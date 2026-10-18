@@ -231,7 +231,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     }
     const dmg = power * DAMAGE_PER_POWER;
     const floor = target.isMain ? (target.team === 'hero' ? this.floors.heroMain : this.floors.villainMain) * target.maxHp : 0;
-    target.hp = Math.max(floor, target.hp - dmg);
+    // The floor stops a fall; it never lifts anybody back up.
+    target.hp = Math.min(target.hp, Math.max(floor, target.hp - dmg));
     target.flashWhite();
     target.squash(Math.min(0.4, 0.12 + power * 0.06));
     target.lastHitAt = this.now;
@@ -695,6 +696,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     await this.simWait(1.6);
     // The last hit.
     stopMusic();
+    this.floors.villainMain = 0;
     v.hp = 0;
     hitstop(this, 220);
     slowmo(this, 0.2, 1500);

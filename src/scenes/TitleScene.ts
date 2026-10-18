@@ -85,6 +85,15 @@ export class TitleScene extends Phaser.Scene {
     // here after an episode; on a cold start the first press is the unlock.
     if (getAudioContext()?.state === 'running') this.time.delayedCall(700, () => void voiceBus.say('core_title'));
 
+    // Whether a gamepad press counts as a user gesture for audio in Chrome is
+    // unconfirmed (2026-10-18), so while audio is still locked a grown-up note
+    // says one click or key turns it on. It disappears the moment it is live.
+    const soundNote = this.add
+      .text(10, 10, '🔈 grown-ups: click or press Space once for sound', { fontFamily: 'sans-serif', fontSize: '16px', color: '#ffffff' })
+      .setAlpha(0.6)
+      .setDepth(DEPTH.hud);
+    this.events.on(Phaser.Scenes.Events.UPDATE, () => soundNote.setVisible(getAudioContext()?.state !== 'running'));
+
     this.add
       .text(GAME_WIDTH - 10, 10, 'grown-ups: hold LB + RB, or F9', { fontFamily: 'sans-serif', fontSize: '14px', color: '#ffffff' })
       .setOrigin(1, 0)

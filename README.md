@@ -14,6 +14,12 @@ Then open **http://localhost:5174** in Chrome or Edge and press F11 for fullscre
 the Xbox 360 pad in first; press green (A) on the title screen. The keyboard works too:
 arrows to walk, Space/Enter for green, Tab for yellow (say it again / hint).
 
+**Sound:** browsers keep audio off until a click or key press, and it is not confirmed
+that a gamepad press counts. While sound is still off, the title shows a small grown-up
+note; one mouse click (or Space) turns it on. To skip that entirely, open the game in a
+Chrome started with `--autoplay-policy=no-user-gesture-required`, e.g.
+`"C:\Program Files\Google\Chrome\Application\chrome.exe" --autoplay-policy=no-user-gesture-required --user-data-dir=%TEMP%\ww-chrome http://localhost:5174`.
+
 The first `npm install` on a machine also needs Playwright's browser for the tests and
 the art painter: `npx playwright install chromium chromium-headless-shell`.
 
