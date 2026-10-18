@@ -25,30 +25,70 @@ the art painter: `npx playwright install chromium chromium-headless-shell`.
 
 ## Playing an episode
 
-1. Title: press green.
-2. Walk to a hero card and press green. Then a friend (or "nobody"). Then a bad guy
-   (or the "?" surprise).
-3. The alarm plays (the friend, or Dada Matt, says "Bad news!"); a journey map shows
-   the way ahead before each big step.
-4. Two prep minigames, walking to answers: Sound to Letter makes a power gem, Blend
-   Path makes star ammo, Word to Picture calls a helper. Yellow (Tab) says it again.
-5. Battle part 1 runs by itself (she can run her own hero with the stick, and green makes
-   it hop); when the move words appear on dots, press the button of that colour. It
-   ends with the villain's ultimate: the heroes retreat to camp.
-6. Walk to the glowing item at camp; Spell the Spell: type the letters in the ghost
-   boxes on the keyboard to forge the counter-item.
-7. Battle part 2: the counter-item beats the ultimate, everyone finishes it, and the
-   villain turns good. Victory replays the words she read; green plays again.
+Selection is walking everywhere: her hero walks to a thing and green picks it. All
+on-screen text is upper case. Yellow (Tab) says the last instruction again, or hints.
 
-A whole episode takes roughly 10–15 minutes for a child (about 4.5 minutes when the
-test harness answers instantly).
+1. Title: press green. (The hero / friend / bad-guy picks are off while v0.2 is being
+   tested; the cast comes from `EPISODE_DEFAULTS`, below.)
+2. **Bedroom.** She wakes up; Dada Matt comes in: "Good news, Julia! Elsa is here to
+   play! Bad news, EvilRilla is coming, and he's going to eat Dada Jason's car!" The
+   room darkens under the villain's mood (footprints, a cracked window). No reading:
+   every toy does something silly on green. The door sparkles if she has not found it
+   20 seconds after the news (`DOOR_SPARKLE_MS`).
+3. **The house (hub).** The helper (the ally, or the narrator) teaches a spell: she
+   stands in the magic circle, presses green, and the word flies into her. That word
+   is her first battle move. Then two side doors open.
+4. **Side rooms**, one sentence each, on a banner, key word last
+   (`WE CAN USE THE NET`). Pass 1 is read to her karaoke-style and stops at the key
+   word, which pulses in silence (skipped once that frame is solid). Pass 2 is hers:
+   each green moves the light one word on and yellow says the lit word. At the key
+   word three things wake up on pedestals (yellow now sounds the key word's letters one
+   at a time, never blended, and never says the word itself); she
+   walks to the one the key word names and presses green. Right: the whole sentence
+   is read back and the thing flies into her bag (top left). Wrong: a funny retry.
+   Each finished room hangs its prize on its door; with both done the front door opens.
+5. **Battle part 1** runs by itself (she can steer her hero with the stick; green
+   hops). The fetched things pop out of her bag and are used. At a move choice the
+   fight freezes, 2–3 word pads glow on the arena floor, the partner says which word;
+   she walks her hero onto that pad and presses green. The first choice is the spell
+   she learned. It ends with the villain's ultimate: "Too strong! Retreat!"
+6. **The house, part 2.** Back in the hub a secret door pops out: the attic, with the
+   villain's counter sentence (`EVILRILLA IS SCARED OF MICE`). Then the front door again.
+7. **Battle part 2**: the counter-item beats the ultimate, everyone finishes it, and
+   the villain turns good. Victory replays the words she read; green plays again.
+
+A journey map shows before each battle and the victory. v0.2 episodes have not been
+timed yet (v0.1 took roughly 10–15 minutes for a child).
+
+The four v0.1 prep games (Sound to Letter, Blend Path, Word to Picture, Spell the
+Spell), the alarm and the retreat camp are **parked**: no episode includes them, but
+`?scene=` still opens each one.
+
+**`EPISODE_DEFAULTS`** in `src/config.ts` sets who is in an episode: `hero: 'julia'`,
+`ally: 'elsa'` (or `null`), `villain: 'rilla'`; `pickScreens: true` brings the pick
+screens back; `randomVillain: true` (picks off) draws a surprise villain. Matt
+dictates the values; a prompt applies them.
 
 Grown-ups page (progress per sound and word): **F9**, or hold **LB + RB** for two
 seconds on the title screen. On that page, **F8** twice erases all progress.
 
 Dev keys: **F2** skip the current step, **F4** answer correctly. Jump straight into a
-step with a URL, e.g. `http://localhost:5174/?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug`
-(`scene` = pick, alarm, sound, blend, picture, spell, battle, retreat, victory, parent).
+step with a URL, e.g. `http://localhost:5174/?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug`.
+Later steps get the episode they would have had by then (spell learned, earlier rooms
+done, items in the bag):
+
+| URL | Opens |
+| --- | --- |
+| `?scene=bedroom` | The wake-up |
+| `?scene=house` / `?scene=house&part=2` | The hub; part 2 has the attic door |
+| `?scene=room&slot=a` (or `b`, `counter`) | A side room; `counter` is the attic |
+| `?scene=battle&part=1` (or `2`) | A battle |
+| `?scene=victory&read=cat,sun,julia` | Victory, recapping those words |
+| `?scene=pick`, `?scene=parent` | A pick screen; the grown-ups page |
+| `?scene=sound` / `blend` / `picture` / `spell` / `alarm` / `retreat` | Parked v0.1 steps |
+
+Extras: `hero=`, `ally=` (`none` for no ally), `villain=`, `fetched=net,fan` (the
+battle items; that is the default), `nojourney` (skip the map).
 
 ## Tests
 
@@ -80,7 +120,9 @@ npm run art:placeholders  # paint missing art, rewrite docs/art.md
   `align.ts` splits it rather than failing.
 - edge-tts pads each clip with ~1.5 s of silence; the build cuts mp3 frames after the
   last word + 0.2 s (`tools/voice/mp3.ts`). That took the voice folder from 23.7 MB to
-  about 19 MB (1,557 lines then; 1,630 now, still about 19 MB).
+  about 19 MB (1,557 lines then). v0.2 added 1,085 lines in one commit (`c5330e7`,
+  16.2 MB, under the 20 MB per-commit gate); the committed folder is
+  2,771 files, 35.9 MB (measured 2026-10-18 from `git ls-tree -r -l HEAD public/voice`).
 - Placeholder art is painted in headless Chromium so emoji render; Windows 10's emoji
   font lacks Emoji 13+ glyphs (🪙 🪭 🪞 🪲 🥸 🪨), so the roster avoids them.
 - The game itself needs no network: voice and art are committed.

@@ -18,7 +18,17 @@ export interface WWState {
   scene: string;
   fps: number;
   step: { kind: string; part?: number; game?: string; what?: string };
-  episode: { hero: string; ally: string | null; villain: string; made: Record<string, boolean> };
+  episode: {
+    hero: string;
+    ally: string | null;
+    villain: string;
+    made: Record<string, boolean>;
+    read: string[];
+    fetched: string[];
+    spell: string | null;
+    house: { plan: { slot: string; room: string; sentence: { key: string; frame: string } }[] | null; done: string[]; taught: boolean };
+    stepIndex: number;
+  };
   room: {
     scene: string;
     round: string;
@@ -47,7 +57,7 @@ export interface WWState {
   } | null;
   voice: { speaking: string | null; busy: boolean; history: string[] };
   fx: Record<string, number>;
-  progress: { sounds: Record<string, { seen: number; recent: boolean[] }>; words: Record<string, { seen: number; recent: boolean[] }>; episodes: number };
+  progress: { sounds: Record<string, { seen: number; recent: boolean[] }>; words: Record<string, { seen: number; recent: boolean[] }>; frames?: Record<string, { seen: number; recent: boolean[] }>; episodes: number };
 }
 
 export function collectErrors(page: Page): string[] {
@@ -196,6 +206,104 @@ async function walkHeroTo(page: Page, x: number, y: number, close = 20): Promise
   }
   await stick(page, 0, 0);
   await page.waitForTimeout(80);
+}
+
+/**
+ * Step the sentence room's read-along to the key word: wait for pass `read`
+ * (or `find`, when it is already there), then one green per word, each press
+ * only once the room is listening and the last one has landed.
+ */
+export async function readToKeyWord(page: Page): Promise<WWState> {
+  for (let guard = 0; guard < 40; guard++) {
+    const s = await until(
+      page,
+      (st) => st.scene === 'SentenceRoom' && Boolean(st.room?.sentence) && (st.room!.sentence!.pass === 'find' || (st.room!.sentence!.pass === 'read' && !st.room!.locked)),
+      90_000,
+      'sentence read pass',
+    );
+    const sent = s.room!.sentence!;
+    if (sent.pass === 'find') return s;
+    await press(page, 'green');
+    await until(page, (st) => st.room?.sentence?.pass !== 'read' || st.room.sentence.index !== sent.index, 10_000, `read-along past word ${sent.index}`);
+  }
+  throw new Error('the read-along never reached the key word');
+}
+
+/**
+ * Play one sentence room: read along to the key word, walk to the right
+ * object, green, and wait until she is out of the room. Returns the key word.
+ */
+export async function playSentenceRoom(page: Page): Promise<string> {
+  const s = await readToKeyWord(page);
+  const key = s.room!.sentence!.key;
+  await choose(page);
+  await until(page, (st) => st.scene !== 'SentenceRoom', 60_000, `out of the ${key} room`);
+  return key;
+}
+
+/** The bedroom: wait for the news to be told and the door to open, then walk out of it. */
+export async function leaveBedroom(page: Page): Promise<void> {
+  await until(page, (s) => s.scene === 'Bedroom' && s.room?.round === 'bedroom:door', 90_000, 'bedroom door open');
+  await choose(page, 'door');
+  await until(page, (s) => s.scene !== 'Bedroom', 30_000, 'out of the bedroom');
+}
+
+/** In the hub: wait for a spot (a door, the circle) to be offered, then walk to it and press green. */
+export async function hubGo(page: Page, id: string): Promise<void> {
+  await until(page, (s) => s.scene === 'Hub', 30_000, 'hub');
+  await choose(page, id);
+  await until(page, (s) => s.scene !== 'Hub' || !s.room?.spots.some((sp) => sp.id === id), 30_000, `${id} taken`);
+}
+
+/** Seed localStorage progress before the page's scripts run (call before `boot`). */
+export async function seedProgress(page: Page, data: Record<string, unknown>): Promise<void> {
+  await page.addInitScript((d) => {
+    localStorage.setItem('wordwarriors.progress', JSON.stringify(d));
+  }, data);
+}
+
+/** The fetch frames (`use: 'fetch'` in content/phonics/sentences.ts). */
+export const FETCH_FRAMES = ['we_can_use_the', 'helper_needs_a', 'go_get_the', 'villain_hates_the', 'we_need_a'];
+
+/** From the bedroom to the victory screen. Returns the victory state and the keys fetched. */
+export async function playEpisode(page: Page): Promise<{ end: WWState; keys: string[] }> {
+  await until(page, (s) => s.scene === 'Bedroom', 30_000, 'bedroom');
+  await leaveBedroom(page);
+
+  // Hub part 1: the spell, then both side rooms, then out the front door.
+  await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:circle', 90_000, 'circle offered');
+  await hubGo(page, 'circle');
+  const keys: string[] = [];
+  for (const door of ['door_a', 'door_b']) {
+    await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:doors', 90_000, `${door} offered`);
+    await hubGo(page, door);
+    keys.push(await playSentenceRoom(page));
+  }
+  const front1 = await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:front', 90_000, 'front door open');
+  expect(front1.episode.fetched).toEqual(keys);
+  await hubGo(page, 'door_front');
+
+  // Battle 1: the fetched things are used, the ultimate still wins.
+  const b1 = await until(page, (s) => s.scene === 'Battle', 30_000, 'battle 1');
+  expect(b1.battle?.part).toBe(1);
+  const afterB1 = await playBattle(page, 1);
+  expect(afterB1.battle?.ultimates).toBe(1);
+  expect(afterB1.battle?.movePicks).toBe(2);
+  expect(afterB1.battle?.itemsUsed).toBeGreaterThan(0);
+  expect(afterB1.battle?.heroes.every((h) => h.status === 'floored')).toBe(true);
+
+  // Hub part 2: the secret door, the attic's counter sentence, out again.
+  await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:2:secret', 90_000, 'secret door');
+  await hubGo(page, 'door_counter');
+  const counterKey = await playSentenceRoom(page);
+  const ready = await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:2:front', 90_000, 'front door again');
+  expect(ready.episode.made.item).toBe(true);
+  await hubGo(page, 'door_front');
+
+  await until(page, (s) => s.scene === 'Battle', 30_000, 'battle 2');
+  await playBattle(page, 2);
+  const end = await until(page, (s) => s.scene === 'Victory', 30_000, 'victory');
+  return { end, keys: [...keys, counterKey] };
 }
 
 export function expectNoErrors(errors: string[]): void {

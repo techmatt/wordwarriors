@@ -5,9 +5,26 @@
 
 import { test, expect } from '@playwright/test';
 
-import { boot, choose, collectErrors, expectNoErrors, playBattle, press, state, typeLetter, until, walkTo } from './harness';
+import {
+  FETCH_FRAMES,
+  boot,
+  choose,
+  collectErrors,
+  expectNoErrors,
+  hubGo,
+  leaveBedroom,
+  playBattle,
+  playSentenceRoom,
+  press,
+  readToKeyWord,
+  seedProgress,
+  state,
+  typeLetter,
+  until,
+  walkTo,
+} from './harness';
 
-test('title boots, green starts the hero pick, F9 opens the grown-ups page', async ({ page }) => {
+test('title boots, F9 opens the grown-ups page and returns, green starts the bedroom', async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page);
   await until(page, (s) => s.scene === 'Title', 30_000, 'title');
@@ -17,126 +34,186 @@ test('title boots, green starts the hero pick, F9 opens the grown-ups page', asy
   await until(page, (s) => s.scene === 'Title', 10_000, 'back to title');
   await page.waitForTimeout(300);
   await press(page, 'green');
-  const s = await until(page, (st) => st.scene === 'Pick' && st.step.what === 'hero', 15_000, 'hero pick');
-  expect(s.room?.spots.map((x) => x.id)).toContain('julia');
+  // Pick screens are off by default: straight into the bedroom.
+  const s = await until(page, (st) => st.scene === 'Bedroom', 15_000, 'bedroom');
+  expect(s.step.kind).toBe('bedroom');
   expectNoErrors(errors);
 });
 
-test('mashing green on a pick picks once, and the next room still runs', async ({ page }) => {
+test('bedroom: the wake-up news, a toy reacts to green, the door leads to the hub', async ({ page }) => {
   const errors = collectErrors(page);
-  await boot(page, '?scene=pick&nojourney=1');
-  const s = await until(page, (st) => st.scene === 'Pick' && Boolean(st.room && !st.room.locked), 30_000, 'hero pick');
-  const elsa = s.room!.spots.find((sp) => sp.id === 'elsa')!;
-  await walkTo(page, elsa.x, elsa.y + 12);
-  for (let i = 0; i < 4; i++) {
-    await press(page, 'green');
-    await page.waitForTimeout(120);
-  }
-  const ally = await until(page, (st) => st.step.what === 'ally' && Boolean(st.room && !st.room.locked), 30_000, 'ally pick');
-  expect(ally.episode.hero).toBe('elsa');
-  // The ally room must be alive: walking still moves her.
-  const before = ally.room!.player.x;
-  await walkTo(page, before + 150, ally.room!.player.y);
-  expect(errors).toEqual([]);
+  await boot(page, '?scene=bedroom&nojourney=1');
+  const s = await until(page, (st) => st.scene === 'Bedroom' && st.room?.round === 'bedroom:door' && !st.room.locked, 90_000, 'news told, door open');
+  expect(s.voice.history).toContain('wake_dada_matt_good_julia');
+  expect(s.voice.history).toContain('wake_dada_matt_helper_elsa');
+  expect(s.voice.history).toContain('wake_dada_matt_bad_rilla');
+  expect(s.room!.spots.map((sp) => sp.id)).toContain('door');
+
+  // Poke a toy: it does its thing (a burst), and nothing else happens.
+  const before = s.fx.bursts ?? 0;
+  await choose(page, 'rocket');
+  await until(page, (st) => (st.fx.bursts ?? 0) > before, 5_000, 'rocket reaction');
+  await page.waitForTimeout(600);
+  const after = await state(page);
+  expect(after.scene).toBe('Bedroom');
+  expect(after.room?.round).toBe('bedroom:door');
+
+  await leaveBedroom(page);
+  const hub = await until(page, (st) => st.scene === 'Hub', 15_000, 'hub');
+  expect(hub.step.kind).toBe('house');
+  expectNoErrors(errors);
 });
 
-test('F9 out of a minigame and back: the room restarts cleanly', async ({ page }) => {
+test('hub part 1: the circle teaches the spell, then door a opens a sentence room', async ({ page }) => {
   const errors = collectErrors(page);
-  await boot(page, '?scene=sound&hero=julia&villain=smaug');
-  await until(page, (s) => s.room?.round.startsWith('sound:0:') === true && !s.room.locked, 60_000, 'first item');
+  await boot(page, '?scene=house&nojourney=1');
+  const circle = await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:circle' && !s.room.locked, 90_000, 'circle offered');
+  expect(circle.episode.spell).toBeTruthy();
+  expect(circle.episode.house.taught).toBe(false);
+  expect(circle.voice.history).toContain(`nar_elsa_teach_word_${circle.episode.spell}`);
+
+  await hubGo(page, 'circle');
+  const doors = await until(page, (s) => s.room?.round === 'hub:1:doors' && !s.room.locked, 60_000, 'doors offered');
+  expect(doors.episode.house.taught).toBe(true);
+  const ids = doors.room!.spots.map((sp) => sp.id);
+  expect(ids).toContain('door_a');
+  expect(ids).toContain('door_b');
+  expect(ids).not.toContain('door_front');
+
+  await hubGo(page, 'door_a');
+  const room = await until(page, (s) => s.scene === 'SentenceRoom' && Boolean(s.room?.sentence), 15_000, 'sentence room');
+  expect(room.room!.round.startsWith('sentence:a:')).toBe(true);
+  expectNoErrors(errors);
+});
+
+test('sentence room: listen, read along, a wrong object costs nothing, the right one goes in the bag', async ({ page }) => {
+  test.setTimeout(180_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=a&nojourney=1');
+  const first = await until(page, (s) => s.scene === 'SentenceRoom' && Boolean(s.room?.sentence), 30_000, 'sentence room');
+  const sent = first.room!.sentence!;
+  const key = sent.key;
+  expect(sent.skipped).toBe(false);
+  expect(sent.tokens.at(-1)).toBe(key.toUpperCase());
+  for (const t of sent.tokens) expect(t).toBe(t.toUpperCase());
+
+  // Pass 1, listening: then her turn, with the light on the first word.
+  const read = await until(page, (s) => s.room?.sentence?.pass === 'read' && !s.room.locked, 90_000, 'read pass');
+  expect(read.voice.history).toContain('nar_elsa_room_listen');
+  expect(read.voice.history).not.toContain(`word_${key}`);
+  expect(read.room!.sentence!.index).toBe(0);
+  expect(read.room!.spots.length).toBe(0);
+
+  // Green steps the light one word on.
+  await press(page, 'green');
+  await until(page, (s) => s.room?.sentence?.index === 1 || s.room?.sentence?.pass === 'find', 10_000, 'light on word 2');
+
+  // On to the key word: the three objects wake up.
+  const find = await readToKeyWord(page);
+  expect(find.room!.sentence!.index).toBe(sent.tokens.length - 1);
+  const awake = await until(page, (s) => (s.room?.spots.length ?? 0) === 3, 10_000, 'three objects');
+  expect(awake.room!.spots.filter((sp) => sp.correct === true).length).toBe(1);
+  expect(awake.voice.history).not.toContain(`word_${key}`);
+
+  // Wrong first: a funny line, same round, nothing fetched, the key word still unsaid.
+  const wrong = awake.room!.spots.find((sp) => sp.correct === false)!;
+  await until(page, (s) => Boolean(s.room && !s.room.locked), 30_000, 'room listening');
+  await walkTo(page, wrong.x, wrong.y + 12);
+  await press(page, 'green');
+  const after = await until(page, (s) => s.voice.history.some((id) => /^nar_.*_wrong_\d$/.test(id)), 20_000, 'wrong line');
+  expect(after.room?.round).toBe(first.room!.round);
+  expect(after.room?.sentence?.pass).toBe('find');
+  expect(after.episode.fetched).not.toContain(key);
+  expect(after.voice.history).not.toContain(`word_${key}`);
+
+  // Right: the whole sentence back, the key word said, into the bag, back to the hub.
+  await choose(page);
+  await until(page, (s) => s.voice.history.includes(`word_${key}`), 30_000, 'key word confirmation');
+  const hub = await until(page, (s) => s.scene === 'Hub', 60_000, 'back in the hub');
+  expect(hub.episode.fetched).toContain(key);
+  expect(hub.episode.house.done).toContain('a');
+  expect(hub.episode.read).toContain(key);
+  expect(hub.progress.frames?.[sent.frame]?.recent.at(-1)).toBe(false);
+  expectNoErrors(errors);
+});
+
+test('a solid sentence frame skips the listening pass', async ({ page }) => {
+  const errors = collectErrors(page);
+  const stat = { seen: 6, right: 6, wrong: 0, recent: [true, true, true, true, true, true], last: Date.now() };
+  await seedProgress(page, {
+    version: 1,
+    sounds: {},
+    words: {},
+    spelling: {},
+    frames: Object.fromEntries(FETCH_FRAMES.map((f) => [f, stat])),
+    episodes: 0,
+  });
+  await boot(page, '?scene=room&slot=a&nojourney=1');
+  const s = await until(page, (st) => st.scene === 'SentenceRoom' && Boolean(st.room?.sentence), 30_000, 'sentence room');
+  expect(s.room!.sentence!.skipped).toBe(true);
+  expect(s.room!.sentence!.pass).toBe('read');
+  const read = await until(page, (st) => st.room?.sentence?.pass === 'read' && !st.room.locked, 30_000, 'read pass');
+  expect(read.voice.history).not.toContain('nar_elsa_room_listen');
+  expect(read.voice.history).toContain('nar_elsa_room_your_turn');
+  expectNoErrors(errors);
+});
+
+test('F9 out of a sentence room and back: it restarts cleanly', async ({ page }) => {
+  test.setTimeout(180_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=a&nojourney=1');
+  await until(page, (s) => s.room?.sentence?.pass === 'read' && !s.room.locked, 90_000, 'read pass');
   await page.keyboard.press('F9');
   await until(page, (s) => s.scene === 'Parent', 10_000, 'parent');
   await press(page, 'red');
-  await until(page, (s) => s.scene === 'SoundToLetter' && s.room?.round.startsWith('sound:0:') === true && !s.room.locked, 60_000, 'room again');
-  await choose(page);
-  await until(page, (s) => s.room?.round.startsWith('sound:1:') === true, 60_000, 'second item');
+  // The parent page returns to the current step (the house), so she is back in the hub, room a still open.
+  const back = await until(page, (s) => s.scene === 'Hub' || s.scene === 'SentenceRoom', 15_000, 'back from parent');
+  if (back.scene === 'Hub') {
+    expect(back.episode.house.done).not.toContain('a');
+    await hubGo(page, 'door_a');
+  }
+  const fresh = await until(page, (s) => s.scene === 'SentenceRoom' && Boolean(s.room?.sentence), 30_000, 'sentence room again');
+  expect(fresh.room!.round.startsWith('sentence:a:')).toBe(true);
+  const key = await playSentenceRoom(page);
+  const hub = await until(page, (s) => s.scene === 'Hub', 30_000, 'hub');
+  expect(hub.episode.fetched).toEqual([key]);
+  expect(hub.episode.house.done).toContain('a');
   expectNoErrors(errors);
 });
 
-test('Sound to Letter: a wrong stone costs nothing, a right one advances and is recorded', async ({ page }) => {
-  const errors = collectErrors(page);
-  await boot(page, '?scene=sound&hero=julia&ally=elsa&villain=smaug');
-  const first = await until(page, (s) => s.scene === 'SoundToLetter' && s.room?.round.startsWith('sound:0:') === true && !s.room.locked, 60_000, 'first item');
-  const target = first.room!.round.split(':')[2]!;
-
-  // Wrong first: same item stays up, a funny line plays.
-  const wrong = first.room!.spots.find((sp) => sp.correct === false)!;
-  await walkTo(page, wrong.x, wrong.y + 12);
-  await press(page, 'green');
-  const after = await until(page, (s) => s.voice.history.some((id) => /_wrong_\d$/.test(id)), 20_000, 'wrong line');
-  expect(after.room?.round).toBe(first.room!.round);
-
-  await choose(page);
-  const next = await until(page, (s) => s.room?.round.startsWith('sound:1:') === true, 60_000, 'second item');
-  expect(next.progress.sounds[target]?.seen).toBe(1);
-  expect(next.voice.history).toContain(`letter_${target}_sound`);
-  expectNoErrors(errors);
-});
-
-test('Spell the Spell: ghost boxes fill only with the right letter', async ({ page }) => {
+test('Spell the Spell (parked): ghost boxes fill only with the right letter', async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=spell&hero=julia&villain=bavmorda');
   const s = await until(page, (st) => st.scene === 'Spelling' && Boolean(st.room?.spelling) && !st.room!.locked, 60_000, 'first word');
   const word = s.room!.spelling!.word;
-  expect(word).toBe('sun');
-  await typeLetter(page, 'z');
+  const wrongLetter = 'zqx'.split('').find((c) => c !== word[0]!.toLowerCase())!;
+  await typeLetter(page, wrongLetter);
   await page.waitForTimeout(200);
   expect((await state(page)).room?.spelling?.filled).toBe(0);
   for (const ch of word) {
     await typeLetter(page, ch);
     await page.waitForTimeout(150);
   }
-  await until(page, (st) => st.room?.spelling?.word === 'pin', 60_000, 'second word');
+  await until(page, (st) => Boolean(st.room?.spelling) && st.room!.spelling!.word !== word, 60_000, 'second word');
   expectNoErrors(errors);
 });
 
-test('Blend Path: tiles count left to right, the doors open, the word is said after', async ({ page }) => {
-  const errors = collectErrors(page);
-  await boot(page, '?scene=blend&hero=julia&villain=moriarty');
-  const s = await until(page, (st) => st.room?.round.startsWith('blend:0:') === true && !st.room.locked, 60_000, 'first item');
-  const word = s.room!.round.split(':')[2]!;
-  expect(s.room!.spots.length).toBe(0); // doors shut until the path is walked
-  // Out of order first: the last tile says its sound but opens nothing.
-  // Detour below the path so the earlier tiles are not stepped on the way.
-  await walkTo(page, 120, 610, 30);
-  await walkTo(page, 260 + (word.length - 1) * 160, 610, 30);
-  await walkTo(page, 260 + (word.length - 1) * 160, 470, 30);
-  await page.waitForTimeout(400);
-  expect((await state(page)).room!.spots.length).toBe(0);
-  for (let i = 0; i < word.length; i++) await walkTo(page, 260 + i * 160, 470, 30);
-  await until(page, (st) => (st.room?.spots.length ?? 0) >= 2, 10_000, 'doors open');
-  expect((await state(page)).voice.history).not.toContain(`word_${word}`);
-  await choose(page);
-  await until(page, (st) => st.voice.history.includes(`word_${word}`), 30_000, 'confirmation');
-  expectNoErrors(errors);
-});
-
-test('Word to Picture: the word is not spoken until she answers', async ({ page }) => {
-  const errors = collectErrors(page);
-  await boot(page, '?scene=picture&hero=anna&ally=jasmine&villain=ozymandias');
-  const s = await until(page, (st) => st.room?.round.startsWith('picture:0:') === true && !st.room.locked, 60_000, 'first item');
-  const word = s.room!.round.split(':')[2]!;
-  expect(s.voice.history).not.toContain(`word_${word}`);
-  await choose(page);
-  await until(page, (st) => st.voice.history.includes(`word_${word}`), 30_000, 'confirmation');
-  expectNoErrors(errors);
-});
-
-test('Battle part 2: a wrong and a right move pick, counter-item, finish, victory', async ({ page }) => {
+test('Battle part 2: a wrong and a right walking pick, counter-item, finish, victory', async ({ page }) => {
   test.setTimeout(240_000);
   const errors = collectErrors(page);
-  await boot(page, '?scene=battle&part=2&hero=elsa&ally=anna&villain=scar');
-  await until(page, (s) => s.scene === 'Battle', 30_000, 'battle');
+  await boot(page, '?scene=battle&part=2&hero=elsa&ally=anna&villain=scar&nojourney=1');
+  const b = await until(page, (s) => s.scene === 'Battle', 30_000, 'battle');
+  expect(b.battle?.part).toBe(2);
   await playBattle(page, 2, true);
   const end = await until(page, (s) => s.scene === 'Victory', 30_000, 'victory');
   // The wrong pick fired a plainer move and cost nothing; it is recorded as a miss.
   const missed = Object.values(end.progress.words).some((st) => st.recent.includes(false));
   expect(missed).toBe(true);
-  expect(end.scene).toBe('Victory');
   expect(end.battle?.ultimates).toBe(1);
   expect(end.battle?.movePicks).toBe(2);
   expect(end.battle?.combos).toBe(1);
   expect(end.battle?.villains[0]?.hp).toBe(0);
+  expect(end.battle?.itemsUsed).toBeGreaterThan(0);
   expect(end.battle!.abilitiesFired).toBeGreaterThan(20);
   expect(end.fx.hitstops).toBeGreaterThan(0);
   expect(end.voice.history.some((id) => id.startsWith('taunt_'))).toBe(true);

@@ -16,6 +16,11 @@ without a new measurement.
   Result ~19 MB. Most of it is narrator lines: 13 narrators × ~110 lines. The next big
   content addition will cross the 20 MB commit gate, which needs Matt's say-so; options
   are fewer possible narrators, or narrator lines that do not name heroes/villains.
+- **Size after v0.2** (measured 2026-10-18, `git ls-tree -r -l HEAD public/voice`): 2,771
+  files, 35.9 MB committed; `lines.json` has 2,769 lines. The v0.2 voice commit
+  (`c5330e7`) added 1,085 lines and 16.2 MB, under the per-commit gate. The growth is
+  per-character multiplication: sentence prefixes (frame × roster name), wake-up lines
+  (waker × character), plus the 14th character's narrator set.
 - **Build cache** stores fingerprints only; entries are read back from the previous
   manifest, so manifest data is committed once (saved ~0.6 MB).
 - `en-AU-WilliamMultilingualNeural` failed "No audio was received" on most lines.

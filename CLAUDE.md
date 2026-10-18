@@ -86,7 +86,8 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 - **Operational facts learned while working go into the README**, never only into a report.
 - **Matt never edits config or content by hand**; prompts apply the values he dictates.
 - **Never commit 20 MB or more of tree bytes without Matt's explicit prior confirmation.**
-  The voice folder is ~19 MB (2026-10-18); see `docs/engineering.md`.
+  The voice folder is ~36 MB after v0.2 (2026-10-18; v0.2's lines were one 16.2 MB
+  commit); see `docs/engineering.md`.
 
 ## Standing design rules (law)
 
