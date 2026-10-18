@@ -34,7 +34,7 @@ export class SoundToLetter extends Minigame {
   protected build(): void {
     this.items = soundRound(progress, ITEMS);
     this.itemIndex = 0;
-    this.makeMeter(ITEMS, 'prop_gem');
+    this.makeMeter(ITEMS, 'prop_gem', '💎');
     void (async () => {
       await this.narrate('prep_gem', 'inst_sound');
       this.showItem();

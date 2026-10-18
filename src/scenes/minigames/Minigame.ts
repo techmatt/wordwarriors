@@ -20,6 +20,7 @@ import { sfxRight, sfxSummon, sfxWrong } from '../../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../../config';
 import { narrator } from '../../episode/Episode';
 import { burst, fitImage, floatText, popIn, shockwave, wiggle } from '../../fx/juice';
+import { TEX } from '../../fx/textures';
 import { progress } from '../../state/progress';
 import type { ItemKind } from '../../state/ProgressStore';
 import { RoomScene } from '../../world/RoomScene';
@@ -32,10 +33,21 @@ export abstract class Minigame extends RoomScene {
   private meter: Phaser.GameObjects.Container | null = null;
   private meterSlots: Phaser.GameObjects.Arc[] = [];
   private filled = 0;
+  private slotGlyphs: Phaser.GameObjects.Text[] = [];
+  private slotsTotal = 0;
+  /** The emoji each piece is drawn as: a gem shard, a star, a sparkle. */
+  private pieceGlyph = '⭐';
 
-  /** Build the piece meter: `n` slots at the top, with the prize's icon at the end. */
-  protected makeMeter(n: number, prizeArt: string): void {
+  /**
+   * Build the piece meter: `n` slots at the top, with the prize's icon at the
+   * end. The prize starts as a faint ghost and fills in as pieces land, so she
+   * watches the thing being made.
+   */
+  protected makeMeter(n: number, prizeArt: string, pieceGlyph = '⭐'): void {
     this.filled = 0;
+    this.slotGlyphs = [];
+    this.slotsTotal = n;
+    this.pieceGlyph = pieceGlyph;
     const gap = 70;
     const x0 = GAME_WIDTH / 2 - ((n - 1) * gap) / 2 - 40;
     this.meterSlots = [];
@@ -56,19 +68,35 @@ export abstract class Minigame extends RoomScene {
     const slot = this.meterSlots[this.filled];
     this.filled++;
     if (!slot || !this.meter) return;
-    const piece = this.add.star(x, y, 5, 10, 22, color).setDepth(DEPTH.sparkles).setStrokeStyle(3, 0xffffff);
+    const piece = this.add.text(x, y, this.pieceGlyph, { fontSize: '54px' }).setOrigin(0.5).setDepth(DEPTH.sparkles);
+    const trailFx = this.add
+      .particles(0, 0, TEX.spark, { speed: 30, scale: { start: 1, end: 0 }, lifespan: 400, frequency: 20, tint: [color, 0xffffff], blendMode: Phaser.BlendModes.ADD })
+      .setDepth(DEPTH.sparkles - 1);
+    trailFx.startFollow(piece);
+    const filledNow = this.filled;
     this.tweens.add({
       targets: piece,
       x: slot.x,
       y: this.meter.y,
-      angle: 360,
+      scale: 0.6,
       duration: 650,
       ease: 'Cubic.easeIn',
       onComplete: () => {
-        piece.destroy();
+        trailFx.stop();
+        this.time.delayedCall(450, () => trailFx.destroy());
         slot.setFillStyle(color, 1);
+        piece.setPosition(slot.x, this.meter!.y).setDepth(DEPTH.hud + 1);
+        popIn(this, piece, 0.6);
         popIn(this, slot, 1);
+        this.slotGlyphs.push(piece);
         burst(this, slot.x, this.meter!.y, { count: 16, speed: 200, colors: [color, 0xffffff] });
+        // The prize fills in, piece by piece.
+        const prize = this.meter?.getData('prize') as Phaser.GameObjects.Image | undefined;
+        if (prize) {
+          const s = prize.scale;
+          prize.setAlpha(0.35 + 0.65 * (filledNow / this.slotsTotal));
+          this.tweens.add({ targets: prize, scale: s * 1.3, duration: 140, yoyo: true });
+        }
       },
     });
   }
@@ -83,7 +111,8 @@ export abstract class Minigame extends RoomScene {
     burst(this, GAME_WIDTH / 2, 330, { count: 120, speed: 700, life: 1100 });
     const bs = big.scale;
     this.tweens.add({ targets: big, scaleX: bs * 1.12, scaleY: bs * 0.9, duration: 160, yoyo: true, repeat: 3, delay: 380 });
-    for (const s of this.meterSlots) this.tweens.add({ targets: s, scale: 1.5, alpha: 0, duration: 500 });
+    for (const s of [...this.meterSlots, ...this.slotGlyphs]) this.tweens.add({ targets: s, scale: 1.5, alpha: 0, duration: 500 });
+    this.slotGlyphs = [];
     await voiceBus.say(narratorLine(narrator(), madeLine));
     await this.wait(400);
     return big;

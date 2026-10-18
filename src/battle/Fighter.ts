@@ -233,6 +233,9 @@ export class Fighter {
       this.shieldBubble.destroy();
       this.shieldBubble = null;
     }
+    // Keep the whole card on screen, not just its centre.
+    const half = this.height * 0.4 * this.scaleMul + 10;
+    this.x = Math.min(Math.max(this.x, half), 1280 - half);
     this.root.setPosition(this.x, this.y);
     this.root.setDepth(this.y);
     this.bobPhase += dt * (this.floored ? 1.5 : 5);

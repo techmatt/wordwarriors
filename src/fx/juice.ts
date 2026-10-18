@@ -111,6 +111,33 @@ export function shake(scene: Phaser.Scene, strength: number, ms = 220): void {
   scene.cameras.main.shake(ms, Math.min(0.03, strength * 0.004));
 }
 
+/** A quick camera zoom-in and back: the "punch" on a big hit. */
+export function punch(scene: Phaser.Scene, amount = 0.06, ms = 160): void {
+  const cam = scene.cameras.main;
+  scene.tweens.add({ targets: cam, zoom: 1 + amount, duration: ms, yoyo: true, ease: 'Quad.easeOut', onComplete: () => cam.setZoom(1) });
+}
+
+/**
+ * Anime speed lines: thin streaks rushing in from the screen edge towards a
+ * point, for supers and ultimates. Drawn in screen space over everything.
+ */
+export function speedLines(scene: Phaser.Scene, cx: number, cy: number, color = 0xffffff, ms = 450): void {
+  const g = scene.add.graphics().setDepth(DEPTH.sparkles - 2).setScrollFactor(0).setBlendMode(Phaser.BlendModes.ADD);
+  const W = scene.scale.width;
+  const H = scene.scale.height;
+  const n = 46;
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2 + Math.random() * 0.1;
+    const outer = Math.hypot(W, H);
+    const inner = 170 + Math.random() * 160;
+    const w = 2 + Math.random() * 5;
+    g.lineStyle(w, i % 3 === 0 ? color : 0xffffff, 0.75);
+    g.lineBetween(cx + Math.cos(a) * inner, cy + Math.sin(a) * inner, cx + Math.cos(a) * outer, cy + Math.sin(a) * outer);
+  }
+  g.setAlpha(0);
+  scene.tweens.add({ targets: g, alpha: 1, duration: 70, yoyo: true, hold: ms - 140, onComplete: () => g.destroy() });
+}
+
 export function flash(scene: Phaser.Scene, color = 0xffffff, ms = 140): void {
   fxStats.flashes++;
   const c = Phaser.Display.Color.IntegerToRGB(color);

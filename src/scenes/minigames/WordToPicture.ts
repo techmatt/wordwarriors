@@ -41,7 +41,7 @@ export class WordToPicture extends Minigame {
   protected build(): void {
     this.items = pictureRound(progress, ITEMS);
     this.itemIndex = 0;
-    this.makeMeter(ITEMS, 'minion_helper');
+    this.makeMeter(ITEMS, 'minion_helper', '✨');
     this.floor.setTo(80, 420, GAME_WIDTH - 160, 230);
     void (async () => {
       await this.narrate('prep_helper', 'inst_picture');

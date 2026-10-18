@@ -56,7 +56,7 @@ export class Spelling extends Minigame {
     const counter = villainSpec().counter;
     this.words = [...counter.words];
     this.itemIndex = 0;
-    this.makeMeter(this.words.length, `item_${counter.id}`);
+    this.makeMeter(this.words.length, `item_${counter.id}`, counter.glyph);
     this.player.place(300, 600);
     const anvil = this.art('prop_anvil', 260, 170, GAME_WIDTH / 2, 640);
     anvil.setDepth(600);

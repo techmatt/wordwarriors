@@ -45,7 +45,7 @@ export class BlendPath extends Minigame {
   protected build(): void {
     this.items = blendRound(progress, ITEMS);
     this.itemIndex = 0;
-    this.makeMeter(ITEMS, 'prop_ammo');
+    this.makeMeter(ITEMS, 'prop_ammo', '⭐');
     void (async () => {
       await this.narrate('prep_ammo', 'inst_blend');
       this.showItem();

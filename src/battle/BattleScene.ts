@@ -37,7 +37,7 @@ import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxSummon, sfxUltimate, sfxWrong } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, PAD_COLOR, type PadColorName } from '../config';
 import { advance, episode, narrator, villainSpec, type Step } from '../episode/Episode';
-import { burst, fitImage, flash, floatText, hitstop, shake, shockwave, slowmo, timeScale } from '../fx/juice';
+import { burst, fitImage, flash, floatText, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { progress } from '../state/progress';
@@ -444,7 +444,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.banner(`${ab.name.toUpperCase()}!`, ab.color, true);
     slowmo(this, 0.35, 900);
     flash(this, ab.color, 160);
+    speedLines(this, (a.cx + b.cx) / 2, (a.cy + b.cy) / 2, ab.color, 800);
     await this.simWait(0.4);
+    punch(this, 0.06, 180);
     cast(this, a, ab, this.villain, 2.2);
     cast(this, b, ab, this.villain, 1.4);
     this.stats.combos++;
@@ -504,6 +506,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       sfxRight();
       flash(this, 0xffffff, 200);
       slowmo(this, 0.3, 1200);
+      punch(this, 0.07, 200);
+      speedLines(this, f.cx, f.cy, ab.color, 700);
       shockwave(this, f.cx, f.cy, ab.color, 300);
       burst(this, f.cx, f.cy, { count: 80, speed: 600, colors: [ab.color, 0xffd23f, 0xffffff] });
       f.setShield(1, 0xffd23f, this.now);
@@ -573,6 +577,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     shockwave(this, v.x, v.y, ult.color, 400, 900);
     this.banner(`${ult.name.toUpperCase()}!`, ult.color, true);
     slowmo(this, 0.4, 1200);
+    speedLines(this, v.cx, v.cy, ult.color, 1200);
+    punch(this, 0.08, 300);
     void voiceBus.say(ultimateLine(v.init.id), 'instruction', v);
     this.stats.ultimates++;
     await this.simWait(1.4);
@@ -585,6 +591,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       flash(this, 0xffffff, 300);
       hitstop(this, 160);
       shake(this, 8, 600);
+      punch(this, 0.1, 220);
       sfxBoom(3);
       for (const h of [...this.heroes, ...(this.helper ? [this.helper] : [])]) {
         if (!h.active) continue;
@@ -615,6 +622,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.tweens.add({ targets: halo, scale: 5, alpha: 0.6, duration: 500, yoyo: true, repeat: -1 });
     sfxSummon();
     flash(this, 0xfff3a0, 250);
+    speedLines(this, item.x, item.y, 0xfff3a0, 900);
     this.banner(`${counter.name.toUpperCase()}!`, 0xffb703, true);
     await this.simWait(0.6);
 
@@ -688,6 +696,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     slowmo(this, 0.2, 1500);
     flash(this, 0xffffff, 400);
     shake(this, 9, 800);
+    punch(this, 0.12, 260);
+    speedLines(this, v.cx, v.cy, 0xffd23f, 1200);
     sfxBoom(3);
     shockwave(this, v.cx, v.cy, 0xffd23f, 600, 900);
     burst(this, v.cx, v.cy, { count: 200, speed: 900, life: 1500, colors: [0xffd23f, 0xff5ab4, 0x7ad9ff, 0xffffff] });
@@ -737,6 +747,12 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     const fighting = this.phase === 'fight' || this.phase === 'combo';
     const moving = fighting || (this.phase === 'ultimate' && f.team === 'hero');
     if (moving) STEER[f.init.style](f, { scene: this, now: this.now, dt, target });
+    // Each side drifts back towards its own ground, so the fight stays framed
+    // heroes-left, villain-right instead of wandering off one edge.
+    if (moving && (f.isMain || f.init.kind === 'helper')) {
+      const home = f.team === 'hero' ? 400 : 900;
+      f.x += (home - f.x) * Math.min(1, 0.6 * dt);
+    }
     if (!fighting || !target) return;
 
     // Casting: one team member at a time, so moves read instead of blurring.
