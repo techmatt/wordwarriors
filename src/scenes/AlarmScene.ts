@@ -23,6 +23,7 @@ import { Caption } from '../ui/Caption';
 
 export class AlarmScene extends Phaser.Scene {
   private controls!: Controls;
+  private gen = 0;
   private heroImgs: Phaser.GameObjects.Image[] = [];
 
   constructor() {
@@ -30,6 +31,8 @@ export class AlarmScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.gen++;
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.gen++);
     hookState.scene = 'Alarm';
     hookState.room = null;
     this.heroImgs = [];
@@ -52,10 +55,14 @@ export class AlarmScene extends Phaser.Scene {
   }
 
   private async run(): Promise<void> {
+    // Stop if this run of the scene ends (F2) while a line is playing.
+    const g = this.gen;
+    const gone = () => g !== this.gen;
     const n = narrator();
     const v = episode.villain;
     const vf = villainSpec().evil;
     await voiceBus.say(narratorLine(n, `alarm_hero_${episode.hero}`));
+    if (gone()) return;
 
     // The villain arrives, and the music turns.
     startMusic('battle');
@@ -68,6 +75,7 @@ export class AlarmScene extends Phaser.Scene {
     await new Promise<void>((resolve) =>
       this.tweens.add({ targets: vill, x: 980, duration: 700, ease: 'Back.easeOut', onComplete: () => resolve() }),
     );
+    if (gone()) return;
     sfxBoom(3);
     shake(this, 6, 500);
     // The heroes jump with surprise: a squash, then a stretch upwards.
@@ -81,8 +89,11 @@ export class AlarmScene extends Phaser.Scene {
 
     const taunt = vf.taunts[0];
     if (taunt) await voiceBus.say(tauntLine(fighterId(v, true), taunt.key), 'instruction', { x: vill.x, y: vill.y, bubbleOffset: vill.displayHeight, active: true });
+    if (gone()) return;
     await voiceBus.say(narratorLine(n, `alarm_villain_${v}`));
+    if (gone()) return;
     await voiceBus.say(narratorLine(n, 'alarm_ready'));
+    if (gone()) return;
     this.time.delayedCall(400, () => advance(this));
   }
 

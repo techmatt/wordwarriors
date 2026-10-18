@@ -24,6 +24,7 @@ const CARD_H = 125;
 
 export class PickScene extends RoomScene {
   private what: 'hero' | 'ally' | 'villain' = 'hero';
+  private picked = false;
 
   constructor() {
     super('Pick');
@@ -32,6 +33,7 @@ export class PickScene extends RoomScene {
   override init(data: { step?: Step }): void {
     super.init(data);
     this.what = this.step.kind === 'pick' ? this.step.what : 'hero';
+    this.picked = false;
     this.floor = new Phaser.Geom.Rectangle(60, 250, GAME_WIDTH - 120, 380);
   }
 
@@ -87,6 +89,10 @@ export class PickScene extends RoomScene {
   }
 
   protected choose(spot: Spot): void {
+    // One pick per visit: a second press during the name line must not pick
+    // again (or re-roll the surprise villain after it was shown).
+    if (this.picked) return;
+    this.picked = true;
     this.locked = true;
     sfxSelect();
     burst(this, spot.x, spot.y - CARD_H / 2, { count: 50 });

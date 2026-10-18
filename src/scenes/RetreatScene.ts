@@ -70,6 +70,7 @@ export class RetreatScene extends RoomScene {
   }
 
   protected choose(_spot: Spot): void {
+    if (this.locked) return;
     sfxSelect();
     this.done();
   }

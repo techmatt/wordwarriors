@@ -114,9 +114,13 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.stats = { abilitiesFired: 0, ultimates: 0, combos: 0, movePicks: 0 };
     this.targetOf = new Map();
     this.hudLabels = [];
+    this.bannerText = null;
+    this.bannerBig = 0;
   }
 
   create(): void {
+    this.gen++;
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.gen++);
     hookState.scene = 'Battle';
     hookState.room = null;
     const v = villainSpec();
@@ -260,11 +264,24 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
 
   /** Resolve after `s` seconds of simulation time. */
   private simWait(s: number): Promise<void> {
-    return new Promise((resolve) => this.waits.push({ until: this.now + s * 1000, resolve }));
+    return this.guard(new Promise((resolve) => this.waits.push({ until: this.now + s * 1000, resolve })));
   }
 
   private say(key: string): Promise<boolean> {
-    return voiceBus.say(narratorLine(narrator(), key));
+    return this.guard(voiceBus.say(narratorLine(narrator(), key)));
+  }
+
+  /**
+   * The director is a chain of awaits; once this run of the scene is over
+   * (F2, the advance to the next step) nothing in the chain may resume.
+   */
+  private gen = 0;
+
+  private guard<T>(p: Promise<T>): Promise<T> {
+    const g = this.gen;
+    return p.then((v) => new Promise<T>((resolve) => {
+      if (this.gen === g && this.sys.isActive()) resolve(v);
+    }));
   }
 
   /** Falling/rising ambience per arena: embers, snow, sand, bubbles, sparks. */
@@ -516,7 +533,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       cast(this, f, ab, this.villain, 2.4, true);
       this.banner('SUPER!', 0xffd23f, true);
       void (async () => {
-        if (voiceBank.has(moveLine(f.init.id, ab.id))) await voiceBus.say(moveLine(f.init.id, ab.id), 'instruction', f);
+        if (voiceBank.has(moveLine(f.init.id, ab.id))) await this.guard(voiceBus.say(moveLine(f.init.id, ab.id), 'instruction', f));
         await this.say('move_great');
       })();
     } else {

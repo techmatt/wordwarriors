@@ -86,6 +86,11 @@ export abstract class RoomScene extends Phaser.Scene {
   protected hint(): void {}
 
   create(): void {
+    this.gen++;
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.gen++;
+      voiceBus.hush();
+    });
     hookState.scene = this.scene.key;
     const bg = this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, this.background()).setDepth(DEPTH.ground);
     bg.setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
@@ -131,22 +136,43 @@ export abstract class RoomScene extends Phaser.Scene {
     this.dot.setVisible(false);
   }
 
+  /**
+   * Scene generation. Phaser reuses a Scene object, and a room's flow is a
+   * chain of awaits; when the scene shuts down (F9, F2, a fast advance) the
+   * chain must stop rather than carry on building stones in the next run.
+   * Every await in a room goes through `guard`, which never resolves once the
+   * generation it started in is over.
+   */
+  private gen = 0;
+
+  protected guard<T>(p: Promise<T>): Promise<T> {
+    const g = this.gen;
+    return p.then((v) => new Promise<T>((resolve) => {
+      if (this.gen === g && this.sys.isActive()) resolve(v);
+    }));
+  }
+
+  /** Say a line as an instruction (guarded). */
+  protected say(id: string): Promise<boolean> {
+    return this.guard(voiceBus.say(id));
+  }
+
   /** Say narrator line(s) as instructions, locking input until done. */
   protected async narrate(...keys: string[]): Promise<void> {
     this.locked = true;
-    await voiceBus.sequence(keys.map((k) => narratorLine(narrator(), k)));
+    await this.guard(voiceBus.sequence(keys.map((k) => narratorLine(narrator(), k))));
     this.locked = false;
   }
 
   /** Say arbitrary line ids as instructions, locking input until done. */
   protected async speak(...ids: string[]): Promise<void> {
     this.locked = true;
-    await voiceBus.sequence(ids);
+    await this.guard(voiceBus.sequence(ids));
     this.locked = false;
   }
 
   protected wait(ms: number): Promise<void> {
-    return new Promise((resolve) => this.time.delayedCall(ms, resolve));
+    return this.guard(new Promise((resolve) => this.time.delayedCall(ms, resolve)));
   }
 
   protected done(): void {

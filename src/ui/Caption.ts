@@ -34,8 +34,16 @@ export class Caption {
     this.slab = scene.add.rectangle(0, 0, 10, 54, 0xffd23f, 1).setVisible(false);
     this.root = scene.add.container(GAME_WIDTH / 2, GAME_HEIGHT - 58, [this.bg, this.slab]).setDepth(DEPTH.hud).setVisible(false);
     this.off = voiceBus.on((u) => this.show(u));
-    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.off());
-    scene.events.on(Phaser.Scenes.Events.UPDATE, () => this.tick());
+    // Phaser keeps a scene's event emitter across restarts, so the per-frame
+    // listener must go when the scene shuts down: an old Caption ticking on
+    // destroyed Text throws inside the game loop and freezes the game.
+    const tick = () => this.tick();
+    scene.events.on(Phaser.Scenes.Events.UPDATE, tick);
+    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.off();
+      scene.events.off(Phaser.Scenes.Events.UPDATE, tick);
+      this.current = null;
+    });
     const now = voiceBus.speaking;
     if (now?.line) this.show(now);
   }
@@ -91,6 +99,7 @@ export class Caption {
   }
 
   private tick(): void {
+    if (!this.root.active) return;
     const u = this.current;
     if (!u?.line || !this.root.visible) {
       this.slab.setVisible(false);

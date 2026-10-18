@@ -12,6 +12,7 @@ import Phaser from 'phaser';
 import { LETTERS } from '../../content/phonics/letters';
 import { WORDS } from '../../content/phonics/words';
 import { stopMusic } from '../audio/music';
+import { voiceBus } from '../audio/VoiceBus';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { startStep, type Step } from '../episode/Episode';
 import { Controls } from '../input/Controls';
@@ -35,6 +36,7 @@ export class ParentScene extends Phaser.Scene {
     hookState.scene = 'Parent';
     this.controls = new Controls(this);
     stopMusic();
+    voiceBus.hush();
     this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xf6f2e8);
     const snap = progress.snapshot();
     this.add.text(30, 18, `Grown-ups: Julia's progress  ·  episodes finished: ${snap.episodes}`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '26px', color: '#222' });

@@ -15,7 +15,6 @@
 import Phaser from 'phaser';
 
 import { narratorLine } from '../../../content/voice/ids';
-import { voiceBus } from '../../audio/VoiceBus';
 import { sfxRight, sfxSummon, sfxWrong } from '../../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../../config';
 import { episode, narrator } from '../../episode/Episode';
@@ -113,7 +112,7 @@ export abstract class Minigame extends RoomScene {
     this.tweens.add({ targets: big, scaleX: bs * 1.12, scaleY: bs * 0.9, duration: 160, yoyo: true, repeat: 3, delay: 380 });
     for (const s of [...this.meterSlots, ...this.slotGlyphs]) this.tweens.add({ targets: s, scale: 1.5, alpha: 0, duration: 500 });
     this.slotGlyphs = [];
-    await voiceBus.say(narratorLine(narrator(), madeLine));
+    await this.say(narratorLine(narrator(), madeLine));
     await this.wait(400);
     return big;
   }
@@ -128,9 +127,9 @@ export abstract class Minigame extends RoomScene {
     shockwave(this, x, y, color, 140);
     floatText(this, x, y - 60, ['YES!', 'WOW!', 'YAY!', 'COOL!'][this.rightN % 4]!, '#ffd23f');
     this.addPiece(x, y, color);
-    if (confirmId) await voiceBus.say(confirmId);
+    if (confirmId) await this.say(confirmId);
     this.rightN++;
-    await voiceBus.say(narratorLine(narrator(), `right_${((this.rightN - 1) % 4) + 1}`));
+    await this.say(narratorLine(narrator(), `right_${((this.rightN - 1) % 4) + 1}`));
     this.wrongTries = 0;
   }
 
@@ -157,7 +156,7 @@ export abstract class Minigame extends RoomScene {
       });
     }
     this.wrongN++;
-    await voiceBus.say(narratorLine(narrator(), `wrong_${((this.wrongN - 1) % 4) + 1}`));
+    await this.say(narratorLine(narrator(), `wrong_${((this.wrongN - 1) % 4) + 1}`));
     this.locked = false;
   }
 

@@ -146,7 +146,7 @@ export class BlendPath extends Minigame {
       for (const [i, t] of this.tiles.entries()) {
         this.tweens.add({ targets: t.img, scale: 1.25, duration: 120, yoyo: true });
         sfxStep(i);
-        await voiceBus.say(letterSoundLine(t.letter));
+        await this.say(letterSoundLine(t.letter));
         await this.wait(250);
       }
       this.locked = false;

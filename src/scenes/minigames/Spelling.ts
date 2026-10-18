@@ -53,6 +53,11 @@ export class Spelling extends Minigame {
 
   protected build(): void {
     this.walking = false;
+    this.accepting = false;
+    this.boxes = [];
+    this.art_ = [];
+    this.cursor = 0;
+    this.wrongKeys = 0;
     const counter = villainSpec().counter;
     this.words = [...counter.words];
     this.itemIndex = 0;
@@ -112,7 +117,7 @@ export class Spelling extends Minigame {
     void (async () => {
       this.accepting = false;
       this.locked = true;
-      await voiceBus.sequence([narratorLine(narrator(), 'spell_this'), wordLine(word)]);
+      await this.guard(voiceBus.sequence([narratorLine(narrator(), 'spell_this'), wordLine(word)]));
       this.locked = false;
       this.accepting = true;
     })();
@@ -185,7 +190,7 @@ export class Spelling extends Minigame {
       this.locked = true;
       for (const b of this.boxes.slice(this.cursor)) {
         this.tweens.add({ targets: b.ghost, alpha: 0.9, duration: 120, yoyo: true });
-        if (LETTER_BY_CHAR[b.letter]) await voiceBus.say(letterSoundLine(b.letter));
+        if (LETTER_BY_CHAR[b.letter]) await this.say(letterSoundLine(b.letter));
         await this.wait(200);
       }
       this.locked = false;

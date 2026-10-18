@@ -23,12 +23,17 @@ import { Caption } from '../ui/Caption';
 export class VictoryScene extends Phaser.Scene {
   private controls!: Controls;
   private ready = false;
+  private gen = 0;
 
   constructor() {
     super('Victory');
   }
 
   create(): void {
+    this.gen++;
+    const g = this.gen;
+    const gone = () => g !== this.gen;
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.gen++);
     hookState.scene = 'Victory';
     // The battle's last state stays readable here, for tests asking how it ended.
     hookState.room = null;
@@ -82,8 +87,11 @@ export class VictoryScene extends Phaser.Scene {
     void (async () => {
       const n = narrator();
       await voiceBus.say(narratorLine(n, 'victory_1'));
-      await this.recap();
+      if (gone()) return;
+      await this.recap(gone);
+      if (gone()) return;
       await voiceBus.sequence([narratorLine(n, 'victory_2'), narratorLine(n, 'again')]);
+      if (gone()) return;
       makeButtonDot(this, GAME_WIDTH / 2, 215, 'green', 30).setDepth(DEPTH.hud);
       this.ready = true;
     })();
@@ -93,10 +101,11 @@ export class VictoryScene extends Phaser.Scene {
    * The words she read this episode pop up one by one, each with its picture,
    * and each is said once more. Shown, never counted: nothing says "six words".
    */
-  private async recap(): Promise<void> {
+  private async recap(gone: () => boolean): Promise<void> {
     const words = episode.read.slice(0, 7);
     const gap = 150;
     for (const [i, w] of words.entries()) {
+      if (gone()) return;
       const x = GAME_WIDTH / 2 + (i - (words.length - 1) / 2) * gap;
       const card = this.add.rectangle(0, 0, 130, 170, 0xfffaf0).setStrokeStyle(6, 0x5a4a8a);
       const entry = WORD_BY_ID[w];
@@ -112,6 +121,7 @@ export class VictoryScene extends Phaser.Scene {
       sfxRight();
       burst(this, x, 345, { count: 30, speed: 300 });
       await voiceBus.say(wordLine(w));
+      if (gone()) return;
     }
   }
 

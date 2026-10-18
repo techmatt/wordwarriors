@@ -8,7 +8,6 @@
  */
 
 import { letterSoundLine } from '../../../content/voice/ids';
-import { voiceBus } from '../../audio/VoiceBus';
 import { DEPTH, GAME_WIDTH } from '../../config';
 import { episode } from '../../episode/Episode';
 import { bob, popIn, shockwave } from '../../fx/juice';
@@ -72,7 +71,7 @@ export class SoundToLetter extends Minigame {
     popIn(this, speaker, 1);
     const rings = this.time.addEvent({ delay: 260, loop: true, callback: () => shockwave(this, GAME_WIDTH / 2 + 30, 170, 0xffd23f, 90, 500) });
     if (lock) await this.speak(letterSoundLine(letter));
-    else await voiceBus.say(letterSoundLine(letter));
+    else await this.say(letterSoundLine(letter));
     rings.remove();
     this.tweens.add({ targets: speaker, scale: 0, duration: 200, onComplete: () => speaker.destroy() });
   }

@@ -99,8 +99,12 @@ class Bus {
 
   private async start(id: string, priority: Priority, anchor: unknown): Promise<boolean> {
     // Claim the voice before any await, so nothing else starts meanwhile.
-    this.current = { u: { id } as Utterance, playback: null, done: () => undefined };
+    const claim = { u: { id } as Utterance, playback: null, done: () => undefined };
+    this.current = claim;
     if (voiceBank.has(id) && !voiceBank.ready(id)) await voiceBank.ensure(id);
+    // hush() or a newer line may have taken the voice while this one decoded;
+    // then this line is dropped rather than talking over (and orphaning) it.
+    if (this.current !== claim) return false;
     this.current = null;
     const line = voiceBank.get(id);
     if (!line) console.warn(`voice: no line ${id}`);

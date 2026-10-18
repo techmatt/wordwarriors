@@ -28,8 +28,14 @@ export class Bubbles {
 
   constructor(private readonly scene: Phaser.Scene) {
     this.off = voiceBus.on((u) => this.onLine(u));
-    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.off());
-    scene.events.on(Phaser.Scenes.Events.UPDATE, () => this.follow());
+    const follow = () => this.follow();
+    scene.events.on(Phaser.Scenes.Events.UPDATE, follow);
+    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.off();
+      scene.events.off(Phaser.Scenes.Events.UPDATE, follow);
+      this.bubble = null;
+      this.anchor = null;
+    });
   }
 
   private onLine(u: Utterance | null): void {

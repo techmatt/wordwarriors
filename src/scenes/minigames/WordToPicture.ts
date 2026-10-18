@@ -14,7 +14,6 @@ import Phaser from 'phaser';
 import { LETTER_BY_CHAR } from '../../../content/phonics/letters';
 import { WORD_BY_ID, pictureFor } from '../../../content/phonics/words';
 import { letterSoundLine, wordLine } from '../../../content/voice/ids';
-import { voiceBus } from '../../audio/VoiceBus';
 import { DEPTH, GAME_WIDTH } from '../../config';
 import { episode } from '../../episode/Episode';
 import { bob, popIn } from '../../fx/juice';
@@ -98,7 +97,7 @@ export class WordToPicture extends Minigame {
           t.setColor('#ff3d7a');
           this.tweens.add({ targets: t, scale: 1.3, duration: 140, yoyo: true });
         }
-        if (LETTER_BY_CHAR[ch]) await voiceBus.say(letterSoundLine(ch));
+        if (LETTER_BY_CHAR[ch]) await this.say(letterSoundLine(ch));
         await this.wait(200);
         t?.setColor('#1a1030');
       }
