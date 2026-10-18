@@ -827,7 +827,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     // heroes-left, villain-right instead of wandering off one edge.
     if (moving && (f.isMain || f.init.kind === 'helper')) {
       const home = f.team === 'hero' ? 400 : 900;
-      f.x += (home - f.x) * Math.min(1, 0.6 * dt);
+      f.x += (home - f.x) * Math.min(1, (f.team === 'villain' ? 1.2 : 0.8) * dt);
     }
     if (!fighting || !target) return;
 
