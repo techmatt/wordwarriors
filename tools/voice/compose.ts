@@ -103,7 +103,9 @@ export function composeLines(): LineSpec[] {
       id: wordLine(w),
       speaker: PHONICS_SPEAKER,
       group: group.phonics,
-      text: `${spokenWord(w)}!`,
+      // Lowercase, as she reads it on the card: the caption must match the word.
+      // Names keep their capital, as they are written everywhere else.
+      text: `${sayName || ROSTER.some((c) => c.id === w) ? spokenWord(w) : w}!`,
       ...(sayName ? { say: `${sayName}!` } : {}),
     });
   }
@@ -127,7 +129,7 @@ export function composeLines(): LineSpec[] {
       }
     }
     for (const word of MOVE_WORDS) {
-      for (const t of MOVE_LINES) lines.push({ id: narratorLine(n, `${t.key}_${word}`), speaker: n, group: g, ...fill(t, { word: spokenWord(word) }) });
+      for (const t of MOVE_LINES) lines.push({ id: narratorLine(n, `${t.key}_${word}`), speaker: n, group: g, ...fill(t, { word }) });
     }
   }
 

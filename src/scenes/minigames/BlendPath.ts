@@ -15,6 +15,7 @@ import Phaser from 'phaser';
 import { letterSoundLine, wordLine } from '../../../content/voice/ids';
 import { voiceBus } from '../../audio/VoiceBus';
 import { sfxStep } from '../../audio/sfx';
+import { DEPTH } from '../../config';
 import { episode } from '../../episode/Episode';
 import { burst, popIn } from '../../fx/juice';
 import { blendRound, type WordItem } from '../../rules/rounds';
@@ -30,6 +31,8 @@ export class BlendPath extends Minigame {
   private items: WordItem[] = [];
   private tiles: { letter: string; x: number; img: Phaser.GameObjects.Container; stepped: boolean }[] = [];
   private onTile = -1;
+  /** Letters lifted off the tiles as she steps on them; they slide together into the word. */
+  private lifted: Phaser.GameObjects.Text[] = [];
 
   constructor() {
     super('BlendPath');
@@ -53,6 +56,8 @@ export class BlendPath extends Minigame {
     this.clearSpots();
     for (const t of this.tiles) t.img.destroy();
     this.tiles = [];
+    for (const l of this.lifted) l.destroy();
+    this.lifted = [];
     this.onTile = -1;
     const item = this.items[this.itemIndex]!;
     this.round = `blend:${this.itemIndex}:${item.target}`;
@@ -89,6 +94,7 @@ export class BlendPath extends Minigame {
       this.onTile = i;
       const tile = this.tiles[i];
       if (tile) {
+        if (!tile.stepped) this.lift(tile.letter, tile.x, i);
         tile.stepped = true;
         sfxStep(i);
         this.tweens.add({ targets: tile.img, scale: 1.25, duration: 120, yoyo: true });
@@ -99,7 +105,33 @@ export class BlendPath extends Minigame {
     }
   }
 
+  /** A copy of the letter floats up off the tile and waits in a row above the path. */
+  private lift(letter: string, x: number, i: number): void {
+    const t = this.add
+      .text(x, TILE_Y - 10, letter, { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '84px', color: '#ffffff', stroke: '#1a1030', strokeThickness: 10 })
+      .setOrigin(0.5)
+      .setDepth(DEPTH.hud - 1);
+    t.setData('i', i);
+    this.lifted.push(t);
+    this.tweens.add({ targets: t, y: 300, duration: 380, ease: 'Back.easeOut' });
+  }
+
+  /**
+   * The visual blend: once every sound has been heard, the lifted letters slide
+   * together into one word. Nothing is spoken here; the word is still hers to read.
+   */
+  private slideTogether(): void {
+    const n = this.lifted.length;
+    const cx = 260 + ((n - 1) * 160) / 2;
+    const sorted = [...this.lifted].sort((a, b) => (a.getData('i') as number) - (b.getData('i') as number));
+    sorted.forEach((t, i) => {
+      this.tweens.add({ targets: t, x: cx + (i - (n - 1) / 2) * 58, scale: 1.15, duration: 450, delay: 150, ease: 'Cubic.easeInOut' });
+    });
+    this.time.delayedCall(650, () => burst(this, cx, 300, { count: 30, speed: 260, colors: [0xffd23f, 0xffffff] }));
+  }
+
   private openDoors(): void {
+    if (this.spots.some((s) => !s.enabled) && this.lifted.length) this.slideTogether();
     for (const s of this.spots) {
       if (s.enabled) continue;
       s.enabled = true;
@@ -142,6 +174,8 @@ export class BlendPath extends Minigame {
         this.clearSpots();
         for (const t of this.tiles) t.img.destroy();
         this.tiles = [];
+        for (const l of this.lifted) l.destroy();
+        this.lifted = [];
         await this.completePrize('prop_ammo', 'made_ammo');
         episode.made.ammo = true;
         this.done();

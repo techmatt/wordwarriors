@@ -80,7 +80,7 @@ export function pictureFor(word: Word): string {
   return word.character ? `char_${word.character}_good` : `pic_${word.word}`;
 }
 
-/** Capitalised for speech: "Seraphina!" rather than "seraphina!". */
+/** Capitalised, for names: "Seraphina!" rather than "seraphina!". */
 export function spokenWord(word: string): string {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
