@@ -6,12 +6,13 @@
 import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
-import { narratorLine } from '../../content/voice/ids';
+import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
+import { narratorLine, wordLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
-import { sfxBoom, sfxSelect, sfxVictory } from '../audio/sfx';
+import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { advance, episode, narrator } from '../episode/Episode';
+import { advance, episode, narrator, villainSpec } from '../episode/Episode';
 import { burst, fitImage, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
@@ -64,13 +65,13 @@ export class VictoryScene extends Phaser.Scene {
     const all = [...cast.map((id) => charArt(id, false)), charArt(episode.villain, false)];
     all.forEach((key, i) => {
       const x = GAME_WIDTH / 2 + (i - (all.length - 1) / 2) * 220;
-      const img = fitImage(this.add.image(x, 610, key).setOrigin(0.5, 1), 180, 230);
-      this.tweens.add({ targets: img, y: 560, duration: 300 + i * 40, yoyo: true, repeat: -1, ease: 'Quad.easeOut' });
+      const img = fitImage(this.add.image(x, 605, key).setOrigin(0.5, 1), 120, 150);
+      this.tweens.add({ targets: img, y: 575, duration: 300 + i * 40, yoyo: true, repeat: -1, ease: 'Quad.easeOut' });
       this.tweens.add({ targets: img, scaleY: img.scaleY * 0.9, scaleX: img.scaleX * 1.08, duration: 300 + i * 40, yoyo: true, repeat: -1, delay: 300 + i * 40 });
     });
 
     const title = this.add
-      .text(GAME_WIDTH / 2, 140, 'VICTORY!', { fontFamily: '"Arial Black", sans-serif', fontSize: '120px', color: '#ffd23f', stroke: '#5a1a7a', strokeThickness: 16 })
+      .text(GAME_WIDTH / 2, 105, 'VICTORY!', { fontFamily: '"Arial Black", sans-serif', fontSize: '104px', color: '#ffd23f', stroke: '#5a1a7a', strokeThickness: 16 })
       .setOrigin(0.5)
       .setDepth(DEPTH.hud);
     title.setScale(0);
@@ -80,10 +81,38 @@ export class VictoryScene extends Phaser.Scene {
     this.time.delayedCall(2200, () => startMusic('title'));
     void (async () => {
       const n = narrator();
-      await voiceBus.sequence([narratorLine(n, 'victory_1'), narratorLine(n, 'victory_2'), narratorLine(n, 'again')]);
-      makeButtonDot(this, GAME_WIDTH / 2, 300, 'green', 34).setDepth(DEPTH.hud);
+      await voiceBus.say(narratorLine(n, 'victory_1'));
+      await this.recap();
+      await voiceBus.sequence([narratorLine(n, 'victory_2'), narratorLine(n, 'again')]);
+      makeButtonDot(this, GAME_WIDTH / 2, 215, 'green', 30).setDepth(DEPTH.hud);
       this.ready = true;
     })();
+  }
+
+  /**
+   * The words she read this episode pop up one by one, each with its picture,
+   * and each is said once more. Shown, never counted: nothing says "six words".
+   */
+  private async recap(): Promise<void> {
+    const words = episode.read.slice(0, 7);
+    const gap = 150;
+    for (const [i, w] of words.entries()) {
+      const x = GAME_WIDTH / 2 + (i - (words.length - 1) / 2) * gap;
+      const card = this.add.rectangle(0, 0, 130, 170, 0xfffaf0).setStrokeStyle(6, 0x5a4a8a);
+      const entry = WORD_BY_ID[w];
+      const counter = villainSpec().counter;
+      const pic = entry ? pictureFor(entry) : counter.words.includes(w) ? `item_${counter.id}` : null;
+      const parts: Phaser.GameObjects.GameObject[] = [card];
+      if (pic) parts.push(fitImage(this.add.image(0, -22, pic), 100, 100));
+      parts.push(this.add.text(0, 58, w, { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '38px', color: '#1a1030' }).setOrigin(0.5));
+      const c = this.add.container(x, 345, parts).setDepth(DEPTH.hud);
+      c.setScale(0);
+      this.tweens.add({ targets: c, scale: 1, duration: 300, ease: 'Back.easeOut' });
+      this.tweens.add({ targets: c, y: 335, duration: 700, yoyo: true, repeat: -1, delay: 300 + i * 90, ease: 'Sine.easeInOut' });
+      sfxRight();
+      burst(this, x, 345, { count: 30, speed: 300 });
+      await voiceBus.say(wordLine(w));
+    }
   }
 
   override update(): void {

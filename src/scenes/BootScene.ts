@@ -6,6 +6,7 @@
  *
  *   ?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug
  *   ?scene=sound | blend | picture | spell | alarm | retreat | victory | pick | parent
+ *   ?scene=victory&read=cat,sun,julia   (the words the recap shows)
  */
 
 import Phaser from 'phaser';
@@ -52,6 +53,8 @@ export class BootScene extends Phaser.Scene {
       if (v && CHARACTER_BY_ID[v]) (episode as unknown as Record<string, string>)[key] = v;
       if (key === 'ally' && v === 'none') episode.ally = null;
     }
+    const read = q.get('read');
+    if (read) episode.read = read.split(',');
     const prep = q.get('prep');
     if (prep) episode.prep = prep.split(',') as PrepGame[];
 

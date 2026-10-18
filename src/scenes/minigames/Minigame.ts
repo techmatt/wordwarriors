@@ -18,7 +18,7 @@ import { narratorLine } from '../../../content/voice/ids';
 import { voiceBus } from '../../audio/VoiceBus';
 import { sfxRight, sfxSummon, sfxWrong } from '../../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../../config';
-import { narrator } from '../../episode/Episode';
+import { episode, narrator } from '../../episode/Episode';
 import { burst, fitImage, floatText, popIn, shockwave, wiggle } from '../../fx/juice';
 import { TEX } from '../../fx/textures';
 import { progress } from '../../state/progress';
@@ -122,6 +122,7 @@ export abstract class Minigame extends RoomScene {
   protected async right(kind: ItemKind, id: string, x: number, y: number, color: number, confirmId: string | null): Promise<void> {
     this.locked = true;
     progress.record(kind, id, this.wrongTries === 0, this.wrongTries);
+    if (kind === 'words' && !episode.read.includes(id)) episode.read.push(id);
     sfxRight();
     burst(this, x, y, { count: 50, speed: 450 });
     shockwave(this, x, y, color, 140);

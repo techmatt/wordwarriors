@@ -46,6 +46,8 @@ export interface EpisodeState {
   villainWasRandom: boolean;
   prep: PrepGame[];
   made: { gem: boolean; ammo: boolean; helper: boolean; item: boolean };
+  /** Words she read (or spelled) right this episode, in order, for the victory recap. */
+  read: string[];
   stepIndex: number;
 }
 
@@ -83,6 +85,7 @@ export const episode: EpisodeState = {
   villainWasRandom: false,
   prep: choosePrep(),
   made: { gem: false, ammo: false, helper: false, item: false },
+  read: [],
   stepIndex: 0,
 };
 
@@ -129,6 +132,7 @@ export function resetEpisode(): void {
   episode.villainWasRandom = false;
   episode.prep = choosePrep();
   episode.made = { gem: false, ammo: false, helper: false, item: false };
+  episode.read = [];
   episode.stepIndex = 0;
 }
 
