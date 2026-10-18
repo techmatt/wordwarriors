@@ -12,6 +12,7 @@ import Phaser from 'phaser';
 import { charArt } from '../../content/art/assets';
 import { ROSTER } from '../../content/battle/roster';
 import { unlockAudio } from '../audio/context';
+import { startMusic } from '../audio/music';
 import { sfxSelect } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { advance, resetEpisode } from '../episode/Episode';
@@ -37,6 +38,7 @@ export class TitleScene extends Phaser.Scene {
     this.leaving = false;
     this.shoulderHeld = 0;
     resetEpisode();
+    startMusic('title');
     this.controls = new Controls(this);
     this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'room_title').setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
 

@@ -78,7 +78,7 @@ test('Battle part 2: move choice, counter-item, finish, victory', async ({ page 
   const end = await playBattle(page, 2);
   expect(end.scene).toBe('Victory');
   expect(end.battle?.ultimates).toBe(1);
-  expect(end.battle?.movePicks).toBe(1);
+  expect(end.battle?.movePicks).toBe(2);
   expect(end.battle?.combos).toBe(1);
   expect(end.battle?.villains[0]?.hp).toBe(0);
   expect(end.battle!.abilitiesFired).toBeGreaterThan(20);

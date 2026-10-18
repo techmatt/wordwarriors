@@ -10,6 +10,7 @@ import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
 import { fighterId, narratorLine, tauntLine } from '../../content/voice/ids';
+import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxUltimate } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
@@ -53,7 +54,8 @@ export class AlarmScene extends Phaser.Scene {
     const vf = villainSpec().evil;
     await voiceBus.say(narratorLine(n, `alarm_hero_${episode.hero}`));
 
-    // The villain arrives.
+    // The villain arrives, and the music turns.
+    startMusic('battle');
     sfxUltimate();
     flash(this, 0x220022, 500);
     this.cameras.main.setBackgroundColor(0x000000);

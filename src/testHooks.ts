@@ -7,6 +7,7 @@
  * virtual pad and `type()`, never through the keyboard diamond.
  */
 
+import { musicPlaying } from './audio/music';
 import { fxStats } from './fx/juice';
 import { virtualPad, type Button } from './input/Controls';
 import { typeLetter } from './input/TextEntry';
@@ -70,6 +71,7 @@ export function installTestHooks(): void {
       battle: hookState.battle,
       voice: { speaking: voiceBus.speaking?.id ?? null, busy: voiceBus.busy, history: [...voiceBus.history] },
       fx: { ...fxStats },
+      music: musicPlaying(),
       progress: progress.snapshot(),
     }),
     input: {

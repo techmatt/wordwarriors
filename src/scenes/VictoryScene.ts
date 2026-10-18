@@ -7,6 +7,7 @@ import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
 import { narratorLine } from '../../content/voice/ids';
+import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxSelect, sfxVictory } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
@@ -76,6 +77,7 @@ export class VictoryScene extends Phaser.Scene {
     this.tweens.add({ targets: title, scale: 1, duration: 600, ease: 'Elastic.easeOut' });
 
     sfxVictory();
+    this.time.delayedCall(2200, () => startMusic('title'));
     void (async () => {
       const n = narrator();
       await voiceBus.sequence([narratorLine(n, 'victory_1'), narratorLine(n, 'victory_2'), narratorLine(n, 'again')]);

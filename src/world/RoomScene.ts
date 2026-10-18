@@ -16,6 +16,7 @@ import Phaser from 'phaser';
 
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH } from '../config';
 import { narratorLine } from '../../content/voice/ids';
+import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { advance, episode, narrator, type Step } from '../episode/Episode';
 import { fitImage } from '../fx/juice';
@@ -74,6 +75,11 @@ export abstract class RoomScene extends Phaser.Scene {
   protected abstract background(): string;
   /** Build spots and start the room's flow. */
   protected abstract build(): void;
+  /** Which music loop plays here. */
+  protected music(): 'room' | 'title' {
+    return 'room';
+  }
+
   /** She pressed green next to a spot. */
   protected abstract choose(spot: Spot): void;
   /** Yellow: say it again / hint. */
@@ -96,6 +102,7 @@ export abstract class RoomScene extends Phaser.Scene {
     new Caption(this);
     new Bubbles(this);
     this.cameras.main.fadeIn(250, 0, 0, 0);
+    startMusic(this.music());
     this.build();
   }
 

@@ -32,6 +32,7 @@ import { charArt } from '../../content/art/assets';
 import { CHARACTER_BY_ID, MINIONS, comboFor } from '../../content/battle/roster';
 import type { AbilitySpec, Status } from '../../content/battle/types';
 import { fighterId, narratorLine, tauntLine, ultimateLine } from '../../content/voice/ids';
+import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxSummon, sfxUltimate, sfxWrong } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, PAD_COLOR, type PadColorName } from '../config';
@@ -60,6 +61,8 @@ interface Choice {
   right: string;
   owners: Map<string, { f: Fighter; ab: AbilitySpec }>;
   ui: Phaser.GameObjects.Container;
+  /** The dots, pulsed by hand on wall-clock time: the scene clock is frozen. */
+  dots: Phaser.GameObjects.Container[];
   open: boolean;
   resolve: (picked: string) => void;
 }
@@ -137,6 +140,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
 
     this.makeHudLabels();
     this.ambience();
+    startMusic('battle');
     void (this.part === 1 ? this.part1() : this.part2());
   }
 
@@ -371,6 +375,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     await this.simWait(6);
     await this.combo();
     await this.simWait(5);
+    await this.moveChoice();
+    await this.simWait(5);
     await this.ultimate();
     await this.finish();
     this.phase = 'end';
@@ -466,9 +472,11 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
         .text(GAME_WIDTH / 2, 150, 'PICK A MOVE!', { fontFamily: '"Arial Black", sans-serif', fontSize: '64px', color: '#ffd23f', stroke: '#000000', strokeThickness: 12 })
         .setOrigin(0.5),
     );
+    const dots: Phaser.GameObjects.Container[] = [];
     words.forEach((w, i) => {
       const x = GAME_WIDTH / 2 + (i - (words.length - 1) / 2) * 330;
       const dot = makeButtonDot(this, x, 330, colors[i]!, 56, false);
+      dots.push(dot);
       const plate = this.add.rectangle(x, 450, 260, 110, 0xffffff, 0.95).setStrokeStyle(8, PAD_COLOR[colors[i]!]);
       const label = this.add
         .text(x, 450, w, { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '84px', color: '#1a1030' })
@@ -477,7 +485,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     });
 
     const picked = await new Promise<string>((resolve) => {
-      this.choice = { words, colors, right, owners, ui, open: false, resolve };
+      this.choice = { words, colors, right, owners, ui, dots, open: false, resolve };
       void (async () => {
         await this.say('move_pick');
         await this.say(`use_move_${right}`);
@@ -674,6 +682,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     if (episode.made.ammo) await this.useAmmo();
     await this.simWait(1.6);
     // The last hit.
+    stopMusic();
     v.hp = 0;
     hitstop(this, 220);
     slowmo(this, 0.2, 1500);
@@ -879,6 +888,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
 
     // Choice input runs on real time.
     if (this.choice) {
+      const pulse = 1 + 0.09 * Math.sin(performance.now() / 160);
+      for (const d of this.choice.dots) d.setScale(this.choice.open ? pulse : 0.9);
       for (const c of CHOICE_COLORS) if (this.controls.pressed(c)) this.pressChoice(c);
       if (this.controls.dev('F4') && this.choice) {
         this.choice.open = true;

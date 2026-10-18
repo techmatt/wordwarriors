@@ -39,6 +39,10 @@ export class PickScene extends RoomScene {
     return 'room_pick';
   }
 
+  protected override music(): 'title' {
+    return 'title';
+  }
+
   protected override playerCharacter(): string {
     return this.what === 'hero' ? 'julia' : episode.hero;
   }

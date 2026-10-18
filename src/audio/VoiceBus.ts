@@ -17,6 +17,7 @@
  * shows and flow-control awaits still resolve.
  */
 
+import { setMusicDuck } from './music';
 import { setSfxLevel } from './sfx';
 import { voiceBank, type VoiceLine, type VoicePlayback } from '../voice/VoiceBank';
 
@@ -122,6 +123,7 @@ class Bus {
     this.history.push(id);
     if (this.history.length > 200) this.history.shift();
     setSfxLevel(0.45);
+    setMusicDuck(0.35);
 
     return new Promise((resolve) => {
       const done = () => resolve(true);
@@ -139,6 +141,7 @@ class Bus {
     if (c.u.priority === 'bark') this.lastBarkEnd = performance.now();
     for (const fn of this.listeners) fn(null);
     setSfxLevel(1);
+    setMusicDuck(1);
     c.done();
     const next = this.queue.shift();
     if (next) next();

@@ -121,6 +121,7 @@ export class Fighter {
   /** Clone of which fighter, for Moriarty's tricks. */
   cloneOf: Fighter | null = null;
   lastHitAt = 0;
+  private lastFlash = 0;
   /** The battle's simulation clock (ms), which slow-mo and hit-stop scale. */
   now = 0;
   bobPhase = Math.random() * Math.PI * 2;
@@ -238,7 +239,11 @@ export class Fighter {
     this.body.y = -this.lift + bobAmt;
     const s = this.scaleMul;
     this.shadow.setScale(Math.max(0.4, 1 - this.lift / 400) * s);
-    this.spin *= Math.pow(0.02, dt);
+    // Spin settles to the nearest whole turn, never to "upside down".
+    const turn = Math.PI * 2;
+    const rest = Math.round(this.spin / turn) * turn;
+    this.spin += (rest - this.spin) * (1 - Math.pow(0.01, dt));
+    if (Math.abs(this.spin - rest) < 0.01) this.spin = 0;
     if (this.floored) {
       // Sat down, dizzy and wobbling: knocked over, never knocked out. A card
       // lying flat read as "dead", which is not a thing this game shows.
@@ -266,6 +271,11 @@ export class Fighter {
 
   /** White flash on a hit. */
   flashWhite(): void {
+    // At most one flash per 280 ms: a villain hit by a whole team every frame
+    // otherwise spends the fight as a white silhouette (seen 2026-10-18).
+    const now = performance.now();
+    if (now - this.lastFlash < 280) return;
+    this.lastFlash = now;
     this.sprite.setTintFill(0xffffff);
     // Wall-clock, not the scene clock: under hit-stop the scene clock nearly
     // stops, and a flash timed on it would leave the card white for seconds.
@@ -273,7 +283,7 @@ export class Fighter {
       if (!this.sprite.active) return;
       if (this.status?.kind === 'freeze') this.sprite.setTint(0x9ad8ff);
       else this.sprite.clearTint();
-    }, 70);
+    }, 55);
   }
 
   /** A fading copy of the sprite where it stands: dodgers, dashers, blinkers. */
