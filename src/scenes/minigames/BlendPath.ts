@@ -1,0 +1,151 @@
+/**
+ * Blend Path. A path of letter tiles, left to right; each says its SOUND as
+ * she steps on it. The path ends at 2–3 picture doors; she walks to the door
+ * whose picture is the word and presses green. Each right door adds a crate of
+ * star ammo for the battle.
+ *
+ * The doors only open once every tile has been stepped on, so the sounds are
+ * always heard in order before she chooses. The word itself is spoken only
+ * after the right door, as confirmation. Yellow replays the sounds one by one
+ * (never blended).
+ */
+
+import Phaser from 'phaser';
+
+import { letterSoundLine, wordLine } from '../../../content/voice/ids';
+import { voiceBus } from '../../audio/VoiceBus';
+import { sfxStep } from '../../audio/sfx';
+import { episode } from '../../episode/Episode';
+import { burst, popIn } from '../../fx/juice';
+import { blendRound, type WordItem } from '../../rules/rounds';
+import { progress } from '../../state/progress';
+import type { Spot } from '../../world/RoomScene';
+import { Minigame } from './Minigame';
+
+const ITEMS = 3;
+const TILE_Y = 470;
+const TILE_COLORS = [0xff7ad9, 0xffd23f, 0x7ad9ff, 0x8aff8a];
+
+export class BlendPath extends Minigame {
+  private items: WordItem[] = [];
+  private tiles: { letter: string; x: number; img: Phaser.GameObjects.Container; stepped: boolean }[] = [];
+  private onTile = -1;
+
+  constructor() {
+    super('BlendPath');
+  }
+
+  protected background(): string {
+    return 'room_path';
+  }
+
+  protected build(): void {
+    this.items = blendRound(progress, ITEMS);
+    this.itemIndex = 0;
+    this.makeMeter(ITEMS, 'prop_ammo');
+    void (async () => {
+      await this.narrate('prep_ammo', 'inst_blend');
+      this.showItem();
+    })();
+  }
+
+  private showItem(): void {
+    this.clearSpots();
+    for (const t of this.tiles) t.img.destroy();
+    this.tiles = [];
+    this.onTile = -1;
+    const item = this.items[this.itemIndex]!;
+    this.round = `blend:${this.itemIndex}:${item.target}`;
+    this.wrongTries = 0;
+
+    [...item.target].forEach((letter, i) => {
+      const x = 260 + i * 160;
+      const tile = this.add.image(0, 0, 'prop_tile').setDisplaySize(120, 120).setTint(TILE_COLORS[i % 4]!);
+      const label = this.add.text(0, -4, letter, { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '80px', color: '#1a1030' }).setOrigin(0.5);
+      const c = this.add.container(x, TILE_Y, [tile, label]).setDepth(TILE_Y - 60);
+      popIn(this, c, 1, i * 120);
+      this.tiles.push({ letter, x, img: c, stepped: false });
+    });
+
+    // Doors in a column at the end of the path. Disabled until every tile is stepped.
+    const ys = item.choices.length === 2 ? [360, 600] : [300, 470, 640];
+    item.choices.forEach((word, i) => {
+      const door = this.art('prop_door', 120, 165);
+      const pic = this.art(`pic_${word}`, 76, 76, 0, -165 + 30 + 76);
+      const spot = this.addSpot(word, 1080, ys[i]!, [this.add.ellipse(0, 0, 100, 20, 0x000000, 0.3), door, pic], word === item.target);
+      spot.enabled = false;
+      spot.obj.setAlpha(0.6);
+      popIn(this, spot.obj, 1, 300 + i * 120);
+    });
+    this.player.place(120, TILE_Y);
+  }
+
+  override update(time: number, delta: number): void {
+    super.update(time, delta);
+    if (!this.tiles.length) return;
+    // Stepping on a tile sounds it (only on arrival, and only in order of arrival).
+    const i = this.tiles.findIndex((t) => Math.abs(this.player.x - t.x) < 60 && Math.abs(this.player.y - TILE_Y) < 70);
+    if (i !== this.onTile) {
+      this.onTile = i;
+      const tile = this.tiles[i];
+      if (tile) {
+        tile.stepped = true;
+        sfxStep(i);
+        this.tweens.add({ targets: tile.img, scale: 1.25, duration: 120, yoyo: true });
+        burst(this, tile.x, TILE_Y, { count: 14, speed: 180, colors: [TILE_COLORS[i % 4]!, 0xffffff] });
+        void voiceBus.say(letterSoundLine(tile.letter));
+        if (this.tiles.every((t) => t.stepped)) this.openDoors();
+      }
+    }
+  }
+
+  private openDoors(): void {
+    for (const s of this.spots) {
+      if (s.enabled) continue;
+      s.enabled = true;
+      s.obj.setAlpha(1);
+      burst(this, s.x, s.y - 80, { count: 20, speed: 200 });
+    }
+  }
+
+  protected override hint(): void {
+    void (async () => {
+      this.locked = true;
+      for (const [i, t] of this.tiles.entries()) {
+        this.tweens.add({ targets: t.img, scale: 1.25, duration: 120, yoyo: true });
+        sfxStep(i);
+        await voiceBus.say(letterSoundLine(t.letter));
+        await this.wait(250);
+      }
+      this.locked = false;
+    })();
+  }
+
+  protected override correctSpot(): Spot | undefined {
+    this.openDoors();
+    return super.correctSpot();
+  }
+
+  protected choose(spot: Spot): void {
+    const item = this.items[this.itemIndex]!;
+    if (!spot.correct) {
+      void this.wrong(spot.obj);
+      return;
+    }
+    void (async () => {
+      await this.right('words', item.target, spot.x, spot.y - 90, 0xffd23f, wordLine(item.target));
+      this.itemIndex++;
+      if (this.itemIndex < this.items.length) {
+        this.locked = false;
+        this.showItem();
+      } else {
+        this.clearSpots();
+        for (const t of this.tiles) t.img.destroy();
+        this.tiles = [];
+        await this.completePrize('prop_ammo', 'made_ammo');
+        episode.made.ammo = true;
+        this.done();
+      }
+    })();
+  }
+}

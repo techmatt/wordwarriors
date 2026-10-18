@@ -1,0 +1,96 @@
+/**
+ * Sound → letter. Three letter stones; the voice says a SOUND (never a letter
+ * name); she walks to the stone that makes it and presses green. Each right
+ * stone gives a gem shard; four shards make the power gem the battle uses.
+ *
+ * Yellow repeats the sound. The confirmation after a right answer is the
+ * sound again, so the letter and its sound arrive together.
+ */
+
+import { letterSoundLine } from '../../../content/voice/ids';
+import { voiceBus } from '../../audio/VoiceBus';
+import { GAME_WIDTH } from '../../config';
+import { episode } from '../../episode/Episode';
+import { bob } from '../../fx/juice';
+import { soundRound, type SoundItem } from '../../rules/rounds';
+import { progress } from '../../state/progress';
+import type { Spot } from '../../world/RoomScene';
+import { Minigame } from './Minigame';
+
+const ITEMS = 4;
+const STONE_COLORS = [0xff7ad9, 0x7ad9ff, 0xffd23f, 0x8aff8a];
+
+export class SoundToLetter extends Minigame {
+  private items: SoundItem[] = [];
+
+  constructor() {
+    super('SoundToLetter');
+  }
+
+  protected background(): string {
+    return 'room_stones';
+  }
+
+  protected build(): void {
+    this.items = soundRound(progress, ITEMS);
+    this.itemIndex = 0;
+    this.makeMeter(ITEMS, 'prop_gem');
+    void (async () => {
+      await this.narrate('prep_gem', 'inst_sound');
+      this.showItem();
+    })();
+  }
+
+  private showItem(): void {
+    this.clearSpots();
+    const item = this.items[this.itemIndex]!;
+    this.round = `sound:${this.itemIndex}:${item.target}`;
+    this.wrongTries = 0;
+    const xs = [GAME_WIDTH / 2 - 330, GAME_WIDTH / 2, GAME_WIDTH / 2 + 330];
+    item.choices.forEach((letter, i) => {
+      const y = 400 + (i % 2) * 40;
+      const stone = this.art('prop_stone', 150, 150);
+      stone.setTint(STONE_COLORS[i % STONE_COLORS.length]!, 0xffffff, 0xffffff, STONE_COLORS[i % STONE_COLORS.length]!);
+      const label = this.add
+        .text(0, -75, letter, { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '96px', color: '#1a1030', stroke: '#ffffff', strokeThickness: 8 })
+        .setOrigin(0.5);
+      const spot = this.addSpot(letter, xs[i]!, y, [this.add.ellipse(0, 0, 120, 26, 0x000000, 0.3), stone, label], letter === item.target);
+      spot.obj.setScale(0);
+      this.tweens.add({ targets: spot.obj, scale: 1, duration: 350, delay: i * 120, ease: 'Back.easeOut' });
+      bob(this, label, 4, 800 + i * 100);
+    });
+    if (this.player.y < 470) this.player.place(this.player.x, 560);
+    void this.speak(letterSoundLine(item.target));
+  }
+
+  protected override hint(): void {
+    const item = this.items[this.itemIndex];
+    if (item) void this.speak(letterSoundLine(item.target));
+  }
+
+  protected choose(spot: Spot): void {
+    const item = this.items[this.itemIndex]!;
+    if (spot.correct) {
+      void (async () => {
+        await this.right('sounds', item.target, spot.x, spot.y - 80, STONE_COLORS[this.itemIndex % STONE_COLORS.length]!, letterSoundLine(item.target));
+        this.tweens.add({ targets: spot.obj, y: spot.y - 400, alpha: 0, duration: 500, ease: 'Back.easeIn' });
+        await this.wait(400);
+        this.itemIndex++;
+        if (this.itemIndex < this.items.length) {
+          this.locked = false;
+          this.showItem();
+        } else {
+          this.clearSpots();
+          await this.completePrize('prop_gem', 'made_gem');
+          episode.made.gem = true;
+          this.done();
+        }
+      })();
+    } else {
+      void (async () => {
+        await this.wrong(spot.obj);
+        await voiceBus.say(letterSoundLine(item.target));
+      })();
+    }
+  }
+}

@@ -1,0 +1,175 @@
+/**
+ * Juice: the motion and impact vocabulary every scene shares.
+ *
+ * Sprites only ever bob and squash/scale (Matt, 2026-10-18: placeholder cards
+ * have no animation frames, so motion is light bob and squash). Impact is
+ * shake, flash, hit-stop and slow-mo, with one shared particle burst helper.
+ *
+ * Hit-stop and slow-mo work on a scene-level time scale that the battle
+ * multiplies into its own simulation step (`timeScale(scene)`), so tweens and
+ * particles slow together.
+ */
+
+import Phaser from 'phaser';
+
+import { DEPTH } from '../config';
+import { TEX } from './textures';
+
+/** Live particle count high-water mark, for tests. */
+export const fxStats = { bursts: 0, shakes: 0, hitstops: 0, slowmos: 0, flashes: 0 };
+
+/** A gentle idle bob. Returns the tween so callers can stop it. */
+export function bob(scene: Phaser.Scene, target: Phaser.GameObjects.Components.Transform & Phaser.GameObjects.GameObject, amount = 6, ms = 900): Phaser.Tweens.Tween {
+  return scene.tweens.add({
+    targets: target,
+    y: `-=${amount}`,
+    duration: ms,
+    yoyo: true,
+    repeat: -1,
+    ease: 'Sine.easeInOut',
+    delay: Math.random() * ms,
+  });
+}
+
+/** Squash then stretch back: a landing, a hit, a press. */
+export function squash(scene: Phaser.Scene, target: Phaser.GameObjects.Components.Transform & Phaser.GameObjects.GameObject, baseX: number, baseY: number, amount = 0.25, ms = 120): void {
+  scene.tweens.add({
+    targets: target,
+    scaleX: baseX * (1 + amount),
+    scaleY: baseY * (1 - amount),
+    duration: ms,
+    yoyo: true,
+    ease: 'Quad.easeOut',
+    onComplete: () => {
+      target.setScale(baseX, baseY);
+    },
+  });
+}
+
+/** Pop in from nothing with an overshoot. */
+export function popIn(scene: Phaser.Scene, target: Phaser.GameObjects.Components.Transform & Phaser.GameObjects.GameObject, scale = 1, delay = 0): void {
+  target.setScale(0);
+  scene.tweens.add({ targets: target, scale, duration: 380, delay, ease: 'Back.easeOut' });
+}
+
+/** A side-to-side wiggle: the "no, try again" motion. */
+export function wiggle(scene: Phaser.Scene, target: Phaser.GameObjects.Components.Transform & Phaser.GameObjects.GameObject): void {
+  const x = target.x;
+  scene.tweens.add({
+    targets: target,
+    x: { from: x - 10, to: x + 10 },
+    duration: 60,
+    yoyo: true,
+    repeat: 3,
+    onComplete: () => {
+      target.x = x;
+    },
+  });
+}
+
+/** One-shot particle burst. */
+export function burst(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  opts: { count?: number; colors?: number[]; speed?: number; scale?: number; life?: number; texture?: string; gravity?: number; depth?: number; blend?: boolean } = {},
+): void {
+  const { count = 24, colors = [0xffffff, 0xffd23f, 0xff5ab4, 0x7ad9ff], speed = 320, scale = 1, life = 650, texture = TEX.spark, gravity = 300, depth = DEPTH.fx, blend = true } = opts;
+  fxStats.bursts++;
+  const emitter = scene.add.particles(x, y, texture, {
+    speed: { min: speed * 0.3, max: speed },
+    angle: { min: 0, max: 360 },
+    scale: { start: scale, end: 0 },
+    alpha: { start: 1, end: 0 },
+    lifespan: { min: life * 0.5, max: life },
+    gravityY: gravity,
+    tint: colors,
+    blendMode: blend ? Phaser.BlendModes.ADD : Phaser.BlendModes.NORMAL,
+    emitting: false,
+  });
+  emitter.setDepth(depth);
+  emitter.explode(count);
+  scene.time.delayedCall(life + 100, () => emitter.destroy());
+}
+
+/** An expanding ring shockwave. */
+export function shockwave(scene: Phaser.Scene, x: number, y: number, color: number, radius = 200, ms = 450): void {
+  const ring = scene.add.image(x, y, TEX.ring).setTint(color).setDepth(DEPTH.fx).setBlendMode(Phaser.BlendModes.ADD);
+  ring.setScale(0.1);
+  scene.tweens.add({
+    targets: ring,
+    scale: radius / 60,
+    alpha: { from: 1, to: 0 },
+    duration: ms,
+    ease: 'Cubic.easeOut',
+    onComplete: () => ring.destroy(),
+  });
+}
+
+export function shake(scene: Phaser.Scene, strength: number, ms = 220): void {
+  fxStats.shakes++;
+  scene.cameras.main.shake(ms, Math.min(0.03, strength * 0.004));
+}
+
+export function flash(scene: Phaser.Scene, color = 0xffffff, ms = 140): void {
+  fxStats.flashes++;
+  const c = Phaser.Display.Color.IntegerToRGB(color);
+  scene.cameras.main.flash(ms, c.r, c.g, c.b);
+}
+
+/** Time scale shared by a scene's simulation, tweens and particles. */
+const scales = new WeakMap<Phaser.Scene, { hitstopUntil: number; slowUntil: number; slow: number }>();
+
+function state(scene: Phaser.Scene) {
+  let s = scales.get(scene);
+  if (!s) {
+    s = { hitstopUntil: 0, slowUntil: 0, slow: 1 };
+    scales.set(scene, s);
+  }
+  return s;
+}
+
+/** Freeze the action for a few frames on impact. */
+export function hitstop(scene: Phaser.Scene, ms = 70): void {
+  fxStats.hitstops++;
+  const s = state(scene);
+  s.hitstopUntil = Math.max(s.hitstopUntil, performance.now() + ms);
+}
+
+/** Slow everything for a big moment. */
+export function slowmo(scene: Phaser.Scene, factor = 0.3, ms = 900): void {
+  fxStats.slowmos++;
+  const s = state(scene);
+  s.slow = factor;
+  s.slowUntil = performance.now() + ms;
+}
+
+/** The current time scale (0 during hit-stop). Applies itself to tweens and the clock. */
+export function timeScale(scene: Phaser.Scene): number {
+  const s = state(scene);
+  const now = performance.now();
+  let t = 1;
+  if (now < s.hitstopUntil) t = 0.02;
+  else if (now < s.slowUntil) t = s.slow;
+  scene.tweens.timeScale = t;
+  scene.time.timeScale = t;
+  return t;
+}
+
+/** Floating text that rises and fades ("POW!", "+1"). */
+export function floatText(scene: Phaser.Scene, x: number, y: number, text: string, color = '#ffffff', size = 40): void {
+  const t = scene.add
+    .text(x, y, text, { fontFamily: '"Arial Black", sans-serif', fontSize: `${size}px`, color, stroke: '#000000', strokeThickness: 8 })
+    .setOrigin(0.5)
+    .setDepth(DEPTH.sparkles);
+  t.setScale(0.3);
+  scene.tweens.add({ targets: t, scale: 1, duration: 200, ease: 'Back.easeOut' });
+  scene.tweens.add({ targets: t, y: y - 70, alpha: 0, delay: 450, duration: 500, onComplete: () => t.destroy() });
+}
+
+/** Fit an image into a box, keeping aspect: real art can be any pixel size. */
+export function fitImage(img: Phaser.GameObjects.Image, w: number, h: number): Phaser.GameObjects.Image {
+  const s = Math.min(w / img.width, h / img.height);
+  img.setScale(s);
+  return img;
+}

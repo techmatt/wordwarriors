@@ -1,0 +1,104 @@
+/**
+ * Her character, walking: the cursor in every room.
+ *
+ * A card sprite with a soft shadow. Motion is only bob and squash/scale: a
+ * walking bounce while moving, a squash when she stops, a little hop on a
+ * green press. Movement is substepped one axis at a time against the room's
+ * floor rectangle, so she slides along the edge rather than sticking.
+ */
+
+import Phaser from 'phaser';
+
+import { charArt } from '../../content/art/assets';
+import { WALK_SPEED } from '../config';
+import { fitImage } from '../fx/juice';
+
+const MAX_STEP = 6;
+
+export class Player {
+  readonly root: Phaser.GameObjects.Container;
+  private readonly sprite: Phaser.GameObjects.Image;
+  private readonly shadow: Phaser.GameObjects.Ellipse;
+  private walkT = 0;
+  private moving = false;
+  private readonly baseScale: number;
+  facing = 1;
+
+  constructor(
+    private readonly scene: Phaser.Scene,
+    x: number,
+    y: number,
+    character: string,
+    private readonly floor: Phaser.Geom.Rectangle,
+    height = 130,
+  ) {
+    this.shadow = scene.add.ellipse(0, 0, height * 0.6, height * 0.16, 0x000000, 0.3);
+    this.sprite = fitImage(scene.add.image(0, 0, charArt(character, false)).setOrigin(0.5, 1), height * 0.8, height);
+    this.baseScale = this.sprite.scale;
+    this.root = scene.add.container(x, y, [this.shadow, this.sprite]);
+  }
+
+  get x(): number {
+    return this.root.x;
+  }
+  get y(): number {
+    return this.root.y;
+  }
+
+  /** Teleport (tests and room setup). */
+  place(x: number, y: number): void {
+    this.root.setPosition(x, y);
+  }
+
+  update(move: Phaser.Math.Vector2, dt: number): void {
+    const len = move.length();
+    const was = this.moving;
+    this.moving = len > 0.05;
+    if (this.moving) {
+      const distance = WALK_SPEED * len * dt;
+      const steps = Math.max(1, Math.ceil(distance / MAX_STEP));
+      const step = distance / steps;
+      const dx = move.x / len;
+      const dy = move.y / len;
+      for (let i = 0; i < steps; i++) {
+        this.root.x = Phaser.Math.Clamp(this.root.x + dx * step, this.floor.left, this.floor.right);
+        this.root.y = Phaser.Math.Clamp(this.root.y + dy * step, this.floor.top, this.floor.bottom);
+      }
+      if (Math.abs(dx) > 0.2) this.facing = dx > 0 ? 1 : -1;
+      this.walkT += dt * 11;
+      // Walking bounce: hop and a slight squash at the bottom of each step.
+      const hop = Math.abs(Math.sin(this.walkT));
+      this.sprite.y = -hop * 10;
+      this.sprite.setScale(this.baseScale * this.facing * (1 + (1 - hop) * 0.05), this.baseScale * (1 - (1 - hop) * 0.05));
+      this.sprite.rotation = Math.sin(this.walkT) * 0.05;
+    } else {
+      if (was) this.land();
+      this.walkT += dt * 2.5;
+      this.sprite.y = -Math.abs(Math.sin(this.walkT)) * 3;
+      this.sprite.rotation = 0;
+    }
+    // Draw order follows the feet.
+    this.root.setDepth(this.root.y);
+  }
+
+  private land(): void {
+    this.scene.tweens.add({
+      targets: this.sprite,
+      scaleX: this.baseScale * this.facing * 1.12,
+      scaleY: this.baseScale * 0.88,
+      duration: 90,
+      yoyo: true,
+      onComplete: () => this.sprite.setScale(this.baseScale * this.facing, this.baseScale),
+    });
+  }
+
+  /** The press: a happy little hop. */
+  hop(): void {
+    this.scene.tweens.add({ targets: this.sprite, y: -40, duration: 140, yoyo: true, ease: 'Quad.easeOut' });
+  }
+
+  /** A no-penalty bump: sheepish wobble. */
+  wobble(): void {
+    this.scene.tweens.add({ targets: this.sprite, angle: { from: -12, to: 12 }, duration: 80, yoyo: true, repeat: 3, onComplete: () => this.sprite.setAngle(0) });
+  }
+}
