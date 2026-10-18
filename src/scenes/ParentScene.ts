@@ -4,7 +4,10 @@
  *
  * Each item shows: tries ever, first-try-right rate over her recent tries, and
  * today's tries. Colour is the shakiness the game uses to pick targets: red
- * items come up more often. Red / Esc / F9 goes back.
+ * items come up more often. Red / Esc / F9 goes back to the scene it came
+ * from, restarted with the data it was given (`{ back, data }`; the older
+ * `{ back, step }` means data `{ step }`), so a side room comes back as the
+ * same room. With no back, or back 'Title', it goes to the title.
  */
 
 import Phaser from 'phaser';
@@ -15,7 +18,7 @@ import { WORDS } from '../../content/phonics/words';
 import { stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { GAME_HEIGHT, GAME_WIDTH, SENTENCE_SOLID } from '../config';
-import { startStep, type Step } from '../episode/Episode';
+import type { Step } from '../episode/Episode';
 import { Controls } from '../input/Controls';
 import { progress } from '../state/progress';
 import type { ItemKind } from '../state/ProgressStore';
@@ -24,13 +27,15 @@ import { hookState } from '../testHooks';
 export class ParentScene extends Phaser.Scene {
   private controls!: Controls;
   private back = 'Title';
+  private backData: object = {};
 
   constructor() {
     super('Parent');
   }
 
-  init(data: { back?: string; step?: Step }): void {
+  init(data: { back?: string; data?: object; step?: Step }): void {
     this.back = data.back ?? 'Title';
+    this.backData = data.data ?? (data.step ? { step: data.step } : {});
   }
 
   create(): void {
@@ -94,7 +99,7 @@ export class ParentScene extends Phaser.Scene {
     if (this.controls.dev('F8')) {
       if (this.resetArmed) {
         progress.reset();
-        this.scene.restart({ back: this.back });
+        this.scene.restart({ back: this.back, data: this.backData });
         return;
       }
       this.resetArmed = true;
@@ -102,7 +107,7 @@ export class ParentScene extends Phaser.Scene {
     }
     if (this.controls.pressed('red') || this.controls.dev('F9')) {
       if (this.back === 'Title') this.scene.start('Title');
-      else startStep(this);
+      else this.scene.start(this.back, this.backData);
     }
     this.controls.endFrame();
   }

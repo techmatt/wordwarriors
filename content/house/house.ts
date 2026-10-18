@@ -99,7 +99,9 @@ export const HUB = {
   look: 'The small main room of a cosy house seen side-on: a sofa, a rug, a staircase, family pictures, a wooden floor across the lower half; three inner doors along the back wall and a big front door on the right',
   palette: [0xffe8c8, 0x8a5a3a] as [number, number],
   entry: { x: 640, y: 640 },
-  helper: { x: 470, y: 520 },
+  // Between doors a and b, clear of both, of where she lands back from either
+  // (door x, y + 90), and of the magic circle.
+  helper: { x: 385, y: 520 },
   circle: { x: 640, y: 560 },
   doors: {
     a: { x: 250, y: 400 },

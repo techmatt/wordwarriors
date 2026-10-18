@@ -9,6 +9,11 @@
  * that ultimate in Part 2. `counter.words` stays for the parked Spell the
  * Spell game.
  *
+ * A counter `word` is never spoken or shown before the attic, so it is a CVC
+ * picture word (or MICE) that is not a move word, not a fetch item, and not a
+ * whole word in any name, ability, ultimate or taunt here (rules.test.ts
+ * checks this).
+ *
  * `house` is how the villain colours the house: the threat in the wake-up
  * line ("Bad news, Evil Elsa is coming, and <threat>!"), a tint, decals and an
  * ambient effect. Threats are fun, not scary, and carry no CVC reading words.
@@ -158,7 +163,7 @@ export const ROSTER: CharacterSpec[] = [
       taunts: [
         { key: 'no', text: 'No, no, no!' },
         { key: 'mine', text: 'All the toys are mine!' },
-        { key: 'bedtime', text: 'I never go to bed!' },
+        { key: 'bedtime', text: 'I never go to sleep!' },
         { key: 'grr', text: 'Grumpy time!' },
         { key: 'nap', text: 'Naps are for babies!' },
         { key: 'cookies', text: 'I ate all the cookies!' },
@@ -221,7 +226,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'treats', name: 'Dragon Treats', glyph: '🍪', look: 'a basket of glowing dragon cookies',
-      how: 'calm', words: ['cup', 'bun', 'yum'], word: 'cup', frame: 'scared_of_the',
+      how: 'calm', words: ['cup', 'bun', 'yum'], word: 'nut', frame: 'scared_of_the',
     },
     house: {
       threat: 'her dragons want to toast the whole house',
@@ -276,7 +281,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'earmuffs', name: 'Magic Earmuffs', glyph: '🎧', look: 'fluffy rainbow earmuffs that glow',
-      how: 'block', words: ['hat', 'cap', 'hum'], word: 'hat', frame: 'scared_of_the',
+      how: 'block', words: ['hat', 'cap', 'hum'], word: 'cap', frame: 'scared_of_the',
     },
     house: {
       threat: 'he wants everybody to eat broccoli for breakfast',
@@ -331,7 +336,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'pillow_fort', name: 'Pillow Fort', glyph: '🏰', look: 'a wobbly fort made of fluffy pillows, glowing softly',
-      how: 'block', words: ['bed', 'box', 'pad'], word: 'box', frame: 'scared_of_the',
+      how: 'block', words: ['bed', 'box', 'pad'], word: 'bed', frame: 'scared_of_the',
     },
     house: {
       threat: 'he wants to knock down every wall',
@@ -386,7 +391,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'sun_torch', name: 'Sun Torch', glyph: '🔥', look: 'a golden torch with a tiny sun burning in it',
-      how: 'restore', words: ['sun', 'hat', 'hot'], word: 'sun', frame: 'scared_of_the',
+      how: 'restore', words: ['sun', 'hat', 'hot'], word: 'log', frame: 'scared_of_the',
     },
     house: {
       threat: 'she wants to freeze the whole house',
@@ -438,7 +443,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'locket', name: 'Friendship Locket', glyph: '💖', look: 'a heart locket glowing warm pink',
-      how: 'calm', words: ['hug', 'pet', 'pal'], word: 'pin', frame: 'scared_of_the',
+      how: 'calm', words: ['hug', 'pet', 'pal'], word: 'cat', frame: 'scared_of_the',
     },
     house: {
       threat: 'she wants to turn every room into a blizzard',
@@ -494,7 +499,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'wind_fan', name: 'Wind Fan', glyph: '🌬️', look: 'a giant painted fan that blows a rainbow breeze',
-      how: 'reflect', words: ['map', 'zip', 'fan'], word: 'fan', frame: 'scared_of_the',
+      how: 'reflect', words: ['map', 'zip', 'fan'], word: 'bag', frame: 'scared_of_the',
     },
     house: {
       threat: 'she wants to fill the house with sand',
@@ -604,7 +609,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'sun_lamp', name: 'Sun Lamp', glyph: '💡', look: 'a brass lantern holding a little captured sun',
-      how: 'restore', words: ['sun', 'pot', 'lit'], word: 'sun', frame: 'scared_of_the',
+      how: 'restore', words: ['sun', 'pot', 'lit'], word: 'cup', frame: 'scared_of_the',
     },
     house: {
       threat: 'he wants to wrap himself around the whole house',
@@ -661,7 +666,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'frost_shield', name: 'Frost Shield', glyph: '🛡️', look: 'a round shield of blue ice with a snowflake crest',
-      how: 'block', words: ['cup', 'net', 'fog'], word: 'net', frame: 'scared_of_the',
+      how: 'block', words: ['cup', 'net', 'fog'], word: 'cup', frame: 'scared_of_the',
     },
     house: {
       threat: 'he wants all the money in your piggy bank',
@@ -716,7 +721,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'off_remote', name: 'Off Remote', glyph: '📱', look: 'a big chunky remote control with one giant red OFF button',
-      how: 'shutdown', words: ['box', 'pen', 'off'], word: 'box', frame: 'scared_of_the',
+      how: 'shutdown', words: ['box', 'pen', 'off'], word: 'bug', frame: 'scared_of_the',
     },
     house: {
       threat: 'his robots want to switch off every light',
@@ -827,7 +832,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'mirror', name: 'Magic Mirror', glyph: '💠', look: 'a silver hand mirror that flashes bright light',
-      how: 'reflect', words: ['sun', 'pin', 'zap'], word: 'sun', frame: 'scared_of_the',
+      how: 'reflect', words: ['sun', 'pin', 'zap'], word: 'cat', frame: 'scared_of_the',
     },
     house: {
       threat: 'she wants to turn everybody into piggies',

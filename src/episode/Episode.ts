@@ -27,6 +27,7 @@ import { DEFAULT_NARRATOR, group } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { EPISODE_DEFAULTS } from '../config';
 import { counterPlan, fetchPlans, type RoomPlan } from '../rules/sentences';
+import { spellFor } from '../rules/spell';
 import { progress } from '../state/progress';
 import { voiceBank } from '../voice/VoiceBank';
 
@@ -190,9 +191,16 @@ export function randomVillain(rand = Math.random): string {
  */
 export function housePlan(): RoomPlan[] {
   if (!episode.house.plan) {
+    // The spell first: the hub says and shows it before the side rooms, so
+    // no room may make it a key word; nor the attic's counter word.
+    episode.spell ??= spellFor(episode.hero, helper());
     const fill = { villain: episode.villain, helper: helper() };
     const rooms = Phaser.Utils.Array.Shuffle([...FETCH_ROOMS]).slice(0, 2);
-    episode.house.plan = [...fetchPlans(progress, fill, rooms as [string, string]), counterPlan(fill, COUNTER_ROOM)];
+    const avoid = [episode.spell, CHARACTER_BY_ID[episode.villain]!.counter.word];
+    episode.house.plan = [
+      ...fetchPlans(progress, fill, rooms as [string, string], Math.random, avoid),
+      counterPlan(fill, COUNTER_ROOM, Math.random, [episode.spell]),
+    ];
   }
   return episode.house.plan;
 }
@@ -207,6 +215,11 @@ export function episodeGroups(): string[] {
   g.push(group.fighter(episode.hero), group.fighter(`${episode.villain}_evil`));
   if (episode.ally) g.push(group.fighter(episode.ally));
   return g;
+}
+
+/** True for a step kind that has a scene (a `?scene=` value jumpTo can take). */
+export function isStepKind(kind: string): kind is Step['kind'] {
+  return Object.prototype.hasOwnProperty.call(SCENE_FOR, kind);
 }
 
 /** Start the scene for the current step. */
@@ -276,15 +289,21 @@ export function journeyStops(): { icon: string; index: number }[] {
 /**
  * Jump into a step directly (dev F-keys, `?scene=`), with a plausible episode
  * around it. Parked steps (alarm, prep, retreat, spell) are not in the list,
- * so they start on their own with the episode as it is.
+ * so they start on their own with the episode as it is. stepIndex is left
+ * alone (0, the title, after a boot), so when a parked scene finishes its
+ * advance() runs on into the bedroom, carrying whatever state it left behind.
  */
 export function jumpTo(scene: Phaser.Scene, kind: Step['kind'], extra: Partial<EpisodeState> = {}, part: 1 | 2 = 1): void {
   Object.assign(episode, extra);
   const list = steps();
   const i = list.findIndex((s) => s.kind === kind && (!('part' in s) || s.part === part));
   if (i < 0) {
+    // A parked pick (pickScreens off) is the hero pick: a pick with no `what`
+    // would fall through to the villain branch.
     const parked: Step =
-      kind === 'prep' ? { kind: 'prep', game: episode.prep[0]!, index: 0 } : ({ kind } as Step);
+      kind === 'prep' ? { kind: 'prep', game: episode.prep[0]!, index: 0 }
+        : kind === 'pick' ? { kind: 'pick', what: 'hero' }
+          : ({ kind } as Step);
     voiceBus.hush();
     void voiceBank.loadGroups(episodeGroups());
     scene.scene.start(parked.kind === 'prep' ? prepScene(parked.game) : SCENE_FOR[parked.kind], { step: parked });

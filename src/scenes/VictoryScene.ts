@@ -150,6 +150,7 @@ export class VictoryScene extends Phaser.Scene {
       sfxSelect();
       advance(this);
     }
+    if (this.controls.dev('F9')) this.scene.start('Parent', { back: 'Victory' });
     this.controls.endFrame();
   }
 }

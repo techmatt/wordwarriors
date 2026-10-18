@@ -75,6 +75,31 @@ export const FETCH_ITEMS: FetchItem[] = [
 
 export const FETCH_BY_WORD: Record<string, FetchItem> = Object.fromEntries(FETCH_ITEMS.map((f) => [f.word, f]));
 
+/**
+ * Pictures a four-year-old could take for each other. A room never shows a
+ * look-alike of its key word as a wrong answer (a RAT beside MICE would be a
+ * fair pick, then told it is wrong). Groups may overlap; a word's look-alikes
+ * are every other word in any group it is in.
+ */
+export const LOOKALIKES: string[][] = [
+  ['mice', 'rat', 'bat'],
+  ['cat', 'rat', 'bat'],
+  ['dog', 'fox'],
+  ['hat', 'cap'],
+  ['bus', 'van', 'jet'],
+  ['cup', 'pot', 'can'],
+  ['pen', 'pin'],
+  ['net', 'web'],
+  ['bag', 'box'],
+];
+
+/** The words whose pictures look like `word`'s (not including `word`). */
+export function lookalikesOf(word: string): string[] {
+  const out = new Set<string>();
+  for (const g of LOOKALIKES) if (g.includes(word)) for (const w of g) if (w !== word) out.add(w);
+  return [...out];
+}
+
 /** Who fills the name slots. `helper` is the ally, or the narrator with no ally. */
 export interface Fill {
   villain: string;

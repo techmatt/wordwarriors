@@ -182,7 +182,17 @@ export async function playBattle(page: Page, part: number, wrongFirst = false): 
     first = false;
     const pad = c.spots.find((sp) => sp.word === word)!;
     await walkHeroTo(page, pad.x, pad.y);
-    await press(page, 'green');
+    // Green is ignored while the idle re-prompt plays (the choice closes for it):
+    // wait for it to open again, then press.
+    for (let tries = 0; ; tries++) {
+      const now = await until(page, (st) => !st.battle?.choice || st.battle.choice.open, 30_000, 'choice open again');
+      if (!now.battle?.choice) break;
+      await press(page, 'green');
+      const done = await until(page, (st) => !st.battle?.choice || !st.battle.choice.open, 5_000, 'green taken').catch(() => null);
+      if (done && !done.battle?.choice) break;
+      if (tries > 4) throw new Error('green on the pad never picked');
+      await page.waitForTimeout(200);
+    }
     await until(page, (st) => !st.battle?.choice, 30_000, 'choice closed');
   }
 }

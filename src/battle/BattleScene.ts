@@ -61,6 +61,10 @@ type Phase = 'intro' | 'fight' | 'choice' | 'combo' | 'ultimate' | 'counter' | '
 const DAMAGE_PER_POWER = 2.6;
 /** The move pads' glow. One colour for all: the word on the sign is the choice, never a colour. */
 const PAD_GLOW = 0x7ad9ff;
+/** How far a pad's word sign stands above its ring. */
+const SIGN_RISE = 215;
+/** Least distance between two pads' columns: a sign is 230 wide, so signs never touch. */
+const PAD_GAP = 270;
 
 /** A move word standing in the arena as a place she walks to. */
 interface MovePad {
@@ -89,6 +93,12 @@ interface Choice {
   open: boolean;
   /** Wall-clock time the word was last said, for the idle re-prompt. */
   promptedAt: number;
+  /**
+   * Where her hero is during the choice, and how high she floats. Written back
+   * every frame, so a leap, dash or spin that was mid-flight when the choice
+   * opened (its timer still ticking on the frozen clock) cannot pull her off it.
+   */
+  at: { x: number; y: number; lift: number };
   resolve: (picked: string) => void;
 }
 
@@ -121,12 +131,15 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
   private itemsUsed = 0;
   /** "Look what we found!" is said once per part, at the first item out of the bag. */
   private bagSaid = false;
+  /** The step this battle was started with, so the parent page can come back to it. */
+  private step: Step | undefined;
 
   constructor() {
     super('Battle');
   }
 
   init(data: { step?: Step }): void {
+    this.step = data.step;
     this.part = data.step?.kind === 'battle' ? data.step.part : 1;
     this.now = 0;
     this.fighters = [];
@@ -608,29 +621,50 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
   }
 
   /**
-   * Where the pads go: spread over the arena floor, away from her hero and
-   * from each other (greedy farthest-point over a grid of floor spots).
+   * Where the pads go: one row across the floor, so every sign stands right
+   * above its own ring and no two pads share a column (a stacked pair put the
+   * lower pad's word over the upper ring). The row and the columns are picked
+   * to keep rings and signs clear of her hero and of the villain (and the
+   * other big fighters), so she never walks into a fighter's card to choose.
    */
   private padSpots(n: number, me: Fighter): { x: number; y: number }[] {
-    const cands: { x: number; y: number }[] = [];
-    for (const x of [220, 490, 770, 1050]) for (const y of [490, 620]) cands.push({ x, y });
-    const taken: { x: number; y: number }[] = [{ x: me.x, y: me.y }];
-    const out: { x: number; y: number }[] = [];
-    for (let i = 0; i < n; i++) {
-      let best: { x: number; y: number } | null = null;
-      let bestScore = -1;
-      for (const c of cands) {
-        if (out.includes(c)) continue;
-        const score = Math.min(...taken.map((t) => Math.hypot(t.x - c.x, (t.y - c.y) * 1.5))) + Math.random() * 40;
-        if (score > bestScore) {
-          best = c;
-          bestScore = score;
-        }
+    const avoid = [me, this.villain, ...this.fighters.filter((f) => f.active && f.isMain)].filter((f, i, a) => f?.active && a.indexOf(f) === i);
+    /** How far a pad at (x, y) stays from every fighter: ring against feet, sign against body. */
+    const clearance = (x: number, y: number): number => {
+      let d = Infinity;
+      for (const f of avoid) {
+        d = Math.min(d, Math.hypot(x - f.x, (y - f.y) * 1.5), Math.hypot(x - f.cx, y - SIGN_RISE - f.cy));
       }
-      out.push(best!);
-      taken.push(best!);
+      return d;
+    };
+    const xs: number[] = [];
+    for (let x = ARENA_LEFT + 110; x <= ARENA_RIGHT - 110; x += 40) xs.push(x);
+    let best: { x: number; y: number }[] = [];
+    let bestScore = -Infinity;
+    for (const y of [480, 560, 640]) {
+      // Every set of n columns at least PAD_GAP apart (n is 2 or 3, so this is small).
+      const walk = (from: number, picked: number[]): void => {
+        if (picked.length === n) {
+          const clear = Math.min(...picked.map((x) => clearance(x, y)));
+          let gap = Infinity;
+          for (let i = 1; i < picked.length; i++) gap = Math.min(gap, picked[i]! - picked[i - 1]!);
+          // Clear enough counts the same however far; then spread out, then a little luck.
+          const score = Math.min(clear, 240) * 3 + Math.min(gap, 420) * 0.25 + Math.random() * 25;
+          if (score > bestScore) {
+            bestScore = score;
+            best = picked.map((x) => ({ x, y }));
+          }
+          return;
+        }
+        for (let i = from; i < xs.length; i++) {
+          const x = xs[i]!;
+          if (picked.length && x - picked[picked.length - 1]! < PAD_GAP) continue;
+          walk(i + 1, [...picked, x]);
+        }
+      };
+      walk(0, []);
     }
-    return out.sort((a, b) => a.x - b.x);
+    return best;
   }
 
   /** One move word as a place: a glowing rune ring on the floor and its word on a sign above. */
@@ -643,7 +677,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       return this.add.circle(Math.cos(a) * 82, Math.sin(a) * 29, 5, 0xffffff, 0.9);
     });
     const ring = this.add.container(x, y, [glow, disc, inner, ...runes]).setDepth(FLOOR_TOP - 3);
-    const sy = y - 215;
+    const sy = y - SIGN_RISE;
     const plate = this.add.rectangle(0, 0, 230, 100, 0xfff8e8, 0.97).setStrokeStyle(7, PAD_GLOW);
     const stake = this.add.rectangle(0, 62, 10, 26, 0xfff8e8, 0.9);
     const label = this.add
@@ -683,6 +717,16 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     // She has to be able to walk: no pig, no ice block during the choice.
     me.status = null;
     me.clearOverlay();
+    // ...and nothing half-done: no move in flight, no hop, no leap height. She is free at once.
+    me.busyUntil = this.now;
+    delete me.mem.stepTo;
+    me.hop = 0;
+    me.spin = 0;
+    me.lean = 0;
+    me.vx = 0;
+    me.vy = 0;
+    const at = { x: me.x, y: me.y, lift: me.init.style === 'fly' ? 110 : me.init.style === 'hover' ? 40 : 0 };
+    me.lift = at.lift;
     const objs: Phaser.GameObjects.GameObject[] = [];
     // A light dim behind the fighters (not over them), so the pads and signs read.
     objs.push(this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0a0018, 0.3).setDepth(FLOOR_TOP - 3.5));
@@ -698,7 +742,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     objs.push(dot);
 
     const picked = await new Promise<string>((resolve) => {
-      this.choice = { words, right, owners, objs, pads, near: null, dot, open: false, promptedAt: 0, resolve };
+      this.choice = { words, right, owners, objs, pads, near: null, dot, open: false, promptedAt: 0, at, resolve };
       void (async () => {
         await this.say('move_pick');
         await this.say(`use_move_${right}`);
@@ -752,6 +796,18 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     c.resolve(word);
   }
 
+  /** Pin her hero to where she walked in the choice: no leftover move timer or hop moves her. */
+  private holdHero(): void {
+    const c = this.choice;
+    const me = this.heroes[0];
+    if (!c || !me?.active) return;
+    me.x = c.at.x;
+    me.y = c.at.y;
+    me.lift = c.at.lift;
+    me.hop = 0;
+    me.spin = 0;
+  }
+
   /**
    * The choice, every frame, on real time (the scene clock is nearly frozen):
    * her hero walks with the stick, the pad she stands at lights up with a
@@ -762,10 +818,11 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     const me = this.heroes[0]!;
     const mv = this.controls.move;
     if (mv.lengthSq() > 0.04 && me.active) {
-      me.x = Phaser.Math.Clamp(me.x + mv.x * WALK_SPEED * realDt, ARENA_LEFT, ARENA_RIGHT);
-      me.y = Phaser.Math.Clamp(me.y + mv.y * WALK_SPEED * 0.8 * realDt, FLOOR_TOP, FLOOR_BOTTOM);
+      c.at.x = Phaser.Math.Clamp(c.at.x + mv.x * WALK_SPEED * realDt, ARENA_LEFT, ARENA_RIGHT);
+      c.at.y = Phaser.Math.Clamp(c.at.y + mv.y * WALK_SPEED * 0.8 * realDt, FLOOR_TOP, FLOOR_BOTTOM);
       me.lean = Phaser.Math.Clamp(mv.x * 0.2, -0.25, 0.25);
     } else me.lean = 0;
+    this.holdHero();
 
     let near: MovePad | null = null;
     let best = REACH;
@@ -800,8 +857,15 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       this.pickChoice(c.right);
     }
     if (c.open && (this.controls.pressed('yellow') || (wall - c.promptedAt > 10_000 && !voiceBus.busy))) {
+      // Green is ignored while the instruction plays, as on the first prompt:
+      // the pads close for the line and open again when it ends.
+      c.open = false;
       c.promptedAt = wall;
-      void voiceBus.say(narratorLine(narrator(), `use_move_${c.right}`));
+      void voiceBus.say(narratorLine(narrator(), `use_move_${c.right}`)).then(() => {
+        if (this.choice !== c) return;
+        c.open = true;
+        c.promptedAt = performance.now();
+      });
     }
   }
 
@@ -1300,12 +1364,18 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     }
     this.fighters = this.fighters.filter((f) => f.alive || f.root.active);
     this.separate(dt);
+    if (this.choice) this.holdHero();
     this.updateProjectiles(dt);
     this.updateTraps();
     this.taunt();
     this.drawHud();
 
     if (this.controls.dev('F2')) advance(this);
+    else if (this.controls.dev('F9')) {
+      // The grown-ups' page; it comes back to this battle (restarted) when closed.
+      this.scene.start('Parent', { back: this.scene.key, data: { step: this.step } });
+      return;
+    }
     this.controls.endFrame();
     this.publish();
   }

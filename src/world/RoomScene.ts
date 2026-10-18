@@ -243,10 +243,15 @@ export abstract class RoomScene extends Phaser.Scene {
       const c = this.correctSpot();
       if (c && !this.locked) this.choose(c);
     }
-    if (this.controls.dev('F9')) this.scene.start('Parent', { back: this.scene.key, step: this.step });
+    if (this.controls.dev('F9')) this.scene.start('Parent', { back: this.scene.key, data: this.sceneData() });
     this.controls.endFrame();
 
     this.publish(deltaMs);
+  }
+
+  /** The start data that recreates this scene (the parent page comes back with it). */
+  protected sceneData(): object {
+    return { step: this.step };
   }
 
   /**

@@ -52,6 +52,13 @@ const BANNER_Y = 120;
 /** The silent beat on the key word at the end of the listening pass. */
 const KEY_BEAT_MS = 1200;
 
+/** A stable scatter seed per side room (FNV-1a of its id). */
+function roomSeed(id: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 0x01000193) >>> 0;
+  return h;
+}
+
 export class SentenceRoom extends Minigame {
   private slot: Slot = 'a';
   private plan!: RoomPlan;
@@ -82,6 +89,11 @@ export class SentenceRoom extends Minigame {
     this.wrongTries = 0;
   }
 
+  /** F9 to the parent page and back reopens this same room. */
+  protected override sceneData(): object {
+    return { step: this.step, slot: this.slot };
+  }
+
   private get keyIndex(): number {
     return this.plan.sentence.tokens.length - 1;
   }
@@ -93,9 +105,10 @@ export class SentenceRoom extends Minigame {
   protected build(): void {
     const s = this.plan.sentence;
     this.round = `sentence:${this.slot}:${s.key}`;
-    applyHouseMood(this, episode.villain);
-    this.bag = new Bag(this);
     this.floor.setTo(80, 420, GAME_WIDTH - 160, 240);
+    // Each room its own stable mess; calm, because she is reading in here.
+    applyHouseMood(this, episode.villain, { seed: roomSeed(this.plan.room), floor: this.floor, calm: true });
+    this.bag = new Bag(this);
     const room = SIDE_ROOM_BY_ID[this.plan.room]!;
     this.player.place(room.entry.x, Math.min(room.entry.y, this.floor.bottom - 10));
 
@@ -200,7 +213,9 @@ export class SentenceRoom extends Minigame {
   private followVoice(): void {
     const k = this.karaoke;
     const u = voiceBus.speaking;
-    if (!k || !u || u.id !== k.id) return;
+    // While a line is still decoding, VoiceBus holds a bare `{ id }` claim
+    // with no clock yet: wait for the real utterance.
+    if (!k || !u || u.id !== k.id || typeof u.time !== 'function') return;
     const words = u.line?.words ?? [];
     const t = u.time();
     let i = 0;
@@ -293,6 +308,21 @@ export class SentenceRoom extends Minigame {
     }
     for (const t of letters) t.setColor(LIT);
     if (this.pass === 'find') this.locked = false;
+  }
+
+  /**
+   * An instruction unlocks input when it ends, but once the answer is found
+   * the room stays locked: on the F4 path the hushed narrate()/speak() ends
+   * after found() has begun and would otherwise unlock mid-celebration.
+   */
+  protected override async narrate(...keys: string[]): Promise<void> {
+    await super.narrate(...keys);
+    if (this.pass === 'done') this.locked = true;
+  }
+
+  protected override async speak(...ids: string[]): Promise<void> {
+    await super.speak(...ids);
+    if (this.pass === 'done') this.locked = true;
   }
 
   /** Dev F4: jump straight to `find` (no lines) and hand back the right object. */

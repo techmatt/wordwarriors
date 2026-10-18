@@ -102,6 +102,7 @@ export class JourneyScene extends Phaser.Scene {
       sfxSelect();
       this.go();
     }
+    if (this.controls.dev('F9') && !this.leaving) this.scene.start('Parent', { back: 'Journey' });
     this.controls.endFrame();
   }
 }

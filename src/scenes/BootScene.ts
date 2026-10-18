@@ -10,11 +10,18 @@
  *   ?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug   (ally=none for no ally)
  *   ?scene=victory&read=cat,sun,julia   (the words the recap shows)
  *   ?scene=pick | parent
- *   ?fetched=net,fan                    (the battle items fetched; default net,fan)
+ *   ?fetched=net,fan                    (the battle items fetched; default: the house plan's)
  *   parked v0.1 games: ?scene=sound | blend | picture | spell | alarm | retreat
  *
  * Later steps get the episode they would have had by then: the spell learned
- * in the hub, the earlier rooms done, the fetched items in the bag.
+ * in the hub, the earlier rooms done, the fetched items in the bag (the plan's
+ * own sentence words, so hub badges, bag and battle agree). A ?hero= that is
+ * also the ally drops the ally (the narrator falls back to a Dada). An
+ * unknown ?scene= warns and starts the title.
+ *
+ * Parked scenes (the v0.1 games and the pick) start outside the step list, so
+ * the episode is still on step 0: when one finishes, advance() runs on into
+ * the bedroom, keeping whatever state it set. That is accepted for a dev jump.
  */
 
 import Phaser from 'phaser';
@@ -23,7 +30,7 @@ import { ART_ASSETS } from '../../content/art/assets';
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import { group } from '../../content/voice/ids';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { enterRoom, episode, episodeGroups, helper, jumpTo, planFor, startStep, steps, type PrepGame, type Slot } from '../episode/Episode';
+import { enterRoom, episode, episodeGroups, helper, isStepKind, jumpTo, planFor, startStep, steps, type PrepGame, type Slot } from '../episode/Episode';
 import { makeTextures } from '../fx/textures';
 import { spellFor } from '../rules/spell';
 import { voiceBank } from '../voice/VoiceBank';
@@ -62,6 +69,8 @@ export class BootScene extends Phaser.Scene {
       if (v && CHARACTER_BY_ID[v]) (episode as unknown as Record<string, string>)[key] = v;
       if (key === 'ally' && v === 'none') episode.ally = null;
     }
+    // The hero cannot also be the ally (she would teach herself the spell).
+    if (episode.ally === episode.hero) episode.ally = null;
     const read = q.get('read');
     if (read) episode.read = read.split(',');
     const prep = q.get('prep');
@@ -80,7 +89,7 @@ export class BootScene extends Phaser.Scene {
       episode.spell = spellFor(episode.hero, helper());
     };
     const fetchedAll = (): void => {
-      episode.fetched = fetched ? fetched.split(',') : ['net', 'fan'];
+      episode.fetched = fetched ? fetched.split(',') : (['a', 'b'] as Slot[]).map((s) => planFor(s).sentence.key);
       episode.house.done = ['a', 'b'];
     };
 
@@ -120,6 +129,11 @@ export class BootScene extends Phaser.Scene {
         episode.made.item = true;
       }
     }
-    jumpTo(this, target as never, {}, part);
+    if (!isStepKind(target)) {
+      console.warn(`?scene=${target} is not a step; starting the title`);
+      startStep(this);
+      return;
+    }
+    jumpTo(this, target, {}, part);
   }
 }

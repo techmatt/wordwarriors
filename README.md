@@ -133,6 +133,13 @@ npm run art:placeholders  # paint missing art, rewrite docs/art.md
   page under test: `npx vite build --outDir scratch/dist-test`, `npx vite preview --outDir
   scratch/dist-test --port 5175`, then `WW_BASE_URL=http://localhost:5175 npx playwright test`.
   Test pages add `?hooks=1`, which turns the test hooks on in a production build.
+- A dev server on 5174 started from the main checkout serves the main branch's code,
+  not this worktree's. Playwright's `reuseExistingServer` attaches to whatever answers
+  on 5174, so with that server running the suite tests the wrong game (old scenes, old
+  hooks) without any warning. From a worktree, serve on another port and point the
+  suite at it: `npx vite --port 5184` (the CLI port overrides `src/port.ts`), then
+  `WW_BASE_URL=http://localhost:5184 npx playwright test`. With `WW_BASE_URL` set,
+  Playwright starts no server of its own.
 - The full-episode test (`npm run test:slow`) takes about 4–5 minutes: every line is
   real speech and green is ignored until an instruction finishes.
 - Headless Chromium renders the battle at roughly 8–18 fps (software GL). With the GPU

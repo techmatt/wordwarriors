@@ -186,10 +186,11 @@ export class HubScene extends RoomScene {
     await this.wait(500);
     await this.narrate('teach_1');
 
-    // The scroll pops up over the helper, the spell written on it.
+    // The scroll pops up over the helper, the spell written on it: high on the
+    // wall between doors a and b, so it covers neither door nor its sign.
     const sx = HUB.helper.x;
-    const sy = HUB.helper.y - 210;
-    const paper = this.art('prop_scroll', 240, 120, 0, 60);
+    const sy = 150;
+    const paper = this.art('prop_scroll', 210, 120, 0, 60);
     const word = this.add
       .text(0, 0, spell.toUpperCase(), { fontFamily: FONT, fontSize: '54px', color: '#3a1a5a', stroke: '#ffffff', strokeThickness: 6 })
       .setOrigin(0.5);

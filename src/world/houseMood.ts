@@ -33,6 +33,12 @@ export interface HouseMoodOptions {
   floor?: Phaser.Geom.Rectangle;
   /** Animate in (the bedroom's bad-news moment). */
   reveal?: boolean;
+  /**
+   * A room where she is reading (the sentence rooms): the effect must not
+   * shake the banner or thump over the voice. 'quake' keeps only small dust
+   * puffs at the floor edges.
+   */
+  calm?: boolean;
 }
 
 export interface HouseMoodHandle {
@@ -79,7 +85,17 @@ export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: Hou
     .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, mood.tint, opts.reveal ? 0 : TINT_ALPHA)
     .setDepth(DEPTH.ground + 1);
   objects.push(tint);
-  if (opts.reveal) scene.tweens.add({ targets: tint, fillAlpha: TINT_ALPHA * 1.6, duration: 500, yoyo: true, hold: 300, onComplete: () => tint.setFillStyle(mood.tint, TINT_ALPHA) });
+  // Reveal: darken past the resting tint, hold, then settle back to it (never
+  // through clear, which a yoyo back to the start would do).
+  if (opts.reveal) {
+    scene.tweens.chain({
+      targets: tint,
+      tweens: [
+        { fillAlpha: TINT_ALPHA * 1.6, duration: 500, hold: 300 },
+        { fillAlpha: TINT_ALPHA, duration: 500 },
+      ],
+    });
+  }
 
   // Where each decal goes: the wall strip, or a floor margin.
   const placed: { x: number; y: number; onFloor: boolean; key: string; size: number }[] = [];
@@ -139,13 +155,13 @@ export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: Hou
     revealed = new Promise((resolve) => {
       order.forEach((p, i) => scene.time.delayedCall(450 + i * gap, () => showDecal(p, true)));
       scene.time.delayedCall(450 + order.length * gap + 200, () => {
-        startFx(scene, mood.fx, floor, objects, timers);
+        startFx(scene, mood.fx, floor, objects, timers, !!opts.calm);
         resolve();
       });
     });
   } else {
     for (const p of order) showDecal(p, false);
-    startFx(scene, mood.fx, floor, objects, timers);
+    startFx(scene, mood.fx, floor, objects, timers, !!opts.calm);
     revealed = Promise.resolve();
   }
   return { revealed, destroy };
@@ -158,6 +174,7 @@ function startFx(
   floor: Phaser.Geom.Rectangle,
   objects: Phaser.GameObjects.GameObject[],
   timers: Phaser.Time.TimerEvent[],
+  calm: boolean,
 ): void {
   const depth = DEPTH.fx - 10;
   const zone = (r: Phaser.Geom.Rectangle) => ({ type: 'random', source: r }) as never;
@@ -224,7 +241,15 @@ function startFx(
   } else if (fx === 'quake') {
     // Something big walking about the house: a thump, a shake, dust from the
     // floor and bits from the ceiling, every few seconds.
+    // Calm (she is reading): no thump, no shake, just a little dust at the
+    // floor's edges, clear of the banner and the answer spots.
     const thump = () => {
+      if (calm) {
+        const x = Math.random() < 0.5 ? floor.left + Math.random() * 100 : floor.right - Math.random() * 100;
+        burst(scene, x, floor.bottom - Math.random() * 30, { count: 6, colors: [0xb8a890, 0x8a7a66], texture: TEX.smoke, scale: 0.35, speed: 70, gravity: -30, life: 600, blend: false, depth });
+        timers[slot] = scene.time.delayedCall(4000 + Math.random() * 2500, thump);
+        return;
+      }
       sfxStomp();
       shake(scene, 4, 380);
       for (let i = 0; i < 3; i++) {

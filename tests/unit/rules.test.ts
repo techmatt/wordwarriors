@@ -115,6 +115,30 @@ test('roster: every character is complete, good and evil', () => {
   }
 });
 
+test('roster: counter words are never spoken or shown before the attic', () => {
+  // Everything a fighter shows or says in the hub and battle 1: names, ability
+  // and ultimate banners, taunts, minion names, the wake-up threat.
+  const said: string[] = Object.values(MINIONS).map((m) => m.name);
+  for (const c of ROSTER) {
+    said.push(c.house.threat, c.house.threatSay ?? '');
+    for (const f of [c.good, c.evil]) {
+      said.push(f.displayName, f.sayName ?? '', f.ultimate.name, ...f.abilities.map((a) => a.name));
+      for (const t of f.taunts) said.push(t.text, t.say ?? '');
+    }
+  }
+  const words = (s: string) => s.toLowerCase().split(/[^a-z]+/);
+  const pictured = new Set([...CVC_WORDS, ...SPECIAL_WORDS].map((w) => w.word));
+  const frameTokens = new Set(allFrameTokens());
+  for (const c of ROSTER) {
+    const w = c.counter.word;
+    assert.ok(pictured.has(w), `${c.id}: counter word ${w} has a picture`);
+    assert.ok(!(MOVE_WORDS as readonly string[]).includes(w), `${c.id}: counter word ${w} is a move word`);
+    assert.ok(!FETCH_ITEMS.some((i) => i.word === w), `${c.id}: counter word ${w} is a fetch item`);
+    assert.ok(!frameTokens.has(w), `${c.id}: counter word ${w} is a sentence word`);
+    for (const s of said) assert.ok(!words(s).includes(w), `${c.id}: counter word ${w} is said in "${s}"`);
+  }
+});
+
 test('voice: every line id the game derives exists in lines.json and the manifest', () => {
   const lines = composeLines();
   const ids = new Set(lines.map((l) => l.id));

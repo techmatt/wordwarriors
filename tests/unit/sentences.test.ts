@@ -7,10 +7,10 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { CHARACTER_BY_ID } from '../../content/battle/roster';
-import { FRAMES, FRAME_BY_ID, allFrameTokens, allPrefixes, sentence, tokenWord } from '../../content/phonics/sentences';
+import { CHARACTER_BY_ID, ROSTER } from '../../content/battle/roster';
+import { FRAMES, FRAME_BY_ID, allFrameTokens, allPrefixes, lookalikesOf, sentence, tokenWord } from '../../content/phonics/sentences';
 import { wordLine } from '../../content/voice/ids';
-import { counterPlan, fetchPlans, frameIsSolid } from '../../src/rules/sentences';
+import { counterPlan, distractors, fetchPlans, frameIsSolid, type RoomPlan } from '../../src/rules/sentences';
 import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
 
 function memory(): StorageLike {
@@ -103,4 +103,51 @@ test("every frame token's word line is in allFrameTokens", () => {
       }
     }
   }
+});
+
+test('fetchPlans never picks a key word in avoid, or one its own sentence already shows', () => {
+  for (const c of ROSTER) {
+    for (const helper of ['elsa', 'jasmine', c.id]) {
+      const fill = { villain: c.id, helper };
+      const avoid = ['fan', 'sun', c.counter.word];
+      for (let seed = 1; seed <= 30; seed++) {
+        const plans = fetchPlans(new ProgressStore(memory()), fill, ['kitchen', 'garage'], seeded(seed), avoid);
+        for (const p of plans) {
+          assert.ok(!avoid.includes(p.sentence.key), `${c.id}/${helper}: key ${p.sentence.key} is avoided`);
+          const shown = p.sentence.tokens.slice(0, -1).map(tokenWord);
+          assert.ok(!shown.includes(p.sentence.key), `${p.sentence.tokens.join(' ')} shows its key word early`);
+        }
+      }
+    }
+  }
+});
+
+test('room objects: no look-alike of the key, no word of the sentence, nothing avoided', () => {
+  const check = (p: RoomPlan, avoid: string[]) => {
+    const key = p.sentence.key;
+    const others = p.objects.filter((o) => o !== key);
+    assert.equal(others.length, 2);
+    const words = p.sentence.tokens.map(tokenWord);
+    for (const o of others) {
+      assert.ok(!lookalikesOf(key).includes(o), `${o} looks like ${key}`);
+      assert.ok(!words.includes(o), `${o} is a word of "${p.sentence.tokens.join(' ')}"`);
+      assert.ok(!avoid.includes(o), `${o} is avoided`);
+    }
+  };
+  for (const c of ROSTER) {
+    const fill = { villain: c.id, helper: 'elsa' };
+    for (let seed = 1; seed <= 30; seed++) {
+      for (const p of fetchPlans(new ProgressStore(memory()), fill, ['kitchen', 'garage'], seeded(seed), ['zap'])) check(p, ['zap']);
+      check(counterPlan(fill, 'attic', seeded(seed), ['fan']), ['fan']);
+    }
+  }
+  // WE CAN USE THE ...: CAN is a frame word, so never a picture in that room.
+  for (let seed = 1; seed <= 50; seed++) {
+    const objs = distractors('mop', seeded(seed), 2, ['we', 'can', 'use', 'the']);
+    assert.ok(!objs.includes('can'));
+  }
+  assert.ok(lookalikesOf('mice').includes('rat'));
+  assert.ok(lookalikesOf('hat').includes('cap'));
+  assert.ok(lookalikesOf('bus').includes('van'));
+  for (let seed = 1; seed <= 50; seed++) assert.ok(!distractors('mice', seeded(seed)).includes('rat'));
 });
