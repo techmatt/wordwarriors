@@ -82,14 +82,26 @@ Adding a character, ability, word or line is data work: edit `content/`, then
   ready", never as losing. Part 2 always ends in victory.
 - **Speech rule:** voice everything except the word she must read. That word is spoken
   only after she answers, as confirmation. Letter SOUNDS, never letter names. The hint
-  sounds out letters one by one and never blends them.
+  sounds out letters one by one and never blends them. Two deliberate exceptions:
+  Spell the Spell says its word first (it is writing, not reading; the ghost boxes
+  show every letter), and the battle's move choice has the partner say which word to
+  pick (the brief's design: she hears it and finds it written). Letter sounds are never
+  captioned (the placeholder spelling is not text to read). Moves that are choice words
+  are never called out during the fight.
+- **Reading targets never print their answer:** word pictures carry no text; names as
+  sight words use the name-free `face_<id>` cards, not the named character cards.
 - **Every instruction speaks with the spoken word highlighted** (the caption ribbon).
 - **Narrator** = the episode's ally, or Dada Matt with no ally (Matt, 2026-10-18). If Dada
   Matt is the hero with no ally, Dada Jason narrates. Picks before an ally exists are Dada Matt.
 - **Interjections** ("Ha!") are SFX, never `lines.json` lines (Matt, 2026-10-18).
 - **Letter sounds** are edge-tts placeholders by sound class (voiced continuants doubled,
   stops/fricatives "Buh"/"Suh"); each is its own line id so Matt's recorded clips replace
-  them via `content/voice/clips/` (Matt, 2026-10-18).
+  them via `content/voice/clips/` (Matt, 2026-10-18). Measured the same night: edge-tts
+  reads doubled consonants as letter names, so only "Mmm" stays doubled and l n r v z use
+  "Luh" "Nuh" "Err" "Vuh" "Zuh" (awaiting Matt's sign-off; see `docs/engineering.md`).
+- **Spelling words are CVC** (2 warm-ups + the magic word), so the letter-by-letter hint
+  is right; spelling slips are recorded apart from reading (`spelling` in ProgressStore).
+- **Yellow is never a choice colour**; yellow always means "say it again".
 - **Navigation is by walking.** Her character is the cursor; answers are places she walks
   to and presses green on. Coloured dots, never letter labels. Yellow = say it again /
   hint; green is ignored while an instruction plays.

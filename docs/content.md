@@ -31,7 +31,8 @@ One `CharacterSpec` in `ROSTER`:
   - `taunts`: `{ key, text }`, short, no interjections ("Ha!" is an SFX).
 - `counter`: the item Spell the Spell makes: `name`, `glyph`, `look`, `how`
   (`block | reflect | reveal | restore | shutdown | calm`), and `words`: two warm-up
-  words and the magic word, each 2–5 letters.
+  words and the magic word, all CVC (the hint sounds letters one by one, so no digraphs,
+  doubled vowels or silent e).
 - `arena`: a key of `ARENAS`.
 
 Every new character is automatically a hero, an ally (and so a narrator: about 110
