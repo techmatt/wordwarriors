@@ -14,7 +14,7 @@ import { ROSTER } from '../../content/battle/roster';
 import { getAudioContext, unlockAudio } from '../audio/context';
 import { voiceBus } from '../audio/VoiceBus';
 import { startMusic } from '../audio/music';
-import { sfxSelect } from '../audio/sfx';
+import { sfxHit, sfxSelect } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { advance, resetEpisode } from '../episode/Episode';
 import { bob, burst, fitImage } from '../fx/juice';
@@ -78,6 +78,10 @@ export class TitleScene extends Phaser.Scene {
     this.tweens.add({ targets: logo, scale: 1, duration: 700, ease: 'Back.easeOut' });
     this.tweens.add({ targets: logo, angle: { from: -2, to: 2 }, duration: 1600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
 
+    // A looping mini-clash under the logo: a hero and a villain dash in,
+    // collide in a burst, and bounce apart. A taste of what the reading buys.
+    this.time.addEvent({ delay: 2600, loop: true, startAt: 1600, callback: () => this.clash() });
+
     const dot = makeButtonDot(this, GAME_WIDTH / 2, 380, 'green', 38).setDepth(DEPTH.hud);
     this.tweens.add({ targets: dot, y: 370, duration: 500, yoyo: true, repeat: -1 });
 
@@ -100,6 +104,33 @@ export class TitleScene extends Phaser.Scene {
       .text(GAME_WIDTH - 10, 10, 'grown-ups: hold LB + RB, or F9', { fontFamily: 'sans-serif', fontSize: '14px', color: '#ffffff' })
       .setOrigin(1, 0)
       .setAlpha(0.35);
+  }
+
+  private clash(): void {
+    if (this.leaving) return;
+    const good = ROSTER[Math.floor(Math.random() * ROSTER.length)]!;
+    const bad = ROSTER[Math.floor(Math.random() * ROSTER.length)]!;
+    const y = 545;
+    const a = fitImage(this.add.image(-120, y, charArt(good.id, false)).setOrigin(0.5, 1), 110, 140).setDepth(5);
+    const b = fitImage(this.add.image(GAME_WIDTH + 120, y, charArt(bad.id, true)).setOrigin(0.5, 1), 110, 140).setDepth(5);
+    const meet = GAME_WIDTH / 2;
+    this.tweens.add({ targets: a, x: meet - 60, duration: 420, ease: 'Quad.easeIn' });
+    this.tweens.add({
+      targets: b,
+      x: meet + 60,
+      duration: 420,
+      ease: 'Quad.easeIn',
+      onComplete: () => {
+        burst(this, meet, y - 70, { count: 50, speed: 520, colors: [good.good.palette[0], bad.evil.palette[1], 0xffffff] });
+        this.cameras.main.shake(140, 0.006);
+        sfxHit(2);
+        for (const [img, dir] of [[a, -1], [b, 1]] as const) {
+          const s = img.scale;
+          this.tweens.add({ targets: img, scaleX: s * 1.25, scaleY: s * 0.8, duration: 90, yoyo: true });
+          this.tweens.add({ targets: img, x: img.x + dir * 700, y: y - 40, duration: 700, delay: 120, ease: 'Quad.easeOut', onComplete: () => img.destroy() });
+        }
+      },
+    });
   }
 
   override update(_t: number, delta: number): void {
