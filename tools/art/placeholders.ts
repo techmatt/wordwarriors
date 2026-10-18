@@ -299,7 +299,82 @@ function paintAll(list: ArtAsset[]): Record<string, string> {
         // Rooms: a simple set per room, drawn behind where she walks.
         const id = a.id.replace('room_', '');
         const dark = hex(shade(c1, 0.6), 0.8);
-        if (id === 'title' || id === 'victory') {
+        const house = id === 'hub' || id.startsWith('bedroom_') || id.startsWith('side_');
+        if (house) {
+          // The house: a back wall in the first colour, a skirting board, and a
+          // floor in the second colour across the lower half where she walks.
+          const fy = H * 0.5;
+          g.fillStyle = hex(shade(c1, 1.1));
+          g.fillRect(0, 0, W, fy);
+          g.fillStyle = hex(0xffffff, 0.08);
+          for (let x = 0; x < W; x += 80) g.fillRect(x, 0, 40, fy);
+          // A window, with sky, off to one side.
+          const wx = id === 'hub' ? W * 0.08 : W * 0.4;
+          g.fillStyle = hex(shade(c1, 0.55));
+          roundRect(wx - 8, H * 0.1 - 8, 196, 156, 14);
+          g.fill();
+          const skyG = g.createLinearGradient(0, H * 0.1, 0, H * 0.1 + 140);
+          skyG.addColorStop(0, hex(id === 'side_attic' ? 0x1a2a5a : 0x8ad7ff));
+          skyG.addColorStop(1, hex(id === 'side_attic' ? 0x3a4a8a : 0xd8f4ff));
+          g.fillStyle = skyG;
+          roundRect(wx, H * 0.1, 180, 140, 10);
+          g.fill();
+          g.fillStyle = hex(shade(c1, 0.55));
+          g.fillRect(wx + 86, H * 0.1, 8, 140);
+          g.fillRect(wx, H * 0.1 + 66, 180, 8);
+          if (id === 'side_attic') {
+            // Sloped roof beams.
+            g.fillStyle = hex(0x3a2418, 0.9);
+            g.beginPath();
+            g.moveTo(0, 0);
+            g.lineTo(W * 0.3, 0);
+            g.lineTo(0, H * 0.35);
+            g.closePath();
+            g.fill();
+            g.beginPath();
+            g.moveTo(W, 0);
+            g.lineTo(W * 0.7, 0);
+            g.lineTo(W, H * 0.35);
+            g.closePath();
+            g.fill();
+          }
+          g.fillStyle = hex(shade(c1, 0.5));
+          g.fillRect(0, fy - 16, W, 16);
+          const floor = g.createLinearGradient(0, fy, 0, H);
+          floor.addColorStop(0, hex(shade(c2, 1.05)));
+          floor.addColorStop(1, hex(shade(c2, 0.7)));
+          g.fillStyle = floor;
+          g.fillRect(0, fy, W, H - fy);
+          // Floorboards (or tiles in the kitchen).
+          g.strokeStyle = hex(0x000000, 0.12);
+          g.lineWidth = 3;
+          if (id === 'side_kitchen') {
+            for (let y = fy; y < H; y += 60) {
+              g.beginPath();
+              g.moveTo(0, y);
+              g.lineTo(W, y);
+              g.stroke();
+            }
+            for (let x = 0; x < W; x += 80) {
+              g.beginPath();
+              g.moveTo(x, fy);
+              g.lineTo(x, H);
+              g.stroke();
+            }
+          } else {
+            for (let y = fy + 30; y < H; y += 36) {
+              g.beginPath();
+              g.moveTo(0, y);
+              g.lineTo(W, y);
+              g.stroke();
+            }
+          }
+          // A rug where the middle of the room is.
+          g.fillStyle = hex(shade(c1, 0.85), 0.35);
+          g.beginPath();
+          g.ellipse(W / 2, H * 0.78, W * 0.28, H * 0.12, 0, 0, Math.PI * 2);
+          g.fill();
+        } else if (id === 'title' || id === 'victory') {
           g.fillStyle = hex(0xffd23f, 0.12);
           for (let i = 0; i < 12; i++) {
             g.beginPath();
@@ -390,8 +465,10 @@ function paintAll(list: ArtAsset[]): Record<string, string> {
             g.fill();
           }
         }
-        g.fillStyle = hex(0x000000, 0.12);
-        g.fillRect(0, H * 0.62, W, H * 0.38);
+        if (!house) {
+          g.fillStyle = hex(0x000000, 0.12);
+          g.fillRect(0, H * 0.62, W, H * 0.38);
+        }
       }
       if (a.glyph) {
         g.globalAlpha = a.kind === 'arena' ? 0.12 : 0.22;
@@ -542,6 +619,70 @@ function paintAll(list: ArtAsset[]): Record<string, string> {
         g.fill();
         g.fillStyle = hex(0xfff3d6);
         g.fillRect(W * 0.08, H * 0.12, W * 0.84, H * 0.76);
+      } else if (id === 'prop_front_door') {
+        g.fillStyle = hex(0xf0e8d8);
+        g.fillRect(0, 0, W, H * 0.95);
+        g.fillStyle = hex(0xc8323a);
+        roundRect(W * 0.1, H * 0.05, W * 0.8, H * 0.9, 14);
+        g.fill();
+        g.strokeStyle = hex(0x8a1a22);
+        g.lineWidth = 6;
+        g.strokeRect(W * 0.2, H * 0.36, W * 0.6, H * 0.22);
+        g.strokeRect(W * 0.2, H * 0.64, W * 0.6, H * 0.22);
+        g.fillStyle = hex(0xbfe8ff);
+        roundRect(W * 0.25, H * 0.1, W * 0.5, H * 0.18, 12);
+        g.fill();
+        g.fillStyle = hex(0xffd23f);
+        g.beginPath();
+        g.arc(W * 0.76, H * 0.6, 14, 0, Math.PI * 2);
+        g.fill();
+        g.fillStyle = hex(0x8a5a3a);
+        g.fillRect(W * 0.05, H * 0.95, W * 0.9, H * 0.05);
+      } else if (id === 'prop_magic_circle') {
+        const cx = W / 2;
+        const cy = H / 2;
+        const glow = g.createRadialGradient(cx, cy, 4, cx, cy, W / 2);
+        glow.addColorStop(0, hex(0xc8a0ff, 0.7));
+        glow.addColorStop(1, hex(0x7a5aff, 0));
+        g.fillStyle = glow;
+        g.beginPath();
+        g.ellipse(cx, cy, W / 2, H / 2, 0, 0, Math.PI * 2);
+        g.fill();
+        g.strokeStyle = hex(0x9ad8ff, 0.95);
+        for (const [f, lw] of [[0.92, 8], [0.7, 5]] as [number, number][]) {
+          g.lineWidth = lw;
+          g.beginPath();
+          g.ellipse(cx, cy, (W / 2) * f, (H / 2) * f, 0, 0, Math.PI * 2);
+          g.stroke();
+        }
+        // Rune ticks round the ring: abstract marks, never letters.
+        g.lineWidth = 4;
+        for (let i = 0; i < 16; i++) {
+          const t = (i / 16) * Math.PI * 2;
+          const x = cx + Math.cos(t) * (W / 2) * 0.81;
+          const y = cy + Math.sin(t) * (H / 2) * 0.81;
+          g.beginPath();
+          g.moveTo(x - 6, y - 3);
+          g.lineTo(x + 6, y + 3);
+          g.stroke();
+        }
+      } else if (id === 'prop_scroll') {
+        const r = H * 0.16;
+        g.fillStyle = hex(0xfff3d6);
+        g.fillRect(r * 1.2, H * 0.12, W - r * 2.4, H * 0.76);
+        g.strokeStyle = hex(0xffd23f, 0.9);
+        g.lineWidth = 6;
+        g.strokeRect(r * 1.2, H * 0.12, W - r * 2.4, H * 0.76);
+        for (const x of [r * 1.2, W - r * 1.2]) {
+          g.fillStyle = hex(0xe8c890);
+          roundRect(x - r, H * 0.04, r * 2, H * 0.92, r);
+          g.fill();
+          g.fillStyle = hex(0x8a5a2a);
+          g.beginPath();
+          g.arc(x, H * 0.04, r * 0.55, 0, Math.PI * 2);
+          g.arc(x, H * 0.96, r * 0.55, 0, Math.PI * 2);
+          g.fill();
+        }
       } else if (id === 'prop_anvil' || id === 'prop_tent' || a.glyph) {
         emoji(a.glyph || '✨', W / 2, H / 2, Math.min(W, H) * 0.85);
       }
@@ -559,10 +700,10 @@ function artDoc(): string {
     ['character', 'Characters (good and evil versions)'],
     ['minion', 'Summoned minions and helpers'],
     ['arena', 'Battle arenas'],
-    ['room', 'Rooms (episode screens and minigames)'],
+    ['room', 'Rooms (the house, episode screens and minigames)'],
     ['picture', 'Word pictures'],
     ['item', 'Counter items'],
-    ['prop', 'Minigame props and effects'],
+    ['prop', 'Props, house objects (`obj_`), villain decals (`decal_`) and effects'],
   ];
   const out: string[] = [
     '# Art assets',

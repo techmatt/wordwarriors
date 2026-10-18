@@ -10,9 +10,10 @@ import { test } from 'node:test';
 import { ART_ASSETS } from '../../content/art/assets';
 import { MINIONS, MOVE_WORDS, ROSTER } from '../../content/battle/roster';
 import { LETTERS } from '../../content/phonics/letters';
-import { CVC_WORDS, WORDS } from '../../content/phonics/words';
-import { letterSoundLine, moveLine, narratorLine, nameLine, tauntLine, ultimateLine, wordLine } from '../../content/voice/ids';
-import { NARRATOR_LINES } from '../../content/voice/script';
+import { FETCH_ITEMS, FRAMES, allFrameTokens, allPrefixes, sentence, tokenWord } from '../../content/phonics/sentences';
+import { CVC_WORDS, SPECIAL_WORDS, WORDS } from '../../content/phonics/words';
+import { WAKERS, letterSoundLine, moveLine, narratorLine, nameLine, tauntLine, ultimateLine, wakeLine, wordLine } from '../../content/voice/ids';
+import { CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE_LINES } from '../../content/voice/script';
 import { pickWeighted, ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
 import { blendRound, choiceCount, pictureRound, soundRound } from '../../src/rules/rounds';
 import { align } from '../../tools/voice/align';
@@ -97,7 +98,7 @@ test('choiceCount drops to two while she is struggling this session', () => {
 });
 
 test('roster: every character is complete, good and evil', () => {
-  assert.equal(ROSTER.length, 13);
+  assert.equal(ROSTER.length, 14);
   for (const c of ROSTER) {
     for (const f of [c.good, c.evil]) {
       assert.ok(f.abilities.length >= 3, `${f.displayName} has 3+ abilities`);
@@ -133,8 +134,32 @@ test('voice: every line id the game derives exists in lines.json and the manifes
     for (const t of NARRATOR_LINES) want.push(narratorLine(c.id, t.key));
     for (const v of ROSTER) want.push(narratorLine(c.id, `alarm_villain_${v.id}`), narratorLine(c.id, `need_item_${v.id}`), narratorLine(c.id, `made_item_${v.id}`));
     for (const h of ROSTER) if (h.id !== c.id) want.push(narratorLine(c.id, `alarm_hero_${h.id}`));
-    for (const w of MOVE_WORDS) want.push(narratorLine(c.id, `use_move_${w}`));
+    for (const w of MOVE_WORDS) want.push(narratorLine(c.id, `use_move_${w}`), narratorLine(c.id, `teach_word_${w}`));
+    for (const v of ROSTER) want.push(narratorLine(c.id, `need_counter_${v.id}`), narratorLine(c.id, `got_counter_${v.id}`));
   }
+  // The house: wake-ups by both wakers, sentence prefixes, and a word line for every sentence token and key word.
+  for (const k of ['teach_1', 'teach_circle', 'teach_done', 'house_doors', 'house_more', 'house_front', 'secret_door', 'house_ready', 'room_listen', 'room_your_turn', 'room_find', 'got_item', 'use_bag']) {
+    assert.ok(NARRATOR_LINES.some((t) => t.key === k), `narrator line ${k}`);
+  }
+  for (const waker of WAKERS) {
+    want.push(wakeLine(waker, 'up'), wakeLine(waker, 'door'));
+    for (const c of ROSTER) {
+      if (c.id !== waker) want.push(wakeLine(waker, `good_${c.id}`), wakeLine(waker, `helper_${c.id}`));
+      want.push(wakeLine(waker, `bad_${c.id}`));
+    }
+  }
+  for (const p of allPrefixes()) want.push(p.id);
+  for (const t of allFrameTokens()) want.push(wordLine(t));
+  for (const f of FETCH_ITEMS) want.push(wordLine(f.word));
+  for (const c of ROSTER) want.push(wordLine(c.counter.word));
+  for (const w of SPECIAL_WORDS) want.push(wordLine(w.word));
+  for (const c of ROSTER) {
+    for (const f of FRAMES) {
+      const s = sentence(f.id, { villain: c.id, helper: c.id }, f.use === 'counter' ? c.counter.word : 'net');
+      want.push(s.prefixLine, wordLine(s.key), ...s.tokens.map((t) => wordLine(tokenWord(t))));
+    }
+  }
+  assert.equal(new Set(lines.map((l) => l.id)).size, lines.length, 'no two lines share an id');
   const missing = want.filter((id) => !ids.has(id));
   assert.deepEqual(missing, [], 'composed');
   const unbuilt = want.filter((id) => !built.has(id));
@@ -143,9 +168,34 @@ test('voice: every line id the game derives exists in lines.json and the manifes
 });
 
 test('speech rule: no narrator line contains a reading word', () => {
-  const readable = new Set(CVC_WORDS.map((w) => w.word));
-  for (const t of NARRATOR_LINES) {
-    for (const token of t.text.toLowerCase().split(/[^a-z]+/)) assert.ok(!readable.has(token), `"${t.text}" says the reading word "${token}"`);
+  // Reading words: every CVC word and every sentence key word (fetched items, counter words, MICE).
+  const keys = new Set<string>([...FETCH_ITEMS.map((f) => f.word), ...ROSTER.map((c) => c.counter.word), ...SPECIAL_WORDS.map((w) => w.word)]);
+  const readable = new Set<string>([...CVC_WORDS.map((w) => w.word), ...keys]);
+  const words = (s: string) => s.toLowerCase().split(/[^a-z]+/);
+  // need_item ("Only the {item} CAN stop...") belongs to the parked Spell the
+  // Spell flow, where CAN is never a target; rewording it would re-synthesise 169 lines.
+  const parked = new Set(['need_item']);
+  const templates = [...CORE_LINES, ...NARRATOR_LINES, ...HERO_LINES, ...VILLAIN_LINES, ...MOVE_LINES, ...WAKE_LINES].filter((t) => !parked.has(t.key));
+  for (const t of templates) {
+    for (const s of [t.text, t.say ?? '']) for (const token of words(s)) assert.ok(!readable.has(token), `"${s}" says the reading word "${token}"`);
+  }
+  for (const c of ROSTER) {
+    for (const s of [c.house.threat, c.house.threatSay ?? '']) {
+      for (const token of words(s)) assert.ok(!readable.has(token), `${c.id}'s threat "${s}" says the reading word "${token}"`);
+    }
+  }
+  // A prefix line stops before the key word; it must not say it earlier either
+  // (WE CAN USE THE CAN would). Every fetch frame × fetch word, every counter sentence.
+  const prefixText = new Map(allPrefixes().map((p) => [p.id, `${p.text} ${p.say ?? ''}`]));
+  const check = (s: { prefixLine: string; key: string }) => {
+    const text = prefixText.get(s.prefixLine);
+    assert.ok(text, `prefix line ${s.prefixLine} exists`);
+    assert.ok(!words(text).includes(s.key), `"${text}" says its key word "${s.key}"`);
+  };
+  for (const c of ROSTER) {
+    const fill = { villain: c.id, helper: c.id };
+    check(sentence(c.counter.frame, fill, c.counter.word));
+    for (const f of FRAMES.filter((f) => f.use === 'fetch')) for (const item of FETCH_ITEMS) check(sentence(f.id, fill, item.word));
   }
 });
 

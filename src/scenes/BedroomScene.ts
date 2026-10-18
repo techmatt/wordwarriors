@@ -1,0 +1,312 @@
+/**
+ * The bedroom: where every episode starts. She is asleep; somebody comes in
+ * to wake her with the news.
+ *
+ * Dada Matt (Dada Jason when Dada Matt is the hero) walks in from the door:
+ * "Wake up, wake up!" She pops out of bed. "Good news!" The helper pops in.
+ * Then the room goes dark, the villain's mood thumps in over the room
+ * (EvilRilla's footprints, a cracked window: `CharacterSpec.house`, so it is
+ * data), a far-off taunt, and "Come on, let us go! Find the door!"
+ *
+ * No reading here, and no text: it is the room she explores for fun first.
+ * Every toy is a spot that does something silly on green (Stardew's "poke
+ * everything" pleasure), and the door is the one way on. If she has not found
+ * it a while after the news, it sparkles. Yellow says the door line again.
+ */
+
+import Phaser from 'phaser';
+
+import { charArt } from '../../content/art/assets';
+import { BEDROOMS, type BedroomObject, type ReactionSound } from '../../content/house/house';
+import { fighterId, tauntLine, wakeLine, wakerFor } from '../../content/voice/ids';
+import { voiceBus } from '../audio/VoiceBus';
+import {
+  sfxBoing,
+  sfxBoom,
+  sfxKey,
+  sfxOink,
+  sfxPew,
+  sfxPoof,
+  sfxSelect,
+  sfxShout,
+  sfxSummon,
+  sfxWhoosh,
+  sfxZap,
+} from '../audio/sfx';
+import { DEPTH, DOOR_SPARKLE_MS, GAME_WIDTH } from '../config';
+import { episode, helper, villainSpec, type Step } from '../episode/Episode';
+import { bob, burst, flash, popIn, shake, squash, wiggle } from '../fx/juice';
+import { TEX } from '../fx/textures';
+import { applyHouseMood } from '../world/houseMood';
+import { RoomScene, type Spot } from '../world/RoomScene';
+
+const SOUND: Record<ReactionSound, () => void> = {
+  boing: sfxBoing,
+  zap: sfxZap,
+  summon: sfxSummon,
+  pew: sfxPew,
+  oink: sfxOink,
+  shout: () => sfxShout(1.3),
+  poof: sfxPoof,
+  key: sfxKey,
+  whoosh: sfxWhoosh,
+};
+
+export class BedroomScene extends RoomScene {
+  private asleep = true;
+  private newsDone = false;
+  private leaving = false;
+  private doorSpot: Spot | null = null;
+  private doorImg: Phaser.GameObjects.Image | null = null;
+  private zzz: Phaser.Time.TimerEvent | null = null;
+
+  constructor() {
+    super('Bedroom');
+  }
+
+  override init(data: { step?: Step }): void {
+    super.init(data);
+    this.asleep = true;
+    this.newsDone = false;
+    this.leaving = false;
+    this.doorSpot = null;
+    this.doorImg = null;
+    this.zzz = null;
+    // The floor runs right down to the toys at the front of the room.
+    this.floor = new Phaser.Geom.Rectangle(70, 400, GAME_WIDTH - 140, 300);
+  }
+
+  private get room() {
+    return BEDROOMS[0]!;
+  }
+
+  protected background(): string {
+    return `room_bedroom_${this.room.id}`;
+  }
+
+  protected build(): void {
+    const room = this.room;
+    this.round = 'bedroom:sleep';
+
+    // The bed, with her tucked in it (hidden: the cover is over her).
+    this.art('prop_bed', 280, 190, room.bed.x, room.bed.y).setDepth(room.bed.y);
+    this.player.place(room.bed.x, room.bed.y - 20);
+    this.player.root.setVisible(false);
+    this.zzz = this.time.addEvent({ delay: 900, loop: true, callback: () => this.floatZ() });
+
+    // The toys: every one does something on green.
+    for (const o of room.objects) {
+      const img = this.art(`obj_${o.id}`, o.w, o.h);
+      const spot = this.addSpot(o.id, o.x, o.y, [img], null);
+      spot.obj.setData('object', o);
+    }
+
+    // The door: the way on, open once the news is told.
+    this.doorImg = this.art('prop_door', 130, 200);
+    this.doorSpot = this.addSpot('door', room.door.x, room.door.y, [this.doorImg], true);
+    this.doorSpot.enabled = false;
+
+    void this.run();
+  }
+
+  private async run(): Promise<void> {
+    const room = this.room;
+    const w = wakerFor(episode.hero);
+    await this.wait(1600);
+
+    // The waker comes in through the door.
+    this.doorOpens();
+    const waker = this.art(charArt(w, false), 120, 160, room.door.x, room.door.y);
+    waker.setDepth(room.waker.y);
+    await this.guard(
+      new Promise<void>((resolve) =>
+        this.tweens.add({ targets: waker, x: room.waker.x, y: room.waker.y, duration: 900, ease: 'Sine.easeInOut', onComplete: () => resolve() }),
+      ),
+    );
+    bob(this, waker, 5, 800);
+    await this.speak(wakeLine(w, 'up'));
+
+    // Up she pops.
+    this.wakeUp();
+    await this.wait(500);
+    await this.speak(wakeLine(w, `good_${episode.hero}`));
+
+    // The helper pops in beside the waker.
+    const h = helper();
+    if (h !== w) {
+      const hx = room.waker.x - 140;
+      const hy = room.waker.y + 20;
+      const friend = this.art(charArt(h, false), 110, 145, hx, hy).setDepth(hy);
+      const s = friend.scale;
+      popIn(this, friend, s);
+      burst(this, hx, hy - 70, { count: 50, colors: [0xffffff, 0xff9ad5, 0x7ad9ff, 0xffd23f] });
+      sfxSummon();
+      this.time.delayedCall(400, () => bob(this, friend, 7, 650));
+      await this.speak(wakeLine(w, `helper_${h}`));
+    }
+
+    // The bad news: the room goes dark and the villain's mess thumps in.
+    this.round = 'bedroom:news';
+    flash(this, 0x220022, 450);
+    sfxBoom(2);
+    shake(this, 5, 600);
+    const mood = applyHouseMood(this, episode.villain, { reveal: true, seed: 11, floor: this.floor });
+    await Promise.all([this.speak(wakeLine(w, `bad_${episode.villain}`)), this.guard(mood.revealed)]);
+
+    // A far-off taunt: heard, not seen.
+    const taunt = villainSpec().evil.taunts[0];
+    if (taunt) {
+      shake(this, 2, 300);
+      await this.guard(voiceBus.say(tauntLine(fighterId(episode.villain, true), taunt.key), 'bark'));
+    }
+
+    await this.speak(wakeLine(w, 'door'));
+    this.newsDone = true;
+    this.round = 'bedroom:door';
+    if (this.doorSpot) {
+      this.doorSpot.enabled = true;
+      burst(this, this.doorSpot.x, this.doorSpot.y - 100, { count: 30 });
+    }
+    this.time.delayedCall(DOOR_SPARKLE_MS, () => this.sparkleDoor());
+  }
+
+  /** A little 💤 rising off the bed while she sleeps. */
+  private floatZ(): void {
+    if (!this.asleep) return;
+    const { x, y } = this.room.bed;
+    const z = this.add.text(x + 40 + Math.random() * 30, y - 150, '💤', { fontSize: '34px' }).setOrigin(0.5).setDepth(DEPTH.fx);
+    z.setScale(0.5);
+    this.tweens.add({ targets: z, y: z.y - 80, scale: 1.1, alpha: { from: 1, to: 0 }, duration: 1800, ease: 'Sine.easeOut', onComplete: () => z.destroy() });
+  }
+
+  private wakeUp(): void {
+    const { x, y } = this.room.bed;
+    this.asleep = false;
+    this.zzz?.remove();
+    this.player.place(x + 170, y + 50);
+    this.player.root.setVisible(true);
+    this.player.root.setScale(1, 0.3);
+    this.tweens.add({ targets: this.player.root, scaleY: 1, duration: 260, ease: 'Back.easeOut' });
+    this.player.hop();
+    sfxBoing();
+    burst(this, x + 170, y - 20, { count: 40 });
+  }
+
+  private doorOpens(): void {
+    if (!this.doorImg) return;
+    const s = this.doorImg.scale;
+    squash(this, this.doorImg, s, s, 0.18, 140);
+    sfxWhoosh();
+  }
+
+  /** She has not found the door for a while: it sparkles, gently. */
+  private sparkleDoor(): void {
+    const spot = this.doorSpot;
+    if (!spot || this.leaving || spot.obj.getData('sparkling')) return;
+    spot.obj.setData('sparkling', true);
+    const b = spot.obj.getBounds();
+    const glow = this.add
+      .particles(spot.x, b.centerY, TEX.star, {
+        speed: { min: 20, max: 70 },
+        scale: { start: 0.8, end: 0 },
+        lifespan: 900,
+        frequency: 80,
+        emitZone: { type: 'random', source: new Phaser.Geom.Rectangle(-b.width / 2, -b.height / 2, b.width, b.height) } as never,
+        tint: [0xffd23f, 0xffffff],
+        blendMode: Phaser.BlendModes.ADD,
+      })
+      .setDepth(spot.obj.depth + 1);
+    spot.obj.once(Phaser.GameObjects.Events.DESTROY, () => glow.destroy());
+  }
+
+  override update(time: number, deltaMs: number): void {
+    super.update(time, deltaMs);
+    // Tucked in: she stays in bed until she is woken.
+    if (this.asleep) this.player.place(this.room.bed.x, this.room.bed.y - 20);
+  }
+
+  protected override hint(): void {
+    if (this.newsDone) void this.speak(wakeLine(wakerFor(episode.hero), 'door'));
+  }
+
+  protected choose(spot: Spot): void {
+    if (this.locked || this.asleep) return;
+    if (spot.id === 'door') {
+      if (!this.newsDone || this.leaving) return;
+      this.leaving = true;
+      this.doorOpens();
+      sfxSelect();
+      burst(this, spot.x, spot.y - 100, { count: 50 });
+      this.done();
+      return;
+    }
+    const o = spot.obj.getData('object') as BedroomObject | undefined;
+    if (o) this.react(spot, o);
+  }
+
+  /** A toy doing its thing. No penalty, no reading: just fun. */
+  private react(spot: Spot, o: BedroomObject): void {
+    const img = spot.obj.list[0] as Phaser.GameObjects.Image | undefined;
+    if (!img || spot.obj.getData('busy')) return;
+    spot.obj.setData('busy', true);
+    const s = img.scale;
+    const free = (ms: number) =>
+      this.time.delayedCall(ms, () => {
+        img.setPosition(0, 0).setScale(s);
+        spot.obj.setData('busy', false);
+      });
+    SOUND[o.sound]();
+    const top = spot.y - o.h;
+    switch (o.reaction) {
+      case 'wiggle':
+        wiggle(this, img);
+        squash(this, img, s, s, 0.12, 100);
+        burst(this, spot.x, top, { count: 14, colors: [0xff9ad5, 0xffffff] });
+        free(500);
+        break;
+      case 'pop':
+        this.tweens.add({ targets: img, scale: s * 1.5, duration: 140, yoyo: true, ease: 'Quad.easeOut' });
+        burst(this, spot.x, top + o.h / 2, { count: 40, texture: TEX.square, colors: [0xff5ab4, 0xffd23f, 0x7ad9ff, 0x44d95a], speed: 420, gravity: 600, blend: false, life: 900 });
+        free(400);
+        break;
+      case 'alive': {
+        // It comes to life: a few hops about, squashing on each landing.
+        const hops = [-28, 28, 0];
+        hops.forEach((dx, i) =>
+          this.time.delayedCall(i * 300, () => {
+            this.tweens.add({ targets: img, x: dx, duration: 280, ease: 'Sine.easeInOut' });
+            this.tweens.add({ targets: img, y: -40, duration: 140, yoyo: true, ease: 'Quad.easeOut', onComplete: () => squash(this, img, s, s, 0.2, 70) });
+          }),
+        );
+        free(1100);
+        break;
+      }
+      case 'bounce': {
+        const heights = [70, 40, 18];
+        let at = 0;
+        heights.forEach((hgt) => {
+          this.time.delayedCall(at, () =>
+            this.tweens.add({ targets: img, y: -hgt, duration: 90 + hgt * 1.5, yoyo: true, ease: 'Quad.easeOut', onComplete: () => squash(this, img, s, s, 0.22, 60) }),
+          );
+          at += 2 * (90 + hgt * 1.5) + 130;
+        });
+        free(at + 50);
+        break;
+      }
+      case 'glow': {
+        const light = this.add.image(spot.x, top + o.h * 0.4, TEX.glow).setTint(0xfff1a8).setBlendMode(Phaser.BlendModes.ADD).setDepth(DEPTH.fx);
+        light.setScale(0.5);
+        this.tweens.add({ targets: light, scale: 5, alpha: { from: 1, to: 0 }, duration: 900, ease: 'Cubic.easeOut', onComplete: () => light.destroy() });
+        flash(this, 0xfff4c0, 160);
+        burst(this, spot.x, top + o.h * 0.4, { count: 24, colors: [0xfff1a8, 0xffffff] });
+        free(500);
+        break;
+      }
+      case 'squeak':
+        squash(this, img, s, s, 0.4, 110);
+        burst(this, spot.x, top, { count: 10, texture: TEX.star, colors: [0xffd23f, 0xffffff], speed: 200 });
+        free(400);
+        break;
+    }
+  }
+}

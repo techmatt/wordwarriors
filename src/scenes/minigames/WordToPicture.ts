@@ -60,7 +60,7 @@ export class WordToPicture extends Minigame {
     this.letters = [];
     const size = item.target.length > 6 ? 70 : 92;
     const style = { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: `${size}px`, color: '#1a1030' };
-    const widths = [...item.target].map((ch) => this.add.text(0, 0, ch, style).setVisible(false));
+    const widths = [...item.target].map((ch) => this.add.text(0, 0, ch.toUpperCase(), style).setVisible(false));
     const total = widths.reduce((n, t) => n + t.width, 0);
     let x = -total / 2;
     for (const [i, t] of widths.entries()) {

@@ -136,7 +136,15 @@ export interface CounterItem {
   glyph: string;
   look: string;
   /** What it does to the ultimate in Part 2, as the battle shows it. */
-  how: 'block' | 'reflect' | 'reveal' | 'restore' | 'shutdown' | 'calm';
+  how: 'block' | 'reflect' | 'reveal' | 'restore' | 'shutdown' | 'calm' | 'scare';
+  /**
+   * The key word of the counter sentence (the sentence game after the
+   * retreat): a picturable word whose picture she finds. Decodable unless it
+   * is listed in SENTENCE_WORDS as a special case (MICE).
+   */
+  word: string;
+  /** Which counter frame the sentence uses (FRAMES in content/phonics/sentences.ts). */
+  frame: 'scared_of' | 'scared_of_the';
   /**
    * The Spell the Spell words: two warm-ups and the magic word last. Short, and
    * the ghost boxes show every letter.
@@ -155,6 +163,28 @@ export interface CharacterSpec {
   counter: CounterItem;
   /** The arena the evil version fights in. ARENAS key. */
   arena: string;
+  /** How the house looks and what Dada Matt says when this one is the villain. */
+  house: HouseMood;
+}
+
+/**
+ * The villain's mood laid over the house (bedroom after the bad news, hub,
+ * side rooms): a tint, a few decals scattered about, and an ambient effect.
+ */
+export interface HouseMood {
+  /**
+   * The threat in the wake-up line: "Bad news, EvilRilla is coming, and
+   * <threat>!" Written as a clause; no reading words.
+   */
+  threat: string;
+  /** Spoken form of the threat, when edge-tts needs help. Same word count. */
+  threatSay?: string;
+  /** Laid over every room at low alpha. */
+  tint: number;
+  /** Things the villain left lying about. Each is art `decal_<id>`. */
+  decals: { id: string; glyph: string; look: string; count: number }[];
+  /** An ambient effect: falling frost, drifting embers, a thump that shakes the room. */
+  fx: 'frost' | 'embers' | 'quake' | 'sparkle' | 'smoke' | 'none';
 }
 
 export interface MinionSpec {

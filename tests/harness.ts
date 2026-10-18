@@ -26,6 +26,7 @@ export interface WWState {
     player: { x: number; y: number };
     spots: { id: string; x: number; y: number; correct: boolean | null }[];
     spelling?: { word: string; filled: number };
+    sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean };
   } | null;
   battle: {
     part: number;
@@ -38,7 +39,11 @@ export interface WWState {
     minions: number;
     heroes: { id: string; hp: number; status: string | null }[];
     villains: { id: string; hp: number; status: string | null }[];
-    choice: { words: string[]; colors: string[]; right: string; open: boolean } | null;
+    /** The move words stand in the arena as pads (`spots`); she walks her hero onto one. */
+    choice: { words: string[]; right: string; open: boolean; spots: { word: string; x: number; y: number }[] } | null;
+    /** Her hero's position. */
+    me: { x: number; y: number } | null;
+    itemsUsed: number;
   } | null;
   voice: { speaking: string | null; busy: boolean; history: string[] };
   fx: Record<string, number>;
@@ -161,12 +166,36 @@ export async function playBattle(page: Page, part: number, wrongFirst = false): 
     const s = await until(page, (st) => st.scene !== 'Battle' || Boolean(st.battle?.choice), 180_000, `battle ${part} choice or end`);
     if (s.scene !== 'Battle') return s;
     const open = await until(page, (st) => st.scene !== 'Battle' || Boolean(st.battle?.choice?.open), 60_000, 'choice open');
+    if (open.scene !== 'Battle') return open;
     const c = open.battle!.choice!;
-    const pick = wrongFirst && first ? c.words.findIndex((w) => w !== c.right) : c.words.indexOf(c.right);
+    const word = wrongFirst && first ? c.words.find((w) => w !== c.right)! : c.right;
     first = false;
-    await press(page, c.colors[pick]!);
+    const pad = c.spots.find((sp) => sp.word === word)!;
+    await walkHeroTo(page, pad.x, pad.y);
+    await press(page, 'green');
     await until(page, (st) => !st.battle?.choice, 30_000, 'choice closed');
   }
+}
+
+/** Walk her battle hero (on real time, in the move choice) onto (x, y), re-aiming every hop. */
+async function walkHeroTo(page: Page, x: number, y: number, close = 20): Promise<void> {
+  const start = Date.now();
+  for (;;) {
+    const s = await state(page);
+    const p = s.battle?.me;
+    if (!p || !s.battle?.choice) break;
+    const dx = x - p.x;
+    const dy = y - p.y;
+    const d = Math.hypot(dx, dy);
+    if (d < close) break;
+    if (Date.now() - start > 20_000) throw new Error(`hero could not reach ${x},${y} from ${p.x},${p.y}`);
+    // Slow down when close so a low frame rate does not overshoot.
+    const k = d < 80 ? 0.35 : 1;
+    await stick(page, (dx / d) * k, (dy / d) * k);
+    await page.waitForTimeout(40);
+  }
+  await stick(page, 0, 0);
+  await page.waitForTimeout(80);
 }
 
 export function expectNoErrors(errors: string[]): void {

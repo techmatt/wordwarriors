@@ -27,6 +27,8 @@
     "moriarty": { "voice": "en-IE-ConnorNeural", "rate": "+0%" },
     "moriarty_evil": { "voice": "en-IE-ConnorNeural", "rate": "-8%", "pitch": "-20Hz" },
     "bavmorda": { "voice": "en-US-MichelleNeural", "rate": "-8%", "pitch": "+5Hz" },
-    "bavmorda_evil": { "voice": "en-US-MichelleNeural", "rate": "-15%", "pitch": "-35Hz" }
+    "bavmorda_evil": { "voice": "en-US-MichelleNeural", "rate": "-15%", "pitch": "-35Hz" },
+    "rilla": { "voice": "en-US-RogerNeural", "rate": "-8%", "pitch": "-5Hz" },
+    "rilla_evil": { "voice": "en-US-RogerNeural", "rate": "-15%", "pitch": "-40Hz" }
   }
 }

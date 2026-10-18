@@ -32,6 +32,8 @@ export interface RoomInfo {
   spots: SpotInfo[];
   /** Ghost boxes in Spelling: the word and how many letters are in. */
   spelling?: { word: string; filled: number };
+  /** The sentence game: its tokens (upper case), key word, frame, which pass, and the token in play. */
+  sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean };
 }
 
 export interface BattleInfo {
@@ -45,7 +47,12 @@ export interface BattleInfo {
   ultimates: number;
   combos: number;
   movePicks: number;
-  choice: { words: string[]; colors: string[]; right: string; open: boolean } | null;
+  /** The move choice: its words standing in the arena as pads (`spots`) she walks onto. */
+  choice: { words: string[]; right: string; open: boolean; spots: { word: string; x: number; y: number }[] } | null;
+  /** Her hero's position on the arena floor. */
+  me: { x: number; y: number } | null;
+  /** Fetched items used this part. */
+  itemsUsed: number;
 }
 
 export const hookState: { room: RoomInfo | null; battle: BattleInfo | null; scene: string; fps: number } = {

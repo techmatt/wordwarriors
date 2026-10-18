@@ -93,7 +93,7 @@ export class TitleScene extends Phaser.Scene {
     // unconfirmed (2026-10-18), so while audio is still locked a grown-up note
     // says one click or key turns it on. It disappears the moment it is live.
     const soundNote = this.add
-      .text(10, 10, '🔈 grown-ups: click or press Space once for sound', { fontFamily: 'sans-serif', fontSize: '16px', color: '#ffffff' })
+      .text(10, 10, '🔈 GROWN-UPS: CLICK OR PRESS SPACE ONCE FOR SOUND', { fontFamily: 'sans-serif', fontSize: '16px', color: '#ffffff' })
       .setAlpha(0.6)
       .setDepth(DEPTH.hud);
     const note = () => soundNote.setVisible(getAudioContext()?.state !== 'running');
@@ -101,7 +101,7 @@ export class TitleScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.events.off(Phaser.Scenes.Events.UPDATE, note));
 
     this.add
-      .text(GAME_WIDTH - 10, 10, 'grown-ups: hold LB + RB, or F9', { fontFamily: 'sans-serif', fontSize: '14px', color: '#ffffff' })
+      .text(GAME_WIDTH - 10, 10, 'GROWN-UPS: HOLD LB + RB, OR F9', { fontFamily: 'sans-serif', fontSize: '14px', color: '#ffffff' })
       .setOrigin(1, 0)
       .setAlpha(0.35);
   }

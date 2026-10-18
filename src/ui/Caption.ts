@@ -9,6 +9,8 @@
  * listens to the bus, so nothing can say a line without it showing.
  *
  * Barks (taunts) are not shown here; they go in follow-the-speaker bubbles.
+ * Letter sounds and sentence prefix lines are not shown either (see show()).
+ * Words show upper case, like every text she reads.
  */
 
 import Phaser from 'phaser';
@@ -54,7 +56,9 @@ export class Caption {
     // ("Puh") that is not a thing to read, and captioning the letter instead
     // would hand her the answer in Sound to Letter. The letter on the stone,
     // tile or ghost box is what lights up.
-    if (u?.id.startsWith('letter_')) {
+    // Sentence prefix lines (`sent_`) are lit word by word on the sentence
+    // banner itself, so the ribbon stays out of the way.
+    if (u?.id.startsWith('letter_') || u?.id.startsWith('sent_')) {
       this.current = null;
       this.root.setVisible(false);
       return;
@@ -82,7 +86,9 @@ export class Caption {
       this.root.add(this.portrait);
     }
 
-    const tokens = u.line.words.map((w) => w.word);
+    // All text in the game is upper case (Matt, 2026-10-18); only the display
+    // changes, the line texts stay as written.
+    const tokens = u.line.words.map((w) => w.word.toUpperCase());
     const size = tokens.length > 9 ? 34 : 40;
     let x = 0;
     const gap = 14;

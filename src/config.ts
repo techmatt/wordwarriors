@@ -38,6 +38,30 @@ export const DEPTH = {
   overlay: 110_000,
 } as const;
 
+/**
+ * Who is in an episode while Matt is testing v0.2 (Matt, 2026-10-18): the
+ * pick screens are skipped and the cast is fixed. `pickScreens: true` brings
+ * back hero → ally → villain picks; `randomVillain: true` (with the picks off)
+ * draws a surprise villain instead of `villain`.
+ */
+export const EPISODE_DEFAULTS = {
+  pickScreens: false,
+  hero: 'julia',
+  ally: 'elsa' as string | null,
+  villain: 'rilla',
+  randomVillain: false,
+};
+
+/**
+ * When a sentence frame counts as solid, so its sentences skip the listening
+ * pass and start on her turn. Conservative: at least `tries` answers recorded
+ * for the frame and the last `lastRight` of them right first time.
+ */
+export const SENTENCE_SOLID = { tries: 6, lastRight: 5 };
+
+/** How long in the bedroom (ms, after the news) before the door starts to sparkle. */
+export const DOOR_SPARKLE_MS = 20_000;
+
 /** Pad face colours, as a child sees them. Rules code talks in these names, never A/B. */
 export const PAD_COLOR = {
   green: 0x44d95a,

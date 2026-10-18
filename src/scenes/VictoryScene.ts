@@ -105,6 +105,7 @@ export class VictoryScene extends Phaser.Scene {
   /**
    * The words she read this episode pop up one by one, each with its picture,
    * and each is said once more. Shown, never counted: nothing says "six words".
+   * Order is the order she read them (episode.read); words show upper case.
    */
   private async recap(gone: () => boolean): Promise<void> {
     const words = episode.read.slice(0, 7);
@@ -113,12 +114,10 @@ export class VictoryScene extends Phaser.Scene {
       if (gone()) return;
       const x = GAME_WIDTH / 2 + (i - (words.length - 1) / 2) * gap;
       const card = this.add.rectangle(0, 0, 130, 170, 0xfffaf0).setStrokeStyle(6, 0x5a4a8a);
-      const entry = WORD_BY_ID[w];
-      const counter = villainSpec().counter;
-      const pic = entry ? pictureFor(entry) : counter.words.includes(w) ? `item_${counter.id}` : null;
+      const pic = this.pictureOf(w);
       const parts: Phaser.GameObjects.GameObject[] = [card];
       if (pic) parts.push(fitImage(this.add.image(0, -22, pic), 100, 100));
-      parts.push(this.add.text(0, 58, w, { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '38px', color: '#1a1030' }).setOrigin(0.5));
+      parts.push(this.add.text(0, 58, w.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '38px', color: '#1a1030' }).setOrigin(0.5));
       const c = this.add.container(x, 345, parts).setDepth(DEPTH.hud);
       c.setScale(0);
       this.tweens.add({ targets: c, scale: 1, duration: 300, ease: 'Back.easeOut' });
@@ -128,6 +127,20 @@ export class VictoryScene extends Phaser.Scene {
       await voiceBus.say(wordLine(w));
       if (gone()) return;
     }
+  }
+
+  /**
+   * A recap word's picture: its own card (fetched key words and the counter
+   * word are picture words too), else the counter-item card for a counter
+   * word without one, else none (sight words like THE).
+   */
+  private pictureOf(w: string): string | null {
+    const entry = WORD_BY_ID[w];
+    if (entry && (entry.character || this.textures.exists(pictureFor(entry)))) return pictureFor(entry);
+    if (episode.fetched.includes(w) && this.textures.exists(`pic_${w}`)) return `pic_${w}`;
+    const counter = villainSpec().counter;
+    if (counter.word === w || counter.words.includes(w)) return `item_${counter.id}`;
+    return null;
   }
 
   override update(): void {

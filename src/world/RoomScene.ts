@@ -82,8 +82,19 @@ export abstract class RoomScene extends Phaser.Scene {
 
   /** She pressed green next to a spot. */
   protected abstract choose(spot: Spot): void;
-  /** Yellow: say it again / hint. */
-  protected hint(): void {}
+  /**
+   * Yellow: say it again / hint. `idle` is true when the room offers it
+   * after a long quiet spell rather than because she pressed yellow.
+   */
+  protected hint(_idle = false): void {}
+  /**
+   * Green, before any spot is chosen. A room that uses green for something
+   * else at times (the sentence read-along steps a word) returns true to
+   * consume the press; the default lets the nearest spot be chosen.
+   */
+  protected onGreen(): boolean {
+    return false;
+  }
 
   create(): void {
     this.gen++;
@@ -215,9 +226,11 @@ export abstract class RoomScene extends Phaser.Scene {
       this.dot.setPosition(best.x, bounds.top - 26).setVisible(!this.locked);
     } else this.dot.setVisible(false);
 
-    if (this.controls.pressed('green') && best && !this.locked) {
-      this.player.hop();
-      this.choose(best);
+    if (this.controls.pressed('green') && !this.locked) {
+      if (!this.onGreen() && best) {
+        this.player.hop();
+        this.choose(best);
+      }
     }
     if (this.controls.pressed('yellow') && !this.locked) {
       this.tweens.add({ targets: this.helpDot, scale: 1.4, duration: 120, yoyo: true });
@@ -258,7 +271,7 @@ export abstract class RoomScene extends Phaser.Scene {
     if (this.stickHint) this.stickHint.setPosition(this.player.x + 90, this.player.y - 70);
     if (this.idleMs > IDLE_REPROMPT_MS) {
       this.idleMs = 0;
-      this.hint();
+      this.hint(true);
     }
   }
 

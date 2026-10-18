@@ -77,7 +77,7 @@ export class PickScene extends RoomScene {
     });
     this.player.place(GAME_WIDTH / 2, 445);
 
-    const title = { hero: 'Pick your HERO', ally: 'Pick a FRIEND', villain: 'Pick the BAD GUY' }[this.what];
+    const title = { hero: 'PICK YOUR HERO', ally: 'PICK A FRIEND', villain: 'PICK THE BAD GUY' }[this.what];
     this.add
       .text(GAME_WIDTH / 2, 50, title, { fontFamily: '"Arial Black", sans-serif', fontSize: '52px', color: evil ? '#ff5a6a' : '#ffd23f', stroke: '#000000', strokeThickness: 10 })
       .setOrigin(0.5);

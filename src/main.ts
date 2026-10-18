@@ -4,7 +4,10 @@ import { BattleScene } from './battle/BattleScene';
 import { GAME_HEIGHT, GAME_WIDTH } from './config';
 import { AlarmScene } from './scenes/AlarmScene';
 import { JourneyScene } from './scenes/JourneyScene';
+import { BedroomScene } from './scenes/BedroomScene';
 import { BootScene } from './scenes/BootScene';
+import { HubScene } from './scenes/HubScene';
+import { SentenceRoom } from './scenes/SentenceRoom';
 import { BlendPath } from './scenes/minigames/BlendPath';
 import { SoundToLetter } from './scenes/minigames/SoundToLetter';
 import { Spelling } from './scenes/minigames/Spelling';
@@ -49,6 +52,25 @@ new Phaser.Game({
   backgroundColor: '#0e0b1a',
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
   input: { gamepad: true },
-  // Only Boot starts on its own; Episode.ts starts everything else.
-  scene: [BootScene, JourneyScene, TitleScene, PickScene, AlarmScene, SoundToLetter, BlendPath, WordToPicture, BattleScene, RetreatScene, Spelling, VictoryScene, ParentScene],
+  // Only Boot starts on its own; Episode.ts starts everything else. The
+  // parked v0.1 scenes (Alarm, the prep games, Retreat, Spelling) stay
+  // registered so `?scene=` can still open them.
+  scene: [
+    BootScene,
+    JourneyScene,
+    TitleScene,
+    PickScene,
+    BedroomScene,
+    HubScene,
+    SentenceRoom,
+    BattleScene,
+    VictoryScene,
+    ParentScene,
+    AlarmScene,
+    SoundToLetter,
+    BlendPath,
+    WordToPicture,
+    RetreatScene,
+    Spelling,
+  ],
 });

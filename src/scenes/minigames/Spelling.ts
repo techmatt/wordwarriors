@@ -106,7 +106,7 @@ export class Spelling extends Minigame {
       const x = x0 + i * (size + gap);
       const rect = this.add.rectangle(x, 370, size, size + 10, 0xffffff, 0.85).setStrokeStyle(6, 0x5a4a8a).setDepth(DEPTH.hud - 2);
       const ghost = this.add
-        .text(x, 370, letter, { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '86px', color: '#5a4a8a' })
+        .text(x, 370, letter.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '86px', color: '#5a4a8a' })
         .setOrigin(0.5)
         .setAlpha(0.28)
         .setDepth(DEPTH.hud - 1);
@@ -132,7 +132,7 @@ export class Spelling extends Minigame {
   /**
    * A small picture of the keyboard (QWERTY, capitals as printed on the keys)
    * with the next letter's key glowing, so a hunt-and-peck four-year-old knows
-   * where to look; the lowercase she is typing sits small in each key's corner.
+   * where to look.
    */
   private keys = new Map<string, Phaser.GameObjects.Container>();
 
@@ -145,10 +145,9 @@ export class Spelling extends Minigame {
       const x0 = GAME_WIDTH / 2 - ((row.length - 1) * (size + gap)) / 2 + r * 14;
       [...row].forEach((ch, i) => {
         const bg = this.add.rectangle(0, 0, size, size, 0xfaf6ee).setStrokeStyle(3, 0x5a4a8a);
-        // Capital as printed on the real keycap; the lowercase she types, small.
+        // Capital, as printed on the real keycap and as every text in the game.
         const cap = this.add.text(-2, 1, ch.toUpperCase(), { fontFamily: '"Arial Black", sans-serif', fontSize: '24px', color: '#3a2a5a' }).setOrigin(0.5);
-        const low = this.add.text(size / 2 - 5, -size / 2 + 2, ch, { fontFamily: '"Comic Sans MS", sans-serif', fontSize: '14px', color: '#7a6a9a' }).setOrigin(1, 0);
-        const key = this.add.container(x0 + i * (size + gap), 480 + r * (size + gap), [bg, cap, low]).setDepth(DEPTH.hud - 3);
+        const key = this.add.container(x0 + i * (size + gap), 480 + r * (size + gap), [bg, cap]).setDepth(DEPTH.hud - 3);
         this.keys.set(ch, key);
       });
     });
@@ -185,7 +184,7 @@ export class Spelling extends Minigame {
     sfxKey();
     box.ghost.setAlpha(0);
     box.filled = this.add
-      .text(box.rect.x, box.rect.y, letter, { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '86px', color: '#1a1030' })
+      .text(box.rect.x, box.rect.y, letter.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '86px', color: '#1a1030' })
       .setOrigin(0.5)
       .setDepth(DEPTH.hud);
     popIn(this, box.filled, 1);

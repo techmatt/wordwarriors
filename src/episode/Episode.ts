@@ -1,28 +1,38 @@
 /**
- * One episode, start to finish: who is fighting, what has been made, and which
- * step comes next.
+ * One episode, start to finish: who is fighting, what has been fetched, and
+ * which step comes next.
  *
- *   title → hero → ally → villain → alarm → prep 1 → prep 2 → battle part 1
- *   → retreat → spell the spell → battle part 2 → victory → title
+ *   title → (hero → ally → villain picks, off by default) → bedroom
+ *   → house part 1 (hub: learn the spell, two side-room sentence games,
+ *     out the front door) → battle part 1 (the villain's ultimate wins)
+ *   → house part 2 (back to the hub, the counter sentence game in the attic,
+ *     out the front door) → battle part 2 (the counter wins) → victory → title
  *
  * Scenes never decide where to go next: they call `advance(scene)` when they
- * are done and this module starts the next step's scene. That keeps the flow
- * in one readable list and lets `?scene=` jump straight into any step with a
- * plausible episode around it (`fastEpisode`).
+ * are done and this module starts the next step's scene. Inside a house step
+ * the hub and its side rooms pass control between themselves (`enterRoom`,
+ * `backToHub`); the front door is the hub's `advance()`.
+ *
+ * The four v0.1 prep games (Sound → Letter, Blend Path, Word → Picture, Spell
+ * the Spell) are parked: their scenes and `prep`/`spell` step kinds stay so
+ * `?scene=sound` etc. still open them, but no episode includes them.
  */
 
 import Phaser from 'phaser';
 
 import { CHARACTER_BY_ID, ROSTER } from '../../content/battle/roster';
 import type { CharacterSpec } from '../../content/battle/types';
+import { COUNTER_ROOM, FETCH_ROOMS } from '../../content/house/house';
 import { DEFAULT_NARRATOR, group } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
+import { EPISODE_DEFAULTS } from '../config';
+import { counterPlan, fetchPlans, type RoomPlan } from '../rules/sentences';
 import { progress } from '../state/progress';
 import { voiceBank } from '../voice/VoiceBank';
 
 export type PrepGame = 'sound' | 'blend' | 'picture';
 
-/** What each prep game makes, which the battle then uses. */
+/** What each (parked) prep game makes, which the battle then uses. */
 export const PREP_MAKES: Record<PrepGame, 'gem' | 'ammo' | 'helper'> = {
   sound: 'gem',
   blend: 'ammo',
@@ -32,12 +42,17 @@ export const PREP_MAKES: Record<PrepGame, 'gem' | 'ammo' | 'helper'> = {
 export type Step =
   | { kind: 'title' }
   | { kind: 'pick'; what: 'hero' | 'ally' | 'villain' }
+  | { kind: 'bedroom' }
+  | { kind: 'house'; part: 1 | 2 }
+  | { kind: 'battle'; part: 1 | 2 }
+  | { kind: 'victory' }
+  // Parked v0.1 steps: reachable by ?scene= only.
   | { kind: 'alarm' }
   | { kind: 'prep'; game: PrepGame; index: number }
-  | { kind: 'battle'; part: 1 | 2 }
   | { kind: 'retreat' }
-  | { kind: 'spell' }
-  | { kind: 'victory' };
+  | { kind: 'spell' };
+
+export type Slot = RoomPlan['slot'];
 
 export interface EpisodeState {
   hero: string;
@@ -45,21 +60,30 @@ export interface EpisodeState {
   villain: string;
   villainWasRandom: boolean;
   prep: PrepGame[];
+  /** v0.1's made things (parked games); `item` is still the counter-item. */
   made: { gem: boolean; ammo: boolean; helper: boolean; item: boolean };
   /** Words she read (or spelled) right this episode, in order, for the victory recap. */
   read: string[];
+  /** Key words fetched from the side rooms, in order: each is a battle item. */
+  fetched: string[];
+  /** The move word the helper taught her in the hub; her first move choice is this spell. */
+  spell: string | null;
+  /** The house: which room holds which sentence, and which rooms are done. */
+  house: { plan: RoomPlan[] | null; done: Slot[]; taught: boolean };
   stepIndex: number;
 }
 
 const SCENE_FOR: Record<Step['kind'], string> = {
   title: 'Title',
   pick: 'Pick',
+  bedroom: 'Bedroom',
+  house: 'Hub',
+  battle: 'Battle',
+  victory: 'Victory',
   alarm: 'Alarm',
   prep: 'Prep',
-  battle: 'Battle',
   retreat: 'Retreat',
   spell: 'Spelling',
-  victory: 'Victory',
 };
 
 export function prepScene(game: PrepGame): string {
@@ -69,7 +93,6 @@ export function prepScene(game: PrepGame): string {
 let episodeCount = 0;
 
 function choosePrep(): PrepGame[] {
-  // Rotate which two of the three prep games an episode gets.
   const all: PrepGame[][] = [
     ['sound', 'picture'],
     ['blend', 'sound'],
@@ -79,28 +102,34 @@ function choosePrep(): PrepGame[] {
 }
 
 export const episode: EpisodeState = {
-  hero: 'julia',
-  ally: null,
-  villain: 'smaug',
+  hero: EPISODE_DEFAULTS.hero,
+  ally: EPISODE_DEFAULTS.ally,
+  villain: EPISODE_DEFAULTS.villain,
   villainWasRandom: false,
   prep: choosePrep(),
   made: { gem: false, ammo: false, helper: false, item: false },
   read: [],
+  fetched: [],
+  spell: null,
+  house: { plan: null, done: [], taught: false },
   stepIndex: 0,
 };
 
-export function steps(state: EpisodeState = episode): Step[] {
+export function steps(_state: EpisodeState = episode): Step[] {
+  const picks: Step[] = EPISODE_DEFAULTS.pickScreens
+    ? [
+        { kind: 'pick', what: 'hero' },
+        { kind: 'pick', what: 'ally' },
+        { kind: 'pick', what: 'villain' },
+      ]
+    : [];
   return [
     { kind: 'title' },
-    { kind: 'pick', what: 'hero' },
-    { kind: 'pick', what: 'ally' },
-    { kind: 'pick', what: 'villain' },
-    { kind: 'alarm' },
-    { kind: 'prep', game: state.prep[0]!, index: 0 },
-    { kind: 'prep', game: state.prep[1]!, index: 1 },
+    ...picks,
+    { kind: 'bedroom' },
+    { kind: 'house', part: 1 },
     { kind: 'battle', part: 1 },
-    { kind: 'retreat' },
-    { kind: 'spell' },
+    { kind: 'house', part: 2 },
     { kind: 'battle', part: 2 },
     { kind: 'victory' },
   ];
@@ -112,12 +141,16 @@ export function currentStep(): Step {
 
 /**
  * Who gives instructions: the ally, or Dada Matt with no ally. When Dada Matt
- * is himself the hero and there is no ally, Dada Jason narrates instead, so
- * nobody says "Bad news, Dada Matt!" in Dada Matt's own voice.
+ * is himself the hero and there is no ally, Dada Jason narrates instead.
  */
 export function narrator(state: EpisodeState = episode): string {
   if (state.ally) return state.ally;
   return state.hero === DEFAULT_NARRATOR ? 'dada_jason' : DEFAULT_NARRATOR;
+}
+
+/** The helper in the house (teaches the spell, fills `{helper}` in sentences): the ally, or the narrator. */
+export function helper(state: EpisodeState = episode): string {
+  return narrator(state);
 }
 
 export function heroSpec(): CharacterSpec {
@@ -128,11 +161,20 @@ export function villainSpec(): CharacterSpec {
 }
 
 export function resetEpisode(): void {
-  episode.ally = null;
+  episode.hero = EPISODE_DEFAULTS.hero;
+  episode.ally = EPISODE_DEFAULTS.ally;
+  episode.villain = EPISODE_DEFAULTS.villain;
   episode.villainWasRandom = false;
+  if (!EPISODE_DEFAULTS.pickScreens && EPISODE_DEFAULTS.randomVillain) {
+    episode.villain = randomVillain();
+    episode.villainWasRandom = true;
+  }
   episode.prep = choosePrep();
   episode.made = { gem: false, ammo: false, helper: false, item: false };
   episode.read = [];
+  episode.fetched = [];
+  episode.spell = null;
+  episode.house = { plan: null, done: [], taught: false };
   episode.stepIndex = 0;
 }
 
@@ -140,6 +182,23 @@ export function resetEpisode(): void {
 export function randomVillain(rand = Math.random): string {
   const pool = ROSTER.filter((c) => c.id !== episode.hero && c.id !== episode.ally);
   return pool[Math.floor(rand() * pool.length)]!.id;
+}
+
+/**
+ * The house plan: two fetch rooms with a sentence each, and the attic with
+ * the villain's counter sentence. Made once per episode, on first need.
+ */
+export function housePlan(): RoomPlan[] {
+  if (!episode.house.plan) {
+    const fill = { villain: episode.villain, helper: helper() };
+    const rooms = Phaser.Utils.Array.Shuffle([...FETCH_ROOMS]).slice(0, 2);
+    episode.house.plan = [...fetchPlans(progress, fill, rooms as [string, string]), counterPlan(fill, COUNTER_ROOM)];
+  }
+  return episode.house.plan;
+}
+
+export function planFor(slot: Slot): RoomPlan {
+  return housePlan().find((p) => p.slot === slot)!;
 }
 
 /** Voice groups the current episode will need from here on. */
@@ -159,6 +218,18 @@ export function startStep(scene: Phaser.Scene): void {
   scene.scene.start(key, { step });
 }
 
+/** From the hub into a side room. */
+export function enterRoom(scene: Phaser.Scene, slot: Slot): void {
+  voiceBus.hush();
+  scene.scene.start('SentenceRoom', { step: currentStep(), slot });
+}
+
+/** From a side room back to the hub, standing at that room's door. */
+export function backToHub(scene: Phaser.Scene, from: Slot): void {
+  voiceBus.hush();
+  scene.scene.start('Hub', { step: currentStep(), from });
+}
+
 /** The current step is done; go to the next one. */
 export function advance(scene: Phaser.Scene): void {
   episode.stepIndex++;
@@ -167,8 +238,8 @@ export function advance(scene: Phaser.Scene): void {
     episodeCount++;
     resetEpisode();
   }
-  // The big steps are reached by a short hop along the journey map, so she
-  // can see where she is in the episode and what comes next.
+  // The battles and the victory are reached by a short hop along the journey
+  // map, so she can see where she is in the episode and what comes next.
   if (JOURNEY_BEFORE.includes(currentStep().kind) && !skipJourney) {
     voiceBus.hush();
     void voiceBank.loadGroups(episodeGroups());
@@ -179,7 +250,7 @@ export function advance(scene: Phaser.Scene): void {
 }
 
 /** Steps that get the journey map first. */
-const JOURNEY_BEFORE: Step['kind'][] = ['prep', 'battle', 'spell', 'victory'];
+const JOURNEY_BEFORE: Step['kind'][] = ['battle', 'victory'];
 
 /** Tests may turn the map off to save time; the game never does. */
 let skipJourney = new URLSearchParams(typeof location === 'undefined' ? '' : location.search).has('nojourney');
@@ -187,14 +258,12 @@ export function setSkipJourney(v: boolean): void {
   skipJourney = v;
 }
 
-/** The journey stops: every step from the alarm to victory, with an icon each. */
+/** The journey stops: every step from the bedroom to victory, with an icon each. */
 export function journeyStops(): { icon: string; index: number }[] {
   const icon = (s: Step): string => {
-    if (s.kind === 'alarm') return '🚨';
-    if (s.kind === 'prep') return s.game === 'sound' ? '💎' : s.game === 'blend' ? '⭐' : '🦄';
+    if (s.kind === 'bedroom') return '🛏️';
+    if (s.kind === 'house') return '🏠';
     if (s.kind === 'battle') return '⚔️';
-    if (s.kind === 'retreat') return '⛺';
-    if (s.kind === 'spell') return '🔨';
     if (s.kind === 'victory') return '🏆';
     return '•';
   };
@@ -204,11 +273,23 @@ export function journeyStops(): { icon: string; index: number }[] {
     .map(({ s, index }) => ({ icon: icon(s), index }));
 }
 
-/** Jump into a step directly (dev F-keys, `?scene=`), with a plausible episode around it. */
+/**
+ * Jump into a step directly (dev F-keys, `?scene=`), with a plausible episode
+ * around it. Parked steps (alarm, prep, retreat, spell) are not in the list,
+ * so they start on their own with the episode as it is.
+ */
 export function jumpTo(scene: Phaser.Scene, kind: Step['kind'], extra: Partial<EpisodeState> = {}, part: 1 | 2 = 1): void {
   Object.assign(episode, extra);
   const list = steps();
-  const i = list.findIndex((s) => s.kind === kind && (s.kind !== 'battle' || s.part === part));
-  episode.stepIndex = Math.max(0, i);
+  const i = list.findIndex((s) => s.kind === kind && (!('part' in s) || s.part === part));
+  if (i < 0) {
+    const parked: Step =
+      kind === 'prep' ? { kind: 'prep', game: episode.prep[0]!, index: 0 } : ({ kind } as Step);
+    voiceBus.hush();
+    void voiceBank.loadGroups(episodeGroups());
+    scene.scene.start(parked.kind === 'prep' ? prepScene(parked.game) : SCENE_FOR[parked.kind], { step: parked });
+    return;
+  }
+  episode.stepIndex = i;
   startStep(scene);
 }

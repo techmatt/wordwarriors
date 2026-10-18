@@ -66,7 +66,7 @@ export class BlendPath extends Minigame {
     [...item.target].forEach((letter, i) => {
       const x = 260 + i * 160;
       const tile = this.add.image(0, 0, 'prop_tile').setDisplaySize(120, 120).setTint(TILE_COLORS[i % 4]!);
-      const label = this.add.text(0, -4, letter, { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '80px', color: '#1a1030' }).setOrigin(0.5);
+      const label = this.add.text(0, -4, letter.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '80px', color: '#1a1030' }).setOrigin(0.5);
       const c = this.add.container(x, TILE_Y, [tile, label]).setDepth(TILE_Y - 60);
       popIn(this, c, 1, i * 120);
       this.tiles.push({ letter, x, img: c, stepped: false });
@@ -127,7 +127,7 @@ export class BlendPath extends Minigame {
   /** A copy of the letter floats up off the tile and waits in a row above the path. */
   private lift(letter: string, x: number, i: number): void {
     const t = this.add
-      .text(x, TILE_Y - 10, letter, { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '84px', color: '#ffffff', stroke: '#1a1030', strokeThickness: 10 })
+      .text(x, TILE_Y - 10, letter.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '84px', color: '#ffffff', stroke: '#1a1030', strokeThickness: 10 })
       .setOrigin(0.5)
       .setDepth(DEPTH.hud - 1);
     t.setData('i', i);

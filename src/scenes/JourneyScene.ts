@@ -2,10 +2,10 @@
  * The journey map: a winding path of stops, one per step of the episode, with
  * her character hopping from the stop she just finished to the next one.
  *
- * Shown for about two seconds before each big step (prep games, battles, the
- * forge, victory), so a four-year-old can see where she is and what is
- * coming: a gem, a sword, a tent, a hammer, a trophy. Nothing to read and no
- * input needed; green skips ahead.
+ * Shown for about two seconds before each battle and the victory, so a
+ * four-year-old can see where she is and what is coming: her bed, the house,
+ * swords, the house again, swords, a trophy (icons from Episode's
+ * journeyStops). Nothing to read and no input needed; green skips ahead.
  */
 
 import Phaser from 'phaser';

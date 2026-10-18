@@ -4,8 +4,16 @@
  * Each character has a good version (a hero or ally) and an evil version (a
  * villain), and each version has its own fighting style, three or more
  * abilities, taunts and an ultimate. The evil version's ultimate is what floors
- * the heroes at the end of Part 1; its `counter` item is what the Spell the
- * Spell game makes and what beats that ultimate in Part 2.
+ * the heroes at the end of Part 1; its `counter` item is what she fetches in
+ * the attic's counter sentence ("EvilRilla is scared of MICE") and what beats
+ * that ultimate in Part 2. `counter.words` stays for the parked Spell the
+ * Spell game.
+ *
+ * `house` is how the villain colours the house: the threat in the wake-up
+ * line ("Bad news, Evil Elsa is coming, and <threat>!"), a tint, decals and an
+ * ambient effect. Threats are fun, not scary, and carry no CVC reading words.
+ * Decal ids are unique across the roster (prefixed with the character id),
+ * because each is its own art asset `decal_<id>`.
  *
  * Elsa, Anna and Jasmine are written as original archetypes (an ice
  * sorceress, her brave sister, a desert princess with a flying carpet), not as
@@ -94,6 +102,18 @@ export const MINIONS: Record<string, MinionSpec> = {
     palette: [0xb0b8c8, 0xffcc33], style: 'march', speed: 90, size: 0.45, hp: 18,
     ability: ab('groan', 'Groan', 'bolt', 2.0, 0xffcc33, 1, { glyph: '😆' }),
   },
+  /** Fetched in a sentence room ("We can use the HEN"), then summoned in the battle. */
+  hen: {
+    id: 'hen', name: 'Brave Hen', glyph: '🐔', look: 'a fluffy brave hen with a tiny red comb, puffed up and ready',
+    palette: [0xffffff, 0xe63946], style: 'march', speed: 115, size: 0.45, hp: 15,
+    ability: ab('peck', 'Peck', 'dash', 1.8, 0xffcc33, 1),
+  },
+  /** The family dog, fetched the same way. */
+  dog: {
+    id: 'dog', name: 'Family Dog', glyph: '🐶', look: 'a big floppy-eared family dog, wagging and bounding',
+    palette: [0xc8884a, 0x5a3a1a], style: 'march', speed: 150, size: 0.6, hp: 35,
+    ability: ab('bark', 'Bark', 'bolt', 2.0, 0xffd6a5, 1, { glyph: '🔊' }),
+  },
   /** The helper Word to Picture summons for the heroes. Its look is set by the hero. */
   helper: {
     id: 'helper', name: 'Helper', glyph: '🦄', look: 'a sparkly unicorn helper with a rainbow mane',
@@ -146,7 +166,16 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'blanket', name: 'Cozy Blanket', glyph: '🛏️', look: 'a soft glowing quilt with stars on it',
-      how: 'calm', words: ['bed', 'hug', 'nap'],
+      how: 'calm', words: ['bed', 'hug', 'nap'], word: 'bed', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'she wants to keep every toy for herself',
+      tint: 0x5a2a7a,
+      decals: [
+        { id: 'julia_toys', glyph: '🧸', look: 'toys tossed all over the floor', count: 3 },
+        { id: 'julia_crumbs', glyph: '🍪', look: 'half-eaten cookies', count: 2 },
+      ],
+      fx: 'sparkle',
     },
   },
   {
@@ -192,7 +221,16 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'treats', name: 'Dragon Treats', glyph: '🍪', look: 'a basket of glowing dragon cookies',
-      how: 'calm', words: ['cup', 'bun', 'yum'],
+      how: 'calm', words: ['cup', 'bun', 'yum'], word: 'cup', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'her dragons want to toast the whole house',
+      tint: 0xff4a1a,
+      decals: [
+        { id: 'seraphina_scorch', glyph: '🔥', look: 'little scorch marks', count: 3 },
+        { id: 'seraphina_egg', glyph: '🥚', look: 'dragon eggs left in odd places', count: 2 },
+      ],
+      fx: 'embers',
     },
   },
   {
@@ -238,7 +276,16 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'earmuffs', name: 'Magic Earmuffs', glyph: '🎧', look: 'fluffy rainbow earmuffs that glow',
-      how: 'block', words: ['hat', 'cap', 'hum'],
+      how: 'block', words: ['hat', 'cap', 'hum'], word: 'hat', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'he wants everybody to eat broccoli for breakfast',
+      tint: 0x4aa62a,
+      decals: [
+        { id: 'dada_matt_broccoli', glyph: '🥦', look: 'broccoli on every plate', count: 3 },
+        { id: 'dada_matt_sock', glyph: '🧦', look: 'odd socks lying about', count: 2 },
+      ],
+      fx: 'none',
     },
   },
   {
@@ -284,7 +331,16 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'pillow_fort', name: 'Pillow Fort', glyph: '🏰', look: 'a wobbly fort made of fluffy pillows, glowing softly',
-      how: 'block', words: ['bed', 'box', 'pad'],
+      how: 'block', words: ['bed', 'box', 'pad'], word: 'box', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'he wants to knock down every wall',
+      tint: 0x7a4ab0,
+      decals: [
+        { id: 'dada_jason_brick', glyph: '🧱', look: 'loose bricks', count: 3 },
+        { id: 'dada_jason_hammer', glyph: '🔨', look: 'a crackling purple hammer left on the floor', count: 1 },
+      ],
+      fx: 'quake',
     },
   },
   {
@@ -330,7 +386,13 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'sun_torch', name: 'Sun Torch', glyph: '🔥', look: 'a golden torch with a tiny sun burning in it',
-      how: 'restore', words: ['sun', 'hat', 'hot'],
+      how: 'restore', words: ['sun', 'hat', 'hot'], word: 'sun', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'she wants to freeze the whole house',
+      tint: 0x9ad8ff,
+      decals: [{ id: 'elsa_icicle', glyph: '❄️', look: 'icicles and frost patches', count: 4 }],
+      fx: 'frost',
     },
   },
   {
@@ -376,7 +438,16 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'locket', name: 'Friendship Locket', glyph: '💖', look: 'a heart locket glowing warm pink',
-      how: 'calm', words: ['hug', 'pet', 'pal'],
+      how: 'calm', words: ['hug', 'pet', 'pal'], word: 'pin', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'she wants to turn every room into a blizzard',
+      tint: 0x7cc7ff,
+      decals: [
+        { id: 'anna_snowman', glyph: '⛄', look: 'grumpy little snowmen', count: 2 },
+        { id: 'anna_shield', glyph: '🛡️', look: 'a cracked ice shield', count: 1 },
+      ],
+      fx: 'frost',
     },
   },
   {
@@ -423,7 +494,16 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'wind_fan', name: 'Wind Fan', glyph: '🌬️', look: 'a giant painted fan that blows a rainbow breeze',
-      how: 'reflect', words: ['map', 'zip', 'fan'],
+      how: 'reflect', words: ['map', 'zip', 'fan'], word: 'fan', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'she wants to fill the house with sand',
+      tint: 0xe8c890,
+      decals: [
+        { id: 'jasmine_swirl', glyph: '🌀', look: 'little swirls of sand', count: 3 },
+        { id: 'jasmine_whirlwind', glyph: '🌪️', look: 'a tiny whirlwind spinning in a corner', count: 1 },
+      ],
+      fx: 'smoke',
     },
   },
   {
@@ -469,7 +549,16 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'rain_cloud', name: 'Rain Cloud', glyph: '🌧️', look: 'a fluffy grey cloud in a jar, ready to rain',
-      how: 'block', words: ['cup', 'tub', 'wet'],
+      how: 'block', words: ['cup', 'tub', 'wet'], word: 'tub', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'he wants a giant statue of himself in the garden',
+      tint: 0xd9b26f,
+      decals: [
+        { id: 'ozymandias_statue', glyph: '🗿', look: 'a stone head poking out of the floor', count: 1 },
+        { id: 'ozymandias_scarab', glyph: '🐞', look: 'shiny scarab beetles', count: 3 },
+      ],
+      fx: 'quake',
     },
   },
   {
@@ -515,7 +604,16 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'sun_lamp', name: 'Sun Lamp', glyph: '💡', look: 'a brass lantern holding a little captured sun',
-      how: 'restore', words: ['sun', 'pot', 'lit'],
+      how: 'restore', words: ['sun', 'pot', 'lit'], word: 'sun', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'he wants to wrap himself around the whole house',
+      tint: 0x2a5a4a,
+      decals: [
+        { id: 'jormungandr_tail', glyph: '🐍', look: 'a long scaly tail poking through the wall', count: 1 },
+        { id: 'jormungandr_puddle', glyph: '💧', look: 'salty sea puddles', count: 3 },
+      ],
+      fx: 'none',
     },
   },
   {
@@ -563,7 +661,16 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'frost_shield', name: 'Frost Shield', glyph: '🛡️', look: 'a round shield of blue ice with a snowflake crest',
-      how: 'block', words: ['cup', 'net', 'fog'],
+      how: 'block', words: ['cup', 'net', 'fog'], word: 'net', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'he wants all the money in your piggy bank',
+      tint: 0xffcc33,
+      decals: [
+        { id: 'smaug_gold', glyph: '💰', look: 'heaps of gold coins', count: 3 },
+        { id: 'smaug_flame', glyph: '🔥', look: 'a little flame flickering', count: 1 },
+      ],
+      fx: 'embers',
     },
   },
   {
@@ -609,7 +716,16 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'off_remote', name: 'Off Remote', glyph: '📱', look: 'a big chunky remote control with one giant red OFF button',
-      how: 'shutdown', words: ['box', 'pen', 'off'],
+      how: 'shutdown', words: ['box', 'pen', 'off'], word: 'box', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'his robots want to switch off every light',
+      tint: 0xff0054,
+      decals: [
+        { id: 'scar_bolt', glyph: '🔩', look: 'scattered nuts and bolts', count: 3 },
+        { id: 'scar_drone', glyph: '🛸', look: 'a little red-eyed drone hovering', count: 1 },
+      ],
+      fx: 'sparkle',
     },
   },
   {
@@ -656,7 +772,16 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'magnifier', name: 'Magnifying Glass', glyph: '🔍', look: 'a big brass magnifying glass that shines a bright truth-light',
-      how: 'reveal', words: ['map', 'pen', 'nab'],
+      how: 'reveal', words: ['map', 'pen', 'nab'], word: 'map', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'he wants to play tricks in every room',
+      tint: 0x9d4edd,
+      decals: [
+        { id: 'moriarty_card', glyph: '🃏', look: 'playing cards left as traps', count: 4 },
+        { id: 'moriarty_question', glyph: '❓', look: 'a floating question mark', count: 1 },
+      ],
+      fx: 'smoke',
     },
   },
   {
@@ -702,7 +827,73 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'mirror', name: 'Magic Mirror', glyph: '💠', look: 'a silver hand mirror that flashes bright light',
-      how: 'reflect', words: ['sun', 'pin', 'zap'],
+      how: 'reflect', words: ['sun', 'pin', 'zap'], word: 'sun', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'she wants to turn everybody into piggies',
+      tint: 0x39ff14,
+      decals: [
+        { id: 'bavmorda_bone', glyph: '🦴', look: 'skeleton bones', count: 3 },
+        { id: 'bavmorda_potion', glyph: '🧪', look: 'a bubbling green potion', count: 1 },
+      ],
+      fx: 'smoke',
+    },
+  },
+  {
+    id: 'rilla',
+    description: 'A giant gorilla robot: as a friend all bananas and big hugs, as a villain all rocket fists and an appetite for cars.',
+    arena: 'street',
+    good: {
+      displayName: 'Rilla', trail: { tint: [0xffe14a, 0x8a6a4a], shape: 'square' }, look: 'a friendly giant gorilla robot with brown steel fur plates, a banana-yellow chest light and big gentle hands',
+      palette: [0x8a6a4a, 0xffe14a], glyph: '🦍', style: 'stomp', speed: 110, size: 1.4, hp: 160,
+      abilities: [
+        ab('banana_toss', 'Banana Toss', 'bolt', 2.4, 0xffe14a, 1, { count: 3, glyph: '🍌', word: 'pop' }),
+        ab('rocket_punch', 'Rocket Punch', 'bolt', 3, 0xff6a3a, 2, { glyph: '🚀', homing: true, word: 'pow', shout: true }),
+        ab('chest_drum', 'Chest Drum', 'slam', 6, 0x8a6a4a, 3, { word: 'bam', shout: true }),
+        ab('gorilla_hug', 'Gorilla Hug', 'heal', 10, 0xffe14a, 1, { word: 'hug' }),
+      ],
+      ultimate: ab('banana_bonanza', 'Banana Bonanza', 'rain', 0, 0xffe14a, 3, { count: 32, glyph: '🍌', color2: 0x8a6a4a }),
+      taunts: [
+        { key: 'hugs', text: 'Hugs for everyone!' },
+        { key: 'bananas', text: 'Bananas, go!' },
+        { key: 'gentle', text: 'I am a gentle giant!' },
+        { key: 'power', text: 'Gorilla power!' },
+        { key: 'snack', text: 'Who wants a banana?' },
+        { key: 'stomp', text: 'Stomp, stomp, hooray!' },
+      ],
+    },
+    evil: {
+      displayName: 'EvilRilla', trail: { tint: [0xff3a1a, 0x3a2a1a], shape: 'smoke' }, look: 'a towering gorilla robot of dented black steel with glowing red eyes, rocket fists and a car-crunching jaw',
+      palette: [0x3a2a1a, 0xff3a1a], glyph: '🤖', style: 'stomp', speed: 70, size: 1.8, hp: 230,
+      abilities: [
+        ab('rocket_fists', 'Rocket Fists', 'bolt', 3, 0xff3a1a, 2, { count: 2, glyph: '🚀', homing: true }),
+        ab('chest_shock', 'Chest Drum Shockwave', 'slam', 6, 0xff3a1a, 3),
+        ab('peel_traps', 'Banana Peel Traps', 'trap', 8, 0xffe14a, 2, { count: 3, glyph: '🍌' }),
+        ab('car_crunch', 'Car Crunch', 'dash', 7, 0x3a2a1a, 3),
+      ],
+      ultimate: ab('mega_chest_drum', 'Mega Chest Drum', 'wave', 0, 0xff3a1a, 3, { color2: 0x3a2a1a }),
+      taunts: [
+        { key: 'hungry', text: 'I am so hungry!' },
+        { key: 'crunch', text: 'Crunch, crunch, crunch!' },
+        { key: 'peels', text: 'Watch out for peels!' },
+        { key: 'fists', text: 'Rocket fists, go!' },
+        { key: 'drum', text: 'Drum, drum, drum!' },
+        { key: 'cars', text: 'Cars are yummy!' },
+      ],
+    },
+    counter: {
+      id: 'mice', name: 'Wind-up Mice', glyph: '🐭', look: 'a tin full of clockwork toy mice that scurry and squeak',
+      how: 'scare', words: ['rat', 'bug', 'hen'], word: 'mice', frame: 'scared_of',
+    },
+    house: {
+      threat: "he's going to eat Dada Jason's car",
+      tint: 0x8a6a4a,
+      decals: [
+        { id: 'rilla_footprint', glyph: '👣', look: 'giant gorilla footprints', count: 4 },
+        { id: 'rilla_crack', glyph: '💥', look: 'a cracked window', count: 1 },
+        { id: 'rilla_banana', glyph: '🍌', look: 'banana peels', count: 3 },
+      ],
+      fx: 'quake',
     },
   },
 ];
@@ -739,4 +930,5 @@ export const ARENAS: Record<string, { name: string; sky: [number, number]; groun
   cave: { name: 'Treasure Cave', sky: [0x1a1a2a, 0x5a4a2a], ground: 0x8a6a2a, glyph: '💰', look: 'a cave piled high with gold coins and jewels, lit by lava cracks' },
   factory: { name: 'Robot Factory', sky: [0x2a2d42, 0x6a7a9a], ground: 0x4a4a5a, glyph: '⚙️', look: 'a neon robot factory with conveyor belts and sparks' },
   city: { name: 'Foggy City', sky: [0x3a4a5a, 0xa0b0c0], ground: 0x5a5a6a, glyph: '🎡', look: 'a foggy old city street at night with lamp posts and a fairground' },
+  street: { name: 'Sunny Street', sky: [0x8ad7ff, 0xf0f8ff], ground: 0x8a8a92, glyph: '🚗', look: 'a sunny suburban street outside the house, Dada Jason\'s car parked at the kerb' },
 };

@@ -69,7 +69,14 @@ export const SIGHT_WORDS: Word[] = [
   { word: 'bavmorda', decodable: false, character: 'bavmorda' },
 ];
 
-export const WORDS: Word[] = [...CVC_WORDS, ...SIGHT_WORDS];
+/**
+ * Sentence key words that are not CVC: special cases kept because they are
+ * the right word for the story (Matt's MICE). Not decodable, so the hint
+ * sounds only the first letter, as for a name.
+ */
+export const SPECIAL_WORDS: Word[] = [{ word: 'mice', glyph: '🐭', decodable: false }];
+
+export const WORDS: Word[] = [...CVC_WORDS, ...SIGHT_WORDS, ...SPECIAL_WORDS];
 
 export const WORD_BY_ID: Record<string, Word> = Object.fromEntries(WORDS.map((w) => [w.word, w]));
 

@@ -23,6 +23,15 @@ export const nameLine = (fighter: string) => `name_${fighter}`;
 /** A fighter id is `<character>` for the good version and `<character>_evil` for the evil one. */
 export const fighterId = (character: string, evil: boolean) => (evil ? `${character}_evil` : character);
 
+/**
+ * The bedroom wake-up, said by whoever comes in to wake the hero: Dada Matt,
+ * or Dada Jason when Dada Matt is himself the hero. Keys: `up`, `good_<hero>`,
+ * `helper_<character>`, `bad_<villain>`, `door`. Group `core`.
+ */
+export const WAKERS = ['dada_matt', 'dada_jason'] as const;
+export const wakerFor = (hero: string) => (hero === 'dada_matt' ? 'dada_jason' : 'dada_matt');
+export const wakeLine = (waker: string, key: string) => `wake_${waker}_${key}`;
+
 /** Voice group names, so a scene can ask for exactly what it is about to say. */
 export const group = {
   core: 'core',

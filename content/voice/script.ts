@@ -15,7 +15,8 @@
  * leaves about 0.9 s of dead air after one.
  *
  * Placeholders: {hero} the hero's name, {villain} the villain's display name,
- * {item} the counter item's name, {word} a move word.
+ * {item} the counter item's name, {word} a move word, {helper} a helper's
+ * name, {threat} the villain's house threat (wake lines only).
  */
 
 export interface Template {
@@ -74,17 +75,51 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'victory_1', text: 'We won! Hooray!', say: 'We won, hooray!' },
   { key: 'victory_2', text: 'You are a real Word Warrior!' },
   { key: 'again', text: 'Press green to play again!' },
+  // The house (v0.2): the hub's magic circle, its doors, and the sentence rooms.
+  { key: 'teach_1', text: 'I will teach you a magic spell!' },
+  { key: 'teach_circle', text: 'Stand in the magic circle, and press green!' },
+  { key: 'teach_done', text: 'You know the spell now! Let us look around.', say: 'You know the spell now, let us look around.' },
+  { key: 'house_doors', text: 'Two doors! Walk to one, and press green.', say: 'Two doors, walk to one, and press green.' },
+  { key: 'house_more', text: 'One more door to go!' },
+  { key: 'house_front', text: 'The front door is open! Let us go!', say: 'The front door is open, let us go!' },
+  { key: 'secret_door', text: 'Look, a secret door! Let us go up!', say: 'Look, a secret door, let us go up!' },
+  { key: 'house_ready', text: 'We are ready now! Out the front door!', say: 'We are ready now, out the front door!' },
+  { key: 'room_listen', text: 'Listen!' },
+  { key: 'room_your_turn', text: 'Your turn! Press green for each word.', say: 'Your turn, press green for each word.' },
+  { key: 'room_find', text: 'Now find it, and press green!' },
+  { key: 'got_item', text: 'We got it!' },
+  { key: 'use_bag', text: 'Look what we found!' },
 ];
 
 /** Composed per narrator × hero. */
 export const HERO_LINES: Template[] = [{ key: 'alarm_hero', text: 'Bad news, {hero}!' }];
 
-/** Composed per narrator × villain. */
+/** Composed per narrator × villain. {item} is the counter item's name. */
 export const VILLAIN_LINES: Template[] = [
   { key: 'alarm_villain', text: '{villain} is coming!' },
   { key: 'need_item', text: 'Only the {item} can stop {villain}!' },
   { key: 'made_item', text: 'We made the {item}!' },
+  { key: 'need_counter', text: 'We need something that scares {villain}!' },
+  // Said after she has read the counter sentence, so the item may be named.
+  { key: 'got_counter', text: 'We found the {item}!' },
 ];
 
-/** Composed per narrator × move word. */
-export const MOVE_LINES: Template[] = [{ key: 'use_move', text: 'Use {word}!' }];
+/** Composed per narrator × move word. The move word is the deliberate exception to the speech rule. */
+export const MOVE_LINES: Template[] = [
+  { key: 'use_move', text: 'Use {word}!' },
+  { key: 'teach_word', text: 'This spell is called {word}!' },
+];
+
+/**
+ * The bedroom wake-up, said by the waker (`wakerFor(hero)` in ids.ts), not the
+ * narrator: the ally has not arrived yet. Keys get a suffix as they are composed:
+ * `good_<hero>`, `helper_<character>`, `bad_<villain>`; `up` and `door` do not.
+ * {helper} is the helper's good name; {threat} the villain's `house.threat`.
+ */
+export const WAKE_LINES: Template[] = [
+  { key: 'up', text: 'Wake up, wake up!' },
+  { key: 'good', text: 'Good news, {hero}!' },
+  { key: 'helper', text: '{helper} is here to play!' },
+  { key: 'bad', text: 'Bad news, {villain} is coming, and {threat}!' },
+  { key: 'door', text: 'Come on, let us go! Find the door!', say: 'Come on, let us go, find the door!' },
+];

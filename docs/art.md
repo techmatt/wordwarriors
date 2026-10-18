@@ -41,6 +41,8 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `char_moriarty_evil` | 200×250 | Evil Moriarty: a sly trickster in a black coat and top hat, a grin full of secrets, cards floating around him. Full body, facing the viewer, cheerful cartoon style for a 4-year-old, villain version: darker palette, mischievous rather than frightening. Transparent background. |
 | `char_bavmorda_good` | 200×250 | Bavmorda: a kindly old witch with a crooked hat full of flowers, a staff with a glowing pink gem. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background. |
 | `char_bavmorda_evil` | 200×250 | Evil Bavmorda: a tall dark witch queen with a horned crown, a black staff with a green flame, skeletons at her feet. Full body, facing the viewer, cheerful cartoon style for a 4-year-old, villain version: darker palette, mischievous rather than frightening. Transparent background. |
+| `char_rilla_good` | 200×250 | Rilla: a friendly giant gorilla robot with brown steel fur plates, a banana-yellow chest light and big gentle hands. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background. |
+| `char_rilla_evil` | 200×250 | EvilRilla: a towering gorilla robot of dented black steel with glowing red eyes, rocket fists and a car-crunching jaw. Full body, facing the viewer, cheerful cartoon style for a 4-year-old, villain version: darker palette, mischievous rather than frightening. Transparent background. |
 | `face_julia` | 200×200 | Julia's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
 | `face_seraphina` | 200×200 | Seraphina's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
 | `face_dada_matt` | 200×200 | Dada Matt's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
@@ -54,6 +56,7 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `face_scar` | 200×200 | Scar's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
 | `face_moriarty` | 200×200 | Moriarty's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
 | `face_bavmorda` | 200×200 | Bavmorda's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
+| `face_rilla` | 200×200 | Rilla's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
 
 ## Summoned minions and helpers
 
@@ -71,6 +74,8 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `minion_teddy` | 140×140 | Teddy: a brave teddy bear with a cape. Small summoned creature, cartoon style, transparent background. |
 | `minion_dust_devil` | 140×140 | Dust Devil: a little spinning whirlwind of sand with a cheeky face. Small summoned creature, cartoon style, transparent background. |
 | `minion_joke_bot` | 140×140 | Pun Bot: a tiny robot holding a joke book. Small summoned creature, cartoon style, transparent background. |
+| `minion_hen` | 140×140 | Brave Hen: a fluffy brave hen with a tiny red comb, puffed up and ready. Small summoned creature, cartoon style, transparent background. |
+| `minion_dog` | 140×140 | Family Dog: a big floppy-eared family dog, wagging and bounding. Small summoned creature, cartoon style, transparent background. |
 | `minion_helper` | 140×140 | Helper: a sparkly unicorn helper with a rainbow mane. Small summoned creature, cartoon style, transparent background. |
 
 ## Battle arenas
@@ -87,8 +92,9 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `arena_cave` | 1280×720 | Battle arena background, Treasure Cave: a cave piled high with gold coins and jewels, lit by lava cracks. Wide side-on view, open flat ground across the lower 60% for fighters, bright and readable, no characters. |
 | `arena_factory` | 1280×720 | Battle arena background, Robot Factory: a neon robot factory with conveyor belts and sparks. Wide side-on view, open flat ground across the lower 60% for fighters, bright and readable, no characters. |
 | `arena_city` | 1280×720 | Battle arena background, Foggy City: a foggy old city street at night with lamp posts and a fairground. Wide side-on view, open flat ground across the lower 60% for fighters, bright and readable, no characters. |
+| `arena_street` | 1280×720 | Battle arena background, Sunny Street: a sunny suburban street outside the house, Dada Jason's car parked at the kerb. Wide side-on view, open flat ground across the lower 60% for fighters, bright and readable, no characters. |
 
-## Rooms (episode screens and minigames)
+## Rooms (the house, episode screens and minigames)
 
 | id | size | content |
 | --- | --- | --- |
@@ -101,6 +107,12 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `room_camp` | 1280×720 | A hidden campfire camp in a forest at dusk, a tent, logs to sit on. No text. |
 | `room_victory` | 1280×720 | A victory celebration: fireworks over a castle, confetti, a podium. No text. |
 | `room_parent` | 1280×720 | A calm plain grown-ups page background, soft paper texture. No text. |
+| `room_bedroom_julia` | 1280×720 | A four-year-old's cosy, cluttered bedroom seen side-on: star wallpaper, a window, a rug, toy shelves, a wooden floor across the lower half. The bed on the left and a door on the right are drawn by the game. Side-on view, bright cheerful cartoon for a 4-year-old, a floor across the lower half where she walks, clear space across the middle for three objects or characters to stand, no characters, no text. |
+| `room_hub` | 1280×720 | The small main room of a cosy house seen side-on: a sofa, a rug, a staircase, family pictures, a wooden floor across the lower half; three inner doors along the back wall and a big front door on the right. The doors and the magic circle are drawn by the game on top; keep the back wall plain where they stand. Side-on view, bright cheerful cartoon for a 4-year-old, a floor across the lower half where she walks, clear space across the middle for three objects or characters to stand, no characters, no text. |
+| `room_side_kitchen` | 1280×720 | A cartoon family kitchen: counters, a fridge with drawings, pots on hooks, a tiled floor. Side-on view, bright cheerful cartoon for a 4-year-old, a floor across the lower half where she walks, clear space across the middle for three objects or characters to stand, no characters, no text. |
+| `room_side_playroom` | 1280×720 | A bright playroom: toy boxes, a slide, beanbags, a carpet with a road map. Side-on view, bright cheerful cartoon for a 4-year-old, a floor across the lower half where she walks, clear space across the middle for three objects or characters to stand, no characters, no text. |
+| `room_side_garage` | 1280×720 | A tidy garage: a workbench, bikes on the wall, Dada Jason's car under a sheet. Side-on view, bright cheerful cartoon for a 4-year-old, a floor across the lower half where she walks, clear space across the middle for three objects or characters to stand, no characters, no text. |
+| `room_side_attic` | 1280×720 | A secret attic: sloped roof beams, old trunks, a round window with moonlight, cobwebs, a treasure-hunt feeling. Side-on view, bright cheerful cartoon for a 4-year-old, a floor across the lower half where she walks, clear space across the middle for three objects or characters to stand, no characters, no text. |
 
 ## Word pictures
 
@@ -136,6 +148,7 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `pic_mop` | 200×200 | A single clear picture of a mop, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_pot` | 200×200 | A single clear picture of a pot, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_rat` | 200×200 | A single clear picture of a rat, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
+| `pic_mice` | 200×200 | A single clear picture of a mice, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 
 ## Counter items
 
@@ -154,11 +167,49 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `item_off_remote` | 180×180 | Off Remote: a big chunky remote control with one giant red OFF button. A magical item glowing with power, centred, transparent background. |
 | `item_magnifier` | 180×180 | Magnifying Glass: a big brass magnifying glass that shines a bright truth-light. A magical item glowing with power, centred, transparent background. |
 | `item_mirror` | 180×180 | Magic Mirror: a silver hand mirror that flashes bright light. A magical item glowing with power, centred, transparent background. |
+| `item_mice` | 180×180 | Wind-up Mice: a tin full of clockwork toy mice that scurry and squeak. A magical item glowing with power, centred, transparent background. |
 
-## Minigame props and effects
+## Props, house objects (`obj_`), villain decals (`decal_`) and effects
 
 | id | size | content |
 | --- | --- | --- |
+| `obj_teddy` | 158×158 | a floppy teddy bear: a toy in a child's bedroom, chunky cartoon, side-on, transparent background. |
+| `obj_drum` | 158×158 | a toy drum with sticks: a toy in a child's bedroom, chunky cartoon, side-on, transparent background. |
+| `obj_rocket` | 158×193 | a toy rocket on a launch pad: a toy in a child's bedroom, chunky cartoon, side-on, transparent background. |
+| `obj_lamp` | 123×140 | a night-light shaped like a bulb: a toy in a child's bedroom, chunky cartoon, side-on, transparent background. |
+| `obj_duck` | 123×123 | a rubber duck: a toy in a child's bedroom, chunky cartoon, side-on, transparent background. |
+| `obj_robot` | 158×175 | a wind-up toy robot: a toy in a child's bedroom, chunky cartoon, side-on, transparent background. |
+| `obj_ball` | 105×105 | a bouncy ball: a toy in a child's bedroom, chunky cartoon, side-on, transparent background. |
+| `obj_unicorn` | 140×140 | a plush unicorn: a toy in a child's bedroom, chunky cartoon, side-on, transparent background. |
+| `obj_blocks` | 140×158 | a tower of toy blocks: a toy in a child's bedroom, chunky cartoon, side-on, transparent background. |
+| `decal_julia_toys` | 120×120 | toys tossed all over the floor: left lying about the house by Evil Julia. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_julia_crumbs` | 120×120 | half-eaten cookies: left lying about the house by Evil Julia. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_seraphina_scorch` | 120×120 | little scorch marks: left lying about the house by Evil Seraphina. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_seraphina_egg` | 120×120 | dragon eggs left in odd places: left lying about the house by Evil Seraphina. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_dada_matt_broccoli` | 120×120 | broccoli on every plate: left lying about the house by Evil Dada Matt. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_dada_matt_sock` | 120×120 | odd socks lying about: left lying about the house by Evil Dada Matt. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_dada_jason_brick` | 120×120 | loose bricks: left lying about the house by Evil Dada Jason. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_dada_jason_hammer` | 120×120 | a crackling purple hammer left on the floor: left lying about the house by Evil Dada Jason. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_elsa_icicle` | 120×120 | icicles and frost patches: left lying about the house by Evil Elsa. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_anna_snowman` | 120×120 | grumpy little snowmen: left lying about the house by Evil Anna. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_anna_shield` | 120×120 | a cracked ice shield: left lying about the house by Evil Anna. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_jasmine_swirl` | 120×120 | little swirls of sand: left lying about the house by Evil Jasmine. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_jasmine_whirlwind` | 120×120 | a tiny whirlwind spinning in a corner: left lying about the house by Evil Jasmine. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_ozymandias_statue` | 120×120 | a stone head poking out of the floor: left lying about the house by Evil Ozymandias. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_ozymandias_scarab` | 120×120 | shiny scarab beetles: left lying about the house by Evil Ozymandias. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_jormungandr_tail` | 120×120 | a long scaly tail poking through the wall: left lying about the house by Evil Jormungandr. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_jormungandr_puddle` | 120×120 | salty sea puddles: left lying about the house by Evil Jormungandr. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_smaug_gold` | 120×120 | heaps of gold coins: left lying about the house by Evil Smaug. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_smaug_flame` | 120×120 | a little flame flickering: left lying about the house by Evil Smaug. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_scar_bolt` | 120×120 | scattered nuts and bolts: left lying about the house by Evil Scar. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_scar_drone` | 120×120 | a little red-eyed drone hovering: left lying about the house by Evil Scar. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_moriarty_card` | 120×120 | playing cards left as traps: left lying about the house by Evil Moriarty. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_moriarty_question` | 120×120 | a floating question mark: left lying about the house by Evil Moriarty. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_bavmorda_bone` | 120×120 | skeleton bones: left lying about the house by Evil Bavmorda. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_bavmorda_potion` | 120×120 | a bubbling green potion: left lying about the house by Evil Bavmorda. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_rilla_footprint` | 120×120 | giant gorilla footprints: left lying about the house by EvilRilla. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_rilla_crack` | 120×120 | a cracked window: left lying about the house by EvilRilla. Small, mischievous not scary, cartoon, transparent background, no text. |
+| `decal_rilla_banana` | 120×120 | banana peels: left lying about the house by EvilRilla. Small, mischievous not scary, cartoon, transparent background, no text. |
 | `prop_stone` | 150×150 | A round mossy standing stone, flat face for a big letter painted on it by the game. No letter in the art. |
 | `prop_tile` | 120×120 | A square stepping-stone tile seen from above, flat face for a letter painted by the game. No letter in the art. |
 | `prop_door` | 170×230 | A colourful arched wooden door in a stone frame, closed, with a little window where a picture is shown. |
@@ -172,4 +223,9 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `prop_sun` | 200×200 | A big happy cartoon sun. |
 | `prop_anvil` | 260×170 | A magic anvil with runes, glowing. |
 | `prop_tent` | 280×220 | A striped camping tent with a flag. |
+| `prop_bed` | 300×200 | A child's cosy bed side-on: a puffy star-pattern duvet, a big pillow, a wooden headboard on the left. |
+| `prop_front_door` | 200×290 | A big friendly front door of a house: painted red, a round brass knob, a little window at the top, a doormat. Closed. No house number or text. |
+| `prop_magic_circle` | 260×110 | A glowing rune circle painted on the floor, seen at an angle (a flat ellipse), soft blue-violet light rising from it, little stars. Abstract runes only, no letters. |
+| `prop_bag` | 120×130 | A little adventure backpack for a child: rounded, bright, a buckle flap, a star patch. No text. |
+| `prop_scroll` | 520×160 | A wide unrolled magic scroll, rolled ends with wooden knobs, glowing edges, blank parchment in the middle for a word painted by the game. NO TEXT. |
 

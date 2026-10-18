@@ -11,16 +11,20 @@
  * Nobody important can be knocked out by the simulation (floors in `hit()`),
  * and the story beats are placed on the simulation clock:
  *
- *   Part 1: charge → helper / power gem / star ammo show off what she made →
- *   move choice → team combo → move choice → the villain's ultimate floors the
- *   heroes → "Too strong! Retreat!" (never "you lost").
- *   Part 2: round two → the made things again → move choice → combo → the
- *   ultimate starts, the counter-item visibly blocks or reverses it → the
- *   villain is stunned → everyone's finisher → victory.
+ *   Part 1: charge → the things she fetched in the house pop out of her bag
+ *   and are used → move choice → team combo → move choice → the villain's
+ *   ultimate floors the heroes → "Too strong! Retreat!" (never "you lost").
+ *   Part 2: round two → the fetched things again → move choice → combo → the
+ *   ultimate starts, the counter-item visibly blocks, reverses or scares it
+ *   off → the villain is stunned → everyone's finisher → victory.
  *
- * The move choice pauses the fight in near-freeze: 2–3 move words on coloured
- * dots, the partner says which one to use, she presses that colour. Right =
- * supercharged version, wrong = that move, plainer. It changes nothing else.
+ * The move choice pauses the fight in near-freeze: 2–3 move words appear as
+ * glowing pads on the arena floor, each with its word on a sign. The partner
+ * says which one to use; she walks her hero (on real time, the rest frozen)
+ * onto that pad and presses green, the same as walking to an answer in a
+ * room. Right = supercharged version, wrong = that move, plainer. It changes
+ * nothing else. The first choice of each part is the spell the helper taught
+ * her in the house, so the word she learned is the one she fires first.
  *
  * Time: `now` is simulation time. Slow-mo, hit-stop and the choice freeze all
  * scale it, and the scene's tweens and timers with it (fx/juice timeScale).
@@ -31,12 +35,13 @@ import Phaser from 'phaser';
 import { charArt } from '../../content/art/assets';
 import { CHARACTER_BY_ID, MINIONS, comboFor } from '../../content/battle/roster';
 import type { AbilitySpec, Status } from '../../content/battle/types';
+import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { fighterId, moveLine, nameLine, narratorLine, tauntLine, ultimateLine } from '../../content/voice/ids';
 import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
-import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxSummon, sfxUltimate, sfxWrong } from '../audio/sfx';
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH, PAD_COLOR, type PadColorName } from '../config';
-import { advance, episode, narrator, villainSpec, type Step } from '../episode/Episode';
+import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh } from '../audio/sfx';
+import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, WALK_SPEED } from '../config';
+import { advance, episode, helper, narrator, villainSpec, type Step } from '../episode/Episode';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
@@ -54,17 +59,33 @@ type Phase = 'intro' | 'fight' | 'choice' | 'combo' | 'ultimate' | 'counter' | '
 
 /** Cosmetic damage per point of ability power. Tuned so bars drift, not drop. */
 const DAMAGE_PER_POWER = 2.6;
-// Yellow is never a choice: yellow always means "say it again".
-const CHOICE_COLORS: PadColorName[] = ['green', 'blue', 'red'];
+/** The move pads' glow. One colour for all: the word on the sign is the choice, never a colour. */
+const PAD_GLOW = 0x7ad9ff;
+
+/** A move word standing in the arena as a place she walks to. */
+interface MovePad {
+  word: string;
+  x: number;
+  y: number;
+  /** The floor ring and its glow, pulsed by hand on wall-clock time. */
+  ring: Phaser.GameObjects.Container;
+  /** The word on its sign, above the fighters. */
+  sign: Phaser.GameObjects.Container;
+  /** Wall-clock ms its pop-in starts. */
+  bornAt: number;
+}
 
 interface Choice {
   words: string[];
-  colors: PadColorName[];
   right: string;
   owners: Map<string, { f: Fighter; ab: AbilitySpec }>;
-  ui: Phaser.GameObjects.Container;
-  /** The dots, pulsed by hand on wall-clock time: the scene clock is frozen. */
-  dots: Phaser.GameObjects.Container[];
+  /** Everything the choice put on screen, destroyed when it closes. */
+  objs: Phaser.GameObjects.GameObject[];
+  pads: MovePad[];
+  /** The pad she is standing at (within REACH), or null. */
+  near: MovePad | null;
+  /** The green dot over the lit pad. */
+  dot: Phaser.GameObjects.Container;
   open: boolean;
   /** Wall-clock time the word was last said, for the idle re-prompt. */
   promptedAt: number;
@@ -94,6 +115,12 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
   private floors = { heroMain: 0.3, villainMain: 0.4 };
   private stats = { abilitiesFired: 0, ultimates: 0, combos: 0, movePicks: 0 };
   private targetOf = new Map<number, { f: Fighter; until: number }>();
+  /** Move choices opened this part: the first one is the learned spell. */
+  private choicesOpened = 0;
+  /** Fetched items used this part, for the tests. */
+  private itemsUsed = 0;
+  /** "Look what we found!" is said once per part, at the first item out of the bag. */
+  private bagSaid = false;
 
   constructor() {
     super('Battle');
@@ -116,6 +143,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.floors = { heroMain: 0.3, villainMain: this.part === 1 ? 0.45 : 0.3 };
     this.stats = { abilitiesFired: 0, ultimates: 0, combos: 0, movePicks: 0 };
     this.targetOf = new Map();
+    this.choicesOpened = 0;
+    this.itemsUsed = 0;
+    this.bagSaid = false;
     this.hudLabels = [];
     this.bannerText = null;
     this.bannerBig = 0;
@@ -367,12 +397,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
   private async part1(): Promise<void> {
     await this.intro();
     await this.simWait(1.5);
-    await this.useHelper();
+    await this.useAllFetched(3.5);
+    await this.useMade(['helper', 'gem', 'ammo'], 3);
     await this.simWait(2.5);
-    await this.useGem();
-    await this.simWait(4);
-    await this.useAmmo();
-    await this.simWait(4);
     await this.moveChoice();
     await this.simWait(7);
     await this.combo();
@@ -392,12 +419,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
   private async part2(): Promise<void> {
     await this.intro();
     await this.simWait(1);
-    await this.useHelper();
+    await this.useAllFetched(3);
+    await this.useMade(['helper', 'ammo', 'gem'], 2.5);
     await this.simWait(2);
-    await this.useAmmo();
-    await this.simWait(3);
-    await this.useGem();
-    await this.simWait(3);
     await this.moveChoice();
     await this.simWait(6);
     await this.combo();
@@ -419,6 +443,71 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     const key = keys[Math.floor(Math.random() * keys.length)];
     if (!key) return;
     await this.guard(voiceBus.say(tauntLine(this.villain.init.id, key), 'instruction', this.villain));
+  }
+
+  /** Every key word she fetched in the house, used in turn, `gap` seconds apart. */
+  private async useAllFetched(gap: number): Promise<void> {
+    for (const word of episode.fetched) {
+      if (!FETCH_BY_WORD[word]) continue;
+      await this.useFetched(word);
+      await this.simWait(gap);
+    }
+  }
+
+  /**
+   * One fetched thing: her bag pops up over her hero, the item's picture
+   * jumps out of it with a sparkle, a big "THE NET!" banner, and her hero
+   * fires the item's own ability. Summon items (hens, the dog) fight on her side.
+   */
+  private async useFetched(word: string): Promise<void> {
+    const item = FETCH_BY_WORD[word];
+    const h = this.heroes[0];
+    if (!item || !h?.active || h.floored) return;
+    const color = item.ability.color;
+    // The bag: pops in over her head.
+    const bag = fitImage(this.add.image(h.cx, h.top - 50, 'prop_bag'), 86, 86).setDepth(DEPTH.fx + 5);
+    const bs = bag.scale;
+    bag.setScale(0);
+    this.tweens.add({ targets: bag, scale: bs, duration: 260, ease: 'Back.easeOut' });
+    sfxWhoosh();
+    if (!this.bagSaid) {
+      this.bagSaid = true;
+      void this.say('use_bag');
+    }
+    await this.simWait(0.35);
+    // The picture jumps out of the bag, a squash on the bag as it goes.
+    this.tweens.add({ targets: bag, scaleX: bs * 1.3, scaleY: bs * 0.7, duration: 90, yoyo: true });
+    const pic = fitImage(this.add.image(bag.x, bag.y, `pic_${word}`), 120, 120).setDepth(DEPTH.fx + 6);
+    const ps = pic.scale;
+    pic.setScale(0.2 * ps);
+    this.tweens.add({ targets: pic, y: bag.y - 110, scale: ps * 1.2, duration: 380, ease: 'Back.easeOut' });
+    const halo = this.add.image(pic.x, bag.y - 110, TEX.glow).setTint(0xfff3a0).setScale(2.4).setBlendMode(Phaser.BlendModes.ADD).setDepth(DEPTH.fx + 4);
+    this.tweens.add({ targets: halo, scale: 3.4, alpha: 0.6, duration: 400, yoyo: true, repeat: 1 });
+    sfxSummon();
+    burst(this, pic.x, bag.y - 110, { count: 50, speed: 380, colors: [0xfff3a0, color, 0xffffff] });
+    await this.simWait(0.45);
+    // Its name, big, and then it is really used.
+    this.banner(`THE ${word.toUpperCase()}!`, color === 0xffffff ? 0x7ad9ff : color, true);
+    slowmo(this, 0.4, 700);
+    speedLines(this, pic.x, pic.y, color, 600);
+    cast(this, h, item.ability, this.villain, 1.8);
+    this.stats.abilitiesFired++;
+    this.itemsUsed++;
+    // The picture flies off towards the villain and fades; the bag closes.
+    this.tweens.add({ targets: pic, x: this.villain.cx, y: this.villain.cy, scale: ps * 0.6, alpha: 0, delay: 300, duration: 500, ease: 'Quad.easeIn', onComplete: () => pic.destroy() });
+    this.tweens.add({ targets: halo, alpha: 0, delay: 300, duration: 400, onComplete: () => halo.destroy() });
+    this.tweens.add({ targets: bag, scale: 0, delay: 500, duration: 250, ease: 'Back.easeIn', onComplete: () => bag.destroy() });
+  }
+
+  /** The parked v0.1 made things, only if their flags are set (they are not, in v0.2 episodes). */
+  private async useMade(order: ('helper' | 'gem' | 'ammo')[], gap: number): Promise<void> {
+    for (const what of order) {
+      if (!episode.made[what]) continue;
+      if (what === 'helper') await this.useHelper();
+      else if (what === 'gem') await this.useGem();
+      else await this.useAmmo();
+      await this.simWait(gap);
+    }
   }
 
   /** The helper friend from Word to Picture joins the heroes. */
@@ -505,39 +594,111 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     if (this.phase === 'combo') this.phase = 'fight';
   }
 
+  /**
+   * The spell the helper taught her in the house: the helper's own move with
+   * that word, fired by her hero. Null with no spell (or an unknown word).
+   */
+  private spellMove(): { word: string; ab: AbilitySpec } | null {
+    const word = episode.spell;
+    if (!word) return null;
+    const ab =
+      CHARACTER_BY_ID[helper()]?.good.abilities.find((a) => a.word === word) ??
+      this.heroes.flatMap((h) => h.init.abilities).find((a) => a.word === word);
+    return ab ? { word, ab } : null;
+  }
+
+  /**
+   * Where the pads go: spread over the arena floor, away from her hero and
+   * from each other (greedy farthest-point over a grid of floor spots).
+   */
+  private padSpots(n: number, me: Fighter): { x: number; y: number }[] {
+    const cands: { x: number; y: number }[] = [];
+    for (const x of [220, 490, 770, 1050]) for (const y of [490, 620]) cands.push({ x, y });
+    const taken: { x: number; y: number }[] = [{ x: me.x, y: me.y }];
+    const out: { x: number; y: number }[] = [];
+    for (let i = 0; i < n; i++) {
+      let best: { x: number; y: number } | null = null;
+      let bestScore = -1;
+      for (const c of cands) {
+        if (out.includes(c)) continue;
+        const score = Math.min(...taken.map((t) => Math.hypot(t.x - c.x, (t.y - c.y) * 1.5))) + Math.random() * 40;
+        if (score > bestScore) {
+          best = c;
+          bestScore = score;
+        }
+      }
+      out.push(best!);
+      taken.push(best!);
+    }
+    return out.sort((a, b) => a.x - b.x);
+  }
+
+  /** One move word as a place: a glowing rune ring on the floor and its word on a sign above. */
+  private makePad(word: string, x: number, y: number, bornAt: number): MovePad {
+    const glow = this.add.image(0, 0, TEX.glow).setTint(PAD_GLOW).setScale(3.2, 1.3).setAlpha(0.8).setBlendMode(Phaser.BlendModes.ADD);
+    const disc = this.add.ellipse(0, 0, 190, 70, PAD_GLOW, 0.3).setStrokeStyle(6, 0xffffff, 0.9);
+    const inner = this.add.ellipse(0, 0, 140, 46).setStrokeStyle(3, PAD_GLOW, 1);
+    const runes = [0, 1, 2, 3, 4, 5].map((i) => {
+      const a = (i / 6) * Math.PI * 2;
+      return this.add.circle(Math.cos(a) * 82, Math.sin(a) * 29, 5, 0xffffff, 0.9);
+    });
+    const ring = this.add.container(x, y, [glow, disc, inner, ...runes]).setDepth(FLOOR_TOP - 3);
+    const sy = y - 215;
+    const plate = this.add.rectangle(0, 0, 230, 100, 0xfff8e8, 0.97).setStrokeStyle(7, PAD_GLOW);
+    const stake = this.add.rectangle(0, 62, 10, 26, 0xfff8e8, 0.9);
+    const label = this.add
+      .text(0, 0, word.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '76px', color: '#1a1030' })
+      .setOrigin(0.5);
+    const sign = this.add.container(x, sy, [stake, plate, label]).setDepth(DEPTH.prompt - 10);
+    // Popped in from nothing by updateChoice, on wall-clock time.
+    sign.setScale(0);
+    ring.setScale(0);
+    return { word, x, y, ring, sign, bornAt };
+  }
+
   /** The move-choice pause. */
   private async moveChoice(): Promise<void> {
-    // Move words come from the heroes' own abilities.
+    // Move words come from the heroes' own abilities, plus the spell she learned.
     const owners = new Map<string, { f: Fighter; ab: AbilitySpec }>();
     for (const h of this.heroes) for (const ab of h.init.abilities) if (ab.word && !owners.has(ab.word)) owners.set(ab.word, { f: h, ab });
-    const words = Phaser.Utils.Array.Shuffle([...owners.keys()]).slice(0, Math.min(3, owners.size));
+    const me = this.heroes[0]!;
+    const spell = this.spellMove();
+    if (spell) owners.set(spell.word, { f: me, ab: spell.ab });
+    let words: string[];
+    let right: string;
+    if (spell && this.choicesOpened === 0) {
+      // The first choice of each part is the spell: the word she learned is the one she fires.
+      const others = Phaser.Utils.Array.Shuffle([...owners.keys()].filter((w) => w !== spell.word)).slice(0, 2);
+      words = Phaser.Utils.Array.Shuffle([spell.word, ...others]);
+      right = spell.word;
+    } else {
+      words = Phaser.Utils.Array.Shuffle([...owners.keys()]).slice(0, Math.min(3, owners.size));
+      right = words[Math.floor(Math.random() * words.length)]!;
+    }
     if (words.length < 2) return;
-    const right = words[Math.floor(Math.random() * words.length)]!;
-    const colors = Phaser.Utils.Array.Shuffle([...CHOICE_COLORS]).slice(0, words.length) as PadColorName[];
+    this.choicesOpened++;
 
     this.phase = 'choice';
     this.simRate = 0.04;
-    const ui = this.add.container(0, 0).setDepth(DEPTH.overlay);
-    ui.add(this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.45));
-    ui.add(
+    // She has to be able to walk: no pig, no ice block during the choice.
+    me.status = null;
+    me.clearOverlay();
+    const objs: Phaser.GameObjects.GameObject[] = [];
+    // A light dim behind the fighters (not over them), so the pads and signs read.
+    objs.push(this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0a0018, 0.3).setDepth(FLOOR_TOP - 3.5));
+    objs.push(
       this.add
-        .text(GAME_WIDTH / 2, 150, 'PICK A MOVE!', { fontFamily: '"Arial Black", sans-serif', fontSize: '64px', color: '#ffd23f', stroke: '#000000', strokeThickness: 12 })
-        .setOrigin(0.5),
+        .text(GAME_WIDTH / 2, 110, 'PICK A MOVE!', { fontFamily: '"Arial Black", sans-serif', fontSize: '56px', color: '#ffd23f', stroke: '#000000', strokeThickness: 12 })
+        .setOrigin(0.5)
+        .setDepth(DEPTH.overlay),
     );
-    const dots: Phaser.GameObjects.Container[] = [];
-    words.forEach((w, i) => {
-      const x = GAME_WIDTH / 2 + (i - (words.length - 1) / 2) * 330;
-      const dot = makeButtonDot(this, x, 330, colors[i]!, 56, false);
-      dots.push(dot);
-      const plate = this.add.rectangle(x, 450, 260, 110, 0xffffff, 0.95).setStrokeStyle(8, PAD_COLOR[colors[i]!]);
-      const label = this.add
-        .text(x, 450, w, { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '84px', color: '#1a1030' })
-        .setOrigin(0.5);
-      ui.add([dot, plate, label]);
-    });
+    const pads = this.padSpots(words.length, me).map((p, i) => this.makePad(words[i]!, p.x, p.y, performance.now() + 120 + i * 140));
+    for (const p of pads) objs.push(p.ring, p.sign);
+    const dot = makeButtonDot(this, 0, 0, 'green', 22, false).setDepth(DEPTH.prompt).setVisible(false);
+    objs.push(dot);
 
     const picked = await new Promise<string>((resolve) => {
-      this.choice = { words, colors, right, owners, ui, dots, open: false, promptedAt: 0, resolve };
+      this.choice = { words, right, owners, objs, pads, near: null, dot, open: false, promptedAt: 0, resolve };
       void (async () => {
         await this.say('move_pick');
         await this.say(`use_move_${right}`);
@@ -548,7 +709,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       })();
     });
 
-    ui.destroy();
+    for (const o of objs) o.destroy();
+    me.lean = 0;
     this.choice = null;
     this.simRate = 1;
     this.stats.movePicks++;
@@ -582,17 +744,65 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.phase = 'fight';
   }
 
-  /** Called from update when a choice is open and a colour is pressed. */
-  private pressChoice(color: PadColorName): void {
+  /** Pick a word: green on a lit pad, or F4. */
+  private pickChoice(word: string): void {
     const c = this.choice;
     if (!c || !c.open) return;
-    const i = c.colors.indexOf(color);
-    if (i < 0) {
-      sfxWrong();
-      return;
-    }
     c.open = false;
-    c.resolve(c.words[i]!);
+    c.resolve(word);
+  }
+
+  /**
+   * The choice, every frame, on real time (the scene clock is nearly frozen):
+   * her hero walks with the stick, the pad she stands at lights up with a
+   * green dot, green there picks it. Yellow or ten quiet seconds says it again.
+   */
+  private updateChoice(realDt: number): void {
+    const c = this.choice!;
+    const me = this.heroes[0]!;
+    const mv = this.controls.move;
+    if (mv.lengthSq() > 0.04 && me.active) {
+      me.x = Phaser.Math.Clamp(me.x + mv.x * WALK_SPEED * realDt, ARENA_LEFT, ARENA_RIGHT);
+      me.y = Phaser.Math.Clamp(me.y + mv.y * WALK_SPEED * 0.8 * realDt, FLOOR_TOP, FLOOR_BOTTOM);
+      me.lean = Phaser.Math.Clamp(mv.x * 0.2, -0.25, 0.25);
+    } else me.lean = 0;
+
+    let near: MovePad | null = null;
+    let best = REACH;
+    for (const p of c.pads) {
+      const d = Phaser.Math.Distance.Between(me.x, me.y, p.x, p.y);
+      if (d < best) {
+        near = p;
+        best = d;
+      }
+    }
+    if (near !== c.near) {
+      c.near = near;
+      if (near) sfxSelect();
+    }
+    const wall = performance.now();
+    const pulse = 1 + 0.06 * Math.sin(wall / 160);
+    for (const p of c.pads) {
+      const k = Phaser.Math.Clamp((wall - p.bornAt) / 260, 0, 1);
+      const pop = k <= 0 ? 0 : Phaser.Math.Easing.Back.Out(k);
+      const lit = p === near;
+      p.ring.setScale(pop * (lit ? 1.2 : 1) * (c.open ? pulse : 1));
+      p.ring.setAlpha(lit ? 1 : 0.8);
+      p.sign.setScale(pop * (lit ? 1.12 : 1));
+    }
+    c.dot.setVisible(Boolean(near && c.open));
+    if (near) c.dot.setPosition(near.x, near.sign.y - 90).setScale(pulse);
+
+    // Green with no pad lit does nothing: no hop in the choice.
+    if (this.controls.pressed('green') && near && c.open) this.pickChoice(near.word);
+    if (this.controls.dev('F4') && this.choice) {
+      c.open = true;
+      this.pickChoice(c.right);
+    }
+    if (c.open && (this.controls.pressed('yellow') || (wall - c.promptedAt > 10_000 && !voiceBus.busy))) {
+      c.promptedAt = wall;
+      void voiceBus.say(narratorLine(narrator(), `use_move_${c.right}`));
+    }
   }
 
   /** The villain's ultimate. Part 1: the heroes are floored. Part 2: the counter-item answers it. */
@@ -687,7 +897,27 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.banner(`${counter.name.toUpperCase()}!`, 0xffb703, true);
     await this.simWait(0.6);
 
-    if (counter.how === 'block' || counter.how === 'reflect') {
+    if (counter.how === 'scare') {
+      // Wind-up mice: a swarm scurries along the floor at the villain, who
+      // leaps up in fright mid-ultimate (a stretch and a lift, no spin), and
+      // the ultimate fizzles out before it is ever fired.
+      for (let i = 0; i < 12; i++) this.after(i * 70, () => this.scurry(h, v, i));
+      await this.simWait(0.75);
+      aura.stop();
+      v.growUntil = 0;
+      sfxShout(1.6);
+      floatText(this, v.cx, v.top - 40, 'EEK!', '#ff9ad5', 84);
+      shake(this, 3, 300);
+      this.tweens.addCounter({ from: 0, to: 1, duration: 750, ease: 'Sine.easeInOut', onUpdate: (tw) => (v.lift = Math.sin((tw.getValue() ?? 0) * Math.PI) * 190), onComplete: () => (v.lift = 0) });
+      const bs = v.baseScale;
+      this.tweens.add({ targets: v.sprite, scaleX: bs * 0.72, scaleY: bs * 1.45, duration: 170, yoyo: true, repeat: 1, onComplete: () => v.sprite.setScale(bs) });
+      await this.simWait(0.8);
+      // The fizzle: the charge goes out of it in a grey puff.
+      sfxPoof();
+      burst(this, v.cx, v.cy, { count: 50, speed: 260, colors: [0x888888, 0xcccccc, ult.color], life: 900 });
+      floatText(this, v.cx + 60, v.cy, 'FIZZLE!', '#cccccc', 44);
+      await this.simWait(1.0);
+    } else if (counter.how === 'block' || counter.how === 'reflect') {
       // A dome over the heroes; the ultimate crashes into it.
       const dome = this.add.ellipse(h.x + 60, h.y - 60, 520, 360, 0x9ad8ff, 0.18).setStrokeStyle(10, 0xffffff, 0.9).setDepth(DEPTH.fx + 3);
       dome.setScale(0);
@@ -746,6 +976,31 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     v.setStatus('stun', 99, this.now);
     floatText(this, v.cx, v.top - 20, 'DIZZY!', '#ffd23f', 56);
     await this.simWait(0.8);
+  }
+
+  /** One wind-up mouse: low and fast along the floor from her side to the villain, then off the edge. */
+  private scurry(from: Fighter, to: Fighter, i: number): void {
+    const y0 = Phaser.Math.Clamp(from.y + (Math.random() - 0.5) * 60, FLOOR_TOP, FLOOR_BOTTOM);
+    const m = this.add.text(from.x + 30, y0, '🐭', { fontSize: '42px' }).setOrigin(0.5, 1).setDepth(y0 + 2);
+    const ty = Phaser.Math.Clamp(to.y + (Math.random() - 0.5) * 70, FLOOR_TOP, FLOOR_BOTTOM);
+    // A scurry: quick little squashes, never a spin.
+    this.tweens.add({ targets: m, scaleY: 0.78, scaleX: 1.12, duration: 60, yoyo: true, repeat: -1 });
+    const done = () => {
+      this.tweens.killTweensOf(m);
+      m.destroy();
+    };
+    this.tweens.add({
+      targets: m,
+      x: to.x + (Math.random() - 0.4) * 70,
+      y: ty,
+      duration: 480 + Math.random() * 160,
+      onUpdate: () => m.setDepth(m.y + 2),
+      onComplete: () => {
+        burst(this, m.x, m.y - 20, { count: 10, speed: 200, colors: [0xc8c8d0, 0xffffff] });
+        if (i % 3 === 0 && to.active) this.hit(to, 0.4, 0xc8c8d0, from);
+        this.tweens.add({ targets: m, x: GAME_WIDTH + 80, alpha: 0.6, duration: 500, onComplete: done });
+      },
+    });
   }
 
   /** Part 2's finish: everyone's biggest move, then the villain is beaten and turns good. */
@@ -972,13 +1227,14 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
   private makeHudLabels(): void {
     const style = { fontFamily: '"Arial Black", sans-serif', fontSize: '18px', color: '#ffffff', stroke: '#000000', strokeThickness: 5 };
     this.heroes.forEach((h, i) => {
-      this.hudLabels.push(this.add.text(30, 14 + i * 44, h.init.name, style).setDepth(DEPTH.hud + 1));
+      this.hudLabels.push(this.add.text(30, 14 + i * 44, h.init.name.toUpperCase(), style).setDepth(DEPTH.hud + 1));
     });
-    this.hudLabels.push(this.add.text(GAME_WIDTH - 30, 14, this.villain.init.name, style).setOrigin(1, 0).setDepth(DEPTH.hud + 1));
+    this.hudLabels.push(this.add.text(GAME_WIDTH - 30, 14, this.villain.init.name.toUpperCase(), style).setOrigin(1, 0).setDepth(DEPTH.hud + 1));
 
-    // What she made in the minigames, in a row beside the heroes' bars, so
-    // the link from reading to the fight stays on screen the whole battle.
-    const made: string[] = [];
+    // What she fetched in the house (and the counter-item, once made), in a
+    // row beside the heroes' bars, so the link from reading to the fight
+    // stays on screen the whole battle. The parked games' things too, if set.
+    const made: string[] = episode.fetched.filter((w) => FETCH_BY_WORD[w]).map((w) => `pic_${w}`);
     if (episode.made.gem) made.push('prop_gem');
     if (episode.made.ammo) made.push('prop_ammo');
     if (episode.made.helper) made.push('minion_helper');
@@ -1026,22 +1282,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.waits = this.waits.filter((w) => w.until > this.now);
     for (const w of due) w.resolve();
 
-    // Choice input runs on real time.
-    if (this.choice) {
-      const pulse = 1 + 0.09 * Math.sin(performance.now() / 160);
-      for (const d of this.choice.dots) d.setScale(this.choice.open ? pulse : 0.9);
-      for (const c of CHOICE_COLORS) if (this.controls.pressed(c)) this.pressChoice(c);
-      if (this.controls.dev('F4') && this.choice) {
-        this.choice.open = true;
-        this.pressChoice(this.choice.colors[this.choice.words.indexOf(this.choice.right)]!);
-      }
-      // Yellow, or ten quiet seconds, says the word again.
-      const c = this.choice;
-      if (c?.open && (this.controls.pressed('yellow') || (performance.now() - c.promptedAt > 10_000 && !voiceBus.busy))) {
-        c.promptedAt = performance.now();
-        void voiceBus.say(narratorLine(narrator(), `use_move_${c.right}`));
-      }
-    }
+    // The choice runs on real time: she walks while the fight is frozen.
+    if (this.choice) this.updateChoice(realDt);
 
     // Green outside a choice makes her hero hop with a sparkle: buttons always answer.
     const me = this.heroes[0];
@@ -1091,7 +1333,11 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       villains: [info(this.villain)],
       minions: this.fighters.filter((f) => f.active && !f.isMain).length,
       ...this.stats,
-      choice: this.choice ? { words: this.choice.words, colors: this.choice.colors, right: this.choice.right, open: this.choice.open } : null,
+      itemsUsed: this.itemsUsed,
+      me: this.heroes[0] ? { x: Math.round(this.heroes[0].x), y: Math.round(this.heroes[0].y) } : null,
+      choice: this.choice
+        ? { words: this.choice.words, right: this.choice.right, open: this.choice.open, spots: this.choice.pads.map((p) => ({ word: p.word, x: p.x, y: p.y })) }
+        : null,
     };
   }
 }

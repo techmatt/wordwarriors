@@ -4,9 +4,17 @@
  * `?scene=<step>`, straight into a step of a plausible episode (tests, and
  * Matt wanting to look at one thing).
  *
- *   ?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug
- *   ?scene=sound | blend | picture | spell | alarm | retreat | victory | pick | parent
+ *   ?scene=bedroom
+ *   ?scene=house&part=2                 (the hub; part 2 has the attic open)
+ *   ?scene=room&slot=a|b|counter        (a side room; counter is the attic, part 2)
+ *   ?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug   (ally=none for no ally)
  *   ?scene=victory&read=cat,sun,julia   (the words the recap shows)
+ *   ?scene=pick | parent
+ *   ?fetched=net,fan                    (the battle items fetched; default net,fan)
+ *   parked v0.1 games: ?scene=sound | blend | picture | spell | alarm | retreat
+ *
+ * Later steps get the episode they would have had by then: the spell learned
+ * in the hub, the earlier rooms done, the fetched items in the bag.
  */
 
 import Phaser from 'phaser';
@@ -15,8 +23,9 @@ import { ART_ASSETS } from '../../content/art/assets';
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import { group } from '../../content/voice/ids';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { episode, jumpTo, startStep, type PrepGame } from '../episode/Episode';
+import { enterRoom, episode, episodeGroups, helper, jumpTo, planFor, startStep, steps, type PrepGame, type Slot } from '../episode/Episode';
 import { makeTextures } from '../fx/textures';
+import { spellFor } from '../rules/spell';
 import { voiceBank } from '../voice/VoiceBank';
 
 export class BootScene extends Phaser.Scene {
@@ -62,7 +71,19 @@ export class BootScene extends Phaser.Scene {
       startStep(this);
       return;
     }
-    const part = q.get('part') === '2' ? 2 : 1;
+    let part: 1 | 2 = q.get('part') === '2' ? 2 : 1;
+    const fetched = q.get('fetched');
+
+    // The episode as it would be by a given point.
+    const learned = (): void => {
+      episode.house.taught = true;
+      episode.spell = spellFor(episode.hero, helper());
+    };
+    const fetchedAll = (): void => {
+      episode.fetched = fetched ? fetched.split(',') : ['net', 'fan'];
+      episode.house.done = ['a', 'b'];
+    };
+
     if (target === 'parent') {
       this.scene.start('Parent', { back: 'Title' });
       return;
@@ -72,11 +93,33 @@ export class BootScene extends Phaser.Scene {
       jumpTo(this, 'prep');
       return;
     }
-    if (target === 'spell') {
-      jumpTo(this, 'spell');
+    if (target === 'room') {
+      const slot: Slot = q.get('slot') === 'b' ? 'b' : q.get('slot') === 'counter' ? 'counter' : 'a';
+      part = slot === 'counter' ? 2 : 1;
+      learned();
+      if (slot === 'counter') fetchedAll();
+      else if (slot === 'b') {
+        episode.house.done = ['a'];
+        episode.fetched = fetched ? fetched.split(',') : [planFor('a').sentence.key];
+      }
+      // The house step of the right part, then straight through its door.
+      episode.stepIndex = steps().findIndex((s) => s.kind === 'house' && s.part === part);
+      void voiceBank.loadGroups(episodeGroups());
+      enterRoom(this, slot);
       return;
     }
-    if (part === 2) episode.made = { gem: true, ammo: true, helper: true, item: true };
+    if (target === 'house' && part === 2) {
+      learned();
+      fetchedAll();
+    }
+    if (target === 'battle' || target === 'victory') {
+      learned();
+      fetchedAll();
+      if (part === 2 || target === 'victory') {
+        episode.house.done = ['a', 'b', 'counter'];
+        episode.made.item = true;
+      }
+    }
     jumpTo(this, target as never, {}, part);
   }
 }

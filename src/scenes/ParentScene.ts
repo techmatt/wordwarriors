@@ -1,6 +1,6 @@
 /**
- * The grown-ups page: progress per letter sound and per word, from the
- * ProgressStore. Reached by F9 anywhere, or holding LB+RB on the title.
+ * The grown-ups page: progress per letter sound, per word and per sentence
+ * frame, from the ProgressStore. Mixed case is fine here: it is not for her. Reached by F9 anywhere, or holding LB+RB on the title.
  *
  * Each item shows: tries ever, first-try-right rate over her recent tries, and
  * today's tries. Colour is the shakiness the game uses to pick targets: red
@@ -10,10 +10,11 @@
 import Phaser from 'phaser';
 
 import { LETTERS } from '../../content/phonics/letters';
+import { FRAMES } from '../../content/phonics/sentences';
 import { WORDS } from '../../content/phonics/words';
 import { stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
-import { GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { GAME_HEIGHT, GAME_WIDTH, SENTENCE_SOLID } from '../config';
 import { startStep, type Step } from '../episode/Episode';
 import { Controls } from '../input/Controls';
 import { progress } from '../state/progress';
@@ -53,6 +54,13 @@ export class ParentScene extends Phaser.Scene {
     // Every word in the content, plus any other word she has met (spelling, move words).
     const words = [...new Set([...WORDS.map((w) => w.word), ...Object.keys(snap.words)])];
     this.grid('Words', 'words', words, 30, 300, 12, 205);
+    // The sentence game keeps progress per frame ("WE CAN USE THE ..."), so
+    // the little words recur until they are sight words.
+    this.grid('Sentence frames', 'frames', FRAMES.map((f) => f.id), 880, 300, 8, 300);
+    this.add.text(880, 300 + 30 + FRAMES.length * 30 + 6, [
+      `Solid frames skip the listening pass`,
+      `(${SENTENCE_SOLID.tries}+ tries, last ${SENTENCE_SOLID.lastRight} right).`,
+    ], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#555' });
   }
 
   private grid(title: string, kind: ItemKind, ids: string[], x0: number, y0: number, perCol: number, colW: number): void {

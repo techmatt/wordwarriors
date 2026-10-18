@@ -13,7 +13,8 @@
  */
 
 import { ARENAS, MINIONS, ROSTER } from '../battle/roster.js';
-import { CVC_WORDS } from '../phonics/words.js';
+import { BEDROOMS, HUB, SIDE_ROOMS } from '../house/house.js';
+import { CVC_WORDS, SPECIAL_WORDS, WORD_BY_ID } from '../phonics/words.js';
 
 export type AssetKind = 'character' | 'minion' | 'arena' | 'room' | 'picture' | 'item' | 'prop';
 
@@ -110,7 +111,44 @@ for (const [id, content, glyph, palette] of ROOMS) {
   assets.push({ id: `room_${id}`, kind: 'room', w: 1280, h: 720, content: `${content}. No text.`, label: '', glyph, palette });
 }
 
-for (const w of CVC_WORDS) {
+// The house (content/house/house.ts). Every room shares one brief tail: she
+// walks across the floor in the lower half, and things stand across the middle.
+// The villain's mood is laid over at run time, so the rooms stay cheerful.
+const HOUSE_ROOM = 'Side-on view, bright cheerful cartoon for a 4-year-old, a floor across the lower half where she walks, clear space across the middle for three objects or characters to stand, no characters, no text';
+for (const b of BEDROOMS) {
+  assets.push({ id: `room_bedroom_${b.id}`, kind: 'room', w: 1280, h: 720, content: `${b.look}. The bed on the left and a door on the right are drawn by the game. ${HOUSE_ROOM}.`, label: '', glyph: '⭐', palette: b.palette });
+}
+assets.push({ id: 'room_hub', kind: 'room', w: 1280, h: 720, content: `${HUB.look}. The doors and the magic circle are drawn by the game on top; keep the back wall plain where they stand. ${HOUSE_ROOM}.`, label: '', glyph: '🏠', palette: HUB.palette });
+for (const r of SIDE_ROOMS) {
+  assets.push({ id: `room_side_${r.id}`, kind: 'room', w: 1280, h: 720, content: `${r.look}. ${HOUSE_ROOM}.`, label: '', glyph: r.glyph, palette: r.palette });
+}
+
+// Bedroom toys: things she presses green next to. Art at about twice the
+// display box so it stays crisp when the reaction squashes it bigger.
+for (const b of BEDROOMS) {
+  for (const o of b.objects) {
+    assets.push({ id: `obj_${o.id}`, kind: 'prop', w: Math.round(o.w * 1.75), h: Math.round(o.h * 1.75), content: `${o.look}: a toy in a child's bedroom, chunky cartoon, side-on, transparent background.`, label: '', glyph: o.glyph });
+  }
+}
+
+// What each villain leaves lying about the house (CharacterSpec.house.decals).
+const decalSeen = new Set<string>();
+for (const c of ROSTER) {
+  for (const d of c.house?.decals ?? []) {
+    if (decalSeen.has(d.id)) continue;
+    decalSeen.add(d.id);
+    assets.push({ id: `decal_${d.id}`, kind: 'prop', w: 120, h: 120, content: `${d.look}: left lying about the house by ${c.evil.displayName}. Small, mischievous not scary, cartoon, transparent background, no text.`, label: '', glyph: d.glyph });
+  }
+}
+
+// Word pictures: every CVC word, the special words (MICE), and any counter
+// sentence key word not already among them (its picture is the item's glyph).
+const picWords = [...CVC_WORDS, ...SPECIAL_WORDS];
+for (const c of ROSTER) {
+  const key = c.counter.word;
+  if (key && !picWords.some((w) => w.word === key)) picWords.push(WORD_BY_ID[key] ?? { word: key, glyph: c.counter.glyph, decodable: true });
+}
+for (const w of picWords) {
   assets.push({
     id: `pic_${w.word}`,
     kind: 'picture',
@@ -149,6 +187,11 @@ const PROPS: [string, number, number, string, string, string?][] = [
   ['sun', 200, 200, 'A big happy cartoon sun.', '☀️'],
   ['anvil', 260, 170, 'A magic anvil with runes, glowing.', '⚒️'],
   ['tent', 280, 220, 'A striped camping tent with a flag.', '⛺'],
+  ['bed', 300, 200, "A child's cosy bed side-on: a puffy star-pattern duvet, a big pillow, a wooden headboard on the left.", '🛏️'],
+  ['front_door', 200, 290, "A big friendly front door of a house: painted red, a round brass knob, a little window at the top, a doormat. Closed. No house number or text.", '🚪'],
+  ['magic_circle', 260, 110, 'A glowing rune circle painted on the floor, seen at an angle (a flat ellipse), soft blue-violet light rising from it, little stars. Abstract runes only, no letters.', '✨'],
+  ['bag', 120, 130, 'A little adventure backpack for a child: rounded, bright, a buckle flap, a star patch. No text.', '🎒'],
+  ['scroll', 520, 160, 'A wide unrolled magic scroll, rolled ends with wooden knobs, glowing edges, blank parchment in the middle for a word painted by the game. NO TEXT.', '📜'],
 ];
 for (const [id, w, h, content, glyph] of PROPS) {
   assets.push({ id: `prop_${id}`, kind: 'prop', w, h, content, label: '', glyph });

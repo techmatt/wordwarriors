@@ -31,10 +31,12 @@ export interface ProgressData {
   words: Record<string, Stat>;
   /** Spelling is writing, not reading: its keystroke slips are kept apart. */
   spelling: Record<string, Stat>;
+  /** Sentence frames (`we_can_use_the`): first-try answers, for skipping the listening pass. */
+  frames: Record<string, Stat>;
   episodes: number;
 }
 
-export type ItemKind = 'sounds' | 'words' | 'spelling';
+export type ItemKind = 'sounds' | 'words' | 'spelling' | 'frames';
 
 const RECENT = 6;
 
@@ -43,7 +45,7 @@ function emptyStat(): Stat {
 }
 
 function empty(): ProgressData {
-  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, episodes: 0 };
+  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, episodes: 0 };
 }
 
 export interface StorageLike {
@@ -71,6 +73,8 @@ export class ProgressStore {
       parsed.sounds ??= {};
       parsed.words ??= {};
       parsed.spelling ??= {};
+      // Added in v0.2 without a version bump: an older blob simply has none yet.
+      parsed.frames ??= {};
       parsed.episodes ??= 0;
       return parsed;
     } catch {
