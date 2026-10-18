@@ -18,6 +18,29 @@ import { installTestHooks } from './testHooks';
 
 installTestHooks();
 
+/**
+ * A safety net for an unattended four-year-old. Phaser runs each frame from a
+ * requestAnimationFrame callback that only schedules the next frame after the
+ * current one returns, so one exception anywhere in a frame stops the game
+ * for good (a frozen screen, seen during review on 2026-10-18). Each frame is
+ * wrapped so the loop survives; the error is rethrown on its own tick so it is
+ * still reported (and still fails every test that collects page errors).
+ */
+const step = Phaser.Game.prototype.step;
+let reported = 0;
+Phaser.Game.prototype.step = function guardedStep(this: Phaser.Game, time: number, delta: number) {
+  try {
+    step.call(this, time, delta);
+  } catch (error) {
+    // Report the first few; an error repeating every frame must not flood.
+    if (reported++ < 10) {
+      window.setTimeout(() => {
+        throw error;
+      });
+    }
+  }
+};
+
 new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
