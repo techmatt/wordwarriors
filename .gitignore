@@ -18,8 +18,13 @@ dist/
 # Scratch space for one session's working files.
 /scratch/
 
-# Full-resolution originals from `npm run art:gen`; only game-sized PNGs are committed.
-/art-originals/
+# Junctions into the Drive-synced folder (README, "Storage"). No trailing slash:
+# git may see a junction as a link, not a directory.
+# Full-resolution originals from `npm run art:gen` and Matt's photos (refs/); only
+# game-sized PNGs are committed.
+/art-originals
+# Generated edge-tts audio, manifest and build cache from `npm run voice:build`.
+/public/voice-gen
 
 # Logs
 *.log
@@ -35,7 +40,7 @@ Thumbs.db
 .env
 .env.*
 
-# NOTE: public/voice/ (generated audio + manifest + .build-cache.json) and
-# public/art/ (placeholder and real art) are committed on purpose: the game must
-# run from a fresh clone with no network and no generator step.
+# NOTE: public/art/ (placeholder and real art) is committed on purpose. Voice is
+# not: a fresh clone without public/voice-gen runs mute (captions still show)
+# until it is linked or `npm run voice:build` fills it.
 # Reports do not live in this repo — see CLAUDE.md, "Reports".

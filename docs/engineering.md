@@ -13,16 +13,22 @@ without a new measurement.
 - **Size.** Measured at 1,557 lines (now 1,630, ~19 MB). Untrimmed: 23.7 MB, of which 2,976 s speech. edge-tts pads each
   clip with ~1.5 s of silence; `tools/voice/mp3.ts` trims at the last word + 0.2 s on
   MP3 frame boundaries (MPEG-2 Layer III, 24 kHz, 48 kbps, 144-byte / 24 ms frames).
-  Result ~19 MB. Most of it is narrator lines: 13 narrators × ~110 lines. The next big
-  content addition will cross the 20 MB commit gate, which needs Matt's say-so; options
-  are fewer possible narrators, or narrator lines that do not name heroes/villains.
+  Result ~19 MB. Most of it is narrator lines: 13 narrators × ~110 lines.
 - **Size after v0.2** (measured 2026-10-18, `git ls-tree -r -l HEAD public/voice`): 2,771
   files, 35.9 MB committed; `lines.json` has 2,769 lines. The v0.2 voice commit
   (`c5330e7`) added 1,085 lines and 16.2 MB, under the per-commit gate. The growth is
   per-character multiplication: sentence prefixes (frame × roster name), wake-up lines
   (waker × character), plus the 14th character's narrator set.
+- **Generated voice left git** (item 008, 2026-10-18) at 3,590 mp3s, 42.3 MB: it lives in
+  untracked `public/voice-gen/`, a junction to the Drive folder (README, *Storage*).
+  `manifest.json` (1.3 MB) and `.build-cache.json` went with it, not into git: the
+  manifest's word timings come from synthesis and are only true of those exact mp3s, and
+  every checkout shares the one folder, so a tracked manifest would drift from the audio
+  as soon as two branches built. The source of truth that stays tracked is
+  `content/voice/lines.json`, `voices.json` and `clips/` (recordings and their hashes).
 - **Build cache** stores fingerprints only; entries are read back from the previous
-  manifest, so manifest data is committed once (saved ~0.6 MB).
+  manifest, so manifest data is stored once (saved ~0.6 MB). Reused entries are re-based
+  onto the current output folder, so moving the folder needs no rebuild.
 - `en-AU-WilliamMultilingualNeural` failed "No audio was received" on most lines.
 - edge-tts sometimes times "Dragon Parade" as one boundary; `align.ts` splits merged
   tokens by letter count.

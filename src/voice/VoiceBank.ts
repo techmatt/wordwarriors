@@ -1,5 +1,5 @@
 /**
- * The game's entire knowledge of voice: `public/voice/manifest.json`.
+ * The game's entire knowledge of voice: `public/voice-gen/manifest.json`.
  *
  * Ported from Seraphina's VoiceBank, with manifest groups added: there are
  * well over a thousand lines (every narrator line exists once per possible
@@ -43,7 +43,7 @@ export class VoiceBank {
   load(base = import.meta.env.BASE_URL): Promise<boolean> {
     this.manifest ??= (async () => {
       try {
-        const response = await fetch(`${base}voice/manifest.json`);
+        const response = await fetch(`${base}voice-gen/manifest.json`);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const manifest = (await response.json()) as VoiceManifestFile;
         for (const line of manifest.lines) this.lines.set(line.id, line);

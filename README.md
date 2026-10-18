@@ -115,9 +115,34 @@ Everything is data under `content/`; `docs/content.md` walks through each kind. 
 
 ```
 npm run voice:lines     # regenerate content/voice/lines.json
-npm run voice:build     # synthesise new or changed lines into public/voice/
+npm run voice:build     # synthesise new or changed lines into public/voice-gen/
 npm run art:placeholders  # paint missing art, rewrite docs/art.md
 ```
+
+## Storage
+
+Every file has exactly one home (Matt, 2026-10-18):
+
+- **git:** source, data, Matt's voice recordings (`content/voice/clips/`) and the
+  game-sized art (`public/art/`).
+- **Drive** (`C:\Code\gdrive-sync\wordwarriors\`, a Google Drive sync folder): expensive,
+  irreplaceable or private files that do not belong in git. They live there; the repo
+  path is a directory junction (`mklink /J`) to them, git-ignored.
+  - `art-originals/` → `…\wordwarriors\art-originals`: full-res art, `log.jsonl`, and
+    Matt's family photos in `refs/` (private: never copy them into the tracked tree).
+  - `public/voice-gen/` → `…\wordwarriors\voice-gen`: the edge-tts mp3s, `manifest.json`
+    and `.build-cache.json`. Recordings are copied in from `content/voice/clips/` by
+    `voice:build`, which overrides edge-tts with them as before.
+- **Nowhere:** anything a command rebuilds cheaply: contact sheets, `refs/crops/`,
+  `dist/`, test output, `node_modules/`.
+
+The main checkout holds the junctions; conductor links each worktree's to the same Drive
+folders, so a worktree shares one copy and never needs a full voice rebuild. Because the
+voice folder is shared, `voice:build` keeps mp3s of lines that left `lines.json` (another
+branch may still speak them); `voice:build -- --prune` deletes them. A checkout without
+`public/voice-gen/` runs mute with captions, and the unit test that checks the manifest
+fails. To link one by hand: `mklink /J public\voice-gen C:\Code\gdrive-sync\wordwarriors\voice-gen`
+(in `cmd`, from the checkout root).
 
 ## Real art (Codex image generation)
 
@@ -155,11 +180,10 @@ a time.
   keyed to transparency (`tools/art/chroma.ts`), trimmed, and fitted to twice their
   display box. Rooms and arenas are cropped to fill 1280×720. The contact sheet is
   `scratch/art_contact.png`.
-- **Keeping the originals:** `art-originals/` and `scratch/` are git-ignored, so in a
-  worktree they vanish when it is cleaned up. The kept copies live in the main checkout,
-  `C:\Code\wordwarriors\art-originals\` (with `log.jsonl`) and `C:\Code\wordwarriors\scratch\`
-  (Matt, 2026-10-18): copy a worktree's into them before it finishes. Batch 1's 177
-  originals and `art_contact_006.png` are there; 005's six originals were already lost.
+- **Keeping the originals:** `art-originals/` is a junction into the Drive folder (see
+  *Storage*), so what `art:gen` writes there is kept whichever checkout ran it. `scratch/`
+  is git-ignored and shared with the main checkout; the contact sheet is rebuilt by
+  `--sheet` and kept nowhere.
 - **Family likeness (2026-10-18, item 007):** Julia, Ellie, Dada Matt and Dada Jason are
   drawn from Matt's photos in `art-originals/refs/` (private, git-ignored, shared with the
   main checkout; never commit or copy them into the tracked tree). `REFS` in
@@ -219,12 +243,11 @@ a time.
   `align.ts` splits it rather than failing.
 - edge-tts pads each clip with ~1.5 s of silence; the build cuts mp3 frames after the
   last word + 0.2 s (`tools/voice/mp3.ts`). That took the voice folder from 23.7 MB to
-  about 19 MB (1,557 lines then). v0.2 added 1,085 lines in one commit (`c5330e7`,
-  16.2 MB, under the 20 MB per-commit gate); the committed folder is
-  2,771 files, 35.9 MB (measured 2026-10-18 from `git ls-tree -r -l HEAD public/voice`).
+  about 19 MB (1,557 lines then). Generated voice left git on 2026-10-18 (item 008) at
+  3,590 mp3s, 42.3 MB with manifest and cache; it lives in `public/voice-gen/` (*Storage*).
 - Placeholder art is painted in headless Chromium so emoji render; Windows 10's emoji
   font lacks Emoji 13+ glyphs (🪙 🪭 🪞 🪲 🥸 🪨), so the roster avoids them.
-- The game itself needs no network: voice and art are committed.
+- The game itself needs no network: art is committed, voice is on disk in `public/voice-gen/`.
 - Stopping a backgrounded `npx vite` by killing its launcher leaves the node server
   still listening on 5174 (seen 2026-10-18). Find it with `netstat -ano | findstr 5174`
   and stop that PID.

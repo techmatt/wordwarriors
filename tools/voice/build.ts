@@ -3,7 +3,12 @@
  *
  * Every word the game speaks is baked here, at content time, never at runtime.
  * The output is the game's entire knowledge of voice: one mp3 per line and
- * `public/voice/manifest.json`. Ported from Seraphina's build.ts.
+ * `public/voice-gen/manifest.json`. Ported from Seraphina's build.ts.
+ *
+ * `public/voice-gen/` is untracked: a junction to the Drive-synced folder, shared
+ * by the main checkout and every worktree (README, "Storage"). Because it is
+ * shared, mp3s of lines no longer in lines.json are kept unless `--prune` is
+ * passed: another checkout's branch may still speak them.
  *
  * Two things can fill a line in, chosen per line:
  * - **a recorded clip** under `content/voice/clips/`, used only while its hash
@@ -15,7 +20,8 @@
  * unchanged and whose mp3 is on disk is skipped. The speaker is in the
  * fingerprint because two speakers can share a voice config and still need
  * separate audio once one of them is re-tuned. `--force` rebuilds everything;
- * `--no-clips` ignores the clip store for a pure edge-tts build.
+ * `--no-clips` ignores the clip store for a pure edge-tts build; `--prune`
+ * deletes orphaned mp3s.
  */
 
 import { createHash } from 'node:crypto';
@@ -45,6 +51,7 @@ interface Options {
   base: string;
   force: boolean;
   noClips: boolean;
+  prune: boolean;
 }
 
 function parseArgs(argv: string[]): Options {
@@ -52,10 +59,11 @@ function parseArgs(argv: string[]): Options {
     lines: path.join('content', 'voice', 'lines.json'),
     voices: path.join('content', 'voice', 'voices.json'),
     clips: CLIP_DIR,
-    out: path.join('public', 'voice'),
-    base: 'voice',
+    out: path.join('public', 'voice-gen'),
+    base: 'voice-gen',
     force: false,
     noClips: false,
+    prune: false,
   };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i]!;
@@ -66,6 +74,7 @@ function parseArgs(argv: string[]): Options {
     };
     if (arg === '--force') opts.force = true;
     else if (arg === '--no-clips') opts.noClips = true;
+    else if (arg === '--prune') opts.prune = true;
     else if (arg === '--lines') opts.lines = value();
     else if (arg === '--voices') opts.voices = value();
     else if (arg === '--out') opts.out = value();
@@ -127,7 +136,7 @@ export async function buildVoice(argv: string[]): Promise<void> {
   await mkdir(opts.out, { recursive: true });
   const cacheFile = path.join(opts.out, '.build-cache.json');
   // The cache holds only fingerprints; the entries themselves are read back from
-  // the previous manifest, so the committed voice folder carries them once.
+  // the previous manifest, so the voice folder carries them once.
   const hashes: Record<string, string> = opts.force ? {} : await readJson<Record<string, string>>(cacheFile).catch(() => ({}));
   const previous = await readJson<VoiceManifest>(path.join(opts.out, 'manifest.json')).catch(() => null);
   const cache: Record<string, { hash: string; entry: ManifestLine }> = {};
@@ -157,8 +166,10 @@ export async function buildVoice(argv: string[]): Promise<void> {
       : fingerprint({ source: book.provider, speaker: line.speaker, voice, text: line.text, say: line.say ?? null, group: line.group });
     const cached = cache[line.id];
     if (cached?.hash === hash && (await exists(path.join(opts.out, path.basename(cached.entry.audio))))) {
-      entries.set(line.id, cached.entry);
-      nextCache[line.id] = cached;
+      // Re-based, so moving the folder (voice/ became voice-gen/) needs no rebuild.
+      const reused = { hash, entry: { ...cached.entry, audio: `${opts.base}/${path.basename(cached.entry.audio)}` } };
+      entries.set(line.id, reused.entry);
+      nextCache[line.id] = reused;
       skipped++;
       continue;
     }
@@ -191,9 +202,14 @@ export async function buildVoice(argv: string[]): Promise<void> {
   const nextHashes = Object.fromEntries(lines.filter((l) => nextCache[l.id]).map((l) => [l.id, nextCache[l.id]!.hash]));
   await writeFile(cacheFile, `${JSON.stringify(nextHashes, null, 1)}\n`);
 
-  for (const orphan of (await readdir(opts.out)).filter((f) => f.endsWith('.mp3') && !ids.has(f.slice(0, -4)))) {
-    await unlink(path.join(opts.out, orphan));
-    console.log(`  removed orphan ${orphan}`);
+  const orphans = (await readdir(opts.out)).filter((f) => f.endsWith('.mp3') && !ids.has(f.slice(0, -4)));
+  if (opts.prune) {
+    for (const orphan of orphans) {
+      await unlink(path.join(opts.out, orphan));
+      console.log(`  removed orphan ${orphan}`);
+    }
+  } else if (orphans.length) {
+    console.log(`  ${orphans.length} orphaned mp3(s) kept (shared folder; --prune deletes them)`);
   }
 
   if (stale.length) {

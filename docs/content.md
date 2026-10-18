@@ -48,8 +48,9 @@ name slot, and wake-up lines in each waker's voice. Add its two speakers (`<id>`
 `<id>_evil`) to `content/voice/voices.json`, and bump the roster count in
 `tests/unit/rules.test.ts`.
 
-Size note: each narrator adds ~1.4 MB of voice. The committed voice folder is ~36 MB
-(v0.2); no single commit may add 20 MB or more without Matt's say-so.
+Size note: each narrator adds ~1.4 MB of voice. Generated voice is not committed (it
+lives in `public/voice-gen/`, see README *Storage*), so it does not count against the
+20 MB per-commit gate.
 
 ## A villain's house mood (`CharacterSpec.house`)
 

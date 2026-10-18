@@ -142,7 +142,7 @@ test('roster: counter words are never spoken or shown before the attic', () => {
 test('voice: every line id the game derives exists in lines.json and the manifest', () => {
   const lines = composeLines();
   const ids = new Set(lines.map((l) => l.id));
-  const manifest = JSON.parse(readFileSync('public/voice/manifest.json', 'utf8')) as { lines: { id: string }[] };
+  const manifest = JSON.parse(readFileSync('public/voice-gen/manifest.json', 'utf8')) as { lines: { id: string }[] };
   const built = new Set(manifest.lines.map((l) => l.id));
   const want: string[] = [];
   for (const l of LETTERS) want.push(letterSoundLine(l.letter));

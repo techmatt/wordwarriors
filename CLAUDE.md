@@ -41,7 +41,7 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | `src/episode/Episode.ts` | The episode's state and step list. Scenes call `advance()`; nothing else decides flow. |
 | `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only). |
 | `src/audio/` | `context`, `sfx` (synthesised), `VoiceBus` (the one voice arbiter). |
-| `src/voice/VoiceBank.ts` | Reads `public/voice/manifest.json` only, decodes by group. |
+| `src/voice/VoiceBank.ts` | Reads `public/voice-gen/manifest.json` only, decodes by group. |
 | `src/state/` | `ProgressStore` (localStorage, versioned, per sound and per word). |
 | `src/rules/` | Phaser-free round generation. Unit-tested. |
 | `src/world/` | `RoomScene` (walk-to-answer rooms) and `Player` (her character as the cursor). |
@@ -51,7 +51,9 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | `content/house/house.ts` | Bedrooms (objects and their reactions), the hub layout, side rooms. |
 | `content/voice/` | `script.ts` (narrator templates), `ids.ts` (line ids), `voices.json`, `lines.json` (generated), `clips/` (recordings that override edge-tts). |
 | `content/art/assets.ts` | Every art asset id, size and brief. |
-| `public/voice/`, `public/art/` | Generated, committed. Do not hand-edit. |
+| `public/art/` | Generated, committed. Do not hand-edit. |
+| `public/voice-gen/` | Generated voice (mp3s, manifest, build cache). Untracked: a junction to the Drive folder. Do not hand-edit. |
+| `art-originals/` | Full-res art, `log.jsonl`, Matt's photos (`refs/`, private). Untracked: a junction to the Drive folder. |
 | `tools/voice/` | `compose.ts` (lines.json from data), `build.ts` (audio + manifest), `providers/`. |
 | `tools/art/placeholders.ts` | Paints placeholder PNGs and writes `docs/art.md`. |
 | `tests/` | Playwright specs + `harness.ts`; `unit/` for node:test. |
@@ -89,8 +91,12 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 - **Operational facts learned while working go into the README**, never only into a report.
 - **Matt never edits config or content by hand**; prompts apply the values he dictates.
 - **Never commit 20 MB or more of tree bytes without Matt's explicit prior confirmation.**
-  The voice folder is ~36 MB after v0.2 (2026-10-18; v0.2's lines were one 16.2 MB
-  commit); see `docs/engineering.md`.
+  Generated voice is no longer committed (2026-10-18), so voice work no longer counts
+  against this; art still does.
+- **Storage: every file has one home** (README, *Storage*): git for source, data, Matt's
+  recordings and game-sized art; the Drive folder `C:\Code\gdrive-sync\wordwarriors\`
+  (reached through the junctions `art-originals/` and `public/voice-gen/`) for
+  expensive, irreplaceable or private files; nowhere for anything rebuilt cheaply.
 
 ## Standing design rules (law)
 
