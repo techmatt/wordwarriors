@@ -62,7 +62,7 @@ for (const c of ROSTER) {
     kind: 'character',
     w: 200,
     h: 200,
-    content: `${c.good.displayName}'s face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
+    content: `${c.good.displayName}'s face, a friendly head-and-shoulders portrait of ${c.good.look}. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
     label: '',
     glyph: c.good.glyph,
     palette: c.good.palette,

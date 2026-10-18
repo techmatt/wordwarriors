@@ -353,7 +353,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'An ice sorceress who grows crystal towers out of the ground and sculpts snow helpers.',
     arena: 'ice',
     good: {
-      displayName: 'Elsa', trail: { tint: [0xe8f6ff, 0x7cc7ff], shape: 'star' }, look: 'a tall young sorceress with a long silver braid, robes of frost crystals, original design',
+      displayName: 'Elsa', trail: { tint: [0xe8f6ff, 0x7cc7ff], shape: 'star' }, look: 'a cheerful winter queen of original design: rosy cheeks and freckles, long pale silver hair, a flowing white-and-gold gown embroidered with golden snowflakes, a little golden crown and a fluffy white fur-trimmed cape, conjuring golden-white sparkles',
       palette: [0x7cc7ff, 0xe8f6ff], glyph: '❄️', style: 'hover', speed: 160, size: 1, hp: 100,
       abilities: [
         ab('ice_shard', 'Ice Shards', 'bolt', 2.2, 0xaee6ff, 1, { count: 4, glyph: '❄️', word: 'ice' }),
@@ -372,7 +372,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Elsa', trail: { tint: [0x5ad8ff, 0x1a2a5a], shape: 'star' }, look: 'an ice sorceress in jagged black-blue crystal armour, eyes glowing pale blue',
+      displayName: 'Evil Elsa', trail: { tint: [0x5ad8ff, 0x1a2a5a], shape: 'star' }, look: 'the winter queen\'s dark version: long pale silver hair, a flowing black-and-gold gown embroidered with jagged dark crystals, a spiky black crown and a smoky violet fur-trimmed cape, a sulky pout, conjuring purple sparkles',
       palette: [0x1a2a5a, 0x5ad8ff], glyph: '🧊', style: 'blink', speed: 170, size: 1.05, hp: 140,
       abilities: [
         ab('icicle_rain', 'Icicle Rain', 'rain', 6, 0x5ad8ff, 2, { count: 14, glyph: '🧊' }),
@@ -405,7 +405,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'The ice sorceress\'s brave little sister: a sword-and-shield adventurer who never gives up.',
     arena: 'ice',
     good: {
-      displayName: 'Anna', trail: { tint: [0xffb703, 0xe63946], shape: 'spark' }, look: 'a freckled young adventurer with two red braids, a round wooden shield and a short sword, original design',
+      displayName: 'Anna', trail: { tint: [0xffb703, 0xe63946], shape: 'spark' }, look: 'a freckled young adventurer of original design with a short curly copper bob and a sprig of holly in it, a moss-green tunic with a mustard-yellow scarf, brown boots, a round wooden shield with a sun painted on it and a wooden practice sword',
       palette: [0xe63946, 0x2a9d8f], glyph: '🛡️', style: 'twirl', speed: 230, size: 1, hp: 110,
       abilities: [
         ab('shield_bash', 'Shield Bash', 'dash', 4, 0xe63946, 2, { word: 'bam', shout: true }),
@@ -424,7 +424,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Anna', trail: { tint: [0x9aeaff, 0x7cc7ff], shape: 'spark' }, look: 'the brave sister under a frost curse: pale blue skin, a cracked ice shield, angry',
+      displayName: 'Evil Anna', trail: { tint: [0x9aeaff, 0x7cc7ff], shape: 'spark' }, look: 'the same copper-haired adventurer under a frost curse: frosty pale-blue skin, icicles in her curly bob, a grey-blue tunic, a cracked ice shield, a cross scowl',
       palette: [0x3a1a2a, 0x7cc7ff], glyph: '⚔️', style: 'twirl', speed: 240, size: 1.05, hp: 140,
       abilities: [
         ab('frost_bash', 'Frost Bash', 'dash', 4, 0x7cc7ff, 2),
@@ -460,7 +460,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A desert princess who rides a flying carpet and commands the wind and the sand.',
     arena: 'desert',
     good: {
-      displayName: 'Jasmine', trail: { tint: [0xbaf2ff, 0xffc857], shape: 'smoke' }, look: 'a desert princess in teal silks with a jewelled headband, riding a patterned flying carpet, original design',
+      displayName: 'Jasmine', trail: { tint: [0xbaf2ff, 0xffc857], shape: 'smoke' }, look: 'a desert princess of original design with short bouncy black curls and a gold circlet, a coral-pink and saffron-orange tunic over baggy saffron trousers, sitting cross-legged on a red-and-gold patterned flying carpet',
       palette: [0x1fb5a8, 0xffc857], glyph: '🧞', style: 'fly', mount: 'carpet', speed: 220, size: 1, hp: 100,
       abilities: [
         ab('wind_fan', 'Wind Fan', 'cone', 4, 0xbaf2ff, 2, { word: 'fan' }),
@@ -479,7 +479,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Jasmine', trail: { tint: [0xe8c890, 0x5a3a6a], shape: 'smoke' }, look: 'a princess in dark purple silks on a carpet of black smoke, a sandstorm swirling behind her',
+      displayName: 'Evil Jasmine', trail: { tint: [0xe8c890, 0x5a3a6a], shape: 'smoke' }, look: 'the same curly-haired desert princess in dark plum and black robes with a dented gold circlet, sitting on a carpet of black smoke, a little sandstorm swirling behind her',
       palette: [0x3a1a4a, 0xe8c890], glyph: '🌪️', style: 'fly', mount: 'carpet', speed: 230, size: 1.05, hp: 140,
       abilities: [
         ab('sand_blast', 'Sand Blast', 'cone', 4, 0xe8c890, 2),
@@ -849,7 +849,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A giant gorilla robot: as a friend all bananas and big hugs, as a villain all rocket fists and an appetite for cars.',
     arena: 'street',
     good: {
-      displayName: 'Rilla', trail: { tint: [0xffe14a, 0x8a6a4a], shape: 'square' }, look: 'a friendly giant gorilla robot with brown steel fur plates, a banana-yellow chest light and big gentle hands',
+      displayName: 'Rilla', trail: { tint: [0xffe14a, 0x8a6a4a], shape: 'square' }, look: 'a friendly, gentle giant gorilla robot with pastel blue armour plates, soft glowing eyes and a big smile, arms open wide for a hug',
       palette: [0x8a6a4a, 0xffe14a], glyph: '🦍', style: 'stomp', speed: 110, size: 1.4, hp: 160,
       abilities: [
         ab('banana_toss', 'Banana Toss', 'bolt', 2.4, 0xffe14a, 1, { count: 3, glyph: '🍌', word: 'pop' }),
@@ -868,7 +868,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'EvilRilla', trail: { tint: [0xff3a1a, 0x3a2a1a], shape: 'smoke' }, look: 'a towering gorilla robot of dented black steel with glowing red eyes, rocket fists and a car-crunching jaw',
+      displayName: 'EvilRilla', trail: { tint: [0xff3a1a, 0x3a2a1a], shape: 'smoke' }, look: 'a giant, menacing-but-silly gorilla robot with chrome and red armour plates, huge rocket fists, glowing red eyes and a bandolier of banana peels across the chest',
       palette: [0x3a2a1a, 0xff3a1a], glyph: '🤖', style: 'stomp', speed: 70, size: 1.8, hp: 230,
       abilities: [
         ab('rocket_fists', 'Rocket Fists', 'bolt', 3, 0xff3a1a, 2, { count: 2, glyph: '🚀', homing: true }),

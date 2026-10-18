@@ -15,6 +15,8 @@
  * prompted id that has real art, not only this run's.
  * `--sheet` only rebuilds the contact sheet; `--reprocess` re-cuts the game
  * PNGs from `art-originals/` without asking Codex (for tuning the keying).
+ * `--shrink` palette-quantizes the named ids' committed PNGs in place.
+ * `--sheet-out=<file>` writes the contact sheet there, of the named ids only.
  */
 
 import { spawn } from 'node:child_process';
@@ -23,6 +25,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 import { chromium, type Page } from '@playwright/test';
+import sharp from 'sharp';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
 import { ART_PROMPTS, BACKGROUND_STYLE, NO_GREEN, SPRITE_STYLE } from '../../content/art/prompts.js';
@@ -37,6 +40,13 @@ const CODEX_HOME = process.env.CODEX_HOME ?? path.join(os.homedir(), '.codex');
 const TIMEOUT_MS = 6 * 60_000;
 /** Committed art is this many times the display box, so it stays crisp when squashed bigger. */
 const SPRITE_SCALE = 2;
+
+/**
+ * Committed PNGs are palette-quantized (Matt, 2026-10-18: the batch must stay
+ * near 20 MB). Flat cel-shaded art loses nothing visible; a room drops from
+ * about 1.8 MB to 0.3 MB and a sprite from about 290 KB to 85 KB.
+ */
+export const shrinkPng = (png: Buffer): Promise<Buffer> => sharp(png).png({ palette: true, quality: 90, effort: 10, dither: 1 }).toBuffer();
 
 const isBackground = (id: string) => ['room', 'arena'].includes(ART_BY_ID[id]!.kind);
 
@@ -230,7 +240,7 @@ async function processImage(page: Page, png: Buffer, opts: { sprite: boolean; bo
   );
 }
 
-async function contactSheet(page: Page, ids: string[]): Promise<void> {
+async function contactSheet(page: Page, ids: string[], sheet = SHEET): Promise<void> {
   const tiles = await Promise.all(ids.map(async (id) => ({ id, src: `data:image/png;base64,${(await readFile(path.join(OUT, `${id}.png`))).toString('base64')}` })));
   const url = await page.evaluate(async (list) => {
     const T = 360;
@@ -264,9 +274,9 @@ async function contactSheet(page: Page, ids: string[]): Promise<void> {
     }
     return cv.toDataURL('image/png');
   }, tiles);
-  await mkdir(path.dirname(SHEET), { recursive: true });
-  await writeFile(SHEET, Buffer.from(url.slice(url.indexOf(',') + 1), 'base64'));
-  console.log(`art: contact sheet ${SHEET} (${ids.length} tiles)`);
+  await mkdir(path.dirname(sheet), { recursive: true });
+  await writeFile(sheet, Buffer.from(url.slice(url.indexOf(',') + 1), 'base64'));
+  console.log(`art: contact sheet ${sheet} (${ids.length} tiles)`);
 }
 
 /** Write the game-sized `public/art/<id>.png` from a full-resolution original. */
@@ -275,7 +285,7 @@ async function cut(page: Page, id: string, original: Buffer, note: string): Prom
   const sprite = !isBackground(id);
   const scale = sprite ? SPRITE_SCALE : 1;
   const p = await processImage(page, original, { sprite, boxW: a.w * scale, boxH: a.h * scale, noGreen: NO_GREEN.has(id) });
-  const png = Buffer.from(p.url.slice(p.url.indexOf(',') + 1), 'base64');
+  const png = await shrinkPng(Buffer.from(p.url.slice(p.url.indexOf(',') + 1), 'base64'));
   await writeFile(path.join(OUT, `${id}.png`), png);
   console.log(`art: ${id}: ${p.srcW}×${p.srcH} → ${p.w}×${p.h} (${Math.round(png.length / 1024)} KB)${sprite ? `, green fringe px ${p.fringe}` : ''}${note ? `; ${note}` : ''}`);
 }
@@ -289,6 +299,8 @@ export async function generate(argv: string[]): Promise<void> {
   const force = argv.includes('--force');
   const sheetOnly = argv.includes('--sheet');
   const reprocess = argv.includes('--reprocess');
+  const shrink = argv.includes('--shrink');
+  const sheetOut = argv.find((a) => a.startsWith('--sheet-out='))?.slice('--sheet-out='.length);
   const named = argv.filter((a) => !a.startsWith('--'));
   const ids = named.length ? named : Object.keys(ART_PROMPTS);
   for (const id of ids) codexPrompt(id); // fail before spending anything on a bad id
@@ -296,7 +308,15 @@ export async function generate(argv: string[]): Promise<void> {
   await mkdir(ORIGINALS, { recursive: true });
   const { page, close } = await openPage();
   try {
-    if (reprocess) {
+    if (shrink) {
+      for (const id of ids) {
+        const f = path.join(OUT, `${id}.png`);
+        const before = await readFile(f);
+        const after = await shrinkPng(before);
+        await writeFile(f, after);
+        console.log(`art: ${id}: ${Math.round(before.length / 1024)} KB → ${Math.round(after.length / 1024)} KB`);
+      }
+    } else if (reprocess) {
       for (const id of ids) {
         const orig = path.join(ORIGINALS, `${id}.png`);
         if (await exists(orig)) await cut(page, id, await readFile(orig), '');
@@ -326,7 +346,11 @@ export async function generate(argv: string[]): Promise<void> {
     }
     const done: string[] = [];
     for (const id of Object.keys(ART_PROMPTS)) if (await isReal(id)) done.push(id);
-    if (done.length) await contactSheet(page, done);
+    if (sheetOut) {
+      const mine: string[] = [];
+      for (const id of ids) if (await isReal(id)) mine.push(id);
+      if (mine.length) await contactSheet(page, mine, sheetOut);
+    } else if (done.length) await contactSheet(page, done);
   } finally {
     await close();
   }

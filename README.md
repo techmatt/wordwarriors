@@ -104,7 +104,10 @@ battle items; that is the default), `nojourney` (skip the map).
 
 `npm test` runs the unit tests and the fast Playwright suite (about 3 minutes);
 `npm run test:slow` plays a whole episode and then two back to back (about 14 minutes).
-They start the dev server themselves if it is not running.
+They start their own server on port 5184 (`TEST_PORT` in `src/port.ts`), never the dev
+port 5174, so a test run in a worktree cannot attach to the main checkout's dev server.
+If 5184 is busy (another worktree's run) the suite fails at once rather than testing the
+wrong code.
 
 ## Content work
 
@@ -193,13 +196,9 @@ image, 6 images used about 3% of the Plus plan's 5-hour window and 1% of the wee
   page under test: `npx vite build --outDir scratch/dist-test`, `npx vite preview --outDir
   scratch/dist-test --port 5175`, then `WW_BASE_URL=http://localhost:5175 npx playwright test`.
   Test pages add `?hooks=1`, which turns the test hooks on in a production build.
-- A dev server on 5174 started from the main checkout serves the main branch's code,
-  not this worktree's. Playwright's `reuseExistingServer` attaches to whatever answers
-  on 5174, so with that server running the suite tests the wrong game (old scenes, old
-  hooks) without any warning. From a worktree, serve on another port and point the
-  suite at it: `npx vite --port 5184` (the CLI port overrides `src/port.ts`), then
-  `WW_BASE_URL=http://localhost:5184 npx playwright test`. With `WW_BASE_URL` set,
-  Playwright starts no server of its own.
+- Until 2026-10-18 the suite reused whatever answered on 5174, so a run in a worktree
+  silently tested the main checkout's dev server. It now always starts its own vite on
+  5184 (`TEST_PORT`) and never reuses one; with `WW_BASE_URL` set it starts none.
 - The full-episode test (`npm run test:slow`) takes about 4–5 minutes: every line is
   real speech and green is ignored until an instruction finishes.
 - Headless Chromium renders the battle at roughly 8–18 fps (software GL). With the GPU
