@@ -44,7 +44,9 @@ without a new measurement.
 - Playwright **workers: 1** (Seraphina measured 2 workers as 2.3–2.4× slower per test,
   and frame-rate-sensitive assertions broke).
 - Headless Chromium runs the battle at 11–18 fps here (software GL, ~10 fighters, heavy
-  particles); the title and rooms at ~25–60. Tests assert on state and counters, never
+  particles); the title and rooms at ~25–60. With the GPU (`channel: 'chromium'`,
+  `--use-angle=d3d11`) the battle holds 56 fps; halving particles changed nothing in
+  software mode, so the software cost is fill rate, not particle count. Tests assert on state and counters, never
   on displacement or timing.
 - Phaser `time.timeScale` and `tweens.timeScale` are driven every battle frame from
   hit-stop × slow-mo × the move-choice freeze; anything that must run in wall-clock time

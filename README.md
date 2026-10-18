@@ -86,5 +86,7 @@ npm run art:placeholders  # paint missing art, rewrite docs/art.md
   Test pages add `?hooks=1`, which turns the test hooks on in a production build.
 - The full-episode test (`npm run test:slow`) takes about 4–5 minutes: every line is
   real speech and green is ignored until an instruction finishes.
-- Headless Chromium renders the battle at roughly 8–18 fps (software GL); on a real GPU
-  it should run at 60. Tests never assert on frame rate or displacement.
+- Headless Chromium renders the battle at roughly 8–18 fps (software GL). With the GPU
+  (Playwright `channel: 'chromium'` plus `--use-angle=d3d11`) the same battle holds a
+  steady 56 fps on this machine (measured 2026-10-18, 2 heroes vs Evil Smaug). Tests
+  never assert on frame rate or displacement.
