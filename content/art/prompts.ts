@@ -14,13 +14,23 @@ export const SPRITE_STYLE = `${STYLE} Single subject centered, full body, on a f
 
 export const BACKGROUND_STYLE = `${STYLE} A full-bleed background painting filling the whole frame edge to edge, no border, no characters.`;
 
+/**
+ * Sprites with no green of their own. Keying treats every green tint in them as
+ * the screen showing through (a cage's faint back bars), not just the edges.
+ * Leave out anything meant to have green in it (a leaf, a dragon).
+ */
+export const NO_GREEN = new Set(['char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net']);
+
 export const ART_PROMPTS: Record<string, string> = {
   char_rilla_evil:
     'EvilRilla, the villain: a giant, menacing-but-silly gorilla robot, chrome and red armour plates, huge rocket fists, glowing red eyes, a bandolier of banana peels across the chest. Mischievous grin rather than frightening. Standing, facing the viewer.',
   char_rilla_good:
     'Rilla, the good version: the same giant gorilla robot, friendly and gentle, pastel blue armour plates, soft glowing eyes and a big smile, arms open wide for a hug. Standing, facing the viewer.',
   char_elsa_good:
-    'An original ice sorceress: a young woman with a long pale braid over one shoulder, a flowing icy-blue gown made of snowflake patterns, conjuring sparkles of frost between her hands, a kind smile. An original character design: not a lookalike of any film or animated character. Standing, facing the viewer.',
+    // Four wordings with pale hair and an icy-blue snowflake gown were refused by
+    // the image tool's safety system (2026-10-18), most likely as too near the film
+    // character. Matt's call the same day: keep the pale hair, white-and-gold gown.
+    'A cheerful winter queen of original design: a young woman with rosy cheeks and freckles, long pale silver hair, a flowing white-and-gold gown embroidered with golden snowflakes, a little golden crown, a fluffy white fur-trimmed cape, conjuring golden-white sparkles. Standing, facing the viewer.',
   room_bedroom_julia:
     "A cozy, cluttered little girl's bedroom seen side-on from a slight top-down game angle, wide landscape 16:9. Star wallpaper, a window, a toy chest, a dragon plushie, a rocket-shaped lamp, a castle playset and children's drawings pinned on the walls, all along the back wall and the edges. A wooden floor with a rug fills the lower half and is left open and uncluttered for the player to walk on. No bed and no door: the game draws those on top.",
   pic_mice:

@@ -11,8 +11,10 @@
  *
  * No ids = every id in ART_PROMPTS. Ids that already have real art (a file
  * without the placeholder mark) are skipped unless `--force`. Stops at the
- * first usage-limit message. Ends by writing scratch/art_contact.png.
- * `--sheet` only rebuilds the contact sheet.
+ * first usage-limit message. Ends by writing scratch/art_contact.png: every
+ * prompted id that has real art, not only this run's.
+ * `--sheet` only rebuilds the contact sheet; `--reprocess` re-cuts the game
+ * PNGs from `art-originals/` without asking Codex (for tuning the keying).
  */
 
 import { spawn } from 'node:child_process';
@@ -23,7 +25,7 @@ import path from 'node:path';
 import { chromium, type Page } from '@playwright/test';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
-import { ART_PROMPTS, BACKGROUND_STYLE, SPRITE_STYLE } from '../../content/art/prompts.js';
+import { ART_PROMPTS, BACKGROUND_STYLE, NO_GREEN, SPRITE_STYLE } from '../../content/art/prompts.js';
 import { isMain } from '../voice/clips.js';
 import { keyGreen } from './chroma.js';
 import { isPlaceholder } from './placeholders.js';
@@ -73,11 +75,8 @@ async function runCodex(prompt: string): Promise<CodexRun> {
   await mkdir(workdir, { recursive: true });
   const started = Date.now();
   // codex is an npm .cmd shim on Windows, which Node only spawns through a shell.
-  // Every argument is fixed; the prompt goes on stdin, so nothing is shell-expanded.
-  const child = spawn('codex', ['exec', '--json', '--skip-git-repo-check', '-s', 'read-only', '-C', workdir, '-'], {
-    shell: process.platform === 'win32',
-    stdio: ['pipe', 'pipe', 'pipe'],
-  });
+  // The command line is fixed; the prompt goes on stdin, so nothing of it is shell-expanded.
+  const child = spawn(`codex exec --json --skip-git-repo-check -s read-only -C "${workdir}" -`, { shell: true, stdio: ['pipe', 'pipe', 'pipe'] });
   child.stdin.end(prompt);
   let out = '';
   let err = '';
@@ -172,9 +171,9 @@ interface Processed {
   fringe: number;
 }
 
-async function processImage(page: Page, png: Buffer, opts: { sprite: boolean; boxW: number; boxH: number }): Promise<Processed> {
+async function processImage(page: Page, png: Buffer, opts: { sprite: boolean; boxW: number; boxH: number; noGreen: boolean }): Promise<Processed> {
   return page.evaluate(
-    async ({ src, sprite, boxW, boxH }) => {
+    async ({ src, sprite, boxW, boxH, noGreen }) => {
       const img = new Image();
       img.src = src;
       await img.decode();
@@ -191,7 +190,7 @@ async function processImage(page: Page, png: Buffer, opts: { sprite: boolean; bo
       let fringe = 0;
       if (sprite) {
         const data = fc.getImageData(0, 0, sw, sh);
-        fringe = (window as unknown as { keyGreen: (p: Uint8ClampedArray, w: number, h: number) => { fringe: number } }).keyGreen(data.data, sw, sh).fringe;
+        fringe = (window as unknown as { keyGreen: (p: Uint8ClampedArray, w: number, h: number, ng: boolean) => { fringe: number } }).keyGreen(data.data, sw, sh, noGreen).fringe;
         fc.putImageData(data, 0, 0);
         let x0 = sw;
         let y0 = sh;
@@ -270,6 +269,17 @@ async function contactSheet(page: Page, ids: string[]): Promise<void> {
   console.log(`art: contact sheet ${SHEET} (${ids.length} tiles)`);
 }
 
+/** Write the game-sized `public/art/<id>.png` from a full-resolution original. */
+async function cut(page: Page, id: string, original: Buffer, note: string): Promise<void> {
+  const a = ART_BY_ID[id]!;
+  const sprite = !isBackground(id);
+  const scale = sprite ? SPRITE_SCALE : 1;
+  const p = await processImage(page, original, { sprite, boxW: a.w * scale, boxH: a.h * scale, noGreen: NO_GREEN.has(id) });
+  const png = Buffer.from(p.url.slice(p.url.indexOf(',') + 1), 'base64');
+  await writeFile(path.join(OUT, `${id}.png`), png);
+  console.log(`art: ${id}: ${p.srcW}×${p.srcH} → ${p.w}×${p.h} (${Math.round(png.length / 1024)} KB)${sprite ? `, green fringe px ${p.fringe}` : ''}${note ? `; ${note}` : ''}`);
+}
+
 async function isReal(id: string): Promise<boolean> {
   const f = path.join(OUT, `${id}.png`);
   return (await exists(f)) && !isPlaceholder(await readFile(f));
@@ -278,6 +288,7 @@ async function isReal(id: string): Promise<boolean> {
 export async function generate(argv: string[]): Promise<void> {
   const force = argv.includes('--force');
   const sheetOnly = argv.includes('--sheet');
+  const reprocess = argv.includes('--reprocess');
   const named = argv.filter((a) => !a.startsWith('--'));
   const ids = named.length ? named : Object.keys(ART_PROMPTS);
   for (const id of ids) codexPrompt(id); // fail before spending anything on a bad id
@@ -285,7 +296,13 @@ export async function generate(argv: string[]): Promise<void> {
   await mkdir(ORIGINALS, { recursive: true });
   const { page, close } = await openPage();
   try {
-    if (!sheetOnly) {
+    if (reprocess) {
+      for (const id of ids) {
+        const orig = path.join(ORIGINALS, `${id}.png`);
+        if (await exists(orig)) await cut(page, id, await readFile(orig), '');
+        else console.log(`art: ${id}: no original in ${ORIGINALS}/, skipped`);
+      }
+    } else if (!sheetOnly) {
       for (const [k, id] of ids.entries()) {
         if (!force && (await isReal(id))) {
           console.log(`art: ${id} already has real art, skipped (--force to redo)`);
@@ -300,12 +317,7 @@ export async function generate(argv: string[]): Promise<void> {
           continue;
         }
         await copyFile(run.image, path.join(ORIGINALS, `${id}.png`));
-        const a = ART_BY_ID[id]!;
-        const sprite = !isBackground(id);
-        const p = await processImage(page, await readFile(run.image), sprite ? { sprite, boxW: a.w * SPRITE_SCALE, boxH: a.h * SPRITE_SCALE } : { sprite, boxW: a.w, boxH: a.h });
-        const png = Buffer.from(p.url.slice(p.url.indexOf(',') + 1), 'base64');
-        await writeFile(path.join(OUT, `${id}.png`), png);
-        console.log(`art: ${id}: ${run.seconds}s, ${p.srcW}×${p.srcH} → ${p.w}×${p.h} (${Math.round(png.length / 1024)} KB)${sprite ? `, green fringe px ${p.fringe}` : ''}; ${describeUsage(run.usage)}`);
+        await cut(page, id, await readFile(run.image), `${run.seconds}s, ${describeUsage(run.usage)}`);
         if (run.limit) {
           console.error(`art: usage limit: ${run.limit}`);
           break;
@@ -313,7 +325,7 @@ export async function generate(argv: string[]): Promise<void> {
       }
     }
     const done: string[] = [];
-    for (const id of ids) if (await isReal(id)) done.push(id);
+    for (const id of Object.keys(ART_PROMPTS)) if (await isReal(id)) done.push(id);
     if (done.length) await contactSheet(page, done);
   } finally {
     await close();

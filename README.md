@@ -116,6 +116,56 @@ npm run voice:build     # synthesise new or changed lines into public/voice/
 npm run art:placeholders  # paint missing art, rewrite docs/art.md
 ```
 
+## Real art (Codex image generation)
+
+`npm run art:gen -- <ids…>` draws real art for the ids in `content/art/prompts.ts` (a shared
+style block plus one prompt per asset id from `docs/art.md`) with OpenAI's Codex CLI image
+tool, on Matt's ChatGPT Plus login. No API key is used, and none should be. No ids means
+every id in the prompts file; ids that already have real art are skipped unless `--force`;
+`--sheet` only rebuilds the contact sheet; `--reprocess` re-cuts the game PNGs from the kept
+originals without asking Codex (use it for keying changes). Run it backgrounded: it runs
+Codex one image at a time and waits for each run to finish. Measured 2026-10-18: 35–50 s per
+image, 6 images used about 3% of the Plus plan's 5-hour window and 1% of the weekly one.
+
+- **What it runs:** `codex exec --json --skip-git-repo-check -s read-only -C scratch/codex -`,
+  with the prompt on stdin. Codex never writes into the repo. Its built-in `image_gen` tool
+  saves every image to `~/.codex/generated_images/<thread id>/exec-<item id>.png` whatever
+  the sandbox is, and the script collects it from there, using the `thread.started`
+  event in the `--json` output.
+- **Where things go:** the full-resolution original goes to `art-originals/<id>.png`
+  (git-ignored, with `log.jsonl`: seconds, thread, allowance). The game-sized PNG goes to
+  `public/art/<id>.png`; that is the only file committed. Sprites are generated on #00FF00,
+  keyed to transparency (`tools/art/chroma.ts`), trimmed, and fitted to twice their
+  display box. Rooms and arenas are cropped to fill 1280×720. The contact sheet is
+  `scratch/art_contact.png`.
+- **Allowance:** Codex logs the plan's usage in its session file
+  (`~/.codex/sessions/…/rollout-*-<thread>.jsonl`, `rate_limits`: percent of a 5-hour
+  and a 1-week window). The script prints it after each image and stops at the first
+  usage-limit message. It reads nothing else from `~/.codex`; `auth.json` is never touched.
+- **Gotchas (2026-10-18, Codex 0.163):**
+  - `--sandbox workspace-write` still reported `sandbox: read-only` on Windows. Codex was
+    "blocked by policy" from reading its own `~/.codex/skills/.system/imagegen/SKILL.md`
+    and could not save into the folder. None of that matters when the image is collected
+    from `generated_images`; no sandbox-bypass flag is needed.
+  - In PowerShell, `"… $imagegen …"` in double quotes expands to nothing. Passing the
+    prompt on stdin avoids all shell quoting.
+  - `codex` is an npm `.cmd` shim, so Node can only spawn it through a shell.
+  - The image tool ignores pixel sizes. It picks square, portrait (1024×1536) or
+    landscape from the words in the prompt, so the script says which shape it wants.
+  - The key colour is taken from the image border, because the model's "#00FF00" is not
+    exact. The dark outlines stop the flood fill, so a green leaf inside the subject
+    survives. The script prints a green-fringe pixel count per sprite; 0 is clean.
+  - Thin see-through parts (a cage's back bars, glow drawn over the screen) come out
+    green-tinted. List a sprite in `NO_GREEN` (`content/art/prompts.ts`) if it has no
+    green of its own: any green tint in it is then treated as the screen showing through.
+  - The image tool's safety system refuses prompts too close to a film character, and
+    the run just ends with "rejected the generation" and no image. Four prompts for an
+    ice sorceress with pale hair and an icy-blue snowflake gown were refused, even
+    with "original design" and without the braid. A white-and-gold gown went through.
+    Writing "not a lookalike of X" does not help.
+  - The tool sometimes draws its own copy of things the game draws on top (the bedroom
+    has toys of its own). Prompts for rooms say what to leave out.
+
 ## Operational facts
 
 - **edge-tts runs through Python, via `uvx`.** On 2026-10-18 Microsoft's endpoint refused

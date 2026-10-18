@@ -43,6 +43,14 @@ test('keyGreen keeps green inside the outline (a leaf is not the screen)', () =>
   assert.deepEqual([...px.subarray(o, o + 4)], [60, 200, 60, 255]);
 });
 
+test('keyGreen with noGreen un-mixes green seen through a subject', () => {
+  const px = picture(20, 20, [100, 180, 100]);
+  keyGreen(px, 20, 20, true);
+  const o = (10 * 20 + 10) * 4;
+  assert.ok(px[o + 1]! <= Math.max(px[o]!, px[o + 2]!), 'no green lean left');
+  assert.ok(px[o + 3]! < 255, 'part-transparent where the screen showed through');
+});
+
 test('keyGreen removes green spill from a soft edge', () => {
   const px = picture(20, 20, [255, 0, 0]);
   // A half-mixed edge pixel just outside the outline: half black, half key.

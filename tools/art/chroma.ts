@@ -9,11 +9,12 @@
  * The dark outline stops the fill, so green inside the subject (a leaf) stays.
  * Pixels within two rings of the background get a soft alpha from their
  * distance to the key, are un-mixed from it, and lose any green spill.
+ * `noGreen` (a subject with no green in it) un-mixes every green-leaning pixel.
  *
  * Returns `fringe`: visible pixels touching transparency that are still
  * clearly green, plus visible near-key pixels. 0 is clean.
  */
-export function keyGreen(px: Uint8ClampedArray, w: number, h: number): { fringe: number; cleared: number } {
+export function keyGreen(px: Uint8ClampedArray, w: number, h: number, noGreen = false): { fringe: number; cleared: number } {
   const n = w * h;
   const rs: number[] = [];
   const gs: number[] = [];
@@ -65,6 +66,9 @@ export function keyGreen(px: Uint8ClampedArray, w: number, h: number): { fringe:
     if (i < n - w) push(i + w);
   }
   for (let i = 0; i < n; i++) if (!bg[i] && dist(i) < EXACT) bg[i] = 1;
+  // Near-key pixels anywhere (faint back bars of a cage over enclosed green) are
+  // treated as mixed edge pixels; a cartoon leaf, (60,200,60), is ~100 away.
+  const MIXED = 90;
 
   // Two rings of edge band around the background.
   const band = new Uint8Array(n);
@@ -79,6 +83,7 @@ export function keyGreen(px: Uint8ClampedArray, w: number, h: number): { fringe:
     for (let i = 0; i < n; i++) if (next[i]) band[i] = 1;
     ring = next;
   }
+  for (let i = 0; i < n; i++) if (!bg[i] && dist(i) < MIXED) band[i] = 1;
 
   let cleared = 0;
   for (let i = 0; i < n; i++) {
@@ -107,6 +112,30 @@ export function keyGreen(px: Uint8ClampedArray, w: number, h: number): { fringe:
     px[o + 1] = g;
     px[o + 2] = b;
     px[o + 3] = Math.round(px[o + 3]! * a);
+  }
+
+  // A subject with no green of its own: every green lean is screen showing
+  // through (a cage's faint back bars), so un-mix it by how much it leans.
+  if (noGreen) {
+    const keyLean = kg - Math.max(kr, kb);
+    for (let i = 0; i < n; i++) {
+      const o = i * 4;
+      if (!px[o + 3]) continue;
+      const lean = px[o + 1]! - Math.max(px[o]!, px[o + 2]!);
+      if (lean <= 0) continue;
+      const f = Math.min(1, lean / keyLean);
+      if (f > 0.95) {
+        px[o + 3] = 0;
+        continue;
+      }
+      const r = Math.max(0, Math.min(255, (px[o]! - f * kr) / (1 - f)));
+      const b = Math.max(0, Math.min(255, (px[o + 2]! - f * kb) / (1 - f)));
+      const g = Math.max(0, Math.min(255, (px[o + 1]! - f * kg) / (1 - f), Math.max(r, b)));
+      px[o] = r;
+      px[o + 1] = g;
+      px[o + 2] = b;
+      px[o + 3] = Math.round(px[o + 3]! * (1 - f));
+    }
   }
 
   let fringe = 0;

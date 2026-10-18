@@ -68,6 +68,7 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | `npm run voice:lines` | Regenerate `content/voice/lines.json` from roster + script + phonics |
 | `npm run voice:build` | Synthesise new/changed lines (incremental; `--force` for all). Needs `uvx` and network. |
 | `npm run art:placeholders` | Paint missing/placeholder art, rewrite `docs/art.md` |
+| `npm run art:gen -- <ids…>` | Real art from `content/art/prompts.ts` via Codex's image tool (README, "Real art"); `--force`, `--reprocess`, `--sheet` |
 | `npm run voice:status` | Recorded / stale / still edge-tts, letter sounds first |
 | `npm run voice:clip -- <id> <file.mp3>` | Put a recording in place of a line |
 
