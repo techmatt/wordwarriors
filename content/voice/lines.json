@@ -4010,13 +4010,13 @@
   "id": "nar_julia_need_item_julia",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Cozy Blanket can stop Evil Julia!"
+  "text": "Only the Cozy Bed can stop Evil Julia!"
  },
  {
   "id": "nar_julia_made_item_julia",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Cozy Blanket!"
+  "text": "We made the Cozy Bed!"
  },
  {
   "id": "nar_julia_need_counter_julia",
@@ -4028,7 +4028,7 @@
   "id": "nar_julia_got_counter_julia",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Cozy Blanket!"
+  "text": "We found the Cozy Bed!"
  },
  {
   "id": "nar_julia_alarm_villain_ellie",
@@ -4040,13 +4040,13 @@
   "id": "nar_julia_need_item_ellie",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Bubble Bath can stop Evil Ellie!"
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
  },
  {
   "id": "nar_julia_made_item_ellie",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Bubble Bath!"
+  "text": "We made the Bubble Tub!"
  },
  {
   "id": "nar_julia_need_counter_ellie",
@@ -4058,7 +4058,7 @@
   "id": "nar_julia_got_counter_ellie",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Bubble Bath!"
+  "text": "We found the Bubble Tub!"
  },
  {
   "id": "nar_julia_alarm_villain_seraphina",
@@ -4070,13 +4070,13 @@
   "id": "nar_julia_need_item_seraphina",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
  },
  {
   "id": "nar_julia_made_item_seraphina",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Dragon Treats!"
+  "text": "We made the Golden Nut!"
  },
  {
   "id": "nar_julia_need_counter_seraphina",
@@ -4088,7 +4088,7 @@
   "id": "nar_julia_got_counter_seraphina",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Dragon Treats!"
+  "text": "We found the Golden Nut!"
  },
  {
   "id": "nar_julia_alarm_villain_dada_matt",
@@ -4100,13 +4100,13 @@
   "id": "nar_julia_need_item_dada_matt",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
  },
  {
   "id": "nar_julia_made_item_dada_matt",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Giant Log!"
  },
  {
   "id": "nar_julia_need_counter_dada_matt",
@@ -4118,7 +4118,7 @@
   "id": "nar_julia_got_counter_dada_matt",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Giant Log!"
  },
  {
   "id": "nar_julia_alarm_villain_dada_jason",
@@ -4160,13 +4160,13 @@
   "id": "nar_julia_need_item_elsa",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Sun Torch can stop Evil Elsa!"
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
  },
  {
   "id": "nar_julia_made_item_elsa",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Sun Torch!"
+  "text": "We made the Cocoa Cup!"
  },
  {
   "id": "nar_julia_need_counter_elsa",
@@ -4178,7 +4178,7 @@
   "id": "nar_julia_got_counter_elsa",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Sun Torch!"
+  "text": "We found the Cocoa Cup!"
  },
  {
   "id": "nar_julia_alarm_villain_anna",
@@ -4190,13 +4190,13 @@
   "id": "nar_julia_need_item_anna",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Friendship Locket can stop Evil Anna!"
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
  },
  {
   "id": "nar_julia_made_item_anna",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Friendship Locket!"
+  "text": "We made the Cuddly Cat!"
  },
  {
   "id": "nar_julia_need_counter_anna",
@@ -4208,7 +4208,7 @@
   "id": "nar_julia_got_counter_anna",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Friendship Locket!"
+  "text": "We found the Cuddly Cat!"
  },
  {
   "id": "nar_julia_alarm_villain_jasmine",
@@ -4220,13 +4220,13 @@
   "id": "nar_julia_need_item_jasmine",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Wind Fan can stop Evil Jasmine!"
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
  },
  {
   "id": "nar_julia_made_item_jasmine",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Wind Fan!"
+  "text": "We made the Flappy Bat!"
  },
  {
   "id": "nar_julia_need_counter_jasmine",
@@ -4238,7 +4238,7 @@
   "id": "nar_julia_got_counter_jasmine",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Wind Fan!"
+  "text": "We found the Flappy Bat!"
  },
  {
   "id": "nar_julia_alarm_villain_ozymandias",
@@ -4250,13 +4250,13 @@
   "id": "nar_julia_need_item_ozymandias",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
  },
  {
   "id": "nar_julia_made_item_ozymandias",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Rain Cloud!"
+  "text": "We made the Brave Rat!"
  },
  {
   "id": "nar_julia_need_counter_ozymandias",
@@ -4268,7 +4268,7 @@
   "id": "nar_julia_got_counter_ozymandias",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Rain Cloud!"
+  "text": "We found the Brave Rat!"
  },
  {
   "id": "nar_julia_alarm_villain_jormungandr",
@@ -4281,15 +4281,15 @@
   "id": "nar_julia_need_item_jormungandr",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
-  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
  },
  {
   "id": "nar_julia_made_item_jormungandr",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Sun Lamp!",
-  "say": "We made the Sun Lamp!"
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
  },
  {
   "id": "nar_julia_need_counter_jormungandr",
@@ -4302,8 +4302,8 @@
   "id": "nar_julia_got_counter_jormungandr",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Sun Lamp!",
-  "say": "We found the Sun Lamp!"
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
  },
  {
   "id": "nar_julia_alarm_villain_smaug",
@@ -4315,13 +4315,13 @@
   "id": "nar_julia_need_item_smaug",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Frost Shield can stop Evil Smaug!"
+  "text": "Only the Gold Bag can stop Evil Smaug!"
  },
  {
   "id": "nar_julia_made_item_smaug",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Frost Shield!"
+  "text": "We made the Gold Bag!"
  },
  {
   "id": "nar_julia_need_counter_smaug",
@@ -4333,7 +4333,7 @@
   "id": "nar_julia_got_counter_smaug",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Frost Shield!"
+  "text": "We found the Gold Bag!"
  },
  {
   "id": "nar_julia_alarm_villain_scar",
@@ -4345,13 +4345,13 @@
   "id": "nar_julia_need_item_scar",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Off Remote can stop Evil Scar!"
+  "text": "Only the Glitch Bug can stop Evil Scar!"
  },
  {
   "id": "nar_julia_made_item_scar",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Off Remote!"
+  "text": "We made the Glitch Bug!"
  },
  {
   "id": "nar_julia_need_counter_scar",
@@ -4363,7 +4363,7 @@
   "id": "nar_julia_got_counter_scar",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Off Remote!"
+  "text": "We found the Glitch Bug!"
  },
  {
   "id": "nar_julia_alarm_villain_moriarty",
@@ -4375,13 +4375,13 @@
   "id": "nar_julia_need_item_moriarty",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+  "text": "Only the Truth Map can stop Evil Moriarty!"
  },
  {
   "id": "nar_julia_made_item_moriarty",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Magnifying Glass!"
+  "text": "We made the Truth Map!"
  },
  {
   "id": "nar_julia_need_counter_moriarty",
@@ -4393,7 +4393,7 @@
   "id": "nar_julia_got_counter_moriarty",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Magnifying Glass!"
+  "text": "We found the Truth Map!"
  },
  {
   "id": "nar_julia_alarm_villain_bavmorda",
@@ -4405,13 +4405,13 @@
   "id": "nar_julia_need_item_bavmorda",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
  },
  {
   "id": "nar_julia_made_item_bavmorda",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Magic Mirror!"
+  "text": "We made the Bounce Cap!"
  },
  {
   "id": "nar_julia_need_counter_bavmorda",
@@ -4423,7 +4423,7 @@
   "id": "nar_julia_got_counter_bavmorda",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Magic Mirror!"
+  "text": "We found the Bounce Cap!"
  },
  {
   "id": "nar_julia_alarm_villain_rilla",
@@ -5240,13 +5240,13 @@
   "id": "nar_ellie_need_item_julia",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "Only the Cozy Blanket can stop Evil Julia!"
+  "text": "Only the Cozy Bed can stop Evil Julia!"
  },
  {
   "id": "nar_ellie_made_item_julia",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We made the Cozy Blanket!"
+  "text": "We made the Cozy Bed!"
  },
  {
   "id": "nar_ellie_need_counter_julia",
@@ -5258,7 +5258,7 @@
   "id": "nar_ellie_got_counter_julia",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We found the Cozy Blanket!"
+  "text": "We found the Cozy Bed!"
  },
  {
   "id": "nar_ellie_alarm_villain_ellie",
@@ -5270,13 +5270,13 @@
   "id": "nar_ellie_need_item_ellie",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "Only the Bubble Bath can stop Evil Ellie!"
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
  },
  {
   "id": "nar_ellie_made_item_ellie",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We made the Bubble Bath!"
+  "text": "We made the Bubble Tub!"
  },
  {
   "id": "nar_ellie_need_counter_ellie",
@@ -5288,7 +5288,7 @@
   "id": "nar_ellie_got_counter_ellie",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We found the Bubble Bath!"
+  "text": "We found the Bubble Tub!"
  },
  {
   "id": "nar_ellie_alarm_villain_seraphina",
@@ -5300,13 +5300,13 @@
   "id": "nar_ellie_need_item_seraphina",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
  },
  {
   "id": "nar_ellie_made_item_seraphina",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We made the Dragon Treats!"
+  "text": "We made the Golden Nut!"
  },
  {
   "id": "nar_ellie_need_counter_seraphina",
@@ -5318,7 +5318,7 @@
   "id": "nar_ellie_got_counter_seraphina",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We found the Dragon Treats!"
+  "text": "We found the Golden Nut!"
  },
  {
   "id": "nar_ellie_alarm_villain_dada_matt",
@@ -5330,13 +5330,13 @@
   "id": "nar_ellie_need_item_dada_matt",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
  },
  {
   "id": "nar_ellie_made_item_dada_matt",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Giant Log!"
  },
  {
   "id": "nar_ellie_need_counter_dada_matt",
@@ -5348,7 +5348,7 @@
   "id": "nar_ellie_got_counter_dada_matt",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Giant Log!"
  },
  {
   "id": "nar_ellie_alarm_villain_dada_jason",
@@ -5390,13 +5390,13 @@
   "id": "nar_ellie_need_item_elsa",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "Only the Sun Torch can stop Evil Elsa!"
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
  },
  {
   "id": "nar_ellie_made_item_elsa",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We made the Sun Torch!"
+  "text": "We made the Cocoa Cup!"
  },
  {
   "id": "nar_ellie_need_counter_elsa",
@@ -5408,7 +5408,7 @@
   "id": "nar_ellie_got_counter_elsa",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We found the Sun Torch!"
+  "text": "We found the Cocoa Cup!"
  },
  {
   "id": "nar_ellie_alarm_villain_anna",
@@ -5420,13 +5420,13 @@
   "id": "nar_ellie_need_item_anna",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "Only the Friendship Locket can stop Evil Anna!"
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
  },
  {
   "id": "nar_ellie_made_item_anna",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We made the Friendship Locket!"
+  "text": "We made the Cuddly Cat!"
  },
  {
   "id": "nar_ellie_need_counter_anna",
@@ -5438,7 +5438,7 @@
   "id": "nar_ellie_got_counter_anna",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We found the Friendship Locket!"
+  "text": "We found the Cuddly Cat!"
  },
  {
   "id": "nar_ellie_alarm_villain_jasmine",
@@ -5450,13 +5450,13 @@
   "id": "nar_ellie_need_item_jasmine",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "Only the Wind Fan can stop Evil Jasmine!"
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
  },
  {
   "id": "nar_ellie_made_item_jasmine",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We made the Wind Fan!"
+  "text": "We made the Flappy Bat!"
  },
  {
   "id": "nar_ellie_need_counter_jasmine",
@@ -5468,7 +5468,7 @@
   "id": "nar_ellie_got_counter_jasmine",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We found the Wind Fan!"
+  "text": "We found the Flappy Bat!"
  },
  {
   "id": "nar_ellie_alarm_villain_ozymandias",
@@ -5480,13 +5480,13 @@
   "id": "nar_ellie_need_item_ozymandias",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
  },
  {
   "id": "nar_ellie_made_item_ozymandias",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We made the Rain Cloud!"
+  "text": "We made the Brave Rat!"
  },
  {
   "id": "nar_ellie_need_counter_ozymandias",
@@ -5498,7 +5498,7 @@
   "id": "nar_ellie_got_counter_ozymandias",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We found the Rain Cloud!"
+  "text": "We found the Brave Rat!"
  },
  {
   "id": "nar_ellie_alarm_villain_jormungandr",
@@ -5511,15 +5511,15 @@
   "id": "nar_ellie_need_item_jormungandr",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
-  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
  },
  {
   "id": "nar_ellie_made_item_jormungandr",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We made the Sun Lamp!",
-  "say": "We made the Sun Lamp!"
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
  },
  {
   "id": "nar_ellie_need_counter_jormungandr",
@@ -5532,8 +5532,8 @@
   "id": "nar_ellie_got_counter_jormungandr",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We found the Sun Lamp!",
-  "say": "We found the Sun Lamp!"
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
  },
  {
   "id": "nar_ellie_alarm_villain_smaug",
@@ -5545,13 +5545,13 @@
   "id": "nar_ellie_need_item_smaug",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "Only the Frost Shield can stop Evil Smaug!"
+  "text": "Only the Gold Bag can stop Evil Smaug!"
  },
  {
   "id": "nar_ellie_made_item_smaug",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We made the Frost Shield!"
+  "text": "We made the Gold Bag!"
  },
  {
   "id": "nar_ellie_need_counter_smaug",
@@ -5563,7 +5563,7 @@
   "id": "nar_ellie_got_counter_smaug",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We found the Frost Shield!"
+  "text": "We found the Gold Bag!"
  },
  {
   "id": "nar_ellie_alarm_villain_scar",
@@ -5575,13 +5575,13 @@
   "id": "nar_ellie_need_item_scar",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "Only the Off Remote can stop Evil Scar!"
+  "text": "Only the Glitch Bug can stop Evil Scar!"
  },
  {
   "id": "nar_ellie_made_item_scar",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We made the Off Remote!"
+  "text": "We made the Glitch Bug!"
  },
  {
   "id": "nar_ellie_need_counter_scar",
@@ -5593,7 +5593,7 @@
   "id": "nar_ellie_got_counter_scar",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We found the Off Remote!"
+  "text": "We found the Glitch Bug!"
  },
  {
   "id": "nar_ellie_alarm_villain_moriarty",
@@ -5605,13 +5605,13 @@
   "id": "nar_ellie_need_item_moriarty",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+  "text": "Only the Truth Map can stop Evil Moriarty!"
  },
  {
   "id": "nar_ellie_made_item_moriarty",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We made the Magnifying Glass!"
+  "text": "We made the Truth Map!"
  },
  {
   "id": "nar_ellie_need_counter_moriarty",
@@ -5623,7 +5623,7 @@
   "id": "nar_ellie_got_counter_moriarty",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We found the Magnifying Glass!"
+  "text": "We found the Truth Map!"
  },
  {
   "id": "nar_ellie_alarm_villain_bavmorda",
@@ -5635,13 +5635,13 @@
   "id": "nar_ellie_need_item_bavmorda",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
  },
  {
   "id": "nar_ellie_made_item_bavmorda",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We made the Magic Mirror!"
+  "text": "We made the Bounce Cap!"
  },
  {
   "id": "nar_ellie_need_counter_bavmorda",
@@ -5653,7 +5653,7 @@
   "id": "nar_ellie_got_counter_bavmorda",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We found the Magic Mirror!"
+  "text": "We found the Bounce Cap!"
  },
  {
   "id": "nar_ellie_alarm_villain_rilla",
@@ -6470,13 +6470,13 @@
   "id": "nar_seraphina_need_item_julia",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Cozy Blanket can stop Evil Julia!"
+  "text": "Only the Cozy Bed can stop Evil Julia!"
  },
  {
   "id": "nar_seraphina_made_item_julia",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Cozy Blanket!"
+  "text": "We made the Cozy Bed!"
  },
  {
   "id": "nar_seraphina_need_counter_julia",
@@ -6488,7 +6488,7 @@
   "id": "nar_seraphina_got_counter_julia",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Cozy Blanket!"
+  "text": "We found the Cozy Bed!"
  },
  {
   "id": "nar_seraphina_alarm_villain_ellie",
@@ -6500,13 +6500,13 @@
   "id": "nar_seraphina_need_item_ellie",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Bubble Bath can stop Evil Ellie!"
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
  },
  {
   "id": "nar_seraphina_made_item_ellie",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Bubble Bath!"
+  "text": "We made the Bubble Tub!"
  },
  {
   "id": "nar_seraphina_need_counter_ellie",
@@ -6518,7 +6518,7 @@
   "id": "nar_seraphina_got_counter_ellie",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Bubble Bath!"
+  "text": "We found the Bubble Tub!"
  },
  {
   "id": "nar_seraphina_alarm_villain_seraphina",
@@ -6530,13 +6530,13 @@
   "id": "nar_seraphina_need_item_seraphina",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
  },
  {
   "id": "nar_seraphina_made_item_seraphina",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Dragon Treats!"
+  "text": "We made the Golden Nut!"
  },
  {
   "id": "nar_seraphina_need_counter_seraphina",
@@ -6548,7 +6548,7 @@
   "id": "nar_seraphina_got_counter_seraphina",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Dragon Treats!"
+  "text": "We found the Golden Nut!"
  },
  {
   "id": "nar_seraphina_alarm_villain_dada_matt",
@@ -6560,13 +6560,13 @@
   "id": "nar_seraphina_need_item_dada_matt",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
  },
  {
   "id": "nar_seraphina_made_item_dada_matt",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Giant Log!"
  },
  {
   "id": "nar_seraphina_need_counter_dada_matt",
@@ -6578,7 +6578,7 @@
   "id": "nar_seraphina_got_counter_dada_matt",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Giant Log!"
  },
  {
   "id": "nar_seraphina_alarm_villain_dada_jason",
@@ -6620,13 +6620,13 @@
   "id": "nar_seraphina_need_item_elsa",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Sun Torch can stop Evil Elsa!"
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
  },
  {
   "id": "nar_seraphina_made_item_elsa",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Sun Torch!"
+  "text": "We made the Cocoa Cup!"
  },
  {
   "id": "nar_seraphina_need_counter_elsa",
@@ -6638,7 +6638,7 @@
   "id": "nar_seraphina_got_counter_elsa",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Sun Torch!"
+  "text": "We found the Cocoa Cup!"
  },
  {
   "id": "nar_seraphina_alarm_villain_anna",
@@ -6650,13 +6650,13 @@
   "id": "nar_seraphina_need_item_anna",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Friendship Locket can stop Evil Anna!"
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
  },
  {
   "id": "nar_seraphina_made_item_anna",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Friendship Locket!"
+  "text": "We made the Cuddly Cat!"
  },
  {
   "id": "nar_seraphina_need_counter_anna",
@@ -6668,7 +6668,7 @@
   "id": "nar_seraphina_got_counter_anna",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Friendship Locket!"
+  "text": "We found the Cuddly Cat!"
  },
  {
   "id": "nar_seraphina_alarm_villain_jasmine",
@@ -6680,13 +6680,13 @@
   "id": "nar_seraphina_need_item_jasmine",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Wind Fan can stop Evil Jasmine!"
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
  },
  {
   "id": "nar_seraphina_made_item_jasmine",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Wind Fan!"
+  "text": "We made the Flappy Bat!"
  },
  {
   "id": "nar_seraphina_need_counter_jasmine",
@@ -6698,7 +6698,7 @@
   "id": "nar_seraphina_got_counter_jasmine",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Wind Fan!"
+  "text": "We found the Flappy Bat!"
  },
  {
   "id": "nar_seraphina_alarm_villain_ozymandias",
@@ -6710,13 +6710,13 @@
   "id": "nar_seraphina_need_item_ozymandias",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
  },
  {
   "id": "nar_seraphina_made_item_ozymandias",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Rain Cloud!"
+  "text": "We made the Brave Rat!"
  },
  {
   "id": "nar_seraphina_need_counter_ozymandias",
@@ -6728,7 +6728,7 @@
   "id": "nar_seraphina_got_counter_ozymandias",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Rain Cloud!"
+  "text": "We found the Brave Rat!"
  },
  {
   "id": "nar_seraphina_alarm_villain_jormungandr",
@@ -6741,15 +6741,15 @@
   "id": "nar_seraphina_need_item_jormungandr",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
-  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
  },
  {
   "id": "nar_seraphina_made_item_jormungandr",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Sun Lamp!",
-  "say": "We made the Sun Lamp!"
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
  },
  {
   "id": "nar_seraphina_need_counter_jormungandr",
@@ -6762,8 +6762,8 @@
   "id": "nar_seraphina_got_counter_jormungandr",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Sun Lamp!",
-  "say": "We found the Sun Lamp!"
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
  },
  {
   "id": "nar_seraphina_alarm_villain_smaug",
@@ -6775,13 +6775,13 @@
   "id": "nar_seraphina_need_item_smaug",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Frost Shield can stop Evil Smaug!"
+  "text": "Only the Gold Bag can stop Evil Smaug!"
  },
  {
   "id": "nar_seraphina_made_item_smaug",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Frost Shield!"
+  "text": "We made the Gold Bag!"
  },
  {
   "id": "nar_seraphina_need_counter_smaug",
@@ -6793,7 +6793,7 @@
   "id": "nar_seraphina_got_counter_smaug",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Frost Shield!"
+  "text": "We found the Gold Bag!"
  },
  {
   "id": "nar_seraphina_alarm_villain_scar",
@@ -6805,13 +6805,13 @@
   "id": "nar_seraphina_need_item_scar",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Off Remote can stop Evil Scar!"
+  "text": "Only the Glitch Bug can stop Evil Scar!"
  },
  {
   "id": "nar_seraphina_made_item_scar",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Off Remote!"
+  "text": "We made the Glitch Bug!"
  },
  {
   "id": "nar_seraphina_need_counter_scar",
@@ -6823,7 +6823,7 @@
   "id": "nar_seraphina_got_counter_scar",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Off Remote!"
+  "text": "We found the Glitch Bug!"
  },
  {
   "id": "nar_seraphina_alarm_villain_moriarty",
@@ -6835,13 +6835,13 @@
   "id": "nar_seraphina_need_item_moriarty",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+  "text": "Only the Truth Map can stop Evil Moriarty!"
  },
  {
   "id": "nar_seraphina_made_item_moriarty",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Magnifying Glass!"
+  "text": "We made the Truth Map!"
  },
  {
   "id": "nar_seraphina_need_counter_moriarty",
@@ -6853,7 +6853,7 @@
   "id": "nar_seraphina_got_counter_moriarty",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Magnifying Glass!"
+  "text": "We found the Truth Map!"
  },
  {
   "id": "nar_seraphina_alarm_villain_bavmorda",
@@ -6865,13 +6865,13 @@
   "id": "nar_seraphina_need_item_bavmorda",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
  },
  {
   "id": "nar_seraphina_made_item_bavmorda",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Magic Mirror!"
+  "text": "We made the Bounce Cap!"
  },
  {
   "id": "nar_seraphina_need_counter_bavmorda",
@@ -6883,7 +6883,7 @@
   "id": "nar_seraphina_got_counter_bavmorda",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Magic Mirror!"
+  "text": "We found the Bounce Cap!"
  },
  {
   "id": "nar_seraphina_alarm_villain_rilla",
@@ -7700,13 +7700,13 @@
   "id": "nar_dada_matt_need_item_julia",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Cozy Blanket can stop Evil Julia!"
+  "text": "Only the Cozy Bed can stop Evil Julia!"
  },
  {
   "id": "nar_dada_matt_made_item_julia",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Cozy Blanket!"
+  "text": "We made the Cozy Bed!"
  },
  {
   "id": "nar_dada_matt_need_counter_julia",
@@ -7718,7 +7718,7 @@
   "id": "nar_dada_matt_got_counter_julia",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Cozy Blanket!"
+  "text": "We found the Cozy Bed!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_ellie",
@@ -7730,13 +7730,13 @@
   "id": "nar_dada_matt_need_item_ellie",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Bubble Bath can stop Evil Ellie!"
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
  },
  {
   "id": "nar_dada_matt_made_item_ellie",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Bubble Bath!"
+  "text": "We made the Bubble Tub!"
  },
  {
   "id": "nar_dada_matt_need_counter_ellie",
@@ -7748,7 +7748,7 @@
   "id": "nar_dada_matt_got_counter_ellie",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Bubble Bath!"
+  "text": "We found the Bubble Tub!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_seraphina",
@@ -7760,13 +7760,13 @@
   "id": "nar_dada_matt_need_item_seraphina",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
  },
  {
   "id": "nar_dada_matt_made_item_seraphina",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Dragon Treats!"
+  "text": "We made the Golden Nut!"
  },
  {
   "id": "nar_dada_matt_need_counter_seraphina",
@@ -7778,7 +7778,7 @@
   "id": "nar_dada_matt_got_counter_seraphina",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Dragon Treats!"
+  "text": "We found the Golden Nut!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_dada_matt",
@@ -7790,13 +7790,13 @@
   "id": "nar_dada_matt_need_item_dada_matt",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
  },
  {
   "id": "nar_dada_matt_made_item_dada_matt",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Giant Log!"
  },
  {
   "id": "nar_dada_matt_need_counter_dada_matt",
@@ -7808,7 +7808,7 @@
   "id": "nar_dada_matt_got_counter_dada_matt",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Giant Log!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_dada_jason",
@@ -7850,13 +7850,13 @@
   "id": "nar_dada_matt_need_item_elsa",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Sun Torch can stop Evil Elsa!"
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
  },
  {
   "id": "nar_dada_matt_made_item_elsa",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Sun Torch!"
+  "text": "We made the Cocoa Cup!"
  },
  {
   "id": "nar_dada_matt_need_counter_elsa",
@@ -7868,7 +7868,7 @@
   "id": "nar_dada_matt_got_counter_elsa",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Sun Torch!"
+  "text": "We found the Cocoa Cup!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_anna",
@@ -7880,13 +7880,13 @@
   "id": "nar_dada_matt_need_item_anna",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Friendship Locket can stop Evil Anna!"
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
  },
  {
   "id": "nar_dada_matt_made_item_anna",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Friendship Locket!"
+  "text": "We made the Cuddly Cat!"
  },
  {
   "id": "nar_dada_matt_need_counter_anna",
@@ -7898,7 +7898,7 @@
   "id": "nar_dada_matt_got_counter_anna",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Friendship Locket!"
+  "text": "We found the Cuddly Cat!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_jasmine",
@@ -7910,13 +7910,13 @@
   "id": "nar_dada_matt_need_item_jasmine",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Wind Fan can stop Evil Jasmine!"
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
  },
  {
   "id": "nar_dada_matt_made_item_jasmine",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Wind Fan!"
+  "text": "We made the Flappy Bat!"
  },
  {
   "id": "nar_dada_matt_need_counter_jasmine",
@@ -7928,7 +7928,7 @@
   "id": "nar_dada_matt_got_counter_jasmine",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Wind Fan!"
+  "text": "We found the Flappy Bat!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_ozymandias",
@@ -7940,13 +7940,13 @@
   "id": "nar_dada_matt_need_item_ozymandias",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
  },
  {
   "id": "nar_dada_matt_made_item_ozymandias",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Rain Cloud!"
+  "text": "We made the Brave Rat!"
  },
  {
   "id": "nar_dada_matt_need_counter_ozymandias",
@@ -7958,7 +7958,7 @@
   "id": "nar_dada_matt_got_counter_ozymandias",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Rain Cloud!"
+  "text": "We found the Brave Rat!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_jormungandr",
@@ -7971,15 +7971,15 @@
   "id": "nar_dada_matt_need_item_jormungandr",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
-  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
  },
  {
   "id": "nar_dada_matt_made_item_jormungandr",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Sun Lamp!",
-  "say": "We made the Sun Lamp!"
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
  },
  {
   "id": "nar_dada_matt_need_counter_jormungandr",
@@ -7992,8 +7992,8 @@
   "id": "nar_dada_matt_got_counter_jormungandr",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Sun Lamp!",
-  "say": "We found the Sun Lamp!"
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_smaug",
@@ -8005,13 +8005,13 @@
   "id": "nar_dada_matt_need_item_smaug",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Frost Shield can stop Evil Smaug!"
+  "text": "Only the Gold Bag can stop Evil Smaug!"
  },
  {
   "id": "nar_dada_matt_made_item_smaug",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Frost Shield!"
+  "text": "We made the Gold Bag!"
  },
  {
   "id": "nar_dada_matt_need_counter_smaug",
@@ -8023,7 +8023,7 @@
   "id": "nar_dada_matt_got_counter_smaug",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Frost Shield!"
+  "text": "We found the Gold Bag!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_scar",
@@ -8035,13 +8035,13 @@
   "id": "nar_dada_matt_need_item_scar",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Off Remote can stop Evil Scar!"
+  "text": "Only the Glitch Bug can stop Evil Scar!"
  },
  {
   "id": "nar_dada_matt_made_item_scar",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Off Remote!"
+  "text": "We made the Glitch Bug!"
  },
  {
   "id": "nar_dada_matt_need_counter_scar",
@@ -8053,7 +8053,7 @@
   "id": "nar_dada_matt_got_counter_scar",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Off Remote!"
+  "text": "We found the Glitch Bug!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_moriarty",
@@ -8065,13 +8065,13 @@
   "id": "nar_dada_matt_need_item_moriarty",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+  "text": "Only the Truth Map can stop Evil Moriarty!"
  },
  {
   "id": "nar_dada_matt_made_item_moriarty",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Magnifying Glass!"
+  "text": "We made the Truth Map!"
  },
  {
   "id": "nar_dada_matt_need_counter_moriarty",
@@ -8083,7 +8083,7 @@
   "id": "nar_dada_matt_got_counter_moriarty",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Magnifying Glass!"
+  "text": "We found the Truth Map!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_bavmorda",
@@ -8095,13 +8095,13 @@
   "id": "nar_dada_matt_need_item_bavmorda",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
  },
  {
   "id": "nar_dada_matt_made_item_bavmorda",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Magic Mirror!"
+  "text": "We made the Bounce Cap!"
  },
  {
   "id": "nar_dada_matt_need_counter_bavmorda",
@@ -8113,7 +8113,7 @@
   "id": "nar_dada_matt_got_counter_bavmorda",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Magic Mirror!"
+  "text": "We found the Bounce Cap!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_rilla",
@@ -8930,13 +8930,13 @@
   "id": "nar_dada_jason_need_item_julia",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Cozy Blanket can stop Evil Julia!"
+  "text": "Only the Cozy Bed can stop Evil Julia!"
  },
  {
   "id": "nar_dada_jason_made_item_julia",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Cozy Blanket!"
+  "text": "We made the Cozy Bed!"
  },
  {
   "id": "nar_dada_jason_need_counter_julia",
@@ -8948,7 +8948,7 @@
   "id": "nar_dada_jason_got_counter_julia",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Cozy Blanket!"
+  "text": "We found the Cozy Bed!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_ellie",
@@ -8960,13 +8960,13 @@
   "id": "nar_dada_jason_need_item_ellie",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Bubble Bath can stop Evil Ellie!"
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
  },
  {
   "id": "nar_dada_jason_made_item_ellie",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Bubble Bath!"
+  "text": "We made the Bubble Tub!"
  },
  {
   "id": "nar_dada_jason_need_counter_ellie",
@@ -8978,7 +8978,7 @@
   "id": "nar_dada_jason_got_counter_ellie",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Bubble Bath!"
+  "text": "We found the Bubble Tub!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_seraphina",
@@ -8990,13 +8990,13 @@
   "id": "nar_dada_jason_need_item_seraphina",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
  },
  {
   "id": "nar_dada_jason_made_item_seraphina",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Dragon Treats!"
+  "text": "We made the Golden Nut!"
  },
  {
   "id": "nar_dada_jason_need_counter_seraphina",
@@ -9008,7 +9008,7 @@
   "id": "nar_dada_jason_got_counter_seraphina",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Dragon Treats!"
+  "text": "We found the Golden Nut!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_dada_matt",
@@ -9020,13 +9020,13 @@
   "id": "nar_dada_jason_need_item_dada_matt",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
  },
  {
   "id": "nar_dada_jason_made_item_dada_matt",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Giant Log!"
  },
  {
   "id": "nar_dada_jason_need_counter_dada_matt",
@@ -9038,7 +9038,7 @@
   "id": "nar_dada_jason_got_counter_dada_matt",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Giant Log!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_dada_jason",
@@ -9080,13 +9080,13 @@
   "id": "nar_dada_jason_need_item_elsa",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Sun Torch can stop Evil Elsa!"
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
  },
  {
   "id": "nar_dada_jason_made_item_elsa",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Sun Torch!"
+  "text": "We made the Cocoa Cup!"
  },
  {
   "id": "nar_dada_jason_need_counter_elsa",
@@ -9098,7 +9098,7 @@
   "id": "nar_dada_jason_got_counter_elsa",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Sun Torch!"
+  "text": "We found the Cocoa Cup!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_anna",
@@ -9110,13 +9110,13 @@
   "id": "nar_dada_jason_need_item_anna",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Friendship Locket can stop Evil Anna!"
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
  },
  {
   "id": "nar_dada_jason_made_item_anna",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Friendship Locket!"
+  "text": "We made the Cuddly Cat!"
  },
  {
   "id": "nar_dada_jason_need_counter_anna",
@@ -9128,7 +9128,7 @@
   "id": "nar_dada_jason_got_counter_anna",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Friendship Locket!"
+  "text": "We found the Cuddly Cat!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_jasmine",
@@ -9140,13 +9140,13 @@
   "id": "nar_dada_jason_need_item_jasmine",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Wind Fan can stop Evil Jasmine!"
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
  },
  {
   "id": "nar_dada_jason_made_item_jasmine",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Wind Fan!"
+  "text": "We made the Flappy Bat!"
  },
  {
   "id": "nar_dada_jason_need_counter_jasmine",
@@ -9158,7 +9158,7 @@
   "id": "nar_dada_jason_got_counter_jasmine",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Wind Fan!"
+  "text": "We found the Flappy Bat!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_ozymandias",
@@ -9170,13 +9170,13 @@
   "id": "nar_dada_jason_need_item_ozymandias",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
  },
  {
   "id": "nar_dada_jason_made_item_ozymandias",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Rain Cloud!"
+  "text": "We made the Brave Rat!"
  },
  {
   "id": "nar_dada_jason_need_counter_ozymandias",
@@ -9188,7 +9188,7 @@
   "id": "nar_dada_jason_got_counter_ozymandias",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Rain Cloud!"
+  "text": "We found the Brave Rat!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_jormungandr",
@@ -9201,15 +9201,15 @@
   "id": "nar_dada_jason_need_item_jormungandr",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
-  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
  },
  {
   "id": "nar_dada_jason_made_item_jormungandr",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Sun Lamp!",
-  "say": "We made the Sun Lamp!"
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
  },
  {
   "id": "nar_dada_jason_need_counter_jormungandr",
@@ -9222,8 +9222,8 @@
   "id": "nar_dada_jason_got_counter_jormungandr",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Sun Lamp!",
-  "say": "We found the Sun Lamp!"
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_smaug",
@@ -9235,13 +9235,13 @@
   "id": "nar_dada_jason_need_item_smaug",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Frost Shield can stop Evil Smaug!"
+  "text": "Only the Gold Bag can stop Evil Smaug!"
  },
  {
   "id": "nar_dada_jason_made_item_smaug",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Frost Shield!"
+  "text": "We made the Gold Bag!"
  },
  {
   "id": "nar_dada_jason_need_counter_smaug",
@@ -9253,7 +9253,7 @@
   "id": "nar_dada_jason_got_counter_smaug",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Frost Shield!"
+  "text": "We found the Gold Bag!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_scar",
@@ -9265,13 +9265,13 @@
   "id": "nar_dada_jason_need_item_scar",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Off Remote can stop Evil Scar!"
+  "text": "Only the Glitch Bug can stop Evil Scar!"
  },
  {
   "id": "nar_dada_jason_made_item_scar",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Off Remote!"
+  "text": "We made the Glitch Bug!"
  },
  {
   "id": "nar_dada_jason_need_counter_scar",
@@ -9283,7 +9283,7 @@
   "id": "nar_dada_jason_got_counter_scar",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Off Remote!"
+  "text": "We found the Glitch Bug!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_moriarty",
@@ -9295,13 +9295,13 @@
   "id": "nar_dada_jason_need_item_moriarty",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+  "text": "Only the Truth Map can stop Evil Moriarty!"
  },
  {
   "id": "nar_dada_jason_made_item_moriarty",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Magnifying Glass!"
+  "text": "We made the Truth Map!"
  },
  {
   "id": "nar_dada_jason_need_counter_moriarty",
@@ -9313,7 +9313,7 @@
   "id": "nar_dada_jason_got_counter_moriarty",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Magnifying Glass!"
+  "text": "We found the Truth Map!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_bavmorda",
@@ -9325,13 +9325,13 @@
   "id": "nar_dada_jason_need_item_bavmorda",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
  },
  {
   "id": "nar_dada_jason_made_item_bavmorda",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Magic Mirror!"
+  "text": "We made the Bounce Cap!"
  },
  {
   "id": "nar_dada_jason_need_counter_bavmorda",
@@ -9343,7 +9343,7 @@
   "id": "nar_dada_jason_got_counter_bavmorda",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Magic Mirror!"
+  "text": "We found the Bounce Cap!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_rilla",
@@ -10160,13 +10160,13 @@
   "id": "nar_elsa_need_item_julia",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Cozy Blanket can stop Evil Julia!"
+  "text": "Only the Cozy Bed can stop Evil Julia!"
  },
  {
   "id": "nar_elsa_made_item_julia",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Cozy Blanket!"
+  "text": "We made the Cozy Bed!"
  },
  {
   "id": "nar_elsa_need_counter_julia",
@@ -10178,7 +10178,7 @@
   "id": "nar_elsa_got_counter_julia",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Cozy Blanket!"
+  "text": "We found the Cozy Bed!"
  },
  {
   "id": "nar_elsa_alarm_villain_ellie",
@@ -10190,13 +10190,13 @@
   "id": "nar_elsa_need_item_ellie",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Bubble Bath can stop Evil Ellie!"
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
  },
  {
   "id": "nar_elsa_made_item_ellie",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Bubble Bath!"
+  "text": "We made the Bubble Tub!"
  },
  {
   "id": "nar_elsa_need_counter_ellie",
@@ -10208,7 +10208,7 @@
   "id": "nar_elsa_got_counter_ellie",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Bubble Bath!"
+  "text": "We found the Bubble Tub!"
  },
  {
   "id": "nar_elsa_alarm_villain_seraphina",
@@ -10220,13 +10220,13 @@
   "id": "nar_elsa_need_item_seraphina",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
  },
  {
   "id": "nar_elsa_made_item_seraphina",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Dragon Treats!"
+  "text": "We made the Golden Nut!"
  },
  {
   "id": "nar_elsa_need_counter_seraphina",
@@ -10238,7 +10238,7 @@
   "id": "nar_elsa_got_counter_seraphina",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Dragon Treats!"
+  "text": "We found the Golden Nut!"
  },
  {
   "id": "nar_elsa_alarm_villain_dada_matt",
@@ -10250,13 +10250,13 @@
   "id": "nar_elsa_need_item_dada_matt",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
  },
  {
   "id": "nar_elsa_made_item_dada_matt",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Giant Log!"
  },
  {
   "id": "nar_elsa_need_counter_dada_matt",
@@ -10268,7 +10268,7 @@
   "id": "nar_elsa_got_counter_dada_matt",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Giant Log!"
  },
  {
   "id": "nar_elsa_alarm_villain_dada_jason",
@@ -10310,13 +10310,13 @@
   "id": "nar_elsa_need_item_elsa",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Sun Torch can stop Evil Elsa!"
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
  },
  {
   "id": "nar_elsa_made_item_elsa",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Sun Torch!"
+  "text": "We made the Cocoa Cup!"
  },
  {
   "id": "nar_elsa_need_counter_elsa",
@@ -10328,7 +10328,7 @@
   "id": "nar_elsa_got_counter_elsa",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Sun Torch!"
+  "text": "We found the Cocoa Cup!"
  },
  {
   "id": "nar_elsa_alarm_villain_anna",
@@ -10340,13 +10340,13 @@
   "id": "nar_elsa_need_item_anna",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Friendship Locket can stop Evil Anna!"
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
  },
  {
   "id": "nar_elsa_made_item_anna",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Friendship Locket!"
+  "text": "We made the Cuddly Cat!"
  },
  {
   "id": "nar_elsa_need_counter_anna",
@@ -10358,7 +10358,7 @@
   "id": "nar_elsa_got_counter_anna",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Friendship Locket!"
+  "text": "We found the Cuddly Cat!"
  },
  {
   "id": "nar_elsa_alarm_villain_jasmine",
@@ -10370,13 +10370,13 @@
   "id": "nar_elsa_need_item_jasmine",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Wind Fan can stop Evil Jasmine!"
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
  },
  {
   "id": "nar_elsa_made_item_jasmine",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Wind Fan!"
+  "text": "We made the Flappy Bat!"
  },
  {
   "id": "nar_elsa_need_counter_jasmine",
@@ -10388,7 +10388,7 @@
   "id": "nar_elsa_got_counter_jasmine",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Wind Fan!"
+  "text": "We found the Flappy Bat!"
  },
  {
   "id": "nar_elsa_alarm_villain_ozymandias",
@@ -10400,13 +10400,13 @@
   "id": "nar_elsa_need_item_ozymandias",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
  },
  {
   "id": "nar_elsa_made_item_ozymandias",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Rain Cloud!"
+  "text": "We made the Brave Rat!"
  },
  {
   "id": "nar_elsa_need_counter_ozymandias",
@@ -10418,7 +10418,7 @@
   "id": "nar_elsa_got_counter_ozymandias",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Rain Cloud!"
+  "text": "We found the Brave Rat!"
  },
  {
   "id": "nar_elsa_alarm_villain_jormungandr",
@@ -10431,15 +10431,15 @@
   "id": "nar_elsa_need_item_jormungandr",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
-  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
  },
  {
   "id": "nar_elsa_made_item_jormungandr",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Sun Lamp!",
-  "say": "We made the Sun Lamp!"
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
  },
  {
   "id": "nar_elsa_need_counter_jormungandr",
@@ -10452,8 +10452,8 @@
   "id": "nar_elsa_got_counter_jormungandr",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Sun Lamp!",
-  "say": "We found the Sun Lamp!"
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
  },
  {
   "id": "nar_elsa_alarm_villain_smaug",
@@ -10465,13 +10465,13 @@
   "id": "nar_elsa_need_item_smaug",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Frost Shield can stop Evil Smaug!"
+  "text": "Only the Gold Bag can stop Evil Smaug!"
  },
  {
   "id": "nar_elsa_made_item_smaug",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Frost Shield!"
+  "text": "We made the Gold Bag!"
  },
  {
   "id": "nar_elsa_need_counter_smaug",
@@ -10483,7 +10483,7 @@
   "id": "nar_elsa_got_counter_smaug",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Frost Shield!"
+  "text": "We found the Gold Bag!"
  },
  {
   "id": "nar_elsa_alarm_villain_scar",
@@ -10495,13 +10495,13 @@
   "id": "nar_elsa_need_item_scar",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Off Remote can stop Evil Scar!"
+  "text": "Only the Glitch Bug can stop Evil Scar!"
  },
  {
   "id": "nar_elsa_made_item_scar",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Off Remote!"
+  "text": "We made the Glitch Bug!"
  },
  {
   "id": "nar_elsa_need_counter_scar",
@@ -10513,7 +10513,7 @@
   "id": "nar_elsa_got_counter_scar",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Off Remote!"
+  "text": "We found the Glitch Bug!"
  },
  {
   "id": "nar_elsa_alarm_villain_moriarty",
@@ -10525,13 +10525,13 @@
   "id": "nar_elsa_need_item_moriarty",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+  "text": "Only the Truth Map can stop Evil Moriarty!"
  },
  {
   "id": "nar_elsa_made_item_moriarty",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Magnifying Glass!"
+  "text": "We made the Truth Map!"
  },
  {
   "id": "nar_elsa_need_counter_moriarty",
@@ -10543,7 +10543,7 @@
   "id": "nar_elsa_got_counter_moriarty",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Magnifying Glass!"
+  "text": "We found the Truth Map!"
  },
  {
   "id": "nar_elsa_alarm_villain_bavmorda",
@@ -10555,13 +10555,13 @@
   "id": "nar_elsa_need_item_bavmorda",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
  },
  {
   "id": "nar_elsa_made_item_bavmorda",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Magic Mirror!"
+  "text": "We made the Bounce Cap!"
  },
  {
   "id": "nar_elsa_need_counter_bavmorda",
@@ -10573,7 +10573,7 @@
   "id": "nar_elsa_got_counter_bavmorda",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Magic Mirror!"
+  "text": "We found the Bounce Cap!"
  },
  {
   "id": "nar_elsa_alarm_villain_rilla",
@@ -11390,13 +11390,13 @@
   "id": "nar_anna_need_item_julia",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Cozy Blanket can stop Evil Julia!"
+  "text": "Only the Cozy Bed can stop Evil Julia!"
  },
  {
   "id": "nar_anna_made_item_julia",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Cozy Blanket!"
+  "text": "We made the Cozy Bed!"
  },
  {
   "id": "nar_anna_need_counter_julia",
@@ -11408,7 +11408,7 @@
   "id": "nar_anna_got_counter_julia",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Cozy Blanket!"
+  "text": "We found the Cozy Bed!"
  },
  {
   "id": "nar_anna_alarm_villain_ellie",
@@ -11420,13 +11420,13 @@
   "id": "nar_anna_need_item_ellie",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Bubble Bath can stop Evil Ellie!"
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
  },
  {
   "id": "nar_anna_made_item_ellie",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Bubble Bath!"
+  "text": "We made the Bubble Tub!"
  },
  {
   "id": "nar_anna_need_counter_ellie",
@@ -11438,7 +11438,7 @@
   "id": "nar_anna_got_counter_ellie",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Bubble Bath!"
+  "text": "We found the Bubble Tub!"
  },
  {
   "id": "nar_anna_alarm_villain_seraphina",
@@ -11450,13 +11450,13 @@
   "id": "nar_anna_need_item_seraphina",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
  },
  {
   "id": "nar_anna_made_item_seraphina",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Dragon Treats!"
+  "text": "We made the Golden Nut!"
  },
  {
   "id": "nar_anna_need_counter_seraphina",
@@ -11468,7 +11468,7 @@
   "id": "nar_anna_got_counter_seraphina",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Dragon Treats!"
+  "text": "We found the Golden Nut!"
  },
  {
   "id": "nar_anna_alarm_villain_dada_matt",
@@ -11480,13 +11480,13 @@
   "id": "nar_anna_need_item_dada_matt",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
  },
  {
   "id": "nar_anna_made_item_dada_matt",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Giant Log!"
  },
  {
   "id": "nar_anna_need_counter_dada_matt",
@@ -11498,7 +11498,7 @@
   "id": "nar_anna_got_counter_dada_matt",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Giant Log!"
  },
  {
   "id": "nar_anna_alarm_villain_dada_jason",
@@ -11540,13 +11540,13 @@
   "id": "nar_anna_need_item_elsa",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Sun Torch can stop Evil Elsa!"
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
  },
  {
   "id": "nar_anna_made_item_elsa",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Sun Torch!"
+  "text": "We made the Cocoa Cup!"
  },
  {
   "id": "nar_anna_need_counter_elsa",
@@ -11558,7 +11558,7 @@
   "id": "nar_anna_got_counter_elsa",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Sun Torch!"
+  "text": "We found the Cocoa Cup!"
  },
  {
   "id": "nar_anna_alarm_villain_anna",
@@ -11570,13 +11570,13 @@
   "id": "nar_anna_need_item_anna",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Friendship Locket can stop Evil Anna!"
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
  },
  {
   "id": "nar_anna_made_item_anna",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Friendship Locket!"
+  "text": "We made the Cuddly Cat!"
  },
  {
   "id": "nar_anna_need_counter_anna",
@@ -11588,7 +11588,7 @@
   "id": "nar_anna_got_counter_anna",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Friendship Locket!"
+  "text": "We found the Cuddly Cat!"
  },
  {
   "id": "nar_anna_alarm_villain_jasmine",
@@ -11600,13 +11600,13 @@
   "id": "nar_anna_need_item_jasmine",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Wind Fan can stop Evil Jasmine!"
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
  },
  {
   "id": "nar_anna_made_item_jasmine",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Wind Fan!"
+  "text": "We made the Flappy Bat!"
  },
  {
   "id": "nar_anna_need_counter_jasmine",
@@ -11618,7 +11618,7 @@
   "id": "nar_anna_got_counter_jasmine",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Wind Fan!"
+  "text": "We found the Flappy Bat!"
  },
  {
   "id": "nar_anna_alarm_villain_ozymandias",
@@ -11630,13 +11630,13 @@
   "id": "nar_anna_need_item_ozymandias",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
  },
  {
   "id": "nar_anna_made_item_ozymandias",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Rain Cloud!"
+  "text": "We made the Brave Rat!"
  },
  {
   "id": "nar_anna_need_counter_ozymandias",
@@ -11648,7 +11648,7 @@
   "id": "nar_anna_got_counter_ozymandias",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Rain Cloud!"
+  "text": "We found the Brave Rat!"
  },
  {
   "id": "nar_anna_alarm_villain_jormungandr",
@@ -11661,15 +11661,15 @@
   "id": "nar_anna_need_item_jormungandr",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
-  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
  },
  {
   "id": "nar_anna_made_item_jormungandr",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Sun Lamp!",
-  "say": "We made the Sun Lamp!"
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
  },
  {
   "id": "nar_anna_need_counter_jormungandr",
@@ -11682,8 +11682,8 @@
   "id": "nar_anna_got_counter_jormungandr",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Sun Lamp!",
-  "say": "We found the Sun Lamp!"
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
  },
  {
   "id": "nar_anna_alarm_villain_smaug",
@@ -11695,13 +11695,13 @@
   "id": "nar_anna_need_item_smaug",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Frost Shield can stop Evil Smaug!"
+  "text": "Only the Gold Bag can stop Evil Smaug!"
  },
  {
   "id": "nar_anna_made_item_smaug",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Frost Shield!"
+  "text": "We made the Gold Bag!"
  },
  {
   "id": "nar_anna_need_counter_smaug",
@@ -11713,7 +11713,7 @@
   "id": "nar_anna_got_counter_smaug",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Frost Shield!"
+  "text": "We found the Gold Bag!"
  },
  {
   "id": "nar_anna_alarm_villain_scar",
@@ -11725,13 +11725,13 @@
   "id": "nar_anna_need_item_scar",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Off Remote can stop Evil Scar!"
+  "text": "Only the Glitch Bug can stop Evil Scar!"
  },
  {
   "id": "nar_anna_made_item_scar",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Off Remote!"
+  "text": "We made the Glitch Bug!"
  },
  {
   "id": "nar_anna_need_counter_scar",
@@ -11743,7 +11743,7 @@
   "id": "nar_anna_got_counter_scar",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Off Remote!"
+  "text": "We found the Glitch Bug!"
  },
  {
   "id": "nar_anna_alarm_villain_moriarty",
@@ -11755,13 +11755,13 @@
   "id": "nar_anna_need_item_moriarty",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+  "text": "Only the Truth Map can stop Evil Moriarty!"
  },
  {
   "id": "nar_anna_made_item_moriarty",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Magnifying Glass!"
+  "text": "We made the Truth Map!"
  },
  {
   "id": "nar_anna_need_counter_moriarty",
@@ -11773,7 +11773,7 @@
   "id": "nar_anna_got_counter_moriarty",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Magnifying Glass!"
+  "text": "We found the Truth Map!"
  },
  {
   "id": "nar_anna_alarm_villain_bavmorda",
@@ -11785,13 +11785,13 @@
   "id": "nar_anna_need_item_bavmorda",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
  },
  {
   "id": "nar_anna_made_item_bavmorda",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Magic Mirror!"
+  "text": "We made the Bounce Cap!"
  },
  {
   "id": "nar_anna_need_counter_bavmorda",
@@ -11803,7 +11803,7 @@
   "id": "nar_anna_got_counter_bavmorda",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Magic Mirror!"
+  "text": "We found the Bounce Cap!"
  },
  {
   "id": "nar_anna_alarm_villain_rilla",
@@ -12620,13 +12620,13 @@
   "id": "nar_jasmine_need_item_julia",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Cozy Blanket can stop Evil Julia!"
+  "text": "Only the Cozy Bed can stop Evil Julia!"
  },
  {
   "id": "nar_jasmine_made_item_julia",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Cozy Blanket!"
+  "text": "We made the Cozy Bed!"
  },
  {
   "id": "nar_jasmine_need_counter_julia",
@@ -12638,7 +12638,7 @@
   "id": "nar_jasmine_got_counter_julia",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Cozy Blanket!"
+  "text": "We found the Cozy Bed!"
  },
  {
   "id": "nar_jasmine_alarm_villain_ellie",
@@ -12650,13 +12650,13 @@
   "id": "nar_jasmine_need_item_ellie",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Bubble Bath can stop Evil Ellie!"
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
  },
  {
   "id": "nar_jasmine_made_item_ellie",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Bubble Bath!"
+  "text": "We made the Bubble Tub!"
  },
  {
   "id": "nar_jasmine_need_counter_ellie",
@@ -12668,7 +12668,7 @@
   "id": "nar_jasmine_got_counter_ellie",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Bubble Bath!"
+  "text": "We found the Bubble Tub!"
  },
  {
   "id": "nar_jasmine_alarm_villain_seraphina",
@@ -12680,13 +12680,13 @@
   "id": "nar_jasmine_need_item_seraphina",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
  },
  {
   "id": "nar_jasmine_made_item_seraphina",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Dragon Treats!"
+  "text": "We made the Golden Nut!"
  },
  {
   "id": "nar_jasmine_need_counter_seraphina",
@@ -12698,7 +12698,7 @@
   "id": "nar_jasmine_got_counter_seraphina",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Dragon Treats!"
+  "text": "We found the Golden Nut!"
  },
  {
   "id": "nar_jasmine_alarm_villain_dada_matt",
@@ -12710,13 +12710,13 @@
   "id": "nar_jasmine_need_item_dada_matt",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
  },
  {
   "id": "nar_jasmine_made_item_dada_matt",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Giant Log!"
  },
  {
   "id": "nar_jasmine_need_counter_dada_matt",
@@ -12728,7 +12728,7 @@
   "id": "nar_jasmine_got_counter_dada_matt",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Giant Log!"
  },
  {
   "id": "nar_jasmine_alarm_villain_dada_jason",
@@ -12770,13 +12770,13 @@
   "id": "nar_jasmine_need_item_elsa",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Sun Torch can stop Evil Elsa!"
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
  },
  {
   "id": "nar_jasmine_made_item_elsa",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Sun Torch!"
+  "text": "We made the Cocoa Cup!"
  },
  {
   "id": "nar_jasmine_need_counter_elsa",
@@ -12788,7 +12788,7 @@
   "id": "nar_jasmine_got_counter_elsa",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Sun Torch!"
+  "text": "We found the Cocoa Cup!"
  },
  {
   "id": "nar_jasmine_alarm_villain_anna",
@@ -12800,13 +12800,13 @@
   "id": "nar_jasmine_need_item_anna",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Friendship Locket can stop Evil Anna!"
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
  },
  {
   "id": "nar_jasmine_made_item_anna",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Friendship Locket!"
+  "text": "We made the Cuddly Cat!"
  },
  {
   "id": "nar_jasmine_need_counter_anna",
@@ -12818,7 +12818,7 @@
   "id": "nar_jasmine_got_counter_anna",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Friendship Locket!"
+  "text": "We found the Cuddly Cat!"
  },
  {
   "id": "nar_jasmine_alarm_villain_jasmine",
@@ -12830,13 +12830,13 @@
   "id": "nar_jasmine_need_item_jasmine",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Wind Fan can stop Evil Jasmine!"
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
  },
  {
   "id": "nar_jasmine_made_item_jasmine",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Wind Fan!"
+  "text": "We made the Flappy Bat!"
  },
  {
   "id": "nar_jasmine_need_counter_jasmine",
@@ -12848,7 +12848,7 @@
   "id": "nar_jasmine_got_counter_jasmine",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Wind Fan!"
+  "text": "We found the Flappy Bat!"
  },
  {
   "id": "nar_jasmine_alarm_villain_ozymandias",
@@ -12860,13 +12860,13 @@
   "id": "nar_jasmine_need_item_ozymandias",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
  },
  {
   "id": "nar_jasmine_made_item_ozymandias",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Rain Cloud!"
+  "text": "We made the Brave Rat!"
  },
  {
   "id": "nar_jasmine_need_counter_ozymandias",
@@ -12878,7 +12878,7 @@
   "id": "nar_jasmine_got_counter_ozymandias",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Rain Cloud!"
+  "text": "We found the Brave Rat!"
  },
  {
   "id": "nar_jasmine_alarm_villain_jormungandr",
@@ -12891,15 +12891,15 @@
   "id": "nar_jasmine_need_item_jormungandr",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
-  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
  },
  {
   "id": "nar_jasmine_made_item_jormungandr",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Sun Lamp!",
-  "say": "We made the Sun Lamp!"
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
  },
  {
   "id": "nar_jasmine_need_counter_jormungandr",
@@ -12912,8 +12912,8 @@
   "id": "nar_jasmine_got_counter_jormungandr",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Sun Lamp!",
-  "say": "We found the Sun Lamp!"
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
  },
  {
   "id": "nar_jasmine_alarm_villain_smaug",
@@ -12925,13 +12925,13 @@
   "id": "nar_jasmine_need_item_smaug",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Frost Shield can stop Evil Smaug!"
+  "text": "Only the Gold Bag can stop Evil Smaug!"
  },
  {
   "id": "nar_jasmine_made_item_smaug",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Frost Shield!"
+  "text": "We made the Gold Bag!"
  },
  {
   "id": "nar_jasmine_need_counter_smaug",
@@ -12943,7 +12943,7 @@
   "id": "nar_jasmine_got_counter_smaug",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Frost Shield!"
+  "text": "We found the Gold Bag!"
  },
  {
   "id": "nar_jasmine_alarm_villain_scar",
@@ -12955,13 +12955,13 @@
   "id": "nar_jasmine_need_item_scar",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Off Remote can stop Evil Scar!"
+  "text": "Only the Glitch Bug can stop Evil Scar!"
  },
  {
   "id": "nar_jasmine_made_item_scar",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Off Remote!"
+  "text": "We made the Glitch Bug!"
  },
  {
   "id": "nar_jasmine_need_counter_scar",
@@ -12973,7 +12973,7 @@
   "id": "nar_jasmine_got_counter_scar",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Off Remote!"
+  "text": "We found the Glitch Bug!"
  },
  {
   "id": "nar_jasmine_alarm_villain_moriarty",
@@ -12985,13 +12985,13 @@
   "id": "nar_jasmine_need_item_moriarty",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+  "text": "Only the Truth Map can stop Evil Moriarty!"
  },
  {
   "id": "nar_jasmine_made_item_moriarty",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Magnifying Glass!"
+  "text": "We made the Truth Map!"
  },
  {
   "id": "nar_jasmine_need_counter_moriarty",
@@ -13003,7 +13003,7 @@
   "id": "nar_jasmine_got_counter_moriarty",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Magnifying Glass!"
+  "text": "We found the Truth Map!"
  },
  {
   "id": "nar_jasmine_alarm_villain_bavmorda",
@@ -13015,13 +13015,13 @@
   "id": "nar_jasmine_need_item_bavmorda",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
  },
  {
   "id": "nar_jasmine_made_item_bavmorda",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Magic Mirror!"
+  "text": "We made the Bounce Cap!"
  },
  {
   "id": "nar_jasmine_need_counter_bavmorda",
@@ -13033,7 +13033,7 @@
   "id": "nar_jasmine_got_counter_bavmorda",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Magic Mirror!"
+  "text": "We found the Bounce Cap!"
  },
  {
   "id": "nar_jasmine_alarm_villain_rilla",
@@ -13850,13 +13850,13 @@
   "id": "nar_ozymandias_need_item_julia",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Cozy Blanket can stop Evil Julia!"
+  "text": "Only the Cozy Bed can stop Evil Julia!"
  },
  {
   "id": "nar_ozymandias_made_item_julia",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Cozy Blanket!"
+  "text": "We made the Cozy Bed!"
  },
  {
   "id": "nar_ozymandias_need_counter_julia",
@@ -13868,7 +13868,7 @@
   "id": "nar_ozymandias_got_counter_julia",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Cozy Blanket!"
+  "text": "We found the Cozy Bed!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_ellie",
@@ -13880,13 +13880,13 @@
   "id": "nar_ozymandias_need_item_ellie",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Bubble Bath can stop Evil Ellie!"
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
  },
  {
   "id": "nar_ozymandias_made_item_ellie",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Bubble Bath!"
+  "text": "We made the Bubble Tub!"
  },
  {
   "id": "nar_ozymandias_need_counter_ellie",
@@ -13898,7 +13898,7 @@
   "id": "nar_ozymandias_got_counter_ellie",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Bubble Bath!"
+  "text": "We found the Bubble Tub!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_seraphina",
@@ -13910,13 +13910,13 @@
   "id": "nar_ozymandias_need_item_seraphina",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
  },
  {
   "id": "nar_ozymandias_made_item_seraphina",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Dragon Treats!"
+  "text": "We made the Golden Nut!"
  },
  {
   "id": "nar_ozymandias_need_counter_seraphina",
@@ -13928,7 +13928,7 @@
   "id": "nar_ozymandias_got_counter_seraphina",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Dragon Treats!"
+  "text": "We found the Golden Nut!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_dada_matt",
@@ -13940,13 +13940,13 @@
   "id": "nar_ozymandias_need_item_dada_matt",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
  },
  {
   "id": "nar_ozymandias_made_item_dada_matt",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Giant Log!"
  },
  {
   "id": "nar_ozymandias_need_counter_dada_matt",
@@ -13958,7 +13958,7 @@
   "id": "nar_ozymandias_got_counter_dada_matt",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Giant Log!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_dada_jason",
@@ -14000,13 +14000,13 @@
   "id": "nar_ozymandias_need_item_elsa",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Sun Torch can stop Evil Elsa!"
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
  },
  {
   "id": "nar_ozymandias_made_item_elsa",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Sun Torch!"
+  "text": "We made the Cocoa Cup!"
  },
  {
   "id": "nar_ozymandias_need_counter_elsa",
@@ -14018,7 +14018,7 @@
   "id": "nar_ozymandias_got_counter_elsa",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Sun Torch!"
+  "text": "We found the Cocoa Cup!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_anna",
@@ -14030,13 +14030,13 @@
   "id": "nar_ozymandias_need_item_anna",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Friendship Locket can stop Evil Anna!"
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
  },
  {
   "id": "nar_ozymandias_made_item_anna",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Friendship Locket!"
+  "text": "We made the Cuddly Cat!"
  },
  {
   "id": "nar_ozymandias_need_counter_anna",
@@ -14048,7 +14048,7 @@
   "id": "nar_ozymandias_got_counter_anna",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Friendship Locket!"
+  "text": "We found the Cuddly Cat!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_jasmine",
@@ -14060,13 +14060,13 @@
   "id": "nar_ozymandias_need_item_jasmine",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Wind Fan can stop Evil Jasmine!"
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
  },
  {
   "id": "nar_ozymandias_made_item_jasmine",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Wind Fan!"
+  "text": "We made the Flappy Bat!"
  },
  {
   "id": "nar_ozymandias_need_counter_jasmine",
@@ -14078,7 +14078,7 @@
   "id": "nar_ozymandias_got_counter_jasmine",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Wind Fan!"
+  "text": "We found the Flappy Bat!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_ozymandias",
@@ -14090,13 +14090,13 @@
   "id": "nar_ozymandias_need_item_ozymandias",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
  },
  {
   "id": "nar_ozymandias_made_item_ozymandias",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Rain Cloud!"
+  "text": "We made the Brave Rat!"
  },
  {
   "id": "nar_ozymandias_need_counter_ozymandias",
@@ -14108,7 +14108,7 @@
   "id": "nar_ozymandias_got_counter_ozymandias",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Rain Cloud!"
+  "text": "We found the Brave Rat!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_jormungandr",
@@ -14121,15 +14121,15 @@
   "id": "nar_ozymandias_need_item_jormungandr",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
-  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
  },
  {
   "id": "nar_ozymandias_made_item_jormungandr",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Sun Lamp!",
-  "say": "We made the Sun Lamp!"
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
  },
  {
   "id": "nar_ozymandias_need_counter_jormungandr",
@@ -14142,8 +14142,8 @@
   "id": "nar_ozymandias_got_counter_jormungandr",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Sun Lamp!",
-  "say": "We found the Sun Lamp!"
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_smaug",
@@ -14155,13 +14155,13 @@
   "id": "nar_ozymandias_need_item_smaug",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Frost Shield can stop Evil Smaug!"
+  "text": "Only the Gold Bag can stop Evil Smaug!"
  },
  {
   "id": "nar_ozymandias_made_item_smaug",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Frost Shield!"
+  "text": "We made the Gold Bag!"
  },
  {
   "id": "nar_ozymandias_need_counter_smaug",
@@ -14173,7 +14173,7 @@
   "id": "nar_ozymandias_got_counter_smaug",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Frost Shield!"
+  "text": "We found the Gold Bag!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_scar",
@@ -14185,13 +14185,13 @@
   "id": "nar_ozymandias_need_item_scar",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Off Remote can stop Evil Scar!"
+  "text": "Only the Glitch Bug can stop Evil Scar!"
  },
  {
   "id": "nar_ozymandias_made_item_scar",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Off Remote!"
+  "text": "We made the Glitch Bug!"
  },
  {
   "id": "nar_ozymandias_need_counter_scar",
@@ -14203,7 +14203,7 @@
   "id": "nar_ozymandias_got_counter_scar",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Off Remote!"
+  "text": "We found the Glitch Bug!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_moriarty",
@@ -14215,13 +14215,13 @@
   "id": "nar_ozymandias_need_item_moriarty",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+  "text": "Only the Truth Map can stop Evil Moriarty!"
  },
  {
   "id": "nar_ozymandias_made_item_moriarty",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Magnifying Glass!"
+  "text": "We made the Truth Map!"
  },
  {
   "id": "nar_ozymandias_need_counter_moriarty",
@@ -14233,7 +14233,7 @@
   "id": "nar_ozymandias_got_counter_moriarty",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Magnifying Glass!"
+  "text": "We found the Truth Map!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_bavmorda",
@@ -14245,13 +14245,13 @@
   "id": "nar_ozymandias_need_item_bavmorda",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
  },
  {
   "id": "nar_ozymandias_made_item_bavmorda",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Magic Mirror!"
+  "text": "We made the Bounce Cap!"
  },
  {
   "id": "nar_ozymandias_need_counter_bavmorda",
@@ -14263,7 +14263,7 @@
   "id": "nar_ozymandias_got_counter_bavmorda",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Magic Mirror!"
+  "text": "We found the Bounce Cap!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_rilla",
@@ -15079,13 +15079,13 @@
   "id": "nar_jormungandr_need_item_julia",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Cozy Blanket can stop Evil Julia!"
+  "text": "Only the Cozy Bed can stop Evil Julia!"
  },
  {
   "id": "nar_jormungandr_made_item_julia",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Cozy Blanket!"
+  "text": "We made the Cozy Bed!"
  },
  {
   "id": "nar_jormungandr_need_counter_julia",
@@ -15097,7 +15097,7 @@
   "id": "nar_jormungandr_got_counter_julia",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Cozy Blanket!"
+  "text": "We found the Cozy Bed!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_ellie",
@@ -15109,13 +15109,13 @@
   "id": "nar_jormungandr_need_item_ellie",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Bubble Bath can stop Evil Ellie!"
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
  },
  {
   "id": "nar_jormungandr_made_item_ellie",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Bubble Bath!"
+  "text": "We made the Bubble Tub!"
  },
  {
   "id": "nar_jormungandr_need_counter_ellie",
@@ -15127,7 +15127,7 @@
   "id": "nar_jormungandr_got_counter_ellie",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Bubble Bath!"
+  "text": "We found the Bubble Tub!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_seraphina",
@@ -15139,13 +15139,13 @@
   "id": "nar_jormungandr_need_item_seraphina",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
  },
  {
   "id": "nar_jormungandr_made_item_seraphina",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Dragon Treats!"
+  "text": "We made the Golden Nut!"
  },
  {
   "id": "nar_jormungandr_need_counter_seraphina",
@@ -15157,7 +15157,7 @@
   "id": "nar_jormungandr_got_counter_seraphina",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Dragon Treats!"
+  "text": "We found the Golden Nut!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_dada_matt",
@@ -15169,13 +15169,13 @@
   "id": "nar_jormungandr_need_item_dada_matt",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
  },
  {
   "id": "nar_jormungandr_made_item_dada_matt",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Giant Log!"
  },
  {
   "id": "nar_jormungandr_need_counter_dada_matt",
@@ -15187,7 +15187,7 @@
   "id": "nar_jormungandr_got_counter_dada_matt",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Giant Log!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_dada_jason",
@@ -15229,13 +15229,13 @@
   "id": "nar_jormungandr_need_item_elsa",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Sun Torch can stop Evil Elsa!"
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
  },
  {
   "id": "nar_jormungandr_made_item_elsa",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Sun Torch!"
+  "text": "We made the Cocoa Cup!"
  },
  {
   "id": "nar_jormungandr_need_counter_elsa",
@@ -15247,7 +15247,7 @@
   "id": "nar_jormungandr_got_counter_elsa",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Sun Torch!"
+  "text": "We found the Cocoa Cup!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_anna",
@@ -15259,13 +15259,13 @@
   "id": "nar_jormungandr_need_item_anna",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Friendship Locket can stop Evil Anna!"
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
  },
  {
   "id": "nar_jormungandr_made_item_anna",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Friendship Locket!"
+  "text": "We made the Cuddly Cat!"
  },
  {
   "id": "nar_jormungandr_need_counter_anna",
@@ -15277,7 +15277,7 @@
   "id": "nar_jormungandr_got_counter_anna",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Friendship Locket!"
+  "text": "We found the Cuddly Cat!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_jasmine",
@@ -15289,13 +15289,13 @@
   "id": "nar_jormungandr_need_item_jasmine",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Wind Fan can stop Evil Jasmine!"
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
  },
  {
   "id": "nar_jormungandr_made_item_jasmine",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Wind Fan!"
+  "text": "We made the Flappy Bat!"
  },
  {
   "id": "nar_jormungandr_need_counter_jasmine",
@@ -15307,7 +15307,7 @@
   "id": "nar_jormungandr_got_counter_jasmine",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Wind Fan!"
+  "text": "We found the Flappy Bat!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_ozymandias",
@@ -15319,13 +15319,13 @@
   "id": "nar_jormungandr_need_item_ozymandias",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
  },
  {
   "id": "nar_jormungandr_made_item_ozymandias",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Rain Cloud!"
+  "text": "We made the Brave Rat!"
  },
  {
   "id": "nar_jormungandr_need_counter_ozymandias",
@@ -15337,7 +15337,7 @@
   "id": "nar_jormungandr_got_counter_ozymandias",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Rain Cloud!"
+  "text": "We found the Brave Rat!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_jormungandr",
@@ -15350,15 +15350,15 @@
   "id": "nar_jormungandr_need_item_jormungandr",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
-  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
  },
  {
   "id": "nar_jormungandr_made_item_jormungandr",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Sun Lamp!",
-  "say": "We made the Sun Lamp!"
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
  },
  {
   "id": "nar_jormungandr_need_counter_jormungandr",
@@ -15371,8 +15371,8 @@
   "id": "nar_jormungandr_got_counter_jormungandr",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Sun Lamp!",
-  "say": "We found the Sun Lamp!"
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_smaug",
@@ -15384,13 +15384,13 @@
   "id": "nar_jormungandr_need_item_smaug",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Frost Shield can stop Evil Smaug!"
+  "text": "Only the Gold Bag can stop Evil Smaug!"
  },
  {
   "id": "nar_jormungandr_made_item_smaug",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Frost Shield!"
+  "text": "We made the Gold Bag!"
  },
  {
   "id": "nar_jormungandr_need_counter_smaug",
@@ -15402,7 +15402,7 @@
   "id": "nar_jormungandr_got_counter_smaug",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Frost Shield!"
+  "text": "We found the Gold Bag!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_scar",
@@ -15414,13 +15414,13 @@
   "id": "nar_jormungandr_need_item_scar",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Off Remote can stop Evil Scar!"
+  "text": "Only the Glitch Bug can stop Evil Scar!"
  },
  {
   "id": "nar_jormungandr_made_item_scar",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Off Remote!"
+  "text": "We made the Glitch Bug!"
  },
  {
   "id": "nar_jormungandr_need_counter_scar",
@@ -15432,7 +15432,7 @@
   "id": "nar_jormungandr_got_counter_scar",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Off Remote!"
+  "text": "We found the Glitch Bug!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_moriarty",
@@ -15444,13 +15444,13 @@
   "id": "nar_jormungandr_need_item_moriarty",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+  "text": "Only the Truth Map can stop Evil Moriarty!"
  },
  {
   "id": "nar_jormungandr_made_item_moriarty",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Magnifying Glass!"
+  "text": "We made the Truth Map!"
  },
  {
   "id": "nar_jormungandr_need_counter_moriarty",
@@ -15462,7 +15462,7 @@
   "id": "nar_jormungandr_got_counter_moriarty",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Magnifying Glass!"
+  "text": "We found the Truth Map!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_bavmorda",
@@ -15474,13 +15474,13 @@
   "id": "nar_jormungandr_need_item_bavmorda",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
  },
  {
   "id": "nar_jormungandr_made_item_bavmorda",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Magic Mirror!"
+  "text": "We made the Bounce Cap!"
  },
  {
   "id": "nar_jormungandr_need_counter_bavmorda",
@@ -15492,7 +15492,7 @@
   "id": "nar_jormungandr_got_counter_bavmorda",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Magic Mirror!"
+  "text": "We found the Bounce Cap!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_rilla",
@@ -16309,13 +16309,13 @@
   "id": "nar_smaug_need_item_julia",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Cozy Blanket can stop Evil Julia!"
+  "text": "Only the Cozy Bed can stop Evil Julia!"
  },
  {
   "id": "nar_smaug_made_item_julia",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Cozy Blanket!"
+  "text": "We made the Cozy Bed!"
  },
  {
   "id": "nar_smaug_need_counter_julia",
@@ -16327,7 +16327,7 @@
   "id": "nar_smaug_got_counter_julia",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Cozy Blanket!"
+  "text": "We found the Cozy Bed!"
  },
  {
   "id": "nar_smaug_alarm_villain_ellie",
@@ -16339,13 +16339,13 @@
   "id": "nar_smaug_need_item_ellie",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Bubble Bath can stop Evil Ellie!"
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
  },
  {
   "id": "nar_smaug_made_item_ellie",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Bubble Bath!"
+  "text": "We made the Bubble Tub!"
  },
  {
   "id": "nar_smaug_need_counter_ellie",
@@ -16357,7 +16357,7 @@
   "id": "nar_smaug_got_counter_ellie",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Bubble Bath!"
+  "text": "We found the Bubble Tub!"
  },
  {
   "id": "nar_smaug_alarm_villain_seraphina",
@@ -16369,13 +16369,13 @@
   "id": "nar_smaug_need_item_seraphina",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
  },
  {
   "id": "nar_smaug_made_item_seraphina",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Dragon Treats!"
+  "text": "We made the Golden Nut!"
  },
  {
   "id": "nar_smaug_need_counter_seraphina",
@@ -16387,7 +16387,7 @@
   "id": "nar_smaug_got_counter_seraphina",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Dragon Treats!"
+  "text": "We found the Golden Nut!"
  },
  {
   "id": "nar_smaug_alarm_villain_dada_matt",
@@ -16399,13 +16399,13 @@
   "id": "nar_smaug_need_item_dada_matt",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
  },
  {
   "id": "nar_smaug_made_item_dada_matt",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Giant Log!"
  },
  {
   "id": "nar_smaug_need_counter_dada_matt",
@@ -16417,7 +16417,7 @@
   "id": "nar_smaug_got_counter_dada_matt",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Giant Log!"
  },
  {
   "id": "nar_smaug_alarm_villain_dada_jason",
@@ -16459,13 +16459,13 @@
   "id": "nar_smaug_need_item_elsa",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Sun Torch can stop Evil Elsa!"
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
  },
  {
   "id": "nar_smaug_made_item_elsa",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Sun Torch!"
+  "text": "We made the Cocoa Cup!"
  },
  {
   "id": "nar_smaug_need_counter_elsa",
@@ -16477,7 +16477,7 @@
   "id": "nar_smaug_got_counter_elsa",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Sun Torch!"
+  "text": "We found the Cocoa Cup!"
  },
  {
   "id": "nar_smaug_alarm_villain_anna",
@@ -16489,13 +16489,13 @@
   "id": "nar_smaug_need_item_anna",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Friendship Locket can stop Evil Anna!"
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
  },
  {
   "id": "nar_smaug_made_item_anna",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Friendship Locket!"
+  "text": "We made the Cuddly Cat!"
  },
  {
   "id": "nar_smaug_need_counter_anna",
@@ -16507,7 +16507,7 @@
   "id": "nar_smaug_got_counter_anna",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Friendship Locket!"
+  "text": "We found the Cuddly Cat!"
  },
  {
   "id": "nar_smaug_alarm_villain_jasmine",
@@ -16519,13 +16519,13 @@
   "id": "nar_smaug_need_item_jasmine",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Wind Fan can stop Evil Jasmine!"
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
  },
  {
   "id": "nar_smaug_made_item_jasmine",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Wind Fan!"
+  "text": "We made the Flappy Bat!"
  },
  {
   "id": "nar_smaug_need_counter_jasmine",
@@ -16537,7 +16537,7 @@
   "id": "nar_smaug_got_counter_jasmine",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Wind Fan!"
+  "text": "We found the Flappy Bat!"
  },
  {
   "id": "nar_smaug_alarm_villain_ozymandias",
@@ -16549,13 +16549,13 @@
   "id": "nar_smaug_need_item_ozymandias",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
  },
  {
   "id": "nar_smaug_made_item_ozymandias",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Rain Cloud!"
+  "text": "We made the Brave Rat!"
  },
  {
   "id": "nar_smaug_need_counter_ozymandias",
@@ -16567,7 +16567,7 @@
   "id": "nar_smaug_got_counter_ozymandias",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Rain Cloud!"
+  "text": "We found the Brave Rat!"
  },
  {
   "id": "nar_smaug_alarm_villain_jormungandr",
@@ -16580,15 +16580,15 @@
   "id": "nar_smaug_need_item_jormungandr",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
-  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
  },
  {
   "id": "nar_smaug_made_item_jormungandr",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Sun Lamp!",
-  "say": "We made the Sun Lamp!"
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
  },
  {
   "id": "nar_smaug_need_counter_jormungandr",
@@ -16601,8 +16601,8 @@
   "id": "nar_smaug_got_counter_jormungandr",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Sun Lamp!",
-  "say": "We found the Sun Lamp!"
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
  },
  {
   "id": "nar_smaug_alarm_villain_smaug",
@@ -16614,13 +16614,13 @@
   "id": "nar_smaug_need_item_smaug",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Frost Shield can stop Evil Smaug!"
+  "text": "Only the Gold Bag can stop Evil Smaug!"
  },
  {
   "id": "nar_smaug_made_item_smaug",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Frost Shield!"
+  "text": "We made the Gold Bag!"
  },
  {
   "id": "nar_smaug_need_counter_smaug",
@@ -16632,7 +16632,7 @@
   "id": "nar_smaug_got_counter_smaug",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Frost Shield!"
+  "text": "We found the Gold Bag!"
  },
  {
   "id": "nar_smaug_alarm_villain_scar",
@@ -16644,13 +16644,13 @@
   "id": "nar_smaug_need_item_scar",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Off Remote can stop Evil Scar!"
+  "text": "Only the Glitch Bug can stop Evil Scar!"
  },
  {
   "id": "nar_smaug_made_item_scar",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Off Remote!"
+  "text": "We made the Glitch Bug!"
  },
  {
   "id": "nar_smaug_need_counter_scar",
@@ -16662,7 +16662,7 @@
   "id": "nar_smaug_got_counter_scar",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Off Remote!"
+  "text": "We found the Glitch Bug!"
  },
  {
   "id": "nar_smaug_alarm_villain_moriarty",
@@ -16674,13 +16674,13 @@
   "id": "nar_smaug_need_item_moriarty",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+  "text": "Only the Truth Map can stop Evil Moriarty!"
  },
  {
   "id": "nar_smaug_made_item_moriarty",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Magnifying Glass!"
+  "text": "We made the Truth Map!"
  },
  {
   "id": "nar_smaug_need_counter_moriarty",
@@ -16692,7 +16692,7 @@
   "id": "nar_smaug_got_counter_moriarty",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Magnifying Glass!"
+  "text": "We found the Truth Map!"
  },
  {
   "id": "nar_smaug_alarm_villain_bavmorda",
@@ -16704,13 +16704,13 @@
   "id": "nar_smaug_need_item_bavmorda",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
  },
  {
   "id": "nar_smaug_made_item_bavmorda",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Magic Mirror!"
+  "text": "We made the Bounce Cap!"
  },
  {
   "id": "nar_smaug_need_counter_bavmorda",
@@ -16722,7 +16722,7 @@
   "id": "nar_smaug_got_counter_bavmorda",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Magic Mirror!"
+  "text": "We found the Bounce Cap!"
  },
  {
   "id": "nar_smaug_alarm_villain_rilla",
@@ -17539,13 +17539,13 @@
   "id": "nar_scar_need_item_julia",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Cozy Blanket can stop Evil Julia!"
+  "text": "Only the Cozy Bed can stop Evil Julia!"
  },
  {
   "id": "nar_scar_made_item_julia",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Cozy Blanket!"
+  "text": "We made the Cozy Bed!"
  },
  {
   "id": "nar_scar_need_counter_julia",
@@ -17557,7 +17557,7 @@
   "id": "nar_scar_got_counter_julia",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Cozy Blanket!"
+  "text": "We found the Cozy Bed!"
  },
  {
   "id": "nar_scar_alarm_villain_ellie",
@@ -17569,13 +17569,13 @@
   "id": "nar_scar_need_item_ellie",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Bubble Bath can stop Evil Ellie!"
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
  },
  {
   "id": "nar_scar_made_item_ellie",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Bubble Bath!"
+  "text": "We made the Bubble Tub!"
  },
  {
   "id": "nar_scar_need_counter_ellie",
@@ -17587,7 +17587,7 @@
   "id": "nar_scar_got_counter_ellie",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Bubble Bath!"
+  "text": "We found the Bubble Tub!"
  },
  {
   "id": "nar_scar_alarm_villain_seraphina",
@@ -17599,13 +17599,13 @@
   "id": "nar_scar_need_item_seraphina",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
  },
  {
   "id": "nar_scar_made_item_seraphina",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Dragon Treats!"
+  "text": "We made the Golden Nut!"
  },
  {
   "id": "nar_scar_need_counter_seraphina",
@@ -17617,7 +17617,7 @@
   "id": "nar_scar_got_counter_seraphina",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Dragon Treats!"
+  "text": "We found the Golden Nut!"
  },
  {
   "id": "nar_scar_alarm_villain_dada_matt",
@@ -17629,13 +17629,13 @@
   "id": "nar_scar_need_item_dada_matt",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
  },
  {
   "id": "nar_scar_made_item_dada_matt",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Giant Log!"
  },
  {
   "id": "nar_scar_need_counter_dada_matt",
@@ -17647,7 +17647,7 @@
   "id": "nar_scar_got_counter_dada_matt",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Giant Log!"
  },
  {
   "id": "nar_scar_alarm_villain_dada_jason",
@@ -17689,13 +17689,13 @@
   "id": "nar_scar_need_item_elsa",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Sun Torch can stop Evil Elsa!"
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
  },
  {
   "id": "nar_scar_made_item_elsa",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Sun Torch!"
+  "text": "We made the Cocoa Cup!"
  },
  {
   "id": "nar_scar_need_counter_elsa",
@@ -17707,7 +17707,7 @@
   "id": "nar_scar_got_counter_elsa",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Sun Torch!"
+  "text": "We found the Cocoa Cup!"
  },
  {
   "id": "nar_scar_alarm_villain_anna",
@@ -17719,13 +17719,13 @@
   "id": "nar_scar_need_item_anna",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Friendship Locket can stop Evil Anna!"
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
  },
  {
   "id": "nar_scar_made_item_anna",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Friendship Locket!"
+  "text": "We made the Cuddly Cat!"
  },
  {
   "id": "nar_scar_need_counter_anna",
@@ -17737,7 +17737,7 @@
   "id": "nar_scar_got_counter_anna",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Friendship Locket!"
+  "text": "We found the Cuddly Cat!"
  },
  {
   "id": "nar_scar_alarm_villain_jasmine",
@@ -17749,13 +17749,13 @@
   "id": "nar_scar_need_item_jasmine",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Wind Fan can stop Evil Jasmine!"
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
  },
  {
   "id": "nar_scar_made_item_jasmine",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Wind Fan!"
+  "text": "We made the Flappy Bat!"
  },
  {
   "id": "nar_scar_need_counter_jasmine",
@@ -17767,7 +17767,7 @@
   "id": "nar_scar_got_counter_jasmine",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Wind Fan!"
+  "text": "We found the Flappy Bat!"
  },
  {
   "id": "nar_scar_alarm_villain_ozymandias",
@@ -17779,13 +17779,13 @@
   "id": "nar_scar_need_item_ozymandias",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
  },
  {
   "id": "nar_scar_made_item_ozymandias",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Rain Cloud!"
+  "text": "We made the Brave Rat!"
  },
  {
   "id": "nar_scar_need_counter_ozymandias",
@@ -17797,7 +17797,7 @@
   "id": "nar_scar_got_counter_ozymandias",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Rain Cloud!"
+  "text": "We found the Brave Rat!"
  },
  {
   "id": "nar_scar_alarm_villain_jormungandr",
@@ -17810,15 +17810,15 @@
   "id": "nar_scar_need_item_jormungandr",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
-  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
  },
  {
   "id": "nar_scar_made_item_jormungandr",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Sun Lamp!",
-  "say": "We made the Sun Lamp!"
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
  },
  {
   "id": "nar_scar_need_counter_jormungandr",
@@ -17831,8 +17831,8 @@
   "id": "nar_scar_got_counter_jormungandr",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Sun Lamp!",
-  "say": "We found the Sun Lamp!"
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
  },
  {
   "id": "nar_scar_alarm_villain_smaug",
@@ -17844,13 +17844,13 @@
   "id": "nar_scar_need_item_smaug",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Frost Shield can stop Evil Smaug!"
+  "text": "Only the Gold Bag can stop Evil Smaug!"
  },
  {
   "id": "nar_scar_made_item_smaug",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Frost Shield!"
+  "text": "We made the Gold Bag!"
  },
  {
   "id": "nar_scar_need_counter_smaug",
@@ -17862,7 +17862,7 @@
   "id": "nar_scar_got_counter_smaug",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Frost Shield!"
+  "text": "We found the Gold Bag!"
  },
  {
   "id": "nar_scar_alarm_villain_scar",
@@ -17874,13 +17874,13 @@
   "id": "nar_scar_need_item_scar",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Off Remote can stop Evil Scar!"
+  "text": "Only the Glitch Bug can stop Evil Scar!"
  },
  {
   "id": "nar_scar_made_item_scar",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Off Remote!"
+  "text": "We made the Glitch Bug!"
  },
  {
   "id": "nar_scar_need_counter_scar",
@@ -17892,7 +17892,7 @@
   "id": "nar_scar_got_counter_scar",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Off Remote!"
+  "text": "We found the Glitch Bug!"
  },
  {
   "id": "nar_scar_alarm_villain_moriarty",
@@ -17904,13 +17904,13 @@
   "id": "nar_scar_need_item_moriarty",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+  "text": "Only the Truth Map can stop Evil Moriarty!"
  },
  {
   "id": "nar_scar_made_item_moriarty",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Magnifying Glass!"
+  "text": "We made the Truth Map!"
  },
  {
   "id": "nar_scar_need_counter_moriarty",
@@ -17922,7 +17922,7 @@
   "id": "nar_scar_got_counter_moriarty",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Magnifying Glass!"
+  "text": "We found the Truth Map!"
  },
  {
   "id": "nar_scar_alarm_villain_bavmorda",
@@ -17934,13 +17934,13 @@
   "id": "nar_scar_need_item_bavmorda",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
  },
  {
   "id": "nar_scar_made_item_bavmorda",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Magic Mirror!"
+  "text": "We made the Bounce Cap!"
  },
  {
   "id": "nar_scar_need_counter_bavmorda",
@@ -17952,7 +17952,7 @@
   "id": "nar_scar_got_counter_bavmorda",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Magic Mirror!"
+  "text": "We found the Bounce Cap!"
  },
  {
   "id": "nar_scar_alarm_villain_rilla",
@@ -18769,13 +18769,13 @@
   "id": "nar_moriarty_need_item_julia",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Cozy Blanket can stop Evil Julia!"
+  "text": "Only the Cozy Bed can stop Evil Julia!"
  },
  {
   "id": "nar_moriarty_made_item_julia",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Cozy Blanket!"
+  "text": "We made the Cozy Bed!"
  },
  {
   "id": "nar_moriarty_need_counter_julia",
@@ -18787,7 +18787,7 @@
   "id": "nar_moriarty_got_counter_julia",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Cozy Blanket!"
+  "text": "We found the Cozy Bed!"
  },
  {
   "id": "nar_moriarty_alarm_villain_ellie",
@@ -18799,13 +18799,13 @@
   "id": "nar_moriarty_need_item_ellie",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Bubble Bath can stop Evil Ellie!"
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
  },
  {
   "id": "nar_moriarty_made_item_ellie",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Bubble Bath!"
+  "text": "We made the Bubble Tub!"
  },
  {
   "id": "nar_moriarty_need_counter_ellie",
@@ -18817,7 +18817,7 @@
   "id": "nar_moriarty_got_counter_ellie",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Bubble Bath!"
+  "text": "We found the Bubble Tub!"
  },
  {
   "id": "nar_moriarty_alarm_villain_seraphina",
@@ -18829,13 +18829,13 @@
   "id": "nar_moriarty_need_item_seraphina",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
  },
  {
   "id": "nar_moriarty_made_item_seraphina",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Dragon Treats!"
+  "text": "We made the Golden Nut!"
  },
  {
   "id": "nar_moriarty_need_counter_seraphina",
@@ -18847,7 +18847,7 @@
   "id": "nar_moriarty_got_counter_seraphina",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Dragon Treats!"
+  "text": "We found the Golden Nut!"
  },
  {
   "id": "nar_moriarty_alarm_villain_dada_matt",
@@ -18859,13 +18859,13 @@
   "id": "nar_moriarty_need_item_dada_matt",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
  },
  {
   "id": "nar_moriarty_made_item_dada_matt",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Giant Log!"
  },
  {
   "id": "nar_moriarty_need_counter_dada_matt",
@@ -18877,7 +18877,7 @@
   "id": "nar_moriarty_got_counter_dada_matt",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Giant Log!"
  },
  {
   "id": "nar_moriarty_alarm_villain_dada_jason",
@@ -18919,13 +18919,13 @@
   "id": "nar_moriarty_need_item_elsa",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Sun Torch can stop Evil Elsa!"
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
  },
  {
   "id": "nar_moriarty_made_item_elsa",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Sun Torch!"
+  "text": "We made the Cocoa Cup!"
  },
  {
   "id": "nar_moriarty_need_counter_elsa",
@@ -18937,7 +18937,7 @@
   "id": "nar_moriarty_got_counter_elsa",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Sun Torch!"
+  "text": "We found the Cocoa Cup!"
  },
  {
   "id": "nar_moriarty_alarm_villain_anna",
@@ -18949,13 +18949,13 @@
   "id": "nar_moriarty_need_item_anna",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Friendship Locket can stop Evil Anna!"
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
  },
  {
   "id": "nar_moriarty_made_item_anna",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Friendship Locket!"
+  "text": "We made the Cuddly Cat!"
  },
  {
   "id": "nar_moriarty_need_counter_anna",
@@ -18967,7 +18967,7 @@
   "id": "nar_moriarty_got_counter_anna",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Friendship Locket!"
+  "text": "We found the Cuddly Cat!"
  },
  {
   "id": "nar_moriarty_alarm_villain_jasmine",
@@ -18979,13 +18979,13 @@
   "id": "nar_moriarty_need_item_jasmine",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Wind Fan can stop Evil Jasmine!"
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
  },
  {
   "id": "nar_moriarty_made_item_jasmine",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Wind Fan!"
+  "text": "We made the Flappy Bat!"
  },
  {
   "id": "nar_moriarty_need_counter_jasmine",
@@ -18997,7 +18997,7 @@
   "id": "nar_moriarty_got_counter_jasmine",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Wind Fan!"
+  "text": "We found the Flappy Bat!"
  },
  {
   "id": "nar_moriarty_alarm_villain_ozymandias",
@@ -19009,13 +19009,13 @@
   "id": "nar_moriarty_need_item_ozymandias",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
  },
  {
   "id": "nar_moriarty_made_item_ozymandias",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Rain Cloud!"
+  "text": "We made the Brave Rat!"
  },
  {
   "id": "nar_moriarty_need_counter_ozymandias",
@@ -19027,7 +19027,7 @@
   "id": "nar_moriarty_got_counter_ozymandias",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Rain Cloud!"
+  "text": "We found the Brave Rat!"
  },
  {
   "id": "nar_moriarty_alarm_villain_jormungandr",
@@ -19040,15 +19040,15 @@
   "id": "nar_moriarty_need_item_jormungandr",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
-  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
  },
  {
   "id": "nar_moriarty_made_item_jormungandr",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Sun Lamp!",
-  "say": "We made the Sun Lamp!"
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
  },
  {
   "id": "nar_moriarty_need_counter_jormungandr",
@@ -19061,8 +19061,8 @@
   "id": "nar_moriarty_got_counter_jormungandr",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Sun Lamp!",
-  "say": "We found the Sun Lamp!"
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
  },
  {
   "id": "nar_moriarty_alarm_villain_smaug",
@@ -19074,13 +19074,13 @@
   "id": "nar_moriarty_need_item_smaug",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Frost Shield can stop Evil Smaug!"
+  "text": "Only the Gold Bag can stop Evil Smaug!"
  },
  {
   "id": "nar_moriarty_made_item_smaug",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Frost Shield!"
+  "text": "We made the Gold Bag!"
  },
  {
   "id": "nar_moriarty_need_counter_smaug",
@@ -19092,7 +19092,7 @@
   "id": "nar_moriarty_got_counter_smaug",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Frost Shield!"
+  "text": "We found the Gold Bag!"
  },
  {
   "id": "nar_moriarty_alarm_villain_scar",
@@ -19104,13 +19104,13 @@
   "id": "nar_moriarty_need_item_scar",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Off Remote can stop Evil Scar!"
+  "text": "Only the Glitch Bug can stop Evil Scar!"
  },
  {
   "id": "nar_moriarty_made_item_scar",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Off Remote!"
+  "text": "We made the Glitch Bug!"
  },
  {
   "id": "nar_moriarty_need_counter_scar",
@@ -19122,7 +19122,7 @@
   "id": "nar_moriarty_got_counter_scar",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Off Remote!"
+  "text": "We found the Glitch Bug!"
  },
  {
   "id": "nar_moriarty_alarm_villain_moriarty",
@@ -19134,13 +19134,13 @@
   "id": "nar_moriarty_need_item_moriarty",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+  "text": "Only the Truth Map can stop Evil Moriarty!"
  },
  {
   "id": "nar_moriarty_made_item_moriarty",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Magnifying Glass!"
+  "text": "We made the Truth Map!"
  },
  {
   "id": "nar_moriarty_need_counter_moriarty",
@@ -19152,7 +19152,7 @@
   "id": "nar_moriarty_got_counter_moriarty",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Magnifying Glass!"
+  "text": "We found the Truth Map!"
  },
  {
   "id": "nar_moriarty_alarm_villain_bavmorda",
@@ -19164,13 +19164,13 @@
   "id": "nar_moriarty_need_item_bavmorda",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
  },
  {
   "id": "nar_moriarty_made_item_bavmorda",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Magic Mirror!"
+  "text": "We made the Bounce Cap!"
  },
  {
   "id": "nar_moriarty_need_counter_bavmorda",
@@ -19182,7 +19182,7 @@
   "id": "nar_moriarty_got_counter_bavmorda",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Magic Mirror!"
+  "text": "We found the Bounce Cap!"
  },
  {
   "id": "nar_moriarty_alarm_villain_rilla",
@@ -19999,13 +19999,13 @@
   "id": "nar_bavmorda_need_item_julia",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Cozy Blanket can stop Evil Julia!"
+  "text": "Only the Cozy Bed can stop Evil Julia!"
  },
  {
   "id": "nar_bavmorda_made_item_julia",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Cozy Blanket!"
+  "text": "We made the Cozy Bed!"
  },
  {
   "id": "nar_bavmorda_need_counter_julia",
@@ -20017,7 +20017,7 @@
   "id": "nar_bavmorda_got_counter_julia",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Cozy Blanket!"
+  "text": "We found the Cozy Bed!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_ellie",
@@ -20029,13 +20029,13 @@
   "id": "nar_bavmorda_need_item_ellie",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Bubble Bath can stop Evil Ellie!"
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
  },
  {
   "id": "nar_bavmorda_made_item_ellie",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Bubble Bath!"
+  "text": "We made the Bubble Tub!"
  },
  {
   "id": "nar_bavmorda_need_counter_ellie",
@@ -20047,7 +20047,7 @@
   "id": "nar_bavmorda_got_counter_ellie",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Bubble Bath!"
+  "text": "We found the Bubble Tub!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_seraphina",
@@ -20059,13 +20059,13 @@
   "id": "nar_bavmorda_need_item_seraphina",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
  },
  {
   "id": "nar_bavmorda_made_item_seraphina",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Dragon Treats!"
+  "text": "We made the Golden Nut!"
  },
  {
   "id": "nar_bavmorda_need_counter_seraphina",
@@ -20077,7 +20077,7 @@
   "id": "nar_bavmorda_got_counter_seraphina",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Dragon Treats!"
+  "text": "We found the Golden Nut!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_dada_matt",
@@ -20089,13 +20089,13 @@
   "id": "nar_bavmorda_need_item_dada_matt",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
  },
  {
   "id": "nar_bavmorda_made_item_dada_matt",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Giant Log!"
  },
  {
   "id": "nar_bavmorda_need_counter_dada_matt",
@@ -20107,7 +20107,7 @@
   "id": "nar_bavmorda_got_counter_dada_matt",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Giant Log!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_dada_jason",
@@ -20149,13 +20149,13 @@
   "id": "nar_bavmorda_need_item_elsa",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Sun Torch can stop Evil Elsa!"
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
  },
  {
   "id": "nar_bavmorda_made_item_elsa",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Sun Torch!"
+  "text": "We made the Cocoa Cup!"
  },
  {
   "id": "nar_bavmorda_need_counter_elsa",
@@ -20167,7 +20167,7 @@
   "id": "nar_bavmorda_got_counter_elsa",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Sun Torch!"
+  "text": "We found the Cocoa Cup!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_anna",
@@ -20179,13 +20179,13 @@
   "id": "nar_bavmorda_need_item_anna",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Friendship Locket can stop Evil Anna!"
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
  },
  {
   "id": "nar_bavmorda_made_item_anna",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Friendship Locket!"
+  "text": "We made the Cuddly Cat!"
  },
  {
   "id": "nar_bavmorda_need_counter_anna",
@@ -20197,7 +20197,7 @@
   "id": "nar_bavmorda_got_counter_anna",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Friendship Locket!"
+  "text": "We found the Cuddly Cat!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_jasmine",
@@ -20209,13 +20209,13 @@
   "id": "nar_bavmorda_need_item_jasmine",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Wind Fan can stop Evil Jasmine!"
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
  },
  {
   "id": "nar_bavmorda_made_item_jasmine",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Wind Fan!"
+  "text": "We made the Flappy Bat!"
  },
  {
   "id": "nar_bavmorda_need_counter_jasmine",
@@ -20227,7 +20227,7 @@
   "id": "nar_bavmorda_got_counter_jasmine",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Wind Fan!"
+  "text": "We found the Flappy Bat!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_ozymandias",
@@ -20239,13 +20239,13 @@
   "id": "nar_bavmorda_need_item_ozymandias",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
  },
  {
   "id": "nar_bavmorda_made_item_ozymandias",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Rain Cloud!"
+  "text": "We made the Brave Rat!"
  },
  {
   "id": "nar_bavmorda_need_counter_ozymandias",
@@ -20257,7 +20257,7 @@
   "id": "nar_bavmorda_got_counter_ozymandias",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Rain Cloud!"
+  "text": "We found the Brave Rat!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_jormungandr",
@@ -20270,15 +20270,15 @@
   "id": "nar_bavmorda_need_item_jormungandr",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
-  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
  },
  {
   "id": "nar_bavmorda_made_item_jormungandr",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Sun Lamp!",
-  "say": "We made the Sun Lamp!"
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
  },
  {
   "id": "nar_bavmorda_need_counter_jormungandr",
@@ -20291,8 +20291,8 @@
   "id": "nar_bavmorda_got_counter_jormungandr",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Sun Lamp!",
-  "say": "We found the Sun Lamp!"
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_smaug",
@@ -20304,13 +20304,13 @@
   "id": "nar_bavmorda_need_item_smaug",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Frost Shield can stop Evil Smaug!"
+  "text": "Only the Gold Bag can stop Evil Smaug!"
  },
  {
   "id": "nar_bavmorda_made_item_smaug",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Frost Shield!"
+  "text": "We made the Gold Bag!"
  },
  {
   "id": "nar_bavmorda_need_counter_smaug",
@@ -20322,7 +20322,7 @@
   "id": "nar_bavmorda_got_counter_smaug",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Frost Shield!"
+  "text": "We found the Gold Bag!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_scar",
@@ -20334,13 +20334,13 @@
   "id": "nar_bavmorda_need_item_scar",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Off Remote can stop Evil Scar!"
+  "text": "Only the Glitch Bug can stop Evil Scar!"
  },
  {
   "id": "nar_bavmorda_made_item_scar",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Off Remote!"
+  "text": "We made the Glitch Bug!"
  },
  {
   "id": "nar_bavmorda_need_counter_scar",
@@ -20352,7 +20352,7 @@
   "id": "nar_bavmorda_got_counter_scar",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Off Remote!"
+  "text": "We found the Glitch Bug!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_moriarty",
@@ -20364,13 +20364,13 @@
   "id": "nar_bavmorda_need_item_moriarty",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+  "text": "Only the Truth Map can stop Evil Moriarty!"
  },
  {
   "id": "nar_bavmorda_made_item_moriarty",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Magnifying Glass!"
+  "text": "We made the Truth Map!"
  },
  {
   "id": "nar_bavmorda_need_counter_moriarty",
@@ -20382,7 +20382,7 @@
   "id": "nar_bavmorda_got_counter_moriarty",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Magnifying Glass!"
+  "text": "We found the Truth Map!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_bavmorda",
@@ -20394,13 +20394,13 @@
   "id": "nar_bavmorda_need_item_bavmorda",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
  },
  {
   "id": "nar_bavmorda_made_item_bavmorda",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Magic Mirror!"
+  "text": "We made the Bounce Cap!"
  },
  {
   "id": "nar_bavmorda_need_counter_bavmorda",
@@ -20412,7 +20412,7 @@
   "id": "nar_bavmorda_got_counter_bavmorda",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Magic Mirror!"
+  "text": "We found the Bounce Cap!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_rilla",
@@ -21229,13 +21229,13 @@
   "id": "nar_rilla_need_item_julia",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Cozy Blanket can stop Evil Julia!"
+  "text": "Only the Cozy Bed can stop Evil Julia!"
  },
  {
   "id": "nar_rilla_made_item_julia",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Cozy Blanket!"
+  "text": "We made the Cozy Bed!"
  },
  {
   "id": "nar_rilla_need_counter_julia",
@@ -21247,7 +21247,7 @@
   "id": "nar_rilla_got_counter_julia",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Cozy Blanket!"
+  "text": "We found the Cozy Bed!"
  },
  {
   "id": "nar_rilla_alarm_villain_ellie",
@@ -21259,13 +21259,13 @@
   "id": "nar_rilla_need_item_ellie",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Bubble Bath can stop Evil Ellie!"
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
  },
  {
   "id": "nar_rilla_made_item_ellie",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Bubble Bath!"
+  "text": "We made the Bubble Tub!"
  },
  {
   "id": "nar_rilla_need_counter_ellie",
@@ -21277,7 +21277,7 @@
   "id": "nar_rilla_got_counter_ellie",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Bubble Bath!"
+  "text": "We found the Bubble Tub!"
  },
  {
   "id": "nar_rilla_alarm_villain_seraphina",
@@ -21289,13 +21289,13 @@
   "id": "nar_rilla_need_item_seraphina",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
  },
  {
   "id": "nar_rilla_made_item_seraphina",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Dragon Treats!"
+  "text": "We made the Golden Nut!"
  },
  {
   "id": "nar_rilla_need_counter_seraphina",
@@ -21307,7 +21307,7 @@
   "id": "nar_rilla_got_counter_seraphina",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Dragon Treats!"
+  "text": "We found the Golden Nut!"
  },
  {
   "id": "nar_rilla_alarm_villain_dada_matt",
@@ -21319,13 +21319,13 @@
   "id": "nar_rilla_need_item_dada_matt",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
  },
  {
   "id": "nar_rilla_made_item_dada_matt",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Giant Log!"
  },
  {
   "id": "nar_rilla_need_counter_dada_matt",
@@ -21337,7 +21337,7 @@
   "id": "nar_rilla_got_counter_dada_matt",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Giant Log!"
  },
  {
   "id": "nar_rilla_alarm_villain_dada_jason",
@@ -21379,13 +21379,13 @@
   "id": "nar_rilla_need_item_elsa",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Sun Torch can stop Evil Elsa!"
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
  },
  {
   "id": "nar_rilla_made_item_elsa",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Sun Torch!"
+  "text": "We made the Cocoa Cup!"
  },
  {
   "id": "nar_rilla_need_counter_elsa",
@@ -21397,7 +21397,7 @@
   "id": "nar_rilla_got_counter_elsa",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Sun Torch!"
+  "text": "We found the Cocoa Cup!"
  },
  {
   "id": "nar_rilla_alarm_villain_anna",
@@ -21409,13 +21409,13 @@
   "id": "nar_rilla_need_item_anna",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Friendship Locket can stop Evil Anna!"
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
  },
  {
   "id": "nar_rilla_made_item_anna",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Friendship Locket!"
+  "text": "We made the Cuddly Cat!"
  },
  {
   "id": "nar_rilla_need_counter_anna",
@@ -21427,7 +21427,7 @@
   "id": "nar_rilla_got_counter_anna",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Friendship Locket!"
+  "text": "We found the Cuddly Cat!"
  },
  {
   "id": "nar_rilla_alarm_villain_jasmine",
@@ -21439,13 +21439,13 @@
   "id": "nar_rilla_need_item_jasmine",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Wind Fan can stop Evil Jasmine!"
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
  },
  {
   "id": "nar_rilla_made_item_jasmine",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Wind Fan!"
+  "text": "We made the Flappy Bat!"
  },
  {
   "id": "nar_rilla_need_counter_jasmine",
@@ -21457,7 +21457,7 @@
   "id": "nar_rilla_got_counter_jasmine",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Wind Fan!"
+  "text": "We found the Flappy Bat!"
  },
  {
   "id": "nar_rilla_alarm_villain_ozymandias",
@@ -21469,13 +21469,13 @@
   "id": "nar_rilla_need_item_ozymandias",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
  },
  {
   "id": "nar_rilla_made_item_ozymandias",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Rain Cloud!"
+  "text": "We made the Brave Rat!"
  },
  {
   "id": "nar_rilla_need_counter_ozymandias",
@@ -21487,7 +21487,7 @@
   "id": "nar_rilla_got_counter_ozymandias",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Rain Cloud!"
+  "text": "We found the Brave Rat!"
  },
  {
   "id": "nar_rilla_alarm_villain_jormungandr",
@@ -21500,15 +21500,15 @@
   "id": "nar_rilla_need_item_jormungandr",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
-  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
  },
  {
   "id": "nar_rilla_made_item_jormungandr",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Sun Lamp!",
-  "say": "We made the Sun Lamp!"
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
  },
  {
   "id": "nar_rilla_need_counter_jormungandr",
@@ -21521,8 +21521,8 @@
   "id": "nar_rilla_got_counter_jormungandr",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Sun Lamp!",
-  "say": "We found the Sun Lamp!"
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
  },
  {
   "id": "nar_rilla_alarm_villain_smaug",
@@ -21534,13 +21534,13 @@
   "id": "nar_rilla_need_item_smaug",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Frost Shield can stop Evil Smaug!"
+  "text": "Only the Gold Bag can stop Evil Smaug!"
  },
  {
   "id": "nar_rilla_made_item_smaug",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Frost Shield!"
+  "text": "We made the Gold Bag!"
  },
  {
   "id": "nar_rilla_need_counter_smaug",
@@ -21552,7 +21552,7 @@
   "id": "nar_rilla_got_counter_smaug",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Frost Shield!"
+  "text": "We found the Gold Bag!"
  },
  {
   "id": "nar_rilla_alarm_villain_scar",
@@ -21564,13 +21564,13 @@
   "id": "nar_rilla_need_item_scar",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Off Remote can stop Evil Scar!"
+  "text": "Only the Glitch Bug can stop Evil Scar!"
  },
  {
   "id": "nar_rilla_made_item_scar",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Off Remote!"
+  "text": "We made the Glitch Bug!"
  },
  {
   "id": "nar_rilla_need_counter_scar",
@@ -21582,7 +21582,7 @@
   "id": "nar_rilla_got_counter_scar",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Off Remote!"
+  "text": "We found the Glitch Bug!"
  },
  {
   "id": "nar_rilla_alarm_villain_moriarty",
@@ -21594,13 +21594,13 @@
   "id": "nar_rilla_need_item_moriarty",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+  "text": "Only the Truth Map can stop Evil Moriarty!"
  },
  {
   "id": "nar_rilla_made_item_moriarty",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Magnifying Glass!"
+  "text": "We made the Truth Map!"
  },
  {
   "id": "nar_rilla_need_counter_moriarty",
@@ -21612,7 +21612,7 @@
   "id": "nar_rilla_got_counter_moriarty",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Magnifying Glass!"
+  "text": "We found the Truth Map!"
  },
  {
   "id": "nar_rilla_alarm_villain_bavmorda",
@@ -21624,13 +21624,13 @@
   "id": "nar_rilla_need_item_bavmorda",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
  },
  {
   "id": "nar_rilla_made_item_bavmorda",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Magic Mirror!"
+  "text": "We made the Bounce Cap!"
  },
  {
   "id": "nar_rilla_need_counter_bavmorda",
@@ -21642,7 +21642,7 @@
   "id": "nar_rilla_got_counter_bavmorda",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Magic Mirror!"
+  "text": "We found the Bounce Cap!"
  },
  {
   "id": "nar_rilla_alarm_villain_rilla",

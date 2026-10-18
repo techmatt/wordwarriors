@@ -1034,7 +1034,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     await this.simWait(0.6);
 
     if (counter.how === 'scare') {
-      // Wind-up mice: a swarm scurries along the floor at the villain, who
+      // Wind-up mice (or brave rats): a swarm scurries along the floor at the villain, who
       // leaps up in fright mid-ultimate (a stretch and a lift, no spin), and
       // the ultimate fizzles out before it is ever fired.
       for (let i = 0; i < 12; i++) this.after(i * 70, () => this.scurry(h, v, i));
@@ -1117,7 +1117,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
   /** One wind-up mouse: low and fast along the floor from her side to the villain, then off the edge. */
   private scurry(from: Fighter, to: Fighter, i: number): void {
     const y0 = Phaser.Math.Clamp(from.y + (Math.random() - 0.5) * 60, FLOOR_TOP, FLOOR_BOTTOM);
-    const m = this.add.text(from.x + 30, y0, '🐭', { fontSize: '42px' }).setOrigin(0.5, 1).setDepth(y0 + 2);
+    const m = this.add.text(from.x + 30, y0, villainSpec().counter.glyph, { fontSize: '42px' }).setOrigin(0.5, 1).setDepth(y0 + 2);
     const ty = Phaser.Math.Clamp(to.y + (Math.random() - 0.5) * 70, FLOOR_TOP, FLOOR_BOTTOM);
     // A scurry: quick little squashes, never a spin.
     this.tweens.add({ targets: m, scaleY: 0.78, scaleX: 1.12, duration: 60, yoyo: true, repeat: -1 });

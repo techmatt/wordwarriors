@@ -82,6 +82,33 @@ keeps the taught spell and the counter word out of the side rooms' key words, an
 room's other two objects are never a look-alike of the key word (`LOOKALIKES` in
 `content/phonics/sentences.ts`) or a word the sentence itself shows.
 
+**The sentence names the item** (Matt, 2026-10-18, item 009): the picture she finds
+in the attic swells into the item that then beats the ultimate, so the item *is* the
+thing the key word says. The key word is a whole word of the item's `name` (MICE →
+Wind-up Mice, CUP → Cocoa Cup), and no two villains share a key word. The unit test
+"every villain: the counter sentence names the item that beats it in battle 2" checks
+both and that the attic offers that picture. Changing an item's `id` needs new
+`item_<id>` art (`npm run art:gen -- item_<id>`). With `how: 'scare'` the swarm that
+scurries at the villain is the item's `glyph`.
+
+| Villain | Counter sentence | Battle-2 item | `how` |
+| --- | --- | --- | --- |
+| Evil Julia | … SCARED OF THE BED | Cozy Bed | calm |
+| Evil Ellie | … SCARED OF THE TUB | Bubble Tub | calm |
+| Evil Seraphina | … SCARED OF THE NUT | Golden Nut | calm |
+| Evil Dada Matt | … SCARED OF THE LOG | Giant Log | block |
+| Evil Dada Jason | … SCARED OF THE VAN | Clean-Up Van | restore |
+| Evil Elsa | … SCARED OF THE CUP | Cocoa Cup | restore |
+| Evil Anna | … SCARED OF THE CAT | Cuddly Cat | calm |
+| Evil Jasmine | … SCARED OF THE BAT | Flappy Bat | reflect |
+| Evil Ozymandias | … SCARED OF THE RAT | Brave Rat | scare |
+| Evil Jormungandr | … SCARED OF THE FOX | Tickle Fox | restore |
+| Evil Smaug | … SCARED OF THE BAG | Gold Bag | block |
+| Evil Scar | … SCARED OF THE BUG | Glitch Bug | shutdown |
+| Evil Moriarty | … SCARED OF THE MAP | Truth Map | reveal |
+| Evil Bavmorda | … SCARED OF THE CAP | Bounce Cap | reflect |
+| EvilRilla | … SCARED OF MICE | Wind-up Mice | scare |
+
 ## An ability (`AbilitySpec`)
 
 `{ id, name, kind, cooldown, color, color2?, power, count?, glyph?, status?, minion?,

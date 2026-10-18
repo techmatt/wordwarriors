@@ -79,6 +79,25 @@ test("counterPlan uses the villain's counter frame and word", () => {
   }
 });
 
+test('every villain: the counter sentence names the item that beats it in battle 2', () => {
+  // Item 009: 12 villains read SCARED OF THE CUP and then fought with a Frost Shield.
+  // The item's name (its battle-2 banner) carries the key word, the attic offers
+  // that word's picture, and no two villains share a key word.
+  const seen = new Map<string, string>();
+  for (const c of ROSTER) {
+    const { word, name } = c.counter;
+    const nameWords = name.toLowerCase().split(/[^a-z]+/);
+    assert.ok(nameWords.includes(word), `${c.id}: counter sentence ends ${word.toUpperCase()} but the battle-2 item is the ${name}`);
+    for (let seed = 1; seed <= 10; seed++) {
+      const p = counterPlan({ villain: c.id, helper: c.id === 'elsa' ? 'anna' : 'elsa' }, 'attic', seeded(seed));
+      assert.equal(p.sentence.key, word);
+      assert.ok(p.objects.includes(word), `${c.id}: the attic offers ${p.objects.join(', ')}, not ${word}`);
+    }
+    assert.ok(!seen.has(word), `${c.id} and ${seen.get(word)} share the counter word ${word}`);
+    seen.set(word, c.id);
+  }
+});
+
 test('frameIsSolid: new is not solid; 6 tries with the last 5 right is; one miss in the last 5 is not', () => {
   const store = new ProgressStore(memory());
   assert.equal(frameIsSolid(store, 'go_get_the'), false);

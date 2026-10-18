@@ -12,7 +12,8 @@
  * A counter `word` is never spoken or shown before the attic, so it is a CVC
  * picture word (or MICE) that is not a move word, not a fetch item, and not a
  * whole word in any name, ability, ultimate or taunt here (rules.test.ts
- * checks this).
+ * checks this). The item is the thing the word names: the word is a whole word
+ * of the item's `name` (CUP → Cocoa Cup), one villain per word (sentences.test.ts).
  *
  * `house` is how the villain colours the house: the threat in the wake-up
  * line ("Bad news, Evil Elsa is coming, and <threat>!"), a tint, decals and an
@@ -171,7 +172,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     counter: {
-      id: 'blanket', name: 'Cozy Blanket', glyph: '🛏️', look: 'a soft glowing quilt with stars on it',
+      id: 'cozy_bed', name: 'Cozy Bed', glyph: '🛏️', look: 'a child\'s bed with a puffy blue duvet and a white pillow, glowing softly, a sleepy moon and stars above it',
       how: 'calm', words: ['bed', 'hug', 'nap'], word: 'bed', frame: 'scared_of_the',
     },
     house: {
@@ -189,7 +190,7 @@ export const ROSTER: CharacterSpec[] = [
     description: "Julia's toddler sister: small, fast and full of giant bubbles and block towers.",
     arena: 'nursery',
     good: {
-      displayName: 'Ellie', trail: { tint: [0x9ad8ff, 0xff9ad5], shape: 'spark' }, look: 'a cheerful chubby toddler girl of about two: a wispy light strawberry-blonde bob with a straight fringe, big blue eyes, chubby rosy cheeks, fair skin, in cosy cream footie pyjamas with rust-orange and brown stripes, waving a giant bubble wand with big shiny pink-and-blue bubbles floating around her',
+      displayName: 'Ellie', trail: { tint: [0x9ad8ff, 0xff9ad5], shape: 'spark' }, look: 'a cheerful chubby toddler girl of about two: a fine, wispy pale strawberry-blonde bob (very light blonde with a faint peach tint, not golden or orange) with a straight fringe, big blue eyes, chubby rosy cheeks, fair skin, in cosy cream footie pyjamas with rust-orange and brown stripes, waving a giant bubble wand with big shiny pink-and-blue bubbles floating around her',
       palette: [0xff9ad5, 0x9ad8ff], glyph: '🍼', style: 'dodge', speed: 230, size: 0.8, hp: 90,
       abilities: [
         ab('giant_bubbles', 'Giant Bubbles', 'bolt', 2.4, 0x9ad8ff, 1, { count: 4, homing: true, word: 'pop' }),
@@ -208,7 +209,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Ellie', trail: { tint: [0xff5ab4, 0x3a1a5a], shape: 'square' }, look: 'a cheeky little toddler menace: the same chubby two-year-old girl with a wispy light strawberry-blonde bob sticking up, big blue eyes and rosy cheeks, a naughty grin with her tongue poking out, in dark purple footie pyjamas and a tiny black cape, holding a giant crayon like a sword. Funny and cute, never scary',
+      displayName: 'Evil Ellie', trail: { tint: [0xff5ab4, 0x3a1a5a], shape: 'square' }, look: 'a cheeky little toddler menace: the same chubby two-year-old girl with a fine, wispy pale strawberry-blonde bob (very light blonde with a faint peach tint) sticking up, big blue eyes and rosy cheeks, a naughty grin with her tongue poking out, in dark purple footie pyjamas and a tiny black cape, holding a giant crayon like a sword. Funny and cute, never scary',
       palette: [0x3a1a5a, 0xff5ab4], glyph: '🖍️', style: 'dodge', speed: 230, size: 0.8, hp: 130,
       abilities: [
         ab('crayon_scribble', 'Crayon Scribble', 'beam', 6, 0xff5ab4, 2),
@@ -227,7 +228,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     counter: {
-      id: 'bubble_bath', name: 'Bubble Bath', glyph: '🛁', look: 'a magic bathtub overflowing with rainbow bubbles, a little yellow rubber duck on top',
+      id: 'bubble_bath', name: 'Bubble Tub', glyph: '🛁', look: 'a magic bathtub overflowing with rainbow bubbles, a little yellow rubber duck on top',
       how: 'calm', words: ['wet', 'dip', 'tub'], word: 'tub', frame: 'scared_of_the',
     },
     house: {
@@ -282,7 +283,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     counter: {
-      id: 'treats', name: 'Dragon Treats', glyph: '🍪', look: 'a basket of glowing dragon cookies',
+      id: 'golden_nut', name: 'Golden Nut', glyph: '🥜', look: 'a giant shiny golden hazelnut in its shell, the snack every dragon loves best',
       how: 'calm', words: ['cup', 'bun', 'yum'], word: 'nut', frame: 'scared_of_the',
     },
     house: {
@@ -302,7 +303,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A big-hearted builder dad with a giant hammer who builds walls and towers in a blink.',
     arena: 'castle',
     good: {
-      displayName: 'Dada Matt', trail: { tint: [0xc8643a, 0xff8c42], shape: 'square' }, look: 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, short light-brown hair thinning on top with a high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile, in chunky orange-and-steel builder armour with a tool belt, holding a huge friendly hammer',
+      displayName: 'Dada Matt', trail: { tint: [0xc8643a, 0xff8c42], shape: 'square' }, look: 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, short light-brown hair, full on top with a slightly high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile, in chunky orange-and-steel builder armour with a tool belt, holding a huge friendly hammer',
       palette: [0xff8c42, 0x4a4a5a], glyph: '🔨', style: 'twirl', speed: 200, size: 1.2, hp: 130,
       abilities: [
         ab('hammer_spin', 'Hammer Spin', 'spin', 5, 0xff8c42, 2, { word: 'pow', shout: true }),
@@ -321,7 +322,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Dada Matt', trail: { tint: [0xb04aff, 0x2a2a3a], shape: 'square' }, look: 'the same beefy bodybuilder dad with short light-brown hair thinning on top and a full short reddish-brown beard, a mischievous grin, in spiky black builder armour, holding a hammer that crackles purple',
+      displayName: 'Evil Dada Matt', trail: { tint: [0xb04aff, 0x2a2a3a], shape: 'square' }, look: 'the same beefy bodybuilder dad with short light-brown hair, full on top, and a full short reddish-brown beard, a mischievous grin, in spiky black builder armour, holding a hammer that crackles purple',
       palette: [0x2a2a3a, 0xb04aff], glyph: '⚒️', style: 'stomp', speed: 120, size: 1.4, hp: 170,
       abilities: [
         ab('wreck', 'Wrecking Spin', 'spin', 5, 0xb04aff, 2),
@@ -339,8 +340,8 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     counter: {
-      id: 'pillow_fort', name: 'Pillow Fort', glyph: '🏰', look: 'a wobbly fort made of fluffy pillows, glowing softly',
-      how: 'block', words: ['bed', 'box', 'pad'], word: 'bed', frame: 'scared_of_the',
+      id: 'giant_log', name: 'Giant Log', glyph: '🌲', look: 'a huge cut wooden log lying down, rings showing on the end, so solid that any hammer just bonks off it',
+      how: 'block', words: ['bed', 'box', 'pad'], word: 'log', frame: 'scared_of_the',
     },
     house: {
       threat: 'he wants to knock down every wall',
@@ -449,8 +450,8 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     counter: {
-      id: 'sun_torch', name: 'Sun Torch', glyph: '🔥', look: 'a golden torch with a tiny sun burning in it',
-      how: 'restore', words: ['sun', 'hat', 'hot'], word: 'log', frame: 'scared_of_the',
+      id: 'cocoa_cup', name: 'Cocoa Cup', glyph: '☕', look: 'a big red mug of steaming cocoa with a handle, so warm it melts any winter',
+      how: 'restore', words: ['sun', 'hat', 'hot'], word: 'cup', frame: 'scared_of_the',
     },
     house: {
       threat: 'she wants to freeze the whole house',
@@ -464,7 +465,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'The ice sorceress\'s brave little sister: a sword-and-shield adventurer who never gives up.',
     arena: 'ice',
     good: {
-      displayName: 'Anna', trail: { tint: [0xffb703, 0xe63946], shape: 'spark' }, look: 'a freckled young adventurer of original design with a short curly copper bob and a sprig of holly in it, a moss-green tunic with a mustard-yellow scarf, brown boots, a round wooden shield with a sun painted on it and a wooden practice sword',
+      displayName: 'Anna', trail: { tint: [0xffb703, 0xe63946], shape: 'spark' }, look: 'a tall, sporty young adventurer of original design with long straight dark-brown hair in one high swinging ponytail tied with a big purple ribbon, a few freckles, a plum-purple tunic with a short magenta cape, white leggings and tall brown boots, a round wooden shield with a golden sun painted on it and a wooden practice sword',
       palette: [0xe63946, 0x2a9d8f], glyph: '🛡️', style: 'twirl', speed: 230, size: 1, hp: 110,
       abilities: [
         ab('shield_bash', 'Shield Bash', 'dash', 4, 0xe63946, 2, { word: 'bam', shout: true }),
@@ -483,7 +484,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Anna', trail: { tint: [0x9aeaff, 0x7cc7ff], shape: 'spark' }, look: 'the same copper-haired adventurer under a frost curse: frosty pale-blue skin, icicles in her curly bob, a grey-blue tunic, a cracked ice shield, a cross scowl',
+      displayName: 'Evil Anna', trail: { tint: [0x9aeaff, 0x7cc7ff], shape: 'spark' }, look: 'the same tall ponytailed adventurer under a frost curse: frosty pale-blue skin, her long dark ponytail frozen stiff and tipped with icicles, a frosted grey-violet tunic and a ragged icy cape, a cracked ice shield, a cross scowl',
       palette: [0x3a1a2a, 0x7cc7ff], glyph: '⚔️', style: 'twirl', speed: 240, size: 1.05, hp: 140,
       abilities: [
         ab('frost_bash', 'Frost Bash', 'dash', 4, 0x7cc7ff, 2),
@@ -501,7 +502,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     counter: {
-      id: 'locket', name: 'Friendship Locket', glyph: '💖', look: 'a heart locket glowing warm pink',
+      id: 'cuddly_cat', name: 'Cuddly Cat', glyph: '🐱', look: 'a warm, fluffy orange tabby cat with a curled tail, purring, who cuddles the frost away',
       how: 'calm', words: ['hug', 'pet', 'pal'], word: 'cat', frame: 'scared_of_the',
     },
     house: {
@@ -557,8 +558,8 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     counter: {
-      id: 'wind_fan', name: 'Wind Fan', glyph: '🌬️', look: 'a giant painted fan that blows a rainbow breeze',
-      how: 'reflect', words: ['map', 'zip', 'fan'], word: 'bag', frame: 'scared_of_the',
+      id: 'flappy_bat', name: 'Flappy Bat', glyph: '🦇', look: 'a friendly purple bat (the animal) with huge wings spread wide, flapping hard enough to blow a sandstorm straight back',
+      how: 'reflect', words: ['map', 'zip', 'fan'], word: 'bat', frame: 'scared_of_the',
     },
     house: {
       threat: 'she wants to fill the house with sand',
@@ -612,8 +613,8 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     counter: {
-      id: 'rain_cloud', name: 'Rain Cloud', glyph: '🌧️', look: 'a fluffy grey cloud in a jar, ready to rain',
-      how: 'block', words: ['cup', 'tub', 'wet'], word: 'tub', frame: 'scared_of_the',
+      id: 'brave_rat', name: 'Brave Rat', glyph: '🐀', look: 'a brave little grey rat with a long pink tail and a tiny red cape, leading a squeaking pack of his friends; giant statues are terrified of rats',
+      how: 'scare', words: ['cup', 'tub', 'wet'], word: 'rat', frame: 'scared_of_the',
     },
     house: {
       threat: 'he wants a giant statue of himself in the garden',
@@ -667,8 +668,8 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     counter: {
-      id: 'sun_lamp', name: 'Sun Lamp', glyph: '💡', look: 'a brass lantern holding a little captured sun',
-      how: 'restore', words: ['sun', 'pot', 'lit'], word: 'cup', frame: 'scared_of_the',
+      id: 'tickle_fox', name: 'Tickle Fox', glyph: '🦊', look: 'a cheeky red-orange fox with a big bushy white-tipped tail, just right for tickling a serpent\'s nose until he sneezes',
+      how: 'restore', words: ['sun', 'pot', 'lit'], word: 'fox', frame: 'scared_of_the',
     },
     house: {
       threat: 'he wants to wrap himself around the whole house',
@@ -724,8 +725,8 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     counter: {
-      id: 'frost_shield', name: 'Frost Shield', glyph: '🛡️', look: 'a round shield of blue ice with a snowflake crest',
-      how: 'block', words: ['cup', 'net', 'fog'], word: 'cup', frame: 'scared_of_the',
+      id: 'gold_bag', name: 'Gold Bag', glyph: '👜', look: 'a magic pink handbag with a curved handle and a clasp, wide open, that gobbles up a whole avalanche of gold',
+      how: 'block', words: ['cup', 'net', 'fog'], word: 'bag', frame: 'scared_of_the',
     },
     house: {
       threat: 'he wants all the money in your piggy bank',
@@ -779,7 +780,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     counter: {
-      id: 'off_remote', name: 'Off Remote', glyph: '📱', look: 'a big chunky remote control with one giant red OFF button',
+      id: 'glitch_bug', name: 'Glitch Bug', glyph: '🐞', look: 'a cute round red ladybird with black spots that crawls inside robots and switches them off',
       how: 'shutdown', words: ['box', 'pen', 'off'], word: 'bug', frame: 'scared_of_the',
     },
     house: {
@@ -835,7 +836,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     counter: {
-      id: 'magnifier', name: 'Magnifying Glass', glyph: '🔍', look: 'a big brass magnifying glass that shines a bright truth-light',
+      id: 'truth_map', name: 'Truth Map', glyph: '🗺️', look: 'a glowing treasure map on old parchment with a dotted path and a red X that shows where every trick is hiding',
       how: 'reveal', words: ['map', 'pen', 'nab'], word: 'map', frame: 'scared_of_the',
     },
     house: {
@@ -890,8 +891,8 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     counter: {
-      id: 'mirror', name: 'Magic Mirror', glyph: '💠', look: 'a silver hand mirror that flashes bright light',
-      how: 'reflect', words: ['sun', 'pin', 'zap'], word: 'cat', frame: 'scared_of_the',
+      id: 'bounce_cap', name: 'Bounce Cap', glyph: '🧢', look: 'a shiny blue baseball cap with a curved peak that bounces any spell straight back',
+      how: 'reflect', words: ['sun', 'pin', 'zap'], word: 'cap', frame: 'scared_of_the',
     },
     house: {
       threat: 'she wants to turn everybody into piggies',
