@@ -229,6 +229,33 @@ a time.
   - The tool sometimes draws its own copy of things the game draws on top (the bedroom
     has toys of its own). Prompts for rooms say what to leave out.
 
+### Candidates to choose from (`art:alts`, `art:pick`)
+
+When an image is weak but Matt should see the options before it changes, draw
+candidates instead of overwriting it:
+
+```
+npm run art:alts -- <ids…> [--n=3] [--sheet=scratch/<name>.png] [--sheet-only] [--no-ref]
+npm run art:pick -- <id> <n>
+```
+
+- `art:alts` draws `n` (default 3) new images per id with the same prompt and photo
+  reference as `art:gen` and keeps them as `art-originals/alts/<id>-<n>.png`, numbered on
+  from the last one there. The game's art is not touched. `--sheet=<file>` writes a
+  contact sheet of the named ids: one row per id, the current game image first
+  (labelled `current`), then each candidate labelled with its `<n>`, cut exactly as the
+  game would cut it and all drawn at one scale. `--sheet-only` rebuilds the sheet
+  without drawing.
+- `art:pick -- <id> <n>` makes candidate `n` the game's art: it becomes
+  `art-originals/<id>.png` and is cut into `public/art/<id>.png` by the same keying,
+  trimming and palette shrink as `art:gen`. Commit the PNG afterwards. The first pick of
+  an id saves the original as candidate 0 (`<id>-0.png`, and `<id>-0.game.png`, the
+  committed PNG byte for byte), so `art:pick -- <id> 0` puts it back.
+- Corrections for an id (what an earlier image got wrong: a likeness, a prop that
+  crowds a face) are `NOTES` in `content/art/prompts.ts`; they end the prompt for both
+  `art:gen` and `art:alts`.
+- Item 009's sheets (2026-10-18) are `scratch/art_alts_009_<group>.png`.
+
 ## Operational facts
 
 - **edge-tts runs through Python, via `uvx`.** On 2026-10-18 Microsoft's endpoint refused

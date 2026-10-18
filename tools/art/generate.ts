@@ -31,13 +31,13 @@ import { chromium, type Page } from '@playwright/test';
 import sharp from 'sharp';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
-import { ART_PROMPTS, BACKGROUND_STYLE, NO_GREEN, REFS, SPRITE_STYLE, refFor } from '../../content/art/prompts.js';
+import { ART_PROMPTS, BACKGROUND_STYLE, NO_GREEN, NOTES, REFS, SPRITE_STYLE, refFor } from '../../content/art/prompts.js';
 import { isMain } from '../voice/clips.js';
 import { keyGreen } from './chroma.js';
 import { isPlaceholder } from './placeholders.js';
 
-const OUT = path.join('public', 'art');
-const ORIGINALS = 'art-originals';
+export const OUT = path.join('public', 'art');
+export const ORIGINALS = 'art-originals';
 const SHEET = path.join('scratch', 'art_contact.png');
 const CODEX_HOME = process.env.CODEX_HOME ?? path.join(os.homedir(), '.codex');
 const TIMEOUT_MS = 6 * 60_000;
@@ -51,7 +51,7 @@ const SPRITE_SCALE = 2;
  */
 export const shrinkPng = (png: Buffer): Promise<Buffer> => sharp(png).png({ palette: true, quality: 90, effort: 10, dither: 1 }).toBuffer();
 
-const isBackground = (id: string) => ['room', 'arena'].includes(ART_BY_ID[id]!.kind);
+export const isBackground = (id: string) => ['room', 'arena'].includes(ART_BY_ID[id]!.kind);
 
 export function codexPrompt(id: string, withRef = false): string {
   const prompt = ART_PROMPTS[id];
@@ -71,6 +71,7 @@ export function codexPrompt(id: string, withRef = false): string {
       : []),
     '',
     `${isBackground(id) ? BACKGROUND_STYLE : SPRITE_STYLE} ${prompt}`,
+    ...(NOTES[id] ? ['', `Important: ${NOTES[id]}`] : []),
   ].join('\n');
 }
 
@@ -83,13 +84,13 @@ interface CodexRun {
   usage?: unknown;
 }
 
-const exists = (f: string) =>
+export const exists = (f: string) =>
   stat(f).then(
     () => true,
     () => false,
   );
 
-async function runCodex(prompt: string, image?: string): Promise<CodexRun> {
+export async function runCodex(prompt: string, image?: string): Promise<CodexRun> {
   const workdir = path.resolve('scratch', 'codex');
   await mkdir(workdir, { recursive: true });
   const started = Date.now();
@@ -163,7 +164,7 @@ async function rateLimits(thread: string): Promise<unknown> {
   return last;
 }
 
-function describeUsage(u: unknown): string {
+export function describeUsage(u: unknown): string {
   const r = u as { primary?: { used_percent?: number; window_minutes?: number }; secondary?: { used_percent?: number; window_minutes?: number }; plan_type?: string; rate_limit_reached_type?: string | null } | undefined;
   if (!r) return 'no allowance logged';
   const w = (x?: { used_percent?: number; window_minutes?: number }) => (x ? `${x.used_percent ?? '?'}% of ${Math.round((x.window_minutes ?? 0) / 60)}h` : '?');
@@ -172,7 +173,7 @@ function describeUsage(u: unknown): string {
 
 // -- image processing (in a page: canvas decodes, scales and encodes PNG) -------
 
-async function openPage(): Promise<{ page: Page; close: () => Promise<void> }> {
+export async function openPage(): Promise<{ page: Page; close: () => Promise<void> }> {
   const browser = await chromium.launch();
   const page = await browser.newPage();
   await page.setContent('<html><body></body></html>');
@@ -190,7 +191,7 @@ interface Processed {
   fringe: number;
 }
 
-async function processImage(page: Page, png: Buffer, opts: { sprite: boolean; boxW: number; boxH: number; noGreen: boolean }): Promise<Processed> {
+export async function processImage(page: Page, png: Buffer, opts: { sprite: boolean; boxW: number; boxH: number; noGreen: boolean }): Promise<Processed> {
   return page.evaluate(
     async ({ src, sprite, boxW, boxH, noGreen }) => {
       const img = new Image();
@@ -289,7 +290,7 @@ async function contactSheet(page: Page, ids: string[], sheet = SHEET): Promise<v
 }
 
 /** Write the game-sized `public/art/<id>.png` from a full-resolution original. */
-async function cut(page: Page, id: string, original: Buffer, note: string): Promise<void> {
+export async function cut(page: Page, id: string, original: Buffer, note: string): Promise<void> {
   const a = ART_BY_ID[id]!;
   const sprite = !isBackground(id);
   const scale = sprite ? SPRITE_SCALE : 1;
@@ -305,7 +306,7 @@ async function isReal(id: string): Promise<boolean> {
 }
 
 /** The cropped likeness photo for a family id, cut from `art-originals/refs/` (absolute path), or undefined. */
-async function refCrop(id: string): Promise<string | undefined> {
+export async function refCrop(id: string): Promise<string | undefined> {
   const c = refFor(id);
   if (!c) return undefined;
   const r = REFS[c]!;

@@ -72,6 +72,8 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | `npm run voice:build` | Synthesise new/changed lines (incremental; `--force` for all). Needs `uvx` and network. |
 | `npm run art:placeholders` | Paint missing/placeholder art, rewrite `docs/art.md` |
 | `npm run art:gen -- <ids…>` | Real art from `content/art/prompts.ts` via Codex's image tool (README, "Real art"); `--force`, `--reprocess`, `--sheet` |
+| `npm run art:alts -- <ids…> --sheet=<file>` | Draw 3 candidates per id into `art-originals/alts/` and a comparison sheet; the game's art is untouched |
+| `npm run art:pick -- <id> <n>` | Make candidate `n` the game's art (`0` restores the original); commit the PNG |
 | `npm run voice:status` | Recorded / stale / still edge-tts, letter sounds first |
 | `npm run voice:clip -- <id> <file.mp3>` | Put a recording in place of a line |
 
@@ -172,3 +174,4 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 | "turn the pick screens back on" / "random villain" | `EPISODE_DEFAULTS` in `src/config.ts` |
 | "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`); for character art also set `FLIP_TO_FACE = true` in `src/config.ts` |
 | "here are my letter sound recordings" | see `docs/recording.md` |
+| "for X I pick n" (from an `art_alts_*` sheet) | `npm run art:pick -- X n`, commit `public/art/X.png` |

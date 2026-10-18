@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.tools.json",
     "art:placeholders": "tsx tools/art/placeholders.ts",
     "art:gen": "tsx tools/art/generate.ts",
+    "art:alts": "tsx tools/art/alts.ts alts",
+    "art:pick": "tsx tools/art/alts.ts pick",
     "voice:lines": "tsx tools/voice/compose.ts",
     "voice:build": "tsx tools/voice/build.ts",
     "voice:clip": "tsx tools/voice/addClip.ts",

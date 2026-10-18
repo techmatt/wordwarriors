@@ -51,6 +51,23 @@ export function refFor(id: string): string | undefined {
   return c && REFS[c] ? c : undefined;
 }
 
+/**
+ * Corrections that go at the end of an id's prompt, after the brief, for
+ * `art:gen` and `art:alts` alike: what an earlier image got wrong (Matt's
+ * notes on the likenesses, 2026-10-18, item 009).
+ */
+const ELLIE_HAIR = "Her hair is pale, fine and wispy strawberry-blonde: very light blonde with only a faint peachy-pink tint, thin and soft like a toddler's. NOT golden, NOT orange, NOT ginger, NOT copper.";
+const MATT_HAIR = 'His hair: short light-brown hair with a full, normal head of hair on top (only a slightly high hairline at the temples). He is NOT bald and NOT balding: no bald patch, no shiny bare scalp on top.';
+export const NOTES: Record<string, string> = {
+  char_ellie_good: ELLIE_HAIR,
+  char_ellie_evil: ELLIE_HAIR,
+  face_ellie: ELLIE_HAIR,
+  char_dada_matt_good: MATT_HAIR,
+  char_dada_matt_evil: MATT_HAIR,
+  face_dada_matt: `${MATT_HAIR} This is a face card: his face fills it. Leave the hammer out entirely, or at most a small hammer resting on his shoulder that never covers or crowds his face.`,
+  face_julia: 'Her mouth is a big happy closed-lip or toothy smile: NO tongue sticking out.',
+};
+
 /** Word pictures: one meaning each, and unlike their look-alikes (content/phonics/sentences.ts LOOKALIKES). */
 const PICTURES: Record<string, string> = {
   cat: 'a cat: a cute orange tabby cat sitting, tail curled, whiskers',
@@ -94,8 +111,10 @@ const HAND: Record<string, string> = {
     // the image tool's safety system (2026-10-18), most likely as too near the film
     // character. Matt's call the same day: keep the pale hair, white-and-gold gown.
     'A cheerful winter queen of original design: a young woman with rosy cheeks and freckles, long pale silver hair, a flowing white-and-gold gown embroidered with golden snowflakes, a little golden crown, a fluffy white fur-trimmed cape, conjuring golden-white sparkles. Standing, facing the viewer.',
+  // Redone (Matt, 2026-10-18, item 009): the first one painted its own teddy and
+  // rocket, which doubled the game's toys (BEDROOMS objects in content/house/house.ts).
   room_bedroom_julia:
-    "A cozy, cluttered little girl's bedroom seen side-on from a slight top-down game angle, wide landscape 16:9. Star wallpaper, a window, a toy chest, a dragon plushie, a rocket-shaped lamp, a castle playset and children's drawings pinned on the walls, all along the back wall and the edges. A wooden floor with a rug fills the lower half and is left open and uncluttered for the player to walk on. No bed and no door: the game draws those on top.",
+    "A cozy little girl's bedroom seen side-on from a slight top-down game angle, wide landscape 16:9. Star wallpaper, a window with curtains, bookshelves with books, a closed toy chest, a castle playset on a shelf, fairy lights and children's drawings pinned on the walls, all along the back wall and the edges. A wooden floor with a rug fills the lower half and is left open and uncluttered for the player to walk on. No bed and no door: the game draws those on top. No loose toys anywhere: no teddy bears or plush animals, no rockets, no drums, no balls, no robots, no rubber ducks, no blocks, no unicorns and no lamps on the floor, because the game puts its own toys there.",
   room_hub:
     'The small cosy main room of a family house, seen side-on from a slight top-down game angle, wide landscape 16:9. A sofa and a staircase at the far left, a bookshelf, a lamp and family picture frames (simple shapes, no faces) on warm wallpaper. A wooden floor with a big round rug fills the lower half, left open for the player to walk on. NO doors anywhere: the back wall between the sofa and the right edge is a plain wall with only a skirting board, because the game draws its own doors there.',
   room_side_kitchen:
@@ -115,8 +134,11 @@ const HAND: Record<string, string> = {
     "A tower of chunky wooden toy blocks in red, blue, yellow and orange (no green blocks): a toy in a child's bedroom, side-on.",
   // Redone after the first try drew the wrong thing (2026-10-18): human footprints,
   // a circus big top, a bear trap on a card, stones the game draws itself, a short banner.
+  // Redone again (item 009): the second try still read as bare human feet.
   decal_rilla_footprint:
-    'Two giant gorilla footprints seen from above, muddy brown: wide knuckly gorilla hand-and-foot prints with a big splayed thumb toe, clearly an ape and not a person.',
+    "One giant robot-gorilla footprint stamped into the floor, seen from above: a huge square-toed metal ape foot pressed into the ground as a deep dented imprint, with a big separate thumb-toe sticking out to the side like a gorilla's, four chunky blocky toe pads with rivet marks and bolt holes, a cracked ring of broken floorboards around it and a little puff of dust. Grey-brown and metallic, clearly a giant robot gorilla's and nothing like a person's foot: no human toes, no heel arch.",
+  arena_street:
+    "A lively sunny suburban street outside a family house, wide side-on view, wide landscape 16:9. Colourful houses with gardens, picket fences, flower beds and trees along the back, a parked friendly blue family car at the kerb, a red post box, a lamp post, a striped awning on a little corner shop, bunting across the street, a few birds and fluffy clouds in a blue sky. The lower 60% is a clean open pavement and road for the fighters, with painted crossing stripes, a few leaves and chalk hopscotch squares (no numbers), bright and readable, no people or animals.",
   prop_tent:
     'A small striped two-person camping tent, green-free: an orange and blue A-frame tent with the door flap tied open, guy ropes and pegs, a little pennant flag on the top pole. Side-on.',
   prop_card_trap:
@@ -137,7 +159,8 @@ function derived(a: ArtAsset): string {
     const what = PICTURES[a.id.slice(4)];
     return what ? `A single clear picture of ${what}, centred, instantly recognisable to a 4-year-old. Nothing else in the picture.` : strip(a.content);
   }
-  if (a.id.startsWith('face_')) return `${strip(a.content)} Head and shoulders only, facing the viewer, smiling.`;
+  // A face card leaves out what the character holds (Dada Matt's hammer crowded his, item 009).
+  if (a.id.startsWith('face_')) return `${strip(a.content).replace(/, (holding|waving) [^.]*\./, '.')} Head and shoulders only, facing the viewer, smiling.`;
   if (a.id.startsWith('decal_')) {
     const look = a.content.split(': left lying')[0];
     return `${look}: a small thing left lying about a house by a mischievous villain (the villain is not shown). Mischievous, not scary.`;
