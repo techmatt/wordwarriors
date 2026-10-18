@@ -177,16 +177,122 @@ function paintAll(list: ArtAsset[]): Record<string, string> {
       g.fillStyle = sky;
       g.fillRect(0, 0, W, H);
       if (a.kind === 'arena') {
-        // Hills and a flat floor, so fighters have somewhere to stand.
-        g.fillStyle = hex(shade(c2, 0.75), 0.6);
-        for (let i = 0; i < 6; i++) {
+        // A silhouette skyline per arena, then a flat floor for the fighters.
+        const sil = hex(shade(c1, 0.55), 0.85);
+        const far = hex(shade(c2, 0.7), 0.55);
+        const hz = H * 0.46;
+        const poly = (pts: [number, number][], fill: string) => {
           g.beginPath();
-          g.ellipse((i + 0.5) * (W / 5), H * 0.48, W * 0.16, H * 0.14, 0, Math.PI, 0);
+          pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
+          g.closePath();
+          g.fillStyle = fill;
           g.fill();
+        };
+        const id = a.id.replace('arena_', '');
+        if (id === 'desert') {
+          poly([[W * 0.55, hz], [W * 0.72, H * 0.12], [W * 0.89, hz]], far);
+          poly([[W * 0.75, hz], [W * 0.84, H * 0.26], [W * 0.93, hz]], sil);
+          for (let i = 0; i < 4; i++) {
+            g.fillStyle = sil;
+            g.fillRect(W * (0.08 + i * 0.1), hz - H * 0.12, W * 0.025, H * 0.12);
+          }
+        } else if (id === 'castle') {
+          for (let i = 0; i < 5; i++) {
+            const x = W * (0.1 + i * 0.2);
+            const h = H * (0.22 + (i % 2) * 0.1);
+            g.fillStyle = sil;
+            g.fillRect(x - W * 0.04, hz - h, W * 0.08, h);
+            for (let k = 0; k < 3; k++) g.fillRect(x - W * 0.04 + k * W * 0.032, hz - h - 18, W * 0.018, 18);
+            poly([[x - W * 0.05, hz - h - 18], [x, hz - h - H * 0.12], [x + W * 0.05, hz - h - 18]], far);
+          }
+          g.fillStyle = sil;
+          g.fillRect(0, hz - H * 0.1, W, H * 0.1);
+        } else if (id === 'ice') {
+          for (let i = 0; i < 9; i++) {
+            const x = W * (0.05 + i * 0.115);
+            const h = H * (0.16 + ((i * 37) % 5) * 0.05);
+            poly([[x - 36, hz], [x, hz - h], [x + 36, hz]], i % 2 ? hex(0xffffff, 0.7) : hex(0xaee6ff, 0.8));
+          }
+        } else if (id === 'volcano') {
+          poly([[W * 0.2, hz], [W * 0.42, H * 0.14], [W * 0.52, H * 0.14], [W * 0.74, hz]], sil);
+          g.fillStyle = hex(0xff7b00, 0.9);
+          g.beginPath();
+          g.ellipse(W * 0.47, H * 0.14, W * 0.05, 12, 0, 0, Math.PI * 2);
+          g.fill();
+          g.strokeStyle = hex(0xff4a00, 0.9);
+          g.lineWidth = 8;
+          g.beginPath();
+          g.moveTo(W * 0.46, H * 0.16);
+          g.quadraticCurveTo(W * 0.4, H * 0.3, W * 0.34, hz);
+          g.stroke();
+        } else if (id === 'sea') {
+          for (let row = 0; row < 3; row++) {
+            g.fillStyle = hex(shade(c2, 0.9 - row * 0.12), 0.8);
+            g.beginPath();
+            g.moveTo(0, hz);
+            for (let x = 0; x <= W; x += 40) g.lineTo(x, hz - 30 - row * 28 + Math.sin(x / 70 + row) * 14);
+            g.lineTo(W, hz);
+            g.closePath();
+            g.fill();
+          }
+          poly([[W * 0.12, hz], [W * 0.18, hz - H * 0.15], [W * 0.26, hz]], sil);
+          poly([[W * 0.78, hz], [W * 0.86, hz - H * 0.2], [W * 0.95, hz]], sil);
+        } else if (id === 'factory') {
+          for (let i = 0; i < 6; i++) {
+            const x = W * (0.04 + i * 0.17);
+            g.fillStyle = sil;
+            g.fillRect(x, hz - H * (0.14 + (i % 3) * 0.05), W * 0.12, H * (0.14 + (i % 3) * 0.05));
+            g.fillRect(x + W * 0.02, hz - H * 0.3, W * 0.025, H * 0.12);
+            g.fillStyle = hex(0x00f5d4, 0.7);
+            for (let k = 0; k < 3; k++) g.fillRect(x + 10 + k * 34, hz - H * 0.09, 20, 14);
+          }
+        } else if (id === 'city') {
+          for (let i = 0; i < 14; i++) {
+            const x = (i * W) / 14;
+            const h = H * (0.1 + ((i * 53) % 7) * 0.035);
+            g.fillStyle = sil;
+            g.fillRect(x + 4, hz - h, W / 14 - 8, h);
+            g.fillStyle = hex(0xffe8a0, 0.7);
+            for (let k = 0; k < 4; k++) if ((i + k) % 3) g.fillRect(x + 14, hz - h + 12 + k * 22, 10, 10);
+          }
+          g.strokeStyle = sil;
+          g.lineWidth = 10;
+          g.beginPath();
+          g.arc(W * 0.82, hz - H * 0.2, H * 0.16, 0, Math.PI * 2);
+          g.stroke();
+        } else if (id === 'cave') {
+          for (let i = 0; i < 16; i++) {
+            const x = (i * W) / 15;
+            poly([[x - 30, 0], [x, H * (0.12 + ((i * 29) % 5) * 0.03)], [x + 30, 0]], sil);
+          }
+          for (let i = 0; i < 6; i++) {
+            g.fillStyle = hex(0xffcc33, 0.85);
+            g.beginPath();
+            g.ellipse(W * (0.1 + i * 0.16), hz, W * 0.07, H * 0.06, 0, Math.PI, 0);
+            g.fill();
+          }
+        } else if (id === 'kitchen') {
+          g.fillStyle = hex(0xffffff, 0.35);
+          for (let y = 0; y < hz; y += 60) for (let x = (y / 60) % 2 ? 30 : 0; x < W; x += 60) g.fillRect(x, y, 28, 28);
+          g.fillStyle = sil;
+          g.fillRect(W * 0.6, hz - H * 0.22, W * 0.3, H * 0.22);
+          g.fillStyle = hex(0x333344, 1);
+          g.beginPath();
+          g.ellipse(W * 0.3, hz - H * 0.06, W * 0.09, H * 0.05, 0, 0, Math.PI * 2);
+          g.fill();
+        } else {
+          // Meadow: rolling hills and flowers.
+          g.fillStyle = far;
+          for (let i = 0; i < 6; i++) {
+            g.beginPath();
+            g.ellipse((i + 0.5) * (W / 5), hz + 10, W * 0.16, H * 0.16, 0, Math.PI, 0);
+            g.fill();
+          }
         }
         const floor = g.createLinearGradient(0, H * 0.42, 0, H);
-        floor.addColorStop(0, hex(shade(c2, 0.55)));
-        floor.addColorStop(1, hex(shade(c1, 0.6)));
+        const gr = a.ground ?? shade(c2, 0.55);
+        floor.addColorStop(0, hex(shade(gr, 1.05)));
+        floor.addColorStop(1, hex(shade(gr, 0.62)));
         g.fillStyle = floor;
         g.fillRect(0, H * 0.45, W, H * 0.55);
       } else {
@@ -194,7 +300,7 @@ function paintAll(list: ArtAsset[]): Record<string, string> {
         g.fillRect(0, H * 0.62, W, H * 0.38);
       }
       if (a.glyph) {
-        g.globalAlpha = 0.22;
+        g.globalAlpha = a.kind === 'arena' ? 0.12 : 0.22;
         for (let i = 0; i < 7; i++) emoji(a.glyph, (i + 0.5) * (W / 7), H * (0.18 + (i % 2) * 0.1), 70);
         g.globalAlpha = 1;
       }

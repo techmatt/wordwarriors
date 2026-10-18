@@ -31,6 +31,8 @@ export interface ArtAsset {
   palette?: [number, number];
   evil?: boolean;
   draw?: string;
+  /** Arena floor colour. */
+  ground?: number;
 }
 
 const assets: ArtAsset[] = [];
@@ -89,6 +91,7 @@ for (const [id, a] of Object.entries(ARENAS)) {
     label: a.name.toUpperCase(),
     glyph: a.glyph,
     palette: a.sky,
+    ground: a.ground,
   });
 }
 
