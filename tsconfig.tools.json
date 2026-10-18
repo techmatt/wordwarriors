@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // DOM because the placeholder painter ships a function into a Playwright
+    // page to draw on a canvas; nothing else in tools/ may touch a browser global.
+    "lib": ["ES2022", "DOM"],
+    "types": ["node"],
+    "module": "NodeNext",
+    "moduleResolution": "nodenext"
+  },
+  "include": ["tools"]
+}

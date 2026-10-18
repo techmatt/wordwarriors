@@ -1,0 +1,5 @@
+# LF everywhere, on every machine. Binary files are detected by git's own heuristic.
+* text=auto eol=lf
+*.png binary
+*.mp3 binary
+*.wav binary

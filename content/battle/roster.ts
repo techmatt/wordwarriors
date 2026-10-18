@@ -1,0 +1,687 @@
+/**
+ * The roster: every character, good and evil, as data.
+ *
+ * Each character has a good version (a hero or ally) and an evil version (a
+ * villain), and each version has its own fighting style, three or more
+ * abilities, taunts and an ultimate. The evil version's ultimate is what floors
+ * the heroes at the end of Part 1; its `counter` item is what the Spell the
+ * Spell game makes and what beats that ultimate in Part 2.
+ *
+ * Elsa, Anna and Jasmine are written as original archetypes (an ice
+ * sorceress, her brave sister, a desert princess with a flying carpet), not as
+ * lookalikes of anybody's films. The art prompts in docs/art.md say the same.
+ *
+ * Move words (`word`) must come from MOVE_WORDS: each has a "Use zap!" line per
+ * narrator. Taunts are short, because a bubble over a moving fighter has to be
+ * readable at a glance, and they never name the word she must read.
+ */
+
+import type { AbilitySpec, CharacterSpec, ComboSpec, MinionSpec } from './types.js';
+
+/** The words a move-choice pause can offer. Short and decodable where possible. */
+export const MOVE_WORDS = ['zap', 'pow', 'bam', 'zip', 'hop', 'pop', 'sun', 'hug', 'fan', 'big', 'hot', 'ice'] as const;
+
+function ab(
+  id: string,
+  name: string,
+  kind: AbilitySpec['kind'],
+  cooldown: number,
+  color: number,
+  power: number,
+  extra: Partial<AbilitySpec> = {},
+): AbilitySpec {
+  return { id, name, kind, cooldown, color, power, ...extra };
+}
+
+export const MINIONS: Record<string, MinionSpec> = {
+  baby_dragon: {
+    id: 'baby_dragon', name: 'Baby Dragon', glyph: '🐲', look: 'a chubby baby dragon with tiny wings, friendly',
+    palette: [0x6ad66a, 0xfff07a], style: 'fly', speed: 150, size: 0.55, hp: 30,
+    ability: ab('puff', 'Puff', 'bolt', 2.2, 0xff9a3c, 1, { glyph: '🔥' }),
+  },
+  snow_golem: {
+    id: 'snow_golem', name: 'Snow Buddy', glyph: '⛄', look: 'a round friendly snowman with stick arms',
+    palette: [0xe8f6ff, 0x7cc7ff], style: 'march', speed: 70, size: 0.6, hp: 40,
+    ability: ab('snowball', 'Snowball', 'bolt', 2.0, 0xdff4ff, 1, { glyph: '❄️' }),
+  },
+  skeleton: {
+    id: 'skeleton', name: 'Skeleton', glyph: '💀', look: 'a goofy cartoon skeleton with a wobbly jaw, more silly than scary',
+    palette: [0xf2f0e6, 0x5a4a6a], style: 'march', speed: 85, size: 0.5, hp: 18,
+    ability: ab('bonk', 'Bonk', 'dash', 2.4, 0xf2f0e6, 1),
+  },
+  gold_golem: {
+    id: 'gold_golem', name: 'Coin Golem', glyph: '🟡', look: 'a lumpy golem made of gold coins',
+    palette: [0xffcc33, 0x8a5a00], style: 'march', speed: 60, size: 0.6, hp: 30,
+    ability: ab('coin_toss', 'Coin Toss', 'bolt', 2.2, 0xffd84a, 1, { glyph: '🟡' }),
+  },
+  colossus: {
+    id: 'colossus', name: 'Colossus', glyph: '🗿', look: 'a towering sandstone statue of a pharaoh, cracked, slow',
+    palette: [0xd9b26f, 0x7a5a2a], style: 'stomp', speed: 25, size: 1.2, hp: 70,
+    ability: ab('statue_stomp', 'Stomp', 'slam', 3.5, 0xd9b26f, 2),
+  },
+  scarab: {
+    id: 'scarab', name: 'Scarab', glyph: '🐞', look: 'a shiny blue-green scarab beetle',
+    palette: [0x2ac7a0, 0x184a5a], style: 'march', speed: 120, size: 0.4, hp: 12,
+    ability: ab('nip', 'Nip', 'dash', 1.8, 0x2ac7a0, 1),
+  },
+  drone: {
+    id: 'drone', name: 'Drone', glyph: '🛸', look: 'a little round robot drone with one red eye',
+    palette: [0x9aa6b8, 0xff3344], style: 'hover', speed: 120, size: 0.45, hp: 15,
+    ability: ab('pew', 'Pew', 'bolt', 1.6, 0xff3344, 1, { count: 2 }),
+  },
+  card_soldier: {
+    id: 'card_soldier', name: 'Card Soldier', glyph: '🃏', look: 'a walking playing card with a tiny spear',
+    palette: [0xffffff, 0xd02040], style: 'march', speed: 95, size: 0.5, hp: 15,
+    ability: ab('poke', 'Poke', 'dash', 2.0, 0xd02040, 1),
+  },
+  mini_serpent: {
+    id: 'mini_serpent', name: 'Sea Snake', glyph: '🐍', look: 'a small green sea snake with a curly tail',
+    palette: [0x2aa66a, 0x0a4a3a], style: 'slither', speed: 110, size: 0.45, hp: 15,
+    ability: ab('hiss', 'Hiss', 'bolt', 2.2, 0x6aff9a, 1, { glyph: '💧' }),
+  },
+  teddy: {
+    id: 'teddy', name: 'Teddy', glyph: '🧸', look: 'a brave teddy bear with a cape',
+    palette: [0xc8884a, 0xff6aa0], style: 'march', speed: 100, size: 0.5, hp: 30,
+    ability: ab('teddy_hug', 'Bear Hug', 'dash', 2.0, 0xff9ac8, 1),
+  },
+  dust_devil: {
+    id: 'dust_devil', name: 'Dust Devil', glyph: '🌪️', look: 'a little spinning whirlwind of sand with a cheeky face',
+    palette: [0xe8c890, 0x9a7a4a], style: 'dodge', speed: 160, size: 0.5, hp: 15,
+    ability: ab('gust', 'Gust', 'cone', 2.0, 0xe8c890, 1),
+  },
+  joke_bot: {
+    id: 'joke_bot', name: 'Pun Bot', glyph: '🤖', look: 'a tiny robot holding a joke book',
+    palette: [0xb0b8c8, 0xffcc33], style: 'march', speed: 90, size: 0.45, hp: 18,
+    ability: ab('groan', 'Groan', 'bolt', 2.0, 0xffcc33, 1, { glyph: '😆' }),
+  },
+  /** The helper Word to Picture summons for the heroes. Its look is set by the hero. */
+  helper: {
+    id: 'helper', name: 'Helper', glyph: '🦄', look: 'a sparkly unicorn helper with a rainbow mane',
+    palette: [0xffffff, 0xff7ad9], style: 'fly', speed: 170, size: 0.7, hp: 60,
+    ability: ab('rainbow', 'Rainbow Blast', 'beam', 3.0, 0xff7ad9, 2, { color2: 0x7ad9ff }),
+  },
+};
+
+export const ROSTER: CharacterSpec[] = [
+  {
+    id: 'julia',
+    description: 'A fearless four-year-old adventurer with a star wand and a big laugh.',
+    arena: 'meadow',
+    good: {
+      displayName: 'Julia', look: 'a cheerful little girl in a purple cape with a glowing star wand',
+      palette: [0x9b5de5, 0xffd23f], glyph: '⭐', style: 'dodge', speed: 210, size: 1, hp: 100,
+      abilities: [
+        ab('star_zap', 'Star Zap', 'bolt', 2.5, 0xffd23f, 1, { count: 3, glyph: '⭐', word: 'zap', shout: true }),
+        ab('giggle_bubble', 'Giggle Bubble', 'shield', 9, 0xff9ad5, 1, { duration: 4, word: 'pop' }),
+        ab('bounce_stomp', 'Bounce Stomp', 'slam', 6, 0x9b5de5, 2, { word: 'hop', shout: true }),
+        ab('teddy_army', 'Teddy Army', 'summon', 14, 0xc8884a, 2, { minion: 'teddy', count: 3, word: 'hug' }),
+      ],
+      ultimate: ab('super_nova', 'Super Star Nova', 'rain', 0, 0xffd23f, 3, { count: 30, glyph: '🌟', color2: 0xff5ab4 }),
+      taunts: [
+        { key: 'here', text: 'Here I come!' },
+        { key: 'wand', text: 'My wand is sparkly!' },
+        { key: 'brave', text: 'I am super brave!' },
+        { key: 'boop', text: 'Boop! Got you!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Julia', look: 'a grumpy mirror-image little girl in a black cape with a cracked dark star wand',
+      palette: [0x3a1a5a, 0xff3355], glyph: '💢', style: 'dodge', speed: 210, size: 1, hp: 140,
+      abilities: [
+        ab('grump_zap', 'Grump Zap', 'bolt', 2.5, 0xff3355, 1, { count: 3, glyph: '💢' }),
+        ab('stomp_stomp', 'Stompy Feet', 'slam', 5, 0x5a2a7a, 2),
+        ab('no_nap', 'No Nap Ever', 'lightning', 7, 0xb04aff, 2, { count: 3 }),
+      ],
+      ultimate: ab('tantrum_quake', 'Tantrum Quake', 'wave', 0, 0xff3355, 3, { color2: 0x3a1a5a }),
+      taunts: [
+        { key: 'no', text: 'No, no, no!' },
+        { key: 'mine', text: 'All the toys are mine!' },
+        { key: 'bedtime', text: 'I never go to bed!' },
+        { key: 'grr', text: 'Grr! Grumpy time!' },
+      ],
+    },
+    counter: {
+      id: 'blanket', name: 'Cozy Blanket', glyph: '🛏️', look: 'a soft glowing quilt with stars on it',
+      how: 'calm', words: ['bed', 'hug', 'nap'],
+    },
+  },
+  {
+    id: 'seraphina',
+    description: 'A little girl who keeps dragons: she calls them, rides them and talks to them.',
+    arena: 'volcano',
+    good: {
+      displayName: 'Seraphina', look: 'a little girl with wild red hair in a green tunic, a tiny dragon on her shoulder',
+      palette: [0x2ec27e, 0xff7b3a], glyph: '🐉', style: 'hover', speed: 170, size: 1, hp: 100,
+      abilities: [
+        ab('dragon_call', 'Dragon Call', 'summon', 12, 0x6ad66a, 2, { minion: 'baby_dragon', count: 2, word: 'pop' }),
+        ab('ember_flick', 'Ember Flick', 'bolt', 2.2, 0xff7b3a, 1, { count: 2, glyph: '🔥', word: 'hot' }),
+        ab('wing_gust', 'Wing Gust', 'cone', 5, 0xbaffc9, 2, { word: 'fan' }),
+        ab('scale_shield', 'Scale Shield', 'shield', 10, 0x2ec27e, 1, { duration: 4 }),
+      ],
+      ultimate: ab('dragon_parade', 'Dragon Parade', 'summon', 0, 0xff7b3a, 3, { minion: 'baby_dragon', count: 6 }),
+      taunts: [
+        { key: 'dragons', text: 'Dragons, to me!' },
+        { key: 'roar', text: 'My dragons say hello!' },
+        { key: 'fly', text: 'Up we fly!' },
+        { key: 'friends', text: 'Dragons are my friends!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Seraphina', look: 'a girl in a dark hooded cloak riding a swarm of shadow dragons, glowing orange eyes',
+      palette: [0x1a3a2a, 0xff4a1a], glyph: '🐲', style: 'fly', speed: 190, size: 1, hp: 140,
+      abilities: [
+        ab('shadow_dragons', 'Shadow Dragons', 'summon', 10, 0x2a5a3a, 2, { minion: 'baby_dragon', count: 3 }),
+        ab('fire_rain', 'Fire Rain', 'rain', 7, 0xff4a1a, 2, { count: 12, glyph: '🔥' }),
+        ab('tail_whip', 'Tail Whip', 'spin', 6, 0x2a5a3a, 2),
+      ],
+      ultimate: ab('dragon_swarm', 'Dragon Swarm', 'rain', 0, 0xff4a1a, 3, { count: 26, glyph: '🐉', color2: 0x2a5a3a }),
+      taunts: [
+        { key: 'mine', text: 'All dragons obey me!' },
+        { key: 'hungry', text: 'My dragons are hungry!' },
+        { key: 'burn', text: 'Toasty time!' },
+        { key: 'swarm', text: 'Swarm them, dragons!' },
+      ],
+    },
+    counter: {
+      id: 'treats', name: 'Dragon Treats', glyph: '🍪', look: 'a basket of glowing dragon cookies',
+      how: 'calm', words: ['cup', 'bun', 'yum'],
+    },
+  },
+  {
+    id: 'dada_matt',
+    description: 'A goofy dad wizard with a bottomless bag of dad jokes and a magic spatula.',
+    arena: 'kitchen',
+    good: {
+      displayName: 'Dada Matt', look: 'a tall smiling dad with glasses and a wizard hat, holding a glowing spatula',
+      palette: [0x3a86ff, 0xffbe0b], glyph: '🧙', style: 'hover', speed: 160, size: 1.1, hp: 110,
+      abilities: [
+        ab('pancake_toss', 'Pancake Toss', 'bolt', 2.4, 0xffbe0b, 1, { count: 3, glyph: '🥞', word: 'pop' }),
+        ab('dad_joke', 'Dad Joke', 'polymorph', 9, 0xff9ad5, 2, { status: 'stun', duration: 2.5, word: 'bam' }),
+        ab('tickle_zap', 'Tickle Lightning', 'lightning', 6, 0x9ad8ff, 2, { count: 2, word: 'zap' }),
+        ab('dad_shield', 'Dad Shield', 'shield', 10, 0x3a86ff, 1, { duration: 4 }),
+      ],
+      ultimate: ab('breakfast_storm', 'Breakfast Storm', 'rain', 0, 0xffbe0b, 3, { count: 30, glyph: '🥞', color2: 0xff6a3a }),
+      taunts: [
+        { key: 'joke', text: 'Want to hear a joke?' },
+        { key: 'pancake', text: 'Pancakes for everyone!' },
+        { key: 'dad', text: 'Dad power, go!' },
+        { key: 'oops', text: 'I meant to do that!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Dada Matt', look: 'the same dad with a twirly villain moustache and a cape, holding a joke book of doom',
+      palette: [0x1a2a5a, 0xc8ff3a], glyph: '🦹', style: 'blink', speed: 180, size: 1.1, hp: 150,
+      abilities: [
+        ab('pun_bots', 'Pun Bots', 'summon', 10, 0xb0b8c8, 2, { minion: 'joke_bot', count: 3 }),
+        ab('broccoli', 'Broccoli Barrage', 'bolt', 2.6, 0x4aa62a, 1, { count: 4, glyph: '🥦' }),
+        ab('chore_beam', 'Chore Beam', 'beam', 6, 0xc8ff3a, 2),
+      ],
+      ultimate: ab('dad_joke_avalanche', 'Dad Joke Avalanche', 'rain', 0, 0xc8ff3a, 3, { count: 28, glyph: '😆', color2: 0x1a2a5a }),
+      taunts: [
+        { key: 'bed', text: 'Bedtime is now!' },
+        { key: 'veggies', text: 'Eat your veggies!' },
+        { key: 'joke', text: 'Here comes a bad joke!' },
+        { key: 'ha', text: 'I am so funny!' },
+      ],
+    },
+    counter: {
+      id: 'earmuffs', name: 'Magic Earmuffs', glyph: '🎧', look: 'fluffy rainbow earmuffs that glow',
+      how: 'block', words: ['hat', 'cap', 'hush'],
+    },
+  },
+  {
+    id: 'dada_jason',
+    description: 'A big-hearted builder knight with a giant hammer who builds walls and towers in a blink.',
+    arena: 'castle',
+    good: {
+      displayName: 'Dada Jason', look: 'a broad-shouldered dad in builder armour with a huge friendly hammer',
+      palette: [0xff8c42, 0x4a4a5a], glyph: '🔨', style: 'twirl', speed: 200, size: 1.2, hp: 130,
+      abilities: [
+        ab('hammer_spin', 'Hammer Spin', 'spin', 5, 0xff8c42, 2, { word: 'pow', shout: true }),
+        ab('brick_wall', 'Brick Wall', 'shield', 10, 0xc8643a, 1, { duration: 4, word: 'big' }),
+        ab('nail_storm', 'Nail Storm', 'bolt', 2.6, 0xc8c8d8, 1, { count: 5, glyph: '🔩' }),
+        ab('ground_pound', 'Ground Pound', 'slam', 7, 0xff8c42, 3, { word: 'bam', shout: true }),
+      ],
+      ultimate: ab('tower_drop', 'Tower Drop', 'rain', 0, 0xc8643a, 3, { count: 20, glyph: '🧱', color2: 0xff8c42 }),
+      taunts: [
+        { key: 'build', text: 'Let me build that!' },
+        { key: 'strong', text: 'Strong like a castle!' },
+        { key: 'hammer', text: 'Hammer time!' },
+        { key: 'got', text: 'I got you, buddy!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Dada Jason', look: 'a builder in spiky black armour with a hammer that crackles purple',
+      palette: [0x2a2a3a, 0xb04aff], glyph: '⚒️', style: 'stomp', speed: 120, size: 1.4, hp: 170,
+      abilities: [
+        ab('wreck', 'Wrecking Spin', 'spin', 5, 0xb04aff, 2),
+        ab('brick_rain', 'Brick Rain', 'rain', 7, 0xc8643a, 2, { count: 12, glyph: '🧱' }),
+        ab('quake', 'Quake', 'slam', 6, 0xb04aff, 3),
+      ],
+      ultimate: ab('mega_hammer', 'Mega Hammer Quake', 'wave', 0, 0xb04aff, 3, { color2: 0x2a2a3a }),
+      taunts: [
+        { key: 'smash', text: 'Smash it all!' },
+        { key: 'mess', text: 'What a big mess!' },
+        { key: 'wall', text: 'No more walls for you!' },
+        { key: 'boom', text: 'Boom goes the hammer!' },
+      ],
+    },
+    counter: {
+      id: 'pillow_fort', name: 'Pillow Fort', glyph: '🏰', look: 'a wobbly fort made of fluffy pillows, glowing softly',
+      how: 'block', words: ['bed', 'box', 'soft'],
+    },
+  },
+  {
+    id: 'elsa',
+    description: 'An ice sorceress who grows crystal towers out of the ground and sculpts snow helpers.',
+    arena: 'ice',
+    good: {
+      displayName: 'Elsa', look: 'a tall young sorceress with a long silver braid, robes of frost crystals, original design',
+      palette: [0x7cc7ff, 0xe8f6ff], glyph: '❄️', style: 'hover', speed: 160, size: 1, hp: 100,
+      abilities: [
+        ab('ice_shard', 'Ice Shards', 'bolt', 2.2, 0xaee6ff, 1, { count: 4, glyph: '❄️', word: 'ice' }),
+        ab('deep_freeze', 'Deep Freeze', 'freeze', 8, 0x7cc7ff, 2, { status: 'freeze', duration: 3, word: 'zip' }),
+        ab('snow_buddies', 'Snow Buddies', 'summon', 12, 0xe8f6ff, 2, { minion: 'snow_golem', count: 2, word: 'big' }),
+        ab('crystal_spire', 'Crystal Spire', 'slam', 6, 0xaee6ff, 2),
+      ],
+      ultimate: ab('blizzard', 'Blizzard Crown', 'rain', 0, 0xe8f6ff, 3, { count: 34, glyph: '❄️', color2: 0x7cc7ff }),
+      taunts: [
+        { key: 'cold', text: 'The cold is my friend!' },
+        { key: 'freeze', text: 'Freeze right there!' },
+        { key: 'snow', text: 'Let it snow!' },
+        { key: 'sister', text: 'Ready, little sister?' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Elsa', look: 'an ice sorceress in jagged black-blue crystal armour, eyes glowing pale blue',
+      palette: [0x1a2a5a, 0x5ad8ff], glyph: '🧊', style: 'blink', speed: 170, size: 1.05, hp: 140,
+      abilities: [
+        ab('icicle_rain', 'Icicle Rain', 'rain', 6, 0x5ad8ff, 2, { count: 14, glyph: '🧊' }),
+        ab('flash_freeze', 'Flash Freeze', 'freeze', 7, 0x5ad8ff, 2, { status: 'freeze', duration: 3 }),
+        ab('frost_beam', 'Frost Beam', 'beam', 5, 0x9aeaff, 2),
+      ],
+      ultimate: ab('eternal_winter', 'Eternal Winter', 'wave', 0, 0xbff0ff, 3, { color2: 0x1a2a5a, status: 'freeze' }),
+      taunts: [
+        { key: 'winter', text: 'Winter forever!' },
+        { key: 'chill', text: 'Chill out!' },
+        { key: 'cold', text: 'Brr! So cold!' },
+        { key: 'ice', text: 'Everything turns to ice!' },
+      ],
+    },
+    counter: {
+      id: 'sun_torch', name: 'Sun Torch', glyph: '🔥', look: 'a golden torch with a tiny sun burning in it',
+      how: 'restore', words: ['sun', 'hat', 'hot'],
+    },
+  },
+  {
+    id: 'anna',
+    description: 'The ice sorceress\'s brave little sister: a sword-and-shield adventurer who never gives up.',
+    arena: 'ice',
+    good: {
+      displayName: 'Anna', look: 'a freckled young adventurer with two red braids, a round wooden shield and a short sword, original design',
+      palette: [0xe63946, 0x2a9d8f], glyph: '🛡️', style: 'twirl', speed: 230, size: 1, hp: 110,
+      abilities: [
+        ab('shield_bash', 'Shield Bash', 'dash', 4, 0xe63946, 2, { word: 'bam', shout: true }),
+        ab('sword_twirl', 'Sword Twirl', 'spin', 5, 0xffd6a5, 2, { word: 'pow', shout: true }),
+        ab('brave_shout', 'Brave Shout', 'heal', 10, 0xffb703, 1, { word: 'hug' }),
+        ab('leap', 'Big Leap', 'slam', 6, 0x2a9d8f, 2, { word: 'hop' }),
+      ],
+      ultimate: ab('never_give_up', 'Never Give Up', 'spin', 0, 0xffb703, 3, { count: 6, color2: 0xe63946 }),
+      taunts: [
+        { key: 'brave', text: 'I am not scared!' },
+        { key: 'charge', text: 'Charge!' },
+        { key: 'sister', text: 'Sisters forever!' },
+        { key: 'again', text: 'Again! Again!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Anna', look: 'the brave sister under a frost curse: pale blue skin, a cracked ice shield, angry',
+      palette: [0x3a1a2a, 0x7cc7ff], glyph: '⚔️', style: 'twirl', speed: 240, size: 1.05, hp: 140,
+      abilities: [
+        ab('frost_bash', 'Frost Bash', 'dash', 4, 0x7cc7ff, 2),
+        ab('cold_twirl', 'Cold Twirl', 'spin', 5, 0x7cc7ff, 2),
+        ab('ice_wall', 'Ice Wall', 'shield', 9, 0x7cc7ff, 1, { duration: 4 }),
+      ],
+      ultimate: ab('frozen_charge', 'Frozen Heart Charge', 'dash', 0, 0x9aeaff, 3, { count: 4, color2: 0x3a1a2a }),
+      taunts: [
+        { key: 'cold', text: 'My heart is ice!' },
+        { key: 'alone', text: 'I fight alone!' },
+        { key: 'charge', text: 'Out of my way!' },
+        { key: 'sword', text: 'Try and stop me!' },
+      ],
+    },
+    counter: {
+      id: 'locket', name: 'Friendship Locket', glyph: '💖', look: 'a heart locket glowing warm pink',
+      how: 'calm', words: ['hug', 'pet', 'love'],
+    },
+  },
+  {
+    id: 'jasmine',
+    description: 'A desert princess who rides a flying carpet and commands the wind and the sand.',
+    arena: 'desert',
+    good: {
+      displayName: 'Jasmine', look: 'a desert princess in teal silks with a jewelled headband, riding a patterned flying carpet, original design',
+      palette: [0x1fb5a8, 0xffc857], glyph: '🧞', style: 'fly', speed: 220, size: 1, hp: 100,
+      abilities: [
+        ab('wind_fan', 'Wind Fan', 'cone', 4, 0xbaf2ff, 2, { word: 'fan' }),
+        ab('carpet_swoop', 'Carpet Swoop', 'dash', 5, 0xffc857, 2, { word: 'zip' }),
+        ab('dust_devils', 'Dust Devils', 'summon', 12, 0xe8c890, 2, { minion: 'dust_devil', count: 3, word: 'pop' }),
+        ab('star_jewels', 'Star Jewels', 'bolt', 2.4, 0xff5ab4, 1, { count: 3, glyph: '💎' }),
+      ],
+      ultimate: ab('desert_wind', 'Desert Wind', 'wave', 0, 0xffc857, 3, { color2: 0x1fb5a8 }),
+      taunts: [
+        { key: 'fly', text: 'Hop on my carpet!' },
+        { key: 'wind', text: 'Feel the wind!' },
+        { key: 'whoosh', text: 'Whoosh! Too fast!' },
+        { key: 'jewels', text: 'Sparkle time!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Jasmine', look: 'a princess in dark purple silks on a carpet of black smoke, a sandstorm swirling behind her',
+      palette: [0x3a1a4a, 0xe8c890], glyph: '🌪️', style: 'fly', speed: 230, size: 1.05, hp: 140,
+      abilities: [
+        ab('sand_blast', 'Sand Blast', 'cone', 4, 0xe8c890, 2),
+        ab('smoke_carpet', 'Smoke Carpet', 'dash', 5, 0x5a3a6a, 2),
+        ab('whirlwinds', 'Whirlwinds', 'summon', 11, 0xe8c890, 2, { minion: 'dust_devil', count: 3 }),
+      ],
+      ultimate: ab('sandstorm', 'Great Sandstorm', 'wave', 0, 0xe8c890, 3, { color2: 0x3a1a4a }),
+      taunts: [
+        { key: 'sand', text: 'Sand in your shoes!' },
+        { key: 'storm', text: 'Here comes the storm!' },
+        { key: 'catch', text: 'You can not catch me!' },
+        { key: 'dust', text: 'Dusty, dusty!' },
+      ],
+    },
+    counter: {
+      id: 'wind_fan', name: 'Wind Fan', glyph: '🌬️', look: 'a giant painted fan that blows a rainbow breeze',
+      how: 'reflect', words: ['fan', 'map', 'fan'],
+    },
+  },
+  {
+    id: 'ozymandias',
+    description: 'A sand-pharaoh who raises colossal statues of himself from the dunes.',
+    arena: 'desert',
+    good: {
+      displayName: 'Ozymandias', look: 'a friendly old pharaoh with a golden mask pushed up on his head, a staff of sand',
+      palette: [0xd9a441, 0x2a5ab4], glyph: '🏺', style: 'stomp', speed: 90, size: 1.3, hp: 140,
+      abilities: [
+        ab('sand_spear', 'Sand Spears', 'bolt', 2.6, 0xe8c890, 1, { count: 3, glyph: '🏺' }),
+        ab('statue_friend', 'Statue Friend', 'summon', 13, 0xd9b26f, 2, { minion: 'colossus', count: 1, word: 'big' }),
+        ab('dune_slam', 'Dune Slam', 'slam', 6, 0xd9a441, 3, { word: 'bam' }),
+        ab('sun_disc', 'Sun Disc', 'beam', 6, 0xffd23f, 2, { word: 'sun' }),
+      ],
+      ultimate: ab('pyramid', 'Pyramid Power', 'lightning', 0, 0xffd23f, 3, { count: 8, color2: 0xd9a441 }),
+      taunts: [
+        { key: 'look', text: 'Look upon my statues!' },
+        { key: 'sand', text: 'Rise, sand!' },
+        { key: 'king', text: 'King of the desert!' },
+        { key: 'old', text: 'I am very, very old!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Ozymandias', look: 'a towering pharaoh of cracked black sandstone with glowing gold eyes',
+      palette: [0x4a3a1a, 0xffcc33], glyph: '🗿', style: 'stomp', speed: 60, size: 1.7, hp: 200,
+      abilities: [
+        ab('colossi', 'Rise, Colossi', 'summon', 11, 0xd9b26f, 3, { minion: 'colossus', count: 2 }),
+        ab('scarab_swarm', 'Scarab Swarm', 'summon', 9, 0x2ac7a0, 2, { minion: 'scarab', count: 5 }),
+        ab('sand_quake', 'Sand Quake', 'slam', 6, 0xd9b26f, 3),
+      ],
+      ultimate: ab('colossus_march', 'March of the Colossi', 'wave', 0, 0xd9b26f, 3, { color2: 0x4a3a1a }),
+      taunts: [
+        { key: 'despair', text: 'Look at me, and tremble!' },
+        { key: 'kneel', text: 'Bow to the pharaoh!' },
+        { key: 'statues', text: 'My statues are huge!' },
+        { key: 'sand', text: 'Sand forever!' },
+      ],
+    },
+    counter: {
+      id: 'rain_cloud', name: 'Rain Cloud', glyph: '🌧️', look: 'a fluffy grey cloud in a jar, ready to rain',
+      how: 'block', words: ['cup', 'tub', 'wet'],
+    },
+  },
+  {
+    id: 'jormungandr',
+    description: 'The world serpent, so long it coils around the whole arena, hungry enough to swallow the sun.',
+    arena: 'sea',
+    good: {
+      displayName: 'Jormungandr', sayName: 'Yormungander', look: 'a huge friendly green sea serpent with kind yellow eyes, wearing a tiny crown',
+      palette: [0x2aa66a, 0x7ad9ff], glyph: '🐍', style: 'slither', speed: 150, size: 1.4, hp: 150,
+      abilities: [
+        ab('tidal_spit', 'Tidal Spit', 'bolt', 2.4, 0x7ad9ff, 1, { count: 3, glyph: '💧' }),
+        ab('snake_pals', 'Snake Pals', 'summon', 12, 0x2aa66a, 2, { minion: 'mini_serpent', count: 3, word: 'pop' }),
+        ab('tail_spin', 'Tail Spin', 'spin', 5, 0x2aa66a, 2, { word: 'zip' }),
+        ab('hug_coil', 'Big Hug', 'coil', 12, 0x2aa66a, 2, { duration: 3, word: 'hug' }),
+      ],
+      ultimate: ab('sea_wave', 'World Wave', 'wave', 0, 0x7ad9ff, 3, { color2: 0x2aa66a }),
+      taunts: [
+        { key: 'long', text: 'I am very, very long!' },
+        { key: 'sea', text: 'The sea is my home!' },
+        { key: 'hiss', text: 'Ssso fun!' },
+        { key: 'round', text: 'Round and round I go!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Jormungandr', sayName: 'Evil Yormungander', look: 'a colossal black and purple world serpent with glowing red eyes, coiled around everything',
+      palette: [0x1a1a3a, 0xa0ff3a], glyph: '🐍', style: 'slither', speed: 140, size: 1.8, hp: 220,
+      abilities: [
+        ab('crushing_coil', 'Crushing Coil', 'coil', 9, 0x3a2a5a, 3, { duration: 3 }),
+        ab('venom_rain', 'Venom Rain', 'rain', 7, 0xa0ff3a, 2, { count: 14, glyph: '💧' }),
+        ab('serpent_spawn', 'Serpent Spawn', 'summon', 10, 0x2aa66a, 2, { minion: 'mini_serpent', count: 4 }),
+      ],
+      ultimate: ab('swallow_sun', 'Swallow the Sun', 'eclipse', 0, 0x1a1a3a, 3, { color2: 0xffd23f }),
+      taunts: [
+        { key: 'world', text: 'I wrap around the world!' },
+        { key: 'hungry', text: 'So hungry for the sun!' },
+        { key: 'squeeze', text: 'Squeeze, squeeze!' },
+        { key: 'dark', text: 'Soon it will be dark!' },
+      ],
+    },
+    counter: {
+      id: 'sun_lamp', name: 'Sun Lamp', glyph: '💡', look: 'a brass lantern holding a little captured sun',
+      how: 'restore', words: ['sun', 'pot', 'lit'],
+    },
+  },
+  {
+    id: 'smaug',
+    description: 'A gold-hoarding dragon who breathes fire and buries enemies under avalanches of coins.',
+    arena: 'cave',
+    good: {
+      displayName: 'Smaug', look: 'a big red dragon with a gold tummy, sitting on coins, grinning and generous',
+      palette: [0xd62828, 0xffcc33], glyph: '🐉', style: 'fly', speed: 160, size: 1.5, hp: 160,
+      abilities: [
+        ab('fire_breath', 'Fire Breath', 'cone', 4, 0xff7b00, 2, { color2: 0xffd23f, word: 'hot' }),
+        ab('coin_shower', 'Coin Shower', 'rain', 8, 0xffcc33, 2, { count: 14, glyph: '🟡', word: 'pop' }),
+        ab('wing_slam', 'Wing Slam', 'slam', 6, 0xd62828, 3, { word: 'bam' }),
+        ab('coin_golems', 'Coin Golems', 'summon', 13, 0xffcc33, 2, { minion: 'gold_golem', count: 2 }),
+      ],
+      ultimate: ab('gift_avalanche', 'Gift Avalanche', 'rain', 0, 0xffcc33, 3, { count: 30, glyph: '🟡', color2: 0xff7b00 }),
+      taunts: [
+        { key: 'gold', text: 'Want some gold?' },
+        { key: 'fire', text: 'Warm and toasty!' },
+        { key: 'roar', text: 'Roar! Just kidding!' },
+        { key: 'shiny', text: 'Ooh, shiny!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Smaug', look: 'a huge greedy dragon with dark red scales and gold-crusted armour, smoke curling from his nose',
+      palette: [0x5a0a0a, 0xffcc33], glyph: '🐲', style: 'fly', speed: 150, size: 1.8, hp: 220,
+      abilities: [
+        ab('inferno', 'Inferno Breath', 'cone', 4, 0xff4a00, 3, { color2: 0xffd23f }),
+        ab('gold_golems', 'Gold Guards', 'summon', 10, 0xffcc33, 2, { minion: 'gold_golem', count: 3 }),
+        ab('tail_quake', 'Tail Quake', 'slam', 6, 0x5a0a0a, 3),
+      ],
+      ultimate: ab('gold_avalanche', 'Gold Avalanche', 'rain', 0, 0xffcc33, 3, { count: 40, glyph: '🟡', color2: 0xff4a00 }),
+      taunts: [
+        { key: 'mine', text: 'My gold! All mine!' },
+        { key: 'fire', text: 'I am fire and gold!' },
+        { key: 'thief', text: 'Who touched my gold?' },
+        { key: 'burn', text: 'Feel my flames!' },
+      ],
+    },
+    counter: {
+      id: 'frost_shield', name: 'Frost Shield', glyph: '🛡️', look: 'a round shield of blue ice with a snowflake crest',
+      how: 'block', words: ['cup', 'net', 'ice'],
+    },
+  },
+  {
+    id: 'scar',
+    description: 'A robot with a laser grid, rocket fists, and a transformation into a giant battle mech.',
+    arena: 'factory',
+    good: {
+      displayName: 'Scar', look: 'a friendly chunky robot with one scratched eye plate, big rocket fists and a smile screen',
+      palette: [0x8d99ae, 0x00f5d4], glyph: '🤖', style: 'march', speed: 140, size: 1.2, hp: 140,
+      abilities: [
+        ab('rocket_fist', 'Rocket Fist', 'bolt', 3, 0xff6a3a, 2, { glyph: '🚀', homing: true, word: 'pow' }),
+        ab('drone_pals', 'Drone Pals', 'summon', 12, 0x9aa6b8, 2, { minion: 'drone', count: 3, word: 'zip' }),
+        ab('laser_eye', 'Laser Eye', 'beam', 5, 0x00f5d4, 2, { word: 'zap' }),
+        ab('mega_mode', 'Mega Mode', 'grow', 14, 0x00f5d4, 2, { duration: 5, word: 'big' }),
+      ],
+      ultimate: ab('friend_grid', 'Laser Light Show', 'grid', 0, 0x00f5d4, 3, { color2: 0xff5ab4 }),
+      taunts: [
+        { key: 'beep', text: 'Beep boop! Hello!' },
+        { key: 'rocket', text: 'Rocket fist, go!' },
+        { key: 'scan', text: 'Scanning for fun!' },
+        { key: 'power', text: 'Power level max!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Scar', look: 'a menacing black robot with a scarred red eye, rocket fists, and armour plates that unfold into a giant mech',
+      palette: [0x2b2d42, 0xff0054], glyph: '🦾', style: 'march', speed: 120, size: 1.4, hp: 210,
+      abilities: [
+        ab('rocket_fists', 'Rocket Fists', 'bolt', 3, 0xff0054, 2, { count: 2, glyph: '🚀', homing: true }),
+        ab('drone_swarm', 'Drone Swarm', 'summon', 10, 0x9aa6b8, 2, { minion: 'drone', count: 4 }),
+        ab('transform', 'Transform', 'grow', 12, 0xff0054, 3, { duration: 6 }),
+      ],
+      ultimate: ab('laser_grid', 'Laser Grid', 'grid', 0, 0xff0054, 3, { color2: 0xffcc33 }),
+      taunts: [
+        { key: 'target', text: 'Target found!' },
+        { key: 'resist', text: 'Beep! You will lose!' },
+        { key: 'transform', text: 'Transform! Bigger!' },
+        { key: 'lasers', text: 'Lasers, on!' },
+      ],
+    },
+    counter: {
+      id: 'off_remote', name: 'Off Remote', glyph: '📱', look: 'a big chunky remote control with one giant red OFF button',
+      how: 'shutdown', words: ['box', 'pen', 'off'],
+    },
+  },
+  {
+    id: 'moriarty',
+    description: 'A trickster who makes clones of himself, teleports, and leaves card traps everywhere.',
+    arena: 'city',
+    good: {
+      displayName: 'Moriarty', look: 'a lanky magician in a green suit and top hat, shuffling glowing cards, winking',
+      palette: [0x2d6a4f, 0xf4a261], glyph: '🎩', style: 'blink', speed: 200, size: 1, hp: 100,
+      abilities: [
+        ab('card_throw', 'Card Throw', 'bolt', 2.0, 0xf4a261, 1, { count: 4, glyph: '🃏', word: 'zip' }),
+        ab('decoys', 'Decoys', 'clones', 10, 0x2d6a4f, 2, { count: 3, word: 'pop' }),
+        ab('trick_trap', 'Trick Trap', 'trap', 8, 0xf4a261, 2, { count: 3 }),
+        ab('ta_da', 'Ta-da Blink', 'teleport', 5, 0x95d5b2, 2, { word: 'hop' }),
+      ],
+      ultimate: ab('grand_finale', 'Grand Finale', 'rain', 0, 0xf4a261, 3, { count: 30, glyph: '🃏', color2: 0x95d5b2 }),
+      taunts: [
+        { key: 'trick', text: 'Pick a card!' },
+        { key: 'where', text: 'Where did I go?' },
+        { key: 'magic', text: 'Ta-da!' },
+        { key: 'which', text: 'Which one is me?' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Moriarty', look: 'a sly trickster in a black coat and top hat, a grin full of secrets, cards floating around him',
+      palette: [0x1b1b2f, 0x9d4edd], glyph: '🃏', style: 'blink', speed: 220, size: 1, hp: 150,
+      abilities: [
+        ab('clone_army', 'Clone Army', 'clones', 8, 0x9d4edd, 2, { count: 4 }),
+        ab('card_traps', 'Card Traps', 'trap', 7, 0x9d4edd, 2, { count: 4 }),
+        ab('vanish', 'Vanish', 'teleport', 4, 0x9d4edd, 2),
+        ab('cards', 'Card Soldiers', 'summon', 11, 0xd02040, 2, { minion: 'card_soldier', count: 4 }),
+      ],
+      ultimate: ab('hall_of_mirrors', 'Hall of Clones', 'clones', 0, 0x9d4edd, 3, { count: 8, color2: 0x1b1b2f }),
+      taunts: [
+        { key: 'catch', text: 'Catch me if you can!' },
+        { key: 'which', text: 'Which one is the real me?' },
+        { key: 'trap', text: 'Watch your step!' },
+        { key: 'clever', text: 'I am too clever!' },
+      ],
+    },
+    counter: {
+      id: 'magnifier', name: 'Magnifying Glass', glyph: '🔍', look: 'a big brass magnifying glass that shines a bright truth-light',
+      how: 'reveal', words: ['map', 'pen', 'see'],
+    },
+  },
+  {
+    id: 'bavmorda',
+    description: 'A witch queen who summons waves of skeletons and polymorphs heroes into pigs.',
+    arena: 'castle',
+    good: {
+      displayName: 'Bavmorda', look: 'a kindly old witch with a crooked hat full of flowers, a staff with a glowing pink gem',
+      palette: [0x7b2cbf, 0x80ffdb], glyph: '🧹', style: 'hover', speed: 150, size: 1, hp: 100,
+      abilities: [
+        ab('flower_bolt', 'Flower Bolts', 'bolt', 2.2, 0xff8fab, 1, { count: 3, glyph: '🌸', word: 'pop' }),
+        ab('piggy_spell', 'Piggy Spell', 'polymorph', 9, 0xff9ad5, 2, { status: 'pig', duration: 3, word: 'zap' }),
+        ab('broom_dash', 'Broom Dash', 'dash', 5, 0x80ffdb, 2, { word: 'zip' }),
+        ab('potion', 'Healing Potion', 'heal', 10, 0x80ffdb, 1, { word: 'hug' }),
+      ],
+      ultimate: ab('garden', 'Magic Garden', 'rain', 0, 0xff8fab, 3, { count: 30, glyph: '🌸', color2: 0x80ffdb }),
+      taunts: [
+        { key: 'brew', text: 'Bubble, bubble!' },
+        { key: 'pig', text: 'Oink oink! Hee hee!' },
+        { key: 'broom', text: 'Zoom on my broom!' },
+        { key: 'magic', text: 'A little magic!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Bavmorda', look: 'a tall dark witch queen with a horned crown, a black staff with a green flame, skeletons at her feet',
+      palette: [0x240046, 0x39ff14], glyph: '🧙‍♀️', style: 'hover', speed: 140, size: 1.2, hp: 190,
+      abilities: [
+        ab('skeleton_wave', 'Skeleton Wave', 'summon', 8, 0xf2f0e6, 2, { minion: 'skeleton', count: 5 }),
+        ab('pig_curse', 'Pig Curse', 'polymorph', 7, 0x39ff14, 2, { status: 'pig', duration: 3.5 }),
+        ab('dark_bolts', 'Dark Bolts', 'bolt', 2.4, 0x39ff14, 2, { count: 3, homing: true }),
+      ],
+      ultimate: ab('all_pigs', 'Everybody Pigs!', 'polymorph', 0, 0x39ff14, 3, { status: 'pig', duration: 6, count: 6 }),
+      taunts: [
+        { key: 'pigs', text: 'You will all be pigs!' },
+        { key: 'rise', text: 'Rise, my skeletons!' },
+        { key: 'kneel', text: 'Bow to the queen!' },
+        { key: 'cackle', text: 'Oink, little hero!' },
+      ],
+    },
+    counter: {
+      id: 'mirror', name: 'Magic Mirror', glyph: '💠', look: 'a silver hand mirror that flashes bright light',
+      how: 'reflect', words: ['sun', 'pin', 'flip'],
+    },
+  },
+];
+
+export const CHARACTER_BY_ID: Record<string, CharacterSpec> = Object.fromEntries(ROSTER.map((c) => [c.id, c]));
+
+/** Team combos: when both are on the hero side, every so often they fire this together. */
+export const COMBOS: ComboSpec[] = [
+  { pair: ['elsa', 'anna'], ability: ab('sister_storm', 'Sister Storm', 'spin', 16, 0xaee6ff, 3, { count: 5, color2: 0xe63946 }) },
+  { pair: ['seraphina', 'smaug'], ability: ab('dragon_duet', 'Dragon Duet', 'cone', 16, 0xff7b00, 3, { color2: 0x6ad66a }) },
+  { pair: ['jasmine', 'ozymandias'], ability: ab('desert_duo', 'Desert Duo', 'wave', 16, 0xffc857, 3, { color2: 0x1fb5a8 }) },
+  { pair: ['dada_matt', 'dada_jason'], ability: ab('dad_squad', 'Dad Squad', 'slam', 16, 0xff8c42, 3, { color2: 0x3a86ff }) },
+  { pair: ['julia', 'dada_matt'], ability: ab('high_five', 'Mega High Five', 'lightning', 16, 0xffd23f, 3, { count: 6, color2: 0x3a86ff }) },
+  { pair: ['julia', 'seraphina'], ability: ab('best_friends', 'Best Friend Blast', 'beam', 16, 0xff5ab4, 3, { color2: 0x2ec27e }) },
+];
+
+/** Any two heroes without a written combo still team up with this. */
+export const DEFAULT_COMBO = ab('team_blast', 'Team Star Blast', 'beam', 18, 0xffd23f, 3, { color2: 0xff5ab4 });
+
+export function comboFor(a: string, b: string): AbilitySpec {
+  const hit = COMBOS.find((c) => (c.pair[0] === a && c.pair[1] === b) || (c.pair[0] === b && c.pair[1] === a));
+  return hit?.ability ?? DEFAULT_COMBO;
+}
+
+/** Arenas: id → colours and a glyph strip for the placeholder painter, plus a look for art prompts. */
+export const ARENAS: Record<string, { name: string; sky: [number, number]; ground: number; glyph: string; look: string }> = {
+  meadow: { name: 'Sunny Meadow', sky: [0x8ad7ff, 0xe8f8ff], ground: 0x6ac46a, glyph: '🌼', look: 'a bright flower meadow with rolling hills' },
+  volcano: { name: 'Dragon Volcano', sky: [0x3a0a1a, 0xff7b3a], ground: 0x4a2a2a, glyph: '🌋', look: 'a smoking volcano with lava rivers and dragon nests' },
+  kitchen: { name: 'Giant Kitchen', sky: [0xfff1d6, 0xffd6a5], ground: 0xc8a07a, glyph: '🍳', look: 'a cartoon kitchen seen from a toy\'s height, giant pans and spoons' },
+  castle: { name: 'Castle Courtyard', sky: [0x5a6aa0, 0xc8d0ff], ground: 0x8a8a9a, glyph: '🏰', look: 'a stone castle courtyard with banners and torches' },
+  ice: { name: 'Crystal Ice Palace', sky: [0x9ad8ff, 0xf0faff], ground: 0xd8f0ff, glyph: '🏔️', look: 'an ice palace of glittering crystal spires and snow' },
+  desert: { name: 'Golden Dunes', sky: [0xffb15a, 0xffe8b0], ground: 0xe8c890, glyph: '🐪', look: 'golden sand dunes with half-buried statues and a pyramid' },
+  sea: { name: 'Serpent Sea', sky: [0x2a5aa0, 0x9ad8ff], ground: 0x2a7ab4, glyph: '🌊', look: 'a stormy sea with rocky islands and huge waves' },
+  cave: { name: 'Treasure Cave', sky: [0x1a1a2a, 0x5a4a2a], ground: 0x8a6a2a, glyph: '💰', look: 'a cave piled high with gold coins and jewels, lit by lava cracks' },
+  factory: { name: 'Robot Factory', sky: [0x2a2d42, 0x6a7a9a], ground: 0x4a4a5a, glyph: '⚙️', look: 'a neon robot factory with conveyor belts and sparks' },
+  city: { name: 'Foggy City', sky: [0x3a4a5a, 0xa0b0c0], ground: 0x5a5a6a, glyph: '🎡', look: 'a foggy old city street at night with lamp posts and a fairground' },
+};

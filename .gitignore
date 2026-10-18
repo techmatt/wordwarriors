@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.local
+
+# Playwright output: regenerated every run.
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Screenshots a test or a session took for a look. Evidence belongs in a report,
+# not in history; an image may be committed only where a test reads it back.
+/tests/screenshots/
+
+# Scratch space for one session's working files.
+/scratch/
+
+# Logs
+*.log
+
+# Editors / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+
+# NOTE: public/voice/ (generated audio + manifest + .build-cache.json) and
+# public/art/ (placeholder and real art) are committed on purpose: the game must
+# run from a fresh clone with no network and no generator step.
+# Reports do not live in this repo — see CLAUDE.md, "Reports".

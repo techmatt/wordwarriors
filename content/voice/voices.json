@@ -1,0 +1,32 @@
+{
+  "provider": "edge-tts",
+  "speakers": {
+    "phonics": { "voice": "en-US-GuyNeural", "rate": "-20%" },
+    "julia": { "voice": "en-US-AnaNeural", "rate": "-5%", "pitch": "+10Hz" },
+    "julia_evil": { "voice": "en-US-AnaNeural", "rate": "-10%", "pitch": "-25Hz" },
+    "seraphina": { "voice": "en-GB-MaisieNeural", "rate": "-5%" },
+    "seraphina_evil": { "voice": "en-GB-MaisieNeural", "rate": "-10%", "pitch": "-30Hz" },
+    "dada_matt": { "voice": "en-US-GuyNeural", "rate": "-8%" },
+    "dada_matt_evil": { "voice": "en-US-GuyNeural", "rate": "-12%", "pitch": "-25Hz" },
+    "dada_jason": { "voice": "en-US-ChristopherNeural", "rate": "-5%" },
+    "dada_jason_evil": { "voice": "en-US-ChristopherNeural", "rate": "-12%", "pitch": "-25Hz" },
+    "elsa": { "voice": "en-GB-SoniaNeural", "rate": "-8%" },
+    "elsa_evil": { "voice": "en-GB-SoniaNeural", "rate": "-12%", "pitch": "-20Hz" },
+    "anna": { "voice": "en-US-JennyNeural", "rate": "+0%", "pitch": "+15Hz" },
+    "anna_evil": { "voice": "en-US-JennyNeural", "rate": "-8%", "pitch": "-20Hz" },
+    "jasmine": { "voice": "en-IN-NeerjaNeural", "rate": "-5%" },
+    "jasmine_evil": { "voice": "en-IN-NeerjaNeural", "rate": "-10%", "pitch": "-25Hz" },
+    "ozymandias": { "voice": "en-GB-RyanNeural", "rate": "-15%", "pitch": "-10Hz" },
+    "ozymandias_evil": { "voice": "en-GB-RyanNeural", "rate": "-20%", "pitch": "-35Hz" },
+    "jormungandr": { "voice": "en-NZ-MitchellNeural", "rate": "-15%", "pitch": "-10Hz" },
+    "jormungandr_evil": { "voice": "en-NZ-MitchellNeural", "rate": "-22%", "pitch": "-35Hz" },
+    "smaug": { "voice": "en-GB-ThomasNeural", "rate": "-10%", "pitch": "-15Hz" },
+    "smaug_evil": { "voice": "en-GB-ThomasNeural", "rate": "-18%", "pitch": "-40Hz" },
+    "scar": { "voice": "en-US-SteffanNeural", "rate": "-5%", "pitch": "+20Hz" },
+    "scar_evil": { "voice": "en-US-SteffanNeural", "rate": "-12%", "pitch": "-40Hz" },
+    "moriarty": { "voice": "en-IE-ConnorNeural", "rate": "+0%" },
+    "moriarty_evil": { "voice": "en-IE-ConnorNeural", "rate": "-8%", "pitch": "-20Hz" },
+    "bavmorda": { "voice": "en-US-MichelleNeural", "rate": "-8%", "pitch": "+5Hz" },
+    "bavmorda_evil": { "voice": "en-US-MichelleNeural", "rate": "-15%", "pitch": "-35Hz" }
+  }
+}

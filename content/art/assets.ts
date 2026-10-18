@@ -1,0 +1,142 @@
+/**
+ * Every art asset the game loads, by stable id.
+ *
+ * The id is the file name: `public/art/<id>.png`. Real art replaces a
+ * placeholder by overwriting that file, nothing else; the game sizes every
+ * image by `w`×`h` here (fitting, keeping its aspect), so the replacement does
+ * not have to match the placeholder's pixel size. Transparent backgrounds for
+ * everything except arenas and rooms.
+ *
+ * `tools/art/placeholders.ts` paints a placeholder for every entry that has no
+ * file, and repaints only files it painted itself (it marks them). docs/art.md
+ * is generated from this list too, as the brief for AI image prompts.
+ */
+
+import { ARENAS, MINIONS, ROSTER } from '../battle/roster.js';
+import { CVC_WORDS } from '../phonics/words.js';
+
+export type AssetKind = 'character' | 'minion' | 'arena' | 'room' | 'picture' | 'item' | 'prop';
+
+export interface ArtAsset {
+  id: string;
+  kind: AssetKind;
+  /** Intended display size in design pixels (1280×720 screen). */
+  w: number;
+  h: number;
+  /** What the picture should show: the AI art brief. */
+  content: string;
+  /** Placeholder painting hints. */
+  label?: string;
+  glyph?: string;
+  palette?: [number, number];
+  evil?: boolean;
+  draw?: string;
+}
+
+const assets: ArtAsset[] = [];
+
+for (const c of ROSTER) {
+  for (const evil of [false, true]) {
+    const f = evil ? c.evil : c.good;
+    assets.push({
+      id: `char_${c.id}_${evil ? 'evil' : 'good'}`,
+      kind: 'character',
+      w: 200,
+      h: 250,
+      content: `${f.displayName}: ${f.look}. Full body, facing the viewer, cheerful cartoon style for a 4-year-old${evil ? ', villain version: darker palette, mischievous rather than frightening' : ''}. Transparent background.`,
+      label: f.displayName.replace(/^Evil /, '').toUpperCase(),
+      glyph: f.glyph,
+      palette: f.palette,
+      evil,
+    });
+  }
+}
+
+for (const m of Object.values(MINIONS)) {
+  assets.push({
+    id: `minion_${m.id}`,
+    kind: 'minion',
+    w: 140,
+    h: 140,
+    content: `${m.name}: ${m.look}. Small summoned creature, cartoon style, transparent background.`,
+    label: m.name.toUpperCase(),
+    glyph: m.glyph,
+    palette: m.palette,
+  });
+}
+
+for (const [id, a] of Object.entries(ARENAS)) {
+  assets.push({
+    id: `arena_${id}`,
+    kind: 'arena',
+    w: 1280,
+    h: 720,
+    content: `Battle arena background, ${a.name}: ${a.look}. Wide side-on view, open flat ground across the lower 60% for fighters, bright and readable, no characters.`,
+    label: a.name.toUpperCase(),
+    glyph: a.glyph,
+    palette: a.sky,
+  });
+}
+
+const ROOMS: [string, string, string, [number, number]][] = [
+  ['title', 'Title screen backdrop: a heroic sunrise over a castle and a dragon silhouette, room for a big logo in the top half', '🏰', [0x2a1a5a, 0xff9a5a]],
+  ['pick', 'A hall of heroes: a wide stone floor with spotlights where character cards stand', '🎭', [0x3a2a6a, 0x8a6ac8]],
+  ['stones', 'A magic garden with mossy ground where three letter stones stand', '🌿', [0x2a6a4a, 0x9ad8a0]],
+  ['path', 'A riverside path of stepping stones leading to a row of doors on the right', '🚪', [0x3a5a8a, 0xa0c8ff]],
+  ['gallery', 'A sunny museum gallery with pedestals and a hanging banner', '🖼️', [0x8a5a3a, 0xffd8a0]],
+  ['forge', 'A cosy wizard workshop with an anvil, bubbling potions and a glowing forge', '⚒️', [0x5a2a1a, 0xff9a3a]],
+  ['camp', 'A hidden campfire camp in a forest at dusk, a tent, logs to sit on', '🏕️', [0x1a2a3a, 0xff8a3a]],
+  ['victory', 'A victory celebration: fireworks over a castle, confetti, a podium', '🎆', [0x3a1a6a, 0xffd23f]],
+  ['parent', 'A calm plain grown-ups page background, soft paper texture', '📋', [0xf0ece0, 0xffffff]],
+];
+for (const [id, content, glyph, palette] of ROOMS) {
+  assets.push({ id: `room_${id}`, kind: 'room', w: 1280, h: 720, content: `${content}. No text.`, label: '', glyph, palette });
+}
+
+for (const w of CVC_WORDS) {
+  assets.push({
+    id: `pic_${w.word}`,
+    kind: 'picture',
+    w: 200,
+    h: 200,
+    content: `A single clear picture of a ${w.word}, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question.`,
+    ...(w.glyph ? { glyph: w.glyph } : {}),
+    ...(w.draw ? { draw: w.draw } : {}),
+  });
+}
+
+for (const c of ROSTER) {
+  assets.push({
+    id: `item_${c.counter.id}`,
+    kind: 'item',
+    w: 180,
+    h: 180,
+    content: `${c.counter.name}: ${c.counter.look}. A magical item glowing with power, centred, transparent background.`,
+    label: c.counter.name.toUpperCase(),
+    glyph: c.counter.glyph,
+    palette: [0xfff3c4, 0xffb703],
+  });
+}
+
+const PROPS: [string, number, number, string, string, string?][] = [
+  ['stone', 150, 150, 'A round mossy standing stone, flat face for a big letter painted on it by the game. No letter in the art.', ''],
+  ['tile', 120, 120, 'A square stepping-stone tile seen from above, flat face for a letter painted by the game. No letter in the art.', ''],
+  ['door', 170, 230, 'A colourful arched wooden door in a stone frame, closed, with a little window where a picture is shown.', '🚪'],
+  ['pedestal', 190, 110, 'A marble museum pedestal seen side-on.', ''],
+  ['banner', 620, 150, 'A wide hanging cloth banner, blank in the middle for a word painted by the game. No text.', ''],
+  ['gem', 120, 120, 'A big glowing faceted power gem, rainbow sparkles.', '💎'],
+  ['ammo', 120, 120, 'A little wooden crate overflowing with glowing star ammo.', '🌟'],
+  ['pig', 110, 110, 'A cute surprised pink piglet: a hero turned into a pig by a spell.', '🐷'],
+  ['ice_block', 150, 190, 'A clear blue block of ice, empty, see-through, to be drawn over a frozen fighter.', '🧊'],
+  ['card_trap', 80, 80, 'A glowing playing card lying flat on the ground, a trap.', '🃏'],
+  ['sun', 200, 200, 'A big happy cartoon sun.', '☀️'],
+  ['anvil', 260, 170, 'A magic anvil with runes, glowing.', '⚒️'],
+  ['tent', 280, 220, 'A striped camping tent with a flag.', '⛺'],
+];
+for (const [id, w, h, content, glyph] of PROPS) {
+  assets.push({ id: `prop_${id}`, kind: 'prop', w, h, content, label: '', glyph });
+}
+
+export const ART_ASSETS: ArtAsset[] = assets;
+export const ART_BY_ID: Record<string, ArtAsset> = Object.fromEntries(assets.map((a) => [a.id, a]));
+export const charArt = (character: string, evil: boolean) => `char_${character}_${evil ? 'evil' : 'good'}`;
