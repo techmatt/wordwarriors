@@ -13,11 +13,11 @@ export const GAME_HEIGHT = 720;
 export const WALK_SPEED = 330;
 
 /**
- * Mirror her character to face the way she walks. Off while the art is
- * placeholder cards, because a mirrored card mirrors its name; turn on when
- * real character art lands.
+ * Mirror her character to face the way she walks. Was off while the art was
+ * placeholder cards, because a mirrored card mirrors its name; on since every
+ * character got real art (art batch 1, 2026-10-18).
  */
-export const FLIP_TO_FACE = false;
+export const FLIP_TO_FACE = true;
 
 /** How close (px, centre to centre) she must be for a spot to light up its green dot. */
 export const REACH = 95;

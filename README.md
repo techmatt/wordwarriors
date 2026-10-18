@@ -121,14 +121,28 @@ npm run art:placeholders  # paint missing art, rewrite docs/art.md
 
 ## Real art (Codex image generation)
 
-`npm run art:gen -- <ids…>` draws real art for the ids in `content/art/prompts.ts` (a shared
-style block plus one prompt per asset id from `docs/art.md`) with OpenAI's Codex CLI image
-tool, on Matt's ChatGPT Plus login. No API key is used, and none should be. No ids means
-every id in the prompts file; ids that already have real art are skipped unless `--force`;
-`--sheet` only rebuilds the contact sheet; `--reprocess` re-cuts the game PNGs from the kept
-originals without asking Codex (use it for keying changes). Run it backgrounded: it runs
-Codex one image at a time and waits for each run to finish. Measured 2026-10-18: 35–50 s per
-image, 6 images used about 3% of the Plus plan's 5-hour window and 1% of the weekly one.
+`npm run art:gen -- <ids…>` draws real art with OpenAI's Codex CLI image tool, on Matt's
+ChatGPT Plus login. No API key is used, and none should be. Every asset id has a prompt in
+`content/art/prompts.ts`: a shared style block plus the asset's brief from `docs/art.md`
+(so a changed `look` in the roster or the house changes the prompt), or a hand-written one
+where the brief alone draws the wrong thing. No ids means every id; ids that already have
+real art are skipped unless `--force`; `--sheet` only rebuilds the contact sheet;
+`--sheet-out=<file>` writes it there, of the named ids only; `--reprocess` re-cuts the game
+PNGs from the kept originals without asking Codex (use it for keying changes); `--shrink`
+re-quantizes the named ids' committed PNGs. Run it backgrounded: each run does one image at
+a time.
+
+- **Numbers (2026-10-18, batch 1, ~180 images):** 27–55 s per image, about 0.3% of the Plus
+  plan's 5-hour window per image (so roughly 300 images per window) and well under 0.1% of
+  the weekly one. Three `art:gen` runs on disjoint id lists ran side by side without
+  trouble or slowing each other, which is the way to do a big batch.
+- **Committed PNGs are palette-quantized** with `sharp` (`shrinkPng` in
+  `tools/art/generate.ts`): a room drops from 1.8 MB to about 0.3 MB, a sprite from about
+  280 KB to 40–80 KB, with no visible change on flat cel-shaded art. The whole art folder
+  is about 20 MB this way; unquantized it would have been about 75 MB.
+- **Test runs reload under you:** `art:gen` writes into `public/`, and a vite dev server
+  full-reloads the page on that, so a Playwright run during generation fails with
+  "execution context was destroyed". Test after generating, or against a build.
 
 - **What it runs:** `codex exec --json --skip-git-repo-check -s read-only -C scratch/codex -`,
   with the prompt on stdin. Codex never writes into the repo. Its built-in `image_gen` tool
@@ -165,7 +179,13 @@ image, 6 images used about 3% of the Plus plan's 5-hour window and 1% of the wee
     the run just ends with "rejected the generation" and no image. Four prompts for an
     ice sorceress with pale hair and an icy-blue snowflake gown were refused, even
     with "original design" and without the braid. A white-and-gold gown went through.
-    Writing "not a lookalike of X" does not help.
+    Writing "not a lookalike of X" does not help. Batch 1: Evil Elsa as the winter
+    queen in a dark gown with long silver hair was refused too; a spiky silver pixie cut
+    and a short crystal tunic went through at once. Anna and Jasmine, designed away from
+    the films from the start (short curls, no teal), were not refused.
+  - Keep green out of a sprite's design where it can be: a green toy block got keyed
+    half-transparent. A glow over the screen (the magic circle) comes out green-tinted;
+    `NO_GREEN` fixes that.
   - The tool sometimes draws its own copy of things the game draws on top (the bedroom
     has toys of its own). Prompts for rooms say what to leave out.
 

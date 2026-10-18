@@ -90,6 +90,18 @@ const HAND: Record<string, string> = {
   obj_blocks:
     // The first one had a green block, which the keying ate (2026-10-18).
     "A tower of chunky wooden toy blocks in red, blue, yellow and orange (no green blocks): a toy in a child's bedroom, side-on.",
+  // Redone after the first try drew the wrong thing (2026-10-18): human footprints,
+  // a circus big top, a bear trap on a card, stones the game draws itself, a short banner.
+  decal_rilla_footprint:
+    'Two giant gorilla footprints seen from above, muddy brown: wide knuckly gorilla hand-and-foot prints with a big splayed thumb toe, clearly an ape and not a person.',
+  prop_tent:
+    'A small striped two-person camping tent, green-free: an orange and blue A-frame tent with the door flap tied open, guy ropes and pegs, a little pennant flag on the top pole. Side-on.',
+  prop_card_trap:
+    'A single playing card lying flat on the ground seen at a slight angle, a red heart card glowing with a soft golden magic outline and little sparkles. Just the card.',
+  prop_banner:
+    'A very wide, short hanging cloth banner (four times wider than it is tall), cream fabric with a red and gold trim and tassels, hanging from a wooden pole by two cords. The middle is completely blank.',
+  room_stones:
+    'A magic garden with soft mossy ground, flowers around the edges, a stone archway and a small waterfall in the background, wide landscape 16:9. The middle of the lawn is completely empty and open: no stones, rocks or objects in the middle, because the game stands its own letter stones there.',
   item_mice:
     'Wind-up Mice: a round open tin box with three cute grey clockwork toy mice spilling out of it, each with a little silver wind-up key in its back, pink ears and curly tails, a few golden sparkles around them.',
 };
