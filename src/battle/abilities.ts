@@ -56,7 +56,7 @@ export interface Projectile {
 }
 
 export interface Trap {
-  obj: Phaser.GameObjects.Image;
+  obj: Phaser.GameObjects.Image | Phaser.GameObjects.Text;
   x: number;
   y: number;
   team: Team;
@@ -487,7 +487,10 @@ const trap: Cast = (w, f, ab, target, mult) => {
     const near = pickTargets(w, f, target, 1)[0] ?? target;
     const x = Phaser.Math.Clamp(near.x + (Math.random() - 0.5) * 260, ARENA_LEFT, ARENA_RIGHT);
     const y = Phaser.Math.Clamp(near.y + (Math.random() - 0.5) * 120, FLOOR_TOP, FLOOR_BOTTOM);
-    const card = s.add.image(f.cx, f.cy, 'prop_card_trap').setDisplaySize(60, 60).setDepth(DEPTH.fx);
+    // A trap is the ability's own glyph if it has one (hot coals, quicksand), else a card.
+    const card = ab.glyph
+      ? s.add.text(f.cx, f.cy, ab.glyph, { fontSize: '44px' }).setOrigin(0.5).setDepth(DEPTH.fx)
+      : s.add.image(f.cx, f.cy, 'prop_card_trap').setDisplaySize(60, 60).setDepth(DEPTH.fx);
     s.tweens.add({ targets: card, x, y, angle: 720, duration: 450, ease: 'Quad.easeOut' });
     s.tweens.add({ targets: card, alpha: 0.6, duration: 400, delay: 500, yoyo: true, repeat: -1 });
     w.addTrap({ obj: card, x, y, team: f.team, power: ab.power * mult * f.power, color: ab.color, from: f, armedAt: w.now + 500 });

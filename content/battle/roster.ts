@@ -407,7 +407,7 @@ export const ROSTER: CharacterSpec[] = [
       palette: [0x3a1a4a, 0xe8c890], glyph: '🌪️', style: 'fly', mount: 'carpet', speed: 230, size: 1.05, hp: 140,
       abilities: [
         ab('sand_blast', 'Sand Blast', 'cone', 4, 0xe8c890, 2),
-        ab('quicksand', 'Quicksand Traps', 'trap', 7, 0xe8c890, 2, { count: 3 }),
+        ab('quicksand', 'Quicksand Traps', 'trap', 7, 0xe8c890, 2, { count: 3, glyph: '🌀' }),
         ab('sand_hail', 'Sand Hail', 'rain', 8, 0xe8c890, 2, { count: 12, glyph: '🟤' }),
         ab('whirlwinds', 'Whirlwinds', 'summon', 11, 0xe8c890, 2, { minion: 'dust_devil', count: 3 }),
       ],
@@ -548,7 +548,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('inferno', 'Inferno Breath', 'cone', 4, 0xff4a00, 3, { color2: 0xffd23f }),
         ab('gold_golems', 'Gold Guards', 'summon', 10, 0xffcc33, 2, { minion: 'gold_golem', count: 3 }),
         ab('molten_gold', 'Molten Gold Beam', 'beam', 7, 0xffcc33, 2, { color2: 0xff4a00 }),
-        ab('hot_coals', 'Hot Coals', 'trap', 9, 0xff4a00, 2, { count: 3 }),
+        ab('hot_coals', 'Hot Coals', 'trap', 9, 0xff4a00, 2, { count: 3, glyph: '🔥' }),
         ab('tail_quake', 'Tail Quake', 'slam', 6, 0x5a0a0a, 3),
       ],
       ultimate: ab('gold_avalanche', 'Gold Avalanche', 'rain', 0, 0xffcc33, 3, { count: 40, glyph: '🟡', color2: 0xff4a00 }),
