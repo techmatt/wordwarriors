@@ -827,10 +827,19 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     const target = this.pickTarget(f);
     const fighting = this.phase === 'fight' || this.phase === 'combo';
     const moving = fighting || (this.phase === 'ultimate' && f.team === 'hero');
-    if (moving) STEER[f.init.style](f, { scene: this, now: this.now, dt, target });
+    // Her own hero runs where she pushes the stick; everything else stays automatic.
+    const steered = f === this.heroes[0] && fighting && this.controls.move.lengthSq() > 0.04;
+    if (steered) {
+      const sp = f.init.speed * 1.3;
+      f.vx = this.controls.move.x * sp;
+      f.vy = this.controls.move.y * sp * 0.7;
+      f.x = Phaser.Math.Clamp(f.x + f.vx * dt, ARENA_LEFT, ARENA_RIGHT);
+      f.y = Phaser.Math.Clamp(f.y + f.vy * dt, FLOOR_TOP, FLOOR_BOTTOM);
+      f.lean = Phaser.Math.Clamp(f.vx / 900, -0.25, 0.25);
+    } else if (moving) STEER[f.init.style](f, { scene: this, now: this.now, dt, target });
     // Each side drifts back towards its own ground, so the fight stays framed
     // heroes-left, villain-right instead of wandering off one edge.
-    if (moving && (f.isMain || f.init.kind === 'helper')) {
+    if (moving && !steered && (f.isMain || f.init.kind === 'helper')) {
       const home = f.team === 'hero' ? 400 : 900;
       f.x += (home - f.x) * Math.min(1, (f.team === 'villain' ? 1.2 : 0.8) * dt);
     }
@@ -1030,6 +1039,14 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
         c.promptedAt = performance.now();
         void voiceBus.say(narratorLine(narrator(), `use_move_${c.right}`));
       }
+    }
+
+    // Green outside a choice makes her hero hop with a sparkle: buttons always answer.
+    const me = this.heroes[0];
+    if (!this.choice && this.controls.pressed('green') && me?.active && !me.floored && this.phase === 'fight' && me.lift < 5) {
+      this.tweens.addCounter({ from: 0, to: 1, duration: 420, onUpdate: (tw) => (me.lift = Math.sin((tw.getValue() ?? 0) * Math.PI) * 90) });
+      burst(this, me.cx, me.y, { count: 18, speed: 220, colors: [me.init.palette[1], 0xffffff] });
+      me.squash(0.3);
     }
 
     for (const f of this.fighters) {
