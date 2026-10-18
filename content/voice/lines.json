@@ -1774,7 +1774,7 @@
   "id": "letter_g_sound",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Guh",
+  "text": "Ghuh",
   "note": "placeholder for the /g/ sound (stop); replace with a recorded clip"
  },
  {
@@ -1788,7 +1788,7 @@
   "id": "letter_i_sound",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Ih",
+  "text": "Ihh",
   "note": "placeholder for the /i/ sound (vowel); replace with a recorded clip"
  },
  {
@@ -1809,7 +1809,7 @@
   "id": "letter_l_sound",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Lll",
+  "text": "Luh",
   "note": "placeholder for the /l/ sound (continuant); replace with a recorded clip"
  },
  {
@@ -1823,7 +1823,7 @@
   "id": "letter_n_sound",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Nnn",
+  "text": "Nuh",
   "note": "placeholder for the /n/ sound (continuant); replace with a recorded clip"
  },
  {
@@ -1851,7 +1851,7 @@
   "id": "letter_r_sound",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Rrr",
+  "text": "Err",
   "note": "placeholder for the /r/ sound (continuant); replace with a recorded clip"
  },
  {
@@ -1879,7 +1879,7 @@
   "id": "letter_v_sound",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Vvv",
+  "text": "Vuh",
   "note": "placeholder for the /v/ sound (continuant); replace with a recorded clip"
  },
  {
@@ -1893,7 +1893,7 @@
   "id": "letter_x_sound",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Ks",
+  "text": "Kuhs",
   "note": "placeholder for the /x/ sound (fricative); replace with a recorded clip"
  },
  {
@@ -1907,7 +1907,7 @@
   "id": "letter_z_sound",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Zzz",
+  "text": "Zuh",
   "note": "placeholder for the /z/ sound (continuant); replace with a recorded clip"
  },
  {

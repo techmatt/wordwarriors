@@ -30,6 +30,11 @@ without a new measurement.
 - SSML `<phoneme>` is impossible twice over: `edge-tts-universal` xml-escapes all input,
   and the Edge endpoint has refused custom SSML since ~2022.
 - Firefly turned "Shhh" into silence.
+- **Doubling fails here too** (measured 2026-10-18, word-boundary span with GuyNeural at
+  -20%): "Lll" 1.26 s, "Rrr" 1.26, "Vvv" 1.26, "Zzz" 1.25, "Sss" 1.25, "Nnn" 1.08, "Guh"
+  1.23, "Ks" 1.01, against 0.4–0.75 s for single syllables ("Buh" 0.58, "Mmm" 0.70).
+  The long spans fit edge-tts reading the letters by name. Inferred from timing, not
+  heard. Only "Mmm" kept its doubling; l n r v z use "Luh" "Nuh" "Err" "Vuh" "Zuh".
 - So: placeholders by class here (`content/phonics/letters.ts`), each its own line id;
   Matt's recorded phoneme clips replace them through `content/voice/clips/`. The
   spellings other than "Mmm" and "Suh" are untested by ear.
