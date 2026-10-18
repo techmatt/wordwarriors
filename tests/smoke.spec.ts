@@ -90,6 +90,27 @@ test('Spell the Spell: ghost boxes fill only with the right letter', async ({ pa
   expectNoErrors(errors);
 });
 
+test('Blend Path: tiles count left to right, the doors open, the word is said after', async ({ page }) => {
+  const errors = collectErrors(page);
+  await boot(page, '?scene=blend&hero=julia&villain=moriarty');
+  const s = await until(page, (st) => st.room?.round.startsWith('blend:0:') === true && !st.room.locked, 60_000, 'first item');
+  const word = s.room!.round.split(':')[2]!;
+  expect(s.room!.spots.length).toBe(0); // doors shut until the path is walked
+  // Out of order first: the last tile says its sound but opens nothing.
+  // Detour below the path so the earlier tiles are not stepped on the way.
+  await walkTo(page, 120, 610, 30);
+  await walkTo(page, 260 + (word.length - 1) * 160, 610, 30);
+  await walkTo(page, 260 + (word.length - 1) * 160, 470, 30);
+  await page.waitForTimeout(400);
+  expect((await state(page)).room!.spots.length).toBe(0);
+  for (let i = 0; i < word.length; i++) await walkTo(page, 260 + i * 160, 470, 30);
+  await until(page, (st) => (st.room?.spots.length ?? 0) >= 2, 10_000, 'doors open');
+  expect((await state(page)).voice.history).not.toContain(`word_${word}`);
+  await choose(page);
+  await until(page, (st) => st.voice.history.includes(`word_${word}`), 30_000, 'confirmation');
+  expectNoErrors(errors);
+});
+
 test('Word to Picture: the word is not spoken until she answers', async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=picture&hero=anna&ally=jasmine&villain=ozymandias');

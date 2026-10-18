@@ -125,7 +125,14 @@ export async function playMinigame(page: Page): Promise<void> {
   // Past the journey map (if any) and into the game itself.
   const scene = (await until(page, (st) => ['SoundToLetter', 'BlendPath', 'WordToPicture', 'Spelling'].includes(st.scene), 60_000, 'a minigame')).scene;
   for (let guard = 0; guard < 12; guard++) {
-    const s = await until(page, (st) => st.scene !== scene || Boolean(st.room && !st.room.locked && (st.room.spots.some((sp) => sp.correct) || st.room.spelling)), 120_000, `${scene} item`);
+    // Blend Path's doors stay shut until the tiles are walked, so there a
+    // round being up (and the room listening) is enough to start walking.
+    const s = await until(
+      page,
+      (st) => st.scene !== scene || Boolean(st.room && !st.room.locked && (st.room.spots.some((sp) => sp.correct) || st.room.spelling || (scene === 'BlendPath' && st.room.round))),
+      120_000,
+      `${scene} item`,
+    );
     if (s.scene !== scene) return;
     if (s.room?.spelling) {
       const { word, filled } = s.room.spelling;
