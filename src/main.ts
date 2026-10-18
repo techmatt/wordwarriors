@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 import { BattleScene } from './battle/BattleScene';
 import { GAME_HEIGHT, GAME_WIDTH } from './config';
 import { AlarmScene } from './scenes/AlarmScene';
+import { JourneyScene } from './scenes/JourneyScene';
 import { BootScene } from './scenes/BootScene';
 import { BlendPath } from './scenes/minigames/BlendPath';
 import { SoundToLetter } from './scenes/minigames/SoundToLetter';
@@ -26,5 +27,5 @@ new Phaser.Game({
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
   input: { gamepad: true },
   // Only Boot starts on its own; Episode.ts starts everything else.
-  scene: [BootScene, TitleScene, PickScene, AlarmScene, SoundToLetter, BlendPath, WordToPicture, BattleScene, RetreatScene, Spelling, VictoryScene, ParentScene],
+  scene: [BootScene, JourneyScene, TitleScene, PickScene, AlarmScene, SoundToLetter, BlendPath, WordToPicture, BattleScene, RetreatScene, Spelling, VictoryScene, ParentScene],
 });

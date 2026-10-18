@@ -167,7 +167,41 @@ export function advance(scene: Phaser.Scene): void {
     episodeCount++;
     resetEpisode();
   }
+  // The big steps are reached by a short hop along the journey map, so she
+  // can see where she is in the episode and what comes next.
+  if (JOURNEY_BEFORE.includes(currentStep().kind) && !skipJourney) {
+    voiceBus.hush();
+    void voiceBank.loadGroups(episodeGroups());
+    scene.scene.start('Journey');
+    return;
+  }
   startStep(scene);
+}
+
+/** Steps that get the journey map first. */
+const JOURNEY_BEFORE: Step['kind'][] = ['prep', 'battle', 'spell', 'victory'];
+
+/** Tests may turn the map off to save time; the game never does. */
+let skipJourney = new URLSearchParams(typeof location === 'undefined' ? '' : location.search).has('nojourney');
+export function setSkipJourney(v: boolean): void {
+  skipJourney = v;
+}
+
+/** The journey stops: every step from the alarm to victory, with an icon each. */
+export function journeyStops(): { icon: string; index: number }[] {
+  const icon = (s: Step): string => {
+    if (s.kind === 'alarm') return '🚨';
+    if (s.kind === 'prep') return s.game === 'sound' ? '💎' : s.game === 'blend' ? '⭐' : '🦄';
+    if (s.kind === 'battle') return '⚔️';
+    if (s.kind === 'retreat') return '⛺';
+    if (s.kind === 'spell') return '🔨';
+    if (s.kind === 'victory') return '🏆';
+    return '•';
+  };
+  return steps()
+    .map((s, index) => ({ s, index }))
+    .filter(({ s }) => s.kind !== 'title' && s.kind !== 'pick')
+    .map(({ s, index }) => ({ icon: icon(s), index }));
 }
 
 /** Jump into a step directly (dev F-keys, `?scene=`), with a plausible episode around it. */

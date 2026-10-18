@@ -122,7 +122,8 @@ export async function choose(page: Page, id?: string): Promise<string> {
 
 /** Answer every item of the current minigame correctly until the scene changes. */
 export async function playMinigame(page: Page): Promise<void> {
-  const scene = (await state(page)).scene;
+  // Past the journey map (if any) and into the game itself.
+  const scene = (await until(page, (st) => ['SoundToLetter', 'BlendPath', 'WordToPicture', 'Spelling'].includes(st.scene), 60_000, 'a minigame')).scene;
   for (let guard = 0; guard < 12; guard++) {
     const s = await until(page, (st) => st.scene !== scene || Boolean(st.room && !st.room.locked && (st.room.spots.some((sp) => sp.correct) || st.room.spelling)), 120_000, `${scene} item`);
     if (s.scene !== scene) return;
