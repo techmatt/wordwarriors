@@ -22,8 +22,10 @@
  * glowing pads on the arena floor, each with its word on a sign. The partner
  * says which one to use; she walks her hero (on real time, the rest frozen)
  * onto that pad and presses green, the same as walking to an answer in a
- * room. Right = supercharged version, wrong = that move, plainer. It changes
- * nothing else. The first choice of each part is the spell the helper taught
+ * room. A wrong pick fires nothing: the fight stays frozen and the partner
+ * says what she picked and what to find ("That wasn't ICE, that was HUG! Find
+ * ICE!"), as often as it takes; the right one fires the supercharged move
+ * (Julia's first play, 2026-10-18). The first choice of each part is the spell the helper taught
  * her in the house, so the word she learned is the one she fires first.
  *
  * Time: `now` is simulation time. Slow-mo, hit-stop and the choice freeze all
@@ -39,7 +41,7 @@ import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { fighterId, moveLine, nameLine, narratorLine, tauntLine, ultimateLine } from '../../content/voice/ids';
 import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
-import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh } from '../audio/sfx';
+import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh, sfxWrong } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, WALK_SPEED } from '../config';
 import { advance, episode, helper, narrator, villainSpec, type Step } from '../episode/Episode';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
@@ -77,6 +79,8 @@ interface MovePad {
   sign: Phaser.GameObjects.Container;
   /** Wall-clock ms its pop-in starts. */
   bornAt: number;
+  /** Wall-clock ms of its last "not that one" wiggle. */
+  wiggleAt?: number;
 }
 
 interface Choice {
@@ -101,7 +105,9 @@ interface Choice {
    * opened (its timer still ticking on the frozen clock) cannot pull her off it.
    */
   at: { x: number; y: number; lift: number };
-  resolve: (picked: string) => void;
+  /** Wrong pads she has picked so far in this choice. */
+  misses: number;
+  resolve: () => void;
 }
 
 export class BattleScene extends Phaser.Scene implements BattleWorld {
@@ -779,8 +785,13 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     const here = this.add.ellipse(me.x, me.y, 150, 52).setStrokeStyle(6, 0xffffff, 0.95).setDepth(DEPTH.prompt - 6);
     objs.push(here);
 
-    const picked = await new Promise<string>((resolve) => {
-      this.choice = { words, right, owners, objs, pads, near: null, dot, here, open: false, promptedAt: 0, at, resolve };
+    let misses = 0;
+    await new Promise<void>((resolve) => {
+      const c: Choice = { words, right, owners, objs, pads, near: null, dot, here, open: false, promptedAt: 0, at, misses: 0, resolve: () => {
+        misses = c.misses;
+        resolve();
+      } };
+      this.choice = c;
       void (async () => {
         await this.say('move_pick');
         await this.say(`use_move_${right}`);
@@ -796,44 +807,59 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.choice = null;
     this.simRate = 1;
     this.stats.movePicks++;
-    const good = picked === right;
-    progress.record('words', right, good, good ? 0 : 1);
+    // Only the right pad ever closes the choice; the misses are recorded, never punished.
+    progress.record('words', right, misses === 0, misses);
     // The victory recap reads episode.read: a battle word she picked right is one she read.
-    if (good && !episode.read.includes(right)) episode.read.push(right);
-    const { f, ab } = owners.get(picked)!;
-    if (good) {
-      // The super frees its hero from any pig or ice; a plain pick changes nothing else.
-      f.status = null;
-      f.clearOverlay();
-      sfxRight();
-      flash(this, 0xffffff, 200);
-      slowmo(this, 0.3, 1200);
-      punch(this, 0.07, 200);
-      speedLines(this, f.cx, f.cy, ab.color, 700);
-      shockwave(this, f.cx, f.cy, ab.color, 300);
-      burst(this, f.cx, f.cy, { count: 80, speed: 600, colors: [ab.color, 0xffd23f, 0xffffff] });
-      f.setShield(1, 0xffd23f, this.now);
-      cast(this, f, ab, this.villain, 2.4, true);
-      this.banner('SUPER!', 0xffd23f, true);
-      void (async () => {
-        if (voiceBank.has(moveLine(f.init.id, ab.id))) await this.guard(voiceBus.say(moveLine(f.init.id, ab.id), 'instruction', f));
-        await this.say('move_great');
-      })();
-    } else {
-      sfxSelect();
-      cast(this, f, ab, this.villain, 1, true);
-      void this.say('move_ok');
-    }
+    if (!episode.read.includes(right)) episode.read.push(right);
+    const { f, ab } = owners.get(right)!;
+    // The super frees its hero from any pig or ice.
+    f.status = null;
+    f.clearOverlay();
+    sfxRight();
+    flash(this, 0xffffff, 200);
+    slowmo(this, 0.3, 1200);
+    punch(this, 0.07, 200);
+    speedLines(this, f.cx, f.cy, ab.color, 700);
+    shockwave(this, f.cx, f.cy, ab.color, 300);
+    burst(this, f.cx, f.cy, { count: 80, speed: 600, colors: [ab.color, 0xffd23f, 0xffffff] });
+    f.setShield(1, 0xffd23f, this.now);
+    cast(this, f, ab, this.villain, 2.4, true);
+    this.banner('SUPER!', 0xffd23f, true);
+    void (async () => {
+      if (voiceBank.has(moveLine(f.init.id, ab.id))) await this.guard(voiceBus.say(moveLine(f.init.id, ab.id), 'instruction', f));
+      await this.say('move_great');
+    })();
     this.stats.abilitiesFired++;
     this.phase = 'fight';
   }
 
-  /** Pick a word: green on a lit pad, or F4. */
+  /** Pick a word: green on a lit pad, or F4. Only the right word closes the choice. */
   private pickChoice(word: string): void {
     const c = this.choice;
     if (!c || !c.open) return;
     c.open = false;
-    c.resolve(word);
+    if (word === c.right) {
+      c.resolve();
+      return;
+    }
+    void this.missChoice(c, word);
+  }
+
+  /**
+   * A wrong pad: nothing fires and the fight stays frozen. A wiggle and a
+   * giggle on the pad, then the partner says what it was and what to find
+   * (her pick has been made, so its word may be said), and the pads open again.
+   */
+  private async missChoice(c: Choice, word: string): Promise<void> {
+    c.misses++;
+    sfxWrong();
+    const pad = c.pads.find((p) => p.word === word);
+    if (pad) pad.wiggleAt = performance.now();
+    const n = narrator();
+    await this.guard(voiceBus.sequence([narratorLine(n, `not_move_${c.right}`), narratorLine(n, `was_move_${word}`), narratorLine(n, `find_move_${c.right}`)]));
+    if (this.choice !== c) return;
+    c.open = true;
+    c.promptedAt = performance.now();
   }
 
   /** Pin her hero to where she walked in the choice: no leftover move timer or hop moves her. */
@@ -889,6 +915,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       p.ring.setScale(pop * (lit ? 1.2 : 1) * (c.open ? pulse : 1));
       p.ring.setAlpha(lit ? 1 : 0.8);
       p.sign.setScale(pop * (lit ? 1.12 : 1));
+      // A wrong pick wiggles its sign side to side for half a second.
+      const w = p.wiggleAt === undefined ? 1 : (wall - p.wiggleAt) / 500;
+      p.sign.setX(p.x + (w < 1 ? Math.sin(w * Math.PI * 8) * 14 * (1 - w) : 0));
     }
     c.dot.setVisible(Boolean(near && c.open));
     if (near) c.dot.setPosition(near.x, near.sign.y - 90).setScale(pulse);
@@ -1449,7 +1478,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       itemsUsed: this.itemsUsed,
       me: this.heroes[0] ? { x: Math.round(this.heroes[0].x), y: Math.round(this.heroes[0].y) } : null,
       choice: this.choice
-        ? { words: this.choice.words, right: this.choice.right, open: this.choice.open, spots: this.choice.pads.map((p) => ({ word: p.word, x: p.x, y: p.y })) }
+        ? { words: this.choice.words, right: this.choice.right, open: this.choice.open, misses: this.choice.misses, spots: this.choice.pads.map((p) => ({ word: p.word, x: p.x, y: p.y })) }
         : null,
     };
   }

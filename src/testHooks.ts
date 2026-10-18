@@ -30,6 +30,8 @@ export interface RoomInfo {
   locked: boolean;
   player: { x: number; y: number };
   spots: SpotInfo[];
+  /** Every spot drawn at all (enabled or not), by id: a door she cannot use yet is not drawn. */
+  shown: string[];
   /** Ghost boxes in Spelling: the word and how many letters are in. */
   spelling?: { word: string; filled: number };
   /** The sentence game: its tokens (upper case), key word, frame, which pass, and the token in play. */
@@ -48,7 +50,7 @@ export interface BattleInfo {
   combos: number;
   movePicks: number;
   /** The move choice: its words standing in the arena as pads (`spots`) she walks onto. */
-  choice: { words: string[]; right: string; open: boolean; spots: { word: string; x: number; y: number }[] } | null;
+  choice: { words: string[]; right: string; open: boolean; misses: number; spots: { word: string; x: number; y: number }[] } | null;
   /** Her hero's position on the arena floor. */
   me: { x: number; y: number } | null;
   /** Fetched items used this part. */

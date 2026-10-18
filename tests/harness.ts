@@ -35,6 +35,7 @@ export interface WWState {
     locked: boolean;
     player: { x: number; y: number };
     spots: { id: string; x: number; y: number; correct: boolean | null }[];
+    shown: string[];
     spelling?: { word: string; filled: number };
     sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean };
   } | null;
@@ -50,7 +51,7 @@ export interface WWState {
     heroes: { id: string; hp: number; status: string | null }[];
     villains: { id: string; hp: number; status: string | null }[];
     /** The move words stand in the arena as pads (`spots`); she walks her hero onto one. */
-    choice: { words: string[]; right: string; open: boolean; spots: { word: string; x: number; y: number }[] } | null;
+    choice: { words: string[]; right: string; open: boolean; misses: number; spots: { word: string; x: number; y: number }[] } | null;
     /** Her hero's position. */
     me: { x: number; y: number } | null;
     itemsUsed: number;
@@ -169,7 +170,10 @@ export async function playMinigame(page: Page): Promise<void> {
   }
 }
 
-/** Play a battle part, answering each move choice; `wrongFirst` picks a wrong dot the first time. */
+/**
+ * Play a battle part, answering each move choice; `wrongFirst` picks a wrong
+ * pad the first time, which holds the choice open until the right one.
+ */
 export async function playBattle(page: Page, part: number, wrongFirst = false): Promise<WWState> {
   let first = true;
   for (;;) {
@@ -178,22 +182,34 @@ export async function playBattle(page: Page, part: number, wrongFirst = false): 
     const open = await until(page, (st) => st.scene !== 'Battle' || Boolean(st.battle?.choice?.open), 60_000, 'choice open');
     if (open.scene !== 'Battle') return open;
     const c = open.battle!.choice!;
-    const word = wrongFirst && first ? c.words.find((w) => w !== c.right)! : c.right;
-    first = false;
-    const pad = c.spots.find((sp) => sp.word === word)!;
-    await walkHeroTo(page, pad.x, pad.y);
-    // Green is ignored while the idle re-prompt plays (the choice closes for it):
-    // wait for it to open again, then press.
-    for (let tries = 0; ; tries++) {
-      const now = await until(page, (st) => !st.battle?.choice || st.battle.choice.open, 30_000, 'choice open again');
-      if (!now.battle?.choice) break;
-      await press(page, 'green');
-      const done = await until(page, (st) => !st.battle?.choice || !st.battle.choice.open, 5_000, 'green taken').catch(() => null);
-      if (done && !done.battle?.choice) break;
-      if (tries > 4) throw new Error('green on the pad never picked');
-      await page.waitForTimeout(200);
+    if (wrongFirst && first) {
+      await pickPad(page, c.words.find((w) => w !== c.right)!);
+      // A miss keeps the choice: it closes for the partner's line, then opens again.
+      await until(page, (st) => st.battle?.choice?.misses === 1, 10_000, 'the miss counted');
     }
+    first = false;
+    await pickPad(page, c.right);
     await until(page, (st) => !st.battle?.choice, 30_000, 'choice closed');
+  }
+}
+
+/** In a move choice: walk onto a word's pad and press green until the pick is taken. */
+async function pickPad(page: Page, word: string): Promise<void> {
+  const pad = (await state(page)).battle!.choice!.spots.find((sp) => sp.word === word)!;
+  await walkHeroTo(page, pad.x, pad.y);
+  // Green is ignored while a line plays (the choice closes for it): wait for
+  // it to open again, then press.
+  for (let tries = 0; ; tries++) {
+    const now = await until(page, (st) => !st.battle?.choice || st.battle.choice.open, 30_000, 'choice open again');
+    if (!now.battle?.choice) return;
+    const misses = now.battle.choice.misses;
+    await press(page, 'green');
+    // Taken: the choice closed (right) or counted a miss (wrong). Anything
+    // else was the idle re-prompt closing it first: press again.
+    const taken = await until(page, (st) => !st.battle?.choice || st.battle.choice.misses !== misses, 2_000, 'green taken').catch(() => null);
+    if (taken) return;
+    if (tries > 4) throw new Error('green on the pad never picked');
+    await page.waitForTimeout(200);
   }
 }
 

@@ -13,7 +13,8 @@ One **episode** (v0.2, Matt 2026-10-18): title → **bedroom** (she wakes; Dada 
 the good news, the helper, and the bad news: the villain and its threat; the house takes
 on the villain's mood) → **house part 1** (the hub: the helper teaches her a spell, which
 becomes her first battle move word; two side-room doors, one **sentence game** each,
-fetching battle items; the front door opens once both are done) → **battle part 1** (the
+fetching battle items; the front door appears once both are done: a door she cannot use
+yet is not there at all) → **battle part 1** (the
 items are used, then the villain's ultimate still wins: "too strong, retreat") → **house
 part 2** (back at the hub, a secret door to the attic: the villain's counter sentence
 fetches the counter-item) → **battle part 2** (the counter beats the ultimate) → victory
@@ -103,10 +104,17 @@ Adding a character, ability, word or line is data work: edit `content/`, then
   pick (the brief's design: she hears it and finds it written). Letter sounds are never
   captioned (the placeholder spelling is not text to read). Moves that are choice words
   are never called out during the fight.
+- **Move choice holds until she is right** (Julia's first play, 2026-10-18). A wrong pad
+  fires nothing: the fight stays frozen, the pad wiggles with the fizzle-and-giggle SFX,
+  and the partner says what she picked and what to find ("That wasn't ICE, that was
+  HUG! Find ICE!": `not_move_<right>`, `was_move_<picked>`, `find_move_<right>`), as
+  often as it takes. Saying the wrong pad's word is fine: she has already picked it.
+  The right pad fires the supercharged move. Misses are recorded, never punished.
 - **Sentence game speech rule** (v0.2): the sentence's last word is the **key word** and
   is never spoken until she has answered. Pass 1 (listen) is voiced karaoke that stops at
-  the key word, which pulses in a beat of silence; pass 2 (her turn) is silent, each green
-  moves the highlight one word (a parent reads along), yellow on a frame word says that
+  the key word, which pulses in a beat of silence; pass 2 (her turn) starts with nothing
+  lit, each green lights the next word and says it (a parent reads along; green waits for
+  the word), except the key word, which lights in silence. Yellow on a frame word says that
   word, yellow on the key word sounds its letters one by one, never blended (a
   non-decodable key word like MICE gets only its first sound). Right: the whole sentence
   is read with the key word. Voice is a prefix line ("EvilRilla is scared of...") plus the

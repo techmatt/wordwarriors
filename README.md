@@ -35,25 +35,31 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    news, Julia! Elsa is here to play! Bad news, EvilRilla is coming, and he's going to
    eat Dada Jason's car!" The room darkens under the villain's mood (footprints, a
    cracked window). No reading: every toy does something silly on green. The door
-   glows; it sparkles if she has not gone through it 12 seconds after the news
-   (`DOOR_SPARKLE_MS`).
+   is there only for the waker's entrance and again once the news is told ("Find the
+   door!"), when it pops out and glows; it sparkles if she has not gone through it 12
+   seconds after the news (`DOOR_SPARKLE_MS`).
 3. **The house (hub).** The helper (the ally, or the narrator) teaches a spell: she
    stands in the magic circle, presses green, and the word flies into her. That word
-   is her first battle move. Then two side doors open.
+   is her first battle move. Then two side doors pop out of the wall. **A door she
+   cannot use yet is not there at all** (her first play: told to find the two doors,
+   she walked to the shut front door), so every door and exit appears, with a little
+   reveal, at the moment it opens.
 4. **Side rooms**, one sentence each, on a banner, key word last
    (`WE CAN USE THE NET`). Pass 1 is read to her karaoke-style and stops at the key
    word, which pulses in silence (skipped once that frame is solid). Pass 2 is hers:
-   each green moves the light one word on and yellow says the lit word. At the key
+   each green lights the next word and says it, and yellow says the lit word. At the key
    word three things wake up on pedestals (yellow now sounds the key word's letters one
    at a time, never blended, and never says the word itself); she
    walks to the one the key word names and presses green. Right: the whole sentence
    is read back and the thing flies into her bag (top left). Wrong: a funny retry.
-   Each finished room hangs its prize on its door; with both done the front door opens.
+   Each finished room hangs its prize on its door; with both done the front door appears.
 5. **Battle part 1** runs by itself (she can steer her hero with the stick; green
    hops). The fetched things pop out of her bag and are used. At a move choice the
    fight freezes, 2–3 word pads glow on the arena floor, the partner says which word;
-   she walks her hero onto that pad and presses green. The first choice is the spell
-   she learned. It ends with the villain's ultimate: "Too strong! Retreat!", and the
+   she walks her hero onto that pad and presses green. A wrong pad fires nothing: the
+   fight stays frozen and the partner says "That wasn't ICE, that was HUG! Find ICE!"
+   until she picks the right one, which fires the supercharged move. The first choice
+   is the spell she learned. It ends with the villain's ultimate: "Too strong! Retreat!", and the
    heroes pick themselves up and run for home.
 6. **The house, part 2.** Back in the hub a secret door pops out: the attic, with the
    villain's counter sentence (`EVILRILLA IS SCARED OF MICE`). Then the front door again.

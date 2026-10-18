@@ -43,7 +43,11 @@ test('title boots, F9 opens the grown-ups page and returns, green starts the bed
 test('bedroom: the wake-up news, a toy reacts to green, the door leads to the hub', async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=bedroom&nojourney=1');
+  // During the news the door is not there (it shows only for the waker's entrance).
+  const news = await until(page, (st) => st.scene === 'Bedroom' && st.room?.round === 'bedroom:news', 90_000, 'bad news');
+  expect(news.room!.shown).not.toContain('door');
   const s = await until(page, (st) => st.scene === 'Bedroom' && st.room?.round === 'bedroom:door' && !st.room.locked, 90_000, 'news told, door open');
+  expect(s.room!.shown).toContain('door');
   expect(s.voice.history).toContain('wake_dada_matt_good_julia');
   expect(s.voice.history).toContain('wake_dada_matt_helper_elsa');
   expect(s.voice.history).toContain('wake_dada_matt_bad_rilla');
@@ -71,6 +75,8 @@ test('hub part 1: the circle teaches the spell, then door a opens a sentence roo
   expect(circle.episode.spell).toBeTruthy();
   expect(circle.episode.house.taught).toBe(false);
   expect(circle.voice.history).toContain(`nar_elsa_teach_word_${circle.episode.spell}`);
+  // A door she cannot use yet is not there at all.
+  for (const d of ['door_a', 'door_b', 'door_front', 'door_counter']) expect(circle.room!.shown).not.toContain(d);
 
   await hubGo(page, 'circle');
   const doors = await until(page, (s) => s.room?.round === 'hub:1:doors' && !s.room.locked, 60_000, 'doors offered');
@@ -79,6 +85,10 @@ test('hub part 1: the circle teaches the spell, then door a opens a sentence roo
   expect(ids).toContain('door_a');
   expect(ids).toContain('door_b');
   expect(ids).not.toContain('door_front');
+  expect(doors.room!.shown).toContain('door_a');
+  expect(doors.room!.shown).toContain('door_b');
+  expect(doors.room!.shown).not.toContain('door_front');
+  expect(doors.room!.shown).not.toContain('door_counter');
 
   await hubGo(page, 'door_a');
   const room = await until(page, (s) => s.scene === 'SentenceRoom' && Boolean(s.room?.sentence), 15_000, 'sentence room');
@@ -97,16 +107,18 @@ test('sentence room: listen, read along, a wrong object costs nothing, the right
   expect(sent.tokens.at(-1)).toBe(key.toUpperCase());
   for (const t of sent.tokens) expect(t).toBe(t.toUpperCase());
 
-  // Pass 1, listening: then her turn, with the light on the first word.
+  // Pass 1, listening: then her turn, nothing lit yet.
   const read = await until(page, (s) => s.room?.sentence?.pass === 'read' && !s.room.locked, 90_000, 'read pass');
   expect(read.voice.history).toContain('nar_elsa_room_listen');
   expect(read.voice.history).not.toContain(`word_${key}`);
-  expect(read.room!.sentence!.index).toBe(0);
+  expect(read.room!.sentence!.index).toBe(-1);
   expect(read.room!.spots.length).toBe(0);
 
-  // Green steps the light one word on.
+  // Green lights the first word and says it.
   await press(page, 'green');
-  await until(page, (s) => s.room?.sentence?.index === 1 || s.room?.sentence?.pass === 'find', 10_000, 'light on word 2');
+  const lit0 = await until(page, (s) => s.room?.sentence?.index === 0 && !s.room.locked, 10_000, 'light on word 1, said');
+  expect(lit0.voice.history.at(-1)).toMatch(/^word_/);
+  expect(lit0.voice.history.filter((id) => id.startsWith('word_')).length).toBe(1);
 
   // On to the key word: the three objects wake up.
   const find = await readToKeyWord(page);
@@ -207,9 +219,14 @@ test('Battle part 2: a wrong and a right walking pick, counter-item, finish, vic
   expect(b.battle?.part).toBe(2);
   await playBattle(page, 2, true);
   const end = await until(page, (s) => s.scene === 'Victory', 30_000, 'victory');
-  // The wrong pick fired a plainer move and cost nothing; it is recorded as a miss.
+  // The wrong pick fired nothing and cost nothing; the partner said what it was
+  // and what to find, and it is recorded as a miss.
   const missed = Object.values(end.progress.words).some((st) => st.recent.includes(false));
   expect(missed).toBe(true);
+  expect(end.voice.history.some((id) => /_not_move_/.test(id))).toBe(true);
+  expect(end.voice.history.some((id) => /_was_move_/.test(id))).toBe(true);
+  expect(end.voice.history.some((id) => /_find_move_/.test(id))).toBe(true);
+  expect(end.voice.history.some((id) => /_move_ok$/.test(id))).toBe(false);
   expect(end.battle?.ultimates).toBe(1);
   expect(end.battle?.movePicks).toBe(2);
   expect(end.battle?.combos).toBe(1);

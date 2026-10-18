@@ -4234,6 +4234,24 @@
   "text": "This spell is called zap!"
  },
  {
+  "id": "nar_julia_not_move_zap",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_julia_was_move_zap",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_julia_find_move_zap",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find zap!"
+ },
+ {
   "id": "nar_julia_use_move_pow",
   "speaker": "julia",
   "group": "nar_julia",
@@ -4244,6 +4262,24 @@
   "speaker": "julia",
   "group": "nar_julia",
   "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_julia_not_move_pow",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_julia_was_move_pow",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_julia_find_move_pow",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find pow!"
  },
  {
   "id": "nar_julia_use_move_bam",
@@ -4258,6 +4294,24 @@
   "text": "This spell is called bam!"
  },
  {
+  "id": "nar_julia_not_move_bam",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_julia_was_move_bam",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_julia_find_move_bam",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find bam!"
+ },
+ {
   "id": "nar_julia_use_move_zip",
   "speaker": "julia",
   "group": "nar_julia",
@@ -4268,6 +4322,24 @@
   "speaker": "julia",
   "group": "nar_julia",
   "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_julia_not_move_zip",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_julia_was_move_zip",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_julia_find_move_zip",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find zip!"
  },
  {
   "id": "nar_julia_use_move_hop",
@@ -4282,6 +4354,24 @@
   "text": "This spell is called hop!"
  },
  {
+  "id": "nar_julia_not_move_hop",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_julia_was_move_hop",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_julia_find_move_hop",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find hop!"
+ },
+ {
   "id": "nar_julia_use_move_pop",
   "speaker": "julia",
   "group": "nar_julia",
@@ -4292,6 +4382,24 @@
   "speaker": "julia",
   "group": "nar_julia",
   "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_julia_not_move_pop",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_julia_was_move_pop",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_julia_find_move_pop",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find pop!"
  },
  {
   "id": "nar_julia_use_move_sun",
@@ -4306,6 +4414,24 @@
   "text": "This spell is called sun!"
  },
  {
+  "id": "nar_julia_not_move_sun",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_julia_was_move_sun",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_julia_find_move_sun",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find sun!"
+ },
+ {
   "id": "nar_julia_use_move_hug",
   "speaker": "julia",
   "group": "nar_julia",
@@ -4316,6 +4442,24 @@
   "speaker": "julia",
   "group": "nar_julia",
   "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_julia_not_move_hug",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_julia_was_move_hug",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_julia_find_move_hug",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find hug!"
  },
  {
   "id": "nar_julia_use_move_fan",
@@ -4330,6 +4474,24 @@
   "text": "This spell is called fan!"
  },
  {
+  "id": "nar_julia_not_move_fan",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_julia_was_move_fan",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_julia_find_move_fan",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find fan!"
+ },
+ {
   "id": "nar_julia_use_move_big",
   "speaker": "julia",
   "group": "nar_julia",
@@ -4340,6 +4502,24 @@
   "speaker": "julia",
   "group": "nar_julia",
   "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_julia_not_move_big",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_julia_was_move_big",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_julia_find_move_big",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find big!"
  },
  {
   "id": "nar_julia_use_move_hot",
@@ -4354,6 +4534,24 @@
   "text": "This spell is called hot!"
  },
  {
+  "id": "nar_julia_not_move_hot",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_julia_was_move_hot",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_julia_find_move_hot",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find hot!"
+ },
+ {
   "id": "nar_julia_use_move_ice",
   "speaker": "julia",
   "group": "nar_julia",
@@ -4364,6 +4562,24 @@
   "speaker": "julia",
   "group": "nar_julia",
   "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_julia_not_move_ice",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_julia_was_move_ice",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_julia_find_move_ice",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find ice!"
  },
  {
   "id": "nar_seraphina_alarm_ready",
@@ -5212,6 +5428,24 @@
   "text": "This spell is called zap!"
  },
  {
+  "id": "nar_seraphina_not_move_zap",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_seraphina_was_move_zap",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_seraphina_find_move_zap",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find zap!"
+ },
+ {
   "id": "nar_seraphina_use_move_pow",
   "speaker": "seraphina",
   "group": "nar_seraphina",
@@ -5222,6 +5456,24 @@
   "speaker": "seraphina",
   "group": "nar_seraphina",
   "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_seraphina_not_move_pow",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_seraphina_was_move_pow",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_seraphina_find_move_pow",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find pow!"
  },
  {
   "id": "nar_seraphina_use_move_bam",
@@ -5236,6 +5488,24 @@
   "text": "This spell is called bam!"
  },
  {
+  "id": "nar_seraphina_not_move_bam",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_seraphina_was_move_bam",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_seraphina_find_move_bam",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find bam!"
+ },
+ {
   "id": "nar_seraphina_use_move_zip",
   "speaker": "seraphina",
   "group": "nar_seraphina",
@@ -5246,6 +5516,24 @@
   "speaker": "seraphina",
   "group": "nar_seraphina",
   "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_seraphina_not_move_zip",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_seraphina_was_move_zip",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_seraphina_find_move_zip",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find zip!"
  },
  {
   "id": "nar_seraphina_use_move_hop",
@@ -5260,6 +5548,24 @@
   "text": "This spell is called hop!"
  },
  {
+  "id": "nar_seraphina_not_move_hop",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_seraphina_was_move_hop",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_seraphina_find_move_hop",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find hop!"
+ },
+ {
   "id": "nar_seraphina_use_move_pop",
   "speaker": "seraphina",
   "group": "nar_seraphina",
@@ -5270,6 +5576,24 @@
   "speaker": "seraphina",
   "group": "nar_seraphina",
   "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_seraphina_not_move_pop",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_seraphina_was_move_pop",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_seraphina_find_move_pop",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find pop!"
  },
  {
   "id": "nar_seraphina_use_move_sun",
@@ -5284,6 +5608,24 @@
   "text": "This spell is called sun!"
  },
  {
+  "id": "nar_seraphina_not_move_sun",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_seraphina_was_move_sun",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_seraphina_find_move_sun",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find sun!"
+ },
+ {
   "id": "nar_seraphina_use_move_hug",
   "speaker": "seraphina",
   "group": "nar_seraphina",
@@ -5294,6 +5636,24 @@
   "speaker": "seraphina",
   "group": "nar_seraphina",
   "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_seraphina_not_move_hug",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_seraphina_was_move_hug",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_seraphina_find_move_hug",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find hug!"
  },
  {
   "id": "nar_seraphina_use_move_fan",
@@ -5308,6 +5668,24 @@
   "text": "This spell is called fan!"
  },
  {
+  "id": "nar_seraphina_not_move_fan",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_seraphina_was_move_fan",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_seraphina_find_move_fan",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find fan!"
+ },
+ {
   "id": "nar_seraphina_use_move_big",
   "speaker": "seraphina",
   "group": "nar_seraphina",
@@ -5318,6 +5696,24 @@
   "speaker": "seraphina",
   "group": "nar_seraphina",
   "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_seraphina_not_move_big",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_seraphina_was_move_big",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_seraphina_find_move_big",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find big!"
  },
  {
   "id": "nar_seraphina_use_move_hot",
@@ -5332,6 +5728,24 @@
   "text": "This spell is called hot!"
  },
  {
+  "id": "nar_seraphina_not_move_hot",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_seraphina_was_move_hot",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_seraphina_find_move_hot",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find hot!"
+ },
+ {
   "id": "nar_seraphina_use_move_ice",
   "speaker": "seraphina",
   "group": "nar_seraphina",
@@ -5342,6 +5756,24 @@
   "speaker": "seraphina",
   "group": "nar_seraphina",
   "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_seraphina_not_move_ice",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_seraphina_was_move_ice",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_seraphina_find_move_ice",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find ice!"
  },
  {
   "id": "nar_dada_matt_alarm_ready",
@@ -6190,6 +6622,24 @@
   "text": "This spell is called zap!"
  },
  {
+  "id": "nar_dada_matt_not_move_zap",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_zap",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_zap",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find zap!"
+ },
+ {
   "id": "nar_dada_matt_use_move_pow",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
@@ -6200,6 +6650,24 @@
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
   "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_pow",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_pow",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_pow",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find pow!"
  },
  {
   "id": "nar_dada_matt_use_move_bam",
@@ -6214,6 +6682,24 @@
   "text": "This spell is called bam!"
  },
  {
+  "id": "nar_dada_matt_not_move_bam",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_bam",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_bam",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find bam!"
+ },
+ {
   "id": "nar_dada_matt_use_move_zip",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
@@ -6224,6 +6710,24 @@
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
   "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_zip",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_zip",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_zip",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find zip!"
  },
  {
   "id": "nar_dada_matt_use_move_hop",
@@ -6238,6 +6742,24 @@
   "text": "This spell is called hop!"
  },
  {
+  "id": "nar_dada_matt_not_move_hop",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_hop",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_hop",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find hop!"
+ },
+ {
   "id": "nar_dada_matt_use_move_pop",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
@@ -6248,6 +6770,24 @@
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
   "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_pop",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_pop",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_pop",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find pop!"
  },
  {
   "id": "nar_dada_matt_use_move_sun",
@@ -6262,6 +6802,24 @@
   "text": "This spell is called sun!"
  },
  {
+  "id": "nar_dada_matt_not_move_sun",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_sun",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_sun",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find sun!"
+ },
+ {
   "id": "nar_dada_matt_use_move_hug",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
@@ -6272,6 +6830,24 @@
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
   "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_hug",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_hug",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_hug",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find hug!"
  },
  {
   "id": "nar_dada_matt_use_move_fan",
@@ -6286,6 +6862,24 @@
   "text": "This spell is called fan!"
  },
  {
+  "id": "nar_dada_matt_not_move_fan",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_fan",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_fan",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find fan!"
+ },
+ {
   "id": "nar_dada_matt_use_move_big",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
@@ -6296,6 +6890,24 @@
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
   "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_big",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_big",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_big",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find big!"
  },
  {
   "id": "nar_dada_matt_use_move_hot",
@@ -6310,6 +6922,24 @@
   "text": "This spell is called hot!"
  },
  {
+  "id": "nar_dada_matt_not_move_hot",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_hot",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_hot",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find hot!"
+ },
+ {
   "id": "nar_dada_matt_use_move_ice",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
@@ -6320,6 +6950,24 @@
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
   "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_ice",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_ice",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_ice",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find ice!"
  },
  {
   "id": "nar_dada_jason_alarm_ready",
@@ -7168,6 +7816,24 @@
   "text": "This spell is called zap!"
  },
  {
+  "id": "nar_dada_jason_not_move_zap",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_zap",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_zap",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find zap!"
+ },
+ {
   "id": "nar_dada_jason_use_move_pow",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
@@ -7178,6 +7844,24 @@
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
   "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_pow",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_pow",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_pow",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find pow!"
  },
  {
   "id": "nar_dada_jason_use_move_bam",
@@ -7192,6 +7876,24 @@
   "text": "This spell is called bam!"
  },
  {
+  "id": "nar_dada_jason_not_move_bam",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_bam",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_bam",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find bam!"
+ },
+ {
   "id": "nar_dada_jason_use_move_zip",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
@@ -7202,6 +7904,24 @@
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
   "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_zip",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_zip",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_zip",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find zip!"
  },
  {
   "id": "nar_dada_jason_use_move_hop",
@@ -7216,6 +7936,24 @@
   "text": "This spell is called hop!"
  },
  {
+  "id": "nar_dada_jason_not_move_hop",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_hop",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_hop",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find hop!"
+ },
+ {
   "id": "nar_dada_jason_use_move_pop",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
@@ -7226,6 +7964,24 @@
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
   "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_pop",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_pop",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_pop",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find pop!"
  },
  {
   "id": "nar_dada_jason_use_move_sun",
@@ -7240,6 +7996,24 @@
   "text": "This spell is called sun!"
  },
  {
+  "id": "nar_dada_jason_not_move_sun",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_sun",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_sun",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find sun!"
+ },
+ {
   "id": "nar_dada_jason_use_move_hug",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
@@ -7250,6 +8024,24 @@
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
   "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_hug",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_hug",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_hug",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find hug!"
  },
  {
   "id": "nar_dada_jason_use_move_fan",
@@ -7264,6 +8056,24 @@
   "text": "This spell is called fan!"
  },
  {
+  "id": "nar_dada_jason_not_move_fan",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_fan",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_fan",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find fan!"
+ },
+ {
   "id": "nar_dada_jason_use_move_big",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
@@ -7274,6 +8084,24 @@
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
   "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_big",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_big",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_big",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find big!"
  },
  {
   "id": "nar_dada_jason_use_move_hot",
@@ -7288,6 +8116,24 @@
   "text": "This spell is called hot!"
  },
  {
+  "id": "nar_dada_jason_not_move_hot",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_hot",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_hot",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find hot!"
+ },
+ {
   "id": "nar_dada_jason_use_move_ice",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
@@ -7298,6 +8144,24 @@
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
   "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_ice",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_ice",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_ice",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find ice!"
  },
  {
   "id": "nar_elsa_alarm_ready",
@@ -8146,6 +9010,24 @@
   "text": "This spell is called zap!"
  },
  {
+  "id": "nar_elsa_not_move_zap",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_elsa_was_move_zap",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_elsa_find_move_zap",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find zap!"
+ },
+ {
   "id": "nar_elsa_use_move_pow",
   "speaker": "elsa",
   "group": "nar_elsa",
@@ -8156,6 +9038,24 @@
   "speaker": "elsa",
   "group": "nar_elsa",
   "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_elsa_not_move_pow",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_elsa_was_move_pow",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_elsa_find_move_pow",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find pow!"
  },
  {
   "id": "nar_elsa_use_move_bam",
@@ -8170,6 +9070,24 @@
   "text": "This spell is called bam!"
  },
  {
+  "id": "nar_elsa_not_move_bam",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_elsa_was_move_bam",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_elsa_find_move_bam",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find bam!"
+ },
+ {
   "id": "nar_elsa_use_move_zip",
   "speaker": "elsa",
   "group": "nar_elsa",
@@ -8180,6 +9098,24 @@
   "speaker": "elsa",
   "group": "nar_elsa",
   "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_elsa_not_move_zip",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_elsa_was_move_zip",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_elsa_find_move_zip",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find zip!"
  },
  {
   "id": "nar_elsa_use_move_hop",
@@ -8194,6 +9130,24 @@
   "text": "This spell is called hop!"
  },
  {
+  "id": "nar_elsa_not_move_hop",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_elsa_was_move_hop",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_elsa_find_move_hop",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find hop!"
+ },
+ {
   "id": "nar_elsa_use_move_pop",
   "speaker": "elsa",
   "group": "nar_elsa",
@@ -8204,6 +9158,24 @@
   "speaker": "elsa",
   "group": "nar_elsa",
   "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_elsa_not_move_pop",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_elsa_was_move_pop",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_elsa_find_move_pop",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find pop!"
  },
  {
   "id": "nar_elsa_use_move_sun",
@@ -8218,6 +9190,24 @@
   "text": "This spell is called sun!"
  },
  {
+  "id": "nar_elsa_not_move_sun",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_elsa_was_move_sun",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_elsa_find_move_sun",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find sun!"
+ },
+ {
   "id": "nar_elsa_use_move_hug",
   "speaker": "elsa",
   "group": "nar_elsa",
@@ -8228,6 +9218,24 @@
   "speaker": "elsa",
   "group": "nar_elsa",
   "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_elsa_not_move_hug",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_elsa_was_move_hug",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_elsa_find_move_hug",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find hug!"
  },
  {
   "id": "nar_elsa_use_move_fan",
@@ -8242,6 +9250,24 @@
   "text": "This spell is called fan!"
  },
  {
+  "id": "nar_elsa_not_move_fan",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_elsa_was_move_fan",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_elsa_find_move_fan",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find fan!"
+ },
+ {
   "id": "nar_elsa_use_move_big",
   "speaker": "elsa",
   "group": "nar_elsa",
@@ -8252,6 +9278,24 @@
   "speaker": "elsa",
   "group": "nar_elsa",
   "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_elsa_not_move_big",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_elsa_was_move_big",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_elsa_find_move_big",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find big!"
  },
  {
   "id": "nar_elsa_use_move_hot",
@@ -8266,6 +9310,24 @@
   "text": "This spell is called hot!"
  },
  {
+  "id": "nar_elsa_not_move_hot",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_elsa_was_move_hot",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_elsa_find_move_hot",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find hot!"
+ },
+ {
   "id": "nar_elsa_use_move_ice",
   "speaker": "elsa",
   "group": "nar_elsa",
@@ -8276,6 +9338,24 @@
   "speaker": "elsa",
   "group": "nar_elsa",
   "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_elsa_not_move_ice",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_elsa_was_move_ice",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_elsa_find_move_ice",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find ice!"
  },
  {
   "id": "nar_anna_alarm_ready",
@@ -9124,6 +10204,24 @@
   "text": "This spell is called zap!"
  },
  {
+  "id": "nar_anna_not_move_zap",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_anna_was_move_zap",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_anna_find_move_zap",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find zap!"
+ },
+ {
   "id": "nar_anna_use_move_pow",
   "speaker": "anna",
   "group": "nar_anna",
@@ -9134,6 +10232,24 @@
   "speaker": "anna",
   "group": "nar_anna",
   "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_anna_not_move_pow",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_anna_was_move_pow",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_anna_find_move_pow",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find pow!"
  },
  {
   "id": "nar_anna_use_move_bam",
@@ -9148,6 +10264,24 @@
   "text": "This spell is called bam!"
  },
  {
+  "id": "nar_anna_not_move_bam",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_anna_was_move_bam",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_anna_find_move_bam",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find bam!"
+ },
+ {
   "id": "nar_anna_use_move_zip",
   "speaker": "anna",
   "group": "nar_anna",
@@ -9158,6 +10292,24 @@
   "speaker": "anna",
   "group": "nar_anna",
   "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_anna_not_move_zip",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_anna_was_move_zip",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_anna_find_move_zip",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find zip!"
  },
  {
   "id": "nar_anna_use_move_hop",
@@ -9172,6 +10324,24 @@
   "text": "This spell is called hop!"
  },
  {
+  "id": "nar_anna_not_move_hop",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_anna_was_move_hop",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_anna_find_move_hop",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find hop!"
+ },
+ {
   "id": "nar_anna_use_move_pop",
   "speaker": "anna",
   "group": "nar_anna",
@@ -9182,6 +10352,24 @@
   "speaker": "anna",
   "group": "nar_anna",
   "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_anna_not_move_pop",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_anna_was_move_pop",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_anna_find_move_pop",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find pop!"
  },
  {
   "id": "nar_anna_use_move_sun",
@@ -9196,6 +10384,24 @@
   "text": "This spell is called sun!"
  },
  {
+  "id": "nar_anna_not_move_sun",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_anna_was_move_sun",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_anna_find_move_sun",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find sun!"
+ },
+ {
   "id": "nar_anna_use_move_hug",
   "speaker": "anna",
   "group": "nar_anna",
@@ -9206,6 +10412,24 @@
   "speaker": "anna",
   "group": "nar_anna",
   "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_anna_not_move_hug",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_anna_was_move_hug",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_anna_find_move_hug",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find hug!"
  },
  {
   "id": "nar_anna_use_move_fan",
@@ -9220,6 +10444,24 @@
   "text": "This spell is called fan!"
  },
  {
+  "id": "nar_anna_not_move_fan",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_anna_was_move_fan",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_anna_find_move_fan",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find fan!"
+ },
+ {
   "id": "nar_anna_use_move_big",
   "speaker": "anna",
   "group": "nar_anna",
@@ -9230,6 +10472,24 @@
   "speaker": "anna",
   "group": "nar_anna",
   "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_anna_not_move_big",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_anna_was_move_big",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_anna_find_move_big",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find big!"
  },
  {
   "id": "nar_anna_use_move_hot",
@@ -9244,6 +10504,24 @@
   "text": "This spell is called hot!"
  },
  {
+  "id": "nar_anna_not_move_hot",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_anna_was_move_hot",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_anna_find_move_hot",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find hot!"
+ },
+ {
   "id": "nar_anna_use_move_ice",
   "speaker": "anna",
   "group": "nar_anna",
@@ -9254,6 +10532,24 @@
   "speaker": "anna",
   "group": "nar_anna",
   "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_anna_not_move_ice",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_anna_was_move_ice",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_anna_find_move_ice",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find ice!"
  },
  {
   "id": "nar_jasmine_alarm_ready",
@@ -10102,6 +11398,24 @@
   "text": "This spell is called zap!"
  },
  {
+  "id": "nar_jasmine_not_move_zap",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_jasmine_was_move_zap",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_jasmine_find_move_zap",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find zap!"
+ },
+ {
   "id": "nar_jasmine_use_move_pow",
   "speaker": "jasmine",
   "group": "nar_jasmine",
@@ -10112,6 +11426,24 @@
   "speaker": "jasmine",
   "group": "nar_jasmine",
   "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_jasmine_not_move_pow",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_jasmine_was_move_pow",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_jasmine_find_move_pow",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find pow!"
  },
  {
   "id": "nar_jasmine_use_move_bam",
@@ -10126,6 +11458,24 @@
   "text": "This spell is called bam!"
  },
  {
+  "id": "nar_jasmine_not_move_bam",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_jasmine_was_move_bam",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_jasmine_find_move_bam",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find bam!"
+ },
+ {
   "id": "nar_jasmine_use_move_zip",
   "speaker": "jasmine",
   "group": "nar_jasmine",
@@ -10136,6 +11486,24 @@
   "speaker": "jasmine",
   "group": "nar_jasmine",
   "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_jasmine_not_move_zip",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_jasmine_was_move_zip",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_jasmine_find_move_zip",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find zip!"
  },
  {
   "id": "nar_jasmine_use_move_hop",
@@ -10150,6 +11518,24 @@
   "text": "This spell is called hop!"
  },
  {
+  "id": "nar_jasmine_not_move_hop",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_jasmine_was_move_hop",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_jasmine_find_move_hop",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find hop!"
+ },
+ {
   "id": "nar_jasmine_use_move_pop",
   "speaker": "jasmine",
   "group": "nar_jasmine",
@@ -10160,6 +11546,24 @@
   "speaker": "jasmine",
   "group": "nar_jasmine",
   "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_jasmine_not_move_pop",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_jasmine_was_move_pop",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_jasmine_find_move_pop",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find pop!"
  },
  {
   "id": "nar_jasmine_use_move_sun",
@@ -10174,6 +11578,24 @@
   "text": "This spell is called sun!"
  },
  {
+  "id": "nar_jasmine_not_move_sun",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_jasmine_was_move_sun",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_jasmine_find_move_sun",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find sun!"
+ },
+ {
   "id": "nar_jasmine_use_move_hug",
   "speaker": "jasmine",
   "group": "nar_jasmine",
@@ -10184,6 +11606,24 @@
   "speaker": "jasmine",
   "group": "nar_jasmine",
   "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_jasmine_not_move_hug",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_jasmine_was_move_hug",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_jasmine_find_move_hug",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find hug!"
  },
  {
   "id": "nar_jasmine_use_move_fan",
@@ -10198,6 +11638,24 @@
   "text": "This spell is called fan!"
  },
  {
+  "id": "nar_jasmine_not_move_fan",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_jasmine_was_move_fan",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_jasmine_find_move_fan",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find fan!"
+ },
+ {
   "id": "nar_jasmine_use_move_big",
   "speaker": "jasmine",
   "group": "nar_jasmine",
@@ -10208,6 +11666,24 @@
   "speaker": "jasmine",
   "group": "nar_jasmine",
   "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_jasmine_not_move_big",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_jasmine_was_move_big",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_jasmine_find_move_big",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find big!"
  },
  {
   "id": "nar_jasmine_use_move_hot",
@@ -10222,6 +11698,24 @@
   "text": "This spell is called hot!"
  },
  {
+  "id": "nar_jasmine_not_move_hot",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_jasmine_was_move_hot",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_jasmine_find_move_hot",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find hot!"
+ },
+ {
   "id": "nar_jasmine_use_move_ice",
   "speaker": "jasmine",
   "group": "nar_jasmine",
@@ -10232,6 +11726,24 @@
   "speaker": "jasmine",
   "group": "nar_jasmine",
   "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_jasmine_not_move_ice",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_jasmine_was_move_ice",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_jasmine_find_move_ice",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find ice!"
  },
  {
   "id": "nar_ozymandias_alarm_ready",
@@ -11080,6 +12592,24 @@
   "text": "This spell is called zap!"
  },
  {
+  "id": "nar_ozymandias_not_move_zap",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_zap",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_zap",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find zap!"
+ },
+ {
   "id": "nar_ozymandias_use_move_pow",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
@@ -11090,6 +12620,24 @@
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
   "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_pow",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_pow",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_pow",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find pow!"
  },
  {
   "id": "nar_ozymandias_use_move_bam",
@@ -11104,6 +12652,24 @@
   "text": "This spell is called bam!"
  },
  {
+  "id": "nar_ozymandias_not_move_bam",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_bam",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_bam",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find bam!"
+ },
+ {
   "id": "nar_ozymandias_use_move_zip",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
@@ -11114,6 +12680,24 @@
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
   "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_zip",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_zip",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_zip",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find zip!"
  },
  {
   "id": "nar_ozymandias_use_move_hop",
@@ -11128,6 +12712,24 @@
   "text": "This spell is called hop!"
  },
  {
+  "id": "nar_ozymandias_not_move_hop",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_hop",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_hop",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find hop!"
+ },
+ {
   "id": "nar_ozymandias_use_move_pop",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
@@ -11138,6 +12740,24 @@
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
   "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_pop",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_pop",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_pop",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find pop!"
  },
  {
   "id": "nar_ozymandias_use_move_sun",
@@ -11152,6 +12772,24 @@
   "text": "This spell is called sun!"
  },
  {
+  "id": "nar_ozymandias_not_move_sun",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_sun",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_sun",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find sun!"
+ },
+ {
   "id": "nar_ozymandias_use_move_hug",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
@@ -11162,6 +12800,24 @@
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
   "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_hug",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_hug",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_hug",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find hug!"
  },
  {
   "id": "nar_ozymandias_use_move_fan",
@@ -11176,6 +12832,24 @@
   "text": "This spell is called fan!"
  },
  {
+  "id": "nar_ozymandias_not_move_fan",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_fan",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_fan",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find fan!"
+ },
+ {
   "id": "nar_ozymandias_use_move_big",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
@@ -11186,6 +12860,24 @@
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
   "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_big",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_big",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_big",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find big!"
  },
  {
   "id": "nar_ozymandias_use_move_hot",
@@ -11200,6 +12892,24 @@
   "text": "This spell is called hot!"
  },
  {
+  "id": "nar_ozymandias_not_move_hot",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_hot",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_hot",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find hot!"
+ },
+ {
   "id": "nar_ozymandias_use_move_ice",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
@@ -11210,6 +12920,24 @@
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
   "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_ice",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_ice",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_ice",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find ice!"
  },
  {
   "id": "nar_jormungandr_alarm_ready",
@@ -12057,6 +13785,24 @@
   "text": "This spell is called zap!"
  },
  {
+  "id": "nar_jormungandr_not_move_zap",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_zap",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_zap",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find zap!"
+ },
+ {
   "id": "nar_jormungandr_use_move_pow",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -12067,6 +13813,24 @@
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
   "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_pow",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_pow",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_pow",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find pow!"
  },
  {
   "id": "nar_jormungandr_use_move_bam",
@@ -12081,6 +13845,24 @@
   "text": "This spell is called bam!"
  },
  {
+  "id": "nar_jormungandr_not_move_bam",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_bam",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_bam",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find bam!"
+ },
+ {
   "id": "nar_jormungandr_use_move_zip",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -12091,6 +13873,24 @@
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
   "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_zip",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_zip",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_zip",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find zip!"
  },
  {
   "id": "nar_jormungandr_use_move_hop",
@@ -12105,6 +13905,24 @@
   "text": "This spell is called hop!"
  },
  {
+  "id": "nar_jormungandr_not_move_hop",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_hop",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_hop",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find hop!"
+ },
+ {
   "id": "nar_jormungandr_use_move_pop",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -12115,6 +13933,24 @@
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
   "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_pop",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_pop",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_pop",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find pop!"
  },
  {
   "id": "nar_jormungandr_use_move_sun",
@@ -12129,6 +13965,24 @@
   "text": "This spell is called sun!"
  },
  {
+  "id": "nar_jormungandr_not_move_sun",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_sun",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_sun",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find sun!"
+ },
+ {
   "id": "nar_jormungandr_use_move_hug",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -12139,6 +13993,24 @@
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
   "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_hug",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_hug",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_hug",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find hug!"
  },
  {
   "id": "nar_jormungandr_use_move_fan",
@@ -12153,6 +14025,24 @@
   "text": "This spell is called fan!"
  },
  {
+  "id": "nar_jormungandr_not_move_fan",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_fan",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_fan",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find fan!"
+ },
+ {
   "id": "nar_jormungandr_use_move_big",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -12163,6 +14053,24 @@
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
   "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_big",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_big",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_big",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find big!"
  },
  {
   "id": "nar_jormungandr_use_move_hot",
@@ -12177,6 +14085,24 @@
   "text": "This spell is called hot!"
  },
  {
+  "id": "nar_jormungandr_not_move_hot",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_hot",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_hot",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find hot!"
+ },
+ {
   "id": "nar_jormungandr_use_move_ice",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -12187,6 +14113,24 @@
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
   "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_ice",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_ice",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_ice",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find ice!"
  },
  {
   "id": "nar_smaug_alarm_ready",
@@ -13035,6 +14979,24 @@
   "text": "This spell is called zap!"
  },
  {
+  "id": "nar_smaug_not_move_zap",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_smaug_was_move_zap",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_smaug_find_move_zap",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find zap!"
+ },
+ {
   "id": "nar_smaug_use_move_pow",
   "speaker": "smaug",
   "group": "nar_smaug",
@@ -13045,6 +15007,24 @@
   "speaker": "smaug",
   "group": "nar_smaug",
   "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_smaug_not_move_pow",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_smaug_was_move_pow",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_smaug_find_move_pow",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find pow!"
  },
  {
   "id": "nar_smaug_use_move_bam",
@@ -13059,6 +15039,24 @@
   "text": "This spell is called bam!"
  },
  {
+  "id": "nar_smaug_not_move_bam",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_smaug_was_move_bam",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_smaug_find_move_bam",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find bam!"
+ },
+ {
   "id": "nar_smaug_use_move_zip",
   "speaker": "smaug",
   "group": "nar_smaug",
@@ -13069,6 +15067,24 @@
   "speaker": "smaug",
   "group": "nar_smaug",
   "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_smaug_not_move_zip",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_smaug_was_move_zip",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_smaug_find_move_zip",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find zip!"
  },
  {
   "id": "nar_smaug_use_move_hop",
@@ -13083,6 +15099,24 @@
   "text": "This spell is called hop!"
  },
  {
+  "id": "nar_smaug_not_move_hop",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_smaug_was_move_hop",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_smaug_find_move_hop",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find hop!"
+ },
+ {
   "id": "nar_smaug_use_move_pop",
   "speaker": "smaug",
   "group": "nar_smaug",
@@ -13093,6 +15127,24 @@
   "speaker": "smaug",
   "group": "nar_smaug",
   "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_smaug_not_move_pop",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_smaug_was_move_pop",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_smaug_find_move_pop",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find pop!"
  },
  {
   "id": "nar_smaug_use_move_sun",
@@ -13107,6 +15159,24 @@
   "text": "This spell is called sun!"
  },
  {
+  "id": "nar_smaug_not_move_sun",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_smaug_was_move_sun",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_smaug_find_move_sun",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find sun!"
+ },
+ {
   "id": "nar_smaug_use_move_hug",
   "speaker": "smaug",
   "group": "nar_smaug",
@@ -13117,6 +15187,24 @@
   "speaker": "smaug",
   "group": "nar_smaug",
   "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_smaug_not_move_hug",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_smaug_was_move_hug",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_smaug_find_move_hug",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find hug!"
  },
  {
   "id": "nar_smaug_use_move_fan",
@@ -13131,6 +15219,24 @@
   "text": "This spell is called fan!"
  },
  {
+  "id": "nar_smaug_not_move_fan",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_smaug_was_move_fan",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_smaug_find_move_fan",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find fan!"
+ },
+ {
   "id": "nar_smaug_use_move_big",
   "speaker": "smaug",
   "group": "nar_smaug",
@@ -13141,6 +15247,24 @@
   "speaker": "smaug",
   "group": "nar_smaug",
   "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_smaug_not_move_big",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_smaug_was_move_big",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_smaug_find_move_big",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find big!"
  },
  {
   "id": "nar_smaug_use_move_hot",
@@ -13155,6 +15279,24 @@
   "text": "This spell is called hot!"
  },
  {
+  "id": "nar_smaug_not_move_hot",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_smaug_was_move_hot",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_smaug_find_move_hot",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find hot!"
+ },
+ {
   "id": "nar_smaug_use_move_ice",
   "speaker": "smaug",
   "group": "nar_smaug",
@@ -13165,6 +15307,24 @@
   "speaker": "smaug",
   "group": "nar_smaug",
   "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_smaug_not_move_ice",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_smaug_was_move_ice",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_smaug_find_move_ice",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find ice!"
  },
  {
   "id": "nar_scar_alarm_ready",
@@ -14013,6 +16173,24 @@
   "text": "This spell is called zap!"
  },
  {
+  "id": "nar_scar_not_move_zap",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_scar_was_move_zap",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_scar_find_move_zap",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find zap!"
+ },
+ {
   "id": "nar_scar_use_move_pow",
   "speaker": "scar",
   "group": "nar_scar",
@@ -14023,6 +16201,24 @@
   "speaker": "scar",
   "group": "nar_scar",
   "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_scar_not_move_pow",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_scar_was_move_pow",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_scar_find_move_pow",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find pow!"
  },
  {
   "id": "nar_scar_use_move_bam",
@@ -14037,6 +16233,24 @@
   "text": "This spell is called bam!"
  },
  {
+  "id": "nar_scar_not_move_bam",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_scar_was_move_bam",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_scar_find_move_bam",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find bam!"
+ },
+ {
   "id": "nar_scar_use_move_zip",
   "speaker": "scar",
   "group": "nar_scar",
@@ -14047,6 +16261,24 @@
   "speaker": "scar",
   "group": "nar_scar",
   "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_scar_not_move_zip",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_scar_was_move_zip",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_scar_find_move_zip",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find zip!"
  },
  {
   "id": "nar_scar_use_move_hop",
@@ -14061,6 +16293,24 @@
   "text": "This spell is called hop!"
  },
  {
+  "id": "nar_scar_not_move_hop",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_scar_was_move_hop",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_scar_find_move_hop",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find hop!"
+ },
+ {
   "id": "nar_scar_use_move_pop",
   "speaker": "scar",
   "group": "nar_scar",
@@ -14071,6 +16321,24 @@
   "speaker": "scar",
   "group": "nar_scar",
   "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_scar_not_move_pop",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_scar_was_move_pop",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_scar_find_move_pop",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find pop!"
  },
  {
   "id": "nar_scar_use_move_sun",
@@ -14085,6 +16353,24 @@
   "text": "This spell is called sun!"
  },
  {
+  "id": "nar_scar_not_move_sun",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_scar_was_move_sun",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_scar_find_move_sun",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find sun!"
+ },
+ {
   "id": "nar_scar_use_move_hug",
   "speaker": "scar",
   "group": "nar_scar",
@@ -14095,6 +16381,24 @@
   "speaker": "scar",
   "group": "nar_scar",
   "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_scar_not_move_hug",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_scar_was_move_hug",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_scar_find_move_hug",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find hug!"
  },
  {
   "id": "nar_scar_use_move_fan",
@@ -14109,6 +16413,24 @@
   "text": "This spell is called fan!"
  },
  {
+  "id": "nar_scar_not_move_fan",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_scar_was_move_fan",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_scar_find_move_fan",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find fan!"
+ },
+ {
   "id": "nar_scar_use_move_big",
   "speaker": "scar",
   "group": "nar_scar",
@@ -14119,6 +16441,24 @@
   "speaker": "scar",
   "group": "nar_scar",
   "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_scar_not_move_big",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_scar_was_move_big",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_scar_find_move_big",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find big!"
  },
  {
   "id": "nar_scar_use_move_hot",
@@ -14133,6 +16473,24 @@
   "text": "This spell is called hot!"
  },
  {
+  "id": "nar_scar_not_move_hot",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_scar_was_move_hot",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_scar_find_move_hot",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find hot!"
+ },
+ {
   "id": "nar_scar_use_move_ice",
   "speaker": "scar",
   "group": "nar_scar",
@@ -14143,6 +16501,24 @@
   "speaker": "scar",
   "group": "nar_scar",
   "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_scar_not_move_ice",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_scar_was_move_ice",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_scar_find_move_ice",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find ice!"
  },
  {
   "id": "nar_moriarty_alarm_ready",
@@ -14991,6 +17367,24 @@
   "text": "This spell is called zap!"
  },
  {
+  "id": "nar_moriarty_not_move_zap",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_moriarty_was_move_zap",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_moriarty_find_move_zap",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find zap!"
+ },
+ {
   "id": "nar_moriarty_use_move_pow",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -15001,6 +17395,24 @@
   "speaker": "moriarty",
   "group": "nar_moriarty",
   "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_moriarty_not_move_pow",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_moriarty_was_move_pow",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_moriarty_find_move_pow",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find pow!"
  },
  {
   "id": "nar_moriarty_use_move_bam",
@@ -15015,6 +17427,24 @@
   "text": "This spell is called bam!"
  },
  {
+  "id": "nar_moriarty_not_move_bam",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_moriarty_was_move_bam",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_moriarty_find_move_bam",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find bam!"
+ },
+ {
   "id": "nar_moriarty_use_move_zip",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -15025,6 +17455,24 @@
   "speaker": "moriarty",
   "group": "nar_moriarty",
   "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_moriarty_not_move_zip",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_moriarty_was_move_zip",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_moriarty_find_move_zip",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find zip!"
  },
  {
   "id": "nar_moriarty_use_move_hop",
@@ -15039,6 +17487,24 @@
   "text": "This spell is called hop!"
  },
  {
+  "id": "nar_moriarty_not_move_hop",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_moriarty_was_move_hop",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_moriarty_find_move_hop",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find hop!"
+ },
+ {
   "id": "nar_moriarty_use_move_pop",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -15049,6 +17515,24 @@
   "speaker": "moriarty",
   "group": "nar_moriarty",
   "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_moriarty_not_move_pop",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_moriarty_was_move_pop",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_moriarty_find_move_pop",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find pop!"
  },
  {
   "id": "nar_moriarty_use_move_sun",
@@ -15063,6 +17547,24 @@
   "text": "This spell is called sun!"
  },
  {
+  "id": "nar_moriarty_not_move_sun",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_moriarty_was_move_sun",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_moriarty_find_move_sun",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find sun!"
+ },
+ {
   "id": "nar_moriarty_use_move_hug",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -15073,6 +17575,24 @@
   "speaker": "moriarty",
   "group": "nar_moriarty",
   "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_moriarty_not_move_hug",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_moriarty_was_move_hug",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_moriarty_find_move_hug",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find hug!"
  },
  {
   "id": "nar_moriarty_use_move_fan",
@@ -15087,6 +17607,24 @@
   "text": "This spell is called fan!"
  },
  {
+  "id": "nar_moriarty_not_move_fan",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_moriarty_was_move_fan",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_moriarty_find_move_fan",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find fan!"
+ },
+ {
   "id": "nar_moriarty_use_move_big",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -15097,6 +17635,24 @@
   "speaker": "moriarty",
   "group": "nar_moriarty",
   "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_moriarty_not_move_big",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_moriarty_was_move_big",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_moriarty_find_move_big",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find big!"
  },
  {
   "id": "nar_moriarty_use_move_hot",
@@ -15111,6 +17667,24 @@
   "text": "This spell is called hot!"
  },
  {
+  "id": "nar_moriarty_not_move_hot",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_moriarty_was_move_hot",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_moriarty_find_move_hot",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find hot!"
+ },
+ {
   "id": "nar_moriarty_use_move_ice",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -15121,6 +17695,24 @@
   "speaker": "moriarty",
   "group": "nar_moriarty",
   "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_moriarty_not_move_ice",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_moriarty_was_move_ice",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_moriarty_find_move_ice",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find ice!"
  },
  {
   "id": "nar_bavmorda_alarm_ready",
@@ -15969,6 +18561,24 @@
   "text": "This spell is called zap!"
  },
  {
+  "id": "nar_bavmorda_not_move_zap",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_zap",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_zap",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find zap!"
+ },
+ {
   "id": "nar_bavmorda_use_move_pow",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
@@ -15979,6 +18589,24 @@
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
   "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_pow",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_pow",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_pow",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find pow!"
  },
  {
   "id": "nar_bavmorda_use_move_bam",
@@ -15993,6 +18621,24 @@
   "text": "This spell is called bam!"
  },
  {
+  "id": "nar_bavmorda_not_move_bam",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_bam",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_bam",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find bam!"
+ },
+ {
   "id": "nar_bavmorda_use_move_zip",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
@@ -16003,6 +18649,24 @@
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
   "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_zip",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_zip",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_zip",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find zip!"
  },
  {
   "id": "nar_bavmorda_use_move_hop",
@@ -16017,6 +18681,24 @@
   "text": "This spell is called hop!"
  },
  {
+  "id": "nar_bavmorda_not_move_hop",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_hop",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_hop",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find hop!"
+ },
+ {
   "id": "nar_bavmorda_use_move_pop",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
@@ -16027,6 +18709,24 @@
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
   "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_pop",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_pop",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_pop",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find pop!"
  },
  {
   "id": "nar_bavmorda_use_move_sun",
@@ -16041,6 +18741,24 @@
   "text": "This spell is called sun!"
  },
  {
+  "id": "nar_bavmorda_not_move_sun",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_sun",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_sun",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find sun!"
+ },
+ {
   "id": "nar_bavmorda_use_move_hug",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
@@ -16051,6 +18769,24 @@
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
   "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_hug",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_hug",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_hug",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find hug!"
  },
  {
   "id": "nar_bavmorda_use_move_fan",
@@ -16065,6 +18801,24 @@
   "text": "This spell is called fan!"
  },
  {
+  "id": "nar_bavmorda_not_move_fan",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_fan",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_fan",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find fan!"
+ },
+ {
   "id": "nar_bavmorda_use_move_big",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
@@ -16075,6 +18829,24 @@
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
   "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_big",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_big",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_big",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find big!"
  },
  {
   "id": "nar_bavmorda_use_move_hot",
@@ -16089,6 +18861,24 @@
   "text": "This spell is called hot!"
  },
  {
+  "id": "nar_bavmorda_not_move_hot",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_hot",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_hot",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find hot!"
+ },
+ {
   "id": "nar_bavmorda_use_move_ice",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
@@ -16099,6 +18889,24 @@
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
   "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_ice",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_ice",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_ice",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find ice!"
  },
  {
   "id": "nar_rilla_alarm_ready",
@@ -16947,6 +19755,24 @@
   "text": "This spell is called zap!"
  },
  {
+  "id": "nar_rilla_not_move_zap",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_rilla_was_move_zap",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_rilla_find_move_zap",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find zap!"
+ },
+ {
   "id": "nar_rilla_use_move_pow",
   "speaker": "rilla",
   "group": "nar_rilla",
@@ -16957,6 +19783,24 @@
   "speaker": "rilla",
   "group": "nar_rilla",
   "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_rilla_not_move_pow",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_rilla_was_move_pow",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_rilla_find_move_pow",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find pow!"
  },
  {
   "id": "nar_rilla_use_move_bam",
@@ -16971,6 +19815,24 @@
   "text": "This spell is called bam!"
  },
  {
+  "id": "nar_rilla_not_move_bam",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_rilla_was_move_bam",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_rilla_find_move_bam",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find bam!"
+ },
+ {
   "id": "nar_rilla_use_move_zip",
   "speaker": "rilla",
   "group": "nar_rilla",
@@ -16981,6 +19843,24 @@
   "speaker": "rilla",
   "group": "nar_rilla",
   "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_rilla_not_move_zip",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_rilla_was_move_zip",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_rilla_find_move_zip",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find zip!"
  },
  {
   "id": "nar_rilla_use_move_hop",
@@ -16995,6 +19875,24 @@
   "text": "This spell is called hop!"
  },
  {
+  "id": "nar_rilla_not_move_hop",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_rilla_was_move_hop",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_rilla_find_move_hop",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find hop!"
+ },
+ {
   "id": "nar_rilla_use_move_pop",
   "speaker": "rilla",
   "group": "nar_rilla",
@@ -17005,6 +19903,24 @@
   "speaker": "rilla",
   "group": "nar_rilla",
   "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_rilla_not_move_pop",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_rilla_was_move_pop",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_rilla_find_move_pop",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find pop!"
  },
  {
   "id": "nar_rilla_use_move_sun",
@@ -17019,6 +19935,24 @@
   "text": "This spell is called sun!"
  },
  {
+  "id": "nar_rilla_not_move_sun",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_rilla_was_move_sun",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_rilla_find_move_sun",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find sun!"
+ },
+ {
   "id": "nar_rilla_use_move_hug",
   "speaker": "rilla",
   "group": "nar_rilla",
@@ -17029,6 +19963,24 @@
   "speaker": "rilla",
   "group": "nar_rilla",
   "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_rilla_not_move_hug",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_rilla_was_move_hug",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_rilla_find_move_hug",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find hug!"
  },
  {
   "id": "nar_rilla_use_move_fan",
@@ -17043,6 +19995,24 @@
   "text": "This spell is called fan!"
  },
  {
+  "id": "nar_rilla_not_move_fan",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_rilla_was_move_fan",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_rilla_find_move_fan",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find fan!"
+ },
+ {
   "id": "nar_rilla_use_move_big",
   "speaker": "rilla",
   "group": "nar_rilla",
@@ -17053,6 +20023,24 @@
   "speaker": "rilla",
   "group": "nar_rilla",
   "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_rilla_not_move_big",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_rilla_was_move_big",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_rilla_find_move_big",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find big!"
  },
  {
   "id": "nar_rilla_use_move_hot",
@@ -17067,6 +20055,24 @@
   "text": "This spell is called hot!"
  },
  {
+  "id": "nar_rilla_not_move_hot",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_rilla_was_move_hot",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_rilla_find_move_hot",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find hot!"
+ },
+ {
   "id": "nar_rilla_use_move_ice",
   "speaker": "rilla",
   "group": "nar_rilla",
@@ -17077,5 +20083,23 @@
   "speaker": "rilla",
   "group": "nar_rilla",
   "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_rilla_not_move_ice",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_rilla_was_move_ice",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_rilla_find_move_ice",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find ice!"
  }
 ]

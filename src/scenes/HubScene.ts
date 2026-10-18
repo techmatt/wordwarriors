@@ -3,14 +3,19 @@
  *
  * Part 1 (before the first battle): the helper teaches her a spell (a scroll
  * with the move word on it, "stand in the magic circle and press green", the
- * word flies into her), then two side-room doors open onto the sentence
- * games. Each room she finishes hangs its prize's picture on its door; when
- * both are done the front door bursts open and out she goes to battle.
+ * word flies into her), then two side-room doors pop out of the wall onto
+ * the sentence games. Each room she finishes hangs its prize's picture on its
+ * door; when both are done the front door appears, bursts open, and out she
+ * goes to battle.
+ *
+ * A door she cannot use yet is not there at all (Julia's first play: told to
+ * find the two doors, she walked to the shut front door). Every door appears,
+ * with a little reveal, at the moment it opens.
  *
  * Part 2 (after the retreat): she comes back in at the front door, the
  * narrator says they need something that scares the villain, and a secret
  * door pops out of the wall (the attic, the counter sentence). Back from it,
- * the front door opens again for the battle she wins.
+ * the front door appears again for the battle she wins.
  *
  * The scene is restarted each time she comes back from a side room (with
  * `from`), so everything it shows is rebuilt from the episode in `init()` and
@@ -134,6 +139,9 @@ export class HubScene extends RoomScene {
       const spot = this.addSpot(`door_${slot}`, pos.x, pos.y, [img, sign], null);
       spot.enabled = false;
       this.doors[`door_${slot}`] = spot;
+      // A door she cannot use yet is not there at all: the side doors appear
+      // once the spell is learned (openSideDoors), and stay, prize and all.
+      spot.obj.setVisible(episode.house.taught || done.includes(slot));
       if (done.includes(slot)) this.badge(spot, slot, slot === this.from);
     }
 
@@ -150,11 +158,12 @@ export class HubScene extends RoomScene {
       this.badge(counter, 'counter', this.from === 'counter');
     }
 
-    // The front door: shut (greyed) until the way out is open.
+    // The front door: not there at all until the way out is open (openFront).
     const fpos = HUB.doors.front;
-    const fimg = this.art('prop_front_door', FRONT_W, FRONT_H).setTint(0x8a8a8a);
+    const fimg = this.art('prop_front_door', FRONT_W, FRONT_H);
     const front = this.addSpot('door_front', fpos.x, fpos.y, [fimg], null);
     front.enabled = false;
+    front.obj.setVisible(false);
     this.doors.door_front = front;
   }
 
@@ -319,6 +328,12 @@ export class HubScene extends RoomScene {
       if (!spot || episode.house.done.includes(slot)) continue;
       spot.enabled = true;
       spot.correct = true;
+      if (!spot.obj.visible) {
+        // First time: the door pops out of the wall.
+        spot.obj.setVisible(true);
+        popIn(this, spot.obj);
+        sfxSummon();
+      }
       if (!spot.obj.getData('glowing')) {
         spot.obj.setData('glowing', true);
         burst(this, spot.x, spot.y - DOOR_H / 2, { count: 24, colors: [0xffd23f, 0xffffff] });
@@ -331,14 +346,17 @@ export class HubScene extends RoomScene {
     return n;
   }
 
-  /** The front door bursts open; she can leave. */
+  /** The front door appears and bursts open; she can leave. */
   private async openFront(line: string): Promise<void> {
     const front = this.doors.door_front;
     if (!front) return;
+    front.obj.setVisible(true);
+    popIn(this, front.obj);
+    flash(this, 0xffe8a0, 200);
+    shockwave(this, front.x, front.y - FRONT_H / 2, 0xffd23f, 240);
     const img = front.obj.list[0] as Phaser.GameObjects.Image;
-    img.clearTint();
     const s = img.scale;
-    squash(this, img, s, s, 0.2, 160);
+    this.time.delayedCall(380, () => squash(this, img, s, s, 0.2, 160));
     const light = this.add.image(0, -FRONT_H / 2, TEX.glow).setTint(0xfff1a8).setBlendMode(Phaser.BlendModes.ADD).setScale(2.2).setAlpha(0.6);
     front.obj.addAt(light, 0);
     this.tweens.add({ targets: light, alpha: 0.95, scale: 2.6, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });

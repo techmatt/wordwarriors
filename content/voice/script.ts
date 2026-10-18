@@ -108,6 +108,11 @@ export const VILLAIN_LINES: Template[] = [
 export const MOVE_LINES: Template[] = [
   { key: 'use_move', text: 'Use {word}!' },
   { key: 'teach_word', text: 'This spell is called {word}!' },
+  // A wrong move pick, said in order: "That wasn't ICE," + "that was HUG!" +
+  // "Find ICE!". The picked word may be said: she has already picked it.
+  { key: 'not_move', text: "That wasn't {word}," },
+  { key: 'was_move', text: 'that was {word}!' },
+  { key: 'find_move', text: 'Find {word}!' },
 ];
 
 /**

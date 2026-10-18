@@ -9,7 +9,8 @@
  * "Good news!" The helper pops in. Then the room goes dark, the villain's mood
  * thumps in over the room (EvilRilla's footprints, a cracked window:
  * `CharacterSpec.house`, so it is data), a far-off taunt, and "Come on, let us
- * go! Find the door!" The grown-ups step over beside the door, which glows.
+ * go! Find the door!" The door pops back out of the wall (it is not there while
+ * she cannot use it) and the grown-ups step over beside it, glowing.
  *
  * No reading here, and no text: it is the room she explores for fun first.
  * Every toy is a spot that does something silly on green (Stardew's "poke
@@ -121,10 +122,12 @@ export class BedroomScene extends RoomScene {
       spot.obj.setData('object', o);
     }
 
-    // The door: the way on, open once the news is told.
+    // The door: the way on, there only once the news is told (a door she
+    // cannot use yet is not there at all), and for a moment as the waker comes in.
     this.doorImg = this.art('prop_door', 130, 200);
     this.doorSpot = this.addSpot('door', room.door.x, room.door.y, [this.doorImg], true);
     this.doorSpot.enabled = false;
+    this.doorSpot.obj.setVisible(false);
 
     void this.run();
   }
@@ -134,7 +137,8 @@ export class BedroomScene extends RoomScene {
     const w = wakerFor(episode.hero);
     await this.wait(800);
 
-    // The waker comes in through the door.
+    // The waker comes in through the door, which goes again behind them.
+    this.showDoor();
     this.doorOpens();
     const waker = this.art(charArt(w, false), 120, 160, room.door.x, room.door.y);
     waker.setDepth(room.waker.y);
@@ -143,6 +147,7 @@ export class BedroomScene extends RoomScene {
         this.tweens.add({ targets: waker, x: room.waker.x, y: room.waker.y, duration: 900, ease: 'Sine.easeInOut', onComplete: () => resolve() }),
       ),
     );
+    this.hideDoor();
     bob(this, waker, 5, 800);
     await this.speak(wakeLine(w, 'up'));
 
@@ -187,6 +192,8 @@ export class BedroomScene extends RoomScene {
     this.newsDone = true;
     this.round = 'bedroom:door';
     if (this.doorSpot) {
+      this.showDoor();
+      sfxSummon();
       this.doorSpot.enabled = true;
       burst(this, this.doorSpot.x, this.doorSpot.y - 100, { count: 30 });
       // A warm glow behind the door straight away (the hub's front door look).
@@ -247,6 +254,23 @@ export class BedroomScene extends RoomScene {
     this.player.hop();
     sfxBoing();
     burst(this, x + 170, y - 20, { count: 40 });
+  }
+
+  /** The door pops out of the wall. */
+  private showDoor(): void {
+    const obj = this.doorSpot?.obj;
+    if (!obj) return;
+    this.tweens.killTweensOf(obj);
+    obj.setVisible(true);
+    popIn(this, obj);
+  }
+
+  /** The door shrinks back into the wall. */
+  private hideDoor(): void {
+    const obj = this.doorSpot?.obj;
+    if (!obj) return;
+    this.tweens.killTweensOf(obj);
+    this.tweens.add({ targets: obj, scale: 0, duration: 260, ease: 'Back.easeIn', onComplete: () => obj.setVisible(false) });
   }
 
   private doorOpens(): void {

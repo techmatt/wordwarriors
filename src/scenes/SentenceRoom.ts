@@ -10,9 +10,10 @@
  * - `listen` (skipped once the frame is solid): the sentence is read to her
  *   up to the key word, each banner word lighting as it is spoken. At the key
  *   word the voice stops and the word pulses in silence: that one is hers.
- * - `read`: her turn. The light sits on the first word; each green press
- *   moves it one word on (a grown-up reads along with her). Yellow says the
- *   lit word. When the light reaches the key word, the pass becomes...
+ * - `read`: her turn. Each green press lights the next word and says it (a
+ *   grown-up reads along with her); the first press lights the first word.
+ *   Yellow says the lit word. When the light reaches the key word (silent),
+ *   the pass becomes...
  * - `find`: the pedestals wake up and she walks to the answer. Yellow sounds
  *   out the key word's letters one at a time, never blended (a non-decodable
  *   word like MICE gives only its first sound).
@@ -218,9 +219,9 @@ export class SentenceRoom extends Minigame {
     });
   }
 
-  /** The green dot sits under the lit word while she reads, bobbing; hidden otherwise. */
+  /** The green dot sits under the lit word while she reads (the first word before any is lit), bobbing; hidden otherwise. */
   private placeReadDot(time: number): void {
-    const box = this.tokenBoxes[this.index];
+    const box = this.tokenBoxes[Math.max(0, this.index)];
     const show = this.pass === 'read' && !this.locked && !!box;
     this.readDot.setVisible(show);
     if (show) this.readDot.setPosition(this.banner.x + box.x, BANNER_Y + 82 + Math.sin(time / 180) * 4);
@@ -283,7 +284,7 @@ export class SentenceRoom extends Minigame {
       if (this.pass !== 'listen') return;
     }
     this.pass = 'read';
-    this.light(0);
+    this.light(-1);
     await this.narrate('room_your_turn');
   }
 
@@ -299,14 +300,22 @@ export class SentenceRoom extends Minigame {
     if (narrate) await this.narrate('room_find');
   }
 
-  /** In `read`, green steps the light one word on; everywhere but `find` it is consumed. */
+  /**
+   * In `read`, green lights the next word and says it (input waits for the
+   * word, so the voice and the light stay together); the key word lights in
+   * silence and wakes the pedestals. Everywhere but `find` green is consumed.
+   */
   protected override onGreen(): boolean {
     if (this.pass === 'find') return false;
     if (this.pass !== 'read') return true;
     const next = this.index + 1;
     sfxStep(next);
     if (next >= this.keyIndex) void this.startFind();
-    else this.light(next);
+    else {
+      this.light(next);
+      const token = this.plan.sentence.tokens[next];
+      if (token) void this.speak(wordLine(tokenWord(token)));
+    }
     // Every press answered on the word itself: a little puff on the newly lit word.
     const box = this.tokenBoxes[Math.min(next, this.keyIndex)]!;
     burst(this, this.banner.x + box.x, BANNER_Y, { count: 12, speed: 200 });
@@ -321,6 +330,7 @@ export class SentenceRoom extends Minigame {
       }
       const token = this.plan.sentence.tokens[this.index];
       if (token) void this.speak(wordLine(tokenWord(token)));
+      else void this.narrate('room_your_turn');
       return;
     }
     if (this.pass !== 'find') return;

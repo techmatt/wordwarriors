@@ -316,6 +316,7 @@ export abstract class RoomScene extends Phaser.Scene {
       locked: this.locked,
       player: { x: this.player.x, y: this.player.y },
       spots,
+      shown: this.spots.filter((s) => s.obj.visible).map((s) => s.id),
       ...this.extraHooks(),
     };
   }
