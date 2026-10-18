@@ -32,8 +32,9 @@ the art painter: `npx playwright install chromium chromium-headless-shell`.
    the way ahead before each big step.
 4. Two prep minigames, walking to answers: Sound to Letter makes a power gem, Blend
    Path makes star ammo, Word to Picture calls a helper. Yellow (Tab) says it again.
-5. Battle part 1 runs by itself; when the move words appear on dots, press the button
-   of that colour. It ends with the villain's ultimate: the heroes retreat to camp.
+5. Battle part 1 runs by itself (she can run her own hero with the stick, and green makes
+   it hop); when the move words appear on dots, press the button of that colour. It
+   ends with the villain's ultimate: the heroes retreat to camp.
 6. Walk to the glowing item at camp; Spell the Spell: type the letters in the ghost
    boxes on the keyboard to forge the counter-item.
 7. Battle part 2: the counter-item beats the ultimate, everyone finishes it, and the
