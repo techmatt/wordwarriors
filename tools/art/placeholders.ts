@@ -296,6 +296,100 @@ function paintAll(list: ArtAsset[]): Record<string, string> {
         g.fillStyle = floor;
         g.fillRect(0, H * 0.45, W, H * 0.55);
       } else {
+        // Rooms: a simple set per room, drawn behind where she walks.
+        const id = a.id.replace('room_', '');
+        const dark = hex(shade(c1, 0.6), 0.8);
+        if (id === 'title' || id === 'victory') {
+          g.fillStyle = hex(0xffd23f, 0.12);
+          for (let i = 0; i < 12; i++) {
+            g.beginPath();
+            g.moveTo(W / 2, H * 0.62);
+            g.arc(W / 2, H * 0.62, W, (i / 12) * Math.PI * 2, (i / 12 + 1 / 24) * Math.PI * 2);
+            g.closePath();
+            g.fill();
+          }
+          g.fillStyle = dark;
+          for (const [x, h] of [[0.12, 0.2], [0.24, 0.3], [0.76, 0.3], [0.88, 0.2]] as [number, number][]) {
+            g.fillRect(W * x - 40, H * (0.62 - h), 80, H * h);
+            g.beginPath();
+            g.moveTo(W * x - 50, H * (0.62 - h));
+            g.lineTo(W * x, H * (0.62 - h - 0.1));
+            g.lineTo(W * x + 50, H * (0.62 - h));
+            g.fill();
+          }
+        } else if (id === 'pick') {
+          for (let i = 0; i < 5; i++) {
+            g.fillStyle = hex(0xfff3c4, 0.1);
+            g.beginPath();
+            g.moveTo(W * (0.1 + i * 0.2), 0);
+            g.lineTo(W * (0.02 + i * 0.2), H * 0.95);
+            g.lineTo(W * (0.18 + i * 0.2), H * 0.95);
+            g.closePath();
+            g.fill();
+          }
+          g.fillStyle = hex(0x8a2a3a, 0.9);
+          g.fillRect(0, 0, W, 30);
+          for (let x = 0; x < W; x += 80) {
+            g.beginPath();
+            g.arc(x + 40, 30, 40, 0, Math.PI);
+            g.fill();
+          }
+        } else if (id === 'stones') {
+          for (let i = 0; i < 7; i++) {
+            const x = W * (0.04 + i * 0.16);
+            g.fillStyle = hex(0x5a3a1a, 0.8);
+            g.fillRect(x - 10, H * 0.38, 20, H * 0.24);
+            g.fillStyle = hex(i % 2 ? 0x3a8a4a : 0x2a7a3a, 0.9);
+            g.beginPath();
+            g.arc(x, H * 0.34, 70, 0, Math.PI * 2);
+            g.fill();
+          }
+        } else if (id === 'path') {
+          g.fillStyle = hex(0x5ab4ff, 0.5);
+          g.fillRect(0, H * 0.53, W, H * 0.06);
+          g.fillStyle = hex(0xffffff, 0.4);
+          for (let x = 0; x < W; x += 90) g.fillRect(x, H * 0.555, 40, 4);
+          g.fillStyle = hex(0x6a8a5a, 0.6);
+          for (let i = 0; i < 8; i++) {
+            g.beginPath();
+            g.ellipse(W * (0.06 + i * 0.13), H * 0.4, 80, 50, 0, Math.PI, 0);
+            g.fill();
+          }
+        } else if (id === 'gallery') {
+          for (let i = 0; i < 5; i++) {
+            const x = W * (0.1 + i * 0.2);
+            g.fillStyle = hex(0xb8862a, 0.9);
+            g.fillRect(x - 60, H * 0.2, 120, 90);
+            g.fillStyle = hex([0x9ad8ff, 0xff9ad5, 0x8aff8a, 0xffd23f, 0xc8a0ff][i]!, 0.9);
+            g.fillRect(x - 48, H * 0.2 + 12, 96, 66);
+          }
+          g.fillStyle = hex(0x5a3a2a, 0.35);
+          g.fillRect(0, H * 0.58, W, 14);
+        } else if (id === 'forge') {
+          g.fillStyle = hex(0x000000, 0.18);
+          for (let y = 0; y < H * 0.6; y += 40) for (let x = (y / 40) % 2 ? -40 : 0; x < W; x += 80) g.fillRect(x + 2, y + 2, 76, 36);
+          const glow = g.createRadialGradient(W * 0.5, H * 0.6, 10, W * 0.5, H * 0.6, W * 0.35);
+          glow.addColorStop(0, hex(0xffb030, 0.55));
+          glow.addColorStop(1, hex(0xffb030, 0));
+          g.fillStyle = glow;
+          g.fillRect(0, 0, W, H);
+        } else if (id === 'camp') {
+          g.fillStyle = hex(0xfff3c4, 0.9);
+          g.beginPath();
+          g.arc(W * 0.82, H * 0.14, 46, 0, Math.PI * 2);
+          g.fill();
+          g.fillStyle = hex(0x0a1a12, 0.9);
+          for (let i = 0; i < 12; i++) {
+            const x = W * (i / 11);
+            const h = H * (0.22 + ((i * 41) % 4) * 0.05);
+            g.beginPath();
+            g.moveTo(x - 50, H * 0.6);
+            g.lineTo(x, H * 0.6 - h);
+            g.lineTo(x + 50, H * 0.6);
+            g.closePath();
+            g.fill();
+          }
+        }
         g.fillStyle = hex(0x000000, 0.12);
         g.fillRect(0, H * 0.62, W, H * 0.38);
       }
