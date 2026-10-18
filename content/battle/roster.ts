@@ -122,6 +122,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'wand', text: 'My wand is sparkly!' },
         { key: 'brave', text: 'I am super brave!' },
         { key: 'boop', text: 'Boop! Got you!' },
+        { key: 'giggle', text: 'You can not catch me!' },
+        { key: 'team', text: 'We are a super team!' },
       ],
     },
     evil: {
@@ -138,6 +140,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'mine', text: 'All the toys are mine!' },
         { key: 'bedtime', text: 'I never go to bed!' },
         { key: 'grr', text: 'Grr! Grumpy time!' },
+        { key: 'nap', text: 'Naps are for babies!' },
+        { key: 'cookies', text: 'I ate all the cookies!' },
       ],
     },
     counter: {
@@ -164,6 +168,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'roar', text: 'My dragons say hello!' },
         { key: 'fly', text: 'Up we fly!' },
         { key: 'friends', text: 'Dragons are my friends!' },
+        { key: 'wings', text: 'Spread your wings!' },
+        { key: 'hot', text: 'Careful, they are hot!' },
       ],
     },
     evil: {
@@ -180,6 +186,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'hungry', text: 'My dragons are hungry!' },
         { key: 'burn', text: 'Toasty time!' },
         { key: 'swarm', text: 'Swarm them, dragons!' },
+        { key: 'shadow', text: 'From the shadows, dragons!' },
+        { key: 'scaly', text: 'Scaly and scary!' },
       ],
     },
     counter: {
@@ -206,6 +214,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'pancake', text: 'Pancakes for everyone!' },
         { key: 'dad', text: 'Dad power, go!' },
         { key: 'oops', text: 'I meant to do that!' },
+        { key: 'spatula', text: 'Spatula of justice!' },
+        { key: 'flip', text: 'Flip, flip, hooray!' },
       ],
     },
     evil: {
@@ -222,6 +232,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'veggies', text: 'Eat your veggies!' },
         { key: 'joke', text: 'Here comes a bad joke!' },
         { key: 'ha', text: 'I am so funny!' },
+        { key: 'chores', text: 'Time to tidy up!' },
+        { key: 'lights', text: 'Lights out!' },
       ],
     },
     counter: {
@@ -248,6 +260,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'strong', text: 'Strong like a castle!' },
         { key: 'hammer', text: 'Hammer time!' },
         { key: 'got', text: 'I got you, buddy!' },
+        { key: 'tools', text: 'Hand me a hammer!' },
+        { key: 'wall', text: 'I will build a wall!' },
       ],
     },
     evil: {
@@ -264,6 +278,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'mess', text: 'What a big mess!' },
         { key: 'wall', text: 'No more walls for you!' },
         { key: 'boom', text: 'Boom goes the hammer!' },
+        { key: 'crumble', text: 'Watch it crumble!' },
+        { key: 'stomp', text: 'Stomp, stomp, stomp!' },
       ],
     },
     counter: {
@@ -290,6 +306,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'freeze', text: 'Freeze right there!' },
         { key: 'snow', text: 'Let it snow!' },
         { key: 'sister', text: 'Ready, little sister?' },
+        { key: 'sparkle', text: 'Sparkle and shine!' },
+        { key: 'snowflake', text: 'Every snowflake is special!' },
       ],
     },
     evil: {
@@ -306,6 +324,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'chill', text: 'Chill out!' },
         { key: 'cold', text: 'Brr! So cold!' },
         { key: 'ice', text: 'Everything turns to ice!' },
+        { key: 'frozen', text: 'You are frozen solid!' },
+        { key: 'icicles', text: 'Icicles everywhere!' },
       ],
     },
     counter: {
@@ -332,6 +352,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'charge', text: 'Charge!' },
         { key: 'sister', text: 'Sisters forever!' },
         { key: 'again', text: 'Again! Again!' },
+        { key: 'shield', text: 'My shield is strong!' },
+        { key: 'friends', text: 'I fight for my friends!' },
       ],
     },
     evil: {
@@ -348,6 +370,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'alone', text: 'I fight alone!' },
         { key: 'charge', text: 'Out of my way!' },
         { key: 'sword', text: 'Try and stop me!' },
+        { key: 'frost', text: 'Feel the frost!' },
+        { key: 'blizzard', text: 'Out of my blizzard!' },
       ],
     },
     counter: {
@@ -374,6 +398,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'wind', text: 'Feel the wind!' },
         { key: 'whoosh', text: 'Whoosh! Too fast!' },
         { key: 'jewels', text: 'Sparkle time!' },
+        { key: 'stars', text: 'Fly to the stars!' },
+        { key: 'sand', text: 'The sand is my friend!' },
       ],
     },
     evil: {
@@ -390,6 +416,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'storm', text: 'Here comes the storm!' },
         { key: 'catch', text: 'You can not catch me!' },
         { key: 'dust', text: 'Dusty, dusty!' },
+        { key: 'swirl', text: 'Swirl and twirl!' },
+        { key: 'gone', text: 'Gone with the wind!' },
       ],
     },
     counter: {
@@ -416,6 +444,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'sand', text: 'Rise, sand!' },
         { key: 'king', text: 'King of the desert!' },
         { key: 'old', text: 'I am very, very old!' },
+        { key: 'pyramid', text: 'Bigger than a pyramid!' },
+        { key: 'dust', text: 'Dust to dust!' },
       ],
     },
     evil: {
@@ -432,6 +462,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'kneel', text: 'Bow to the pharaoh!' },
         { key: 'statues', text: 'My statues are huge!' },
         { key: 'sand', text: 'Sand forever!' },
+        { key: 'mighty', text: 'Behold my mighty works!' },
+        { key: 'crush', text: 'I crush like sand!' },
       ],
     },
     counter: {
@@ -458,6 +490,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'sea', text: 'The sea is my home!' },
         { key: 'hiss', text: 'Ssso fun!' },
         { key: 'round', text: 'Round and round I go!' },
+        { key: 'splash', text: 'Splish, splash!' },
+        { key: 'tail', text: 'Watch my tail!' },
       ],
     },
     evil: {
@@ -474,6 +508,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'hungry', text: 'So hungry for the sun!' },
         { key: 'squeeze', text: 'Squeeze, squeeze!' },
         { key: 'dark', text: 'Soon it will be dark!' },
+        { key: 'coil', text: 'Coil, coil, coil!' },
+        { key: 'sun', text: 'I will eat the sun!' },
       ],
     },
     counter: {
@@ -500,6 +536,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'fire', text: 'Warm and toasty!' },
         { key: 'roar', text: 'Roar! Just kidding!' },
         { key: 'shiny', text: 'Ooh, shiny!' },
+        { key: 'share', text: 'Sharing is caring!' },
+        { key: 'wings', text: 'Flap, flap, whoosh!' },
       ],
     },
     evil: {
@@ -516,6 +554,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'fire', text: 'I am fire and gold!' },
         { key: 'thief', text: 'Who touched my gold?' },
         { key: 'burn', text: 'Feel my flames!' },
+        { key: 'roar', text: 'Roar! My treasure!' },
+        { key: 'greedy', text: 'More gold for me!' },
       ],
     },
     counter: {
@@ -542,6 +582,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'rocket', text: 'Rocket fist, go!' },
         { key: 'scan', text: 'Scanning for fun!' },
         { key: 'power', text: 'Power level max!' },
+        { key: 'boop', text: 'Boop beep, friend!' },
+        { key: 'battery', text: 'Battery full!' },
       ],
     },
     evil: {
@@ -558,6 +600,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'resist', text: 'Beep! You will lose!' },
         { key: 'transform', text: 'Transform! Bigger!' },
         { key: 'lasers', text: 'Lasers, on!' },
+        { key: 'compute', text: 'Computing your defeat!' },
+        { key: 'robot', text: 'Robots rule!' },
       ],
     },
     counter: {
@@ -584,6 +628,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'where', text: 'Where did I go?' },
         { key: 'magic', text: 'Ta-da!' },
         { key: 'which', text: 'Which one is me?' },
+        { key: 'hat', text: 'Look in my hat!' },
+        { key: 'cards', text: 'So many cards!' },
       ],
     },
     evil: {
@@ -601,6 +647,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'which', text: 'Which one is the real me?' },
         { key: 'trap', text: 'Watch your step!' },
         { key: 'clever', text: 'I am too clever!' },
+        { key: 'puzzle', text: 'Solve my puzzle!' },
+        { key: 'smoke', text: 'Poof! Gone!' },
       ],
     },
     counter: {
@@ -627,6 +675,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'pig', text: 'Oink oink! Hee hee!' },
         { key: 'broom', text: 'Zoom on my broom!' },
         { key: 'magic', text: 'A little magic!' },
+        { key: 'flowers', text: 'Flowers for you!' },
+        { key: 'ride', text: 'Hop on my broom!' },
       ],
     },
     evil: {
@@ -643,6 +693,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'rise', text: 'Rise, my skeletons!' },
         { key: 'kneel', text: 'Bow to the queen!' },
         { key: 'cackle', text: 'Oink, little hero!' },
+        { key: 'cauldron', text: 'Into my cauldron!' },
+        { key: 'piglets', text: 'Bow, little piglets!' },
       ],
     },
     counter: {

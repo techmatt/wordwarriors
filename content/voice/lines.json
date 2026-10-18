@@ -71,6 +71,18 @@
   "text": "Boop! Got you!"
  },
  {
+  "id": "taunt_julia_giggle",
+  "speaker": "julia",
+  "group": "fighter_julia",
+  "text": "You can not catch me!"
+ },
+ {
+  "id": "taunt_julia_team",
+  "speaker": "julia",
+  "group": "fighter_julia",
+  "text": "We are a super team!"
+ },
+ {
   "id": "ult_julia",
   "speaker": "julia",
   "group": "fighter_julia",
@@ -117,6 +129,18 @@
   "speaker": "julia_evil",
   "group": "fighter_julia_evil",
   "text": "Grr! Grumpy time!"
+ },
+ {
+  "id": "taunt_julia_evil_nap",
+  "speaker": "julia_evil",
+  "group": "fighter_julia_evil",
+  "text": "Naps are for babies!"
+ },
+ {
+  "id": "taunt_julia_evil_cookies",
+  "speaker": "julia_evil",
+  "group": "fighter_julia_evil",
+  "text": "I ate all the cookies!"
  },
  {
   "id": "ult_julia_evil",
@@ -167,6 +191,18 @@
   "text": "Dragons are my friends!"
  },
  {
+  "id": "taunt_seraphina_wings",
+  "speaker": "seraphina",
+  "group": "fighter_seraphina",
+  "text": "Spread your wings!"
+ },
+ {
+  "id": "taunt_seraphina_hot",
+  "speaker": "seraphina",
+  "group": "fighter_seraphina",
+  "text": "Careful, they are hot!"
+ },
+ {
   "id": "ult_seraphina",
   "speaker": "seraphina",
   "group": "fighter_seraphina",
@@ -213,6 +249,18 @@
   "speaker": "seraphina_evil",
   "group": "fighter_seraphina_evil",
   "text": "Swarm them, dragons!"
+ },
+ {
+  "id": "taunt_seraphina_evil_shadow",
+  "speaker": "seraphina_evil",
+  "group": "fighter_seraphina_evil",
+  "text": "From the shadows, dragons!"
+ },
+ {
+  "id": "taunt_seraphina_evil_scaly",
+  "speaker": "seraphina_evil",
+  "group": "fighter_seraphina_evil",
+  "text": "Scaly and scary!"
  },
  {
   "id": "ult_seraphina_evil",
@@ -269,6 +317,18 @@
   "text": "I meant to do that!"
  },
  {
+  "id": "taunt_dada_matt_spatula",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt",
+  "text": "Spatula of justice!"
+ },
+ {
+  "id": "taunt_dada_matt_flip",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt",
+  "text": "Flip, flip, hooray!"
+ },
+ {
   "id": "ult_dada_matt",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt",
@@ -315,6 +375,18 @@
   "speaker": "dada_matt_evil",
   "group": "fighter_dada_matt_evil",
   "text": "I am so funny!"
+ },
+ {
+  "id": "taunt_dada_matt_evil_chores",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_evil",
+  "text": "Time to tidy up!"
+ },
+ {
+  "id": "taunt_dada_matt_evil_lights",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_evil",
+  "text": "Lights out!"
  },
  {
   "id": "ult_dada_matt_evil",
@@ -365,6 +437,18 @@
   "text": "I got you, buddy!"
  },
  {
+  "id": "taunt_dada_jason_tools",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason",
+  "text": "Hand me a hammer!"
+ },
+ {
+  "id": "taunt_dada_jason_wall",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason",
+  "text": "I will build a wall!"
+ },
+ {
   "id": "ult_dada_jason",
   "speaker": "dada_jason",
   "group": "fighter_dada_jason",
@@ -411,6 +495,18 @@
   "speaker": "dada_jason_evil",
   "group": "fighter_dada_jason_evil",
   "text": "Boom goes the hammer!"
+ },
+ {
+  "id": "taunt_dada_jason_evil_crumble",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_evil",
+  "text": "Watch it crumble!"
+ },
+ {
+  "id": "taunt_dada_jason_evil_stomp",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_evil",
+  "text": "Stomp, stomp, stomp!"
  },
  {
   "id": "ult_dada_jason_evil",
@@ -467,6 +563,18 @@
   "text": "Ready, little sister?"
  },
  {
+  "id": "taunt_elsa_sparkle",
+  "speaker": "elsa",
+  "group": "fighter_elsa",
+  "text": "Sparkle and shine!"
+ },
+ {
+  "id": "taunt_elsa_snowflake",
+  "speaker": "elsa",
+  "group": "fighter_elsa",
+  "text": "Every snowflake is special!"
+ },
+ {
   "id": "ult_elsa",
   "speaker": "elsa",
   "group": "fighter_elsa",
@@ -519,6 +627,18 @@
   "speaker": "elsa_evil",
   "group": "fighter_elsa_evil",
   "text": "Everything turns to ice!"
+ },
+ {
+  "id": "taunt_elsa_evil_frozen",
+  "speaker": "elsa_evil",
+  "group": "fighter_elsa_evil",
+  "text": "You are frozen solid!"
+ },
+ {
+  "id": "taunt_elsa_evil_icicles",
+  "speaker": "elsa_evil",
+  "group": "fighter_elsa_evil",
+  "text": "Icicles everywhere!"
  },
  {
   "id": "ult_elsa_evil",
@@ -575,6 +695,18 @@
   "text": "Again! Again!"
  },
  {
+  "id": "taunt_anna_shield",
+  "speaker": "anna",
+  "group": "fighter_anna",
+  "text": "My shield is strong!"
+ },
+ {
+  "id": "taunt_anna_friends",
+  "speaker": "anna",
+  "group": "fighter_anna",
+  "text": "I fight for my friends!"
+ },
+ {
   "id": "ult_anna",
   "speaker": "anna",
   "group": "fighter_anna",
@@ -629,6 +761,18 @@
   "text": "Try and stop me!"
  },
  {
+  "id": "taunt_anna_evil_frost",
+  "speaker": "anna_evil",
+  "group": "fighter_anna_evil",
+  "text": "Feel the frost!"
+ },
+ {
+  "id": "taunt_anna_evil_blizzard",
+  "speaker": "anna_evil",
+  "group": "fighter_anna_evil",
+  "text": "Out of my blizzard!"
+ },
+ {
   "id": "ult_anna_evil",
   "speaker": "anna_evil",
   "group": "fighter_anna_evil",
@@ -675,6 +819,18 @@
   "speaker": "jasmine",
   "group": "fighter_jasmine",
   "text": "Sparkle time!"
+ },
+ {
+  "id": "taunt_jasmine_stars",
+  "speaker": "jasmine",
+  "group": "fighter_jasmine",
+  "text": "Fly to the stars!"
+ },
+ {
+  "id": "taunt_jasmine_sand",
+  "speaker": "jasmine",
+  "group": "fighter_jasmine",
+  "text": "The sand is my friend!"
  },
  {
   "id": "ult_jasmine",
@@ -731,6 +887,18 @@
   "text": "Dusty, dusty!"
  },
  {
+  "id": "taunt_jasmine_evil_swirl",
+  "speaker": "jasmine_evil",
+  "group": "fighter_jasmine_evil",
+  "text": "Swirl and twirl!"
+ },
+ {
+  "id": "taunt_jasmine_evil_gone",
+  "speaker": "jasmine_evil",
+  "group": "fighter_jasmine_evil",
+  "text": "Gone with the wind!"
+ },
+ {
   "id": "ult_jasmine_evil",
   "speaker": "jasmine_evil",
   "group": "fighter_jasmine_evil",
@@ -785,6 +953,18 @@
   "text": "I am very, very old!"
  },
  {
+  "id": "taunt_ozymandias_pyramid",
+  "speaker": "ozymandias",
+  "group": "fighter_ozymandias",
+  "text": "Bigger than a pyramid!"
+ },
+ {
+  "id": "taunt_ozymandias_dust",
+  "speaker": "ozymandias",
+  "group": "fighter_ozymandias",
+  "text": "Dust to dust!"
+ },
+ {
   "id": "ult_ozymandias",
   "speaker": "ozymandias",
   "group": "fighter_ozymandias",
@@ -837,6 +1017,18 @@
   "speaker": "ozymandias_evil",
   "group": "fighter_ozymandias_evil",
   "text": "Sand forever!"
+ },
+ {
+  "id": "taunt_ozymandias_evil_mighty",
+  "speaker": "ozymandias_evil",
+  "group": "fighter_ozymandias_evil",
+  "text": "Behold my mighty works!"
+ },
+ {
+  "id": "taunt_ozymandias_evil_crush",
+  "speaker": "ozymandias_evil",
+  "group": "fighter_ozymandias_evil",
+  "text": "I crush like sand!"
  },
  {
   "id": "ult_ozymandias_evil",
@@ -894,6 +1086,18 @@
   "text": "Round and round I go!"
  },
  {
+  "id": "taunt_jormungandr_splash",
+  "speaker": "jormungandr",
+  "group": "fighter_jormungandr",
+  "text": "Splish, splash!"
+ },
+ {
+  "id": "taunt_jormungandr_tail",
+  "speaker": "jormungandr",
+  "group": "fighter_jormungandr",
+  "text": "Watch my tail!"
+ },
+ {
   "id": "ult_jormungandr",
   "speaker": "jormungandr",
   "group": "fighter_jormungandr",
@@ -949,6 +1153,18 @@
   "text": "Soon it will be dark!"
  },
  {
+  "id": "taunt_jormungandr_evil_coil",
+  "speaker": "jormungandr_evil",
+  "group": "fighter_jormungandr_evil",
+  "text": "Coil, coil, coil!"
+ },
+ {
+  "id": "taunt_jormungandr_evil_sun",
+  "speaker": "jormungandr_evil",
+  "group": "fighter_jormungandr_evil",
+  "text": "I will eat the sun!"
+ },
+ {
   "id": "ult_jormungandr_evil",
   "speaker": "jormungandr_evil",
   "group": "fighter_jormungandr_evil",
@@ -1001,6 +1217,18 @@
   "speaker": "smaug",
   "group": "fighter_smaug",
   "text": "Ooh, shiny!"
+ },
+ {
+  "id": "taunt_smaug_share",
+  "speaker": "smaug",
+  "group": "fighter_smaug",
+  "text": "Sharing is caring!"
+ },
+ {
+  "id": "taunt_smaug_wings",
+  "speaker": "smaug",
+  "group": "fighter_smaug",
+  "text": "Flap, flap, whoosh!"
  },
  {
   "id": "ult_smaug",
@@ -1063,6 +1291,18 @@
   "text": "Feel my flames!"
  },
  {
+  "id": "taunt_smaug_evil_roar",
+  "speaker": "smaug_evil",
+  "group": "fighter_smaug_evil",
+  "text": "Roar! My treasure!"
+ },
+ {
+  "id": "taunt_smaug_evil_greedy",
+  "speaker": "smaug_evil",
+  "group": "fighter_smaug_evil",
+  "text": "More gold for me!"
+ },
+ {
   "id": "ult_smaug_evil",
   "speaker": "smaug_evil",
   "group": "fighter_smaug_evil",
@@ -1115,6 +1355,18 @@
   "speaker": "scar",
   "group": "fighter_scar",
   "text": "Power level max!"
+ },
+ {
+  "id": "taunt_scar_boop",
+  "speaker": "scar",
+  "group": "fighter_scar",
+  "text": "Boop beep, friend!"
+ },
+ {
+  "id": "taunt_scar_battery",
+  "speaker": "scar",
+  "group": "fighter_scar",
+  "text": "Battery full!"
  },
  {
   "id": "ult_scar",
@@ -1177,6 +1429,18 @@
   "text": "Lasers, on!"
  },
  {
+  "id": "taunt_scar_evil_compute",
+  "speaker": "scar_evil",
+  "group": "fighter_scar_evil",
+  "text": "Computing your defeat!"
+ },
+ {
+  "id": "taunt_scar_evil_robot",
+  "speaker": "scar_evil",
+  "group": "fighter_scar_evil",
+  "text": "Robots rule!"
+ },
+ {
   "id": "ult_scar_evil",
   "speaker": "scar_evil",
   "group": "fighter_scar_evil",
@@ -1231,6 +1495,18 @@
   "text": "Which one is me?"
  },
  {
+  "id": "taunt_moriarty_hat",
+  "speaker": "moriarty",
+  "group": "fighter_moriarty",
+  "text": "Look in my hat!"
+ },
+ {
+  "id": "taunt_moriarty_cards",
+  "speaker": "moriarty",
+  "group": "fighter_moriarty",
+  "text": "So many cards!"
+ },
+ {
   "id": "ult_moriarty",
   "speaker": "moriarty",
   "group": "fighter_moriarty",
@@ -1283,6 +1559,18 @@
   "speaker": "moriarty_evil",
   "group": "fighter_moriarty_evil",
   "text": "I am too clever!"
+ },
+ {
+  "id": "taunt_moriarty_evil_puzzle",
+  "speaker": "moriarty_evil",
+  "group": "fighter_moriarty_evil",
+  "text": "Solve my puzzle!"
+ },
+ {
+  "id": "taunt_moriarty_evil_smoke",
+  "speaker": "moriarty_evil",
+  "group": "fighter_moriarty_evil",
+  "text": "Poof! Gone!"
  },
  {
   "id": "ult_moriarty_evil",
@@ -1345,6 +1633,18 @@
   "text": "A little magic!"
  },
  {
+  "id": "taunt_bavmorda_flowers",
+  "speaker": "bavmorda",
+  "group": "fighter_bavmorda",
+  "text": "Flowers for you!"
+ },
+ {
+  "id": "taunt_bavmorda_ride",
+  "speaker": "bavmorda",
+  "group": "fighter_bavmorda",
+  "text": "Hop on my broom!"
+ },
+ {
   "id": "ult_bavmorda",
   "speaker": "bavmorda",
   "group": "fighter_bavmorda",
@@ -1391,6 +1691,18 @@
   "speaker": "bavmorda_evil",
   "group": "fighter_bavmorda_evil",
   "text": "Oink, little hero!"
+ },
+ {
+  "id": "taunt_bavmorda_evil_cauldron",
+  "speaker": "bavmorda_evil",
+  "group": "fighter_bavmorda_evil",
+  "text": "Into my cauldron!"
+ },
+ {
+  "id": "taunt_bavmorda_evil_piglets",
+  "speaker": "bavmorda_evil",
+  "group": "fighter_bavmorda_evil",
+  "text": "Bow, little piglets!"
  },
  {
   "id": "ult_bavmorda_evil",
