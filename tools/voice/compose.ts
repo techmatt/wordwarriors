@@ -24,6 +24,7 @@ import {
   fighterId,
   group,
   letterSoundLine,
+  moveLine,
   nameLine,
   narratorLine,
   tauntLine,
@@ -82,6 +83,10 @@ export function composeLines(): LineSpec[] {
         lines.push({ id: tauntLine(fid, taunt.key), speaker: fid, group: group.fighter(fid), text: taunt.text, ...(taunt.say ? { say: taunt.say } : {}) });
       }
       lines.push({ id: ultimateLine(fid), speaker: fid, group: group.fighter(fid), text: `${spec.ultimate.name}!` });
+      // Big moves (power 2+) are called out as they fire.
+      for (const ab of spec.abilities.filter((a) => a.power >= 2)) {
+        lines.push({ id: moveLine(fid, ab.id), speaker: fid, group: group.fighter(fid), text: `${ab.name}!` });
+      }
     }
   }
 

@@ -31,7 +31,7 @@ import Phaser from 'phaser';
 import { charArt } from '../../content/art/assets';
 import { CHARACTER_BY_ID, MINIONS, comboFor } from '../../content/battle/roster';
 import type { AbilitySpec, Status } from '../../content/battle/types';
-import { fighterId, narratorLine, tauntLine, ultimateLine } from '../../content/voice/ids';
+import { fighterId, moveLine, narratorLine, tauntLine, ultimateLine } from '../../content/voice/ids';
 import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxSummon, sfxUltimate, sfxWrong } from '../audio/sfx';
@@ -42,6 +42,7 @@ import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { progress } from '../state/progress';
 import { hookState } from '../testHooks';
+import { voiceBank } from '../voice/VoiceBank';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { Bubbles } from '../ui/Bubbles';
 import { Caption } from '../ui/Caption';
@@ -513,7 +514,10 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       f.setShield(1, 0xffd23f, this.now);
       cast(this, f, ab, this.villain, 2.4, true);
       this.banner('SUPER!', 0xffd23f, true);
-      void this.say('move_great');
+      void (async () => {
+        if (voiceBank.has(moveLine(f.init.id, ab.id))) await voiceBus.say(moveLine(f.init.id, ab.id), 'instruction', f);
+        await this.say('move_great');
+      })();
     } else {
       sfxSelect();
       cast(this, f, ab, this.villain, 1, true);
@@ -763,6 +767,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       if (ab.kind === 'heal' && this.alliesOf(f).every((a) => a.hp > a.maxHp * 0.7) && f.hp > f.maxHp * 0.7) continue;
       f.use(ab, this.now);
       cast(this, f, ab, target, f.init.kind === 'helper' ? 1.4 : 1, f.isMain && ab.power >= 2);
+      // Big moves are called out by name, if nobody else is talking.
+      if (f.isMain && ab.power >= 2) void voiceBus.say(moveLine(f.init.id, ab.id), 'bark', f);
       this.stats.abilitiesFired++;
       if (f.isMain) this.teamNextCast[teamKey] = this.now + (teamKey === 'villain' ? 700 : 500);
       break;

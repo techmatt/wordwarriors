@@ -77,6 +77,18 @@
   "text": "Super Star Nova!"
  },
  {
+  "id": "move_julia_bounce_stomp",
+  "speaker": "julia",
+  "group": "fighter_julia",
+  "text": "Bounce Stomp!"
+ },
+ {
+  "id": "move_julia_teddy_army",
+  "speaker": "julia",
+  "group": "fighter_julia",
+  "text": "Teddy Army!"
+ },
+ {
   "id": "name_julia_evil",
   "speaker": "julia_evil",
   "group": "core",
@@ -111,6 +123,18 @@
   "speaker": "julia_evil",
   "group": "fighter_julia_evil",
   "text": "Tantrum Quake!"
+ },
+ {
+  "id": "move_julia_evil_stomp_stomp",
+  "speaker": "julia_evil",
+  "group": "fighter_julia_evil",
+  "text": "Stompy Feet!"
+ },
+ {
+  "id": "move_julia_evil_no_nap",
+  "speaker": "julia_evil",
+  "group": "fighter_julia_evil",
+  "text": "No Nap Ever!"
  },
  {
   "id": "name_seraphina",
@@ -149,6 +173,18 @@
   "text": "Dragon Parade!"
  },
  {
+  "id": "move_seraphina_dragon_call",
+  "speaker": "seraphina",
+  "group": "fighter_seraphina",
+  "text": "Dragon Call!"
+ },
+ {
+  "id": "move_seraphina_wing_gust",
+  "speaker": "seraphina",
+  "group": "fighter_seraphina",
+  "text": "Wing Gust!"
+ },
+ {
   "id": "name_seraphina_evil",
   "speaker": "seraphina_evil",
   "group": "core",
@@ -183,6 +219,24 @@
   "speaker": "seraphina_evil",
   "group": "fighter_seraphina_evil",
   "text": "Dragon Swarm!"
+ },
+ {
+  "id": "move_seraphina_evil_shadow_dragons",
+  "speaker": "seraphina_evil",
+  "group": "fighter_seraphina_evil",
+  "text": "Shadow Dragons!"
+ },
+ {
+  "id": "move_seraphina_evil_fire_rain",
+  "speaker": "seraphina_evil",
+  "group": "fighter_seraphina_evil",
+  "text": "Fire Rain!"
+ },
+ {
+  "id": "move_seraphina_evil_tail_whip",
+  "speaker": "seraphina_evil",
+  "group": "fighter_seraphina_evil",
+  "text": "Tail Whip!"
  },
  {
   "id": "name_dada_matt",
@@ -221,6 +275,18 @@
   "text": "Breakfast Storm!"
  },
  {
+  "id": "move_dada_matt_dad_joke",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt",
+  "text": "Dad Joke!"
+ },
+ {
+  "id": "move_dada_matt_tickle_zap",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt",
+  "text": "Tickle Lightning!"
+ },
+ {
   "id": "name_dada_matt_evil",
   "speaker": "dada_matt_evil",
   "group": "core",
@@ -255,6 +321,18 @@
   "speaker": "dada_matt_evil",
   "group": "fighter_dada_matt_evil",
   "text": "Dad Joke Avalanche!"
+ },
+ {
+  "id": "move_dada_matt_evil_pun_bots",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_evil",
+  "text": "Pun Bots!"
+ },
+ {
+  "id": "move_dada_matt_evil_chore_beam",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_evil",
+  "text": "Chore Beam!"
  },
  {
   "id": "name_dada_jason",
@@ -293,6 +371,18 @@
   "text": "Tower Drop!"
  },
  {
+  "id": "move_dada_jason_hammer_spin",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason",
+  "text": "Hammer Spin!"
+ },
+ {
+  "id": "move_dada_jason_ground_pound",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason",
+  "text": "Ground Pound!"
+ },
+ {
   "id": "name_dada_jason_evil",
   "speaker": "dada_jason_evil",
   "group": "core",
@@ -327,6 +417,24 @@
   "speaker": "dada_jason_evil",
   "group": "fighter_dada_jason_evil",
   "text": "Mega Hammer Quake!"
+ },
+ {
+  "id": "move_dada_jason_evil_wreck",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_evil",
+  "text": "Wrecking Spin!"
+ },
+ {
+  "id": "move_dada_jason_evil_brick_rain",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_evil",
+  "text": "Brick Rain!"
+ },
+ {
+  "id": "move_dada_jason_evil_quake",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_evil",
+  "text": "Quake!"
  },
  {
   "id": "name_elsa",
@@ -365,6 +473,24 @@
   "text": "Blizzard Crown!"
  },
  {
+  "id": "move_elsa_deep_freeze",
+  "speaker": "elsa",
+  "group": "fighter_elsa",
+  "text": "Deep Freeze!"
+ },
+ {
+  "id": "move_elsa_snow_buddies",
+  "speaker": "elsa",
+  "group": "fighter_elsa",
+  "text": "Snow Buddies!"
+ },
+ {
+  "id": "move_elsa_crystal_spire",
+  "speaker": "elsa",
+  "group": "fighter_elsa",
+  "text": "Crystal Spire!"
+ },
+ {
   "id": "name_elsa_evil",
   "speaker": "elsa_evil",
   "group": "core",
@@ -399,6 +525,24 @@
   "speaker": "elsa_evil",
   "group": "fighter_elsa_evil",
   "text": "Eternal Winter!"
+ },
+ {
+  "id": "move_elsa_evil_icicle_rain",
+  "speaker": "elsa_evil",
+  "group": "fighter_elsa_evil",
+  "text": "Icicle Rain!"
+ },
+ {
+  "id": "move_elsa_evil_flash_freeze",
+  "speaker": "elsa_evil",
+  "group": "fighter_elsa_evil",
+  "text": "Flash Freeze!"
+ },
+ {
+  "id": "move_elsa_evil_frost_beam",
+  "speaker": "elsa_evil",
+  "group": "fighter_elsa_evil",
+  "text": "Frost Beam!"
  },
  {
   "id": "name_anna",
@@ -437,6 +581,24 @@
   "text": "Never Give Up!"
  },
  {
+  "id": "move_anna_shield_bash",
+  "speaker": "anna",
+  "group": "fighter_anna",
+  "text": "Shield Bash!"
+ },
+ {
+  "id": "move_anna_sword_twirl",
+  "speaker": "anna",
+  "group": "fighter_anna",
+  "text": "Sword Twirl!"
+ },
+ {
+  "id": "move_anna_leap",
+  "speaker": "anna",
+  "group": "fighter_anna",
+  "text": "Big Leap!"
+ },
+ {
   "id": "name_anna_evil",
   "speaker": "anna_evil",
   "group": "core",
@@ -471,6 +633,18 @@
   "speaker": "anna_evil",
   "group": "fighter_anna_evil",
   "text": "Frozen Heart Charge!"
+ },
+ {
+  "id": "move_anna_evil_frost_bash",
+  "speaker": "anna_evil",
+  "group": "fighter_anna_evil",
+  "text": "Frost Bash!"
+ },
+ {
+  "id": "move_anna_evil_cold_twirl",
+  "speaker": "anna_evil",
+  "group": "fighter_anna_evil",
+  "text": "Cold Twirl!"
  },
  {
   "id": "name_jasmine",
@@ -509,6 +683,24 @@
   "text": "Desert Wind!"
  },
  {
+  "id": "move_jasmine_wind_fan",
+  "speaker": "jasmine",
+  "group": "fighter_jasmine",
+  "text": "Wind Fan!"
+ },
+ {
+  "id": "move_jasmine_carpet_swoop",
+  "speaker": "jasmine",
+  "group": "fighter_jasmine",
+  "text": "Carpet Swoop!"
+ },
+ {
+  "id": "move_jasmine_dust_devils",
+  "speaker": "jasmine",
+  "group": "fighter_jasmine",
+  "text": "Dust Devils!"
+ },
+ {
   "id": "name_jasmine_evil",
   "speaker": "jasmine_evil",
   "group": "core",
@@ -543,6 +735,24 @@
   "speaker": "jasmine_evil",
   "group": "fighter_jasmine_evil",
   "text": "Great Sandstorm!"
+ },
+ {
+  "id": "move_jasmine_evil_sand_blast",
+  "speaker": "jasmine_evil",
+  "group": "fighter_jasmine_evil",
+  "text": "Sand Blast!"
+ },
+ {
+  "id": "move_jasmine_evil_smoke_carpet",
+  "speaker": "jasmine_evil",
+  "group": "fighter_jasmine_evil",
+  "text": "Smoke Carpet!"
+ },
+ {
+  "id": "move_jasmine_evil_whirlwinds",
+  "speaker": "jasmine_evil",
+  "group": "fighter_jasmine_evil",
+  "text": "Whirlwinds!"
  },
  {
   "id": "name_ozymandias",
@@ -581,6 +791,24 @@
   "text": "Pyramid Power!"
  },
  {
+  "id": "move_ozymandias_statue_friend",
+  "speaker": "ozymandias",
+  "group": "fighter_ozymandias",
+  "text": "Statue Friend!"
+ },
+ {
+  "id": "move_ozymandias_dune_slam",
+  "speaker": "ozymandias",
+  "group": "fighter_ozymandias",
+  "text": "Dune Slam!"
+ },
+ {
+  "id": "move_ozymandias_sun_disc",
+  "speaker": "ozymandias",
+  "group": "fighter_ozymandias",
+  "text": "Sun Disc!"
+ },
+ {
   "id": "name_ozymandias_evil",
   "speaker": "ozymandias_evil",
   "group": "core",
@@ -615,6 +843,24 @@
   "speaker": "ozymandias_evil",
   "group": "fighter_ozymandias_evil",
   "text": "March of the Colossi!"
+ },
+ {
+  "id": "move_ozymandias_evil_colossi",
+  "speaker": "ozymandias_evil",
+  "group": "fighter_ozymandias_evil",
+  "text": "Rise, Colossi!"
+ },
+ {
+  "id": "move_ozymandias_evil_scarab_swarm",
+  "speaker": "ozymandias_evil",
+  "group": "fighter_ozymandias_evil",
+  "text": "Scarab Swarm!"
+ },
+ {
+  "id": "move_ozymandias_evil_sand_quake",
+  "speaker": "ozymandias_evil",
+  "group": "fighter_ozymandias_evil",
+  "text": "Sand Quake!"
  },
  {
   "id": "name_jormungandr",
@@ -654,6 +900,24 @@
   "text": "World Wave!"
  },
  {
+  "id": "move_jormungandr_snake_pals",
+  "speaker": "jormungandr",
+  "group": "fighter_jormungandr",
+  "text": "Snake Pals!"
+ },
+ {
+  "id": "move_jormungandr_tail_spin",
+  "speaker": "jormungandr",
+  "group": "fighter_jormungandr",
+  "text": "Tail Spin!"
+ },
+ {
+  "id": "move_jormungandr_hug_coil",
+  "speaker": "jormungandr",
+  "group": "fighter_jormungandr",
+  "text": "Big Hug!"
+ },
+ {
   "id": "name_jormungandr_evil",
   "speaker": "jormungandr_evil",
   "group": "core",
@@ -689,6 +953,24 @@
   "speaker": "jormungandr_evil",
   "group": "fighter_jormungandr_evil",
   "text": "Swallow the Sun!"
+ },
+ {
+  "id": "move_jormungandr_evil_crushing_coil",
+  "speaker": "jormungandr_evil",
+  "group": "fighter_jormungandr_evil",
+  "text": "Crushing Coil!"
+ },
+ {
+  "id": "move_jormungandr_evil_venom_rain",
+  "speaker": "jormungandr_evil",
+  "group": "fighter_jormungandr_evil",
+  "text": "Venom Rain!"
+ },
+ {
+  "id": "move_jormungandr_evil_serpent_spawn",
+  "speaker": "jormungandr_evil",
+  "group": "fighter_jormungandr_evil",
+  "text": "Serpent Spawn!"
  },
  {
   "id": "name_smaug",
@@ -727,6 +1009,30 @@
   "text": "Gift Avalanche!"
  },
  {
+  "id": "move_smaug_fire_breath",
+  "speaker": "smaug",
+  "group": "fighter_smaug",
+  "text": "Fire Breath!"
+ },
+ {
+  "id": "move_smaug_coin_shower",
+  "speaker": "smaug",
+  "group": "fighter_smaug",
+  "text": "Coin Shower!"
+ },
+ {
+  "id": "move_smaug_wing_slam",
+  "speaker": "smaug",
+  "group": "fighter_smaug",
+  "text": "Wing Slam!"
+ },
+ {
+  "id": "move_smaug_coin_golems",
+  "speaker": "smaug",
+  "group": "fighter_smaug",
+  "text": "Coin Golems!"
+ },
+ {
   "id": "name_smaug_evil",
   "speaker": "smaug_evil",
   "group": "core",
@@ -761,6 +1067,24 @@
   "speaker": "smaug_evil",
   "group": "fighter_smaug_evil",
   "text": "Gold Avalanche!"
+ },
+ {
+  "id": "move_smaug_evil_inferno",
+  "speaker": "smaug_evil",
+  "group": "fighter_smaug_evil",
+  "text": "Inferno Breath!"
+ },
+ {
+  "id": "move_smaug_evil_gold_golems",
+  "speaker": "smaug_evil",
+  "group": "fighter_smaug_evil",
+  "text": "Gold Guards!"
+ },
+ {
+  "id": "move_smaug_evil_tail_quake",
+  "speaker": "smaug_evil",
+  "group": "fighter_smaug_evil",
+  "text": "Tail Quake!"
  },
  {
   "id": "name_scar",
@@ -799,6 +1123,30 @@
   "text": "Laser Light Show!"
  },
  {
+  "id": "move_scar_rocket_fist",
+  "speaker": "scar",
+  "group": "fighter_scar",
+  "text": "Rocket Fist!"
+ },
+ {
+  "id": "move_scar_drone_pals",
+  "speaker": "scar",
+  "group": "fighter_scar",
+  "text": "Drone Pals!"
+ },
+ {
+  "id": "move_scar_laser_eye",
+  "speaker": "scar",
+  "group": "fighter_scar",
+  "text": "Laser Eye!"
+ },
+ {
+  "id": "move_scar_mega_mode",
+  "speaker": "scar",
+  "group": "fighter_scar",
+  "text": "Mega Mode!"
+ },
+ {
   "id": "name_scar_evil",
   "speaker": "scar_evil",
   "group": "core",
@@ -833,6 +1181,24 @@
   "speaker": "scar_evil",
   "group": "fighter_scar_evil",
   "text": "Laser Grid!"
+ },
+ {
+  "id": "move_scar_evil_rocket_fists",
+  "speaker": "scar_evil",
+  "group": "fighter_scar_evil",
+  "text": "Rocket Fists!"
+ },
+ {
+  "id": "move_scar_evil_drone_swarm",
+  "speaker": "scar_evil",
+  "group": "fighter_scar_evil",
+  "text": "Drone Swarm!"
+ },
+ {
+  "id": "move_scar_evil_transform",
+  "speaker": "scar_evil",
+  "group": "fighter_scar_evil",
+  "text": "Transform!"
  },
  {
   "id": "name_moriarty",
@@ -871,6 +1237,24 @@
   "text": "Grand Finale!"
  },
  {
+  "id": "move_moriarty_decoys",
+  "speaker": "moriarty",
+  "group": "fighter_moriarty",
+  "text": "Decoys!"
+ },
+ {
+  "id": "move_moriarty_trick_trap",
+  "speaker": "moriarty",
+  "group": "fighter_moriarty",
+  "text": "Trick Trap!"
+ },
+ {
+  "id": "move_moriarty_ta_da",
+  "speaker": "moriarty",
+  "group": "fighter_moriarty",
+  "text": "Ta-da Blink!"
+ },
+ {
   "id": "name_moriarty_evil",
   "speaker": "moriarty_evil",
   "group": "core",
@@ -905,6 +1289,30 @@
   "speaker": "moriarty_evil",
   "group": "fighter_moriarty_evil",
   "text": "Hall of Clones!"
+ },
+ {
+  "id": "move_moriarty_evil_clone_army",
+  "speaker": "moriarty_evil",
+  "group": "fighter_moriarty_evil",
+  "text": "Clone Army!"
+ },
+ {
+  "id": "move_moriarty_evil_card_traps",
+  "speaker": "moriarty_evil",
+  "group": "fighter_moriarty_evil",
+  "text": "Card Traps!"
+ },
+ {
+  "id": "move_moriarty_evil_vanish",
+  "speaker": "moriarty_evil",
+  "group": "fighter_moriarty_evil",
+  "text": "Vanish!"
+ },
+ {
+  "id": "move_moriarty_evil_cards",
+  "speaker": "moriarty_evil",
+  "group": "fighter_moriarty_evil",
+  "text": "Card Soldiers!"
  },
  {
   "id": "name_bavmorda",
@@ -943,6 +1351,18 @@
   "text": "Magic Garden!"
  },
  {
+  "id": "move_bavmorda_piggy_spell",
+  "speaker": "bavmorda",
+  "group": "fighter_bavmorda",
+  "text": "Piggy Spell!"
+ },
+ {
+  "id": "move_bavmorda_broom_dash",
+  "speaker": "bavmorda",
+  "group": "fighter_bavmorda",
+  "text": "Broom Dash!"
+ },
+ {
   "id": "name_bavmorda_evil",
   "speaker": "bavmorda_evil",
   "group": "core",
@@ -977,6 +1397,24 @@
   "speaker": "bavmorda_evil",
   "group": "fighter_bavmorda_evil",
   "text": "Everybody Pigs!!"
+ },
+ {
+  "id": "move_bavmorda_evil_skeleton_wave",
+  "speaker": "bavmorda_evil",
+  "group": "fighter_bavmorda_evil",
+  "text": "Skeleton Wave!"
+ },
+ {
+  "id": "move_bavmorda_evil_pig_curse",
+  "speaker": "bavmorda_evil",
+  "group": "fighter_bavmorda_evil",
+  "text": "Pig Curse!"
+ },
+ {
+  "id": "move_bavmorda_evil_dark_bolts",
+  "speaker": "bavmorda_evil",
+  "group": "fighter_bavmorda_evil",
+  "text": "Dark Bolts!"
  },
  {
   "id": "letter_a_sound",

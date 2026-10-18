@@ -17,6 +17,8 @@ export const wordLine = (word: string) => `word_${word}`;
 export const narratorLine = (narrator: string, key: string) => `nar_${narrator}_${key}`;
 export const tauntLine = (fighter: string, key: string) => `taunt_${fighter}_${key}`;
 export const ultimateLine = (fighter: string) => `ult_${fighter}`;
+/** A fighter calling out one of its own moves: `move_smaug_evil_inferno`. */
+export const moveLine = (fighter: string, ability: string) => `move_${fighter}_${ability}`;
 export const nameLine = (fighter: string) => `name_${fighter}`;
 /** A fighter id is `<character>` for the good version and `<character>_evil` for the evil one. */
 export const fighterId = (character: string, evil: boolean) => (evil ? `${character}_evil` : character);

@@ -9,9 +9,9 @@
 
 import { letterSoundLine } from '../../../content/voice/ids';
 import { voiceBus } from '../../audio/VoiceBus';
-import { GAME_WIDTH } from '../../config';
+import { DEPTH, GAME_WIDTH } from '../../config';
 import { episode } from '../../episode/Episode';
-import { bob } from '../../fx/juice';
+import { bob, popIn, shockwave } from '../../fx/juice';
 import { soundRound, type SoundItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
 import type { Spot } from '../../world/RoomScene';
@@ -60,12 +60,26 @@ export class SoundToLetter extends Minigame {
       bob(this, label, 4, 800 + i * 100);
     });
     if (this.player.y < 470) this.player.place(this.player.x, 560);
-    void this.speak(letterSoundLine(item.target));
+    void this.playSound(item.target);
+  }
+
+  /**
+   * Say the sound with a big speaker pulsing rings above the stones, so she
+   * can see that this is the moment to listen.
+   */
+  private async playSound(letter: string, lock = true): Promise<void> {
+    const speaker = this.add.text(GAME_WIDTH / 2, 170, '🔊', { fontSize: '72px' }).setOrigin(0.5).setDepth(DEPTH.hud);
+    popIn(this, speaker, 1);
+    const rings = this.time.addEvent({ delay: 260, loop: true, callback: () => shockwave(this, GAME_WIDTH / 2 + 30, 170, 0xffd23f, 90, 500) });
+    if (lock) await this.speak(letterSoundLine(letter));
+    else await voiceBus.say(letterSoundLine(letter));
+    rings.remove();
+    this.tweens.add({ targets: speaker, scale: 0, duration: 200, onComplete: () => speaker.destroy() });
   }
 
   protected override hint(): void {
     const item = this.items[this.itemIndex];
-    if (item) void this.speak(letterSoundLine(item.target));
+    if (item) void this.playSound(item.target);
   }
 
   protected choose(spot: Spot): void {
@@ -89,7 +103,7 @@ export class SoundToLetter extends Minigame {
     } else {
       void (async () => {
         await this.wrong(spot.obj);
-        await voiceBus.say(letterSoundLine(item.target));
+        await this.playSound(item.target, false);
       })();
     }
   }

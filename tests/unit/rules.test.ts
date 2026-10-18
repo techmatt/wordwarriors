@@ -11,7 +11,7 @@ import { ART_ASSETS } from '../../content/art/assets';
 import { MINIONS, MOVE_WORDS, ROSTER } from '../../content/battle/roster';
 import { LETTERS } from '../../content/phonics/letters';
 import { CVC_WORDS, WORDS } from '../../content/phonics/words';
-import { letterSoundLine, narratorLine, nameLine, tauntLine, ultimateLine, wordLine } from '../../content/voice/ids';
+import { letterSoundLine, moveLine, narratorLine, nameLine, tauntLine, ultimateLine, wordLine } from '../../content/voice/ids';
 import { NARRATOR_LINES } from '../../content/voice/script';
 import { pickWeighted, ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
 import { blendRound, pictureRound, soundRound } from '../../src/rules/rounds';
@@ -113,6 +113,7 @@ test('voice: every line id the game derives exists in lines.json and the manifes
       const f = evil ? c.evil : c.good;
       const id = evil ? `${c.id}_evil` : c.id;
       want.push(nameLine(id), ultimateLine(id), ...f.taunts.map((t) => tauntLine(id, t.key)));
+      want.push(...f.abilities.filter((a) => a.power >= 2).map((a) => moveLine(id, a.id)));
     }
     for (const t of NARRATOR_LINES) want.push(narratorLine(c.id, t.key));
     for (const v of ROSTER) want.push(narratorLine(c.id, `alarm_villain_${v.id}`), narratorLine(c.id, `need_item_${v.id}`), narratorLine(c.id, `made_item_${v.id}`));
