@@ -1,0 +1,328 @@
+/**
+ * `npm run art:gen -- <ids…> [--force]`: real art from content/art/prompts.ts,
+ * drawn by OpenAI Codex's built-in image tool on Matt's ChatGPT login (no API key).
+ *
+ * One image at a time: `codex exec --json -s read-only` with the prompt on
+ * stdin. Codex never writes into the repo; the image it makes lands in
+ * `$CODEX_HOME/generated_images/<thread id>/`, and this script collects it from
+ * there. The full-resolution original goes to `art-originals/` (git-ignored);
+ * a game-sized PNG goes to `public/art/<id>.png`: sprites keyed off green,
+ * trimmed and fitted to twice their display box, backgrounds cropped to fill.
+ *
+ * No ids = every id in ART_PROMPTS. Ids that already have real art (a file
+ * without the placeholder mark) are skipped unless `--force`. Stops at the
+ * first usage-limit message. Ends by writing scratch/art_contact.png.
+ * `--sheet` only rebuilds the contact sheet.
+ */
+
+import { spawn } from 'node:child_process';
+import { copyFile, mkdir, readFile, readdir, stat, writeFile, appendFile } from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+
+import { chromium, type Page } from '@playwright/test';
+
+import { ART_BY_ID } from '../../content/art/assets.js';
+import { ART_PROMPTS, BACKGROUND_STYLE, SPRITE_STYLE } from '../../content/art/prompts.js';
+import { isMain } from '../voice/clips.js';
+import { keyGreen } from './chroma.js';
+import { isPlaceholder } from './placeholders.js';
+
+const OUT = path.join('public', 'art');
+const ORIGINALS = 'art-originals';
+const SHEET = path.join('scratch', 'art_contact.png');
+const CODEX_HOME = process.env.CODEX_HOME ?? path.join(os.homedir(), '.codex');
+const TIMEOUT_MS = 6 * 60_000;
+/** Committed art is this many times the display box, so it stays crisp when squashed bigger. */
+const SPRITE_SCALE = 2;
+
+const isBackground = (id: string) => ['room', 'arena'].includes(ART_BY_ID[id]!.kind);
+
+export function codexPrompt(id: string): string {
+  const prompt = ART_PROMPTS[id];
+  if (!prompt) throw new Error(`no prompt for ${id} in content/art/prompts.ts`);
+  const a = ART_BY_ID[id];
+  if (!a) throw new Error(`${id} is not an asset id (content/art/assets.ts)`);
+  const shape = isBackground(id) ? 'wide landscape' : a.h > a.w * 1.1 ? 'portrait' : 'square';
+  return [
+    'Use your built-in image_gen tool ($imagegen) exactly once to generate the image below.',
+    'Do not read any files, run any commands, or try to save the image anywhere: just generate it, then stop.',
+    `Image shape: ${shape}.`,
+    '',
+    `${isBackground(id) ? BACKGROUND_STYLE : SPRITE_STYLE} ${prompt}`,
+  ].join('\n');
+}
+
+interface CodexRun {
+  thread?: string;
+  image?: string;
+  seconds: number;
+  limit?: string;
+  lastMessage?: string;
+  usage?: unknown;
+}
+
+const exists = (f: string) =>
+  stat(f).then(
+    () => true,
+    () => false,
+  );
+
+async function runCodex(prompt: string): Promise<CodexRun> {
+  const workdir = path.resolve('scratch', 'codex');
+  await mkdir(workdir, { recursive: true });
+  const started = Date.now();
+  // codex is an npm .cmd shim on Windows, which Node only spawns through a shell.
+  // Every argument is fixed; the prompt goes on stdin, so nothing is shell-expanded.
+  const child = spawn('codex', ['exec', '--json', '--skip-git-repo-check', '-s', 'read-only', '-C', workdir, '-'], {
+    shell: process.platform === 'win32',
+    stdio: ['pipe', 'pipe', 'pipe'],
+  });
+  child.stdin.end(prompt);
+  let out = '';
+  let err = '';
+  child.stdout.on('data', (d: Buffer) => (out += d.toString('utf8')));
+  child.stderr.on('data', (d: Buffer) => (err += d.toString('utf8')));
+  const timer = setTimeout(() => child.kill(), TIMEOUT_MS);
+  const code = await new Promise<number | null>((resolve) => child.on('close', resolve));
+  clearTimeout(timer);
+  const run: CodexRun = { seconds: Math.round((Date.now() - started) / 100) / 10 };
+
+  for (const line of out.split('\n')) {
+    let ev: { type?: string; thread_id?: string; item?: { type?: string; text?: string }; message?: string; error?: { message?: string } };
+    try {
+      ev = JSON.parse(line);
+    } catch {
+      continue;
+    }
+    if (ev.type === 'thread.started') run.thread = ev.thread_id;
+    if (ev.item?.type === 'agent_message' && ev.item.text) run.lastMessage = ev.item.text.trim();
+    const msg = ev.message ?? ev.error?.message;
+    if ((ev.type === 'error' || ev.type === 'turn.failed') && msg) run.lastMessage = msg;
+  }
+  const limitText = `${run.lastMessage ?? ''}\n${err}`.match(/[^\n]*(usage limit|rate limit|limit reached|try again (at|in))[^\n]*/i);
+  if (limitText) run.limit = limitText[0].trim();
+
+  if (run.thread) {
+    const dir = path.join(CODEX_HOME, 'generated_images', run.thread);
+    if (await exists(dir)) {
+      const pngs = (await readdir(dir)).filter((f) => f.endsWith('.png'));
+      const withTimes = await Promise.all(pngs.map(async (f) => ({ f, t: (await stat(path.join(dir, f))).mtimeMs })));
+      const newest = withTimes.sort((p, q) => q.t - p.t)[0];
+      if (newest) run.image = path.join(dir, newest.f);
+    }
+    run.usage = await rateLimits(run.thread);
+  }
+  if (!run.image && code !== 0 && !run.lastMessage) run.lastMessage = `codex exited ${code}: ${err.trim().split('\n').slice(-3).join(' | ')}`;
+  return run;
+}
+
+/** The allowance Codex logged for this thread (the last `rate_limits` in its session file). Nothing else is read. */
+async function rateLimits(thread: string): Promise<unknown> {
+  const root = path.join(CODEX_HOME, 'sessions');
+  const find = async (dir: string): Promise<string | undefined> => {
+    for (const e of await readdir(dir, { withFileTypes: true }).catch(() => [])) {
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) {
+        const hit = await find(p);
+        if (hit) return hit;
+      } else if (e.name.endsWith(`${thread}.jsonl`)) return p;
+    }
+    return undefined;
+  };
+  const file = await find(root);
+  if (!file) return undefined;
+  let last: unknown;
+  for (const line of (await readFile(file, 'utf8')).split('\n')) {
+    if (!line.includes('"rate_limits"')) continue;
+    try {
+      const rl = JSON.parse(line)?.payload?.rate_limits;
+      if (rl) last = rl;
+    } catch {
+      /* partial line */
+    }
+  }
+  return last;
+}
+
+function describeUsage(u: unknown): string {
+  const r = u as { primary?: { used_percent?: number; window_minutes?: number }; secondary?: { used_percent?: number; window_minutes?: number }; plan_type?: string; rate_limit_reached_type?: string | null } | undefined;
+  if (!r) return 'no allowance logged';
+  const w = (x?: { used_percent?: number; window_minutes?: number }) => (x ? `${x.used_percent ?? '?'}% of ${Math.round((x.window_minutes ?? 0) / 60)}h` : '?');
+  return `${r.plan_type ?? '?'}: used ${w(r.primary)}, ${w(r.secondary)}${r.rate_limit_reached_type ? `, LIMIT ${r.rate_limit_reached_type}` : ''}`;
+}
+
+// -- image processing (in a page: canvas decodes, scales and encodes PNG) -------
+
+async function openPage(): Promise<{ page: Page; close: () => Promise<void> }> {
+  const browser = await chromium.launch();
+  const page = await browser.newPage();
+  await page.setContent('<html><body></body></html>');
+  await page.evaluate('window.__name = (f) => f');
+  await page.addScriptTag({ content: `window.keyGreen = ${keyGreen.toString()};` });
+  return { page, close: () => browser.close() };
+}
+
+interface Processed {
+  url: string;
+  w: number;
+  h: number;
+  srcW: number;
+  srcH: number;
+  fringe: number;
+}
+
+async function processImage(page: Page, png: Buffer, opts: { sprite: boolean; boxW: number; boxH: number }): Promise<Processed> {
+  return page.evaluate(
+    async ({ src, sprite, boxW, boxH }) => {
+      const img = new Image();
+      img.src = src;
+      await img.decode();
+      const sw = img.naturalWidth;
+      const sh = img.naturalHeight;
+      const full = document.createElement('canvas');
+      full.width = sw;
+      full.height = sh;
+      const fc = full.getContext('2d')!;
+      fc.drawImage(img, 0, 0);
+      const out = document.createElement('canvas');
+      const oc = out.getContext('2d')!;
+      oc.imageSmoothingQuality = 'high';
+      let fringe = 0;
+      if (sprite) {
+        const data = fc.getImageData(0, 0, sw, sh);
+        fringe = (window as unknown as { keyGreen: (p: Uint8ClampedArray, w: number, h: number) => { fringe: number } }).keyGreen(data.data, sw, sh).fringe;
+        fc.putImageData(data, 0, 0);
+        let x0 = sw;
+        let y0 = sh;
+        let x1 = -1;
+        let y1 = -1;
+        for (let y = 0; y < sh; y++)
+          for (let x = 0; x < sw; x++)
+            if (data.data[(y * sw + x) * 4 + 3]! > 8) {
+              if (x < x0) x0 = x;
+              if (x > x1) x1 = x;
+              if (y < y0) y0 = y;
+              if (y > y1) y1 = y;
+            }
+        if (x1 < 0) throw new Error('keying left nothing visible');
+        const pad = Math.round(Math.max(x1 - x0, y1 - y0) * 0.02);
+        x0 = Math.max(0, x0 - pad);
+        y0 = Math.max(0, y0 - pad);
+        x1 = Math.min(sw - 1, x1 + pad);
+        y1 = Math.min(sh - 1, y1 + pad);
+        const cw = x1 - x0 + 1;
+        const ch = y1 - y0 + 1;
+        const s = Math.min(boxW / cw, boxH / ch, 1);
+        out.width = Math.round(cw * s);
+        out.height = Math.round(ch * s);
+        oc.drawImage(full, x0, y0, cw, ch, 0, 0, out.width, out.height);
+      } else {
+        out.width = boxW;
+        out.height = boxH;
+        const s = Math.max(boxW / sw, boxH / sh);
+        const cw = boxW / s;
+        const ch = boxH / s;
+        oc.drawImage(full, (sw - cw) / 2, (sh - ch) / 2, cw, ch, 0, 0, boxW, boxH);
+      }
+      return { url: out.toDataURL('image/png'), w: out.width, h: out.height, srcW: sw, srcH: sh, fringe };
+    },
+    { src: `data:image/png;base64,${png.toString('base64')}`, ...opts },
+  );
+}
+
+async function contactSheet(page: Page, ids: string[]): Promise<void> {
+  const tiles = await Promise.all(ids.map(async (id) => ({ id, src: `data:image/png;base64,${(await readFile(path.join(OUT, `${id}.png`))).toString('base64')}` })));
+  const url = await page.evaluate(async (list) => {
+    const T = 360;
+    const L = 40;
+    const cols = Math.min(3, list.length);
+    const rows = Math.ceil(list.length / cols);
+    const cv = document.createElement('canvas');
+    cv.width = cols * T;
+    cv.height = rows * (T + L);
+    const c = cv.getContext('2d')!;
+    c.fillStyle = '#fff';
+    c.fillRect(0, 0, cv.width, cv.height);
+    for (const [k, t] of list.entries()) {
+      const x = (k % cols) * T;
+      const y = Math.floor(k / cols) * (T + L);
+      for (let i = 0; i < T / 20; i++) for (let j = 0; j < T / 20; j++) {
+        c.fillStyle = (i + j) % 2 ? '#d8d8d8' : '#f4f4f4';
+        c.fillRect(x + i * 20, y + j * 20, 20, 20);
+      }
+      const img = new Image();
+      img.src = t.src;
+      await img.decode();
+      const s = Math.min((T - 16) / img.naturalWidth, (T - 16) / img.naturalHeight);
+      const w = img.naturalWidth * s;
+      const h = img.naturalHeight * s;
+      c.drawImage(img, x + (T - w) / 2, y + (T - h) / 2, w, h);
+      c.fillStyle = '#222';
+      c.font = 'bold 20px monospace';
+      c.textAlign = 'center';
+      c.fillText(`${t.id}  ${img.naturalWidth}×${img.naturalHeight}`, x + T / 2, y + T + 27);
+    }
+    return cv.toDataURL('image/png');
+  }, tiles);
+  await mkdir(path.dirname(SHEET), { recursive: true });
+  await writeFile(SHEET, Buffer.from(url.slice(url.indexOf(',') + 1), 'base64'));
+  console.log(`art: contact sheet ${SHEET} (${ids.length} tiles)`);
+}
+
+async function isReal(id: string): Promise<boolean> {
+  const f = path.join(OUT, `${id}.png`);
+  return (await exists(f)) && !isPlaceholder(await readFile(f));
+}
+
+export async function generate(argv: string[]): Promise<void> {
+  const force = argv.includes('--force');
+  const sheetOnly = argv.includes('--sheet');
+  const named = argv.filter((a) => !a.startsWith('--'));
+  const ids = named.length ? named : Object.keys(ART_PROMPTS);
+  for (const id of ids) codexPrompt(id); // fail before spending anything on a bad id
+
+  await mkdir(ORIGINALS, { recursive: true });
+  const { page, close } = await openPage();
+  try {
+    if (!sheetOnly) {
+      for (const [k, id] of ids.entries()) {
+        if (!force && (await isReal(id))) {
+          console.log(`art: ${id} already has real art, skipped (--force to redo)`);
+          continue;
+        }
+        console.log(`art: [${k + 1}/${ids.length}] ${id}: asking codex…`);
+        const run = await runCodex(codexPrompt(id));
+        await appendFile(path.join(ORIGINALS, 'log.jsonl'), `${JSON.stringify({ id, at: new Date().toISOString(), seconds: run.seconds, thread: run.thread, image: run.image, limit: run.limit, usage: run.usage, message: run.lastMessage })}\n`);
+        if (!run.image) {
+          console.error(`art: ${id}: no image after ${run.seconds}s. ${run.limit ?? run.lastMessage ?? ''}`);
+          if (run.limit) break;
+          continue;
+        }
+        await copyFile(run.image, path.join(ORIGINALS, `${id}.png`));
+        const a = ART_BY_ID[id]!;
+        const sprite = !isBackground(id);
+        const p = await processImage(page, await readFile(run.image), sprite ? { sprite, boxW: a.w * SPRITE_SCALE, boxH: a.h * SPRITE_SCALE } : { sprite, boxW: a.w, boxH: a.h });
+        const png = Buffer.from(p.url.slice(p.url.indexOf(',') + 1), 'base64');
+        await writeFile(path.join(OUT, `${id}.png`), png);
+        console.log(`art: ${id}: ${run.seconds}s, ${p.srcW}×${p.srcH} → ${p.w}×${p.h} (${Math.round(png.length / 1024)} KB)${sprite ? `, green fringe px ${p.fringe}` : ''}; ${describeUsage(run.usage)}`);
+        if (run.limit) {
+          console.error(`art: usage limit: ${run.limit}`);
+          break;
+        }
+      }
+    }
+    const done: string[] = [];
+    for (const id of ids) if (await isReal(id)) done.push(id);
+    if (done.length) await contactSheet(page, done);
+  } finally {
+    await close();
+  }
+}
+
+if (isMain(import.meta.url)) {
+  generate(process.argv.slice(2)).catch((error: unknown) => {
+    console.error(`art:gen failed: ${error instanceof Error ? error.message : String(error)}`);
+    process.exitCode = 1;
+  });
+}

@@ -57,7 +57,7 @@ function withMark(png: Buffer): Buffer {
   return Buffer.concat([png.subarray(0, at), len, type, data, crc, png.subarray(at)]);
 }
 
-function isPlaceholder(png: Buffer): boolean {
+export function isPlaceholder(png: Buffer): boolean {
   return png.includes(Buffer.from(`tEXt${MARK_KEY}\0${MARK_VALUE}`, 'latin1'));
 }
 

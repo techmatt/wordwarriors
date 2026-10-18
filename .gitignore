@@ -18,6 +18,9 @@ dist/
 # Scratch space for one session's working files.
 /scratch/
 
+# Full-resolution originals from `npm run art:gen`; only game-sized PNGs are committed.
+/art-originals/
+
 # Logs
 *.log
 
