@@ -26,7 +26,7 @@ export const BACKGROUND_STYLE = `${STYLE} A full-bleed background painting filli
  * the screen showing through (a cage's faint back bars), not just the edges.
  * Leave out anything meant to have green in it (a leaf, a dragon).
  */
-export const NO_GREEN = new Set(['char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net']);
+export const NO_GREEN = new Set(['char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block']);
 
 /** Word pictures: one meaning each, and unlike their look-alikes (content/phonics/sentences.ts LOOKALIKES). */
 const PICTURES: Record<string, string> = {
@@ -87,6 +87,9 @@ const HAND: Record<string, string> = {
     'A heroic sunrise over a fairytale castle on a hill, a friendly dragon silhouette flying across the sky, wide landscape 16:9. The top half is open bright sky (a big logo goes there), the castle and green hills fill the lower half.',
   room_victory:
     'A victory celebration, wide landscape 16:9: colourful fireworks bursting over a fairytale castle at dusk, confetti falling, a cheering green lawn across the lower half with an empty three-step winners podium in the middle.',
+  obj_blocks:
+    // The first one had a green block, which the keying ate (2026-10-18).
+    "A tower of chunky wooden toy blocks in red, blue, yellow and orange (no green blocks): a toy in a child's bedroom, side-on.",
   item_mice:
     'Wind-up Mice: a round open tin box with three cute grey clockwork toy mice spilling out of it, each with a little silver wind-up key in its back, pink ears and curly tails, a few golden sparkles around them.',
 };
