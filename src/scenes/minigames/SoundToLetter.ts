@@ -53,7 +53,12 @@ export class SoundToLetter extends Minigame {
       const label = this.add
         .text(0, -75, letter, { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '96px', color: '#1a1030', stroke: '#ffffff', strokeThickness: 8 })
         .setOrigin(0.5);
-      const spot = this.addSpot(letter, xs[i]!, y, [this.add.ellipse(0, 0, 120, 26, 0x000000, 0.3), stone, label], letter === item.target);
+      // The capital, small, beside it: she knows letter names, mostly from capitals.
+      const capital = this.add
+        .text(46, -128, letter.toUpperCase(), { fontFamily: '"Arial Black", sans-serif', fontSize: '30px', color: '#1a1030', stroke: '#ffffff', strokeThickness: 5 })
+        .setOrigin(0.5)
+        .setAlpha(0.8);
+      const spot = this.addSpot(letter, xs[i]!, y, [this.add.ellipse(0, 0, 120, 26, 0x000000, 0.3), stone, label, capital], letter === item.target);
       spot.obj.setScale(0);
       this.tweens.add({ targets: spot.obj, scale: 1, duration: 350, delay: i * 120, ease: 'Back.easeOut' });
       bob(this, label, 4, 800 + i * 100);
