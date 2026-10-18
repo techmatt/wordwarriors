@@ -73,6 +73,14 @@ gives only the first sound, as for a name). Use `scared_of_the` when the word re
 better with THE. Its `word_<x>` line is composed automatically. A new counter frame is
 a `FRAMES` entry with `use: 'counter'` plus its id in the `CounterItem.frame` type.
 
+The counter word must not be heard or seen before the attic, so it may not be a move
+word, a `FETCH_ITEMS` word, a frame word, or a whole word in any name, ability,
+ultimate, taunt or house threat in the roster. The unit test "counter words are never
+spoken or shown before the attic" checks all of that. At run time the episode also
+keeps the taught spell and the counter word out of the side rooms' key words, and a
+room's other two objects are never a look-alike of the key word (`LOOKALIKES` in
+`content/phonics/sentences.ts`) or a word the sentence itself shows.
+
 ## An ability (`AbilitySpec`)
 
 `{ id, name, kind, cooldown, color, color2?, power, count?, glyph?, status?, minion?,
