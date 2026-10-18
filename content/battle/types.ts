@@ -108,6 +108,11 @@ export interface FighterSpec {
   /** An emoji painted on the placeholder card. */
   glyph: string;
   style: MoveStyle;
+  /**
+   * What it rides when airborne, drawn under the card: `carpet` (drawn), or an
+   * emoji ('🧹', '🐉'). Placeholder until real art draws the mount in.
+   */
+  mount?: string;
   /** Pixels per second at full stride. */
   speed: number;
   /** Sprite scale: 1 a person, 1.4 big, 1.8 a giant. */

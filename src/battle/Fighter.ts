@@ -42,6 +42,7 @@ export interface FighterInit {
   kind: 'main' | 'minion' | 'clone' | 'helper';
   /** Voice speaker id for taunts (main fighters only). */
   voice?: string;
+  mount?: string;
   taunts?: string[];
 }
 
@@ -61,6 +62,7 @@ export function initFromSpec(spec: FighterSpec, id: string, art: string, team: T
     kind: 'main',
     voice: id,
     taunts: spec.taunts.map((t) => t.key),
+    ...(spec.mount ? { mount: spec.mount } : {}),
   };
 }
 
@@ -143,6 +145,7 @@ export class Fighter {
     this.sprite = fitImage(scene.add.image(0, 0, init.art).setOrigin(0.5, 1), this.height * 0.8, this.height);
     this.baseScale = this.sprite.scale;
     this.body = scene.add.container(0, 0, [this.sprite]);
+    if (init.mount) this.addMount(init.mount);
     this.root = scene.add.container(x, y, [this.shadow, this.body]);
     // Stagger cooldowns so a whole team does not fire on the first frame.
     for (const a of init.abilities) this.cooldowns.set(a.id, 0.8 + Math.random() * a.cooldown);
@@ -263,6 +266,28 @@ export class Fighter {
       this.body.setScale(s * (1 + stretch) * flip, s * (1 - stretch * 0.6));
     }
     this.body.x = 0;
+  }
+
+  /**
+   * The thing it rides, under its feet, inside the body so it bobs and lifts
+   * with it: a drawn flying carpet with tassels, or an emoji (broom, dragon).
+   */
+  private addMount(mount: string): void {
+    const w = this.height * 0.95;
+    if (mount === 'carpet') {
+      const [main, accent] = this.init.palette;
+      const g = this.scene.add.graphics();
+      g.fillStyle(main, 1).fillRoundedRect(-w / 2, -8, w, 22, 8);
+      g.lineStyle(4, accent, 1).strokeRoundedRect(-w / 2 + 6, -4, w - 12, 14, 5);
+      g.fillStyle(accent, 1);
+      for (let i = 0; i < 5; i++) g.fillCircle(-w / 2 + 14 + (i * (w - 28)) / 4, 3, 3);
+      for (const x of [-w / 2, w / 2]) for (const dy of [-4, 6]) g.fillTriangle(x, dy, x + (x < 0 ? -12 : 12), dy + 4, x, dy + 8);
+      this.body.addAt(g, 0);
+      this.scene.tweens.add({ targets: g, scaleY: { from: 1, to: 0.8 }, duration: 380, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    } else {
+      const t = this.scene.add.text(0, 6, mount, { fontSize: `${Math.round(w * 0.6)}px` }).setOrigin(0.5, 0.75);
+      this.body.addAt(t, 0);
+    }
   }
 
   /** Squash on landing or being hit. */

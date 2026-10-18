@@ -168,7 +168,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     evil: {
       displayName: 'Evil Seraphina', look: 'a girl in a dark hooded cloak riding a swarm of shadow dragons, glowing orange eyes',
-      palette: [0x1a3a2a, 0xff4a1a], glyph: '🐲', style: 'fly', speed: 190, size: 1, hp: 140,
+      palette: [0x1a3a2a, 0xff4a1a], glyph: '🐲', style: 'fly', mount: '🐉', speed: 190, size: 1, hp: 140,
       abilities: [
         ab('shadow_dragons', 'Shadow Dragons', 'summon', 10, 0x2a5a3a, 2, { minion: 'baby_dragon', count: 3 }),
         ab('fire_rain', 'Fire Rain', 'rain', 7, 0xff4a1a, 2, { count: 12, glyph: '🔥' }),
@@ -361,7 +361,7 @@ export const ROSTER: CharacterSpec[] = [
     arena: 'desert',
     good: {
       displayName: 'Jasmine', look: 'a desert princess in teal silks with a jewelled headband, riding a patterned flying carpet, original design',
-      palette: [0x1fb5a8, 0xffc857], glyph: '🧞', style: 'fly', speed: 220, size: 1, hp: 100,
+      palette: [0x1fb5a8, 0xffc857], glyph: '🧞', style: 'fly', mount: 'carpet', speed: 220, size: 1, hp: 100,
       abilities: [
         ab('wind_fan', 'Wind Fan', 'cone', 4, 0xbaf2ff, 2, { word: 'fan' }),
         ab('carpet_swoop', 'Carpet Swoop', 'dash', 5, 0xffc857, 2, { word: 'zip' }),
@@ -378,7 +378,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     evil: {
       displayName: 'Evil Jasmine', look: 'a princess in dark purple silks on a carpet of black smoke, a sandstorm swirling behind her',
-      palette: [0x3a1a4a, 0xe8c890], glyph: '🌪️', style: 'fly', speed: 230, size: 1.05, hp: 140,
+      palette: [0x3a1a4a, 0xe8c890], glyph: '🌪️', style: 'fly', mount: 'carpet', speed: 230, size: 1.05, hp: 140,
       abilities: [
         ab('sand_blast', 'Sand Blast', 'cone', 4, 0xe8c890, 2),
         ab('smoke_carpet', 'Smoke Carpet', 'dash', 5, 0x5a3a6a, 2),
@@ -614,7 +614,7 @@ export const ROSTER: CharacterSpec[] = [
     arena: 'castle',
     good: {
       displayName: 'Bavmorda', look: 'a kindly old witch with a crooked hat full of flowers, a staff with a glowing pink gem',
-      palette: [0x7b2cbf, 0x80ffdb], glyph: '🧹', style: 'hover', speed: 150, size: 1, hp: 100,
+      palette: [0x7b2cbf, 0x80ffdb], glyph: '🧹', style: 'hover', mount: '🧹', speed: 150, size: 1, hp: 100,
       abilities: [
         ab('flower_bolt', 'Flower Bolts', 'bolt', 2.2, 0xff8fab, 1, { count: 3, glyph: '🌸', word: 'pop' }),
         ab('piggy_spell', 'Piggy Spell', 'polymorph', 9, 0xff9ad5, 2, { status: 'pig', duration: 3, word: 'zap' }),
@@ -631,7 +631,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     evil: {
       displayName: 'Evil Bavmorda', look: 'a tall dark witch queen with a horned crown, a black staff with a green flame, skeletons at her feet',
-      palette: [0x240046, 0x39ff14], glyph: '🧙‍♀️', style: 'hover', speed: 140, size: 1.2, hp: 190,
+      palette: [0x240046, 0x39ff14], glyph: '🧙‍♀️', style: 'hover', mount: '🧹', speed: 140, size: 1.2, hp: 190,
       abilities: [
         ab('skeleton_wave', 'Skeleton Wave', 'summon', 8, 0xf2f0e6, 2, { minion: 'skeleton', count: 5 }),
         ab('pig_curse', 'Pig Curse', 'polymorph', 7, 0x39ff14, 2, { status: 'pig', duration: 3.5 }),
