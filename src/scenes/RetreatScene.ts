@@ -10,7 +10,7 @@
 import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
-import { narratorLine } from '../../content/voice/ids';
+import { fighterId, narratorLine, tauntLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxSelect } from '../audio/sfx';
 import { GAME_WIDTH } from '../config';
@@ -57,7 +57,15 @@ export class RetreatScene extends RoomScene {
     spot.enabled = false;
     this.player.place(520, 560);
 
+    // The villain looms small on a far hill, waiting.
+    const vs = villainSpec();
+    const looming = this.art(charArt(vs.id, true), 70, 88, 1150, 300).setDepth(10);
+    looming.setTint(0x9a8aaa);
+    this.tweens.add({ targets: looming, y: 294, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+
     void (async () => {
+      const gloat = vs.evil.taunts[1] ?? vs.evil.taunts[0];
+      if (gloat) await this.say(tauntLine(fighterId(vs.id, true), gloat.key));
       await this.narrate('retreat_1', 'retreat_2', `need_item_${episode.villain}`);
       spot.enabled = true;
       burst(this, spot.x, spot.y - 60, { count: 40 });
