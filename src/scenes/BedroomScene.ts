@@ -2,16 +2,19 @@
  * The bedroom: where every episode starts. She is asleep; somebody comes in
  * to wake her with the news.
  *
+ * She is in bed, peeking over the cover and breathing; any button puffs a 💤.
  * Dada Matt (Dada Jason when Dada Matt is the hero) walks in from the door:
- * "Wake up, wake up!" She pops out of bed. "Good news!" The helper pops in.
- * Then the room goes dark, the villain's mood thumps in over the room
- * (EvilRilla's footprints, a cracked window: `CharacterSpec.house`, so it is
- * data), a far-off taunt, and "Come on, let us go! Find the door!"
+ * "Wake up, wake up!" A green dot shows over the bed and she presses green to
+ * jump out (or she pops out by herself after WAKE_WAIT_MS, so nothing stalls).
+ * "Good news!" The helper pops in. Then the room goes dark, the villain's mood
+ * thumps in over the room (EvilRilla's footprints, a cracked window:
+ * `CharacterSpec.house`, so it is data), a far-off taunt, and "Come on, let us
+ * go! Find the door!" The grown-ups step over beside the door, which glows.
  *
  * No reading here, and no text: it is the room she explores for fun first.
  * Every toy is a spot that does something silly on green (Stardew's "poke
  * everything" pleasure), and the door is the one way on. If she has not found
- * it a while after the news, it sparkles. Yellow says the door line again.
+ * it a while after the news, it sparkles too. Yellow says the door line again.
  */
 
 import Phaser from 'phaser';
@@ -52,6 +55,9 @@ const SOUND: Record<ReactionSound, () => void> = {
   whoosh: sfxWhoosh,
 };
 
+/** How long "Wake up!" waits for her green before she pops out by herself. */
+const WAKE_WAIT_MS = 6000;
+
 export class BedroomScene extends RoomScene {
   private asleep = true;
   private newsDone = false;
@@ -59,6 +65,11 @@ export class BedroomScene extends RoomScene {
   private doorSpot: Spot | null = null;
   private doorImg: Phaser.GameObjects.Image | null = null;
   private zzz: Phaser.Time.TimerEvent | null = null;
+  private bedSpot: Spot | null = null;
+  private breathing: Phaser.Tweens.Tween | null = null;
+  /** Set while "Wake up!" waits for her green on the bed. */
+  private wakeResolve: (() => void) | null = null;
+  private puffAt = 0;
 
   constructor() {
     super('Bedroom');
@@ -72,6 +83,12 @@ export class BedroomScene extends RoomScene {
     this.doorSpot = null;
     this.doorImg = null;
     this.zzz = null;
+    this.bedSpot = null;
+    this.breathing = null;
+    this.wakeResolve = null;
+    this.puffAt = 0;
+    // Tucked in: no "walk about" stick hint until she is up.
+    this.walking = false;
     // The floor runs right down to the toys at the front of the room.
     this.floor = new Phaser.Geom.Rectangle(70, 400, GAME_WIDTH - 140, 300);
   }
@@ -88,10 +105,13 @@ export class BedroomScene extends RoomScene {
     const room = this.room;
     this.round = 'bedroom:sleep';
 
-    // The bed, with her tucked in it (hidden: the cover is over her).
-    this.art('prop_bed', 280, 190, room.bed.x, room.bed.y).setDepth(room.bed.y);
-    this.player.place(room.bed.x, room.bed.y - 20);
-    this.player.root.setVisible(false);
+    // The bed, with her tucked in it: her feet are above the bed's, so she
+    // draws behind it and only her top peeks over the cover. The bed is a
+    // spot (off until "Wake up!") so green on it jumps her out.
+    this.bedSpot = this.addSpot('bed', room.bed.x, room.bed.y, [this.art('prop_bed', 280, 190)], true);
+    this.bedSpot.enabled = false;
+    this.player.place(room.bed.x - 30, room.bed.y - 30);
+    this.breathing = this.tweens.add({ targets: this.player.root, scaleY: 0.95, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     this.zzz = this.time.addEvent({ delay: 900, loop: true, callback: () => this.floatZ() });
 
     // The toys: every one does something on green.
@@ -112,7 +132,7 @@ export class BedroomScene extends RoomScene {
   private async run(): Promise<void> {
     const room = this.room;
     const w = wakerFor(episode.hero);
-    await this.wait(1600);
+    await this.wait(800);
 
     // The waker comes in through the door.
     this.doorOpens();
@@ -126,22 +146,25 @@ export class BedroomScene extends RoomScene {
     bob(this, waker, 5, 800);
     await this.speak(wakeLine(w, 'up'));
 
-    // Up she pops.
+    // Up she pops: on her green (the dot over the bed), or by herself.
+    await this.awaitWake();
     this.wakeUp();
     await this.wait(500);
     await this.speak(wakeLine(w, `good_${episode.hero}`));
 
     // The helper pops in beside the waker.
     const h = helper();
+    let friend: Phaser.GameObjects.Image | null = null;
     if (h !== w) {
       const hx = room.waker.x - 140;
       const hy = room.waker.y + 20;
-      const friend = this.art(charArt(h, false), 110, 145, hx, hy).setDepth(hy);
-      const s = friend.scale;
-      popIn(this, friend, s);
+      const f = this.art(charArt(h, false), 110, 145, hx, hy).setDepth(hy);
+      friend = f;
+      const s = f.scale;
+      popIn(this, f, s);
       burst(this, hx, hy - 70, { count: 50, colors: [0xffffff, 0xff9ad5, 0x7ad9ff, 0xffd23f] });
       sfxSummon();
-      this.time.delayedCall(400, () => bob(this, friend, 7, 650));
+      this.time.delayedCall(400, () => bob(this, f, 7, 650));
       await this.speak(wakeLine(w, `helper_${h}`));
     }
 
@@ -166,8 +189,40 @@ export class BedroomScene extends RoomScene {
     if (this.doorSpot) {
       this.doorSpot.enabled = true;
       burst(this, this.doorSpot.x, this.doorSpot.y - 100, { count: 30 });
+      // A warm glow behind the door straight away (the hub's front door look).
+      const light = this.add.image(0, -100, TEX.glow).setTint(0xfff1a8).setBlendMode(Phaser.BlendModes.ADD).setScale(2.2).setAlpha(0.6);
+      this.doorSpot.obj.addAt(light, 0);
+      this.tweens.add({ targets: light, alpha: 0.95, scale: 2.6, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     }
+    // The grown-ups step over beside the door, off the toys: the way out.
+    // The waker just below the door's sill (right of the blocks), the helper
+    // between the robot and the door: no toy and no part of the door covered.
+    this.stepAside(waker, { x: room.door.x, y: room.door.y + 180 });
+    if (friend) this.stepAside(friend, { x: room.door.x - 140, y: room.door.y + 50 });
     this.time.delayedCall(DOOR_SPARKLE_MS, () => this.sparkleDoor());
+  }
+
+  /** Walk a grown-up to a new place (bob stopped for the walk, then again). */
+  private stepAside(img: Phaser.GameObjects.Image, to: { x: number; y: number }): void {
+    this.tweens.killTweensOf(img);
+    this.tweens.add({
+      targets: img,
+      x: to.x,
+      y: to.y,
+      duration: 1000,
+      ease: 'Sine.easeInOut',
+      onUpdate: () => img.setDepth(img.y),
+      onComplete: () => bob(this, img, 6, 750),
+    });
+  }
+
+  /** Hold "Wake up!" until green on the bed, or WAKE_WAIT_MS. */
+  private async awaitWake(): Promise<void> {
+    if (!this.bedSpot) return;
+    this.bedSpot.enabled = true;
+    await this.guard(Promise.race([new Promise<void>((resolve) => (this.wakeResolve = resolve)), this.wait(WAKE_WAIT_MS)]));
+    this.wakeResolve = null;
+    this.bedSpot.enabled = false;
   }
 
   /** A little 💤 rising off the bed while she sleeps. */
@@ -182,9 +237,11 @@ export class BedroomScene extends RoomScene {
   private wakeUp(): void {
     const { x, y } = this.room.bed;
     this.asleep = false;
+    this.walking = true;
     this.zzz?.remove();
+    this.breathing?.remove();
+    this.breathing = null;
     this.player.place(x + 170, y + 50);
-    this.player.root.setVisible(true);
     this.player.root.setScale(1, 0.3);
     this.tweens.add({ targets: this.player.root, scaleY: 1, duration: 260, ease: 'Back.easeOut' });
     this.player.hop();
@@ -221,8 +278,17 @@ export class BedroomScene extends RoomScene {
 
   override update(time: number, deltaMs: number): void {
     super.update(time, deltaMs);
+    if (!this.asleep) return;
     // Tucked in: she stays in bed until she is woken.
-    if (this.asleep) this.player.place(this.room.bed.x, this.room.bed.y - 20);
+    this.player.place(this.room.bed.x - 30, this.room.bed.y - 30);
+    // Any button while asleep: a puff of 💤 and a little boing (green on the
+    // bed while "Wake up!" waits is the wake-up itself, not a puff).
+    const waking = this.wakeResolve && !this.locked && this.controls.pressed('green');
+    if (this.controls.anyFace() && !waking && this.time.now >= this.puffAt) {
+      this.puffAt = this.time.now + 250;
+      for (let i = 0; i < 3; i++) this.time.delayedCall(i * 120, () => this.floatZ());
+      sfxBoing();
+    }
   }
 
   protected override hint(): void {
@@ -230,6 +296,10 @@ export class BedroomScene extends RoomScene {
   }
 
   protected choose(spot: Spot): void {
+    if (spot.id === 'bed') {
+      if (this.asleep && !this.locked) this.wakeResolve?.();
+      return;
+    }
     if (this.locked || this.asleep) return;
     if (spot.id === 'door') {
       if (!this.newsDone || this.leaving) return;

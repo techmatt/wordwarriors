@@ -60,7 +60,7 @@ export const EPISODE_DEFAULTS = {
 export const SENTENCE_SOLID = { tries: 6, lastRight: 5 };
 
 /** How long in the bedroom (ms, after the news) before the door starts to sparkle. */
-export const DOOR_SPARKLE_MS = 20_000;
+export const DOOR_SPARKLE_MS = 12_000;
 
 /** Pad face colours, as a child sees them. Rules code talks in these names, never A/B. */
 export const PAD_COLOR = {

@@ -90,6 +90,8 @@ interface Choice {
   near: MovePad | null;
   /** The green dot over the lit pad. */
   dot: Phaser.GameObjects.Container;
+  /** The "I am here" ring at her hero's feet. */
+  here: Phaser.GameObjects.Ellipse;
   open: boolean;
   /** Wall-clock time the word was last said, for the idle re-prompt. */
   promptedAt: number;
@@ -423,7 +425,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.phase = 'end';
     await this.villainSays();
     await this.say('retreat_1');
-    await this.simWait(0.5);
+    this.retreat();
+    await this.simWait(1.4);
     this.cameras.main.fadeOut(500);
     await this.simWait(0.6);
     advance(this);
@@ -448,6 +451,33 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.cameras.main.fadeOut(500, 255, 255, 255);
     await this.simWait(0.6);
     advance(this);
+  }
+
+  /**
+   * Part 1's end: the heroes bounce back up and run off left to get ready, so
+   * the fade is on a retreat, never on a floored team. The villain stomps.
+   */
+  private retreat(): void {
+    const team = [...this.heroes, ...(this.helper ? [this.helper] : [])].filter((h) => h.active);
+    team.forEach((h, i) => {
+      // Off the stage edge: the on-screen clamp lets go, and no shove pins her to the wall.
+      h.onStage = false;
+      h.busyUntil = Infinity;
+      this.after(i * 120, () => {
+        h.floored = false;
+        h.status = null;
+        h.clearOverlay();
+        h.lean = -0.25;
+        h.squash(0.3);
+        sfxWhoosh();
+        burst(this, h.x, h.y, { count: 22, speed: 260, colors: [0xd9c7a0, 0xffffff] });
+        this.tweens.addCounter({ from: 0, to: 1, duration: 380, onUpdate: (tw) => (h.hop = Math.sin((tw.getValue() ?? 0) * Math.PI) * 80), onComplete: () => (h.hop = 0) });
+        this.tweens.add({ targets: h, x: -220, duration: 900, delay: 200, ease: 'Quad.easeIn' });
+        this.tweens.add({ targets: h.root, alpha: 0, duration: 300, delay: 800 });
+      });
+    });
+    const v = this.villain;
+    if (v.active) this.tweens.add({ targets: v.root, scaleY: 0.9, duration: 140, yoyo: true, repeat: 3 });
   }
 
   /** The villain gets a word in at the big beats: a gloat, a challenge. */
@@ -641,7 +671,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     for (let x = ARENA_LEFT + 110; x <= ARENA_RIGHT - 110; x += 40) xs.push(x);
     let best: { x: number; y: number }[] = [];
     let bestScore = -Infinity;
-    for (const y of [480, 560, 640]) {
+    // Not 640: a pad there sits under the caption ribbon while its word is said.
+    for (const y of [480, 560]) {
       // Every set of n columns at least PAD_GAP apart (n is 2 or 3, so this is small).
       const walk = (from: number, picked: number[]): void => {
         if (picked.length === n) {
@@ -727,6 +758,10 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     me.vy = 0;
     const at = { x: me.x, y: me.y, lift: me.init.style === 'fly' ? 110 : me.init.style === 'hover' ? 40 : 0 };
     me.lift = at.lift;
+    // The last big banner ("ROCKET FISTS!") is frozen with the clock: clear it from under PICK A MOVE.
+    this.bannerText?.destroy();
+    this.bannerText = null;
+    this.bannerBig = 0;
     const objs: Phaser.GameObjects.GameObject[] = [];
     // A light dim behind the fighters (not over them), so the pads and signs read.
     objs.push(this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0a0018, 0.3).setDepth(FLOOR_TOP - 3.5));
@@ -740,9 +775,12 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     for (const p of pads) objs.push(p.ring, p.sign);
     const dot = makeButtonDot(this, 0, 0, 'green', 22, false).setDepth(DEPTH.prompt).setVisible(false);
     objs.push(dot);
+    // "I am here": a white ring at her hero's feet, so she finds herself among the signs.
+    const here = this.add.ellipse(me.x, me.y, 150, 52).setStrokeStyle(6, 0xffffff, 0.95).setDepth(DEPTH.prompt - 6);
+    objs.push(here);
 
     const picked = await new Promise<string>((resolve) => {
-      this.choice = { words, right, owners, objs, pads, near: null, dot, open: false, promptedAt: 0, at, resolve };
+      this.choice = { words, right, owners, objs, pads, near: null, dot, here, open: false, promptedAt: 0, at, resolve };
       void (async () => {
         await this.say('move_pick');
         await this.say(`use_move_${right}`);
@@ -760,6 +798,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.stats.movePicks++;
     const good = picked === right;
     progress.record('words', right, good, good ? 0 : 1);
+    // The victory recap reads episode.read: a battle word she picked right is one she read.
+    if (good && !episode.read.includes(right)) episode.read.push(right);
     const { f, ab } = owners.get(picked)!;
     if (good) {
       // The super frees its hero from any pig or ice; a plain pick changes nothing else.
@@ -806,6 +846,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     me.lift = c.at.lift;
     me.hop = 0;
     me.spin = 0;
+    // Above the word signs while she steers (updateVisual sets depth by y, so this runs after it).
+    me.root.setDepth(DEPTH.prompt - 5);
+    c.here.setPosition(me.x, me.y).setScale(1 + 0.1 * Math.sin(performance.now() / 180));
   }
 
   /**

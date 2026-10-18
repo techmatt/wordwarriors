@@ -30,7 +30,7 @@ import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
-import { sfxRight, sfxStep, sfxSummon } from '../audio/sfx';
+import { sfxRight, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../config';
 import { backToHub, episode, narrator, planFor, villainSpec, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
@@ -38,6 +38,8 @@ import { frameIsSolid, type RoomPlan } from '../rules/sentences';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../testHooks';
 import { Bag } from '../ui/Bag';
+import { makeButtonDot } from '../ui/ButtonDot';
+import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
 import { Minigame } from './minigames/Minigame';
@@ -51,6 +53,12 @@ const BANNER_W = 1040;
 const BANNER_Y = 120;
 /** The silent beat on the key word at the end of the listening pass. */
 const KEY_BEAT_MS = 1200;
+/** A moment to look round a room she has just walked into, before anyone talks. */
+const ARRIVE_MS = 800;
+/** How big the lit word grows (the layout leaves room for it). */
+const LIT_SCALE = 1.08;
+/** The pause after each letter sound, so the sounds never run together. */
+const LETTER_GAP_MS = 450;
 
 /** A stable scatter seed per side room (FNV-1a of its id). */
 function roomSeed(id: string): number {
@@ -73,6 +81,9 @@ export class SentenceRoom extends Minigame {
   /** While a line plays, the banner follows it: line id and how many tokens it covers. */
   private karaoke: { id: string; n: number } | null = null;
   private bag!: Bag;
+  private banner!: Phaser.GameObjects.Container;
+  /** In `read`, a green dot under the lit word: that light is hers to move. */
+  private readDot!: Phaser.GameObjects.Container;
 
   constructor() {
     super('SentenceRoom');
@@ -111,8 +122,18 @@ export class SentenceRoom extends Minigame {
     this.bag = new Bag(this);
     const room = SIDE_ROOM_BY_ID[this.plan.room]!;
     this.player.place(room.entry.x, Math.min(room.entry.y, this.floor.bottom - 10));
+    // Arriving: a hop and a puff where she comes in.
+    this.player.hop();
+    burst(this, this.player.x, this.player.y - 40, { count: 16, speed: 220 });
+    sfxWhoosh();
+    // Nothing to walk to until the pedestals wake: no stick hint before then.
+    this.walking = false;
+    // Decode the sentence's lines now, so the banner lights the moment they start.
+    void voiceBank.ensure(s.prefixLine);
+    void voiceBank.ensure(wordLine(s.key));
 
     this.makeBanner();
+    this.readDot = makeButtonDot(this, 0, 0, 'green', 16).setDepth(DEPTH.hud).setVisible(false);
 
     // The three objects, asleep until the read-along reaches the key word.
     this.plan.objects.forEach((word, i) => {
@@ -143,7 +164,8 @@ export class SentenceRoom extends Minigame {
       probe.destroy();
       return w;
     };
-    while (size > 40 && measure(size) > BANNER_W - 90) size -= 4;
+    // Fit inside the cream panel (about 82% of the banner art), with room for the lit word to grow.
+    while (size > 40 && measure(size) * 1.1 > BANNER_W * 0.82) size -= 4;
     const style = { fontFamily: FONT, fontSize: `${size}px`, color: INK };
     const gap = size * 0.4;
 
@@ -171,14 +193,17 @@ export class SentenceRoom extends Minigame {
       this.tokenTexts.push(texts);
       this.tokenBoxes.push(this.add.container(0, 0, texts));
     });
-    const total = widths.reduce((n, w) => n + w, 0) + gap * (tokens.length - 1);
+    // Each gap leaves room for either neighbour to grow when lit, so words never touch.
+    const gapAfter = (i: number) => gap + (LIT_SCALE - 1) * Math.max(widths[i]!, widths[i + 1]!);
+    let total = widths.reduce((n, w) => n + w, 0);
+    for (let i = 0; i < widths.length - 1; i++) total += gapAfter(i);
     let x = -total / 2;
     this.tokenBoxes.forEach((box, i) => {
       box.setX(x + widths[i]! / 2);
-      x += widths[i]! + gap;
+      x += widths[i]! + (i < widths.length - 1 ? gapAfter(i) : 0);
     });
-    const banner = this.add.container(GAME_WIDTH / 2, BANNER_Y, [bg, ...this.tokenBoxes]).setDepth(DEPTH.hud - 1);
-    popIn(this, banner, 1);
+    this.banner = this.add.container(GAME_WIDTH / 2, BANNER_Y, [bg, ...this.tokenBoxes]).setDepth(DEPTH.hud - 1);
+    popIn(this, this.banner, 1);
   }
 
   /** Light one token (or none, with -1). */
@@ -189,8 +214,16 @@ export class SentenceRoom extends Minigame {
       const on = k === i;
       for (const t of this.tokenTexts[k]!) t.setColor(on ? LIT : INK);
       this.tweens.killTweensOf(box);
-      this.tweens.add({ targets: box, scale: on ? 1.15 : 1, duration: 120, ease: on ? 'Back.easeOut' : 'Sine.easeOut' });
+      this.tweens.add({ targets: box, scale: on ? LIT_SCALE : 1, duration: 120, ease: on ? 'Back.easeOut' : 'Sine.easeOut' });
     });
+  }
+
+  /** The green dot sits under the lit word while she reads, bobbing; hidden otherwise. */
+  private placeReadDot(time: number): void {
+    const box = this.tokenBoxes[this.index];
+    const show = this.pass === 'read' && !this.locked && !!box;
+    this.readDot.setVisible(show);
+    if (show) this.readDot.setPosition(this.banner.x + box.x, BANNER_Y + 82 + Math.sin(time / 180) * 4);
   }
 
   /** Say a line with the banner following it, word by word, over the first `n` tokens. */
@@ -203,6 +236,7 @@ export class SentenceRoom extends Minigame {
   override update(time: number, deltaMs: number): void {
     super.update(time, deltaMs);
     this.followVoice();
+    this.placeReadDot(time);
   }
 
   /**
@@ -230,6 +264,9 @@ export class SentenceRoom extends Minigame {
   private async flow(): Promise<void> {
     const s = this.plan.sentence;
     this.skipped = frameIsSolid(progress, s.frame);
+    // She has just walked in: let her see the room before the first instruction.
+    await this.wait(ARRIVE_MS);
+    if (this.pass !== 'listen') return; // F4 jumped ahead meanwhile
     if (!this.skipped) {
       this.pass = 'listen';
       await this.narrate('room_listen');
@@ -253,6 +290,7 @@ export class SentenceRoom extends Minigame {
   /** The light has reached the key word: wake the pedestals. */
   private async startFind(narrate = true): Promise<void> {
     this.pass = 'find';
+    this.walking = true;
     this.light(this.keyIndex);
     for (const spot of this.spots) {
       spot.enabled = true;
@@ -269,6 +307,9 @@ export class SentenceRoom extends Minigame {
     sfxStep(next);
     if (next >= this.keyIndex) void this.startFind();
     else this.light(next);
+    // Every press answered on the word itself: a little puff on the newly lit word.
+    const box = this.tokenBoxes[Math.min(next, this.keyIndex)]!;
+    burst(this, this.banner.x + box.x, BANNER_Y, { count: 12, speed: 200 });
     return true;
   }
 
@@ -284,29 +325,39 @@ export class SentenceRoom extends Minigame {
     }
     if (this.pass !== 'find') return;
     if (idle) {
-      void this.narrate('room_find');
+      // Stuck: the instruction again, then help with the word itself.
+      void this.narrate('room_find').then(() => this.soundOut());
       return;
     }
     void this.soundOut();
   }
 
-  /** The key word's letters, one sound at a time, never blended. */
+  /** A miss: the usual giggle, then the key word's letters sounded out (the sparkle still comes on the second). */
+  protected override async wrong(obj: Phaser.GameObjects.Container): Promise<void> {
+    await super.wrong(obj);
+    await this.soundOut();
+  }
+
+  /** The key word's letters, one sound at a time, never blended. Only while she is finding it. */
   private async soundOut(): Promise<void> {
+    if (this.pass !== 'find') return;
     const key = this.plan.sentence.key;
     this.locked = true;
     const letters = this.tokenTexts[this.keyIndex]!;
     // A word that does not sound out (MICE) gets just its first sound.
     const n = WORD_BY_ID[key]?.decodable === false ? 1 : letters.length;
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i < n && this.pass === 'find'; i++) {
       const t = letters[i]!;
       const ch = key[i]!;
       for (const other of letters) other.setColor(INK);
       t.setColor(LIT);
       this.tweens.add({ targets: t, scale: 1.35, duration: 140, yoyo: true });
       if (LETTER_BY_CHAR[ch]) await this.say(letterSoundLine(ch));
-      await this.wait(200);
+      // A beat on each letter, still lit, so the sounds stay apart.
+      await this.wait(LETTER_GAP_MS);
     }
     for (const t of letters) t.setColor(LIT);
+    await this.wait(300);
     if (this.pass === 'find') this.locked = false;
   }
 
@@ -376,11 +427,15 @@ export class SentenceRoom extends Minigame {
 
     // Into the bag it goes.
     const pic = spot.obj.getData('pic') as Phaser.GameObjects.Image | undefined;
-    pic?.setVisible(false);
     if (counter) {
+      // What she picked becomes the counter item: it swells and fades as the item pops out of it.
       const villain = villainSpec();
       const art = `item_${villain.counter.id}`;
       sfxSummon();
+      if (pic) {
+        this.tweens.killTweensOf(pic);
+        this.tweens.add({ targets: pic, scale: pic.scale * 1.5, alpha: 0, duration: 380, ease: 'Quad.easeOut' });
+      }
       const big = fitImage(this.add.image(spot.x, picY, art), 200, 200).setDepth(DEPTH.sparkles);
       popIn(this, big, big.scale);
       shockwave(this, spot.x, picY, 0xffd23f, 220);
@@ -389,6 +444,7 @@ export class SentenceRoom extends Minigame {
       big.destroy();
       await Promise.all([this.guard(this.bag.receive(art, spot.x, picY)), this.say(narratorLine(narrator(), `got_counter_${villain.id}`))]);
     } else {
+      pic?.setVisible(false);
       const w = WORD_BY_ID[s.key];
       const art = w ? pictureFor(w) : `pic_${s.key}`;
       await Promise.all([this.guard(this.bag.receive(art, spot.x, picY)), this.say(narratorLine(narrator(), 'got_item'))]);

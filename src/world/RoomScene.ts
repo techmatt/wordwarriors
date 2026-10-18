@@ -62,6 +62,8 @@ export abstract class RoomScene extends Phaser.Scene {
   /** False in rooms where she does not walk (spelling): no stick hint there. */
   protected walking = true;
   private helpDot!: Phaser.GameObjects.Container;
+  /** When green pressed during narration may hop again (scene clock ms). */
+  private ignoredHopAt = 0;
 
   init(data: { step?: Step }): void {
     this.step = data.step ?? { kind: 'title' };
@@ -69,6 +71,7 @@ export abstract class RoomScene extends Phaser.Scene {
     this.locked = false;
     this.round = '';
     this.lastNear = null;
+    this.ignoredHopAt = 0;
   }
 
   /** The room's background art id. */
@@ -231,6 +234,11 @@ export abstract class RoomScene extends Phaser.Scene {
         this.player.hop();
         this.choose(best);
       }
+    } else if (this.controls.pressed('green') && this.locked && this.walking && this.time.now >= this.ignoredHopAt) {
+      // Buttons always answer: a little hop while an instruction plays. It
+      // never chooses or skips anything; throttled so mashing does not stack.
+      this.ignoredHopAt = this.time.now + 300;
+      this.player.hop();
     }
     if (this.controls.pressed('yellow') && !this.locked) {
       this.tweens.add({ targets: this.helpDot, scale: 1.4, duration: 120, yoyo: true });

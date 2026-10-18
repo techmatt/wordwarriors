@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { CHARACTER_BY_ID, ROSTER } from '../../content/battle/roster';
-import { FRAMES, FRAME_BY_ID, allFrameTokens, allPrefixes, lookalikesOf, sentence, tokenWord } from '../../content/phonics/sentences';
+import { FETCH_ITEMS, FRAMES, FRAME_BY_ID, allFrameTokens, allPrefixes, lookalikesOf, sentence, tokenWord } from '../../content/phonics/sentences';
 import { wordLine } from '../../content/voice/ids';
 import { counterPlan, distractors, fetchPlans, frameIsSolid, type RoomPlan } from '../../src/rules/sentences';
 import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
@@ -150,4 +150,21 @@ test('room objects: no look-alike of the key, no word of the sentence, nothing a
   assert.ok(lookalikesOf('hat').includes('cap'));
   assert.ok(lookalikesOf('bus').includes('van'));
   for (let seed = 1; seed <= 50; seed++) assert.ok(!distractors('mice', seeded(seed)).includes('rat'));
+});
+
+test("room objects never share the key word's first letter (no MAP beside the MICE)", () => {
+  const keys = new Set([...FETCH_ITEMS.map((i) => i.word), ...ROSTER.map((c) => c.counter.word)]);
+  for (const key of keys) {
+    for (let seed = 1; seed <= 30; seed++) {
+      const objs = distractors(key, seeded(seed), 2, ['we', 'can', 'use', 'the']);
+      assert.equal(objs.length, 2, key);
+      for (const o of objs) assert.notEqual(o[0], key[0], `${o} starts like ${key}`);
+    }
+  }
+  for (const c of ROSTER) {
+    for (let seed = 1; seed <= 20; seed++) {
+      const p = counterPlan({ villain: c.id, helper: 'elsa' }, 'attic', seeded(seed));
+      for (const o of p.objects.filter((w) => w !== p.sentence.key)) assert.notEqual(o[0], p.sentence.key[0], `${c.id}: ${o}`);
+    }
+  }
 });

@@ -252,8 +252,10 @@ export function advance(scene: Phaser.Scene): void {
     resetEpisode();
   }
   // The battles and the victory are reached by a short hop along the journey
-  // map, so she can see where she is in the episode and what comes next.
-  if (JOURNEY_BEFORE.includes(currentStep().kind) && !skipJourney) {
+  // map, so she can see where she is in the episode and what comes next. So is
+  // the run home after the retreat (house part 2): "back home, he still waits".
+  const next = currentStep();
+  if ((JOURNEY_BEFORE.includes(next.kind) || (next.kind === 'house' && next.part === 2)) && !skipJourney) {
     voiceBus.hush();
     void voiceBank.loadGroups(episodeGroups());
     scene.scene.start('Journey');

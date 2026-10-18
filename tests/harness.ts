@@ -300,7 +300,9 @@ export async function playEpisode(page: Page): Promise<{ end: WWState; keys: str
   expect(afterB1.battle?.ultimates).toBe(1);
   expect(afterB1.battle?.movePicks).toBe(2);
   expect(afterB1.battle?.itemsUsed).toBeGreaterThan(0);
-  expect(afterB1.battle?.heroes.every((h) => h.status === 'floored')).toBe(true);
+  // The ultimate floors them, then the retreat stands them back up to run off:
+  // the part ends on a retreat, never on a floored team.
+  expect(afterB1.battle?.heroes.every((h) => h.status !== 'floored')).toBe(true);
 
   // Hub part 2: the secret door, the attic's counter sentence, out again.
   await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:2:secret', 90_000, 'secret door');

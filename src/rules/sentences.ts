@@ -30,11 +30,15 @@ export interface RoomPlan {
  * Two picture words for the room's other objects: not the key word, not a
  * look-alike of it (LOOKALIKES), and nothing in `avoid` (the sentence's own
  * words, so no CAN picture under WE CAN USE THE; the taught spell).
+ * Nor anything starting with the key word's first letter: that letter is
+ * her strongest clue and all the hint gives for a word like MICE (no MAP
+ * beside the mice). If that ever leaves too few, the letter rule gives way.
  */
 export function distractors(key: string, rand: Rand = Math.random, n = 2, avoid: string[] = []): string[] {
   const banned = new Set([key, ...lookalikesOf(key), ...avoid]);
   const pool = CVC_WORDS.map((w) => w.word).filter((w) => !banned.has(w));
-  return pickWeighted(pool, () => 1, n, rand);
+  const unlike = pool.filter((w) => w[0] !== key[0]);
+  return pickWeighted(unlike.length >= n ? unlike : pool, () => 1, n, rand);
 }
 
 function objectsFor(s: Sentence, rand: Rand, avoid: string[]): string[] {

@@ -98,7 +98,9 @@ export const COUNTER_ROOM = 'attic';
 export const HUB = {
   look: 'The small main room of a cosy house seen side-on: a sofa, a rug, a staircase, family pictures, a wooden floor across the lower half; three inner doors along the back wall and a big front door on the right',
   palette: [0xffe8c8, 0x8a5a3a] as [number, number],
-  entry: { x: 640, y: 640 },
+  // Where she lands from the bedroom: right of the circle, clear of the
+  // caption ribbon, so "stand in the magic circle" is a short walk.
+  entry: { x: 900, y: 560 },
   // Between doors a and b, clear of both, of where she lands back from either
   // (door x, y + 90), and of the magic circle.
   helper: { x: 385, y: 520 },

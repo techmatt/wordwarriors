@@ -93,7 +93,10 @@ export class HubScene extends RoomScene {
     if (this.part === 1) {
       if (this.from) this.placeAtDoor(this.from);
       else this.player.place(HUB.entry.x, HUB.entry.y);
-      if (!episode.house.taught) void this.teach();
+      if (!episode.house.taught) {
+        if (!this.from) this.arrive();
+        void this.teach();
+      }
       else if (this.from) void this.backFromRoom(this.from);
       else void this.offerDoors();
     } else {
@@ -127,7 +130,7 @@ export class HubScene extends RoomScene {
       const room = SIDE_ROOM_BY_ID[planFor(slot).room];
       const img = this.art('prop_door', DOOR_W, DOOR_H);
       // The room's sign: a picture, never a name.
-      const sign = this.add.text(0, -DOOR_H - 26, room?.glyph ?? '🚪', { fontSize: '40px' }).setOrigin(0.5);
+      const sign = this.plaque(room?.glyph ?? '🚪');
       const spot = this.addSpot(`door_${slot}`, pos.x, pos.y, [img, sign], null);
       spot.enabled = false;
       this.doors[`door_${slot}`] = spot;
@@ -137,7 +140,7 @@ export class HubScene extends RoomScene {
     // The secret door: only in part 2, and only once it has been found.
     const cpos = HUB.doors.counter;
     const cimg = this.art('prop_door', DOOR_W, DOOR_H);
-    const csign = this.add.text(0, -DOOR_H - 26, SIDE_ROOM_BY_ID[planFor('counter').room]?.glyph ?? '🗝️', { fontSize: '40px' }).setOrigin(0.5);
+    const csign = this.plaque(SIDE_ROOM_BY_ID[planFor('counter').room]?.glyph ?? '🗝️');
     const counter = this.addSpot('door_counter', cpos.x, cpos.y, [cimg, csign], null);
     counter.enabled = false;
     counter.obj.setVisible(false);
@@ -153,6 +156,15 @@ export class HubScene extends RoomScene {
     const front = this.addSpot('door_front', fpos.x, fpos.y, [fimg], null);
     front.enabled = false;
     this.doors.door_front = front;
+  }
+
+  /** A door's sign: its room's picture on a round plaque, gently bobbing. */
+  private plaque(glyph: string): Phaser.GameObjects.Container {
+    const board = this.add.circle(0, 0, 34, 0xffffff, 1).setStrokeStyle(5, 0xffd23f, 1);
+    const pic = this.add.text(0, 2, glyph, { fontSize: '56px' }).setOrigin(0.5);
+    const sign = this.add.container(0, -DOOR_H - 40, [board, pic]);
+    bob(this, sign, 4, 1100);
+    return sign;
   }
 
   /** A finished room's prize hangs on its door, with a ring of gold. */
@@ -178,6 +190,15 @@ export class HubScene extends RoomScene {
   }
 
   // -- the flow ---------------------------------------------------------------
+
+  /** In from the bedroom: she lands with a hop and a puff of dust. */
+  private arrive(): void {
+    this.time.delayedCall(200, () => {
+      this.player.hop();
+      burst(this, this.player.x, this.player.y, { count: 22, colors: [0xe8d8c0, 0xc8b090, 0xffffff], speed: 200, gravity: 120, blend: false });
+      sfxWhoosh();
+    });
+  }
 
   /** Part 1, first time in: the helper teaches the spell. */
   private async teach(): Promise<void> {
@@ -266,6 +287,9 @@ export class HubScene extends RoomScene {
     sfxFanfare();
     episode.house.taught = true;
     await this.wait(500);
+    // The doors light up while the helper speaks (still locked: nothing can
+    // be chosen early); offerDoors finds them already open.
+    this.openSideDoors();
     await this.narrate('teach_done');
     await this.offerDoors();
   }
@@ -298,6 +322,9 @@ export class HubScene extends RoomScene {
       if (!spot.obj.getData('glowing')) {
         spot.obj.setData('glowing', true);
         burst(this, spot.x, spot.y - DOOR_H / 2, { count: 24, colors: [0xffd23f, 0xffffff] });
+        // It keeps sparkling while it waits for her (the scene is rebuilt on
+        // each return, so a done door never gets one).
+        this.sparkle(spot);
       }
       n++;
     }
