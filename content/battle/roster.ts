@@ -372,7 +372,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Elsa', trail: { tint: [0x5ad8ff, 0x1a2a5a], shape: 'star' }, look: 'the winter queen\'s dark version: long pale silver hair, a flowing black-and-gold gown embroidered with jagged dark crystals, a spiky black crown and a smoky violet fur-trimmed cape, a sulky pout, conjuring purple sparkles',
+      displayName: 'Evil Elsa', trail: { tint: [0x5ad8ff, 0x1a2a5a], shape: 'star' }, look: 'a sulky frost witch of original design with a short spiky silver pixie cut and freckles, a tall jagged black-and-gold crown, a knee-length tunic of dark violet crystal plates over black leggings, black boots, a tattered gold-edged cape, holding a staff topped with a purple crystal',
       palette: [0x1a2a5a, 0x5ad8ff], glyph: '🧊', style: 'blink', speed: 170, size: 1.05, hp: 140,
       abilities: [
         ab('icicle_rain', 'Icicle Rain', 'rain', 6, 0x5ad8ff, 2, { count: 14, glyph: '🧊' }),
