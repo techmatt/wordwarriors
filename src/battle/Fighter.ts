@@ -100,6 +100,8 @@ export class Fighter {
   x: number;
   y: number;
   lift = 0;
+  /** Her green-button hop: a height of its own, so movement code never fights it. */
+  hop = 0;
   vx = 0;
   vy = 0;
   hp: number;
@@ -261,7 +263,7 @@ export class Fighter {
     }
     this.bobPhase += dt * (this.floored ? 1.5 : 5);
     const bobAmt = this.floored ? 0 : Math.sin(this.bobPhase) * 4;
-    this.body.y = -this.lift + bobAmt;
+    this.body.y = -this.lift - this.hop + bobAmt;
     const s = this.scaleMul;
     this.shadow.setScale(Math.max(0.4, 1 - this.lift / 400) * s);
     // Sprites move only by bob and squash/scale (Matt, 2026-10-18), so a "spin"

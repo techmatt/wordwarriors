@@ -830,6 +830,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     // Her own hero runs where she pushes the stick; everything else stays automatic.
     const steered = f === this.heroes[0] && fighting && this.controls.move.lengthSq() > 0.04;
     if (steered) {
+      // Forget any half-taken giant step, or letting go would snap her back.
+      delete f.mem.stepTo;
       const sp = f.init.speed * 1.3;
       f.vx = this.controls.move.x * sp;
       f.vy = this.controls.move.y * sp * 0.7;
@@ -1043,8 +1045,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
 
     // Green outside a choice makes her hero hop with a sparkle: buttons always answer.
     const me = this.heroes[0];
-    if (!this.choice && this.controls.pressed('green') && me?.active && !me.floored && this.phase === 'fight' && me.lift < 5) {
-      this.tweens.addCounter({ from: 0, to: 1, duration: 420, onUpdate: (tw) => (me.lift = Math.sin((tw.getValue() ?? 0) * Math.PI) * 90) });
+    if (!this.choice && this.controls.pressed('green') && me?.active && !me.floored && this.phase === 'fight' && me.hop === 0) {
+      this.tweens.addCounter({ from: 0, to: 1, duration: 420, onUpdate: (tw) => (me.hop = Math.sin((tw.getValue() ?? 0) * Math.PI) * 90), onComplete: () => (me.hop = 0) });
       burst(this, me.cx, me.y, { count: 18, speed: 220, colors: [me.init.palette[1], 0xffffff] });
       me.squash(0.3);
     }
