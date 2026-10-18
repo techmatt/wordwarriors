@@ -34,13 +34,14 @@ export class ParentScene extends Phaser.Scene {
 
   create(): void {
     hookState.scene = 'Parent';
+    this.resetArmed = false;
     this.controls = new Controls(this);
     stopMusic();
     voiceBus.hush();
     this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xf6f2e8);
     const snap = progress.snapshot();
     this.add.text(30, 18, `Grown-ups: Julia's progress  ·  episodes finished: ${snap.episodes}`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '26px', color: '#222' });
-    this.add.text(30, 54, 'tries · first-try right (recent) · today.  Red = shaky (comes up more often), green = solid. Red button / Esc / F9: back.', {
+    this.add.text(30, 54, 'tries · first-try right (recent) · today.  Red = shaky (comes up more often), green = solid. Red button / Esc / F9: back. F8 twice: erase.', {
       fontFamily: 'Segoe UI, sans-serif',
       fontSize: '15px',
       color: '#555',
@@ -77,8 +78,20 @@ export class ParentScene extends Phaser.Scene {
     });
   }
 
+  private resetArmed = false;
+
   override update(): void {
     this.controls.update();
+    // F8 twice wipes progress (a grown-up's testing tool; never on the pad).
+    if (this.controls.dev('F8')) {
+      if (this.resetArmed) {
+        progress.reset();
+        this.scene.restart({ back: this.back });
+        return;
+      }
+      this.resetArmed = true;
+      this.add.text(30, 690, 'Press F8 again to erase all progress.', { fontFamily: 'Segoe UI, sans-serif', fontSize: '18px', color: '#c0392b' });
+    }
     if (this.controls.pressed('red') || this.controls.dev('F9')) {
       if (this.back === 'Title') this.scene.start('Title');
       else startStep(this);

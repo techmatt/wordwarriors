@@ -43,7 +43,7 @@ A whole episode takes roughly 10–15 minutes for a child (about 4.5 minutes whe
 test harness answers instantly).
 
 Grown-ups page (progress per sound and word): **F9**, or hold **LB + RB** for two
-seconds on the title screen.
+seconds on the title screen. On that page, **F8** twice erases all progress.
 
 Dev keys: **F2** skip the current step, **F4** answer correctly. Jump straight into a
 step with a URL, e.g. `http://localhost:5174/?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug`
