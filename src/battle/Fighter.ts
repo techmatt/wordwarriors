@@ -237,12 +237,18 @@ export class Fighter {
     const bobAmt = this.floored ? 0 : Math.sin(this.bobPhase) * 4;
     this.body.y = -this.lift + bobAmt;
     const s = this.scaleMul;
-    this.body.setScale(s, s);
     this.shadow.setScale(Math.max(0.4, 1 - this.lift / 400) * s);
     this.spin *= Math.pow(0.02, dt);
-    this.body.rotation = this.floored ? -Math.PI / 2 : this.lean + this.spin;
-    if (this.floored) this.body.x = this.height * 0.4;
-    else this.body.x = 0;
+    if (this.floored) {
+      // Sat down, dizzy and wobbling: knocked over, never knocked out. A card
+      // lying flat read as "dead", which is not a thing this game shows.
+      this.body.setScale(s * 1.08, s * 0.72);
+      this.body.rotation = Math.sin(this.bobPhase * 2) * 0.18 - 0.12;
+    } else {
+      this.body.setScale(s, s);
+      this.body.rotation = this.lean + this.spin;
+    }
+    this.body.x = 0;
   }
 
   /** Squash on landing or being hit. */

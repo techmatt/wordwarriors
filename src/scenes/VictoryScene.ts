@@ -28,8 +28,8 @@ export class VictoryScene extends Phaser.Scene {
 
   create(): void {
     hookState.scene = 'Victory';
+    // The battle's last state stays readable here, for tests asking how it ended.
     hookState.room = null;
-    hookState.battle = null;
     this.ready = false;
     this.controls = new Controls(this);
     this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'room_victory').setDisplaySize(GAME_WIDTH, GAME_HEIGHT);

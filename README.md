@@ -63,3 +63,14 @@ npm run art:placeholders  # paint missing art, rewrite docs/art.md
 - Placeholder art is painted in headless Chromium so emoji render; Windows 10's emoji
   font lacks Emoji 13+ glyphs (🪙 🪭 🪞 🪲 🥸 🪨), so the roster avoids them.
 - The game itself needs no network: voice and art are committed.
+- Stopping a backgrounded `npx vite` by killing its launcher leaves the node server
+  still listening on 5174 (seen 2026-10-18). Find it with `netstat -ano | findstr 5174`
+  and stop that PID.
+- Long Playwright runs: point them at a build so edits to `src/` do not hot-reload the
+  page under test: `npx vite build --outDir scratch/dist-test`, `npx vite preview --outDir
+  scratch/dist-test --port 5175`, then `WW_BASE_URL=http://localhost:5175 npx playwright test`.
+  Test pages add `?hooks=1`, which turns the test hooks on in a production build.
+- The full-episode test (`npm run test:slow`) takes about 4–5 minutes: every line is
+  real speech and green is ignored until an instruction finishes.
+- Headless Chromium renders the battle at roughly 8–18 fps (software GL); on a real GPU
+  it should run at 60. Tests never assert on frame rate or displacement.

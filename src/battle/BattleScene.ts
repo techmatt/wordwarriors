@@ -531,7 +531,13 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     const ult = v.init.ultimate!;
     // Clear the floor a little: villain minions bow out, the villain takes centre.
     this.tweens.add({ targets: v, x: 900, y: 560, duration: 600 });
-    for (const h of this.heroes) h.status = null;
+    // Everyone back to their own side, so the big moment reads left against right.
+    this.heroes.forEach((h, i) => {
+      h.status = null;
+      h.clearOverlay();
+      this.tweens.add({ targets: h, x: 260 + i * 150, y: 500 + i * 70, duration: 600, ease: 'Quad.easeOut' });
+    });
+    if (this.helper?.active) this.tweens.add({ targets: this.helper, x: 150, y: 600, duration: 600 });
     await this.simWait(0.6);
     sfxUltimate();
     this.darken(0.55, 800);
@@ -580,7 +586,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
         h.setStatus('stun', 99, this.now);
         burst(this, h.cx, h.cy, { count: 40, speed: 400, colors: [ult.color, 0xffffff] });
       }
-      floatText(this, GAME_WIDTH / 2 - 200, 300, 'TOO STRONG!', '#ff5a6a', 64);
+      floatText(this, GAME_WIDTH / 2 - 200, 300, 'WHOA! TOO STRONG!', '#ffd23f', 60);
       this.darken(0.35, 600);
       await this.simWait(1.2);
       return;
@@ -654,7 +660,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.phase = 'finish';
     const v = this.villain;
     await this.say('finish');
-    this.floors.villainMain = 0;
+    // Low, but not zero: the last hit below is the one that wins.
+    this.floors.villainMain = 0.06;
     const team = [...this.heroes, ...(this.helper ? [this.helper] : [])];
     for (const [i, h] of team.entries()) {
       this.after(i * 700, () => {

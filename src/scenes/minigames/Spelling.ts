@@ -52,6 +52,7 @@ export class Spelling extends Minigame {
   }
 
   protected build(): void {
+    this.walking = false;
     const counter = villainSpec().counter;
     this.words = [...counter.words];
     this.itemIndex = 0;
@@ -122,6 +123,7 @@ export class Spelling extends Minigame {
   }
 
   private onLetter(letter: string): void {
+    this.noteActivity();
     if (!this.accepting) return;
     const box = this.boxes[this.cursor];
     if (!box) return;

@@ -83,7 +83,7 @@ export interface BattleWorld {
   darken(alpha: number, ms: number): void;
 }
 
-const MINION_CAP = 9;
+const MINION_CAP = 7;
 
 function hex(c: number): string {
   return `#${c.toString(16).padStart(6, '0')}`;

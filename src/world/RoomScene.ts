@@ -26,6 +26,9 @@ import { Bubbles } from '../ui/Bubbles';
 import { Caption } from '../ui/Caption';
 import { Player } from './Player';
 
+/** Nothing happening for this long offers the prompt again. */
+const IDLE_REPROMPT_MS = 15_000;
+
 export interface Spot {
   id: string;
   x: number;
@@ -52,6 +55,12 @@ export abstract class RoomScene extends Phaser.Scene {
   private lastNear: Spot | null = null;
   private fpsAcc = 0;
   private fpsFrames = 0;
+  private idleMs = 0;
+  private hasMoved = false;
+  private stickHint: Phaser.GameObjects.Container | null = null;
+  /** False in rooms where she does not walk (spelling): no stick hint there. */
+  protected walking = true;
+  private helpDot!: Phaser.GameObjects.Container;
 
   init(data: { step?: Step }): void {
     this.step = data.step ?? { kind: 'title' };
@@ -77,6 +86,13 @@ export abstract class RoomScene extends Phaser.Scene {
     this.controls = new Controls(this);
     this.player = new Player(this, this.floor.centerX, this.floor.bottom - 10, this.playerCharacter(), this.floor);
     this.dot = makeButtonDot(this, 0, 0, 'green', 18).setDepth(DEPTH.prompt).setVisible(false);
+    // Yellow is always "say it again": a yellow dot with an ear, top right.
+    this.helpDot = this.add
+      .container(GAME_WIDTH - 60, 60, [makeButtonDot(this, 0, 0, 'yellow', 22, false), this.add.text(0, 44, '👂', { fontSize: '30px' }).setOrigin(0.5)])
+      .setDepth(DEPTH.hud);
+    this.idleMs = 0;
+    this.hasMoved = false;
+    this.stickHint = null;
     new Caption(this);
     new Bubbles(this);
     this.cameras.main.fadeIn(250, 0, 0, 0);
@@ -170,7 +186,11 @@ export abstract class RoomScene extends Phaser.Scene {
       this.player.hop();
       this.choose(best);
     }
-    if (this.controls.pressed('yellow') && !this.locked) this.hint();
+    if (this.controls.pressed('yellow') && !this.locked) {
+      this.tweens.add({ targets: this.helpDot, scale: 1.4, duration: 120, yoyo: true });
+      this.hint();
+    }
+    this.idleHelp(deltaMs);
 
     if (this.controls.dev('F2')) advance(this);
     if (this.controls.dev('F4')) {
@@ -181,6 +201,45 @@ export abstract class RoomScene extends Phaser.Scene {
     this.controls.endFrame();
 
     this.publish(deltaMs);
+  }
+
+  /**
+   * Help for a four-year-old who has stalled: if she has not moved at all in
+   * this room, a pulsing stick appears beside her; if nothing has happened for
+   * a while, the prompt is offered again (the same thing yellow does).
+   */
+  private idleHelp(deltaMs: number): void {
+    const acting = this.controls.move.lengthSq() > 0.01 || this.controls.anyFace();
+    if (acting) {
+      this.idleMs = 0;
+      if (this.controls.move.lengthSq() > 0.01 && !this.hasMoved) {
+        this.hasMoved = true;
+        this.stickHint?.destroy();
+        this.stickHint = null;
+      }
+      return;
+    }
+    if (this.locked) return;
+    this.idleMs += deltaMs;
+    if (this.walking && !this.hasMoved && this.idleMs > 4000 && !this.stickHint) this.showStickHint();
+    if (this.stickHint) this.stickHint.setPosition(this.player.x + 90, this.player.y - 70);
+    if (this.idleMs > IDLE_REPROMPT_MS) {
+      this.idleMs = 0;
+      this.hint();
+    }
+  }
+
+  /** Something she did that is not a stick or a button (typing), for the idle timer. */
+  protected noteActivity(): void {
+    this.idleMs = 0;
+  }
+
+  private showStickHint(): void {
+    const ring = this.add.circle(0, 0, 30, 0x222233, 0.85).setStrokeStyle(4, 0xffffff, 0.9);
+    const nub = this.add.circle(0, 0, 14, 0xdddddd, 1);
+    const arrows = this.add.text(0, 0, '↔', { fontSize: '44px', color: '#ffd23f', stroke: '#000000', strokeThickness: 6 }).setOrigin(0.5, 0.55);
+    this.stickHint = this.add.container(this.player.x + 90, this.player.y - 70, [ring, arrows, nub]).setDepth(DEPTH.prompt);
+    this.tweens.add({ targets: nub, x: { from: -14, to: 14 }, duration: 450, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
   }
 
   private publish(deltaMs: number): void {
