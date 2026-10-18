@@ -44,7 +44,8 @@ const BARK_GAP_MS = 900;
 
 class Bus {
   private current: { u: Utterance; playback: VoicePlayback | null; done: () => void } | null = null;
-  private queue: (() => void)[] = [];
+  private queue: ((() => void) & { drop?: () => void })[] = [];
+  private hushes = 0;
   private listeners = new Set<Listener>();
   private lastBarkEnd = 0;
   /** Lines started, by id, in order: the tests' view of what was said. */
@@ -76,18 +77,27 @@ class Bus {
     if (this.current?.u.priority === 'bark') this.cut();
     if (!this.current && this.queue.length === 0) return this.start(id, priority, anchor);
     return new Promise((resolve) => {
-      this.queue.push(() => void this.start(id, priority, anchor).then(resolve));
+      this.queue.push(Object.assign(() => void this.start(id, priority, anchor).then(resolve), { drop: () => resolve(false) }));
     });
   }
 
   /** Say several instruction lines back to back. */
   async sequence(ids: string[], anchor?: unknown): Promise<void> {
-    for (const id of ids) await this.say(id, 'instruction', anchor);
+    // A hush (scene change) ends the whole sequence, not just its current line.
+    const epoch = this.hushes;
+    for (const id of ids) {
+      if (this.hushes !== epoch) return;
+      await this.say(id, 'instruction', anchor);
+    }
   }
 
   /** Stop everything, queue included (scene change). */
   hush(): void {
+    this.hushes++;
+    // Queued lines resolve (as not said) rather than hang their awaiters.
+    const dropped = this.queue;
     this.queue = [];
+    for (const q of dropped) q.drop?.();
     this.cut();
   }
 
@@ -139,7 +149,11 @@ class Bus {
       for (const fn of this.listeners) fn(u);
       if (playback) void playback.ended.then(() => this.current?.u === u && this.finish());
       // Always a backstop: whatever happens to the audio, the line ends.
-      setTimeout(() => this.current?.u === u && this.finish(), (duration + (playback ? 1.5 : 0)) * 1000);
+      setTimeout(() => {
+        if (this.current?.u !== u) return;
+        playback?.stop();
+        this.finish();
+      }, (duration + (playback ? 1.5 : 0)) * 1000);
     });
   }
 

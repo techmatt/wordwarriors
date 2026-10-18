@@ -145,6 +145,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     if (this.part === 2) for (const h of this.heroes) h.power = 1.25;
 
     this.makeHudLabels();
+    fxQuality.level = 1;
     this.ambience();
     startMusic('battle');
     void (this.part === 1 ? this.part1() : this.part2());
