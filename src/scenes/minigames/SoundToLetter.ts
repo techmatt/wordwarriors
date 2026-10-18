@@ -12,7 +12,7 @@ import { voiceBus } from '../../audio/VoiceBus';
 import { DEPTH, GAME_WIDTH } from '../../config';
 import { episode } from '../../episode/Episode';
 import { bob, popIn, shockwave } from '../../fx/juice';
-import { soundRound, type SoundItem } from '../../rules/rounds';
+import { choiceCount, soundRound, type SoundItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
 import type { Spot } from '../../world/RoomScene';
 import { Minigame } from './Minigame';
@@ -32,7 +32,7 @@ export class SoundToLetter extends Minigame {
   }
 
   protected build(): void {
-    this.items = soundRound(progress, ITEMS);
+    this.items = soundRound(progress, ITEMS, Math.random, choiceCount(progress, 'sounds'));
     this.itemIndex = 0;
     this.makeMeter(ITEMS, 'prop_gem', '💎');
     void (async () => {
@@ -46,7 +46,7 @@ export class SoundToLetter extends Minigame {
     const item = this.items[this.itemIndex]!;
     this.round = `sound:${this.itemIndex}:${item.target}`;
     this.wrongTries = 0;
-    const xs = [GAME_WIDTH / 2 - 330, GAME_WIDTH / 2, GAME_WIDTH / 2 + 330];
+    const xs = item.choices.length === 2 ? [GAME_WIDTH / 2 - 220, GAME_WIDTH / 2 + 220] : [GAME_WIDTH / 2 - 330, GAME_WIDTH / 2, GAME_WIDTH / 2 + 330];
     item.choices.forEach((letter, i) => {
       const y = 400 + (i % 2) * 40;
       const stone = this.art('prop_stone', 150, 150);

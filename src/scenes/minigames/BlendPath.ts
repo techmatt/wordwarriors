@@ -18,7 +18,7 @@ import { sfxStep } from '../../audio/sfx';
 import { DEPTH } from '../../config';
 import { episode } from '../../episode/Episode';
 import { burst, popIn } from '../../fx/juice';
-import { blendRound, type WordItem } from '../../rules/rounds';
+import { choiceCount, blendRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
 import type { Spot } from '../../world/RoomScene';
 import { Minigame } from './Minigame';
@@ -43,7 +43,7 @@ export class BlendPath extends Minigame {
   }
 
   protected build(): void {
-    this.items = blendRound(progress, ITEMS);
+    this.items = blendRound(progress, ITEMS, Math.random, choiceCount(progress, 'words'));
     this.itemIndex = 0;
     this.makeMeter(ITEMS, 'prop_ammo', '⭐');
     void (async () => {

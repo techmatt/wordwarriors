@@ -18,7 +18,7 @@ import { voiceBus } from '../../audio/VoiceBus';
 import { DEPTH, GAME_WIDTH } from '../../config';
 import { episode } from '../../episode/Episode';
 import { bob, popIn } from '../../fx/juice';
-import { pictureRound, type WordItem } from '../../rules/rounds';
+import { choiceCount, pictureRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
 import type { Spot } from '../../world/RoomScene';
 import { Minigame } from './Minigame';
@@ -39,7 +39,7 @@ export class WordToPicture extends Minigame {
   }
 
   protected build(): void {
-    this.items = pictureRound(progress, ITEMS);
+    this.items = pictureRound(progress, ITEMS, Math.random, choiceCount(progress, 'words'));
     this.itemIndex = 0;
     this.makeMeter(ITEMS, 'minion_helper', '✨');
     this.floor.setTo(80, 420, GAME_WIDTH - 160, 230);
@@ -73,7 +73,7 @@ export class WordToPicture extends Minigame {
     this.banner = this.add.container(GAME_WIDTH / 2, 160, [bg, ...this.letters]).setDepth(DEPTH.hud - 1);
     popIn(this, this.banner, 1);
 
-    const xs = [GAME_WIDTH / 2 - 360, GAME_WIDTH / 2, GAME_WIDTH / 2 + 360];
+    const xs = item.choices.length === 2 ? [GAME_WIDTH / 2 - 240, GAME_WIDTH / 2 + 240] : [GAME_WIDTH / 2 - 360, GAME_WIDTH / 2, GAME_WIDTH / 2 + 360];
     item.choices.forEach((word, i) => {
       const w = WORD_BY_ID[word]!;
       const pedestal = this.art('prop_pedestal', 170, 100);

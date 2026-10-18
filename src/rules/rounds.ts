@@ -84,6 +84,22 @@ function wordItem(target: string, pool: string[], choices: number, rand: Rand): 
   return { target, choices: shuffle([target, ...others], rand) };
 }
 
+/**
+ * How many choices to offer: two while she is finding it hard this session
+ * (more wrong tries than right answers, over at least three answers), three
+ * otherwise. A scaffold, never a penalty: nothing says it changed.
+ */
+export function choiceCount(store: ProgressStore, kind: 'sounds' | 'words'): number {
+  const s = store.sessionSnapshot()[kind];
+  let right = 0;
+  let wrong = 0;
+  for (const st of Object.values(s)) {
+    right += st.right;
+    wrong += st.wrong;
+  }
+  return right >= 3 && wrong > right ? 2 : 3;
+}
+
 export function isWord(word: string): boolean {
   return WORDS.some((w) => w.word === word);
 }

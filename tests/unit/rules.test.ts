@@ -14,7 +14,7 @@ import { CVC_WORDS, WORDS } from '../../content/phonics/words';
 import { letterSoundLine, moveLine, narratorLine, nameLine, tauntLine, ultimateLine, wordLine } from '../../content/voice/ids';
 import { NARRATOR_LINES } from '../../content/voice/script';
 import { pickWeighted, ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
-import { blendRound, pictureRound, soundRound } from '../../src/rules/rounds';
+import { blendRound, choiceCount, pictureRound, soundRound } from '../../src/rules/rounds';
 import { align } from '../../tools/voice/align';
 import { composeLines } from '../../tools/voice/compose';
 import { trimMp3 } from '../../tools/voice/mp3';
@@ -79,6 +79,15 @@ test('rounds: 3–5 items, the target among the choices, choices distinct', () =
   for (const item of pictureRound(p, 4, r)) assert.equal(new Set(item.choices.map((w) => w[0])).size, item.choices.length);
   // Sound to Letter never offers b and d together.
   for (let i = 0; i < 50; i++) for (const item of soundRound(p, 4, r)) assert.ok(!(item.choices.includes('b') && item.choices.includes('d')));
+});
+
+test('choiceCount drops to two while she is struggling this session', () => {
+  const p = new ProgressStore(memory());
+  assert.equal(choiceCount(p, 'sounds'), 3);
+  for (const l of ['a', 'b', 'c']) p.record('sounds', l, false, 2);
+  assert.equal(choiceCount(p, 'sounds'), 2);
+  for (const l of ['d', 'e', 'f', 'g']) p.record('sounds', l, true, 0);
+  assert.equal(choiceCount(p, 'sounds'), 3);
 });
 
 test('roster: every character is complete, good and evil', () => {
