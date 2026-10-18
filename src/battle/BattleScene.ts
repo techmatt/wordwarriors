@@ -673,13 +673,24 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       // A beam of the item's own light straight into the wind-up.
       const light: AbilitySpec = { id: 'counter_light', name: counter.name, kind: 'beam', cooldown: 0, color: 0xfff3a0, color2: 0xffb703, power: 3 };
       cast(this, h, light, v, 2.4);
-      if (counter.how === 'restore') this.darken(0, 900);
+      if (counter.how === 'restore') {
+        // The light comes back: the sun pops into the sky with rays.
+        this.darken(0, 900);
+        const sun = this.add.image(GAME_WIDTH * 0.72, 120, 'prop_sun').setDisplaySize(160, 160).setDepth(FLOOR_TOP - 3);
+        const ss = sun.scale;
+        sun.setScale(0);
+        this.tweens.add({ targets: sun, scale: ss, duration: 500, ease: 'Back.easeOut' });
+        speedLines(this, sun.x, sun.y, 0xffd23f, 900);
+        burst(this, sun.x, sun.y, { count: 90, speed: 500, colors: [0xffd23f, 0xffffff, 0xff9a3c] });
+        sfxFanfare();
+      }
       if (counter.how === 'reveal') {
         for (const c of this.fighters.filter((f) => f.init.kind === 'clone')) this.hit(c, 1, 0xffffff, h);
       }
       if (counter.how === 'shutdown') {
         await this.simWait(0.6);
-        v.sprite.setTint(0x777777);
+        v.baseTint = 0x777777;
+        v.restoreTint();
         floatText(this, v.cx, v.top, 'POWER OFF!', '#ff5a6a', 56);
       }
       if (counter.how === 'calm') {

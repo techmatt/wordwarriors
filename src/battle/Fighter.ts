@@ -213,7 +213,8 @@ export class Fighter {
     if (this.overlay instanceof Phaser.GameObjects.Container) this.scene.tweens.killTweensOf(this.overlay.list);
     this.overlay?.destroy();
     this.overlay = null;
-    this.sprite.setVisible(true).clearTint();
+    this.sprite.setVisible(true);
+    this.restoreTint();
   }
 
   setShield(seconds: number, color: number, now: number): void {
@@ -298,6 +299,14 @@ export class Fighter {
     }
   }
 
+  /** A lasting tint (Scar powered off), restored after flashes and statuses. */
+  baseTint: number | null = null;
+
+  restoreTint(): void {
+    if (this.baseTint !== null) this.sprite.setTint(this.baseTint);
+    else this.sprite.clearTint();
+  }
+
   /** Squash on landing or being hit. */
   squash(amount = 0.25): void {
     const sx = this.baseScale;
@@ -324,7 +333,7 @@ export class Fighter {
     window.setTimeout(() => {
       if (!this.sprite.active) return;
       if (this.status?.kind === 'freeze') this.sprite.setTint(0x9ad8ff);
-      else this.sprite.clearTint();
+      else this.restoreTint();
     }, 55);
   }
 

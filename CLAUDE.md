@@ -10,7 +10,7 @@ which those things power up.
 
 One **episode**: title → pick a hero → pick an optional ally → pick a villain (or
 surprise) → the alarm → two prep minigames → battle part 1 → retreat → Spell the Spell
-→ battle part 2 → victory.
+→ battle part 2 → victory (with a reading recap). A journey map shows before each big step.
 
 **Stack** (decided 2026-10-18): TypeScript + Phaser ^3.90 (not 4) + Vite, npm.
 Playwright (workers 1) for browser tests, `node:test` via tsx for pure rules. Dev port
@@ -23,7 +23,7 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | Path | What |
 | --- | --- |
 | `src/` | Game source. `main.ts` boots Phaser; `config.ts` sizes, depth bands, pad colours. |
-| `src/scenes/` | One scene per episode step: Boot, Title, Pick, Alarm, Retreat, Victory, Parent; `minigames/` the four games. |
+| `src/scenes/` | One scene per episode step: Boot, Title, Pick, Alarm, Journey (the map between big steps), Retreat, Victory, Parent; `minigames/` the four games. |
 | `src/battle/` | The battle simulation: `BattleScene`, `Fighter`, `abilities`, `movement`, `director`. |
 | `src/episode/Episode.ts` | The episode's state and step list. Scenes call `advance()`; nothing else decides flow. |
 | `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only). |
