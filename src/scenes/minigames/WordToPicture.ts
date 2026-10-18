@@ -42,7 +42,7 @@ export class WordToPicture extends Minigame {
     this.items = pictureRound(progress, ITEMS);
     this.itemIndex = 0;
     this.makeMeter(ITEMS, 'minion_helper');
-    this.floor.setTo(80, 380, GAME_WIDTH - 160, 260);
+    this.floor.setTo(80, 420, GAME_WIDTH - 160, 230);
     void (async () => {
       await this.narrate('prep_helper', 'inst_picture');
       this.showItem();
@@ -70,7 +70,7 @@ export class WordToPicture extends Minigame {
       this.letters.push(t);
       void i;
     }
-    this.banner = this.add.container(GAME_WIDTH / 2, 175, [bg, ...this.letters]).setDepth(DEPTH.hud - 1);
+    this.banner = this.add.container(GAME_WIDTH / 2, 160, [bg, ...this.letters]).setDepth(DEPTH.hud - 1);
     popIn(this, this.banner, 1);
 
     const xs = [GAME_WIDTH / 2 - 360, GAME_WIDTH / 2, GAME_WIDTH / 2 + 360];
@@ -78,11 +78,11 @@ export class WordToPicture extends Minigame {
       const w = WORD_BY_ID[word]!;
       const pedestal = this.art('prop_pedestal', 170, 100);
       const pic = this.art(pictureFor(w), 150, 150, 0, -100);
-      const spot = this.addSpot(word, xs[i]!, 470, [pedestal, pic], word === item.target);
+      const spot = this.addSpot(word, xs[i]!, 520, [pedestal, pic], word === item.target);
       bob(this, pic, 5, 900 + i * 120);
       popIn(this, spot.obj, 1, 200 + i * 120);
     });
-    if (this.player.y < 560) this.player.place(this.player.x, 600);
+    if (this.player.y < 600) this.player.place(this.player.x, 640);
   }
 
   protected override hint(): void {

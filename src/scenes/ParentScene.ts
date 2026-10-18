@@ -43,7 +43,9 @@ export class ParentScene extends Phaser.Scene {
     });
 
     this.grid('Letter sounds', 'sounds', LETTERS.map((l) => l.letter), 30, 90, 6, 200);
-    this.grid('Words', 'words', WORDS.map((w) => w.word), 30, 340, 7, 175);
+    // Every word in the content, plus any other word she has met (spelling, move words).
+    const words = [...new Set([...WORDS.map((w) => w.word), ...Object.keys(snap.words)])];
+    this.grid('Words', 'words', words, 30, 300, 12, 205);
   }
 
   private grid(title: string, kind: ItemKind, ids: string[], x0: number, y0: number, perCol: number, colW: number): void {

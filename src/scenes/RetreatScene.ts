@@ -53,7 +53,7 @@ export class RetreatScene extends RoomScene {
     img.setAlpha(0.45);
     const glow = this.add.circle(0, -60, 70, 0xffd23f, 0.25);
     this.tweens.add({ targets: glow, scale: 1.3, alpha: 0.5, duration: 600, yoyo: true, repeat: -1 });
-    const spot = this.addSpot('forge', 1100, 600, [glow, img], true);
+    const spot = this.addSpot('forge', 1100, 560, [glow, img], true);
     spot.enabled = false;
     this.player.place(520, 560);
 

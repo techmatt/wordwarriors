@@ -2,7 +2,9 @@ import { defineConfig, devices } from '@playwright/test';
 
 import { PORT } from './src/port';
 
-const BASE_URL = `http://localhost:${PORT}`;
+// WW_BASE_URL points the suite at an already-running server (e.g. a `vite preview`
+// of a build on another port), so a long run is not reloaded by edits to src/.
+const BASE_URL = process.env.WW_BASE_URL ?? `http://localhost:${PORT}`;
 
 export default defineConfig({
   testDir: './tests',
@@ -30,12 +32,14 @@ export default defineConfig({
 
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 
-  webServer: {
-    command: 'npm run dev',
-    url: BASE_URL,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-    stdout: 'ignore',
-    stderr: 'pipe',
-  },
+  webServer: process.env.WW_BASE_URL
+    ? undefined
+    : {
+        command: 'npm run dev',
+        url: BASE_URL,
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+        stdout: 'ignore',
+        stderr: 'pipe',
+      },
 });

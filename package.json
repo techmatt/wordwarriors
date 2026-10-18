@@ -12,6 +12,7 @@
     "art:placeholders": "tsx tools/art/placeholders.ts",
     "voice:lines": "tsx tools/voice/compose.ts",
     "voice:build": "tsx tools/voice/build.ts",
+    "voice:clip": "tsx tools/voice/addClip.ts",
     "test:unit": "tsx --test tests/unit/*.test.ts",
     "test": "npm run test:unit && playwright test --grep-invert @slow",
     "test:slow": "playwright test --grep @slow",

@@ -44,7 +44,7 @@ export interface BattleInfo {
   ultimates: number;
   combos: number;
   movePicks: number;
-  choice: { words: string[]; colors: string[]; right: string } | null;
+  choice: { words: string[]; colors: string[]; right: string; open: boolean } | null;
 }
 
 export const hookState: { room: RoomInfo | null; battle: BattleInfo | null; scene: string; fps: number } = {

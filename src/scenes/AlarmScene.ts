@@ -40,7 +40,7 @@ export class AlarmScene extends Phaser.Scene {
     const heroes = [episode.hero, ...(episode.ally ? [episode.ally] : [])];
     if (!episode.ally) heroes.push(narrator());
     heroes.forEach((id, i) => {
-      const img = fitImage(this.add.image(220 + i * 170, 560, charArt(id, false)).setOrigin(0.5, 1), 150, 190);
+      const img = fitImage(this.add.image(220 + i * 170, 560, charArt(id, false)).setOrigin(0.5, 1), 150, 190).setDepth(DEPTH.fx + 1);
       bob(this, img, 6, 700 + i * 90);
     });
 

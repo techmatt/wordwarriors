@@ -136,6 +136,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     if (this.part === 2) for (const h of this.heroes) h.power = 1.25;
 
     this.makeHudLabels();
+    this.ambience();
     void (this.part === 1 ? this.part1() : this.part2());
   }
 
@@ -260,8 +261,70 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     return voiceBus.say(narratorLine(narrator(), key));
   }
 
+  /** Falling/rising ambience per arena: embers, snow, sand, bubbles, sparks. */
+  private ambience(): void {
+    const arena = villainSpec().arena;
+    const cfg: Record<string, { tint: number[]; up: boolean; tex: string }> = {
+      meadow: { tint: [0xffffff, 0xffd23f, 0xff9ad5], up: false, tex: TEX.spark },
+      volcano: { tint: [0xff7b00, 0xffd23f, 0xff3d00], up: true, tex: TEX.spark },
+      kitchen: { tint: [0xffffff, 0xfff1d6], up: true, tex: TEX.smoke },
+      castle: { tint: [0xffd23f, 0xff9a3c], up: true, tex: TEX.spark },
+      ice: { tint: [0xffffff, 0xdff4ff], up: false, tex: TEX.spark },
+      desert: { tint: [0xe8c890, 0xffe8b0], up: false, tex: TEX.pixel },
+      sea: { tint: [0x9ad8ff, 0xffffff], up: true, tex: TEX.ring },
+      cave: { tint: [0xffd23f, 0xff7b00], up: true, tex: TEX.spark },
+      factory: { tint: [0x00f5d4, 0xffcc33], up: false, tex: TEX.pixel },
+      city: { tint: [0xa0b0c0, 0xffffff], up: false, tex: TEX.smoke },
+    };
+    const c = cfg[arena] ?? cfg.meadow!;
+    this.add
+      .particles(0, c.up ? GAME_HEIGHT + 10 : -10, c.tex, {
+        x: { min: 0, max: GAME_WIDTH },
+        speedY: c.up ? { min: -90, max: -30 } : { min: 40, max: 120 },
+        speedX: arena === 'desert' ? { min: 120, max: 260 } : { min: -25, max: 25 },
+        scale: c.tex === TEX.ring ? { start: 0.12, end: 0.2 } : c.tex === TEX.smoke ? { start: 0.4, end: 1.2 } : { start: 0.7, end: 0.1 },
+        alpha: { start: 0.8, end: 0 },
+        lifespan: 9000,
+        frequency: arena === 'desert' ? 40 : 140,
+        tint: c.tint,
+        blendMode: Phaser.BlendModes.ADD,
+      })
+      .setDepth(FLOOR_TOP - 4);
+  }
+
+  /** The fighting-game "VS" splash before Part 1. */
+  private async versus(): Promise<void> {
+    const ui = this.add.container(0, 0).setDepth(DEPTH.overlay + 5);
+    const left = this.add.rectangle(-GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH / 2 + 60, GAME_HEIGHT, 0x2a5aff, 0.92).setOrigin(0.5);
+    const right = this.add.rectangle(GAME_WIDTH * 1.5, GAME_HEIGHT / 2, GAME_WIDTH / 2 + 60, GAME_HEIGHT, 0xc8102e, 0.92).setOrigin(0.5);
+    ui.add([left, right]);
+    const heroCards = this.heroes.map((h, i) => fitImage(this.add.image(-300 + i * 30, 440 + i * 40, h.init.art).setOrigin(0.5, 1), 190, 240));
+    const villainCard = fitImage(this.add.image(GAME_WIDTH + 300, 450, this.villain.init.art).setOrigin(0.5, 1), 300, 360);
+    ui.add([...heroCards, villainCard]);
+    const vs = this.add
+      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 40, 'VS', { fontFamily: '"Arial Black", sans-serif', fontSize: '160px', color: '#ffd23f', stroke: '#000000', strokeThickness: 20 })
+      .setOrigin(0.5)
+      .setScale(0);
+    ui.add(vs);
+    // These tweens run on the scene clock, which is not slowed during the intro.
+    this.tweens.add({ targets: left, x: GAME_WIDTH / 4 - 30, duration: 300, ease: 'Cubic.easeOut' });
+    this.tweens.add({ targets: right, x: (GAME_WIDTH * 3) / 4 + 30, duration: 300, ease: 'Cubic.easeOut' });
+    heroCards.forEach((c, i) => this.tweens.add({ targets: c, x: (heroCards.length === 1 ? 300 : 180) + i * 210, duration: 400, delay: 150, ease: 'Back.easeOut' }));
+    this.tweens.add({ targets: villainCard, x: GAME_WIDTH - 280, duration: 400, delay: 150, ease: 'Back.easeOut' });
+    this.tweens.add({ targets: vs, scale: 1, angle: { from: -30, to: 0 }, duration: 350, delay: 400, ease: 'Back.easeOut' });
+    this.after(450, () => {
+      sfxBoom(2);
+      shake(this, 4, 250);
+      burst(this, GAME_WIDTH / 2, GAME_HEIGHT / 2 - 40, { count: 80, speed: 700, depth: DEPTH.overlay + 6, colors: [0xffd23f, 0xffffff, 0xff5ab4] });
+    });
+    await this.simWait(2.0);
+    this.tweens.add({ targets: ui, alpha: 0, duration: 300, onComplete: () => ui.destroy() });
+    await this.simWait(0.3);
+  }
+
   private async intro(): Promise<void> {
     this.phase = 'intro';
+    if (this.part === 1) await this.versus();
     // Everybody runs in from the sides.
     this.heroes.forEach((h, i) => this.tweens.add({ targets: h, x: 260 + i * 140, duration: 900, ease: 'Quad.easeOut' }));
     this.tweens.add({ targets: this.villain, x: 960, duration: 1100, ease: 'Quad.easeOut' });
@@ -474,6 +537,24 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.darken(0.55, 800);
     shake(this, 3, 1400);
     v.growUntil = this.now + 4500;
+    // A roaring aura: particles streaming up off the villain while it charges.
+    const aura = this.add
+      .particles(0, 0, TEX.spark, {
+        speedY: { min: -420, max: -160 },
+        speedX: { min: -80, max: 80 },
+        scale: { start: 1.8, end: 0 },
+        lifespan: 700,
+        frequency: 6,
+        tint: [ult.color, ult.color2 ?? 0xffffff, v.init.palette[1]],
+        blendMode: Phaser.BlendModes.ADD,
+        emitZone: { type: 'random', source: new Phaser.Geom.Ellipse(0, 0, v.height * 0.9, v.height * 0.5) } as never,
+      })
+      .setDepth(DEPTH.fx + 2);
+    aura.startFollow(v.root, 0, -v.height * 0.6);
+    this.after(3200, () => aura.stop());
+    this.after(4200, () => aura.destroy());
+    const vignette = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT).setStrokeStyle(80, ult.color, 0.5).setDepth(DEPTH.hud - 1).setAlpha(0);
+    this.tweens.add({ targets: vignette, alpha: 1, duration: 300, yoyo: true, repeat: 4, onComplete: () => vignette.destroy() });
     burst(this, v.cx, v.cy, { count: 120, speed: 700, colors: [v.init.palette[0], v.init.palette[1], ult.color], life: 1200 });
     shockwave(this, v.x, v.y, ult.color, 400, 900);
     this.banner(`${ult.name.toUpperCase()}!`, ult.color, true);
@@ -836,7 +917,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       villains: [info(this.villain)],
       minions: this.fighters.filter((f) => f.active && !f.isMain).length,
       ...this.stats,
-      choice: this.choice ? { words: this.choice.words, colors: this.choice.colors, right: this.choice.right } : null,
+      choice: this.choice ? { words: this.choice.words, colors: this.choice.colors, right: this.choice.right, open: this.choice.open } : null,
     };
   }
 }
