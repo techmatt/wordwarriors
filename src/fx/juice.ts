@@ -15,6 +15,14 @@ import Phaser from 'phaser';
 import { DEPTH } from '../config';
 import { TEX } from './textures';
 
+/**
+ * Effects quality, 0.35..1. The battle lowers it when the frame rate sags
+ * (a slow machine, or headless tests) and raises it back when there is room;
+ * every burst scales its particle count by it. Spectacle is the reward, but a
+ * stuttering battle is worse than a slightly thinner one.
+ */
+export const fxQuality = { level: 1 };
+
 /** Live particle count high-water mark, for tests. */
 export const fxStats = { bursts: 0, shakes: 0, hitstops: 0, slowmos: 0, flashes: 0 };
 
@@ -76,6 +84,7 @@ export function burst(
 ): void {
   const { count = 24, colors = [0xffffff, 0xffd23f, 0xff5ab4, 0x7ad9ff], speed = 320, scale = 1, life = 650, texture = TEX.spark, gravity = 300, depth = DEPTH.fx, blend = true } = opts;
   fxStats.bursts++;
+  const n = Math.max(3, Math.round(count * fxQuality.level));
   const emitter = scene.add.particles(x, y, texture, {
     speed: { min: speed * 0.3, max: speed },
     angle: { min: 0, max: 360 },
@@ -88,7 +97,7 @@ export function burst(
     emitting: false,
   });
   emitter.setDepth(depth);
-  emitter.explode(count);
+  emitter.explode(n);
   scene.time.delayedCall(life + 100, () => emitter.destroy());
 }
 

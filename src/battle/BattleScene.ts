@@ -37,7 +37,7 @@ import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxSummon, sfxUltimate, sfxWrong } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, PAD_COLOR, type PadColorName } from '../config';
 import { advance, episode, narrator, villainSpec, type Step } from '../episode/Episode';
-import { burst, fitImage, flash, floatText, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
+import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { progress } from '../state/progress';
@@ -983,6 +983,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.fpsFrames++;
     if (this.fpsAcc > 500) {
       hookState.fps = Math.round((this.fpsFrames * 1000) / this.fpsAcc);
+      // Thin the particles when frames drop; restore them when they recover.
+      if (hookState.fps < 40) fxQuality.level = Math.max(0.35, fxQuality.level - 0.15);
+      else if (hookState.fps > 55) fxQuality.level = Math.min(1, fxQuality.level + 0.05);
       this.fpsAcc = 0;
       this.fpsFrames = 0;
     }
