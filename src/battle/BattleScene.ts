@@ -66,6 +66,8 @@ interface Choice {
   /** The dots, pulsed by hand on wall-clock time: the scene clock is frozen. */
   dots: Phaser.GameObjects.Container[];
   open: boolean;
+  /** Wall-clock time the word was last said, for the idle re-prompt. */
+  promptedAt: number;
   resolve: (picked: string) => void;
 }
 
@@ -535,11 +537,14 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     });
 
     const picked = await new Promise<string>((resolve) => {
-      this.choice = { words, colors, right, owners, ui, dots, open: false, resolve };
+      this.choice = { words, colors, right, owners, ui, dots, open: false, promptedAt: 0, resolve };
       void (async () => {
         await this.say('move_pick');
         await this.say(`use_move_${right}`);
-        if (this.choice) this.choice.open = true;
+        if (this.choice) {
+          this.choice.open = true;
+          this.choice.promptedAt = performance.now();
+        }
       })();
     });
 
@@ -1019,7 +1024,12 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
         this.choice.open = true;
         this.pressChoice(this.choice.colors[this.choice.words.indexOf(this.choice.right)]!);
       }
-      if (this.controls.pressed('yellow') && this.choice?.open) void voiceBus.say(narratorLine(narrator(), `use_move_${this.choice.right}`));
+      // Yellow, or ten quiet seconds, says the word again.
+      const c = this.choice;
+      if (c?.open && (this.controls.pressed('yellow') || (performance.now() - c.promptedAt > 10_000 && !voiceBus.busy))) {
+        c.promptedAt = performance.now();
+        void voiceBus.say(narratorLine(narrator(), `use_move_${c.right}`));
+      }
     }
 
     for (const f of this.fighters) {
