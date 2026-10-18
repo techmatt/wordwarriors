@@ -11,7 +11,7 @@ import { letterSoundLine } from '../../../content/voice/ids';
 import { DEPTH, GAME_WIDTH } from '../../config';
 import { episode } from '../../episode/Episode';
 import { bob, popIn, shockwave } from '../../fx/juice';
-import { choiceCount, soundRound, type SoundItem } from '../../rules/rounds';
+import { soundRound, type SoundItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
 import type { Spot } from '../../world/RoomScene';
 import { Minigame } from './Minigame';
@@ -31,7 +31,7 @@ export class SoundToLetter extends Minigame {
   }
 
   protected build(): void {
-    this.items = soundRound(progress, ITEMS, Math.random, choiceCount(progress, 'sounds'));
+    this.items = soundRound(progress, ITEMS) // always three stones, as designed;
     this.itemIndex = 0;
     this.makeMeter(ITEMS, 'prop_gem', '💎');
     void (async () => {

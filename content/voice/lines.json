@@ -68,7 +68,7 @@
   "id": "taunt_julia_boop",
   "speaker": "julia",
   "group": "fighter_julia",
-  "text": "Boop! Got you!"
+  "text": "Got you!"
  },
  {
   "id": "taunt_julia_giggle",
@@ -128,7 +128,7 @@
   "id": "taunt_julia_evil_grr",
   "speaker": "julia_evil",
   "group": "fighter_julia_evil",
-  "text": "Grr! Grumpy time!"
+  "text": "Grumpy time!"
  },
  {
   "id": "taunt_julia_evil_nap",
@@ -620,7 +620,7 @@
   "id": "taunt_elsa_evil_cold",
   "speaker": "elsa_evil",
   "group": "fighter_elsa_evil",
-  "text": "Brr! So cold!"
+  "text": "So very cold!"
  },
  {
   "id": "taunt_elsa_evil_ice",
@@ -812,7 +812,7 @@
   "id": "taunt_jasmine_whoosh",
   "speaker": "jasmine",
   "group": "fighter_jasmine",
-  "text": "Whoosh! Too fast!"
+  "text": "Too fast for you!"
  },
  {
   "id": "taunt_jasmine_jewels",
@@ -1089,7 +1089,7 @@
   "id": "taunt_jormungandr_splash",
   "speaker": "jormungandr",
   "group": "fighter_jormungandr",
-  "text": "Splish, splash!"
+  "text": "Splash time!"
  },
  {
   "id": "taunt_jormungandr_tail",
@@ -1210,13 +1210,13 @@
   "id": "taunt_smaug_roar",
   "speaker": "smaug",
   "group": "fighter_smaug",
-  "text": "Roar! Just kidding!"
+  "text": "Just kidding, friend!"
  },
  {
   "id": "taunt_smaug_shiny",
   "speaker": "smaug",
   "group": "fighter_smaug",
-  "text": "Ooh, shiny!"
+  "text": "So shiny!"
  },
  {
   "id": "taunt_smaug_share",
@@ -1294,7 +1294,7 @@
   "id": "taunt_smaug_evil_roar",
   "speaker": "smaug_evil",
   "group": "fighter_smaug_evil",
-  "text": "Roar! My treasure!"
+  "text": "My treasure!"
  },
  {
   "id": "taunt_smaug_evil_greedy",
@@ -1336,7 +1336,7 @@
   "id": "taunt_scar_beep",
   "speaker": "scar",
   "group": "fighter_scar",
-  "text": "Beep boop! Hello!"
+  "text": "Hello, friend!"
  },
  {
   "id": "taunt_scar_rocket",
@@ -1360,7 +1360,7 @@
   "id": "taunt_scar_boop",
   "speaker": "scar",
   "group": "fighter_scar",
-  "text": "Boop beep, friend!"
+  "text": "Robot hug, friend!"
  },
  {
   "id": "taunt_scar_battery",
@@ -1414,7 +1414,7 @@
   "id": "taunt_scar_evil_resist",
   "speaker": "scar_evil",
   "group": "fighter_scar_evil",
-  "text": "Beep! You will lose!"
+  "text": "You can not win!"
  },
  {
   "id": "taunt_scar_evil_transform",
@@ -1486,7 +1486,7 @@
   "id": "taunt_moriarty_magic",
   "speaker": "moriarty",
   "group": "fighter_moriarty",
-  "text": "Ta-da!"
+  "text": "Magic trick!"
  },
  {
   "id": "taunt_moriarty_which",
@@ -1570,7 +1570,7 @@
   "id": "taunt_moriarty_evil_smoke",
   "speaker": "moriarty_evil",
   "group": "fighter_moriarty_evil",
-  "text": "Poof! Gone!"
+  "text": "Now you see me!"
  },
  {
   "id": "ult_moriarty_evil",
@@ -1618,7 +1618,7 @@
   "id": "taunt_bavmorda_pig",
   "speaker": "bavmorda",
   "group": "fighter_bavmorda",
-  "text": "Oink oink! Hee hee!"
+  "text": "Into a piggy you go!"
  },
  {
   "id": "taunt_bavmorda_broom",
@@ -1690,7 +1690,7 @@
   "id": "taunt_bavmorda_evil_cackle",
   "speaker": "bavmorda_evil",
   "group": "fighter_bavmorda_evil",
-  "text": "Oink, little hero!"
+  "text": "Bow, little hero!"
  },
  {
   "id": "taunt_bavmorda_evil_cauldron",
@@ -1917,12 +1917,6 @@
   "text": "Anna!"
  },
  {
-  "id": "word_ant",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "ant!"
- },
- {
   "id": "word_bag",
   "speaker": "phonics",
   "group": "phonics",
@@ -2013,10 +2007,10 @@
   "text": "fan!"
  },
  {
-  "id": "word_flip",
+  "id": "word_fog",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "flip!"
+  "text": "fog!"
  },
  {
   "id": "word_fox",
@@ -2049,16 +2043,10 @@
   "text": "hug!"
  },
  {
-  "id": "word_hush",
+  "id": "word_hum",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "hush!"
- },
- {
-  "id": "word_ice",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "ice!"
+  "text": "hum!"
  },
  {
   "id": "word_jasmine",
@@ -2091,12 +2079,6 @@
   "text": "log!"
  },
  {
-  "id": "word_love",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "love!"
- },
- {
   "id": "word_map",
   "speaker": "phonics",
   "group": "phonics",
@@ -2113,6 +2095,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "Moriarty!"
+ },
+ {
+  "id": "word_nab",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "nab!"
  },
  {
   "id": "word_nap",
@@ -2137,6 +2125,18 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "off!"
+ },
+ {
+  "id": "word_pad",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "pad!"
+ },
+ {
+  "id": "word_pal",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "pal!"
  },
  {
   "id": "word_pen",
@@ -2181,34 +2181,16 @@
   "text": "Scar!"
  },
  {
-  "id": "word_see",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "see!"
- },
- {
   "id": "word_seraphina",
   "speaker": "phonics",
   "group": "phonics",
   "text": "Seraphina!"
  },
  {
-  "id": "word_six",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "six!"
- },
- {
   "id": "word_smaug",
   "speaker": "phonics",
   "group": "phonics",
   "text": "Smaug!"
- },
- {
-  "id": "word_soft",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "soft!"
  },
  {
   "id": "word_sun",
@@ -2245,6 +2227,18 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "yum!"
+ },
+ {
+  "id": "word_zap",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "zap!"
+ },
+ {
+  "id": "word_zip",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "zip!"
  },
  {
   "id": "nar_julia_alarm_ready",
@@ -2327,8 +2321,8 @@
   "id": "nar_julia_right_3",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Woo hoo! That is it!",
-  "say": "Woo hoo, that is it!"
+  "text": "Yes! That is it!",
+  "say": "Yes, that is it!"
  },
  {
   "id": "nar_julia_right_4",
@@ -2347,7 +2341,7 @@
   "id": "nar_julia_wrong_2",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Hee hee, not that one!"
+  "text": "Not that one, silly!"
  },
  {
   "id": "nar_julia_wrong_3",
@@ -2955,8 +2949,8 @@
   "id": "nar_seraphina_right_3",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Woo hoo! That is it!",
-  "say": "Woo hoo, that is it!"
+  "text": "Yes! That is it!",
+  "say": "Yes, that is it!"
  },
  {
   "id": "nar_seraphina_right_4",
@@ -2975,7 +2969,7 @@
   "id": "nar_seraphina_wrong_2",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Hee hee, not that one!"
+  "text": "Not that one, silly!"
  },
  {
   "id": "nar_seraphina_wrong_3",
@@ -3583,8 +3577,8 @@
   "id": "nar_dada_matt_right_3",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Woo hoo! That is it!",
-  "say": "Woo hoo, that is it!"
+  "text": "Yes! That is it!",
+  "say": "Yes, that is it!"
  },
  {
   "id": "nar_dada_matt_right_4",
@@ -3603,7 +3597,7 @@
   "id": "nar_dada_matt_wrong_2",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Hee hee, not that one!"
+  "text": "Not that one, silly!"
  },
  {
   "id": "nar_dada_matt_wrong_3",
@@ -4211,8 +4205,8 @@
   "id": "nar_dada_jason_right_3",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Woo hoo! That is it!",
-  "say": "Woo hoo, that is it!"
+  "text": "Yes! That is it!",
+  "say": "Yes, that is it!"
  },
  {
   "id": "nar_dada_jason_right_4",
@@ -4231,7 +4225,7 @@
   "id": "nar_dada_jason_wrong_2",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Hee hee, not that one!"
+  "text": "Not that one, silly!"
  },
  {
   "id": "nar_dada_jason_wrong_3",
@@ -4839,8 +4833,8 @@
   "id": "nar_elsa_right_3",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Woo hoo! That is it!",
-  "say": "Woo hoo, that is it!"
+  "text": "Yes! That is it!",
+  "say": "Yes, that is it!"
  },
  {
   "id": "nar_elsa_right_4",
@@ -4859,7 +4853,7 @@
   "id": "nar_elsa_wrong_2",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Hee hee, not that one!"
+  "text": "Not that one, silly!"
  },
  {
   "id": "nar_elsa_wrong_3",
@@ -5467,8 +5461,8 @@
   "id": "nar_anna_right_3",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Woo hoo! That is it!",
-  "say": "Woo hoo, that is it!"
+  "text": "Yes! That is it!",
+  "say": "Yes, that is it!"
  },
  {
   "id": "nar_anna_right_4",
@@ -5487,7 +5481,7 @@
   "id": "nar_anna_wrong_2",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Hee hee, not that one!"
+  "text": "Not that one, silly!"
  },
  {
   "id": "nar_anna_wrong_3",
@@ -6095,8 +6089,8 @@
   "id": "nar_jasmine_right_3",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Woo hoo! That is it!",
-  "say": "Woo hoo, that is it!"
+  "text": "Yes! That is it!",
+  "say": "Yes, that is it!"
  },
  {
   "id": "nar_jasmine_right_4",
@@ -6115,7 +6109,7 @@
   "id": "nar_jasmine_wrong_2",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Hee hee, not that one!"
+  "text": "Not that one, silly!"
  },
  {
   "id": "nar_jasmine_wrong_3",
@@ -6723,8 +6717,8 @@
   "id": "nar_ozymandias_right_3",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Woo hoo! That is it!",
-  "say": "Woo hoo, that is it!"
+  "text": "Yes! That is it!",
+  "say": "Yes, that is it!"
  },
  {
   "id": "nar_ozymandias_right_4",
@@ -6743,7 +6737,7 @@
   "id": "nar_ozymandias_wrong_2",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Hee hee, not that one!"
+  "text": "Not that one, silly!"
  },
  {
   "id": "nar_ozymandias_wrong_3",
@@ -7351,8 +7345,8 @@
   "id": "nar_jormungandr_right_3",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Woo hoo! That is it!",
-  "say": "Woo hoo, that is it!"
+  "text": "Yes! That is it!",
+  "say": "Yes, that is it!"
  },
  {
   "id": "nar_jormungandr_right_4",
@@ -7371,7 +7365,7 @@
   "id": "nar_jormungandr_wrong_2",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Hee hee, not that one!"
+  "text": "Not that one, silly!"
  },
  {
   "id": "nar_jormungandr_wrong_3",
@@ -7978,8 +7972,8 @@
   "id": "nar_smaug_right_3",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Woo hoo! That is it!",
-  "say": "Woo hoo, that is it!"
+  "text": "Yes! That is it!",
+  "say": "Yes, that is it!"
  },
  {
   "id": "nar_smaug_right_4",
@@ -7998,7 +7992,7 @@
   "id": "nar_smaug_wrong_2",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Hee hee, not that one!"
+  "text": "Not that one, silly!"
  },
  {
   "id": "nar_smaug_wrong_3",
@@ -8606,8 +8600,8 @@
   "id": "nar_scar_right_3",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Woo hoo! That is it!",
-  "say": "Woo hoo, that is it!"
+  "text": "Yes! That is it!",
+  "say": "Yes, that is it!"
  },
  {
   "id": "nar_scar_right_4",
@@ -8626,7 +8620,7 @@
   "id": "nar_scar_wrong_2",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Hee hee, not that one!"
+  "text": "Not that one, silly!"
  },
  {
   "id": "nar_scar_wrong_3",
@@ -9234,8 +9228,8 @@
   "id": "nar_moriarty_right_3",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Woo hoo! That is it!",
-  "say": "Woo hoo, that is it!"
+  "text": "Yes! That is it!",
+  "say": "Yes, that is it!"
  },
  {
   "id": "nar_moriarty_right_4",
@@ -9254,7 +9248,7 @@
   "id": "nar_moriarty_wrong_2",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Hee hee, not that one!"
+  "text": "Not that one, silly!"
  },
  {
   "id": "nar_moriarty_wrong_3",
@@ -9862,8 +9856,8 @@
   "id": "nar_bavmorda_right_3",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Woo hoo! That is it!",
-  "say": "Woo hoo, that is it!"
+  "text": "Yes! That is it!",
+  "say": "Yes, that is it!"
  },
  {
   "id": "nar_bavmorda_right_4",
@@ -9882,7 +9876,7 @@
   "id": "nar_bavmorda_wrong_2",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Hee hee, not that one!"
+  "text": "Not that one, silly!"
  },
  {
   "id": "nar_bavmorda_wrong_3",

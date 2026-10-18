@@ -47,6 +47,8 @@ export class ParentScene extends Phaser.Scene {
     });
 
     this.grid('Letter sounds', 'sounds', LETTERS.map((l) => l.letter), 30, 90, 6, 200);
+    const spelled = Object.entries(snap.spelling ?? {}).map(([w, st]) => `${w} ×${st.seen}`);
+    this.add.text(1040, 90, ['Spelled (typing, kept apart', 'from reading):', ...spelled.slice(0, 7)], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' });
     // Every word in the content, plus any other word she has met (spelling, move words).
     const words = [...new Set([...WORDS.map((w) => w.word), ...Object.keys(snap.words)])];
     this.grid('Words', 'words', words, 30, 300, 12, 205);

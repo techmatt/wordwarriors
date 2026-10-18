@@ -41,6 +41,19 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `char_moriarty_evil` | 200×250 | Evil Moriarty: a sly trickster in a black coat and top hat, a grin full of secrets, cards floating around him. Full body, facing the viewer, cheerful cartoon style for a 4-year-old, villain version: darker palette, mischievous rather than frightening. Transparent background. |
 | `char_bavmorda_good` | 200×250 | Bavmorda: a kindly old witch with a crooked hat full of flowers, a staff with a glowing pink gem. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background. |
 | `char_bavmorda_evil` | 200×250 | Evil Bavmorda: a tall dark witch queen with a horned crown, a black staff with a green flame, skeletons at her feet. Full body, facing the viewer, cheerful cartoon style for a 4-year-old, villain version: darker palette, mischievous rather than frightening. Transparent background. |
+| `face_julia` | 200×200 | Julia's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
+| `face_seraphina` | 200×200 | Seraphina's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
+| `face_dada_matt` | 200×200 | Dada Matt's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
+| `face_dada_jason` | 200×200 | Dada Jason's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
+| `face_elsa` | 200×200 | Elsa's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
+| `face_anna` | 200×200 | Anna's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
+| `face_jasmine` | 200×200 | Jasmine's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
+| `face_ozymandias` | 200×200 | Ozymandias's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
+| `face_jormungandr` | 200×200 | Jormungandr's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
+| `face_smaug` | 200×200 | Smaug's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
+| `face_scar` | 200×200 | Scar's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
+| `face_moriarty` | 200×200 | Moriarty's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
+| `face_bavmorda` | 200×200 | Bavmorda's face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name. |
 
 ## Summoned minions and helpers
 
@@ -112,7 +125,6 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `pic_pen` | 200×200 | A single clear picture of a pen, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_van` | 200×200 | A single clear picture of a van, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_bat` | 200×200 | A single clear picture of a bat, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
-| `pic_ant` | 200×200 | A single clear picture of a ant, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_bag` | 200×200 | A single clear picture of a bag, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_can` | 200×200 | A single clear picture of a can, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_nut` | 200×200 | A single clear picture of a nut, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
@@ -124,7 +136,6 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `pic_mop` | 200×200 | A single clear picture of a mop, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_pot` | 200×200 | A single clear picture of a pot, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_rat` | 200×200 | A single clear picture of a rat, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
-| `pic_six` | 200×200 | A single clear picture of a six, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 
 ## Counter items
 

@@ -25,7 +25,16 @@ export interface WordItem {
 
 /** Letters whose placeholder sound is too unlike the real one to test on yet. */
 const SOUND_SKIP = new Set(['q', 'x']);
-const MIRROR_SETS = [new Set(['b', 'd', 'p', 'q']), new Set(['m', 'n']), new Set(['u', 'n'])];
+// Letters that look alike, or whose placeholder sounds alike (c and k are both
+// "Kuh"; a "Aah" and o "Ah"), never share a round.
+const MIRROR_SETS = [new Set(['b', 'd', 'p', 'q']), new Set(['m', 'n']), new Set(['u', 'n']), new Set(['c', 'k', 'q']), new Set(['a', 'o', 'u']), new Set(['e', 'i'])];
+
+/** Words whose pictures could be mistaken for each other never share a round. */
+const LOOKALIKES = [['bus', 'van', 'jet'], ['hat', 'cap'], ['cat', 'rat', 'bat'], ['cup', 'can', 'pot'], ['pen', 'pin']];
+
+function lookalike(a: string, b: string): boolean {
+  return LOOKALIKES.some((g) => g.includes(a) && g.includes(b));
+}
 
 function shuffle<T>(xs: T[], rand: Rand): T[] {
   const a = [...xs];
@@ -77,7 +86,7 @@ function wordItem(target: string, pool: string[], choices: number, rand: Rand): 
   const others: string[] = [];
   for (const w of shuffle(pool, rand)) {
     if (others.length >= choices - 1) break;
-    if (w === target || used.has(w[0])) continue;
+    if (w === target || used.has(w[0]) || lookalike(w, target) || others.some((o) => lookalike(o, w))) continue;
     used.add(w[0]);
     others.push(w);
   }

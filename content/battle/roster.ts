@@ -121,7 +121,7 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'here', text: 'Here I come!' },
         { key: 'wand', text: 'My wand is sparkly!' },
         { key: 'brave', text: 'I am super brave!' },
-        { key: 'boop', text: 'Boop! Got you!' },
+        { key: 'boop', text: 'Got you!' },
         { key: 'giggle', text: 'You can not catch me!' },
         { key: 'team', text: 'We are a super team!' },
       ],
@@ -139,7 +139,7 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'no', text: 'No, no, no!' },
         { key: 'mine', text: 'All the toys are mine!' },
         { key: 'bedtime', text: 'I never go to bed!' },
-        { key: 'grr', text: 'Grr! Grumpy time!' },
+        { key: 'grr', text: 'Grumpy time!' },
         { key: 'nap', text: 'Naps are for babies!' },
         { key: 'cookies', text: 'I ate all the cookies!' },
       ],
@@ -238,7 +238,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'earmuffs', name: 'Magic Earmuffs', glyph: '🎧', look: 'fluffy rainbow earmuffs that glow',
-      how: 'block', words: ['hat', 'cap', 'hush'],
+      how: 'block', words: ['hat', 'cap', 'hum'],
     },
   },
   {
@@ -284,7 +284,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'pillow_fort', name: 'Pillow Fort', glyph: '🏰', look: 'a wobbly fort made of fluffy pillows, glowing softly',
-      how: 'block', words: ['bed', 'box', 'soft'],
+      how: 'block', words: ['bed', 'box', 'pad'],
     },
   },
   {
@@ -322,7 +322,7 @@ export const ROSTER: CharacterSpec[] = [
       taunts: [
         { key: 'winter', text: 'Winter forever!' },
         { key: 'chill', text: 'Chill out!' },
-        { key: 'cold', text: 'Brr! So cold!' },
+        { key: 'cold', text: 'So very cold!' },
         { key: 'ice', text: 'Everything turns to ice!' },
         { key: 'frozen', text: 'You are frozen solid!' },
         { key: 'icicles', text: 'Icicles everywhere!' },
@@ -376,7 +376,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'locket', name: 'Friendship Locket', glyph: '💖', look: 'a heart locket glowing warm pink',
-      how: 'calm', words: ['hug', 'pet', 'love'],
+      how: 'calm', words: ['hug', 'pet', 'pal'],
     },
   },
   {
@@ -396,7 +396,7 @@ export const ROSTER: CharacterSpec[] = [
       taunts: [
         { key: 'fly', text: 'Hop on my carpet!' },
         { key: 'wind', text: 'Feel the wind!' },
-        { key: 'whoosh', text: 'Whoosh! Too fast!' },
+        { key: 'whoosh', text: 'Too fast for you!' },
         { key: 'jewels', text: 'Sparkle time!' },
         { key: 'stars', text: 'Fly to the stars!' },
         { key: 'sand', text: 'The sand is my friend!' },
@@ -422,7 +422,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'wind_fan', name: 'Wind Fan', glyph: '🌬️', look: 'a giant painted fan that blows a rainbow breeze',
-      how: 'reflect', words: ['fan', 'map', 'fan'],
+      how: 'reflect', words: ['map', 'zip', 'fan'],
     },
   },
   {
@@ -490,7 +490,7 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'sea', text: 'The sea is my home!' },
         { key: 'hiss', text: 'Ssso fun!' },
         { key: 'round', text: 'Round and round I go!' },
-        { key: 'splash', text: 'Splish, splash!' },
+        { key: 'splash', text: 'Splash time!' },
         { key: 'tail', text: 'Watch my tail!' },
       ],
     },
@@ -534,8 +534,8 @@ export const ROSTER: CharacterSpec[] = [
       taunts: [
         { key: 'gold', text: 'Want some gold?' },
         { key: 'fire', text: 'Warm and toasty!' },
-        { key: 'roar', text: 'Roar! Just kidding!' },
-        { key: 'shiny', text: 'Ooh, shiny!' },
+        { key: 'roar', text: 'Just kidding, friend!' },
+        { key: 'shiny', text: 'So shiny!' },
         { key: 'share', text: 'Sharing is caring!' },
         { key: 'wings', text: 'Flap, flap, whoosh!' },
       ],
@@ -554,13 +554,13 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'fire', text: 'I am fire and gold!' },
         { key: 'thief', text: 'Who touched my gold?' },
         { key: 'burn', text: 'Feel my flames!' },
-        { key: 'roar', text: 'Roar! My treasure!' },
+        { key: 'roar', text: 'My treasure!' },
         { key: 'greedy', text: 'More gold for me!' },
       ],
     },
     counter: {
       id: 'frost_shield', name: 'Frost Shield', glyph: '🛡️', look: 'a round shield of blue ice with a snowflake crest',
-      how: 'block', words: ['cup', 'net', 'ice'],
+      how: 'block', words: ['cup', 'net', 'fog'],
     },
   },
   {
@@ -578,11 +578,11 @@ export const ROSTER: CharacterSpec[] = [
       ],
       ultimate: ab('friend_grid', 'Laser Light Show', 'grid', 0, 0x00f5d4, 3, { color2: 0xff5ab4 }),
       taunts: [
-        { key: 'beep', text: 'Beep boop! Hello!' },
+        { key: 'beep', text: 'Hello, friend!' },
         { key: 'rocket', text: 'Rocket fist, go!' },
         { key: 'scan', text: 'Scanning for fun!' },
         { key: 'power', text: 'Power level max!' },
-        { key: 'boop', text: 'Boop beep, friend!' },
+        { key: 'boop', text: 'Robot hug, friend!' },
         { key: 'battery', text: 'Battery full!' },
       ],
     },
@@ -597,7 +597,7 @@ export const ROSTER: CharacterSpec[] = [
       ultimate: ab('laser_grid', 'Laser Grid', 'grid', 0, 0xff0054, 3, { color2: 0xffcc33 }),
       taunts: [
         { key: 'target', text: 'Target found!' },
-        { key: 'resist', text: 'Beep! You will lose!' },
+        { key: 'resist', text: 'You can not win!' },
         { key: 'transform', text: 'Transform! Bigger!' },
         { key: 'lasers', text: 'Lasers, on!' },
         { key: 'compute', text: 'Computing your defeat!' },
@@ -626,7 +626,7 @@ export const ROSTER: CharacterSpec[] = [
       taunts: [
         { key: 'trick', text: 'Pick a card!' },
         { key: 'where', text: 'Where did I go?' },
-        { key: 'magic', text: 'Ta-da!' },
+        { key: 'magic', text: 'Magic trick!' },
         { key: 'which', text: 'Which one is me?' },
         { key: 'hat', text: 'Look in my hat!' },
         { key: 'cards', text: 'So many cards!' },
@@ -648,12 +648,12 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'trap', text: 'Watch your step!' },
         { key: 'clever', text: 'I am too clever!' },
         { key: 'puzzle', text: 'Solve my puzzle!' },
-        { key: 'smoke', text: 'Poof! Gone!' },
+        { key: 'smoke', text: 'Now you see me!' },
       ],
     },
     counter: {
       id: 'magnifier', name: 'Magnifying Glass', glyph: '🔍', look: 'a big brass magnifying glass that shines a bright truth-light',
-      how: 'reveal', words: ['map', 'pen', 'see'],
+      how: 'reveal', words: ['map', 'pen', 'nab'],
     },
   },
   {
@@ -672,7 +672,7 @@ export const ROSTER: CharacterSpec[] = [
       ultimate: ab('garden', 'Magic Garden', 'rain', 0, 0xff8fab, 3, { count: 30, glyph: '🌸', color2: 0x80ffdb }),
       taunts: [
         { key: 'brew', text: 'Bubble, bubble!' },
-        { key: 'pig', text: 'Oink oink! Hee hee!' },
+        { key: 'pig', text: 'Into a piggy you go!' },
         { key: 'broom', text: 'Zoom on my broom!' },
         { key: 'magic', text: 'A little magic!' },
         { key: 'flowers', text: 'Flowers for you!' },
@@ -692,14 +692,14 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'pigs', text: 'You will all be pigs!' },
         { key: 'rise', text: 'Rise, my skeletons!' },
         { key: 'kneel', text: 'Bow to the queen!' },
-        { key: 'cackle', text: 'Oink, little hero!' },
+        { key: 'cackle', text: 'Bow, little hero!' },
         { key: 'cauldron', text: 'Into my cauldron!' },
         { key: 'piglets', text: 'Bow, little piglets!' },
       ],
     },
     counter: {
       id: 'mirror', name: 'Magic Mirror', glyph: '💠', look: 'a silver hand mirror that flashes bright light',
-      how: 'reflect', words: ['sun', 'pin', 'flip'],
+      how: 'reflect', words: ['sun', 'pin', 'zap'],
     },
   },
 ];

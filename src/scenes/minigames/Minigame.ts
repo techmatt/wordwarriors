@@ -121,7 +121,7 @@ export abstract class Minigame extends RoomScene {
   protected async right(kind: ItemKind, id: string, x: number, y: number, color: number, confirmId: string | null): Promise<void> {
     this.locked = true;
     progress.record(kind, id, this.wrongTries === 0, this.wrongTries);
-    if (kind === 'words' && !episode.read.includes(id)) episode.read.push(id);
+    if (kind !== 'sounds' && !episode.read.includes(id)) episode.read.push(id);
     sfxRight();
     burst(this, x, y, { count: 50, speed: 450 });
     shockwave(this, x, y, color, 140);

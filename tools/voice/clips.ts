@@ -82,7 +82,8 @@ export type ClipState =
 export function clipStateFor(line: LineSpec, index: ClipIndex): ClipState {
   const clip = index.clips[line.id];
   if (!clip) return { state: 'missing' };
-  return clip.spokenHash === spokenHash(line) ? { state: 'fresh', clip } : { state: 'stale', clip };
+  // A line moved to another speaker is stale too: the recording is the wrong voice.
+  return clip.spokenHash === spokenHash(line) && clip.speaker === line.speaker ? { state: 'fresh', clip } : { state: 'stale', clip };
 }
 
 /** Forget clips whose audio was deleted by hand, so they read as gaps, not errors. */

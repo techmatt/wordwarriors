@@ -83,6 +83,7 @@ export class BlendPath extends Minigame {
       popIn(this, spot.obj, 1, 300 + i * 120);
     });
     this.player.place(120, TILE_Y);
+    this.time.delayedCall(500, () => this.glowNext());
   }
 
   override update(time: number, delta: number): void {
@@ -94,8 +95,14 @@ export class BlendPath extends Minigame {
       this.onTile = i;
       const tile = this.tiles[i];
       if (tile) {
-        if (!tile.stepped) this.lift(tile.letter, tile.x, i);
-        tile.stepped = true;
+        // Left to right: a tile counts (lifts its letter) only when it is the
+        // next one along. Any tile still says its sound when stepped on.
+        const next = this.tiles.findIndex((t) => !t.stepped);
+        if (i === next) {
+          this.lift(tile.letter, tile.x, i);
+          tile.stepped = true;
+          this.glowNext();
+        }
         sfxStep(i);
         this.tweens.add({ targets: tile.img, scale: 1.25, duration: 120, yoyo: true });
         burst(this, tile.x, TILE_Y, { count: 14, speed: 180, colors: [TILE_COLORS[i % 4]!, 0xffffff] });
@@ -103,6 +110,18 @@ export class BlendPath extends Minigame {
         if (this.tiles.every((t) => t.stepped)) this.openDoors();
       }
     }
+  }
+
+  /** The next tile to step on glows; the rest wait. */
+  private glowNext(): void {
+    const next = this.tiles.findIndex((t) => !t.stepped);
+    this.tiles.forEach((t, i) => {
+      const img = t.img.list[0] as Phaser.GameObjects.Image;
+      img.setAlpha(i === next || t.stepped ? 1 : 0.55);
+      this.tweens.killTweensOf(t.img);
+      t.img.setScale(1);
+      if (i === next) this.tweens.add({ targets: t.img, scale: 1.12, duration: 420, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    });
   }
 
   /** A copy of the letter floats up off the tile and waits in a row above the path. */

@@ -166,7 +166,7 @@ export class Spelling extends Minigame {
     await this.wait(500);
     shake(this, 3, 200);
     for (const b of this.boxes) this.tweens.add({ targets: [b.rect, b.filled], scale: 1.15, duration: 120, yoyo: true });
-    await this.right('words', word, GAME_WIDTH / 2, 370, 0xffb703, wordLine(word));
+    await this.right('spelling', word, GAME_WIDTH / 2, 370, 0xffb703, wordLine(word));
     this.itemIndex++;
     if (this.itemIndex < this.words.length) {
       this.showWord();

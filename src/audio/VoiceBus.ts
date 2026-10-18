@@ -17,6 +17,7 @@
  * shows and flow-control awaits still resolve.
  */
 
+import { getAudioContext } from './context';
 import { setMusicDuck } from './music';
 import { setSfxLevel } from './sfx';
 import { voiceBank, type VoiceLine, type VoicePlayback } from '../voice/VoiceBank';
@@ -108,7 +109,10 @@ class Bus {
     this.current = null;
     const line = voiceBank.get(id);
     if (!line) console.warn(`voice: no line ${id}`);
-    const playback = line ? voiceBank.play(id) : null;
+    // A suspended context (audio not yet unlocked) never ends a clip, so it
+    // would hang every await on this line: run on the estimated clock instead.
+    const live = getAudioContext()?.state === 'running';
+    const playback = line && live ? voiceBank.play(id) : null;
     const text = line?.text ?? '';
     const words = text.split(/\s+/).length;
     const duration = playback ? playback.length : line ? Math.max(0.8, line.duration + 0.3) : Math.max(0.6, words * 0.35);
@@ -134,7 +138,8 @@ class Bus {
       this.current = { u, playback, done };
       for (const fn of this.listeners) fn(u);
       if (playback) void playback.ended.then(() => this.current?.u === u && this.finish());
-      else setTimeout(() => this.current?.u === u && this.finish(), duration * 1000);
+      // Always a backstop: whatever happens to the audio, the line ends.
+      setTimeout(() => this.current?.u === u && this.finish(), (duration + (playback ? 1.5 : 0)) * 1000);
     });
   }
 

@@ -29,10 +29,12 @@ export interface ProgressData {
   version: number;
   sounds: Record<string, Stat>;
   words: Record<string, Stat>;
+  /** Spelling is writing, not reading: its keystroke slips are kept apart. */
+  spelling: Record<string, Stat>;
   episodes: number;
 }
 
-export type ItemKind = 'sounds' | 'words';
+export type ItemKind = 'sounds' | 'words' | 'spelling';
 
 const RECENT = 6;
 
@@ -41,7 +43,7 @@ function emptyStat(): Stat {
 }
 
 function empty(): ProgressData {
-  return { version: STORE_VERSION, sounds: {}, words: {}, episodes: 0 };
+  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, episodes: 0 };
 }
 
 export interface StorageLike {
@@ -68,6 +70,7 @@ export class ProgressStore {
       if (parsed.version !== STORE_VERSION) throw new Error(`version ${parsed.version}`);
       parsed.sounds ??= {};
       parsed.words ??= {};
+      parsed.spelling ??= {};
       parsed.episodes ??= 0;
       return parsed;
     } catch {

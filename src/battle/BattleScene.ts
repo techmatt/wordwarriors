@@ -54,7 +54,8 @@ type Phase = 'intro' | 'fight' | 'choice' | 'combo' | 'ultimate' | 'counter' | '
 
 /** Cosmetic damage per point of ability power. Tuned so bars drift, not drop. */
 const DAMAGE_PER_POWER = 2.6;
-const CHOICE_COLORS: PadColorName[] = ['green', 'blue', 'yellow', 'red'];
+// Yellow is never a choice: yellow always means "say it again".
+const CHOICE_COLORS: PadColorName[] = ['green', 'blue', 'red'];
 
 interface Choice {
   words: string[];
@@ -257,7 +258,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     f.alive = false;
     sfxPoof();
     burst(this, f.cx, f.cy, { count: 30, speed: 300, colors: [f.init.palette[0], f.init.palette[1], 0xffffff] });
-    this.tweens.add({ targets: f.root, scale: 0, angle: 360, duration: 250, onComplete: () => f.destroy() });
+    // Pop out with a squash, never a spin: sprites only bob and squash.
+    this.tweens.add({ targets: f.root, scaleX: 1.4, scaleY: 0, duration: 250, ease: 'Back.easeIn', onComplete: () => f.destroy() });
   }
 
   // -- director ----------------------------------------------------------------------
@@ -522,9 +524,10 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     const good = picked === right;
     progress.record('words', right, good, good ? 0 : 1);
     const { f, ab } = owners.get(picked)!;
-    f.status = null;
-    f.clearOverlay();
     if (good) {
+      // The super frees its hero from any pig or ice; a plain pick changes nothing else.
+      f.status = null;
+      f.clearOverlay();
       sfxRight();
       flash(this, 0xffffff, 200);
       slowmo(this, 0.3, 1200);
@@ -670,7 +673,12 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       }
       this.tweens.add({ targets: dome, alpha: 0, duration: 400, onComplete: () => dome.destroy() });
     } else {
-      // A beam of the item's own light straight into the wind-up.
+      // The ultimate really happens first (the sun is swallowed, the clones
+      // appear, the lasers fire), with the heroes shielded by the item's glow;
+      // then the item visibly undoes it.
+      cast(this, v, ult, h, 2.0);
+      await this.simWait(1.6);
+      // A beam of the item's own light straight into the villain.
       const light: AbilitySpec = { id: 'counter_light', name: counter.name, kind: 'beam', cooldown: 0, color: 0xfff3a0, color2: 0xffb703, power: 3 };
       cast(this, h, light, v, 2.4);
       if (counter.how === 'restore') {
@@ -743,7 +751,10 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.banner('VICTORY!', 0xffd23f, true);
     for (const f of this.fighters) if (f.team === 'villain' && !f.isMain && f.active) this.kill(f);
     // The villain spins, shrinks into a puff, and comes back as the good version.
-    this.tweens.add({ targets: v.body, angle: 720, scale: 0, duration: 900, ease: 'Back.easeIn' });
+    // A stretch up, then a squash to nothing: scale only.
+    v.alive = false;
+    this.tweens.add({ targets: v.body, scaleX: 0.4, scaleY: 1.6, duration: 350, ease: 'Quad.easeOut', yoyo: false });
+    this.tweens.add({ targets: v.body, scaleX: 1.8, scaleY: 0, duration: 500, delay: 350, ease: 'Back.easeIn' });
     await this.simWait(1.0);
     sfxPoof();
     const good = fitImage(this.add.image(v.x, v.y, charArt(episode.villain, false)).setOrigin(0.5, 1), 150, 190).setDepth(v.y + 1);
@@ -803,7 +814,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       f.use(ab, this.now);
       cast(this, f, ab, target, f.init.kind === 'helper' ? 1.4 : 1, f.isMain && ab.power >= 2);
       // Big moves are called out by name, if nobody else is talking.
-      if (f.isMain && ab.power >= 2 && Math.random() < 0.5) void voiceBus.say(moveLine(f.init.id, ab.id), 'bark', f);
+      // A move that is also a choice word is never called out in the fight:
+      // hearing it named then would give the choice away.
+      if (f.isMain && ab.power >= 2 && !ab.word && Math.random() < 0.5) void voiceBus.say(moveLine(f.init.id, ab.id), 'bark', f);
       this.stats.abilitiesFired++;
       if (f.isMain) this.teamNextCast[teamKey] = this.now + (teamKey === 'villain' ? 700 : 500);
       break;
@@ -966,7 +979,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
         this.choice.open = true;
         this.pressChoice(this.choice.colors[this.choice.words.indexOf(this.choice.right)]!);
       }
-      if (this.controls.pressed('yellow') && this.choice?.open) void this.say(`use_move_${this.choice.right}`);
+      if (this.controls.pressed('yellow') && this.choice?.open) void voiceBus.say(narratorLine(narrator(), `use_move_${this.choice.right}`));
     }
 
     for (const f of this.fighters) {

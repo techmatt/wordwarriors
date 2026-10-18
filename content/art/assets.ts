@@ -52,6 +52,20 @@ for (const c of ROSTER) {
   }
 }
 
+// Name-free cards: the pictures for character names as sight words.
+for (const c of ROSTER) {
+  assets.push({
+    id: `face_${c.id}`,
+    kind: 'character',
+    w: 200,
+    h: 200,
+    content: `${c.good.displayName}'s face, friendly portrait, NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
+    label: '',
+    glyph: c.good.glyph,
+    palette: c.good.palette,
+  });
+}
+
 for (const m of Object.values(MINIONS)) {
   assets.push({
     id: `minion_${m.id}`,

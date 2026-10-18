@@ -43,7 +43,6 @@ export const CVC_WORDS: Word[] = [
   { word: 'pen', glyph: '🖊️', decodable: true },
   { word: 'van', glyph: '🚐', decodable: true },
   { word: 'bat', glyph: '🦇', decodable: true },
-  { word: 'ant', glyph: '🐜', decodable: true },
   { word: 'bag', glyph: '👜', decodable: true },
   { word: 'can', glyph: '🥫', decodable: true },
   { word: 'nut', glyph: '🥜', decodable: true },
@@ -55,7 +54,6 @@ export const CVC_WORDS: Word[] = [
   { word: 'mop', draw: 'mop', decodable: true },
   { word: 'pot', draw: 'pot', decodable: true },
   { word: 'rat', glyph: '🐀', decodable: true },
-  { word: 'six', glyph: '🎲', decodable: true },
 ];
 
 /** Character names as sight words. The picture is the character's own card. */
@@ -77,7 +75,9 @@ export const WORD_BY_ID: Record<string, Word> = Object.fromEntries(WORDS.map((w)
 
 /** The picture asset id for a word: its own card, or the character's. */
 export function pictureFor(word: Word): string {
-  return word.character ? `char_${word.character}_good` : `pic_${word.word}`;
+  // A character's picture is its name-free face card: the normal card prints
+  // the name, which would turn reading the name into matching letters.
+  return word.character ? `face_${word.character}` : `pic_${word.word}`;
 }
 
 /** Capitalised, for names: "Seraphina!" rather than "seraphina!". */
