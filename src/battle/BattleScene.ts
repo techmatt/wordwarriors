@@ -949,6 +949,20 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       this.hudLabels.push(this.add.text(30, 14 + i * 44, h.init.name, style).setDepth(DEPTH.hud + 1));
     });
     this.hudLabels.push(this.add.text(GAME_WIDTH - 30, 14, this.villain.init.name, style).setOrigin(1, 0).setDepth(DEPTH.hud + 1));
+
+    // What she made in the minigames, in a row beside the heroes' bars, so
+    // the link from reading to the fight stays on screen the whole battle.
+    const made: string[] = [];
+    if (episode.made.gem) made.push('prop_gem');
+    if (episode.made.ammo) made.push('prop_ammo');
+    if (episode.made.helper) made.push('minion_helper');
+    if (episode.made.item) made.push(`item_${villainSpec().counter.id}`);
+    made.forEach((key, i) => {
+      const icon = fitImage(this.add.image(370 + i * 58, 40, key), 50, 50).setDepth(DEPTH.hud + 1);
+      const s = icon.scale;
+      icon.setScale(0);
+      this.tweens.add({ targets: icon, scale: s, duration: 300, delay: 300 + i * 120, ease: 'Back.easeOut' });
+    });
   }
 
   private drawHud(): void {
