@@ -9,6 +9,9 @@
 | Voice data | `src/voice/VoiceBank.ts` | `voiceBank.loadGroups([...])`; groups are `core`, `phonics`, `nar_<narrator>`, `fighter_<fighter>`. |
 | Voice arbiter | `src/audio/VoiceBus.ts` | `voiceBus.say(id, 'instruction' \| 'bark', anchor?)`. The only way to speak. Caption and Bubbles listen to it. |
 | SFX | `src/audio/sfx.ts` | Synthesised; one master gain, ducked while a voice line plays. |
+| Music | `src/audio/music.ts` | Synthesised step sequencer: `startMusic('title' \| 'room' \| 'battle')`, ducked under speech. |
+| Journey map | `src/scenes/JourneyScene.ts` | Shown by `advance()` before prep, battle, spell and victory steps (`JOURNEY_BEFORE`). |
+| Frame safety net | `src/main.ts` | `Phaser.Game.prototype.step` wrapped so one throwing frame cannot stop the loop. |
 | Captions | `src/ui/Caption.ts` | Instruction lines along the bottom, spoken word highlighted, speaker portrait. |
 | Bubbles | `src/ui/Bubbles.ts` | Barks over a moving anchor (`{x, y, bubbleOffset, active}`), e.g. a `Fighter`. |
 | Walking rooms | `src/world/RoomScene.ts` | Base for picks, prep games, retreat. Subclass: `background()`, `build()`, `choose(spot)`, optional `hint()`. |
