@@ -1,10 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
 
-import { PORT } from './src/port';
+import { TEST_PORT } from './src/port';
 
 // WW_BASE_URL points the suite at an already-running server (e.g. a `vite preview`
 // of a build on another port), so a long run is not reloaded by edits to src/.
-const BASE_URL = process.env.WW_BASE_URL ?? `http://localhost:${PORT}`;
+// Otherwise the suite starts its own server on TEST_PORT, never the dev port, and
+// never reuses one: whatever already answers there may be another checkout's code.
+const BASE_URL = process.env.WW_BASE_URL ?? `http://localhost:${TEST_PORT}`;
 
 export default defineConfig({
   testDir: './tests',
@@ -35,9 +37,10 @@ export default defineConfig({
   webServer: process.env.WW_BASE_URL
     ? undefined
     : {
-        command: 'npm run dev',
+        // strictPort (vite.config.ts) makes a busy TEST_PORT fail loudly.
+        command: `npx vite --port ${TEST_PORT}`,
         url: BASE_URL,
-        reuseExistingServer: !process.env.CI,
+        reuseExistingServer: false,
         timeout: 120_000,
         stdout: 'ignore',
         stderr: 'pipe',

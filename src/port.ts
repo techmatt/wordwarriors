@@ -7,3 +7,10 @@
  * own dependency-free file so the Node-side configs can import it.
  */
 export const PORT = 5174;
+
+/**
+ * The port Playwright serves the game on for its own run. Not PORT: a dev server
+ * on 5174 from the main checkout (Matt's `game` run target) would otherwise be
+ * reused by a test run in a worktree, testing the main branch's code.
+ */
+export const TEST_PORT = 5184;
