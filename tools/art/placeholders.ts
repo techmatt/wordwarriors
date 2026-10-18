@@ -15,7 +15,7 @@
  * same list (content/art/assets.ts).
  */
 
-import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, stat, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { chromium } from '@playwright/test';
@@ -631,6 +631,18 @@ export async function paintPlaceholders(argv: string[]): Promise<void> {
       await browser.close();
     }
   }
+
+  // Placeholders for ids that no longer exist go; anything else (real art) stays.
+  const known = new Set(ART_ASSETS.map((a) => `${a.id}.png`));
+  const pruned: string[] = [];
+  for (const f of await readdir(OUT)) {
+    if (!f.endsWith('.png') || known.has(f)) continue;
+    if (isPlaceholder(await readFile(path.join(OUT, f)))) {
+      await unlink(path.join(OUT, f));
+      pruned.push(f);
+    }
+  }
+  if (pruned.length) console.log(`art: removed orphan placeholders ${pruned.join(', ')}`);
 
   await mkdir('docs', { recursive: true });
   await writeFile(path.join('docs', 'art.md'), `${artDoc()}\n`);
