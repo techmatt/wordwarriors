@@ -155,6 +155,11 @@ a time.
   keyed to transparency (`tools/art/chroma.ts`), trimmed, and fitted to twice their
   display box. Rooms and arenas are cropped to fill 1280×720. The contact sheet is
   `scratch/art_contact.png`.
+- **Keeping the originals:** `art-originals/` and `scratch/` are git-ignored, so in a
+  worktree they vanish when it is cleaned up. The kept copies live in the main checkout,
+  `C:\Code\wordwarriors\art-originals\` (with `log.jsonl`) and `C:\Code\wordwarriors\scratch\`
+  (Matt, 2026-10-18): copy a worktree's into them before it finishes. Batch 1's 177
+  originals and `art_contact_006.png` are there; 005's six originals were already lost.
 - **Allowance:** Codex logs the plan's usage in its session file
   (`~/.codex/sessions/…/rollout-*-<thread>.jsonl`, `rate_limits`: percent of a 5-hour
   and a 1-week window). The script prints it after each image and stops at the first
