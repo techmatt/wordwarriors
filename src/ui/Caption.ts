@@ -42,6 +42,15 @@ export class Caption {
 
   private show(u: Utterance | null): void {
     if (!this.root.active) return;
+    // Letter sounds are never captioned: their text is a placeholder spelling
+    // ("Puh") that is not a thing to read, and captioning the letter instead
+    // would hand her the answer in Sound to Letter. The letter on the stone,
+    // tile or ghost box is what lights up.
+    if (u?.id.startsWith('letter_')) {
+      this.current = null;
+      this.root.setVisible(false);
+      return;
+    }
     if (!u || u.priority !== 'instruction' || !u.line) {
       if (!u) {
         // Leave the last line up briefly, so a short line can still be read.
