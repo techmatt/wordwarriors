@@ -31,7 +31,7 @@ import Phaser from 'phaser';
 import { charArt } from '../../content/art/assets';
 import { CHARACTER_BY_ID, MINIONS, comboFor } from '../../content/battle/roster';
 import type { AbilitySpec, Status } from '../../content/battle/types';
-import { fighterId, moveLine, narratorLine, tauntLine, ultimateLine } from '../../content/voice/ids';
+import { fighterId, moveLine, nameLine, narratorLine, tauntLine, ultimateLine } from '../../content/voice/ids';
 import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxSummon, sfxUltimate, sfxWrong } from '../audio/sfx';
@@ -453,8 +453,18 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
   /** Two heroes (or the hero and the helper) fire a combo together. */
   private async combo(): Promise<void> {
     const a = this.heroes[0]!;
-    const b = this.heroes[1] ?? this.helper;
-    if (!b || !b.active) return;
+    let b = this.heroes[1] ?? this.helper;
+    // With no ally and no helper, the narrator swoops in for the combo and
+    // leaves again: nobody fights alone at the big moment.
+    let cameo: Fighter | null = null;
+    if (!b || !b.active) {
+      const id = narrator();
+      cameo = this.spawn(initFromSpec(CHARACTER_BY_ID[id]!.good, id, charArt(id, false), 'hero'), -160, a.y + 30);
+      cameo.invulnerable = true;
+      b = cameo;
+      void voiceBus.say(nameLine(id), 'bark', cameo);
+      await this.simWait(0.45);
+    }
     this.phase = 'combo';
     const ab = comboFor(a.init.id, b.init.id);
     // Both glow and fly together, then fire as one.
@@ -474,6 +484,11 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.stats.combos++;
     this.stats.abilitiesFired += 2;
     await this.simWait(1.5);
+    if (cameo) {
+      const c = cameo;
+      c.busyUntil = this.now + 10_000;
+      this.tweens.add({ targets: c, x: -220, duration: 600, ease: 'Quad.easeIn', onComplete: () => c.destroy() });
+    }
     if (this.phase === 'combo') this.phase = 'fight';
   }
 
