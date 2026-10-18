@@ -24,6 +24,8 @@ One `CharacterSpec` in `ROSTER`:
   - `look` (the art brief), `palette` `[main, accent]`, `glyph` (placeholder emoji; avoid
     Emoji 13+, Windows 10 lacks them).
   - `style`: `hover | twirl | stomp | dodge | slither | blink | fly | march`.
+  - optional `mount` (`'carpet'` is drawn; any emoji works, e.g. `'🧹'`) and `trail`
+    (`{ tint: [colours], shape: 'spark' | 'star' | 'smoke' | 'square' }`, its aura).
   - `speed` (px/s), `size` (1 person, 1.4 big, 1.8 giant), `hp` (cosmetic).
   - `abilities`: three or more `AbilitySpec`; at least two on the good side should carry
     a `word` from `MOVE_WORDS`, so the move-choice pause has words to offer.
