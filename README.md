@@ -30,11 +30,13 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
 
 1. Title: press green. (The hero / friend / bad-guy picks are off while v0.2 is being
    tested; the cast comes from `EPISODE_DEFAULTS`, below.)
-2. **Bedroom.** She wakes up; Dada Matt comes in: "Good news, Julia! Elsa is here to
-   play! Bad news, EvilRilla is coming, and he's going to eat Dada Jason's car!" The
-   room darkens under the villain's mood (footprints, a cracked window). No reading:
-   every toy does something silly on green. The door sparkles if she has not found it
-   20 seconds after the news (`DOOR_SPARKLE_MS`).
+2. **Bedroom.** She is asleep in bed; Dada Matt comes in: "Wake up, wake up!" and she
+   presses green to jump out of bed (after 6 seconds she wakes anyway). Then: "Good
+   news, Julia! Elsa is here to play! Bad news, EvilRilla is coming, and he's going to
+   eat Dada Jason's car!" The room darkens under the villain's mood (footprints, a
+   cracked window). No reading: every toy does something silly on green. The door
+   glows; it sparkles if she has not gone through it 12 seconds after the news
+   (`DOOR_SPARKLE_MS`).
 3. **The house (hub).** The helper (the ally, or the narrator) teaches a spell: she
    stands in the magic circle, presses green, and the word flies into her. That word
    is her first battle move. Then two side doors open.
@@ -51,14 +53,16 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    hops). The fetched things pop out of her bag and are used. At a move choice the
    fight freezes, 2–3 word pads glow on the arena floor, the partner says which word;
    she walks her hero onto that pad and presses green. The first choice is the spell
-   she learned. It ends with the villain's ultimate: "Too strong! Retreat!"
+   she learned. It ends with the villain's ultimate: "Too strong! Retreat!", and the
+   heroes pick themselves up and run for home.
 6. **The house, part 2.** Back in the hub a secret door pops out: the attic, with the
    villain's counter sentence (`EVILRILLA IS SCARED OF MICE`). Then the front door again.
 7. **Battle part 2**: the counter-item beats the ultimate, everyone finishes it, and
    the villain turns good. Victory replays the words she read; green plays again.
 
-A journey map shows before each battle and the victory. v0.2 episodes have not been
-timed yet (v0.1 took roughly 10–15 minutes for a child).
+A journey map shows before each battle, the trip home after the retreat, and the
+victory. With the test harness answering instantly a v0.2 episode takes about 4.6
+minutes (measured 2026-10-18); a child's pace has not been timed.
 
 The four v0.1 prep games (Sound to Letter, Blend Path, Word to Picture, Spell the
 Spell), the alarm and the retreat camp are **parked**: no episode includes them, but
