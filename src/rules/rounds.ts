@@ -27,7 +27,7 @@ export interface WordItem {
 const SOUND_SKIP = new Set(['q', 'x']);
 // Letters that look alike, or whose placeholder sounds alike (c and k are both
 // "Kuh"; a "Aah" and o "Ah"), never share a round.
-const MIRROR_SETS = [new Set(['b', 'd', 'p', 'q']), new Set(['m', 'n']), new Set(['u', 'n']), new Set(['c', 'k', 'q']), new Set(['a', 'o', 'u']), new Set(['e', 'i'])];
+const MIRROR_SETS = [new Set(['b', 'd', 'p', 'q']), new Set(['m', 'n']), new Set(['u', 'n']), new Set(['c', 'k', 'q']), new Set(['a', 'o', 'u']), new Set(['e', 'i']), new Set(['v', 'w', 'y']), new Set(['m', 'w']), new Set(['i', 'l', 'j'])];
 
 /** Words whose pictures could be mistaken for each other never share a round. */
 const LOOKALIKES = [['bus', 'van', 'jet'], ['hat', 'cap'], ['cat', 'rat', 'bat'], ['cup', 'can', 'pot'], ['pen', 'pin']];
@@ -53,10 +53,13 @@ export function soundRound(store: ProgressStore, n: number, rand: Rand = Math.ra
   const letters = LETTERS.map((l) => l.letter).filter((l) => !SOUND_SKIP.has(l));
   const targets = pickWeighted(letters, (id) => store.shakiness('sounds', id), n, rand);
   return targets.map((target) => {
-    const others = shuffle(
-      letters.filter((l) => l !== target && !confusable(l, target)),
-      rand,
-    ).slice(0, choices - 1);
+    // Distractors that differ from the target and from each other.
+    const others: string[] = [];
+    for (const l of shuffle(letters, rand)) {
+      if (others.length >= choices - 1) break;
+      if (l === target || confusable(l, target) || others.some((o) => confusable(o, l))) continue;
+      others.push(l);
+    }
     return { target, choices: shuffle([target, ...others], rand) };
   });
 }

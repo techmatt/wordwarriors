@@ -78,7 +78,13 @@ test('rounds: 3–5 items, the target among the choices, choices distinct', () =
   // Word to Picture: no two choices share a first letter.
   for (const item of pictureRound(p, 4, r)) assert.equal(new Set(item.choices.map((w) => w[0])).size, item.choices.length);
   // Sound to Letter never offers b and d together.
-  for (let i = 0; i < 50; i++) for (const item of soundRound(p, 4, r)) assert.ok(!(item.choices.includes('b') && item.choices.includes('d')));
+  for (let i = 0; i < 50; i++) {
+    for (const item of soundRound(p, 4, r)) {
+      assert.ok(!(item.choices.includes('b') && item.choices.includes('d')));
+      assert.ok(!(item.choices.includes('v') && item.choices.includes('w')));
+      assert.ok(!(item.choices.includes('c') && item.choices.includes('k')));
+    }
+  }
 });
 
 test('choiceCount drops to two while she is struggling this session', () => {
