@@ -105,6 +105,8 @@ export class Fighter {
   alive = true;
   /** Floored by the Part 1 ultimate: lies still, dizzy, unhurt. */
   floored = false;
+  /** Clamped fully on screen once the intro run-in is over. */
+  onStage = false;
   /** Busy with an ability animation; movement pauses. */
   busyUntil = 0;
   cooldowns = new Map<string, number>();
@@ -207,6 +209,8 @@ export class Fighter {
   }
 
   clearOverlay(): void {
+    if (this.overlay) this.scene.tweens.killTweensOf(this.overlay);
+    if (this.overlay instanceof Phaser.GameObjects.Container) this.scene.tweens.killTweensOf(this.overlay.list);
     this.overlay?.destroy();
     this.overlay = null;
     this.sprite.setVisible(true).clearTint();
@@ -214,6 +218,7 @@ export class Fighter {
 
   setShield(seconds: number, color: number, now: number): void {
     this.shieldUntil = now + seconds * 1000;
+    if (this.shieldBubble) this.scene.tweens.killTweensOf(this.shieldBubble);
     this.shieldBubble?.destroy();
     this.shieldBubble = this.scene.add
       .image(0, -this.height * 0.5, TEX.glow)
@@ -233,12 +238,15 @@ export class Fighter {
       this.clearOverlay();
     }
     if (this.shieldBubble && this.shieldUntil <= now) {
+      this.scene.tweens.killTweensOf(this.shieldBubble);
       this.shieldBubble.destroy();
       this.shieldBubble = null;
     }
     // Keep the whole card on screen, not just its centre.
-    const half = this.height * 0.4 * this.scaleMul + 10;
-    this.x = Math.min(Math.max(this.x, half), 1280 - half);
+    if (this.onStage || this.init.kind !== 'main') {
+      const half = this.height * 0.4 * this.scaleMul + 10;
+      this.x = Math.min(Math.max(this.x, half), 1280 - half);
+    }
     this.root.setPosition(this.x, this.y);
     this.root.setDepth(this.y);
     this.bobPhase += dt * (this.floored ? 1.5 : 5);

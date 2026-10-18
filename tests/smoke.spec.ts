@@ -22,6 +22,37 @@ test('title boots, green starts the hero pick, F9 opens the grown-ups page', asy
   expectNoErrors(errors);
 });
 
+test('mashing green on a pick picks once, and the next room still runs', async ({ page }) => {
+  const errors = collectErrors(page);
+  await boot(page, '?scene=pick&nojourney=1');
+  const s = await until(page, (st) => st.scene === 'Pick' && Boolean(st.room && !st.room.locked), 30_000, 'hero pick');
+  const elsa = s.room!.spots.find((sp) => sp.id === 'elsa')!;
+  await walkTo(page, elsa.x, elsa.y + 12);
+  for (let i = 0; i < 4; i++) {
+    await press(page, 'green');
+    await page.waitForTimeout(120);
+  }
+  const ally = await until(page, (st) => st.step.what === 'ally' && Boolean(st.room && !st.room.locked), 30_000, 'ally pick');
+  expect(ally.episode.hero).toBe('elsa');
+  // The ally room must be alive: walking still moves her.
+  const before = ally.room!.player.x;
+  await walkTo(page, before + 150, ally.room!.player.y);
+  expect(errors).toEqual([]);
+});
+
+test('F9 out of a minigame and back: the room restarts cleanly', async ({ page }) => {
+  const errors = collectErrors(page);
+  await boot(page, '?scene=sound&hero=julia&villain=smaug');
+  await until(page, (s) => s.room?.round.startsWith('sound:0:') === true && !s.room.locked, 60_000, 'first item');
+  await page.keyboard.press('F9');
+  await until(page, (s) => s.scene === 'Parent', 10_000, 'parent');
+  await press(page, 'red');
+  await until(page, (s) => s.scene === 'SoundToLetter' && s.room?.round.startsWith('sound:0:') === true && !s.room.locked, 60_000, 'room again');
+  await choose(page);
+  await until(page, (s) => s.room?.round.startsWith('sound:1:') === true, 60_000, 'second item');
+  expectNoErrors(errors);
+});
+
 test('Sound to Letter: a wrong stone costs nothing, a right one advances and is recorded', async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=sound&hero=julia&ally=elsa&villain=smaug');
@@ -75,7 +106,8 @@ test('Battle part 2: move choice, counter-item, finish, victory', async ({ page 
   const errors = collectErrors(page);
   await boot(page, '?scene=battle&part=2&hero=elsa&ally=anna&villain=scar');
   await until(page, (s) => s.scene === 'Battle', 30_000, 'battle');
-  const end = await playBattle(page, 2);
+  await playBattle(page, 2);
+  const end = await until(page, (s) => s.scene === 'Victory', 30_000, 'victory');
   expect(end.scene).toBe('Victory');
   expect(end.battle?.ultimates).toBe(1);
   expect(end.battle?.movePicks).toBe(2);

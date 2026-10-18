@@ -383,7 +383,9 @@ const summon: Cast = (w, f, ab, _target, mult) => {
   const spec: MinionSpec | undefined = MINIONS[ab.minion ?? ''];
   if (!spec) return;
   const existing = w.alliesOf(f).filter((a) => a.init.kind === 'minion').length;
-  const n = Math.max(0, Math.min(Math.round((ab.count ?? 1) * (mult > 1.5 ? 1.5 : 1)), MINION_CAP - existing));
+  // A finisher or ultimate always gets its crowd, a little past the usual cap.
+  const cap = mult >= 2 ? MINION_CAP + 6 : MINION_CAP;
+  const n = Math.max(0, Math.min(Math.round((ab.count ?? 1) * (mult > 1.5 ? 1.5 : 1)), cap - existing));
   if (!n) return;
   w.busy(f, 600);
   sfxSummon();
@@ -458,7 +460,10 @@ const teleport: Cast = (w, f, ab, target, mult) => {
 
 const clones: Cast = (w, f, ab, _target, mult) => {
   const s = w.stage;
-  const n = Math.round((ab.count ?? 2) * (mult > 1.5 ? 1.5 : 1));
+  // At most 6 clones of anybody at once (an ultimate may add a few more).
+  const have = w.alliesOf(f).filter((a) => a.cloneOf === f).length;
+  const n = Math.max(0, Math.min(Math.round((ab.count ?? 2) * (mult > 1.5 ? 1.5 : 1)), (mult >= 2 ? 10 : 6) - have));
+  if (!n) return;
   w.busy(f, 500);
   sfxPoof();
   for (let i = 0; i < n; i++) {
@@ -545,7 +550,7 @@ const heal: Cast = (w, f, ab, _target, mult) => {
   sfxHeal();
   for (const a of [f, ...w.alliesOf(f)]) {
     a.hp = Math.min(a.maxHp, a.hp + a.maxHp * 0.15 * mult);
-    w.stage.add
+    const em = w.stage.add
       .particles(a.cx, a.cy + 40, TEX.star, {
         speedY: { min: -220, max: -80 },
         speedX: { min: -40, max: 40 },
@@ -558,6 +563,7 @@ const heal: Cast = (w, f, ab, _target, mult) => {
         blendMode: Phaser.BlendModes.ADD,
       })
       .setDepth(DEPTH.fx);
+    w.after(1400, () => em.destroy());
   }
 };
 
@@ -722,7 +728,7 @@ export const CASTS: Record<AbilitySpec['kind'], Cast> = {
   spin,
   dash,
   summon,
-  polymorph: statusBolt('pig'),
+  polymorph: (w, f, ab, t, m) => statusBolt(ab.status ?? 'pig')(w, f, ab, t, m),
   freeze: statusBolt('freeze'),
   teleport,
   clones,

@@ -354,6 +354,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.banner(this.part === 1 ? 'FIGHT!' : 'ROUND TWO!', 0xff3d7a, true);
     sfxFanfare();
     await this.say(this.part === 1 ? 'battle_start' : 'battle2_start');
+    for (const f of this.fighters) f.onStage = true;
     this.phase = 'fight';
   }
 
@@ -521,6 +522,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     const good = picked === right;
     progress.record('words', right, good, good ? 0 : 1);
     const { f, ab } = owners.get(picked)!;
+    f.status = null;
+    f.clearOverlay();
     if (good) {
       sfxRight();
       flash(this, 0xffffff, 200);
@@ -563,7 +566,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.phase = 'ultimate';
     const v = this.villain;
     const ult = v.init.ultimate!;
-    // Clear the floor a little: villain minions bow out, the villain takes centre.
+    // The villain winds up as itself, not as a pig or an ice block.
+    v.status = null;
+    v.clearOverlay();
     this.tweens.add({ targets: v, x: 900, y: 560, duration: 600 });
     // Everyone back to their own side, so the big moment reads left against right.
     this.heroes.forEach((h, i) => {
@@ -864,6 +869,11 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
 
   private updateTraps(): void {
     for (const t of this.traps) {
+      if (t.obj.active && this.now - t.armedAt > 12_000) {
+        this.tweens.killTweensOf(t.obj);
+        t.obj.destroy();
+        continue;
+      }
       if (this.now < t.armedAt || !t.obj.active) continue;
       const victim = this.fighters.find((e) => e.active && e.team !== t.team && !e.floored && Math.abs(e.x - t.x) < 55 && Math.abs(e.y - t.y) < 40);
       if (victim) {
@@ -871,6 +881,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
         shockwave(this, t.x, t.y, t.color, 120);
         sfxBoom(1);
         this.hit(victim, t.power, t.color, t.from, { kind: 'stun', duration: 1.2 });
+        this.tweens.killTweensOf(t.obj);
         t.obj.destroy();
       }
     }
@@ -921,6 +932,11 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     const ts = base * this.simRate;
     this.tweens.timeScale = ts;
     this.time.timeScale = ts;
+    // Particle emitters keep their own clock; without this they pour out at
+    // full rate through the move-choice freeze and hit-stop.
+    for (const obj of this.children.list) {
+      if (obj instanceof Phaser.GameObjects.Particles.ParticleEmitter) obj.timeScale = ts;
+    }
     const realDt = Math.min(0.05, deltaMs / 1000);
     const dt = realDt * ts;
     this.now += deltaMs * ts;

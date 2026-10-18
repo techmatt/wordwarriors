@@ -44,7 +44,8 @@ test('a full episode plays end to end @slow', async ({ page }) => {
   await playMinigame(page);
 
   await until(page, (s) => s.scene === 'Battle', 30_000, 'battle 2');
-  const afterB2 = await playBattle(page, 2);
+  await playBattle(page, 2);
+  const afterB2 = await until(page, (s) => s.scene === 'Victory', 30_000, 'victory');
   expect(afterB2.scene).toBe('Victory');
   expect(afterB2.battle?.villains[0]?.hp).toBe(0);
   expect(afterB2.episode.made).toEqual({ gem: expect.any(Boolean), ammo: expect.any(Boolean), helper: expect.any(Boolean), item: true });
