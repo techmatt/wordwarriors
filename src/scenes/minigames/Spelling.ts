@@ -63,8 +63,9 @@ export class Spelling extends Minigame {
     this.itemIndex = 0;
     this.makeMeter(this.words.length, `item_${counter.id}`, counter.glyph);
     this.player.place(300, 600);
-    const anvil = this.art('prop_anvil', 260, 170, GAME_WIDTH / 2, 640);
+    const anvil = this.art('prop_anvil', 220, 150, GAME_WIDTH - 170, 620);
     anvil.setDepth(600);
+    this.makeKeyboard();
     this.closeEntry = openTextEntry((l) => this.onLetter(l));
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.closeEntry?.());
     void (async () => {
@@ -125,6 +126,43 @@ export class Spelling extends Minigame {
 
   private highlightCursor(): void {
     this.boxes.forEach((b, i) => b.rect.setStrokeStyle(6, i === this.cursor ? 0xffd23f : 0x5a4a8a));
+    this.glowKey(this.boxes[this.cursor]?.letter ?? null);
+  }
+
+  /**
+   * A small picture of the keyboard (QWERTY, capitals as printed on the keys)
+   * with the next letter's key glowing, so a hunt-and-peck four-year-old knows
+   * where to look; the lowercase she is typing sits small in each key's corner.
+   */
+  private keys = new Map<string, Phaser.GameObjects.Container>();
+
+  private makeKeyboard(): void {
+    this.keys = new Map();
+    const rows = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
+    const size = 46;
+    const gap = 6;
+    rows.forEach((row, r) => {
+      const x0 = GAME_WIDTH / 2 - ((row.length - 1) * (size + gap)) / 2 + r * 14;
+      [...row].forEach((ch, i) => {
+        const bg = this.add.rectangle(0, 0, size, size, 0xfaf6ee).setStrokeStyle(3, 0x5a4a8a);
+        // Capital as printed on the real keycap; the lowercase she types, small.
+        const cap = this.add.text(-2, 1, ch.toUpperCase(), { fontFamily: '"Arial Black", sans-serif', fontSize: '24px', color: '#3a2a5a' }).setOrigin(0.5);
+        const low = this.add.text(size / 2 - 5, -size / 2 + 2, ch, { fontFamily: '"Comic Sans MS", sans-serif', fontSize: '14px', color: '#7a6a9a' }).setOrigin(1, 0);
+        const key = this.add.container(x0 + i * (size + gap), 480 + r * (size + gap), [bg, cap, low]).setDepth(DEPTH.hud - 3);
+        this.keys.set(ch, key);
+      });
+    });
+  }
+
+  private glowKey(letter: string | null): void {
+    for (const [ch, key] of this.keys) {
+      const bg = key.list[0] as Phaser.GameObjects.Rectangle;
+      this.tweens.killTweensOf(key);
+      key.setScale(1);
+      const on = ch === letter;
+      bg.setFillStyle(on ? 0xffd23f : 0xfaf6ee).setStrokeStyle(3, on ? 0xff7b00 : 0x5a4a8a);
+      if (on) this.tweens.add({ targets: key, scale: 1.18, duration: 380, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    }
   }
 
   private onLetter(letter: string): void {
