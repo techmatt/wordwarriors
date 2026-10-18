@@ -836,7 +836,7 @@
   "id": "ult_jasmine",
   "speaker": "jasmine",
   "group": "fighter_jasmine",
-  "text": "Desert Wind!"
+  "text": "Jewel Storm!"
  },
  {
   "id": "move_jasmine_wind_fan",
@@ -911,10 +911,16 @@
   "text": "Sand Blast!"
  },
  {
-  "id": "move_jasmine_evil_smoke_carpet",
+  "id": "move_jasmine_evil_quicksand",
   "speaker": "jasmine_evil",
   "group": "fighter_jasmine_evil",
-  "text": "Smoke Carpet!"
+  "text": "Quicksand Traps!"
+ },
+ {
+  "id": "move_jasmine_evil_sand_hail",
+  "speaker": "jasmine_evil",
+  "group": "fighter_jasmine_evil",
+  "text": "Sand Hail!"
  },
  {
   "id": "move_jasmine_evil_whirlwinds",
@@ -1234,7 +1240,7 @@
   "id": "ult_smaug",
   "speaker": "smaug",
   "group": "fighter_smaug",
-  "text": "Gift Avalanche!"
+  "text": "Rainbow Fire!"
  },
  {
   "id": "move_smaug_fire_breath",
@@ -1321,6 +1327,18 @@
   "text": "Gold Guards!"
  },
  {
+  "id": "move_smaug_evil_molten_gold",
+  "speaker": "smaug_evil",
+  "group": "fighter_smaug_evil",
+  "text": "Molten Gold Beam!"
+ },
+ {
+  "id": "move_smaug_evil_hot_coals",
+  "speaker": "smaug_evil",
+  "group": "fighter_smaug_evil",
+  "text": "Hot Coals!"
+ },
+ {
   "id": "move_smaug_evil_tail_quake",
   "speaker": "smaug_evil",
   "group": "fighter_smaug_evil",
@@ -1372,7 +1390,7 @@
   "id": "ult_scar",
   "speaker": "scar",
   "group": "fighter_scar",
-  "text": "Laser Light Show!"
+  "text": "Confetti Cannon!"
  },
  {
   "id": "move_scar_rocket_fist",

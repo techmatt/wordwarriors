@@ -392,7 +392,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('dust_devils', 'Dust Devils', 'summon', 12, 0xe8c890, 2, { minion: 'dust_devil', count: 3, word: 'pop' }),
         ab('star_jewels', 'Star Jewels', 'bolt', 2.4, 0xff5ab4, 1, { count: 3, glyph: '💎' }),
       ],
-      ultimate: ab('desert_wind', 'Desert Wind', 'wave', 0, 0xffc857, 3, { color2: 0x1fb5a8 }),
+      ultimate: ab('jewel_storm', 'Jewel Storm', 'rain', 0, 0xff5ab4, 3, { count: 30, glyph: '💎', color2: 0x1fb5a8 }),
       taunts: [
         { key: 'fly', text: 'Hop on my carpet!' },
         { key: 'wind', text: 'Feel the wind!' },
@@ -407,7 +407,8 @@ export const ROSTER: CharacterSpec[] = [
       palette: [0x3a1a4a, 0xe8c890], glyph: '🌪️', style: 'fly', mount: 'carpet', speed: 230, size: 1.05, hp: 140,
       abilities: [
         ab('sand_blast', 'Sand Blast', 'cone', 4, 0xe8c890, 2),
-        ab('smoke_carpet', 'Smoke Carpet', 'dash', 5, 0x5a3a6a, 2),
+        ab('quicksand', 'Quicksand Traps', 'trap', 7, 0xe8c890, 2, { count: 3 }),
+        ab('sand_hail', 'Sand Hail', 'rain', 8, 0xe8c890, 2, { count: 12, glyph: '🟤' }),
         ab('whirlwinds', 'Whirlwinds', 'summon', 11, 0xe8c890, 2, { minion: 'dust_devil', count: 3 }),
       ],
       ultimate: ab('sandstorm', 'Great Sandstorm', 'wave', 0, 0xe8c890, 3, { color2: 0x3a1a4a }),
@@ -530,7 +531,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('wing_slam', 'Wing Slam', 'slam', 6, 0xd62828, 3, { word: 'bam' }),
         ab('coin_golems', 'Coin Golems', 'summon', 13, 0xffcc33, 2, { minion: 'gold_golem', count: 2 }),
       ],
-      ultimate: ab('gift_avalanche', 'Gift Avalanche', 'rain', 0, 0xffcc33, 3, { count: 30, glyph: '🟡', color2: 0xff7b00 }),
+      ultimate: ab('rainbow_fire', 'Rainbow Fire', 'cone', 0, 0xff5ab4, 3, { color2: 0xffd23f }),
       taunts: [
         { key: 'gold', text: 'Want some gold?' },
         { key: 'fire', text: 'Warm and toasty!' },
@@ -546,6 +547,8 @@ export const ROSTER: CharacterSpec[] = [
       abilities: [
         ab('inferno', 'Inferno Breath', 'cone', 4, 0xff4a00, 3, { color2: 0xffd23f }),
         ab('gold_golems', 'Gold Guards', 'summon', 10, 0xffcc33, 2, { minion: 'gold_golem', count: 3 }),
+        ab('molten_gold', 'Molten Gold Beam', 'beam', 7, 0xffcc33, 2, { color2: 0xff4a00 }),
+        ab('hot_coals', 'Hot Coals', 'trap', 9, 0xff4a00, 2, { count: 3 }),
         ab('tail_quake', 'Tail Quake', 'slam', 6, 0x5a0a0a, 3),
       ],
       ultimate: ab('gold_avalanche', 'Gold Avalanche', 'rain', 0, 0xffcc33, 3, { count: 40, glyph: '🟡', color2: 0xff4a00 }),
@@ -576,7 +579,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('laser_eye', 'Laser Eye', 'beam', 5, 0x00f5d4, 2, { word: 'zap' }),
         ab('mega_mode', 'Mega Mode', 'grow', 14, 0x00f5d4, 2, { duration: 5, word: 'big' }),
       ],
-      ultimate: ab('friend_grid', 'Laser Light Show', 'grid', 0, 0x00f5d4, 3, { color2: 0xff5ab4 }),
+      ultimate: ab('confetti_cannon', 'Confetti Cannon', 'rain', 0, 0x00f5d4, 3, { count: 34, glyph: '🎉', color2: 0xff5ab4 }),
       taunts: [
         { key: 'beep', text: 'Hello, friend!' },
         { key: 'rocket', text: 'Rocket fist, go!' },
