@@ -37,7 +37,7 @@ step with a URL, e.g. `http://localhost:5174/?scene=battle&part=2&hero=elsa&ally
 
 ## Content work
 
-Everything is data under `content/`. After editing it:
+Everything is data under `content/`; `docs/content.md` walks through each kind. After editing it:
 
 ```
 npm run voice:lines     # regenerate content/voice/lines.json

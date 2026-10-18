@@ -41,7 +41,7 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | `tools/voice/` | `compose.ts` (lines.json from data), `build.ts` (audio + manifest), `providers/`. |
 | `tools/art/placeholders.ts` | Paints placeholder PNGs and writes `docs/art.md`. |
 | `tests/` | Playwright specs + `harness.ts`; `unit/` for node:test. |
-| `docs/` | `systems.md` entry points; `engineering.md` measured facts; `recording.md` Matt's voice side; `art.md` (generated) the art brief. |
+| `docs/` | `systems.md` entry points; `engineering.md` measured facts; `content.md` how to add characters, abilities, words, art; `recording.md` Matt's voice side; `art.md` (generated) the art brief. |
 
 ## Commands
 
@@ -105,5 +105,5 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 | --- | --- |
 | "add a character / ability / taunt" | edit `content/battle/roster.ts`, then `voice:lines`, `voice:build`, `art:placeholders` |
 | "add words" | edit `content/phonics/words.ts`, same three commands |
-| "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`) |
+| "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`); for character art also set `FLIP_TO_FACE = true` in `src/config.ts` |
 | "here are my letter sound recordings" | see `docs/recording.md` |

@@ -81,7 +81,8 @@ export abstract class Minigame extends RoomScene {
     popIn(this, big, big.scale);
     shockwave(this, GAME_WIDTH / 2, 330, 0xffd23f, 300);
     burst(this, GAME_WIDTH / 2, 330, { count: 120, speed: 700, life: 1100 });
-    this.tweens.add({ targets: big, angle: { from: -8, to: 8 }, duration: 300, yoyo: true, repeat: 3 });
+    const bs = big.scale;
+    this.tweens.add({ targets: big, scaleX: bs * 1.12, scaleY: bs * 0.9, duration: 160, yoyo: true, repeat: 3, delay: 380 });
     for (const s of this.meterSlots) this.tweens.add({ targets: s, scale: 1.5, alpha: 0, duration: 500 });
     await voiceBus.say(narratorLine(narrator(), madeLine));
     await this.wait(400);

@@ -4,7 +4,8 @@
  * Holds its own sprite (card art, shadow, status overlays), cosmetic hit
  * points, ability cooldowns and status effects. It does not decide anything:
  * `movement.ts` steers it and `BattleScene` chooses when it casts. Motion on
- * the sprite is only bob, squash/stretch, lean and spin, per the house rule;
+ * the sprite is only bob and squash/stretch (a spin is a card flip in scaleX),
+ * per the house rule;
  * no animation frames exist yet, and real art will drop in under the same ids.
  *
  * Arena space: x across, y = depth on the floor (420..670). `lift` is height
@@ -239,19 +240,24 @@ export class Fighter {
     this.body.y = -this.lift + bobAmt;
     const s = this.scaleMul;
     this.shadow.setScale(Math.max(0.4, 1 - this.lift / 400) * s);
-    // Spin settles to the nearest whole turn, never to "upside down".
+    // Sprites move only by bob and squash/scale (Matt, 2026-10-18), so a "spin"
+    // is a card flip: scaleX runs through cos(spin), which reads as twirling
+    // without ever rotating the art. It settles to the nearest whole turn.
     const turn = Math.PI * 2;
     const rest = Math.round(this.spin / turn) * turn;
     this.spin += (rest - this.spin) * (1 - Math.pow(0.01, dt));
     if (Math.abs(this.spin - rest) < 0.01) this.spin = 0;
+    this.body.rotation = 0;
     if (this.floored) {
       // Sat down, dizzy and wobbling: knocked over, never knocked out. A card
       // lying flat read as "dead", which is not a thing this game shows.
-      this.body.setScale(s * 1.08, s * 0.72);
-      this.body.rotation = Math.sin(this.bobPhase * 2) * 0.18 - 0.12;
+      const wob = Math.sin(this.bobPhase * 2) * 0.06;
+      this.body.setScale(s * (1.1 + wob), s * (0.72 - wob));
     } else {
-      this.body.setScale(s, s);
-      this.body.rotation = this.lean + this.spin;
+      // Moving fast stretches the card along its motion a little.
+      const stretch = Math.min(0.12, Math.abs(this.lean) * 0.5);
+      const flip = this.spin === 0 ? 1 : Math.cos(this.spin);
+      this.body.setScale(s * (1 + stretch) * flip, s * (1 - stretch * 0.6));
     }
     this.body.x = 0;
   }
@@ -295,7 +301,6 @@ export class Fighter {
       .setTintFill(color)
       .setAlpha(0.5)
       .setDepth(this.y - 1)
-      .setRotation(this.body.rotation)
       .setBlendMode(Phaser.BlendModes.ADD);
     this.scene.tweens.add({ targets: ghost, alpha: 0, scale: ghost.scale * 1.1, duration: 350, onComplete: () => ghost.destroy() });
   }

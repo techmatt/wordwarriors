@@ -10,7 +10,7 @@
 import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
-import { WALK_SPEED } from '../config';
+import { FLIP_TO_FACE, WALK_SPEED } from '../config';
 import { fitImage } from '../fx/juice';
 
 const MAX_STEP = 6;
@@ -64,18 +64,16 @@ export class Player {
         this.root.x = Phaser.Math.Clamp(this.root.x + dx * step, this.floor.left, this.floor.right);
         this.root.y = Phaser.Math.Clamp(this.root.y + dy * step, this.floor.top, this.floor.bottom);
       }
-      if (Math.abs(dx) > 0.2) this.facing = dx > 0 ? 1 : -1;
+      if (FLIP_TO_FACE && Math.abs(dx) > 0.2) this.facing = dx > 0 ? 1 : -1;
       this.walkT += dt * 11;
       // Walking bounce: hop and a slight squash at the bottom of each step.
       const hop = Math.abs(Math.sin(this.walkT));
       this.sprite.y = -hop * 10;
       this.sprite.setScale(this.baseScale * this.facing * (1 + (1 - hop) * 0.05), this.baseScale * (1 - (1 - hop) * 0.05));
-      this.sprite.rotation = Math.sin(this.walkT) * 0.05;
     } else {
       if (was) this.land();
       this.walkT += dt * 2.5;
       this.sprite.y = -Math.abs(Math.sin(this.walkT)) * 3;
-      this.sprite.rotation = 0;
     }
     // Draw order follows the feet.
     this.root.setDepth(this.root.y);
@@ -99,6 +97,16 @@ export class Player {
 
   /** A no-penalty bump: sheepish wobble. */
   wobble(): void {
-    this.scene.tweens.add({ targets: this.sprite, angle: { from: -12, to: 12 }, duration: 80, yoyo: true, repeat: 3, onComplete: () => this.sprite.setAngle(0) });
+    // A sheepish squash-wobble (no rotation: sprites only bob and squash).
+    const b = this.baseScale;
+    this.scene.tweens.add({
+      targets: this.sprite,
+      scaleX: { from: b * this.facing * 1.15, to: b * this.facing * 0.9 },
+      scaleY: { from: b * 0.88, to: b * 1.1 },
+      duration: 90,
+      yoyo: true,
+      repeat: 3,
+      onComplete: () => this.sprite.setScale(b * this.facing, b),
+    });
   }
 }

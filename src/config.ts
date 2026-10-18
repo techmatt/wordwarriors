@@ -12,6 +12,13 @@ export const GAME_HEIGHT = 720;
 /** Her walking speed in rooms, design pixels per second. */
 export const WALK_SPEED = 330;
 
+/**
+ * Mirror her character to face the way she walks. Off while the art is
+ * placeholder cards, because a mirrored card mirrors its name; turn on when
+ * real character art lands.
+ */
+export const FLIP_TO_FACE = false;
+
 /** How close (px, centre to centre) she must be for a spot to light up its green dot. */
 export const REACH = 95;
 

@@ -11,7 +11,8 @@ import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
 import { ROSTER } from '../../content/battle/roster';
-import { unlockAudio } from '../audio/context';
+import { getAudioContext, unlockAudio } from '../audio/context';
+import { voiceBus } from '../audio/VoiceBus';
 import { startMusic } from '../audio/music';
 import { sfxSelect } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
@@ -79,6 +80,10 @@ export class TitleScene extends Phaser.Scene {
 
     const dot = makeButtonDot(this, GAME_WIDTH / 2, 380, 'green', 38).setDepth(DEPTH.hud);
     this.tweens.add({ targets: dot, y: 370, duration: 500, yoyo: true, repeat: -1 });
+
+    // The welcome can only be heard once audio is unlocked, i.e. coming back
+    // here after an episode; on a cold start the first press is the unlock.
+    if (getAudioContext()?.state === 'running') this.time.delayedCall(700, () => void voiceBus.say('core_title'));
 
     this.add
       .text(GAME_WIDTH - 10, 10, 'grown-ups: hold LB + RB, or F9', { fontFamily: 'sans-serif', fontSize: '14px', color: '#ffffff' })
