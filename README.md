@@ -65,7 +65,7 @@ npm run art:placeholders  # paint missing art, rewrite docs/art.md
   `align.ts` splits it rather than failing.
 - edge-tts pads each clip with ~1.5 s of silence; the build cuts mp3 frames after the
   last word + 0.2 s (`tools/voice/mp3.ts`). That took the voice folder from 23.7 MB to
-  about 19 MB for 1,557 lines.
+  about 19 MB (1,557 lines then; 1,630 now, still about 19 MB).
 - Placeholder art is painted in headless Chromium so emoji render; Windows 10's emoji
   font lacks Emoji 13+ glyphs (🪙 🪭 🪞 🪲 🥸 🪨), so the roster avoids them.
 - The game itself needs no network: voice and art are committed.

@@ -770,7 +770,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       f.use(ab, this.now);
       cast(this, f, ab, target, f.init.kind === 'helper' ? 1.4 : 1, f.isMain && ab.power >= 2);
       // Big moves are called out by name, if nobody else is talking.
-      if (f.isMain && ab.power >= 2) void voiceBus.say(moveLine(f.init.id, ab.id), 'bark', f);
+      if (f.isMain && ab.power >= 2 && Math.random() < 0.5) void voiceBus.say(moveLine(f.init.id, ab.id), 'bark', f);
       this.stats.abilitiesFired++;
       if (f.isMain) this.teamNextCast[teamKey] = this.now + (teamKey === 'villain' ? 700 : 500);
       break;
@@ -867,7 +867,10 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     const f = speakers[Math.floor(Math.random() * speakers.length)];
     if (!f) return;
     const key = f.init.taunts![Math.floor(Math.random() * f.init.taunts!.length)]!;
-    void voiceBus.say(tauntLine(f.init.id, key), 'bark', f);
+    // A dropped taunt (somebody was talking) tries again soon rather than waiting a full turn.
+    void voiceBus.say(tauntLine(f.init.id, key), 'bark', f).then((ok) => {
+      if (!ok) this.nextTaunt = this.now + 1200;
+    });
   }
 
   // -- HUD -------------------------------------------------------------------------

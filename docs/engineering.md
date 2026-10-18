@@ -10,7 +10,7 @@ without a new measurement.
   Upstream Python `edge-tts` 7.3.1 uses a v2 Sec-MS-GEC token (modified SHA-256 + CS64)
   and works. `tools/voice/providers/edge_tts_worker.py` runs under `uvx` with a pinned
   version; the TS build talks to a pool of 4 workers over JSON lines.
-- **Size.** 1,557 lines. Untrimmed: 23.7 MB, of which 2,976 s speech. edge-tts pads each
+- **Size.** Measured at 1,557 lines (now 1,630, ~19 MB). Untrimmed: 23.7 MB, of which 2,976 s speech. edge-tts pads each
   clip with ~1.5 s of silence; `tools/voice/mp3.ts` trims at the last word + 0.2 s on
   MP3 frame boundaries (MPEG-2 Layer III, 24 kHz, 48 kbps, 144-byte / 24 ms frames).
   Result ~19 MB. Most of it is narrator lines: 13 narrators × ~110 lines. The next big

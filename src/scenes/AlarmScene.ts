@@ -15,7 +15,7 @@ import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxUltimate } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { advance, episode, narrator, villainSpec } from '../episode/Episode';
-import { bob, burst, fitImage, flash, shake } from '../fx/juice';
+import { bob, burst, fitImage, flash, floatText, shake } from '../fx/juice';
 import { Controls } from '../input/Controls';
 import { hookState } from '../testHooks';
 import { Bubbles } from '../ui/Bubbles';
@@ -23,6 +23,7 @@ import { Caption } from '../ui/Caption';
 
 export class AlarmScene extends Phaser.Scene {
   private controls!: Controls;
+  private heroImgs: Phaser.GameObjects.Image[] = [];
 
   constructor() {
     super('Alarm');
@@ -31,6 +32,7 @@ export class AlarmScene extends Phaser.Scene {
   create(): void {
     hookState.scene = 'Alarm';
     hookState.room = null;
+    this.heroImgs = [];
     this.controls = new Controls(this);
     const v = villainSpec();
     this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, `arena_${v.arena}`).setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
@@ -43,6 +45,7 @@ export class AlarmScene extends Phaser.Scene {
     heroes.forEach((id, i) => {
       const img = fitImage(this.add.image(220 + i * 170, 560, charArt(id, false)).setOrigin(0.5, 1), 150, 190).setDepth(DEPTH.fx + 1);
       bob(this, img, 6, 700 + i * 90);
+      this.heroImgs.push(img);
     });
 
     void this.run();
@@ -67,6 +70,12 @@ export class AlarmScene extends Phaser.Scene {
     );
     sfxBoom(3);
     shake(this, 6, 500);
+    // The heroes jump with surprise: a squash, then a stretch upwards.
+    for (const img of this.heroImgs) {
+      const s = img.scale;
+      this.tweens.add({ targets: img, scaleX: s * 0.85, scaleY: s * 1.25, duration: 120, yoyo: true, ease: 'Quad.easeOut' });
+      floatText(this, img.x, img.y - img.displayHeight - 10, '!', '#ffd23f', 64);
+    }
     burst(this, 980, 450, { count: 90, colors: [vf.palette[0], vf.palette[1], 0xffffff], speed: 600 });
     bob(this, vill, 8, 500);
 

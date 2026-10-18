@@ -142,6 +142,20 @@ export abstract class Minigame extends RoomScene {
     wiggle(this, obj);
     this.player.wobble();
     floatText(this, obj.x, obj.y - 120, ['OOPS!', 'HEE HEE!', 'SILLY!', 'BOING!'][this.wrongN % 4]!, '#7ad9ff', 34);
+    // Cartoon dizzy stars circle the thing she picked, then pop away: funny, not wrong.
+    for (let i = 0; i < 4; i++) {
+      const star = this.add.image(obj.x, obj.y - 90, TEX.star).setTint(0xffd23f).setDepth(DEPTH.sparkles);
+      this.tweens.addCounter({
+        from: 0,
+        to: 1,
+        duration: 900,
+        onUpdate: (tw) => {
+          const a = tw.getValue()! * Math.PI * 4 + (i * Math.PI) / 2;
+          star.setPosition(obj.x + Math.cos(a) * 55, obj.y - 90 + Math.sin(a) * 16);
+        },
+        onComplete: () => star.destroy(),
+      });
+    }
     this.wrongN++;
     await voiceBus.say(narratorLine(narrator(), `wrong_${((this.wrongN - 1) % 4) + 1}`));
     this.locked = false;
