@@ -158,6 +158,31 @@ export abstract class Minigame extends RoomScene {
     this.wrongN++;
     await this.say(narratorLine(narrator(), `wrong_${((this.wrongN - 1) % 4) + 1}`));
     this.locked = false;
+    if (this.wrongTries >= 2) this.sparkleAnswer();
+  }
+
+  /**
+   * After two misses on one item the right answer starts to sparkle, gently:
+   * a scaffold so she always gets there, never a penalty or a "wrong" sound.
+   */
+  private sparkleAnswer(): void {
+    // Looked up directly: some games' correctSpot() is a dev cheat with side effects.
+    const spot = this.spots.find((s) => s.correct === true && s.enabled);
+    if (!spot || spot.obj.getData('sparkling')) return;
+    spot.obj.setData('sparkling', true);
+    const b = spot.obj.getBounds();
+    const glow = this.add
+      .particles(spot.x, b.centerY, TEX.star, {
+        speed: { min: 20, max: 70 },
+        scale: { start: 0.7, end: 0 },
+        lifespan: 900,
+        frequency: 90,
+        emitZone: { type: 'random', source: new Phaser.Geom.Rectangle(-b.width / 2, -b.height / 2, b.width, b.height) } as never,
+        tint: [0xffd23f, 0xffffff],
+        blendMode: Phaser.BlendModes.ADD,
+      })
+      .setDepth(spot.obj.depth + 1);
+    spot.obj.once(Phaser.GameObjects.Events.DESTROY, () => glow.destroy());
   }
 
   protected override extraHooks() {
