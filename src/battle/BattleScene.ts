@@ -357,6 +357,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.banner(this.part === 1 ? 'FIGHT!' : 'ROUND TWO!', 0xff3d7a, true);
     sfxFanfare();
     await this.say(this.part === 1 ? 'battle_start' : 'battle2_start');
+    if (this.part === 2) await this.villainSays();
     for (const f of this.fighters) f.onStage = true;
     this.phase = 'fight';
   }
@@ -378,6 +379,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     await this.simWait(7);
     await this.ultimate();
     this.phase = 'end';
+    await this.villainSays();
     await this.say('retreat_1');
     await this.simWait(0.5);
     this.cameras.main.fadeOut(500);
@@ -407,6 +409,14 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.cameras.main.fadeOut(500, 255, 255, 255);
     await this.simWait(0.6);
     advance(this);
+  }
+
+  /** The villain gets a word in at the big beats: a gloat, a challenge. */
+  private async villainSays(): Promise<void> {
+    const keys = this.villain.init.taunts ?? [];
+    const key = keys[Math.floor(Math.random() * keys.length)];
+    if (!key) return;
+    await this.guard(voiceBus.say(tauntLine(this.villain.init.id, key), 'instruction', this.villain));
   }
 
   /** The helper friend from Word to Picture joins the heroes. */

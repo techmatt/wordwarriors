@@ -7,7 +7,8 @@ import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
 import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
-import { narratorLine, wordLine } from '../../content/voice/ids';
+import { CHARACTER_BY_ID } from '../../content/battle/roster';
+import { narratorLine, tauntLine, wordLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
@@ -89,6 +90,10 @@ export class VictoryScene extends Phaser.Scene {
       await voiceBus.say(narratorLine(n, 'victory_1'));
       if (gone()) return;
       await this.recap(gone);
+      if (gone()) return;
+      // The villain, good again, says something friendly in its own voice.
+      const friend = CHARACTER_BY_ID[episode.villain]?.good.taunts[0];
+      if (friend) await voiceBus.say(tauntLine(episode.villain, friend.key));
       if (gone()) return;
       await voiceBus.sequence([narratorLine(n, 'victory_2'), narratorLine(n, 'again')]);
       if (gone()) return;
