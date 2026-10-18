@@ -27,7 +27,7 @@ export const BACKGROUND_STYLE = `${STYLE} A full-bleed background painting filli
  * Leave out anything meant to have green in it (a leaf, a dragon).
  */
 const FAMILY_ART = ['julia', 'ellie', 'dada_matt', 'dada_jason'].flatMap((c) => [`char_${c}_good`, `char_${c}_evil`, `face_${c}`]);
-export const NO_GREEN = new Set([...FAMILY_ART, 'item_bubble_bath', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block']);
+export const NO_GREEN = new Set([...FAMILY_ART, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block']);
 
 /**
  * Likeness references for the family (Matt, 2026-10-18): a photo in the
