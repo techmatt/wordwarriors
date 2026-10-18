@@ -113,6 +113,11 @@ export interface FighterSpec {
    * emoji ('🧹', '🐉'). Placeholder until real art draws the mount in.
    */
   mount?: string;
+  /**
+   * A signature trail of particles that follows the fighter: its colours and
+   * shape. Defaults to sparks in the palette colours.
+   */
+  trail?: { tint: number[]; shape: 'spark' | 'star' | 'smoke' | 'square' };
   /** Pixels per second at full stride. */
   speed: number;
   /** Sprite scale: 1 a person, 1.4 big, 1.8 a giant. */

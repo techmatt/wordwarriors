@@ -108,7 +108,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A fearless four-year-old adventurer with a star wand and a big laugh.',
     arena: 'meadow',
     good: {
-      displayName: 'Julia', look: 'a cheerful little girl in a purple cape with a glowing star wand',
+      displayName: 'Julia', trail: { tint: [0xffd23f, 0xff9ad5], shape: 'star' }, look: 'a cheerful little girl in a purple cape with a glowing star wand',
       palette: [0x9b5de5, 0xffd23f], glyph: '⭐', style: 'dodge', speed: 210, size: 1, hp: 100,
       abilities: [
         ab('star_zap', 'Star Zap', 'bolt', 2.5, 0xffd23f, 1, { count: 3, glyph: '⭐', word: 'zap', shout: true }),
@@ -127,7 +127,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Julia', look: 'a grumpy mirror-image little girl in a black cape with a cracked dark star wand',
+      displayName: 'Evil Julia', trail: { tint: [0xff3355, 0x3a1a5a], shape: 'square' }, look: 'a grumpy mirror-image little girl in a black cape with a cracked dark star wand',
       palette: [0x3a1a5a, 0xff3355], glyph: '💢', style: 'dodge', speed: 210, size: 1, hp: 140,
       abilities: [
         ab('grump_zap', 'Grump Zap', 'bolt', 2.5, 0xff3355, 1, { count: 3, glyph: '💢' }),
@@ -154,7 +154,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A little girl who keeps dragons: she calls them, rides them and talks to them.',
     arena: 'volcano',
     good: {
-      displayName: 'Seraphina', look: 'a little girl with wild red hair in a green tunic, a tiny dragon on her shoulder',
+      displayName: 'Seraphina', trail: { tint: [0x6ad66a, 0xff7b3a], shape: 'spark' }, look: 'a little girl with wild red hair in a green tunic, a tiny dragon on her shoulder',
       palette: [0x2ec27e, 0xff7b3a], glyph: '🐉', style: 'hover', speed: 170, size: 1, hp: 100,
       abilities: [
         ab('dragon_call', 'Dragon Call', 'summon', 12, 0x6ad66a, 2, { minion: 'baby_dragon', count: 2, word: 'pop' }),
@@ -173,7 +173,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Seraphina', look: 'a girl in a dark hooded cloak riding a swarm of shadow dragons, glowing orange eyes',
+      displayName: 'Evil Seraphina', trail: { tint: [0xff4a1a, 0x2a5a3a], shape: 'smoke' }, look: 'a girl in a dark hooded cloak riding a swarm of shadow dragons, glowing orange eyes',
       palette: [0x1a3a2a, 0xff4a1a], glyph: '🐲', style: 'fly', mount: '🐉', speed: 190, size: 1, hp: 140,
       abilities: [
         ab('shadow_dragons', 'Shadow Dragons', 'summon', 10, 0x2a5a3a, 2, { minion: 'baby_dragon', count: 3 }),
@@ -200,7 +200,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A goofy dad wizard with a bottomless bag of dad jokes and a magic spatula.',
     arena: 'kitchen',
     good: {
-      displayName: 'Dada Matt', look: 'a tall smiling dad with glasses and a wizard hat, holding a glowing spatula',
+      displayName: 'Dada Matt', trail: { tint: [0xffbe0b, 0x3a86ff], shape: 'star' }, look: 'a tall smiling dad with glasses and a wizard hat, holding a glowing spatula',
       palette: [0x3a86ff, 0xffbe0b], glyph: '🧙', style: 'hover', speed: 160, size: 1.1, hp: 110,
       abilities: [
         ab('pancake_toss', 'Pancake Toss', 'bolt', 2.4, 0xffbe0b, 1, { count: 3, glyph: '🥞', word: 'pop' }),
@@ -219,7 +219,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Dada Matt', look: 'the same dad with a twirly villain moustache and a cape, holding a joke book of doom',
+      displayName: 'Evil Dada Matt', trail: { tint: [0xc8ff3a, 0x1a2a5a], shape: 'square' }, look: 'the same dad with a twirly villain moustache and a cape, holding a joke book of doom',
       palette: [0x1a2a5a, 0xc8ff3a], glyph: '🦹', style: 'blink', speed: 180, size: 1.1, hp: 150,
       abilities: [
         ab('pun_bots', 'Pun Bots', 'summon', 10, 0xb0b8c8, 2, { minion: 'joke_bot', count: 3 }),
@@ -246,7 +246,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A big-hearted builder knight with a giant hammer who builds walls and towers in a blink.',
     arena: 'castle',
     good: {
-      displayName: 'Dada Jason', look: 'a broad-shouldered dad in builder armour with a huge friendly hammer',
+      displayName: 'Dada Jason', trail: { tint: [0xc8643a, 0xff8c42], shape: 'square' }, look: 'a broad-shouldered dad in builder armour with a huge friendly hammer',
       palette: [0xff8c42, 0x4a4a5a], glyph: '🔨', style: 'twirl', speed: 200, size: 1.2, hp: 130,
       abilities: [
         ab('hammer_spin', 'Hammer Spin', 'spin', 5, 0xff8c42, 2, { word: 'pow', shout: true }),
@@ -265,7 +265,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Dada Jason', look: 'a builder in spiky black armour with a hammer that crackles purple',
+      displayName: 'Evil Dada Jason', trail: { tint: [0xb04aff, 0x2a2a3a], shape: 'square' }, look: 'a builder in spiky black armour with a hammer that crackles purple',
       palette: [0x2a2a3a, 0xb04aff], glyph: '⚒️', style: 'stomp', speed: 120, size: 1.4, hp: 170,
       abilities: [
         ab('wreck', 'Wrecking Spin', 'spin', 5, 0xb04aff, 2),
@@ -292,7 +292,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'An ice sorceress who grows crystal towers out of the ground and sculpts snow helpers.',
     arena: 'ice',
     good: {
-      displayName: 'Elsa', look: 'a tall young sorceress with a long silver braid, robes of frost crystals, original design',
+      displayName: 'Elsa', trail: { tint: [0xe8f6ff, 0x7cc7ff], shape: 'star' }, look: 'a tall young sorceress with a long silver braid, robes of frost crystals, original design',
       palette: [0x7cc7ff, 0xe8f6ff], glyph: '❄️', style: 'hover', speed: 160, size: 1, hp: 100,
       abilities: [
         ab('ice_shard', 'Ice Shards', 'bolt', 2.2, 0xaee6ff, 1, { count: 4, glyph: '❄️', word: 'ice' }),
@@ -311,7 +311,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Elsa', look: 'an ice sorceress in jagged black-blue crystal armour, eyes glowing pale blue',
+      displayName: 'Evil Elsa', trail: { tint: [0x5ad8ff, 0x1a2a5a], shape: 'star' }, look: 'an ice sorceress in jagged black-blue crystal armour, eyes glowing pale blue',
       palette: [0x1a2a5a, 0x5ad8ff], glyph: '🧊', style: 'blink', speed: 170, size: 1.05, hp: 140,
       abilities: [
         ab('icicle_rain', 'Icicle Rain', 'rain', 6, 0x5ad8ff, 2, { count: 14, glyph: '🧊' }),
@@ -338,7 +338,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'The ice sorceress\'s brave little sister: a sword-and-shield adventurer who never gives up.',
     arena: 'ice',
     good: {
-      displayName: 'Anna', look: 'a freckled young adventurer with two red braids, a round wooden shield and a short sword, original design',
+      displayName: 'Anna', trail: { tint: [0xffb703, 0xe63946], shape: 'spark' }, look: 'a freckled young adventurer with two red braids, a round wooden shield and a short sword, original design',
       palette: [0xe63946, 0x2a9d8f], glyph: '🛡️', style: 'twirl', speed: 230, size: 1, hp: 110,
       abilities: [
         ab('shield_bash', 'Shield Bash', 'dash', 4, 0xe63946, 2, { word: 'bam', shout: true }),
@@ -357,7 +357,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Anna', look: 'the brave sister under a frost curse: pale blue skin, a cracked ice shield, angry',
+      displayName: 'Evil Anna', trail: { tint: [0x9aeaff, 0x7cc7ff], shape: 'spark' }, look: 'the brave sister under a frost curse: pale blue skin, a cracked ice shield, angry',
       palette: [0x3a1a2a, 0x7cc7ff], glyph: '⚔️', style: 'twirl', speed: 240, size: 1.05, hp: 140,
       abilities: [
         ab('frost_bash', 'Frost Bash', 'dash', 4, 0x7cc7ff, 2),
@@ -384,7 +384,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A desert princess who rides a flying carpet and commands the wind and the sand.',
     arena: 'desert',
     good: {
-      displayName: 'Jasmine', look: 'a desert princess in teal silks with a jewelled headband, riding a patterned flying carpet, original design',
+      displayName: 'Jasmine', trail: { tint: [0xbaf2ff, 0xffc857], shape: 'smoke' }, look: 'a desert princess in teal silks with a jewelled headband, riding a patterned flying carpet, original design',
       palette: [0x1fb5a8, 0xffc857], glyph: '🧞', style: 'fly', mount: 'carpet', speed: 220, size: 1, hp: 100,
       abilities: [
         ab('wind_fan', 'Wind Fan', 'cone', 4, 0xbaf2ff, 2, { word: 'fan' }),
@@ -403,7 +403,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Jasmine', look: 'a princess in dark purple silks on a carpet of black smoke, a sandstorm swirling behind her',
+      displayName: 'Evil Jasmine', trail: { tint: [0xe8c890, 0x5a3a6a], shape: 'smoke' }, look: 'a princess in dark purple silks on a carpet of black smoke, a sandstorm swirling behind her',
       palette: [0x3a1a4a, 0xe8c890], glyph: '🌪️', style: 'fly', mount: 'carpet', speed: 230, size: 1.05, hp: 140,
       abilities: [
         ab('sand_blast', 'Sand Blast', 'cone', 4, 0xe8c890, 2),
@@ -431,7 +431,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A sand-pharaoh who raises colossal statues of himself from the dunes.',
     arena: 'desert',
     good: {
-      displayName: 'Ozymandias', look: 'a friendly old pharaoh with a golden mask pushed up on his head, a staff of sand',
+      displayName: 'Ozymandias', trail: { tint: [0xe8c890, 0xffd23f], shape: 'square' }, look: 'a friendly old pharaoh with a golden mask pushed up on his head, a staff of sand',
       palette: [0xd9a441, 0x2a5ab4], glyph: '🏺', style: 'stomp', speed: 90, size: 1.3, hp: 140,
       abilities: [
         ab('sand_spear', 'Sand Spears', 'bolt', 2.6, 0xe8c890, 1, { count: 3, glyph: '🏺' }),
@@ -450,7 +450,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Ozymandias', look: 'a towering pharaoh of cracked black sandstone with glowing gold eyes',
+      displayName: 'Evil Ozymandias', trail: { tint: [0xd9b26f, 0x4a3a1a], shape: 'smoke' }, look: 'a towering pharaoh of cracked black sandstone with glowing gold eyes',
       palette: [0x4a3a1a, 0xffcc33], glyph: '🗿', style: 'stomp', speed: 60, size: 1.7, hp: 200,
       abilities: [
         ab('colossi', 'Rise, Colossi', 'summon', 11, 0xd9b26f, 3, { minion: 'colossus', count: 2 }),
@@ -477,7 +477,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'The world serpent, so long it coils around the whole arena, hungry enough to swallow the sun.',
     arena: 'sea',
     good: {
-      displayName: 'Jormungandr', sayName: 'Yormungander', look: 'a huge friendly green sea serpent with kind yellow eyes, wearing a tiny crown',
+      displayName: 'Jormungandr', trail: { tint: [0x7ad9ff, 0xffffff], shape: 'spark' }, sayName: 'Yormungander', look: 'a huge friendly green sea serpent with kind yellow eyes, wearing a tiny crown',
       palette: [0x2aa66a, 0x7ad9ff], glyph: '🐍', style: 'slither', speed: 150, size: 1.4, hp: 150,
       abilities: [
         ab('tidal_spit', 'Tidal Spit', 'bolt', 2.4, 0x7ad9ff, 1, { count: 3, glyph: '💧' }),
@@ -496,7 +496,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Jormungandr', sayName: 'Evil Yormungander', look: 'a colossal black and purple world serpent with glowing red eyes, coiled around everything',
+      displayName: 'Evil Jormungandr', trail: { tint: [0xa0ff3a, 0x3a2a5a], shape: 'spark' }, sayName: 'Evil Yormungander', look: 'a colossal black and purple world serpent with glowing red eyes, coiled around everything',
       palette: [0x1a1a3a, 0xa0ff3a], glyph: '🐍', style: 'slither', speed: 140, size: 1.8, hp: 220,
       abilities: [
         ab('crushing_coil', 'Crushing Coil', 'coil', 9, 0x3a2a5a, 3, { duration: 3 }),
@@ -523,7 +523,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A gold-hoarding dragon who breathes fire and buries enemies under avalanches of coins.',
     arena: 'cave',
     good: {
-      displayName: 'Smaug', look: 'a big red dragon with a gold tummy, sitting on coins, grinning and generous',
+      displayName: 'Smaug', trail: { tint: [0xffcc33, 0xff7b00], shape: 'spark' }, look: 'a big red dragon with a gold tummy, sitting on coins, grinning and generous',
       palette: [0xd62828, 0xffcc33], glyph: '🐉', style: 'fly', speed: 160, size: 1.5, hp: 160,
       abilities: [
         ab('fire_breath', 'Fire Breath', 'cone', 4, 0xff7b00, 2, { color2: 0xffd23f, word: 'hot' }),
@@ -542,7 +542,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Smaug', look: 'a huge greedy dragon with dark red scales and gold-crusted armour, smoke curling from his nose',
+      displayName: 'Evil Smaug', trail: { tint: [0xff4a00, 0xffcc33], shape: 'smoke' }, look: 'a huge greedy dragon with dark red scales and gold-crusted armour, smoke curling from his nose',
       palette: [0x5a0a0a, 0xffcc33], glyph: '🐲', style: 'fly', speed: 150, size: 1.8, hp: 220,
       abilities: [
         ab('inferno', 'Inferno Breath', 'cone', 4, 0xff4a00, 3, { color2: 0xffd23f }),
@@ -571,7 +571,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A robot with a laser grid, rocket fists, and a transformation into a giant battle mech.',
     arena: 'factory',
     good: {
-      displayName: 'Scar', look: 'a friendly chunky robot with one scratched eye plate, big rocket fists and a smile screen',
+      displayName: 'Scar', trail: { tint: [0x00f5d4, 0xffffff], shape: 'square' }, look: 'a friendly chunky robot with one scratched eye plate, big rocket fists and a smile screen',
       palette: [0x8d99ae, 0x00f5d4], glyph: '🤖', style: 'march', speed: 140, size: 1.2, hp: 140,
       abilities: [
         ab('rocket_fist', 'Rocket Fist', 'bolt', 3, 0xff6a3a, 2, { glyph: '🚀', homing: true, word: 'pow' }),
@@ -590,7 +590,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Scar', look: 'a menacing black robot with a scarred red eye, rocket fists, and armour plates that unfold into a giant mech',
+      displayName: 'Evil Scar', trail: { tint: [0xff0054, 0xffcc33], shape: 'square' }, look: 'a menacing black robot with a scarred red eye, rocket fists, and armour plates that unfold into a giant mech',
       palette: [0x2b2d42, 0xff0054], glyph: '🦾', style: 'march', speed: 120, size: 1.4, hp: 210,
       abilities: [
         ab('rocket_fists', 'Rocket Fists', 'bolt', 3, 0xff0054, 2, { count: 2, glyph: '🚀', homing: true }),
@@ -617,7 +617,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A trickster who makes clones of himself, teleports, and leaves card traps everywhere.',
     arena: 'city',
     good: {
-      displayName: 'Moriarty', look: 'a lanky magician in a green suit and top hat, shuffling glowing cards, winking',
+      displayName: 'Moriarty', trail: { tint: [0xf4a261, 0x95d5b2], shape: 'square' }, look: 'a lanky magician in a green suit and top hat, shuffling glowing cards, winking',
       palette: [0x2d6a4f, 0xf4a261], glyph: '🎩', style: 'blink', speed: 200, size: 1, hp: 100,
       abilities: [
         ab('card_throw', 'Card Throw', 'bolt', 2.0, 0xf4a261, 1, { count: 4, glyph: '🃏', word: 'zip' }),
@@ -636,7 +636,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Moriarty', look: 'a sly trickster in a black coat and top hat, a grin full of secrets, cards floating around him',
+      displayName: 'Evil Moriarty', trail: { tint: [0x9d4edd, 0xffffff], shape: 'square' }, look: 'a sly trickster in a black coat and top hat, a grin full of secrets, cards floating around him',
       palette: [0x1b1b2f, 0x9d4edd], glyph: '🃏', style: 'blink', speed: 220, size: 1, hp: 150,
       abilities: [
         ab('clone_army', 'Clone Army', 'clones', 8, 0x9d4edd, 2, { count: 4 }),
@@ -664,7 +664,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A witch queen who summons waves of skeletons and polymorphs heroes into pigs.',
     arena: 'castle',
     good: {
-      displayName: 'Bavmorda', look: 'a kindly old witch with a crooked hat full of flowers, a staff with a glowing pink gem',
+      displayName: 'Bavmorda', trail: { tint: [0xff8fab, 0x80ffdb], shape: 'star' }, look: 'a kindly old witch with a crooked hat full of flowers, a staff with a glowing pink gem',
       palette: [0x7b2cbf, 0x80ffdb], glyph: '🧹', style: 'hover', mount: '🧹', speed: 150, size: 1, hp: 100,
       abilities: [
         ab('flower_bolt', 'Flower Bolts', 'bolt', 2.2, 0xff8fab, 1, { count: 3, glyph: '🌸', word: 'pop' }),
@@ -683,7 +683,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Bavmorda', look: 'a tall dark witch queen with a horned crown, a black staff with a green flame, skeletons at her feet',
+      displayName: 'Evil Bavmorda', trail: { tint: [0x39ff14, 0x240046], shape: 'smoke' }, look: 'a tall dark witch queen with a horned crown, a black staff with a green flame, skeletons at her feet',
       palette: [0x240046, 0x39ff14], glyph: '🧙‍♀️', style: 'hover', mount: '🧹', speed: 140, size: 1.2, hp: 190,
       abilities: [
         ab('skeleton_wave', 'Skeleton Wave', 'summon', 8, 0xf2f0e6, 2, { minion: 'skeleton', count: 5 }),

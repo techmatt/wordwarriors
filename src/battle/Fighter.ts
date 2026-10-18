@@ -43,6 +43,7 @@ export interface FighterInit {
   /** Voice speaker id for taunts (main fighters only). */
   voice?: string;
   mount?: string;
+  trail?: FighterSpec['trail'];
   taunts?: string[];
 }
 
@@ -63,6 +64,7 @@ export function initFromSpec(spec: FighterSpec, id: string, art: string, team: T
     voice: id,
     taunts: spec.taunts.map((t) => t.key),
     ...(spec.mount ? { mount: spec.mount } : {}),
+    ...(spec.trail ? { trail: spec.trail } : {}),
   };
 }
 
@@ -149,6 +151,7 @@ export class Fighter {
     this.body = scene.add.container(0, 0, [this.sprite]);
     if (init.mount) this.addMount(init.mount);
     this.root = scene.add.container(x, y, [this.shadow, this.body]);
+    if (init.kind === 'main') this.addTrail();
     // Stagger cooldowns so a whole team does not fire on the first frame.
     for (const a of init.abilities) this.cooldowns.set(a.id, 0.8 + Math.random() * a.cooldown);
   }
@@ -250,6 +253,12 @@ export class Fighter {
     }
     this.root.setPosition(this.x, this.y);
     this.root.setDepth(this.y);
+    if (this.trailFx) {
+      this.trailFx.setPosition(this.x, this.y - this.lift - this.height * 0.5);
+      // Just above its own card: an aura, not hidden behind the art.
+      this.trailFx.setDepth(this.y + 1);
+      this.trailFx.emitting = !this.floored && this.alive;
+    }
     this.bobPhase += dt * (this.floored ? 1.5 : 5);
     const bobAmt = this.floored ? 0 : Math.sin(this.bobPhase) * 4;
     this.body.y = -this.lift + bobAmt;
@@ -305,6 +314,27 @@ export class Fighter {
   restoreTint(): void {
     if (this.baseTint !== null) this.sprite.setTint(this.baseTint);
     else this.sprite.clearTint();
+  }
+
+  /** The signature trail, following the fighter's middle. */
+  private trailFx: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
+
+  private addTrail(): void {
+    const t = this.init.trail ?? { tint: [this.init.palette[0], this.init.palette[1]], shape: 'spark' as const };
+    const tex = { spark: TEX.spark, star: TEX.star, smoke: TEX.smoke, square: TEX.square }[t.shape];
+    this.trailFx = this.scene.add.particles(0, 0, tex, {
+      speed: { min: 10, max: 50 },
+      angle: { min: 0, max: 360 },
+      rotate: t.shape === 'square' || t.shape === 'star' ? { min: 0, max: 360 } : 0,
+      scale: { start: t.shape === 'smoke' ? 0.5 : 0.7, end: 0 },
+      alpha: { start: 0.7, end: 0 },
+      lifespan: 650,
+      frequency: 55,
+      tint: t.tint,
+      blendMode: t.shape === 'smoke' ? Phaser.BlendModes.NORMAL : Phaser.BlendModes.ADD,
+      emitZone: { type: 'random', source: new Phaser.Geom.Rectangle(-this.height * 0.5, -this.height * 0.55, this.height, this.height * 1.1) } as never,
+    });
+    this.root.once(Phaser.GameObjects.Events.DESTROY, () => this.trailFx?.destroy());
   }
 
   /** Squash on landing or being hit. */
