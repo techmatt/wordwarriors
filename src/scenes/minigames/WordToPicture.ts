@@ -90,7 +90,9 @@ export class WordToPicture extends Minigame {
     if (!item) return;
     void (async () => {
       this.locked = true;
-      for (const [i, ch] of [...item.target].entries()) {
+      // A name does not sound out letter by letter; its hint is just the first sound.
+      const letters = WORD_BY_ID[item.target]?.decodable === false ? [...item.target].slice(0, 1) : [...item.target];
+      for (const [i, ch] of letters.entries()) {
         const t = this.letters[i];
         if (t) {
           t.setColor('#ff3d7a');
