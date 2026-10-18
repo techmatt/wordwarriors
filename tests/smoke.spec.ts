@@ -101,13 +101,16 @@ test('Word to Picture: the word is not spoken until she answers', async ({ page 
   expectNoErrors(errors);
 });
 
-test('Battle part 2: move choice, counter-item, finish, victory', async ({ page }) => {
+test('Battle part 2: a wrong and a right move pick, counter-item, finish, victory', async ({ page }) => {
   test.setTimeout(240_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=battle&part=2&hero=elsa&ally=anna&villain=scar');
   await until(page, (s) => s.scene === 'Battle', 30_000, 'battle');
-  await playBattle(page, 2);
+  await playBattle(page, 2, true);
   const end = await until(page, (s) => s.scene === 'Victory', 30_000, 'victory');
+  // The wrong pick fired a plainer move and cost nothing; it is recorded as a miss.
+  const missed = Object.values(end.progress.words).some((st) => st.recent.includes(false));
+  expect(missed).toBe(true);
   expect(end.scene).toBe('Victory');
   expect(end.battle?.ultimates).toBe(1);
   expect(end.battle?.movePicks).toBe(2);

@@ -42,7 +42,7 @@ export interface WWState {
   } | null;
   voice: { speaking: string | null; busy: boolean; history: string[] };
   fx: Record<string, number>;
-  progress: { sounds: Record<string, { seen: number }>; words: Record<string, { seen: number }>; episodes: number };
+  progress: { sounds: Record<string, { seen: number; recent: boolean[] }>; words: Record<string, { seen: number; recent: boolean[] }>; episodes: number };
 }
 
 export function collectErrors(page: Page): string[] {
@@ -147,13 +147,17 @@ export async function playMinigame(page: Page): Promise<void> {
   }
 }
 
-export async function playBattle(page: Page, part: number): Promise<WWState> {
+/** Play a battle part, answering each move choice; `wrongFirst` picks a wrong dot the first time. */
+export async function playBattle(page: Page, part: number, wrongFirst = false): Promise<WWState> {
+  let first = true;
   for (;;) {
     const s = await until(page, (st) => st.scene !== 'Battle' || Boolean(st.battle?.choice), 180_000, `battle ${part} choice or end`);
     if (s.scene !== 'Battle') return s;
     const open = await until(page, (st) => st.scene !== 'Battle' || Boolean(st.battle?.choice?.open), 60_000, 'choice open');
     const c = open.battle!.choice!;
-    await press(page, c.colors[c.words.indexOf(c.right)]!);
+    const pick = wrongFirst && first ? c.words.findIndex((w) => w !== c.right) : c.words.indexOf(c.right);
+    first = false;
+    await press(page, c.colors[pick]!);
     await until(page, (st) => !st.battle?.choice, 30_000, 'choice closed');
   }
 }
