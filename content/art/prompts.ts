@@ -26,7 +26,30 @@ export const BACKGROUND_STYLE = `${STYLE} A full-bleed background painting filli
  * the screen showing through (a cage's faint back bars), not just the edges.
  * Leave out anything meant to have green in it (a leaf, a dragon).
  */
-export const NO_GREEN = new Set(['char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block']);
+const FAMILY_ART = ['julia', 'ellie', 'dada_matt', 'dada_jason'].flatMap((c) => [`char_${c}_good`, `char_${c}_evil`, `face_${c}`]);
+export const NO_GREEN = new Set([...FAMILY_ART, 'item_bubble_bath', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block']);
+
+/**
+ * Likeness references for the family (Matt, 2026-10-18): a photo in the
+ * git-ignored `art-originals/refs/` (private: never committed or copied into
+ * the tracked tree) and the box (left, top, width, height) that crops one
+ * person out of it. `art:gen` attaches the crop to the char and face prompts of
+ * that character; `--no-ref` sends the text alone. The roster looks describe
+ * the same people in words, so the prompts still work without the photos.
+ */
+export const REFS: Record<string, { photo: string; box: [number, number, number, number]; who: string }> = {
+  julia: { photo: 'julia_and_ellie.png', box: [270, 160, 420, 500], who: 'the girl with pink glasses' },
+  ellie: { photo: 'julia_and_ellie.png', box: [600, 320, 560, 560], who: 'the toddler' },
+  dada_matt: { photo: 'family_dada_matt_far_left.png', box: [360, 260, 300, 380], who: 'the man in front with the beard and the teal shirt (not the baby, not the man behind him)' },
+  dada_jason: { photo: 'dada_jason_with_ellie.png', box: [60, 160, 600, 620], who: 'the man with glasses (not the toddler)' },
+};
+
+/** The character whose likeness reference an asset id uses, if any. */
+export function refFor(id: string): string | undefined {
+  const m = id.match(/^(?:char_(.+)_(?:good|evil)|face_(.+))$/);
+  const c = m?.[1] ?? m?.[2];
+  return c && REFS[c] ? c : undefined;
+}
 
 /** Word pictures: one meaning each, and unlike their look-alikes (content/phonics/sentences.ts LOOKALIKES). */
 const PICTURES: Record<string, string> = {

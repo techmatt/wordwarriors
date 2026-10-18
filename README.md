@@ -160,6 +160,17 @@ a time.
   `C:\Code\wordwarriors\art-originals\` (with `log.jsonl`) and `C:\Code\wordwarriors\scratch\`
   (Matt, 2026-10-18): copy a worktree's into them before it finishes. Batch 1's 177
   originals and `art_contact_006.png` are there; 005's six originals were already lost.
+- **Family likeness (2026-10-18, item 007):** Julia, Ellie, Dada Matt and Dada Jason are
+  drawn from Matt's photos in `art-originals/refs/` (private, git-ignored, shared with the
+  main checkout; never commit or copy them into the tracked tree). `REFS` in
+  `content/art/prompts.ts` names each person's photo and a crop box; `art:gen` cuts the
+  crop to `art-originals/refs/crops/<id>.png` and passes it with `codex exec -i` for that
+  character's `char_*` and `face_*` ids (the `-i` goes before `--json`, because it takes
+  several files and would swallow the `-` that means stdin). The image tool accepted the
+  photo references, the children's too, and the likeness is far better than words alone.
+  A photo pulls the drawing towards a realistic painting, so the prompt asks for a flat
+  cartoon. If a photo run brings back no image it is retried with text alone;
+  `--no-ref` skips the photo. The roster looks still describe each person in words.
 - **Allowance:** Codex logs the plan's usage in its session file
   (`~/.codex/sessions/…/rollout-*-<thread>.jsonl`, `rate_limits`: percent of a 5-hour
   and a 1-week window). The script prints it after each image and stops at the first

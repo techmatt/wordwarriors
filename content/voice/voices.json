@@ -4,6 +4,8 @@
     "phonics": { "voice": "en-US-GuyNeural", "rate": "-20%" },
     "julia": { "voice": "en-US-AnaNeural", "rate": "-5%", "pitch": "+10Hz" },
     "julia_evil": { "voice": "en-US-AnaNeural", "rate": "-10%", "pitch": "-25Hz" },
+    "ellie": { "voice": "en-US-AnaNeural", "rate": "-12%", "pitch": "+30Hz" },
+    "ellie_evil": { "voice": "en-US-AnaNeural", "rate": "-5%", "pitch": "+15Hz" },
     "seraphina": { "voice": "en-GB-MaisieNeural", "rate": "-5%" },
     "seraphina_evil": { "voice": "en-GB-MaisieNeural", "rate": "-10%", "pitch": "-30Hz" },
     "dada_matt": { "voice": "en-US-GuyNeural", "rate": "-8%" },

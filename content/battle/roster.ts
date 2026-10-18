@@ -130,10 +130,11 @@ export const MINIONS: Record<string, MinionSpec> = {
 export const ROSTER: CharacterSpec[] = [
   {
     id: 'julia',
-    description: 'A fearless four-year-old adventurer with a star wand and a big laugh.',
+    description: 'A fearless four-year-old adventurer in a rainbow twirl dress, with a star wand and a big laugh.',
     arena: 'meadow',
     good: {
-      displayName: 'Julia', trail: { tint: [0xffd23f, 0xff9ad5], shape: 'star' }, look: 'a cheerful little girl in a purple cape with a glowing star wand',
+      // Looks from Matt's photos (2026-10-18), cartoon-simplified.
+      displayName: 'Julia', trail: { tint: [0xffd23f, 0xff9ad5], shape: 'star' }, look: 'a cheerful slim four-year-old girl with long straight pale-blonde hair and a straight fringe, round pink glasses, blue eyes, fair skin and rosy cheeks, a big cheeky grin, in a rainbow twirl dress with a full swishy skirt striped red, orange, yellow, blue, purple and pink (no green), holding a golden star wand',
       palette: [0x9b5de5, 0xffd23f], glyph: '⭐', style: 'dodge', speed: 210, size: 1, hp: 100,
       abilities: [
         ab('star_zap', 'Star Zap', 'bolt', 2.5, 0xffd23f, 1, { count: 3, glyph: '⭐', word: 'zap', shout: true }),
@@ -152,7 +153,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Julia', trail: { tint: [0xff3355, 0x3a1a5a], shape: 'square' }, look: 'a grumpy mirror-image little girl in a black cape with a cracked dark star wand',
+      displayName: 'Evil Julia', trail: { tint: [0xff3355, 0x3a1a5a], shape: 'square' }, look: "Julia's mischievous dark mirror: the same slim four-year-old girl with long straight pale-blonde hair and a straight fringe, round glasses with dark magenta frames, a sly cheeky smirk, in a black-and-dark-purple version of her twirl dress with a little black cape, holding a cracked dark star wand",
       palette: [0x3a1a5a, 0xff3355], glyph: '💢', style: 'dodge', speed: 210, size: 1, hp: 140,
       abilities: [
         ab('grump_zap', 'Grump Zap', 'bolt', 2.5, 0xff3355, 1, { count: 3, glyph: '💢' }),
@@ -179,6 +180,62 @@ export const ROSTER: CharacterSpec[] = [
       decals: [
         { id: 'julia_toys', glyph: '🧸', look: 'toys tossed all over the floor', count: 3 },
         { id: 'julia_crumbs', glyph: '🍪', look: 'half-eaten cookies', count: 2 },
+      ],
+      fx: 'sparkle',
+    },
+  },
+  {
+    id: 'ellie',
+    description: "Julia's toddler sister: small, fast and full of giant bubbles and block towers.",
+    arena: 'nursery',
+    good: {
+      displayName: 'Ellie', trail: { tint: [0x9ad8ff, 0xff9ad5], shape: 'spark' }, look: 'a cheerful chubby toddler girl of about two: a wispy light strawberry-blonde bob with a straight fringe, big blue eyes, chubby rosy cheeks, fair skin, in cosy cream footie pyjamas with rust-orange and brown stripes, waving a giant bubble wand with big shiny pink-and-blue bubbles floating around her',
+      palette: [0xff9ad5, 0x9ad8ff], glyph: '🍼', style: 'dodge', speed: 230, size: 0.8, hp: 90,
+      abilities: [
+        ab('giant_bubbles', 'Giant Bubbles', 'bolt', 2.4, 0x9ad8ff, 1, { count: 4, homing: true, word: 'pop' }),
+        ab('block_crash', 'Block Tower Crash', 'rain', 7, 0xff5a3c, 2, { count: 10, glyph: '🧱', word: 'bam', shout: true }),
+        ab('peekaboo', 'Peekaboo', 'teleport', 6, 0xffd23f, 2, { word: 'hop' }),
+        ab('juice_splash', 'Juice Splash', 'cone', 5, 0x7ad9ff, 1),
+      ],
+      ultimate: ab('bubble_storm', 'Mega Bubble Storm', 'rain', 0, 0x9ad8ff, 3, { count: 30, glyph: '⚪', color2: 0xff9ad5 }),
+      taunts: [
+        { key: 'me', text: 'Me do it!' },
+        { key: 'again', text: 'Again, again!' },
+        { key: 'strong', text: 'Ellie strong!' },
+        { key: 'peekaboo', text: 'Peekaboo!' },
+        { key: 'look', text: 'Julia, look at me!' },
+        { key: 'bubbles', text: 'More bubbles!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Ellie', trail: { tint: [0xff5ab4, 0x3a1a5a], shape: 'square' }, look: 'a cheeky little toddler menace: the same chubby two-year-old girl with a wispy light strawberry-blonde bob sticking up, big blue eyes and rosy cheeks, a naughty grin with her tongue poking out, in dark purple footie pyjamas and a tiny black cape, holding a giant crayon like a sword. Funny and cute, never scary',
+      palette: [0x3a1a5a, 0xff5ab4], glyph: '🖍️', style: 'dodge', speed: 230, size: 0.8, hp: 130,
+      abilities: [
+        ab('crayon_scribble', 'Crayon Scribble', 'beam', 6, 0xff5ab4, 2),
+        ab('raspberry', 'Raspberry Blast', 'cone', 5, 0xff3a7a, 2),
+        ab('toy_toss', 'Toy Toss', 'bolt', 2.4, 0xc8884a, 1, { count: 4, glyph: '🧸' }),
+        ab('tantrum_shockwave', 'Tantrum Shockwave', 'slam', 6, 0xb04aff, 3),
+      ],
+      ultimate: ab('juice_tsunami', 'Juice Tsunami', 'wave', 0, 0x7ad9ff, 3, { color2: 0x3a1a5a }),
+      taunts: [
+        { key: 'mine', text: 'Everything is mine!' },
+        { key: 'share', text: 'I will not share!' },
+        { key: 'snacks', text: 'More snacks, now!' },
+        { key: 'scribble', text: 'I scribble everywhere!' },
+        { key: 'fast', text: 'Too fast for you!' },
+        { key: 'raspberry', text: 'A raspberry for you!' },
+      ],
+    },
+    counter: {
+      id: 'bubble_bath', name: 'Bubble Bath', glyph: '🛁', look: 'a magic bathtub overflowing with rainbow bubbles, a little yellow rubber duck on top',
+      how: 'calm', words: ['wet', 'dip', 'tub'], word: 'tub', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'she wants to scribble crayon on every wall',
+      tint: 0xff5ab4,
+      decals: [
+        { id: 'ellie_crayon', glyph: '🖍️', look: 'bright crayon scribbles', count: 3 },
+        { id: 'ellie_snack', glyph: '🥣', look: 'a tipped-over bowl of snack puffs', count: 2 },
       ],
       fx: 'sparkle',
     },
@@ -239,66 +296,13 @@ export const ROSTER: CharacterSpec[] = [
     },
   },
   {
+    // Matt, 2026-10-18: Dada Matt took over the builder look and moves Dada
+    // Jason had, and Dada Jason became a chef.
     id: 'dada_matt',
-    description: 'A goofy dad wizard with a bottomless bag of dad jokes and a magic spatula.',
-    arena: 'kitchen',
-    good: {
-      displayName: 'Dada Matt', trail: { tint: [0xffbe0b, 0x3a86ff], shape: 'star' }, look: 'a tall smiling dad with glasses and a wizard hat, holding a glowing spatula',
-      palette: [0x3a86ff, 0xffbe0b], glyph: '🧙', style: 'hover', speed: 160, size: 1.1, hp: 110,
-      abilities: [
-        ab('pancake_toss', 'Pancake Toss', 'bolt', 2.4, 0xffbe0b, 1, { count: 3, glyph: '🥞', word: 'pop' }),
-        ab('dad_joke', 'Dad Joke', 'polymorph', 9, 0xff9ad5, 2, { status: 'stun', duration: 2.5, word: 'bam' }),
-        ab('tickle_zap', 'Tickle Lightning', 'lightning', 6, 0x9ad8ff, 2, { count: 2, word: 'zap' }),
-        ab('dad_shield', 'Dad Shield', 'shield', 10, 0x3a86ff, 1, { duration: 4 }),
-      ],
-      ultimate: ab('breakfast_storm', 'Breakfast Storm', 'rain', 0, 0xffbe0b, 3, { count: 30, glyph: '🥞', color2: 0xff6a3a }),
-      taunts: [
-        { key: 'joke', text: 'Want to hear a joke?' },
-        { key: 'pancake', text: 'Pancakes for everyone!' },
-        { key: 'dad', text: 'Dad power, go!' },
-        { key: 'oops', text: 'I meant to do that!' },
-        { key: 'spatula', text: 'Spatula of justice!' },
-        { key: 'flip', text: 'Flip, flip, hooray!' },
-      ],
-    },
-    evil: {
-      displayName: 'Evil Dada Matt', trail: { tint: [0xc8ff3a, 0x1a2a5a], shape: 'square' }, look: 'the same dad with a twirly villain moustache and a cape, holding a joke book of doom',
-      palette: [0x1a2a5a, 0xc8ff3a], glyph: '🦹', style: 'blink', speed: 180, size: 1.1, hp: 150,
-      abilities: [
-        ab('pun_bots', 'Pun Bots', 'summon', 10, 0xb0b8c8, 2, { minion: 'joke_bot', count: 3 }),
-        ab('broccoli', 'Broccoli Barrage', 'bolt', 2.6, 0x4aa62a, 1, { count: 4, glyph: '🥦' }),
-        ab('chore_beam', 'Chore Beam', 'beam', 6, 0xc8ff3a, 2),
-      ],
-      ultimate: ab('dad_joke_avalanche', 'Dad Joke Avalanche', 'rain', 0, 0xc8ff3a, 3, { count: 28, glyph: '😆', color2: 0x1a2a5a }),
-      taunts: [
-        { key: 'bed', text: 'Bedtime is now!' },
-        { key: 'veggies', text: 'Eat your veggies!' },
-        { key: 'joke', text: 'Here comes a bad joke!' },
-        { key: 'ha', text: 'I am so funny!' },
-        { key: 'chores', text: 'Time to tidy up!' },
-        { key: 'lights', text: 'Lights out!' },
-      ],
-    },
-    counter: {
-      id: 'earmuffs', name: 'Magic Earmuffs', glyph: '🎧', look: 'fluffy rainbow earmuffs that glow',
-      how: 'block', words: ['hat', 'cap', 'hum'], word: 'cap', frame: 'scared_of_the',
-    },
-    house: {
-      threat: 'he wants everybody to eat broccoli for breakfast',
-      tint: 0x4aa62a,
-      decals: [
-        { id: 'dada_matt_broccoli', glyph: '🥦', look: 'broccoli on every plate', count: 3 },
-        { id: 'dada_matt_sock', glyph: '🧦', look: 'odd socks lying about', count: 2 },
-      ],
-      fx: 'none',
-    },
-  },
-  {
-    id: 'dada_jason',
-    description: 'A big-hearted builder knight with a giant hammer who builds walls and towers in a blink.',
+    description: 'A big-hearted builder dad with a giant hammer who builds walls and towers in a blink.',
     arena: 'castle',
     good: {
-      displayName: 'Dada Jason', trail: { tint: [0xc8643a, 0xff8c42], shape: 'square' }, look: 'a broad-shouldered dad in builder armour with a huge friendly hammer',
+      displayName: 'Dada Matt', trail: { tint: [0xc8643a, 0xff8c42], shape: 'square' }, look: 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, short light-brown hair thinning on top with a high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile, in chunky orange-and-steel builder armour with a tool belt, holding a huge friendly hammer',
       palette: [0xff8c42, 0x4a4a5a], glyph: '🔨', style: 'twirl', speed: 200, size: 1.2, hp: 130,
       abilities: [
         ab('hammer_spin', 'Hammer Spin', 'spin', 5, 0xff8c42, 2, { word: 'pow', shout: true }),
@@ -317,7 +321,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Dada Jason', trail: { tint: [0xb04aff, 0x2a2a3a], shape: 'square' }, look: 'a builder in spiky black armour with a hammer that crackles purple',
+      displayName: 'Evil Dada Matt', trail: { tint: [0xb04aff, 0x2a2a3a], shape: 'square' }, look: 'the same beefy bodybuilder dad with short light-brown hair thinning on top and a full short reddish-brown beard, a mischievous grin, in spiky black builder armour, holding a hammer that crackles purple',
       palette: [0x2a2a3a, 0xb04aff], glyph: '⚒️', style: 'stomp', speed: 120, size: 1.4, hp: 170,
       abilities: [
         ab('wreck', 'Wrecking Spin', 'spin', 5, 0xb04aff, 2),
@@ -342,10 +346,65 @@ export const ROSTER: CharacterSpec[] = [
       threat: 'he wants to knock down every wall',
       tint: 0x7a4ab0,
       decals: [
-        { id: 'dada_jason_brick', glyph: '🧱', look: 'loose bricks', count: 3 },
-        { id: 'dada_jason_hammer', glyph: '🔨', look: 'a crackling purple hammer left on the floor', count: 1 },
+        { id: 'dada_matt_brick', glyph: '🧱', look: 'loose bricks', count: 3 },
+        { id: 'dada_matt_hammer', glyph: '🔨', look: 'a crackling purple hammer left on the floor', count: 1 },
       ],
       fx: 'quake',
+    },
+  },
+  {
+    id: 'dada_jason',
+    description: 'A jolly chef dad with a giant whisk who flips pancakes higher than the roof.',
+    arena: 'kitchen',
+    good: {
+      displayName: 'Dada Jason', trail: { tint: [0xffbe0b, 0xe63946], shape: 'star' }, look: 'a big, sturdy, round-faced chef dad: warm light-brown skin, very short dark curly hair receding at the front, black browline glasses, a short dark goatee beard flecked with grey, a tiny hoop earring, a big laughing smile, in crisp white chef\'s whites with a tall white chef\'s hat and a red neckerchief, holding a giant whisk',
+      palette: [0xe63946, 0xffbe0b], glyph: '🍳', style: 'hover', speed: 170, size: 1.2, hp: 120,
+      abilities: [
+        ab('pancake_flip', 'Pancake Flip', 'bolt', 2.4, 0xffbe0b, 1, { count: 3, glyph: '🥞', word: 'pop' }),
+        ab('whisk_whirl', 'Whisk Whirl', 'spin', 5, 0xfff1d6, 2, { word: 'zip', shout: true }),
+        ab('sauce_tornado', 'Sauce Tornado', 'cone', 6, 0xe63946, 2, { word: 'hot' }),
+        ab('oven_mitt', 'Oven Mitt Shield', 'shield', 10, 0xff8c42, 1, { duration: 4, word: 'hug' }),
+      ],
+      ultimate: ab('breakfast_storm', 'Breakfast Storm', 'rain', 0, 0xffbe0b, 3, { count: 30, glyph: '🥞', color2: 0xff6a3a }),
+      taunts: [
+        { key: 'order', text: 'Order up!' },
+        { key: 'pancake', text: 'Pancakes for everyone!' },
+        { key: 'chef', text: 'Chef power, go!' },
+        { key: 'whisk', text: 'Whisk it, whisk it!' },
+        { key: 'sauce', text: 'A little more sauce!' },
+        { key: 'flip', text: 'Flip, flip, hooray!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Dada Jason', trail: { tint: [0xc8ff3a, 0x2a1a3a], shape: 'smoke' }, look: 'a mischievous villain chef: the same big round-faced dad with warm light-brown skin, very short dark curly hair, black browline glasses and a short dark goatee, plus a twirly villain moustache and a sly grin, in a black chef\'s jacket and a floppy dark-purple chef\'s hat, waving a giant dripping spatula',
+      palette: [0x2a1a3a, 0xc8ff3a], glyph: '🥦', style: 'blink', speed: 180, size: 1.2, hp: 150,
+      abilities: [
+        ab('broccoli', 'Broccoli Barrage', 'bolt', 2.6, 0x4aa62a, 1, { count: 4, glyph: '🥦' }),
+        ab('hot_sauce', 'Hot Sauce Blast', 'beam', 6, 0xff3a1a, 2),
+        ab('sticky_syrup', 'Sticky Syrup', 'trap', 8, 0xc8781a, 2, { count: 3, glyph: '🍯' }),
+      ],
+      ultimate: ab('food_fight', 'Food Fight Frenzy', 'rain', 0, 0xc8ff3a, 3, { count: 28, glyph: '🍝', color2: 0x2a1a3a }),
+      taunts: [
+        { key: 'veggies', text: 'Eat your veggies!' },
+        { key: 'broccoli', text: 'Broccoli for breakfast!' },
+        { key: 'soup', text: 'Soup of the day is slime!' },
+        { key: 'table', text: 'Nobody leaves the table!' },
+        { key: 'sprouts', text: 'Extra sprouts for you!' },
+        { key: 'fight', text: 'Food fight!' },
+      ],
+    },
+    counter: {
+      id: 'cleanup_van', name: 'Clean-Up Van', glyph: '🚐', look: 'a little cartoon cleaning van with spinning brushes and a big hose that hoovers up every bit of food',
+      how: 'restore', words: ['wet', 'rub', 'van'], word: 'van', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'he wants everybody to eat broccoli for breakfast',
+      tint: 0x4aa62a,
+      decals: [
+        { id: 'dada_jason_broccoli', glyph: '🥦', look: 'broccoli on every plate', count: 3 },
+        { id: 'dada_jason_flour', glyph: '🥄', look: 'spilled flour with floury footprints', count: 2 },
+      ],
+      fx: 'none',
     },
   },
   {
@@ -912,6 +971,7 @@ export const COMBOS: ComboSpec[] = [
   { pair: ['jasmine', 'ozymandias'], ability: ab('desert_duo', 'Desert Duo', 'wave', 16, 0xffc857, 3, { color2: 0x1fb5a8 }) },
   { pair: ['dada_matt', 'dada_jason'], ability: ab('dad_squad', 'Dad Squad', 'slam', 16, 0xff8c42, 3, { color2: 0x3a86ff }) },
   { pair: ['julia', 'dada_matt'], ability: ab('high_five', 'Mega High Five', 'lightning', 16, 0xffd23f, 3, { count: 6, color2: 0x3a86ff }) },
+  { pair: ['julia', 'ellie'], ability: ab('sister_squeeze', 'Sister Squeeze', 'spin', 16, 0xff9ad5, 3, { count: 5, color2: 0x9ad8ff }) },
   { pair: ['julia', 'seraphina'], ability: ab('best_friends', 'Best Friend Blast', 'beam', 16, 0xff5ab4, 3, { color2: 0x2ec27e }) },
 ];
 
@@ -935,5 +995,6 @@ export const ARENAS: Record<string, { name: string; sky: [number, number]; groun
   cave: { name: 'Treasure Cave', sky: [0x1a1a2a, 0x5a4a2a], ground: 0x8a6a2a, glyph: '💰', look: 'a cave piled high with gold coins and jewels, lit by lava cracks' },
   factory: { name: 'Robot Factory', sky: [0x2a2d42, 0x6a7a9a], ground: 0x4a4a5a, glyph: '⚙️', look: 'a neon robot factory with conveyor belts and sparks' },
   city: { name: 'Foggy City', sky: [0x3a4a5a, 0xa0b0c0], ground: 0x5a5a6a, glyph: '🎡', look: 'a foggy old city street at night with lamp posts and a fairground' },
+  nursery: { name: 'Giant Playroom', sky: [0xffe0f0, 0xfff8e0], ground: 0xc8a07a, glyph: '🧸', look: "a toddler's playroom seen from a toy's height: towering stacks of building blocks, a huge crib, giant soft toys and a squashy play mat" },
   street: { name: 'Sunny Street', sky: [0x8ad7ff, 0xf0f8ff], ground: 0x8a8a92, glyph: '🚗', look: 'a sunny suburban street outside the house, Dada Jason\'s car parked at the kerb' },
 };

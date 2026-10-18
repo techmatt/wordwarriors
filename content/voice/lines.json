@@ -161,6 +161,132 @@
   "text": "No Nap Ever!"
  },
  {
+  "id": "name_ellie",
+  "speaker": "ellie",
+  "group": "core",
+  "text": "Ellie!"
+ },
+ {
+  "id": "taunt_ellie_me",
+  "speaker": "ellie",
+  "group": "fighter_ellie",
+  "text": "Me do it!"
+ },
+ {
+  "id": "taunt_ellie_again",
+  "speaker": "ellie",
+  "group": "fighter_ellie",
+  "text": "Again, again!"
+ },
+ {
+  "id": "taunt_ellie_strong",
+  "speaker": "ellie",
+  "group": "fighter_ellie",
+  "text": "Ellie strong!"
+ },
+ {
+  "id": "taunt_ellie_peekaboo",
+  "speaker": "ellie",
+  "group": "fighter_ellie",
+  "text": "Peekaboo!"
+ },
+ {
+  "id": "taunt_ellie_look",
+  "speaker": "ellie",
+  "group": "fighter_ellie",
+  "text": "Julia, look at me!"
+ },
+ {
+  "id": "taunt_ellie_bubbles",
+  "speaker": "ellie",
+  "group": "fighter_ellie",
+  "text": "More bubbles!"
+ },
+ {
+  "id": "ult_ellie",
+  "speaker": "ellie",
+  "group": "fighter_ellie",
+  "text": "Mega Bubble Storm!"
+ },
+ {
+  "id": "move_ellie_block_crash",
+  "speaker": "ellie",
+  "group": "fighter_ellie",
+  "text": "Block Tower Crash!"
+ },
+ {
+  "id": "move_ellie_peekaboo",
+  "speaker": "ellie",
+  "group": "fighter_ellie",
+  "text": "Peekaboo!"
+ },
+ {
+  "id": "name_ellie_evil",
+  "speaker": "ellie_evil",
+  "group": "core",
+  "text": "Evil Ellie!"
+ },
+ {
+  "id": "taunt_ellie_evil_mine",
+  "speaker": "ellie_evil",
+  "group": "fighter_ellie_evil",
+  "text": "Everything is mine!"
+ },
+ {
+  "id": "taunt_ellie_evil_share",
+  "speaker": "ellie_evil",
+  "group": "fighter_ellie_evil",
+  "text": "I will not share!"
+ },
+ {
+  "id": "taunt_ellie_evil_snacks",
+  "speaker": "ellie_evil",
+  "group": "fighter_ellie_evil",
+  "text": "More snacks, now!"
+ },
+ {
+  "id": "taunt_ellie_evil_scribble",
+  "speaker": "ellie_evil",
+  "group": "fighter_ellie_evil",
+  "text": "I scribble everywhere!"
+ },
+ {
+  "id": "taunt_ellie_evil_fast",
+  "speaker": "ellie_evil",
+  "group": "fighter_ellie_evil",
+  "text": "Too fast for you!"
+ },
+ {
+  "id": "taunt_ellie_evil_raspberry",
+  "speaker": "ellie_evil",
+  "group": "fighter_ellie_evil",
+  "text": "A raspberry for you!"
+ },
+ {
+  "id": "ult_ellie_evil",
+  "speaker": "ellie_evil",
+  "group": "fighter_ellie_evil",
+  "text": "Juice Tsunami!"
+ },
+ {
+  "id": "move_ellie_evil_crayon_scribble",
+  "speaker": "ellie_evil",
+  "group": "fighter_ellie_evil",
+  "text": "Crayon Scribble!"
+ },
+ {
+  "id": "move_ellie_evil_raspberry",
+  "speaker": "ellie_evil",
+  "group": "fighter_ellie_evil",
+  "text": "Raspberry Blast!"
+ },
+ {
+  "id": "move_ellie_evil_tantrum_shockwave",
+  "speaker": "ellie_evil",
+  "group": "fighter_ellie_evil",
+  "text": "Tantrum Shockwave!"
+ },
+ {
   "id": "name_seraphina",
   "speaker": "seraphina",
   "group": "core",
@@ -293,58 +419,58 @@
   "text": "Dada Matt!"
  },
  {
-  "id": "taunt_dada_matt_joke",
+  "id": "taunt_dada_matt_build",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt",
-  "text": "Want to hear a joke?"
+  "text": "Let me build that!"
  },
  {
-  "id": "taunt_dada_matt_pancake",
+  "id": "taunt_dada_matt_strong",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt",
-  "text": "Pancakes for everyone!"
+  "text": "Strong like a castle!"
  },
  {
-  "id": "taunt_dada_matt_dad",
+  "id": "taunt_dada_matt_hammer",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt",
-  "text": "Dad power, go!"
+  "text": "Hammer time!"
  },
  {
-  "id": "taunt_dada_matt_oops",
+  "id": "taunt_dada_matt_got",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt",
-  "text": "I meant to do that!"
+  "text": "I got you, buddy!"
  },
  {
-  "id": "taunt_dada_matt_spatula",
+  "id": "taunt_dada_matt_tools",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt",
-  "text": "Spatula of justice!"
+  "text": "Hand me a hammer!"
  },
  {
-  "id": "taunt_dada_matt_flip",
+  "id": "taunt_dada_matt_wall",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt",
-  "text": "Flip, flip, hooray!"
+  "text": "I will build a wall!"
  },
  {
   "id": "ult_dada_matt",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt",
-  "text": "Breakfast Storm!"
+  "text": "Tower Drop!"
  },
  {
-  "id": "move_dada_matt_dad_joke",
+  "id": "move_dada_matt_hammer_spin",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt",
-  "text": "Dad Joke!"
+  "text": "Hammer Spin!"
  },
  {
-  "id": "move_dada_matt_tickle_zap",
+  "id": "move_dada_matt_ground_pound",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt",
-  "text": "Tickle Lightning!"
+  "text": "Ground Pound!"
  },
  {
   "id": "name_dada_matt_evil",
@@ -353,58 +479,64 @@
   "text": "Evil Dada Matt!"
  },
  {
-  "id": "taunt_dada_matt_evil_bed",
+  "id": "taunt_dada_matt_evil_smash",
   "speaker": "dada_matt_evil",
   "group": "fighter_dada_matt_evil",
-  "text": "Bedtime is now!"
+  "text": "Smash it all!"
  },
  {
-  "id": "taunt_dada_matt_evil_veggies",
+  "id": "taunt_dada_matt_evil_mess",
   "speaker": "dada_matt_evil",
   "group": "fighter_dada_matt_evil",
-  "text": "Eat your veggies!"
+  "text": "What a big mess!"
  },
  {
-  "id": "taunt_dada_matt_evil_joke",
+  "id": "taunt_dada_matt_evil_wall",
   "speaker": "dada_matt_evil",
   "group": "fighter_dada_matt_evil",
-  "text": "Here comes a bad joke!"
+  "text": "No more walls for you!"
  },
  {
-  "id": "taunt_dada_matt_evil_ha",
+  "id": "taunt_dada_matt_evil_boom",
   "speaker": "dada_matt_evil",
   "group": "fighter_dada_matt_evil",
-  "text": "I am so funny!"
+  "text": "Boom goes the hammer!"
  },
  {
-  "id": "taunt_dada_matt_evil_chores",
+  "id": "taunt_dada_matt_evil_crumble",
   "speaker": "dada_matt_evil",
   "group": "fighter_dada_matt_evil",
-  "text": "Time to tidy up!"
+  "text": "Watch it crumble!"
  },
  {
-  "id": "taunt_dada_matt_evil_lights",
+  "id": "taunt_dada_matt_evil_stomp",
   "speaker": "dada_matt_evil",
   "group": "fighter_dada_matt_evil",
-  "text": "Lights out!"
+  "text": "Stomp, stomp, stomp!"
  },
  {
   "id": "ult_dada_matt_evil",
   "speaker": "dada_matt_evil",
   "group": "fighter_dada_matt_evil",
-  "text": "Dad Joke Avalanche!"
+  "text": "Mega Hammer Quake!"
  },
  {
-  "id": "move_dada_matt_evil_pun_bots",
+  "id": "move_dada_matt_evil_wreck",
   "speaker": "dada_matt_evil",
   "group": "fighter_dada_matt_evil",
-  "text": "Pun Bots!"
+  "text": "Wrecking Spin!"
  },
  {
-  "id": "move_dada_matt_evil_chore_beam",
+  "id": "move_dada_matt_evil_brick_rain",
   "speaker": "dada_matt_evil",
   "group": "fighter_dada_matt_evil",
-  "text": "Chore Beam!"
+  "text": "Brick Rain!"
+ },
+ {
+  "id": "move_dada_matt_evil_quake",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_evil",
+  "text": "Quake!"
  },
  {
   "id": "name_dada_jason",
@@ -413,58 +545,58 @@
   "text": "Dada Jason!"
  },
  {
-  "id": "taunt_dada_jason_build",
+  "id": "taunt_dada_jason_order",
   "speaker": "dada_jason",
   "group": "fighter_dada_jason",
-  "text": "Let me build that!"
+  "text": "Order up!"
  },
  {
-  "id": "taunt_dada_jason_strong",
+  "id": "taunt_dada_jason_pancake",
   "speaker": "dada_jason",
   "group": "fighter_dada_jason",
-  "text": "Strong like a castle!"
+  "text": "Pancakes for everyone!"
  },
  {
-  "id": "taunt_dada_jason_hammer",
+  "id": "taunt_dada_jason_chef",
   "speaker": "dada_jason",
   "group": "fighter_dada_jason",
-  "text": "Hammer time!"
+  "text": "Chef power, go!"
  },
  {
-  "id": "taunt_dada_jason_got",
+  "id": "taunt_dada_jason_whisk",
   "speaker": "dada_jason",
   "group": "fighter_dada_jason",
-  "text": "I got you, buddy!"
+  "text": "Whisk it, whisk it!"
  },
  {
-  "id": "taunt_dada_jason_tools",
+  "id": "taunt_dada_jason_sauce",
   "speaker": "dada_jason",
   "group": "fighter_dada_jason",
-  "text": "Hand me a hammer!"
+  "text": "A little more sauce!"
  },
  {
-  "id": "taunt_dada_jason_wall",
+  "id": "taunt_dada_jason_flip",
   "speaker": "dada_jason",
   "group": "fighter_dada_jason",
-  "text": "I will build a wall!"
+  "text": "Flip, flip, hooray!"
  },
  {
   "id": "ult_dada_jason",
   "speaker": "dada_jason",
   "group": "fighter_dada_jason",
-  "text": "Tower Drop!"
+  "text": "Breakfast Storm!"
  },
  {
-  "id": "move_dada_jason_hammer_spin",
+  "id": "move_dada_jason_whisk_whirl",
   "speaker": "dada_jason",
   "group": "fighter_dada_jason",
-  "text": "Hammer Spin!"
+  "text": "Whisk Whirl!"
  },
  {
-  "id": "move_dada_jason_ground_pound",
+  "id": "move_dada_jason_sauce_tornado",
   "speaker": "dada_jason",
   "group": "fighter_dada_jason",
-  "text": "Ground Pound!"
+  "text": "Sauce Tornado!"
  },
  {
   "id": "name_dada_jason_evil",
@@ -473,64 +605,58 @@
   "text": "Evil Dada Jason!"
  },
  {
-  "id": "taunt_dada_jason_evil_smash",
+  "id": "taunt_dada_jason_evil_veggies",
   "speaker": "dada_jason_evil",
   "group": "fighter_dada_jason_evil",
-  "text": "Smash it all!"
+  "text": "Eat your veggies!"
  },
  {
-  "id": "taunt_dada_jason_evil_mess",
+  "id": "taunt_dada_jason_evil_broccoli",
   "speaker": "dada_jason_evil",
   "group": "fighter_dada_jason_evil",
-  "text": "What a big mess!"
+  "text": "Broccoli for breakfast!"
  },
  {
-  "id": "taunt_dada_jason_evil_wall",
+  "id": "taunt_dada_jason_evil_soup",
   "speaker": "dada_jason_evil",
   "group": "fighter_dada_jason_evil",
-  "text": "No more walls for you!"
+  "text": "Soup of the day is slime!"
  },
  {
-  "id": "taunt_dada_jason_evil_boom",
+  "id": "taunt_dada_jason_evil_table",
   "speaker": "dada_jason_evil",
   "group": "fighter_dada_jason_evil",
-  "text": "Boom goes the hammer!"
+  "text": "Nobody leaves the table!"
  },
  {
-  "id": "taunt_dada_jason_evil_crumble",
+  "id": "taunt_dada_jason_evil_sprouts",
   "speaker": "dada_jason_evil",
   "group": "fighter_dada_jason_evil",
-  "text": "Watch it crumble!"
+  "text": "Extra sprouts for you!"
  },
  {
-  "id": "taunt_dada_jason_evil_stomp",
+  "id": "taunt_dada_jason_evil_fight",
   "speaker": "dada_jason_evil",
   "group": "fighter_dada_jason_evil",
-  "text": "Stomp, stomp, stomp!"
+  "text": "Food fight!"
  },
  {
   "id": "ult_dada_jason_evil",
   "speaker": "dada_jason_evil",
   "group": "fighter_dada_jason_evil",
-  "text": "Mega Hammer Quake!"
+  "text": "Food Fight Frenzy!"
  },
  {
-  "id": "move_dada_jason_evil_wreck",
+  "id": "move_dada_jason_evil_hot_sauce",
   "speaker": "dada_jason_evil",
   "group": "fighter_dada_jason_evil",
-  "text": "Wrecking Spin!"
+  "text": "Hot Sauce Blast!"
  },
  {
-  "id": "move_dada_jason_evil_brick_rain",
+  "id": "move_dada_jason_evil_sticky_syrup",
   "speaker": "dada_jason_evil",
   "group": "fighter_dada_jason_evil",
-  "text": "Brick Rain!"
- },
- {
-  "id": "move_dada_jason_evil_quake",
-  "speaker": "dada_jason_evil",
-  "group": "fighter_dada_jason_evil",
-  "text": "Quake!"
+  "text": "Sticky Syrup!"
  },
  {
   "id": "name_elsa",
@@ -2139,10 +2265,22 @@
   "text": "cup!"
  },
  {
+  "id": "word_dip",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "dip!"
+ },
+ {
   "id": "word_dog",
   "speaker": "phonics",
   "group": "phonics",
   "text": "dog!"
+ },
+ {
+  "id": "word_ellie",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Ellie!"
  },
  {
   "id": "word_elsa",
@@ -2191,12 +2329,6 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "hug!"
- },
- {
-  "id": "word_hum",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "hum!"
  },
  {
   "id": "word_jasmine",
@@ -2331,6 +2463,12 @@
   "text": "rat!"
  },
  {
+  "id": "word_rub",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "rub!"
+ },
+ {
   "id": "word_scar",
   "speaker": "phonics",
   "group": "phonics",
@@ -2407,6 +2545,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "Julia needs a..."
+ },
+ {
+  "id": "sent_helper_needs_a_ellie",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Ellie needs a..."
  },
  {
   "id": "sent_helper_needs_a_seraphina",
@@ -2500,6 +2644,12 @@
   "text": "Evil Julia hates the..."
  },
  {
+  "id": "sent_villain_hates_the_ellie",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Ellie hates the..."
+ },
+ {
   "id": "sent_villain_hates_the_seraphina",
   "speaker": "phonics",
   "group": "phonics",
@@ -2591,6 +2741,12 @@
   "text": "Evil Julia is scared of..."
  },
  {
+  "id": "sent_scared_of_ellie",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Ellie is scared of..."
+ },
+ {
   "id": "sent_scared_of_seraphina",
   "speaker": "phonics",
   "group": "phonics",
@@ -2674,6 +2830,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "Evil Julia is scared of the..."
+ },
+ {
+  "id": "sent_scared_of_the_ellie",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Ellie is scared of the..."
  },
  {
   "id": "sent_scared_of_the_seraphina",
@@ -2901,6 +3063,18 @@
   "text": "Julia is here to play!"
  },
  {
+  "id": "wake_dada_matt_good_ellie",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Good news, Ellie!"
+ },
+ {
+  "id": "wake_dada_matt_helper_ellie",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Ellie is here to play!"
+ },
+ {
   "id": "wake_dada_matt_good_seraphina",
   "speaker": "dada_matt",
   "group": "core",
@@ -3053,6 +3227,12 @@
   "text": "Bad news, Evil Julia is coming, and she wants to keep every toy for herself!"
  },
  {
+  "id": "wake_dada_matt_bad_ellie",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Bad news, Evil Ellie is coming, and she wants to scribble crayon on every wall!"
+ },
+ {
   "id": "wake_dada_matt_bad_seraphina",
   "speaker": "dada_matt",
   "group": "core",
@@ -3062,13 +3242,13 @@
   "id": "wake_dada_matt_bad_dada_matt",
   "speaker": "dada_matt",
   "group": "core",
-  "text": "Bad news, Evil Dada Matt is coming, and he wants everybody to eat broccoli for breakfast!"
+  "text": "Bad news, Evil Dada Matt is coming, and he wants to knock down every wall!"
  },
  {
   "id": "wake_dada_matt_bad_dada_jason",
   "speaker": "dada_matt",
   "group": "core",
-  "text": "Bad news, Evil Dada Jason is coming, and he wants to knock down every wall!"
+  "text": "Bad news, Evil Dada Jason is coming, and he wants everybody to eat broccoli for breakfast!"
  },
  {
   "id": "wake_dada_matt_bad_elsa",
@@ -3155,6 +3335,18 @@
   "speaker": "dada_jason",
   "group": "core",
   "text": "Julia is here to play!"
+ },
+ {
+  "id": "wake_dada_jason_good_ellie",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Good news, Ellie!"
+ },
+ {
+  "id": "wake_dada_jason_helper_ellie",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Ellie is here to play!"
  },
  {
   "id": "wake_dada_jason_good_seraphina",
@@ -3309,6 +3501,12 @@
   "text": "Bad news, Evil Julia is coming, and she wants to keep every toy for herself!"
  },
  {
+  "id": "wake_dada_jason_bad_ellie",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Bad news, Evil Ellie is coming, and she wants to scribble crayon on every wall!"
+ },
+ {
   "id": "wake_dada_jason_bad_seraphina",
   "speaker": "dada_jason",
   "group": "core",
@@ -3318,13 +3516,13 @@
   "id": "wake_dada_jason_bad_dada_matt",
   "speaker": "dada_jason",
   "group": "core",
-  "text": "Bad news, Evil Dada Matt is coming, and he wants everybody to eat broccoli for breakfast!"
+  "text": "Bad news, Evil Dada Matt is coming, and he wants to knock down every wall!"
  },
  {
   "id": "wake_dada_jason_bad_dada_jason",
   "speaker": "dada_jason",
   "group": "core",
-  "text": "Bad news, Evil Dada Jason is coming, and he wants to knock down every wall!"
+  "text": "Bad news, Evil Dada Jason is coming, and he wants everybody to eat broccoli for breakfast!"
  },
  {
   "id": "wake_dada_jason_bad_elsa",
@@ -3718,6 +3916,12 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_julia_alarm_hero_ellie",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Bad news, Ellie!"
+ },
+ {
   "id": "nar_julia_alarm_hero_seraphina",
   "speaker": "julia",
   "group": "nar_julia",
@@ -3827,6 +4031,36 @@
   "text": "We found the Cozy Blanket!"
  },
  {
+  "id": "nar_julia_alarm_villain_ellie",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_julia_need_item_ellie",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Only the Bubble Bath can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_julia_made_item_ellie",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We made the Bubble Bath!"
+ },
+ {
+  "id": "nar_julia_need_counter_ellie",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_julia_got_counter_ellie",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We found the Bubble Bath!"
+ },
+ {
   "id": "nar_julia_alarm_villain_seraphina",
   "speaker": "julia",
   "group": "nar_julia",
@@ -3866,13 +4100,13 @@
   "id": "nar_julia_need_item_dada_matt",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Magic Earmuffs can stop Evil Dada Matt!"
+  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
  },
  {
   "id": "nar_julia_made_item_dada_matt",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Magic Earmuffs!"
+  "text": "We made the Pillow Fort!"
  },
  {
   "id": "nar_julia_need_counter_dada_matt",
@@ -3884,7 +4118,7 @@
   "id": "nar_julia_got_counter_dada_matt",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Magic Earmuffs!"
+  "text": "We found the Pillow Fort!"
  },
  {
   "id": "nar_julia_alarm_villain_dada_jason",
@@ -3896,13 +4130,13 @@
   "id": "nar_julia_need_item_dada_jason",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Pillow Fort can stop Evil Dada Jason!"
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
  },
  {
   "id": "nar_julia_made_item_dada_jason",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Clean-Up Van!"
  },
  {
   "id": "nar_julia_need_counter_dada_jason",
@@ -3914,7 +4148,7 @@
   "id": "nar_julia_got_counter_dada_jason",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Clean-Up Van!"
  },
  {
   "id": "nar_julia_alarm_villain_elsa",
@@ -4582,6 +4816,1236 @@
   "text": "Find ice!"
  },
  {
+  "id": "nar_ellie_alarm_ready",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need to get ready!"
+ },
+ {
+  "id": "nar_ellie_prep_gem",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "First, let us make a power gem!",
+  "say": "First, let us make a power gem."
+ },
+ {
+  "id": "nar_ellie_prep_ammo",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Let us make magic star ammo!",
+  "say": "Let us make magic star ammo."
+ },
+ {
+  "id": "nar_ellie_prep_helper",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Let us call a helper friend!",
+  "say": "Let us call a helper friend."
+ },
+ {
+  "id": "nar_ellie_inst_sound",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Listen! Walk to the letter that makes this sound.",
+  "say": "Listen, walk to the letter that makes this sound."
+ },
+ {
+  "id": "nar_ellie_inst_blend",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Walk on the letters, then pick the right door!"
+ },
+ {
+  "id": "nar_ellie_inst_picture",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Read the word, then walk to its picture!"
+ },
+ {
+  "id": "nar_ellie_inst_spell",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Type the letters to spell the magic word!"
+ },
+ {
+  "id": "nar_ellie_spell_this",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Spell this one!"
+ },
+ {
+  "id": "nar_ellie_hint",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Listen to the sounds!"
+ },
+ {
+  "id": "nar_ellie_right_1",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Yes! You did it!",
+  "say": "Yes, you did it!"
+ },
+ {
+  "id": "nar_ellie_right_2",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Great reading!"
+ },
+ {
+  "id": "nar_ellie_right_3",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Yes! That is it!",
+  "say": "Yes, that is it!"
+ },
+ {
+  "id": "nar_ellie_right_4",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Super duper!"
+ },
+ {
+  "id": "nar_ellie_wrong_1",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Oopsie! Try another one!",
+  "say": "Oopsie, try another one!"
+ },
+ {
+  "id": "nar_ellie_wrong_2",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Not that one, silly!"
+ },
+ {
+  "id": "nar_ellie_wrong_3",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That one is ticklish! Try again!",
+  "say": "That one is ticklish, try again!"
+ },
+ {
+  "id": "nar_ellie_wrong_4",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Silly me, wrong way! Try again!",
+  "say": "Silly me, wrong way, try again!"
+ },
+ {
+  "id": "nar_ellie_made_gem",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made a power gem!"
+ },
+ {
+  "id": "nar_ellie_made_ammo",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made star ammo!"
+ },
+ {
+  "id": "nar_ellie_made_helper",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "A helper friend is here!"
+ },
+ {
+  "id": "nar_ellie_piece",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "One more piece!"
+ },
+ {
+  "id": "nar_ellie_battle_start",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Let us go! Charge!",
+  "say": "Let us go, charge!"
+ },
+ {
+  "id": "nar_ellie_battle2_start",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Round two! We are ready now!",
+  "say": "Round two, we are ready now!"
+ },
+ {
+  "id": "nar_ellie_move_pick",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Quick! Pick a move!",
+  "say": "Quick, pick a move!"
+ },
+ {
+  "id": "nar_ellie_move_great",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Super power!"
+ },
+ {
+  "id": "nar_ellie_move_ok",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Nice move!"
+ },
+ {
+  "id": "nar_ellie_use_gem",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Power gem, shine!"
+ },
+ {
+  "id": "nar_ellie_use_ammo",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Fire the star ammo!"
+ },
+ {
+  "id": "nar_ellie_use_helper",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Go, helper friend!"
+ },
+ {
+  "id": "nar_ellie_use_item",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Now! Use it!",
+  "say": "Now, use it!"
+ },
+ {
+  "id": "nar_ellie_retreat_1",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Too strong! Retreat, retreat!",
+  "say": "Too strong, retreat, retreat!"
+ },
+ {
+  "id": "nar_ellie_retreat_2",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That was close! We need a plan!",
+  "say": "That was close, we need a plan!"
+ },
+ {
+  "id": "nar_ellie_forge_intro",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Let us make it! Spell the magic words!",
+  "say": "Let us make it, spell the magic words!"
+ },
+ {
+  "id": "nar_ellie_finish",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Now, all together! Finish it!",
+  "say": "Now, all together, finish it!"
+ },
+ {
+  "id": "nar_ellie_victory_1",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We won! Hooray!",
+  "say": "We won, hooray!"
+ },
+ {
+  "id": "nar_ellie_victory_2",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "You are a real Word Warrior!"
+ },
+ {
+  "id": "nar_ellie_again",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Press green to play again!"
+ },
+ {
+  "id": "nar_ellie_teach_1",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "I will teach you a magic spell!"
+ },
+ {
+  "id": "nar_ellie_teach_circle",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Stand in the magic circle, and press green!"
+ },
+ {
+  "id": "nar_ellie_teach_done",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "You know the spell now! Let us look around.",
+  "say": "You know the spell now, let us look around."
+ },
+ {
+  "id": "nar_ellie_house_doors",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Two doors! Walk to one, and press green.",
+  "say": "Two doors, walk to one, and press green."
+ },
+ {
+  "id": "nar_ellie_house_more",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "One more door to go!"
+ },
+ {
+  "id": "nar_ellie_house_front",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "The front door is open! Let us go!",
+  "say": "The front door is open, let us go!"
+ },
+ {
+  "id": "nar_ellie_secret_door",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Look, a secret door! Let us go up!",
+  "say": "Look, a secret door, let us go up!"
+ },
+ {
+  "id": "nar_ellie_house_ready",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We are ready now! Out the front door!",
+  "say": "We are ready now, out the front door!"
+ },
+ {
+  "id": "nar_ellie_room_listen",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Listen!"
+ },
+ {
+  "id": "nar_ellie_room_your_turn",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Your turn! Press green for each word.",
+  "say": "Your turn, press green for each word."
+ },
+ {
+  "id": "nar_ellie_room_find",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Now find it, and press green!"
+ },
+ {
+  "id": "nar_ellie_got_item",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We got it!"
+ },
+ {
+  "id": "nar_ellie_use_bag",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Look what we found!"
+ },
+ {
+  "id": "nar_ellie_alarm_hero_julia",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Bad news, Julia!"
+ },
+ {
+  "id": "nar_ellie_alarm_hero_seraphina",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Bad news, Seraphina!"
+ },
+ {
+  "id": "nar_ellie_alarm_hero_dada_matt",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Bad news, Dada Matt!"
+ },
+ {
+  "id": "nar_ellie_alarm_hero_dada_jason",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Bad news, Dada Jason!"
+ },
+ {
+  "id": "nar_ellie_alarm_hero_elsa",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Bad news, Elsa!"
+ },
+ {
+  "id": "nar_ellie_alarm_hero_anna",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Bad news, Anna!"
+ },
+ {
+  "id": "nar_ellie_alarm_hero_jasmine",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Bad news, Jasmine!"
+ },
+ {
+  "id": "nar_ellie_alarm_hero_ozymandias",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Bad news, Ozymandias!"
+ },
+ {
+  "id": "nar_ellie_alarm_hero_jormungandr",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Bad news, Jormungandr!",
+  "say": "Bad news, Yormungander!"
+ },
+ {
+  "id": "nar_ellie_alarm_hero_smaug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Bad news, Smaug!"
+ },
+ {
+  "id": "nar_ellie_alarm_hero_scar",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Bad news, Scar!"
+ },
+ {
+  "id": "nar_ellie_alarm_hero_moriarty",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Bad news, Moriarty!"
+ },
+ {
+  "id": "nar_ellie_alarm_hero_bavmorda",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Bad news, Bavmorda!"
+ },
+ {
+  "id": "nar_ellie_alarm_hero_rilla",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Bad news, Rilla!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_julia",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Julia is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_julia",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Cozy Blanket can stop Evil Julia!"
+ },
+ {
+  "id": "nar_ellie_made_item_julia",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Cozy Blanket!"
+ },
+ {
+  "id": "nar_ellie_need_counter_julia",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Julia!"
+ },
+ {
+  "id": "nar_ellie_got_counter_julia",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Cozy Blanket!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_ellie",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_ellie",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Bubble Bath can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_ellie_made_item_ellie",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Bubble Bath!"
+ },
+ {
+  "id": "nar_ellie_need_counter_ellie",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_ellie_got_counter_ellie",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Bubble Bath!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_seraphina",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Seraphina is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_seraphina",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Dragon Treats can stop Evil Seraphina!"
+ },
+ {
+  "id": "nar_ellie_made_item_seraphina",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Dragon Treats!"
+ },
+ {
+  "id": "nar_ellie_need_counter_seraphina",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Seraphina!"
+ },
+ {
+  "id": "nar_ellie_got_counter_seraphina",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Dragon Treats!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_dada_matt",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_dada_matt",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_ellie_made_item_dada_matt",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Pillow Fort!"
+ },
+ {
+  "id": "nar_ellie_need_counter_dada_matt",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_ellie_got_counter_dada_matt",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Pillow Fort!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_dada_jason",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_dada_jason",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_ellie_made_item_dada_jason",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Clean-Up Van!"
+ },
+ {
+  "id": "nar_ellie_need_counter_dada_jason",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_ellie_got_counter_dada_jason",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Clean-Up Van!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_elsa",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Elsa is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_elsa",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Sun Torch can stop Evil Elsa!"
+ },
+ {
+  "id": "nar_ellie_made_item_elsa",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Sun Torch!"
+ },
+ {
+  "id": "nar_ellie_need_counter_elsa",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Elsa!"
+ },
+ {
+  "id": "nar_ellie_got_counter_elsa",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Sun Torch!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_anna",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Anna is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_anna",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Friendship Locket can stop Evil Anna!"
+ },
+ {
+  "id": "nar_ellie_made_item_anna",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Friendship Locket!"
+ },
+ {
+  "id": "nar_ellie_need_counter_anna",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Anna!"
+ },
+ {
+  "id": "nar_ellie_got_counter_anna",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Friendship Locket!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_jasmine",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Jasmine is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_jasmine",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Wind Fan can stop Evil Jasmine!"
+ },
+ {
+  "id": "nar_ellie_made_item_jasmine",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Wind Fan!"
+ },
+ {
+  "id": "nar_ellie_need_counter_jasmine",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Jasmine!"
+ },
+ {
+  "id": "nar_ellie_got_counter_jasmine",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Wind Fan!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_ozymandias",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Ozymandias is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_ozymandias",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Rain Cloud can stop Evil Ozymandias!"
+ },
+ {
+  "id": "nar_ellie_made_item_ozymandias",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Rain Cloud!"
+ },
+ {
+  "id": "nar_ellie_need_counter_ozymandias",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Ozymandias!"
+ },
+ {
+  "id": "nar_ellie_got_counter_ozymandias",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Rain Cloud!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_jormungandr",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Jormungandr is coming!",
+  "say": "Evil Yormungander is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_jormungandr",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Sun Lamp can stop Evil Jormungandr!",
+  "say": "Only the Sun Lamp can stop Evil Yormungander!"
+ },
+ {
+  "id": "nar_ellie_made_item_jormungandr",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Sun Lamp!",
+  "say": "We made the Sun Lamp!"
+ },
+ {
+  "id": "nar_ellie_need_counter_jormungandr",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Jormungandr!",
+  "say": "We need something that scares Evil Yormungander!"
+ },
+ {
+  "id": "nar_ellie_got_counter_jormungandr",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Sun Lamp!",
+  "say": "We found the Sun Lamp!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_smaug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Smaug is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_smaug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Frost Shield can stop Evil Smaug!"
+ },
+ {
+  "id": "nar_ellie_made_item_smaug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Frost Shield!"
+ },
+ {
+  "id": "nar_ellie_need_counter_smaug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Smaug!"
+ },
+ {
+  "id": "nar_ellie_got_counter_smaug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Frost Shield!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_scar",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Scar is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_scar",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Off Remote can stop Evil Scar!"
+ },
+ {
+  "id": "nar_ellie_made_item_scar",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Off Remote!"
+ },
+ {
+  "id": "nar_ellie_need_counter_scar",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Scar!"
+ },
+ {
+  "id": "nar_ellie_got_counter_scar",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Off Remote!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_moriarty",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Moriarty is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_moriarty",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Magnifying Glass can stop Evil Moriarty!"
+ },
+ {
+  "id": "nar_ellie_made_item_moriarty",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Magnifying Glass!"
+ },
+ {
+  "id": "nar_ellie_need_counter_moriarty",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Moriarty!"
+ },
+ {
+  "id": "nar_ellie_got_counter_moriarty",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Magnifying Glass!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_bavmorda",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Bavmorda is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_bavmorda",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Magic Mirror can stop Evil Bavmorda!"
+ },
+ {
+  "id": "nar_ellie_made_item_bavmorda",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Magic Mirror!"
+ },
+ {
+  "id": "nar_ellie_need_counter_bavmorda",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Bavmorda!"
+ },
+ {
+  "id": "nar_ellie_got_counter_bavmorda",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Magic Mirror!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_rilla",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "EvilRilla is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_rilla",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Wind-up Mice can stop EvilRilla!"
+ },
+ {
+  "id": "nar_ellie_made_item_rilla",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Wind-up Mice!"
+ },
+ {
+  "id": "nar_ellie_need_counter_rilla",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares EvilRilla!"
+ },
+ {
+  "id": "nar_ellie_got_counter_rilla",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Wind-up Mice!"
+ },
+ {
+  "id": "nar_ellie_use_move_zap",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use zap!"
+ },
+ {
+  "id": "nar_ellie_teach_word_zap",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called zap!"
+ },
+ {
+  "id": "nar_ellie_not_move_zap",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_ellie_was_move_zap",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_ellie_find_move_zap",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find zap!"
+ },
+ {
+  "id": "nar_ellie_use_move_pow",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use pow!"
+ },
+ {
+  "id": "nar_ellie_teach_word_pow",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_ellie_not_move_pow",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_ellie_was_move_pow",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_ellie_find_move_pow",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find pow!"
+ },
+ {
+  "id": "nar_ellie_use_move_bam",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use bam!"
+ },
+ {
+  "id": "nar_ellie_teach_word_bam",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called bam!"
+ },
+ {
+  "id": "nar_ellie_not_move_bam",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_ellie_was_move_bam",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_ellie_find_move_bam",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find bam!"
+ },
+ {
+  "id": "nar_ellie_use_move_zip",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use zip!"
+ },
+ {
+  "id": "nar_ellie_teach_word_zip",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_ellie_not_move_zip",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_ellie_was_move_zip",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_ellie_find_move_zip",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find zip!"
+ },
+ {
+  "id": "nar_ellie_use_move_hop",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use hop!"
+ },
+ {
+  "id": "nar_ellie_teach_word_hop",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called hop!"
+ },
+ {
+  "id": "nar_ellie_not_move_hop",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_ellie_was_move_hop",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_ellie_find_move_hop",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find hop!"
+ },
+ {
+  "id": "nar_ellie_use_move_pop",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use pop!"
+ },
+ {
+  "id": "nar_ellie_teach_word_pop",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_ellie_not_move_pop",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_ellie_was_move_pop",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_ellie_find_move_pop",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find pop!"
+ },
+ {
+  "id": "nar_ellie_use_move_sun",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use sun!"
+ },
+ {
+  "id": "nar_ellie_teach_word_sun",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called sun!"
+ },
+ {
+  "id": "nar_ellie_not_move_sun",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_ellie_was_move_sun",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_ellie_find_move_sun",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find sun!"
+ },
+ {
+  "id": "nar_ellie_use_move_hug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use hug!"
+ },
+ {
+  "id": "nar_ellie_teach_word_hug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_ellie_not_move_hug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_ellie_was_move_hug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_ellie_find_move_hug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find hug!"
+ },
+ {
+  "id": "nar_ellie_use_move_fan",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use fan!"
+ },
+ {
+  "id": "nar_ellie_teach_word_fan",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called fan!"
+ },
+ {
+  "id": "nar_ellie_not_move_fan",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_ellie_was_move_fan",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_ellie_find_move_fan",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find fan!"
+ },
+ {
+  "id": "nar_ellie_use_move_big",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use big!"
+ },
+ {
+  "id": "nar_ellie_teach_word_big",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_ellie_not_move_big",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_ellie_was_move_big",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_ellie_find_move_big",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find big!"
+ },
+ {
+  "id": "nar_ellie_use_move_hot",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use hot!"
+ },
+ {
+  "id": "nar_ellie_teach_word_hot",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called hot!"
+ },
+ {
+  "id": "nar_ellie_not_move_hot",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_ellie_was_move_hot",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_ellie_find_move_hot",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find hot!"
+ },
+ {
+  "id": "nar_ellie_use_move_ice",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use ice!"
+ },
+ {
+  "id": "nar_ellie_teach_word_ice",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_ellie_not_move_ice",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_ellie_was_move_ice",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_ellie_find_move_ice",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find ice!"
+ },
+ {
   "id": "nar_seraphina_alarm_ready",
   "speaker": "seraphina",
   "group": "nar_seraphina",
@@ -4918,6 +6382,12 @@
   "text": "Bad news, Julia!"
  },
  {
+  "id": "nar_seraphina_alarm_hero_ellie",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Bad news, Ellie!"
+ },
+ {
   "id": "nar_seraphina_alarm_hero_dada_matt",
   "speaker": "seraphina",
   "group": "nar_seraphina",
@@ -5021,6 +6491,36 @@
   "text": "We found the Cozy Blanket!"
  },
  {
+  "id": "nar_seraphina_alarm_villain_ellie",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_seraphina_need_item_ellie",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Only the Bubble Bath can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_seraphina_made_item_ellie",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We made the Bubble Bath!"
+ },
+ {
+  "id": "nar_seraphina_need_counter_ellie",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_seraphina_got_counter_ellie",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We found the Bubble Bath!"
+ },
+ {
   "id": "nar_seraphina_alarm_villain_seraphina",
   "speaker": "seraphina",
   "group": "nar_seraphina",
@@ -5060,13 +6560,13 @@
   "id": "nar_seraphina_need_item_dada_matt",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Magic Earmuffs can stop Evil Dada Matt!"
+  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
  },
  {
   "id": "nar_seraphina_made_item_dada_matt",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Magic Earmuffs!"
+  "text": "We made the Pillow Fort!"
  },
  {
   "id": "nar_seraphina_need_counter_dada_matt",
@@ -5078,7 +6578,7 @@
   "id": "nar_seraphina_got_counter_dada_matt",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Magic Earmuffs!"
+  "text": "We found the Pillow Fort!"
  },
  {
   "id": "nar_seraphina_alarm_villain_dada_jason",
@@ -5090,13 +6590,13 @@
   "id": "nar_seraphina_need_item_dada_jason",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Pillow Fort can stop Evil Dada Jason!"
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
  },
  {
   "id": "nar_seraphina_made_item_dada_jason",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Clean-Up Van!"
  },
  {
   "id": "nar_seraphina_need_counter_dada_jason",
@@ -5108,7 +6608,7 @@
   "id": "nar_seraphina_got_counter_dada_jason",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Clean-Up Van!"
  },
  {
   "id": "nar_seraphina_alarm_villain_elsa",
@@ -6112,6 +7612,12 @@
   "text": "Bad news, Julia!"
  },
  {
+  "id": "nar_dada_matt_alarm_hero_ellie",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Bad news, Ellie!"
+ },
+ {
   "id": "nar_dada_matt_alarm_hero_seraphina",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
@@ -6215,6 +7721,36 @@
   "text": "We found the Cozy Blanket!"
  },
  {
+  "id": "nar_dada_matt_alarm_villain_ellie",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_dada_matt_need_item_ellie",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Only the Bubble Bath can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_dada_matt_made_item_ellie",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We made the Bubble Bath!"
+ },
+ {
+  "id": "nar_dada_matt_need_counter_ellie",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_dada_matt_got_counter_ellie",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We found the Bubble Bath!"
+ },
+ {
   "id": "nar_dada_matt_alarm_villain_seraphina",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
@@ -6254,13 +7790,13 @@
   "id": "nar_dada_matt_need_item_dada_matt",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Magic Earmuffs can stop Evil Dada Matt!"
+  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
  },
  {
   "id": "nar_dada_matt_made_item_dada_matt",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Magic Earmuffs!"
+  "text": "We made the Pillow Fort!"
  },
  {
   "id": "nar_dada_matt_need_counter_dada_matt",
@@ -6272,7 +7808,7 @@
   "id": "nar_dada_matt_got_counter_dada_matt",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Magic Earmuffs!"
+  "text": "We found the Pillow Fort!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_dada_jason",
@@ -6284,13 +7820,13 @@
   "id": "nar_dada_matt_need_item_dada_jason",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Pillow Fort can stop Evil Dada Jason!"
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
  },
  {
   "id": "nar_dada_matt_made_item_dada_jason",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Clean-Up Van!"
  },
  {
   "id": "nar_dada_matt_need_counter_dada_jason",
@@ -6302,7 +7838,7 @@
   "id": "nar_dada_matt_got_counter_dada_jason",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Clean-Up Van!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_elsa",
@@ -7306,6 +8842,12 @@
   "text": "Bad news, Julia!"
  },
  {
+  "id": "nar_dada_jason_alarm_hero_ellie",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Bad news, Ellie!"
+ },
+ {
   "id": "nar_dada_jason_alarm_hero_seraphina",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
@@ -7409,6 +8951,36 @@
   "text": "We found the Cozy Blanket!"
  },
  {
+  "id": "nar_dada_jason_alarm_villain_ellie",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_dada_jason_need_item_ellie",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Only the Bubble Bath can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_dada_jason_made_item_ellie",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We made the Bubble Bath!"
+ },
+ {
+  "id": "nar_dada_jason_need_counter_ellie",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_dada_jason_got_counter_ellie",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We found the Bubble Bath!"
+ },
+ {
   "id": "nar_dada_jason_alarm_villain_seraphina",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
@@ -7448,13 +9020,13 @@
   "id": "nar_dada_jason_need_item_dada_matt",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Magic Earmuffs can stop Evil Dada Matt!"
+  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
  },
  {
   "id": "nar_dada_jason_made_item_dada_matt",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Magic Earmuffs!"
+  "text": "We made the Pillow Fort!"
  },
  {
   "id": "nar_dada_jason_need_counter_dada_matt",
@@ -7466,7 +9038,7 @@
   "id": "nar_dada_jason_got_counter_dada_matt",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Magic Earmuffs!"
+  "text": "We found the Pillow Fort!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_dada_jason",
@@ -7478,13 +9050,13 @@
   "id": "nar_dada_jason_need_item_dada_jason",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Pillow Fort can stop Evil Dada Jason!"
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
  },
  {
   "id": "nar_dada_jason_made_item_dada_jason",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Clean-Up Van!"
  },
  {
   "id": "nar_dada_jason_need_counter_dada_jason",
@@ -7496,7 +9068,7 @@
   "id": "nar_dada_jason_got_counter_dada_jason",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Clean-Up Van!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_elsa",
@@ -8500,6 +10072,12 @@
   "text": "Bad news, Julia!"
  },
  {
+  "id": "nar_elsa_alarm_hero_ellie",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Bad news, Ellie!"
+ },
+ {
   "id": "nar_elsa_alarm_hero_seraphina",
   "speaker": "elsa",
   "group": "nar_elsa",
@@ -8603,6 +10181,36 @@
   "text": "We found the Cozy Blanket!"
  },
  {
+  "id": "nar_elsa_alarm_villain_ellie",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_elsa_need_item_ellie",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Only the Bubble Bath can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_elsa_made_item_ellie",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We made the Bubble Bath!"
+ },
+ {
+  "id": "nar_elsa_need_counter_ellie",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_elsa_got_counter_ellie",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We found the Bubble Bath!"
+ },
+ {
   "id": "nar_elsa_alarm_villain_seraphina",
   "speaker": "elsa",
   "group": "nar_elsa",
@@ -8642,13 +10250,13 @@
   "id": "nar_elsa_need_item_dada_matt",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Magic Earmuffs can stop Evil Dada Matt!"
+  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
  },
  {
   "id": "nar_elsa_made_item_dada_matt",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Magic Earmuffs!"
+  "text": "We made the Pillow Fort!"
  },
  {
   "id": "nar_elsa_need_counter_dada_matt",
@@ -8660,7 +10268,7 @@
   "id": "nar_elsa_got_counter_dada_matt",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Magic Earmuffs!"
+  "text": "We found the Pillow Fort!"
  },
  {
   "id": "nar_elsa_alarm_villain_dada_jason",
@@ -8672,13 +10280,13 @@
   "id": "nar_elsa_need_item_dada_jason",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Pillow Fort can stop Evil Dada Jason!"
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
  },
  {
   "id": "nar_elsa_made_item_dada_jason",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Clean-Up Van!"
  },
  {
   "id": "nar_elsa_need_counter_dada_jason",
@@ -8690,7 +10298,7 @@
   "id": "nar_elsa_got_counter_dada_jason",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Clean-Up Van!"
  },
  {
   "id": "nar_elsa_alarm_villain_elsa",
@@ -9694,6 +11302,12 @@
   "text": "Bad news, Julia!"
  },
  {
+  "id": "nar_anna_alarm_hero_ellie",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Bad news, Ellie!"
+ },
+ {
   "id": "nar_anna_alarm_hero_seraphina",
   "speaker": "anna",
   "group": "nar_anna",
@@ -9797,6 +11411,36 @@
   "text": "We found the Cozy Blanket!"
  },
  {
+  "id": "nar_anna_alarm_villain_ellie",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_anna_need_item_ellie",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Only the Bubble Bath can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_anna_made_item_ellie",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We made the Bubble Bath!"
+ },
+ {
+  "id": "nar_anna_need_counter_ellie",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_anna_got_counter_ellie",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We found the Bubble Bath!"
+ },
+ {
   "id": "nar_anna_alarm_villain_seraphina",
   "speaker": "anna",
   "group": "nar_anna",
@@ -9836,13 +11480,13 @@
   "id": "nar_anna_need_item_dada_matt",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Magic Earmuffs can stop Evil Dada Matt!"
+  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
  },
  {
   "id": "nar_anna_made_item_dada_matt",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Magic Earmuffs!"
+  "text": "We made the Pillow Fort!"
  },
  {
   "id": "nar_anna_need_counter_dada_matt",
@@ -9854,7 +11498,7 @@
   "id": "nar_anna_got_counter_dada_matt",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Magic Earmuffs!"
+  "text": "We found the Pillow Fort!"
  },
  {
   "id": "nar_anna_alarm_villain_dada_jason",
@@ -9866,13 +11510,13 @@
   "id": "nar_anna_need_item_dada_jason",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Pillow Fort can stop Evil Dada Jason!"
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
  },
  {
   "id": "nar_anna_made_item_dada_jason",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Clean-Up Van!"
  },
  {
   "id": "nar_anna_need_counter_dada_jason",
@@ -9884,7 +11528,7 @@
   "id": "nar_anna_got_counter_dada_jason",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Clean-Up Van!"
  },
  {
   "id": "nar_anna_alarm_villain_elsa",
@@ -10888,6 +12532,12 @@
   "text": "Bad news, Julia!"
  },
  {
+  "id": "nar_jasmine_alarm_hero_ellie",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Bad news, Ellie!"
+ },
+ {
   "id": "nar_jasmine_alarm_hero_seraphina",
   "speaker": "jasmine",
   "group": "nar_jasmine",
@@ -10991,6 +12641,36 @@
   "text": "We found the Cozy Blanket!"
  },
  {
+  "id": "nar_jasmine_alarm_villain_ellie",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_jasmine_need_item_ellie",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Only the Bubble Bath can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_jasmine_made_item_ellie",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We made the Bubble Bath!"
+ },
+ {
+  "id": "nar_jasmine_need_counter_ellie",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_jasmine_got_counter_ellie",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We found the Bubble Bath!"
+ },
+ {
   "id": "nar_jasmine_alarm_villain_seraphina",
   "speaker": "jasmine",
   "group": "nar_jasmine",
@@ -11030,13 +12710,13 @@
   "id": "nar_jasmine_need_item_dada_matt",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Magic Earmuffs can stop Evil Dada Matt!"
+  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
  },
  {
   "id": "nar_jasmine_made_item_dada_matt",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Magic Earmuffs!"
+  "text": "We made the Pillow Fort!"
  },
  {
   "id": "nar_jasmine_need_counter_dada_matt",
@@ -11048,7 +12728,7 @@
   "id": "nar_jasmine_got_counter_dada_matt",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Magic Earmuffs!"
+  "text": "We found the Pillow Fort!"
  },
  {
   "id": "nar_jasmine_alarm_villain_dada_jason",
@@ -11060,13 +12740,13 @@
   "id": "nar_jasmine_need_item_dada_jason",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Pillow Fort can stop Evil Dada Jason!"
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
  },
  {
   "id": "nar_jasmine_made_item_dada_jason",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Clean-Up Van!"
  },
  {
   "id": "nar_jasmine_need_counter_dada_jason",
@@ -11078,7 +12758,7 @@
   "id": "nar_jasmine_got_counter_dada_jason",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Clean-Up Van!"
  },
  {
   "id": "nar_jasmine_alarm_villain_elsa",
@@ -12082,6 +13762,12 @@
   "text": "Bad news, Julia!"
  },
  {
+  "id": "nar_ozymandias_alarm_hero_ellie",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Bad news, Ellie!"
+ },
+ {
   "id": "nar_ozymandias_alarm_hero_seraphina",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
@@ -12185,6 +13871,36 @@
   "text": "We found the Cozy Blanket!"
  },
  {
+  "id": "nar_ozymandias_alarm_villain_ellie",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_ozymandias_need_item_ellie",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Only the Bubble Bath can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_ozymandias_made_item_ellie",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We made the Bubble Bath!"
+ },
+ {
+  "id": "nar_ozymandias_need_counter_ellie",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_ozymandias_got_counter_ellie",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We found the Bubble Bath!"
+ },
+ {
   "id": "nar_ozymandias_alarm_villain_seraphina",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
@@ -12224,13 +13940,13 @@
   "id": "nar_ozymandias_need_item_dada_matt",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Magic Earmuffs can stop Evil Dada Matt!"
+  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
  },
  {
   "id": "nar_ozymandias_made_item_dada_matt",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Magic Earmuffs!"
+  "text": "We made the Pillow Fort!"
  },
  {
   "id": "nar_ozymandias_need_counter_dada_matt",
@@ -12242,7 +13958,7 @@
   "id": "nar_ozymandias_got_counter_dada_matt",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Magic Earmuffs!"
+  "text": "We found the Pillow Fort!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_dada_jason",
@@ -12254,13 +13970,13 @@
   "id": "nar_ozymandias_need_item_dada_jason",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Pillow Fort can stop Evil Dada Jason!"
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
  },
  {
   "id": "nar_ozymandias_made_item_dada_jason",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Clean-Up Van!"
  },
  {
   "id": "nar_ozymandias_need_counter_dada_jason",
@@ -12272,7 +13988,7 @@
   "id": "nar_ozymandias_got_counter_dada_jason",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Clean-Up Van!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_elsa",
@@ -13276,6 +14992,12 @@
   "text": "Bad news, Julia!"
  },
  {
+  "id": "nar_jormungandr_alarm_hero_ellie",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Bad news, Ellie!"
+ },
+ {
   "id": "nar_jormungandr_alarm_hero_seraphina",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -13378,6 +15100,36 @@
   "text": "We found the Cozy Blanket!"
  },
  {
+  "id": "nar_jormungandr_alarm_villain_ellie",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_jormungandr_need_item_ellie",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Only the Bubble Bath can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_jormungandr_made_item_ellie",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We made the Bubble Bath!"
+ },
+ {
+  "id": "nar_jormungandr_need_counter_ellie",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_jormungandr_got_counter_ellie",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We found the Bubble Bath!"
+ },
+ {
   "id": "nar_jormungandr_alarm_villain_seraphina",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -13417,13 +15169,13 @@
   "id": "nar_jormungandr_need_item_dada_matt",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Magic Earmuffs can stop Evil Dada Matt!"
+  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
  },
  {
   "id": "nar_jormungandr_made_item_dada_matt",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Magic Earmuffs!"
+  "text": "We made the Pillow Fort!"
  },
  {
   "id": "nar_jormungandr_need_counter_dada_matt",
@@ -13435,7 +15187,7 @@
   "id": "nar_jormungandr_got_counter_dada_matt",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Magic Earmuffs!"
+  "text": "We found the Pillow Fort!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_dada_jason",
@@ -13447,13 +15199,13 @@
   "id": "nar_jormungandr_need_item_dada_jason",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Pillow Fort can stop Evil Dada Jason!"
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
  },
  {
   "id": "nar_jormungandr_made_item_dada_jason",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Clean-Up Van!"
  },
  {
   "id": "nar_jormungandr_need_counter_dada_jason",
@@ -13465,7 +15217,7 @@
   "id": "nar_jormungandr_got_counter_dada_jason",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Clean-Up Van!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_elsa",
@@ -14469,6 +16221,12 @@
   "text": "Bad news, Julia!"
  },
  {
+  "id": "nar_smaug_alarm_hero_ellie",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Bad news, Ellie!"
+ },
+ {
   "id": "nar_smaug_alarm_hero_seraphina",
   "speaker": "smaug",
   "group": "nar_smaug",
@@ -14572,6 +16330,36 @@
   "text": "We found the Cozy Blanket!"
  },
  {
+  "id": "nar_smaug_alarm_villain_ellie",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_smaug_need_item_ellie",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Only the Bubble Bath can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_smaug_made_item_ellie",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We made the Bubble Bath!"
+ },
+ {
+  "id": "nar_smaug_need_counter_ellie",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_smaug_got_counter_ellie",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We found the Bubble Bath!"
+ },
+ {
   "id": "nar_smaug_alarm_villain_seraphina",
   "speaker": "smaug",
   "group": "nar_smaug",
@@ -14611,13 +16399,13 @@
   "id": "nar_smaug_need_item_dada_matt",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Magic Earmuffs can stop Evil Dada Matt!"
+  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
  },
  {
   "id": "nar_smaug_made_item_dada_matt",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Magic Earmuffs!"
+  "text": "We made the Pillow Fort!"
  },
  {
   "id": "nar_smaug_need_counter_dada_matt",
@@ -14629,7 +16417,7 @@
   "id": "nar_smaug_got_counter_dada_matt",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Magic Earmuffs!"
+  "text": "We found the Pillow Fort!"
  },
  {
   "id": "nar_smaug_alarm_villain_dada_jason",
@@ -14641,13 +16429,13 @@
   "id": "nar_smaug_need_item_dada_jason",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Pillow Fort can stop Evil Dada Jason!"
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
  },
  {
   "id": "nar_smaug_made_item_dada_jason",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Clean-Up Van!"
  },
  {
   "id": "nar_smaug_need_counter_dada_jason",
@@ -14659,7 +16447,7 @@
   "id": "nar_smaug_got_counter_dada_jason",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Clean-Up Van!"
  },
  {
   "id": "nar_smaug_alarm_villain_elsa",
@@ -15663,6 +17451,12 @@
   "text": "Bad news, Julia!"
  },
  {
+  "id": "nar_scar_alarm_hero_ellie",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Bad news, Ellie!"
+ },
+ {
   "id": "nar_scar_alarm_hero_seraphina",
   "speaker": "scar",
   "group": "nar_scar",
@@ -15766,6 +17560,36 @@
   "text": "We found the Cozy Blanket!"
  },
  {
+  "id": "nar_scar_alarm_villain_ellie",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_scar_need_item_ellie",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Only the Bubble Bath can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_scar_made_item_ellie",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We made the Bubble Bath!"
+ },
+ {
+  "id": "nar_scar_need_counter_ellie",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_scar_got_counter_ellie",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We found the Bubble Bath!"
+ },
+ {
   "id": "nar_scar_alarm_villain_seraphina",
   "speaker": "scar",
   "group": "nar_scar",
@@ -15805,13 +17629,13 @@
   "id": "nar_scar_need_item_dada_matt",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Magic Earmuffs can stop Evil Dada Matt!"
+  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
  },
  {
   "id": "nar_scar_made_item_dada_matt",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Magic Earmuffs!"
+  "text": "We made the Pillow Fort!"
  },
  {
   "id": "nar_scar_need_counter_dada_matt",
@@ -15823,7 +17647,7 @@
   "id": "nar_scar_got_counter_dada_matt",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Magic Earmuffs!"
+  "text": "We found the Pillow Fort!"
  },
  {
   "id": "nar_scar_alarm_villain_dada_jason",
@@ -15835,13 +17659,13 @@
   "id": "nar_scar_need_item_dada_jason",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Pillow Fort can stop Evil Dada Jason!"
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
  },
  {
   "id": "nar_scar_made_item_dada_jason",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Clean-Up Van!"
  },
  {
   "id": "nar_scar_need_counter_dada_jason",
@@ -15853,7 +17677,7 @@
   "id": "nar_scar_got_counter_dada_jason",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Clean-Up Van!"
  },
  {
   "id": "nar_scar_alarm_villain_elsa",
@@ -16857,6 +18681,12 @@
   "text": "Bad news, Julia!"
  },
  {
+  "id": "nar_moriarty_alarm_hero_ellie",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Bad news, Ellie!"
+ },
+ {
   "id": "nar_moriarty_alarm_hero_seraphina",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -16960,6 +18790,36 @@
   "text": "We found the Cozy Blanket!"
  },
  {
+  "id": "nar_moriarty_alarm_villain_ellie",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_moriarty_need_item_ellie",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Only the Bubble Bath can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_moriarty_made_item_ellie",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We made the Bubble Bath!"
+ },
+ {
+  "id": "nar_moriarty_need_counter_ellie",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_moriarty_got_counter_ellie",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We found the Bubble Bath!"
+ },
+ {
   "id": "nar_moriarty_alarm_villain_seraphina",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -16999,13 +18859,13 @@
   "id": "nar_moriarty_need_item_dada_matt",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Magic Earmuffs can stop Evil Dada Matt!"
+  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
  },
  {
   "id": "nar_moriarty_made_item_dada_matt",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Magic Earmuffs!"
+  "text": "We made the Pillow Fort!"
  },
  {
   "id": "nar_moriarty_need_counter_dada_matt",
@@ -17017,7 +18877,7 @@
   "id": "nar_moriarty_got_counter_dada_matt",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Magic Earmuffs!"
+  "text": "We found the Pillow Fort!"
  },
  {
   "id": "nar_moriarty_alarm_villain_dada_jason",
@@ -17029,13 +18889,13 @@
   "id": "nar_moriarty_need_item_dada_jason",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Pillow Fort can stop Evil Dada Jason!"
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
  },
  {
   "id": "nar_moriarty_made_item_dada_jason",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Clean-Up Van!"
  },
  {
   "id": "nar_moriarty_need_counter_dada_jason",
@@ -17047,7 +18907,7 @@
   "id": "nar_moriarty_got_counter_dada_jason",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Clean-Up Van!"
  },
  {
   "id": "nar_moriarty_alarm_villain_elsa",
@@ -18051,6 +19911,12 @@
   "text": "Bad news, Julia!"
  },
  {
+  "id": "nar_bavmorda_alarm_hero_ellie",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Bad news, Ellie!"
+ },
+ {
   "id": "nar_bavmorda_alarm_hero_seraphina",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
@@ -18154,6 +20020,36 @@
   "text": "We found the Cozy Blanket!"
  },
  {
+  "id": "nar_bavmorda_alarm_villain_ellie",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_bavmorda_need_item_ellie",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Only the Bubble Bath can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_bavmorda_made_item_ellie",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We made the Bubble Bath!"
+ },
+ {
+  "id": "nar_bavmorda_need_counter_ellie",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_bavmorda_got_counter_ellie",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We found the Bubble Bath!"
+ },
+ {
   "id": "nar_bavmorda_alarm_villain_seraphina",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
@@ -18193,13 +20089,13 @@
   "id": "nar_bavmorda_need_item_dada_matt",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Magic Earmuffs can stop Evil Dada Matt!"
+  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
  },
  {
   "id": "nar_bavmorda_made_item_dada_matt",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Magic Earmuffs!"
+  "text": "We made the Pillow Fort!"
  },
  {
   "id": "nar_bavmorda_need_counter_dada_matt",
@@ -18211,7 +20107,7 @@
   "id": "nar_bavmorda_got_counter_dada_matt",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Magic Earmuffs!"
+  "text": "We found the Pillow Fort!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_dada_jason",
@@ -18223,13 +20119,13 @@
   "id": "nar_bavmorda_need_item_dada_jason",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Pillow Fort can stop Evil Dada Jason!"
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
  },
  {
   "id": "nar_bavmorda_made_item_dada_jason",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Clean-Up Van!"
  },
  {
   "id": "nar_bavmorda_need_counter_dada_jason",
@@ -18241,7 +20137,7 @@
   "id": "nar_bavmorda_got_counter_dada_jason",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Clean-Up Van!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_elsa",
@@ -19245,6 +21141,12 @@
   "text": "Bad news, Julia!"
  },
  {
+  "id": "nar_rilla_alarm_hero_ellie",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Bad news, Ellie!"
+ },
+ {
   "id": "nar_rilla_alarm_hero_seraphina",
   "speaker": "rilla",
   "group": "nar_rilla",
@@ -19348,6 +21250,36 @@
   "text": "We found the Cozy Blanket!"
  },
  {
+  "id": "nar_rilla_alarm_villain_ellie",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_rilla_need_item_ellie",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Only the Bubble Bath can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_rilla_made_item_ellie",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We made the Bubble Bath!"
+ },
+ {
+  "id": "nar_rilla_need_counter_ellie",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_rilla_got_counter_ellie",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We found the Bubble Bath!"
+ },
+ {
   "id": "nar_rilla_alarm_villain_seraphina",
   "speaker": "rilla",
   "group": "nar_rilla",
@@ -19387,13 +21319,13 @@
   "id": "nar_rilla_need_item_dada_matt",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Magic Earmuffs can stop Evil Dada Matt!"
+  "text": "Only the Pillow Fort can stop Evil Dada Matt!"
  },
  {
   "id": "nar_rilla_made_item_dada_matt",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Magic Earmuffs!"
+  "text": "We made the Pillow Fort!"
  },
  {
   "id": "nar_rilla_need_counter_dada_matt",
@@ -19405,7 +21337,7 @@
   "id": "nar_rilla_got_counter_dada_matt",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Magic Earmuffs!"
+  "text": "We found the Pillow Fort!"
  },
  {
   "id": "nar_rilla_alarm_villain_dada_jason",
@@ -19417,13 +21349,13 @@
   "id": "nar_rilla_need_item_dada_jason",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Pillow Fort can stop Evil Dada Jason!"
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
  },
  {
   "id": "nar_rilla_made_item_dada_jason",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Pillow Fort!"
+  "text": "We made the Clean-Up Van!"
  },
  {
   "id": "nar_rilla_need_counter_dada_jason",
@@ -19435,7 +21367,7 @@
   "id": "nar_rilla_got_counter_dada_jason",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Pillow Fort!"
+  "text": "We found the Clean-Up Van!"
  },
  {
   "id": "nar_rilla_alarm_villain_elsa",

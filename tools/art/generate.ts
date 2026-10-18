@@ -17,6 +17,9 @@
  * PNGs from `art-originals/` without asking Codex (for tuning the keying).
  * `--shrink` palette-quantizes the named ids' committed PNGs in place.
  * `--sheet-out=<file>` writes the contact sheet there, of the named ids only.
+ * Family ids (REFS in content/art/prompts.ts) attach a crop of their photo in
+ * `art-originals/refs/` as a likeness reference; if that run brings back no
+ * image, it is retried with the text alone. `--no-ref` never attaches one.
  */
 
 import { spawn } from 'node:child_process';
@@ -28,7 +31,7 @@ import { chromium, type Page } from '@playwright/test';
 import sharp from 'sharp';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
-import { ART_PROMPTS, BACKGROUND_STYLE, NO_GREEN, SPRITE_STYLE } from '../../content/art/prompts.js';
+import { ART_PROMPTS, BACKGROUND_STYLE, NO_GREEN, REFS, SPRITE_STYLE, refFor } from '../../content/art/prompts.js';
 import { isMain } from '../voice/clips.js';
 import { keyGreen } from './chroma.js';
 import { isPlaceholder } from './placeholders.js';
@@ -50,7 +53,7 @@ export const shrinkPng = (png: Buffer): Promise<Buffer> => sharp(png).png({ pale
 
 const isBackground = (id: string) => ['room', 'arena'].includes(ART_BY_ID[id]!.kind);
 
-export function codexPrompt(id: string): string {
+export function codexPrompt(id: string, withRef = false): string {
   const prompt = ART_PROMPTS[id];
   if (!prompt) throw new Error(`no prompt for ${id} in content/art/prompts.ts`);
   const a = ART_BY_ID[id];
@@ -60,6 +63,12 @@ export function codexPrompt(id: string): string {
     'Use your built-in image_gen tool ($imagegen) exactly once to generate the image below.',
     'Do not read any files, run any commands, or try to save the image anywhere: just generate it, then stop.',
     `Image shape: ${shape}.`,
+    ...(withRef
+      ? [
+          '',
+          `The attached photo is a likeness reference only, for ${REFS[refFor(id)!]!.who}. Draw that person as the cartoon character below: keep their face shape, hair, eye colour, skin tone, glasses and beard as in the photo, simplified into the style: a flat, simple cartoon with thick outlines, not a realistic painting. Do not copy the photo's clothes, pose or background, and draw nobody else from it.`,
+        ]
+      : []),
     '',
     `${isBackground(id) ? BACKGROUND_STYLE : SPRITE_STYLE} ${prompt}`,
   ].join('\n');
@@ -80,13 +89,13 @@ const exists = (f: string) =>
     () => false,
   );
 
-async function runCodex(prompt: string): Promise<CodexRun> {
+async function runCodex(prompt: string, image?: string): Promise<CodexRun> {
   const workdir = path.resolve('scratch', 'codex');
   await mkdir(workdir, { recursive: true });
   const started = Date.now();
   // codex is an npm .cmd shim on Windows, which Node only spawns through a shell.
   // The command line is fixed; the prompt goes on stdin, so nothing of it is shell-expanded.
-  const child = spawn(`codex exec --json --skip-git-repo-check -s read-only -C "${workdir}" -`, { shell: true, stdio: ['pipe', 'pipe', 'pipe'] });
+  const child = spawn(`codex exec ${image ? `-i "${image}" ` : ''}--json --skip-git-repo-check -s read-only -C "${workdir}" -`, { shell: true, stdio: ['pipe', 'pipe', 'pipe'] });
   child.stdin.end(prompt);
   let out = '';
   let err = '';
@@ -295,12 +304,27 @@ async function isReal(id: string): Promise<boolean> {
   return (await exists(f)) && !isPlaceholder(await readFile(f));
 }
 
+/** The cropped likeness photo for a family id, cut from `art-originals/refs/` (absolute path), or undefined. */
+async function refCrop(id: string): Promise<string | undefined> {
+  const c = refFor(id);
+  if (!c) return undefined;
+  const r = REFS[c]!;
+  const src = path.join(ORIGINALS, 'refs', r.photo);
+  if (!(await exists(src))) return undefined;
+  const out = path.resolve(ORIGINALS, 'refs', 'crops', `${c}.png`);
+  await mkdir(path.dirname(out), { recursive: true });
+  const [left, top, width, height] = r.box;
+  await sharp(src).extract({ left, top, width, height }).toFile(out);
+  return out;
+}
+
 export async function generate(argv: string[]): Promise<void> {
   const force = argv.includes('--force');
   const sheetOnly = argv.includes('--sheet');
   const reprocess = argv.includes('--reprocess');
   const shrink = argv.includes('--shrink');
   const sheetOut = argv.find((a) => a.startsWith('--sheet-out='))?.slice('--sheet-out='.length);
+  const noRef = argv.includes('--no-ref');
   const named = argv.filter((a) => !a.startsWith('--'));
   const ids = named.length ? named : Object.keys(ART_PROMPTS);
   for (const id of ids) codexPrompt(id); // fail before spending anything on a bad id
@@ -329,8 +353,19 @@ export async function generate(argv: string[]): Promise<void> {
           continue;
         }
         console.log(`art: [${k + 1}/${ids.length}] ${id}: asking codex…`);
-        const run = await runCodex(codexPrompt(id));
-        await appendFile(path.join(ORIGINALS, 'log.jsonl'), `${JSON.stringify({ id, at: new Date().toISOString(), seconds: run.seconds, thread: run.thread, image: run.image, limit: run.limit, usage: run.usage, message: run.lastMessage })}\n`);
+        const ref = noRef ? undefined : await refCrop(id);
+        const log = (r: CodexRun, withRef: boolean) =>
+          appendFile(path.join(ORIGINALS, 'log.jsonl'), `${JSON.stringify({ id, at: new Date().toISOString(), ref: withRef, seconds: r.seconds, thread: r.thread, image: r.image, limit: r.limit, usage: r.usage, message: r.lastMessage })}\n`);
+        let run = await runCodex(codexPrompt(id, !!ref), ref);
+        await log(run, !!ref);
+        let usedRef = !!ref && !!run.image;
+        if (ref && !run.image && !run.limit) {
+          console.error(`art: ${id}: no image with the photo reference (${run.lastMessage ?? '?'}); retrying with text alone`);
+          run = await runCodex(codexPrompt(id));
+          await log(run, false);
+          usedRef = false;
+        }
+        if (run.image && refFor(id)) console.log(`art: ${id}: drawn ${usedRef ? 'with' : 'without'} a photo reference`);
         if (!run.image) {
           console.error(`art: ${id}: no image after ${run.seconds}s. ${run.limit ?? run.lastMessage ?? ''}`);
           if (run.limit) break;

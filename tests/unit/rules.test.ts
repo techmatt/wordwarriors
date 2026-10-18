@@ -98,7 +98,7 @@ test('choiceCount drops to two while she is struggling this session', () => {
 });
 
 test('roster: every character is complete, good and evil', () => {
-  assert.equal(ROSTER.length, 14);
+  assert.equal(ROSTER.length, 15);
   for (const c of ROSTER) {
     for (const f of [c.good, c.evil]) {
       assert.ok(f.abilities.length >= 3, `${f.displayName} has 3+ abilities`);

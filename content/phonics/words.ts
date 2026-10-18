@@ -59,6 +59,7 @@ export const CVC_WORDS: Word[] = [
 /** Character names as sight words. The picture is the character's own card. */
 export const SIGHT_WORDS: Word[] = [
   { word: 'julia', decodable: false, character: 'julia' },
+  { word: 'ellie', decodable: false, character: 'ellie' },
   { word: 'seraphina', decodable: false, character: 'seraphina' },
   { word: 'elsa', decodable: false, character: 'elsa' },
   { word: 'anna', decodable: false, character: 'anna' },
