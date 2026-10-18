@@ -12,7 +12,7 @@ import { charArt } from '../../content/art/assets';
 import { fighterId, narratorLine, tauntLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
-import { sfxBoom, sfxUltimate } from '../audio/sfx';
+import { sfxBoom, sfxSiren, sfxUltimate } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { advance, episode, narrator, villainSpec } from '../episode/Episode';
 import { bob, burst, fitImage, flash, floatText, shake } from '../fx/juice';
@@ -58,6 +58,12 @@ export class AlarmScene extends Phaser.Scene {
     // Stop if this run of the scene ends (F2) while a line is playing.
     const g = this.gen;
     const gone = () => g !== this.gen;
+    // Siren and a red pulse first: something is happening.
+    sfxSiren();
+    const red = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xff2040, 0).setDepth(DEPTH.hud - 1);
+    this.tweens.add({ targets: red, fillAlpha: 0.25, duration: 250, yoyo: true, repeat: 2, onComplete: () => red.destroy() });
+    await new Promise((r) => this.time.delayedCall(1300, r));
+    if (gone()) return;
     const n = narrator();
     const v = episode.villain;
     const vf = villainSpec().evil;

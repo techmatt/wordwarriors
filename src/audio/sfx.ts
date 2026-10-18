@@ -332,3 +332,13 @@ export function sfxVictory(): void {
     { freq: 1318.5, at: 1.22, dur: 0.7, peak: 0.16 },
   ]);
 }
+
+/** The alarm: a friendly two-tone siren, three times. */
+export function sfxSiren(): void {
+  const notes: Note[] = [];
+  for (let i = 0; i < 3; i++) {
+    notes.push({ freq: 784, at: i * 0.5, dur: 0.24, peak: 0.12, type: 'square' });
+    notes.push({ freq: 587.3, at: i * 0.5 + 0.25, dur: 0.24, peak: 0.12, type: 'square' });
+  }
+  playNotes(notes);
+}
