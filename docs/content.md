@@ -39,8 +39,8 @@ Every new character is automatically a hero, an ally (and so a narrator: about 1
 narrator lines in its voice), a villain, and a sight word if added to `SIGHT_WORDS`.
 Add its two speakers (`<id>`, `<id>_evil`) to `content/voice/voices.json`.
 
-Size note: each narrator adds ~1.4 MB of voice. The voice folder is ~19 MB; the 20 MB
-commit gate needs Matt's say-so before it is crossed.
+Size note: each narrator adds ~1.4 MB of voice. The voice folder totals ~20.4 MB across
+several commits; no single commit may add 20 MB or more without Matt's say-so.
 
 ## An ability (`AbilitySpec`)
 
