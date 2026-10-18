@@ -145,7 +145,8 @@ function paintAll(list: ArtAsset[]): Record<string, string> {
       g.stroke();
 
       const glyphSize = (a.kind === 'character' ? Math.min(W, H) * 0.42 : Math.min(W, H) * 0.5);
-      if (a.glyph) emoji(a.glyph, W / 2, a.kind === 'character' ? H * 0.42 : H * 0.44, glyphSize);
+      // A card with no label (the name-free face cards) centres its glyph, larger.
+      if (a.glyph) emoji(a.glyph, W / 2, !a.label ? H * 0.52 : a.kind === 'character' ? H * 0.42 : H * 0.44, !a.label ? glyphSize * 1.35 : glyphSize);
 
       const label = a.label ?? '';
       if (label) {
