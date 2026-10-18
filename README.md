@@ -28,11 +28,19 @@ the art painter: `npx playwright install chromium chromium-headless-shell`.
 1. Title: press green.
 2. Walk to a hero card and press green. Then a friend (or "nobody"). Then a bad guy
    (or the "?" surprise).
-3. The alarm plays; then two prep minigames make a power gem, star ammo or a helper.
-4. Battle part 1 runs by itself; when the move dots appear, press the button of that
-   colour. It ends with the villain's ultimate: the heroes retreat.
-5. Spell the Spell: type the letters shown in the ghost boxes on the keyboard.
-6. Battle part 2: the counter-item beats the ultimate; victory.
+3. The alarm plays (the friend, or Dada Matt, says "Bad news!"); a journey map shows
+   the way ahead before each big step.
+4. Two prep minigames, walking to answers: Sound to Letter makes a power gem, Blend
+   Path makes star ammo, Word to Picture calls a helper. Yellow (Tab) says it again.
+5. Battle part 1 runs by itself; when the move words appear on dots, press the button
+   of that colour. It ends with the villain's ultimate: the heroes retreat to camp.
+6. Walk to the glowing item at camp; Spell the Spell: type the letters in the ghost
+   boxes on the keyboard to forge the counter-item.
+7. Battle part 2: the counter-item beats the ultimate, everyone finishes it, and the
+   villain turns good. Victory replays the words she read; green plays again.
+
+A whole episode takes roughly 10–15 minutes for a child (about 4.5 minutes when the
+test harness answers instantly).
 
 Grown-ups page (progress per sound and word): **F9**, or hold **LB + RB** for two
 seconds on the title screen.
