@@ -49,6 +49,12 @@ Dev keys: **F2** skip the current step, **F4** answer correctly. Jump straight i
 step with a URL, e.g. `http://localhost:5174/?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug`
 (`scene` = pick, alarm, sound, blend, picture, spell, battle, retreat, victory, parent).
 
+## Tests
+
+`npm test` runs the unit tests and the fast Playwright suite (about 3 minutes);
+`npm run test:slow` plays a whole episode and then two back to back (about 14 minutes).
+They start the dev server themselves if it is not running.
+
 ## Content work
 
 Everything is data under `content/`; `docs/content.md` walks through each kind. After editing it:
