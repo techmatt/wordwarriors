@@ -69,6 +69,21 @@ for (const c of ROSTER) {
   });
 }
 
+// Outfits: a roster character dressed for a future scenario, sized like the
+// char_* images and drawn from the same photo reference (refFor). Her face and
+// hair come from her roster look; only the clothes and the prop change.
+const julia = ROSTER.find((c) => c.id === 'julia')!.good;
+assets.push({
+  id: 'char_julia_chef',
+  kind: 'character',
+  w: 200,
+  h: 250,
+  content: `Julia the little chef: ${julia.look.split(', in a ')[0]}, in a cheerful little chef's outfit: a white double-breasted chef's jacket with round buttons, a small red neckerchief, a white apron, a tall puffy white chef's hat, holding up a wooden spoon. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background.`,
+  label: 'CHEF',
+  glyph: '🥄',
+  palette: julia.palette,
+});
+
 for (const m of Object.values(MINIONS)) {
   assets.push({
     id: `minion_${m.id}`,

@@ -256,6 +256,13 @@ npm run art:pick -- <id> <n>
 - Corrections for an id (what an earlier image got wrong: a likeness, a prop that
   crowds a face) are `NOTES` in `content/art/prompts.ts`; they end the prompt for both
   `art:gen` and `art:alts`.
+- An outfit of a family member (`char_julia_chef`, item 012) is a hand-added entry in
+  `content/art/assets.ts`, not a roster character: `refFor` gives any
+  `char_<person>_<word>` id that person's photo reference, and the brief reuses their
+  roster look up to the clothes. Its sheet is `scratch/art_alts_012_julia_chef.png`, its
+  picker manifest `scratch/art_alts_012_julia_chef.json`.
+- `scratch/` is a junction to the main checkout's: a script in it imports with `../../`
+  from the main checkout, not the worktree. Keep throwaway scripts outside it.
 - Item 009's sheets (2026-10-18) are `scratch/art_alts_009_<group>.png`; its picker
   manifest, all 13 ids in one, is `scratch/art_alts_009.json`.
 

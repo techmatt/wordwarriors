@@ -60,6 +60,7 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `face_moriarty` | 200×200 | Moriarty's face, a friendly head-and-shoulders portrait of a lanky magician in a green suit and top hat, shuffling glowing cards, winking. NO TEXT OR NAME anywhere: it is the picture for reading the name. |
 | `face_bavmorda` | 200×200 | Bavmorda's face, a friendly head-and-shoulders portrait of a kindly old witch with a crooked hat full of flowers, a staff with a glowing pink gem. NO TEXT OR NAME anywhere: it is the picture for reading the name. |
 | `face_rilla` | 200×200 | Rilla's face, a friendly head-and-shoulders portrait of a friendly, gentle giant gorilla robot with pastel blue armour plates, soft glowing eyes and a big smile, arms open wide for a hug. NO TEXT OR NAME anywhere: it is the picture for reading the name. |
+| `char_julia_chef` | 200×250 | Julia the little chef: a cheerful slim four-year-old girl with long straight pale-blonde hair and a straight fringe, round pink glasses, blue eyes, fair skin and rosy cheeks, a big cheeky grin, in a cheerful little chef's outfit: a white double-breasted chef's jacket with round buttons, a small red neckerchief, a white apron, a tall puffy white chef's hat, holding up a wooden spoon. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background. |
 
 ## Summoned minions and helpers
 
