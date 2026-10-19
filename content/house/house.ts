@@ -115,6 +115,8 @@ export interface PlaceSpec {
    * treetops below it). Default: the hub's walking floor.
    */
   moodFloor?: [number, number, number, number];
+  /** Open sky where the house has a back wall: the villain's mess all lies on the floor (item 030). */
+  outdoor?: boolean;
 }
 
 const SPOTS: [number, number][] = [[300, 470], [640, 470], [980, 470]];
@@ -132,6 +134,7 @@ const HIDEOUT = room('secret_hideout', 'Secret Hideout', '💎', [0x2a2a4a, 0x9a
 export const PLACES: PlaceSpec[] = [
   {
     id: 'treehouse', name: 'Treehouse Workshop', glyph: '🌳', palette: [0x8ad7a0, 0xa0683a],
+    outdoor: true,
     look: "Dada Matt's secret treehouse workshop high in a giant oak tree, seen side-on: a wide wooden deck floor across the lower half, rope railings, half-built wooden towers, tool racks, leafy branches and sunbeams all around",
     moodFloor: [80, 445, 1120, 105],
     rooms: [
@@ -142,6 +145,7 @@ export const PLACES: PlaceSpec[] = [
   },
   {
     id: 'forest_gym', name: 'Forest Gym', glyph: '🏋️', palette: [0x6ac46a, 0xc89a6a],
+    outdoor: true,
     look: "Dada Matt's secret gym in the forest, seen side-on: a sunny clearing with a grassy floor across the lower half, log benches, round stone weights, tree-trunk pull-up bars and a rope climb hanging from a big branch, tall trees all around",
     rooms: [
       room('boulder_yard', 'Boulder Yard', '⛰️', [0x8a8a7a, 0x6ac46a], 'The boulder yard in the forest: round rocks of every size to lift, a stack of log barbells, a little stream with stepping stones, ferns'),
@@ -160,6 +164,7 @@ export const PLACES: PlaceSpec[] = [
   },
   {
     id: 'rune_dojo', name: 'Rune Dojo', glyph: '🗡️', palette: [0x2a4aa0, 0xd8f0ff],
+    outdoor: true,
     look: "Dada Matt's rune dojo on a mountain top, seen side-on: a polished wooden training floor across the lower half, sword racks, glowing blue rune stones, paper lanterns, snowy peaks and clouds behind",
     rooms: [
       room('sword_yard', 'Sword Yard', '⚔️', [0xe8c890, 0x2a4aa0], 'The sword yard of the mountain dojo: straw training dummies, wooden practice swords on racks, a sand circle, blue banners with rune shapes, peaks behind'),
@@ -178,6 +183,7 @@ export const PLACES: PlaceSpec[] = [
   },
   {
     id: 'knight_camp', name: "Knights' Camp", glyph: '🏰', palette: [0x6ac46a, 0xe63946],
+    outdoor: true,
     look: "Dada Jason's knights' training camp outside a castle, seen side-on: striped tents, a practice field of trampled grass across the lower half, weapon racks, bright banners, a castle on the hill behind",
     rooms: [
       room('armoury', 'Armoury', '🛡️', [0x8a8a9a, 0xe63946], 'The armoury tent of the knights camp: shiny suits of armour on stands, round shields on the walls, a forge glowing in the corner, a straw floor'),
@@ -196,6 +202,7 @@ export const PLACES: PlaceSpec[] = [
   },
   {
     id: 'bubble_castle', name: 'Bubble Castle', glyph: '💭', palette: [0xd8f0ff, 0xff9ad5],
+    outdoor: true,
     look: "Ellie's bubble castle in the clouds, seen side-on: a soft fluffy cloud floor across the lower half, pastel towers, giant floating rainbow bubbles, rainbow bridges and a sparkly fountain",
     rooms: [
       room('bubble_baths', 'Bubble Baths', '🛁', [0xbfefff, 0xff9ad5], 'The bubble baths of the cloud castle: big shell-shaped bathtubs overflowing with rainbow bubbles, yellow rubber ducks, a bubble slide'),
@@ -205,6 +212,7 @@ export const PLACES: PlaceSpec[] = [
   },
   {
     id: 'dragon_mountain', name: 'Dragon Mountain', glyph: '🐉', palette: [0xffb15a, 0x6a4a3a],
+    outdoor: true,
     look: 'A dragon mountain, seen side-on: a sunny wide ledge high on a mountain with warm rock across the lower half, big straw dragon nests with golden eggs, clouds below and a far-off smoking volcano',
     rooms: [
       room('egg_nest', 'Egg Nest', '🥚', [0xe8c890, 0xff7b3a], 'The nest cave of the dragon mountain: soft straw nests with big spotted dragon eggs, warm glowing rocks, a sunny cave mouth'),
@@ -223,6 +231,7 @@ export const PLACES: PlaceSpec[] = [
   },
   {
     id: 'desert_oasis', name: 'Desert Oasis', glyph: '🌴', palette: [0xffe8b0, 0x1fb5a8],
+    outdoor: true,
     look: 'A desert oasis, seen side-on: palm trees, a sparkling blue pool, colourful striped tents, warm sand across the lower half, dunes and a pyramid far away',
     rooms: [
       room('bazaar_tent', 'Bazaar Tent', '🏮', [0xc83a5a, 0xffc857], 'The bazaar tent of the oasis: piles of rugs and cushions, hanging lanterns, baskets of fruit, a striped canvas roof'),
@@ -232,6 +241,7 @@ export const PLACES: PlaceSpec[] = [
   },
   {
     id: 'sea_grotto', name: 'Sea Grotto', glyph: '🐚', palette: [0x2a7ab4, 0x9ad8ff],
+    outdoor: true,
     look: 'An underwater grotto, seen side-on: bright coral, swaying sea plants, rising bubbles, a sandy floor across the lower half, sunbeams through the water, little friendly fish',
     rooms: [
       room('coral_garden', 'Coral Garden', '🐠', [0xff9ad5, 0x2a7ab4], 'The coral garden under the sea: towers of pink and orange coral, sea anemones, shells on the sand, bubbles'),

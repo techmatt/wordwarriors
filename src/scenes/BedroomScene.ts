@@ -213,7 +213,8 @@ export class BedroomScene extends RoomScene {
     shake(this, 5, 600);
     // Never under the grown-ups: where they stand now and where they step to.
     const feet = (x: number, y: number) => new Phaser.Geom.Rectangle(x - 70, y - 130, 140, 150);
-    const avoid = [feet(room.waker.x, room.waker.y), feet(room.waker.x - 140, room.waker.y + 20), feet(room.door.x, room.door.y + 180), feet(room.door.x - 140, room.door.y + 50), feet(SECOND_SPOT.x, SECOND_SPOT.y)];
+    const toys = room.objects.map((o) => new Phaser.Geom.Rectangle(o.x - o.w / 2, o.y - o.h, o.w, o.h + 20));
+    const avoid = [...toys, feet(room.waker.x, room.waker.y), feet(room.waker.x - 140, room.waker.y + 20), feet(room.door.x, room.door.y + 180), feet(room.door.x - 140, room.door.y + 50), feet(SECOND_SPOT.x, SECOND_SPOT.y)];
     const mood = applyHouseMood(this, episode.villain, { reveal: true, seed: 11, floor: this.floor, avoid });
     await Promise.all([this.speak(wakeLine(w, `bad_${episode.villain}`)), this.guard(mood.revealed)]);
 

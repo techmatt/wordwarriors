@@ -109,8 +109,9 @@ export class HubScene extends RoomScene {
     // Off the spell scroll (high between doors a and b), and on a place's own
     // floor where its art's differs from the house's (item 030).
     const scroll = new Phaser.Geom.Rectangle(HUB.helper.x - 120, SCROLL_Y - 70, 240, 150);
-    const f = PLACE_BY_ID[episode.place]?.moodFloor;
-    applyHouseMood(this, episode.villain, { seed: 21, floor: f ? new Phaser.Geom.Rectangle(...f) : this.floor, avoid: [scroll] });
+    const place = PLACE_BY_ID[episode.place];
+    const f = place?.moodFloor;
+    applyHouseMood(this, episode.villain, { seed: 21, floor: f ? new Phaser.Geom.Rectangle(...f) : this.floor, avoid: [scroll], floorOnly: place?.outdoor });
     new Bag(this);
     this.round = `hub:${this.part}:intro`;
 

@@ -42,6 +42,7 @@ import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh, sfxWrong } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, WALK_SPEED } from '../config';
+import { formFor } from '../../content/battle/forms';
 import { advance, castArt, castScale, counterArt, counterWord, episode, helper, movePlan, namedCounter, narrator, villainSpec, type Step } from '../episode/Episode';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -691,7 +692,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
 
   /** A fighter's taunts that give no move choice away. */
   private safeTaunts(f: Fighter): string[] {
-    return (f.init.taunts ?? []).filter((k) => !this.lineGivesAway(tauntLine(f.init.id, k)));
+    // Nor one that does not fit today's outfit (a knight has no wand).
+    const skip = f.team === 'hero' ? formFor(f.init.id, episode)?.skipTaunts ?? [] : [];
+    return (f.init.taunts ?? []).filter((k) => !skip.includes(k) && !this.lineGivesAway(tauntLine(f.init.id, k)));
   }
 
   /**

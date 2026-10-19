@@ -22,6 +22,8 @@ export interface Form {
   face?: string;
   /** The scenario: every field given must match the episode's cast. */
   when: { ally?: string; villain?: string };
+  /** Taunt keys that do not fit the outfit, never said in it (item 030: no wand in a chef's or a knight's hand). */
+  skipTaunts?: string[];
 }
 
 /** The cast a form is chosen for. */
@@ -33,9 +35,9 @@ export interface Cast {
 export const FORMS: Record<string, Form[]> = {
   julia: [
     // The chef scenario: Dada Jason the chef is her ally (Matt, item 016).
-    { id: 'chef', art: 'char_julia_chef', face: 'face_julia_chef', when: { ally: 'dada_jason' } },
+    { id: 'chef', art: 'char_julia_chef', face: 'face_julia_chef', when: { ally: 'dada_jason' }, skipTaunts: ['wand'] },
     // The knights' camp: warrior Dada Jason is her ally (item 025).
-    { id: 'knight', art: 'char_julia_knight', face: 'face_julia_knight', when: { ally: 'dada_jason_warrior' } },
+    { id: 'knight', art: 'char_julia_knight', face: 'face_julia_knight', when: { ally: 'dada_jason_warrior' }, skipTaunts: ['wand'] },
   ],
 };
 

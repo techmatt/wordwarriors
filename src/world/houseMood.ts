@@ -44,6 +44,8 @@ export interface HouseMoodOptions {
    * spots the grown-ups stand on. A decal keeps its whole size clear of them.
    */
   avoid?: Phaser.Geom.Rectangle[];
+  /** An outdoor place (item 030): no wall to hang things on, so every decal lies on the floor. */
+  floorOnly?: boolean;
 }
 
 export interface HouseMoodHandle {
@@ -114,7 +116,7 @@ export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: Hou
   let n = 0;
   for (const d of mood.decals) {
     for (let i = 0; i < d.count; i++) {
-      const onFloor = FLOOR_LIKE.test(d.id) || (!/crack|web|scratch|claw|frost|ice|hole|smudge|soot/.test(d.id) && n % 2 === 0);
+      const onFloor = !!opts.floorOnly || FLOOR_LIKE.test(d.id) || (!/crack|web|scratch|claw|frost|ice|hole|smudge|soot/.test(d.id) && n % 2 === 0);
       // Best of a few candidates: the one farthest from what is already down,
       // and out of everything `avoid` keeps clear while any candidate is.
       const size = onFloor ? 64 + rand() * 16 : 84 + rand() * 20;
