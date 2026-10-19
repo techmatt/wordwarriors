@@ -303,7 +303,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A big-hearted builder dad with a giant hammer who builds walls and towers in a blink.',
     arena: 'castle',
     good: {
-      displayName: 'Dada Matt', trail: { tint: [0xc8643a, 0xff8c42], shape: 'square' }, look: 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, short light-brown hair, full on top with a slightly high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile, in chunky orange-and-steel builder armour with a tool belt, holding a huge friendly hammer',
+      displayName: 'Dada Matt', trail: { tint: [0xc8643a, 0xff8c42], shape: 'square' }, look: 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, short light-brown hair thinning on top with a high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile, in chunky orange-and-steel builder armour with a tool belt, holding a huge friendly hammer',
       palette: [0xff8c42, 0x4a4a5a], glyph: '🔨', style: 'twirl', speed: 200, size: 1.2, hp: 130,
       abilities: [
         ab('hammer_spin', 'Hammer Spin', 'spin', 5, 0xff8c42, 2, { word: 'pow', shout: true }),
@@ -322,7 +322,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Dada Matt', trail: { tint: [0xb04aff, 0x2a2a3a], shape: 'square' }, look: 'the same beefy bodybuilder dad with short light-brown hair, full on top, and a full short reddish-brown beard, a mischievous grin, in spiky black builder armour, holding a hammer that crackles purple',
+      displayName: 'Evil Dada Matt', trail: { tint: [0xb04aff, 0x2a2a3a], shape: 'square' }, look: 'the same beefy bodybuilder dad with short light-brown hair thinning on top and a full short reddish-brown beard, a mischievous grin, in spiky black builder armour, holding a hammer that crackles purple',
       palette: [0x2a2a3a, 0xb04aff], glyph: '⚒️', style: 'stomp', speed: 120, size: 1.4, hp: 170,
       abilities: [
         ab('wreck', 'Wrecking Spin', 'spin', 5, 0xb04aff, 2),
@@ -464,6 +464,9 @@ export const ROSTER: CharacterSpec[] = [
     id: 'anna',
     description: 'The ice sorceress\'s brave little sister: a sword-and-shield adventurer who never gives up.',
     arena: 'ice',
+    // Split look (Matt's picks, item 011): good Anna and her face card are the
+    // item 009 redesign (dark ponytail, plum and magenta); Evil Anna's art is
+    // still the old copper-curls design, so her look describes that image.
     good: {
       displayName: 'Anna', trail: { tint: [0xffb703, 0xe63946], shape: 'spark' }, look: 'a tall, sporty young adventurer of original design with long straight dark-brown hair in one high swinging ponytail tied with a big purple ribbon, a few freckles, a plum-purple tunic with a short magenta cape, white leggings and tall brown boots, a round wooden shield with a golden sun painted on it and a wooden practice sword',
       palette: [0xe63946, 0x2a9d8f], glyph: '🛡️', style: 'twirl', speed: 230, size: 1, hp: 110,
@@ -484,7 +487,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Anna', trail: { tint: [0x9aeaff, 0x7cc7ff], shape: 'spark' }, look: 'the same tall ponytailed adventurer under a frost curse: frosty pale-blue skin, her long dark ponytail frozen stiff and tipped with icicles, a frosted grey-violet tunic and a ragged icy cape, a cracked ice shield, a cross scowl',
+      displayName: 'Evil Anna', trail: { tint: [0x9aeaff, 0x7cc7ff], shape: 'spark' }, look: 'a freckled young adventurer of original design under a frost curse, with a short curly copper bob: frosty pale-blue skin, icicles in her curly bob, a grey-blue tunic, a cracked ice shield, a cross scowl',
       palette: [0x3a1a2a, 0x7cc7ff], glyph: '⚔️', style: 'twirl', speed: 240, size: 1.05, hp: 140,
       abilities: [
         ab('frost_bash', 'Frost Bash', 'dash', 4, 0x7cc7ff, 2),

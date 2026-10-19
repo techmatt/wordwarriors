@@ -59,15 +59,10 @@ export function refFor(id: string): string | undefined {
  * notes on the likenesses, 2026-10-18, item 009).
  */
 const ELLIE_HAIR = "Her hair is pale, fine and wispy strawberry-blonde: very light blonde with only a faint peachy-pink tint, thin and soft like a toddler's. NOT golden, NOT orange, NOT ginger, NOT copper.";
-const MATT_HAIR = 'His hair: short light-brown hair with a full, normal head of hair on top (only a slightly high hairline at the temples). He is NOT bald and NOT balding: no bald patch, no shiny bare scalp on top.';
 export const NOTES: Record<string, string> = {
   char_ellie_good: ELLIE_HAIR,
   char_ellie_evil: ELLIE_HAIR,
   face_ellie: ELLIE_HAIR,
-  char_dada_matt_good: MATT_HAIR,
-  char_dada_matt_evil: MATT_HAIR,
-  face_dada_matt: `${MATT_HAIR} This is a face card: his face fills it. Leave the hammer out entirely, or at most a small hammer resting on his shoulder that never covers or crowds his face.`,
-  face_julia: 'Her mouth is a big happy closed-lip or toothy smile: NO tongue sticking out.',
 };
 
 /**
@@ -75,14 +70,10 @@ export const NOTES: Record<string, string> = {
  * its row in the picker manifest `art:alts` writes (after the NOTES correction,
  * which the row quotes by itself).
  */
-const ANNA_REDESIGN = "The candidates are a redesign (item 009): dark-brown ponytail with a purple ribbon, plum tunic, magenta cape, so she no longer looks like Seraphina (compare Seraphina's current image, public/art/char_seraphina_good.png: copper curls, green tunic). `current` is the old copper-curls look; keeping it means reverting Anna's look text in content/battle/roster.ts so her brief matches her art.";
 export const PICK_NOTES: Record<string, string> = {
-  char_anna_good: ANNA_REDESIGN,
-  char_anna_evil: ANNA_REDESIGN,
-  face_anna: ANNA_REDESIGN,
+  char_anna_evil: "`current` is the old copper-curls design, unlike good Anna and her face card (the item 009 redesign: dark ponytail, plum and magenta). Her look in content/battle/roster.ts describes `current`; a candidate drawn from it is copper-curled too.",
   room_bedroom_julia: 'Redrawn with no loose toys of its own: the first one painted a teddy and a rocket that doubled the toys the game puts on the floor.',
   decal_rilla_footprint: 'Redrawn as one giant robot-gorilla footprint: the earlier try still read as bare human feet.',
-  arena_street: 'A livelier street: houses, a car, a shop awning, bunting, an open road for the fighters.',
 };
 
 /** Word pictures: one meaning each, and unlike their look-alikes (content/phonics/sentences.ts LOOKALIKES). */
@@ -154,8 +145,6 @@ const HAND: Record<string, string> = {
   // Redone again (item 009): the second try still read as bare human feet.
   decal_rilla_footprint:
     "One giant robot-gorilla footprint stamped into the floor, seen from above: a huge square-toed metal ape foot pressed into the ground as a deep dented imprint, with a big separate thumb-toe sticking out to the side like a gorilla's, four chunky blocky toe pads with rivet marks and bolt holes, a cracked ring of broken floorboards around it and a little puff of dust. Grey-brown and metallic, clearly a giant robot gorilla's and nothing like a person's foot: no human toes, no heel arch.",
-  arena_street:
-    "A lively sunny suburban street outside a family house, wide side-on view, wide landscape 16:9. Colourful houses with gardens, picket fences, flower beds and trees along the back, a parked friendly blue family car at the kerb, a red post box, a lamp post, a striped awning on a little corner shop, bunting across the street, a few birds and fluffy clouds in a blue sky. The lower 60% is a clean open pavement and road for the fighters, with painted crossing stripes, a few leaves and chalk hopscotch squares (no numbers), bright and readable, no people or animals.",
   prop_tent:
     'A small striped two-person camping tent, green-free: an orange and blue A-frame tent with the door flap tied open, guy ropes and pegs, a little pennant flag on the top pole. Side-on.',
   prop_card_trap:
@@ -168,6 +157,8 @@ const HAND: Record<string, string> = {
     'Wind-up Mice: a round open tin box with three cute grey clockwork toy mice spilling out of it, each with a little silver wind-up key in its back, pink ears and curly tails, a few golden sparkles around them.',
 };
 
+const EMPTY_HANDED_FACES = new Set(['face_ellie', 'face_anna']);
+
 const strip = (s: string) => s.replace(/,?\s*transparent background\.?/gi, '.').replace(/\.\s*\./g, '.').trim();
 
 /** The prompt for an asset with no HAND entry, from its brief. */
@@ -176,8 +167,12 @@ function derived(a: ArtAsset): string {
     const what = PICTURES[a.id.slice(4)];
     return what ? `A single clear picture of ${what}, centred, instantly recognisable to a 4-year-old. Nothing else in the picture.` : strip(a.content);
   }
-  // A face card leaves out what the character holds (Dada Matt's hammer crowded his, item 009).
-  if (a.id.startsWith('face_')) return `${strip(a.content).replace(/, (holding|waving) [^.]*\./, '.')} Head and shoulders only, facing the viewer, smiling.`;
+  if (a.id.startsWith('face_')) {
+    // These face cards leave out what the character holds (item 009); the others,
+    // drawn before, show it (Dada Matt's hammer on his shoulder) and Matt kept them.
+    const look = EMPTY_HANDED_FACES.has(a.id) ? strip(a.content).replace(/, (holding|waving) [^.]*\./, '.') : strip(a.content);
+    return `${look} Head and shoulders only, facing the viewer, smiling.`;
+  }
   if (a.id.startsWith('decal_')) {
     const look = a.content.split(': left lying')[0];
     return `${look}: a small thing left lying about a house by a mischievous villain (the villain is not shown). Mischievous, not scary.`;
