@@ -12,9 +12,10 @@
  * The words come out of her word bag (item 015) like any key word: a word
  * still in the bag, never one in `avoid` (whatever the episode says or shows
  * before: the spell, frame words, the cast's words) nor one another room has
- * (`taken`). When no family has two words left in the bag, the bag refills;
- * a full bag with none falls back to every eligible word. Building a word
- * right first time spends it (`takeFromBag`), a miss puts it back.
+ * (`taken`). When no family has two words left in the bag, the machine uses
+ * every eligible word instead (the bag, shared with the sentence rooms, refills
+ * only when it is empty). Building a word right first time spends it
+ * (`takeFromBag`), a miss puts it back.
  *
  * Modes. Only `make` (make the picture) is played today: a picture and a
  * fixed rime, onset tiles on the floor, wrong tiles make silly words. Each
@@ -96,8 +97,12 @@ export function planMachine(store: ProgressStore, input: MachineInput, rand: Ran
   const eligible = BAG_WORDS.filter((w) => FAMILIES.some((f) => f.words.includes(w)) && !avoid.has(w) && !input.taken.includes(w));
   const usable = (pool: string[]) => FAMILIES.filter((f) => inFamily(f, pool).length >= 2);
 
+  // The bag is shared with the sentence rooms: it refills only once it is
+  // empty (as `drawKey` refills only when nothing it can use is left). While
+  // other words are still in it and no family has two left, the machine takes
+  // eligible words from outside the bag, without spending the round.
   let pool = store.bag().left.filter((w) => eligible.includes(w));
-  if (!usable(pool).length) {
+  if (!usable(pool).length && !store.bag().left.length) {
     store.refillBag(BAG_WORDS.filter((w) => !input.taken.includes(w)));
     pool = store.bag().left.filter((w) => eligible.includes(w));
   }

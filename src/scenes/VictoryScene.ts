@@ -12,7 +12,7 @@ import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { advance, castArt, castFace, episode, narrator, villainSpec } from '../episode/Episode';
+import { advance, castArt, castFace, counterWord, episode, narrator, villainSpec } from '../episode/Episode';
 import { burst, fitImage, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
@@ -140,7 +140,13 @@ export class VictoryScene extends Phaser.Scene {
    * Order is the order she read them (episode.read); words show upper case.
    */
   private async recap(gone: () => boolean): Promise<void> {
-    const words = episode.read.slice(0, 7);
+    // Seven cards fit. A word machine visit reads four words, so when there
+    // are more than seven the counter word (what beat the villain) and what
+    // she read after it always stay, and the earliest words fill the rest.
+    const max = 7;
+    const at = episode.read.indexOf(counterWord());
+    const tail = episode.read.length > max && at >= 0 ? episode.read.slice(at, at + max) : [];
+    const words = [...episode.read.slice(0, max - tail.length), ...tail];
     const gap = 150;
     for (const [i, w] of words.entries()) {
       if (gone()) return;

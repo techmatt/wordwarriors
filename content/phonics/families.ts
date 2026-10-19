@@ -43,14 +43,20 @@ export interface SillyOnset {
 
 /** Rime placeholders and silly onsets, by rime. A rime with pictured words but no entry here is not a family yet. */
 const RIMES: Record<string, { say: string; silly: SillyOnset[] }> = {
-  at: { say: 'At', silly: [{ letter: 'z', say: 'Zat' }, { letter: 'j', say: 'Jat' }, { letter: 'y', say: 'Yat' }] },
-  an: { say: 'Ann', silly: [{ letter: 'z', say: 'Zan' }, { letter: 'g', say: 'Gan' }, { letter: 'y', say: 'Yan' }] },
-  // ZAP is a real word (and a move word); YEN and ZEN are real too.
-  ap: { say: 'App', silly: [{ letter: 'v', say: 'Vap' }, { letter: 'd', say: 'Dap' }] },
-  en: { say: 'Ehn', silly: [{ letter: 'v', say: 'Venn' }, { letter: 's', say: 'Senn' }] },
-  // "Ett" spans 1.39 s (read as letters); a single syllable is 0.7 s.
-  et: { say: 'Eht', silly: [{ letter: 'z', say: 'Zet' }, { letter: 'f', say: 'Fet' }, { letter: 'd', say: 'Det' }] },
-  og: { say: 'Ogg', silly: [{ letter: 'z', say: 'Zog' }, { letter: 'm', say: 'Mog' }, { letter: 'y', say: 'Yog' }] },
+  // Out: JAT (a people's name), GAT (slang), KAT/NAT/WAT (sound like CAT, GNAT, WHAT).
+  at: { say: 'At', silly: [{ letter: 'z', say: 'Zat' }, { letter: 'y', say: 'Yat' }] },
+  // Out: YAN, JAN, DAN, HAN (names), GAN (Scots "go"), KAN (sounds like CAN), WAN, NAN.
+  an: { say: 'Ann', silly: [{ letter: 'z', say: 'Zan' }, { letter: 'l', say: 'Lan' }] },
+  // Every other onset makes a word, a name or worse (ZAP, YAP, DAP, BAP, WAP; never J
+  // or F), so -AP lays two tiles, the right one and VAP.
+  ap: { say: 'App', silly: [{ letter: 'v', say: 'Vap' }] },
+  // Out: ZEN, YEN, FEN, WEN (words), JEN, KEN, BEN, LEN, REN (names), SEN (a coin).
+  en: { say: 'Ehn', silly: [{ letter: 'n', say: 'Nehn' }, { letter: 'v', say: 'Vehn' }] },
+  // "Ett" spans 1.39 s (read as letters); a single syllable is 0.7 s. Out: FET, RET, HET.
+  et: { say: 'Eht', silly: [{ letter: 'z', say: 'Zet' }, { letter: 'd', say: 'Det' }] },
+  // Out: ZOG (a storybook dragon, and worse), MOG (a cat, and a storybook one), WOG
+  // (a slur), NOG, POG, TOG, GOG, VOG (words or names), KOG (sounds like COG).
+  og: { say: 'Ogg', silly: [{ letter: 'y', say: 'Yog' }, { letter: 's', say: 'Sog' }] },
 };
 
 export const onsetOf = (word: string): string => word.charAt(0);

@@ -335,12 +335,13 @@ export async function playSentenceRoom(page: Page): Promise<string> {
 export async function playWordMachine(page: Page, wrongFirst = false): Promise<string[]> {
   const first = await until(page, (s) => s.scene === 'WordMachine' && Boolean(s.room?.machine), 30_000, 'word machine');
   const rounds = first.room!.machine!.rounds;
-  for (let i = 0; i < rounds.length; i++) {
+  // From the round it is on (back from F9 mid-visit, words already built stay built).
+  for (let i = first.room!.machine!.index; i < rounds.length; i++) {
     const word = rounds[i]!;
     const s = await until(page, (st) => st.room?.machine?.index === i && st.room.machine.phase === 'pick' && !st.room.locked, 90_000, `round ${i} (${word}) open`);
     const tiles = s.room!.machine!.tiles;
     const right = tiles.find((t) => t.makes === word)!;
-    if (wrongFirst && i === 0) {
+    if (wrongFirst && i === first.room!.machine!.index) {
       const silly = tiles.find((t) => !t.real)!;
       await choose(page, `tile_${silly.letter}`);
       await until(page, (st) => (st.room?.machine?.misses ?? 0) > 0 && st.room!.machine!.phase === 'pick' && !st.room!.locked, 60_000, 'silly word said, round open again');

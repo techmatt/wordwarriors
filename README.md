@@ -201,8 +201,9 @@ Every browser test plays the fixed default episode (`tests/harness.ts` adds
 drawn casts, and in the slow lane three whole random episodes (item 025). The same
 way, every browser test's rooms play the sentence game (the harness adds
 `games=sentence`) unless its URL asks for a game (`game=word_machine`) or the whole pool
-(`games=all`): `tests/machine.spec.ts` plays the word machine, and in the slow lane a
-whole episode with it behind door a (item 026).
+(`games=all`): `tests/machine.spec.ts` opens the word machine in the fast lane, and in
+the slow lane plays whole visits (a silly tile first, F9 out and back) and a whole
+episode with it behind door a (item 026).
 
 The browser tests run the page's clocks 3× fast (`WW_SPEED`, default 3; `tests/harness.ts`):
 timers, tweens, the game loop and voice playback together. The full-episode test alone

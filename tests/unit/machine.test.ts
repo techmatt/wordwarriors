@@ -57,9 +57,13 @@ test('families: every rime with two or more pictured words, and only pictured, d
 test('silly onsets make nonsense: no pictured word, no move word, never the family\'s own onsets, nothing on the block list', () => {
   const real = new Set<string>([...CVC_WORDS.map((w) => w.word), ...MOVE_WORDS]);
   // Real words, names and slurs a careless list could make; none may be a silly word.
-  const blocked = ['zap', 'yap', 'jap', 'fap', 'zen', 'yen', 'jen', 'ken', 'ben', 'den', 'ten', 'men', 'jan', 'dan', 'nan', 'kat', 'nat', 'wat', 'gat', 'vat', 'fat', 'yet', 'fog', 'hog', 'jog', 'bog', 'cog', 'nog', 'pog', 'set', 'get', 'let', 'met', 'pet', 'vet', 'wet'];
+  const blocked = [
+    'zap', 'yap', 'jap', 'fap', 'dap', 'bap', 'wap', 'zen', 'yen', 'fen', 'wen', 'sen', 'jen', 'ken', 'ben', 'len', 'ren', 'den', 'ten', 'men',
+    'jan', 'dan', 'nan', 'han', 'yan', 'gan', 'kan', 'wan', 'kat', 'nat', 'wat', 'gat', 'jat', 'vat', 'fat', 'yet', 'fet', 'ret', 'het',
+    'fog', 'hog', 'jog', 'bog', 'cog', 'kog', 'nog', 'pog', 'tog', 'gog', 'vog', 'zog', 'mog', 'wog', 'set', 'get', 'let', 'met', 'pet', 'vet', 'wet',
+  ];
   for (const f of FAMILIES) {
-    assert.ok(f.silly.length >= WORD_MACHINE.tiles - 1, `${f.rime} has enough silly tiles`);
+    assert.ok(f.silly.length >= 1, `${f.rime} has a silly tile`);
     for (const s of f.silly) {
       const w = sillyWord(s.letter, f.rime);
       assert.ok(!real.has(w), `${w} is a real word in the game`);
@@ -84,7 +88,8 @@ test('planMachine: several words of one family, then another; tiles are the righ
     assert.ok(firstRun === -1 || firstRun <= WORD_MACHINE.perFamily, `no more than ${WORD_MACHINE.perFamily} of the first family`);
     assert.ok(firstRun > 0, `seed ${seed}: switches family (${rimes.join(' ')})`);
     for (const r of plan.rounds) {
-      assert.equal(r.tiles.length, WORD_MACHINE.tiles);
+      // Three tiles, or two where the family has only one clean silly onset (-AP).
+      assert.equal(r.tiles.length, Math.min(WORD_MACHINE.tiles, 1 + FAMILY_BY_RIME[r.rime]!.silly.length));
       assert.equal(r.tiles.filter((t) => t.makes === r.word && t.real).length, 1);
       assert.equal(new Set(r.tiles.map((t) => t.letter)).size, r.tiles.length);
       for (const t of r.tiles.filter((x) => x.makes !== r.word)) assert.equal(t.real, false);
@@ -106,6 +111,21 @@ test('planMachine leans to shaky families and shaky first sounds, and keeps to t
   const store = new ProgressStore(memory());
   store.refillBag(FAMILY_WORDS.filter((w) => rimeOf(w) !== 'at'));
   for (let seed = 1; seed <= 30; seed++) assert.ok(!machineWords(planMachine(store, { avoid: [], taken: [] }, seeded(seed))).some((w) => rimeOf(w) === 'at'));
+});
+
+test('planMachine never starts a new round of the shared bag while other words are still in it', () => {
+  const store = new ProgressStore(memory());
+  // One word left per family, and sentence words still to come.
+  store.refillBag(['rat', 'can', 'cap', 'pen', 'jet', 'log', 'sun', 'fox', 'bug']);
+  const round = store.bag().round;
+  const plan = planMachine(store, { avoid: [], taken: [] }, seeded(3));
+  assert.equal(machineWords(plan).length, WORD_MACHINE.rounds, 'still a full visit, from outside the bag');
+  assert.equal(store.bag().round, round, 'no refill');
+  assert.ok(store.bag().left.includes('sun'));
+  // An empty bag refills.
+  const empty = new ProgressStore(memory());
+  planMachine(empty, { avoid: [], taken: [] }, seeded(3));
+  assert.equal(empty.bag().round, 1);
 });
 
 test('the pool: the machine is a fetch game, drawn about every other episode, never the counter', () => {

@@ -34,7 +34,7 @@ import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, rimeLine, sillyLine, wordLine } from '../../content/voice/ids';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { sfxBoing, sfxPoof, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxWrong } from '../audio/sfx';
-import { DEPTH, GAME_WIDTH } from '../config';
+import { DEPTH, GAME_WIDTH, REACH } from '../config';
 import { backToHub, castFace, episode, narrator, planFor, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, shockwave, squash, wiggle } from '../fx/juice';
 import type { MachineMode, MachinePlan, MachineRound, MachineTile } from '../rules/wordMachine';
@@ -94,6 +94,10 @@ export class WordMachine extends Minigame {
   private rimeText!: Phaser.GameObjects.Text;
   /** Each round's misses, for the hooks (`wrongTries` resets on the right one). */
   private misses = 0;
+  /** Every word was built before this run of the room (back from F9 at the very end): straight back to the hub. */
+  private finished = false;
+  /** A tile she reached while it could not speak (a line playing, the round opening): it speaks when it can. */
+  private pendingTile: Spot | null = null;
 
   constructor() {
     super('WordMachine');
@@ -106,15 +110,19 @@ export class WordMachine extends Minigame {
     if (p.kind !== 'machine') throw new Error(`WordMachine: room ${this.slot} plays ${p.game}`);
     this.plan = p.machine;
     this.roomId = p.room;
-    this.index = 0;
+    // Back from the parent page (F9) mid-visit: on from the first word not yet built.
+    const built = this.plan.rounds.findIndex((r) => !episode.fetched.includes(r.word));
+    this.index = built < 0 ? this.plan.rounds.length - 1 : built;
+    this.finished = built < 0;
     this.phase = 'intro';
     this.slotted = null;
     this.picture = null;
+    this.pendingTile = null;
     this.wrongTries = 0;
     this.misses = 0;
   }
 
-  /** F9 to the parent page and back reopens this same room (from its first word). */
+  /** F9 to the parent page and back reopens this same room (from the first word not yet built). */
   protected override sceneData(): object {
     return { step: this.step, slot: this.slot };
   }
@@ -164,7 +172,21 @@ export class WordMachine extends Minigame {
       void voiceBank.ensure(wordLine(r.word));
       void voiceBank.ensure(rimeLine(r.rime));
     }
+    if (this.finished) {
+      this.locked = true;
+      this.time.delayedCall(600, () => backToHub(this, this.slot));
+      return;
+    }
     void this.startRound();
+  }
+
+  /** A tile that could not speak when she reached it speaks once the room is quiet, if she is still on it. */
+  override update(time: number, deltaMs: number): void {
+    super.update(time, deltaMs);
+    const t = this.pendingTile;
+    if (!t || this.phase !== 'pick' || this.locked || voiceBus.busy) return;
+    this.pendingTile = null;
+    if (t.enabled && Phaser.Math.Distance.Between(this.player.x, this.player.y, t.x, t.y) < REACH) this.sayTile(t);
   }
 
   /** A point on the machine art, from fractions of the image. */
@@ -189,14 +211,14 @@ export class WordMachine extends Minigame {
     this.drawSlot(false);
   }
 
-  /** The onset's slot: a dashed-looking empty box, or nothing behind a letter. */
-  private drawSlot(filled: boolean): void {
+  /** The onset's slot: an empty box (lit while the hint says its sound), or nothing behind a letter. */
+  private drawSlot(filled: boolean, lit = false): void {
     const h = this.onsetText.style.fontSize ? parseInt(String(this.onsetText.style.fontSize), 10) : 60;
     const s = h * 1.05;
     this.slotBox.clear();
     if (filled) return;
-    this.slotBox.fillStyle(0xffffff, 1).fillRoundedRect(this.onsetText.x - s / 2, -s / 2, s, s, 10);
-    this.slotBox.lineStyle(4, 0x9b5de5, 1).strokeRoundedRect(this.onsetText.x - s / 2, -s / 2, s, s, 10);
+    this.slotBox.fillStyle(lit ? 0xffd6e5 : 0xffffff, 1).fillRoundedRect(this.onsetText.x - s / 2, -s / 2, s, s, 10);
+    this.slotBox.lineStyle(lit ? 7 : 4, lit ? 0xff3d7a : 0x9b5de5, 1).strokeRoundedRect(this.onsetText.x - s / 2, -s / 2, s, s, 10);
   }
 
   /** Where the slot is, in scene coordinates. */
@@ -213,6 +235,7 @@ export class WordMachine extends Minigame {
     this.locked = true;
     this.wrongTries = 0;
     this.misses = 0;
+    this.pendingTile = null;
     this.clearSpots();
     this.onsetText.setText('');
     this.drawSlot(false);
@@ -259,16 +282,22 @@ export class WordMachine extends Minigame {
       const x = x0 + i * TILE_GAP;
       const block = this.art('prop_machine_tile', 130, 110);
       const letter = this.add.text(0, -62, t.letter.toUpperCase(), { fontFamily: FONT, fontSize: '64px', color: INK }).setOrigin(0.5);
-      const spot = this.addSpot(`tile_${t.letter}`, x, TILE_Y, [block, letter], t.makes === this.current.word, () => this.sayTile(t));
+      const spot: Spot = this.addSpot(`tile_${t.letter}`, x, TILE_Y, [block, letter], t.makes === this.current.word, () => this.sayTile(spot));
       // Over her, not under: standing on a tile must not hide its letter.
       spot.obj.setData('tile', t).setData('letter', letter).setDepth(TILE_DEPTH);
       popIn(this, spot.obj, 1, 150 + i * 120);
     });
   }
 
-  /** Walking onto a tile: its letter's sound (teaching audio), unless something is being said. */
-  private sayTile(t: MachineTile): void {
-    if (this.phase !== 'pick' || this.locked || voiceBus.busy) return;
+  /** Walking onto a tile: its letter's sound (teaching audio); while something is being said, it waits its turn. */
+  private sayTile(spot: Spot): void {
+    const t = spot.obj.getData('tile') as MachineTile | undefined;
+    if (!t || this.phase === 'done') return;
+    if (this.phase !== 'pick' || this.locked || voiceBus.busy) {
+      this.pendingTile = spot;
+      return;
+    }
+    this.pendingTile = null;
     if (LETTER_BY_CHAR[t.letter]) void voiceBus.say(letterSoundLine(t.letter));
   }
 
@@ -306,12 +335,21 @@ export class WordMachine extends Minigame {
     else await this.silly(spot, tile);
   }
 
-  /** The onset's sound, a beat, the rime: each lit as it is said, never blended. */
+  /**
+   * The onset's sound, a beat, the rime: each lit as it is said, never
+   * blended. In the hint the slot is still empty, so the slot itself lights
+   * (its letter is the answer, never printed before she finds it).
+   */
   private async sayParts(letter: string, rime: string): Promise<void> {
-    this.onsetText.setColor(LIT);
-    this.tweens.add({ targets: this.onsetText, scale: 1.3, duration: 140, yoyo: true });
+    const empty = !this.onsetText.text;
+    if (empty) this.drawSlot(false, true);
+    else {
+      this.onsetText.setColor(LIT);
+      this.tweens.add({ targets: this.onsetText, scale: 1.3, duration: 140, yoyo: true });
+    }
     if (LETTER_BY_CHAR[letter]) await this.say(letterSoundLine(letter));
     await this.wait(PART_GAP_MS);
+    if (empty) this.drawSlot(false);
     this.onsetText.setColor(INK);
     this.rimeText.setColor(LIT);
     this.tweens.add({ targets: this.rimeText, scale: 1.2, duration: 140, yoyo: true });
@@ -360,7 +398,7 @@ export class WordMachine extends Minigame {
     else progress.returnToBag(r.word);
     // The episode learns the result now, so a skip mid-celebration loses nothing.
     if (!episode.read.includes(r.word)) episode.read.push(r.word);
-    episode.fetched.push(r.word);
+    if (!episode.fetched.includes(r.word)) episode.fetched.push(r.word);
     if (last && !episode.house.done.includes(this.slot)) episode.house.done.push(this.slot);
     for (const s of this.spots) s.enabled = false;
     this.phase = last ? 'done' : 'check';

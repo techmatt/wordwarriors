@@ -3396,12 +3396,6 @@
   "text": "Zat!"
  },
  {
-  "id": "silly_jat",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Jat!"
- },
- {
   "id": "silly_yat",
   "speaker": "phonics",
   "group": "phonics",
@@ -3421,16 +3415,10 @@
   "text": "Zan!"
  },
  {
-  "id": "silly_gan",
+  "id": "silly_lan",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Gan!"
- },
- {
-  "id": "silly_yan",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Yan!"
+  "text": "Lan!"
  },
  {
   "id": "rime_ap",
@@ -3446,12 +3434,6 @@
   "text": "Vap!"
  },
  {
-  "id": "silly_dap",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Dap!"
- },
- {
   "id": "rime_en",
   "speaker": "phonics",
   "group": "phonics",
@@ -3459,16 +3441,16 @@
   "note": "placeholder for the rime -en said alone; replace with a recorded clip"
  },
  {
+  "id": "silly_nen",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Nehn!"
+ },
+ {
   "id": "silly_ven",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Venn!"
- },
- {
-  "id": "silly_sen",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Senn!"
+  "text": "Vehn!"
  },
  {
   "id": "rime_et",
@@ -3484,12 +3466,6 @@
   "text": "Zet!"
  },
  {
-  "id": "silly_fet",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Fet!"
- },
- {
   "id": "silly_det",
   "speaker": "phonics",
   "group": "phonics",
@@ -3503,22 +3479,16 @@
   "note": "placeholder for the rime -og said alone; replace with a recorded clip"
  },
  {
-  "id": "silly_zog",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Zog!"
- },
- {
-  "id": "silly_mog",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Mog!"
- },
- {
   "id": "silly_yog",
   "speaker": "phonics",
   "group": "phonics",
   "text": "Yog!"
+ },
+ {
+  "id": "silly_sog",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Sog!"
  },
  {
   "id": "word_anna",

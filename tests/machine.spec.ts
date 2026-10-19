@@ -1,8 +1,9 @@
 /**
- * Item 026: the word machine. A room of it played by the virtual pad (a
- * silly tile first, then every word), checking the speech rule on the voice
- * history; and in the slow lane a whole episode where the pool draws it for
- * door a. Screenshots land in tests/screenshots/ (ignored) for a look.
+ * Item 026: the word machine. Fast lane: the room opens right. Slow lane: a
+ * room of it played by the virtual pad (a silly tile first, then every word),
+ * checking the speech rule on the voice history; F9 out and back mid-visit;
+ * and a whole episode where the pool draws it for door a. Screenshots land in
+ * tests/screenshots/ (ignored) for a look.
  */
 
 import { test, expect, type Page } from '@playwright/test';
@@ -11,7 +12,21 @@ import { boot, choose, collectErrors, expectNoErrors, playEpisode, playWordMachi
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/026_${name}.png` });
 
-test('the word machine: tiles say their sounds, a silly tile giggles and pops out, each word is said only once built', async ({ page }) => {
+test('the word machine opens: a picture, a rime, a tile per onset, and no word said', async ({ page }) => {
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=a&game=word_machine');
+  const s = await until(page, (st) => st.scene === 'WordMachine' && st.room?.machine?.phase === 'pick' && !st.room.locked, 30_000, 'first round open');
+  const m = s.room!.machine!;
+  expect(m.family).toContain(m.word);
+  expect(s.room!.spots.map((sp) => sp.id).sort()).toEqual(m.tiles.map((t) => `tile_${t.letter}`).sort());
+  expect(s.room!.spots.filter((sp) => sp.correct)).toHaveLength(1);
+  // The intro and the instruction, and nothing that says a word yet.
+  expect(s.voice.history.some((id) => id.endsWith('_machine_intro'))).toBe(true);
+  expect(s.voice.history.filter((id) => id.startsWith('word_') || id.startsWith('silly_'))).toEqual([]);
+  expectNoErrors(errors);
+});
+
+test('the word machine: tiles say their sounds, a silly tile giggles and pops out, each word is said only once built @slow', async ({ page }) => {
   test.setTimeout(240_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&game=word_machine');
@@ -104,7 +119,27 @@ test('the pool draws the word machine: a whole episode with it behind door a @sl
   expectNoErrors(errors);
 });
 
-test('door b behind the machine: the harness plays it wrong-first, then the hub badge is the last word', async ({ page }) => {
+test('F9 mid-visit and back: the machine goes on from the next word, nothing fetched twice @slow', async ({ page }) => {
+  test.setTimeout(240_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=a&game=word_machine');
+  const open = await until(page, (s) => s.room?.machine?.phase === 'pick' && !s.room.locked, 60_000, 'first round open');
+  const m = open.room!.machine!;
+  await choose(page, `tile_${m.tiles.find((t) => t.makes === m.word)!.letter}`);
+  await until(page, (s) => s.room?.machine?.index === 1 && s.room.machine.phase === 'pick' && !s.room.locked, 60_000, 'round 2');
+  await page.keyboard.press('F9');
+  await until(page, (s) => s.scene === 'Parent', 10_000, 'parent');
+  await press(page, 'red');
+  const back = await until(page, (s) => s.scene === 'WordMachine' && s.room?.machine?.phase === 'pick' && !s.room.locked, 60_000, 'back in the machine');
+  expect(back.room!.machine!.index).toBe(1);
+  expect(back.episode.fetched).toEqual([m.word]);
+  const rest = await playWordMachine(page);
+  const hub = await until(page, (s) => s.scene === 'Hub', 30_000, 'hub');
+  expect(hub.episode.fetched).toEqual(rest);
+  expectNoErrors(errors);
+});
+
+test('the harness plays the machine wrong-first; its door then wears the last word built @slow', async ({ page }) => {
   test.setTimeout(240_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&game=word_machine');
