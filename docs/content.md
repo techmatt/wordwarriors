@@ -167,7 +167,8 @@ keep her default images. To add one: an outfit entry in `content/art/assets.ts` 
 images, then a line in `FORMS` with a `when` on the ally, the villain or both. The
 first match wins. The `when` names a roster id, so a dad's form counts: Julia is a little
 knight (`char_julia_knight`) beside warrior Dada Jason (`dada_jason_warrior`, item 025).
-(An outfit only swaps images; a dad's form is a whole character: next section.) The game asks `castArt(id)` / `castFace(id)` in
+`skipTaunts` lists taunt keys that do not fit the outfit (chef and knight Julia never
+say "My wand is sparkly!"). (An outfit only swaps images; a dad's form is a whole character: next section.) The game asks `castArt(id)` / `castFace(id)` in
 `src/episode/Episode.ts`, never `charArt` directly, for anything shown after she wakes.
 
 ## A dad's form: another whole character (`person` in the roster)
@@ -205,7 +206,10 @@ voice (`quest_<id>`, group core). No reading words in it (rules.test.ts), and it
 never become key words that episode (`saidBefore`). A character with no entry takes
 `HOME_QUEST`: the house, and the narrator's "we have to train right here at home".
 
-A place is `{ id, name, glyph, look, palette, rooms: [two side rooms], secret }`; its
+A place is `{ id, name, glyph, look, palette, rooms: [two side rooms], secret }`, and
+optionally `outdoor: true` (open sky behind: the villain's decals all lie on the floor,
+none hang in the air) and `moodFloor: [x, y, w, h]` (where floor decals lie when the
+art's floor is not the house hub's, like the treehouse deck); its
 art is `room_place_<id>` (the hub, laid out like the house's: the game draws the
 helper, the magic circle, the doors and a `prop_portal` way out on top) and
 `room_side_<room id>` for each room. Several characters may share a place; tier-two

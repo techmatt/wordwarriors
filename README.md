@@ -458,6 +458,12 @@ npm run art:pick -- <id> <n>
   line is this worktree's vite before stopping it. Background `test:all` needs a timeout
   over its ~12 minutes; a 10-minute limit kills it partway. With items 025 and 026's
   slow tests it took 26 minutes (2026-10-19, 2:55am), so give it 40.
+- Every active ally × villain pair (item 030): `WW_PAIRS=+ npx playwright test tests/pairs.spec.ts`
+  (about 1.8 minutes a pair at clock speed 3, an hour for all 36; `WW_PAIRS=scar+` plays one
+  ally's four). Off unless `WW_PAIRS` is set. Shots and voiced ids land in `tests/screenshots/pairs_*`.
+  Run batches one ally at a time, never beside art generation (item 028 ran both and the
+  machine ran out of memory). An edit to `src/` mid-run reloads the dev server's page and
+  fails the pair in play ("execution context was destroyed"): use a build, below.
 - Long Playwright runs: point them at a build so edits to `src/` do not hot-reload the
   page under test: `npx vite build --outDir scratch/dist-test`, `npx vite preview --outDir
   scratch/dist-test --port 5175`, then `WW_BASE_URL=http://localhost:5175 npx playwright test`.
