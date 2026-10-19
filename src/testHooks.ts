@@ -59,9 +59,16 @@ export interface BattleInfo {
   itemsUsed: number;
 }
 
-export const hookState: { room: RoomInfo | null; battle: BattleInfo | null; scene: string; fps: number } = {
+/** The victory recap's cards so far: each word and the picture beside it. */
+export interface RecapCard {
+  word: string;
+  picture: string | null;
+}
+
+export const hookState: { room: RoomInfo | null; battle: BattleInfo | null; recap: RecapCard[]; scene: string; fps: number } = {
   room: null,
   battle: null,
+  recap: [],
   scene: '',
   fps: 0,
 };
@@ -80,6 +87,7 @@ export function installTestHooks(): void {
       episode: JSON.parse(JSON.stringify(episode)) as unknown,
       room: hookState.room,
       battle: hookState.battle,
+      recap: hookState.recap,
       voice: { speaking: voiceBus.speaking?.id ?? null, busy: voiceBus.busy, history: [...voiceBus.history] },
       fx: { ...fxStats },
       music: musicPlaying(),

@@ -28,9 +28,14 @@ One `CharacterSpec` in `ROSTER`:
     (`{ tint: [colours], shape: 'spark' | 'star' | 'smoke' | 'square' }`, its aura).
   - `speed` (px/s), `size` (1 person, 1.4 big, 1.8 giant), `hp` (cosmetic).
   - `abilities`: three or more `AbilitySpec`; at least two on the good side should carry
-    a `word` from `MOVE_WORDS`, so the move-choice pads have words to offer. As a
-    helper, its first worded ability the hero lacks is the spell it teaches in the hub
-    (`src/rules/spell.ts`).
+    a `word` from `MOVE_WORDS`, so the move-choice pads have words to offer, and each
+    can list more words that suit it in `words` (item 018: every good fighter answers
+    to six or more; see "Move words and the move bag" below). As a helper, its first
+    `word` the hero lacks is the spell it teaches in the hub (`src/rules/spell.ts`).
+  - `reformed` (on the character, beside `counter`): two or more short, kid-funny lines
+    the villain says in its good voice once beaten ("Sorry I was so stormy!"); the
+    battle's end says the first, the victory the second. Voiced as
+    `reformed_<id>_<key>` in the villain's voice group.
   - `ultimate`: the evil one floors the heroes in Part 1 and is countered in Part 2.
   - `taunts`: `{ key, text }`, short, no interjections ("Ha!" is an SFX).
 - `counter`: its named counter item, flavour for when the attic's drawn counter word is
@@ -77,8 +82,8 @@ into itself, flies into her bag, and in battle 2 a swarm of it scurries at the v
 who leaps up ("EEK!", "NOT THE MOP!") while the ultimate fizzles. The narrator says
 `got_counter_any` ("That is just what we need!"), which fits every word.
 
-The counter word obeys the 009 rule, now checked on the draw: never a move word (battle
-1's pads), never a word fetched this episode (battle 1's item banners), never a word
+The counter word obeys the 009 rule, now checked on the draw: never a word on battle
+1's move pads (planned with the episode, item 018), never a word fetched this episode (battle 1's item banners), never a word
 any of the episode's three sentences shows, never the taught spell, and never a word
 the episode's hero, ally or villain says or shows first (`saidEarly` in
 `src/rules/sentences.ts`: names, abilities, ultimates, taunts, minions, the threat,
@@ -205,6 +210,26 @@ round, minus this episode's words). Within the bag, shaky words are drawn more o
 again soon. No key word repeats within
 an episode. The grown-ups page (F9) shows the round, words seen and left, and the
 shaky words. Erasing progress (F8 twice) empties the bag too.
+
+## Move words and the move bag (`src/rules/moves.ts`, ProgressStore `moveBag`)
+
+`MOVE_WORDS` (`content/battle/roster.ts`) is the pool, 26 words since item 018. An
+ability answers to its `word` and its `words`. When the house is planned,
+`planMoves` plans all four move choices too (two per battle part): the first of each
+part is the spell, the other right words come out of her **move bag**, the 015 bag
+logic over the move words (without replacement across episodes, shaky words more
+often, a word leaves only when she picks it right first time). Each choice shows 2 or
+3 pads; the wrong ones are her team's other words, ones she has not seen this episode
+first. The owner of the right word fires it (her hero fires the spell, with the
+helper's move). Planning up front is what lets the attic's counter word keep clear of
+exactly the words battle 1 shows (`battle1Words`).
+
+A new move word: add it to `MOVE_WORDS`, to an ability's `words`, and give it a
+picture: a reading word's own `pic_<word>`, or a `MOVE_PICTURES` entry
+(`content/phonics/words.ts`) plus its line in `PICTURES` (`content/art/prompts.ts`).
+The super shows a fan of that picture and the recap shows it beside the word. Then
+`voice:lines`, `voice:build`, `art:placeholders` (narrator `use_move_`, `teach_word_`,
+`not_move_`, `was_move_`, `find_move_` lines and its `word_` line are composed).
 
 ## A bedroom, or a bedroom object (`content/house/house.ts`)
 

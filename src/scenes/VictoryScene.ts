@@ -27,6 +27,8 @@ export class VictoryScene extends Phaser.Scene {
   private gen = 0;
   /** Where the villain, good again, stands on the podium: its bubble follows it. */
   private villainAnchor: BubbleAnchor | null = null;
+  /** The recap's cards, so they can step up out of the way of the villain's bubble. */
+  private cards: Phaser.GameObjects.Container[] = [];
 
   constructor() {
     super('Victory');
@@ -40,7 +42,9 @@ export class VictoryScene extends Phaser.Scene {
     hookState.scene = 'Victory';
     // The battle's last state stays readable here, for tests asking how it ended.
     hookState.room = null;
+    hookState.recap = [];
     this.ready = false;
+    this.cards = [];
     this.controls = new Controls(this);
     this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'room_victory').setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
     new Caption(this);
@@ -99,6 +103,11 @@ export class VictoryScene extends Phaser.Scene {
       // said its first reformed line, so this is the next one.
       const lines = CHARACTER_BY_ID[episode.villain]?.reformed ?? [];
       const friend = lines[1] ?? lines[0];
+      // The cards step up and shrink a little, so its bubble over the podium is clear.
+      for (const c of this.cards) {
+        this.tweens.killTweensOf(c);
+        this.tweens.add({ targets: c, y: 238, scale: 0.72, duration: 400, ease: 'Quad.easeInOut' });
+      }
       if (friend) await voiceBus.say(reformedLine(episode.villain, friend.key), 'bark', this.villainAnchor);
       if (gone()) return;
       await voiceBus.sequence([narratorLine(n, 'victory_2'), narratorLine(n, 'again')]);
@@ -121,10 +130,12 @@ export class VictoryScene extends Phaser.Scene {
       const x = GAME_WIDTH / 2 + (i - (words.length - 1) / 2) * gap;
       const card = this.add.rectangle(0, 0, 130, 170, 0xfffaf0).setStrokeStyle(6, 0x5a4a8a);
       const pic = this.pictureOf(w);
+      hookState.recap.push({ word: w, picture: pic });
       const parts: Phaser.GameObjects.GameObject[] = [card];
       if (pic) parts.push(fitImage(this.add.image(0, -22, pic), 100, 100));
       parts.push(this.add.text(0, 58, w.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '38px', color: '#1a1030' }).setOrigin(0.5));
       const c = this.add.container(x, 345, parts).setDepth(DEPTH.hud);
+      this.cards.push(c);
       c.setScale(0);
       this.tweens.add({ targets: c, scale: 1, duration: 300, ease: 'Back.easeOut' });
       this.tweens.add({ targets: c, y: 335, duration: 700, yoyo: true, repeat: -1, delay: 300 + i * 90, ease: 'Sine.easeInOut' });

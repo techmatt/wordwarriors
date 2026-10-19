@@ -46,7 +46,8 @@ export class Bubbles {
     if (!u || !u.anchor || u.priority !== 'bark' || !u.text) return;
     this.anchor = u.anchor as BubbleAnchor;
     const text = this.scene.add
-      .text(0, 0, u.text, { fontFamily: '"Arial Black", sans-serif', fontSize: '26px', color: '#1a1030', align: 'center', wordWrap: { width: 300 } })
+      // All text in the game is upper case; the line keeps its case for the voice.
+      .text(0, 0, u.text.toUpperCase(), { fontFamily: '"Arial Black", sans-serif', fontSize: '26px', color: '#1a1030', align: 'center', wordWrap: { width: 300 } })
       .setOrigin(0.5);
     const w = text.width + 34;
     const h = text.height + 24;

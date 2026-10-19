@@ -29,6 +29,8 @@ export interface WWState {
     house: { plan: { slot: string; room: string; sentence: { key: string; frame: string } }[] | null; done: string[]; taught: boolean };
     stepIndex: number;
   };
+  /** The victory recap's cards so far (item 018: every one has a picture). */
+  recap: { word: string; picture: string | null }[];
   room: {
     scene: string;
     round: string;

@@ -34,7 +34,7 @@
 
 import Phaser from 'phaser';
 
-import { CHARACTER_BY_ID, MINIONS, abilityWords, comboFor, comboPart } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, MINIONS, comboFor, comboPart } from '../../content/battle/roster';
 import type { AbilitySpec, Status } from '../../content/battle/types';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { fighterId, moveLine, nameLine, narratorLine, reformedLine, tauntLine, ultimateLine } from '../../content/voice/ids';
@@ -490,7 +490,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
 
   /** The villain gets a word in at the big beats: a gloat, a challenge. */
   private async villainSays(): Promise<void> {
-    const keys = this.villain.init.taunts ?? [];
+    const keys = this.safeTaunts(this.villain);
     const key = keys[Math.floor(Math.random() * keys.length)];
     if (!key) return;
     await this.guard(voiceBus.say(tauntLine(this.villain.init.id, key), 'instruction', this.villain));
@@ -655,16 +655,29 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     return f && ab ? { f, ab } : null;
   }
 
-  /**
-   * Whether calling this move out by name now would give a move choice away:
-   * its name or its move words are on a pad still to come this episode.
-   */
-  private givesChoiceAway(ab: AbilitySpec): boolean {
+  /** Every word on a move pad still to come this episode. */
+  private upcomingPads(): Set<string> {
     const plan = movePlan();
     const ahead = [...plan.part1.slice(this.part === 1 ? this.choicesOpened : plan.part1.length), ...plan.part2.slice(this.part === 2 ? this.choicesOpened : 0)];
-    const upcoming = new Set(ahead.flatMap((c) => c.words));
-    const said = [...ab.name.toLowerCase().split(/[^a-z]+/), ...abilityWords(ab)];
-    return said.some((w) => upcoming.has(w));
+    return new Set(ahead.flatMap((c) => c.words));
+  }
+
+  /**
+   * Whether saying this line now would give a move choice away: it says a
+   * word that is on a pad still to come ("Hop on my broom!" before a HOP
+   * pad, a move called out by a name with a pad word in it). Only what is
+   * spoken counts, so a move's extra `words` never silence its name.
+   */
+  private lineGivesAway(id: string): boolean {
+    const text = voiceBank.get(id)?.text;
+    if (!text) return false;
+    const upcoming = this.upcomingPads();
+    return text.toLowerCase().split(/[^a-z]+/).some((w) => upcoming.has(w));
+  }
+
+  /** A fighter's taunts that give no move choice away. */
+  private safeTaunts(f: Fighter): string[] {
+    return (f.init.taunts ?? []).filter((k) => !this.lineGivesAway(tauntLine(f.init.id, k)));
   }
 
   /**
@@ -864,7 +877,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.wordFx(right, f, ab.color);
     this.banner(`SUPER ${right.toUpperCase()}!`, 0xffd23f, true);
     void (async () => {
-      if (voiceBank.has(moveLine(f.init.id, ab.id)) && !this.givesChoiceAway(ab)) await this.guard(voiceBus.say(moveLine(f.init.id, ab.id), 'instruction', f));
+      if (voiceBank.has(moveLine(f.init.id, ab.id)) && !this.lineGivesAway(moveLine(f.init.id, ab.id))) await this.guard(voiceBus.say(moveLine(f.init.id, ab.id), 'instruction', f));
       await this.say('move_great');
     })();
     this.stats.abilitiesFired++;
@@ -1056,7 +1069,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     slowmo(this, 0.4, 1200);
     speedLines(this, v.cx, v.cy, ult.color, 1200);
     punch(this, 0.08, 300);
-    void voiceBus.say(ultimateLine(v.init.id), 'instruction', v);
+    if (!this.lineGivesAway(ultimateLine(v.init.id))) void voiceBus.say(ultimateLine(v.init.id), 'instruction', v);
     this.stats.ultimates++;
     await this.simWait(1.4);
 
@@ -1393,9 +1406,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       f.use(ab, this.now);
       cast(this, f, ab, target, f.init.kind === 'helper' ? 1.4 : 1, f.isMain && ab.power >= 2);
       // Big moves are called out by name, if nobody else is talking.
-      // A move whose name or move words are on a pad still to come is never
-      // called out: hearing it named then would give the choice away.
-      if (f.isMain && ab.power >= 2 && Math.random() < 0.5 && !this.givesChoiceAway(ab)) void voiceBus.say(moveLine(f.init.id, ab.id), 'bark', f);
+      // A move whose name says a word on a pad still to come is never called
+      // out: hearing it then would give the choice away (so are taunts).
+      if (f.isMain && ab.power >= 2 && Math.random() < 0.5 && !this.lineGivesAway(moveLine(f.init.id, ab.id))) void voiceBus.say(moveLine(f.init.id, ab.id), 'bark', f);
       this.stats.abilitiesFired++;
       if (f.isMain) this.teamNextCast[teamKey] = this.now + (teamKey === 'villain' ? 700 : 500);
       break;
@@ -1497,7 +1510,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     const speakers = this.fighters.filter((f) => f.isMain && f.active && !f.floored && f.init.taunts?.length && f.canAct(this.now));
     const f = speakers[Math.floor(Math.random() * speakers.length)];
     if (!f) return;
-    const key = f.init.taunts![Math.floor(Math.random() * f.init.taunts!.length)]!;
+    const keys = this.safeTaunts(f);
+    const key = keys[Math.floor(Math.random() * keys.length)];
+    if (!key) return;
     // A dropped taunt (somebody was talking) tries again soon rather than waiting a full turn.
     void voiceBus.say(tauntLine(f.init.id, key), 'bark', f).then((ok) => {
       if (!ok) this.nextTaunt = this.now + 1200;

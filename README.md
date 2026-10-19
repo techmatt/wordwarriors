@@ -81,6 +81,12 @@ when she reads it right first time, so a missed word comes round again soon, and
 `?scene=` jump spends nothing). Frames repeat on purpose so their little words become sight words. Details in
 `docs/content.md`, "Key words and the word bag"; the grown-ups page (F9) shows the bag.
 
+The battle's move words come round the same way (item 018): 26 move words, each move
+answering to several, and a **move bag** that decides which ones she is asked to find,
+so fight after fight she meets new ones (`docs/content.md`, "Move words and the move
+bag"). A super shows a fan of its word's picture; the beaten villain, good again, says
+two lines of its own (`reformed` in the roster); the victory recap pictures every word.
+
 A journey map shows before each battle, the trip home after the retreat, and the
 victory. With the test harness answering instantly a v0.2 episode takes about 4.6
 minutes (measured 2026-10-18); a child's pace has not been timed.
@@ -308,6 +314,10 @@ npm run art:pick -- <id> <n>
   `scratch/art_alts_013_tiamat.json`. Three `art:alts` runs on disjoint ids ran side
   by side; each writes its own sheet and manifest, so one `--sheet-only` run over all
   the ids afterwards makes the combined one.
+- Item 018's move-word pictures (20 `pic_` ids, 3 candidates each, the best
+  promoted) are `scratch/art_alts_018_moves.png` and `scratch/art_alts_018_moves.json`;
+  three runs (`art_alts_018_a`/`_b`/`_c`) drew them side by side, about 1% of Codex's
+  5-hour window per image (2026-10-18).
 - When Codex answers "Selected model is at capacity", `art:alts` skips that candidate
   and goes on (2026-10-18), so an id can end up with fewer than `n`. Top it up with
   `art:alts -- <id> --n=1`; it numbers on from the last candidate.
