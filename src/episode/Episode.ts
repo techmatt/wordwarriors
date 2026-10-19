@@ -263,7 +263,6 @@ export function castEpisode(picked: CastOverrides = {}): void {
   episode.secondary = c.secondary;
   // The hero cannot also be the ally (she would teach herself the spell).
   if (episode.ally && personOf(episode.ally) === personOf(episode.hero)) episode.ally = null;
-  if (episode.villainWasRandom) progress.villainMet(personOf(episode.villain));
   episode.place = placeOverride && (placeOverride === HOME || PLACE_BY_ID[placeOverride]) ? placeOverride : questFor(helper()).place;
 }
 
@@ -388,6 +387,9 @@ export function backToHub(scene: Phaser.Scene, from: Slot): void {
 
 /** The current step is done; go to the next one. */
 export function advance(scene: Phaser.Scene): void {
+  // The cast is drawn more often than episodes are played (at boot, at the
+  // title): her villain counts as met only when she presses on from the title.
+  if (currentStep().kind === 'title' && episode.villainWasRandom) progress.villainMet(personOf(episode.villain));
   episode.stepIndex++;
   if (episode.stepIndex >= steps().length) {
     progress.episodeDone();

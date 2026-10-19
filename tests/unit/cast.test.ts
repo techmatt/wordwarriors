@@ -95,6 +95,14 @@ test('cast: overrides fix any part; a dad picked by person plays his own form', 
   assert.equal(none.ally, null);
 });
 
+test('cast: a fixed primary dad drawn as the villain hands the waking to the other dad', () => {
+  const c = drawCast({ hero: 'julia', overrides: { ally: 'ellie', villain: 'dada_matt_lifter', primary: 'dada_matt', secondary: false } }, seededRand(10));
+  assert.equal(personOf(c.primary!), 'dada_jason');
+  assert.equal(personOf(wakerOf(c)), 'dada_jason');
+  // Even with no primary at all, the villain never wakes her.
+  assert.equal(wakerOf({ hero: 'julia', ally: 'ellie', primary: null, villain: 'dada_matt' }), 'dada_jason');
+});
+
 test('cast: the same seed draws the same episodes', () => {
   const a = seededRand(9);
   const b = seededRand(9);

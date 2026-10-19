@@ -57,8 +57,8 @@ const SOUND: Record<ReactionSound, () => void> = {
   whoosh: sfxWhoosh,
 };
 
-/** Where the other dad stands while the news is told: by the door, clear of the toys. */
-const SECOND_SPOT = { x: 1150, y: 560 };
+/** Where the other dad stands: at the foot of her bed, clear of the toys and the door. */
+const SECOND_SPOT = { x: 140, y: 690 };
 
 /** How long "Wake up!" waits for her green before she pops out by herself. */
 const WAKE_WAIT_MS = 6000;
@@ -172,20 +172,19 @@ export class BedroomScene extends RoomScene {
 
     // The other dad, some mornings (item 025): he comes in too, says hello
     // half the time, and is otherwise just there.
-    let second: Phaser.GameObjects.Image | null = null;
+    // He walks round to the foot of her bed and stays there.
     if (episode.secondary) {
       const sp = personOf(episode.secondary);
       this.showDoor();
       this.doorOpens();
       const s2 = this.art(castArt(episode.secondary), 120, 160, room.door.x, room.door.y).setDepth(room.door.y);
-      second = s2;
       this.caption.track(sp, () => (s2.active ? { x: s2.x, y: s2.y } : null));
+      this.time.delayedCall(600, () => this.hideDoor());
       await this.guard(
         new Promise<void>((resolve) =>
-          this.tweens.add({ targets: s2, x: SECOND_SPOT.x, y: SECOND_SPOT.y, duration: 800, ease: 'Sine.easeInOut', onUpdate: () => s2.setDepth(s2.y), onComplete: () => resolve() }),
+          this.tweens.add({ targets: s2, x: SECOND_SPOT.x, y: SECOND_SPOT.y, duration: 1600, ease: 'Sine.easeInOut', onUpdate: () => s2.setDepth(s2.y), onComplete: () => resolve() }),
         ),
       );
-      this.hideDoor();
       bob(this, s2, 5, 820);
       if (Math.random() < 0.5) await this.speak(wakeLine(sp, 'hi'));
     }
@@ -244,7 +243,6 @@ export class BedroomScene extends RoomScene {
     // between the robot and the door: no toy and no part of the door covered.
     this.stepAside(waker, { x: room.door.x, y: room.door.y + 180 });
     if (friend) this.stepAside(friend, { x: room.door.x - 140, y: room.door.y + 50 });
-    if (second) this.stepAside(second, { x: room.door.x + 80, y: room.door.y + 60 });
     this.time.delayedCall(DOOR_SPARKLE_MS, () => this.sparkleDoor());
   }
 

@@ -42,7 +42,7 @@ import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh, sfxWrong } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, WALK_SPEED } from '../config';
-import { advance, castArt, counterArt, counterWord, episode, movePlan, namedCounter, narrator, villainSpec, type Step } from '../episode/Episode';
+import { advance, castArt, counterArt, counterWord, episode, helper, movePlan, namedCounter, narrator, villainSpec, type Step } from '../episode/Episode';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
@@ -616,7 +616,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     // leaves again: nobody fights alone at the big moment.
     let cameo: Fighter | null = null;
     if (!b || !b.active) {
-      const id = narrator();
+      // The helper's roster id: a dad in today's form (his lines are per form too).
+      const id = helper();
       cameo = this.spawn(initFromSpec(CHARACTER_BY_ID[id]!.good, id, castArt(id), 'hero'), -160, a.y + 30);
       cameo.invulnerable = true;
       b = cameo;

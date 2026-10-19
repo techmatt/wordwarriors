@@ -111,7 +111,40 @@ export const PICK_NOTES: Record<string, string> = {
   char_anna_evil: "`current` is the old copper-curls design, unlike good Anna and her face card (the item 009 redesign: dark ponytail, plum and magenta). Her look in content/battle/roster.ts describes `current`; a candidate drawn from it is copper-curled too.",
   room_bedroom_julia: 'Redrawn with no loose toys of its own: the first one painted a teddy and a rocket that doubled the toys the game puts on the floor.',
   decal_rilla_footprint: 'Redrawn as one giant robot-gorilla footprint: the earlier try still read as bare human feet.',
+  ...pickedBy025(),
 };
+
+/**
+ * Item 025's new ids (the dads' forms, knight Julia, the quest places, the
+ * forms' counters and decals, the imp, the portal): which candidate it
+ * promoted, and why when it was close. `0` is the painted placeholder.
+ */
+function pickedBy025(): Record<string, string> {
+  const why: Record<string, [number, string?]> = {
+    char_dada_matt_lifter_good: [1, 'the fullest barbell pose'], char_dada_matt_lifter_evil: [2], face_dada_matt_lifter: [2],
+    char_dada_matt_cyber_good: [1], char_dada_matt_cyber_evil: [1], face_dada_matt_cyber: [2],
+    char_dada_matt_blade_good: [5, 'run twice, 6 candidates; the clearest blade and arcane swirl'], char_dada_matt_blade_evil: [1], face_dada_matt_blade: [3],
+    char_dada_jason_warrior_good: [2], char_dada_jason_warrior_evil: [2], face_dada_jason_warrior: [2],
+    char_dada_jason_warlock_good: [2], char_dada_jason_warlock_evil: [2], face_dada_jason_warlock: [2, 'the biggest laugh'],
+    char_julia_knight: [1], face_julia_knight: [2],
+    item_juice_box: [1], item_magic_pen: [1], item_shiny_pot: [1], item_slippy_mop: [1], item_sunshine_bus: [2],
+    decal_dada_matt_lifter_dumbbell: [1], decal_dada_matt_cyber_cable: [2], decal_dada_matt_blade_rune: [2], decal_dada_jason_warrior_shield: [2], decal_dada_jason_warlock_flame: [1],
+    minion_imp: [1], prop_portal: [2, 'the taller arch reads as a doorway'],
+    room_place_forest_gym: [1], room_side_boulder_yard: [2], room_side_climb_rocks: [2], room_side_waterfall_cave: [2],
+    room_place_hacker_den: [1], room_side_server_room: [1], room_side_drone_hangar: [2], room_side_mainframe_core: [1],
+    room_place_treehouse: [1, 'its deck is the larger walking floor'], room_side_lumber_loft: [1], room_side_tool_hut: [1], room_side_treetop_lookout: [1],
+    room_place_rune_dojo: [1], room_side_sword_yard: [1], room_side_spell_library: [1], room_side_crystal_vault: [2],
+    room_place_secret_kitchen: [1], room_side_pantry: [1], room_side_bakery: [2], room_side_sweet_cellar: [1],
+    room_place_knight_camp: [1], room_side_armoury: [1], room_side_practice_ring: [1], room_side_tower_room: [2],
+    room_place_moon_tower: [1], room_side_potion_room: [1], room_side_imp_nursery: [1], room_side_star_observatory: [2],
+    room_place_bubble_castle: [1], room_side_bubble_baths: [1], room_side_toy_cloud: [2], room_side_rainbow_room: [1],
+    room_place_dragon_mountain: [1], room_side_egg_nest: [1], room_side_flight_cliff: [1], room_side_secret_hideout: [1, 'the secret room every tier-two place shares'],
+    room_place_ice_castle: [1], room_side_snow_garden: [1], room_side_skating_pond: [1],
+    room_place_desert_oasis: [1], room_side_bazaar_tent: [1], room_side_sand_dunes: [1],
+    room_place_sea_grotto: [1], room_side_coral_garden: [1], room_side_shipwreck: [1],
+  };
+  return Object.fromEntries(Object.entries(why).map(([id, [n, note]]) => [id, `New id (item 025). \`current\` is candidate ${n}, promoted by item 025${note ? `: ${note}` : ''}. \`0\` is the painted placeholder.`]));
+}
 
 /** Word pictures: one meaning each, and unlike their look-alikes (content/phonics/sentences.ts LOOKALIKES). */
 const PICTURES: Record<string, string> = {

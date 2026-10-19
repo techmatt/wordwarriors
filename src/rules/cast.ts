@@ -111,7 +111,9 @@ export function drawCast(input: CastInput, rand: Rand = Math.random): Cast {
   // The dads' roles.
   const free = DADS.filter((d) => d !== heroPerson && d !== villainPerson && d !== allyPerson);
   let primaryDad: string | null;
-  if (o.primary !== undefined) primaryDad = o.primary !== null && free.includes(o.primary as (typeof DADS)[number]) ? o.primary : null;
+  // A fixed primary who is busy (the default episode's Dada Matt drawn as the
+  // villain) hands the role to the other dad, if he is free.
+  if (o.primary !== undefined) primaryDad = o.primary === null ? null : free.includes(o.primary as (typeof DADS)[number]) ? o.primary : (free[0] ?? null);
   else if (free.length === 2) primaryDad = rand() < CAST_ODDS.mattPrimary ? 'dada_matt' : 'dada_jason';
   else primaryDad = free[0] ?? null;
   const other = free.find((d) => d !== primaryDad);
@@ -129,13 +131,14 @@ export function drawCast(input: CastInput, rand: Rand = Math.random): Cast {
 
 /**
  * Who wakes her: the primary dad, else the ally if he is a dad, else (only an
- * override can get here) whichever dad is not the hero.
+ * override can get here) a dad who is neither the hero nor the villain if
+ * there is one.
  */
-export function wakerOf(cast: Pick<Cast, 'hero' | 'ally' | 'primary'>): string {
+export function wakerOf(cast: Pick<Cast, 'hero' | 'ally' | 'primary' | 'villain'>): string {
   if (cast.primary) return cast.primary;
   if (cast.ally && isDad(personOf(cast.ally))) return cast.ally;
-  const dad = DADS.find((d) => d !== personOf(cast.hero)) ?? DADS[0];
-  return dad;
+  const hero = personOf(cast.hero);
+  return DADS.find((d) => d !== hero && d !== personOf(cast.villain)) ?? DADS.find((d) => d !== hero) ?? DADS[0];
 }
 
 /** A seeded random source (mulberry32), for `?seed=` and the tests. */
