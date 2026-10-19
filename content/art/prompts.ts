@@ -29,7 +29,9 @@ export const BACKGROUND_STYLE = `${STYLE} A full-bleed background painting filli
 const FAMILY_ART = ['julia', 'ellie', 'dada_matt', 'dada_jason'].flatMap((c) => [`char_${c}_good`, `char_${c}_evil`, `face_${c}`]);
 // The counter items of item 009 came back with a green-tinted glow round them.
 const GLOWING_ITEMS = ['cozy_bed', 'golden_nut', 'giant_log', 'cocoa_cup', 'cuddly_cat', 'flappy_bat', 'brave_rat', 'tickle_fox', 'gold_bag', 'glitch_bug', 'bounce_cap'].map((i) => `item_${i}`);
-export const NO_GREEN = new Set([...FAMILY_ART, 'char_julia_chef',...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block']);
+// Tiamat (item 013) is purple and silver with a glow: no green of her own.
+const TIAMAT_ART = ['char_tiamat_good', 'char_tiamat_evil', 'face_tiamat', 'item_magic_hat', 'decal_tiamat_scale', 'decal_tiamat_banner'];
+export const NO_GREEN = new Set([...FAMILY_ART, ...TIAMAT_ART,'char_julia_chef',...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block']);
 
 /**
  * Likeness references for the family (Matt, 2026-10-18): a photo in the

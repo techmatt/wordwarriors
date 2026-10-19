@@ -742,6 +742,68 @@ export const ROSTER: CharacterSpec[] = [
     },
   },
   {
+    // Matt, 2026-10-18 (item 013): a giant purple dragon, and she is female. An
+    // original design, unlike Smaug (red and gold, sleek, flying) and Seraphina's
+    // little green dragons: a plump upright giant in violet and silver who barely
+    // moves and fills the arena.
+    id: 'tiamat',
+    description: 'A giant purple dragon queen, so big she fills the arena, who barely needs to move.',
+    arena: 'castle',
+    good: {
+      displayName: 'Tiamat', trail: { tint: [0xc77dff, 0xe0e0ff], shape: 'star' }, look: 'a giant, regal, friendly female dragon queen of original design: a huge plump pear-shaped body sitting upright like a soft purple hill, deep violet scales with a pale lilac pearly belly, a short graceful neck, a round gentle face with big kind golden eyes and long lashes, a warm closed-mouth smile, three short rounded silver horns curving back like a tiara, a small silver crown with a single violet gem, broad wings folded around her shoulders like a royal cloak with lilac membranes, a thick curled tail ending in a silver heart-shaped tip, a sprinkle of silver star freckles on her cheeks. Majestic, huggable and grandmotherly-kind, not sleek',
+      palette: [0x7b2cbf, 0xd8d8f0], glyph: '🐉', style: 'stomp', speed: 40, size: 2.1, hp: 230,
+      abilities: [
+        ab('purple_flame', 'Purple Flame', 'cone', 4, 0xb15cff, 2, { color2: 0xffc8ff, word: 'hot' }),
+        ab('wing_gust', 'Wing Gust', 'wave', 8, 0xd8c8ff, 2, { color2: 0xffffff, word: 'fan' }),
+        ab('gem_rain', 'Gem Rain', 'rain', 8, 0xc77dff, 2, { count: 14, glyph: '💎', word: 'pop' }),
+        ab('wing_hug', 'Wing Hug', 'shield', 10, 0x9b5de5, 1, { duration: 4, word: 'hug' }),
+        ab('tail_thump', 'Tail Thump', 'slam', 6, 0x7b2cbf, 3, { word: 'bam', shout: true }),
+      ],
+      ultimate: ab('royal_starfire', 'Royal Starfire', 'cone', 0, 0xe0aaff, 3, { color2: 0xffd23f }),
+      taunts: [
+        { key: 'hello', text: 'Hello, little friend!' },
+        { key: 'queen', text: 'The kind queen is here!' },
+        { key: 'wings', text: 'Hide under my wings!' },
+        { key: 'sparkle', text: 'Purple sparkles!' },
+        { key: 'tower', text: 'I am as tall as a tower!' },
+        { key: 'together', text: 'Together we are strong!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Tiamat', trail: { tint: [0xff3ad0, 0x2a0a3a], shape: 'smoke' }, look: 'a giant tyrant dragon queen, menacing but safe for small children: the same huge upright pear-shaped dragon in dark plum and black-violet scales with glowing magenta lines between them, wings spread wide behind her like a jagged royal cloak, a tall spiky black-and-gold crown above three swept-back horns, narrowed glowing pink eyes, a haughty bossy pout with her nose in the air (no teeth showing), one clawed hand pointing down as if giving orders, a thick tail with a spiky dark-purple tip, wisps of purple smoke curling from her nostrils. Grand, bossy and a bit funny, never gory or truly frightening',
+      palette: [0x2a0a3a, 0xff3ad0], glyph: '👑', style: 'stomp', speed: 35, size: 2.4, hp: 270,
+      abilities: [
+        ab('shadow_flame', 'Shadow Flame', 'cone', 4, 0x9b1aff, 3, { color2: 0xff3ad0 }),
+        ab('dragon_babies', 'Dragon Babies', 'summon', 12, 0xc77dff, 2, { minion: 'baby_dragon', count: 3 }),
+        ab('crown_beam', 'Crown Beam', 'beam', 7, 0xff3ad0, 2, { color2: 0xffd23f }),
+        ab('purple_thunder', 'Purple Thunder', 'lightning', 7, 0xc77dff, 2, { count: 3 }),
+        ab('throne_quake', 'Throne Quake', 'slam', 6, 0x5a1a7a, 3),
+      ],
+      ultimate: ab('royal_storm', 'Royal Purple Storm', 'rain', 0, 0xb15cff, 3, { count: 40, glyph: '🔥', color2: 0xff3ad0 }),
+      taunts: [
+        { key: 'bow', text: 'Bow to your queen!' },
+        { key: 'castle', text: 'This house is my castle!' },
+        { key: 'throne', text: 'Bring me my throne!' },
+        { key: 'tiny', text: 'You are so tiny!' },
+        { key: 'roar', text: 'Hear me roar!' },
+        { key: 'rules', text: 'My rules, my house!' },
+      ],
+    },
+    counter: {
+      id: 'magic_hat', name: 'Magic Hat', glyph: '🎩', look: "a magician's tall black top hat with a red band, tipped upside down and glowing with golden sparkles, that sucks a whole storm inside it like a magic trick",
+      how: 'block', words: ['top', 'tip', 'hat'], word: 'hat', frame: 'scared_of_the',
+    },
+    house: {
+      threat: 'she wants to be the queen of the whole house',
+      tint: 0x9b5de5,
+      decals: [
+        { id: 'tiamat_scale', glyph: '💜', look: 'big shiny purple dragon scales', count: 3 },
+        { id: 'tiamat_banner', glyph: '🚩', look: 'a royal purple banner with a dragon crown on it', count: 1 },
+      ],
+      fx: 'smoke',
+    },
+  },
+  {
     id: 'scar',
     description: 'A robot with a laser grid, rocket fists, and a transformation into a giant battle mech.',
     arena: 'factory',
@@ -815,7 +877,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'where', text: 'Where did I go?' },
         { key: 'magic', text: 'Magic trick!' },
         { key: 'which', text: 'Which one is me?' },
-        { key: 'hat', text: 'Look in my hat!' },
+        // Was "Look in my hat!": HAT is Evil Tiamat's counter word (item 013).
+        { key: 'sleeve', text: 'What is up my sleeve?' },
         { key: 'cards', text: 'So many cards!' },
       ],
     },
@@ -976,6 +1039,7 @@ export const COMBOS: ComboSpec[] = [
   { pair: ['dada_matt', 'dada_jason'], ability: ab('dad_squad', 'Dad Squad', 'slam', 16, 0xff8c42, 3, { color2: 0x3a86ff }) },
   { pair: ['julia', 'dada_matt'], ability: ab('high_five', 'Mega High Five', 'lightning', 16, 0xffd23f, 3, { count: 6, color2: 0x3a86ff }) },
   { pair: ['julia', 'ellie'], ability: ab('sister_squeeze', 'Sister Squeeze', 'spin', 16, 0xff9ad5, 3, { count: 5, color2: 0x9ad8ff }) },
+  { pair: ['seraphina', 'tiamat'], ability: ab('dragon_queen_ride', 'Dragon Queen Ride', 'dash', 16, 0xc77dff, 3, { color2: 0x6ad66a }) },
   { pair: ['julia', 'seraphina'], ability: ab('best_friends', 'Best Friend Blast', 'beam', 16, 0xff5ab4, 3, { color2: 0x2ec27e }) },
 ];
 

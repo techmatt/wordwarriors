@@ -104,6 +104,7 @@ scurries at the villain is the item's `glyph`.
 | Evil Ozymandias | … SCARED OF THE RAT | Brave Rat | scare |
 | Evil Jormungandr | … SCARED OF THE FOX | Tickle Fox | restore |
 | Evil Smaug | … SCARED OF THE BAG | Gold Bag | block |
+| Evil Tiamat | … SCARED OF THE HAT | Magic Hat | block |
 | Evil Scar | … SCARED OF THE BUG | Glitch Bug | shutdown |
 | Evil Moriarty | … SCARED OF THE MAP | Truth Map | reveal |
 | Evil Bavmorda | … SCARED OF THE CAP | Bounce Cap | reflect |

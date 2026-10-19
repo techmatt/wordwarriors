@@ -1471,6 +1471,156 @@
   "text": "Tail Quake!"
  },
  {
+  "id": "name_tiamat",
+  "speaker": "tiamat",
+  "group": "core",
+  "text": "Tiamat!"
+ },
+ {
+  "id": "taunt_tiamat_hello",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat",
+  "text": "Hello, little friend!"
+ },
+ {
+  "id": "taunt_tiamat_queen",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat",
+  "text": "The kind queen is here!"
+ },
+ {
+  "id": "taunt_tiamat_wings",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat",
+  "text": "Hide under my wings!"
+ },
+ {
+  "id": "taunt_tiamat_sparkle",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat",
+  "text": "Purple sparkles!"
+ },
+ {
+  "id": "taunt_tiamat_tower",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat",
+  "text": "I am as tall as a tower!"
+ },
+ {
+  "id": "taunt_tiamat_together",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat",
+  "text": "Together we are strong!"
+ },
+ {
+  "id": "ult_tiamat",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat",
+  "text": "Royal Starfire!"
+ },
+ {
+  "id": "move_tiamat_purple_flame",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat",
+  "text": "Purple Flame!"
+ },
+ {
+  "id": "move_tiamat_wing_gust",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat",
+  "text": "Wing Gust!"
+ },
+ {
+  "id": "move_tiamat_gem_rain",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat",
+  "text": "Gem Rain!"
+ },
+ {
+  "id": "move_tiamat_tail_thump",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat",
+  "text": "Tail Thump!"
+ },
+ {
+  "id": "name_tiamat_evil",
+  "speaker": "tiamat_evil",
+  "group": "core",
+  "text": "Evil Tiamat!"
+ },
+ {
+  "id": "taunt_tiamat_evil_bow",
+  "speaker": "tiamat_evil",
+  "group": "fighter_tiamat_evil",
+  "text": "Bow to your queen!"
+ },
+ {
+  "id": "taunt_tiamat_evil_castle",
+  "speaker": "tiamat_evil",
+  "group": "fighter_tiamat_evil",
+  "text": "This house is my castle!"
+ },
+ {
+  "id": "taunt_tiamat_evil_throne",
+  "speaker": "tiamat_evil",
+  "group": "fighter_tiamat_evil",
+  "text": "Bring me my throne!"
+ },
+ {
+  "id": "taunt_tiamat_evil_tiny",
+  "speaker": "tiamat_evil",
+  "group": "fighter_tiamat_evil",
+  "text": "You are so tiny!"
+ },
+ {
+  "id": "taunt_tiamat_evil_roar",
+  "speaker": "tiamat_evil",
+  "group": "fighter_tiamat_evil",
+  "text": "Hear me roar!"
+ },
+ {
+  "id": "taunt_tiamat_evil_rules",
+  "speaker": "tiamat_evil",
+  "group": "fighter_tiamat_evil",
+  "text": "My rules, my house!"
+ },
+ {
+  "id": "ult_tiamat_evil",
+  "speaker": "tiamat_evil",
+  "group": "fighter_tiamat_evil",
+  "text": "Royal Purple Storm!"
+ },
+ {
+  "id": "move_tiamat_evil_shadow_flame",
+  "speaker": "tiamat_evil",
+  "group": "fighter_tiamat_evil",
+  "text": "Shadow Flame!"
+ },
+ {
+  "id": "move_tiamat_evil_dragon_babies",
+  "speaker": "tiamat_evil",
+  "group": "fighter_tiamat_evil",
+  "text": "Dragon Babies!"
+ },
+ {
+  "id": "move_tiamat_evil_crown_beam",
+  "speaker": "tiamat_evil",
+  "group": "fighter_tiamat_evil",
+  "text": "Crown Beam!"
+ },
+ {
+  "id": "move_tiamat_evil_purple_thunder",
+  "speaker": "tiamat_evil",
+  "group": "fighter_tiamat_evil",
+  "text": "Purple Thunder!"
+ },
+ {
+  "id": "move_tiamat_evil_throne_quake",
+  "speaker": "tiamat_evil",
+  "group": "fighter_tiamat_evil",
+  "text": "Throne Quake!"
+ },
+ {
   "id": "name_scar",
   "speaker": "scar",
   "group": "core",
@@ -1639,10 +1789,10 @@
   "text": "Which one is me?"
  },
  {
-  "id": "taunt_moriarty_hat",
+  "id": "taunt_moriarty_sleeve",
   "speaker": "moriarty",
   "group": "fighter_moriarty",
-  "text": "Look in my hat!"
+  "text": "What is up my sleeve?"
  },
  {
   "id": "taunt_moriarty_cards",
@@ -2493,6 +2643,24 @@
   "text": "sun!"
  },
  {
+  "id": "word_tiamat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Tiamat!"
+ },
+ {
+  "id": "word_tip",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "tip!"
+ },
+ {
+  "id": "word_top",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "top!"
+ },
+ {
   "id": "word_tub",
   "speaker": "phonics",
   "group": "phonics",
@@ -2608,6 +2776,12 @@
   "text": "Smaug needs a..."
  },
  {
+  "id": "sent_helper_needs_a_tiamat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Tiamat needs a..."
+ },
+ {
   "id": "sent_helper_needs_a_scar",
   "speaker": "phonics",
   "group": "phonics",
@@ -2703,6 +2877,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "Evil Smaug hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_tiamat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Tiamat hates the..."
  },
  {
   "id": "sent_villain_hates_the_scar",
@@ -2802,6 +2982,12 @@
   "text": "Evil Smaug is scared of..."
  },
  {
+  "id": "sent_scared_of_tiamat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Tiamat is scared of..."
+ },
+ {
   "id": "sent_scared_of_scar",
   "speaker": "phonics",
   "group": "phonics",
@@ -2891,6 +3077,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "Evil Smaug is scared of the..."
+ },
+ {
+  "id": "sent_scared_of_the_tiamat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Tiamat is scared of the..."
  },
  {
   "id": "sent_scared_of_the_scar",
@@ -3173,6 +3365,18 @@
   "text": "Smaug is here to play!"
  },
  {
+  "id": "wake_dada_matt_good_tiamat",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Good news, Tiamat!"
+ },
+ {
+  "id": "wake_dada_matt_helper_tiamat",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Tiamat is here to play!"
+ },
+ {
   "id": "wake_dada_matt_good_scar",
   "speaker": "dada_matt",
   "group": "core",
@@ -3286,6 +3490,12 @@
   "speaker": "dada_matt",
   "group": "core",
   "text": "Bad news, Evil Smaug is coming, and he wants all the money in your piggy bank!"
+ },
+ {
+  "id": "wake_dada_matt_bad_tiamat",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Bad news, Evil Tiamat is coming, and she wants to be the queen of the whole house!"
  },
  {
   "id": "wake_dada_matt_bad_scar",
@@ -3447,6 +3657,18 @@
   "text": "Smaug is here to play!"
  },
  {
+  "id": "wake_dada_jason_good_tiamat",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Good news, Tiamat!"
+ },
+ {
+  "id": "wake_dada_jason_helper_tiamat",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Tiamat is here to play!"
+ },
+ {
   "id": "wake_dada_jason_good_scar",
   "speaker": "dada_jason",
   "group": "core",
@@ -3560,6 +3782,12 @@
   "speaker": "dada_jason",
   "group": "core",
   "text": "Bad news, Evil Smaug is coming, and he wants all the money in your piggy bank!"
+ },
+ {
+  "id": "wake_dada_jason_bad_tiamat",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Bad news, Evil Tiamat is coming, and she wants to be the queen of the whole house!"
  },
  {
   "id": "wake_dada_jason_bad_scar",
@@ -3977,6 +4205,12 @@
   "text": "Bad news, Smaug!"
  },
  {
+  "id": "nar_julia_alarm_hero_tiamat",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Bad news, Tiamat!"
+ },
+ {
   "id": "nar_julia_alarm_hero_scar",
   "speaker": "julia",
   "group": "nar_julia",
@@ -4334,6 +4568,36 @@
   "speaker": "julia",
   "group": "nar_julia",
   "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_julia_alarm_villain_tiamat",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_julia_need_item_tiamat",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_julia_made_item_tiamat",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_julia_need_counter_tiamat",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_julia_got_counter_tiamat",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We found the Magic Hat!"
  },
  {
   "id": "nar_julia_alarm_villain_scar",
@@ -5207,6 +5471,12 @@
   "text": "Bad news, Smaug!"
  },
  {
+  "id": "nar_ellie_alarm_hero_tiamat",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Bad news, Tiamat!"
+ },
+ {
   "id": "nar_ellie_alarm_hero_scar",
   "speaker": "ellie",
   "group": "nar_ellie",
@@ -5564,6 +5834,36 @@
   "speaker": "ellie",
   "group": "nar_ellie",
   "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_tiamat",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_tiamat",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_ellie_made_item_tiamat",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_ellie_need_counter_tiamat",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_ellie_got_counter_tiamat",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Magic Hat!"
  },
  {
   "id": "nar_ellie_alarm_villain_scar",
@@ -6437,6 +6737,12 @@
   "text": "Bad news, Smaug!"
  },
  {
+  "id": "nar_seraphina_alarm_hero_tiamat",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Bad news, Tiamat!"
+ },
+ {
   "id": "nar_seraphina_alarm_hero_scar",
   "speaker": "seraphina",
   "group": "nar_seraphina",
@@ -6794,6 +7100,36 @@
   "speaker": "seraphina",
   "group": "nar_seraphina",
   "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_seraphina_alarm_villain_tiamat",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_seraphina_need_item_tiamat",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_seraphina_made_item_tiamat",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_seraphina_need_counter_tiamat",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_seraphina_got_counter_tiamat",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We found the Magic Hat!"
  },
  {
   "id": "nar_seraphina_alarm_villain_scar",
@@ -7667,6 +8003,12 @@
   "text": "Bad news, Smaug!"
  },
  {
+  "id": "nar_dada_matt_alarm_hero_tiamat",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Bad news, Tiamat!"
+ },
+ {
   "id": "nar_dada_matt_alarm_hero_scar",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
@@ -8024,6 +8366,36 @@
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
   "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_dada_matt_alarm_villain_tiamat",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_dada_matt_need_item_tiamat",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_dada_matt_made_item_tiamat",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_dada_matt_need_counter_tiamat",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_dada_matt_got_counter_tiamat",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We found the Magic Hat!"
  },
  {
   "id": "nar_dada_matt_alarm_villain_scar",
@@ -8897,6 +9269,12 @@
   "text": "Bad news, Smaug!"
  },
  {
+  "id": "nar_dada_jason_alarm_hero_tiamat",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Bad news, Tiamat!"
+ },
+ {
   "id": "nar_dada_jason_alarm_hero_scar",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
@@ -9254,6 +9632,36 @@
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
   "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_dada_jason_alarm_villain_tiamat",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_dada_jason_need_item_tiamat",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_dada_jason_made_item_tiamat",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_dada_jason_need_counter_tiamat",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_dada_jason_got_counter_tiamat",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We found the Magic Hat!"
  },
  {
   "id": "nar_dada_jason_alarm_villain_scar",
@@ -10127,6 +10535,12 @@
   "text": "Bad news, Smaug!"
  },
  {
+  "id": "nar_elsa_alarm_hero_tiamat",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Bad news, Tiamat!"
+ },
+ {
   "id": "nar_elsa_alarm_hero_scar",
   "speaker": "elsa",
   "group": "nar_elsa",
@@ -10484,6 +10898,36 @@
   "speaker": "elsa",
   "group": "nar_elsa",
   "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_elsa_alarm_villain_tiamat",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_elsa_need_item_tiamat",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_elsa_made_item_tiamat",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_elsa_need_counter_tiamat",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_elsa_got_counter_tiamat",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We found the Magic Hat!"
  },
  {
   "id": "nar_elsa_alarm_villain_scar",
@@ -11357,6 +11801,12 @@
   "text": "Bad news, Smaug!"
  },
  {
+  "id": "nar_anna_alarm_hero_tiamat",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Bad news, Tiamat!"
+ },
+ {
   "id": "nar_anna_alarm_hero_scar",
   "speaker": "anna",
   "group": "nar_anna",
@@ -11714,6 +12164,36 @@
   "speaker": "anna",
   "group": "nar_anna",
   "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_anna_alarm_villain_tiamat",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_anna_need_item_tiamat",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_anna_made_item_tiamat",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_anna_need_counter_tiamat",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_anna_got_counter_tiamat",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We found the Magic Hat!"
  },
  {
   "id": "nar_anna_alarm_villain_scar",
@@ -12587,6 +13067,12 @@
   "text": "Bad news, Smaug!"
  },
  {
+  "id": "nar_jasmine_alarm_hero_tiamat",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Bad news, Tiamat!"
+ },
+ {
   "id": "nar_jasmine_alarm_hero_scar",
   "speaker": "jasmine",
   "group": "nar_jasmine",
@@ -12944,6 +13430,36 @@
   "speaker": "jasmine",
   "group": "nar_jasmine",
   "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_jasmine_alarm_villain_tiamat",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_jasmine_need_item_tiamat",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_jasmine_made_item_tiamat",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_jasmine_need_counter_tiamat",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_jasmine_got_counter_tiamat",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We found the Magic Hat!"
  },
  {
   "id": "nar_jasmine_alarm_villain_scar",
@@ -13817,6 +14333,12 @@
   "text": "Bad news, Smaug!"
  },
  {
+  "id": "nar_ozymandias_alarm_hero_tiamat",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Bad news, Tiamat!"
+ },
+ {
   "id": "nar_ozymandias_alarm_hero_scar",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
@@ -14174,6 +14696,36 @@
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
   "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_ozymandias_alarm_villain_tiamat",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_ozymandias_need_item_tiamat",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_ozymandias_made_item_tiamat",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_ozymandias_need_counter_tiamat",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_ozymandias_got_counter_tiamat",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We found the Magic Hat!"
  },
  {
   "id": "nar_ozymandias_alarm_villain_scar",
@@ -15046,6 +15598,12 @@
   "text": "Bad news, Smaug!"
  },
  {
+  "id": "nar_jormungandr_alarm_hero_tiamat",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Bad news, Tiamat!"
+ },
+ {
   "id": "nar_jormungandr_alarm_hero_scar",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -15403,6 +15961,36 @@
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
   "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_jormungandr_alarm_villain_tiamat",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_jormungandr_need_item_tiamat",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_jormungandr_made_item_tiamat",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_jormungandr_need_counter_tiamat",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_jormungandr_got_counter_tiamat",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We found the Magic Hat!"
  },
  {
   "id": "nar_jormungandr_alarm_villain_scar",
@@ -16276,6 +16864,12 @@
   "say": "Bad news, Yormungander!"
  },
  {
+  "id": "nar_smaug_alarm_hero_tiamat",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Bad news, Tiamat!"
+ },
+ {
   "id": "nar_smaug_alarm_hero_scar",
   "speaker": "smaug",
   "group": "nar_smaug",
@@ -16633,6 +17227,36 @@
   "speaker": "smaug",
   "group": "nar_smaug",
   "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_smaug_alarm_villain_tiamat",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_smaug_need_item_tiamat",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_smaug_made_item_tiamat",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_smaug_need_counter_tiamat",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_smaug_got_counter_tiamat",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We found the Magic Hat!"
  },
  {
   "id": "nar_smaug_alarm_villain_scar",
@@ -17115,6 +17739,1272 @@
   "text": "Find ice!"
  },
  {
+  "id": "nar_tiamat_alarm_ready",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need to get ready!"
+ },
+ {
+  "id": "nar_tiamat_prep_gem",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "First, let us make a power gem!",
+  "say": "First, let us make a power gem."
+ },
+ {
+  "id": "nar_tiamat_prep_ammo",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Let us make magic star ammo!",
+  "say": "Let us make magic star ammo."
+ },
+ {
+  "id": "nar_tiamat_prep_helper",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Let us call a helper friend!",
+  "say": "Let us call a helper friend."
+ },
+ {
+  "id": "nar_tiamat_inst_sound",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Listen! Walk to the letter that makes this sound.",
+  "say": "Listen, walk to the letter that makes this sound."
+ },
+ {
+  "id": "nar_tiamat_inst_blend",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Walk on the letters, then pick the right door!"
+ },
+ {
+  "id": "nar_tiamat_inst_picture",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Read the word, then walk to its picture!"
+ },
+ {
+  "id": "nar_tiamat_inst_spell",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Type the letters to spell the magic word!"
+ },
+ {
+  "id": "nar_tiamat_spell_this",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Spell this one!"
+ },
+ {
+  "id": "nar_tiamat_hint",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Listen to the sounds!"
+ },
+ {
+  "id": "nar_tiamat_right_1",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Yes! You did it!",
+  "say": "Yes, you did it!"
+ },
+ {
+  "id": "nar_tiamat_right_2",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Great reading!"
+ },
+ {
+  "id": "nar_tiamat_right_3",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Yes! That is it!",
+  "say": "Yes, that is it!"
+ },
+ {
+  "id": "nar_tiamat_right_4",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Super duper!"
+ },
+ {
+  "id": "nar_tiamat_wrong_1",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Oopsie! Try another one!",
+  "say": "Oopsie, try another one!"
+ },
+ {
+  "id": "nar_tiamat_wrong_2",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Not that one, silly!"
+ },
+ {
+  "id": "nar_tiamat_wrong_3",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That one is ticklish! Try again!",
+  "say": "That one is ticklish, try again!"
+ },
+ {
+  "id": "nar_tiamat_wrong_4",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Silly me, wrong way! Try again!",
+  "say": "Silly me, wrong way, try again!"
+ },
+ {
+  "id": "nar_tiamat_made_gem",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made a power gem!"
+ },
+ {
+  "id": "nar_tiamat_made_ammo",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made star ammo!"
+ },
+ {
+  "id": "nar_tiamat_made_helper",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "A helper friend is here!"
+ },
+ {
+  "id": "nar_tiamat_piece",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "One more piece!"
+ },
+ {
+  "id": "nar_tiamat_battle_start",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Let us go! Charge!",
+  "say": "Let us go, charge!"
+ },
+ {
+  "id": "nar_tiamat_battle2_start",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Round two! We are ready now!",
+  "say": "Round two, we are ready now!"
+ },
+ {
+  "id": "nar_tiamat_move_pick",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Quick! Pick a move!",
+  "say": "Quick, pick a move!"
+ },
+ {
+  "id": "nar_tiamat_move_great",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Super power!"
+ },
+ {
+  "id": "nar_tiamat_move_ok",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Nice move!"
+ },
+ {
+  "id": "nar_tiamat_use_gem",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Power gem, shine!"
+ },
+ {
+  "id": "nar_tiamat_use_ammo",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Fire the star ammo!"
+ },
+ {
+  "id": "nar_tiamat_use_helper",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Go, helper friend!"
+ },
+ {
+  "id": "nar_tiamat_use_item",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Now! Use it!",
+  "say": "Now, use it!"
+ },
+ {
+  "id": "nar_tiamat_retreat_1",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Too strong! Retreat, retreat!",
+  "say": "Too strong, retreat, retreat!"
+ },
+ {
+  "id": "nar_tiamat_retreat_2",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That was close! We need a plan!",
+  "say": "That was close, we need a plan!"
+ },
+ {
+  "id": "nar_tiamat_forge_intro",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Let us make it! Spell the magic words!",
+  "say": "Let us make it, spell the magic words!"
+ },
+ {
+  "id": "nar_tiamat_finish",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Now, all together! Finish it!",
+  "say": "Now, all together, finish it!"
+ },
+ {
+  "id": "nar_tiamat_victory_1",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We won! Hooray!",
+  "say": "We won, hooray!"
+ },
+ {
+  "id": "nar_tiamat_victory_2",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "You are a real Word Warrior!"
+ },
+ {
+  "id": "nar_tiamat_again",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Press green to play again!"
+ },
+ {
+  "id": "nar_tiamat_teach_1",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "I will teach you a magic spell!"
+ },
+ {
+  "id": "nar_tiamat_teach_circle",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Stand in the magic circle, and press green!"
+ },
+ {
+  "id": "nar_tiamat_teach_done",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "You know the spell now! Let us look around.",
+  "say": "You know the spell now, let us look around."
+ },
+ {
+  "id": "nar_tiamat_house_doors",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Two doors! Walk to one, and press green.",
+  "say": "Two doors, walk to one, and press green."
+ },
+ {
+  "id": "nar_tiamat_house_more",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "One more door to go!"
+ },
+ {
+  "id": "nar_tiamat_house_front",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "The front door is open! Let us go!",
+  "say": "The front door is open, let us go!"
+ },
+ {
+  "id": "nar_tiamat_secret_door",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Look, a secret door! Let us go up!",
+  "say": "Look, a secret door, let us go up!"
+ },
+ {
+  "id": "nar_tiamat_house_ready",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We are ready now! Out the front door!",
+  "say": "We are ready now, out the front door!"
+ },
+ {
+  "id": "nar_tiamat_room_listen",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Listen!"
+ },
+ {
+  "id": "nar_tiamat_room_your_turn",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Your turn! Press green for each word.",
+  "say": "Your turn, press green for each word."
+ },
+ {
+  "id": "nar_tiamat_room_find",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Now find it, and press green!"
+ },
+ {
+  "id": "nar_tiamat_got_item",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We got it!"
+ },
+ {
+  "id": "nar_tiamat_use_bag",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Look what we found!"
+ },
+ {
+  "id": "nar_tiamat_alarm_hero_julia",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Bad news, Julia!"
+ },
+ {
+  "id": "nar_tiamat_alarm_hero_ellie",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Bad news, Ellie!"
+ },
+ {
+  "id": "nar_tiamat_alarm_hero_seraphina",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Bad news, Seraphina!"
+ },
+ {
+  "id": "nar_tiamat_alarm_hero_dada_matt",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Bad news, Dada Matt!"
+ },
+ {
+  "id": "nar_tiamat_alarm_hero_dada_jason",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Bad news, Dada Jason!"
+ },
+ {
+  "id": "nar_tiamat_alarm_hero_elsa",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Bad news, Elsa!"
+ },
+ {
+  "id": "nar_tiamat_alarm_hero_anna",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Bad news, Anna!"
+ },
+ {
+  "id": "nar_tiamat_alarm_hero_jasmine",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Bad news, Jasmine!"
+ },
+ {
+  "id": "nar_tiamat_alarm_hero_ozymandias",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Bad news, Ozymandias!"
+ },
+ {
+  "id": "nar_tiamat_alarm_hero_jormungandr",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Bad news, Jormungandr!",
+  "say": "Bad news, Yormungander!"
+ },
+ {
+  "id": "nar_tiamat_alarm_hero_smaug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Bad news, Smaug!"
+ },
+ {
+  "id": "nar_tiamat_alarm_hero_scar",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Bad news, Scar!"
+ },
+ {
+  "id": "nar_tiamat_alarm_hero_moriarty",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Bad news, Moriarty!"
+ },
+ {
+  "id": "nar_tiamat_alarm_hero_bavmorda",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Bad news, Bavmorda!"
+ },
+ {
+  "id": "nar_tiamat_alarm_hero_rilla",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Bad news, Rilla!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_julia",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Julia is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_julia",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Cozy Bed can stop Evil Julia!"
+ },
+ {
+  "id": "nar_tiamat_made_item_julia",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Cozy Bed!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_julia",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Julia!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_julia",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Cozy Bed!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_ellie",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Ellie is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_ellie",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Bubble Tub can stop Evil Ellie!"
+ },
+ {
+  "id": "nar_tiamat_made_item_ellie",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Bubble Tub!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_ellie",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Ellie!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_ellie",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Bubble Tub!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_seraphina",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Seraphina is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_seraphina",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Golden Nut can stop Evil Seraphina!"
+ },
+ {
+  "id": "nar_tiamat_made_item_seraphina",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Golden Nut!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_seraphina",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Seraphina!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_seraphina",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Golden Nut!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_dada_matt",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_dada_matt",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Giant Log can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_tiamat_made_item_dada_matt",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Giant Log!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_dada_matt",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_dada_matt",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Giant Log!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_dada_jason",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_dada_jason",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Clean-Up Van can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_tiamat_made_item_dada_jason",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Clean-Up Van!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_dada_jason",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_dada_jason",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Clean-Up Van!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_elsa",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Elsa is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_elsa",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Cocoa Cup can stop Evil Elsa!"
+ },
+ {
+  "id": "nar_tiamat_made_item_elsa",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Cocoa Cup!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_elsa",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Elsa!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_elsa",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Cocoa Cup!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_anna",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Anna is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_anna",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Cuddly Cat can stop Evil Anna!"
+ },
+ {
+  "id": "nar_tiamat_made_item_anna",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Cuddly Cat!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_anna",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Anna!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_anna",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Cuddly Cat!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_jasmine",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Jasmine is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_jasmine",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Flappy Bat can stop Evil Jasmine!"
+ },
+ {
+  "id": "nar_tiamat_made_item_jasmine",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Flappy Bat!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_jasmine",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Jasmine!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_jasmine",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Flappy Bat!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_ozymandias",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Ozymandias is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_ozymandias",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Brave Rat can stop Evil Ozymandias!"
+ },
+ {
+  "id": "nar_tiamat_made_item_ozymandias",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Brave Rat!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_ozymandias",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Ozymandias!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_ozymandias",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Brave Rat!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_jormungandr",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Jormungandr is coming!",
+  "say": "Evil Yormungander is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_jormungandr",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Tickle Fox can stop Evil Jormungandr!",
+  "say": "Only the Tickle Fox can stop Evil Yormungander!"
+ },
+ {
+  "id": "nar_tiamat_made_item_jormungandr",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Tickle Fox!",
+  "say": "We made the Tickle Fox!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_jormungandr",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Jormungandr!",
+  "say": "We need something that scares Evil Yormungander!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_jormungandr",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Tickle Fox!",
+  "say": "We found the Tickle Fox!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_smaug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Smaug is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_smaug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Gold Bag can stop Evil Smaug!"
+ },
+ {
+  "id": "nar_tiamat_made_item_smaug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Gold Bag!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_smaug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Smaug!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_smaug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_tiamat",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_tiamat",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_tiamat_made_item_tiamat",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_tiamat",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_tiamat",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Magic Hat!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_scar",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Scar is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_scar",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Glitch Bug can stop Evil Scar!"
+ },
+ {
+  "id": "nar_tiamat_made_item_scar",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Glitch Bug!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_scar",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Scar!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_scar",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Glitch Bug!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_moriarty",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Moriarty is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_moriarty",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Truth Map can stop Evil Moriarty!"
+ },
+ {
+  "id": "nar_tiamat_made_item_moriarty",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Truth Map!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_moriarty",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Moriarty!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_moriarty",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Truth Map!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_bavmorda",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Bavmorda is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_bavmorda",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Bounce Cap can stop Evil Bavmorda!"
+ },
+ {
+  "id": "nar_tiamat_made_item_bavmorda",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Bounce Cap!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_bavmorda",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Bavmorda!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_bavmorda",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Bounce Cap!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_rilla",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "EvilRilla is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_rilla",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Wind-up Mice can stop EvilRilla!"
+ },
+ {
+  "id": "nar_tiamat_made_item_rilla",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Wind-up Mice!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_rilla",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares EvilRilla!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_rilla",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Wind-up Mice!"
+ },
+ {
+  "id": "nar_tiamat_use_move_zap",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use zap!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_zap",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called zap!"
+ },
+ {
+  "id": "nar_tiamat_not_move_zap",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't zap,"
+ },
+ {
+  "id": "nar_tiamat_was_move_zap",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was zap!"
+ },
+ {
+  "id": "nar_tiamat_find_move_zap",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find zap!"
+ },
+ {
+  "id": "nar_tiamat_use_move_pow",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use pow!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_pow",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called pow!"
+ },
+ {
+  "id": "nar_tiamat_not_move_pow",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't pow,"
+ },
+ {
+  "id": "nar_tiamat_was_move_pow",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was pow!"
+ },
+ {
+  "id": "nar_tiamat_find_move_pow",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find pow!"
+ },
+ {
+  "id": "nar_tiamat_use_move_bam",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use bam!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_bam",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called bam!"
+ },
+ {
+  "id": "nar_tiamat_not_move_bam",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't bam,"
+ },
+ {
+  "id": "nar_tiamat_was_move_bam",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was bam!"
+ },
+ {
+  "id": "nar_tiamat_find_move_bam",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find bam!"
+ },
+ {
+  "id": "nar_tiamat_use_move_zip",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use zip!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_zip",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called zip!"
+ },
+ {
+  "id": "nar_tiamat_not_move_zip",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't zip,"
+ },
+ {
+  "id": "nar_tiamat_was_move_zip",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was zip!"
+ },
+ {
+  "id": "nar_tiamat_find_move_zip",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find zip!"
+ },
+ {
+  "id": "nar_tiamat_use_move_hop",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use hop!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_hop",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called hop!"
+ },
+ {
+  "id": "nar_tiamat_not_move_hop",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't hop,"
+ },
+ {
+  "id": "nar_tiamat_was_move_hop",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was hop!"
+ },
+ {
+  "id": "nar_tiamat_find_move_hop",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find hop!"
+ },
+ {
+  "id": "nar_tiamat_use_move_pop",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use pop!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_pop",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called pop!"
+ },
+ {
+  "id": "nar_tiamat_not_move_pop",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't pop,"
+ },
+ {
+  "id": "nar_tiamat_was_move_pop",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was pop!"
+ },
+ {
+  "id": "nar_tiamat_find_move_pop",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find pop!"
+ },
+ {
+  "id": "nar_tiamat_use_move_sun",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use sun!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_sun",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called sun!"
+ },
+ {
+  "id": "nar_tiamat_not_move_sun",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't sun,"
+ },
+ {
+  "id": "nar_tiamat_was_move_sun",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was sun!"
+ },
+ {
+  "id": "nar_tiamat_find_move_sun",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find sun!"
+ },
+ {
+  "id": "nar_tiamat_use_move_hug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use hug!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_hug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called hug!"
+ },
+ {
+  "id": "nar_tiamat_not_move_hug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't hug,"
+ },
+ {
+  "id": "nar_tiamat_was_move_hug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was hug!"
+ },
+ {
+  "id": "nar_tiamat_find_move_hug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find hug!"
+ },
+ {
+  "id": "nar_tiamat_use_move_fan",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use fan!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_fan",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called fan!"
+ },
+ {
+  "id": "nar_tiamat_not_move_fan",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't fan,"
+ },
+ {
+  "id": "nar_tiamat_was_move_fan",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was fan!"
+ },
+ {
+  "id": "nar_tiamat_find_move_fan",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find fan!"
+ },
+ {
+  "id": "nar_tiamat_use_move_big",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use big!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_big",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called big!"
+ },
+ {
+  "id": "nar_tiamat_not_move_big",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't big,"
+ },
+ {
+  "id": "nar_tiamat_was_move_big",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was big!"
+ },
+ {
+  "id": "nar_tiamat_find_move_big",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find big!"
+ },
+ {
+  "id": "nar_tiamat_use_move_hot",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use hot!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_hot",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called hot!"
+ },
+ {
+  "id": "nar_tiamat_not_move_hot",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't hot,"
+ },
+ {
+  "id": "nar_tiamat_was_move_hot",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was hot!"
+ },
+ {
+  "id": "nar_tiamat_find_move_hot",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find hot!"
+ },
+ {
+  "id": "nar_tiamat_use_move_ice",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use ice!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_ice",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called ice!"
+ },
+ {
+  "id": "nar_tiamat_not_move_ice",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't ice,"
+ },
+ {
+  "id": "nar_tiamat_was_move_ice",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was ice!"
+ },
+ {
+  "id": "nar_tiamat_find_move_ice",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find ice!"
+ },
+ {
   "id": "nar_scar_alarm_ready",
   "speaker": "scar",
   "group": "nar_scar",
@@ -17512,6 +19402,12 @@
   "text": "Bad news, Smaug!"
  },
  {
+  "id": "nar_scar_alarm_hero_tiamat",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Bad news, Tiamat!"
+ },
+ {
   "id": "nar_scar_alarm_hero_moriarty",
   "speaker": "scar",
   "group": "nar_scar",
@@ -17863,6 +19759,36 @@
   "speaker": "scar",
   "group": "nar_scar",
   "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_scar_alarm_villain_tiamat",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_scar_need_item_tiamat",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_scar_made_item_tiamat",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_scar_need_counter_tiamat",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_scar_got_counter_tiamat",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We found the Magic Hat!"
  },
  {
   "id": "nar_scar_alarm_villain_scar",
@@ -18742,6 +20668,12 @@
   "text": "Bad news, Smaug!"
  },
  {
+  "id": "nar_moriarty_alarm_hero_tiamat",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Bad news, Tiamat!"
+ },
+ {
   "id": "nar_moriarty_alarm_hero_scar",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -19093,6 +21025,36 @@
   "speaker": "moriarty",
   "group": "nar_moriarty",
   "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_moriarty_alarm_villain_tiamat",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_moriarty_need_item_tiamat",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_moriarty_made_item_tiamat",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_moriarty_need_counter_tiamat",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_moriarty_got_counter_tiamat",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We found the Magic Hat!"
  },
  {
   "id": "nar_moriarty_alarm_villain_scar",
@@ -19972,6 +21934,12 @@
   "text": "Bad news, Smaug!"
  },
  {
+  "id": "nar_bavmorda_alarm_hero_tiamat",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Bad news, Tiamat!"
+ },
+ {
   "id": "nar_bavmorda_alarm_hero_scar",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
@@ -20323,6 +22291,36 @@
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
   "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_bavmorda_alarm_villain_tiamat",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_bavmorda_need_item_tiamat",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_bavmorda_made_item_tiamat",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_bavmorda_need_counter_tiamat",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_bavmorda_got_counter_tiamat",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We found the Magic Hat!"
  },
  {
   "id": "nar_bavmorda_alarm_villain_scar",
@@ -21202,6 +23200,12 @@
   "text": "Bad news, Smaug!"
  },
  {
+  "id": "nar_rilla_alarm_hero_tiamat",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Bad news, Tiamat!"
+ },
+ {
   "id": "nar_rilla_alarm_hero_scar",
   "speaker": "rilla",
   "group": "nar_rilla",
@@ -21553,6 +23557,36 @@
   "speaker": "rilla",
   "group": "nar_rilla",
   "text": "We found the Gold Bag!"
+ },
+ {
+  "id": "nar_rilla_alarm_villain_tiamat",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Evil Tiamat is coming!"
+ },
+ {
+  "id": "nar_rilla_need_item_tiamat",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Only the Magic Hat can stop Evil Tiamat!"
+ },
+ {
+  "id": "nar_rilla_made_item_tiamat",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We made the Magic Hat!"
+ },
+ {
+  "id": "nar_rilla_need_counter_tiamat",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We need something that scares Evil Tiamat!"
+ },
+ {
+  "id": "nar_rilla_got_counter_tiamat",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We found the Magic Hat!"
  },
  {
   "id": "nar_rilla_alarm_villain_scar",

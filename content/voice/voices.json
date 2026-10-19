@@ -24,6 +24,8 @@
     "jormungandr_evil": { "voice": "en-NZ-MitchellNeural", "rate": "-22%", "pitch": "-35Hz" },
     "smaug": { "voice": "en-GB-ThomasNeural", "rate": "-10%", "pitch": "-15Hz" },
     "smaug_evil": { "voice": "en-GB-ThomasNeural", "rate": "-18%", "pitch": "-40Hz" },
+    "tiamat": { "voice": "en-AU-NatashaNeural", "rate": "-12%", "pitch": "-8Hz" },
+    "tiamat_evil": { "voice": "en-AU-NatashaNeural", "rate": "-18%", "pitch": "-30Hz" },
     "scar": { "voice": "en-US-SteffanNeural", "rate": "-5%", "pitch": "+20Hz" },
     "scar_evil": { "voice": "en-US-SteffanNeural", "rate": "-12%", "pitch": "-40Hz" },
     "moriarty": { "voice": "en-IE-ConnorNeural", "rate": "+0%" },

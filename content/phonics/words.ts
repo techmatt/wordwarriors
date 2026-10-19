@@ -65,6 +65,7 @@ export const SIGHT_WORDS: Word[] = [
   { word: 'anna', decodable: false, character: 'anna' },
   { word: 'jasmine', decodable: false, character: 'jasmine' },
   { word: 'smaug', decodable: false, character: 'smaug' },
+  { word: 'tiamat', decodable: false, character: 'tiamat' },
   { word: 'scar', decodable: false, character: 'scar' },
   { word: 'moriarty', decodable: false, character: 'moriarty' },
   { word: 'bavmorda', decodable: false, character: 'bavmorda' },
