@@ -78,6 +78,11 @@ export interface AbilitySpec {
    * glyph (`prop_silver_sword`). Drawn point up; it falls point first.
    */
   art?: string;
+  /**
+   * The art is a picture (`pic_cat`), not a blade: it stays the right way up,
+   * neither spinning as a bolt nor falling point first.
+   */
+  upright?: boolean;
   /** For `orbit`: the caster is shielded while the ring spins (a whirling guard). */
   guard?: boolean;
   status?: Status;
@@ -146,13 +151,14 @@ export interface CounterItem {
   /** What it does to the ultimate in Part 2, as the battle shows it. */
   how: 'block' | 'reflect' | 'swallow' | 'reveal' | 'restore' | 'shutdown' | 'calm' | 'scare';
   /**
-   * The key word of the counter sentence (the sentence game after the
-   * retreat): a picturable word whose picture she finds. Decodable unless it
-   * is listed in SENTENCE_WORDS as a special case (MICE).
+   * The word this item is named for. Since item 015 the attic's counter word
+   * is drawn from her word bag each episode (any pictured CVC word can beat
+   * any villain); when the draw lands on this word, battle 2 shows this item
+   * and its `how` instead of the generic picture swarm. A flavour, not a rule.
+   * MICE is not decodable, so it is never drawn: EvilRilla's Wind-up Mice
+   * stay for the parked games only.
    */
   word: string;
-  /** Which counter frame the sentence uses (FRAMES in content/phonics/sentences.ts). */
-  frame: 'scared_of' | 'scared_of_the';
   /**
    * The Spell the Spell words: two warm-ups and the magic word last. Short, and
    * the ghost boxes show every letter.

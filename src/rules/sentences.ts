@@ -2,15 +2,26 @@
  * Choosing the sentences for an episode, and when a frame is solid. Pure:
  * no Phaser, unit-tested.
  *
- * Fetch rooms get two different fetch frames and two different key words,
- * weighted toward shaky frames and words. The counter room gets the
- * villain's own counter sentence. Each room shows three objects: the key
- * word's picture and two other picture words.
+ * Item 015: the episode picks its three frames first (two different fetch
+ * frames for the side rooms, one counter frame for the attic, each weighted
+ * toward shaky frames), then draws three different key words from her word
+ * bag (ProgressStore `bag`): without replacement across episodes, weighted
+ * toward shaky words. The counter word is drawn like the others, so any
+ * pictured CVC word can beat any villain. Each room shows three objects: the
+ * key word's picture and two other picture words.
+ *
+ * A key word is never spoken or shown before its room asks for it, so the
+ * draw keeps out every word the episode says or shows earlier: its sentences'
+ * own frame words and names, the taught spell, and everything the hero, ally
+ * and villain say or show (`saidEarly`). The counter word also keeps out the
+ * move words (battle 1's move pads) and the episode's fetch words (battle 1's
+ * item banners).
  */
 
-import { CHARACTER_BY_ID } from '../../content/battle/roster';
-import { CVC_WORDS } from '../../content/phonics/words';
+import { CHARACTER_BY_ID, MINIONS, MOVE_WORDS, comboPart } from '../../content/battle/roster';
+import type { FighterSpec } from '../../content/battle/types';
 import { FETCH_ITEMS, FRAMES, lookalikesOf, sentence, tokenWord, type Fill, type Sentence } from '../../content/phonics/sentences';
+import { CVC_WORDS } from '../../content/phonics/words';
 import { SENTENCE_SOLID } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
 
@@ -26,13 +37,28 @@ export interface RoomPlan {
   objects: string[];
 }
 
+/** Every word the bag holds: the pictured, decodable CVC words. */
+export const BAG_WORDS: string[] = CVC_WORDS.filter((w) => w.decodable).map((w) => w.word);
+
+/** Words a side room can fetch (each has a battle item). */
+const FETCHABLE = new Set(FETCH_ITEMS.map((i) => i.word));
+
+/**
+ * How much more likely the villain's own named counter word is than any
+ * other, when it is in the bag: the named items (Evil Tiamat's Magic Hat
+ * swallowing her storm) are the best-staged defeats, so they come up a bit
+ * more often, without breaking the bag.
+ */
+export const NAMED_COUNTER_BOOST = 3;
+
 /**
  * Two picture words for the room's other objects: not the key word, not a
  * look-alike of it (LOOKALIKES), and nothing in `avoid` (the sentence's own
- * words, so no CAN picture under WE CAN USE THE; the taught spell).
+ * words, so no CAN picture under WE CAN USE THE; the taught spell; the
+ * episode's other key words).
  * Nor anything starting with the key word's first letter: that letter is
- * her strongest clue and all the hint gives for a word like MICE (no MAP
- * beside the mice). If that ever leaves too few, the letter rule gives way.
+ * her strongest clue and all the hint gives for a non-decodable word (no MAP
+ * beside the MOP). If that ever leaves too few, the letter rule gives way.
  */
 export function distractors(key: string, rand: Rand = Math.random, n = 2, avoid: string[] = []): string[] {
   const banned = new Set([key, ...lookalikesOf(key), ...avoid]);
@@ -52,44 +78,114 @@ function objectsFor(s: Sentence, rand: Rand, avoid: string[]): string[] {
   return all;
 }
 
-/**
- * The two fetch rooms' plans: distinct frames, distinct key words, weighted
- * toward shaky ones. A key word is never in `avoid` (the episode passes the
- * taught spell and the villain's counter word, both heard or due elsewhere)
- * and never a word its own sentence already shows (its frame or a filled name),
- * because the prefix line would say it before she reads it.
- */
-export function fetchPlans(
-  store: ProgressStore,
-  fill: Fill,
-  rooms: [string, string],
-  rand: Rand = Math.random,
-  avoid: string[] = [],
-): [RoomPlan, RoomPlan] {
-  const frames = pickWeighted(
-    FRAMES.filter((f) => f.use === 'fetch').map((f) => f.id),
-    (id) => store.shakiness('frames', id),
-    2,
-    rand,
-  );
-  const words: string[] = [];
-  for (const frame of frames) {
-    const shown = new Set(sentence(frame, fill, 'x').tokens.slice(0, -1).map(tokenWord));
-    const pool = FETCH_ITEMS.map((i) => i.word).filter((w) => !avoid.includes(w) && !shown.has(w) && !words.includes(w));
-    words.push(pickWeighted(pool, (w) => store.shakiness('words', w), 1, rand)[0]!);
-  }
-  const plan = (i: 0 | 1, slot: 'a' | 'b'): RoomPlan => {
-    const s = sentence(frames[i]!, fill, words[i]!);
-    return { slot, room: rooms[i], sentence: s, objects: objectsFor(s, rand, avoid) };
-  };
-  return [plan(0, 'a'), plan(1, 'b')];
+function wordsOf(s: string | undefined): string[] {
+  return (s ?? '').toLowerCase().split(/[^a-z]+/).filter(Boolean);
 }
 
-/** The counter room's plan: the villain's counter sentence. `avoid` keeps words (the spell) out of its other objects. */
-export function counterPlan(fill: Fill, room: string, rand: Rand = Math.random, avoid: string[] = []): RoomPlan {
-  const counter = CHARACTER_BY_ID[fill.villain]!.counter;
-  const s = sentence(counter.frame, fill, counter.word);
-  return { slot: 'counter', room, sentence: s, objects: objectsFor(s, rand, avoid) };
+/** Everything one fighter says or shows: names, ability and ultimate banners, taunts, minion names. */
+function fighterWords(f: FighterSpec): string[] {
+  const out = [f.displayName, f.sayName, f.ultimate.name, ...f.abilities.map((a) => a.name)];
+  for (const t of f.taunts) out.push(t.text, t.say);
+  for (const a of [...f.abilities, f.ultimate]) if (a.minion) out.push(MINIONS[a.minion]?.name);
+  return out.flatMap(wordsOf);
+}
+
+/**
+ * Every word the episode's own characters say or show before the attic: the
+ * hero's and ally's (good) and the villain's (evil) names, abilities,
+ * ultimates, taunts and minions, the villain's wake-up threat, and the hero
+ * and ally's combo. A key word is never one of these.
+ */
+export function saidEarly(cast: { hero: string; ally: string | null; villain: string; helper: string }): string[] {
+  const out = new Set<string>();
+  const add = (ws: string[]) => ws.forEach((w) => out.add(w));
+  for (const id of new Set([cast.hero, cast.helper, ...(cast.ally ? [cast.ally] : [])])) {
+    const c = CHARACTER_BY_ID[id];
+    if (c) add(fighterWords(c.good));
+  }
+  const v = CHARACTER_BY_ID[cast.villain];
+  if (v) {
+    add(fighterWords(v.evil));
+    add(wordsOf(v.house.threat));
+    add(wordsOf(v.house.threatSay));
+  }
+  if (cast.ally) for (const [a, b] of [[cast.hero, cast.ally], [cast.ally, cast.hero]] as const) add(wordsOf(comboPart(a, b).name));
+  return [...out];
+}
+
+/**
+ * Draw one key word from the bag: an `eligible` word still in it, weighted
+ * toward shaky words (times `boost`). When no eligible word is left, the bag
+ * refills (a new round) with every bag word except `keepOut` (this episode's
+ * words so far, so they do not open the new round too). It falls back to
+ * any eligible word only if even a full bag has none. The word leaves the bag.
+ */
+export function drawKey(
+  store: ProgressStore,
+  eligible: string[],
+  rand: Rand = Math.random,
+  keepOut: string[] = [],
+  boost: (w: string) => number = () => 1,
+): string {
+  const ok = new Set(eligible);
+  let pool = store.bag().left.filter((w) => ok.has(w));
+  if (!pool.length) {
+    store.refillBag(BAG_WORDS.filter((w) => !keepOut.includes(w)));
+    pool = store.bag().left.filter((w) => ok.has(w));
+  }
+  if (!pool.length) pool = [...eligible];
+  const word = pickWeighted(pool, (w) => store.shakiness('words', w) * boost(w), 1, rand)[0]!;
+  store.takeFromBag(word);
+  return word;
+}
+
+export interface EpisodeInput {
+  fill: Fill;
+  /** The ally, or null (the helper is then the narrator). */
+  ally: string | null;
+  /** The move word the hub teaches: said before any room, so never a key word. */
+  spell: string;
+  /** The two side rooms (SIDE_ROOMS ids) for doors a and b, and the attic. */
+  rooms: [string, string];
+  counterRoom: string;
+}
+
+/**
+ * The episode's three room plans: fetch rooms a and b, then the attic's
+ * counter sentence. Draws (and so spends) three words from the bag.
+ */
+export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Rand = Math.random): [RoomPlan, RoomPlan, RoomPlan] {
+  const { fill, spell } = input;
+  const shakyFrame = (id: string) => store.shakiness('frames', id);
+  const fetchFrames = pickWeighted(FRAMES.filter((f) => f.use === 'fetch').map((f) => f.id), shakyFrame, 2, rand);
+  const counterFrame = pickWeighted(FRAMES.filter((f) => f.use === 'counter').map((f) => f.id), shakyFrame, 1, rand)[0]!;
+  const frames = [...fetchFrames, counterFrame];
+
+  // Every word any of the three sentences shows besides its key word: she
+  // reads them (and hears them on green) in every room, so none is a key word.
+  const shown = frames.flatMap((f) => sentence(f, fill, 'x').tokens.slice(0, -1).map(tokenWord));
+  const avoid = new Set([spell, ...shown, ...saidEarly({ hero: fill.hero, ally: input.ally, villain: fill.villain, helper: fill.helper })]);
+
+  const keys: string[] = [];
+  for (let i = 0; i < 2; i++) {
+    const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !avoid.has(w) && !keys.includes(w));
+    keys.push(drawKey(store, eligible, rand, keys));
+  }
+  // The counter: not a move word (battle 1 shows them on its pads), not a
+  // word fetched this episode (battle 1 shouts THE NET!).
+  const named = CHARACTER_BY_ID[fill.villain]?.counter.word;
+  const moves = new Set<string>(MOVE_WORDS);
+  const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !moves.has(w) && !keys.includes(w));
+  keys.push(drawKey(store, eligible, rand, keys, (w) => (w === named ? NAMED_COUNTER_BOOST : 1)));
+
+  const slots = ['a', 'b', 'counter'] as const;
+  const roomIds = [input.rooms[0], input.rooms[1], input.counterRoom];
+  return slots.map((slot, i) => {
+    const s = sentence(frames[i]!, fill, keys[i]!);
+    // No room offers the spell or another of the episode's key words as a wrong picture.
+    const others = [spell, ...keys.filter((k) => k !== keys[i])];
+    return { slot, room: roomIds[i]!, sentence: s, objects: objectsFor(s, rand, others) };
+  }) as [RoomPlan, RoomPlan, RoomPlan];
 }
 
 /** A solid frame skips the listening pass (SENTENCE_SOLID in config). */

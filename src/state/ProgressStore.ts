@@ -33,7 +33,19 @@ export interface ProgressData {
   spelling: Record<string, Stat>;
   /** Sentence frames (`we_can_use_the`): first-try answers, for skipping the listening pass. */
   frames: Record<string, Stat>;
+  /** Her word bag: the sentence key words drawn without replacement (item 015). */
+  bag: WordBag;
   episodes: number;
+}
+
+/**
+ * Key words still to come this round. A drawn word leaves the bag; when no
+ * word the episode can use is left, the bag refills with every key word and
+ * `round` counts up. A word she missed goes back in early (`returnToBag`).
+ */
+export interface WordBag {
+  left: string[];
+  round: number;
 }
 
 export type ItemKind = 'sounds' | 'words' | 'spelling' | 'frames';
@@ -45,7 +57,7 @@ function emptyStat(): Stat {
 }
 
 function empty(): ProgressData {
-  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, episodes: 0 };
+  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, bag: { left: [], round: 0 }, episodes: 0 };
 }
 
 export interface StorageLike {
@@ -75,6 +87,8 @@ export class ProgressStore {
       parsed.spelling ??= {};
       // Added in v0.2 without a version bump: an older blob simply has none yet.
       parsed.frames ??= {};
+      // Item 015, the same way: an empty bag with round 0 fills on the first draw.
+      parsed.bag ??= { left: [], round: 0 };
       parsed.episodes ??= 0;
       return parsed;
     } catch {
@@ -110,6 +124,29 @@ export class ProgressStore {
   episodeDone(): void {
     this.data.episodes++;
     this.session.episodes++;
+    this.save();
+  }
+
+  /** The word bag, as stored (a copy). */
+  bag(): WordBag {
+    return { left: [...this.data.bag.left], round: this.data.bag.round };
+  }
+
+  /** A word is drawn: it leaves the bag until the next round (or a miss). */
+  takeFromBag(word: string): void {
+    this.data.bag.left = this.data.bag.left.filter((w) => w !== word);
+    this.save();
+  }
+
+  /** A new round: the bag holds `words` again. */
+  refillBag(words: string[]): void {
+    this.data.bag = { left: [...new Set(words)], round: this.data.bag.round + 1 };
+    this.save();
+  }
+
+  /** A word she missed goes back in, so it can come round again before the bag empties. */
+  returnToBag(word: string): void {
+    if (!this.data.bag.left.includes(word)) this.data.bag.left.push(word);
     this.save();
   }
 

@@ -4,16 +4,19 @@
  * Each character has a good version (a hero or ally) and an evil version (a
  * villain), and each version has its own fighting style, three or more
  * abilities, taunts and an ultimate. The evil version's ultimate is what floors
- * the heroes at the end of Part 1; its `counter` item is what she fetches in
- * the attic's counter sentence ("EvilRilla is scared of MICE") and what beats
- * that ultimate in Part 2. `counter.words` stays for the parked Spell the
- * Spell game.
+ * the heroes at the end of Part 1. What beats it in Part 2 is whatever the
+ * attic's counter sentence draws from her word bag ("EVIL TIAMAT RUNS FROM THE
+ * BUS", item 015): any pictured CVC word, flung at the villain as a swarm of
+ * its pictures. The `counter` item here is flavour for when the draw lands on
+ * its own word (HAT for Evil Tiamat: the Magic Hat swallows her storm).
+ * `counter.words` stays for the parked Spell the Spell game.
  *
- * A counter `word` is never spoken or shown before the attic, so it is a CVC
- * picture word (or MICE) that is not a move word, not a fetch item, and not a
- * whole word in any name, ability, ultimate or taunt here (rules.test.ts
- * checks this). The item is the thing the word names: the word is a whole word
- * of the item's `name` (CUP → Cocoa Cup), one villain per word (sentences.test.ts).
+ * Because any CVC word can be a key word, the episode keeps out of the draw
+ * every word its own hero, ally and villain say or show before the attic
+ * (names, abilities, ultimates, taunts, minions, the threat):
+ * `saidEarly` in src/rules/sentences.ts. Named counter words are still kept
+ * out of everyone's names, abilities, ultimates and taunts (rules.test.ts), and
+ * each is a whole word of its item's `name` (HAT → Magic Hat).
  *
  * `house` is how the villain colours the house: the threat in the wake-up
  * line ("Bad news, Evil Elsa is coming, and <threat>!"), a tint, decals and an
@@ -173,7 +176,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'cozy_bed', name: 'Cozy Bed', glyph: '🛏️', look: 'a child\'s bed with a puffy blue duvet and a white pillow, glowing softly, a sleepy moon and stars above it',
-      how: 'calm', words: ['bed', 'hug', 'nap'], word: 'bed', frame: 'scared_of_the',
+      how: 'calm', words: ['bed', 'hug', 'nap'], word: 'bed',
     },
     house: {
       threat: 'she wants to keep every toy for herself',
@@ -234,7 +237,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'bubble_bath', name: 'Bubble Tub', glyph: '🛁', look: 'a magic bathtub overflowing with rainbow bubbles, a little yellow rubber duck on top',
-      how: 'calm', words: ['wet', 'dip', 'tub'], word: 'tub', frame: 'scared_of_the',
+      how: 'calm', words: ['wet', 'dip', 'tub'], word: 'tub',
     },
     house: {
       threat: 'she wants to scribble crayon on every wall',
@@ -289,7 +292,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'golden_nut', name: 'Golden Nut', glyph: '🥜', look: 'a giant shiny golden hazelnut in its shell, the snack every dragon loves best',
-      how: 'calm', words: ['cup', 'bun', 'yum'], word: 'nut', frame: 'scared_of_the',
+      how: 'calm', words: ['cup', 'bun', 'yum'], word: 'nut',
     },
     house: {
       threat: 'her dragons want to toast the whole house',
@@ -346,7 +349,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'giant_log', name: 'Giant Log', glyph: '🌲', look: 'a huge cut wooden log lying down, rings showing on the end, so solid that any hammer just bonks off it',
-      how: 'block', words: ['bed', 'box', 'pad'], word: 'log', frame: 'scared_of_the',
+      how: 'block', words: ['bed', 'box', 'pad'], word: 'log',
     },
     house: {
       threat: 'he wants to knock down every wall',
@@ -401,7 +404,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'cleanup_van', name: 'Clean-Up Van', glyph: '🚐', look: 'a little cartoon cleaning van with spinning brushes and a big hose that hoovers up every bit of food',
-      how: 'restore', words: ['wet', 'rub', 'van'], word: 'van', frame: 'scared_of_the',
+      how: 'restore', words: ['wet', 'rub', 'van'], word: 'van',
     },
     house: {
       threat: 'he wants everybody to eat broccoli for breakfast',
@@ -456,7 +459,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'cocoa_cup', name: 'Cocoa Cup', glyph: '☕', look: 'a big red mug of steaming cocoa with a handle, so warm it melts any winter',
-      how: 'restore', words: ['sun', 'hat', 'hot'], word: 'cup', frame: 'scared_of_the',
+      how: 'restore', words: ['sun', 'hat', 'hot'], word: 'cup',
     },
     house: {
       threat: 'she wants to freeze the whole house',
@@ -511,7 +514,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'cuddly_cat', name: 'Cuddly Cat', glyph: '🐱', look: 'a warm, fluffy orange tabby cat with a curled tail, purring, who cuddles the frost away',
-      how: 'calm', words: ['hug', 'pet', 'pal'], word: 'cat', frame: 'scared_of_the',
+      how: 'calm', words: ['hug', 'pet', 'pal'], word: 'cat',
     },
     house: {
       threat: 'she wants to turn every room into a blizzard',
@@ -567,7 +570,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'flappy_bat', name: 'Flappy Bat', glyph: '🦇', look: 'a friendly purple bat (the animal) with huge wings spread wide, flapping hard enough to blow a sandstorm straight back',
-      how: 'reflect', words: ['map', 'zip', 'fan'], word: 'bat', frame: 'scared_of_the',
+      how: 'reflect', words: ['map', 'zip', 'fan'], word: 'bat',
     },
     house: {
       threat: 'she wants to fill the house with sand',
@@ -622,7 +625,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'brave_rat', name: 'Brave Rat', glyph: '🐀', look: 'a brave little grey rat with a long pink tail and a tiny red cape, leading a squeaking pack of his friends; giant statues are terrified of rats',
-      how: 'scare', words: ['cup', 'tub', 'wet'], word: 'rat', frame: 'scared_of_the',
+      how: 'scare', words: ['cup', 'tub', 'wet'], word: 'rat',
     },
     house: {
       threat: 'he wants a giant statue of himself in the garden',
@@ -677,7 +680,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'tickle_fox', name: 'Tickle Fox', glyph: '🦊', look: 'a cheeky red-orange fox with a big bushy white-tipped tail, just right for tickling a serpent\'s nose until he sneezes',
-      how: 'restore', words: ['sun', 'pot', 'lit'], word: 'fox', frame: 'scared_of_the',
+      how: 'restore', words: ['sun', 'pot', 'lit'], word: 'fox',
     },
     house: {
       threat: 'he wants to wrap himself around the whole house',
@@ -734,7 +737,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'gold_bag', name: 'Gold Bag', glyph: '👜', look: 'a magic pink handbag with a curved handle and a clasp, wide open, that gobbles up a whole avalanche of gold',
-      how: 'block', words: ['cup', 'net', 'fog'], word: 'bag', frame: 'scared_of_the',
+      how: 'block', words: ['cup', 'net', 'fog'], word: 'bag',
     },
     house: {
       threat: 'he wants all the money in your piggy bank',
@@ -796,7 +799,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'magic_hat', name: 'Magic Hat', glyph: '🎩', look: "a magician's tall black top hat with a red band, tipped upside down and glowing with golden sparkles, that sucks a whole storm inside it like a magic trick",
-      how: 'swallow', words: ['top', 'tip', 'hat'], word: 'hat', frame: 'scared_of_the',
+      how: 'swallow', words: ['top', 'tip', 'hat'], word: 'hat',
     },
     house: {
       threat: 'she wants to be the queen of the whole house',
@@ -851,7 +854,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'glitch_bug', name: 'Glitch Bug', glyph: '🐞', look: 'a cute round red ladybird with black spots that crawls inside robots and switches them off',
-      how: 'shutdown', words: ['box', 'pen', 'off'], word: 'bug', frame: 'scared_of_the',
+      how: 'shutdown', words: ['box', 'pen', 'off'], word: 'bug',
     },
     house: {
       threat: 'his robots want to switch off every light',
@@ -908,7 +911,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'truth_map', name: 'Truth Map', glyph: '🗺️', look: 'a glowing treasure map on old parchment with a dotted path and a red X that shows where every trick is hiding',
-      how: 'reveal', words: ['map', 'pen', 'nab'], word: 'map', frame: 'scared_of_the',
+      how: 'reveal', words: ['map', 'pen', 'nab'], word: 'map',
     },
     house: {
       threat: 'he wants to play tricks in every room',
@@ -963,7 +966,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'bounce_cap', name: 'Bounce Cap', glyph: '🧢', look: 'a shiny blue baseball cap with a curved peak that bounces any spell straight back',
-      how: 'reflect', words: ['sun', 'pin', 'zap'], word: 'cap', frame: 'scared_of_the',
+      how: 'reflect', words: ['sun', 'pin', 'zap'], word: 'cap',
     },
     house: {
       threat: 'she wants to turn everybody into piggies',
@@ -1019,7 +1022,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'mice', name: 'Wind-up Mice', glyph: '🐭', look: 'a tin full of clockwork toy mice that scurry and squeak',
-      how: 'scare', words: ['rat', 'bug', 'hen'], word: 'mice', frame: 'scared_of',
+      how: 'scare', words: ['rat', 'bug', 'hen'], word: 'mice',
     },
     house: {
       threat: "he's going to eat Dada Jason's car",

@@ -20,6 +20,7 @@ import { voiceBus } from '../audio/VoiceBus';
 import { GAME_HEIGHT, GAME_WIDTH, SENTENCE_SOLID } from '../config';
 import type { Step } from '../episode/Episode';
 import { Controls } from '../input/Controls';
+import { BAG_WORDS } from '../rules/sentences';
 import { progress } from '../state/progress';
 import type { ItemKind } from '../state/ProgressStore';
 import { hookState } from '../testHooks';
@@ -61,11 +62,25 @@ export class ParentScene extends Phaser.Scene {
     this.grid('Words', 'words', words, 30, 300, 12, 205);
     // The sentence game keeps progress per frame ("WE CAN USE THE ..."), so
     // the little words recur until they are sight words.
-    this.grid('Sentence frames', 'frames', FRAMES.map((f) => f.id), 880, 300, 8, 300);
-    this.add.text(880, 300 + 30 + FRAMES.length * 30 + 6, [
+    this.grid('Sentence frames', 'frames', FRAMES.map((f) => f.id), 880, 300, FRAMES.length, 300);
+    const framesEnd = 300 + 30 + FRAMES.length * 30 + 6;
+    this.add.text(880, framesEnd, [
       `Solid frames skip the listening pass`,
       `(${SENTENCE_SOLID.tries}+ tries, last ${SENTENCE_SOLID.lastRight} right).`,
     ], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#555' });
+    this.bagView(880, framesEnd + 44);
+  }
+
+  /** Her word bag: key words drawn without replacement, and the shaky ones that come back early. */
+  private bagView(x: number, y: number): void {
+    const bag = progress.bag();
+    const left = BAG_WORDS.filter((w) => bag.left.includes(w));
+    const shaky = BAG_WORDS.filter((w) => progress.stat('words', w).seen > 0 && progress.shakiness('words', w) >= 0.5)
+      .sort((a, b) => progress.shakiness('words', b) - progress.shakiness('words', a));
+    this.add.text(x, y, [
+      `Word bag, round ${bag.round}: ${bag.round ? BAG_WORDS.length - left.length : 0} seen, ${bag.round ? left.length : BAG_WORDS.length} left`,
+      `Shaky: ${shaky.slice(0, 8).join(' ') || 'none yet'}`,
+    ], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' });
   }
 
   private grid(title: string, kind: ItemKind, ids: string[], x0: number, y0: number, perCol: number, colW: number): void {

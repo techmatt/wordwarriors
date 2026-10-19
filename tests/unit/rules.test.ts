@@ -16,6 +16,7 @@ import { WAKERS, letterSoundLine, moveLine, narratorLine, nameLine, tauntLine, u
 import { CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE_LINES } from '../../content/voice/script';
 import { pickWeighted, ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
 import { blendRound, choiceCount, pictureRound, soundRound } from '../../src/rules/rounds';
+import { BAG_WORDS, episodePlans } from '../../src/rules/sentences';
 import { align } from '../../tools/voice/align';
 import { composeLines } from '../../tools/voice/compose';
 import { trimMp3 } from '../../tools/voice/mp3';
@@ -115,9 +116,12 @@ test('roster: every character is complete, good and evil', () => {
   }
 });
 
-test('roster: counter words are never spoken or shown before the attic', () => {
-  // Everything a fighter shows or says in the hub and battle 1: names, ability
-  // and ultimate banners, taunts, minion names, the wake-up threat.
+test('roster: named counter words are pictured, and never in any name, ability, taunt or threat', () => {
+  // Item 015 draws the counter word from her word bag; a villain's named
+  // counter item is flavour for when the draw lands on its word. Named words
+  // still stay out of everything any fighter shows or says (names, ability and
+  // ultimate banners, taunts, minion names, the wake-up threat), so the flavour
+  // is never ruled out by the villain's own lines.
   const said: string[] = Object.values(MINIONS).map((m) => m.name);
   for (const c of ROSTER) {
     said.push(c.house.threat, c.house.threatSay ?? '');
@@ -133,7 +137,6 @@ test('roster: counter words are never spoken or shown before the attic', () => {
     const w = c.counter.word;
     assert.ok(pictured.has(w), `${c.id}: counter word ${w} has a picture`);
     assert.ok(!(MOVE_WORDS as readonly string[]).includes(w), `${c.id}: counter word ${w} is a move word`);
-    assert.ok(!FETCH_ITEMS.some((i) => i.word === w), `${c.id}: counter word ${w} is a fetch item`);
     assert.ok(!frameTokens.has(w), `${c.id}: counter word ${w} is a sentence word`);
     for (const s of said) assert.ok(!words(s).includes(w), `${c.id}: counter word ${w} is said in "${s}"`);
   }
@@ -179,7 +182,7 @@ test('voice: every line id the game derives exists in lines.json and the manifes
   for (const w of SPECIAL_WORDS) want.push(wordLine(w.word));
   for (const c of ROSTER) {
     for (const f of FRAMES) {
-      const s = sentence(f.id, { villain: c.id, helper: c.id }, f.use === 'counter' ? c.counter.word : 'net');
+      const s = sentence(f.id, { villain: c.id, helper: c.id, hero: c.id }, 'net');
       want.push(s.prefixLine, wordLine(s.key), ...s.tokens.map((t) => wordLine(tokenWord(t))));
     }
   }
@@ -193,7 +196,7 @@ test('voice: every line id the game derives exists in lines.json and the manifes
 
 test('speech rule: no narrator line contains a reading word', () => {
   // Reading words: every CVC word and every sentence key word (fetched items, counter words, MICE).
-  const keys = new Set<string>([...FETCH_ITEMS.map((f) => f.word), ...ROSTER.map((c) => c.counter.word), ...SPECIAL_WORDS.map((w) => w.word)]);
+  const keys = new Set<string>([...FETCH_ITEMS.map((f) => f.word), ...BAG_WORDS, ...ROSTER.map((c) => c.counter.word), ...SPECIAL_WORDS.map((w) => w.word)]);
   const readable = new Set<string>([...CVC_WORDS.map((w) => w.word), ...keys]);
   const words = (s: string) => s.toLowerCase().split(/[^a-z]+/);
   // need_item ("Only the {item} CAN stop...") belongs to the parked Spell the
@@ -209,7 +212,7 @@ test('speech rule: no narrator line contains a reading word', () => {
     }
   }
   // A prefix line stops before the key word; it must not say it earlier either
-  // (WE CAN USE THE CAN would). Every fetch frame × fetch word, every counter sentence.
+  // (WE CAN USE THE CAN would). Every sentence an episode plans, for every villain.
   const prefixText = new Map(allPrefixes().map((p) => [p.id, `${p.text} ${p.say ?? ''}`]));
   const check = (s: { prefixLine: string; key: string }) => {
     const text = prefixText.get(s.prefixLine);
@@ -217,9 +220,13 @@ test('speech rule: no narrator line contains a reading word', () => {
     assert.ok(!words(text).includes(s.key), `"${text}" says its key word "${s.key}"`);
   };
   for (const c of ROSTER) {
-    const fill = { villain: c.id, helper: c.id };
-    check(sentence(c.counter.frame, fill, c.counter.word));
-    for (const f of FRAMES.filter((f) => f.use === 'fetch')) for (const item of FETCH_ITEMS) check(sentence(f.id, fill, item.word));
+    for (const helper of ['elsa', 'ellie', c.id]) {
+      const fill = { villain: c.id, helper, hero: 'julia' };
+      for (let seed = 1; seed <= 25; seed++) {
+        const plans = episodePlans(new ProgressStore(memory()), { fill, ally: helper, spell: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic' }, seeded(seed));
+        for (const p of plans) check(p.sentence);
+      }
+    }
   }
 });
 

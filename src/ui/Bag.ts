@@ -3,7 +3,8 @@
  *
  * A bag icon with the fetched things lined up small beside it: the picture of
  * each key word she found in a side room (`episode.fetched`), then the
- * counter-item once it is made. They are her battle items, so seeing them pile
+ * counter once she has found it (`counterArt()`: its picture, or the
+ * villain's named item). They are her battle items, so seeing them pile
  * up is the point of the house: every room she finishes puts something here.
  *
  * `receive()` is the moment of getting one: the thing flies from where it was
@@ -15,7 +16,7 @@ import Phaser from 'phaser';
 
 import { sfxSelect, sfxWhoosh } from '../audio/sfx';
 import { DEPTH } from '../config';
-import { episode, villainSpec } from '../episode/Episode';
+import { counterArt, episode } from '../episode/Episode';
 import { burst, fitImage } from '../fx/juice';
 import { TEX } from '../fx/textures';
 
@@ -42,7 +43,7 @@ export class Bag {
   /** What the episode says she has, in order. */
   static contents(): string[] {
     const arts = episode.fetched.map((w) => `pic_${w}`);
-    if (episode.made.item) arts.push(`item_${villainSpec().counter.id}`);
+    if (episode.made.item) arts.push(counterArt());
     return arts;
   }
 

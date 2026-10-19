@@ -43,7 +43,7 @@ import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh, sfxWrong } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, WALK_SPEED } from '../config';
-import { advance, episode, helper, narrator, villainSpec, type Step } from '../episode/Episode';
+import { advance, counterArt, counterWord, episode, helper, namedCounter, narrator, villainSpec, type Step } from '../episode/Episode';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
@@ -1050,14 +1050,19 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       return;
     }
 
-    // Part 2: the counter-item.
+    // Part 2: the counter, whatever the attic's sentence drew from her word
+    // bag. The villain's own named item (Evil Tiamat's Magic Hat) when the
+    // draw lands on its word, with its own staging; otherwise the thing in the
+    // picture, which scares the villain silly whatever it is (item 015).
     this.phase = 'counter';
-    const counter = villainSpec().counter;
+    const named = namedCounter();
+    const word = counterWord();
+    const counter = { name: named?.name ?? `The ${word}`, how: named?.how ?? 'scare' };
     for (const h of this.heroes) h.invulnerable = true;
     if (this.helper) this.helper.invulnerable = true;
     const h = this.heroes[0]!;
     void this.say('use_item');
-    const item = fitImage(this.add.image(h.cx, h.top - 90, `item_${counter.id}`), 130, 130).setDepth(DEPTH.fx + 5);
+    const item = fitImage(this.add.image(h.cx, h.top - 90, counterArt()), 130, 130).setDepth(DEPTH.fx + 5);
     const s = item.scale;
     item.setScale(0);
     this.tweens.add({ targets: item, scale: s * 1.4, duration: 400, ease: 'Back.easeOut' });
@@ -1070,15 +1075,18 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     await this.simWait(0.6);
 
     if (counter.how === 'scare') {
-      // Wind-up mice (or brave rats): a swarm scurries along the floor at the villain, who
-      // leaps up in fright mid-ultimate (a stretch and a lift, no spin), and
-      // the ultimate fizzles out before it is ever fired.
-      for (let i = 0; i < 12; i++) this.after(i * 70, () => this.scurry(h, v, i));
+      // A swarm of the thing (wind-up mice, brave rats, cats, buses, mops)
+      // scurries along the floor at the villain, who leaps up in fright
+      // mid-ultimate (a stretch and a lift, no spin), and the ultimate fizzles
+      // out before it is ever fired.
+      for (let i = 0; i < 12; i++) this.after(i * 70, () => this.scurry(h, v, i, named ? null : `pic_${word}`));
       await this.simWait(0.75);
       aura.stop();
       v.growUntil = 0;
       sfxShout(1.6);
       floatText(this, v.cx, v.top - 40, 'EEK!', '#ff9ad5', 84);
+      // Not the mop! She has read the word by now, so the villain may wail it.
+      if (!named) this.after(350, () => floatText(this, v.cx - 40, v.top - 130, `NOT THE ${word.toUpperCase()}!`, '#ffd23f', 56));
       shake(this, 3, 300);
       this.tweens.addCounter({ from: 0, to: 1, duration: 750, ease: 'Sine.easeInOut', onUpdate: (tw) => (v.lift = Math.sin((tw.getValue() ?? 0) * Math.PI) * 190), onComplete: () => (v.lift = 0) });
       const bs = v.baseScale;
@@ -1200,13 +1208,18 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     await this.simWait(0.8);
   }
 
-  /** One wind-up mouse: low and fast along the floor from her side to the villain, then off the edge. */
-  private scurry(from: Fighter, to: Fighter, i: number): void {
+  /**
+   * One of the swarm (a wind-up mouse, or `art`, the counter word's picture):
+   * low and fast along the floor from her side to the villain, then off the edge.
+   */
+  private scurry(from: Fighter, to: Fighter, i: number, art: string | null = null): void {
     const y0 = Phaser.Math.Clamp(from.y + (Math.random() - 0.5) * 60, FLOOR_TOP, FLOOR_BOTTOM);
-    const m = this.add.text(from.x + 30, y0, villainSpec().counter.glyph, { fontSize: '42px' }).setOrigin(0.5, 1).setDepth(y0 + 2);
+    const m = art && this.textures.exists(art)
+      ? fitImage(this.add.image(from.x + 30, y0, art), 58, 58).setOrigin(0.5, 1).setDepth(y0 + 2)
+      : this.add.text(from.x + 30, y0, villainSpec().counter.glyph, { fontSize: '42px' }).setOrigin(0.5, 1).setDepth(y0 + 2);
     const ty = Phaser.Math.Clamp(to.y + (Math.random() - 0.5) * 70, FLOOR_TOP, FLOOR_BOTTOM);
     // A scurry: quick little squashes, never a spin.
-    this.tweens.add({ targets: m, scaleY: 0.78, scaleX: 1.12, duration: 60, yoyo: true, repeat: -1 });
+    this.tweens.add({ targets: m, scaleY: m.scaleY * 0.78, scaleX: m.scaleX * 1.12, duration: 60, yoyo: true, repeat: -1 });
     const done = () => {
       this.tweens.killTweensOf(m);
       m.destroy();
@@ -1462,7 +1475,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     if (episode.made.gem) made.push('prop_gem');
     if (episode.made.ammo) made.push('prop_ammo');
     if (episode.made.helper) made.push('minion_helper');
-    if (episode.made.item) made.push(`item_${villainSpec().counter.id}`);
+    if (episode.made.item) made.push(counterArt());
     made.forEach((key, i) => {
       const icon = fitImage(this.add.image(370 + i * 58, 40, key), 50, 50).setDepth(DEPTH.hud + 1);
       const s = icon.scale;

@@ -21,12 +21,12 @@
 import Phaser from 'phaser';
 
 import { CHARACTER_BY_ID, ROSTER } from '../../content/battle/roster';
-import type { CharacterSpec } from '../../content/battle/types';
+import type { CharacterSpec, CounterItem } from '../../content/battle/types';
 import { COUNTER_ROOM, FETCH_ROOMS } from '../../content/house/house';
 import { DEFAULT_NARRATOR, group } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { EPISODE_DEFAULTS } from '../config';
-import { counterPlan, fetchPlans, type RoomPlan } from '../rules/sentences';
+import { episodePlans, type RoomPlan } from '../rules/sentences';
 import { spellFor } from '../rules/spell';
 import { progress } from '../state/progress';
 import { voiceBank } from '../voice/VoiceBank';
@@ -194,19 +194,37 @@ export function housePlan(): RoomPlan[] {
     // The spell first: the hub says and shows it before the side rooms, so
     // no room may make it a key word; nor the attic's counter word.
     episode.spell ??= spellFor(episode.hero, helper());
-    const fill = { villain: episode.villain, helper: helper() };
-    const rooms = Phaser.Utils.Array.Shuffle([...FETCH_ROOMS]).slice(0, 2);
-    const avoid = [episode.spell, CHARACTER_BY_ID[episode.villain]!.counter.word];
-    episode.house.plan = [
-      ...fetchPlans(progress, fill, rooms as [string, string], Math.random, avoid),
-      counterPlan(fill, COUNTER_ROOM, Math.random, [episode.spell]),
-    ];
+    const fill = { villain: episode.villain, helper: helper(), hero: episode.hero };
+    const rooms = Phaser.Utils.Array.Shuffle([...FETCH_ROOMS]).slice(0, 2) as [string, string];
+    // The three key words come out of her word bag (and are spent) here.
+    episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, spell: episode.spell, rooms, counterRoom: COUNTER_ROOM });
   }
   return episode.house.plan;
 }
 
 export function planFor(slot: Slot): RoomPlan {
   return housePlan().find((p) => p.slot === slot)!;
+}
+
+/** The word the attic's counter sentence ends in: whatever beats the villain this episode. */
+export function counterWord(): string {
+  return planFor('counter').sentence.key;
+}
+
+/**
+ * The villain's named counter item when this episode's counter word is its
+ * own word (Evil Tiamat and the HAT: the Magic Hat), else null and the
+ * counter is just the thing in the picture.
+ */
+export function namedCounter(): CounterItem | null {
+  const c = villainSpec().counter;
+  return c.word === counterWord() ? c : null;
+}
+
+/** The counter's art: the named item's card, or the word's own picture. */
+export function counterArt(): string {
+  const named = namedCounter();
+  return named ? `item_${named.id}` : `pic_${counterWord()}`;
 }
 
 /** Voice groups the current episode will need from here on. */

@@ -88,6 +88,9 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'room_your_turn', text: 'Your turn! Press green for each word.', say: 'Your turn, press green for each word.' },
   { key: 'room_find', text: 'Now find it, and press green!' },
   { key: 'got_item', text: 'We got it!' },
+  // The attic's counter, whatever word the bag drew (item 015). A named item
+  // ("We found the Magic Hat!") says got_counter_<villain> instead.
+  { key: 'got_counter_any', text: 'That is just what we need!' },
   { key: 'use_bag', text: 'Look what we found!' },
 ];
 
@@ -100,7 +103,8 @@ export const VILLAIN_LINES: Template[] = [
   { key: 'need_item', text: 'Only the {item} can stop {villain}!' },
   { key: 'made_item', text: 'We made the {item}!' },
   { key: 'need_counter', text: 'We need something that scares {villain}!' },
-  // Said after she has read the counter sentence, so the item may be named.
+  // Said after she has read the counter sentence, so the item may be named;
+  // only when the bag drew the villain's own named counter word.
   { key: 'got_counter', text: 'We found the {item}!' },
 ];
 

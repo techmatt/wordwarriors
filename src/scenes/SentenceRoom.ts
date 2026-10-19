@@ -33,7 +33,7 @@ import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxRight, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../config';
-import { backToHub, episode, narrator, planFor, villainSpec, type Slot, type Step } from '../episode/Episode';
+import { backToHub, counterArt, episode, namedCounter, narrator, planFor, villainSpec, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
 import { frameIsSolid, type RoomPlan } from '../rules/sentences';
 import { progress } from '../state/progress';
@@ -415,6 +415,8 @@ export class SentenceRoom extends Minigame {
     const firstTry = this.wrongTries === 0;
     progress.record('words', s.key, firstTry, this.wrongTries);
     progress.record('frames', s.frame, firstTry, this.wrongTries);
+    // A key word she missed goes back in her word bag, so it comes round again soon.
+    if (!firstTry) progress.returnToBag(s.key);
     if (!episode.read.includes(s.key)) episode.read.push(s.key);
     // The episode learns the result now, so a skip mid-celebration loses nothing.
     const counter = this.slot === 'counter';
@@ -438,9 +440,11 @@ export class SentenceRoom extends Minigame {
     // Into the bag it goes.
     const pic = spot.obj.getData('pic') as Phaser.GameObjects.Image | undefined;
     if (counter) {
-      // What she picked becomes the counter item: it swells and fades as the item pops out of it.
+      // What she picked becomes the counter: it swells and fades as the counter
+      // (its picture again, or the villain's named item) pops out of it.
       const villain = villainSpec();
-      const art = `item_${villain.counter.id}`;
+      const named = namedCounter();
+      const art = counterArt();
       sfxSummon();
       if (pic) {
         this.tweens.killTweensOf(pic);
@@ -452,7 +456,10 @@ export class SentenceRoom extends Minigame {
       burst(this, spot.x, picY, { count: 80, speed: 600, life: 1000 });
       await this.wait(900);
       big.destroy();
-      await Promise.all([this.guard(this.bag.receive(art, spot.x, picY)), this.say(narratorLine(narrator(), `got_counter_${villain.id}`))]);
+      // The named item may be named ("We found the Magic Hat!"); anything else
+      // gets a line that fits every word.
+      const line = named ? `got_counter_${villain.id}` : 'got_counter_any';
+      await Promise.all([this.guard(this.bag.receive(art, spot.x, picY)), this.say(narratorLine(narrator(), line))]);
     } else {
       pic?.setVisible(false);
       const w = WORD_BY_ID[s.key];

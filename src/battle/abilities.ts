@@ -172,7 +172,7 @@ function fireBolt(w: BattleWorld, f: Fighter, ab: AbilitySpec, target: Fighter, 
       life: 2.2,
       from: f,
       trail: t,
-      spinRate: ab.art ? 16 : ab.glyph ? 8 : 0,
+      spinRate: ab.upright ? 0 : ab.art ? 16 : ab.glyph ? 8 : 0,
     });
   });
 }
@@ -521,10 +521,12 @@ const rain: Cast = (w, f, ab, _target, mult) => {
       const x = aimed ? aimed.x + (Math.random() - 0.5) * 40 : Phaser.Math.Between(minX, maxX);
       const y = aimed ? aimed.y : Phaser.Math.Between(FLOOR_TOP, FLOOR_BOTTOM);
       const size = Math.round((ab.glyph ? 40 : 30) * Math.sqrt(mult) * (0.8 + Math.random() * 0.5));
-      // Art (a sword) falls point first, tilted along its path, instead of tumbling.
+      // Art (a sword) falls point first, tilted along its path, instead of tumbling;
+      // a picture (an upright cat) just drops, the right way up.
       const art = artObj(w, ab, x - 120, -60, size * 2.2);
+      const artAngle = ab.upright ? 0 : 180 - 13;
       const obj = art
-        ? art.setAngle(180 - 13)
+        ? art.setAngle(artAngle)
         : ab.glyph
           ? s.add.text(x - 120, -60, ab.glyph, { fontSize: `${size}px` }).setOrigin(0.5)
           : s.add.image(x - 120, -60, TEX.glow).setTint(ab.color).setScale(size / 64).setBlendMode(Phaser.BlendModes.ADD);
@@ -539,7 +541,7 @@ const rain: Cast = (w, f, ab, _target, mult) => {
         targets: obj,
         x,
         y: y - 20,
-        angle: art ? 180 - 13 : 360,
+        angle: art ? artAngle : 360,
         duration: 520,
         ease: 'Quad.easeIn',
         onComplete: () => {
