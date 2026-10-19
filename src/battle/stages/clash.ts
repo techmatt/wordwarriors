@@ -364,17 +364,17 @@ export class ClashStage extends BaseStage {
       g.strokePath();
     };
     if (!braid) {
-      this.glowG.lineStyle(w * 26, colors[0]!, 0.14 * p);
+      this.glowG.lineStyle(w * 44, colors[0]!, 0.26 * p);
       this.glowG.lineBetween(a.x, a.y, end.x, end.y);
     }
     colors.forEach((col, k) => {
-      this.beamG.lineStyle(Math.max(1.5, w * (braid ? 4 : 7 - k)), col, 0.8 * p);
+      this.beamG.lineStyle(Math.max(2, w * (braid ? 6 : 12 - 2 * k)), col, 0.9 * p);
       const phase = braid ? k * Math.PI : k * 2.1;
       const spin = braid ? 16 : 13 + k * 3;
       path(this.beamG, (u) => Math.sin(u * (len / 45) - t * spin + phase + seed) * (7 + 5 * k) * amp * Math.max(0.6, w) * Math.sin(Math.PI * u));
     });
     if (!braid) {
-      this.glowG.lineStyle(Math.max(2, w * 4), 0xffffff, 0.95 * p);
+      this.glowG.lineStyle(Math.max(3, w * 7), 0xffffff, 0.95 * p);
       path(this.glowG, (u) => Math.sin(u * 9 - t * 20 + seed) * 2 * Math.sin(Math.PI * u));
       this.paths.push({ a, b: end, color: colors[0]! });
     }

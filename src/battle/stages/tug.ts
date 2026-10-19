@@ -346,8 +346,9 @@ export class TugStage extends BaseStage {
     const x0 = MID - POOL_HALF;
     const y0 = FLOOR_TOP + 10;
     const h = FLOOR_BOTTOM - y0 - 4;
-    g.fillStyle(0x1a6ab4, 0.42).fillRoundedRect(x0, y0, POOL_HALF * 2, h, 26);
-    g.fillStyle(0x7ad9ff, 0.18).fillRoundedRect(x0 + 14, y0 + 10, POOL_HALF * 2 - 28, h - 20, 20);
+    // Bright sea blue, opaque enough to read as water on any floor (on sand it read grey).
+    g.fillStyle(0x0a78d8, 0.78).fillRoundedRect(x0, y0, POOL_HALF * 2, h, 26);
+    g.fillStyle(0x3ac8ff, 0.5).fillRoundedRect(x0 + 14, y0 + 10, POOL_HALF * 2 - 28, h - 20, 20);
     // Foam along both edges, wobbling.
     g.lineStyle(4, 0xffffff, 0.7);
     for (const ex of [x0, x0 + POOL_HALF * 2]) {

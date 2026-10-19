@@ -47,11 +47,18 @@ for (const f of FIGHTS) {
       const going = await until(page, (s) => s.scene === 'Battle' && (s.battle?.abilitiesFired ?? 0) >= 4, 60_000, `${f.id} part ${part} under way`);
       expect(going.battle?.fight).toBe(f.id);
       await shot(page, `${f.id}_${part}_a`);
-      if (part === 1) {
-        const ult = await until(page, (s) => s.scene !== 'Battle' || s.battle?.phase === 'ultimate', 240_000, 'the ultimate').catch(() => null);
-        if (ult?.scene === 'Battle') await shot(page, `${f.id}_1_ultimate`);
-      }
+      // Shots of the big beats, taken alongside the play (a move choice holds until answered).
+      const watch = (phase: string, delay: number, name: string) =>
+        until(page, (s) => s.scene !== 'Battle' || s.battle?.phase === phase, 240_000, phase)
+          .then(async (s) => {
+            if (s.scene !== 'Battle') return;
+            await page.waitForTimeout(delay);
+            await shot(page, `${f.id}_${part}_${name}`);
+          })
+          .catch(() => undefined);
+      const shots = part === 1 ? [watch('combo', 400, 'combo'), watch('ultimate', 1400, 'ultimate')] : [watch('counter', 900, 'counter'), watch('finish', 1500, 'finish')];
       const end = await playBattle(page, part);
+      await Promise.all(shots);
       expect(end.battle?.ultimates).toBe(1);
       expect(end.battle?.movePicks).toBe(2);
       if (part === 1) expect(end.battle?.heroes.every((h) => h.status !== 'floored')).toBe(true);
