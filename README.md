@@ -249,7 +249,10 @@ way, every browser test's rooms play the sentence game (the harness adds
 `games=sentence`) unless its URL asks for a game (`game=word_machine`) or the whole pool
 (`games=all`): `tests/machine.spec.ts` opens the word machine in the fast lane, and in
 the slow lane plays whole visits (a silly tile first, F9 out and back) and a whole
-episode with it behind door a (item 026).
+episode with it behind door a (item 026). `leaveBedroom` also plays the entry hall's
+warm-up (item 033) unless given `{ grab: false }`, so a test that walks out of the bedroom
+lands in the hub as before; `tests/entry.spec.ts` (slow lane) plays the warm-up itself:
+each level's clue, three misses, F9 out and back, and four drawn casts from the bedroom.
 
 The browser tests run the page's clocks 3× fast (`WW_SPEED`, default 3; `tests/harness.ts`):
 timers, tweens, the game loop and voice playback together. The full-episode test alone
@@ -477,6 +480,11 @@ npm run art:pick -- <id> <n>
   "Ett" came back at 1.39 s (read as letters) and is spelled "Eht"; "En" risks the letter
   name N and is "Ehn". Check a new rime's span in `public/voice-gen/manifest.json` after
   `voice:build`.
+- Letter names (`letter_<x>_name`, item 033) are one-word lines spelled for edge-tts
+  ("Vee", "Aitch"): "Double you" for W is timed as two words and fails `voice:build`'s
+  word count, so it is "Dubbelyou". Measured 2026-10-19: 0.6–0.9 s each, F 1.35 s, R 1.08 s.
+  At real speed the warm-up walked straight (the harness's path) takes about 18 s from the
+  hall opening to out of its door.
 - edge-tts pads each clip with ~1.5 s of silence; the build cuts mp3 frames after the
   last word + 0.2 s (`tools/voice/mp3.ts`). That took the voice folder from 23.7 MB to
   about 19 MB (1,557 lines then). Generated voice left git on 2026-10-18 (item 008) at
@@ -497,7 +505,8 @@ npm run art:pick -- <id> <n>
   line is this worktree's vite before stopping it. Background `test:all` needs a timeout
   over its ~12 minutes; a 10-minute limit kills it partway. With items 025 and 026's
   slow tests it took 26 minutes (2026-10-19, 2:55am); with item 031's fight styles 37
-  minutes (2026-10-19, 1:15pm), so give it 50.
+  minutes (2026-10-19, 1:15pm); with item 033's warm-up spec 45 minutes (2026-10-19,
+  3:37pm), so give it 60.
 - Every active ally × villain pair (item 030): `WW_PAIRS=+ npx playwright test tests/pairs.spec.ts`
   (about 1.8 minutes a pair at clock speed 3, an hour for all 36; `WW_PAIRS=scar+` plays one
   ally's four). Off unless `WW_PAIRS` is set. Shots and voiced ids land in `tests/screenshots/pairs_*`.

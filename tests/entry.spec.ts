@@ -1,10 +1,11 @@
 /**
  * Item 033: the home warm-up in the entry hall, "Before we head out, let's
- * grab the ...". Fast lane: a new player's clue (names and sounds, no word),
- * the right pick, the level up, and out to the hub. Slow lane: each level's
- * clue, three misses (the word added as help, the level down), and a sweep
- * of drawn casts from the bedroom, checking the grab word stays out of the
- * episode's reading. Screenshots land in tests/screenshots/ (ignored).
+ * grab the ...". All slow lane (each over 10 s): a new player's clue (names
+ * and sounds, no word), the right pick, the level up, and out to the hub;
+ * each level's clue; three misses (the word added as help, the level down);
+ * F9 out and back; and a sweep of drawn casts from the bedroom, checking the
+ * grab word stays out of the episode's reading. Screenshots land in
+ * tests/screenshots/ (ignored).
  */
 
 import { test, expect, type Page } from '@playwright/test';
@@ -26,7 +27,7 @@ async function clued(page: Page): Promise<WWState> {
   return until(page, (st) => st.scene === 'Entry' && st.room?.round === 'entry:find' && !st.room.locked, 60_000, 'clue given');
 }
 
-test('warm-up, a new player: names then sounds and no word, nine labelled pictures; right first time moves the word up to 3; out to the hub', async ({ page }) => {
+test('warm-up, a new player: names then sounds and no word, nine labelled pictures; right first time moves the word up to 3; out to the hub @slow', async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=grab&nojourney=1');
   const s = await clued(page);
