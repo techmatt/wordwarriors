@@ -28,15 +28,30 @@
  * sorceress, her brave sister, a desert princess with a flying carpet), not as
  * lookalikes of anybody's films. The art prompts in docs/art.md say the same.
  *
- * Move words (`word`) must come from MOVE_WORDS: each has a "Use zap!" line per
+ * Move words (`word`, `words`) must come from MOVE_WORDS: each has a "Use zap!" line per
  * narrator. Taunts are short, because a bubble over a moving fighter has to be
  * readable at a glance, and they never name the word she must read.
  */
 
 import type { AbilitySpec, CharacterSpec, ComboSpec, MinionSpec } from './types.js';
 
-/** The words a move-choice pause can offer. Short and decodable where possible. */
-export const MOVE_WORDS = ['zap', 'pow', 'bam', 'zip', 'hop', 'pop', 'sun', 'hug', 'fan', 'big', 'hot', 'ice'] as const;
+/**
+ * The words a move-choice pause can offer. Short and decodable where possible.
+ * Item 018 widened the pool: an ability carries its main `word` and more that
+ * suit it (`words`), and each episode draws which ones she meets from her move
+ * bag (src/rules/moves.ts). Every one has a picture (`pic_<word>`: a reading
+ * word's own, or MOVE_PICTURES in content/phonics/words.ts) for the battle's
+ * super and the victory recap.
+ */
+export const MOVE_WORDS = [
+  'zap', 'pow', 'bam', 'zip', 'hop', 'pop', 'sun', 'hug', 'fan', 'big', 'hot', 'ice',
+  'dig', 'run', 'jet', 'mud', 'wet', 'fog', 'top', 'web', 'net', 'tug', 'fix', 'pan', 'ram', 'pig',
+] as const;
+
+/** Every move word an ability answers to: its main `word`, then its `words`. */
+export function abilityWords(a: AbilitySpec): string[] {
+  return [...(a.word ? [a.word] : []), ...(a.words ?? [])];
+}
 
 function ab(
   id: string,
@@ -141,10 +156,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Julia', trail: { tint: [0xffd23f, 0xff9ad5], shape: 'star' }, look: 'a cheerful slim four-year-old girl with long straight pale-blonde hair and a straight fringe, round pink glasses, blue eyes, fair skin and rosy cheeks, a big cheeky grin, in a rainbow twirl dress with a full swishy skirt striped red, orange, yellow, blue, purple and pink (no green), holding a golden star wand',
       palette: [0x9b5de5, 0xffd23f], glyph: '⭐', style: 'dodge', speed: 210, size: 1, hp: 100,
       abilities: [
-        ab('star_zap', 'Star Zap', 'bolt', 2.5, 0xffd23f, 1, { count: 3, glyph: '⭐', word: 'zap', shout: true }),
-        ab('giggle_bubble', 'Giggle Bubble', 'shield', 9, 0xff9ad5, 1, { duration: 4, word: 'pop' }),
-        ab('bounce_stomp', 'Bounce Stomp', 'slam', 6, 0x9b5de5, 2, { word: 'hop', shout: true }),
-        ab('teddy_army', 'Teddy Army', 'summon', 14, 0xc8884a, 2, { minion: 'teddy', count: 3, word: 'hug' }),
+        ab('star_zap', 'Star Zap', 'bolt', 2.5, 0xffd23f, 1, { count: 3, glyph: '⭐', word: 'zap', shout: true, words: ['zip', 'pow'] }),
+        ab('giggle_bubble', 'Giggle Bubble', 'shield', 9, 0xff9ad5, 1, { duration: 4, word: 'pop', words: ['wet'] }),
+        ab('bounce_stomp', 'Bounce Stomp', 'slam', 6, 0x9b5de5, 2, { word: 'hop', shout: true, words: ['bam', 'big'] }),
+        ab('teddy_army', 'Teddy Army', 'summon', 14, 0xc8884a, 2, { minion: 'teddy', count: 3, word: 'hug', words: ['run', 'tug'] }),
       ],
       ultimate: ab('super_nova', 'Super Star Nova', 'rain', 0, 0xffd23f, 3, { count: 30, glyph: '🌟', color2: 0xff5ab4 }),
       taunts: [
@@ -174,6 +189,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'cookies', text: 'I ate all the cookies!' },
       ],
     },
+    reformed: [
+      { key: 'share', text: 'Sorry! I will share all my toys now.' },
+      { key: 'next', text: 'Can I come on the next adventure?' },
+    ],
     counter: {
       id: 'cozy_bed', name: 'Cozy Bed', glyph: '🛏️', look: 'a child\'s bed with a puffy blue duvet and a white pillow, glowing softly, a sleepy moon and stars above it',
       how: 'calm', words: ['bed', 'hug', 'nap'], word: 'bed',
@@ -200,12 +219,12 @@ export const ROSTER: CharacterSpec[] = [
       abilities: [
         // BIG first: it is the spell Ellie teaches Julia in the hub (spellFor
         // takes the first word Julia has not got; she already has POP and HOP).
-        ab('giant_bubbles', 'Giant Bubbles', 'bolt', 2.4, 0x9ad8ff, 1, { count: 4, art: 'fx_bubble', upright: true, homing: true, color2: 0xff9ad5, word: 'big' }),
-        ab('bubble_trap', 'Bubble Trap', 'bolt', 7, 0xff9ad5, 2, { count: 2, art: 'fx_bubble', upright: true, homing: true, status: 'bubble', duration: 2.5, color2: 0x9ad8ff, word: 'pop' }),
-        ab('bubble_shield', 'Bubble Shield', 'shield', 10, 0x9ad8ff, 1, { duration: 4 }),
-        ab('peekaboo', 'Peekaboo', 'teleport', 6, 0xffd23f, 2, { word: 'hop' }),
+        ab('giant_bubbles', 'Giant Bubbles', 'bolt', 2.4, 0x9ad8ff, 1, { count: 4, art: 'fx_bubble', upright: true, homing: true, color2: 0xff9ad5, word: 'big', words: ['wet'] }),
+        ab('bubble_trap', 'Bubble Trap', 'bolt', 7, 0xff9ad5, 2, { count: 2, art: 'fx_bubble', upright: true, homing: true, status: 'bubble', duration: 2.5, color2: 0x9ad8ff, word: 'pop', words: ['fog'] }),
+        ab('bubble_shield', 'Bubble Shield', 'shield', 10, 0x9ad8ff, 1, { duration: 4, words: ['hug'] }),
+        ab('peekaboo', 'Peekaboo', 'teleport', 6, 0xffd23f, 2, { word: 'hop', words: ['fog'] }),
         // Her one sword move (item 014's swords): a ring round her, then flung.
-        ab('spinny_swords', 'Spinny Swords', 'orbit', 7, 0xcfe8ff, 2, { count: 5, art: 'prop_silver_sword', duration: 1.6, color2: 0xff9ad5, word: 'zip', shout: true }),
+        ab('spinny_swords', 'Spinny Swords', 'orbit', 7, 0xcfe8ff, 2, { count: 5, art: 'prop_silver_sword', duration: 1.6, color2: 0xff9ad5, word: 'zip', shout: true, words: ['top'] }),
       ],
       ultimate: ab('bubble_storm', 'Mega Bubble Storm', 'rain', 0, 0x9ad8ff, 3, { count: 30, art: 'fx_bubble', upright: true, color2: 0xff9ad5 }),
       taunts: [
@@ -236,6 +255,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'raspberry', text: 'A raspberry for you!' },
       ],
     },
+    reformed: [
+      { key: 'bubbles', text: 'Sorry! Bubbles for everybody!' },
+      { key: 'cuddle', text: 'I want a cuddle now!' },
+    ],
     counter: {
       id: 'bubble_bath', name: 'Bubble Tub', glyph: '🛁', look: 'a magic bathtub overflowing with rainbow bubbles, a little yellow rubber duck on top',
       how: 'calm', words: ['wet', 'dip', 'tub'], word: 'tub',
@@ -258,10 +281,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Seraphina', trail: { tint: [0x6ad66a, 0xff7b3a], shape: 'spark' }, look: 'a little girl with wild red hair in a green tunic, a tiny dragon on her shoulder',
       palette: [0x2ec27e, 0xff7b3a], glyph: '🐉', style: 'hover', speed: 170, size: 1, hp: 100,
       abilities: [
-        ab('dragon_call', 'Dragon Call', 'summon', 12, 0x6ad66a, 2, { minion: 'baby_dragon', count: 2, word: 'pop' }),
-        ab('ember_flick', 'Ember Flick', 'bolt', 2.2, 0xff7b3a, 1, { count: 2, glyph: '🔥', word: 'hot' }),
-        ab('wing_gust', 'Wing Gust', 'cone', 5, 0xbaffc9, 2, { word: 'fan' }),
-        ab('scale_shield', 'Scale Shield', 'shield', 10, 0x2ec27e, 1, { duration: 4 }),
+        ab('dragon_call', 'Dragon Call', 'summon', 12, 0x6ad66a, 2, { minion: 'baby_dragon', count: 2, word: 'pop', words: ['jet'] }),
+        ab('ember_flick', 'Ember Flick', 'bolt', 2.2, 0xff7b3a, 1, { count: 2, glyph: '🔥', word: 'hot', words: ['zip'] }),
+        ab('wing_gust', 'Wing Gust', 'cone', 5, 0xbaffc9, 2, { word: 'fan', words: ['fog'] }),
+        ab('scale_shield', 'Scale Shield', 'shield', 10, 0x2ec27e, 1, { duration: 4, words: ['hug'] }),
       ],
       ultimate: ab('dragon_parade', 'Dragon Parade', 'summon', 0, 0xff7b3a, 3, { minion: 'baby_dragon', count: 6 }),
       taunts: [
@@ -291,6 +314,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'scaly', text: 'Scaly and scary!' },
       ],
     },
+    reformed: [
+      { key: 'nice', text: 'Oops! I am a nice dragon again.' },
+      { key: 'fly', text: 'Can I fly with you next time?' },
+    ],
     counter: {
       id: 'golden_nut', name: 'Golden Nut', glyph: '🥜', look: 'a giant shiny golden hazelnut in its shell, the snack every dragon loves best',
       how: 'calm', words: ['cup', 'bun', 'yum'], word: 'nut',
@@ -315,10 +342,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Dada Matt', trail: { tint: [0xc8643a, 0xff8c42], shape: 'square' }, look: 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, short light-brown hair thinning on top with a high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile, in chunky orange-and-steel builder armour with a tool belt, holding a huge friendly hammer',
       palette: [0xff8c42, 0x4a4a5a], glyph: '🔨', style: 'twirl', speed: 200, size: 1.2, hp: 130,
       abilities: [
-        ab('hammer_spin', 'Hammer Spin', 'spin', 5, 0xff8c42, 2, { word: 'pow', shout: true }),
-        ab('brick_wall', 'Brick Wall', 'shield', 10, 0xc8643a, 1, { duration: 4, word: 'big' }),
-        ab('nail_storm', 'Nail Storm', 'bolt', 2.6, 0xc8c8d8, 1, { count: 5, glyph: '🔩' }),
-        ab('ground_pound', 'Ground Pound', 'slam', 7, 0xff8c42, 3, { word: 'bam', shout: true }),
+        ab('hammer_spin', 'Hammer Spin', 'spin', 5, 0xff8c42, 2, { word: 'pow', shout: true, words: ['top'] }),
+        ab('brick_wall', 'Brick Wall', 'shield', 10, 0xc8643a, 1, { duration: 4, word: 'big', words: ['fix'] }),
+        ab('nail_storm', 'Nail Storm', 'bolt', 2.6, 0xc8c8d8, 1, { count: 5, glyph: '🔩', words: ['zip'] }),
+        ab('ground_pound', 'Ground Pound', 'slam', 7, 0xff8c42, 3, { word: 'bam', shout: true, words: ['dig', 'mud'] }),
       ],
       ultimate: ab('tower_drop', 'Tower Drop', 'rain', 0, 0xc8643a, 3, { count: 20, glyph: '🧱', color2: 0xff8c42 }),
       taunts: [
@@ -348,6 +375,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'stomp', text: 'Stomp, stomp, stomp!' },
       ],
     },
+    reformed: [
+      { key: 'fort', text: 'Sorry, kiddo! Want to build a fort?' },
+      { key: 'fixing', text: 'No more smashing. Only fixing!' },
+    ],
     counter: {
       id: 'giant_log', name: 'Giant Log', glyph: '🌲', look: 'a huge cut wooden log lying down, rings showing on the end, so solid that any hammer just bonks off it',
       how: 'block', words: ['bed', 'box', 'pad'], word: 'log',
@@ -370,10 +401,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Dada Jason', trail: { tint: [0xffbe0b, 0xe63946], shape: 'star' }, look: 'a big, sturdy, round-faced chef dad: warm light-brown skin, very short dark curly hair receding at the front, black browline glasses, a short dark goatee beard flecked with grey, a tiny hoop earring, a big laughing smile, in crisp white chef\'s whites with a tall white chef\'s hat and a red neckerchief, holding a giant whisk',
       palette: [0xe63946, 0xffbe0b], glyph: '🍳', style: 'hover', speed: 170, size: 1.2, hp: 120,
       abilities: [
-        ab('pancake_flip', 'Pancake Flip', 'bolt', 2.4, 0xffbe0b, 1, { count: 3, glyph: '🥞', word: 'pop' }),
-        ab('whisk_whirl', 'Whisk Whirl', 'spin', 5, 0xfff1d6, 2, { word: 'zip', shout: true }),
-        ab('sauce_tornado', 'Sauce Tornado', 'cone', 6, 0xe63946, 2, { word: 'hot' }),
-        ab('oven_mitt', 'Oven Mitt Shield', 'shield', 10, 0xff8c42, 1, { duration: 4, word: 'hug' }),
+        ab('pancake_flip', 'Pancake Flip', 'bolt', 2.4, 0xffbe0b, 1, { count: 3, glyph: '🥞', word: 'pop', words: ['pan', 'hop'] }),
+        ab('whisk_whirl', 'Whisk Whirl', 'spin', 5, 0xfff1d6, 2, { word: 'zip', shout: true, words: ['top'] }),
+        ab('sauce_tornado', 'Sauce Tornado', 'cone', 6, 0xe63946, 2, { word: 'hot', words: ['wet'] }),
+        ab('oven_mitt', 'Oven Mitt Shield', 'shield', 10, 0xff8c42, 1, { duration: 4, word: 'hug', words: ['big'] }),
       ],
       ultimate: ab('breakfast_storm', 'Breakfast Storm', 'rain', 0, 0xffbe0b, 3, { count: 30, glyph: '🥞', color2: 0xff6a3a }),
       taunts: [
@@ -403,6 +434,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'fight', text: 'Food fight!' },
       ],
     },
+    reformed: [
+      { key: 'pancakes', text: 'Sorry! Who wants pancakes?' },
+      { key: 'yummy', text: 'I promise to cook yummy food, not yucky food!' },
+    ],
     counter: {
       id: 'cleanup_van', name: 'Clean-Up Van', glyph: '🚐', look: 'a little cartoon cleaning van with spinning brushes and a big hose that hoovers up every bit of food',
       how: 'restore', words: ['wet', 'rub', 'van'], word: 'van',
@@ -425,10 +460,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Elsa', trail: { tint: [0xe8f6ff, 0x7cc7ff], shape: 'star' }, look: 'a cheerful winter queen of original design: rosy cheeks and freckles, long pale silver hair, a flowing white-and-gold gown embroidered with golden snowflakes, a little golden crown and a fluffy white fur-trimmed cape, conjuring golden-white sparkles',
       palette: [0x7cc7ff, 0xe8f6ff], glyph: '❄️', style: 'hover', speed: 160, size: 1, hp: 100,
       abilities: [
-        ab('ice_shard', 'Ice Shards', 'bolt', 2.2, 0xaee6ff, 1, { count: 4, glyph: '❄️', word: 'ice' }),
-        ab('deep_freeze', 'Deep Freeze', 'freeze', 8, 0x7cc7ff, 2, { status: 'freeze', duration: 3, word: 'zip' }),
-        ab('snow_buddies', 'Snow Buddies', 'summon', 12, 0xe8f6ff, 2, { minion: 'snow_golem', count: 2, word: 'big' }),
-        ab('crystal_spire', 'Crystal Spire', 'slam', 6, 0xaee6ff, 2),
+        ab('ice_shard', 'Ice Shards', 'bolt', 2.2, 0xaee6ff, 1, { count: 4, glyph: '❄️', word: 'ice', words: ['zap'] }),
+        ab('deep_freeze', 'Deep Freeze', 'freeze', 8, 0x7cc7ff, 2, { status: 'freeze', duration: 3, word: 'zip', words: ['fog'] }),
+        ab('snow_buddies', 'Snow Buddies', 'summon', 12, 0xe8f6ff, 2, { minion: 'snow_golem', count: 2, word: 'big', words: ['hug'] }),
+        ab('crystal_spire', 'Crystal Spire', 'slam', 6, 0xaee6ff, 2, { words: ['bam'] }),
       ],
       ultimate: ab('blizzard', 'Blizzard Crown', 'rain', 0, 0xe8f6ff, 3, { count: 34, glyph: '❄️', color2: 0x7cc7ff }),
       taunts: [
@@ -458,6 +493,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'icicles', text: 'Icicles everywhere!' },
       ],
     },
+    reformed: [
+      { key: 'chilly', text: 'Sorry I made it so chilly!' },
+      { key: 'snowman', text: 'Can I make you a snowman?' },
+    ],
     counter: {
       id: 'cocoa_cup', name: 'Cocoa Cup', glyph: '☕', look: 'a big red mug of steaming cocoa with a handle, so warm it melts any winter',
       how: 'restore', words: ['sun', 'hat', 'hot'], word: 'cup',
@@ -480,10 +519,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Anna', trail: { tint: [0xffb703, 0xe63946], shape: 'spark' }, look: 'a tall, sporty young adventurer of original design with long straight dark-brown hair in one high swinging ponytail tied with a big purple ribbon, a few freckles, a plum-purple tunic with a short magenta cape, white leggings and tall brown boots, a round wooden shield with a golden sun painted on it and a wooden practice sword',
       palette: [0xe63946, 0x2a9d8f], glyph: '🛡️', style: 'twirl', speed: 230, size: 1, hp: 110,
       abilities: [
-        ab('shield_bash', 'Shield Bash', 'dash', 4, 0xe63946, 2, { word: 'bam', shout: true }),
-        ab('sword_twirl', 'Sword Twirl', 'spin', 5, 0xffd6a5, 2, { word: 'pow', shout: true }),
-        ab('brave_shout', 'Brave Shout', 'heal', 10, 0xffb703, 1, { word: 'hug' }),
-        ab('leap', 'Big Leap', 'slam', 6, 0x2a9d8f, 2, { word: 'hop' }),
+        ab('shield_bash', 'Shield Bash', 'dash', 4, 0xe63946, 2, { word: 'bam', shout: true, words: ['ram', 'run'] }),
+        ab('sword_twirl', 'Sword Twirl', 'spin', 5, 0xffd6a5, 2, { word: 'pow', shout: true, words: ['top'] }),
+        ab('brave_shout', 'Brave Shout', 'heal', 10, 0xffb703, 1, { word: 'hug', words: ['fix'] }),
+        ab('leap', 'Big Leap', 'slam', 6, 0x2a9d8f, 2, { word: 'hop', words: ['big'] }),
       ],
       ultimate: ab('never_give_up', 'Never Give Up', 'spin', 0, 0xffb703, 3, { count: 6, color2: 0xe63946 }),
       taunts: [
@@ -513,6 +552,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'blizzard', text: 'Out of my blizzard!' },
       ],
     },
+    reformed: [
+      { key: 'friends', text: 'Sorry! Can we be friends again?' },
+      { key: 'side', text: 'Next time, I fight on your side!' },
+    ],
     counter: {
       id: 'cuddly_cat', name: 'Cuddly Cat', glyph: '🐱', look: 'a warm, fluffy orange tabby cat with a curled tail, purring, who cuddles the frost away',
       how: 'calm', words: ['hug', 'pet', 'pal'], word: 'cat',
@@ -535,10 +578,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Jasmine', trail: { tint: [0xbaf2ff, 0xffc857], shape: 'smoke' }, look: 'a desert princess of original design with short bouncy black curls and a gold circlet, a coral-pink and saffron-orange tunic over baggy saffron trousers, sitting cross-legged on a red-and-gold patterned flying carpet',
       palette: [0x1fb5a8, 0xffc857], glyph: '🧞', style: 'fly', mount: 'carpet', speed: 220, size: 1, hp: 100,
       abilities: [
-        ab('wind_fan', 'Wind Fan', 'cone', 4, 0xbaf2ff, 2, { word: 'fan' }),
-        ab('carpet_swoop', 'Carpet Swoop', 'dash', 5, 0xffc857, 2, { word: 'zip' }),
-        ab('dust_devils', 'Dust Devils', 'summon', 12, 0xe8c890, 2, { minion: 'dust_devil', count: 3, word: 'pop' }),
-        ab('star_jewels', 'Star Jewels', 'bolt', 2.4, 0xff5ab4, 1, { count: 3, glyph: '💎' }),
+        ab('wind_fan', 'Wind Fan', 'cone', 4, 0xbaf2ff, 2, { word: 'fan', words: ['fog'] }),
+        ab('carpet_swoop', 'Carpet Swoop', 'dash', 5, 0xffc857, 2, { word: 'zip', words: ['jet', 'run'] }),
+        ab('dust_devils', 'Dust Devils', 'summon', 12, 0xe8c890, 2, { minion: 'dust_devil', count: 3, word: 'pop', words: ['top'] }),
+        ab('star_jewels', 'Star Jewels', 'bolt', 2.4, 0xff5ab4, 1, { count: 3, glyph: '💎', words: ['zap'] }),
       ],
       ultimate: ab('jewel_storm', 'Jewel Storm', 'rain', 0, 0xff5ab4, 3, { count: 30, glyph: '💎', color2: 0x1fb5a8 }),
       taunts: [
@@ -569,6 +612,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'gone', text: 'Gone with the wind!' },
       ],
     },
+    reformed: [
+      { key: 'sand', text: 'Sorry about all the sand!' },
+      { key: 'ride', text: 'Want a ride on my carpet?' },
+    ],
     counter: {
       id: 'flappy_bat', name: 'Flappy Bat', glyph: '🦇', look: 'a friendly purple bat (the animal) with huge wings spread wide, flapping hard enough to blow a sandstorm straight back',
       how: 'reflect', words: ['map', 'zip', 'fan'], word: 'bat',
@@ -591,10 +638,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Ozymandias', trail: { tint: [0xe8c890, 0xffd23f], shape: 'square' }, look: 'a friendly old pharaoh with a golden mask pushed up on his head, a staff of sand',
       palette: [0xd9a441, 0x2a5ab4], glyph: '🏺', style: 'stomp', speed: 90, size: 1.3, hp: 140,
       abilities: [
-        ab('sand_spear', 'Sand Spears', 'bolt', 2.6, 0xe8c890, 1, { count: 3, glyph: '🏺' }),
-        ab('statue_friend', 'Statue Friend', 'summon', 13, 0xd9b26f, 2, { minion: 'colossus', count: 1, word: 'big' }),
-        ab('dune_slam', 'Dune Slam', 'slam', 6, 0xd9a441, 3, { word: 'bam' }),
-        ab('sun_disc', 'Sun Disc', 'beam', 6, 0xffd23f, 2, { word: 'sun' }),
+        ab('sand_spear', 'Sand Spears', 'bolt', 2.6, 0xe8c890, 1, { count: 3, glyph: '🏺', words: ['zip'] }),
+        ab('statue_friend', 'Statue Friend', 'summon', 13, 0xd9b26f, 2, { minion: 'colossus', count: 1, word: 'big', words: ['tug'] }),
+        ab('dune_slam', 'Dune Slam', 'slam', 6, 0xd9a441, 3, { word: 'bam', words: ['dig'] }),
+        ab('sun_disc', 'Sun Disc', 'beam', 6, 0xffd23f, 2, { word: 'sun', words: ['hot', 'zap'] }),
       ],
       ultimate: ab('pyramid', 'Pyramid Power', 'lightning', 0, 0xffd23f, 3, { count: 8, color2: 0xd9a441 }),
       taunts: [
@@ -624,6 +671,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'crush', text: 'I crush like sand!' },
       ],
     },
+    reformed: [
+      { key: 'kings', text: 'Sorry! Even kings say sorry.' },
+      { key: 'visit', text: 'Please come and visit my pyramid!' },
+    ],
     counter: {
       id: 'brave_rat', name: 'Brave Rat', glyph: '🐀', look: 'a brave little grey rat with a long pink tail and a tiny red cape, leading a squeaking pack of his friends; giant statues are terrified of rats',
       how: 'scare', words: ['cup', 'tub', 'wet'], word: 'rat',
@@ -646,10 +697,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Jormungandr', trail: { tint: [0x7ad9ff, 0xffffff], shape: 'spark' }, sayName: 'Yormungander', look: 'a huge friendly green sea serpent with kind yellow eyes, wearing a tiny crown',
       palette: [0x2aa66a, 0x7ad9ff], glyph: '🐍', style: 'slither', speed: 150, size: 1.4, hp: 150,
       abilities: [
-        ab('tidal_spit', 'Tidal Spit', 'bolt', 2.4, 0x7ad9ff, 1, { count: 3, glyph: '💧' }),
-        ab('snake_pals', 'Snake Pals', 'summon', 12, 0x2aa66a, 2, { minion: 'mini_serpent', count: 3, word: 'pop' }),
-        ab('tail_spin', 'Tail Spin', 'spin', 5, 0x2aa66a, 2, { word: 'zip' }),
-        ab('hug_coil', 'Big Hug', 'coil', 12, 0x2aa66a, 2, { duration: 3, word: 'hug' }),
+        ab('tidal_spit', 'Tidal Spit', 'bolt', 2.4, 0x7ad9ff, 1, { count: 3, glyph: '💧', words: ['wet'] }),
+        ab('snake_pals', 'Snake Pals', 'summon', 12, 0x2aa66a, 2, { minion: 'mini_serpent', count: 3, word: 'pop', words: ['run'] }),
+        ab('tail_spin', 'Tail Spin', 'spin', 5, 0x2aa66a, 2, { word: 'zip', words: ['top'] }),
+        ab('hug_coil', 'Big Hug', 'coil', 12, 0x2aa66a, 2, { duration: 3, word: 'hug', words: ['tug'] }),
       ],
       ultimate: ab('sea_wave', 'World Wave', 'wave', 0, 0x7ad9ff, 3, { color2: 0x2aa66a }),
       taunts: [
@@ -679,6 +730,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'sun', text: 'I will eat the sun!' },
       ],
     },
+    reformed: [
+      { key: 'noodle', text: 'Sorry! I was a grumpy noodle.' },
+      { key: 'join', text: 'Can I join your next adventure?' },
+    ],
     counter: {
       id: 'tickle_fox', name: 'Tickle Fox', glyph: '🦊', look: 'a cheeky red-orange fox with a big bushy white-tipped tail, just right for tickling a serpent\'s nose until he sneezes',
       how: 'restore', words: ['sun', 'pot', 'lit'], word: 'fox',
@@ -701,10 +756,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Smaug', trail: { tint: [0xffcc33, 0xff7b00], shape: 'spark' }, look: 'a big red dragon with a gold tummy, sitting on coins, grinning and generous',
       palette: [0xd62828, 0xffcc33], glyph: '🐉', style: 'fly', speed: 160, size: 1.5, hp: 160,
       abilities: [
-        ab('fire_breath', 'Fire Breath', 'cone', 4, 0xff7b00, 2, { color2: 0xffd23f, word: 'hot' }),
-        ab('coin_shower', 'Coin Shower', 'rain', 8, 0xffcc33, 2, { count: 14, glyph: '🟡', word: 'pop' }),
-        ab('wing_slam', 'Wing Slam', 'slam', 6, 0xd62828, 3, { word: 'bam' }),
-        ab('coin_golems', 'Coin Golems', 'summon', 13, 0xffcc33, 2, { minion: 'gold_golem', count: 2 }),
+        ab('fire_breath', 'Fire Breath', 'cone', 4, 0xff7b00, 2, { color2: 0xffd23f, word: 'hot', words: ['fog'] }),
+        ab('coin_shower', 'Coin Shower', 'rain', 8, 0xffcc33, 2, { count: 14, glyph: '🟡', word: 'pop', words: ['zip'] }),
+        ab('wing_slam', 'Wing Slam', 'slam', 6, 0xd62828, 3, { word: 'bam', words: ['big'] }),
+        ab('coin_golems', 'Coin Golems', 'summon', 13, 0xffcc33, 2, { minion: 'gold_golem', count: 2, words: ['run'] }),
       ],
       ultimate: ab('rainbow_fire', 'Rainbow Fire', 'cone', 0, 0xff5ab4, 3, { color2: 0xffd23f }),
       taunts: [
@@ -736,6 +791,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'greedy', text: 'More gold for me!' },
       ],
     },
+    reformed: [
+      { key: 'treasure', text: 'Sorry! You can share my treasure.' },
+      { key: 'marshmallows', text: 'I will only toast marshmallows now!' },
+    ],
     counter: {
       id: 'gold_bag', name: 'Gold Bag', glyph: '👜', look: 'a magic pink handbag with a curved handle and a clasp, wide open, that gobbles up a whole avalanche of gold',
       how: 'block', words: ['cup', 'net', 'fog'], word: 'bag',
@@ -762,11 +821,11 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Tiamat', trail: { tint: [0xc77dff, 0xe0e0ff], shape: 'star' }, look: 'a giant, regal, friendly female dragon queen of original design: a huge plump pear-shaped body sitting upright like a soft purple hill, deep violet scales with a pale lilac pearly belly, a short graceful neck, a round gentle face with big kind golden eyes and long lashes, a warm closed-mouth smile, three short rounded silver horns curving back like a tiara, a small silver crown with a single violet gem, broad wings spread open behind her shoulders with lilac membranes, her little clawed hands clasped together over her belly, a thick curled tail ending in a silver heart-shaped tip, a sprinkle of silver star freckles on her cheeks. Majestic, huggable and grandmotherly-kind, not sleek',
       palette: [0x7b2cbf, 0xd8d8f0], glyph: '🐉', style: 'stomp', speed: 40, size: 2.1, hp: 230,
       abilities: [
-        ab('purple_flame', 'Purple Flame', 'cone', 4, 0xb15cff, 2, { color2: 0xffc8ff, word: 'hot' }),
-        ab('wing_gust', 'Wing Gust', 'wave', 8, 0xd8c8ff, 2, { color2: 0xffffff, word: 'fan' }),
-        ab('gem_rain', 'Gem Rain', 'rain', 8, 0xc77dff, 2, { count: 14, glyph: '💎', word: 'pop' }),
-        ab('wing_hug', 'Wing Hug', 'shield', 10, 0x9b5de5, 1, { duration: 4, word: 'hug' }),
-        ab('tail_thump', 'Tail Thump', 'slam', 6, 0x7b2cbf, 3, { word: 'bam', shout: true }),
+        ab('purple_flame', 'Purple Flame', 'cone', 4, 0xb15cff, 2, { color2: 0xffc8ff, word: 'hot', words: ['zap'] }),
+        ab('wing_gust', 'Wing Gust', 'wave', 8, 0xd8c8ff, 2, { color2: 0xffffff, word: 'fan', words: ['fog'] }),
+        ab('gem_rain', 'Gem Rain', 'rain', 8, 0xc77dff, 2, { count: 14, glyph: '💎', word: 'pop', words: ['zip'] }),
+        ab('wing_hug', 'Wing Hug', 'shield', 10, 0x9b5de5, 1, { duration: 4, word: 'hug', words: ['big'] }),
+        ab('tail_thump', 'Tail Thump', 'slam', 6, 0x7b2cbf, 3, { word: 'bam', shout: true, words: ['dig'] }),
       ],
       ultimate: ab('royal_starfire', 'Royal Starfire', 'cone', 0, 0xe0aaff, 3, { color2: 0xffd23f }),
       taunts: [
@@ -798,6 +857,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'rules', text: 'My rules, my house!' },
       ],
     },
+    reformed: [
+      { key: 'stormy', text: 'Sorry I was so stormy!' },
+      { key: 'team', text: 'Can I be on your team next time?' },
+    ],
     counter: {
       id: 'magic_hat', name: 'Magic Hat', glyph: '🎩', look: "a magician's tall black top hat with a red band, tipped upside down with a golden swirl glowing in its open top, sucking a whole storm of grey clouds, raindrops and lightning bolts down inside it like a magic trick",
       how: 'swallow', words: ['top', 'tip', 'hat'], word: 'hat',
@@ -820,10 +883,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Scar', trail: { tint: [0x00f5d4, 0xffffff], shape: 'square' }, look: 'a friendly chunky robot with one scratched eye plate, big rocket fists and a smile screen',
       palette: [0x8d99ae, 0x00f5d4], glyph: '🤖', style: 'march', speed: 140, size: 1.2, hp: 140,
       abilities: [
-        ab('rocket_fist', 'Rocket Fist', 'bolt', 3, 0xff6a3a, 2, { glyph: '🚀', homing: true, word: 'pow' }),
-        ab('drone_pals', 'Drone Pals', 'summon', 12, 0x9aa6b8, 2, { minion: 'drone', count: 3, word: 'zip' }),
-        ab('laser_eye', 'Laser Eye', 'beam', 5, 0x00f5d4, 2, { word: 'zap' }),
-        ab('mega_mode', 'Mega Mode', 'grow', 14, 0x00f5d4, 2, { duration: 5, word: 'big' }),
+        ab('rocket_fist', 'Rocket Fist', 'bolt', 3, 0xff6a3a, 2, { glyph: '🚀', homing: true, word: 'pow', words: ['jet'] }),
+        ab('drone_pals', 'Drone Pals', 'summon', 12, 0x9aa6b8, 2, { minion: 'drone', count: 3, word: 'zip', words: ['run'] }),
+        ab('laser_eye', 'Laser Eye', 'beam', 5, 0x00f5d4, 2, { word: 'zap', words: ['hot'] }),
+        ab('mega_mode', 'Mega Mode', 'grow', 14, 0x00f5d4, 2, { duration: 5, word: 'big', words: ['fix'] }),
       ],
       ultimate: ab('confetti_cannon', 'Confetti Cannon', 'rain', 0, 0x00f5d4, 3, { count: 34, glyph: '🎉', color2: 0xff5ab4 }),
       taunts: [
@@ -853,6 +916,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'robot', text: 'Robots rule!' },
       ],
     },
+    reformed: [
+      { key: 'mess', text: 'Beep boop! Sorry about the mess!' },
+      { key: 'friend', text: 'Robot friend mode, switched on!' },
+    ],
     counter: {
       id: 'glitch_bug', name: 'Glitch Bug', glyph: '🐞', look: 'a cute round red ladybird with black spots that crawls inside robots and switches them off',
       how: 'shutdown', words: ['box', 'pen', 'off'], word: 'bug',
@@ -875,10 +942,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Moriarty', trail: { tint: [0xf4a261, 0x95d5b2], shape: 'square' }, look: 'a lanky magician in a green suit and top hat, shuffling glowing cards, winking',
       palette: [0x2d6a4f, 0xf4a261], glyph: '🎩', style: 'blink', speed: 200, size: 1, hp: 100,
       abilities: [
-        ab('card_throw', 'Card Throw', 'bolt', 2.0, 0xf4a261, 1, { count: 4, glyph: '🃏', word: 'zip' }),
-        ab('decoys', 'Decoys', 'clones', 10, 0x2d6a4f, 2, { count: 3, word: 'pop' }),
-        ab('trick_trap', 'Trick Trap', 'trap', 8, 0xf4a261, 2, { count: 3 }),
-        ab('ta_da', 'Ta-da Blink', 'teleport', 5, 0x95d5b2, 2, { word: 'hop' }),
+        ab('card_throw', 'Card Throw', 'bolt', 2.0, 0xf4a261, 1, { count: 4, glyph: '🃏', word: 'zip', words: ['top'] }),
+        ab('decoys', 'Decoys', 'clones', 10, 0x2d6a4f, 2, { count: 3, word: 'pop', words: ['fog'] }),
+        ab('trick_trap', 'Trick Trap', 'trap', 8, 0xf4a261, 2, { count: 3, words: ['net', 'web'] }),
+        ab('ta_da', 'Ta-da Blink', 'teleport', 5, 0x95d5b2, 2, { word: 'hop', words: ['run'] }),
       ],
       ultimate: ab('grand_finale', 'Grand Finale', 'rain', 0, 0xf4a261, 3, { count: 30, glyph: '🃏', color2: 0x95d5b2 }),
       taunts: [
@@ -910,6 +977,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'smoke', text: 'Now you see me!' },
       ],
     },
+    reformed: [
+      { key: 'tricks', text: 'Sorry for all the tricks!' },
+      { key: 'mystery', text: 'Next time, let us solve a mystery together!' },
+    ],
     counter: {
       id: 'truth_map', name: 'Truth Map', glyph: '🗺️', look: 'a glowing treasure map on old parchment with a dotted path and a red X that shows where every trick is hiding',
       how: 'reveal', words: ['map', 'pen', 'nab'], word: 'map',
@@ -932,10 +1003,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Bavmorda', trail: { tint: [0xff8fab, 0x80ffdb], shape: 'star' }, look: 'a kindly old witch with a crooked hat full of flowers, a staff with a glowing pink gem',
       palette: [0x7b2cbf, 0x80ffdb], glyph: '🧹', style: 'hover', mount: '🧹', speed: 150, size: 1, hp: 100,
       abilities: [
-        ab('flower_bolt', 'Flower Bolts', 'bolt', 2.2, 0xff8fab, 1, { count: 3, glyph: '🌸', word: 'pop' }),
-        ab('piggy_spell', 'Piggy Spell', 'polymorph', 9, 0xff9ad5, 2, { status: 'pig', duration: 3, word: 'zap' }),
-        ab('broom_dash', 'Broom Dash', 'dash', 5, 0x80ffdb, 2, { word: 'zip' }),
-        ab('potion', 'Healing Potion', 'heal', 10, 0x80ffdb, 1, { word: 'hug' }),
+        ab('flower_bolt', 'Flower Bolts', 'bolt', 2.2, 0xff8fab, 1, { count: 3, glyph: '🌸', word: 'pop', words: ['zip'] }),
+        ab('piggy_spell', 'Piggy Spell', 'polymorph', 9, 0xff9ad5, 2, { status: 'pig', duration: 3, word: 'zap', words: ['pig'] }),
+        ab('broom_dash', 'Broom Dash', 'dash', 5, 0x80ffdb, 2, { word: 'zip', words: ['jet', 'run'] }),
+        ab('potion', 'Healing Potion', 'heal', 10, 0x80ffdb, 1, { word: 'hug', words: ['fix'] }),
       ],
       ultimate: ab('garden', 'Magic Garden', 'rain', 0, 0xff8fab, 3, { count: 30, glyph: '🌸', color2: 0x80ffdb }),
       taunts: [
@@ -965,6 +1036,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'piglets', text: 'Bow, little piglets!' },
       ],
     },
+    reformed: [
+      { key: 'piggy', text: 'Sorry! No more piggy spells. Well, maybe one.' },
+      { key: 'potion', text: 'Can I brew you a happy potion?' },
+    ],
     counter: {
       id: 'bounce_cap', name: 'Bounce Cap', glyph: '🧢', look: 'a shiny blue baseball cap with a curved peak that bounces any spell straight back',
       how: 'reflect', words: ['sun', 'pin', 'zap'], word: 'cap',
@@ -987,10 +1062,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Rilla', trail: { tint: [0xffe14a, 0x8a6a4a], shape: 'square' }, look: 'a friendly, gentle giant gorilla robot with pastel blue armour plates, soft glowing eyes and a big smile, arms open wide for a hug',
       palette: [0x8a6a4a, 0xffe14a], glyph: '🦍', style: 'stomp', speed: 110, size: 1.4, hp: 160,
       abilities: [
-        ab('banana_toss', 'Banana Toss', 'bolt', 2.4, 0xffe14a, 1, { count: 3, glyph: '🍌', word: 'pop' }),
-        ab('rocket_punch', 'Rocket Punch', 'bolt', 3, 0xff6a3a, 2, { glyph: '🚀', homing: true, word: 'pow', shout: true }),
-        ab('chest_drum', 'Chest Drum', 'slam', 6, 0x8a6a4a, 3, { word: 'bam', shout: true }),
-        ab('gorilla_hug', 'Gorilla Hug', 'heal', 10, 0xffe14a, 1, { word: 'hug' }),
+        ab('banana_toss', 'Banana Toss', 'bolt', 2.4, 0xffe14a, 1, { count: 3, glyph: '🍌', word: 'pop', words: ['top'] }),
+        ab('rocket_punch', 'Rocket Punch', 'bolt', 3, 0xff6a3a, 2, { glyph: '🚀', homing: true, word: 'pow', shout: true, words: ['jet'] }),
+        ab('chest_drum', 'Chest Drum', 'slam', 6, 0x8a6a4a, 3, { word: 'bam', shout: true, words: ['big'] }),
+        ab('gorilla_hug', 'Gorilla Hug', 'heal', 10, 0xffe14a, 1, { word: 'hug', words: ['tug'] }),
       ],
       ultimate: ab('banana_bonanza', 'Banana Bonanza', 'rain', 0, 0xffe14a, 3, { count: 32, glyph: '🍌', color2: 0x8a6a4a }),
       taunts: [
@@ -1021,6 +1096,10 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'cars', text: 'Cars are yummy!' },
       ],
     },
+    reformed: [
+      { key: 'banana', text: 'Sorry! Want a banana?' },
+      { key: 'hugs', text: 'Gorilla hugs for everybody!' },
+    ],
     counter: {
       id: 'mice', name: 'Wind-up Mice', glyph: '🐭', look: 'a tin full of clockwork toy mice that scurry and squeak',
       how: 'scare', words: ['rat', 'bug', 'hen'], word: 'mice',

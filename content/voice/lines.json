@@ -161,6 +161,18 @@
   "text": "No Nap Ever!"
  },
  {
+  "id": "reformed_julia_share",
+  "speaker": "julia",
+  "group": "fighter_julia_evil",
+  "text": "Sorry! I will share all my toys now."
+ },
+ {
+  "id": "reformed_julia_next",
+  "speaker": "julia",
+  "group": "fighter_julia_evil",
+  "text": "Can I come on the next adventure?"
+ },
+ {
   "id": "name_ellie",
   "speaker": "ellie",
   "group": "core",
@@ -293,6 +305,18 @@
   "text": "Tantrum Shockwave!"
  },
  {
+  "id": "reformed_ellie_bubbles",
+  "speaker": "ellie",
+  "group": "fighter_ellie_evil",
+  "text": "Sorry! Bubbles for everybody!"
+ },
+ {
+  "id": "reformed_ellie_cuddle",
+  "speaker": "ellie",
+  "group": "fighter_ellie_evil",
+  "text": "I want a cuddle now!"
+ },
+ {
   "id": "name_seraphina",
   "speaker": "seraphina",
   "group": "core",
@@ -417,6 +441,18 @@
   "speaker": "seraphina_evil",
   "group": "fighter_seraphina_evil",
   "text": "Tail Whip!"
+ },
+ {
+  "id": "reformed_seraphina_nice",
+  "speaker": "seraphina",
+  "group": "fighter_seraphina_evil",
+  "text": "Oops! I am a nice dragon again."
+ },
+ {
+  "id": "reformed_seraphina_fly",
+  "speaker": "seraphina",
+  "group": "fighter_seraphina_evil",
+  "text": "Can I fly with you next time?"
  },
  {
   "id": "name_dada_matt",
@@ -545,6 +581,18 @@
   "text": "Quake!"
  },
  {
+  "id": "reformed_dada_matt_fort",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_evil",
+  "text": "Sorry, kiddo! Want to build a fort?"
+ },
+ {
+  "id": "reformed_dada_matt_fixing",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_evil",
+  "text": "No more smashing. Only fixing!"
+ },
+ {
   "id": "name_dada_jason",
   "speaker": "dada_jason",
   "group": "core",
@@ -663,6 +711,18 @@
   "speaker": "dada_jason_evil",
   "group": "fighter_dada_jason_evil",
   "text": "Sticky Syrup!"
+ },
+ {
+  "id": "reformed_dada_jason_pancakes",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_evil",
+  "text": "Sorry! Who wants pancakes?"
+ },
+ {
+  "id": "reformed_dada_jason_yummy",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_evil",
+  "text": "I promise to cook yummy food, not yucky food!"
  },
  {
   "id": "name_elsa",
@@ -797,6 +857,18 @@
   "text": "Frost Beam!"
  },
  {
+  "id": "reformed_elsa_chilly",
+  "speaker": "elsa",
+  "group": "fighter_elsa_evil",
+  "text": "Sorry I made it so chilly!"
+ },
+ {
+  "id": "reformed_elsa_snowman",
+  "speaker": "elsa",
+  "group": "fighter_elsa_evil",
+  "text": "Can I make you a snowman?"
+ },
+ {
   "id": "name_anna",
   "speaker": "anna",
   "group": "core",
@@ -921,6 +993,18 @@
   "speaker": "anna_evil",
   "group": "fighter_anna_evil",
   "text": "Cold Twirl!"
+ },
+ {
+  "id": "reformed_anna_friends",
+  "speaker": "anna",
+  "group": "fighter_anna_evil",
+  "text": "Sorry! Can we be friends again?"
+ },
+ {
+  "id": "reformed_anna_side",
+  "speaker": "anna",
+  "group": "fighter_anna_evil",
+  "text": "Next time, I fight on your side!"
  },
  {
   "id": "name_jasmine",
@@ -1061,6 +1145,18 @@
   "text": "Whirlwinds!"
  },
  {
+  "id": "reformed_jasmine_sand",
+  "speaker": "jasmine",
+  "group": "fighter_jasmine_evil",
+  "text": "Sorry about all the sand!"
+ },
+ {
+  "id": "reformed_jasmine_ride",
+  "speaker": "jasmine",
+  "group": "fighter_jasmine_evil",
+  "text": "Want a ride on my carpet?"
+ },
+ {
   "id": "name_ozymandias",
   "speaker": "ozymandias",
   "group": "core",
@@ -1191,6 +1287,18 @@
   "speaker": "ozymandias_evil",
   "group": "fighter_ozymandias_evil",
   "text": "Sand Quake!"
+ },
+ {
+  "id": "reformed_ozymandias_kings",
+  "speaker": "ozymandias",
+  "group": "fighter_ozymandias_evil",
+  "text": "Sorry! Even kings say sorry."
+ },
+ {
+  "id": "reformed_ozymandias_visit",
+  "speaker": "ozymandias",
+  "group": "fighter_ozymandias_evil",
+  "text": "Please come and visit my pyramid!"
  },
  {
   "id": "name_jormungandr",
@@ -1325,6 +1433,18 @@
   "speaker": "jormungandr_evil",
   "group": "fighter_jormungandr_evil",
   "text": "Serpent Spawn!"
+ },
+ {
+  "id": "reformed_jormungandr_noodle",
+  "speaker": "jormungandr",
+  "group": "fighter_jormungandr_evil",
+  "text": "Sorry! I was a grumpy noodle."
+ },
+ {
+  "id": "reformed_jormungandr_join",
+  "speaker": "jormungandr",
+  "group": "fighter_jormungandr_evil",
+  "text": "Can I join your next adventure?"
  },
  {
   "id": "name_smaug",
@@ -1477,6 +1597,18 @@
   "text": "Tail Quake!"
  },
  {
+  "id": "reformed_smaug_treasure",
+  "speaker": "smaug",
+  "group": "fighter_smaug_evil",
+  "text": "Sorry! You can share my treasure."
+ },
+ {
+  "id": "reformed_smaug_marshmallows",
+  "speaker": "smaug",
+  "group": "fighter_smaug_evil",
+  "text": "I will only toast marshmallows now!"
+ },
+ {
   "id": "name_tiamat",
   "speaker": "tiamat",
   "group": "core",
@@ -1627,6 +1759,18 @@
   "text": "Throne Quake!"
  },
  {
+  "id": "reformed_tiamat_stormy",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat_evil",
+  "text": "Sorry I was so stormy!"
+ },
+ {
+  "id": "reformed_tiamat_team",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat_evil",
+  "text": "Can I be on your team next time?"
+ },
+ {
   "id": "name_scar",
   "speaker": "scar",
   "group": "core",
@@ -1763,6 +1907,18 @@
   "speaker": "scar_evil",
   "group": "fighter_scar_evil",
   "text": "Transform!"
+ },
+ {
+  "id": "reformed_scar_mess",
+  "speaker": "scar",
+  "group": "fighter_scar_evil",
+  "text": "Beep boop! Sorry about the mess!"
+ },
+ {
+  "id": "reformed_scar_friend",
+  "speaker": "scar",
+  "group": "fighter_scar_evil",
+  "text": "Robot friend mode, switched on!"
  },
  {
   "id": "name_moriarty",
@@ -1903,6 +2059,18 @@
   "text": "Card Soldiers!"
  },
  {
+  "id": "reformed_moriarty_tricks",
+  "speaker": "moriarty",
+  "group": "fighter_moriarty_evil",
+  "text": "Sorry for all the tricks!"
+ },
+ {
+  "id": "reformed_moriarty_mystery",
+  "speaker": "moriarty",
+  "group": "fighter_moriarty_evil",
+  "text": "Next time, let us solve a mystery together!"
+ },
+ {
   "id": "name_bavmorda",
   "speaker": "bavmorda",
   "group": "core",
@@ -2027,6 +2195,18 @@
   "speaker": "bavmorda_evil",
   "group": "fighter_bavmorda_evil",
   "text": "Dark Bolts!"
+ },
+ {
+  "id": "reformed_bavmorda_piggy",
+  "speaker": "bavmorda",
+  "group": "fighter_bavmorda_evil",
+  "text": "Sorry! No more piggy spells. Well, maybe one."
+ },
+ {
+  "id": "reformed_bavmorda_potion",
+  "speaker": "bavmorda",
+  "group": "fighter_bavmorda_evil",
+  "text": "Can I brew you a happy potion?"
  },
  {
   "id": "name_rilla",
@@ -2159,6 +2339,18 @@
   "speaker": "rilla_evil",
   "group": "fighter_rilla_evil",
   "text": "Car Crunch!"
+ },
+ {
+  "id": "reformed_rilla_banana",
+  "speaker": "rilla",
+  "group": "fighter_rilla_evil",
+  "text": "Sorry! Want a banana?"
+ },
+ {
+  "id": "reformed_rilla_hugs",
+  "speaker": "rilla",
+  "group": "fighter_rilla_evil",
+  "text": "Gorilla hugs for everybody!"
  },
  {
   "id": "letter_a_sound",
@@ -2433,6 +2625,12 @@
   "text": "cup!"
  },
  {
+  "id": "word_dig",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "dig!"
+ },
+ {
   "id": "word_dip",
   "speaker": "phonics",
   "group": "phonics",
@@ -2461,6 +2659,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "fan!"
+ },
+ {
+  "id": "word_fix",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "fix!"
  },
  {
   "id": "word_fog",
@@ -2565,6 +2769,12 @@
   "text": "Moriarty!"
  },
  {
+  "id": "word_mud",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "mud!"
+ },
+ {
   "id": "word_nab",
   "speaker": "phonics",
   "group": "phonics",
@@ -2605,6 +2815,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "pal!"
+ },
+ {
+  "id": "word_pan",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "pan!"
  },
  {
   "id": "word_pen",
@@ -2649,6 +2865,12 @@
   "text": "pow!"
  },
  {
+  "id": "word_ram",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "ram!"
+ },
+ {
   "id": "word_rat",
   "speaker": "phonics",
   "group": "phonics",
@@ -2659,6 +2881,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "rub!"
+ },
+ {
+  "id": "word_run",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "run!"
  },
  {
   "id": "word_scar",
@@ -2707,6 +2935,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "tub!"
+ },
+ {
+  "id": "word_tug",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "tug!"
  },
  {
   "id": "word_van",
@@ -5346,6 +5580,426 @@
   "text": "Find ice!"
  },
  {
+  "id": "nar_julia_use_move_dig",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_julia_teach_word_dig",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_julia_not_move_dig",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_julia_was_move_dig",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_julia_find_move_dig",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_julia_use_move_run",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_julia_teach_word_run",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_julia_not_move_run",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_julia_was_move_run",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_julia_find_move_run",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_julia_use_move_jet",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_julia_teach_word_jet",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_julia_not_move_jet",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_julia_was_move_jet",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_julia_find_move_jet",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_julia_use_move_mud",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_julia_teach_word_mud",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_julia_not_move_mud",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_julia_was_move_mud",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_julia_find_move_mud",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_julia_use_move_wet",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_julia_teach_word_wet",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_julia_not_move_wet",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_julia_was_move_wet",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_julia_find_move_wet",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_julia_use_move_fog",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_julia_teach_word_fog",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_julia_not_move_fog",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_julia_was_move_fog",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_julia_find_move_fog",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_julia_use_move_top",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_julia_teach_word_top",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_julia_not_move_top",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_julia_was_move_top",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_julia_find_move_top",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_julia_use_move_web",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_julia_teach_word_web",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_julia_not_move_web",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_julia_was_move_web",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_julia_find_move_web",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_julia_use_move_net",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_julia_teach_word_net",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_julia_not_move_net",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_julia_was_move_net",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_julia_find_move_net",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_julia_use_move_tug",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_julia_teach_word_tug",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_julia_not_move_tug",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_julia_was_move_tug",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_julia_find_move_tug",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_julia_use_move_fix",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_julia_teach_word_fix",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_julia_not_move_fix",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_julia_was_move_fix",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_julia_find_move_fix",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_julia_use_move_pan",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_julia_teach_word_pan",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_julia_not_move_pan",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_julia_was_move_pan",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_julia_find_move_pan",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_julia_use_move_ram",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_julia_teach_word_ram",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_julia_not_move_ram",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_julia_was_move_ram",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_julia_find_move_ram",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_julia_use_move_pig",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_julia_teach_word_pig",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_julia_not_move_pig",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_julia_was_move_pig",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_julia_find_move_pig",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Find pig!"
+ },
+ {
   "id": "nar_ellie_alarm_ready",
   "speaker": "ellie",
   "group": "nar_ellie",
@@ -6616,6 +7270,426 @@
   "speaker": "ellie",
   "group": "nar_ellie",
   "text": "Find ice!"
+ },
+ {
+  "id": "nar_ellie_use_move_dig",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_ellie_teach_word_dig",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_ellie_not_move_dig",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_ellie_was_move_dig",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_ellie_find_move_dig",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_ellie_use_move_run",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_ellie_teach_word_run",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_ellie_not_move_run",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_ellie_was_move_run",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_ellie_find_move_run",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_ellie_use_move_jet",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_ellie_teach_word_jet",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_ellie_not_move_jet",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_ellie_was_move_jet",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_ellie_find_move_jet",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_ellie_use_move_mud",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_ellie_teach_word_mud",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_ellie_not_move_mud",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_ellie_was_move_mud",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_ellie_find_move_mud",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_ellie_use_move_wet",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_ellie_teach_word_wet",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_ellie_not_move_wet",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_ellie_was_move_wet",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_ellie_find_move_wet",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_ellie_use_move_fog",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_ellie_teach_word_fog",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_ellie_not_move_fog",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_ellie_was_move_fog",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_ellie_find_move_fog",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_ellie_use_move_top",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_ellie_teach_word_top",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_ellie_not_move_top",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_ellie_was_move_top",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_ellie_find_move_top",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_ellie_use_move_web",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_ellie_teach_word_web",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_ellie_not_move_web",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_ellie_was_move_web",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_ellie_find_move_web",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_ellie_use_move_net",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_ellie_teach_word_net",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_ellie_not_move_net",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_ellie_was_move_net",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_ellie_find_move_net",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_ellie_use_move_tug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_ellie_teach_word_tug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_ellie_not_move_tug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_ellie_was_move_tug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_ellie_find_move_tug",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_ellie_use_move_fix",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_ellie_teach_word_fix",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_ellie_not_move_fix",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_ellie_was_move_fix",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_ellie_find_move_fix",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_ellie_use_move_pan",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_ellie_teach_word_pan",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_ellie_not_move_pan",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_ellie_was_move_pan",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_ellie_find_move_pan",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_ellie_use_move_ram",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_ellie_teach_word_ram",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_ellie_not_move_ram",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_ellie_was_move_ram",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_ellie_find_move_ram",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_ellie_use_move_pig",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_ellie_teach_word_pig",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_ellie_not_move_pig",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_ellie_was_move_pig",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_ellie_find_move_pig",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Find pig!"
  },
  {
   "id": "nar_seraphina_alarm_ready",
@@ -7890,6 +8964,426 @@
   "text": "Find ice!"
  },
  {
+  "id": "nar_seraphina_use_move_dig",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_seraphina_teach_word_dig",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_seraphina_not_move_dig",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_seraphina_was_move_dig",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_seraphina_find_move_dig",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_seraphina_use_move_run",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_seraphina_teach_word_run",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_seraphina_not_move_run",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_seraphina_was_move_run",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_seraphina_find_move_run",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_seraphina_use_move_jet",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_seraphina_teach_word_jet",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_seraphina_not_move_jet",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_seraphina_was_move_jet",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_seraphina_find_move_jet",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_seraphina_use_move_mud",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_seraphina_teach_word_mud",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_seraphina_not_move_mud",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_seraphina_was_move_mud",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_seraphina_find_move_mud",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_seraphina_use_move_wet",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_seraphina_teach_word_wet",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_seraphina_not_move_wet",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_seraphina_was_move_wet",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_seraphina_find_move_wet",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_seraphina_use_move_fog",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_seraphina_teach_word_fog",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_seraphina_not_move_fog",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_seraphina_was_move_fog",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_seraphina_find_move_fog",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_seraphina_use_move_top",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_seraphina_teach_word_top",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_seraphina_not_move_top",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_seraphina_was_move_top",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_seraphina_find_move_top",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_seraphina_use_move_web",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_seraphina_teach_word_web",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_seraphina_not_move_web",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_seraphina_was_move_web",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_seraphina_find_move_web",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_seraphina_use_move_net",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_seraphina_teach_word_net",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_seraphina_not_move_net",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_seraphina_was_move_net",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_seraphina_find_move_net",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_seraphina_use_move_tug",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_seraphina_teach_word_tug",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_seraphina_not_move_tug",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_seraphina_was_move_tug",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_seraphina_find_move_tug",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_seraphina_use_move_fix",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_seraphina_teach_word_fix",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_seraphina_not_move_fix",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_seraphina_was_move_fix",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_seraphina_find_move_fix",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_seraphina_use_move_pan",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_seraphina_teach_word_pan",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_seraphina_not_move_pan",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_seraphina_was_move_pan",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_seraphina_find_move_pan",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_seraphina_use_move_ram",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_seraphina_teach_word_ram",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_seraphina_not_move_ram",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_seraphina_was_move_ram",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_seraphina_find_move_ram",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_seraphina_use_move_pig",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_seraphina_teach_word_pig",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_seraphina_not_move_pig",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_seraphina_was_move_pig",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_seraphina_find_move_pig",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Find pig!"
+ },
+ {
   "id": "nar_dada_matt_alarm_ready",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
@@ -9160,6 +10654,426 @@
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
   "text": "Find ice!"
+ },
+ {
+  "id": "nar_dada_matt_use_move_dig",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_dada_matt_teach_word_dig",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_dig",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_dig",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_dig",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_dada_matt_use_move_run",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_dada_matt_teach_word_run",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_run",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_run",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_run",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_dada_matt_use_move_jet",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_dada_matt_teach_word_jet",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_jet",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_jet",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_jet",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_dada_matt_use_move_mud",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_dada_matt_teach_word_mud",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_mud",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_mud",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_mud",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_dada_matt_use_move_wet",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_dada_matt_teach_word_wet",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_wet",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_wet",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_wet",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_dada_matt_use_move_fog",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_dada_matt_teach_word_fog",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_fog",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_fog",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_fog",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_dada_matt_use_move_top",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_dada_matt_teach_word_top",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_top",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_top",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_top",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_dada_matt_use_move_web",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_dada_matt_teach_word_web",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_web",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_web",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_web",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_dada_matt_use_move_net",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_dada_matt_teach_word_net",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_net",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_net",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_net",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_dada_matt_use_move_tug",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_dada_matt_teach_word_tug",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_tug",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_tug",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_tug",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_dada_matt_use_move_fix",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_dada_matt_teach_word_fix",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_fix",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_fix",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_fix",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_dada_matt_use_move_pan",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_dada_matt_teach_word_pan",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_pan",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_pan",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_pan",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_dada_matt_use_move_ram",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_dada_matt_teach_word_ram",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_ram",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_ram",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_ram",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_dada_matt_use_move_pig",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_dada_matt_teach_word_pig",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_dada_matt_not_move_pig",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_dada_matt_was_move_pig",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_dada_matt_find_move_pig",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Find pig!"
  },
  {
   "id": "nar_dada_jason_alarm_ready",
@@ -10434,6 +12348,426 @@
   "text": "Find ice!"
  },
  {
+  "id": "nar_dada_jason_use_move_dig",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_dada_jason_teach_word_dig",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_dig",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_dig",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_dig",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_dada_jason_use_move_run",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_dada_jason_teach_word_run",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_run",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_run",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_run",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_dada_jason_use_move_jet",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_dada_jason_teach_word_jet",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_jet",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_jet",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_jet",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_dada_jason_use_move_mud",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_dada_jason_teach_word_mud",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_mud",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_mud",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_mud",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_dada_jason_use_move_wet",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_dada_jason_teach_word_wet",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_wet",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_wet",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_wet",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_dada_jason_use_move_fog",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_dada_jason_teach_word_fog",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_fog",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_fog",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_fog",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_dada_jason_use_move_top",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_dada_jason_teach_word_top",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_top",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_top",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_top",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_dada_jason_use_move_web",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_dada_jason_teach_word_web",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_web",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_web",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_web",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_dada_jason_use_move_net",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_dada_jason_teach_word_net",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_net",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_net",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_net",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_dada_jason_use_move_tug",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_dada_jason_teach_word_tug",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_tug",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_tug",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_tug",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_dada_jason_use_move_fix",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_dada_jason_teach_word_fix",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_fix",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_fix",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_fix",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_dada_jason_use_move_pan",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_dada_jason_teach_word_pan",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_pan",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_pan",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_pan",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_dada_jason_use_move_ram",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_dada_jason_teach_word_ram",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_ram",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_ram",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_ram",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_dada_jason_use_move_pig",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_dada_jason_teach_word_pig",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_dada_jason_not_move_pig",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_dada_jason_was_move_pig",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_dada_jason_find_move_pig",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Find pig!"
+ },
+ {
   "id": "nar_elsa_alarm_ready",
   "speaker": "elsa",
   "group": "nar_elsa",
@@ -11704,6 +14038,426 @@
   "speaker": "elsa",
   "group": "nar_elsa",
   "text": "Find ice!"
+ },
+ {
+  "id": "nar_elsa_use_move_dig",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_elsa_teach_word_dig",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_elsa_not_move_dig",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_elsa_was_move_dig",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_elsa_find_move_dig",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_elsa_use_move_run",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_elsa_teach_word_run",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_elsa_not_move_run",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_elsa_was_move_run",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_elsa_find_move_run",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_elsa_use_move_jet",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_elsa_teach_word_jet",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_elsa_not_move_jet",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_elsa_was_move_jet",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_elsa_find_move_jet",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_elsa_use_move_mud",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_elsa_teach_word_mud",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_elsa_not_move_mud",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_elsa_was_move_mud",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_elsa_find_move_mud",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_elsa_use_move_wet",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_elsa_teach_word_wet",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_elsa_not_move_wet",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_elsa_was_move_wet",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_elsa_find_move_wet",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_elsa_use_move_fog",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_elsa_teach_word_fog",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_elsa_not_move_fog",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_elsa_was_move_fog",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_elsa_find_move_fog",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_elsa_use_move_top",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_elsa_teach_word_top",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_elsa_not_move_top",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_elsa_was_move_top",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_elsa_find_move_top",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_elsa_use_move_web",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_elsa_teach_word_web",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_elsa_not_move_web",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_elsa_was_move_web",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_elsa_find_move_web",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_elsa_use_move_net",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_elsa_teach_word_net",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_elsa_not_move_net",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_elsa_was_move_net",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_elsa_find_move_net",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_elsa_use_move_tug",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_elsa_teach_word_tug",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_elsa_not_move_tug",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_elsa_was_move_tug",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_elsa_find_move_tug",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_elsa_use_move_fix",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_elsa_teach_word_fix",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_elsa_not_move_fix",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_elsa_was_move_fix",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_elsa_find_move_fix",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_elsa_use_move_pan",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_elsa_teach_word_pan",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_elsa_not_move_pan",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_elsa_was_move_pan",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_elsa_find_move_pan",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_elsa_use_move_ram",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_elsa_teach_word_ram",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_elsa_not_move_ram",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_elsa_was_move_ram",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_elsa_find_move_ram",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_elsa_use_move_pig",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_elsa_teach_word_pig",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_elsa_not_move_pig",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_elsa_was_move_pig",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_elsa_find_move_pig",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Find pig!"
  },
  {
   "id": "nar_anna_alarm_ready",
@@ -12978,6 +15732,426 @@
   "text": "Find ice!"
  },
  {
+  "id": "nar_anna_use_move_dig",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_anna_teach_word_dig",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_anna_not_move_dig",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_anna_was_move_dig",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_anna_find_move_dig",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_anna_use_move_run",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_anna_teach_word_run",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_anna_not_move_run",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_anna_was_move_run",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_anna_find_move_run",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_anna_use_move_jet",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_anna_teach_word_jet",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_anna_not_move_jet",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_anna_was_move_jet",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_anna_find_move_jet",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_anna_use_move_mud",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_anna_teach_word_mud",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_anna_not_move_mud",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_anna_was_move_mud",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_anna_find_move_mud",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_anna_use_move_wet",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_anna_teach_word_wet",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_anna_not_move_wet",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_anna_was_move_wet",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_anna_find_move_wet",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_anna_use_move_fog",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_anna_teach_word_fog",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_anna_not_move_fog",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_anna_was_move_fog",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_anna_find_move_fog",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_anna_use_move_top",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_anna_teach_word_top",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_anna_not_move_top",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_anna_was_move_top",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_anna_find_move_top",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_anna_use_move_web",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_anna_teach_word_web",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_anna_not_move_web",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_anna_was_move_web",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_anna_find_move_web",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_anna_use_move_net",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_anna_teach_word_net",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_anna_not_move_net",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_anna_was_move_net",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_anna_find_move_net",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_anna_use_move_tug",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_anna_teach_word_tug",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_anna_not_move_tug",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_anna_was_move_tug",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_anna_find_move_tug",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_anna_use_move_fix",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_anna_teach_word_fix",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_anna_not_move_fix",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_anna_was_move_fix",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_anna_find_move_fix",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_anna_use_move_pan",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_anna_teach_word_pan",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_anna_not_move_pan",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_anna_was_move_pan",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_anna_find_move_pan",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_anna_use_move_ram",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_anna_teach_word_ram",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_anna_not_move_ram",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_anna_was_move_ram",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_anna_find_move_ram",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_anna_use_move_pig",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_anna_teach_word_pig",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_anna_not_move_pig",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_anna_was_move_pig",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_anna_find_move_pig",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Find pig!"
+ },
+ {
   "id": "nar_jasmine_alarm_ready",
   "speaker": "jasmine",
   "group": "nar_jasmine",
@@ -14248,6 +17422,426 @@
   "speaker": "jasmine",
   "group": "nar_jasmine",
   "text": "Find ice!"
+ },
+ {
+  "id": "nar_jasmine_use_move_dig",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_jasmine_teach_word_dig",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_jasmine_not_move_dig",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_jasmine_was_move_dig",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_jasmine_find_move_dig",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_jasmine_use_move_run",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_jasmine_teach_word_run",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_jasmine_not_move_run",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_jasmine_was_move_run",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_jasmine_find_move_run",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_jasmine_use_move_jet",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_jasmine_teach_word_jet",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_jasmine_not_move_jet",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_jasmine_was_move_jet",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_jasmine_find_move_jet",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_jasmine_use_move_mud",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_jasmine_teach_word_mud",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_jasmine_not_move_mud",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_jasmine_was_move_mud",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_jasmine_find_move_mud",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_jasmine_use_move_wet",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_jasmine_teach_word_wet",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_jasmine_not_move_wet",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_jasmine_was_move_wet",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_jasmine_find_move_wet",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_jasmine_use_move_fog",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_jasmine_teach_word_fog",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_jasmine_not_move_fog",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_jasmine_was_move_fog",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_jasmine_find_move_fog",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_jasmine_use_move_top",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_jasmine_teach_word_top",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_jasmine_not_move_top",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_jasmine_was_move_top",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_jasmine_find_move_top",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_jasmine_use_move_web",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_jasmine_teach_word_web",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_jasmine_not_move_web",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_jasmine_was_move_web",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_jasmine_find_move_web",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_jasmine_use_move_net",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_jasmine_teach_word_net",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_jasmine_not_move_net",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_jasmine_was_move_net",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_jasmine_find_move_net",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_jasmine_use_move_tug",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_jasmine_teach_word_tug",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_jasmine_not_move_tug",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_jasmine_was_move_tug",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_jasmine_find_move_tug",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_jasmine_use_move_fix",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_jasmine_teach_word_fix",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_jasmine_not_move_fix",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_jasmine_was_move_fix",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_jasmine_find_move_fix",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_jasmine_use_move_pan",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_jasmine_teach_word_pan",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_jasmine_not_move_pan",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_jasmine_was_move_pan",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_jasmine_find_move_pan",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_jasmine_use_move_ram",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_jasmine_teach_word_ram",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_jasmine_not_move_ram",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_jasmine_was_move_ram",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_jasmine_find_move_ram",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_jasmine_use_move_pig",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_jasmine_teach_word_pig",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_jasmine_not_move_pig",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_jasmine_was_move_pig",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_jasmine_find_move_pig",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Find pig!"
  },
  {
   "id": "nar_ozymandias_alarm_ready",
@@ -15522,6 +19116,426 @@
   "text": "Find ice!"
  },
  {
+  "id": "nar_ozymandias_use_move_dig",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_ozymandias_teach_word_dig",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_dig",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_dig",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_dig",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_ozymandias_use_move_run",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_ozymandias_teach_word_run",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_run",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_run",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_run",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_ozymandias_use_move_jet",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_ozymandias_teach_word_jet",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_jet",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_jet",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_jet",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_ozymandias_use_move_mud",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_ozymandias_teach_word_mud",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_mud",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_mud",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_mud",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_ozymandias_use_move_wet",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_ozymandias_teach_word_wet",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_wet",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_wet",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_wet",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_ozymandias_use_move_fog",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_ozymandias_teach_word_fog",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_fog",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_fog",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_fog",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_ozymandias_use_move_top",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_ozymandias_teach_word_top",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_top",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_top",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_top",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_ozymandias_use_move_web",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_ozymandias_teach_word_web",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_web",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_web",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_web",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_ozymandias_use_move_net",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_ozymandias_teach_word_net",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_net",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_net",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_net",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_ozymandias_use_move_tug",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_ozymandias_teach_word_tug",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_tug",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_tug",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_tug",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_ozymandias_use_move_fix",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_ozymandias_teach_word_fix",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_fix",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_fix",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_fix",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_ozymandias_use_move_pan",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_ozymandias_teach_word_pan",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_pan",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_pan",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_pan",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_ozymandias_use_move_ram",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_ozymandias_teach_word_ram",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_ram",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_ram",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_ram",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_ozymandias_use_move_pig",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_ozymandias_teach_word_pig",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_ozymandias_not_move_pig",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_ozymandias_was_move_pig",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_ozymandias_find_move_pig",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Find pig!"
+ },
+ {
   "id": "nar_jormungandr_alarm_ready",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -16791,6 +20805,426 @@
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
   "text": "Find ice!"
+ },
+ {
+  "id": "nar_jormungandr_use_move_dig",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_jormungandr_teach_word_dig",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_dig",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_dig",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_dig",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_jormungandr_use_move_run",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_jormungandr_teach_word_run",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_run",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_run",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_run",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_jormungandr_use_move_jet",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_jormungandr_teach_word_jet",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_jet",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_jet",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_jet",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_jormungandr_use_move_mud",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_jormungandr_teach_word_mud",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_mud",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_mud",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_mud",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_jormungandr_use_move_wet",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_jormungandr_teach_word_wet",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_wet",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_wet",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_wet",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_jormungandr_use_move_fog",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_jormungandr_teach_word_fog",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_fog",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_fog",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_fog",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_jormungandr_use_move_top",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_jormungandr_teach_word_top",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_top",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_top",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_top",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_jormungandr_use_move_web",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_jormungandr_teach_word_web",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_web",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_web",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_web",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_jormungandr_use_move_net",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_jormungandr_teach_word_net",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_net",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_net",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_net",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_jormungandr_use_move_tug",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_jormungandr_teach_word_tug",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_tug",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_tug",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_tug",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_jormungandr_use_move_fix",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_jormungandr_teach_word_fix",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_fix",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_fix",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_fix",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_jormungandr_use_move_pan",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_jormungandr_teach_word_pan",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_pan",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_pan",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_pan",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_jormungandr_use_move_ram",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_jormungandr_teach_word_ram",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_ram",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_ram",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_ram",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_jormungandr_use_move_pig",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_jormungandr_teach_word_pig",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_jormungandr_not_move_pig",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_jormungandr_was_move_pig",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_jormungandr_find_move_pig",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Find pig!"
  },
  {
   "id": "nar_smaug_alarm_ready",
@@ -18065,6 +22499,426 @@
   "text": "Find ice!"
  },
  {
+  "id": "nar_smaug_use_move_dig",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_smaug_teach_word_dig",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_smaug_not_move_dig",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_smaug_was_move_dig",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_smaug_find_move_dig",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_smaug_use_move_run",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_smaug_teach_word_run",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_smaug_not_move_run",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_smaug_was_move_run",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_smaug_find_move_run",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_smaug_use_move_jet",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_smaug_teach_word_jet",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_smaug_not_move_jet",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_smaug_was_move_jet",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_smaug_find_move_jet",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_smaug_use_move_mud",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_smaug_teach_word_mud",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_smaug_not_move_mud",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_smaug_was_move_mud",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_smaug_find_move_mud",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_smaug_use_move_wet",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_smaug_teach_word_wet",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_smaug_not_move_wet",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_smaug_was_move_wet",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_smaug_find_move_wet",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_smaug_use_move_fog",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_smaug_teach_word_fog",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_smaug_not_move_fog",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_smaug_was_move_fog",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_smaug_find_move_fog",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_smaug_use_move_top",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_smaug_teach_word_top",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_smaug_not_move_top",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_smaug_was_move_top",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_smaug_find_move_top",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_smaug_use_move_web",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_smaug_teach_word_web",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_smaug_not_move_web",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_smaug_was_move_web",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_smaug_find_move_web",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_smaug_use_move_net",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_smaug_teach_word_net",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_smaug_not_move_net",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_smaug_was_move_net",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_smaug_find_move_net",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_smaug_use_move_tug",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_smaug_teach_word_tug",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_smaug_not_move_tug",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_smaug_was_move_tug",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_smaug_find_move_tug",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_smaug_use_move_fix",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_smaug_teach_word_fix",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_smaug_not_move_fix",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_smaug_was_move_fix",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_smaug_find_move_fix",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_smaug_use_move_pan",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_smaug_teach_word_pan",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_smaug_not_move_pan",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_smaug_was_move_pan",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_smaug_find_move_pan",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_smaug_use_move_ram",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_smaug_teach_word_ram",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_smaug_not_move_ram",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_smaug_was_move_ram",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_smaug_find_move_ram",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_smaug_use_move_pig",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_smaug_teach_word_pig",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_smaug_not_move_pig",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_smaug_was_move_pig",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_smaug_find_move_pig",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Find pig!"
+ },
+ {
   "id": "nar_tiamat_alarm_ready",
   "speaker": "tiamat",
   "group": "nar_tiamat",
@@ -19335,6 +24189,426 @@
   "speaker": "tiamat",
   "group": "nar_tiamat",
   "text": "Find ice!"
+ },
+ {
+  "id": "nar_tiamat_use_move_dig",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_dig",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_tiamat_not_move_dig",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_tiamat_was_move_dig",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_tiamat_find_move_dig",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_tiamat_use_move_run",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_run",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_tiamat_not_move_run",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_tiamat_was_move_run",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_tiamat_find_move_run",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_tiamat_use_move_jet",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_jet",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_tiamat_not_move_jet",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_tiamat_was_move_jet",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_tiamat_find_move_jet",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_tiamat_use_move_mud",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_mud",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_tiamat_not_move_mud",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_tiamat_was_move_mud",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_tiamat_find_move_mud",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_tiamat_use_move_wet",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_wet",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_tiamat_not_move_wet",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_tiamat_was_move_wet",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_tiamat_find_move_wet",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_tiamat_use_move_fog",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_fog",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_tiamat_not_move_fog",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_tiamat_was_move_fog",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_tiamat_find_move_fog",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_tiamat_use_move_top",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_top",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_tiamat_not_move_top",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_tiamat_was_move_top",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_tiamat_find_move_top",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_tiamat_use_move_web",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_web",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_tiamat_not_move_web",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_tiamat_was_move_web",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_tiamat_find_move_web",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_tiamat_use_move_net",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_net",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_tiamat_not_move_net",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_tiamat_was_move_net",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_tiamat_find_move_net",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_tiamat_use_move_tug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_tug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_tiamat_not_move_tug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_tiamat_was_move_tug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_tiamat_find_move_tug",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_tiamat_use_move_fix",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_fix",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_tiamat_not_move_fix",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_tiamat_was_move_fix",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_tiamat_find_move_fix",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_tiamat_use_move_pan",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_pan",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_tiamat_not_move_pan",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_tiamat_was_move_pan",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_tiamat_find_move_pan",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_tiamat_use_move_ram",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_ram",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_tiamat_not_move_ram",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_tiamat_was_move_ram",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_tiamat_find_move_ram",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_tiamat_use_move_pig",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_tiamat_teach_word_pig",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_tiamat_not_move_pig",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_tiamat_was_move_pig",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_tiamat_find_move_pig",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Find pig!"
  },
  {
   "id": "nar_scar_alarm_ready",
@@ -20609,6 +25883,426 @@
   "text": "Find ice!"
  },
  {
+  "id": "nar_scar_use_move_dig",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_scar_teach_word_dig",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_scar_not_move_dig",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_scar_was_move_dig",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_scar_find_move_dig",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_scar_use_move_run",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_scar_teach_word_run",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_scar_not_move_run",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_scar_was_move_run",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_scar_find_move_run",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_scar_use_move_jet",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_scar_teach_word_jet",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_scar_not_move_jet",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_scar_was_move_jet",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_scar_find_move_jet",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_scar_use_move_mud",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_scar_teach_word_mud",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_scar_not_move_mud",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_scar_was_move_mud",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_scar_find_move_mud",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_scar_use_move_wet",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_scar_teach_word_wet",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_scar_not_move_wet",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_scar_was_move_wet",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_scar_find_move_wet",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_scar_use_move_fog",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_scar_teach_word_fog",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_scar_not_move_fog",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_scar_was_move_fog",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_scar_find_move_fog",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_scar_use_move_top",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_scar_teach_word_top",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_scar_not_move_top",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_scar_was_move_top",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_scar_find_move_top",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_scar_use_move_web",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_scar_teach_word_web",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_scar_not_move_web",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_scar_was_move_web",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_scar_find_move_web",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_scar_use_move_net",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_scar_teach_word_net",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_scar_not_move_net",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_scar_was_move_net",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_scar_find_move_net",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_scar_use_move_tug",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_scar_teach_word_tug",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_scar_not_move_tug",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_scar_was_move_tug",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_scar_find_move_tug",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_scar_use_move_fix",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_scar_teach_word_fix",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_scar_not_move_fix",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_scar_was_move_fix",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_scar_find_move_fix",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_scar_use_move_pan",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_scar_teach_word_pan",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_scar_not_move_pan",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_scar_was_move_pan",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_scar_find_move_pan",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_scar_use_move_ram",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_scar_teach_word_ram",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_scar_not_move_ram",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_scar_was_move_ram",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_scar_find_move_ram",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_scar_use_move_pig",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_scar_teach_word_pig",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_scar_not_move_pig",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_scar_was_move_pig",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_scar_find_move_pig",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Find pig!"
+ },
+ {
   "id": "nar_moriarty_alarm_ready",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -21879,6 +27573,426 @@
   "speaker": "moriarty",
   "group": "nar_moriarty",
   "text": "Find ice!"
+ },
+ {
+  "id": "nar_moriarty_use_move_dig",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_moriarty_teach_word_dig",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_moriarty_not_move_dig",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_moriarty_was_move_dig",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_moriarty_find_move_dig",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_moriarty_use_move_run",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_moriarty_teach_word_run",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_moriarty_not_move_run",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_moriarty_was_move_run",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_moriarty_find_move_run",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_moriarty_use_move_jet",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_moriarty_teach_word_jet",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_moriarty_not_move_jet",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_moriarty_was_move_jet",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_moriarty_find_move_jet",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_moriarty_use_move_mud",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_moriarty_teach_word_mud",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_moriarty_not_move_mud",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_moriarty_was_move_mud",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_moriarty_find_move_mud",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_moriarty_use_move_wet",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_moriarty_teach_word_wet",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_moriarty_not_move_wet",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_moriarty_was_move_wet",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_moriarty_find_move_wet",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_moriarty_use_move_fog",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_moriarty_teach_word_fog",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_moriarty_not_move_fog",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_moriarty_was_move_fog",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_moriarty_find_move_fog",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_moriarty_use_move_top",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_moriarty_teach_word_top",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_moriarty_not_move_top",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_moriarty_was_move_top",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_moriarty_find_move_top",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_moriarty_use_move_web",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_moriarty_teach_word_web",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_moriarty_not_move_web",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_moriarty_was_move_web",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_moriarty_find_move_web",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_moriarty_use_move_net",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_moriarty_teach_word_net",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_moriarty_not_move_net",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_moriarty_was_move_net",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_moriarty_find_move_net",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_moriarty_use_move_tug",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_moriarty_teach_word_tug",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_moriarty_not_move_tug",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_moriarty_was_move_tug",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_moriarty_find_move_tug",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_moriarty_use_move_fix",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_moriarty_teach_word_fix",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_moriarty_not_move_fix",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_moriarty_was_move_fix",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_moriarty_find_move_fix",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_moriarty_use_move_pan",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_moriarty_teach_word_pan",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_moriarty_not_move_pan",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_moriarty_was_move_pan",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_moriarty_find_move_pan",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_moriarty_use_move_ram",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_moriarty_teach_word_ram",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_moriarty_not_move_ram",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_moriarty_was_move_ram",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_moriarty_find_move_ram",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_moriarty_use_move_pig",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_moriarty_teach_word_pig",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_moriarty_not_move_pig",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_moriarty_was_move_pig",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_moriarty_find_move_pig",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Find pig!"
  },
  {
   "id": "nar_bavmorda_alarm_ready",
@@ -23153,6 +29267,426 @@
   "text": "Find ice!"
  },
  {
+  "id": "nar_bavmorda_use_move_dig",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_bavmorda_teach_word_dig",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_dig",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_dig",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_dig",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_bavmorda_use_move_run",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_bavmorda_teach_word_run",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_run",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_run",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_run",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_bavmorda_use_move_jet",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_bavmorda_teach_word_jet",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_jet",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_jet",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_jet",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_bavmorda_use_move_mud",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_bavmorda_teach_word_mud",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_mud",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_mud",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_mud",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_bavmorda_use_move_wet",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_bavmorda_teach_word_wet",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_wet",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_wet",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_wet",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_bavmorda_use_move_fog",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_bavmorda_teach_word_fog",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_fog",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_fog",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_fog",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_bavmorda_use_move_top",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_bavmorda_teach_word_top",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_top",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_top",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_top",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_bavmorda_use_move_web",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_bavmorda_teach_word_web",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_web",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_web",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_web",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_bavmorda_use_move_net",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_bavmorda_teach_word_net",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_net",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_net",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_net",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_bavmorda_use_move_tug",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_bavmorda_teach_word_tug",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_tug",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_tug",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_tug",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_bavmorda_use_move_fix",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_bavmorda_teach_word_fix",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_fix",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_fix",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_fix",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_bavmorda_use_move_pan",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_bavmorda_teach_word_pan",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_pan",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_pan",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_pan",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_bavmorda_use_move_ram",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_bavmorda_teach_word_ram",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_ram",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_ram",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_ram",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_bavmorda_use_move_pig",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_bavmorda_teach_word_pig",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_bavmorda_not_move_pig",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_bavmorda_was_move_pig",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_bavmorda_find_move_pig",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Find pig!"
+ },
+ {
   "id": "nar_rilla_alarm_ready",
   "speaker": "rilla",
   "group": "nar_rilla",
@@ -24423,5 +30957,425 @@
   "speaker": "rilla",
   "group": "nar_rilla",
   "text": "Find ice!"
+ },
+ {
+  "id": "nar_rilla_use_move_dig",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Use dig!"
+ },
+ {
+  "id": "nar_rilla_teach_word_dig",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "This spell is called dig!"
+ },
+ {
+  "id": "nar_rilla_not_move_dig",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't dig,"
+ },
+ {
+  "id": "nar_rilla_was_move_dig",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was dig!"
+ },
+ {
+  "id": "nar_rilla_find_move_dig",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find dig!"
+ },
+ {
+  "id": "nar_rilla_use_move_run",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Use run!"
+ },
+ {
+  "id": "nar_rilla_teach_word_run",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "This spell is called run!"
+ },
+ {
+  "id": "nar_rilla_not_move_run",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't run,"
+ },
+ {
+  "id": "nar_rilla_was_move_run",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was run!"
+ },
+ {
+  "id": "nar_rilla_find_move_run",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find run!"
+ },
+ {
+  "id": "nar_rilla_use_move_jet",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Use jet!"
+ },
+ {
+  "id": "nar_rilla_teach_word_jet",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "This spell is called jet!"
+ },
+ {
+  "id": "nar_rilla_not_move_jet",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't jet,"
+ },
+ {
+  "id": "nar_rilla_was_move_jet",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was jet!"
+ },
+ {
+  "id": "nar_rilla_find_move_jet",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find jet!"
+ },
+ {
+  "id": "nar_rilla_use_move_mud",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Use mud!"
+ },
+ {
+  "id": "nar_rilla_teach_word_mud",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "This spell is called mud!"
+ },
+ {
+  "id": "nar_rilla_not_move_mud",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't mud,"
+ },
+ {
+  "id": "nar_rilla_was_move_mud",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was mud!"
+ },
+ {
+  "id": "nar_rilla_find_move_mud",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find mud!"
+ },
+ {
+  "id": "nar_rilla_use_move_wet",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Use wet!"
+ },
+ {
+  "id": "nar_rilla_teach_word_wet",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "This spell is called wet!"
+ },
+ {
+  "id": "nar_rilla_not_move_wet",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't wet,"
+ },
+ {
+  "id": "nar_rilla_was_move_wet",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was wet!"
+ },
+ {
+  "id": "nar_rilla_find_move_wet",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find wet!"
+ },
+ {
+  "id": "nar_rilla_use_move_fog",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Use fog!"
+ },
+ {
+  "id": "nar_rilla_teach_word_fog",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "This spell is called fog!"
+ },
+ {
+  "id": "nar_rilla_not_move_fog",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't fog,"
+ },
+ {
+  "id": "nar_rilla_was_move_fog",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was fog!"
+ },
+ {
+  "id": "nar_rilla_find_move_fog",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find fog!"
+ },
+ {
+  "id": "nar_rilla_use_move_top",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Use top!"
+ },
+ {
+  "id": "nar_rilla_teach_word_top",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "This spell is called top!"
+ },
+ {
+  "id": "nar_rilla_not_move_top",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't top,"
+ },
+ {
+  "id": "nar_rilla_was_move_top",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was top!"
+ },
+ {
+  "id": "nar_rilla_find_move_top",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find top!"
+ },
+ {
+  "id": "nar_rilla_use_move_web",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Use web!"
+ },
+ {
+  "id": "nar_rilla_teach_word_web",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "This spell is called web!"
+ },
+ {
+  "id": "nar_rilla_not_move_web",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't web,"
+ },
+ {
+  "id": "nar_rilla_was_move_web",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was web!"
+ },
+ {
+  "id": "nar_rilla_find_move_web",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find web!"
+ },
+ {
+  "id": "nar_rilla_use_move_net",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Use net!"
+ },
+ {
+  "id": "nar_rilla_teach_word_net",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "This spell is called net!"
+ },
+ {
+  "id": "nar_rilla_not_move_net",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't net,"
+ },
+ {
+  "id": "nar_rilla_was_move_net",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was net!"
+ },
+ {
+  "id": "nar_rilla_find_move_net",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find net!"
+ },
+ {
+  "id": "nar_rilla_use_move_tug",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Use tug!"
+ },
+ {
+  "id": "nar_rilla_teach_word_tug",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "This spell is called tug!"
+ },
+ {
+  "id": "nar_rilla_not_move_tug",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't tug,"
+ },
+ {
+  "id": "nar_rilla_was_move_tug",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was tug!"
+ },
+ {
+  "id": "nar_rilla_find_move_tug",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find tug!"
+ },
+ {
+  "id": "nar_rilla_use_move_fix",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Use fix!"
+ },
+ {
+  "id": "nar_rilla_teach_word_fix",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "This spell is called fix!"
+ },
+ {
+  "id": "nar_rilla_not_move_fix",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't fix,"
+ },
+ {
+  "id": "nar_rilla_was_move_fix",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was fix!"
+ },
+ {
+  "id": "nar_rilla_find_move_fix",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find fix!"
+ },
+ {
+  "id": "nar_rilla_use_move_pan",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Use pan!"
+ },
+ {
+  "id": "nar_rilla_teach_word_pan",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "This spell is called pan!"
+ },
+ {
+  "id": "nar_rilla_not_move_pan",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't pan,"
+ },
+ {
+  "id": "nar_rilla_was_move_pan",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was pan!"
+ },
+ {
+  "id": "nar_rilla_find_move_pan",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find pan!"
+ },
+ {
+  "id": "nar_rilla_use_move_ram",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Use ram!"
+ },
+ {
+  "id": "nar_rilla_teach_word_ram",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "This spell is called ram!"
+ },
+ {
+  "id": "nar_rilla_not_move_ram",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't ram,"
+ },
+ {
+  "id": "nar_rilla_was_move_ram",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was ram!"
+ },
+ {
+  "id": "nar_rilla_find_move_ram",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find ram!"
+ },
+ {
+  "id": "nar_rilla_use_move_pig",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Use pig!"
+ },
+ {
+  "id": "nar_rilla_teach_word_pig",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "This spell is called pig!"
+ },
+ {
+  "id": "nar_rilla_not_move_pig",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That wasn't pig,"
+ },
+ {
+  "id": "nar_rilla_was_move_pig",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "that was pig!"
+ },
+ {
+  "id": "nar_rilla_find_move_pig",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Find pig!"
  }
 ]

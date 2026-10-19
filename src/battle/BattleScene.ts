@@ -34,18 +34,19 @@
 
 import Phaser from 'phaser';
 
-import { CHARACTER_BY_ID, MINIONS, comboFor, comboPart } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, MINIONS, abilityWords, comboFor, comboPart } from '../../content/battle/roster';
 import type { AbilitySpec, Status } from '../../content/battle/types';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
-import { fighterId, moveLine, nameLine, narratorLine, tauntLine, ultimateLine } from '../../content/voice/ids';
+import { fighterId, moveLine, nameLine, narratorLine, reformedLine, tauntLine, ultimateLine } from '../../content/voice/ids';
 import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh, sfxWrong } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, WALK_SPEED } from '../config';
-import { advance, castArt, counterArt, counterWord, episode, helper, namedCounter, narrator, villainSpec, type Step } from '../episode/Episode';
+import { advance, castArt, counterArt, counterWord, episode, movePlan, namedCounter, narrator, villainSpec, type Step } from '../episode/Episode';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
+import type { MoveOwner } from '../rules/moves';
 import { progress } from '../state/progress';
 import { hookState } from '../testHooks';
 import { voiceBank } from '../voice/VoiceBank';
@@ -85,7 +86,6 @@ interface MovePad {
 interface Choice {
   words: string[];
   right: string;
-  owners: Map<string, { f: Fighter; ab: AbilitySpec }>;
   /** Everything the choice put on screen, destroyed when it closes. */
   objs: Phaser.GameObjects.GameObject[];
   pads: MovePad[];
@@ -646,16 +646,58 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
   }
 
   /**
-   * The spell the helper taught her in the house: the helper's own move with
-   * that word, fired by her hero. Null with no spell (or an unknown word).
+   * Who fires a planned move word: the owner hero (her own hero for the spell
+   * the helper taught her) with the ability of character `from`.
    */
-  private spellMove(): { word: string; ab: AbilitySpec } | null {
-    const word = episode.spell;
-    if (!word) return null;
-    const ab =
-      CHARACTER_BY_ID[helper()]?.good.abilities.find((a) => a.word === word) ??
-      this.heroes.flatMap((h) => h.init.abilities).find((a) => a.word === word);
-    return ab ? { word, ab } : null;
+  private ownerOf(o: MoveOwner): { f: Fighter; ab: AbilitySpec } | null {
+    const f = this.heroes.find((h) => h.init.id === o.fighter) ?? this.heroes[0];
+    const ab = CHARACTER_BY_ID[o.from]?.good.abilities.find((a) => a.id === o.ability);
+    return f && ab ? { f, ab } : null;
+  }
+
+  /**
+   * Whether calling this move out by name now would give a move choice away:
+   * its name or its move words are on a pad still to come this episode.
+   */
+  private givesChoiceAway(ab: AbilitySpec): boolean {
+    const plan = movePlan();
+    const ahead = [...plan.part1.slice(this.part === 1 ? this.choicesOpened : plan.part1.length), ...plan.part2.slice(this.part === 2 ? this.choicesOpened : 0)];
+    const upcoming = new Set(ahead.flatMap((c) => c.words));
+    const said = [...ab.name.toLowerCase().split(/[^a-z]+/), ...abilityWords(ab)];
+    return said.some((w) => upcoming.has(w));
+  }
+
+  /**
+   * The move word's own effect on a super: a fan of its picture (`pic_zap`
+   * bolts, `pic_ice` cubes) bursting from the hero at the villain, each
+   * popping in, bobbing and popping out by scale.
+   */
+  private wordFx(word: string, f: Fighter, color: number): void {
+    const key = `pic_${word}`;
+    if (!this.textures.exists(key)) return;
+    const v = this.villain;
+    const n = fxQuality.level < 1 ? 5 : 8;
+    for (let i = 0; i < n; i++) {
+      const img = fitImage(this.add.image(f.cx, f.cy, key), 90, 90).setDepth(DEPTH.fx);
+      const s = img.scale;
+      img.setScale(0);
+      const tx = (v?.active ? v.cx : f.cx + 300) + Phaser.Math.Between(-170, 170);
+      const ty = (v?.active ? v.cy : f.cy) + Phaser.Math.Between(-140, 110);
+      const delay = i * 70;
+      this.tweens.add({ targets: img, scale: s, duration: 220, delay, ease: 'Back.easeOut' });
+      this.tweens.add({ targets: img, x: tx, y: ty, duration: 650, delay, ease: 'Quad.easeOut' });
+      this.tweens.add({
+        targets: img,
+        scale: 0,
+        duration: 260,
+        delay: delay + 900,
+        ease: 'Back.easeIn',
+        onComplete: () => {
+          burst(this, img.x, img.y, { count: 14, speed: 260, colors: [color, 0xffffff] });
+          img.destroy();
+        },
+      });
+    }
   }
 
   /**
@@ -731,24 +773,13 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
 
   /** The move-choice pause. */
   private async moveChoice(): Promise<void> {
-    // Move words come from the heroes' own abilities, plus the spell she learned.
-    const owners = new Map<string, { f: Fighter; ab: AbilitySpec }>();
-    for (const h of this.heroes) for (const ab of h.init.abilities) if (ab.word && !owners.has(ab.word)) owners.set(ab.word, { f: h, ab });
+    // The words were planned with the episode (src/rules/moves.ts): the first
+    // of each part is the spell she learned, the rest come from her move bag.
+    const planned = movePlan()[this.part === 1 ? 'part1' : 'part2'][this.choicesOpened];
     const me = this.heroes[0]!;
-    const spell = this.spellMove();
-    if (spell) owners.set(spell.word, { f: me, ab: spell.ab });
-    let words: string[];
-    let right: string;
-    if (spell && this.choicesOpened === 0) {
-      // The first choice of each part is the spell: the word she learned is the one she fires.
-      const others = Phaser.Utils.Array.Shuffle([...owners.keys()].filter((w) => w !== spell.word)).slice(0, 2);
-      words = Phaser.Utils.Array.Shuffle([spell.word, ...others]);
-      right = spell.word;
-    } else {
-      words = Phaser.Utils.Array.Shuffle([...owners.keys()]).slice(0, Math.min(3, owners.size));
-      right = words[Math.floor(Math.random() * words.length)]!;
-    }
-    if (words.length < 2) return;
+    const owner = planned && this.ownerOf(planned.owner);
+    if (!planned || !owner || planned.words.length < 2) return;
+    const { words, right } = planned;
     this.choicesOpened++;
 
     this.phase = 'choice';
@@ -789,7 +820,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
 
     let misses = 0;
     await new Promise<void>((resolve) => {
-      const c: Choice = { words, right, owners, objs, pads, near: null, dot, here, open: false, promptedAt: 0, at, misses: 0, resolve: () => {
+      const c: Choice = { words, right, objs, pads, near: null, dot, here, open: false, promptedAt: 0, at, misses: 0, resolve: () => {
         misses = c.misses;
         resolve();
       } };
@@ -811,9 +842,12 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.stats.movePicks++;
     // Only the right pad ever closes the choice; the misses are recorded, never punished.
     progress.record('words', right, misses === 0, misses);
+    // Her move bag spends a word only when she picks it right first time; a missed one stays in.
+    if (misses === 0) progress.takeFromBag(right, 'moves');
+    else progress.returnToBag(right, 'moves');
     // The victory recap reads episode.read: a battle word she picked right is one she read.
     if (!episode.read.includes(right)) episode.read.push(right);
-    const { f, ab } = owners.get(right)!;
+    const { f, ab } = owner;
     // The super frees its hero from any pig or ice.
     f.status = null;
     f.clearOverlay();
@@ -826,9 +860,11 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     burst(this, f.cx, f.cy, { count: 80, speed: 600, colors: [ab.color, 0xffd23f, 0xffffff] });
     f.setShield(1, 0xffd23f, this.now);
     cast(this, f, ab, this.villain, 2.4, true);
-    this.banner('SUPER!', 0xffd23f, true);
+    // The word's own effect: a fan of its pictures. Its name on the banner: she has read it.
+    this.wordFx(right, f, ab.color);
+    this.banner(`SUPER ${right.toUpperCase()}!`, 0xffd23f, true);
     void (async () => {
-      if (voiceBank.has(moveLine(f.init.id, ab.id))) await this.guard(voiceBus.say(moveLine(f.init.id, ab.id), 'instruction', f));
+      if (voiceBank.has(moveLine(f.init.id, ab.id)) && !this.givesChoiceAway(ab)) await this.guard(voiceBus.say(moveLine(f.init.id, ab.id), 'instruction', f));
       await this.say('move_great');
     })();
     this.stats.abilitiesFired++;
@@ -1290,6 +1326,11 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     v.alive = false;
     v.root.setVisible(false);
     for (const h of this.heroes) h.invulnerable = false;
+    // Good again, the villain says sorry (or asks to come next time) in its own
+    // voice, in a bubble over its good self. The victory says another.
+    await this.simWait(0.6);
+    const sorry = CHARACTER_BY_ID[episode.villain]?.reformed[0];
+    if (sorry) await this.guard(voiceBus.say(reformedLine(episode.villain, sorry.key), 'bark', { x: good.x, y: good.y, bubbleOffset: good.displayHeight, active: true }));
   }
 
   // -- the simulation ----------------------------------------------------------------
@@ -1352,9 +1393,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       f.use(ab, this.now);
       cast(this, f, ab, target, f.init.kind === 'helper' ? 1.4 : 1, f.isMain && ab.power >= 2);
       // Big moves are called out by name, if nobody else is talking.
-      // A move that is also a choice word is never called out in the fight:
-      // hearing it named then would give the choice away.
-      if (f.isMain && ab.power >= 2 && !ab.word && Math.random() < 0.5) void voiceBus.say(moveLine(f.init.id, ab.id), 'bark', f);
+      // A move whose name or move words are on a pad still to come is never
+      // called out: hearing it named then would give the choice away.
+      if (f.isMain && ab.power >= 2 && Math.random() < 0.5 && !this.givesChoiceAway(ab)) void voiceBus.say(moveLine(f.init.id, ab.id), 'bark', f);
       this.stats.abilitiesFired++;
       if (f.isMain) this.teamNextCast[teamKey] = this.now + (teamKey === 'villain' ? 700 : 500);
       break;

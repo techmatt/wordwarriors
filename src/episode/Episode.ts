@@ -29,6 +29,7 @@ import { DEFAULT_NARRATOR, group } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { EPISODE_DEFAULTS } from '../config';
 import { episodePlans, type RoomPlan } from '../rules/sentences';
+import { battle1Words, planMoves, type MovePlan } from '../rules/moves';
 import { spellFor } from '../rules/spell';
 import { progress } from '../state/progress';
 import { voiceBank } from '../voice/VoiceBank';
@@ -71,6 +72,8 @@ export interface EpisodeState {
   fetched: string[];
   /** The move word the helper taught her in the hub; her first move choice is this spell. */
   spell: string | null;
+  /** The battles' move choices (item 018), planned with the house: battle 1's words never become the counter word. */
+  moves: MovePlan | null;
   /** The house: which room holds which sentence, and which rooms are done. */
   house: { plan: RoomPlan[] | null; done: Slot[]; taught: boolean };
   stepIndex: number;
@@ -114,6 +117,7 @@ export const episode: EpisodeState = {
   read: [],
   fetched: [],
   spell: null,
+  moves: null,
   house: { plan: null, done: [], taught: false },
   stepIndex: 0,
 };
@@ -193,6 +197,7 @@ export function resetEpisode(): void {
   episode.read = [];
   episode.fetched = [];
   episode.spell = null;
+  episode.moves = null;
   episode.house = { plan: null, done: [], taught: false };
   episode.stepIndex = 0;
 }
@@ -214,10 +219,22 @@ export function housePlan(): RoomPlan[] {
     episode.spell ??= spellFor(episode.hero, helper());
     const fill = { villain: episode.villain, helper: helper(), hero: episode.hero };
     const rooms = Phaser.Utils.Array.Shuffle([...FETCH_ROOMS]).slice(0, 2) as [string, string];
-    // The three key words come out of her word bag (and are spent) here.
-    episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, spell: episode.spell, rooms, counterRoom: COUNTER_ROOM });
+    // The three key words come out of her word bag here; the counter keeps
+    // clear of battle 1's move pads.
+    const battle1Moves = battle1Words(movePlan());
+    episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, spell: episode.spell, rooms, counterRoom: COUNTER_ROOM, battle1Moves });
   }
   return episode.house.plan;
+}
+
+/** The battles' move choices: made once per episode, on first need (the house plan needs battle 1's). */
+export function movePlan(): MovePlan {
+  if (!episode.moves) {
+    episode.spell ??= spellFor(episode.hero, helper());
+    const team = [episode.hero, ...(episode.ally ? [episode.ally] : [])];
+    episode.moves = planMoves(progress, { hero: episode.hero, team, helper: helper(), spell: episode.spell });
+  }
+  return episode.moves;
 }
 
 export function planFor(slot: Slot): RoomPlan {

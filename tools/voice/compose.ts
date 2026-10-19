@@ -30,6 +30,7 @@ import {
   moveLine,
   nameLine,
   narratorLine,
+  reformedLine,
   tauntLine,
   ultimateLine,
   wakeLine,
@@ -122,6 +123,11 @@ export function composeLines(): LineSpec[] {
       for (const ab of spec.abilities.filter((a) => a.power >= 2)) {
         lines.push({ id: moveLine(fid, ab.id), speaker: fid, group: group.fighter(fid), text: `${ab.name}!` });
       }
+    }
+    // The villain good again, in the good voice, but in the villain's group:
+    // only an episode with this villain says them, and it has that group loaded.
+    for (const r of c.reformed) {
+      lines.push({ id: reformedLine(c.id, r.key), speaker: c.id, group: group.fighter(fighterId(c.id, true)), text: r.text, ...(r.say ? { say: r.say } : {}) });
     }
   }
 

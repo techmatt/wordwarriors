@@ -20,6 +20,8 @@ export const ultimateLine = (fighter: string) => `ult_${fighter}`;
 /** A fighter calling out one of its own moves: `move_smaug_evil_inferno`. */
 export const moveLine = (fighter: string, ability: string) => `move_${fighter}_${ability}`;
 export const nameLine = (fighter: string) => `name_${fighter}`;
+/** A beaten villain, good again, in the good version's voice: `reformed_tiamat_sorry`. */
+export const reformedLine = (character: string, key: string) => `reformed_${character}_${key}`;
 /** A fighter id is `<character>` for the good version and `<character>_evil` for the evil one. */
 export const fighterId = (character: string, evil: boolean) => (evil ? `${character}_evil` : character);
 

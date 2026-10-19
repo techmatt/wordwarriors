@@ -7,7 +7,7 @@ import Phaser from 'phaser';
 
 import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
-import { narratorLine, tauntLine, wordLine } from '../../content/voice/ids';
+import { narratorLine, reformedLine, wordLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
@@ -17,6 +17,7 @@ import { burst, fitImage, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { hookState } from '../testHooks';
+import { Bubbles, type BubbleAnchor } from '../ui/Bubbles';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { Caption } from '../ui/Caption';
 
@@ -24,6 +25,8 @@ export class VictoryScene extends Phaser.Scene {
   private controls!: Controls;
   private ready = false;
   private gen = 0;
+  /** Where the villain, good again, stands on the podium: its bubble follows it. */
+  private villainAnchor: BubbleAnchor | null = null;
 
   constructor() {
     super('Victory');
@@ -41,6 +44,7 @@ export class VictoryScene extends Phaser.Scene {
     this.controls = new Controls(this);
     this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'room_victory').setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
     new Caption(this);
+    new Bubbles(this);
     this.cameras.main.fadeIn(400, 255, 255, 255);
 
     this.add.particles(0, -20, TEX.square, {
@@ -73,6 +77,7 @@ export class VictoryScene extends Phaser.Scene {
       const img = fitImage(this.add.image(x, 605, key).setOrigin(0.5, 1), 120, 150);
       this.tweens.add({ targets: img, y: 575, duration: 300 + i * 40, yoyo: true, repeat: -1, ease: 'Quad.easeOut' });
       this.tweens.add({ targets: img, scaleY: img.scaleY * 0.9, scaleX: img.scaleX * 1.08, duration: 300 + i * 40, yoyo: true, repeat: -1, delay: 300 + i * 40 });
+      if (i === all.length - 1) this.villainAnchor = { get x() { return img.x; }, get y() { return img.y; }, bubbleOffset: img.displayHeight, active: true };
     });
 
     const title = this.add
@@ -90,9 +95,11 @@ export class VictoryScene extends Phaser.Scene {
       if (gone()) return;
       await this.recap(gone);
       if (gone()) return;
-      // The villain, good again, says something friendly in its own voice.
-      const friend = CHARACTER_BY_ID[episode.villain]?.good.taunts[0];
-      if (friend) await voiceBus.say(tauntLine(episode.villain, friend.key));
+      // The villain, good again, says something of its own: the battle's end
+      // said its first reformed line, so this is the next one.
+      const lines = CHARACTER_BY_ID[episode.villain]?.reformed ?? [];
+      const friend = lines[1] ?? lines[0];
+      if (friend) await voiceBus.say(reformedLine(episode.villain, friend.key), 'bark', this.villainAnchor);
       if (gone()) return;
       await voiceBus.sequence([narratorLine(n, 'victory_2'), narratorLine(n, 'again')]);
       if (gone()) return;
@@ -130,13 +137,13 @@ export class VictoryScene extends Phaser.Scene {
 
   /**
    * A recap word's picture: its own card (fetched key words and the counter
-   * word are picture words too), else the counter-item card for a counter
-   * word without one, else none (sight words like THE).
+   * word are picture words too; move words have theirs, item 018), else the
+   * counter-item card for a counter word without one, else none.
    */
   private pictureOf(w: string): string | null {
     const entry = WORD_BY_ID[w];
     if (entry && (entry.character || this.textures.exists(pictureFor(entry)))) return pictureFor(entry, castFace);
-    if (episode.fetched.includes(w) && this.textures.exists(`pic_${w}`)) return `pic_${w}`;
+    if (this.textures.exists(`pic_${w}`)) return `pic_${w}`;
     const counter = villainSpec().counter;
     if (counter.word === w) return `item_${counter.id}`;
     return null;

@@ -14,8 +14,8 @@
  * draw keeps out every word the episode says or shows earlier: its sentences'
  * own frame words and names, the taught spell, and everything the hero, ally
  * and villain say or show (`saidEarly`). The counter word also keeps out the
- * move words (battle 1's move pads) and the episode's fetch words (battle 1's
- * item banners).
+ * words on battle 1's move pads (planned up front, src/rules/moves.ts) and the
+ * episode's fetch words (battle 1's item banners).
  */
 
 import { CHARACTER_BY_ID, MINIONS, MOVE_WORDS, comboPart } from '../../content/battle/roster';
@@ -151,6 +151,11 @@ export interface EpisodeInput {
   /** The two side rooms (SIDE_ROOMS ids) for doors a and b, and the attic. */
   rooms: [string, string];
   counterRoom: string;
+  /**
+   * Every word battle 1's move pads show (`battle1Words`), kept out of the
+   * counter draw. Without it, every move word is.
+   */
+  battle1Moves?: string[];
 }
 
 /**
@@ -174,10 +179,10 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
     const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !avoid.has(w) && !keys.includes(w));
     keys.push(drawKey(store, eligible, rand, keys));
   }
-  // The counter: not a move word (battle 1 shows them on its pads), not a
-  // word fetched this episode (battle 1 shouts THE NET!).
+  // The counter: not a word on battle 1's move pads, not a word fetched this
+  // episode (battle 1 shouts THE NET!).
   const named = CHARACTER_BY_ID[fill.villain]?.counter.word;
-  const moves = new Set<string>(MOVE_WORDS);
+  const moves = new Set<string>(input.battle1Moves ?? MOVE_WORDS);
   const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !moves.has(w) && !keys.includes(w));
   keys.push(drawKey(store, eligible, rand, keys, (w) => (w === named ? NAMED_COUNTER_BOOST : 1)));
 

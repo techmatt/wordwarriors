@@ -35,6 +35,8 @@ export interface ProgressData {
   frames: Record<string, Stat>;
   /** Her word bag: the sentence key words drawn without replacement (item 015). */
   bag: WordBag;
+  /** Her move bag: the battle's move words, drawn the same way (item 018). */
+  moveBag: WordBag;
   episodes: number;
 }
 
@@ -49,6 +51,9 @@ export interface WordBag {
   round: number;
 }
 
+/** Which bag: the sentence key words, or the battle's move words. */
+export type BagKind = 'keys' | 'moves';
+
 export type ItemKind = 'sounds' | 'words' | 'spelling' | 'frames';
 
 const RECENT = 6;
@@ -58,7 +63,7 @@ function emptyStat(): Stat {
 }
 
 function empty(): ProgressData {
-  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, bag: { left: [], round: 0 }, episodes: 0 };
+  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, episodes: 0 };
 }
 
 export interface StorageLike {
@@ -90,6 +95,7 @@ export class ProgressStore {
       parsed.frames ??= {};
       // Item 015, the same way: an empty bag with round 0 fills on the first draw.
       parsed.bag ??= { left: [], round: 0 };
+      parsed.moveBag ??= { left: [], round: 0 };
       parsed.episodes ??= 0;
       return parsed;
     } catch {
@@ -128,26 +134,34 @@ export class ProgressStore {
     this.save();
   }
 
-  /** The word bag, as stored (a copy). */
-  bag(): WordBag {
-    return { left: [...this.data.bag.left], round: this.data.bag.round };
+  private bagField(which: BagKind): 'bag' | 'moveBag' {
+    return which === 'keys' ? 'bag' : 'moveBag';
+  }
+
+  /** A word bag, as stored (a copy). */
+  bag(which: BagKind = 'keys'): WordBag {
+    const b = this.data[this.bagField(which)];
+    return { left: [...b.left], round: b.round };
   }
 
   /** She read a word right first time: it leaves the bag until the next round. */
-  takeFromBag(word: string): void {
-    this.data.bag.left = this.data.bag.left.filter((w) => w !== word);
+  takeFromBag(word: string, which: BagKind = 'keys'): void {
+    const b = this.data[this.bagField(which)];
+    b.left = b.left.filter((w) => w !== word);
     this.save();
   }
 
   /** A new round: the bag holds `words` again. */
-  refillBag(words: string[]): void {
-    this.data.bag = { left: [...new Set(words)], round: this.data.bag.round + 1 };
+  refillBag(words: string[], which: BagKind = 'keys'): void {
+    const f = this.bagField(which);
+    this.data[f] = { left: [...new Set(words)], round: this.data[f].round + 1 };
     this.save();
   }
 
   /** A word she missed goes back in, so it can come round again before the bag empties. */
-  returnToBag(word: string): void {
-    if (!this.data.bag.left.includes(word)) this.data.bag.left.push(word);
+  returnToBag(word: string, which: BagKind = 'keys'): void {
+    const b = this.data[this.bagField(which)];
+    if (!b.left.includes(word)) b.left.push(word);
     this.save();
   }
 

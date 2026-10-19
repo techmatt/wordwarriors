@@ -99,6 +99,12 @@ export interface AbilitySpec {
    * MOVE_WORDS, because each has a voiced "Use zap!" line per narrator.
    */
   word?: string;
+  /**
+   * More move words that suit this move (item 018): a choice can offer any of
+   * them for it. `word` stays the main one (the spell the helper teaches).
+   * Each must be one of MOVE_WORDS too.
+   */
+  words?: string[];
   /** Plays the "Ha!" interjection SFX when used. */
   shout?: boolean;
 }
@@ -175,6 +181,12 @@ export interface CharacterSpec {
   /** edge-tts speaker ids are `<id>` and `<id>_evil`. */
   good: FighterSpec;
   evil: FighterSpec;
+  /**
+   * What the villain says, in the good version's voice, once beaten and good
+   * again (item 018): short and kid-funny, an apology or wanting to come on the
+   * next adventure. One at the battle's end, another at the victory.
+   */
+  reformed: Taunt[];
   /** What beats the evil version's ultimate. */
   counter: CounterItem;
   /** The arena the evil version fights in. ARENAS key. */
