@@ -275,6 +275,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
    */
   hit(target: Fighter, power: number, color: number, from: Fighter | null, status?: { kind: Status; duration: number }): void {
     if (!target.active || target.floored) return;
+    // Nothing left over (a sword ring flung late) dents the villain while her
+    // ultimate charges: that is her big moment, and a white hit flash spoils it.
+    if (this.phase === 'ultimate' && target === this.villain) return;
     if (target.invulnerable || target.shieldUntil > this.now) {
       burst(this, target.cx, target.cy, { count: 12, speed: 200, colors: [0xffffff, color] });
       if (target.isMain && Math.random() < 0.3) floatText(this, target.cx, target.top, 'BLOCK!', '#7ad9ff', 30);
@@ -1087,8 +1090,16 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       floatText(this, v.cx + 60, v.cy, 'FIZZLE!', '#cccccc', 44);
       await this.simWait(1.0);
     } else if (counter.how === 'block' || counter.how === 'reflect' || counter.how === 'swallow') {
-      // A dome over the heroes; the ultimate crashes into it.
-      const dome = this.add.ellipse(h.x + 60, h.y - 60, 520, 360, 0x9ad8ff, 0.18).setStrokeStyle(10, 0xffffff, 0.9).setDepth(DEPTH.fx + 3);
+      // A dome over the heroes, all of them (the ally can be well apart from
+      // her); the ultimate crashes into it.
+      const team = [...this.heroes, ...(this.helper ? [this.helper] : [])].filter((f) => f.active);
+      const xs = team.map((f) => f.x);
+      const ys = team.map((f) => f.cy);
+      const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+      const dome = this.add
+        .ellipse((x0 + x1) / 2, (y0 + y1) / 2 - 20, Math.max(520, x1 - x0 + 300), Math.max(360, y1 - y0 + 280), 0x9ad8ff, 0.18)
+        .setStrokeStyle(10, 0xffffff, 0.9)
+        .setDepth(DEPTH.fx + 3);
       dome.setScale(0);
       this.tweens.add({ targets: dome, scale: 1, duration: 300, ease: 'Back.easeOut' });
       sfxShield();
@@ -1104,6 +1115,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
         await this.simWait(0.6);
         this.tweens.killTweensOf(halo);
         this.tweens.add({ targets: [item, halo], x: GAME_WIDTH / 2, y: 260, duration: 500, ease: 'Back.easeOut' });
+        this.tweens.add({ targets: item, scale: s * 2, duration: 500, ease: 'Back.easeOut' });
         await this.simWait(0.5);
         pour?.stop();
         const vortex = this.add
@@ -1311,7 +1323,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       f.x += (home - f.x) * Math.min(1, (f.team === 'villain' ? 1.2 : 0.8) * dt);
     }
     // A giant's wings would hang off the edge of the screen: keep all of her in.
-    if (f.init.size >= 2) f.x = Phaser.Math.Clamp(f.x, ARENA_LEFT + f.height * 0.35, ARENA_RIGHT - f.height * 0.35);
+    if (f.init.size >= 2) f.x = Phaser.Math.Clamp(f.x, ARENA_LEFT + f.height * 0.45, ARENA_RIGHT - f.height * 0.45);
     if (!fighting || !target) return;
 
     // Casting: one team member at a time, so moves read instead of blurring.
