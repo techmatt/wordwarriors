@@ -12,7 +12,8 @@
 
 import Phaser from 'phaser';
 
-import { DEPTH } from '../config';
+import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { fitText } from '../ui/fitText';
 import { TEX } from './textures';
 
 /**
@@ -195,9 +196,13 @@ export function timeScale(scene: Phaser.Scene): number {
 /** Floating text that rises and fades ("POW!", "+1"). */
 export function floatText(scene: Phaser.Scene, x: number, y: number, text: string, color = '#ffffff', size = 40): void {
   const t = scene.add
-    .text(x, y, text, { fontFamily: '"Arial Black", sans-serif', fontSize: `${size}px`, color, stroke: '#000000', strokeThickness: 8 })
+    .text(x, y, text, { fontFamily: '"Arial Black", sans-serif', fontSize: `${size}px`, color, stroke: '#000000', strokeThickness: 8, align: 'center' })
     .setOrigin(0.5)
     .setDepth(DEPTH.sparkles);
+  // Wrapped and shrunk to the screen, and kept inside it (it rises 70 px).
+  fitText(t, GAME_WIDTH - 40, GAME_HEIGHT / 3);
+  t.setPosition(Phaser.Math.Clamp(x, t.width / 2 + 10, GAME_WIDTH - t.width / 2 - 10), Phaser.Math.Clamp(y, t.height / 2 + 80, GAME_HEIGHT - t.height / 2 - 10));
+  y = t.y;
   t.setScale(0.3);
   scene.tweens.add({ targets: t, scale: 1, duration: 200, ease: 'Back.easeOut' });
   scene.tweens.add({ targets: t, y: y - 70, alpha: 0, delay: 450, duration: 500, onComplete: () => t.destroy() });

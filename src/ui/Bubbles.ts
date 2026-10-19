@@ -10,8 +10,13 @@
 
 import Phaser from 'phaser';
 
-import { DEPTH, GAME_WIDTH } from '../config';
+import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
+import { fitText } from './fitText';
+
+/** The bubble's text box: a sensible line length, and never taller than a third of the screen. */
+const BUBBLE_TEXT_W = 300;
+const BUBBLE_TEXT_H = 220;
 
 export interface BubbleAnchor {
   x: number;
@@ -47,8 +52,10 @@ export class Bubbles {
     this.anchor = u.anchor as BubbleAnchor;
     const text = this.scene.add
       // All text in the game is upper case; the line keeps its case for the voice.
-      .text(0, 0, u.text.toUpperCase(), { fontFamily: '"Arial Black", sans-serif', fontSize: '26px', color: '#1a1030', align: 'center', wordWrap: { width: 300 } })
+      .text(0, 0, u.text.toUpperCase(), { fontFamily: '"Arial Black", sans-serif', fontSize: '26px', color: '#1a1030', align: 'center' })
       .setOrigin(0.5);
+    // Wrapped between words, and shrunk if it is still too big: never off screen.
+    fitText(text, BUBBLE_TEXT_W, BUBBLE_TEXT_H);
     const w = text.width + 34;
     const h = text.height + 24;
     const g = this.scene.add.graphics();
@@ -61,6 +68,7 @@ export class Bubbles {
     g.lineBetween(12, h / 2, 0, h / 2 + 18);
     this.bubble = this.scene.add.container(0, 0, [g, text]).setDepth(DEPTH.speech);
     this.bubble.setData('h', h);
+    this.bubble.setData('w', w);
     this.bubble.setScale(0.2);
     this.scene.tweens.add({ targets: this.bubble, scale: 1, duration: 180, ease: 'Back.easeOut' });
     this.follow();
@@ -76,7 +84,8 @@ export class Bubbles {
       return;
     }
     const h = b.getData('h') as number;
-    b.x = Phaser.Math.Clamp(a.x, 170, GAME_WIDTH - 170);
-    b.y = Math.max(h / 2 + 8, a.y - a.bubbleOffset - h / 2 - 20);
+    const w = b.getData('w') as number;
+    b.x = Phaser.Math.Clamp(a.x, w / 2 + 8, GAME_WIDTH - w / 2 - 8);
+    b.y = Phaser.Math.Clamp(a.y - a.bubbleOffset - h / 2 - 20, h / 2 + 8, GAME_HEIGHT - h / 2 - 28);
   }
 }

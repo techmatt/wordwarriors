@@ -21,6 +21,11 @@ import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { castArt } from '../episode/Episode';
 
 const FONT = '"Arial Rounded MT Bold", "Arial Black", sans-serif';
+const BG_H = 86;
+/** The text area: right of the speaker's card, inside the ribbon (centre x, width). */
+const TEXT_X = 50;
+const TEXT_W = GAME_WIDTH - 160 - 200 - 40;
+const MAX_ROWS = 3;
 
 export class Caption {
   private readonly root: Phaser.GameObjects.Container;
@@ -28,6 +33,7 @@ export class Caption {
   private readonly bg: Phaser.GameObjects.Rectangle;
   private portrait: Phaser.GameObjects.Image | null = null;
   private words: Phaser.GameObjects.Text[] = [];
+  private slabH = 54;
   private current: Utterance | null = null;
   private readonly off: () => void;
 
@@ -89,19 +95,57 @@ export class Caption {
     // All text in the game is upper case (Matt, 2026-10-18); only the display
     // changes, the line texts stay as written.
     const tokens = u.line.words.map((w) => w.word.toUpperCase());
-    const size = tokens.length > 9 ? 34 : 40;
-    let x = 0;
-    const gap = 14;
     for (const token of tokens) {
-      const t = this.scene.add.text(x, 0, token, { fontFamily: FONT, fontSize: `${size}px`, color: '#ffffff', stroke: '#000000', strokeThickness: 6 }).setOrigin(0, 0.5);
-      x += t.width + gap;
-      this.words.push(t);
+      this.words.push(this.scene.add.text(0, 0, token, { fontFamily: FONT, fontSize: '40px', color: '#ffffff', stroke: '#000000', strokeThickness: 6 }).setOrigin(0.5, 0.5));
     }
-    const total = x - gap;
-    const left = -total / 2 + 40;
-    for (const t of this.words) t.x += left;
+    this.layout(tokens.length > 9 ? 34 : 40);
     this.root.add(this.words);
     this.root.setVisible(true);
+  }
+
+  /**
+   * Words in rows inside the ribbon, right of the speaker's card: one row
+   * when it fits, otherwise wrapped between words (up to three rows), the
+   * font shrinking until every word fits. The ribbon grows upwards.
+   */
+  private layout(start: number): void {
+    const maxW = TEXT_W;
+    let size = start;
+    let rows: Phaser.GameObjects.Text[][] = [];
+    for (;;) {
+      for (const t of this.words) t.setFontSize(size);
+      const gap = size * 0.35;
+      rows = [[]];
+      let x = 0;
+      for (const t of this.words) {
+        const row = rows[rows.length - 1]!;
+        if (row.length && x + gap + t.width > maxW) {
+          rows.push([t]);
+          x = t.width;
+        } else {
+          x += (row.length ? gap : 0) + t.width;
+          row.push(t);
+        }
+      }
+      const fits = this.words.every((t) => t.width <= maxW) && rows.length <= MAX_ROWS;
+      if (fits || size <= 14) break;
+      size -= 2;
+    }
+    const gap = size * 0.35;
+    const lineH = size * 1.35;
+    this.slabH = lineH;
+    const h = Math.max(BG_H, rows.length * lineH + 32);
+    // The bottom edge stays put; extra rows push the top up.
+    this.bg.setSize(GAME_WIDTH - 160, h).setPosition(0, (BG_H - h) / 2);
+    const top = this.bg.y - (rows.length * lineH) / 2 + lineH / 2;
+    rows.forEach((row, r) => {
+      const width = row.reduce((n, t) => n + t.width, 0) + gap * (row.length - 1);
+      let x = TEXT_X - width / 2;
+      for (const t of row) {
+        t.setPosition(x + t.width / 2, top + r * lineH);
+        x += t.width + gap;
+      }
+    });
   }
 
   private tick(): void {
@@ -120,9 +164,8 @@ export class Caption {
     const target = this.words[lit];
     if (target) {
       this.slab.setVisible(true);
-      this.slab.setPosition(target.x + target.width / 2, 0);
-      this.slab.width = target.width + 14;
-      this.slab.setSize(target.width + 14, 54);
+      this.slab.setPosition(target.x, target.y);
+      this.slab.setSize(target.width + 14, this.slabH);
     } else this.slab.setVisible(false);
   }
 }

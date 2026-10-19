@@ -77,6 +77,8 @@ export class SentenceRoom extends Minigame {
   private index = -1;
   /** One container per token, centred on the word, so it can pulse in place. */
   private tokenBoxes: Phaser.GameObjects.Container[] = [];
+  /** The banner's height: 140 for one row, taller when the sentence wraps. */
+  private bannerH = 140;
   /** Each token's Text objects: one for a frame word, one per letter for the key word. */
   private tokenTexts: Phaser.GameObjects.Text[][] = [];
   /** While a line plays, the banner follows it: line id and how many tokens it covers. */
@@ -153,57 +155,93 @@ export class SentenceRoom extends Minigame {
     void this.flow();
   }
 
-  /** The banner: each token its own word, upper case, key word last and split into letters. */
+  /**
+   * The banner: each token its own word, upper case, key word last and split
+   * into letters. One row when it fits (shrinking to 40 px first); otherwise
+   * the words wrap onto more rows, between words only, and the banner grows.
+   */
   private makeBanner(): void {
     const tokens = this.plan.sentence.tokens;
-    const bg = this.add.image(0, 0, 'prop_banner').setDisplaySize(BANNER_W, 140);
+    const room = BANNER_W * 0.82;
     let size = 76;
-    const measure = (sz: number) => {
-      const style = { fontFamily: FONT, fontSize: `${sz}px`, color: INK };
-      const probe = this.add.text(0, 0, tokens.join(' '), style);
-      const w = probe.width;
-      probe.destroy();
-      return w;
-    };
-    // Fit inside the cream panel (about 82% of the banner art), with room for the lit word to grow.
-    while (size > 40 && measure(size) * 1.1 > BANNER_W * 0.82) size -= 4;
-    const style = { fontFamily: FONT, fontSize: `${size}px`, color: INK };
-    const gap = size * 0.4;
-
+    let style = { fontFamily: FONT, fontSize: `${size}px`, color: INK };
+    let widths: number[] = [];
     this.tokenBoxes = [];
-    this.tokenTexts = [];
-    const widths: number[] = [];
-    tokens.forEach((token, i) => {
-      const texts: Phaser.GameObjects.Text[] = [];
-      if (i === this.keyIndex) {
-        // Letter by letter, so the hint can light each one.
-        const letters = [...token].map((ch) => this.add.text(0, 0, ch, style).setOrigin(0.5));
-        const total = letters.reduce((n, t) => n + t.width, 0);
-        let x = -total / 2;
-        for (const t of letters) {
-          t.setX(x + t.width / 2);
-          x += t.width;
+    const build = () => {
+      for (const box of this.tokenBoxes) box.destroy();
+      this.tokenBoxes = [];
+      this.tokenTexts = [];
+      widths = [];
+      style = { fontFamily: FONT, fontSize: `${size}px`, color: INK };
+      tokens.forEach((token, i) => {
+        const texts: Phaser.GameObjects.Text[] = [];
+        if (i === this.keyIndex) {
+          // Letter by letter, so the hint can light each one.
+          const letters = [...token].map((ch) => this.add.text(0, 0, ch, style).setOrigin(0.5));
+          const total = letters.reduce((n, t) => n + t.width, 0);
+          let x = -total / 2;
+          for (const t of letters) {
+            t.setX(x + t.width / 2);
+            x += t.width;
+            texts.push(t);
+          }
+          widths.push(total);
+        } else {
+          const t = this.add.text(0, 0, token, style).setOrigin(0.5);
           texts.push(t);
+          widths.push(t.width);
         }
-        widths.push(total);
-      } else {
-        const t = this.add.text(0, 0, token, style).setOrigin(0.5);
-        texts.push(t);
-        widths.push(t.width);
-      }
-      this.tokenTexts.push(texts);
-      this.tokenBoxes.push(this.add.container(0, 0, texts));
-    });
+        this.tokenTexts.push(texts);
+        this.tokenBoxes.push(this.add.container(0, 0, texts));
+      });
+    };
     // Each gap leaves room for either neighbour to grow when lit, so words never touch.
-    const gapAfter = (i: number) => gap + (LIT_SCALE - 1) * Math.max(widths[i]!, widths[i + 1]!);
-    let total = widths.reduce((n, w) => n + w, 0);
-    for (let i = 0; i < widths.length - 1; i++) total += gapAfter(i);
-    let x = -total / 2;
-    this.tokenBoxes.forEach((box, i) => {
-      box.setX(x + widths[i]! / 2);
-      x += widths[i]! + (i < widths.length - 1 ? gapAfter(i) : 0);
+    const gapBetween = (i: number, j: number) => size * 0.4 + (LIT_SCALE - 1) * Math.max(widths[i]!, widths[j]!);
+    /** Token indices per row, greedy, every row within `room` if it can be. */
+    const rowsOf = (): number[][] => {
+      const rows: number[][] = [[]];
+      let x = 0;
+      widths.forEach((w, i) => {
+        const row = rows[rows.length - 1]!;
+        const prev = row[row.length - 1];
+        const add = prev === undefined ? w : gapBetween(prev, i) + w;
+        if (prev !== undefined && (x + add) * 1.1 > room) {
+          rows.push([i]);
+          x = w;
+        } else {
+          row.push(i);
+          x += add;
+        }
+      });
+      return rows;
+    };
+    const rowWidth = (row: number[]) => row.reduce((n, i, k) => n + widths[i]! + (k ? gapBetween(row[k - 1]!, i) : 0), 0);
+    let rows: number[][];
+    for (;;) {
+      build();
+      rows = rowsOf();
+      const fits = rows.every((r) => rowWidth(r) * 1.1 <= room);
+      // One row down to 40 px; past that, more rows are better than smaller words.
+      if ((rows.length === 1 && fits) || (size <= 40 && fits && rows.length <= 3) || size <= 20) break;
+      size -= 4;
+    }
+    const lineH = size * 1.2;
+    // The cream panel is about the middle half of the banner art, a little
+    // below its centre (the pole and cords are above): a wrapped sentence gets
+    // a taller banner, with its rows centred on the panel.
+    this.bannerH = rows.length > 1 ? Math.max(140, (rows.length * lineH) / 0.5) : 140;
+    const panelY = rows.length > 1 ? this.bannerH * 0.06 : 0;
+    rows.forEach((row, r) => {
+      let x = -rowWidth(row) / 2;
+      const y = panelY + (r - (rows.length - 1) / 2) * lineH;
+      row.forEach((i, k) => {
+        if (k) x += gapBetween(row[k - 1]!, i);
+        this.tokenBoxes[i]!.setPosition(x + widths[i]! / 2, y);
+        x += widths[i]!;
+      });
     });
-    this.banner = this.add.container(GAME_WIDTH / 2, BANNER_Y, [bg, ...this.tokenBoxes]).setDepth(DEPTH.hud - 1);
+    const bg = this.add.image(0, 0, 'prop_banner').setDisplaySize(BANNER_W, this.bannerH);
+    this.banner = this.add.container(GAME_WIDTH / 2, BANNER_Y + (this.bannerH - 140) / 2, [bg, ...this.tokenBoxes]).setDepth(DEPTH.hud - 1);
     popIn(this, this.banner, 1);
   }
 
@@ -224,7 +262,7 @@ export class SentenceRoom extends Minigame {
     const box = this.tokenBoxes[Math.max(0, this.index)];
     const show = this.pass === 'read' && !this.locked && !!box;
     this.readDot.setVisible(show);
-    if (show) this.readDot.setPosition(this.banner.x + box.x, BANNER_Y + 82 + Math.sin(time / 180) * 4);
+    if (show) this.readDot.setPosition(this.banner.x + box.x, this.banner.y + this.bannerH / 2 + 12 + Math.sin(time / 180) * 4);
   }
 
   /** Say a line with the banner following it, word by word, over the first `n` tokens. */
@@ -318,7 +356,7 @@ export class SentenceRoom extends Minigame {
     }
     // Every press answered on the word itself: a little puff on the newly lit word.
     const box = this.tokenBoxes[Math.min(next, this.keyIndex)]!;
-    burst(this, this.banner.x + box.x, BANNER_Y, { count: 12, speed: 200 });
+    burst(this, this.banner.x + box.x, this.banner.y + box.y, { count: 12, speed: 200 });
     return true;
   }
 

@@ -20,6 +20,7 @@ import { hookState } from '../testHooks';
 import { Bubbles, type BubbleAnchor } from '../ui/Bubbles';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { Caption } from '../ui/Caption';
+import { fitText } from '../ui/fitText';
 
 export class VictoryScene extends Phaser.Scene {
   private controls!: Controls;
@@ -133,7 +134,8 @@ export class VictoryScene extends Phaser.Scene {
       hookState.recap.push({ word: w, picture: pic });
       const parts: Phaser.GameObjects.GameObject[] = [card];
       if (pic) parts.push(fitImage(this.add.image(0, -22, pic), 100, 100));
-      parts.push(this.add.text(0, 58, w.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '38px', color: '#1a1030' }).setOrigin(0.5));
+      // Shrunk to the card if the word is long (a name); never cut off.
+      parts.push(fitText(this.add.text(0, 58, w.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '38px', color: '#1a1030' }).setOrigin(0.5), 120, 50));
       const c = this.add.container(x, 345, parts).setDepth(DEPTH.hud);
       this.cards.push(c);
       c.setScale(0);

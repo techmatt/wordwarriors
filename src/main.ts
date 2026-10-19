@@ -19,7 +19,6 @@ import { TitleScene } from './scenes/TitleScene';
 import { VictoryScene } from './scenes/VictoryScene';
 import { installTestHooks } from './testHooks';
 
-installTestHooks();
 
 /**
  * A safety net for an unattended four-year-old. Phaser runs each frame from a
@@ -44,7 +43,7 @@ Phaser.Game.prototype.step = function guardedStep(this: Phaser.Game, time: numbe
   }
 };
 
-new Phaser.Game({
+const game = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
   width: GAME_WIDTH,
@@ -74,3 +73,6 @@ new Phaser.Game({
     Spelling,
   ],
 });
+
+// After the game exists: the hooks read its scenes (texts).
+installTestHooks(game);

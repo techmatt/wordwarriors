@@ -307,7 +307,11 @@ npm run art:pick -- <id> <n>
   `art-originals/<id>.png` and is cut into `public/art/<id>.png` by the same keying,
   trimming and palette shrink as `art:gen`. Commit the PNG afterwards. The first pick of
   an id saves the original as candidate 0 (`<id>-0.png`, and `<id>-0.game.png`, the
-  committed PNG byte for byte), so `art:pick -- <id> 0` puts it back.
+  committed PNG byte for byte), so `art:pick -- <id> 0` puts it back. A placeholder
+  has no original, so it has only `<id>-0.game.png`. Before item 020 a second pick
+  overwrote that file with the art then in the game: pic_zap's and pic_pow's candidate
+  0 is now item 018's promotion, not the painted placeholder (`art:placeholders`
+  repaints one).
 - Corrections for an id (what an earlier image got wrong: a likeness, a prop that
   crowds a face) are `NOTES` in `content/art/prompts.ts`; they end the prompt for both
   `art:gen` and `art:alts`.

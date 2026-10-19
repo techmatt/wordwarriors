@@ -7,6 +7,8 @@
  * virtual pad and `type()`, never through the keyboard diamond.
  */
 
+import Phaser from 'phaser';
+
 import { musicPlaying } from './audio/music';
 import { fxStats } from './fx/juice';
 import { virtualPad, type Button } from './input/Controls';
@@ -14,6 +16,7 @@ import { typeLetter } from './input/TextEntry';
 import { voiceBus } from './audio/VoiceBus';
 import { episode, currentStep } from './episode/Episode';
 import { progress } from './state/progress';
+import { GAME_HEIGHT, GAME_WIDTH } from './config';
 
 export interface SpotInfo {
   id: string;
@@ -77,7 +80,37 @@ export function hooksEnabled(): boolean {
   return import.meta.env.DEV || new URLSearchParams(location.search).has('hooks');
 }
 
-export function installTestHooks(): void {
+interface TextInfo {
+  scene: string;
+  text: string;
+  bounds: [number, number, number, number];
+  offscreen: boolean;
+}
+
+/**
+ * Every visible text in the running scenes, flagged when it pokes past the
+ * screen edge (item 020: nothing is ever cut off). Containers are walked;
+ * bounds are world bounds, so a bubble or ribbon's own transform counts.
+ */
+function visibleText(game: Phaser.Game): TextInfo[] {
+  const out: TextInfo[] = [];
+  const walk = (scene: Phaser.Scene, objs: Phaser.GameObjects.GameObject[], shown: boolean) => {
+    for (const o of objs) {
+      const vis = shown && (o as unknown as { visible?: boolean }).visible !== false && ((o as unknown as { alpha?: number }).alpha ?? 1) > 0;
+      if (o instanceof Phaser.GameObjects.Container) walk(scene, o.list, vis);
+      else if (o instanceof Phaser.GameObjects.Text && vis && o.text.trim()) {
+        const b = o.getBounds();
+        const slack = 2;
+        const offscreen = b.left < -slack || b.top < -slack || b.right > GAME_WIDTH + slack || b.bottom > GAME_HEIGHT + slack;
+        out.push({ scene: scene.scene.key, text: o.text, bounds: [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)], offscreen });
+      }
+    }
+  };
+  for (const scene of game.scene.getScenes(true)) walk(scene, scene.children.list, true);
+  return out;
+}
+
+export function installTestHooks(game: Phaser.Game): void {
   if (!hooksEnabled()) return;
   (window as unknown as { __ww: unknown }).__ww = {
     state: () => ({
@@ -103,5 +136,9 @@ export function installTestHooks(): void {
     resetProgress: () => progress.reset(),
     /** Tests can skip the 15+ s of speech in a long flow. */
     hush: () => voiceBus.hush(),
+    texts: () => visibleText(game),
+    /** Say any line; a bark needs somewhere to hang its bubble (`at`). */
+    say: (id: string, priority: 'instruction' | 'bark' = 'instruction', at?: { x: number; y: number }) =>
+      voiceBus.say(id, priority, at ? { ...at, bubbleOffset: 0, active: true } : undefined),
   };
 }

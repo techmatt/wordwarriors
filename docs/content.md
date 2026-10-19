@@ -38,12 +38,18 @@ One `CharacterSpec` in `ROSTER`:
     `reformed_<id>_<key>` in the villain's voice group.
   - `ultimate`: the evil one floors the heroes in Part 1 and is countered in Part 2.
   - `taunts`: `{ key, text }`, short, no interjections ("Ha!" is an SFX).
+    A homograph edge-tts reads the wrong way gets a `say` respelling (item 020: "Bow"
+    is said "Bough"; the Wind-up Mice have `counter.sayName` "Whined-up Mice"). Watch
+    for bow, wind, tear, read, live and lead.
 - `counter`: its named counter item, flavour for when the attic's drawn counter word is
   this item's own word (see "The counter sentence" below): `name`, `glyph`, `look`, `how`
   (`block | reflect | swallow | reveal | restore | shutdown | calm | scare`; `swallow`
   is a block whose item then sucks the whole ultimate inside it, Tiamat's Magic Hat), and:
   - `word`: the word the item is named for (HAT → Magic Hat);
-  - `words`: the parked Spell the Spell's two warm-ups and magic word, all CVC.
+  - optional `sayName`, for edge-tts, like a fighter's.
+- The parked Spell the Spell's words (two warm-ups and a magic word, all CVC) are not
+  on the roster: add the character's triple to `SPELL_WORDS` in
+  `content/phonics/spelling.ts` (item 020).
 - `arena`: a key of `ARENAS`.
 - `house`: its mood as a villain (see "A villain's house mood" below).
 

@@ -53,6 +53,7 @@ import { voiceBank } from '../voice/VoiceBank';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { Bubbles } from '../ui/Bubbles';
 import { Caption } from '../ui/Caption';
+import { fitText } from '../ui/fitText';
 import { cast, type BattleWorld, type Projectile, type Trap } from './abilities';
 import { Fighter, FLOOR_BOTTOM, FLOOR_TOP, initFromMinion, initFromSpec, type FighterInit } from './Fighter';
 import { ARENA_LEFT, ARENA_RIGHT, STEER } from './movement';
@@ -258,10 +259,13 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
         color: '#ffffff',
         stroke: `#${color.toString(16).padStart(6, '0')}`,
         strokeThickness: big ? 16 : 10,
+        align: 'center',
         shadow: { offsetX: 0, offsetY: 6, color: '#000000', blur: 0, fill: true, stroke: true },
       })
       .setOrigin(0.5)
       .setDepth(DEPTH.hud + 2);
+    // A long name wraps between words, then shrinks: never off the screen.
+    fitText(t, GAME_WIDTH - 80, big ? 300 : 200);
     this.bannerText = t;
     t.setScale(0.2);
     this.tweens.add({ targets: t, scale: 1, duration: 220, ease: 'Back.easeOut' });
