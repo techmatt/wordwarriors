@@ -259,9 +259,12 @@ export class Fighter {
       this.clearOverlay();
     }
     // Bubbled: rise and drift away from the fight, wobbling; popped: drop back down.
+    // A giant (Evil Tiamat) only bobs up a little and stays in her half, so her
+    // head stays on screen and she does not snap back when it pops.
     if (this.status?.kind === 'bubble') {
-      this.float += (110 - this.float) * (1 - Math.pow(0.15, dt));
-      this.x += (this.team === 'villain' ? 1 : -1) * 45 * dt;
+      const giant = this.init.size >= 2;
+      this.float += ((giant ? 45 : 110) - this.float) * (1 - Math.pow(0.15, dt));
+      if (!giant) this.x += (this.team === 'villain' ? 1 : -1) * 45 * dt;
     } else if (this.float > 0) {
       this.float = Math.max(0, this.float - 900 * dt);
     }
