@@ -5838,8 +5838,8 @@
   "id": "nar_julia_fight_spell_clash_retreat",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_julia_fight_spell_clash_finish",
@@ -7884,8 +7884,8 @@
   "id": "nar_ellie_fight_spell_clash_retreat",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_ellie_fight_spell_clash_finish",
@@ -9930,8 +9930,8 @@
   "id": "nar_seraphina_fight_spell_clash_retreat",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_seraphina_fight_spell_clash_finish",
@@ -11976,8 +11976,8 @@
   "id": "nar_dada_matt_fight_spell_clash_retreat",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_dada_matt_fight_spell_clash_finish",
@@ -14022,8 +14022,8 @@
   "id": "nar_dada_jason_fight_spell_clash_retreat",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_dada_jason_fight_spell_clash_finish",
@@ -16068,8 +16068,8 @@
   "id": "nar_elsa_fight_spell_clash_retreat",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_elsa_fight_spell_clash_finish",
@@ -18114,8 +18114,8 @@
   "id": "nar_anna_fight_spell_clash_retreat",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_anna_fight_spell_clash_finish",
@@ -20160,8 +20160,8 @@
   "id": "nar_jasmine_fight_spell_clash_retreat",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_jasmine_fight_spell_clash_finish",
@@ -22206,8 +22206,8 @@
   "id": "nar_ozymandias_fight_spell_clash_retreat",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_ozymandias_fight_spell_clash_finish",
@@ -24252,8 +24252,8 @@
   "id": "nar_jormungandr_fight_spell_clash_retreat",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_jormungandr_fight_spell_clash_finish",
@@ -26297,8 +26297,8 @@
   "id": "nar_smaug_fight_spell_clash_retreat",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_smaug_fight_spell_clash_finish",
@@ -28343,8 +28343,8 @@
   "id": "nar_tiamat_fight_spell_clash_retreat",
   "speaker": "tiamat",
   "group": "nar_tiamat",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_tiamat_fight_spell_clash_finish",
@@ -30389,8 +30389,8 @@
   "id": "nar_scar_fight_spell_clash_retreat",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_scar_fight_spell_clash_finish",
@@ -32435,8 +32435,8 @@
   "id": "nar_moriarty_fight_spell_clash_retreat",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_moriarty_fight_spell_clash_finish",
@@ -34481,8 +34481,8 @@
   "id": "nar_bavmorda_fight_spell_clash_retreat",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_bavmorda_fight_spell_clash_finish",
@@ -36527,8 +36527,8 @@
   "id": "nar_rilla_fight_spell_clash_retreat",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Her spell is too strong! Retreat!",
-  "say": "Her spell is too strong, retreat!"
+  "text": "That spell is too strong! Retreat!",
+  "say": "That spell is too strong, retreat!"
  },
  {
   "id": "nar_rilla_fight_spell_clash_finish",

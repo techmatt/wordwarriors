@@ -303,7 +303,10 @@ export class RaceStage extends BaseStage {
         k = 7;
       }
     }
-    tx = Phaser.Math.Clamp(tx, 90, this.maxX(f));
+    // Her stick sways her about her place in the pack.
+    const n = this.nudge(f);
+    tx = Phaser.Math.Clamp(tx + n.x, 90, this.maxX(f));
+    ty += n.y;
     const e = 1 - Math.exp(-k * dt);
     f.x += (tx - f.x) * e;
     f.y += (ty - f.y) * (1 - Math.exp(-3 * dt));

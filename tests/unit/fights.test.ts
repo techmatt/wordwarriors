@@ -80,6 +80,14 @@ test('fights: nothing a style shows or says has a move word or a reading word', 
   }
 });
 
+test('fights: a style\'s lines fit any villain it may be drawn against: no he or she', () => {
+  for (const f of FIGHTS) {
+    for (const l of Object.values(f.lines)) {
+      for (const w of `${l.text} ${l.say ?? ''}`.toLowerCase().split(/[^a-z]+/)) assert.ok(!['he', 'she', 'her', 'his', 'him'].includes(w), `${f.id}: "${l.text}"`);
+    }
+  }
+});
+
 test('fights: every style line is voiced for every narrator', () => {
   const ids = new Set(composeLines().map((l) => l.id));
   const narrators = new Set(composeLines().filter((l) => l.id.endsWith('_battle_start')).map((l) => l.speaker));

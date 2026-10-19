@@ -175,8 +175,10 @@ export class CookoffStage extends BaseStage {
     // Busy cooks: a little stirring sway at the counter.
     const sway = Math.sin(this.t * 3 + f.uid) * 8;
     const k = 1 - Math.pow(0.03, dt);
-    f.x += (to.x + sway - f.x) * k;
-    f.y += (to.y - f.y) * k;
+    // Her stick sways her about her station.
+    const n = this.nudge(f);
+    f.x += (to.x + sway + n.x - f.x) * k;
+    f.y += (to.y + n.y - f.y) * k;
     const bob = Math.sin(this.t * 2.5 + f.uid) * 6;
     const lift = f.init.style === 'fly' ? 34 + bob : f.init.style === 'hover' ? 16 + bob * 0.6 : 0;
     f.lift += (lift - f.lift) * k;

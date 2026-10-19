@@ -53,7 +53,6 @@ const VILLAIN_SPOT: Pt = { x: 975, y: 570 };
  */
 const METER = { x: 400, y: 76, w: 480, h: 22 };
 /** How far her stick nudges her hero off her spot: she can still sway about while she casts. */
-const NUDGE = { x: 60, y: 40 };
 const RAINBOW = [0xff4a6a, 0xff9a3c, 0xffd23f, 0x5aff8a, 0x7ad9ff, 0xb04aff];
 const GOLD = 0xffd23f;
 
@@ -196,11 +195,9 @@ export class ClashStage extends BaseStage {
     // The losing side gives ground a little; knockback from hits eases back.
     const give = f.team === 'hero' ? Math.min(0, this.lead) * 45 : Math.max(0, this.lead) * 45;
     // Her stick still sways her hero about her spot, so the pad always answers.
-    const me = f === this.host.heroes[0] && (this.host.phase === 'fight' || this.host.phase === 'combo');
-    const sx = me ? this.host.stick.x * NUDGE.x : 0;
-    const sy = me ? this.host.stick.y * NUDGE.y : 0;
-    f.x += (spot.x + give + sx - f.x) * k;
-    f.y += (spot.y + sy - f.y) * k;
+    const n = this.nudge(f);
+    f.x += (spot.x + give + n.x - f.x) * k;
+    f.y += (spot.y + n.y - f.y) * k;
     f.vx = 0;
     f.vy = 0;
     // Height: flyers and hoverers float as they would; the villain's own scare leap is left alone.

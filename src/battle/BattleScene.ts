@@ -251,6 +251,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
 
   focus(x: number, y: number, zoom: number, holdMs: number): void {
     const cam = this.cameras.main;
+    // One camera move at a time: a punch or an earlier push still running would fight this one.
+    this.tweens.killTweensOf(cam);
     // Pan and zoom on the scene clock, so slow-mo and the choice freeze hold it too.
     this.tweens.add({ targets: cam, zoom, scrollX: (x - GAME_WIDTH / 2) * (1 - 1 / zoom), scrollY: (y - GAME_HEIGHT / 2) * (1 - 1 / zoom), duration: 300, ease: 'Sine.easeInOut' });
     this.tweens.add({ targets: cam, zoom: 1, scrollX: 0, scrollY: 0, delay: 300 + holdMs, duration: 400, ease: 'Sine.easeInOut' });

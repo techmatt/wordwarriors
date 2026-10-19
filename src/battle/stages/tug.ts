@@ -165,10 +165,12 @@ export class TugStage extends BaseStage {
     // Each side rocks back on its own beat: the heroes on the heave, the villain on the off-beat.
     const pull = Math.max(0, Math.sin(this.heave + (villain ? Math.PI : 0)));
     const rock = (villain ? 1 : -1) * pull * (10 + this.boost * 16);
-    const tx = Phaser.Math.Clamp(home.x - this.lead * SHIFT + (this.stumble.get(f.uid) ?? 0) + rock, ARENA_LEFT, ARENA_RIGHT);
+    // Her stick sways her a little on her end of the rope.
+    const n = this.nudge(f);
+    const tx = Phaser.Math.Clamp(home.x - this.lead * SHIFT + (this.stumble.get(f.uid) ?? 0) + rock + n.x, ARENA_LEFT, ARENA_RIGHT);
     const k = 1 - Math.exp(-5 * dt);
     f.x += (tx - f.x) * k;
-    f.y += (home.y - f.y) * k;
+    f.y += (home.y + n.y - f.y) * k;
     f.vx = 0;
     f.vy = 0;
     // Flyers and hoverers pull from the air, bobbing.
@@ -244,7 +246,8 @@ export class TugStage extends BaseStage {
       : { x: f.x + f.height * 0.2, y: f.y - f.lift - f.hop - f.height * 0.42 };
     // Off on a dash or her own walk, the rope stays near its place; a beat's fling
     // carries it all the way, and a floored puller keeps hold where it landed.
-    if (!this.fling && !f.floored) {
+    // A stunned villain is not steered back to its place (knocked off it, it keeps hold where it is).
+    if (!this.fling && !f.floored && !(villain && f.status?.kind === 'stun')) {
       const i = this.placeOf(f) ?? 0;
       const sx = this.slot(f, i).x - this.lead * SHIFT + (villain ? -f.height * 0.28 : f.height * 0.2);
       raw.x = Phaser.Math.Clamp(raw.x, sx - 140, sx + 140);
@@ -501,7 +504,7 @@ export class TugStage extends BaseStage {
     const sy = team.length ? team.reduce((a, f) => a + f.y, 0) / team.length : 570;
     this.splash(sx, sy, 1.6);
     for (const f of team) this.splash(f.x, f.y, 0.6);
-    this.host.focus(sx, sy - 60, 1.25, 450);
+    this.host.focus(sx, sy - 60, 1.25, 100);
     sfxBoom(3);
     floatText(this.scene, sx, sy - 220, 'SPLASH!', '#7ad9ff', 70);
     await this.host.wait(0.9);
@@ -550,7 +553,6 @@ export class TugStage extends BaseStage {
     if (v.active) {
       v.lift = 0;
       this.splash(v.x, v.y, 2);
-      this.host.focus(v.x, v.y - 80, 1.2, 380);
       floatText(this.scene, v.x, v.top - 40, 'SPLASH!', '#7ad9ff', 84);
     }
     sfxBoom(3);

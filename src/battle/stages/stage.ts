@@ -91,6 +91,9 @@ export interface FightStage {
   info(): Record<string, unknown>;
 }
 
+/** How far her stick sways her hero about a contest's spot (px across, down). */
+const NUDGE = { x: 60, y: 40 };
+
 /** The brawl: the battle as it always was. Contests extend this. */
 export class BaseStage implements FightStage {
   readonly anchored: boolean = false;
@@ -99,6 +102,17 @@ export class BaseStage implements FightStage {
 
   protected get scene(): Phaser.Scene {
     return this.host.stage;
+  }
+
+  /**
+   * Her stick's sway for her hero while the fight runs: a contest that places
+   * her adds it to her spot, so the pad always answers (the brawl's stick
+   * walks her anywhere). Zero for everybody else and outside the fight.
+   */
+  protected nudge(f: Fighter): { x: number; y: number } {
+    const h = this.host;
+    if (f !== h.heroes[0] || (h.phase !== 'fight' && h.phase !== 'combo')) return { x: 0, y: 0 };
+    return { x: h.stick.x * NUDGE.x, y: h.stick.y * NUDGE.y };
   }
 
   setup(): void {}
