@@ -55,7 +55,8 @@ export type AbilityKind =
   | 'grid' // a lattice of lasers across the arena
   | 'orbit'; // things (Ellie's swords) circle the caster, hitting what they pass, then fly at the enemy
 
-export type Status = 'freeze' | 'pig' | 'stun' | 'burn';
+/** `bubble`: caught in a giant bubble that floats up and away, then pops and drops it. */
+export type Status = 'freeze' | 'pig' | 'stun' | 'burn' | 'bubble';
 
 export interface AbilitySpec {
   id: string;
@@ -75,7 +76,8 @@ export interface AbilitySpec {
   glyph?: string;
   /**
    * An art id drawn as the projectile, falling or orbiting thing instead of a
-   * glyph (`prop_silver_sword`). Drawn point up; it falls point first.
+   * glyph (`prop_silver_sword`). Drawn point up; it falls point first. Built-in
+   * fx textures count too: `fx_bubble` is a see-through bubble tinted `color`.
    */
   art?: string;
   /**

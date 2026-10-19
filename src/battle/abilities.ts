@@ -116,13 +116,16 @@ function pickTargets(w: BattleWorld, f: Fighter, target: Fighter | null, n: numb
 function artObj(w: BattleWorld, ab: AbilitySpec, x: number, y: number, h: number): Phaser.GameObjects.Image | null {
   if (!ab.art || !w.stage.textures.exists(ab.art)) return null;
   const img = w.stage.add.image(x, y, ab.art).setDepth(DEPTH.fx);
+  // A built-in fx texture (fx_bubble) is white: the ability's colours tint it.
+  if (ab.art.startsWith('fx_')) img.setTint(Math.random() < 0.5 ? ab.color : (ab.color2 ?? ab.color));
   return img.setScale(h / Math.max(1, img.height));
 }
 
 /** A projectile object: the ability's art, else an emoji glyph, else a glowing orb. */
 function projectileObj(w: BattleWorld, ab: AbilitySpec, x: number, y: number, mult: number) {
   const s = w.stage;
-  const art = artObj(w, ab, x, y, 64 * Math.sqrt(mult));
+  // Bubbles are giant ones.
+  const art = artObj(w, ab, x, y, (ab.art === 'fx_bubble' ? 88 : 64) * Math.sqrt(mult));
   if (art) return art;
   if (ab.glyph) {
     return s.add
@@ -744,7 +747,7 @@ const grid: Cast = (w, f, ab, _target, mult) => {
 };
 
 /**
- * Ellie's swords: `count` of them pop out around the caster and circle her for
+ * Ellie's swords (or bubbles): `count` of them pop out around the caster and circle her for
  * `duration` seconds (a flat ellipse, the back half behind her), cutting
  * whatever they pass; with `guard` she is shielded while they spin. Then the
  * whole ring is flung at the enemy, spinning, as homing projectiles.
@@ -780,8 +783,8 @@ const orbit: Cast = (w, f, ab, target, mult) => {
       const a = a0 + (i / n) * Math.PI * 2;
       sw.x = f.cx + Math.cos(a) * radius;
       sw.y = f.cy + Math.sin(a) * radius * 0.5;
-      // Point outwards and lean with the spin; the back half goes behind her.
-      sw.rotation = a + Math.PI / 2 + 0.5;
+      // Point outwards and lean with the spin (an upright bubble does not); the back half goes behind her.
+      if (!ab.upright) sw.rotation = a + Math.PI / 2 + 0.5;
       const behind = Math.sin(a) < 0;
       sw.setDepth(behind ? f.y - 2 : DEPTH.fx);
       glints[i]?.setDepth(behind ? f.y - 3 : DEPTH.fx - 1);
@@ -850,7 +853,7 @@ const orbit: Cast = (w, f, ab, target, mult) => {
         life: 2.4,
         from: f,
         trail: tr,
-        spinRate: 18,
+        spinRate: ab.upright ? 0 : 18,
       });
     });
   });

@@ -17,6 +17,8 @@ export const TEX = {
   smoke: 'fx_smoke',
   streak: 'fx_streak',
   pixel: 'fx_pixel',
+  /** A see-through soap bubble, white so a tint colours it (Ellie's bubbles; AbilitySpec.art `fx_bubble`). */
+  bubble: 'fx_bubble',
 } as const;
 
 export function makeTextures(scene: Phaser.Scene): void {
@@ -82,5 +84,18 @@ export function makeTextures(scene: Phaser.Scene): void {
   make(TEX.pixel, 4, 4, (g) => {
     g.fillStyle(0xffffff, 1);
     g.fillRect(0, 0, 4, 4);
+  });
+
+  make(TEX.bubble, 96, 96, (g) => {
+    g.fillStyle(0xffffff, 0.16);
+    g.fillCircle(48, 48, 44);
+    g.lineStyle(7, 0xffffff, 0.3);
+    g.strokeCircle(48, 48, 40);
+    g.lineStyle(3, 0xffffff, 0.95);
+    g.strokeCircle(48, 48, 45);
+    // The shine: a bright crescent top left and a dot below it.
+    g.fillStyle(0xffffff, 0.9);
+    g.fillEllipse(32, 28, 20, 11);
+    g.fillCircle(22, 42, 4);
   });
 }

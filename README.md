@@ -93,8 +93,11 @@ A giant villain (roster `size` 2 or more: Evil Tiamat) is staged as one: she hol
 own half of the arena instead of walking over the heroes (`stomp` in
 `src/battle/movement.ts`), steps to the front for her ultimate so growing fills the
 screen floor to top, and her ultimate also sweeps the whole arena (`giantSweep`).
-Ellie's swords are `prop_silver_sword`, drawn by the `orbit` ability kind and by any
-ability with `art` set, so they show with whatever Ellie image is in the game.
+Ellie fights with bubbles (item 016): giant bubbles (BIG, the spell she teaches), a
+Bubble Trap that floats an enemy away (POP), a bubble shield and the Mega Bubble Storm,
+all drawn with the generated `fx_bubble` texture, plus one sword move, Spinny Swords
+(ZIP), whose `prop_silver_sword` the `orbit` kind draws round her, so they show with
+whatever Ellie image is in the game.
 
 Grown-ups page (progress per sound and word): **F9**, or hold **LB + RB** for two
 seconds on the title screen. On that page, **F8** twice erases all progress.

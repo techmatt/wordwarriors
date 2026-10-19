@@ -83,6 +83,18 @@ assets.push({
   glyph: '🥄',
   palette: julia.palette,
 });
+// Her name-free face card in that form (item 016): the picture for reading
+// JULIA in a chef episode (content/battle/forms.ts).
+assets.push({
+  id: 'face_julia_chef',
+  kind: 'character',
+  w: 200,
+  h: 200,
+  content: `Julia the little chef's face, a friendly head-and-shoulders portrait of ${julia.look.split(', in a ')[0]}, in a white double-breasted chef's jacket with a small red neckerchief and a tall puffy white chef's hat. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
+  label: '',
+  glyph: '🥄',
+  palette: julia.palette,
+});
 
 for (const m of Object.values(MINIONS)) {
   assets.push({
@@ -206,9 +218,9 @@ const PROPS: [string, number, number, string, string, string?][] = [
   ['front_door', 200, 290, "A big friendly front door of a house: painted red, a round brass knob, a little window at the top, a doormat. Closed. No house number or text.", '🚪'],
   ['magic_circle', 260, 110, 'A glowing rune circle painted on the floor, seen at an angle (a flat ellipse), soft blue-violet light rising from it, little stars. Abstract runes only, no letters.', '✨'],
   ['bag', 120, 130, 'A little adventure backpack for a child: rounded, bright, a buckle flap, a star patch. No text.', '🎒'],
-  // Ellie's summoned sword (item 014): the game spins, flings and rains it, so
-  // it is drawn alone, upright, point at the top.
-  ['silver_sword', 80, 220, 'A single small magic silver sword standing perfectly upright, point straight up at the top and the hilt at the bottom, seen flat side-on: a shining polished silver blade with a soft pale-blue glow along its edge, a little rounded silver crossguard, a pink-wrapped grip and a round pink gem on the pommel, a few tiny silver sparkles. Toy-like, friendly and magical, not a real weapon. Just the sword, nothing else.', '🗡️'],
+  // Ellie's summoned sword (item 014): the game spins and flings it, so it is
+  // drawn alone, upright, point at the top.
+  ['silver_sword', 80, 220, 'A single small magic sword standing perfectly upright, point straight up at the top and the hilt at the bottom, seen flat side-on: a shining icy pale-blue crystal blade with a bright edge, a silver crossguard with round ends and a pink gem at its centre, a pink-wrapped grip and a round pink gem on the pommel, a few tiny pale-blue sparkles. Toy-like, friendly and magical, not a real weapon. Just the sword, nothing else.', '🗡️'],
   ['scroll', 520, 160, 'A wide unrolled magic scroll, rolled ends with wooden knobs, glowing edges, blank parchment in the middle for a word painted by the game. NO TEXT.', '📜'],
 ];
 for (const [id, w, h, content, glyph] of PROPS) {

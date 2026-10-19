@@ -31,7 +31,7 @@ const FAMILY_ART = ['julia', 'ellie', 'dada_matt', 'dada_jason'].flatMap((c) => 
 const GLOWING_ITEMS = ['cozy_bed', 'golden_nut', 'giant_log', 'cocoa_cup', 'cuddly_cat', 'flappy_bat', 'brave_rat', 'tickle_fox', 'gold_bag', 'glitch_bug', 'bounce_cap'].map((i) => `item_${i}`);
 // Tiamat (item 013) is purple and silver with a glow: no green of her own.
 const TIAMAT_ART = ['char_tiamat_good', 'char_tiamat_evil', 'face_tiamat', 'item_magic_hat', 'decal_tiamat_scale', 'decal_tiamat_banner'];
-export const NO_GREEN = new Set([...FAMILY_ART, ...TIAMAT_ART,'char_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block']);
+export const NO_GREEN = new Set([...FAMILY_ART, ...TIAMAT_ART, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block']);
 
 /**
  * Likeness references for the family (Matt, 2026-10-18): a photo in the
@@ -48,9 +48,9 @@ export const REFS: Record<string, { photo: string; box: [number, number, number,
   dada_jason: { photo: 'dada_jason_with_ellie.png', box: [60, 160, 600, 620], who: 'the man with glasses (not the toddler)' },
 };
 
-/** The character whose likeness reference an asset id uses, if any: `char_<c>_<good|evil|outfit>` and `face_<c>`. */
+/** The character whose likeness reference an asset id uses, if any: `char_<c>_<good|evil|outfit>` and `face_<c>[_<outfit>]`. */
 export function refFor(id: string): string | undefined {
-  return Object.keys(REFS).find((c) => id === `face_${c}` || new RegExp(`^char_${c}_[a-z]+$`).test(id));
+  return Object.keys(REFS).find((c) => new RegExp(`^face_${c}(_[a-z]+)?$`).test(id) || new RegExp(`^char_${c}_[a-z]+$`).test(id));
 }
 
 /**
@@ -75,15 +75,16 @@ export const NOTES: Record<string, string> = {
  * which the row quotes by itself).
  */
 export const PICK_NOTES: Record<string, string> = {
-  char_tiamat_good: 'New character (item 013). `current` is candidate 1, promoted by item 013 (widest wings and fullest body: reads as the giant she is).',
-  char_tiamat_evil: '`current` is candidate 2, promoted by item 013: 1 and 3 drew a woman\'s bust, wrong for this game; 2 keeps the plain dragon belly of the good version.',
+  char_tiamat_good: "`current` is candidate 3, Matt's pick (item 016): wings spread open, hands clasped over her belly. 0 is item 013's first promotion (candidate 1).",
+  char_tiamat_evil: "`current` is candidate 3, Matt's pick (item 016): gold collar and cuffs, one hand on her hip. 0 is item 013's first promotion (candidate 2, the plainest dragon belly).",
   face_tiamat: '`current` is candidate 2, promoted by item 013: the only one without a bust shape.',
-  item_magic_hat: 'Evil Tiamat\'s counter (SCARED OF THE HAT). `current` is candidate 2, promoted by item 013 (cleanest hat shape at game size). All three drew a rain storm, not her purple fire storm.',
+  item_magic_hat: 'Evil Tiamat\'s counter (SCARED OF THE HAT). `current` is candidate 1, Matt\'s pick (item 016): grey clouds, rain and lightning swirling down into its golden top. 0 is item 013\'s first promotion (candidate 2). All three drew a rain storm, not her purple fire storm.',
   decal_tiamat_scale: '`current` is candidate 1, promoted by item 013.',
   decal_tiamat_banner: '`current` is candidate 1, promoted by item 013 (2 lies crumpled on the floor and reads less clearly).',
-  prop_silver_sword: "New id (item 014): Ellie's summoned sword, which she spins round herself, flings and rains in the fight; it shows with any Ellie image. `current` is candidate 2, promoted by item 014 (the cleanest silver at the small size the game spins it at; 1 and 3 are icier blue).",
-  char_ellie_good: "`current` is Matt's pick (item 009), bubble wand and all; it stays the game's art. 4, 5 and 6 are new (item 014): Ellie summoning her silver swords, drawn for comparison and not promoted. Pick one only if the swords should be in her picture too; the game draws her swords round her either way. 0 to 3 are item 009's bubble-wand candidates.",
-  char_julia_chef: 'New id (item 012), Julia as a chef for a future scenario; no scene uses it yet. `current` is candidate 3, promoted by item 012 (closest face and fringe to her other art, pink shoes like hers).',
+  prop_silver_sword: "Ellie's one sword move (Spinny Swords, item 016): she spins them round herself, then flings them; it shows with any Ellie image. `current` is candidate 3, Matt's pick (item 016): an icy-blue crystal blade, pink gems and grip. 0 is item 014's first promotion (candidate 2, plain silver).",
+  char_ellie_good: "`current` is candidate 0, the original bubble-wand Ellie, Matt's pick (item 016); she fights with bubbles and one sword move, and the game draws her swords round her when she uses it. 1 to 3 are item 009's bubble-wand candidates; 4 to 6 (item 014) summon silver swords.",
+  char_julia_chef: 'Julia in her chef form (content/battle/forms.ts): every scene after she wakes uses it when Dada Jason is the ally. `current` is candidate 3, promoted by item 012 (closest face and fringe to her other art, pink shoes like hers).',
+  face_julia_chef: "New id (item 016): chef Julia's name-free face card, the picture for reading JULIA in a chef episode. `0` is the painted placeholder.",
   char_anna_evil: "`current` is the old copper-curls design, unlike good Anna and her face card (the item 009 redesign: dark ponytail, plum and magenta). Her look in content/battle/roster.ts describes `current`; a candidate drawn from it is copper-curled too.",
   room_bedroom_julia: 'Redrawn with no loose toys of its own: the first one painted a teddy and a rocket that doubled the toys the game puts on the floor.',
   decal_rilla_footprint: 'Redrawn as one giant robot-gorilla footprint: the earlier try still read as bare human feet.',

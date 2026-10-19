@@ -120,18 +120,22 @@ The named items (the sentence column is how they read when their word comes up):
 ## An ability (`AbilitySpec`)
 
 `{ id, name, kind, cooldown, color, color2?, power, count?, glyph?, status?, minion?,
-duration?, homing?, word?, shout?, art?, guard? }`. Kinds: `bolt beam cone lightning
+duration?, homing?, word?, shout?, art?, upright?, guard? }`. Kinds: `bolt beam cone lightning
 slam spin dash summon polymorph freeze teleport clones trap rain shield heal grow coil
 eclipse wave grid orbit` (one function each in `src/battle/abilities.ts`). `power` 1–3
 scales damage, particles and shake. `shout: true` plays the "Ha!" SFX. `art` is an art
 id drawn instead of a glyph for bolts, rain and orbits (Ellie's `prop_silver_sword`,
-drawn point up); `orbit` rings the caster with `count` of them for `duration` seconds,
-then flings them, and `guard: true` shields her while they spin.
+drawn point up), or a built-in fx texture: `fx_bubble` is a see-through bubble tinted
+the ability's `color`/`color2` (Ellie's bubbles); `upright: true` keeps it from
+spinning or tilting. `orbit` rings the caster with `count` of them for `duration` seconds,
+then flings them, and `guard: true` shields her while they spin. Statuses: `freeze pig
+stun burn bubble`; `bubble` (Ellie's Bubble Trap) floats the target up and away in a
+giant bubble for `duration` seconds, then pops it.
 
 A minion is a `MinionSpec` in `MINIONS` (one ability, its own style).
 A team combo is a `ComboSpec` in `COMBOS` (`pair` of character ids + an ability, and
 optionally `second`, what the second of the pair fires instead: Julia's stars and
-Ellie's sword ring in Star Sword Spin); any other pair uses `DEFAULT_COMBO`.
+Ellie's bubble ring in Star Bubble Spin); any other pair uses `DEFAULT_COMBO`.
 
 ## Words (`content/phonics/words.ts`)
 

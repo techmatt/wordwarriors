@@ -20,7 +20,7 @@ part 2** (back at the hub, a secret door to the attic: the villain's counter sen
 fetches the counter-item) → **battle part 2** (the counter beats the ultimate) → victory
 with a reading recap. A journey map shows before each battle and the victory.
 Testing defaults (`EPISODE_DEFAULTS` in `src/config.ts`): hero Julia, helper Ellie
-(she fights with summoned silver swords), villain Evil Tiamat (a giant; her named counter is the
+(she fights with bubbles and one summoned-sword move), villain Evil Tiamat (a giant; her named counter is the
 Magic Hat, shown when the bag draws HAT); the pick screens and the random villain are behind that config.
 **Parked** (code kept, out of the episode, reachable by `?scene=`): Sound → Letter,
 Blend Path, Word → Picture, Spell the Spell, the alarm and the camp retreat.

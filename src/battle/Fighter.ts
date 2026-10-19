@@ -16,8 +16,9 @@
 import Phaser from 'phaser';
 
 import type { AbilitySpec, FighterSpec, MinionSpec, MoveStyle, Status } from '../../content/battle/types';
+import { sfxPoof } from '../audio/sfx';
 import { TEX } from '../fx/textures';
-import { fitImage } from '../fx/juice';
+import { burst, fitImage } from '../fx/juice';
 
 export type Team = 'hero' | 'villain';
 
@@ -115,6 +116,8 @@ export class Fighter {
   busyUntil = 0;
   cooldowns = new Map<string, number>();
   status: { kind: Status; until: number } | null = null;
+  /** Height the `bubble` status has floated it up to; drops back to 0 when it pops. */
+  private float = 0;
   shieldUntil = 0;
   growUntil = 0;
   /** Takes no damage (counter-item moments, cutscenes). */
@@ -169,10 +172,10 @@ export class Fighter {
     return this.x;
   }
   get cy(): number {
-    return this.y - this.lift - this.height * 0.5 * this.scaleMul;
+    return this.y - this.lift - this.float - this.height * 0.5 * this.scaleMul;
   }
   get top(): number {
-    return this.y - this.lift - this.height * this.scaleMul;
+    return this.y - this.lift - this.float - this.height * this.scaleMul;
   }
   get scaleMul(): number {
     return this.growUntil > this.now ? 1.6 : 1;
@@ -182,7 +185,7 @@ export class Fighter {
   }
   /** For bubbles. */
   get bubbleOffset(): number {
-    return this.height * this.scaleMul + this.lift;
+    return this.height * this.scaleMul + this.lift + this.float;
   }
 
   /** Can it act (move, cast) right now? */
@@ -210,6 +213,14 @@ export class Fighter {
       this.scene.tweens.add({ targets: stars, angle: 360, duration: 900, repeat: -1 });
       this.overlay = stars;
       this.body.add(stars);
+    } else if (kind === 'bubble') {
+      // Ellie's Bubble Trap: a giant pink bubble round the whole card, which
+      // floats it up and away (updateVisual) until it pops.
+      const d = this.height * 1.15;
+      const bubble = this.scene.add.image(0, -this.height * 0.5, TEX.bubble).setTint(0xffb8e6).setScale(d / 96);
+      this.scene.tweens.add({ targets: bubble, scaleX: (d / 96) * 1.06, scaleY: (d / 96) * 0.95, duration: 420, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+      this.overlay = bubble;
+      this.body.add(bubble);
     }
   }
 
@@ -240,8 +251,19 @@ export class Fighter {
   updateVisual(now: number, dt: number): void {
     this.now = now;
     if (this.status && this.status.until <= now) {
+      if (this.status.kind === 'bubble') {
+        burst(this.scene, this.x, this.y - this.float - this.height * 0.5, { count: 24, speed: 260, colors: [0xffb8e6, 0x9ad8ff, 0xffffff] });
+        sfxPoof();
+      }
       this.status = null;
       this.clearOverlay();
+    }
+    // Bubbled: rise and drift away from the fight, wobbling; popped: drop back down.
+    if (this.status?.kind === 'bubble') {
+      this.float += (110 - this.float) * (1 - Math.pow(0.15, dt));
+      this.x += (this.team === 'villain' ? 1 : -1) * 45 * dt;
+    } else if (this.float > 0) {
+      this.float = Math.max(0, this.float - 900 * dt);
     }
     if (this.shieldBubble && this.shieldUntil <= now) {
       this.scene.tweens.killTweensOf(this.shieldBubble);
@@ -263,7 +285,8 @@ export class Fighter {
     }
     this.bobPhase += dt * (this.floored ? 1.5 : 5);
     const bobAmt = this.floored ? 0 : Math.sin(this.bobPhase) * 4;
-    this.body.y = -this.lift - this.hop + bobAmt;
+    const drift = this.status?.kind === 'bubble' ? Math.sin(this.bobPhase * 0.6) * 8 : 0;
+    this.body.y = -this.lift - this.hop - this.float - drift + bobAmt;
     const s = this.scaleMul;
     this.shadow.setScale(Math.max(0.4, 1 - this.lift / 400) * s);
     // Sprites move only by bob and squash/scale (Matt, 2026-10-18), so a "spin"

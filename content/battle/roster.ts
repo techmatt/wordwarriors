@@ -190,30 +190,31 @@ export const ROSTER: CharacterSpec[] = [
   },
   {
     id: 'ellie',
-    description: "Julia's toddler sister: small, fast, and she summons spinning silver swords.",
+    description: "Julia's toddler sister: small, fast and full of giant bubbles, with one trick of spinning silver swords.",
     arena: 'nursery',
     good: {
-      // Her swords are their own art (prop_silver_sword), summoned in the fight,
-      // so they show with any Ellie image; her picked art keeps its bubble wand.
-      displayName: 'Ellie', trail: { tint: [0xe8eef8, 0xff9ad5], shape: 'spark' }, look: 'a cheerful chubby toddler girl of about two: a fine, wispy pale strawberry-blonde bob (very light blonde with a faint peach tint, not golden or orange) with a straight fringe, big blue eyes, chubby rosy cheeks, fair skin, in cosy cream footie pyjamas with rust-orange and brown stripes, one chubby hand raised high summoning three small shining silver swords that float and spin in a ring around her, little silver sparkles trailing off them',
-      palette: [0xff9ad5, 0xe8eef8], glyph: '🗡️', style: 'dodge', speed: 230, size: 0.8, hp: 90,
+      // Bubbles are the fx_bubble texture (src/fx/textures.ts), tinted; her one
+      // sword move draws prop_silver_sword round her, so it shows with any Ellie image.
+      displayName: 'Ellie', trail: { tint: [0x9ad8ff, 0xff9ad5], shape: 'spark' }, look: 'a cheerful chubby toddler girl of about two: a fine, wispy pale strawberry-blonde bob (very light blonde with a faint peach tint, not golden or orange) with a straight fringe, big blue eyes, chubby rosy cheeks, fair skin, in cosy cream footie pyjamas with rust-orange and brown stripes, waving a giant bubble wand with big shiny pink-and-blue bubbles floating around her',
+      palette: [0xff9ad5, 0x9ad8ff], glyph: '🍼', style: 'dodge', speed: 230, size: 0.8, hp: 90,
       abilities: [
-        // ZIP first: it is the spell Ellie teaches Julia in the hub (spellFor
-        // takes the first word Julia has not got), so her first move is a sword.
-        ab('sword_fling', 'Sword Fling', 'bolt', 2.4, 0xe8eef8, 1, { count: 3, art: 'prop_silver_sword', homing: true, color2: 0x9ad8ff, word: 'zip', shout: true }),
-        ab('spinny_swords', 'Spinny Swords', 'orbit', 6, 0xe8eef8, 2, { count: 5, art: 'prop_silver_sword', duration: 1.6, color2: 0xff9ad5, word: 'bam' }),
-        ab('sword_shield', 'Sword Shield', 'orbit', 10, 0xcfe8ff, 1, { count: 6, art: 'prop_silver_sword', duration: 3.5, guard: true, color2: 0x9ad8ff }),
+        // BIG first: it is the spell Ellie teaches Julia in the hub (spellFor
+        // takes the first word Julia has not got; she already has POP and HOP).
+        ab('giant_bubbles', 'Giant Bubbles', 'bolt', 2.4, 0x9ad8ff, 1, { count: 4, art: 'fx_bubble', upright: true, homing: true, color2: 0xff9ad5, word: 'big' }),
+        ab('bubble_trap', 'Bubble Trap', 'bolt', 7, 0xff9ad5, 2, { count: 2, art: 'fx_bubble', upright: true, homing: true, status: 'bubble', duration: 2.5, color2: 0x9ad8ff, word: 'pop' }),
+        ab('bubble_shield', 'Bubble Shield', 'shield', 10, 0x9ad8ff, 1, { duration: 4 }),
         ab('peekaboo', 'Peekaboo', 'teleport', 6, 0xffd23f, 2, { word: 'hop' }),
-        ab('giant_bubbles', 'Giant Bubbles', 'bolt', 2.4, 0x9ad8ff, 1, { count: 4, homing: true, word: 'pop' }),
+        // Her one sword move (item 014's swords): a ring round her, then flung.
+        ab('spinny_swords', 'Spinny Swords', 'orbit', 7, 0xcfe8ff, 2, { count: 5, art: 'prop_silver_sword', duration: 1.6, color2: 0xff9ad5, word: 'zip', shout: true }),
       ],
-      ultimate: ab('sword_storm', 'Super Sword Storm', 'rain', 0, 0xe8eef8, 3, { count: 30, art: 'prop_silver_sword', color2: 0xff9ad5 }),
+      ultimate: ab('bubble_storm', 'Mega Bubble Storm', 'rain', 0, 0x9ad8ff, 3, { count: 30, art: 'fx_bubble', upright: true, color2: 0xff9ad5 }),
       taunts: [
         { key: 'me', text: 'Me do it!' },
         { key: 'again', text: 'Again, again!' },
         { key: 'strong', text: 'Ellie strong!' },
-        { key: 'swords', text: 'My swords go round!' },
-        { key: 'swish', text: 'Swishy swishy!' },
+        { key: 'peekaboo', text: 'Peekaboo!' },
         { key: 'look', text: 'Julia, look at me!' },
+        { key: 'bubbles', text: 'More bubbles!' },
       ],
     },
     evil: {
@@ -758,7 +759,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A giant purple dragon queen, so big she fills the arena, who barely needs to move.',
     arena: 'castle',
     good: {
-      displayName: 'Tiamat', trail: { tint: [0xc77dff, 0xe0e0ff], shape: 'star' }, look: 'a giant, regal, friendly female dragon queen of original design: a huge plump pear-shaped body sitting upright like a soft purple hill, deep violet scales with a pale lilac pearly belly, a short graceful neck, a round gentle face with big kind golden eyes and long lashes, a warm closed-mouth smile, three short rounded silver horns curving back like a tiara, a small silver crown with a single violet gem, broad wings folded around her shoulders like a royal cloak with lilac membranes, a thick curled tail ending in a silver heart-shaped tip, a sprinkle of silver star freckles on her cheeks. Majestic, huggable and grandmotherly-kind, not sleek',
+      displayName: 'Tiamat', trail: { tint: [0xc77dff, 0xe0e0ff], shape: 'star' }, look: 'a giant, regal, friendly female dragon queen of original design: a huge plump pear-shaped body sitting upright like a soft purple hill, deep violet scales with a pale lilac pearly belly, a short graceful neck, a round gentle face with big kind golden eyes and long lashes, a warm closed-mouth smile, three short rounded silver horns curving back like a tiara, a small silver crown with a single violet gem, broad wings spread open behind her shoulders with lilac membranes, her little clawed hands clasped together over her belly, a thick curled tail ending in a silver heart-shaped tip, a sprinkle of silver star freckles on her cheeks. Majestic, huggable and grandmotherly-kind, not sleek',
       palette: [0x7b2cbf, 0xd8d8f0], glyph: '🐉', style: 'stomp', speed: 40, size: 2.1, hp: 230,
       abilities: [
         ab('purple_flame', 'Purple Flame', 'cone', 4, 0xb15cff, 2, { color2: 0xffc8ff, word: 'hot' }),
@@ -778,7 +779,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Tiamat', trail: { tint: [0xff3ad0, 0x2a0a3a], shape: 'smoke' }, look: 'a giant tyrant dragon queen, menacing but safe for small children: the same huge upright pear-shaped dragon in dark plum and black-violet scales with glowing magenta lines between them, wings spread wide behind her like a jagged royal cloak, a tall spiky black-and-gold crown above three swept-back horns, narrowed glowing pink eyes, a haughty bossy pout with her nose in the air (no teeth showing), one clawed hand pointing down as if giving orders, a thick tail with a spiky dark-purple tip, wisps of purple smoke curling from her nostrils. Grand, bossy and a bit funny, never gory or truly frightening',
+      displayName: 'Evil Tiamat', trail: { tint: [0xff3ad0, 0x2a0a3a], shape: 'smoke' }, look: 'a giant tyrant dragon queen, menacing but safe for small children: the same huge upright pear-shaped dragon in dark plum and black-violet scales with glowing magenta lines between them, wings spread wide behind her like a jagged royal cloak, a tall spiky black-and-gold crown above three swept-back horns, narrowed glowing pink eyes, a haughty bossy pout with her nose in the air (no teeth showing), a spiky gold collar with a magenta gem and gold cuffs on her wrists, one clawed hand on her hip and the other pointing down as if giving orders, a thick tail with a spiky dark-purple tip, wisps of purple smoke curling from her nostrils. Grand, bossy and a bit funny, never gory or truly frightening',
       palette: [0x2a0a3a, 0xff3ad0], glyph: '👑', style: 'stomp', speed: 35, size: 2.4, hp: 270,
       abilities: [
         ab('shadow_flame', 'Shadow Flame', 'cone', 4, 0x9b1aff, 3, { color2: 0xff3ad0 }),
@@ -798,7 +799,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     counter: {
-      id: 'magic_hat', name: 'Magic Hat', glyph: '🎩', look: "a magician's tall black top hat with a red band, tipped upside down and glowing with golden sparkles, that sucks a whole storm inside it like a magic trick",
+      id: 'magic_hat', name: 'Magic Hat', glyph: '🎩', look: "a magician's tall black top hat with a red band, tipped upside down with a golden swirl glowing in its open top, sucking a whole storm of grey clouds, raindrops and lightning bolts down inside it like a magic trick",
       how: 'swallow', words: ['top', 'tip', 'hat'], word: 'hat',
     },
     house: {
@@ -1046,12 +1047,12 @@ export const COMBOS: ComboSpec[] = [
   { pair: ['jasmine', 'ozymandias'], ability: ab('desert_duo', 'Desert Duo', 'wave', 16, 0xffc857, 3, { color2: 0x1fb5a8 }) },
   { pair: ['dada_matt', 'dada_jason'], ability: ab('dad_squad', 'Dad Squad', 'slam', 16, 0xff8c42, 3, { color2: 0x3a86ff }) },
   { pair: ['julia', 'dada_matt'], ability: ab('high_five', 'Mega High Five', 'lightning', 16, 0xffd23f, 3, { count: 6, color2: 0x3a86ff }) },
-  // Ellie rings them both in spinning swords; Julia's stars fly out through the
-  // ring, then the swords follow them in.
+  // Ellie rings them both in giant bubbles; Julia's stars fly out through the
+  // ring, then the bubbles follow them in.
   {
     pair: ['julia', 'ellie'],
-    ability: ab('star_sword_spin', 'Star Sword Spin', 'bolt', 16, 0xffd23f, 3, { count: 4, glyph: '⭐', homing: true, color2: 0xe8eef8 }),
-    second: ab('star_sword_ring', 'Star Sword Spin', 'orbit', 16, 0xe8eef8, 3, { count: 8, art: 'prop_silver_sword', duration: 1.4, color2: 0xffd23f }),
+    ability: ab('star_bubble_spin', 'Star Bubble Spin', 'bolt', 16, 0xffd23f, 3, { count: 4, glyph: '⭐', homing: true, color2: 0x9ad8ff }),
+    second: ab('star_bubble_ring', 'Star Bubble Spin', 'orbit', 16, 0x9ad8ff, 3, { count: 8, art: 'fx_bubble', upright: true, duration: 1.4, color2: 0xff9ad5 }),
   },
   { pair: ['seraphina', 'tiamat'], ability: ab('dragon_queen_ride', 'Dragon Queen Ride', 'dash', 16, 0xc77dff, 3, { color2: 0x6ad66a }) },
   { pair: ['julia', 'seraphina'], ability: ab('best_friends', 'Best Friend Blast', 'beam', 16, 0xff5ab4, 3, { color2: 0x2ec27e }) },

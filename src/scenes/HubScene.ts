@@ -55,7 +55,7 @@ export class HubScene extends RoomScene {
   private doors: Partial<Record<'door_a' | 'door_b' | 'door_counter' | 'door_front', Spot>> = {};
   private circle: Spot | null = null;
   private scroll: Phaser.GameObjects.Container | null = null;
-  /** The spell's own things (Ellie's swords) circling the helper while she teaches it. */
+  /** The spell's own things (Ellie's giant bubbles) circling the helper while she teaches it. */
   private ring: Phaser.GameObjects.Image[] = [];
 
   constructor() {
@@ -246,8 +246,8 @@ export class HubScene extends RoomScene {
   }
 
   /**
-   * If the spell is a move with its own art (Ellie's ZIP, a sword fling), the
-   * helper summons three of them, circling her while she teaches it.
+   * If the spell is a move with its own art (Ellie's BIG, giant bubbles; a
+   * sword), the helper summons three of them, circling her while she teaches it.
    */
   private summonRing(spell: string): void {
     const ab = CHARACTER_BY_ID[helper()]?.good.abilities.find((a) => a.word === spell);
@@ -257,10 +257,12 @@ export class HubScene extends RoomScene {
     sfxSummon();
     this.ring = [0, 1, 2].map((i) => {
       const sw = this.add.image(cx, cy, ab.art!).setDepth(DEPTH.fx);
+      // A built-in fx texture (fx_bubble) is white: the move's colours tint it.
+      if (ab.art!.startsWith('fx_')) sw.setTint(i % 2 ? (ab.color2 ?? ab.color) : ab.color);
       const s = 72 / sw.height;
       sw.setScale(0);
       this.tweens.add({ targets: sw, scale: s, duration: 300, delay: i * 120, ease: 'Back.easeOut' });
-      // Round and round her: a flat ellipse, swords leaning with the spin.
+      // Round and round her: a flat ellipse, swords leaning with the spin (bubbles stay upright).
       this.tweens.addCounter({
         from: 0,
         to: Math.PI * 2,
@@ -274,7 +276,7 @@ export class HubScene extends RoomScene {
           }
           const a = (tw.getValue() ?? 0) + (i * Math.PI * 2) / 3;
           sw.setPosition(cx + Math.cos(a) * 88, cy + Math.sin(a) * 32);
-          sw.setRotation(a + Math.PI / 2 + 0.5);
+          if (!ab.upright) sw.setRotation(a + Math.PI / 2 + 0.5);
           sw.setDepth(Math.sin(a) < 0 ? HUB.helper.y - 2 : DEPTH.fx);
         },
       });
@@ -304,7 +306,7 @@ export class HubScene extends RoomScene {
         .setOrigin(0.5)
         .setDepth(DEPTH.sparkles);
       word.setVisible(false);
-      // The spell's swords fly in with the word, spinning, and vanish into her.
+      // The spell's things fly in with the word (swords spinning) and vanish into her.
       for (const [i, sw] of this.ring.entries()) {
         sw.setData('free', true);
         this.tweens.killTweensOf(sw);
@@ -312,7 +314,7 @@ export class HubScene extends RoomScene {
           targets: sw,
           x: this.player.x + (i - 1) * 30,
           y: this.player.y - 70,
-          angle: sw.angle + 720,
+          angle: sw.angle + (sw.texture.key.startsWith('fx_') ? 0 : 720),
           scale: 0,
           duration: 800,
           delay: i * 60,
