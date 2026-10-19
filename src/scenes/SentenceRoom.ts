@@ -70,6 +70,8 @@ function roomSeed(id: string): number {
 }
 
 export class SentenceRoom extends Minigame {
+  /** The banner is in keepOut() below, and key words are never names: the box places itself and names its speaker. */
+  protected override dialogueAware = true;
   private slot: Slot = 'a';
   private plan!: RoomPlan;
   private pass: Pass = 'listen';

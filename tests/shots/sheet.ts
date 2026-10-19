@@ -8,7 +8,7 @@
 
 import { readdirSync } from 'node:fs';
 
-import sharp from 'sharp';
+import sharp, { type OverlayOptions } from 'sharp';
 
 const [beforeTag = 'before', afterTag = 'after', out = 'scratch/ui_024_before_after.png'] = process.argv.slice(2);
 const dir = (tag: string) => `scratch/ui_shots/${tag}`;
@@ -24,10 +24,10 @@ const ROWS: [string, string, string][] = [
   ['Side room: her turn, a word said on green', 'anna_room', 'word_'],
   ['Side room: find it', 'default_room', 'find'],
   ['Victory: the recap says each word', 'default_victory', 'word_'],
-  ['Victory: the villain, good again, in a bubble', 'noally_victory', 'reformed_rilla_hugs'],
-  ['Victory: press green to play again', 'default_victory', 'nar_ellie_again'],
+  ['Victory: the villain, good again, in a bubble', 'anna_victory', 'reformed_smaug_marshmallows'],
+  ['Victory: Ellie sends her off', 'default_victory', 'nar_ellie_victory_2'],
   ['Battle: the partner in the move choice (compact)', 'default_battle', 'choice'],
-  ['Battle: a line mid-fight (compact)', 'default_battle', 'nar_ellie_use_bag'],
+  ['Battle: the opening line (compact)', 'default_battle', 'nar_ellie_battle_start'],
 ];
 
 function find(tag: string, prefix: string, key: string): string | null {
@@ -55,7 +55,7 @@ async function main(): Promise<void> {
   const width = PAD * 3 + W * 2;
   const header = 70;
   const height = header + rows.length * (LABEL + H + PAD);
-  const parts: sharp.OverlayOptions[] = [];
+  const parts: OverlayOptions[] = [];
   const svgText = (text: string, w: number, h: number, size: number, weight = 'bold') =>
     Buffer.from(
       `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg"><text x="0" y="${h - 12}" font-family="Arial, sans-serif" font-size="${size}" font-weight="${weight}" fill="#ffffff">${text.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</text></svg>`,

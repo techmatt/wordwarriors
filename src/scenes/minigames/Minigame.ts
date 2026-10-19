@@ -22,9 +22,27 @@ import { burst, fitImage, floatText, popIn, shockwave, wiggle } from '../../fx/j
 import { TEX } from '../../fx/textures';
 import { progress } from '../../state/progress';
 import type { ItemKind } from '../../state/ProgressStore';
+import type { KeepOut } from '../../ui/Caption';
+import type { Speaker } from '../../ui/Portrait';
 import { RoomScene } from '../../world/RoomScene';
 
 export abstract class Minigame extends RoomScene {
+  /**
+   * The parked v0.1 games put names and words up as reading targets the
+   * dialogue box does not know about (Word to Picture reads ELLIE beside her
+   * face card), so there the box stays along the bottom and prints no name.
+   * A game that tells the box what to keep clear (the sentence room) opts in.
+   */
+  protected dialogueAware = false;
+
+  protected override keepOut(): KeepOut[] {
+    return this.dialogueAware ? super.keepOut() : [];
+  }
+
+  protected override showSpeakerName(s: Speaker): boolean {
+    return this.dialogueAware && super.showSpeakerName(s);
+  }
+
   protected itemIndex = 0;
   protected wrongTries = 0;
   private rightN = 0;

@@ -56,6 +56,8 @@ export interface CaptionOptions {
   avoid?: () => KeepOut[];
   /** Per-line override of how it shows; undefined falls back to the default rules. */
   mode?: (u: Utterance) => CaptionMode | undefined;
+  /** Whether to print the speaker's name under their face (default yes). */
+  showName?: (s: Speaker) => boolean;
 }
 
 interface Layout {
@@ -81,7 +83,7 @@ export class Caption {
   private readonly box: Phaser.GameObjects.Graphics;
   private readonly slab: Phaser.GameObjects.Graphics;
   private readonly text: Phaser.GameObjects.Container;
-  private portrait: (Portrait & { speaker: Speaker; baseY: number }) | null = null;
+  private portrait: (Portrait & { speaker: Speaker; baseY: number; name: boolean }) | null = null;
   private words: Phaser.GameObjects.Text[] = [];
   private slabH = 54;
   private current: Utterance | null = null;
@@ -205,12 +207,14 @@ export class Caption {
 
   /** The face card: kept (no pop) while the same speaker goes on, else a new one pops in. */
   private setPortrait(s: Speaker | null): void {
-    if (this.portrait && sameSpeaker(this.portrait.speaker, s) && this.root.visible) return;
+    const name = s ? (this.opts.showName?.(s) ?? true) : false;
+    if (this.portrait && sameSpeaker(this.portrait.speaker, s) && this.portrait.name === name && this.root.visible) return;
+    if (this.portrait) this.tweens().killTweensOf(this.portrait.root);
     this.portrait?.root.destroy();
     this.portrait = null;
     if (!s) return;
-    const p = makePortrait(this.scene, s, this.L.face, { name: true });
-    this.portrait = { ...p, speaker: s, baseY: 0 };
+    const p = makePortrait(this.scene, s, this.L.face, { name });
+    this.portrait = { ...p, speaker: s, baseY: 0, name };
     this.root.add(p.root);
     p.root.setScale(0.4);
     this.tweens().add({ targets: p.root, scale: 1, duration: 260, ease: 'Back.easeOut' });
@@ -218,9 +222,7 @@ export class Caption {
 
   /** A soft light at the feet of a speaker who is standing in the scene. */
   private setGlow(u: Utterance): void {
-    this.glow?.destroy();
-    this.glow = null;
-    this.glowAt = null;
+    this.dropGlow();
     if (this.opts.compact) return;
     const t = this.trackerOf(u);
     if (!t || !t()) return;
@@ -230,11 +232,19 @@ export class Caption {
     this.tweens().add({ targets: this.glow, alpha: 0.4, scaleX: 1.9, duration: 420, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
   }
 
-  private hide(now = false): void {
-    this.current = null;
-    this.glow?.destroy();
+  /** Its pulse is endless, and destroying an object does not stop its tweens. */
+  private dropGlow(): void {
+    if (this.glow) {
+      this.tweens().killTweensOf(this.glow);
+      this.glow.destroy();
+    }
     this.glow = null;
     this.glowAt = null;
+  }
+
+  private hide(now = false): void {
+    this.current = null;
+    this.dropGlow();
     if (!this.root.visible) return;
     this.tweens().killTweensOf(this.root);
     if (now) {
@@ -380,12 +390,13 @@ export class Caption {
     const sides: ('left' | 'right')[] = hint.fixed ? [hint.side] : [hint.side, other];
     const stay = this.band;
     const flip: 'top' | 'bottom' = stay === 'top' ? 'bottom' : 'top';
-    // In order of preference; a later choice must beat the best so far by a margin.
+    // In order of preference; a later choice must be clearly freer than the
+    // best so far (a quarter less, and more than a small patch) to win.
     let best = { band: stay, side: hint.side, c: Infinity };
     for (const side of sides) {
       for (const band of [stay, flip]) {
         const c = cost(band, side);
-        if (c + 400 < best.c || best.c === Infinity) best = { band, side, c };
+        if (best.c === Infinity || c < best.c * 0.75 - 2000) best = { band, side, c };
       }
     }
     return { band: best.band, side: best.side };
@@ -405,8 +416,8 @@ export class Caption {
     }
     if (this.glow && this.glowAt) {
       const at = this.glowAt();
+      this.glow.setVisible(Boolean(at));
       if (at) this.glow.setPosition(at.x, at.y).setDepth(at.y - 1);
-      else this.glow.setVisible(false);
     }
     this.slab.clear();
     if (!u?.line || !this.root.visible || !this.words.length) return;

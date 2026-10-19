@@ -25,6 +25,7 @@ import { hookState, type SpotInfo } from '../testHooks';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { Bubbles } from '../ui/Bubbles';
 import { Caption, type CaptionMode, type KeepOut } from '../ui/Caption';
+import type { Speaker } from '../ui/Portrait';
 import { Player } from './Player';
 
 /** Nothing happening for this long offers the prompt again. */
@@ -120,7 +121,7 @@ export abstract class RoomScene extends Phaser.Scene {
     this.idleMs = 0;
     this.hasMoved = false;
     this.stickHint = null;
-    this.caption = new Caption(this, { avoid: () => this.keepOut(), mode: (u) => this.captionMode(u) });
+    this.caption = new Caption(this, { avoid: () => this.keepOut(), mode: (u) => this.captionMode(u), showName: (s) => this.showSpeakerName(s) });
     new Bubbles(this);
     this.cameras.main.fadeIn(250, 0, 0, 0);
     startMusic(this.music());
@@ -209,6 +210,11 @@ export abstract class RoomScene extends Phaser.Scene {
       out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: 2 });
     }
     return out;
+  }
+
+  /** Whether the dialogue box prints the speaker's name under their face. */
+  protected showSpeakerName(_s: Speaker): boolean {
+    return true;
   }
 
   /** How a line shows in the dialogue box; undefined keeps the box's own rules. */
