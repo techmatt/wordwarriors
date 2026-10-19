@@ -30,9 +30,15 @@ export interface EndingBeat {
   line: string;
 }
 
-/** The narrator's roster id: the ally, else the dad who woke her (src/episode/Episode.ts `helper`). */
+/**
+ * Who opens the scene: the narrator (the ally, else the dad who woke her,
+ * src/episode/Episode.ts `helper`), or the hero when that is nobody in the
+ * scene (only URL overrides get there: a dad as hero, no ally, the other dad
+ * the villain, so the waker fallback is the villain's own person).
+ */
 function host(cast: EndingCast): string {
-  return cast.ally ?? wakerOf(cast);
+  const h = cast.ally ?? wakerOf(cast);
+  return personOf(h) === personOf(cast.villain) ? cast.hero : h;
 }
 
 /**
@@ -54,6 +60,22 @@ export function endingPeople(cast: EndingCast): string[] {
 export function endingFits(e: EndingSpec, cast: EndingCast): boolean {
   const friends = endingPeople(cast).filter((id) => id !== cast.villain);
   return Boolean(e.fit && friends.includes(e.fit.form)) || e.villains.includes(cast.villain);
+}
+
+/**
+ * Where n people stand (x of their feet): spread evenly along the scene's span;
+ * with a gap (the campfire), split either side of it, the left
+ * side taking the odd one, and kept `margin` (half a person) clear of it.
+ */
+export function standXs(e: EndingSpec, n: number): number[] {
+  const { left, right, gap, h } = e.stand;
+  const spread = (l: number, r: number, k: number): number[] =>
+    k === 1 ? [Math.round((l + r) / 2)] : Array.from({ length: k }, (_, i) => Math.round(l + ((r - l) * i) / (k - 1)));
+  // No gap: each in the middle of an equal share of the span.
+  if (!gap) return Array.from({ length: n }, (_, i) => Math.round(left + ((i + 0.5) * (right - left)) / n));
+  const margin = h * 0.4;
+  const k = Math.ceil(n / 2);
+  return [...spread(left, gap[0] - margin, k), ...(n - k ? spread(gap[1] + margin, right, n - k) : [])];
 }
 
 /** Draw a scene id: never `last` (while another is left), a fitting one `FIT_WEIGHT` times likelier. */

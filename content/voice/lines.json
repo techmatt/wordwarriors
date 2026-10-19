@@ -36433,8 +36433,8 @@
   "id": "end_julia_campfire_cheer",
   "speaker": "julia",
   "group": "end_julia",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_julia_campfire_close",
@@ -36446,15 +36446,15 @@
   "id": "end_julia_snow_open",
   "speaker": "julia",
   "group": "end_julia",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_julia_snow_cheer",
   "speaker": "julia",
   "group": "end_julia",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_julia_snow_close",
@@ -36593,8 +36593,8 @@
   "id": "end_ellie_campfire_cheer",
   "speaker": "ellie",
   "group": "end_ellie",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_ellie_campfire_close",
@@ -36606,15 +36606,15 @@
   "id": "end_ellie_snow_open",
   "speaker": "ellie",
   "group": "end_ellie",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_ellie_snow_cheer",
   "speaker": "ellie",
   "group": "end_ellie",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_ellie_snow_close",
@@ -36753,8 +36753,8 @@
   "id": "end_seraphina_campfire_cheer",
   "speaker": "seraphina",
   "group": "end_seraphina",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_seraphina_campfire_close",
@@ -36766,15 +36766,15 @@
   "id": "end_seraphina_snow_open",
   "speaker": "seraphina",
   "group": "end_seraphina",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_seraphina_snow_cheer",
   "speaker": "seraphina",
   "group": "end_seraphina",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_seraphina_snow_close",
@@ -36913,8 +36913,8 @@
   "id": "end_dada_matt_campfire_cheer",
   "speaker": "dada_matt",
   "group": "end_dada_matt",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_dada_matt_campfire_close",
@@ -36926,15 +36926,15 @@
   "id": "end_dada_matt_snow_open",
   "speaker": "dada_matt",
   "group": "end_dada_matt",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_dada_matt_snow_cheer",
   "speaker": "dada_matt",
   "group": "end_dada_matt",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_dada_matt_snow_close",
@@ -37073,8 +37073,8 @@
   "id": "end_dada_jason_campfire_cheer",
   "speaker": "dada_jason",
   "group": "end_dada_jason",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_dada_jason_campfire_close",
@@ -37086,15 +37086,15 @@
   "id": "end_dada_jason_snow_open",
   "speaker": "dada_jason",
   "group": "end_dada_jason",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_dada_jason_snow_cheer",
   "speaker": "dada_jason",
   "group": "end_dada_jason",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_dada_jason_snow_close",
@@ -37233,8 +37233,8 @@
   "id": "end_elsa_campfire_cheer",
   "speaker": "elsa",
   "group": "end_elsa",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_elsa_campfire_close",
@@ -37246,15 +37246,15 @@
   "id": "end_elsa_snow_open",
   "speaker": "elsa",
   "group": "end_elsa",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_elsa_snow_cheer",
   "speaker": "elsa",
   "group": "end_elsa",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_elsa_snow_close",
@@ -37393,8 +37393,8 @@
   "id": "end_anna_campfire_cheer",
   "speaker": "anna",
   "group": "end_anna",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_anna_campfire_close",
@@ -37406,15 +37406,15 @@
   "id": "end_anna_snow_open",
   "speaker": "anna",
   "group": "end_anna",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_anna_snow_cheer",
   "speaker": "anna",
   "group": "end_anna",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_anna_snow_close",
@@ -37553,8 +37553,8 @@
   "id": "end_jasmine_campfire_cheer",
   "speaker": "jasmine",
   "group": "end_jasmine",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_jasmine_campfire_close",
@@ -37566,15 +37566,15 @@
   "id": "end_jasmine_snow_open",
   "speaker": "jasmine",
   "group": "end_jasmine",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_jasmine_snow_cheer",
   "speaker": "jasmine",
   "group": "end_jasmine",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_jasmine_snow_close",
@@ -37713,8 +37713,8 @@
   "id": "end_ozymandias_campfire_cheer",
   "speaker": "ozymandias",
   "group": "end_ozymandias",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_ozymandias_campfire_close",
@@ -37726,15 +37726,15 @@
   "id": "end_ozymandias_snow_open",
   "speaker": "ozymandias",
   "group": "end_ozymandias",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_ozymandias_snow_cheer",
   "speaker": "ozymandias",
   "group": "end_ozymandias",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_ozymandias_snow_close",
@@ -37873,8 +37873,8 @@
   "id": "end_jormungandr_campfire_cheer",
   "speaker": "jormungandr",
   "group": "end_jormungandr",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_jormungandr_campfire_close",
@@ -37886,15 +37886,15 @@
   "id": "end_jormungandr_snow_open",
   "speaker": "jormungandr",
   "group": "end_jormungandr",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_jormungandr_snow_cheer",
   "speaker": "jormungandr",
   "group": "end_jormungandr",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_jormungandr_snow_close",
@@ -38033,8 +38033,8 @@
   "id": "end_smaug_campfire_cheer",
   "speaker": "smaug",
   "group": "end_smaug",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_smaug_campfire_close",
@@ -38046,15 +38046,15 @@
   "id": "end_smaug_snow_open",
   "speaker": "smaug",
   "group": "end_smaug",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_smaug_snow_cheer",
   "speaker": "smaug",
   "group": "end_smaug",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_smaug_snow_close",
@@ -38193,8 +38193,8 @@
   "id": "end_tiamat_campfire_cheer",
   "speaker": "tiamat",
   "group": "end_tiamat",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_tiamat_campfire_close",
@@ -38206,15 +38206,15 @@
   "id": "end_tiamat_snow_open",
   "speaker": "tiamat",
   "group": "end_tiamat",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_tiamat_snow_cheer",
   "speaker": "tiamat",
   "group": "end_tiamat",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_tiamat_snow_close",
@@ -38353,8 +38353,8 @@
   "id": "end_scar_campfire_cheer",
   "speaker": "scar",
   "group": "end_scar",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_scar_campfire_close",
@@ -38366,15 +38366,15 @@
   "id": "end_scar_snow_open",
   "speaker": "scar",
   "group": "end_scar",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_scar_snow_cheer",
   "speaker": "scar",
   "group": "end_scar",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_scar_snow_close",
@@ -38513,8 +38513,8 @@
   "id": "end_moriarty_campfire_cheer",
   "speaker": "moriarty",
   "group": "end_moriarty",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_moriarty_campfire_close",
@@ -38526,15 +38526,15 @@
   "id": "end_moriarty_snow_open",
   "speaker": "moriarty",
   "group": "end_moriarty",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_moriarty_snow_cheer",
   "speaker": "moriarty",
   "group": "end_moriarty",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_moriarty_snow_close",
@@ -38673,8 +38673,8 @@
   "id": "end_bavmorda_campfire_cheer",
   "speaker": "bavmorda",
   "group": "end_bavmorda",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_bavmorda_campfire_close",
@@ -38686,15 +38686,15 @@
   "id": "end_bavmorda_snow_open",
   "speaker": "bavmorda",
   "group": "end_bavmorda",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_bavmorda_snow_cheer",
   "speaker": "bavmorda",
   "group": "end_bavmorda",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_bavmorda_snow_close",
@@ -38833,8 +38833,8 @@
   "id": "end_rilla_campfire_cheer",
   "speaker": "rilla",
   "group": "end_rilla",
-  "text": "Me! Me! Toasty and gooey!",
-  "say": "Me, me, toasty and gooey!"
+  "text": "Yay! Toasty, gooey marshmallows!",
+  "say": "Yay, toasty, gooey marshmallows!"
  },
  {
   "id": "end_rilla_campfire_close",
@@ -38846,15 +38846,15 @@
   "id": "end_rilla_snow_open",
   "speaker": "rilla",
   "group": "end_rilla",
-  "text": "A snow day! Let us build a snowman!",
-  "say": "A snow day, let us build a snowman!"
+  "text": "A snow day! Look at our snowman!",
+  "say": "A snow day, look at our snowman!"
  },
  {
   "id": "end_rilla_snow_cheer",
   "speaker": "rilla",
   "group": "end_rilla",
-  "text": "Yay! I will give him a carrot nose!",
-  "say": "Yay, I will give him a carrot nose!"
+  "text": "Yay! I love his carrot nose!",
+  "say": "Yay, I love his carrot nose!"
  },
  {
   "id": "end_rilla_snow_close",

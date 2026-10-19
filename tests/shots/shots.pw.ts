@@ -94,7 +94,8 @@ for (const cast of CASTS) {
   test(`${cast.name}: victory`, async ({ page }) => {
     // A few words read, so the recap has cards.
     await boot(page, q('scene=victory&nojourney=1&read=bed,hat,ice,zap'), 2);
-    const rec = recorder(page, `${cast.name}_victory`, 8, 900);
+    // The victory scene's four lines come first now (item 027), then the recap's.
+    const rec = recorder(page, `${cast.name}_victory`, 16, 900);
     await until(page, (s) => s.scene === 'Victory', 30_000, 'victory');
     await page.waitForTimeout(16_000);
     await rec.stop();

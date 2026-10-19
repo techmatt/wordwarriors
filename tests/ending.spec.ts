@@ -68,5 +68,7 @@ test('never last episode\'s scene', async ({ page }) => {
   await boot(page, '?scene=victory&seed=2&nojourney=1&read=bed');
   const s = await until(page, (st) => st.scene === 'Ending' && Boolean(st.ending), 30_000, 'the victory scene');
   expect(s.ending!.id).not.toBe('picnic');
+  // ...and this one is kept for the next episode.
+  expect((s.progress as { ending?: string | null }).ending).toBe(s.ending!.id);
   expectNoErrors(errors);
 });

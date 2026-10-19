@@ -11,14 +11,14 @@
 
 import Phaser from 'phaser';
 
-import { ENDING_BY_ID, endingArt, endingPropArt, type EndingSpec } from '../../content/house/endings';
+import { ENDING_BY_ID, endingArt, endingPropArt } from '../../content/house/endings';
 import { voiceBus } from '../audio/VoiceBus';
 import { startMusic } from '../audio/music';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { castArt, episode, type Step } from '../episode/Episode';
 import { burst, fitImage } from '../fx/juice';
 import { Controls } from '../input/Controls';
-import { endingPeople, endingScript, pickEnding } from '../rules/endings';
+import { endingPeople, endingScript, pickEnding, standXs } from '../rules/endings';
 import { progress } from '../state/progress';
 import { hookState } from '../testHooks';
 import { Bubbles, type BubbleAnchor } from '../ui/Bubbles';
@@ -29,23 +29,6 @@ import { Bubbles, type BubbleAnchor } from '../ui/Bubbles';
  * runs about 18–24 s (measured over drawn casts, tests/unit/endings.test.ts).
  */
 export const ENDING_PAUSE = { intro: 3000, between: 1500, outro: 3000 };
-
-/** Where n people stand: spread evenly along the scene's span, skipping its gap (the campfire). */
-export function standXs(e: EndingSpec, n: number): number[] {
-  const { left, right, gap } = e.stand;
-  const segs: [number, number][] = gap ? [[left, gap[0]], [gap[1], right]] : [[left, right]];
-  const total = segs.reduce((a, [l, r]) => a + (r - l), 0);
-  const at = (d: number): number => {
-    for (const [l, r] of segs) {
-      if (d <= r - l) return l + d;
-      d -= r - l;
-    }
-    return right;
-  };
-  if (n === 1) return [at(total / 2)];
-  // With a gap the ends sit at the span's edges, so nobody stands in it.
-  return Array.from({ length: n }, (_, i) => Math.round(at(gap ? (i * total) / (n - 1) : ((i + 0.5) * total) / n)));
-}
 
 export class EndingScene extends Phaser.Scene {
   private controls!: Controls;
@@ -157,7 +140,8 @@ export class EndingScene extends Phaser.Scene {
   override update(): void {
     this.controls.update();
     if (this.controls.dev('F2')) this.onward();
-    if (this.controls.dev('F9')) this.scene.start('Parent', { back: 'Ending', data: { step: this.step } });
+    // Not while fading out to the recap: coming back would play the whole scene again.
+    if (this.controls.dev('F9') && !this.leaving) this.scene.start('Parent', { back: 'Ending', data: { step: this.step } });
     this.controls.endFrame();
   }
 }

@@ -52,7 +52,11 @@ export interface EndingSpec {
   close: EndingLine;
   /** A dad's form (roster id) that fits the scene, and what he says when he is there in it. */
   fit?: { form: string } & EndingLine;
-  /** Villains (roster ids, forms included) whose reformed line fits the scene: likelier with them. */
+  /**
+   * Villains (roster ids, forms included) who suit the scene, by their reformed
+   * lines (Smaug's marshmallows, Dada Matt's fort) or by who they are (the sea
+   * serpent on the lake): likelier with them.
+   */
   villains: string[];
 }
 
@@ -81,7 +85,7 @@ export const ENDINGS: EndingSpec[] = [
     cheer: { text: 'Yay! Come and sit on the blanket!', say: 'Yay, come and sit on the blanket!' },
     close: { text: 'Sharing is the best!' },
     fit: { form: 'dada_matt_cyber', text: 'My drone brought the sandwiches!' },
-    villains: ['rilla', 'anna', 'dada_matt_cyber'],
+    villains: ['rilla', 'dada_matt_cyber'],
   },
   {
     id: 'mountain',
@@ -143,10 +147,10 @@ export const ENDINGS: EndingSpec[] = [
     props: [{ id: 'campfire', glyph: '🔥', look: 'A cheerful little campfire: a ring of round stones, crossed logs and bright orange-and-yellow flames with sparks, and three marshmallows on long sticks toasting over it', x: 640, y: 690, w: 260, h: 230 }],
     stand: { y: 640, left: 230, right: 1050, h: 175, gap: [500, 780] },
     open: { text: 'Campfire time! Who wants a marshmallow?', say: 'Campfire time, who wants a marshmallow?' },
-    cheer: { text: 'Me! Me! Toasty and gooey!', say: 'Me, me, toasty and gooey!' },
+    cheer: { text: 'Yay! Toasty, gooey marshmallows!', say: 'Yay, toasty, gooey marshmallows!' },
     close: { text: 'Now, campfire songs, everybody!' },
     fit: { form: 'dada_matt_blade', text: 'My sword is a marshmallow stick now!' },
-    villains: ['smaug', 'scar', 'dada_matt_blade'],
+    villains: ['smaug', 'dada_matt_blade'],
   },
   {
     id: 'snow',
@@ -155,8 +159,8 @@ export const ENDINGS: EndingSpec[] = [
     look: 'A snowy hillside on a bright winter day: soft deep snow across the lower half, snowy pine trees and a little wooden cabin with smoke from its chimney at the edges, a pale blue sky with gentle falling snowflakes. The middle of the snow is open and empty',
     props: [{ id: 'snowman', glyph: '⛄', look: 'A big round happy snowman: three snowballs, coal eyes and smile, a carrot nose, a red-and-white striped scarf, a little black top hat and stick arms waving', x: 1100, y: 650, w: 200, h: 260 }],
     stand: { y: 640, left: 230, right: 930, h: 175 },
-    open: { text: 'A snow day! Let us build a snowman!', say: 'A snow day, let us build a snowman!' },
-    cheer: { text: 'Yay! I will give him a carrot nose!', say: 'Yay, I will give him a carrot nose!' },
+    open: { text: 'A snow day! Look at our snowman!', say: 'A snow day, look at our snowman!' },
+    cheer: { text: 'Yay! I love his carrot nose!', say: 'Yay, I love his carrot nose!' },
     close: { text: 'Everybody, make a snow angel!' },
     villains: ['elsa'],
   },

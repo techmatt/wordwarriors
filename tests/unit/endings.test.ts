@@ -10,7 +10,7 @@ import { ART_BY_ID } from '../../content/art/assets';
 import { CHARACTER_BY_ID, personOf } from '../../content/battle/roster';
 import { ENDINGS, ENDING_BY_ID, endingArt, endingPropArt } from '../../content/house/endings';
 import { drawCast, seededRand, type Cast } from '../../src/rules/cast';
-import { FIT_WEIGHT, endingFits, endingPeople, endingScript, pickEnding } from '../../src/rules/endings';
+import { FIT_WEIGHT, endingFits, endingPeople, endingScript, pickEnding, standXs } from '../../src/rules/endings';
 import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
 
@@ -28,6 +28,9 @@ function casts(): Cast[] {
   out.push(drawCast({ hero: 'julia', overrides: { ally: 'dada_jason', villain: 'dada_matt_cyber' } }, rand));
   out.push(drawCast({ hero: 'julia', overrides: { ally: 'dada_matt_lifter', villain: 'tiamat', secondary: true } }, rand));
   out.push({ hero: 'julia', ally: 'ellie', villain: 'tiamat', primary: 'dada_matt', secondary: null });
+  // A dad as hero (the parked pick screens), no ally, the other dad the villain: nobody left to wake her.
+  out.push(drawCast({ hero: 'dada_matt', overrides: { ally: null, villain: 'dada_jason_warlock' } }, rand));
+  out.push(drawCast({ hero: 'elsa', overrides: { ally: null } }, rand));
   return out;
 }
 
@@ -79,6 +82,23 @@ test('endings: every scene works for every cast: four lines, all voiced, by peop
     const around = 3 + 3 * 1.5 + 3 + 0.9;
     assert.ok(longest + around <= 30, `longest scene ${(longest + around).toFixed(1)} s`);
     assert.ok(shortest + around >= 15, `shortest scene ${(shortest + around).toFixed(1)} s`);
+  }
+});
+
+test('endings: everyone stands on screen, apart, and out of the campfire', () => {
+  for (const e of ENDINGS) {
+    for (let n = 1; n <= 6; n++) {
+      const xs = standXs(e, n);
+      assert.equal(xs.length, n);
+      for (const x of xs) assert.ok(x - e.stand.h * 0.4 >= 0 && x + e.stand.h * 0.4 <= 1280, `${e.id} n=${n}: ${x} on screen`);
+      for (let i = 1; i < n; i++) assert.ok(xs[i]! - xs[i - 1]! >= e.stand.h * 0.5, `${e.id} n=${n}: ${xs.join(',')} apart`);
+      const gap = e.stand.gap;
+      if (gap) for (const x of xs) assert.ok(x + e.stand.h * 0.4 <= gap[0] || x - e.stand.h * 0.4 >= gap[1], `${e.id} n=${n}: ${x} clear of the gap`);
+      // Nobody hidden behind a prop that is drawn over them, apart from a front prop they stand behind.
+      for (const p of e.props.filter((q) => !q.front && q.y > e.stand.y)) {
+        for (const x of xs) assert.ok(Math.abs(x - p.x) >= p.w / 2, `${e.id} n=${n}: ${x} not behind ${p.id}`);
+      }
+    }
   }
 });
 
