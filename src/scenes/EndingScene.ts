@@ -79,7 +79,7 @@ export class EndingScene extends Phaser.Scene {
     people.forEach((id, i) => {
       // `stand.h` is the tallest (a dad); the rest stand to their sizes beside him (item 028).
       const h = (e.stand.h * castScale(id)) / 1.25;
-      const img = fitImage(this.add.image(xs[i]!, e.stand.y, art[i]!).setOrigin(0.5, 1), h * 0.8, h).setDepth(e.stand.y);
+      const img = fitImage(this.add.image(xs[i]!, e.stand.y, art[i]!).setOrigin(0.5, 1), h * 0.95, h).setDepth(e.stand.y);
       sprites.set(id, img);
       const base = img.scaleY;
       this.tweens.add({ targets: img, scaleY: base * 1.04, scaleX: img.scaleX * 0.97, duration: 520 + i * 70, yoyo: true, repeat: -1, ease: 'Sine.easeInOut', delay: i * 90 });

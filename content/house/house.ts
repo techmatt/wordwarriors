@@ -109,6 +109,12 @@ export interface PlaceSpec {
   rooms: SideRoomSpec[];
   /** The secret room behind the secret door, where the counter sentence is. */
   secret: SideRoomSpec;
+  /**
+   * Where the villain's floor decals lie in this hub, `[x, y, w, h]`, when its
+   * art's floor is not the house hub's (the treehouse deck ends higher, with
+   * treetops below it). Default: the hub's walking floor.
+   */
+  moodFloor?: [number, number, number, number];
 }
 
 const SPOTS: [number, number][] = [[300, 470], [640, 470], [980, 470]];
@@ -127,6 +133,7 @@ export const PLACES: PlaceSpec[] = [
   {
     id: 'treehouse', name: 'Treehouse Workshop', glyph: '🌳', palette: [0x8ad7a0, 0xa0683a],
     look: "Dada Matt's secret treehouse workshop high in a giant oak tree, seen side-on: a wide wooden deck floor across the lower half, rope railings, half-built wooden towers, tool racks, leafy branches and sunbeams all around",
+    moodFloor: [80, 445, 1120, 105],
     rooms: [
       room('lumber_loft', 'Lumber Loft', '🌲', [0xc89a6a, 0x6a4a2a], 'The lumber loft in the treehouse: stacks of planks, a big saw bench, a pulley crane with a rope, sawdust on the floorboards, leaves at the windows'),
       room('tool_hut', 'Tool Hut', '🔧', [0xa0683a, 0xffd8a0], 'The tool hut up in the branches: pegboards of hammers and spanners, a long workbench, jars of nails and screws, a round window full of leaves'),

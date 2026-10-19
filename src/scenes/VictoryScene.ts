@@ -94,7 +94,7 @@ export class VictoryScene extends Phaser.Scene {
       // Depth by feet, as in the rooms, so the speaker's glow sits under them.
       // Each as tall beside her as their size says (item 030: Scar just under her).
       const h = 150 * castScale(ids[i]!);
-      const img = fitImage(this.add.image(x, 605, key).setOrigin(0.5, 1), h * 0.8, h).setDepth(605);
+      const img = fitImage(this.add.image(x, 605, key).setOrigin(0.5, 1), h * 0.95, h).setDepth(605);
       podium.push(img);
       caption.track(ids[i]!, () => (img.active ? { x: img.x, y: 605 } : null));
       this.tweens.add({ targets: img, y: 575, duration: 300 + i * 40, yoyo: true, repeat: -1, ease: 'Quad.easeOut' });

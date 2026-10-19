@@ -211,7 +211,10 @@ export class BedroomScene extends RoomScene {
     flash(this, 0x220022, 450);
     sfxBoom(2);
     shake(this, 5, 600);
-    const mood = applyHouseMood(this, episode.villain, { reveal: true, seed: 11, floor: this.floor });
+    // Never under the grown-ups: where they stand now and where they step to.
+    const feet = (x: number, y: number) => new Phaser.Geom.Rectangle(x - 70, y - 130, 140, 150);
+    const avoid = [feet(room.waker.x, room.waker.y), feet(room.waker.x - 140, room.waker.y + 20), feet(room.door.x, room.door.y + 180), feet(room.door.x - 140, room.door.y + 50), feet(SECOND_SPOT.x, SECOND_SPOT.y)];
+    const mood = applyHouseMood(this, episode.villain, { reveal: true, seed: 11, floor: this.floor, avoid });
     await Promise.all([this.speak(wakeLine(w, `bad_${episode.villain}`)), this.guard(mood.revealed)]);
 
     // A far-off taunt: heard, not seen.

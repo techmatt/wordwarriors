@@ -39,6 +39,11 @@ export interface HouseMoodOptions {
    * puffs at the floor edges.
    */
   calm?: boolean;
+  /**
+   * Where no decal may land (item 030): the spell scroll on the wall, the
+   * spots the grown-ups stand on. A decal keeps its whole size clear of them.
+   */
+  avoid?: Phaser.Geom.Rectangle[];
 }
 
 export interface HouseMoodHandle {
@@ -110,18 +115,25 @@ export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: Hou
   for (const d of mood.decals) {
     for (let i = 0; i < d.count; i++) {
       const onFloor = FLOOR_LIKE.test(d.id) || (!/crack|web|scratch|claw|frost|ice|hole|smudge|soot/.test(d.id) && n % 2 === 0);
-      // Best of a few candidates: the one farthest from what is already down.
+      // Best of a few candidates: the one farthest from what is already down,
+      // and out of everything `avoid` keeps clear while any candidate is.
+      const size = onFloor ? 64 + rand() * 16 : 84 + rand() * 20;
+      const clear = (p: { x: number; y: number }) => !(opts.avoid ?? []).some((r) => Phaser.Geom.Rectangle.Overlaps(r, new Phaser.Geom.Rectangle(p.x - size / 2, p.y - size / 2, size, size)));
       let best = onFloor ? floorPoint() : wallPoint();
       let bestD = -1;
-      for (let k = 0; k < 8; k++) {
+      let bestClear = clear(best);
+      for (let k = 0; k < 16; k++) {
         const p = onFloor ? floorPoint() : wallPoint();
+        const ok = clear(p);
+        if (bestClear && !ok) continue;
         const d2 = placed.reduce((m, q) => Math.min(m, (q.x - p.x) ** 2 + (q.y - p.y) ** 2), Number.MAX_VALUE);
-        if (d2 > bestD) {
+        if (d2 > bestD || (ok && !bestClear)) {
+          bestClear = ok;
           bestD = d2;
           best = p;
         }
       }
-      placed.push({ ...best, onFloor, key: `decal_${d.id}`, size: onFloor ? 64 + rand() * 16 : 84 + rand() * 20 });
+      placed.push({ ...best, onFloor, key: `decal_${d.id}`, size });
       n++;
     }
   }

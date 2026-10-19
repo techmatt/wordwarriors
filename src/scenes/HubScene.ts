@@ -26,7 +26,7 @@
 import Phaser from 'phaser';
 
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
-import { HUB, SIDE_ROOM_BY_ID, hubArt } from '../../content/house/house';
+import { HUB, PLACE_BY_ID, SIDE_ROOM_BY_ID, hubArt } from '../../content/house/house';
 import { sfxFanfare, sfxSelect, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../config';
 import { away, enterRoom, episode, helper, planFor, type Slot, type Step } from '../episode/Episode';
@@ -45,6 +45,8 @@ const DOOR_W = 120;
 const DOOR_H = 180;
 const FRONT_W = 150;
 const FRONT_H = 220;
+/** The spell scroll's height on the wall (its centre), above the helper. */
+const SCROLL_Y = 150;
 
 export class HubScene extends RoomScene {
   private part: 1 | 2 = 1;
@@ -104,7 +106,11 @@ export class HubScene extends RoomScene {
   }
 
   protected build(): void {
-    applyHouseMood(this, episode.villain, { seed: 21, floor: this.floor });
+    // Off the spell scroll (high between doors a and b), and on a place's own
+    // floor where its art's differs from the house's (item 030).
+    const scroll = new Phaser.Geom.Rectangle(HUB.helper.x - 120, SCROLL_Y - 70, 240, 150);
+    const f = PLACE_BY_ID[episode.place]?.moodFloor;
+    applyHouseMood(this, episode.villain, { seed: 21, floor: f ? new Phaser.Geom.Rectangle(...f) : this.floor, avoid: [scroll] });
     new Bag(this);
     this.round = `hub:${this.part}:intro`;
 
@@ -242,7 +248,7 @@ export class HubScene extends RoomScene {
     // The scroll pops up over the helper, the spell written on it: high on the
     // wall between doors a and b, so it covers neither door nor its sign.
     const sx = HUB.helper.x;
-    const sy = 150;
+    const sy = SCROLL_Y;
     const paper = this.art('prop_scroll', 210, 120, 0, 60);
     const word = this.add
       .text(0, 0, spell.toUpperCase(), { fontFamily: FONT, fontSize: '54px', color: '#3a1a5a', stroke: '#ffffff', strokeThickness: 6 })

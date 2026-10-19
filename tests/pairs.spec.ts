@@ -57,7 +57,8 @@ PAIRS.forEach(([ally, villain], i) => {
       await until(page, (s) => s.scene === 'Battle' && (s.battle?.abilitiesFired ?? 0) >= 6, 120_000, `battle ${part} under way`);
       await shot(page, `${name}_${part + 2}_battle${part}`);
       const after = await playBattle(page, part);
-      voiced.push(...after.voice.history);
+      // Part 2's page goes on to the recap, whose history has it all.
+      if (part === 1) voiced.push(...after.voice.history);
       expect(after.battle?.ultimates).toBe(1);
     }
 
