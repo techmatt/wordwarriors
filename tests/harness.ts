@@ -26,7 +26,11 @@ export interface WWState {
     read: string[];
     fetched: string[];
     spell: string | null;
-    house: { plan: { slot: string; room: string; sentence: { key: string; frame: string } }[] | null; done: string[]; taught: boolean };
+    house: {
+      plan: { slot: string; room: string; game: string; kind: 'sentence' | 'machine'; key: string; fetches: string[]; sentence?: { key: string; frame: string }; machine?: { mode: string; rounds: { word: string; rime: string }[] } }[] | null;
+      done: string[];
+      taught: boolean;
+    };
     stepIndex: number;
   };
   /** The victory recap's cards so far (item 018: every one has a picture). */
@@ -40,6 +44,18 @@ export interface WWState {
     shown: string[];
     spelling?: { word: string; filled: number };
     sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean };
+    machine?: {
+      mode: string;
+      index: number;
+      rounds: string[];
+      word: string;
+      rime: string;
+      family: string[];
+      tiles: { letter: string; makes: string; real: boolean }[];
+      phase: 'intro' | 'pick' | 'check' | 'done';
+      slotted: string | null;
+      misses: number;
+    };
   } | null;
   battle: {
     part: number;
@@ -60,7 +76,7 @@ export interface WWState {
   } | null;
   voice: { speaking: string | null; busy: boolean; history: string[] };
   fx: Record<string, number>;
-  progress: { sounds: Record<string, { seen: number; recent: boolean[] }>; words: Record<string, { seen: number; recent: boolean[] }>; frames?: Record<string, { seen: number; recent: boolean[] }>; episodes: number };
+  progress: { sounds: Record<string, { seen: number; recent: boolean[] }>; words: Record<string, { seen: number; recent: boolean[] }>; frames?: Record<string, { seen: number; recent: boolean[] }>; rimes?: Record<string, { seen: number; recent: boolean[] }>; onsets?: Record<string, { seen: number; recent: boolean[] }>; bag?: { left: string[]; round: number }; episodes: number };
 }
 
 export function collectErrors(page: Page): string[] {
@@ -111,7 +127,9 @@ function warpClocks(k: number): void {
 export async function boot(page: Page, query = '', speed = SPEED): Promise<void> {
   await page.addInitScript(warpClocks, speed);
   const cast = /[?&](seed|cast)=/.test(query) ? '' : 'cast=default&';
-  await page.goto(`/${query ? `${query}&` : '?'}${cast}hooks=1`);
+  // The rooms play the sentence game unless the query asks for a game (`game=word_machine`) or the whole pool (`games=all`).
+  const games = /[?&]games?=/.test(query) ? '' : 'games=sentence&';
+  await page.goto(`/${query ? `${query}&` : '?'}${cast}${games}hooks=1`);
   await page.waitForFunction(() => Boolean((window as unknown as { __ww?: unknown }).__ww));
   await page.mouse.click(20, 20);
 }
@@ -309,6 +327,37 @@ export async function playSentenceRoom(page: Page): Promise<string> {
   return key;
 }
 
+/**
+ * Play the word machine: each round, walk to the tile that makes the
+ * picture's word and press green; with `wrongFirst`, a silly tile first,
+ * which holds the round until the right one. Returns the words built.
+ */
+export async function playWordMachine(page: Page, wrongFirst = false): Promise<string[]> {
+  const first = await until(page, (s) => s.scene === 'WordMachine' && Boolean(s.room?.machine), 30_000, 'word machine');
+  const rounds = first.room!.machine!.rounds;
+  for (let i = 0; i < rounds.length; i++) {
+    const word = rounds[i]!;
+    const s = await until(page, (st) => st.room?.machine?.index === i && st.room.machine.phase === 'pick' && !st.room.locked, 90_000, `round ${i} (${word}) open`);
+    const tiles = s.room!.machine!.tiles;
+    const right = tiles.find((t) => t.makes === word)!;
+    if (wrongFirst && i === 0) {
+      const silly = tiles.find((t) => !t.real)!;
+      await choose(page, `tile_${silly.letter}`);
+      await until(page, (st) => (st.room?.machine?.misses ?? 0) > 0 && st.room!.machine!.phase === 'pick' && !st.room!.locked, 60_000, 'silly word said, round open again');
+    }
+    await choose(page, `tile_${right.letter}`);
+    await until(page, (st) => st.scene !== 'WordMachine' || (st.room?.machine?.index ?? 0) > i || st.room?.machine?.phase === 'done', 60_000, `${word} built`);
+  }
+  await until(page, (st) => st.scene !== 'WordMachine', 60_000, 'out of the word machine');
+  return rounds;
+}
+
+/** Play whichever game the room has: a sentence room (its key word) or the word machine (every word built). */
+export async function playRoom(page: Page): Promise<string[]> {
+  const s = await until(page, (st) => (st.scene === 'SentenceRoom' && Boolean(st.room?.sentence)) || (st.scene === 'WordMachine' && Boolean(st.room?.machine)), 30_000, 'a side room');
+  return s.scene === 'WordMachine' ? playWordMachine(page) : [await playSentenceRoom(page)];
+}
+
 /** The bedroom: wait for the news to be told and the door to open, then walk out of it. */
 export async function leaveBedroom(page: Page): Promise<void> {
   await until(page, (s) => s.scene === 'Bedroom' && s.room?.round === 'bedroom:door', 90_000, 'bedroom door open');
@@ -345,7 +394,7 @@ export async function playEpisode(page: Page): Promise<{ end: WWState; keys: str
   for (const door of ['door_a', 'door_b']) {
     await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:doors', 90_000, `${door} offered`);
     await hubGo(page, door);
-    keys.push(await playSentenceRoom(page));
+    keys.push(...(await playRoom(page)));
   }
   const front1 = await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:front', 90_000, 'front door open');
   expect(front1.episode.fetched).toEqual(keys);

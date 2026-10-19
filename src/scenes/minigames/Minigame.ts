@@ -183,7 +183,7 @@ export abstract class Minigame extends RoomScene {
    * After two misses on one item the right answer starts to sparkle, gently:
    * a scaffold so she always gets there, never a penalty or a "wrong" sound.
    */
-  private sparkleAnswer(): void {
+  protected sparkleAnswer(): void {
     // Looked up directly: some games' correctSpot() is a dev cheat with side effects.
     const spot = this.spots.find((s) => s.correct === true && s.enabled);
     if (!spot || spot.obj.getData('sparkling')) return;

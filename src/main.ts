@@ -8,6 +8,7 @@ import { BedroomScene } from './scenes/BedroomScene';
 import { BootScene } from './scenes/BootScene';
 import { HubScene } from './scenes/HubScene';
 import { SentenceRoom } from './scenes/SentenceRoom';
+import { WordMachine } from './scenes/WordMachine';
 import { BlendPath } from './scenes/minigames/BlendPath';
 import { SoundToLetter } from './scenes/minigames/SoundToLetter';
 import { Spelling } from './scenes/minigames/Spelling';
@@ -62,6 +63,7 @@ const game = new Phaser.Game({
     BedroomScene,
     HubScene,
     SentenceRoom,
+    WordMachine,
     BattleScene,
     VictoryScene,
     ParentScene,

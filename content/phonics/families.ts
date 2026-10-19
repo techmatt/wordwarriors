@@ -48,7 +48,8 @@ const RIMES: Record<string, { say: string; silly: SillyOnset[] }> = {
   // ZAP is a real word (and a move word); YEN and ZEN are real too.
   ap: { say: 'App', silly: [{ letter: 'v', say: 'Vap' }, { letter: 'd', say: 'Dap' }] },
   en: { say: 'Ehn', silly: [{ letter: 'v', say: 'Venn' }, { letter: 's', say: 'Senn' }] },
-  et: { say: 'Ett', silly: [{ letter: 'z', say: 'Zet' }, { letter: 'f', say: 'Fet' }, { letter: 'd', say: 'Det' }] },
+  // "Ett" spans 1.39 s (read as letters); a single syllable is 0.7 s.
+  et: { say: 'Eht', silly: [{ letter: 'z', say: 'Zet' }, { letter: 'f', say: 'Fet' }, { letter: 'd', say: 'Det' }] },
   og: { say: 'Ogg', silly: [{ letter: 'z', say: 'Zog' }, { letter: 'm', say: 'Mog' }, { letter: 'y', say: 'Yog' }] },
 };
 

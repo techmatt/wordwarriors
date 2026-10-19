@@ -92,6 +92,18 @@ export const NARRATOR_LINES: Template[] = [
   // ("We found the Magic Hat!") says got_counter_<villain> instead.
   { key: 'got_counter_any', text: 'That is just what we need!' },
   { key: 'use_bag', text: 'Look what we found!' },
+  // The word machine (item 026). No line names a word it builds (or any CVC
+  // word): the built word is said only by its word_ line, once it is built.
+  // `machine_makes` trails off into the silly word's own line (silly_zat).
+  { key: 'machine_intro', text: 'A word machine! It makes the word for the picture.', say: 'A word machine, it makes the word for the picture.' },
+  { key: 'machine_go', text: 'Walk on a letter to hear it. Press green to put it in!', say: 'Walk on a letter to hear it, press green to put it in!' },
+  { key: 'machine_change', text: 'Change the first sound to make a new word!' },
+  { key: 'machine_switch', text: 'New sounds! Let us make one more.', say: 'New sounds, let us make one more.' },
+  { key: 'machine_makes', text: 'That makes...' },
+  { key: 'machine_silly_1', text: 'A silly word! Try another letter!', say: 'A silly word, try another letter!' },
+  { key: 'machine_silly_2', text: 'That is not a word, you silly! Try again!', say: 'That is not a word, you silly, try again!' },
+  { key: 'machine_silly_3', text: 'The machine is giggling! Try another one!', say: 'The machine is giggling, try another one!' },
+  { key: 'machine_done', text: 'We made them all!' },
   // Quests (item 025). The home quest's setup line, for a helper with no quest
   // place of their own (content/house/quests.ts), and the hub's lines in a
   // quest place, where there is no front door and no stairs up.

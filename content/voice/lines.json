@@ -3383,6 +3383,144 @@
   "note": "placeholder for the /z/ sound (continuant); replace with a recorded clip"
  },
  {
+  "id": "rime_at",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "At.",
+  "note": "placeholder for the rime -at said alone; replace with a recorded clip"
+ },
+ {
+  "id": "silly_zat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Zat!"
+ },
+ {
+  "id": "silly_jat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Jat!"
+ },
+ {
+  "id": "silly_yat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Yat!"
+ },
+ {
+  "id": "rime_an",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Ann.",
+  "note": "placeholder for the rime -an said alone; replace with a recorded clip"
+ },
+ {
+  "id": "silly_zan",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Zan!"
+ },
+ {
+  "id": "silly_gan",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Gan!"
+ },
+ {
+  "id": "silly_yan",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Yan!"
+ },
+ {
+  "id": "rime_ap",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "App.",
+  "note": "placeholder for the rime -ap said alone; replace with a recorded clip"
+ },
+ {
+  "id": "silly_vap",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Vap!"
+ },
+ {
+  "id": "silly_dap",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Dap!"
+ },
+ {
+  "id": "rime_en",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Ehn.",
+  "note": "placeholder for the rime -en said alone; replace with a recorded clip"
+ },
+ {
+  "id": "silly_ven",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Venn!"
+ },
+ {
+  "id": "silly_sen",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Senn!"
+ },
+ {
+  "id": "rime_et",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Ett.",
+  "note": "placeholder for the rime -et said alone; replace with a recorded clip"
+ },
+ {
+  "id": "silly_zet",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Zet!"
+ },
+ {
+  "id": "silly_fet",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Fet!"
+ },
+ {
+  "id": "silly_det",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Det!"
+ },
+ {
+  "id": "rime_og",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Ogg.",
+  "note": "placeholder for the rime -og said alone; replace with a recorded clip"
+ },
+ {
+  "id": "silly_zog",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Zog!"
+ },
+ {
+  "id": "silly_mog",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Mog!"
+ },
+ {
+  "id": "silly_yog",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Yog!"
+ },
+ {
   "id": "word_anna",
   "speaker": "phonics",
   "group": "phonics",
@@ -5588,6 +5726,66 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_julia_machine_intro",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_julia_machine_go",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_julia_machine_change",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_julia_machine_switch",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_julia_machine_makes",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_julia_machine_silly_1",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_julia_machine_silly_2",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_julia_machine_silly_3",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_julia_machine_done",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We made them all!"
+ },
+ {
   "id": "nar_julia_quest_home",
   "speaker": "julia",
   "group": "nar_julia",
@@ -7460,6 +7658,66 @@
   "speaker": "ellie",
   "group": "nar_ellie",
   "text": "Look what we found!"
+ },
+ {
+  "id": "nar_ellie_machine_intro",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_ellie_machine_go",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_ellie_machine_change",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_ellie_machine_switch",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_ellie_machine_makes",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_ellie_machine_silly_1",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_ellie_machine_silly_2",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_ellie_machine_silly_3",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_ellie_machine_done",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made them all!"
  },
  {
   "id": "nar_ellie_quest_home",
@@ -9336,6 +9594,66 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_seraphina_machine_intro",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_seraphina_machine_go",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_seraphina_machine_change",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_seraphina_machine_switch",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_seraphina_machine_makes",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_seraphina_machine_silly_1",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_seraphina_machine_silly_2",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_seraphina_machine_silly_3",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_seraphina_machine_done",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We made them all!"
+ },
+ {
   "id": "nar_seraphina_quest_home",
   "speaker": "seraphina",
   "group": "nar_seraphina",
@@ -11208,6 +11526,66 @@
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
   "text": "Look what we found!"
+ },
+ {
+  "id": "nar_dada_matt_machine_intro",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_dada_matt_machine_go",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_dada_matt_machine_change",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_dada_matt_machine_switch",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_dada_matt_machine_makes",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_dada_matt_machine_silly_1",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_dada_matt_machine_silly_2",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_dada_matt_machine_silly_3",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_dada_matt_machine_done",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We made them all!"
  },
  {
   "id": "nar_dada_matt_quest_home",
@@ -13084,6 +13462,66 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_dada_jason_machine_intro",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_dada_jason_machine_go",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_dada_jason_machine_change",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_dada_jason_machine_switch",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_dada_jason_machine_makes",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_dada_jason_machine_silly_1",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_dada_jason_machine_silly_2",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_dada_jason_machine_silly_3",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_dada_jason_machine_done",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We made them all!"
+ },
+ {
   "id": "nar_dada_jason_quest_home",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
@@ -14956,6 +15394,66 @@
   "speaker": "elsa",
   "group": "nar_elsa",
   "text": "Look what we found!"
+ },
+ {
+  "id": "nar_elsa_machine_intro",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_elsa_machine_go",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_elsa_machine_change",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_elsa_machine_switch",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_elsa_machine_makes",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_elsa_machine_silly_1",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_elsa_machine_silly_2",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_elsa_machine_silly_3",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_elsa_machine_done",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We made them all!"
  },
  {
   "id": "nar_elsa_quest_home",
@@ -16832,6 +17330,66 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_anna_machine_intro",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_anna_machine_go",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_anna_machine_change",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_anna_machine_switch",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_anna_machine_makes",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_anna_machine_silly_1",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_anna_machine_silly_2",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_anna_machine_silly_3",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_anna_machine_done",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We made them all!"
+ },
+ {
   "id": "nar_anna_quest_home",
   "speaker": "anna",
   "group": "nar_anna",
@@ -18704,6 +19262,66 @@
   "speaker": "jasmine",
   "group": "nar_jasmine",
   "text": "Look what we found!"
+ },
+ {
+  "id": "nar_jasmine_machine_intro",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_jasmine_machine_go",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_jasmine_machine_change",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_jasmine_machine_switch",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_jasmine_machine_makes",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_jasmine_machine_silly_1",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_jasmine_machine_silly_2",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_jasmine_machine_silly_3",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_jasmine_machine_done",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We made them all!"
  },
  {
   "id": "nar_jasmine_quest_home",
@@ -20580,6 +21198,66 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_ozymandias_machine_intro",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_ozymandias_machine_go",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_ozymandias_machine_change",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_ozymandias_machine_switch",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_ozymandias_machine_makes",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_ozymandias_machine_silly_1",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_ozymandias_machine_silly_2",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_ozymandias_machine_silly_3",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_ozymandias_machine_done",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We made them all!"
+ },
+ {
   "id": "nar_ozymandias_quest_home",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
@@ -22454,6 +23132,66 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_jormungandr_machine_intro",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_jormungandr_machine_go",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_jormungandr_machine_change",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_jormungandr_machine_switch",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_jormungandr_machine_makes",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_jormungandr_machine_silly_1",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_jormungandr_machine_silly_2",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_jormungandr_machine_silly_3",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_jormungandr_machine_done",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We made them all!"
+ },
+ {
   "id": "nar_jormungandr_quest_home",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -24325,6 +25063,66 @@
   "speaker": "smaug",
   "group": "nar_smaug",
   "text": "Look what we found!"
+ },
+ {
+  "id": "nar_smaug_machine_intro",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_smaug_machine_go",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_smaug_machine_change",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_smaug_machine_switch",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_smaug_machine_makes",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_smaug_machine_silly_1",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_smaug_machine_silly_2",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_smaug_machine_silly_3",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_smaug_machine_done",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We made them all!"
  },
  {
   "id": "nar_smaug_quest_home",
@@ -26201,6 +26999,66 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_tiamat_machine_intro",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_tiamat_machine_go",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_tiamat_machine_change",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_tiamat_machine_switch",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_tiamat_machine_makes",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_tiamat_machine_silly_1",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_tiamat_machine_silly_2",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_tiamat_machine_silly_3",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_tiamat_machine_done",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made them all!"
+ },
+ {
   "id": "nar_tiamat_quest_home",
   "speaker": "tiamat",
   "group": "nar_tiamat",
@@ -28073,6 +28931,66 @@
   "speaker": "scar",
   "group": "nar_scar",
   "text": "Look what we found!"
+ },
+ {
+  "id": "nar_scar_machine_intro",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_scar_machine_go",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_scar_machine_change",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_scar_machine_switch",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_scar_machine_makes",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_scar_machine_silly_1",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_scar_machine_silly_2",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_scar_machine_silly_3",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_scar_machine_done",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We made them all!"
  },
  {
   "id": "nar_scar_quest_home",
@@ -29949,6 +30867,66 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_moriarty_machine_intro",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_moriarty_machine_go",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_moriarty_machine_change",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_moriarty_machine_switch",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_moriarty_machine_makes",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_moriarty_machine_silly_1",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_moriarty_machine_silly_2",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_moriarty_machine_silly_3",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_moriarty_machine_done",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We made them all!"
+ },
+ {
   "id": "nar_moriarty_quest_home",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -31823,6 +32801,66 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_bavmorda_machine_intro",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_bavmorda_machine_go",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_bavmorda_machine_change",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_bavmorda_machine_switch",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_bavmorda_machine_makes",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_bavmorda_machine_silly_1",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_bavmorda_machine_silly_2",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_bavmorda_machine_silly_3",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_bavmorda_machine_done",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We made them all!"
+ },
+ {
   "id": "nar_bavmorda_quest_home",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
@@ -33695,6 +34733,66 @@
   "speaker": "rilla",
   "group": "nar_rilla",
   "text": "Look what we found!"
+ },
+ {
+  "id": "nar_rilla_machine_intro",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "A word machine! It makes the word for the picture.",
+  "say": "A word machine, it makes the word for the picture."
+ },
+ {
+  "id": "nar_rilla_machine_go",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Walk on a letter to hear it. Press green to put it in!",
+  "say": "Walk on a letter to hear it, press green to put it in!"
+ },
+ {
+  "id": "nar_rilla_machine_change",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Change the first sound to make a new word!"
+ },
+ {
+  "id": "nar_rilla_machine_switch",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "New sounds! Let us make one more.",
+  "say": "New sounds, let us make one more."
+ },
+ {
+  "id": "nar_rilla_machine_makes",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That makes..."
+ },
+ {
+  "id": "nar_rilla_machine_silly_1",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "A silly word! Try another letter!",
+  "say": "A silly word, try another letter!"
+ },
+ {
+  "id": "nar_rilla_machine_silly_2",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That is not a word, you silly! Try again!",
+  "say": "That is not a word, you silly, try again!"
+ },
+ {
+  "id": "nar_rilla_machine_silly_3",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "The machine is giggling! Try another one!",
+  "say": "The machine is giggling, try another one!"
+ },
+ {
+  "id": "nar_rilla_machine_done",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We made them all!"
  },
  {
   "id": "nar_rilla_quest_home",

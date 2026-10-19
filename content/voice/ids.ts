@@ -14,6 +14,9 @@ export const PHONICS_SPEAKER = 'phonics';
 
 export const letterSoundLine = (letter: string) => `letter_${letter}_sound`;
 export const wordLine = (word: string) => `word_${word}`;
+/** The word machine (item 026): a rime said alone (`rime_at`), and a silly word a wrong tile makes (`silly_zat`). */
+export const rimeLine = (rime: string) => `rime_${rime}`;
+export const sillyLine = (word: string) => `silly_${word}`;
 export const narratorLine = (narrator: string, key: string) => `nar_${narrator}_${key}`;
 export const tauntLine = (fighter: string, key: string) => `taunt_${fighter}_${key}`;
 export const ultimateLine = (fighter: string) => `ult_${fighter}`;

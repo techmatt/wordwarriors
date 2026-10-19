@@ -18,6 +18,7 @@ import path from 'node:path';
 import { MOVE_WORDS, PERSONS, ROSTER, personOf } from '../../content/battle/roster.js';
 import { QUESTS, questLine } from '../../content/house/quests.js';
 import type { FighterSpec } from '../../content/battle/types.js';
+import { FAMILIES, sillyWord } from '../../content/phonics/families.js';
 import { LETTERS } from '../../content/phonics/letters.js';
 import { FETCH_ITEMS, allFrameTokens, allPrefixes, tokenWord } from '../../content/phonics/sentences.js';
 import { SPELL_WORDS } from '../../content/phonics/spelling.js';
@@ -33,6 +34,8 @@ import {
   nameLine,
   narratorLine,
   reformedLine,
+  rimeLine,
+  sillyLine,
   tauntLine,
   ultimateLine,
   wakeLine,
@@ -155,6 +158,14 @@ export function composeLines(): LineSpec[] {
       text: l.say,
       note: `placeholder for the /${l.letter}/ sound (${l.cls}); replace with a recorded clip`,
     });
+  }
+  // The word machine (item 026): each rime alone, said after the onset's own
+  // sound and never blended with it, and each silly word a wrong tile makes.
+  for (const f of FAMILIES) {
+    lines.push({ id: rimeLine(f.rime), speaker: PHONICS_SPEAKER, group: group.phonics, text: `${f.say}.`, note: `placeholder for the rime -${f.rime} said alone; replace with a recorded clip` });
+    for (const s of f.silly) {
+      lines.push({ id: sillyLine(sillyWord(s.letter, f.rime)), speaker: PHONICS_SPEAKER, group: group.phonics, text: `${s.say}!` });
+    }
   }
   const spellWords = new Set<string>();
   for (const triple of Object.values(SPELL_WORDS)) for (const w of triple) spellWords.add(w);
