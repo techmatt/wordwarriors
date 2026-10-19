@@ -87,7 +87,8 @@ test('endings: every scene works for every cast: four lines, all voiced, by peop
 
 test('endings: everyone stands on screen, apart, and out of the campfire', () => {
   for (const e of ENDINGS) {
-    for (let n = 1; n <= 6; n++) {
+    // At most five are there: the hero, the ally, both dads and the villain.
+    for (let n = 1; n <= 5; n++) {
       const xs = standXs(e, n);
       assert.equal(xs.length, n);
       for (const x of xs) assert.ok(x - e.stand.h * 0.4 >= 0 && x + e.stand.h * 0.4 <= 1280, `${e.id} n=${n}: ${x} on screen`);

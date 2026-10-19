@@ -103,6 +103,16 @@ for (const cast of CASTS) {
   });
 }
 
+// Every victory scene (item 027) with five there: Julia, Ellie, both dads, Tiamat.
+for (const ending of ['dessert', 'picnic', 'mountain', 'fort', 'boat', 'stars', 'campfire', 'snow']) {
+  test(`ending: ${ending}`, async ({ page }) => {
+    await boot(page, `?scene=victory&ending=${ending}&ally=ellie&villain=tiamat&primary=dada_matt&secondary=1&nojourney=1&read=bed`, 2);
+    await until(page, (s) => (s.ending?.said.length ?? 0) >= 1, 30_000, 'a line said');
+    await page.waitForTimeout(500);
+    await shot(page, `ending_${ending}`);
+  });
+}
+
 test('battle: taunts up to the first move choice', async ({ page }) => {
   await boot(page, '?scene=battle', 2);
   const rec = recorder(page, 'default_battle', 8, 400);

@@ -63,7 +63,14 @@ export class EndingScene extends Phaser.Scene {
 
     this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, endingArt(e.id)).setDisplaySize(GAME_WIDTH, GAME_HEIGHT).setDepth(0);
     // Depth by feet, as in the rooms: a front prop (the table, the boat) stands lower, so it is drawn over them.
-    for (const p of e.props) fitImage(this.add.image(p.x, p.y, endingPropArt(p.id)).setOrigin(0.5, 1), p.w, p.h).setDepth(p.y);
+    for (const p of e.props) {
+      const img = fitImage(this.add.image(p.x, p.y, endingPropArt(p.id)).setOrigin(0.5, 1), p.w, p.h).setDepth(p.y);
+      if (!p.front || p.cut === undefined) continue;
+      // Cut in two: the top behind the cast, the bottom (a second copy, cropped) over them.
+      img.setDepth(e.stand.y - 1);
+      const from = Math.round(img.height * p.cut);
+      fitImage(this.add.image(p.x, p.y, endingPropArt(p.id)).setOrigin(0.5, 1), p.w, p.h).setCrop(0, from, img.width, img.height - from).setDepth(p.y);
+    }
     new Bubbles(this);
 
     const xs = standXs(e, people.length);
