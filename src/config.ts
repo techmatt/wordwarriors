@@ -39,21 +39,37 @@ export const DEPTH = {
 } as const;
 
 /**
- * Who is in an episode while Matt is testing v0.2 (Matt, 2026-10-18): the
- * pick screens are skipped and the cast is fixed. `pickScreens: true` brings
- * back hero → ally → villain picks; `randomVillain: true` (with the picks off)
- * draws a surprise villain instead of `villain`.
+ * Who is in an episode. Since item 025 the cast is drawn fresh every episode
+ * (`randomCast`, src/rules/cast.ts): a villain from the whole roster, a random
+ * ally, the dads in random forms and roles. The fixed cast below is the
+ * "default episode": what `randomCast: false` plays, and what `?cast=default`
+ * (the tests' default) plays.
  *
- * The cast also picks the scenario (content/battle/forms.ts): `ally:
- * 'dada_jason'` is the chef episode, with Julia as chef Julia from the moment
- * she wakes up. That one line is the whole switch.
+ * `pickScreens: true` brings back the parked hero → ally → villain picks,
+ * which then choose those roles; the dads' forms are still drawn.
+ * `randomVillain: true` (with `randomCast: false`) draws only the villain.
+ *
+ * The cast also picks the scenario (content/battle/forms.ts): with `ally:
+ * 'dada_jason'` it is the chef episode, Julia as chef Julia from the moment
+ * she wakes up.
  */
 export const EPISODE_DEFAULTS = {
   pickScreens: false,
+  randomCast: true,
   hero: 'julia',
   ally: 'ellie' as string | null,
   villain: 'tiamat',
+  /** The default episode's waking dad (a person), in his own form; nobody else comes in. */
+  primary: 'dada_matt',
   randomVillain: false,
+};
+
+/** The cast draw's odds (Matt, item 025). */
+export const CAST_ODDS = {
+  /** The primary dad (the one who wakes her) is Dada Matt this often, else Dada Jason. */
+  mattPrimary: 0.6,
+  /** The other dad also comes into the bedroom this often. */
+  secondary: 0.5,
 };
 
 /**

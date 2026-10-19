@@ -126,6 +126,12 @@ export const MINIONS: Record<string, MinionSpec> = {
     palette: [0xb0b8c8, 0xffcc33], style: 'march', speed: 90, size: 0.45, hp: 18,
     ability: ab('groan', 'Groan', 'bolt', 2.0, 0xffcc33, 1, { glyph: '😆' }),
   },
+  /** Warlock Dada Jason's helpers (item 025). */
+  imp: {
+    id: 'imp', name: 'Imp', glyph: '😈', look: 'a tiny cheeky purple imp with little horns, bat wings and a big grin, more silly than scary',
+    palette: [0xb04aff, 0xff9ad5], style: 'fly', speed: 140, size: 0.45, hp: 15,
+    ability: ab('imp_flick', 'Flick', 'bolt', 2.0, 0xb04aff, 1, { glyph: '✨' }),
+  },
   /** Fetched in a sentence room ("We can use the HEN"), then summoned in the battle. */
   hen: {
     id: 'hen', name: 'Brave Hen', glyph: '🐔', look: 'a fluffy brave hen with a tiny red comb, puffed up and ready',
@@ -145,6 +151,10 @@ export const MINIONS: Record<string, MinionSpec> = {
     ability: ab('rainbow', 'Rainbow Blast', 'beam', 3.0, 0xff7ad9, 2, { color2: 0x7ad9ff }),
   },
 };
+
+/** The dads as drawn in every form (Matt's photos, 2026-10-18): only the clothes and props change between forms. */
+const MATT_FACE = 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, short light-brown hair thinning on top with a high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile';
+const JASON_FACE = 'a big, sturdy, round-faced dad: warm light-brown skin, very short dark curly hair receding at the front, black browline glasses, a short dark goatee beard flecked with grey, a tiny hoop earring, a big laughing smile';
 
 export const ROSTER: CharacterSpec[] = [
   {
@@ -336,6 +346,7 @@ export const ROSTER: CharacterSpec[] = [
     // Matt, 2026-10-18: Dada Matt took over the builder look and moves Dada
     // Jason had, and Dada Jason became a chef.
     id: 'dada_matt',
+    form: 'builder',
     description: 'A big-hearted builder dad with a giant hammer who builds walls and towers in a blink.',
     arena: 'castle',
     good: {
@@ -395,6 +406,7 @@ export const ROSTER: CharacterSpec[] = [
   },
   {
     id: 'dada_jason',
+    form: 'chef',
     description: 'A jolly chef dad with a giant whisk who flips pancakes higher than the roof.',
     arena: 'kitchen',
     good: {
@@ -1116,9 +1128,324 @@ export const ROSTER: CharacterSpec[] = [
       fx: 'quake',
     },
   },
+
+  // The dads' other forms (item 025). Each is a whole character with its own
+  // fighting, voice lines, villain version and quest, and `person` says whose
+  // form it is: the voice, the narrator lines and the wake-up are the
+  // person's, so a form is drawn in place of the dad wherever he appears in an
+  // episode. Builder Dada Matt and chef Dada Jason are the persons themselves.
+  {
+    id: 'dada_matt_lifter',
+    person: 'dada_matt',
+    form: 'lifter',
+    description: 'A huge-hearted weightlifter dad who lifts barbells, cars and the whole team over his head.',
+    arena: 'meadow',
+    good: {
+      displayName: 'Dada Matt', trail: { tint: [0xffd23f, 0xe63946], shape: 'star' }, look: `${MATT_FACE}, in a red weightlifting singlet with a gold star, a thick black lifting belt, wristbands and sneakers, holding a giant friendly barbell with round red-and-gold weights over his head`,
+      palette: [0xe63946, 0xffd23f], glyph: '💪', style: 'twirl', speed: 190, size: 1.25, hp: 140,
+      abilities: [
+        ab('barbell_spin', 'Barbell Spin', 'spin', 5, 0xffd23f, 2, { word: 'big', shout: true, words: ['top'] }),
+        ab('dumbbell_toss', 'Dumbbell Toss', 'bolt', 2.6, 0xc8c8d8, 1, { count: 3, glyph: '💪', word: 'pow', words: ['hop'] }),
+        ab('muscle_flex', 'Muscle Flex', 'shield', 10, 0xe63946, 1, { duration: 4, word: 'hug', words: ['fix'] }),
+        ab('mega_squat', 'Mega Squat Slam', 'slam', 7, 0xffd23f, 3, { word: 'bam', shout: true, words: ['tug', 'dig'] }),
+      ],
+      ultimate: ab('trophy_shower', 'Trophy Shower', 'rain', 0, 0xffd23f, 3, { count: 24, glyph: '🏆', color2: 0xe63946 }),
+      taunts: [
+        { key: 'power', text: 'Feel the power!' },
+        { key: 'rep', text: 'One more rep!' },
+        { key: 'legs', text: 'Lift with your legs!' },
+        { key: 'muscles', text: 'Muscles, go!' },
+        { key: 'mountain', text: 'Strong like a mountain!' },
+        { key: 'pump', text: 'Time to pump it up!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Dada Matt', trail: { tint: [0xb04aff, 0x2a2a3a], shape: 'square' }, look: `${MATT_FACE}, with a smug show-off grin, in a black-and-purple weightlifting singlet with a spiky lifting belt, flexing, a giant black barbell with purple weights crackling on his shoulders`,
+      palette: [0x2a2a3a, 0xb04aff], glyph: '🏋️', style: 'stomp', speed: 110, size: 1.45, hp: 180,
+      abilities: [
+        ab('kettlebell_crash', 'Kettlebell Crash', 'dash', 7, 0xb04aff, 3),
+        ab('shake_splash', 'Protein Shake Splash', 'cone', 6, 0xc8a0ff, 2),
+        ab('flex_quake', 'Flex Quake', 'slam', 6, 0xb04aff, 3),
+      ],
+      ultimate: ab('mega_muscle_quake', 'Mega Muscle Quake', 'wave', 0, 0xb04aff, 3, { color2: 0x2a2a3a }),
+      taunts: [
+        { key: 'lift', text: 'Do you even lift?' },
+        { key: 'weak', text: 'Too weak, too weak!' },
+        { key: 'flex', text: 'Watch me flex!' },
+        { key: 'nobody', text: 'Nobody lifts like me!' },
+        { key: 'sweaty', text: 'Sweaty hugs for all!' },
+        { key: 'reps', text: 'Ten more reps!' },
+      ],
+    },
+    reformed: [
+      { key: 'teddies', text: 'Sorry! Want to lift teddies with me?' },
+      { key: 'fives', text: 'No more showing off. Only high fives!' },
+    ],
+    counter: {
+      id: 'juice_box', name: 'Juice Box', glyph: '🥤', look: 'a big cold juice box with a bendy straw: one sip and even the strongest show-off needs a nap',
+      how: 'calm', word: 'box',
+    },
+    house: {
+      threat: 'he wants everybody to do a thousand jumping jacks',
+      tint: 0x7a4ab0,
+      decals: [{ id: 'dada_matt_lifter_dumbbell', glyph: '🏋️', look: 'heavy purple dumbbells dropped all over the floor', count: 3 }],
+      fx: 'quake',
+    },
+  },
+  {
+    id: 'dada_matt_cyber',
+    person: 'dada_matt',
+    form: 'cyber',
+    description: 'A programmer dad turned cyberdecker: a neon visor, glowing code at his fingertips, a swarm of helper drones and hacking tricks.',
+    arena: 'factory',
+    good: {
+      displayName: 'Dada Matt', trail: { tint: [0x3ae0ff, 0xff4ad8], shape: 'square' }, look: `${MATT_FACE}, as a friendly cyberpunk hacker: a glowing cyan neon visor over his eyes, a black hooded jacket with glowing magenta circuit lines, fingerless gloves, a floating keyboard of glowing cyan code in front of him and a little round helper drone at his shoulder`,
+      palette: [0x1a1a3a, 0x3ae0ff], glyph: '💻', style: 'hover', speed: 180, size: 1.2, hp: 120,
+      abilities: [
+        ab('drone_swarm', 'Drone Swarm', 'summon', 12, 0x3ae0ff, 2, { minion: 'drone', count: 2, word: 'zip', words: ['jet'] }),
+        ab('laser_net', 'Laser Net', 'grid', 8, 0xff4ad8, 2, { duration: 2, word: 'zap', words: ['net'] }),
+        ab('firewall', 'Firewall Shield', 'shield', 10, 0x3ae0ff, 1, { duration: 4, word: 'fix', words: ['top'] }),
+        ab('code_bolt', 'Code Bolt', 'bolt', 2.4, 0x3ae0ff, 1, { count: 4, glyph: '💾', homing: true, word: 'run', words: ['pop'] }),
+      ],
+      ultimate: ab('data_storm', 'Data Storm', 'rain', 0, 0x3ae0ff, 3, { count: 28, glyph: '💾', color2: 0xff4ad8 }),
+      taunts: [
+        { key: 'hacking', text: 'Hacking in!' },
+        { key: 'beep', text: 'Beep boop, got you!' },
+        { key: 'drones', text: 'Drones, go!' },
+        { key: 'upload', text: 'Upload complete!' },
+        { key: 'access', text: 'Access granted!' },
+        { key: 'code', text: 'Code mode on!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Dada Matt', trail: { tint: [0xff2a4a, 0x1a1a2a], shape: 'square' }, look: `${MATT_FACE}, with a sly glitchy grin, as a villain hacker: a glowing red neon visor, a black spiky hooded jacket with red circuit lines, a floating red screen of jumbled code and two little red-eyed drones`,
+      palette: [0x1a1a2a, 0xff2a4a], glyph: '🖥️', style: 'blink', speed: 170, size: 1.3, hp: 160,
+      abilities: [
+        ab('virus_blast', 'Virus Blast', 'bolt', 2.6, 0xff2a4a, 2, { count: 3, glyph: '👾', status: 'stun', duration: 1.5 }),
+        ab('glitch_jump', 'Glitch Jump', 'teleport', 6, 0xff2a4a, 2),
+        ab('red_lasers', 'Red Laser Grid', 'grid', 8, 0xff2a4a, 3, { duration: 2 }),
+        ab('evil_drones', 'Evil Drones', 'summon', 12, 0xff2a4a, 2, { minion: 'drone', count: 3 }),
+      ],
+      ultimate: ab('system_crash', 'System Crash', 'wave', 0, 0xff2a4a, 3, { color2: 0x1a1a2a }),
+      taunts: [
+        { key: 'deleting', text: 'Deleting your fun!' },
+        { key: 'error', text: 'Error, error!' },
+        { key: 'glitch', text: 'Glitch, glitch, glitch!' },
+        { key: 'lights', text: 'I hacked the lights!' },
+        { key: 'bye', text: 'Beep boop, bye bye!' },
+        { key: 'over', text: 'Game over, heroes!' },
+      ],
+    },
+    reformed: [
+      { key: 'cartoons', text: 'Sorry! I will only hack cartoons now.' },
+      { key: 'drone', text: 'Want to fly my drone?' },
+    ],
+    counter: {
+      id: 'magic_pen', name: 'Magic Pen', glyph: '🖊️', look: 'a glowing magic pen that scribbles over bad code and rewrites it into a lullaby',
+      how: 'shutdown', word: 'pen',
+    },
+    house: {
+      threat: 'he hacked every light to blink and beep',
+      tint: 0x2a4a8a,
+      decals: [{ id: 'dada_matt_cyber_cable', glyph: '🔌', look: 'tangled cables glowing red and blinking', count: 3 }],
+      fx: 'sparkle',
+    },
+  },
+  {
+    id: 'dada_matt_blade',
+    person: 'dada_matt',
+    form: 'blade',
+    description: 'A buff spell-blade dad: a runed sword in one hand and arcane bursts of blue magic in the other.',
+    arena: 'castle',
+    good: {
+      displayName: 'Dada Matt', trail: { tint: [0x7ab8ff, 0xffffff], shape: 'star' }, look: `${MATT_FACE}, as a buff spell-blade hero: sleek blue-and-silver rune armour that shows his big arms, a flowing dark-blue cape, a glowing silver sword with blue runes along the blade in one hand and a swirl of blue arcane magic in the other`,
+      palette: [0x2a4aa0, 0x7ab8ff], glyph: '🗡️', style: 'twirl', speed: 210, size: 1.2, hp: 130,
+      abilities: [
+        ab('rune_slash', 'Rune Slash', 'dash', 5, 0x7ab8ff, 2, { word: 'pow', shout: true, words: ['run'] }),
+        ab('arcane_burst', 'Arcane Burst', 'bolt', 2.4, 0x7ab8ff, 1, { count: 3, glyph: '✨', homing: true, word: 'zap', words: ['pop'] }),
+        ab('frost_rune', 'Frost Rune', 'freeze', 9, 0xbfefff, 2, { status: 'freeze', duration: 2, word: 'ice', words: ['fog'] }),
+        ab('blade_spin', 'Blade Spin', 'spin', 6, 0xffffff, 2, { count: 4, word: 'top', words: ['zip'] }),
+      ],
+      ultimate: ab('rune_storm', 'Rune Storm', 'lightning', 0, 0x7ab8ff, 3, { count: 8, color2: 0xffffff }),
+      taunts: [
+        { key: 'sword', text: 'Sword and spell!' },
+        { key: 'runes', text: 'By the runes!' },
+        { key: 'shine', text: 'Blade, shine!' },
+        { key: 'muscles', text: 'Magic and muscles!' },
+        { key: 'rune', text: 'Feel the rune power!' },
+        { key: 'guard', text: 'On guard!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Dada Matt', trail: { tint: [0x8a2aff, 0x1a0a2a], shape: 'smoke' }, look: `${MATT_FACE}, with a smug dark-lord grin, in spiky black-and-purple rune armour and a tattered purple cape, a dark sword with glowing purple runes and purple magic smoking round his other hand`,
+      palette: [0x1a0a2a, 0x8a2aff], glyph: '⚔️', style: 'twirl', speed: 190, size: 1.35, hp: 170,
+      abilities: [
+        ab('shadow_slash', 'Shadow Slash', 'dash', 6, 0x8a2aff, 3),
+        ab('hex_bolts', 'Hex Bolts', 'bolt', 2.6, 0x8a2aff, 2, { count: 4, glyph: '🔮', homing: true }),
+        ab('rune_traps', 'Rune Traps', 'trap', 8, 0xb04aff, 2, { count: 3, glyph: '🔮' }),
+      ],
+      ultimate: ab('doom_rune', 'Doom Rune Blast', 'wave', 0, 0x8a2aff, 3, { color2: 0x1a0a2a }),
+      taunts: [
+        { key: 'bow', text: 'Bow to my blade!' },
+        { key: 'rise', text: 'Dark runes, rise!' },
+        { key: 'best', text: 'My spells are the best!' },
+        { key: 'nobody', text: 'Nobody beats my blade!' },
+        { key: 'hex', text: 'Hex, hex, hex!' },
+        { key: 'shadow', text: 'Shadow magic!' },
+      ],
+    },
+    reformed: [
+      { key: 'sparkle', text: 'Sorry! Want to learn a sparkle spell?' },
+      { key: 'tickle', text: 'My sword is only for tickling now!' },
+    ],
+    counter: {
+      id: 'shiny_pot', name: 'Shiny Pot', glyph: '🍲', look: 'a huge shiny silver cooking pot, polished like a mirror, that bounces magic straight back',
+      how: 'reflect', word: 'pot',
+    },
+    house: {
+      threat: 'he wants to put a grumpy spell on every toy',
+      tint: 0x4a2a8a,
+      decals: [{ id: 'dada_matt_blade_rune', glyph: '🔮', look: 'glowing purple runes scorched on the floor', count: 3 }],
+      fx: 'sparkle',
+    },
+  },
+  {
+    id: 'dada_jason_warrior',
+    person: 'dada_jason',
+    form: 'warrior',
+    description: 'A bold fantasy warrior dad in shining armour, with a round shield, a big friendly axe and the loudest battle cry in the land.',
+    arena: 'castle',
+    good: {
+      displayName: 'Dada Jason', trail: { tint: [0xffd23f, 0xe63946], shape: 'spark' }, look: `${JASON_FACE}, as a fantasy warrior: shining silver armour with gold trim, a red cape, a round red shield with a golden sun on it on one arm and a big friendly double-headed battle axe in the other hand`,
+      palette: [0xc8c8d8, 0xe63946], glyph: '🛡️', style: 'twirl', speed: 190, size: 1.25, hp: 140,
+      abilities: [
+        ab('axe_spin', 'Axe Spin', 'spin', 5, 0xc8c8d8, 2, { word: 'top', shout: true, words: ['zip'] }),
+        ab('shield_bash', 'Shield Bash', 'dash', 6, 0xe63946, 2, { word: 'ram', shout: true, words: ['run'] }),
+        ab('battle_cry', 'Battle Cry', 'shield', 10, 0xffd23f, 1, { duration: 4, word: 'big', words: ['hug'] }),
+        ab('sword_leap', 'Sword Leap', 'slam', 7, 0xffd23f, 3, { word: 'bam', shout: true, words: ['hop', 'pow'] }),
+      ],
+      ultimate: ab('sword_rain', 'Sword Rain', 'rain', 0, 0xc8c8d8, 3, { count: 24, glyph: '⚔️', color2: 0xffd23f }),
+      taunts: [
+        { key: 'kingdom', text: 'For the kingdom!' },
+        { key: 'shields', text: 'Shields up!' },
+        { key: 'charge', text: 'Charge!' },
+        { key: 'line', text: 'Hold the line!' },
+        { key: 'bold', text: 'Brave and bold!' },
+        { key: 'quits', text: 'A warrior never quits!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Dada Jason', trail: { tint: [0xff3a1a, 0x2a1a1a], shape: 'smoke' }, look: `${JASON_FACE}, with a fierce cheeky scowl, in spiky black armour with red trim and a horned helmet, a dented black shield and a huge jagged battle axe`,
+      palette: [0x2a1a1a, 0xff3a1a], glyph: '🪓', style: 'stomp', speed: 120, size: 1.45, hp: 180,
+      abilities: [
+        ab('axe_throw', 'Axe Throw', 'bolt', 3, 0xff3a1a, 2, { count: 2, glyph: '⚔️', homing: true }),
+        ab('shield_slam', 'Shield Slam', 'slam', 6, 0xff3a1a, 3),
+        ab('whirlwind', 'Whirlwind', 'spin', 6, 0x8a8a9a, 2, { count: 4 }),
+      ],
+      ultimate: ab('war_cry', 'Mega War Cry', 'wave', 0, 0xff3a1a, 3, { color2: 0x2a1a1a }),
+      taunts: [
+        { key: 'kneel', text: 'Kneel before me!' },
+        { key: 'axe', text: 'My axe is hungry!' },
+        { key: 'charge', text: 'Charge, charge, charge!' },
+        { key: 'past', text: 'Nobody gets past!' },
+        { key: 'never', text: 'I never give up!' },
+        { key: 'cry', text: 'Hear my war cry!' },
+      ],
+    },
+    reformed: [
+      { key: 'knight', text: 'Sorry! Let me be your brave knight!' },
+      { key: 'battles', text: 'No more battles. Only hugs!' },
+    ],
+    counter: {
+      id: 'slippy_mop', name: 'Slippy Mop', glyph: '💦', look: 'a soapy magic mop that makes the floor so slippery a big charging warrior slides right past',
+      how: 'block', word: 'mop',
+    },
+    house: {
+      threat: 'he wants to turn the house into a castle with no snacks',
+      tint: 0x8a3a2a,
+      decals: [{ id: 'dada_jason_warrior_shield', glyph: '🛡️', look: 'dented black shields and a broken axe handle', count: 2 }],
+      fx: 'quake',
+    },
+  },
+  {
+    id: 'dada_jason_warlock',
+    person: 'dada_jason',
+    form: 'warlock',
+    description: 'A dark-robed warlock dad with purple fire, silly curses and a gang of cheeky summoned imps: spooky on the outside, a big softie inside.',
+    arena: 'city',
+    good: {
+      displayName: 'Dada Jason', trail: { tint: [0xb04aff, 0xff9ad5], shape: 'smoke' }, look: `${JASON_FACE}, as a friendly warlock: long deep-purple robes with silver stars, a pointed hood pushed back, a tall wooden staff topped with a glowing violet crystal, little purple flames dancing round his free hand, and a tiny cheeky purple imp on his shoulder`,
+      palette: [0x4a1a7a, 0xb04aff], glyph: '🔮', style: 'blink', speed: 170, size: 1.2, hp: 120,
+      abilities: [
+        ab('imp_party', 'Imp Party', 'summon', 12, 0xb04aff, 2, { minion: 'imp', count: 3, word: 'pop', words: ['hop'] }),
+        ab('purple_fire', 'Purple Fire', 'cone', 6, 0xb04aff, 2, { color2: 0xff9ad5, word: 'hot', words: ['fog'] }),
+        ab('piggy_hex', 'Piggy Hex', 'polymorph', 10, 0xff9ad5, 2, { status: 'pig', duration: 3, word: 'pig', words: ['mud'] }),
+        ab('shadow_bolt', 'Shadow Bolt', 'bolt', 2.4, 0xb04aff, 1, { count: 3, glyph: '🔮', homing: true, word: 'zap', words: ['zip'] }),
+      ],
+      ultimate: ab('meteor_rain', 'Purple Meteor Rain', 'rain', 0, 0xb04aff, 3, { count: 24, glyph: '☄️', color2: 0xff9ad5 }),
+      taunts: [
+        { key: 'abracadabra', text: 'Abracadabra, purple fire!' },
+        { key: 'imps', text: 'My imps are ready!' },
+        { key: 'spell', text: 'A spell for you!' },
+        { key: 'hocus', text: 'Hocus pocus!' },
+        { key: 'purple', text: 'Purple power!' },
+        { key: 'go', text: 'Little imps, go!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Dada Jason', trail: { tint: [0x8a2aff, 0x0a0a1a], shape: 'smoke' }, look: `${JASON_FACE}, with a sly twirly villain moustache and a wicked grin, in black-and-violet robes with a spiky collar and a deep hood, a crooked staff crackling with violet fire, and two grinning purple imps`,
+      palette: [0x0a0a1a, 0x8a2aff], glyph: '🕯️', style: 'blink', speed: 170, size: 1.3, hp: 160,
+      abilities: [
+        ab('curse_cloud', 'Curse Cloud', 'cone', 6, 0x8a2aff, 2),
+        ab('hex_trap', 'Hex Trap', 'trap', 8, 0xb04aff, 2, { count: 3, glyph: '🔮' }),
+        ab('imp_swarm', 'Imp Swarm', 'summon', 12, 0x8a2aff, 2, { minion: 'imp', count: 4 }),
+      ],
+      ultimate: ab('big_purple_doom', 'Big Purple Doom', 'eclipse', 0, 0x2a0a4a, 3, { color2: 0xb04aff }),
+      taunts: [
+        { key: 'curses', text: 'Curses on you!' },
+        { key: 'imps', text: 'My imps will catch you!' },
+        { key: 'trouble', text: 'Bubble, bubble, purple trouble!' },
+        { key: 'hex', text: 'Hex, hex, everybody!' },
+        { key: 'gotcha', text: 'Abracadabra, gotcha!' },
+        { key: 'darkness', text: 'Darkness, come!' },
+      ],
+    },
+    reformed: [
+      { key: 'trick', text: 'Sorry! Want to see a sparkly trick?' },
+      { key: 'happy', text: 'From now on, only happy spells!' },
+    ],
+    counter: {
+      id: 'sunshine_bus', name: 'Sunshine Bus', glyph: '🚌', look: 'a bright yellow bus with headlights so sunny that every purple shadow melts away',
+      how: 'reveal', word: 'bus',
+    },
+    house: {
+      threat: 'he wants to turn everybody into a little purple frog',
+      tint: 0x4a1a7a,
+      decals: [{ id: 'dada_jason_warlock_flame', glyph: '🔥', look: 'little purple flames flickering on the floor', count: 3 }],
+      fx: 'embers',
+    },
+  },
 ];
 
 export const CHARACTER_BY_ID: Record<string, CharacterSpec> = Object.fromEntries(ROSTER.map((c) => [c.id, c]));
+
+/** Whose form `id` is: the person for a form (`dada_matt_lifter` → `dada_matt`), else `id` itself. */
+export function personOf(id: string): string {
+  return CHARACTER_BY_ID[id]?.person ?? id;
+}
+
+/** The persons: every roster character that is not a form of another. Voices, narrators and pick screens are per person. */
+export const PERSONS: CharacterSpec[] = ROSTER.filter((c) => !c.person);
+
+/** Every form of a person, the person's own (default) form first: `dada_matt`, then `dada_matt_lifter`... */
+export function formsOf(person: string): CharacterSpec[] {
+  return ROSTER.filter((c) => c.id === person || c.person === person);
+}
+
+/** The roster id of `person`'s form named `form` (`dada_matt`, `lifter` → `dada_matt_lifter`), or undefined. */
+export function formId(person: string, form: string): string | undefined {
+  return formsOf(person).find((c) => c.form === form)?.id;
+}
 
 /** Team combos: when both are on the hero side, every so often they fire this together. */
 export const COMBOS: ComboSpec[] = [
@@ -1141,8 +1468,11 @@ export const COMBOS: ComboSpec[] = [
 /** Any two heroes without a written combo still team up with this. */
 export const DEFAULT_COMBO = ab('team_blast', 'Team Star Blast', 'beam', 18, 0xffd23f, 3, { color2: 0xff5ab4 });
 
+/** A combo is written for persons, so every form of a dad keeps his (Julia and any Dada Matt high-five). */
 function comboSpec(a: string, b: string): ComboSpec | undefined {
-  return COMBOS.find((c) => (c.pair[0] === a && c.pair[1] === b) || (c.pair[0] === b && c.pair[1] === a));
+  const pa = personOf(a);
+  const pb = personOf(b);
+  return COMBOS.find((c) => (c.pair[0] === pa && c.pair[1] === pb) || (c.pair[0] === pb && c.pair[1] === pa));
 }
 
 export function comboFor(a: string, b: string): AbilitySpec {
@@ -1153,7 +1483,7 @@ export function comboFor(a: string, b: string): AbilitySpec {
 export function comboPart(who: string, partner: string): AbilitySpec {
   const c = comboSpec(who, partner);
   if (!c) return DEFAULT_COMBO;
-  return c.second && c.pair[1] === who ? c.second : c.ability;
+  return c.second && c.pair[1] === personOf(who) ? c.second : c.ability;
 }
 
 /** Arenas: id → colours and a glyph strip for the placeholder painter, plus a look for art prompts. */

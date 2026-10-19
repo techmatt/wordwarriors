@@ -20,7 +20,7 @@
  * unit tests read it under Node.
  */
 
-import { CHARACTER_BY_ID, ROSTER } from '../battle/roster.js';
+import { CHARACTER_BY_ID, PERSONS, ROSTER, personOf } from '../battle/roster.js';
 import type { AbilitySpec } from '../battle/types.js';
 
 export interface Frame {
@@ -186,7 +186,8 @@ export function sentence(frameId: string, fill: Fill, key: string): Sentence {
   const text = frame.text
     .replace(/\{(villain|helper|hero)\}/, name ? nameFor(name.slot, name.id).show.toUpperCase() : '')
     .replace('{x}', key.toUpperCase());
-  return { frame: frameId, tokens: text.split(/\s+/).filter(Boolean), key, prefixLine: prefixLineId(frameId, name?.id ?? null) };
+  // A form reads and sounds like its person (EVIL DADA MATT for every Matt), so it shares the person's prefix line.
+  return { frame: frameId, tokens: text.split(/\s+/).filter(Boolean), key, prefixLine: prefixLineId(frameId, name ? personOf(name.id) : null) };
 }
 
 /** A sentence token's own word line (`word_evilrilla`, `word_the`). */
@@ -200,7 +201,7 @@ export function allPrefixes(): { id: string; text: string; say?: string }[] {
   for (const frame of FRAMES) {
     const words = frame.text.replace(' {x}', '').split(/\s+/);
     const slot = slotOf(frame);
-    const ids = slot ? ROSTER.map((c) => c.id) : [null];
+    const ids = slot ? PERSONS.map((c) => c.id) : [null];
     for (const id of ids) {
       const name = slot && id ? nameFor(slot, id) : null;
       // Spoken in sentence case, trailing off where the key word will go.

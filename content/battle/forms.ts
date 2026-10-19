@@ -34,6 +34,8 @@ export const FORMS: Record<string, Form[]> = {
   julia: [
     // The chef scenario: Dada Jason the chef is her ally (Matt, item 016).
     { id: 'chef', art: 'char_julia_chef', face: 'face_julia_chef', when: { ally: 'dada_jason' } },
+    // The knights' camp: warrior Dada Jason is her ally (item 025).
+    { id: 'knight', art: 'char_julia_knight', face: 'face_julia_knight', when: { ally: 'dada_jason_warrior' } },
   ],
 };
 

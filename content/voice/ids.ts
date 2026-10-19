@@ -26,12 +26,13 @@ export const reformedLine = (character: string, key: string) => `reformed_${char
 export const fighterId = (character: string, evil: boolean) => (evil ? `${character}_evil` : character);
 
 /**
- * The bedroom wake-up, said by whoever comes in to wake the hero: Dada Matt,
- * or Dada Jason when Dada Matt is himself the hero. Keys: `up`, `good_<hero>`,
- * `helper_<character>`, `bad_<villain>`, `door`. Group `core`.
+ * The bedroom wake-up, said by whichever dad comes in to wake the hero (the
+ * episode's primary dad, src/rules/cast.ts), in his own voice whatever his
+ * form. Keys: `up`, `good_<hero>`, `helper_<person>`, `bad_<villain>` (any
+ * roster id: each villain form has its own threat), `door`, and `hi` for the
+ * other dad when he comes in too. Group `core`.
  */
 export const WAKERS = ['dada_matt', 'dada_jason'] as const;
-export const wakerFor = (hero: string) => (hero === 'dada_matt' ? 'dada_jason' : 'dada_matt');
 export const wakeLine = (waker: string, key: string) => `wake_${waker}_${key}`;
 
 /** Voice group names, so a scene can ask for exactly what it is about to say. */

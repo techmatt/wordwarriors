@@ -2358,6 +2358,818 @@
   "text": "Gorilla hugs for everybody!"
  },
  {
+  "id": "name_dada_matt_lifter",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Dada Matt!"
+ },
+ {
+  "id": "taunt_dada_matt_lifter_power",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_lifter",
+  "text": "Feel the power!"
+ },
+ {
+  "id": "taunt_dada_matt_lifter_rep",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_lifter",
+  "text": "One more rep!"
+ },
+ {
+  "id": "taunt_dada_matt_lifter_legs",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_lifter",
+  "text": "Lift with your legs!"
+ },
+ {
+  "id": "taunt_dada_matt_lifter_muscles",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_lifter",
+  "text": "Muscles, go!"
+ },
+ {
+  "id": "taunt_dada_matt_lifter_mountain",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_lifter",
+  "text": "Strong like a mountain!"
+ },
+ {
+  "id": "taunt_dada_matt_lifter_pump",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_lifter",
+  "text": "Time to pump it up!"
+ },
+ {
+  "id": "ult_dada_matt_lifter",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_lifter",
+  "text": "Trophy Shower!"
+ },
+ {
+  "id": "move_dada_matt_lifter_barbell_spin",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_lifter",
+  "text": "Barbell Spin!"
+ },
+ {
+  "id": "move_dada_matt_lifter_mega_squat",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_lifter",
+  "text": "Mega Squat Slam!"
+ },
+ {
+  "id": "name_dada_matt_lifter_evil",
+  "speaker": "dada_matt_evil",
+  "group": "core",
+  "text": "Evil Dada Matt!"
+ },
+ {
+  "id": "taunt_dada_matt_lifter_evil_lift",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "Do you even lift?"
+ },
+ {
+  "id": "taunt_dada_matt_lifter_evil_weak",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "Too weak, too weak!"
+ },
+ {
+  "id": "taunt_dada_matt_lifter_evil_flex",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "Watch me flex!"
+ },
+ {
+  "id": "taunt_dada_matt_lifter_evil_nobody",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "Nobody lifts like me!"
+ },
+ {
+  "id": "taunt_dada_matt_lifter_evil_sweaty",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "Sweaty hugs for all!"
+ },
+ {
+  "id": "taunt_dada_matt_lifter_evil_reps",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "Ten more reps!"
+ },
+ {
+  "id": "ult_dada_matt_lifter_evil",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "Mega Muscle Quake!"
+ },
+ {
+  "id": "move_dada_matt_lifter_evil_kettlebell_crash",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "Kettlebell Crash!"
+ },
+ {
+  "id": "move_dada_matt_lifter_evil_shake_splash",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "Protein Shake Splash!"
+ },
+ {
+  "id": "move_dada_matt_lifter_evil_flex_quake",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "Flex Quake!"
+ },
+ {
+  "id": "reformed_dada_matt_lifter_teddies",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "Sorry! Want to lift teddies with me?"
+ },
+ {
+  "id": "reformed_dada_matt_lifter_fives",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "No more showing off. Only high fives!"
+ },
+ {
+  "id": "name_dada_matt_cyber",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Dada Matt!"
+ },
+ {
+  "id": "taunt_dada_matt_cyber_hacking",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_cyber",
+  "text": "Hacking in!"
+ },
+ {
+  "id": "taunt_dada_matt_cyber_beep",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_cyber",
+  "text": "Beep boop, got you!"
+ },
+ {
+  "id": "taunt_dada_matt_cyber_drones",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_cyber",
+  "text": "Drones, go!"
+ },
+ {
+  "id": "taunt_dada_matt_cyber_upload",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_cyber",
+  "text": "Upload complete!"
+ },
+ {
+  "id": "taunt_dada_matt_cyber_access",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_cyber",
+  "text": "Access granted!"
+ },
+ {
+  "id": "taunt_dada_matt_cyber_code",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_cyber",
+  "text": "Code mode on!"
+ },
+ {
+  "id": "ult_dada_matt_cyber",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_cyber",
+  "text": "Data Storm!"
+ },
+ {
+  "id": "move_dada_matt_cyber_drone_swarm",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_cyber",
+  "text": "Drone Swarm!"
+ },
+ {
+  "id": "move_dada_matt_cyber_laser_net",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_cyber",
+  "text": "Laser Net!"
+ },
+ {
+  "id": "name_dada_matt_cyber_evil",
+  "speaker": "dada_matt_evil",
+  "group": "core",
+  "text": "Evil Dada Matt!"
+ },
+ {
+  "id": "taunt_dada_matt_cyber_evil_deleting",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "Deleting your fun!"
+ },
+ {
+  "id": "taunt_dada_matt_cyber_evil_error",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "Error, error!"
+ },
+ {
+  "id": "taunt_dada_matt_cyber_evil_glitch",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "Glitch, glitch, glitch!"
+ },
+ {
+  "id": "taunt_dada_matt_cyber_evil_lights",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "I hacked the lights!"
+ },
+ {
+  "id": "taunt_dada_matt_cyber_evil_bye",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "Beep boop, bye bye!"
+ },
+ {
+  "id": "taunt_dada_matt_cyber_evil_over",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "Game over, heroes!"
+ },
+ {
+  "id": "ult_dada_matt_cyber_evil",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "System Crash!"
+ },
+ {
+  "id": "move_dada_matt_cyber_evil_virus_blast",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "Virus Blast!"
+ },
+ {
+  "id": "move_dada_matt_cyber_evil_glitch_jump",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "Glitch Jump!"
+ },
+ {
+  "id": "move_dada_matt_cyber_evil_red_lasers",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "Red Laser Grid!"
+ },
+ {
+  "id": "move_dada_matt_cyber_evil_evil_drones",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "Evil Drones!"
+ },
+ {
+  "id": "reformed_dada_matt_cyber_cartoons",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "Sorry! I will only hack cartoons now."
+ },
+ {
+  "id": "reformed_dada_matt_cyber_drone",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "Want to fly my drone?"
+ },
+ {
+  "id": "name_dada_matt_blade",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Dada Matt!"
+ },
+ {
+  "id": "taunt_dada_matt_blade_sword",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade",
+  "text": "Sword and spell!"
+ },
+ {
+  "id": "taunt_dada_matt_blade_runes",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade",
+  "text": "By the runes!"
+ },
+ {
+  "id": "taunt_dada_matt_blade_shine",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade",
+  "text": "Blade, shine!"
+ },
+ {
+  "id": "taunt_dada_matt_blade_muscles",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade",
+  "text": "Magic and muscles!"
+ },
+ {
+  "id": "taunt_dada_matt_blade_rune",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade",
+  "text": "Feel the rune power!"
+ },
+ {
+  "id": "taunt_dada_matt_blade_guard",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade",
+  "text": "On guard!"
+ },
+ {
+  "id": "ult_dada_matt_blade",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade",
+  "text": "Rune Storm!"
+ },
+ {
+  "id": "move_dada_matt_blade_rune_slash",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade",
+  "text": "Rune Slash!"
+ },
+ {
+  "id": "move_dada_matt_blade_frost_rune",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade",
+  "text": "Frost Rune!"
+ },
+ {
+  "id": "move_dada_matt_blade_blade_spin",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade",
+  "text": "Blade Spin!"
+ },
+ {
+  "id": "name_dada_matt_blade_evil",
+  "speaker": "dada_matt_evil",
+  "group": "core",
+  "text": "Evil Dada Matt!"
+ },
+ {
+  "id": "taunt_dada_matt_blade_evil_bow",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "Bow to my blade!"
+ },
+ {
+  "id": "taunt_dada_matt_blade_evil_rise",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "Dark runes, rise!"
+ },
+ {
+  "id": "taunt_dada_matt_blade_evil_best",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "My spells are the best!"
+ },
+ {
+  "id": "taunt_dada_matt_blade_evil_nobody",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "Nobody beats my blade!"
+ },
+ {
+  "id": "taunt_dada_matt_blade_evil_hex",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "Hex, hex, hex!"
+ },
+ {
+  "id": "taunt_dada_matt_blade_evil_shadow",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "Shadow magic!"
+ },
+ {
+  "id": "ult_dada_matt_blade_evil",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "Doom Rune Blast!"
+ },
+ {
+  "id": "move_dada_matt_blade_evil_shadow_slash",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "Shadow Slash!"
+ },
+ {
+  "id": "move_dada_matt_blade_evil_hex_bolts",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "Hex Bolts!"
+ },
+ {
+  "id": "move_dada_matt_blade_evil_rune_traps",
+  "speaker": "dada_matt_evil",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "Rune Traps!"
+ },
+ {
+  "id": "reformed_dada_matt_blade_sparkle",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "Sorry! Want to learn a sparkle spell?"
+ },
+ {
+  "id": "reformed_dada_matt_blade_tickle",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "My sword is only for tickling now!"
+ },
+ {
+  "id": "name_dada_jason_warrior",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Dada Jason!"
+ },
+ {
+  "id": "taunt_dada_jason_warrior_kingdom",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior",
+  "text": "For the kingdom!"
+ },
+ {
+  "id": "taunt_dada_jason_warrior_shields",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior",
+  "text": "Shields up!"
+ },
+ {
+  "id": "taunt_dada_jason_warrior_charge",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior",
+  "text": "Charge!"
+ },
+ {
+  "id": "taunt_dada_jason_warrior_line",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior",
+  "text": "Hold the line!"
+ },
+ {
+  "id": "taunt_dada_jason_warrior_bold",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior",
+  "text": "Brave and bold!"
+ },
+ {
+  "id": "taunt_dada_jason_warrior_quits",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior",
+  "text": "A warrior never quits!"
+ },
+ {
+  "id": "ult_dada_jason_warrior",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior",
+  "text": "Sword Rain!"
+ },
+ {
+  "id": "move_dada_jason_warrior_axe_spin",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior",
+  "text": "Axe Spin!"
+ },
+ {
+  "id": "move_dada_jason_warrior_shield_bash",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior",
+  "text": "Shield Bash!"
+ },
+ {
+  "id": "move_dada_jason_warrior_sword_leap",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior",
+  "text": "Sword Leap!"
+ },
+ {
+  "id": "name_dada_jason_warrior_evil",
+  "speaker": "dada_jason_evil",
+  "group": "core",
+  "text": "Evil Dada Jason!"
+ },
+ {
+  "id": "taunt_dada_jason_warrior_evil_kneel",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "Kneel before me!"
+ },
+ {
+  "id": "taunt_dada_jason_warrior_evil_axe",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "My axe is hungry!"
+ },
+ {
+  "id": "taunt_dada_jason_warrior_evil_charge",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "Charge, charge, charge!"
+ },
+ {
+  "id": "taunt_dada_jason_warrior_evil_past",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "Nobody gets past!"
+ },
+ {
+  "id": "taunt_dada_jason_warrior_evil_never",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "I never give up!"
+ },
+ {
+  "id": "taunt_dada_jason_warrior_evil_cry",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "Hear my war cry!"
+ },
+ {
+  "id": "ult_dada_jason_warrior_evil",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "Mega War Cry!"
+ },
+ {
+  "id": "move_dada_jason_warrior_evil_axe_throw",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "Axe Throw!"
+ },
+ {
+  "id": "move_dada_jason_warrior_evil_shield_slam",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "Shield Slam!"
+ },
+ {
+  "id": "move_dada_jason_warrior_evil_whirlwind",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "Whirlwind!"
+ },
+ {
+  "id": "reformed_dada_jason_warrior_knight",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "Sorry! Let me be your brave knight!"
+ },
+ {
+  "id": "reformed_dada_jason_warrior_battles",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "No more battles. Only hugs!"
+ },
+ {
+  "id": "name_dada_jason_warlock",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Dada Jason!"
+ },
+ {
+  "id": "taunt_dada_jason_warlock_abracadabra",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock",
+  "text": "Abracadabra, purple fire!"
+ },
+ {
+  "id": "taunt_dada_jason_warlock_imps",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock",
+  "text": "My imps are ready!"
+ },
+ {
+  "id": "taunt_dada_jason_warlock_spell",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock",
+  "text": "A spell for you!"
+ },
+ {
+  "id": "taunt_dada_jason_warlock_hocus",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock",
+  "text": "Hocus pocus!"
+ },
+ {
+  "id": "taunt_dada_jason_warlock_purple",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock",
+  "text": "Purple power!"
+ },
+ {
+  "id": "taunt_dada_jason_warlock_go",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock",
+  "text": "Little imps, go!"
+ },
+ {
+  "id": "ult_dada_jason_warlock",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock",
+  "text": "Purple Meteor Rain!"
+ },
+ {
+  "id": "move_dada_jason_warlock_imp_party",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock",
+  "text": "Imp Party!"
+ },
+ {
+  "id": "move_dada_jason_warlock_purple_fire",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock",
+  "text": "Purple Fire!"
+ },
+ {
+  "id": "move_dada_jason_warlock_piggy_hex",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock",
+  "text": "Piggy Hex!"
+ },
+ {
+  "id": "name_dada_jason_warlock_evil",
+  "speaker": "dada_jason_evil",
+  "group": "core",
+  "text": "Evil Dada Jason!"
+ },
+ {
+  "id": "taunt_dada_jason_warlock_evil_curses",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "Curses on you!"
+ },
+ {
+  "id": "taunt_dada_jason_warlock_evil_imps",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "My imps will catch you!"
+ },
+ {
+  "id": "taunt_dada_jason_warlock_evil_trouble",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "Bubble, bubble, purple trouble!"
+ },
+ {
+  "id": "taunt_dada_jason_warlock_evil_hex",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "Hex, hex, everybody!"
+ },
+ {
+  "id": "taunt_dada_jason_warlock_evil_gotcha",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "Abracadabra, gotcha!"
+ },
+ {
+  "id": "taunt_dada_jason_warlock_evil_darkness",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "Darkness, come!"
+ },
+ {
+  "id": "ult_dada_jason_warlock_evil",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "Big Purple Doom!"
+ },
+ {
+  "id": "move_dada_jason_warlock_evil_curse_cloud",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "Curse Cloud!"
+ },
+ {
+  "id": "move_dada_jason_warlock_evil_hex_trap",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "Hex Trap!"
+ },
+ {
+  "id": "move_dada_jason_warlock_evil_imp_swarm",
+  "speaker": "dada_jason_evil",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "Imp Swarm!"
+ },
+ {
+  "id": "reformed_dada_jason_warlock_trick",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "Sorry! Want to see a sparkly trick?"
+ },
+ {
+  "id": "reformed_dada_jason_warlock_happy",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "From now on, only happy spells!"
+ },
+ {
+  "id": "quest_dada_matt",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "To build a plan strong enough to beat them, we have to train in my secret treehouse workshop!"
+ },
+ {
+  "id": "quest_dada_matt_lifter",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "To get strong enough to fight them, we have to train in my secret gym in the forest!"
+ },
+ {
+  "id": "quest_dada_matt_cyber",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "To hack their tricks, we have to train in my secret hacker den in the neon city!"
+ },
+ {
+  "id": "quest_dada_matt_blade",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "To learn sword and spell, we have to train in my rune dojo on the mountain!"
+ },
+ {
+  "id": "quest_dada_jason",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "To cook up a plan, we have to train in my secret kitchen under the city!"
+ },
+ {
+  "id": "quest_dada_jason_warrior",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "To be brave enough to fight them, we have to train at my knights' camp by the castle!",
+  "say": "To be brave enough to fight them, we have to train at my knights camp by the castle!"
+ },
+ {
+  "id": "quest_dada_jason_warlock",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "To learn some spooky spells, we have to train in my purple moon tower!"
+ },
+ {
+  "id": "quest_ellie",
+  "speaker": "ellie",
+  "group": "core",
+  "text": "To get ready, we have to play in my bubble castle up in the clouds!"
+ },
+ {
+  "id": "quest_seraphina",
+  "speaker": "seraphina",
+  "group": "core",
+  "text": "To fly fast enough, we have to train with the dragons on my mountain!"
+ },
+ {
+  "id": "quest_smaug",
+  "speaker": "smaug",
+  "group": "core",
+  "text": "To be fierce enough, we have to train on my dragon mountain!"
+ },
+ {
+  "id": "quest_tiamat",
+  "speaker": "tiamat",
+  "group": "core",
+  "text": "To be mighty enough, we have to train on the dragon mountain!"
+ },
+ {
+  "id": "quest_elsa",
+  "speaker": "elsa",
+  "group": "core",
+  "text": "To be cool enough, we have to train in my ice castle!"
+ },
+ {
+  "id": "quest_anna",
+  "speaker": "anna",
+  "group": "core",
+  "text": "To be brave enough, we have to train at my sister's ice castle!",
+  "say": "To be brave enough, we have to train at my sisters ice castle!"
+ },
+ {
+  "id": "quest_jasmine",
+  "speaker": "jasmine",
+  "group": "core",
+  "text": "To be quick enough, we have to train at the desert oasis!"
+ },
+ {
+  "id": "quest_ozymandias",
+  "speaker": "ozymandias",
+  "group": "core",
+  "text": "To be as strong as stone, we have to train at my desert oasis!"
+ },
+ {
+  "id": "quest_jormungandr",
+  "speaker": "jormungandr",
+  "group": "core",
+  "text": "To be slippery enough, we have to train in my secret sea grotto!"
+ },
+ {
   "id": "letter_a_sound",
   "speaker": "phonics",
   "group": "phonics",
@@ -2582,6 +3394,12 @@
   "text": "big!"
  },
  {
+  "id": "word_bit",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "bit!"
+ },
+ {
   "id": "word_box",
   "speaker": "phonics",
   "group": "phonics",
@@ -2696,6 +3514,12 @@
   "text": "hen!"
  },
  {
+  "id": "word_hit",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "hit!"
+ },
+ {
   "id": "word_hop",
   "speaker": "phonics",
   "group": "phonics",
@@ -2748,6 +3572,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "log!"
+ },
+ {
+  "id": "word_lug",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "lug!"
  },
  {
   "id": "word_map",
@@ -3748,6 +4578,12 @@
   "say": "Come on, let us go, find the door!"
  },
  {
+  "id": "wake_dada_matt_hi",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Good morning, sleepyhead!"
+ },
+ {
   "id": "wake_dada_matt_good_julia",
   "speaker": "dada_matt",
   "group": "core",
@@ -4027,6 +4863,36 @@
   "text": "Bad news, EvilRilla is coming, and he's going to eat Dada Jason's car!"
  },
  {
+  "id": "wake_dada_matt_bad_dada_matt_lifter",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Bad news, Evil Dada Matt is coming, and he wants everybody to do a thousand jumping jacks!"
+ },
+ {
+  "id": "wake_dada_matt_bad_dada_matt_cyber",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Bad news, Evil Dada Matt is coming, and he hacked every light to blink and beep!"
+ },
+ {
+  "id": "wake_dada_matt_bad_dada_matt_blade",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Bad news, Evil Dada Matt is coming, and he wants to put a grumpy spell on every toy!"
+ },
+ {
+  "id": "wake_dada_matt_bad_dada_jason_warrior",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Bad news, Evil Dada Jason is coming, and he wants to turn the house into a castle with no snacks!"
+ },
+ {
+  "id": "wake_dada_matt_bad_dada_jason_warlock",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Bad news, Evil Dada Jason is coming, and he wants to turn everybody into a little purple frog!"
+ },
+ {
   "id": "wake_dada_jason_up",
   "speaker": "dada_jason",
   "group": "core",
@@ -4038,6 +4904,12 @@
   "group": "core",
   "text": "Come on, let us go! Find the door!",
   "say": "Come on, let us go, find the door!"
+ },
+ {
+  "id": "wake_dada_jason_hi",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Good morning, sleepyhead!"
  },
  {
   "id": "wake_dada_jason_good_julia",
@@ -4317,6 +5189,36 @@
   "speaker": "dada_jason",
   "group": "core",
   "text": "Bad news, EvilRilla is coming, and he's going to eat Dada Jason's car!"
+ },
+ {
+  "id": "wake_dada_jason_bad_dada_matt_lifter",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Bad news, Evil Dada Matt is coming, and he wants everybody to do a thousand jumping jacks!"
+ },
+ {
+  "id": "wake_dada_jason_bad_dada_matt_cyber",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Bad news, Evil Dada Matt is coming, and he hacked every light to blink and beep!"
+ },
+ {
+  "id": "wake_dada_jason_bad_dada_matt_blade",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Bad news, Evil Dada Matt is coming, and he wants to put a grumpy spell on every toy!"
+ },
+ {
+  "id": "wake_dada_jason_bad_dada_jason_warrior",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Bad news, Evil Dada Jason is coming, and he wants to turn the house into a castle with no snacks!"
+ },
+ {
+  "id": "wake_dada_jason_bad_dada_jason_warlock",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Bad news, Evil Dada Jason is coming, and he wants to turn everybody into a little purple frog!"
  },
  {
   "id": "nar_julia_alarm_ready",
@@ -4653,6 +5555,33 @@
   "speaker": "julia",
   "group": "nar_julia",
   "text": "Look what we found!"
+ },
+ {
+  "id": "nar_julia_quest_home",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_julia_away_secret",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_julia_away_front",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_julia_away_ready",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
  },
  {
   "id": "nar_julia_alarm_hero_ellie",
@@ -5234,6 +6163,156 @@
   "group": "nar_julia",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_julia_alarm_villain_dada_matt_lifter",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_julia_need_item_dada_matt_lifter",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_julia_made_item_dada_matt_lifter",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_julia_need_counter_dada_matt_lifter",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_julia_got_counter_dada_matt_lifter",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_julia_alarm_villain_dada_matt_cyber",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_julia_need_item_dada_matt_cyber",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_julia_made_item_dada_matt_cyber",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_julia_need_counter_dada_matt_cyber",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_julia_got_counter_dada_matt_cyber",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_julia_alarm_villain_dada_matt_blade",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_julia_need_item_dada_matt_blade",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_julia_made_item_dada_matt_blade",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_julia_need_counter_dada_matt_blade",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_julia_got_counter_dada_matt_blade",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_julia_alarm_villain_dada_jason_warrior",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_julia_need_item_dada_jason_warrior",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_julia_made_item_dada_jason_warrior",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_julia_need_counter_dada_jason_warrior",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_julia_got_counter_dada_jason_warrior",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_julia_alarm_villain_dada_jason_warlock",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_julia_need_item_dada_jason_warlock",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_julia_made_item_dada_jason_warlock",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_julia_need_counter_dada_jason_warlock",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_julia_got_counter_dada_jason_warlock",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_julia_use_move_zap",
@@ -6352,6 +7431,33 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_ellie_quest_home",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_ellie_away_secret",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_ellie_away_front",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_ellie_away_ready",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
+ },
+ {
   "id": "nar_ellie_alarm_hero_julia",
   "speaker": "ellie",
   "group": "nar_ellie",
@@ -6931,6 +8037,156 @@
   "group": "nar_ellie",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_dada_matt_lifter",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_dada_matt_lifter",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_ellie_made_item_dada_matt_lifter",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_ellie_need_counter_dada_matt_lifter",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_ellie_got_counter_dada_matt_lifter",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_dada_matt_cyber",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_dada_matt_cyber",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_ellie_made_item_dada_matt_cyber",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_ellie_need_counter_dada_matt_cyber",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_ellie_got_counter_dada_matt_cyber",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_dada_matt_blade",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_dada_matt_blade",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_ellie_made_item_dada_matt_blade",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_ellie_need_counter_dada_matt_blade",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_ellie_got_counter_dada_matt_blade",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_dada_jason_warrior",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_dada_jason_warrior",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_ellie_made_item_dada_jason_warrior",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_ellie_need_counter_dada_jason_warrior",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_ellie_got_counter_dada_jason_warrior",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_ellie_alarm_villain_dada_jason_warlock",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_ellie_need_item_dada_jason_warlock",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_ellie_made_item_dada_jason_warlock",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_ellie_need_counter_dada_jason_warlock",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_ellie_got_counter_dada_jason_warlock",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_ellie_use_move_zap",
@@ -8049,6 +9305,33 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_seraphina_quest_home",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_seraphina_away_secret",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_seraphina_away_front",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_seraphina_away_ready",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
+ },
+ {
   "id": "nar_seraphina_alarm_hero_julia",
   "speaker": "seraphina",
   "group": "nar_seraphina",
@@ -8628,6 +9911,156 @@
   "group": "nar_seraphina",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_seraphina_alarm_villain_dada_matt_lifter",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_seraphina_need_item_dada_matt_lifter",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_seraphina_made_item_dada_matt_lifter",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_seraphina_need_counter_dada_matt_lifter",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_seraphina_got_counter_dada_matt_lifter",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_seraphina_alarm_villain_dada_matt_cyber",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_seraphina_need_item_dada_matt_cyber",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_seraphina_made_item_dada_matt_cyber",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_seraphina_need_counter_dada_matt_cyber",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_seraphina_got_counter_dada_matt_cyber",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_seraphina_alarm_villain_dada_matt_blade",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_seraphina_need_item_dada_matt_blade",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_seraphina_made_item_dada_matt_blade",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_seraphina_need_counter_dada_matt_blade",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_seraphina_got_counter_dada_matt_blade",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_seraphina_alarm_villain_dada_jason_warrior",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_seraphina_need_item_dada_jason_warrior",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_seraphina_made_item_dada_jason_warrior",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_seraphina_need_counter_dada_jason_warrior",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_seraphina_got_counter_dada_jason_warrior",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_seraphina_alarm_villain_dada_jason_warlock",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_seraphina_need_item_dada_jason_warlock",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_seraphina_made_item_dada_jason_warlock",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_seraphina_need_counter_dada_jason_warlock",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_seraphina_got_counter_dada_jason_warlock",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_seraphina_use_move_zap",
@@ -9746,6 +11179,33 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_dada_matt_quest_home",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_dada_matt_away_secret",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_dada_matt_away_front",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_dada_matt_away_ready",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
+ },
+ {
   "id": "nar_dada_matt_alarm_hero_julia",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
@@ -10325,6 +11785,156 @@
   "group": "nar_dada_matt",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_dada_matt_alarm_villain_dada_matt_lifter",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_dada_matt_need_item_dada_matt_lifter",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_dada_matt_made_item_dada_matt_lifter",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_dada_matt_need_counter_dada_matt_lifter",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_dada_matt_got_counter_dada_matt_lifter",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_dada_matt_alarm_villain_dada_matt_cyber",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_dada_matt_need_item_dada_matt_cyber",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_dada_matt_made_item_dada_matt_cyber",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_dada_matt_need_counter_dada_matt_cyber",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_dada_matt_got_counter_dada_matt_cyber",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_dada_matt_alarm_villain_dada_matt_blade",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_dada_matt_need_item_dada_matt_blade",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_dada_matt_made_item_dada_matt_blade",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_dada_matt_need_counter_dada_matt_blade",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_dada_matt_got_counter_dada_matt_blade",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_dada_matt_alarm_villain_dada_jason_warrior",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_dada_matt_need_item_dada_jason_warrior",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_dada_matt_made_item_dada_jason_warrior",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_dada_matt_need_counter_dada_jason_warrior",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_dada_matt_got_counter_dada_jason_warrior",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_dada_matt_alarm_villain_dada_jason_warlock",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_dada_matt_need_item_dada_jason_warlock",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_dada_matt_made_item_dada_jason_warlock",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_dada_matt_need_counter_dada_jason_warlock",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_dada_matt_got_counter_dada_jason_warlock",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_dada_matt_use_move_zap",
@@ -11443,6 +13053,33 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_dada_jason_quest_home",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_dada_jason_away_secret",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_dada_jason_away_front",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_dada_jason_away_ready",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
+ },
+ {
   "id": "nar_dada_jason_alarm_hero_julia",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
@@ -12022,6 +13659,156 @@
   "group": "nar_dada_jason",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_dada_jason_alarm_villain_dada_matt_lifter",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_dada_jason_need_item_dada_matt_lifter",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_dada_jason_made_item_dada_matt_lifter",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_dada_jason_need_counter_dada_matt_lifter",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_dada_jason_got_counter_dada_matt_lifter",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_dada_jason_alarm_villain_dada_matt_cyber",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_dada_jason_need_item_dada_matt_cyber",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_dada_jason_made_item_dada_matt_cyber",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_dada_jason_need_counter_dada_matt_cyber",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_dada_jason_got_counter_dada_matt_cyber",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_dada_jason_alarm_villain_dada_matt_blade",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_dada_jason_need_item_dada_matt_blade",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_dada_jason_made_item_dada_matt_blade",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_dada_jason_need_counter_dada_matt_blade",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_dada_jason_got_counter_dada_matt_blade",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_dada_jason_alarm_villain_dada_jason_warrior",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_dada_jason_need_item_dada_jason_warrior",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_dada_jason_made_item_dada_jason_warrior",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_dada_jason_need_counter_dada_jason_warrior",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_dada_jason_got_counter_dada_jason_warrior",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_dada_jason_alarm_villain_dada_jason_warlock",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_dada_jason_need_item_dada_jason_warlock",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_dada_jason_made_item_dada_jason_warlock",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_dada_jason_need_counter_dada_jason_warlock",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_dada_jason_got_counter_dada_jason_warlock",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_dada_jason_use_move_zap",
@@ -13140,6 +14927,33 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_elsa_quest_home",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_elsa_away_secret",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_elsa_away_front",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_elsa_away_ready",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
+ },
+ {
   "id": "nar_elsa_alarm_hero_julia",
   "speaker": "elsa",
   "group": "nar_elsa",
@@ -13719,6 +15533,156 @@
   "group": "nar_elsa",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_elsa_alarm_villain_dada_matt_lifter",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_elsa_need_item_dada_matt_lifter",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_elsa_made_item_dada_matt_lifter",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_elsa_need_counter_dada_matt_lifter",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_elsa_got_counter_dada_matt_lifter",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_elsa_alarm_villain_dada_matt_cyber",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_elsa_need_item_dada_matt_cyber",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_elsa_made_item_dada_matt_cyber",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_elsa_need_counter_dada_matt_cyber",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_elsa_got_counter_dada_matt_cyber",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_elsa_alarm_villain_dada_matt_blade",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_elsa_need_item_dada_matt_blade",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_elsa_made_item_dada_matt_blade",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_elsa_need_counter_dada_matt_blade",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_elsa_got_counter_dada_matt_blade",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_elsa_alarm_villain_dada_jason_warrior",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_elsa_need_item_dada_jason_warrior",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_elsa_made_item_dada_jason_warrior",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_elsa_need_counter_dada_jason_warrior",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_elsa_got_counter_dada_jason_warrior",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_elsa_alarm_villain_dada_jason_warlock",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_elsa_need_item_dada_jason_warlock",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_elsa_made_item_dada_jason_warlock",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_elsa_need_counter_dada_jason_warlock",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_elsa_got_counter_dada_jason_warlock",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_elsa_use_move_zap",
@@ -14837,6 +16801,33 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_anna_quest_home",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_anna_away_secret",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_anna_away_front",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_anna_away_ready",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
+ },
+ {
   "id": "nar_anna_alarm_hero_julia",
   "speaker": "anna",
   "group": "nar_anna",
@@ -15416,6 +17407,156 @@
   "group": "nar_anna",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_anna_alarm_villain_dada_matt_lifter",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_anna_need_item_dada_matt_lifter",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_anna_made_item_dada_matt_lifter",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_anna_need_counter_dada_matt_lifter",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_anna_got_counter_dada_matt_lifter",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_anna_alarm_villain_dada_matt_cyber",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_anna_need_item_dada_matt_cyber",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_anna_made_item_dada_matt_cyber",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_anna_need_counter_dada_matt_cyber",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_anna_got_counter_dada_matt_cyber",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_anna_alarm_villain_dada_matt_blade",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_anna_need_item_dada_matt_blade",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_anna_made_item_dada_matt_blade",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_anna_need_counter_dada_matt_blade",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_anna_got_counter_dada_matt_blade",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_anna_alarm_villain_dada_jason_warrior",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_anna_need_item_dada_jason_warrior",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_anna_made_item_dada_jason_warrior",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_anna_need_counter_dada_jason_warrior",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_anna_got_counter_dada_jason_warrior",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_anna_alarm_villain_dada_jason_warlock",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_anna_need_item_dada_jason_warlock",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_anna_made_item_dada_jason_warlock",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_anna_need_counter_dada_jason_warlock",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_anna_got_counter_dada_jason_warlock",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_anna_use_move_zap",
@@ -16534,6 +18675,33 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_jasmine_quest_home",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_jasmine_away_secret",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_jasmine_away_front",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_jasmine_away_ready",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
+ },
+ {
   "id": "nar_jasmine_alarm_hero_julia",
   "speaker": "jasmine",
   "group": "nar_jasmine",
@@ -17113,6 +19281,156 @@
   "group": "nar_jasmine",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_jasmine_alarm_villain_dada_matt_lifter",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_jasmine_need_item_dada_matt_lifter",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_jasmine_made_item_dada_matt_lifter",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_jasmine_need_counter_dada_matt_lifter",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_jasmine_got_counter_dada_matt_lifter",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_jasmine_alarm_villain_dada_matt_cyber",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_jasmine_need_item_dada_matt_cyber",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_jasmine_made_item_dada_matt_cyber",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_jasmine_need_counter_dada_matt_cyber",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_jasmine_got_counter_dada_matt_cyber",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_jasmine_alarm_villain_dada_matt_blade",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_jasmine_need_item_dada_matt_blade",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_jasmine_made_item_dada_matt_blade",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_jasmine_need_counter_dada_matt_blade",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_jasmine_got_counter_dada_matt_blade",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_jasmine_alarm_villain_dada_jason_warrior",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_jasmine_need_item_dada_jason_warrior",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_jasmine_made_item_dada_jason_warrior",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_jasmine_need_counter_dada_jason_warrior",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_jasmine_got_counter_dada_jason_warrior",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_jasmine_alarm_villain_dada_jason_warlock",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_jasmine_need_item_dada_jason_warlock",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_jasmine_made_item_dada_jason_warlock",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_jasmine_need_counter_dada_jason_warlock",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_jasmine_got_counter_dada_jason_warlock",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_jasmine_use_move_zap",
@@ -18231,6 +20549,33 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_ozymandias_quest_home",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_ozymandias_away_secret",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_ozymandias_away_front",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_ozymandias_away_ready",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
+ },
+ {
   "id": "nar_ozymandias_alarm_hero_julia",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
@@ -18810,6 +21155,156 @@
   "group": "nar_ozymandias",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_ozymandias_alarm_villain_dada_matt_lifter",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_ozymandias_need_item_dada_matt_lifter",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_ozymandias_made_item_dada_matt_lifter",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_ozymandias_need_counter_dada_matt_lifter",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_ozymandias_got_counter_dada_matt_lifter",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_ozymandias_alarm_villain_dada_matt_cyber",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_ozymandias_need_item_dada_matt_cyber",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_ozymandias_made_item_dada_matt_cyber",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_ozymandias_need_counter_dada_matt_cyber",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_ozymandias_got_counter_dada_matt_cyber",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_ozymandias_alarm_villain_dada_matt_blade",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_ozymandias_need_item_dada_matt_blade",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_ozymandias_made_item_dada_matt_blade",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_ozymandias_need_counter_dada_matt_blade",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_ozymandias_got_counter_dada_matt_blade",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_ozymandias_alarm_villain_dada_jason_warrior",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_ozymandias_need_item_dada_jason_warrior",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_ozymandias_made_item_dada_jason_warrior",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_ozymandias_need_counter_dada_jason_warrior",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_ozymandias_got_counter_dada_jason_warrior",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_ozymandias_alarm_villain_dada_jason_warlock",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_ozymandias_need_item_dada_jason_warlock",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_ozymandias_made_item_dada_jason_warlock",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_ozymandias_need_counter_dada_jason_warlock",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_ozymandias_got_counter_dada_jason_warlock",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_ozymandias_use_move_zap",
@@ -19928,6 +22423,33 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_jormungandr_quest_home",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_jormungandr_away_secret",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_jormungandr_away_front",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_jormungandr_away_ready",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
+ },
+ {
   "id": "nar_jormungandr_alarm_hero_julia",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -20506,6 +23028,156 @@
   "group": "nar_jormungandr",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_jormungandr_alarm_villain_dada_matt_lifter",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_jormungandr_need_item_dada_matt_lifter",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_jormungandr_made_item_dada_matt_lifter",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_jormungandr_need_counter_dada_matt_lifter",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_jormungandr_got_counter_dada_matt_lifter",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_jormungandr_alarm_villain_dada_matt_cyber",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_jormungandr_need_item_dada_matt_cyber",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_jormungandr_made_item_dada_matt_cyber",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_jormungandr_need_counter_dada_matt_cyber",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_jormungandr_got_counter_dada_matt_cyber",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_jormungandr_alarm_villain_dada_matt_blade",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_jormungandr_need_item_dada_matt_blade",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_jormungandr_made_item_dada_matt_blade",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_jormungandr_need_counter_dada_matt_blade",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_jormungandr_got_counter_dada_matt_blade",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_jormungandr_alarm_villain_dada_jason_warrior",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_jormungandr_need_item_dada_jason_warrior",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_jormungandr_made_item_dada_jason_warrior",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_jormungandr_need_counter_dada_jason_warrior",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_jormungandr_got_counter_dada_jason_warrior",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_jormungandr_alarm_villain_dada_jason_warlock",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_jormungandr_need_item_dada_jason_warlock",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_jormungandr_made_item_dada_jason_warlock",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_jormungandr_need_counter_dada_jason_warlock",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_jormungandr_got_counter_dada_jason_warlock",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_jormungandr_use_move_zap",
@@ -21624,6 +24296,33 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_smaug_quest_home",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_smaug_away_secret",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_smaug_away_front",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_smaug_away_ready",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
+ },
+ {
   "id": "nar_smaug_alarm_hero_julia",
   "speaker": "smaug",
   "group": "nar_smaug",
@@ -22203,6 +24902,156 @@
   "group": "nar_smaug",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_smaug_alarm_villain_dada_matt_lifter",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_smaug_need_item_dada_matt_lifter",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_smaug_made_item_dada_matt_lifter",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_smaug_need_counter_dada_matt_lifter",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_smaug_got_counter_dada_matt_lifter",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_smaug_alarm_villain_dada_matt_cyber",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_smaug_need_item_dada_matt_cyber",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_smaug_made_item_dada_matt_cyber",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_smaug_need_counter_dada_matt_cyber",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_smaug_got_counter_dada_matt_cyber",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_smaug_alarm_villain_dada_matt_blade",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_smaug_need_item_dada_matt_blade",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_smaug_made_item_dada_matt_blade",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_smaug_need_counter_dada_matt_blade",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_smaug_got_counter_dada_matt_blade",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_smaug_alarm_villain_dada_jason_warrior",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_smaug_need_item_dada_jason_warrior",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_smaug_made_item_dada_jason_warrior",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_smaug_need_counter_dada_jason_warrior",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_smaug_got_counter_dada_jason_warrior",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_smaug_alarm_villain_dada_jason_warlock",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_smaug_need_item_dada_jason_warlock",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_smaug_made_item_dada_jason_warlock",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_smaug_need_counter_dada_jason_warlock",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_smaug_got_counter_dada_jason_warlock",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_smaug_use_move_zap",
@@ -23321,6 +26170,33 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_tiamat_quest_home",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_tiamat_away_secret",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_tiamat_away_front",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_tiamat_away_ready",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
+ },
+ {
   "id": "nar_tiamat_alarm_hero_julia",
   "speaker": "tiamat",
   "group": "nar_tiamat",
@@ -23900,6 +26776,156 @@
   "group": "nar_tiamat",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_dada_matt_lifter",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_dada_matt_lifter",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_tiamat_made_item_dada_matt_lifter",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_dada_matt_lifter",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_dada_matt_lifter",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_dada_matt_cyber",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_dada_matt_cyber",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_tiamat_made_item_dada_matt_cyber",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_dada_matt_cyber",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_dada_matt_cyber",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_dada_matt_blade",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_dada_matt_blade",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_tiamat_made_item_dada_matt_blade",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_dada_matt_blade",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_dada_matt_blade",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_dada_jason_warrior",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_dada_jason_warrior",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_tiamat_made_item_dada_jason_warrior",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_dada_jason_warrior",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_dada_jason_warrior",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_tiamat_alarm_villain_dada_jason_warlock",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_tiamat_need_item_dada_jason_warlock",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_tiamat_made_item_dada_jason_warlock",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_tiamat_need_counter_dada_jason_warlock",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_tiamat_got_counter_dada_jason_warlock",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_tiamat_use_move_zap",
@@ -25018,6 +28044,33 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_scar_quest_home",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_scar_away_secret",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_scar_away_front",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_scar_away_ready",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
+ },
+ {
   "id": "nar_scar_alarm_hero_julia",
   "speaker": "scar",
   "group": "nar_scar",
@@ -25597,6 +28650,156 @@
   "group": "nar_scar",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_scar_alarm_villain_dada_matt_lifter",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_scar_need_item_dada_matt_lifter",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_scar_made_item_dada_matt_lifter",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_scar_need_counter_dada_matt_lifter",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_scar_got_counter_dada_matt_lifter",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_scar_alarm_villain_dada_matt_cyber",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_scar_need_item_dada_matt_cyber",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_scar_made_item_dada_matt_cyber",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_scar_need_counter_dada_matt_cyber",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_scar_got_counter_dada_matt_cyber",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_scar_alarm_villain_dada_matt_blade",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_scar_need_item_dada_matt_blade",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_scar_made_item_dada_matt_blade",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_scar_need_counter_dada_matt_blade",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_scar_got_counter_dada_matt_blade",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_scar_alarm_villain_dada_jason_warrior",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_scar_need_item_dada_jason_warrior",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_scar_made_item_dada_jason_warrior",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_scar_need_counter_dada_jason_warrior",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_scar_got_counter_dada_jason_warrior",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_scar_alarm_villain_dada_jason_warlock",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_scar_need_item_dada_jason_warlock",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_scar_made_item_dada_jason_warlock",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_scar_need_counter_dada_jason_warlock",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_scar_got_counter_dada_jason_warlock",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_scar_use_move_zap",
@@ -26715,6 +29918,33 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_moriarty_quest_home",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_moriarty_away_secret",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_moriarty_away_front",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_moriarty_away_ready",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
+ },
+ {
   "id": "nar_moriarty_alarm_hero_julia",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -27294,6 +30524,156 @@
   "group": "nar_moriarty",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_moriarty_alarm_villain_dada_matt_lifter",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_moriarty_need_item_dada_matt_lifter",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_moriarty_made_item_dada_matt_lifter",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_moriarty_need_counter_dada_matt_lifter",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_moriarty_got_counter_dada_matt_lifter",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_moriarty_alarm_villain_dada_matt_cyber",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_moriarty_need_item_dada_matt_cyber",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_moriarty_made_item_dada_matt_cyber",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_moriarty_need_counter_dada_matt_cyber",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_moriarty_got_counter_dada_matt_cyber",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_moriarty_alarm_villain_dada_matt_blade",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_moriarty_need_item_dada_matt_blade",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_moriarty_made_item_dada_matt_blade",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_moriarty_need_counter_dada_matt_blade",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_moriarty_got_counter_dada_matt_blade",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_moriarty_alarm_villain_dada_jason_warrior",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_moriarty_need_item_dada_jason_warrior",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_moriarty_made_item_dada_jason_warrior",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_moriarty_need_counter_dada_jason_warrior",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_moriarty_got_counter_dada_jason_warrior",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_moriarty_alarm_villain_dada_jason_warlock",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_moriarty_need_item_dada_jason_warlock",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_moriarty_made_item_dada_jason_warlock",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_moriarty_need_counter_dada_jason_warlock",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_moriarty_got_counter_dada_jason_warlock",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_moriarty_use_move_zap",
@@ -28412,6 +31792,33 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_bavmorda_quest_home",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_bavmorda_away_secret",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_bavmorda_away_front",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_bavmorda_away_ready",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
+ },
+ {
   "id": "nar_bavmorda_alarm_hero_julia",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
@@ -28991,6 +32398,156 @@
   "group": "nar_bavmorda",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_bavmorda_alarm_villain_dada_matt_lifter",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_bavmorda_need_item_dada_matt_lifter",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_bavmorda_made_item_dada_matt_lifter",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_bavmorda_need_counter_dada_matt_lifter",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_bavmorda_got_counter_dada_matt_lifter",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_bavmorda_alarm_villain_dada_matt_cyber",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_bavmorda_need_item_dada_matt_cyber",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_bavmorda_made_item_dada_matt_cyber",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_bavmorda_need_counter_dada_matt_cyber",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_bavmorda_got_counter_dada_matt_cyber",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_bavmorda_alarm_villain_dada_matt_blade",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_bavmorda_need_item_dada_matt_blade",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_bavmorda_made_item_dada_matt_blade",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_bavmorda_need_counter_dada_matt_blade",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_bavmorda_got_counter_dada_matt_blade",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_bavmorda_alarm_villain_dada_jason_warrior",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_bavmorda_need_item_dada_jason_warrior",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_bavmorda_made_item_dada_jason_warrior",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_bavmorda_need_counter_dada_jason_warrior",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_bavmorda_got_counter_dada_jason_warrior",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_bavmorda_alarm_villain_dada_jason_warlock",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_bavmorda_need_item_dada_jason_warlock",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_bavmorda_made_item_dada_jason_warlock",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_bavmorda_need_counter_dada_jason_warlock",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_bavmorda_got_counter_dada_jason_warlock",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_bavmorda_use_move_zap",
@@ -30109,6 +33666,33 @@
   "text": "Look what we found!"
  },
  {
+  "id": "nar_rilla_quest_home",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "To get ready, we have to train right here at home!"
+ },
+ {
+  "id": "nar_rilla_away_secret",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Look, a secret door! Let us go in!",
+  "say": "Look, a secret door, let us go in!"
+ },
+ {
+  "id": "nar_rilla_away_front",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "The way out is open! Let us go!",
+  "say": "The way out is open, let us go!"
+ },
+ {
+  "id": "nar_rilla_away_ready",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We are ready now! Off to the fight!",
+  "say": "We are ready now, off to the fight!"
+ },
+ {
   "id": "nar_rilla_alarm_hero_julia",
   "speaker": "rilla",
   "group": "nar_rilla",
@@ -30688,6 +34272,156 @@
   "group": "nar_rilla",
   "text": "We found the Wind-up Mice!",
   "say": "We found the Whined-up Mice!"
+ },
+ {
+  "id": "nar_rilla_alarm_villain_dada_matt_lifter",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_rilla_need_item_dada_matt_lifter",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Only the Juice Box can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_rilla_made_item_dada_matt_lifter",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We made the Juice Box!"
+ },
+ {
+  "id": "nar_rilla_need_counter_dada_matt_lifter",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_rilla_got_counter_dada_matt_lifter",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We found the Juice Box!"
+ },
+ {
+  "id": "nar_rilla_alarm_villain_dada_matt_cyber",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_rilla_need_item_dada_matt_cyber",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Only the Magic Pen can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_rilla_made_item_dada_matt_cyber",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We made the Magic Pen!"
+ },
+ {
+  "id": "nar_rilla_need_counter_dada_matt_cyber",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_rilla_got_counter_dada_matt_cyber",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We found the Magic Pen!"
+ },
+ {
+  "id": "nar_rilla_alarm_villain_dada_matt_blade",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Evil Dada Matt is coming!"
+ },
+ {
+  "id": "nar_rilla_need_item_dada_matt_blade",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Only the Shiny Pot can stop Evil Dada Matt!"
+ },
+ {
+  "id": "nar_rilla_made_item_dada_matt_blade",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We made the Shiny Pot!"
+ },
+ {
+  "id": "nar_rilla_need_counter_dada_matt_blade",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We need something that scares Evil Dada Matt!"
+ },
+ {
+  "id": "nar_rilla_got_counter_dada_matt_blade",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We found the Shiny Pot!"
+ },
+ {
+  "id": "nar_rilla_alarm_villain_dada_jason_warrior",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_rilla_need_item_dada_jason_warrior",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Only the Slippy Mop can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_rilla_made_item_dada_jason_warrior",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We made the Slippy Mop!"
+ },
+ {
+  "id": "nar_rilla_need_counter_dada_jason_warrior",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_rilla_got_counter_dada_jason_warrior",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We found the Slippy Mop!"
+ },
+ {
+  "id": "nar_rilla_alarm_villain_dada_jason_warlock",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Evil Dada Jason is coming!"
+ },
+ {
+  "id": "nar_rilla_need_item_dada_jason_warlock",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Only the Sunshine Bus can stop Evil Dada Jason!"
+ },
+ {
+  "id": "nar_rilla_made_item_dada_jason_warlock",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We made the Sunshine Bus!"
+ },
+ {
+  "id": "nar_rilla_need_counter_dada_jason_warlock",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We need something that scares Evil Dada Jason!"
+ },
+ {
+  "id": "nar_rilla_got_counter_dada_jason_warlock",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We found the Sunshine Bus!"
  },
  {
   "id": "nar_rilla_use_move_zap",

@@ -8,6 +8,7 @@
 
 import Phaser from 'phaser';
 
+import { personOf } from '../../content/battle/roster';
 import { fighterId, narratorLine, tauntLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
@@ -66,7 +67,7 @@ export class AlarmScene extends Phaser.Scene {
     const n = narrator();
     const v = episode.villain;
     const vf = villainSpec().evil;
-    await voiceBus.say(narratorLine(n, `alarm_hero_${episode.hero}`));
+    await voiceBus.say(narratorLine(n, `alarm_hero_${personOf(episode.hero)}`));
     if (gone()) return;
 
     // The villain arrives, and the music turns.

@@ -8,7 +8,8 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { ART_ASSETS } from '../../content/art/assets';
-import { MINIONS, MOVE_WORDS, ROSTER } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, MINIONS, MOVE_WORDS, PERSONS, ROSTER, formId } from '../../content/battle/roster';
+import { QUESTS, questLine } from '../../content/house/quests';
 import { LETTERS } from '../../content/phonics/letters';
 import { FETCH_ITEMS, FRAMES, allFrameTokens, allPrefixes, sentence, tokenWord } from '../../content/phonics/sentences';
 import { SPELL_WORDS, spellWordsFor } from '../../content/phonics/spelling';
@@ -100,7 +101,15 @@ test('choiceCount drops to two while she is struggling this session', () => {
 });
 
 test('roster: every character is complete, good and evil', () => {
-  assert.equal(ROSTER.length, 16);
+  // 16 persons, and the dads' five other forms (item 025).
+  assert.equal(PERSONS.length, 16);
+  assert.equal(ROSTER.length, 21);
+  for (const c of ROSTER.filter((c) => c.person)) {
+    assert.ok(CHARACTER_BY_ID[c.person!] && !CHARACTER_BY_ID[c.person!]!.person, `${c.id} is a form of a person`);
+    assert.ok(c.form && formId(c.person!, c.form) === c.id, `${c.id} has a unique form name`);
+    assert.equal(c.good.displayName, CHARACTER_BY_ID[c.person!]!.good.displayName, `${c.id} has its person's name`);
+    assert.equal(c.evil.displayName, CHARACTER_BY_ID[c.person!]!.evil.displayName, `${c.id} has its person's evil name`);
+  }
   for (const c of ROSTER) {
     for (const f of [c.good, c.evil]) {
       assert.ok(f.abilities.length >= 3, `${f.displayName} has 3+ abilities`);
@@ -161,23 +170,27 @@ test('voice: every line id the game derives exists in lines.json and the manifes
       want.push(nameLine(id), ultimateLine(id), ...f.taunts.map((t) => tauntLine(id, t.key)));
       want.push(...f.abilities.filter((a) => a.power >= 2).map((a) => moveLine(id, a.id)));
     }
+  }
+  // Narrators are persons (a dad narrates in his own voice in every form);
+  // villain lines are per roster id (each villain form has its own counter).
+  for (const c of PERSONS) {
     for (const t of NARRATOR_LINES) want.push(narratorLine(c.id, t.key));
     for (const v of ROSTER) want.push(narratorLine(c.id, `alarm_villain_${v.id}`), narratorLine(c.id, `need_item_${v.id}`), narratorLine(c.id, `made_item_${v.id}`));
-    for (const h of ROSTER) if (h.id !== c.id) want.push(narratorLine(c.id, `alarm_hero_${h.id}`));
+    for (const h of PERSONS) if (h.id !== c.id) want.push(narratorLine(c.id, `alarm_hero_${h.id}`));
     for (const w of MOVE_WORDS) want.push(narratorLine(c.id, `use_move_${w}`), narratorLine(c.id, `teach_word_${w}`));
     for (const v of ROSTER) want.push(narratorLine(c.id, `need_counter_${v.id}`), narratorLine(c.id, `got_counter_${v.id}`));
   }
   // The house: wake-ups by both wakers, sentence prefixes, and a word line for every sentence token and key word.
-  for (const k of ['teach_1', 'teach_circle', 'teach_done', 'house_doors', 'house_more', 'house_front', 'secret_door', 'house_ready', 'room_listen', 'room_your_turn', 'room_find', 'got_item', 'use_bag', 'got_counter_any']) {
+  for (const k of ['teach_1', 'teach_circle', 'teach_done', 'house_doors', 'house_more', 'house_front', 'secret_door', 'house_ready', 'room_listen', 'room_your_turn', 'room_find', 'got_item', 'use_bag', 'got_counter_any', 'quest_home', 'away_secret', 'away_front', 'away_ready']) {
     assert.ok(NARRATOR_LINES.some((t) => t.key === k), `narrator line ${k}`);
   }
   for (const waker of WAKERS) {
-    want.push(wakeLine(waker, 'up'), wakeLine(waker, 'door'));
-    for (const c of ROSTER) {
-      if (c.id !== waker) want.push(wakeLine(waker, `good_${c.id}`), wakeLine(waker, `helper_${c.id}`));
-      want.push(wakeLine(waker, `bad_${c.id}`));
-    }
+    want.push(wakeLine(waker, 'up'), wakeLine(waker, 'door'), wakeLine(waker, 'hi'));
+    for (const c of PERSONS) if (c.id !== waker) want.push(wakeLine(waker, `good_${c.id}`), wakeLine(waker, `helper_${c.id}`));
+    for (const c of ROSTER) want.push(wakeLine(waker, `bad_${c.id}`));
   }
+  // The quests' setup lines (item 025).
+  for (const owner of Object.keys(QUESTS)) want.push(questLine(owner));
   for (const p of allPrefixes()) want.push(p.id);
   for (const t of allFrameTokens()) want.push(wordLine(t));
   for (const f of FETCH_ITEMS) want.push(wordLine(f.word));
@@ -212,6 +225,12 @@ test('speech rule: no narrator line contains a reading word', () => {
   for (const c of ROSTER) {
     for (const s of [c.house.threat, c.house.threatSay ?? '']) {
       for (const token of words(s)) assert.ok(!readable.has(token), `${c.id}'s threat "${s}" says the reading word "${token}"`);
+    }
+  }
+  // The quests' setup lines (item 025) are said before any room, like the threats.
+  for (const [owner, q] of Object.entries(QUESTS)) {
+    for (const s of [q.text, q.say ?? '']) {
+      for (const token of words(s)) assert.ok(!readable.has(token), `${owner}'s quest "${s}" says the reading word "${token}"`);
     }
   }
   // A prefix line stops before the key word; it must not say it earlier either

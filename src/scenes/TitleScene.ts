@@ -10,7 +10,7 @@
 import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
-import { ROSTER } from '../../content/battle/roster';
+import { PERSONS, ROSTER } from '../../content/battle/roster';
 import { getAudioContext, unlockAudio } from '../audio/context';
 import { voiceBus } from '../audio/VoiceBus';
 import { startMusic } from '../audio/music';
@@ -56,9 +56,10 @@ export class TitleScene extends Phaser.Scene {
       blendMode: Phaser.BlendModes.ADD,
     });
 
-    // The roster parades along the bottom, good on the left, evil on the right.
-    ROSTER.forEach((c, i) => {
-      const x = 60 + i * ((GAME_WIDTH - 120) / (ROSTER.length - 1));
+    // The roster parades along the bottom, good and evil by turns (one of each
+    // person: the dads' other forms turn up in the duel below).
+    PERSONS.forEach((c, i) => {
+      const x = 60 + i * ((GAME_WIDTH - 120) / (PERSONS.length - 1));
       const img = fitImage(this.add.image(x, GAME_HEIGHT - 20, charArt(c.id, i % 2 === 1)).setOrigin(0.5, 1), 100, 125);
       bob(this, img, 8, 600 + i * 40);
     });

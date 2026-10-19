@@ -22,13 +22,15 @@ import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
 import { formFor } from '../../content/battle/forms';
-import { CHARACTER_BY_ID, ROSTER } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, ROSTER, personOf } from '../../content/battle/roster';
 import type { CharacterSpec, CounterItem } from '../../content/battle/types';
-import { COUNTER_ROOM, FETCH_ROOMS } from '../../content/house/house';
-import { DEFAULT_NARRATOR, group } from '../../content/voice/ids';
+import { COUNTER_ROOM, FETCH_ROOMS, HOME, PLACE_BY_ID } from '../../content/house/house';
+import { QUESTS, questFor, questLine } from '../../content/house/quests';
+import { group, narratorLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { EPISODE_DEFAULTS } from '../config';
-import { episodePlans, type RoomPlan } from '../rules/sentences';
+import { drawCast, wakerOf, type CastOverrides } from '../rules/cast';
+import { episodePlans, wordsOf, type Rand, type RoomPlan } from '../rules/sentences';
 import { battle1Words, planMoves, type MovePlan } from '../rules/moves';
 import { spellFor } from '../rules/spell';
 import { progress } from '../state/progress';
@@ -59,10 +61,17 @@ export type Step =
 export type Slot = RoomPlan['slot'];
 
 export interface EpisodeState {
+  /** Roster ids: a dad is his form this episode (`dada_matt_lifter`). See src/rules/cast.ts. */
   hero: string;
   ally: string | null;
   villain: string;
   villainWasRandom: boolean;
+  /** The dad who wakes her (narrates with no ally), in his form; null when both dads are busy. */
+  primary: string | null;
+  /** The other dad, there in the bedroom too, or null. */
+  secondary: string | null;
+  /** The quest place (content/house/house.ts PLACES id, or `home`): where the helper takes her to train. */
+  place: string;
   prep: PrepGame[];
   /** v0.1's made things (parked games); `item` is still the counter-item. */
   made: { gem: boolean; ammo: boolean; helper: boolean; item: boolean };
@@ -112,6 +121,9 @@ export const episode: EpisodeState = {
   ally: EPISODE_DEFAULTS.ally,
   villain: EPISODE_DEFAULTS.villain,
   villainWasRandom: false,
+  primary: EPISODE_DEFAULTS.primary,
+  secondary: null,
+  place: HOME,
   prep: choosePrep(),
   made: { gem: false, ammo: false, helper: false, item: false },
   read: [],
@@ -146,34 +158,113 @@ export function currentStep(): Step {
   return steps()[episode.stepIndex] ?? { kind: 'title' };
 }
 
+/** The dad who wakes her (src/rules/cast.ts `wakerOf`), in his form. */
+export function waker(state: EpisodeState = episode): string {
+  return wakerOf(state);
+}
+
 /**
- * Who gives instructions: the ally, or Dada Matt with no ally. When Dada Matt
- * is himself the hero and there is no ally, Dada Jason narrates instead.
+ * The helper (teaches the spell, fills `{helper}` in sentences, takes her on
+ * the quest): the ally, or with no ally the dad who woke her. A roster id, so
+ * a dad's form, whose abilities the spell comes from.
+ */
+export function helper(state: EpisodeState = episode): string {
+  return state.ally ?? waker(state);
+}
+
+/**
+ * Who gives instructions: the helper's person (narrator lines are voiced per
+ * person: lifter Dada Matt narrates as `dada_matt`).
  */
 export function narrator(state: EpisodeState = episode): string {
-  if (state.ally) return state.ally;
-  return state.hero === DEFAULT_NARRATOR ? 'dada_jason' : DEFAULT_NARRATOR;
-}
-
-/** The helper in the house (teaches the spell, fills `{helper}` in sentences): the ally, or the narrator. */
-export function helper(state: EpisodeState = episode): string {
-  return narrator(state);
+  return personOf(helper(state));
 }
 
 /**
- * The image `id` appears as in this episode, once she is awake: its form's
- * (content/battle/forms.ts: Julia the chef when Dada Jason is the ally), else
- * its roster image. Evil versions have no forms. The title, the pick screens
- * and Julia asleep in bed use `charArt` directly: the default images.
+ * The roster id `id` plays in this episode: a person's form when they are in
+ * the cast (`dada_matt` → `dada_matt_cyber` when Dada Matt is the cyberdecker
+ * today), else `id`. The voice speaks as the person; this is who to draw.
  */
-export function castArt(id: string, evil = false, state: EpisodeState = episode): string {
-  if (evil) return charArt(id, true);
-  return formFor(id, state)?.art ?? charArt(id, false);
+export function castId(id: string, state: EpisodeState = episode): string {
+  const person = personOf(id);
+  const inCast = [state.ally, state.villain, state.primary, state.secondary, state.hero].find((c) => c && personOf(c) === person);
+  return inCast ?? id;
 }
 
-/** The name-free face card for `id` in this episode (names as sight words): its form's, else `face_<id>`. */
+/**
+ * The image `id` appears as in this episode, once she is awake: its outfit
+ * (content/battle/forms.ts: Julia the chef when Dada Jason is the ally), else
+ * the roster image of the form it plays (`castId`). The title, the pick
+ * screens and Julia asleep in bed use `charArt` directly: the default images.
+ */
+export function castArt(id: string, evil = false, state: EpisodeState = episode): string {
+  const c = castId(id, state);
+  if (evil) return charArt(c, true);
+  return formFor(c, state)?.art ?? charArt(c, false);
+}
+
+/** The name-free face card for `id` in this episode (names as sight words): its outfit's, else its form's `face_<id>`. */
 export function castFace(id: string, state: EpisodeState = episode): string {
-  return formFor(id, state)?.face ?? `face_${id}`;
+  const c = castId(id, state);
+  return formFor(c, state)?.face ?? `face_${c}`;
+}
+
+/** The quest's setup line, said in the bedroom in the helper's voice: theirs, or the narrator's "right here at home". */
+export function questSetupLine(state: EpisodeState = episode): string {
+  const h = helper(state);
+  return QUESTS[h] ? questLine(h) : narratorLine(narrator(state), 'quest_home');
+}
+
+/** True when the episode trains somewhere other than the house. */
+export function away(state: EpisodeState = episode): boolean {
+  return state.place !== HOME && Boolean(PLACE_BY_ID[state.place]);
+}
+
+let castOverrides: CastOverrides = {};
+let castRand: Rand = Math.random;
+let castDefault = !EPISODE_DEFAULTS.randomCast;
+let placeOverride: string | null = null;
+
+/**
+ * Fix parts of every episode's cast this session (`?ally=`, `?villain=`,
+ * `?form=`, `?primary=`, `?secondary=`, `?seed=`, `?cast=default`,
+ * `?place=`: BootScene), then recast the current episode.
+ */
+export function setCastOptions(o: { overrides?: CastOverrides; rand?: Rand; fixed?: boolean; place?: string | null }): void {
+  if (o.overrides) castOverrides = o.overrides;
+  if (o.rand) castRand = o.rand;
+  if (o.fixed !== undefined) castDefault = o.fixed;
+  if (o.place !== undefined) placeOverride = o.place;
+  castEpisode();
+}
+
+/**
+ * Draw this episode's cast (src/rules/cast.ts) and its quest place. `picked`
+ * fixes roles for this episode only: the parked pick screens' choices, after
+ * which the dads' roles, forms and the quest are drawn around them.
+ */
+export function castEpisode(picked: CastOverrides = {}): void {
+  const fixed: CastOverrides = castDefault
+    ? {
+        ally: EPISODE_DEFAULTS.ally,
+        ...(EPISODE_DEFAULTS.randomVillain ? {} : { villain: EPISODE_DEFAULTS.villain }),
+        primary: EPISODE_DEFAULTS.primary,
+        secondary: false,
+        forms: { dada_matt: 'builder', dada_jason: 'chef' },
+      }
+    : {};
+  const overrides = { ...fixed, ...castOverrides, ...picked };
+  const c = drawCast({ hero: EPISODE_DEFAULTS.hero, recent: progress.recentVillains(), overrides }, castRand);
+  episode.hero = c.hero;
+  episode.ally = c.ally;
+  episode.villain = c.villain;
+  episode.villainWasRandom = !overrides.villain;
+  episode.primary = c.primary;
+  episode.secondary = c.secondary;
+  // The hero cannot also be the ally (she would teach herself the spell).
+  if (episode.ally && personOf(episode.ally) === personOf(episode.hero)) episode.ally = null;
+  if (episode.villainWasRandom) progress.villainMet(personOf(episode.villain));
+  episode.place = placeOverride && (placeOverride === HOME || PLACE_BY_ID[placeOverride]) ? placeOverride : questFor(helper()).place;
 }
 
 export function heroSpec(): CharacterSpec {
@@ -184,14 +275,7 @@ export function villainSpec(): CharacterSpec {
 }
 
 export function resetEpisode(): void {
-  episode.hero = EPISODE_DEFAULTS.hero;
-  episode.ally = EPISODE_DEFAULTS.ally;
-  episode.villain = EPISODE_DEFAULTS.villain;
-  episode.villainWasRandom = false;
-  if (!EPISODE_DEFAULTS.pickScreens && EPISODE_DEFAULTS.randomVillain) {
-    episode.villain = randomVillain();
-    episode.villainWasRandom = true;
-  }
+  castEpisode();
   episode.prep = choosePrep();
   episode.made = { gem: false, ammo: false, helper: false, item: false };
   episode.read = [];
@@ -202,9 +286,9 @@ export function resetEpisode(): void {
   episode.stepIndex = 0;
 }
 
-/** Pick a random villain that is not the hero's or ally's own character. */
+/** Pick a random villain (any form) that is not the hero's or ally's own person: the pick screen's surprise. */
 export function randomVillain(rand = Math.random): string {
-  const pool = ROSTER.filter((c) => c.id !== episode.hero && c.id !== episode.ally);
+  const pool = ROSTER.filter((c) => personOf(c.id) !== personOf(episode.hero) && (!episode.ally || personOf(c.id) !== personOf(episode.ally)));
   return pool[Math.floor(rand() * pool.length)]!.id;
 }
 
@@ -218,11 +302,17 @@ export function housePlan(): RoomPlan[] {
     // no room may make it a key word; nor the attic's counter word.
     episode.spell ??= spellFor(episode.hero, helper());
     const fill = { villain: episode.villain, helper: helper(), hero: episode.hero };
-    const rooms = Phaser.Utils.Array.Shuffle([...FETCH_ROOMS]).slice(0, 2) as [string, string];
+    // The rooms: the quest place's own, or two of the house's.
+    const place = away() ? PLACE_BY_ID[episode.place]! : null;
+    const rooms = place
+      ? ([place.rooms[0]!.id, place.rooms[1]!.id] as [string, string])
+      : (Phaser.Utils.Array.Shuffle([...FETCH_ROOMS]).slice(0, 2) as [string, string]);
+    const counterRoom = place ? place.secret.id : COUNTER_ROOM;
     // The three key words come out of her word bag here; the counter keeps
-    // clear of battle 1's move pads.
+    // clear of battle 1's move pads, and none is a word of the quest's setup line.
     const battle1Moves = battle1Words(movePlan());
-    episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, spell: episode.spell, rooms, counterRoom: COUNTER_ROOM, battle1Moves });
+    const saidBefore = wordsOf(questFor(helper()).text);
+    episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, spell: episode.spell, rooms, counterRoom, battle1Moves, saidBefore });
   }
   return episode.house.plan;
 }
@@ -284,10 +374,10 @@ export function startStep(scene: Phaser.Scene): void {
   scene.scene.start(key, { step });
 }
 
-/** From the hub into a side room. */
+/** From the hub into a side room: the scene of the minigame drawn for it (src/rules/minigames.ts). */
 export function enterRoom(scene: Phaser.Scene, slot: Slot): void {
   voiceBus.hush();
-  scene.scene.start('SentenceRoom', { step: currentStep(), slot });
+  scene.scene.start(planFor(slot).scene, { step: currentStep(), slot });
 }
 
 /** From a side room back to the hub, standing at that room's door. */
@@ -330,7 +420,7 @@ export function setSkipJourney(v: boolean): void {
 export function journeyStops(): { icon: string; index: number }[] {
   const icon = (s: Step): string => {
     if (s.kind === 'bedroom') return '🛏️';
-    if (s.kind === 'house') return '🏠';
+    if (s.kind === 'house') return away() ? PLACE_BY_ID[episode.place]!.glyph : '🏠';
     if (s.kind === 'battle') return '⚔️';
     if (s.kind === 'victory') return '🏆';
     return '•';

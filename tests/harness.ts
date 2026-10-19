@@ -104,10 +104,14 @@ function warpClocks(k: number): void {
   };
 }
 
-/** Load the game with test hooks on (`?hooks=1` works in a production build too), its clocks at `speed`. */
+/**
+ * Load the game with test hooks on (`?hooks=1` works in a production build too), its clocks at `speed`.
+ * The cast is the fixed default episode (`cast=default`) unless the query asks for a draw (`seed=`, `cast=random`).
+ */
 export async function boot(page: Page, query = '', speed = SPEED): Promise<void> {
   await page.addInitScript(warpClocks, speed);
-  await page.goto(`/${query ? `${query}&` : '?'}hooks=1`);
+  const cast = /[?&](seed|cast)=/.test(query) ? '' : 'cast=default&';
+  await page.goto(`/${query ? `${query}&` : '?'}${cast}hooks=1`);
   await page.waitForFunction(() => Boolean((window as unknown as { __ww?: unknown }).__ww));
   await page.mouse.click(20, 20);
 }

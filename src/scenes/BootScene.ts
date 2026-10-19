@@ -7,7 +7,7 @@
  *   ?scene=bedroom
  *   ?scene=house&part=2                 (the hub; part 2 has the attic open)
  *   ?scene=room&slot=a|b|counter        (a side room; counter is the attic, part 2)
- *   ?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug   (ally=none for no ally)
+ *   ?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug   (ally=none for no ally; the cast: castOptions)
  *   ?scene=victory&read=cat,sun,julia   (the words the recap shows)
  *   ?scene=pick | parent
  *   ?fetched=net,fan                    (the battle items fetched; default: the house plan's)
@@ -27,13 +27,59 @@
 import Phaser from 'phaser';
 
 import { ART_ASSETS } from '../../content/art/assets';
-import { CHARACTER_BY_ID } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, formId } from '../../content/battle/roster';
 import { group } from '../../content/voice/ids';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { enterRoom, episode, episodeGroups, helper, isStepKind, jumpTo, planFor, startStep, steps, type PrepGame, type Slot } from '../episode/Episode';
+import { enterRoom, episode, episodeGroups, helper, isStepKind, jumpTo, planFor, setCastOptions, startStep, steps, type PrepGame, type Slot } from '../episode/Episode';
+import { DADS, seededRand, type CastOverrides } from '../rules/cast';
 import { makeTextures } from '../fx/textures';
 import { spellFor } from '../rules/spell';
 import { voiceBank } from '../voice/VoiceBank';
+
+/**
+ * The cast from the URL (item 025), for this episode and every one after it
+ * this session; whatever is not given is drawn (src/rules/cast.ts).
+ *
+ *   ?seed=7                      the draw is repeatable: same seed, same episodes
+ *   ?cast=default                the fixed default episode (EPISODE_DEFAULTS; the tests' default)
+ *   ?hero= ?ally= ?villain=      roster ids; a dad's form by its id (ally=dada_matt_lifter); ally=none
+ *   ?form=lifter,warlock         the dads' forms by name (builder lifter cyber blade; chef warrior warlock)
+ *   ?primary=dada_jason|none     who wakes her; ?secondary=1|0 whether the other dad comes in too
+ *   ?place=forest_gym|home       the quest place, whoever the helper is (to look at a place)
+ */
+function castOptions(q: URLSearchParams): Parameters<typeof setCastOptions>[0] {
+  const overrides: CastOverrides = {};
+  const id = (key: string) => {
+    const v = q.get(key);
+    return v && CHARACTER_BY_ID[v] ? v : undefined;
+  };
+  const hero = id('hero');
+  if (hero) overrides.hero = hero;
+  const ally = q.get('ally') === 'none' ? null : id('ally');
+  if (ally !== undefined) overrides.ally = ally;
+  const villain = id('villain');
+  if (villain) overrides.villain = villain;
+  const forms = q.get('form');
+  if (forms) {
+    overrides.forms = {};
+    for (const name of forms.split(',')) {
+      const dad = DADS.find((d) => formId(d, name));
+      if (dad) overrides.forms[dad] = name;
+    }
+  }
+  const primary = q.get('primary');
+  if (primary === 'none') overrides.primary = null;
+  else if (primary && (DADS as readonly string[]).includes(primary)) overrides.primary = primary;
+  const secondary = q.get('secondary');
+  if (secondary !== null) overrides.secondary = secondary === '1' || secondary === 'true';
+  const seed = q.get('seed');
+  return {
+    overrides,
+    ...(seed !== null && Number.isFinite(Number(seed)) ? { rand: seededRand(Number(seed)) } : {}),
+    ...(q.get('cast') === 'default' ? { fixed: true } : q.get('cast') === 'random' ? { fixed: false } : {}),
+    ...(q.get('place') ? { place: q.get('place') } : {}),
+  };
+}
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -64,13 +110,7 @@ export class BootScene extends Phaser.Scene {
 
     const q = new URLSearchParams(location.search);
     const target = q.get('scene');
-    for (const key of ['hero', 'ally', 'villain'] as const) {
-      const v = q.get(key);
-      if (v && CHARACTER_BY_ID[v]) (episode as unknown as Record<string, string>)[key] = v;
-      if (key === 'ally' && v === 'none') episode.ally = null;
-    }
-    // The hero cannot also be the ally (she would teach herself the spell).
-    if (episode.ally === episode.hero) episode.ally = null;
+    setCastOptions(castOptions(q));
     const read = q.get('read');
     if (read) episode.read = read.split(',');
     const prep = q.get('prep');

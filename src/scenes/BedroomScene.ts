@@ -22,7 +22,8 @@ import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
 import { BEDROOMS, type BedroomObject, type ReactionSound } from '../../content/house/house';
-import { fighterId, tauntLine, wakeLine, wakerFor } from '../../content/voice/ids';
+import { personOf } from '../../content/battle/roster';
+import { fighterId, tauntLine, wakeLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import {
   sfxBoing,
@@ -38,7 +39,7 @@ import {
   sfxZap,
 } from '../audio/sfx';
 import { DEPTH, DOOR_SPARKLE_MS, GAME_WIDTH } from '../config';
-import { castArt, episode, helper, villainSpec, type Step } from '../episode/Episode';
+import { castArt, episode, helper, questSetupLine, villainSpec, waker as wakerId, type Step } from '../episode/Episode';
 import { bob, burst, flash, popIn, shake, squash, wiggle } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { applyHouseMood } from '../world/houseMood';
@@ -55,6 +56,9 @@ const SOUND: Record<ReactionSound, () => void> = {
   key: sfxKey,
   whoosh: sfxWhoosh,
 };
+
+/** Where the other dad stands while the news is told: by the door, clear of the toys. */
+const SECOND_SPOT = { x: 1150, y: 560 };
 
 /** How long "Wake up!" waits for her green before she pops out by herself. */
 const WAKE_WAIT_MS = 6000;
@@ -139,13 +143,16 @@ export class BedroomScene extends RoomScene {
 
   private async run(): Promise<void> {
     const room = this.room;
-    const w = wakerFor(episode.hero);
+    // The dad who wakes her (src/rules/cast.ts), drawn in his form for this
+    // episode and speaking in his own voice (`w` is the person).
+    const wForm = wakerId();
+    const w = personOf(wForm);
     await this.wait(800);
 
     // The waker comes in through the door, which goes again behind them.
     this.showDoor();
     this.doorOpens();
-    const waker = this.art(charArt(w, false), 120, 160, room.door.x, room.door.y);
+    const waker = this.art(castArt(wForm), 120, 160, room.door.x, room.door.y);
     waker.setDepth(room.waker.y);
     this.caption.track(w, () => (waker.active ? { x: waker.x, y: waker.y } : null));
     await this.guard(
@@ -161,23 +168,43 @@ export class BedroomScene extends RoomScene {
     await this.awaitWake();
     this.wakeUp();
     await this.wait(500);
-    await this.speak(wakeLine(w, `good_${episode.hero}`));
+    await this.speak(wakeLine(w, `good_${personOf(episode.hero)}`));
+
+    // The other dad, some mornings (item 025): he comes in too, says hello
+    // half the time, and is otherwise just there.
+    let second: Phaser.GameObjects.Image | null = null;
+    if (episode.secondary) {
+      const sp = personOf(episode.secondary);
+      this.showDoor();
+      this.doorOpens();
+      const s2 = this.art(castArt(episode.secondary), 120, 160, room.door.x, room.door.y).setDepth(room.door.y);
+      second = s2;
+      this.caption.track(sp, () => (s2.active ? { x: s2.x, y: s2.y } : null));
+      await this.guard(
+        new Promise<void>((resolve) =>
+          this.tweens.add({ targets: s2, x: SECOND_SPOT.x, y: SECOND_SPOT.y, duration: 800, ease: 'Sine.easeInOut', onUpdate: () => s2.setDepth(s2.y), onComplete: () => resolve() }),
+        ),
+      );
+      this.hideDoor();
+      bob(this, s2, 5, 820);
+      if (Math.random() < 0.5) await this.speak(wakeLine(sp, 'hi'));
+    }
 
     // The helper pops in beside the waker.
     const h = helper();
     let friend: Phaser.GameObjects.Image | null = null;
-    if (h !== w) {
+    if (personOf(h) !== w) {
       const hx = room.waker.x - 140;
       const hy = room.waker.y + 20;
       const f = this.art(castArt(h), 110, 145, hx, hy).setDepth(hy);
       friend = f;
-      this.caption.track(h, () => (f.active ? { x: f.x, y: f.y } : null));
+      this.caption.track(personOf(h), () => (f.active ? { x: f.x, y: f.y } : null));
       const s = f.scale;
       popIn(this, f, s);
       burst(this, hx, hy - 70, { count: 50, colors: [0xffffff, 0xff9ad5, 0x7ad9ff, 0xffd23f] });
       sfxSummon();
       this.time.delayedCall(400, () => bob(this, f, 7, 650));
-      await this.speak(wakeLine(w, `helper_${h}`));
+      await this.speak(wakeLine(w, `helper_${personOf(h)}`));
     }
 
     // The bad news: the room goes dark and the villain's mess thumps in.
@@ -194,6 +221,10 @@ export class BedroomScene extends RoomScene {
       shake(this, 2, 300);
       await this.guard(voiceBus.say(tauntLine(fighterId(episode.villain, true), taunt.key), 'bark'));
     }
+
+    // The quest (item 025): the helper says where they will train.
+    this.round = 'bedroom:quest';
+    await this.speak(questSetupLine());
 
     await this.speak(wakeLine(w, 'door'));
     this.newsDone = true;
@@ -213,6 +244,7 @@ export class BedroomScene extends RoomScene {
     // between the robot and the door: no toy and no part of the door covered.
     this.stepAside(waker, { x: room.door.x, y: room.door.y + 180 });
     if (friend) this.stepAside(friend, { x: room.door.x - 140, y: room.door.y + 50 });
+    if (second) this.stepAside(second, { x: room.door.x + 80, y: room.door.y + 60 });
     this.time.delayedCall(DOOR_SPARKLE_MS, () => this.sparkleDoor());
   }
 
@@ -326,7 +358,7 @@ export class BedroomScene extends RoomScene {
   }
 
   protected override hint(): void {
-    if (this.newsDone) void this.speak(wakeLine(wakerFor(episode.hero), 'door'));
+    if (this.newsDone) void this.speak(wakeLine(personOf(wakerId()), 'door'));
   }
 
   protected choose(spot: Spot): void {

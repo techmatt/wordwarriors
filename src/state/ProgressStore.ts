@@ -38,6 +38,8 @@ export interface ProgressData {
   /** Her move bag: the battle's move words, drawn the same way (item 018). */
   moveBag: WordBag;
   episodes: number;
+  /** The villains (persons) of her last few episodes, newest last (item 025): the cast draw avoids them. */
+  villains: string[];
 }
 
 /**
@@ -63,8 +65,11 @@ function emptyStat(): Stat {
 }
 
 function empty(): ProgressData {
-  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, episodes: 0 };
+  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, episodes: 0, villains: [] };
 }
+
+/** How many past villains the store keeps. */
+const VILLAINS_KEPT = 4;
 
 export interface StorageLike {
   getItem(key: string): string | null;
@@ -97,6 +102,8 @@ export class ProgressStore {
       parsed.bag ??= { left: [], round: 0 };
       parsed.moveBag ??= { left: [], round: 0 };
       parsed.episodes ??= 0;
+      // Item 025, the same way.
+      parsed.villains ??= [];
       return parsed;
     } catch {
       this.storage?.setItem(`${STORE_KEY}.unreadable.${this.now()}`, raw);
@@ -131,6 +138,17 @@ export class ProgressStore {
   episodeDone(): void {
     this.data.episodes++;
     this.session.episodes++;
+    this.save();
+  }
+
+  /** Her recent villains (persons), newest last. */
+  recentVillains(): string[] {
+    return [...this.data.villains];
+  }
+
+  /** An episode was cast with this villain (a person): kept so the next ones differ. */
+  villainMet(person: string): void {
+    this.data.villains = [...this.data.villains.filter((v) => v !== person), person].slice(-VILLAINS_KEPT);
     this.save();
   }
 

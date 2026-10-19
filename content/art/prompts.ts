@@ -26,12 +26,14 @@ export const BACKGROUND_STYLE = `${STYLE} A full-bleed background painting filli
  * the screen showing through (a cage's faint back bars), not just the edges.
  * Leave out anything meant to have green in it (a leaf, a dragon).
  */
-const FAMILY_ART = ['julia', 'ellie', 'dada_matt', 'dada_jason'].flatMap((c) => [`char_${c}_good`, `char_${c}_evil`, `face_${c}`]);
+const FAMILY_ART = ['julia', 'ellie', 'dada_matt', 'dada_jason', 'dada_matt_lifter', 'dada_matt_cyber', 'dada_matt_blade', 'dada_jason_warrior', 'dada_jason_warlock'].flatMap((c) => [`char_${c}_good`, `char_${c}_evil`, `face_${c}`]);
+// Item 025's counters and decals: glows and metal, no green of their own.
+const ITEM_025 = ['item_juice_box', 'item_magic_pen', 'item_shiny_pot', 'item_slippy_mop', 'item_sunshine_bus', 'decal_dada_matt_lifter_dumbbell', 'decal_dada_matt_cyber_cable', 'decal_dada_matt_blade_rune', 'decal_dada_jason_warrior_shield', 'decal_dada_jason_warlock_flame', 'minion_imp', 'prop_portal', 'char_julia_knight', 'face_julia_knight'];
 // The counter items of item 009 came back with a green-tinted glow round them.
 const GLOWING_ITEMS = ['cozy_bed', 'golden_nut', 'giant_log', 'cocoa_cup', 'cuddly_cat', 'flappy_bat', 'brave_rat', 'tickle_fox', 'gold_bag', 'glitch_bug', 'bounce_cap'].map((i) => `item_${i}`);
 // Tiamat (item 013) is purple and silver with a glow: no green of her own.
 const TIAMAT_ART = ['char_tiamat_good', 'char_tiamat_evil', 'face_tiamat', 'item_magic_hat', 'decal_tiamat_scale', 'decal_tiamat_banner'];
-export const NO_GREEN = new Set([...FAMILY_ART, ...TIAMAT_ART, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block']);
+export const NO_GREEN = new Set([...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block']);
 
 /**
  * Likeness references for the family (Matt, 2026-10-18): a photo in the
@@ -50,7 +52,8 @@ export const REFS: Record<string, { photo: string; box: [number, number, number,
 
 /** The character whose likeness reference an asset id uses, if any: `char_<c>_<good|evil|outfit>` and `face_<c>[_<outfit>]`. */
 export function refFor(id: string): string | undefined {
-  return Object.keys(REFS).find((c) => new RegExp(`^face_${c}(_[a-z]+)?$`).test(id) || new RegExp(`^char_${c}_[a-z]+$`).test(id));
+  // `[a-z_]+`: a dad's form is `char_dada_matt_lifter_good` (item 025).
+  return Object.keys(REFS).find((c) => new RegExp(`^face_${c}(_[a-z]+)*$`).test(id) || new RegExp(`^char_${c}_[a-z_]+$`).test(id));
 }
 
 /**

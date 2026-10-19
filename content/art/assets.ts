@@ -13,7 +13,7 @@
  */
 
 import { ARENAS, MINIONS, ROSTER } from '../battle/roster.js';
-import { BEDROOMS, HUB, SIDE_ROOMS } from '../house/house.js';
+import { ALL_SIDE_ROOMS, BEDROOMS, HUB, PLACES, hubArt } from '../house/house.js';
 import { CVC_WORDS, MOVE_PICTURES, SPECIAL_WORDS, WORD_BY_ID } from '../phonics/words.js';
 
 export type AssetKind = 'character' | 'minion' | 'arena' | 'room' | 'picture' | 'item' | 'prop';
@@ -95,6 +95,27 @@ assets.push({
   glyph: '🥄',
   palette: julia.palette,
 });
+// Julia the little knight, beside warrior Dada Jason (item 025).
+assets.push({
+  id: 'char_julia_knight',
+  kind: 'character',
+  w: 200,
+  h: 250,
+  content: `Julia the little knight: ${julia.look.split(', in a ')[0]}, in a little shining silver knight's armour over a pink tunic, a short red cape, a small round red shield with a golden star on it and a little wooden toy sword held up high. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background.`,
+  label: 'KNIGHT',
+  glyph: '🛡️',
+  palette: julia.palette,
+});
+assets.push({
+  id: 'face_julia_knight',
+  kind: 'character',
+  w: 200,
+  h: 200,
+  content: `Julia the little knight's face, a friendly head-and-shoulders portrait of ${julia.look.split(', in a ')[0]}, in a little shining silver knight's armour with a short red cape, no helmet. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
+  label: '',
+  glyph: '🛡️',
+  palette: julia.palette,
+});
 
 for (const m of Object.values(MINIONS)) {
   assets.push({
@@ -146,7 +167,12 @@ for (const b of BEDROOMS) {
   assets.push({ id: `room_bedroom_${b.id}`, kind: 'room', w: 1280, h: 720, content: `${b.look}. The bed on the left and a door on the right are drawn by the game. ${HOUSE_ROOM}.`, label: '', glyph: '⭐', palette: b.palette });
 }
 assets.push({ id: 'room_hub', kind: 'room', w: 1280, h: 720, content: `${HUB.look}. The doors and the magic circle are drawn by the game on top; keep the back wall plain where they stand. ${HOUSE_ROOM}.`, label: '', glyph: '🏠', palette: HUB.palette });
-for (const r of SIDE_ROOMS) {
+// Quest places (item 025): each hub is laid out like the house's, so the game
+// draws the doors, the magic circle and the way out on top of it.
+for (const p of PLACES) {
+  assets.push({ id: hubArt(p.id), kind: 'room', w: 1280, h: 720, content: `${p.look}. No doors, gates or archways anywhere: the game draws its own doors, a magic circle and a portal on top, so keep the background behind the middle simple. ${HOUSE_ROOM}.`, label: '', glyph: p.glyph, palette: p.palette });
+}
+for (const r of ALL_SIDE_ROOMS) {
   assets.push({ id: `room_side_${r.id}`, kind: 'room', w: 1280, h: 720, content: `${r.look}. ${HOUSE_ROOM}.`, label: '', glyph: r.glyph, palette: r.palette });
 }
 
@@ -216,6 +242,8 @@ const PROPS: [string, number, number, string, string, string?][] = [
   ['anvil', 260, 170, 'A magic anvil with runes, glowing.', '⚒️'],
   ['tent', 280, 220, 'A striped camping tent with a flag.', '⛺'],
   ['bed', 300, 200, "A child's cosy bed side-on: a puffy star-pattern duvet, a big pillow, a wooden headboard on the left.", '🛏️'],
+  // The way out of a quest place (item 025), where the house has its front door.
+  ['portal', 200, 290, 'A tall magic portal standing upright: an arch of carved stone with glowing runes, filled with a swirling bright blue-and-violet whirlpool of light and little stars. No text.', '🌀'],
   ['front_door', 200, 290, "A big friendly front door of a house: painted red, a round brass knob, a little window at the top, a doormat. Closed. No house number or text.", '🚪'],
   ['magic_circle', 260, 110, 'A glowing rune circle painted on the floor, seen at an angle (a flat ellipse), soft blue-violet light rising from it, little stars. Abstract runes only, no letters.', '✨'],
   ['bag', 120, 130, 'A little adventure backpack for a child: rounded, bright, a buckle flap, a star patch. No text.', '🎒'],

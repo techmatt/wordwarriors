@@ -26,10 +26,10 @@
 import Phaser from 'phaser';
 
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
-import { HUB, SIDE_ROOM_BY_ID } from '../../content/house/house';
+import { HUB, SIDE_ROOM_BY_ID, hubArt } from '../../content/house/house';
 import { sfxFanfare, sfxSelect, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../config';
-import { castArt, enterRoom, episode, helper, planFor, type Slot, type Step } from '../episode/Episode';
+import { away, castArt, enterRoom, episode, helper, planFor, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, flash, popIn, shockwave, squash } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { spellFor } from '../rules/spell';
@@ -77,7 +77,14 @@ export class HubScene extends RoomScene {
   }
 
   protected background(): string {
-    return 'room_hub';
+    // The house's main room, or the quest place's (item 025).
+    return hubArt(episode.place);
+  }
+
+  /** A house line, or its quest place version (no front door, no stairs up there). */
+  private line(key: 'house_front' | 'house_ready' | 'secret_door'): string {
+    if (!away()) return key;
+    return key === 'house_front' ? 'away_front' : key === 'house_ready' ? 'away_ready' : 'away_secret';
   }
 
   private setPhase(phase: Phase, ...hint: string[]): void {
@@ -175,7 +182,8 @@ export class HubScene extends RoomScene {
 
     // The front door: not there at all until the way out is open (openFront).
     const fpos = HUB.doors.front;
-    const fimg = this.art('prop_front_door', FRONT_W, FRONT_H);
+    // In a quest place the way out is a portal: there is no front door.
+    const fimg = this.art(away() ? 'prop_portal' : 'prop_front_door', FRONT_W, FRONT_H);
     const front = this.addSpot('door_front', fpos.x, fpos.y, [fimg], null);
     front.enabled = false;
     front.obj.setVisible(false);
@@ -379,7 +387,7 @@ export class HubScene extends RoomScene {
   /** The side doors open for the rooms not yet done. */
   private async offerDoors(): Promise<void> {
     const left = this.openSideDoors();
-    if (left === 0) return this.openFront('house_front');
+    if (left === 0) return this.openFront(this.line('house_front'));
     await this.narrate(left === 2 ? 'house_doors' : 'house_more');
     this.setPhase('doors', left === 2 ? 'house_doors' : 'house_more');
   }
@@ -388,7 +396,7 @@ export class HubScene extends RoomScene {
   private async backFromRoom(_from: Slot): Promise<void> {
     await this.wait(700);
     const left = this.openSideDoors();
-    if (left === 0) return this.openFront('house_front');
+    if (left === 0) return this.openFront(this.line('house_front'));
     await this.narrate('house_more');
     this.setPhase('doors', 'house_more');
   }
@@ -454,16 +462,16 @@ export class HubScene extends RoomScene {
     burst(this, door.x, door.y - DOOR_H / 2, { count: 80, speed: 500 });
     sfxSummon();
     this.sparkle(door);
-    await this.narrate('secret_door');
+    await this.narrate(this.line('secret_door'));
     door.enabled = true;
     door.correct = true;
-    this.setPhase('secret', 'secret_door');
+    this.setPhase('secret', this.line('secret_door'));
   }
 
   /** Part 2, back from the attic: out the front door. */
   private async ready(): Promise<void> {
     await this.wait(700);
-    await this.openFront('house_ready');
+    await this.openFront(this.line('house_ready'));
   }
 
   /** A gentle sparkle over a door, for as long as it stands. */

@@ -173,6 +173,15 @@ export interface CounterItem {
 
 export interface CharacterSpec {
   id: string;
+  /**
+   * For a form (item 025): the person it is a form of (`dada_matt` for
+   * `dada_matt_lifter`). A form is a whole character, with its own fighting,
+   * villain version, counter and house mood, but speaks in the person's voice,
+   * narrates the person's lines and wakes her as the person. Absent on persons.
+   */
+  person?: string;
+  /** The form's short name ('builder', 'lifter', 'chef'), on persons with forms and on forms: `?form=lifter`. */
+  form?: string;
   /** Archetype, in one sentence. Original characters, not lookalikes. */
   description: string;
   /** edge-tts speaker ids are `<id>` and `<id>_evil`. */

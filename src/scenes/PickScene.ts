@@ -10,12 +10,12 @@
 import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
-import { ROSTER } from '../../content/battle/roster';
+import { PERSONS } from '../../content/battle/roster';
 import { fighterId, nameLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxSelect, sfxSummon } from '../audio/sfx';
 import { GAME_WIDTH } from '../config';
-import { episode, randomVillain, type Step } from '../episode/Episode';
+import { castEpisode, episode, randomVillain, type Step } from '../episode/Episode';
 import { bob, burst, flash, shockwave } from '../fx/juice';
 import { RoomScene, type Spot } from '../world/RoomScene';
 
@@ -56,7 +56,9 @@ export class PickScene extends RoomScene {
 
   protected build(): void {
     const evil = this.what === 'villain';
-    const ids = ROSTER.map((c) => c.id).filter((id) => this.what !== 'ally' || id !== episode.hero);
+    // Persons only: a dad picked here plays his own form (builder, chef); the
+    // random cast still gives the other dad a form (item 025).
+    const ids = PERSONS.map((c) => c.id).filter((id) => this.what !== 'ally' || id !== episode.hero);
     const extra = this.what === 'ally' ? 'nobody' : this.what === 'villain' ? 'surprise' : null;
     const all = extra ? [...ids, extra] : ids;
     const perRow = Math.ceil(all.length / 2);
@@ -124,6 +126,8 @@ export class PickScene extends RoomScene {
           burst(this, spot.x, spot.y - CARD_H, { count: 80, colors: [0xff2244, 0x5a1a7a, 0xffffff] });
         }
         await this.speak(nameLine(fighterId(episode.villain, true)));
+        // The last pick: the dads' roles and the quest are drawn around the picks.
+        castEpisode({ hero: episode.hero, ally: episode.ally, villain: episode.villain });
       }
       await this.wait(300);
       this.done();

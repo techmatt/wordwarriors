@@ -92,6 +92,13 @@ export const NARRATOR_LINES: Template[] = [
   // ("We found the Magic Hat!") says got_counter_<villain> instead.
   { key: 'got_counter_any', text: 'That is just what we need!' },
   { key: 'use_bag', text: 'Look what we found!' },
+  // Quests (item 025). The home quest's setup line, for a helper with no quest
+  // place of their own (content/house/quests.ts), and the hub's lines in a
+  // quest place, where there is no front door and no stairs up.
+  { key: 'quest_home', text: 'To get ready, we have to train right here at home!' },
+  { key: 'away_secret', text: 'Look, a secret door! Let us go in!', say: 'Look, a secret door, let us go in!' },
+  { key: 'away_front', text: 'The way out is open! Let us go!', say: 'The way out is open, let us go!' },
+  { key: 'away_ready', text: 'We are ready now! Off to the fight!', say: 'We are ready now, off to the fight!' },
 ];
 
 /** Composed per narrator × hero. */
@@ -120,7 +127,7 @@ export const MOVE_LINES: Template[] = [
 ];
 
 /**
- * The bedroom wake-up, said by the waker (`wakerFor(hero)` in ids.ts), not the
+ * The bedroom wake-up, said by the waker (the episode's primary dad, `WAKERS` in ids.ts), not the
  * narrator: the ally has not arrived yet. Keys get a suffix as they are composed:
  * `good_<hero>`, `helper_<character>`, `bad_<villain>`; `up` and `door` do not.
  * {helper} is the helper's good name; {threat} the villain's `house.threat`.
@@ -131,4 +138,6 @@ export const WAKE_LINES: Template[] = [
   { key: 'helper', text: '{helper} is here to play!' },
   { key: 'bad', text: 'Bad news, {villain} is coming, and {threat}!' },
   { key: 'door', text: 'Come on, let us go! Find the door!', say: 'Come on, let us go, find the door!' },
+  // The other dad, when he comes into the bedroom too (item 025).
+  { key: 'hi', text: 'Good morning, sleepyhead!' },
 ];

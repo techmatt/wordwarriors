@@ -24,6 +24,11 @@ export const SPELL_WORDS: Record<string, [string, string, string]> = {
   moriarty: ['map', 'pen', 'nab'],
   bavmorda: ['sun', 'pin', 'zap'],
   rilla: ['rat', 'bug', 'hen'],
+  dada_matt_lifter: ['big', 'lug', 'box'],
+  dada_matt_cyber: ['zip', 'bit', 'pen'],
+  dada_matt_blade: ['zap', 'hit', 'pot'],
+  dada_jason_warrior: ['run', 'wet', 'mop'],
+  dada_jason_warlock: ['hop', 'sun', 'bus'],
 };
 
 /** The villain's triple, or a plain one for a villain with none. */

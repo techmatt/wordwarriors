@@ -11,10 +11,9 @@
 
 import Phaser from 'phaser';
 
-import { CHARACTER_BY_ID } from '../../content/battle/roster';
-import { wakerFor } from '../../content/voice/ids';
+import { CHARACTER_BY_ID, personOf } from '../../content/battle/roster';
 import type { Utterance } from '../audio/VoiceBus';
-import { castArt, castFace, episode } from '../episode/Episode';
+import { castArt, castFace, castId, episode, waker } from '../episode/Episode';
 import { fitText } from './fitText';
 
 export interface Speaker {
@@ -30,7 +29,9 @@ const NAME_FONT = '"Arial Rounded MT Bold", "Arial Black", sans-serif';
  * when she plays as Dada Matt). Null when the speaker is not a character.
  */
 export function speakerOf(u: Pick<Utterance, 'speaker'>): Speaker | null {
-  const raw = u.speaker === 'phonics' ? wakerFor(episode.hero) : u.speaker;
+  // Phonics is Dada Matt's voice (his recordings replace it); while he is the
+  // villain, the dad who woke her shows instead (item 025).
+  const raw = u.speaker === 'phonics' ? (personOf(episode.villain) === 'dada_matt' ? personOf(waker()) : 'dada_matt') : u.speaker;
   const evil = raw.endsWith('_evil');
   const id = raw.replace(/_evil$/, '');
   return CHARACTER_BY_ID[id] ? { id, evil } : null;
@@ -44,7 +45,8 @@ export function speakerName(s: Speaker): string {
 
 /** The speaker's frame colour: their own palette, so each character's card looks like theirs. */
 export function speakerColour(s: Speaker): number {
-  const c = CHARACTER_BY_ID[s.id]!;
+  // The form they play today: lifter Dada Matt's red, not the builder's orange.
+  const c = CHARACTER_BY_ID[castId(s.id)] ?? CHARACTER_BY_ID[s.id]!;
   return (s.evil ? c.evil : c.good).palette[0];
 }
 

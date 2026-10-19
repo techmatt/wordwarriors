@@ -25,6 +25,7 @@
 
 import Phaser from 'phaser';
 
+import { personOf } from '../../content/battle/roster';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { TEX } from '../fx/textures';
@@ -125,7 +126,9 @@ export class Caption {
    * under them while they talk.
    */
   track(id: string, where: () => Where, evil = false): void {
-    this.tracked.set(evil ? `${id}_evil` : id, where);
+    // Lines are voiced per person: a dad's form is tracked as the dad (item 025).
+    const p = personOf(id);
+    this.tracked.set(evil ? `${p}_evil` : p, where);
   }
 
   private modeOf(u: Utterance): CaptionMode {

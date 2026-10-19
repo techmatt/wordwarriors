@@ -20,8 +20,9 @@
 
 import { CHARACTER_BY_ID, MINIONS, MOVE_WORDS, comboPart } from '../../content/battle/roster';
 import type { FighterSpec } from '../../content/battle/types';
-import { FETCH_ITEMS, FRAMES, lookalikesOf, sentence, tokenWord, type Fill, type Sentence } from '../../content/phonics/sentences';
+import { FETCH_ITEMS, lookalikesOf, sentence, tokenWord, type Fill, type Sentence } from '../../content/phonics/sentences';
 import { CVC_WORDS } from '../../content/phonics/words';
+import { drawGames, type Minigame } from './minigames';
 import { SENTENCE_SOLID } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
 
@@ -30,8 +31,11 @@ export type Rand = () => number;
 export interface RoomPlan {
   /** `a` and `b` are the hub's two side-room doors; `counter` is the attic. */
   slot: 'a' | 'b' | 'counter';
-  /** SIDE_ROOMS id. */
+  /** Side room id (content/house/house.ts SIDE_ROOM_BY_ID): the house's or the quest place's. */
   room: string;
+  /** The minigame played there (src/rules/minigames.ts) and its scene. */
+  game: string;
+  scene: string;
   sentence: Sentence;
   /** The three objects in the room (key word included), in left-to-right order. */
   objects: string[];
@@ -78,7 +82,7 @@ function objectsFor(s: Sentence, rand: Rand, avoid: string[]): string[] {
   return all;
 }
 
-function wordsOf(s: string | undefined): string[] {
+export function wordsOf(s: string | undefined): string[] {
   return (s ?? '').toLowerCase().split(/[^a-z]+/).filter(Boolean);
 }
 
@@ -156,6 +160,10 @@ export interface EpisodeInput {
    * counter draw. Without it, every move word is.
    */
   battle1Moves?: string[];
+  /** The rooms' games, a, b and counter (`drawGames`); drawn here when not given. */
+  games?: [Minigame, Minigame, Minigame];
+  /** Words said before any room besides the cast's own (the quest's setup line): never key words. */
+  saidBefore?: string[];
 }
 
 /**
@@ -164,15 +172,17 @@ export interface EpisodeInput {
  */
 export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Rand = Math.random): [RoomPlan, RoomPlan, RoomPlan] {
   const { fill, spell } = input;
-  const shakyFrame = (id: string) => store.shakiness('frames', id);
-  const fetchFrames = pickWeighted(FRAMES.filter((f) => f.use === 'fetch').map((f) => f.id), shakyFrame, 2, rand);
-  const counterFrame = pickWeighted(FRAMES.filter((f) => f.use === 'counter').map((f) => f.id), shakyFrame, 1, rand)[0]!;
-  const frames = [...fetchFrames, counterFrame];
+  // The rooms' games come from the minigame pool (item 025); each sentence game is a frame.
+  const games = input.games ?? drawGames(store, rand);
+  const frames = games.map((g) => {
+    if (!g.frame) throw new Error(`episodePlans: ${g.id} is not a sentence game`);
+    return g.frame;
+  });
 
   // Every word any of the three sentences shows besides its key word: she
   // reads them (and hears them on green) in every room, so none is a key word.
   const shown = frames.flatMap((f) => sentence(f, fill, 'x').tokens.slice(0, -1).map(tokenWord));
-  const avoid = new Set([spell, ...shown, ...saidEarly({ hero: fill.hero, ally: input.ally, villain: fill.villain, helper: fill.helper })]);
+  const avoid = new Set([spell, ...shown, ...(input.saidBefore ?? []), ...saidEarly({ hero: fill.hero, ally: input.ally, villain: fill.villain, helper: fill.helper })]);
 
   const keys: string[] = [];
   for (let i = 0; i < 2; i++) {
@@ -192,7 +202,7 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
     const s = sentence(frames[i]!, fill, keys[i]!);
     // No room offers the spell or another of the episode's key words as a wrong picture.
     const others = [spell, ...keys.filter((k) => k !== keys[i])];
-    return { slot, room: roomIds[i]!, sentence: s, objects: objectsFor(s, rand, others) };
+    return { slot, room: roomIds[i]!, game: games[i]!.id, scene: games[i]!.scene, sentence: s, objects: objectsFor(s, rand, others) };
   }) as [RoomPlan, RoomPlan, RoomPlan];
 }
 

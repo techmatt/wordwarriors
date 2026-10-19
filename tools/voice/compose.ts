@@ -15,7 +15,8 @@
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { MOVE_WORDS, ROSTER } from '../../content/battle/roster.js';
+import { MOVE_WORDS, PERSONS, ROSTER, personOf } from '../../content/battle/roster.js';
+import { QUESTS, questLine } from '../../content/house/quests.js';
 import type { FighterSpec } from '../../content/battle/types.js';
 import { LETTERS } from '../../content/phonics/letters.js';
 import { FETCH_ITEMS, allFrameTokens, allPrefixes, tokenWord } from '../../content/phonics/sentences.js';
@@ -115,27 +116,35 @@ export function composeLines(): LineSpec[] {
     for (const evil of [false, true]) {
       const spec = evil ? c.evil : c.good;
       const fid = fighterId(c.id, evil);
+      // A dad's form speaks in the dad's own voice (item 025).
+      const speaker = fighterId(personOf(c.id), evil);
       const name: Template = { key: 'name', text: `${spec.displayName}!` };
       lines.push({
         id: nameLine(fid),
-        speaker: fid,
+        speaker,
         group: group.core,
         ...(spec.sayName ? { text: name.text, say: `${spec.sayName}!` } : { text: name.text }),
       });
       for (const taunt of spec.taunts) {
-        lines.push({ id: tauntLine(fid, taunt.key), speaker: fid, group: group.fighter(fid), text: taunt.text, ...(taunt.say ? { say: taunt.say } : {}) });
+        lines.push({ id: tauntLine(fid, taunt.key), speaker, group: group.fighter(fid), text: taunt.text, ...(taunt.say ? { say: taunt.say } : {}) });
       }
-      lines.push({ id: ultimateLine(fid), speaker: fid, group: group.fighter(fid), text: `${spec.ultimate.name}!` });
+      lines.push({ id: ultimateLine(fid), speaker, group: group.fighter(fid), text: `${spec.ultimate.name}!` });
       // Big moves (power 2+) are called out as they fire.
       for (const ab of spec.abilities.filter((a) => a.power >= 2)) {
-        lines.push({ id: moveLine(fid, ab.id), speaker: fid, group: group.fighter(fid), text: `${ab.name}!` });
+        lines.push({ id: moveLine(fid, ab.id), speaker, group: group.fighter(fid), text: `${ab.name}!` });
       }
     }
     // The villain good again, in the good voice, but in the villain's group:
     // only an episode with this villain says them, and it has that group loaded.
     for (const r of c.reformed) {
-      lines.push({ id: reformedLine(c.id, r.key), speaker: c.id, group: group.fighter(fighterId(c.id, true)), text: r.text, ...(r.say ? { say: r.say } : {}) });
+      lines.push({ id: reformedLine(c.id, r.key), speaker: personOf(c.id), group: group.fighter(fighterId(c.id, true)), text: r.text, ...(r.say ? { say: r.say } : {}) });
     }
+  }
+
+  // The quests' setup lines (item 025), in the owner's (person's) voice. Group
+  // core: the bedroom says them, before any narrator group is sure to be loaded.
+  for (const [owner, q] of Object.entries(QUESTS)) {
+    lines.push({ id: questLine(owner), speaker: personOf(owner), group: group.core, text: q.text, ...(q.say ? { say: q.say } : {}) });
   }
 
   for (const l of LETTERS) {
@@ -195,21 +204,25 @@ export function composeLines(): LineSpec[] {
     const push = (key: string, t: Template, f: Fill) => lines.push({ id: wakeLine(waker, key), speaker: waker, group: group.core, ...fill(t, f) });
     push('up', wake('up'), {});
     push('door', wake('door'), {});
-    for (const c of ROSTER) {
+    push('hi', wake('hi'), {});
+    // Per person: every form of a character has the same name.
+    for (const c of PERSONS) {
       if (c.id === waker) continue;
       push(`good_${c.id}`, wake('good'), { hero: c.good });
       push(`helper_${c.id}`, wake('helper'), { helper: c.good });
     }
+    // Per roster id: each villain form has its own threat.
     for (const v of ROSTER) {
       push(`bad_${v.id}`, wake('bad'), { villain: v.evil, threat: v.house.threat, ...(v.house.threatSay ? { threatSay: v.house.threatSay } : {}) });
     }
   }
 
-  for (const narrator of ROSTER) {
+  // Narrators are persons: a dad narrates in his own voice whatever his form.
+  for (const narrator of PERSONS) {
     const n = narrator.id;
     const g = group.narrator(n);
     for (const t of NARRATOR_LINES) lines.push({ id: narratorLine(n, t.key), speaker: n, group: g, ...fill(t, {}) });
-    for (const hero of ROSTER) {
+    for (const hero of PERSONS) {
       if (hero.id === n) continue;
       for (const t of HERO_LINES) lines.push({ id: narratorLine(n, `${t.key}_${hero.id}`), speaker: n, group: g, ...fill(t, { hero: hero.good }) });
     }

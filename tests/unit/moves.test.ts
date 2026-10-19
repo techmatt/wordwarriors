@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { ART_BY_ID } from '../../content/art/assets';
-import { CHARACTER_BY_ID, MOVE_WORDS, ROSTER, abilityWords } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, MOVE_WORDS, ROSTER, abilityWords, personOf } from '../../content/battle/roster';
 import { CVC_WORDS, SPECIAL_WORDS } from '../../content/phonics/words';
 import { reformedLine, wordLine } from '../../content/voice/ids';
 import { EPISODE_DEFAULTS } from '../../src/config';
@@ -153,7 +153,8 @@ test('reformed: every character has two or more short lines, each voiced in its 
       const id = reformedLine(c.id, r.key);
       const l = lines.get(id);
       assert.ok(l, id);
-      assert.equal(l.speaker, c.id);
+      // A dad's form speaks in the dad's own voice.
+      assert.equal(l.speaker, personOf(c.id));
       assert.equal(l.group, `fighter_${c.id}_evil`, 'in the villain group, which the episode loads');
       assert.ok(built.has(id), `${id} is built`);
       assert.ok(r.text.split(/\s+/).length <= 10, `${id} is short`);
