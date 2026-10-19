@@ -90,6 +90,9 @@ test('cast: the active cast (item 028) draws only its allies and villains, every
   // An ally who is the only active villain leaves the rest of the roster.
   const lone = drawCast({ hero: 'julia', overrides: { ally: 'smaug' } }, rand, { allies: ['ellie'], villains: ['smaug'] });
   assert.ok(lone.villain && personOf(lone.villain) !== 'smaug');
+  // A dad as the only active villain, with the other dad as hero, would leave nobody to wake her: the rest of the roster.
+  const noWaker = drawCast({ hero: 'dada_jason' }, rand, { allies: ['ellie'], villains: ['dada_matt'] });
+  assert.ok(noWaker.villain && !DADS.includes(personOf(noWaker.villain) as (typeof DADS)[number]), `villain ${noWaker.villain}`);
 });
 
 test("cast: never last episode's villain, and none of the last few while others are left", () => {

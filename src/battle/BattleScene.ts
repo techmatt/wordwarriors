@@ -42,7 +42,7 @@ import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh, sfxWrong } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, WALK_SPEED } from '../config';
-import { advance, castArt, counterArt, counterWord, episode, helper, movePlan, namedCounter, narrator, villainSpec, type Step } from '../episode/Episode';
+import { advance, castArt, castScale, counterArt, counterWord, episode, helper, movePlan, namedCounter, narrator, villainSpec, type Step } from '../episode/Episode';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
@@ -632,7 +632,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       burst(this, f.cx, f.cy, { count: 40, speed: 300, colors: [ab.color, ab.color2 ?? 0xffffff] });
     }
     this.tweens.add({ targets: b, x: a.x + 90, y: a.y + 10, duration: 400 });
-    this.banner(`${ab.name.toUpperCase()}!`, ab.color, true);
+    if (!this.textGivesAway(ab.name)) this.banner(`${ab.name.toUpperCase()}!`, ab.color, true);
     slowmo(this, 0.35, 900);
     flash(this, ab.color, 160);
     speedLines(this, (a.cx + b.cx) / 2, (a.cy + b.cy) / 2, ab.color, 800);
@@ -676,7 +676,15 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
    */
   private lineGivesAway(id: string): boolean {
     const text = voiceBank.get(id)?.text;
-    if (!text) return false;
+    return !!text && this.textGivesAway(text);
+  }
+
+  /**
+   * Whether showing or saying `text` now would give a move choice away: it
+   * has a word on a pad still to come (a ROCKET HOP! banner before a HOP
+   * pad; item 030). Banners are held to it as well as spoken lines.
+   */
+  private textGivesAway(text: string): boolean {
     const upcoming = this.upcomingPads();
     return text.toLowerCase().split(/[^a-z]+/).some((w) => upcoming.has(w));
   }
@@ -1338,7 +1346,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.tweens.add({ targets: v.body, scaleX: 1.8, scaleY: 0, duration: 500, delay: 350, ease: 'Back.easeIn' });
     await this.simWait(1.0);
     sfxPoof();
-    const good = fitImage(this.add.image(v.x, v.y, castArt(episode.villain)).setOrigin(0.5, 1), 150, 190).setDepth(v.y + 1);
+    // As tall beside her hero as the villain's good size says (Scar just under her).
+    const gh = (this.heroes[0]?.height ?? 150) * castScale(episode.villain);
+    const good = fitImage(this.add.image(v.x, v.y, castArt(episode.villain)).setOrigin(0.5, 1), gh * 0.8, gh).setDepth(v.y + 1);
     const gs = good.scale;
     good.setScale(0);
     this.tweens.add({ targets: good, scale: gs, duration: 500, ease: 'Back.easeOut' });
@@ -1411,7 +1421,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       if (!f.ready(ab, this.now)) continue;
       if (ab.kind === 'heal' && this.alliesOf(f).every((a) => a.hp > a.maxHp * 0.7) && f.hp > f.maxHp * 0.7) continue;
       f.use(ab, this.now);
-      cast(this, f, ab, target, f.init.kind === 'helper' ? 1.4 : 1, f.isMain && ab.power >= 2);
+      cast(this, f, ab, target, f.init.kind === 'helper' ? 1.4 : 1, f.isMain && ab.power >= 2 && !this.textGivesAway(ab.name));
       // Big moves are called out by name, if nobody else is talking.
       // A move whose name says a word on a pad still to come is never called
       // out: hearing it then would give the choice away (so are taunts).

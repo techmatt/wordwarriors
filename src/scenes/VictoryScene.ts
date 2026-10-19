@@ -13,7 +13,7 @@ import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { advance, castArt, castFace, counterWord, episode, narrator, villainSpec } from '../episode/Episode';
+import { advance, castArt, castFace, castScale, counterWord, episode, narrator, villainSpec } from '../episode/Episode';
 import { burst, fitImage, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
@@ -92,7 +92,9 @@ export class VictoryScene extends Phaser.Scene {
     all.forEach((key, i) => {
       const x = GAME_WIDTH / 2 + (i - (all.length - 1) / 2) * 220;
       // Depth by feet, as in the rooms, so the speaker's glow sits under them.
-      const img = fitImage(this.add.image(x, 605, key).setOrigin(0.5, 1), 120, 150).setDepth(605);
+      // Each as tall beside her as their size says (item 030: Scar just under her).
+      const h = 150 * castScale(ids[i]!);
+      const img = fitImage(this.add.image(x, 605, key).setOrigin(0.5, 1), h * 0.8, h).setDepth(605);
       podium.push(img);
       caption.track(ids[i]!, () => (img.active ? { x: img.x, y: 605 } : null));
       this.tweens.add({ targets: img, y: 575, duration: 300 + i * 40, yoyo: true, repeat: -1, ease: 'Quad.easeOut' });

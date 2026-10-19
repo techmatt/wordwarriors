@@ -97,12 +97,13 @@ export function drawCast(input: CastInput, rand: Rand = Math.random, active: { a
   if (o.villain) villain = o.villain;
   else {
     const allyPerson = o.ally ? personOf(o.ally) : null;
-    // A fixed ally who is the only active villain leaves the whole roster to draw from.
-    const free = (p: string) => p !== heroPerson && p !== allyPerson;
-    const actives = activePersons(active.villains).filter(free);
-    const pool = actives.length ? actives : PERSONS.map((c) => c.id).filter(free);
+    // When no active villain can play (a fixed ally or hero who is the only
+    // one, or a dad villain who would leave nobody to wake her), the whole
+    // roster is drawn from instead.
     const wakerLeft = (p: string) => DADS.some((d) => d !== p && d !== heroPerson) || (allyPerson !== null && isDad(allyPerson));
-    const ok = pool.filter(wakerLeft);
+    const can = (p: string) => p !== heroPerson && p !== allyPerson && wakerLeft(p);
+    const actives = activePersons(active.villains).filter(can);
+    const ok = actives.length ? actives : PERSONS.map((c) => c.id).filter(can);
     // Her last few villains sit out, but always leaving two to choose from (a
     // short active list would otherwise turn into a fixed rotation), and
     // never last episode's while another is left.
