@@ -69,8 +69,9 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | --- | --- |
 | `npm run dev` | Serve at http://localhost:5174 |
 | `npm run build` | Typecheck, then static `dist/` |
-| `npm test` | Unit tests, then the fast Playwright suite |
-| `npm run test:slow` / `test:all` | The full-episode walk-through / both |
+| `npm test` | Fast lane, after every change (~45 s): unit tests, then the quick browser tests |
+| `npm run test:all` | Everything, before every commit (~12 min): fast lane + slow lane |
+| `npm run test:slow` | Slow lane alone: tests tagged `@slow`, the real-time full episode, the two-episode soak |
 | `npm run typecheck` | `src`, `tests`, `content`, `tools` |
 | `npm run voice:lines` | Regenerate `content/voice/lines.json` from roster + script + phonics |
 | `npm run voice:build` | Synthesise new/changed lines (incremental; `--force` for all). Needs `uvx` and network. |

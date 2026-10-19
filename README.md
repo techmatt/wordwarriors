@@ -139,9 +139,22 @@ battle items; that is the default), `nojourney` (skip the map).
 
 ## Tests
 
-`npm test` runs the unit tests and the fast Playwright suite (about 3 minutes);
-`npm run test:slow` plays a whole episode and then two back to back (about 14 minutes).
-They start their own server on port 5184 (`TEST_PORT` in `src/port.ts`), never the dev
+Two lanes:
+
+- **Fast lane, after every change: `npm test`** (about 45 s). The unit tests, then the
+  quick browser tests: title, a solid sentence frame, the chef scenario, Spell the Spell.
+- **Everything, before every commit: `npm run test:all`** (about 12 minutes). The fast lane plus the
+  slow lane, which `npm run test:slow` runs alone (about 11½ minutes): the tests tagged `@slow`
+  (bedroom, hub part 1, a whole sentence room, F9 out of a room, battle part 2), one
+  whole episode at real time, and two episodes back to back.
+
+The browser tests run the page's clocks 3× fast (`WW_SPEED`, default 3; `tests/harness.ts`):
+timers, tweens, the game loop and voice playback together. The full-episode test alone
+runs at real time (speed 1), so real pacing stays covered. `WW_SPEED=1 npm test` runs
+the fast lane at real time. A new browser test that takes more than about 10 s gets
+`{ tag: '@slow' }`.
+
+The suite starts its own server on port 5184 (`TEST_PORT` in `src/port.ts`), never the dev
 port 5174, so a test run in a worktree cannot attach to the main checkout's dev server.
 If 5184 is busy (another worktree's run) the suite fails at once rather than testing the
 wrong code.
@@ -351,8 +364,10 @@ npm run art:pick -- <id> <n>
 - Until 2026-10-18 the suite reused whatever answered on 5174, so a run in a worktree
   silently tested the main checkout's dev server. It now always starts its own vite on
   5184 (`TEST_PORT`) and never reuses one; with `WW_BASE_URL` set it starts none.
-- The full-episode test (`npm run test:slow`) takes about 4–5 minutes: every line is
-  real speech and green is ignored until an instruction finishes.
+- The full-episode test (`npm run test:slow`) takes about 5 minutes: every line is
+  real speech and green is ignored until an instruction finishes. It is the one test at
+  real time; everything else runs at clock speed 3. Speed 6 is slower, not faster (her
+  walking overshoots at headless frame rates); measurements in `docs/engineering.md`.
 - Headless Chromium renders the battle at roughly 8–18 fps (software GL). With the GPU
   (Playwright `channel: 'chromium'` plus `--use-angle=d3d11`) the same battle holds a
   steady 56 fps on this machine (measured 2026-10-18, 2 heroes vs Evil Smaug). Tests

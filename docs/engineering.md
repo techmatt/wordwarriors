@@ -70,6 +70,9 @@ without a new measurement.
   worth its 5 s build: smoke suite 2m12s against 2m24s. GPU (`channel: 'chromium'`,
   `--use-angle=d3d11`) at speed 3 was 1m55s in one run and 3m05s in another; not adopted.
 - Fixed cost of any Playwright run here: about 9 s (vite start, browser launch).
+- The soak's heap line: 60 MB after both episodes at speed 1, 86 MB after both at speed 3
+  (2026-10-18). Flat between episodes either way, which is what it watches; compare like
+  with like.
 - Headless Chromium runs the battle at 11–18 fps here (software GL, ~10 fighters, heavy
   particles); the title and rooms at ~25–60. With the GPU (`channel: 'chromium'`,
   `--use-angle=d3d11`) the battle holds 56 fps; halving particles changed nothing in
