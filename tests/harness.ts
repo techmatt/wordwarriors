@@ -35,6 +35,8 @@ export interface WWState {
   };
   /** The victory recap's cards so far (item 018: every one has a picture). */
   recap: { word: string; picture: string | null }[];
+  /** The victory scene (item 027): which, who is in it (villain last), its lines, what has been said. */
+  ending: { id: string; people: string[]; art: string[]; lines: string[]; said: string[]; done: boolean } | null;
   room: {
     scene: string;
     round: string;

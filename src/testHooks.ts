@@ -81,10 +81,21 @@ export interface RecapCard {
   picture: string | null;
 }
 
-export const hookState: { room: RoomInfo | null; battle: BattleInfo | null; recap: RecapCard[]; scene: string; fps: number } = {
+/** The victory scene (item 027): which, who is in it (roster ids, villain last), its lines and what has been said. */
+export interface EndingInfo {
+  id: string;
+  people: string[];
+  art: string[];
+  lines: string[];
+  said: string[];
+  done: boolean;
+}
+
+export const hookState: { room: RoomInfo | null; battle: BattleInfo | null; recap: RecapCard[]; ending: EndingInfo | null; scene: string; fps: number } = {
   room: null,
   battle: null,
   recap: [],
+  ending: null,
   scene: '',
   fps: 0,
 };
@@ -134,6 +145,7 @@ export function installTestHooks(game: Phaser.Game): void {
       room: hookState.room,
       battle: hookState.battle,
       recap: hookState.recap,
+      ending: hookState.ending,
       voice: { speaking: voiceBus.speaking?.id ?? null, busy: voiceBus.busy, history: [...voiceBus.history] },
       fx: { ...fxStats },
       music: musicPlaying(),

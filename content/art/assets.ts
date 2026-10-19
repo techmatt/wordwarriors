@@ -13,6 +13,7 @@
  */
 
 import { ARENAS, MINIONS, ROSTER } from '../battle/roster.js';
+import { ENDINGS, endingArt, endingPropArt } from '../house/endings.js';
 import { ALL_SIDE_ROOMS, BEDROOMS, HUB, PLACES, hubArt } from '../house/house.js';
 import { CVC_WORDS, MOVE_PICTURES, SPECIAL_WORDS, WORD_BY_ID } from '../phonics/words.js';
 
@@ -258,6 +259,15 @@ const PROPS: [string, number, number, string, string, string?][] = [
 ];
 for (const [id, w, h, content, glyph] of PROPS) {
   assets.push({ id: `prop_${id}`, kind: 'prop', w, h, content, label: '', glyph });
+}
+
+// Victory scenes (item 027, content/house/endings.ts): a background each, the
+// cast stands across it, and its props are drawn over or under them.
+for (const e of ENDINGS) {
+  assets.push({ id: endingArt(e.id), kind: 'room', w: 1280, h: 720, content: `${e.look}. Side-on view, bright cheerful cartoon for a 4-year-old, clear space across the middle and lower half where a group of friends stands, no characters, no text.`, label: '', glyph: e.glyph, palette: e.palette });
+  for (const p of e.props) {
+    assets.push({ id: endingPropArt(p.id), kind: 'prop', w: p.w, h: p.h, content: `${p.look}. No text, chunky cartoon. Transparent background.`, label: '', glyph: p.glyph });
+  }
 }
 
 export const ART_ASSETS: ArtAsset[] = assets;

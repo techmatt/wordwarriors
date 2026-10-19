@@ -16,6 +16,7 @@ import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { MOVE_WORDS, PERSONS, ROSTER, personOf } from '../../content/battle/roster.js';
+import { ENDINGS } from '../../content/house/endings.js';
 import { QUESTS, questLine } from '../../content/house/quests.js';
 import type { FighterSpec } from '../../content/battle/types.js';
 import { FAMILIES, sillyWord } from '../../content/phonics/families.js';
@@ -25,6 +26,7 @@ import { SPELL_WORDS } from '../../content/phonics/spelling.js';
 import { SPECIAL_WORDS, WORDS, spokenWord } from '../../content/phonics/words.js';
 import {
   DEFAULT_NARRATOR,
+  endingLine,
   PHONICS_SPEAKER,
   WAKERS,
   fighterId,
@@ -250,6 +252,22 @@ export function composeLines(): LineSpec[] {
     for (const word of MOVE_WORDS) {
       for (const t of MOVE_LINES) lines.push({ id: narratorLine(n, `${t.key}_${word}`), speaker: n, group: g, ...fill(t, { word }) });
     }
+  }
+
+  // Victory scenes (item 027): every role line in every person's voice, since
+  // anybody can host, cheer or close; a scene's fit line only in its dad's.
+  for (const p of PERSONS) {
+    for (const e of ENDINGS) {
+      for (const key of ['open', 'cheer', 'close'] as const) {
+        const l = e[key];
+        lines.push({ id: endingLine(p.id, e.id, key), speaker: p.id, group: group.ending(p.id), text: l.text, ...(l.say ? { say: l.say } : {}) });
+      }
+    }
+  }
+  for (const e of ENDINGS) {
+    if (!e.fit) continue;
+    const dad = personOf(e.fit.form);
+    lines.push({ id: endingLine(dad, e.id, 'fit'), speaker: dad, group: group.ending(dad), text: e.fit.text, ...(e.fit.say ? { say: e.fit.say } : {}) });
   }
 
   // Two lines under one id would silently shadow each other in the manifest.

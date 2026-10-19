@@ -1,13 +1,14 @@
 /**
  * Victory: fireworks, confetti, the heroes bouncing on a podium, the villain
- * turned good again and bouncing with them. Green plays again.
+ * turned good again and bouncing with them, and the recap. Green plays again.
+ * The victory scene (EndingScene, item 027) plays first; the villain's own
+ * line is said there, so nothing here says it again.
  */
 
 import Phaser from 'phaser';
 
 import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
-import { CHARACTER_BY_ID } from '../../content/battle/roster';
-import { narratorLine, reformedLine, wordLine } from '../../content/voice/ids';
+import { narratorLine, wordLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
@@ -17,7 +18,7 @@ import { burst, fitImage, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { hookState } from '../testHooks';
-import { Bubbles, type BubbleAnchor } from '../ui/Bubbles';
+import { Bubbles } from '../ui/Bubbles';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { Caption, type KeepOut } from '../ui/Caption';
 import { fitText } from '../ui/fitText';
@@ -26,9 +27,7 @@ export class VictoryScene extends Phaser.Scene {
   private controls!: Controls;
   private ready = false;
   private gen = 0;
-  /** Where the villain, good again, stands on the podium: its bubble follows it. */
-  private villainAnchor: BubbleAnchor | null = null;
-  /** The recap's cards, so they can step up out of the way of the villain's bubble. */
+  /** The recap's cards: the caption keeps off them. */
   private cards: Phaser.GameObjects.Container[] = [];
 
   constructor() {
@@ -98,7 +97,6 @@ export class VictoryScene extends Phaser.Scene {
       caption.track(ids[i]!, () => (img.active ? { x: img.x, y: 605 } : null));
       this.tweens.add({ targets: img, y: 575, duration: 300 + i * 40, yoyo: true, repeat: -1, ease: 'Quad.easeOut' });
       this.tweens.add({ targets: img, scaleY: img.scaleY * 0.9, scaleX: img.scaleX * 1.08, duration: 300 + i * 40, yoyo: true, repeat: -1, delay: 300 + i * 40 });
-      if (i === all.length - 1) this.villainAnchor = { get x() { return img.x; }, get y() { return img.y; }, bubbleOffset: img.displayHeight, active: true };
     });
 
     title = this.add
@@ -115,17 +113,6 @@ export class VictoryScene extends Phaser.Scene {
       await voiceBus.say(narratorLine(n, 'victory_1'));
       if (gone()) return;
       await this.recap(gone);
-      if (gone()) return;
-      // The villain, good again, says something of its own: the battle's end
-      // said its first reformed line, so this is the next one.
-      const lines = CHARACTER_BY_ID[episode.villain]?.reformed ?? [];
-      const friend = lines[1] ?? lines[0];
-      // The cards step up and shrink a little, so its bubble over the podium is clear.
-      for (const c of this.cards) {
-        this.tweens.killTweensOf(c);
-        this.tweens.add({ targets: c, y: 238, scale: 0.72, duration: 400, ease: 'Quad.easeInOut' });
-      }
-      if (friend) await voiceBus.say(reformedLine(episode.villain, friend.key), 'bark', this.villainAnchor);
       if (gone()) return;
       await voiceBus.sequence([narratorLine(n, 'victory_2'), narratorLine(n, 'again')]);
       if (gone()) return;

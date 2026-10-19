@@ -43,6 +43,8 @@ export interface ProgressData {
   episodes: number;
   /** The villains (persons) of her last few episodes, newest last (item 025): the cast draw avoids them. */
   villains: string[];
+  /** The victory scene of her last episode (item 027): the next one is different. */
+  ending: string | null;
 }
 
 /**
@@ -68,7 +70,7 @@ function emptyStat(): Stat {
 }
 
 function empty(): ProgressData {
-  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, episodes: 0, villains: [] };
+  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, episodes: 0, villains: [], ending: null };
 }
 
 /** How many past villains the store keeps. */
@@ -110,6 +112,8 @@ export class ProgressStore {
       // Item 026, the same way.
       parsed.rimes ??= {};
       parsed.onsets ??= {};
+      // Item 027, the same way.
+      parsed.ending ??= null;
       return parsed;
     } catch {
       this.storage?.setItem(`${STORE_KEY}.unreadable.${this.now()}`, raw);
@@ -150,6 +154,17 @@ export class ProgressStore {
   /** Her recent villains (persons), newest last. */
   recentVillains(): string[] {
     return [...this.data.villains];
+  }
+
+  /** Her last episode's victory scene, or null. */
+  lastEnding(): string | null {
+    return this.data.ending;
+  }
+
+  /** A victory scene was played: the next episode draws another. */
+  endingPlayed(id: string): void {
+    this.data.ending = id;
+    this.save();
   }
 
   /** An episode was cast with this villain (a person): kept so the next ones differ. */

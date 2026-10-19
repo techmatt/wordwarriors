@@ -30,6 +30,7 @@ import { group, narratorLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { EPISODE_DEFAULTS } from '../config';
 import { drawCast, wakerOf, type CastOverrides } from '../rules/cast';
+import { endingPeople } from '../rules/endings';
 import { episodePlans, wordsOf, type Rand, type RoomPlan } from '../rules/sentences';
 import { MINIGAMES, MINIGAME_BY_ID, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
 import { battle1Words, planMoves, type MovePlan } from '../rules/moves';
@@ -86,6 +87,8 @@ export interface EpisodeState {
   moves: MovePlan | null;
   /** The house: which room holds which sentence, and which rooms are done. */
   house: { plan: RoomPlan[] | null; done: Slot[]; taught: boolean };
+  /** The victory scene (content/house/endings.ts id), drawn when it starts (item 027). */
+  ending: string | null;
   stepIndex: number;
 }
 
@@ -95,7 +98,8 @@ const SCENE_FOR: Record<Step['kind'], string> = {
   bedroom: 'Bedroom',
   house: 'Hub',
   battle: 'Battle',
-  victory: 'Victory',
+  // The victory step opens on its scene (item 027), which goes on to the recap.
+  victory: 'Ending',
   alarm: 'Alarm',
   prep: 'Prep',
   retreat: 'Retreat',
@@ -132,6 +136,7 @@ export const episode: EpisodeState = {
   spell: null,
   moves: null,
   house: { plan: null, done: [], taught: false },
+  ending: null,
   stepIndex: 0,
 };
 
@@ -283,6 +288,7 @@ export function resetEpisode(): void {
   episode.spell = null;
   episode.moves = null;
   episode.house = { plan: null, done: [], taught: false };
+  episode.ending = null;
   episode.stepIndex = 0;
 }
 
@@ -374,7 +380,9 @@ export function episodeGroups(): string[] {
   const g = [group.core, group.phonics, group.narrator(narrator())];
   g.push(group.fighter(episode.hero), group.fighter(`${episode.villain}_evil`));
   if (episode.ally) g.push(group.fighter(episode.ally));
-  return g;
+  // The victory scene (item 027): everyone in it says a line in their own voice.
+  for (const id of endingPeople(episode)) g.push(group.ending(personOf(id)));
+  return [...new Set(g)];
 }
 
 /** True for a step kind that has a scene (a `?scene=` value jumpTo can take). */

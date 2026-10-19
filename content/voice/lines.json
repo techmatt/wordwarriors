@@ -36301,5 +36301,2608 @@
   "speaker": "rilla",
   "group": "nar_rilla",
   "text": "Find pig!"
+ },
+ {
+  "id": "end_julia_dessert_open",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_julia_dessert_cheer",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_julia_dessert_close",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_julia_picnic_open",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_julia_picnic_cheer",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_julia_picnic_close",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_julia_mountain_open",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_julia_mountain_cheer",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_julia_mountain_close",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_julia_fort_open",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_julia_fort_cheer",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_julia_fort_close",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_julia_boat_open",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_julia_boat_cheer",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_julia_boat_close",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_julia_stars_open",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_julia_stars_cheer",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_julia_stars_close",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_julia_campfire_open",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_julia_campfire_cheer",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_julia_campfire_close",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_julia_snow_open",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_julia_snow_cheer",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_julia_snow_close",
+  "speaker": "julia",
+  "group": "end_julia",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_ellie_dessert_open",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_ellie_dessert_cheer",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_ellie_dessert_close",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_ellie_picnic_open",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_ellie_picnic_cheer",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_ellie_picnic_close",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_ellie_mountain_open",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_ellie_mountain_cheer",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_ellie_mountain_close",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_ellie_fort_open",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_ellie_fort_cheer",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_ellie_fort_close",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_ellie_boat_open",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_ellie_boat_cheer",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_ellie_boat_close",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_ellie_stars_open",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_ellie_stars_cheer",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_ellie_stars_close",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_ellie_campfire_open",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_ellie_campfire_cheer",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_ellie_campfire_close",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_ellie_snow_open",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_ellie_snow_cheer",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_ellie_snow_close",
+  "speaker": "ellie",
+  "group": "end_ellie",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_seraphina_dessert_open",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_seraphina_dessert_cheer",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_seraphina_dessert_close",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_seraphina_picnic_open",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_seraphina_picnic_cheer",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_seraphina_picnic_close",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_seraphina_mountain_open",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_seraphina_mountain_cheer",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_seraphina_mountain_close",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_seraphina_fort_open",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_seraphina_fort_cheer",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_seraphina_fort_close",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_seraphina_boat_open",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_seraphina_boat_cheer",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_seraphina_boat_close",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_seraphina_stars_open",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_seraphina_stars_cheer",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_seraphina_stars_close",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_seraphina_campfire_open",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_seraphina_campfire_cheer",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_seraphina_campfire_close",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_seraphina_snow_open",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_seraphina_snow_cheer",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_seraphina_snow_close",
+  "speaker": "seraphina",
+  "group": "end_seraphina",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_dada_matt_dessert_open",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_dada_matt_dessert_cheer",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_dada_matt_dessert_close",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_dada_matt_picnic_open",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_dada_matt_picnic_cheer",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_dada_matt_picnic_close",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_dada_matt_mountain_open",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_dada_matt_mountain_cheer",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_dada_matt_mountain_close",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_dada_matt_fort_open",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_dada_matt_fort_cheer",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_dada_matt_fort_close",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_dada_matt_boat_open",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_dada_matt_boat_cheer",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_dada_matt_boat_close",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_dada_matt_stars_open",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_dada_matt_stars_cheer",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_dada_matt_stars_close",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_dada_matt_campfire_open",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_dada_matt_campfire_cheer",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_dada_matt_campfire_close",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_dada_matt_snow_open",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_dada_matt_snow_cheer",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_dada_matt_snow_close",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_dada_jason_dessert_open",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_dada_jason_dessert_cheer",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_dada_jason_dessert_close",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_dada_jason_picnic_open",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_dada_jason_picnic_cheer",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_dada_jason_picnic_close",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_dada_jason_mountain_open",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_dada_jason_mountain_cheer",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_dada_jason_mountain_close",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_dada_jason_fort_open",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_dada_jason_fort_cheer",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_dada_jason_fort_close",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_dada_jason_boat_open",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_dada_jason_boat_cheer",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_dada_jason_boat_close",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_dada_jason_stars_open",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_dada_jason_stars_cheer",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_dada_jason_stars_close",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_dada_jason_campfire_open",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_dada_jason_campfire_cheer",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_dada_jason_campfire_close",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_dada_jason_snow_open",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_dada_jason_snow_cheer",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_dada_jason_snow_close",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_elsa_dessert_open",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_elsa_dessert_cheer",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_elsa_dessert_close",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_elsa_picnic_open",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_elsa_picnic_cheer",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_elsa_picnic_close",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_elsa_mountain_open",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_elsa_mountain_cheer",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_elsa_mountain_close",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_elsa_fort_open",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_elsa_fort_cheer",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_elsa_fort_close",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_elsa_boat_open",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_elsa_boat_cheer",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_elsa_boat_close",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_elsa_stars_open",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_elsa_stars_cheer",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_elsa_stars_close",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_elsa_campfire_open",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_elsa_campfire_cheer",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_elsa_campfire_close",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_elsa_snow_open",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_elsa_snow_cheer",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_elsa_snow_close",
+  "speaker": "elsa",
+  "group": "end_elsa",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_anna_dessert_open",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_anna_dessert_cheer",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_anna_dessert_close",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_anna_picnic_open",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_anna_picnic_cheer",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_anna_picnic_close",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_anna_mountain_open",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_anna_mountain_cheer",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_anna_mountain_close",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_anna_fort_open",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_anna_fort_cheer",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_anna_fort_close",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_anna_boat_open",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_anna_boat_cheer",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_anna_boat_close",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_anna_stars_open",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_anna_stars_cheer",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_anna_stars_close",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_anna_campfire_open",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_anna_campfire_cheer",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_anna_campfire_close",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_anna_snow_open",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_anna_snow_cheer",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_anna_snow_close",
+  "speaker": "anna",
+  "group": "end_anna",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_jasmine_dessert_open",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_jasmine_dessert_cheer",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_jasmine_dessert_close",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_jasmine_picnic_open",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_jasmine_picnic_cheer",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_jasmine_picnic_close",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_jasmine_mountain_open",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_jasmine_mountain_cheer",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_jasmine_mountain_close",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_jasmine_fort_open",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_jasmine_fort_cheer",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_jasmine_fort_close",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_jasmine_boat_open",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_jasmine_boat_cheer",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_jasmine_boat_close",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_jasmine_stars_open",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_jasmine_stars_cheer",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_jasmine_stars_close",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_jasmine_campfire_open",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_jasmine_campfire_cheer",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_jasmine_campfire_close",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_jasmine_snow_open",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_jasmine_snow_cheer",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_jasmine_snow_close",
+  "speaker": "jasmine",
+  "group": "end_jasmine",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_ozymandias_dessert_open",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_ozymandias_dessert_cheer",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_ozymandias_dessert_close",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_ozymandias_picnic_open",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_ozymandias_picnic_cheer",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_ozymandias_picnic_close",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_ozymandias_mountain_open",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_ozymandias_mountain_cheer",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_ozymandias_mountain_close",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_ozymandias_fort_open",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_ozymandias_fort_cheer",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_ozymandias_fort_close",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_ozymandias_boat_open",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_ozymandias_boat_cheer",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_ozymandias_boat_close",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_ozymandias_stars_open",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_ozymandias_stars_cheer",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_ozymandias_stars_close",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_ozymandias_campfire_open",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_ozymandias_campfire_cheer",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_ozymandias_campfire_close",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_ozymandias_snow_open",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_ozymandias_snow_cheer",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_ozymandias_snow_close",
+  "speaker": "ozymandias",
+  "group": "end_ozymandias",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_jormungandr_dessert_open",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_jormungandr_dessert_cheer",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_jormungandr_dessert_close",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_jormungandr_picnic_open",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_jormungandr_picnic_cheer",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_jormungandr_picnic_close",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_jormungandr_mountain_open",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_jormungandr_mountain_cheer",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_jormungandr_mountain_close",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_jormungandr_fort_open",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_jormungandr_fort_cheer",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_jormungandr_fort_close",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_jormungandr_boat_open",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_jormungandr_boat_cheer",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_jormungandr_boat_close",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_jormungandr_stars_open",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_jormungandr_stars_cheer",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_jormungandr_stars_close",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_jormungandr_campfire_open",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_jormungandr_campfire_cheer",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_jormungandr_campfire_close",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_jormungandr_snow_open",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_jormungandr_snow_cheer",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_jormungandr_snow_close",
+  "speaker": "jormungandr",
+  "group": "end_jormungandr",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_smaug_dessert_open",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_smaug_dessert_cheer",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_smaug_dessert_close",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_smaug_picnic_open",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_smaug_picnic_cheer",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_smaug_picnic_close",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_smaug_mountain_open",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_smaug_mountain_cheer",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_smaug_mountain_close",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_smaug_fort_open",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_smaug_fort_cheer",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_smaug_fort_close",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_smaug_boat_open",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_smaug_boat_cheer",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_smaug_boat_close",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_smaug_stars_open",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_smaug_stars_cheer",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_smaug_stars_close",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_smaug_campfire_open",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_smaug_campfire_cheer",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_smaug_campfire_close",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_smaug_snow_open",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_smaug_snow_cheer",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_smaug_snow_close",
+  "speaker": "smaug",
+  "group": "end_smaug",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_tiamat_dessert_open",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_tiamat_dessert_cheer",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_tiamat_dessert_close",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_tiamat_picnic_open",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_tiamat_picnic_cheer",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_tiamat_picnic_close",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_tiamat_mountain_open",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_tiamat_mountain_cheer",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_tiamat_mountain_close",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_tiamat_fort_open",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_tiamat_fort_cheer",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_tiamat_fort_close",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_tiamat_boat_open",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_tiamat_boat_cheer",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_tiamat_boat_close",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_tiamat_stars_open",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_tiamat_stars_cheer",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_tiamat_stars_close",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_tiamat_campfire_open",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_tiamat_campfire_cheer",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_tiamat_campfire_close",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_tiamat_snow_open",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_tiamat_snow_cheer",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_tiamat_snow_close",
+  "speaker": "tiamat",
+  "group": "end_tiamat",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_scar_dessert_open",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_scar_dessert_cheer",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_scar_dessert_close",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_scar_picnic_open",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_scar_picnic_cheer",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_scar_picnic_close",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_scar_mountain_open",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_scar_mountain_cheer",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_scar_mountain_close",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_scar_fort_open",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_scar_fort_cheer",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_scar_fort_close",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_scar_boat_open",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_scar_boat_cheer",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_scar_boat_close",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_scar_stars_open",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_scar_stars_cheer",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_scar_stars_close",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_scar_campfire_open",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_scar_campfire_cheer",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_scar_campfire_close",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_scar_snow_open",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_scar_snow_cheer",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_scar_snow_close",
+  "speaker": "scar",
+  "group": "end_scar",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_moriarty_dessert_open",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_moriarty_dessert_cheer",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_moriarty_dessert_close",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_moriarty_picnic_open",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_moriarty_picnic_cheer",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_moriarty_picnic_close",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_moriarty_mountain_open",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_moriarty_mountain_cheer",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_moriarty_mountain_close",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_moriarty_fort_open",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_moriarty_fort_cheer",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_moriarty_fort_close",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_moriarty_boat_open",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_moriarty_boat_cheer",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_moriarty_boat_close",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_moriarty_stars_open",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_moriarty_stars_cheer",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_moriarty_stars_close",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_moriarty_campfire_open",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_moriarty_campfire_cheer",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_moriarty_campfire_close",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_moriarty_snow_open",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_moriarty_snow_cheer",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_moriarty_snow_close",
+  "speaker": "moriarty",
+  "group": "end_moriarty",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_bavmorda_dessert_open",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_bavmorda_dessert_cheer",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_bavmorda_dessert_close",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_bavmorda_picnic_open",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_bavmorda_picnic_cheer",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_bavmorda_picnic_close",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_bavmorda_mountain_open",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_bavmorda_mountain_cheer",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_bavmorda_mountain_close",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_bavmorda_fort_open",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_bavmorda_fort_cheer",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_bavmorda_fort_close",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_bavmorda_boat_open",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_bavmorda_boat_cheer",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_bavmorda_boat_close",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_bavmorda_stars_open",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_bavmorda_stars_cheer",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_bavmorda_stars_close",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_bavmorda_campfire_open",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_bavmorda_campfire_cheer",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_bavmorda_campfire_close",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_bavmorda_snow_open",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_bavmorda_snow_cheer",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_bavmorda_snow_close",
+  "speaker": "bavmorda",
+  "group": "end_bavmorda",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_rilla_dessert_open",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Dessert time! Cake for everybody!",
+  "say": "Dessert time, cake for everybody!"
+ },
+ {
+  "id": "end_rilla_dessert_cheer",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Yay! Come and sit with us!",
+  "say": "Yay, come and sit with us!"
+ },
+ {
+  "id": "end_rilla_dessert_close",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "This is the best party ever!"
+ },
+ {
+  "id": "end_rilla_picnic_open",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Picnic time! Grab a sandwich!",
+  "say": "Picnic time, grab a sandwich!"
+ },
+ {
+  "id": "end_rilla_picnic_cheer",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Yay! Come and sit on the blanket!",
+  "say": "Yay, come and sit on the blanket!"
+ },
+ {
+  "id": "end_rilla_picnic_close",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Sharing is the best!"
+ },
+ {
+  "id": "end_rilla_mountain_open",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "We climbed all the way to the top!"
+ },
+ {
+  "id": "end_rilla_mountain_cheer",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Wow! I can see our house from here!",
+  "say": "Wow, I can see our house from here!"
+ },
+ {
+  "id": "end_rilla_mountain_close",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Everybody, give a big wave!",
+  "say": "Everybody, give a big wave!"
+ },
+ {
+  "id": "end_rilla_fort_open",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Pillow fort time! Everybody in!",
+  "say": "Pillow fort time, everybody in!"
+ },
+ {
+  "id": "end_rilla_fort_cheer",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Yay! There is room for everybody!",
+  "say": "Yay, there is room for everybody!"
+ },
+ {
+  "id": "end_rilla_fort_close",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Shh! It is our secret hideout!",
+  "say": "Shh, it is our secret hideout."
+ },
+ {
+  "id": "end_rilla_boat_open",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "All aboard the boat!"
+ },
+ {
+  "id": "end_rilla_boat_cheer",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Wheee! Splash, splash!",
+  "say": "Wheee, splash, splash!"
+ },
+ {
+  "id": "end_rilla_boat_close",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Look! A fish is waving at us!",
+  "say": "Look, a fish is waving at us!"
+ },
+ {
+  "id": "end_rilla_stars_open",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Look up! So many stars!",
+  "say": "Look up, so many stars!"
+ },
+ {
+  "id": "end_rilla_stars_cheer",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "I see a shooting star!"
+ },
+ {
+  "id": "end_rilla_stars_close",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Let us all make a wish together!"
+ },
+ {
+  "id": "end_rilla_campfire_open",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Campfire time! Who wants a marshmallow?",
+  "say": "Campfire time, who wants a marshmallow?"
+ },
+ {
+  "id": "end_rilla_campfire_cheer",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Me! Me! Toasty and gooey!",
+  "say": "Me, me, toasty and gooey!"
+ },
+ {
+  "id": "end_rilla_campfire_close",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Now, campfire songs, everybody!"
+ },
+ {
+  "id": "end_rilla_snow_open",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "A snow day! Let us build a snowman!",
+  "say": "A snow day, let us build a snowman!"
+ },
+ {
+  "id": "end_rilla_snow_cheer",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Yay! I will give him a carrot nose!",
+  "say": "Yay, I will give him a carrot nose!"
+ },
+ {
+  "id": "end_rilla_snow_close",
+  "speaker": "rilla",
+  "group": "end_rilla",
+  "text": "Everybody, make a snow angel!"
+ },
+ {
+  "id": "end_dada_jason_dessert_fit",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "I baked this cake just for you!"
+ },
+ {
+  "id": "end_dada_matt_picnic_fit",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "My drone brought the sandwiches!"
+ },
+ {
+  "id": "end_dada_matt_mountain_fit",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "I carried the snacks all the way up!"
+ },
+ {
+  "id": "end_dada_matt_fort_fit",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "I built the biggest fort ever!"
+ },
+ {
+  "id": "end_dada_jason_boat_fit",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "I will be the captain! Row, row, row!",
+  "say": "I will be the captain, row, row, row!"
+ },
+ {
+  "id": "end_dada_jason_stars_fit",
+  "speaker": "dada_jason",
+  "group": "end_dada_jason",
+  "text": "I made the stars twinkle extra bright!"
+ },
+ {
+  "id": "end_dada_matt_campfire_fit",
+  "speaker": "dada_matt",
+  "group": "end_dada_matt",
+  "text": "My sword is a marshmallow stick now!"
  }
 ]

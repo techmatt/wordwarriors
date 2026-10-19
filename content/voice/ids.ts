@@ -27,6 +27,11 @@ export const nameLine = (fighter: string) => `name_${fighter}`;
 export const reformedLine = (character: string, key: string) => `reformed_${character}_${key}`;
 /** A fighter id is `<character>` for the good version and `<character>_evil` for the evil one. */
 export const fighterId = (character: string, evil: boolean) => (evil ? `${character}_evil` : character);
+/**
+ * A victory scene's line (item 027, content/house/endings.ts) in a person's own
+ * voice: `end_julia_picnic_cheer`, `end_dada_jason_dessert_fit`. Group `end_<person>`.
+ */
+export const endingLine = (person: string, scene: string, key: string) => `end_${person}_${scene}_${key}`;
 
 /**
  * The bedroom wake-up, said by whichever dad comes in to wake the hero (the
@@ -44,4 +49,6 @@ export const group = {
   phonics: 'phonics',
   narrator: (n: string) => `nar_${n}`,
   fighter: (f: string) => `fighter_${f}`,
+  /** A person's victory scene lines (item 027): loaded for everyone in the episode. */
+  ending: (person: string) => `end_${person}`,
 };

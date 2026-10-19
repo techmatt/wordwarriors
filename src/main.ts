@@ -17,6 +17,7 @@ import { ParentScene } from './scenes/ParentScene';
 import { PickScene } from './scenes/PickScene';
 import { RetreatScene } from './scenes/RetreatScene';
 import { TitleScene } from './scenes/TitleScene';
+import { EndingScene } from './scenes/EndingScene';
 import { VictoryScene } from './scenes/VictoryScene';
 import { installTestHooks } from './testHooks';
 
@@ -65,6 +66,7 @@ const game = new Phaser.Game({
     SentenceRoom,
     WordMachine,
     BattleScene,
+    EndingScene,
     VictoryScene,
     ParentScene,
     AlarmScene,

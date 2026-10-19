@@ -58,7 +58,8 @@ export function codexPrompt(id: string, withRef = false): string {
   if (!prompt) throw new Error(`no prompt for ${id} in content/art/prompts.ts`);
   const a = ART_BY_ID[id];
   if (!a) throw new Error(`${id} is not an asset id (content/art/assets.ts)`);
-  const shape = isBackground(id) ? 'wide landscape' : a.h > a.w * 1.1 ? 'portrait' : 'square';
+  // A wide prop (item 027's table, boat, fort) is asked for wide too, so it is not drawn small in a square.
+  const shape = isBackground(id) || a.w > a.h * 1.6 ? 'wide landscape' : a.h > a.w * 1.1 ? 'portrait' : 'square';
   return [
     'Use your built-in image_gen tool ($imagegen) exactly once to generate the image below.',
     'Do not read any files, run any commands, or try to save the image anywhere: just generate it, then stop.',
