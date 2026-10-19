@@ -13,7 +13,8 @@ import { EPISODE_DEFAULTS } from '../../src/config';
 import { FETCH_ITEMS, FRAMES, FRAME_BY_ID, allFrameTokens, allPrefixes, lookalikesOf, sentence, slotOf, tokenWord } from '../../content/phonics/sentences';
 import { CVC_WORDS } from '../../content/phonics/words';
 import { wordLine } from '../../content/voice/ids';
-import { BAG_WORDS, distractors, drawKey, episodePlans, frameIsSolid, saidEarly, type EpisodeInput, type RoomPlan } from '../../src/rules/sentences';
+import { BAG_WORDS, distractors, drawKey, frameIsSolid, saidEarly, type EpisodeInput, type SentencePlan } from '../../src/rules/sentences';
+import { sentencePlans } from './plans';
 import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
 
 function memory(): StorageLike {
@@ -75,7 +76,7 @@ test('frames: a few of each, and every fetch and counter frame ends in the key w
 test('episodePlans: rooms a, b and the attic; the right kinds of frame; three different key words; three objects each', () => {
   for (let seed = 1; seed <= 40; seed++) {
     const store = new ProgressStore(memory());
-    const [a, b, c] = episodePlans(store, input(), seeded(seed));
+    const [a, b, c] = sentencePlans(store, input(), seeded(seed));
     assert.deepEqual([a.slot, b.slot, c.slot], ['a', 'b', 'counter']);
     assert.deepEqual([a.room, b.room, c.room], ['kitchen', 'garage', 'attic']);
     assert.notEqual(a.sentence.frame, b.sentence.frame);
@@ -107,7 +108,7 @@ test('the counter is random: any pictured, decodable word, under the 009 exclusi
       if (helper === v.id) continue;
       const early = new Set(saidEarly({ hero: HERO, ally: helper, villain: v.id, helper }));
       for (let seed = 1; seed <= 12; seed++) {
-        const plans = episodePlans(new ProgressStore(memory()), input(v.id, helper, HERO, 'pop'), seeded(seed));
+        const plans = sentencePlans(new ProgressStore(memory()), input(v.id, helper, HERO, 'pop'), seeded(seed));
         const counter = plans[2];
         const key = counter.sentence.key;
         const fetched = plans.slice(0, 2).map((p) => p.sentence.key);
@@ -135,7 +136,7 @@ test('the counter varies: many words and every counter frame come up for one vil
   const keys = new Set<string>();
   const frames = new Set<string>();
   for (let seed = 1; seed <= 60; seed++) {
-    const c = episodePlans(new ProgressStore(memory()), input(), seeded(seed))[2];
+    const c = sentencePlans(new ProgressStore(memory()), input(), seeded(seed))[2];
     keys.add(c.sentence.key);
     frames.add(c.sentence.frame);
   }
@@ -170,7 +171,7 @@ test('the word bag: no key word comes back until the bag has gone round', () => 
     const s = new ProgressStore(memory());
     const keys: string[] = [];
     for (let e = 0; e < 4; e++) {
-      const ks = episodePlans(s, input(), seeded(seed * 10 + e)).map((p) => p.sentence.key);
+      const ks = sentencePlans(s, input(), seeded(seed * 10 + e)).map((p) => p.sentence.key);
       for (const k of ks) readRight(s, k);
       keys.push(...ks);
     }
@@ -180,11 +181,11 @@ test('the word bag: no key word comes back until the bag has gone round', () => 
 
 test('the word bag: drawing spends nothing; an abandoned episode or a dev jump keeps every word', () => {
   const store = new ProgressStore(memory());
-  episodePlans(store, input(), seeded(4));
+  sentencePlans(store, input(), seeded(4));
   const before = store.bag();
   assert.equal(before.round, 1);
   assert.equal(before.left.length, BAG_WORDS.length, 'planning an episode takes nothing out');
-  episodePlans(store, input(), seeded(5));
+  sentencePlans(store, input(), seeded(5));
   assert.deepEqual(store.bag(), before);
 });
 
@@ -241,7 +242,7 @@ test("the villain's named counter word still comes up, and is boosted", () => {
   // any word, a bit more often than one in thirty.
   const named = CHARACTER_BY_ID[VILLAIN]!.counter.word;
   let n = 0;
-  for (let seed = 1; seed <= 200; seed++) if (episodePlans(new ProgressStore(memory()), input(), seeded(seed))[2].sentence.key === named) n++;
+  for (let seed = 1; seed <= 200; seed++) if (sentencePlans(new ProgressStore(memory()), input(), seeded(seed))[2].sentence.key === named) n++;
   assert.ok(n >= 10, `${named} came up ${n} times in 200`);
 });
 
@@ -272,7 +273,7 @@ test("every frame token's word line is in allFrameTokens", () => {
 });
 
 test('room objects: no look-alike of the key, no word of the sentence, not the spell, no other key word', () => {
-  const check = (p: RoomPlan, avoid: string[]) => {
+  const check = (p: SentencePlan, avoid: string[]) => {
     const key = p.sentence.key;
     const others = p.objects.filter((o) => o !== key);
     assert.equal(others.length, 2);
@@ -285,7 +286,7 @@ test('room objects: no look-alike of the key, no word of the sentence, not the s
   };
   for (const c of ROSTER) {
     for (let seed = 1; seed <= 20; seed++) {
-      const plans = episodePlans(new ProgressStore(memory()), input(c.id, 'elsa', HERO, 'fan'), seeded(seed));
+      const plans = sentencePlans(new ProgressStore(memory()), input(c.id, 'elsa', HERO, 'fan'), seeded(seed));
       const keys = plans.map((p) => p.sentence.key);
       for (const p of plans) check(p, ['fan', ...keys.filter((k) => k !== p.sentence.key)]);
     }

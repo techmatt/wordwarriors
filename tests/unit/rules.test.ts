@@ -18,7 +18,8 @@ import { WAKERS, letterSoundLine, moveLine, narratorLine, nameLine, tauntLine, u
 import { CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE_LINES } from '../../content/voice/script';
 import { pickWeighted, ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
 import { blendRound, choiceCount, pictureRound, soundRound } from '../../src/rules/rounds';
-import { BAG_WORDS, episodePlans } from '../../src/rules/sentences';
+import { BAG_WORDS } from '../../src/rules/sentences';
+import { sentencePlans } from './plans';
 import { align } from '../../tools/voice/align';
 import { composeLines } from '../../tools/voice/compose';
 import { trimMp3 } from '../../tools/voice/mp3';
@@ -245,7 +246,7 @@ test('speech rule: no narrator line contains a reading word', () => {
     for (const helper of ['elsa', 'ellie', c.id]) {
       const fill = { villain: c.id, helper, hero: 'julia' };
       for (let seed = 1; seed <= 25; seed++) {
-        const plans = episodePlans(new ProgressStore(memory()), { fill, ally: helper, spell: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic' }, seeded(seed));
+        const plans = sentencePlans(new ProgressStore(memory()), { fill, ally: helper, spell: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic' }, seeded(seed));
         for (const p of plans) check(p.sentence);
       }
     }

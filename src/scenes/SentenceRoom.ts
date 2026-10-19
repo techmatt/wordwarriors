@@ -35,7 +35,7 @@ import { sfxRight, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../config';
 import { backToHub, castFace, counterArt, episode, namedCounter, narrator, planFor, villainSpec, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
-import { frameIsSolid, type RoomPlan } from '../rules/sentences';
+import { asSentence, frameIsSolid, type SentencePlan } from '../rules/sentences';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../testHooks';
 import { Bag } from '../ui/Bag';
@@ -73,7 +73,7 @@ export class SentenceRoom extends Minigame {
   /** The banner is in keepOut() below, and key words are never names: the box places itself and names its speaker. */
   protected override dialogueAware = true;
   private slot: Slot = 'a';
-  private plan!: RoomPlan;
+  private plan!: SentencePlan;
   private pass: Pass = 'listen';
   private skipped = false;
   /** The highlighted token, or -1. */
@@ -98,7 +98,7 @@ export class SentenceRoom extends Minigame {
   override init(data: { step?: Step; slot?: Slot }): void {
     super.init(data);
     this.slot = data.slot ?? 'a';
-    this.plan = planFor(this.slot);
+    this.plan = asSentence(planFor(this.slot));
     this.pass = 'listen';
     this.skipped = false;
     this.index = -1;

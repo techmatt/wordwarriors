@@ -250,6 +250,10 @@ const PROPS: [string, number, number, string, string, string?][] = [
   // Ellie's summoned sword (item 014): the game spins and flings it, so it is
   // drawn alone, upright, point at the top.
   ['silver_sword', 80, 220, 'A single small magic sword standing perfectly upright, point straight up at the top and the hilt at the bottom, seen flat side-on: a shining icy pale-blue crystal blade with a bright edge, a silver crossguard with round ends and a pink gem at its centre, a pink-wrapped grip and a round pink gem on the pommel, a few tiny pale-blue sparkles. Toy-like, friendly and magical, not a real weapon. Just the sword, nothing else.', '🗡️'],
+  // The word machine (item 026): the game draws the picture, the letter slot
+  // and the rime on the machine's blank window and panel.
+  ['word_machine', 460, 440, 'A big friendly cartoon word-making machine for a child, front view, standing on the floor: a rounded candy-coloured metal body (sky blue, orange and cream, no green anywhere) with brass rivets, a little chimney puffing a heart-shaped cloud, two springy antennae with bulbs, a row of coloured lights and a crank handle on one side. The upper half is a big round empty glass window (blank, for a picture shown by the game). The lower half is one wide flat empty cream panel, plain and blank (the game shows letters there). No text.', '🏭'],
+  ['machine_tile', 130, 110, 'A chunky square toy letter block lying on the floor, seen from slightly above: bright yellow with rounded corners, a soft orange rim and a little shine, the top face completely blank and flat (the game paints a letter on it). No letter in the art.', ''],
   ['scroll', 520, 160, 'A wide unrolled magic scroll, rolled ends with wooden knobs, glowing edges, blank parchment in the middle for a word painted by the game. NO TEXT.', '📜'],
 ];
 for (const [id, w, h, content, glyph] of PROPS) {

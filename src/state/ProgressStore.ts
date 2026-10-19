@@ -33,6 +33,9 @@ export interface ProgressData {
   spelling: Record<string, Stat>;
   /** Sentence frames (`we_can_use_the`): first-try answers, for skipping the listening pass. */
   frames: Record<string, Stat>;
+  /** The word machine (item 026): word families by rime (`at`) and first sounds by letter (`b`), first-try builds. */
+  rimes: Record<string, Stat>;
+  onsets: Record<string, Stat>;
   /** Her word bag: the sentence key words drawn without replacement (item 015). */
   bag: WordBag;
   /** Her move bag: the battle's move words, drawn the same way (item 018). */
@@ -56,7 +59,7 @@ export interface WordBag {
 /** Which bag: the sentence key words, or the battle's move words. */
 export type BagKind = 'keys' | 'moves';
 
-export type ItemKind = 'sounds' | 'words' | 'spelling' | 'frames';
+export type ItemKind = 'sounds' | 'words' | 'spelling' | 'frames' | 'rimes' | 'onsets';
 
 const RECENT = 6;
 
@@ -65,7 +68,7 @@ function emptyStat(): Stat {
 }
 
 function empty(): ProgressData {
-  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, episodes: 0, villains: [] };
+  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, episodes: 0, villains: [] };
 }
 
 /** How many past villains the store keeps. */
@@ -104,6 +107,9 @@ export class ProgressStore {
       parsed.episodes ??= 0;
       // Item 025, the same way.
       parsed.villains ??= [];
+      // Item 026, the same way.
+      parsed.rimes ??= {};
+      parsed.onsets ??= {};
       return parsed;
     } catch {
       this.storage?.setItem(`${STORE_KEY}.unreadable.${this.now()}`, raw);

@@ -129,7 +129,7 @@ export class BootScene extends Phaser.Scene {
       episode.spell = spellFor(episode.hero, helper());
     };
     const fetchedAll = (): void => {
-      episode.fetched = fetched ? fetched.split(',') : (['a', 'b'] as Slot[]).map((s) => planFor(s).sentence.key);
+      episode.fetched = fetched ? fetched.split(',') : (['a', 'b'] as Slot[]).flatMap((s) => planFor(s).fetches);
       episode.house.done = ['a', 'b'];
     };
 
@@ -149,7 +149,7 @@ export class BootScene extends Phaser.Scene {
       if (slot === 'counter') fetchedAll();
       else if (slot === 'b') {
         episode.house.done = ['a'];
-        episode.fetched = fetched ? fetched.split(',') : [planFor('a').sentence.key];
+        episode.fetched = fetched ? fetched.split(',') : planFor('a').fetches;
       }
       // The house step of the right part, then straight through its door.
       episode.stepIndex = steps().findIndex((s) => s.kind === 'house' && s.part === part);

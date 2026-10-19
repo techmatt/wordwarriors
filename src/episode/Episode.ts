@@ -31,6 +31,7 @@ import { voiceBus } from '../audio/VoiceBus';
 import { EPISODE_DEFAULTS } from '../config';
 import { drawCast, wakerOf, type CastOverrides } from '../rules/cast';
 import { episodePlans, wordsOf, type Rand, type RoomPlan } from '../rules/sentences';
+import { MINIGAMES, MINIGAME_BY_ID, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
 import { battle1Words, planMoves, type MovePlan } from '../rules/moves';
 import { spellFor } from '../rules/spell';
 import { progress } from '../state/progress';
@@ -311,9 +312,26 @@ export function housePlan(): RoomPlan[] {
     // clear of battle 1's move pads, and none is a word of the quest's setup line.
     const battle1Moves = battle1Words(movePlan());
     const saidBefore = wordsOf(questFor(helper()).text);
-    episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, spell: episode.spell, rooms, counterRoom, battle1Moves, saidBefore });
+    const games = roomGames();
+    episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, spell: episode.spell, rooms, counterRoom, battle1Moves, saidBefore, ...games });
   }
   return episode.house.plan;
+}
+
+/**
+ * The rooms' games, as the URL asks (tests, and a look at one game):
+ * `?game=word_machine` puts that game behind door a (the rest drawn as
+ * usual), `?games=sentence` draws from the sentence game only (the tests'
+ * default, so a test that plays sentence rooms gets them). Otherwise nothing:
+ * the whole pool.
+ */
+function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[] } {
+  const q = new URLSearchParams(typeof location === 'undefined' ? '' : location.search);
+  const only = q.get('games') === 'sentence' ? SENTENCE_GAMES : undefined;
+  const force = MINIGAME_BY_ID[q.get('game') ?? ''];
+  if (!force) return only ? { pool: only } : {};
+  const rest = drawGames(progress, Math.random, (only ?? MINIGAMES).filter((g) => g.id !== force.id));
+  return { games: [force, rest[1], rest[2]] };
 }
 
 /** The battles' move choices: made once per episode, on first need (the house plan needs battle 1's). */
@@ -332,7 +350,7 @@ export function planFor(slot: Slot): RoomPlan {
 
 /** The word the attic's counter sentence ends in: whatever beats the villain this episode. */
 export function counterWord(): string {
-  return planFor('counter').sentence.key;
+  return planFor('counter').key;
 }
 
 /**

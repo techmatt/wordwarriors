@@ -136,7 +136,7 @@ test("the counter word is never on battle 1's pads, and bag words that are move 
     const p = planMoves(store, INPUT, rand);
     const pads = battle1Words(p);
     const input: EpisodeInput = { fill: { villain: EPISODE_DEFAULTS.villain, helper: ALLY, hero: HERO }, ally: ALLY, spell: SPELL, rooms: ['kitchen', 'garage'], counterRoom: 'attic', battle1Moves: pads };
-    const key = episodePlans(store, input, rand)[2].sentence.key;
+    const key = episodePlans(store, input, rand)[2].key;
     assert.ok(!pads.includes(key), `seed ${seed}: ${key} is on battle 1's pads (${pads.join(', ')})`);
     counters.add(key);
   }

@@ -22,13 +22,14 @@ import { CHARACTER_BY_ID, MINIONS, MOVE_WORDS, comboPart } from '../../content/b
 import type { FighterSpec } from '../../content/battle/types';
 import { FETCH_ITEMS, lookalikesOf, sentence, tokenWord, type Fill, type Sentence } from '../../content/phonics/sentences';
 import { CVC_WORDS } from '../../content/phonics/words';
-import { drawGames, type Minigame } from './minigames';
+import { MINIGAMES, drawGames, type Minigame } from './minigames';
+import { machineWords, planMachine, type MachinePlan } from './wordMachine';
 import { SENTENCE_SOLID } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
 
 export type Rand = () => number;
 
-export interface RoomPlan {
+interface PlanBase {
   /** `a` and `b` are the hub's two side-room doors; `counter` is the attic. */
   slot: 'a' | 'b' | 'counter';
   /** Side room id (content/house/house.ts SIDE_ROOM_BY_ID): the house's or the quest place's. */
@@ -36,10 +37,27 @@ export interface RoomPlan {
   /** The minigame played there (src/rules/minigames.ts) and its scene. */
   game: string;
   scene: string;
+  /** The word the room ends in: its prize (the picture on the hub door), the counter in the attic. */
+  key: string;
+  /** Every word she reads there, in order, `key` last: from a fetch room, each is a battle item. */
+  fetches: string[];
+}
+
+/** The sentence game's room. */
+export interface SentencePlan extends PlanBase {
+  kind: 'sentence';
   sentence: Sentence;
   /** The three objects in the room (key word included), in left-to-right order. */
   objects: string[];
 }
+
+/** The word machine's room (item 026): the words it builds, `fetches`, in its plan's rounds. */
+export interface MachineRoomPlan extends PlanBase {
+  kind: 'machine';
+  machine: MachinePlan;
+}
+
+export type RoomPlan = SentencePlan | MachineRoomPlan;
 
 /** Every word the bag holds: the pictured, decodable CVC words. */
 export const BAG_WORDS: string[] = CVC_WORDS.filter((w) => w.decodable).map((w) => w.word);
@@ -162,6 +180,8 @@ export interface EpisodeInput {
   battle1Moves?: string[];
   /** The rooms' games, a, b and counter (`drawGames`); drawn here when not given. */
   games?: [Minigame, Minigame, Minigame];
+  /** The pool `games` is drawn from when not given (default: every minigame). */
+  pool?: Minigame[];
   /** Words said before any room besides the cast's own (the quest's setup line): never key words. */
   saidBefore?: string[];
 }
@@ -173,37 +193,67 @@ export interface EpisodeInput {
 export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Rand = Math.random): [RoomPlan, RoomPlan, RoomPlan] {
   const { fill, spell } = input;
   // The rooms' games come from the minigame pool (item 025); each sentence game is a frame.
-  const games = input.games ?? drawGames(store, rand);
+  const games = [...(input.games ?? drawGames(store, rand, input.pool))] as [Minigame, Minigame, Minigame];
+  if (games[2].machine) throw new Error('episodePlans: the word machine is a fetch room, not the counter');
   const frames = games.map((g) => {
-    if (!g.frame) throw new Error(`episodePlans: ${g.id} is not a sentence game`);
+    if (!g.frame && !g.machine) throw new Error(`episodePlans: ${g.id} is neither a sentence game nor the word machine`);
     return g.frame;
   });
 
-  // Every word any of the three sentences shows besides its key word: she
-  // reads them (and hears them on green) in every room, so none is a key word.
-  const shown = frames.flatMap((f) => sentence(f, fill, 'x').tokens.slice(0, -1).map(tokenWord));
+  // Every word any of the sentences shows besides its key word: she reads
+  // them (and hears them on green) in every room, so none is a key word.
+  const shown = frames.flatMap((f) => (f ? sentence(f, fill, 'x').tokens.slice(0, -1).map(tokenWord) : []));
   const avoid = new Set([spell, ...shown, ...(input.saidBefore ?? []), ...saidEarly({ hero: fill.hero, ally: input.ally, villain: fill.villain, helper: fill.helper })]);
+
+  // The word machine builds several words (item 026): they are planned first,
+  // so the sentence rooms and the counter keep clear of all of them.
+  const machines: (MachinePlan | null)[] = games.map((g) => (g.machine ? planMachine(store, { avoid, taken: [] }, rand) : null));
+  machines.forEach((m, i) => {
+    if (!m || m.rounds.length) return;
+    // No family has two words this episode can use (it never happens with
+    // today's words): that room plays a sentence game instead.
+    const spare = (input.pool ?? MINIGAMES).find((g) => g.frame && g.slots.includes('fetch') && !games.includes(g))!;
+    games[i] = spare;
+    frames[i] = spare.frame;
+    machines[i] = null;
+    for (const t of sentence(spare.frame!, fill, 'x').tokens.slice(0, -1)) avoid.add(tokenWord(t));
+  });
+  const taken = machines.flatMap((m) => (m ? machineWords(m) : []));
 
   const keys: string[] = [];
   for (let i = 0; i < 2; i++) {
-    const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !avoid.has(w) && !keys.includes(w));
-    keys.push(drawKey(store, eligible, rand, keys));
+    const m = machines[i];
+    if (m) {
+      keys.push(machineWords(m).at(-1) ?? '');
+      continue;
+    }
+    const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !avoid.has(w) && !keys.includes(w) && !taken.includes(w));
+    keys.push(drawKey(store, eligible, rand, [...keys, ...taken]));
   }
   // The counter: not a word on battle 1's move pads, not a word fetched this
   // episode (battle 1 shouts THE NET!).
   const named = CHARACTER_BY_ID[fill.villain]?.counter.word;
   const moves = new Set<string>(input.battle1Moves ?? MOVE_WORDS);
-  const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !moves.has(w) && !keys.includes(w));
-  keys.push(drawKey(store, eligible, rand, keys, (w) => (w === named ? NAMED_COUNTER_BOOST : 1)));
+  const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w));
+  keys.push(drawKey(store, eligible, rand, [...keys, ...taken], (w) => (w === named ? NAMED_COUNTER_BOOST : 1)));
 
   const slots = ['a', 'b', 'counter'] as const;
   const roomIds = [input.rooms[0], input.rooms[1], input.counterRoom];
-  return slots.map((slot, i) => {
+  return slots.map((slot, i): RoomPlan => {
+    const base = { slot, room: roomIds[i]!, game: games[i]!.id, scene: games[i]!.scene, key: keys[i]! };
+    const m = machines[i];
+    if (m) return { ...base, kind: 'machine', machine: m, fetches: machineWords(m) };
     const s = sentence(frames[i]!, fill, keys[i]!);
     // No room offers the spell or another of the episode's key words as a wrong picture.
-    const others = [spell, ...keys.filter((k) => k !== keys[i])];
-    return { slot, room: roomIds[i]!, game: games[i]!.id, scene: games[i]!.scene, sentence: s, objects: objectsFor(s, rand, others) };
+    const others = [spell, ...keys.filter((k) => k !== keys[i]), ...taken];
+    return { ...base, kind: 'sentence', fetches: [keys[i]!], sentence: s, objects: objectsFor(s, rand, others) };
   }) as [RoomPlan, RoomPlan, RoomPlan];
+}
+
+/** A sentence room's plan, for code that only runs in one (the sentence room, its tests). */
+export function asSentence(plan: RoomPlan): SentencePlan {
+  if (plan.kind !== 'sentence') throw new Error(`room ${plan.slot} plays ${plan.game}, not the sentence game`);
+  return plan;
 }
 
 /** A solid frame skips the listening pass (SENTENCE_SOLID in config). */

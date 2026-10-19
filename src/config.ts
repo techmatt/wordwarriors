@@ -79,6 +79,15 @@ export const CAST_ODDS = {
  */
 export const SENTENCE_SOLID = { tries: 6, lastRight: 5 };
 
+/**
+ * The word machine (item 026): words built per visit, how many of them from
+ * the first family before it switches to another, and letter tiles on the
+ * floor per word (the right one and silly ones). `weight` is its weight in
+ * the rooms' minigame pool (a sentence frame is 1; 2 gives it about every
+ * other episode), times how shaky her word families are.
+ */
+export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2 };
+
 /** How long in the bedroom (ms, after the news) before the door starts to sparkle. */
 export const DOOR_SPARKLE_MS = 12_000;
 
