@@ -59,8 +59,12 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    she walked to the shut front door), so every door and exit appears, with a little
    reveal, at the moment it opens.
 4. **Side rooms** (the place's own: the boulder yard and the climbing rocks of the
-   forest gym), each with a minigame drawn from a weighted pool (`src/rules/minigames.ts`;
-   today the sentence game in its frames), one sentence each, on a banner, key word last
+   forest gym), each with a minigame drawn from a weighted pool (`src/rules/minigames.ts`:
+   the sentence game in its frames, or the word machine, item 026: a picture and a rime
+   like AT on the machine, letter tiles on the floor that say their sounds, green slots
+   one in and the machine says the two parts apart; the right one makes the picture's
+   word, said only then, and into her bag it goes; a wrong one makes a silly word like ZAT;
+   several words of one family, then another). The sentence game is one sentence each, on a banner, key word last
    (`WE CAN USE THE NET`, `JULIA NEEDS THE CAT`). Pass 1 is read to her karaoke-style and stops at the key
    word, which pulses in silence (skipped once that frame is solid). Pass 2 is hers:
    each green lights the next word and says it, and yellow says the lit word. At the key
@@ -171,6 +175,7 @@ done, items in the bag):
 | `?scene=bedroom` | The wake-up |
 | `?scene=house` / `?scene=house&part=2` | The hub; part 2 has the attic door |
 | `?scene=room&slot=a` (or `b`, `counter`) | A side room; `counter` is the attic |
+| `?scene=room&slot=a&game=word_machine` | The word machine (`game=` puts that game behind door a, in any URL) |
 | `?scene=battle&part=1` (or `2`) | A battle |
 | `?scene=victory&read=cat,sun,julia` | Victory, recapping those words |
 | `?scene=pick`, `?scene=parent` | A pick screen; the grown-ups page |
@@ -193,7 +198,11 @@ Two lanes:
 
 Every browser test plays the fixed default episode (`tests/harness.ts` adds
 `cast=default`) unless its URL asks for a draw (`seed=`): `tests/cast.spec.ts` plays
-drawn casts, and in the slow lane three whole random episodes (item 025).
+drawn casts, and in the slow lane three whole random episodes (item 025). The same
+way, every browser test's rooms play the sentence game (the harness adds
+`games=sentence`) unless its URL asks for a game (`game=word_machine`) or the whole pool
+(`games=all`): `tests/machine.spec.ts` plays the word machine, and in the slow lane a
+whole episode with it behind door a (item 026).
 
 The browser tests run the page's clocks 3× fast (`WW_SPEED`, default 3; `tests/harness.ts`):
 timers, tweens, the game loop and voice playback together. The full-episode test alone
@@ -410,6 +419,10 @@ npm run art:pick -- <id> <n>
   text and is timed as two, so `voice:build` rejects the line ("expected 16 spoken
   words ... timed 17"), even with a `say` that spells it as two (item 025). Keep
   hyphens out of lines.
+- A rime said alone is a one-syllable line (`rime_at`, item 026), timed about 0.7 s.
+  "Ett" came back at 1.39 s (read as letters) and is spelled "Eht"; "En" risks the letter
+  name N and is "Ehn". Check a new rime's span in `public/voice-gen/manifest.json` after
+  `voice:build`.
 - edge-tts pads each clip with ~1.5 s of silence; the build cuts mp3 frames after the
   last word + 0.2 s (`tools/voice/mp3.ts`). That took the voice folder from 23.7 MB to
   about 19 MB (1,557 lines then). Generated voice left git on 2026-10-18 (item 008) at

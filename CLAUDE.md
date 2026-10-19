@@ -42,7 +42,7 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | Path | What |
 | --- | --- |
 | `src/` | Game source. `main.ts` boots Phaser; `config.ts` sizes, depth bands, pad colours. |
-| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Hub, SentenceRoom (the side rooms), Journey (the map before battles), Victory, Parent; parked: Pick, Alarm, Retreat and `minigames/` (the four v0.1 games). |
+| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Hub, the side rooms' games (SentenceRoom, WordMachine), Journey (the map before battles), Victory, Parent; parked: Pick, Alarm, Retreat and `minigames/` (the four v0.1 games). |
 | `src/battle/` | The battle simulation: `BattleScene` (the director scripts `part1`/`part2` live in it), `Fighter`, `abilities`, `movement`. |
 | `src/episode/Episode.ts` | The episode's state and step list. Scenes call `advance()`; nothing else decides flow. |
 | `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only). |
@@ -55,7 +55,8 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | `content/battle/roster.ts` | **Every character**, good and evil: style, abilities, taunts, ultimate, counter-item. Every roster character is also a villain. The dads' forms are roster characters with `person` (voiced, narrating and waking as the dad). |
 | `content/battle/forms.ts` | Outfits: a character's images for a scenario (Julia the chef beside chef Dada Jason, the knight beside warrior Dada Jason). |
 | `content/house/quests.ts` | Quests: each ally's place to train and setup line; places themselves are `PLACES` in `house.ts`. |
-| `src/rules/cast.ts`, `src/rules/minigames.ts` | The episode's cast draw; the rooms' weighted minigame pool. |
+| `src/rules/cast.ts`, `src/rules/minigames.ts` | The episode's cast draw; the rooms' weighted minigame pool (the sentence game's frames, the word machine). |
+| `content/phonics/families.ts`, `src/rules/wordMachine.ts` | The word machine (item 026): word families (rimes from the pictured words, silly onsets) and each visit's rounds. |
 | `content/phonics/` | Letter sounds (placeholder spellings by sound class), words, and `sentences.ts` (frames, fetchable key words and their battle items). |
 | `content/house/house.ts` | Bedrooms (objects and their reactions), the hub layout, side rooms. |
 | `content/voice/` | `script.ts` (narrator templates), `ids.ts` (line ids), `voices.json`, `lines.json` (generated), `clips/` (recordings that override edge-tts). |
@@ -189,6 +190,7 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 | "turn the pick screens back on" / "always the same cast" | `EPISODE_DEFAULTS` in `src/config.ts` (`pickScreens`, `randomCast: false`) |
 | "Matt should wake her more / less often" | `CAST_ODDS` in `src/config.ts` |
 | "add a dad form" / "add a quest" / "add a minigame" | `docs/content.md`: a roster entry with `person`; `QUESTS` + `PLACES`; `MINIGAMES` |
+| "add a word family / silly word" / "more or fewer machine words" | `RIMES` in `content/phonics/families.ts` (then `voice:lines`, `voice:build`); `WORD_MACHINE` in `src/config.ts` |
 | "make it the chef episode" | `?ally=dada_jason` (Julia's chef form follows; outfits are `content/battle/forms.ts`) |
 | "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`); for character art also set `FLIP_TO_FACE = true` in `src/config.ts` |
 | "here are my letter sound recordings" | see `docs/recording.md` |

@@ -111,6 +111,8 @@ export const PICK_NOTES: Record<string, string> = {
   char_anna_evil: "`current` is the old copper-curls design, unlike good Anna and her face card (the item 009 redesign: dark ponytail, plum and magenta). Her look in content/battle/roster.ts describes `current`; a candidate drawn from it is copper-curled too.",
   room_bedroom_julia: 'Redrawn with no loose toys of its own: the first one painted a teddy and a rocket that doubled the toys the game puts on the floor.',
   decal_rilla_footprint: 'Redrawn as one giant robot-gorilla footprint: the earlier try still read as bare human feet.',
+  prop_word_machine: "The word machine (item 026): the game puts the picture in its round window and draws its own letter panel over the blank lower panel. `current` is candidate 2, promoted by item 026: the widest panel and the plainest window. A different pick may need `WINDOW` / `PANEL` in src/scenes/WordMachine.ts nudged (fractions of the image). 0 is the painted placeholder.",
+  prop_machine_tile: "The word machine's letter tiles, a letter painted on each by the game. `current` is candidate 3, promoted by item 026: the flattest blank top for a letter (1 is a cube seen corner-on). 0 is the painted placeholder.",
   ...pickedBy025(),
 };
 

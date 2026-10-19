@@ -12,6 +12,7 @@
 
 import Phaser from 'phaser';
 
+import { FAMILIES } from '../../content/phonics/families';
 import { LETTERS } from '../../content/phonics/letters';
 import { FRAMES } from '../../content/phonics/sentences';
 import { WORDS } from '../../content/phonics/words';
@@ -83,6 +84,11 @@ export class ParentScene extends Phaser.Scene {
     fitText(this.add.text(x, y, [
       `Word bag, round ${bag.round}: ${bag.round ? BAG_WORDS.length - left.length : 0} seen, ${bag.round ? left.length : BAG_WORDS.length} left`,
       `Shaky: ${shaky.slice(0, 8).join(' ') || 'none yet'}`,
+      // The word machine (item 026): per family, tries and first-try right (recent).
+      `Word families: ${FAMILIES.map((f) => {
+        const s = progress.stat('rimes', f.rime);
+        return `-${f.rime} ${s.seen}·${s.recent.length ? `${Math.round((100 * s.recent.filter(Boolean).length) / s.recent.length)}%` : '–'}`;
+      }).join('  ')}`,
     ], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - x - 20, GAME_HEIGHT - y - 10);
   }
 

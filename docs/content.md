@@ -210,11 +210,43 @@ the secret door's plaque. Look at one with `?place=<id>`.
 
 Each episode draws three games from the pool, one per room (two fetch games, then
 the counter game), weighted, never the same entry twice, apart from the quest. An
-entry is `{ id, scene, weight, slots: ['fetch'] | ['counter'] | both, frame? }`; today
+entry is `{ id, scene, weight, slots: ['fetch'] | ['counter'] | both, frame?, machine? }`:
 each sentence frame is one entry (`sentence:<frame>`, weight 1 times the frame's
-shakiness). A new game is one entry and its scene; the room's `RoomPlan` carries
-`game` and `scene`, and `enterRoom` starts that scene. Whatever it plays, it must end in
-a key word she read (the fetched thing or the counter), as `plan.sentence.key` does now.
+shakiness), and the word machine is one more (`word_machine`, fetch rooms only, weight
+`WORD_MACHINE.weight` in `src/config.ts` times how shaky her word families are: about
+every other episode). A new game is one entry and its scene; the room's `RoomPlan`
+(a union by `kind`, `src/rules/sentences.ts`) carries `game` and `scene`, and `enterRoom`
+starts that scene. Whatever it plays, it must end in a word she read: `plan.key` (the
+prize on the hub door, or the counter) and `plan.fetches` (every word read there, each a
+battle item from a fetch room). Words a game uses are planned in `episodePlans`, so
+they stay out of the other rooms and the counter.
+
+Look at one game: `?game=word_machine` puts it behind door a; `?games=sentence` draws
+from the sentence game alone (the tests' default).
+
+## A word family (`content/phonics/families.ts`, the word machine)
+
+The word machine (item 026, `src/scenes/WordMachine.ts`) teaches onset + rime: a
+picture in its window, a rime on its panel (AT), letter tiles on the floor; stepping on
+a tile says its sound, green slots it in, and the machine says the sound and the rime
+apart, never blended. A wrong tile makes a silly word ("That makes... ZAT! A silly
+word!"). A visit is `WORD_MACHINE.rounds` words, up to `perFamily` from one family, then
+another family; every word built is a battle item.
+
+- **Families come from the pictured words.** Any rime with two or more decodable CVC
+  words in `words.ts` and an entry in `RIMES` is a family (today -AT, -AN, -AP, -EN, -ET,
+  -OG). A new pictured word (MUG, RUG) opens -UG once `RIMES` has `ug`.
+- **A rime** is `{ say, silly }`: `say` is the edge-tts spelling of the rime alone (one
+  syllable, about 0.7 s; "Ett" came back 1.4 s, read as letters, so -ET is "Eht"); its line
+  is `rime_<rime>`, a placeholder for Matt's recording.
+- **Silly onsets** make the wrong tiles: each must be nonsense (not a word, not a name,
+  not slang, not a homophone of a real word: no KAT, NAT, ZAP, YEN, JAN, and never J or F
+  before AP), at least `tiles - 1` per family. Each is a `silly_<word>` line.
+- Then `voice:lines`, `voice:build`. The unit tests check every silly word against the
+  game's words and a block list.
+- **Later modes** (`flip`, `real_or_silly`): `MachineMode` in `src/rules/wordMachine.ts`;
+  each tile already carries what it makes and whether that is a real word. A mode is a
+  plan there and a branch at `startRound` in the scene.
 
 ## Words (`content/phonics/words.ts`)
 
