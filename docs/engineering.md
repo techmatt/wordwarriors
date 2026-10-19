@@ -53,7 +53,23 @@ without a new measurement.
 ## Browser and tests
 
 - Playwright **workers: 1** (Seraphina measured 2 workers as 2.3–2.4× slower per test,
-  and frame-rate-sensitive assertions broke).
+  and frame-rate-sensitive assertions broke). Re-measured here 2026-10-18 on the 9 smoke
+  tests at clock speed 3 (`--fully-parallel`): 1 worker 2m24s, 2 workers 2m02s, 3 workers
+  1m48s; each test ran 1.5–2× slower, so it bought 15–25% at a flake risk, and stayed off.
+  (Without `--fully-parallel`, `--workers` does nothing: the tests are in one file.)
+- **Test clock speed** (`WW_SPEED`, `tests/harness.ts`, item 019): an init script scales
+  every page clock (`performance.now`, `Date.now`, timers, the rAF timestamp) and voice
+  `playbackRate` by the same factor. Phaser's tweens read `Date.now` and its loop the rAF
+  time, so both follow. Smoke suite, same machine: speed 1 4m22s, 3 2m24s, 6 5m32s (at 6
+  her walking and the battle hero's walk overshoot at 15–20 fps and the harness keeps
+  re-aiming). The speed-up is ~2.5× not 3×: voice decoding, page loads and Phaser's
+  first 120 frames (capped to 16.7 ms each) run in real time. Voice `time()` reads the
+  audio clock, which is not warped, so the karaoke highlight lags a sped-up clip; no test
+  asserts on it.
+- Serving a production build (`vite preview`) instead of the dev server saved nothing
+  worth its 5 s build: smoke suite 2m12s against 2m24s. GPU (`channel: 'chromium'`,
+  `--use-angle=d3d11`) at speed 3 was 1m55s in one run and 3m05s in another; not adopted.
+- Fixed cost of any Playwright run here: about 9 s (vite start, browser launch).
 - Headless Chromium runs the battle at 11–18 fps here (software GL, ~10 fighters, heavy
   particles); the title and rooms at ~25–60. With the GPU (`channel: 'chromium'`,
   `--use-angle=d3d11`) the battle holds 56 fps; halving particles changed nothing in

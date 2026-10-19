@@ -1,7 +1,9 @@
 /**
  * One whole episode, title to victory, played through the virtual pad:
  * bedroom, the hub and both side rooms, battle 1, the attic, battle 2.
- * Slow (several minutes of real voice), so it is @slow.
+ * Slow (several minutes of real voice), so it is @slow. It is the one test
+ * that runs at real time (clock speed 1, not `WW_SPEED`): it keeps the real
+ * pacing of speech, karaoke and timers covered.
  */
 
 import { test, expect } from '@playwright/test';
@@ -11,7 +13,7 @@ import { boot, collectErrors, expectNoErrors, playEpisode, press, state, until }
 test('a full episode plays end to end @slow', async ({ page }) => {
   test.setTimeout(900_000);
   const errors = collectErrors(page);
-  await boot(page);
+  await boot(page, '', 1);
   await until(page, (s) => s.scene === 'Title', 30_000, 'title');
   await page.waitForTimeout(500);
   await press(page, 'green');

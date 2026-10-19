@@ -69,8 +69,44 @@ export function collectErrors(page: Page): string[] {
   return errors;
 }
 
-/** Load the game with test hooks on (`?hooks=1` works in a production build too). */
-export async function boot(page: Page, query = ''): Promise<void> {
+/**
+ * How fast the page's clocks run (`WW_SPEED`, default 3). Every clock the game
+ * reads is scaled together: `performance.now`, `Date.now`, timers, the
+ * animation-frame timestamp (so Phaser's loop, timers and tweens), and voice
+ * clips play `speed` times faster, so they end in step with the timers that
+ * wait for them. The slow lane's full episode passes 1: real time.
+ */
+export const SPEED = Number(process.env.WW_SPEED ?? 3);
+
+/** Install the clock warp before the page's scripts run (once per page; it survives reloads). */
+function warpClocks(k: number): void {
+  const w = window as unknown as { __wwSpeed?: number };
+  if (w.__wwSpeed) return;
+  w.__wwSpeed = k;
+  if (k === 1) return;
+  const pNow = performance.now.bind(performance);
+  const p0 = pNow();
+  const warp = (t: number) => p0 + (t - p0) * k;
+  performance.now = () => warp(pNow());
+  const dNow = Date.now;
+  const d0 = dNow();
+  Date.now = () => d0 + (dNow() - d0) * k;
+  const setT = window.setTimeout.bind(window);
+  const setI = window.setInterval.bind(window);
+  (window as unknown as { setTimeout: unknown }).setTimeout = (fn: TimerHandler, ms = 0, ...a: unknown[]) => setT(fn, ms / k, ...a);
+  (window as unknown as { setInterval: unknown }).setInterval = (fn: TimerHandler, ms = 0, ...a: unknown[]) => setI(fn, ms / k, ...a);
+  const raf = window.requestAnimationFrame.bind(window);
+  window.requestAnimationFrame = (cb) => raf((t) => cb(warp(t)));
+  const start = AudioBufferSourceNode.prototype.start;
+  AudioBufferSourceNode.prototype.start = function (this: AudioBufferSourceNode, ...a: Parameters<AudioBufferSourceNode['start']>) {
+    this.playbackRate.value *= k;
+    return start.apply(this, a);
+  };
+}
+
+/** Load the game with test hooks on (`?hooks=1` works in a production build too), its clocks at `speed`. */
+export async function boot(page: Page, query = '', speed = SPEED): Promise<void> {
+  await page.addInitScript(warpClocks, speed);
   await page.goto(`/${query ? `${query}&` : '?'}hooks=1`);
   await page.waitForFunction(() => Boolean((window as unknown as { __ww?: unknown }).__ww));
   await page.mouse.click(20, 20);

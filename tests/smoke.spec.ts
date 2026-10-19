@@ -1,6 +1,8 @@
 /**
- * The fast suite: one page boot per test, many asserts each. Every scene is
- * reached directly with `?scene=`, so a failure points at one step.
+ * One page boot per test, many asserts each. Every scene is reached directly
+ * with `?scene=`, so a failure points at one step. The quick ones are the fast
+ * lane (`npm test`); the ones tagged SLOW (15–40 s each even at clock speed 3)
+ * run with the slow lane (`npm run test:slow`, `npm run test:all`).
  */
 
 import { test, expect } from '@playwright/test';
@@ -24,6 +26,8 @@ import {
   walkTo,
 } from './harness';
 
+const SLOW = { tag: '@slow' };
+
 test('title boots, F9 opens the grown-ups page and returns, green starts the bedroom', async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page);
@@ -40,7 +44,7 @@ test('title boots, F9 opens the grown-ups page and returns, green starts the bed
   expectNoErrors(errors);
 });
 
-test('bedroom: the wake-up news, a toy reacts to green, the door leads to the hub', async ({ page }) => {
+test('bedroom: the wake-up news, a toy reacts to green, the door leads to the hub', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=bedroom&nojourney=1');
   // During the news the door is not there (it shows only for the waker's entrance).
@@ -70,7 +74,7 @@ test('bedroom: the wake-up news, a toy reacts to green, the door leads to the hu
   expectNoErrors(errors);
 });
 
-test('hub part 1: the circle teaches the spell, then door a opens a sentence room', async ({ page }) => {
+test('hub part 1: the circle teaches the spell, then door a opens a sentence room', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=house&nojourney=1');
   const circle = await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:circle' && !s.room.locked, 90_000, 'circle offered');
@@ -98,7 +102,7 @@ test('hub part 1: the circle teaches the spell, then door a opens a sentence roo
   expectNoErrors(errors);
 });
 
-test('sentence room: listen, read along, a wrong object costs nothing, the right one goes in the bag', async ({ page }) => {
+test('sentence room: listen, read along, a wrong object costs nothing, the right one goes in the bag', SLOW, async ({ page }) => {
   test.setTimeout(180_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&nojourney=1');
@@ -173,7 +177,7 @@ test('a solid sentence frame skips the listening pass', async ({ page }) => {
   expectNoErrors(errors);
 });
 
-test('F9 out of a sentence room and back: it restarts cleanly', async ({ page }) => {
+test('F9 out of a sentence room and back: it restarts cleanly', SLOW, async ({ page }) => {
   test.setTimeout(180_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&nojourney=1');
@@ -229,7 +233,7 @@ test('Spell the Spell (parked): ghost boxes fill only with the right letter', as
   expectNoErrors(errors);
 });
 
-test('Battle part 2: a wrong and a right walking pick, counter-item, finish, victory', async ({ page }) => {
+test('Battle part 2: a wrong and a right walking pick, counter-item, finish, victory', SLOW, async ({ page }) => {
   test.setTimeout(240_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=battle&part=2&hero=elsa&ally=anna&villain=scar&nojourney=1');

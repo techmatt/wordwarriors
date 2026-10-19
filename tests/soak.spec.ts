@@ -3,7 +3,8 @@
  * Victory, green, and straight into the next one. Catches anything that
  * only breaks on the second run of a scene (listeners, stale state, leaks):
  * the hub is restarted many times an episode, so it is the one to watch.
- * @slow, about ten minutes.
+ * @slow. Runs at clock speed `WW_SPEED` (3): what it guards is the second
+ * run, not real-time pacing, which the full-episode test covers.
  */
 
 import { test, expect } from '@playwright/test';
