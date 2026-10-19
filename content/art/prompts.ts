@@ -31,7 +31,7 @@ const FAMILY_ART = ['julia', 'ellie', 'dada_matt', 'dada_jason'].flatMap((c) => 
 const GLOWING_ITEMS = ['cozy_bed', 'golden_nut', 'giant_log', 'cocoa_cup', 'cuddly_cat', 'flappy_bat', 'brave_rat', 'tickle_fox', 'gold_bag', 'glitch_bug', 'bounce_cap'].map((i) => `item_${i}`);
 // Tiamat (item 013) is purple and silver with a glow: no green of her own.
 const TIAMAT_ART = ['char_tiamat_good', 'char_tiamat_evil', 'face_tiamat', 'item_magic_hat', 'decal_tiamat_scale', 'decal_tiamat_banner'];
-export const NO_GREEN = new Set([...FAMILY_ART, ...TIAMAT_ART,'char_julia_chef',...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block']);
+export const NO_GREEN = new Set([...FAMILY_ART, ...TIAMAT_ART,'char_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block']);
 
 /**
  * Likeness references for the family (Matt, 2026-10-18): a photo in the
@@ -81,6 +81,8 @@ export const PICK_NOTES: Record<string, string> = {
   item_magic_hat: 'Evil Tiamat\'s counter (SCARED OF THE HAT). `current` is candidate 2, promoted by item 013 (cleanest hat shape at game size). All three drew a rain storm, not her purple fire storm.',
   decal_tiamat_scale: '`current` is candidate 1, promoted by item 013.',
   decal_tiamat_banner: '`current` is candidate 1, promoted by item 013 (2 lies crumpled on the floor and reads less clearly).',
+  prop_silver_sword: "New id (item 014): Ellie's summoned sword, which she spins round herself, flings and rains in the fight; it shows with any Ellie image. `current` is the candidate item 014 promoted (see the report).",
+  char_ellie_good: "`current` is Matt's pick (item 009), bubble wand and all; it stays the game's art. The new candidates are Ellie summoning her silver swords (item 014), drawn for comparison and not promoted: pick one only if the swords should be in her picture too (the game draws them round her either way).",
   char_julia_chef: 'New id (item 012), Julia as a chef for a future scenario; no scene uses it yet. `current` is candidate 3, promoted by item 012 (closest face and fringe to her other art, pink shoes like hers).',
   char_anna_evil: "`current` is the old copper-curls design, unlike good Anna and her face card (the item 009 redesign: dark ponytail, plum and magenta). Her look in content/battle/roster.ts describes `current`; a candidate drawn from it is copper-curled too.",
   room_bedroom_julia: 'Redrawn with no loose toys of its own: the first one painted a teddy and a rocket that doubled the toys the game puts on the floor.',

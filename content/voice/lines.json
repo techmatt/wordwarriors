@@ -185,10 +185,16 @@
   "text": "Ellie strong!"
  },
  {
-  "id": "taunt_ellie_peekaboo",
+  "id": "taunt_ellie_swords",
   "speaker": "ellie",
   "group": "fighter_ellie",
-  "text": "Peekaboo!"
+  "text": "My swords go round!"
+ },
+ {
+  "id": "taunt_ellie_swish",
+  "speaker": "ellie",
+  "group": "fighter_ellie",
+  "text": "Swishy swishy!"
  },
  {
   "id": "taunt_ellie_look",
@@ -197,22 +203,16 @@
   "text": "Julia, look at me!"
  },
  {
-  "id": "taunt_ellie_bubbles",
-  "speaker": "ellie",
-  "group": "fighter_ellie",
-  "text": "More bubbles!"
- },
- {
   "id": "ult_ellie",
   "speaker": "ellie",
   "group": "fighter_ellie",
-  "text": "Mega Bubble Storm!"
+  "text": "Super Sword Storm!"
  },
  {
-  "id": "move_ellie_block_crash",
+  "id": "move_ellie_spinny_swords",
   "speaker": "ellie",
   "group": "fighter_ellie",
-  "text": "Block Tower Crash!"
+  "text": "Spinny Swords!"
  },
  {
   "id": "move_ellie_peekaboo",

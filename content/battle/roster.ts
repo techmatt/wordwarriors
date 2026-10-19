@@ -187,25 +187,30 @@ export const ROSTER: CharacterSpec[] = [
   },
   {
     id: 'ellie',
-    description: "Julia's toddler sister: small, fast and full of giant bubbles and block towers.",
+    description: "Julia's toddler sister: small, fast, and she summons spinning silver swords.",
     arena: 'nursery',
     good: {
-      displayName: 'Ellie', trail: { tint: [0x9ad8ff, 0xff9ad5], shape: 'spark' }, look: 'a cheerful chubby toddler girl of about two: a fine, wispy pale strawberry-blonde bob (very light blonde with a faint peach tint, not golden or orange) with a straight fringe, big blue eyes, chubby rosy cheeks, fair skin, in cosy cream footie pyjamas with rust-orange and brown stripes, waving a giant bubble wand with big shiny pink-and-blue bubbles floating around her',
-      palette: [0xff9ad5, 0x9ad8ff], glyph: '🍼', style: 'dodge', speed: 230, size: 0.8, hp: 90,
+      // Her swords are their own art (prop_silver_sword), summoned in the fight,
+      // so they show with any Ellie image; her picked art keeps its bubble wand.
+      displayName: 'Ellie', trail: { tint: [0xe8eef8, 0xff9ad5], shape: 'spark' }, look: 'a cheerful chubby toddler girl of about two: a fine, wispy pale strawberry-blonde bob (very light blonde with a faint peach tint, not golden or orange) with a straight fringe, big blue eyes, chubby rosy cheeks, fair skin, in cosy cream footie pyjamas with rust-orange and brown stripes, one chubby hand raised high summoning three small shining silver swords that float and spin in a ring around her, little silver sparkles trailing off them',
+      palette: [0xff9ad5, 0xe8eef8], glyph: '🗡️', style: 'dodge', speed: 230, size: 0.8, hp: 90,
       abilities: [
-        ab('giant_bubbles', 'Giant Bubbles', 'bolt', 2.4, 0x9ad8ff, 1, { count: 4, homing: true, word: 'pop' }),
-        ab('block_crash', 'Block Tower Crash', 'rain', 7, 0xff5a3c, 2, { count: 10, glyph: '🧱', word: 'bam', shout: true }),
+        // ZIP first: it is the spell Ellie teaches Julia in the hub (spellFor
+        // takes the first word Julia has not got), so her first move is a sword.
+        ab('sword_fling', 'Sword Fling', 'bolt', 2.4, 0xe8eef8, 1, { count: 3, art: 'prop_silver_sword', homing: true, color2: 0x9ad8ff, word: 'zip', shout: true }),
+        ab('spinny_swords', 'Spinny Swords', 'orbit', 6, 0xe8eef8, 2, { count: 5, art: 'prop_silver_sword', duration: 1.6, color2: 0xff9ad5, word: 'bam' }),
+        ab('sword_shield', 'Sword Shield', 'orbit', 10, 0xcfe8ff, 1, { count: 6, art: 'prop_silver_sword', duration: 3.5, guard: true, color2: 0x9ad8ff }),
         ab('peekaboo', 'Peekaboo', 'teleport', 6, 0xffd23f, 2, { word: 'hop' }),
-        ab('juice_splash', 'Juice Splash', 'cone', 5, 0x7ad9ff, 1),
+        ab('giant_bubbles', 'Giant Bubbles', 'bolt', 2.4, 0x9ad8ff, 1, { count: 4, homing: true, word: 'pop' }),
       ],
-      ultimate: ab('bubble_storm', 'Mega Bubble Storm', 'rain', 0, 0x9ad8ff, 3, { count: 30, glyph: '⚪', color2: 0xff9ad5 }),
+      ultimate: ab('sword_storm', 'Super Sword Storm', 'rain', 0, 0xe8eef8, 3, { count: 30, art: 'prop_silver_sword', color2: 0xff9ad5 }),
       taunts: [
         { key: 'me', text: 'Me do it!' },
         { key: 'again', text: 'Again, again!' },
         { key: 'strong', text: 'Ellie strong!' },
-        { key: 'peekaboo', text: 'Peekaboo!' },
+        { key: 'swords', text: 'My swords go round!' },
+        { key: 'swish', text: 'Swishy swishy!' },
         { key: 'look', text: 'Julia, look at me!' },
-        { key: 'bubbles', text: 'More bubbles!' },
       ],
     },
     evil: {
@@ -1038,7 +1043,13 @@ export const COMBOS: ComboSpec[] = [
   { pair: ['jasmine', 'ozymandias'], ability: ab('desert_duo', 'Desert Duo', 'wave', 16, 0xffc857, 3, { color2: 0x1fb5a8 }) },
   { pair: ['dada_matt', 'dada_jason'], ability: ab('dad_squad', 'Dad Squad', 'slam', 16, 0xff8c42, 3, { color2: 0x3a86ff }) },
   { pair: ['julia', 'dada_matt'], ability: ab('high_five', 'Mega High Five', 'lightning', 16, 0xffd23f, 3, { count: 6, color2: 0x3a86ff }) },
-  { pair: ['julia', 'ellie'], ability: ab('sister_squeeze', 'Sister Squeeze', 'spin', 16, 0xff9ad5, 3, { count: 5, color2: 0x9ad8ff }) },
+  // Ellie rings them both in spinning swords; Julia's stars fly out through the
+  // ring, then the swords follow them in.
+  {
+    pair: ['julia', 'ellie'],
+    ability: ab('star_sword_spin', 'Star Sword Spin', 'bolt', 16, 0xffd23f, 3, { count: 4, glyph: '⭐', homing: true, color2: 0xe8eef8 }),
+    second: ab('star_sword_ring', 'Star Sword Spin', 'orbit', 16, 0xe8eef8, 3, { count: 8, art: 'prop_silver_sword', duration: 1.4, color2: 0xffd23f }),
+  },
   { pair: ['seraphina', 'tiamat'], ability: ab('dragon_queen_ride', 'Dragon Queen Ride', 'dash', 16, 0xc77dff, 3, { color2: 0x6ad66a }) },
   { pair: ['julia', 'seraphina'], ability: ab('best_friends', 'Best Friend Blast', 'beam', 16, 0xff5ab4, 3, { color2: 0x2ec27e }) },
 ];
@@ -1046,9 +1057,19 @@ export const COMBOS: ComboSpec[] = [
 /** Any two heroes without a written combo still team up with this. */
 export const DEFAULT_COMBO = ab('team_blast', 'Team Star Blast', 'beam', 18, 0xffd23f, 3, { color2: 0xff5ab4 });
 
+function comboSpec(a: string, b: string): ComboSpec | undefined {
+  return COMBOS.find((c) => (c.pair[0] === a && c.pair[1] === b) || (c.pair[0] === b && c.pair[1] === a));
+}
+
 export function comboFor(a: string, b: string): AbilitySpec {
-  const hit = COMBOS.find((c) => (c.pair[0] === a && c.pair[1] === b) || (c.pair[0] === b && c.pair[1] === a));
-  return hit?.ability ?? DEFAULT_COMBO;
+  return comboSpec(a, b)?.ability ?? DEFAULT_COMBO;
+}
+
+/** What `who` fires in its combo with `partner`: the combo's `second` half if `who` is second of the pair. */
+export function comboPart(who: string, partner: string): AbilitySpec {
+  const c = comboSpec(who, partner);
+  if (!c) return DEFAULT_COMBO;
+  return c.second && c.pair[1] === who ? c.second : c.ability;
 }
 
 /** Arenas: id → colours and a glyph strip for the placeholder painter, plus a look for art prompts. */

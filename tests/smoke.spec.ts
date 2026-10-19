@@ -49,8 +49,8 @@ test('bedroom: the wake-up news, a toy reacts to green, the door leads to the hu
   const s = await until(page, (st) => st.scene === 'Bedroom' && st.room?.round === 'bedroom:door' && !st.room.locked, 90_000, 'news told, door open');
   expect(s.room!.shown).toContain('door');
   expect(s.voice.history).toContain('wake_dada_matt_good_julia');
-  expect(s.voice.history).toContain('wake_dada_matt_helper_elsa');
-  expect(s.voice.history).toContain('wake_dada_matt_bad_rilla');
+  expect(s.voice.history).toContain('wake_dada_matt_helper_ellie');
+  expect(s.voice.history).toContain('wake_dada_matt_bad_tiamat');
   expect(s.room!.spots.map((sp) => sp.id)).toContain('door');
 
   // Poke a toy: it does its thing (a burst), and nothing else happens.
@@ -74,7 +74,7 @@ test('hub part 1: the circle teaches the spell, then door a opens a sentence roo
   const circle = await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:circle' && !s.room.locked, 90_000, 'circle offered');
   expect(circle.episode.spell).toBeTruthy();
   expect(circle.episode.house.taught).toBe(false);
-  expect(circle.voice.history).toContain(`nar_elsa_teach_word_${circle.episode.spell}`);
+  expect(circle.voice.history).toContain(`nar_ellie_teach_word_${circle.episode.spell}`);
   // A door she cannot use yet is not there at all.
   for (const d of ['door_a', 'door_b', 'door_front', 'door_counter']) expect(circle.room!.shown).not.toContain(d);
 
@@ -109,7 +109,7 @@ test('sentence room: listen, read along, a wrong object costs nothing, the right
 
   // Pass 1, listening: then her turn, nothing lit yet.
   const read = await until(page, (s) => s.room?.sentence?.pass === 'read' && !s.room.locked, 90_000, 'read pass');
-  expect(read.voice.history).toContain('nar_elsa_room_listen');
+  expect(read.voice.history).toContain('nar_ellie_room_listen');
   expect(read.voice.history).not.toContain(`word_${key}`);
   expect(read.room!.sentence!.index).toBe(-1);
   expect(read.room!.spots.length).toBe(0);
@@ -166,8 +166,8 @@ test('a solid sentence frame skips the listening pass', async ({ page }) => {
   // The room opens with an arrival beat (ARRIVE_MS) before any pass runs, so the
   // pass may still read 'listen' here; it must go straight to 'read', never listening.
   const read = await until(page, (st) => st.room?.sentence?.pass === 'read' && !st.room.locked, 30_000, 'read pass');
-  expect(read.voice.history).not.toContain('nar_elsa_room_listen');
-  expect(read.voice.history).toContain('nar_elsa_room_your_turn');
+  expect(read.voice.history).not.toContain('nar_ellie_room_listen');
+  expect(read.voice.history).toContain('nar_ellie_room_your_turn');
   expectNoErrors(errors);
 });
 

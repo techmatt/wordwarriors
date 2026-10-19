@@ -52,7 +52,8 @@ export type AbilityKind =
   | 'coil' // a ring of serpent body squeezing the arena
   | 'eclipse' // the sky goes dark; the sun is swallowed
   | 'wave' // a wall sweeping across the arena
-  | 'grid'; // a lattice of lasers across the arena
+  | 'grid' // a lattice of lasers across the arena
+  | 'orbit'; // things (Ellie's swords) circle the caster, hitting what they pass, then fly at the enemy
 
 export type Status = 'freeze' | 'pig' | 'stun' | 'burn';
 
@@ -72,6 +73,13 @@ export interface AbilitySpec {
   count?: number;
   /** An emoji drawn as the projectile or falling thing ("🪙", "❄️"). */
   glyph?: string;
+  /**
+   * An art id drawn as the projectile, falling or orbiting thing instead of a
+   * glyph (`prop_silver_sword`). Drawn point up; it falls point first.
+   */
+  art?: string;
+  /** For `orbit`: the caster is shielded while the ring spins (a whirling guard). */
+  guard?: boolean;
   status?: Status;
   /** For `summon`: which minion (MINIONS key). */
   minion?: string;
@@ -204,4 +212,6 @@ export interface ComboSpec {
   /** Character ids; both must be on the hero side. */
   pair: [string, string];
   ability: AbilitySpec;
+  /** What the second of the pair fires, when the two do different halves of it. */
+  second?: AbilitySpec;
 }

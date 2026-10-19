@@ -206,6 +206,9 @@ const PROPS: [string, number, number, string, string, string?][] = [
   ['front_door', 200, 290, "A big friendly front door of a house: painted red, a round brass knob, a little window at the top, a doormat. Closed. No house number or text.", '🚪'],
   ['magic_circle', 260, 110, 'A glowing rune circle painted on the floor, seen at an angle (a flat ellipse), soft blue-violet light rising from it, little stars. Abstract runes only, no letters.', '✨'],
   ['bag', 120, 130, 'A little adventure backpack for a child: rounded, bright, a buckle flap, a star patch. No text.', '🎒'],
+  // Ellie's summoned sword (item 014): the game spins, flings and rains it, so
+  // it is drawn alone, upright, point at the top.
+  ['silver_sword', 80, 220, 'A single small magic silver sword standing perfectly upright, point straight up at the top and the hilt at the bottom, seen flat side-on: a shining polished silver blade with a soft pale-blue glow along its edge, a little rounded silver crossguard, a pink-wrapped grip and a round pink gem on the pommel, a few tiny silver sparkles. Toy-like, friendly and magical, not a real weapon. Just the sword, nothing else.', '🗡️'],
   ['scroll', 520, 160, 'A wide unrolled magic scroll, rolled ends with wooden knobs, glowing edges, blank parchment in the middle for a word painted by the game. NO TEXT.', '📜'],
 ];
 for (const [id, w, h, content, glyph] of PROPS) {

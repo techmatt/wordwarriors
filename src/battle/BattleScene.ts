@@ -35,7 +35,7 @@
 import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
-import { CHARACTER_BY_ID, MINIONS, comboFor } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, MINIONS, comboFor, comboPart } from '../../content/battle/roster';
 import type { AbilitySpec, Status } from '../../content/battle/types';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { fighterId, moveLine, nameLine, narratorLine, tauntLine, ultimateLine } from '../../content/voice/ids';
@@ -630,8 +630,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     speedLines(this, (a.cx + b.cx) / 2, (a.cy + b.cy) / 2, ab.color, 800);
     await this.simWait(0.4);
     punch(this, 0.06, 180);
-    cast(this, a, ab, this.villain, 2.2);
-    cast(this, b, ab, this.villain, 1.4);
+    cast(this, a, comboPart(a.init.id, b.init.id), this.villain, 2.2);
+    cast(this, b, comboPart(b.init.id, a.init.id), this.villain, 1.4);
     this.stats.combos++;
     this.stats.abilitiesFired += 2;
     await this.simWait(1.5);

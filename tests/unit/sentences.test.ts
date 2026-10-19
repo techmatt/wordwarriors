@@ -8,6 +8,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { CHARACTER_BY_ID, ROSTER } from '../../content/battle/roster';
+import { EPISODE_DEFAULTS } from '../../src/config';
 import { FETCH_ITEMS, FRAMES, FRAME_BY_ID, allFrameTokens, allPrefixes, lookalikesOf, sentence, tokenWord } from '../../content/phonics/sentences';
 import { wordLine } from '../../content/voice/ids';
 import { counterPlan, distractors, fetchPlans, frameIsSolid, type RoomPlan } from '../../src/rules/sentences';
@@ -24,9 +25,10 @@ function seeded(seed = 1): () => number {
   return () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
 }
 
-// Rilla is the v0.2 default villain; fall back to Elsa if the roster has not got her yet.
-const VILLAIN = CHARACTER_BY_ID['rilla'] ? 'rilla' : 'elsa';
-const FILL = { villain: VILLAIN, helper: 'elsa' };
+// The default episode's pair (Evil Tiamat and Ellie since item 014).
+const VILLAIN = EPISODE_DEFAULTS.villain;
+const HELPER = EPISODE_DEFAULTS.ally ?? 'elsa';
+const FILL = { villain: VILLAIN, helper: HELPER };
 
 test('sentence() is upper case, key word last, with the right prefix line', () => {
   for (const frame of FRAMES) {
@@ -35,7 +37,7 @@ test('sentence() is upper case, key word last, with the right prefix line', () =
     assert.equal(s.key, 'net');
     assert.equal(s.frame, frame.id);
     for (const t of s.tokens) assert.equal(t, t.toUpperCase(), `${frame.id}: ${t}`);
-    const named = frame.text.includes('{villain}') ? VILLAIN : frame.text.includes('{helper}') ? 'elsa' : null;
+    const named = frame.text.includes('{villain}') ? VILLAIN : frame.text.includes('{helper}') ? HELPER : null;
     assert.equal(s.prefixLine, named ? `sent_${frame.id}_${named}` : `sent_${frame.id}`);
     assert.ok(allPrefixes().some((p) => p.id === s.prefixLine), `${s.prefixLine} is composed`);
   }
@@ -72,11 +74,17 @@ test("counterPlan uses the villain's counter frame and word", () => {
   assert.equal(p.objects.length, 3);
   assert.equal(new Set(p.objects).size, 3);
   assert.ok(p.objects.includes(counter.word));
-  if (VILLAIN === 'rilla') {
-    assert.equal(p.sentence.frame, 'scared_of');
-    assert.equal(p.sentence.key, 'mice');
-    assert.equal(p.sentence.tokens.at(-1), 'MICE');
+  if (VILLAIN === 'tiamat') {
+    // EVIL TIAMAT IS SCARED OF THE HAT.
+    assert.equal(p.sentence.frame, 'scared_of_the');
+    assert.equal(p.sentence.key, 'hat');
+    assert.deepEqual(p.sentence.tokens.slice(0, 2), ['EVIL', 'TIAMAT']);
+    assert.equal(p.sentence.tokens.at(-1), 'HAT');
   }
+  // EvilRilla, parked out of the default: still SCARED OF MICE.
+  const rilla = counterPlan({ villain: 'rilla', helper: HELPER }, 'attic', seeded(3));
+  assert.equal(rilla.sentence.frame, 'scared_of');
+  assert.equal(rilla.sentence.tokens.at(-1), 'MICE');
 });
 
 test('every villain: the counter sentence names the item that beats it in battle 2', () => {

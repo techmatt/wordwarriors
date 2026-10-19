@@ -47,8 +47,8 @@ export const DEPTH = {
 export const EPISODE_DEFAULTS = {
   pickScreens: false,
   hero: 'julia',
-  ally: 'elsa' as string | null,
-  villain: 'rilla',
+  ally: 'ellie' as string | null,
+  villain: 'tiamat',
   randomVillain: false,
 };
 

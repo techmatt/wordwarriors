@@ -112,9 +112,18 @@ function pickTargets(w: BattleWorld, f: Fighter, target: Fighter | null, n: numb
   return out;
 }
 
-/** A projectile object: an emoji glyph if the ability has one, else a glowing orb. */
+/** An `art` thing (Ellie's sword) `h` pixels tall, or null when the ability has none or it is not loaded. */
+function artObj(w: BattleWorld, ab: AbilitySpec, x: number, y: number, h: number): Phaser.GameObjects.Image | null {
+  if (!ab.art || !w.stage.textures.exists(ab.art)) return null;
+  const img = w.stage.add.image(x, y, ab.art).setDepth(DEPTH.fx);
+  return img.setScale(h / Math.max(1, img.height));
+}
+
+/** A projectile object: the ability's art, else an emoji glyph, else a glowing orb. */
 function projectileObj(w: BattleWorld, ab: AbilitySpec, x: number, y: number, mult: number) {
   const s = w.stage;
+  const art = artObj(w, ab, x, y, 64 * Math.sqrt(mult));
+  if (art) return art;
   if (ab.glyph) {
     return s.add
       .text(x, y, ab.glyph, { fontSize: `${Math.round(34 * Math.sqrt(mult))}px` })
@@ -163,7 +172,7 @@ function fireBolt(w: BattleWorld, f: Fighter, ab: AbilitySpec, target: Fighter, 
       life: 2.2,
       from: f,
       trail: t,
-      spinRate: ab.glyph ? 8 : 0,
+      spinRate: ab.art ? 16 : ab.glyph ? 8 : 0,
     });
   });
 }
@@ -512,15 +521,24 @@ const rain: Cast = (w, f, ab, _target, mult) => {
       const x = aimed ? aimed.x + (Math.random() - 0.5) * 40 : Phaser.Math.Between(minX, maxX);
       const y = aimed ? aimed.y : Phaser.Math.Between(FLOOR_TOP, FLOOR_BOTTOM);
       const size = Math.round((ab.glyph ? 40 : 30) * Math.sqrt(mult) * (0.8 + Math.random() * 0.5));
-      const obj = ab.glyph
-        ? s.add.text(x - 120, -60, ab.glyph, { fontSize: `${size}px` }).setOrigin(0.5)
-        : s.add.image(x - 120, -60, TEX.glow).setTint(ab.color).setScale(size / 64).setBlendMode(Phaser.BlendModes.ADD);
+      // Art (a sword) falls point first, tilted along its path, instead of tumbling.
+      const art = artObj(w, ab, x - 120, -60, size * 2.2);
+      const obj = art
+        ? art.setAngle(180 - 13)
+        : ab.glyph
+          ? s.add.text(x - 120, -60, ab.glyph, { fontSize: `${size}px` }).setOrigin(0.5)
+          : s.add.image(x - 120, -60, TEX.glow).setTint(ab.color).setScale(size / 64).setBlendMode(Phaser.BlendModes.ADD);
       obj.setDepth(DEPTH.fx);
+      if (art) {
+        const glint = trail(w, ab.color, mult);
+        glint.startFollow(art);
+        w.after(560, () => glint.destroy());
+      }
       s.tweens.add({
         targets: obj,
         x,
         y: y - 20,
-        angle: 360,
+        angle: art ? 180 - 13 : 360,
         duration: 520,
         ease: 'Quad.easeIn',
         onComplete: () => {
@@ -722,6 +740,115 @@ const grid: Cast = (w, f, ab, _target, mult) => {
   });
 };
 
+/**
+ * Ellie's swords: `count` of them pop out around the caster and circle her for
+ * `duration` seconds (a flat ellipse, the back half behind her), cutting
+ * whatever they pass; with `guard` she is shielded while they spin. Then the
+ * whole ring is flung at the enemy, spinning, as homing projectiles.
+ */
+const orbit: Cast = (w, f, ab, target, mult) => {
+  const s = w.stage;
+  const n = Math.round((ab.count ?? 4) * (mult > 1.5 ? 1.5 : 1));
+  const hold = (ab.duration ?? 1.4) * 1000 * Math.min(1.5, mult);
+  const radius = (f.height * 0.4 + 30 + n * 9) * Math.sqrt(Math.min(2, mult));
+  const swordH = 58 * Math.sqrt(Math.min(2.2, mult));
+  w.busy(f, 300);
+  f.squash(0.2);
+  sfxSummon();
+  if (ab.shout) sfxShout();
+  if (ab.guard) f.setShield(hold / 1000, ab.color, w.now);
+  const swords = Array.from({ length: n }, () => artObj(w, ab, f.cx, f.cy, swordH) ?? projectileObj(w, ab, f.cx, f.cy, mult));
+  const glints = swords.map((sw) => {
+    const g = trail(w, ab.color, mult * 0.7);
+    g.startFollow(sw);
+    return g;
+  });
+  for (const sw of swords) {
+    const sc = sw.scale;
+    sw.setScale(0);
+    s.tweens.add({ targets: sw, scale: sc, duration: 260, ease: 'Back.easeOut' });
+  }
+  burst(s, f.cx, f.cy, { count: 30, speed: 260, colors: [ab.color, 0xffffff, ab.color2 ?? 0xcfd8e6] });
+  const lastHit = new Map<Fighter, number>();
+  let t = 0;
+  let a0 = Math.random() * Math.PI * 2;
+  const place = () => {
+    swords.forEach((sw, i) => {
+      const a = a0 + (i / n) * Math.PI * 2;
+      sw.x = f.cx + Math.cos(a) * radius;
+      sw.y = f.cy + Math.sin(a) * radius * 0.5;
+      // Point outwards and lean with the spin; the back half goes behind her.
+      sw.rotation = a + Math.PI / 2 + 0.5;
+      sw.setDepth(Math.sin(a) < 0 ? f.y - 2 : DEPTH.fx);
+    });
+  };
+  place();
+  const ev = s.time.addEvent({
+    delay: 16,
+    loop: true,
+    callback: () => {
+      if (!f.active) {
+        ev.remove();
+        swords.forEach((sw) => sw.destroy());
+        glints.forEach((g) => g.destroy());
+        return;
+      }
+      t += 16;
+      a0 += 0.016 * (6 + Math.min(4, t / 300));
+      place();
+      if (t % 160 < 16) sfxWhoosh();
+      for (const e of w.enemiesOf(f)) {
+        if (w.now - (lastHit.get(e) ?? -1000) < 300) continue;
+        const near = swords.some((sw) => Math.abs(sw.x - e.cx) < e.height * 0.3 + 30 && Math.abs(sw.y - e.cy) < e.height * 0.45 + 20);
+        if (!near) continue;
+        lastHit.set(e, w.now);
+        burst(s, e.cx, e.cy, { count: 10, speed: 240, colors: [ab.color, 0xffffff] });
+        w.hit(e, ab.power * mult * f.power * 0.2, ab.color, f);
+      }
+    },
+  });
+  w.after(hold, () => {
+    ev.remove();
+    glints.forEach((g) => g.destroy());
+    if (!f.active) {
+      swords.forEach((sw) => sw.destroy());
+      return;
+    }
+    sfxWhoosh();
+    sfxPew();
+    const targets = pickTargets(w, f, target, n);
+    swords.forEach((sw, i) => {
+      const to = targets[i % Math.max(1, targets.length)];
+      if (!to) {
+        sw.destroy();
+        return;
+      }
+      sw.setDepth(DEPTH.fx);
+      // Off along the ring first, then the homing turns each one in.
+      const out = Phaser.Math.Angle.Between(f.cx, f.cy, sw.x, sw.y) + Math.PI / 2;
+      const speed = 700;
+      const tr = trail(w, ab.color, mult);
+      tr.startFollow(sw);
+      w.addProjectile({
+        obj: sw,
+        x: sw.x,
+        y: sw.y,
+        vx: Math.cos(out) * speed * 0.6 + Math.sign(to.cx - sw.x) * speed * 0.5,
+        vy: Math.sin(out) * speed * 0.6,
+        team: f.team,
+        target: to,
+        homing: true,
+        power: ab.power * mult * f.power * 0.45,
+        color: ab.color,
+        life: 2.4,
+        from: f,
+        trail: tr,
+        spinRate: 18,
+      });
+    });
+  });
+};
+
 export const CASTS: Record<AbilitySpec['kind'], Cast> = {
   bolt,
   beam,
@@ -744,6 +871,7 @@ export const CASTS: Record<AbilitySpec['kind'], Cast> = {
   eclipse,
   wave,
   grid,
+  orbit,
 };
 
 /** Fire an ability, with a name banner for big ones. */
