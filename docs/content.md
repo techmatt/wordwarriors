@@ -137,6 +137,20 @@ A team combo is a `ComboSpec` in `COMBOS` (`pair` of character ids + an ability,
 optionally `second`, what the second of the pair fires instead: Julia's stars and
 Ellie's bubble ring in Star Bubble Spin); any other pair uses `DEFAULT_COMBO`.
 
+## A form: a character's outfit for a scenario (`content/battle/forms.ts`)
+
+A character normally appears as its roster images (`char_<id>_good`, `face_<id>`). A
+form swaps them when the episode's cast matches: `FORMS.julia` has
+`{ id: 'chef', art: 'char_julia_chef', face: 'face_julia_chef', when: { ally: 'dada_jason' } }`,
+so with Dada Jason the chef as ally Julia is chef Julia from the moment she gets out of
+bed: walking in every room, in battle, on the journey map and at the victory, and her
+face card when JULIA is a word to read. Asleep in bed, the title and the pick screens
+keep her default images. To add one: an outfit entry in `content/art/assets.ts` (like
+`char_julia_chef`, and a `face_<id>_<outfit>` card), `art:alts` / `art:pick` for its
+images, then a line in `FORMS` with a `when` on the ally, the villain or both. The
+first match wins. The game asks `castArt(id)` / `castFace(id)` in
+`src/episode/Episode.ts`, never `charArt` directly, for anything shown after she wakes.
+
 ## Words (`content/phonics/words.ts`)
 
 `{ word, glyph | draw, decodable: true }` for a CVC word with a picture; sight words

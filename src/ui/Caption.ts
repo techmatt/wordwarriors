@@ -15,10 +15,10 @@
 
 import Phaser from 'phaser';
 
-import { charArt } from '../../content/art/assets';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { fitImage } from '../fx/juice';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
+import { castArt } from '../episode/Episode';
 
 const FONT = '"Arial Rounded MT Bold", "Arial Black", sans-serif';
 
@@ -80,7 +80,7 @@ export class Caption {
     this.portrait = null;
 
     const speakerChar = u.speaker === 'phonics' ? 'dada_matt' : u.speaker.replace(/_evil$/, '');
-    const key = charArt(speakerChar, u.speaker.endsWith('_evil'));
+    const key = castArt(speakerChar, u.speaker.endsWith('_evil'));
     if (this.scene.textures.exists(key)) {
       this.portrait = fitImage(this.scene.add.image(-GAME_WIDTH / 2 + 130, -20, key), 90, 112);
       this.root.add(this.portrait);

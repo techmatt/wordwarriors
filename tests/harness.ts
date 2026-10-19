@@ -33,7 +33,7 @@ export interface WWState {
     scene: string;
     round: string;
     locked: boolean;
-    player: { x: number; y: number };
+    player: { x: number; y: number; art: string };
     spots: { id: string; x: number; y: number; correct: boolean | null }[];
     shown: string[];
     spelling?: { word: string; filled: number };
@@ -48,8 +48,8 @@ export interface WWState {
     combos: number;
     movePicks: number;
     minions: number;
-    heroes: { id: string; hp: number; status: string | null }[];
-    villains: { id: string; hp: number; status: string | null }[];
+    heroes: { id: string; hp: number; status: string | null; art: string }[];
+    villains: { id: string; hp: number; status: string | null; art: string }[];
     /** The move words stand in the arena as pads (`spots`); she walks her hero onto one. */
     choice: { words: string[]; right: string; open: boolean; misses: number; spots: { word: string; x: number; y: number }[] } | null;
     /** Her hero's position. */

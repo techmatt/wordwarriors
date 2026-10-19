@@ -15,7 +15,7 @@ import { LETTER_BY_CHAR } from '../../../content/phonics/letters';
 import { WORD_BY_ID, pictureFor } from '../../../content/phonics/words';
 import { letterSoundLine, wordLine } from '../../../content/voice/ids';
 import { DEPTH, GAME_WIDTH } from '../../config';
-import { episode } from '../../episode/Episode';
+import { castFace, episode } from '../../episode/Episode';
 import { bob, popIn } from '../../fx/juice';
 import { choiceCount, pictureRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
@@ -76,7 +76,7 @@ export class WordToPicture extends Minigame {
     item.choices.forEach((word, i) => {
       const w = WORD_BY_ID[word]!;
       const pedestal = this.art('prop_pedestal', 170, 100);
-      const pic = this.art(pictureFor(w), 150, 150, 0, -100);
+      const pic = this.art(pictureFor(w, castFace), 150, 150, 0, -100);
       const spot = this.addSpot(word, xs[i]!, 520, [pedestal, pic], word === item.target);
       bob(this, pic, 5, 900 + i * 120);
       popIn(this, spot.obj, 1, 200 + i * 120);

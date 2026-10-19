@@ -18,7 +18,7 @@ import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH } from '../config';
 import { narratorLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
-import { advance, episode, narrator, type Step } from '../episode/Episode';
+import { advance, castArt, episode, narrator, type Step } from '../episode/Episode';
 import { fitImage } from '../fx/juice';
 import { Controls } from '../input/Controls';
 import { hookState, type SpotInfo } from '../testHooks';
@@ -109,7 +109,7 @@ export abstract class RoomScene extends Phaser.Scene {
     const bg = this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, this.background()).setDepth(DEPTH.ground);
     bg.setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
     this.controls = new Controls(this);
-    this.player = new Player(this, this.floor.centerX, this.floor.bottom - 10, this.playerCharacter(), this.floor);
+    this.player = new Player(this, this.floor.centerX, this.floor.bottom - 10, this.playerArt(), this.floor);
     this.dot = makeButtonDot(this, 0, 0, 'green', 18).setDepth(DEPTH.prompt).setVisible(false);
     // Yellow is always "say it again": a yellow dot with an ear, top right.
     this.helpDot = this.add
@@ -128,6 +128,11 @@ export abstract class RoomScene extends Phaser.Scene {
   /** Who walks: the hero, or Julia before a hero is chosen. */
   protected playerCharacter(): string {
     return episode.hero;
+  }
+
+  /** What she looks like walking: her form in this episode (Julia the chef with Dada Jason). */
+  protected playerArt(): string {
+    return castArt(this.playerCharacter());
   }
 
   /** Add a choosable thing standing in the room. */
@@ -314,7 +319,7 @@ export abstract class RoomScene extends Phaser.Scene {
       scene: this.scene.key,
       round: this.round,
       locked: this.locked,
-      player: { x: this.player.x, y: this.player.y },
+      player: { x: this.player.x, y: this.player.y, art: this.player.art },
       spots,
       shown: this.spots.filter((s) => s.obj.visible).map((s) => s.id),
       ...this.extraHooks(),

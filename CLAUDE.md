@@ -48,6 +48,7 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | `src/world/` | `RoomScene` (walk-to-answer rooms) and `Player` (her character as the cursor). |
 | `src/ui/`, `src/fx/` | Caption ribbon, follow-the-speaker bubbles, button dots; particles and juice. |
 | `content/battle/roster.ts` | **Every character**, good and evil: style, abilities, taunts, ultimate, counter-item. |
+| `content/battle/forms.ts` | Forms: a character's outfit images for a scenario (Julia the chef when Dada Jason is the ally). |
 | `content/phonics/` | Letter sounds (placeholder spellings by sound class), words, and `sentences.ts` (frames, fetchable key words and their battle items). |
 | `content/house/house.ts` | Bedrooms (objects and their reactions), the hub layout, side rooms. |
 | `content/voice/` | `script.ts` (narrator templates), `ids.ts` (line ids), `voices.json`, `lines.json` (generated), `clips/` (recordings that override edge-tts). |
@@ -175,6 +176,7 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 | "add a sentence / frame / fetchable item" | edit `content/phonics/sentences.ts` (frames, `FETCH_ITEMS`), same three commands |
 | "add a bedroom / side room / villain mood" | edit `content/house/house.ts` or the villain's `house` in the roster, same three commands |
 | "turn the pick screens back on" / "random villain" | `EPISODE_DEFAULTS` in `src/config.ts` |
+| "make it the chef episode" | `ally: 'dada_jason'` in `EPISODE_DEFAULTS` (Julia's chef form follows; forms are `content/battle/forms.ts`) |
 | "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`); for character art also set `FLIP_TO_FACE = true` in `src/config.ts` |
 | "here are my letter sound recordings" | see `docs/recording.md` |
 | "for X I pick n" (from an `art_alts_*` sheet) | `npm run art:pick -- X n`, commit `public/art/X.png` |

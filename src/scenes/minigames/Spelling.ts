@@ -21,7 +21,7 @@ import { letterSoundLine, narratorLine, wordLine } from '../../../content/voice/
 import { voiceBus } from '../../audio/VoiceBus';
 import { sfxBoing, sfxKey } from '../../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../../config';
-import { episode, narrator, villainSpec } from '../../episode/Episode';
+import { castFace, episode, narrator, villainSpec } from '../../episode/Episode';
 import { burst, fitImage, popIn, shake, wiggle } from '../../fx/juice';
 import { openTextEntry } from '../../input/TextEntry';
 import type { Spot } from '../../world/RoomScene';
@@ -92,7 +92,7 @@ export class Spelling extends Minigame {
     // A picture when the word has one; the magic word gets the item itself.
     const w = WORD_BY_ID[word];
     const last = this.itemIndex === this.words.length - 1;
-    const picKey = last ? `item_${villainSpec().counter.id}` : w ? pictureFor(w) : null;
+    const picKey = last ? `item_${villainSpec().counter.id}` : w ? pictureFor(w, castFace) : null;
     if (picKey) {
       const pic = fitImage(this.add.image(GAME_WIDTH / 2, 190, picKey), 150, 150).setDepth(DEPTH.hud - 2);
       popIn(this, pic, pic.scale);

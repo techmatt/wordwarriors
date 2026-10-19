@@ -9,12 +9,11 @@
 
 import Phaser from 'phaser';
 
-import { charArt } from '../../content/art/assets';
 import { fighterId, narratorLine, tauntLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxSelect } from '../audio/sfx';
 import { GAME_WIDTH } from '../config';
-import { episode, narrator, villainSpec } from '../episode/Episode';
+import { castArt, episode, narrator, villainSpec } from '../episode/Episode';
 import { bob, burst } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { RoomScene, type Spot } from '../world/RoomScene';
@@ -43,7 +42,7 @@ export class RetreatScene extends RoomScene {
 
     const friends = [episode.ally ?? narrator()];
     friends.forEach((id, i) => {
-      const img = this.art(charArt(id, false), 110, 140, 860 + i * 130, 520);
+      const img = this.art(castArt(id), 110, 140, 860 + i * 130, 520);
       img.setDepth(520);
       bob(this, img, 6, 700);
     });
@@ -59,7 +58,7 @@ export class RetreatScene extends RoomScene {
 
     // The villain looms small on a far hill, waiting.
     const vs = villainSpec();
-    const looming = this.art(charArt(vs.id, true), 70, 88, 1150, 300).setDepth(10);
+    const looming = this.art(castArt(vs.id, true), 70, 88, 1150, 300).setDepth(10);
     looming.setTint(0x9a8aaa);
     this.tweens.add({ targets: looming, y: 294, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
 

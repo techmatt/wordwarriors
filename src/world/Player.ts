@@ -9,7 +9,6 @@
 
 import Phaser from 'phaser';
 
-import { charArt } from '../../content/art/assets';
 import { FLIP_TO_FACE, WALK_SPEED } from '../config';
 import { fitImage } from '../fx/juice';
 
@@ -21,21 +20,30 @@ export class Player {
   private readonly shadow: Phaser.GameObjects.Ellipse;
   private walkT = 0;
   private moving = false;
-  private readonly baseScale: number;
+  private baseScale: number;
   facing = 1;
 
   constructor(
     private readonly scene: Phaser.Scene,
     x: number,
     y: number,
-    character: string,
+    art: string,
     private readonly floor: Phaser.Geom.Rectangle,
-    height = 130,
+    private readonly height = 130,
   ) {
     this.shadow = scene.add.ellipse(0, 0, height * 0.6, height * 0.16, 0x000000, 0.3);
-    this.sprite = fitImage(scene.add.image(0, 0, charArt(character, false)).setOrigin(0.5, 1), height * 0.8, height);
+    this.sprite = fitImage(scene.add.image(0, 0, art).setOrigin(0.5, 1), height * 0.8, height);
     this.baseScale = this.sprite.scale;
     this.root = scene.add.container(x, y, [this.shadow, this.sprite]);
+  }
+
+  /** Change what she looks like (her form, as she gets out of bed). */
+  setArt(art: string): void {
+    this.scene.tweens.killTweensOf(this.sprite);
+    this.sprite.setTexture(art);
+    fitImage(this.sprite, this.height * 0.8, this.height);
+    this.baseScale = this.sprite.scale;
+    this.sprite.setScale(this.baseScale * this.facing, this.baseScale);
   }
 
   get x(): number {
@@ -43,6 +51,11 @@ export class Player {
   }
   get y(): number {
     return this.root.y;
+  }
+
+  /** The image she is drawn with (test hooks). */
+  get art(): string {
+    return this.sprite.texture.key;
   }
 
   /** Teleport (tests and room setup). */

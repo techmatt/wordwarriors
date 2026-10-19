@@ -38,7 +38,7 @@ import {
   sfxZap,
 } from '../audio/sfx';
 import { DEPTH, DOOR_SPARKLE_MS, GAME_WIDTH } from '../config';
-import { episode, helper, villainSpec, type Step } from '../episode/Episode';
+import { castArt, episode, helper, villainSpec, type Step } from '../episode/Episode';
 import { bob, burst, flash, popIn, shake, squash, wiggle } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { applyHouseMood } from '../world/houseMood';
@@ -102,6 +102,11 @@ export class BedroomScene extends RoomScene {
     return `room_bedroom_${this.room.id}`;
   }
 
+  /** Asleep in bed she is in her default images; wakeUp() puts her form on. */
+  protected override playerArt(): string {
+    return charArt(episode.hero, false);
+  }
+
   protected build(): void {
     const room = this.room;
     this.round = 'bedroom:sleep';
@@ -163,7 +168,7 @@ export class BedroomScene extends RoomScene {
     if (h !== w) {
       const hx = room.waker.x - 140;
       const hy = room.waker.y + 20;
-      const f = this.art(charArt(h, false), 110, 145, hx, hy).setDepth(hy);
+      const f = this.art(castArt(h), 110, 145, hx, hy).setDepth(hy);
       friend = f;
       const s = f.scale;
       popIn(this, f, s);
@@ -249,6 +254,9 @@ export class BedroomScene extends RoomScene {
     this.breathing?.remove();
     this.breathing = null;
     this.player.place(x + 170, y + 50);
+    // Out of bed in her form for this episode (chef Julia when Dada Jason is
+    // the ally), dressed in the burst: asleep she is in her default images.
+    this.player.setArt(castArt(episode.hero));
     this.player.root.setScale(1, 0.3);
     this.tweens.add({ targets: this.player.root, scaleY: 1, duration: 260, ease: 'Back.easeOut' });
     this.player.hop();

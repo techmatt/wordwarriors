@@ -52,6 +52,8 @@ test('bedroom: the wake-up news, a toy reacts to green, the door leads to the hu
   expect(s.voice.history).toContain('wake_dada_matt_helper_ellie');
   expect(s.voice.history).toContain('wake_dada_matt_bad_tiamat');
   expect(s.room!.spots.map((sp) => sp.id)).toContain('door');
+  // The default episode is no scenario: she is up in her rainbow twirl dress.
+  expect(s.room!.player.art).toBe('char_julia_good');
 
   // Poke a toy: it does its thing (a burst), and nothing else happens.
   const before = s.fx.bursts ?? 0;
@@ -191,6 +193,22 @@ test('F9 out of a sentence room and back: it restarts cleanly', async ({ page })
   const hub = await until(page, (s) => s.scene === 'Hub', 30_000, 'hub');
   expect(hub.episode.fetched).toEqual([key]);
   expect(hub.episode.house.done).toContain('a');
+  expectNoErrors(errors);
+});
+
+test('chef scenario: with Dada Jason as ally, Julia wakes up as chef Julia and fights as her', async ({ page }) => {
+  const errors = collectErrors(page);
+  await boot(page, '?scene=bedroom&ally=dada_jason&nojourney=1');
+  // Asleep in bed: her default images (forms start once she is up).
+  const asleep = await until(page, (st) => st.scene === 'Bedroom' && st.room?.round === 'bedroom:sleep', 30_000, 'asleep');
+  expect(asleep.room!.player.art).toBe('char_julia_good');
+  const up = await until(page, (st) => st.scene === 'Bedroom' && st.room?.round === 'bedroom:news', 90_000, 'awake');
+  expect(up.room!.player.art).toBe('char_julia_chef');
+
+  await boot(page, '?scene=battle&part=1&ally=dada_jason&nojourney=1');
+  const b = await until(page, (s) => s.scene === 'Battle' && (s.battle?.heroes.length ?? 0) > 0, 30_000, 'battle');
+  expect(b.battle!.heroes.find((h) => h.id === 'julia')?.art).toBe('char_julia_chef');
+  expect(b.battle!.heroes.find((h) => h.id === 'dada_jason')?.art).toBe('char_dada_jason_good');
   expectNoErrors(errors);
 });
 

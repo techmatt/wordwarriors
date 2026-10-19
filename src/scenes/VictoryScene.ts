@@ -5,7 +5,6 @@
 
 import Phaser from 'phaser';
 
-import { charArt } from '../../content/art/assets';
 import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import { narratorLine, tauntLine, wordLine } from '../../content/voice/ids';
@@ -13,7 +12,7 @@ import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { advance, episode, narrator, villainSpec } from '../episode/Episode';
+import { advance, castArt, castFace, episode, narrator, villainSpec } from '../episode/Episode';
 import { burst, fitImage, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
@@ -68,7 +67,7 @@ export class VictoryScene extends Phaser.Scene {
     });
 
     const cast = [episode.hero, ...(episode.ally ? [episode.ally] : [])];
-    const all = [...cast.map((id) => charArt(id, false)), charArt(episode.villain, false)];
+    const all = [...cast.map((id) => castArt(id)), castArt(episode.villain)];
     all.forEach((key, i) => {
       const x = GAME_WIDTH / 2 + (i - (all.length - 1) / 2) * 220;
       const img = fitImage(this.add.image(x, 605, key).setOrigin(0.5, 1), 120, 150);
@@ -136,7 +135,7 @@ export class VictoryScene extends Phaser.Scene {
    */
   private pictureOf(w: string): string | null {
     const entry = WORD_BY_ID[w];
-    if (entry && (entry.character || this.textures.exists(pictureFor(entry)))) return pictureFor(entry);
+    if (entry && (entry.character || this.textures.exists(pictureFor(entry)))) return pictureFor(entry, castFace);
     if (episode.fetched.includes(w) && this.textures.exists(`pic_${w}`)) return `pic_${w}`;
     const counter = villainSpec().counter;
     if (counter.word === w || counter.words.includes(w)) return `item_${counter.id}`;

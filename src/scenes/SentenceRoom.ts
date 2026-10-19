@@ -33,7 +33,7 @@ import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxRight, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../config';
-import { backToHub, counterArt, episode, namedCounter, narrator, planFor, villainSpec, type Slot, type Step } from '../episode/Episode';
+import { backToHub, castFace, counterArt, episode, namedCounter, narrator, planFor, villainSpec, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
 import { frameIsSolid, type RoomPlan } from '../rules/sentences';
 import { progress } from '../state/progress';
@@ -141,7 +141,7 @@ export class SentenceRoom extends Minigame {
       const [x, y] = room.spots[i]!;
       const w = WORD_BY_ID[word];
       const pedestal = this.art('prop_pedestal', 170, 100);
-      const pic = this.art(w ? pictureFor(w) : `pic_${word}`, 150, 150, 0, -100);
+      const pic = this.art(w ? pictureFor(w, castFace) : `pic_${word}`, 150, 150, 0, -100);
       const spot = this.addSpot(word, x, y, [pedestal, pic], word === s.key);
       spot.obj.setData('pic', pic);
       spot.enabled = false;
@@ -465,7 +465,7 @@ export class SentenceRoom extends Minigame {
     } else {
       pic?.setVisible(false);
       const w = WORD_BY_ID[s.key];
-      const art = w ? pictureFor(w) : `pic_${s.key}`;
+      const art = w ? pictureFor(w, castFace) : `pic_${s.key}`;
       await Promise.all([this.guard(this.bag.receive(art, spot.x, picY)), this.say(narratorLine(narrator(), 'got_item'))]);
     }
     await this.wait(400);

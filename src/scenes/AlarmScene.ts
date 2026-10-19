@@ -8,13 +8,12 @@
 
 import Phaser from 'phaser';
 
-import { charArt } from '../../content/art/assets';
 import { fighterId, narratorLine, tauntLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxSiren, sfxUltimate } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { advance, episode, narrator, villainSpec } from '../episode/Episode';
+import { advance, castArt, episode, narrator, villainSpec } from '../episode/Episode';
 import { bob, burst, fitImage, flash, floatText, shake } from '../fx/juice';
 import { Controls } from '../input/Controls';
 import { hookState } from '../testHooks';
@@ -46,7 +45,7 @@ export class AlarmScene extends Phaser.Scene {
     const heroes = [episode.hero, ...(episode.ally ? [episode.ally] : [])];
     if (!episode.ally) heroes.push(narrator());
     heroes.forEach((id, i) => {
-      const img = fitImage(this.add.image(220 + i * 170, 560, charArt(id, false)).setOrigin(0.5, 1), 150, 190).setDepth(DEPTH.fx + 1);
+      const img = fitImage(this.add.image(220 + i * 170, 560, castArt(id)).setOrigin(0.5, 1), 150, 190).setDepth(DEPTH.fx + 1);
       bob(this, img, 6, 700 + i * 90);
       this.heroImgs.push(img);
     });
@@ -77,7 +76,7 @@ export class AlarmScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(0x000000);
     const dark = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x1a0022, 0).setDepth(DEPTH.fx - 1);
     this.tweens.add({ targets: dark, fillAlpha: 0.45, duration: 600 });
-    const vill = fitImage(this.add.image(GAME_WIDTH + 200, 600, charArt(v, true)).setOrigin(0.5, 1), 260 * Math.min(1.3, vf.size), 330 * Math.min(1.3, vf.size)).setDepth(DEPTH.fx);
+    const vill = fitImage(this.add.image(GAME_WIDTH + 200, 600, castArt(v, true)).setOrigin(0.5, 1), 260 * Math.min(1.3, vf.size), 330 * Math.min(1.3, vf.size)).setDepth(DEPTH.fx);
     await new Promise<void>((resolve) =>
       this.tweens.add({ targets: vill, x: 980, duration: 700, ease: 'Back.easeOut', onComplete: () => resolve() }),
     );

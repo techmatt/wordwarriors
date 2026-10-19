@@ -34,7 +34,6 @@
 
 import Phaser from 'phaser';
 
-import { charArt } from '../../content/art/assets';
 import { CHARACTER_BY_ID, MINIONS, comboFor, comboPart } from '../../content/battle/roster';
 import type { AbilitySpec, Status } from '../../content/battle/types';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
@@ -43,7 +42,7 @@ import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh, sfxWrong } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, WALK_SPEED } from '../config';
-import { advance, counterArt, counterWord, episode, helper, namedCounter, narrator, villainSpec, type Step } from '../episode/Episode';
+import { advance, castArt, counterArt, counterWord, episode, helper, namedCounter, narrator, villainSpec, type Step } from '../episode/Episode';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
@@ -190,11 +189,11 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     const heroIds = [episode.hero, ...(episode.ally ? [episode.ally] : [])];
     heroIds.forEach((id, i) => {
       const spec = CHARACTER_BY_ID[id]!.good;
-      const f = this.spawn(initFromSpec(spec, id, charArt(id, false), 'hero'), -120 - i * 100, 520 + i * 90);
+      const f = this.spawn(initFromSpec(spec, id, castArt(id), 'hero'), -120 - i * 100, 520 + i * 90);
       this.heroes.push(f);
     });
     const vid = fighterId(episode.villain, true);
-    this.villain = this.spawn(initFromSpec(v.evil, vid, charArt(episode.villain, true), 'villain'), GAME_WIDTH + 160, 540);
+    this.villain = this.spawn(initFromSpec(v.evil, vid, castArt(episode.villain, true), 'villain'), GAME_WIDTH + 160, 540);
     if (this.part === 2) for (const h of this.heroes) h.power = 1.25;
 
     this.makeHudLabels();
@@ -613,7 +612,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     let cameo: Fighter | null = null;
     if (!b || !b.active) {
       const id = narrator();
-      cameo = this.spawn(initFromSpec(CHARACTER_BY_ID[id]!.good, id, charArt(id, false), 'hero'), -160, a.y + 30);
+      cameo = this.spawn(initFromSpec(CHARACTER_BY_ID[id]!.good, id, castArt(id), 'hero'), -160, a.y + 30);
       cameo.invulnerable = true;
       b = cameo;
       void voiceBus.say(nameLine(id), 'bark', cameo);
@@ -1283,7 +1282,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.tweens.add({ targets: v.body, scaleX: 1.8, scaleY: 0, duration: 500, delay: 350, ease: 'Back.easeIn' });
     await this.simWait(1.0);
     sfxPoof();
-    const good = fitImage(this.add.image(v.x, v.y, charArt(episode.villain, false)).setOrigin(0.5, 1), 150, 190).setDepth(v.y + 1);
+    const good = fitImage(this.add.image(v.x, v.y, castArt(episode.villain)).setOrigin(0.5, 1), 150, 190).setDepth(v.y + 1);
     const gs = good.scale;
     good.setScale(0);
     this.tweens.add({ targets: good, scale: gs, duration: 500, ease: 'Back.easeOut' });
@@ -1572,7 +1571,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       this.fpsAcc = 0;
       this.fpsFrames = 0;
     }
-    const info = (f: Fighter) => ({ id: f.init.id, hp: Math.round((100 * f.hp) / f.maxHp), status: f.floored ? 'floored' : (f.status?.kind ?? null) });
+    const info = (f: Fighter) => ({ id: f.init.id, hp: Math.round((100 * f.hp) / f.maxHp), status: f.floored ? 'floored' : (f.status?.kind ?? null), art: f.init.art });
     hookState.battle = {
       part: this.part,
       phase: this.phase,

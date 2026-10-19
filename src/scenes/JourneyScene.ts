@@ -10,10 +10,9 @@
 
 import Phaser from 'phaser';
 
-import { charArt } from '../../content/art/assets';
 import { sfxSelect, sfxStep } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { episode, journeyStops, startStep, villainSpec } from '../episode/Episode';
+import { castArt, episode, journeyStops, startStep, villainSpec } from '../episode/Episode';
 import { burst, fitImage, popIn } from '../fx/juice';
 import { Controls } from '../input/Controls';
 import { hookState } from '../testHooks';
@@ -60,14 +59,14 @@ export class JourneyScene extends Phaser.Scene {
     // The villain waits at the battles, small and grumpy.
     const vStop = stops.findIndex((s, i) => i > here && s.icon === '⚔️');
     if (vStop >= 0) {
-      const v = fitImage(this.add.image(pos[vStop]!.x + 30, pos[vStop]!.y - 50, charArt(villainSpec().id, true)).setOrigin(0.5, 1), 60, 75);
+      const v = fitImage(this.add.image(pos[vStop]!.x + 30, pos[vStop]!.y - 50, castArt(villainSpec().id, true)).setOrigin(0.5, 1), 60, 75);
       this.tweens.add({ targets: v, y: v.y - 6, duration: 400, yoyo: true, repeat: -1 });
     }
 
     // Her character hops from the last stop to this one.
     const from = pos[Math.max(0, here - 1)]!;
     const to = pos[Math.max(0, here)]!;
-    const hero = fitImage(this.add.image(from.x, from.y - 40, charArt(episode.hero, false)).setOrigin(0.5, 1), 80, 100).setDepth(DEPTH.hud);
+    const hero = fitImage(this.add.image(from.x, from.y - 40, castArt(episode.hero)).setOrigin(0.5, 1), 80, 100).setDepth(DEPTH.hud);
     this.tweens.addCounter({
       from: 0,
       to: 1,

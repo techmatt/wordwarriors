@@ -82,11 +82,15 @@ export const WORDS: Word[] = [...CVC_WORDS, ...SIGHT_WORDS, ...SPECIAL_WORDS];
 
 export const WORD_BY_ID: Record<string, Word> = Object.fromEntries(WORDS.map((w) => [w.word, w]));
 
-/** The picture asset id for a word: its own card, or the character's. */
-export function pictureFor(word: Word): string {
+/**
+ * The picture asset id for a word: its own card, or the character's. `face`
+ * picks a character's card: the game passes `castFace`, so in a chef episode
+ * JULIA shows chef Julia's face (content/battle/forms.ts).
+ */
+export function pictureFor(word: Word, face: (character: string) => string = (c) => `face_${c}`): string {
   // A character's picture is its name-free face card: the normal card prints
   // the name, which would turn reading the name into matching letters.
-  return word.character ? `face_${word.character}` : `pic_${word.word}`;
+  return word.character ? face(word.character) : `pic_${word.word}`;
 }
 
 /** Capitalised, for names: "Seraphina!" rather than "seraphina!". */

@@ -20,6 +20,8 @@
 
 import Phaser from 'phaser';
 
+import { charArt } from '../../content/art/assets';
+import { formFor } from '../../content/battle/forms';
 import { CHARACTER_BY_ID, ROSTER } from '../../content/battle/roster';
 import type { CharacterSpec, CounterItem } from '../../content/battle/types';
 import { COUNTER_ROOM, FETCH_ROOMS } from '../../content/house/house';
@@ -152,6 +154,22 @@ export function narrator(state: EpisodeState = episode): string {
 /** The helper in the house (teaches the spell, fills `{helper}` in sentences): the ally, or the narrator. */
 export function helper(state: EpisodeState = episode): string {
   return narrator(state);
+}
+
+/**
+ * The image `id` appears as in this episode, once she is awake: its form's
+ * (content/battle/forms.ts: Julia the chef when Dada Jason is the ally), else
+ * its roster image. Evil versions have no forms. The title, the pick screens
+ * and Julia asleep in bed use `charArt` directly: the default images.
+ */
+export function castArt(id: string, evil = false, state: EpisodeState = episode): string {
+  if (evil) return charArt(id, true);
+  return formFor(id, state)?.art ?? charArt(id, false);
+}
+
+/** The name-free face card for `id` in this episode (names as sight words): its form's, else `face_<id>`. */
+export function castFace(id: string, state: EpisodeState = episode): string {
+  return formFor(id, state)?.face ?? `face_${id}`;
 }
 
 export function heroSpec(): CharacterSpec {

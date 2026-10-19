@@ -43,6 +43,10 @@ export const DEPTH = {
  * pick screens are skipped and the cast is fixed. `pickScreens: true` brings
  * back hero → ally → villain picks; `randomVillain: true` (with the picks off)
  * draws a surprise villain instead of `villain`.
+ *
+ * The cast also picks the scenario (content/battle/forms.ts): `ally:
+ * 'dada_jason'` is the chef episode, with Julia as chef Julia from the moment
+ * she wakes up. That one line is the whole switch.
  */
 export const EPISODE_DEFAULTS = {
   pickScreens: false,

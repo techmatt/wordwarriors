@@ -28,7 +28,8 @@ export interface RoomInfo {
   /** Changes every item: `<game>:<index>:<target>`. Wait for `=== expected`. */
   round: string;
   locked: boolean;
-  player: { x: number; y: number };
+  /** Where she stands, and the image she walks as (her form: `char_julia_chef` in a chef episode). */
+  player: { x: number; y: number; art: string };
   spots: SpotInfo[];
   /** Every spot drawn at all (enabled or not), by id: a door she cannot use yet is not drawn. */
   shown: string[];
@@ -42,8 +43,9 @@ export interface BattleInfo {
   part: number;
   phase: string;
   t: number;
-  heroes: { id: string; hp: number; status: string | null }[];
-  villains: { id: string; hp: number; status: string | null }[];
+  /** `art`: the image each fights as (a form's, for a hero in one). */
+  heroes: { id: string; hp: number; status: string | null; art: string }[];
+  villains: { id: string; hp: number; status: string | null; art: string }[];
   minions: number;
   abilitiesFired: number;
   ultimates: number;

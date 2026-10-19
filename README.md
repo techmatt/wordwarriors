@@ -89,6 +89,12 @@ Spell), the alarm and the retreat camp are **parked**: no episode includes them,
 before); `pickScreens: true` brings the pick screens back; `randomVillain: true` (picks
 off) draws a surprise villain. Matt dictates the values; a prompt applies them.
 
+The cast also picks a **scenario** (item 016): **`ally: 'dada_jason'`** in
+`EPISODE_DEFAULTS` is the chef episode, one line to switch, and Julia is chef Julia
+(`char_julia_chef`, her face card `face_julia_chef`) from the moment she gets out of
+bed. Which outfit goes with which cast is `FORMS` in `content/battle/forms.ts` (data;
+see `docs/content.md`, "A form"). `?ally=dada_jason` tries it without changing the default.
+
 A giant villain (roster `size` 2 or more: Evil Tiamat) is staged as one: she holds her
 own half of the arena instead of walking over the heroes (`stomp` in
 `src/battle/movement.ts`), steps to the front for her ultimate so growing fills the
@@ -280,7 +286,10 @@ npm run art:pick -- <id> <n>
   `content/art/assets.ts`, not a roster character: `refFor` gives any
   `char_<person>_<word>` id that person's photo reference, and the brief reuses their
   roster look up to the clothes. Its sheet is `scratch/art_alts_012_julia_chef.png`, its
-  picker manifest `scratch/art_alts_012_julia_chef.json`.
+  picker manifest `scratch/art_alts_012_julia_chef.json`. An outfit's face card is
+  `face_<person>_<word>` (`face_julia_chef`, item 016), which `refFor` also matches;
+  its sheet is `scratch/art_alts_016_julia_chef.png`, its manifest
+  `scratch/art_alts_016_julia_chef.json`.
 - `scratch/` is a junction to the main checkout's: a script in it imports with `../../`
   from the main checkout, not the worktree. Keep throwaway scripts outside it.
 - Item 009's sheets (2026-10-18) are `scratch/art_alts_009_<group>.png`; its picker

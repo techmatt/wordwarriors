@@ -49,6 +49,11 @@ export class PickScene extends RoomScene {
     return this.what === 'hero' ? 'julia' : episode.hero;
   }
 
+  /** The picks come before she wakes: her default images, never a form. */
+  protected override playerArt(): string {
+    return charArt(this.playerCharacter(), false);
+  }
+
   protected build(): void {
     const evil = this.what === 'villain';
     const ids = ROSTER.map((c) => c.id).filter((id) => this.what !== 'ally' || id !== episode.hero);
