@@ -33,23 +33,33 @@ machine, so a worktree does not need them again.
 Selection is walking everywhere: her hero walks to a thing and green picks it. All
 on-screen text is upper case. Yellow (Tab) says the last instruction again, or hints.
 
-1. Title: press green. (The hero / friend / bad-guy picks are off while v0.2 is being
-   tested; the cast comes from `EPISODE_DEFAULTS`, below.)
-2. **Bedroom.** She is asleep in bed; Dada Matt comes in: "Wake up, wake up!" and she
-   presses green to jump out of bed (after 6 seconds she wakes anyway). Then: "Good
+1. Title: press green. (The hero / friend / bad-guy picks are off; every episode's
+   cast is drawn fresh, below, "Who is in an episode".)
+2. **Bedroom.** She is asleep in bed; a dad comes in (Dada Matt 60% of the time, Dada
+   Jason 40%, each in one of his forms): "Wake up, wake up!" and she
+   presses green to jump out of bed (after 6 seconds she wakes anyway). Half the time
+   the other dad comes in too. Then: "Good
    news, Julia! Ellie is here to play! Bad news, Evil Tiamat is coming, and she wants to
    be the queen of the whole house!" The room darkens under the villain's mood (purple
-   smoke, dragon scales, a royal banner). No reading: every toy does something silly on green. The door
+   smoke, dragon scales, a royal banner). Then the helper says where they will train,
+   the **quest** ("To get ready, we have to play in my bubble castle up in the clouds!").
+   No reading: every toy does something silly on green. The door
    is there only for the waker's entrance and again once the news is told ("Find the
    door!"), when it pops out and glows; it sparkles if she has not gone through it 12
    seconds after the news (`DOOR_SPARKLE_MS`).
-3. **The house (hub).** The helper (the ally, or the narrator) teaches a spell: she
+3. **The quest place (the hub).** The door leads to the helper's quest place (the
+   forest gym, the bubble castle; or the house itself for a helper with no place) laid
+   out like the house: the helper by a magic circle, two side doors, later a secret
+   door, and a way out (the house's front door, a glowing portal anywhere else).
+   The helper (the ally, or the dad who woke her) teaches a spell: she
    stands in the magic circle, presses green, and the word flies into her. That word
    is her first battle move. Then two side doors pop out of the wall. **A door she
    cannot use yet is not there at all** (her first play: told to find the two doors,
    she walked to the shut front door), so every door and exit appears, with a little
    reveal, at the moment it opens.
-4. **Side rooms**, one sentence each, on a banner, key word last
+4. **Side rooms** (the place's own: the boulder yard and the climbing rocks of the
+   forest gym), each with a minigame drawn from a weighted pool (`src/rules/minigames.ts`;
+   today the sentence game in its frames), one sentence each, on a banner, key word last
    (`WE CAN USE THE NET`, `JULIA NEEDS THE CAT`). Pass 1 is read to her karaoke-style and stops at the key
    word, which pulses in silence (skipped once that frame is solid). Pass 2 is hers:
    each green lights the next word and says it, and yellow says the lit word. At the key
@@ -66,7 +76,8 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    until she picks the right one, which fires the supercharged move. The first choice
    is the spell she learned. It ends with the villain's ultimate: "Too strong! Retreat!", and the
    heroes pick themselves up and run for home.
-6. **The house, part 2.** Back in the hub a secret door pops out: the attic, with the
+6. **The quest place, part 2.** Back in the hub a secret door pops out: the attic (or the
+   place's secret room: the cave behind the waterfall), with the
    villain's counter sentence (`EVIL TIAMAT RUNS FROM THE BUS`: the frame and the word
    are drawn each episode). Then the front door again.
 7. **Battle part 2**: the counter beats the ultimate (a swarm of its picture: "NOT THE
@@ -95,16 +106,46 @@ The four v0.1 prep games (Sound to Letter, Blend Path, Word to Picture, Spell th
 Spell), the alarm and the retreat camp are **parked**: no episode includes them, but
 `?scene=` still opens each one.
 
-**`EPISODE_DEFAULTS`** in `src/config.ts` sets who is in an episode: `hero: 'julia'`,
-`ally: 'ellie'` (or `null`), `villain: 'tiamat'` (since item 014; Elsa and EvilRilla
-before); `pickScreens: true` brings the pick screens back; `randomVillain: true` (picks
-off) draws a surprise villain. Matt dictates the values; a prompt applies them.
+**Who is in an episode** (item 025) is drawn fresh each time (`src/rules/cast.ts`):
 
-The cast also picks a **scenario** (item 016): **`ally: 'dada_jason'`** in
-`EPISODE_DEFAULTS` is the chef episode, one line to switch, and Julia is chef Julia
-(`char_julia_chef`, her face card `face_julia_chef`) from the moment she gets out of
-bed. Which outfit goes with which cast is `FORMS` in `content/battle/forms.ts` (data;
-see `docs/content.md`, "A form"). `?ally=dada_jason` tries it without changing the default.
+- **The villain**: any character of the roster, each equally likely, a dad in one of
+  his forms; never one of her last four villains (kept with her progress).
+- **The ally**: any other good character; a dad sometimes, in one of his forms.
+- **The dads**: the one who wakes her (and narrates when there is no ally) is Dada Matt
+  60% of the time and Dada Jason 40% (`CAST_ODDS` in `src/config.ts`); half the time the
+  other dad comes in too. A dad already playing the ally or the villain takes no other
+  role; if both are busy the ally dad wakes her.
+- **The dads' forms**, one each per episode: Dada Matt the builder, the weightlifter,
+  the cyberdecker or the spell-blade; Dada Jason the chef, the warrior or the warlock.
+  Each form is a whole character (its own moves, villain version, counter and house
+  mood) speaking in the dad's own voice: `person` in `content/battle/roster.ts`.
+- **The quest**: the helper's place to train (`content/house/quests.ts`); anybody
+  without one trains at home, in the house.
+
+**`EPISODE_DEFAULTS`** in `src/config.ts`: `randomCast: true` draws as above;
+`randomCast: false` plays the fixed default episode (`hero: 'julia'`, `ally: 'ellie'`,
+`villain: 'tiamat'`, Dada Matt the builder wakes her), which `?cast=default` also plays
+and the tests use. `pickScreens: true` brings the parked pick screens back: they choose
+the hero, ally and villain (as persons: a dad picked there is in his own form), and the
+dads' roles, forms and the quest are drawn around them. Matt dictates the values; a
+prompt applies them.
+
+The cast also picks a **scenario** (item 016): with Dada Jason the chef as ally, Julia
+is chef Julia (`char_julia_chef`, her face card `face_julia_chef`) from the moment she
+gets out of bed; with warrior Dada Jason she is a little knight (`char_julia_knight`,
+item 025). Which outfit goes with which cast is `FORMS` in `content/battle/forms.ts`
+(data; see `docs/content.md`, "A form"). `?ally=dada_jason` tries the chef episode.
+
+Any cast can be tried from the URL (and stays for every episode that session):
+
+| URL | Does |
+| --- | --- |
+| `?seed=7` | The draw is repeatable: the same seed (and the same progress) plays the same episodes |
+| `?cast=default` | The fixed default episode (`cast=random` draws even with `randomCast: false`) |
+| `?ally=dada_matt_lifter`, `?villain=dada_jason_warlock` | A role by roster id; a dad's id alone (`dada_jason`) is his own form (chef); `ally=none` |
+| `?form=cyber,warrior` | The dads' forms by name: `builder` `lifter` `cyber` `blade`; `chef` `warrior` `warlock` |
+| `?primary=dada_jason` / `none`, `?secondary=1` / `0` | Who wakes her; whether the other dad comes in |
+| `?place=forest_gym` / `home` | The quest place, whoever the helper is (to look at one) |
 
 A giant villain (roster `size` 2 or more: Evil Tiamat) is staged as one: she holds her
 own half of the arena instead of walking over the heroes (`stomp` in
@@ -134,7 +175,8 @@ done, items in the bag):
 | `?scene=pick`, `?scene=parent` | A pick screen; the grown-ups page |
 | `?scene=sound` / `blend` / `picture` / `spell` / `alarm` / `retreat` | Parked v0.1 steps |
 
-Extras: `hero=`, `ally=` (`none` for no ally), `villain=`, `fetched=net,fan` (the
+Extras: the cast (above: `seed=`, `cast=default`, `hero=`, `ally=`, `villain=`,
+`form=`, `primary=`, `secondary=`, `place=`), `fetched=net,fan` (the
 battle items; that is the default), `nojourney` (skip the map).
 
 ## Tests
@@ -147,6 +189,10 @@ Two lanes:
   slow lane, which `npm run test:slow` runs alone (about 11½ minutes): the tests tagged `@slow`
   (bedroom, hub part 1, a whole sentence room, F9 out of a room, battle part 2), one
   whole episode at real time, and two episodes back to back.
+
+Every browser test plays the fixed default episode (`tests/harness.ts` adds
+`cast=default`) unless its URL asks for a draw (`seed=`): `tests/cast.spec.ts` plays
+drawn casts, and in the slow lane three whole random episodes (item 025).
 
 The browser tests run the page's clocks 3× fast (`WW_SPEED`, default 3; `tests/harness.ts`):
 timers, tweens, the game loop and voice playback together. The full-episode test alone
@@ -359,6 +405,10 @@ npm run art:pick -- <id> <n>
   (2026-10-18); Jormungandr uses `en-NZ-MitchellNeural` instead.
 - edge-tts sometimes times a two-word name as one boundary ("Dragon Parade");
   `align.ts` splits it rather than failing.
+- The other way round fails: a hyphenated word ("push-ups") counts as one word in the
+  text and is timed as two, so `voice:build` rejects the line ("expected 16 spoken
+  words ... timed 17"), even with a `say` that spells it as two (item 025). Keep
+  hyphens out of lines.
 - edge-tts pads each clip with ~1.5 s of silence; the build cuts mp3 frames after the
   last word + 0.2 s (`tools/voice/mp3.ts`). That took the voice folder from 23.7 MB to
   about 19 MB (1,557 lines then). Generated voice left git on 2026-10-18 (item 008) at

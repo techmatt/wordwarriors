@@ -159,8 +159,62 @@ face card when JULIA is a word to read. Asleep in bed, the title and the pick sc
 keep her default images. To add one: an outfit entry in `content/art/assets.ts` (like
 `char_julia_chef`, and a `face_<id>_<outfit>` card), `art:alts` / `art:pick` for its
 images, then a line in `FORMS` with a `when` on the ally, the villain or both. The
-first match wins. The game asks `castArt(id)` / `castFace(id)` in
+first match wins. The `when` names a roster id, so a dad's form counts: Julia is a little
+knight (`char_julia_knight`) beside warrior Dada Jason (`dada_jason_warrior`, item 025).
+(An outfit only swaps images; a dad's form is a whole character: next section.) The game asks `castArt(id)` / `castFace(id)` in
 `src/episode/Episode.ts`, never `charArt` directly, for anything shown after she wakes.
+
+## A dad's form: another whole character (`person` in the roster)
+
+Item 025 gave the dads forms that change more than clothes: weightlifter, cyberdecker and
+spell-blade Dada Matt (`dada_matt_lifter`, `dada_matt_cyber`, `dada_matt_blade`), warrior
+and warlock Dada Jason (`dada_jason_warrior`, `dada_jason_warlock`). Each is a full
+`CharacterSpec` in `ROSTER` with `person: 'dada_matt'` and a `form` name (`lifter`):
+its own good and evil fighters, abilities (move words from `MOVE_WORDS`), taunts,
+ultimate, counter item, arena, house mood and reformed lines, and a quest. The person's
+own entry carries the default form's name (`form: 'builder'`). What follows from `person`:
+
+- **Voice**: every line of the form is spoken by the person's speaker (`dada_matt`,
+  `dada_matt_evil`), so no `voices.json` entry is needed. Narrator lines, the wake-up
+  and the sentence prefix lines are per person (`PERSONS`); names are the person's
+  ("Dada Matt", "Evil Dada Matt"), so sentences read the same.
+- **Art**: `char_<form id>_good`, `char_<form id>_evil`, `face_<form id>`, drawn from
+  the person's photo (`refFor` matches `char_dada_matt_<anything>`). The look starts
+  from the person's face (`MATT_FACE`, `JASON_FACE` in roster.ts); only clothes and props change.
+- **Casting**: `drawCast` gives each dad one form per episode, and he is that form in
+  every role (the waker, the ally, the villain). `castId('dada_matt')` is the form he
+  plays now; `castArt`/`castFace` use it, so the caption portrait shows the lifter.
+- Combos are written for persons (Julia and any Dada Matt high-five).
+
+To add one: a roster entry like `dada_matt_lifter`, a `SPELL_WORDS` triple, a quest,
+then `voice:lines`, `voice:build`, `art:placeholders`, and `art:alts` for its three
+images, its counter item and its decals. Hyphens stay out of its lines (README,
+*Operational facts*).
+
+## A quest (`content/house/quests.ts`) and a quest place (`PLACES`, `content/house/house.ts`)
+
+A quest is `QUESTS[<roster id>] = { place, text, say? }`: the place the helper takes her
+and the setup line the helper says in the bedroom after the bad news, in their own
+voice (`quest_<id>`, group core). No reading words in it (rules.test.ts), and its words
+never become key words that episode (`saidBefore`). A character with no entry takes
+`HOME_QUEST`: the house, and the narrator's "we have to train right here at home".
+
+A place is `{ id, name, glyph, look, palette, rooms: [two side rooms], secret }`; its
+art is `room_place_<id>` (the hub, laid out like the house's: the game draws the
+helper, the magic circle, the doors and a `prop_portal` way out on top) and
+`room_side_<room id>` for each room. Several characters may share a place; tier-two
+places share the `secret_hideout` secret room. The glyph is the journey map's stop and
+the secret door's plaque. Look at one with `?place=<id>`.
+
+## A minigame (`MINIGAMES`, `src/rules/minigames.ts`)
+
+Each episode draws three games from the pool, one per room (two fetch games, then
+the counter game), weighted, never the same entry twice, apart from the quest. An
+entry is `{ id, scene, weight, slots: ['fetch'] | ['counter'] | both, frame? }`; today
+each sentence frame is one entry (`sentence:<frame>`, weight 1 times the frame's
+shakiness). A new game is one entry and its scene; the room's `RoomPlan` carries
+`game` and `scene`, and `enterRoom` starts that scene. Whatever it plays, it must end in
+a key word she read (the fetched thing or the counter), as `plan.sentence.key` does now.
 
 ## Words (`content/phonics/words.ts`)
 

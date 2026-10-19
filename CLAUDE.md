@@ -19,9 +19,14 @@ items are used, then the villain's ultimate still wins: "too strong, retreat") �
 part 2** (back at the hub, a secret door to the attic: the villain's counter sentence
 fetches the counter-item) → **battle part 2** (the counter beats the ultimate) → victory
 with a reading recap. A journey map shows before each battle and the victory.
-Testing defaults (`EPISODE_DEFAULTS` in `src/config.ts`): hero Julia, helper Ellie
-(she fights with bubbles and one summoned-sword move), villain Evil Tiamat (a giant; her named counter is the
-Magic Hat, shown when the bag draws HAT); the pick screens and the random villain are behind that config.
+The cast is drawn every episode (item 025, `src/rules/cast.ts`): a villain from the
+whole roster (never her last few), a random ally, the waking dad (Matt 60%, Jason 40%;
+the other dad half the time too), each dad in a random form (builder, weightlifter,
+cyberdecker, spell-blade Matt; chef, warrior, warlock Jason), and the helper's quest
+place (`content/house/quests.ts`) instead of the house. The fixed default episode
+(`EPISODE_DEFAULTS` in `src/config.ts`, `?cast=default`, what the tests play): hero
+Julia, helper Ellie (she fights with bubbles and one summoned-sword move), villain Evil
+Tiamat (a giant; her named counter is the Magic Hat, shown when the bag draws HAT).
 **Parked** (code kept, out of the episode, reachable by `?scene=`): Sound → Letter,
 Blend Path, Word → Picture, Spell the Spell, the alarm and the camp retreat.
 
@@ -47,8 +52,10 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | `src/rules/` | Phaser-free round generation. Unit-tested. |
 | `src/world/` | `RoomScene` (walk-to-answer rooms) and `Player` (her character as the cursor). |
 | `src/ui/`, `src/fx/` | Caption ribbon, follow-the-speaker bubbles, button dots; particles and juice. |
-| `content/battle/roster.ts` | **Every character**, good and evil: style, abilities, taunts, ultimate, counter-item. Every roster character is also a villain (`randomVillain` draws from the whole roster but the hero and ally). |
-| `content/battle/forms.ts` | Forms: a character's outfit images for a scenario (Julia the chef when Dada Jason is the ally). |
+| `content/battle/roster.ts` | **Every character**, good and evil: style, abilities, taunts, ultimate, counter-item. Every roster character is also a villain. The dads' forms are roster characters with `person` (voiced, narrating and waking as the dad). |
+| `content/battle/forms.ts` | Outfits: a character's images for a scenario (Julia the chef beside chef Dada Jason, the knight beside warrior Dada Jason). |
+| `content/house/quests.ts` | Quests: each ally's place to train and setup line; places themselves are `PLACES` in `house.ts`. |
+| `src/rules/cast.ts`, `src/rules/minigames.ts` | The episode's cast draw; the rooms' weighted minigame pool. |
 | `content/phonics/` | Letter sounds (placeholder spellings by sound class), words, and `sentences.ts` (frames, fetchable key words and their battle items). |
 | `content/house/house.ts` | Bedrooms (objects and their reactions), the hub layout, side rooms. |
 | `content/voice/` | `script.ts` (narrator templates), `ids.ts` (line ids), `voices.json`, `lines.json` (generated), `clips/` (recordings that override edge-tts). |
@@ -145,8 +152,9 @@ Adding a character, ability, word or line is data work: edit `content/`, then
   sight words use the name-free `face_<id>` cards, not the named character cards.
 - **Every instruction speaks with the spoken word highlighted** (the caption ribbon; in the
   sentence game the banner is the highlighter and the caption stays out of the way).
-- **Narrator** = the episode's ally, or Dada Matt with no ally (Matt, 2026-10-18). If Dada
-  Matt is the hero with no ally, Dada Jason narrates. Picks before an ally exists are Dada Matt.
+- **Narrator** = the episode's ally, or with no ally the primary dad, the one who woke
+  her (Matt, 2026-10-18; item 025), in his own voice whatever his form. Picks before an
+  ally exists are Dada Matt.
 - **Interjections** ("Ha!") are SFX, never `lines.json` lines (Matt, 2026-10-18).
 - **Letter sounds** are edge-tts placeholders by sound class (voiced continuants doubled,
   stops/fricatives "Buh"/"Suh"); each is its own line id so Matt's recorded clips replace
@@ -178,8 +186,10 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 | "add words" | edit `content/phonics/words.ts`, same three commands |
 | "add a sentence / frame / fetchable item" | edit `content/phonics/sentences.ts` (frames, `FETCH_ITEMS`), same three commands |
 | "add a bedroom / side room / villain mood" | edit `content/house/house.ts` or the villain's `house` in the roster, same three commands |
-| "turn the pick screens back on" / "random villain" | `EPISODE_DEFAULTS` in `src/config.ts` |
-| "make it the chef episode" | `ally: 'dada_jason'` in `EPISODE_DEFAULTS` (Julia's chef form follows; forms are `content/battle/forms.ts`) |
+| "turn the pick screens back on" / "always the same cast" | `EPISODE_DEFAULTS` in `src/config.ts` (`pickScreens`, `randomCast: false`) |
+| "Matt should wake her more / less often" | `CAST_ODDS` in `src/config.ts` |
+| "add a dad form" / "add a quest" / "add a minigame" | `docs/content.md`: a roster entry with `person`; `QUESTS` + `PLACES`; `MINIGAMES` |
+| "make it the chef episode" | `?ally=dada_jason` (Julia's chef form follows; outfits are `content/battle/forms.ts`) |
 | "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`); for character art also set `FLIP_TO_FACE = true` in `src/config.ts` |
 | "here are my letter sound recordings" | see `docs/recording.md` |
 | "for X I pick n" (from an `art_alts_*` sheet) | `npm run art:pick -- X n`, commit `public/art/X.png` |
