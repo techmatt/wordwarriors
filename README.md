@@ -23,6 +23,11 @@ Chrome started with `--autoplay-policy=no-user-gesture-required`, e.g.
 The first `npm install` on a machine also needs Playwright's browser for the tests and
 the art painter: `npx playwright install chromium chromium-headless-shell`.
 
+A fresh conductor worktree has no `node_modules/`: run `npm ci` first (about a minute).
+Without it `npx tsc` lands on npm's "this is not the tsc command you are looking for"
+stub and `npx tsx` cannot find `@playwright/test`. The Playwright browsers are per
+machine, so a worktree does not need them again.
+
 ## Playing an episode
 
 Selection is walking everywhere: her hero walks to a thing and green picks it. All
@@ -165,7 +170,10 @@ Every file has exactly one home (Matt, 2026-10-18):
 The main checkout holds the junctions; conductor links each worktree's to the same Drive
 folders, so a worktree shares one copy and never needs a full voice rebuild. Because the
 voice folder is shared, `voice:build` keeps mp3s of lines that left `lines.json` (another
-branch may still speak them); `voice:build -- --prune` deletes them. A checkout without
+branch may still speak them); `voice:build -- --prune` deletes them. The flip side: there
+is one `manifest.json`, so a branch that changes a line's text and runs `voice:build`
+changes what main speaks for that id too, before the branch lands (item 009 re-voiced
+630 `need_item_*`/`made_item_*`/`got_counter_*` lines this way). A checkout without
 `public/voice-gen/` runs mute with captions, and the unit test that checks the manifest
 fails. To link one by hand: `mklink /J public\voice-gen C:\Code\gdrive-sync\wordwarriors\voice-gen`
 (in `cmd`, from the checkout root).
@@ -186,7 +194,9 @@ a time.
 - **Numbers (2026-10-18, batch 1, ~180 images):** 27–55 s per image, about 0.3% of the Plus
   plan's 5-hour window per image (so roughly 300 images per window) and well under 0.1% of
   the weekly one. Three `art:gen` runs on disjoint id lists ran side by side without
-  trouble or slowing each other, which is the way to do a big batch.
+  trouble or slowing each other, which is the way to do a big batch. The allowance each
+  run prints is the plan's, so with runs side by side it climbs by all of their images
+  (item 009: 60% to 76% for about 51 images over four runs, still ~0.3% each).
 - **Committed PNGs are palette-quantized** with `sharp` (`shrinkPng` in
   `tools/art/generate.ts`): a room drops from 1.8 MB to about 0.3 MB, a sprite from about
   280 KB to 40–80 KB, with no visible change on flat cel-shaded art. The whole art folder

@@ -47,7 +47,7 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | `src/rules/` | Phaser-free round generation. Unit-tested. |
 | `src/world/` | `RoomScene` (walk-to-answer rooms) and `Player` (her character as the cursor). |
 | `src/ui/`, `src/fx/` | Caption ribbon, follow-the-speaker bubbles, button dots; particles and juice. |
-| `content/battle/roster.ts` | **Every character**, good and evil: style, abilities, taunts, ultimate, counter-item. |
+| `content/battle/roster.ts` | **Every character**, good and evil: style, abilities, taunts, ultimate, counter-item. Every roster character is also a villain (`randomVillain` draws from the whole roster but the hero and ally). |
 | `content/battle/forms.ts` | Forms: a character's outfit images for a scenario (Julia the chef when Dada Jason is the ally). |
 | `content/phonics/` | Letter sounds (placeholder spellings by sound class), words, and `sentences.ts` (frames, fetchable key words and their battle items). |
 | `content/house/house.ts` | Bedrooms (objects and their reactions), the hub layout, side rooms. |
@@ -62,6 +62,8 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | `docs/` | `systems.md` entry points; `engineering.md` measured facts; `content.md` how to add characters, abilities, words, art; `recording.md` Matt's voice side; `art.md` (generated) the art brief. |
 
 ## Commands
+
+A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 
 | Command | What |
 | --- | --- |

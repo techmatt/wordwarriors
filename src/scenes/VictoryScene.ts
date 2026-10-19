@@ -138,7 +138,7 @@ export class VictoryScene extends Phaser.Scene {
     if (entry && (entry.character || this.textures.exists(pictureFor(entry)))) return pictureFor(entry, castFace);
     if (episode.fetched.includes(w) && this.textures.exists(`pic_${w}`)) return `pic_${w}`;
     const counter = villainSpec().counter;
-    if (counter.word === w || counter.words.includes(w)) return `item_${counter.id}`;
+    if (counter.word === w) return `item_${counter.id}`;
     return null;
   }
 
