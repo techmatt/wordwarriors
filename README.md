@@ -235,9 +235,11 @@ When an image is weak but Matt should see the options before it changes, draw
 candidates instead of overwriting it:
 
 ```
-npm run art:alts -- <ids…> [--n=3] [--sheet=scratch/<name>.png] [--sheet-only] [--no-ref]
+npm run art:alts -- <ids…> [--n=3] [--sheet=scratch/<name>.png] [--sheet-only] [--manifest-only] [--no-ref]
 npm run art:pick -- <id> <n>
 ```
+
+`art:alts` writes a picker manifest for conductor's picker page by itself, `scratch/<name>.json` beside the sheet, with each candidate cut as the game shows it into `scratch/<name>/` (row notes: `PICK_NOTES` in `content/art/prompts.ts`); `--manifest-only` rewrites it without drawing.
 
 - `art:alts` draws `n` (default 3) new images per id with the same prompt and photo
   reference as `art:gen` and keeps them as `art-originals/alts/<id>-<n>.png`, numbered on
@@ -254,7 +256,8 @@ npm run art:pick -- <id> <n>
 - Corrections for an id (what an earlier image got wrong: a likeness, a prop that
   crowds a face) are `NOTES` in `content/art/prompts.ts`; they end the prompt for both
   `art:gen` and `art:alts`.
-- Item 009's sheets (2026-10-18) are `scratch/art_alts_009_<group>.png`.
+- Item 009's sheets (2026-10-18) are `scratch/art_alts_009_<group>.png`; its picker
+  manifest, all 13 ids in one, is `scratch/art_alts_009.json`.
 
 ## Operational facts
 

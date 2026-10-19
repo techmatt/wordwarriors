@@ -5,10 +5,14 @@
  * draws `n` new candidates per id with the same prompt and photo reference as
  * `art:gen`, and keeps each full-resolution image as
  * `art-originals/alts/<id>-<k>.png` (k counts on from the last one there).
- * `public/art/` is not touched. `--sheet=<file>` then writes a contact sheet of
- * the named ids: one row per id, the game's current image first (labelled
- * `current`), then every candidate labelled with its `k`, all cut exactly as
- * `art:gen` would cut them and drawn at one scale.
+ * `public/art/` is not touched. Every run then cuts each candidate of the named
+ * ids exactly as `art:pick` would into previews (`<sheet>/<id>-<k>.png`) and
+ * writes, beside them, a contact sheet (`--sheet=<file>`, default
+ * `scratch/art_alts_<date>_<time>.png`: one row per id, the game's current image
+ * first, labelled `current`, then every candidate labelled with its `k`, drawn at
+ * one scale) and a picker manifest for conductor's picker page (`<sheet>.json`,
+ * named after the sheet). `--sheet-only` skips the drawing; `--manifest-only`
+ * skips the drawing and the sheet.
  *
  * `npm run art:pick -- <id> <k>` makes candidate `k` the game's art: it becomes
  * `art-originals/<id>.png` and is cut into `public/art/<id>.png` by the same
@@ -23,12 +27,11 @@ import path from 'node:path';
 import type { Page } from '@playwright/test';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
-import { NO_GREEN, refFor } from '../../content/art/prompts.js';
+import { NOTES, PICK_NOTES, refFor } from '../../content/art/prompts.js';
 import { isMain } from '../voice/clips.js';
-import { ORIGINALS, OUT, codexPrompt, cut, describeUsage, exists, isBackground, openPage, processImage, refCrop, runCodex } from './generate.js';
+import { ORIGINALS, OUT, codexPrompt, cut, describeUsage, exists, gamePng, isBackground, openPage, refCrop, runCodex } from './generate.js';
 
 export const ALTS = path.join(ORIGINALS, 'alts');
-const SPRITE_SCALE = 2;
 
 const altFile = (id: string, k: number | string) => path.join(ALTS, `${id}-${k}.png`);
 
@@ -78,21 +81,70 @@ async function draw(argv: string[]): Promise<void> {
   }
 }
 
-/** A candidate's original, cut exactly as the game would cut it, as a data URL. */
-async function gameCut(page: Page, id: string, original: Buffer): Promise<string> {
-  const a = ART_BY_ID[id]!;
-  const sprite = !isBackground(id);
-  const scale = sprite ? SPRITE_SCALE : 1;
-  return (await processImage(page, original, { sprite, boxW: a.w * scale, boxH: a.h * scale, noGreen: NO_GREEN.has(id) })).url;
+/** The game's art for an id now, then each kept candidate cut exactly as `art:pick` would cut it. */
+interface Row {
+  id: string;
+  tiles: { key: string; label?: string; file: string }[];
 }
 
-export async function altSheet(page: Page, ids: string[], file: string): Promise<void> {
-  const rows: { id: string; tiles: { label: string; src: string }[] }[] = [];
+/**
+ * Cut every candidate of `ids` the way `art:pick` would (keying, trim, fit,
+ * palette shrink) into `<dir>/<id>-<k>.png`; never into `public/art`. A saved
+ * original (candidate 0, after a first pick) shows as its committed PNG.
+ */
+async function previews(page: Page, ids: string[], dir: string): Promise<Row[]> {
+  await mkdir(dir, { recursive: true });
+  const rows: Row[] = [];
   for (const id of ids) {
-    const tiles = [{ label: 'current', src: `data:image/png;base64,${(await readFile(path.join(OUT, `${id}.png`))).toString('base64')}` }];
-    for (const k of await candidates(id)) if (k > 0) tiles.push({ label: String(k), src: await gameCut(page, id, await readFile(altFile(id, k))) });
+    const tiles: Row['tiles'] = [{ key: 'current', file: path.join(OUT, `${id}.png`) }];
+    for (const k of await candidates(id)) {
+      if (k === 0) {
+        const game = altFile(id, '0.game');
+        if (await exists(game)) tiles.push({ key: '0', label: 'the original, before the first pick', file: game });
+        continue;
+      }
+      const file = path.join(dir, `${id}-${k}.png`);
+      await writeFile(file, (await gamePng(page, id, await readFile(altFile(id, k)))).png);
+      tiles.push({ key: String(k), file });
+    }
     rows.push({ id, tiles });
   }
+  return rows;
+}
+
+/**
+ * The picker manifest for conductor's picker page: one row per id, `current`
+ * first (the default), then the candidates keyed exactly as `art:pick` takes
+ * them. Image paths are relative to the manifest; `PICK_NOTES` and the id's
+ * NOTES correction become the row's note.
+ */
+async function altManifest(rows: Row[], file: string, name: string): Promise<void> {
+  const dir = path.dirname(file);
+  const rel = (f: string) => path.relative(path.resolve(dir), path.resolve(f)).split(path.sep).join('/');
+  const manifest = {
+    name,
+    title: `Art candidates (${name})`,
+    intro:
+      "One row per image. `current` is the game's art now; each number is a candidate cut exactly as the game would show it (keyed, trimmed, fitted, palette-shrunk). Keeping `current` changes nothing; a number means `npm run art:pick -- <id> <number>`.",
+    rows: rows.map((r) => {
+      const note = [PICK_NOTES[r.id], NOTES[r.id] && `Asked for this round: ${NOTES[r.id]}`].filter(Boolean).join(' ');
+      return {
+        id: r.id,
+        label: r.id,
+        ...(note ? { note } : {}),
+        options: r.tiles.map((t) => ({ key: t.key, image: rel(t.file), ...(t.label ? { label: t.label } : {}) })),
+      };
+    }),
+  };
+  await mkdir(dir, { recursive: true });
+  await writeFile(file, `${JSON.stringify(manifest, null, 2)}\n`);
+  console.log(`art:alts: picker manifest ${file} (${rows.length} rows, ${rows.reduce((n, r) => n + r.tiles.length - 1, 0)} candidates)`);
+}
+
+export async function altSheet(rows: Row[], page: Page, file: string): Promise<void> {
+  const ids = rows.map((r) => r.id);
+  const tiles = async (r: Row) => Promise.all(r.tiles.map(async (t) => ({ label: t.key, src: `data:image/png;base64,${(await readFile(t.file)).toString('base64')}` })));
+  const sheetRows = await Promise.all(rows.map(async (r) => ({ id: r.id, tiles: await tiles(r) })));
   const wide = ids.some(isBackground);
   const url = await page.evaluate(
     async ({ rows, wide }) => {
@@ -148,7 +200,7 @@ export async function altSheet(page: Page, ids: string[], file: string): Promise
       }
       return cv.toDataURL('image/png');
     },
-    { rows, wide },
+    { rows: sheetRows, wide },
   );
   await mkdir(path.dirname(file), { recursive: true });
   await writeFile(file, Buffer.from(url.slice(url.indexOf(',') + 1), 'base64'));
@@ -156,18 +208,31 @@ export async function altSheet(page: Page, ids: string[], file: string): Promise
 }
 
 export async function alts(argv: string[]): Promise<void> {
-  const sheet = argv.find((a) => a.startsWith('--sheet='))?.slice('--sheet='.length);
   const ids = argv.filter((a) => !a.startsWith('--'));
-  if (!ids.length) throw new Error('usage: npm run art:alts -- <ids…> [--n=3] [--sheet=<file>] [--sheet-only] [--no-ref]');
-  if (!argv.includes('--sheet-only')) await draw(argv);
-  if (sheet) {
-    const { page, close } = await openPage();
-    try {
-      await altSheet(page, ids, sheet);
-    } finally {
-      await close();
-    }
+  if (!ids.length) throw new Error('usage: npm run art:alts -- <ids…> [--n=3] [--sheet=<file>] [--sheet-only] [--manifest-only] [--no-ref]');
+  for (const id of ids) if (!ART_BY_ID[id]) throw new Error(`${id} is not an asset id (content/art/assets.ts)`);
+  const sheet = argv.find((a) => a.startsWith('--sheet='))?.slice('--sheet='.length) ?? defaultSheet();
+  const base = sheet.replace(/\.png$/i, '');
+  const name = path.basename(base);
+  // The name is the picker's URL part and choices file name.
+  if (!/^[a-z0-9][a-z0-9_-]{0,63}$/.test(name)) throw new Error(`--sheet: ${name} must be a lower-case slug (a-z, 0-9, _ and -), since it names the picker manifest too`);
+  const manifestOnly = argv.includes('--manifest-only');
+  if (!manifestOnly && !argv.includes('--sheet-only')) await draw(argv);
+  const { page, close } = await openPage();
+  try {
+    const rows = await previews(page, ids, base);
+    if (!manifestOnly) await altSheet(rows, page, `${base}.png`);
+    await altManifest(rows, `${base}.json`, name);
+  } finally {
+    await close();
   }
+}
+
+/** `scratch/art_alts_<yyyymmdd>_<hhmm>.png`, local time, when no `--sheet` is given. */
+function defaultSheet(): string {
+  const d = new Date();
+  const p = (n: number) => String(n).padStart(2, '0');
+  return path.join('scratch', `art_alts_${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}.png`);
 }
 
 export async function pick(argv: string[]): Promise<void> {

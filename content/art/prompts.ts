@@ -70,6 +70,21 @@ export const NOTES: Record<string, string> = {
   face_julia: 'Her mouth is a big happy closed-lip or toothy smile: NO tongue sticking out.',
 };
 
+/**
+ * What Matt should know when he picks among an id's candidates: the `note` on
+ * its row in the picker manifest `art:alts` writes (after the NOTES correction,
+ * which the row quotes by itself).
+ */
+const ANNA_REDESIGN = "The candidates are a redesign (item 009): dark-brown ponytail with a purple ribbon, plum tunic, magenta cape, so she no longer looks like Seraphina (compare Seraphina's current image, public/art/char_seraphina_good.png: copper curls, green tunic). `current` is the old copper-curls look; keeping it means reverting Anna's look text in content/battle/roster.ts so her brief matches her art.";
+export const PICK_NOTES: Record<string, string> = {
+  char_anna_good: ANNA_REDESIGN,
+  char_anna_evil: ANNA_REDESIGN,
+  face_anna: ANNA_REDESIGN,
+  room_bedroom_julia: 'Redrawn with no loose toys of its own: the first one painted a teddy and a rocket that doubled the toys the game puts on the floor.',
+  decal_rilla_footprint: 'Redrawn as one giant robot-gorilla footprint: the earlier try still read as bare human feet.',
+  arena_street: 'A livelier street: houses, a car, a shop awning, bunting, an open road for the fighters.',
+};
+
 /** Word pictures: one meaning each, and unlike their look-alikes (content/phonics/sentences.ts LOOKALIKES). */
 const PICTURES: Record<string, string> = {
   cat: 'a cat: a cute orange tabby cat sitting, tail curled, whiskers',

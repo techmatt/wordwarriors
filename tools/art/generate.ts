@@ -182,7 +182,7 @@ export async function openPage(): Promise<{ page: Page; close: () => Promise<voi
   return { page, close: () => browser.close() };
 }
 
-interface Processed {
+export interface Processed {
   url: string;
   w: number;
   h: number;
@@ -289,13 +289,19 @@ async function contactSheet(page: Page, ids: string[], sheet = SHEET): Promise<v
   console.log(`art: contact sheet ${sheet} (${ids.length} tiles)`);
 }
 
-/** Write the game-sized `public/art/<id>.png` from a full-resolution original. */
-export async function cut(page: Page, id: string, original: Buffer, note: string): Promise<void> {
+/** The game-sized PNG for an id from a full-resolution original: keyed, trimmed, fitted and shrunk. */
+export async function gamePng(page: Page, id: string, original: Buffer): Promise<{ png: Buffer; p: Processed }> {
   const a = ART_BY_ID[id]!;
   const sprite = !isBackground(id);
   const scale = sprite ? SPRITE_SCALE : 1;
   const p = await processImage(page, original, { sprite, boxW: a.w * scale, boxH: a.h * scale, noGreen: NO_GREEN.has(id) });
-  const png = await shrinkPng(Buffer.from(p.url.slice(p.url.indexOf(',') + 1), 'base64'));
+  return { png: await shrinkPng(Buffer.from(p.url.slice(p.url.indexOf(',') + 1), 'base64')), p };
+}
+
+/** Write the game-sized `public/art/<id>.png` from a full-resolution original. */
+export async function cut(page: Page, id: string, original: Buffer, note: string): Promise<void> {
+  const sprite = !isBackground(id);
+  const { png, p } = await gamePng(page, id, original);
   await writeFile(path.join(OUT, `${id}.png`), png);
   console.log(`art: ${id}: ${p.srcW}×${p.srcH} → ${p.w}×${p.h} (${Math.round(png.length / 1024)} KB)${sprite ? `, green fringe px ${p.fringe}` : ''}${note ? `; ${note}` : ''}`);
 }
