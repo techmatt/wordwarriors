@@ -24,7 +24,7 @@ const ROWS: [string, string, string][] = [
   ['Side room: her turn, a word said on green', 'anna_room', 'word_'],
   ['Side room: find it', 'default_room', 'find'],
   ['Victory: the recap says each word', 'default_victory', 'word_'],
-  ['Victory: the villain, good again, in a bubble', 'anna_victory', 'reformed_smaug_marshmallows'],
+  ['The victory scene: the villain, good again, says its own line', 'anna_victory', 'reformed_smaug_marshmallows'],
   ['Victory: Ellie sends her off', 'default_victory', 'nar_ellie_victory_2'],
   ['Battle: the partner in the move choice (compact)', 'default_battle', 'choice'],
   ['Battle: the opening line (compact)', 'default_battle', 'nar_ellie_battle_start'],

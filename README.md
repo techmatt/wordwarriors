@@ -87,8 +87,14 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    are drawn each episode). Then the front door again.
 7. **Battle part 2**: the counter beats the ultimate (a swarm of its picture: "NOT THE
    BUS!"; the villain's named item, Evil Tiamat's Magic Hat, when its own word comes
-   up), everyone finishes it, and the villain turns good. Victory replays the words she
-   read; green plays again.
+   up), everyone finishes it, and the villain turns good.
+8. **The victory scene** (item 027): the villain, good again, and everyone who took part
+   (Julia, the ally, the dads there) do something nice together: dessert round the table,
+   a picnic, the top of a mountain, a pillow fort, a boat ride, stargazing, a campfire or
+   a snow day, drawn at random and never last episode's. Four voiced lines in bubbles,
+   about 20 seconds: the host opens, the villain says its own line, Julia cheers, a dad
+   closes (chef Dada Jason baked the cake). Then the victory replays the words she read;
+   green plays again.
 
 Key words never repeat until her **word bag** has gone round: every key word (both side
 rooms and the attic) is drawn without replacement from the decodable CVC words, kept
@@ -101,7 +107,8 @@ The battle's move words come round the same way (item 018): 26 move words, each 
 answering to several, and a **move bag** that decides which ones she is asked to find,
 so fight after fight she meets new ones (`docs/content.md`, "Move words and the move
 bag"). A super shows a fan of its word's picture; the beaten villain, good again, says
-two lines of its own (`reformed` in the roster); the victory recap pictures every word.
+two lines of its own (`reformed` in the roster: the first as the battle ends, the second
+in the victory scene); the victory recap pictures every word.
 
 A journey map shows before each battle, the trip home after the retreat, and the
 victory. With the test harness answering instantly a v0.2 episode takes about 4.6
@@ -177,7 +184,8 @@ done, items in the bag):
 | `?scene=room&slot=a` (or `b`, `counter`) | A side room; `counter` is the attic |
 | `?scene=room&slot=a&game=word_machine` | The word machine (`game=` puts that game behind door a, in any URL) |
 | `?scene=battle&part=1` (or `2`) | A battle |
-| `?scene=victory&read=cat,sun,julia` | Victory, recapping those words |
+| `?scene=victory&read=cat,sun,julia` | The victory scene, then the victory recapping those words |
+| `?scene=victory&ending=boat` | That victory scene (`content/house/endings.ts` ids); F2 skips to the recap |
 | `?scene=pick`, `?scene=parent` | A pick screen; the grown-ups page |
 | `?scene=sound` / `blend` / `picture` / `spell` / `alarm` / `retreat` | Parked v0.1 steps |
 
@@ -428,6 +436,12 @@ npm run art:pick -- <id> <n>
   last word + 0.2 s (`tools/voice/mp3.ts`). That took the voice folder from 23.7 MB to
   about 19 MB (1,557 lines then). Generated voice left git on 2026-10-18 (item 008) at
   3,590 mp3s, 42.3 MB with manifest and cache; it lives in `public/voice-gen/` (*Storage*).
+- `scratch/` is a junction into the main checkout, so a `.ts` file run from there with
+  `npx tsx` resolves its relative imports against the main checkout's code, not the
+  worktree's (seen 2026-10-19, item 027). Put a throwaway script in the worktree root and
+  delete it after.
+- The bubble pops in over 180 ms (scale 0.2 to 1): a screenshot taken just as a bark
+  starts shows it tiny. Wait half a second after a line starts before a shot.
 - Placeholder art is painted in headless Chromium so emoji render; Windows 10's emoji
   font lacks Emoji 13+ glyphs (🪙 🪭 🪞 🪲 🥸 🪨), so the roster avoids them.
 - The game itself needs no network: art is committed, voice is on disk in `public/voice-gen/`.

@@ -17,8 +17,10 @@ fetching battle items; the front door appears once both are done: a door she can
 yet is not there at all) → **battle part 1** (the
 items are used, then the villain's ultimate still wins: "too strong, retreat") → **house
 part 2** (back at the hub, a secret door to the attic: the villain's counter sentence
-fetches the counter-item) → **battle part 2** (the counter beats the ultimate) → victory
-with a reading recap. A journey map shows before each battle and the victory.
+fetches the counter-item) → **battle part 2** (the counter beats the ultimate) → a
+**victory scene** (item 027, `content/house/endings.ts`: the villain, good again, and
+everyone there doing something nice together, four voiced lines) → victory with a
+reading recap. A journey map shows before each battle and the victory.
 The cast is drawn every episode (item 025, `src/rules/cast.ts`): a villain from the
 whole roster (never her last few), a random ally, the waking dad (Matt 60%, Jason 40%;
 the other dad half the time too), each dad in a random form (builder, weightlifter,
@@ -42,7 +44,7 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | Path | What |
 | --- | --- |
 | `src/` | Game source. `main.ts` boots Phaser; `config.ts` sizes, depth bands, pad colours. |
-| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Hub, the side rooms' games (SentenceRoom, WordMachine), Journey (the map before battles), Victory, Parent; parked: Pick, Alarm, Retreat and `minigames/` (the four v0.1 games). |
+| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Hub, the side rooms' games (SentenceRoom, WordMachine), Journey (the map before battles), Ending (the victory scene), Victory, Parent; parked: Pick, Alarm, Retreat and `minigames/` (the four v0.1 games). |
 | `src/battle/` | The battle simulation: `BattleScene` (the director scripts `part1`/`part2` live in it), `Fighter`, `abilities`, `movement`. |
 | `src/episode/Episode.ts` | The episode's state and step list. Scenes call `advance()`; nothing else decides flow. |
 | `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only). |
@@ -59,6 +61,7 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | `content/phonics/families.ts`, `src/rules/wordMachine.ts` | The word machine (item 026): word families (rimes from the pictured words, silly onsets) and each visit's rounds. |
 | `content/phonics/` | Letter sounds (placeholder spellings by sound class), words, and `sentences.ts` (frames, fetchable key words and their battle items). |
 | `content/house/house.ts` | Bedrooms (objects and their reactions), the hub layout, side rooms. |
+| `content/house/endings.ts`, `src/rules/endings.ts` | The victory scenes (item 027): backgrounds, props, lines by role; the draw and who says what. |
 | `content/voice/` | `script.ts` (narrator templates), `ids.ts` (line ids), `voices.json`, `lines.json` (generated), `clips/` (recordings that override edge-tts). |
 | `content/art/assets.ts` | Every art asset id, size and brief. |
 | `public/art/` | Generated, committed. Do not hand-edit. |
@@ -191,6 +194,7 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 | "Matt should wake her more / less often" | `CAST_ODDS` in `src/config.ts` |
 | "add a dad form" / "add a quest" / "add a minigame" | `docs/content.md`: a roster entry with `person`; `QUESTS` + `PLACES`; `MINIGAMES` |
 | "add a word family / silly word" / "more or fewer machine words" | `RIMES` in `content/phonics/families.ts` (then `voice:lines`, `voice:build`); `WORD_MACHINE` in `src/config.ts` |
+| "add a victory scene" / "change what they say at the end" | `ENDINGS` in `content/house/endings.ts` (`docs/content.md`, "A victory scene"), same three commands, then `art:alts` |
 | "make it the chef episode" | `?ally=dada_jason` (Julia's chef form follows; outfits are `content/battle/forms.ts`) |
 | "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`); for character art also set `FLIP_TO_FACE = true` in `src/config.ts` |
 | "here are my letter sound recordings" | see `docs/recording.md` |

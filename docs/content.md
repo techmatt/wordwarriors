@@ -34,7 +34,8 @@ One `CharacterSpec` in `ROSTER`:
     `word` the hero lacks is the spell it teaches in the hub (`src/rules/spell.ts`).
   - `reformed` (on the character, beside `counter`): two or more short, kid-funny lines
     the villain says in its good voice once beaten ("Sorry I was so stormy!"); the
-    battle's end says the first, the victory the second. Voiced as
+    battle's end says the first, the victory scene the second (item 027), so the
+    second should work as something said to friends at a party. Voiced as
     `reformed_<id>_<key>` in the villain's voice group.
   - `ultimate`: the evil one floors the heroes in Part 1 and is countered in Part 2.
   - `taunts`: `{ key, text }`, short, no interjections ("Ha!" is an SFX).
@@ -223,6 +224,34 @@ they stay out of the other rooms and the counter.
 
 Look at one game: `?game=word_machine` puts it behind door a; `?games=sentence` draws
 from the sentence game alone (the tests' default).
+
+## A victory scene (`ENDINGS`, `content/house/endings.ts`)
+
+After battle 2, before the recap, one scene plays (`src/scenes/EndingScene.ts`; the
+draw and the script are `src/rules/endings.ts`). A scene is `{ id, glyph, palette, look,
+props, stand, open, cheer, close, fit?, villains }`:
+
+- `look`: the background's brief (`room_end_<id>`); keep the middle and the floor clear
+  where the cast stands. `props`: `{ id, look, glyph, x, y, w, h, front? }`, art
+  `prop_end_<id>`, feet at `x, y`; a `front` prop (the table, the boat, the fort) stands
+  lower than the cast and so is drawn over them.
+- `stand`: the cast's feet line `y`, the span `left`–`right` they spread over, their
+  height `h`, and an optional `gap` nobody stands in (the campfire).
+- `open` (the host: the narrator), `cheer` (the hero), `close` (someone else there):
+  `{ text, say? }`, with no names, so any cast can say them; each is voiced for every
+  person (`end_<person>_<scene>_<key>`, group `end_<person>`). The villain's line between
+  `open` and `cheer` is its own second `reformed` line, so the replies must follow any of
+  them ("Yay! Come and sit with us!").
+- `fit`: `{ form, text }`, a dad form (roster id) that suits the scene; when he is there
+  (not as the villain) he says it in place of `close`, voiced only for him. `villains`:
+  roster ids whose reformed line suits it. A scene that fits the cast either way is
+  `FIT_WEIGHT` (3) times likelier; last episode's scene (ProgressStore `ending`) is
+  never drawn.
+
+Four lines plus the pauses (`ENDING_PAUSE`) come to about 18–24 s; the unit test checks
+every scene for every cast shape against the built voice and keeps it under 30 s. After
+adding one: `voice:lines`, `voice:build`, `art:placeholders`, then `art:alts` for its
+background and props. Look at it with `?scene=victory&ending=<id>`.
 
 ## A word family (`content/phonics/families.ts`, the word machine)
 
