@@ -181,7 +181,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, `arena_${v.arena}`).setDisplaySize(GAME_WIDTH, GAME_HEIGHT).setDepth(DEPTH.ground);
     this.darkRect = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0a0018, 0).setDepth(FLOOR_TOP - 5);
     this.controls = new Controls(this);
-    new Caption(this);
+    // Lighter in battle: a small box and face at the bottom, so the fight stays in view.
+    new Caption(this, { compact: true });
     new Bubbles(this);
     this.hud = this.add.graphics().setDepth(DEPTH.hud);
     this.cameras.main.fadeIn(300);

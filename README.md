@@ -159,6 +159,14 @@ port 5174, so a test run in a worktree cannot attach to the main checkout's dev 
 If 5184 is busy (another worktree's run) the suite fails at once rather than testing the
 wrong code.
 
+**Screenshots for judging the UI by eye** (not tests; item 024):
+`SHOTS_TAG=<tag> npx playwright test --config tests/shots/shots.config.ts` plays the
+bedroom, the hub and a side room, and the victory for four casts (and a battle up to its
+first move choice), shooting every line shortly after it starts into
+`scratch/ui_shots/<tag>/` (about 5 minutes; `-g bedroom` for one scene). It serves its own
+vite on port 5194. `npx tsx tests/shots/sheet.ts <beforeTag> <afterTag> <out.png>` puts
+two runs side by side.
+
 ## Content work
 
 Everything is data under `content/`; `docs/content.md` walks through each kind. After editing it:

@@ -147,6 +147,7 @@ export class BedroomScene extends RoomScene {
     this.doorOpens();
     const waker = this.art(charArt(w, false), 120, 160, room.door.x, room.door.y);
     waker.setDepth(room.waker.y);
+    this.caption.track(w, () => (waker.active ? { x: waker.x, y: waker.y } : null));
     await this.guard(
       new Promise<void>((resolve) =>
         this.tweens.add({ targets: waker, x: room.waker.x, y: room.waker.y, duration: 900, ease: 'Sine.easeInOut', onComplete: () => resolve() }),
@@ -170,6 +171,7 @@ export class BedroomScene extends RoomScene {
       const hy = room.waker.y + 20;
       const f = this.art(castArt(h), 110, 145, hx, hy).setDepth(hy);
       friend = f;
+      this.caption.track(h, () => (f.active ? { x: f.x, y: f.y } : null));
       const s = f.scale;
       popIn(this, f, s);
       burst(this, hx, hy - 70, { count: 50, colors: [0xffffff, 0xff9ad5, 0x7ad9ff, 0xffd23f] });

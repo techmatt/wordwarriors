@@ -34,6 +34,7 @@ import { bob, burst, flash, popIn, shockwave, squash } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { spellFor } from '../rules/spell';
 import { Bag } from '../ui/Bag';
+import type { KeepOut } from '../ui/Caption';
 import { applyHouseMood } from '../world/houseMood';
 import { RoomScene, type Spot } from '../world/RoomScene';
 
@@ -85,6 +86,16 @@ export class HubScene extends RoomScene {
     this.round = `hub:${this.part}:${phase}`;
   }
 
+  /** The spell scroll is a word she reads: the dialogue box keeps off it. */
+  protected override keepOut(): KeepOut[] {
+    const out = super.keepOut();
+    if (this.scroll?.active) {
+      const b = this.scroll.getBounds();
+      out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: 5 });
+    }
+    return out;
+  }
+
   protected build(): void {
     applyHouseMood(this, episode.villain, { seed: 21, floor: this.floor });
     new Bag(this);
@@ -93,6 +104,7 @@ export class HubScene extends RoomScene {
     // The helper, by the stairs.
     const friend = this.art(castArt(helper()), 110, 145, HUB.helper.x, HUB.helper.y).setDepth(HUB.helper.y);
     bob(this, friend, 6, 750);
+    this.caption.track(helper(), () => (friend.active ? { x: friend.x, y: friend.y } : null));
 
     this.buildCircle();
     this.buildDoors();

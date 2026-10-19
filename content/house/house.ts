@@ -72,16 +72,16 @@ export interface SideRoomSpec {
   palette: [number, number];
   /** Three places the answer objects stand. */
   spots: [number, number][];
-  /** Where she comes in. */
+  /** Where she comes in: above the dialogue box along the bottom (item 024), so it never hides her. */
   entry: { x: number; y: number };
 }
 
 /** Side rooms off the hub. Two are picked per episode for the fetch games; `attic` is the counter room. */
 export const SIDE_ROOMS: SideRoomSpec[] = [
-  { id: 'kitchen', name: 'Kitchen', look: 'A cartoon family kitchen: counters, a fridge with drawings, pots on hooks, a tiled floor', glyph: '🍳', palette: [0xffe0b0, 0xc89a6a], spots: [[300, 470], [640, 470], [980, 470]], entry: { x: 640, y: 650 } },
-  { id: 'playroom', name: 'Playroom', look: 'A bright playroom: toy boxes, a slide, beanbags, a carpet with a road map', glyph: '🧸', palette: [0xb0e0ff, 0xff9ad5], spots: [[300, 470], [640, 470], [980, 470]], entry: { x: 640, y: 650 } },
-  { id: 'garage', name: 'Garage', look: "A tidy garage: a workbench, bikes on the wall, Dada Jason's car under a sheet", glyph: '🔧', palette: [0x9aa6b8, 0x5a6a7a], spots: [[300, 470], [640, 470], [980, 470]], entry: { x: 640, y: 650 } },
-  { id: 'attic', name: 'Attic', look: 'A secret attic: sloped roof beams, old trunks, a round window with moonlight, cobwebs, a treasure-hunt feeling', glyph: '🗝️', palette: [0x5a3a2a, 0xffc87a], spots: [[300, 480], [640, 480], [980, 480]], entry: { x: 640, y: 650 } },
+  { id: 'kitchen', name: 'Kitchen', look: 'A cartoon family kitchen: counters, a fridge with drawings, pots on hooks, a tiled floor', glyph: '🍳', palette: [0xffe0b0, 0xc89a6a], spots: [[300, 470], [640, 470], [980, 470]], entry: { x: 640, y: 580 } },
+  { id: 'playroom', name: 'Playroom', look: 'A bright playroom: toy boxes, a slide, beanbags, a carpet with a road map', glyph: '🧸', palette: [0xb0e0ff, 0xff9ad5], spots: [[300, 470], [640, 470], [980, 470]], entry: { x: 640, y: 580 } },
+  { id: 'garage', name: 'Garage', look: "A tidy garage: a workbench, bikes on the wall, Dada Jason's car under a sheet", glyph: '🔧', palette: [0x9aa6b8, 0x5a6a7a], spots: [[300, 470], [640, 470], [980, 470]], entry: { x: 640, y: 580 } },
+  { id: 'attic', name: 'Attic', look: 'A secret attic: sloped roof beams, old trunks, a round window with moonlight, cobwebs, a treasure-hunt feeling', glyph: '🗝️', palette: [0x5a3a2a, 0xffc87a], spots: [[300, 480], [640, 480], [980, 480]], entry: { x: 640, y: 580 } },
 ];
 
 export const SIDE_ROOM_BY_ID: Record<string, SideRoomSpec> = Object.fromEntries(SIDE_ROOMS.map((r) => [r.id, r]));

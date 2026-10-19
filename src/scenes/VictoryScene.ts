@@ -19,7 +19,7 @@ import { Controls } from '../input/Controls';
 import { hookState } from '../testHooks';
 import { Bubbles, type BubbleAnchor } from '../ui/Bubbles';
 import { makeButtonDot } from '../ui/ButtonDot';
-import { Caption } from '../ui/Caption';
+import { Caption, type KeepOut } from '../ui/Caption';
 import { fitText } from '../ui/fitText';
 
 export class VictoryScene extends Phaser.Scene {
@@ -48,7 +48,19 @@ export class VictoryScene extends Phaser.Scene {
     this.cards = [];
     this.controls = new Controls(this);
     this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'room_victory').setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
-    new Caption(this);
+    // The recap cards light up as each word is said, so the box shows only
+    // who says it; it keeps off the cards, the podium and the title.
+    const keep = (o: { active: boolean; getBounds(): Phaser.Geom.Rectangle }, weight: number): KeepOut[] => {
+      if (!o.active) return [];
+      const b = o.getBounds();
+      return [{ x: b.x, y: b.y, w: b.width, h: b.height, weight }];
+    };
+    const podium: Phaser.GameObjects.Image[] = [];
+    let title: Phaser.GameObjects.Text | null = null;
+    const caption = new Caption(this, {
+      mode: (u) => (u.id.startsWith('word_') ? 'portrait' : undefined),
+      avoid: () => [...this.cards.flatMap((c) => keep(c, 3)), ...podium.flatMap((p) => keep(p, 2)), ...(title ? keep(title, 2) : [])],
+    });
     new Bubbles(this);
     this.cameras.main.fadeIn(400, 255, 255, 255);
 
@@ -76,16 +88,19 @@ export class VictoryScene extends Phaser.Scene {
     });
 
     const cast = [episode.hero, ...(episode.ally ? [episode.ally] : [])];
-    const all = [...cast.map((id) => castArt(id)), castArt(episode.villain)];
+    const ids = [...cast, episode.villain];
+    const all = ids.map((id) => castArt(id));
     all.forEach((key, i) => {
       const x = GAME_WIDTH / 2 + (i - (all.length - 1) / 2) * 220;
       const img = fitImage(this.add.image(x, 605, key).setOrigin(0.5, 1), 120, 150);
+      podium.push(img);
+      caption.track(ids[i]!, () => (img.active ? { x: img.x, y: 605 } : null));
       this.tweens.add({ targets: img, y: 575, duration: 300 + i * 40, yoyo: true, repeat: -1, ease: 'Quad.easeOut' });
       this.tweens.add({ targets: img, scaleY: img.scaleY * 0.9, scaleX: img.scaleX * 1.08, duration: 300 + i * 40, yoyo: true, repeat: -1, delay: 300 + i * 40 });
       if (i === all.length - 1) this.villainAnchor = { get x() { return img.x; }, get y() { return img.y; }, bubbleOffset: img.displayHeight, active: true };
     });
 
-    const title = this.add
+    title = this.add
       .text(GAME_WIDTH / 2, 105, 'VICTORY!', { fontFamily: '"Arial Black", sans-serif', fontSize: '104px', color: '#ffd23f', stroke: '#5a1a7a', strokeThickness: 16 })
       .setOrigin(0.5)
       .setDepth(DEPTH.hud);
@@ -143,8 +158,13 @@ export class VictoryScene extends Phaser.Scene {
       this.tweens.add({ targets: c, y: 335, duration: 700, yoyo: true, repeat: -1, delay: 300 + i * 90, ease: 'Sine.easeInOut' });
       sfxRight();
       burst(this, x, 345, { count: 30, speed: 300 });
+      // The card is the highlighter: lit gold and a little bigger while its word is said.
+      card.setStrokeStyle(10, 0xffd23f);
+      this.tweens.add({ targets: c, scale: 1.12, duration: 200, delay: 300, ease: 'Back.easeOut' });
       await voiceBus.say(wordLine(w));
       if (gone()) return;
+      card.setStrokeStyle(6, 0x5a4a8a);
+      this.tweens.add({ targets: c, scale: 1, duration: 200 });
     }
   }
 

@@ -30,7 +30,7 @@ import { LETTER_BY_CHAR } from '../../content/phonics/letters';
 import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { sfxRight, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../config';
 import { backToHub, castFace, counterArt, episode, namedCounter, narrator, planFor, villainSpec, type Slot, type Step } from '../episode/Episode';
@@ -40,6 +40,7 @@ import { progress } from '../state/progress';
 import type { RoomInfo } from '../testHooks';
 import { Bag } from '../ui/Bag';
 import { makeButtonDot } from '../ui/ButtonDot';
+import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
@@ -106,6 +107,25 @@ export class SentenceRoom extends Minigame {
   /** F9 to the parent page and back reopens this same room. */
   protected override sceneData(): object {
     return { step: this.step, slot: this.slot };
+  }
+
+  /**
+   * The banner is the highlighter here: the words it lights (the prefix line,
+   * each word on her turn, the key word's sounds) show only the reader's face,
+   * never a second copy of the words in the box.
+   */
+  protected override captionMode(u: Utterance): CaptionMode | undefined {
+    return u.id.startsWith('sent_') || u.id.startsWith('word_') || u.id.startsWith('letter_') ? 'portrait' : undefined;
+  }
+
+  /** The banner is what she reads: the box keeps off it above all. */
+  protected override keepOut(): KeepOut[] {
+    const out = super.keepOut();
+    if (this.banner?.active) {
+      const b = this.banner.getBounds();
+      out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: 6 });
+    }
+    return out;
   }
 
   private get keyIndex(): number {

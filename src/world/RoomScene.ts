@@ -17,14 +17,14 @@ import Phaser from 'phaser';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH } from '../config';
 import { narratorLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { advance, castArt, episode, narrator, type Step } from '../episode/Episode';
 import { fitImage } from '../fx/juice';
 import { Controls } from '../input/Controls';
 import { hookState, type SpotInfo } from '../testHooks';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { Bubbles } from '../ui/Bubbles';
-import { Caption } from '../ui/Caption';
+import { Caption, type CaptionMode, type KeepOut } from '../ui/Caption';
 import { Player } from './Player';
 
 /** Nothing happening for this long offers the prompt again. */
@@ -45,6 +45,8 @@ export interface Spot {
 
 export abstract class RoomScene extends Phaser.Scene {
   protected controls!: Controls;
+  /** The dialogue box: rooms tell it who stands where (`track`). */
+  protected caption!: Caption;
   protected player!: Player;
   protected spots: Spot[] = [];
   protected floor = new Phaser.Geom.Rectangle(80, 300, GAME_WIDTH - 160, GAME_HEIGHT - 430);
@@ -118,7 +120,7 @@ export abstract class RoomScene extends Phaser.Scene {
     this.idleMs = 0;
     this.hasMoved = false;
     this.stickHint = null;
-    new Caption(this);
+    this.caption = new Caption(this, { avoid: () => this.keepOut(), mode: (u) => this.captionMode(u) });
     new Bubbles(this);
     this.cameras.main.fadeIn(250, 0, 0, 0);
     startMusic(this.music());
@@ -188,6 +190,30 @@ export abstract class RoomScene extends Phaser.Scene {
     this.locked = true;
     await this.guard(voiceBus.sequence(ids));
     this.locked = false;
+  }
+
+  /**
+   * What the dialogue box must not cover: the things she can walk to (the
+   * ones she can choose now count most) and her character. Rooms add their
+   * reading targets (the sentence banner, the spell scroll).
+   */
+  protected keepOut(): KeepOut[] {
+    const out: KeepOut[] = [];
+    for (const s of this.spots) {
+      if (!s.obj.active || !s.obj.visible) continue;
+      const b = s.obj.getBounds();
+      out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: s.enabled ? 3 : 1 });
+    }
+    if (this.player?.root.active) {
+      const b = this.player.root.getBounds();
+      out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: 2 });
+    }
+    return out;
+  }
+
+  /** How a line shows in the dialogue box; undefined keeps the box's own rules. */
+  protected captionMode(_u: Utterance): CaptionMode | undefined {
+    return undefined;
   }
 
   protected wait(ms: number): Promise<void> {
