@@ -9,7 +9,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { boot, choose, collectErrors, expectNoErrors, leaveBedroom, playEntry, seedProgress, state, until, type WWState } from './harness';
+import { boot, choose, collectErrors, expectNoErrors, leaveBedroom, playEntry, press, seedProgress, state, until, type WWState } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/033_${name}.png` });
 
@@ -116,6 +116,43 @@ test('warm-up misses: "that\'s the CAT, we need the ...", the clue again at the 
   expect(p.grabs[g.word]).toMatchObject({ seen: 1, wrong: 3, recent: [false] });
   expect(p.grabLevels[g.word]).toBe(1);
   expect(got.episode.fetched).toEqual([g.word]);
+  expectNoErrors(errors);
+});
+
+test('F9 and back: a miss before it still counts; after the grab the hall comes back done, nothing recorded twice @slow', async ({ page }) => {
+  test.setTimeout(180_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=grab&nojourney=1');
+  const s = await clued(page);
+  const g = s.room!.grab!;
+  await choose(page, `grab_${g.objects.find((w) => w !== g.word)!}`);
+  await until(page, (st) => st.room?.grab?.misses === 1, 30_000, 'a miss');
+  await clued(page);
+  await page.keyboard.press('F9');
+  await until(page, (st) => st.scene === 'Parent', 10_000, 'parent');
+  await shot(page, 'parent');
+  await press(page, 'red');
+  const back = await clued(page);
+  expect(back.room!.grab).toMatchObject({ word: g.word, level: 2, misses: 1 });
+  await choose(page, `grab_${g.word}`);
+  const got = await until(page, (st) => st.room?.round === 'entry:door' && !st.room.locked, 60_000, 'door open');
+  const rec = () => (got.progress as unknown as { grabs: Record<string, { seen: number; recent: boolean[] }>; grabLevels: Record<string, number> });
+  expect(rec().grabs[g.word]).toMatchObject({ seen: 1, recent: [false] });
+  expect(rec().grabLevels[g.word]).toBe(1);
+
+  await page.keyboard.press('F9');
+  await until(page, (st) => st.scene === 'Parent', 10_000, 'parent again');
+  await shot(page, 'parent_levels');
+  await press(page, 'red');
+  const done = await until(page, (st) => st.scene === 'Entry' && st.room?.round === 'entry:door' && !st.room.locked, 30_000, 'back at the open door');
+  expect(done.room!.shown).toContain('door');
+  expect(done.room!.spots.map((sp) => sp.id)).toEqual(['door']);
+  const p = done.progress as unknown as { grabs: Record<string, { seen: number }>; grabLevels: Record<string, number> };
+  expect(p.grabs[g.word]!.seen).toBe(1);
+  expect(p.grabLevels[g.word]).toBe(1);
+  expect(done.episode.fetched).toEqual([g.word]);
+  await choose(page, 'door');
+  await until(page, (st) => st.scene === 'Hub', 30_000, 'hub');
   expectNoErrors(errors);
 });
 

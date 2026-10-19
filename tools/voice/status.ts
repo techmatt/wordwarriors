@@ -17,7 +17,8 @@ export async function voiceStatus(): Promise<void> {
   const by = { fresh: [] as string[], stale: [] as string[], missing: [] as string[] };
   for (const l of lines) by[clipStateFor(l, index).state].push(l.id);
 
-  const letters = lines.filter((l) => l.id.startsWith('letter_'));
+  // The sounds only: the letter names (item 033, `letter_<x>_name`) are ordinary lines.
+  const letters = lines.filter((l) => l.id.startsWith('letter_') && l.id.endsWith('_sound'));
   const lettersLeft = letters.filter((l) => clipStateFor(l, index).state !== 'fresh').map((l) => l.id.slice(7, 8));
   console.log(`voice: ${lines.length} lines; ${by.fresh.length} recorded, ${by.stale.length} stale, ${by.missing.length} on edge-tts`);
   console.log(`letter sounds still placeholder (${lettersLeft.length}/26): ${lettersLeft.join(' ') || 'none'}`);

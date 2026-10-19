@@ -94,7 +94,13 @@ export class EntryScene extends RoomScene {
   protected build(): void {
     const plan = grabPlan();
     this.word = plan.word;
-    this.level = grabLevel(progress, this.word);
+    // The level and the misses live on the episode, so a trip to the parent
+    // page (F9) and back neither forgets a miss nor reads the level it moved.
+    const g = episode.grab!;
+    g.level ??= grabLevel(progress, this.word);
+    this.level = g.level as GrabLevel;
+    this.misses = g.misses;
+    const got = episode.fetched.includes(this.word);
     this.setPhase('intro');
 
     const things = ENTRY_HALL.spots.map((p) => new Phaser.Geom.Rectangle(p.x - 70, p.y - 140, 140, 150));
@@ -124,7 +130,11 @@ export class EntryScene extends RoomScene {
       const label = this.add.text(0, -16, word.toUpperCase(), { fontFamily: FONT, fontSize: '28px', color: '#3a2412' }).setOrigin(0.5);
       const spot = this.addSpot(`grab_${word}`, p.x, p.y, [pic, plate, label], word === this.word);
       spot.obj.setData('word', word);
-      spot.obj.setData('pic', pic);
+      if (got) {
+        // Back from the parent page with it in her bag: the hall as she left it.
+        spot.enabled = false;
+        if (word === this.word) spot.obj.setVisible(false);
+      }
     });
 
     // The front door: not there until she has the thing (a door she cannot use yet is not there at all).
@@ -134,7 +144,38 @@ export class EntryScene extends RoomScene {
     this.doorSpot.obj.setVisible(false);
 
     this.buildBoard();
+    if (got) {
+      this.showLetters();
+      this.board?.setVisible(true);
+      this.openDoor(false);
+      return;
+    }
     void this.run();
+  }
+
+  /** The board shows the whole word, green: she has it. */
+  private showLetters(): void {
+    for (const [i, t] of this.tiles.entries()) {
+      t.letter.setText(this.word[i]!.toUpperCase());
+      t.box.setFillStyle(0xb8f5a0, 1);
+    }
+  }
+
+  /** The front door pops out of the wall, glowing, and is the way on. */
+  private openDoor(pop = true): void {
+    const d = this.doorSpot;
+    if (d) {
+      d.obj.setVisible(true);
+      if (pop) popIn(this, d.obj);
+      const light = this.add.image(0, -100, TEX.glow).setTint(0xfff1a8).setBlendMode(Phaser.BlendModes.ADD).setScale(2.2).setAlpha(0.6);
+      d.obj.addAt(light, 0);
+      this.tweens.add({ targets: light, alpha: 0.95, scale: 2.6, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+      if (pop) burst(this, d.x, d.y - 100, { count: 30 });
+      d.correct = true;
+      d.enabled = true;
+    }
+    this.setPhase('door');
+    this.locked = false;
   }
 
   /** The letter board: one box per letter, empty until the clue fills or lights it. */
@@ -218,6 +259,7 @@ export class EntryScene extends RoomScene {
   private async wrong(spot: Spot): Promise<void> {
     this.locked = true;
     this.misses++;
+    if (episode.grab) episode.grab.misses = this.misses;
     const picked = spot.obj.getData('word') as string;
     sfxWrong();
     wiggle(this, spot.obj);
@@ -247,10 +289,7 @@ export class EntryScene extends RoomScene {
     burst(this, spot.x, y, { count: 50, speed: 450 });
     shockwave(this, spot.x, y, 0xffd23f, 140);
     floatText(this, spot.x, y - 90, firstTry ? 'WOW!' : 'YES!', '#ffd23f');
-    for (const [i, t] of this.tiles.entries()) {
-      t.letter.setText(this.word[i]!.toUpperCase());
-      t.box.setFillStyle(0xb8f5a0, 1);
-    }
+    this.showLetters();
     await this.say(wordLine(this.word));
 
     // Into the bag it goes.
@@ -261,20 +300,7 @@ export class EntryScene extends RoomScene {
     await this.narrate('grab_door');
     this.locked = true;
 
-    // The front door pops out of the wall, glowing.
-    const d = this.doorSpot;
-    if (d) {
-      d.obj.setVisible(true);
-      popIn(this, d.obj);
-      const light = this.add.image(0, -100, TEX.glow).setTint(0xfff1a8).setBlendMode(Phaser.BlendModes.ADD).setScale(2.2).setAlpha(0.6);
-      d.obj.addAt(light, 0);
-      this.tweens.add({ targets: light, alpha: 0.95, scale: 2.6, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-      burst(this, d.x, d.y - 100, { count: 30 });
-      d.correct = true;
-      d.enabled = true;
-    }
-    this.setPhase('door');
-    this.locked = false;
+    this.openDoor();
   }
 
   protected override extraHooks() {

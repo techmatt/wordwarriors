@@ -97,7 +97,7 @@ export interface EpisodeState {
    * entry hall and the hall's pictures. Drawn before the house plan, which
    * keeps the word out of its reading.
    */
-  grab: { word: string; objects: string[] } | null;
+  grab: { word: string; objects: string[]; level: number | null; misses: number } | null;
   /** The victory scene (content/house/endings.ts id), drawn when it starts (item 027). */
   ending: string | null;
   /** The showdown's fight style (content/battle/fights.ts id), drawn at the first battle (item 031). */
@@ -377,8 +377,11 @@ function grabWord(): string {
   if (!episode.grab) {
     episode.spell ??= spellFor(episode.hero, helper());
     // Not a word on either battle's move pads (planned up front) either: she reads those.
-    const avoid = [episode.spell, ...moveWords(), ...(episode.house.plan ? readingWords() : [])];
-    episode.grab = { word: pickGrab(progress, avoid), objects: [] };
+    // Nor the villain's named counter word (HAT for Evil Tiamat): that would keep her named counter out this episode.
+    const named = CHARACTER_BY_ID[episode.villain]?.counter.word;
+    const avoid = [episode.spell, ...moveWords(), ...(named ? [named] : []), ...(episode.house.plan ? readingWords() : [])];
+    // `level` is read when the hall opens, `misses` counted there: kept here so a trip to the parent page loses neither.
+    episode.grab = { word: pickGrab(progress, avoid), objects: [], level: null, misses: 0 };
   }
   return episode.grab.word;
 }

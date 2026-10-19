@@ -60,7 +60,8 @@ export class ParentScene extends Phaser.Scene {
 
     this.grid('Letter sounds', 'sounds', LETTERS.map((l) => l.letter), 30, 90, 6, 200);
     const spelled = Object.entries(snap.spelling ?? {}).map(([w, st]) => `${w} ×${st.seen}`);
-    fitText(this.add.text(1040, 90, ['Spelled (typing, kept apart', 'from reading):', ...spelled.slice(0, 7)], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - 1040 - 20, 200);
+    fitText(this.add.text(1040, 90, ['Spelled (typing, kept apart', 'from reading):', ...spelled.slice(0, 3)], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - 1040 - 20, 85);
+    this.grabView(840, 182, GAME_WIDTH - 840 - 20, 112);
     // Every word in the content, plus any other word she has met (spelling, move words).
     const words = [...new Set([...WORDS.map((w) => w.word), ...Object.keys(snap.words)])];
     // Columns narrow to stay left of the frames column, however many words she has met.
@@ -74,6 +75,23 @@ export class ParentScene extends Phaser.Scene {
       `(${SENTENCE_SOLID.tries}+ tries, last ${SENTENCE_SOLID.lastRight} right).`,
     ], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#555' }), GAME_WIDTH - 880 - 20, 40);
     this.bagView(880, framesEnd + 44);
+  }
+
+  /**
+   * The home warm-up (item 033): each word's level on the ramp, with its grabs
+   * (tries · first-try right, recent). Words she has never grabbed are at the start level.
+   */
+  private grabView(x: number, y: number, w: number, h: number): void {
+    const rows = ([1, 2, 3] as const).map((l) => {
+      const ws = GRAB_WORDS.filter((word) => progress.stat('grabs', word).seen > 0 && grabLevel(progress, word) === l);
+      const list = ws.map((word) => {
+        const s = progress.stat('grabs', word);
+        return `${word} ${s.seen}·${Math.round((100 * s.recent.filter(Boolean).length) / Math.max(1, s.recent.length))}%`;
+      });
+      return `${l} ${['word + names + sounds', 'names + sounds', 'sounds only'][l - 1]}: ${list.join('  ') || '–'}`;
+    });
+    this.add.text(x, y, 'Warm-up levels', { fontFamily: 'Segoe UI, sans-serif', fontSize: '17px', color: '#333', fontStyle: 'bold' });
+    fitText(this.add.text(x, y + 24, [...rows, `New words start at ${GRAB.startLevel}; right first time: up one, a first-try miss: down one.`], { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#444' }), w, h - 24);
   }
 
   /** Her word bag: key words drawn without replacement, and the shaky ones that come back early. */
@@ -90,15 +108,6 @@ export class ParentScene extends Phaser.Scene {
         const s = progress.stat('rimes', f.rime);
         return `-${f.rime} ${s.seen}·${s.recent.length ? `${Math.round((100 * s.recent.filter(Boolean).length) / s.recent.length)}%` : '–'}`;
       }).join('  ')}`,
-      // The home warm-up (item 033): each word's level on the ramp, and its grabs (tries · first-try right).
-      `Warm-up levels (1 word + names + sounds, 2 names + sounds, 3 sounds only; new words start at ${GRAB.startLevel}):`,
-      ...([1, 2, 3] as const).map((l) => {
-        const ws = GRAB_WORDS.filter((w) => progress.stat('grabs', w).seen > 0 && grabLevel(progress, w) === l);
-        return `  ${l}: ${ws.map((w) => {
-          const s = progress.stat('grabs', w);
-          return `${w} ${s.seen}·${Math.round((100 * s.recent.filter(Boolean).length) / Math.max(1, s.recent.length))}%`;
-        }).join('  ') || '–'}`;
-      }),
     ], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - x - 20, GAME_HEIGHT - y - 10);
   }
 
