@@ -3,6 +3,7 @@
  * which step comes next.
  *
  *   title → (hero → ally → villain picks, off by default) → bedroom
+ *   → the entry hall's warm-up ("before we head out, let's grab the ...")
  *   → house part 1 (hub: learn the spell, two side-room sentence games,
  *     out the front door) → battle part 1 (the villain's ultimate wins)
  *   → house part 2 (back to the hub, the counter sentence game in the attic,
@@ -36,6 +37,7 @@ import { endingPeople } from '../rules/endings';
 import { episodePlans, wordsOf, type Rand, type RoomPlan } from '../rules/sentences';
 import { MINIGAMES, MINIGAME_BY_ID, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
 import { battle1Words, planMoves, type MovePlan } from '../rules/moves';
+import { hallObjects, pickGrab } from '../rules/grab';
 import { spellFor } from '../rules/spell';
 import { progress } from '../state/progress';
 import { voiceBank } from '../voice/VoiceBank';
@@ -53,6 +55,7 @@ export type Step =
   | { kind: 'title' }
   | { kind: 'pick'; what: 'hero' | 'ally' | 'villain' }
   | { kind: 'bedroom' }
+  | { kind: 'grab' }
   | { kind: 'house'; part: 1 | 2 }
   | { kind: 'battle'; part: 1 | 2 }
   | { kind: 'victory' }
@@ -89,6 +92,12 @@ export interface EpisodeState {
   moves: MovePlan | null;
   /** The house: which room holds which sentence, and which rooms are done. */
   house: { plan: RoomPlan[] | null; done: Slot[]; taught: boolean };
+  /**
+   * The home warm-up (item 033, src/rules/grab.ts): the word she grabs in the
+   * entry hall and the hall's pictures. Drawn before the house plan, which
+   * keeps the word out of its reading.
+   */
+  grab: { word: string; objects: string[] } | null;
   /** The victory scene (content/house/endings.ts id), drawn when it starts (item 027). */
   ending: string | null;
   /** The showdown's fight style (content/battle/fights.ts id), drawn at the first battle (item 031). */
@@ -100,6 +109,7 @@ const SCENE_FOR: Record<Step['kind'], string> = {
   title: 'Title',
   pick: 'Pick',
   bedroom: 'Bedroom',
+  grab: 'Entry',
   house: 'Hub',
   battle: 'Battle',
   // The victory step opens on its scene (item 027), which goes on to the recap.
@@ -140,6 +150,7 @@ export const episode: EpisodeState = {
   spell: null,
   moves: null,
   house: { plan: null, done: [], taught: false },
+  grab: null,
   ending: null,
   fight: null,
   stepIndex: 0,
@@ -157,6 +168,7 @@ export function steps(_state: EpisodeState = episode): Step[] {
     { kind: 'title' },
     ...picks,
     { kind: 'bedroom' },
+    { kind: 'grab' },
     { kind: 'house', part: 1 },
     { kind: 'battle', part: 1 },
     { kind: 'house', part: 2 },
@@ -317,6 +329,7 @@ export function resetEpisode(): void {
   episode.spell = null;
   episode.moves = null;
   episode.house = { plan: null, done: [], taught: false };
+  episode.grab = null;
   episode.ending = null;
   episode.fight = null;
   episode.stepIndex = 0;
@@ -347,11 +360,47 @@ export function housePlan(): RoomPlan[] {
     // The three key words come out of her word bag here; the counter keeps
     // clear of battle 1's move pads, and none is a word of the quest's setup line.
     const battle1Moves = battle1Words(movePlan());
-    const saidBefore = wordsOf(questFor(helper()).text);
+    // The warm-up's word is said in the entry hall (item 033): drawn first, kept out too.
+    const saidBefore = [...wordsOf(questFor(helper()).text), ...(episode.grab ? [episode.grab.word] : [grabWord()])];
     const games = roomGames();
     episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, spell: episode.spell, rooms, counterRoom, battle1Moves, saidBefore, ...games });
   }
   return episode.house.plan;
+}
+
+/**
+ * The warm-up's word (item 033), drawn on first need: before the house plan,
+ * which then keeps it out of the rooms, the counter and the word machine. If
+ * the plan was made first (a dev jump), the word keeps clear of its words.
+ */
+function grabWord(): string {
+  if (!episode.grab) {
+    episode.spell ??= spellFor(episode.hero, helper());
+    const avoid = [episode.spell, ...(episode.house.plan ? readingWords() : [])];
+    episode.grab = { word: pickGrab(progress, avoid), objects: [] };
+  }
+  return episode.grab.word;
+}
+
+/** Every word the episode has her read after the hall: the rooms' (machine words included), the counter, battle 1's move pads, the spell. */
+function readingWords(): string[] {
+  const plan = episode.house.plan ?? [];
+  return [...new Set([...(episode.spell ? [episode.spell] : []), ...plan.flatMap((p) => [p.key, ...p.fetches]), ...battle1Words(movePlan())])];
+}
+
+/**
+ * The warm-up (item 033): its word and the hall's pictures. The word comes
+ * first; the house plan is made next (keeping the word out of it); then the
+ * other pictures, clear of every word she will read this episode.
+ */
+export function grabPlan(): { word: string; objects: string[] } {
+  const word = grabWord();
+  const grab = episode.grab!;
+  if (!grab.objects.length) {
+    housePlan();
+    grab.objects = hallObjects(word, readingWords().filter((w) => w !== word));
+  }
+  return { word, objects: grab.objects };
 }
 
 /**
@@ -485,7 +534,8 @@ export function journeyStops(): { icon: string; index: number }[] {
   };
   return steps()
     .map((s, index) => ({ s, index }))
-    .filter(({ s }) => s.kind !== 'title' && s.kind !== 'pick')
+    // The warm-up is still home, part of the morning: no stop of its own.
+    .filter(({ s }) => s.kind !== 'title' && s.kind !== 'pick' && s.kind !== 'grab')
     .map(({ s, index }) => ({ icon: icon(s), index }));
 }
 

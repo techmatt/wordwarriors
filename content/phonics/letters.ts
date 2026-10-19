@@ -67,3 +67,16 @@ export const LETTERS: LetterSound[] = [
 export const LETTER_BY_CHAR: Record<string, LetterSound> = Object.fromEntries(
   LETTERS.map((l) => [l.letter, l]),
 );
+
+/**
+ * Letter NAMES (item 033): the home warm-up spells its word with them before
+ * it gives the sounds, because names are what she already knows. Each is its
+ * own line (`letterNameLine`), in the phonics voice like the sounds, so a
+ * recording can replace one the same way. `say` is what edge-tts is asked to
+ * say: a bare "A." or "W." is read as a word ("uh") or mumbled.
+ */
+export const LETTER_NAMES: Record<string, string> = {
+  a: 'Ay', b: 'Bee', c: 'See', d: 'Dee', e: 'Ee', f: 'Eff', g: 'Jee', h: 'Aitch', i: 'Eye',
+  j: 'Jay', k: 'Kay', l: 'Ell', m: 'Em', n: 'En', o: 'Oh', p: 'Pee', q: 'Cue', r: 'Ar',
+  s: 'Ess', t: 'Tee', u: 'You', v: 'Vee', w: 'Dubbelyou', x: 'Ex', y: 'Why', z: 'Zee',
+};

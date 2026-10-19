@@ -100,6 +100,17 @@ export const SENTENCE_SOLID = { tries: 6, lastRight: 5 };
  */
 export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2 };
 
+/**
+ * The home warm-up (item 033, src/scenes/EntryScene.ts): "Before we head out,
+ * let's grab the ..." in the entry hall. Each word has its own level on a
+ * ramp: 1 = the word, its letter names and its letter sounds; 2 = names and
+ * sounds, no word; 3 = sounds only. `startLevel` is where a word she has never
+ * grabbed starts; right first time moves a word up a level, a miss on its
+ * first try moves it down. `helpAfter` misses add the whole word to the clue.
+ * `objects` labelled pictures stand in the hall.
+ */
+export const GRAB = { startLevel: 2 as 1 | 2 | 3, helpAfter: 3, objects: 9 };
+
 /** How long in the bedroom (ms, after the news) before the door starts to sparkle. */
 export const DOOR_SPARKLE_MS = 12_000;
 

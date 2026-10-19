@@ -20,7 +20,7 @@ import { ENDINGS } from '../../content/house/endings.js';
 import { QUESTS, questLine } from '../../content/house/quests.js';
 import type { FighterSpec } from '../../content/battle/types.js';
 import { FAMILIES, sillyWord } from '../../content/phonics/families.js';
-import { LETTERS } from '../../content/phonics/letters.js';
+import { LETTERS, LETTER_NAMES } from '../../content/phonics/letters.js';
 import { FETCH_ITEMS, allFrameTokens, allPrefixes, tokenWord } from '../../content/phonics/sentences.js';
 import { SPELL_WORDS } from '../../content/phonics/spelling.js';
 import { SPECIAL_WORDS, WORDS, spokenWord } from '../../content/phonics/words.js';
@@ -31,6 +31,7 @@ import {
   WAKERS,
   fighterId,
   group,
+  letterNameLine,
   letterSoundLine,
   moveLine,
   nameLine,
@@ -160,6 +161,11 @@ export function composeLines(): LineSpec[] {
       text: l.say,
       note: `placeholder for the /${l.letter}/ sound (${l.cls}); replace with a recorded clip`,
     });
+  }
+  // Letter names (item 033): the home warm-up spells its word with them.
+  // Shown as the bare capital; edge-tts is given the name spelled out.
+  for (const [letter, say] of Object.entries(LETTER_NAMES)) {
+    lines.push({ id: letterNameLine(letter), speaker: PHONICS_SPEAKER, group: group.phonics, text: `${letter.toUpperCase()}.`, say: `${say}.` });
   }
   // The word machine (item 026): each rime alone, said after the onset's own
   // sound and never blended with it, and each silly word a wrong tile makes.

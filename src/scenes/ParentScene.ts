@@ -18,7 +18,8 @@ import { FRAMES } from '../../content/phonics/sentences';
 import { WORDS } from '../../content/phonics/words';
 import { stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
-import { GAME_HEIGHT, GAME_WIDTH, SENTENCE_SOLID } from '../config';
+import { GAME_HEIGHT, GAME_WIDTH, GRAB, SENTENCE_SOLID } from '../config';
+import { GRAB_WORDS, grabLevel } from '../rules/grab';
 import { fitText } from '../ui/fitText';
 import type { Step } from '../episode/Episode';
 import { Controls } from '../input/Controls';
@@ -89,6 +90,15 @@ export class ParentScene extends Phaser.Scene {
         const s = progress.stat('rimes', f.rime);
         return `-${f.rime} ${s.seen}·${s.recent.length ? `${Math.round((100 * s.recent.filter(Boolean).length) / s.recent.length)}%` : '–'}`;
       }).join('  ')}`,
+      // The home warm-up (item 033): each word's level on the ramp, and its grabs (tries · first-try right).
+      `Warm-up levels (1 word + names + sounds, 2 names + sounds, 3 sounds only; new words start at ${GRAB.startLevel}):`,
+      ...([1, 2, 3] as const).map((l) => {
+        const ws = GRAB_WORDS.filter((w) => progress.stat('grabs', w).seen > 0 && grabLevel(progress, w) === l);
+        return `  ${l}: ${ws.map((w) => {
+          const s = progress.stat('grabs', w);
+          return `${w} ${s.seen}·${Math.round((100 * s.recent.filter(Boolean).length) / Math.max(1, s.recent.length))}%`;
+        }).join('  ') || '–'}`;
+      }),
     ], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - x - 20, GAME_HEIGHT - y - 10);
   }
 

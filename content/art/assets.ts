@@ -15,7 +15,7 @@
 import { ARENAS, MINIONS, ROSTER } from '../battle/roster.js';
 import { ENDINGS, endingArt, endingPropArt } from '../house/endings.js';
 import { FIGHTS, fightPropArt } from '../battle/fights.js';
-import { ALL_SIDE_ROOMS, BEDROOMS, HUB, PLACES, hubArt } from '../house/house.js';
+import { ALL_SIDE_ROOMS, BEDROOMS, ENTRY_HALL, HUB, PLACES, hubArt } from '../house/house.js';
 import { CVC_WORDS, MOVE_PICTURES, SPECIAL_WORDS, WORD_BY_ID } from '../phonics/words.js';
 
 export type AssetKind = 'character' | 'minion' | 'arena' | 'room' | 'picture' | 'item' | 'prop';
@@ -169,6 +169,8 @@ for (const b of BEDROOMS) {
   assets.push({ id: `room_bedroom_${b.id}`, kind: 'room', w: 1280, h: 720, content: `${b.look}. The bed on the left and a door on the right are drawn by the game. ${HOUSE_ROOM}.`, label: '', glyph: '⭐', palette: b.palette });
 }
 assets.push({ id: 'room_hub', kind: 'room', w: 1280, h: 720, content: `${HUB.look}. The doors and the magic circle are drawn by the game on top; keep the back wall plain where they stand. ${HOUSE_ROOM}.`, label: '', glyph: '🏠', palette: HUB.palette });
+// The entry hall (item 033): the home warm-up's nine labelled pictures stand on its floor.
+assets.push({ id: 'room_entry', kind: 'room', w: 1280, h: 720, content: `${ENTRY_HALL.look}. The front door on the right and the things on the floor are drawn by the game. ${HOUSE_ROOM}.`, label: '', glyph: '🧥', palette: ENTRY_HALL.palette });
 // Quest places (item 025): each hub is laid out like the house's, so the game
 // draws the doors, the magic circle and the way out on top of it.
 for (const p of PLACES) {

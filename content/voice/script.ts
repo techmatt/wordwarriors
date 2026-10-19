@@ -113,6 +113,14 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'away_secret', text: 'Look, a secret door! Let us go in!', say: 'Look, a secret door, let us go in!' },
   { key: 'away_front', text: 'The way out is open! Let us go!', say: 'The way out is open, let us go!' },
   { key: 'away_ready', text: 'We are ready now! Off to the fight!', say: 'We are ready now, off to the fight!' },
+  // The home warm-up (item 033, src/scenes/EntryScene.ts). `grab_ask` and
+  // `grab_need` trail off into the clue (letter names, letter sounds, and at
+  // the easiest level the word's own word_ line); `grab_wrong` trails off into
+  // the word she picked (word_cat): she has picked it, so it may be said.
+  { key: 'grab_ask', text: "Before we head out, let's grab the..." },
+  { key: 'grab_wrong', text: "That's the..." },
+  { key: 'grab_need', text: 'We need the...' },
+  { key: 'grab_door', text: 'Got it! Now, out the door!', say: 'Got it, now, out the door!' },
   // Each fight style's own beats (item 031, content/battle/fights.ts): `fight_<id>_<beat>`.
   ...FIGHTS.flatMap((f) => FIGHT_BEATS.flatMap((b) => (f.lines[b] ? [{ key: `fight_${f.id}_${b}`, ...f.lines[b] }] : []))),
 ];

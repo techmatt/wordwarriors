@@ -13,6 +13,8 @@ export const DEFAULT_NARRATOR = 'dada_matt';
 export const PHONICS_SPEAKER = 'phonics';
 
 export const letterSoundLine = (letter: string) => `letter_${letter}_sound`;
+/** A letter's name (item 033, the home warm-up spells with them): `letter_v_name`. Never captioned, like the sounds. */
+export const letterNameLine = (letter: string) => `letter_${letter}_name`;
 export const wordLine = (word: string) => `word_${word}`;
 /** The word machine (item 026): a rime said alone (`rime_at`), and a silly word a wrong tile makes (`silly_zat`). */
 export const rimeLine = (rime: string) => `rime_${rime}`;

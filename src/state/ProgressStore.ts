@@ -36,6 +36,13 @@ export interface ProgressData {
   /** The word machine (item 026): word families by rime (`at`) and first sounds by letter (`b`), first-try builds. */
   rimes: Record<string, Stat>;
   onsets: Record<string, Stat>;
+  /**
+   * The home warm-up (item 033): per word, first-try grabs. A grab is exposure,
+   * not a read: it never touches `words` or the word bag.
+   */
+  grabs: Record<string, Stat>;
+  /** The warm-up's ramp level per word (1 word + names + sounds, 2 names + sounds, 3 sounds); absent = GRAB.startLevel. */
+  grabLevels: Record<string, number>;
   /** Her word bag: the sentence key words drawn without replacement (item 015). */
   bag: WordBag;
   /** Her move bag: the battle's move words, drawn the same way (item 018). */
@@ -61,7 +68,7 @@ export interface WordBag {
 /** Which bag: the sentence key words, or the battle's move words. */
 export type BagKind = 'keys' | 'moves';
 
-export type ItemKind = 'sounds' | 'words' | 'spelling' | 'frames' | 'rimes' | 'onsets';
+export type ItemKind = 'sounds' | 'words' | 'spelling' | 'frames' | 'rimes' | 'onsets' | 'grabs';
 
 const RECENT = 6;
 
@@ -70,7 +77,7 @@ function emptyStat(): Stat {
 }
 
 function empty(): ProgressData {
-  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, episodes: 0, villains: [], ending: null };
+  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, grabs: {}, grabLevels: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, episodes: 0, villains: [], ending: null };
 }
 
 /** How many past villains the store keeps. */
@@ -114,6 +121,9 @@ export class ProgressStore {
       parsed.onsets ??= {};
       // Item 027, the same way.
       parsed.ending ??= null;
+      // Item 033, the same way.
+      parsed.grabs ??= {};
+      parsed.grabLevels ??= {};
       return parsed;
     } catch {
       this.storage?.setItem(`${STORE_KEY}.unreadable.${this.now()}`, raw);
@@ -170,6 +180,16 @@ export class ProgressStore {
   /** An episode was cast with this villain (a person): kept so the next ones differ. */
   villainMet(person: string): void {
     this.data.villains = [...this.data.villains.filter((v) => v !== person), person].slice(-VILLAINS_KEPT);
+    this.save();
+  }
+
+  /** A word's warm-up level (item 033), or `fallback` (GRAB.startLevel) if she has never grabbed it. */
+  grabLevel(word: string, fallback: number): number {
+    return this.data.grabLevels[word] ?? fallback;
+  }
+
+  setGrabLevel(word: string, level: number): void {
+    this.data.grabLevels[word] = level;
     this.save();
   }
 

@@ -274,6 +274,27 @@ export const SIDE_ROOM_BY_ID: Record<string, SideRoomSpec> = Object.fromEntries(
 export const hubArt = (place: string) => (place === HOME ? 'room_hub' : `room_place_${place}`);
 
 /**
+ * The entry hall (item 033): the home warm-up, between the bedroom and the
+ * quest. Nine labelled pictures stand on the floor in three staggered rows
+ * (`spots`, feet positions, back row first); the grown-ups wait by the front
+ * door on the right, which appears once she has grabbed the right thing.
+ */
+export const ENTRY_HALL = {
+  look: 'The front entry hall of a cosy family house seen side-on: a coat rack with coats and a scarf, wellington boots on a mat, a little bench, a mirror and a potted plant at the edges, a wooden floor across the lower half',
+  palette: [0xfff0d8, 0x9a6a4a] as [number, number],
+  // Where she comes in from the bedroom: the left, by the stairs.
+  start: { x: 110, y: 600 },
+  spots: [
+    { x: 250, y: 420 }, { x: 520, y: 420 }, { x: 790, y: 420 },
+    { x: 340, y: 550 }, { x: 610, y: 550 }, { x: 880, y: 550 },
+    { x: 250, y: 680 }, { x: 520, y: 680 }, { x: 790, y: 680 },
+  ],
+  helper: { x: 1050, y: 560 },
+  waker: { x: 1170, y: 660 },
+  door: { x: 1150, y: 430 },
+} as const;
+
+/**
  * The hub: a small main room with the helper, a magic circle where she learns
  * the spell, two side-room doors, a hidden counter door (appears after the
  * retreat) and the front door (opens once both side rooms are done).

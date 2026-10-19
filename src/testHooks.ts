@@ -40,6 +40,8 @@ export interface RoomInfo {
   spelling?: { word: string; filled: number };
   /** The sentence game: its tokens (upper case), key word, frame, which pass, and the token in play. */
   sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean };
+  /** The home warm-up (item 033): the word to grab, its level on the ramp (1 easiest), misses so far, the hall's pictures. */
+  grab?: { word: string; level: number; misses: number; objects: string[]; phase: string };
   /** The word machine (item 026): the round in play (`index` of `rounds`), its tiles, and what is in the slot. */
   machine?: {
     mode: string;

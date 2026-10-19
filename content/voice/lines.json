@@ -3365,6 +3365,188 @@
   "note": "placeholder for the /z/ sound (continuant); replace with a recorded clip"
  },
  {
+  "id": "letter_a_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "A.",
+  "say": "Ay."
+ },
+ {
+  "id": "letter_b_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "B.",
+  "say": "Bee."
+ },
+ {
+  "id": "letter_c_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "C.",
+  "say": "See."
+ },
+ {
+  "id": "letter_d_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "D.",
+  "say": "Dee."
+ },
+ {
+  "id": "letter_e_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "E.",
+  "say": "Ee."
+ },
+ {
+  "id": "letter_f_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "F.",
+  "say": "Eff."
+ },
+ {
+  "id": "letter_g_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "G.",
+  "say": "Jee."
+ },
+ {
+  "id": "letter_h_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "H.",
+  "say": "Aitch."
+ },
+ {
+  "id": "letter_i_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "I.",
+  "say": "Eye."
+ },
+ {
+  "id": "letter_j_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "J.",
+  "say": "Jay."
+ },
+ {
+  "id": "letter_k_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "K.",
+  "say": "Kay."
+ },
+ {
+  "id": "letter_l_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "L.",
+  "say": "Ell."
+ },
+ {
+  "id": "letter_m_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "M.",
+  "say": "Em."
+ },
+ {
+  "id": "letter_n_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "N.",
+  "say": "En."
+ },
+ {
+  "id": "letter_o_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "O.",
+  "say": "Oh."
+ },
+ {
+  "id": "letter_p_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "P.",
+  "say": "Pee."
+ },
+ {
+  "id": "letter_q_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Q.",
+  "say": "Cue."
+ },
+ {
+  "id": "letter_r_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "R.",
+  "say": "Ar."
+ },
+ {
+  "id": "letter_s_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "S.",
+  "say": "Ess."
+ },
+ {
+  "id": "letter_t_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "T.",
+  "say": "Tee."
+ },
+ {
+  "id": "letter_u_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "U.",
+  "say": "You."
+ },
+ {
+  "id": "letter_v_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "V.",
+  "say": "Vee."
+ },
+ {
+  "id": "letter_w_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "W.",
+  "say": "Dubbelyou."
+ },
+ {
+  "id": "letter_x_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "X.",
+  "say": "Ex."
+ },
+ {
+  "id": "letter_y_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Y.",
+  "say": "Why."
+ },
+ {
+  "id": "letter_z_name",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Z.",
+  "say": "Zee."
+ },
+ {
   "id": "rime_at",
   "speaker": "phonics",
   "group": "phonics",
@@ -5765,6 +5947,31 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_julia_grab_ask",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_julia_grab_wrong",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_julia_grab_need",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_julia_grab_door",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
+ },
+ {
   "id": "nar_julia_fight_sky_race_start",
   "speaker": "julia",
   "group": "nar_julia",
@@ -7809,6 +8016,31 @@
   "group": "nar_ellie",
   "text": "We are ready now! Off to the fight!",
   "say": "We are ready now, off to the fight!"
+ },
+ {
+  "id": "nar_ellie_grab_ask",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_ellie_grab_wrong",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_ellie_grab_need",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_ellie_grab_door",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
  },
  {
   "id": "nar_ellie_fight_sky_race_start",
@@ -9857,6 +10089,31 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_seraphina_grab_ask",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_seraphina_grab_wrong",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_seraphina_grab_need",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_seraphina_grab_door",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
+ },
+ {
   "id": "nar_seraphina_fight_sky_race_start",
   "speaker": "seraphina",
   "group": "nar_seraphina",
@@ -11901,6 +12158,31 @@
   "group": "nar_dada_matt",
   "text": "We are ready now! Off to the fight!",
   "say": "We are ready now, off to the fight!"
+ },
+ {
+  "id": "nar_dada_matt_grab_ask",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_dada_matt_grab_wrong",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_dada_matt_grab_need",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_dada_matt_grab_door",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
  },
  {
   "id": "nar_dada_matt_fight_sky_race_start",
@@ -13949,6 +14231,31 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_dada_jason_grab_ask",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_dada_jason_grab_wrong",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_dada_jason_grab_need",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_dada_jason_grab_door",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
+ },
+ {
   "id": "nar_dada_jason_fight_sky_race_start",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
@@ -15993,6 +16300,31 @@
   "group": "nar_elsa",
   "text": "We are ready now! Off to the fight!",
   "say": "We are ready now, off to the fight!"
+ },
+ {
+  "id": "nar_elsa_grab_ask",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_elsa_grab_wrong",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_elsa_grab_need",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_elsa_grab_door",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
  },
  {
   "id": "nar_elsa_fight_sky_race_start",
@@ -18041,6 +18373,31 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_anna_grab_ask",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_anna_grab_wrong",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_anna_grab_need",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_anna_grab_door",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
+ },
+ {
   "id": "nar_anna_fight_sky_race_start",
   "speaker": "anna",
   "group": "nar_anna",
@@ -20085,6 +20442,31 @@
   "group": "nar_jasmine",
   "text": "We are ready now! Off to the fight!",
   "say": "We are ready now, off to the fight!"
+ },
+ {
+  "id": "nar_jasmine_grab_ask",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_jasmine_grab_wrong",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_jasmine_grab_need",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_jasmine_grab_door",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
  },
  {
   "id": "nar_jasmine_fight_sky_race_start",
@@ -22133,6 +22515,31 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_ozymandias_grab_ask",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_ozymandias_grab_wrong",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_ozymandias_grab_need",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_ozymandias_grab_door",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
+ },
+ {
   "id": "nar_ozymandias_fight_sky_race_start",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
@@ -24179,6 +24586,31 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_jormungandr_grab_ask",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_jormungandr_grab_wrong",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_jormungandr_grab_need",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_jormungandr_grab_door",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
+ },
+ {
   "id": "nar_jormungandr_fight_sky_race_start",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -26222,6 +26654,31 @@
   "group": "nar_smaug",
   "text": "We are ready now! Off to the fight!",
   "say": "We are ready now, off to the fight!"
+ },
+ {
+  "id": "nar_smaug_grab_ask",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_smaug_grab_wrong",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_smaug_grab_need",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_smaug_grab_door",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
  },
  {
   "id": "nar_smaug_fight_sky_race_start",
@@ -28270,6 +28727,31 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_tiamat_grab_ask",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_tiamat_grab_wrong",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_tiamat_grab_need",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_tiamat_grab_door",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
+ },
+ {
   "id": "nar_tiamat_fight_sky_race_start",
   "speaker": "tiamat",
   "group": "nar_tiamat",
@@ -30314,6 +30796,31 @@
   "group": "nar_scar",
   "text": "We are ready now! Off to the fight!",
   "say": "We are ready now, off to the fight!"
+ },
+ {
+  "id": "nar_scar_grab_ask",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_scar_grab_wrong",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_scar_grab_need",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_scar_grab_door",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
  },
  {
   "id": "nar_scar_fight_sky_race_start",
@@ -32362,6 +32869,31 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_moriarty_grab_ask",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_moriarty_grab_wrong",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_moriarty_grab_need",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_moriarty_grab_door",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
+ },
+ {
   "id": "nar_moriarty_fight_sky_race_start",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -34408,6 +34940,31 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_bavmorda_grab_ask",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_bavmorda_grab_wrong",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_bavmorda_grab_need",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_bavmorda_grab_door",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
+ },
+ {
   "id": "nar_bavmorda_fight_sky_race_start",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
@@ -36452,6 +37009,31 @@
   "group": "nar_rilla",
   "text": "We are ready now! Off to the fight!",
   "say": "We are ready now, off to the fight!"
+ },
+ {
+  "id": "nar_rilla_grab_ask",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Before we head out, let's grab the..."
+ },
+ {
+  "id": "nar_rilla_grab_wrong",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That's the..."
+ },
+ {
+  "id": "nar_rilla_grab_need",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "We need the..."
+ },
+ {
+  "id": "nar_rilla_grab_door",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Got it! Now, out the door!",
+  "say": "Got it, now, out the door!"
  },
  {
   "id": "nar_rilla_fight_sky_race_start",
