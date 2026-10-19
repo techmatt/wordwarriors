@@ -92,6 +92,12 @@ export const NOTES: Record<string, string> = {
  * which the row quotes by itself).
  */
 export const PICK_NOTES: Record<string, string> = {
+  arena_sky_race: "Evil Smaug's sky race (item 031): the game sweeps stalactites, lanterns and coin piles across it so it reads as a fast flight. `current` is candidate 2, promoted by item 031: the open sky in the middle reads most like flying. `0` is the painted placeholder.",
+  arena_spell_tower: "The spell-beam clash (Evil Bavmorda, evil warlock Dada Jason; item 031): the beams meet over the middle of the floor. `current` is candidate 2, promoted by item 031: the plainest floor under the beams. `0` is the painted placeholder.",
+  arena_cook_show: "The cook-off (chef Dada Jason as ally, item 031): the game stands two cooking stations on the floor. `current` is candidate 2, promoted by item 031: the least busy wall behind the stations. `0` is the painted placeholder.",
+  prop_fight_finish_flag: 'The sky race\'s finish line (item 031), swept in at the end of each race. `current` is candidate 2, promoted by item 031: the widest banner. `0` is the painted placeholder.',
+  prop_fight_trophy: 'Over the winner of a race or a cook-off (item 031). `current` is candidate 1, promoted by item 031. `0` is the painted placeholder.',
+  prop_fight_cook_station: 'Each side\'s station in the cook-off (item 031); the dish is stacked on its counter top. `current` is candidate 2, promoted by item 031: the clearest counter top. `0` is the painted placeholder.',
   char_scar_good: "Scar's redesign (items 028/030): a tiny gold mech, a little shorter than Julia. `current` is candidate 2, promoted by item 030: the biggest head and shortest legs (the smallest-reading), and a smiling visor. `0` is the old design.",
   char_scar_evil: "`current` is candidate 3, promoted by item 030: the same round helmet and fins as good candidate 2, smoking jets, blaster raised. `0` is the old design.",
   face_scar: "`current` is candidate 4, promoted by item 030: the fins and smiling visor of good candidate 2. `0` is the old design.",
