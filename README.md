@@ -265,6 +265,13 @@ npm run art:pick -- <id> <n>
   from the main checkout, not the worktree. Keep throwaway scripts outside it.
 - Item 009's sheets (2026-10-18) are `scratch/art_alts_009_<group>.png`; its picker
   manifest, all 13 ids in one, is `scratch/art_alts_009.json`.
+- Item 013's (Tiamat, all six of her ids) are `scratch/art_alts_013_tiamat.png` and
+  `scratch/art_alts_013_tiamat.json`. Three `art:alts` runs on disjoint ids ran side
+  by side; each writes its own sheet and manifest, so one `--sheet-only` run over all
+  the ids afterwards makes the combined one.
+- When Codex answers "Selected model is at capacity", `art:alts` skips that candidate
+  and goes on (2026-10-18), so an id can end up with fewer than `n`. Top it up with
+  `art:alts -- <id> --n=1`; it numbers on from the last candidate.
 
 ## Operational facts
 
