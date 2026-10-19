@@ -265,6 +265,34 @@ every scene for every cast shape against the built voice and keeps it under 30 s
 adding one: `voice:lines`, `voice:build`, `art:placeholders`, then `art:alts` for its
 background and props. Look at it with `?scene=victory&ending=<id>`.
 
+## A fight style (`FIGHTS`, `content/battle/fights.ts`)
+
+Item 031: not every showdown is a brawl. A style is data plus a staging:
+
+- **Data** (`FightSpec`): `{ id, kind, name, arena?, banner, tooStrong, win, lines,
+  props? }`. `kind` picks the staging code (`brawl`, `race`, `tug`, `clash`,
+  `cookoff`: `src/battle/stages/`), so a second race (a sea race, a broom race) is data
+  only. `arena` is an `ARENAS` key in the roster (art `arena_<key>`), else the villain's
+  own arena. `banner` is the big word as each part starts, `tooStrong` floats over the
+  floored heroes at the end of part 1, `win` is the last hit's banner. `lines` are the
+  narrator's `start`, `start2`, `retreat` and `finish`, voiced for every narrator
+  (`<narrator>_fight_<id>_<beat>`); a beat without one uses the brawl's. Props are art
+  `prop_fight_<id>`. Nothing shown or said may hold a move word or a reading word
+  (`tests/unit/fights.test.ts` checks): the rope pull never says TUG.
+- **Whose**: `fight: '<id>'` on the villain's roster entry (absent: `brawl`);
+  `fightNudge: { fight, chance }` on a character makes that style likelier when it is
+  the ally (chef Dada Jason: a cook-off, 70%). `src/rules/fights.ts` draws it once per
+  episode; `?fight=<id>` fixes it.
+- **A new kind**: a class extending `BaseStage` in `src/battle/stages/` (registered in
+  `index.ts`). The battle calls its hooks at each beat (`setup`, `home`, `steer`,
+  `update`, `drawHud`, `onHit`, `superMove`, `combo`, `ultimate1`, `counter2`, `finish`,
+  `retreat`; the contract is `stage.ts`). It never changes the beats, their timing or the
+  move choice; its meter is the steered health (`host.heroFrac()`, `host.villainFrac()`)
+  plus its own beat swings, so the outcome stays fixed.
+
+After adding one: `voice:lines`, `voice:build`, `art:placeholders`, then `art:alts` for
+its arena and props. Look at it with `?scene=battle&part=1&fight=<id>` (any villain).
+
 ## A word family (`content/phonics/families.ts`, the word machine)
 
 The word machine (item 026, `src/scenes/WordMachine.ts`) teaches onset + rime: a

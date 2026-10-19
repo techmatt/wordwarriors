@@ -56,6 +56,7 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | `src/world/` | `RoomScene` (walk-to-answer rooms) and `Player` (her character as the cursor). |
 | `src/ui/`, `src/fx/` | Caption ribbon, follow-the-speaker bubbles, button dots; particles and juice. |
 | `content/battle/roster.ts` | **Every character**, good and evil: style, abilities, taunts, ultimate, counter-item. Every roster character is also a villain. The dads' forms are roster characters with `person` (voiced, narrating and waking as the dad). |
+| `content/battle/fights.ts`, `src/battle/stages/` | Fight styles (item 031): a sky race, a rope pull, a spell-beam clash, a cook-off, the brawl. `fight` on a villain, `fightNudge` on an ally; each kind's staging. |
 | `content/battle/forms.ts` | Outfits: a character's images for a scenario (Julia the chef beside chef Dada Jason, the knight beside warrior Dada Jason). |
 | `content/house/quests.ts` | Quests: each ally's place to train and setup line; places themselves are `PLACES` in `house.ts`. |
 | `src/rules/cast.ts`, `src/rules/minigames.ts` | The episode's cast draw; the rooms' weighted minigame pool (the sentence game's frames, the word machine). |
@@ -197,6 +198,7 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 | "add a dad form" / "add a quest" / "add a minigame" | `docs/content.md`: a roster entry with `person`; `QUESTS` + `PLACES`; `MINIGAMES` |
 | "add a word family / silly word" / "more or fewer machine words" | `RIMES` in `content/phonics/families.ts` (then `voice:lines`, `voice:build`); `WORD_MACHINE` in `src/config.ts` |
 | "add a victory scene" / "change what they say at the end" | `ENDINGS` in `content/house/endings.ts` (`docs/content.md`, "A victory scene"), same three commands, then `art:alts` |
+| "make X a race / a cook-off" / "chef Jason should cook more" | `fight` on X in `content/battle/roster.ts`; `fightNudge.chance` on `dada_jason` (`docs/content.md`, "A fight style") |
 | "make it the chef episode" | `?ally=dada_jason` (Julia's chef form follows; outfits are `content/battle/forms.ts`) |
 | "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`); for character art also set `FLIP_TO_FACE = true` in `src/config.ts` |
 | "here are my letter sound recordings" | see `docs/recording.md` |

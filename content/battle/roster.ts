@@ -409,6 +409,8 @@ export const ROSTER: CharacterSpec[] = [
     form: 'chef',
     description: 'A jolly chef dad with a giant whisk who flips pancakes higher than the roof.',
     arena: 'kitchen',
+    fight: 'cook_off',
+    fightNudge: { fight: 'cook_off', chance: 0.7 },
     good: {
       displayName: 'Dada Jason', trail: { tint: [0xffbe0b, 0xe63946], shape: 'star' }, look: 'a big, sturdy, round-faced chef dad: warm light-brown skin, very short dark curly hair receding at the front, black browline glasses, a short dark goatee beard flecked with grey, a tiny hoop earring, a big laughing smile, in crisp white chef\'s whites with a tall white chef\'s hat and a red neckerchief, holding a giant whisk',
       palette: [0xe63946, 0xffbe0b], glyph: '🍳', style: 'hover', speed: 170, size: 1.2, hp: 120,
@@ -705,6 +707,7 @@ export const ROSTER: CharacterSpec[] = [
     id: 'jormungandr',
     description: 'The world serpent, so long it coils around the whole arena, hungry enough to swallow the sun.',
     arena: 'sea',
+    fight: 'sea_tug',
     good: {
       displayName: 'Jormungandr', trail: { tint: [0x7ad9ff, 0xffffff], shape: 'spark' }, sayName: 'Yormungander', look: 'a huge friendly green sea serpent with kind yellow eyes, wearing a tiny crown',
       palette: [0x2aa66a, 0x7ad9ff], glyph: '🐍', style: 'slither', speed: 150, size: 1.4, hp: 150,
@@ -764,6 +767,7 @@ export const ROSTER: CharacterSpec[] = [
     id: 'smaug',
     description: 'A gold-hoarding dragon who breathes fire and buries enemies under avalanches of coins.',
     arena: 'cave',
+    fight: 'sky_race',
     good: {
       displayName: 'Smaug', trail: { tint: [0xffcc33, 0xff7b00], shape: 'spark' }, look: 'a big red dragon with a gold tummy, sitting on coins, grinning and generous',
       palette: [0xd62828, 0xffcc33], glyph: '🐉', style: 'fly', speed: 160, size: 1.5, hp: 160,
@@ -1018,6 +1022,7 @@ export const ROSTER: CharacterSpec[] = [
     id: 'bavmorda',
     description: 'A witch queen who summons waves of skeletons and polymorphs heroes into pigs.',
     arena: 'castle',
+    fight: 'spell_clash',
     good: {
       displayName: 'Bavmorda', trail: { tint: [0xff8fab, 0x80ffdb], shape: 'star' }, look: 'a kindly old witch with a crooked hat full of flowers, a staff with a glowing pink gem',
       palette: [0x7b2cbf, 0x80ffdb], glyph: '🧹', style: 'hover', mount: '🧹', speed: 150, size: 1.15, hp: 100,
@@ -1379,6 +1384,7 @@ export const ROSTER: CharacterSpec[] = [
     form: 'warlock',
     description: 'A dark-robed warlock dad with purple fire, silly curses and a gang of cheeky summoned imps: spooky on the outside, a big softie inside.',
     arena: 'city',
+    fight: 'spell_clash',
     good: {
       displayName: 'Dada Jason', trail: { tint: [0xb04aff, 0xff9ad5], shape: 'smoke' }, look: `${JASON_FACE}, as a friendly warlock: long deep-purple robes with silver stars, a pointed hood pushed back, a tall wooden staff topped with a glowing violet crystal, little purple flames dancing round his free hand, and a tiny cheeky purple imp on his shoulder`,
       palette: [0x4a1a7a, 0xb04aff], glyph: '🔮', style: 'blink', speed: 170, size: 1.2, hp: 120,
@@ -1511,4 +1517,8 @@ export const ARENAS: Record<string, { name: string; sky: [number, number]; groun
   city: { name: 'Foggy City', sky: [0x3a4a5a, 0xa0b0c0], ground: 0x5a5a6a, glyph: '🎡', look: 'a foggy old city street at night with lamp posts and a fairground' },
   nursery: { name: 'Giant Playroom', sky: [0xffe0f0, 0xfff8e0], ground: 0xc8a07a, glyph: '🧸', look: "a toddler's playroom seen from a toy's height: towering stacks of building blocks, a huge crib, giant soft toys and a squashy play mat" },
   street: { name: 'Sunny Street', sky: [0x8ad7ff, 0xf0f8ff], ground: 0x8a8a92, glyph: '🚗', look: 'a sunny suburban street outside the house, Dada Jason\'s car parked at the kerb' },
+  // Fight styles' own places (item 031, content/battle/fights.ts).
+  sky_race: { name: 'Treasure Cave Sky Race', sky: [0x1a1a2a, 0x8a6a2a], ground: 0x6a4a1a, glyph: '🏁', look: 'a huge treasure cave seen side-on as a sky-race course: a wide open flying space in the middle, glittering gold coin piles and jewels along the floor, stalactites hanging from the top, glowing lava cracks, coloured lanterns strung across' },
+  spell_tower: { name: 'Moonlit Spell Tower', sky: [0x1a0a3a, 0x5a3a8a], ground: 0x4a3a5a, glyph: '🌙', look: "the flat round top of a witch's stone tower at night: a big full moon, purple clouds, swirling stars, glowing rune stones around the edge of a wide flat stone floor" },
+  cook_show: { name: 'Cook-Off Studio', sky: [0xfff1d6, 0xff9ad5], ground: 0xd8b088, glyph: '🍳', look: "a bright cartoon TV cooking-contest studio: coloured spotlights, bunting, a big shiny kitchen wall with shelves of pots, fruit and spices behind a wide wooden floor, an empty judges' table at the back" },
 };

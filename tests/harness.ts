@@ -61,6 +61,9 @@ export interface WWState {
   } | null;
   battle: {
     part: number;
+    /** The showdown's fight style (item 031) and its staging's own numbers. */
+    fight: string;
+    stage: Record<string, unknown>;
     phase: string;
     t: number;
     abilitiesFired: number;

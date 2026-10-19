@@ -120,6 +120,9 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `arena_city` | 1280×720 | Battle arena background, Foggy City: a foggy old city street at night with lamp posts and a fairground. Wide side-on view, open flat ground across the lower 60% for fighters, bright and readable, no characters. |
 | `arena_nursery` | 1280×720 | Battle arena background, Giant Playroom: a toddler's playroom seen from a toy's height: towering stacks of building blocks, a huge crib, giant soft toys and a squashy play mat. Wide side-on view, open flat ground across the lower 60% for fighters, bright and readable, no characters. |
 | `arena_street` | 1280×720 | Battle arena background, Sunny Street: a sunny suburban street outside the house, Dada Jason's car parked at the kerb. Wide side-on view, open flat ground across the lower 60% for fighters, bright and readable, no characters. |
+| `arena_sky_race` | 1280×720 | Battle arena background, Treasure Cave Sky Race: a huge treasure cave seen side-on as a sky-race course: a wide open flying space in the middle, glittering gold coin piles and jewels along the floor, stalactites hanging from the top, glowing lava cracks, coloured lanterns strung across. Wide side-on view, open flat ground across the lower 60% for fighters, bright and readable, no characters. |
+| `arena_spell_tower` | 1280×720 | Battle arena background, Moonlit Spell Tower: the flat round top of a witch's stone tower at night: a big full moon, purple clouds, swirling stars, glowing rune stones around the edge of a wide flat stone floor. Wide side-on view, open flat ground across the lower 60% for fighters, bright and readable, no characters. |
+| `arena_cook_show` | 1280×720 | Battle arena background, Cook-Off Studio: a bright cartoon TV cooking-contest studio: coloured spotlights, bunting, a big shiny kitchen wall with shelves of pots, fruit and spices behind a wide wooden floor, an empty judges' table at the back. Wide side-on view, open flat ground across the lower 60% for fighters, bright and readable, no characters. |
 
 ## Rooms (the house, episode screens and minigames)
 
@@ -358,4 +361,7 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `prop_end_telescope` | 200×266 | A brass telescope on a wooden three-legged stand, pointing up at the sky, seen side-on. No text, chunky cartoon. Transparent background. |
 | `prop_end_campfire` | 260×243 | A cheerful little campfire: a ring of round stones, crossed logs and bright orange-and-yellow flames with sparks, and three marshmallows on long sticks toasting over it. No text, chunky cartoon. Transparent background. |
 | `prop_end_snowman` | 190×280 | A big round happy snowman: three snowballs, coal eyes and smile, a carrot nose, a red-and-white striped scarf, a little black top hat and stick arms waving. No text, chunky cartoon. Transparent background. |
+| `prop_fight_finish_flag` | 300×420 | a big chequered black-and-white finish-line banner on two tall golden poles, with little gold coins and jewels on the tops of the poles. No text, chunky cartoon. Transparent background. |
+| `prop_fight_trophy` | 200×220 | a huge shiny golden trophy cup with two big handles, a red jewel on the front and sparkles. No text, chunky cartoon. Transparent background. |
+| `prop_fight_cook_station` | 300×260 | a chunky cartoon cooking station: a little red stove with a big shiny pot on top, a wooden counter with a chopping board, a whisk and a rolling pin, seen from the front. No text, chunky cartoon. Transparent background. |
 

@@ -164,6 +164,20 @@ Any cast can be tried from the URL (and stays for every episode that session):
 | `?form=cyber,warrior` | The dads' forms by name: `builder` `lifter` `cyber` `blade`; `chef` `warrior` `warlock` |
 | `?primary=dada_jason` / `none`, `?secondary=1` / `0` | Who wakes her; whether the other dad comes in |
 | `?place=forest_gym` / `home` | The quest place, whoever the helper is (to look at one) |
+| `?fight=sky_race` | The showdown's fight style, whoever the villain is: `brawl` `sky_race` `sea_tug` `spell_clash` `cook_off` |
+
+Not every showdown is a brawl (item 031). Each villain has a **fight style**
+(`fight` in the roster; `content/battle/fights.ts`): Evil Smaug races the heroes
+through his treasure cave (`sky_race`), Evil Jörmungandr pulls a rope against them
+over the sea (`sea_tug`), Evil Bavmorda meets their magic beam for beam
+(`spell_clash`), and Evil Tiamat keeps her giant free-for-all (`brawl`, also every
+villain without a style). With chef Dada Jason as the ally a **cook-off** is likely
+(70%, `fightNudge`), whoever the villain is. The episode draws it once, at the first
+battle (`episode.fight`, `src/rules/fights.ts`), so both battles are the same contest.
+Every style keeps the episode's shape (part 1's ultimate wins the round, part 2's
+counter turns it), the same beats, timing and move choices; only the staging changes
+(`src/battle/stages/`), and its bars are the steered health shown as a race lead, a
+rope's knot, a clash point or the judges' scores.
 
 A giant villain (roster `size` 2 or more: Evil Tiamat) is staged as one: she holds her
 own half of the arena instead of walking over the heroes (`stomp` in
@@ -196,7 +210,7 @@ done, items in the bag):
 | `?scene=sound` / `blend` / `picture` / `spell` / `alarm` / `retreat` | Parked v0.1 steps |
 
 Extras: the cast (above: `seed=`, `cast=default`, `hero=`, `ally=`, `villain=`,
-`form=`, `primary=`, `secondary=`, `place=`), `fetched=net,fan` (the
+`form=`, `primary=`, `secondary=`, `place=`, `fight=`), `fetched=net,fan` (the
 battle items; that is the default), `nojourney` (skip the map).
 
 ## Tests

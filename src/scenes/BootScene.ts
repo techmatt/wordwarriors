@@ -78,6 +78,7 @@ function castOptions(q: URLSearchParams): Parameters<typeof setCastOptions>[0] {
     ...(seed !== null && Number.isFinite(Number(seed)) ? { rand: seededRand(Number(seed)) } : {}),
     ...(q.get('cast') === 'default' ? { fixed: true } : q.get('cast') === 'random' ? { fixed: false } : {}),
     ...(q.get('place') ? { place: q.get('place') } : {}),
+    ...(q.get('fight') ? { fight: q.get('fight') } : {}),
   };
 }
 

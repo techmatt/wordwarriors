@@ -197,6 +197,17 @@ export interface CharacterSpec {
   counter: CounterItem;
   /** The arena the evil version fights in. ARENAS key. */
   arena: string;
+  /**
+   * How the showdown against the evil version goes (item 031): a FIGHTS key
+   * in content/battle/fights.ts (a sky race, a tug-of-war, a spell-beam
+   * clash, a cook-off). Absent: `brawl`, the free-for-all.
+   */
+  fight?: string;
+  /**
+   * As the ally, this one makes a showdown of its own likelier, whoever the
+   * villain is (chef Dada Jason makes a cook-off likely): `chance` of `fight`.
+   */
+  fightNudge?: { fight: string; chance: number };
   /** How the house looks and what Dada Matt says when this one is the villain. */
   house: HouseMood;
 }

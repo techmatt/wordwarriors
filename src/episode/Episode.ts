@@ -30,6 +30,8 @@ import { group, narratorLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { EPISODE_DEFAULTS } from '../config';
 import { drawCast, wakerOf, type CastOverrides } from '../rules/cast';
+import { fightSpec, pickFight } from '../rules/fights';
+import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
 import { endingPeople } from '../rules/endings';
 import { episodePlans, wordsOf, type Rand, type RoomPlan } from '../rules/sentences';
 import { MINIGAMES, MINIGAME_BY_ID, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
@@ -89,6 +91,8 @@ export interface EpisodeState {
   house: { plan: RoomPlan[] | null; done: Slot[]; taught: boolean };
   /** The victory scene (content/house/endings.ts id), drawn when it starts (item 027). */
   ending: string | null;
+  /** The showdown's fight style (content/battle/fights.ts id), drawn at the first battle (item 031). */
+  fight: string | null;
   stepIndex: number;
 }
 
@@ -137,6 +141,7 @@ export const episode: EpisodeState = {
   moves: null,
   house: { plan: null, done: [], taught: false },
   ending: null,
+  fight: null,
   stepIndex: 0,
 };
 
@@ -242,14 +247,16 @@ let castOverrides: CastOverrides = {};
 let castRand: Rand = Math.random;
 let castDefault = !EPISODE_DEFAULTS.randomCast;
 let placeOverride: string | null = null;
+let fightOverride: string | null = null;
 
 /**
  * Fix parts of every episode's cast this session (`?ally=`, `?villain=`,
  * `?form=`, `?primary=`, `?secondary=`, `?seed=`, `?cast=default`,
  * `?place=`: BootScene), then recast the current episode.
  */
-export function setCastOptions(o: { overrides?: CastOverrides; rand?: Rand; fixed?: boolean; place?: string | null }): void {
+export function setCastOptions(o: { overrides?: CastOverrides; rand?: Rand; fixed?: boolean; place?: string | null; fight?: string | null }): void {
   if (o.overrides) castOverrides = o.overrides;
+  if (o.fight !== undefined) fightOverride = o.fight;
   if (o.rand) castRand = o.rand;
   if (o.fixed !== undefined) castDefault = o.fixed;
   if (o.place !== undefined) placeOverride = o.place;
@@ -282,6 +289,16 @@ export function castEpisode(picked: CastOverrides = {}): void {
   // The hero cannot also be the ally (she would teach herself the spell).
   if (episode.ally && personOf(episode.ally) === personOf(episode.hero)) episode.ally = null;
   episode.place = placeOverride && (placeOverride === HOME || PLACE_BY_ID[placeOverride]) ? placeOverride : questFor(helper()).place;
+  episode.fight = null;
+}
+
+/**
+ * The showdown's fight style (item 031, src/rules/fights.ts): drawn on first
+ * need, so both battles are the same contest; `?fight=<id>` fixes it.
+ */
+export function fightStyle(): FightSpec {
+  if (!episode.fight) episode.fight = fightOverride && FIGHT_BY_ID[fightOverride] ? fightOverride : pickFight(episode, castRand);
+  return fightSpec(episode.fight);
 }
 
 export function heroSpec(): CharacterSpec {
@@ -301,6 +318,7 @@ export function resetEpisode(): void {
   episode.moves = null;
   episode.house = { plan: null, done: [], taught: false };
   episode.ending = null;
+  episode.fight = null;
   episode.stepIndex = 0;
 }
 

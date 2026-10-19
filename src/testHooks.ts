@@ -57,6 +57,9 @@ export interface RoomInfo {
 
 export interface BattleInfo {
   part: number;
+  /** The showdown's fight style (item 031) and what its staging reports (a race lead, the rope's knot...). */
+  fight: string;
+  stage: Record<string, unknown>;
   phase: string;
   t: number;
   /** `art`: the image each fights as (a form's, for a hero in one). */

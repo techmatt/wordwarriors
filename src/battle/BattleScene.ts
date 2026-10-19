@@ -43,7 +43,8 @@ import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh, sfxWrong } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, WALK_SPEED } from '../config';
 import { formFor } from '../../content/battle/forms';
-import { advance, castArt, castScale, counterArt, counterWord, episode, helper, movePlan, namedCounter, narrator, villainSpec, type Step } from '../episode/Episode';
+import { advance, castArt, castScale, counterArt, counterWord, episode, fightStyle, helper, movePlan, namedCounter, narrator, villainSpec, type Step } from '../episode/Episode';
+import { fightLineKey, type FightSpec } from '../../content/battle/fights';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
@@ -55,11 +56,11 @@ import { makeButtonDot } from '../ui/ButtonDot';
 import { Bubbles } from '../ui/Bubbles';
 import { Caption } from '../ui/Caption';
 import { fitText } from '../ui/fitText';
-import { cast, type BattleWorld, type Projectile, type Trap } from './abilities';
+import { cast, type Projectile, type Trap } from './abilities';
 import { Fighter, FLOOR_BOTTOM, FLOOR_TOP, initFromMinion, initFromSpec, type FighterInit } from './Fighter';
 import { ARENA_LEFT, ARENA_RIGHT, STEER } from './movement';
-
-type Phase = 'intro' | 'fight' | 'choice' | 'combo' | 'ultimate' | 'counter' | 'finish' | 'end';
+import { makeStage } from './stages';
+import type { FightStage, Phase, StageHost } from './stages/stage';
 
 /** Cosmetic damage per point of ability power. Tuned so bars drift, not drop. */
 const DAMAGE_PER_POWER = 2.6;
@@ -111,17 +112,22 @@ interface Choice {
   resolve: () => void;
 }
 
-export class BattleScene extends Phaser.Scene implements BattleWorld {
+export class BattleScene extends Phaser.Scene implements StageHost {
   part: 1 | 2 = 1;
   now = 0;
   fighters: Fighter[] = [];
   private projectiles: Projectile[] = [];
   private traps: Trap[] = [];
   private waits: { until: number; resolve: () => void }[] = [];
-  private phase: Phase = 'intro';
-  private heroes: Fighter[] = [];
-  private villain!: Fighter;
-  private helper: Fighter | null = null;
+  phase: Phase = 'intro';
+  heroes: Fighter[] = [];
+  villain!: Fighter;
+  helper: Fighter | null = null;
+  /** The showdown's style (item 031) and its staging (src/battle/stages/). */
+  fight!: FightSpec;
+  private show!: FightStage;
+  /** The background's ARENAS key: the style's own place, else the villain's arena. */
+  private arenaKey = 'meadow';
   private controls!: Controls;
   private darkRect!: Phaser.GameObjects.Rectangle;
   private hud!: Phaser.GameObjects.Graphics;
@@ -179,7 +185,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     hookState.scene = 'Battle';
     hookState.room = null;
     const v = villainSpec();
-    this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, `arena_${v.arena}`).setDisplaySize(GAME_WIDTH, GAME_HEIGHT).setDepth(DEPTH.ground);
+    this.fight = fightStyle();
+    this.arenaKey = this.fight.arena ?? v.arena;
+    this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, `arena_${this.arenaKey}`).setDisplaySize(GAME_WIDTH, GAME_HEIGHT).setDepth(DEPTH.ground);
     this.darkRect = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0a0018, 0).setDepth(FLOOR_TOP - 5);
     this.controls = new Controls(this);
     // Lighter in battle: a small box and face at the bottom, so the fight stays in view.
@@ -198,6 +206,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     const vid = fighterId(episode.villain, true);
     this.villain = this.spawn(initFromSpec(v.evil, vid, castArt(episode.villain, true), 'villain'), GAME_WIDTH + 160, 540);
     if (this.part === 2) for (const h of this.heroes) h.power = 1.25;
+    this.show = makeStage(this.fight.kind, this);
+    this.show.setup();
 
     this.makeHudLabels();
     fxQuality.level = 1;
@@ -210,6 +220,40 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
 
   get stage(): Phaser.Scene {
     return this;
+  }
+
+  // -- StageHost (item 031: what a fight style's staging may use) ---------------------
+
+  get stick(): Phaser.Math.Vector2 {
+    return this.controls.move;
+  }
+
+  get choosing(): boolean {
+    return this.choice !== null;
+  }
+
+  wait(s: number): Promise<void> {
+    return this.simWait(s);
+  }
+
+  team(): Fighter[] {
+    return [...this.heroes, ...(this.helper ? [this.helper] : [])].filter((f) => f.active);
+  }
+
+  heroFrac(): number {
+    const live = this.heroes.filter((h) => h.active);
+    return live.length ? live.reduce((a, h) => a + h.hp / h.maxHp, 0) / live.length : 0;
+  }
+
+  villainFrac(): number {
+    return this.villain?.active ? this.villain.hp / this.villain.maxHp : 0;
+  }
+
+  focus(x: number, y: number, zoom: number, holdMs: number): void {
+    const cam = this.cameras.main;
+    // Pan and zoom on the scene clock, so slow-mo and the choice freeze hold it too.
+    this.tweens.add({ targets: cam, zoom, scrollX: (x - GAME_WIDTH / 2) * (1 - 1 / zoom), scrollY: (y - GAME_HEIGHT / 2) * (1 - 1 / zoom), duration: 300, ease: 'Sine.easeInOut' });
+    this.tweens.add({ targets: cam, zoom: 1, scrollX: 0, scrollY: 0, delay: 300 + holdMs, duration: 400, ease: 'Sine.easeInOut' });
   }
 
   enemiesOf(f: Fighter): Fighter[] {
@@ -310,8 +354,13 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       hitstop(this, 60);
       shake(this, power, 160);
     }
-    if (power >= 2 && Math.random() < 0.35) floatText(this, target.cx, target.top, ['POW!', 'BAM!', 'ZAP!', 'BOOM!', 'WHAM!'][Math.floor(Math.random() * 5)]!, `#${color.toString(16).padStart(6, '0')}`, 34);
+    if (power >= 2 && Math.random() < 0.35) {
+      // Not a word on a move pad still to come (POW, BAM and ZAP are move words).
+      const words = ['POW!', 'BAM!', 'ZAP!', 'BOOM!', 'WHAM!'].filter((w) => !this.textGivesAway(w));
+      floatText(this, target.cx, target.top, words[Math.floor(Math.random() * words.length)]!, `#${color.toString(16).padStart(6, '0')}`, 34);
+    }
     if (status && !(target.isMain && target.team === 'villain' && this.part === 1 && Math.random() < 0.5)) target.setStatus(status.kind, status.duration, this.now);
+    this.show.onHit(target, power, from);
     if (!target.isMain && target.hp <= 0) this.kill(target);
   }
 
@@ -350,7 +399,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
 
   /** Falling/rising ambience per arena: embers, snow, sand, bubbles, sparks. */
   private ambience(): void {
-    const arena = villainSpec().arena;
+    const arena = this.arenaKey;
     const cfg: Record<string, { tint: number[]; up: boolean; tex: string }> = {
       meadow: { tint: [0xffffff, 0xffd23f, 0xff9ad5], up: false, tex: TEX.spark },
       volcano: { tint: [0xff7b00, 0xffd23f, 0xff3d00], up: true, tex: TEX.spark },
@@ -362,6 +411,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       cave: { tint: [0xffd23f, 0xff7b00], up: true, tex: TEX.spark },
       factory: { tint: [0x00f5d4, 0xffcc33], up: false, tex: TEX.pixel },
       city: { tint: [0xa0b0c0, 0xffffff], up: false, tex: TEX.smoke },
+      sky_race: { tint: [0xffd23f, 0xff7b00, 0xffffff], up: true, tex: TEX.spark },
+      spell_tower: { tint: [0xb04aff, 0x80ffdb, 0xffffff], up: true, tex: TEX.spark },
+      cook_show: { tint: [0xffffff, 0xff9ad5, 0xffd23f], up: false, tex: TEX.spark },
     };
     const c = cfg[arena] ?? cfg.meadow!;
     this.add
@@ -412,12 +464,16 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
   private async intro(): Promise<void> {
     this.phase = 'intro';
     if (this.part === 1) await this.versus();
-    // Everybody runs in from the sides.
-    this.heroes.forEach((h, i) => this.tweens.add({ targets: h, x: 260 + i * 140, duration: 900, ease: 'Quad.easeOut' }));
-    this.tweens.add({ targets: this.villain, x: 960, duration: 1100, ease: 'Quad.easeOut' });
-    this.banner(this.part === 1 ? 'FIGHT!' : 'ROUND TWO!', 0xff3d7a, true);
+    // Everybody runs in from the sides (to the style's own spots, if it has them).
+    this.heroes.forEach((h, i) => {
+      const to = this.show.home(h, i) ?? { x: 260 + i * 140, y: h.y };
+      this.tweens.add({ targets: h, x: to.x, y: to.y, duration: 900, ease: 'Quad.easeOut' });
+    });
+    const vto = this.show.home(this.villain, 0) ?? { x: 960, y: this.villain.y };
+    this.tweens.add({ targets: this.villain, x: vto.x, y: vto.y, duration: 1100, ease: 'Quad.easeOut' });
+    this.banner(this.fight.banner[this.part - 1]!, 0xff3d7a, true);
     sfxFanfare();
-    await this.say(this.part === 1 ? 'battle_start' : 'battle2_start');
+    await this.say(fightLineKey(this.fight, this.part === 1 ? 'start' : 'start2'));
     if (this.part === 2) await this.villainSays();
     for (const f of this.fighters) f.onStage = true;
     this.phase = 'fight';
@@ -438,7 +494,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     await this.ultimate();
     this.phase = 'end';
     await this.villainSays();
-    await this.say('retreat_1');
+    await this.say(fightLineKey(this.fight, 'retreat'));
     this.retreat();
     await this.simWait(1.4);
     this.cameras.main.fadeOut(500);
@@ -492,6 +548,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     });
     const v = this.villain;
     if (v.active) this.tweens.add({ targets: v.root, scaleY: 0.9, duration: 140, yoyo: true, repeat: 3 });
+    this.show.retreat();
   }
 
   /** The villain gets a word in at the big beats: a gloat, a challenge. */
@@ -641,6 +698,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     punch(this, 0.06, 180);
     cast(this, a, comboPart(a.init.id, b.init.id), this.villain, 2.2);
     cast(this, b, comboPart(b.init.id, a.init.id), this.villain, 1.4);
+    this.show.combo(a, b);
     this.stats.combos++;
     this.stats.abilitiesFired += 2;
     await this.simWait(1.5);
@@ -890,6 +948,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     burst(this, f.cx, f.cy, { count: 80, speed: 600, colors: [ab.color, 0xffd23f, 0xffffff] });
     f.setShield(1, 0xffd23f, this.now);
     cast(this, f, ab, this.villain, 2.4, true);
+    this.show.superMove(f, ab, right);
     // The word's own effect: a fan of its pictures. Its name on the banner: she has read it.
     this.wordFx(right, f, ab.color);
     this.banner(`SUPER ${right.toUpperCase()}!`, 0xffd23f, true);
@@ -1049,14 +1108,15 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     // A giant (Tiamat) steps to the front of her half, so growing for the
     // ultimate fills the screen from the floor to near the top, head still in view.
     const giant = v.init.size >= 2;
-    this.tweens.add({ targets: v, x: giant ? 960 : 900, y: giant ? FLOOR_BOTTOM : 560, duration: 600 });
+    // A contest's stage keeps everybody where its contest has them.
+    if (!this.show.anchored) this.tweens.add({ targets: v, x: giant ? 960 : 900, y: giant ? FLOOR_BOTTOM : 560, duration: 600 });
     // Everyone back to their own side, so the big moment reads left against right.
     this.heroes.forEach((h, i) => {
       h.status = null;
       h.clearOverlay();
-      this.tweens.add({ targets: h, x: 260 + i * 150, y: 500 + i * 70, duration: 600, ease: 'Quad.easeOut' });
+      if (!this.show.anchored) this.tweens.add({ targets: h, x: 260 + i * 150, y: 500 + i * 70, duration: 600, ease: 'Quad.easeOut' });
     });
-    if (this.helper?.active) this.tweens.add({ targets: this.helper, x: 150, y: 600, duration: 600 });
+    if (this.helper?.active && !this.show.anchored) this.tweens.add({ targets: this.helper, x: 150, y: 600, duration: 600 });
     await this.simWait(0.6);
     sfxUltimate();
     this.darken(0.55, 800);
@@ -1095,7 +1155,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       this.floors.heroMain = 0.06;
       cast(this, v, ult, this.heroes[0] ?? null, 2.6);
       if (giant) this.giantSweep(v, ult);
-      await this.simWait(2.2);
+      // The style stages the villain winning the round (the brawl just lets it land).
+      await this.show.ultimate1(v, ult);
       flash(this, 0xffffff, 300);
       hitstop(this, 160);
       shake(this, 8, 600);
@@ -1109,7 +1170,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
         h.setStatus('stun', 99, this.now);
         burst(this, h.cx, h.cy, { count: 40, speed: 400, colors: [ult.color, 0xffffff] });
       }
-      floatText(this, GAME_WIDTH / 2 - 200, 300, 'WHOA! TOO STRONG!', '#ffd23f', 60);
+      floatText(this, GAME_WIDTH / 2 - 200, 300, this.fight.tooStrong, '#ffd23f', 60);
       this.darken(0.35, 600);
       await this.simWait(1.2);
       return;
@@ -1159,7 +1220,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       // the counter is not her Magic Hat).
       const leap = giant ? 50 : 190;
       const stretch = giant ? 1.12 : 1.45;
-      this.tweens.addCounter({ from: 0, to: 1, duration: 750, ease: 'Sine.easeInOut', onUpdate: (tw) => (v.lift = Math.sin((tw.getValue() ?? 0) * Math.PI) * leap), onComplete: () => (v.lift = 0) });
+      // From the height it is at: a flyer leaps up from the air, not from the floor.
+      const lift0 = v.lift;
+      this.tweens.addCounter({ from: 0, to: 1, duration: 750, ease: 'Sine.easeInOut', onUpdate: (tw) => (v.lift = lift0 + Math.sin((tw.getValue() ?? 0) * Math.PI) * leap), onComplete: () => (v.lift = lift0) });
       const bs = v.baseScale;
       this.tweens.add({ targets: v.sprite, scaleX: bs * (giant ? 0.9 : 0.72), scaleY: bs * stretch, duration: 170, yoyo: true, repeat: 1, onComplete: () => v.sprite.setScale(bs) });
       await this.simWait(0.8);
@@ -1273,6 +1336,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     halo.destroy();
     this.tweens.add({ targets: item, alpha: 0, scale: 0, duration: 400, onComplete: () => item.destroy() });
     this.darken(0, 600);
+    // The contest turns the heroes' way.
+    await this.show.counter2(v);
     v.growUntil = 0;
     v.setStatus('stun', 99, this.now);
     floatText(this, v.cx, v.top - 20, 'DIZZY!', '#ffd23f', 56);
@@ -1313,7 +1378,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
   private async finish(): Promise<void> {
     this.phase = 'finish';
     const v = this.villain;
-    await this.say('finish');
+    await this.say(fightLineKey(this.fight, 'finish'));
     // Low, but not zero: the last hit below is the one that wins.
     this.floors.villainMain = 0.06;
     const team = [...this.heroes, ...(this.helper ? [this.helper] : [])];
@@ -1327,6 +1392,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     await this.simWait(team.length * 0.7 + 0.5);
     if (episode.made.ammo) await this.useAmmo();
     await this.simWait(1.6);
+    await this.show.finish(v);
     // The last hit.
     stopMusic();
     this.floors.villainMain = 0;
@@ -1340,7 +1406,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     sfxBoom(3);
     shockwave(this, v.cx, v.cy, 0xffd23f, 600, 900);
     burst(this, v.cx, v.cy, { count: 200, speed: 900, life: 1500, colors: [0xffd23f, 0xff5ab4, 0x7ad9ff, 0xffffff] });
-    this.banner('VICTORY!', 0xffd23f, true);
+    this.banner(this.fight.win, 0xffd23f, true);
     for (const f of this.fighters) if (f.team === 'villain' && !f.isMain && f.active) this.kill(f);
     // The villain spins, shrinks into a puff, and comes back as the good version.
     // A stretch up, then a squash to nothing: scale only.
@@ -1395,9 +1461,13 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     const target = this.pickTarget(f);
     const fighting = this.phase === 'fight' || this.phase === 'combo';
     const moving = fighting || (this.phase === 'ultimate' && f.team === 'hero');
+    // A contest places its fighters itself (lanes, the rope's ends, stations).
+    const placed = this.show.steer(f, dt);
     // Her own hero runs where she pushes the stick; everything else stays automatic.
-    const steered = f === this.heroes[0] && fighting && this.controls.move.lengthSq() > 0.04;
-    if (steered) {
+    const steered = !placed && f === this.heroes[0] && fighting && this.controls.move.lengthSq() > 0.04;
+    if (placed) {
+      // The stage has placed it.
+    } else if (steered) {
       // Forget any half-taken giant step, or letting go would snap her back.
       delete f.mem.stepTo;
       const sp = f.init.speed * 1.3;
@@ -1409,7 +1479,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     } else if (moving) STEER[f.init.style](f, { scene: this, now: this.now, dt, target });
     // Each side drifts back towards its own ground, so the fight stays framed
     // heroes-left, villain-right instead of wandering off one edge.
-    if (moving && !steered && (f.isMain || f.init.kind === 'helper')) {
+    if (moving && !steered && !placed && (f.isMain || f.init.kind === 'helper')) {
       const home = f.team === 'hero' ? 400 : 900;
       f.x += (home - f.x) * Math.min(1, (f.team === 'villain' ? 1.2 : 0.8) * dt);
     }
@@ -1567,6 +1637,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
   private drawHud(): void {
     const g = this.hud;
     g.clear();
+    if (this.show.drawHud(g)) return;
     const bar = (x: number, y: number, w: number, frac: number, color: number, alignRight: boolean) => {
       g.fillStyle(0x000000, 0.6).fillRoundedRect(x - 3, y - 3, w + 6, 20, 8);
       const fw = Math.max(0, w * frac);
@@ -1617,6 +1688,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     }
     this.fighters = this.fighters.filter((f) => f.alive || f.root.active);
     this.separate(dt);
+    this.show.update(dt);
     if (this.choice) this.holdHero();
     this.updateProjectiles(dt);
     this.updateTraps();
@@ -1650,6 +1722,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     const info = (f: Fighter) => ({ id: f.init.id, hp: Math.round((100 * f.hp) / f.maxHp), status: f.floored ? 'floored' : (f.status?.kind ?? null), art: f.init.art });
     hookState.battle = {
       part: this.part,
+      fight: this.fight.id,
+      stage: this.show.info(),
       phase: this.phase,
       t: Math.round(this.now) / 1000,
       heroes: this.heroes.map(info),

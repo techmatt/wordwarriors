@@ -19,6 +19,8 @@
  * name, {threat} the villain's house threat (wake lines only).
  */
 
+import { FIGHTS, FIGHT_BEATS } from '../battle/fights.js';
+
 export interface Template {
   key: string;
   text: string;
@@ -111,6 +113,8 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'away_secret', text: 'Look, a secret door! Let us go in!', say: 'Look, a secret door, let us go in!' },
   { key: 'away_front', text: 'The way out is open! Let us go!', say: 'The way out is open, let us go!' },
   { key: 'away_ready', text: 'We are ready now! Off to the fight!', say: 'We are ready now, off to the fight!' },
+  // Each fight style's own beats (item 031, content/battle/fights.ts): `fight_<id>_<beat>`.
+  ...FIGHTS.flatMap((f) => FIGHT_BEATS.flatMap((b) => (f.lines[b] ? [{ key: `fight_${f.id}_${b}`, ...f.lines[b] }] : []))),
 ];
 
 /** Composed per narrator × hero. */

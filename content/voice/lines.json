@@ -5765,6 +5765,118 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_julia_fight_sky_race_start",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_julia_fight_sky_race_start2",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_julia_fight_sky_race_retreat",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_julia_fight_sky_race_finish",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_julia_fight_sea_tug_start",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_julia_fight_sea_tug_start2",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_julia_fight_sea_tug_retreat",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_julia_fight_sea_tug_finish",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_julia_fight_spell_clash_start",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_julia_fight_spell_clash_start2",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_julia_fight_spell_clash_retreat",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_julia_fight_spell_clash_finish",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_julia_fight_cook_off_start",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_julia_fight_cook_off_start2",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_julia_fight_cook_off_retreat",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_julia_fight_cook_off_finish",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
+ },
+ {
   "id": "nar_julia_alarm_hero_ellie",
   "speaker": "julia",
   "group": "nar_julia",
@@ -7697,6 +7809,118 @@
   "group": "nar_ellie",
   "text": "We are ready now! Off to the fight!",
   "say": "We are ready now, off to the fight!"
+ },
+ {
+  "id": "nar_ellie_fight_sky_race_start",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_ellie_fight_sky_race_start2",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_ellie_fight_sky_race_retreat",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_ellie_fight_sky_race_finish",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_ellie_fight_sea_tug_start",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_ellie_fight_sea_tug_start2",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_ellie_fight_sea_tug_retreat",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_ellie_fight_sea_tug_finish",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_ellie_fight_spell_clash_start",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_ellie_fight_spell_clash_start2",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_ellie_fight_spell_clash_retreat",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_ellie_fight_spell_clash_finish",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_ellie_fight_cook_off_start",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_ellie_fight_cook_off_start2",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_ellie_fight_cook_off_retreat",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_ellie_fight_cook_off_finish",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
  },
  {
   "id": "nar_ellie_alarm_hero_julia",
@@ -9633,6 +9857,118 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_seraphina_fight_sky_race_start",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_seraphina_fight_sky_race_start2",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_seraphina_fight_sky_race_retreat",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_seraphina_fight_sky_race_finish",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_seraphina_fight_sea_tug_start",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_seraphina_fight_sea_tug_start2",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_seraphina_fight_sea_tug_retreat",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_seraphina_fight_sea_tug_finish",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_seraphina_fight_spell_clash_start",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_seraphina_fight_spell_clash_start2",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_seraphina_fight_spell_clash_retreat",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_seraphina_fight_spell_clash_finish",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_seraphina_fight_cook_off_start",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_seraphina_fight_cook_off_start2",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_seraphina_fight_cook_off_retreat",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_seraphina_fight_cook_off_finish",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
+ },
+ {
   "id": "nar_seraphina_alarm_hero_julia",
   "speaker": "seraphina",
   "group": "nar_seraphina",
@@ -11565,6 +11901,118 @@
   "group": "nar_dada_matt",
   "text": "We are ready now! Off to the fight!",
   "say": "We are ready now, off to the fight!"
+ },
+ {
+  "id": "nar_dada_matt_fight_sky_race_start",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_dada_matt_fight_sky_race_start2",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_dada_matt_fight_sky_race_retreat",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_dada_matt_fight_sky_race_finish",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_dada_matt_fight_sea_tug_start",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_dada_matt_fight_sea_tug_start2",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_dada_matt_fight_sea_tug_retreat",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_dada_matt_fight_sea_tug_finish",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_dada_matt_fight_spell_clash_start",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_dada_matt_fight_spell_clash_start2",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_dada_matt_fight_spell_clash_retreat",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_dada_matt_fight_spell_clash_finish",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_dada_matt_fight_cook_off_start",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_dada_matt_fight_cook_off_start2",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_dada_matt_fight_cook_off_retreat",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_dada_matt_fight_cook_off_finish",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
  },
  {
   "id": "nar_dada_matt_alarm_hero_julia",
@@ -13501,6 +13949,118 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_dada_jason_fight_sky_race_start",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_dada_jason_fight_sky_race_start2",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_dada_jason_fight_sky_race_retreat",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_dada_jason_fight_sky_race_finish",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_dada_jason_fight_sea_tug_start",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_dada_jason_fight_sea_tug_start2",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_dada_jason_fight_sea_tug_retreat",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_dada_jason_fight_sea_tug_finish",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_dada_jason_fight_spell_clash_start",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_dada_jason_fight_spell_clash_start2",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_dada_jason_fight_spell_clash_retreat",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_dada_jason_fight_spell_clash_finish",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_dada_jason_fight_cook_off_start",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_dada_jason_fight_cook_off_start2",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_dada_jason_fight_cook_off_retreat",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_dada_jason_fight_cook_off_finish",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
+ },
+ {
   "id": "nar_dada_jason_alarm_hero_julia",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
@@ -15433,6 +15993,118 @@
   "group": "nar_elsa",
   "text": "We are ready now! Off to the fight!",
   "say": "We are ready now, off to the fight!"
+ },
+ {
+  "id": "nar_elsa_fight_sky_race_start",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_elsa_fight_sky_race_start2",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_elsa_fight_sky_race_retreat",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_elsa_fight_sky_race_finish",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_elsa_fight_sea_tug_start",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_elsa_fight_sea_tug_start2",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_elsa_fight_sea_tug_retreat",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_elsa_fight_sea_tug_finish",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_elsa_fight_spell_clash_start",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_elsa_fight_spell_clash_start2",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_elsa_fight_spell_clash_retreat",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_elsa_fight_spell_clash_finish",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_elsa_fight_cook_off_start",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_elsa_fight_cook_off_start2",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_elsa_fight_cook_off_retreat",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_elsa_fight_cook_off_finish",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
  },
  {
   "id": "nar_elsa_alarm_hero_julia",
@@ -17369,6 +18041,118 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_anna_fight_sky_race_start",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_anna_fight_sky_race_start2",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_anna_fight_sky_race_retreat",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_anna_fight_sky_race_finish",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_anna_fight_sea_tug_start",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_anna_fight_sea_tug_start2",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_anna_fight_sea_tug_retreat",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_anna_fight_sea_tug_finish",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_anna_fight_spell_clash_start",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_anna_fight_spell_clash_start2",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_anna_fight_spell_clash_retreat",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_anna_fight_spell_clash_finish",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_anna_fight_cook_off_start",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_anna_fight_cook_off_start2",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_anna_fight_cook_off_retreat",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_anna_fight_cook_off_finish",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
+ },
+ {
   "id": "nar_anna_alarm_hero_julia",
   "speaker": "anna",
   "group": "nar_anna",
@@ -19301,6 +20085,118 @@
   "group": "nar_jasmine",
   "text": "We are ready now! Off to the fight!",
   "say": "We are ready now, off to the fight!"
+ },
+ {
+  "id": "nar_jasmine_fight_sky_race_start",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_jasmine_fight_sky_race_start2",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_jasmine_fight_sky_race_retreat",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_jasmine_fight_sky_race_finish",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_jasmine_fight_sea_tug_start",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_jasmine_fight_sea_tug_start2",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_jasmine_fight_sea_tug_retreat",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_jasmine_fight_sea_tug_finish",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_jasmine_fight_spell_clash_start",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_jasmine_fight_spell_clash_start2",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_jasmine_fight_spell_clash_retreat",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_jasmine_fight_spell_clash_finish",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_jasmine_fight_cook_off_start",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_jasmine_fight_cook_off_start2",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_jasmine_fight_cook_off_retreat",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_jasmine_fight_cook_off_finish",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
  },
  {
   "id": "nar_jasmine_alarm_hero_julia",
@@ -21237,6 +22133,118 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_ozymandias_fight_sky_race_start",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_ozymandias_fight_sky_race_start2",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_ozymandias_fight_sky_race_retreat",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_ozymandias_fight_sky_race_finish",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_ozymandias_fight_sea_tug_start",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_ozymandias_fight_sea_tug_start2",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_ozymandias_fight_sea_tug_retreat",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_ozymandias_fight_sea_tug_finish",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_ozymandias_fight_spell_clash_start",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_ozymandias_fight_spell_clash_start2",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_ozymandias_fight_spell_clash_retreat",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_ozymandias_fight_spell_clash_finish",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_ozymandias_fight_cook_off_start",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_ozymandias_fight_cook_off_start2",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_ozymandias_fight_cook_off_retreat",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_ozymandias_fight_cook_off_finish",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
+ },
+ {
   "id": "nar_ozymandias_alarm_hero_julia",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
@@ -23171,6 +24179,118 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_jormungandr_fight_sky_race_start",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_jormungandr_fight_sky_race_start2",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_jormungandr_fight_sky_race_retreat",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_jormungandr_fight_sky_race_finish",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_jormungandr_fight_sea_tug_start",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_jormungandr_fight_sea_tug_start2",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_jormungandr_fight_sea_tug_retreat",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_jormungandr_fight_sea_tug_finish",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_jormungandr_fight_spell_clash_start",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_jormungandr_fight_spell_clash_start2",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_jormungandr_fight_spell_clash_retreat",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_jormungandr_fight_spell_clash_finish",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_jormungandr_fight_cook_off_start",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_jormungandr_fight_cook_off_start2",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_jormungandr_fight_cook_off_retreat",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_jormungandr_fight_cook_off_finish",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
+ },
+ {
   "id": "nar_jormungandr_alarm_hero_julia",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -25102,6 +26222,118 @@
   "group": "nar_smaug",
   "text": "We are ready now! Off to the fight!",
   "say": "We are ready now, off to the fight!"
+ },
+ {
+  "id": "nar_smaug_fight_sky_race_start",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_smaug_fight_sky_race_start2",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_smaug_fight_sky_race_retreat",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_smaug_fight_sky_race_finish",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_smaug_fight_sea_tug_start",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_smaug_fight_sea_tug_start2",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_smaug_fight_sea_tug_retreat",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_smaug_fight_sea_tug_finish",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_smaug_fight_spell_clash_start",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_smaug_fight_spell_clash_start2",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_smaug_fight_spell_clash_retreat",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_smaug_fight_spell_clash_finish",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_smaug_fight_cook_off_start",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_smaug_fight_cook_off_start2",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_smaug_fight_cook_off_retreat",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_smaug_fight_cook_off_finish",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
  },
  {
   "id": "nar_smaug_alarm_hero_julia",
@@ -27038,6 +28270,118 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_tiamat_fight_sky_race_start",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_tiamat_fight_sky_race_start2",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_tiamat_fight_sky_race_retreat",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_tiamat_fight_sky_race_finish",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_tiamat_fight_sea_tug_start",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_tiamat_fight_sea_tug_start2",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_tiamat_fight_sea_tug_retreat",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_tiamat_fight_sea_tug_finish",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_tiamat_fight_spell_clash_start",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_tiamat_fight_spell_clash_start2",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_tiamat_fight_spell_clash_retreat",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_tiamat_fight_spell_clash_finish",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_tiamat_fight_cook_off_start",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_tiamat_fight_cook_off_start2",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_tiamat_fight_cook_off_retreat",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_tiamat_fight_cook_off_finish",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
+ },
+ {
   "id": "nar_tiamat_alarm_hero_julia",
   "speaker": "tiamat",
   "group": "nar_tiamat",
@@ -28970,6 +30314,118 @@
   "group": "nar_scar",
   "text": "We are ready now! Off to the fight!",
   "say": "We are ready now, off to the fight!"
+ },
+ {
+  "id": "nar_scar_fight_sky_race_start",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_scar_fight_sky_race_start2",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_scar_fight_sky_race_retreat",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_scar_fight_sky_race_finish",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_scar_fight_sea_tug_start",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_scar_fight_sea_tug_start2",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_scar_fight_sea_tug_retreat",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_scar_fight_sea_tug_finish",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_scar_fight_spell_clash_start",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_scar_fight_spell_clash_start2",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_scar_fight_spell_clash_retreat",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_scar_fight_spell_clash_finish",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_scar_fight_cook_off_start",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_scar_fight_cook_off_start2",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_scar_fight_cook_off_retreat",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_scar_fight_cook_off_finish",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
  },
  {
   "id": "nar_scar_alarm_hero_julia",
@@ -30906,6 +32362,118 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_moriarty_fight_sky_race_start",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_moriarty_fight_sky_race_start2",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_moriarty_fight_sky_race_retreat",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_moriarty_fight_sky_race_finish",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_moriarty_fight_sea_tug_start",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_moriarty_fight_sea_tug_start2",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_moriarty_fight_sea_tug_retreat",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_moriarty_fight_sea_tug_finish",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_moriarty_fight_spell_clash_start",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_moriarty_fight_spell_clash_start2",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_moriarty_fight_spell_clash_retreat",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_moriarty_fight_spell_clash_finish",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_moriarty_fight_cook_off_start",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_moriarty_fight_cook_off_start2",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_moriarty_fight_cook_off_retreat",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_moriarty_fight_cook_off_finish",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
+ },
+ {
   "id": "nar_moriarty_alarm_hero_julia",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -32840,6 +34408,118 @@
   "say": "We are ready now, off to the fight!"
  },
  {
+  "id": "nar_bavmorda_fight_sky_race_start",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_bavmorda_fight_sky_race_start2",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_bavmorda_fight_sky_race_retreat",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_bavmorda_fight_sky_race_finish",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_bavmorda_fight_sea_tug_start",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_bavmorda_fight_sea_tug_start2",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_bavmorda_fight_sea_tug_retreat",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_bavmorda_fight_sea_tug_finish",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_bavmorda_fight_spell_clash_start",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_bavmorda_fight_spell_clash_start2",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_bavmorda_fight_spell_clash_retreat",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_bavmorda_fight_spell_clash_finish",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_bavmorda_fight_cook_off_start",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_bavmorda_fight_cook_off_start2",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_bavmorda_fight_cook_off_retreat",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_bavmorda_fight_cook_off_finish",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
+ },
+ {
   "id": "nar_bavmorda_alarm_hero_julia",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
@@ -34772,6 +36452,118 @@
   "group": "nar_rilla",
   "text": "We are ready now! Off to the fight!",
   "say": "We are ready now, off to the fight!"
+ },
+ {
+  "id": "nar_rilla_fight_sky_race_start",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "A race! Ready, set, go!",
+  "say": "A race, ready, set, go!"
+ },
+ {
+  "id": "nar_rilla_fight_sky_race_start2",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "The rematch! Fly faster this time!",
+  "say": "The rematch, fly faster this time!"
+ },
+ {
+  "id": "nar_rilla_fight_sky_race_retreat",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Too fast! Back to practise!",
+  "say": "Too fast, back to practise!"
+ },
+ {
+  "id": "nar_rilla_fight_sky_race_finish",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "The finish line! All together, zoom!",
+  "say": "The finish line, all together, zoom!"
+ },
+ {
+  "id": "nar_rilla_fight_sea_tug_start",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "A rope pull! Grab the rope and pull!",
+  "say": "A rope pull, grab the rope and pull!"
+ },
+ {
+  "id": "nar_rilla_fight_sea_tug_start2",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Pull again! We are stronger now!",
+  "say": "Pull again, we are stronger now!"
+ },
+ {
+  "id": "nar_rilla_fight_sea_tug_retreat",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Too strong! Let go, let go!",
+  "say": "Too strong, let go, let go!"
+ },
+ {
+  "id": "nar_rilla_fight_sea_tug_finish",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "All together now! Pull!",
+  "say": "All together now, pull!"
+ },
+ {
+  "id": "nar_rilla_fight_spell_clash_start",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Magic against magic! Push the beam!",
+  "say": "Magic against magic, push the beam!"
+ },
+ {
+  "id": "nar_rilla_fight_spell_clash_start2",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Our magic is stronger now! Push!",
+  "say": "Our magic is stronger now, push!"
+ },
+ {
+  "id": "nar_rilla_fight_spell_clash_retreat",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Her spell is too strong! Retreat!",
+  "say": "Her spell is too strong, retreat!"
+ },
+ {
+  "id": "nar_rilla_fight_spell_clash_finish",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "All our magic together! Push!",
+  "say": "All our magic together, push!"
+ },
+ {
+  "id": "nar_rilla_fight_cook_off_start",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "A cook-off! The yummiest dish wins!",
+  "say": "A cook-off, the yummiest dish wins!"
+ },
+ {
+  "id": "nar_rilla_fight_cook_off_start2",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Round two! We know the recipe now!",
+  "say": "Round two, we know the recipe now!"
+ },
+ {
+  "id": "nar_rilla_fight_cook_off_retreat",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Their dish was too yummy! Back to practise!",
+  "say": "Their dish was too yummy, back to practise!"
+ },
+ {
+  "id": "nar_rilla_fight_cook_off_finish",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "Now the topping! All together!",
+  "say": "Now the topping, all together!"
  },
  {
   "id": "nar_rilla_alarm_hero_julia",

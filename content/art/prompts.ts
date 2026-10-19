@@ -12,6 +12,7 @@
  * draws the wrong thing (a word that has two meanings, a room the game draws on).
  */
 
+import { FIGHTS, fightPropArt } from '../battle/fights.js';
 import { ENDINGS, endingPropArt } from '../house/endings.js';
 import { ART_ASSETS, type ArtAsset } from './assets.js';
 
@@ -38,7 +39,9 @@ const TIAMAT_ART = ['char_tiamat_good', 'char_tiamat_evil', 'face_tiamat', 'item
 const SCAR_ART = ['char_scar_good', 'char_scar_evil', 'face_scar'];
 // The victory scenes' props (item 027): a cake, a boat, a fort; asked for with no green.
 const ENDING_PROPS = ENDINGS.flatMap((e) => e.props.map((p) => endingPropArt(p.id)));
-export const NO_GREEN = new Set([...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', ...ENDING_PROPS, ...SCAR_ART]);
+// The fight styles' props (item 031): a finish banner, a trophy, a cooking station.
+const FIGHT_PROPS = FIGHTS.flatMap((f) => (f.props ?? []).map((p) => fightPropArt(p.id)));
+export const NO_GREEN = new Set([...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
 
 /**
  * Likeness references for the family (Matt, 2026-10-18): a photo in the
