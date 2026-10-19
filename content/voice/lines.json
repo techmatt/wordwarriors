@@ -3170,6 +3170,37 @@
   "text": "To be slippery enough, we have to train in my secret sea grotto!"
  },
  {
+  "id": "quest_julia",
+  "speaker": "julia",
+  "group": "core",
+  "text": "To get ready, we have to play in Dada's treehouse workshop!",
+  "say": "To get ready, we have to play in Dadas treehouse workshop!"
+ },
+ {
+  "id": "quest_scar",
+  "speaker": "scar",
+  "group": "core",
+  "text": "To be fast enough, we have to train in the neon hacker den!"
+ },
+ {
+  "id": "quest_moriarty",
+  "speaker": "moriarty",
+  "group": "core",
+  "text": "To learn the best tricks, we have to train in the purple moon tower!"
+ },
+ {
+  "id": "quest_bavmorda",
+  "speaker": "bavmorda",
+  "group": "core",
+  "text": "To brew the best spells, we have to train in the purple moon tower!"
+ },
+ {
+  "id": "quest_rilla",
+  "speaker": "rilla",
+  "group": "core",
+  "text": "To be gorilla strong, we have to train in the secret forest gym!"
+ },
+ {
   "id": "letter_a_sound",
   "speaker": "phonics",
   "group": "phonics",

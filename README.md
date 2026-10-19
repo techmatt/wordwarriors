@@ -48,7 +48,8 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    door!"), when it pops out and glows; it sparkles if she has not gone through it 12
    seconds after the news (`DOOR_SPARKLE_MS`).
 3. **The quest place (the hub).** The door leads to the helper's quest place (the
-   forest gym, the bubble castle; or the house itself for a helper with no place) laid
+   forest gym, the bubble castle; every character has one, and the house itself is the
+   fallback for a character added without one, or `?place=home`) laid
    out like the house: the helper by a magic circle, two side doors, later a secret
    door, and a way out (the house's front door, a glowing portal anywhere else).
    The helper (the ally, or the dad who woke her) teaches a spell: she
