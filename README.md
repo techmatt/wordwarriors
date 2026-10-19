@@ -436,7 +436,8 @@ npm run art:pick -- <id> <n>
   and stop that PID. A killed `npm run test:all` does the same on 5184 (the next run then
   fails at once with "5184 is already used"; seen 2026-10-18): check the PID's command
   line is this worktree's vite before stopping it. Background `test:all` needs a timeout
-  over its ~12 minutes; a 10-minute limit kills it partway.
+  over its ~12 minutes; a 10-minute limit kills it partway. With items 025 and 026's
+  slow tests it took 26 minutes (2026-10-19, 2:55am), so give it 40.
 - Long Playwright runs: point them at a build so edits to `src/` do not hot-reload the
   page under test: `npx vite build --outDir scratch/dist-test`, `npx vite preview --outDir
   scratch/dist-test --port 5175`, then `WW_BASE_URL=http://localhost:5175 npx playwright test`.
