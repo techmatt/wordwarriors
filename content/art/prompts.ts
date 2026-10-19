@@ -59,10 +59,14 @@ export function refFor(id: string): string | undefined {
  * notes on the likenesses, 2026-10-18, item 009).
  */
 const ELLIE_HAIR = "Her hair is pale, fine and wispy strawberry-blonde: very light blonde with only a faint peachy-pink tint, thin and soft like a toddler's. NOT golden, NOT orange, NOT ginger, NOT copper.";
+const TIAMAT_BELLY = 'She is a dragon, not a person: a plain round dragon belly with smooth belly plates like the good version, no chest or bust shape at all.';
 export const NOTES: Record<string, string> = {
   char_ellie_good: ELLIE_HAIR,
   char_ellie_evil: ELLIE_HAIR,
   face_ellie: ELLIE_HAIR,
+  // Item 013: two of the first three of each gave her a woman's bust.
+  char_tiamat_evil: TIAMAT_BELLY,
+  face_tiamat: TIAMAT_BELLY,
 };
 
 /**
@@ -71,6 +75,12 @@ export const NOTES: Record<string, string> = {
  * which the row quotes by itself).
  */
 export const PICK_NOTES: Record<string, string> = {
+  char_tiamat_good: 'New character (item 013). `current` is candidate 1, promoted by item 013 (widest wings and fullest body: reads as the giant she is).',
+  char_tiamat_evil: '`current` is candidate 2, promoted by item 013: 1 and 3 drew a woman\'s bust, wrong for this game; 2 keeps the plain dragon belly of the good version.',
+  face_tiamat: '`current` is candidate 2, promoted by item 013: the only one without a bust shape.',
+  item_magic_hat: 'Evil Tiamat\'s counter (SCARED OF THE HAT). `current` is candidate 2, promoted by item 013 (cleanest hat shape at game size). All three drew a rain storm, not her purple fire storm.',
+  decal_tiamat_scale: '`current` is candidate 1, promoted by item 013.',
+  decal_tiamat_banner: '`current` is candidate 1, promoted by item 013 (2 lies crumpled on the floor and reads less clearly).',
   char_julia_chef: 'New id (item 012), Julia as a chef for a future scenario; no scene uses it yet. `current` is candidate 3, promoted by item 012 (closest face and fringe to her other art, pink shoes like hers).',
   char_anna_evil: "`current` is the old copper-curls design, unlike good Anna and her face card (the item 009 redesign: dark ponytail, plum and magenta). Her look in content/battle/roster.ts describes `current`; a candidate drawn from it is copper-curled too.",
   room_bedroom_julia: 'Redrawn with no loose toys of its own: the first one painted a teddy and a rocket that doubled the toys the game puts on the floor.',
