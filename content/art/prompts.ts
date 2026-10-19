@@ -121,6 +121,27 @@ const PICTURES: Record<string, string> = {
   mop: 'a mop: a floor mop with a long wooden handle and a floppy white mop head',
   pot: 'a pot: a big silver cooking pot with two handles and a lid',
   rat: 'a rat: a grey rat with a long pink tail, side-on',
+  // Move words (item 018): the picture is what the move does, for the victory recap.
+  zap: 'a zap: one bright yellow zig-zag lightning bolt crackling with little white sparks',
+  pow: 'a pow: a big red cartoon boxing glove punching forward into a jagged yellow star-shaped impact flash, with no letters in the flash',
+  bam: 'a bam: a big wooden cartoon mallet smashing down onto the ground, a jagged star-shaped impact and little cracks under it, with no letters',
+  zip: 'a zip: a small bright blue comet zooming sideways very fast, long white speed lines streaming behind it',
+  hop: 'a hop: a white bunny rabbit in mid-hop high in the air, a curved dotted arc under it showing the jump',
+  pop: 'a pop: a red balloon bursting with a star-shaped bang, rubber bits and confetti flying out',
+  hug: 'a hug: two cute teddy bears hugging each other tight, eyes closed and smiling, a little pink heart above them',
+  big: 'big: a huge grey elephant standing beside a tiny mouse, so the elephant looks enormous',
+  hot: 'hot: a red chilli pepper with little orange flames curling off it and a drop of sweat',
+  ice: 'ice: one shiny pale-blue ice cube with frosty edges and a tiny sparkle',
+  dig: 'a dig: a small red spade digging into a heap of brown dirt, a few clods flying',
+  run: 'a run: a pair of bright running trainers in mid-stride, speed lines and little dust puffs behind them',
+  mud: 'mud: one big brown splat of mud with drips and a few splashes flying off',
+  wet: 'wet: one big blue water splash with round droplets flying out',
+  fog: 'fog: a big soft grey cloud of fog drifting low, wispy curls at its edges',
+  top: 'a top: a colourful striped spinning top toy spinning on its point, curved swirl marks around it',
+  tug: 'a tug: two little cartoon hands pulling hard on a thick rope in a tug of war, the rope pulled tight with a knot in the middle',
+  fix: 'a fix: a silver spanner and a sticking plaster crossed over each other, with sparkles',
+  pan: 'a pan: a black frying pan with a long handle, a fried egg sizzling in it',
+  ram: 'a ram: a white ram (a woolly sheep with big curly horns) charging forward, side-on',
 };
 
 const HAND: Record<string, string> = {

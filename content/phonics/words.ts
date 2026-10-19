@@ -80,6 +80,36 @@ export const SPECIAL_WORDS: Word[] = [{ word: 'mice', glyph: '🐭', decodable: 
 
 export const WORDS: Word[] = [...CVC_WORDS, ...SIGHT_WORDS, ...SPECIAL_WORDS];
 
+/**
+ * Pictures for the battle's move words that are not reading words of their
+ * own (item 018): the victory recap shows every word she read with its
+ * picture, move words included. Not in WORDS: they are never key words or
+ * room objects. A move word that is a CVC word (SUN, JET, NET) uses its
+ * existing `pic_<word>`.
+ */
+export const MOVE_PICTURES: Word[] = [
+  { word: 'zap', glyph: '⚡', decodable: true },
+  { word: 'pow', glyph: '🥊', decodable: true },
+  { word: 'bam', glyph: '🔨', decodable: true },
+  { word: 'zip', glyph: '☄️', decodable: true },
+  { word: 'hop', glyph: '🐇', decodable: true },
+  { word: 'pop', glyph: '🎈', decodable: true },
+  { word: 'hug', glyph: '🧸', decodable: true },
+  { word: 'big', glyph: '🐘', decodable: true },
+  { word: 'hot', glyph: '🌶️', decodable: true },
+  { word: 'ice', glyph: '🧊', decodable: false },
+  { word: 'dig', glyph: '⛏️', decodable: true },
+  { word: 'run', glyph: '👟', decodable: true },
+  { word: 'mud', glyph: '🟤', decodable: true },
+  { word: 'wet', glyph: '💦', decodable: true },
+  { word: 'fog', glyph: '🌫️', decodable: true },
+  { word: 'top', glyph: '🌀', decodable: true },
+  { word: 'tug', glyph: '➰', decodable: true },
+  { word: 'fix', glyph: '🔧', decodable: true },
+  { word: 'pan', glyph: '🍳', decodable: true },
+  { word: 'ram', glyph: '🐏', decodable: true },
+];
+
 export const WORD_BY_ID: Record<string, Word> = Object.fromEntries(WORDS.map((w) => [w.word, w]));
 
 /**
