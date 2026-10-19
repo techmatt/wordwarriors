@@ -73,11 +73,16 @@ export function refFor(id: string): string | undefined {
  * notes on the likenesses, 2026-10-18, item 009).
  */
 const ELLIE_HAIR = "Her hair is pale, fine and wispy strawberry-blonde: very light blonde with only a faint peachy-pink tint, thin and soft like a toddler's. NOT golden, NOT orange, NOT ginger, NOT copper.";
+const LIFTER = 'He wears a T-shirt WITH SLEEVES, not a singlet or a tank top, and holds one small ordinary dumbbell, NOT a barbell, nothing lifted over his head. Strong but a little less muscly than a bodybuilder.';
 const TIAMAT_BELLY = 'She is a dragon, not a person: a plain round dragon belly with smooth belly plates like the good version, no chest or bust shape at all.';
 export const NOTES: Record<string, string> = {
   char_ellie_good: ELLIE_HAIR,
   char_ellie_evil: ELLIE_HAIR,
   face_ellie: ELLIE_HAIR,
+  // Item 032 (Matt): item 025's lifter was too buff, sleeveless, with a giant barbell overhead.
+  char_dada_matt_lifter_good: LIFTER,
+  char_dada_matt_lifter_evil: LIFTER,
+  face_dada_matt_lifter: LIFTER,
   // Item 013: two of the first three of each gave her a woman's bust.
   char_tiamat_evil: TIAMAT_BELLY,
   face_tiamat: TIAMAT_BELLY,
@@ -137,10 +142,48 @@ export const PICK_NOTES: Record<string, string> = {
   char_anna_evil: "`current` is the old copper-curls design, unlike good Anna and her face card (the item 009 redesign: dark ponytail, plum and magenta). Her look in content/battle/roster.ts describes `current`; a candidate drawn from it is copper-curled too.",
   room_bedroom_julia: 'Redrawn with no loose toys of its own: the first one painted a teddy and a rocket that doubled the toys the game puts on the floor.',
   decal_rilla_footprint: 'Redrawn as one giant robot-gorilla footprint: the earlier try still read as bare human feet.',
-  prop_word_machine: "The word machine (item 026): the game puts the picture in its round window and draws its own letter panel over the blank lower panel. `current` is candidate 2, promoted by item 026: the widest panel and the plainest window. A different pick may need `WINDOW` / `PANEL` in src/scenes/WordMachine.ts nudged (fractions of the image). 0 is the painted placeholder.",
+  prop_word_machine: "The word machine (item 026): the game puts the picture in its round window and draws its own letter panel over the blank lower panel. `current` is candidate 3, Matt's pick (item 032): a round glass dome over a cream panel, with a crank on the side; `WINDOW` / `PANEL` in src/scenes/WordMachine.ts are fitted to it (fractions of the image), so a different pick needs them refitted. 2 is item 026's promotion; 0 is the painted placeholder.",
+  room_end_fort: "`current` is candidate 3, Matt's pick (item 032): a fairy-lit living room, a green sofa, a moon window, a big white rug across an open middle where the game draws the pillow fort. `0` is the art item 027 left in the game.",
   prop_machine_tile: "The word machine's letter tiles, a letter painted on each by the game. `current` is candidate 3, promoted by item 026: the flattest blank top for a letter (1 is a cube seen corner-on). 0 is the painted placeholder.",
   ...pickedBy025(),
+  ...pickedBy032(),
 };
+
+/**
+ * Matt's picks from item 025's sheet (`art_alts_025`), promoted by item 032:
+ * the candidate now in the game, what it shows, and item 025's own promotion
+ * (a candidate still, so the picker offers it back).
+ */
+function pickedBy032(): Record<string, string> {
+  const picks: Record<string, [number, number, string]> = {
+    char_dada_jason_warlock_good: [1, 2, 'starry purple robes, a crystal staff, purple fire in one hand, a grinning imp on his shoulder'],
+    char_dada_jason_warrior_evil: [3, 2, 'a horned crown helmet, a spiked round shield, a jagged axe, a tattered red cape, grinning'],
+    char_dada_jason_warrior_good: [3, 2, 'gold-trimmed silver plate, a red cape, a sun shield, a double-headed axe held high'],
+    char_dada_matt_blade_good: [6, 5, 'bare-armed rune armour, the sword held low, a blue magic swirl raised'],
+    char_dada_matt_cyber_evil: [2, 1, 'a red visor, a spike-shouldered jacket, a red code tablet in his palm, two red drones'],
+    char_dada_matt_cyber_good: [3, 1, 'typing on a floating cyan keyboard, a smiling drone at his shoulder'],
+    decal_dada_jason_warlock_flame: [2, 1, 'one cheeky purple flame with a face, small flames round it'],
+    decal_dada_jason_warrior_shield: [1, 2, 'two dented black shields, a snapped axe, a spilled coin pouch'],
+    decal_dada_matt_cyber_cable: [1, 2, 'a tangle of red-glowing cables and plugs'],
+    room_place_hacker_den: [2, 1, 'a wide rainy neon-skyline window, beanbags, a shiny floor'],
+    room_place_ice_castle: [2, 1, 'crystal pillars round a tiered frozen fountain'],
+    room_place_moon_tower: [2, 1, 'a huge round window full of purple moon, a cauldron each side'],
+    room_side_bazaar_tent: [2, 1, 'the tent opens onto a palm oasis lake'],
+    room_side_egg_nest: [2, 1, 'a golden cave of spotted eggs in straw nests, amber crystals'],
+    room_side_potion_room: [2, 1, 'a green bubbling cauldron, a crescent-moon window, a toadstool stool'],
+    room_side_treetop_lookout: [2, 1, 'a round plank deck with rope rails, a telescope, a star flag'],
+  };
+  const lifter: Record<string, [number, string]> = {
+    char_dada_matt_lifter_good: [6, 'the smallest dumbbell, curled at his chest; the most cartoon-like of 4 to 6'],
+    char_dada_matt_lifter_evil: [4, 'the dumbbell curled up in purple sparks, the mirror of good 6'],
+    face_dada_matt_lifter: [6, 'the most T-shirt sleeve and the smallest dumbbell'],
+  };
+  return {
+    ...Object.fromEntries(Object.entries(picks).map(([id, [n, was, what]]) => [id, `\`current\` is candidate ${n}, Matt's pick (item 032): ${what}. ${was} is item 025's promotion; \`0\` is the painted placeholder.`])),
+    // Matt's redesign (item 032): less buff, a T-shirt with sleeves, a modest dumbbell, no barbell.
+    ...Object.fromEntries(Object.entries(lifter).map(([id, [n, what]]) => [id, `Weightlifter Dada Matt redrawn (item 032): a little less buff, a T-shirt with sleeves, a dumbbell of modest size. \`current\` is candidate ${n}, promoted by item 032: ${what}. 1 to 3 are item 025's barbell design; \`0\` is the painted placeholder.`])),
+  };
+}
 
 /**
  * Item 025's new ids (the dads' forms, knight Julia, the quest places, the

@@ -59,11 +59,11 @@ const MACHINE_W = 420;
 const MACHINE_H = 430;
 /**
  * Where the art's blank window and panel are, as fractions of the image
- * (prop_word_machine, candidate 2 of item 026). The game draws its own panel
+ * (prop_word_machine, candidate 3 of item 026, Matt's pick in item 032). The game draws its own panel
  * over the art's, a little bigger, so other art only needs to be close.
  */
-const WINDOW = { x: 0.443, y: 0.415, r: 0.2 };
-const PANEL = { x: 0.437, y: 0.765, w: 0.66, h: 0.2 };
+const WINDOW = { x: 0.42, y: 0.383, r: 0.22 };
+const PANEL = { x: 0.422, y: 0.741, w: 0.6, h: 0.21 };
 /** The tiles lie in a row on the floor in front of the machine. */
 const TILE_Y = 640;
 const TILE_GAP = 250;

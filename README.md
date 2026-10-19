@@ -428,6 +428,13 @@ npm run art:pick -- <id> <n>
   promoted) are `scratch/art_alts_018_moves.png` and `scratch/art_alts_018_moves.json`;
   three runs (`art_alts_018_a`/`_b`/`_c`) drew them side by side, about 1% of Codex's
   5-hour window per image (2026-10-18).
+- Item 032's weightlifter Dada Matt redraw (good, evil, face; T-shirt and dumbbell, the
+  best promoted) is `scratch/art_alts_032_lifter.png` and `scratch/art_alts_032_lifter.json`.
+  Each candidate took 35 to 60 s with the photo reference (2026-10-19).
+- A new `prop_word_machine` means refitting `WINDOW` / `PANEL` in
+  `src/scenes/WordMachine.ts`: fractions of the cut `public/art` PNG (centre and radius
+  of the glass, centre and size of the blank panel), checked with machine.spec's
+  `tests/screenshots/026_round1.png`.
 - When Codex answers "Selected model is at capacity", `art:alts` skips that candidate
   and goes on (2026-10-18), so an id can end up with fewer than `n`. Top it up with
   `art:alts -- <id> --n=1`; it numbers on from the last candidate.

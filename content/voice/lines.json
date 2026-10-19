@@ -2388,10 +2388,10 @@
   "text": "Trophy Shower!"
  },
  {
-  "id": "move_dada_matt_lifter_barbell_spin",
+  "id": "move_dada_matt_lifter_dumbbell_spin",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt_lifter",
-  "text": "Barbell Spin!"
+  "text": "Dumbbell Spin!"
  },
  {
   "id": "move_dada_matt_lifter_mega_squat",

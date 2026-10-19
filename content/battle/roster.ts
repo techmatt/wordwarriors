@@ -154,6 +154,8 @@ export const MINIONS: Record<string, MinionSpec> = {
 
 /** The dads as drawn in every form (Matt's photos, 2026-10-18): only the clothes and props change between forms. */
 const MATT_FACE = 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, short light-brown hair thinning on top with a high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile';
+/** Weightlifter Dada Matt (Matt, item 032): a little less buff than the other forms, in a T-shirt with sleeves. */
+const MATT_LIFTER = 'a tall, strong, broad-shouldered dad, fit but not bulky (not a bodybuilder): fair skin, short light-brown hair thinning on top with a high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile';
 const JASON_FACE = 'a big, sturdy, round-faced dad: warm light-brown skin, very short dark curly hair receding at the front, black browline glasses, a short dark goatee beard flecked with grey, a tiny hoop earring, a big laughing smile';
 
 export const ROSTER: CharacterSpec[] = [
@@ -1149,13 +1151,13 @@ export const ROSTER: CharacterSpec[] = [
     id: 'dada_matt_lifter',
     person: 'dada_matt',
     form: 'lifter',
-    description: 'A huge-hearted weightlifter dad who lifts barbells, cars and the whole team over his head.',
+    description: 'A huge-hearted weightlifter dad who lifts dumbbells, teddies and the whole team.',
     arena: 'meadow',
     good: {
-      displayName: 'Dada Matt', trail: { tint: [0xffd23f, 0xe63946], shape: 'star' }, look: `${MATT_FACE}, in a red weightlifting singlet with a gold star, a thick black lifting belt, wristbands and sneakers, holding a giant friendly barbell with round red-and-gold weights over his head`,
+      displayName: 'Dada Matt', trail: { tint: [0xffd23f, 0xe63946], shape: 'star' }, look: `${MATT_LIFTER}, in a normal red short-sleeved gym T-shirt with a gold star on the chest (sleeves, not a singlet or a tank top), dark gym shorts, a black lifting belt, wristbands and sneakers, curling one red-and-gold dumbbell of ordinary gym size in one hand at his side`,
       palette: [0xe63946, 0xffd23f], glyph: '💪', style: 'twirl', speed: 190, size: 1.25, hp: 140,
       abilities: [
-        ab('barbell_spin', 'Barbell Spin', 'spin', 5, 0xffd23f, 2, { word: 'big', shout: true, words: ['top'] }),
+        ab('dumbbell_spin', 'Dumbbell Spin', 'spin', 5, 0xffd23f, 2, { word: 'big', shout: true, words: ['top'] }),
         ab('dumbbell_toss', 'Dumbbell Toss', 'bolt', 2.6, 0xc8c8d8, 1, { count: 3, glyph: '💪', word: 'pow', words: ['hop'] }),
         ab('muscle_flex', 'Muscle Flex', 'shield', 10, 0xe63946, 1, { duration: 4, word: 'hug', words: ['fix'] }),
         ab('mega_squat', 'Mega Squat Slam', 'slam', 7, 0xffd23f, 3, { word: 'bam', shout: true, words: ['tug', 'dig'] }),
@@ -1171,7 +1173,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Dada Matt', trail: { tint: [0xb04aff, 0x2a2a3a], shape: 'square' }, look: `${MATT_FACE}, with a smug show-off grin, in a black-and-purple weightlifting singlet with a spiky lifting belt, flexing, a giant black barbell with purple weights crackling on his shoulders`,
+      displayName: 'Evil Dada Matt', trail: { tint: [0xb04aff, 0x2a2a3a], shape: 'square' }, look: `${MATT_LIFTER}, with a smug show-off grin, the same build and outfit in his evil palette: a normal black short-sleeved gym T-shirt with a purple lightning bolt (sleeves, not a singlet or a tank top), dark purple gym shorts, a spiky black lifting belt, purple wristbands and sneakers, holding up one black dumbbell of ordinary gym size crackling with purple sparks`,
       palette: [0x2a2a3a, 0xb04aff], glyph: '🏋️', style: 'stomp', speed: 110, size: 1.45, hp: 180,
       abilities: [
         ab('kettlebell_crash', 'Kettlebell Crash', 'dash', 7, 0xb04aff, 3),
@@ -1346,7 +1348,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Dada Jason', trail: { tint: [0xff3a1a, 0x2a1a1a], shape: 'smoke' }, look: `${JASON_FACE}, with a fierce cheeky scowl, in spiky black armour with red trim and a horned helmet, a dented black shield and a huge jagged battle axe`,
+      displayName: 'Evil Dada Jason', trail: { tint: [0xff3a1a, 0x2a1a1a], shape: 'smoke' }, look: `${JASON_FACE}, with a cheeky open-mouthed villain grin, in spiky black armour with red trim, a horned crown helmet and a tattered red cape, a spiked black round shield and a huge jagged battle axe`,
       palette: [0x2a1a1a, 0xff3a1a], glyph: '🪓', style: 'stomp', speed: 120, size: 1.45, hp: 180,
       abilities: [
         ab('axe_throw', 'Axe Throw', 'bolt', 3, 0xff3a1a, 2, { count: 2, glyph: '⚔️', homing: true }),
@@ -1433,7 +1435,7 @@ export const ROSTER: CharacterSpec[] = [
     house: {
       threat: 'he wants to turn everybody into a little purple frog',
       tint: 0x4a1a7a,
-      decals: [{ id: 'dada_jason_warlock_flame', glyph: '🔥', look: 'little purple flames flickering on the floor', count: 3 }],
+      decals: [{ id: 'dada_jason_warlock_flame', glyph: '🔥', look: 'a cheeky purple flame with a grinning face, little flames flickering round it', count: 3 }],
       fx: 'embers',
     },
   },
