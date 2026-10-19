@@ -2848,204 +2848,107 @@
   "text": "Go get the..."
  },
  {
-  "id": "sent_villain_hates_the_julia",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Evil Julia hates the..."
- },
- {
-  "id": "sent_villain_hates_the_ellie",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Evil Ellie hates the..."
- },
- {
-  "id": "sent_villain_hates_the_seraphina",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Evil Seraphina hates the..."
- },
- {
-  "id": "sent_villain_hates_the_dada_matt",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Evil Dada Matt hates the..."
- },
- {
-  "id": "sent_villain_hates_the_dada_jason",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Evil Dada Jason hates the..."
- },
- {
-  "id": "sent_villain_hates_the_elsa",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Evil Elsa hates the..."
- },
- {
-  "id": "sent_villain_hates_the_anna",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Evil Anna hates the..."
- },
- {
-  "id": "sent_villain_hates_the_jasmine",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Evil Jasmine hates the..."
- },
- {
-  "id": "sent_villain_hates_the_ozymandias",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Evil Ozymandias hates the..."
- },
- {
-  "id": "sent_villain_hates_the_jormungandr",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Evil Jormungandr hates the...",
-  "say": "Evil Yormungander hates the..."
- },
- {
-  "id": "sent_villain_hates_the_smaug",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Evil Smaug hates the..."
- },
- {
-  "id": "sent_villain_hates_the_tiamat",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Evil Tiamat hates the..."
- },
- {
-  "id": "sent_villain_hates_the_scar",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Evil Scar hates the..."
- },
- {
-  "id": "sent_villain_hates_the_moriarty",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Evil Moriarty hates the..."
- },
- {
-  "id": "sent_villain_hates_the_bavmorda",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Evil Bavmorda hates the..."
- },
- {
-  "id": "sent_villain_hates_the_rilla",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "EvilRilla hates the..."
- },
- {
   "id": "sent_we_need_a",
   "speaker": "phonics",
   "group": "phonics",
   "text": "We need a..."
  },
  {
-  "id": "sent_scared_of_julia",
+  "id": "sent_hero_needs_the_julia",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Julia is scared of..."
+  "text": "Julia needs the..."
  },
  {
-  "id": "sent_scared_of_ellie",
+  "id": "sent_hero_needs_the_ellie",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Ellie is scared of..."
+  "text": "Ellie needs the..."
  },
  {
-  "id": "sent_scared_of_seraphina",
+  "id": "sent_hero_needs_the_seraphina",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Seraphina is scared of..."
+  "text": "Seraphina needs the..."
  },
  {
-  "id": "sent_scared_of_dada_matt",
+  "id": "sent_hero_needs_the_dada_matt",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Dada Matt is scared of..."
+  "text": "Dada Matt needs the..."
  },
  {
-  "id": "sent_scared_of_dada_jason",
+  "id": "sent_hero_needs_the_dada_jason",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Dada Jason is scared of..."
+  "text": "Dada Jason needs the..."
  },
  {
-  "id": "sent_scared_of_elsa",
+  "id": "sent_hero_needs_the_elsa",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Elsa is scared of..."
+  "text": "Elsa needs the..."
  },
  {
-  "id": "sent_scared_of_anna",
+  "id": "sent_hero_needs_the_anna",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Anna is scared of..."
+  "text": "Anna needs the..."
  },
  {
-  "id": "sent_scared_of_jasmine",
+  "id": "sent_hero_needs_the_jasmine",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Jasmine is scared of..."
+  "text": "Jasmine needs the..."
  },
  {
-  "id": "sent_scared_of_ozymandias",
+  "id": "sent_hero_needs_the_ozymandias",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Ozymandias is scared of..."
+  "text": "Ozymandias needs the..."
  },
  {
-  "id": "sent_scared_of_jormungandr",
+  "id": "sent_hero_needs_the_jormungandr",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Jormungandr is scared of...",
-  "say": "Evil Yormungander is scared of..."
+  "text": "Jormungandr needs the...",
+  "say": "Yormungander needs the..."
  },
  {
-  "id": "sent_scared_of_smaug",
+  "id": "sent_hero_needs_the_smaug",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Smaug is scared of..."
+  "text": "Smaug needs the..."
  },
  {
-  "id": "sent_scared_of_tiamat",
+  "id": "sent_hero_needs_the_tiamat",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Tiamat is scared of..."
+  "text": "Tiamat needs the..."
  },
  {
-  "id": "sent_scared_of_scar",
+  "id": "sent_hero_needs_the_scar",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Scar is scared of..."
+  "text": "Scar needs the..."
  },
  {
-  "id": "sent_scared_of_moriarty",
+  "id": "sent_hero_needs_the_moriarty",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Moriarty is scared of..."
+  "text": "Moriarty needs the..."
  },
  {
-  "id": "sent_scared_of_bavmorda",
+  "id": "sent_hero_needs_the_bavmorda",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Bavmorda is scared of..."
+  "text": "Bavmorda needs the..."
  },
  {
-  "id": "sent_scared_of_rilla",
+  "id": "sent_hero_needs_the_rilla",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "EvilRilla is scared of..."
+  "text": "Rilla needs the..."
  },
  {
   "id": "sent_scared_of_the_julia",
@@ -3145,6 +3048,297 @@
   "text": "EvilRilla is scared of the..."
  },
  {
+  "id": "sent_villain_hates_the_julia",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Julia hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_ellie",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Ellie hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_seraphina",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Seraphina hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_dada_matt",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Dada Matt hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_dada_jason",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Dada Jason hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_elsa",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Elsa hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_anna",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Anna hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_jasmine",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Jasmine hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_ozymandias",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Ozymandias hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_jormungandr",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Jormungandr hates the...",
+  "say": "Evil Yormungander hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_smaug",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Smaug hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_tiamat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Tiamat hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_scar",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Scar hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_moriarty",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Moriarty hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_bavmorda",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Bavmorda hates the..."
+ },
+ {
+  "id": "sent_villain_hates_the_rilla",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "EvilRilla hates the..."
+ },
+ {
+  "id": "sent_runs_from_the_julia",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Julia runs from the..."
+ },
+ {
+  "id": "sent_runs_from_the_ellie",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Ellie runs from the..."
+ },
+ {
+  "id": "sent_runs_from_the_seraphina",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Seraphina runs from the..."
+ },
+ {
+  "id": "sent_runs_from_the_dada_matt",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Dada Matt runs from the..."
+ },
+ {
+  "id": "sent_runs_from_the_dada_jason",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Dada Jason runs from the..."
+ },
+ {
+  "id": "sent_runs_from_the_elsa",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Elsa runs from the..."
+ },
+ {
+  "id": "sent_runs_from_the_anna",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Anna runs from the..."
+ },
+ {
+  "id": "sent_runs_from_the_jasmine",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Jasmine runs from the..."
+ },
+ {
+  "id": "sent_runs_from_the_ozymandias",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Ozymandias runs from the..."
+ },
+ {
+  "id": "sent_runs_from_the_jormungandr",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Jormungandr runs from the...",
+  "say": "Evil Yormungander runs from the..."
+ },
+ {
+  "id": "sent_runs_from_the_smaug",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Smaug runs from the..."
+ },
+ {
+  "id": "sent_runs_from_the_tiamat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Tiamat runs from the..."
+ },
+ {
+  "id": "sent_runs_from_the_scar",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Scar runs from the..."
+ },
+ {
+  "id": "sent_runs_from_the_moriarty",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Moriarty runs from the..."
+ },
+ {
+  "id": "sent_runs_from_the_bavmorda",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Bavmorda runs from the..."
+ },
+ {
+  "id": "sent_runs_from_the_rilla",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "EvilRilla runs from the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_julia",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Julia can not stand the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_ellie",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Ellie can not stand the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_seraphina",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Seraphina can not stand the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_dada_matt",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Dada Matt can not stand the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_dada_jason",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Dada Jason can not stand the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_elsa",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Elsa can not stand the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_anna",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Anna can not stand the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_jasmine",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Jasmine can not stand the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_ozymandias",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Ozymandias can not stand the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_jormungandr",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Jormungandr can not stand the...",
+  "say": "Evil Yormungander can not stand the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_smaug",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Smaug can not stand the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_tiamat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Tiamat can not stand the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_scar",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Scar can not stand the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_moriarty",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Moriarty can not stand the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_bavmorda",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Evil Bavmorda can not stand the..."
+ },
+ {
+  "id": "sent_can_not_stand_the_rilla",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "EvilRilla can not stand the..."
+ },
+ {
   "id": "word_a",
   "speaker": "phonics",
   "group": "phonics",
@@ -3167,6 +3361,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "EvilRilla!"
+ },
+ {
+  "id": "word_from",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "from!"
  },
  {
   "id": "word_get",
@@ -3224,6 +3424,12 @@
   "text": "needs!"
  },
  {
+  "id": "word_not",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "not!"
+ },
+ {
   "id": "word_of",
   "speaker": "phonics",
   "group": "phonics",
@@ -3242,10 +3448,22 @@
   "text": "Rilla!"
  },
  {
+  "id": "word_runs",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "runs!"
+ },
+ {
   "id": "word_scared",
   "speaker": "phonics",
   "group": "phonics",
   "text": "scared!"
+ },
+ {
+  "id": "word_stand",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "stand!"
  },
  {
   "id": "word_the",
@@ -4172,6 +4390,12 @@
   "speaker": "julia",
   "group": "nar_julia",
   "text": "We got it!"
+ },
+ {
+  "id": "nar_julia_got_counter_any",
+  "speaker": "julia",
+  "group": "nar_julia",
+  "text": "That is just what we need!"
  },
  {
   "id": "nar_julia_use_bag",
@@ -5440,6 +5664,12 @@
   "text": "We got it!"
  },
  {
+  "id": "nar_ellie_got_counter_any",
+  "speaker": "ellie",
+  "group": "nar_ellie",
+  "text": "That is just what we need!"
+ },
+ {
   "id": "nar_ellie_use_bag",
   "speaker": "ellie",
   "group": "nar_ellie",
@@ -6704,6 +6934,12 @@
   "speaker": "seraphina",
   "group": "nar_seraphina",
   "text": "We got it!"
+ },
+ {
+  "id": "nar_seraphina_got_counter_any",
+  "speaker": "seraphina",
+  "group": "nar_seraphina",
+  "text": "That is just what we need!"
  },
  {
   "id": "nar_seraphina_use_bag",
@@ -7972,6 +8208,12 @@
   "text": "We got it!"
  },
  {
+  "id": "nar_dada_matt_got_counter_any",
+  "speaker": "dada_matt",
+  "group": "nar_dada_matt",
+  "text": "That is just what we need!"
+ },
+ {
   "id": "nar_dada_matt_use_bag",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
@@ -9236,6 +9478,12 @@
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
   "text": "We got it!"
+ },
+ {
+  "id": "nar_dada_jason_got_counter_any",
+  "speaker": "dada_jason",
+  "group": "nar_dada_jason",
+  "text": "That is just what we need!"
  },
  {
   "id": "nar_dada_jason_use_bag",
@@ -10504,6 +10752,12 @@
   "text": "We got it!"
  },
  {
+  "id": "nar_elsa_got_counter_any",
+  "speaker": "elsa",
+  "group": "nar_elsa",
+  "text": "That is just what we need!"
+ },
+ {
   "id": "nar_elsa_use_bag",
   "speaker": "elsa",
   "group": "nar_elsa",
@@ -11768,6 +12022,12 @@
   "speaker": "anna",
   "group": "nar_anna",
   "text": "We got it!"
+ },
+ {
+  "id": "nar_anna_got_counter_any",
+  "speaker": "anna",
+  "group": "nar_anna",
+  "text": "That is just what we need!"
  },
  {
   "id": "nar_anna_use_bag",
@@ -13036,6 +13296,12 @@
   "text": "We got it!"
  },
  {
+  "id": "nar_jasmine_got_counter_any",
+  "speaker": "jasmine",
+  "group": "nar_jasmine",
+  "text": "That is just what we need!"
+ },
+ {
   "id": "nar_jasmine_use_bag",
   "speaker": "jasmine",
   "group": "nar_jasmine",
@@ -14300,6 +14566,12 @@
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
   "text": "We got it!"
+ },
+ {
+  "id": "nar_ozymandias_got_counter_any",
+  "speaker": "ozymandias",
+  "group": "nar_ozymandias",
+  "text": "That is just what we need!"
  },
  {
   "id": "nar_ozymandias_use_bag",
@@ -15568,6 +15840,12 @@
   "text": "We got it!"
  },
  {
+  "id": "nar_jormungandr_got_counter_any",
+  "speaker": "jormungandr",
+  "group": "nar_jormungandr",
+  "text": "That is just what we need!"
+ },
+ {
   "id": "nar_jormungandr_use_bag",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -16831,6 +17109,12 @@
   "speaker": "smaug",
   "group": "nar_smaug",
   "text": "We got it!"
+ },
+ {
+  "id": "nar_smaug_got_counter_any",
+  "speaker": "smaug",
+  "group": "nar_smaug",
+  "text": "That is just what we need!"
  },
  {
   "id": "nar_smaug_use_bag",
@@ -18099,6 +18383,12 @@
   "text": "We got it!"
  },
  {
+  "id": "nar_tiamat_got_counter_any",
+  "speaker": "tiamat",
+  "group": "nar_tiamat",
+  "text": "That is just what we need!"
+ },
+ {
   "id": "nar_tiamat_use_bag",
   "speaker": "tiamat",
   "group": "nar_tiamat",
@@ -19363,6 +19653,12 @@
   "speaker": "scar",
   "group": "nar_scar",
   "text": "We got it!"
+ },
+ {
+  "id": "nar_scar_got_counter_any",
+  "speaker": "scar",
+  "group": "nar_scar",
+  "text": "That is just what we need!"
  },
  {
   "id": "nar_scar_use_bag",
@@ -20631,6 +20927,12 @@
   "text": "We got it!"
  },
  {
+  "id": "nar_moriarty_got_counter_any",
+  "speaker": "moriarty",
+  "group": "nar_moriarty",
+  "text": "That is just what we need!"
+ },
+ {
   "id": "nar_moriarty_use_bag",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -21897,6 +22199,12 @@
   "text": "We got it!"
  },
  {
+  "id": "nar_bavmorda_got_counter_any",
+  "speaker": "bavmorda",
+  "group": "nar_bavmorda",
+  "text": "That is just what we need!"
+ },
+ {
   "id": "nar_bavmorda_use_bag",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
@@ -23161,6 +23469,12 @@
   "speaker": "rilla",
   "group": "nar_rilla",
   "text": "We got it!"
+ },
+ {
+  "id": "nar_rilla_got_counter_any",
+  "speaker": "rilla",
+  "group": "nar_rilla",
+  "text": "That is just what we need!"
  },
  {
   "id": "nar_rilla_use_bag",

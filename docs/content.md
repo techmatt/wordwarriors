@@ -33,11 +33,11 @@ One `CharacterSpec` in `ROSTER`:
     (`src/rules/spell.ts`).
   - `ultimate`: the evil one floors the heroes in Part 1 and is countered in Part 2.
   - `taunts`: `{ key, text }`, short, no interjections ("Ha!" is an SFX).
-- `counter`: the item that beats the ultimate in Part 2: `name`, `glyph`, `look`, `how`
+- `counter`: its named counter item, flavour for when the attic's drawn counter word is
+  this item's own word (see "The counter sentence" below): `name`, `glyph`, `look`, `how`
   (`block | reflect | swallow | reveal | restore | shutdown | calm | scare`; `swallow`
   is a block whose item then sucks the whole ultimate inside it, Tiamat's Magic Hat), and:
-  - `word`: the key word of its counter sentence in the attic (see below);
-  - `frame`: `scared_of` (`EVILRILLA IS SCARED OF MICE`) or `scared_of_the`;
+  - `word`: the word the item is named for (HAT → Magic Hat);
   - `words`: the parked Spell the Spell's two warm-ups and magic word, all CVC.
 - `arena`: a key of `ARENAS`.
 - `house`: its mood as a villain (see "A villain's house mood" below).
@@ -66,31 +66,37 @@ the bedroom after the news, the hub and every side room; no room art is per-vill
   the character id (`rilla_footprint`); each is art `decal_<id>`.
 - `fx`: `frost | embers | quake | sparkle | smoke | none`.
 
-## The counter sentence (`counter.word`, `counter.frame`)
+## The counter sentence, and named counter items (`counter.word`)
 
-The attic's sentence after the retreat: `{villain} IS SCARED OF [THE] {x}`. `word`
-must have a picture she can find: a CVC word in `CVC_WORDS` (`pic_<word>`), or, when
-the story wants a non-decodable word, one added to `SPECIAL_WORDS` (its yellow hint
-gives only the first sound, as for a name). Use `scared_of_the` when the word reads
-better with THE. Its `word_<x>` line is composed automatically. A new counter frame is
-a `FRAMES` entry with `use: 'counter'` plus its id in the `CounterItem.frame` type.
+The attic's sentence after the retreat is drawn fresh each episode (item 015): a
+counter frame (`{villain} IS SCARED OF THE {x}`, `HATES THE`, `RUNS FROM THE`,
+`CAN NOT STAND THE`, weighted toward shaky frames) and a counter word from her word bag
+(see "Key words and the word bag" below). A villain's weakness does not have to make
+sense: any pictured, decodable word can beat any villain. The picture she finds swells
+into itself, flies into her bag, and in battle 2 a swarm of it scurries at the villain,
+who leaps up ("EEK!", "NOT THE MOP!") while the ultimate fizzles. The narrator says
+`got_counter_any` ("That is just what we need!"), which fits every word.
 
-The counter word must not be heard or seen before the attic, so it may not be a move
-word, a `FETCH_ITEMS` word, a frame word, or a whole word in any name, ability,
-ultimate, taunt or house threat in the roster. The unit test "counter words are never
-spoken or shown before the attic" checks all of that. At run time the episode also
-keeps the taught spell and the counter word out of the side rooms' key words, and a
-room's other two objects are never a look-alike of the key word (`LOOKALIKES` in
-`content/phonics/sentences.ts`) or a word the sentence itself shows.
+The counter word obeys the 009 rule, now checked on the draw: never a move word (battle
+1's pads), never a word fetched this episode (battle 1's item banners), never a word
+any of the episode's three sentences shows, never the taught spell, and never a word
+the episode's hero, ally or villain says or shows first (`saidEarly` in
+`src/rules/sentences.ts`: names, abilities, ultimates, taunts, minions, the threat,
+their combo). The unit test "the counter is random: any pictured, decodable word,
+under the 009 exclusions" checks it for every villain.
 
-**The sentence names the item** (Matt, 2026-10-18, item 009): the picture she finds
-in the attic swells into the item that then beats the ultimate, so the item *is* the
-thing the key word says. The key word is a whole word of the item's `name` (MICE →
-Wind-up Mice, CUP → Cocoa Cup), and no two villains share a key word. The unit test
-"every villain: the counter sentence names the item that beats it in battle 2" checks
-both and that the attic offers that picture. Changing an item's `id` needs new
-`item_<id>` art (`npm run art:gen -- item_<id>`). With `how: 'scare'` the swarm that
-scurries at the villain is the item's `glyph`.
+**Named counter items are flavour.** When the draw lands on the villain's own
+`counter.word` (HAT for Evil Tiamat), battle 2 shows the named item (`item_<id>` art,
+its banner, its `how`) and the narrator says `got_counter_<villain>` ("We found the Magic
+Hat!"). That word is drawn `NAMED_COUNTER_BOOST` (3) times as often as any other while
+it is in the bag. A named word is a whole word of the item's `name` and stays out of
+every name, ability, ultimate, taunt and threat in the roster (unit test "named counter
+words are pictured, and never in any name, ability, taunt or threat"). MICE is not
+decodable, so EvilRilla's Wind-up Mice never come up in the episode now. Changing an
+item's `id` needs new `item_<id>` art (`npm run art:gen -- item_<id>`). With `how:
+'scare'` the swarm is the item's `glyph`.
+
+The named items (the sentence column is how they read when their word comes up):
 
 | Villain | Counter sentence | Battle-2 item | `how` |
 | --- | --- | --- | --- |
@@ -139,13 +145,18 @@ Path uses only decodable words; Word to Picture mixes in one sight word per roun
 
 One `Frame` in `FRAMES`: `{ id, text, use }`.
 
-- `text` is upper case; slots are `{villain}`, `{helper}` and `{x}`; at most one name
-  slot; `{x}` (the key word) is always last.
+- `text` is upper case; slots are `{villain}`, `{helper}`, `{hero}` and `{x}`; at most
+  one name slot; `{x}` (the key word) is always last.
 - `use: 'fetch'` frames fill the two side rooms (two different ones per episode,
-  weighted toward shaky frames); `use: 'counter'` frames are for `counter.frame`.
-- Keep to the little words that should become sight words (IS, THE, A, OF, WE, CAN):
-  repetition is the point. Never put a fetch word or counter word in a frame: the
-  prefix line would say it before she answers (why CAN is not a fetch item).
+  weighted toward shaky frames); `use: 'counter'` frames fill the attic (one per
+  episode, weighted the same way) and name the villain.
+- Keep to the little words that should become sight words (IS, THE, A, OF, WE, CAN,
+  NOT): repetition is the point, and 3–5 frames of each kind is right. A frame word
+  that is also a CVC word (CAN) is fine: the draw keeps every word of the episode's
+  three sentences out of its key words, so WE CAN USE THE CAN never happens.
+- Today: fetch `we_can_use_the`, `helper_needs_a`, `go_get_the`, `we_need_a`,
+  `hero_needs_the`; counter `scared_of_the`, `villain_hates_the` (a fetch frame until
+  item 015, so it kept its id and progress), `runs_from_the`, `can_not_stand_the`.
 - The composer makes one prefix line per frame (`sent_<id>`), or per frame × roster
   character when it has a name slot (`sent_<id>_<character>`), plus a `word_<token>`
   line for any new token. A name-slot frame costs one line per character.
@@ -157,11 +168,23 @@ One `Frame` in `FRAMES`: `{ id, text, use }`.
 `{ word, look, ability }`: a key word a side room can ask for, and what it does when it
 pops out of her bag in both battles.
 
-- `word`: CVC, already in `CVC_WORDS` with a `pic_<word>` picture, and not a frame word.
+- `word`: CVC, already in `CVC_WORDS` with a `pic_<word>` picture. Every CVC word has
+  an item since item 015; a new CVC word needs one too, or it can only be a counter.
 - `ability`: write it with the `use(word, kind, color, extra)` helper, so its id is
   `item_<word>` and its banner "The net". Any ability kind works; a `summon` item needs
-  a `MinionSpec` in `MINIONS` (`hen`, `dog` fight on her side).
-- Every item is in the pool for every episode; shaky words come up more often.
+  a `MinionSpec` in `MINIONS` (`hen`, `dog` fight on her side). `...pic(word)` makes a
+  `bolt` or `rain` fling or drop the word's own picture, the right way up.
+
+## Key words and the word bag (`src/rules/sentences.ts`, ProgressStore `bag`)
+
+Every key word (both side rooms and the attic) comes out of her word bag: every
+decodable `CVC_WORDS` word (`BAG_WORDS`), drawn without replacement and kept with her
+progress in localStorage. A drawn word leaves the bag; when no word the episode can
+use is left, the bag refills (a new round, minus this episode's words). Within the
+bag, shaky words are drawn more often (`shakiness`), and a word she missed (any wrong
+try) goes straight back in, so it comes round again soon. No key word repeats within
+an episode. The grown-ups page (F9) shows the round, words seen and left, and the
+shaky words. Erasing progress (F8 twice) empties the bag too.
 
 ## A bedroom, or a bedroom object (`content/house/house.ts`)
 

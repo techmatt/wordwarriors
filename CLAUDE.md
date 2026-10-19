@@ -20,8 +20,8 @@ part 2** (back at the hub, a secret door to the attic: the villain's counter sen
 fetches the counter-item) → **battle part 2** (the counter beats the ultimate) → victory
 with a reading recap. A journey map shows before each battle and the victory.
 Testing defaults (`EPISODE_DEFAULTS` in `src/config.ts`): hero Julia, helper Ellie
-(she fights with summoned silver swords), villain Evil Tiamat (a giant; SCARED OF THE
-HAT); the pick screens and the random villain are behind that config.
+(she fights with summoned silver swords), villain Evil Tiamat (a giant; her named counter is the
+Magic Hat, shown when the bag draws HAT); the pick screens and the random villain are behind that config.
 **Parked** (code kept, out of the episode, reachable by `?scene=`): Sound → Letter,
 Blend Path, Word → Picture, Spell the Spell, the alarm and the camp retreat.
 
@@ -131,7 +131,9 @@ Adding a character, ability, word or line is data work: edit `content/`, then
   is read with the key word. Voice is a prefix line ("EvilRilla is scared of...") plus the
   key word's own `word_<x>` line, so no line can leak the key word. Sentences come from a
   few repeating frames (`content/phonics/sentences.ts`); once a frame is solid
-  (`SENTENCE_SOLID` in `src/config.ts`) its listening pass is skipped.
+  (`SENTENCE_SOLID` in `src/config.ts`) its listening pass is skipped. Key words, the
+  attic's counter word included, come from her word bag (item 015): without replacement
+  across episodes, leaning to shaky words, never one the episode says or shows first.
 - **All text in the game is UPPER CASE** (v0.2). Line texts in `lines.json` keep their case
   (changing them re-synthesises audio); the caption and every on-screen word upper-case at
   display time. The grown-ups page may stay mixed case.

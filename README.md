@@ -45,7 +45,7 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    she walked to the shut front door), so every door and exit appears, with a little
    reveal, at the moment it opens.
 4. **Side rooms**, one sentence each, on a banner, key word last
-   (`WE CAN USE THE NET`). Pass 1 is read to her karaoke-style and stops at the key
+   (`WE CAN USE THE NET`, `JULIA NEEDS THE CAT`). Pass 1 is read to her karaoke-style and stops at the key
    word, which pulses in silence (skipped once that frame is solid). Pass 2 is hers:
    each green lights the next word and says it, and yellow says the lit word. At the key
    word three things wake up on pedestals (yellow now sounds the key word's letters one
@@ -62,9 +62,18 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    is the spell she learned. It ends with the villain's ultimate: "Too strong! Retreat!", and the
    heroes pick themselves up and run for home.
 6. **The house, part 2.** Back in the hub a secret door pops out: the attic, with the
-   villain's counter sentence (`EVIL TIAMAT IS SCARED OF THE HAT`). Then the front door again.
-7. **Battle part 2**: the counter-item beats the ultimate, everyone finishes it, and
-   the villain turns good. Victory replays the words she read; green plays again.
+   villain's counter sentence (`EVIL TIAMAT RUNS FROM THE BUS`: the frame and the word
+   are drawn each episode). Then the front door again.
+7. **Battle part 2**: the counter beats the ultimate (a swarm of its picture: "NOT THE
+   BUS!"; the villain's named item, Evil Tiamat's Magic Hat, when its own word comes
+   up), everyone finishes it, and the villain turns good. Victory replays the words she
+   read; green plays again.
+
+Key words never repeat until her **word bag** has gone round: every key word (both side
+rooms and the attic) is drawn without replacement from the decodable CVC words, kept
+with her progress, leaning toward the words she has missed (a missed word goes back in
+early). Frames repeat on purpose so their little words become sight words. Details in
+`docs/content.md`, "Key words and the word bag"; the grown-ups page (F9) shows the bag.
 
 A journey map shows before each battle, the trip home after the retreat, and the
 victory. With the test harness answering instantly a v0.2 episode takes about 4.6
