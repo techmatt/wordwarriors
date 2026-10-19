@@ -234,7 +234,10 @@ props, stand, open, cheer, close, fit?, villains }`:
 - `look`: the background's brief (`room_end_<id>`); keep the middle and the floor clear
   where the cast stands. `props`: `{ id, look, glyph, x, y, w, h, front? }`, art
   `prop_end_<id>`, feet at `x, y`; a `front` prop (the table, the boat, the fort) stands
-  lower than the cast and so is drawn over them.
+  lower than the cast and so is drawn over them; with `cut` (a fraction of its height)
+  only the part below it is, and the rest behind them (the boat's hull over them, its
+  sail behind). A tall prop that should not hide faces (the party table, the fort)
+  stands behind the cast instead: its feet higher than theirs.
 - `stand`: the cast's feet line `y`, the span `left`–`right` they spread over, their
   height `h`, and an optional `gap` nobody stands in (the campfire).
 - `open` (the host: the narrator), `cheer` (the hero), `close` (someone else there):
