@@ -1126,8 +1126,9 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       // A swarm of the thing (wind-up mice, brave rats, cats, buses, mops)
       // scurries along the floor at the villain, who leaps up in fright
       // mid-ultimate (a stretch and a lift, no spin), and the ultimate fizzles
-      // out before it is ever fired.
-      for (let i = 0; i < 12; i++) this.after(i * 70, () => this.scurry(h, v, i, named ? null : `pic_${word}`));
+      // out before it is ever fired. Its picture whenever there is one, named
+      // counters too (Matt's 017 call); the item's glyph otherwise.
+      for (let i = 0; i < 12; i++) this.after(i * 70, () => this.scurry(h, v, i, `pic_${word}`));
       await this.simWait(0.75);
       aura.stop();
       v.growUntil = 0;

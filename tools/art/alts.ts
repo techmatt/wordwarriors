@@ -241,22 +241,24 @@ export async function pick(argv: string[]): Promise<void> {
   if (!ART_BY_ID[id]) throw new Error(`${id} is not an asset id (content/art/assets.ts)`);
   const k = Number(kArg);
   const src = altFile(id, k);
+  const game = path.join(OUT, `${id}.png`);
+  if (k === 0 && (await exists(altFile(id, '0.game')))) {
+    // The original's committed PNG, byte for byte (a placeholder has no full-res original).
+    await copyFile(altFile(id, '0.game'), game);
+    if (await exists(src)) await copyFile(src, path.join(ORIGINALS, `${id}.png`));
+    console.log(`art:pick: ${id}: the original is back`);
+    return;
+  }
   if (!(await exists(src))) throw new Error(`no candidate ${src}; have ${(await candidates(id)).join(', ') || 'none'}`);
   const orig = path.join(ORIGINALS, `${id}.png`);
-  const game = path.join(OUT, `${id}.png`);
   // The first pick keeps what was there as candidate 0, so it can come back.
-  if (k !== 0 && !(await exists(altFile(id, 0)))) {
+  // A placeholder has no original, only `0.game` (art:alts writes it): keep that too.
+  if (k !== 0 && !(await exists(altFile(id, 0))) && !(await exists(altFile(id, '0.game')))) {
     if (await exists(orig)) await copyFile(orig, altFile(id, 0));
     await copyFile(game, altFile(id, '0.game'));
     console.log(`art:pick: kept the original ${id} as candidate 0`);
   }
   await copyFile(src, orig);
-  if (k === 0 && (await exists(altFile(id, '0.game')))) {
-    // The original's committed PNG, byte for byte.
-    await copyFile(altFile(id, '0.game'), game);
-    console.log(`art:pick: ${id}: the original is back`);
-    return;
-  }
   const { page, close } = await openPage();
   try {
     await cut(page, id, await readFile(src), `candidate ${k}`);

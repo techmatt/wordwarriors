@@ -183,22 +183,22 @@ Word pictures must contain no text or letters: the word is the reading answer.
 
 | id | size | content |
 | --- | --- | --- |
-| `item_cozy_bed` | 180×180 | Cozy Bed: a child's bed with a puffy blue duvet and a white pillow, glowing softly, a sleepy moon and stars above it. A magical item glowing with power, centred, transparent background. |
-| `item_bubble_bath` | 180×180 | Bubble Tub: a magic bathtub overflowing with rainbow bubbles, a little yellow rubber duck on top. A magical item glowing with power, centred, transparent background. |
-| `item_golden_nut` | 180×180 | Golden Nut: a giant shiny golden hazelnut in its shell, the snack every dragon loves best. A magical item glowing with power, centred, transparent background. |
-| `item_giant_log` | 180×180 | Giant Log: a huge cut wooden log lying down, rings showing on the end, so solid that any hammer just bonks off it. A magical item glowing with power, centred, transparent background. |
-| `item_cleanup_van` | 180×180 | Clean-Up Van: a little cartoon cleaning van with spinning brushes and a big hose that hoovers up every bit of food. A magical item glowing with power, centred, transparent background. |
-| `item_cocoa_cup` | 180×180 | Cocoa Cup: a big red mug of steaming cocoa with a handle, so warm it melts any winter. A magical item glowing with power, centred, transparent background. |
-| `item_cuddly_cat` | 180×180 | Cuddly Cat: a warm, fluffy orange tabby cat with a curled tail, purring, who cuddles the frost away. A magical item glowing with power, centred, transparent background. |
-| `item_flappy_bat` | 180×180 | Flappy Bat: a friendly purple bat (the animal) with huge wings spread wide, flapping hard enough to blow a sandstorm straight back. A magical item glowing with power, centred, transparent background. |
-| `item_brave_rat` | 180×180 | Brave Rat: a brave little grey rat with a long pink tail and a tiny red cape, leading a squeaking pack of his friends; giant statues are terrified of rats. A magical item glowing with power, centred, transparent background. |
-| `item_tickle_fox` | 180×180 | Tickle Fox: a cheeky red-orange fox with a big bushy white-tipped tail, just right for tickling a serpent's nose until he sneezes. A magical item glowing with power, centred, transparent background. |
-| `item_gold_bag` | 180×180 | Gold Bag: a magic pink handbag with a curved handle and a clasp, wide open, that gobbles up a whole avalanche of gold. A magical item glowing with power, centred, transparent background. |
-| `item_magic_hat` | 180×180 | Magic Hat: a magician's tall black top hat with a red band, tipped upside down with a golden swirl glowing in its open top, sucking a whole storm of grey clouds, raindrops and lightning bolts down inside it like a magic trick. A magical item glowing with power, centred, transparent background. |
-| `item_glitch_bug` | 180×180 | Glitch Bug: a cute round red ladybird with black spots that crawls inside robots and switches them off. A magical item glowing with power, centred, transparent background. |
-| `item_truth_map` | 180×180 | Truth Map: a glowing treasure map on old parchment with a dotted path and a red X that shows where every trick is hiding. A magical item glowing with power, centred, transparent background. |
-| `item_bounce_cap` | 180×180 | Bounce Cap: a shiny blue baseball cap with a curved peak that bounces any spell straight back. A magical item glowing with power, centred, transparent background. |
-| `item_mice` | 180×180 | Wind-up Mice: a tin full of clockwork toy mice that scurry and squeak. A magical item glowing with power, centred, transparent background. |
+| `item_cozy_bed` | 180×180 | Cozy Bed: a child's bed with a puffy blue duvet and a white pillow, glowing softly, a sleepy moon and stars above it. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
+| `item_bubble_bath` | 180×180 | Bubble Tub: a magic bathtub overflowing with rainbow bubbles, a little yellow rubber duck on top. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
+| `item_golden_nut` | 180×180 | Golden Nut: a giant shiny golden hazelnut in its shell, the snack every dragon loves best. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
+| `item_giant_log` | 180×180 | Giant Log: a huge cut wooden log lying down, rings showing on the end, so solid that any hammer just bonks off it. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
+| `item_cleanup_van` | 180×180 | Clean-Up Van: a little cartoon cleaning van with spinning brushes and a big hose that hoovers up every bit of food. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
+| `item_cocoa_cup` | 180×180 | Cocoa Cup: a big red mug of steaming cocoa with a handle, so warm it melts any winter. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
+| `item_cuddly_cat` | 180×180 | Cuddly Cat: a warm, fluffy orange tabby cat with a curled tail, purring, who cuddles the frost away. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
+| `item_flappy_bat` | 180×180 | Flappy Bat: a friendly purple bat (the animal) with huge wings spread wide, flapping hard enough to blow a sandstorm straight back. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
+| `item_brave_rat` | 180×180 | Brave Rat: a brave little grey rat with a long pink tail and a tiny red cape, leading a squeaking pack of his friends; giant statues are terrified of rats. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
+| `item_tickle_fox` | 180×180 | Tickle Fox: a cheeky red-orange fox with a big bushy white-tipped tail, just right for tickling a serpent's nose until he sneezes. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
+| `item_gold_bag` | 180×180 | Gold Bag: a magic pink handbag with a curved handle and a clasp, wide open, that gobbles up a whole avalanche of gold. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
+| `item_magic_hat` | 180×180 | Magic Hat: a magician's tall black top hat with a red band, tipped upside down with a golden swirl glowing in its open top, sucking a whole storm of grey clouds, raindrops and lightning bolts down inside it like a magic trick. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
+| `item_glitch_bug` | 180×180 | Glitch Bug: a cute round red ladybird with black spots that crawls inside robots and switches them off. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
+| `item_truth_map` | 180×180 | Truth Map: a glowing treasure map on old parchment with a dotted path and a red X that shows where every trick is hiding. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
+| `item_bounce_cap` | 180×180 | Bounce Cap: a shiny blue baseball cap with a curved peak that bounces any spell straight back. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
+| `item_mice` | 180×180 | Wind-up Mice: a tin full of clockwork toy mice that scurry and squeak. A magical item with a warm gold glow of power (gold, never green), centred, transparent background. |
 
 ## Props, house objects (`obj_`), villain decals (`decal_`) and effects
 

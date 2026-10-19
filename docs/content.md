@@ -174,12 +174,13 @@ One `Frame` in `FRAMES`: `{ id, text, use }`.
   weighted toward shaky frames); `use: 'counter'` frames fill the attic (one per
   episode, weighted the same way) and name the villain.
 - Keep to the little words that should become sight words (IS, THE, A, OF, WE, CAN,
-  NOT): repetition is the point, and 3–5 frames of each kind is right. A frame word
+  NO, FOR): repetition is the point, and 3–5 frames of each kind is right. A frame word
   that is also a CVC word (CAN) is fine: the draw keeps every word of the episode's
   three sentences out of its key words, so WE CAN USE THE CAN never happens.
 - Today: fetch `we_can_use_the`, `helper_needs_a`, `go_get_the`, `we_need_a`,
   `hero_needs_the`; counter `scared_of_the`, `villain_hates_the` (a fetch frame until
-  item 015, so it kept its id and progress), `runs_from_the`, `can_not_stand_the`.
+  item 015, so it kept its id and progress), `runs_from_the`, `no_match_for_the`
+  (CAN NOT STAND THE until item 020).
 - The composer makes one prefix line per frame (`sent_<id>`), or per frame × roster
   character when it has a name slot (`sent_<id>_<character>`), plus a `word_<token>`
   line for any new token. A name-slot frame costs one line per character.

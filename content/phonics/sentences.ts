@@ -47,7 +47,7 @@ export const FRAMES: Frame[] = [
   { id: 'scared_of_the', text: '{villain} IS SCARED OF THE {x}', use: 'counter' },
   { id: 'villain_hates_the', text: '{villain} HATES THE {x}', use: 'counter' },
   { id: 'runs_from_the', text: '{villain} RUNS FROM THE {x}', use: 'counter' },
-  { id: 'can_not_stand_the', text: '{villain} CAN NOT STAND THE {x}', use: 'counter' },
+  { id: 'no_match_for_the', text: '{villain} IS NO MATCH FOR THE {x}', use: 'counter' },
 ];
 
 export const FRAME_BY_ID: Record<string, Frame> = Object.fromEntries(FRAMES.map((f) => [f.id, f]));

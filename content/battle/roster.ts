@@ -9,7 +9,7 @@
  * BUS", item 015): any pictured CVC word, flung at the villain as a swarm of
  * its pictures. The `counter` item here is flavour for when the draw lands on
  * its own word (HAT for Evil Tiamat: the Magic Hat swallows her storm).
- * `counter.words` stays for the parked Spell the Spell game.
+ * The parked Spell the Spell game has its own words: content/phonics/spelling.ts.
  *
  * Because any CVC word can be a key word, the episode keeps out of the draw
  * every word its own hero, ally and villain say or show before the attic
@@ -195,7 +195,7 @@ export const ROSTER: CharacterSpec[] = [
     ],
     counter: {
       id: 'cozy_bed', name: 'Cozy Bed', glyph: '🛏️', look: 'a child\'s bed with a puffy blue duvet and a white pillow, glowing softly, a sleepy moon and stars above it',
-      how: 'calm', words: ['bed', 'hug', 'nap'], word: 'bed',
+      how: 'calm', word: 'bed',
     },
     house: {
       threat: 'she wants to keep every toy for herself',
@@ -261,7 +261,7 @@ export const ROSTER: CharacterSpec[] = [
     ],
     counter: {
       id: 'bubble_bath', name: 'Bubble Tub', glyph: '🛁', look: 'a magic bathtub overflowing with rainbow bubbles, a little yellow rubber duck on top',
-      how: 'calm', words: ['wet', 'dip', 'tub'], word: 'tub',
+      how: 'calm', word: 'tub',
     },
     house: {
       threat: 'she wants to scribble crayon on every wall',
@@ -320,7 +320,7 @@ export const ROSTER: CharacterSpec[] = [
     ],
     counter: {
       id: 'golden_nut', name: 'Golden Nut', glyph: '🥜', look: 'a giant shiny golden hazelnut in its shell, the snack every dragon loves best',
-      how: 'calm', words: ['cup', 'bun', 'yum'], word: 'nut',
+      how: 'calm', word: 'nut',
     },
     house: {
       threat: 'her dragons want to toast the whole house',
@@ -381,7 +381,7 @@ export const ROSTER: CharacterSpec[] = [
     ],
     counter: {
       id: 'giant_log', name: 'Giant Log', glyph: '🌲', look: 'a huge cut wooden log lying down, rings showing on the end, so solid that any hammer just bonks off it',
-      how: 'block', words: ['bed', 'box', 'pad'], word: 'log',
+      how: 'block', word: 'log',
     },
     house: {
       threat: 'he wants to knock down every wall',
@@ -440,7 +440,7 @@ export const ROSTER: CharacterSpec[] = [
     ],
     counter: {
       id: 'cleanup_van', name: 'Clean-Up Van', glyph: '🚐', look: 'a little cartoon cleaning van with spinning brushes and a big hose that hoovers up every bit of food',
-      how: 'restore', words: ['wet', 'rub', 'van'], word: 'van',
+      how: 'restore', word: 'van',
     },
     house: {
       threat: 'he wants everybody to eat broccoli for breakfast',
@@ -499,7 +499,7 @@ export const ROSTER: CharacterSpec[] = [
     ],
     counter: {
       id: 'cocoa_cup', name: 'Cocoa Cup', glyph: '☕', look: 'a big red mug of steaming cocoa with a handle, so warm it melts any winter',
-      how: 'restore', words: ['sun', 'hat', 'hot'], word: 'cup',
+      how: 'restore', word: 'cup',
     },
     house: {
       threat: 'she wants to freeze the whole house',
@@ -558,7 +558,7 @@ export const ROSTER: CharacterSpec[] = [
     ],
     counter: {
       id: 'cuddly_cat', name: 'Cuddly Cat', glyph: '🐱', look: 'a warm, fluffy orange tabby cat with a curled tail, purring, who cuddles the frost away',
-      how: 'calm', words: ['hug', 'pet', 'pal'], word: 'cat',
+      how: 'calm', word: 'cat',
     },
     house: {
       threat: 'she wants to turn every room into a blizzard',
@@ -618,7 +618,7 @@ export const ROSTER: CharacterSpec[] = [
     ],
     counter: {
       id: 'flappy_bat', name: 'Flappy Bat', glyph: '🦇', look: 'a friendly purple bat (the animal) with huge wings spread wide, flapping hard enough to blow a sandstorm straight back',
-      how: 'reflect', words: ['map', 'zip', 'fan'], word: 'bat',
+      how: 'reflect', word: 'bat',
     },
     house: {
       threat: 'she wants to fill the house with sand',
@@ -664,7 +664,7 @@ export const ROSTER: CharacterSpec[] = [
       ultimate: ab('colossus_march', 'March of the Colossi', 'wave', 0, 0xd9b26f, 3, { color2: 0x4a3a1a }),
       taunts: [
         { key: 'despair', text: 'Look at me, and tremble!' },
-        { key: 'kneel', text: 'Bow to the pharaoh!' },
+        { key: 'kneel', text: 'Bow to the pharaoh!', say: 'Bough to the pharaoh!' },
         { key: 'statues', text: 'My statues are huge!' },
         { key: 'sand', text: 'Sand forever!' },
         { key: 'mighty', text: 'Behold my mighty works!' },
@@ -677,7 +677,7 @@ export const ROSTER: CharacterSpec[] = [
     ],
     counter: {
       id: 'brave_rat', name: 'Brave Rat', glyph: '🐀', look: 'a brave little grey rat with a long pink tail and a tiny red cape, leading a squeaking pack of his friends; giant statues are terrified of rats',
-      how: 'scare', words: ['cup', 'tub', 'wet'], word: 'rat',
+      how: 'scare', word: 'rat',
     },
     house: {
       threat: 'he wants a giant statue of himself in the garden',
@@ -736,7 +736,7 @@ export const ROSTER: CharacterSpec[] = [
     ],
     counter: {
       id: 'tickle_fox', name: 'Tickle Fox', glyph: '🦊', look: 'a cheeky red-orange fox with a big bushy white-tipped tail, just right for tickling a serpent\'s nose until he sneezes',
-      how: 'restore', words: ['sun', 'pot', 'lit'], word: 'fox',
+      how: 'restore', word: 'fox',
     },
     house: {
       threat: 'he wants to wrap himself around the whole house',
@@ -797,7 +797,7 @@ export const ROSTER: CharacterSpec[] = [
     ],
     counter: {
       id: 'gold_bag', name: 'Gold Bag', glyph: '👜', look: 'a magic pink handbag with a curved handle and a clasp, wide open, that gobbles up a whole avalanche of gold',
-      how: 'block', words: ['cup', 'net', 'fog'], word: 'bag',
+      how: 'block', word: 'bag',
     },
     house: {
       threat: 'he wants all the money in your piggy bank',
@@ -849,7 +849,8 @@ export const ROSTER: CharacterSpec[] = [
       ],
       ultimate: ab('royal_storm', 'Royal Purple Storm', 'rain', 0, 0xb15cff, 3, { count: 40, glyph: '🔥', color2: 0xff3ad0 }),
       taunts: [
-        { key: 'bow', text: 'Bow to your queen!' },
+        // edge-tts reads a bare "Bow" as the archer's bow; "Bough" rhymes with now.
+        { key: 'bow', text: 'Bow to your queen!', say: 'Bough to your queen!' },
         { key: 'castle', text: 'This house is my castle!' },
         { key: 'throne', text: 'Bring me my throne!' },
         { key: 'tiny', text: 'You are so tiny!' },
@@ -863,7 +864,7 @@ export const ROSTER: CharacterSpec[] = [
     ],
     counter: {
       id: 'magic_hat', name: 'Magic Hat', glyph: '🎩', look: "a magician's tall black top hat with a red band, tipped upside down with a golden swirl glowing in its open top, sucking a whole storm of grey clouds, raindrops and lightning bolts down inside it like a magic trick",
-      how: 'swallow', words: ['top', 'tip', 'hat'], word: 'hat',
+      how: 'swallow', word: 'hat',
     },
     house: {
       threat: 'she wants to be the queen of the whole house',
@@ -922,7 +923,7 @@ export const ROSTER: CharacterSpec[] = [
     ],
     counter: {
       id: 'glitch_bug', name: 'Glitch Bug', glyph: '🐞', look: 'a cute round red ladybird with black spots that crawls inside robots and switches them off',
-      how: 'shutdown', words: ['box', 'pen', 'off'], word: 'bug',
+      how: 'shutdown', word: 'bug',
     },
     house: {
       threat: 'his robots want to switch off every light',
@@ -983,7 +984,7 @@ export const ROSTER: CharacterSpec[] = [
     ],
     counter: {
       id: 'truth_map', name: 'Truth Map', glyph: '🗺️', look: 'a glowing treasure map on old parchment with a dotted path and a red X that shows where every trick is hiding',
-      how: 'reveal', words: ['map', 'pen', 'nab'], word: 'map',
+      how: 'reveal', word: 'map',
     },
     house: {
       threat: 'he wants to play tricks in every room',
@@ -1030,10 +1031,10 @@ export const ROSTER: CharacterSpec[] = [
       taunts: [
         { key: 'pigs', text: 'You will all be pigs!' },
         { key: 'rise', text: 'Rise, my skeletons!' },
-        { key: 'kneel', text: 'Bow to the queen!' },
-        { key: 'cackle', text: 'Bow, little hero!' },
+        { key: 'kneel', text: 'Bow to the queen!', say: 'Bough to the queen!' },
+        { key: 'cackle', text: 'Bow, little hero!', say: 'Bough, little hero!' },
         { key: 'cauldron', text: 'Into my cauldron!' },
-        { key: 'piglets', text: 'Bow, little piglets!' },
+        { key: 'piglets', text: 'Bow, little piglets!', say: 'Bough, little piglets!' },
       ],
     },
     reformed: [
@@ -1042,7 +1043,7 @@ export const ROSTER: CharacterSpec[] = [
     ],
     counter: {
       id: 'bounce_cap', name: 'Bounce Cap', glyph: '🧢', look: 'a shiny blue baseball cap with a curved peak that bounces any spell straight back',
-      how: 'reflect', words: ['sun', 'pin', 'zap'], word: 'cap',
+      how: 'reflect', word: 'cap',
     },
     house: {
       threat: 'she wants to turn everybody into piggies',
@@ -1101,8 +1102,8 @@ export const ROSTER: CharacterSpec[] = [
       { key: 'hugs', text: 'Gorilla hugs for everybody!' },
     ],
     counter: {
-      id: 'mice', name: 'Wind-up Mice', glyph: '🐭', look: 'a tin full of clockwork toy mice that scurry and squeak',
-      how: 'scare', words: ['rat', 'bug', 'hen'], word: 'mice',
+      id: 'mice', name: 'Wind-up Mice', sayName: 'Whined-up Mice', glyph: '🐭', look: 'a tin full of clockwork toy mice that scurry and squeak',
+      how: 'scare', word: 'mice',
     },
     house: {
       threat: "he's going to eat Dada Jason's car",

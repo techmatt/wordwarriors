@@ -153,6 +153,8 @@ export interface FighterSpec {
 export interface CounterItem {
   id: string;
   name: string;
+  /** For edge-tts, when the name mispronounces (WIND-up, not the weather). Same word count. */
+  sayName?: string;
   /** Painted on the placeholder item card. */
   glyph: string;
   look: string;
@@ -167,11 +169,6 @@ export interface CounterItem {
    * stay for the parked games only.
    */
   word: string;
-  /**
-   * The Spell the Spell words: two warm-ups and the magic word last. Short, and
-   * the ghost boxes show every letter.
-   */
-  words: [string, string, string];
 }
 
 export interface CharacterSpec {

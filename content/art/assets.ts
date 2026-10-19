@@ -194,7 +194,7 @@ for (const c of ROSTER) {
     kind: 'item',
     w: 180,
     h: 180,
-    content: `${c.counter.name}: ${c.counter.look}. A magical item glowing with power, centred, transparent background.`,
+    content: `${c.counter.name}: ${c.counter.look}. A magical item with a warm gold glow of power (gold, never green), centred, transparent background.`,
     label: c.counter.name.toUpperCase(),
     glyph: c.counter.glyph,
     palette: [0xfff3c4, 0xffb703],

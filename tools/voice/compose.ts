@@ -19,6 +19,7 @@ import { MOVE_WORDS, ROSTER } from '../../content/battle/roster.js';
 import type { FighterSpec } from '../../content/battle/types.js';
 import { LETTERS } from '../../content/phonics/letters.js';
 import { FETCH_ITEMS, allFrameTokens, allPrefixes, tokenWord } from '../../content/phonics/sentences.js';
+import { SPELL_WORDS } from '../../content/phonics/spelling.js';
 import { SPECIAL_WORDS, WORDS, spokenWord } from '../../content/phonics/words.js';
 import {
   DEFAULT_NARRATOR,
@@ -45,6 +46,7 @@ interface Fill {
   villain?: FighterSpec;
   helper?: FighterSpec;
   item?: string;
+  itemSay?: string;
   word?: string;
   threat?: string;
   threatSay?: string;
@@ -65,12 +67,17 @@ function fill(t: Template, f: Fill): { text: string; say?: string } {
       .replace('{hero}', f.hero?.sayName ?? f.hero?.displayName ?? '')
       .replace(/\{villain\}/g, f.villain?.sayName ?? f.villain?.displayName ?? '')
       .replace('{helper}', f.helper?.sayName ?? f.helper?.displayName ?? '')
-      .replace('{item}', f.item ?? '')
+      .replace('{item}', f.itemSay ?? f.item ?? '')
       .replace('{word}', f.word ?? '')
       .replace('{threat}', f.threatSay ?? f.threat ?? '');
   const text = show(t.text);
   const needsSay =
-    t.say !== undefined || Boolean(f.hero?.sayName) || Boolean(f.villain?.sayName) || Boolean(f.helper?.sayName) || Boolean(f.threatSay);
+    t.say !== undefined ||
+    Boolean(f.hero?.sayName) ||
+    Boolean(f.villain?.sayName) ||
+    Boolean(f.helper?.sayName) ||
+    Boolean(f.threatSay) ||
+    Boolean(f.itemSay);
   return needsSay ? { text, say: speak(t.say ?? t.text) } : { text };
 }
 
@@ -141,7 +148,7 @@ export function composeLines(): LineSpec[] {
     });
   }
   const spellWords = new Set<string>();
-  for (const c of ROSTER) for (const w of c.counter.words) spellWords.add(w);
+  for (const triple of Object.values(SPELL_WORDS)) for (const w of triple) spellWords.add(w);
   for (const w of WORDS) spellWords.add(w.word);
   // Sentence key words: what the side rooms fetch, and each villain's counter word.
   for (const f of FETCH_ITEMS) spellWords.add(f.word);
@@ -212,7 +219,7 @@ export function composeLines(): LineSpec[] {
           id: narratorLine(n, `${t.key}_${villain.id}`),
           speaker: n,
           group: g,
-          ...fill(t, { villain: villain.evil, item: villain.counter.name }),
+          ...fill(t, { villain: villain.evil, item: villain.counter.name, ...(villain.counter.sayName ? { itemSay: villain.counter.sayName } : {}) }),
         });
       }
     }

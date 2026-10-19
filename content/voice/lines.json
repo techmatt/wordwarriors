@@ -1238,7 +1238,8 @@
   "id": "taunt_ozymandias_evil_kneel",
   "speaker": "ozymandias_evil",
   "group": "fighter_ozymandias_evil",
-  "text": "Bow to the pharaoh!"
+  "text": "Bow to the pharaoh!",
+  "say": "Bough to the pharaoh!"
  },
  {
   "id": "taunt_ozymandias_evil_statues",
@@ -1690,7 +1691,8 @@
   "id": "taunt_tiamat_evil_bow",
   "speaker": "tiamat_evil",
   "group": "fighter_tiamat_evil",
-  "text": "Bow to your queen!"
+  "text": "Bow to your queen!",
+  "say": "Bough to your queen!"
  },
  {
   "id": "taunt_tiamat_evil_castle",
@@ -2152,13 +2154,15 @@
   "id": "taunt_bavmorda_evil_kneel",
   "speaker": "bavmorda_evil",
   "group": "fighter_bavmorda_evil",
-  "text": "Bow to the queen!"
+  "text": "Bow to the queen!",
+  "say": "Bough to the queen!"
  },
  {
   "id": "taunt_bavmorda_evil_cackle",
   "speaker": "bavmorda_evil",
   "group": "fighter_bavmorda_evil",
-  "text": "Bow, little hero!"
+  "text": "Bow, little hero!",
+  "say": "Bough, little hero!"
  },
  {
   "id": "taunt_bavmorda_evil_cauldron",
@@ -2170,7 +2174,8 @@
   "id": "taunt_bavmorda_evil_piglets",
   "speaker": "bavmorda_evil",
   "group": "fighter_bavmorda_evil",
-  "text": "Bow, little piglets!"
+  "text": "Bow, little piglets!",
+  "say": "Bough, little piglets!"
  },
  {
   "id": "ult_bavmorda_evil",
@@ -3482,101 +3487,101 @@
   "text": "EvilRilla runs from the..."
  },
  {
-  "id": "sent_can_not_stand_the_julia",
+  "id": "sent_no_match_for_the_julia",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Julia can not stand the..."
+  "text": "Evil Julia is no match for the..."
  },
  {
-  "id": "sent_can_not_stand_the_ellie",
+  "id": "sent_no_match_for_the_ellie",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Ellie can not stand the..."
+  "text": "Evil Ellie is no match for the..."
  },
  {
-  "id": "sent_can_not_stand_the_seraphina",
+  "id": "sent_no_match_for_the_seraphina",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Seraphina can not stand the..."
+  "text": "Evil Seraphina is no match for the..."
  },
  {
-  "id": "sent_can_not_stand_the_dada_matt",
+  "id": "sent_no_match_for_the_dada_matt",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Dada Matt can not stand the..."
+  "text": "Evil Dada Matt is no match for the..."
  },
  {
-  "id": "sent_can_not_stand_the_dada_jason",
+  "id": "sent_no_match_for_the_dada_jason",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Dada Jason can not stand the..."
+  "text": "Evil Dada Jason is no match for the..."
  },
  {
-  "id": "sent_can_not_stand_the_elsa",
+  "id": "sent_no_match_for_the_elsa",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Elsa can not stand the..."
+  "text": "Evil Elsa is no match for the..."
  },
  {
-  "id": "sent_can_not_stand_the_anna",
+  "id": "sent_no_match_for_the_anna",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Anna can not stand the..."
+  "text": "Evil Anna is no match for the..."
  },
  {
-  "id": "sent_can_not_stand_the_jasmine",
+  "id": "sent_no_match_for_the_jasmine",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Jasmine can not stand the..."
+  "text": "Evil Jasmine is no match for the..."
  },
  {
-  "id": "sent_can_not_stand_the_ozymandias",
+  "id": "sent_no_match_for_the_ozymandias",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Ozymandias can not stand the..."
+  "text": "Evil Ozymandias is no match for the..."
  },
  {
-  "id": "sent_can_not_stand_the_jormungandr",
+  "id": "sent_no_match_for_the_jormungandr",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Jormungandr can not stand the...",
-  "say": "Evil Yormungander can not stand the..."
+  "text": "Evil Jormungandr is no match for the...",
+  "say": "Evil Yormungander is no match for the..."
  },
  {
-  "id": "sent_can_not_stand_the_smaug",
+  "id": "sent_no_match_for_the_smaug",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Smaug can not stand the..."
+  "text": "Evil Smaug is no match for the..."
  },
  {
-  "id": "sent_can_not_stand_the_tiamat",
+  "id": "sent_no_match_for_the_tiamat",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Tiamat can not stand the..."
+  "text": "Evil Tiamat is no match for the..."
  },
  {
-  "id": "sent_can_not_stand_the_scar",
+  "id": "sent_no_match_for_the_scar",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Scar can not stand the..."
+  "text": "Evil Scar is no match for the..."
  },
  {
-  "id": "sent_can_not_stand_the_moriarty",
+  "id": "sent_no_match_for_the_moriarty",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Moriarty can not stand the..."
+  "text": "Evil Moriarty is no match for the..."
  },
  {
-  "id": "sent_can_not_stand_the_bavmorda",
+  "id": "sent_no_match_for_the_bavmorda",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Evil Bavmorda can not stand the..."
+  "text": "Evil Bavmorda is no match for the..."
  },
  {
-  "id": "sent_can_not_stand_the_rilla",
+  "id": "sent_no_match_for_the_rilla",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "EvilRilla can not stand the..."
+  "text": "EvilRilla is no match for the..."
  },
  {
   "id": "word_a",
@@ -3601,6 +3606,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "EvilRilla!"
+ },
+ {
+  "id": "word_for",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "for!"
  },
  {
   "id": "word_from",
@@ -3646,6 +3657,12 @@
   "say": "Yormungander!"
  },
  {
+  "id": "word_match",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "match!"
+ },
+ {
   "id": "word_matt",
   "speaker": "phonics",
   "group": "phonics",
@@ -3664,10 +3681,10 @@
   "text": "needs!"
  },
  {
-  "id": "word_not",
+  "id": "word_no",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "not!"
+  "text": "no!"
  },
  {
   "id": "word_of",
@@ -3698,12 +3715,6 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "scared!"
- },
- {
-  "id": "word_stand",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "stand!"
  },
  {
   "id": "word_the",
@@ -5193,31 +5204,36 @@
   "id": "nar_julia_alarm_villain_rilla",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_julia_need_item_rilla",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_julia_made_item_rilla",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_julia_need_counter_rilla",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_julia_got_counter_rilla",
   "speaker": "julia",
   "group": "nar_julia",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_julia_use_move_zap",
@@ -6885,31 +6901,36 @@
   "id": "nar_ellie_alarm_villain_rilla",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_ellie_need_item_rilla",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_ellie_made_item_rilla",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_ellie_need_counter_rilla",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_ellie_got_counter_rilla",
   "speaker": "ellie",
   "group": "nar_ellie",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_ellie_use_move_zap",
@@ -8577,31 +8598,36 @@
   "id": "nar_seraphina_alarm_villain_rilla",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_seraphina_need_item_rilla",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_seraphina_made_item_rilla",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_seraphina_need_counter_rilla",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_seraphina_got_counter_rilla",
   "speaker": "seraphina",
   "group": "nar_seraphina",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_seraphina_use_move_zap",
@@ -10269,31 +10295,36 @@
   "id": "nar_dada_matt_alarm_villain_rilla",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_dada_matt_need_item_rilla",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_dada_matt_made_item_rilla",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_dada_matt_need_counter_rilla",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_dada_matt_got_counter_rilla",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_dada_matt_use_move_zap",
@@ -11961,31 +11992,36 @@
   "id": "nar_dada_jason_alarm_villain_rilla",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_dada_jason_need_item_rilla",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_dada_jason_made_item_rilla",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_dada_jason_need_counter_rilla",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_dada_jason_got_counter_rilla",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_dada_jason_use_move_zap",
@@ -13653,31 +13689,36 @@
   "id": "nar_elsa_alarm_villain_rilla",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_elsa_need_item_rilla",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_elsa_made_item_rilla",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_elsa_need_counter_rilla",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_elsa_got_counter_rilla",
   "speaker": "elsa",
   "group": "nar_elsa",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_elsa_use_move_zap",
@@ -15345,31 +15386,36 @@
   "id": "nar_anna_alarm_villain_rilla",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_anna_need_item_rilla",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_anna_made_item_rilla",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_anna_need_counter_rilla",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_anna_got_counter_rilla",
   "speaker": "anna",
   "group": "nar_anna",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_anna_use_move_zap",
@@ -17037,31 +17083,36 @@
   "id": "nar_jasmine_alarm_villain_rilla",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_jasmine_need_item_rilla",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_jasmine_made_item_rilla",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_jasmine_need_counter_rilla",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_jasmine_got_counter_rilla",
   "speaker": "jasmine",
   "group": "nar_jasmine",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_jasmine_use_move_zap",
@@ -18729,31 +18780,36 @@
   "id": "nar_ozymandias_alarm_villain_rilla",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_ozymandias_need_item_rilla",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_ozymandias_made_item_rilla",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_ozymandias_need_counter_rilla",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_ozymandias_got_counter_rilla",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_ozymandias_use_move_zap",
@@ -20420,31 +20476,36 @@
   "id": "nar_jormungandr_alarm_villain_rilla",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_jormungandr_need_item_rilla",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_jormungandr_made_item_rilla",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_jormungandr_need_counter_rilla",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_jormungandr_got_counter_rilla",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_jormungandr_use_move_zap",
@@ -22112,31 +22173,36 @@
   "id": "nar_smaug_alarm_villain_rilla",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_smaug_need_item_rilla",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_smaug_made_item_rilla",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_smaug_need_counter_rilla",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_smaug_got_counter_rilla",
   "speaker": "smaug",
   "group": "nar_smaug",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_smaug_use_move_zap",
@@ -23804,31 +23870,36 @@
   "id": "nar_tiamat_alarm_villain_rilla",
   "speaker": "tiamat",
   "group": "nar_tiamat",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_tiamat_need_item_rilla",
   "speaker": "tiamat",
   "group": "nar_tiamat",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_tiamat_made_item_rilla",
   "speaker": "tiamat",
   "group": "nar_tiamat",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_tiamat_need_counter_rilla",
   "speaker": "tiamat",
   "group": "nar_tiamat",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_tiamat_got_counter_rilla",
   "speaker": "tiamat",
   "group": "nar_tiamat",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_tiamat_use_move_zap",
@@ -25496,31 +25567,36 @@
   "id": "nar_scar_alarm_villain_rilla",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_scar_need_item_rilla",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_scar_made_item_rilla",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_scar_need_counter_rilla",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_scar_got_counter_rilla",
   "speaker": "scar",
   "group": "nar_scar",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_scar_use_move_zap",
@@ -27188,31 +27264,36 @@
   "id": "nar_moriarty_alarm_villain_rilla",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_moriarty_need_item_rilla",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_moriarty_made_item_rilla",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_moriarty_need_counter_rilla",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_moriarty_got_counter_rilla",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_moriarty_use_move_zap",
@@ -28880,31 +28961,36 @@
   "id": "nar_bavmorda_alarm_villain_rilla",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_bavmorda_need_item_rilla",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_bavmorda_made_item_rilla",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_bavmorda_need_counter_rilla",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_bavmorda_got_counter_rilla",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_bavmorda_use_move_zap",
@@ -30572,31 +30658,36 @@
   "id": "nar_rilla_alarm_villain_rilla",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "EvilRilla is coming!"
+  "text": "EvilRilla is coming!",
+  "say": "EvilRilla is coming!"
  },
  {
   "id": "nar_rilla_need_item_rilla",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Only the Wind-up Mice can stop EvilRilla!"
+  "text": "Only the Wind-up Mice can stop EvilRilla!",
+  "say": "Only the Whined-up Mice can stop EvilRilla!"
  },
  {
   "id": "nar_rilla_made_item_rilla",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We made the Wind-up Mice!"
+  "text": "We made the Wind-up Mice!",
+  "say": "We made the Whined-up Mice!"
  },
  {
   "id": "nar_rilla_need_counter_rilla",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We need something that scares EvilRilla!"
+  "text": "We need something that scares EvilRilla!",
+  "say": "We need something that scares EvilRilla!"
  },
  {
   "id": "nar_rilla_got_counter_rilla",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "We found the Wind-up Mice!"
+  "text": "We found the Wind-up Mice!",
+  "say": "We found the Whined-up Mice!"
  },
  {
   "id": "nar_rilla_use_move_zap",

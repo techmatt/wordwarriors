@@ -17,6 +17,7 @@ import Phaser from 'phaser';
 
 import { WORD_BY_ID, pictureFor } from '../../../content/phonics/words';
 import { LETTER_BY_CHAR } from '../../../content/phonics/letters';
+import { spellWordsFor } from '../../../content/phonics/spelling';
 import { letterSoundLine, narratorLine, wordLine } from '../../../content/voice/ids';
 import { voiceBus } from '../../audio/VoiceBus';
 import { sfxBoing, sfxKey } from '../../audio/sfx';
@@ -59,7 +60,7 @@ export class Spelling extends Minigame {
     this.cursor = 0;
     this.wrongKeys = 0;
     const counter = villainSpec().counter;
-    this.words = [...counter.words];
+    this.words = [...spellWordsFor(episode.villain)];
     this.itemIndex = 0;
     this.makeMeter(this.words.length, `item_${counter.id}`, counter.glyph);
     this.player.place(300, 600);

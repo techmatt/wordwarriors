@@ -11,6 +11,7 @@ import { ART_ASSETS } from '../../content/art/assets';
 import { MINIONS, MOVE_WORDS, ROSTER } from '../../content/battle/roster';
 import { LETTERS } from '../../content/phonics/letters';
 import { FETCH_ITEMS, FRAMES, allFrameTokens, allPrefixes, sentence, tokenWord } from '../../content/phonics/sentences';
+import { SPELL_WORDS, spellWordsFor } from '../../content/phonics/spelling';
 import { CVC_WORDS, SPECIAL_WORDS, WORDS } from '../../content/phonics/words';
 import { WAKERS, letterSoundLine, moveLine, narratorLine, nameLine, tauntLine, ultimateLine, wakeLine, wordLine } from '../../content/voice/ids';
 import { CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE_LINES } from '../../content/voice/script';
@@ -111,8 +112,10 @@ test('roster: every character is complete, good and evil', () => {
       }
     }
     assert.ok(c.good.abilities.filter((a) => a.word).length >= 2, `${c.id} offers at least two move words`);
-    assert.equal(c.counter.words.length, 3);
-    for (const w of c.counter.words) assert.match(w, /^[a-z]{2,5}$/, `${c.id} spell word ${w} is short`);
+    const spell = SPELL_WORDS[c.id];
+    assert.ok(spell, `${c.id} has Spell the Spell words`);
+    assert.equal(spell.length, 3);
+    for (const w of spell) assert.match(w, /^[a-z]{2,5}$/, `${c.id} spell word ${w} is short`);
   }
 });
 
@@ -151,7 +154,7 @@ test('voice: every line id the game derives exists in lines.json and the manifes
   for (const l of LETTERS) want.push(letterSoundLine(l.letter));
   for (const w of WORDS) want.push(wordLine(w.word));
   for (const c of ROSTER) {
-    for (const w of c.counter.words) want.push(wordLine(w));
+    for (const w of spellWordsFor(c.id)) want.push(wordLine(w));
     for (const evil of [false, true]) {
       const f = evil ? c.evil : c.good;
       const id = evil ? `${c.id}_evil` : c.id;
