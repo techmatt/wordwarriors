@@ -118,7 +118,12 @@ export function saidEarly(cast: { hero: string; ally: string | null; villain: st
  * toward shaky words (times `boost`). When no eligible word is left, the bag
  * refills (a new round) with every bag word except `keepOut` (this episode's
  * words so far, so they do not open the new round too). It falls back to
- * any eligible word only if even a full bag has none. The word leaves the bag.
+ * any eligible word only if even a full bag has none.
+ *
+ * Drawing does not spend the word: it leaves the bag only when she reads it
+ * right first time (SentenceRoom calls `takeFromBag`), so an episode she
+ * abandons, or a dev `?scene=` jump, costs her bag nothing, and a word she
+ * missed simply stays in.
  */
 export function drawKey(
   store: ProgressStore,
@@ -134,9 +139,7 @@ export function drawKey(
     pool = store.bag().left.filter((w) => ok.has(w));
   }
   if (!pool.length) pool = [...eligible];
-  const word = pickWeighted(pool, (w) => store.shakiness('words', w) * boost(w), 1, rand)[0]!;
-  store.takeFromBag(word);
-  return word;
+  return pickWeighted(pool, (w) => store.shakiness('words', w) * boost(w), 1, rand)[0]!;
 }
 
 export interface EpisodeInput {
@@ -152,7 +155,7 @@ export interface EpisodeInput {
 
 /**
  * The episode's three room plans: fetch rooms a and b, then the attic's
- * counter sentence. Draws (and so spends) three words from the bag.
+ * counter sentence. Draws three words from the bag (spent as she reads them).
  */
 export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Rand = Math.random): [RoomPlan, RoomPlan, RoomPlan] {
   const { fill, spell } = input;

@@ -179,10 +179,12 @@ pops out of her bag in both battles.
 
 Every key word (both side rooms and the attic) comes out of her word bag: every
 decodable `CVC_WORDS` word (`BAG_WORDS`), drawn without replacement and kept with her
-progress in localStorage. A drawn word leaves the bag; when no word the episode can
-use is left, the bag refills (a new round, minus this episode's words). Within the
-bag, shaky words are drawn more often (`shakiness`), and a word she missed (any wrong
-try) goes straight back in, so it comes round again soon. No key word repeats within
+progress in localStorage. A word leaves the bag when she reads it right first time
+(drawing alone spends nothing, so an abandoned episode or a `?scene=` jump costs her
+bag no words); when no word the episode can use is left, the bag refills (a new
+round, minus this episode's words). Within the bag, shaky words are drawn more often
+(`shakiness`), and a word she missed (any wrong try) stays in, so it comes round
+again soon. No key word repeats within
 an episode. The grown-ups page (F9) shows the round, words seen and left, and the
 shaky words. Erasing progress (F8 twice) empties the bag too.
 

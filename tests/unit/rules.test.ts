@@ -165,7 +165,7 @@ test('voice: every line id the game derives exists in lines.json and the manifes
     for (const v of ROSTER) want.push(narratorLine(c.id, `need_counter_${v.id}`), narratorLine(c.id, `got_counter_${v.id}`));
   }
   // The house: wake-ups by both wakers, sentence prefixes, and a word line for every sentence token and key word.
-  for (const k of ['teach_1', 'teach_circle', 'teach_done', 'house_doors', 'house_more', 'house_front', 'secret_door', 'house_ready', 'room_listen', 'room_your_turn', 'room_find', 'got_item', 'use_bag']) {
+  for (const k of ['teach_1', 'teach_circle', 'teach_done', 'house_doors', 'house_more', 'house_front', 'secret_door', 'house_ready', 'room_listen', 'room_your_turn', 'room_find', 'got_item', 'use_bag', 'got_counter_any']) {
     assert.ok(NARRATOR_LINES.some((t) => t.key === k), `narrator line ${k}`);
   }
   for (const waker of WAKERS) {

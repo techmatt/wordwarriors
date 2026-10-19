@@ -143,25 +143,49 @@ test('the counter varies: many words and every counter frame come up for one vil
   assert.equal(frames.size, FRAMES.filter((f) => f.use === 'counter').length, `frames: ${[...frames].join(', ')}`);
 });
 
+/** She reads a word right first time, as SentenceRoom records it. */
+function readRight(store: ProgressStore, word: string): void {
+  store.record('words', word, true, 0);
+  store.takeFromBag(word);
+}
+
 test('the word bag: no key word comes back until the bag has gone round', () => {
   const store = new ProgressStore(memory());
   const rand = seeded(7);
   const drawn: string[] = [];
-  for (let i = 0; i < BAG_WORDS.length; i++) drawn.push(drawKey(store, BAG_WORDS, rand));
+  for (let i = 0; i < BAG_WORDS.length; i++) {
+    const w = drawKey(store, BAG_WORDS, rand);
+    drawn.push(w);
+    readRight(store, w);
+  }
   assert.equal(new Set(drawn).size, BAG_WORDS.length, 'a whole round without a repeat');
   assert.equal(store.bag().round, 1);
   assert.equal(store.bag().left.length, 0);
   drawKey(store, BAG_WORDS, rand);
   assert.equal(store.bag().round, 2, 'then it refills');
-  assert.equal(store.bag().left.length, BAG_WORDS.length - 1);
+  assert.equal(store.bag().left.length, BAG_WORDS.length);
 
-  // Across whole episodes: four episodes (12 key words) without a repeat.
+  // Across whole episodes she plays through: four episodes (12 key words) without a repeat.
   for (let seed = 1; seed <= 20; seed++) {
     const s = new ProgressStore(memory());
     const keys: string[] = [];
-    for (let e = 0; e < 4; e++) keys.push(...episodePlans(s, input(), seeded(seed * 10 + e)).map((p) => p.sentence.key));
+    for (let e = 0; e < 4; e++) {
+      const ks = episodePlans(s, input(), seeded(seed * 10 + e)).map((p) => p.sentence.key);
+      for (const k of ks) readRight(s, k);
+      keys.push(...ks);
+    }
     assert.equal(new Set(keys).size, keys.length, `seed ${seed}: ${keys.join(' ')}`);
   }
+});
+
+test('the word bag: drawing spends nothing; an abandoned episode or a dev jump keeps every word', () => {
+  const store = new ProgressStore(memory());
+  episodePlans(store, input(), seeded(4));
+  const before = store.bag();
+  assert.equal(before.round, 1);
+  assert.equal(before.left.length, BAG_WORDS.length, 'planning an episode takes nothing out');
+  episodePlans(store, input(), seeded(5));
+  assert.deepEqual(store.bag(), before);
 });
 
 test('the word bag: a refill keeps out the words this episode has already drawn', () => {
@@ -175,10 +199,11 @@ test('the word bag: a refill keeps out the words this episode has already drawn'
   assert.ok(!store.bag().left.includes('cat'), 'the new round does not open with this episode\'s word');
 });
 
-test('the word bag: a missed word goes back in; shaky words are drawn more often', () => {
+test('the word bag: a missed word stays in (or goes back in); shaky words are drawn more often', () => {
   const store = new ProgressStore(memory());
   const rand = seeded(11);
   const w = drawKey(store, BAG_WORDS, rand);
+  store.takeFromBag(w);
   assert.ok(!store.bag().left.includes(w));
   store.returnToBag(w);
   assert.ok(store.bag().left.includes(w));
@@ -198,7 +223,7 @@ test('the word bag: a missed word goes back in; shaky words are drawn more often
 test('the word bag is kept with her progress, and an older save without one still loads', () => {
   const storage = memory();
   const a = new ProgressStore(storage);
-  drawKey(a, BAG_WORDS, seeded(5));
+  readRight(a, drawKey(a, BAG_WORDS, seeded(5)));
   const b = new ProgressStore(storage);
   assert.deepEqual(b.bag(), a.bag());
   assert.equal(b.bag().left.length, BAG_WORDS.length - 1);

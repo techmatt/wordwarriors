@@ -71,8 +71,9 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
 
 Key words never repeat until her **word bag** has gone round: every key word (both side
 rooms and the attic) is drawn without replacement from the decodable CVC words, kept
-with her progress, leaning toward the words she has missed (a missed word goes back in
-early). Frames repeat on purpose so their little words become sight words. Details in
+with her progress, leaning toward the words she has missed (a word leaves the bag only
+when she reads it right first time, so a missed word comes round again soon, and a dev
+`?scene=` jump spends nothing). Frames repeat on purpose so their little words become sight words. Details in
 `docs/content.md`, "Key words and the word bag"; the grown-ups page (F9) shows the bag.
 
 A journey map shows before each battle, the trip home after the retreat, and the

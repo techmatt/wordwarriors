@@ -39,9 +39,10 @@ export interface ProgressData {
 }
 
 /**
- * Key words still to come this round. A drawn word leaves the bag; when no
- * word the episode can use is left, the bag refills with every key word and
- * `round` counts up. A word she missed goes back in early (`returnToBag`).
+ * Key words still to come this round. A word leaves the bag when she reads
+ * it right first time; when no word the episode can use is left, the bag
+ * refills with every key word and `round` counts up. A word she missed stays
+ * in, or goes back in if a refill dropped it (`returnToBag`).
  */
 export interface WordBag {
   left: string[];
@@ -132,7 +133,7 @@ export class ProgressStore {
     return { left: [...this.data.bag.left], round: this.data.bag.round };
   }
 
-  /** A word is drawn: it leaves the bag until the next round (or a miss). */
+  /** She read a word right first time: it leaves the bag until the next round. */
   takeFromBag(word: string): void {
     this.data.bag.left = this.data.bag.left.filter((w) => w !== word);
     this.save();

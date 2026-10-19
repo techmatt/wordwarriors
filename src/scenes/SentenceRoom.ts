@@ -415,8 +415,10 @@ export class SentenceRoom extends Minigame {
     const firstTry = this.wrongTries === 0;
     progress.record('words', s.key, firstTry, this.wrongTries);
     progress.record('frames', s.frame, firstTry, this.wrongTries);
-    // A key word she missed goes back in her word bag, so it comes round again soon.
-    if (!firstTry) progress.returnToBag(s.key);
+    // Her word bag: a word read right first time is done for this round; one
+    // she missed stays in (or goes back in), so it comes round again soon.
+    if (firstTry) progress.takeFromBag(s.key);
+    else progress.returnToBag(s.key);
     if (!episode.read.includes(s.key)) episode.read.push(s.key);
     // The episode learns the result now, so a skip mid-celebration loses nothing.
     const counter = this.slot === 'counter';

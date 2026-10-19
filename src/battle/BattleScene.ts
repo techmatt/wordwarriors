@@ -1088,9 +1088,14 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       // Not the mop! She has read the word by now, so the villain may wail it.
       if (!named) this.after(350, () => floatText(this, v.cx - 40, v.top - 130, `NOT THE ${word.toUpperCase()}!`, '#ffd23f', 56));
       shake(this, 3, 300);
-      this.tweens.addCounter({ from: 0, to: 1, duration: 750, ease: 'Sine.easeInOut', onUpdate: (tw) => (v.lift = Math.sin((tw.getValue() ?? 0) * Math.PI) * 190), onComplete: () => (v.lift = 0) });
+      // A giant (Evil Tiamat, standing at the front) only hops and stretches a
+      // little, so her head stays on screen (she now takes this branch whenever
+      // the counter is not her Magic Hat).
+      const leap = giant ? 50 : 190;
+      const stretch = giant ? 1.12 : 1.45;
+      this.tweens.addCounter({ from: 0, to: 1, duration: 750, ease: 'Sine.easeInOut', onUpdate: (tw) => (v.lift = Math.sin((tw.getValue() ?? 0) * Math.PI) * leap), onComplete: () => (v.lift = 0) });
       const bs = v.baseScale;
-      this.tweens.add({ targets: v.sprite, scaleX: bs * 0.72, scaleY: bs * 1.45, duration: 170, yoyo: true, repeat: 1, onComplete: () => v.sprite.setScale(bs) });
+      this.tweens.add({ targets: v.sprite, scaleX: bs * (giant ? 0.9 : 0.72), scaleY: bs * stretch, duration: 170, yoyo: true, repeat: 1, onComplete: () => v.sprite.setScale(bs) });
       await this.simWait(0.8);
       // The fizzle: the charge goes out of it in a grey puff.
       sfxPoof();
