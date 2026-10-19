@@ -144,7 +144,7 @@ export interface CounterItem {
   glyph: string;
   look: string;
   /** What it does to the ultimate in Part 2, as the battle shows it. */
-  how: 'block' | 'reflect' | 'reveal' | 'restore' | 'shutdown' | 'calm' | 'scare';
+  how: 'block' | 'reflect' | 'swallow' | 'reveal' | 'restore' | 'shutdown' | 'calm' | 'scare';
   /**
    * The key word of the counter sentence (the sentence game after the
    * retreat): a picturable word whose picture she finds. Decodable unless it

@@ -941,6 +941,35 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     }
   }
 
+  /**
+   * A giant's ultimate fills the whole screen, not just the heroes' corner: a
+   * wall of its colours sweeps the arena while its fire pours from the top edge
+   * all the way across. Part 2 leaves out the wall (it would shove the heroes
+   * out from under the counter-item); a `swallow` stops the pour itself.
+   */
+  private giantSweep(v: Fighter, ult: AbilitySpec, wall = true, pourMs = 1600): Phaser.GameObjects.Particles.ParticleEmitter {
+    if (wall) cast(this, v, { ...ult, id: `${ult.id}_sweep`, kind: 'wave', power: 2 }, this.heroes[0] ?? null, 2.2);
+    const pour = this.add
+      .particles(0, 0, TEX.smoke, {
+        x: { min: 0, max: GAME_WIDTH },
+        y: -40,
+        speedY: { min: 500, max: 900 },
+        speedX: { min: -160, max: -40 },
+        scale: { start: 1.2, end: 2.6 },
+        alpha: { start: 0.75, end: 0 },
+        lifespan: 1000,
+        frequency: 10,
+        quantity: 4,
+        tint: [ult.color, ult.color2 ?? 0xffffff, v.init.palette[1]],
+        blendMode: Phaser.BlendModes.ADD,
+      })
+      .setDepth(DEPTH.fx + 1);
+    flash(this, ult.color, 220);
+    this.after(pourMs, () => pour.stop());
+    this.after(pourMs + 1200, () => pour.destroy());
+    return pour;
+  }
+
   /** The villain's ultimate. Part 1: the heroes are floored. Part 2: the counter-item answers it. */
   private async ultimate(): Promise<void> {
     this.phase = 'ultimate';
@@ -949,7 +978,10 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
     // The villain winds up as itself, not as a pig or an ice block.
     v.status = null;
     v.clearOverlay();
-    this.tweens.add({ targets: v, x: 900, y: 560, duration: 600 });
+    // A giant (Tiamat) steps to the front of her half, so growing for the
+    // ultimate fills the screen from the floor to near the top, head still in view.
+    const giant = v.init.size >= 2;
+    this.tweens.add({ targets: v, x: giant ? 960 : 900, y: giant ? FLOOR_BOTTOM : 560, duration: 600 });
     // Everyone back to their own side, so the big moment reads left against right.
     this.heroes.forEach((h, i) => {
       h.status = null;
@@ -994,6 +1026,7 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       // Too strong: the heroes are floored, dizzy and fine.
       this.floors.heroMain = 0.06;
       cast(this, v, ult, this.heroes[0] ?? null, 2.6);
+      if (giant) this.giantSweep(v, ult);
       await this.simWait(2.2);
       flash(this, 0xffffff, 300);
       hitstop(this, 160);
@@ -1053,15 +1086,56 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       burst(this, v.cx, v.cy, { count: 50, speed: 260, colors: [0x888888, 0xcccccc, ult.color], life: 900 });
       floatText(this, v.cx + 60, v.cy, 'FIZZLE!', '#cccccc', 44);
       await this.simWait(1.0);
-    } else if (counter.how === 'block' || counter.how === 'reflect') {
+    } else if (counter.how === 'block' || counter.how === 'reflect' || counter.how === 'swallow') {
       // A dome over the heroes; the ultimate crashes into it.
       const dome = this.add.ellipse(h.x + 60, h.y - 60, 520, 360, 0x9ad8ff, 0.18).setStrokeStyle(10, 0xffffff, 0.9).setDepth(DEPTH.fx + 3);
       dome.setScale(0);
       this.tweens.add({ targets: dome, scale: 1, duration: 300, ease: 'Back.easeOut' });
       sfxShield();
       cast(this, v, ult, h, 2.2);
-      await this.simWait(1.8);
-      floatText(this, h.x + 60, h.y - 280, 'BLOCKED!', '#7ad9ff', 70);
+      const pour = giant ? this.giantSweep(v, ult, false, counter.how === 'swallow' ? 3000 : 1600) : null;
+      if (counter.how !== 'swallow') {
+        await this.simWait(1.8);
+        floatText(this, h.x + 60, h.y - 280, 'BLOCKED!', '#7ad9ff', 70);
+      } else {
+        // The item (the Magic Hat, drawn brim up) flies up between them while
+        // the storm is still falling and sucks it all inside like a magic trick;
+        // she shrinks back to size behind the GULP.
+        await this.simWait(0.6);
+        this.tweens.killTweensOf(halo);
+        this.tweens.add({ targets: [item, halo], x: GAME_WIDTH / 2, y: 260, duration: 500, ease: 'Back.easeOut' });
+        await this.simWait(0.5);
+        pour?.stop();
+        const vortex = this.add
+          .particles(0, 0, TEX.smoke, {
+            x: { min: 0, max: GAME_WIDTH },
+            y: { min: 0, max: GAME_HEIGHT },
+            moveToX: item.x,
+            moveToY: item.y + 30,
+            scale: { start: 1.4, end: 0.1 },
+            alpha: { start: 0.9, end: 0.2 },
+            lifespan: 700,
+            frequency: 6,
+            quantity: 3,
+            tint: [ult.color, ult.color2 ?? 0xffffff, v.init.palette[1]],
+            blendMode: Phaser.BlendModes.ADD,
+          })
+          .setDepth(DEPTH.fx + 4);
+        sfxWhoosh();
+        this.after(400, () => sfxWhoosh());
+        this.after(800, () => sfxWhoosh());
+        this.tweens.add({ targets: item, scaleX: item.scaleX * 1.25, scaleY: item.scaleY * 0.8, duration: 120, yoyo: true, repeat: 6 });
+        this.darken(0.2, 1200);
+        await this.simWait(1.4);
+        vortex.stop();
+        floatText(this, item.x, item.y - 110, 'GULP!', '#ffd23f', 84);
+        sfxPoof();
+        burst(this, item.x, item.y, { count: 70, speed: 420, colors: [0xffd23f, 0xffffff, ult.color] });
+        burst(this, v.cx, v.cy, { count: 50, speed: 320, colors: [0xffffff, ult.color, v.init.palette[1]] });
+        v.growUntil = 0;
+        this.after(900, () => vortex.destroy());
+        await this.simWait(0.8);
+      }
       if (counter.how === 'reflect') {
         this.banner('BOUNCE BACK!', 0x7ad9ff, true);
         const mirrored: AbilitySpec = { ...ult, power: ult.power };
@@ -1236,6 +1310,8 @@ export class BattleScene extends Phaser.Scene implements BattleWorld {
       const home = f.team === 'hero' ? 400 : 900;
       f.x += (home - f.x) * Math.min(1, (f.team === 'villain' ? 1.2 : 0.8) * dt);
     }
+    // A giant's wings would hang off the edge of the screen: keep all of her in.
+    if (f.init.size >= 2) f.x = Phaser.Math.Clamp(f.x, ARENA_LEFT + f.height * 0.35, ARENA_RIGHT - f.height * 0.35);
     if (!fighting || !target) return;
 
     // Casting: one team member at a time, so moves read instead of blurring.

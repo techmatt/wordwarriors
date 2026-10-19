@@ -141,6 +141,8 @@ export function composeLines(): LineSpec[] {
   for (const f of FETCH_ITEMS) spellWords.add(f.word);
   for (const c of ROSTER) spellWords.add(c.counter.word);
   for (const w of SPECIAL_WORDS) spellWords.add(w.word);
+  // Move words: a right pick in the battle goes into the victory recap, which says it.
+  for (const w of MOVE_WORDS) spellWords.add(w);
   for (const w of [...spellWords].sort()) {
     const sayName = ROSTER.find((c) => c.id === w)?.good.sayName;
     lines.push({

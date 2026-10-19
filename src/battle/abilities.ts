@@ -532,7 +532,8 @@ const rain: Cast = (w, f, ab, _target, mult) => {
       if (art) {
         const glint = trail(w, ab.color, mult);
         glint.startFollow(art);
-        w.after(560, () => glint.destroy());
+        w.after(520, () => glint.stop());
+        w.after(1000, () => glint.destroy());
       }
       s.tweens.add({
         targets: obj,
@@ -779,7 +780,9 @@ const orbit: Cast = (w, f, ab, target, mult) => {
       sw.y = f.cy + Math.sin(a) * radius * 0.5;
       // Point outwards and lean with the spin; the back half goes behind her.
       sw.rotation = a + Math.PI / 2 + 0.5;
-      sw.setDepth(Math.sin(a) < 0 ? f.y - 2 : DEPTH.fx);
+      const behind = Math.sin(a) < 0;
+      sw.setDepth(behind ? f.y - 2 : DEPTH.fx);
+      glints[i]?.setDepth(behind ? f.y - 3 : DEPTH.fx - 1);
     });
   };
   place();
@@ -809,7 +812,9 @@ const orbit: Cast = (w, f, ab, target, mult) => {
   });
   w.after(hold, () => {
     ev.remove();
-    glints.forEach((g) => g.destroy());
+    // The ring's sparkles fade out; each flung sword gets a trail of its own.
+    glints.forEach((g) => g.stop());
+    w.after(500, () => glints.forEach((g) => g.destroy()));
     if (!f.active) {
       swords.forEach((sw) => sw.destroy());
       return;

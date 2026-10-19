@@ -796,7 +796,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     counter: {
       id: 'magic_hat', name: 'Magic Hat', glyph: '🎩', look: "a magician's tall black top hat with a red band, tipped upside down and glowing with golden sparkles, that sucks a whole storm inside it like a magic trick",
-      how: 'block', words: ['top', 'tip', 'hat'], word: 'hat', frame: 'scared_of_the',
+      how: 'swallow', words: ['top', 'tip', 'hat'], word: 'hat', frame: 'scared_of_the',
     },
     house: {
       threat: 'she wants to be the queen of the whole house',

@@ -34,7 +34,8 @@ One `CharacterSpec` in `ROSTER`:
   - `ultimate`: the evil one floors the heroes in Part 1 and is countered in Part 2.
   - `taunts`: `{ key, text }`, short, no interjections ("Ha!" is an SFX).
 - `counter`: the item that beats the ultimate in Part 2: `name`, `glyph`, `look`, `how`
-  (`block | reflect | reveal | restore | shutdown | calm | scare`), and:
+  (`block | reflect | swallow | reveal | restore | shutdown | calm | scare`; `swallow`
+  is a block whose item then sucks the whole ultimate inside it, Tiamat's Magic Hat), and:
   - `word`: the key word of its counter sentence in the attic (see below);
   - `frame`: `scared_of` (`EVILRILLA IS SCARED OF MICE`) or `scared_of_the`;
   - `words`: the parked Spell the Spell's two warm-ups and magic word, all CVC.
@@ -104,7 +105,7 @@ scurries at the villain is the item's `glyph`.
 | Evil Ozymandias | … SCARED OF THE RAT | Brave Rat | scare |
 | Evil Jormungandr | … SCARED OF THE FOX | Tickle Fox | restore |
 | Evil Smaug | … SCARED OF THE BAG | Gold Bag | block |
-| Evil Tiamat | … SCARED OF THE HAT | Magic Hat | block |
+| Evil Tiamat | … SCARED OF THE HAT | Magic Hat | swallow |
 | Evil Scar | … SCARED OF THE BUG | Glitch Bug | shutdown |
 | Evil Moriarty | … SCARED OF THE MAP | Truth Map | reveal |
 | Evil Bavmorda | … SCARED OF THE CAP | Bounce Cap | reflect |
@@ -113,14 +114,18 @@ scurries at the villain is the item's `glyph`.
 ## An ability (`AbilitySpec`)
 
 `{ id, name, kind, cooldown, color, color2?, power, count?, glyph?, status?, minion?,
-duration?, homing?, word?, shout? }`. Kinds: `bolt beam cone lightning slam spin dash
-summon polymorph freeze teleport clones trap rain shield heal grow coil eclipse wave
-grid` (one function each in `src/battle/abilities.ts`). `power` 1–3 scales damage,
-particles and shake. `shout: true` plays the "Ha!" SFX.
+duration?, homing?, word?, shout?, art?, guard? }`. Kinds: `bolt beam cone lightning
+slam spin dash summon polymorph freeze teleport clones trap rain shield heal grow coil
+eclipse wave grid orbit` (one function each in `src/battle/abilities.ts`). `power` 1–3
+scales damage, particles and shake. `shout: true` plays the "Ha!" SFX. `art` is an art
+id drawn instead of a glyph for bolts, rain and orbits (Ellie's `prop_silver_sword`,
+drawn point up); `orbit` rings the caster with `count` of them for `duration` seconds,
+then flings them, and `guard: true` shields her while they spin.
 
 A minion is a `MinionSpec` in `MINIONS` (one ability, its own style).
-A team combo is a `ComboSpec` in `COMBOS` (`pair` of character ids + an ability);
-any other pair uses `DEFAULT_COMBO`.
+A team combo is a `ComboSpec` in `COMBOS` (`pair` of character ids + an ability, and
+optionally `second`, what the second of the pair fires instead: Julia's stars and
+Ellie's sword ring in Star Sword Spin); any other pair uses `DEFAULT_COMBO`.
 
 ## Words (`content/phonics/words.ts`)
 

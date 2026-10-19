@@ -26,6 +26,7 @@
 import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
+import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import { HUB, SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { sfxFanfare, sfxSelect, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../config';
@@ -54,6 +55,8 @@ export class HubScene extends RoomScene {
   private doors: Partial<Record<'door_a' | 'door_b' | 'door_counter' | 'door_front', Spot>> = {};
   private circle: Spot | null = null;
   private scroll: Phaser.GameObjects.Container | null = null;
+  /** The spell's own things (Ellie's swords) circling the helper while she teaches it. */
+  private ring: Phaser.GameObjects.Image[] = [];
 
   constructor() {
     super('Hub');
@@ -68,6 +71,7 @@ export class HubScene extends RoomScene {
     this.doors = {};
     this.circle = null;
     this.scroll = null;
+    this.ring = [];
     // The floor reaches up to the back-wall doors.
     this.floor = new Phaser.Geom.Rectangle(80, 420, GAME_WIDTH - 160, 250);
   }
@@ -230,6 +234,7 @@ export class HubScene extends RoomScene {
     sfxWhoosh();
     burst(this, sx, sy, { count: 30, colors: [0xffd23f, 0xffffff, 0x9a7aff] });
     this.tweens.add({ targets: word, scale: 1.12, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    this.summonRing(spell);
 
     await this.narrate(`teach_word_${spell}`, 'teach_circle');
     if (this.circle) {
@@ -238,6 +243,44 @@ export class HubScene extends RoomScene {
       burst(this, this.circle.x, this.circle.y - 20, { count: 30, colors: [0x9a7aff, 0xffffff] });
     }
     this.setPhase('circle', 'teach_circle');
+  }
+
+  /**
+   * If the spell is a move with its own art (Ellie's ZIP, a sword fling), the
+   * helper summons three of them, circling her while she teaches it.
+   */
+  private summonRing(spell: string): void {
+    const ab = CHARACTER_BY_ID[helper()]?.good.abilities.find((a) => a.word === spell);
+    if (!ab?.art || !this.textures.exists(ab.art)) return;
+    const cx = HUB.helper.x;
+    const cy = HUB.helper.y - 70;
+    sfxSummon();
+    this.ring = [0, 1, 2].map((i) => {
+      const sw = this.add.image(cx, cy, ab.art!).setDepth(DEPTH.fx);
+      const s = 72 / sw.height;
+      sw.setScale(0);
+      this.tweens.add({ targets: sw, scale: s, duration: 300, delay: i * 120, ease: 'Back.easeOut' });
+      // Round and round her: a flat ellipse, swords leaning with the spin.
+      this.tweens.addCounter({
+        from: 0,
+        to: Math.PI * 2,
+        duration: 1800,
+        repeat: -1,
+        onUpdate: (tw) => {
+          // Let go once it flies off to her (learn), or is gone.
+          if (!sw.active || sw.getData('free')) {
+            tw.stop();
+            return;
+          }
+          const a = (tw.getValue() ?? 0) + (i * Math.PI * 2) / 3;
+          sw.setPosition(cx + Math.cos(a) * 88, cy + Math.sin(a) * 32);
+          sw.setRotation(a + Math.PI / 2 + 0.5);
+          sw.setDepth(Math.sin(a) < 0 ? HUB.helper.y - 2 : DEPTH.fx);
+        },
+      });
+      return sw;
+    });
+    burst(this, cx, cy, { count: 24, colors: [ab.color, 0xffffff, ab.color2 ?? 0xcfd8e6] });
   }
 
   /** Green in the magic circle: the word flies into her. */
@@ -261,6 +304,23 @@ export class HubScene extends RoomScene {
         .setOrigin(0.5)
         .setDepth(DEPTH.sparkles);
       word.setVisible(false);
+      // The spell's swords fly in with the word, spinning, and vanish into her.
+      for (const [i, sw] of this.ring.entries()) {
+        sw.setData('free', true);
+        this.tweens.killTweensOf(sw);
+        this.tweens.add({
+          targets: sw,
+          x: this.player.x + (i - 1) * 30,
+          y: this.player.y - 70,
+          angle: sw.angle + 720,
+          scale: 0,
+          duration: 800,
+          delay: i * 60,
+          ease: 'Cubic.easeIn',
+          onComplete: () => sw.destroy(),
+        });
+      }
+      this.ring = [];
       const trail = this.add
         .particles(0, 0, TEX.star, {
           follow: flying,

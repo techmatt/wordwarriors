@@ -32,9 +32,9 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    tested; the cast comes from `EPISODE_DEFAULTS`, below.)
 2. **Bedroom.** She is asleep in bed; Dada Matt comes in: "Wake up, wake up!" and she
    presses green to jump out of bed (after 6 seconds she wakes anyway). Then: "Good
-   news, Julia! Elsa is here to play! Bad news, EvilRilla is coming, and he's going to
-   eat Dada Jason's car!" The room darkens under the villain's mood (footprints, a
-   cracked window). No reading: every toy does something silly on green. The door
+   news, Julia! Ellie is here to play! Bad news, Evil Tiamat is coming, and she wants to
+   be the queen of the whole house!" The room darkens under the villain's mood (purple
+   smoke, dragon scales, a royal banner). No reading: every toy does something silly on green. The door
    is there only for the waker's entrance and again once the news is told ("Find the
    door!"), when it pops out and glows; it sparkles if she has not gone through it 12
    seconds after the news (`DOOR_SPARKLE_MS`).
@@ -62,7 +62,7 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    is the spell she learned. It ends with the villain's ultimate: "Too strong! Retreat!", and the
    heroes pick themselves up and run for home.
 6. **The house, part 2.** Back in the hub a secret door pops out: the attic, with the
-   villain's counter sentence (`EVILRILLA IS SCARED OF MICE`). Then the front door again.
+   villain's counter sentence (`EVIL TIAMAT IS SCARED OF THE HAT`). Then the front door again.
 7. **Battle part 2**: the counter-item beats the ultimate, everyone finishes it, and
    the villain turns good. Victory replays the words she read; green plays again.
 
@@ -75,9 +75,16 @@ Spell), the alarm and the retreat camp are **parked**: no episode includes them,
 `?scene=` still opens each one.
 
 **`EPISODE_DEFAULTS`** in `src/config.ts` sets who is in an episode: `hero: 'julia'`,
-`ally: 'elsa'` (or `null`), `villain: 'rilla'`; `pickScreens: true` brings the pick
-screens back; `randomVillain: true` (picks off) draws a surprise villain. Matt
-dictates the values; a prompt applies them.
+`ally: 'ellie'` (or `null`), `villain: 'tiamat'` (since item 014; Elsa and EvilRilla
+before); `pickScreens: true` brings the pick screens back; `randomVillain: true` (picks
+off) draws a surprise villain. Matt dictates the values; a prompt applies them.
+
+A giant villain (roster `size` 2 or more: Evil Tiamat) is staged as one: she holds her
+own half of the arena instead of walking over the heroes (`stomp` in
+`src/battle/movement.ts`), steps to the front for her ultimate so growing fills the
+screen floor to top, and her ultimate also sweeps the whole arena (`giantSweep`).
+Ellie's swords are `prop_silver_sword`, drawn by the `orbit` ability kind and by any
+ability with `art` set, so they show with whatever Ellie image is in the game.
 
 Grown-ups page (progress per sound and word): **F9**, or hold **LB + RB** for two
 seconds on the title screen. On that page, **F8** twice erases all progress.

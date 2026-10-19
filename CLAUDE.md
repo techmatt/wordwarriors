@@ -19,8 +19,9 @@ items are used, then the villain's ultimate still wins: "too strong, retreat") �
 part 2** (back at the hub, a secret door to the attic: the villain's counter sentence
 fetches the counter-item) → **battle part 2** (the counter beats the ultimate) → victory
 with a reading recap. A journey map shows before each battle and the victory.
-Testing defaults (`EPISODE_DEFAULTS` in `src/config.ts`): hero Julia, helper Elsa,
-villain EvilRilla; the pick screens and the random villain are behind that config.
+Testing defaults (`EPISODE_DEFAULTS` in `src/config.ts`): hero Julia, helper Ellie
+(she fights with summoned silver swords), villain Evil Tiamat (a giant; SCARED OF THE
+HAT); the pick screens and the random villain are behind that config.
 **Parked** (code kept, out of the episode, reachable by `?scene=`): Sound → Letter,
 Blend Path, Word → Picture, Spell the Spell, the alarm and the camp retreat.
 

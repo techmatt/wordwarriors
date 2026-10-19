@@ -2349,6 +2349,12 @@
   "text": "bag!"
  },
  {
+  "id": "word_bam",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "bam!"
+ },
+ {
   "id": "word_bat",
   "speaker": "phonics",
   "group": "phonics",
@@ -2365,6 +2371,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "bed!"
+ },
+ {
+  "id": "word_big",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "big!"
  },
  {
   "id": "word_box",
@@ -2469,6 +2481,12 @@
   "text": "hen!"
  },
  {
+  "id": "word_hop",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "hop!"
+ },
+ {
   "id": "word_hot",
   "speaker": "phonics",
   "group": "phonics",
@@ -2479,6 +2497,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "hug!"
+ },
+ {
+  "id": "word_ice",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "ice!"
  },
  {
   "id": "word_jasmine",
@@ -2601,10 +2625,22 @@
   "text": "pin!"
  },
  {
+  "id": "word_pop",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "pop!"
+ },
+ {
   "id": "word_pot",
   "speaker": "phonics",
   "group": "phonics",
   "text": "pot!"
+ },
+ {
+  "id": "word_pow",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "pow!"
  },
  {
   "id": "word_rat",

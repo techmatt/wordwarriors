@@ -93,7 +93,10 @@ const stomp: Steer = (f, s) => {
   const m = f.mem;
   if (s.now > (m.nextStep ?? 0)) {
     m.nextStep = s.now + 900;
-    const tx = t ? t.x + side(f) * 240 : f.x;
+    let tx = t ? t.x + side(f) * 240 : f.x;
+    // A real giant (Tiamat, size 2+) holds her own half and lets the fight
+    // come to her: she fills it already, and walking over would bury the heroes.
+    if (f.init.size >= 2) tx = f.team === 'hero' ? Math.min(tx, 420) : Math.max(tx, 860);
     const dx = Phaser.Math.Clamp(tx - f.x, -50, 50);
     m.stepTo = f.x + dx;
     m.stepFrom = f.x;
