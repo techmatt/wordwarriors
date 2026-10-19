@@ -209,6 +209,18 @@ export function castArt(id: string, evil = false, state: EpisodeState = episode)
   return formFor(c, state)?.art ?? charArt(c, false);
 }
 
+/**
+ * How tall `id` stands beside the hero outside battles (item 028): the size
+ * of the form it plays over hers, kept between 0.7 and 1.3 so a dragon still
+ * fits a room. A dad is a head taller than her; Scar and Ellie a little shorter.
+ */
+export function castScale(id: string, state: EpisodeState = episode): number {
+  const c = CHARACTER_BY_ID[castId(id, state)];
+  const hero = CHARACTER_BY_ID[castId(state.hero, state)];
+  if (!c || !hero) return 1;
+  return Phaser.Math.Clamp(c.good.size / hero.good.size, 0.7, 1.3);
+}
+
 /** The name-free face card for `id` in this episode (names as sight words): its outfit's, else its form's `face_<id>`. */
 export function castFace(id: string, state: EpisodeState = episode): string {
   const c = castId(id, state);

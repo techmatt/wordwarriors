@@ -67,7 +67,9 @@ export function codexPrompt(id: string, withRef = false): string {
     ...(withRef
       ? [
           '',
-          `The attached photo is a likeness reference only, for ${REFS[refFor(id)!]!.who}. Draw that person as the cartoon character below: keep their face shape, hair, eye colour, skin tone, glasses and beard as in the photo, simplified into the style: a flat, simple cartoon with thick outlines, not a realistic painting. Do not copy the photo's clothes, pose or background, and draw nobody else from it.`,
+          REFS[refFor(id)!]!.style
+            ? `The attached picture is a style reference only: ${REFS[refFor(id)!]!.who}. Take its chunky armour and general feel, and its colours unless the description below gives others, and draw an original character of your own design as described below, as a flat, simple cartoon with thick outlines, not a 3D render. Do not copy the picture's design, proportions, pose or background.`
+            : `The attached photo is a likeness reference only, for ${REFS[refFor(id)!]!.who}. Draw that person as the cartoon character below: keep their face shape, hair, eye colour, skin tone, glasses and beard as in the photo, simplified into the style: a flat, simple cartoon with thick outlines, not a realistic painting. Do not copy the photo's clothes, pose or background, and draw nobody else from it.`,
         ]
       : []),
     '',

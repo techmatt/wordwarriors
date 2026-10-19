@@ -22,7 +22,8 @@ fetches the counter-item) → **battle part 2** (the counter beats the ultimate)
 everyone there doing something nice together, four voiced lines) → victory with a
 reading recap. A journey map shows before each battle and the victory.
 The cast is drawn every episode (item 025, `src/rules/cast.ts`): a villain from the
-whole roster (never her last few), a random ally, the waking dad (Matt 60%, Jason 40%;
+active cast's villains (`ACTIVE_CAST` in `src/config.ts`; never her last two), an
+active ally, the waking dad (Matt 60%, Jason 40%;
 the other dad half the time too), each dad in a random form (builder, weightlifter,
 cyberdecker, spell-blade Matt; chef, warrior, warlock Jason), and the helper's quest
 place (`content/house/quests.ts`) instead of the house. The fixed default episode
@@ -192,6 +193,7 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 | "add a bedroom / side room / villain mood" | edit `content/house/house.ts` or the villain's `house` in the roster, same three commands |
 | "turn the pick screens back on" / "always the same cast" | `EPISODE_DEFAULTS` in `src/config.ts` (`pickScreens`, `randomCast: false`) |
 | "Matt should wake her more / less often" | `CAST_ODDS` in `src/config.ts` |
+| "switch X on / off" (in the random cast) | `ACTIVE_CAST` in `src/config.ts` (allies, villains; persons, a dad in all his forms) |
 | "add a dad form" / "add a quest" / "add a minigame" | `docs/content.md`: a roster entry with `person`; `QUESTS` + `PLACES`; `MINIGAMES` |
 | "add a word family / silly word" / "more or fewer machine words" | `RIMES` in `content/phonics/families.ts` (then `voice:lines`, `voice:build`); `WORD_MACHINE` in `src/config.ts` |
 | "add a victory scene" / "change what they say at the end" | `ENDINGS` in `content/house/endings.ts` (`docs/content.md`, "A victory scene"), same three commands, then `art:alts` |

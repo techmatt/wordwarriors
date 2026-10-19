@@ -34,9 +34,11 @@ const ITEM_025 = ['item_juice_box', 'item_magic_pen', 'item_shiny_pot', 'item_sl
 const GLOWING_ITEMS = ['cozy_bed', 'golden_nut', 'giant_log', 'cocoa_cup', 'cuddly_cat', 'flappy_bat', 'brave_rat', 'tickle_fox', 'gold_bag', 'glitch_bug', 'bounce_cap'].map((i) => `item_${i}`);
 // Tiamat (item 013) is purple and silver with a glow: no green of her own.
 const TIAMAT_ART = ['char_tiamat_good', 'char_tiamat_evil', 'face_tiamat', 'item_magic_hat', 'decal_tiamat_scale', 'decal_tiamat_banner'];
+// Scar (item 028): gold, black, cyan and orange; red and black when evil.
+const SCAR_ART = ['char_scar_good', 'char_scar_evil', 'face_scar'];
 // The victory scenes' props (item 027): a cake, a boat, a fort; asked for with no green.
 const ENDING_PROPS = ENDINGS.flatMap((e) => e.props.map((p) => endingPropArt(p.id)));
-export const NO_GREEN = new Set([...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', ...ENDING_PROPS]);
+export const NO_GREEN = new Set([...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', ...ENDING_PROPS, ...SCAR_ART]);
 
 /**
  * Likeness references for the family (Matt, 2026-10-18): a photo in the
@@ -46,7 +48,10 @@ export const NO_GREEN = new Set([...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'cha
  * that character; `--no-ref` sends the text alone. The roster looks describe
  * the same people in words, so the prompts still work without the photos.
  */
-export const REFS: Record<string, { photo: string; box: [number, number, number, number]; who: string }> = {
+export const REFS: Record<string, { photo: string; box: [number, number, number, number]; who: string; style?: boolean }> = {
+  // Item 028: Matt's picture of a gold mech, a style reference (`style`) for an
+  // original design, not a likeness: the prompt says not to copy it.
+  scar: { photo: 'scar_reference.png', box: [0, 0, 512, 512], who: 'a chunky gold-and-black armoured mech with a cyan visor, a glowing orange chest core and a blaster arm', style: true },
   julia: { photo: 'julia_and_ellie.png', box: [270, 160, 420, 500], who: 'the girl with pink glasses' },
   ellie: { photo: 'julia_and_ellie.png', box: [600, 320, 560, 560], who: 'the toddler' },
   dada_matt: { photo: 'family_dada_matt_far_left.png', box: [360, 260, 300, 380], who: 'the man in front with the beard and the teal shirt (not the baby, not the man behind him)' },
@@ -73,6 +78,9 @@ export const NOTES: Record<string, string> = {
   // Item 013: two of the first three of each gave her a woman's bust.
   char_tiamat_evil: TIAMAT_BELLY,
   face_tiamat: TIAMAT_BELLY,
+  // Item 028: drawn from a gold style reference, so the evil one says its colours twice.
+  char_scar_good: 'He is small and stocky, with a big head and short legs, but still clearly taller than he is wide: a little robot, not a tall mech.',
+  char_scar_evil: 'His armour is black and crimson, NOT gold. He is small and chunky, with a big head and short legs: a little robot, not a tall mech.',
 };
 
 /**
@@ -81,6 +89,9 @@ export const NOTES: Record<string, string> = {
  * which the row quotes by itself).
  */
 export const PICK_NOTES: Record<string, string> = {
+  char_scar_good: "Scar's redesign (items 028/030): a tiny gold mech, a little shorter than Julia. `current` is candidate 2, promoted by item 030: the biggest head and shortest legs (the smallest-reading), and a smiling visor. `0` is the old design.",
+  char_scar_evil: "`current` is candidate 3, promoted by item 030: the same round helmet and fins as good candidate 2, smoking jets, blaster raised. `0` is the old design.",
+  face_scar: "`current` is candidate 4, promoted by item 030: the fins and smiling visor of good candidate 2. `0` is the old design.",
   pic_zap: "Move word ZAP (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 1, Matt's pick (item 020). 0 is candidate 2, item 018's promotion.",
   pic_pow: "Move word POW (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 1, Matt's pick (item 020). 0 is candidate 2, item 018's promotion: the most compact glove and flash.",
   pic_bam: 'Move word BAM (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 3, promoted by item 018: the clearest impact and cracks. 0 is the painted placeholder.',

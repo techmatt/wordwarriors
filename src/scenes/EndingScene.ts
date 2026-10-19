@@ -15,7 +15,7 @@ import { ENDING_BY_ID, endingArt, endingPropArt } from '../../content/house/endi
 import { voiceBus } from '../audio/VoiceBus';
 import { startMusic } from '../audio/music';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { castArt, episode, type Step } from '../episode/Episode';
+import { castArt, castScale, episode, type Step } from '../episode/Episode';
 import { burst, fitImage } from '../fx/juice';
 import { Controls } from '../input/Controls';
 import { endingPeople, endingScript, pickEnding, standXs } from '../rules/endings';
@@ -77,7 +77,9 @@ export class EndingScene extends Phaser.Scene {
     const sprites = new Map<string, Phaser.GameObjects.Image>();
     const art = people.map((id) => castArt(id));
     people.forEach((id, i) => {
-      const img = fitImage(this.add.image(xs[i]!, e.stand.y, art[i]!).setOrigin(0.5, 1), e.stand.h * 0.8, e.stand.h).setDepth(e.stand.y);
+      // `stand.h` is the tallest (a dad); the rest stand to their sizes beside him (item 028).
+      const h = (e.stand.h * castScale(id)) / 1.25;
+      const img = fitImage(this.add.image(xs[i]!, e.stand.y, art[i]!).setOrigin(0.5, 1), h * 0.8, h).setDepth(e.stand.y);
       sprites.set(id, img);
       const base = img.scaleY;
       this.tweens.add({ targets: img, scaleY: base * 1.04, scaleX: img.scaleX * 0.97, duration: 520 + i * 70, yoyo: true, repeat: -1, ease: 'Sine.easeInOut', delay: i * 90 });

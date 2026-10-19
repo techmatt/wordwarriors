@@ -6,11 +6,12 @@
  *     cyberdecker or spell-blade Dada Matt; chef, warrior or warlock Dada
  *     Jason). Wherever a dad appears this episode, good or evil, it is in
  *     that form.
- *   - The villain: a person from the whole roster (each equally likely, so the
- *     dads' many forms do not crowd the pool), in their episode form for a
- *     dad. Never one of her last few villains while another is left.
- *   - The ally: a good person who is neither the hero nor the villain; a dad
- *     sometimes, in his episode form.
+ *   - The villain: a person from the active cast's villains (`ACTIVE_CAST`
+ *     in src/config.ts, item 028; each equally likely, so the dads' many
+ *     forms do not crowd the pool), in their episode form for a dad. Never
+ *     one of her last few villains while another is left.
+ *   - The ally: a person from the active cast's allies who is neither the
+ *     hero nor the villain; a dad sometimes, in his episode form.
  *   - The primary dad wakes her (and narrates when there is no ally): Dada
  *     Matt 60% of the time, Dada Jason 40%. In half the episodes the other dad
  *     comes into the bedroom too, as the secondary. A dad already playing the
@@ -22,7 +23,7 @@
  */
 
 import { CHARACTER_BY_ID, PERSONS, formId, formsOf, personOf } from '../../content/battle/roster';
-import { CAST_ODDS } from '../config';
+import { ACTIVE_CAST, CAST_ODDS } from '../config';
 import type { Rand } from './sentences';
 
 /** The two dads: the only wakers (their wake-up lines are voiced). */
@@ -66,8 +67,15 @@ function pick<T>(xs: readonly T[], rand: Rand): T {
 
 const isDad = (person: string) => (DADS as readonly string[]).includes(person);
 
+/** The persons of `active` that are in the roster, or every person when it names none. */
+function activePersons(active: readonly string[]): string[] {
+  const all = PERSONS.map((c) => c.id);
+  const on = all.filter((p) => active.includes(p));
+  return on.length ? on : all;
+}
+
 /** Draw an episode's cast. */
-export function drawCast(input: CastInput, rand: Rand = Math.random): Cast {
+export function drawCast(input: CastInput, rand: Rand = Math.random, active: { allies: readonly string[]; villains: readonly string[] } = ACTIVE_CAST): Cast {
   const o = input.overrides ?? {};
   const hero = o.hero ?? input.hero;
   const heroPerson = personOf(hero);
@@ -89,13 +97,20 @@ export function drawCast(input: CastInput, rand: Rand = Math.random): Cast {
   if (o.villain) villain = o.villain;
   else {
     const allyPerson = o.ally ? personOf(o.ally) : null;
-    const pool = PERSONS.map((c) => c.id).filter((p) => p !== heroPerson && p !== allyPerson);
+    // A fixed ally who is the only active villain leaves the whole roster to draw from.
+    const free = (p: string) => p !== heroPerson && p !== allyPerson;
+    const actives = activePersons(active.villains).filter(free);
+    const pool = actives.length ? actives : PERSONS.map((c) => c.id).filter(free);
     const wakerLeft = (p: string) => DADS.some((d) => d !== p && d !== heroPerson) || (allyPerson !== null && isDad(allyPerson));
     const ok = pool.filter(wakerLeft);
-    const fresh = ok.filter((p) => !(input.recent ?? []).includes(p));
-    const last = input.recent?.[input.recent.length - 1];
-    const notLast = ok.filter((p) => p !== last);
-    villain = inForm(pick(fresh.length ? fresh : notLast.length ? notLast : ok, rand));
+    // Her last few villains sit out, but always leaving two to choose from (a
+    // short active list would otherwise turn into a fixed rotation), and
+    // never last episode's while another is left.
+    const recent = input.recent ?? [];
+    const n = Math.min(recent.length, Math.max(1, ok.length - 2));
+    const avoid = recent.slice(recent.length - n);
+    const fresh = ok.filter((p) => !avoid.includes(p));
+    villain = inForm(pick(fresh.length ? fresh : ok, rand));
   }
   const villainPerson = personOf(villain);
 
@@ -103,8 +118,8 @@ export function drawCast(input: CastInput, rand: Rand = Math.random): Cast {
   let ally: string | null;
   if (o.ally !== undefined) ally = o.ally;
   else {
-    const pool = PERSONS.map((c) => c.id).filter((p) => p !== heroPerson && p !== villainPerson);
-    ally = inForm(pick(pool, rand));
+    const pool = activePersons(active.allies).filter((p) => p !== heroPerson && p !== villainPerson);
+    ally = pool.length ? inForm(pick(pool, rand)) : null;
   }
   const allyPerson = ally ? personOf(ally) : null;
 

@@ -18,7 +18,7 @@ import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH } from '../config';
 import { narratorLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
-import { advance, castArt, episode, narrator, type Step } from '../episode/Episode';
+import { advance, castArt, castScale, episode, narrator, type Step } from '../episode/Episode';
 import { fitImage } from '../fx/juice';
 import { Controls } from '../input/Controls';
 import { hookState, type SpotInfo } from '../testHooks';
@@ -26,7 +26,7 @@ import { makeButtonDot } from '../ui/ButtonDot';
 import { Bubbles } from '../ui/Bubbles';
 import { Caption, type CaptionMode, type KeepOut } from '../ui/Caption';
 import type { Speaker } from '../ui/Portrait';
-import { Player } from './Player';
+import { PLAYER_HEIGHT, Player } from './Player';
 
 /** Nothing happening for this long offers the prompt again. */
 const IDLE_REPROMPT_MS = 15_000;
@@ -149,6 +149,12 @@ export abstract class RoomScene extends Phaser.Scene {
   /** An art image sized into a box, origin at its feet. */
   protected art(key: string, w: number, h: number, x = 0, y = 0): Phaser.GameObjects.Image {
     return fitImage(this.add.image(x, y, key).setOrigin(0.5, 1), w, h);
+  }
+
+  /** A cast member standing in the room, as tall beside her as their size says (item 028: Scar just under her, a dad a head over). */
+  protected castSprite(id: string, x = 0, y = 0): Phaser.GameObjects.Image {
+    const h = PLAYER_HEIGHT * castScale(id);
+    return this.art(castArt(id), h * 0.8, h, x, y);
   }
 
   protected clearSpots(): void {

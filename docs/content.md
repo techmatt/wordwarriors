@@ -14,6 +14,11 @@ npm run test:unit          # checks every derived voice id exists, roster comple
 
 ## A character (`content/battle/roster.ts`)
 
+A new character is defined but not drawn into random
+episodes until its id is added to `ACTIVE_CAST` in `src/config.ts` (`allies`,
+`villains`, or both); `?ally=<id>` / `?villain=<id>` play it either way. Its `size`
+also sets how tall it stands beside her in rooms and the victory scene (`castScale`).
+
 One `CharacterSpec` in `ROSTER`:
 
 - `id`: lowercase, used in every derived id (`char_<id>_good`, `taunt_<id>_evil_<key>`…).

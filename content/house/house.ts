@@ -232,6 +232,16 @@ export const PLACES: PlaceSpec[] = [
     ],
     secret: HIDEOUT,
   },
+  {
+    // Item 030: Scar's own, when he joined the active cast.
+    id: 'robot_workshop', name: 'Robot Workshop', glyph: '🤖', palette: [0x2a2d42, 0xffc233],
+    look: "Scar's robot workshop, seen side-on: a bright, tidy workshop with a shiny metal floor across the lower half, a small gold charging pod glowing orange, robot arms on the walls, shelves of gears and springs, warm yellow lights and a big round window on a starry sky (no letters or numbers anywhere)",
+    rooms: [
+      room('parts_bay', 'Parts Bay', '⚙️', [0x5a6a7a, 0xffc233], 'The parts bay of the robot workshop: bins of colourful gears, springs and bolts, a little conveyor belt, a workbench with tools, a shiny metal floor (no letters or numbers anywhere)'),
+      room('rocket_pad', 'Rocket Pad', '🚀', [0x1a2a4a, 0xff9a3c], 'The rocket test pad of the robot workshop: a round launch pad with painted rings, scorch marks, little practice rockets on stands, a big open roof hatch with blue sky (no letters or numbers anywhere)'),
+    ],
+    secret: HIDEOUT,
+  },
 ];
 
 export const PLACE_BY_ID: Record<string, PlaceSpec> = Object.fromEntries(PLACES.map((p) => [p.id, p]));

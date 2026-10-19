@@ -14,6 +14,9 @@ import { fitImage } from '../fx/juice';
 
 const MAX_STEP = 6;
 
+/** Her height in rooms, design pixels; everybody else in a room stands to it (`castScale`). */
+export const PLAYER_HEIGHT = 130;
+
 export class Player {
   readonly root: Phaser.GameObjects.Container;
   private readonly sprite: Phaser.GameObjects.Image;
@@ -29,7 +32,7 @@ export class Player {
     y: number,
     art: string,
     private readonly floor: Phaser.Geom.Rectangle,
-    private readonly height = 130,
+    private readonly height = PLAYER_HEIGHT,
   ) {
     this.shadow = scene.add.ellipse(0, 0, height * 0.6, height * 0.16, 0x000000, 0.3);
     this.sprite = fitImage(scene.add.image(0, 0, art).setOrigin(0.5, 1), height * 0.8, height);

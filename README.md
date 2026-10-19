@@ -120,9 +120,15 @@ Spell), the alarm and the retreat camp are **parked**: no episode includes them,
 
 **Who is in an episode** (item 025) is drawn fresh each time (`src/rules/cast.ts`):
 
-- **The villain**: any character of the roster, each equally likely, a dad in one of
-  his forms; never one of her last four villains (kept with her progress).
-- **The ally**: any other good character; a dad sometimes, in one of his forms.
+- **The active cast** (item 028/030): `ACTIVE_CAST` in `src/config.ts` lists who the
+  draw picks from, as persons: allies Dada Matt, Dada Jason, Scar and Ellie; villains
+  Jörmungandr, Smaug, Bavmorda and Tiamat. A dad listed comes in all his forms.
+  Everybody else stays defined and playable by `?ally=` / `?villain=`; adding a name to
+  the list switches that character on.
+- **The villain**: one of the active villains, each equally likely; her last two sit
+  out (with four active, always two left to choose from), never last episode's.
+- **The ally**: one of the active allies who is not the villain; a dad in one of his
+  forms.
 - **The dads**: the one who wakes her (and narrates when there is no ally) is Dada Matt
   60% of the time and Dada Jason 40% (`CAST_ODDS` in `src/config.ts`); half the time the
   other dad comes in too. A dad already playing the ally or the villain takes no other

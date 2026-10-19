@@ -9,7 +9,7 @@ import { CHARACTER_BY_ID, PERSONS, ROSTER, formsOf, personOf } from '../../conte
 import { HOME, PLACES, PLACE_BY_ID, SIDE_ROOM_BY_ID, hubArt } from '../../content/house/house';
 import { QUESTS, questFor } from '../../content/house/quests';
 import { ART_BY_ID } from '../../content/art/assets';
-import { CAST_ODDS } from '../../src/config';
+import { ACTIVE_CAST, CAST_ODDS } from '../../src/config';
 import { DADS, drawCast, seededRand, wakerOf } from '../../src/rules/cast';
 import { MINIGAMES, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/sentences';
@@ -52,13 +52,14 @@ test('cast: Dada Matt is primary 60% of the time when both dads are free; the ot
   assert.ok(Math.abs(second / free - CAST_ODDS.secondary) < 0.04, `secondary ${second}/${free}`);
 });
 
-test('cast: villains and allies come from the whole roster, dads in every form', () => {
+test('cast: with the whole roster switched on, villains and allies come from all of it, dads in every form', () => {
   const rand = seededRand(3);
+  const everybody = PERSONS.map((c) => c.id);
   const villains = new Set<string>();
   const allies = new Set<string>();
   const primaries = new Set<string>();
   for (let i = 0; i < N; i++) {
-    const c = drawCast({ hero: 'julia' }, rand);
+    const c = drawCast({ hero: 'julia' }, rand, { allies: everybody, villains: everybody });
     villains.add(c.villain);
     if (c.ally) allies.add(c.ally);
     if (c.primary) primaries.add(c.primary);
@@ -72,16 +73,47 @@ test('cast: villains and allies come from the whole roster, dads in every form',
   for (const d of DADS) for (const f of formsOf(d)) assert.ok(primaries.has(f.id), `primary ${f.id}`);
 });
 
+test('cast: the active cast (item 028) draws only its allies and villains, every pair of them, dads in every form', () => {
+  const rand = seededRand(11);
+  const pairs = new Set<string>();
+  for (let i = 0; i < N; i++) {
+    const c = drawCast({ hero: 'julia' }, rand);
+    assert.ok(ACTIVE_CAST.villains.includes(personOf(c.villain)), `villain ${c.villain}`);
+    assert.ok(c.ally && ACTIVE_CAST.allies.includes(personOf(c.ally)), `ally ${c.ally}`);
+    pairs.add(`${c.ally}+${c.villain}`);
+  }
+  const allyForms = ACTIVE_CAST.allies.flatMap((p) => formsOf(p).map((f) => f.id));
+  assert.equal(allyForms.length, 9, 'four Dada Matts, three Dada Jasons, Scar and Ellie');
+  for (const a of allyForms) for (const v of ACTIVE_CAST.villains) assert.ok(pairs.has(`${a}+${v}`), `${a} + ${v}`);
+  // Anybody off the list is still a fixed override away.
+  assert.equal(drawCast({ hero: 'julia', overrides: { ally: 'anna', villain: 'rilla' } }, rand).villain, 'rilla');
+  // An ally who is the only active villain leaves the rest of the roster.
+  const lone = drawCast({ hero: 'julia', overrides: { ally: 'smaug' } }, rand, { allies: ['ellie'], villains: ['smaug'] });
+  assert.ok(lone.villain && personOf(lone.villain) !== 'smaug');
+});
+
 test("cast: never last episode's villain, and none of the last few while others are left", () => {
   const rand = seededRand(4);
+  const everybody = PERSONS.map((c) => c.id);
   const recent: string[] = [];
   for (let i = 0; i < 300; i++) {
-    const c = drawCast({ hero: 'julia', recent }, rand);
+    const c = drawCast({ hero: 'julia', recent }, rand, { allies: everybody, villains: everybody });
     const p = personOf(c.villain);
     assert.ok(!recent.includes(p), `${p} again after ${recent.join(', ')}`);
     recent.push(p);
     if (recent.length > 4) recent.shift();
   }
+  // Four active villains (item 028): the last two sit out, so two are left to choose from, not a fixed rotation.
+  const four = seededRand(12);
+  const seen: string[] = [];
+  const nexts = new Set<string>();
+  for (let i = 0; i < 400; i++) {
+    const p = personOf(drawCast({ hero: 'julia', recent: seen.slice(-4) }, four).villain);
+    assert.ok(!seen.slice(-2).includes(p), `${p} again after ${seen.slice(-2).join(', ')}`);
+    if (i > 4) nexts.add(`${seen.slice(-2).join('+')}>${p}`);
+    seen.push(p);
+  }
+  assert.ok(nexts.size > ACTIVE_CAST.villains.length * 2, 'more than one villain can follow the same two');
 });
 
 test('cast: overrides fix any part; a dad picked by person plays his own form', () => {

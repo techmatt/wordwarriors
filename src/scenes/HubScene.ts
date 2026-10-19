@@ -29,7 +29,7 @@ import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import { HUB, SIDE_ROOM_BY_ID, hubArt } from '../../content/house/house';
 import { sfxFanfare, sfxSelect, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../config';
-import { away, castArt, enterRoom, episode, helper, planFor, type Slot, type Step } from '../episode/Episode';
+import { away, enterRoom, episode, helper, planFor, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, flash, popIn, shockwave, squash } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { spellFor } from '../rules/spell';
@@ -109,7 +109,7 @@ export class HubScene extends RoomScene {
     this.round = `hub:${this.part}:intro`;
 
     // The helper, by the stairs.
-    const friend = this.art(castArt(helper()), 110, 145, HUB.helper.x, HUB.helper.y).setDepth(HUB.helper.y);
+    const friend = this.castSprite(helper(), HUB.helper.x, HUB.helper.y).setDepth(HUB.helper.y);
     bob(this, friend, 6, 750);
     this.caption.track(helper(), () => (friend.active ? { x: friend.x, y: friend.y } : null));
 

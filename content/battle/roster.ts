@@ -889,43 +889,49 @@ export const ROSTER: CharacterSpec[] = [
     },
   },
   {
+    // Redesigned by items 028 and 030 (Matt): a cool, tiny robot, a little
+    // shorter than Julia (size 0.9, good and evil), gold and black with a cyan
+    // visor and a glowing orange core; evil is the same little mech in red and
+    // black, hunched and scowling. His kit is a small, plucky mech's: blaster,
+    // rocket hop and punch, a shield, and a core-blast ultimate.
     id: 'scar',
-    description: 'A robot with a laser grid, rocket fists, and a transformation into a giant battle mech.',
+    description: 'A tiny, plucky gold robot with an arm blaster, rocket hops, a gold shield and a big core blast.',
     arena: 'factory',
     good: {
-      displayName: 'Scar', trail: { tint: [0x00f5d4, 0xffffff], shape: 'square' }, look: 'a friendly chunky robot with one scratched eye plate, big rocket fists and a smile screen',
-      palette: [0x8d99ae, 0x00f5d4], glyph: '🤖', style: 'march', speed: 140, size: 1.2, hp: 140,
+      displayName: 'Scar', trail: { tint: [0xffc233, 0x3ae0ff], shape: 'square' }, look: 'a tiny, cool little robot, shorter than a four-year-old: a chunky mini mech in shiny gold armour with black joints, a big round gold helmet with two little fins, round gold shoulder pads, a wide glowing cyan visor showing happy curved eyes, with a little scratch across one corner, a round glowing orange power core in the middle of his chest, short sturdy legs with big gold boots, his right arm a small blaster cannon and little rocket jets on his back, standing tall and proud with a brave, cheerful look',
+      palette: [0xffc233, 0x3ae0ff], glyph: '🤖', style: 'dodge', speed: 210, size: 0.9, hp: 110,
       abilities: [
-        ab('rocket_fist', 'Rocket Fist', 'bolt', 3, 0xff6a3a, 2, { glyph: '🚀', homing: true, word: 'pow', words: ['jet'] }),
-        ab('drone_pals', 'Drone Pals', 'summon', 12, 0x9aa6b8, 2, { minion: 'drone', count: 3, word: 'zip', words: ['run'] }),
-        ab('laser_eye', 'Laser Eye', 'beam', 5, 0x00f5d4, 2, { word: 'zap', words: ['hot'] }),
-        ab('mega_mode', 'Mega Mode', 'grow', 14, 0x00f5d4, 2, { duration: 5, word: 'big', words: ['fix'] }),
+        ab('arm_blaster', 'Arm Blaster', 'bolt', 2.2, 0x3ae0ff, 1, { count: 3, word: 'zap', shout: true, words: ['pop', 'hot'] }),
+        ab('rocket_hop', 'Rocket Hop', 'slam', 6, 0xff9a3c, 2, { word: 'hop', words: ['jet', 'bam'] }),
+        ab('rocket_punch', 'Rocket Punch', 'dash', 4, 0xff6a3a, 2, { word: 'pow', words: ['run'] }),
+        ab('gold_shield', 'Gold Shield', 'shield', 10, 0xffc233, 1, { duration: 4, word: 'big', words: ['fix'] }),
       ],
-      ultimate: ab('confetti_cannon', 'Confetti Cannon', 'rain', 0, 0x00f5d4, 3, { count: 34, glyph: '🎉', color2: 0xff5ab4 }),
+      ultimate: ab('core_blast', 'Core Blast', 'beam', 0, 0xff9a3c, 3, { color2: 0xffd23f }),
       taunts: [
-        { key: 'beep', text: 'Hello, friend!' },
-        { key: 'rocket', text: 'Rocket fist, go!' },
-        { key: 'scan', text: 'Scanning for fun!' },
-        { key: 'power', text: 'Power level max!' },
-        { key: 'boop', text: 'Robot hug, friend!' },
-        { key: 'battery', text: 'Battery full!' },
+        { key: 'mighty', text: 'Small but mighty!' },
+        { key: 'rocket', text: 'Rocket hop!' },
+        { key: 'shields', text: 'Shields up!' },
+        { key: 'core', text: 'Core charging!' },
+        { key: 'beep', text: 'Beep boop, friend!' },
+        { key: 'gold', text: 'Gold power!' },
       ],
     },
     evil: {
-      displayName: 'Evil Scar', trail: { tint: [0xff0054, 0xffcc33], shape: 'square' }, look: 'a menacing black robot with a scarred red eye, rocket fists, and armour plates that unfold into a giant mech',
-      palette: [0x2b2d42, 0xff0054], glyph: '🦾', style: 'march', speed: 120, size: 1.4, hp: 210,
+      displayName: 'Evil Scar', trail: { tint: [0xff0054, 0xffcc33], shape: 'square' }, look: 'the same tiny robot gone bad, shorter than a four-year-old: a chunky mini mech in black armour with crimson trim and red joints, a glowing red visor narrowed into a scowl with a scratch across one corner, a hot red power core pulsing in his chest, hunched forward with his blaster arm raised and his other fist clenched, little rocket jets smoking on his back; small but cross',
+      palette: [0x2b2d42, 0xff0054], glyph: '🦾', style: 'march', speed: 150, size: 0.9, hp: 150,
       abilities: [
-        ab('rocket_fists', 'Rocket Fists', 'bolt', 3, 0xff0054, 2, { count: 2, glyph: '🚀', homing: true }),
+        ab('red_blaster', 'Red Blaster', 'bolt', 2.2, 0xff0054, 1, { count: 3 }),
+        ab('rocket_stomp', 'Rocket Stomp', 'slam', 6, 0xff3355, 2),
         ab('drone_swarm', 'Drone Swarm', 'summon', 10, 0x9aa6b8, 2, { minion: 'drone', count: 4 }),
-        ab('transform', 'Transform', 'grow', 12, 0xff0054, 3, { duration: 6 }),
+        ab('spike_shield', 'Spike Shield', 'shield', 10, 0xff0054, 1, { duration: 4 }),
       ],
-      ultimate: ab('laser_grid', 'Laser Grid', 'grid', 0, 0xff0054, 3, { color2: 0xffcc33 }),
+      ultimate: ab('core_overload', 'Core Overload', 'wave', 0, 0xff0054, 3, { color2: 0xffcc33 }),
       taunts: [
-        { key: 'target', text: 'Target found!' },
+        { key: 'tiny', text: 'Tiny but terrible!' },
+        { key: 'target', text: 'Target locked!' },
         { key: 'resist', text: 'You can not win!' },
-        { key: 'transform', text: 'Transform! Bigger!' },
-        { key: 'lasers', text: 'Lasers, on!' },
-        { key: 'compute', text: 'Computing your defeat!' },
+        { key: 'core', text: 'Core overload!' },
+        { key: 'stomp', text: 'Rocket stomp!' },
         { key: 'robot', text: 'Robots rule!' },
       ],
     },
@@ -1454,6 +1460,11 @@ export const COMBOS: ComboSpec[] = [
   { pair: ['jasmine', 'ozymandias'], ability: ab('desert_duo', 'Desert Duo', 'wave', 16, 0xffc857, 3, { color2: 0x1fb5a8 }) },
   { pair: ['dada_matt', 'dada_jason'], ability: ab('dad_squad', 'Dad Squad', 'slam', 16, 0xff8c42, 3, { color2: 0x3a86ff }) },
   { pair: ['julia', 'dada_matt'], ability: ab('high_five', 'Mega High Five', 'lightning', 16, 0xffd23f, 3, { count: 6, color2: 0x3a86ff }) },
+  // Item 028: the active cast's allies each have one with her. Dada Jason
+  // charges in with her on his back, whatever his form.
+  { pair: ['julia', 'dada_jason'], ability: ab('piggyback_charge', 'Piggyback Charge', 'dash', 16, 0xffd23f, 3, { color2: 0xff8c42 }) },
+  // Scar's rockets carry her stars up, and they all come down together.
+  { pair: ['julia', 'scar'], ability: ab('star_rocket_rain', 'Star Rocket Rain', 'rain', 16, 0xffc233, 3, { count: 26, glyph: '🚀', color2: 0xffd23f }) },
   // Ellie rings them both in giant bubbles; Julia's stars fly out through the
   // ring, then the bubbles follow them in.
   {

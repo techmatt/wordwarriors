@@ -1779,70 +1779,58 @@
   "text": "Scar!"
  },
  {
-  "id": "taunt_scar_beep",
+  "id": "taunt_scar_mighty",
   "speaker": "scar",
   "group": "fighter_scar",
-  "text": "Hello, friend!"
+  "text": "Small but mighty!"
  },
  {
   "id": "taunt_scar_rocket",
   "speaker": "scar",
   "group": "fighter_scar",
-  "text": "Rocket fist, go!"
+  "text": "Rocket hop!"
  },
  {
-  "id": "taunt_scar_scan",
+  "id": "taunt_scar_shields",
   "speaker": "scar",
   "group": "fighter_scar",
-  "text": "Scanning for fun!"
+  "text": "Shields up!"
  },
  {
-  "id": "taunt_scar_power",
+  "id": "taunt_scar_core",
   "speaker": "scar",
   "group": "fighter_scar",
-  "text": "Power level max!"
+  "text": "Core charging!"
  },
  {
-  "id": "taunt_scar_boop",
+  "id": "taunt_scar_beep",
   "speaker": "scar",
   "group": "fighter_scar",
-  "text": "Robot hug, friend!"
+  "text": "Beep boop, friend!"
  },
  {
-  "id": "taunt_scar_battery",
+  "id": "taunt_scar_gold",
   "speaker": "scar",
   "group": "fighter_scar",
-  "text": "Battery full!"
+  "text": "Gold power!"
  },
  {
   "id": "ult_scar",
   "speaker": "scar",
   "group": "fighter_scar",
-  "text": "Confetti Cannon!"
+  "text": "Core Blast!"
  },
  {
-  "id": "move_scar_rocket_fist",
+  "id": "move_scar_rocket_hop",
   "speaker": "scar",
   "group": "fighter_scar",
-  "text": "Rocket Fist!"
+  "text": "Rocket Hop!"
  },
  {
-  "id": "move_scar_drone_pals",
+  "id": "move_scar_rocket_punch",
   "speaker": "scar",
   "group": "fighter_scar",
-  "text": "Drone Pals!"
- },
- {
-  "id": "move_scar_laser_eye",
-  "speaker": "scar",
-  "group": "fighter_scar",
-  "text": "Laser Eye!"
- },
- {
-  "id": "move_scar_mega_mode",
-  "speaker": "scar",
-  "group": "fighter_scar",
-  "text": "Mega Mode!"
+  "text": "Rocket Punch!"
  },
  {
   "id": "name_scar_evil",
@@ -1851,10 +1839,16 @@
   "text": "Evil Scar!"
  },
  {
+  "id": "taunt_scar_evil_tiny",
+  "speaker": "scar_evil",
+  "group": "fighter_scar_evil",
+  "text": "Tiny but terrible!"
+ },
+ {
   "id": "taunt_scar_evil_target",
   "speaker": "scar_evil",
   "group": "fighter_scar_evil",
-  "text": "Target found!"
+  "text": "Target locked!"
  },
  {
   "id": "taunt_scar_evil_resist",
@@ -1863,22 +1857,16 @@
   "text": "You can not win!"
  },
  {
-  "id": "taunt_scar_evil_transform",
+  "id": "taunt_scar_evil_core",
   "speaker": "scar_evil",
   "group": "fighter_scar_evil",
-  "text": "Transform! Bigger!"
+  "text": "Core overload!"
  },
  {
-  "id": "taunt_scar_evil_lasers",
+  "id": "taunt_scar_evil_stomp",
   "speaker": "scar_evil",
   "group": "fighter_scar_evil",
-  "text": "Lasers, on!"
- },
- {
-  "id": "taunt_scar_evil_compute",
-  "speaker": "scar_evil",
-  "group": "fighter_scar_evil",
-  "text": "Computing your defeat!"
+  "text": "Rocket stomp!"
  },
  {
   "id": "taunt_scar_evil_robot",
@@ -1890,25 +1878,19 @@
   "id": "ult_scar_evil",
   "speaker": "scar_evil",
   "group": "fighter_scar_evil",
-  "text": "Laser Grid!"
+  "text": "Core Overload!"
  },
  {
-  "id": "move_scar_evil_rocket_fists",
+  "id": "move_scar_evil_rocket_stomp",
   "speaker": "scar_evil",
   "group": "fighter_scar_evil",
-  "text": "Rocket Fists!"
+  "text": "Rocket Stomp!"
  },
  {
   "id": "move_scar_evil_drone_swarm",
   "speaker": "scar_evil",
   "group": "fighter_scar_evil",
   "text": "Drone Swarm!"
- },
- {
-  "id": "move_scar_evil_transform",
-  "speaker": "scar_evil",
-  "group": "fighter_scar_evil",
-  "text": "Transform!"
  },
  {
   "id": "reformed_scar_mess",
@@ -3170,17 +3152,17 @@
   "text": "To be slippery enough, we have to train in my secret sea grotto!"
  },
  {
+  "id": "quest_scar",
+  "speaker": "scar",
+  "group": "core",
+  "text": "To power up my core, we have to train in my robot workshop!"
+ },
+ {
   "id": "quest_julia",
   "speaker": "julia",
   "group": "core",
   "text": "To get ready, we have to play in Dada's treehouse workshop!",
   "say": "To get ready, we have to play in Dadas treehouse workshop!"
- },
- {
-  "id": "quest_scar",
-  "speaker": "scar",
-  "group": "core",
-  "text": "To be fast enough, we have to train in the neon hacker den!"
  },
  {
   "id": "quest_moriarty",

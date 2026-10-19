@@ -51,9 +51,10 @@ export const QUESTS: Record<string, Quest> = {
   jasmine: { place: 'desert_oasis', text: 'To be quick enough, we have to train at the desert oasis!' },
   ozymandias: { place: 'desert_oasis', text: 'To be as strong as stone, we have to train at my desert oasis!' },
   jormungandr: { place: 'sea_grotto', text: 'To be slippery enough, we have to train in my secret sea grotto!' },
+  // Item 030: in the active cast, so his own place.
+  scar: { place: 'robot_workshop', text: 'To power up my core, we have to train in my robot workshop!' },
   // Guests in somebody else's place: no art budget was left for places of their own.
   julia: { place: 'treehouse', text: "To get ready, we have to play in Dada's treehouse workshop!", say: 'To get ready, we have to play in Dadas treehouse workshop!' },
-  scar: { place: 'hacker_den', text: 'To be fast enough, we have to train in the neon hacker den!' },
   moriarty: { place: 'moon_tower', text: 'To learn the best tricks, we have to train in the purple moon tower!' },
   bavmorda: { place: 'moon_tower', text: 'To brew the best spells, we have to train in the purple moon tower!' },
   rilla: { place: 'forest_gym', text: 'To be gorilla strong, we have to train in the secret forest gym!' },

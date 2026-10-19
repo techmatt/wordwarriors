@@ -64,6 +64,18 @@ export const EPISODE_DEFAULTS = {
   randomVillain: false,
 };
 
+/**
+ * The active cast (Matt, item 028): who the random draw picks the ally and
+ * the villain from, as persons (roster ids without a form). A dad here comes
+ * in any of his forms (four Dada Matts, three Dada Jasons). Everybody else in
+ * the roster is still defined, reachable by `?ally=` / `?villain=`, and joins
+ * the draw by being added here. The dads wake her whatever this says.
+ */
+export const ACTIVE_CAST = {
+  allies: ['dada_matt', 'dada_jason', 'scar', 'ellie'],
+  villains: ['jormungandr', 'smaug', 'bavmorda', 'tiamat'],
+};
+
 /** The cast draw's odds (Matt, item 025). */
 export const CAST_ODDS = {
   /** The primary dad (the one who wakes her) is Dada Matt this often, else Dada Jason. */

@@ -152,7 +152,7 @@ export class BedroomScene extends RoomScene {
     // The waker comes in through the door, which goes again behind them.
     this.showDoor();
     this.doorOpens();
-    const waker = this.art(castArt(wForm), 120, 160, room.door.x, room.door.y);
+    const waker = this.castSprite(wForm, room.door.x, room.door.y);
     waker.setDepth(room.waker.y);
     this.caption.track(w, () => (waker.active ? { x: waker.x, y: waker.y } : null));
     await this.guard(
@@ -177,7 +177,7 @@ export class BedroomScene extends RoomScene {
       const sp = personOf(episode.secondary);
       this.showDoor();
       this.doorOpens();
-      const s2 = this.art(castArt(episode.secondary), 120, 160, room.door.x, room.door.y).setDepth(room.door.y);
+      const s2 = this.castSprite(episode.secondary, room.door.x, room.door.y).setDepth(room.door.y);
       this.caption.track(sp, () => (s2.active ? { x: s2.x, y: s2.y } : null));
       this.time.delayedCall(600, () => this.hideDoor());
       await this.guard(
@@ -195,7 +195,7 @@ export class BedroomScene extends RoomScene {
     if (personOf(h) !== w) {
       const hx = room.waker.x - 140;
       const hy = room.waker.y + 20;
-      const f = this.art(castArt(h), 110, 145, hx, hy).setDepth(hy);
+      const f = this.castSprite(h, hx, hy).setDepth(hy);
       friend = f;
       this.caption.track(personOf(h), () => (f.active ? { x: f.x, y: f.y } : null));
       const s = f.scale;
