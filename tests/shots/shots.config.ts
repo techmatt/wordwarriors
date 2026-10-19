@@ -1,5 +1,5 @@
 /**
- * Playwright config for `tests/shots/shots.pw.ts` (screenshots, not tests;
+ * Playwright config for `tests/shots/*.pw.ts` (screenshots and probes, not tests;
  * the `.pw.ts` name keeps it out of the suite).
  * Its own port, so it never meets the dev server or a test run.
  */
@@ -10,7 +10,7 @@ const PORT = 5194;
 
 export default defineConfig({
   testDir: '.',
-  testMatch: 'shots.pw.ts',
+  testMatch: '*.pw.ts',
   outputDir: '../../test-results/shots',
   workers: 1,
   retries: 0,

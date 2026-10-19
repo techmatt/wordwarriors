@@ -368,7 +368,10 @@ npm run art:pick -- <id> <n>
 - The game itself needs no network: art is committed, voice is on disk in `public/voice-gen/`.
 - Stopping a backgrounded `npx vite` by killing its launcher leaves the node server
   still listening on 5174 (seen 2026-10-18). Find it with `netstat -ano | findstr 5174`
-  and stop that PID.
+  and stop that PID. A killed `npm run test:all` does the same on 5184 (the next run then
+  fails at once with "5184 is already used"; seen 2026-10-18): check the PID's command
+  line is this worktree's vite before stopping it. Background `test:all` needs a timeout
+  over its ~12 minutes; a 10-minute limit kills it partway.
 - Long Playwright runs: point them at a build so edits to `src/` do not hot-reload the
   page under test: `npx vite build --outDir scratch/dist-test`, `npx vite preview --outDir
   scratch/dist-test --port 5175`, then `WW_BASE_URL=http://localhost:5175 npx playwright test`.

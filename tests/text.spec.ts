@@ -69,8 +69,9 @@ test('the longest caption and the longest bubble stay on screen, even at the edg
   const errors = collectErrors(page);
   // The hub has both the ribbon and the bubbles.
   await boot(page, '?scene=house&nojourney=1');
-  await until(page, (s) => s.scene === 'Hub', 30_000, 'hub');
-  await page.waitForTimeout(500);
+  // Once the hub's own teaching is over and it is quiet: otherwise its next
+  // line cuts the test's bubble off within a frame or two of popping in.
+  await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:circle' && !s.voice.busy, 60_000, 'hub quiet');
   // Narrator lines are instructions (the ribbon); taunts and reformed lines are barks (bubbles).
   const instruction = longest((l) => l.id.startsWith('nar_') || l.id.startsWith('core_'));
   const lastWord = instruction.text.split(/\s+/).pop()!.toUpperCase();
