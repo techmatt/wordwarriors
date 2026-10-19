@@ -11,7 +11,10 @@ which those things power up.
 
 One **episode** (v0.2, Matt 2026-10-18): title → **bedroom** (she wakes; Dada Matt brings
 the good news, the helper, and the bad news: the villain and its threat; the house takes
-on the villain's mood) → **house part 1** (the hub: the helper teaches her a spell, which
+on the villain's mood) → the **entry hall warm-up** (item 033, `src/scenes/EntryScene.ts`:
+"Before we head out, let's grab the ...", nine labelled pictures, a clue in letter names
+and letter sounds at the word's level on a ramp, `GRAB` in `src/config.ts`; the grabbed
+thing is her first battle item) → **house part 1** (the hub: the helper teaches her a spell, which
 becomes her first battle move word; two side-room doors, one **sentence game** each,
 fetching battle items; the front door appears once both are done: a door she cannot use
 yet is not there at all) → **battle part 1** (the
@@ -45,7 +48,7 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | Path | What |
 | --- | --- |
 | `src/` | Game source. `main.ts` boots Phaser; `config.ts` sizes, depth bands, pad colours. |
-| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Hub, the side rooms' games (SentenceRoom, WordMachine), Journey (the map before battles), Ending (the victory scene), Victory, Parent; parked: Pick, Alarm, Retreat and `minigames/` (the four v0.1 games). |
+| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine), Journey (the map before battles), Ending (the victory scene), Victory, Parent; parked: Pick, Alarm, Retreat and `minigames/` (the four v0.1 games). |
 | `src/battle/` | The battle simulation: `BattleScene` (the director scripts `part1`/`part2` live in it), `Fighter`, `abilities`, `movement`. |
 | `src/episode/Episode.ts` | The episode's state and step list. Scenes call `advance()`; nothing else decides flow. |
 | `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only). |
@@ -59,6 +62,7 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | `content/battle/fights.ts`, `src/battle/stages/` | Fight styles (item 031): a sky race, a rope pull, a spell-beam clash, a cook-off, the brawl. `fight` on a villain, `fightNudge` on an ally; each kind's staging. |
 | `content/battle/forms.ts` | Outfits: a character's images for a scenario (Julia the chef beside chef Dada Jason, the knight beside warrior Dada Jason). |
 | `content/house/quests.ts` | Quests: each ally's place to train and setup line; places themselves are `PLACES` in `house.ts`. |
+| `src/rules/grab.ts` | The home warm-up (item 033): the word draw, the hall's pictures, the ramp, the clue per level. |
 | `src/rules/cast.ts`, `src/rules/minigames.ts` | The episode's cast draw; the rooms' weighted minigame pool (the sentence game's frames, the word machine). |
 | `content/phonics/families.ts`, `src/rules/wordMachine.ts` | The word machine (item 026): word families (rimes from the pictured words, silly onsets) and each visit's rounds. |
 | `content/phonics/` | Letter sounds (placeholder spellings by sound class), words, and `sentences.ts` (frames, fetchable key words and their battle items). |
@@ -155,7 +159,10 @@ Adding a character, ability, word or line is data work: edit `content/`, then
   (changing them re-synthesises audio); the caption and every on-screen word upper-case at
   display time. The grown-ups page may stay mixed case.
 - **Reading targets never print their answer:** word pictures carry no text; names as
-  sight words use the name-free `face_<id>` cards, not the named character cards.
+  sight words use the name-free `face_<id>` cards, not the named character cards. The one
+  exception is the entry hall's warm-up (item 033): there she finds a word by its letters,
+  so each picture has its word on a plaque; its word is spoken, so it is never read later
+  that episode, and the hall shows none of the words she will read.
 - **Every instruction speaks with the spoken word highlighted** (the caption ribbon; in the
   sentence game the banner is the highlighter and the caption stays out of the way).
 - **Narrator** = the episode's ally, or with no ally the primary dad, the one who woke
@@ -202,4 +209,5 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 | "make it the chef episode" | `?ally=dada_jason` (Julia's chef form follows; outfits are `content/battle/forms.ts`) |
 | "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`); for character art also set `FLIP_TO_FACE = true` in `src/config.ts` |
 | "here are my letter sound recordings" | see `docs/recording.md` |
+| "the warm-up is too hard / too easy" / "start new words at level N" | `GRAB.startLevel` (and `helpAfter`) in `src/config.ts` |
 | "for X I pick n" (from an `art_alts_*` sheet) | `npm run art:pick -- X n`, commit `public/art/X.png` |

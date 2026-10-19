@@ -417,6 +417,19 @@ room she pokes for fun. Art: `obj_<id>`, so object ids are unique across bedroom
 `say` is the edge-tts placeholder. Real phonemes replace them line by line with
 `npm run voice:clip -- letter_<x>_sound <file.mp3>` (see `docs/recording.md`).
 
+Letter **names** (item 033, the home warm-up spells with them) are `LETTER_NAMES` in the
+same file: `letter_<x>_name`, shown as the bare capital, `say` the name spelled out for
+edge-tts ("Vee", "Dubbelyou": "Double you" is timed as two words and fails the build). A
+recording replaces one the same way: `npm run voice:clip -- letter_<x>_name <file.mp3>`.
+
+## The home warm-up (`GRAB` in `src/config.ts`, `src/rules/grab.ts`)
+
+Any decodable CVC word in `content/phonics/words.ts` with a picture can be asked for;
+adding a word adds it. `GRAB.startLevel` is where a word she has never grabbed starts
+(1 word + names + sounds, 2 names + sounds, 3 sounds only), `GRAB.helpAfter` how many
+misses before the clue adds the word, `GRAB.objects` how many pictures stand in the hall
+(`ENTRY_HALL.spots` in `content/house/house.ts` has a place for each).
+
 ## Narrator lines (`content/voice/script.ts`)
 
 Templates composed once per narrator (`{hero}`, `{villain}`, `{item}`, `{word}`).

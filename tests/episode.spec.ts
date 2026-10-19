@@ -19,7 +19,7 @@ test('a full episode plays end to end @slow', async ({ page }) => {
   await press(page, 'green');
 
   const { end, keys } = await playEpisode(page);
-  expect(end.episode.fetched.length).toBe(2);
+  expect(end.episode.fetched.length).toBe(3);
   expect(end.episode.made.item).toBe(true);
   expect(end.battle?.villains[0]?.hp).toBe(0);
   for (const k of keys) expect(end.episode.read).toContain(k);

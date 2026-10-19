@@ -19,7 +19,7 @@ test('two episodes back to back @slow', async ({ page }) => {
   await page.waitForTimeout(500);
   await press(page, 'green');
   const first = await playEpisode(page);
-  expect(first.end.episode.fetched.length).toBe(2);
+  expect(first.end.episode.fetched.length).toBe(3);
   const heap1 = await page.evaluate(() => (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0);
 
   // Victory: green when the dot appears, then the title, then green again.
@@ -35,7 +35,7 @@ test('two episodes back to back @slow', async ({ page }) => {
   await page.waitForTimeout(800);
   await press(page, 'green');
   const second = await playEpisode(page);
-  expect(second.end.episode.fetched.length).toBe(2);
+  expect(second.end.episode.fetched.length).toBe(3);
   expect(second.end.battle?.villains[0]?.hp).toBe(0);
 
   const end = await state(page);

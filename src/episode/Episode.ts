@@ -376,16 +376,23 @@ export function housePlan(): RoomPlan[] {
 function grabWord(): string {
   if (!episode.grab) {
     episode.spell ??= spellFor(episode.hero, helper());
-    const avoid = [episode.spell, ...(episode.house.plan ? readingWords() : [])];
+    // Not a word on either battle's move pads (planned up front) either: she reads those.
+    const avoid = [episode.spell, ...moveWords(), ...(episode.house.plan ? readingWords() : [])];
     episode.grab = { word: pickGrab(progress, avoid), objects: [] };
   }
   return episode.grab.word;
 }
 
-/** Every word the episode has her read after the hall: the rooms' (machine words included), the counter, battle 1's move pads, the spell. */
+/** Every word on both battles' move pads. */
+function moveWords(): string[] {
+  const m = movePlan();
+  return [...m.part1, ...m.part2].flatMap((c) => c.words);
+}
+
+/** Every word the episode has her read after the hall: the rooms' (machine words included), the counter, the move pads, the spell. */
 function readingWords(): string[] {
   const plan = episode.house.plan ?? [];
-  return [...new Set([...(episode.spell ? [episode.spell] : []), ...plan.flatMap((p) => [p.key, ...p.fetches]), ...battle1Words(movePlan())])];
+  return [...new Set([...(episode.spell ? [episode.spell] : []), ...plan.flatMap((p) => [p.key, ...p.fetches]), ...moveWords()])];
 }
 
 /**

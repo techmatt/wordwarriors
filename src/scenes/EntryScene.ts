@@ -254,8 +254,8 @@ export class EntryScene extends RoomScene {
     await this.say(wordLine(this.word));
 
     // Into the bag it goes.
-    const pic = spot.obj.getData('pic') as Phaser.GameObjects.Image | undefined;
-    if (pic) pic.setVisible(false);
+    // Its picture and plaque leave the floor as it flies.
+    this.tweens.add({ targets: spot.obj, alpha: 0, duration: 250 });
     sfxSummon();
     await this.guard(this.bag?.receive(`pic_${this.word}`, spot.x, y) ?? Promise.resolve());
     await this.narrate('grab_door');

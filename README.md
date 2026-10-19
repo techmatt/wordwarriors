@@ -47,7 +47,25 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    is there only for the waker's entrance and again once the news is told ("Find the
    door!"), when it pops out and glows; it sparkles if she has not gone through it 12
    seconds after the news (`DOOR_SPARKLE_MS`).
-3. **The quest place (the hub).** The door leads to the helper's quest place (the
+3. **The entry hall: the home warm-up** (item 033, `src/scenes/EntryScene.ts`). The
+   bedroom door opens on the front hall, where nine pictures stand on the floor, each
+   with its word on a plaque (CAT, VAN; the one place a picture shows its word: here she
+   finds a word by its letters). The helper asks "Before we head out, let's grab the..."
+   and gives a clue by the word's **level** on a ramp: 1 the word, its letter names
+   ("Vee, Ay, En") and its letter sounds; 2 names and sounds, no word; 3 sounds only.
+   A board over the hall fills in each letter as its name is said and lights it for its
+   sound (blank boxes at level 3). She walks to the thing and presses green: right, a
+   burst, the word, and into her bag as a battle item (her first), then the front door
+   appears. Wrong: "That's the... CAT! We need the..." and the clue again at the same
+   level; from the third miss the clue adds the whole word. Yellow repeats the clue.
+   A new word starts at level 2 (**`GRAB.startLevel` in `src/config.ts`**); right first
+   time moves that word up a level, a miss on its first try moves it down. The levels
+   and grabs are on the grown-ups page ("Warm-up levels"). The word is said, so it never
+   becomes a room's key word, the counter, a word machine word or a move pad that
+   episode, and the hall's other eight pictures are none of the words she will read. A
+   grab is exposure, not a read (ProgressStore `grabs`, never `words` or the word bag).
+   About 20–30 seconds; no journey stop of its own.
+4. **The quest place (the hub).** The door leads to the helper's quest place (the
    forest gym, the bubble castle; every character has one, and the house itself is the
    fallback for a character added without one, or `?place=home`) laid
    out like the house: the helper by a magic circle, two side doors, later a secret
@@ -58,7 +76,7 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    cannot use yet is not there at all** (her first play: told to find the two doors,
    she walked to the shut front door), so every door and exit appears, with a little
    reveal, at the moment it opens.
-4. **Side rooms** (the place's own: the boulder yard and the climbing rocks of the
+5. **Side rooms** (the place's own: the boulder yard and the climbing rocks of the
    forest gym), each with a minigame drawn from a weighted pool (`src/rules/minigames.ts`:
    the sentence game in its frames, or the word machine, item 026: a picture and a rime
    like AT on the machine, letter tiles on the floor that say their sounds, green slots
@@ -73,7 +91,7 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    walks to the one the key word names and presses green. Right: the whole sentence
    is read back and the thing flies into her bag (top left). Wrong: a funny retry.
    Each finished room hangs its prize on its door; with both done the front door appears.
-5. **Battle part 1** runs by itself (she can steer her hero with the stick; green
+6. **Battle part 1** runs by itself (she can steer her hero with the stick; green
    hops). The fetched things pop out of her bag and are used. At a move choice the
    fight freezes, 2–3 word pads glow on the arena floor, the partner says which word;
    she walks her hero onto that pad and presses green. A wrong pad fires nothing: the
@@ -81,14 +99,14 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    until she picks the right one, which fires the supercharged move. The first choice
    is the spell she learned. It ends with the villain's ultimate: "Too strong! Retreat!", and the
    heroes pick themselves up and run for home.
-6. **The quest place, part 2.** Back in the hub a secret door pops out: the attic (or the
+7. **The quest place, part 2.** Back in the hub a secret door pops out: the attic (or the
    place's secret room: the cave behind the waterfall), with the
    villain's counter sentence (`EVIL TIAMAT RUNS FROM THE BUS`: the frame and the word
    are drawn each episode). Then the front door again.
-7. **Battle part 2**: the counter beats the ultimate (a swarm of its picture: "NOT THE
+8. **Battle part 2**: the counter beats the ultimate (a swarm of its picture: "NOT THE
    BUS!"; the villain's named item, Evil Tiamat's Magic Hat, when its own word comes
    up), everyone finishes it, and the villain turns good.
-8. **The victory scene** (item 027): the villain, good again, and everyone who took part
+9. **The victory scene** (item 027): the villain, good again, and everyone who took part
    (Julia, the ally, the dads there) do something nice together: dessert round the table,
    a picnic, the top of a mountain, a pillow fort, a boat ride, stargazing, a campfire or
    a snow day, drawn at random and never last episode's. Four voiced lines in bubbles,

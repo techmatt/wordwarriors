@@ -26,6 +26,8 @@ export interface WWState {
     read: string[];
     fetched: string[];
     spell: string | null;
+    /** The home warm-up (item 033): the word grabbed in the entry hall and the hall's pictures. */
+    grab: { word: string; objects: string[] } | null;
     house: {
       plan: { slot: string; room: string; game: string; kind: 'sentence' | 'machine'; key: string; fetches: string[]; sentence?: { key: string; frame: string }; machine?: { mode: string; rounds: { word: string; rime: string }[] } }[] | null;
       done: string[];
@@ -45,6 +47,7 @@ export interface WWState {
     spots: { id: string; x: number; y: number; correct: boolean | null }[];
     shown: string[];
     spelling?: { word: string; filled: number };
+    grab?: { word: string; level: number; misses: number; objects: string[]; phase: string };
     sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean };
     machine?: {
       mode: string;
@@ -364,11 +367,38 @@ export async function playRoom(page: Page): Promise<string[]> {
   return s.scene === 'WordMachine' ? playWordMachine(page) : [await playSentenceRoom(page)];
 }
 
-/** The bedroom: wait for the news to be told and the door to open, then walk out of it. */
-export async function leaveBedroom(page: Page): Promise<void> {
+/**
+ * The bedroom: wait for the news to be told and the door to open, then walk
+ * out of it, and (unless `grab: false`) through the entry hall's warm-up too
+ * (item 033), so the caller lands where the quest starts.
+ */
+export async function leaveBedroom(page: Page, opts: { grab?: boolean } = {}): Promise<void> {
   await until(page, (s) => s.scene === 'Bedroom' && s.room?.round === 'bedroom:door', 90_000, 'bedroom door open');
   await choose(page, 'door');
-  await until(page, (s) => s.scene !== 'Bedroom', 30_000, 'out of the bedroom');
+  const s = await until(page, (st) => st.scene !== 'Bedroom', 30_000, 'out of the bedroom');
+  if (s.scene === 'Entry' && opts.grab !== false) await playEntry(page);
+}
+
+/**
+ * The entry hall's warm-up (item 033): wait for the clue, pick `wrong` wrong
+ * pictures first (each waits for the clue again), then the right one, then
+ * out of the front door. Returns the grabbed word.
+ */
+export async function playEntry(page: Page, wrong = 0): Promise<string> {
+  const ask = await until(page, (st) => st.scene === 'Entry' && st.room?.round === 'entry:find' && !st.room.locked, 90_000, 'warm-up clue given');
+  const g = ask.room!.grab!;
+  for (let i = 0; i < wrong; i++) {
+    const others = g.objects.filter((w) => w !== g.word);
+    const other = others[i % others.length]!;
+    await choose(page, `grab_${other}`);
+    await until(page, (st) => (st.room?.grab?.misses ?? 0) === i + 1, 30_000, `miss ${i + 1}`);
+    await until(page, (st) => st.room?.round === 'entry:find' && !st.room.locked, 90_000, `clue again after miss ${i + 1}`);
+  }
+  await choose(page, `grab_${g.word}`);
+  await until(page, (st) => st.scene === 'Entry' && st.room?.round === 'entry:door' && !st.room.locked, 60_000, 'front door open');
+  await choose(page, 'door');
+  await until(page, (st) => st.scene !== 'Entry', 30_000, 'out of the entry hall');
+  return g.word;
 }
 
 /** In the hub: wait for a spot (a door, the circle) to be offered, then walk to it and press green. */
@@ -388,22 +418,24 @@ export async function seedProgress(page: Page, data: Record<string, unknown>): P
 /** The fetch frames (`use: 'fetch'` in content/phonics/sentences.ts). */
 export const FETCH_FRAMES = ['we_can_use_the', 'helper_needs_a', 'go_get_the', 'we_need_a', 'hero_needs_the'];
 
-/** From the bedroom to the victory screen. Returns the victory state and the keys fetched. */
-export async function playEpisode(page: Page): Promise<{ end: WWState; keys: string[] }> {
+/** From the bedroom to the victory screen. Returns the victory state, the keys read and fetched, and the warm-up's word (fetched, not read). */
+export async function playEpisode(page: Page): Promise<{ end: WWState; keys: string[]; grab: string }> {
   await until(page, (s) => s.scene === 'Bedroom', 30_000, 'bedroom');
-  await leaveBedroom(page);
+  await leaveBedroom(page, { grab: false });
+  // The entry hall's warm-up: its word is her first battle item.
+  const grab = await playEntry(page);
+  const keys: string[] = [];
 
   // Hub part 1: the spell, then both side rooms, then out the front door.
   await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:circle', 90_000, 'circle offered');
   await hubGo(page, 'circle');
-  const keys: string[] = [];
   for (const door of ['door_a', 'door_b']) {
     await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:doors', 90_000, `${door} offered`);
     await hubGo(page, door);
     keys.push(...(await playRoom(page)));
   }
   const front1 = await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:front', 90_000, 'front door open');
-  expect(front1.episode.fetched).toEqual(keys);
+  expect(front1.episode.fetched).toEqual([grab, ...keys]);
   await hubGo(page, 'door_front');
 
   // Battle 1: the fetched things are used, the ultimate still wins.
@@ -428,7 +460,7 @@ export async function playEpisode(page: Page): Promise<{ end: WWState; keys: str
   await until(page, (s) => s.scene === 'Battle', 30_000, 'battle 2');
   await playBattle(page, 2);
   const end = await until(page, (s) => s.scene === 'Victory', 30_000, 'victory');
-  return { end, keys: [...keys, counterKey] };
+  return { end, keys: [...keys, counterKey], grab };
 }
 
 export function expectNoErrors(errors: string[]): void {
