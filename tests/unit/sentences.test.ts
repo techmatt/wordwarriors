@@ -57,6 +57,11 @@ test('sentence() is upper case, key word last, with the right prefix line', () =
   assert.deepEqual(sentence('runs_from_the', FILL, 'bus').tokens.slice(-4), ['RUNS', 'FROM', 'THE', 'BUS']);
 });
 
+test("the Playwright harness's FETCH_FRAMES matches the fetch frames", async () => {
+  const { FETCH_FRAMES } = await import('../harness');
+  assert.deepEqual([...FETCH_FRAMES].sort(), FRAMES.filter((f) => f.use === 'fetch').map((f) => f.id).sort());
+});
+
 test('frames: a few of each, and every fetch and counter frame ends in the key word', () => {
   const fetch = FRAMES.filter((f) => f.use === 'fetch');
   const counter = FRAMES.filter((f) => f.use === 'counter');

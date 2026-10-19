@@ -289,7 +289,7 @@ export async function seedProgress(page: Page, data: Record<string, unknown>): P
 }
 
 /** The fetch frames (`use: 'fetch'` in content/phonics/sentences.ts). */
-export const FETCH_FRAMES = ['we_can_use_the', 'helper_needs_a', 'go_get_the', 'villain_hates_the', 'we_need_a'];
+export const FETCH_FRAMES = ['we_can_use_the', 'helper_needs_a', 'go_get_the', 'we_need_a', 'hero_needs_the'];
 
 /** From the bedroom to the victory screen. Returns the victory state and the keys fetched. */
 export async function playEpisode(page: Page): Promise<{ end: WWState; keys: string[] }> {
