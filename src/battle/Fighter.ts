@@ -18,6 +18,8 @@ import Phaser from 'phaser';
 import type { AbilitySpec, FighterSpec, MinionSpec, MoveStyle, Status } from '../../content/battle/types';
 import { sfxPoof } from '../audio/sfx';
 import { TEX } from '../fx/textures';
+import { ADULT_HEIGHT } from '../config';
+import { isGrownUp } from '../rules/cast';
 import { burst, fitImage } from '../fx/juice';
 
 export type Team = 'hero' | 'villain';
@@ -46,10 +48,13 @@ export interface FighterInit {
   mount?: string;
   trail?: FighterSpec['trail'];
   taunts?: string[];
+  /** How tall it is drawn, when not its `size` (a grown-up, item 034); `size` still drives the fight. */
+  tall?: number;
 }
 
 export function initFromSpec(spec: FighterSpec, id: string, art: string, team: Team): FighterInit {
   return {
+    ...(isGrownUp(id) ? { tall: Math.max(spec.size, ADULT_HEIGHT) } : {}),
     id,
     name: spec.displayName,
     art,
@@ -149,9 +154,10 @@ export class Fighter {
     this.y = y;
     this.hp = init.hp;
     this.maxHp = init.hp;
-    this.height = BASE_HEIGHT * init.size;
+    this.height = BASE_HEIGHT * (init.tall ?? init.size);
     this.shadow = scene.add.ellipse(0, 0, this.height * 0.55, this.height * 0.13, 0x000000, 0.32);
-    this.sprite = fitImage(scene.add.image(0, 0, init.art).setOrigin(0.5, 1), this.height * 0.8, this.height);
+    // A grown-up's wider art (the warlock's robe and staff) is not shrunk to fit: he keeps his height.
+    this.sprite = fitImage(scene.add.image(0, 0, init.art).setOrigin(0.5, 1), this.height * (init.tall ? 1 : 0.8), this.height);
     this.baseScale = this.sprite.scale;
     this.body = scene.add.container(0, 0, [this.sprite]);
     if (init.mount) this.addMount(init.mount);
@@ -176,6 +182,10 @@ export class Fighter {
   }
   get top(): number {
     return this.y - this.lift - this.float - this.height * this.scaleMul;
+  }
+  /** Half the drawn art's width: how far the body reaches either side of `x` (item 034). */
+  get bodyHalf(): number {
+    return this.sprite.width * this.baseScale * 0.5 * this.scaleMul * 0.9;
   }
   get scaleMul(): number {
     return this.growUntil > this.now ? 1.6 : 1;

@@ -153,6 +153,10 @@ export class TugStage extends BaseStage {
     return this.slot(f, i);
   }
 
+  override holds(f: Fighter): boolean {
+    return this.placeOf(f) !== null;
+  }
+
   override steer(f: Fighter, dt: number): boolean {
     const i = this.placeOf(f);
     if (i === null) return false;

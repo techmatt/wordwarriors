@@ -34,7 +34,7 @@
 
 import Phaser from 'phaser';
 
-import { CHARACTER_BY_ID, MINIONS, comboFor, comboPart } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, MINIONS, abilityCallout, comboFor, comboPart } from '../../content/battle/roster';
 import type { AbilitySpec, Status } from '../../content/battle/types';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { fighterId, moveLine, nameLine, narratorLine, reformedLine, tauntLine, ultimateLine } from '../../content/voice/ids';
@@ -64,6 +64,8 @@ import type { FightStage, Phase, StageHost } from './stages/stage';
 
 /** Cosmetic damage per point of ability power. Tuned so bars drift, not drop. */
 const DAMAGE_PER_POWER = 2.6;
+/** Two fighters closer than this in depth (px of floor) stand side by side, and their bodies must not overlap (item 034). */
+const SAME_DEPTH = 70;
 /** The move pads' glow. One colour for all: the word on the sign is the choice, never a colour. */
 const PAD_GLOW = 0x7ad9ff;
 /** How far a pad's word sign stands above its ring. */
@@ -99,8 +101,15 @@ interface Choice {
   /** The "I am here" ring at her hero's feet. */
   here: Phaser.GameObjects.Ellipse;
   open: boolean;
-  /** Wall-clock time the word was last said, for the idle re-prompt. */
+  /** Wall-clock time the word was last said. */
   promptedAt: number;
+  /**
+   * Quiet seconds since the word was last said, on the clamped frame clock her
+   * walk uses, for the idle re-prompt (item 034): only while the pads are open,
+   * nobody talks and she is not walking, so it never repeats the word while
+   * she is on her way to a pad.
+   */
+  idle: number;
   /**
    * Where her hero is during the choice, and how high she floats. Written back
    * every frame, so a leap, dash or spin that was mid-flight when the choice
@@ -192,7 +201,12 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     this.controls = new Controls(this);
     // Lighter in battle: a small box and face at the bottom, so the fight stays in view.
     new Caption(this, { compact: true });
-    new Bubbles(this);
+    // A bubble keeps clear of the banner showing (item 034), measured at its full size.
+    new Bubbles(this, () => {
+      const t = this.bannerText;
+      if (!t?.active || t.alpha < 0.2) return null;
+      return new Phaser.Geom.Rectangle(t.x - t.width / 2 - 10, t.y - t.height / 2 - 10, t.width + 20, t.height + 20);
+    });
     this.hud = this.add.graphics().setDepth(DEPTH.hud);
     this.cameras.main.fadeIn(300);
 
@@ -286,6 +300,10 @@ export class BattleScene extends Phaser.Scene implements StageHost {
 
   after(ms: number, fn: () => void): void {
     this.time.delayedCall(ms, fn);
+  }
+
+  held(f: Fighter): boolean {
+    return this.show?.holds(f) ?? false;
   }
 
   darken(alpha: number, ms: number): void {
@@ -439,7 +457,12 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     const left = this.add.rectangle(-GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH / 2 + 60, GAME_HEIGHT, 0x2a5aff, 0.92).setOrigin(0.5);
     const right = this.add.rectangle(GAME_WIDTH * 1.5, GAME_HEIGHT / 2, GAME_WIDTH / 2 + 60, GAME_HEIGHT, 0xc8102e, 0.92).setOrigin(0.5);
     ui.add([left, right]);
-    const heroCards = this.heroes.map((h, i) => fitImage(this.add.image(-300 + i * 30, 440 + i * 40, h.init.art).setOrigin(0.5, 1), 190, 240));
+    // Each card as tall beside hers as the fighter stands beside her (item 034: a dad is grown-up height here too).
+    const me = this.heroes[0]?.height ?? 150;
+    const heroCards = this.heroes.map((h, i) => {
+      const ch = Math.min(340, (220 * h.height) / me);
+      return fitImage(this.add.image(-300 + i * 30, 440 + i * 40, h.init.art).setOrigin(0.5, 1), ch * 0.95, ch);
+    });
     const villainCard = fitImage(this.add.image(GAME_WIDTH + 300, 450, this.villain.init.art).setOrigin(0.5, 1), 300, 360);
     ui.add([...heroCards, villainCard]);
     const vs = this.add
@@ -575,13 +598,35 @@ export class BattleScene extends Phaser.Scene implements StageHost {
    * jumps out of it with a sparkle, a big "THE NET!" banner, and her hero
    * fires the item's own ability. Summon items (hens, the dog) fight on her side.
    */
+  /**
+   * Where a reveal `w` wide whose bottom edge sits `bottomGap` above her head
+   * and reaches `ht` up can go, clear of every other fighter's body (item 034:
+   * the bag over Julia's head hid a small ally standing just behind her). Over
+   * her head when that is clear, else stepped sideways, away from the villain
+   * first. Returns the reveal's bottom-centre.
+   */
+  private revealSpot(h: Fighter, w: number, ht: number, bottomGap: number): { x: number; y: number } {
+    const others = this.fighters.filter((f) => f !== h && f.active && f.init.kind !== 'minion');
+    const y = Math.max(ht + 12, h.top - bottomGap);
+    const clear = (x: number) =>
+      others.every((f) => f.x + f.bodyHalf < x - w / 2 || f.x - f.bodyHalf > x + w / 2 || f.y < y - ht || f.top > y);
+    const away = h.x < this.villain.x ? -1 : 1;
+    for (const dx of [0, 70, -70, 140, -140, 210, -210, 280, -280]) {
+      const x = Phaser.Math.Clamp(h.cx + dx * away, w / 2 + 10, GAME_WIDTH - w / 2 - 10);
+      if (clear(x)) return { x, y };
+    }
+    return { x: h.cx, y };
+  }
+
   private async useFetched(word: string): Promise<void> {
     const item = FETCH_BY_WORD[word];
     const h = this.heroes[0];
     if (!item || !h?.active || h.floored) return;
     const color = item.ability.color;
-    // The bag: pops in over her head.
-    const bag = fitImage(this.add.image(h.cx, h.top - 50, 'prop_bag'), 86, 86).setDepth(DEPTH.fx + 5);
+    // The bag: pops in over her head, or beside it, where it hides nobody;
+    // the picture then rises 110 above it.
+    const spot = this.revealSpot(h, 150, 86 + 110 + 72, 7);
+    const bag = fitImage(this.add.image(spot.x, spot.y - 43, 'prop_bag'), 86, 86).setDepth(DEPTH.fx + 5);
     const bs = bag.scale;
     bag.setScale(0);
     this.tweens.add({ targets: bag, scale: bs, duration: 260, ease: 'Back.easeOut' });
@@ -597,7 +642,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     const ps = pic.scale;
     pic.setScale(0.2 * ps);
     this.tweens.add({ targets: pic, y: bag.y - 110, scale: ps * 1.2, duration: 380, ease: 'Back.easeOut' });
-    const halo = this.add.image(pic.x, bag.y - 110, TEX.glow).setTint(0xfff3a0).setScale(2.4).setBlendMode(Phaser.BlendModes.ADD).setDepth(DEPTH.fx + 4);
+    // The glow behind the fighters, so it never washes one out.
+    const halo = this.add.image(pic.x, bag.y - 110, TEX.glow).setTint(0xfff3a0).setScale(2.4).setBlendMode(Phaser.BlendModes.ADD).setDepth(FLOOR_TOP - 4);
     this.tweens.add({ targets: halo, scale: 3.4, alpha: 0.6, duration: 400, yoyo: true, repeat: 1 });
     sfxSummon();
     burst(this, pic.x, bag.y - 110, { count: 50, speed: 380, colors: [0xfff3a0, color, 0xffffff] });
@@ -691,8 +737,9 @@ export class BattleScene extends Phaser.Scene implements StageHost {
       f.setShield(1.5, ab.color, this.now);
       burst(this, f.cx, f.cy, { count: 40, speed: 300, colors: [ab.color, ab.color2 ?? 0xffffff] });
     }
-    this.tweens.add({ targets: b, x: a.x + 90, y: a.y + 10, duration: 400 });
-    if (!this.textGivesAway(ab.name)) this.banner(`${ab.name.toUpperCase()}!`, ab.color, true);
+    // Side by side, not one inside the other (item 034).
+    this.tweens.add({ targets: b, x: a.x + Math.max(90, (a.bodyHalf + b.bodyHalf) * 0.85), y: a.y + 10, duration: 400 });
+    if (!this.textGivesAway(abilityCallout(ab))) this.banner(abilityCallout(ab).toUpperCase(), ab.color, true);
     slowmo(this, 0.35, 900);
     flash(this, ab.color, 160);
     speedLines(this, (a.cx + b.cx) / 2, (a.cy + b.cy) / 2, ab.color, 800);
@@ -910,7 +957,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
 
     let misses = 0;
     await new Promise<void>((resolve) => {
-      const c: Choice = { words, right, objs, pads, near: null, dot, here, open: false, promptedAt: 0, at, misses: 0, resolve: () => {
+      const c: Choice = { words, right, objs, pads, near: null, dot, here, open: false, promptedAt: 0, idle: 0, at, misses: 0, resolve: () => {
         misses = c.misses;
         resolve();
       } };
@@ -921,6 +968,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
         if (this.choice) {
           this.choice.open = true;
           this.choice.promptedAt = performance.now();
+          this.choice.idle = 0;
         }
       })();
     });
@@ -989,6 +1037,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     if (this.choice !== c) return;
     c.open = true;
     c.promptedAt = performance.now();
+    c.idle = 0;
   }
 
   /** Pin her hero to where she walked in the choice: no leftover move timer or hop moves her. */
@@ -1015,7 +1064,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     const c = this.choice!;
     const me = this.heroes[0]!;
     const mv = this.controls.move;
-    if (mv.lengthSq() > 0.04 && me.active) {
+    const walking = mv.lengthSq() > 0.04 && me.active;
+    if (walking) {
       c.at.x = Phaser.Math.Clamp(c.at.x + mv.x * WALK_SPEED * realDt, ARENA_LEFT, ARENA_RIGHT);
       c.at.y = Phaser.Math.Clamp(c.at.y + mv.y * WALK_SPEED * 0.8 * realDt, FLOOR_TOP, FLOOR_BOTTOM);
       me.lean = Phaser.Math.Clamp(mv.x * 0.2, -0.25, 0.25);
@@ -1057,15 +1107,19 @@ export class BattleScene extends Phaser.Scene implements StageHost {
       c.open = true;
       this.pickChoice(c.right);
     }
-    if (c.open && (this.controls.pressed('yellow') || (wall - c.promptedAt > 10_000 && !voiceBus.busy))) {
+    if (walking) c.idle = 0;
+    else if (c.open && !voiceBus.busy) c.idle += realDt;
+    if (c.open && (this.controls.pressed('yellow') || c.idle > 10)) {
       // Green is ignored while the instruction plays, as on the first prompt:
       // the pads close for the line and open again when it ends.
       c.open = false;
       c.promptedAt = wall;
+      c.idle = 0;
       void voiceBus.say(narratorLine(narrator(), `use_move_${c.right}`)).then(() => {
         if (this.choice !== c) return;
         c.open = true;
         c.promptedAt = performance.now();
+        c.idle = 0;
       });
     }
   }
@@ -1190,11 +1244,12 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     if (this.helper) this.helper.invulnerable = true;
     const h = this.heroes[0]!;
     void this.say('use_item');
-    const item = fitImage(this.add.image(h.cx, h.top - 90, counterArt()), 130, 130).setDepth(DEPTH.fx + 5);
+    const at = this.revealSpot(h, 190, 190, 0);
+    const item = fitImage(this.add.image(at.x, at.y - 95, counterArt()), 130, 130).setDepth(DEPTH.fx + 5);
     const s = item.scale;
     item.setScale(0);
     this.tweens.add({ targets: item, scale: s * 1.4, duration: 400, ease: 'Back.easeOut' });
-    const halo = this.add.image(item.x, item.y, TEX.glow).setTint(0xfff3a0).setScale(3).setBlendMode(Phaser.BlendModes.ADD).setDepth(DEPTH.fx + 4);
+    const halo = this.add.image(item.x, item.y, TEX.glow).setTint(0xfff3a0).setScale(3).setBlendMode(Phaser.BlendModes.ADD).setDepth(FLOOR_TOP - 4);
     this.tweens.add({ targets: halo, scale: 5, alpha: 0.6, duration: 500, yoyo: true, repeat: -1 });
     sfxSummon();
     flash(this, 0xfff3a0, 250);
@@ -1419,7 +1474,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     sfxPoof();
     // As tall beside her hero as the villain's good size says (Scar just under her).
     const gh = (this.heroes[0]?.height ?? 150) * castScale(episode.villain);
-    const good = fitImage(this.add.image(v.x, v.y, castArt(episode.villain)).setOrigin(0.5, 1), gh * 0.8, gh).setDepth(v.y + 1);
+    const good = fitImage(this.add.image(v.x, v.y, castArt(episode.villain)).setOrigin(0.5, 1), gh * 0.95, gh).setDepth(v.y + 1);
     const gs = good.scale;
     good.setScale(0);
     this.tweens.add({ targets: good, scale: gs, duration: 500, ease: 'Back.easeOut' });
@@ -1482,7 +1537,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     // Each side drifts back towards its own ground, so the fight stays framed
     // heroes-left, villain-right instead of wandering off one edge.
     if (moving && !steered && !placed && (f.isMain || f.init.kind === 'helper')) {
-      const home = f.team === 'hero' ? 400 : 900;
+      // Each hero has a ground of their own, so she and her ally never share one spot (item 034).
+      const home = f.team === 'hero' ? 430 - Math.max(0, this.heroes.indexOf(f)) * 160 : 900;
       f.x += (home - f.x) * Math.min(1, (f.team === 'villain' ? 1.2 : 0.8) * dt);
     }
     // A giant's wings would hang off the edge of the screen: keep all of her in.
@@ -1496,11 +1552,13 @@ export class BattleScene extends Phaser.Scene implements StageHost {
       if (!f.ready(ab, this.now)) continue;
       if (ab.kind === 'heal' && this.alliesOf(f).every((a) => a.hp > a.maxHp * 0.7) && f.hp > f.maxHp * 0.7) continue;
       f.use(ab, this.now);
-      cast(this, f, ab, target, f.init.kind === 'helper' ? 1.4 : 1, f.isMain && ab.power >= 2 && !this.textGivesAway(ab.name));
+      cast(this, f, ab, target, f.init.kind === 'helper' ? 1.4 : 1, f.isMain && ab.power >= 2 && !this.textGivesAway(abilityCallout(ab)));
       // Big moves are called out by name, if nobody else is talking.
       // A move whose name says a word on a pad still to come is never called
       // out: hearing it then would give the choice away (so are taunts).
-      if (f.isMain && ab.power >= 2 && Math.random() < 0.5 && !this.lineGivesAway(moveLine(f.init.id, ab.id))) void voiceBus.say(moveLine(f.init.id, ab.id), 'bark', f);
+      // Never the same call twice in a row (item 034: a move fired again soon after was called out again).
+      const call = moveLine(f.init.id, ab.id);
+      if (f.isMain && ab.power >= 2 && Math.random() < 0.5 && voiceBus.history.at(-1) !== call && !this.lineGivesAway(call)) void voiceBus.say(call, 'bark', f);
       this.stats.abilitiesFired++;
       if (f.isMain) this.teamNextCast[teamKey] = this.now + (teamKey === 'villain' ? 700 : 500);
       break;
@@ -1513,10 +1571,30 @@ export class BattleScene extends Phaser.Scene implements StageHost {
    */
   private separate(dt: number): void {
     const live = this.fighters.filter((f) => f.active && !f.floored);
+    const body = (f: Fighter) => f.isMain || f.init.kind === 'helper';
     for (let i = 0; i < live.length; i++) {
       for (let j = i + 1; j < live.length; j++) {
         const a = live[i]!;
         const b = live[j]!;
+        // The heroes, the helper and the villain never stand in one another
+        // (item 034): at about the same depth, their bodies are kept apart
+        // across, at once, the bigger one giving less. Not while one is in
+        // the air (a leap passes over), and her hero in a move choice is hers.
+        if (body(a) && body(b)) {
+          if (Math.abs(b.y - a.y) >= SAME_DEPTH || a.lift > 4 || b.lift > 4) continue;
+          const need = (a.bodyHalf + b.bodyHalf) * 0.85;
+          const dx = b.x - a.x;
+          if (Math.abs(dx) >= need) continue;
+          const dir = Math.abs(dx) > 0.5 ? Math.sign(dx) : a.team === 'hero' ? 1 : -1;
+          const over = need - Math.abs(dx);
+          const pinned = (f: Fighter) => (f === this.heroes[0] && Boolean(this.choice)) || f === this.villain;
+          let wa = b.init.size / (a.init.size + b.init.size);
+          if (pinned(a)) wa = 0;
+          else if (pinned(b)) wa = 1;
+          a.x = Phaser.Math.Clamp(a.x - dir * over * wa, ARENA_LEFT, ARENA_RIGHT);
+          b.x = Phaser.Math.Clamp(b.x + dir * over * (1 - wa), ARENA_LEFT, ARENA_RIGHT);
+          continue;
+        }
         const min = (a.height * a.scaleMul + b.height * b.scaleMul) * 0.36;
         const dx = b.x - a.x;
         const dy = (b.y - a.y) * 1.8;

@@ -29,8 +29,8 @@ import { COUNTER_ROOM, FETCH_ROOMS, HOME, PLACE_BY_ID } from '../../content/hous
 import { QUESTS, questFor, questLine } from '../../content/house/quests';
 import { group, narratorLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
-import { EPISODE_DEFAULTS } from '../config';
-import { drawCast, wakerOf, type CastOverrides } from '../rules/cast';
+import { ADULT_HEIGHT, EPISODE_DEFAULTS } from '../config';
+import { drawCast, isGrownUp, wakerOf, type CastOverrides } from '../rules/cast';
 import { fightSpec, pickFight } from '../rules/fights';
 import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
 import { endingPeople } from '../rules/endings';
@@ -229,12 +229,14 @@ export function castArt(id: string, evil = false, state: EpisodeState = episode)
 /**
  * How tall `id` stands beside the hero outside battles (item 028): the size
  * of the form it plays over hers, kept between 0.7 and 1.3 so a dragon still
- * fits a room. A dad is a head taller than her; Scar and Ellie a little shorter.
+ * fits a room. A dad is grown-up height beside her, `ADULT_HEIGHT` (item
+ * 034); Scar and Ellie a little shorter.
  */
 export function castScale(id: string, state: EpisodeState = episode): number {
   const c = CHARACTER_BY_ID[castId(id, state)];
   const hero = CHARACTER_BY_ID[castId(state.hero, state)];
   if (!c || !hero) return 1;
+  if (isGrownUp(c.id) && !isGrownUp(hero.id)) return ADULT_HEIGHT;
   return Phaser.Math.Clamp(c.good.size / hero.good.size, 0.7, 1.3);
 }
 

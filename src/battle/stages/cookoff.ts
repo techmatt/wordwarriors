@@ -162,6 +162,11 @@ export class CookoffStage extends BaseStage {
     return this.spot(f, i);
   }
 
+  override holds(f: Fighter): boolean {
+    const h = this.host;
+    return f === h.villain || h.heroes.includes(f) || (f === h.helper && f.active);
+  }
+
   override steer(f: Fighter, dt: number): boolean {
     const h = this.host;
     // Floored heroes stay where they lie; her hero is hers during a move choice.

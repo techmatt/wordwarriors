@@ -77,6 +77,14 @@ export const ACTIVE_CAST = {
 };
 
 /** The cast draw's odds (Matt, item 025). */
+/**
+ * A grown-up (a dad, in any form) stands at least this many times her height,
+ * everywhere: rooms, battles, the victory scene and the podium (item 034:
+ * at a dad's roster size, 1.2 to 1.25, lifter Dada Matt and warlock Dada Jason
+ * read as only a little taller than her).
+ */
+export const ADULT_HEIGHT = 1.5;
+
 export const CAST_ODDS = {
   /** The primary dad (the one who wakes her) is Dada Matt this often, else Dada Jason. */
   mattPrimary: 0.6,

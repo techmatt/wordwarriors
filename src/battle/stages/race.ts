@@ -250,6 +250,10 @@ export class RaceStage extends BaseStage {
     return { x: HERO_X - i * 80, y: this.laneY(f) };
   }
 
+  override holds(f: Fighter): boolean {
+    return Boolean(this.racer(f));
+  }
+
   override steer(f: Fighter, dt: number): boolean {
     const r = this.racer(f);
     // Minions, clones and the combo's cameo dad roam as in the brawl.

@@ -116,6 +116,43 @@ export function shockwave(scene: Phaser.Scene, x: number, y: number, color: numb
   });
 }
 
+/**
+ * A landing's ring lying on the floor (item 034): squashed to the floor's
+ * perspective, tinted, drawn just under whoever stands at `y` so the
+ * fighters in front stay in front. Not a white disc.
+ */
+export function groundRing(scene: Phaser.Scene, x: number, y: number, color: number, radius = 200, ms = 450): void {
+  const ring = scene.add.image(x, y, TEX.ring).setTint(color).setDepth(y - 1).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.9).setScale(0.1, 0.035);
+  scene.tweens.add({
+    targets: ring,
+    scaleX: radius / 60,
+    scaleY: (radius / 60) * 0.32,
+    alpha: 0,
+    duration: ms,
+    ease: 'Cubic.easeOut',
+    onComplete: () => ring.destroy(),
+  });
+}
+
+/** A soft puff of dust thrown out sideways along the floor: a heavy landing. */
+export function dustPuff(scene: Phaser.Scene, x: number, y: number, radius = 120, colors = [0xc8b89a, 0x8a7a5a], count = 14): void {
+  fxStats.bursts++;
+  const n = Math.max(4, Math.round(count * fxQuality.level));
+  const e = scene.add.particles(x, y, TEX.smoke, {
+    speedX: { min: -radius * 2, max: radius * 2 },
+    speedY: { min: -radius * 0.45, max: radius * 0.05 },
+    scale: { start: 0.45, end: 1.3 },
+    alpha: { start: 0.6, end: 0 },
+    lifespan: { min: 380, max: 680 },
+    gravityY: -20,
+    tint: colors,
+    emitting: false,
+  });
+  e.setDepth(y + 1);
+  e.explode(n);
+  scene.time.delayedCall(800, () => e.destroy());
+}
+
 export function shake(scene: Phaser.Scene, strength: number, ms = 220): void {
   fxStats.shakes++;
   scene.cameras.main.shake(ms, Math.min(0.03, strength * 0.004));

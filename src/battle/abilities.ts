@@ -13,7 +13,7 @@
 import Phaser from 'phaser';
 
 import type { AbilitySpec, MinionSpec, Status } from '../../content/battle/types';
-import { MINIONS } from '../../content/battle/roster';
+import { MINIONS, abilityCallout } from '../../content/battle/roster';
 import {
   sfxBoom,
   sfxFire,
@@ -32,7 +32,7 @@ import {
   sfxZap,
 } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { burst, flash, shake, shockwave } from '../fx/juice';
+import { burst, dustPuff, flash, groundRing, shake, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter, type FighterInit, type Team } from './Fighter';
 import { ARENA_LEFT, ARENA_RIGHT } from './movement';
@@ -81,9 +81,25 @@ export interface BattleWorld {
   /** Run after `ms` of simulation time (respects slow-mo/hit-stop). */
   after(ms: number, fn: () => void): void;
   darken(alpha: number, ms: number): void;
+  /**
+   * Is `f` held to its place by a contest (item 034)? A race's lane, a rope's
+   * end, a clash's spot, a cooking station: its melee moves (slam, spin, dash,
+   * teleport) then play where it stands and send their force across, instead
+   * of carrying it over to the villain.
+   */
+  held?(f: Fighter): boolean;
 }
 
 const MINION_CAP = 7;
+
+/**
+ * How far from `t`'s centre `f` lands beside it, at least `min`: their bodies
+ * side by side, never one inside the other (item 034: Julia's stomp landed
+ * inside a giant).
+ */
+function besideGap(f: Fighter, t: Fighter, min: number): number {
+  return Math.max(min, (f.bodyHalf + t.bodyHalf) * 0.85 + 10);
+}
 
 function hex(c: number): string {
   return `#${c.toString(16).padStart(6, '0')}`;
@@ -287,9 +303,10 @@ const slam: Cast = (w, f, ab, target, mult) => {
   const s = w.stage;
   w.busy(f, 900);
   if (ab.shout) sfxShout(f.init.size > 1.2 ? 0.7 : 1);
-  const leap = f.init.style !== 'stomp';
+  const held = w.held?.(f) ?? false;
+  const leap = f.init.style !== 'stomp' && !held;
   const fromX = f.x;
-  const toX = leap ? Phaser.Math.Clamp(target.x - (f.team === 'hero' ? 90 : -90), ARENA_LEFT, ARENA_RIGHT) : f.x;
+  const toX = leap ? Phaser.Math.Clamp(target.x - (f.team === 'hero' ? 1 : -1) * besideGap(f, target, 90), ARENA_LEFT, ARENA_RIGHT) : f.x;
   const toY = leap ? target.y : f.y;
   const fromY = f.y;
   let p = 0;
@@ -310,11 +327,29 @@ const slam: Cast = (w, f, ab, target, mult) => {
     sfxStomp();
     sfxBoom(Math.min(3, ab.power * mult));
     shake(s, 4 * mult, 300);
-    shockwave(s, f.x, f.y, ab.color, 220 * mult);
-    shockwave(s, f.x, f.y, 0xffffff, 140 * mult, 300);
-    burst(s, f.x, f.y, { count: 60, speed: 520, colors: [ab.color, 0xc8b89a, 0xffffff], gravity: 700 });
+    // On the floor: a ring in the move's colours and a puff of dust (item 034:
+    // a white ring here read as a flat white disc).
+    groundRing(s, f.x, f.y, ab.color, 220 * mult);
+    groundRing(s, f.x, f.y, ab.color2 ?? ab.color, 130 * mult, 320);
+    dustPuff(s, f.x, f.y, 130 * mult, [0xc8b89a, 0x8a7a5a, ab.color], 16);
+    burst(s, f.x, f.y - 20, { count: 40, speed: 460, colors: [ab.color, ab.color2 ?? ab.color, 0xc8b89a], gravity: 700 });
+    const status = ab.status ? { kind: ab.status, duration: ab.duration ?? 2 } : undefined;
+    if (held) {
+      // Held in a contest: the stomp's tremor runs along the floor to the target.
+      const fx = f.x;
+      const fy = f.y;
+      for (let k = 1; k <= 4; k++) w.after(k * 70, () => dustPuff(s, Phaser.Math.Linear(fx, target.x, k / 5), Phaser.Math.Linear(fy, target.y, k / 5), 70 * mult, [0xc8b89a, ab.color], 8));
+      w.after(350, () => {
+        if (!target.active) return;
+        groundRing(s, target.x, target.y, ab.color, 180 * mult);
+        for (const e of w.enemiesOf(f)) {
+          if (Phaser.Math.Distance.Between(target.x, target.y, e.x, e.y) < 230 * Math.sqrt(mult)) w.hit(e, ab.power * mult * f.power, ab.color, f, status);
+        }
+      });
+      return;
+    }
     for (const e of w.enemiesOf(f)) {
-      if (Phaser.Math.Distance.Between(f.x, f.y, e.x, e.y) < 230 * Math.sqrt(mult)) w.hit(e, ab.power * mult * f.power, ab.color, f, ab.status ? { kind: ab.status, duration: ab.duration ?? 2 } : undefined);
+      if (Phaser.Math.Distance.Between(f.x, f.y, e.x, e.y) < 230 * Math.sqrt(mult) + e.bodyHalf) w.hit(e, ab.power * mult * f.power, ab.color, f, status);
     }
   });
 };
@@ -324,14 +359,17 @@ const spin: Cast = (w, f, ab, target, mult) => {
   const victims = pickTargets(w, f, target, Math.round((ab.count ?? 3) * (mult > 1.5 ? 1.5 : 1)));
   if (ab.shout) sfxShout();
   w.busy(f, victims.length * 280 + 200);
+  // Held in a contest, it spins where it stands and the whirl flies across.
+  const held = w.held?.(f) ?? false;
   victims.forEach((v, i) => {
     w.after(i * 280, () => {
       if (!v.active || !f.active) return;
       sfxWhoosh();
       const fx = f.x;
       const fy = f.y;
-      const tx = v.x + (Math.random() - 0.5) * 80;
-      const ty = v.y;
+      const tx = held ? fx : Phaser.Math.Clamp(v.x - (Math.sign(v.x - fx) || 1) * besideGap(f, v, 40 * Math.random()), ARENA_LEFT, ARENA_RIGHT);
+      const ty = held ? fy : v.y;
+      if (held) shockwave(s, f.cx, f.cy, ab.color, 110, 300);
       let p = 0;
       const ev = s.time.addEvent({
         delay: 16,
@@ -366,7 +404,28 @@ const dash: Cast = (w, f, ab, target, mult) => {
       const fx = f.x;
       const fy = f.y;
       const dir = Math.sign(t.x - f.x) || 1;
-      const tx = Phaser.Math.Clamp(t.x + dir * 120, ARENA_LEFT, ARENA_RIGHT);
+      if (w.held?.(f)) {
+        // Held in a contest: a lunge on the spot, and the charge's streak flies across.
+        let q = 0;
+        const lunge = s.time.addEvent({
+          delay: 16,
+          repeat: 16,
+          callback: () => {
+            q += 1 / 16;
+            f.x = fx + dir * 40 * Math.sin(q * Math.PI);
+            f.lean = dir * 0.45 * Math.sin(q * Math.PI);
+            if (q > 0.2 && q < 0.6) f.afterimage(ab.color);
+          },
+        });
+        fireBolt(w, f, ab, t, mult, 0, 90);
+        w.after(300, () => {
+          lunge.remove();
+          f.x = fx;
+          f.lean = 0;
+        });
+        return;
+      }
+      const tx = Phaser.Math.Clamp(t.x + dir * besideGap(f, t, 120), ARENA_LEFT, ARENA_RIGHT);
       let p = 0;
       const ev = s.time.addEvent({
         delay: 16,
@@ -403,8 +462,11 @@ const summon: Cast = (w, f, ab, _target, mult) => {
   sfxSummon();
   // A magic circle on the floor, then the minions pop out of it one by one.
   const cx = Phaser.Math.Clamp(f.x + (f.team === 'hero' ? 120 : -120), ARENA_LEFT, ARENA_RIGHT);
-  const circle = s.add.ellipse(cx, f.y, 10, 4, ab.color, 0.5).setStrokeStyle(4, 0xffffff).setDepth(f.y - 1);
-  s.tweens.add({ targets: circle, scaleX: 26, scaleY: 18, duration: 300, ease: 'Back.easeOut' });
+  // Drawn at its full size and scaled up from small, so its rim stays a thin
+  // line in the move's colour (scaling a 10×4 ellipse up 26× made the white
+  // rim a thick, flat white disc).
+  const circle = s.add.ellipse(cx, f.y, 260, 72, ab.color, 0.35).setStrokeStyle(4, ab.color2 ?? ab.color, 0.9).setDepth(f.y - 1).setScale(0.04);
+  s.tweens.add({ targets: circle, scale: 1, duration: 300, ease: 'Back.easeOut' });
   s.tweens.add({ targets: circle, alpha: 0, delay: 300 + n * 120, duration: 400, onComplete: () => circle.destroy() });
   for (let i = 0; i < n; i++) {
     w.after(250 + i * 120, () => {
@@ -456,10 +518,14 @@ const teleport: Cast = (w, f, ab, target, mult) => {
   f.afterimage(ab.color);
   sfxPoof();
   burst(s, f.cx, f.cy, { count: 30, speed: 260, colors: [ab.color, 0xffffff] });
+  // Held in a contest, it pops out and back in on its own spot.
+  const held = w.held?.(f) ?? false;
   w.after(160, () => {
     if (!target.active) return;
-    f.x = Phaser.Math.Clamp(target.x + (Math.random() < 0.5 ? -100 : 100), ARENA_LEFT, ARENA_RIGHT);
-    f.y = target.y;
+    if (!held) {
+      f.x = Phaser.Math.Clamp(target.x + (Math.random() < 0.5 ? -1 : 1) * besideGap(f, target, 100), ARENA_LEFT, ARENA_RIGHT);
+      f.y = target.y;
+    }
     burst(s, f.cx, f.cy, { count: 30, speed: 260, colors: [ab.color, 0xffffff] });
     f.squash(0.35);
   });
@@ -888,7 +954,7 @@ export const CASTS: Record<AbilitySpec['kind'], Cast> = {
 export function cast(w: BattleWorld, f: Fighter, ab: AbilitySpec, target: Fighter | null, mult = 1, banner = false): void {
   const t = target && target.active ? target : nearestEnemy(w, f);
   if (!t && !['shield', 'heal', 'grow', 'summon', 'clones'].includes(ab.kind)) return;
-  if (banner) w.banner(`${ab.name.toUpperCase()}!`, ab.color, mult > 1.5);
+  if (banner) w.banner(abilityCallout(ab).toUpperCase(), ab.color, mult > 1.5);
   CASTS[ab.kind](w, f, ab, t ?? f, mult);
 }
 

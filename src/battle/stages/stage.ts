@@ -56,6 +56,8 @@ export interface FightStage {
    * movement styles: the ultimate's walk to each side is skipped too.
    */
   readonly anchored: boolean;
+  /** Does the contest hold `f` to a place of its own (a lane, a rope end, a spot, a station)? */
+  holds(f: Fighter): boolean;
   /** After the cast spawns, before the intro: dressing, props, meters. */
   setup(): void;
   /** Where `f` runs to in the intro (the i-th hero; i is 0 for the villain), or null for the brawl's spot. */
@@ -115,6 +117,9 @@ export class BaseStage implements FightStage {
     return { x: h.stick.x * NUDGE.x, y: h.stick.y * NUDGE.y };
   }
 
+  holds(_f: Fighter): boolean {
+    return false;
+  }
   setup(): void {}
   home(_f: Fighter, _i: number): { x: number; y: number } | null {
     return null;

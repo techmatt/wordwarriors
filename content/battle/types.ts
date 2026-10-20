@@ -107,6 +107,12 @@ export interface AbilitySpec {
   words?: string[];
   /** Plays the "Ha!" interjection SFX when used. */
   shout?: boolean;
+  /**
+   * Called out (voiced and on the name banner) instead of `<name>!`, when the
+   * name says a move word (item 034: Pig Curse says PIG, a pad word, so it was
+   * never called out). Must say no move word itself.
+   */
+  callout?: string;
 }
 
 export interface Taunt {

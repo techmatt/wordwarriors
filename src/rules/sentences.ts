@@ -106,7 +106,7 @@ export function wordsOf(s: string | undefined): string[] {
 
 /** Everything one fighter says or shows: names, ability and ultimate banners, taunts, minion names. */
 function fighterWords(f: FighterSpec): string[] {
-  const out = [f.displayName, f.sayName, f.ultimate.name, ...f.abilities.map((a) => a.name)];
+  const out = [f.displayName, f.sayName, f.ultimate.name, ...f.abilities.flatMap((a) => [a.name, a.callout])];
   for (const t of f.taunts) out.push(t.text, t.say);
   for (const a of [...f.abilities, f.ultimate]) if (a.minion) out.push(MINIONS[a.minion]?.name);
   return out.flatMap(wordsOf);

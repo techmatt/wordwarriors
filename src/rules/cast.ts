@@ -67,6 +67,11 @@ function pick<T>(xs: readonly T[], rand: Rand): T {
 
 const isDad = (person: string) => (DADS as readonly string[]).includes(person);
 
+/** Is `id` (a character, form or fighter id: `dada_jason_warlock_evil`) a grown-up, a dad in any form? */
+export function isGrownUp(id: string): boolean {
+  return isDad(personOf(id.replace(/_(good|evil)$/, '')));
+}
+
 /** The persons of `active` that are in the roster, or every person when it names none. */
 function activePersons(active: readonly string[]): string[] {
   const all = PERSONS.map((c) => c.id);

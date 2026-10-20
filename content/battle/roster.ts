@@ -48,6 +48,9 @@ export const MOVE_WORDS = [
   'dig', 'run', 'jet', 'mud', 'wet', 'fog', 'top', 'web', 'net', 'tug', 'fix', 'pan', 'ram', 'pig',
 ] as const;
 
+/** What a big move is called out as, voiced and on its banner: `callout`, else its name. */
+export const abilityCallout = (a: AbilitySpec): string => a.callout ?? `${a.name}!`;
+
 /** Every move word an ability answers to: its main `word`, then its `words`. */
 export function abilityWords(a: AbilitySpec): string[] {
   return [...(a.word ? [a.word] : []), ...(a.words ?? [])];
@@ -1049,7 +1052,7 @@ export const ROSTER: CharacterSpec[] = [
       palette: [0x240046, 0x39ff14], glyph: '🧙‍♀️', style: 'hover', mount: '🧹', speed: 140, size: 1.2, hp: 190,
       abilities: [
         ab('skeleton_wave', 'Skeleton Wave', 'summon', 8, 0xf2f0e6, 2, { minion: 'skeleton', count: 5 }),
-        ab('pig_curse', 'Pig Curse', 'polymorph', 7, 0x39ff14, 2, { status: 'pig', duration: 3.5 }),
+        ab('pig_curse', 'Pig Curse', 'polymorph', 7, 0x39ff14, 2, { status: 'pig', duration: 3.5, callout: 'Curly Tail Curse!' }),
         ab('dark_bolts', 'Dark Bolts', 'bolt', 2.4, 0x39ff14, 2, { count: 3, homing: true }),
       ],
       ultimate: ab('all_pigs', 'Everybody Pigs!', 'polymorph', 0, 0x39ff14, 3, { status: 'pig', duration: 6, count: 6 }),

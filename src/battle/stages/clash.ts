@@ -185,6 +185,10 @@ export class ClashStage extends BaseStage {
     return f === this.host.helper ? HELPER_SPOT : null;
   }
 
+  override holds(f: Fighter): boolean {
+    return this.spot(f) !== null;
+  }
+
   override steer(f: Fighter, dt: number): boolean {
     // Her hero is hers to walk during a move choice; eased back to her place after.
     if (this.host.choosing && f === this.host.heroes[0]) return false;

@@ -35,7 +35,15 @@ export class Bubbles {
   private anchor: BubbleAnchor | null = null;
   private readonly off: () => void;
 
-  constructor(private readonly scene: Phaser.Scene) {
+  /**
+   * `avoid` (item 034) is a box the bubble must keep clear of, or null: the
+   * battle's banner, so a banner never covers what someone is saying. The
+   * bubble steps above it, or below it when there is no room above.
+   */
+  constructor(
+    private readonly scene: Phaser.Scene,
+    private readonly avoid?: () => Phaser.Geom.Rectangle | null,
+  ) {
     this.off = voiceBus.on((u) => this.onLine(u));
     const follow = () => this.follow();
     scene.events.on(Phaser.Scenes.Events.UPDATE, follow);
@@ -98,6 +106,12 @@ export class Bubbles {
     const w = b.getData('w') as number;
     b.x = Phaser.Math.Clamp(a.x, w / 2 + 8, GAME_WIDTH - w / 2 - 8);
     b.y = Phaser.Math.Clamp(a.y - a.bubbleOffset - h / 2 - 20, h / 2 + 8, GAME_HEIGHT - h / 2 - 28);
+    const r = this.avoid?.();
+    // The bubble's box, its tail included.
+    if (r && Phaser.Geom.Rectangle.Overlaps(new Phaser.Geom.Rectangle(b.x - w / 2, b.y - h / 2, w, h + 18), r)) {
+      const above = r.top - 22 - h / 2;
+      b.y = above >= h / 2 + 8 ? above : Math.min(r.bottom + h / 2 + 8, GAME_HEIGHT - h / 2 - 28);
+    }
     const tx = Math.round(Phaser.Math.Clamp(a.x - b.x, -w / 2 + 26, w / 2 - 26));
     if (tx !== b.getData('tailX')) {
       b.setData('tailX', tx);

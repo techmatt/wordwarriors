@@ -77,7 +77,8 @@ export class EndingScene extends Phaser.Scene {
     const sprites = new Map<string, Phaser.GameObjects.Image>();
     const art = people.map((id) => castArt(id));
     people.forEach((id, i) => {
-      // `stand.h` is the tallest (a dad); the rest stand to their sizes beside him (item 028).
+      // `stand.h` is a 1.25-size friend; the rest stand to their sizes beside
+      // her (item 028), a dad at grown-up height, 1.2 × `stand.h` (item 034).
       const h = (e.stand.h * castScale(id)) / 1.25;
       const img = fitImage(this.add.image(xs[i]!, e.stand.y, art[i]!).setOrigin(0.5, 1), h * 0.95, h).setDepth(e.stand.y);
       sprites.set(id, img);

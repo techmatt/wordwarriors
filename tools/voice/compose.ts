@@ -15,7 +15,7 @@
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { MOVE_WORDS, PERSONS, ROSTER, personOf } from '../../content/battle/roster.js';
+import { MOVE_WORDS, PERSONS, ROSTER, abilityCallout, personOf } from '../../content/battle/roster.js';
 import { ENDINGS } from '../../content/house/endings.js';
 import { QUESTS, questLine } from '../../content/house/quests.js';
 import type { FighterSpec } from '../../content/battle/types.js';
@@ -137,7 +137,7 @@ export function composeLines(): LineSpec[] {
       lines.push({ id: ultimateLine(fid), speaker, group: group.fighter(fid), text: `${spec.ultimate.name}!` });
       // Big moves (power 2+) are called out as they fire.
       for (const ab of spec.abilities.filter((a) => a.power >= 2)) {
-        lines.push({ id: moveLine(fid, ab.id), speaker, group: group.fighter(fid), text: `${ab.name}!` });
+        lines.push({ id: moveLine(fid, ab.id), speaker, group: group.fighter(fid), text: abilityCallout(ab) });
       }
     }
     // The villain good again, in the good voice, but in the villain's group:
