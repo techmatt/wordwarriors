@@ -12,6 +12,7 @@ import Phaser from 'phaser';
 import { musicPlaying } from './audio/music';
 import { fxStats } from './fx/juice';
 import { virtualPad, type Button } from './input/Controls';
+import { dadLock, setDadLock } from './input/dadLock';
 import { typeLetter } from './input/TextEntry';
 import { voiceBus } from './audio/VoiceBus';
 import { episode, currentStep } from './episode/Episode';
@@ -163,6 +164,11 @@ export function installTestHooks(game: Phaser.Game): void {
       release: () => virtualPad.release(),
     },
     type: (letter: string) => typeLetter(letter),
+    /** Dad lock (item 038): set it, or read it with no argument. */
+    dadLock: (on?: boolean) => {
+      if (on !== undefined) setDadLock(on);
+      return dadLock.locked;
+    },
     resetProgress: () => progress.reset(),
     /** Tests can skip the 15+ s of speech in a long flow. */
     hush: () => voiceBus.hush(),

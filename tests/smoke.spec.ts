@@ -184,6 +184,35 @@ test('a solid sentence frame skips the listening pass', async ({ page }) => {
   expectNoErrors(errors);
 });
 
+test('dad lock: the backquote key stops every press but not walking, and again carries on where it was', async ({ page }) => {
+  const errors = collectErrors(page);
+  const stat = { seen: 6, right: 6, wrong: 0, recent: [true, true, true, true, true, true], last: Date.now() };
+  await seedProgress(page, { version: 1, sounds: {}, words: {}, spelling: {}, frames: Object.fromEntries(FETCH_FRAMES.map((f) => [f, stat])), episodes: 0 });
+  await boot(page, '?scene=room&slot=a&nojourney=1');
+  const read = await until(page, (st) => st.room?.sentence?.pass === 'read' && !st.room.locked, 30_000, 'read pass');
+  const lock = () => page.evaluate(() => (window as unknown as { __ww: { dadLock(): boolean } }).__ww.dadLock());
+  await page.keyboard.press('Backquote');
+  expect(await lock()).toBe(true);
+  await expect(page.locator('#dad-lock')).toBeVisible();
+  for (const b of ['green', 'yellow', 'red', 'start']) await press(page, b);
+  await page.keyboard.press('Space');
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(400);
+  const locked = await state(page);
+  expect(locked.room!.sentence!.index).toBe(read.room!.sentence!.index);
+  expect(locked.scene).toBe('SentenceRoom');
+  // Walking still works.
+  const from = locked.room!.player!;
+  await walkTo(page, from.x + 120, from.y);
+  expect((await state(page)).room!.player!.x).toBeGreaterThan(from.x + 60);
+  await page.keyboard.press('Shift+Backquote');
+  expect(await lock()).toBe(false);
+  await expect(page.locator('#dad-lock')).toHaveCount(0);
+  await press(page, 'green');
+  await until(page, (st) => st.room?.sentence?.index !== read.room!.sentence!.index, 10_000, 'green reads on after the unlock');
+  expectNoErrors(errors);
+});
+
 test('F9 out of a sentence room and back: it restarts cleanly', SLOW, async ({ page }) => {
   test.setTimeout(180_000);
   const errors = collectErrors(page);

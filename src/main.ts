@@ -21,6 +21,7 @@ import { EndingScene } from './scenes/EndingScene';
 import { EntryScene } from './scenes/EntryScene';
 import { VictoryScene } from './scenes/VictoryScene';
 import { installTestHooks } from './testHooks';
+import { installDadLock } from './input/dadLock';
 
 
 /**
@@ -79,6 +80,8 @@ const game = new Phaser.Game({
     Spelling,
   ],
 });
+
+installDadLock();
 
 // After the game exists: the hooks read its scenes (texts).
 installTestHooks(game);

@@ -193,6 +193,8 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 - **Sprites move only by bob and squash/scale.**
 - **Keyboard:** A–Z belongs to spelling. Arrows move, Space/Enter green, Esc red, Tab
   yellow. Dev keys are F-keys only: F2 skip step, F4 auto-answer, F9 parent page.
+  Backquote / tilde is **dad lock** (item 038, `src/input/dadLock.ts`): she walks, no
+  press does anything, timed re-prompts wait; again to unlock.
 - Elsa, Anna and Jasmine are named in data and lines but described and drawn as
   original archetypes, not lookalikes.
 

@@ -12,7 +12,8 @@ npm run dev
 
 Then open **http://localhost:5174** in Chrome or Edge and press F11 for fullscreen. Plug
 the Xbox 360 pad in first; press green (A) on the title screen. The keyboard works too:
-arrows to walk, Space/Enter for green, Tab for yellow (say it again / hint).
+arrows to walk, Space/Enter for green, Tab for yellow (say it again / hint), and the
+backquote / tilde key for dad lock (below).
 
 **Sound:** browsers keep audio off until a click or key press, and it is not confirmed
 that a gamepad press counts. While sound is still off, the title shows a small grown-up
@@ -215,6 +216,14 @@ whatever Ellie image is in the game.
 
 Grown-ups page (progress per sound and word): **F9**, or hold **LB + RB** for two
 seconds on the title screen. On that page, **F8** twice erases all progress.
+
+**Dad lock** (item 038): the **backquote / tilde** key (top-left, below Esc) toggles it,
+anywhere. While it is on, a 🔒 DAD LOCK badge sits in the bottom-left corner: Julia
+can still walk, but no button or key does anything (no green, yellow, red or Start, no
+letters), and the rooms' and the battle's timed re-prompts hold off. Lines already
+playing finish; the battle's move choice keeps waiting. Press it again and play
+carries on exactly where it was. The F-keys still work (F9 opens and closes the
+grown-ups page; red and Esc do not while locked). `src/input/dadLock.ts`.
 
 Dev keys: **F2** skip the current step, **F4** answer correctly. Jump straight into a
 step with a URL, e.g. `http://localhost:5174/?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug`.

@@ -20,7 +20,8 @@
  * Buttons are colours, never A/B: `pressed('green')`. Keyboard: arrows move,
  * Space/Enter green, Escape red, Tab yellow, Shift blue. Letters are left alone
  * entirely, because the spelling game owns A–Z (see TextEntry). Dev keys are
- * F-keys only.
+ * F-keys only. Backquote is dad lock (`dadLock.ts`): while it is on, only the
+ * directions report presses.
  *
  * Tests drive the same state through `virtualPad` (exposed on the hooks
  * object): `press('green')` lands as a press on the next frame, `stick(x, y)`
@@ -30,11 +31,14 @@
 import Phaser from 'phaser';
 
 import { unlockAudio } from '../audio/context';
+import { dadLock } from './dadLock';
 import type { PadColorName } from '../config';
 
 export type Button = PadColorName | 'lb' | 'rb' | 'lt' | 'rt' | 'start' | 'back' | 'up' | 'down' | 'left' | 'right';
 
 const BUTTONS: Button[] = ['green', 'red', 'blue', 'yellow', 'lb', 'rb', 'lt', 'rt', 'start', 'back', 'up', 'down', 'left', 'right'];
+
+const DIRECTIONS = new Set<Button>(['up', 'down', 'left', 'right']);
 
 /** Standard-mapping indices (Xbox 360 pad in Chrome). */
 const PAD_INDEX: Record<Button, number> = {
@@ -168,6 +172,9 @@ export class Controls {
       for (const b of now) if (!this.prev.has(b)) this.edges.add(b);
     }
     if (queued) this.edges.add(queued);
+    // Dad lock: she can walk, but no press does anything. Held buttons still
+    // seed `prev`, so one held through the unlock does not fire either.
+    if (dadLock.locked) for (const b of this.edges) if (!DIRECTIONS.has(b)) this.edges.delete(b);
     this.seeded = true;
     this.prev = now;
     this.down = now;

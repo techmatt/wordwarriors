@@ -60,6 +60,7 @@ import { Caption } from '../ui/Caption';
 import { fitText } from '../ui/fitText';
 import { cast, type Projectile, type Trap } from './abilities';
 import { Fighter, FLOOR_BOTTOM, FLOOR_TOP, initFromMinion, initFromSpec, type FighterInit } from './Fighter';
+import { dadLock } from '../input/dadLock';
 import { ARENA_LEFT, ARENA_RIGHT, STEER } from './movement';
 import { makeStage } from './stages';
 import type { FightStage, Phase, StageHost } from './stages/stage';
@@ -1133,7 +1134,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
       c.open = true;
       this.pickChoice(c.right);
     }
-    if (walking) c.idle = 0;
+    if (walking || dadLock.locked) c.idle = 0;
     else if (c.open && !voiceBus.busy) c.idle += realDt;
     if (c.open && (this.controls.pressed('yellow') || c.idle > 10)) {
       // Green is ignored while the instruction plays, as on the first prompt:

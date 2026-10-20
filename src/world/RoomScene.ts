@@ -21,6 +21,7 @@ import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { advance, castArt, castScale, episode, narrator, type Step } from '../episode/Episode';
 import { fitImage } from '../fx/juice';
 import { Controls } from '../input/Controls';
+import { dadLock } from '../input/dadLock';
 import { hookState, type SpotInfo } from '../testHooks';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { Bubbles } from '../ui/Bubbles';
@@ -322,6 +323,11 @@ export abstract class RoomScene extends Phaser.Scene {
       return;
     }
     if (this.locked) return;
+    // Dad lock: no re-prompt nags while a grown-up is talking with her.
+    if (dadLock.locked) {
+      this.idleMs = 0;
+      return;
+    }
     this.idleMs += deltaMs;
     if (this.walking && !this.hasMoved && this.idleMs > 4000 && !this.stickHint) this.showStickHint();
     if (this.stickHint) this.stickHint.setPosition(this.player.x + 90, this.player.y - 70);
