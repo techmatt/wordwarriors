@@ -548,6 +548,19 @@ same file: `letter_<x>_name`, shown as the bare capital, `say` the name spelled 
 edge-tts ("Vee", "Dubbelyou": "Double you" is timed as two words and fails the build). A
 recording replaces one the same way: `npm run voice:clip -- letter_<x>_name <file.mp3>`.
 
+## A rune (Charge the Spell, `content/phonics/runes.ts`)
+
+Each entry in `RUNES` is one sound unit she can charge: `rune(sound, tier, glyph,
+motion, text, kind, color, extra)`. `tier` 1 is a continuous sound (drawn first), 2 a
+quick one (opens as tier 1 firms up), 3 a digraph. The gesture is the narrator's: their
+sprite bobs in time while `glyph` (an emoji, never a bank word's picture) does `motion`
+beside them, and they say `text`, which trails off into `letter_<sound>_sound`, so it
+must never name the letter or spell the sound, and says no bank word at all
+(`tests/unit/charge.test.ts` checks both). The rest is the battle move her hero fires
+for it, shaped like a word effect (no `pic_` art). Then `voice:lines`, `voice:build`
+(each narrator says each gesture: `nar_<n>_charge_gesture_<sound>`). Tuning is `CHARGE`
+in `src/config.ts`.
+
 ## The home warm-up (`GRAB` in `src/config.ts`, `src/rules/grab.ts`)
 
 Any pictured bank word can be asked for, by her grabs' shakiness times the bank's

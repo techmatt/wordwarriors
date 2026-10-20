@@ -111,7 +111,7 @@ test('Charge the Spell: the charged runes fire as her hero\'s moves in the next 
   await boot(page, '?scene=battle&part=1&charged=m,s,a&nojourney=1');
   await until(page, (st) => st.scene === 'Battle' && (st.battle?.runesFired ?? 0) === 3, 60_000, 'three runes fired');
   // Each rune's sound is said as it fires (queued behind the battle's opening lines).
-  const s = await until(page, (st) => ['m', 's', 'a'].every((r) => st.voice.history.includes(`letter_${r}_sound`)), 60_000, 'the runes' sounds said');
+  const s = await until(page, (st) => ['m', 's', 'a'].every((r) => st.voice.history.includes(`letter_${r}_sound`)), 60_000, 'the runes said');
   expect(s.voice.history.some((id) => id.endsWith('_use_runes'))).toBe(true);
   await shot(page, 'battle');
   expectNoErrors(errors);

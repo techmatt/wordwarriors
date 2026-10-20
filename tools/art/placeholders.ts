@@ -608,6 +608,39 @@ function paintAll(list: ArtAsset[]): Record<string, string> {
         g.lineWidth = 8;
         g.strokeStyle = hex(0x4a8a4a);
         g.stroke();
+      } else if (id === 'prop_rune_altar') {
+        // Item 053: a low violet stone block, a slab on top, glowing grooves; no letters.
+        g.beginPath();
+        g.moveTo(W * 0.14, H * 0.3);
+        g.lineTo(W * 0.86, H * 0.3);
+        g.lineTo(W * 0.96, H * 0.98);
+        g.lineTo(W * 0.04, H * 0.98);
+        g.closePath();
+        g.fillStyle = hex(0x7a6a9a);
+        g.fill();
+        g.lineWidth = 6;
+        g.strokeStyle = hex(0x3a2f55);
+        g.stroke();
+        roundRect(W * 0.06, H * 0.16, W * 0.88, H * 0.16, 12);
+        g.fillStyle = hex(0x9a8ac0);
+        g.fill();
+        g.stroke();
+        g.lineWidth = 7;
+        g.strokeStyle = hex(0xc9a7ff);
+        // Diamonds, not rings: a ring would read as the letter O.
+        for (const fx of [0.3, 0.5, 0.7]) {
+          const cx = W * fx;
+          const cy = H * 0.64;
+          const r = W * 0.06;
+          g.beginPath();
+          g.moveTo(cx, cy - r);
+          g.lineTo(cx + r * 0.7, cy);
+          g.lineTo(cx, cy + r);
+          g.lineTo(cx - r * 0.7, cy);
+          g.closePath();
+          g.fillStyle = hex(0xc9a7ff);
+          g.fill();
+        }
       } else if (id === 'prop_rune_stone') {
         // Item 053: a blank lilac face in a glowing gold rim; the game paints the letter.
         g.beginPath();
