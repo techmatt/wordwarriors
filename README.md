@@ -281,10 +281,14 @@ first, stop-sound CVC words once those come along, then the bank's blends and di
 the vowel after it (the S of the "Suh" placeholder), a hum up to where the schwa comes in
 (the M of "Mmm-uh", the V of "Vuh"), a vowel's steady part, a stop's burst (T, K) or a
 voiced stop's first instant (B, D), and X's K and final S around its vowel. The held part
-loops, crossfaded at the seam. A recording put in place with `voice:clip` is cut by its own
+loops, crossfaded at the seam. A recording put in place with `voice:import` or `voice:clip` is cut by its own
 shape the same way, so no code changes: record a sound you can hold as a steady sound of
 half a second or more (a clean "mmmm", "ssss", "aaa") and a stop as a crisp sound with no
 vowel after it ("t", not "tuh"). A recording with no schwa plays as it is, held whole or once.
+The cut counts zero crossings per second, not per sample (item 057): the browser decodes
+at its AudioContext's rate, usually 48 kHz, and per sample a hiss there counts half what
+it does at 24 kHz, so a recorded CH played 0.06 s of its 0.29 s. At 24 kHz every cut is
+as 054 made it.
 
 Dev keys: **F2** skip the current step, **F4** answer correctly (in Charge the Spell, Dad's yes; on the Stretchy Bridge, across in one go, then Dad's yes or the right picture). Jump straight into a
 step with a URL, e.g. `http://localhost:5174/?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug`.
@@ -457,6 +461,63 @@ npm run voice:lines     # regenerate content/voice/lines.json
 npm run voice:build     # synthesise new or changed lines into public/voice-gen/
 npm run art:placeholders  # paint missing art, rewrite docs/art.md
 ```
+
+### Matt's recordings: the phonics recorder and `voice:import` (item 057)
+
+**The recorder** is one self-contained page, `tools/recorder/phonics-recorder.html`: 12
+cards, each three words with their sounds (`docs/recording.md` says how to record). To
+send it to someone, either **email the file** (they open it in Chrome, Edge or Firefox
+straight from their downloads; the browser asks for the microphone, which works from a
+`file://` page), or **send the hosted link**. The hosted copy is
+`C:\Code\techmatt.github.io\phonics-recorder.html`, Matt's GitHub Pages repo, served
+over HTTPS. Don't edit it there: after each change to the repo's copy the planner copies
+it over, and Matt commits it. Nothing leaves their computer until they press
+**Download zip**, which saves `phonics-<name>.zip` (stored, no compression, about 16 MB
+for all 12 cards). That zip comes back by email or a shared folder; put it in
+`scratch/voice-import/`.
+
+The zip holds `manifest.json` (format `phonics-recorder/2`: `recorder`, the speaker's
+name, now required; each take's card `group` `g01`…`g12`, `entries` of sound, word,
+`kind`, `repeats`, and `counted`, the sounds the page heard) and `takes/gNN.wav`, one
+mono WAV per card at the browser's rate (48 kHz here). The importer reads format 1 too;
+a format-1 zip has no name and is taken as Matt's.
+
+**`npm run voice:import -- <zip> [--take gNN] [--dry]`** (`tools/voice/import.ts`, the
+splitter `tools/voice/split.ts`, ported from item 055's prototype):
+
+- each card is high-passed at 80 Hz, cut by its loudness envelope, and must hold
+  exactly 12 sounds (word, three repeats, three times). Otherwise it installs nothing
+  and says which card to re-record and why. "No sound" is an empty take; "found 10
+  sounds, expected 12: sounds ran together at 8.4 s" means pauses under about 0.25 s;
+  "too quiet to tell from noise" is a sound more than 20 dB under the card's loudest;
+  "did it stop early?" means the take is short;
+- each clip is widened to its soft edges, faded (5 / 15 ms), normalised to -17 dBFS RMS
+  (peak at most -1 dBFS), padded with 30 ms of digital silence, and encoded as 96 kbps
+  mono MP3 by `@breezystack/lamejs` (pure JS, a devDependency: nothing to install but
+  `npm ci`);
+- for each sound it takes the most typical of the three repeats (the medoid, by band
+  spectrum and length) that passes the bridge's hold check (`holdPlan`; a held sound
+  must loop 0.1 s or more), falling back to the next closest. If none passes, the word
+  goes in and the sound doesn't;
+- clips install as `content/voice/clips/<id>.<hash8>.mp3` for `letter_<x>_sound` (the K
+  card fills `letter_ck_sound` too) and `word_<word>` where the game has that word, with
+  `provider` the recorder's name. A file it replaces is deleted. The hash in the name
+  makes `voice:build` rebuild a re-record. A sound the game has no line for yet waits in
+  `index.json`'s `waiting` map and is moved in by the next import once the line exists;
+- every run writes `scratch/voice-import/review.html` (with its audio in `review/`):
+  each card's envelope, cuts, threshold and floor, then every clip with a player, its
+  target id and the bridge's cut of each repeat, looped. `--dry` writes only that.
+
+Then `npm run voice:build` (no network: recorded lines are copied, not synthesised).
+The recorder counts each take with the importer's own detector (its `detector:begin` /
+`detector:end` block; `tests/unit/voiceImport.test.ts` runs the two side by side), so a
+take the page says counts out is one the importer takes.
+
+Matt's recording 2 (2026-10-20, all 12 cards, recorded with the format-1 page before
+these changes): cards 2, 4, 6, 8 and 9 went in (D P H J G Y E I O U SH CH and 15 words);
+1, 3, 5, 7, 10, 11 and 12 were refused (repeats about 0.2 s apart ran together, quiet S
+and K hisses, card 3 stopped after 5.6 s). F, L and V were said "fuh", "luh", "vuh" with
+about 0.1 s of the sound itself, so none of their repeats holds on the bridge.
 
 ### The word bank's coverage rule (item 056)
 

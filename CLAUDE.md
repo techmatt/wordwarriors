@@ -64,7 +64,8 @@ Playwright serves its own (README, *Tests*). The sibling game
 | `content/art/` | `assets.ts` every art id and size; `prompts.ts` the real-art prompts. |
 | `public/art/` | Generated, committed. Do not hand-edit. |
 | `public/voice-gen/`, `art-originals/` | Untracked junctions to the Drive folder (README, *Storage*): generated voice; full-res art and Matt's private photos. Do not hand-edit. |
-| `tools/voice/`, `tools/art/` | `compose.ts` (lines.json from data), `build.ts` (audio + manifest); `placeholders.ts`, `generate.ts`, `alts.ts`. |
+| `tools/voice/`, `tools/art/` | `compose.ts` (lines.json from data), `build.ts` (audio + manifest), `import.ts` + `split.ts` (a recorder zip into clips); `placeholders.ts`, `generate.ts`, `alts.ts`. |
+| `tools/recorder/` | `phonics-recorder.html`, the page Matt records the letter sounds on (README, *Matt's recordings*); its hosted copy is synced by the planner, never edited here. |
 | `tests/` | Playwright specs + `harness.ts`; `unit/` for node:test; `shots/` UI screenshots (README, *Tests*); `qa/` the bug-hunt checker. |
 | `docs/` | `systems.md` entry points; `engineering.md` measured facts; `content.md` how to add each kind of content; `recording.md` Matt's voice side; `art.md` (generated) the art brief; `qa-findings.md` the bug-hunt findings (known issues and Matt's calls). |
 
@@ -85,6 +86,7 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `npm run voice:build` | Synthesise new/changed lines (`--force` all, `--prune` drop unused). Needs `uv` and network |
 | `npm run voice:status` | Recorded / stale / still edge-tts, letter sounds first |
 | `npm run voice:clip -- <id> <file.mp3>` | Put a recording in place of a line |
+| `npm run voice:import -- <zip> [--take gNN] [--dry]` | A phonics-recorder zip into clips; writes `scratch/voice-import/review.html` |
 | `npm run art:placeholders` | Paint missing/placeholder art, rewrite `docs/art.md` |
 | `npm run art:gen -- <ids…>` | Real art via Codex's image tool (README, *Real art*) |
 | `npm run art:alts -- <ids…> --sheet=<file>` | Draw candidates (3 per id) and a comparison sheet; the game's art is untouched |
@@ -211,7 +213,7 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 | "make X a race / a cook-off" / "chef Jason should cook more" | `fight` on X in the roster; `fightNudge.chance` on `dada_jason` (`docs/content.md`, "A fight style") |
 | "make it the chef episode" | `?ally=dada_jason` (Julia's chef form follows; outfits are `content/battle/forms.ts`) |
 | "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`) |
-| "here are my letter sound recordings" | `docs/recording.md` |
+| "here are my letter sound recordings" / "here is a recorder zip" | `npm run voice:import -- <zip>`, then `voice:build`; report each card installed or refused and why (`docs/recording.md`) |
 | "more / fewer runes" / "Dad should wait longer" / "quick sounds sooner / later" | `CHARGE` in `src/config.ts` (`runes`, `timeoutMs`, `assists`, `startLevel`, `tiers`) |
 | "a new gesture for X" / "X's rune should fire Y" | X's entry in `RUNES` (`content/phonics/runes.ts`: `gesture`, `move`), then `voice:lines`, `voice:build` |
 | "stop forcing the phonics room" | `FORCE_PHONICS_ROOM` in `src/config.ts` (both stay weighted entries, `CHARGE.weight`, `BRIDGE.weight`) |
