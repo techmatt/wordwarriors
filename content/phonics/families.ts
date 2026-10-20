@@ -52,15 +52,18 @@ export interface SillyOnset {
 const RIMES: Record<string, { say: string; silly: SillyOnset[] }> = {
   // Out: JAT (a people's name), GAT (slang), KAT/NAT/WAT (sound like CAT, GNAT, WHAT).
   at: { say: 'At', silly: [{ letter: 'z', say: 'Zat' }, { letter: 'y', say: 'Yat' }] },
-  // Out: YAN, JAN, DAN, HAN (names), GAN (Scots "go"), KAN (sounds like CAN), WAN, NAN.
-  an: { say: 'Ann', silly: [{ letter: 'z', say: 'Zan' }, { letter: 'l', say: 'Lan' }] },
+  // Out: YAN, JAN, DAN, HAN, LAN (names; LAN is a word too, item 038), GAN (Scots "go"),
+  // KAN (sounds like CAN), WAN, NAN; the rest are words. So -AN lays two tiles, with ZAN.
+  an: { say: 'Ann', silly: [{ letter: 'z', say: 'Zan' }] },
   // Every other onset makes a word, a name or worse (ZAP, YAP, DAP, BAP, WAP; never J
   // or F), so -AP lays two tiles, the right one and VAP.
   ap: { say: 'App', silly: [{ letter: 'v', say: 'Vap' }] },
   // Out: ZEN, YEN, FEN, WEN (words), JEN, KEN, BEN, LEN, REN (names), SEN (a coin).
   en: { say: 'Ehn', silly: [{ letter: 'n', say: 'Nehn' }, { letter: 'v', say: 'Vehn' }] },
-  // "Ett" spans 1.39 s (read as letters); a single syllable is 0.7 s. Out: FET, RET, HET.
-  et: { say: 'Eht', silly: [{ letter: 'z', say: 'Zet' }, { letter: 'd', say: 'Det' }] },
+  // "Ett" spans 1.39 s (read as letters); a single syllable is 0.7 s. Out: FET, RET, HET,
+  // DET (slang for a detective, item 038), KET (slang, and worse), TET (a holiday), CET
+  // (sounds like SET); the rest are words. So -ET lays two tiles, with ZET.
+  et: { say: 'Eht', silly: [{ letter: 'z', say: 'Zet' }] },
   // Out: ZOG (a storybook dragon, and worse), MOG (a cat, and a storybook one), WOG
   // (a slur), NOG, POG, TOG, GOG, VOG (words or names), KOG (sounds like COG).
   og: { say: 'Ogg', silly: [{ letter: 'y', say: 'Yog' }, { letter: 's', say: 'Sog' }] },

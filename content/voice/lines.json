@@ -5179,12 +5179,6 @@
   "text": "Zan!"
  },
  {
-  "id": "silly_lan",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Lan!"
- },
- {
   "id": "rime_ap",
   "speaker": "phonics",
   "group": "phonics",
@@ -5228,12 +5222,6 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "Zet!"
- },
- {
-  "id": "silly_det",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Det!"
  },
  {
   "id": "rime_og",
