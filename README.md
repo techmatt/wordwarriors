@@ -580,6 +580,15 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   one from 30% to 39% (2026-10-19). An action word's picture is the hardest to make
   name itself (SNAP comes out a crocodile, LIFT a crane): it is only ever shown after
   she has read the word, never as the thing to find.
+- Item 041's cyber Dada Matt round (`char_dada_matt_cyber_good`, the first drawn from
+  briefs: five looks, 2 candidates each, 4 to 13; none promoted, Matt picks) is
+  `scratch/art_alts_041_cyber_matt.png` and `scratch/art_alts_041_cyber_matt.json`; the
+  briefs are `scratch/041_cyber_<look>.txt`, each run's own sheet
+  `scratch/art_alts_041_cyber_matt_<look>.png`. With the photo reference a candidate took
+  50 to 75 s and about 0.5% of Codex's 5-hour window (2026-10-20). The briefs use
+  `MATT_LIFTER`'s wording (fit, not bulky), not `MATT_FACE`'s bodybuilder.
+- `npm test` empties `test-results/` as it starts (Playwright's output folder): a
+  script or log kept there by a run beside it is deleted. Keep logs in `scratch/`.
 - A new `prop_word_machine` means refitting `WINDOW` / `PANEL` in
   `src/scenes/WordMachine.ts`: fractions of the cut `public/art` PNG (centre and radius
   of the glass, centre and size of the blank panel), checked with machine.spec's
