@@ -262,6 +262,10 @@ the fast lane at real time. A new browser test that takes more than about 10 s g
 
 The suite starts its own server on port 5184 (`TEST_PORT` in `src/port.ts`), never the dev
 port 5174, so a test run in a worktree cannot attach to the main checkout's dev server.
+A test that times out "waiting for title" (or "parent page", "hub quiet") with `scene=`
+empty never got past the boot's loading. Seen in item 034 when the machine was loaded (and
+in any run where `src/` changed underneath: the dev server reloads the page): the same
+tests passed when rerun alone. Rerun them alone before suspecting the code.
 If 5184 is busy (another worktree's run) the suite fails at once rather than testing the
 wrong code.
 
