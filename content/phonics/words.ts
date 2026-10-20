@@ -17,7 +17,7 @@ export interface Word {
   word: string;
   glyph?: string;
   /** A canvas drawing in tools/art/placeholders.ts, when there is no emoji. */
-  draw?: 'fan' | 'log' | 'mop' | 'pot';
+  draw?: 'fan' | 'log' | 'mop' | 'pot' | 'mug' | 'rug';
   decodable: boolean;
   /** For sight words: the character whose card is the picture. */
   character?: string;
@@ -54,6 +54,10 @@ export const CVC_WORDS: Word[] = [
   { word: 'mop', draw: 'mop', decodable: true },
   { word: 'pot', draw: 'pot', decodable: true },
   { word: 'rat', glyph: '🐀', decodable: true },
+  // Item 035: the -UG family with BUG (content/phonics/families.ts).
+  { word: 'mug', draw: 'mug', decodable: true },
+  { word: 'rug', draw: 'rug', decodable: true },
+  { word: 'jug', glyph: '🏺', decodable: true },
 ];
 
 /** Character names as sight words. The picture is the character's own card. */

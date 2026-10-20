@@ -19,7 +19,7 @@ const clueLines = (s: WWState) => s.voice.history.filter((id) => /^letter_|^word
 
 const names = (w: string) => [...w].map((c) => `letter_${c}_name`);
 const sounds = (w: string) => [...w].map((c) => `letter_${c}_sound`);
-const WORDS = ['cat', 'dog', 'sun', 'fox', 'bug', 'pig', 'hat', 'bed', 'cup', 'map', 'fan', 'web', 'bus', 'hen', 'box', 'net', 'pen', 'van', 'bat', 'bag', 'can', 'nut', 'tub', 'cap', 'pin', 'jet', 'log', 'mop', 'pot', 'rat'];
+const WORDS = ['cat', 'dog', 'sun', 'fox', 'bug', 'pig', 'hat', 'bed', 'cup', 'map', 'fan', 'web', 'bus', 'hen', 'box', 'net', 'pen', 'van', 'bat', 'bag', 'can', 'nut', 'tub', 'cap', 'pin', 'jet', 'log', 'mop', 'pot', 'rat', 'mug', 'rug', 'jug'];
 const allAt = (level: number) => Object.fromEntries(WORDS.map((w) => [w, level]));
 
 /** Into the hall with the clue given and her free to walk. */

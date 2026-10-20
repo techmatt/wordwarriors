@@ -13,7 +13,7 @@ import { EPISODE_DEFAULTS } from '../../src/config';
 import { FETCH_ITEMS, FRAMES, FRAME_BY_ID, allFrameTokens, allPrefixes, lookalikesOf, sentence, slotOf, tokenWord } from '../../content/phonics/sentences';
 import { CVC_WORDS } from '../../content/phonics/words';
 import { wordLine } from '../../content/voice/ids';
-import { BAG_WORDS, distractors, drawKey, frameIsSolid, saidEarly, type EpisodeInput, type SentencePlan } from '../../src/rules/sentences';
+import { BAG_WORDS, LEGACY_BAG_WORDS, distractors, drawKey, frameIsSolid, saidEarly, type EpisodeInput, type SentencePlan } from '../../src/rules/sentences';
 import { sentencePlans } from './plans';
 import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
 
@@ -235,6 +235,27 @@ test('the word bag is kept with her progress, and an older save without one stil
   assert.deepEqual(c.bag(), { left: [], round: 0 });
   assert.equal(c.snapshot().episodes, 3);
   assert.equal(c.stat('words', 'cat').seen, 1);
+});
+
+test('new words (MUG RUG JUG) join a round under way; a fresh bag and a new round are untouched', () => {
+  const NEW = ['mug', 'rug', 'jug'];
+  // Saved before item 035, mid-round, MUG RUG JUG never in it.
+  const old = memory();
+  const left = LEGACY_BAG_WORDS.slice(0, 5);
+  old.setItem(STORE_KEY, JSON.stringify({ ...new ProgressStore(memory()).snapshot(), bag: { left, round: 2 }, bagKnown: undefined }));
+  const a = new ProgressStore(old);
+  drawKey(a, BAG_WORDS, seeded(1));
+  assert.deepEqual(a.bag().left.sort(), [...left, ...NEW].sort());
+  assert.equal(a.bag().round, 2);
+  // Once known, spending them keeps them out until the next round.
+  for (const w of NEW) a.takeFromBag(w);
+  drawKey(a, BAG_WORDS, seeded(2));
+  assert.ok(!a.bag().left.some((w) => NEW.includes(w)));
+  // A store from today never tops up: its first draw fills the bag, with every word.
+  const b = new ProgressStore(memory());
+  b.refillBag(['cat', 'dog']);
+  drawKey(b, BAG_WORDS, seeded(3));
+  assert.deepEqual(b.bag().left.sort(), ['cat', 'dog']);
 });
 
 test("the villain's named counter word still comes up, and is boosted", () => {

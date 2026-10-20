@@ -28,7 +28,7 @@
 import { FAMILIES, FAMILY_BY_RIME, onsetOf, rimeOf, sillyWord, type Family } from '../../content/phonics/families';
 import { WORD_MACHINE } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
-import { BAG_WORDS, type Rand } from './sentences';
+import { BAG_WORDS, LEGACY_BAG_WORDS, type Rand } from './sentences';
 
 export type MachineMode = 'make' | 'flip' | 'real_or_silly';
 
@@ -100,7 +100,9 @@ export function planMachine(store: ProgressStore, input: MachineInput, rand: Ran
   // The bag is shared with the sentence rooms: it refills only once it is
   // empty (as `drawKey` refills only when nothing it can use is left). While
   // other words are still in it and no family has two left, the machine takes
-  // eligible words from outside the bag, without spending the round.
+  // eligible words from outside the bag, without spending the round. Words new
+  // to the game join a round under way (`topUpBag`).
+  store.topUpBag(BAG_WORDS, LEGACY_BAG_WORDS);
   let pool = store.bag().left.filter((w) => eligible.includes(w));
   if (!usable(pool).length && !store.bag().left.length) {
     store.refillBag(BAG_WORDS.filter((w) => !input.taken.includes(w)));

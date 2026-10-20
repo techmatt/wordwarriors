@@ -62,6 +62,9 @@ export type RoomPlan = SentencePlan | MachineRoomPlan;
 /** Every word the bag holds: the pictured, decodable CVC words. */
 export const BAG_WORDS: string[] = CVC_WORDS.filter((w) => w.decodable).map((w) => w.word);
 
+/** The bag words before item 035 added MUG RUG JUG: a progress blob saved then knew these (`topUpBag`). */
+export const LEGACY_BAG_WORDS: string[] = BAG_WORDS.filter((w) => !['mug', 'rug', 'jug'].includes(w));
+
 /** Words a side room can fetch (each has a battle item). */
 const FETCHABLE = new Set(FETCH_ITEMS.map((i) => i.word));
 
@@ -155,6 +158,7 @@ export function drawKey(
   boost: (w: string) => number = () => 1,
 ): string {
   const ok = new Set(eligible);
+  store.topUpBag(BAG_WORDS, LEGACY_BAG_WORDS);
   let pool = store.bag().left.filter((w) => ok.has(w));
   if (!pool.length) {
     store.refillBag(BAG_WORDS.filter((w) => !keepOut.includes(w)));

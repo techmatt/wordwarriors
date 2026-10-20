@@ -42,7 +42,7 @@ const INPUT: EpisodeInput = {
 
 test('families: every rime with two or more pictured words, and only pictured, decodable CVC words', () => {
   const pictured = new Set(CVC_WORDS.filter((w) => w.decodable).map((w) => w.word));
-  assert.deepEqual(FAMILIES.map((f) => f.rime).sort(), ['an', 'ap', 'at', 'en', 'et', 'og']);
+  assert.deepEqual(FAMILIES.map((f) => f.rime).sort(), ['an', 'ap', 'at', 'en', 'et', 'og', 'ug']);
   for (const f of FAMILIES) {
     assert.ok(f.words.length >= 2, `${f.rime} has ${f.words.join(', ')}`);
     for (const w of f.words) {
@@ -52,6 +52,7 @@ test('families: every rime with two or more pictured words, and only pictured, d
     }
   }
   assert.deepEqual(FAMILY_BY_RIME.at!.words.sort(), ['bat', 'cat', 'hat', 'rat']);
+  assert.deepEqual(FAMILY_BY_RIME.ug!.words.sort(), ['bug', 'jug', 'mug', 'rug']);
 });
 
 test('silly onsets make nonsense: no pictured word, no move word, never the family\'s own onsets, nothing on the block list', () => {
@@ -61,6 +62,7 @@ test('silly onsets make nonsense: no pictured word, no move word, never the fami
     'zap', 'yap', 'jap', 'fap', 'dap', 'bap', 'wap', 'zen', 'yen', 'fen', 'wen', 'sen', 'jen', 'ken', 'ben', 'len', 'ren', 'den', 'ten', 'men',
     'jan', 'dan', 'nan', 'han', 'yan', 'gan', 'kan', 'wan', 'kat', 'nat', 'wat', 'gat', 'jat', 'vat', 'fat', 'yet', 'fet', 'ret', 'het',
     'fog', 'hog', 'jog', 'bog', 'cog', 'kog', 'nog', 'pog', 'tog', 'gog', 'vog', 'zog', 'mog', 'wog', 'set', 'get', 'let', 'met', 'pet', 'vet', 'wet',
+    'dug', 'lug', 'pug', 'vug', 'fug', 'hug', 'tug', 'nug', 'zug', 'cug', 'gug', 'sug',
   ];
   for (const f of FAMILIES) {
     assert.ok(f.silly.length >= 1, `${f.rime} has a silly tile`);

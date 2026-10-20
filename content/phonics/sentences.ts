@@ -103,6 +103,10 @@ export const FETCH_ITEMS: FetchItem[] = [
   { word: 'cap', look: 'caps flung like flying saucers', ability: use('cap', 'bolt', 0xe63946, { ...pic('cap'), count: 4, homing: true }) },
   { word: 'log', look: 'logs rolling down from the sky, thump', ability: use('log', 'rain', 0x8a5a2a, { ...pic('log'), count: 6, power: 3 }) },
   { word: 'rat', look: 'brave rats scurrying at the villain', ability: use('rat', 'bolt', 0xa0a0a0, { ...pic('rat'), count: 6, homing: true }) },
+  // Item 035: the -UG family.
+  { word: 'mug', look: 'mugs of cocoa tumbling down, warm and sloshy', ability: use('mug', 'rain', 0x3a86ff, { ...pic('mug'), count: 8 }) },
+  { word: 'rug', look: 'a magic flying rug that swoops straight through the villain', ability: use('rug', 'dash', 0xe63946, { power: 3 }) },
+  { word: 'jug', look: 'a giant jug that pours a wave of milk across the arena', ability: use('jug', 'wave', 0xffffff, { color2: 0xbfefff }) },
 ];
 
 /** The word's own picture as the thing flung or dropped, the right way up. */
@@ -125,6 +129,7 @@ export const LOOKALIKES: string[][] = [
   ['hat', 'cap'],
   ['bus', 'van', 'jet'],
   ['cup', 'pot', 'can'],
+  ['cup', 'mug', 'jug'],
   ['pen', 'pin'],
   ['net', 'web'],
   ['bag', 'box'],

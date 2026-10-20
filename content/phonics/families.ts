@@ -5,8 +5,8 @@
  * it (content/phonics/words.ts). Only rimes with at least two pictured words
  * are families: the game teaches that changing the first sound makes a new
  * word, which needs a second word to change to. Today that is -AT, -AN, -AP,
- * -EN, -ET and -OG; a new pictured word (MUG, RUG, TOP...) can open -UG or -OP
- * without any change here.
+ * -EN, -ET, -OG and -UG (item 035); a rime with a second pictured word (TOP
+ * for -OP) becomes one once it has an entry in RIMES.
  *
  * `silly` are the onsets whose word is nonsense: the wrong tiles of mode 1
  * ("that makes ZAT, a silly word!"). Each one is checked by hand: not an
@@ -57,6 +57,9 @@ const RIMES: Record<string, { say: string; silly: SillyOnset[] }> = {
   // Out: ZOG (a storybook dragon, and worse), MOG (a cat, and a storybook one), WOG
   // (a slur), NOG, POG, TOG, GOG, VOG (words or names), KOG (sounds like COG).
   og: { say: 'Ogg', silly: [{ letter: 'y', say: 'Yog' }, { letter: 's', say: 'Sog' }] },
+  // Item 035: BUG MUG RUG JUG. Out: DUG, LUG, PUG, VUG, FUG (words, FUG too near worse),
+  // HUG, TUG (move words), NUG (slang), ZUG (a town), CUG (sounds like KUG), GUG (a monster).
+  ug: { say: 'Ugg', silly: [{ letter: 'k', say: 'Kug' }, { letter: 'w', say: 'Wug' }] },
 };
 
 export const onsetOf = (word: string): string => word.charAt(0);

@@ -3655,6 +3655,25 @@
   "text": "Sog!"
  },
  {
+  "id": "rime_ug",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Ugg.",
+  "note": "placeholder for the rime -ug said alone; replace with a recorded clip"
+ },
+ {
+  "id": "silly_kug",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Kug!"
+ },
+ {
+  "id": "silly_wug",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Wug!"
+ },
+ {
   "id": "word_anna",
   "speaker": "phonics",
   "group": "phonics",
@@ -3859,6 +3878,12 @@
   "text": "jet!"
  },
  {
+  "id": "word_jug",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "jug!"
+ },
+ {
   "id": "word_julia",
   "speaker": "phonics",
   "group": "phonics",
@@ -3911,6 +3936,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "mud!"
+ },
+ {
+  "id": "word_mug",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "mug!"
  },
  {
   "id": "word_nab",
@@ -4019,6 +4050,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "rub!"
+ },
+ {
+  "id": "word_rug",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "rug!"
  },
  {
   "id": "word_run",

@@ -561,6 +561,37 @@ function paintAll(list: ArtAsset[]): Record<string, string> {
             g.bezierCurveTo(cx + i * u - 0.5 * u, cy - 2.6 * u, cx + i * u + 0.5 * u, cy - 3 * u, cx + i * u, cy - 3.8 * u);
             g.stroke();
           }
+        } else if (a.draw === 'mug') {
+          g.strokeStyle = hex(0x3a86ff);
+          g.lineWidth = 0.7 * u;
+          g.beginPath();
+          g.arc(cx + 2.2 * u, cy + 0.3 * u, 1.3 * u, -Math.PI * 0.5, Math.PI * 0.5);
+          g.stroke();
+          g.fillStyle = hex(0x3a86ff);
+          roundRect(cx - 2.6 * u, cy - 2.4 * u, 4.8 * u, 5.2 * u, 0.8 * u);
+          g.fill();
+          g.fillStyle = hex(0x7a4a2a);
+          g.beginPath();
+          g.ellipse(cx - 0.2 * u, cy - 2.2 * u, 2.2 * u, 0.5 * u, 0, 0, Math.PI * 2);
+          g.fill();
+        } else if (a.draw === 'rug') {
+          g.fillStyle = hex(0xe63946);
+          roundRect(cx - 3.6 * u, cy - 2.2 * u, 7.2 * u, 4.4 * u, 0.4 * u);
+          g.fill();
+          for (const [k, c] of [[1.4, 0xffd23f], [0.6, 0x3a86ff]] as const) {
+            g.fillStyle = hex(c);
+            g.fillRect(cx - (3.6 - k * 1.5) * u, cy - (2.2 - k * 1.2) * u, (7.2 - k * 3) * u, (4.4 - k * 2.4) * u);
+          }
+          g.strokeStyle = hex(0xfff3c4);
+          g.lineWidth = 0.2 * u;
+          for (let i = -1.8; i <= 1.8; i += 0.6) {
+            for (const s of [-1, 1]) {
+              g.beginPath();
+              g.moveTo(cx + s * 3.6 * u, cy + i * u);
+              g.lineTo(cx + s * 4.2 * u, cy + i * u);
+              g.stroke();
+            }
+          }
         }
       }
     } else {

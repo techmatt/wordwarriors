@@ -45,6 +45,8 @@ export interface ProgressData {
   grabLevels: Record<string, number>;
   /** Her word bag: the sentence key words drawn without replacement (item 015). */
   bag: WordBag;
+  /** The bag words the game had when `bag` was last topped up (`topUpBag`); `'legacy'` for a blob from before item 035. */
+  bagKnown?: string[] | 'legacy';
   /** Her move bag: the battle's move words, drawn the same way (item 018). */
   moveBag: WordBag;
   episodes: number;
@@ -124,6 +126,8 @@ export class ProgressStore {
       // Item 033, the same way.
       parsed.grabs ??= {};
       parsed.grabLevels ??= {};
+      // Item 035: a blob with no `bagKnown` knew the bag words before MUG RUG JUG.
+      parsed.bagKnown ??= 'legacy';
       return parsed;
     } catch {
       this.storage?.setItem(`${STORE_KEY}.unreadable.${this.now()}`, raw);
@@ -215,6 +219,24 @@ export class ProgressStore {
     const f = this.bagField(which);
     this.data[f] = { left: [...new Set(words)], round: this.data[f].round + 1 };
     this.save();
+  }
+
+  /**
+   * Words new to the game (item 035's MUG RUG JUG) join her key-word round
+   * already under way, so she meets them this round, not after the bag
+   * empties. `catalogue` is every bag word the game has now; `bagKnown`
+   * remembers the catalogue last seen, and a blob saved before item 035
+   * (`'legacy'`) knew `legacy`. A word in neither goes into the bag.
+   */
+  topUpBag(catalogue: string[], legacy: string[]): void {
+    const was = this.data.bagKnown;
+    const known = was === 'legacy' ? legacy : (was ?? catalogue);
+    const b = this.data.bag;
+    const add = b.round ? catalogue.filter((w) => !known.includes(w) && !b.left.includes(w)) : [];
+    b.left.push(...add);
+    const changed = add.length > 0 || !was || was === 'legacy' || catalogue.some((w) => !was.includes(w));
+    this.data.bagKnown = [...catalogue];
+    if (changed) this.save();
   }
 
   /** A word she missed goes back in, so it can come round again before the bag empties. */
