@@ -745,7 +745,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
       burst(this, f.cx, f.cy, { count: 40, speed: 300, colors: [ab.color, ab.color2 ?? 0xffffff] });
     }
     // Side by side, not one inside the other (item 034).
-    this.tweens.add({ targets: b, x: a.x + Math.max(90, (a.bodyHalf + b.bodyHalf) * 0.85), y: a.y + 10, duration: 400 });
+    this.tweens.add({ targets: b, x: a.x + Math.max(90, a.bodyHalf + b.bodyHalf), y: a.y + 10, duration: 400 });
     if (!this.textGivesAway(abilityCallout(ab))) this.banner(abilityCallout(ab).toUpperCase(), ab.color, true);
     slowmo(this, 0.35, 900);
     flash(this, ab.color, 160);
@@ -1597,8 +1597,14 @@ export class BattleScene extends Phaser.Scene implements StageHost {
         // the air (a leap passes over), and her hero in a move choice is hers.
         if (body(a) && body(b)) {
           // One passing over the other (a leap, a flyer high above) is not standing in it.
-          if (Math.abs(b.y - a.y) >= SAME_DEPTH || Math.abs(a.lift - b.lift) > Math.min(a.height, b.height) * 0.6) continue;
-          const need = (a.bodyHalf + b.bodyHalf) * 0.85;
+          if (Math.abs(a.lift - b.lift) > Math.min(a.height, b.height) * 0.6) continue;
+          // Side by side at about one depth, or one standing behind the other
+          // and more than half hidden by them (Julia just behind a dad). A
+          // contest's own places (race lanes passing) are the stage's to judge.
+          const [front, back] = a.y >= b.y ? [a, b] : [b, a];
+          const hidden = !(this.held(a) && this.held(b)) && front.top - back.top < back.height * back.scaleMul * 0.5;
+          if (Math.abs(b.y - a.y) >= SAME_DEPTH && !hidden) continue;
+          const need = a.bodyHalf + b.bodyHalf;
           const dx = b.x - a.x;
           if (Math.abs(dx) >= need) continue;
           const dir = Math.abs(dx) > 0.5 ? Math.sign(dx) : a.team === 'hero' ? 1 : -1;

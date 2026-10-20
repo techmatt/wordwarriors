@@ -98,7 +98,7 @@ const MINION_CAP = 7;
  * inside a giant).
  */
 function besideGap(f: Fighter, t: Fighter, min: number): number {
-  return Math.max(min, (f.bodyHalf + t.bodyHalf) * 0.85 + 10);
+  return Math.max(min, f.bodyHalf + t.bodyHalf + 10);
 }
 
 /**
