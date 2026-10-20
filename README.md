@@ -397,8 +397,10 @@ Every file has exactly one home (Matt, 2026-10-18):
 - **Drive** (`C:\Code\gdrive-sync\wordwarriors\`, a Google Drive sync folder): expensive,
   irreplaceable or private files that do not belong in git. They live there; the repo
   path is a directory junction (`mklink /J`) to them, git-ignored.
-  - `art-originals/` → `…\wordwarriors\art-originals`: full-res art, `log.jsonl`, and
-    Matt's family photos in `refs/` (private: never copy them into the tracked tree).
+  - `art-originals/` → `…\wordwarriors\art-originals`: full-res art (`<id>.png`, what
+    `art:gen --reprocess` cuts), `log.jsonl`, the originals `art:pick -- <id> 0` puts
+    back (`restore/`), candidates still waiting on Matt (`alts/`), and Matt's family
+    photos in `refs/` (private: never copy them into the tracked tree).
   - `public/voice-gen/` → `…\wordwarriors\voice-gen`: the edge-tts mp3s, `manifest.json`
     and `.build-cache.json`. Recordings are copied in from `content/voice/clips/` by
     `voice:build`, which overrides edge-tts with them as before.
@@ -408,7 +410,17 @@ Every file has exactly one home (Matt, 2026-10-18):
   in `scratch/qa/<tag>/`, a battle-shots run ~0.5 GB in `scratch/polish_034/<tag>/`.
   Once a run's findings are written up (`docs/qa-findings.md`, a report), delete its
   PNGs and keep its `summary.md`, `*.json` and the shots the summary cites. Item 051 did
-  this for every run to date: 16.6 GB of `scratch/` became 1.3 GB.
+  this for every run to date: 16.6 GB of `scratch/` became 1.3 GB. Item 052 then deleted
+  item 039's cited shots and contact sheets too (`scratch/qa/` keeps only each run's
+  `summary.md` and JSON, so a summary's shot links are dead).
+- **Nothing old is kept forever** (item 052). Once Matt's picks from a candidate round
+  are promoted, the candidates he did not pick are disposable (redrawing one costs ~1%
+  of a 5-hour Codex window): `art:pick` deletes the id's candidates itself, and the
+  round's sheet, manifest, preview folder and briefs in `scratch/` go too. A finished
+  item's leftover worktree goes with `git worktree remove --force <path>` from the main
+  checkout (junctions unlinked first, *Battle shots*), then `git worktree prune`; its
+  `conductor/*` branch stays. Item 052 did this for everything to date: `alts/` 1.3 GB
+  to 39 MB, `scratch/` 1.2 GB to 22 MB, the worktrees folder 1.4 GB to 0.3 GB.
 
 The main checkout holds the junctions; conductor links each worktree's to the same Drive
 folders, so a worktree shares one copy and never needs a full voice rebuild. Because the
@@ -563,12 +575,23 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
 - `art:pick -- <id> <n>` makes candidate `n` the game's art: it becomes
   `art-originals/<id>.png` and is cut into `public/art/<id>.png` by the same keying,
   trimming and palette shrink as `art:gen`. Commit the PNG afterwards. The first pick of
-  an id saves the original as candidate 0 (`<id>-0.png`, and `<id>-0.game.png`, the
-  committed PNG byte for byte), so `art:pick -- <id> 0` puts it back. A placeholder
-  has no original, so it has only `<id>-0.game.png`. Before item 020 a second pick
-  overwrote that file with the art then in the game: pic_zap's and pic_pow's candidate
-  0 is now item 018's promotion, not the painted placeholder (`art:placeholders`
-  repaints one).
+  an id saves the original in `art-originals/restore/` (`<id>.png`, and
+  `<id>.game.png`, the committed PNG byte for byte), so `art:pick -- <id> 0` puts it
+  back; a later pick leaves it alone. A placeholder has no original, so it has only
+  `<id>.game.png`. Before item 020 a second pick overwrote that file with the art then
+  in the game: pic_zap's and pic_pow's original is item 018's promotion, not the painted
+  placeholder (`art:placeholders` repaints one). Up to item 051 the original was
+  candidate 0 in `alts/` (`<id>-0.png`, `<id>-0.game.png`); item 052 moved them all.
+- **A pick deletes the id's other candidates** (item 052): every `alts/<id>-<n>.png`
+  and brief sidecar goes once the pick is copied to `art-originals/<id>.png` (which
+  `--reprocess` reads) and cut, and on `art:pick -- <id> 0` too. So pick from a round
+  only when Matt has chosen for that id: a later round on it numbers from 1 again, and
+  an old sheet's numbers no longer exist. Then delete the round's `scratch/` sheet,
+  manifest, preview folder and briefs once every id in it is decided. `alts/` now holds
+  only rounds still waiting: item 009's `arena_street`, `char_anna_evil`,
+  `char_dada_matt_evil`, `face_julia` (never promoted; `scratch/art_alts_009*` kept
+  for them) and item 040's `pic_chin`, `pic_dish`, `pic_sand`, `pic_ten` (words
+  since cut from the bank; previews in `scratch/040_alts_pic_*`).
 - Corrections for an id (what an earlier image got wrong: a likeness, a prop that
   crowds a face) are `NOTES` in `content/art/prompts.ts`; they end the prompt for both
   `art:gen` and `art:alts`.
@@ -578,9 +601,8 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   roster look up to the clothes. An outfit's face card is `face_<person>_<word>`
   (`face_julia_chef`, item 016), which `refFor` also matches.
 - **Where each round is:** a round's sheet and picker manifest are
-  `scratch/art_alts_<item>_<name>.png` / `.json` (`ls scratch/art_alts_*`; item 009's
-  manifest is `scratch/art_alts_009.json`, item 037's four runs share
-  `scratch/art_alts_037_words.json`), and a brief round's briefs are
+  `scratch/art_alts_<item>_<name>.png` / `.json` (`ls scratch/art_alts_*`; only the
+  rounds still waiting are there, item 052), and a brief round's briefs are
   `scratch/<item>_<name>_<look>.txt`. Runs side by side each write their own sheet and
   manifest; one `--sheet-only` run over all the ids afterwards makes the combined one.
 - **Measured costs:** a word picture takes 30 to 50 s and about 0.25 to 0.3% of Codex's
@@ -593,22 +615,19 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   the thing to find.
 - Item 041's cyber briefs use `MATT_LIFTER`'s wording (fit, not bulky), not
   `MATT_FACE`'s bodybuilder.
-- Item 043's round (evil chef Jason without the moustache, cyber Matt's face card):
-  `scratch/art_alts_044.png` / `.json` (one run per brief, `scratch/art_alts_044_<brief>.*`),
-  briefs `scratch/044_evilchef_*.txt` and `scratch/044_cyberface_*.txt`. Matt picked
-  `char_dada_jason_evil` 1 and `face_dada_matt_cyber` 4 (promoted by item 046; a face
-  card's brief goes into `HAND`, since its derived prompt follows the full-body `look`).
+- Item 043's round (evil chef Jason without the moustache, cyber Matt's face card): Matt
+  picked `char_dada_jason_evil` 1 and `face_dada_matt_cyber` 4 (promoted by item 046; a
+  face card's brief goes into `HAND`, since its derived prompt follows the full-body
+  `look`).
 - Item 044's round (the dads' good forms recoloured: Jason forest green, builder and
-  lifter Matt blue): `scratch/art_alts_045_palettes.png` / `.json`, briefs
-  `scratch/045_<form>_<green|blue|trim>.txt`. Matt's picks were promoted by item 046,
-  whose face round is `scratch/art_alts_046_faces.png` / `.json`.
+  lifter Matt blue): Matt's picks were promoted by item 046, then its face round.
 - **Green family art must leave `NO_GREEN`.** Every family sprite is keyed as having no
   green (`FAMILY_ART` in `content/art/prompts.ts`), so `keyGreen` treats any green lean as
   screen showing through: a forest-green Jason comes out grey-teal and see-through. Item
   046 carved Jason's three good forms and their face cards out (`GREEN_JASON`); his evil
   forms stay keyed. A green candidate must be out of the set before `art:pick` and
-  before `art:alts` cuts the sheet (item 044's per-run sheets
-  `scratch/art_alts_045_palettes_jason_*.png` still show the washed-out cut). Item 049
+  before `art:alts` cuts the sheet (item 044's per-run sheets showed the washed-out
+  cut). Item 049
   keys them light-green-only instead (`LIGHT_GREEN`, `keyMode` in
   `content/art/prompts.ts`, `'lightGreen'` in `tools/art/chroma.ts`): green-leaning
   pixels are un-mixed by how bright their green is, none under 120 and fully from 170,

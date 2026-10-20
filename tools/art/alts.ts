@@ -22,11 +22,13 @@
  * `npm run art:pick -- <id> <k>` makes candidate `k` the game's art: it becomes
  * `art-originals/<id>.png` and is cut into `public/art/<id>.png` by the same
  * processing as `art:gen`. The first pick of an id saves what was there as
- * candidate 0 (`<id>-0.png`, plus `<id>-0.game.png`, the committed PNG), so
- * `art:pick -- <id> 0` puts the original art back.
+ * `art-originals/restore/<id>.png` (the full-res original, if any) and
+ * `<id>.game.png` (the committed PNG), so `art:pick -- <id> 0` puts the
+ * original art back. A pick then deletes every candidate of that id in
+ * `alts/` (item 052): what the game and `--reprocess` need lives outside it.
  */
 
-import { appendFile, copyFile, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { appendFile, copyFile, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import type { Page } from '@playwright/test';
@@ -37,9 +39,13 @@ import { isMain } from '../voice/clips.js';
 import { ORIGINALS, OUT, codexPrompt, cut, describeUsage, exists, gamePng, isBackground, openPage, refCrop, runCodex } from './generate.js';
 
 export const ALTS = path.join(ORIGINALS, 'alts');
+/** What the game had before an id's first pick, for `art:pick -- <id> 0`. */
+export const RESTORE = path.join(ORIGINALS, 'restore');
 
-const altFile = (id: string, k: number | string) => path.join(ALTS, `${id}-${k}.png`);
-const sidecarFile = (id: string, k: number | string) => path.join(ALTS, `${id}-${k}.json`);
+const altFile = (id: string, k: number) => path.join(ALTS, `${id}-${k}.png`);
+const sidecarFile = (id: string, k: number) => path.join(ALTS, `${id}-${k}.json`);
+const restoreFile = (id: string) => path.join(RESTORE, `${id}.png`);
+const restoreGame = (id: string) => path.join(RESTORE, `${id}.game.png`);
 
 /** A brief (`--brief=<file>`): its name is the file's base name, its text the whole file, whitespace collapsed. */
 export interface Brief {
@@ -70,7 +76,7 @@ export async function sidecar(id: string, k: number): Promise<Sidecar | undefine
   return (await exists(f)) ? (JSON.parse(await readFile(f, 'utf8')) as Sidecar) : undefined;
 }
 
-/** The candidate numbers kept for an id, ascending (0, the saved original, included if present). */
+/** The candidate numbers kept for an id, ascending. */
 export async function candidates(id: string): Promise<number[]> {
   const files = await readdir(ALTS).catch(() => [] as string[]);
   const re = new RegExp(`^${id}-(\\d+)\\.png$`);
@@ -79,6 +85,15 @@ export async function candidates(id: string): Promise<number[]> {
     .filter((k): k is string => k !== undefined)
     .map(Number)
     .sort((a, b) => a - b);
+}
+
+/** Delete every candidate of an id (images and brief sidecars): once one is promoted the rest are disposable. */
+async function prune(id: string): Promise<number> {
+  const files = await readdir(ALTS).catch(() => [] as string[]);
+  const re = new RegExp(`^${id}-\\d+\\.(png|json)$`);
+  const gone = files.filter((f) => re.test(f));
+  for (const f of gone) await rm(path.join(ALTS, f));
+  return gone.filter((f) => f.endsWith('.png')).length;
 }
 
 async function draw(argv: string[]): Promise<void> {
@@ -138,19 +153,15 @@ interface Row {
 /**
  * Cut every candidate of `ids` the way `art:pick` would (keying, trim, fit,
  * palette shrink) into `<dir>/<id>-<k>.png`; never into `public/art`. A saved
- * original (candidate 0, after a first pick) shows as its committed PNG.
+ * original (`restore/`, after a first pick) shows as `0`, its committed PNG.
  */
 async function previews(page: Page, ids: string[], dir: string): Promise<Row[]> {
   await mkdir(dir, { recursive: true });
   const rows: Row[] = [];
   for (const id of ids) {
     const tiles: Row['tiles'] = [{ key: 'current', file: path.join(OUT, `${id}.png`) }];
+    if (await exists(restoreGame(id))) tiles.push({ key: '0', label: 'the original, before the first pick', file: restoreGame(id) });
     for (const k of await candidates(id)) {
-      if (k === 0) {
-        const game = altFile(id, '0.game');
-        if (await exists(game)) tiles.push({ key: '0', label: 'the original, before the first pick', file: game });
-        continue;
-      }
       const file = path.join(dir, `${id}-${k}.png`);
       await writeFile(file, (await gamePng(page, id, await readFile(altFile(id, k)))).png);
       const b = await sidecar(id, k);
@@ -297,29 +308,34 @@ function defaultSheet(): string {
   return path.join('scratch', `art_alts_${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}.png`);
 }
 
+const pruned = (n: number) => (n ? `; deleted its ${n} candidate${n === 1 ? '' : 's'} in ${ALTS}/` : '');
+
 export async function pick(argv: string[]): Promise<void> {
   const [id, kArg] = argv.filter((a) => !a.startsWith('--'));
   if (!id || kArg === undefined || !/^\d+$/.test(kArg)) throw new Error('usage: npm run art:pick -- <id> <n>   (n from the contact sheet; 0 puts the original back)');
   if (!ART_BY_ID[id]) throw new Error(`${id} is not an asset id (content/art/assets.ts)`);
   const k = Number(kArg);
-  const src = altFile(id, k);
   const game = path.join(OUT, `${id}.png`);
-  if (k === 0 && (await exists(altFile(id, '0.game')))) {
+  const orig = path.join(ORIGINALS, `${id}.png`);
+  if (k === 0) {
+    if (!(await exists(restoreGame(id)))) throw new Error(`${id} has no saved original (${restoreGame(id)}): it was never picked`);
     // The original's committed PNG, byte for byte (a placeholder has no full-res original).
-    await copyFile(altFile(id, '0.game'), game);
-    if (await exists(src)) await copyFile(src, path.join(ORIGINALS, `${id}.png`));
-    console.log(`art:pick: ${id}: the original is back`);
+    await copyFile(restoreGame(id), game);
+    if (await exists(restoreFile(id))) await copyFile(restoreFile(id), orig);
+    console.log(`art:pick: ${id}: the original is back${pruned(await prune(id))}`);
     return;
   }
+  const src = altFile(id, k);
   if (!(await exists(src))) throw new Error(`no candidate ${src}; have ${(await candidates(id)).join(', ') || 'none'}`);
-  const orig = path.join(ORIGINALS, `${id}.png`);
-  // The first pick keeps what was there as candidate 0, so it can come back.
-  // A placeholder has no original, only `0.game` (art:alts writes it): keep that too.
-  if (k !== 0 && !(await exists(altFile(id, 0))) && !(await exists(altFile(id, '0.game')))) {
-    if (await exists(orig)) await copyFile(orig, altFile(id, 0));
-    await copyFile(game, altFile(id, '0.game'));
-    console.log(`art:pick: kept the original ${id} as candidate 0`);
+  // The first pick keeps what was there, outside alts/, so it can come back.
+  // A placeholder has no full-res original, only its committed PNG.
+  if (!(await exists(restoreGame(id)))) {
+    await mkdir(RESTORE, { recursive: true });
+    if (await exists(orig)) await copyFile(orig, restoreFile(id));
+    await copyFile(game, restoreGame(id));
+    console.log(`art:pick: kept the original ${id} in ${RESTORE}/`);
   }
+  // The full-res pick goes where --reprocess reads it before alts/ is pruned.
   await copyFile(src, orig);
   const { page, close } = await openPage();
   try {
@@ -328,6 +344,7 @@ export async function pick(argv: string[]): Promise<void> {
     await close();
   }
   const b = await sidecar(id, k);
+  console.log(`art:pick: ${id}${pruned(await prune(id))}`);
   if (b) {
     // The game's prompt must match its art, so art:gen and later rounds draw the same look (item 041).
     console.log(`\nart:pick: ${id}-${k} was drawn from brief ${b.name} (${b.file}), not the game's prompt. Write the brief into the game in the same commit:`);
