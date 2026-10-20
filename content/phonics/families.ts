@@ -70,7 +70,7 @@ const RIMES: Record<string, { say: string; silly: SillyOnset[] }> = {
   // Item 037 from here: the bank's new rimes with two pictures or more.
   // PIG WIG FIG. Out: never N; BIG DIG JIG GIG RIG ZIG (words), CIG (slang), MIG (a jet),
   // TIG, LIG (British slang), SIG, VIG (abbreviations, slang), YIG (a storybook god).
-  ig: { say: 'Igg', silly: [{ letter: 'h', say: 'Hig' }, { letter: 'k', say: 'Kig' }] },
+  ig: { say: 'Ihg', silly: [{ letter: 'h', say: 'Hihg' }, { letter: 'k', say: 'Kig' }] },
   // PIN FIN. Every other onset is a word, a name or a drink (BIN DIN GIN KIN SIN TIN WIN
   // YIN; JIN LIN RIN MIN VIN; ZIN slang; CIN sounds like SIN), so -IN lays two tiles, with HIN.
   in: { say: 'Inn', silly: [{ letter: 'h', say: 'Hin' }] },
@@ -91,10 +91,10 @@ const RIMES: Record<string, { say: string; silly: SillyOnset[] }> = {
   od: { say: 'Odd', silly: [{ letter: 'f', say: 'Fod' }] },
   // SUN BUN. Out: RUN (a move word), DUN FUN GUN NUN PUN TUN (words), HUN (a slur),
   // JUN YUN (names), KUN (Japanese), MUN (slang), WUN (sounds like ONE), LUN.
-  un: { say: 'Unn', silly: [{ letter: 'v', say: 'Vun' }, { letter: 'z', say: 'Zun' }] },
+  un: { say: 'Uhn', silly: [{ letter: 'v', say: 'Vun' }, { letter: 'z', say: 'Zun' }] },
   // NUT HUT. Out: BUT CUT GUT JUT PUT RUT TUT (words), MUT KUT (sound like MUTT, CUT),
   // WUT (slang), ZUT (French), YUT (a game), FUT, SUT (too near worse).
-  ut: { say: 'Uht', silly: [{ letter: 'v', say: 'Vut' }, { letter: 'l', say: 'Lut' }] },
+  ut: { say: 'Utt', silly: [{ letter: 'v', say: 'Vut' }, { letter: 'l', say: 'Lut' }] },
   // TUB SUB. Out: CUB DUB HUB NUB PUB RUB (words), BUB (slang), LUB (a heartbeat), YUB
   // (a film's word), GUB (Scots slang), WUB (slang).
   ub: { say: 'Ubb', silly: [{ letter: 'z', say: 'Zub' }, { letter: 'v', say: 'Vub' }] },

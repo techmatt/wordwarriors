@@ -5277,14 +5277,14 @@
   "id": "rime_ig",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Igg.",
+  "text": "Ihg.",
   "note": "placeholder for the rime -ig said alone; replace with a recorded clip"
  },
  {
   "id": "silly_hig",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Hig!"
+  "text": "Hihg!"
  },
  {
   "id": "silly_kig",
@@ -5398,7 +5398,7 @@
   "id": "rime_un",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Unn.",
+  "text": "Uhn.",
   "note": "placeholder for the rime -un said alone; replace with a recorded clip"
  },
  {
@@ -5417,7 +5417,7 @@
   "id": "rime_ut",
   "speaker": "phonics",
   "group": "phonics",
-  "text": "Uht.",
+  "text": "Utt.",
   "note": "placeholder for the rime -ut said alone; replace with a recorded clip"
  },
  {

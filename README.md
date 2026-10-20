@@ -497,6 +497,14 @@ npm run art:pick -- <id> <n>
   mug; the best promoted) are `scratch/art_alts_035_ug.png` and
   `scratch/art_alts_035_ug.json`. A word picture took 30 to 50 s, about 0.3% of Codex's
   5-hour window each (2026-10-19).
+- Item 037's word bank pictures (81 new words, 3 candidates each, the clearest promoted
+  by a review pass) are `scratch/art_alts_037_words.json`, one row per word; the four
+  runs' own sheets are `scratch/art_alts_037_words_<0-3>.png`. Four `art:alts` runs of
+  about 20 ids side by side drew the 243 images in about 50 minutes, 30 to 50 s each,
+  and took Codex's 5-hour window from 7% to 66% (about 0.25% an image) and the weekly
+  one from 30% to 39% (2026-10-19). An action word's picture is the hardest to make
+  name itself (SNAP comes out a crocodile, LIFT a crane): it is only ever shown after
+  she has read the word, never as the thing to find.
 - A new `prop_word_machine` means refitting `WINDOW` / `PANEL` in
   `src/scenes/WordMachine.ts`: fractions of the cut `public/art` PNG (centre and radius
   of the glass, centre and size of the blank panel), checked with machine.spec's
@@ -523,8 +531,13 @@ npm run art:pick -- <id> <n>
   hyphens out of lines.
 - A rime said alone is a one-syllable line (`rime_at`, item 026), timed about 0.7 s.
   "Ett" came back at 1.39 s (read as letters) and is spelled "Eht"; "En" risks the letter
-  name N and is "Ehn". Check a new rime's span in `public/voice-gen/manifest.json` after
+  name N and is "Ehn". Item 037's measured the same way (2026-10-19): "Igg" 1.25 s, "Unn"
+  1.02 s, "Uht" 1.30 s, "Hig" 1.16 s; "Ihg", "Uhn", "Utt" and "Hihg" all about 0.6 s. A
+  doubled final letter is not safe either way. Check a new rime's span in `public/voice-gen/manifest.json` after
   `voice:build`.
+- `voice:build` made item 037's 3,708 new lines (every action word's five narrator
+  lines for all 16 narrators, the hub scenes, the quest variants, 81 word lines) in 13.5
+  minutes on 4 workers, about 4.6 lines a second (2026-10-19).
 - Letter names (`letter_<x>_name`, item 033) are one-word lines spelled for edge-tts
   ("Vee", "Aitch"): "Double you" for W is timed as two words and fails `voice:build`'s
   word count, so it is "Dubbelyou". Measured 2026-10-19: 0.6–0.9 s each, F 1.35 s, R 1.08 s.
