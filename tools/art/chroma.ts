@@ -10,11 +10,14 @@
  * Pixels within two rings of the background get a soft alpha from their
  * distance to the key, are un-mixed from it, and lose any green spill.
  * `noGreen` (a subject with no green in it) un-mixes every green-leaning pixel.
+ * `lightGreen` (a subject in dark green, item 049) un-mixes only the bright,
+ * light greens of the screen showing through (between whisk wires, a lime glow),
+ * by how bright they are, and leaves dark greens alone.
  *
  * Returns `fringe`: visible pixels touching transparency that are still
  * clearly green, plus visible near-key pixels. 0 is clean.
  */
-export function keyGreen(px: Uint8ClampedArray, w: number, h: number, noGreen = false): { fringe: number; cleared: number } {
+export function keyGreen(px: Uint8ClampedArray, w: number, h: number, mode: 'keep' | 'noGreen' | 'lightGreen' = 'keep'): { fringe: number; cleared: number } {
   const n = w * h;
   const rs: number[] = [];
   const gs: number[] = [];
@@ -116,14 +119,21 @@ export function keyGreen(px: Uint8ClampedArray, w: number, h: number, noGreen = 
 
   // A subject with no green of its own: every green lean is screen showing
   // through (a cage's faint back bars), so un-mix it by how much it leans.
-  if (noGreen) {
+  // A subject in dark green: only a light green is screen, weighted from none
+  // at green LIGHT_LO to full at LIGHT_HI, so his forest green stays solid.
+  if (mode !== 'keep') {
     const keyLean = kg - Math.max(kr, kb);
+    // Measured on Jason's six images: his greens are under 120, screen leaks 160 up.
+    const LIGHT_LO = 120;
+    const LIGHT_HI = 170;
     for (let i = 0; i < n; i++) {
       const o = i * 4;
       if (!px[o + 3]) continue;
       const lean = px[o + 1]! - Math.max(px[o]!, px[o + 2]!);
       if (lean <= 0) continue;
-      const f = Math.min(1, lean / keyLean);
+      const light = mode === 'lightGreen' ? Math.max(0, Math.min(1, (px[o + 1]! - LIGHT_LO) / (LIGHT_HI - LIGHT_LO))) : 1;
+      if (!light) continue;
+      const f = Math.min(1, lean / keyLean) * light;
       if (f > 0.95) {
         px[o + 3] = 0;
         continue;

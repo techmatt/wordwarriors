@@ -5,7 +5,7 @@ import path from 'node:path';
 import { test } from 'node:test';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
-import { ART_PROMPTS, NOTES, SPRITE_STYLE } from '../../content/art/prompts.js';
+import { ART_PROMPTS, keyMode, NOTES, SPRITE_STYLE } from '../../content/art/prompts.js';
 import { readBrief } from '../../tools/art/alts.js';
 import { keyGreen } from '../../tools/art/chroma.js';
 import { codexPrompt } from '../../tools/art/generate.js';
@@ -73,10 +73,30 @@ test('keyGreen keeps green inside the outline (a leaf is not the screen)', () =>
 
 test('keyGreen with noGreen un-mixes green seen through a subject', () => {
   const px = picture(20, 20, [100, 180, 100]);
-  keyGreen(px, 20, 20, true);
+  keyGreen(px, 20, 20, 'noGreen');
   const o = (10 * 20 + 10) * 4;
   assert.ok(px[o + 1]! <= Math.max(px[o]!, px[o + 2]!), 'no green lean left');
   assert.ok(px[o + 3]! < 255, 'part-transparent where the screen showed through');
+});
+
+test('keyGreen with lightGreen keeps dark green and un-mixes light screen green (item 049)', () => {
+  const dark = picture(20, 20, [22, 79, 49]);
+  keyGreen(dark, 20, 20, 'lightGreen');
+  const o = (10 * 20 + 10) * 4;
+  assert.deepEqual([...dark.subarray(o, o + 4)], [22, 79, 49, 255], 'forest green stays solid');
+  const light = picture(20, 20, [150, 230, 120]);
+  keyGreen(light, 20, 20, 'lightGreen');
+  assert.ok(light[o + 1]! <= Math.max(light[o]!, light[o + 2]!), 'no green lean left');
+  assert.ok(light[o + 3]! < 255, 'part-transparent where the screen showed through');
+});
+
+test("Jason's green forms cut light-green-only, for art:gen, art:alts and art:pick alike (item 049)", () => {
+  for (const c of ['dada_jason', 'dada_jason_warrior', 'dada_jason_warlock']) {
+    assert.equal(keyMode(`char_${c}_good`), 'lightGreen');
+    assert.equal(keyMode(`face_${c}`), 'lightGreen');
+    assert.equal(keyMode(`char_${c}_evil`), 'noGreen');
+  }
+  assert.equal(keyMode('pic_frog'), 'keep');
 });
 
 test('keyGreen removes green spill from a soft edge', () => {

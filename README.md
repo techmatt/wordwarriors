@@ -603,9 +603,17 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   046 carved Jason's three good forms and their face cards out (`GREEN_JASON`); his evil
   forms stay keyed. A green candidate must be out of the set before `art:pick` and
   before `art:alts` cuts the sheet (item 044's per-run sheets
-  `scratch/art_alts_045_palettes_jason_*.png` still show the washed-out cut). Without
-  the keying, light green screen caught inside the subject stays (between whisk wires,
-  in a glow): item 046's chef and warlock carry a little of it.
+  `scratch/art_alts_045_palettes_jason_*.png` still show the washed-out cut). Item 049
+  keys them light-green-only instead (`LIGHT_GREEN`, `keyMode` in
+  `content/art/prompts.ts`, `'lightGreen'` in `tools/art/chroma.ts`): green-leaning
+  pixels are un-mixed by how bright their green is, none under 120 and fully from 170,
+  so the screen between whisk wires and a lime glow go while his forest green (measured
+  under 120) stays solid. `art:gen`, `--reprocess`, `art:alts` and `art:pick` all take
+  the mode from `keyMode`. A family form that wears dark green goes in `LIGHT_GREEN`,
+  not `NO_GREEN`.
+- A script in `scratch/` that imports `../tools/…` gets the **main checkout's** copy, not
+  the worktree's: `scratch/` is a junction and Node resolves the real path (item 049).
+  Import by absolute path (`pathToFileURL(path.resolve('tools/…'))`) from the worktree root.
 - `npm test` empties `test-results/` as it starts (Playwright's output folder): a
   script or log kept there by a run beside it is deleted. Keep logs in `scratch/`.
 - A new `prop_word_machine` means refitting `WINDOW` / `PANEL` in

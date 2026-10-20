@@ -31,7 +31,7 @@ import { chromium, type Page } from '@playwright/test';
 import sharp from 'sharp';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
-import { ART_PROMPTS, BACKGROUND_STYLE, NO_GREEN, NOTES, REFS, SPRITE_STYLE, refFor } from '../../content/art/prompts.js';
+import { ART_PROMPTS, BACKGROUND_STYLE, keyMode, NOTES, REFS, SPRITE_STYLE, refFor } from '../../content/art/prompts.js';
 import { isMain } from '../voice/clips.js';
 import { keyGreen } from './chroma.js';
 import { isPlaceholder } from './placeholders.js';
@@ -194,9 +194,9 @@ export interface Processed {
   fringe: number;
 }
 
-export async function processImage(page: Page, png: Buffer, opts: { sprite: boolean; boxW: number; boxH: number; noGreen: boolean }): Promise<Processed> {
+export async function processImage(page: Page, png: Buffer, opts: { sprite: boolean; boxW: number; boxH: number; mode: 'keep' | 'noGreen' | 'lightGreen' }): Promise<Processed> {
   return page.evaluate(
-    async ({ src, sprite, boxW, boxH, noGreen }) => {
+    async ({ src, sprite, boxW, boxH, mode }) => {
       const img = new Image();
       img.src = src;
       await img.decode();
@@ -213,7 +213,7 @@ export async function processImage(page: Page, png: Buffer, opts: { sprite: bool
       let fringe = 0;
       if (sprite) {
         const data = fc.getImageData(0, 0, sw, sh);
-        fringe = (window as unknown as { keyGreen: (p: Uint8ClampedArray, w: number, h: number, ng: boolean) => { fringe: number } }).keyGreen(data.data, sw, sh, noGreen).fringe;
+        fringe = (window as unknown as { keyGreen: (p: Uint8ClampedArray, w: number, h: number, m: string) => { fringe: number } }).keyGreen(data.data, sw, sh, mode).fringe;
         fc.putImageData(data, 0, 0);
         let x0 = sw;
         let y0 = sh;
@@ -297,7 +297,7 @@ export async function gamePng(page: Page, id: string, original: Buffer): Promise
   const a = ART_BY_ID[id]!;
   const sprite = !isBackground(id);
   const scale = sprite ? SPRITE_SCALE : 1;
-  const p = await processImage(page, original, { sprite, boxW: a.w * scale, boxH: a.h * scale, noGreen: NO_GREEN.has(id) });
+  const p = await processImage(page, original, { sprite, boxW: a.w * scale, boxH: a.h * scale, mode: keyMode(id) });
   return { png: await shrinkPng(Buffer.from(p.url.slice(p.url.indexOf(',') + 1), 'base64')), p };
 }
 
