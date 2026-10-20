@@ -63,6 +63,10 @@ three episodes back to back), plus a static review of the 037/038 surfaces.
 | 46 | Rooms | The idle stick hint's arrows were under its nub, so it read as a dark ball. | contact sheet |
 | 47 | Word machine | The silly-word lines ("That makes... ZAT! Silly!") covered the tiles she picks from next. | contact sheet |
 | 48 | Entry hall | The idle re-prompt and the miss lines ("We need the...") covered the bottom row of pictures, the one she was stuck on among them. While she looks, the pictures weigh more than the board. | contact sheet |
+| 49 | Speech rule | The journey map's stops are glyphs too (🛏️ BED, 🏠 HUT, the dojo's 🥋 BELT) and show before the attic: kept out of that episode's keys like the door signs. | static review |
+| 50 | Bubbles | A long name (EVIL JORMUNGANDR) wrapped in its 22 px name chip and spilled onto the taunt. Names stay on one row and shrink. | static review |
+| 51 | Grown-ups page | The warm-up levels list grew one word an episode and ran over the sentence frames after about 20 episodes. Each level shows its shakiest eight and a count. | static review |
+| 52 | Memory | Decoded voice was never freed: each new narrator in a sitting added 110-170 MB (over a gigabyte in 4-6 episodes with varied allies). A new episode drops the last one's groups (core and phonics stay). | static review |
 
 Pacing, measured at real speed (an instant-answering child, seed 101): about 5.9 minutes title to recap; the longest stretch she cannot act is the hub's story scene, 13 s; no silent stretch over 2 s. With wrong answers the entry hall's clue repeats make up to 60 s of talk before she can pick (M3).
 
@@ -92,3 +96,4 @@ Most important first; the hunt's pick is in **bold**.
 | W7 | Sentence room, hub | The banner's rod runs under the bag's item row; the villain's decals (flames, coins) land on door signs and the bag row; the first bag item tucks under the backpack button. | The items stay readable; a layout pass. |
 | W8 | Victory scene, battle | Bubbles over other characters' heads in the victory scene; the counter shout (NOT THE FOX!) touching the HP bar; a lightning bolt from just before a move choice lingering over a sign (the frozen clock slows its fade); Smaug cut off at the left edge in race 2's choice; the spell clash hides its meter during a choice. | Each lasts a line or a choice; noted for a polish pass. |
 | W9 | Word machine | Standing on a used tile, she shows through it. | On purpose: the tile is over her so its letter is never hidden. |
+| W10 | Dad lock | While locked, the bedroom still wakes her by itself after 6 s, the journey map still moves on after 2 s, and the green dot still shows over things in reach. | Item 038 asks only that her presses do nothing and re-prompts wait ("nothing else changes while locked"); if Matt wants the lock to pause the whole flow, those three are the places. |

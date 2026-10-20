@@ -14,7 +14,6 @@ import Phaser from 'phaser';
 import { CHARACTER_BY_ID, personOf } from '../../content/battle/roster';
 import type { Utterance } from '../audio/VoiceBus';
 import { castArt, castFace, castId, episode, waker } from '../episode/Episode';
-import { fitText } from './fitText';
 
 export interface Speaker {
   id: string;
@@ -124,7 +123,10 @@ export function makePortrait(scene: Phaser.Scene, s: Speaker, size: number, opts
     const name = scene.add
       .text(0, 0, speakerName(s), { fontFamily: NAME_FONT, fontSize: `${Math.round(plateH * 0.72)}px`, color: '#ffffff' })
       .setOrigin(0.5);
-    fitText(name, card + size * 0.25, plateH, 10);
+    // One row, shrunk to fit: wrapped, a long name (EVIL JORMUNGANDR) grew past its plate onto the line (item 039).
+    name.setWordWrapWidth(null as unknown as number);
+    let fs = Math.round(plateH * 0.72);
+    while (name.width > card * 1.15 && fs > 8) name.setFontSize(--fs);
     const plateW = Math.max(card * 0.7, name.width + plateH);
     const py = cardY + card / 2 - overlap + plateH / 2;
     const plate = scene.add.graphics();

@@ -91,6 +91,21 @@ export class VoiceBank {
     }
   }
 
+  /**
+   * Forget the decoded audio of every group not in `keep` (core and phonics
+   * always stay). A new episode's narrator is ~500 clips, 110-170 MB decoded,
+   * and nothing was ever freed: a long sitting with varied allies held over a
+   * gigabyte (item 039). A group dropped here decodes again if it is needed.
+   */
+  retain(keep: string[]): void {
+    const k = new Set([...keep, 'core', 'phonics']);
+    for (const name of [...this.groups.keys()]) {
+      if (k.has(name)) continue;
+      this.groups.delete(name);
+      for (const line of this.lines.values()) if (line.group === name) this.buffers.delete(line.id);
+    }
+  }
+
   get(id: string): VoiceLine | undefined {
     return this.lines.get(id);
   }

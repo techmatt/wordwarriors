@@ -101,11 +101,14 @@ export class ParentScene extends Phaser.Scene {
   private grabView(x: number, y: number, w: number, h: number): void {
     const rows = ([1, 2, 3] as const).map((l) => {
       const ws = GRAB_WORDS.filter((word) => progress.stat('grabs', word).seen > 0 && grabLevel(progress, word) === l);
-      const list = ws.map((word) => {
+      // The shakiest eight and a count: the full list grew past its box after ~20 episodes (item 039).
+      const shown = [...ws].sort((a, b) => progress.shakiness('grabs', b) - progress.shakiness('grabs', a)).slice(0, 8);
+      const list = shown.map((word) => {
         const s = progress.stat('grabs', word);
         return `${word} ${s.seen}·${Math.round((100 * s.recent.filter(Boolean).length) / Math.max(1, s.recent.length))}%`;
       });
-      return `${l} ${['word + names + sounds', 'names + sounds', 'sounds only'][l - 1]}: ${list.join('  ') || '–'}`;
+      const more = ws.length > shown.length ? `  +${ws.length - shown.length} more` : '';
+      return `${l} ${['word + names + sounds', 'names + sounds', 'sounds only'][l - 1]}: ${list.join('  ') || '–'}${more}`;
     });
     this.add.text(x, y, 'Warm-up levels', { fontFamily: 'Segoe UI, sans-serif', fontSize: '17px', color: '#333', fontStyle: 'bold' });
     fitText(this.add.text(x, y + 24, [...rows, `New words start at ${GRAB.startLevel}; right first time: up one, a first-try miss: down one.`], { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#444' }), w, h - 24);

@@ -404,7 +404,9 @@ export function housePlan(): RoomPlan[] {
     // The warm-up's word is said in the entry hall (item 033): drawn first, kept out too.
     // The doors' signs show their rooms' glyphs: a bank word drawn the same way is
     // shown before she reads it (item 039: the 🛁 door led to GO GET THE TUB).
+    // The journey map's stops too (🛏️ 🏠, the place's glyph): it shows before the attic.
     const signs = new Set([...rooms, counterRoom].map((r) => SIDE_ROOM_BY_ID[r]?.glyph).filter(Boolean));
+    for (const s of journeyStops()) signs.add(s.icon);
     const signWords = BANK.filter((w) => w.glyph && signs.has(w.glyph)).map((w) => w.word);
     const saidBefore = [...storyWords(), ...signWords, ...(episode.grab ? [episode.grab.word] : [grabWord()])];
     const games = roomGames();
@@ -572,7 +574,11 @@ export function startStep(scene: Phaser.Scene): void {
   const key = step.kind === 'prep' ? prepScene(step.game) : SCENE_FOR[step.kind];
   // Not for the title: it draws a fresh cast as it opens, and its one line is
   // core (item 039: it decoded the old cast's narrator, ~500 clips, for nothing).
-  if (step.kind !== 'title') void voiceBank.loadGroups(episodeGroups());
+  if (step.kind !== 'title') {
+    // A new episode: let the last one's voices go first.
+    if (step.kind === 'bedroom') voiceBank.retain(episodeGroups());
+    void voiceBank.loadGroups(episodeGroups());
+  }
   scene.scene.start(key, { step });
 }
 
