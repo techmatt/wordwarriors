@@ -37,7 +37,7 @@
  * - 8 per short vowel; 2 pictures per word-machine family, the listed
  *   families staying families;
  * - the Stretchy Bridge: 3 early words (levels 1-2, short vowel) per first
- *   sound, so its far bank can show two that start alike and differ later;
+ *   sound it lists (COVERAGE.bridgeStarts; R V J have 2), so its far bank can show two that start alike and differ later;
  * - long vowels: E 3, O A I 2 each, U none yet.
  *
  * tests/unit/coverage.test.ts fails on any row under target; `npm run
@@ -72,8 +72,10 @@ export interface BankEntry {
    * sound (a key of SOUND_BY_UNIT in content/phonics/letters.ts). The right
    * familiar picture for a first sound the bank had none of (item 043: KEY for
    * K, YOYO for Y). Item 048: it sounds out like any word, every unit (KEY is
-   * K, long E on EY; YOYO is Y, long O, Y, long O). Level 1, no short-vowel
-   * tag, never in a word family.
+   * K, long E on EY; YOYO is Y, long O, Y, long O). Level 1 (or 3 if `late`),
+   * no short-vowel tag, never in a word family. Item 056: a spelled word with
+   * one short vowel and nothing long or silent (THUMB: MB saying M) is tagged
+   * like any word, vowel, level and family included.
    */
   spelled?: [letters: string, sound: string][];
   /**
@@ -161,9 +163,9 @@ const ENTRIES: BankEntry[] = [
   T('mat', '🟫', NEW_054), T('man', '👨', NEW_054), T('lid', '🍲', NEW_054), T('lock', '🔒', NEW_054),
   // Item 056, the coverage audit: three familiar first-sound pictures for every
   // letter sound the language allows (COVERAGE above). Short-vowel words first:
-  // doubled letters (EGG, BELL), NG (KING), the -ING -ELL -OCK families, S and T
+  // doubled letters (EGG, BELL), NG (KING), the -ING and -OCK families, S and T
   // pictures for the bridge.
-  T('egg', '🥚', NEW_056), T('bell', '🔔', NEW_056), T('doll', '🪆', NEW_056), T('tap', '🚰', NEW_056),
+  T('egg', '🥚', NEW_056), T('bell', '🔔', NEW_056), T('doll', '🎎', NEW_056), T('tap', '🚰', NEW_056),
   T('elf', '🧝', NEW_056), T('grass', '🌾', NEW_056), T('glass', '🥤', NEW_056), T('sink', '🧽', NEW_056),
   T('king', '🤴', NEW_056), T('ring', '💍', NEW_056), T('wing', '🦅', NEW_056), T('shell', '🐚', NEW_056),
   T('chips', '🍟', NEW_056), T('bush', '🌳', NEW_056),
@@ -171,8 +173,9 @@ const ENTRIES: BankEntry[] = [
   T('lamb', '🐑', { ...NEW_056, spelled: [['l', 'l'], ['a', 'a'], ['mb', 'm']] }),
   A('quest', '🧭', NEW_056),
   T('quilt', '🛏️', { ...NEW_056, odd: true }),
-  // Long vowels where no familiar short-vowel picture starts with the sound
-  // (Q, J, G, K, V, TH, SH, CH), and magic-E words with a silent E: level 3,
+  // Long vowels: Q and K have no familiar short-vowel first-sound picture but
+  // these; J G V SH TH CH get a third; CAKE KITE BIKE give long A and I a start.
+  // Magic-E words have a silent E (the sound ''). Level 3,
   // `late` (Matt's default, 2026-10-20), so they come with the digraphs.
   T('queen', '👸', { ...NEW_056, late: true, spelled: [['qu', 'q'], ['ee', 'long_e'], ['n', 'n']] }),
   T('goat', '🐐', { ...NEW_056, late: true, spelled: [['g', 'g'], ['oa', 'long_o'], ['t', 't']] }),
@@ -304,7 +307,6 @@ export const COVERAGE = {
   bridge: {
     r: { target: 2, why: 'RAT, RUG; ROCK and RING are level 3, RAFT and RAM odd' },
     v: { target: 2, why: 'VAN, VET; VEST is odd, VASE level 3' },
-    g: { target: 2, why: 'GRASS, GLASS; GIFT too; GUM is odd, GOAT level 3' },
     j: { target: 2, why: 'JUG, JAM; JET is odd, JEEP level 3' },
   } as Record<string, CoverageTarget>,
   /** Familiar pictures per long vowel (each its own sound line). */

@@ -101,10 +101,12 @@ const RIMES: Record<string, { say: string; silly: SillyOnset[] }> = {
   // TUB SUB. Out: CUB DUB HUB NUB PUB RUB (words), BUB (slang), LUB (a heartbeat), YUB
   // (a film's word), GUB (Scots slang), WUB (slang).
   ub: { say: 'Ubb', silly: [{ letter: 'z', say: 'Zub' }, { letter: 'v', say: 'Vub' }] },
-  // Item 056: the bank's NG, doubled-letter and CK rimes (KING RING WING, BELL WELL,
-  // ROCK SOCK LOCK). -ING: out ZING DING PING SING TING LING BING (words), MING (slang),
-  // FING (too near worse), GING JING (too near GINGER, JINGLE). "Ell" alone is the letter L.
-  ing: { say: 'Ihng', silly: [{ letter: 'v', say: 'Ving' }, { letter: 'h', say: 'Hing' }] },
+  // Item 056: the bank's NG and CK rimes (KING RING WING, ROCK SOCK LOCK), and -ELL
+  // ready for a second picture beside BELL (WELL is said in hub scenes; SHELL's onset is SH).
+  // -ING: out ZING DING PING SING TING LING BING (words), HING (a spice), MING (slang), VING
+  // NING JING YING (names), FING (too near worse); GING alone is clean, a hard G ("Ghing").
+  // "Ell" alone is the letter L.
+  ing: { say: 'Ihng', silly: [{ letter: 'g', say: 'Ghing' }] },
   // -ELL: out H (never), FELL DELL CELL SELL TELL YELL JELL (words), NELL KELL (names),
   // GELL (sounds like GEL), MELL PELL (word-ish).
   ell: { say: 'Ehl', silly: [{ letter: 'z', say: 'Zell' }, { letter: 'v', say: 'Vell' }] },

@@ -235,7 +235,7 @@ export class EntryScene extends RoomScene {
         // The word itself: every box lights at once.
         for (const o of this.tiles) o.box.setFillStyle(0xffe066, 1);
       }
-      await this.say(step.id);
+      if (step.id) await this.say(step.id);
       await this.wait(step.kind === 'name' ? NAME_GAP_MS : step.kind === 'sound' ? SOUND_GAP_MS : 250);
     }
     for (const o of this.tiles) o.box.setFillStyle(0xfff8e6, 1);

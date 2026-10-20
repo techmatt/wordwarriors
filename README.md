@@ -470,8 +470,8 @@ The bank covers phonics by rule, not by luck. Counting only familiar pictured wo
   SH, fewer for F Z CH TH, with reasons;
 - **8 per short vowel**; **2 pictures per word-machine family**, and the families listed
   must stay families (-ING and -OCK joined in 056);
-- **the Stretchy Bridge**: 3 early words (levels 1–2, a short vowel) per first sound,
-  so the far bank can show two that start like the word and differ later;
+- **the Stretchy Bridge**: 3 early words (levels 1–2, a short vowel) per first sound in
+  `COVERAGE.bridgeStarts` (R, V and J have 2, with reasons), so the far bank can show two that start like the word and differ later;
 - **long vowels**: long E 3, long O, A and I 2 each, long U none yet.
 
 `npm run bank:audit` prints the table (`-- --gaps` only the shortfalls) and the
@@ -483,7 +483,8 @@ Sound units (056): QU and NG are units like SH (QU sounds as Q's "Kwuh"), and do
 letters (EGG, BELL: FF LL SS ZZ GG) are one unit sounding as the letter, without
 raising the level. A hand-`spelled` word with one short vowel (THUMB: TH U MB, MB
 saying M) is tagged like any word; a long-vowel one marked `late` is level 3, and a
-silent letter (the E of KITE) has the sound `''`: the hint lights it and says nothing.
+silent letter (the E of KITE) has the sound `''`: the hints (the sentence game's and the
+warm-up's clue) light it and say nothing.
 A word that is said in a narrator line, a threat, a quest line, a hub scene or a rune
 gesture cannot join the bank until that line is reworded (the unit tests name it):
 WELL ("well done"), WITCH (Bavmorda), SAND (Jasmine's threat) and SWING (a rune) stayed

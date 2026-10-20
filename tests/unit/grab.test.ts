@@ -70,7 +70,9 @@ test('clue: names go letter by letter, sounds by sound unit (SH of SHIP is one s
 test('voice: every clue line, and the warm-up narrator lines, exist; letter names say the name and show the capital', () => {
   const lines = composeLines();
   const byId = new Map(lines.map((l) => [l.id, l]));
-  for (const w of GRAB_WORDS) for (const l of [1, 2, 3] as const) for (const s of clue(w, l, true)) assert.ok(byId.has(s.id), s.id);
+  // A silent letter's step (KITE's E, item 056) has no line: it only lights.
+  for (const w of GRAB_WORDS) for (const l of [1, 2, 3] as const) for (const s of clue(w, l, true)) assert.ok(s.id === '' || byId.has(s.id), s.id);
+  assert.deepEqual(clue('kite', 3).map((s) => [s.index, s.id === '']), [[0, false], [1, false], [2, false], [3, true]]);
   for (const k of ['grab_ask', 'grab_wrong', 'grab_need', 'grab_door']) assert.ok(byId.has(narratorLine('dada_matt', k)), k);
   const v = byId.get(letterNameLine('v'))!;
   assert.equal(v.text, 'V.');

@@ -277,12 +277,12 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
     ], 'Stand in the golden circle, and press green, to take the word!', 'Strong as stone, let us look around!'),
   ],
   jormungandr: [
-    // Item 056: a conch, since SHELL is a bank word now (and its picture no prop).
-    S('🔮', [
-      'Deep in my grotto, I found a magic conch.',
+    // Item 056: a sea horn, since SHELL is a bank word now (and its picture no prop).
+    S('📯', [
+      'Deep in my grotto, I found a magic horn.',
       'Hold it to your ear, and you will hear a word inside.',
-      'Listen, the conch says...',
-    ], CIRCLE('to take the conch'), 'The sea is on your side now, let us look around!'),
+      'Listen, the horn says...',
+    ], CIRCLE('to take the horn'), 'The sea is on your side now, let us look around!'),
     S('🦪', [
       'The sea gave me a pearl, and the pearl has a secret.',
       'I curled my tail around it for a hundred years, to keep it safe.',

@@ -100,6 +100,7 @@ export function hallObjects(store: ProgressStore, word: string, avoid: Iterable<
  * `index` (null for the word itself), `span` letters (2 for a digraph's sound).
  */
 export interface ClueStep {
+  /** The line to say; `` for a silent letter (item 056), which only lights. */
   id: string;
   kind: 'word' | 'name' | 'sound';
   index: number | null;
@@ -125,6 +126,8 @@ export function clue(word: string, level: GrabLevel, help = false): ClueStep[] {
   units.forEach((unit, i) => {
     const sound = b?.sounds[i] ?? unit;
     if (SOUND_BY_UNIT[sound]) out.push({ id: letterSoundLine(sound), kind: 'sound', index, span: unit.length });
+    // A silent letter (KITE's E, item 056) lights in its turn and says nothing: no line id.
+    else if (sound === '') out.push({ id: '', kind: 'sound', index, span: unit.length });
     index += unit.length;
   });
   return out;

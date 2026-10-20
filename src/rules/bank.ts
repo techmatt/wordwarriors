@@ -132,13 +132,16 @@ export function withStems(said: Iterable<string>): string[] {
       const half = rest.replace(/s$/, '');
       const compound = rest.length >= 3 && (Boolean(BANK_BY_WORD[half]) || COMPOUND_HALVES.has(half));
       if (plural || ending || compound) out.add(b.word);
+      // Item 056: a compound's other half when it is a bank word too (CUP-CAKES says CAKE).
+      if (compound && BANK_BY_WORD[half]) out.add(half);
     }
   }
   return [...out];
 }
 
 /** Second halves of compounds the game says, beyond bank words (CUP-CAKES, SUN-SHINE, PIG-LETS). */
-const COMPOUND_HALVES = new Set(['cake', 'shine', 'let', 'ball', 'fish', 'man', 'box']);
+// Item 056: DOM, so KINGDOM says KING.
+const COMPOUND_HALVES = new Set(['cake', 'shine', 'let', 'ball', 'fish', 'man', 'box', 'dom']);
 
 /**
  * Is a word's level open to her (its gate above 0)? A bag draw whose pool
