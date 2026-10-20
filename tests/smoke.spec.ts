@@ -200,7 +200,7 @@ test('F9 out of a sentence room and back: it restarts cleanly', SLOW, async ({ p
   expectNoErrors(errors);
 });
 
-test('chef scenario: with Dada Jason as ally, Julia wakes up as chef Julia and fights as her', async ({ page }) => {
+test('chef scenario: with Dada Jason as ally, Julia wakes up as chef Julia and fights as her', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=bedroom&ally=dada_jason&nojourney=1');
   // Asleep in bed: her default images (forms start once she is up).

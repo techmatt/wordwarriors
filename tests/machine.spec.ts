@@ -101,7 +101,8 @@ test('the word machine: tiles say their sounds, a silly tile giggles and pops ou
 test('the pool draws the word machine: a whole episode with it behind door a @slow', async ({ page }) => {
   test.setTimeout(900_000);
   const errors = collectErrors(page);
-  await boot(page, '?game=word_machine&nojourney=1');
+  // A drawn cast (seed 19): also one of item 025's whole random episodes.
+  await boot(page, '?game=word_machine&seed=19&nojourney=1');
   await until(page, (s) => s.scene === 'Title', 30_000, 'title');
   await page.waitForTimeout(300);
   await press(page, 'green');

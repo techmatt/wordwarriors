@@ -22,9 +22,10 @@ async function playEnding(page: Page, name: string): Promise<{ ending: NonNullab
   return { ending: done.ending!, end };
 }
 
-// Two in the fast lane, the rest in the slow one.
+// Each plays its four lines out (12-25 s), so all are slow lane; the fast lane keeps
+// the quick check below that a scene is drawn at all.
 for (const seed of [2, 9, 4, 6, 13]) {
-  test(`a random victory scene plays through (seed ${seed})${seed === 2 || seed === 9 ? '' : ' @slow'}`, async ({ page }) => {
+  test(`a random victory scene plays through (seed ${seed}) @slow`, async ({ page }) => {
     const errors = collectErrors(page);
     await boot(page, `?scene=victory&seed=${seed}&nojourney=1&read=bed,hat,zap`);
     const { ending, end } = await playEnding(page, `seed${seed}`);
@@ -52,7 +53,7 @@ for (const seed of [2, 9, 4, 6, 13]) {
   });
 }
 
-test('a fitting dad says his own line: chef Dada Jason baked the cake', async ({ page }) => {
+test('a fitting dad says his own line: chef Dada Jason baked the cake @slow', async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=victory&ally=dada_jason&villain=smaug&ending=dessert&nojourney=1&read=bed');
   const { ending } = await playEnding(page, 'chef');

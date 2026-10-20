@@ -27,16 +27,20 @@ function collectProblems(page: Page): string[] {
 }
 
 test('the cast draw picks the villain\'s own style; ?fight= fixes another', async ({ page }) => {
+  // The style and its staging are made with the scene, so the versus intro need not play out.
   await boot(page, '?scene=battle&part=1&villain=smaug&nojourney=1');
-  const race = await until(page, (s) => s.scene === 'Battle' && s.battle?.phase === 'fight', 30_000, 'the race under way');
+  const race = await until(page, (s) => s.scene === 'Battle' && Boolean(s.battle), 30_000, 'the race set up');
   expect(race.battle?.fight).toBe('sky_race');
   expect(typeof race.battle?.stage.lead).toBe('number');
   await boot(page, '?scene=battle&part=1&villain=smaug&fight=cook_off&nojourney=1');
-  const cook = await until(page, (s) => s.scene === 'Battle' && s.battle?.phase === 'fight', 30_000, 'the cook-off under way');
+  const cook = await until(page, (s) => s.scene === 'Battle' && Boolean(s.battle), 30_000, 'the cook-off set up');
   expect(cook.battle?.fight).toBe('cook_off');
 });
 
-for (const f of FIGHTS) {
+// The brawl is the default episode's style (Evil Tiamat has none of her own), so every
+// default whole episode and smoke's Battle part 2 already play it with these checks,
+// the length too (`expectFightLength` in playEpisode): only the contests are swept here.
+for (const f of FIGHTS.filter((x) => x.id !== 'brawl')) {
   test(`${f.id}: both battles keep the episode's shape @slow`, async ({ page }) => {
     test.setTimeout(600_000);
     const problems = collectProblems(page);

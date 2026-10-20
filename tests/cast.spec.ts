@@ -1,13 +1,15 @@
 /**
- * Item 025: drawn casts. A few seeds through the bedroom (every role, the
- * quest line, the quest place), and in the slow lane whole random episodes
- * from title to victory. Screenshots land in tests/screenshots/ (ignored) for
- * a look.
+ * Item 025: drawn casts. A seed draws the same cast every time; URL overrides
+ * fix one. Drawn casts are played elsewhere (item 036 folded them into walks
+ * that were already there): through the bedroom and the warm-up to the quest
+ * place in tests/entry.spec.ts, whole episodes in tests/soak.spec.ts (two)
+ * and tests/machine.spec.ts (one). Screenshots land in tests/screenshots/
+ * (ignored) for a look.
  */
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { boot, collectErrors, expectNoErrors, leaveBedroom, playEpisode, press, state, until } from './harness';
+import { boot, collectErrors, expectNoErrors, until } from './harness';
 
 interface Ep {
   hero: string;
@@ -24,28 +26,6 @@ async function episodeOf(page: Page): Promise<Ep> {
 }
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/025_${name}.png` });
-
-for (const seed of [3, 11, 25]) {
-  test(`seed ${seed}: the drawn cast wakes her, the helper says the quest, and the door leads to the quest place @slow`, async ({ page }) => {
-    test.setTimeout(180_000);
-    const errors = collectErrors(page);
-    await boot(page, `?scene=bedroom&seed=${seed}&nojourney=1`);
-    const ep = await episodeOf(page);
-    expect(ep.villain).toBeTruthy();
-    expect(ep.ally).toBeTruthy();
-    await until(page, (s) => s.room?.round === 'bedroom:door', 120_000, 'the news, the quest, the door');
-    await shot(page, `seed${seed}_bedroom`);
-    const s = await state(page);
-    // The quest's setup line was said: the helper's own, or the narrator's home one.
-    expect(s.voice.history.some((id) => id.startsWith('quest_') || id.endsWith('_quest_home'))).toBe(true);
-    // The helper's wake-up introduction is in the waker's voice; the bad news names this villain.
-    expect(s.voice.history.some((id) => id.startsWith('wake_') && id.endsWith(`_bad_${ep.villain}`))).toBe(true);
-    await leaveBedroom(page);
-    await until(page, (st) => st.scene === 'Hub' && st.room?.round === 'hub:1:circle', 90_000, 'circle offered');
-    await shot(page, `seed${seed}_hub_${ep.place}`);
-    expectNoErrors(errors);
-  });
-}
 
 test('the same seed casts the same episode (from the same progress) @slow', async ({ browser }) => {
   const cast = async () => {
@@ -71,19 +51,3 @@ test('URL overrides fix the cast: a dad form as ally, his quest place, the other
   await shot(page, 'override_forest_gym');
   expectNoErrors(errors);
 });
-
-for (const seed of [1, 7, 19]) {
-  test(`a whole random episode plays through (seed ${seed}) @slow`, async ({ page }) => {
-    test.setTimeout(900_000);
-    const errors = collectErrors(page);
-    await boot(page, `?seed=${seed}&nojourney=1`);
-    await until(page, (s) => s.scene === 'Title', 30_000, 'title');
-    await page.waitForTimeout(300);
-    await press(page, 'green');
-    const ep = await episodeOf(page);
-    const { end } = await playEpisode(page);
-    await shot(page, `seed${seed}_victory_${ep.villain}`);
-    expect(end.battle?.villains[0]?.hp).toBe(0);
-    expectNoErrors(errors);
-  });
-}

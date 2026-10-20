@@ -448,6 +448,7 @@ export async function playEpisode(page: Page): Promise<{ end: WWState; keys: str
   // The ultimate floors them, then the retreat stands them back up to run off:
   // the part ends on a retreat, never on a floored team.
   expect(afterB1.battle?.heroes.every((h) => h.status !== 'floored')).toBe(true);
+  expectFightLength(afterB1);
 
   // Hub part 2: the secret door, the attic's counter sentence, out again.
   await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:2:secret', 90_000, 'secret door');
@@ -460,7 +461,18 @@ export async function playEpisode(page: Page): Promise<{ end: WWState; keys: str
   await until(page, (s) => s.scene === 'Battle', 30_000, 'battle 2');
   await playBattle(page, 2);
   const end = await until(page, (s) => s.scene === 'Victory', 30_000, 'victory');
+  expectFightLength(end);
   return { end, keys: [...keys, counterKey], grab };
+}
+
+/**
+ * A battle part takes about as long as the brawl's (~70-80 s of simulation
+ * time), whatever the fight style (item 031). Read from the state after the
+ * part, where the battle's last numbers stay.
+ */
+export function expectFightLength(after: WWState): void {
+  expect(after.battle?.t ?? 0).toBeGreaterThan(45);
+  expect(after.battle?.t ?? 0).toBeLessThan(120);
 }
 
 export function expectNoErrors(errors: string[]): void {

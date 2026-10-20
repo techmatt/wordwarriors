@@ -4,7 +4,9 @@
  * and sounds, no word), the right pick, the level up, and out to the hub;
  * each level's clue; three misses (the word added as help, the level down);
  * F9 out and back; and a sweep of drawn casts from the bedroom, checking the
- * grab word stays out of the episode's reading. Screenshots land in
+ * grab word stays out of the episode's reading, and (item 025's checks, once
+ * their own walk through the same bedroom) that the drawn cast wakes her and
+ * the door leads to the quest place. Screenshots land in
  * tests/screenshots/ (ignored).
  */
 
@@ -158,13 +160,21 @@ test('F9 and back: a miss before it still counts; after the grab the hall comes 
 });
 
 for (const seed of [3, 11, 25, 40]) {
-  test(`seed ${seed}: from the bedroom through the warm-up to the quest; the grab word is never read this episode @slow`, async ({ page }) => {
+  test(`seed ${seed}: the drawn cast wakes her, the helper says the quest, through the warm-up to the quest place; the grab word is never read this episode @slow`, async ({ page }) => {
     test.setTimeout(240_000);
     const errors = collectErrors(page);
     await boot(page, `?scene=bedroom&seed=${seed}&nojourney=1&games=all`);
     await leaveBedroom(page, { grab: false });
     const s = await clued(page);
     const g = s.room!.grab!;
+    // The drawn cast (item 025): every role filled; the quest's setup line was
+    // said (the helper's own, or the narrator's home one); the helper's wake-up
+    // introduction is in the waker's voice and the bad news names this villain.
+    const ep = s.episode as unknown as { ally: string | null; villain: string; place: string };
+    expect(ep.villain).toBeTruthy();
+    expect(ep.ally).toBeTruthy();
+    expect(s.voice.history.some((id) => id.startsWith('quest_') || id.endsWith('_quest_home'))).toBe(true);
+    expect(s.voice.history.some((id) => id.startsWith('wake_') && id.endsWith(`_bad_${ep.villain}`))).toBe(true);
     await shot(page, `seed${seed}_hall`);
     const plan = s.episode.house.plan!;
     expect(plan).toBeTruthy();
@@ -179,6 +189,9 @@ for (const seed of [3, 11, 25, 40]) {
     expect(word).toBe(g.word);
     const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'hub');
     expect(hub.episode.fetched).toEqual([g.word]);
+    // ...and the front door led to the quest place.
+    await until(page, (st) => st.scene === 'Hub' && st.room?.round === 'hub:1:circle', 90_000, 'circle offered');
+    await page.screenshot({ path: `tests/screenshots/025_seed${seed}_hub_${ep.place}.png` });
     test.info().annotations.push({ type: 'warm-up', description: `seed ${seed}: ${g.word} at level ${g.level}, ${Math.round((Date.now() - t0) / 100) / 10}s scaled` });
     expectNoErrors(errors);
   });

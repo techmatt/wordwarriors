@@ -32,7 +32,16 @@ export default defineConfig({
     },
   },
 
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  // WW_GPU=1 draws with the GPU (full Chromium, ANGLE on D3D11) instead of software GL.
+  projects: [
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        ...(process.env.WW_GPU ? { channel: 'chromium', launchOptions: { args: ['--autoplay-policy=no-user-gesture-required', '--use-angle=d3d11', '--enable-gpu'] } } : {}),
+      },
+    },
+  ],
 
   webServer: process.env.WW_BASE_URL
     ? undefined
