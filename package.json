@@ -21,9 +21,11 @@
     "bank:audit": "tsx tools/phonics/audit.ts",
     "test": "npm run test:unit && playwright test --grep-invert @slow",
     "test:slow": "playwright test --grep @slow",
-    "test:all": "npm run test:unit && playwright test"
+    "test:all": "npm run test:unit && playwright test",
+    "voice:import": "tsx tools/voice/import.ts"
   },
   "devDependencies": {
+    "@breezystack/lamejs": "^1.2.7",
     "@playwright/test": "^1.62.1",
     "@types/node": "^26.2.0",
     "edge-tts-universal": "^1.4.0",

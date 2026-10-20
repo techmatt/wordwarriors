@@ -59,9 +59,21 @@ export interface ClipRecord {
   ingested: string;
 }
 
+/** A recording `voice:import` made for a line the game doesn't have yet. */
+export interface WaitingClip {
+  provider: string;
+  /** What was asked for: the recorder's word and sound. */
+  recorded: string;
+  audio: string;
+  seconds: number;
+  ingested: string;
+}
+
 export interface ClipIndex {
   version: number;
   clips: Record<string, ClipRecord>;
+  /** By the line id it is for; `voice:import` moves each into `clips` once that line exists. */
+  waiting?: Record<string, WaitingClip>;
 }
 
 export async function readClipIndex(file = CLIP_INDEX): Promise<ClipIndex> {

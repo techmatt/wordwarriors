@@ -19,9 +19,10 @@ export async function voiceStatus(): Promise<void> {
 
   // The sounds only: the letter names (item 033, `letter_<x>_name`) are ordinary lines.
   const letters = lines.filter((l) => l.id.startsWith('letter_') && l.id.endsWith('_sound'));
-  const lettersLeft = letters.filter((l) => clipStateFor(l, index).state !== 'fresh').map((l) => l.id.slice(7, 8));
+  // The sound key, whole: `letter_long_a_sound` is long_a, not l.
+  const lettersLeft = letters.filter((l) => clipStateFor(l, index).state !== 'fresh').map((l) => l.id.slice('letter_'.length, -'_sound'.length));
   console.log(`voice: ${lines.length} lines; ${by.fresh.length} recorded, ${by.stale.length} stale, ${by.missing.length} on edge-tts`);
-  console.log(`letter sounds still placeholder (${lettersLeft.length}/26): ${lettersLeft.join(' ') || 'none'}`);
+  console.log(`letter sounds still placeholder (${lettersLeft.length}/${letters.length}): ${lettersLeft.join(' ') || 'none'}`);
   if (by.stale.length) console.log(`stale (re-record): ${by.stale.join(', ')}`);
 }
 
