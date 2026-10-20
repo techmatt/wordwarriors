@@ -50,6 +50,7 @@ import { fightLineKey, type FightSpec } from '../../content/battle/fights';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
+import { withStems } from '../rules/bank';
 import type { MoveOwner } from '../rules/moves';
 import { progress } from '../state/progress';
 import { hookState } from '../testHooks';
@@ -809,7 +810,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
    */
   private textGivesAway(text: string): boolean {
     const upcoming = this.upcomingPads();
-    return text.toLowerCase().split(/[^a-z]+/).some((w) => upcoming.has(w));
+    // A pad word inside a longer one counts too: SPINNY before SPIN, HUGS before HUG (item 039).
+    return withStems(text.toLowerCase().split(/[^a-z]+/).filter(Boolean)).some((w) => upcoming.has(w));
   }
 
   /** A fighter's taunts that give no move choice away. */

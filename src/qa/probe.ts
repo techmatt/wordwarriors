@@ -6,7 +6,7 @@
  * It keeps logs the checker cannot get by polling: every line the voice bus
  * starts (and whether it had audio), frame-time spikes and long tasks per
  * scene, stretches where her input was locked (and how much of each was
- * silent), art that failed to load, and console warnings. `layout()` lists
+ * silent), full-screen flashes, art that failed to load, and console warnings. `layout()` lists
  * what is drawn right now (texts, images, the targets she can walk to) for
  * the overlap and placeholder checks; `counts()` the objects, tweens and
  * timers alive, for growth across episodes.
@@ -17,6 +17,7 @@ import Phaser from 'phaser';
 import { getAudioContext } from '../audio/context';
 import { voiceBus } from '../audio/VoiceBus';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { fxStats } from '../fx/juice';
 import { dadLock } from '../input/dadLock';
 import { voiceBank } from '../voice/VoiceBank';
 import { hookState } from '../testHooks';
@@ -77,6 +78,8 @@ const log = {
   missingArt: [] as string[],
   console: [] as { level: string; text: string; scene: string }[],
   frames: {} as Record<string, { n: number; over50: number; over100: number; max: number }>,
+  /** Full-screen camera flashes (game-clock ms), for the flashes-per-second check. */
+  flashes: [] as { scene: string; t: number }[],
 };
 
 const speed = (): number => (window as unknown as { __wwSpeed?: number }).__wwSpeed ?? 1;
@@ -121,6 +124,7 @@ export function installProbe(game: Phaser.Game): void {
   // Frame times and lock stretches, once a frame.
   let open: QaLock | null = null;
   let last = performance.now();
+  let flashes = fxStats.flashes;
   game.events.on(Phaser.Core.Events.POST_STEP, () => {
     const now = performance.now();
     const real = (now - last) / speed();
@@ -134,6 +138,12 @@ export function installProbe(game: Phaser.Game): void {
     if (real > f.max && f.n > 3) f.max = Math.round(real);
     if (real > 120 && f.n > 3) log.spikes.push({ scene, t: now, ms: Math.round(real), kind: 'frame' });
     if (log.spikes.length > 500) log.spikes.splice(0, 100);
+
+    if (fxStats.flashes !== flashes) {
+      for (let i = flashes; i < fxStats.flashes; i++) log.flashes.push({ scene, t: now });
+      flashes = fxStats.flashes;
+      if (log.flashes.length > 2000) log.flashes.splice(0, 500);
+    }
 
     const room = hookState.room;
     const locked = Boolean(room && room.scene === scene && room.locked) && !dadLock.locked;
@@ -156,6 +166,7 @@ export function installProbe(game: Phaser.Game): void {
       voice: log.voice.filter((v) => v.t > t),
       locks: log.locks.filter((l) => l.start + l.ms > t),
       spikes: log.spikes.filter((s) => s.t > t),
+      flashes: log.flashes.filter((f) => f.t > t),
       console: log.console.slice(),
       missingArt: log.missingArt.slice(),
       frames: log.frames,

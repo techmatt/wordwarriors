@@ -97,8 +97,12 @@ export interface EpisodeState {
   spell: string | null;
   /** The battles' move choices (item 018), planned with the house: battle 1's words never become the counter word. */
   moves: MovePlan | null;
-  /** The house: which room holds which sentence, and which rooms are done. */
-  house: { plan: RoomPlan[] | null; done: Slot[]; taught: boolean };
+  /**
+   * The house: which room holds which sentence, and which rooms are done.
+   * `misses`: wrong tries on a round not yet answered, by `<slot>:<word>`, so a
+   * trip to the parent page (F9) and back does not turn a miss into a first try (item 039).
+   */
+  house: { plan: RoomPlan[] | null; done: Slot[]; taught: boolean; misses?: Record<string, number> };
   /**
    * The home warm-up (item 033, src/rules/grab.ts): the word she grabs in the
    * entry hall and the hall's pictures. Drawn before the house plan, which
@@ -470,7 +474,19 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
  * banners and lines clear of pad words as it goes (BattleScene `textGivesAway`).
  */
 function saidBeforeBattle(): string[] {
-  return withStems([...bedroomWords(), ...HALL_LINE_WORDS, ...storyWords()]);
+  return withStems([...bedroomWords(), ...HALL_LINE_WORDS, ...storyWords(), ...fightWords()]);
+}
+
+/**
+ * What the fight style says and shows around the pads (item 039: the
+ * cook-off's "the yummiest dish wins!" came before a YUM pad): its banners,
+ * its "too strong" call and its start and retreat lines. Drawing the style
+ * here is drawing it a little sooner; it is the cast's last draw either way.
+ */
+function fightWords(): string[] {
+  const f = fightStyle();
+  const lines = (['start', 'start2', 'retreat'] as const).flatMap((b) => [f.lines[b]?.text, f.lines[b]?.say]);
+  return [...f.banner, f.tooStrong, ...lines].flatMap((t) => wordsOf(t));
 }
 
 /** What the bedroom says about the villain: its wake-up threat and the taunt it shouts (BedroomScene). */

@@ -323,6 +323,38 @@ the dev server reloading under your edits, run it from a second worktree at the 
 junctions (`cmd /c rmdir <path>`) before `git worktree remove --force`, so nothing is
 deleted through them.
 
+### The bug-hunt checker (item 039)
+
+`QA_TAG=<tag> npx playwright test --config tests/qa/qa.config.ts` plays whole episodes at
+clock speed 5 across casts, dads' forms, places, all five fight styles, the word machine,
+wrong answers everywhere, dad lock, seeded progress (blends and digraphs open) and three
+episodes back to back (`SCENARIOS` in `tests/qa/qa.pw.ts`; `-g <name>` for one,
+`QA_SET=quick` for three). About 1.5 minutes an episode. It is not a test: it records.
+
+- **Shots only at moments:** each scene change, each line (a moment in, so the box and
+  karaoke are up), each new round, move choice and battle phase, each victory-scene line,
+  the recap. About 150 an episode in `scratch/qa/<tag>/<scenario>/`.
+- **Checks at each shot** (`tests/qa/checks.ts`): words off the screen, lower-case
+  text, tiny text, text over text, a target under the dialogue box, placeholder art; the
+  sentence key word or the machine's word said or shown before she answers; lines with
+  no manifest entry or no audio; console warnings; input locked over 20 s or silent over
+  2.5 s; frames over 250 ms; objects, tweens, timers and listeners growing from one
+  episode to the next; and a stall (any wait timing out) with its last shot.
+- **The probe** (`src/qa/probe.ts`) is what the page adds for it, only with `?qa=1` (and
+  the test hooks): the voice log, frame times and long tasks per scene, lock stretches,
+  missing art, console capture, `layout()` and `counts()` on `window.__wwqa`.
+- `npx tsx tests/qa/report.ts <tag>` merges the issues across scenarios into
+  `scratch/qa/<tag>/summary.md` (bugs first, each with a shot) with frame and heap tables,
+  and contact sheets in `scratch/qa/<tag>/sheets/`.
+- **One moment instead of a sweep:** `QA_LOOK='scene=house&cast=default' QA_LOOK_S=30
+  QA_LOOK_GREEN=0` records that URL for 30 s into `scratch/qa/<tag>/look/`.
+- Its server (port 5195, `QA_PORT` to move it) does not watch files, so editing `src/`
+  during a sweep neither reloads it nor mixes code. **Do not run a second browser run
+  (a look, the test suite) beside a sweep:** on this machine the second GPU browser
+  starves the first, and scenarios time out at boot with an empty scene (seen in item 039).
+- Known issues and Matt's calls are in `docs/qa-findings.md`; a hunt reads it first and
+  does not re-report them.
+
 ## Content work
 
 Everything is data under `content/`; `docs/content.md` walks through each kind. After editing it:

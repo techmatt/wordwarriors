@@ -104,7 +104,12 @@ export class SentenceRoom extends Minigame {
     this.skipped = false;
     this.index = -1;
     this.karaoke = null;
-    this.wrongTries = 0;
+    // Back from the parent page (F9) after a miss: still a miss.
+    this.wrongTries = episode.house.misses?.[this.missKey] ?? 0;
+  }
+
+  private get missKey(): string {
+    return `${this.slot}:${this.plan.sentence.key}`;
   }
 
   /** F9 to the parent page and back reopens this same room. */
@@ -146,6 +151,14 @@ export class SentenceRoom extends Minigame {
     // Each room its own stable mess; calm, because she is reading in here.
     applyHouseMood(this, episode.villain, { seed: roomSeed(this.plan.room), floor: this.floor, calm: true });
     this.bag = new Bag(this);
+    // Back from the parent page (F9) after she found it, mid-celebration: the
+    // room is done, so straight back to the hub (item 039: it replayed, and a
+    // second find fetched and recorded the word twice).
+    if (episode.house.done.includes(this.slot)) {
+      this.locked = true;
+      this.time.delayedCall(600, () => backToHub(this, this.slot));
+      return;
+    }
     const room = SIDE_ROOM_BY_ID[this.plan.room]!;
     this.player.place(room.entry.x, Math.min(room.entry.y, this.floor.bottom - 10));
     // Arriving: a hop and a puff where she comes in.
@@ -469,6 +482,7 @@ export class SentenceRoom extends Minigame {
     if (this.pass !== 'find') return;
     if (!spot.correct) {
       void this.wrong(spot.obj);
+      (episode.house.misses ??= {})[this.missKey] = this.wrongTries;
       return;
     }
     void this.found(spot);
@@ -491,7 +505,7 @@ export class SentenceRoom extends Minigame {
     // The episode learns the result now, so a skip mid-celebration loses nothing.
     const counter = this.slot === 'counter';
     if (counter) episode.made.item = true;
-    else episode.fetched.push(s.key);
+    else if (!episode.fetched.includes(s.key)) episode.fetched.push(s.key);
     if (!episode.house.done.includes(this.slot)) episode.house.done.push(this.slot);
 
     const picY = spot.y - 175;

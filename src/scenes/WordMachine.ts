@@ -118,8 +118,13 @@ export class WordMachine extends Minigame {
     this.slotted = null;
     this.picture = null;
     this.pendingTile = null;
-    this.wrongTries = 0;
-    this.misses = 0;
+    // Back from the parent page (F9) after a silly word: still a miss (item 039).
+    this.wrongTries = episode.house.misses?.[this.missKey] ?? 0;
+    this.misses = this.wrongTries;
+  }
+
+  private get missKey(): string {
+    return `${this.slot}:${this.plan.rounds[this.index]?.word ?? ''}`;
   }
 
   /** F9 to the parent page and back reopens this same room (from the first word not yet built). */
@@ -138,6 +143,15 @@ export class WordMachine extends Minigame {
     if (this.machine?.active) {
       const b = this.machine.getBounds();
       out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: 6 });
+    }
+    // The lines that send her to the letters keep off the letters (item 039:
+    // "Walk on a letter..." hid every tile it was talking about).
+    if (/_machine_(go|change|switch)$/.test(voiceBus.speaking?.id ?? '')) {
+      for (const s of this.spots) {
+        if (!s.id.startsWith('tile_') || !s.obj.active) continue;
+        const b = s.obj.getBounds();
+        out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: 40 });
+      }
     }
     return out;
   }
@@ -233,8 +247,8 @@ export class WordMachine extends Minigame {
     this.round = `machine:${this.index}:${r.word}`;
     this.phase = 'intro';
     this.locked = true;
-    this.wrongTries = 0;
-    this.misses = 0;
+    this.wrongTries = episode.house.misses?.[this.missKey] ?? 0;
+    this.misses = this.wrongTries;
     this.pendingTile = null;
     this.clearSpots();
     this.onsetText.setText('');
@@ -362,6 +376,7 @@ export class WordMachine extends Minigame {
   private async silly(spot: Spot, tile: MachineTile): Promise<void> {
     this.wrongTries++;
     this.misses++;
+    (episode.house.misses ??= {})[this.missKey] = this.wrongTries;
     sfxWrong();
     wiggle(this, this.panel);
     this.player.wobble();

@@ -31,6 +31,7 @@ export interface Since {
   voice: { t: number; id: string; scene: string; priority: string; text: string; noLine: boolean; silent: boolean }[];
   locks: { scene: string; round: string; start: number; ms: number; silentMs: number }[];
   spikes: { scene: string; t: number; ms: number; kind: string }[];
+  flashes: { scene: string; t: number }[];
   console: { level: string; text: string; scene: string }[];
   missingArt: string[];
   frames: Record<string, { n: number; over50: number; over100: number; max: number }>;
@@ -152,6 +153,14 @@ export function logIssues(q: Since): Issue[] {
   for (const k of q.locks) {
     if (k.silentMs > 2500) out.push({ kind: 'locked-silent', severity: 'look', scene: k.scene, detail: `${k.round}: input locked ${(k.ms / 1000).toFixed(1)} s, ${(k.silentMs / 1000).toFixed(1)} s of it silent`, key: `lsilent:${k.scene}:${k.round.replace(/:\w+$/, '')}` });
     else if (k.ms > 20_000) out.push({ kind: 'locked-long', severity: 'look', scene: k.scene, detail: `${k.round}: input locked ${(k.ms / 1000).toFixed(1)} s (talking)`, key: `llong:${k.scene}:${k.round.replace(/:\w+$/, '')}` });
+  }
+  // Full-screen flashes: more than three in any second is the photosensitivity line (WCAG 2.3.1).
+  const fl = q.flashes;
+  for (let i = 0; i + 3 < fl.length; i++) {
+    if (fl[i + 3]!.t - fl[i]!.t < 1000) {
+      const n = fl.filter((f) => f.t >= fl[i]!.t && f.t < fl[i]!.t + 1000).length;
+      out.push({ kind: 'flash-rate', severity: 'look', scene: fl[i]!.scene, detail: `${n} full-screen flashes within one second`, key: `flash:${fl[i]!.scene}:${Math.round(fl[i]!.t / 5000)}` });
+    }
   }
   for (const sp of q.spikes) {
     if (sp.ms >= 250) out.push({ kind: `spike-${sp.kind}`, severity: 'look', scene: sp.scene, detail: `${sp.ms} ms`, key: `spike:${sp.scene}:${sp.kind}:${Math.round(sp.t)}` });

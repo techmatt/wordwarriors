@@ -111,7 +111,7 @@ class Recorder {
     this.last = s;
     const q = await this.page.evaluate((t) => (window as unknown as { __wwqa: { since(t: number): Since } }).__wwqa.since(t), this.qaT);
     this.qaT = q.now;
-    this.add(logIssues({ ...q, console: [], missingArt: [] }));
+    this.add(logIssues({ ...q, console: [], missingArt: [], flashes: [] }));
     const sig = {
       scene: s.scene,
       voice: s.voice.speaking && !s.voice.speaking.startsWith('letter_') ? s.voice.speaking : this.sig.voice,
@@ -196,7 +196,7 @@ async function dadLockProbe(page: Page, rec: Recorder): Promise<void> {
 
 /** One episode from the title's green to the victory recap. */
 async function episode(page: Page, sc: Scenario, rec: Recorder): Promise<void> {
-  await until(page, (s) => s.scene === 'Title', 30_000, 'title');
+  await until(page, (s) => s.scene === 'Title', 90_000, 'title');
   await page.waitForTimeout(500);
   await press(page, 'green');
   await until(page, (s) => s.scene === 'Bedroom', 30_000, 'bedroom');
@@ -247,7 +247,8 @@ if (LOOK) {
       if (process.env.QA_LOOK_GREEN !== '0') await press(page, 'green');
     }
     await rec.stop();
-    writeFileSync(`${OUT}/look.json`, JSON.stringify({ scenario: { name: 'look', query: LOOK }, seconds: 0, stalled: null, shots: rec.shots, cast: null, heapMB: [], frames: {}, locks: [], issues: [...rec.issues.values()] }, null, 1));
+    const last = await state(page);
+    writeFileSync(`${OUT}/look.json`, JSON.stringify({ scenario: { name: 'look', query: LOOK }, seconds: 0, stalled: null, shots: rec.shots, cast: null, heapMB: [], frames: {}, locks: [], issues: [...rec.issues.values()], last: { scene: last.scene, room: last.room, voice: last.voice } }, null, 1));
   });
 }
 
@@ -277,6 +278,7 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && (set !== 'quick' || x.quick)))
     }
     await rec.stop();
     const q = await page.evaluate(() => (window as unknown as { __wwqa: { since(t: number): Since } }).__wwqa.since(0));
+    // The whole run's flashes at once: a burst can straddle two polls.
     rec.add(logIssues({ ...q, voice: [], locks: [], spikes: [] }));
     for (const e of errors) rec.add([{ kind: 'page-error', severity: 'bug', scene: '', detail: e, key: `pageerror:${e.slice(0, 80)}` }]);
     // Growth from one episode to the next.
