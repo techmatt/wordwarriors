@@ -547,6 +547,10 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   (`npx tsx tools/art/alts.ts alts <ids…>`); without it the first id is taken as the
   command and skipped. A run whose id list names a picture deleted meanwhile still
   draws its candidates and fails only at the sheet: rebuild it with `--sheet-only`.
+  Without `--sheet` a run names its sheet by the minute it started
+  (`scratch/art_alts_<date>_<hhmm>.*`), so two runs started together overwrite one
+  sheet and manifest (item 046): give each its own `--sheet`, or build the combined one
+  with `--sheet-only` afterwards and delete the timestamped one.
 - `art:pick -- <id> <n>` makes candidate `n` the game's art: it becomes
   `art-originals/<id>.png` and is cut into `public/art/<id>.png` by the same keying,
   trimming and palette shrink as `art:gen`. Commit the PNG afterwards. The first pick of
