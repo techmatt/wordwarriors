@@ -1,22 +1,22 @@
 /**
- * Item 053: Charge the Spell and the dad buttons. Fast lane: a visit played
- * with Dad's real keys (2 yes, 1 no) and the hooks, the help levels moving
- * and saved, the cue in the corner, letter sounds never captioned; the
- * timeout and dad lock (the keys stay live, the timeout waits); the runes
- * fired in battle; the forced room in a drawn episode. Screenshots land in
+ * Item 053: Charge the Spell and the dad buttons. Fast lane: the runes fired
+ * in battle; the forced room in a drawn episode, F4 as Dad's yes. Slow lane: a
+ * visit played with Dad's real keys (2 yes, 1 no) and the hooks, the help
+ * levels moving and saved, the cue in the corner; the timeout and dad lock
+ * (the keys stay live, the timeout waits). Screenshots land in
  * tests/screenshots/ (ignored) for a look.
  */
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { boot, choose, collectErrors, dad, expectNoErrors, playChargeRoom, seedProgress, state, until } from './harness';
+import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playChargeRoom, seedProgress, state, until } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/053_${name}.png` });
 
 /** Every rune at help level 3 (the rune alone): asks come straight away. */
 const LEVEL3 = Object.fromEntries([...'mesfalnrvziou', ...'tpbdckghjwy', 'sh', 'ch', 'th'].map((s) => [s, 3]));
 
-test('Charge the Spell: walk to the altar, Dad says yes with key 2, no with key 1; levels move and are saved', async ({ page }) => {
+test('Charge the Spell: walk to the altar, Dad says yes with key 2, no with key 1; levels move and are saved', SLOW, async ({ page }) => {
   test.setTimeout(150_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&room=charge');
@@ -71,7 +71,7 @@ test('Charge the Spell: walk to the altar, Dad says yes with key 2, no with key 
   expectNoErrors(errors);
 });
 
-test('Charge the Spell: nothing for 8 s helps; under dad lock the keys still work and the timeout waits', async ({ page }) => {
+test('Charge the Spell: nothing for 8 s helps; under dad lock the keys still work and the timeout waits', SLOW, async ({ page }) => {
   test.setTimeout(120_000);
   const errors = collectErrors(page);
   await seedProgress(page, { version: 1, chargeLevels: LEVEL3 });
