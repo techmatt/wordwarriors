@@ -1,7 +1,7 @@
 /**
  * One page boot per test, many asserts each. Every scene is reached directly
  * with `?scene=`, so a failure points at one step. The quick ones are the fast
- * lane (`npm test`); the ones tagged SLOW (15–40 s each even at clock speed 3)
+ * lane (`npm test`); the ones tagged SLOW (10–50 s each even at clock speed 5)
  * run with the slow lane (`npm run test:slow`, `npm run test:all`).
  */
 

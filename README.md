@@ -266,7 +266,7 @@ each level's clue, three misses, F9 out and back, and four drawn casts from the 
 fight style the cast drew; `tests/fights.spec.ts` sweeps the four contests through both
 battles (the brawl is the default episode's own).
 
-The browser tests run the page's clocks 3× fast (`WW_SPEED`, default 3; `tests/harness.ts`):
+The browser tests run the page's clocks 5× fast (`WW_SPEED`, default 5; `tests/harness.ts`):
 timers, tweens, the game loop and voice playback together. The full-episode test alone
 runs at real time (speed 1), so real pacing stays covered. `WW_SPEED=1 npm test` runs
 the fast lane at real time.
@@ -565,7 +565,8 @@ npm run art:pick -- <id> <n>
   5184 (`TEST_PORT`) and never reuses one; with `WW_BASE_URL` set it starts none.
 - The full-episode test (`npm run test:slow`) takes about 5 minutes: every line is
   real speech and green is ignored until an instruction finishes. It is the one test at
-  real time; everything else runs at clock speed 3. Speed 6 is slower, not faster (her
+  real time; everything else runs at clock speed 5 (3 before item 036 moved the tests to
+  the GPU). Speed 6 in software GL was slower, not faster (her
   walking overshoots at headless frame rates); measurements in `docs/engineering.md`.
 - Headless Chromium renders the battle at roughly 8–18 fps (software GL). With the GPU
   (Playwright `channel: 'chromium'` plus `--use-angle=d3d11`) the same battle holds a

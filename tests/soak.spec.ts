@@ -3,7 +3,7 @@
  * Victory, green, and straight into the next one. Catches anything that
  * only breaks on the second run of a scene (listeners, stale state, leaks):
  * the hub is restarted many times an episode, so it is the one to watch.
- * @slow. Runs at clock speed `WW_SPEED` (3): what it guards is the second
+ * @slow. Runs at clock speed `WW_SPEED` (5): what it guards is the second
  * run, not real-time pacing, which the full-episode test covers. Both are
  * drawn casts (seed 1, then the next draw), so they are also two of the
  * whole random episodes item 025 asks for (the third is the word machine's

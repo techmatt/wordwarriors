@@ -94,13 +94,13 @@ export function collectErrors(page: Page): string[] {
 }
 
 /**
- * How fast the page's clocks run (`WW_SPEED`, default 3). Every clock the game
+ * How fast the page's clocks run (`WW_SPEED`, default 5; 3 until item 036). Every clock the game
  * reads is scaled together: `performance.now`, `Date.now`, timers, the
  * animation-frame timestamp (so Phaser's loop, timers and tweens), and voice
  * clips play `speed` times faster, so they end in step with the timers that
  * wait for them. The slow lane's full episode passes 1: real time.
  */
-export const SPEED = Number(process.env.WW_SPEED ?? 3);
+export const SPEED = Number(process.env.WW_SPEED ?? 5);
 
 /** Install the clock warp before the page's scripts run (once per page; it survives reloads). */
 function warpClocks(k: number): void {

@@ -71,7 +71,10 @@ without a new measurement.
   `--use-angle=d3d11`) at speed 3 was 1m55s in one run and 3m05s in another; not adopted
   then. Re-measured 2026-10-19 (item 036): one fight style through both battles 53 s on
   the GPU against 78 s in software, the fast lane 76 s against 82 s, so the GPU is now
-  the default (`WW_GPU=0` for software). Three workers with `--fully-parallel` on the
+  the default (`WW_GPU=0` for software). With the GPU's frame rate her walking keeps up
+  at a faster clock: three slow tests (Battle part 2, the machine wrong-first, a warm-up
+  seed) took 99 s at speed 3, 81 s at 4, 73 s at 5, all green, so the default is now 5.
+  Three workers with `--fully-parallel` on the
   fast lane: 89 s against 82 s on one, so still one worker.
 - Battle fighters move by `min(0.05 s, frame delta) × time scale` (`BattleScene.update`),
   while the director's clock (`now`) takes the frame delta unclamped. At software GL's
