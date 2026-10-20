@@ -135,6 +135,8 @@ export class Fighter {
   readonly height: number;
   spin = 0;
   lean = 0;
+  /** Where its bolts leave from, when not its middle: a fetched thing's picture over her head (item 034). */
+  castFrom: { x: number; y: number } | null = null;
   /** Clone of which fighter, for Moriarty's tricks. */
   cloneOf: Fighter | null = null;
   lastHitAt = 0;

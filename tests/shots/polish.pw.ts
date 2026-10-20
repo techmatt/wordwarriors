@@ -85,6 +85,20 @@ for (const ally of ['dada_matt_lifter', 'dada_jason_warlock']) {
   });
 }
 
+// Evil Bavmorda's Pig Curse with warlock Dada Jason (a PIG pad) as ally: called out without saying PIG.
+test('pig_callout', async ({ page }) => {
+  test.setTimeout(600_000);
+  const said: string[] = [];
+  for (const part of [1, 2]) {
+    await boot(page, `?scene=battle&part=${part}&villain=bavmorda&ally=dada_jason_warlock&fight=spell_clash&nojourney=1`, SPEED);
+    await until(page, (s) => s.scene === 'Battle' && Boolean(s.battle), 60_000, 'the battle');
+    const rec = sampler(page, `pig_p${part}`, 4000);
+    await playBattle(page, part);
+    for (const id of await rec.stop()) if (id.includes('pig')) said.push(`p${part} ${id}`);
+  }
+  writeFileSync(`${OUT}/pig_callout.json`, JSON.stringify({ said }, null, 1));
+});
+
 for (const cast of CASTS) {
   test(`${cast.name}`, async ({ page }) => {
     test.setTimeout(900_000);

@@ -273,6 +273,18 @@ first move choice), shooting every line shortly after it starts into
 vite on port 5194. `npx tsx tests/shots/sheet.ts <beforeTag> <afterTag> <out.png>` puts
 two runs side by side.
 
+**Battle shots** (item 034): `SHOTS_TAG=<tag> npx playwright test --config
+tests/shots/shots.config.ts polish.pw` plays both battles for eight casts across the five
+fight styles (`CASTS` in `tests/shots/polish.pw.ts`), shooting every 1.5 s and at each new
+phase into `scratch/polish_034/<tag>/`, with each battle's voice history and any line said
+twice in a row (`*_voice.json`); also the dads' heights in the bedroom, entry hall, hub and
+victory scene, and Pig Curse's callout. About 16 minutes at `WW_SPEED=2` (the default
+there). Name the spec file (`polish.pw`), not `polish`: every path in a worktree called
+`…_polish` matches the bare word. `npx tsx tests/shots/contact.ts <tag>` makes one
+contact sheet per battle in `scratch/polish_034/<tag>_sheets/`. To shoot "before" without
+the dev server reloading under your edits, run it from a second worktree at the base commit
+(junction its `node_modules`, `public/voice-gen` and `scratch` to this one's).
+
 ## Content work
 
 Everything is data under `content/`; `docs/content.md` walks through each kind. After editing it:

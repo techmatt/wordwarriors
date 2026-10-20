@@ -181,16 +181,17 @@ function trail(w: BattleWorld, color: number, mult: number) {
 function fireBolt(w: BattleWorld, f: Fighter, ab: AbilitySpec, target: Fighter, mult: number, spread: number, delay: number): void {
   w.after(delay, () => {
     if (!f.active) return;
-    const angle = Phaser.Math.Angle.Between(f.cx, f.cy, target.cx, target.cy) + spread;
+    const from = f.castFrom ?? { x: f.cx, y: f.cy };
+    const angle = Phaser.Math.Angle.Between(from.x, from.y, target.cx, target.cy) + spread;
     const speed = 620 + Math.random() * 120;
-    const obj = projectileObj(w, ab, f.cx, f.cy, mult);
+    const obj = projectileObj(w, ab, from.x, from.y, mult);
     const t = trail(w, ab.color, mult);
     t.startFollow(obj);
     sfxPew();
     w.addProjectile({
       obj,
-      x: f.cx,
-      y: f.cy,
+      x: from.x,
+      y: from.y,
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed,
       team: f.team,

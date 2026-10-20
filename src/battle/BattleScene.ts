@@ -656,7 +656,10 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     this.banner(`THE ${word.toUpperCase()}!`, color === 0xffffff ? 0x7ad9ff : color, true);
     slowmo(this, 0.4, 700);
     speedLines(this, pic.x, pic.y, color, 600);
+    // Its bolts fly out of the picture, not out of her: a volley of big caps hid her (item 034).
+    h.castFrom = { x: pic.x, y: bag.y - 110 };
     cast(this, h, item.ability, this.villain, 1.8);
+    this.after(900, () => (h.castFrom = null));
     this.stats.abilitiesFired++;
     this.itemsUsed++;
     // The picture flies off towards the villain and fades; the bag closes.

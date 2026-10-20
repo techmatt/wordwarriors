@@ -151,7 +151,7 @@ export abstract class RoomScene extends Phaser.Scene {
     return fitImage(this.add.image(x, y, key).setOrigin(0.5, 1), w, h);
   }
 
-  /** A cast member standing in the room, as tall beside her as their size says (item 028: Scar just under her, a dad a head over). */
+  /** A cast member standing in the room, as tall beside her as their size says (item 028: Scar just under her; a dad grown-up height, item 034). */
   protected castSprite(id: string, x = 0, y = 0): Phaser.GameObjects.Image {
     const h = PLAYER_HEIGHT * castScale(id);
     return this.art(castArt(id), h * 0.95, h, x, y);
