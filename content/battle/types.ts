@@ -95,15 +95,11 @@ export interface AbilitySpec {
   /** Bolts curve towards their target. */
   homing?: boolean;
   /**
-   * A move word this move answers to ("zap"), flavour since item 037: a pad or
-   * gift word it answers to fires this move, styled (`abilityWords`). One of
-   * MOVE_WORDS, or POW / ICE, which are never on a pad.
-   */
-  word?: string;
-  /**
-   * More move words it answers to, the same as `word` (item 018). `word` is
-   * only listed first; every character's good side has at least two moves
-   * with one (rules.test.ts).
+   * The move words this move answers to (["zap", "zip"]), flavour since item
+   * 037: a pad or gift word it answers to fires this move, styled
+   * (`abilityWords`). Each is one of MOVE_WORDS, or POW / ICE, which are never
+   * on a pad. Every character's good side has at least two moves with words
+   * (rules.test.ts). One list since item 047 (it was `word` plus `words`).
    */
   words?: string[];
   /** Plays the "Ha!" interjection SFX when used. */

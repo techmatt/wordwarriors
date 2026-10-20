@@ -43,7 +43,6 @@ test('effects use real kinds, statuses and minions, at a fetched-item power', ()
     if (ab.kind === 'summon') assert.ok(ab.minion && MINIONS[ab.minion], `${word}: minion ${ab.minion}`);
     if (ab.art) assert.match(ab.art, /^(pic|fx|prop)_/, `${word}: art ${ab.art}`);
     // The banner is the word: an effect never claims a move-choice word of its own.
-    assert.equal(ab.word, undefined, word);
     assert.equal(ab.words, undefined, word);
   }
 });

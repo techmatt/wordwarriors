@@ -34,12 +34,13 @@ One `CharacterSpec` in `ROSTER`:
   - optional `mount` (`'carpet'` is drawn; any emoji works, e.g. `'🧹'`) and `trail`
     (`{ tint: [colours], shape: 'spark' | 'star' | 'smoke' | 'square' }`, its aura).
   - `speed` (px/s), `size` (1 person, 1.4 big, 1.8 giant), `hp` (cosmetic).
-  - `abilities`: three or more `AbilitySpec`. A `word` and more `words` that suit it are
+  - `abilities`: three or more `AbilitySpec`. The `words` that suit one are
     flavour (item 037): bank action words (`MOVE_WORDS`), or POW and ICE, which are
     never on a pad. When a pad's word is one a teammate's ability answers to, that
     teammate fires the styled move instead of the word's own effect; as a helper, its
     words are twice as likely to be the gift word, which her hero then fires with its
-    move (see "Move words and the move bag" below).
+    move (see "Move words and the move bag" below). At least two of a character's good
+    abilities have `words` (one list per ability since item 047).
   - `reformed` (on the character, beside `counter`): two or more short, kid-funny lines
     the villain says in its good voice once beaten ("Sorry I was so stormy!"); the
     battle's end says the first, the victory scene the second (item 027), so the
@@ -483,7 +484,7 @@ word needs nothing more.
 
 `MOVE_WORDS` (`content/battle/roster.ts`) is the pool: every bank action word (role
 `action` or `both`, item 037). Reading a pad casts its word (word magic): when a
-teammate's ability answers to it (`word`/`words`), that teammate fires the styled move;
+teammate's ability answers to it (its `words`), that teammate fires the styled move;
 otherwise her hero fires the word's own effect (`content/phonics/effects.ts`). POW and
 ICE are flavour on abilities, never on a pad.
 

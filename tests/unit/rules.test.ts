@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { ART_ASSETS } from '../../content/art/assets';
-import { CHARACTER_BY_ID, MINIONS, MOVE_WORDS, PERSONS, ROSTER, formId } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, MINIONS, MOVE_WORDS, PERSONS, ROSTER, abilityWords, formId } from '../../content/battle/roster';
 import { HOME_QUEST, QUESTS, homeQuestLine, questLine } from '../../content/house/quests';
 import { ANY_SCENES, HUB_SCENES, hubStoryIds, storyTexts } from '../../content/house/scenes';
 import { BANK, THINGS } from '../../content/phonics/bank';
@@ -122,10 +122,10 @@ test('roster: every character is complete, good and evil', () => {
       for (const ab of [...f.abilities, f.ultimate]) {
         if (ab.minion) assert.ok(MINIONS[ab.minion], `${ab.id} summons a known minion`);
         // Flavour since item 037: a bank word, or POW / ICE, which she no longer reads.
-        if (ab.word) assert.ok([...MOVE_WORDS, 'pow', 'ice'].includes(ab.word), `${ab.id} word ${ab.word} is a move word or flavour`);
+        for (const w of abilityWords(ab)) assert.ok([...MOVE_WORDS, 'pow', 'ice'].includes(w), `${ab.id} word ${w} is a move word or flavour`);
       }
     }
-    assert.ok(c.good.abilities.filter((a) => a.word).length >= 2, `${c.id} offers at least two move words`);
+    assert.ok(c.good.abilities.filter((a) => abilityWords(a).length).length >= 2, `${c.id} has at least two abilities with words`);
     const spell = SPELL_WORDS[c.id];
     assert.ok(spell, `${c.id} has Spell the Spell words`);
     assert.equal(spell.length, 3);

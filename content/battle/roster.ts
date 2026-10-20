@@ -28,7 +28,7 @@
  * sorceress, her brave sister, a desert princess with a flying carpet), not as
  * lookalikes of anybody's films. The art prompts in docs/art.md say the same.
  *
- * Move words (`word`, `words`) are flavour (see MOVE_WORDS): a pad word one of
+ * Move words (an ability's `words`) are flavour (see MOVE_WORDS): a pad word one of
  * them answers to fires that ability, styled. Taunts are short, because a bubble over a moving fighter has to be
  * readable at a glance, and they never name the word she must read.
  */
@@ -43,7 +43,7 @@ import type { AbilitySpec, CharacterSpec, ComboSpec, MinionSpec } from './types.
  * narrator. Each episode draws which ones she meets from her move bag
  * (src/rules/moves.ts).
  *
- * Since item 037 an ability's `word`/`words` no longer limit what she reads:
+ * Since item 037 an ability's `words` no longer limit what she reads:
  * they are flavour. When a pad's word is one a teammate's ability answers to,
  * that teammate fires the styled version (Ellie's Giant Bubbles for BIG);
  * otherwise her hero fires the word's own effect. POW and ICE are not bank
@@ -54,9 +54,9 @@ export const MOVE_WORDS: string[] = ACTIONS.map((w) => w.word);
 /** What a big move is called out as, voiced and on its banner: `callout`, else its name. */
 export const abilityCallout = (a: AbilitySpec): string => a.callout ?? `${a.name}!`;
 
-/** Every move word an ability answers to: its main `word`, then its `words`. */
+/** Every move word an ability answers to: its `words`. */
 export function abilityWords(a: AbilitySpec): string[] {
-  return [...(a.word ? [a.word] : []), ...(a.words ?? [])];
+  return a.words ?? [];
 }
 
 function ab(
@@ -179,10 +179,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Julia', trail: { tint: [0xffd23f, 0xff9ad5], shape: 'star' }, look: 'a cheerful slim four-year-old girl with long straight pale-blonde hair and a straight fringe, round pink glasses, blue eyes, fair skin and rosy cheeks, a big cheeky grin, in a rainbow twirl dress with a full swishy skirt striped red, orange, yellow, blue, purple and pink (no green), holding a golden star wand',
       palette: [0x9b5de5, 0xffd23f], glyph: '⭐', style: 'dodge', speed: 210, size: 1, hp: 100,
       abilities: [
-        ab('star_zap', 'Star Zap', 'bolt', 2.5, 0xffd23f, 1, { count: 3, glyph: '⭐', word: 'zap', shout: true, words: ['zip', 'pow'] }),
-        ab('giggle_bubble', 'Giggle Bubble', 'shield', 9, 0xff9ad5, 1, { duration: 4, word: 'pop', words: ['wet'] }),
-        ab('bounce_stomp', 'Bounce Stomp', 'slam', 6, 0x9b5de5, 2, { word: 'hop', shout: true, words: ['bam', 'big'] }),
-        ab('teddy_army', 'Teddy Army', 'summon', 14, 0xc8884a, 2, { minion: 'teddy', count: 3, word: 'hug', words: ['run', 'tug'] }),
+        ab('star_zap', 'Star Zap', 'bolt', 2.5, 0xffd23f, 1, { count: 3, glyph: '⭐', shout: true, words: ['zap', 'zip', 'pow'] }),
+        ab('giggle_bubble', 'Giggle Bubble', 'shield', 9, 0xff9ad5, 1, { duration: 4, words: ['pop', 'wet'] }),
+        ab('bounce_stomp', 'Bounce Stomp', 'slam', 6, 0x9b5de5, 2, { shout: true, words: ['hop', 'bam', 'big'] }),
+        ab('teddy_army', 'Teddy Army', 'summon', 14, 0xc8884a, 2, { minion: 'teddy', count: 3, words: ['hug', 'run', 'tug'] }),
       ],
       ultimate: ult('super_nova', 'Super Star Nova', 'rain',0xffd23f, 3, { count: 30, glyph: '🌟', color2: 0xff5ab4 }),
       taunts: [
@@ -250,12 +250,12 @@ export const ROSTER: CharacterSpec[] = [
       abilities: [
         // When the hub's gift word is one of Ellie's (BIG, POP, HOP...),
         // Julia fires Ellie's move for it (src/rules/moves.ts giftOwner).
-        ab('giant_bubbles', 'Giant Bubbles', 'bolt', 2.4, 0x9ad8ff, 1, { count: 4, art: 'fx_bubble', upright: true, homing: true, color2: 0xff9ad5, word: 'big', words: ['wet'] }),
-        ab('bubble_trap', 'Bubble Trap', 'bolt', 7, 0xff9ad5, 2, { count: 2, art: 'fx_bubble', upright: true, homing: true, status: 'bubble', duration: 2.5, color2: 0x9ad8ff, word: 'pop', words: ['fog'] }),
+        ab('giant_bubbles', 'Giant Bubbles', 'bolt', 2.4, 0x9ad8ff, 1, { count: 4, art: 'fx_bubble', upright: true, homing: true, color2: 0xff9ad5, words: ['big', 'wet'] }),
+        ab('bubble_trap', 'Bubble Trap', 'bolt', 7, 0xff9ad5, 2, { count: 2, art: 'fx_bubble', upright: true, homing: true, status: 'bubble', duration: 2.5, color2: 0x9ad8ff, words: ['pop', 'fog'] }),
         ab('bubble_shield', 'Bubble Shield', 'shield', 10, 0x9ad8ff, 1, { duration: 4, words: ['hug'] }),
-        ab('peekaboo', 'Peekaboo', 'teleport', 6, 0xffd23f, 2, { word: 'hop', words: ['fog'] }),
+        ab('peekaboo', 'Peekaboo', 'teleport', 6, 0xffd23f, 2, { words: ['hop', 'fog'] }),
         // Her one sword move (item 014's swords): a ring round her, then flung.
-        ab('spinny_swords', 'Spinny Swords', 'orbit', 7, 0xcfe8ff, 2, { count: 5, art: 'prop_silver_sword', duration: 1.6, color2: 0xff9ad5, word: 'zip', shout: true, words: ['top'] }),
+        ab('spinny_swords', 'Spinny Swords', 'orbit', 7, 0xcfe8ff, 2, { count: 5, art: 'prop_silver_sword', duration: 1.6, color2: 0xff9ad5, shout: true, words: ['zip', 'top'] }),
       ],
       ultimate: ult('bubble_storm', 'Mega Bubble Storm', 'rain',0x9ad8ff, 3, { count: 30, art: 'fx_bubble', upright: true, color2: 0xff9ad5 }),
       taunts: [
@@ -320,9 +320,9 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Seraphina', trail: { tint: [0x6ad66a, 0xff7b3a], shape: 'spark' }, look: 'a little girl with wild red hair in a green tunic, a tiny dragon on her shoulder',
       palette: [0x2ec27e, 0xff7b3a], glyph: '🐉', style: 'hover', speed: 170, size: 1, hp: 100,
       abilities: [
-        ab('dragon_call', 'Dragon Call', 'summon', 12, 0x6ad66a, 2, { minion: 'baby_dragon', count: 2, word: 'pop', words: ['jet'] }),
-        ab('ember_flick', 'Ember Flick', 'bolt', 2.2, 0xff7b3a, 1, { count: 2, glyph: '🔥', word: 'hot', words: ['zip'] }),
-        ab('wing_gust', 'Wing Gust', 'cone', 5, 0xbaffc9, 2, { word: 'fan', words: ['fog'] }),
+        ab('dragon_call', 'Dragon Call', 'summon', 12, 0x6ad66a, 2, { minion: 'baby_dragon', count: 2, words: ['pop', 'jet'] }),
+        ab('ember_flick', 'Ember Flick', 'bolt', 2.2, 0xff7b3a, 1, { count: 2, glyph: '🔥', words: ['hot', 'zip'] }),
+        ab('wing_gust', 'Wing Gust', 'cone', 5, 0xbaffc9, 2, { words: ['fan', 'fog'] }),
         ab('scale_shield', 'Scale Shield', 'shield', 10, 0x2ec27e, 1, { duration: 4, words: ['hug'] }),
       ],
       ultimate: ult('dragon_parade', 'Dragon Parade', 'summon',0xff7b3a, 3, { minion: 'baby_dragon', count: 6 }),
@@ -390,10 +390,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Dada Matt', trail: { tint: [0xc8643a, 0xff8c42], shape: 'square' }, look: 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, short light-brown hair thinning on top with a high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile, in chunky deep-blue-and-steel builder armour (a rich royal-to-navy blue) with a tool belt, holding a huge friendly hammer. Bright, sturdy and friendly',
       palette: [0xff8c42, 0x4a4a5a], glyph: '🔨', style: 'twirl', speed: 200, size: 1.2, hp: 130,
       abilities: [
-        ab('hammer_spin', 'Hammer Spin', 'spin', 5, 0xff8c42, 2, { word: 'pow', shout: true, words: ['top'] }),
-        ab('brick_wall', 'Brick Wall', 'shield', 10, 0xc8643a, 1, { duration: 4, word: 'big', words: ['fix'] }),
+        ab('hammer_spin', 'Hammer Spin', 'spin', 5, 0xff8c42, 2, { shout: true, words: ['pow', 'top'] }),
+        ab('brick_wall', 'Brick Wall', 'shield', 10, 0xc8643a, 1, { duration: 4, words: ['big', 'fix'] }),
         ab('nail_storm', 'Nail Storm', 'bolt', 2.6, 0xc8c8d8, 1, { count: 5, glyph: '🔩', words: ['zip'] }),
-        ab('ground_pound', 'Ground Pound', 'slam', 7, 0xff8c42, 3, { word: 'bam', shout: true, words: ['dig', 'mud'] }),
+        ab('ground_pound', 'Ground Pound', 'slam', 7, 0xff8c42, 3, { shout: true, words: ['bam', 'dig', 'mud'] }),
       ],
       ultimate: ult('tower_drop', 'Tower Drop', 'rain',0xc8643a, 3, { count: 20, glyph: '🧱', color2: 0xff8c42 }),
       taunts: [
@@ -460,10 +460,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Dada Jason', trail: { tint: [0xffbe0b, 0xe63946], shape: 'star' }, look: 'a big, sturdy, round-faced chef dad: warm light-brown skin, very short dark curly hair receding at the front, black browline glasses, a short dark goatee beard flecked with grey, a tiny hoop earring, a big laughing smile, in crisp white chef\'s whites trimmed in deep forest green (a dark, rich pine green, not lime or bright grass green): a forest-green collar, cuffs and buttons, a forest-green apron, a tall white chef\'s hat with a forest-green band and a forest-green neckerchief, holding a giant whisk. Bright, warm and friendly',
       palette: [0xe63946, 0xffbe0b], glyph: '🍳', style: 'hover', speed: 170, size: 1.2, hp: 120,
       abilities: [
-        ab('pancake_flip', 'Pancake Flip', 'bolt', 2.4, 0xffbe0b, 1, { count: 3, glyph: '🥞', word: 'pop', words: ['pan', 'hop'] }),
-        ab('whisk_whirl', 'Whisk Whirl', 'spin', 5, 0xfff1d6, 2, { word: 'zip', shout: true, words: ['top'] }),
-        ab('sauce_tornado', 'Sauce Tornado', 'cone', 6, 0xe63946, 2, { word: 'hot', words: ['wet'] }),
-        ab('oven_mitt', 'Oven Mitt Shield', 'shield', 10, 0xff8c42, 1, { duration: 4, word: 'hug', words: ['big'] }),
+        ab('pancake_flip', 'Pancake Flip', 'bolt', 2.4, 0xffbe0b, 1, { count: 3, glyph: '🥞', words: ['pop', 'pan', 'hop'] }),
+        ab('whisk_whirl', 'Whisk Whirl', 'spin', 5, 0xfff1d6, 2, { shout: true, words: ['zip', 'top'] }),
+        ab('sauce_tornado', 'Sauce Tornado', 'cone', 6, 0xe63946, 2, { words: ['hot', 'wet'] }),
+        ab('oven_mitt', 'Oven Mitt Shield', 'shield', 10, 0xff8c42, 1, { duration: 4, words: ['hug', 'big'] }),
       ],
       ultimate: ult('breakfast_storm', 'Breakfast Storm', 'rain',0xffbe0b, 3, { count: 30, glyph: '🥞', color2: 0xff6a3a }),
       taunts: [
@@ -527,9 +527,9 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Elsa', trail: { tint: [0xe8f6ff, 0x7cc7ff], shape: 'star' }, look: 'a cheerful winter queen of original design: rosy cheeks and freckles, long pale silver hair, a flowing white-and-gold gown embroidered with golden snowflakes, a little golden crown and a fluffy white fur-trimmed cape, conjuring golden-white sparkles',
       palette: [0x7cc7ff, 0xe8f6ff], glyph: '❄️', style: 'hover', speed: 160, size: 1, hp: 100,
       abilities: [
-        ab('ice_shard', 'Ice Shards', 'bolt', 2.2, 0xaee6ff, 1, { count: 4, glyph: '❄️', word: 'ice', words: ['zap'] }),
-        ab('deep_freeze', 'Deep Freeze', 'freeze', 8, 0x7cc7ff, 2, { status: 'freeze', duration: 3, word: 'zip', words: ['fog'] }),
-        ab('snow_buddies', 'Snow Buddies', 'summon', 12, 0xe8f6ff, 2, { minion: 'snow_golem', count: 2, word: 'big', words: ['hug'] }),
+        ab('ice_shard', 'Ice Shards', 'bolt', 2.2, 0xaee6ff, 1, { count: 4, glyph: '❄️', words: ['ice', 'zap'] }),
+        ab('deep_freeze', 'Deep Freeze', 'freeze', 8, 0x7cc7ff, 2, { status: 'freeze', duration: 3, words: ['zip', 'fog'] }),
+        ab('snow_buddies', 'Snow Buddies', 'summon', 12, 0xe8f6ff, 2, { minion: 'snow_golem', count: 2, words: ['big', 'hug'] }),
         ab('crystal_spire', 'Crystal Spire', 'slam', 6, 0xaee6ff, 2, { words: ['bam'] }),
       ],
       ultimate: ult('blizzard', 'Blizzard Crown', 'rain',0xe8f6ff, 3, { count: 34, glyph: '❄️', color2: 0x7cc7ff }),
@@ -594,10 +594,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Anna', trail: { tint: [0xffb703, 0xe63946], shape: 'spark' }, look: 'a tall, sporty young adventurer of original design with long straight dark-brown hair in one high swinging ponytail tied with a big purple ribbon, a few freckles, a plum-purple tunic with a short magenta cape, white leggings and tall brown boots, a round wooden shield with a golden sun painted on it and a wooden practice sword',
       palette: [0xe63946, 0x2a9d8f], glyph: '🛡️', style: 'twirl', speed: 230, size: 1, hp: 110,
       abilities: [
-        ab('shield_bash', 'Shield Bash', 'dash', 4, 0xe63946, 2, { word: 'bam', shout: true, words: ['ram', 'run'] }),
-        ab('sword_twirl', 'Sword Twirl', 'spin', 5, 0xffd6a5, 2, { word: 'pow', shout: true, words: ['top'] }),
-        ab('brave_shout', 'Brave Shout', 'heal', 10, 0xffb703, 1, { word: 'hug', words: ['fix'] }),
-        ab('leap', 'Big Leap', 'slam', 6, 0x2a9d8f, 2, { word: 'hop', words: ['big'] }),
+        ab('shield_bash', 'Shield Bash', 'dash', 4, 0xe63946, 2, { shout: true, words: ['bam', 'ram', 'run'] }),
+        ab('sword_twirl', 'Sword Twirl', 'spin', 5, 0xffd6a5, 2, { shout: true, words: ['pow', 'top'] }),
+        ab('brave_shout', 'Brave Shout', 'heal', 10, 0xffb703, 1, { words: ['hug', 'fix'] }),
+        ab('leap', 'Big Leap', 'slam', 6, 0x2a9d8f, 2, { words: ['hop', 'big'] }),
       ],
       ultimate: ult('never_give_up', 'Never Give Up', 'spin',0xffb703, 3, { count: 6, color2: 0xe63946 }),
       taunts: [
@@ -661,9 +661,9 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Jasmine', trail: { tint: [0xbaf2ff, 0xffc857], shape: 'smoke' }, look: 'a desert princess of original design with short bouncy black curls and a gold circlet, a coral-pink and saffron-orange tunic over baggy saffron trousers, sitting cross-legged on a red-and-gold patterned flying carpet',
       palette: [0x1fb5a8, 0xffc857], glyph: '🧞', style: 'fly', mount: 'carpet', speed: 220, size: 1, hp: 100,
       abilities: [
-        ab('wind_fan', 'Wind Fan', 'cone', 4, 0xbaf2ff, 2, { word: 'fan', words: ['fog'] }),
-        ab('carpet_swoop', 'Carpet Swoop', 'dash', 5, 0xffc857, 2, { word: 'zip', words: ['jet', 'run'] }),
-        ab('dust_devils', 'Dust Devils', 'summon', 12, 0xe8c890, 2, { minion: 'dust_devil', count: 3, word: 'pop', words: ['top'] }),
+        ab('wind_fan', 'Wind Fan', 'cone', 4, 0xbaf2ff, 2, { words: ['fan', 'fog'] }),
+        ab('carpet_swoop', 'Carpet Swoop', 'dash', 5, 0xffc857, 2, { words: ['zip', 'jet', 'run'] }),
+        ab('dust_devils', 'Dust Devils', 'summon', 12, 0xe8c890, 2, { minion: 'dust_devil', count: 3, words: ['pop', 'top'] }),
         ab('star_jewels', 'Star Jewels', 'bolt', 2.4, 0xff5ab4, 1, { count: 3, glyph: '💎', words: ['zap'] }),
       ],
       ultimate: ult('jewel_storm', 'Jewel Storm', 'rain',0xff5ab4, 3, { count: 30, glyph: '💎', color2: 0x1fb5a8 }),
@@ -730,9 +730,9 @@ export const ROSTER: CharacterSpec[] = [
       palette: [0xd9a441, 0x2a5ab4], glyph: '🏺', style: 'stomp', speed: 90, size: 1.3, hp: 140,
       abilities: [
         ab('sand_spear', 'Sand Spears', 'bolt', 2.6, 0xe8c890, 1, { count: 3, glyph: '🏺', words: ['zip'] }),
-        ab('statue_friend', 'Statue Friend', 'summon', 13, 0xd9b26f, 2, { minion: 'colossus', count: 1, word: 'big', words: ['tug'] }),
-        ab('dune_slam', 'Dune Slam', 'slam', 6, 0xd9a441, 3, { word: 'bam', words: ['dig'] }),
-        ab('sun_disc', 'Sun Disc', 'beam', 6, 0xffd23f, 2, { word: 'sun', words: ['hot', 'zap'] }),
+        ab('statue_friend', 'Statue Friend', 'summon', 13, 0xd9b26f, 2, { minion: 'colossus', count: 1, words: ['big', 'tug'] }),
+        ab('dune_slam', 'Dune Slam', 'slam', 6, 0xd9a441, 3, { words: ['bam', 'dig'] }),
+        ab('sun_disc', 'Sun Disc', 'beam', 6, 0xffd23f, 2, { words: ['sun', 'hot', 'zap'] }),
       ],
       ultimate: ult('pyramid', 'Pyramid Power', 'lightning',0xffd23f, 3, { count: 8, color2: 0xd9a441 }),
       taunts: [
@@ -798,9 +798,9 @@ export const ROSTER: CharacterSpec[] = [
       palette: [0x2aa66a, 0x7ad9ff], glyph: '🐍', style: 'slither', speed: 150, size: 1.4, hp: 150,
       abilities: [
         ab('tidal_spit', 'Tidal Spit', 'bolt', 2.4, 0x7ad9ff, 1, { count: 3, glyph: '💧', words: ['wet'] }),
-        ab('snake_pals', 'Snake Pals', 'summon', 12, 0x2aa66a, 2, { minion: 'mini_serpent', count: 3, word: 'pop', words: ['run'] }),
-        ab('tail_spin', 'Tail Spin', 'spin', 5, 0x2aa66a, 2, { word: 'zip', words: ['top'] }),
-        ab('hug_coil', 'Big Hug', 'coil', 12, 0x2aa66a, 2, { duration: 3, word: 'hug', words: ['tug'] }),
+        ab('snake_pals', 'Snake Pals', 'summon', 12, 0x2aa66a, 2, { minion: 'mini_serpent', count: 3, words: ['pop', 'run'] }),
+        ab('tail_spin', 'Tail Spin', 'spin', 5, 0x2aa66a, 2, { words: ['zip', 'top'] }),
+        ab('hug_coil', 'Big Hug', 'coil', 12, 0x2aa66a, 2, { duration: 3, words: ['hug', 'tug'] }),
       ],
       ultimate: ult('sea_wave', 'World Wave', 'wave',0x7ad9ff, 3, { color2: 0x2aa66a }),
       taunts: [
@@ -865,9 +865,9 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Smaug', trail: { tint: [0xffcc33, 0xff7b00], shape: 'spark' }, look: 'a big red dragon with a gold tummy, sitting on coins, grinning and generous',
       palette: [0xd62828, 0xffcc33], glyph: '🐉', style: 'fly', speed: 160, size: 1.5, hp: 160,
       abilities: [
-        ab('fire_breath', 'Fire Breath', 'cone', 4, 0xff7b00, 2, { color2: 0xffd23f, word: 'hot', words: ['fog'] }),
-        ab('coin_shower', 'Coin Shower', 'rain', 8, 0xffcc33, 2, { count: 14, glyph: '🟡', word: 'pop', words: ['zip'] }),
-        ab('wing_slam', 'Wing Slam', 'slam', 6, 0xd62828, 3, { word: 'bam', words: ['big'] }),
+        ab('fire_breath', 'Fire Breath', 'cone', 4, 0xff7b00, 2, { color2: 0xffd23f, words: ['hot', 'fog'] }),
+        ab('coin_shower', 'Coin Shower', 'rain', 8, 0xffcc33, 2, { count: 14, glyph: '🟡', words: ['pop', 'zip'] }),
+        ab('wing_slam', 'Wing Slam', 'slam', 6, 0xd62828, 3, { words: ['bam', 'big'] }),
         ab('coin_golems', 'Coin Golems', 'summon', 13, 0xffcc33, 2, { minion: 'gold_golem', count: 2, words: ['run'] }),
       ],
       ultimate: ult('rainbow_fire', 'Rainbow Fire', 'cone',0xff5ab4, 3, { color2: 0xffd23f }),
@@ -938,11 +938,11 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Tiamat', trail: { tint: [0xc77dff, 0xe0e0ff], shape: 'star' }, look: 'a giant, regal, friendly female dragon queen of original design: a huge plump pear-shaped body sitting upright like a soft purple hill, deep violet scales with a pale lilac pearly belly, a short graceful neck, a round gentle face with big kind golden eyes and long lashes, a warm closed-mouth smile, three short rounded silver horns curving back like a tiara, a small silver crown with a single violet gem, broad wings spread open behind her shoulders with lilac membranes, her little clawed hands clasped together over her belly, a thick curled tail ending in a silver heart-shaped tip, a sprinkle of silver star freckles on her cheeks. Majestic, huggable and grandmotherly-kind, not sleek',
       palette: [0x7b2cbf, 0xd8d8f0], glyph: '🐉', style: 'stomp', speed: 40, size: 2.1, hp: 230,
       abilities: [
-        ab('purple_flame', 'Purple Flame', 'cone', 4, 0xb15cff, 2, { color2: 0xffc8ff, word: 'hot', words: ['zap'] }),
-        ab('wing_gust', 'Wing Gust', 'wave', 8, 0xd8c8ff, 2, { color2: 0xffffff, word: 'fan', words: ['fog'] }),
-        ab('gem_rain', 'Gem Rain', 'rain', 8, 0xc77dff, 2, { count: 14, glyph: '💎', word: 'pop', words: ['zip'] }),
-        ab('wing_hug', 'Wing Hug', 'shield', 10, 0x9b5de5, 1, { duration: 4, word: 'hug', words: ['big'] }),
-        ab('tail_thump', 'Tail Thump', 'slam', 6, 0x7b2cbf, 3, { word: 'bam', shout: true, words: ['dig'] }),
+        ab('purple_flame', 'Purple Flame', 'cone', 4, 0xb15cff, 2, { color2: 0xffc8ff, words: ['hot', 'zap'] }),
+        ab('wing_gust', 'Wing Gust', 'wave', 8, 0xd8c8ff, 2, { color2: 0xffffff, words: ['fan', 'fog'] }),
+        ab('gem_rain', 'Gem Rain', 'rain', 8, 0xc77dff, 2, { count: 14, glyph: '💎', words: ['pop', 'zip'] }),
+        ab('wing_hug', 'Wing Hug', 'shield', 10, 0x9b5de5, 1, { duration: 4, words: ['hug', 'big'] }),
+        ab('tail_thump', 'Tail Thump', 'slam', 6, 0x7b2cbf, 3, { shout: true, words: ['bam', 'dig'] }),
       ],
       ultimate: ult('royal_starfire', 'Royal Starfire', 'cone',0xe0aaff, 3, { color2: 0xffd23f }),
       taunts: [
@@ -1014,10 +1014,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Scar', trail: { tint: [0xffc233, 0x3ae0ff], shape: 'square' }, look: 'a tiny, cool little robot, shorter than a four-year-old: a chunky mini mech in shiny gold armour with black joints, a big round gold helmet with two little fins, round gold shoulder pads, a wide glowing cyan visor showing happy curved eyes, with a little scratch across one corner, a round glowing orange power core in the middle of his chest, short sturdy legs with big gold boots, his right arm a small blaster cannon and little rocket jets on his back, standing tall and proud with a brave, cheerful look',
       palette: [0xffc233, 0x3ae0ff], glyph: '🤖', style: 'dodge', speed: 210, size: 0.9, hp: 110,
       abilities: [
-        ab('arm_blaster', 'Arm Blaster', 'bolt', 2.2, 0x3ae0ff, 1, { count: 3, word: 'zap', shout: true, words: ['pop', 'hot'] }),
-        ab('rocket_hop', 'Rocket Hop', 'slam', 6, 0xff9a3c, 2, { word: 'hop', words: ['jet', 'bam'] }),
-        ab('rocket_punch', 'Rocket Punch', 'dash', 4, 0xff6a3a, 2, { word: 'pow', words: ['run'] }),
-        ab('gold_shield', 'Gold Shield', 'shield', 10, 0xffc233, 1, { duration: 4, word: 'big', words: ['fix'] }),
+        ab('arm_blaster', 'Arm Blaster', 'bolt', 2.2, 0x3ae0ff, 1, { count: 3, shout: true, words: ['zap', 'pop', 'hot'] }),
+        ab('rocket_hop', 'Rocket Hop', 'slam', 6, 0xff9a3c, 2, { words: ['hop', 'jet', 'bam'] }),
+        ab('rocket_punch', 'Rocket Punch', 'dash', 4, 0xff6a3a, 2, { words: ['pow', 'run'] }),
+        ab('gold_shield', 'Gold Shield', 'shield', 10, 0xffc233, 1, { duration: 4, words: ['big', 'fix'] }),
       ],
       ultimate: ult('core_blast', 'Core Blast', 'beam',0xff9a3c, 3, { color2: 0xffd23f }),
       taunts: [
@@ -1082,10 +1082,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Moriarty', trail: { tint: [0xf4a261, 0x95d5b2], shape: 'square' }, look: 'a lanky magician in a green suit and top hat, shuffling glowing cards, winking',
       palette: [0x2d6a4f, 0xf4a261], glyph: '🎩', style: 'blink', speed: 200, size: 1, hp: 100,
       abilities: [
-        ab('card_throw', 'Card Throw', 'bolt', 2.0, 0xf4a261, 1, { count: 4, glyph: '🃏', word: 'zip', words: ['top'] }),
-        ab('decoys', 'Decoys', 'clones', 10, 0x2d6a4f, 2, { count: 3, word: 'pop', words: ['fog'] }),
+        ab('card_throw', 'Card Throw', 'bolt', 2.0, 0xf4a261, 1, { count: 4, glyph: '🃏', words: ['zip', 'top'] }),
+        ab('decoys', 'Decoys', 'clones', 10, 0x2d6a4f, 2, { count: 3, words: ['pop', 'fog'] }),
         ab('trick_trap', 'Trick Trap', 'trap', 8, 0xf4a261, 2, { count: 3, words: ['net', 'web'] }),
-        ab('ta_da', 'Ta-da Blink', 'teleport', 5, 0x95d5b2, 2, { word: 'hop', words: ['run'] }),
+        ab('ta_da', 'Ta-da Blink', 'teleport', 5, 0x95d5b2, 2, { words: ['hop', 'run'] }),
       ],
       ultimate: ult('grand_finale', 'Grand Finale', 'rain',0xf4a261, 3, { count: 30, glyph: '🃏', color2: 0x95d5b2 }),
       taunts: [
@@ -1152,10 +1152,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Bavmorda', trail: { tint: [0xff8fab, 0x80ffdb], shape: 'star' }, look: 'a kindly old witch with a crooked hat full of flowers, a staff with a glowing pink gem',
       palette: [0x7b2cbf, 0x80ffdb], glyph: '🧹', style: 'hover', mount: '🧹', speed: 150, size: 1.15, hp: 100,
       abilities: [
-        ab('flower_bolt', 'Flower Bolts', 'bolt', 2.2, 0xff8fab, 1, { count: 3, glyph: '🌸', word: 'pop', words: ['zip'] }),
-        ab('piggy_spell', 'Piggy Spell', 'polymorph', 9, 0xff9ad5, 2, { status: 'pig', duration: 3, word: 'zap', words: ['pig'] }),
-        ab('broom_dash', 'Broom Dash', 'dash', 5, 0x80ffdb, 2, { word: 'zip', words: ['jet', 'run'] }),
-        ab('potion', 'Healing Potion', 'heal', 10, 0x80ffdb, 1, { word: 'hug', words: ['fix'] }),
+        ab('flower_bolt', 'Flower Bolts', 'bolt', 2.2, 0xff8fab, 1, { count: 3, glyph: '🌸', words: ['pop', 'zip'] }),
+        ab('piggy_spell', 'Piggy Spell', 'polymorph', 9, 0xff9ad5, 2, { status: 'pig', duration: 3, words: ['zap', 'pig'] }),
+        ab('broom_dash', 'Broom Dash', 'dash', 5, 0x80ffdb, 2, { words: ['zip', 'jet', 'run'] }),
+        ab('potion', 'Healing Potion', 'heal', 10, 0x80ffdb, 1, { words: ['hug', 'fix'] }),
       ],
       ultimate: ult('garden', 'Magic Garden', 'rain',0xff8fab, 3, { count: 30, glyph: '🌸', color2: 0x80ffdb }),
       taunts: [
@@ -1219,10 +1219,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Rilla', trail: { tint: [0xffe14a, 0x8a6a4a], shape: 'square' }, look: 'a friendly, gentle giant gorilla robot with pastel blue armour plates, soft glowing eyes and a big smile, arms open wide for a hug',
       palette: [0x8a6a4a, 0xffe14a], glyph: '🦍', style: 'stomp', speed: 110, size: 1.4, hp: 160,
       abilities: [
-        ab('banana_toss', 'Banana Toss', 'bolt', 2.4, 0xffe14a, 1, { count: 3, glyph: '🍌', word: 'pop', words: ['top'] }),
-        ab('rocket_punch', 'Rocket Punch', 'bolt', 3, 0xff6a3a, 2, { glyph: '🚀', homing: true, word: 'pow', shout: true, words: ['jet'] }),
-        ab('chest_drum', 'Chest Drum', 'slam', 6, 0x8a6a4a, 3, { word: 'bam', shout: true, words: ['big'] }),
-        ab('gorilla_hug', 'Gorilla Hug', 'heal', 10, 0xffe14a, 1, { word: 'hug', words: ['tug'] }),
+        ab('banana_toss', 'Banana Toss', 'bolt', 2.4, 0xffe14a, 1, { count: 3, glyph: '🍌', words: ['pop', 'top'] }),
+        ab('rocket_punch', 'Rocket Punch', 'bolt', 3, 0xff6a3a, 2, { glyph: '🚀', homing: true, shout: true, words: ['pow', 'jet'] }),
+        ab('chest_drum', 'Chest Drum', 'slam', 6, 0x8a6a4a, 3, { shout: true, words: ['bam', 'big'] }),
+        ab('gorilla_hug', 'Gorilla Hug', 'heal', 10, 0xffe14a, 1, { words: ['hug', 'tug'] }),
       ],
       ultimate: ult('banana_bonanza', 'Banana Bonanza', 'rain',0xffe14a, 3, { count: 32, glyph: '🍌', color2: 0x8a6a4a }),
       taunts: [
@@ -1296,10 +1296,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Dada Matt', trail: { tint: [0xffd23f, 0xe63946], shape: 'star' }, look: `${MATT_LIFTER}, in a normal deep-blue short-sleeved gym T-shirt (a rich royal-to-navy blue) with a gold star on the chest (sleeves, not a singlet or a tank top), dark gym shorts, a black lifting belt, wristbands and blue sneakers, holding one blue-and-gold dumbbell of ordinary gym size low in one hand at his side. Bright, sporty and friendly`,
       palette: [0xe63946, 0xffd23f], glyph: '💪', style: 'twirl', speed: 190, size: 1.25, hp: 140,
       abilities: [
-        ab('dumbbell_spin', 'Dumbbell Spin', 'spin', 5, 0xffd23f, 2, { word: 'big', shout: true, words: ['top'] }),
-        ab('dumbbell_toss', 'Dumbbell Toss', 'bolt', 2.6, 0xc8c8d8, 1, { count: 3, glyph: '💪', word: 'pow', words: ['hop'] }),
-        ab('muscle_flex', 'Muscle Flex', 'shield', 10, 0xe63946, 1, { duration: 4, word: 'hug', words: ['fix'] }),
-        ab('mega_squat', 'Mega Squat Slam', 'slam', 7, 0xffd23f, 3, { word: 'bam', shout: true, words: ['tug', 'dig'] }),
+        ab('dumbbell_spin', 'Dumbbell Spin', 'spin', 5, 0xffd23f, 2, { shout: true, words: ['big', 'top'] }),
+        ab('dumbbell_toss', 'Dumbbell Toss', 'bolt', 2.6, 0xc8c8d8, 1, { count: 3, glyph: '💪', words: ['pow', 'hop'] }),
+        ab('muscle_flex', 'Muscle Flex', 'shield', 10, 0xe63946, 1, { duration: 4, words: ['hug', 'fix'] }),
+        ab('mega_squat', 'Mega Squat Slam', 'slam', 7, 0xffd23f, 3, { shout: true, words: ['bam', 'tug', 'dig'] }),
       ],
       ultimate: ult('trophy_shower', 'Trophy Shower', 'rain',0xffd23f, 3, { count: 24, glyph: '🏆', color2: 0xe63946 }),
       taunts: [
@@ -1362,10 +1362,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Dada Matt', trail: { tint: [0x3ae0ff, 0xff4ad8], shape: 'square' }, look: `${MATT_LIFTER}, as a friendly, fun cyber engineer for a children's game: one big chunky glowing cyan power gauntlet on his right hand and forearm, projecting floating hologram tools above it (a glowing wrench, a little round shield and two tiny screens), round cyber goggles with cyan lenses pushed up on his forehead, and a dark navy work jacket with glowing magenta circuit lines. Kid-friendly and playful, not edgy. A clear, simple silhouette that still reads at small sprite size. No green anywhere.`,
       palette: [0x1a1a3a, 0x3ae0ff], glyph: '💻', style: 'hover', speed: 180, size: 1.2, hp: 120,
       abilities: [
-        ab('hologram_tools', 'Hologram Tools', 'bolt', 12, 0x3ae0ff, 2, { count: 3, glyph: '🔧', homing: true, word: 'zip', words: ['jet'] }),
-        ab('hologram_grid', 'Hologram Grid', 'grid', 8, 0xff4ad8, 2, { duration: 2, word: 'zap', words: ['net'] }),
-        ab('gauntlet_shield', 'Gauntlet Shield', 'shield', 10, 0x3ae0ff, 1, { duration: 4, word: 'fix', words: ['top'] }),
-        ab('gauntlet_blast', 'Gauntlet Blast', 'bolt', 2.4, 0x3ae0ff, 1, { count: 4, glyph: '🔩', homing: true, word: 'run', words: ['pop'] }),
+        ab('hologram_tools', 'Hologram Tools', 'bolt', 12, 0x3ae0ff, 2, { count: 3, glyph: '🔧', homing: true, words: ['zip', 'jet'] }),
+        ab('hologram_grid', 'Hologram Grid', 'grid', 8, 0xff4ad8, 2, { duration: 2, words: ['zap', 'net'] }),
+        ab('gauntlet_shield', 'Gauntlet Shield', 'shield', 10, 0x3ae0ff, 1, { duration: 4, words: ['fix', 'top'] }),
+        ab('gauntlet_blast', 'Gauntlet Blast', 'bolt', 2.4, 0x3ae0ff, 1, { count: 4, glyph: '🔩', homing: true, words: ['run', 'pop'] }),
       ],
       ultimate: ult('data_storm', 'Data Storm', 'rain',0x3ae0ff, 3, { count: 28, glyph: '💾', color2: 0xff4ad8 }),
       taunts: [
@@ -1429,10 +1429,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Dada Matt', trail: { tint: [0x7ab8ff, 0xffffff], shape: 'star' }, look: `${MATT_FACE}, as a buff spell-blade hero: sleek blue-and-silver rune armour that shows his big arms, a flowing dark-blue cape, a glowing silver sword with blue runes along the blade in one hand and a swirl of blue arcane magic in the other`,
       palette: [0x2a4aa0, 0x7ab8ff], glyph: '🗡️', style: 'twirl', speed: 210, size: 1.2, hp: 130,
       abilities: [
-        ab('rune_slash', 'Rune Slash', 'dash', 5, 0x7ab8ff, 2, { word: 'pow', shout: true, words: ['run'] }),
-        ab('arcane_burst', 'Arcane Burst', 'bolt', 2.4, 0x7ab8ff, 1, { count: 3, glyph: '✨', homing: true, word: 'zap', words: ['pop'] }),
-        ab('frost_rune', 'Frost Rune', 'freeze', 9, 0xbfefff, 2, { status: 'freeze', duration: 2, word: 'ice', words: ['fog'] }),
-        ab('blade_spin', 'Blade Spin', 'spin', 6, 0xffffff, 2, { count: 4, word: 'top', words: ['zip'] }),
+        ab('rune_slash', 'Rune Slash', 'dash', 5, 0x7ab8ff, 2, { shout: true, words: ['pow', 'run'] }),
+        ab('arcane_burst', 'Arcane Burst', 'bolt', 2.4, 0x7ab8ff, 1, { count: 3, glyph: '✨', homing: true, words: ['zap', 'pop'] }),
+        ab('frost_rune', 'Frost Rune', 'freeze', 9, 0xbfefff, 2, { status: 'freeze', duration: 2, words: ['ice', 'fog'] }),
+        ab('blade_spin', 'Blade Spin', 'spin', 6, 0xffffff, 2, { count: 4, words: ['top', 'zip'] }),
       ],
       ultimate: ult('rune_storm', 'Rune Storm', 'lightning',0x7ab8ff, 3, { count: 8, color2: 0xffffff }),
       taunts: [
@@ -1495,10 +1495,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Dada Jason', trail: { tint: [0xffd23f, 0xe63946], shape: 'spark' }, look: `${JASON_FACE}, as a fantasy warrior: shining silver armour with gold trim and a deep forest-green tunic showing under it (a dark, rich pine green, not lime or bright grass green), a forest-green cape, a round silver shield with a golden sun on it on one arm and a big friendly double-headed battle axe with a forest-green wrapped handle in the other hand. Bright, heroic and friendly`,
       palette: [0xc8c8d8, 0xe63946], glyph: '🛡️', style: 'twirl', speed: 190, size: 1.25, hp: 140,
       abilities: [
-        ab('axe_spin', 'Axe Spin', 'spin', 5, 0xc8c8d8, 2, { word: 'top', shout: true, words: ['zip'] }),
-        ab('shield_bash', 'Shield Bash', 'dash', 6, 0xe63946, 2, { word: 'ram', shout: true, words: ['run'] }),
-        ab('battle_cry', 'Battle Cry', 'shield', 10, 0xffd23f, 1, { duration: 4, word: 'big', words: ['hug'] }),
-        ab('sword_leap', 'Sword Leap', 'slam', 7, 0xffd23f, 3, { word: 'bam', shout: true, words: ['hop', 'pow'] }),
+        ab('axe_spin', 'Axe Spin', 'spin', 5, 0xc8c8d8, 2, { shout: true, words: ['top', 'zip'] }),
+        ab('shield_bash', 'Shield Bash', 'dash', 6, 0xe63946, 2, { shout: true, words: ['ram', 'run'] }),
+        ab('battle_cry', 'Battle Cry', 'shield', 10, 0xffd23f, 1, { duration: 4, words: ['big', 'hug'] }),
+        ab('sword_leap', 'Sword Leap', 'slam', 7, 0xffd23f, 3, { shout: true, words: ['bam', 'hop', 'pow'] }),
       ],
       ultimate: ult('sword_rain', 'Sword Rain', 'rain',0xc8c8d8, 3, { count: 24, glyph: '⚔️', color2: 0xffd23f }),
       taunts: [
@@ -1562,10 +1562,10 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Dada Jason', trail: { tint: [0xb04aff, 0xff9ad5], shape: 'smoke' }, look: `${JASON_FACE}, as a friendly warlock: long deep forest-green robes (a dark, rich pine green, not lime or bright grass green) with golden stars, a pointed hood pushed back, a tall wooden staff topped with a glowing golden-amber crystal, little warm golden flames dancing round his free hand, and a tiny cheeky purple imp on his shoulder. Bright, magical and friendly`,
       palette: [0x4a1a7a, 0xb04aff], glyph: '🔮', style: 'blink', speed: 170, size: 1.2, hp: 120,
       abilities: [
-        ab('imp_party', 'Imp Party', 'summon', 12, 0xb04aff, 2, { minion: 'imp', count: 3, word: 'pop', words: ['hop'] }),
-        ab('purple_fire', 'Purple Fire', 'cone', 6, 0xb04aff, 2, { color2: 0xff9ad5, word: 'hot', words: ['fog'] }),
-        ab('piggy_hex', 'Piggy Hex', 'polymorph', 10, 0xff9ad5, 2, { status: 'pig', duration: 3, word: 'pig', words: ['mud'] }),
-        ab('shadow_bolt', 'Shadow Bolt', 'bolt', 2.4, 0xb04aff, 1, { count: 3, glyph: '🔮', homing: true, word: 'zap', words: ['zip'] }),
+        ab('imp_party', 'Imp Party', 'summon', 12, 0xb04aff, 2, { minion: 'imp', count: 3, words: ['pop', 'hop'] }),
+        ab('purple_fire', 'Purple Fire', 'cone', 6, 0xb04aff, 2, { color2: 0xff9ad5, words: ['hot', 'fog'] }),
+        ab('piggy_hex', 'Piggy Hex', 'polymorph', 10, 0xff9ad5, 2, { status: 'pig', duration: 3, words: ['pig', 'mud'] }),
+        ab('shadow_bolt', 'Shadow Bolt', 'bolt', 2.4, 0xb04aff, 1, { count: 3, glyph: '🔮', homing: true, words: ['zap', 'zip'] }),
       ],
       ultimate: ult('meteor_rain', 'Purple Meteor Rain', 'rain',0xb04aff, 3, { count: 24, glyph: '☄️', color2: 0xff9ad5 }),
       taunts: [
