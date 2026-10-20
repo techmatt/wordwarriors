@@ -108,6 +108,8 @@ export interface BattleInfo {
   me: { x: number; y: number } | null;
   /** Fetched items used this part. */
   itemsUsed: number;
+  /** Charge the Spell's runes fired this part (item 053). */
+  runesFired: number;
 }
 
 /** The victory recap's cards so far: each word and the picture beside it. */

@@ -11,6 +11,8 @@
  *   ?scene=victory&read=cat,sun,julia   (the words the recap shows)
  *   ?scene=pick | parent
  *   ?fetched=net,fan                    (the battle items fetched; default: the house plan's)
+ *   ?charged=m,s,a                      (Charge the Spell's runes, fired in this battle part; default: the plan's charge room's, in part 1)
+ *   ?room=charge                        (Charge the Spell behind door a: Episode.ts roomGames)
  *   parked v0.1 games: ?scene=sound | blend | picture | spell | alarm | retreat
  *
  * Later steps get the episode they would have had by then: the gift word
@@ -128,9 +130,14 @@ export class BootScene extends Phaser.Scene {
       episode.house.taught = true;
       giftWord();
     };
+    const charged = q.get('charged');
     const fetchedAll = (): void => {
       episode.fetched = fetched ? fetched.split(',') : (['a', 'b'] as Slot[]).flatMap((s) => planFor(s).fetches);
       episode.house.done = ['a', 'b'];
+      // Charge the Spell's runes (item 053): the ones asked for, or all of the plan's charge room's.
+      const room = (['a', 'b'] as Slot[]).map((s) => planFor(s)).find((p) => p.kind === 'charge');
+      if (charged) episode.charged = { sounds: charged.split(','), part };
+      else if (room?.kind === 'charge') episode.charged = { sounds: [...room.charge.runes], part: 1 };
     };
 
     if (target === 'parent') {
@@ -150,6 +157,8 @@ export class BootScene extends Phaser.Scene {
       else if (slot === 'b') {
         episode.house.done = ['a'];
         episode.fetched = fetched ? fetched.split(',') : planFor('a').fetches;
+        const a = planFor('a');
+        if (a.kind === 'charge') episode.charged = { sounds: [...a.charge.runes], part: 1 };
       }
       // The house step of the right part, then straight through its door.
       episode.stepIndex = steps().findIndex((s) => s.kind === 'house' && s.part === part);

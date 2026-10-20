@@ -38,8 +38,9 @@ import Phaser from 'phaser';
 import { CHARACTER_BY_ID, MINIONS, abilityCallout, comboFor, comboPart } from '../../content/battle/roster';
 import type { AbilitySpec, Status } from '../../content/battle/types';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
+import { RUNE_BY_SOUND } from '../../content/phonics/runes';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
-import { fighterId, moveKey, moveLine, nameLine, narratorLine, reformedLine, tauntLine, ultimateLine } from '../../content/voice/ids';
+import { fighterId, letterSoundLine, moveKey, moveLine, nameLine, narratorLine, reformedLine, tauntLine, ultimateLine } from '../../content/voice/ids';
 import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh, sfxWrong } from '../audio/sfx';
@@ -181,6 +182,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
   private choicesOpened = 0;
   /** Fetched items used this part, for the tests. */
   private itemsUsed = 0;
+  /** Charge the Spell's runes fired this part (item 053). */
+  private runesFired = 0;
   /** "Look what we found!" is said once per part, at the first item out of the bag. */
   private bagSaid = false;
   /** The step this battle was started with, so the parent page can come back to it. */
@@ -210,6 +213,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     this.targetOf = new Map();
     this.choicesOpened = 0;
     this.itemsUsed = 0;
+    this.runesFired = 0;
     this.bagSaid = false;
     this.hudLabels = [];
     this.bannerText = null;
@@ -541,6 +545,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     await this.intro();
     await this.simWait(1.5);
     await this.useAllFetched(3.5);
+    await this.useCharged(1.1);
     await this.useMade(['helper', 'gem', 'ammo'], 3);
     await this.simWait(2.5);
     await this.moveChoice();
@@ -564,6 +569,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     await this.intro();
     await this.simWait(1);
     await this.useAllFetched(3);
+    await this.useCharged(1.1);
     await this.useMade(['helper', 'ammo', 'gem'], 2.5);
     await this.simWait(2);
     await this.moveChoice();
@@ -622,6 +628,65 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     for (const word of episode.fetched) {
       if (!FETCH_BY_WORD[word]) continue;
       await this.useFetched(word);
+      await this.simWait(gap);
+    }
+  }
+
+  /**
+   * Charge the Spell's runes (item 053), if they were charged for this part:
+   * a quick volley, each rune stone popping up over her hero with its letter,
+   * its sound said (never captioned), and her hero firing the rune's move
+   * (content/phonics/runes.ts) at a little over normal power, so six of them
+   * neither end the fight nor run it long (expectFightLength).
+   */
+  private async useCharged(gap: number): Promise<void> {
+    const c = episode.charged;
+    if (!c || c.part !== this.part) return;
+    let said = false;
+    for (const sound of c.sounds) {
+      const rune = RUNE_BY_SOUND[sound];
+      const h = this.heroes[0];
+      if (!rune || !h?.active || h.floored) continue;
+      if (!said) {
+        said = true;
+        void this.say('use_runes');
+      }
+      const color = rune.move.color;
+      const spot = this.revealSpot(h, 110, 110, 10);
+      const at = { x: spot.x, y: spot.y - 55 };
+      const stone = fitImage(this.add.image(at.x, at.y, 'prop_rune_stone'), 100, 100).setDepth(DEPTH.fx + 6);
+      const letter = this.add
+        .text(at.x, at.y + 2, sound.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: sound.length > 1 ? '48px' : '64px', color: '#ff3d7a', stroke: '#ffffff', strokeThickness: 6 })
+        .setOrigin(0.5)
+        .setDepth(DEPTH.fx + 7);
+      const ss = stone.scale;
+      stone.setScale(0);
+      letter.setScale(0);
+      this.tweens.add({ targets: stone, scale: ss, duration: 220, ease: 'Back.easeOut' });
+      this.tweens.add({ targets: letter, scale: 1, duration: 220, delay: 60, ease: 'Back.easeOut' });
+      sfxSummon();
+      burst(this, at.x, at.y, { count: 40, speed: 340, texture: TEX.star, colors: [color, 0xffffff, 0xffd23f] });
+      void this.guard(voiceBus.say(letterSoundLine(sound)));
+      await this.simWait(0.3);
+      this.banner(`${sound.toUpperCase()}!`, color === 0xffffff ? 0x7ad9ff : color, true);
+      speedLines(this, at.x, at.y, color, 400);
+      h.castFrom = at;
+      cast(this, h, rune.move, this.villain, 1.3);
+      this.after(700, () => (h.castFrom = null));
+      this.stats.abilitiesFired++;
+      this.runesFired++;
+      this.tweens.add({
+        targets: [stone, letter],
+        scale: 0,
+        alpha: 0,
+        delay: 350,
+        duration: 260,
+        ease: 'Back.easeIn',
+        onComplete: () => {
+          stone.destroy();
+          letter.destroy();
+        },
+      });
       await this.simWait(gap);
     }
   }
@@ -1901,6 +1966,18 @@ export class BattleScene extends Phaser.Scene implements StageHost {
       icon.setScale(0);
       this.tweens.add({ targets: icon, scale: s, duration: 300, delay: 300 + i * 120, ease: 'Back.easeOut' });
     });
+    // Charge the Spell's runes (item 053), on a row of their own below, for the part they fire in.
+    const runes = episode.charged?.part === this.part ? episode.charged.sounds.filter((s) => RUNE_BY_SOUND[s]) : [];
+    runes.forEach((sound, i) => {
+      const x = 370 + i * 46;
+      const chip = fitImage(this.add.image(x, 92, 'prop_rune_stone'), 42, 42).setDepth(DEPTH.hud + 1);
+      const t = this.add.text(x, 93, sound.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: sound.length > 1 ? '17px' : '24px', color: '#1a1030' }).setOrigin(0.5).setDepth(DEPTH.hud + 2);
+      for (const o of [chip, t]) {
+        const s = o.scale;
+        o.setScale(0);
+        this.tweens.add({ targets: o, scale: s, duration: 300, delay: 600 + i * 100, ease: 'Back.easeOut' });
+      }
+    });
   }
 
   private drawHud(): void {
@@ -2002,6 +2079,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
       minions: this.fighters.filter((f) => f.active && !f.isMain).length,
       ...this.stats,
       itemsUsed: this.itemsUsed,
+      runesFired: this.runesFired,
       me: this.heroes[0] ? { x: Math.round(this.heroes[0].x), y: Math.round(this.heroes[0].y) } : null,
       choice: this.choice
         ? {

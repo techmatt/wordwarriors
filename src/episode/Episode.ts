@@ -492,8 +492,8 @@ export function grabPlan(): { word: string; objects: string[] } {
  *
  * The beta's phonics room (item 053): with FORCE_PHONICS_ROOM on, a phonics
  * game (PHONICS_GAMES, drawn by weight) is behind door a of every episode,
- * unless the URL picks its own games (`?games=`, `?game=`: the tests' rooms
- * stay theirs). `?room=charge` forces Charge the Spell whatever else is
+ * unless the URL picks its own games (`?games=sentence`, `?game=`: the tests'
+ * rooms stay theirs; `?games=all` is the real draw, so it is forced there). `?room=charge` forces Charge the Spell whatever else is
  * asked: behind door a, or door b when `?game=` holds door a.
  */
 function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[] } {
@@ -502,7 +502,7 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
   const asked = MINIGAME_BY_ID[q.get('game') ?? ''];
   const phonics =
     q.get('room') === 'charge' ? CHARGE_GAME
-      : FORCE_PHONICS_ROOM && !q.has('games') && !q.has('game') ? MINIGAME_BY_ID[pickWeighted(PHONICS_GAMES.map((g) => g.id), (id) => MINIGAME_BY_ID[id]!.weight, 1)[0]!]
+      : FORCE_PHONICS_ROOM && !only && !asked ? MINIGAME_BY_ID[pickWeighted(PHONICS_GAMES.map((g) => g.id), (id) => MINIGAME_BY_ID[id]!.weight, 1)[0]!]
         : undefined;
   const forced = [asked, phonics].filter((g, i, all): g is Minigame => Boolean(g) && all.indexOf(g) === i);
   if (!forced.length) return only ? { pool: only } : {};

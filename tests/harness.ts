@@ -28,11 +28,13 @@ export interface WWState {
     made: Record<string, boolean>;
     read: string[];
     fetched: string[];
+    /** Charge the Spell (item 053): the sounds charged, and the battle part they fire in. */
+    charged: { sounds: string[]; part: number } | null;
     gift: string | null;
     /** The home warm-up (item 033): the word grabbed in the entry hall and the hall's pictures. */
     grab: { word: string; objects: string[] } | null;
     house: {
-      plan: { slot: string; room: string; game: string; kind: 'sentence' | 'machine'; key: string; fetches: string[]; sentence?: { key: string; frame: string }; machine?: { mode: string; rounds: { word: string; rime: string }[] } }[] | null;
+      plan: { slot: string; room: string; game: string; kind: 'sentence' | 'machine' | 'charge'; key: string; fetches: string[]; charge?: { runes: string[] }; sentence?: { key: string; frame: string }; machine?: { mode: string; rounds: { word: string; rime: string }[] } }[] | null;
       done: string[];
       taught: boolean;
     };
@@ -64,6 +66,18 @@ export interface WWState {
       slotted: string | null;
       misses: number;
     };
+    /** Charge the Spell (item 053). */
+    charge?: {
+      runes: string[];
+      index: number;
+      sound: string;
+      level: number;
+      phase: 'approach' | 'prompt' | 'ask' | 'help' | 'charging' | 'done';
+      asking: boolean;
+      assists: number;
+      timeouts: number;
+      charged: string[];
+    };
   } | null;
   battle: {
     part: number;
@@ -84,6 +98,8 @@ export interface WWState {
     /** Her hero's position. */
     me: { x: number; y: number } | null;
     itemsUsed: number;
+    /** Charge the Spell's runes fired this part (item 053). */
+    runesFired: number;
   } | null;
   voice: { speaking: string | null; busy: boolean; history: string[] };
   fx: Record<string, number>;
@@ -326,9 +342,52 @@ export async function playWordMachine(page: Page, wrongFirst = false): Promise<s
   return rounds;
 }
 
-/** Play whichever game the room has: a sentence room (its key word) or the word machine (every word built). */
+/** Dad's buttons (item 053): `yes` is key 2, `no` key 1, through the hooks. */
+export async function dad(page: Page, a: 'yes' | 'no'): Promise<void> {
+  await page.evaluate((v) => (window as unknown as { __ww: { dad(a: string): boolean } }).__ww.dad(v), a);
+}
+
+/**
+ * Play Charge the Spell (item 053): walk to the altar and press green, then
+ * Dad says yes to each rune as it asks; with `noFirst`, a no on the first
+ * rune first (the helper models it, then asks again). Returns the sounds
+ * charged (it fetches no word).
+ */
+export async function playChargeRoom(page: Page, noFirst = false): Promise<string[]> {
+  const first = await until(page, (s) => s.scene === 'ChargeRoom' && Boolean(s.room?.charge), 30_000, 'charge room');
+  if (first.room!.charge!.phase === 'approach') {
+    await until(page, (s) => s.room?.charge?.phase === 'approach' && !s.room.locked, 60_000, 'altar offered');
+    await choose(page, 'altar');
+  }
+  const runes = first.room!.charge!.runes;
+  for (let i = first.room!.charge!.index; i < runes.length; i++) {
+    await until(page, (st) => st.room?.charge?.index === i && st.room.charge.asking, 90_000, `rune ${i} (${runes[i]}) asks`);
+    if (noFirst && i === first.room!.charge!.index) {
+      await dad(page, 'no');
+      await until(page, (st) => (st.room?.charge?.assists ?? 0) > 0 && Boolean(st.room?.charge?.asking), 90_000, 'helped, asking again');
+    }
+    await dad(page, 'yes');
+    await until(page, (st) => st.scene !== 'ChargeRoom' || (st.room?.charge?.index ?? 0) > i || st.room?.charge?.phase === 'done', 60_000, `rune ${i} charged`);
+  }
+  await until(page, (st) => st.scene !== 'ChargeRoom', 60_000, 'out of the charge room');
+  return runes;
+}
+
+/**
+ * Play whichever game the room has: a sentence room (its key word), the word
+ * machine (every word built), or Charge the Spell (nothing: it fetches no word).
+ */
 export async function playRoom(page: Page): Promise<string[]> {
-  const s = await until(page, (st) => (st.scene === 'SentenceRoom' && Boolean(st.room?.sentence)) || (st.scene === 'WordMachine' && Boolean(st.room?.machine)), 30_000, 'a side room');
+  const s = await until(
+    page,
+    (st) => (st.scene === 'SentenceRoom' && Boolean(st.room?.sentence)) || (st.scene === 'WordMachine' && Boolean(st.room?.machine)) || (st.scene === 'ChargeRoom' && Boolean(st.room?.charge)),
+    30_000,
+    'a side room',
+  );
+  if (s.scene === 'ChargeRoom') {
+    await playChargeRoom(page);
+    return [];
+  }
   return s.scene === 'WordMachine' ? playWordMachine(page) : [await playSentenceRoom(page)];
 }
 

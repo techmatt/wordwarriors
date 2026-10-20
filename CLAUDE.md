@@ -40,10 +40,10 @@ Playwright serves its own (README, *Tests*). The sibling game
 | Path | What |
 | --- | --- |
 | `src/` | Game source. `main.ts` boots Phaser; `config.ts` sizes, depth bands, pad colours and every tuning knob named below. |
-| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine), Journey, Ending (the victory scene), Victory, Parent; parked: Pick, Alarm, Retreat and `minigames/` (the v0.1 games, Spell the Spell among them). |
+| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine, ChargeRoom), Journey, Ending (the victory scene), Victory, Parent; parked: Pick, Alarm, Retreat and `minigames/` (the v0.1 games, Spell the Spell among them). |
 | `src/battle/` | The battle simulation: `BattleScene` (the director scripts `part1`/`part2`), `Fighter`, `abilities`, `movement`; `stages/` stages each fight style. |
 | `src/episode/Episode.ts` | The episode's state and step list. Scenes call `advance()`; nothing else decides flow. |
-| `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only), `dadLock`. |
+| `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only), `dadLock`, `dadButtons` (keys 1 / 2, Dad's no / yes). |
 | `src/audio/` | `context`, `sfx` and `music` (synthesised), `VoiceBus` (the one voice arbiter). |
 | `src/voice/VoiceBank.ts` | Reads `public/voice-gen/manifest.json` only, decodes by group. |
 | `src/state/` | `ProgressStore` (localStorage, versioned, per sound and per word). |
@@ -174,7 +174,9 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 - **A door she cannot use yet is not there at all.**
 - **Sprites move only by bob and squash/scale.**
 - **Keyboard:** A–Z belongs to spelling. Arrows move, Space/Enter green, Esc red, Tab
-  yellow. Dev keys are F-keys only: F2 skip step, F4 auto-answer, F9 parent page.
+  yellow. **1 / 2 are Dad's no / yes** (`src/input/dadButtons.ts`), live even under dad
+  lock, and only where a game asks him, with a small 1 ✗ / 2 ✓ cue in a corner. Dev keys
+  are F-keys only: F2 skip step, F4 auto-answer (Dad's yes where he is asked), F9 parent page.
   Backquote / tilde is **dad lock**: she walks, no press does anything, timed re-prompts
   wait; again to unlock.
 - Elsa, Anna and Jasmine are named in data and lines but described and drawn as
@@ -205,6 +207,9 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 | "make it the chef episode" | `?ally=dada_jason` (Julia's chef form follows; outfits are `content/battle/forms.ts`) |
 | "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`) |
 | "here are my letter sound recordings" | `docs/recording.md` |
+| "more / fewer runes" / "Dad should wait longer" / "quick sounds sooner / later" | `CHARGE` in `src/config.ts` (`runes`, `timeoutMs`, `assists`, `startLevel`, `tiers`) |
+| "a new gesture for X" / "X's rune should fire Y" | X's entry in `RUNES` (`content/phonics/runes.ts`: `gesture`, `move`), then `voice:lines`, `voice:build` |
+| "stop forcing the phonics room" | `FORCE_PHONICS_ROOM` in `src/config.ts` (it stays a weighted entry, `CHARGE.weight`) |
 | "the warm-up is too hard / too easy" / "start new words at level N" | `GRAB.startLevel` (and `helpAfter`) in `src/config.ts` |
 | "for X I pick n" (from an `art_alts_*` sheet) | `npm run art:pick -- X n`, commit `public/art/X.png`; if it prints a brief, write it into X's roster `look` (or `HAND`) in the same commit |
 | "try a new look for X" / "draw X as …" | a brief file in `scratch/`, then `npm run art:alts -- X --n=2 --brief=scratch/<name>.txt --sheet=scratch/art_alts_<item>_<name>.png` (readonly; Matt picks) |

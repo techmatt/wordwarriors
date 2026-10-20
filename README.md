@@ -16,7 +16,8 @@ npm run dev
 Then open **http://localhost:5174** in Chrome or Edge and press F11 for fullscreen. Plug
 the Xbox 360 pad in first; press green (A) on the title screen. The keyboard works too:
 arrows to walk, Space/Enter for green, Tab for yellow (say it again / hint), and the
-backquote / tilde key for dad lock (below).
+backquote / tilde key for dad lock (below). The number keys **1** (no) and **2** (yes) are
+Dad's, for the games that ask him whether she said it (below).
 
 **Sound:** browsers keep audio off until a click or key press, and it is not confirmed
 that a gamepad press counts. While sound is still off, the title shows a small grown-up
@@ -89,7 +90,7 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    like AT on the machine, letter tiles on the floor that say their sounds, green slots
    one in and the machine says the two parts apart; the right one makes the picture's
    word, said only then, and into her bag it goes; a wrong one makes a silly word like ZAT;
-   several words of one family, then another). The sentence game is one sentence each, on a banner, key word last
+   several words of one family, then another; or Charge the Spell, item 053, below). The sentence game is one sentence each, on a banner, key word last
    (`WE CAN USE THE NET`, `JULIA NEEDS THE CAT`). Pass 1 is read to her karaoke-style and stops at the key
    word, which pulses in silence (skipped once that frame is solid). Pass 2 is hers:
    each green lights the next word and says it, and yellow says the lit word. At the key
@@ -228,7 +229,29 @@ playing finish; the battle's move choice keeps waiting. Press it again and play
 carries on exactly where it was. The F-keys still work (F9 opens and closes the
 grown-ups page; red and Esc do not while locked). `src/input/dadLock.ts`.
 
-Dev keys: **F2** skip the current step, **F4** answer correctly. Jump straight into a
+**Dad buttons** (item 053): keyboard **1** = no, **2** = yes. They are always live, dad
+lock included, and do nothing where no game is asking; a game that asks shows a small
+`DAD 1 ✗ 2 ✓` cue in the bottom-right corner (lit while a question is waiting).
+`src/input/dadButtons.ts` (`openDadButtons`), for 054 and later games too.
+
+**Charge the Spell** (item 053, `src/scenes/ChargeRoom.ts`): a side room where she says
+letter SOUNDS aloud. She walks to the altar and presses green; a big rune lights (an
+upper-case letter) and the helper asks for its sound. She says it, Dad presses **2**: the
+rune fires into her power bar and its sound is said back. Dad presses **1**, or nothing
+comes for 8 s: the helper models it with the sound's gesture (Jolly Phonics style: a
+hissing snake 🐍 for S, a tummy rub for M; `content/phonics/runes.ts`) and asks again;
+after two helps they say it together and move on, and it charges anyway. Help fades per
+sound: level 1 the sound and gesture first and she copies, level 2 the gesture only (its
+line trails off where the sound goes), level 3 the rune alone; an unhelped yes is one
+level less help next time, a helped rune one more (`chargeLevels` in the progress, the
+number in a sound's dot on the grown-ups page). Six runes a visit, continuous sounds
+first (M S F A L N R V Z, the short vowels), the quick sounds once those are solid, then
+SH CH TH (`src/rules/charge.ts`, `CHARGE` in `src/config.ts`). Each charged rune is a
+move her hero fires in the next battle (`episode.charged`, BattleScene `useCharged`).
+For the beta, `FORCE_PHONICS_ROOM` (on) puts it behind door a of every episode; the
+dad lock pauses its 8 s wait.
+
+Dev keys: **F2** skip the current step, **F4** answer correctly (in Charge the Spell, Dad's yes). Jump straight into a
 step with a URL, e.g. `http://localhost:5174/?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug`.
 Later steps get the episode they would have had by then (gift word given, earlier rooms
 done, items in the bag):
@@ -239,6 +262,8 @@ done, items in the bag):
 | `?scene=house` / `?scene=house&part=2` | The hub; part 2 has the attic door |
 | `?scene=room&slot=a` (or `b`, `counter`) | A side room; `counter` is the attic |
 | `?scene=room&slot=a&game=word_machine` | The word machine (`game=` puts that game behind door a, in any URL) |
+| `?scene=room&slot=a&room=charge` | Charge the Spell (`room=charge` forces it behind door a, or door b when `game=` holds door a, in any URL) |
+| `?scene=battle&part=1&charged=m,s,a` | A battle that fires those charged runes (default: the plan's charge room's, in part 1) |
 | `?scene=battle&part=1` (or `2`) | A battle |
 | `?scene=victory&read=cat,sun,julia` | The victory scene, then the victory recapping those words |
 | `?scene=victory&ending=boat` | That victory scene (`content/house/endings.ts` ids); F2 skips to the recap |
@@ -279,7 +304,12 @@ whole random episodes play in the slow lane, two in `tests/soak.spec.ts` (seed 1
 draw after it) and one in the word machine's episode (seed 19) (item 025). The same
 way, every browser test's rooms play the sentence game (the harness adds
 `games=sentence`) unless its URL asks for a game (`game=word_machine`) or the whole pool
-(`games=all`): `tests/machine.spec.ts` opens the word machine in the fast lane, and in
+(`games=all`). `FORCE_PHONICS_ROOM` follows the same rule: the harness's `games=sentence`
+and any `game=` keep the test's own rooms, while `games=all` (the real draw) and the
+game itself get Charge the Spell behind door a, so `playRoom` and the bug-hunt checker
+play it (`playChargeRoom`: the altar, then Dad's yes per rune); `tests/charge.spec.ts`
+covers the room, the dad keys, the timeout under dad lock and the runes in battle
+(item 053). `tests/machine.spec.ts` opens the word machine in the fast lane, and in
 the slow lane plays whole visits (a silly tile first, F9 out and back) and a whole
 episode with it behind door a (item 026). `leaveBedroom` also plays the entry hall's
 warm-up (item 033) unless given `{ grab: false }`, so a test that walks out of the bedroom

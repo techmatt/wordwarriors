@@ -12,7 +12,9 @@
  * Two pages (item 037; the word bank outgrew one): green / Space flips
  * between them. Page 1 has the sounds, the warm-up, the frames, the bag and
  * the bank's coverage (by level, vowel and first sound: words · read · solid);
- * page 2 has every word, one row each.
+ * page 2 has every word, one row each. A letter sound she has charged in
+ * Charge the Spell (item 053) carries its help level in its dot (1 the sound
+ * and gesture first, 2 the gesture only, 3 the rune alone).
  */
 
 import Phaser from 'phaser';
@@ -26,6 +28,7 @@ import { voiceBus } from '../audio/VoiceBus';
 import { BANK_DRAW, GAME_HEIGHT, GAME_WIDTH, GRAB, SENTENCE_SOLID } from '../config';
 import { coverageTable, levelGate, type CoverageRow } from '../rules/bank';
 import { GRAB_WORDS, grabLevel } from '../rules/grab';
+import { chargeLevel } from '../rules/charge';
 import { fitText } from '../ui/fitText';
 import type { Step } from '../episode/Episode';
 import { Controls } from '../input/Controls';
@@ -78,7 +81,10 @@ export class ParentScene extends Phaser.Scene {
 
     // The digraphs' sounds (SH CH TH CK) sit with the letters': each is one sound unit.
     // Five full columns, narrow enough to stay left of the warm-up's levels.
-    this.grid('Letter sounds', 'sounds', [...LETTERS, ...DIGRAPH_SOUNDS].map((l) => l.letter), 30, 90, 6, 162);
+    // The number in a sound's dot is its Charge the Spell help level (item 053), once she has charged it.
+    const charged = (id: string) => (snap.chargeLevels?.[id] !== undefined ? String(chargeLevel(progress, id)) : null);
+    this.grid('Letter sounds', 'sounds', [...LETTERS, ...DIGRAPH_SOUNDS].map((l) => l.letter), 30, 90, 6, 162, 30, charged);
+    fitText(this.add.text(200, 94, 'number in the dot: Charge the Spell help (1 sound + gesture first, 2 gesture only, 3 rune alone)', { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#555' }), 1030 - 200, 22);
     const spelled = Object.entries(snap.spelling ?? {}).map(([w, st]) => `${w} ×${st.seen}`);
     fitText(this.add.text(1040, 90, ['Spelled (typing, kept apart', 'from reading):', ...spelled.slice(0, 3)], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - 1040 - 20, 85);
     this.grabView(840, 182, GAME_WIDTH - 840 - 20, 112);
@@ -166,7 +172,8 @@ export class ParentScene extends Phaser.Scene {
     fitText(this.add.text(x, vy + 24 + 5 * 24 + 6, `Solid: shakiness ≤ ${BANK_DRAW.solid}. Grey: not read yet; green: half or more solid.`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '13px', color: '#555' }), 250, 40);
   }
 
-  private grid(title: string, kind: ItemKind, ids: string[], x0: number, y0: number, perCol: number, colW: number, rowH = 30): void {
+  /** A column grid of items; `badge` puts a short mark (a help level) in an item's dot. */
+  private grid(title: string, kind: ItemKind, ids: string[], x0: number, y0: number, perCol: number, colW: number, rowH = 30, badge?: (id: string) => string | null): void {
     this.add.text(x0, y0, title, { fontFamily: 'Segoe UI, sans-serif', fontSize: '20px', color: '#333', fontStyle: 'bold' });
     ids.forEach((id, i) => {
       const col = Math.floor(i / perCol);
@@ -184,7 +191,9 @@ export class ParentScene extends Phaser.Scene {
         Math.round(shaky * 100),
       );
       const c = typeof color === 'number' ? color : Phaser.Display.Color.GetColor(color.r, color.g, color.b);
-      this.add.circle(x + 8, y + 11, 7, c);
+      const mark = badge?.(id);
+      this.add.circle(x + 8, y + 11, mark ? 9 : 7, c);
+      if (mark) this.add.text(x + 8, y + 11, mark, { fontFamily: 'Segoe UI, sans-serif', fontSize: '12px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
       fitText(this.add.text(x + 22, y, `${id}  ${s.seen} · ${recent} · ${today.seen}`, { fontFamily: 'Consolas, monospace', fontSize: '16px', color: '#222' }), colW - 30, rowH - 2);
     });
   }
