@@ -167,10 +167,34 @@
   "text": "Sorry! I will share all my toys now."
  },
  {
+  "id": "reformed_julia_grumpy",
+  "speaker": "julia",
+  "group": "fighter_julia_evil",
+  "text": "Sorry, I was a grumpy girl."
+ },
+ {
+  "id": "reformed_julia_play",
+  "speaker": "julia",
+  "group": "fighter_julia_evil",
+  "text": "Sorry! Let us all play together."
+ },
+ {
   "id": "reformed_julia_next",
   "speaker": "julia",
   "group": "fighter_julia_evil",
   "text": "Can I come on the next adventure?"
+ },
+ {
+  "id": "reformed_julia_best",
+  "speaker": "julia",
+  "group": "fighter_julia_evil",
+  "text": "This is the best day ever!"
+ },
+ {
+  "id": "reformed_julia_sit",
+  "speaker": "julia",
+  "group": "fighter_julia_evil",
+  "text": "Can I sit next to you?"
  },
  {
   "id": "name_ellie",
@@ -311,10 +335,34 @@
   "text": "Sorry! Bubbles for everybody!"
  },
  {
+  "id": "reformed_ellie_good",
+  "speaker": "ellie",
+  "group": "fighter_ellie_evil",
+  "text": "Sorry! Ellie good now."
+ },
+ {
+  "id": "reformed_ellie_sorry",
+  "speaker": "ellie",
+  "group": "fighter_ellie_evil",
+  "text": "Sorry, sorry, sorry!"
+ },
+ {
   "id": "reformed_ellie_cuddle",
   "speaker": "ellie",
   "group": "fighter_ellie_evil",
   "text": "I want a cuddle now!"
+ },
+ {
+  "id": "reformed_ellie_happy",
+  "speaker": "ellie",
+  "group": "fighter_ellie_evil",
+  "text": "Ellie happy!"
+ },
+ {
+  "id": "reformed_ellie_please",
+  "speaker": "ellie",
+  "group": "fighter_ellie_evil",
+  "text": "More bubbles, please!"
  },
  {
   "id": "name_seraphina",
@@ -449,10 +497,34 @@
   "text": "Oops! I am a nice dragon again."
  },
  {
+  "id": "reformed_seraphina_dragons",
+  "speaker": "seraphina",
+  "group": "fighter_seraphina_evil",
+  "text": "Sorry! My dragons will be good now."
+ },
+ {
+  "id": "reformed_seraphina_fiery",
+  "speaker": "seraphina",
+  "group": "fighter_seraphina_evil",
+  "text": "Sorry I was so fiery!"
+ },
+ {
   "id": "reformed_seraphina_fly",
   "speaker": "seraphina",
   "group": "fighter_seraphina_evil",
   "text": "Can I fly with you next time?"
+ },
+ {
+  "id": "reformed_seraphina_play",
+  "speaker": "seraphina",
+  "group": "fighter_seraphina_evil",
+  "text": "My dragons want to play with you!"
+ },
+ {
+  "id": "reformed_seraphina_parties",
+  "speaker": "seraphina",
+  "group": "fighter_seraphina_evil",
+  "text": "Dragons love parties!"
  },
  {
   "id": "name_dada_matt",
@@ -587,10 +659,34 @@
   "text": "Sorry, kiddo! Want to build a fort?"
  },
  {
+  "id": "reformed_dada_matt_walls",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_evil",
+  "text": "Sorry, kiddo! I will fix every wall."
+ },
+ {
+  "id": "reformed_dada_matt_silly",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_evil",
+  "text": "Sorry! Daddy got a bit silly."
+ },
+ {
   "id": "reformed_dada_matt_fixing",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt_evil",
   "text": "No more smashing. Only fixing!"
+ },
+ {
+  "id": "reformed_dada_matt_piggyback",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_evil",
+  "text": "Who wants a piggyback ride?"
+ },
+ {
+  "id": "reformed_dada_matt_build",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_evil",
+  "text": "Let us build something together!"
  },
  {
   "id": "name_dada_jason",
@@ -719,10 +815,34 @@
   "text": "Sorry! Who wants pancakes?"
  },
  {
+  "id": "reformed_dada_jason_broccoli",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_evil",
+  "text": "Sorry! No more broccoli for breakfast."
+ },
+ {
+  "id": "reformed_dada_jason_dessert",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_evil",
+  "text": "Sorry, kiddo! Dessert first today."
+ },
+ {
   "id": "reformed_dada_jason_yummy",
   "speaker": "dada_jason",
   "group": "fighter_dada_jason_evil",
   "text": "I promise to cook yummy food, not yucky food!"
+ },
+ {
+  "id": "reformed_dada_jason_seconds",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_evil",
+  "text": "Seconds for everybody!"
+ },
+ {
+  "id": "reformed_dada_jason_party",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_evil",
+  "text": "Best party ever!"
  },
  {
   "id": "name_elsa",
@@ -863,10 +983,34 @@
   "text": "Sorry I made it so chilly!"
  },
  {
+  "id": "reformed_elsa_melt",
+  "speaker": "elsa",
+  "group": "fighter_elsa_evil",
+  "text": "Sorry! Let me melt all the ice."
+ },
+ {
+  "id": "reformed_elsa_frosty",
+  "speaker": "elsa",
+  "group": "fighter_elsa_evil",
+  "text": "Sorry I was so frosty!"
+ },
+ {
   "id": "reformed_elsa_snowman",
   "speaker": "elsa",
   "group": "fighter_elsa_evil",
   "text": "Can I make you a snowman?"
+ },
+ {
+  "id": "reformed_elsa_cosy",
+  "speaker": "elsa",
+  "group": "fighter_elsa_evil",
+  "text": "It is so warm and cosy now!"
+ },
+ {
+  "id": "reformed_elsa_snowflake",
+  "speaker": "elsa",
+  "group": "fighter_elsa_evil",
+  "text": "Can I give you a snowflake?"
  },
  {
   "id": "name_anna",
@@ -1001,10 +1145,34 @@
   "text": "Sorry! Can we be friends again?"
  },
  {
+  "id": "reformed_anna_team",
+  "speaker": "anna",
+  "group": "fighter_anna_evil",
+  "text": "Sorry! I am on your team now."
+ },
+ {
+  "id": "reformed_anna_blizzard",
+  "speaker": "anna",
+  "group": "fighter_anna_evil",
+  "text": "Sorry about the blizzard!"
+ },
+ {
   "id": "reformed_anna_side",
   "speaker": "anna",
   "group": "fighter_anna_evil",
   "text": "Next time, I fight on your side!"
+ },
+ {
+  "id": "reformed_anna_grouphug",
+  "speaker": "anna",
+  "group": "fighter_anna_evil",
+  "text": "Group hug, everybody!"
+ },
+ {
+  "id": "reformed_anna_love",
+  "speaker": "anna",
+  "group": "fighter_anna_evil",
+  "text": "I love my friends!"
  },
  {
   "id": "name_jasmine",
@@ -1151,10 +1319,34 @@
   "text": "Sorry about all the sand!"
  },
  {
+  "id": "reformed_jasmine_sweep",
+  "speaker": "jasmine",
+  "group": "fighter_jasmine_evil",
+  "text": "Sorry! I will sweep it all up."
+ },
+ {
+  "id": "reformed_jasmine_stormy",
+  "speaker": "jasmine",
+  "group": "fighter_jasmine_evil",
+  "text": "Sorry I was so stormy!"
+ },
+ {
   "id": "reformed_jasmine_ride",
   "speaker": "jasmine",
   "group": "fighter_jasmine_evil",
   "text": "Want a ride on my carpet?"
+ },
+ {
+  "id": "reformed_jasmine_magic",
+  "speaker": "jasmine",
+  "group": "fighter_jasmine_evil",
+  "text": "What a magic day!"
+ },
+ {
+  "id": "reformed_jasmine_dance",
+  "speaker": "jasmine",
+  "group": "fighter_jasmine_evil",
+  "text": "Let us dance and twirl!"
  },
  {
   "id": "name_ozymandias",
@@ -1296,10 +1488,34 @@
   "text": "Sorry! Even kings say sorry."
  },
  {
+  "id": "reformed_ozymandias_kind",
+  "speaker": "ozymandias",
+  "group": "fighter_ozymandias_evil",
+  "text": "Sorry! I am a kind pharaoh now."
+ },
+ {
+  "id": "reformed_ozymandias_statue",
+  "speaker": "ozymandias",
+  "group": "fighter_ozymandias_evil",
+  "text": "Sorry about my giant statue!"
+ },
+ {
   "id": "reformed_ozymandias_visit",
   "speaker": "ozymandias",
   "group": "fighter_ozymandias_evil",
   "text": "Please come and visit my pyramid!"
+ },
+ {
+  "id": "reformed_ozymandias_mighty",
+  "speaker": "ozymandias",
+  "group": "fighter_ozymandias_evil",
+  "text": "This is a mighty party!"
+ },
+ {
+  "id": "reformed_ozymandias_loves",
+  "speaker": "ozymandias",
+  "group": "fighter_ozymandias_evil",
+  "text": "Even a pharaoh loves a party!"
  },
  {
   "id": "name_jormungandr",
@@ -1442,10 +1658,34 @@
   "text": "Sorry! I was a grumpy noodle."
  },
  {
+  "id": "reformed_jormungandr_letgo",
+  "speaker": "jormungandr",
+  "group": "fighter_jormungandr_evil",
+  "text": "Sorry! I will let go of the house."
+ },
+ {
+  "id": "reformed_jormungandr_squeeze",
+  "speaker": "jormungandr",
+  "group": "fighter_jormungandr_evil",
+  "text": "Sorry I squeezed so hard!"
+ },
+ {
   "id": "reformed_jormungandr_join",
   "speaker": "jormungandr",
   "group": "fighter_jormungandr_evil",
   "text": "Can I join your next adventure?"
+ },
+ {
+  "id": "reformed_jormungandr_slide",
+  "speaker": "jormungandr",
+  "group": "fighter_jormungandr_evil",
+  "text": "I can be a slide for you!"
+ },
+ {
+  "id": "reformed_jormungandr_rainbow",
+  "speaker": "jormungandr",
+  "group": "fighter_jormungandr_evil",
+  "text": "Look, I am a big rainbow noodle!"
  },
  {
   "id": "name_smaug",
@@ -1604,10 +1844,34 @@
   "text": "Sorry! You can share my treasure."
  },
  {
+  "id": "reformed_smaug_gold",
+  "speaker": "smaug",
+  "group": "fighter_smaug_evil",
+  "text": "Sorry! I do not need all the gold."
+ },
+ {
+  "id": "reformed_smaug_greedy",
+  "speaker": "smaug",
+  "group": "fighter_smaug_evil",
+  "text": "Sorry I was so greedy!"
+ },
+ {
   "id": "reformed_smaug_marshmallows",
   "speaker": "smaug",
   "group": "fighter_smaug_evil",
   "text": "I will only toast marshmallows now!"
+ },
+ {
+  "id": "reformed_smaug_coins",
+  "speaker": "smaug",
+  "group": "fighter_smaug_evil",
+  "text": "Gold coins for everybody!"
+ },
+ {
+  "id": "reformed_smaug_warm",
+  "speaker": "smaug",
+  "group": "fighter_smaug_evil",
+  "text": "I will keep you nice and warm!"
  },
  {
   "id": "name_tiamat",
@@ -1767,10 +2031,34 @@
   "text": "Sorry I was so stormy!"
  },
  {
+  "id": "reformed_tiamat_crowns",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat_evil",
+  "text": "Sorry! You can all be kings and queens."
+ },
+ {
+  "id": "reformed_tiamat_bossy",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat_evil",
+  "text": "Sorry I was so bossy!"
+ },
+ {
   "id": "reformed_tiamat_team",
   "speaker": "tiamat",
   "group": "fighter_tiamat_evil",
   "text": "Can I be on your team next time?"
+ },
+ {
+  "id": "reformed_tiamat_crown",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat_evil",
+  "text": "Everybody gets a crown!"
+ },
+ {
+  "id": "reformed_tiamat_hooray",
+  "speaker": "tiamat",
+  "group": "fighter_tiamat_evil",
+  "text": "Hip hip hooray for the team!"
  },
  {
   "id": "name_scar",
@@ -1899,10 +2187,34 @@
   "text": "Beep boop! Sorry about the mess!"
  },
  {
+  "id": "reformed_scar_good",
+  "speaker": "scar",
+  "group": "fighter_scar_evil",
+  "text": "Beep, sorry! Scar good now."
+ },
+ {
+  "id": "reformed_scar_lights",
+  "speaker": "scar",
+  "group": "fighter_scar_evil",
+  "text": "Sorry! I will switch the lights back on."
+ },
+ {
   "id": "reformed_scar_friend",
   "speaker": "scar",
   "group": "fighter_scar_evil",
   "text": "Robot friend mode, switched on!"
+ },
+ {
+  "id": "reformed_scar_parties",
+  "speaker": "scar",
+  "group": "fighter_scar_evil",
+  "text": "Beep boop, I love parties!"
+ },
+ {
+  "id": "reformed_scar_dance",
+  "speaker": "scar",
+  "group": "fighter_scar_evil",
+  "text": "Happy robot dance!"
  },
  {
   "id": "name_moriarty",
@@ -2049,10 +2361,34 @@
   "text": "Sorry for all the tricks!"
  },
  {
+  "id": "reformed_moriarty_sneaky",
+  "speaker": "moriarty",
+  "group": "fighter_moriarty_evil",
+  "text": "Sorry! No more sneaky tricks."
+ },
+ {
+  "id": "reformed_moriarty_puzzle",
+  "speaker": "moriarty",
+  "group": "fighter_moriarty_evil",
+  "text": "Sorry I was such a puzzle!"
+ },
+ {
   "id": "reformed_moriarty_mystery",
   "speaker": "moriarty",
   "group": "fighter_moriarty_evil",
   "text": "Next time, let us solve a mystery together!"
+ },
+ {
+  "id": "reformed_moriarty_idea",
+  "speaker": "moriarty",
+  "group": "fighter_moriarty_evil",
+  "text": "I have a clever idea, let us play!"
+ },
+ {
+  "id": "reformed_moriarty_best",
+  "speaker": "moriarty",
+  "group": "fighter_moriarty_evil",
+  "text": "This is the best mystery ever!"
  },
  {
   "id": "name_bavmorda",
@@ -2190,10 +2526,34 @@
   "text": "Sorry! No more piggy spells. Well, maybe one."
  },
  {
+  "id": "reformed_bavmorda_back",
+  "speaker": "bavmorda",
+  "group": "fighter_bavmorda_evil",
+  "text": "Sorry! I will turn everybody back."
+ },
+ {
+  "id": "reformed_bavmorda_witchy",
+  "speaker": "bavmorda",
+  "group": "fighter_bavmorda_evil",
+  "text": "Sorry I was so witchy!"
+ },
+ {
   "id": "reformed_bavmorda_potion",
   "speaker": "bavmorda",
   "group": "fighter_bavmorda_evil",
   "text": "Can I brew you a happy potion?"
+ },
+ {
+  "id": "reformed_bavmorda_soup",
+  "speaker": "bavmorda",
+  "group": "fighter_bavmorda_evil",
+  "text": "Cauldron soup for everybody, it is yummy!"
+ },
+ {
+  "id": "reformed_bavmorda_dance",
+  "speaker": "bavmorda",
+  "group": "fighter_bavmorda_evil",
+  "text": "Let us dance round the cauldron!"
  },
  {
   "id": "name_rilla",
@@ -2334,10 +2694,34 @@
   "text": "Sorry! Want a banana?"
  },
  {
+  "id": "reformed_rilla_car",
+  "speaker": "rilla",
+  "group": "fighter_rilla_evil",
+  "text": "Sorry! Rilla will not eat the car."
+ },
+ {
+  "id": "reformed_rilla_hungry",
+  "speaker": "rilla",
+  "group": "fighter_rilla_evil",
+  "text": "Sorry, so sorry, I was hungry!"
+ },
+ {
   "id": "reformed_rilla_hugs",
   "speaker": "rilla",
   "group": "fighter_rilla_evil",
   "text": "Gorilla hugs for everybody!"
+ },
+ {
+  "id": "reformed_rilla_bananas",
+  "speaker": "rilla",
+  "group": "fighter_rilla_evil",
+  "text": "Bananas for the whole team!"
+ },
+ {
+  "id": "reformed_rilla_happy",
+  "speaker": "rilla",
+  "group": "fighter_rilla_evil",
+  "text": "Rilla happy now!"
  },
  {
   "id": "name_dada_matt_lifter",
@@ -2472,10 +2856,34 @@
   "text": "Sorry! Want to lift teddies with me?"
  },
  {
+  "id": "reformed_dada_matt_lifter_jacks",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "Sorry! No more jumping jacks."
+ },
+ {
+  "id": "reformed_dada_matt_lifter_rest",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "Sorry, kiddo! Let us take a rest."
+ },
+ {
   "id": "reformed_dada_matt_lifter_fives",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt_lifter_evil",
   "text": "No more showing off. Only high fives!"
+ },
+ {
+  "id": "reformed_dada_matt_lifter_high",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "Who wants to be lifted up high?"
+ },
+ {
+  "id": "reformed_dada_matt_lifter_strong",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_lifter_evil",
+  "text": "Strong hearts, strong friends!"
  },
  {
   "id": "name_dada_matt_cyber",
@@ -2616,10 +3024,34 @@
   "text": "Sorry! I will only hack cartoons now."
  },
  {
+  "id": "reformed_dada_matt_cyber_lights",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "Sorry! I fixed all the lights."
+ },
+ {
+  "id": "reformed_dada_matt_cyber_friendly",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "Beep, sorry! System is friendly now."
+ },
+ {
   "id": "reformed_dada_matt_cyber_drone",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt_cyber_evil",
   "text": "Want to fly my drone?"
+ },
+ {
+  "id": "reformed_dada_matt_cyber_game",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "Let us play a video game together!"
+ },
+ {
+  "id": "reformed_dada_matt_cyber_party",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_cyber_evil",
+  "text": "Party mode, switched on!"
  },
  {
   "id": "name_dada_matt_blade",
@@ -2760,10 +3192,34 @@
   "text": "Sorry! Want to learn a sparkle spell?"
  },
  {
+  "id": "reformed_dada_matt_blade_toys",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "Sorry! I will un-grump all the toys."
+ },
+ {
+  "id": "reformed_dada_matt_blade_grumpy",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "Sorry, kiddo! No more grumpy spells."
+ },
+ {
   "id": "reformed_dada_matt_blade_tickle",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt_blade_evil",
   "text": "My sword is only for tickling now!"
+ },
+ {
+  "id": "reformed_dada_matt_blade_sparkles",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "Sparkles for everybody!"
+ },
+ {
+  "id": "reformed_dada_matt_blade_wish",
+  "speaker": "dada_matt",
+  "group": "fighter_dada_matt_blade_evil",
+  "text": "Let us make a wish together!"
  },
  {
   "id": "name_dada_jason_warrior",
@@ -2904,10 +3360,34 @@
   "text": "Sorry! Let me be your brave knight!"
  },
  {
+  "id": "reformed_dada_jason_warrior_snacks",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "Sorry! The snacks are back!"
+ },
+ {
+  "id": "reformed_dada_jason_warrior_axe",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "Sorry, kiddo! I put my axe away."
+ },
+ {
   "id": "reformed_dada_jason_warrior_battles",
   "speaker": "dada_jason",
   "group": "fighter_dada_jason_warrior_evil",
   "text": "No more battles. Only hugs!"
+ },
+ {
+  "id": "reformed_dada_jason_warrior_cheers",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "Three cheers for the heroes!"
+ },
+ {
+  "id": "reformed_dada_jason_warrior_feast",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warrior_evil",
+  "text": "A feast for the whole castle!"
  },
  {
   "id": "name_dada_jason_warlock",
@@ -3048,10 +3528,34 @@
   "text": "Sorry! Want to see a sparkly trick?"
  },
  {
+  "id": "reformed_dada_jason_warlock_toads",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "Sorry! No more toads, I promise."
+ },
+ {
+  "id": "reformed_dada_jason_warlock_curses",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "Sorry, kiddo! I will undo my curses."
+ },
+ {
   "id": "reformed_dada_jason_warlock_happy",
   "speaker": "dada_jason",
   "group": "fighter_dada_jason_warlock_evil",
   "text": "From now on, only happy spells!"
+ },
+ {
+  "id": "reformed_dada_jason_warlock_rainbow",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "Look, a rainbow spell!"
+ },
+ {
+  "id": "reformed_dada_jason_warlock_magic",
+  "speaker": "dada_jason",
+  "group": "fighter_dada_jason_warlock_evil",
+  "text": "Happy magic for everybody!"
  },
  {
   "id": "quest_dada_matt_1",
@@ -3081,7 +3585,7 @@
   "id": "quest_dada_matt_lifter_2",
   "speaker": "dada_matt",
   "group": "core",
-  "text": "Time to get strong, my secret forest gym has rocks for weights and squirrels for coaches!"
+  "text": "Time to get strong, my secret forest gym has boulders for weights and squirrels for coaches!"
  },
  {
   "id": "quest_dada_matt_lifter_3",
@@ -4710,7 +5214,7 @@
   "id": "hub_rilla_1_line3",
   "speaker": "rilla",
   "group": "nar_rilla",
-  "text": "Then beat your chest, and shout..."
+  "text": "Then thump your tummy, and shout..."
  },
  {
   "id": "hub_rilla_1_circle",
@@ -5262,95 +5766,6 @@
   "text": "Wug!"
  },
  {
-  "id": "rime_ig",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Ihg.",
-  "note": "placeholder for the rime -ig said alone; replace with a recorded clip"
- },
- {
-  "id": "silly_hig",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Hihg!"
- },
- {
-  "id": "silly_kig",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Kig!"
- },
- {
-  "id": "rime_in",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Inn.",
-  "note": "placeholder for the rime -in said alone; replace with a recorded clip"
- },
- {
-  "id": "silly_hin",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Hin!"
- },
- {
-  "id": "rime_eg",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Egg.",
-  "note": "placeholder for the rime -eg said alone; replace with a recorded clip"
- },
- {
-  "id": "silly_zeg",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Zeg!"
- },
- {
-  "id": "silly_heg",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Heg!"
- },
- {
-  "id": "rime_am",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Amm.",
-  "note": "placeholder for the rime -am said alone; replace with a recorded clip"
- },
- {
-  "id": "silly_vam",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Vam!"
- },
- {
-  "id": "silly_zam",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Zam!"
- },
- {
-  "id": "rime_op",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Opp.",
-  "note": "placeholder for the rime -op said alone; replace with a recorded clip"
- },
- {
-  "id": "silly_zop",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Zop!"
- },
- {
-  "id": "silly_yop",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Yop!"
- },
- {
   "id": "rime_ox",
   "speaker": "phonics",
   "group": "phonics",
@@ -5370,19 +5785,6 @@
   "text": "Yox!"
  },
  {
-  "id": "rime_od",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Odd.",
-  "note": "placeholder for the rime -od said alone; replace with a recorded clip"
- },
- {
-  "id": "silly_fod",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Fod!"
- },
- {
   "id": "rime_un",
   "speaker": "phonics",
   "group": "phonics",
@@ -5400,44 +5802,6 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "Zun!"
- },
- {
-  "id": "rime_ut",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Utt.",
-  "note": "placeholder for the rime -ut said alone; replace with a recorded clip"
- },
- {
-  "id": "silly_vut",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Vut!"
- },
- {
-  "id": "silly_lut",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Lut!"
- },
- {
-  "id": "rime_ub",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Ubb.",
-  "note": "placeholder for the rime -ub said alone; replace with a recorded clip"
- },
- {
-  "id": "silly_zub",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Zub!"
- },
- {
-  "id": "silly_vub",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Vub!"
  },
  {
   "id": "word_anna",
@@ -5470,6 +5834,12 @@
   "text": "bat!"
  },
  {
+  "id": "word_bath",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "bath!"
+ },
+ {
   "id": "word_bavmorda",
   "speaker": "phonics",
   "group": "phonics",
@@ -5500,6 +5870,12 @@
   "text": "big!"
  },
  {
+  "id": "word_bin",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "bin!"
+ },
+ {
   "id": "word_bit",
   "speaker": "phonics",
   "group": "phonics",
@@ -5522,6 +5898,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "box!"
+ },
+ {
+  "id": "word_brush",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "brush!"
  },
  {
   "id": "word_bug",
@@ -5566,6 +5948,12 @@
   "text": "cat!"
  },
  {
+  "id": "word_chest",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "chest!"
+ },
+ {
   "id": "word_chick",
   "speaker": "phonics",
   "group": "phonics",
@@ -5584,6 +5972,12 @@
   "text": "clap!"
  },
  {
+  "id": "word_clock",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "clock!"
+ },
+ {
   "id": "word_cog",
   "speaker": "phonics",
   "group": "phonics",
@@ -5594,6 +5988,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "crab!"
+ },
+ {
+  "id": "word_crib",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "crib!"
  },
  {
   "id": "word_cup",
@@ -6064,6 +6464,12 @@
   "text": "pin!"
  },
  {
+  "id": "word_plant",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "plant!"
+ },
+ {
   "id": "word_plop",
   "speaker": "phonics",
   "group": "phonics",
@@ -6122,6 +6528,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "red!"
+ },
+ {
+  "id": "word_rock",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "rock!"
  },
  {
   "id": "word_rod",
@@ -6232,6 +6644,12 @@
   "text": "spin!"
  },
  {
+  "id": "word_stick",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "stick!"
+ },
+ {
   "id": "word_stomp",
   "speaker": "phonics",
   "group": "phonics",
@@ -6286,6 +6704,12 @@
   "text": "trap!"
  },
  {
+  "id": "word_truck",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "truck!"
+ },
+ {
   "id": "word_tub",
   "speaker": "phonics",
   "group": "phonics",
@@ -6326,6 +6750,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "vest!"
+ },
+ {
+  "id": "word_vet",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "vet!"
  },
  {
   "id": "word_wag",
@@ -6976,16 +7406,416 @@
   "text": "Rilla is no match for the..."
  },
  {
+  "id": "sent_cannot_beat_the_julia",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Julia can not beat the..."
+ },
+ {
+  "id": "sent_cannot_beat_the_ellie",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Ellie can not beat the..."
+ },
+ {
+  "id": "sent_cannot_beat_the_seraphina",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Seraphina can not beat the..."
+ },
+ {
+  "id": "sent_cannot_beat_the_dada_matt",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Dada Matt can not beat the..."
+ },
+ {
+  "id": "sent_cannot_beat_the_dada_jason",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Dada Jason can not beat the..."
+ },
+ {
+  "id": "sent_cannot_beat_the_elsa",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Elsa can not beat the..."
+ },
+ {
+  "id": "sent_cannot_beat_the_anna",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Anna can not beat the..."
+ },
+ {
+  "id": "sent_cannot_beat_the_jasmine",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Jasmine can not beat the..."
+ },
+ {
+  "id": "sent_cannot_beat_the_ozymandias",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Ozymandias can not beat the..."
+ },
+ {
+  "id": "sent_cannot_beat_the_jormungandr",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Jormungandr can not beat the...",
+  "say": "Yormungander can not beat the..."
+ },
+ {
+  "id": "sent_cannot_beat_the_smaug",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Smaug can not beat the..."
+ },
+ {
+  "id": "sent_cannot_beat_the_tiamat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Tiamat can not beat the..."
+ },
+ {
+  "id": "sent_cannot_beat_the_scar",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Scar can not beat the..."
+ },
+ {
+  "id": "sent_cannot_beat_the_moriarty",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Moriarty can not beat the..."
+ },
+ {
+  "id": "sent_cannot_beat_the_bavmorda",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Bavmorda can not beat the..."
+ },
+ {
+  "id": "sent_cannot_beat_the_rilla",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Rilla can not beat the..."
+ },
+ {
+  "id": "sent_hides_from_the_julia",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Julia hides from the..."
+ },
+ {
+  "id": "sent_hides_from_the_ellie",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Ellie hides from the..."
+ },
+ {
+  "id": "sent_hides_from_the_seraphina",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Seraphina hides from the..."
+ },
+ {
+  "id": "sent_hides_from_the_dada_matt",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Dada Matt hides from the..."
+ },
+ {
+  "id": "sent_hides_from_the_dada_jason",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Dada Jason hides from the..."
+ },
+ {
+  "id": "sent_hides_from_the_elsa",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Elsa hides from the..."
+ },
+ {
+  "id": "sent_hides_from_the_anna",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Anna hides from the..."
+ },
+ {
+  "id": "sent_hides_from_the_jasmine",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Jasmine hides from the..."
+ },
+ {
+  "id": "sent_hides_from_the_ozymandias",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Ozymandias hides from the..."
+ },
+ {
+  "id": "sent_hides_from_the_jormungandr",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Jormungandr hides from the...",
+  "say": "Yormungander hides from the..."
+ },
+ {
+  "id": "sent_hides_from_the_smaug",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Smaug hides from the..."
+ },
+ {
+  "id": "sent_hides_from_the_tiamat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Tiamat hides from the..."
+ },
+ {
+  "id": "sent_hides_from_the_scar",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Scar hides from the..."
+ },
+ {
+  "id": "sent_hides_from_the_moriarty",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Moriarty hides from the..."
+ },
+ {
+  "id": "sent_hides_from_the_bavmorda",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Bavmorda hides from the..."
+ },
+ {
+  "id": "sent_hides_from_the_rilla",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Rilla hides from the..."
+ },
+ {
+  "id": "sent_does_not_like_the_julia",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Julia does not like the..."
+ },
+ {
+  "id": "sent_does_not_like_the_ellie",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Ellie does not like the..."
+ },
+ {
+  "id": "sent_does_not_like_the_seraphina",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Seraphina does not like the..."
+ },
+ {
+  "id": "sent_does_not_like_the_dada_matt",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Dada Matt does not like the..."
+ },
+ {
+  "id": "sent_does_not_like_the_dada_jason",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Dada Jason does not like the..."
+ },
+ {
+  "id": "sent_does_not_like_the_elsa",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Elsa does not like the..."
+ },
+ {
+  "id": "sent_does_not_like_the_anna",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Anna does not like the..."
+ },
+ {
+  "id": "sent_does_not_like_the_jasmine",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Jasmine does not like the..."
+ },
+ {
+  "id": "sent_does_not_like_the_ozymandias",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Ozymandias does not like the..."
+ },
+ {
+  "id": "sent_does_not_like_the_jormungandr",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Jormungandr does not like the...",
+  "say": "Yormungander does not like the..."
+ },
+ {
+  "id": "sent_does_not_like_the_smaug",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Smaug does not like the..."
+ },
+ {
+  "id": "sent_does_not_like_the_tiamat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Tiamat does not like the..."
+ },
+ {
+  "id": "sent_does_not_like_the_scar",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Scar does not like the..."
+ },
+ {
+  "id": "sent_does_not_like_the_moriarty",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Moriarty does not like the..."
+ },
+ {
+  "id": "sent_does_not_like_the_bavmorda",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Bavmorda does not like the..."
+ },
+ {
+  "id": "sent_does_not_like_the_rilla",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Rilla does not like the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_julia",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Julia says yuck to the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_ellie",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Ellie says yuck to the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_seraphina",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Seraphina says yuck to the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_dada_matt",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Dada Matt says yuck to the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_dada_jason",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Dada Jason says yuck to the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_elsa",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Elsa says yuck to the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_anna",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Anna says yuck to the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_jasmine",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Jasmine says yuck to the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_ozymandias",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Ozymandias says yuck to the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_jormungandr",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Jormungandr says yuck to the...",
+  "say": "Yormungander says yuck to the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_smaug",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Smaug says yuck to the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_tiamat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Tiamat says yuck to the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_scar",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Scar says yuck to the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_moriarty",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Moriarty says yuck to the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_bavmorda",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Bavmorda says yuck to the..."
+ },
+ {
+  "id": "sent_says_yuck_to_the_rilla",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Rilla says yuck to the..."
+ },
+ {
   "id": "word_a",
   "speaker": "phonics",
   "group": "phonics",
   "text": "a!"
  },
  {
+  "id": "word_beat",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "beat!"
+ },
+ {
   "id": "word_dada",
   "speaker": "phonics",
   "group": "phonics",
   "text": "Dada!"
+ },
+ {
+  "id": "word_does",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "does!"
  },
  {
   "id": "word_for",
@@ -7018,6 +7848,12 @@
   "text": "hates!"
  },
  {
+  "id": "word_hides",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "hides!"
+ },
+ {
   "id": "word_is",
   "speaker": "phonics",
   "group": "phonics",
@@ -7035,6 +7871,12 @@
   "group": "phonics",
   "text": "Jormungandr!",
   "say": "Yormungander!"
+ },
+ {
+  "id": "word_like",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "like!"
  },
  {
   "id": "word_match",
@@ -7067,6 +7909,12 @@
   "text": "no!"
  },
  {
+  "id": "word_not",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "not!"
+ },
+ {
   "id": "word_of",
   "speaker": "phonics",
   "group": "phonics",
@@ -7091,6 +7939,12 @@
   "text": "runs!"
  },
  {
+  "id": "word_says",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "says!"
+ },
+ {
   "id": "word_scared",
   "speaker": "phonics",
   "group": "phonics",
@@ -7103,6 +7957,12 @@
   "text": "the!"
  },
  {
+  "id": "word_to",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "to!"
+ },
+ {
   "id": "word_use",
   "speaker": "phonics",
   "group": "phonics",
@@ -7113,6 +7973,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "we!"
+ },
+ {
+  "id": "word_yuck",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "yuck!"
  },
  {
   "id": "wake_dada_matt_up",
@@ -7128,6 +7994,31 @@
   "say": "Come on, let us go, find the door!"
  },
  {
+  "id": "wake_dada_matt_up_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Rise and shine, sleepyhead!"
+ },
+ {
+  "id": "wake_dada_matt_door_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Quick, to the door!"
+ },
+ {
+  "id": "wake_dada_matt_up_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Good morning, it is time to get up!"
+ },
+ {
+  "id": "wake_dada_matt_door_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Off we go! Walk to the door!",
+  "say": "Off we go, walk to the door!"
+ },
+ {
   "id": "wake_dada_matt_hi",
   "speaker": "dada_matt",
   "group": "core",
@@ -7138,6 +8029,19 @@
   "speaker": "dada_matt",
   "group": "core",
   "text": "Good news, Julia!"
+ },
+ {
+  "id": "wake_dada_matt_good_julia_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Guess what, Julia? Good news!"
+ },
+ {
+  "id": "wake_dada_matt_good_julia_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Hey Julia, I have good news!",
+  "say": "Hey Julia, I have good news!"
  },
  {
   "id": "wake_dada_matt_helper_julia",
@@ -7152,6 +8056,19 @@
   "text": "Good news, Ellie!"
  },
  {
+  "id": "wake_dada_matt_good_ellie_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Guess what, Ellie? Good news!"
+ },
+ {
+  "id": "wake_dada_matt_good_ellie_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Hey Ellie, I have good news!",
+  "say": "Hey Ellie, I have good news!"
+ },
+ {
   "id": "wake_dada_matt_helper_ellie",
   "speaker": "dada_matt",
   "group": "core",
@@ -7162,6 +8079,19 @@
   "speaker": "dada_matt",
   "group": "core",
   "text": "Good news, Seraphina!"
+ },
+ {
+  "id": "wake_dada_matt_good_seraphina_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Guess what, Seraphina? Good news!"
+ },
+ {
+  "id": "wake_dada_matt_good_seraphina_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Hey Seraphina, I have good news!",
+  "say": "Hey Seraphina, I have good news!"
  },
  {
   "id": "wake_dada_matt_helper_seraphina",
@@ -7176,6 +8106,19 @@
   "text": "Good news, Dada Jason!"
  },
  {
+  "id": "wake_dada_matt_good_dada_jason_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Guess what, Dada Jason? Good news!"
+ },
+ {
+  "id": "wake_dada_matt_good_dada_jason_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Hey Dada Jason, I have good news!",
+  "say": "Hey Dada Jason, I have good news!"
+ },
+ {
   "id": "wake_dada_matt_helper_dada_jason",
   "speaker": "dada_matt",
   "group": "core",
@@ -7186,6 +8129,19 @@
   "speaker": "dada_matt",
   "group": "core",
   "text": "Good news, Elsa!"
+ },
+ {
+  "id": "wake_dada_matt_good_elsa_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Guess what, Elsa? Good news!"
+ },
+ {
+  "id": "wake_dada_matt_good_elsa_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Hey Elsa, I have good news!",
+  "say": "Hey Elsa, I have good news!"
  },
  {
   "id": "wake_dada_matt_helper_elsa",
@@ -7200,6 +8156,19 @@
   "text": "Good news, Anna!"
  },
  {
+  "id": "wake_dada_matt_good_anna_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Guess what, Anna? Good news!"
+ },
+ {
+  "id": "wake_dada_matt_good_anna_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Hey Anna, I have good news!",
+  "say": "Hey Anna, I have good news!"
+ },
+ {
   "id": "wake_dada_matt_helper_anna",
   "speaker": "dada_matt",
   "group": "core",
@@ -7212,6 +8181,19 @@
   "text": "Good news, Jasmine!"
  },
  {
+  "id": "wake_dada_matt_good_jasmine_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Guess what, Jasmine? Good news!"
+ },
+ {
+  "id": "wake_dada_matt_good_jasmine_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Hey Jasmine, I have good news!",
+  "say": "Hey Jasmine, I have good news!"
+ },
+ {
   "id": "wake_dada_matt_helper_jasmine",
   "speaker": "dada_matt",
   "group": "core",
@@ -7222,6 +8204,19 @@
   "speaker": "dada_matt",
   "group": "core",
   "text": "Good news, Ozymandias!"
+ },
+ {
+  "id": "wake_dada_matt_good_ozymandias_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Guess what, Ozymandias? Good news!"
+ },
+ {
+  "id": "wake_dada_matt_good_ozymandias_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Hey Ozymandias, I have good news!",
+  "say": "Hey Ozymandias, I have good news!"
  },
  {
   "id": "wake_dada_matt_helper_ozymandias",
@@ -7237,6 +8232,20 @@
   "say": "Good news, Yormungander!"
  },
  {
+  "id": "wake_dada_matt_good_jormungandr_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Guess what, Jormungandr? Good news!",
+  "say": "Guess what, Yormungander? Good news!"
+ },
+ {
+  "id": "wake_dada_matt_good_jormungandr_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Hey Jormungandr, I have good news!",
+  "say": "Hey Yormungander, I have good news!"
+ },
+ {
   "id": "wake_dada_matt_helper_jormungandr",
   "speaker": "dada_matt",
   "group": "core",
@@ -7248,6 +8257,19 @@
   "speaker": "dada_matt",
   "group": "core",
   "text": "Good news, Smaug!"
+ },
+ {
+  "id": "wake_dada_matt_good_smaug_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Guess what, Smaug? Good news!"
+ },
+ {
+  "id": "wake_dada_matt_good_smaug_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Hey Smaug, I have good news!",
+  "say": "Hey Smaug, I have good news!"
  },
  {
   "id": "wake_dada_matt_helper_smaug",
@@ -7262,6 +8284,19 @@
   "text": "Good news, Tiamat!"
  },
  {
+  "id": "wake_dada_matt_good_tiamat_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Guess what, Tiamat? Good news!"
+ },
+ {
+  "id": "wake_dada_matt_good_tiamat_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Hey Tiamat, I have good news!",
+  "say": "Hey Tiamat, I have good news!"
+ },
+ {
   "id": "wake_dada_matt_helper_tiamat",
   "speaker": "dada_matt",
   "group": "core",
@@ -7272,6 +8307,19 @@
   "speaker": "dada_matt",
   "group": "core",
   "text": "Good news, Scar!"
+ },
+ {
+  "id": "wake_dada_matt_good_scar_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Guess what, Scar? Good news!"
+ },
+ {
+  "id": "wake_dada_matt_good_scar_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Hey Scar, I have good news!",
+  "say": "Hey Scar, I have good news!"
  },
  {
   "id": "wake_dada_matt_helper_scar",
@@ -7286,6 +8334,19 @@
   "text": "Good news, Moriarty!"
  },
  {
+  "id": "wake_dada_matt_good_moriarty_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Guess what, Moriarty? Good news!"
+ },
+ {
+  "id": "wake_dada_matt_good_moriarty_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Hey Moriarty, I have good news!",
+  "say": "Hey Moriarty, I have good news!"
+ },
+ {
   "id": "wake_dada_matt_helper_moriarty",
   "speaker": "dada_matt",
   "group": "core",
@@ -7298,6 +8359,19 @@
   "text": "Good news, Bavmorda!"
  },
  {
+  "id": "wake_dada_matt_good_bavmorda_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Guess what, Bavmorda? Good news!"
+ },
+ {
+  "id": "wake_dada_matt_good_bavmorda_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Hey Bavmorda, I have good news!",
+  "say": "Hey Bavmorda, I have good news!"
+ },
+ {
   "id": "wake_dada_matt_helper_bavmorda",
   "speaker": "dada_matt",
   "group": "core",
@@ -7308,6 +8382,19 @@
   "speaker": "dada_matt",
   "group": "core",
   "text": "Good news, Rilla!"
+ },
+ {
+  "id": "wake_dada_matt_good_rilla_2",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Guess what, Rilla? Good news!"
+ },
+ {
+  "id": "wake_dada_matt_good_rilla_3",
+  "speaker": "dada_matt",
+  "group": "core",
+  "text": "Hey Rilla, I have good news!",
+  "say": "Hey Rilla, I have good news!"
  },
  {
   "id": "wake_dada_matt_helper_rilla",
@@ -7456,6 +8543,31 @@
   "say": "Come on, let us go, find the door!"
  },
  {
+  "id": "wake_dada_jason_up_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Rise and shine, sleepyhead!"
+ },
+ {
+  "id": "wake_dada_jason_door_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Quick, to the door!"
+ },
+ {
+  "id": "wake_dada_jason_up_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Good morning, it is time to get up!"
+ },
+ {
+  "id": "wake_dada_jason_door_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Off we go! Walk to the door!",
+  "say": "Off we go, walk to the door!"
+ },
+ {
   "id": "wake_dada_jason_hi",
   "speaker": "dada_jason",
   "group": "core",
@@ -7466,6 +8578,19 @@
   "speaker": "dada_jason",
   "group": "core",
   "text": "Good news, Julia!"
+ },
+ {
+  "id": "wake_dada_jason_good_julia_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Guess what, Julia? Good news!"
+ },
+ {
+  "id": "wake_dada_jason_good_julia_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Hey Julia, I have good news!",
+  "say": "Hey Julia, I have good news!"
  },
  {
   "id": "wake_dada_jason_helper_julia",
@@ -7480,6 +8605,19 @@
   "text": "Good news, Ellie!"
  },
  {
+  "id": "wake_dada_jason_good_ellie_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Guess what, Ellie? Good news!"
+ },
+ {
+  "id": "wake_dada_jason_good_ellie_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Hey Ellie, I have good news!",
+  "say": "Hey Ellie, I have good news!"
+ },
+ {
   "id": "wake_dada_jason_helper_ellie",
   "speaker": "dada_jason",
   "group": "core",
@@ -7490,6 +8628,19 @@
   "speaker": "dada_jason",
   "group": "core",
   "text": "Good news, Seraphina!"
+ },
+ {
+  "id": "wake_dada_jason_good_seraphina_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Guess what, Seraphina? Good news!"
+ },
+ {
+  "id": "wake_dada_jason_good_seraphina_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Hey Seraphina, I have good news!",
+  "say": "Hey Seraphina, I have good news!"
  },
  {
   "id": "wake_dada_jason_helper_seraphina",
@@ -7504,6 +8655,19 @@
   "text": "Good news, Dada Matt!"
  },
  {
+  "id": "wake_dada_jason_good_dada_matt_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Guess what, Dada Matt? Good news!"
+ },
+ {
+  "id": "wake_dada_jason_good_dada_matt_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Hey Dada Matt, I have good news!",
+  "say": "Hey Dada Matt, I have good news!"
+ },
+ {
   "id": "wake_dada_jason_helper_dada_matt",
   "speaker": "dada_jason",
   "group": "core",
@@ -7514,6 +8678,19 @@
   "speaker": "dada_jason",
   "group": "core",
   "text": "Good news, Elsa!"
+ },
+ {
+  "id": "wake_dada_jason_good_elsa_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Guess what, Elsa? Good news!"
+ },
+ {
+  "id": "wake_dada_jason_good_elsa_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Hey Elsa, I have good news!",
+  "say": "Hey Elsa, I have good news!"
  },
  {
   "id": "wake_dada_jason_helper_elsa",
@@ -7528,6 +8705,19 @@
   "text": "Good news, Anna!"
  },
  {
+  "id": "wake_dada_jason_good_anna_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Guess what, Anna? Good news!"
+ },
+ {
+  "id": "wake_dada_jason_good_anna_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Hey Anna, I have good news!",
+  "say": "Hey Anna, I have good news!"
+ },
+ {
   "id": "wake_dada_jason_helper_anna",
   "speaker": "dada_jason",
   "group": "core",
@@ -7540,6 +8730,19 @@
   "text": "Good news, Jasmine!"
  },
  {
+  "id": "wake_dada_jason_good_jasmine_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Guess what, Jasmine? Good news!"
+ },
+ {
+  "id": "wake_dada_jason_good_jasmine_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Hey Jasmine, I have good news!",
+  "say": "Hey Jasmine, I have good news!"
+ },
+ {
   "id": "wake_dada_jason_helper_jasmine",
   "speaker": "dada_jason",
   "group": "core",
@@ -7550,6 +8753,19 @@
   "speaker": "dada_jason",
   "group": "core",
   "text": "Good news, Ozymandias!"
+ },
+ {
+  "id": "wake_dada_jason_good_ozymandias_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Guess what, Ozymandias? Good news!"
+ },
+ {
+  "id": "wake_dada_jason_good_ozymandias_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Hey Ozymandias, I have good news!",
+  "say": "Hey Ozymandias, I have good news!"
  },
  {
   "id": "wake_dada_jason_helper_ozymandias",
@@ -7565,6 +8781,20 @@
   "say": "Good news, Yormungander!"
  },
  {
+  "id": "wake_dada_jason_good_jormungandr_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Guess what, Jormungandr? Good news!",
+  "say": "Guess what, Yormungander? Good news!"
+ },
+ {
+  "id": "wake_dada_jason_good_jormungandr_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Hey Jormungandr, I have good news!",
+  "say": "Hey Yormungander, I have good news!"
+ },
+ {
   "id": "wake_dada_jason_helper_jormungandr",
   "speaker": "dada_jason",
   "group": "core",
@@ -7576,6 +8806,19 @@
   "speaker": "dada_jason",
   "group": "core",
   "text": "Good news, Smaug!"
+ },
+ {
+  "id": "wake_dada_jason_good_smaug_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Guess what, Smaug? Good news!"
+ },
+ {
+  "id": "wake_dada_jason_good_smaug_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Hey Smaug, I have good news!",
+  "say": "Hey Smaug, I have good news!"
  },
  {
   "id": "wake_dada_jason_helper_smaug",
@@ -7590,6 +8833,19 @@
   "text": "Good news, Tiamat!"
  },
  {
+  "id": "wake_dada_jason_good_tiamat_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Guess what, Tiamat? Good news!"
+ },
+ {
+  "id": "wake_dada_jason_good_tiamat_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Hey Tiamat, I have good news!",
+  "say": "Hey Tiamat, I have good news!"
+ },
+ {
   "id": "wake_dada_jason_helper_tiamat",
   "speaker": "dada_jason",
   "group": "core",
@@ -7600,6 +8856,19 @@
   "speaker": "dada_jason",
   "group": "core",
   "text": "Good news, Scar!"
+ },
+ {
+  "id": "wake_dada_jason_good_scar_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Guess what, Scar? Good news!"
+ },
+ {
+  "id": "wake_dada_jason_good_scar_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Hey Scar, I have good news!",
+  "say": "Hey Scar, I have good news!"
  },
  {
   "id": "wake_dada_jason_helper_scar",
@@ -7614,6 +8883,19 @@
   "text": "Good news, Moriarty!"
  },
  {
+  "id": "wake_dada_jason_good_moriarty_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Guess what, Moriarty? Good news!"
+ },
+ {
+  "id": "wake_dada_jason_good_moriarty_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Hey Moriarty, I have good news!",
+  "say": "Hey Moriarty, I have good news!"
+ },
+ {
   "id": "wake_dada_jason_helper_moriarty",
   "speaker": "dada_jason",
   "group": "core",
@@ -7626,6 +8908,19 @@
   "text": "Good news, Bavmorda!"
  },
  {
+  "id": "wake_dada_jason_good_bavmorda_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Guess what, Bavmorda? Good news!"
+ },
+ {
+  "id": "wake_dada_jason_good_bavmorda_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Hey Bavmorda, I have good news!",
+  "say": "Hey Bavmorda, I have good news!"
+ },
+ {
   "id": "wake_dada_jason_helper_bavmorda",
   "speaker": "dada_jason",
   "group": "core",
@@ -7636,6 +8931,19 @@
   "speaker": "dada_jason",
   "group": "core",
   "text": "Good news, Rilla!"
+ },
+ {
+  "id": "wake_dada_jason_good_rilla_2",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Guess what, Rilla? Good news!"
+ },
+ {
+  "id": "wake_dada_jason_good_rilla_3",
+  "speaker": "dada_jason",
+  "group": "core",
+  "text": "Hey Rilla, I have good news!",
+  "say": "Hey Rilla, I have good news!"
  },
  {
   "id": "wake_dada_jason_helper_rilla",

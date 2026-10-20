@@ -62,7 +62,7 @@ export class EndingScene extends Phaser.Scene {
     }
     const e = ENDING_BY_ID[episode.ending]!;
     const people = endingPeople(episode);
-    const script = endingScript(episode, e.id);
+    const script = endingScript(episode, e.id, episode.lines.ending);
 
     this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, endingArt(e.id)).setDisplaySize(GAME_WIDTH, GAME_HEIGHT).setDepth(0);
     // Depth by feet, as in the rooms: a front prop (the table, the boat) stands lower, so it is drawn over them.

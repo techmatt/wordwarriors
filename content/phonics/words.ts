@@ -64,12 +64,12 @@ export const SPECIAL_WORDS: Word[] = [{ word: 'mice', glyph: '🐭', decodable: 
 export const WORDS: Word[] = [...CVC_WORDS, ...SIGHT_WORDS, ...SPECIAL_WORDS];
 
 /**
- * The bank's action words (role `action`): the battle's move pads and the
- * ally's gift word (item 037). Each has a picture of what it does (the
+ * The bank's other words: its actions (the battle's move pads and the
+ * ally's gift word, item 037) and its `odd` things (item 040). Each has a picture (the
  * victory recap and the fan on its super). Not in WORDS: they are never key
- * words or room objects. A `both` word (NET, JET) is in CVC_WORDS instead.
+ * words or room objects. A familiar `both` word (NET, PAN) is in CVC_WORDS instead.
  */
-export const MOVE_PICTURES: Word[] = BANK.filter((w) => w.role === 'action').map(asWord);
+export const MOVE_PICTURES: Word[] = BANK.filter((w) => !THINGS.includes(w)).map(asWord);
 
 /**
  * Pictures kept for roster flavour words that left the reading pool in item

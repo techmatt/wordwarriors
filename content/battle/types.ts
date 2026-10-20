@@ -196,9 +196,10 @@ export interface CharacterSpec {
   /**
    * What the villain says, in the good version's voice, once beaten and good
    * again (item 018): short and kid-funny, an apology or wanting to come on the
-   * next adventure. One at the battle's end, another at the victory.
+   * next adventure. `sorry` at the battle's end, `ending` in the victory scene,
+   * three of each, one drawn per episode (item 040; the first with `?cast=default`).
    */
-  reformed: Taunt[];
+  reformed: { sorry: Taunt[]; ending: Taunt[] };
   /** What beats the evil version's ultimate. */
   counter: CounterItem;
   /** The arena the evil version fights in. ARENAS key. */

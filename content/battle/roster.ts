@@ -207,10 +207,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'cookies', text: 'I ate all the cookies!' },
       ],
     },
-    reformed: [
-      { key: 'share', text: 'Sorry! I will share all my toys now.' },
-      { key: 'next', text: 'Can I come on the next adventure?' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'share', text: 'Sorry! I will share all my toys now.' },
+        { key: 'grumpy', text: 'Sorry, I was a grumpy girl.' },
+        { key: 'play', text: 'Sorry! Let us all play together.' },
+      ],
+      ending: [
+        { key: 'next', text: 'Can I come on the next adventure?' },
+        { key: 'best', text: 'This is the best day ever!' },
+        { key: 'sit', text: 'Can I sit next to you?' },
+      ],
+    },
     counter: {
       id: 'cozy_bed', name: 'Cozy Bed', glyph: '🛏️', look: 'a child\'s bed with a puffy blue duvet and a white pillow, glowing softly, a sleepy moon and stars above it',
       how: 'calm', word: 'bed',
@@ -273,10 +281,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'raspberry', text: 'A raspberry for you!' },
       ],
     },
-    reformed: [
-      { key: 'bubbles', text: 'Sorry! Bubbles for everybody!' },
-      { key: 'cuddle', text: 'I want a cuddle now!' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'bubbles', text: 'Sorry! Bubbles for everybody!' },
+        { key: 'good', text: 'Sorry! Ellie good now.' },
+        { key: 'sorry', text: 'Sorry, sorry, sorry!' },
+      ],
+      ending: [
+        { key: 'cuddle', text: 'I want a cuddle now!' },
+        { key: 'happy', text: 'Ellie happy!' },
+        { key: 'please', text: 'More bubbles, please!' },
+      ],
+    },
     counter: {
       id: 'bubble_bath', name: 'Bubble Tub', glyph: '🛁', look: 'a magic bathtub overflowing with rainbow bubbles, a little yellow rubber duck on top',
       how: 'calm', word: 'tub',
@@ -332,10 +348,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'scaly', text: 'Scaly and scary!' },
       ],
     },
-    reformed: [
-      { key: 'nice', text: 'Oops! I am a nice dragon again.' },
-      { key: 'fly', text: 'Can I fly with you next time?' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'nice', text: 'Oops! I am a nice dragon again.' },
+        { key: 'dragons', text: 'Sorry! My dragons will be good now.' },
+        { key: 'fiery', text: 'Sorry I was so fiery!' },
+      ],
+      ending: [
+        { key: 'fly', text: 'Can I fly with you next time?' },
+        { key: 'play', text: 'My dragons want to play with you!' },
+        { key: 'parties', text: 'Dragons love parties!' },
+      ],
+    },
     counter: {
       id: 'golden_nut', name: 'Golden Nut', glyph: '🥜', look: 'a giant shiny golden hazelnut in its shell, the snack every dragon loves best',
       how: 'calm', word: 'nut',
@@ -394,10 +418,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'stomp', text: 'Stomp, stomp, stomp!' },
       ],
     },
-    reformed: [
-      { key: 'fort', text: 'Sorry, kiddo! Want to build a fort?' },
-      { key: 'fixing', text: 'No more smashing. Only fixing!' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'fort', text: 'Sorry, kiddo! Want to build a fort?' },
+        { key: 'walls', text: 'Sorry, kiddo! I will fix every wall.' },
+        { key: 'silly', text: 'Sorry! Daddy got a bit silly.' },
+      ],
+      ending: [
+        { key: 'fixing', text: 'No more smashing. Only fixing!' },
+        { key: 'piggyback', text: 'Who wants a piggyback ride?' },
+        { key: 'build', text: 'Let us build something together!' },
+      ],
+    },
     counter: {
       id: 'giant_log', name: 'Giant Log', glyph: '🌲', look: 'a huge cut wooden log lying down, rings showing on the end, so solid that any hammer just bonks off it',
       how: 'block', word: 'log',
@@ -456,10 +488,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'fight', text: 'Food fight!' },
       ],
     },
-    reformed: [
-      { key: 'pancakes', text: 'Sorry! Who wants pancakes?' },
-      { key: 'yummy', text: 'I promise to cook yummy food, not yucky food!' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'pancakes', text: 'Sorry! Who wants pancakes?' },
+        { key: 'broccoli', text: 'Sorry! No more broccoli for breakfast.' },
+        { key: 'dessert', text: 'Sorry, kiddo! Dessert first today.' },
+      ],
+      ending: [
+        { key: 'yummy', text: 'I promise to cook yummy food, not yucky food!' },
+        { key: 'seconds', text: 'Seconds for everybody!' },
+        { key: 'party', text: 'Best party ever!' },
+      ],
+    },
     counter: {
       id: 'cleanup_van', name: 'Clean-Up Van', glyph: '🚐', look: 'a little cartoon cleaning van with spinning brushes and a big hose that hoovers up every bit of food',
       how: 'restore', word: 'van',
@@ -515,10 +555,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'icicles', text: 'Icicles everywhere!' },
       ],
     },
-    reformed: [
-      { key: 'chilly', text: 'Sorry I made it so chilly!' },
-      { key: 'snowman', text: 'Can I make you a snowman?' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'chilly', text: 'Sorry I made it so chilly!' },
+        { key: 'melt', text: 'Sorry! Let me melt all the ice.' },
+        { key: 'frosty', text: 'Sorry I was so frosty!' },
+      ],
+      ending: [
+        { key: 'snowman', text: 'Can I make you a snowman?' },
+        { key: 'cosy', text: 'It is so warm and cosy now!' },
+        { key: 'snowflake', text: 'Can I give you a snowflake?' },
+      ],
+    },
     counter: {
       id: 'cocoa_cup', name: 'Cocoa Cup', glyph: '☕', look: 'a big red mug of steaming cocoa with a handle, so warm it melts any winter',
       how: 'restore', word: 'cup',
@@ -574,10 +622,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'blizzard', text: 'Out of my blizzard!' },
       ],
     },
-    reformed: [
-      { key: 'friends', text: 'Sorry! Can we be friends again?' },
-      { key: 'side', text: 'Next time, I fight on your side!' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'friends', text: 'Sorry! Can we be friends again?' },
+        { key: 'team', text: 'Sorry! I am on your team now.' },
+        { key: 'blizzard', text: 'Sorry about the blizzard!' },
+      ],
+      ending: [
+        { key: 'side', text: 'Next time, I fight on your side!' },
+        { key: 'grouphug', text: 'Group hug, everybody!' },
+        { key: 'love', text: 'I love my friends!' },
+      ],
+    },
     counter: {
       id: 'cuddly_cat', name: 'Cuddly Cat', glyph: '🐱', look: 'a warm, fluffy orange tabby cat with a curled tail, purring, who cuddles the frost away',
       how: 'calm', word: 'cat',
@@ -634,10 +690,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'gone', text: 'Gone with the wind!' },
       ],
     },
-    reformed: [
-      { key: 'sand', text: 'Sorry about all the sand!' },
-      { key: 'ride', text: 'Want a ride on my carpet?' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'sand', text: 'Sorry about all the sand!' },
+        { key: 'sweep', text: 'Sorry! I will sweep it all up.' },
+        { key: 'stormy', text: 'Sorry I was so stormy!' },
+      ],
+      ending: [
+        { key: 'ride', text: 'Want a ride on my carpet?' },
+        { key: 'magic', text: 'What a magic day!' },
+        { key: 'dance', text: 'Let us dance and twirl!' },
+      ],
+    },
     counter: {
       id: 'flappy_bat', name: 'Flappy Bat', glyph: '🦇', look: 'a friendly purple bat (the animal) with huge wings spread wide, flapping hard enough to blow a sandstorm straight back',
       how: 'reflect', word: 'bat',
@@ -693,10 +757,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'crush', text: 'I crush like sand!' },
       ],
     },
-    reformed: [
-      { key: 'kings', text: 'Sorry! Even kings say sorry.' },
-      { key: 'visit', text: 'Please come and visit my pyramid!' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'kings', text: 'Sorry! Even kings say sorry.' },
+        { key: 'kind', text: 'Sorry! I am a kind pharaoh now.' },
+        { key: 'statue', text: 'Sorry about my giant statue!' },
+      ],
+      ending: [
+        { key: 'visit', text: 'Please come and visit my pyramid!' },
+        { key: 'mighty', text: 'This is a mighty party!' },
+        { key: 'loves', text: 'Even a pharaoh loves a party!' },
+      ],
+    },
     counter: {
       id: 'brave_rat', name: 'Brave Rat', glyph: '🐀', look: 'a brave little grey rat with a long pink tail and a tiny red cape, leading a squeaking pack of his friends; giant statues are terrified of rats',
       how: 'scare', word: 'rat',
@@ -753,10 +825,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'sun', text: 'I will eat the sun!' },
       ],
     },
-    reformed: [
-      { key: 'noodle', text: 'Sorry! I was a grumpy noodle.' },
-      { key: 'join', text: 'Can I join your next adventure?' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'noodle', text: 'Sorry! I was a grumpy noodle.' },
+        { key: 'letgo', text: 'Sorry! I will let go of the house.' },
+        { key: 'squeeze', text: 'Sorry I squeezed so hard!' },
+      ],
+      ending: [
+        { key: 'join', text: 'Can I join your next adventure?' },
+        { key: 'slide', text: 'I can be a slide for you!' },
+        { key: 'rainbow', text: 'Look, I am a big rainbow noodle!' },
+      ],
+    },
     counter: {
       id: 'tickle_fox', name: 'Tickle Fox', glyph: '🦊', look: 'a cheeky red-orange fox with a big bushy white-tipped tail, just right for tickling a serpent\'s nose until he sneezes',
       how: 'restore', word: 'fox',
@@ -815,10 +895,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'greedy', text: 'More gold for me!' },
       ],
     },
-    reformed: [
-      { key: 'treasure', text: 'Sorry! You can share my treasure.' },
-      { key: 'marshmallows', text: 'I will only toast marshmallows now!' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'treasure', text: 'Sorry! You can share my treasure.' },
+        { key: 'gold', text: 'Sorry! I do not need all the gold.' },
+        { key: 'greedy', text: 'Sorry I was so greedy!' },
+      ],
+      ending: [
+        { key: 'marshmallows', text: 'I will only toast marshmallows now!' },
+        { key: 'coins', text: 'Gold coins for everybody!' },
+        { key: 'warm', text: 'I will keep you nice and warm!' },
+      ],
+    },
     counter: {
       id: 'gold_bag', name: 'Gold Bag', glyph: '👜', look: 'a magic pink handbag with a curved handle and a clasp, wide open, that gobbles up a whole avalanche of gold',
       how: 'block', word: 'bag',
@@ -882,10 +970,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'rules', text: 'My rules, my house!' },
       ],
     },
-    reformed: [
-      { key: 'stormy', text: 'Sorry I was so stormy!' },
-      { key: 'team', text: 'Can I be on your team next time?' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'stormy', text: 'Sorry I was so stormy!' },
+        { key: 'crowns', text: 'Sorry! You can all be kings and queens.' },
+        { key: 'bossy', text: 'Sorry I was so bossy!' },
+      ],
+      ending: [
+        { key: 'team', text: 'Can I be on your team next time?' },
+        { key: 'crown', text: 'Everybody gets a crown!' },
+        { key: 'hooray', text: 'Hip hip hooray for the team!' },
+      ],
+    },
     counter: {
       id: 'magic_hat', name: 'Magic Hat', glyph: '🎩', look: "a magician's tall black top hat with a red band, tipped upside down with a golden swirl glowing in its open top, sucking a whole storm of grey clouds, raindrops and lightning bolts down inside it like a magic trick",
       how: 'swallow', word: 'hat',
@@ -947,10 +1043,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'robot', text: 'Robots rule!' },
       ],
     },
-    reformed: [
-      { key: 'mess', text: 'Beep boop! Sorry about the mess!' },
-      { key: 'friend', text: 'Robot friend mode, switched on!' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'mess', text: 'Beep boop! Sorry about the mess!' },
+        { key: 'good', text: 'Beep, sorry! Scar good now.' },
+        { key: 'lights', text: 'Sorry! I will switch the lights back on.' },
+      ],
+      ending: [
+        { key: 'friend', text: 'Robot friend mode, switched on!' },
+        { key: 'parties', text: 'Beep boop, I love parties!' },
+        { key: 'dance', text: 'Happy robot dance!' },
+      ],
+    },
     counter: {
       id: 'glitch_bug', name: 'Glitch Bug', glyph: '🐞', look: 'a cute round red ladybird with black spots that crawls inside robots and switches them off',
       how: 'shutdown', word: 'bug',
@@ -1008,10 +1112,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'smoke', text: 'Now you see me!' },
       ],
     },
-    reformed: [
-      { key: 'tricks', text: 'Sorry for all the tricks!' },
-      { key: 'mystery', text: 'Next time, let us solve a mystery together!' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'tricks', text: 'Sorry for all the tricks!' },
+        { key: 'sneaky', text: 'Sorry! No more sneaky tricks.' },
+        { key: 'puzzle', text: 'Sorry I was such a puzzle!' },
+      ],
+      ending: [
+        { key: 'mystery', text: 'Next time, let us solve a mystery together!' },
+        { key: 'idea', text: 'I have a clever idea, let us play!' },
+        { key: 'best', text: 'This is the best mystery ever!' },
+      ],
+    },
     counter: {
       id: 'truth_map', name: 'Truth Map', glyph: '🗺️', look: 'a glowing treasure map on old parchment with a dotted path and a red X that shows where every trick is hiding',
       how: 'reveal', word: 'map',
@@ -1068,10 +1180,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'piglets', text: 'Bow, little piglets!', say: 'Bough, little piglets!' },
       ],
     },
-    reformed: [
-      { key: 'piggy', text: 'Sorry! No more piggy spells. Well, maybe one.' },
-      { key: 'potion', text: 'Can I brew you a happy potion?' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'piggy', text: 'Sorry! No more piggy spells. Well, maybe one.' },
+        { key: 'back', text: 'Sorry! I will turn everybody back.' },
+        { key: 'witchy', text: 'Sorry I was so witchy!' },
+      ],
+      ending: [
+        { key: 'potion', text: 'Can I brew you a happy potion?' },
+        { key: 'soup', text: 'Cauldron soup for everybody, it is yummy!' },
+        { key: 'dance', text: 'Let us dance round the cauldron!' },
+      ],
+    },
     counter: {
       id: 'bounce_cap', name: 'Bounce Cap', glyph: '🧢', look: 'a shiny blue baseball cap with a curved peak that bounces any spell straight back',
       how: 'reflect', word: 'cap',
@@ -1128,10 +1248,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'cars', text: 'Cars are yummy!' },
       ],
     },
-    reformed: [
-      { key: 'banana', text: 'Sorry! Want a banana?' },
-      { key: 'hugs', text: 'Gorilla hugs for everybody!' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'banana', text: 'Sorry! Want a banana?' },
+        { key: 'car', text: 'Sorry! Rilla will not eat the car.' },
+        { key: 'hungry', text: 'Sorry, so sorry, I was hungry!' },
+      ],
+      ending: [
+        { key: 'hugs', text: 'Gorilla hugs for everybody!' },
+        { key: 'bananas', text: 'Bananas for the whole team!' },
+        { key: 'happy', text: 'Rilla happy now!' },
+      ],
+    },
     counter: {
       id: 'mice', name: 'Wind-up Mice', sayName: 'Whined-up Mice', glyph: '🐭', look: 'a tin full of clockwork toy mice that scurry and squeak',
       how: 'scare', word: 'mice',
@@ -1196,10 +1324,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'reps', text: 'Ten more reps!' },
       ],
     },
-    reformed: [
-      { key: 'teddies', text: 'Sorry! Want to lift teddies with me?' },
-      { key: 'fives', text: 'No more showing off. Only high fives!' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'teddies', text: 'Sorry! Want to lift teddies with me?' },
+        { key: 'jacks', text: 'Sorry! No more jumping jacks.' },
+        { key: 'rest', text: 'Sorry, kiddo! Let us take a rest.' },
+      ],
+      ending: [
+        { key: 'fives', text: 'No more showing off. Only high fives!' },
+        { key: 'high', text: 'Who wants to be lifted up high?' },
+        { key: 'strong', text: 'Strong hearts, strong friends!' },
+      ],
+    },
     counter: {
       id: 'juice_box', name: 'Juice Box', glyph: '🥤', look: 'a big cold juice box with a bendy straw: one sip and even the strongest show-off needs a nap',
       how: 'calm', word: 'box',
@@ -1255,10 +1391,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'over', text: 'Game over, heroes!' },
       ],
     },
-    reformed: [
-      { key: 'cartoons', text: 'Sorry! I will only hack cartoons now.' },
-      { key: 'drone', text: 'Want to fly my drone?' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'cartoons', text: 'Sorry! I will only hack cartoons now.' },
+        { key: 'lights', text: 'Sorry! I fixed all the lights.' },
+        { key: 'friendly', text: 'Beep, sorry! System is friendly now.' },
+      ],
+      ending: [
+        { key: 'drone', text: 'Want to fly my drone?' },
+        { key: 'game', text: 'Let us play a video game together!' },
+        { key: 'party', text: 'Party mode, switched on!' },
+      ],
+    },
     counter: {
       id: 'magic_pen', name: 'Magic Pen', glyph: '🖊️', look: 'a glowing magic pen that scribbles over bad code and rewrites it into a lullaby',
       how: 'shutdown', word: 'pen',
@@ -1313,10 +1457,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'shadow', text: 'Shadow magic!' },
       ],
     },
-    reformed: [
-      { key: 'sparkle', text: 'Sorry! Want to learn a sparkle spell?' },
-      { key: 'tickle', text: 'My sword is only for tickling now!' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'sparkle', text: 'Sorry! Want to learn a sparkle spell?' },
+        { key: 'toys', text: 'Sorry! I will un-grump all the toys.' },
+        { key: 'grumpy', text: 'Sorry, kiddo! No more grumpy spells.' },
+      ],
+      ending: [
+        { key: 'tickle', text: 'My sword is only for tickling now!' },
+        { key: 'sparkles', text: 'Sparkles for everybody!' },
+        { key: 'wish', text: 'Let us make a wish together!' },
+      ],
+    },
     counter: {
       id: 'shiny_pot', name: 'Shiny Pot', glyph: '🍲', look: 'a huge shiny silver cooking pot, polished like a mirror, that bounces magic straight back',
       how: 'reflect', word: 'pot',
@@ -1371,10 +1523,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'cry', text: 'Hear my war cry!' },
       ],
     },
-    reformed: [
-      { key: 'knight', text: 'Sorry! Let me be your brave knight!' },
-      { key: 'battles', text: 'No more battles. Only hugs!' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'knight', text: 'Sorry! Let me be your brave knight!' },
+        { key: 'snacks', text: 'Sorry! The snacks are back!' },
+        { key: 'axe', text: 'Sorry, kiddo! I put my axe away.' },
+      ],
+      ending: [
+        { key: 'battles', text: 'No more battles. Only hugs!' },
+        { key: 'cheers', text: 'Three cheers for the heroes!' },
+        { key: 'feast', text: 'A feast for the whole castle!' },
+      ],
+    },
     counter: {
       id: 'slippy_mop', name: 'Slippy Mop', glyph: '💦', look: 'a soapy magic mop that makes the floor so slippery a big charging warrior slides right past',
       how: 'block', word: 'mop',
@@ -1430,10 +1590,18 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'darkness', text: 'Darkness, come!' },
       ],
     },
-    reformed: [
-      { key: 'trick', text: 'Sorry! Want to see a sparkly trick?' },
-      { key: 'happy', text: 'From now on, only happy spells!' },
-    ],
+    reformed: {
+      sorry: [
+        { key: 'trick', text: 'Sorry! Want to see a sparkly trick?' },
+        { key: 'toads', text: 'Sorry! No more toads, I promise.' },
+        { key: 'curses', text: 'Sorry, kiddo! I will undo my curses.' },
+      ],
+      ending: [
+        { key: 'happy', text: 'From now on, only happy spells!' },
+        { key: 'rainbow', text: 'Look, a rainbow spell!' },
+        { key: 'magic', text: 'Happy magic for everybody!' },
+      ],
+    },
     counter: {
       id: 'sunshine_bus', name: 'Sunshine Bus', glyph: '🚌', look: 'a bright yellow bus with headlights so sunny that every purple shadow melts away',
       how: 'reveal', word: 'bus',

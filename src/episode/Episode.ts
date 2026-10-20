@@ -24,13 +24,13 @@ import Phaser from 'phaser';
 import { charArt } from '../../content/art/assets';
 import { formFor } from '../../content/battle/forms';
 import { CHARACTER_BY_ID, ROSTER, personOf } from '../../content/battle/roster';
-import type { CharacterSpec, CounterItem } from '../../content/battle/types';
+import type { CharacterSpec, CounterItem, Taunt } from '../../content/battle/types';
 import { COUNTER_ROOM, FETCH_ROOMS, HOME, PLACE_BY_ID, SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { BANK } from '../../content/phonics/bank';
 import { questFor, questSetup, type Line } from '../../content/house/quests';
 import { hubStory, storyTexts, type HubStory, type HubStoryIds } from '../../content/house/scenes';
 import { group } from '../../content/voice/ids';
-import { NARRATOR_LINES } from '../../content/voice/script';
+import { NARRATOR_LINES, wakeTemplate, wakeVariant } from '../../content/voice/script';
 import { voiceBus } from '../audio/VoiceBus';
 import { ADULT_HEIGHT, EPISODE_DEFAULTS } from '../config';
 import { drawCast, isGrownUp, wakerOf, type CastOverrides } from '../rules/cast';
@@ -42,7 +42,7 @@ import { episodePlans, wordsOf, type Rand, type RoomPlan } from '../rules/senten
 import { MINIGAMES, MINIGAME_BY_ID, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
 import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
 import { hallObjects, pickGrab } from '../rules/grab';
-import { DEFAULT_STORY, drawStory, type Story } from '../rules/story';
+import { BEDROOM_TAUNTS, DEFAULT_LINES, DEFAULT_STORY, drawLines, drawStory, type LineVariants, type Story } from '../rules/story';
 import { progress } from '../state/progress';
 import { voiceBank } from '../voice/VoiceBank';
 
@@ -118,6 +118,8 @@ export interface EpisodeState {
   fight: string | null;
   /** Which quest setup line and hub scene the helper plays (item 037, src/rules/story.ts), drawn with the cast. */
   story: Story;
+  /** Which wake-up, bedroom taunt, sorry and victory lines this episode says (item 040, `drawLines`), drawn with the cast. */
+  lines: LineVariants;
   stepIndex: number;
 }
 
@@ -170,6 +172,7 @@ export const episode: EpisodeState = {
   ending: null,
   fight: null,
   story: { ...DEFAULT_STORY },
+  lines: { ...DEFAULT_LINES },
   stepIndex: 0,
 };
 
@@ -342,6 +345,26 @@ export function castEpisode(picked: CastOverrides = {}): void {
   // The helper's quest line and hub scene (item 037): after the cast, so a
   // seed draws the same cast as before; the default cast always plays the first.
   episode.story = drawStory(helper(), castRand, castDefault);
+  // The wake-up and the villain's lines (item 040): after the story, so a seed's story is unchanged.
+  episode.lines = drawLines(episode.villain, castRand, castDefault);
+}
+
+/** The waker's wake line `key` (`up`, `good_<hero>`, `door`) in this episode's variant: `wake_<waker>_up_2`. */
+export function wakeKey(key: 'up' | 'good' | 'door', state: EpisodeState = episode): string {
+  const n = state.lines[key];
+  return key === 'good' ? wakeVariant(`good_${personOf(state.hero)}`, n) : wakeVariant(key, n);
+}
+
+/** The villain's far-off bedroom taunt this episode: one of its first `BEDROOM_TAUNTS` (item 040). */
+export function bedroomTaunt(state: EpisodeState = episode): Taunt | undefined {
+  const t = CHARACTER_BY_ID[state.villain]?.evil.taunts ?? [];
+  return t[Math.min(state.lines.taunt, BEDROOM_TAUNTS, t.length) - 1];
+}
+
+/** The villain's sorry after battle 2 and its line in the victory scene, this episode's variants (item 040). */
+export function reformedOf(which: 'sorry' | 'ending', state: EpisodeState = episode): Taunt | undefined {
+  const r = CHARACTER_BY_ID[state.villain]?.reformed[which] ?? [];
+  return r[Math.min(state.lines[which], r.length) - 1];
 }
 
 /**
@@ -408,7 +431,7 @@ export function housePlan(): RoomPlan[] {
     const signs = new Set([...rooms, counterRoom].map((r) => SIDE_ROOM_BY_ID[r]?.glyph).filter(Boolean));
     for (const s of journeyStops()) signs.add(s.icon);
     const signWords = BANK.filter((w) => w.glyph && signs.has(w.glyph)).map((w) => w.word);
-    const saidBefore = [...storyWords(), ...signWords, ...(episode.grab ? [episode.grab.word] : [grabWord()])];
+    const saidBefore = [...storyWords(), ...bedroomWords(), ...signWords, ...(episode.grab ? [episode.grab.word] : [grabWord()])];
     const games = roomGames();
     episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, spell, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore, ...games });
   }
@@ -501,8 +524,10 @@ function fightWords(): string[] {
 /** What the bedroom says about the villain: its wake-up threat and the taunt it shouts (BedroomScene). */
 function bedroomWords(): string[] {
   const v = CHARACTER_BY_ID[episode.villain];
-  const taunt = v?.evil.taunts[0];
-  return [...wordsOf(v?.house.threat), ...wordsOf(v?.house.threatSay), ...wordsOf(taunt?.text), ...wordsOf(taunt?.say)];
+  const taunt = bedroomTaunt();
+  // The wake-up's own lines too, whichever variants were drawn (item 040).
+  const wake = (['up', 'good', 'door'] as const).map((k) => wakeTemplate(wakeVariant(k, episode.lines[k])));
+  return [...wake.flatMap((t) => [...wordsOf(t?.text), ...wordsOf(t?.say)]), ...wordsOf(v?.house.threat), ...wordsOf(v?.house.threatSay), ...wordsOf(taunt?.text), ...wordsOf(taunt?.say)];
 }
 
 /** The entry hall's own lines ("let's grab the..."): GRAB is a bank word, so it is never a pad or the gift. */

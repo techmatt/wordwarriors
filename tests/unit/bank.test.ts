@@ -8,7 +8,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { ACTIONS, BANK, BANK_BY_WORD, THINGS, tag, unitsOf } from '../../content/phonics/bank';
+import { ACTIONS, BANK, BANK_BY_WORD, LIVE, THINGS, tag, unitsOf } from '../../content/phonics/bank';
 import { SOUND_BY_UNIT } from '../../content/phonics/letters';
 import { BANK_DRAW } from '../../src/config';
 import { coverage, coverageTable, distractorsFor, drawWords, isFirm, levelGate, sharesSound } from '../../src/rules/bank';
@@ -55,7 +55,8 @@ test('the bank: unique words, every vowel and level present, things and actions 
   for (const v of ['a', 'e', 'i', 'o', 'u']) assert.ok(THINGS.some((w) => w.vowel === v), `a pictured short ${v}`);
   for (const l of [1, 2, 3]) assert.ok(THINGS.some((w) => w.level === l), `a pictured level ${l} word`);
   for (const w of BANK) {
-    assert.equal(THINGS.includes(w), w.role !== 'action', w.word);
+    // Item 040: an `odd` word (YAK) is no picture to match.
+    assert.equal(THINGS.includes(w), w.role !== 'action' && !w.odd, w.word);
     assert.equal(ACTIONS.includes(w), w.role !== 'thing', w.word);
     for (const u of w.units) assert.ok(SOUND_BY_UNIT[u], `${w.word}: no sound for ${u}`);
   }
@@ -137,7 +138,7 @@ test('coverageTable: per level, vowel and first sound, words · read · solid ad
   store.record('words', 'frog', false, 1);
   const t = coverageTable(store);
   for (const rows of [t.level, t.vowel, t.onset]) {
-    assert.equal(rows.reduce((n, r) => n + r.words, 0), BANK.length);
+    assert.equal(rows.reduce((n, r) => n + r.words, 0), LIVE.length);
     assert.equal(rows.reduce((n, r) => n + r.readWords, 0), 2);
     assert.equal(rows.reduce((n, r) => n + r.solid, 0), 1);
   }

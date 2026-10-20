@@ -46,7 +46,7 @@ import {
   wakeLine,
   wordLine,
 } from '../../content/voice/ids.js';
-import { CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE_LINES, type Template } from '../../content/voice/script.js';
+import { CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE_LINES, WAKE_VARIANTS, wakeVariant, type Template } from '../../content/voice/script.js';
 import { isMain } from './clips.js';
 import type { LineSpec } from './types.js';
 
@@ -144,7 +144,7 @@ export function composeLines(): LineSpec[] {
     }
     // The villain good again, in the good voice, but in the villain's group:
     // only an episode with this villain says them, and it has that group loaded.
-    for (const r of c.reformed) {
+    for (const r of [...c.reformed.sorry, ...c.reformed.ending]) {
       lines.push({ id: reformedLine(c.id, r.key), speaker: personOf(c.id), group: group.fighter(fighterId(c.id, true)), text: r.text, ...(r.say ? { say: r.say } : {}) });
     }
   }
@@ -239,13 +239,16 @@ export function composeLines(): LineSpec[] {
   const wake = (key: string) => WAKE_LINES.find((t) => t.key === key)!;
   for (const waker of WAKERS) {
     const push = (key: string, t: Template, f: Fill) => lines.push({ id: wakeLine(waker, key), speaker: waker, group: group.core, ...fill(t, f) });
-    push('up', wake('up'), {});
-    push('door', wake('door'), {});
+    // Three variants of each (item 040): `up`, `up_2`, `up_3`; `good_<hero>`, `good_<hero>_2`...
+    for (let n = 1; n <= WAKE_VARIANTS; n++) {
+      push(wakeVariant('up', n), wake(wakeVariant('up', n)), {});
+      push(wakeVariant('door', n), wake(wakeVariant('door', n)), {});
+    }
     push('hi', wake('hi'), {});
     // Per person: every form of a character has the same name.
     for (const c of PERSONS) {
       if (c.id === waker) continue;
-      push(`good_${c.id}`, wake('good'), { hero: c.good });
+      for (let n = 1; n <= WAKE_VARIANTS; n++) push(wakeVariant(`good_${c.id}`, n), wake(wakeVariant('good', n)), { hero: c.good });
       push(`helper_${c.id}`, wake('helper'), { helper: c.good });
     }
     // Per roster id: each villain form has its own threat.

@@ -159,13 +159,33 @@ export const MOVE_LINES: Template[] = [
  * narrator: the ally has not arrived yet. Keys get a suffix as they are composed:
  * `good_<hero>`, `helper_<character>`, `bad_<villain>`; `up` and `door` do not.
  * {helper} is the helper's good name; {threat} the villain's `house.threat`.
+ *
+ * `up`, `good` and `door` have three variants each (item 040), one drawn per
+ * episode (src/rules/story.ts `drawLines`): `up`, `up_2`, `up_3`, composed as
+ * `wake_<waker>_up_2` and `wake_<waker>_good_<hero>_2`. They are said before
+ * any reading, so the episode keeps their words out of her key words and pads.
  */
 export const WAKE_LINES: Template[] = [
   { key: 'up', text: 'Wake up, wake up!' },
+  { key: 'up_2', text: 'Rise and shine, sleepyhead!' },
+  { key: 'up_3', text: 'Good morning, it is time to get up!' },
   { key: 'good', text: 'Good news, {hero}!' },
+  { key: 'good_2', text: 'Guess what, {hero}? Good news!' },
+  { key: 'good_3', text: 'Hey {hero}, I have good news!', say: 'Hey {hero}, I have good news!' },
   { key: 'helper', text: '{helper} is here to play!' },
   { key: 'bad', text: 'Bad news, {villain} is coming, and {threat}!' },
   { key: 'door', text: 'Come on, let us go! Find the door!', say: 'Come on, let us go, find the door!' },
+  { key: 'door_2', text: 'Quick, to the door!' },
+  { key: 'door_3', text: 'Off we go! Walk to the door!', say: 'Off we go, walk to the door!' },
   // The other dad, when he comes into the bedroom too (item 025).
   { key: 'hi', text: 'Good morning, sleepyhead!' },
 ];
+
+/** A wake line's template by key (`up_2`). */
+export const wakeTemplate = (key: string): Template | undefined => WAKE_LINES.find((t) => t.key === key);
+
+/** How many variants `up`, `good` and `door` have (item 040). */
+export const WAKE_VARIANTS = 3;
+
+/** A wake line's key for variant `n`: `up`, `up_2`, `up_3`. Variant 1 keeps the plain key (and its recording). */
+export const wakeVariant = (key: string, n: number): string => (n > 1 ? `${key}_${n}` : key);

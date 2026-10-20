@@ -20,7 +20,7 @@
  * letter.
  */
 
-import { BANK, BANK_BY_WORD, LEVELS, VOWEL_LIST, type BankWord, type Level } from '../../content/phonics/bank';
+import { BANK, BANK_BY_WORD, LEVELS, LIVE, VOWEL_LIST, type BankWord, type Level } from '../../content/phonics/bank';
 import { BANK_DRAW } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
 
@@ -33,7 +33,7 @@ export interface Met {
   level: Record<string, number>;
 }
 
-export function met(store: ProgressStore, words: BankWord[] = BANK): Met {
+export function met(store: ProgressStore, words: BankWord[] = LIVE): Met {
   const out: Met = { vowel: {}, onset: {}, level: {} };
   for (const w of words) {
     const n = store.stat('words', w.word).seen;
@@ -50,7 +50,8 @@ function factor(counts: Record<string, number>, tag: string, tags: string[]): nu
   return 1 / (1 + (counts[tag] ?? 0) / (1 + mean));
 }
 
-const ONSETS = [...new Set(BANK.map((w) => w.onset))];
+// The words in play (item 040: an `odd` thing like YAK is out, so coverage never chases it).
+const ONSETS = [...new Set(LIVE.map((w) => w.onset))];
 
 /** The coverage term for a word, 0..1: the product of its vowel's, first sound's and level's factors, softened. */
 export function coverage(store: ProgressStore, word: string, m: Met = met(store)): number {
@@ -66,7 +67,7 @@ export function coverage(store: ProgressStore, word: string, m: Met = met(store)
 
 /** The share of a level's words that are solid (shakiness at or under BANK_DRAW.solid). */
 export function firmness(store: ProgressStore, level: Level): number {
-  const words = BANK.filter((w) => w.level === level);
+  const words = LIVE.filter((w) => w.level === level);
   const solid = words.filter((w) => store.stat('words', w.word).seen > 0 && store.shakiness('words', w.word) <= BANK_DRAW.solid);
   return solid.length / Math.max(1, words.length);
 }
@@ -221,7 +222,7 @@ export interface CoverageRow {
 export function coverageTable(store: ProgressStore): { vowel: CoverageRow[]; onset: CoverageRow[]; level: CoverageRow[] } {
   const rows = (tags: string[], key: (w: BankWord) => string): CoverageRow[] =>
     tags.map((tag) => {
-      const ws = BANK.filter((w) => key(w) === tag);
+      const ws = LIVE.filter((w) => key(w) === tag);
       const stats = ws.map((w) => store.stat('words', w.word));
       return {
         tag,

@@ -92,7 +92,7 @@ export function pickEnding(cast: EndingCast, last: string | null, rand: Rand = M
 }
 
 /** The scene's lines in order: open, the villain's own, cheer, close (or the fitting dad's). */
-export function endingScript(cast: EndingCast, sceneId: string): EndingBeat[] {
+export function endingScript(cast: EndingCast, sceneId: string, ending = 1): EndingBeat[] {
   const e = ENDING_BY_ID[sceneId];
   if (!e) throw new Error(`no victory scene ${sceneId}`);
   const people = endingPeople(cast);
@@ -100,9 +100,9 @@ export function endingScript(cast: EndingCast, sceneId: string): EndingBeat[] {
   const say = (who: string, key: string): EndingBeat => ({ who, line: endingLine(personOf(who), e.id, key) });
   const beats: EndingBeat[] = [say(h, 'open')];
 
-  // The villain's own line: its second reformed line (battle 2 ends on its first, the sorry).
-  const reformed = CHARACTER_BY_ID[cast.villain]?.reformed ?? [];
-  const own = reformed[1] ?? reformed[0];
+  // The villain's own line: its `ending` line, variant `ending` (item 040; battle 2 ends on its sorry).
+  const lines = CHARACTER_BY_ID[cast.villain]?.reformed.ending ?? [];
+  const own = lines[Math.min(ending, lines.length) - 1];
   if (own) beats.push({ who: cast.villain, line: reformedLine(cast.villain, own.key) });
 
   beats.push(say(cast.hero, 'cheer'));

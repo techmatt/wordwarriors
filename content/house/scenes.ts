@@ -316,7 +316,7 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
     S('🍌', [
       'Rilla strong, and Rilla share, here is my power banana!',
       'Eat the banana, and you get a mighty power.',
-      'Then beat your chest, and shout...',
+      'Then thump your tummy, and shout...',
     ], SPOT('to get the power'), 'Now you are gorilla strong, let us look around!'),
     S('🦾', [
       'My robot arms are very strong, but my best trick is a word.',

@@ -45,7 +45,7 @@ import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh, sfxWrong } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, WALK_SPEED } from '../config';
 import { formFor } from '../../content/battle/forms';
-import { advance, castArt, castScale, counterArt, counterWord, episode, fightStyle, helper, movePlan, namedCounter, narrator, villainSpec, type Step } from '../episode/Episode';
+import { advance, castArt, castScale, counterArt, counterWord, episode, fightStyle, helper, movePlan, namedCounter, narrator, reformedOf, villainSpec, type Step } from '../episode/Episode';
 import { fightLineKey, type FightSpec } from '../../content/battle/fights';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -1553,8 +1553,9 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     for (const h of this.heroes) h.invulnerable = false;
     // Good again, the villain says sorry (or asks to come next time) in its own
     // voice, in a bubble over its good self. The victory says another.
+    // One of three, drawn with the cast (item 040).
     await this.simWait(0.6);
-    const sorry = CHARACTER_BY_ID[episode.villain]?.reformed[0];
+    const sorry = reformedOf('sorry');
     if (sorry) await this.guard(voiceBus.say(reformedLine(episode.villain, sorry.key), 'bark', { x: good.x, y: good.y, bubbleOffset: good.displayHeight, active: true }));
   }
 

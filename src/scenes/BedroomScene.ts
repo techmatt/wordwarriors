@@ -39,7 +39,7 @@ import {
   sfxZap,
 } from '../audio/sfx';
 import { DEPTH, DOOR_SPARKLE_MS, GAME_WIDTH } from '../config';
-import { castArt, episode, helper, questSetupLine, villainSpec, waker as wakerId, type Step } from '../episode/Episode';
+import { bedroomTaunt, castArt, episode, helper, questSetupLine, wakeKey, waker as wakerId, type Step } from '../episode/Episode';
 import { bob, burst, flash, popIn, shake, squash, wiggle } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { applyHouseMood } from '../world/houseMood';
@@ -162,13 +162,13 @@ export class BedroomScene extends RoomScene {
     );
     this.hideDoor();
     bob(this, waker, 5, 800);
-    await this.speak(wakeLine(w, 'up'));
+    await this.speak(wakeLine(w, wakeKey('up')));
 
     // Up she pops: on her green (the dot over the bed), or by herself.
     await this.awaitWake();
     this.wakeUp();
     await this.wait(500);
-    await this.speak(wakeLine(w, `good_${personOf(episode.hero)}`));
+    await this.speak(wakeLine(w, wakeKey('good')));
 
     // The other dad, some mornings (item 025): he comes in too, says hello
     // half the time, and is otherwise just there.
@@ -219,7 +219,7 @@ export class BedroomScene extends RoomScene {
     await Promise.all([this.speak(wakeLine(w, `bad_${episode.villain}`)), this.guard(mood.revealed)]);
 
     // A far-off taunt: heard, not seen.
-    const taunt = villainSpec().evil.taunts[0];
+    const taunt = bedroomTaunt();
     if (taunt) {
       shake(this, 2, 300);
       await this.guard(voiceBus.say(tauntLine(fighterId(episode.villain, true), taunt.key), 'bark'));
@@ -241,7 +241,7 @@ export class BedroomScene extends RoomScene {
       this.doorSpot.obj.addAt(light, 0);
       this.tweens.add({ targets: light, alpha: 0.95, scale: 2.6, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     }
-    await this.speak(wakeLine(w, 'door'));
+    await this.speak(wakeLine(w, wakeKey('door')));
     this.newsDone = true;
     this.round = 'bedroom:door';
     // The grown-ups step over beside the door, off the toys: the way out.

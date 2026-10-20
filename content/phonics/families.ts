@@ -27,7 +27,7 @@
  * Pure data: no Phaser, so the voice composer and the unit tests read it.
  */
 
-import { BANK, BANK_BY_WORD } from './bank.js';
+import { BANK, BANK_BY_WORD, THINGS } from './bank.js';
 
 export interface Family {
   /** Lower case: `at`. */
@@ -114,9 +114,10 @@ const SINGLE = BANK.filter((w) => w.onset.length === 1);
 export const FAMILIES: Family[] = Object.entries(RIMES)
   .map(([rime, r]) => {
     const ws = SINGLE.filter((w) => w.rime === rime);
-    return { rime, say: r.say, words: ws.filter((w) => w.role !== 'action').map((w) => w.word), all: ws.map((w) => w.word), silly: r.silly };
+    return { rime, say: r.say, words: ws.filter((w) => THINGS.includes(w)).map((w) => w.word), all: ws.map((w) => w.word), silly: r.silly };
   })
-  .filter((f) => f.all.length >= 2);
+  // Two pictures to build at least (item 040: an `odd` word like WIG is no picture).
+  .filter((f) => f.all.length >= 2 && f.words.length >= 2);
 
 export const FAMILY_BY_RIME: Record<string, Family> = Object.fromEntries(FAMILIES.map((f) => [f.rime, f]));
 

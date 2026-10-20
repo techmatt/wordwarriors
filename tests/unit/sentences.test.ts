@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { CHARACTER_BY_ID, ROSTER } from '../../content/battle/roster';
-import { ACTIONS } from '../../content/phonics/bank';
+import { ACTIONS, BANK_BY_WORD } from '../../content/phonics/bank';
 import { EPISODE_DEFAULTS } from '../../src/config';
 import { FETCH_ITEMS, FRAMES, FRAME_BY_ID, allFrameTokens, allPrefixes, lookalikesOf, sentence, slotOf, tokenWord } from '../../content/phonics/sentences';
 import { CVC_WORDS } from '../../content/phonics/words';
@@ -81,7 +81,7 @@ test('frames: a few of each, and every fetch and counter frame ends in the key w
   const fetch = FRAMES.filter((f) => f.use === 'fetch');
   const counter = FRAMES.filter((f) => f.use === 'counter');
   assert.ok(fetch.length >= 3 && fetch.length <= 5, `${fetch.length} fetch frames`);
-  assert.ok(counter.length >= 3 && counter.length <= 5, `${counter.length} counter frames`);
+  assert.ok(counter.length >= 3 && counter.length <= 8, `${counter.length} counter frames`);
   for (const f of FRAMES) assert.ok(f.text.endsWith(' {x}'), f.id);
   // A counter frame names the villain: it is the villain's weakness.
   for (const f of counter) assert.equal(slotOf(f), 'villain', f.id);
@@ -258,7 +258,8 @@ test('new words (MUG RUG JUG, then 037\'s) join a round under way; a fresh bag a
   const NEW = BAG_WORDS.filter((w) => !LEGACY_BAG_WORDS.includes(w));
   assert.equal(LEGACY_BAG_WORDS.length, 30);
   assert.ok(['mug', 'rug', 'jug', 'frog', 'ship'].every((w) => NEW.includes(w)));
-  assert.ok(LEGACY_BAG_WORDS.every((w) => BAG_WORDS.includes(w)), 'no pre-035 word left the bag');
+  // Item 040: only an `odd` word (PIN) left it.
+  assert.ok(LEGACY_BAG_WORDS.every((w) => BAG_WORDS.includes(w) || BANK_BY_WORD[w]?.odd), 'no pre-035 word left the bag but the odd ones');
   // Saved before item 035, mid-round, none of them ever in it.
   const old = memory();
   const left = LEGACY_BAG_WORDS.slice(0, 5);

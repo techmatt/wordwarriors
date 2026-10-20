@@ -49,6 +49,11 @@ export const FRAMES: Frame[] = [
   { id: 'villain_hates_the', text: '{villain} HATES THE {x}', use: 'counter' },
   { id: 'runs_from_the', text: '{villain} RUNS FROM THE {x}', use: 'counter' },
   { id: 'no_match_for_the', text: '{villain} IS NO MATCH FOR THE {x}', use: 'counter' },
+  // Item 040: more counter frames, so the attic's sentence changes more often.
+  { id: 'cannot_beat_the', text: '{villain} CAN NOT BEAT THE {x}', use: 'counter' },
+  { id: 'hides_from_the', text: '{villain} HIDES FROM THE {x}', use: 'counter' },
+  { id: 'does_not_like_the', text: '{villain} DOES NOT LIKE THE {x}', use: 'counter' },
+  { id: 'says_yuck_to_the', text: '{villain} SAYS YUCK TO THE {x}', use: 'counter' },
 ];
 
 export const FRAME_BY_ID: Record<string, Frame> = Object.fromEntries(FRAMES.map((f) => [f.id, f]));
@@ -105,6 +110,15 @@ export const LOOKALIKES: string[][] = [
   ['bun', 'nut'],
   ['jam', 'gum'],
   ['drum', 'pot'],
+  // Item 040's words.
+  ['bath', 'tub'],
+  ['truck', 'van', 'bus'],
+  ['stick', 'log'],
+  ['chest', 'box', 'gift'],
+  ['bin', 'can', 'pot'],
+  ['rock', 'nut'],
+  ['plant', 'nest'],
+  ['crib', 'bed'],
 ];
 
 /** The words whose pictures look like `word`'s (not including `word`). */

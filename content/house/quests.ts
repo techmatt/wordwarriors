@@ -56,7 +56,7 @@ export const QUESTS: Record<string, Quest> = {
     place: 'forest_gym',
     lines: [
       { text: 'To get strong enough to fight them, we have to train in my secret gym in the forest!' },
-      { text: 'Time to get strong, my secret forest gym has rocks for weights and squirrels for coaches!' },
+      { text: 'Time to get strong, my secret forest gym has boulders for weights and squirrels for coaches!' },
       { text: 'To beat them we need muscles, so off to my gym in the forest, where even the trees do push ups!' },
     ],
   },

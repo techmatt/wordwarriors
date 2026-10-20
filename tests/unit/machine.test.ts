@@ -43,8 +43,9 @@ const INPUT: EpisodeInput = {
 
 test('families: every bank rime in RIMES with two or more one-letter-onset words; make mode builds only the pictured ones', () => {
   const pictured = new Set(CVC_WORDS.filter((w) => w.decodable).map((w) => w.word));
-  // Item 037: the bank's new rimes joined 035's seven.
-  assert.deepEqual(FAMILIES.map((f) => f.rime).sort(), ['am', 'an', 'ap', 'at', 'eg', 'en', 'et', 'ig', 'in', 'od', 'og', 'op', 'ox', 'ub', 'ug', 'un', 'ut']);
+  // Item 037: the bank's new rimes joined 035's seven. Item 040: a family needs two
+  // familiar pictures, so -AM -EG -IG -IN -OD -OP -UB -UT left (WIG, PEG, ROD... are odd).
+  assert.deepEqual(FAMILIES.map((f) => f.rime).sort(), ['an', 'ap', 'at', 'en', 'et', 'og', 'ox', 'ug', 'un']);
   for (const f of FAMILIES) {
     assert.ok(f.all.length >= 2, `${f.rime} has ${f.all.join(', ')}`);
     assert.ok(f.words.length >= 2, `${f.rime} has two pictures to build: ${f.words.join(', ')}`);
@@ -58,13 +59,12 @@ test('families: every bank rime in RIMES with two or more one-letter-onset words
       assert.ok(FETCH_BY_WORD[w], `${w} is a battle item`);
     }
   }
-  assert.deepEqual(FAMILY_BY_RIME.at!.words.sort(), ['bat', 'cat', 'hat', 'rat', 'vat']);
+  assert.deepEqual(FAMILY_BY_RIME.at!.words.sort(), ['bat', 'cat', 'hat', 'rat']);
   assert.deepEqual(FAMILY_BY_RIME.ug!.words.sort(), ['bug', 'jug', 'mug', 'rug']);
   assert.deepEqual(FAMILY_BY_RIME.ug!.all.sort(), ['bug', 'hug', 'jug', 'mug', 'rug', 'tug']);
-  assert.deepEqual(FAMILY_BY_RIME.ig!.words.sort(), ['fig', 'pig', 'wig']);
   // A blend or digraph onset is not one tile: SLUG and PLUG are not -UG's, CHOP not -OP's.
   assert.ok(!FAMILY_BY_RIME.ug!.all.includes('slug'));
-  assert.ok(!FAMILY_BY_RIME.op!.all.includes('chop'));
+  assert.ok(!FAMILY_BY_RIME.og!.all.includes('chop'));
 });
 
 test('silly onsets make nonsense: no bank word, no move word, never the family\'s own onsets, nothing on the block list', () => {

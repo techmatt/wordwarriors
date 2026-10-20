@@ -42,8 +42,10 @@ const ENDING_PROPS = ENDINGS.flatMap((e) => e.props.map((p) => endingPropArt(p.i
 // The fight styles' props (item 031): a finish banner, a trophy, a cooking station.
 const FIGHT_PROPS = FIGHTS.flatMap((f) => (f.props ?? []).map((p) => fightPropArt(p.id)));
 // The word bank's new words (item 037) with no green of their own: not frog, twig, pod, plum, fig, slug or snap (a crocodile).
+// Item 040's words: none is green.
+const BANK_040 = ['vet', 'chest', 'bin', 'rock', 'clock', 'stick', 'brush', 'truck', 'bath', 'plant', 'crib'].map((w) => `pic_${w}`);
 const BANK_037 = ['jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'gum', 'bun', 'hut', 'sub', 'nap', 'wag', 'jab', 'red', 'hex', 'jig', 'mix', 'jog', 'bop', 'dot', 'hum', 'yum', 'drum', 'crab', 'flag', 'sled', 'nest', 'tent', 'desk', 'belt', 'vest', 'gift', 'lamp', 'hand', 'mask', 'raft', 'plug', 'ant', 'milk', 'jump', 'spin', 'swim', 'flip', 'stomp', 'slam', 'grab', 'clap', 'bump', 'skip', 'twist', 'melt', 'lift', 'plop', 'flop', 'trap', 'blast', 'drip', 'ship', 'fish', 'duck', 'sock', 'moth', 'shed', 'chick', 'chop', 'kick', 'rush'].map((w) => `pic_${w}`);
-export const NO_GREEN = new Set([...BANK_037,...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
+export const NO_GREEN = new Set([...BANK_037, ...BANK_040,...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
 
 /**
  * Likeness references for the family (Matt, 2026-10-18): a photo in the
@@ -443,6 +445,18 @@ const PICTURES: Record<string, string> = {
   chop: 'a chop: an axe chopping a log in two, the halves flying apart, wood chips flying',
   kick: 'a kick: a foot in a trainer kicking a black-and-white football, motion lines behind the ball, no grass',
   rush: 'a rush: a gust of wind swooshing past in white curly lines, orange autumn leaves flying in it',
+  // Item 040: familiar words for a four-year-old.
+  vet: 'a vet: a smiling animal doctor in a blue tunic with a stethoscope, gently holding a little puppy with a bandaged paw',
+  chest: 'a chest: a wooden pirate treasure chest with gold bands, its lid open, gold coins and a few jewels spilling out',
+  bin: 'a bin: a green wheelie rubbish bin with its lid shut, side-on, a banana peel peeking out',
+  rock: 'a rock: one big round grey rock, chunky and solid, a few small pebbles beside it',
+  clock: 'a clock: a round red alarm clock with two bells on top, a white face and black hands',
+  stick: 'a stick: one long brown wooden stick from a tree, a little bent, with a small leaf on it, lying side-on',
+  brush: 'a brush: a pink hairbrush with a round head of soft bristles and a long handle, side-on',
+  truck: 'a truck: a big red truck with a long flat back and big black wheels, side-on',
+  plant: 'a plant: a green leafy plant in a round orange flowerpot',
+  crib: "a crib: a baby's white wooden crib with bars, a soft blue blanket and a little teddy inside, side-on",
+  bath: 'a bath: a white bathtub full of foamy bubbles, a yellow rubber duck on top, side-on',
 };
 
 const HAND: Record<string, string> = {

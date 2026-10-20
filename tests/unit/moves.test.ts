@@ -255,8 +255,9 @@ test('reformed: every character has two or more short lines, each voiced in its 
   const manifest = JSON.parse(readFileSync('public/voice-gen/manifest.json', 'utf8')) as { lines: { id: string }[] };
   const built = new Set(manifest.lines.map((l) => l.id));
   for (const c of ROSTER) {
-    assert.ok(c.reformed.length >= 2, c.id);
-    for (const r of c.reformed) {
+    assert.equal(c.reformed.sorry.length, 3, c.id);
+    assert.equal(c.reformed.ending.length, 3, c.id);
+    for (const r of [...c.reformed.sorry, ...c.reformed.ending]) {
       const id = reformedLine(c.id, r.key);
       const l = lines.get(id);
       assert.ok(l, id);

@@ -38,10 +38,17 @@ export interface BankEntry {
   glyph?: string;
   draw?: 'fan' | 'log' | 'mop' | 'pot' | 'mug' | 'rug';
   say?: string;
-  /** The item that added it: before 037 (`old`) or 037. */
-  since?: '037';
+  /** The item that added it: before 037 (`old`), 037 or 040. */
+  since?: '037' | '040';
   /** It sounds like a spell (ZAP, HEX, POP; not MUD or NAP): a caster's gift leans to it (item 038, `drawGift`). */
   spell?: true;
+  /**
+   * A typical four-year-old would not know it from its picture (YAK, VAT, COG;
+   * item 040). It never fills a role where she matches the word to a picture
+   * (a room's key word, the counter, the warm-up, the word machine): a `both`
+   * word keeps its action role (pads, the gift), a `thing` drops out of play.
+   */
+  odd?: true;
 }
 
 export interface BankWord extends BankEntry {
@@ -58,44 +65,52 @@ const B = (word: string, glyph?: string, extra: Partial<BankEntry> = {}): BankEn
 const NEW = { since: '037' as const };
 const SPELL = { spell: true as const };
 const NEW_SPELL = { ...NEW, ...SPELL };
+const ODD = { odd: true as const };
+const NEW_ODD = { ...NEW, ...ODD };
+const NEW_040 = { since: '040' as const };
 
 const ENTRIES: BankEntry[] = [
   // Level 1: CVC. The pictured words from before 037.
   T('cat', '🐱'), T('dog', '🐶'), T('fox', '🦊'), T('bug', '🐛'), T('hat', '🎩'), T('bed', '🛏️'),
   T('cup', '☕'), T('map', '🗺️'), T('bus', '🚌'), T('hen', '🐔'), T('box', '📦'), T('pen', '🖊️'),
   T('van', '🚐'), T('bat', '🦇'), T('bag', '👜'), T('can', '🥫'), T('nut', '🥜'), T('tub', '🛁'),
-  T('cap', '🧢'), T('pin', '📌'), T('log', undefined, { draw: 'log' }), T('mop', undefined, { draw: 'mop' }),
+  T('cap', '🧢'), T('pin', '📌', ODD), T('log', undefined, { draw: 'log' }), T('mop', undefined, { draw: 'mop' }),
   T('pot', undefined, { draw: 'pot' }), T('rat', '🐀'), T('mug', undefined, { draw: 'mug' }),
   T('rug', undefined, { draw: 'rug' }), T('jug', '🏺'),
   // Pictured words that were move words too.
-  B('sun', '☀️'), B('fan', undefined, { draw: 'fan' }), B('web', '🕸️'), B('net', '🥅'), B('jet', '✈️'),
-  B('pig', '🐷'), B('pan', '🍳'), B('ram', '🐏'), B('top', '🌀'),
+  B('sun', '☀️'), B('fan', undefined, { draw: 'fan' }), B('web', '🕸️'), B('net', '🥅'), B('jet', '✈️', ODD),
+  B('pig', '🐷'), B('pan', '🍳'), B('ram', '🐏', ODD), B('top', '🌀', ODD),
   // The move words from before 037.
   A('zap', '⚡', SPELL), A('bam', '🔨'), A('zip', '☄️', SPELL), A('hop', '🐇'), A('pop', '🎈', SPELL), A('hug', '🧸'),
   A('big', '🐘'), A('hot', '🌶️'), A('dig', '⛏️'), A('run', '👟'), A('mud', '🟤'), A('wet', '💦'),
   A('fog', '🌫️'), A('tug', '➰'), A('fix', '🔧'),
   // Item 037, level 1: short i, short e and the rare first sounds (Y, V, K, L, J, G).
-  T('jam', '🍓', NEW), T('yak', '🐂', NEW), T('vat', '🍯', NEW), T('leg', '🦵', NEW), T('peg', '📎', NEW),
-  T('wig', '💇', NEW), T('bib', '👶', NEW), T('fig', '🟣', NEW), T('six', '🎲', NEW), B('fin', '🦈', NEW),
-  T('kit', '🧰', NEW), T('lip', '👄', NEW), T('cog', '⚙️', NEW), T('rod', '🎣', NEW), T('pod', '🌱', NEW),
-  T('gum', '🍬', NEW), T('bun', '🍞', NEW), T('hut', '🏠', NEW), T('sub', '🐳', NEW),
+  T('jam', '🍓', NEW), T('yak', '🐂', NEW_ODD), T('vat', '🍯', NEW_ODD), T('leg', '🦵', NEW), T('peg', '📎', NEW_ODD),
+  T('wig', '💇', NEW_ODD), T('bib', '👶', NEW), T('fig', '🟣', NEW_ODD), T('six', '🎲', NEW), B('fin', '🦈', NEW_ODD),
+  T('kit', '🧰', NEW_ODD), T('lip', '👄', NEW), T('cog', '⚙️', NEW_ODD), T('rod', '🎣', NEW_ODD), T('pod', '🌱', NEW_ODD),
+  T('gum', '🍬', NEW_ODD), T('bun', '🍞', NEW), T('hut', '🏠', NEW_ODD), T('sub', '🐳', NEW_ODD),
   A('nap', '😴', NEW), A('wag', '🐕', NEW), A('jab', '🥊', NEW), A('red', '🔴', NEW), A('hex', '🔮', NEW_SPELL),
   A('jig', '💃', NEW), A('mix', '🥣', NEW_SPELL), A('jog', '🏃', NEW), A('bop', '🔨', NEW), A('dot', '⚫', NEW),
   A('hum', '🎵', NEW), A('yum', '😋', NEW),
   // Item 037, level 2: blends.
-  T('frog', '🐸', NEW), T('drum', '🥁', NEW), T('crab', '🦀', NEW), T('flag', '🚩', NEW), T('sled', '🛷', NEW),
-  T('nest', '🥚', NEW), T('tent', '⛺', NEW), T('desk', '🗄️', NEW), T('belt', '🥋', NEW), T('vest', '🦺', NEW),
-  T('plum', '🍑', NEW), T('gift', '🎁', NEW), T('lamp', '💡', NEW), T('hand', '✋', NEW), T('mask', '🎭', NEW),
-  T('raft', '🛶', NEW), T('plug', '🔌', NEW), T('slug', '🐌', NEW), T('twig', '🌿', NEW), T('ant', '🐜', NEW),
+  T('frog', '🐸', NEW), T('drum', '🥁', NEW), T('crab', '🦀', NEW), T('flag', '🚩', NEW), T('sled', '🛷', NEW_ODD),
+  T('nest', '🥚', NEW), T('tent', '⛺', NEW), T('desk', '🗄️', NEW), T('belt', '🥋', NEW), T('vest', '🦺', NEW_ODD),
+  T('plum', '🍑', NEW_ODD), T('gift', '🎁', NEW), T('lamp', '💡', NEW), T('hand', '✋', NEW), T('mask', '🎭', NEW),
+  T('raft', '🛶', NEW_ODD), T('plug', '🔌', NEW_ODD), T('slug', '🐌', NEW_ODD), T('twig', '🌿', NEW_ODD), T('ant', '🐜', NEW),
   T('milk', '🥛', NEW),
   A('jump', '🦘', NEW), A('spin', '🌀', NEW_SPELL), A('swim', '🏊', NEW), A('flip', '🥞', NEW_SPELL), A('stomp', '🦖', NEW),
   A('slam', '💥', NEW), A('grab', '🦾', NEW), A('clap', '👏', NEW), A('bump', '🚗', NEW), A('snap', '🐊', NEW_SPELL),
   A('skip', '🎗️', NEW), A('twist', '🌪️', NEW_SPELL), A('melt', '🍦', NEW_SPELL), A('lift', '🏗️', NEW), A('plop', '💧', NEW),
   A('flop', '🤽', NEW), A('trap', '🧀', NEW), A('blast', '🚀', NEW_SPELL), A('drip', '🚰', NEW),
   // Item 037, level 3: digraphs, a small start.
-  T('ship', '🚢', NEW), T('fish', '🐟', NEW), T('duck', '🦆', NEW), T('sock', '🧦', NEW), T('moth', '🦋', NEW),
-  T('shed', '🏚️', NEW), T('chick', '🐤', NEW),
+  T('ship', '🚢', NEW), T('fish', '🐟', NEW), T('duck', '🦆', NEW), T('sock', '🧦', NEW), T('moth', '🦋', NEW_ODD),
+  T('shed', '🏚️', NEW_ODD), T('chick', '🐤', NEW),
   A('chop', '🪓', NEW), A('kick', '🦶', NEW), A('rush', '💨', NEW),
+  // Item 040: familiar pictured words where the odd ones left short e, i and o,
+  // first sounds V and R, the blends and the digraphs thin.
+  T('vet', '🩺', NEW_040), T('chest', '🧰', NEW_040), T('bin', '🗑️', NEW_040), T('rock', '🪨', NEW_040), T('clock', '🕰️', NEW_040),
+  T('stick', '🥢', NEW_040), T('brush', '🪥', NEW_040), T('truck', '🚚', NEW_040), T('bath', '🧼', NEW_040),
+  T('plant', '🪴', NEW_040), T('crib', '🛌', NEW_040),
 ];
 
 /** The digraphs that are one sound unit. */
@@ -132,10 +147,14 @@ export function tag(e: BankEntry): BankWord {
 export const BANK: BankWord[] = ENTRIES.map(tag);
 export const BANK_BY_WORD: Record<string, BankWord> = Object.fromEntries(BANK.map((w) => [w.word, w]));
 
-/** Pictured words: rooms, key words, the counter, the warm-up, fetched items. */
-export const THINGS: BankWord[] = BANK.filter((w) => w.role !== 'action');
-/** Words with a battle effect of their own: move pads and the ally's gift. */
+/** Pictured words she knows on sight (not `odd`): rooms, key words, the counter, the warm-up, the word machine, fetched items. */
+export const THINGS: BankWord[] = BANK.filter((w) => w.role !== 'action' && !w.odd);
+/** Words with a battle effect of their own: move pads and the ally's gift. An `odd` `both` word stays one. */
 export const ACTIONS: BankWord[] = BANK.filter((w) => w.role !== 'thing');
+/** Every word she can be given to read: a thing or an action. Not an `odd` thing (YAK), which is out of play. */
+export const LIVE: BankWord[] = BANK.filter((w) => THINGS.includes(w) || ACTIONS.includes(w));
+/** The `odd` things out of play (item 040): kept with their pictures and lines, in case Matt overrules one. */
+export const DROPPED: BankWord[] = BANK.filter((w) => !LIVE.includes(w));
 
 export const VOWEL_LIST: Vowel[] = ['a', 'e', 'i', 'o', 'u'];
 export const LEVELS: Level[] = [1, 2, 3];
