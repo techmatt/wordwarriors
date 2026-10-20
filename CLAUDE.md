@@ -98,8 +98,15 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `npm run voice:build` | Synthesise new/changed lines (incremental; `--force` for all). Needs `uvx` and network. |
 | `npm run art:placeholders` | Paint missing/placeholder art, rewrite `docs/art.md` |
 | `npm run art:gen -- <ids…>` | Real art from `content/art/prompts.ts` via Codex's image tool (README, "Real art"); `--force`, `--reprocess`, `--sheet` |
-| `npm run art:alts -- <ids…> --sheet=<file>` | Draw 3 candidates per id into `art-originals/alts/` and a comparison sheet; the game's art is untouched |
-| `npm run art:pick -- <id> <n>` | Make candidate `n` the game's art (`0` restores the original); commit the PNG |
+| `npm run art:alts -- <ids…> --sheet=<file>` | Draw 3 candidates per id into `art-originals/alts/` and a comparison sheet; the game's art is untouched. `--brief=scratch/<name>.txt` (one id) draws from that prompt instead of the tracked one |
+| `npm run art:pick -- <id> <n>` | Make candidate `n` the game's art (`0` restores the original); commit the PNG. A brief's candidate: it prints the brief, which goes into the game's prompt in the same commit |
+
+A **candidate round** (draw + contact sheet + picker manifest) writes only to the shared,
+git-ignored `art-originals/alts/` and `scratch/`, changes nothing tracked, and may run as
+a **readonly** item; a new look is a `--brief` file in `scratch/`, not an edit to
+`content/art/prompts.ts`. **Promotion** (`art:pick`) is a normal item: it commits the PNG
+and writes a brief's text into the game (the roster `look` for a character, else `HAND`
+in `content/art/prompts.ts`) so the prompt matches the art (README, *Candidates*).
 | `npm run voice:status` | Recorded / stale / still edge-tts, letter sounds first |
 | `npm run voice:clip -- <id> <file.mp3>` | Put a recording in place of a line |
 
@@ -222,4 +229,5 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 | "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`); for character art also set `FLIP_TO_FACE = true` in `src/config.ts` |
 | "here are my letter sound recordings" | see `docs/recording.md` |
 | "the warm-up is too hard / too easy" / "start new words at level N" | `GRAB.startLevel` (and `helpAfter`) in `src/config.ts` |
-| "for X I pick n" (from an `art_alts_*` sheet) | `npm run art:pick -- X n`, commit `public/art/X.png` |
+| "for X I pick n" (from an `art_alts_*` sheet) | `npm run art:pick -- X n`, commit `public/art/X.png`; if it prints a brief, write that into X's roster `look` (or `HAND`) in the same commit |
+| "try a new look for X" / "draw X as …" | a brief file in `scratch/`, then `npm run art:alts -- X --n=2 --brief=scratch/<name>.txt --sheet=scratch/art_alts_<item>_<name>.png` (readonly; Matt picks) |

@@ -492,9 +492,29 @@ When an image is weak but Matt should see the options before it changes, draw
 candidates instead of overwriting it:
 
 ```
-npm run art:alts -- <ids…> [--n=3] [--sheet=scratch/<name>.png] [--sheet-only] [--manifest-only] [--no-ref]
+npm run art:alts -- <ids…> [--n=3] [--sheet=scratch/<name>.png] [--sheet-only] [--manifest-only] [--no-ref] [--brief=scratch/<brief>.txt]
 npm run art:pick -- <id> <n>
 ```
+
+**A candidate round changes nothing tracked** (item 041): drawing, the contact sheet and
+the picker manifest all go to `art-originals/alts/` and `scratch/`, shared and
+git-ignored, so a round may run as a **readonly** item beside other work. Promotion
+(`art:pick`) is a normal item: it changes `public/art/` and, for a brief, the game's prompt.
+
+- **Trying a new look: `--brief=<file>`.** The file (in `scratch/`, any extension) holds
+  the asset prompt to use instead of the tracked one in `content/art/prompts.ts`: the
+  same style block, photo reference and `NOTES` correction go round it. Its name is the
+  file's base name (a lower-case slug). One id per run, so one run per brief; run briefs
+  for the same id one after another, since side-by-side runs on one id would number
+  their candidates alike. Each candidate drawn from a brief gets a sidecar
+  `art-originals/alts/<id>-<k>.json` (brief name, file, text, the whole prompt, whether
+  the photo went with it), and the sheet and picker label that candidate with the
+  brief's name; the row's note lists which candidates came from which brief.
+- **Promoting a brief's candidate:** `art:pick` prints the brief after cutting the image.
+  Write it into the game in the same commit: a character's `look` in
+  `content/battle/roster.ts` (its prompt is derived from that, so `docs/art.md` follows;
+  rerun `art:placeholders`), anything else a `HAND` entry in `content/art/prompts.ts`.
+  Otherwise `art:gen --force` and later rounds would draw the old look.
 
 `art:alts` writes a picker manifest for conductor's picker page by itself, `scratch/<name>.json` beside the sheet, with each candidate cut as the game shows it into `scratch/<name>/` (row notes: `PICK_NOTES` in `content/art/prompts.ts`); `--manifest-only` rewrites it without drawing.
 
