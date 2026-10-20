@@ -8,7 +8,7 @@
 
 import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
-import type { Rand } from './sentences';
+import type { Rand } from './bank';
 
 /** The villain's own style id, `brawl` when it has none (or names one that does not exist). */
 export function ownFight(villain: string): string {

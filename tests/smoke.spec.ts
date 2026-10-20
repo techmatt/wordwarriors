@@ -9,6 +9,7 @@ import { test, expect } from '@playwright/test';
 
 import {
   FETCH_FRAMES,
+  SLOW,
   boot,
   choose,
   collectErrors,
@@ -25,8 +26,6 @@ import {
   until,
   walkTo,
 } from './harness';
-
-const SLOW = { tag: '@slow' };
 
 test('title boots, F9 opens the grown-ups page and returns, green starts the bedroom', async ({ page }) => {
   const errors = collectErrors(page);
@@ -78,12 +77,12 @@ test('hub part 1: the helper\'s scene gives the gift word in the circle, then do
   const errors = collectErrors(page);
   await boot(page, '?scene=house&nojourney=1');
   const circle = await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:circle' && !s.room.locked, 90_000, 'circle offered');
-  expect(circle.episode.spell).toBeTruthy();
+  expect(circle.episode.gift).toBeTruthy();
   expect(circle.episode.house.taught).toBe(false);
   // The default cast plays Ellie's first scene (item 037): its lines, the
   // reveal trailing off into the gift word's own clip, then the circle line.
   const h = circle.voice.history;
-  const gift = h.indexOf(`nar_ellie_gift_word_${circle.episode.spell}`);
+  const gift = h.indexOf(`nar_ellie_gift_word_${circle.episode.gift}`);
   expect(gift).toBeGreaterThan(0);
   expect(h[gift - 1]).toBe('hub_ellie_1_line3');
   expect(h[gift + 1]).toBe('hub_ellie_1_circle');
@@ -342,7 +341,6 @@ test('Battle part 2: a wrong and a right walking pick, counter-item, finish, vic
   expect(end.voice.history.some((id) => /_not_move_/.test(id))).toBe(true);
   expect(end.voice.history.some((id) => /_was_move_/.test(id))).toBe(true);
   expect(end.voice.history.some((id) => /_find_move_/.test(id))).toBe(true);
-  expect(end.voice.history.some((id) => /_move_ok$/.test(id))).toBe(false);
   expect(end.battle?.ultimates).toBe(1);
   expect(end.battle?.movePicks).toBe(2);
   expect(end.battle?.combos).toBe(1);

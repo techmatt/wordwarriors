@@ -23,7 +23,7 @@ import Phaser from 'phaser';
 import { charArt } from '../../content/art/assets';
 import { BEDROOMS, type BedroomObject, type ReactionSound } from '../../content/house/house';
 import { personOf } from '../../content/battle/roster';
-import { fighterId, tauntLine, wakeLine } from '../../content/voice/ids';
+import { fighterId, tauntLine, wakeCastKey, wakeLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import {
   sfxBoing,
@@ -203,7 +203,7 @@ export class BedroomScene extends RoomScene {
       burst(this, hx, hy - 70, { count: 50, colors: [0xffffff, 0xff9ad5, 0x7ad9ff, 0xffd23f] });
       sfxSummon();
       this.time.delayedCall(400, () => bob(this, f, 7, 650));
-      await this.speak(wakeLine(w, `helper_${personOf(h)}`));
+      await this.speak(wakeLine(w, wakeCastKey('helper', personOf(h))));
     }
 
     // The bad news: the room goes dark and the villain's mess thumps in.
@@ -216,7 +216,7 @@ export class BedroomScene extends RoomScene {
     const toys = room.objects.map((o) => new Phaser.Geom.Rectangle(o.x - o.w / 2, o.y - o.h, o.w, o.h + 20));
     const avoid = [...toys, feet(room.waker.x, room.waker.y), feet(room.waker.x - 140, room.waker.y + 20), feet(room.door.x, room.door.y + 180), feet(room.door.x - 140, room.door.y + 50), feet(SECOND_SPOT.x, SECOND_SPOT.y)];
     const mood = applyHouseMood(this, episode.villain, { reveal: true, seed: 11, floor: this.floor, avoid });
-    await Promise.all([this.speak(wakeLine(w, `bad_${episode.villain}`)), this.guard(mood.revealed)]);
+    await Promise.all([this.speak(wakeLine(w, wakeCastKey('bad', episode.villain))), this.guard(mood.revealed)]);
 
     // A far-off taunt: heard, not seen.
     const taunt = bedroomTaunt();

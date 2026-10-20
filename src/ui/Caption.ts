@@ -26,12 +26,11 @@
 import Phaser from 'phaser';
 
 import { personOf } from '../../content/battle/roster';
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_ROUNDED, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { TEX } from '../fx/textures';
 import { makePortrait, sameSpeaker, speakerOf, type Portrait, type Speaker } from './Portrait';
 
-const FONT = '"Arial Rounded MT Bold", "Arial Black", sans-serif';
 const INK = '#24163a';
 const BOX_FILL = 0xfffaf0;
 const BOX_LINE = 0x3a2a5a;
@@ -182,7 +181,7 @@ export class Caption {
       // All text in the game is upper case (Matt, 2026-10-18); only the display
       // changes, the line texts stay as written.
       for (const w of u.line.words) {
-        this.words.push(this.scene.add.text(0, 0, w.word.toUpperCase(), { fontFamily: FONT, fontSize: `${this.L.fontSize}px`, color: INK }).setOrigin(0.5, 0.5));
+        this.words.push(this.scene.add.text(0, 0, w.word.toUpperCase(), { fontFamily: FONT_ROUNDED,fontSize: `${this.L.fontSize}px`, color: INK }).setOrigin(0.5, 0.5));
       }
       this.text.add(this.words);
     }

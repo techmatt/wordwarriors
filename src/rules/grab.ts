@@ -28,9 +28,8 @@ import { SOUND_BY_UNIT } from '../../content/phonics/letters';
 import { letterNameLine, letterSoundLine, wordLine } from '../../content/voice/ids';
 import { GRAB } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
-import { coverage, distractorsFor, gates, isFirm, met } from './bank';
+import { coverage, distractorsFor, gates, isFirm, met, openIn, shuffle, type Rand } from './bank';
 
-export type Rand = () => number;
 export type GrabLevel = 1 | 2 | 3;
 
 /** Words the hall can ask for: the bank's pictured words (each has a battle item). */
@@ -73,7 +72,7 @@ export function pickGrab(store: ProgressStore, avoid: Iterable<string> = [], ran
   const m = met(store);
   const g = gates(store);
   // A word whose level is still shut comes up only when nothing else can (as `drawWords`).
-  const open = from.filter((w) => g[BANK_BY_WORD[w]?.level ?? 1]! > 0);
+  const open = from.filter(openIn(g));
   const weight = (w: string) => store.shakiness('grabs', w) * coverage(store, w, m) * (g[BANK_BY_WORD[w]?.level ?? 1] ?? 1);
   return pickWeighted(open.length ? open : from, weight, 1, rand)[0]!;
 }
@@ -93,12 +92,7 @@ export function hallObjects(store: ProgressStore, word: string, avoid: Iterable<
   const others = HALL_WORDS.filter((w) => w !== word);
   const tiers = [[...out, ...like], out, []];
   const banned = tiers.find((t) => others.filter((w) => !t.includes(w)).length >= n - 1) ?? [];
-  const all = [word, ...distractorsFor(store, word, others, n - 1, rand, banned, isFirm(store, word, 'grabs'))];
-  for (let i = all.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [all[i], all[j]] = [all[j]!, all[i]!];
-  }
-  return all;
+  return shuffle([word, ...distractorsFor(store, word, others, n - 1, rand, banned, isFirm(store, word, 'grabs'))], rand);
 }
 
 /**

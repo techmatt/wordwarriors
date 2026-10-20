@@ -30,7 +30,7 @@
  * scenes gets `ANY_SCENES`, composed per narrator (`hub_any_<n>_<key>`).
  */
 
-import { hubLine, narratorLine } from '../voice/ids.js';
+import { hubAnyKey, hubLine, narratorLine } from '../voice/ids.js';
 import { variantIndex, type Line } from './quests.js';
 
 export interface HubStory {
@@ -356,7 +356,7 @@ export function scenesFor(helper: string): HubStory[] {
 
 /** Line ids of one scene: the owner's own, or `hub_any_<n>_<key>` in the narrator's voice. */
 export function hubStoryIds(owner: string | null, narrator: string, n: number, story: HubStory): HubStoryIds {
-  const id = (key: string) => (owner ? hubLine(owner, n, key) : narratorLine(narrator, `hub_any_${n}_${key}`));
+  const id = (key: string) => (owner ? hubLine(owner, n, key) : narratorLine(narrator, hubAnyKey(n, key)));
   return { lines: story.lines.map((_, i) => id(`line${i + 1}`)), circle: id('circle'), done: id('done') };
 }
 

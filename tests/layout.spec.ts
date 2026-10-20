@@ -9,10 +9,8 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { boot, collectErrors, expectNoErrors, until } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, until } from './harness';
 import { layoutIssues, type Layout } from './qa/checks';
-
-const SLOW = { tag: '@slow' };
 
 function layout(page: Page): Promise<Layout> {
   return page.evaluate(() => (window as unknown as { __wwqa: { layout(): Layout } }).__wwqa.layout());
@@ -25,7 +23,7 @@ function boxOf(l: Layout): [number, number, number, number] | null {
   return [Math.min(...words.map((t) => t.b[0])), Math.min(...words.map((t) => t.b[1])), Math.max(...words.map((t) => t.b[2])), Math.max(...words.map((t) => t.b[3]))];
 }
 
-test('hub: "stand in the circle" keeps the box off the circle @slow', SLOW, async ({ page }) => {
+test('hub: "stand in the circle" keeps the box off the circle', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=house&nojourney=1&qa=1');
   const s = await until(page, (st) => st.scene === 'Hub' && /_circle$/.test(st.voice.speaking ?? ''), 90_000, 'the circle line');
@@ -39,7 +37,7 @@ test('hub: "stand in the circle" keeps the box off the circle @slow', SLOW, asyn
   expectNoErrors(errors);
 });
 
-test('word machine: "walk on a letter" keeps the box off the tiles @slow', SLOW, async ({ page }) => {
+test('word machine: "walk on a letter" keeps the box off the tiles', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&game=word_machine&nojourney=1&qa=1');
   await until(page, (st) => st.scene === 'WordMachine' && /_machine_go$/.test(st.voice.speaking ?? ''), 90_000, 'the go line');

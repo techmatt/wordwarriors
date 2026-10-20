@@ -93,6 +93,15 @@ export interface FightStage {
   info(): Record<string, unknown>;
 }
 
+export interface Pt {
+  x: number;
+  y: number;
+}
+
+/** The share of the way to a target an exponential ease covers in `dt` seconds at `rate`. */
+export const ease = (rate: number, dt: number): number => 1 - Math.exp(-rate * dt);
+export const lerpPt = (a: Pt, b: Pt, u: number): Pt => ({ x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u });
+
 /** How far her stick sways her hero about a contest's spot (px across, down). */
 const NUDGE = { x: 60, y: 40 };
 
@@ -115,6 +124,13 @@ export class BaseStage implements FightStage {
     const h = this.host;
     if (f !== h.heroes[0] || (h.phase !== 'fight' && h.phase !== 'combo')) return { x: 0, y: 0 };
     return { x: h.stick.x * NUDGE.x, y: h.stick.y * NUDGE.y };
+  }
+
+  /** `host.after`, but never after the scene has ended. */
+  protected later(ms: number, fn: () => void): void {
+    this.host.after(ms, () => {
+      if (this.scene.sys.isActive()) fn();
+    });
   }
 
   holds(_f: Fighter): boolean {

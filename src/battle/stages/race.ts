@@ -26,7 +26,7 @@ import { burst, fitImage, floatText, fxQuality, shockwave, speedLines } from '..
 import { TEX } from '../../fx/textures';
 import { FLOOR_TOP, type Fighter } from '../Fighter';
 import { ARENA_RIGHT } from '../movement';
-import { BaseStage } from './stage';
+import { BaseStage, ease } from './stage';
 
 type Emitter = Phaser.GameObjects.Particles.ParticleEmitter;
 
@@ -266,7 +266,7 @@ export class RaceStage extends BaseStage {
     const villain = f === this.host.villain;
     // The villain's fright leap at the counter is the battle's own lift.
     // The victory loop sets its own lift below.
-    if (!(villain && (this.host.phase === 'counter' || this.loopAt >= 0))) f.lift += (this.liftFor(f) - f.lift) * (1 - Math.exp(-4 * dt));
+    if (!(villain && (this.host.phase === 'counter' || this.loopAt >= 0))) f.lift += (this.liftFor(f) - f.lift) * ease(4, dt);
     // The intro's run-in is the battle's tween.
     if (this.host.phase === 'intro') return true;
     const L = this.lead;
@@ -288,7 +288,7 @@ export class RaceStage extends BaseStage {
         const ramp = Math.min(1, (this.t - this.loopAt) / 0.4);
         tx = this.flagX() + 40 + Math.cos(a) * 150;
         const lift = this.liftFor(f) + (90 - Math.sin(a) * 90) * ramp;
-        f.lift += (lift - f.lift) * (1 - Math.exp(-10 * dt));
+        f.lift += (lift - f.lift) * ease(10, dt);
         k = 10;
       }
     } else if (f === this.host.helper) {
@@ -313,9 +313,8 @@ export class RaceStage extends BaseStage {
     const n = this.nudge(f);
     tx = Phaser.Math.Clamp(tx + n.x, 90, this.maxX(f));
     ty += n.y;
-    const e = 1 - Math.exp(-k * dt);
-    f.x += (tx - f.x) * e;
-    f.y += (ty - f.y) * (1 - Math.exp(-3 * dt));
+    f.x += (tx - f.x) * ease(k, dt);
+    f.y += (ty - f.y) * ease(3, dt);
     // A forward stretch, more when boosting.
     f.lean = boost || k > 5 ? 0.3 : 0.12;
     return true;
@@ -331,12 +330,12 @@ export class RaceStage extends BaseStage {
     let target = Phaser.Math.Clamp((h.heroFrac() - h.villainFrac()) * 2.2, -0.85, 0.85) + this.surge;
     if (this.override !== null) target = this.override;
     target = Phaser.Math.Clamp(target, -1, 1);
-    this.lead += (target - this.lead) * (1 - Math.exp(-2.5 * dt));
+    this.lead += (target - this.lead) * ease(2.5, dt);
 
     // Speed: cruising, boosted at the big beats, gliding once the race is won.
     let want = this.t < this.speedUntil ? this.speedMul : 1;
     if (this.villainWon || this.heroesWon || h.phase === 'end') want = 0.4;
-    this.speed += (want - this.speed) * (1 - Math.exp(-3 * dt));
+    this.speed += (want - this.speed) * ease(3, dt);
     const span = GAME_WIDTH + 400;
     for (const l of this.layers) {
       l.g.x -= l.speed * this.speed * dt;
@@ -370,7 +369,7 @@ export class RaceStage extends BaseStage {
       let p: number;
       if (f.team === 'hero') p = this.heroesWon ? 1 : this.pack + 0.12 * this.lead - (this.villainWon ? 0.1 : 0);
       else p = this.villainWon ? 1 : this.pack - 0.12 * this.lead;
-      r.prog += (Phaser.Math.Clamp(p, 0.02, 1) - r.prog) * (1 - Math.exp(-3 * dt));
+      r.prog += (Phaser.Math.Clamp(p, 0.02, 1) - r.prog) * ease(3, dt);
       const i = h.heroes.indexOf(f);
       // The ally's face a little behind her hero's, so both show.
       r.icon.setPosition(TRACK.x0 + r.prog * (TRACK.x1 - TRACK.x0) - Math.max(0, i) * 24,f.team === 'hero' ? TRACK.y - 12 : TRACK.y + 12);

@@ -3,7 +3,7 @@
  * Pure: the word bank, roster data and the progress store, unit-tested.
  *
  * Each battle part opens two move choices. The first of each part is the
- * gift word the helper gave her in the hub (`episode.spell`, `drawGift`). The
+ * gift word the helper gave her in the hub (`episode.gift`, `drawGift`). The
  * other right words come out of her move bag (ProgressStore `moveBag`, the 015
  * bag logic) by the bank's one weighting (src/rules/bank.ts: shakiness ×
  * coverage × level gate): without replacement across episodes, so fight after
@@ -25,12 +25,12 @@
  */
 
 import { CHARACTER_BY_ID, MOVE_WORDS, abilityWords } from '../../content/battle/roster';
+import type { AbilitySpec } from '../../content/battle/types';
 import { CASTERS } from '../../content/house/scenes';
 import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import type { ProgressStore } from '../state/ProgressStore';
-import { coverage, distractorsFor, drawWords, gates, isFirm, met, openWords } from './bank';
-import type { Rand } from './sentences';
+import { coverage, distractorsFor, drawFromBag, drawWords, isFirm, met, openWords, shuffle, type Rand } from './bank';
 
 /**
  * Who fires a move word: a hero on her team, with ability `ability` of
@@ -79,31 +79,27 @@ export function teamMoveWords(team: string[]): Map<string, MoveOwner[]> {
   return out;
 }
 
+/** The helper's own ability that answers to `word`, if any. */
+export function helperAbilityFor(word: string, helper: string): AbilitySpec | undefined {
+  return CHARACTER_BY_ID[helper]?.good.abilities.find((a) => abilityWords(a).includes(word));
+}
+
 /**
  * Who fires the gift word: her hero, with the helper's move of that word (it
  * is the helper's gift), or null when the helper has none (then the word's
  * own effect).
  */
-export function spellOwner(spell: string, hero: string, helper: string): MoveOwner | null {
-  const ab = CHARACTER_BY_ID[helper]?.good.abilities.find((a) => abilityWords(a).includes(spell));
+export function giftOwner(gift: string, hero: string, helper: string): MoveOwner | null {
+  const ab = helperAbilityFor(gift, helper);
   return ab ? { fighter: hero, ability: ab.id, from: helper } : null;
 }
 
 /** Who fires `word`: see the header. */
-export function ownerFor(word: string, input: Pick<MoveInput, 'hero' | 'team' | 'helper' | 'spell'>, rand: Rand = Math.random): MoveOwner {
+export function ownerFor(word: string, input: Pick<MoveInput, 'hero' | 'team' | 'helper' | 'gift'>, rand: Rand = Math.random): MoveOwner {
   const magic: MoveOwner = { fighter: input.hero, ability: effectId(word), from: null };
-  if (word === input.spell) return spellOwner(word, input.hero, input.helper) ?? magic;
+  if (word === input.gift) return giftOwner(word, input.hero, input.helper) ?? magic;
   const own = teamMoveWords(input.team).get(word);
   return own?.length ? own[Math.floor(rand() * own.length)]! : magic;
-}
-
-function shuffle<T>(xs: T[], rand: Rand): T[] {
-  const a = [...xs];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [a[i], a[j]] = [a[j]!, a[i]!];
-  }
-  return a;
 }
 
 /**
@@ -125,17 +121,7 @@ function topUpMoves(store: ProgressStore): void {
  */
 export function drawMove(store: ProgressStore, eligible: string[], rand: Rand = Math.random, keepOut: string[] = []): string {
   topUpMoves(store);
-  const ok = new Set(eligible);
-  const open = openWords(store);
-  // A bag left with only words of a shut level counts as spent (item 039).
-  let pool = store.bag('moves').left.filter((w) => ok.has(w));
-  if (!pool.some(open)) {
-    store.refillBag(MOVE_WORDS.filter((w) => !keepOut.includes(w)), 'moves');
-    pool = store.bag('moves').left.filter((w) => ok.has(w));
-  }
-  if (!pool.some(open) && eligible.some(open)) pool = eligible.filter(open);
-  if (!pool.length) pool = [...eligible];
-  return drawWords(store, pool, 1, rand)[0]!;
+  return drawFromBag(store, 'moves', MOVE_WORDS, eligible, rand, keepOut);
 }
 
 /** How much more a spell-sounding word weighs as a caster's gift (item 038). */
@@ -187,7 +173,7 @@ export interface MoveInput {
   team: string[];
   helper: string;
   /** The hub's gift word: it opens each part. */
-  spell: string | null;
+  gift: string | null;
   /** Words no pad may show: said or shown before the battle (the wake-up threat, the quest's setup line). */
   avoid?: string[];
 }
@@ -198,13 +184,12 @@ export interface MoveInput {
  * gift word, which opens each part.
  */
 export function planMoves(store: ProgressStore, input: MoveInput, rand: Rand = Math.random): MovePlan {
-  const spell = input.spell;
+  const gift = input.gift;
   const avoid = new Set(input.avoid ?? []);
-  const all = MOVE_WORDS.filter((w) => !avoid.has(w) || w === spell);
+  const all = MOVE_WORDS.filter((w) => !avoid.has(w) || w === gift);
   // Wrong pads from the levels open to her, while there are enough of them:
   // a pad she cannot decode yet is no help as a distractor.
-  const g = gates(store);
-  const open = all.filter((w) => (g[BANK_BY_WORD[w]?.level ?? 1] ?? 1) > 0);
+  const open = all.filter(openWords(store));
   const wrongPool = open.length >= 6 ? open : all;
   // An episode shows at most 2 wrong pads per choice.
   const padWeight = padWeights(store, wrongPool, CHOICES_PER_PART * 2 * 2);
@@ -212,9 +197,9 @@ export function planMoves(store: ProgressStore, input: MoveInput, rand: Rand = M
   const shown = new Set<string>();
   const choice = (first: boolean): MoveChoicePlan | null => {
     let right: string;
-    if (first && spell) right = spell;
+    if (first && gift) right = gift;
     else {
-      const eligible = all.filter((w) => w !== spell && !rights.includes(w));
+      const eligible = all.filter((w) => w !== gift && !rights.includes(w));
       if (!eligible.length) return null;
       right = drawMove(store, eligible, rand, rights);
     }

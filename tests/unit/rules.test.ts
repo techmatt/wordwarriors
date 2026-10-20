@@ -17,7 +17,7 @@ import { DIGRAPH_SOUNDS, LETTERS } from '../../content/phonics/letters';
 import { FETCH_ITEMS, FRAMES, allFrameTokens, allPrefixes, sentence, tokenWord } from '../../content/phonics/sentences';
 import { SPELL_WORDS, spellWordsFor } from '../../content/phonics/spelling';
 import { CVC_WORDS, SPECIAL_WORDS, WORDS } from '../../content/phonics/words';
-import { WAKERS, letterSoundLine, moveLine, narratorLine, nameLine, rimeLine, sillyLine, tauntLine, ultimateLine, wakeLine, wordLine } from '../../content/voice/ids';
+import { WAKERS, coreLine, heroKey, letterSoundLine, moveKey, moveLine, narratorLine, nameLine, rimeLine, sillyLine, tauntLine, ultimateLine, villainKey, wakeCastKey, wakeLine, wordLine } from '../../content/voice/ids';
 import { CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE_LINES } from '../../content/voice/script';
 import { pickWeighted, ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
 import { blendRound, choiceCount, pictureRound, soundRound } from '../../src/rules/rounds';
@@ -180,15 +180,15 @@ test('voice: every line id the game derives exists in lines.json and the manifes
       want.push(...f.abilities.filter((a) => a.power >= 2).map((a) => moveLine(id, a.id)));
     }
   }
+  for (const k of ['title', 'pick_hero', 'pick_ally', 'pick_villain', 'nobody', 'surprise']) want.push(coreLine(k));
   // Narrators are persons (a dad narrates in his own voice in every form);
   // villain lines are per roster id (each villain form has its own counter).
   for (const c of PERSONS) {
     for (const t of NARRATOR_LINES) want.push(narratorLine(c.id, t.key));
-    for (const v of ROSTER) want.push(narratorLine(c.id, `alarm_villain_${v.id}`), narratorLine(c.id, `need_item_${v.id}`), narratorLine(c.id, `made_item_${v.id}`));
-    for (const h of PERSONS) if (h.id !== c.id) want.push(narratorLine(c.id, `alarm_hero_${h.id}`));
+    for (const v of ROSTER) for (const k of ['alarm_villain', 'need_item', 'made_item', 'need_counter', 'got_counter'] as const) want.push(narratorLine(c.id, villainKey(k, v.id)));
+    for (const h of PERSONS) if (h.id !== c.id) want.push(narratorLine(c.id, heroKey('alarm_hero', h.id)));
     // Every move word (the bank's actions): its pad lines, and the hub's gift clip (item 037).
-    for (const w of MOVE_WORDS) for (const k of ['use_move', 'gift_word', 'not_move', 'was_move', 'find_move']) want.push(narratorLine(c.id, `${k}_${w}`));
-    for (const v of ROSTER) want.push(narratorLine(c.id, `need_counter_${v.id}`), narratorLine(c.id, `got_counter_${v.id}`));
+    for (const w of MOVE_WORDS) for (const k of ['use_move', 'gift_word', 'not_move', 'was_move', 'find_move'] as const) want.push(narratorLine(c.id, moveKey(k, w)));
     // The home quest and the fallback hub scene, for a helper without their own.
     HOME_QUEST.lines.forEach((_, i) => want.push(homeQuestLine(c.id, i + 1)));
     ANY_SCENES.forEach((s, i) => {
@@ -202,8 +202,8 @@ test('voice: every line id the game derives exists in lines.json and the manifes
   }
   for (const waker of WAKERS) {
     want.push(wakeLine(waker, 'up'), wakeLine(waker, 'door'), wakeLine(waker, 'hi'));
-    for (const c of PERSONS) if (c.id !== waker) want.push(wakeLine(waker, `good_${c.id}`), wakeLine(waker, `helper_${c.id}`));
-    for (const c of ROSTER) want.push(wakeLine(waker, `bad_${c.id}`));
+    for (const c of PERSONS) if (c.id !== waker) want.push(wakeLine(waker, wakeCastKey('good', c.id)), wakeLine(waker, wakeCastKey('helper', c.id)));
+    for (const c of ROSTER) want.push(wakeLine(waker, wakeCastKey('bad', c.id)));
   }
   // The quests' setup lines (item 025), every variant (item 037).
   for (const [owner, q] of Object.entries(QUESTS)) q.lines.forEach((_, i) => want.push(questLine(owner, i + 1)));
@@ -290,7 +290,7 @@ test('speech rule: no narrator line contains a reading word', () => {
     for (const helper of ['elsa', 'ellie', c.id]) {
       const fill = { villain: c.id, helper, hero: 'julia' };
       for (let seed = 1; seed <= 25; seed++) {
-        const plans = sentencePlans(new ProgressStore(memory()), { fill, ally: helper, spell: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic' }, seeded(seed));
+        const plans = sentencePlans(new ProgressStore(memory()), { fill, ally: helper, gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic' }, seeded(seed));
         for (const p of plans) check(p.sentence);
       }
     }

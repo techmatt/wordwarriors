@@ -22,9 +22,9 @@
  * `?primary=`, `?secondary=`, src/scenes/BootScene.ts); what is left is drawn.
  */
 
-import { CHARACTER_BY_ID, PERSONS, formId, formsOf, personOf } from '../../content/battle/roster';
+import { PERSONS, formId, formsOf, personOf } from '../../content/battle/roster';
 import { ACTIVE_CAST, CAST_ODDS } from '../config';
-import type { Rand } from './sentences';
+import type { Rand } from './bank';
 
 /** The two dads: the only wakers (their wake-up lines are voiced). */
 export const DADS = ['dada_matt', 'dada_jason'] as const;
@@ -173,6 +173,3 @@ export function seededRand(seed: number): Rand {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
-
-/** True for a roster id. */
-export const isCharacter = (id: string) => Boolean(CHARACTER_BY_ID[id]);

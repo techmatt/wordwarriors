@@ -5,7 +5,8 @@
  */
 
 import { SENTENCE_GAMES } from '../../src/rules/minigames';
-import { asSentence, episodePlans, type EpisodeInput, type Rand, type SentencePlan } from '../../src/rules/sentences';
+import type { Rand } from '../../src/rules/bank';
+import { asSentence, episodePlans, type EpisodeInput, type SentencePlan } from '../../src/rules/sentences';
 import type { ProgressStore } from '../../src/state/ProgressStore';
 
 export function sentencePlans(store: ProgressStore, input: EpisodeInput, rand?: Rand): [SentencePlan, SentencePlan, SentencePlan] {

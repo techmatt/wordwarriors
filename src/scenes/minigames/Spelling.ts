@@ -18,7 +18,7 @@ import Phaser from 'phaser';
 import { WORD_BY_ID, pictureFor } from '../../../content/phonics/words';
 import { LETTER_BY_CHAR } from '../../../content/phonics/letters';
 import { spellWordsFor } from '../../../content/phonics/spelling';
-import { letterSoundLine, narratorLine, wordLine } from '../../../content/voice/ids';
+import { letterSoundLine, narratorLine, villainKey, wordLine } from '../../../content/voice/ids';
 import { voiceBus } from '../../audio/VoiceBus';
 import { sfxBoing, sfxKey } from '../../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../../config';
@@ -218,7 +218,7 @@ export class Spelling extends Minigame {
     }
     this.boxes = [];
     const counter = villainSpec().counter;
-    await this.completePrize(`item_${counter.id}`, `made_item_${episode.villain}`);
+    await this.completePrize(`item_${counter.id}`, villainKey('made_item', episode.villain));
     episode.made.item = true;
     this.done();
   }

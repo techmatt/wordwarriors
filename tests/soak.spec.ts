@@ -12,9 +12,9 @@
 
 import { test, expect } from '@playwright/test';
 
-import { boot, collectErrors, expectNoErrors, playEpisode, press, state, until } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, playEpisode, press, state, until } from './harness';
 
-test('two episodes back to back @slow', async ({ page }) => {
+test('two episodes back to back', SLOW, async ({ page }) => {
   test.setTimeout(1_500_000);
   const errors = collectErrors(page);
   await boot(page, '?seed=1');
@@ -36,7 +36,7 @@ test('two episodes back to back @slow', async ({ page }) => {
   const fresh = await state(page);
   expect(fresh.episode.fetched).toEqual([]);
   expect(fresh.episode.house.done).toEqual([]);
-  expect(fresh.episode.spell).toBeNull();
+  expect(fresh.episode.gift).toBeNull();
   await page.waitForTimeout(800);
   await press(page, 'green');
   const second = await playEpisode(page);

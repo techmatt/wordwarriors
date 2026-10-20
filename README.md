@@ -6,9 +6,12 @@ battles between her favourite characters. Phaser 3 + TypeScript + Vite.
 ## Run it
 
 ```
-npm install
+npm ci
 npm run dev
 ```
+
+`npm ci` installs exactly what `package-lock.json` pins (a fresh checkout or worktree);
+`npm install <pkg>` only when adding or bumping a dependency, committing the lock file.
 
 Then open **http://localhost:5174** in Chrome or Edge and press F11 for fullscreen. Plug
 the Xbox 360 pad in first; press green (A) on the title screen. The keyboard works too:
@@ -21,7 +24,7 @@ note; one mouse click (or Space) turns it on. To skip that entirely, open the ga
 Chrome started with `--autoplay-policy=no-user-gesture-required`, e.g.
 `"C:\Program Files\Google\Chrome\Application\chrome.exe" --autoplay-policy=no-user-gesture-required --user-data-dir=%TEMP%\ww-chrome http://localhost:5174`.
 
-The first `npm install` on a machine also needs Playwright's browser for the tests and
+The first install on a machine also needs Playwright's browser for the tests and
 the art painter: `npx playwright install chromium chromium-headless-shell`.
 
 A fresh conductor worktree has no `node_modules/`: run `npm ci` first (about a minute).
@@ -252,13 +255,16 @@ Two lanes (re-measured in item 036, 2026-10-19):
 
 - **Fast lane, after every change: `npm test`** (about a minute). The unit tests (3 s), then
   the browser tests not tagged `@slow`, each under 10 s: title and the grown-ups page, a
-  solid sentence frame, Spell the Spell, the word machine opening, the cast and fight-style
-  overrides, never last episode's victory scene, and the three text-fit checks.
+  solid sentence frame, dad lock, a key held through a scene change, Spell the Spell, the
+  word machine opening, the cast and fight-style overrides and the cast's own fight
+  style, never last episode's victory scene, and the three text-fit checks.
+  `npm run test:unit` runs the unit tests alone.
 - **Everything, before every commit: `npm run test:all`** (about 18 minutes). The fast lane plus
   the slow lane, which `npm run test:slow` runs alone: every test tagged `@slow`, the one
   whole episode at real time, and two drawn-cast episodes back to back.
 
-A new browser test that takes more than about 10 s gets `{ tag: '@slow' }`. Before adding
+A new browser test that takes more than about 10 s gets `SLOW` (`{ tag: '@slow' }`, from
+`tests/harness.ts`) as its options; `--grep @slow` matches the tag, not the title. Before adding
 a slow test, look for a walk that already goes there: item 036 took the full run from 45
 minutes back down by folding new checks into walks that were already played (a drawn
 cast's bedroom checks into the warm-up's seed sweep, the random-cast episodes into the
@@ -299,7 +305,10 @@ empty never got past the boot's loading. Seen in item 034 when the machine was l
 in any run where `src/` changed underneath: the dev server reloads the page): the same
 tests passed when rerun alone. Rerun them alone before suspecting the code.
 If 5184 is busy (another worktree's run) the suite fails at once rather than testing the
-wrong code.
+wrong code. To run on another port (a conductor item is given one), serve it yourself and
+point the suite at it: `npx vite --port <p> --strictPort` in the background, then
+`WW_BASE_URL=http://localhost:<p> npx playwright test --grep-invert @slow` (the fast
+lane's browser half; `npm run test:unit` for the rest).
 
 **Screenshots for judging the UI by eye** (not tests; item 024):
 `SHOTS_TAG=<tag> npx playwright test --config tests/shots/shots.config.ts` plays the
@@ -356,10 +365,8 @@ About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it r
   starves the first, and scenarios time out at boot with an empty scene (seen in item 039).
 - Known issues and Matt's calls are in `docs/qa-findings.md`; a hunt reads it first and
   does not re-report them.
-- **A throwaway script that imports game code does not go in `scratch/`** in a worktree:
-  `scratch/` is a junction into the main checkout, so `../src/...` from there resolves to
-  the main checkout's code, not the worktree's (a fix "missing" in item 039 was this). Put
-  it under `test-results/` (ignored, the worktree's own) and import `../../src/...`.
+- A throwaway script that imports game code does not go in `scratch/` (*Operational
+  facts*).
 
 ## Content work
 
@@ -530,9 +537,6 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   (`npx tsx tools/art/alts.ts alts <ids…>`); without it the first id is taken as the
   command and skipped. A run whose id list names a picture deleted meanwhile still
   draws its candidates and fails only at the sheet: rebuild it with `--sheet-only`.
-- A `tsx` script in `scratch/` imports the main checkout's code, not a worktree's:
-  `scratch/` is a junction to the main checkout's. Import by `file:///` URL, or keep
-  the script in the worktree.
 - `art:pick -- <id> <n>` makes candidate `n` the game's art: it becomes
   `art-originals/<id>.png` and is cut into `public/art/<id>.png` by the same keying,
   trimming and palette shrink as `art:gen`. Commit the PNG afterwards. The first pick of
@@ -548,45 +552,24 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
 - An outfit of a family member (`char_julia_chef`, item 012) is a hand-added entry in
   `content/art/assets.ts`, not a roster character: `refFor` gives any
   `char_<person>_<word>` id that person's photo reference, and the brief reuses their
-  roster look up to the clothes. Its sheet is `scratch/art_alts_012_julia_chef.png`, its
-  picker manifest `scratch/art_alts_012_julia_chef.json`. An outfit's face card is
-  `face_<person>_<word>` (`face_julia_chef`, item 016), which `refFor` also matches;
-  its sheet is `scratch/art_alts_016_julia_chef.png`, its manifest
-  `scratch/art_alts_016_julia_chef.json`.
-- `scratch/` is a junction to the main checkout's: a script in it imports with `../../`
-  from the main checkout, not the worktree. Keep throwaway scripts outside it.
-- Item 009's sheets (2026-10-18) are `scratch/art_alts_009_<group>.png`; its picker
-  manifest, all 13 ids in one, is `scratch/art_alts_009.json`.
-- Item 013's (Tiamat, all six of her ids) are `scratch/art_alts_013_tiamat.png` and
-  `scratch/art_alts_013_tiamat.json`. Three `art:alts` runs on disjoint ids ran side
-  by side; each writes its own sheet and manifest, so one `--sheet-only` run over all
-  the ids afterwards makes the combined one.
-- Item 018's move-word pictures (20 `pic_` ids, 3 candidates each, the best
-  promoted) are `scratch/art_alts_018_moves.png` and `scratch/art_alts_018_moves.json`;
-  three runs (`art_alts_018_a`/`_b`/`_c`) drew them side by side, about 1% of Codex's
-  5-hour window per image (2026-10-18).
-- Item 032's weightlifter Dada Matt redraw (good, evil, face; T-shirt and dumbbell, the
-  best promoted) is `scratch/art_alts_032_lifter.png` and `scratch/art_alts_032_lifter.json`.
-  Each candidate took 35 to 60 s with the photo reference (2026-10-19).
-- Item 035's -UG pictures (MUG, RUG, JUG, and CUP redrawn as a teacup so it is not a
-  mug; the best promoted) are `scratch/art_alts_035_ug.png` and
-  `scratch/art_alts_035_ug.json`. A word picture took 30 to 50 s, about 0.3% of Codex's
-  5-hour window each (2026-10-19).
-- Item 037's word bank pictures (81 new words, 3 candidates each, the clearest promoted
-  by a review pass) are `scratch/art_alts_037_words.json`, one row per word; the four
-  runs' own sheets are `scratch/art_alts_037_words_<0-3>.png`. Four `art:alts` runs of
-  about 20 ids side by side drew the 243 images in about 50 minutes, 30 to 50 s each,
-  and took Codex's 5-hour window from 7% to 66% (about 0.25% an image) and the weekly
-  one from 30% to 39% (2026-10-19). An action word's picture is the hardest to make
-  name itself (SNAP comes out a crocodile, LIFT a crane): it is only ever shown after
-  she has read the word, never as the thing to find.
-- Item 041's cyber Dada Matt round (`char_dada_matt_cyber_good`, the first drawn from
-  briefs: five looks, 2 candidates each, 4 to 13; none promoted, Matt picks) is
-  `scratch/art_alts_041_cyber_matt.png` and `scratch/art_alts_041_cyber_matt.json`; the
-  briefs are `scratch/041_cyber_<look>.txt`, each run's own sheet
-  `scratch/art_alts_041_cyber_matt_<look>.png`. With the photo reference a candidate took
-  50 to 75 s and about 0.5% of Codex's 5-hour window (2026-10-20). The briefs use
-  `MATT_LIFTER`'s wording (fit, not bulky), not `MATT_FACE`'s bodybuilder.
+  roster look up to the clothes. An outfit's face card is `face_<person>_<word>`
+  (`face_julia_chef`, item 016), which `refFor` also matches.
+- **Where each round is:** a round's sheet and picker manifest are
+  `scratch/art_alts_<item>_<name>.png` / `.json` (`ls scratch/art_alts_*`; item 009's
+  manifest is `scratch/art_alts_009.json`, item 037's four runs share
+  `scratch/art_alts_037_words.json`), and a brief round's briefs are
+  `scratch/<item>_<name>_<look>.txt`. Runs side by side each write their own sheet and
+  manifest; one `--sheet-only` run over all the ids afterwards makes the combined one.
+- **Measured costs:** a word picture takes 30 to 50 s and about 0.25 to 0.3% of Codex's
+  5-hour window; with a photo reference 35 to 75 s and up to 0.5% (items 032, 035,
+  037, 041, 2026-10-19 to 20). Four runs of about 20 ids side by side drew 243 images in
+  about 50 minutes and took the 5-hour window from 7% to 66%, the weekly from 30% to 39%
+  (item 037).
+- An action word's picture is the hardest to make name itself (SNAP comes out a
+  crocodile, LIFT a crane): it is only ever shown after she has read the word, never as
+  the thing to find.
+- Item 041's cyber briefs use `MATT_LIFTER`'s wording (fit, not bulky), not
+  `MATT_FACE`'s bodybuilder.
 - `npm test` empties `test-results/` as it starts (Playwright's output folder): a
   script or log kept there by a run beside it is deleted. Keep logs in `scratch/`.
 - A new `prop_word_machine` means refitting `WINDOW` / `PANEL` in
@@ -631,10 +614,12 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   last word + 0.2 s (`tools/voice/mp3.ts`). That took the voice folder from 23.7 MB to
   about 19 MB (1,557 lines then). Generated voice left git on 2026-10-18 (item 008) at
   3,590 mp3s, 42.3 MB with manifest and cache; it lives in `public/voice-gen/` (*Storage*).
-- `scratch/` is a junction into the main checkout, so a `.ts` file run from there with
-  `npx tsx` resolves its relative imports against the main checkout's code, not the
-  worktree's (seen 2026-10-19, item 027). Put a throwaway script in the worktree root and
-  delete it after.
+- **A throwaway script that imports game code does not go in `scratch/`.** `scratch/` is
+  a junction into the main checkout, so a `.ts` file run from there with `npx tsx`
+  resolves its relative imports against the main checkout's code, not the worktree's
+  (items 027 and 039: a fix looked "missing"). Put it in the worktree (the root, or
+  `test-results/` when no `npm test` runs meanwhile, since that empties it) and delete it
+  after; or import by `file:///` URL.
 - The bubble pops in over 180 ms (scale 0.2 to 1): a screenshot taken just as a bark
   starts shows it tiny. Wait half a second after a line starts before a shot.
 - Placeholder art is painted in headless Chromium so emoji render; Windows 10's emoji

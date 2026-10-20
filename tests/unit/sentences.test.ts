@@ -36,8 +36,8 @@ const HELPER = EPISODE_DEFAULTS.ally ?? 'elsa';
 const HERO = EPISODE_DEFAULTS.hero;
 const FILL = { villain: VILLAIN, helper: HELPER, hero: HERO };
 
-function input(villain = VILLAIN, helper = HELPER, hero = HERO, spell = 'zap'): EpisodeInput {
-  return { fill: { villain, helper, hero }, ally: helper, spell, rooms: ['kitchen', 'garage'], counterRoom: 'attic' };
+function input(villain = VILLAIN, helper = HELPER, hero = HERO, gift = 'zap'): EpisodeInput {
+  return { fill: { villain, helper, hero }, ally: helper, gift, rooms: ['kitchen', 'garage'], counterRoom: 'attic' };
 }
 
 const words = (s: string) => s.toLowerCase().split(/[^a-z]+/).filter(Boolean);
@@ -114,7 +114,7 @@ test('the counter is random: any pictured, decodable word, under the 009 exclusi
   // not a move word (battle 1's pads); not a word fetched this episode (battle
   // 1's banners); not a word the villain's taunts or anything else the
   // episode's characters say first; not a word any of the episode's sentences
-  // shows; not the spell. The attic offers its picture, and battle 2 uses it.
+  // shows; not the gift word. The attic offers its picture, and battle 2 uses it.
   const decodable = new Set(CVC_WORDS.filter((w) => w.decodable).map((w) => w.word));
   for (const v of ROSTER) {
     const taunts = new Set(v.evil.taunts.flatMap((t) => [...words(t.text), ...words(t.say ?? '')]));
@@ -325,7 +325,7 @@ test("every frame token's word line is in allFrameTokens", () => {
   }
 });
 
-test('room objects: no look-alike of the key, no word of the sentence, not the spell, no other key word', () => {
+test('room objects: no look-alike of the key, no word of the sentence, not the gift word, no other key word', () => {
   const check = (p: SentencePlan, avoid: string[]) => {
     const key = p.sentence.key;
     const others = p.objects.filter((o) => o !== key);

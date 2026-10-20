@@ -11,7 +11,7 @@ import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
 import { PERSONS } from '../../content/battle/roster';
-import { fighterId, nameLine } from '../../content/voice/ids';
+import { coreLine, fighterId, nameLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxSelect, sfxSummon } from '../audio/sfx';
 import { GAME_WIDTH } from '../config';
@@ -88,11 +88,11 @@ export class PickScene extends RoomScene {
     this.add
       .text(GAME_WIDTH / 2, 50, title, { fontFamily: '"Arial Black", sans-serif', fontSize: '52px', color: evil ? '#ff5a6a' : '#ffd23f', stroke: '#000000', strokeThickness: 10 })
       .setOrigin(0.5);
-    void this.speak(`core_pick_${this.what}`);
+    void this.speak(coreLine(`pick_${this.what}`));
   }
 
   protected override hint(): void {
-    void this.speak(`core_pick_${this.what}`);
+    void this.speak(coreLine(`pick_${this.what}`));
   }
 
   protected choose(spot: Spot): void {
@@ -112,13 +112,13 @@ export class PickScene extends RoomScene {
         await this.speak(nameLine(spot.id));
       } else if (this.what === 'ally') {
         episode.ally = spot.id === 'nobody' ? null : spot.id;
-        await this.speak(spot.id === 'nobody' ? 'core_nobody' : nameLine(spot.id));
+        await this.speak(spot.id === 'nobody' ? coreLine('nobody') : nameLine(spot.id));
       } else {
         const random = spot.id === 'surprise';
         episode.villain = random ? randomVillain() : spot.id;
         episode.villainWasRandom = random;
         if (random) {
-          await this.speak('core_surprise');
+          await this.speak(coreLine('surprise'));
           flash(this, 0x5a1a7a, 300);
           sfxSummon();
           const v = this.art(charArt(episode.villain, true), CARD_W * 2, CARD_H * 2, spot.x, spot.y);

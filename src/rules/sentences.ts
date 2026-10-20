@@ -21,7 +21,7 @@
  *
  * A key word is never spoken or shown before its room asks for it, so the
  * draw keeps out every word the episode says or shows earlier: its sentences'
- * own frame words and names, the taught spell, and everything the hero, ally
+ * own frame words and names, the gift word, and everything the hero, ally
  * and villain say or show (`saidEarly`). The counter word also keeps out the
  * words on battle 1's move pads (planned up front, src/rules/moves.ts) and the
  * episode's fetch words (battle 1's item banners).
@@ -35,9 +35,7 @@ import { MINIGAMES, drawGames, type Minigame } from './minigames';
 import { machineWords, planMachine, type MachinePlan } from './wordMachine';
 import { SENTENCE_SOLID } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
-import { distractorsFor, drawWords, openWords, withStems } from './bank';
-
-export type Rand = () => number;
+import { distractorsFor, drawFromBag, shuffle, withStems, type Rand } from './bank';
 
 interface PlanBase {
   /** `a` and `b` are the hub's two side-room doors; `counter` is the attic. */
@@ -113,13 +111,8 @@ export function distractors(store: ProgressStore, key: string, rand: Rand = Math
 
 function objectsFor(store: ProgressStore, s: Sentence, rand: Rand, avoid: string[]): string[] {
   const key = s.key;
-  const all = [key, ...distractors(store, key, rand, 2, [...avoid, ...s.tokens.map(tokenWord)])];
-  // Shuffle so the answer is not always in the same place.
-  for (let i = all.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [all[i], all[j]] = [all[j]!, all[i]!];
-  }
-  return all;
+  // Shuffled so the answer is not always in the same place.
+  return shuffle([key, ...distractors(store, key, rand, 2, [...avoid, ...s.tokens.map(tokenWord)])], rand);
 }
 
 export function wordsOf(s: string | undefined): string[] {
@@ -177,18 +170,8 @@ export function drawKey(
   keepOut: string[] = [],
   boost: (w: string) => number = () => 1,
 ): string {
-  const ok = new Set(eligible);
-  const open = openWords(store);
   store.topUpBag(BAG_WORDS, LEGACY_BAG_WORDS);
-  // A bag left with only words of a shut level counts as spent (item 039).
-  let pool = store.bag().left.filter((w) => ok.has(w));
-  if (!pool.some(open)) {
-    store.refillBag(BAG_WORDS.filter((w) => !keepOut.includes(w)));
-    pool = store.bag().left.filter((w) => ok.has(w));
-  }
-  if (!pool.some(open) && eligible.some(open)) pool = eligible.filter(open);
-  if (!pool.length) pool = [...eligible];
-  return drawWords(store, pool, 1, rand, boost)[0]!;
+  return drawFromBag(store, 'keys', BAG_WORDS, eligible, rand, keepOut, boost);
 }
 
 export interface EpisodeInput {
@@ -196,7 +179,7 @@ export interface EpisodeInput {
   /** The ally, or null (the helper is then the narrator). */
   ally: string | null;
   /** The hub's gift word (an action word): said before any room, so never a key word. */
-  spell: string;
+  gift: string;
   /** The two side rooms (SIDE_ROOMS ids) for doors a and b, and the attic. */
   rooms: [string, string];
   counterRoom: string;
@@ -225,7 +208,7 @@ export interface EpisodeInput {
  * counter sentence. Draws three words from the bag (spent as she reads them).
  */
 export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Rand = Math.random): [RoomPlan, RoomPlan, RoomPlan] {
-  const { fill, spell } = input;
+  const { fill, gift } = input;
   // The rooms' games come from the minigame pool (item 025); each sentence game is a frame.
   const games = [...(input.games ?? drawGames(store, rand, input.pool))] as [Minigame, Minigame, Minigame];
   if (games[2].machine) throw new Error('episodePlans: the word machine is a fetch room, not the counter');
@@ -237,7 +220,7 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   // Every word any of the sentences shows besides its key word: she reads
   // them (and hears them on green) in every room, so none is a key word.
   const shown = frames.flatMap((f) => (f ? sentence(f, fill, 'x').tokens.slice(0, -1).map(tokenWord) : []));
-  const avoid = new Set(withStems([spell, ...shown, ...(input.saidBefore ?? []), ...saidEarly({ hero: fill.hero, ally: input.ally, villain: fill.villain, helper: fill.helper })]));
+  const avoid = new Set(withStems([gift, ...shown, ...(input.saidBefore ?? []), ...saidEarly({ hero: fill.hero, ally: input.ally, villain: fill.villain, helper: fill.helper })]));
 
   // The word machine builds several words (item 026): they are planned first,
   // so the sentence rooms and the counter keep clear of all of them.
@@ -286,8 +269,8 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
     const m = machines[i];
     if (m) return { ...base, kind: 'machine', machine: m, fetches: machineWords(m) };
     const s = sentence(frames[i]!, fill, keys[i]!);
-    // No room offers the spell or another of the episode's key words as a wrong picture.
-    const others = [spell, ...keys.filter((k) => k !== keys[i]), ...taken];
+    // No room offers the gift word or another of the episode's key words as a wrong picture.
+    const others = [gift, ...keys.filter((k) => k !== keys[i]), ...taken];
     return { ...base, kind: 'sentence', fetches: [keys[i]!], sentence: s, objects: objectsFor(store, s, rand, others) };
   }) as [RoomPlan, RoomPlan, RoomPlan];
 }

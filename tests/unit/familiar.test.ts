@@ -1,6 +1,7 @@
 /**
- * Item 040: only familiar words where she matches a word to a picture, and the
- * episode's line variants (wake-up, bedroom taunt, sorry, victory line).
+ * Only familiar words where she matches a word to a picture (item 040: the
+ * bank's `odd` flag), and the episode's line variants (wake-up, bedroom
+ * taunt, sorry, victory line).
  */
 
 import { test } from 'node:test';

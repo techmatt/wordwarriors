@@ -1,6 +1,7 @@
 /**
- * Item 039 (the bug hunt): its rule fixes, kept fixed (the word draws, the battle's give-aways).
- * `npx tsx --test tests/unit/bughunt039.test.ts` (also part of `npm run test:unit`).
+ * Word rules across the draws (item 039's bug hunt, kept fixed): a bag of shut levels is spent, no
+ * "A" frame before a vowel, other pictures start with another sound, stems count as said, and no
+ * fight style floats a bank word. `npx tsx --test tests/unit/wordrules.test.ts` (also part of `npm run test:unit`).
  */
 
 import assert from 'node:assert/strict';
@@ -57,7 +58,7 @@ test('no "A" frame takes a word starting with a vowel (WE NEED A ANT)', () => {
     const input: EpisodeInput = {
       fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' },
       ally: 'ellie',
-      spell: 'zap',
+      gift: 'zap',
       rooms: ['kitchen', 'garage'],
       counterRoom: 'attic',
       games: [g('we_need_a'), g('helper_needs_a'), g('runs_from_the')],

@@ -139,7 +139,7 @@ test('said early: the grab word, passed as saidBefore, is never a room key, the 
     const store = new ProgressStore(memory());
     const word = pickGrab(store, ['zap'], seeded(seed));
     const games = machine && seed % 2 ? { games: [machine, MINIGAME_BY_ID['sentence:we_can_use_the']!, MINIGAME_BY_ID['sentence:scared_of_the']!] as EpisodeInput['games'] } : {};
-    const input: EpisodeInput = { fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', spell: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic', saidBefore: [word], ...games };
+    const input: EpisodeInput = { fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic', saidBefore: [word], ...games };
     const plans = episodePlans(store, input, seeded(seed + 100));
     for (const p of plans) {
       assert.notEqual(p.key, word, `seed ${seed}: ${p.slot} key`);

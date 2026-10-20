@@ -72,7 +72,7 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | `content/phonics/` | Letter sounds (placeholder spellings by sound class; `DIGRAPH_SOUNDS` SH CH TH CK), `words.ts` (the bank's pictured words as `CVC_WORDS`, sight words, move pictures), and `sentences.ts` (frames, key-word look-alikes; `FETCH_ITEMS` from the bank's things). |
 | `content/house/house.ts` | Bedrooms (objects and their reactions), the hub layout, side rooms, quest places. |
 | `content/house/endings.ts`, `src/rules/endings.ts` | The victory scenes (item 027): backgrounds, props, lines by role; the draw and who says what. |
-| `content/voice/` | `script.ts` (narrator templates), `ids.ts` (line ids), `voices.json`, `lines.json` (generated), `clips/` (recordings that override edge-tts). |
+| `content/voice/` | `script.ts` (narrator templates), `ids.ts` (every line id and narrator key is built by its builders, game and composer alike: never spell `find_move_${w}` by hand), `voices.json`, `lines.json` (generated; the game reads `public/voice-gen/manifest.json`), `clips/` (recordings that override edge-tts). |
 | `content/art/assets.ts` | Every art asset id, size and brief. |
 | `public/art/` | Generated, committed. Do not hand-edit. |
 | `public/voice-gen/` | Generated voice (mp3s, manifest, build cache). Untracked: a junction to the Drive folder. Do not hand-edit. |
@@ -100,6 +100,10 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `npm run art:gen -- <ids…>` | Real art from `content/art/prompts.ts` via Codex's image tool (README, "Real art"); `--force`, `--reprocess`, `--sheet` |
 | `npm run art:alts -- <ids…> --sheet=<file>` | Draw 3 candidates per id into `art-originals/alts/` and a comparison sheet; the game's art is untouched. `--brief=scratch/<name>.txt` (one id) draws from that prompt instead of the tracked one |
 | `npm run art:pick -- <id> <n>` | Make candidate `n` the game's art (`0` restores the original); commit the PNG. A brief's candidate: it prints the brief, which goes into the game's prompt in the same commit |
+| `npm run voice:status` | Recorded / stale / still edge-tts, letter sounds first |
+| `npm run voice:clip -- <id> <file.mp3>` | Put a recording in place of a line |
+| `npm run test:unit` | The unit tests alone (~3 s) |
+| `npm run preview` | Serve the built `dist/` |
 
 A **candidate round** (draw + contact sheet + picker manifest) writes only to the shared,
 git-ignored `art-originals/alts/` and `scratch/`, changes nothing tracked, and may run as
@@ -107,8 +111,6 @@ a **readonly** item; a new look is a `--brief` file in `scratch/`, not an edit t
 `content/art/prompts.ts`. **Promotion** (`art:pick`) is a normal item: it commits the PNG
 and writes a brief's text into the game (the roster `look` for a character, else `HAND`
 in `content/art/prompts.ts`) so the prompt matches the art (README, *Candidates*).
-| `npm run voice:status` | Recorded / stale / still edge-tts, letter sounds first |
-| `npm run voice:clip -- <id> <file.mp3>` | Put a recording in place of a line |
 
 Adding a character, ability, word or line is data work: edit `content/`, then
 `npm run voice:lines && npm run voice:build && npm run art:placeholders`.

@@ -3,7 +3,9 @@
  *
  * The composer (tools/voice/compose.ts) writes lines under these ids and the
  * game asks for them by the same functions, so a renamed id cannot drift.
- * `npm run voice:lines` fails if a derived id the game uses is missing.
+ * `npm run voice:lines` only refuses duplicate ids; what guards a missing one is
+ * tests/unit/rules.test.ts, which builds every derived id the game asks for with
+ * these same functions and checks the composer writes it and the manifest has it.
  */
 
 /** The fixed narrator before an ally exists, and whenever there is none. */
@@ -20,6 +22,22 @@ export const wordLine = (word: string) => `word_${word}`;
 export const rimeLine = (rime: string) => `rime_${rime}`;
 export const sillyLine = (word: string) => `silly_${word}`;
 export const narratorLine = (narrator: string, key: string) => `nar_${narrator}_${key}`;
+
+/** A line Dada Matt says before the ally is picked (`CORE_LINES` in script.ts): `core_title`. */
+export const coreLine = (key: string) => `core_${key}`;
+/**
+ * Narrator keys composed per something (the template lists in script.ts):
+ * per hero person (`alarm_hero_julia`), per villain roster id (`need_item_tiamat`),
+ * per move word (`use_move_ice`, `gift_word_zap`). Wrap in `narratorLine`.
+ */
+export type HeroKind = 'alarm_hero';
+export type VillainKind = 'alarm_villain' | 'need_item' | 'made_item' | 'need_counter' | 'got_counter';
+export type MoveKind = 'use_move' | 'gift_word' | 'not_move' | 'was_move' | 'find_move';
+export const heroKey = (kind: HeroKind, hero: string) => `${kind}_${hero}`;
+export const villainKey = (kind: VillainKind, villain: string) => `${kind}_${villain}`;
+export const moveKey = (kind: MoveKind, word: string) => `${kind}_${word}`;
+/** A fight style's own beat line (item 031, content/battle/fights.ts): `fight_race_start`. */
+export const fightKey = (fight: string, beat: string) => `fight_${fight}_${beat}`;
 export const tauntLine = (fighter: string, key: string) => `taunt_${fighter}_${key}`;
 export const ultimateLine = (fighter: string) => `ult_${fighter}`;
 /** A fighter calling out one of its own moves: `move_smaug_evil_inferno`. */
@@ -42,6 +60,16 @@ export const endingLine = (person: string, scene: string, key: string) => `end_$
  * of the owner's person, who is the episode's narrator whenever it helps.
  */
 export const hubLine = (owner: string, n: number, key: string) => `hub_${owner}_${n}_${key}`;
+/** The fallback hub scene's key, for a helper with no scene of their own: `hub_any_1_circle`. Wrap in `narratorLine`. */
+export const hubAnyKey = (n: number, key: string) => `hub_any_${n}_${key}`;
+
+/** A quest's setup line (content/house/quests.ts), n from 1: `quest_<owner>_<n>`. */
+export const questLine = (owner: string, n: number) => `quest_${owner}_${n}`;
+/** The home quest's line `n` in a narrator's voice: `nar_<narrator>_quest_home_<n>`. */
+export const homeQuestLine = (narrator: string, n: number) => narratorLine(narrator, `quest_home_${n}`);
+
+/** A sentence frame's prefix line (content/phonics/sentences.ts): `sent_<frame>` or `sent_<frame>_<character>`. */
+export const sentenceLine = (frame: string, name: string | null) => (name ? `sent_${frame}_${name}` : `sent_${frame}`);
 
 /**
  * The bedroom wake-up, said by whichever dad comes in to wake the hero (the
@@ -52,6 +80,8 @@ export const hubLine = (owner: string, n: number, key: string) => `hub_${owner}_
  */
 export const WAKERS = ['dada_matt', 'dada_jason'] as const;
 export const wakeLine = (waker: string, key: string) => `wake_${waker}_${key}`;
+/** A wake key composed per cast member (before any variant suffix): `good_julia`, `helper_ellie`, `bad_tiamat`. */
+export const wakeCastKey = (kind: 'good' | 'helper' | 'bad', id: string) => `${kind}_${id}`;
 
 /** Voice group names, so a scene can ask for exactly what it is about to say. */
 export const group = {

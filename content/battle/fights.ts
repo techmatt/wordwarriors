@@ -13,9 +13,11 @@
  * data: what it is called, what is said and shown, and where it happens.
  *
  * Lines are said by the narrator (composed per narrator as
- * `<narrator>_fight_<id>_<beat>`): no move words, no CVC reading words.
+ * `nar_<narrator>_fight_<id>_<beat>`): no move words, no CVC reading words.
  * New arenas are ARENAS keys in roster.ts (art `arena_<key>`).
  */
+
+import { fightKey } from '../voice/ids.js';
 
 export type FightKind = 'brawl' | 'race' | 'tug' | 'clash' | 'cookoff';
 
@@ -141,7 +143,7 @@ export const FIGHT_BY_ID: Record<string, FightSpec> = Object.fromEntries(FIGHTS.
 
 /** The narrator line key for a style's beat: its own, else the brawl's. */
 export function fightLineKey(fight: FightSpec, beat: FightBeat): string {
-  return fight.lines[beat] ? `fight_${fight.id}_${beat}` : BRAWL_LINE[beat];
+  return fight.lines[beat] ? fightKey(fight.id, beat) : BRAWL_LINE[beat];
 }
 
 /** Art id of a style's prop. */

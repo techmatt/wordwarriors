@@ -236,7 +236,7 @@ test('minigames: three different games a episode, fetch twice then the counter, 
   }
   assert.equal(seen.size, MINIGAMES.length, 'every game in the pool comes up');
   // The plans carry the drawn game and its scene, in the place's rooms.
-  const plans = episodePlans(store, { fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', spell: 'pop', rooms: ['bubble_baths', 'toy_cloud'], counterRoom: 'rainbow_room' }, rand);
+  const plans = episodePlans(store, { fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', gift: 'pop', rooms: ['bubble_baths', 'toy_cloud'], counterRoom: 'rainbow_room' }, rand);
   assert.deepEqual(plans.map((p) => p.room), ['bubble_baths', 'toy_cloud', 'rainbow_room']);
   for (const p of plans) assert.equal(p.scene, p.kind === 'machine' ? 'WordMachine' : 'SentenceRoom');
 });

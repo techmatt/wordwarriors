@@ -9125,22 +9125,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_julia_inst_spell",
-  "speaker": "julia",
-  "group": "nar_julia",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_julia_spell_this",
   "speaker": "julia",
   "group": "nar_julia",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_julia_hint",
-  "speaker": "julia",
-  "group": "nar_julia",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_julia_right_1",
@@ -9214,12 +9202,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_julia_piece",
-  "speaker": "julia",
-  "group": "nar_julia",
-  "text": "One more piece!"
- },
- {
   "id": "nar_julia_battle_start",
   "speaker": "julia",
   "group": "nar_julia",
@@ -9245,12 +9227,6 @@
   "speaker": "julia",
   "group": "nar_julia",
   "text": "Super power!"
- },
- {
-  "id": "nar_julia_move_ok",
-  "speaker": "julia",
-  "group": "nar_julia",
-  "text": "Nice move!"
  },
  {
   "id": "nar_julia_use_gem",
@@ -12203,22 +12179,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_ellie_inst_spell",
-  "speaker": "ellie",
-  "group": "nar_ellie",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_ellie_spell_this",
   "speaker": "ellie",
   "group": "nar_ellie",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_ellie_hint",
-  "speaker": "ellie",
-  "group": "nar_ellie",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_ellie_right_1",
@@ -12292,12 +12256,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_ellie_piece",
-  "speaker": "ellie",
-  "group": "nar_ellie",
-  "text": "One more piece!"
- },
- {
   "id": "nar_ellie_battle_start",
   "speaker": "ellie",
   "group": "nar_ellie",
@@ -12323,12 +12281,6 @@
   "speaker": "ellie",
   "group": "nar_ellie",
   "text": "Super power!"
- },
- {
-  "id": "nar_ellie_move_ok",
-  "speaker": "ellie",
-  "group": "nar_ellie",
-  "text": "Nice move!"
  },
  {
   "id": "nar_ellie_use_gem",
@@ -15281,22 +15233,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_seraphina_inst_spell",
-  "speaker": "seraphina",
-  "group": "nar_seraphina",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_seraphina_spell_this",
   "speaker": "seraphina",
   "group": "nar_seraphina",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_seraphina_hint",
-  "speaker": "seraphina",
-  "group": "nar_seraphina",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_seraphina_right_1",
@@ -15370,12 +15310,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_seraphina_piece",
-  "speaker": "seraphina",
-  "group": "nar_seraphina",
-  "text": "One more piece!"
- },
- {
   "id": "nar_seraphina_battle_start",
   "speaker": "seraphina",
   "group": "nar_seraphina",
@@ -15401,12 +15335,6 @@
   "speaker": "seraphina",
   "group": "nar_seraphina",
   "text": "Super power!"
- },
- {
-  "id": "nar_seraphina_move_ok",
-  "speaker": "seraphina",
-  "group": "nar_seraphina",
-  "text": "Nice move!"
  },
  {
   "id": "nar_seraphina_use_gem",
@@ -18359,22 +18287,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_dada_matt_inst_spell",
-  "speaker": "dada_matt",
-  "group": "nar_dada_matt",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_dada_matt_spell_this",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_dada_matt_hint",
-  "speaker": "dada_matt",
-  "group": "nar_dada_matt",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_dada_matt_right_1",
@@ -18448,12 +18364,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_dada_matt_piece",
-  "speaker": "dada_matt",
-  "group": "nar_dada_matt",
-  "text": "One more piece!"
- },
- {
   "id": "nar_dada_matt_battle_start",
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
@@ -18479,12 +18389,6 @@
   "speaker": "dada_matt",
   "group": "nar_dada_matt",
   "text": "Super power!"
- },
- {
-  "id": "nar_dada_matt_move_ok",
-  "speaker": "dada_matt",
-  "group": "nar_dada_matt",
-  "text": "Nice move!"
  },
  {
   "id": "nar_dada_matt_use_gem",
@@ -21437,22 +21341,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_dada_jason_inst_spell",
-  "speaker": "dada_jason",
-  "group": "nar_dada_jason",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_dada_jason_spell_this",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_dada_jason_hint",
-  "speaker": "dada_jason",
-  "group": "nar_dada_jason",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_dada_jason_right_1",
@@ -21526,12 +21418,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_dada_jason_piece",
-  "speaker": "dada_jason",
-  "group": "nar_dada_jason",
-  "text": "One more piece!"
- },
- {
   "id": "nar_dada_jason_battle_start",
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
@@ -21557,12 +21443,6 @@
   "speaker": "dada_jason",
   "group": "nar_dada_jason",
   "text": "Super power!"
- },
- {
-  "id": "nar_dada_jason_move_ok",
-  "speaker": "dada_jason",
-  "group": "nar_dada_jason",
-  "text": "Nice move!"
  },
  {
   "id": "nar_dada_jason_use_gem",
@@ -24515,22 +24395,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_elsa_inst_spell",
-  "speaker": "elsa",
-  "group": "nar_elsa",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_elsa_spell_this",
   "speaker": "elsa",
   "group": "nar_elsa",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_elsa_hint",
-  "speaker": "elsa",
-  "group": "nar_elsa",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_elsa_right_1",
@@ -24604,12 +24472,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_elsa_piece",
-  "speaker": "elsa",
-  "group": "nar_elsa",
-  "text": "One more piece!"
- },
- {
   "id": "nar_elsa_battle_start",
   "speaker": "elsa",
   "group": "nar_elsa",
@@ -24635,12 +24497,6 @@
   "speaker": "elsa",
   "group": "nar_elsa",
   "text": "Super power!"
- },
- {
-  "id": "nar_elsa_move_ok",
-  "speaker": "elsa",
-  "group": "nar_elsa",
-  "text": "Nice move!"
  },
  {
   "id": "nar_elsa_use_gem",
@@ -27593,22 +27449,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_anna_inst_spell",
-  "speaker": "anna",
-  "group": "nar_anna",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_anna_spell_this",
   "speaker": "anna",
   "group": "nar_anna",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_anna_hint",
-  "speaker": "anna",
-  "group": "nar_anna",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_anna_right_1",
@@ -27682,12 +27526,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_anna_piece",
-  "speaker": "anna",
-  "group": "nar_anna",
-  "text": "One more piece!"
- },
- {
   "id": "nar_anna_battle_start",
   "speaker": "anna",
   "group": "nar_anna",
@@ -27713,12 +27551,6 @@
   "speaker": "anna",
   "group": "nar_anna",
   "text": "Super power!"
- },
- {
-  "id": "nar_anna_move_ok",
-  "speaker": "anna",
-  "group": "nar_anna",
-  "text": "Nice move!"
  },
  {
   "id": "nar_anna_use_gem",
@@ -30671,22 +30503,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_jasmine_inst_spell",
-  "speaker": "jasmine",
-  "group": "nar_jasmine",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_jasmine_spell_this",
   "speaker": "jasmine",
   "group": "nar_jasmine",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_jasmine_hint",
-  "speaker": "jasmine",
-  "group": "nar_jasmine",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_jasmine_right_1",
@@ -30760,12 +30580,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_jasmine_piece",
-  "speaker": "jasmine",
-  "group": "nar_jasmine",
-  "text": "One more piece!"
- },
- {
   "id": "nar_jasmine_battle_start",
   "speaker": "jasmine",
   "group": "nar_jasmine",
@@ -30791,12 +30605,6 @@
   "speaker": "jasmine",
   "group": "nar_jasmine",
   "text": "Super power!"
- },
- {
-  "id": "nar_jasmine_move_ok",
-  "speaker": "jasmine",
-  "group": "nar_jasmine",
-  "text": "Nice move!"
  },
  {
   "id": "nar_jasmine_use_gem",
@@ -33749,22 +33557,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_ozymandias_inst_spell",
-  "speaker": "ozymandias",
-  "group": "nar_ozymandias",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_ozymandias_spell_this",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_ozymandias_hint",
-  "speaker": "ozymandias",
-  "group": "nar_ozymandias",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_ozymandias_right_1",
@@ -33838,12 +33634,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_ozymandias_piece",
-  "speaker": "ozymandias",
-  "group": "nar_ozymandias",
-  "text": "One more piece!"
- },
- {
   "id": "nar_ozymandias_battle_start",
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
@@ -33869,12 +33659,6 @@
   "speaker": "ozymandias",
   "group": "nar_ozymandias",
   "text": "Super power!"
- },
- {
-  "id": "nar_ozymandias_move_ok",
-  "speaker": "ozymandias",
-  "group": "nar_ozymandias",
-  "text": "Nice move!"
  },
  {
   "id": "nar_ozymandias_use_gem",
@@ -36827,22 +36611,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_jormungandr_inst_spell",
-  "speaker": "jormungandr",
-  "group": "nar_jormungandr",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_jormungandr_spell_this",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_jormungandr_hint",
-  "speaker": "jormungandr",
-  "group": "nar_jormungandr",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_jormungandr_right_1",
@@ -36916,12 +36688,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_jormungandr_piece",
-  "speaker": "jormungandr",
-  "group": "nar_jormungandr",
-  "text": "One more piece!"
- },
- {
   "id": "nar_jormungandr_battle_start",
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
@@ -36947,12 +36713,6 @@
   "speaker": "jormungandr",
   "group": "nar_jormungandr",
   "text": "Super power!"
- },
- {
-  "id": "nar_jormungandr_move_ok",
-  "speaker": "jormungandr",
-  "group": "nar_jormungandr",
-  "text": "Nice move!"
  },
  {
   "id": "nar_jormungandr_use_gem",
@@ -39904,22 +39664,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_smaug_inst_spell",
-  "speaker": "smaug",
-  "group": "nar_smaug",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_smaug_spell_this",
   "speaker": "smaug",
   "group": "nar_smaug",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_smaug_hint",
-  "speaker": "smaug",
-  "group": "nar_smaug",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_smaug_right_1",
@@ -39993,12 +39741,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_smaug_piece",
-  "speaker": "smaug",
-  "group": "nar_smaug",
-  "text": "One more piece!"
- },
- {
   "id": "nar_smaug_battle_start",
   "speaker": "smaug",
   "group": "nar_smaug",
@@ -40024,12 +39766,6 @@
   "speaker": "smaug",
   "group": "nar_smaug",
   "text": "Super power!"
- },
- {
-  "id": "nar_smaug_move_ok",
-  "speaker": "smaug",
-  "group": "nar_smaug",
-  "text": "Nice move!"
  },
  {
   "id": "nar_smaug_use_gem",
@@ -42982,22 +42718,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_tiamat_inst_spell",
-  "speaker": "tiamat",
-  "group": "nar_tiamat",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_tiamat_spell_this",
   "speaker": "tiamat",
   "group": "nar_tiamat",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_tiamat_hint",
-  "speaker": "tiamat",
-  "group": "nar_tiamat",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_tiamat_right_1",
@@ -43071,12 +42795,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_tiamat_piece",
-  "speaker": "tiamat",
-  "group": "nar_tiamat",
-  "text": "One more piece!"
- },
- {
   "id": "nar_tiamat_battle_start",
   "speaker": "tiamat",
   "group": "nar_tiamat",
@@ -43102,12 +42820,6 @@
   "speaker": "tiamat",
   "group": "nar_tiamat",
   "text": "Super power!"
- },
- {
-  "id": "nar_tiamat_move_ok",
-  "speaker": "tiamat",
-  "group": "nar_tiamat",
-  "text": "Nice move!"
  },
  {
   "id": "nar_tiamat_use_gem",
@@ -46060,22 +45772,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_scar_inst_spell",
-  "speaker": "scar",
-  "group": "nar_scar",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_scar_spell_this",
   "speaker": "scar",
   "group": "nar_scar",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_scar_hint",
-  "speaker": "scar",
-  "group": "nar_scar",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_scar_right_1",
@@ -46149,12 +45849,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_scar_piece",
-  "speaker": "scar",
-  "group": "nar_scar",
-  "text": "One more piece!"
- },
- {
   "id": "nar_scar_battle_start",
   "speaker": "scar",
   "group": "nar_scar",
@@ -46180,12 +45874,6 @@
   "speaker": "scar",
   "group": "nar_scar",
   "text": "Super power!"
- },
- {
-  "id": "nar_scar_move_ok",
-  "speaker": "scar",
-  "group": "nar_scar",
-  "text": "Nice move!"
  },
  {
   "id": "nar_scar_use_gem",
@@ -49138,22 +48826,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_moriarty_inst_spell",
-  "speaker": "moriarty",
-  "group": "nar_moriarty",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_moriarty_spell_this",
   "speaker": "moriarty",
   "group": "nar_moriarty",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_moriarty_hint",
-  "speaker": "moriarty",
-  "group": "nar_moriarty",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_moriarty_right_1",
@@ -49227,12 +48903,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_moriarty_piece",
-  "speaker": "moriarty",
-  "group": "nar_moriarty",
-  "text": "One more piece!"
- },
- {
   "id": "nar_moriarty_battle_start",
   "speaker": "moriarty",
   "group": "nar_moriarty",
@@ -49258,12 +48928,6 @@
   "speaker": "moriarty",
   "group": "nar_moriarty",
   "text": "Super power!"
- },
- {
-  "id": "nar_moriarty_move_ok",
-  "speaker": "moriarty",
-  "group": "nar_moriarty",
-  "text": "Nice move!"
  },
  {
   "id": "nar_moriarty_use_gem",
@@ -52216,22 +51880,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_bavmorda_inst_spell",
-  "speaker": "bavmorda",
-  "group": "nar_bavmorda",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_bavmorda_spell_this",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_bavmorda_hint",
-  "speaker": "bavmorda",
-  "group": "nar_bavmorda",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_bavmorda_right_1",
@@ -52305,12 +51957,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_bavmorda_piece",
-  "speaker": "bavmorda",
-  "group": "nar_bavmorda",
-  "text": "One more piece!"
- },
- {
   "id": "nar_bavmorda_battle_start",
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
@@ -52336,12 +51982,6 @@
   "speaker": "bavmorda",
   "group": "nar_bavmorda",
   "text": "Super power!"
- },
- {
-  "id": "nar_bavmorda_move_ok",
-  "speaker": "bavmorda",
-  "group": "nar_bavmorda",
-  "text": "Nice move!"
  },
  {
   "id": "nar_bavmorda_use_gem",
@@ -55294,22 +54934,10 @@
   "text": "Read the word, then walk to its picture!"
  },
  {
-  "id": "nar_rilla_inst_spell",
-  "speaker": "rilla",
-  "group": "nar_rilla",
-  "text": "Type the letters to spell the magic word!"
- },
- {
   "id": "nar_rilla_spell_this",
   "speaker": "rilla",
   "group": "nar_rilla",
   "text": "Spell this one!"
- },
- {
-  "id": "nar_rilla_hint",
-  "speaker": "rilla",
-  "group": "nar_rilla",
-  "text": "Listen to the sounds!"
  },
  {
   "id": "nar_rilla_right_1",
@@ -55383,12 +55011,6 @@
   "text": "A helper friend is here!"
  },
  {
-  "id": "nar_rilla_piece",
-  "speaker": "rilla",
-  "group": "nar_rilla",
-  "text": "One more piece!"
- },
- {
   "id": "nar_rilla_battle_start",
   "speaker": "rilla",
   "group": "nar_rilla",
@@ -55414,12 +55036,6 @@
   "speaker": "rilla",
   "group": "nar_rilla",
   "text": "Super power!"
- },
- {
-  "id": "nar_rilla_move_ok",
-  "speaker": "rilla",
-  "group": "nar_rilla",
-  "text": "Nice move!"
  },
  {
   "id": "nar_rilla_use_gem",

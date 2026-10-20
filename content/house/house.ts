@@ -298,7 +298,7 @@ export const ENTRY_HALL = {
 
 /**
  * The hub: a small main room with the helper, a magic circle where she learns
- * the spell, two side-room doors, a hidden counter door (appears after the
+ * the gift word, two side-room doors, a hidden counter door (appears after the
  * retreat) and the front door (opens once both side rooms are done).
  */
 export const HUB = {

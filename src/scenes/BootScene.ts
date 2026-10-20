@@ -13,8 +13,8 @@
  *   ?fetched=net,fan                    (the battle items fetched; default: the house plan's)
  *   parked v0.1 games: ?scene=sound | blend | picture | spell | alarm | retreat
  *
- * Later steps get the episode they would have had by then: the spell learned
- * in the hub, the earlier rooms done, the fetched items in the bag (the plan's
+ * Later steps get the episode they would have had by then: the gift word
+ * learned in the hub, the earlier rooms done, the fetched items in the bag (the plan's
  * own sentence words, so hub badges, bag and battle agree). A ?hero= that is
  * also the ally drops the ally (the narrator falls back to a Dada). An
  * unknown ?scene= warns and starts the title.

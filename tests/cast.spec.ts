@@ -9,7 +9,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { boot, collectErrors, expectNoErrors, until } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, until } from './harness';
 
 interface Ep {
   hero: string;
@@ -27,7 +27,7 @@ async function episodeOf(page: Page): Promise<Ep> {
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/025_${name}.png` });
 
-test('the same seed casts the same episode (from the same progress) @slow', async ({ browser }) => {
+test('the same seed casts the same episode (from the same progress)', SLOW, async ({ browser }) => {
   const cast = async () => {
     const context = await browser.newContext();
     const page = await context.newPage();

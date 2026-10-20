@@ -36,7 +36,7 @@ const ALLY = EPISODE_DEFAULTS.ally ?? 'ellie';
 /** A gift word that is one of Ellie's (her Giant Bubbles), and one that is nobody's on the team. */
 const STYLED = 'big';
 const PLAIN = 'jump';
-const input = (spell: string): MoveInput => ({ hero: HERO, team: [HERO, ALLY], helper: ALLY, spell });
+const input = (gift: string): MoveInput => ({ hero: HERO, team: [HERO, ALLY], helper: ALLY, gift });
 
 const choices = (p: MovePlan) => [...p.part1, ...p.part2];
 
@@ -73,20 +73,20 @@ test('every word the recap can show has a picture: key words, move words, counte
 });
 
 test('planMoves: two choices a part, 2 or 3 different bank action words each, the gift word opens each part', () => {
-  for (const spell of [STYLED, PLAIN]) {
+  for (const gift of [STYLED, PLAIN]) {
     for (let seed = 1; seed <= 40; seed++) {
-      const p = planMoves(new ProgressStore(memory()), input(spell), seeded(seed));
+      const p = planMoves(new ProgressStore(memory()), input(gift), seeded(seed));
       assert.equal(p.part1.length, CHOICES_PER_PART);
       assert.equal(p.part2.length, CHOICES_PER_PART);
-      assert.equal(p.part1[0]!.right, spell);
-      assert.equal(p.part2[0]!.right, spell);
+      assert.equal(p.part1[0]!.right, gift);
+      assert.equal(p.part2[0]!.right, gift);
       for (const c of choices(p)) {
         assert.ok(c.words.length === 2 || c.words.length === 3, c.words.join(','));
         assert.equal(new Set(c.words).size, c.words.length);
         assert.ok(c.words.includes(c.right));
         for (const w of c.words) assert.ok(MOVE_WORDS.includes(w), `${w} is not a bank action word`);
       }
-      const others = choices(p).filter((c) => c.right !== spell).map((c) => c.right);
+      const others = choices(p).filter((c) => c.right !== gift).map((c) => c.right);
       assert.equal(new Set(others).size, others.length, 'no right word twice but the gift word');
     }
   }
@@ -94,15 +94,15 @@ test('planMoves: two choices a part, 2 or 3 different bank action words each, th
 
 test('owners: a teammate whose move answers to the word fires it styled; any other word is word magic', () => {
   const team = teamMoveWords([HERO, ALLY]);
-  for (const spell of [STYLED, PLAIN]) {
+  for (const gift of [STYLED, PLAIN]) {
     for (let seed = 1; seed <= 40; seed++) {
-      const p = planMoves(new ProgressStore(memory()), input(spell), seeded(seed));
+      const p = planMoves(new ProgressStore(memory()), input(gift), seeded(seed));
       for (const c of choices(p)) {
         const o = c.owner;
-        if (c.right === spell && spell === STYLED) {
+        if (c.right === gift && gift === STYLED) {
           // The gift word Ellie has: her hero fires Ellie's move for it.
           assert.deepEqual([o.fighter, o.from], [HERO, ALLY]);
-        } else if (c.right === spell || !team.has(c.right)) {
+        } else if (c.right === gift ||!team.has(c.right)) {
           assert.equal(o.from, null, `${c.right} is word magic`);
           assert.equal(o.fighter, HERO);
           assert.equal(o.ability, effectId(c.right));
@@ -239,10 +239,10 @@ test("the counter word is never on battle 1's pads, and the counter still varies
   for (let seed = 1; seed <= 60; seed++) {
     const store = new ProgressStore(memory());
     const rand = seeded(seed);
-    const spell = drawGift(store, { helper: ALLY }, rand);
-    const p = planMoves(store, input(spell), rand);
+    const gift = drawGift(store, { helper: ALLY }, rand);
+    const p = planMoves(store, input(gift), rand);
     const pads = battle1Words(p);
-    const ep: EpisodeInput = { fill: { villain: EPISODE_DEFAULTS.villain, helper: ALLY, hero: HERO }, ally: ALLY, spell, rooms: ['kitchen', 'garage'], counterRoom: 'attic', battle1Moves: pads };
+    const ep: EpisodeInput = { fill: { villain: EPISODE_DEFAULTS.villain, helper: ALLY, hero: HERO }, ally: ALLY, gift, rooms: ['kitchen', 'garage'], counterRoom: 'attic', battle1Moves: pads };
     const key = episodePlans(store, ep, rand)[2].key;
     assert.ok(!pads.includes(key), `seed ${seed}: ${key} is on battle 1's pads (${pads.join(', ')})`);
     counters.add(key);

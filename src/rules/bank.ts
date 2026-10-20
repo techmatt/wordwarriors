@@ -22,9 +22,20 @@
 
 import { BANK, BANK_BY_WORD, LEVELS, LIVE, VOWEL_LIST, type BankWord, type Level } from '../../content/phonics/bank';
 import { BANK_DRAW } from '../config';
-import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
+import { pickWeighted, type BagKind, type ProgressStore } from '../state/ProgressStore';
 
+/** A random source, 0..1 like Math.random: seeded in tests and with `?seed=`. */
 export type Rand = () => number;
+
+/** A shuffled copy of `xs` (Fisher-Yates from the end, one `rand()` per step). */
+export function shuffle<T>(xs: readonly T[], rand: Rand): T[] {
+  const a = [...xs];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [a[i], a[j]] = [a[j]!, a[i]!];
+  }
+  return a;
+}
 
 /** How many reads she has had of each vowel, first sound and level: every recorded read of a bank word counts. */
 export interface Met {
@@ -135,8 +146,41 @@ const COMPOUND_HALVES = new Set(['cake', 'shine', 'let', 'ball', 'fish', 'man', 
  * the gift, the moves and the keys while digraphs were still shut).
  */
 export function openWords(store: ProgressStore): (w: string) => boolean {
-  const g = gates(store);
+  return openIn(gates(store));
+}
+
+/** `openWords` by gates already worked out (`gates`); a word outside the bank is open. */
+export function openIn(g: Record<number, number>): (w: string) => boolean {
   return (w) => !BANK_BY_WORD[w] || g[BANK_BY_WORD[w]!.level]! > 0;
+}
+
+/**
+ * Draw one word from bag `which`: an `eligible` word still in it, by
+ * `wordWeight` × `boost`. When none of them is open (a bag left with only
+ * words of a shut level counts as spent, item 039) the bag refills with
+ * `catalogue` but `keepOut` (this episode's words so far); failing that, any
+ * open eligible word, then any eligible word. Drawing never spends the word.
+ * The caller tops the bag up first (`topUpBag`, `topUpMoves`).
+ */
+export function drawFromBag(
+  store: ProgressStore,
+  which: BagKind,
+  catalogue: string[],
+  eligible: string[],
+  rand: Rand,
+  keepOut: string[],
+  boost?: (w: string) => number,
+): string {
+  const ok = new Set(eligible);
+  const open = openWords(store);
+  let pool = store.bag(which).left.filter((w) => ok.has(w));
+  if (!pool.some(open)) {
+    store.refillBag(catalogue.filter((w) => !keepOut.includes(w)), which);
+    pool = store.bag(which).left.filter((w) => ok.has(w));
+  }
+  if (!pool.some(open) && eligible.some(open)) pool = eligible.filter(open);
+  if (!pool.length) pool = [...eligible];
+  return drawWords(store, pool, 1, rand, boost)[0]!;
 }
 
 /**
@@ -147,7 +191,7 @@ export function openWords(store: ProgressStore): (w: string) => boolean {
 export function drawWords(store: ProgressStore, pool: string[], n: number, rand: Rand = Math.random, boost: (w: string) => number = () => 1): string[] {
   const m = met(store);
   const g = gates(store);
-  const open = pool.filter((w) => !BANK_BY_WORD[w] || g[BANK_BY_WORD[w]!.level]! > 0);
+  const open = pool.filter(openIn(g));
   const from = open.length >= n ? open : pool;
   return pickWeighted(from, (w) => wordWeight(store, w, m, g) * boost(w), n, rand);
 }

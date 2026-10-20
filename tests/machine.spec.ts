@@ -8,7 +8,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { boot, choose, collectErrors, expectNoErrors, playEpisode, playWordMachine, press, state, until } from './harness';
+import { SLOW, boot, choose, collectErrors, expectNoErrors, playEpisode, playWordMachine, press, state, until } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/026_${name}.png` });
 
@@ -26,7 +26,7 @@ test('the word machine opens: a picture, a rime, a tile per onset, and no word s
   expectNoErrors(errors);
 });
 
-test('the word machine: tiles say their sounds, a silly tile giggles and pops out, each word is said only once built @slow', async ({ page }) => {
+test('the word machine: tiles say their sounds, a silly tile giggles and pops out, each word is said only once built', SLOW, async ({ page }) => {
   test.setTimeout(240_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&game=word_machine');
@@ -98,7 +98,7 @@ test('the word machine: tiles say their sounds, a silly tile giggles and pops ou
   expectNoErrors(errors);
 });
 
-test('the pool draws the word machine: a whole episode with it behind door a @slow', async ({ page }) => {
+test('the pool draws the word machine: a whole episode with it behind door a', SLOW, async ({ page }) => {
   test.setTimeout(900_000);
   const errors = collectErrors(page);
   // A drawn cast (seed 19): also one of item 025's whole random episodes.
@@ -120,7 +120,7 @@ test('the pool draws the word machine: a whole episode with it behind door a @sl
   expectNoErrors(errors);
 });
 
-test('F9 mid-visit and back: the machine goes on from the next word, nothing fetched twice @slow', async ({ page }) => {
+test('F9 mid-visit and back: the machine goes on from the next word, nothing fetched twice', SLOW, async ({ page }) => {
   test.setTimeout(240_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&game=word_machine');
@@ -140,7 +140,7 @@ test('F9 mid-visit and back: the machine goes on from the next word, nothing fet
   expectNoErrors(errors);
 });
 
-test('the harness plays the machine wrong-first; its door then wears the last word built @slow', async ({ page }) => {
+test('the harness plays the machine wrong-first; its door then wears the last word built', SLOW, async ({ page }) => {
   test.setTimeout(240_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&game=word_machine');

@@ -26,7 +26,7 @@ import { personOf } from '../../content/battle/roster';
 import { ENTRY_HALL } from '../../content/house/house';
 import { wordLine } from '../../content/voice/ids';
 import { sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxWrong } from '../audio/sfx';
-import { DEPTH, GAME_WIDTH, GRAB } from '../config';
+import { DEPTH, FONT_ROUNDED, GAME_WIDTH, GRAB } from '../config';
 import { episode, grabPlan, helper, waker, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, shockwave, squash, wiggle } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -39,7 +39,6 @@ import { RoomScene, type Spot } from '../world/RoomScene';
 
 type Phase = 'intro' | 'find' | 'got' | 'door';
 
-const FONT = '"Arial Rounded MT Bold", "Arial Black", sans-serif';
 const PIC = 96;
 const BOARD_Y = 118;
 const TILE = 76;
@@ -137,7 +136,7 @@ export class EntryScene extends RoomScene {
       const p = ENTRY_HALL.spots[i]!;
       const pic = fitImage(this.add.image(0, -34, `pic_${word}`).setOrigin(0.5, 1), PIC, PIC);
       const plate = this.add.rectangle(0, -16, 112, 36, 0xfff8e6, 1).setStrokeStyle(3, 0x5a3a22, 1);
-      const label = this.add.text(0, -16, word.toUpperCase(), { fontFamily: FONT, fontSize: '28px', color: '#3a2412' }).setOrigin(0.5);
+      const label = this.add.text(0, -16, word.toUpperCase(), { fontFamily: FONT_ROUNDED, fontSize: '28px', color: '#3a2412' }).setOrigin(0.5);
       const spot = this.addSpot(`grab_${word}`, p.x, p.y, [pic, plate, label], word === this.word);
       spot.obj.setData('word', word);
       if (got) {
@@ -196,7 +195,7 @@ export class EntryScene extends RoomScene {
     this.tiles = [...this.word].map((_, i) => {
       const x = -width / 2 + TILE / 2 + i * (TILE + TILE_GAP);
       const box = this.add.rectangle(x, 0, TILE, TILE, 0xfff8e6, 1).setStrokeStyle(4, 0x5a3a22, 1);
-      const letter = this.add.text(x, 2, '', { fontFamily: FONT, fontSize: '56px', color: '#3a2412' }).setOrigin(0.5);
+      const letter = this.add.text(x, 2, '', { fontFamily: FONT_ROUNDED, fontSize: '56px', color: '#3a2412' }).setOrigin(0.5);
       parts.push(box, letter);
       return { box, letter };
     });

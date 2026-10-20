@@ -7,7 +7,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { boot, collectErrors, expectNoErrors, seedProgress, until, type WWState } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, seedProgress, until, type WWState } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/027_${name}.png` });
 
@@ -25,7 +25,7 @@ async function playEnding(page: Page, name: string): Promise<{ ending: NonNullab
 // Each plays its four lines out (12-25 s), so all are slow lane; the fast lane keeps
 // the quick check below that a scene is drawn at all.
 for (const seed of [2, 9, 4, 6, 13]) {
-  test(`a random victory scene plays through (seed ${seed}) @slow`, async ({ page }) => {
+  test(`a random victory scene plays through (seed ${seed})`, SLOW, async ({ page }) => {
     const errors = collectErrors(page);
     await boot(page, `?scene=victory&seed=${seed}&nojourney=1&read=bed,hat,zap`);
     const { ending, end } = await playEnding(page, `seed${seed}`);
@@ -53,7 +53,7 @@ for (const seed of [2, 9, 4, 6, 13]) {
   });
 }
 
-test('a fitting dad says his own line: chef Dada Jason baked the cake @slow', async ({ page }) => {
+test('a fitting dad says his own line: chef Dada Jason baked the cake', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=victory&ally=dada_jason&villain=smaug&ending=dessert&nojourney=1&read=bed');
   const { ending } = await playEnding(page, 'chef');

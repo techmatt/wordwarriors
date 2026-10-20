@@ -33,7 +33,6 @@ export interface Word {
  * minigames and the room code read on unchanged.
  */
 export const CVC_WORDS: Word[] = THINGS.map(asWord);
-export const PICTURED_WORDS = CVC_WORDS;
 
 function asWord(w: BankWord): Word {
   return { word: w.word, decodable: true, ...(w.glyph ? { glyph: w.glyph } : {}), ...(w.draw ? { draw: w.draw } : {}) };

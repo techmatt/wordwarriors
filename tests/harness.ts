@@ -14,6 +14,9 @@
 
 import { expect, type Page } from '@playwright/test';
 
+/** A browser test over about 10 s: the slow lane (`--grep @slow` matches the tag). */
+export const SLOW = { tag: '@slow' };
+
 export interface WWState {
   scene: string;
   fps: number;
@@ -25,7 +28,7 @@ export interface WWState {
     made: Record<string, boolean>;
     read: string[];
     fetched: string[];
-    spell: string | null;
+    gift: string | null;
     /** The home warm-up (item 033): the word grabbed in the entry hall and the hall's pictures. */
     grab: { word: string; objects: string[] } | null;
     house: {
@@ -171,20 +174,32 @@ export async function until(page: Page, pred: (s: WWState) => boolean, timeout =
 
 /** Walk her character to (x, y) with the stick, re-aiming every hop. */
 export async function walkTo(page: Page, x: number, y: number, close = 22): Promise<void> {
+  await steer(page, x, y, close, (s) => {
+    if (!s.room?.player) throw new Error(`no room to walk in (scene ${s.scene})`);
+    return s.room.player;
+  }, true, '');
+}
+
+/**
+ * Steer whatever `at` reads back to (x, y) with the stick, re-aiming every hop;
+ * `at` returning null stops. With `edge`, stuck near enough counts as arrival.
+ */
+async function steer(page: Page, x: number, y: number, close: number, at: (s: WWState) => { x: number; y: number } | null, edge: boolean, who: string): Promise<void> {
   const start = Date.now();
   let last = { x: NaN, y: NaN, at: Date.now() };
   for (;;) {
-    const s = await state(page);
-    const p = s.room?.player;
-    if (!p) throw new Error(`no room to walk in (scene ${s.scene})`);
+    const p = at(await state(page));
+    if (!p) break;
     const dx = x - p.x;
     const dy = y - p.y;
     const d = Math.hypot(dx, dy);
     if (d < close) break;
     // Pressed against the edge of the floor and near enough: that is arrival.
-    if (Math.hypot(p.x - last.x, p.y - last.y) > 1) last = { x: p.x, y: p.y, at: Date.now() };
-    else if (Date.now() - last.at > 800 && d < 70) break;
-    if (Date.now() - start > 20_000) throw new Error(`could not reach ${x},${y} from ${p.x},${p.y}`);
+    if (edge) {
+      if (Math.hypot(p.x - last.x, p.y - last.y) > 1) last = { x: p.x, y: p.y, at: Date.now() };
+      else if (Date.now() - last.at > 800 && d < 70) break;
+    }
+    if (Date.now() - start > 20_000) throw new Error(`${who}could not reach ${x},${y} from ${p.x},${p.y}`);
     // Slow down when close so a low frame rate does not overshoot.
     const k = d < 80 ? 0.35 : 1;
     await stick(page, (dx / d) * k, (dy / d) * k);
@@ -202,40 +217,6 @@ export async function choose(page: Page, id?: string): Promise<string> {
   await until(page, (st) => Boolean(st.room && !st.room.locked), 30_000, 'room unlocked');
   await press(page, 'green');
   return spot.id;
-}
-
-/** Answer every item of the current minigame correctly until the scene changes. */
-export async function playMinigame(page: Page): Promise<void> {
-  // Past the journey map (if any) and into the game itself.
-  const scene = (await until(page, (st) => ['SoundToLetter', 'BlendPath', 'WordToPicture', 'Spelling'].includes(st.scene), 60_000, 'a minigame')).scene;
-  for (let guard = 0; guard < 12; guard++) {
-    // Blend Path's doors stay shut until the tiles are walked, so there a
-    // round being up (and the room listening) is enough to start walking.
-    const s = await until(
-      page,
-      (st) => st.scene !== scene || Boolean(st.room && !st.room.locked && (st.room.spots.some((sp) => sp.correct) || st.room.spelling || (scene === 'BlendPath' && st.room.round))),
-      120_000,
-      `${scene} item`,
-    );
-    if (s.scene !== scene) return;
-    if (s.room?.spelling) {
-      const { word, filled } = s.room.spelling;
-      for (const ch of word.slice(filled)) {
-        await typeLetter(page, ch);
-        await page.waitForTimeout(120);
-      }
-      await until(page, (st) => st.scene !== scene || st.room?.spelling?.word !== word || st.room.spelling.filled === 0, 60_000, 'next spelling word');
-      continue;
-    }
-    const round = s.room!.round;
-    // Blend Path doors open only after every tile is stepped on.
-    if (scene === 'BlendPath') {
-      const tiles = round.split(':')[2]!.length;
-      for (let i = 0; i < tiles; i++) await walkTo(page, 260 + i * 160, 470, 30);
-    }
-    await choose(page);
-    await until(page, (st) => st.scene !== scene || st.room?.round !== round, 60_000, `${scene} round after ${round}`);
-  }
 }
 
 /**
@@ -283,23 +264,7 @@ async function pickPad(page: Page, word: string): Promise<void> {
 
 /** Walk her battle hero (on real time, in the move choice) onto (x, y), re-aiming every hop. */
 async function walkHeroTo(page: Page, x: number, y: number, close = 20): Promise<void> {
-  const start = Date.now();
-  for (;;) {
-    const s = await state(page);
-    const p = s.battle?.me;
-    if (!p || !s.battle?.choice) break;
-    const dx = x - p.x;
-    const dy = y - p.y;
-    const d = Math.hypot(dx, dy);
-    if (d < close) break;
-    if (Date.now() - start > 20_000) throw new Error(`hero could not reach ${x},${y} from ${p.x},${p.y}`);
-    // Slow down when close so a low frame rate does not overshoot.
-    const k = d < 80 ? 0.35 : 1;
-    await stick(page, (dx / d) * k, (dy / d) * k);
-    await page.waitForTimeout(40);
-  }
-  await stick(page, 0, 0);
-  await page.waitForTimeout(80);
+  await steer(page, x, y, close, (s) => (s.battle?.choice && s.battle.me) || null, false, 'hero ');
 }
 
 /**

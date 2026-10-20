@@ -8,9 +8,9 @@
 
 import { test, expect } from '@playwright/test';
 
-import { boot, collectErrors, expectNoErrors, playEpisode, press, state, until } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, playEpisode, press, state, until } from './harness';
 
-test('a full episode plays end to end @slow', async ({ page }) => {
+test('a full episode plays end to end', SLOW, async ({ page }) => {
   test.setTimeout(900_000);
   const errors = collectErrors(page);
   await boot(page, '', 1);

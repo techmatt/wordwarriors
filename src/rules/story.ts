@@ -12,8 +12,7 @@ import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import { questFor } from '../../content/house/quests';
 import { WAKE_VARIANTS } from '../../content/voice/script';
 import { scenesFor } from '../../content/house/scenes';
-
-export type Rand = () => number;
+import type { Rand } from './bank';
 
 /** Variant numbers, from 1. */
 export interface Story {

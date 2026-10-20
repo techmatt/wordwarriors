@@ -26,7 +26,7 @@
  * says them); the home quest as each narrator's `quest_home_<n>`.
  */
 
-import { narratorLine } from '../voice/ids.js';
+import { homeQuestLine, questLine } from '../voice/ids.js';
 import { HOME } from './house.js';
 
 /** A voiced line: what the caption shows, and the spoken form when edge-tts needs help (same word count). */
@@ -232,10 +232,8 @@ export function questFor(id: string): Quest {
   return QUESTS[id] ?? HOME_QUEST;
 }
 
-/** A setup line's id: `quest_<owner>_<n>`, n from 1. */
-export const questLine = (owner: string, n: number) => `quest_${owner}_${n}`;
-/** The home quest's line `n` in a narrator's voice: `nar_<narrator>_quest_home_<n>`. */
-export const homeQuestLine = (narrator: string, n: number) => narratorLine(narrator, `quest_home_${n}`);
+/** A setup line's id (`quest_<owner>_<n>`) and the home quest's (`nar_<narrator>_quest_home_<n>`), from ids.ts. */
+export { questLine, homeQuestLine };
 
 /** Variant `n` (from 1) of `count`, wrapped: a variant drawn for one helper still names a line for another. */
 export const variantIndex = (n: number, count: number): number => (((Math.max(1, Math.floor(n)) - 1) % count) + count) % count;

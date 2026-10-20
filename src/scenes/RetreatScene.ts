@@ -9,7 +9,7 @@
 
 import Phaser from 'phaser';
 
-import { fighterId, narratorLine, tauntLine } from '../../content/voice/ids';
+import { fighterId, narratorLine, tauntLine, villainKey } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxSelect } from '../audio/sfx';
 import { GAME_WIDTH } from '../config';
@@ -65,7 +65,7 @@ export class RetreatScene extends RoomScene {
     void (async () => {
       const gloat = vs.evil.taunts[1] ?? vs.evil.taunts[0];
       if (gloat) await this.say(tauntLine(fighterId(vs.id, true), gloat.key));
-      await this.narrate('retreat_1', 'retreat_2', `need_item_${episode.villain}`);
+      await this.narrate('retreat_1', 'retreat_2', villainKey('need_item', episode.villain));
       spot.enabled = true;
       burst(this, spot.x, spot.y - 60, { count: 40 });
       void voiceBus.say(narratorLine(narrator(), 'forge_intro'));
@@ -73,7 +73,7 @@ export class RetreatScene extends RoomScene {
   }
 
   protected override hint(): void {
-    void this.narrate(`need_item_${episode.villain}`);
+    void this.narrate(villainKey('need_item', episode.villain));
   }
 
   protected choose(_spot: Spot): void {

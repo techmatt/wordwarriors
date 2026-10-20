@@ -39,7 +39,7 @@ import { CHARACTER_BY_ID, MINIONS, abilityCallout, comboFor, comboPart } from '.
 import type { AbilitySpec, Status } from '../../content/battle/types';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
-import { fighterId, moveLine, nameLine, narratorLine, reformedLine, tauntLine, ultimateLine } from '../../content/voice/ids';
+import { fighterId, moveKey, moveLine, nameLine, narratorLine, reformedLine, tauntLine, ultimateLine } from '../../content/voice/ids';
 import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh, sfxWrong } from '../audio/sfx';
@@ -47,6 +47,7 @@ import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, WALK_SPEED } from '../config';
 import { formFor } from '../../content/battle/forms';
 import { advance, castArt, castScale, counterArt, counterWord, episode, fightStyle, helper, movePlan, namedCounter, narrator, reformedOf, villainSpec, type Step } from '../episode/Episode';
 import { fightLineKey, type FightSpec } from '../../content/battle/fights';
+import { hex } from '../fx/colour';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
@@ -80,6 +81,13 @@ const PAD_GLOW = 0x7ad9ff;
 const SIGN_RISE = 215;
 /** Least distance between two pads' columns: a sign is 230 wide, so signs never touch. */
 const PAD_GAP = 270;
+/** The brawl's run-in spots (a contest's stage has its own): the i-th hero at `x + i * dx`, the villain at `villainX`. */
+const INTRO_SPOTS = { x: 260, dx: 140, villainX: 960 };
+/**
+ * The brawl's sides for the ultimate: the i-th hero at (`x + i * dx`, `y + i * dy`),
+ * the helper behind, the villain on the right (a giant further out, on the front edge of the floor).
+ */
+const ULT_SPOTS = { x: 260, dx: 150, y: 500, dy: 70, helper: { x: 150, y: 600 }, villain: { x: 900, y: 560 }, giantX: 960 };
 
 /** A move word standing in the arena as a place she walks to. */
 interface MovePad {
@@ -331,7 +339,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
         fontFamily: '"Arial Black", sans-serif',
         fontSize: big ? '76px' : '44px',
         color: '#ffffff',
-        stroke: `#${color.toString(16).padStart(6, '0')}`,
+        stroke: hex(color),
         strokeThickness: big ? 16 : 10,
         align: 'center',
         shadow: { offsetX: 0, offsetY: 6, color: '#000000', blur: 0, fill: true, stroke: true },
@@ -388,7 +396,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     if (power >= 2 && Math.random() < 0.35) {
       // Not a word on a move pad still to come (POW, BAM and ZAP are move words).
       const words = ['POW!', 'BAM!', 'ZAP!', 'BOOM!', 'WHAM!'].filter((w) => !this.textGivesAway(w));
-      floatText(this, target.cx, target.top, words[Math.floor(Math.random() * words.length)]!, `#${color.toString(16).padStart(6, '0')}`, 34, HIT_FLOAT);
+      floatText(this, target.cx, target.top, words[Math.floor(Math.random() * words.length)]!, hex(color), 34, HIT_FLOAT);
     }
     if (status && !(target.isMain && target.team === 'villain' && this.part === 1 && Math.random() < 0.5)) target.setStatus(status.kind, status.duration, this.now);
     this.show.onHit(target, power, from);
@@ -502,10 +510,10 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     if (this.part === 1) await this.versus();
     // Everybody runs in from the sides (to the style's own spots, if it has them).
     this.heroes.forEach((h, i) => {
-      const to = this.show.home(h, i) ?? { x: 260 + i * 140, y: h.y };
+      const to = this.show.home(h, i) ?? { x: INTRO_SPOTS.x + i * INTRO_SPOTS.dx, y: h.y };
       this.tweens.add({ targets: h, x: to.x, y: to.y, duration: 900, ease: 'Quad.easeOut' });
     });
-    const vto = this.show.home(this.villain, 0) ?? { x: 960, y: this.villain.y };
+    const vto = this.show.home(this.villain, 0) ?? { x: INTRO_SPOTS.villainX, y: this.villain.y };
     this.tweens.add({ targets: this.villain, x: vto.x, y: vto.y, duration: 1100, ease: 'Quad.easeOut' });
     this.banner(this.fight.banner[this.part - 1]!, 0xff3d7a, true);
     sfxFanfare();
@@ -1016,7 +1024,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
       this.choice = c;
       void (async () => {
         await this.say('move_pick');
-        await this.say(`use_move_${right}`);
+        await this.say(moveKey('use_move', right));
         if (this.choice) {
           this.choice.open = true;
           this.choice.promptedAt = performance.now();
@@ -1096,7 +1104,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     const pad = c.pads.find((p) => p.word === word);
     if (pad) pad.wiggleAt = performance.now();
     const n = narrator();
-    await this.guard(voiceBus.sequence([narratorLine(n, `not_move_${c.right}`), narratorLine(n, `was_move_${word}`), narratorLine(n, `find_move_${c.right}`)]));
+    await this.guard(voiceBus.sequence([narratorLine(n, moveKey('not_move', c.right)), narratorLine(n, moveKey('was_move', word)), narratorLine(n, moveKey('find_move', c.right))]));
     if (this.choice !== c) return;
     c.open = true;
     c.promptedAt = performance.now();
@@ -1180,7 +1188,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
       c.open = false;
       c.promptedAt = wall;
       c.idle = 0;
-      void voiceBus.say(narratorLine(narrator(), `use_move_${c.right}`)).then(() => {
+      void voiceBus.say(narratorLine(narrator(), moveKey('use_move', c.right))).then(() => {
         if (this.choice !== c) return;
         c.open = true;
         c.promptedAt = performance.now();
@@ -1220,6 +1228,13 @@ export class BattleScene extends Phaser.Scene implements StageHost {
 
   /** The villain's ultimate. Part 1: the heroes are floored. Part 2: the counter-item answers it. */
   private async ultimate(): Promise<void> {
+    const { v, ult, giant, aura } = await this.ultimateWindUp();
+    if (this.part === 1) await this.ultimateFloors(v, ult, giant);
+    else await this.ultimateCountered(v, ult, giant, aura);
+  }
+
+  /** Both parts: everyone to their own side, then the villain grows and roars its ultimate. */
+  private async ultimateWindUp(): Promise<{ v: Fighter; ult: AbilitySpec; giant: boolean; aura: Phaser.GameObjects.Particles.ParticleEmitter }> {
     this.phase = 'ultimate';
     const v = this.villain;
     const ult = v.init.ultimate!;
@@ -1230,14 +1245,14 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     // ultimate fills the screen from the floor to near the top, head still in view.
     const giant = v.init.size >= 2;
     // A contest's stage keeps everybody where its contest has them.
-    if (!this.show.anchored) this.tweens.add({ targets: v, x: giant ? 960 : 900, y: giant ? FLOOR_BOTTOM : 560, duration: 600 });
+    if (!this.show.anchored) this.tweens.add({ targets: v, x: giant ? ULT_SPOTS.giantX : ULT_SPOTS.villain.x, y: giant ? FLOOR_BOTTOM : ULT_SPOTS.villain.y, duration: 600 });
     // Everyone back to their own side, so the big moment reads left against right.
     this.heroes.forEach((h, i) => {
       h.status = null;
       h.clearOverlay();
-      if (!this.show.anchored) this.tweens.add({ targets: h, x: 260 + i * 150, y: 500 + i * 70, duration: 600, ease: 'Quad.easeOut' });
+      if (!this.show.anchored) this.tweens.add({ targets: h, x: ULT_SPOTS.x + i * ULT_SPOTS.dx, y: ULT_SPOTS.y + i * ULT_SPOTS.dy, duration: 600, ease: 'Quad.easeOut' });
     });
-    if (this.helper?.active && !this.show.anchored) this.tweens.add({ targets: this.helper, x: 150, y: 600, duration: 600 });
+    if (this.helper?.active && !this.show.anchored) this.tweens.add({ targets: this.helper, x: ULT_SPOTS.helper.x, y: ULT_SPOTS.helper.y, duration: 600 });
     await this.simWait(0.6);
     sfxUltimate();
     this.darken(0.55, 800);
@@ -1271,37 +1286,41 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     if (!this.lineGivesAway(ultimateLine(v.init.id))) void voiceBus.say(ultimateLine(v.init.id), 'instruction', v);
     this.stats.ultimates++;
     await this.simWait(1.4);
+    return { v, ult, giant, aura };
+  }
 
-    if (this.part === 1) {
-      // Too strong: the heroes are floored, dizzy and fine.
-      this.floors.heroMain = 0.06;
-      cast(this, v, ult, this.heroes[0] ?? null, 2.6);
-      if (giant) this.giantSweep(v, ult);
-      // The style stages the villain winning the round (the brawl just lets it land).
-      await this.show.ultimate1(v, ult);
-      flash(this, 0xffffff, 300);
-      hitstop(this, 160);
-      shake(this, 8, 600);
-      punch(this, 0.1, 220);
-      sfxBoom(3);
-      for (const h of [...this.heroes, ...(this.helper ? [this.helper] : [])]) {
-        if (!h.active) continue;
-        h.hp = Math.min(h.hp, h.maxHp * 0.08);
-        h.floored = true;
-        h.lift = 0;
-        h.setStatus('stun', 99, this.now);
-        burst(this, h.cx, h.cy, { count: 40, speed: 400, colors: [ult.color, 0xffffff] });
-      }
-      floatText(this, GAME_WIDTH / 2 - 200, 300, this.fight.tooStrong, '#ffd23f', 60);
-      this.darken(0.35, 600);
-      await this.simWait(1.2);
-      return;
+  /** Part 1, too strong: the heroes are floored, dizzy and fine. */
+  private async ultimateFloors(v: Fighter, ult: AbilitySpec, giant: boolean): Promise<void> {
+    this.floors.heroMain = 0.06;
+    cast(this, v, ult, this.heroes[0] ?? null, 2.6);
+    if (giant) this.giantSweep(v, ult);
+    // The style stages the villain winning the round (the brawl just lets it land).
+    await this.show.ultimate1(v, ult);
+    flash(this, 0xffffff, 300);
+    hitstop(this, 160);
+    shake(this, 8, 600);
+    punch(this, 0.1, 220);
+    sfxBoom(3);
+    for (const h of [...this.heroes, ...(this.helper ? [this.helper] : [])]) {
+      if (!h.active) continue;
+      h.hp = Math.min(h.hp, h.maxHp * 0.08);
+      h.floored = true;
+      h.lift = 0;
+      h.setStatus('stun', 99, this.now);
+      burst(this, h.cx, h.cy, { count: 40, speed: 400, colors: [ult.color, 0xffffff] });
     }
+    floatText(this, GAME_WIDTH / 2 - 200, 300, this.fight.tooStrong, '#ffd23f', 60);
+    this.darken(0.35, 600);
+    await this.simWait(1.2);
+  }
 
-    // Part 2: the counter, whatever the attic's sentence drew from her word
-    // bag. The villain's own named item (Evil Tiamat's Magic Hat) when the
-    // draw lands on its word, with its own staging; otherwise the thing in the
-    // picture, which scares the villain silly whatever it is (item 015).
+  /**
+   * Part 2: the counter, whatever the attic's sentence drew from her word
+   * bag. The villain's own named item (Evil Tiamat's Magic Hat) when the
+   * draw lands on its word, with its own staging; otherwise the thing in the
+   * picture, which scares the villain silly whatever it is (item 015).
+   */
+  private async ultimateCountered(v: Fighter, ult: AbilitySpec, giant: boolean, aura: Phaser.GameObjects.Particles.ParticleEmitter): Promise<void> {
     this.phase = 'counter';
     const named = namedCounter();
     const word = counterWord();

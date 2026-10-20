@@ -21,6 +21,7 @@
  */
 
 import { CHARACTER_BY_ID, PERSONS, ROSTER, personOf } from '../battle/roster.js';
+import { sentenceLine } from '../voice/ids.js';
 import { THINGS } from './bank.js';
 import { EFFECT_BY_WORD, type WordEffect } from './effects.js';
 
@@ -161,7 +162,7 @@ export function frameName(frame: Frame, fill: Fill): { slot: NameSlot; id: strin
 
 /** The prefix line id: `sent_<frame>` or `sent_<frame>_<character>`. */
 export function prefixLineId(frameId: string, name: string | null): string {
-  return name ? `sent_${frameId}_${name}` : `sent_${frameId}`;
+  return sentenceLine(frameId, name);
 }
 
 /**

@@ -15,7 +15,7 @@ import { test, expect, type Page } from '@playwright/test';
 
 import { formsOf } from '../content/battle/roster';
 import { ACTIVE_CAST } from '../src/config';
-import { boot, leaveBedroom, playBattle, until } from './harness';
+import { SLOW, boot, leaveBedroom, playBattle, until } from './harness';
 
 const ALLIES = ACTIVE_CAST.allies.flatMap((p) => formsOf(p).map((f) => f.id));
 const PAIRS = ALLIES.flatMap((a) => ACTIVE_CAST.villains.map((v) => [a, v] as const)).filter(([a, v]) => process.env.WW_PAIRS && `${a}+${v}`.includes(process.env.WW_PAIRS));
@@ -33,7 +33,7 @@ function collectProblems(page: Page): string[] {
 }
 
 PAIRS.forEach(([ally, villain], i) => {
-  test(`${ally} + ${villain}: bedroom, quest place, both battles and the victory scene @slow`, async ({ page }) => {
+  test(`${ally} + ${villain}: bedroom, quest place, both battles and the victory scene`, SLOW, async ({ page }) => {
     test.setTimeout(900_000);
     const problems = collectProblems(page);
     const name = `${ally}+${villain}`;

@@ -12,7 +12,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { boot, choose, collectErrors, expectNoErrors, leaveBedroom, playEntry, press, seedProgress, state, until, type WWState } from './harness';
+import { SLOW, boot, choose, collectErrors, expectNoErrors, leaveBedroom, playEntry, press, seedProgress, state, until, type WWState } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/033_${name}.png` });
 
@@ -30,7 +30,7 @@ async function clued(page: Page): Promise<WWState> {
   return until(page, (st) => st.scene === 'Entry' && st.room?.round === 'entry:find' && !st.room.locked, 60_000, 'clue given');
 }
 
-test('warm-up, a new player: names then sounds and no word, nine labelled pictures; right first time moves the word up to 3; out to the hub @slow', async ({ page }) => {
+test('warm-up, a new player: names then sounds and no word, nine labelled pictures; right first time moves the word up to 3; out to the hub', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=grab&nojourney=1');
   const s = await clued(page);
@@ -65,7 +65,7 @@ test('warm-up, a new player: names then sounds and no word, nine labelled pictur
   expectNoErrors(errors);
 });
 
-test('warm-up levels: 1 says the word first, 3 gives the sounds only; a first-time right at 1 moves up to 2 @slow', async ({ page }) => {
+test('warm-up levels: 1 says the word first, 3 gives the sounds only; a first-time right at 1 moves up to 2', SLOW, async ({ page }) => {
   test.setTimeout(120_000);
   const errors = collectErrors(page);
   await seedProgress(page, { version: 1, grabLevels: allAt(1) });
@@ -92,7 +92,7 @@ test('warm-up levels: 1 says the word first, 3 gives the sounds only; a first-ti
   expectNoErrors(errors);
 });
 
-test('warm-up misses: "that\'s the CAT, we need the ...", the clue again at the same level; after 3 the word is added; the level goes down @slow', async ({ page }) => {
+test('warm-up misses: "that\'s the CAT, we need the ...", the clue again at the same level; after 3 the word is added; the level goes down', SLOW, async ({ page }) => {
   test.setTimeout(180_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=grab&nojourney=1');
@@ -125,7 +125,7 @@ test('warm-up misses: "that\'s the CAT, we need the ...", the clue again at the 
   expectNoErrors(errors);
 });
 
-test('F9 and back: a miss before it still counts; after the grab the hall comes back done, nothing recorded twice @slow', async ({ page }) => {
+test('F9 and back: a miss before it still counts; after the grab the hall comes back done, nothing recorded twice', SLOW, async ({ page }) => {
   test.setTimeout(180_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=grab&nojourney=1');
@@ -163,7 +163,7 @@ test('F9 and back: a miss before it still counts; after the grab the hall comes 
 });
 
 for (const seed of [3, 11, 25, 40]) {
-  test(`seed ${seed}: the drawn cast wakes her, the helper says the quest, through the warm-up to the quest place; the grab word is never read this episode @slow`, async ({ page }) => {
+  test(`seed ${seed}: the drawn cast wakes her, the helper says the quest, through the warm-up to the quest place; the grab word is never read this episode`, SLOW, async ({ page }) => {
     test.setTimeout(240_000);
     const errors = collectErrors(page);
     await boot(page, `?scene=bedroom&seed=${seed}&nojourney=1&games=all`);
@@ -181,7 +181,7 @@ for (const seed of [3, 11, 25, 40]) {
     await shot(page, `seed${seed}_hall`);
     const plan = s.episode.house.plan!;
     expect(plan).toBeTruthy();
-    const reading = new Set([...(s.episode.spell ? [s.episode.spell] : []), ...plan.flatMap((p) => [p.key, ...p.fetches])]);
+    const reading = new Set([...(s.episode.gift ? [s.episode.gift] : []), ...plan.flatMap((p) => [p.key, ...p.fetches])]);
     expect(reading.has(g.word)).toBe(false);
     // The hall shows none of the words she will read.
     for (const w of g.objects) expect(reading.has(w), `${w} is read later`).toBe(false);

@@ -27,15 +27,15 @@
 
 import Phaser from 'phaser';
 
-import { CHARACTER_BY_ID, abilityWords } from '../../content/battle/roster';
 import { HUB, PLACE_BY_ID, SIDE_ROOM_BY_ID, hubArt } from '../../content/house/house';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import type { AbilitySpec } from '../../content/battle/types';
-import { narratorLine } from '../../content/voice/ids';
+import { moveKey, narratorLine, villainKey } from '../../content/voice/ids';
 import { sfxFanfare, sfxSelect, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { voiceBus } from '../audio/VoiceBus';
-import { DEPTH, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_ROUNDED, GAME_WIDTH } from '../config';
 import { away, enterRoom, episode, giftWord, helper, hubScene, narrator, planFor, type Slot, type Step } from '../episode/Episode';
+import { helperAbilityFor } from '../rules/moves';
 import { bob, burst, flash, popIn, shockwave, squash } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Bag } from '../ui/Bag';
@@ -45,7 +45,6 @@ import { RoomScene, type Spot } from '../world/RoomScene';
 
 type Phase = 'intro' | 'circle' | 'doors' | 'secret' | 'front' | 'leaving';
 
-const FONT = '"Arial Rounded MT Bold", "Arial Black", sans-serif';
 const DOOR_W = 120;
 const DOOR_H = 180;
 const FRONT_W = 150;
@@ -200,7 +199,7 @@ export class HubScene extends RoomScene {
       spot.enabled = false;
       this.doors[`door_${slot}`] = spot;
       // A door she cannot use yet is not there at all: the side doors appear
-      // once the spell is learned (openSideDoors), and stay, prize and all.
+      // once the gift word is learned (openSideDoors), and stay, prize and all.
       spot.obj.setVisible(episode.house.taught || done.includes(slot));
       if (done.includes(slot)) this.badge(spot, slot, slot === this.from);
     }
@@ -278,7 +277,7 @@ export class HubScene extends RoomScene {
    * word, deliberately said), then the circle line.
    */
   private async teach(): Promise<void> {
-    const spell = giftWord();
+    const gift = giftWord();
     const { story, ids } = hubScene();
     const reveal = ids.lines[ids.lines.length - 1]!;
     this.circleLine = ids.circle;
@@ -290,7 +289,7 @@ export class HubScene extends RoomScene {
     const sx = HUB.helper.x;
     const sy = SCROLL_Y;
     const word = this.add
-      .text(0, 0, spell.toUpperCase(), { fontFamily: FONT, fontSize: '54px', color: '#3a1a5a', stroke: '#ffffff', strokeThickness: 6 })
+      .text(0, 0, gift.toUpperCase(),{ fontFamily: FONT_ROUNDED, fontSize: '54px', color: '#3a1a5a', stroke: '#ffffff', strokeThickness: 6 })
       .setOrigin(0.5);
     this.scroll = this.add.container(sx, sy, [...this.propBehind(story.prop), word]).setDepth(DEPTH.fx);
     this.scroll.setData('word', word);
@@ -298,9 +297,9 @@ export class HubScene extends RoomScene {
     sfxWhoosh();
     burst(this, sx, sy, { count: 30, colors: [0xffd23f, 0xffffff, 0x9a7aff] });
     this.tweens.add({ targets: word, scale: 1.12, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-    this.summonRing(spell);
+    this.summonRing(gift);
 
-    await this.speak(reveal, this.nar(`gift_word_${spell}`), ids.circle);
+    await this.speak(reveal, this.nar(moveKey('gift_word', gift)), ids.circle);
     if (this.circle) {
       this.circle.enabled = true;
       this.circle.correct = true;
@@ -331,9 +330,9 @@ export class HubScene extends RoomScene {
    * sword; else the word's own effect art, a flung picture), the helper
    * summons three of them, circling her while she gives it.
    */
-  private summonRing(spell: string): void {
-    const own = CHARACTER_BY_ID[helper()]?.good.abilities.find((a) => abilityWords(a).includes(spell));
-    const ab: AbilitySpec | undefined = own?.art ? own : EFFECT_BY_WORD[spell]?.ability;
+  private summonRing(gift: string): void {
+    const own = helperAbilityFor(gift, helper());
+    const ab: AbilitySpec | undefined = own?.art ? own : EFFECT_BY_WORD[gift]?.ability;
     if (!ab?.art || !this.textures.exists(ab.art)) return;
     const cx = HUB.helper.x;
     const cy = HUB.helper.y - 70;
@@ -386,11 +385,11 @@ export class HubScene extends RoomScene {
     if (scroll && word) {
       // The word leaves the scroll and flies into her.
       const flying = this.add
-        .text(scroll.x + word.x, scroll.y + word.y, word.text, { fontFamily: FONT, fontSize: '54px', color: '#ffd23f', stroke: '#3a1a5a', strokeThickness: 8 })
+        .text(scroll.x + word.x, scroll.y + word.y, word.text, { fontFamily: FONT_ROUNDED, fontSize: '54px', color: '#ffd23f', stroke: '#3a1a5a', strokeThickness: 8 })
         .setOrigin(0.5)
         .setDepth(DEPTH.sparkles);
       word.setVisible(false);
-      // The spell's things fly in with the word (swords spinning) and vanish into her.
+      // The gift's things fly in with the word (swords spinning) and vanish into her.
       for (const [i, sw] of this.ring.entries()) {
         sw.setData('free', true);
         this.tweens.killTweensOf(sw);
@@ -518,7 +517,7 @@ export class HubScene extends RoomScene {
   /** Part 2: back from the retreat; a secret door appears. */
   private async secretDoor(): Promise<void> {
     await this.wait(600);
-    await this.narrate('retreat_2', `need_counter_${episode.villain}`);
+    await this.narrate('retreat_2', villainKey('need_counter', episode.villain));
     const door = this.doors.door_counter!;
     door.obj.setVisible(true);
     popIn(this, door.obj);
@@ -595,7 +594,6 @@ export class HubScene extends RoomScene {
       then();
       return;
     }
-    this.cameras.main.fadeOut(300, 0, 0, 0);
-    this.time.delayedCall(320, then);
+    this.fadeOutThen(then);
   }
 }

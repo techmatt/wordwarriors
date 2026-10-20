@@ -142,7 +142,8 @@ The named items (the sentence column is how they read when their word comes up):
 ## An ability (`AbilitySpec`)
 
 `{ id, name, kind, cooldown, color, color2?, power, count?, glyph?, status?, minion?,
-duration?, homing?, word?, shout?, art?, upright?, guard?, callout? }`. Kinds: `bolt beam cone lightning
+duration?, homing?, word?, words?, shout?, art?, upright?, guard?, callout? }`, written
+`ab(...)` in the roster, an ultimate `ult(...)` (no cooldown: the director fires it). Kinds: `bolt beam cone lightning
 slam spin dash summon polymorph freeze teleport clones trap rain shield heal grow coil
 eclipse wave grid orbit` (one function each in `src/battle/abilities.ts`). `power` 1–3
 scales damage, particles and shake. `shout: true` plays the "Ha!" SFX. `art` is an art
@@ -549,7 +550,11 @@ misses before the clue adds the word, `GRAB.objects` how many pictures stand in 
 ## Narrator lines (`content/voice/script.ts`)
 
 Templates composed once per narrator (`{hero}`, `{villain}`, `{item}`, `{word}`).
-Never put a reading word in one: the unit tests check.
+Never put a reading word in one: the unit tests check. A template keyed per hero,
+villain or move word (`HERO_LINES`, `VILLAIN_LINES`, `MOVE_LINES`) needs its key added
+to the matching kind in `content/voice/ids.ts`, and the game builds the key with that
+file's `heroKey` / `villainKey` / `moveKey`, never by hand. A new `right_<n>`,
+`wrong_<n>` or `machine_silly_<n>` variant is picked up by count, nothing else to change.
 
 ## Art
 

@@ -22,17 +22,14 @@ import Phaser from 'phaser';
 import type { AbilitySpec } from '../../../content/battle/types';
 import { sfxBoom, sfxPoof, sfxShield, sfxSummon, sfxWhoosh, sfxZap } from '../../audio/sfx';
 import { DEPTH } from '../../config';
+import { hex, rgb } from '../../fx/colour';
 import { burst, fitImage, floatText, fxQuality, shake, shockwave } from '../../fx/juice';
 import { TEX } from '../../fx/textures';
 import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter } from '../Fighter';
 import { ARENA_RIGHT } from '../movement';
-import { BaseStage } from './stage';
+import { BaseStage, ease, lerpPt, type Pt } from './stage';
 
 type Mode = 'off' | 'clash' | 'ultimate' | 'counter' | 'finish' | 'done';
-interface Pt {
-  x: number;
-  y: number;
-}
 /** One caster's beam: `p` is how far out and how strong (0..1), `w` its width multiplier. Both eased. */
 interface Beam {
   p: number;
@@ -56,15 +53,9 @@ const METER = { x: 400, y: 76, w: 480, h: 22 };
 const RAINBOW = [0xff4a6a, 0xff9a3c, 0xffd23f, 0x5aff8a, 0x7ad9ff, 0xb04aff];
 const GOLD = 0xffd23f;
 
-const hex = (c: number) => `#${c.toString(16).padStart(6, '0')}`;
-const ease = (rate: number, dt: number) => 1 - Math.exp(-rate * dt);
-const lerpPt = (a: Pt, b: Pt, u: number): Pt => ({ x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u });
-
 /** A dark palette colour lifted towards white, so a beam on a night sky still reads. */
 function bright(c: number): number {
-  const r = (c >> 16) & 255;
-  const g = (c >> 8) & 255;
-  const b = c & 255;
+  const [r, g, b] = rgb(c);
   if ((0.3 * r + 0.59 * g + 0.11 * b) / 255 >= 0.35) return c;
   const up = (v: number) => Math.round(v + (255 - v) * 0.5);
   return (up(r) << 16) | (up(g) << 8) | up(b);
@@ -72,7 +63,9 @@ function bright(c: number): number {
 
 /** How far apart two colours are, roughly as the eye sees it. */
 function colourGap(a: number, b: number): number {
-  return Math.hypot(((a >> 16) & 255) - ((b >> 16) & 255), ((a >> 8) & 255) - ((b >> 8) & 255), (a & 255) - (b & 255));
+  const [ar, ag, ab] = rgb(a);
+  const [br, bg, bb] = rgb(b);
+  return Math.hypot(ar - br, ag - bg, ab - bb);
 }
 
 /** The spell-beam clash: two beams and the point where they meet. */
@@ -432,8 +425,7 @@ export class ClashStage extends BaseStage {
   private ignite(): void {
     this.mode = 'clash';
     sfxZap();
-    this.host.after(250, () => {
-      if (!this.scene.sys.isActive()) return;
+    this.later(250, () => {
       const { x, y } = this.clash;
       shockwave(this.scene, x, y, 0xffffff, 220, 500);
       burst(this.scene, x, y, { count: 50, speed: 480, colors: [this.heroCol, this.villainCol, 0xffffff], texture: TEX.star });
@@ -476,8 +468,7 @@ export class ClashStage extends BaseStage {
     this.surge = { f, colors: [bright(ab.color), bright(ab.color2 ?? 0xffffff), 0xffffff], until: this.t + 1.8 };
     if (this.mode === 'clash') this.kick += 0.45;
     // The surge reaches the clash point, which jumps the villain's way. Never the move word.
-    this.host.after(250, () => {
-      if (!this.scene.sys.isActive()) return;
+    this.later(250, () => {
       const { x, y } = this.clash;
       sfxZap();
       shockwave(this.scene, x, y, ab.color, 280, 600);
@@ -492,12 +483,11 @@ export class ClashStage extends BaseStage {
     if (this.mode === 'clash') this.kick += 0.6;
     sfxSummon();
     // After the director's own punch (360 ms) has settled, or the two zooms fight.
-    this.host.after(380, () => {
-      if (!this.scene.sys.isActive()) return;
+    this.later(380, () => {
       const { x, y } = this.clash;
       this.host.focus(x, y, 1.12, 300);
       shockwave(this.scene, x, y, 0xffffff, 340, 700);
-      this.host.after(140, () => this.scene.sys.isActive() && shockwave(this.scene, this.clash.x, this.clash.y, GOLD, 260, 600));
+      this.later(140, () => shockwave(this.scene, this.clash.x, this.clash.y, GOLD, 260, 600));
       burst(this.scene, x, y, { count: 90, speed: 640, colors: RAINBOW, texture: TEX.star, life: 1000 });
       floatText(this.scene, x, y - 100, 'WOW!', '#ffd23f', 60);
     });
@@ -512,8 +502,7 @@ export class ClashStage extends BaseStage {
     sfxZap();
     // Rings crackle off the clash point as it races across.
     for (let i = 0; i < 5; i++) {
-      this.host.after(i * 240, () => {
-        if (!this.scene.sys.isActive()) return;
+      this.later(i * 240, () => {
         shockwave(this.scene, this.clash.x, this.clash.y, i % 2 ? 0xffffff : ult.color, 120 + i * 30, 420);
         if (i % 2 === 0) sfxZap();
       });
@@ -526,7 +515,7 @@ export class ClashStage extends BaseStage {
     burst(this.scene, x, y, { count: 120, speed: 720, colors: cols, texture: TEX.star, life: 1100, gravity: 250 });
     burst(this.scene, x, y, { count: 80, speed: 500, colors: cols });
     shockwave(this.scene, x, y, ult.color, 340, 700);
-    this.host.after(150, () => this.scene.sys.isActive() && shockwave(this.scene, x, y, 0xffffff, 260, 600));
+    this.later(150, () => shockwave(this.scene, x, y, 0xffffff, 260, 600));
     // Back to 1x (300 in, hold, 400 out) before the director's punch at the end of the wait.
     this.host.focus(x, y, 1.15, 150);
     sfxBoom(2);
@@ -544,13 +533,12 @@ export class ClashStage extends BaseStage {
     this.ultColors = null;
     sfxShield();
     sfxWhoosh();
-    this.host.after(350, () => {
-      if (!this.scene.sys.isActive()) return;
+    this.later(350, () => {
       const { x, y } = this.clash;
       // A quick push in on the turn; back to 1x well inside the beat.
       this.host.focus(x, y, 1.1, 120);
       shockwave(this.scene, x, y, this.heroCol, 320, 650);
-      this.host.after(160, () => this.scene.sys.isActive() && shockwave(this.scene, this.clash.x, this.clash.y, GOLD, 240, 550));
+      this.later(160, () => shockwave(this.scene, this.clash.x, this.clash.y, GOLD, 240, 550));
       burst(this.scene, x, y, { count: 70, speed: 560, colors: [this.heroCol, GOLD, 0xffffff], texture: TEX.star });
       floatText(this.scene, x, y - 100, 'WHOOSH!', hex(this.heroCol), 56);
     });
@@ -568,7 +556,7 @@ export class ClashStage extends BaseStage {
     const y = v.cy;
     burst(this.scene, x, y, { count: 160, speed: 900, colors: [...RAINBOW, 0xffffff], texture: TEX.star, life: 1300, gravity: 200, scale: 1.3 });
     burst(this.scene, x, y, { count: 90, speed: 600, colors: [GOLD, 0xffffff] });
-    for (let i = 0; i < 3; i++) this.host.after(i * 120, () => this.scene.sys.isActive() && shockwave(this.scene, x, y, RAINBOW[i * 2]!, 380, 700));
+    for (let i = 0; i < 3; i++) this.later(i * 120, () => shockwave(this.scene, x, y, RAINBOW[i * 2]!, 380, 700));
     // Settled (300 in, hold, 400 out) inside the 0.8 s wait, before the last hit's punch.
     this.host.focus(x, y, 1.15, 80);
     sfxBoom(3);

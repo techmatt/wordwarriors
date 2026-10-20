@@ -20,6 +20,7 @@
  */
 
 import { FIGHTS, FIGHT_BEATS } from '../battle/fights.js';
+import { fightKey, type HeroKind, type MoveKind, type VillainKind } from './ids.js';
 
 export interface Template {
   key: string;
@@ -46,9 +47,7 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'inst_sound', text: 'Listen! Walk to the letter that makes this sound.', say: 'Listen, walk to the letter that makes this sound.' },
   { key: 'inst_blend', text: 'Walk on the letters, then pick the right door!' },
   { key: 'inst_picture', text: 'Read the word, then walk to its picture!' },
-  { key: 'inst_spell', text: 'Type the letters to spell the magic word!' },
   { key: 'spell_this', text: 'Spell this one!' },
-  { key: 'hint', text: 'Listen to the sounds!' },
   { key: 'right_1', text: 'Yes! You did it!', say: 'Yes, you did it!' },
   { key: 'right_2', text: 'Great reading!' },
   { key: 'right_3', text: 'Yes! That is it!', say: 'Yes, that is it!' },
@@ -60,12 +59,10 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'made_gem', text: 'We made a power gem!' },
   { key: 'made_ammo', text: 'We made star ammo!' },
   { key: 'made_helper', text: 'A helper friend is here!' },
-  { key: 'piece', text: 'One more piece!' },
   { key: 'battle_start', text: 'Let us go! Charge!', say: 'Let us go, charge!' },
   { key: 'battle2_start', text: 'Round two! We are ready now!', say: 'Round two, we are ready now!' },
   { key: 'move_pick', text: 'Quick! Pick a move!', say: 'Quick, pick a move!' },
   { key: 'move_great', text: 'Super power!' },
-  { key: 'move_ok', text: 'Nice move!' },
   { key: 'use_gem', text: 'Power gem, shine!' },
   { key: 'use_ammo', text: 'Fire the star ammo!' },
   { key: 'use_helper', text: 'Go, helper friend!' },
@@ -120,18 +117,24 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'grab_need', text: 'We need the...' },
   { key: 'grab_door', text: 'Got it! Now, out the door!', say: 'Got it, now, out the door!' },
   // Each fight style's own beats (item 031, content/battle/fights.ts): `fight_<id>_<beat>`.
-  ...FIGHTS.flatMap((f) => FIGHT_BEATS.flatMap((b) => (f.lines[b] ? [{ key: `fight_${f.id}_${b}`, ...f.lines[b] }] : []))),
+  ...FIGHTS.flatMap((f) => FIGHT_BEATS.flatMap((b) => (f.lines[b] ? [{ key: fightKey(f.id, b), ...f.lines[b] }] : []))),
 ];
 
+const variants = (base: string) => NARRATOR_LINES.filter((t) => new RegExp(`^${base}_\\d+$`).test(t.key)).length;
+/** How many `right_<n>`, `wrong_<n>` and `machine_silly_<n>` lines there are; scenes cycle through them. */
+export const RIGHT_VARIANTS = variants('right');
+export const WRONG_VARIANTS = variants('wrong');
+export const SILLY_VARIANTS = variants('machine_silly');
+
 /** Composed per narrator × hero. */
-export const HERO_LINES: Template[] = [{ key: 'alarm_hero', text: 'Bad news, {hero}!' }];
+export const HERO_LINES: (Template & { key: HeroKind })[] = [{ key: 'alarm_hero', text: 'Bad news, {hero}!' }];
 
 /**
  * Composed per narrator × villain. {item} is the counter item's name. {villain}
  * is the bare name ("Only the Magic Hat can stop Tiamat!", item 038), except in
  * `alarm_villain`, which announces the villain, as the bedroom's `bad` does.
  */
-export const VILLAIN_LINES: Template[] = [
+export const VILLAIN_LINES: (Template & { key: VillainKind })[] = [
   { key: 'alarm_villain', text: '{villain} is coming!' },
   { key: 'need_item', text: 'Only the {item} can stop {villain}!' },
   { key: 'made_item', text: 'We made the {item}!' },
@@ -142,7 +145,7 @@ export const VILLAIN_LINES: Template[] = [
 ];
 
 /** Composed per narrator × move word. The move word is the deliberate exception to the speech rule. */
-export const MOVE_LINES: Template[] = [
+export const MOVE_LINES: (Template & { key: MoveKind })[] = [
   { key: 'use_move', text: 'Use {word}!' },
   // The hub scene's last clip (item 037): its reveal line trails off ("...and
   // it goes...") into the gift word, said alone.

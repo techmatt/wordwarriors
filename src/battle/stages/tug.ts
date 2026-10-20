@@ -27,7 +27,7 @@ import { burst, floatText, fxQuality, shake } from '../../fx/juice';
 import { TEX } from '../../fx/textures';
 import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter } from '../Fighter';
 import { ARENA_LEFT, ARENA_RIGHT } from '../movement';
-import { BaseStage } from './stage';
+import { BaseStage, ease, type Pt } from './stage';
 
 /** The centre line, and the pool of sea water either side of it. */
 const MID = GAME_WIDTH / 2;
@@ -43,8 +43,6 @@ const WATER = [0x7ad9ff, 0xffffff, 0x2a8ad4, 0x9ad8ff];
 const ROPE_DARK = 0x5a3a1a;
 const ROPE_MAIN = 0xc8964a;
 const ROPE_LIGHT = 0xf0d090;
-
-type Pt = { x: number; y: number };
 
 /** A beat that carries fighters somewhere in an arc, overriding their steering: the yank, the haul. */
 interface Fling {
@@ -172,7 +170,7 @@ export class TugStage extends BaseStage {
     // Her stick sways her a little on her end of the rope.
     const n = this.nudge(f);
     const tx = Phaser.Math.Clamp(home.x - this.lead * SHIFT + (this.stumble.get(f.uid) ?? 0) + rock + n.x, ARENA_LEFT, ARENA_RIGHT);
-    const k = 1 - Math.exp(-5 * dt);
+    const k = ease(5, dt);
     f.x += (tx - f.x) * k;
     f.y += (home.y + n.y - f.y) * k;
     f.vx = 0;
@@ -201,14 +199,14 @@ export class TugStage extends BaseStage {
     }
     if (Math.floor((this.heave + Math.PI) / turn) !== beforeOff && pulling && villain.canAct(villain.now)) villain.squash(0.08);
     // The lead: the steered health, a beat's fading push, or a beat's fixed swing.
-    this.kick += (0 - this.kick) * (1 - Math.exp(-0.4 * dt));
+    this.kick += (0 - this.kick) * ease(0.4, dt);
     const base = Phaser.Math.Clamp((this.host.heroFrac() - this.host.villainFrac()) * 1.5, -0.7, 0.7);
     const want = this.lock ?? Phaser.Math.Clamp(base + this.kick, -1, 1);
-    this.lead += (want - this.lead) * (1 - Math.exp(-(this.lock === null ? 2.5 : this.leadRate) * dt));
+    this.lead += (want - this.lead) * ease(this.lock === null ? 2.5 : this.leadRate, dt);
     for (const [uid, s] of this.stumble) this.stumble.set(uid, s * Math.exp(-2.5 * dt));
     // While the ultimate charges (before a beat takes over) the coils already swell with it.
     const surgeWant = this.lock === null && this.host.phase === 'ultimate' ? 1.5 : this.surgeTo;
-    this.surge += (surgeWant - this.surge) * (1 - Math.exp(-4 * dt));
+    this.surge += (surgeWant - this.surge) * ease(4, dt);
     // Beaten and turned good, its coils sink back into the sea instead of vanishing.
     this.coilsUp = villain.active ? 1 : Math.max(0, this.coilsUp - dt * 2.5);
     this.flingStep();
@@ -463,8 +461,7 @@ export class TugStage extends BaseStage {
     glow(b);
     this.heaveAll(0.25);
     floatText(this.scene, (a.cx + b.cx) / 2, Math.min(a.top, b.top) - 30, 'HEAVE!', '#ffd23f', 50);
-    this.host.after(450, () => {
-      if (!this.scene.sys.isActive()) return;
+    this.later(450, () => {
       this.heaveAll(0.25);
       floatText(this.scene, (a.x + b.x) / 2, Math.min(a.y, b.y) - 220, 'HO!', '#7ad9ff', 56);
     });

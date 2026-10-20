@@ -71,6 +71,11 @@ function ab(
   return { id, name, kind, cooldown, color, power, ...extra };
 }
 
+/** An ultimate: an ability with no cooldown (the director fires it). */
+function ult(id: string, name: string, kind: AbilitySpec['kind'], color: number, power: number, extra: Partial<AbilitySpec> = {}): AbilitySpec {
+  return ab(id, name, kind, 0, color, power, extra);
+}
+
 export const MINIONS: Record<string, MinionSpec> = {
   baby_dragon: {
     id: 'baby_dragon', name: 'Baby Dragon', glyph: '🐲', look: 'a chubby baby dragon with tiny wings, friendly',
@@ -179,7 +184,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('bounce_stomp', 'Bounce Stomp', 'slam', 6, 0x9b5de5, 2, { word: 'hop', shout: true, words: ['bam', 'big'] }),
         ab('teddy_army', 'Teddy Army', 'summon', 14, 0xc8884a, 2, { minion: 'teddy', count: 3, word: 'hug', words: ['run', 'tug'] }),
       ],
-      ultimate: ab('super_nova', 'Super Star Nova', 'rain', 0, 0xffd23f, 3, { count: 30, glyph: '🌟', color2: 0xff5ab4 }),
+      ultimate: ult('super_nova', 'Super Star Nova', 'rain',0xffd23f, 3, { count: 30, glyph: '🌟', color2: 0xff5ab4 }),
       taunts: [
         { key: 'here', text: 'Here I come!' },
         { key: 'wand', text: 'My wand is sparkly!' },
@@ -197,7 +202,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('stomp_stomp', 'Stompy Feet', 'slam', 5, 0x5a2a7a, 2),
         ab('no_nap', 'No Nap Ever', 'lightning', 7, 0xb04aff, 2, { count: 3 }),
       ],
-      ultimate: ab('tantrum_quake', 'Tantrum Quake', 'wave', 0, 0xff3355, 3, { color2: 0x3a1a5a }),
+      ultimate: ult('tantrum_quake', 'Tantrum Quake', 'wave',0xff3355, 3, { color2: 0x3a1a5a }),
       taunts: [
         { key: 'no', text: 'No, no, no!' },
         { key: 'mine', text: 'All the toys are mine!' },
@@ -244,7 +249,7 @@ export const ROSTER: CharacterSpec[] = [
       palette: [0xff9ad5, 0x9ad8ff], glyph: '🍼', style: 'dodge', speed: 230, size: 0.8, hp: 90,
       abilities: [
         // When the hub's gift word is one of Ellie's (BIG, POP, HOP...),
-        // Julia fires Ellie's move for it (src/rules/moves.ts spellOwner).
+        // Julia fires Ellie's move for it (src/rules/moves.ts giftOwner).
         ab('giant_bubbles', 'Giant Bubbles', 'bolt', 2.4, 0x9ad8ff, 1, { count: 4, art: 'fx_bubble', upright: true, homing: true, color2: 0xff9ad5, word: 'big', words: ['wet'] }),
         ab('bubble_trap', 'Bubble Trap', 'bolt', 7, 0xff9ad5, 2, { count: 2, art: 'fx_bubble', upright: true, homing: true, status: 'bubble', duration: 2.5, color2: 0x9ad8ff, word: 'pop', words: ['fog'] }),
         ab('bubble_shield', 'Bubble Shield', 'shield', 10, 0x9ad8ff, 1, { duration: 4, words: ['hug'] }),
@@ -252,7 +257,7 @@ export const ROSTER: CharacterSpec[] = [
         // Her one sword move (item 014's swords): a ring round her, then flung.
         ab('spinny_swords', 'Spinny Swords', 'orbit', 7, 0xcfe8ff, 2, { count: 5, art: 'prop_silver_sword', duration: 1.6, color2: 0xff9ad5, word: 'zip', shout: true, words: ['top'] }),
       ],
-      ultimate: ab('bubble_storm', 'Mega Bubble Storm', 'rain', 0, 0x9ad8ff, 3, { count: 30, art: 'fx_bubble', upright: true, color2: 0xff9ad5 }),
+      ultimate: ult('bubble_storm', 'Mega Bubble Storm', 'rain',0x9ad8ff, 3, { count: 30, art: 'fx_bubble', upright: true, color2: 0xff9ad5 }),
       taunts: [
         { key: 'me', text: 'Me do it!' },
         { key: 'again', text: 'Again, again!' },
@@ -271,7 +276,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('toy_toss', 'Toy Toss', 'bolt', 2.4, 0xc8884a, 1, { count: 4, glyph: '🧸' }),
         ab('tantrum_shockwave', 'Tantrum Shockwave', 'slam', 6, 0xb04aff, 3),
       ],
-      ultimate: ab('juice_tsunami', 'Juice Tsunami', 'wave', 0, 0x7ad9ff, 3, { color2: 0x3a1a5a }),
+      ultimate: ult('juice_tsunami', 'Juice Tsunami', 'wave',0x7ad9ff, 3, { color2: 0x3a1a5a }),
       taunts: [
         { key: 'mine', text: 'Everything is mine!' },
         { key: 'share', text: 'I will not share!' },
@@ -320,7 +325,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('wing_gust', 'Wing Gust', 'cone', 5, 0xbaffc9, 2, { word: 'fan', words: ['fog'] }),
         ab('scale_shield', 'Scale Shield', 'shield', 10, 0x2ec27e, 1, { duration: 4, words: ['hug'] }),
       ],
-      ultimate: ab('dragon_parade', 'Dragon Parade', 'summon', 0, 0xff7b3a, 3, { minion: 'baby_dragon', count: 6 }),
+      ultimate: ult('dragon_parade', 'Dragon Parade', 'summon',0xff7b3a, 3, { minion: 'baby_dragon', count: 6 }),
       taunts: [
         { key: 'dragons', text: 'Dragons, to me!' },
         { key: 'roar', text: 'My dragons say hello!' },
@@ -338,7 +343,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('fire_rain', 'Fire Rain', 'rain', 7, 0xff4a1a, 2, { count: 12, glyph: '🔥' }),
         ab('tail_whip', 'Tail Whip', 'spin', 6, 0x2a5a3a, 2),
       ],
-      ultimate: ab('dragon_swarm', 'Dragon Swarm', 'rain', 0, 0xff4a1a, 3, { count: 26, glyph: '🐉', color2: 0x2a5a3a }),
+      ultimate: ult('dragon_swarm', 'Dragon Swarm', 'rain',0xff4a1a, 3, { count: 26, glyph: '🐉', color2: 0x2a5a3a }),
       taunts: [
         { key: 'mine', text: 'All dragons obey me!' },
         { key: 'hungry', text: 'My dragons are hungry!' },
@@ -390,7 +395,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('nail_storm', 'Nail Storm', 'bolt', 2.6, 0xc8c8d8, 1, { count: 5, glyph: '🔩', words: ['zip'] }),
         ab('ground_pound', 'Ground Pound', 'slam', 7, 0xff8c42, 3, { word: 'bam', shout: true, words: ['dig', 'mud'] }),
       ],
-      ultimate: ab('tower_drop', 'Tower Drop', 'rain', 0, 0xc8643a, 3, { count: 20, glyph: '🧱', color2: 0xff8c42 }),
+      ultimate: ult('tower_drop', 'Tower Drop', 'rain',0xc8643a, 3, { count: 20, glyph: '🧱', color2: 0xff8c42 }),
       taunts: [
         { key: 'build', text: 'Let me build that!' },
         { key: 'strong', text: 'Strong like a castle!' },
@@ -408,7 +413,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('brick_rain', 'Brick Rain', 'rain', 7, 0xc8643a, 2, { count: 12, glyph: '🧱' }),
         ab('quake', 'Quake', 'slam', 6, 0xb04aff, 3),
       ],
-      ultimate: ab('mega_hammer', 'Mega Hammer Quake', 'wave', 0, 0xb04aff, 3, { color2: 0x2a2a3a }),
+      ultimate: ult('mega_hammer', 'Mega Hammer Quake', 'wave',0xb04aff, 3, { color2: 0x2a2a3a }),
       taunts: [
         { key: 'smash', text: 'Smash it all!' },
         { key: 'mess', text: 'What a big mess!' },
@@ -460,7 +465,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('sauce_tornado', 'Sauce Tornado', 'cone', 6, 0xe63946, 2, { word: 'hot', words: ['wet'] }),
         ab('oven_mitt', 'Oven Mitt Shield', 'shield', 10, 0xff8c42, 1, { duration: 4, word: 'hug', words: ['big'] }),
       ],
-      ultimate: ab('breakfast_storm', 'Breakfast Storm', 'rain', 0, 0xffbe0b, 3, { count: 30, glyph: '🥞', color2: 0xff6a3a }),
+      ultimate: ult('breakfast_storm', 'Breakfast Storm', 'rain',0xffbe0b, 3, { count: 30, glyph: '🥞', color2: 0xff6a3a }),
       taunts: [
         { key: 'order', text: 'Order up!' },
         { key: 'pancake', text: 'Pancakes for everyone!' },
@@ -478,7 +483,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('hot_sauce', 'Hot Sauce Blast', 'beam', 6, 0xff3a1a, 2),
         ab('sticky_syrup', 'Sticky Syrup', 'trap', 8, 0xc8781a, 2, { count: 3, glyph: '🍯' }),
       ],
-      ultimate: ab('food_fight', 'Food Fight Frenzy', 'rain', 0, 0xc8ff3a, 3, { count: 28, glyph: '🍝', color2: 0x2a1a3a }),
+      ultimate: ult('food_fight', 'Food Fight Frenzy', 'rain',0xc8ff3a, 3, { count: 28, glyph: '🍝', color2: 0x2a1a3a }),
       taunts: [
         { key: 'veggies', text: 'Eat your veggies!' },
         { key: 'broccoli', text: 'Broccoli for breakfast!' },
@@ -527,7 +532,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('snow_buddies', 'Snow Buddies', 'summon', 12, 0xe8f6ff, 2, { minion: 'snow_golem', count: 2, word: 'big', words: ['hug'] }),
         ab('crystal_spire', 'Crystal Spire', 'slam', 6, 0xaee6ff, 2, { words: ['bam'] }),
       ],
-      ultimate: ab('blizzard', 'Blizzard Crown', 'rain', 0, 0xe8f6ff, 3, { count: 34, glyph: '❄️', color2: 0x7cc7ff }),
+      ultimate: ult('blizzard', 'Blizzard Crown', 'rain',0xe8f6ff, 3, { count: 34, glyph: '❄️', color2: 0x7cc7ff }),
       taunts: [
         { key: 'cold', text: 'The cold is my friend!' },
         { key: 'freeze', text: 'Freeze right there!' },
@@ -545,7 +550,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('flash_freeze', 'Flash Freeze', 'freeze', 7, 0x5ad8ff, 2, { status: 'freeze', duration: 3 }),
         ab('frost_beam', 'Frost Beam', 'beam', 5, 0x9aeaff, 2),
       ],
-      ultimate: ab('eternal_winter', 'Eternal Winter', 'wave', 0, 0xbff0ff, 3, { color2: 0x1a2a5a, status: 'freeze' }),
+      ultimate: ult('eternal_winter', 'Eternal Winter', 'wave',0xbff0ff, 3, { color2: 0x1a2a5a, status: 'freeze' }),
       taunts: [
         { key: 'winter', text: 'Winter forever!' },
         { key: 'chill', text: 'Chill out!' },
@@ -594,7 +599,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('brave_shout', 'Brave Shout', 'heal', 10, 0xffb703, 1, { word: 'hug', words: ['fix'] }),
         ab('leap', 'Big Leap', 'slam', 6, 0x2a9d8f, 2, { word: 'hop', words: ['big'] }),
       ],
-      ultimate: ab('never_give_up', 'Never Give Up', 'spin', 0, 0xffb703, 3, { count: 6, color2: 0xe63946 }),
+      ultimate: ult('never_give_up', 'Never Give Up', 'spin',0xffb703, 3, { count: 6, color2: 0xe63946 }),
       taunts: [
         { key: 'brave', text: 'I am not scared!' },
         { key: 'charge', text: 'Charge!' },
@@ -612,7 +617,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('cold_twirl', 'Cold Twirl', 'spin', 5, 0x7cc7ff, 2),
         ab('ice_wall', 'Ice Wall', 'shield', 9, 0x7cc7ff, 1, { duration: 4 }),
       ],
-      ultimate: ab('frozen_charge', 'Frozen Heart Charge', 'dash', 0, 0x9aeaff, 3, { count: 4, color2: 0x3a1a2a }),
+      ultimate: ult('frozen_charge', 'Frozen Heart Charge', 'dash',0x9aeaff, 3, { count: 4, color2: 0x3a1a2a }),
       taunts: [
         { key: 'cold', text: 'My heart is ice!' },
         { key: 'alone', text: 'I fight alone!' },
@@ -661,7 +666,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('dust_devils', 'Dust Devils', 'summon', 12, 0xe8c890, 2, { minion: 'dust_devil', count: 3, word: 'pop', words: ['top'] }),
         ab('star_jewels', 'Star Jewels', 'bolt', 2.4, 0xff5ab4, 1, { count: 3, glyph: '💎', words: ['zap'] }),
       ],
-      ultimate: ab('jewel_storm', 'Jewel Storm', 'rain', 0, 0xff5ab4, 3, { count: 30, glyph: '💎', color2: 0x1fb5a8 }),
+      ultimate: ult('jewel_storm', 'Jewel Storm', 'rain',0xff5ab4, 3, { count: 30, glyph: '💎', color2: 0x1fb5a8 }),
       taunts: [
         { key: 'fly', text: 'Hop on my carpet!' },
         { key: 'wind', text: 'Feel the wind!' },
@@ -680,7 +685,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('sand_hail', 'Sand Hail', 'rain', 8, 0xe8c890, 2, { count: 12, glyph: '🟤' }),
         ab('whirlwinds', 'Whirlwinds', 'summon', 11, 0xe8c890, 2, { minion: 'dust_devil', count: 3 }),
       ],
-      ultimate: ab('sandstorm', 'Great Sandstorm', 'wave', 0, 0xe8c890, 3, { color2: 0x3a1a4a }),
+      ultimate: ult('sandstorm', 'Great Sandstorm', 'wave',0xe8c890, 3, { color2: 0x3a1a4a }),
       taunts: [
         { key: 'sand', text: 'Sand in your shoes!' },
         { key: 'storm', text: 'Here comes the storm!' },
@@ -729,7 +734,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('dune_slam', 'Dune Slam', 'slam', 6, 0xd9a441, 3, { word: 'bam', words: ['dig'] }),
         ab('sun_disc', 'Sun Disc', 'beam', 6, 0xffd23f, 2, { word: 'sun', words: ['hot', 'zap'] }),
       ],
-      ultimate: ab('pyramid', 'Pyramid Power', 'lightning', 0, 0xffd23f, 3, { count: 8, color2: 0xd9a441 }),
+      ultimate: ult('pyramid', 'Pyramid Power', 'lightning',0xffd23f, 3, { count: 8, color2: 0xd9a441 }),
       taunts: [
         { key: 'look', text: 'Look upon my statues!' },
         { key: 'sand', text: 'Rise, sand!' },
@@ -747,7 +752,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('scarab_swarm', 'Scarab Swarm', 'summon', 9, 0x2ac7a0, 2, { minion: 'scarab', count: 5 }),
         ab('sand_quake', 'Sand Quake', 'slam', 6, 0xd9b26f, 3),
       ],
-      ultimate: ab('colossus_march', 'March of the Colossi', 'wave', 0, 0xd9b26f, 3, { color2: 0x4a3a1a }),
+      ultimate: ult('colossus_march', 'March of the Colossi', 'wave',0xd9b26f, 3, { color2: 0x4a3a1a }),
       taunts: [
         { key: 'despair', text: 'Look at me, and tremble!' },
         { key: 'kneel', text: 'Bow to the pharaoh!', say: 'Bough to the pharaoh!' },
@@ -797,7 +802,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('tail_spin', 'Tail Spin', 'spin', 5, 0x2aa66a, 2, { word: 'zip', words: ['top'] }),
         ab('hug_coil', 'Big Hug', 'coil', 12, 0x2aa66a, 2, { duration: 3, word: 'hug', words: ['tug'] }),
       ],
-      ultimate: ab('sea_wave', 'World Wave', 'wave', 0, 0x7ad9ff, 3, { color2: 0x2aa66a }),
+      ultimate: ult('sea_wave', 'World Wave', 'wave',0x7ad9ff, 3, { color2: 0x2aa66a }),
       taunts: [
         { key: 'long', text: 'I am very, very long!' },
         { key: 'sea', text: 'The sea is my home!' },
@@ -815,7 +820,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('venom_rain', 'Venom Rain', 'rain', 7, 0xa0ff3a, 2, { count: 14, glyph: '💧' }),
         ab('serpent_spawn', 'Serpent Spawn', 'summon', 10, 0x2aa66a, 2, { minion: 'mini_serpent', count: 4 }),
       ],
-      ultimate: ab('swallow_sun', 'Swallow the Sun', 'eclipse', 0, 0x1a1a3a, 3, { color2: 0xffd23f }),
+      ultimate: ult('swallow_sun', 'Swallow the Sun', 'eclipse',0x1a1a3a, 3, { color2: 0xffd23f }),
       taunts: [
         { key: 'world', text: 'I wrap around the world!' },
         { key: 'hungry', text: 'So hungry for the sun!' },
@@ -865,7 +870,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('wing_slam', 'Wing Slam', 'slam', 6, 0xd62828, 3, { word: 'bam', words: ['big'] }),
         ab('coin_golems', 'Coin Golems', 'summon', 13, 0xffcc33, 2, { minion: 'gold_golem', count: 2, words: ['run'] }),
       ],
-      ultimate: ab('rainbow_fire', 'Rainbow Fire', 'cone', 0, 0xff5ab4, 3, { color2: 0xffd23f }),
+      ultimate: ult('rainbow_fire', 'Rainbow Fire', 'cone',0xff5ab4, 3, { color2: 0xffd23f }),
       taunts: [
         { key: 'gold', text: 'Want some gold?' },
         { key: 'fire', text: 'Warm and toasty!' },
@@ -885,7 +890,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('hot_coals', 'Hot Coals', 'trap', 9, 0xff4a00, 2, { count: 3, glyph: '🔥' }),
         ab('tail_quake', 'Tail Quake', 'slam', 6, 0x5a0a0a, 3),
       ],
-      ultimate: ab('gold_avalanche', 'Gold Avalanche', 'rain', 0, 0xffcc33, 3, { count: 40, glyph: '🟡', color2: 0xff4a00 }),
+      ultimate: ult('gold_avalanche', 'Gold Avalanche', 'rain',0xffcc33, 3, { count: 40, glyph: '🟡', color2: 0xff4a00 }),
       taunts: [
         { key: 'mine', text: 'My gold! All mine!' },
         { key: 'fire', text: 'I am fire and gold!' },
@@ -939,7 +944,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('wing_hug', 'Wing Hug', 'shield', 10, 0x9b5de5, 1, { duration: 4, word: 'hug', words: ['big'] }),
         ab('tail_thump', 'Tail Thump', 'slam', 6, 0x7b2cbf, 3, { word: 'bam', shout: true, words: ['dig'] }),
       ],
-      ultimate: ab('royal_starfire', 'Royal Starfire', 'cone', 0, 0xe0aaff, 3, { color2: 0xffd23f }),
+      ultimate: ult('royal_starfire', 'Royal Starfire', 'cone',0xe0aaff, 3, { color2: 0xffd23f }),
       taunts: [
         { key: 'hello', text: 'Hello, little friend!' },
         { key: 'queen', text: 'The kind queen is here!' },
@@ -959,7 +964,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('purple_thunder', 'Purple Thunder', 'lightning', 7, 0xc77dff, 2, { count: 3 }),
         ab('throne_quake', 'Throne Quake', 'slam', 6, 0x5a1a7a, 3),
       ],
-      ultimate: ab('royal_storm', 'Royal Purple Storm', 'rain', 0, 0xb15cff, 3, { count: 40, glyph: '🔥', color2: 0xff3ad0 }),
+      ultimate: ult('royal_storm', 'Royal Purple Storm', 'rain',0xb15cff, 3, { count: 40, glyph: '🔥', color2: 0xff3ad0 }),
       taunts: [
         // edge-tts reads a bare "Bow" as the archer's bow; "Bough" rhymes with now.
         { key: 'bow', text: 'Bow to your queen!', say: 'Bough to your queen!' },
@@ -1014,7 +1019,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('rocket_punch', 'Rocket Punch', 'dash', 4, 0xff6a3a, 2, { word: 'pow', words: ['run'] }),
         ab('gold_shield', 'Gold Shield', 'shield', 10, 0xffc233, 1, { duration: 4, word: 'big', words: ['fix'] }),
       ],
-      ultimate: ab('core_blast', 'Core Blast', 'beam', 0, 0xff9a3c, 3, { color2: 0xffd23f }),
+      ultimate: ult('core_blast', 'Core Blast', 'beam',0xff9a3c, 3, { color2: 0xffd23f }),
       taunts: [
         { key: 'mighty', text: 'Small but mighty!' },
         { key: 'rocket', text: 'Rocket hop!' },
@@ -1033,7 +1038,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('drone_swarm', 'Drone Swarm', 'summon', 10, 0x9aa6b8, 2, { minion: 'drone', count: 4 }),
         ab('spike_shield', 'Spike Shield', 'shield', 10, 0xff0054, 1, { duration: 4 }),
       ],
-      ultimate: ab('core_overload', 'Core Overload', 'wave', 0, 0xff0054, 3, { color2: 0xffcc33 }),
+      ultimate: ult('core_overload', 'Core Overload', 'wave',0xff0054, 3, { color2: 0xffcc33 }),
       taunts: [
         { key: 'tiny', text: 'Tiny but terrible!' },
         { key: 'target', text: 'Target locked!' },
@@ -1082,7 +1087,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('trick_trap', 'Trick Trap', 'trap', 8, 0xf4a261, 2, { count: 3, words: ['net', 'web'] }),
         ab('ta_da', 'Ta-da Blink', 'teleport', 5, 0x95d5b2, 2, { word: 'hop', words: ['run'] }),
       ],
-      ultimate: ab('grand_finale', 'Grand Finale', 'rain', 0, 0xf4a261, 3, { count: 30, glyph: '🃏', color2: 0x95d5b2 }),
+      ultimate: ult('grand_finale', 'Grand Finale', 'rain',0xf4a261, 3, { count: 30, glyph: '🃏', color2: 0x95d5b2 }),
       taunts: [
         { key: 'trick', text: 'Pick a card!' },
         { key: 'where', text: 'Where did I go?' },
@@ -1102,7 +1107,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('vanish', 'Vanish', 'teleport', 4, 0x9d4edd, 2),
         ab('cards', 'Card Soldiers', 'summon', 11, 0xd02040, 2, { minion: 'card_soldier', count: 4 }),
       ],
-      ultimate: ab('hall_of_mirrors', 'Hall of Clones', 'clones', 0, 0x9d4edd, 3, { count: 8, color2: 0x1b1b2f }),
+      ultimate: ult('hall_of_mirrors', 'Hall of Clones', 'clones',0x9d4edd, 3, { count: 8, color2: 0x1b1b2f }),
       taunts: [
         { key: 'catch', text: 'Catch me if you can!' },
         { key: 'which', text: 'Which one is the real me?' },
@@ -1152,7 +1157,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('broom_dash', 'Broom Dash', 'dash', 5, 0x80ffdb, 2, { word: 'zip', words: ['jet', 'run'] }),
         ab('potion', 'Healing Potion', 'heal', 10, 0x80ffdb, 1, { word: 'hug', words: ['fix'] }),
       ],
-      ultimate: ab('garden', 'Magic Garden', 'rain', 0, 0xff8fab, 3, { count: 30, glyph: '🌸', color2: 0x80ffdb }),
+      ultimate: ult('garden', 'Magic Garden', 'rain',0xff8fab, 3, { count: 30, glyph: '🌸', color2: 0x80ffdb }),
       taunts: [
         { key: 'brew', text: 'Bubble, bubble!' },
         { key: 'pig', text: 'Into a piggy you go!' },
@@ -1170,7 +1175,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('pig_curse', 'Pig Curse', 'polymorph', 7, 0x39ff14, 2, { status: 'pig', duration: 3.5, callout: 'Curly Tail Curse!' }),
         ab('dark_bolts', 'Dark Bolts', 'bolt', 2.4, 0x39ff14, 2, { count: 3, homing: true }),
       ],
-      ultimate: ab('all_pigs', 'Everybody Pigs!', 'polymorph', 0, 0x39ff14, 3, { status: 'pig', duration: 6, count: 6 }),
+      ultimate: ult('all_pigs', 'Everybody Pigs!', 'polymorph',0x39ff14, 3, { status: 'pig', duration: 6, count: 6 }),
       taunts: [
         { key: 'pigs', text: 'You will all be pigs!' },
         { key: 'rise', text: 'Rise, my skeletons!' },
@@ -1219,7 +1224,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('chest_drum', 'Chest Drum', 'slam', 6, 0x8a6a4a, 3, { word: 'bam', shout: true, words: ['big'] }),
         ab('gorilla_hug', 'Gorilla Hug', 'heal', 10, 0xffe14a, 1, { word: 'hug', words: ['tug'] }),
       ],
-      ultimate: ab('banana_bonanza', 'Banana Bonanza', 'rain', 0, 0xffe14a, 3, { count: 32, glyph: '🍌', color2: 0x8a6a4a }),
+      ultimate: ult('banana_bonanza', 'Banana Bonanza', 'rain',0xffe14a, 3, { count: 32, glyph: '🍌', color2: 0x8a6a4a }),
       taunts: [
         { key: 'hugs', text: 'Hugs for everyone!' },
         { key: 'bananas', text: 'Bananas, go!' },
@@ -1238,7 +1243,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('peel_traps', 'Banana Peel Traps', 'trap', 8, 0xffe14a, 2, { count: 3, glyph: '🍌' }),
         ab('car_crunch', 'Car Crunch', 'dash', 7, 0x3a2a1a, 3),
       ],
-      ultimate: ab('mega_chest_drum', 'Mega Chest Drum', 'wave', 0, 0xff3a1a, 3, { color2: 0x3a2a1a }),
+      ultimate: ult('mega_chest_drum', 'Mega Chest Drum', 'wave',0xff3a1a, 3, { color2: 0x3a2a1a }),
       taunts: [
         { key: 'hungry', text: 'I am so hungry!' },
         { key: 'crunch', text: 'Crunch, crunch, crunch!' },
@@ -1296,7 +1301,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('muscle_flex', 'Muscle Flex', 'shield', 10, 0xe63946, 1, { duration: 4, word: 'hug', words: ['fix'] }),
         ab('mega_squat', 'Mega Squat Slam', 'slam', 7, 0xffd23f, 3, { word: 'bam', shout: true, words: ['tug', 'dig'] }),
       ],
-      ultimate: ab('trophy_shower', 'Trophy Shower', 'rain', 0, 0xffd23f, 3, { count: 24, glyph: '🏆', color2: 0xe63946 }),
+      ultimate: ult('trophy_shower', 'Trophy Shower', 'rain',0xffd23f, 3, { count: 24, glyph: '🏆', color2: 0xe63946 }),
       taunts: [
         { key: 'power', text: 'Feel the power!' },
         { key: 'rep', text: 'One more rep!' },
@@ -1314,7 +1319,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('shake_splash', 'Protein Shake Splash', 'cone', 6, 0xc8a0ff, 2),
         ab('flex_quake', 'Flex Quake', 'slam', 6, 0xb04aff, 3),
       ],
-      ultimate: ab('mega_muscle_quake', 'Mega Muscle Quake', 'wave', 0, 0xb04aff, 3, { color2: 0x2a2a3a }),
+      ultimate: ult('mega_muscle_quake', 'Mega Muscle Quake', 'wave',0xb04aff, 3, { color2: 0x2a2a3a }),
       taunts: [
         { key: 'lift', text: 'Do you even lift?' },
         { key: 'weak', text: 'Too weak, too weak!' },
@@ -1362,7 +1367,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('firewall', 'Firewall Shield', 'shield', 10, 0x3ae0ff, 1, { duration: 4, word: 'fix', words: ['top'] }),
         ab('code_bolt', 'Code Bolt', 'bolt', 2.4, 0x3ae0ff, 1, { count: 4, glyph: '💾', homing: true, word: 'run', words: ['pop'] }),
       ],
-      ultimate: ab('data_storm', 'Data Storm', 'rain', 0, 0x3ae0ff, 3, { count: 28, glyph: '💾', color2: 0xff4ad8 }),
+      ultimate: ult('data_storm', 'Data Storm', 'rain',0x3ae0ff, 3, { count: 28, glyph: '💾', color2: 0xff4ad8 }),
       taunts: [
         { key: 'hacking', text: 'Hacking in!' },
         { key: 'beep', text: 'Beep boop, got you!' },
@@ -1381,7 +1386,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('red_lasers', 'Red Laser Grid', 'grid', 8, 0xff2a4a, 3, { duration: 2 }),
         ab('evil_drones', 'Evil Drones', 'summon', 12, 0xff2a4a, 2, { minion: 'drone', count: 3 }),
       ],
-      ultimate: ab('system_crash', 'System Crash', 'wave', 0, 0xff2a4a, 3, { color2: 0x1a1a2a }),
+      ultimate: ult('system_crash', 'System Crash', 'wave',0xff2a4a, 3, { color2: 0x1a1a2a }),
       taunts: [
         { key: 'deleting', text: 'Deleting your fun!' },
         { key: 'error', text: 'Error, error!' },
@@ -1429,7 +1434,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('frost_rune', 'Frost Rune', 'freeze', 9, 0xbfefff, 2, { status: 'freeze', duration: 2, word: 'ice', words: ['fog'] }),
         ab('blade_spin', 'Blade Spin', 'spin', 6, 0xffffff, 2, { count: 4, word: 'top', words: ['zip'] }),
       ],
-      ultimate: ab('rune_storm', 'Rune Storm', 'lightning', 0, 0x7ab8ff, 3, { count: 8, color2: 0xffffff }),
+      ultimate: ult('rune_storm', 'Rune Storm', 'lightning',0x7ab8ff, 3, { count: 8, color2: 0xffffff }),
       taunts: [
         { key: 'sword', text: 'Sword and spell!' },
         { key: 'runes', text: 'By the runes!' },
@@ -1447,7 +1452,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('hex_bolts', 'Hex Bolts', 'bolt', 2.6, 0x8a2aff, 2, { count: 4, glyph: '🔮', homing: true }),
         ab('rune_traps', 'Rune Traps', 'trap', 8, 0xb04aff, 2, { count: 3, glyph: '🔮' }),
       ],
-      ultimate: ab('doom_rune', 'Doom Rune Blast', 'wave', 0, 0x8a2aff, 3, { color2: 0x1a0a2a }),
+      ultimate: ult('doom_rune', 'Doom Rune Blast', 'wave',0x8a2aff, 3, { color2: 0x1a0a2a }),
       taunts: [
         { key: 'bow', text: 'Bow to my blade!' },
         { key: 'rise', text: 'Dark runes, rise!' },
@@ -1495,7 +1500,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('battle_cry', 'Battle Cry', 'shield', 10, 0xffd23f, 1, { duration: 4, word: 'big', words: ['hug'] }),
         ab('sword_leap', 'Sword Leap', 'slam', 7, 0xffd23f, 3, { word: 'bam', shout: true, words: ['hop', 'pow'] }),
       ],
-      ultimate: ab('sword_rain', 'Sword Rain', 'rain', 0, 0xc8c8d8, 3, { count: 24, glyph: '⚔️', color2: 0xffd23f }),
+      ultimate: ult('sword_rain', 'Sword Rain', 'rain',0xc8c8d8, 3, { count: 24, glyph: '⚔️', color2: 0xffd23f }),
       taunts: [
         { key: 'kingdom', text: 'For the kingdom!' },
         { key: 'shields', text: 'Shields up!' },
@@ -1513,7 +1518,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('shield_slam', 'Shield Slam', 'slam', 6, 0xff3a1a, 3),
         ab('whirlwind', 'Whirlwind', 'spin', 6, 0x8a8a9a, 2, { count: 4 }),
       ],
-      ultimate: ab('war_cry', 'Mega War Cry', 'wave', 0, 0xff3a1a, 3, { color2: 0x2a1a1a }),
+      ultimate: ult('war_cry', 'Mega War Cry', 'wave',0xff3a1a, 3, { color2: 0x2a1a1a }),
       taunts: [
         { key: 'kneel', text: 'Kneel before me!' },
         { key: 'axe', text: 'My axe is hungry!' },
@@ -1562,7 +1567,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('piggy_hex', 'Piggy Hex', 'polymorph', 10, 0xff9ad5, 2, { status: 'pig', duration: 3, word: 'pig', words: ['mud'] }),
         ab('shadow_bolt', 'Shadow Bolt', 'bolt', 2.4, 0xb04aff, 1, { count: 3, glyph: '🔮', homing: true, word: 'zap', words: ['zip'] }),
       ],
-      ultimate: ab('meteor_rain', 'Purple Meteor Rain', 'rain', 0, 0xb04aff, 3, { count: 24, glyph: '☄️', color2: 0xff9ad5 }),
+      ultimate: ult('meteor_rain', 'Purple Meteor Rain', 'rain',0xb04aff, 3, { count: 24, glyph: '☄️', color2: 0xff9ad5 }),
       taunts: [
         { key: 'abracadabra', text: 'Abracadabra, purple fire!' },
         { key: 'imps', text: 'My imps are ready!' },
@@ -1580,7 +1585,7 @@ export const ROSTER: CharacterSpec[] = [
         ab('hex_trap', 'Hex Trap', 'trap', 8, 0xb04aff, 2, { count: 3, glyph: '🔮' }),
         ab('imp_swarm', 'Imp Swarm', 'summon', 12, 0x8a2aff, 2, { minion: 'imp', count: 4 }),
       ],
-      ultimate: ab('big_purple_doom', 'Big Purple Doom', 'eclipse', 0, 0x2a0a4a, 3, { color2: 0xb04aff }),
+      ultimate: ult('big_purple_doom', 'Big Purple Doom', 'eclipse',0x2a0a4a, 3, { color2: 0xb04aff }),
       taunts: [
         { key: 'curses', text: 'Curses on you!' },
         { key: 'imps', text: 'My imps will catch you!' },

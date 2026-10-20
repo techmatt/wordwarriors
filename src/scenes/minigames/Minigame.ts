@@ -15,6 +15,7 @@
 import Phaser from 'phaser';
 
 import { narratorLine } from '../../../content/voice/ids';
+import { RIGHT_VARIANTS, WRONG_VARIANTS } from '../../../content/voice/script';
 import { sfxRight, sfxSummon, sfxWrong } from '../../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../../config';
 import { episode, narrator } from '../../episode/Episode';
@@ -25,6 +26,12 @@ import type { ItemKind } from '../../state/ProgressStore';
 import type { KeepOut } from '../../ui/Caption';
 import type { Speaker } from '../../ui/Portrait';
 import { RoomScene } from '../../world/RoomScene';
+
+/** The side rooms' words (the sentence banner, the machine's panel): ink, and lit while said. */
+export const INK = '#1a1030';
+export const LIT = '#ff3d7a';
+/** A moment to look round a side room she has just walked into, before anyone talks. */
+export const ARRIVE_MS = 800;
 
 export abstract class Minigame extends RoomScene {
   /**
@@ -147,7 +154,7 @@ export abstract class Minigame extends RoomScene {
     this.addPiece(x, y, color);
     if (confirmId) await this.say(confirmId);
     this.rightN++;
-    await this.say(narratorLine(narrator(), `right_${((this.rightN - 1) % 4) + 1}`));
+    await this.say(narratorLine(narrator(), `right_${((this.rightN - 1) % RIGHT_VARIANTS) + 1}`));
     this.wrongTries = 0;
   }
 
@@ -174,7 +181,7 @@ export abstract class Minigame extends RoomScene {
       });
     }
     this.wrongN++;
-    await this.say(narratorLine(narrator(), `wrong_${((this.wrongN - 1) % 4) + 1}`));
+    await this.say(narratorLine(narrator(), `wrong_${((this.wrongN - 1) % WRONG_VARIANTS) + 1}`));
     this.locked = false;
     if (this.wrongTries >= 2) this.sparkleAnswer();
   }

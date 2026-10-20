@@ -29,7 +29,7 @@ import { COUNTER_ROOM, FETCH_ROOMS, HOME, PLACE_BY_ID, SIDE_ROOM_BY_ID } from '.
 import { BANK } from '../../content/phonics/bank';
 import { questFor, questSetup, type Line } from '../../content/house/quests';
 import { hubStory, storyTexts, type HubStory, type HubStoryIds } from '../../content/house/scenes';
-import { group } from '../../content/voice/ids';
+import { group, wakeCastKey } from '../../content/voice/ids';
 import { NARRATOR_LINES, wakeTemplate, wakeVariant } from '../../content/voice/script';
 import { voiceBus } from '../audio/VoiceBus';
 import { ADULT_HEIGHT, EPISODE_DEFAULTS } from '../config';
@@ -37,8 +37,8 @@ import { drawCast, isGrownUp, wakerOf, type CastOverrides } from '../rules/cast'
 import { fightSpec, pickFight } from '../rules/fights';
 import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
 import { endingPeople } from '../rules/endings';
-import { withStems } from '../rules/bank';
-import { episodePlans, wordsOf, type Rand, type RoomPlan } from '../rules/sentences';
+import { withStems, type Rand } from '../rules/bank';
+import { episodePlans, wordsOf, type RoomPlan } from '../rules/sentences';
 import { MINIGAMES, MINIGAME_BY_ID, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
 import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
 import { hallObjects, pickGrab } from '../rules/grab';
@@ -47,13 +47,6 @@ import { progress } from '../state/progress';
 import { voiceBank } from '../voice/VoiceBank';
 
 export type PrepGame = 'sound' | 'blend' | 'picture';
-
-/** What each (parked) prep game makes, which the battle then uses. */
-export const PREP_MAKES: Record<PrepGame, 'gem' | 'ammo' | 'helper'> = {
-  sound: 'gem',
-  blend: 'ammo',
-  picture: 'helper',
-};
 
 export type Step =
   | { kind: 'title' }
@@ -91,11 +84,10 @@ export interface EpisodeState {
   /** Key words fetched from the side rooms, in order: each is a battle item. */
   fetched: string[];
   /**
-   * The hub's gift word (item 037; the name is from when it was a spell): an
-   * action word the helper gives her, drawn from the bank (`giftWord`). Her
-   * first move choice of each part.
+   * The hub's gift word (item 037): an action word the helper gives her, drawn
+   * from the bank (`giftWord`). Her first move choice of each part.
    */
-  spell: string | null;
+  gift: string | null;
   /** The battles' move choices (item 018), planned with the house: battle 1's words never become the counter word. */
   moves: MovePlan | null;
   /**
@@ -165,7 +157,7 @@ export const episode: EpisodeState = {
   made: { gem: false, ammo: false, helper: false, item: false },
   read: [],
   fetched: [],
-  spell: null,
+  gift: null,
   moves: null,
   house: { plan: null, done: [], taught: false },
   grab: null,
@@ -338,7 +330,7 @@ export function castEpisode(picked: CastOverrides = {}): void {
   episode.villainWasRandom = !overrides.villain;
   episode.primary = c.primary;
   episode.secondary = c.secondary;
-  // The hero cannot also be the ally (she would teach herself the spell).
+  // The hero cannot also be the ally (she would give herself the gift word).
   if (episode.ally && personOf(episode.ally) === personOf(episode.hero)) episode.ally = null;
   episode.place = placeOverride && (placeOverride === HOME || PLACE_BY_ID[placeOverride]) ? placeOverride : questFor(helper()).place;
   episode.fight = null;
@@ -352,7 +344,7 @@ export function castEpisode(picked: CastOverrides = {}): void {
 /** The waker's wake line `key` (`up`, `good_<hero>`, `door`) in this episode's variant: `wake_<waker>_up_2`. */
 export function wakeKey(key: 'up' | 'good' | 'door', state: EpisodeState = episode): string {
   const n = state.lines[key];
-  return key === 'good' ? wakeVariant(`good_${personOf(state.hero)}`, n) : wakeVariant(key, n);
+  return key === 'good' ? wakeVariant(wakeCastKey('good', personOf(state.hero)), n) : wakeVariant(key, n);
 }
 
 /** The villain's far-off bedroom taunt this episode: one of its first `BEDROOM_TAUNTS` (item 040). */
@@ -376,9 +368,6 @@ export function fightStyle(): FightSpec {
   return fightSpec(episode.fight);
 }
 
-export function heroSpec(): CharacterSpec {
-  return CHARACTER_BY_ID[episode.hero]!;
-}
 export function villainSpec(): CharacterSpec {
   return CHARACTER_BY_ID[episode.villain]!;
 }
@@ -389,7 +378,7 @@ export function resetEpisode(): void {
   episode.made = { gem: false, ammo: false, helper: false, item: false };
   episode.read = [];
   episode.fetched = [];
-  episode.spell = null;
+  episode.gift = null;
   episode.moves = null;
   episode.house = { plan: null, done: [], taught: false };
   episode.grab = null;
@@ -412,7 +401,7 @@ export function housePlan(): RoomPlan[] {
   if (!episode.house.plan) {
     // The gift word first: the hub says and shows it before the side rooms,
     // so no room may make it a key word; nor the attic's counter word.
-    const spell = giftWord();
+    const gift = giftWord();
     const fill = { villain: episode.villain, helper: helper(), hero: episode.hero };
     // The rooms: the quest place's own, or two of the house's.
     const place = away() ? PLACE_BY_ID[episode.place]! : null;
@@ -433,7 +422,7 @@ export function housePlan(): RoomPlan[] {
     const signWords = BANK.filter((w) => w.glyph && signs.has(w.glyph)).map((w) => w.word);
     const saidBefore = [...storyWords(), ...bedroomWords(), ...signWords, ...(episode.grab ? [episode.grab.word] : [grabWord()])];
     const games = roomGames();
-    episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, spell, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore, ...games });
+    episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, gift, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore, ...games });
   }
   return episode.house.plan;
 }
@@ -462,10 +451,10 @@ function moveWords(): string[] {
   return [...m.part1, ...m.part2].flatMap((c) => c.words);
 }
 
-/** Every word the episode has her read after the hall: the rooms' (machine words included), the counter, the move pads, the spell. */
+/** Every word the episode has her read after the hall: the rooms' (machine words included), the counter, the move pads, the gift word. */
 function readingWords(): string[] {
   const plan = episode.house.plan ?? [];
-  return [...new Set([...(episode.spell ? [episode.spell] : []), ...plan.flatMap((p) => [p.key, ...p.fetches]), ...moveWords()])];
+  return [...new Set([...(episode.gift ? [episode.gift] : []), ...plan.flatMap((p) => [p.key, ...p.fetches]), ...moveWords()])];
 }
 
 /**
@@ -538,16 +527,16 @@ const HALL_LINE_WORDS = NARRATOR_LINES.filter((t) => t.key.startsWith('grab_')).
  * first need (the hub, the move plan, the house plan, whichever asks first).
  */
 export function giftWord(): string {
-  episode.spell ??= drawGift(progress, { helper: helper(), avoid: saidBeforeBattle() });
-  return episode.spell;
+  episode.gift ??= drawGift(progress, { helper: helper(), avoid: saidBeforeBattle() });
+  return episode.gift;
 }
 
 /** The battles' move choices: made once per episode, on first need (the house plan needs battle 1's). */
 export function movePlan(): MovePlan {
   if (!episode.moves) {
-    const spell = giftWord();
+    const gift = giftWord();
     const team = [episode.hero, ...(episode.ally ? [episode.ally] : [])];
-    episode.moves = planMoves(progress, { hero: episode.hero, team, helper: helper(), spell, avoid: saidBeforeBattle() });
+    episode.moves = planMoves(progress, { hero: episode.hero, team, helper: helper(), gift, avoid: saidBeforeBattle() });
   }
   return episode.moves;
 }
@@ -647,10 +636,7 @@ export function advance(scene: Phaser.Scene): void {
 const JOURNEY_BEFORE: Step['kind'][] = ['battle', 'victory'];
 
 /** Tests may turn the map off to save time; the game never does. */
-let skipJourney = new URLSearchParams(typeof location === 'undefined' ? '' : location.search).has('nojourney');
-export function setSkipJourney(v: boolean): void {
-  skipJourney = v;
-}
+const skipJourney = new URLSearchParams(typeof location === 'undefined' ? '' : location.search).has('nojourney');
 
 /** The journey stops: every step from the bedroom to victory, with an icon each. */
 export function journeyStops(): { icon: string; index: number }[] {

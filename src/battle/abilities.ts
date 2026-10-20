@@ -32,6 +32,7 @@ import {
   sfxZap,
 } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { hex } from '../fx/colour';
 import { burst, dustPuff, flash, groundRing, shake, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter, type FighterInit, type Team } from './Fighter';
@@ -110,10 +111,6 @@ function besideX(f: Fighter, t: Fighter, min: number, dir: number): number {
   const gap = besideGap(f, t, min);
   const x = t.x + dir * gap;
   return x - f.bodyHalf < ARENA_LEFT || x + f.bodyHalf > ARENA_RIGHT ? Phaser.Math.Clamp(t.x - dir * gap, ARENA_LEFT, ARENA_RIGHT) : x;
-}
-
-function hex(c: number): string {
-  return `#${c.toString(16).padStart(6, '0')}`;
 }
 
 function nearestEnemy(w: BattleWorld, f: Fighter): Fighter | null {

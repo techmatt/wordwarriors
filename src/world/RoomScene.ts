@@ -240,8 +240,13 @@ export abstract class RoomScene extends Phaser.Scene {
 
   protected done(): void {
     this.locked = true;
+    this.fadeOutThen(() => advance(this));
+  }
+
+  /** Fade to black, then (just after the fade ends) `then`: leaving the room. */
+  protected fadeOutThen(then: () => void): void {
     this.cameras.main.fadeOut(300, 0, 0, 0);
-    this.time.delayedCall(320, () => advance(this));
+    this.time.delayedCall(320, then);
   }
 
   /** The spot a correct answer is at (dev F4 and tests). */

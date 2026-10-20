@@ -9,7 +9,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { FIGHTS } from '../content/battle/fights';
-import { boot, playBattle, until } from './harness';
+import { SLOW, boot, playBattle, until } from './harness';
 
 /** Each style against a villain it was not written for, so nothing leans on one villain. */
 const AGAINST: Record<string, string> = { brawl: 'tiamat', sky_race: 'smaug', sea_tug: 'jormungandr', spell_clash: 'bavmorda', cook_off: 'tiamat' };
@@ -41,7 +41,7 @@ test('the cast draw picks the villain\'s own style; ?fight= fixes another', asyn
 // default whole episode and smoke's Battle part 2 already play it with these checks,
 // the length too (`expectFightLength` in playEpisode): only the contests are swept here.
 for (const f of FIGHTS.filter((x) => x.id !== 'brawl')) {
-  test(`${f.id}: both battles keep the episode's shape @slow`, async ({ page }) => {
+  test(`${f.id}: both battles keep the episode's shape`, SLOW, async ({ page }) => {
     test.setTimeout(600_000);
     const problems = collectProblems(page);
     const villain = AGAINST[f.id] ?? 'tiamat';

@@ -12,7 +12,7 @@
  *
  * The words come out of her word bag (item 015) like any key word: a word
  * still in the bag, never one in `avoid` (whatever the episode says or shows
- * before: the spell, frame words, the cast's words) nor one another room has
+ * before: the gift word, frame words, the cast's words) nor one another room has
  * (`taken`). When no family has two words left in the bag, the machine uses
  * every eligible word instead (the bag, shared with the sentence rooms, refills
  * only when it is empty). Building a word right first time spends it
@@ -29,8 +29,8 @@
 import { FAMILIES, FAMILY_BY_RIME, onsetOf, rimeOf, sillyWord, type Family } from '../../content/phonics/families';
 import { WORD_MACHINE } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
-import { gates, met, wordWeight as bankWeight } from './bank';
-import { BAG_WORDS, LEGACY_BAG_WORDS, type Rand } from './sentences';
+import { gates, met, shuffle, wordWeight as bankWeight, type Rand } from './bank';
+import { BAG_WORDS, LEGACY_BAG_WORDS } from './sentences';
 
 export type MachineMode = 'make' | 'flip' | 'real_or_silly';
 
@@ -83,11 +83,7 @@ export function tilesFor(word: string, n: number, rand: Rand): MachineTile[] {
     { letter: onsetOf(word), makes: word, real: true },
     ...silly.map((l) => ({ letter: l, makes: sillyWord(l, fam.rime), real: false })),
   ];
-  for (let i = tiles.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [tiles[i], tiles[j]] = [tiles[j]!, tiles[i]!];
-  }
-  return tiles;
+  return shuffle(tiles, rand);
 }
 
 /**

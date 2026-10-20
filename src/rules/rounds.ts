@@ -8,10 +8,9 @@
  */
 
 import { LETTERS } from '../../content/phonics/letters';
-import { CVC_WORDS, SIGHT_WORDS, WORDS } from '../../content/phonics/words';
+import { CVC_WORDS, SIGHT_WORDS } from '../../content/phonics/words';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
-
-export type Rand = () => number;
+import { shuffle, type Rand } from './bank';
 
 export interface SoundItem {
   target: string;
@@ -34,15 +33,6 @@ const LOOKALIKES = [['bus', 'van', 'jet'], ['hat', 'cap'], ['cat', 'rat', 'bat']
 
 function lookalike(a: string, b: string): boolean {
   return LOOKALIKES.some((g) => g.includes(a) && g.includes(b));
-}
-
-function shuffle<T>(xs: T[], rand: Rand): T[] {
-  const a = [...xs];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [a[i], a[j]] = [a[j]!, a[i]!];
-  }
-  return a;
 }
 
 function confusable(a: string, b: string): boolean {
@@ -110,8 +100,4 @@ export function choiceCount(store: ProgressStore, kind: 'sounds' | 'words'): num
     wrong += st.wrong;
   }
   return right >= 3 && wrong > right ? 2 : 3;
-}
-
-export function isWord(word: string): boolean {
-  return WORDS.some((w) => w.word === word);
 }

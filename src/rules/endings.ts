@@ -17,7 +17,7 @@ import { CHARACTER_BY_ID, personOf } from '../../content/battle/roster';
 import { ENDINGS, ENDING_BY_ID, type EndingSpec } from '../../content/house/endings';
 import { endingLine, reformedLine } from '../../content/voice/ids';
 import { wakerOf, type Cast } from './cast';
-import type { Rand } from './sentences';
+import type { Rand } from './bank';
 
 /** How much likelier a scene that fits the cast is. */
 export const FIT_WEIGHT = 3;

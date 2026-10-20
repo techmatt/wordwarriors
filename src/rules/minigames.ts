@@ -20,7 +20,7 @@ import { FAMILIES } from '../../content/phonics/families';
 import { FRAMES } from '../../content/phonics/sentences';
 import { WORD_MACHINE } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
-import type { Rand } from './sentences';
+import type { Rand } from './bank';
 
 export type GameSlot = 'fetch' | 'counter';
 

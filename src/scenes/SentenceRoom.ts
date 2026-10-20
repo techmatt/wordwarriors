@@ -30,10 +30,10 @@ import { tokenWord } from '../../content/phonics/sentences';
 import { SOUND_BY_UNIT } from '../../content/phonics/letters';
 import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
-import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
+import { letterSoundLine, narratorLine, villainKey, wordLine } from '../../content/voice/ids';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { sfxRight, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
-import { DEPTH, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
 import { backToHub, castFace, counterArt, episode, namedCounter, narrator, planFor, villainSpec, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
 import { asSentence, frameIsSolid, type SentencePlan } from '../rules/sentences';
@@ -45,19 +45,14 @@ import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
-import { Minigame } from './minigames/Minigame';
+import { ARRIVE_MS, INK, LIT, Minigame } from './minigames/Minigame';
 
 type Pass = 'listen' | 'read' | 'find' | 'done';
 
-const FONT = '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif';
-const INK = '#1a1030';
-const LIT = '#ff3d7a';
 const BANNER_W = 1040;
 const BANNER_Y = 120;
 /** The silent beat on the key word at the end of the listening pass. */
 const KEY_BEAT_MS = 1200;
-/** A moment to look round a room she has just walked into, before anyone talks. */
-const ARRIVE_MS = 800;
 /** How big the lit word grows (the layout leaves room for it). */
 const LIT_SCALE = 1.08;
 /** The pause after each letter sound, so the sounds never run together. */
@@ -202,7 +197,7 @@ export class SentenceRoom extends Minigame {
     const tokens = this.plan.sentence.tokens;
     const room = BANNER_W * 0.82;
     let size = 76;
-    let style = { fontFamily: FONT, fontSize: `${size}px`, color: INK };
+    let style = { fontFamily: FONT_COMIC, fontSize: `${size}px`, color: INK };
     let widths: number[] = [];
     this.tokenBoxes = [];
     const build = () => {
@@ -210,7 +205,7 @@ export class SentenceRoom extends Minigame {
       this.tokenBoxes = [];
       this.tokenTexts = [];
       widths = [];
-      style = { fontFamily: FONT, fontSize: `${size}px`, color: INK };
+      style = { fontFamily: FONT_COMIC, fontSize: `${size}px`, color: INK };
       tokens.forEach((token, i) => {
         const texts: Phaser.GameObjects.Text[] = [];
         if (i === this.keyIndex) {
@@ -564,7 +559,7 @@ export class SentenceRoom extends Minigame {
       big.destroy();
       // The named item may be named ("We found the Magic Hat!"); anything else
       // gets a line that fits every word.
-      const line = named ? `got_counter_${villain.id}` : 'got_counter_any';
+      const line = named ? villainKey('got_counter', villain.id) : 'got_counter_any';
       await Promise.all([this.guard(this.bag.receive(art, spot.x, picY)), this.say(narratorLine(narrator(), line))]);
     } else {
       pic?.setVisible(false);
@@ -573,8 +568,7 @@ export class SentenceRoom extends Minigame {
       await Promise.all([this.guard(this.bag.receive(art, spot.x, picY)), this.say(narratorLine(narrator(), 'got_item'))]);
     }
     await this.wait(400);
-    this.cameras.main.fadeOut(300, 0, 0, 0);
-    this.time.delayedCall(320, () => backToHub(this, this.slot));
+    this.fadeOutThen(() => backToHub(this, this.slot));
   }
 
   protected override extraHooks(): Partial<RoomInfo> {

@@ -15,7 +15,7 @@
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { MOVE_WORDS, PERSONS, ROSTER, abilityCallout, personOf } from '../../content/battle/roster.js';
+import { CHARACTER_BY_ID, MOVE_WORDS, PERSONS, ROSTER, abilityCallout, personOf } from '../../content/battle/roster.js';
 import { ENDINGS } from '../../content/house/endings.js';
 import { HOME_QUEST, QUESTS, homeQuestLine, questLine } from '../../content/house/quests.js';
 import { ANY_SCENES, HUB_SCENES, hubStoryIds, type HubStory } from '../../content/house/scenes.js';
@@ -28,13 +28,16 @@ import { SPELL_WORDS } from '../../content/phonics/spelling.js';
 import { SPECIAL_WORDS, WORDS, spokenWord } from '../../content/phonics/words.js';
 import {
   DEFAULT_NARRATOR,
+  coreLine,
   endingLine,
   PHONICS_SPEAKER,
   WAKERS,
   fighterId,
   group,
+  heroKey,
   letterNameLine,
   letterSoundLine,
+  moveKey,
   moveLine,
   nameLine,
   narratorLine,
@@ -43,6 +46,8 @@ import {
   sillyLine,
   tauntLine,
   ultimateLine,
+  villainKey,
+  wakeCastKey,
   wakeLine,
   wordLine,
 } from '../../content/voice/ids.js';
@@ -65,20 +70,20 @@ interface Fill {
 function fill(t: Template, f: Fill): { text: string; say?: string } {
   const show = (s: string) =>
     s
-      .replace('{hero}', f.hero?.displayName ?? '')
-      .replace(/\{villain\}/g, f.villain?.displayName ?? '')
-      .replace('{helper}', f.helper?.displayName ?? '')
-      .replace('{item}', f.item ?? '')
-      .replace('{word}', f.word ?? '')
-      .replace('{threat}', f.threat ?? '');
+      .replaceAll('{hero}', f.hero?.displayName ?? '')
+      .replaceAll('{villain}', f.villain?.displayName ?? '')
+      .replaceAll('{helper}', f.helper?.displayName ?? '')
+      .replaceAll('{item}', f.item ?? '')
+      .replaceAll('{word}', f.word ?? '')
+      .replaceAll('{threat}', f.threat ?? '');
   const speak = (s: string) =>
     s
-      .replace('{hero}', f.hero?.sayName ?? f.hero?.displayName ?? '')
-      .replace(/\{villain\}/g, f.villain?.sayName ?? f.villain?.displayName ?? '')
-      .replace('{helper}', f.helper?.sayName ?? f.helper?.displayName ?? '')
-      .replace('{item}', f.itemSay ?? f.item ?? '')
-      .replace('{word}', f.word ?? '')
-      .replace('{threat}', f.threatSay ?? f.threat ?? '');
+      .replaceAll('{hero}', f.hero?.sayName ?? f.hero?.displayName ?? '')
+      .replaceAll('{villain}', f.villain?.sayName ?? f.villain?.displayName ?? '')
+      .replaceAll('{helper}', f.helper?.sayName ?? f.helper?.displayName ?? '')
+      .replaceAll('{item}', f.itemSay ?? f.item ?? '')
+      .replaceAll('{word}', f.word ?? '')
+      .replaceAll('{threat}', f.threatSay ?? f.threat ?? '');
   const text = show(t.text);
   const needsSay =
     t.say !== undefined ||
@@ -117,7 +122,7 @@ export function composeLines(): LineSpec[] {
   const lines: LineSpec[] = [];
 
   for (const t of CORE_LINES) {
-    lines.push({ id: `core_${t.key}`, speaker: DEFAULT_NARRATOR, group: group.core, ...fill(t, {}) });
+    lines.push({ id: coreLine(t.key), speaker: DEFAULT_NARRATOR, group: group.core, ...fill(t, {}) });
   }
 
   for (const c of ROSTER) {
@@ -190,27 +195,28 @@ export function composeLines(): LineSpec[] {
       lines.push({ id: sillyLine(sillyWord(s.letter, f.rime)), speaker: PHONICS_SPEAKER, group: group.phonics, text: `${s.say}!` });
     }
   }
-  const spellWords = new Set<string>();
-  for (const triple of Object.values(SPELL_WORDS)) for (const w of triple) spellWords.add(w);
-  for (const w of WORDS) spellWords.add(w.word);
+  const wordLineWords = new Set<string>();
+  for (const triple of Object.values(SPELL_WORDS)) for (const w of triple) wordLineWords.add(w);
+  for (const w of WORDS) wordLineWords.add(w.word);
   // Sentence key words: what the side rooms fetch, and each villain's counter word.
-  for (const f of FETCH_ITEMS) spellWords.add(f.word);
-  for (const c of ROSTER) spellWords.add(c.counter.word);
-  for (const w of SPECIAL_WORDS) spellWords.add(w.word);
+  for (const f of FETCH_ITEMS) wordLineWords.add(f.word);
+  for (const c of ROSTER) wordLineWords.add(c.counter.word);
+  for (const w of SPECIAL_WORDS) wordLineWords.add(w.word);
   // Move words: a right pick in the battle goes into the victory recap, which says it.
-  for (const w of MOVE_WORDS) spellWords.add(w);
+  for (const w of MOVE_WORDS) wordLineWords.add(w);
   // Every bank word (item 037): pictures, move pads and gift words alike.
-  for (const w of BANK) spellWords.add(w.word);
-  for (const w of [...spellWords].sort()) {
+  for (const w of BANK) wordLineWords.add(w.word);
+  for (const w of [...wordLineWords].sort()) {
     // A name's sayName, or the bank's respelling where edge-tts misreads a word.
-    const sayName = ROSTER.find((c) => c.id === w)?.good.sayName ?? BANK_BY_WORD[w]?.say;
+    const named = CHARACTER_BY_ID[w];
+    const sayName = named?.good.sayName ?? BANK_BY_WORD[w]?.say;
     lines.push({
       id: wordLine(w),
       speaker: PHONICS_SPEAKER,
       group: group.phonics,
       // Lowercase, as she reads it on the card: the caption must match the word.
       // Names keep their capital, as they are written everywhere else.
-      text: `${ROSTER.some((c) => c.id === w) ? spokenWord(w) : w}!`,
+      text: `${named ? spokenWord(w) : w}!`,
       ...(sayName ? { say: `${sayName}!` } : {}),
     });
   }
@@ -223,7 +229,7 @@ export function composeLines(): LineSpec[] {
   // Every other token in a sentence gets a word line, for the yellow hint.
   const forms = tokenForms();
   for (const t of allFrameTokens()) {
-    if (spellWords.has(t)) continue;
+    if (wordLineWords.has(t)) continue;
     const form = forms.get(t) ?? { show: t };
     lines.push({
       id: wordLine(t),
@@ -248,12 +254,12 @@ export function composeLines(): LineSpec[] {
     // Per person: every form of a character has the same name.
     for (const c of PERSONS) {
       if (c.id === waker) continue;
-      for (let n = 1; n <= WAKE_VARIANTS; n++) push(wakeVariant(`good_${c.id}`, n), wake(wakeVariant('good', n)), { hero: c.good });
-      push(`helper_${c.id}`, wake('helper'), { helper: c.good });
+      for (let n = 1; n <= WAKE_VARIANTS; n++) push(wakeVariant(wakeCastKey('good', c.id), n), wake(wakeVariant('good', n)), { hero: c.good });
+      push(wakeCastKey('helper', c.id), wake('helper'), { helper: c.good });
     }
     // Per roster id: each villain form has its own threat.
     for (const v of ROSTER) {
-      push(`bad_${v.id}`, wake('bad'), { villain: v.evil, threat: v.house.threat, ...(v.house.threatSay ? { threatSay: v.house.threatSay } : {}) });
+      push(wakeCastKey('bad', v.id), wake('bad'), { villain: v.evil, threat: v.house.threat, ...(v.house.threatSay ? { threatSay: v.house.threatSay } : {}) });
     }
   }
 
@@ -264,13 +270,13 @@ export function composeLines(): LineSpec[] {
     for (const t of NARRATOR_LINES) lines.push({ id: narratorLine(n, t.key), speaker: n, group: g, ...fill(t, {}) });
     for (const hero of PERSONS) {
       if (hero.id === n) continue;
-      for (const t of HERO_LINES) lines.push({ id: narratorLine(n, `${t.key}_${hero.id}`), speaker: n, group: g, ...fill(t, { hero: hero.good }) });
+      for (const t of HERO_LINES) lines.push({ id: narratorLine(n, heroKey(t.key, hero.id)), speaker: n, group: g, ...fill(t, { hero: hero.good }) });
     }
     for (const villain of ROSTER) {
       for (const t of VILLAIN_LINES) {
         // The bare name (item 038) once the villain is known; "Evil" only where it announces them.
         lines.push({
-          id: narratorLine(n, `${t.key}_${villain.id}`),
+          id: narratorLine(n, villainKey(t.key, villain.id)),
           speaker: n,
           group: g,
           ...fill(t, { villain: t.key === 'alarm_villain' ? villain.evil : villain.good, item: villain.counter.name, ...(villain.counter.sayName ? { itemSay: villain.counter.sayName } : {}) }),
@@ -278,7 +284,7 @@ export function composeLines(): LineSpec[] {
       }
     }
     for (const word of MOVE_WORDS) {
-      for (const t of MOVE_LINES) lines.push({ id: narratorLine(n, `${t.key}_${word}`), speaker: n, group: g, ...fill(t, { word }) });
+      for (const t of MOVE_LINES) lines.push({ id: narratorLine(n, moveKey(t.key, word)), speaker: n, group: g, ...fill(t, { word }) });
     }
     // For a helper with no quest place or no hub scene of their own: the
     // home quest's lines and the fallback scene, in every narrator's voice.

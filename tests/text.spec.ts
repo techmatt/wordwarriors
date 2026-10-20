@@ -68,7 +68,7 @@ test('the grown-ups page: every column wraps or shrinks to fit', async ({ page }
 test('the longest caption and the longest bubble stay on screen, even at the edges', async ({ page }) => {
   const errors = collectErrors(page);
   // The hub has both the ribbon and the bubbles. Part 2's: it says one line
-  // (the secret door), where part 1 teaches the spell first (20-40 s).
+  // (the secret door), where part 1 gives the gift word first (20-40 s).
   await boot(page, '?scene=house&part=2&nojourney=1');
   // Once the hub's own line is over and it is quiet: otherwise its next
   // line cuts the test's bubble off within a frame or two of popping in.

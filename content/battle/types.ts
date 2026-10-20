@@ -95,14 +95,15 @@ export interface AbilitySpec {
   /** Bolts curve towards their target. */
   homing?: boolean;
   /**
-   * The readable word for the move-choice pause ("zap"). Must be one of
-   * MOVE_WORDS, because each has a voiced "Use zap!" line per narrator.
+   * A move word this move answers to ("zap"), flavour since item 037: a pad or
+   * gift word it answers to fires this move, styled (`abilityWords`). One of
+   * MOVE_WORDS, or POW / ICE, which are never on a pad.
    */
   word?: string;
   /**
-   * More move words that suit this move (item 018): a choice can offer any of
-   * them for it. `word` stays the main one (the spell the helper teaches).
-   * Each must be one of MOVE_WORDS too.
+   * More move words it answers to, the same as `word` (item 018). `word` is
+   * only listed first; every character's good side has at least two moves
+   * with one (rules.test.ts).
    */
   words?: string[];
   /** Plays the "Ha!" interjection SFX when used. */

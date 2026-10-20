@@ -32,9 +32,10 @@ import { LETTER_BY_CHAR } from '../../content/phonics/letters';
 import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, rimeLine, sillyLine, wordLine } from '../../content/voice/ids';
+import { RIGHT_VARIANTS, SILLY_VARIANTS } from '../../content/voice/script';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { sfxBoing, sfxPoof, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxWrong } from '../audio/sfx';
-import { DEPTH, GAME_WIDTH, REACH } from '../config';
+import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH } from '../config';
 import { backToHub, castFace, episode, narrator, planFor, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, shockwave, squash, wiggle } from '../fx/juice';
 import type { MachineMode, MachinePlan, MachineRound, MachineTile } from '../rules/wordMachine';
@@ -45,13 +46,10 @@ import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
-import { Minigame } from './minigames/Minigame';
+import { ARRIVE_MS, INK, LIT, Minigame } from './minigames/Minigame';
 
 type Phase = 'intro' | 'pick' | 'check' | 'done';
 
-const FONT = '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif';
-const INK = '#1a1030';
-const LIT = '#ff3d7a';
 /** The machine stands centre stage; its art is sized into this box, feet at MACHINE_Y. */
 const MACHINE_X = GAME_WIDTH / 2;
 const MACHINE_Y = 515;
@@ -71,8 +69,6 @@ const TILE_GAP = 250;
 const TILE_DEPTH = 9_999;
 /** The beat between the onset's sound and the rime's, so they never run together. */
 const PART_GAP_MS = 450;
-/** A moment to look round a room she has just walked into, before anyone talks. */
-const ARRIVE_MS = 800;
 
 export class WordMachine extends Minigame {
   /** No names in here, and the machine is in keepOut(): the box places itself and names its speaker. */
@@ -217,7 +213,7 @@ export class WordMachine extends Minigame {
     const plate = this.add.graphics();
     plate.fillStyle(0xfff4d6, 1).fillRoundedRect(-w / 2, -h / 2, w, h, 16);
     plate.lineStyle(5, 0xe0782a, 1).strokeRoundedRect(-w / 2, -h / 2, w, h, 16);
-    const style = { fontFamily: FONT, fontSize: `${Math.round(h * 0.72)}px`, color: INK };
+    const style = { fontFamily: FONT_COMIC, fontSize: `${Math.round(h * 0.72)}px`, color: INK };
     this.slotBox = this.add.graphics();
     this.onsetText = this.add.text(-w * 0.2, 0, '', style).setOrigin(0.5);
     this.rimeText = this.add.text(w * 0.14, 0, '', style).setOrigin(0.5);
@@ -295,7 +291,7 @@ export class WordMachine extends Minigame {
     tiles.forEach((t, i) => {
       const x = x0 + i * TILE_GAP;
       const block = this.art('prop_machine_tile', 130, 110);
-      const letter = this.add.text(0, -62, t.letter.toUpperCase(), { fontFamily: FONT, fontSize: '64px', color: INK }).setOrigin(0.5);
+      const letter = this.add.text(0, -62, t.letter.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '64px', color: INK }).setOrigin(0.5);
       const spot: Spot = this.addSpot(`tile_${t.letter}`, x, TILE_Y, [block, letter], t.makes === this.current.word, () => this.sayTile(spot));
       // Over her, not under: standing on a tile must not hide its letter.
       spot.obj.setData('tile', t).setData('letter', letter).setDepth(TILE_DEPTH);
@@ -335,7 +331,7 @@ export class WordMachine extends Minigame {
     spot.enabled = false;
     spot.obj.setAlpha(0.35);
     const to = this.slotPos();
-    const flyer = this.add.text(spot.x, spot.y - 62, tile.letter.toUpperCase(), { fontFamily: FONT, fontSize: '64px', color: INK }).setOrigin(0.5).setDepth(DEPTH.sparkles);
+    const flyer = this.add.text(spot.x, spot.y - 62, tile.letter.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '64px', color: INK }).setOrigin(0.5).setDepth(DEPTH.sparkles);
     await new Promise<void>((resolve) => this.tweens.add({ targets: flyer, x: to.x, y: to.y, duration: 420, ease: 'Cubic.easeInOut', onComplete: () => resolve() }));
     flyer.destroy();
     this.drawSlot(true);
@@ -384,7 +380,7 @@ export class WordMachine extends Minigame {
     // The whole silly word, lit, said: it is not the word she is making.
     this.onsetText.setColor(LIT);
     this.rimeText.setColor(LIT);
-    await this.speak(narratorLine(narrator(), 'machine_makes'), sillyLine(tile.makes), narratorLine(narrator(), `machine_silly_${((this.misses - 1) % 3) + 1}`));
+    await this.speak(narratorLine(narrator(), 'machine_makes'), sillyLine(tile.makes), narratorLine(narrator(), `machine_silly_${((this.misses - 1) % SILLY_VARIANTS) + 1}`));
     // Out it pops, back to its place on the floor.
     this.onsetText.setText('').setColor(INK);
     this.rimeText.setColor(INK);
@@ -442,7 +438,7 @@ export class WordMachine extends Minigame {
     const pic = this.picture;
     this.picture = null;
     pic?.destroy();
-    await Promise.all([this.guard(this.bag.receive(`pic_${r.word}`, win.x, win.y)), this.say(narratorLine(narrator(), `right_${(this.index % 4) + 1}`))]);
+    await Promise.all([this.guard(this.bag.receive(`pic_${r.word}`, win.x, win.y)), this.say(narratorLine(narrator(), `right_${(this.index % RIGHT_VARIANTS) + 1}`))]);
     spot.obj.setAlpha(1);
     if (!last) {
       this.index++;
@@ -452,8 +448,7 @@ export class WordMachine extends Minigame {
     this.locked = true;
     await this.say(narratorLine(narrator(), 'machine_done'));
     await this.wait(400);
-    this.cameras.main.fadeOut(300, 0, 0, 0);
-    this.time.delayedCall(320, () => backToHub(this, this.slot));
+    this.fadeOutThen(() => backToHub(this, this.slot));
   }
 
   /** Yellow: the picture's word in parts, the onset's sound then the rime, never blended. Idle: the instruction first. */

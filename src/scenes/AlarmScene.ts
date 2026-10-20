@@ -9,7 +9,7 @@
 import Phaser from 'phaser';
 
 import { personOf } from '../../content/battle/roster';
-import { fighterId, narratorLine, tauntLine } from '../../content/voice/ids';
+import { fighterId, heroKey, narratorLine, tauntLine, villainKey } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxSiren, sfxUltimate } from '../audio/sfx';
@@ -67,7 +67,7 @@ export class AlarmScene extends Phaser.Scene {
     const n = narrator();
     const v = episode.villain;
     const vf = villainSpec().evil;
-    await voiceBus.say(narratorLine(n, `alarm_hero_${personOf(episode.hero)}`));
+    await voiceBus.say(narratorLine(n, heroKey('alarm_hero', personOf(episode.hero))));
     if (gone()) return;
 
     // The villain arrives, and the music turns.
@@ -96,7 +96,7 @@ export class AlarmScene extends Phaser.Scene {
     const taunt = vf.taunts[0];
     if (taunt) await voiceBus.say(tauntLine(fighterId(v, true), taunt.key), 'instruction', { x: vill.x, y: vill.y, bubbleOffset: vill.displayHeight, active: true });
     if (gone()) return;
-    await voiceBus.say(narratorLine(n, `alarm_villain_${v}`));
+    await voiceBus.say(narratorLine(n, villainKey('alarm_villain', v)));
     if (gone()) return;
     await voiceBus.say(narratorLine(n, 'alarm_ready'));
     if (gone()) return;

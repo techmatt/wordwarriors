@@ -150,7 +150,7 @@ export class VictoryScene extends Phaser.Scene {
     const max = 9;
     const read = episode.read;
     const at = read.indexOf(counterWord());
-    const must = new Set([...(episode.spell ? [episode.spell] : []), ...(at >= 0 ? read.slice(at) : [])].filter((w) => read.includes(w)));
+    const must = new Set([...(episode.gift ? [episode.gift] : []), ...(at >= 0 ? read.slice(at) : [])].filter((w) => read.includes(w)));
     const pick = new Set([...must].slice(0, max));
     for (const w of read) if (pick.size < max) pick.add(w);
     const words = read.filter((w) => pick.has(w));

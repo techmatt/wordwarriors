@@ -36,7 +36,7 @@ function seeded(seed = 1): () => number {
 const INPUT: EpisodeInput = {
   fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' },
   ally: 'ellie',
-  spell: 'pop',
+  gift: 'pop',
   rooms: ['kitchen', 'garage'],
   counterRoom: 'attic',
 };
@@ -189,7 +189,7 @@ test('episodePlans with the machine: its words are the room\'s fetches, kept out
     // The sentence rooms' own words are never machine words (WE CAN USE THE: no CAN).
     const shown = [...b.sentence.tokens, ...c.sentence.tokens].map((t) => t.toLowerCase());
     for (const w of a.fetches) assert.ok(!shown.includes(w), `${w} is shown in a sentence`);
-    assert.ok(!a.fetches.includes('pop'), 'not the spell');
+    assert.ok(!a.fetches.includes('pop'), 'not the gift word');
   }
 });
 

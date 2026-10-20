@@ -20,6 +20,7 @@ import { fightPropArt } from '../../../content/battle/fights';
 import type { AbilitySpec } from '../../../content/battle/types';
 import { sfxBoing, sfxBoom, sfxFanfare, sfxGrow, sfxHeal, sfxPoof, sfxStep, sfxWhoosh } from '../../audio/sfx';
 import { DEPTH } from '../../config';
+import { rgb } from '../../fx/colour';
 import { burst, fitImage, floatText, fxQuality, shockwave } from '../../fx/juice';
 import { TEX } from '../../fx/textures';
 import type { Fighter } from '../Fighter';
@@ -78,10 +79,8 @@ const STAR_POINTS = Array.from({ length: 10 }, (_, i) => {
 
 /** A colour a quarter darker: each layer's underside. */
 function shade(c: number): number {
-  const r = ((c >> 16) & 255) * 0.72;
-  const g = ((c >> 8) & 255) * 0.72;
-  const b = (c & 255) * 0.72;
-  return (Math.round(r) << 16) | (Math.round(g) << 8) | Math.round(b);
+  const [r, g, b] = rgb(c).map((v) => Math.round(v * 0.72));
+  return (r! << 16) | (g! << 8) | b!;
 }
 
 /** The cook-off's staging: stations, growing dishes, flying food, judges and a trophy. */
@@ -603,13 +602,6 @@ export class CookoffStage extends BaseStage {
     sc.tweens.add({ targets: glow, alpha: 0.4, duration: 400, yoyo: true, repeat: -1 });
     this.cup = { side: s, img, glow };
     burst(sc, s.topX, y, { count: 60, speed: 420, texture: TEX.star, colors: [0xffd23f, 0xffffff, 0xff9a3c] });
-  }
-
-  /** `host.after`, but never after the scene has ended. */
-  private later(ms: number, fn: () => void): void {
-    this.host.after(ms, () => {
-      if (this.scene.sys.isActive()) fn();
-    });
   }
 
   /** The topple's end: the stack lands in a soft splat and starts again small. */

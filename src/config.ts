@@ -22,6 +22,10 @@ export const FLIP_TO_FACE = true;
 /** How close (px, centre to centre) she must be for a spot to light up its green dot. */
 export const REACH = 95;
 
+/** The two text faces: rounded (the dialogue box, the hub's gift word, the hall's plaques) and comic (the side rooms' banner and tiles). */
+export const FONT_ROUNDED = '"Arial Rounded MT Bold", "Arial Black", sans-serif';
+export const FONT_COMIC = '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif';
+
 /**
  * Draw order. Rooms and the arena sort world objects by their own y between
  * `ground` and `fx`; the named bands sit above.
