@@ -1,1 +1,410 @@
-{ "version": 1, "clips": {} }
+{
+  "version": 1,
+  "clips": {
+    "word_fan": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "fan!",
+      "spokenHash": "6cf1aa47716e5e43",
+      "audio": "word_fan.ff55bf3c.mp3",
+      "words": [
+        {
+          "word": "fan",
+          "start": 0,
+          "end": 0.76
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "word_bed": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "bed!",
+      "spokenHash": "58b04e4e3b53a0de",
+      "audio": "word_bed.41c0a73f.mp3",
+      "words": [
+        {
+          "word": "bed",
+          "start": 0,
+          "end": 0.91
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "letter_d_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Duh.",
+      "spokenHash": "704f52d60661f57d",
+      "audio": "letter_d_sound.56c8bc5d.mp3",
+      "words": [
+        {
+          "word": "Duh",
+          "start": 0,
+          "end": 0.44
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "word_leg": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "leg!",
+      "spokenHash": "e6e51681419bfe0b",
+      "audio": "word_leg.79d057c8.mp3",
+      "words": [
+        {
+          "word": "leg",
+          "start": 0,
+          "end": 0.72
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "word_van": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "van!",
+      "spokenHash": "9881d27a9c93d44f",
+      "audio": "word_van.67ce680f.mp3",
+      "words": [
+        {
+          "word": "van",
+          "start": 0,
+          "end": 0.76
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "word_pig": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "pig!",
+      "spokenHash": "856466b281d01b3c",
+      "audio": "word_pig.57669de8.mp3",
+      "words": [
+        {
+          "word": "pig",
+          "start": 0,
+          "end": 0.54
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "letter_p_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Puh.",
+      "spokenHash": "238fe5a31976c597",
+      "audio": "letter_p_sound.bcab23d9.mp3",
+      "words": [
+        {
+          "word": "Puh",
+          "start": 0,
+          "end": 0.44997916666666665
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "word_hat": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "hat!",
+      "spokenHash": "b6ff5ded9669e15f",
+      "audio": "word_hat.76a64733.mp3",
+      "words": [
+        {
+          "word": "hat",
+          "start": 0,
+          "end": 0.5900208333333333
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "letter_h_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Huh.",
+      "spokenHash": "e5ecdc2551e62f9d",
+      "audio": "letter_h_sound.6b38ba54.mp3",
+      "words": [
+        {
+          "word": "Huh",
+          "start": 0,
+          "end": 0.5
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "word_jam": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "jam!",
+      "spokenHash": "30dd84aa3cd9fc5f",
+      "audio": "word_jam.408a64c6.mp3",
+      "words": [
+        {
+          "word": "jam",
+          "start": 0,
+          "end": 0.8
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "letter_j_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Juh.",
+      "spokenHash": "b40da82296bf22b4",
+      "audio": "letter_j_sound.0697d851.mp3",
+      "words": [
+        {
+          "word": "Juh",
+          "start": 0,
+          "end": 0.59
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "word_gift": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "gift!",
+      "spokenHash": "a6a96b43ad538597",
+      "audio": "word_gift.0534c49c.mp3",
+      "words": [
+        {
+          "word": "gift",
+          "start": 0,
+          "end": 0.78
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "letter_g_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Ghuh.",
+      "spokenHash": "dbeb32774f4dcde2",
+      "audio": "letter_g_sound.98a6190c.mp3",
+      "words": [
+        {
+          "word": "Ghuh",
+          "start": 0,
+          "end": 0.42
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "word_yoyo": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "yo-yo!",
+      "spokenHash": "658328627eddaabd",
+      "audio": "word_yoyo.4fa70150.mp3",
+      "words": [
+        {
+          "word": "yoyo",
+          "start": 0,
+          "end": 0.94
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "letter_y_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Yuh.",
+      "spokenHash": "1235495b1f7d1ef1",
+      "audio": "letter_y_sound.e1196785.mp3",
+      "words": [
+        {
+          "word": "Yuh",
+          "start": 0,
+          "end": 0.5000208333333334
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "word_hen": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "hen!",
+      "spokenHash": "21db13cad598b9e7",
+      "audio": "word_hen.b9c9fe8a.mp3",
+      "words": [
+        {
+          "word": "hen",
+          "start": 0,
+          "end": 0.59
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "letter_e_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Eh.",
+      "spokenHash": "2e1490048886c7cb",
+      "audio": "letter_e_sound.d54258f1.mp3",
+      "words": [
+        {
+          "word": "Eh",
+          "start": 0,
+          "end": 0.53
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "word_pin": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "pin!",
+      "spokenHash": "dc5bbcee30d326dd",
+      "audio": "word_pin.492b3ed0.mp3",
+      "words": [
+        {
+          "word": "pin",
+          "start": 0,
+          "end": 0.81
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "letter_i_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Ihh.",
+      "spokenHash": "c1d6de2fd1e1cc50",
+      "audio": "letter_i_sound.a40b8908.mp3",
+      "words": [
+        {
+          "word": "Ihh",
+          "start": 0,
+          "end": 0.44
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "word_fox": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "fox!",
+      "spokenHash": "72eece1b3eba940f",
+      "audio": "word_fox.88214736.mp3",
+      "words": [
+        {
+          "word": "fox",
+          "start": 0,
+          "end": 0.85
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "letter_o_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Ah.",
+      "spokenHash": "26e6d2eea48a0d15",
+      "audio": "letter_o_sound.e25301ce.mp3",
+      "words": [
+        {
+          "word": "Ah",
+          "start": 0,
+          "end": 0.52
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "word_bug": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "bug!",
+      "spokenHash": "e38aa9de2f1ed971",
+      "audio": "word_bug.b66c60f7.mp3",
+      "words": [
+        {
+          "word": "bug",
+          "start": 0,
+          "end": 0.8000208333333333
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "letter_u_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Uh.",
+      "spokenHash": "fcd9a90045822c4b",
+      "audio": "letter_u_sound.b08719fe.mp3",
+      "words": [
+        {
+          "word": "Uh",
+          "start": 0,
+          "end": 0.56
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "word_ship": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "ship!",
+      "spokenHash": "372b4a03fee36df6",
+      "audio": "word_ship.6368aa36.mp3",
+      "words": [
+        {
+          "word": "ship",
+          "start": 0,
+          "end": 0.69
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "letter_sh_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Shh.",
+      "spokenHash": "e0d5030204465a02",
+      "audio": "letter_sh_sound.c5df3e63.mp3",
+      "words": [
+        {
+          "word": "Shh",
+          "start": 0,
+          "end": 0.43
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "word_chop": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "chop!",
+      "spokenHash": "03e0e5c70d1bbe0f",
+      "audio": "word_chop.fbc0f804.mp3",
+      "words": [
+        {
+          "word": "chop",
+          "start": 0,
+          "end": 0.68
+        }
+      ],
+      "ingested": "2026-10-20"
+    },
+    "letter_ch_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Chuh.",
+      "spokenHash": "05af74fb2acc949d",
+      "audio": "letter_ch_sound.bb85b945.mp3",
+      "words": [
+        {
+          "word": "Chuh",
+          "start": 0,
+          "end": 0.55
+        }
+      ],
+      "ingested": "2026-10-20"
+    }
+  }
+}
