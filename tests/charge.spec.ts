@@ -9,7 +9,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playChargeRoom, seedProgress, state, until } from './harness';
+import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playChargeRoom, playEpisode, press, seedProgress, state, until } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/053_${name}.png` });
 
@@ -134,5 +134,22 @@ test('Charge the Spell: the beta forces it behind a door of a drawn episode; F4 
   expect(a0.progress.sounds[a0.room!.charge!.sound]).toBeUndefined();
   await page.keyboard.press('F4');
   await until(page, (st) => (st.room?.charge?.index ?? 0) === 1, 60_000, 'F4 charged rune 0');
+  expectNoErrors(errors);
+});
+
+test('the beta: a whole drawn episode with Charge the Spell forced behind door a', SLOW, async ({ page }) => {
+  test.setTimeout(900_000);
+  const errors = collectErrors(page);
+  // `games=all` is the real draw, so FORCE_PHONICS_ROOM applies; playEpisode checks each battle's length.
+  await boot(page, '?games=all&seed=19&nojourney=1');
+  await until(page, (s) => s.scene === 'Title', 30_000, 'title');
+  await page.waitForTimeout(300);
+  await press(page, 'green');
+  const { end } = await playEpisode(page);
+  const plan = end.episode.house.plan ?? [];
+  expect(plan.find((p) => p.slot === 'a')!.kind).toBe('charge');
+  expect(end.episode.charged?.sounds).toHaveLength(6);
+  expect(end.episode.charged?.part).toBe(1);
+  expect(end.battle?.villains[0]?.hp).toBe(0);
   expectNoErrors(errors);
 });
