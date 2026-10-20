@@ -1,12 +1,40 @@
 import assert from 'node:assert/strict';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
 import { test } from 'node:test';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
-import { ART_PROMPTS } from '../../content/art/prompts.js';
+import { ART_PROMPTS, NOTES, SPRITE_STYLE } from '../../content/art/prompts.js';
+import { readBrief } from '../../tools/art/alts.js';
 import { keyGreen } from '../../tools/art/chroma.js';
+import { codexPrompt } from '../../tools/art/generate.js';
 
 test('every art prompt is keyed to a real asset id', () => {
   for (const id of Object.keys(ART_PROMPTS)) assert.ok(ART_BY_ID[id], `${id} is not in content/art/assets.ts`);
+});
+
+test('a brief replaces only the asset prompt: the style block and NOTES stay (art:alts --brief, item 041)', () => {
+  const id = 'char_dada_matt_lifter_good';
+  const p = codexPrompt(id, false, 'A BRIEF FROM SCRATCH.');
+  assert.ok(p.includes(`${SPRITE_STYLE} A BRIEF FROM SCRATCH.`));
+  assert.ok(!p.includes(ART_PROMPTS[id]!));
+  assert.ok(p.includes(NOTES[id]!));
+  assert.equal(codexPrompt(id), codexPrompt(id, false, ART_PROMPTS[id]));
+});
+
+test('a brief is named by its file and its text has its whitespace collapsed', async () => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'ww-brief-'));
+  try {
+    await writeFile(path.join(dir, '041_cyber_netrunner.txt'), 'A dad\n  with a deck.\n');
+    const b = await readBrief(path.join(dir, '041_cyber_netrunner.txt'));
+    assert.equal(b.name, '041_cyber_netrunner');
+    assert.equal(b.text, 'A dad with a deck.');
+    await writeFile(path.join(dir, 'Bad Name.txt'), 'x');
+    await assert.rejects(readBrief(path.join(dir, 'Bad Name.txt')), /slug/);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
 });
 
 /** A w×h green image with a black-outlined square of `inner` in the middle. */

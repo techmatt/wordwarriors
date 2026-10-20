@@ -53,8 +53,8 @@ export const shrinkPng = (png: Buffer): Promise<Buffer> => sharp(png).png({ pale
 
 export const isBackground = (id: string) => ['room', 'arena'].includes(ART_BY_ID[id]!.kind);
 
-export function codexPrompt(id: string, withRef = false): string {
-  const prompt = ART_PROMPTS[id];
+/** `prompt` replaces the tracked asset prompt (`art:alts --brief`); the style block, photo wording and NOTES stay. */
+export function codexPrompt(id: string, withRef = false, prompt = ART_PROMPTS[id]): string {
   if (!prompt) throw new Error(`no prompt for ${id} in content/art/prompts.ts`);
   const a = ART_BY_ID[id];
   if (!a) throw new Error(`${id} is not an asset id (content/art/assets.ts)`);

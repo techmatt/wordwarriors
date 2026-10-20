@@ -1,10 +1,15 @@
 /**
  * Art candidates for Matt to choose from, without touching the game's art.
  *
- * `npm run art:alts -- <ids…> [--n=3] [--sheet=<file>] [--sheet-only] [--no-ref]`
+ * `npm run art:alts -- <ids…> [--n=3] [--sheet=<file>] [--sheet-only] [--no-ref] [--brief=<file>]`
  * draws `n` new candidates per id with the same prompt and photo reference as
  * `art:gen`, and keeps each full-resolution image as
  * `art-originals/alts/<id>-<k>.png` (k counts on from the last one there).
+ * `--brief=<file>` (one id only; a text file in `scratch/`, item 041) draws from
+ * that file's text instead of the tracked prompt, with the same style block,
+ * photo reference and NOTES, so trying a new look edits nothing tracked. Each
+ * such candidate gets a sidecar `<id>-<k>.json` (the brief's name, its file and
+ * text, the whole prompt), and the sheet and picker label it with the name.
  * `public/art/` is not touched. Every run then cuts each candidate of the named
  * ids exactly as `art:pick` would into previews (`<sheet>/<id>-<k>.png`) and
  * writes, beside them, a contact sheet (`--sheet=<file>`, default
@@ -34,6 +39,36 @@ import { ORIGINALS, OUT, codexPrompt, cut, describeUsage, exists, gamePng, isBac
 export const ALTS = path.join(ORIGINALS, 'alts');
 
 const altFile = (id: string, k: number | string) => path.join(ALTS, `${id}-${k}.png`);
+const sidecarFile = (id: string, k: number | string) => path.join(ALTS, `${id}-${k}.json`);
+
+/** A brief (`--brief=<file>`): its name is the file's base name, its text the whole file, whitespace collapsed. */
+export interface Brief {
+  name: string;
+  file: string;
+  text: string;
+}
+
+export async function readBrief(file: string): Promise<Brief> {
+  const name = path.basename(file).replace(/\.[a-z]+$/i, '');
+  if (!/^[a-z0-9][a-z0-9_-]{0,63}$/.test(name)) throw new Error(`--brief: ${name} must be a lower-case slug (a-z, 0-9, _ and -), since it labels the candidates`);
+  const text = (await readFile(file, 'utf8')).replace(/\s+/g, ' ').trim();
+  if (!text) throw new Error(`--brief: ${file} is empty`);
+  return { name, file: file.split(path.sep).join('/'), text };
+}
+
+/** What a candidate drawn from a brief was drawn from, beside its image. */
+export interface Sidecar extends Brief {
+  id: string;
+  k: number;
+  at: string;
+  ref: boolean;
+  prompt: string;
+}
+
+export async function sidecar(id: string, k: number): Promise<Sidecar | undefined> {
+  const f = sidecarFile(id, k);
+  return (await exists(f)) ? (JSON.parse(await readFile(f, 'utf8')) as Sidecar) : undefined;
+}
 
 /** The candidate numbers kept for an id, ascending (0, the saved original, included if present). */
 export async function candidates(id: string): Promise<number[]> {
@@ -50,7 +85,11 @@ async function draw(argv: string[]): Promise<void> {
   const n = Number(argv.find((a) => a.startsWith('--n='))?.slice(4) ?? 3);
   const noRef = argv.includes('--no-ref');
   const ids = argv.filter((a) => !a.startsWith('--'));
-  for (const id of ids) codexPrompt(id); // fail before spending anything on a bad id
+  const briefArg = argv.find((a) => a.startsWith('--brief='))?.slice('--brief='.length);
+  const brief = briefArg ? await readBrief(briefArg) : undefined;
+  if (brief && ids.length !== 1) throw new Error('--brief draws one id: one run per brief');
+  const prompt = (id: string, withRef = false) => codexPrompt(id, withRef, brief?.text);
+  for (const id of ids) prompt(id); // fail before spending anything on a bad id
   await mkdir(ALTS, { recursive: true });
   for (const id of ids) {
     const ref = noRef ? undefined : await refCrop(id);
@@ -58,25 +97,34 @@ async function draw(argv: string[]): Promise<void> {
       const k = Math.max(0, ...(await candidates(id))) + 1;
       console.log(`art:alts: ${id} candidate ${k} (${i + 1}/${n}): asking codex…`);
       const log = (r: Awaited<ReturnType<typeof runCodex>>, withRef: boolean) =>
-        appendFile(path.join(ORIGINALS, 'log.jsonl'), `${JSON.stringify({ id, alt: k, at: new Date().toISOString(), ref: withRef, seconds: r.seconds, thread: r.thread, image: r.image, limit: r.limit, usage: r.usage, message: r.lastMessage })}\n`);
-      let run = await runCodex(codexPrompt(id, !!ref), ref);
-      await log(run, !!ref);
+        appendFile(path.join(ORIGINALS, 'log.jsonl'), `${JSON.stringify({ id, alt: k, ...(brief ? { brief: brief.name } : {}), at: new Date().toISOString(), ref: withRef, seconds: r.seconds, thread: r.thread, image: r.image, limit: r.limit, usage: r.usage, message: r.lastMessage })}\n`);
+      let withRef = !!ref;
+      let run = await runCodex(prompt(id, withRef), ref);
+      await log(run, withRef);
       if (ref && !run.image && !run.limit) {
         console.error(`art:alts: ${id}: no image with the photo reference (${run.lastMessage ?? '?'}); retrying with text alone`);
-        run = await runCodex(codexPrompt(id));
+        withRef = false;
+        run = await runCodex(prompt(id));
         await log(run, false);
       }
+      const keep = async (image: string) => {
+        await copyFile(image, altFile(id, k));
+        if (brief) {
+          const side: Sidecar = { id, k, ...brief, at: new Date().toISOString(), ref: withRef, prompt: prompt(id, withRef) };
+          await writeFile(sidecarFile(id, k), `${JSON.stringify(side, null, 2)}\n`);
+        }
+      };
       if (run.limit) {
         console.error(`art:alts: usage limit: ${run.limit}`);
-        if (run.image) await copyFile(run.image, altFile(id, k));
+        if (run.image) await keep(run.image);
         return;
       }
       if (!run.image) {
         console.error(`art:alts: ${id}: no image after ${run.seconds}s. ${run.lastMessage ?? ''}`);
         continue;
       }
-      await copyFile(run.image, altFile(id, k));
-      console.log(`art:alts: ${id}-${k}: ${run.seconds}s${refFor(id) ? (ref ? ', with photo' : ', text only') : ''}, ${describeUsage(run.usage)}`);
+      await keep(run.image);
+      console.log(`art:alts: ${id}-${k}: ${run.seconds}s${refFor(id) ? (withRef ? ', with photo' : ', text only') : ''}${brief ? `, brief ${brief.name}` : ''}, ${describeUsage(run.usage)}`);
     }
   }
 }
@@ -84,7 +132,7 @@ async function draw(argv: string[]): Promise<void> {
 /** The game's art for an id now, then each kept candidate cut exactly as `art:pick` would cut it. */
 interface Row {
   id: string;
-  tiles: { key: string; label?: string; file: string }[];
+  tiles: { key: string; label?: string; brief?: string; file: string }[];
 }
 
 /**
@@ -105,7 +153,8 @@ async function previews(page: Page, ids: string[], dir: string): Promise<Row[]> 
       }
       const file = path.join(dir, `${id}-${k}.png`);
       await writeFile(file, (await gamePng(page, id, await readFile(altFile(id, k)))).png);
-      tiles.push({ key: String(k), file });
+      const b = await sidecar(id, k);
+      tiles.push({ key: String(k), file, ...(b ? { label: `brief ${b.name}`, brief: b.name } : {}) });
     }
     rows.push({ id, tiles });
   }
@@ -127,7 +176,7 @@ async function altManifest(rows: Row[], file: string, name: string): Promise<voi
     intro:
       "One row per image. `current` is the game's art now; each number is a candidate cut exactly as the game would show it (keyed, trimmed, fitted, palette-shrunk). Keeping `current` changes nothing; a number means `npm run art:pick -- <id> <number>`.",
     rows: rows.map((r) => {
-      const note = [PICK_NOTES[r.id], NOTES[r.id] && `Asked for this round: ${NOTES[r.id]}`].filter(Boolean).join(' ');
+      const note = [PICK_NOTES[r.id], NOTES[r.id] && `Asked for this round: ${NOTES[r.id]}`, briefNote(r)].filter(Boolean).join(' ');
       return {
         id: r.id,
         label: r.id,
@@ -141,16 +190,24 @@ async function altManifest(rows: Row[], file: string, name: string): Promise<voi
   console.log(`art:alts: picker manifest ${file} (${rows.length} rows, ${rows.reduce((n, r) => n + r.tiles.length - 1, 0)} candidates)`);
 }
 
+/** "Drawn from briefs …: 4, 5 netrunner; 6 drones." for a row with candidates drawn from briefs. */
+function briefNote(r: Row): string | undefined {
+  const by = new Map<string, string[]>();
+  for (const t of r.tiles) if (t.brief) by.set(t.brief, [...(by.get(t.brief) ?? []), t.key]);
+  if (!by.size) return undefined;
+  return `Drawn from briefs, not the game's prompt (art:alts --brief; promoting one writes its brief into the game): ${[...by].map(([b, ks]) => `${ks.join(', ')} ${b}`).join('; ')}.`;
+}
+
 export async function altSheet(rows: Row[], page: Page, file: string): Promise<void> {
   const ids = rows.map((r) => r.id);
-  const tiles = async (r: Row) => Promise.all(r.tiles.map(async (t) => ({ label: t.key, src: `data:image/png;base64,${(await readFile(t.file)).toString('base64')}` })));
+  const tiles = async (r: Row) => Promise.all(r.tiles.map(async (t) => ({ label: t.key, brief: t.brief ?? '', src: `data:image/png;base64,${(await readFile(t.file)).toString('base64')}` })));
   const sheetRows = await Promise.all(rows.map(async (r) => ({ id: r.id, tiles: await tiles(r) })));
   const wide = ids.some(isBackground);
   const url = await page.evaluate(
     async ({ rows, wide }) => {
       const TW = wide ? 480 : 300;
       const TH = wide ? 270 : 300;
-      const L = 34;
+      const L = rows.some((r) => r.tiles.some((t) => t.brief)) ? 56 : 34;
       const HEAD = 36;
       const imgs = await Promise.all(
         rows.map((r) =>
@@ -196,6 +253,11 @@ export async function altSheet(rows: Row[], page: Page, file: string): Promise<v
           c.font = 'bold 26px monospace';
           c.textAlign = 'center';
           c.fillText(t.label, x + TW / 2, y + TH + 26);
+          if (t.brief) {
+            c.fillStyle = '#333';
+            c.font = '15px monospace';
+            c.fillText(t.brief, x + TW / 2, y + TH + 48, TW - 8);
+          }
         }
       }
       return cv.toDataURL('image/png');
@@ -209,7 +271,7 @@ export async function altSheet(rows: Row[], page: Page, file: string): Promise<v
 
 export async function alts(argv: string[]): Promise<void> {
   const ids = argv.filter((a) => !a.startsWith('--'));
-  if (!ids.length) throw new Error('usage: npm run art:alts -- <ids…> [--n=3] [--sheet=<file>] [--sheet-only] [--manifest-only] [--no-ref]');
+  if (!ids.length) throw new Error('usage: npm run art:alts -- <ids…> [--n=3] [--sheet=<file>] [--sheet-only] [--manifest-only] [--no-ref] [--brief=<file>]');
   for (const id of ids) if (!ART_BY_ID[id]) throw new Error(`${id} is not an asset id (content/art/assets.ts)`);
   const sheet = argv.find((a) => a.startsWith('--sheet='))?.slice('--sheet='.length) ?? defaultSheet();
   const base = sheet.replace(/\.png$/i, '');
@@ -264,6 +326,14 @@ export async function pick(argv: string[]): Promise<void> {
     await cut(page, id, await readFile(src), `candidate ${k}`);
   } finally {
     await close();
+  }
+  const b = await sidecar(id, k);
+  if (b) {
+    // The game's prompt must match its art, so art:gen and later rounds draw the same look (item 041).
+    console.log(`\nart:pick: ${id}-${k} was drawn from brief ${b.name} (${b.file}), not the game's prompt. Write the brief into the game in the same commit:`);
+    console.log('  a character: its `look` in content/battle/roster.ts (its prompt is derived from that, and docs/art.md follows);');
+    console.log(`  anything else: a HAND entry for ${id} in content/art/prompts.ts.`);
+    console.log(`\n${b.text}\n`);
   }
 }
 
