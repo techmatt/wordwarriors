@@ -48,7 +48,7 @@ import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids
 import { RIGHT_VARIANTS } from '../../content/voice/script';
 import { voiceBus, type HeldSound, type Utterance } from '../audio/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon, sfxWhoosh, sfxWrong } from '../audio/sfx';
-import { BRIDGE, DEPTH, FONT_COMIC, GAME_HEIGHT } from '../config';
+import { BRIDGE, DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { backToHub, episode, narrator, planFor, type Slot, type Step } from '../episode/Episode';
 import { burst, fitImage, floatText, popIn, shockwave, wiggle } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -201,7 +201,9 @@ export class BridgeRoom extends Minigame {
 
   protected build(): void {
     this.floor.setTo(70, 430, 1140, 270);
-    applyHouseMood(this, episode.villain, { seed: 0x2054, floor: this.floor, calm: true });
+    // The villain's mess keeps out of the gap and off the far bank's pictures.
+    const avoid = [new Phaser.Geom.Rectangle(GAP.left - 30, GAP.top - 20, GAP.right - GAP.left + 60, GAME_HEIGHT), new Phaser.Geom.Rectangle(FAR_X, PICTURES[0]![1] - PICTURE_SIZE - 30, GAME_WIDTH - FAR_X, GAME_HEIGHT)];
+    applyHouseMood(this, episode.villain, { seed: 0x2054, floor: this.floor, calm: true, avoid });
     this.bag = new Bag(this);
     const gap = gapFor(this.roomId);
     this.gapLook = GAP_LOOK[gap];
@@ -621,8 +623,10 @@ export class BridgeRoom extends Minigame {
     // Her pick's letters over its picture, each lit while its sound plays.
     const units = BANK_BY_WORD[picked]?.units ?? [...picked];
     const sounds = BANK_BY_WORD[picked]?.sounds ?? [...picked];
-    const row = this.add.container(spot.x, spot.y - PICTURE_SIZE - 50).setDepth(DEPTH.sparkles);
-    const plate = this.add.rectangle(0, 0, units.length * 62 + 30, 78, 0xffffff, 0.9).setStrokeStyle(4, 0x1a1030, 0.8);
+    // Over its picture, kept on the screen (the rightmost picture's row would run off it).
+    const rowW = units.length * 62 + 30;
+    const row = this.add.container(Math.min(spot.x, GAME_WIDTH - rowW / 2 - 12), spot.y - PICTURE_SIZE - 50).setDepth(DEPTH.sparkles);
+    const plate = this.add.rectangle(0, 0, rowW, 78, 0xffffff, 0.9).setStrokeStyle(4, 0x1a1030, 0.8);
     row.add(plate);
     const letters = units.map((u, i) => {
       const t = this.add.text((i - (units.length - 1) / 2) * 62, 0, u.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: u.length > 1 ? '40px' : '52px', color: INK }).setOrigin(0.5);
