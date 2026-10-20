@@ -373,7 +373,8 @@ export class CookoffStage extends BaseStage {
       side.bonus = Math.min(0.25, side.bonus + 0.1);
       side.pop = 0.3;
       sfxGrow();
-      floatText(s, side.topX, side.topY - 40, 'YUM!', '#ffd23f', 64);
+      // Never a bank word (YUM was, item 039): it would show a move pad's word before she reads it.
+      floatText(s, side.topX, side.topY - 40, 'MMM!', '#ffd23f', 64);
       shockwave(s, side.topX, side.topY, ab.color, 160);
       this.fountain(side, [ab.color, ab.color2 ?? 0xffffff, 0xffd23f, 0xff5ab4], 700);
     });
@@ -427,7 +428,7 @@ export class CookoffStage extends BaseStage {
             side.bonus = Math.min(0.25, side.bonus + 0.08);
             side.pop = 0.35;
             sfxBoing();
-            floatText(s, side.topX, side.topY - 40, 'FLIP!', '#ffb703', 56);
+            floatText(s, side.topX, side.topY - 40, 'WHEE!', '#ffb703', 56);
             burst(s, side.topX, side.topY, { count: 50, speed: 380, texture: TEX.star, colors: [0xffd23f, 0xffffff, 0xff7eb6] });
             this.judge(side.dishX, [8, 9, 8]);
           },

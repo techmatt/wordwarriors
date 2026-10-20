@@ -1227,7 +1227,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     this.tweens.add({ targets: vignette, alpha: 1, duration: 300, yoyo: true, repeat: 4, onComplete: () => vignette.destroy() });
     burst(this, v.cx, v.cy, { count: 120, speed: 700, colors: [v.init.palette[0], v.init.palette[1], ult.color], life: 1200 });
     shockwave(this, v.x, v.y, ult.color, 400, 900);
-    this.banner(`${ult.name.toUpperCase()}!`, ult.color, true);
+    // Not when its name holds a pad word still to come (SWALLOW THE SUN!, item 039), like its line below.
+    if (!this.textGivesAway(ult.name)) this.banner(`${ult.name.toUpperCase()}!`, ult.color, true);
     slowmo(this, 0.4, 1200);
     speedLines(this, v.cx, v.cy, ult.color, 1200);
     punch(this, 0.08, 300);

@@ -35,7 +35,7 @@ import { MINIGAMES, drawGames, type Minigame } from './minigames';
 import { machineWords, planMachine, type MachinePlan } from './wordMachine';
 import { SENTENCE_SOLID } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
-import { distractorsFor, drawWords } from './bank';
+import { distractorsFor, drawWords, openWords, withStems } from './bank';
 
 export type Rand = () => number;
 
@@ -178,12 +178,15 @@ export function drawKey(
   boost: (w: string) => number = () => 1,
 ): string {
   const ok = new Set(eligible);
+  const open = openWords(store);
   store.topUpBag(BAG_WORDS, LEGACY_BAG_WORDS);
+  // A bag left with only words of a shut level counts as spent (item 039).
   let pool = store.bag().left.filter((w) => ok.has(w));
-  if (!pool.length) {
+  if (!pool.some(open)) {
     store.refillBag(BAG_WORDS.filter((w) => !keepOut.includes(w)));
     pool = store.bag().left.filter((w) => ok.has(w));
   }
+  if (!pool.some(open) && eligible.some(open)) pool = eligible.filter(open);
   if (!pool.length) pool = [...eligible];
   return drawWords(store, pool, 1, rand, boost)[0]!;
 }
@@ -234,7 +237,7 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   // Every word any of the sentences shows besides its key word: she reads
   // them (and hears them on green) in every room, so none is a key word.
   const shown = frames.flatMap((f) => (f ? sentence(f, fill, 'x').tokens.slice(0, -1).map(tokenWord) : []));
-  const avoid = new Set([spell, ...shown, ...(input.saidBefore ?? []), ...saidEarly({ hero: fill.hero, ally: input.ally, villain: fill.villain, helper: fill.helper })]);
+  const avoid = new Set(withStems([spell, ...shown, ...(input.saidBefore ?? []), ...saidEarly({ hero: fill.hero, ally: input.ally, villain: fill.villain, helper: fill.helper })]));
 
   // The word machine builds several words (item 026): they are planned first,
   // so the sentence rooms and the counter keep clear of all of them.
@@ -254,6 +257,12 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   });
   const taken = machines.flatMap((m) => (m ? machineWords(m) : []));
 
+  // A frame ending "...A {x}" takes no word starting with a vowel: no WE NEED A ANT (item 039).
+  const fits = (i: number) => {
+    const f = frames[i];
+    const article = f ? tokenWord(sentence(f, fill, 'x').tokens.at(-2) ?? '') : '';
+    return (w: string) => article !== 'a' || !/^[aeiou]/.test(w);
+  };
   const keys: string[] = [];
   for (let i = 0; i < 2; i++) {
     const m = machines[i];
@@ -261,13 +270,13 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
       keys.push(machineWords(m).at(-1) ?? '');
       continue;
     }
-    const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w));
+    const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w)).filter(fits(i));
     keys.push(drawKey(store, eligible, rand, [...keys, ...taken]));
   }
   // The counter: not a word on battle 1's move pads, not a word fetched this
   // episode (battle 1 shouts THE NET!).
   const named = CHARACTER_BY_ID[fill.villain]?.counter.word;
-  const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w));
+  const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w)).filter(fits(2));
   keys.push(drawKey(store, eligible, rand, [...keys, ...taken], (w) => (w === named ? NAMED_COUNTER_BOOST : 1)));
 
   const slots = ['a', 'b', 'counter'] as const;

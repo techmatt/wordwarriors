@@ -16,6 +16,7 @@ import { CVC_WORDS } from '../../content/phonics/words';
 import { wordLine } from '../../content/voice/ids';
 import { BAG_WORDS, LEGACY_BAG_WORDS, distractors, drawKey, frameIsSolid, saidEarly, type EpisodeInput, type SentencePlan } from '../../src/rules/sentences';
 import { sentencePlans } from './plans';
+import { openWords } from '../../src/rules/bank';
 import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
 
 function memory(): StorageLike {
@@ -167,17 +168,19 @@ test('the word bag: no key word comes back until the bag has gone round', () => 
   const store = new ProgressStore(memory());
   const rand = seeded(7);
   const drawn: string[] = [];
-  for (let i = 0; i < BAG_WORDS.length; i++) {
+  // Round 1 goes through every word of the levels open to her; words of a
+  // level still shut stay in the bag and do not hold the round open (item 039).
+  for (;;) {
     const w = drawKey(store, BAG_WORDS, rand);
+    if (store.bag().round !== 1) break;
     drawn.push(w);
     readRight(store, w);
   }
-  assert.equal(new Set(drawn).size, BAG_WORDS.length, 'a whole round without a repeat');
-  assert.equal(store.bag().round, 1);
-  assert.equal(store.bag().left.length, 0);
-  drawKey(store, BAG_WORDS, rand);
+  assert.equal(new Set(drawn).size, drawn.length, 'a whole round without a repeat');
+  const open = openWords(store);
+  assert.ok(drawn.length >= BAG_WORDS.filter(open).length - 1, `the round drew the open words (${drawn.length})`);
   assert.equal(store.bag().round, 2, 'then it refills');
-  assert.equal(store.bag().left.length, BAG_WORDS.length);
+  assert.ok(BAG_WORDS.filter((w) => !drawn.includes(w)).every((w) => !openWords(store)(w) || store.bag().left.includes(w)));
 
   // Across whole episodes she plays through: four episodes (12 key words) without a repeat.
   for (let seed = 1; seed <= 20; seed++) {

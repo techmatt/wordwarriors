@@ -29,7 +29,7 @@ import { CASTERS } from '../../content/house/scenes';
 import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import type { ProgressStore } from '../state/ProgressStore';
-import { coverage, distractorsFor, drawWords, gates, isFirm, met } from './bank';
+import { coverage, distractorsFor, drawWords, gates, isFirm, met, openWords } from './bank';
 import type { Rand } from './sentences';
 
 /**
@@ -126,11 +126,14 @@ function topUpMoves(store: ProgressStore): void {
 export function drawMove(store: ProgressStore, eligible: string[], rand: Rand = Math.random, keepOut: string[] = []): string {
   topUpMoves(store);
   const ok = new Set(eligible);
+  const open = openWords(store);
+  // A bag left with only words of a shut level counts as spent (item 039).
   let pool = store.bag('moves').left.filter((w) => ok.has(w));
-  if (!pool.length) {
+  if (!pool.some(open)) {
     store.refillBag(MOVE_WORDS.filter((w) => !keepOut.includes(w)), 'moves');
     pool = store.bag('moves').left.filter((w) => ok.has(w));
   }
+  if (!pool.some(open) && eligible.some(open)) pool = eligible.filter(open);
   if (!pool.length) pool = [...eligible];
   return drawWords(store, pool, 1, rand)[0]!;
 }
@@ -154,7 +157,9 @@ export function drawGift(store: ProgressStore, input: { helper: string; avoid?: 
   const inBag = new Set(store.bag('moves').left);
   const left = all.filter((w) => inBag.has(w));
   const helperWords = new Set((CHARACTER_BY_ID[input.helper]?.good.abilities ?? []).flatMap(abilityWords));
-  const pool = left.length ? left : all.length ? all : MOVE_WORDS;
+  // The bag's words, unless only shut levels are left in it (item 039): then any open word.
+  const open = openWords(store);
+  const pool = left.some(open) ? left : all.some(open) ? all.filter(open) : all.length ? all : MOVE_WORDS;
   const caster = CASTERS.has(input.helper);
   return drawWords(store, pool, 1, rand, (w) => (helperWords.has(w) ? 2 : 1) * (caster && BANK_BY_WORD[w]?.spell ? CASTER_SPELL_BOOST : 1))[0]!;
 }

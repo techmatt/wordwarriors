@@ -36,6 +36,7 @@ import { drawCast, isGrownUp, wakerOf, type CastOverrides } from '../rules/cast'
 import { fightSpec, pickFight } from '../rules/fights';
 import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
 import { endingPeople } from '../rules/endings';
+import { withStems } from '../rules/bank';
 import { episodePlans, wordsOf, type Rand, type RoomPlan } from '../rules/sentences';
 import { MINIGAMES, MINIGAME_BY_ID, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
 import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
@@ -469,7 +470,7 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
  * banners and lines clear of pad words as it goes (BattleScene `textGivesAway`).
  */
 function saidBeforeBattle(): string[] {
-  return [...bedroomWords(), ...HALL_LINE_WORDS, ...storyWords()];
+  return withStems([...bedroomWords(), ...HALL_LINE_WORDS, ...storyWords()]);
 }
 
 /** What the bedroom says about the villain: its wake-up threat and the taunt it shouts (BedroomScene). */

@@ -95,6 +95,38 @@ export function gates(store: ProgressStore): Record<number, number> {
 }
 
 /**
+ * `said` plus every bank word heard inside one of them (item 039): a plural
+ * (LEGS: LEG), a pet form (PIGGY: PIG) or a compound (CUPCAKES: CUP,
+ * PANCAKES: PAN). Exact-word matching let Smaug's "piggy bank" threat come
+ * before PIG as a key word. Not any prefix: FIN in FIND, FIG in FIGHT stay.
+ */
+export function withStems(said: Iterable<string>): string[] {
+  const out = new Set(said);
+  for (const w of [...out]) {
+    for (const b of BANK) {
+      if (w === b.word || !w.startsWith(b.word)) continue;
+      const rest = w.slice(b.word.length);
+      const last = b.word.at(-1);
+      // -ES only after a hiss (FOXES: FOX), so HATES is not HAT's plural.
+      const es = rest === 'es' && /(s|x|z|ch|sh)$/.test(b.word);
+      if (rest === 's' || es || rest === `${last}y` || rest === `${last}ie` || rest === `${last}ies` || rest.length >= 4) out.add(b.word);
+    }
+  }
+  return [...out];
+}
+
+/**
+ * Is a word's level open to her (its gate above 0)? A bag draw whose pool
+ * holds only shut words looks wider before falling back on them (item 039:
+ * the end of a bag round left only digraphs in it, and they were drawn as
+ * the gift, the moves and the keys while digraphs were still shut).
+ */
+export function openWords(store: ProgressStore): (w: string) => boolean {
+  const g = gates(store);
+  return (w) => !BANK_BY_WORD[w] || g[BANK_BY_WORD[w]!.level]! > 0;
+}
+
+/**
  * Draw `n` distinct words from `pool` by `wordWeight` × `boost`. A word whose
  * level is still shut has weight 0 and comes up only when nothing else can
  * (pickWeighted's floor), so a pool of only shut words still draws.
@@ -118,6 +150,8 @@ export function isFirm(store: ProgressStore, word: string, kind: 'words' | 'grab
 }
 
 const onsetOf = (w: string) => BANK_BY_WORD[w]?.onset ?? w.charAt(0);
+/** A word's first sound, as far as two letters can share one: a hard C and K are one (CH is its own). */
+const firstSound = (w: string) => (w.startsWith('ch') ? 'ch' : w.charAt(0) === 'c' ? 'k' : w.charAt(0));
 const rimeOf = (w: string) => BANK_BY_WORD[w]?.rime ?? w.slice(1);
 
 /** Does `other` share `target`'s first sound (a non-empty onset) or its rime? */
@@ -148,7 +182,8 @@ export function distractorsFor(
 ): string[] {
   const out = new Set([target, ...banned]);
   const all = [...new Set(pool)].filter((w) => !out.has(w));
-  const unlike = all.filter((w) => w.charAt(0) !== target.charAt(0));
+  // Another first letter and another first sound: KIT is no "other start" for CAT (item 039).
+  const unlike = all.filter((w) => w.charAt(0) !== target.charAt(0) && firstSound(w) !== firstSound(target));
   const picked: string[] = [];
   if (firm && n > 0) {
     const share = all.filter((w) => sharesSound(target, w));
