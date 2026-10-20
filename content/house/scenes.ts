@@ -158,7 +158,7 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
   ],
   // Ellie: a toy she shares.
   ellie: [
-    S('🫧', [
+    S('🔵', [
       'I want to share my favourite bubble with you!',
       'It is the biggest, shiniest bubble in the whole castle.',
       'Blow on it, and it goes...',
@@ -294,11 +294,11 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'It is my best trick card, and now it belongs to you.',
       'Turn it over, and it says...',
     ], CIRCLE('to take the card'), 'A true magician, let us look around!'),
-    S('🪄', [
+    S('🎩', [
       'Every good magician has a magic word, and I will lend you mine.',
       'Do not tell anybody, it is my favourite.',
-      'Wave the wand, and say...',
-    ], CIRCLE('to take the wand'), 'Now you know my best trick, let us look around!'),
+      'Wave your arms like a magician, and say...',
+    ], CIRCLE('to learn it'), 'Now you know my best trick, let us look around!'),
   ],
   bavmorda: [
     S('🧪', [

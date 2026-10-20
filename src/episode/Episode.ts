@@ -29,6 +29,7 @@ import { COUNTER_ROOM, FETCH_ROOMS, HOME, PLACE_BY_ID } from '../../content/hous
 import { questFor, questSetup, type Line } from '../../content/house/quests';
 import { hubStory, storyTexts, type HubStory, type HubStoryIds } from '../../content/house/scenes';
 import { group } from '../../content/voice/ids';
+import { NARRATOR_LINES } from '../../content/voice/script';
 import { voiceBus } from '../audio/VoiceBus';
 import { ADULT_HEIGHT, EPISODE_DEFAULTS } from '../config';
 import { drawCast, isGrownUp, wakerOf, type CastOverrides } from '../rules/cast';
@@ -411,7 +412,7 @@ function grabWord(): string {
     // Not a word on either battle's move pads (planned up front) either: she reads those.
     // Nor the villain's named counter word (HAT for Evil Tiamat): that would keep her named counter out this episode.
     const named = CHARACTER_BY_ID[episode.villain]?.counter.word;
-    const avoid = [gift, ...moveWords(), ...(named ? [named] : []), ...(episode.house.plan ? readingWords() : [])];
+    const avoid = [gift, ...moveWords(), ...bedroomWords(), ...(named ? [named] : []), ...(episode.house.plan ? readingWords() : [])];
     // `level` is read when the hall opens, `misses` counted there: kept here so a trip to the parent page loses neither.
     episode.grab = { word: pickGrab(progress, avoid), objects: [], level: null, misses: 0 };
   }
@@ -468,9 +469,18 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
  * banners and lines clear of pad words as it goes (BattleScene `textGivesAway`).
  */
 function saidBeforeBattle(): string[] {
-  const v = CHARACTER_BY_ID[episode.villain];
-  return [...wordsOf(v?.house.threat), ...wordsOf(v?.house.threatSay), ...storyWords()];
+  return [...bedroomWords(), ...HALL_LINE_WORDS, ...storyWords()];
 }
+
+/** What the bedroom says about the villain: its wake-up threat and the taunt it shouts (BedroomScene). */
+function bedroomWords(): string[] {
+  const v = CHARACTER_BY_ID[episode.villain];
+  const taunt = v?.evil.taunts[0];
+  return [...wordsOf(v?.house.threat), ...wordsOf(v?.house.threatSay), ...wordsOf(taunt?.text), ...wordsOf(taunt?.say)];
+}
+
+/** The entry hall's own lines ("let's grab the..."): GRAB is a bank word, so it is never a pad or the gift. */
+const HALL_LINE_WORDS = NARRATOR_LINES.filter((t) => t.key.startsWith('grab_')).flatMap((t) => [...wordsOf(t.text), ...wordsOf(t.say)]);
 
 /**
  * The hub's gift word (item 037): an action word from the bank, drawn on

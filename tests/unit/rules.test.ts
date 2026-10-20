@@ -12,11 +12,12 @@ import { CHARACTER_BY_ID, MINIONS, MOVE_WORDS, PERSONS, ROSTER, formId } from '.
 import { HOME_QUEST, QUESTS, homeQuestLine, questLine } from '../../content/house/quests';
 import { ANY_SCENES, HUB_SCENES, hubStoryIds, storyTexts } from '../../content/house/scenes';
 import { BANK, THINGS } from '../../content/phonics/bank';
-import { LETTERS } from '../../content/phonics/letters';
+import { FAMILIES, sillyWord } from '../../content/phonics/families';
+import { DIGRAPH_SOUNDS, LETTERS } from '../../content/phonics/letters';
 import { FETCH_ITEMS, FRAMES, allFrameTokens, allPrefixes, sentence, tokenWord } from '../../content/phonics/sentences';
 import { SPELL_WORDS, spellWordsFor } from '../../content/phonics/spelling';
 import { CVC_WORDS, SPECIAL_WORDS, WORDS } from '../../content/phonics/words';
-import { WAKERS, letterSoundLine, moveLine, narratorLine, nameLine, tauntLine, ultimateLine, wakeLine, wordLine } from '../../content/voice/ids';
+import { WAKERS, letterSoundLine, moveLine, narratorLine, nameLine, rimeLine, sillyLine, tauntLine, ultimateLine, wakeLine, wordLine } from '../../content/voice/ids';
 import { CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE_LINES } from '../../content/voice/script';
 import { pickWeighted, ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
 import { blendRound, choiceCount, pictureRound, soundRound } from '../../src/rules/rounds';
@@ -166,6 +167,10 @@ test('voice: every line id the game derives exists in lines.json and the manifes
   const want: string[] = [];
   for (const l of LETTERS) want.push(letterSoundLine(l.letter));
   for (const w of WORDS) want.push(wordLine(w.word));
+  // Item 037: every bank word (actions too), the digraph sounds, every family's rime and silly words.
+  for (const w of BANK) want.push(wordLine(w.word));
+  for (const d of DIGRAPH_SOUNDS) want.push(letterSoundLine(d.letter));
+  for (const f of FAMILIES) want.push(rimeLine(f.rime), ...f.silly.map((x) => sillyLine(sillyWord(x.letter, f.rime))));
   for (const c of ROSTER) {
     for (const w of spellWordsFor(c.id)) want.push(wordLine(w));
     for (const evil of [false, true]) {

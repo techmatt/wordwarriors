@@ -72,6 +72,9 @@ export const FETCH_BY_WORD: Record<string, FetchItem> = Object.fromEntries(FETCH
  * are every other word in any group it is in.
  */
 export const LOOKALIKES: string[][] = [
+  ['kit', 'box', 'bag'],
+  ['jam', 'plum', 'fig'],
+  ['wig', 'hat', 'cap'],
   ['mice', 'rat', 'bat'],
   ['cat', 'rat', 'bat'],
   ['dog', 'fox'],

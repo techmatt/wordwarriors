@@ -88,7 +88,7 @@ const RIMES: Record<string, { say: string; silly: SillyOnset[] }> = {
   ox: { say: 'Ox', silly: [{ letter: 'z', say: 'Zox' }, { letter: 'y', say: 'Yox' }] },
   // ROD POD. Out: COD GOD HOD NOD SOD TOD (words, SOD rude), BOD MOD (slang), KOD
   // (sounds like COD), ZOD (a villain's name), YOD (a letter), LOD (a town), VOD WOD.
-  od: { say: 'Odd', silly: [{ letter: 'j', say: 'Jod' }, { letter: 'f', say: 'Fod' }] },
+  od: { say: 'Odd', silly: [{ letter: 'f', say: 'Fod' }] },
   // SUN BUN. Out: RUN (a move word), DUN FUN GUN NUN PUN TUN (words), HUN (a slur),
   // JUN YUN (names), KUN (Japanese), MUN (slang), WUN (sounds like ONE), LUN.
   un: { say: 'Unn', silly: [{ letter: 'v', say: 'Vun' }, { letter: 'z', say: 'Zun' }] },

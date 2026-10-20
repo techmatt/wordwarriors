@@ -107,7 +107,7 @@ const THING_EFFECTS: WordEffect[] = [
   { word: 'crab', look: 'crabs scuttling at the villain, pinch pinch', ability: use('crab', 'bolt', 0xff5a3c, { ...pic('crab'), count: 4, homing: true }) },
   { word: 'flag', look: 'a big flag waved high: the team stands tall behind a shield', ability: use('flag', 'shield', 0xe63946, { duration: 4 }) },
   { word: 'sled', look: 'a sled that whooshes downhill through the villain', ability: use('sled', 'dash', 0xbfefff, { power: 3 }) },
-  { word: 'nest', look: 'a big nest on the ground: the villain sits in it, stuck', ability: use('nest', 'trap', 0xc8884a, { glyph: '🪺', count: 2 }) },
+  { word: 'nest', look: 'a big nest on the ground: the villain sits in it, stuck', ability: use('nest', 'trap', 0xc8884a, { glyph: '🥚', count: 2 }) },
   { word: 'tent', look: 'a tent that pops up over the team', ability: use('tent', 'shield', 0x2a9d8f, { duration: 4 }) },
   { word: 'desk', look: 'a heavy desk that drops on the villain, thud', ability: use('desk', 'slam', 0x8a5a2a, { power: 3 }) },
   { word: 'belt', look: 'a belt flung like a lasso: the villain is tied up', ability: use('belt', 'bolt', 0x5a3a2a, { ...pic('belt'), count: 1, status: 'stun', duration: 2, homing: true }) },
@@ -129,7 +129,7 @@ const THING_EFFECTS: WordEffect[] = [
   { word: 'sock', look: 'stinky socks raining down on the villain, pee-yew', ability: use('sock', 'rain', 0xffffff, { ...pic('sock'), count: 10 }) },
   { word: 'moth', look: 'moths that flutter round her, then fly at the villain', ability: use('moth', 'orbit', 0xe8d8b0, { ...pic('moth'), count: 5, duration: 1.6 }) },
   { word: 'shed', look: 'a garden shed that drops down on the villain, crash', ability: use('shed', 'slam', 0x8a6a4a, { power: 3 }) },
-  { word: 'chick', look: 'a flock of fluffy chicks that peck at the villain', ability: use('chick', 'summon', 0xffe14a, { minion: 'hen', count: 4 }) },
+  { word: 'chick', look: 'a flurry of fluffy chicks flapping at the villain', ability: use('chick', 'bolt', 0xffe14a, { ...pic('chick'), count: 5, homing: true }) },
 ];
 
 /**
@@ -177,15 +177,15 @@ const ACTION_EFFECTS: WordEffect[] = [
   { word: 'clap', look: 'a thunder clap: booms strike down from the sky', ability: act('clap', 'lightning', 0xffd23f, { count: 3, color2: 0xffffff }) },
   { word: 'bump', look: 'a bumper car that bumps right through the villain', ability: act('bump', 'dash', 0xff5ab4, { power: 3 }) },
   { word: 'snap', look: 'snappy crocodile jaws hidden on the ground: SNAP!', ability: act('snap', 'trap', 0x2ec27e, { glyph: '🐊', count: 3 }) },
-  { word: 'skip', look: 'skipping stones that bounce, bounce, bonk', ability: act('skip', 'bolt', 0xa0a0a0, { glyph: '🪨', count: 4, homing: true }) },
+  { word: 'skip', look: 'skipping stones that bounce, bounce, bonk', ability: act('skip', 'bolt', 0xa0a0a0, { glyph: '⚪', count: 4, homing: true }) },
   { word: 'twist', look: 'a twisty tornado that wraps round the villain', ability: act('twist', 'coil', 0xbfefff, { duration: 3, color2: 0xffffff }) },
   { word: 'melt', look: 'a wave of warm, gooey melt sweeping across', ability: act('melt', 'wave', 0xffb347, { color2: 0xfff1d6 }) },
   { word: 'lift', look: 'balloons lift the villain up, up and away, then pop!', ability: act('lift', 'polymorph', 0xff5ab4, { status: 'bubble', duration: 2.5, color2: 0x9ad8ff }) },
   { word: 'plop', look: 'big drops of water plopping down, splosh', ability: act('plop', 'rain', 0x3a86ff, { glyph: '💦', count: 8, power: 3 }) },
   { word: 'flop', look: 'a giant belly flop onto the villain', ability: act('flop', 'slam', 0xff9ad5, { power: 3 }) },
-  { word: 'trap', look: 'mouse traps hidden on the ground: snap!', ability: act('trap', 'trap', 0xc8a070, { glyph: '🪤', count: 3 }) },
+  { word: 'trap', look: 'mouse traps hidden on the ground: snap!', ability: act('trap', 'trap', 0xc8a070, { glyph: '🧀', count: 3 }) },
   { word: 'blast', look: 'a rocket blast beamed at the villain', ability: act('blast', 'beam', 0xff6a3a, { color2: 0xffd23f, power: 3 }) },
-  { word: 'drip', look: 'icy drips that freeze the villain solid', ability: act('drip', 'freeze', 0x7cc7ff, { status: 'freeze', duration: 3 }) },
+  { word: 'drip', look: 'big drips of water plopping down on the villain', ability: act('drip', 'rain', 0x7cc7ff, { glyph: '💧', count: 14 }) },
   // Item 037, level 3.
   { word: 'chop', look: 'she pops up beside the villain: karate chop!', ability: act('chop', 'teleport', 0xffd6a5, { power: 3, shout: true }) },
   { word: 'kick', look: 'balls kicked at the villain, goal!', ability: act('kick', 'bolt', 0xffffff, { glyph: '⚽', count: 3, homing: true, shout: true }) },

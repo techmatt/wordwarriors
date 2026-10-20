@@ -4620,13 +4620,13 @@
   "id": "hub_moriarty_2_line3",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Wave the wand, and say..."
+  "text": "Wave your arms like a magician, and say..."
  },
  {
   "id": "hub_moriarty_2_circle",
   "speaker": "moriarty",
   "group": "nar_moriarty",
-  "text": "Stand in the glowing circle, and press green, to take the wand!"
+  "text": "Stand in the glowing circle, and press green, to learn it!"
  },
  {
   "id": "hub_moriarty_2_done",
@@ -5387,12 +5387,6 @@
   "group": "phonics",
   "text": "Odd.",
   "note": "placeholder for the rime -od said alone; replace with a recorded clip"
- },
- {
-  "id": "silly_jod",
-  "speaker": "phonics",
-  "group": "phonics",
-  "text": "Jod!"
  },
  {
   "id": "silly_fod",
