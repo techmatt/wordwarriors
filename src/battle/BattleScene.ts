@@ -43,7 +43,7 @@ import { fighterId, moveKey, moveLine, nameLine, narratorLine, reformedLine, tau
 import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh, sfxWrong } from '../audio/sfx';
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, WALK_SPEED } from '../config';
+import { DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH, REACH, WALK_SPEED } from '../config';
 import { formFor } from '../../content/battle/forms';
 import { advance, castArt, castScale, counterArt, counterWord, episode, fightStyle, helper, movePlan, namedCounter, narrator, reformedOf, villainSpec, type Step } from '../episode/Episode';
 import { fightLineKey, type FightSpec } from '../../content/battle/fights';
@@ -941,7 +941,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     const stake = this.add.rectangle(0, 62, 10, 26, 0xfff8e8, 0.9);
     // Shrunk to the plate if long (BLAST ran over its edges, item 039).
     const label = fitText(
-      this.add.text(0, 0, word.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '76px', color: '#1a1030' }).setOrigin(0.5),
+      this.add.text(0, 0, word.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '76px', color: '#1a1030' }).setOrigin(0.5),
       210,
       92,
     );

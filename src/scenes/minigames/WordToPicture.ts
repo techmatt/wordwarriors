@@ -14,7 +14,7 @@ import Phaser from 'phaser';
 import { LETTER_BY_CHAR } from '../../../content/phonics/letters';
 import { WORD_BY_ID, pictureFor } from '../../../content/phonics/words';
 import { letterSoundLine, wordLine } from '../../../content/voice/ids';
-import { DEPTH, GAME_WIDTH } from '../../config';
+import { DEPTH, FONT_COMIC, GAME_WIDTH } from '../../config';
 import { castFace, episode } from '../../episode/Episode';
 import { bob, popIn } from '../../fx/juice';
 import { choiceCount, pictureRound, type WordItem } from '../../rules/rounds';
@@ -59,7 +59,7 @@ export class WordToPicture extends Minigame {
     const bg = this.add.image(0, 0, 'prop_banner').setDisplaySize(560, 130);
     this.letters = [];
     const size = item.target.length > 6 ? 70 : 92;
-    const style = { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: `${size}px`, color: '#1a1030' };
+    const style = { fontFamily: FONT_COMIC, fontSize: `${size}px`, color: '#1a1030' };
     const widths = [...item.target].map((ch) => this.add.text(0, 0, ch.toUpperCase(), style).setVisible(false));
     const total = widths.reduce((n, t) => n + t.width, 0);
     let x = -total / 2;

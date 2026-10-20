@@ -13,7 +13,7 @@ import { narratorLine, wordLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { advance, castArt, castFace, castId, castScale, counterWord, episode, narrator, villainSpec, waker } from '../episode/Episode';
 import { burst, fitImage, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -164,7 +164,7 @@ export class VictoryScene extends Phaser.Scene {
       const parts: Phaser.GameObjects.GameObject[] = [card];
       if (pic) parts.push(fitImage(this.add.image(0, -22, pic), 100, 100));
       // Shrunk to the card if the word is long (a name); never cut off.
-      parts.push(fitText(this.add.text(0, 58, w.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '38px', color: '#1a1030' }).setOrigin(0.5), 120, 50));
+      parts.push(fitText(this.add.text(0, 58, w.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '38px', color: '#1a1030' }).setOrigin(0.5), 120, 50));
       // Along the bottom, in front of the podium's feet: in the middle of the
       // screen they hid the grown-ups' heads (item 039).
       // Over the dialogue box (DEPTH.hud + 5): the card being said is the highlighter.

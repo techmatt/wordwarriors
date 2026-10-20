@@ -49,7 +49,6 @@ const VILLAIN_SPOT: Pt = { x: 975, y: 570 };
  * (18 px type from x 30 at y 58).
  */
 const METER = { x: 400, y: 76, w: 480, h: 22 };
-/** How far her stick nudges her hero off her spot: she can still sway about while she casts. */
 const RAINBOW = [0xff4a6a, 0xff9a3c, 0xffd23f, 0x5aff8a, 0x7ad9ff, 0xb04aff];
 const GOLD = 0xffd23f;
 

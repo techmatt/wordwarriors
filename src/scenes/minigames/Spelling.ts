@@ -21,7 +21,7 @@ import { spellWordsFor } from '../../../content/phonics/spelling';
 import { letterSoundLine, narratorLine, villainKey, wordLine } from '../../../content/voice/ids';
 import { voiceBus } from '../../audio/VoiceBus';
 import { sfxBoing, sfxKey } from '../../audio/sfx';
-import { DEPTH, GAME_WIDTH } from '../../config';
+import { DEPTH, FONT_COMIC, GAME_WIDTH } from '../../config';
 import { castFace, episode, narrator, villainSpec } from '../../episode/Episode';
 import { burst, fitImage, popIn, shake, wiggle } from '../../fx/juice';
 import { openTextEntry } from '../../input/TextEntry';
@@ -107,7 +107,7 @@ export class Spelling extends Minigame {
       const x = x0 + i * (size + gap);
       const rect = this.add.rectangle(x, 370, size, size + 10, 0xffffff, 0.85).setStrokeStyle(6, 0x5a4a8a).setDepth(DEPTH.hud - 2);
       const ghost = this.add
-        .text(x, 370, letter.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '86px', color: '#5a4a8a' })
+        .text(x, 370, letter.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '86px', color: '#5a4a8a' })
         .setOrigin(0.5)
         .setAlpha(0.28)
         .setDepth(DEPTH.hud - 1);
@@ -185,7 +185,7 @@ export class Spelling extends Minigame {
     sfxKey();
     box.ghost.setAlpha(0);
     box.filled = this.add
-      .text(box.rect.x, box.rect.y, letter.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '86px', color: '#1a1030' })
+      .text(box.rect.x, box.rect.y, letter.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '86px', color: '#1a1030' })
       .setOrigin(0.5)
       .setDepth(DEPTH.hud);
     popIn(this, box.filled, 1);

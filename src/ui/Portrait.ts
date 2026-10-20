@@ -13,14 +13,13 @@ import Phaser from 'phaser';
 
 import { CHARACTER_BY_ID, personOf } from '../../content/battle/roster';
 import type { Utterance } from '../audio/VoiceBus';
+import { FONT_ROUNDED as NAME_FONT } from '../config';
 import { castArt, castFace, castId, episode, waker } from '../episode/Episode';
 
 export interface Speaker {
   id: string;
   evil: boolean;
 }
-
-const NAME_FONT = '"Arial Rounded MT Bold", "Arial Black", sans-serif';
 
 /**
  * The character behind a line. `phonics` (word confirmations, letter sounds)
