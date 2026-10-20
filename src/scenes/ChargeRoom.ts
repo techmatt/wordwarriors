@@ -49,11 +49,14 @@ import type { Spot } from '../world/RoomScene';
 import { ARRIVE_MS, INK, LIT, Minigame } from './minigames/Minigame';
 
 /**
- * `approach`: walk to the altar. `prompt`: the rune is lit and the helper is
- * asking (or modelling it first). `ask`: waiting for Dad. `help`: the helper
- * models it after a no. `charging`: the payoff. `done`: back to the hub.
+ * `approach`: walk to the altar. `explain`: the helper explains, no rune yet.
+ * `resume`: back from the parent page, the rune not lit yet. `prompt`: the
+ * rune is lit and the helper is asking (or modelling it first). `ask`:
+ * waiting for Dad. `help`: the helper models it after a no. `charging`: the
+ * payoff. `done`: back to the hub. Dad's buttons count only in `prompt`,
+ * `ask` and (a yes) `help`: a rune she can see.
  */
-type Phase = 'approach' | 'prompt' | 'ask' | 'help' | 'charging' | 'done';
+type Phase = 'approach' | 'explain' | 'resume' | 'prompt' | 'ask' | 'help' | 'charging' | 'done';
 
 const ALTAR = { x: GAME_WIDTH / 2 + 60, y: 600, w: 340, h: 250 };
 /** The rune stands on the altar's top. */
@@ -86,6 +89,16 @@ export class ChargeRoom extends Minigame {
   private friend!: Phaser.GameObjects.Image;
   private bar!: Phaser.GameObjects.Container;
   private barSlots: Phaser.GameObjects.Rectangle[] = [];
+  /**
+   * The flow in charge: every chain (a prompt, a help, a payoff) takes the
+   * number when it starts and stops at its next await once Dad's answer has
+   * moved it on, so a press mid-line never leaves two chains talking.
+   */
+  private flow = 0;
+  /** The gesture playing now, to stop it at once when Dad answers mid-gesture. */
+  private stopGesture: (() => void) | null = null;
+  /** The helper's scale at rest: every gesture's squash starts and ends there. */
+  private friendScale = { x: 1, y: 1 };
 
   constructor() {
     super('ChargeRoom');
@@ -102,7 +115,10 @@ export class ChargeRoom extends Minigame {
     const charged = episode.charged?.sounds ?? [];
     this.index = Math.min(charged.length, this.plan.runes.length);
     this.finished = this.index >= this.plan.runes.length;
-    this.phase = this.index > 0 ? 'prompt' : 'approach';
+    this.phase = this.index > 0 ? 'resume' : 'approach';
+    this.level = 1;
+    this.flow++;
+    this.stopGesture = null;
     this.assists = this.missesNow();
     this.waitMs = 0;
     this.timeouts = 0;
@@ -157,6 +173,7 @@ export class ChargeRoom extends Minigame {
 
     // The helper beside the altar, who performs the gestures.
     this.friend = this.castSprite(helper(), HELPER.x, HELPER.y).setDepth(HELPER.y);
+    this.friendScale = { x: this.friend.scaleX, y: this.friend.scaleY };
     this.caption.track(helper(), () => (this.friend.active ? { x: this.friend.x, y: this.friend.y } : null));
     bob(this, this.friend, 4, 1300);
 
@@ -188,7 +205,9 @@ export class ChargeRoom extends Minigame {
       // Back mid-visit: she is at the altar already.
       spot.enabled = false;
       this.player.place(ALTAR.x - 150, ALTAR.y + 40);
-      void this.wait(ARRIVE_MS).then(() => this.lightRune());
+      void this.wait(ARRIVE_MS).then(() => {
+        if (this.phase === 'resume') void this.lightRune();
+      });
     }
   }
 
@@ -241,7 +260,7 @@ export class ChargeRoom extends Minigame {
   protected choose(spot: Spot): void {
     if (this.phase !== 'approach' || spot.id !== 'altar') return;
     spot.enabled = false;
-    this.phase = 'prompt';
+    this.phase = 'explain';
     this.locked = true;
     voiceBus.hush();
     sfxSummon();
@@ -250,13 +269,14 @@ export class ChargeRoom extends Minigame {
     shockwave(this, ALTAR.x, ALTAR.y - ALTAR.h * 0.6, 0xb28dff, 220);
     void (async () => {
       await this.narrate('charge_explain');
-      await this.lightRune();
+      if (this.phase === 'explain') await this.lightRune();
     })();
   }
 
   /** A rune lights on the altar and the helper asks, with the help its level gives. */
   private async lightRune(): Promise<void> {
     const sound = this.rune;
+    const f = ++this.flow;
     this.round = `charge:${this.index}:${sound}`;
     this.phase = 'prompt';
     this.locked = true;
@@ -273,27 +293,28 @@ export class ChargeRoom extends Minigame {
     sfxZap();
     burst(this, RUNE.x, RUNE.y, { count: 40, speed: 280, colors: [0xb28dff, 0xffffff] });
     await this.wait(350);
-    if (this.phase !== 'prompt') return;
-    await this.prompt();
+    if (f !== this.flow || this.phase !== 'prompt') return;
+    await this.prompt(f);
   }
 
-  /** The ask, as the rune's level (and any help so far) says. */
-  private async prompt(): Promise<void> {
+  /** The ask, as the rune's level (and any help so far) says; `f` is the flow it belongs to. */
+  private async prompt(f: number): Promise<void> {
     const sound = this.rune;
+    const on = () => f === this.flow && this.phase === 'prompt';
     if (this.assists === 0 && this.level === 1) {
       // Level 1: the helper says it with its gesture first; she copies.
       await this.narrate('charge_watch');
-      if (this.phase !== 'prompt') return;
-      await this.gesture(sound, true);
-      if (this.phase !== 'prompt') return;
+      if (!on()) return;
+      await this.gesture(sound, true, f);
+      if (!on()) return;
       await this.narrate('charge_your_turn');
     } else if (this.assists === 0 && this.level === 2) {
       // Level 2: the gesture only; its line trails off where the sound would be.
-      await this.gesture(sound, false);
+      await this.gesture(sound, false, f);
     } else {
       await this.narrate(`charge_ask_${(this.index % CHARGE_ASK_VARIANTS) + 1}`);
     }
-    if (this.phase === 'prompt') this.startAsking();
+    if (on()) this.startAsking();
   }
 
   private startAsking(): void {
@@ -308,27 +329,32 @@ export class ChargeRoom extends Minigame {
    * rhythm while its glyph does the action beside them, saying its line; with
    * `withSound` the sound follows, the rune lit while it plays.
    */
-  private async gesture(sound: string, withSound: boolean): Promise<void> {
+  private async gesture(sound: string, withSound: boolean, f: number): Promise<void> {
     const r = RUNE_BY_SOUND[sound];
     if (!r) return;
+    // One gesture at a time, from the helper's rest scale.
+    this.stopGesture?.();
     const at = { x: this.friend.x + 95, y: this.friend.y - this.friend.displayHeight * 0.6 };
     const prop = this.add.text(at.x, at.y, r.gesture.glyph, { fontSize: '84px', padding: { top: 14, bottom: 6 } }).setOrigin(0.5).setDepth(DEPTH.sparkles);
     popIn(this, prop, 1);
     const moves = this.motion(prop, r.gesture.motion, at);
-    const fx = this.friend.scaleX;
-    const fy = this.friend.scaleY;
+    const { x: fx, y: fy } = this.friendScale;
+    this.friend.setScale(fx, fy);
     const beat = this.tweens.add({ targets: this.friend, scaleX: fx * 1.06, scaleY: fy * 0.94, duration: 260, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     const line = narratorLine(narrator(), chargeKey('charge_gesture', sound));
     const stop = () => {
+      if (this.stopGesture === stop) this.stopGesture = null;
       beat.stop();
       this.friend.setScale(fx, fy);
       for (const t of moves) t.stop();
+      this.tweens.killTweensOf(prop);
       this.tweens.add({ targets: prop, scale: 0, alpha: 0, duration: 220, onComplete: () => prop.destroy() });
     };
+    this.stopGesture = stop;
     this.locked = true;
     await this.say(line);
-    if (withSound && (this.phase === 'prompt' || this.phase === 'help')) await this.saySound(sound);
-    stop();
+    if (withSound && f === this.flow) await this.saySound(sound);
+    if (this.stopGesture === stop) stop();
   }
 
   /** The glyph's action, by bob, squash, scale and path; returns its tweens so the gesture can stop them. */
@@ -372,6 +398,9 @@ export class ChargeRoom extends Minigame {
     if (this.phase !== 'prompt' && this.phase !== 'ask' && !(this.phase === 'help' && a === 'yes')) return;
     this.noteActivity();
     setDadAsking(false);
+    // Whatever was being said or shown for this rune stops here.
+    this.flow++;
+    this.stopGesture?.();
     voiceBus.hush();
     if (a === 'yes') void this.charge(false);
     else void this.help(timedOut);
@@ -387,21 +416,23 @@ export class ChargeRoom extends Minigame {
     if (first) progress.setChargeLevel(this.rune, nextChargeLevel(this.level, false));
     this.phase = 'help';
     this.locked = true;
+    const f = this.flow;
+    const on = () => f === this.flow && this.phase === 'help';
     if (this.assists > CHARGE.assists) {
       // Enough: the helper says it with her, and the rune charges all the same.
       await this.narrate('charge_together');
-      if (this.phase !== 'help') return;
-      await this.gesture(this.rune, true);
-      if (this.phase !== 'help') return;
+      if (!on()) return;
+      await this.gesture(this.rune, true, f);
+      if (!on()) return;
       await this.charge(true);
       return;
     }
     await this.narrate('charge_help');
-    if (this.phase !== 'help') return;
-    await this.gesture(this.rune, true);
-    if (this.phase !== 'help') return;
+    if (!on()) return;
+    await this.gesture(this.rune, true, f);
+    if (!on()) return;
     await this.narrate('charge_your_turn');
-    if (this.phase !== 'help') return;
+    if (!on()) return;
     this.phase = 'prompt';
     this.startAsking();
   }
@@ -508,7 +539,7 @@ export class ChargeRoom extends Minigame {
     if (this.phase !== 'ask' || idle) return;
     setDadAsking(false);
     this.phase = 'prompt';
-    void this.prompt();
+    void this.prompt(++this.flow);
   }
 
   /** F4 at the altar walks up to it; with a rune lit it is Dad's yes. */

@@ -68,7 +68,7 @@ export interface RoomInfo {
     index: number;
     sound: string;
     level: number;
-    phase: 'approach' | 'prompt' | 'ask' | 'help' | 'charging' | 'done';
+    phase: 'approach' | 'explain' | 'resume' | 'prompt' | 'ask' | 'help' | 'charging' | 'done';
     asking: boolean;
     assists: number;
     timeouts: number;

@@ -126,7 +126,12 @@ test('Charge the Spell: the beta forces it behind a door of a drawn episode; F4 
   expect(s.episode.house.plan!.filter((p) => p.kind === 'charge')).toHaveLength(1);
   await until(page, (st) => st.room?.charge?.phase === 'approach' && !st.room.locked, 60_000, 'altar offered');
   await page.keyboard.press('F4');
-  await until(page, (st) => st.room?.charge?.index === 0 && Boolean(st.room.charge.asking), 60_000, 'rune 0 asks');
+  // Dad's yes while the helper explains (no rune lit yet) does nothing (item 053 review: it charged an unseen rune).
+  await until(page, (st) => st.room?.charge?.phase === 'explain', 30_000, 'explaining');
+  await dad(page, 'yes');
+  const a0 = await until(page, (st) => st.room?.charge?.index === 0 && Boolean(st.room.charge.asking), 60_000, 'rune 0 asks');
+  expect(a0.room!.charge!.charged).toEqual([]);
+  expect(a0.progress.sounds[a0.room!.charge!.sound]).toBeUndefined();
   await page.keyboard.press('F4');
   await until(page, (st) => (st.room?.charge?.index ?? 0) === 1, 60_000, 'F4 charged rune 0');
   expectNoErrors(errors);

@@ -13,7 +13,8 @@
  *
  * Lines here are voiced before the battle, so they say no bank word at all,
  * stems included (tests/unit/charge.test.ts), and no glyph is a bank word's
- * picture (a 🥁 would show DRUM before she reads it).
+ * picture or close to one (a 🥁 would show DRUM before she reads it; a mouse
+ * reads as RAT, a hatching chick as CHICK, a plane as JET, a ladybird as BUG).
  *
  * `tier`: 1 the continuous sounds (she can hold them: M S F A L N R V Z and
  * the short vowels), 2 the quick ones (stops, H W Y J), 3 the digraphs, one
@@ -71,14 +72,14 @@ export const RUNES: RuneSound[] = [
   rune('m', 1, '🍰', 'pulse', 'Rub your tummy, so tasty, it goes...', 'beam', 0xff9ad5, { color2: 0xffffff }),
   rune('s', 1, '🐍', 'weave', 'The snake wiggles, and hisses...', 'wave', 0x7be36b, { color2: 0xd8ffb0 }),
   rune('f', 1, '🔥', 'puff', 'Blow on the fire, it goes...', 'cone', 0xff7b3a, { color2: 0xffd23f }),
-  rune('a', 1, '🐞', 'climb', 'Tiny critters crawl up my arm, and I go...', 'bolt', 0xff4040, { count: 4, homing: true }),
+  rune('a', 1, '💪', 'climb', 'Tiny critters crawl up my arm, and I go...', 'bolt', 0xff4040, { count: 4, homing: true }),
   rune('l', 1, '🍭', 'pulse', 'Lick a lollipop, it goes...', 'orbit', 0xff6ad5, { count: 4 }),
-  rune('n', 1, '🛩️', 'fly', 'Arms out, like a plane, it goes...', 'dash', 0xbfd4ff, { power: 3 }),
+  rune('n', 1, '🕊️', 'fly', 'Arms out wide, like a bird gliding, it goes...', 'dash', 0xbfd4ff, { power: 3 }),
   rune('r', 1, '🐯', 'shake', 'The tiger growls, it goes...', 'slam', 0xffa53d, { power: 3 }),
   rune('v', 1, '🏎️', 'fly', 'The race car zooms past, it goes...', 'dash', 0xff3d3d, { power: 3 }),
   rune('z', 1, '🐝', 'weave', 'The bee buzzes about, it goes...', 'bolt', 0xffd23f, { count: 5, homing: true }),
-  rune('e', 1, '🐣', 'shake', 'Crack the egg open, it goes...', 'lightning', 0xfff4b0),
-  rune('i', 1, '🐭', 'shake', 'The little mouse squeaks...', 'bolt', 0xc0c0d0, { count: 3, homing: true }),
+  rune('e', 1, '👐', 'shake', 'Crack the egg open, it goes...', 'lightning', 0xfff4b0),
+  rune('i', 1, '👃', 'shake', 'Wiggle your nose like a mouse, it goes...', 'bolt', 0xc0c0d0, { count: 3, homing: true }),
   rune('o', 1, '🔦', 'blink', 'Flick the light on and off, it goes...', 'beam', 0xfff59a, { color2: 0xffffff }),
   rune('u', 1, '☂️', 'pulse', 'Put up the umbrella, it goes...', 'shield', 0x9b5de5, { duration: 4 }),
   // Tier 2: quick sounds, once the continuous ones are solid.
@@ -87,7 +88,7 @@ export const RUNES: RuneSound[] = [
   rune('b', 2, '⚾', 'bounce', 'Swing hard at the ball, it goes...', 'bolt', 0xffffff, { count: 3, homing: true, power: 3 }),
   rune('d', 2, '🦕', 'pulse', 'The dinosaur takes a step, it goes...', 'slam', 0x5ad17a, { power: 3 }),
   rune('c', 2, '📷', 'blink', 'The camera clicks, it goes...', 'lightning', 0xe0e8ff),
-  rune('k', 2, '🥥', 'shake', 'Knock on a coconut, it goes...', 'rain', 0xa0703a, { count: 10 }),
+  rune('k', 2, '🚪', 'shake', 'Knock on the door, it goes...', 'rain', 0xa0703a, { count: 10 }),
   rune('g', 2, '🚿', 'weave', 'Water gurgles down the drain, it goes...', 'wave', 0x3d9bff, { color2: 0xbfefff }),
   rune('h', 2, '😮', 'pulse', 'Pant like a puppy, it goes...', 'cone', 0xffffff, { color2: 0xbfefff }),
   rune('j', 2, '🍮', 'pulse', 'The jelly wobbles on a plate, it goes...', 'orbit', 0xffb347, { count: 3 }),
