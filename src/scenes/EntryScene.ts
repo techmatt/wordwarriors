@@ -304,10 +304,9 @@ export class EntryScene extends RoomScene {
     this.tweens.add({ targets: spot.obj, alpha: 0, duration: 250 });
     sfxSummon();
     await this.guard(this.bag?.receive(`pic_${this.word}`, spot.x, y) ?? Promise.resolve());
-    await this.narrate('grab_door');
-    this.locked = true;
-
+    // The door pops out as its line starts (item 039: "out the door" came before there was one).
     this.openDoor();
+    await this.narrate('grab_door');
   }
 
   protected override extraHooks() {

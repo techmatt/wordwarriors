@@ -865,7 +865,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
    * other big fighters), so she never walks into a fighter's card to choose.
    */
   private padSpots(n: number, me: Fighter): { x: number; y: number }[] {
-    const avoid = [me, this.villain, ...this.fighters.filter((f) => f.active && f.isMain)].filter((f, i, a) => f?.active && a.indexOf(f) === i);
+    // Minions too (item 039: a pad under a crowd of skeletons or dragon babies did not read as a place to stand).
+    const avoid = [me, this.villain, ...this.fighters.filter((f) => f.active)].filter((f, i, a) => f?.active && a.indexOf(f) === i);
     /** How far a pad at (x, y) stays from every fighter: ring against feet, sign against body. */
     const clearance = (x: number, y: number): number => {
       let d = Infinity;
@@ -994,8 +995,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     for (const o of this.children.list) {
       const d = (o as unknown as { depth: number }).depth;
       const a = o as unknown as Phaser.GameObjects.Components.AlphaSingle;
-      // Not what is tweening its own alpha (a trap's blink): the tween would keep the faded value for good.
-      if (d >= DEPTH.fx && d < DEPTH.prompt - 10 && typeof a.alpha === 'number' && !objs.includes(o) && !this.tweens.getTweensOf(o).length) {
+      if (d >= DEPTH.fx && d < DEPTH.prompt - 10 && typeof a.alpha === 'number' && !objs.includes(o)) {
         veiled.push({ o: o as never, alpha: a.alpha });
         a.setAlpha(a.alpha * 0.2);
       }
@@ -1020,7 +1020,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     });
 
     for (const o of objs) o.destroy();
-    for (const v of veiled) if (v.o.active) v.o.setAlpha(v.alpha);
+    // Back as they were, unless something has set their alpha since (a fade-out finishing).
+    for (const v of veiled) if (v.o.active && Math.abs(v.o.alpha - v.alpha * 0.2) < 0.01) v.o.setAlpha(v.alpha);
     me.lean = 0;
     this.choice = null;
     this.simRate = 1;

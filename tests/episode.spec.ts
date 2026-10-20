@@ -28,7 +28,7 @@ test('a full episode plays end to end @slow', async ({ page }) => {
   // battle's end, its own in the victory scene); every recap word has its picture.
   expect(end.ending?.said).toEqual(end.ending?.lines);
   expect(end.voice.history.filter((id) => id.startsWith(`reformed_${end.episode.villain}_`)).length).toBe(2);
-  const recapWords = end.episode.read.slice(0, 8);
+  const recapWords = end.episode.read.slice(0, 9);
   const done = await until(page, (s) => s.recap.length === recapWords.length && !s.voice.busy, 120_000, 'the recap');
   expect(done.recap.map((c) => c.word)).toEqual(recapWords);
   for (const c of done.recap) expect(c.picture, `${c.word} has a picture`).toMatch(/^(pic|face|item)_/);

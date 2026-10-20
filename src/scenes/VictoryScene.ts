@@ -7,13 +7,14 @@
 
 import Phaser from 'phaser';
 
+import { personOf } from '../../content/battle/roster';
 import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { narratorLine, wordLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { advance, castArt, castFace, castScale, counterWord, episode, narrator, villainSpec } from '../episode/Episode';
+import { advance, castArt, castFace, castId, castScale, counterWord, episode, narrator, villainSpec, waker } from '../episode/Episode';
 import { burst, fitImage, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
@@ -62,7 +63,8 @@ export class VictoryScene extends Phaser.Scene {
     let title: Phaser.GameObjects.Text | null = null;
     const caption = new Caption(this, {
       mode: (u) => (u.id.startsWith('word_') ? 'portrait' : undefined),
-      avoid: () => [...this.cards.flatMap((c) => keep(c, 3)), ...podium.flatMap((p) => keep(p, 2)), ...(title ? keep(title, 2) : [])],
+      // The cards weigh most: the closing lines' box sat over them (item 039); over the title is fine.
+      avoid: () => [...this.cards.flatMap((c) => keep(c, 8)), ...podium.flatMap((p) => keep(p, 2)), ...(title ? keep(title, 1) : [])],
     });
     new Bubbles(this);
     this.cameras.main.fadeIn(400, 255, 255, 255);
@@ -94,9 +96,11 @@ export class VictoryScene extends Phaser.Scene {
     // in front of it, and her dad had the top step): she has the top one, her
     // ally the left, the villain, good again, the right.
     const blocks = { top: { x: 640, y: 450 }, left: { x: 405, y: 516 }, right: { x: 878, y: 528 } };
+    // With no ally, the dad who woke her (and was there all along) has the left block.
+    const second = episode.ally ?? (personOf(waker()) !== personOf(episode.villain) ? castId(waker()) : null);
     const places = [
       { id: episode.hero, at: blocks.top },
-      ...(episode.ally ? [{ id: episode.ally, at: blocks.left }] : []),
+      ...(second ? [{ id: second, at: blocks.left }] : []),
       { id: episode.villain, at: blocks.right },
     ];
     places.forEach(({ id, at }, i) => {
@@ -138,19 +142,19 @@ export class VictoryScene extends Phaser.Scene {
    * Order is the order she read them (episode.read); words show upper case.
    */
   private async recap(gone: () => boolean): Promise<void> {
-    // Eight cards fit. A word machine visit reads four words, so when there
-    // are more than eight the gift word (her first move), the counter word
+    // Nine cards fit. A word machine visit reads four words, so when there
+    // are more than nine the gift word (her first move), the counter word
     // (what beat the villain) and what she read after it always stay, and the
     // earliest words fill the rest, in the order she read them (item 039: the
     // cut used to drop the gift word and battle 1's moves).
-    const max = 8;
+    const max = 9;
     const read = episode.read;
     const at = read.indexOf(counterWord());
     const must = new Set([...(episode.spell ? [episode.spell] : []), ...(at >= 0 ? read.slice(at) : [])].filter((w) => read.includes(w)));
     const pick = new Set([...must].slice(0, max));
     for (const w of read) if (pick.size < max) pick.add(w);
     const words = read.filter((w) => pick.has(w));
-    const gap = 140;
+    const gap = 132;
     for (const [i, w] of words.entries()) {
       if (gone()) return;
       const x = GAME_WIDTH / 2 + (i - (words.length - 1) / 2) * gap;

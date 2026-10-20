@@ -25,7 +25,8 @@ import { charArt } from '../../content/art/assets';
 import { formFor } from '../../content/battle/forms';
 import { CHARACTER_BY_ID, ROSTER, personOf } from '../../content/battle/roster';
 import type { CharacterSpec, CounterItem } from '../../content/battle/types';
-import { COUNTER_ROOM, FETCH_ROOMS, HOME, PLACE_BY_ID } from '../../content/house/house';
+import { COUNTER_ROOM, FETCH_ROOMS, HOME, PLACE_BY_ID, SIDE_ROOM_BY_ID } from '../../content/house/house';
+import { BANK } from '../../content/phonics/bank';
 import { questFor, questSetup, type Line } from '../../content/house/quests';
 import { hubStory, storyTexts, type HubStory, type HubStoryIds } from '../../content/house/scenes';
 import { group } from '../../content/voice/ids';
@@ -401,7 +402,11 @@ export function housePlan(): RoomPlan[] {
     // line or hub scene (item 037), both said before any room.
     const battle1Moves = battle1Words(movePlan());
     // The warm-up's word is said in the entry hall (item 033): drawn first, kept out too.
-    const saidBefore = [...storyWords(), ...(episode.grab ? [episode.grab.word] : [grabWord()])];
+    // The doors' signs show their rooms' glyphs: a bank word drawn the same way is
+    // shown before she reads it (item 039: the 🛁 door led to GO GET THE TUB).
+    const signs = new Set([...rooms, counterRoom].map((r) => SIDE_ROOM_BY_ID[r]?.glyph).filter(Boolean));
+    const signWords = BANK.filter((w) => w.glyph && signs.has(w.glyph)).map((w) => w.word);
+    const saidBefore = [...storyWords(), ...signWords, ...(episode.grab ? [episode.grab.word] : [grabWord()])];
     const games = roomGames();
     episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, spell, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore, ...games });
   }

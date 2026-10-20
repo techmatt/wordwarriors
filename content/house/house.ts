@@ -168,7 +168,8 @@ export const PLACES: PlaceSpec[] = [
     outdoor: true,
     look: "Dada Matt's rune dojo on a mountain top, seen side-on: a polished wooden training floor across the lower half, sword racks, glowing blue rune stones, paper lanterns, snowy peaks and clouds behind",
     rooms: [
-      room('sword_yard', 'Sword Yard', '⚔️', [0xe8c890, 0x2a4aa0], 'The sword yard of the mountain dojo: straw training dummies, wooden practice swords on racks, a sand circle, blue banners with rune shapes, peaks behind'),
+      // Not swords: on a door, as on the journey map, swords are a battle (item 039).
+      room('sword_yard', 'Sword Yard', '🎯', [0xe8c890, 0x2a4aa0], 'The sword yard of the mountain dojo: straw training dummies, wooden practice swords on racks, a sand circle, blue banners with rune shapes, peaks behind'),
       room('spell_library', 'Spell Library', '📚', [0x3a2a6a, 0x7ab8ff], 'The spell library of the mountain dojo: tall shelves of spell books, floating candles, a big crystal ball on a stand, a ceiling painted with stars'),
     ],
     secret: room('crystal_vault', 'Crystal Vault', '💎', [0x1a2a5a, 0x7ab8ff], 'The secret crystal vault deep in the mountain: glowing blue crystals, a stone pedestal, a round rune door, a treasure-hunt feeling'),
