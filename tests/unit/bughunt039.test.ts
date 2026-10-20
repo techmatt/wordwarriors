@@ -79,10 +79,10 @@ test('a new word\'s other pictures start with another sound: no KIT beside CAT, 
   }
 });
 
-test('withStems: a bank word heard inside a plural, a pet form or a compound is said; FIND, FIGHT and HATES are not FIN, FIG and HAT', () => {
-  const said = withStems(['piggy', 'legs', 'cupcakes', 'pancakes', 'foxes', 'find', 'fight', 'hates']);
-  for (const w of ['pig', 'leg', 'cup', 'pan', 'fox']) if (BANK_BY_WORD[w]) assert.ok(said.includes(w), w);
-  for (const w of ['fin', 'fig', 'hat']) assert.ok(!said.includes(w), w);
+test('withStems: a bank word heard inside a plural, a pet form, an ending or a compound is said; FIND, FIGHT, HATES, KITCHEN, BATTLES and CAPTAIN are not FIN, FIG, HAT, KIT, BAT and CAP', () => {
+  const said = withStems(['piggy', 'legs', 'cupcakes', 'pancakes', 'foxes', 'biggest', 'topping', 'yummiest', 'sunshine', 'find', 'fight', 'fighting', 'hates', 'hating', 'kitchen', 'battles', 'captain']);
+  for (const w of ['pig', 'leg', 'cup', 'pan', 'fox', 'big', 'top', 'yum', 'sun']) if (BANK_BY_WORD[w]) assert.ok(said.includes(w), w);
+  for (const w of ['fin', 'fig', 'hat', 'kit', 'bat', 'cap']) assert.ok(!said.includes(w), w);
 });
 
 test("the fight styles' floating words are never bank words (the cook-off's YUM! and FLIP! were pads to come)", () => {

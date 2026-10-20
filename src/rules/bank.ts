@@ -96,9 +96,11 @@ export function gates(store: ProgressStore): Record<number, number> {
 
 /**
  * `said` plus every bank word heard inside one of them (item 039): a plural
- * (LEGS: LEG), a pet form (PIGGY: PIG) or a compound (CUPCAKES: CUP,
- * PANCAKES: PAN). Exact-word matching let Smaug's "piggy bank" threat come
- * before PIG as a key word. Not any prefix: FIN in FIND, FIG in FIGHT stay.
+ * (LEGS: LEG, FOXES: FOX), an ending on a doubled last letter (PIGGY, PIGGIES,
+ * BIGGEST, TOPPING, YUMMIEST), a plain ending (JUMPING), or a compound whose
+ * other half is a word (CUPCAKES, PANCAKES, SUNSHINE, PIGLETS). Exact-word
+ * matching let Smaug's "piggy bank" threat come before PIG as a key word.
+ * Not any prefix: FIND, FIGHT, HATES, KITCHEN, BATTLES, CAPTAIN stay clear.
  */
 export function withStems(said: Iterable<string>): string[] {
   const out = new Set(said);
@@ -106,14 +108,24 @@ export function withStems(said: Iterable<string>): string[] {
     for (const b of BANK) {
       if (w === b.word || !w.startsWith(b.word)) continue;
       const rest = w.slice(b.word.length);
-      const last = b.word.at(-1);
+      const last = b.word.at(-1)!;
       // -ES only after a hiss (FOXES: FOX), so HATES is not HAT's plural.
-      const es = rest === 'es' && /(s|x|z|ch|sh)$/.test(b.word);
-      if (rest === 's' || es || rest === `${last}y` || rest === `${last}ie` || rest === `${last}ies` || rest.length >= 4) out.add(b.word);
+      const plural = rest === 's' || (rest === 'es' && /(s|x|z|ch|sh)$/.test(b.word));
+      // An ending on a doubled last letter (PIG-GY, TOP-PING), or a plain one
+      // after two consonants (JUMP-ING); a plain one after a vowel and a
+      // consonant is another word's (HAT-ING is HATE's).
+      const ending =
+        new RegExp(`^${last}(y|ie|ies|ing|er|est|iest|ed)$`).test(rest) || (/[^aeiou]{2}$/.test(b.word) && /^(y|ies|ing|er|est|ed)$/.test(rest));
+      const half = rest.replace(/s$/, '');
+      const compound = rest.length >= 3 && (Boolean(BANK_BY_WORD[half]) || COMPOUND_HALVES.has(half));
+      if (plural || ending || compound) out.add(b.word);
     }
   }
   return [...out];
 }
+
+/** Second halves of compounds the game says, beyond bank words (CUP-CAKES, SUN-SHINE, PIG-LETS). */
+const COMPOUND_HALVES = new Set(['cake', 'shine', 'let', 'ball', 'fish', 'man', 'box']);
 
 /**
  * Is a word's level open to her (its gate above 0)? A bag draw whose pool

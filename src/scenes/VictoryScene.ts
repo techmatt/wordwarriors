@@ -163,7 +163,8 @@ export class VictoryScene extends Phaser.Scene {
       parts.push(fitText(this.add.text(0, 58, w.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '38px', color: '#1a1030' }).setOrigin(0.5), 120, 50));
       // Along the bottom, in front of the podium's feet: in the middle of the
       // screen they hid the grown-ups' heads (item 039).
-      const c = this.add.container(x, CARD_Y, parts).setDepth(DEPTH.hud);
+      // Over the dialogue box (DEPTH.hud + 5): the card being said is the highlighter.
+      const c = this.add.container(x, CARD_Y, parts).setDepth(DEPTH.hud + 6);
       this.cards.push(c);
       c.setScale(0);
       this.tweens.add({ targets: c, scale: CARD_SCALE, duration: 300, ease: 'Back.easeOut' });

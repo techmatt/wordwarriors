@@ -994,7 +994,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     for (const o of this.children.list) {
       const d = (o as unknown as { depth: number }).depth;
       const a = o as unknown as Phaser.GameObjects.Components.AlphaSingle;
-      if (d >= DEPTH.fx && d < DEPTH.prompt - 10 && typeof a.alpha === 'number' && !objs.includes(o)) {
+      // Not what is tweening its own alpha (a trap's blink): the tween would keep the faded value for good.
+      if (d >= DEPTH.fx && d < DEPTH.prompt - 10 && typeof a.alpha === 'number' && !objs.includes(o) && !this.tweens.getTweensOf(o).length) {
         veiled.push({ o: o as never, alpha: a.alpha });
         a.setAlpha(a.alpha * 0.2);
       }

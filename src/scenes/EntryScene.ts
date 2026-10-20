@@ -195,7 +195,8 @@ export class EntryScene extends RoomScene {
       parts.push(box, letter);
       return { box, letter };
     });
-    this.board = this.add.container(GAME_WIDTH / 2, BOARD_Y, parts).setDepth(DEPTH.hud);
+    // Over the dialogue box (DEPTH.hud + 5): the board is what she matches.
+    this.board = this.add.container(GAME_WIDTH / 2, BOARD_Y, parts).setDepth(DEPTH.hud + 6);
     this.board.setVisible(false);
   }
 

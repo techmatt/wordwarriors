@@ -135,6 +135,8 @@ export class Player {
       duration: 90,
       yoyo: true,
       repeat: 3,
+      // She may turn while it plays: keep her facing the way she walks.
+      onUpdate: () => this.sprite.setScale(Math.abs(this.sprite.scaleX) * this.facing, this.sprite.scaleY),
       onComplete: () => {
         this.wobbling = false;
         this.sprite.setScale(b * this.facing, b);
