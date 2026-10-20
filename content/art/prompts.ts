@@ -98,14 +98,14 @@ export const NOTES: Record<string, string> = {
  */
 export const PICK_NOTES: Record<string, string> = {
   arena_sky_race: "Evil Smaug's sky race (item 031): the game sweeps stalactites, lanterns and coin piles across it so it reads as a fast flight. `current` is candidate 2, promoted by item 031: the open sky in the middle reads most like flying. `0` is the painted placeholder.",
-  arena_spell_tower: "The spell-beam clash (Evil Bavmorda, evil warlock Dada Jason; item 031): the beams meet over the middle of the floor. `current` is candidate 2, promoted by item 031: the plainest floor under the beams. `0` is the painted placeholder.",
+  arena_spell_tower: "The spell-beam clash (Evil Bavmorda, evil warlock Dada Jason; item 031): the beams meet over the middle of the floor. `current` is candidate 1, Matt's pick (item 034): glowing rune stones round a cracked, moonlit flagstone floor. 2 was item 031's promotion; `0` is the painted placeholder.",
   arena_cook_show: "The cook-off (chef Dada Jason as ally, item 031): the game stands two cooking stations on the floor. `current` is candidate 2, promoted by item 031: the least busy wall behind the stations. `0` is the painted placeholder.",
-  prop_fight_finish_flag: 'The sky race\'s finish line (item 031), swept in at the end of each race. `current` is candidate 2, promoted by item 031: the widest banner. `0` is the painted placeholder.',
-  prop_fight_trophy: 'Over the winner of a race or a cook-off (item 031). `current` is candidate 1, promoted by item 031. `0` is the painted placeholder.',
+  prop_fight_finish_flag: 'The sky race\'s finish line (item 031), swept in at the end of each race. `current` is candidate 1, Matt's pick (item 034): the slimmer gold posts with jewelled tops. 2 was item 031's promotion; `0` is the painted placeholder.',
+  prop_fight_trophy: 'Over the winner of a race or a cook-off (item 031). `current` is candidate 3, Matt's pick (item 034): the ornate cup with a gold filigree crest round its ruby. 1 was item 031's promotion; `0` is the painted placeholder.',
   prop_fight_cook_station: 'Each side\'s station in the cook-off (item 031); the dish is stacked on its counter top. `current` is candidate 2, promoted by item 031: the clearest counter top. `0` is the painted placeholder.',
-  char_scar_good: "Scar's redesign (items 028/030): a tiny gold mech, a little shorter than Julia. `current` is candidate 2, promoted by item 030: the biggest head and shortest legs (the smallest-reading), and a smiling visor. `0` is the old design.",
-  char_scar_evil: "`current` is candidate 3, promoted by item 030: the same round helmet and fins as good candidate 2, smoking jets, blaster raised. `0` is the old design.",
-  face_scar: "`current` is candidate 4, promoted by item 030: the fins and smiling visor of good candidate 2. `0` is the old design.",
+  char_scar_good: "Scar's redesign (items 028/030): a tiny gold mech, a little shorter than Julia. `current` is candidate 2, promoted by item 030 and kept by Matt (item 034): the biggest head and shortest legs (the smallest-reading), and a smiling visor. `0` is the old design.",
+  char_scar_evil: "`current` is candidate 1, Matt's pick (item 034): a round black helmet with smoking exhaust stacks, a scowling red visor, blaster thrust forward and fist clenched. 3 was item 030's promotion; `0` is the old design.",
+  face_scar: "`current` is candidate 2, Matt's pick (item 034): a laughing visor with his smiling mouth showing beneath it, blue jets behind. 4 was item 030's promotion; `0` is the old design.",
   room_place_robot_workshop: "Scar's own quest place (item 030; he trained in the hacker den before). `current` is candidate 2, promoted by item 030: the plainest wall behind the middle, where the game draws the doors and the portal. `0` is the painted placeholder.",
   room_side_parts_bay: '`current` is candidate 3, promoted by item 030: the claw and the conveyor read most robot. `0` is the painted placeholder.',
   room_side_rocket_pad: '`current` is candidate 1, promoted by item 030: the clearest launch rings and floor. `0` is the painted placeholder.',
@@ -174,14 +174,14 @@ function pickedBy032(): Record<string, string> {
     room_side_treetop_lookout: [2, 1, 'a round plank deck with rope rails, a telescope, a star flag'],
   };
   const lifter: Record<string, [number, string]> = {
-    char_dada_matt_lifter_good: [6, 'the smallest dumbbell, curled at his chest; the most cartoon-like of 4 to 6'],
-    char_dada_matt_lifter_evil: [4, 'the dumbbell curled up in purple sparks, the mirror of good 6'],
+    char_dada_matt_lifter_good: [5, 'the dumbbell held low at his side, red sneakers'],
+    char_dada_matt_lifter_evil: [5, 'the dumbbell curled up by his shoulder in purple sparks'],
     face_dada_matt_lifter: [6, 'the most T-shirt sleeve and the smallest dumbbell'],
   };
   return {
     ...Object.fromEntries(Object.entries(picks).map(([id, [n, was, what]]) => [id, `\`current\` is candidate ${n}, Matt's pick (item 032): ${what}. ${was} is item 025's promotion; \`0\` is the painted placeholder.`])),
     // Matt's redesign (item 032): less buff, a T-shirt with sleeves, a modest dumbbell, no barbell.
-    ...Object.fromEntries(Object.entries(lifter).map(([id, [n, what]]) => [id, `Weightlifter Dada Matt redrawn (item 032): a little less buff, a T-shirt with sleeves, a dumbbell of modest size. \`current\` is candidate ${n}, promoted by item 032: ${what}. 1 to 3 are item 025's barbell design; \`0\` is the painted placeholder.`])),
+    ...Object.fromEntries(Object.entries(lifter).map(([id, [n, what]]) => [id, `Weightlifter Dada Matt redrawn (item 032): a little less buff, a T-shirt with sleeves, a dumbbell of modest size. \`current\` is candidate ${n}, Matt's pick (items 032/034): ${what}. 1 to 3 are item 025's barbell design; \`0\` is the painted placeholder.`])),
   };
 }
 

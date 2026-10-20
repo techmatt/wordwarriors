@@ -923,7 +923,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Scar', trail: { tint: [0xff0054, 0xffcc33], shape: 'square' }, look: 'the same tiny robot gone bad, shorter than a four-year-old: a chunky mini mech in black armour with crimson trim and red joints, a glowing red visor narrowed into a scowl with a scratch across one corner, a hot red power core pulsing in his chest, hunched forward with his blaster arm raised and his other fist clenched, little rocket jets smoking on his back; small but cross',
+      displayName: 'Evil Scar', trail: { tint: [0xff0054, 0xffcc33], shape: 'square' }, look: 'the same tiny robot gone bad, shorter than a four-year-old: a chunky mini mech in black armour with crimson trim and red joints, a big round black helmet with two little exhaust stacks, a glowing red visor narrowed into a scowl, a hot red power core pulsing in his chest, hunched forward with his blaster arm thrust out and his other fist clenched, smoke puffing from his exhausts; small but cross',
       palette: [0x2b2d42, 0xff0054], glyph: '🦾', style: 'march', speed: 150, size: 0.9, hp: 150,
       abilities: [
         ab('red_blaster', 'Red Blaster', 'bolt', 2.2, 0xff0054, 1, { count: 3 }),
@@ -1154,7 +1154,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A huge-hearted weightlifter dad who lifts dumbbells, teddies and the whole team.',
     arena: 'meadow',
     good: {
-      displayName: 'Dada Matt', trail: { tint: [0xffd23f, 0xe63946], shape: 'star' }, look: `${MATT_LIFTER}, in a normal red short-sleeved gym T-shirt with a gold star on the chest (sleeves, not a singlet or a tank top), dark gym shorts, a black lifting belt, wristbands and sneakers, curling one red-and-gold dumbbell of ordinary gym size in one hand at his side`,
+      displayName: 'Dada Matt', trail: { tint: [0xffd23f, 0xe63946], shape: 'star' }, look: `${MATT_LIFTER}, in a normal red short-sleeved gym T-shirt with a gold star on the chest (sleeves, not a singlet or a tank top), dark gym shorts, a black lifting belt, wristbands and red sneakers, holding one red-and-gold dumbbell of ordinary gym size low in one hand at his side`,
       palette: [0xe63946, 0xffd23f], glyph: '💪', style: 'twirl', speed: 190, size: 1.25, hp: 140,
       abilities: [
         ab('dumbbell_spin', 'Dumbbell Spin', 'spin', 5, 0xffd23f, 2, { word: 'big', shout: true, words: ['top'] }),
