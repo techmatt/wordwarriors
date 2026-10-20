@@ -22,7 +22,7 @@ import { ANY_SCENES, HUB_SCENES, hubStoryIds, type HubStory } from '../../conten
 import type { FighterSpec } from '../../content/battle/types.js';
 import { FAMILIES, sillyWord } from '../../content/phonics/families.js';
 import { BANK_BY_WORD, BANK } from '../../content/phonics/bank.js';
-import { DIGRAPH_SOUNDS, LETTERS, LETTER_NAMES } from '../../content/phonics/letters.js';
+import { DIGRAPH_SOUNDS, LETTERS, LETTER_NAMES, LONG_VOWEL_SOUNDS } from '../../content/phonics/letters.js';
 import { FETCH_ITEMS, allFrameTokens, allPrefixes, tokenWord } from '../../content/phonics/sentences.js';
 import { SPELL_WORDS } from '../../content/phonics/spelling.js';
 import { SPECIAL_WORDS, WORDS, spokenWord } from '../../content/phonics/words.js';
@@ -172,8 +172,9 @@ export function composeLines(): LineSpec[] {
     scenes.forEach((s, i) => pushScene(hubStoryIds(owner, person, i + 1, s), s, person));
   }
 
-  // Letter sounds, then the digraphs' (item 037: SH CH TH CK, one sound unit each, `letter_sh_sound`).
-  for (const l of [...LETTERS, ...DIGRAPH_SOUNDS]) {
+  // Letter sounds, then the digraphs' (item 037: SH CH TH CK, one sound unit each, `letter_sh_sound`),
+  // then the long vowels' (item 048: KEY, YOYO, `letter_long_e_sound`).
+  for (const l of [...LETTERS, ...DIGRAPH_SOUNDS, ...LONG_VOWEL_SOUNDS]) {
     lines.push({
       id: letterSoundLine(l.letter),
       speaker: PHONICS_SPEAKER,

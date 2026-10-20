@@ -903,6 +903,8 @@
 {"id":"letter_ch_sound","speaker":"phonics","group":"phonics","text":"Chuh","note":"placeholder for the /ch/ sound (stop); replace with a recorded clip"},
 {"id":"letter_th_sound","speaker":"phonics","group":"phonics","text":"Thuh","note":"placeholder for the /th/ sound (fricative); replace with a recorded clip"},
 {"id":"letter_ck_sound","speaker":"phonics","group":"phonics","text":"Kuh","note":"placeholder for the /ck/ sound (stop); replace with a recorded clip"},
+{"id":"letter_long_e_sound","speaker":"phonics","group":"phonics","text":"Ee","note":"placeholder for the /long_e/ sound (vowel); replace with a recorded clip"},
+{"id":"letter_long_o_sound","speaker":"phonics","group":"phonics","text":"Oh","note":"placeholder for the /long_o/ sound (vowel); replace with a recorded clip"},
 {"id":"letter_a_name","speaker":"phonics","group":"phonics","text":"A.","say":"Ay."},
 {"id":"letter_b_name","speaker":"phonics","group":"phonics","text":"B.","say":"Bee."},
 {"id":"letter_c_name","speaker":"phonics","group":"phonics","text":"C.","say":"See."},

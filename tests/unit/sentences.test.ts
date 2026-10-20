@@ -107,6 +107,15 @@ test('episodePlans: rooms a, b and the attic; the right kinds of frame; three di
   }
 });
 
+test('KEY and YOYO can be the counter (item 048)', () => {
+  const seen = new Set<string>();
+  for (let seed = 1; seed <= 400 && seen.size < 2; seed++) {
+    const k = sentencePlans(new ProgressStore(memory()), input(), seeded(seed))[2].sentence.key;
+    if (k === 'key' || k === 'yoyo') seen.add(k);
+  }
+  assert.deepEqual([...seen].sort(), ['key', 'yoyo']);
+});
+
 test('the counter is random: any pictured, decodable word, under the 009 exclusions', () => {
   // Item 009: 12 villains read SCARED OF THE CUP and then fought with a Frost
   // Shield. Item 015: the counter word is drawn each episode, so the rule is

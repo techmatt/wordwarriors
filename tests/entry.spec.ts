@@ -25,8 +25,8 @@ const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screen
 const clueLines = (s: WWState) => s.voice.history.filter((id) => /^letter_|^word_|_grab_/.test(id));
 
 const names = (w: string) => [...w].map((c) => `letter_${c}_name`);
-// By sound unit: a special word (KEY, item 043) has only its first letter's.
-const sounds = (w: string) => (BANK_BY_WORD[w]?.units ?? [...w]).map((c) => `letter_${c}_sound`);
+// By sound unit: a long-vowel word spells its own (KEY is K, long E: item 048).
+const sounds = (w: string) => (BANK_BY_WORD[w]?.sounds ?? [...w]).map((c) => `letter_${c}_sound`);
 // Every word the hall can ask for (the bank's things), each at one ramp level. Read from the
 // bank, not listed: a hand list missed VET and BIN, so a draw of either started at 2 (item 047).
 const allAt = (level: number) => Object.fromEntries(THINGS.map((w) => [w.word, level]));

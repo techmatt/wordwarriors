@@ -69,7 +69,7 @@ export function coverage(store: ProgressStore, word: string, m: Met = met(store)
   const w = BANK_BY_WORD[word];
   if (!w) return 1;
   const f =
-    // A special word (KEY) has no vowel to cover.
+    // A long-vowel word (KEY) has no short vowel to cover.
     (w.vowel ? factor(m.vowel, w.vowel, VOWEL_LIST) : 1) *
     factor(m.onset, w.onset, ONSETS) *
     factor(m.level, String(w.level), LEVELS.map(String));

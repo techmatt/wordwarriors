@@ -30,7 +30,7 @@
 import { CHARACTER_BY_ID, MINIONS, comboPart } from '../../content/battle/roster';
 import type { FighterSpec } from '../../content/battle/types';
 import { FETCH_ITEMS, lookalikesOf, sentence, tokenWord, type Fill, type Sentence } from '../../content/phonics/sentences';
-import { ACTIONS, BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
+import { ACTIONS, THINGS } from '../../content/phonics/bank';
 import { MINIGAMES, drawGames, type Minigame } from './minigames';
 import { machineWords, planMachine, type MachinePlan } from './wordMachine';
 import { SENTENCE_SOLID } from '../config';
@@ -257,10 +257,10 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
     keys.push(drawKey(store, eligible, rand, [...keys, ...taken]));
   }
   // The counter: not a word on battle 1's move pads, not a word fetched this
-  // episode (battle 1 shouts THE NET!). A decodable word (item 009): not a
-  // special word like KEY, which only the side rooms give (item 043).
+  // episode (battle 1 shouts THE NET!). Every bag word is decodable (item 009;
+  // KEY and YOYO too since item 048).
   const named = CHARACTER_BY_ID[fill.villain]?.counter.word;
-  const eligible = BAG_WORDS.filter((w) => !BANK_BY_WORD[w]?.special && !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w)).filter(fits(2));
+  const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w)).filter(fits(2));
   keys.push(drawKey(store, eligible, rand, [...keys, ...taken], (w) => (w === named ? NAMED_COUNTER_BOOST : 1)));
 
   const slots = ['a', 'b', 'counter'] as const;

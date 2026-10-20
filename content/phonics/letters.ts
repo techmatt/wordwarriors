@@ -82,9 +82,21 @@ export const DIGRAPH_SOUNDS: LetterSound[] = [
   { letter: 'ck', say: 'Kuh', cls: 'stop', example: 'duck', note: 'the same sound as c and k, its own line so a recording can differ' },
 ];
 
-/** Every sound unit's sound: a single letter's or a digraph's. */
+/**
+ * Long vowels (item 048), for the bank's hand-spelled words: KEY is K, long E
+ * (on its EY), YOYO is Y, long O, twice. `letter` is the sound's key, not
+ * letters (`letterSoundLine('long_e')` is `letter_long_e_sound`), each its own
+ * line, a placeholder until Matt records them. A long vowel says its letter's
+ * name, so edge-tts gets the name's spelling, as in LETTER_NAMES.
+ */
+export const LONG_VOWEL_SOUNDS: LetterSound[] = [
+  { letter: 'long_e', say: 'Ee', cls: 'vowel', example: 'key', note: 'long e, the vowel of KEY (spelled EY there)' },
+  { letter: 'long_o', say: 'Oh', cls: 'vowel', example: 'yoyo', note: 'long o, both vowels of YOYO' },
+];
+
+/** Every sound unit's sound: a single letter's, a digraph's or a long vowel's. */
 export const SOUND_BY_UNIT: Record<string, LetterSound> = Object.fromEntries(
-  [...LETTERS, ...DIGRAPH_SOUNDS].map((l) => [l.letter, l]),
+  [...LETTERS, ...DIGRAPH_SOUNDS, ...LONG_VOWEL_SOUNDS].map((l) => [l.letter, l]),
 );
 
 /**

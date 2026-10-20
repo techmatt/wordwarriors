@@ -1,11 +1,13 @@
 /**
- * Item 043: a familiar picture for every first sound (KEY for K, YOYO for Y,
- * special words like MICE), and PIN familiar again (the -IN family).
+ * Item 043: a familiar picture for every first sound (KEY for K, YOYO for Y),
+ * and PIN familiar again (the -IN family). Item 048: KEY and YOYO sound out
+ * in full, long vowels and all, and may be the counter.
  */
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BANK_BY_WORD, LIVE, THINGS } from '../../content/phonics/bank';
+import { SOUND_BY_UNIT } from '../../content/phonics/letters';
 import { FAMILY_BY_RIME, FAMILY_WORDS } from '../../content/phonics/families';
 import { FETCH_BY_WORD, lookalikesOf } from '../../content/phonics/sentences';
 import { WORD_BY_ID } from '../../content/phonics/words';
@@ -27,20 +29,29 @@ test('K and Y: a familiar pictured word each, in the rooms, the warm-up and the 
   }
 });
 
-test('special words: level 1, no vowel, never in a family, the hint sounds only the first letter', () => {
-  for (const w of ['key', 'yoyo']) {
+test('KEY and YOYO (item 048): level 1, no short vowel, never in a family, every unit sounded, long vowels their own lines', () => {
+  const want: Record<string, { units: string[]; sounds: string[]; index: number[] }> = {
+    key: { units: ['k', 'ey'], sounds: ['k', 'long_e'], index: [0, 1] },
+    yoyo: { units: ['y', 'o', 'y', 'o'], sounds: ['y', 'long_o', 'y', 'long_o'], index: [0, 1, 2, 3] },
+  };
+  for (const [w, x] of Object.entries(want)) {
     const b = BANK_BY_WORD[w]!;
-    assert.ok(b.special, w);
     assert.equal(b.level, 1);
     assert.equal(b.vowel, null);
-    assert.deepEqual(b.units, [w.charAt(0)]);
-    assert.equal(WORD_BY_ID[w]?.decodable, false, `${w} is not decodable (SentenceRoom sounds only its first letter)`);
+    assert.deepEqual(b.units, x.units);
+    assert.deepEqual(b.sounds, x.sounds);
+    assert.equal(WORD_BY_ID[w]?.decodable, true, `${w} sounds out (SentenceRoom sounds every unit)`);
     assert.ok(!FAMILY_WORDS.includes(w), w);
     for (const level of [1, 2, 3] as const) {
       const sounds = clue(w, level).filter((s) => s.kind === 'sound');
-      assert.deepEqual(sounds.map((s) => s.id), [letterSoundLine(w.charAt(0))], `${w} level ${level}`);
+      assert.deepEqual(sounds.map((s) => s.id), x.sounds.map(letterSoundLine), `${w} level ${level}`);
+      assert.deepEqual(sounds.map((s) => s.index), x.index, `${w} level ${level}: which letters each sound lights`);
     }
   }
+  // KEY's EY lights both letters; the long vowels are not the short ones' lines.
+  assert.equal(clue('key', 3)[1]!.span, 2);
+  assert.ok(SOUND_BY_UNIT.long_e && SOUND_BY_UNIT.long_o);
+  assert.notEqual(letterSoundLine('long_o'), letterSoundLine('o'));
   assert.ok(lookalikesOf('yoyo').includes('top'));
 });
 

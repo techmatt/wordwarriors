@@ -159,8 +159,8 @@ export const PICK_NOTES: Record<string, string> = {
   ...pickedBy025(),
   ...pickedBy032(),
   // Item 043: Matt's 040 pick, and the cyber Dada Matt redesign (brief 041_cyber_gauntlet_engineer).
-  pic_key: "New word KEY (item 043, a special word for K: level 1, the hint sounds only its K; rooms, warm-up, battle item). `current` is candidate 1, promoted by item 043: the boldest teeth; all three are nearly the same gold key. `0` is the painted placeholder.",
-  pic_yoyo: "New word YOYO (item 043, a special word for Y, printed YOYO: level 1, the hint sounds only its Y; rooms, warm-up, battle item). `current` is candidate 1, promoted by item 043: the biggest yo-yo, its string clearest. `0` is the painted placeholder. Watch: kept apart from TOP (both spinning toys).",
+  pic_key: "New word KEY (item 043, a long-vowel word for K: level 1, the hint sounds K then long E since item 048; rooms, warm-up, battle item). `current` is candidate 1, promoted by item 043: the boldest teeth; all three are nearly the same gold key. `0` is the painted placeholder.",
+  pic_yoyo: "New word YOYO (item 043, a long-vowel word for Y, printed YOYO: level 1, the hint sounds Y, long O, twice since item 048; rooms, warm-up, battle item). `current` is candidate 1, promoted by item 043: the biggest yo-yo, its string clearest. `0` is the painted placeholder. Watch: kept apart from TOP (both spinning toys).",
   pic_chest: "Item 040's word CHEST. `current` is candidate 3, Matt's pick (item 043). `0` is the painted placeholder.",
   char_dada_matt_cyber_good: "Cyber Dada Matt redrawn as a gauntlet engineer (item 041's brief round). `current` is candidate 10, Matt's pick (item 043, brief 041_cyber_gauntlet_engineer): the cyan power gauntlet projecting hologram tools, goggles up. 1 to 3 are item 025's hacker design; `0` is the painted placeholder.",
   char_dada_matt_cyber_evil: "Evil cyber Dada Matt in the same gauntlet-engineer look (item 043): the same build and gauntlet, glowing red. `current` is candidate 5, promoted by item 043: red gauntlet and hologram tools, goggles up, no green (4 has a teal shirt). 1 to 3 are item 025's hacker design (2 was Matt's item 032 pick); `0` is the painted placeholder.",
@@ -478,7 +478,7 @@ const PICTURES: Record<string, string> = {
   plant: 'a plant: a green leafy plant in a round orange flowerpot',
   crib: "a crib: a baby's white wooden crib with bars, a soft blue blanket and a little teddy inside, side-on",
   bath: 'a bath: a white bathtub full of foamy bubbles, a yellow rubber duck on top, side-on',
-  // Item 043: the K and Y pictures (special words).
+  // Item 043: the K and Y pictures (long-vowel words).
   key: 'a key: one big shiny gold door key with a round loop handle and simple teeth, lying side-on; a key alone, no lock, no keyring',
   yoyo: 'a yo-yo: one bright red toy yo-yo hanging from its white string, the string looped round a finger at the top, a few motion lines',
 };

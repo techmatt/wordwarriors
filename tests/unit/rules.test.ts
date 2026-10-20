@@ -13,7 +13,7 @@ import { HOME_QUEST, QUESTS, homeQuestLine, questLine } from '../../content/hous
 import { ANY_SCENES, HUB_SCENES, hubStoryIds, storyTexts } from '../../content/house/scenes';
 import { BANK, THINGS } from '../../content/phonics/bank';
 import { FAMILIES, sillyWord } from '../../content/phonics/families';
-import { DIGRAPH_SOUNDS, LETTERS } from '../../content/phonics/letters';
+import { DIGRAPH_SOUNDS, LETTERS, LONG_VOWEL_SOUNDS } from '../../content/phonics/letters';
 import { FETCH_ITEMS, FRAMES, allFrameTokens, allPrefixes, sentence, tokenWord } from '../../content/phonics/sentences';
 import { SPELL_WORDS, spellWordsFor } from '../../content/phonics/spelling';
 import { CVC_WORDS, SPECIAL_WORDS, WORDS } from '../../content/phonics/words';
@@ -169,7 +169,7 @@ test('voice: every line id the game derives exists in lines.json and the manifes
   for (const w of WORDS) want.push(wordLine(w.word));
   // Item 037: every bank word (actions too), the digraph sounds, every family's rime and silly words.
   for (const w of BANK) want.push(wordLine(w.word));
-  for (const d of DIGRAPH_SOUNDS) want.push(letterSoundLine(d.letter));
+  for (const d of [...DIGRAPH_SOUNDS, ...LONG_VOWEL_SOUNDS]) want.push(letterSoundLine(d.letter));
   for (const f of FAMILIES) want.push(rimeLine(f.rime), ...f.silly.map((x) => sillyLine(sillyWord(x.letter, f.rime))));
   for (const c of ROSTER) {
     for (const w of spellWordsFor(c.id)) want.push(wordLine(w));

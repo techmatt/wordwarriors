@@ -119,10 +119,13 @@ export function clue(word: string, level: GrabLevel, help = false): ClueStep[] {
   if (level === 1 || help) out.push({ id: wordLine(word), kind: 'word', index: null, span: 0 });
   if (level <= 2) letters.forEach((ch, index) => out.push({ id: letterNameLine(ch), kind: 'name', index, span: 1 }));
   let index = 0;
-  // A special word (KEY) has one sound unit, its first letter (content/phonics/bank.ts).
-  for (const unit of BANK_BY_WORD[word]?.units ?? unitsOf(word)) {
-    if (SOUND_BY_UNIT[unit]) out.push({ id: letterSoundLine(unit), kind: 'sound', index, span: unit.length });
+  // A long-vowel word spells its sounds out (KEY is K, then long E on EY: content/phonics/bank.ts).
+  const b = BANK_BY_WORD[word];
+  const units = b?.units ?? unitsOf(word);
+  units.forEach((unit, i) => {
+    const sound = b?.sounds[i] ?? unit;
+    if (SOUND_BY_UNIT[sound]) out.push({ id: letterSoundLine(sound), kind: 'sound', index, span: unit.length });
     index += unit.length;
-  }
+  });
   return out;
 }

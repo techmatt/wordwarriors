@@ -58,7 +58,7 @@ test('the bank: unique words, every vowel and level present, things and actions 
     // Item 040: an `odd` word (YAK) is no picture to match.
     assert.equal(THINGS.includes(w), w.role !== 'action' && !w.odd, w.word);
     assert.equal(ACTIONS.includes(w), w.role !== 'thing', w.word);
-    for (const u of w.units) assert.ok(SOUND_BY_UNIT[u], `${w.word}: no sound for ${u}`);
+    for (const u of w.sounds) assert.ok(SOUND_BY_UNIT[u], `${w.word}: no sound for ${u}`);
   }
 });
 
@@ -138,7 +138,7 @@ test('coverageTable: per level, vowel and first sound, words · read · solid ad
   store.record('words', 'frog', false, 1);
   const t = coverageTable(store);
   for (const rows of [t.level, t.vowel, t.onset]) {
-    // A special word (KEY) has no vowel row.
+    // A long-vowel word (KEY) has no vowel row.
     assert.equal(rows.reduce((n, r) => n + r.words, 0), LIVE.filter((w) => rows !== t.vowel || w.vowel).length);
     assert.equal(rows.reduce((n, r) => n + r.readWords, 0), 2);
     assert.equal(rows.reduce((n, r) => n + r.solid, 0), 1);

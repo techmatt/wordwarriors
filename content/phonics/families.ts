@@ -107,8 +107,8 @@ const RIMES: Record<string, { say: string; silly: SillyOnset[] }> = {
 export const onsetOf = (word: string): string => BANK_BY_WORD[word]?.onset ?? word.charAt(0);
 export const rimeOf = (word: string): string => BANK_BY_WORD[word]?.rime ?? word.slice(1);
 
-/** The bank's words with a one-letter onset (not a blend, not a digraph): the ones a family's tile can make. */
-const SINGLE = BANK.filter((w) => w.onset.length === 1);
+/** The bank's words with a one-letter onset (not a blend, not a digraph): the ones a family's tile can make. A long-vowel word (KEY, YOYO) is in none. */
+const SINGLE = BANK.filter((w) => w.onset.length === 1 && w.vowel);
 
 /** Every family the bank makes, in rime order. */
 export const FAMILIES: Family[] = Object.entries(RIMES)

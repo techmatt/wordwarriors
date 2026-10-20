@@ -51,18 +51,23 @@ export interface BankEntry {
    */
   odd?: true;
   /**
-   * Not a short-vowel word, but the right familiar picture for a first sound
-   * the bank had none of (item 043: KEY for K, YOYO for Y), as MICE is for its
-   * sentence. Level 1, no vowel tag, and only its first letter is a sound unit:
-   * the hint sounds just that (it is not decodable), never the rest.
+   * A long-vowel word, spelled out by hand: each sound unit's letters and its
+   * sound (a key of SOUND_BY_UNIT in content/phonics/letters.ts). The right
+   * familiar picture for a first sound the bank had none of (item 043: KEY for
+   * K, YOYO for Y). Item 048: it sounds out like any word, every unit (KEY is
+   * K, long E on EY; YOYO is Y, long O, Y, long O). Level 1, no short-vowel
+   * tag, never in a word family.
    */
-  special?: true;
+  spelled?: [letters: string, sound: string][];
 }
 
 export interface BankWord extends BankEntry {
+  /** Its sound units' letters, in order: SHIP is SH I P, KEY is K EY. */
   units: string[];
+  /** Each unit's sound, the SOUND_BY_UNIT key: the unit itself, except a hand-spelled word's (EY is `long_e`). */
+  sounds: string[];
   level: Level;
-  /** Its short vowel; null for a `special` word (KEY), which has none. */
+  /** Its short vowel; null for a long-vowel word (KEY), which has none. */
   vowel: Vowel | null;
   onset: string;
   rime: string;
@@ -77,7 +82,6 @@ const NEW_SPELL = { ...NEW, ...SPELL };
 const ODD = { odd: true as const };
 const NEW_ODD = { ...NEW, ...ODD };
 const NEW_040 = { since: '040' as const };
-const SPECIAL = { special: true as const };
 
 const ENTRIES: BankEntry[] = [
   // Level 1: CVC. The pictured words from before 037.
@@ -122,8 +126,10 @@ const ENTRIES: BankEntry[] = [
   T('stick', '🥢', NEW_040), T('brush', '🪥', NEW_040), T('truck', '🚚', NEW_040), T('bath', '🧼', NEW_040),
   T('plant', '🪴', NEW_040), T('crib', '🛌', NEW_040),
   // Item 043: the only pictured K and Y words were odd (KIT, YAK), and no familiar
-  // short-vowel picture starts with either, so these two are special words.
-  T('key', '🔑', SPECIAL), T('yoyo', '🪀', { ...SPECIAL, say: 'yo-yo' }),
+  // short-vowel picture starts with either, so these two are long-vowel words,
+  // spelled out by sound (item 048).
+  T('key', '🔑', { spelled: [['k', 'k'], ['ey', 'long_e']] }),
+  T('yoyo', '🪀', { say: 'yo-yo', spelled: [['y', 'y'], ['o', 'long_o'], ['y', 'y'], ['o', 'long_o']] }),
 ];
 
 /** The digraphs that are one sound unit. */
@@ -143,9 +149,13 @@ export function unitsOf(word: string): string[] {
   return out;
 }
 
-/** Tags from the spelling. Throws for a word that is not one short vowel between consonants. */
+/** Tags from the spelling. Throws for a word that is not one short vowel between consonants, unless `spelled` spells it out. */
 export function tag(e: BankEntry): BankWord {
-  if (e.special) return { ...e, units: [e.word.charAt(0)], level: 1, vowel: null, onset: e.word.charAt(0), rime: e.word.slice(1) };
+  if (e.spelled) {
+    const units = e.spelled.map(([letters]) => letters);
+    if (units.join('') !== e.word) throw new Error(`bank: ${e.word} is spelled ${units.join('')}`);
+    return { ...e, units, sounds: e.spelled.map(([, s]) => s), level: 1, vowel: null, onset: units[0]!, rime: units.slice(1).join('') };
+  }
   const units = unitsOf(e.word);
   const vi = units.findIndex((u) => VOWELS.includes(u));
   const vowels = units.filter((u) => VOWELS.includes(u));
@@ -155,7 +165,7 @@ export function tag(e: BankEntry): BankWord {
   const digraph = units.some((u) => u.length === 2);
   const blend = onset.length > 1 || coda.length > 1;
   const level: Level = digraph ? 3 : blend ? 2 : 1;
-  return { ...e, units, level, vowel: units[vi] as Vowel, onset: onset.join(''), rime: units.slice(vi).join('') };
+  return { ...e, units, sounds: units, level, vowel: units[vi] as Vowel, onset: onset.join(''), rime: units.slice(vi).join('') };
 }
 
 export const BANK: BankWord[] = ENTRIES.map(tag);

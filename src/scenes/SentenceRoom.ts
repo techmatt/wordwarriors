@@ -25,7 +25,7 @@
 
 import Phaser from 'phaser';
 
-import { unitsOf } from '../../content/phonics/bank';
+import { BANK_BY_WORD, unitsOf } from '../../content/phonics/bank';
 import { tokenWord } from '../../content/phonics/sentences';
 import { SOUND_BY_UNIT } from '../../content/phonics/letters';
 import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
@@ -453,18 +453,21 @@ export class SentenceRoom extends Minigame {
     const key = this.plan.sentence.key;
     this.locked = true;
     const letters = this.tokenTexts[this.keyIndex]!;
-    const units = unitsOf(key);
+    // A long-vowel word spells its sounds out (KEY is K, then long E on EY).
+    const b = BANK_BY_WORD[key];
+    const units = b?.units ?? unitsOf(key);
     // A word that does not sound out (MICE) gets just its first sound.
     const n = WORD_BY_ID[key]?.decodable === false ? 1 : units.length;
     let at = 0;
     for (let i = 0; i < n && this.pass === 'find'; i++) {
       const unit = units[i]!;
+      const sound = b?.sounds[i] ?? unit;
       const lit = letters.slice(at, at + unit.length);
       at += unit.length;
       for (const other of letters) other.setColor(INK);
       for (const t of lit) t.setColor(LIT);
       this.tweens.add({ targets: lit, scale: 1.35, duration: 140, yoyo: true });
-      if (SOUND_BY_UNIT[unit]) await this.say(letterSoundLine(unit));
+      if (SOUND_BY_UNIT[sound]) await this.say(letterSoundLine(sound));
       // A beat on each letter, still lit, so the sounds stay apart.
       await this.wait(LETTER_GAP_MS);
     }
