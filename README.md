@@ -283,7 +283,9 @@ there). Name the spec file (`polish.pw`), not `polish`: every path in a worktree
 `…_polish` matches the bare word. `npx tsx tests/shots/contact.ts <tag>` makes one
 contact sheet per battle in `scratch/polish_034/<tag>_sheets/`. To shoot "before" without
 the dev server reloading under your edits, run it from a second worktree at the base commit
-(junction its `node_modules`, `public/voice-gen` and `scratch` to this one's).
+(junction its `node_modules`, `public/voice-gen` and `scratch` to this one's). Unlink those
+junctions (`cmd /c rmdir <path>`) before `git worktree remove --force`, so nothing is
+deleted through them.
 
 ## Content work
 
