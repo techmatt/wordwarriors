@@ -11,7 +11,8 @@ import { test } from 'node:test';
 
 import { ART_BY_ID } from '../../content/art/assets';
 import { CHARACTER_BY_ID, MOVE_WORDS, ROSTER, abilityWords, personOf } from '../../content/battle/roster';
-import { ACTIONS } from '../../content/phonics/bank';
+import { CASTERS, HUB_SCENES, storyTexts } from '../../content/house/scenes';
+import { ACTIONS, BANK_BY_WORD } from '../../content/phonics/bank';
 import { CVC_WORDS, SPECIAL_WORDS } from '../../content/phonics/words';
 import { reformedLine, wordLine } from '../../content/voice/ids';
 import { EPISODE_DEFAULTS } from '../../src/config';
@@ -155,6 +156,22 @@ test('the move bag: the right words go round before any comes back', () => {
     playRight(store, p);
   }
   assert.equal(new Set(seen).size, seen.length, `a word came back early: ${seen.join(', ')}`);
+});
+
+test("drawGift (item 038): a caster's gift sounds like a spell; nobody else calls theirs a spell", () => {
+  const share = (helper: string) => {
+    let spelly = 0;
+    const rand = seeded(11);
+    for (let i = 0; i < 100; i++) if (BANK_BY_WORD[drawGift(new ProgressStore(memory()), { helper }, rand)]!.spell) spelly++;
+    return spelly / 100;
+  };
+  for (const c of CASTERS) assert.ok(share(c) >= 0.75, `${c}: ${share(c)} of gifts sound like a spell`);
+  assert.ok(share('anna') < 0.4, `a non-caster's gift is any action word: ${share('anna')}`);
+  for (const [helper, scenes] of Object.entries(HUB_SCENES)) {
+    if (CASTERS.has(helper)) continue;
+    for (const s of scenes) for (const t of storyTexts(s)) assert.ok(!/spell/i.test(t), `${helper} calls the gift a spell: ${t}`);
+  }
+  for (const id of ['mud', 'nap']) assert.ok(!BANK_BY_WORD[id]!.spell, id);
 });
 
 test('the pad bag (item 038): back-to-back episodes rarely share a wrong pad', () => {

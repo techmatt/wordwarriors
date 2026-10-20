@@ -40,6 +40,8 @@ export interface BankEntry {
   say?: string;
   /** The item that added it: before 037 (`old`) or 037. */
   since?: '037';
+  /** It sounds like a spell (ZAP, HEX, POP; not MUD or NAP): a caster's gift leans to it (item 038, `drawGift`). */
+  spell?: true;
 }
 
 export interface BankWord extends BankEntry {
@@ -54,6 +56,8 @@ const T = (word: string, glyph?: string, extra: Partial<BankEntry> = {}): BankEn
 const A = (word: string, glyph?: string, extra: Partial<BankEntry> = {}): BankEntry => ({ word, role: 'action', ...(glyph ? { glyph } : {}), ...extra });
 const B = (word: string, glyph?: string, extra: Partial<BankEntry> = {}): BankEntry => ({ word, role: 'both', ...(glyph ? { glyph } : {}), ...extra });
 const NEW = { since: '037' as const };
+const SPELL = { spell: true as const };
+const NEW_SPELL = { ...NEW, ...SPELL };
 
 const ENTRIES: BankEntry[] = [
   // Level 1: CVC. The pictured words from before 037.
@@ -67,7 +71,7 @@ const ENTRIES: BankEntry[] = [
   B('sun', '☀️'), B('fan', undefined, { draw: 'fan' }), B('web', '🕸️'), B('net', '🥅'), B('jet', '✈️'),
   B('pig', '🐷'), B('pan', '🍳'), B('ram', '🐏'), B('top', '🌀'),
   // The move words from before 037.
-  A('zap', '⚡'), A('bam', '🔨'), A('zip', '☄️'), A('hop', '🐇'), A('pop', '🎈'), A('hug', '🧸'),
+  A('zap', '⚡', SPELL), A('bam', '🔨'), A('zip', '☄️', SPELL), A('hop', '🐇'), A('pop', '🎈', SPELL), A('hug', '🧸'),
   A('big', '🐘'), A('hot', '🌶️'), A('dig', '⛏️'), A('run', '👟'), A('mud', '🟤'), A('wet', '💦'),
   A('fog', '🌫️'), A('tug', '➰'), A('fix', '🔧'),
   // Item 037, level 1: short i, short e and the rare first sounds (Y, V, K, L, J, G).
@@ -75,8 +79,8 @@ const ENTRIES: BankEntry[] = [
   T('wig', '💇', NEW), T('bib', '👶', NEW), T('fig', '🟣', NEW), T('six', '🎲', NEW), B('fin', '🦈', NEW),
   T('kit', '🧰', NEW), T('lip', '👄', NEW), T('cog', '⚙️', NEW), T('rod', '🎣', NEW), T('pod', '🌱', NEW),
   T('gum', '🍬', NEW), T('bun', '🍞', NEW), T('hut', '🏠', NEW), T('sub', '🐳', NEW),
-  A('nap', '😴', NEW), A('wag', '🐕', NEW), A('jab', '🥊', NEW), A('red', '🔴', NEW), A('hex', '🔮', NEW),
-  A('jig', '💃', NEW), A('mix', '🥣', NEW), A('jog', '🏃', NEW), A('bop', '🔨', NEW), A('dot', '⚫', NEW),
+  A('nap', '😴', NEW), A('wag', '🐕', NEW), A('jab', '🥊', NEW), A('red', '🔴', NEW), A('hex', '🔮', NEW_SPELL),
+  A('jig', '💃', NEW), A('mix', '🥣', NEW_SPELL), A('jog', '🏃', NEW), A('bop', '🔨', NEW), A('dot', '⚫', NEW),
   A('hum', '🎵', NEW), A('yum', '😋', NEW),
   // Item 037, level 2: blends.
   T('frog', '🐸', NEW), T('drum', '🥁', NEW), T('crab', '🦀', NEW), T('flag', '🚩', NEW), T('sled', '🛷', NEW),
@@ -84,10 +88,10 @@ const ENTRIES: BankEntry[] = [
   T('plum', '🍑', NEW), T('gift', '🎁', NEW), T('lamp', '💡', NEW), T('hand', '✋', NEW), T('mask', '🎭', NEW),
   T('raft', '🛶', NEW), T('plug', '🔌', NEW), T('slug', '🐌', NEW), T('twig', '🌿', NEW), T('ant', '🐜', NEW),
   T('milk', '🥛', NEW),
-  A('jump', '🦘', NEW), A('spin', '🌀', NEW), A('swim', '🏊', NEW), A('flip', '🥞', NEW), A('stomp', '🦖', NEW),
-  A('slam', '💥', NEW), A('grab', '🦾', NEW), A('clap', '👏', NEW), A('bump', '🚗', NEW), A('snap', '🐊', NEW),
-  A('skip', '🎗️', NEW), A('twist', '🌪️', NEW), A('melt', '🍦', NEW), A('lift', '🏗️', NEW), A('plop', '💧', NEW),
-  A('flop', '🤽', NEW), A('trap', '🧀', NEW), A('blast', '🚀', NEW), A('drip', '🚰', NEW),
+  A('jump', '🦘', NEW), A('spin', '🌀', NEW_SPELL), A('swim', '🏊', NEW), A('flip', '🥞', NEW_SPELL), A('stomp', '🦖', NEW),
+  A('slam', '💥', NEW), A('grab', '🦾', NEW), A('clap', '👏', NEW), A('bump', '🚗', NEW), A('snap', '🐊', NEW_SPELL),
+  A('skip', '🎗️', NEW), A('twist', '🌪️', NEW_SPELL), A('melt', '🍦', NEW_SPELL), A('lift', '🏗️', NEW), A('plop', '💧', NEW),
+  A('flop', '🤽', NEW), A('trap', '🧀', NEW), A('blast', '🚀', NEW_SPELL), A('drip', '🚰', NEW),
   // Item 037, level 3: digraphs, a small start.
   T('ship', '🚢', NEW), T('fish', '🐟', NEW), T('duck', '🦆', NEW), T('sock', '🧦', NEW), T('moth', '🦋', NEW),
   T('shed', '🏚️', NEW), T('chick', '🐤', NEW),

@@ -25,6 +25,7 @@
  */
 
 import { CHARACTER_BY_ID, MOVE_WORDS, abilityWords } from '../../content/battle/roster';
+import { CASTERS } from '../../content/house/scenes';
 import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import type { ProgressStore } from '../state/ProgressStore';
@@ -134,12 +135,17 @@ export function drawMove(store: ProgressStore, eligible: string[], rand: Rand = 
   return drawWords(store, pool, 1, rand)[0]!;
 }
 
+/** How much more a spell-sounding word weighs as a caster's gift (item 038). */
+export const CASTER_SPELL_BOOST = 25;
+
 /**
  * The hub's gift word (item 037): an action word from the move bag by the
  * bank's weighting, without spending it (it leaves the bag like any pad word,
  * when she picks it right first time). Never a word in `avoid`. Words the
  * helper's own moves answer to weigh double, so now and then the gift is the
- * helper's styled move (Ellie's bubbles for BIG).
+ * helper's styled move (Ellie's bubbles for BIG). A caster's gift (CASTERS,
+ * item 038) is a spell: words that sound like one (the bank's `spell`) weigh
+ * CASTER_SPELL_BOOST times more.
  */
 export function drawGift(store: ProgressStore, input: { helper: string; avoid?: string[] }, rand: Rand = Math.random): string {
   topUpMoves(store);
@@ -149,7 +155,8 @@ export function drawGift(store: ProgressStore, input: { helper: string; avoid?: 
   const left = all.filter((w) => inBag.has(w));
   const helperWords = new Set((CHARACTER_BY_ID[input.helper]?.good.abilities ?? []).flatMap(abilityWords));
   const pool = left.length ? left : all.length ? all : MOVE_WORDS;
-  return drawWords(store, pool, 1, rand, (w) => (helperWords.has(w) ? 2 : 1))[0]!;
+  const caster = CASTERS.has(input.helper);
+  return drawWords(store, pool, 1, rand, (w) => (helperWords.has(w) ? 2 : 1) * (caster && BANK_BY_WORD[w]?.spell ? CASTER_SPELL_BOOST : 1))[0]!;
 }
 
 /** How much a wrong pad that has had its turn this round weighs against one still in the pad bag. */

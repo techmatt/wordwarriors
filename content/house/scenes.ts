@@ -326,6 +326,14 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
   ],
 };
 
+/**
+ * The helpers who cast spells (item 038, Matt): their gift leans hard to a
+ * word that sounds like a spell (the bank's `spell` words: ZAP, HEX, POP, not
+ * MUD or NAP; `drawGift`), and only their scenes may call the gift a spell.
+ * Moriarty's is a magician's magic word.
+ */
+export const CASTERS: ReadonlySet<string> = new Set(['elsa', 'bavmorda', 'tiamat', 'moriarty', 'dada_jason_warlock', 'dada_matt_blade']);
+
 /** Anybody added without scenes: one scene, composed in every narrator's voice. */
 export const ANY_SCENES: HubStory[] = [
   S('prop_scroll', [
