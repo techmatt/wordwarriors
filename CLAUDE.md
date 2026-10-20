@@ -31,8 +31,7 @@ Spell the Spell, the alarm and the camp retreat.
 **Stack:** TypeScript + Phaser ^3.90 (not 4) + Vite, npm. Playwright (one worker) for
 browser tests, `node:test` via tsx for pure rules. Dev port **5174** (`src/port.ts`);
 Playwright serves its own (README, *Tests*). The sibling game
-`C:\Code\seraphinas\seraphinas-secret` is read-only reference; the audit of what was
-taken from it is `wordwarriors-control/reports/wordwarriors__001_seraphina_audit.md`.
+`C:\Code\seraphinas\seraphinas-secret` is read-only reference.
 
 ## Where things live
 
@@ -62,7 +61,7 @@ taken from it is `wordwarriors-control/reports/wordwarriors__001_seraphina_audit
 | `public/voice-gen/`, `art-originals/` | Untracked junctions to the Drive folder (README, *Storage*): generated voice; full-res art and Matt's private photos. Do not hand-edit. |
 | `tools/voice/`, `tools/art/` | `compose.ts` (lines.json from data), `build.ts` (audio + manifest); `placeholders.ts`, `generate.ts`, `alts.ts`. |
 | `tests/` | Playwright specs + `harness.ts`; `unit/` for node:test; `shots/` UI screenshots (README, *Tests*); `qa/` the bug-hunt checker. |
-| `docs/` | `systems.md` entry points; `engineering.md` measured facts; `content.md` how to add each kind of content; `recording.md` Matt's voice side; `art.md` (generated) the art brief. |
+| `docs/` | `systems.md` entry points; `engineering.md` measured facts; `content.md` how to add each kind of content; `recording.md` Matt's voice side; `art.md` (generated) the art brief; `qa-findings.md` the bug-hunt findings (known issues and Matt's calls). |
 
 ## Commands
 

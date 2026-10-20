@@ -404,6 +404,11 @@ Every file has exactly one home (Matt, 2026-10-18):
     `voice:build`, which overrides edge-tts with them as before.
 - **Nowhere:** anything a command rebuilds cheaply: contact sheets, `refs/crops/`,
   `dist/`, test output, `node_modules/`.
+- **Shot runs fill the disk.** Every shot is a ~1 MB PNG: a bug-hunt sweep is 1.6–4.3 GB
+  in `scratch/qa/<tag>/`, a battle-shots run ~0.5 GB in `scratch/polish_034/<tag>/`.
+  Once a run's findings are written up (`docs/qa-findings.md`, a report), delete its
+  PNGs and keep its `summary.md`, `*.json` and the shots the summary cites. Item 051 did
+  this for every run to date: 16.6 GB of `scratch/` became 1.3 GB.
 
 The main checkout holds the junctions; conductor links each worktree's to the same Drive
 folders, so a worktree shares one copy and never needs a full voice rebuild. Because the
