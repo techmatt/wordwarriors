@@ -120,6 +120,8 @@ export const LOOKALIKES: string[][] = [
   ['quilt', 'rug', 'mat', 'bed'],
   ['doll', 'elf'],
   ['egg', 'nest'],
+  ['thumb', 'hand'],
+  ['wing', 'bat', 'duck', 'hen'],
   ['jug', 'milk', 'mug', 'cup'],
   ['peg', 'pin'],
   ['lamp', 'sun'],

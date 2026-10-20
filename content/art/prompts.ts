@@ -48,8 +48,8 @@ const FIGHT_PROPS = FIGHTS.flatMap((f) => (f.props ?? []).map((p) => fightPropAr
 // Item 040's words: none is green.
 // Item 054's words: none is green.
 const BANK_054 = ['mat', 'man', 'lid', 'lock'].map((w) => `pic_${w}`);
-// Item 056's words but the green ones (GRASS, ELF).
-const BANK_056 = ['egg', 'bell', 'doll', 'tap', 'glass', 'sink', 'king', 'ring', 'wing', 'shell', 'chips', 'bush', 'thumb', 'lamb', 'quest', 'quilt', 'queen', 'goat', 'jeep', 'sheep', 'three', 'cheese', 'kite', 'bike', 'vase', 'cake'].map((w) => `pic_${w}`);
+// Item 056's words but the green ones (GRASS, ELF, BUSH).
+const BANK_056 = ['egg', 'bell', 'doll', 'tap', 'glass', 'sink', 'king', 'ring', 'wing', 'shell', 'chips', 'thumb', 'lamb', 'quest', 'quilt', 'queen', 'goat', 'jeep', 'sheep', 'three', 'cheese', 'kite', 'bike', 'vase', 'cake'].map((w) => `pic_${w}`);
 const BANK_040 = ['vet', 'chest', 'bin', 'rock', 'clock', 'stick', 'brush', 'truck', 'bath', 'plant', 'crib', 'key', 'yoyo'].map((w) => `pic_${w}`);
 const BANK_037 = ['jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'gum', 'bun', 'hut', 'sub', 'nap', 'wag', 'jab', 'red', 'hex', 'jig', 'mix', 'jog', 'bop', 'dot', 'hum', 'yum', 'drum', 'crab', 'flag', 'sled', 'nest', 'tent', 'desk', 'belt', 'vest', 'gift', 'lamp', 'hand', 'mask', 'raft', 'plug', 'ant', 'milk', 'jump', 'spin', 'swim', 'flip', 'stomp', 'slam', 'grab', 'clap', 'bump', 'skip', 'twist', 'melt', 'lift', 'plop', 'flop', 'trap', 'blast', 'drip', 'ship', 'fish', 'duck', 'sock', 'moth', 'shed', 'chick', 'chop', 'kick', 'rush'].map((w) => `pic_${w}`);
 /**
@@ -508,7 +508,8 @@ const PICTURES: Record<string, string> = {
   doll: 'a doll: a soft rag doll girl with yarn hair and a dress, sitting; a toy, not a real child',
   tap: 'a tap: one shiny silver kitchen tap (faucet) with a drop of water dripping from it; no sink',
   elf: 'an elf: a cheerful little Christmas elf in green with a pointy hat with a bell and pointy ears, standing',
-  grass: 'grass: a tuft of bright green lawn grass, long blades, nothing else; no flowers, not a plant in a pot',
+  // A loose tuft keyed badly (item 056: screen green caught between the blades): a solid block of turf.
+  grass: 'grass: a small square block of lawn turf seen side-on, a thick slab of brown soil with a dense carpet of short dark green grass on top, no gaps between the blades; no flowers, not a plant in a pot',
   glass: 'a glass: one clear drinking glass of water, see-through, a little shine; a glass, not a cup or a mug',
   sink: 'a sink: a white kitchen sink basin with a silver tap above it, seen from the front; no dishes',
   king: 'a king: a smiling cartoon king with a gold crown, a red cape and a white fur collar, standing',
