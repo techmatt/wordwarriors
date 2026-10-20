@@ -11,6 +11,7 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
+import { BANK_BY_WORD } from '../content/phonics/bank';
 
 import { SLOW, boot, choose, collectErrors, expectNoErrors, leaveBedroom, playEntry, press, seedProgress, state, until, type WWState } from './harness';
 
@@ -20,9 +21,10 @@ const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screen
 const clueLines = (s: WWState) => s.voice.history.filter((id) => /^letter_|^word_|_grab_/.test(id));
 
 const names = (w: string) => [...w].map((c) => `letter_${c}_name`);
-const sounds = (w: string) => [...w].map((c) => `letter_${c}_sound`);
+// By sound unit: a special word (KEY, item 043) has only its first letter's.
+const sounds = (w: string) => (BANK_BY_WORD[w]?.units ?? [...w]).map((c) => `letter_${c}_sound`);
 // The bank's pictured CVC words (item 037): a new player's grab is one of these, blends wait behind the level gate.
-const WORDS = ['cat', 'dog', 'fox', 'bug', 'hat', 'bed', 'cup', 'map', 'bus', 'hen', 'box', 'pen', 'van', 'bat', 'bag', 'can', 'nut', 'tub', 'cap', 'pin', 'log', 'mop', 'pot', 'rat', 'mug', 'rug', 'jug', 'sun', 'fan', 'web', 'net', 'jet', 'pig', 'pan', 'ram', 'top', 'jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'fig', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'pod', 'gum', 'bun', 'hut', 'sub'];
+const WORDS = ['cat', 'dog', 'fox', 'bug', 'hat', 'bed', 'cup', 'map', 'bus', 'hen', 'box', 'pen', 'van', 'bat', 'bag', 'can', 'nut', 'tub', 'cap', 'pin', 'log', 'mop', 'pot', 'rat', 'mug', 'rug', 'jug', 'sun', 'fan', 'web', 'net', 'jet', 'pig', 'pan', 'ram', 'top', 'jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'fig', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'pod', 'gum', 'bun', 'hut', 'sub', 'key', 'yoyo'];
 const allAt = (level: number) => Object.fromEntries(WORDS.map((w) => [w, level]));
 
 /** Into the hall with the clue given and her free to walk. */
