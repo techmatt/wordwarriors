@@ -155,7 +155,10 @@ export class CookoffStage extends BaseStage {
     }
     if (f.init.kind === 'helper') return { x: 150, y: 600 };
     if (this.host.heroes.length < 2) return { x: 260, y: 500 };
-    return i === 0 ? { x: 215, y: 500 } : { x: 325, y: 482 };
+    // Her in front, left of the dish; her ally a step back and to her left,
+    // so a grown-up shows over her shoulder and neither hides the other or
+    // stands behind the dish (item 034).
+    return i === 0 ? { x: 265, y: 505 } : { x: 150, y: 450 };
   }
 
   override home(f: Fighter, i: number): { x: number; y: number } | null {

@@ -1601,15 +1601,17 @@ export class BattleScene extends Phaser.Scene implements StageHost {
         // the air (a leap passes over), and her hero in a move choice is hers.
         if (body(a) && body(b)) {
           // Her hero in a move choice is the cursor: she walks past anyone,
-          // and never shoves her ally ahead of her across the arena.
+          // and never shoves her ally ahead of her across the arena. A
+          // contest's own places are the stage's: once crossed, a push would
+          // hold two of them on the wrong sides of each other.
           if (this.choice && (a === this.heroes[0] || b === this.heroes[0])) continue;
+          if (this.held(a) && this.held(b)) continue;
           // One passing over the other (a leap, a flyer high above) is not standing in it.
           if (Math.abs(a.lift - b.lift) > Math.min(a.height, b.height) * 0.6) continue;
           // Side by side at about one depth, or one standing behind the other
-          // and more than half hidden by them (Julia just behind a dad). A
-          // contest's own places (race lanes passing) are the stage's to judge.
+          // and more than half hidden by them (Julia just behind a dad).
           const [front, back] = a.y >= b.y ? [a, b] : [b, a];
-          const hidden = !(this.held(a) && this.held(b)) && front.top - back.top < back.height * back.scaleMul * 0.5;
+          const hidden = front.top - back.top < back.height * back.scaleMul * 0.5;
           if (Math.abs(b.y - a.y) >= SAME_DEPTH && !hidden) continue;
           const need = a.bodyHalf + b.bodyHalf;
           const dx = b.x - a.x;
