@@ -356,6 +356,10 @@ About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it r
   starves the first, and scenarios time out at boot with an empty scene (seen in item 039).
 - Known issues and Matt's calls are in `docs/qa-findings.md`; a hunt reads it first and
   does not re-report them.
+- **A throwaway script that imports game code does not go in `scratch/`** in a worktree:
+  `scratch/` is a junction into the main checkout, so `../src/...` from there resolves to
+  the main checkout's code, not the worktree's (a fix "missing" in item 039 was this). Put
+  it under `test-results/` (ignored, the worktree's own) and import `../../src/...`.
 
 ## Content work
 
