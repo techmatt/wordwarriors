@@ -36,13 +36,13 @@ export class Bubbles {
   private readonly off: () => void;
 
   /**
-   * `avoid` (item 034) is a box the bubble must keep clear of, or null: the
-   * battle's banner, so a banner never covers what someone is saying. The
-   * bubble steps above it, or below it when there is no room above.
+   * `avoid` (item 034) is the boxes the bubble must keep clear of, in order:
+   * the battle's HUD band and its banner, so neither covers what someone is
+   * saying. The bubble steps above each, or below it when there is no room above.
    */
   constructor(
     private readonly scene: Phaser.Scene,
-    private readonly avoid?: () => Phaser.Geom.Rectangle | null,
+    private readonly avoid?: () => (Phaser.Geom.Rectangle | null)[],
   ) {
     this.off = voiceBus.on((u) => this.onLine(u));
     const follow = () => this.follow();
@@ -106,11 +106,16 @@ export class Bubbles {
     const w = b.getData('w') as number;
     b.x = Phaser.Math.Clamp(a.x, w / 2 + 8, GAME_WIDTH - w / 2 - 8);
     b.y = Phaser.Math.Clamp(a.y - a.bubbleOffset - h / 2 - 20, h / 2 + 8, GAME_HEIGHT - h / 2 - 28);
-    const r = this.avoid?.();
-    // The bubble's box, its tail included.
-    if (r && Phaser.Geom.Rectangle.Overlaps(new Phaser.Geom.Rectangle(b.x - w / 2, b.y - h / 2, w, h + 18), r)) {
-      const above = r.top - 22 - h / 2;
-      b.y = above >= h / 2 + 8 ? above : Math.min(r.bottom + h / 2 + 8, GAME_HEIGHT - h / 2 - 28);
+    // A box along the top edge is a ceiling: nothing steps above it.
+    let top = h / 2 + 8;
+    for (const r of this.avoid?.() ?? []) {
+      if (!r) continue;
+      // The bubble's box, its tail included.
+      if (Phaser.Geom.Rectangle.Overlaps(new Phaser.Geom.Rectangle(b.x - w / 2, b.y - h / 2, w, h + 18), r)) {
+        const above = r.top - 22 - h / 2;
+        b.y = above >= top ? above : Math.min(r.bottom + h / 2 + 8, GAME_HEIGHT - h / 2 - 28);
+      }
+      if (r.top <= 0) top = Math.max(top, r.bottom + h / 2 + 8);
     }
     const tx = Math.round(Phaser.Math.Clamp(a.x - b.x, -w / 2 + 26, w / 2 - 26));
     if (tx !== b.getData('tailX')) {

@@ -66,6 +66,10 @@ import type { FightStage, Phase, StageHost } from './stages/stage';
 const DAMAGE_PER_POWER = 2.6;
 /** Two fighters closer than this in depth (px of floor) stand side by side, and their bodies must not overlap (item 034). */
 const SAME_DEPTH = 70;
+/** Hit words (BAM!, BLOCK!) float under the move pads' signs: a sign's word is never covered (item 034). */
+const HIT_FLOAT = DEPTH.prompt - 20;
+/** The top band where the health bars and a contest's meter (the race's track) are drawn: bubbles keep below it. */
+const HUD_BAND = new Phaser.Geom.Rectangle(0, 0, GAME_WIDTH, 128);
 /** The move pads' glow. One colour for all: the word on the sign is the choice, never a colour. */
 const PAD_GLOW = 0x7ad9ff;
 /** How far a pad's word sign stands above its ring. */
@@ -201,11 +205,11 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     this.controls = new Controls(this);
     // Lighter in battle: a small box and face at the bottom, so the fight stays in view.
     new Caption(this, { compact: true });
-    // A bubble keeps clear of the banner showing (item 034), measured at its full size.
+    // A bubble keeps clear of the bars at the top and of the banner showing (item 034), measured at its full size.
     new Bubbles(this, () => {
       const t = this.bannerText;
-      if (!t?.active || t.alpha < 0.2) return null;
-      return new Phaser.Geom.Rectangle(t.x - t.width / 2 - 10, t.y - t.height / 2 - 10, t.width + 20, t.height + 20);
+      if (!t?.active || t.alpha < 0.2) return [HUD_BAND];
+      return [HUD_BAND, new Phaser.Geom.Rectangle(t.x - t.width / 2 - 10, t.y - t.height / 2 - 10, t.width + 20, t.height + 20)];
     });
     this.hud = this.add.graphics().setDepth(DEPTH.hud);
     this.cameras.main.fadeIn(300);
@@ -349,14 +353,14 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     if (this.phase === 'ultimate' && target === this.villain) return;
     if (target.invulnerable || target.shieldUntil > this.now) {
       burst(this, target.cx, target.cy, { count: 12, speed: 200, colors: [0xffffff, color] });
-      if (target.isMain && Math.random() < 0.3) floatText(this, target.cx, target.top, 'BLOCK!', '#7ad9ff', 30);
+      if (target.isMain && Math.random() < 0.3) floatText(this, target.cx, target.top, 'BLOCK!', '#7ad9ff', 30, HIT_FLOAT);
       return;
     }
     // Clones pop on any hit.
     if (target.init.kind === 'clone') {
       sfxPoof();
       burst(this, target.cx, target.cy, { count: 30, speed: 300, colors: [target.init.palette[1], 0xffffff] });
-      floatText(this, target.cx, target.top, 'POOF!', '#ffffff', 30);
+      floatText(this, target.cx, target.top, 'POOF!', '#ffffff', 30, HIT_FLOAT);
       this.kill(target);
       return;
     }
@@ -377,7 +381,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     if (power >= 2 && Math.random() < 0.35) {
       // Not a word on a move pad still to come (POW, BAM and ZAP are move words).
       const words = ['POW!', 'BAM!', 'ZAP!', 'BOOM!', 'WHAM!'].filter((w) => !this.textGivesAway(w));
-      floatText(this, target.cx, target.top, words[Math.floor(Math.random() * words.length)]!, `#${color.toString(16).padStart(6, '0')}`, 34);
+      floatText(this, target.cx, target.top, words[Math.floor(Math.random() * words.length)]!, `#${color.toString(16).padStart(6, '0')}`, 34, HIT_FLOAT);
     }
     if (status && !(target.isMain && target.team === 'villain' && this.part === 1 && Math.random() < 0.5)) target.setStatus(status.kind, status.duration, this.now);
     this.show.onHit(target, power, from);
@@ -850,12 +854,20 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     const clearance = (x: number, y: number): number => {
       let d = Infinity;
       for (const f of avoid) {
-        d = Math.min(d, Math.hypot(x - f.x, (y - f.y) * 1.5), Math.hypot(x - f.cx, y - SIGN_RISE - f.cy));
+        // From the edge of the body, not its middle: a giant's pad stood inside her (item 034).
+        d = Math.min(d, Math.hypot(Math.max(0, Math.abs(x - f.x) - f.bodyHalf), (y - f.y) * 1.5), Math.hypot(Math.max(0, Math.abs(x - f.cx) - f.bodyHalf), y - SIGN_RISE - f.cy));
       }
       return d;
     };
-    const xs: number[] = [];
+    let xs: number[] = [];
     for (let x = ARENA_LEFT + 110; x <= ARENA_RIGHT - 110; x += 40) xs.push(x);
+    // A contest keeps its pads on her side of the villain (item 034): a pad
+    // past him had her fire her super from inside his coils, off her rope.
+    if (this.show.anchored) {
+      const v = this.villain;
+      const mine = xs.filter((x) => (me.x < v.x ? x < v.x - v.bodyHalf - 100 : x > v.x + v.bodyHalf + 100));
+      if (mine.length && Math.abs(mine[mine.length - 1]! - mine[0]!) >= (n - 1) * PAD_GAP) xs = mine;
+    }
     let best: { x: number; y: number }[] = [];
     let bestScore = -Infinity;
     // Not 640: a pad there sits under the caption ribbon while its word is said.
@@ -1581,7 +1593,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
         // across, at once, the bigger one giving less. Not while one is in
         // the air (a leap passes over), and her hero in a move choice is hers.
         if (body(a) && body(b)) {
-          if (Math.abs(b.y - a.y) >= SAME_DEPTH || a.lift > 4 || b.lift > 4) continue;
+          // One passing over the other (a leap, a flyer high above) is not standing in it.
+          if (Math.abs(b.y - a.y) >= SAME_DEPTH || Math.abs(a.lift - b.lift) > Math.min(a.height, b.height) * 0.6) continue;
           const need = (a.bodyHalf + b.bodyHalf) * 0.85;
           const dx = b.x - a.x;
           if (Math.abs(dx) >= need) continue;
@@ -1591,8 +1604,14 @@ export class BattleScene extends Phaser.Scene implements StageHost {
           let wa = b.init.size / (a.init.size + b.init.size);
           if (pinned(a)) wa = 0;
           else if (pinned(b)) wa = 1;
-          a.x = Phaser.Math.Clamp(a.x - dir * over * wa, ARENA_LEFT, ARENA_RIGHT);
-          b.x = Phaser.Math.Clamp(b.x + dir * over * (1 - wa), ARENA_LEFT, ARENA_RIGHT);
+          // Pushed against the arena's edge: out the other side instead.
+          const room = (f: Fighter, x: number) => x - f.bodyHalf * 0.5 >= ARENA_LEFT && x + f.bodyHalf * 0.5 <= ARENA_RIGHT;
+          const ax = a.x - dir * over * wa;
+          const bx = b.x + dir * over * (1 - wa);
+          if (wa === 1 && !room(a, ax)) a.x = Phaser.Math.Clamp(b.x + dir * need, ARENA_LEFT, ARENA_RIGHT);
+          else a.x = Phaser.Math.Clamp(ax, ARENA_LEFT, ARENA_RIGHT);
+          if (wa === 0 && !room(b, bx)) b.x = Phaser.Math.Clamp(a.x - dir * need, ARENA_LEFT, ARENA_RIGHT);
+          else b.x = Phaser.Math.Clamp(bx, ARENA_LEFT, ARENA_RIGHT);
           continue;
         }
         const min = (a.height * a.scaleMul + b.height * b.scaleMul) * 0.36;
@@ -1762,12 +1781,14 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     }
 
     for (const f of this.fighters) {
-      if (!f.active) continue;
-      this.think(f, dt);
-      f.updateVisual(this.now, dt);
+      if (f.active) this.think(f, dt);
     }
     this.fighters = this.fighters.filter((f) => f.alive || f.root.active);
+    // Kept apart before they are drawn, so the screen never shows them inside one another (item 034).
     this.separate(dt);
+    for (const f of this.fighters) {
+      if (f.active) f.updateVisual(this.now, dt);
+    }
     this.show.update(dt);
     if (this.choice) this.holdHero();
     this.updateProjectiles(dt);

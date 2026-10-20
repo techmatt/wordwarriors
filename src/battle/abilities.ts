@@ -101,6 +101,17 @@ function besideGap(f: Fighter, t: Fighter, min: number): number {
   return Math.max(min, (f.bodyHalf + t.bodyHalf) * 0.85 + 10);
 }
 
+/**
+ * Where `f` lands beside `t` on side `dir` (-1 left, 1 right), `besideGap`
+ * away; on the other side when that side has no room before the arena's edge
+ * (a giant stands near the edge: landing past her put Julia inside her).
+ */
+function besideX(f: Fighter, t: Fighter, min: number, dir: number): number {
+  const gap = besideGap(f, t, min);
+  const x = t.x + dir * gap;
+  return x - f.bodyHalf < ARENA_LEFT || x + f.bodyHalf > ARENA_RIGHT ? Phaser.Math.Clamp(t.x - dir * gap, ARENA_LEFT, ARENA_RIGHT) : x;
+}
+
 function hex(c: number): string {
   return `#${c.toString(16).padStart(6, '0')}`;
 }
@@ -306,7 +317,7 @@ const slam: Cast = (w, f, ab, target, mult) => {
   const held = w.held?.(f) ?? false;
   const leap = f.init.style !== 'stomp' && !held;
   const fromX = f.x;
-  const toX = leap ? Phaser.Math.Clamp(target.x - (f.team === 'hero' ? 1 : -1) * besideGap(f, target, 90), ARENA_LEFT, ARENA_RIGHT) : f.x;
+  const toX = leap ? besideX(f, target, 90, f.team === 'hero' ? -1 : 1) : f.x;
   const toY = leap ? target.y : f.y;
   const fromY = f.y;
   let p = 0;
@@ -367,7 +378,7 @@ const spin: Cast = (w, f, ab, target, mult) => {
       sfxWhoosh();
       const fx = f.x;
       const fy = f.y;
-      const tx = held ? fx : Phaser.Math.Clamp(v.x - (Math.sign(v.x - fx) || 1) * besideGap(f, v, 40 * Math.random()), ARENA_LEFT, ARENA_RIGHT);
+      const tx = held ? fx : besideX(f, v, 40 * Math.random(), -(Math.sign(v.x - fx) || 1));
       const ty = held ? fy : v.y;
       if (held) shockwave(s, f.cx, f.cy, ab.color, 110, 300);
       let p = 0;
@@ -425,7 +436,7 @@ const dash: Cast = (w, f, ab, target, mult) => {
         });
         return;
       }
-      const tx = Phaser.Math.Clamp(t.x + dir * besideGap(f, t, 120), ARENA_LEFT, ARENA_RIGHT);
+      const tx = besideX(f, t, 120, dir);
       let p = 0;
       const ev = s.time.addEvent({
         delay: 16,
@@ -523,7 +534,7 @@ const teleport: Cast = (w, f, ab, target, mult) => {
   w.after(160, () => {
     if (!target.active) return;
     if (!held) {
-      f.x = Phaser.Math.Clamp(target.x + (Math.random() < 0.5 ? -1 : 1) * besideGap(f, target, 100), ARENA_LEFT, ARENA_RIGHT);
+      f.x = besideX(f, target, 100, Math.random() < 0.5 ? -1 : 1);
       f.y = target.y;
     }
     burst(s, f.cx, f.cy, { count: 30, speed: 260, colors: [ab.color, 0xffffff] });

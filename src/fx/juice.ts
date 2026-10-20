@@ -231,11 +231,11 @@ export function timeScale(scene: Phaser.Scene): number {
 }
 
 /** Floating text that rises and fades ("POW!", "+1"). */
-export function floatText(scene: Phaser.Scene, x: number, y: number, text: string, color = '#ffffff', size = 40): void {
+export function floatText(scene: Phaser.Scene, x: number, y: number, text: string, color = '#ffffff', size = 40, depth: number = DEPTH.sparkles): void {
   const t = scene.add
     .text(x, y, text, { fontFamily: '"Arial Black", sans-serif', fontSize: `${size}px`, color, stroke: '#000000', strokeThickness: 8, align: 'center' })
     .setOrigin(0.5)
-    .setDepth(DEPTH.sparkles);
+    .setDepth(depth);
   // Wrapped and shrunk to the screen, and kept inside it (it rises 70 px).
   fitText(t, GAME_WIDTH - 40, GAME_HEIGHT / 3);
   t.setPosition(Phaser.Math.Clamp(x, t.width / 2 + 10, GAME_WIDTH - t.width / 2 - 10), Phaser.Math.Clamp(y, t.height / 2 + 80, GAME_HEIGHT - t.height / 2 - 10));
