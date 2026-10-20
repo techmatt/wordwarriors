@@ -33,6 +33,7 @@ import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import type { AbilitySpec } from '../../content/battle/types';
 import { narratorLine } from '../../content/voice/ids';
 import { sfxFanfare, sfxSelect, sfxSummon, sfxWhoosh } from '../audio/sfx';
+import { voiceBus } from '../audio/VoiceBus';
 import { DEPTH, GAME_WIDTH } from '../config';
 import { away, enterRoom, episode, giftWord, helper, hubScene, narrator, planFor, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, flash, popIn, shockwave, squash } from '../fx/juice';
@@ -65,6 +66,8 @@ export class HubScene extends RoomScene {
   private circle: Spot | null = null;
   /** The gift's prop with the word written on it (a scroll, a card). */
   private scroll: Phaser.GameObjects.Container | null = null;
+  /** The hub scene's line that sends her to the circle (the box keeps off the circle for it). */
+  private circleLine: string | null = null;
   /** The gift's own things (Ellie's giant bubbles, a word's picture) circling the helper while she gives it. */
   private ring: Phaser.GameObjects.Image[] = [];
 
@@ -81,6 +84,7 @@ export class HubScene extends RoomScene {
     this.doors = {};
     this.circle = null;
     this.scroll = null;
+    this.circleLine = null;
     this.ring = [];
     // The floor reaches up to the back-wall doors.
     this.floor = new Phaser.Geom.Rectangle(80, 420, GAME_WIDTH - 160, 250);
@@ -109,12 +113,22 @@ export class HubScene extends RoomScene {
     this.round = `hub:${this.part}:${phase}`;
   }
 
-  /** The gift's prop carries a word she reads: the dialogue box keeps off it. */
+  /**
+   * The gift's prop carries a word she reads: the dialogue box keeps off it,
+   * at its full size (a line starting as it pops in measured it at a tenth of
+   * that and covered it, item 039). Except while the circle is the thing to
+   * find: the line that sends her to it, and after, the box keeps off the
+   * circle (it covered the circle it was telling her to stand in).
+   */
   protected override keepOut(): KeepOut[] {
     const out = super.keepOut();
     if (this.scroll?.active) {
-      const b = this.scroll.getBounds();
-      out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: 5 });
+      out.push({ x: this.scroll.x - CARD_W / 2 - 10, y: this.scroll.y - CARD_H / 2 - 60, w: CARD_W + 20, h: CARD_H + 70, weight: 5 });
+    }
+    const c = this.circle;
+    if (c?.obj.active && (this.phase === 'circle' || (this.circleLine && voiceBus.speaking?.id === this.circleLine))) {
+      const b = c.obj.getBounds();
+      out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: 40 });
     }
     return out;
   }
@@ -263,6 +277,7 @@ export class HubScene extends RoomScene {
     const spell = giftWord();
     const { story, ids } = hubScene();
     const reveal = ids.lines[ids.lines.length - 1]!;
+    this.circleLine = ids.circle;
     await this.wait(500);
     await this.speak(...ids.lines.slice(0, -1));
 
@@ -302,7 +317,8 @@ export class HubScene extends RoomScene {
     const card = this.add.graphics();
     card.fillStyle(0xffffff, 1).fillRoundedRect(-CARD_W / 2, -CARD_H / 2, CARD_W, CARD_H, 22);
     card.lineStyle(6, 0xffd23f, 1).strokeRoundedRect(-CARD_W / 2, -CARD_H / 2, CARD_W, CARD_H, 22);
-    const glyph = this.add.text(0, -CARD_H / 2 - 4, prop.startsWith('prop_') ? '✨' : prop, { fontSize: '60px' }).setOrigin(0.5, 0.8);
+    // Padded: Phaser measures an emoji shorter than it draws, and 🔵 lost its top (item 039).
+    const glyph = this.add.text(0, -CARD_H / 2 - 4, prop.startsWith('prop_') ? '✨' : prop, { fontSize: '60px', padding: { top: 14, bottom: 6 } }).setOrigin(0.5, 0.8);
     return [card, glyph];
   }
 

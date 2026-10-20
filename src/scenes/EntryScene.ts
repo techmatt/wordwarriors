@@ -77,10 +77,14 @@ export class EntryScene extends RoomScene {
     return 'room_entry';
   }
 
-  /** The letter board is what she matches: the dialogue box keeps off it. */
+  /**
+   * The letter board is what she matches: the dialogue box keeps off it. Only
+   * once it is up: a hidden board kept the first line ("let's grab the...")
+   * off the empty top and down over the bottom row of pictures (item 039).
+   */
   protected override keepOut(): KeepOut[] {
     const out = super.keepOut();
-    if (this.board?.active) {
+    if (this.board?.active && this.board.visible) {
       const b = this.board.getBounds();
       out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: 5 });
     }

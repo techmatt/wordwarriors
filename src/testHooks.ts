@@ -18,6 +18,7 @@ import { voiceBus } from './audio/VoiceBus';
 import { episode, currentStep } from './episode/Episode';
 import { progress } from './state/progress';
 import { GAME_HEIGHT, GAME_WIDTH } from './config';
+import { installProbe } from './qa/probe';
 
 export interface SpotInfo {
   id: string;
@@ -142,6 +143,8 @@ function visibleText(game: Phaser.Game): TextInfo[] {
 
 export function installTestHooks(game: Phaser.Game): void {
   if (!hooksEnabled()) return;
+  // The bug-hunt checker's probe (item 039, tests/qa/): `?qa=1` only.
+  if (new URLSearchParams(location.search).has('qa')) installProbe(game);
   (window as unknown as { __ww: unknown }).__ww = {
     state: () => ({
       scene: hookState.scene,
