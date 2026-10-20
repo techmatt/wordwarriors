@@ -619,6 +619,11 @@ a time.
   - Keep green out of a sprite's design where it can be: a green toy block got keyed
     half-transparent. A glow over the screen (the magic circle) comes out green-tinted;
     `NO_GREEN` fixes that.
+  - A thing that is green itself (grass, a bush, an elf) stays out of `NO_GREEN`, or it
+    comes out grey. Open green shapes with screen showing between them key badly either
+    way: item 056's loose grass tuft got pink-grey holes between its blades, under both
+    the default cut and `LIGHT_GREEN`. Draw it as a solid shape instead (GRASS is a block
+    of turf on brown soil).
   - The tool sometimes draws its own copy of things the game draws on top (the bedroom
     has toys of its own). Prompts for rooms say what to leave out.
 
