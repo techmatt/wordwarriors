@@ -206,6 +206,7 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 | "add words" / "add a move word" | a `BANK` entry in `content/phonics/bank.ts` (role `thing`, `action` or `both`), its picture brief in `PICTURES` (`content/art/prompts.ts`) and its battle effect in `content/phonics/effects.ts` (`docs/content.md`, "A word"), same three commands |
 | "add a sentence / frame" / "what X does in battle" | `FRAMES` in `content/phonics/sentences.ts`; X's effect in `content/phonics/effects.ts`; same three commands |
 | "add a hub scene / quest line" | `HUB_SCENES` in `content/house/scenes.ts`; a quest's `lines` in `content/house/quests.ts` (`docs/content.md`, "A hub scene", "A quest"), same three commands |
+| "X casts spells" / "X's gift should sound like a spell" | `CASTERS` in `content/house/scenes.ts`; spell-sounding words are `spell` on `BANK` entries in `content/phonics/bank.ts` |
 | "blends sooner / later" / "digraphs sooner / later" | `BANK_DRAW.levels` in `src/config.ts` (`start`, `full`, `min` per level) |
 | "add a bedroom / side room / villain mood" | edit `content/house/house.ts` or the villain's `house` in the roster, same three commands |
 | "turn the pick screens back on" / "always the same cast" | `EPISODE_DEFAULTS` in `src/config.ts` (`pickScreens`, `randomCast: false`) |
