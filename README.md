@@ -329,7 +329,9 @@ deleted through them.
 clock speed 5 across casts, dads' forms, places, all five fight styles, the word machine,
 wrong answers everywhere, dad lock, seeded progress (blends and digraphs open) and three
 episodes back to back (`SCENARIOS` in `tests/qa/qa.pw.ts`; `-g <name>` for one,
-`QA_SET=quick` for three). About 1.5 minutes an episode. It is not a test: it records.
+`QA_SET=quick` for three, `QA_SET=more` for the second batch: the other places and dads'
+forms, an idle child who stands still at every choice, more seeds; `QA_SET=all` both).
+About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it records.
 
 - **Shots only at moments:** each scene change, each line (a moment in, so the box and
   karaoke are up), each new round, move choice and battle phase, each victory-scene line,

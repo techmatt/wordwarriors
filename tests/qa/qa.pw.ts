@@ -10,7 +10,8 @@
  * and read `scratch/qa/<tag>/`: one folder of shots per scenario, its
  * `<scenario>.json` (issues, counts, lock and frame stats), then
  * `npx tsx tests/qa/report.ts <tag>` for `summary.md` and contact sheets.
- * `QA_SET=quick` plays three scenarios; the default plays them all.
+ * `QA_SET=quick` plays three scenarios, `more` the second batch (places, forms,
+ * an idle child), `all` both; the default plays the first batch.
  * A scenario that stalls records a `stall` issue with its last shot and the
  * next one runs. README, "The bug-hunt checker"; findings: docs/qa-findings.md.
  */
@@ -39,8 +40,15 @@ interface Scenario {
   progress?: 'firm' | 'all';
   /** Toggle dad lock in each room and check green does nothing. */
   dadLock?: boolean;
+  /** Stand still for `IDLE_MS` at each choice first (the stick hint, the re-prompts). */
+  idle?: boolean;
   quick?: boolean;
+  /** Only with `QA_SET=more` (or `all`): the second batch, added by the first hunt. */
+  more?: boolean;
 }
+
+/** How long an idle scenario stands still at each choice (real ms; 5x that in game time). */
+const IDLE_MS = 9000;
 
 const SCENARIOS: Scenario[] = [
   { name: 'default', query: 'cast=default', quick: true },
@@ -58,6 +66,17 @@ const SCENARIOS: Scenario[] = [
   { name: 'firm_blends', query: 'seed=112&games=all', progress: 'firm' },
   { name: 'all_solid', query: 'seed=113&games=all', progress: 'all' },
   { name: 'soak3', query: 'seed=114&games=all', episodes: 3 },
+  // The second batch (item 039): the other places and forms, an idle child, more random casts.
+  { name: 'idle_default', query: 'cast=default', idle: true, more: true },
+  { name: 'builder_treehouse', query: 'seed=201&ally=dada_matt&villain=bavmorda&games=all', more: true },
+  { name: 'warlock_ally', query: 'seed=202&ally=dada_jason_warlock&villain=jormungandr', more: true },
+  { name: 'ellie_home_race', query: 'seed=203&ally=ellie&villain=smaug&place=home&fight=sky_race&games=all', more: true },
+  { name: 'scar_wrong_clash', query: 'seed=204&ally=scar&villain=bavmorda&fight=spell_clash', wrong: true, more: true },
+  { name: 'jason_wakes', query: 'seed=205&ally=scar&villain=tiamat&primary=dada_jason&secondary=1&games=all', more: true },
+  { name: 'machine_solid', query: 'seed=206&game=word_machine', progress: 'all', more: true },
+  { name: 'seed207', query: 'seed=207&games=all', more: true },
+  { name: 'seed208', query: 'seed=208&games=all', more: true },
+  { name: 'seed209', query: 'seed=209&games=all', wrong: true, more: true },
 ];
 
 /** Every level-1 word solid (`firm`), or every word (`all`): six right first tries each. */
@@ -153,9 +172,10 @@ class Recorder {
 }
 
 /** A sentence room, a wrong object first when asked. */
-async function sentenceRoom(page: Page, wrong: boolean): Promise<string> {
+async function sentenceRoom(page: Page, wrong: boolean, idle = false): Promise<string> {
   const s = await readToKeyWord(page);
   const key = s.room!.sentence!.key;
+  if (idle) await page.waitForTimeout(IDLE_MS);
   if (wrong) {
     const ready = await until(page, (st) => Boolean(st.room && !st.room.locked && st.room.spots.some((sp) => sp.correct === false)), 60_000, 'objects up');
     const bad = ready.room!.spots.find((sp) => sp.correct === false)!;
@@ -168,10 +188,17 @@ async function sentenceRoom(page: Page, wrong: boolean): Promise<string> {
   return key;
 }
 
-async function room(page: Page, wrong: boolean): Promise<void> {
+async function room(page: Page, wrong: boolean, idle = false): Promise<void> {
   const s = await until(page, (st) => (st.scene === 'SentenceRoom' && Boolean(st.room?.sentence)) || (st.scene === 'WordMachine' && Boolean(st.room?.machine)), 30_000, 'a side room');
   if (s.scene === 'WordMachine') await playWordMachine(page, wrong);
-  else await sentenceRoom(page, wrong);
+  else await sentenceRoom(page, wrong, idle);
+}
+
+/** An idle child: wait for the choice to be up, then stand still. */
+async function standStill(page: Page, sc: Scenario, ready: (s: WWState) => boolean, what: string): Promise<void> {
+  if (!sc.idle) return;
+  await until(page, ready, 90_000, what);
+  await page.waitForTimeout(IDLE_MS);
 }
 
 /**
@@ -200,23 +227,27 @@ async function episode(page: Page, sc: Scenario, rec: Recorder): Promise<void> {
   await page.waitForTimeout(500);
   await press(page, 'green');
   await until(page, (s) => s.scene === 'Bedroom', 30_000, 'bedroom');
+  await standStill(page, sc, (s) => s.scene === 'Bedroom' && s.room?.round === 'bedroom:door' && !s.room.locked, 'bedroom door');
   await leaveBedroom(page, { grab: false });
+  await standStill(page, sc, (s) => s.scene === 'Entry' && s.room?.round === 'entry:find' && !s.room.locked, 'warm-up clue');
   await playEntry(page, sc.wrong ? 2 : 0);
   await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:circle', 90_000, 'circle offered');
   await hubGo(page, 'circle');
   for (const door of ['door_a', 'door_b']) {
     await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:doors', 90_000, `${door} offered`);
+    await standStill(page, sc, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:doors' && !s.room.locked, 'doors open');
     await hubGo(page, door);
     if (sc.dadLock && door === 'door_a') {
       const s = await until(page, (st) => st.scene === 'SentenceRoom' || st.scene === 'WordMachine', 30_000, 'side room');
       if (s.scene === 'SentenceRoom') await until(page, (st) => st.room?.sentence?.pass === 'read' && !st.room.locked, 90_000, 'read pass');
       await dadLockProbe(page, rec);
     }
-    await room(page, Boolean(sc.wrong));
+    await room(page, Boolean(sc.wrong), Boolean(sc.idle));
   }
   await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:front', 90_000, 'front door');
   await hubGo(page, 'door_front');
   await until(page, (s) => s.scene === 'Battle', 60_000, 'battle 1');
+  await standStill(page, sc, (s) => Boolean(s.battle?.choice?.open), 'first move choice');
   await playBattle(page, 1, Boolean(sc.wrong));
   await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:2:secret', 120_000, 'secret door');
   await hubGo(page, 'door_counter');
@@ -253,7 +284,8 @@ if (LOOK) {
 }
 
 const set = process.env.QA_SET;
-for (const sc of SCENARIOS.filter((x) => !LOOK && (set !== 'quick' || x.quick))) {
+const inSet = (x: Scenario) => (set === 'quick' ? Boolean(x.quick) : set === 'more' ? Boolean(x.more) : set === 'all' ? true : !x.more);
+for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
   test(`qa ${sc.name}`, async ({ page }) => {
     const errors = collectErrors(page);
     if (sc.progress) await seedProgress(page, seededProgress(sc.progress));
