@@ -168,7 +168,8 @@ test('the pool: the machine is a fetch game, drawn about every other episode, ne
     if (games.slice(0, 2).some((g) => g.machine)) n++;
   }
   assert.ok(n > 120 && n < 300, `machine drawn in ${n}/400 episodes`);
-  assert.equal(MINIGAMES.length, SENTENCE_GAMES.length + 1);
+  // The word machine and Charge the Spell (item 053).
+  assert.equal(MINIGAMES.length, SENTENCE_GAMES.length + 2);
 });
 
 test('episodePlans with the machine: its words are the room\'s fetches, kept out of every other room and the counter', () => {

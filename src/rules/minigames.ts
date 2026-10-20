@@ -7,7 +7,9 @@
  * weighted, and no entry comes up twice in an episode. The entries are the
  * sentence game in each of its frames, its weight times how shaky that frame
  * is (so a frame she keeps missing comes back sooner, as before), and the word
- * machine (item 026, fetch rooms only), times how shaky her word families are.
+ * machine (item 026, fetch rooms only), times how shaky her word families are,
+ * and Charge the Spell (item 053, fetch rooms only), times how shaky her
+ * letter sounds are.
  *
  * A new minigame is one entry here: its scene, a weight, the slots it can
  * fill. Whatever it is, it must end in a key word she has read (the thing
@@ -18,9 +20,10 @@
 
 import { FAMILIES } from '../../content/phonics/families';
 import { FRAMES } from '../../content/phonics/sentences';
-import { WORD_MACHINE } from '../config';
+import { CHARGE, WORD_MACHINE } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
 import type { Rand } from './bank';
+import { soundShakiness } from './charge';
 
 export type GameSlot = 'fetch' | 'counter';
 
@@ -37,6 +40,8 @@ export interface Minigame {
   frame?: string;
   /** The word machine (item 026): its plan is the visit's words (src/rules/wordMachine.ts). */
   machine?: boolean;
+  /** Charge the Spell (item 053): letter sounds said aloud, judged by Dad; its plan is the visit's runes (src/rules/charge.ts). */
+  charge?: boolean;
 }
 
 /** The sentence game in each of its frames: the pool before item 026, and the tests' default (`?games=sentence`). */
@@ -45,8 +50,18 @@ export const SENTENCE_GAMES: Minigame[] = FRAMES.map((f): Minigame => ({ id: `se
 /** The word machine: a fetch room only (the counter belongs to the villain's sentence). */
 export const WORD_MACHINE_GAME: Minigame = { id: 'word_machine', scene: 'WordMachine', weight: WORD_MACHINE.weight, slots: ['fetch'], machine: true };
 
+/**
+ * Charge the Spell (item 053): a fetch room only. It reads no word, so it
+ * fetches none; its runes become her hero's moves in the next battle. For the
+ * beta it is forced into every episode (FORCE_PHONICS_ROOM, Episode.ts `roomGames`).
+ */
+export const CHARGE_GAME: Minigame = { id: 'charge', scene: 'ChargeRoom', weight: CHARGE.weight, slots: ['fetch'], charge: true };
+
+/** The phonics games FORCE_PHONICS_ROOM puts in every episode (054's joins here). */
+export const PHONICS_GAMES: Minigame[] = [CHARGE_GAME];
+
 /** The pool. */
-export const MINIGAMES: Minigame[] = [...SENTENCE_GAMES, WORD_MACHINE_GAME];
+export const MINIGAMES: Minigame[] = [...SENTENCE_GAMES, WORD_MACHINE_GAME, CHARGE_GAME];
 
 export const MINIGAME_BY_ID: Record<string, Minigame> = Object.fromEntries(MINIGAMES.map((g) => [g.id, g]));
 
@@ -63,7 +78,7 @@ function familyShakiness(store: ProgressStore): number {
 export function drawGames(store: ProgressStore, rand: Rand = Math.random, pool: Minigame[] = MINIGAMES): [Minigame, Minigame, Minigame] {
   const weight = (id: string) => {
     const g = pool.find((m) => m.id === id)!;
-    return g.weight * (g.frame ? store.shakiness('frames', g.frame) : g.machine ? familyShakiness(store) : 1);
+    return g.weight * (g.frame ? store.shakiness('frames', g.frame) : g.machine ? familyShakiness(store) : g.charge ? soundShakiness(store) : 1);
   };
   const fits = (slot: GameSlot) => pool.filter((g) => g.slots.includes(slot)).map((g) => g.id);
   const fetch = pickWeighted(fits('fetch'), weight, 2, rand);

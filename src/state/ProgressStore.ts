@@ -43,6 +43,12 @@ export interface ProgressData {
   grabs: Record<string, Stat>;
   /** The warm-up's ramp level per word (1 word + names + sounds, 2 names + sounds, 3 sounds); absent = GRAB.startLevel. */
   grabLevels: Record<string, number>;
+  /**
+   * Charge the Spell (item 053): per letter sound, its help level (1 the sound
+   * and gesture first, 2 the gesture only, 3 the rune alone); absent =
+   * CHARGE.startLevel. What she said is recorded under `sounds`.
+   */
+  chargeLevels: Record<string, number>;
   /** Her word bag: the sentence key words drawn without replacement (item 015). */
   bag: WordBag;
   /** The bag words the game had when `bag` was last topped up (`topUpBag`); `'legacy'` for a blob from before item 035. */
@@ -81,7 +87,7 @@ function emptyStat(): Stat {
 }
 
 function empty(): ProgressData {
-  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, grabs: {}, grabLevels: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, padBag: { left: [], round: 0 }, episodes: 0, villains: [], ending: null };
+  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, grabs: {}, grabLevels: {}, chargeLevels: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, padBag: { left: [], round: 0 }, episodes: 0, villains: [], ending: null };
 }
 
 /** How many past villains the store keeps. */
@@ -130,6 +136,8 @@ export class ProgressStore {
       // Item 033, the same way.
       parsed.grabs ??= {};
       parsed.grabLevels ??= {};
+      // Item 053, the same way.
+      parsed.chargeLevels ??= {};
       // Item 035: a blob with no `bagKnown` knew the bag words before MUG RUG JUG.
       parsed.bagKnown ??= 'legacy';
       return parsed;
@@ -198,6 +206,16 @@ export class ProgressStore {
 
   setGrabLevel(word: string, level: number): void {
     this.data.grabLevels[word] = level;
+    this.save();
+  }
+
+  /** A sound's Charge the Spell help level (item 053), or `fallback` (CHARGE.startLevel) if she has never charged it. */
+  chargeLevel(sound: string, fallback: number): number {
+    return this.data.chargeLevels[sound] ?? fallback;
+  }
+
+  setChargeLevel(sound: string, level: number): void {
+    this.data.chargeLevels[sound] = level;
     this.save();
   }
 

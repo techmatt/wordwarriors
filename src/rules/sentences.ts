@@ -33,6 +33,7 @@ import { FETCH_ITEMS, lookalikesOf, sentence, tokenWord, type Fill, type Sentenc
 import { ACTIONS, THINGS } from '../../content/phonics/bank';
 import { MINIGAMES, drawGames, type Minigame } from './minigames';
 import { machineWords, planMachine, type MachinePlan } from './wordMachine';
+import { planCharge, type ChargePlan } from './charge';
 import { SENTENCE_SOLID } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { distractorsFor, drawFromBag, shuffle, withStems, type Rand } from './bank';
@@ -65,7 +66,17 @@ export interface MachineRoomPlan extends PlanBase {
   machine: MachinePlan;
 }
 
-export type RoomPlan = SentencePlan | MachineRoomPlan;
+/**
+ * Charge the Spell's room (item 053): the visit's runes. It reads no word, so
+ * `key` is '' and `fetches` is empty; what it gives the battle is
+ * `episode.charged`.
+ */
+export interface ChargeRoomPlan extends PlanBase {
+  kind: 'charge';
+  charge: ChargePlan;
+}
+
+export type RoomPlan = SentencePlan | MachineRoomPlan | ChargeRoomPlan;
 
 /** Every word the bag holds: the bank's pictured words (item 037: CVC, blends and digraphs). */
 export const BAG_WORDS: string[] = THINGS.map((w) => w.word);
@@ -212,8 +223,9 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   // The rooms' games come from the minigame pool (item 025); each sentence game is a frame.
   const games = [...(input.games ?? drawGames(store, rand, input.pool))] as [Minigame, Minigame, Minigame];
   if (games[2].machine) throw new Error('episodePlans: the word machine is a fetch room, not the counter');
+  if (games[2].charge) throw new Error('episodePlans: Charge the Spell is a fetch room, not the counter');
   const frames = games.map((g) => {
-    if (!g.frame && !g.machine) throw new Error(`episodePlans: ${g.id} is neither a sentence game nor the word machine`);
+    if (!g.frame && !g.machine && !g.charge) throw new Error(`episodePlans: ${g.id} is not a sentence game, the word machine or Charge the Spell`);
     return g.frame;
   });
 
@@ -246,8 +258,14 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
     const article = f ? tokenWord(sentence(f, fill, 'x').tokens.at(-2) ?? '') : '';
     return (w: string) => article !== 'a' || !/^[aeiou]/.test(w);
   };
+  // Charge the Spell (item 053) reads no word: its key is '' and it draws nothing from the bag.
+  const charges: (ChargePlan | null)[] = games.map((g) => (g.charge ? planCharge(store, rand) : null));
   const keys: string[] = [];
   for (let i = 0; i < 2; i++) {
+    if (charges[i]) {
+      keys.push('');
+      continue;
+    }
     const m = machines[i];
     if (m) {
       keys.push(machineWords(m).at(-1) ?? '');
@@ -269,9 +287,11 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
     const base = { slot, room: roomIds[i]!, game: games[i]!.id, scene: games[i]!.scene, key: keys[i]! };
     const m = machines[i];
     if (m) return { ...base, kind: 'machine', machine: m, fetches: machineWords(m) };
+    const c = charges[i];
+    if (c) return { ...base, kind: 'charge', charge: c, fetches: [] };
     const s = sentence(frames[i]!, fill, keys[i]!);
     // No room offers the gift word or another of the episode's key words as a wrong picture.
-    const others = [gift, ...keys.filter((k) => k !== keys[i]), ...taken];
+    const others = [gift, ...keys.filter((k) => k && k !== keys[i]), ...taken];
     return { ...base, kind: 'sentence', fetches: [keys[i]!], sentence: s, objects: objectsFor(store, s, rand, others) };
   }) as [RoomPlan, RoomPlan, RoomPlan];
 }

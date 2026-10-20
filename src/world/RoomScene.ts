@@ -250,6 +250,14 @@ export abstract class RoomScene extends Phaser.Scene {
     this.time.delayedCall(320, then);
   }
 
+  /**
+   * Dev F4 in a room whose answer is not a spot (Charge the Spell: Dad's
+   * yes). Return true when it answered; false lets F4 choose `correctSpot()`.
+   */
+  protected autoAnswer(): boolean {
+    return false;
+  }
+
   /** The spot a correct answer is at (dev F4 and tests). */
   protected correctSpot(): Spot | undefined {
     return this.spots.find((s) => s.correct === true && s.enabled);
@@ -302,7 +310,7 @@ export abstract class RoomScene extends Phaser.Scene {
     this.idleHelp(deltaMs);
 
     if (this.controls.dev('F2')) advance(this);
-    if (this.controls.dev('F4')) {
+    if (this.controls.dev('F4') && !this.autoAnswer()) {
       const c = this.correctSpot();
       if (c && !this.locked) this.choose(c);
     }

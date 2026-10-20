@@ -55,8 +55,8 @@ export function met(store: ProgressStore, words: BankWord[] = LIVE): Met {
   return out;
 }
 
-/** One dimension's coverage factor: 1 for a tag never met, about 0.5 at the average, less above it. */
-function factor(counts: Record<string, number>, tag: string, tags: string[]): number {
+/** One dimension's coverage factor: 1 for a tag never met, about 0.5 at the average, less above it (Charge the Spell's sounds use it too). */
+export function factor(counts: Record<string, number>, tag: string, tags: string[]): number {
   const mean = tags.reduce((n, t) => n + (counts[t] ?? 0), 0) / Math.max(1, tags.length);
   return 1 / (1 + (counts[tag] ?? 0) / (1 + mean));
 }

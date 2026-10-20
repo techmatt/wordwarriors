@@ -113,6 +113,38 @@ export const SENTENCE_SOLID = { tries: 6, lastRight: 5 };
 export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2 };
 
 /**
+ * Charge the Spell (item 053, src/scenes/ChargeRoom.ts): she says each rune's
+ * letter sound aloud and Dad presses 2 (yes) or 1 (no). `runes` per visit;
+ * `timeoutMs` with no answer counts as a no (the game helps); `assists` helps
+ * per rune before the game says it with her and moves on. Each sound has its
+ * own help level: 1 = the sound and its gesture first, she copies; 2 = the
+ * gesture only; 3 = the rune alone. `startLevel` is a sound she has never
+ * charged. `tiers`: the quick sounds (stops, H W Y J...) join once `start` of
+ * the continuous ones (M S F A L N R V Z, the short vowels) are solid, at
+ * weight `min`, full at `full`; the digraphs (SH CH TH) the same off the
+ * quick ones. `weight` is its weight in the rooms' pool (a frame is 1).
+ */
+export const CHARGE = {
+  runes: 6,
+  timeoutMs: 8000,
+  assists: 2,
+  startLevel: 1 as 1 | 2 | 3,
+  weight: 1,
+  tiers: {
+    2: { start: 0.3, full: 0.7, min: 0.25 },
+    3: { start: 0.3, full: 0.7, min: 0.2 },
+  } as Record<2 | 3, { start: number; full: number; min: number }>,
+};
+
+/**
+ * Beta (item 053): every episode has one of the phonics games (Charge the
+ * Spell; 054's game once it lands) behind one of the two side doors. Off, the
+ * game is only its weight in the pool. A test URL that picks its own games
+ * (`?games=sentence`, `?game=`) is left alone; `?room=charge` forces it anyway.
+ */
+export const FORCE_PHONICS_ROOM = true;
+
+/**
  * The home warm-up (item 033, src/scenes/EntryScene.ts): "Before we head out,
  * let's grab the ..." in the entry hall. Each word has its own level on a
  * ramp: 1 = the word, its letter names and its letter sounds; 2 = names and

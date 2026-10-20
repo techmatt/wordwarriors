@@ -12,6 +12,7 @@ import Phaser from 'phaser';
 import { musicPlaying } from './audio/music';
 import { fxStats } from './fx/juice';
 import { virtualPad, type Button } from './input/Controls';
+import { dadButtonsOpen, dadPress, type DadAnswer } from './input/dadButtons';
 import { dadLock, setDadLock } from './input/dadLock';
 import { typeLetter } from './input/TextEntry';
 import { voiceBus } from './audio/VoiceBus';
@@ -56,6 +57,22 @@ export interface RoomInfo {
     phase: 'intro' | 'pick' | 'check' | 'done';
     slotted: string | null;
     misses: number;
+  };
+  /**
+   * Charge the Spell (item 053): the visit's runes, the one lit (`index`,
+   * `sound`, its help `level`), the phase, whether Dad is being asked now, its
+   * helps and timeouts so far, and what is charged.
+   */
+  charge?: {
+    runes: string[];
+    index: number;
+    sound: string;
+    level: number;
+    phase: 'approach' | 'prompt' | 'ask' | 'help' | 'charging' | 'done';
+    asking: boolean;
+    assists: number;
+    timeouts: number;
+    charged: string[];
   };
 }
 
@@ -182,6 +199,11 @@ export function installTestHooks(game: Phaser.Game): void {
     dadLock: (on?: boolean) => {
       if (on !== undefined) setDadLock(on);
       return dadLock.locked;
+    },
+    /** Dad buttons (item 053): press one (`'yes'` is key 2, `'no'` key 1); returns whether a game is asking. */
+    dad: (a?: DadAnswer) => {
+      if (a) dadPress(a);
+      return dadButtonsOpen();
     },
     resetProgress: () => progress.reset(),
     /** Tests can skip the 15+ s of speech in a long flow. */

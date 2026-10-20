@@ -9,6 +9,7 @@ import { BootScene } from './scenes/BootScene';
 import { HubScene } from './scenes/HubScene';
 import { SentenceRoom } from './scenes/SentenceRoom';
 import { WordMachine } from './scenes/WordMachine';
+import { ChargeRoom } from './scenes/ChargeRoom';
 import { BlendPath } from './scenes/minigames/BlendPath';
 import { SoundToLetter } from './scenes/minigames/SoundToLetter';
 import { Spelling } from './scenes/minigames/Spelling';
@@ -21,6 +22,7 @@ import { EndingScene } from './scenes/EndingScene';
 import { EntryScene } from './scenes/EntryScene';
 import { VictoryScene } from './scenes/VictoryScene';
 import { installTestHooks } from './testHooks';
+import { installDadButtons } from './input/dadButtons';
 import { installDadLock } from './input/dadLock';
 
 
@@ -68,6 +70,7 @@ const game = new Phaser.Game({
     HubScene,
     SentenceRoom,
     WordMachine,
+    ChargeRoom,
     BattleScene,
     EndingScene,
     VictoryScene,
@@ -82,6 +85,7 @@ const game = new Phaser.Game({
 });
 
 installDadLock();
+installDadButtons();
 
 // After the game exists: the hooks read its scenes (texts).
 installTestHooks(game);

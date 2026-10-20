@@ -60,7 +60,7 @@ export function keyMode(id: string): 'keep' | 'noGreen' | 'lightGreen' {
   return NO_GREEN.has(id) ? 'noGreen' : LIGHT_GREEN.has(id) ? 'lightGreen' : 'keep';
 }
 
-export const NO_GREEN = new Set([...BANK_037, ...BANK_040,...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
+export const NO_GREEN = new Set([...BANK_037, ...BANK_040,...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
 
 /**
  * Likeness references for the family (Matt, 2026-10-18): a photo in the

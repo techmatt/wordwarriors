@@ -239,9 +239,10 @@ export class HubScene extends RoomScene {
 
   /** A finished room's prize hangs on its door, with a ring of gold. */
   private badge(spot: Spot, slot: Slot, fresh: boolean): void {
-    const key = planFor(slot).key;
+    const plan = planFor(slot);
     const ring = this.add.circle(0, -DOOR_H * 0.55, 40, 0xffd23f, 0.35).setStrokeStyle(5, 0xffd23f, 1);
-    const pic = this.art(`pic_${key}`, 62, 62, 0, -DOOR_H * 0.55 + 31);
+    // Charge the Spell (item 053) fetches no word: its door wears a charged rune stone.
+    const pic = this.art(plan.kind === 'charge' ? 'prop_rune_stone' : `pic_${plan.key}`, 62, 62, 0, -DOOR_H * 0.55 + 31);
     spot.obj.add([ring, pic]);
     spot.enabled = false;
     if (fresh) {

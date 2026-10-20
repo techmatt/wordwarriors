@@ -36,6 +36,9 @@ export type MoveKind = 'use_move' | 'gift_word' | 'not_move' | 'was_move' | 'fin
 export const heroKey = (kind: HeroKind, hero: string) => `${kind}_${hero}`;
 export const villainKey = (kind: VillainKind, villain: string) => `${kind}_${villain}`;
 export const moveKey = (kind: MoveKind, word: string) => `${kind}_${word}`;
+/** Charge the Spell (item 053): a rune's gesture line, which trails off into `letter_<sound>_sound` (content/phonics/runes.ts). */
+export type ChargeKind = 'charge_gesture';
+export const chargeKey = (kind: ChargeKind, sound: string) => `${kind}_${sound}`;
 /** A fight style's own beat line (item 031, content/battle/fights.ts): `fight_race_start`. */
 export const fightKey = (fight: string, beat: string) => `fight_${fight}_${beat}`;
 export const tauntLine = (fighter: string, key: string) => `taunt_${fighter}_${key}`;

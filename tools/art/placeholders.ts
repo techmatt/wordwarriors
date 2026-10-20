@@ -608,6 +608,21 @@ function paintAll(list: ArtAsset[]): Record<string, string> {
         g.lineWidth = 8;
         g.strokeStyle = hex(0x4a8a4a);
         g.stroke();
+      } else if (id === 'prop_rune_stone') {
+        // Item 053: a blank lilac face in a glowing gold rim; the game paints the letter.
+        g.beginPath();
+        g.ellipse(W / 2, H / 2, W * 0.45, H * 0.45, 0, 0, Math.PI * 2);
+        const gr = g.createRadialGradient(W * 0.42, H * 0.38, 4, W / 2, H / 2, W * 0.5);
+        gr.addColorStop(0, hex(0xf4ecff));
+        gr.addColorStop(1, hex(0xb8a0e0));
+        g.fillStyle = gr;
+        g.fill();
+        g.lineWidth = W * 0.05;
+        g.strokeStyle = hex(0xffd23f);
+        g.stroke();
+        g.lineWidth = W * 0.015;
+        g.strokeStyle = hex(0x9b5de5);
+        g.stroke();
       } else if (id === 'prop_tile') {
         roundRect(6, 6, W - 12, H - 12, 24);
         g.fillStyle = hex(0xc8b89a);

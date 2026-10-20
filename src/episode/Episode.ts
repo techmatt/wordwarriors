@@ -32,18 +32,19 @@ import { hubStory, storyTexts, type HubStory, type HubStoryIds } from '../../con
 import { group, wakeCastKey } from '../../content/voice/ids';
 import { NARRATOR_LINES, wakeTemplate, wakeVariant } from '../../content/voice/script';
 import { voiceBus } from '../audio/VoiceBus';
-import { ADULT_HEIGHT, EPISODE_DEFAULTS } from '../config';
+import { ADULT_HEIGHT, EPISODE_DEFAULTS, FORCE_PHONICS_ROOM } from '../config';
 import { drawCast, isGrownUp, wakerOf, type CastOverrides } from '../rules/cast';
 import { fightSpec, pickFight } from '../rules/fights';
 import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
 import { endingPeople } from '../rules/endings';
 import { withStems, type Rand } from '../rules/bank';
 import { episodePlans, wordsOf, type RoomPlan } from '../rules/sentences';
-import { MINIGAMES, MINIGAME_BY_ID, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
+import { CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
 import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
 import { hallObjects, pickGrab } from '../rules/grab';
 import { BEDROOM_TAUNTS, DEFAULT_LINES, DEFAULT_STORY, drawLines, drawStory, type LineVariants, type Story } from '../rules/story';
 import { progress } from '../state/progress';
+import { pickWeighted } from '../state/ProgressStore';
 import { voiceBank } from '../voice/VoiceBank';
 
 export type PrepGame = 'sound' | 'blend' | 'picture';
@@ -88,6 +89,12 @@ export interface EpisodeState {
    * from the bank (`giftWord`). Her first move choice of each part.
    */
   gift: string | null;
+  /**
+   * Charge the Spell (item 053): the sounds she charged in its room, in order,
+   * and the battle part they fire in (the next one). Never words: they stay
+   * out of `read` and `fetched` (no recap card, no bag picture).
+   */
+  charged: { sounds: string[]; part: 1 | 2 } | null;
   /** The battles' move choices (item 018), planned with the house: battle 1's words never become the counter word. */
   moves: MovePlan | null;
   /**
@@ -157,6 +164,7 @@ export const episode: EpisodeState = {
   made: { gem: false, ammo: false, helper: false, item: false },
   read: [],
   fetched: [],
+  charged: null,
   gift: null,
   moves: null,
   house: { plan: null, done: [], taught: false },
@@ -378,6 +386,7 @@ export function resetEpisode(): void {
   episode.made = { gem: false, ammo: false, helper: false, item: false };
   episode.read = [];
   episode.fetched = [];
+  episode.charged = null;
   episode.gift = null;
   episode.moves = null;
   episode.house = { plan: null, done: [], taught: false };
@@ -480,14 +489,25 @@ export function grabPlan(): { word: string; objects: string[] } {
  * usual), `?games=sentence` draws from the sentence game only (the tests'
  * default, so a test that plays sentence rooms gets them). Otherwise nothing:
  * the whole pool.
+ *
+ * The beta's phonics room (item 053): with FORCE_PHONICS_ROOM on, a phonics
+ * game (PHONICS_GAMES, drawn by weight) is behind door a of every episode,
+ * unless the URL picks its own games (`?games=`, `?game=`: the tests' rooms
+ * stay theirs). `?room=charge` forces Charge the Spell whatever else is
+ * asked: behind door a, or door b when `?game=` holds door a.
  */
 function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[] } {
   const q = new URLSearchParams(typeof location === 'undefined' ? '' : location.search);
   const only = q.get('games') === 'sentence' ? SENTENCE_GAMES : undefined;
-  const force = MINIGAME_BY_ID[q.get('game') ?? ''];
-  if (!force) return only ? { pool: only } : {};
-  const rest = drawGames(progress, Math.random, (only ?? MINIGAMES).filter((g) => g.id !== force.id));
-  return { games: [force, rest[1], rest[2]] };
+  const asked = MINIGAME_BY_ID[q.get('game') ?? ''];
+  const phonics =
+    q.get('room') === 'charge' ? CHARGE_GAME
+      : FORCE_PHONICS_ROOM && !q.has('games') && !q.has('game') ? MINIGAME_BY_ID[pickWeighted(PHONICS_GAMES.map((g) => g.id), (id) => MINIGAME_BY_ID[id]!.weight, 1)[0]!]
+        : undefined;
+  const forced = [asked, phonics].filter((g, i, all): g is Minigame => Boolean(g) && all.indexOf(g) === i);
+  if (!forced.length) return only ? { pool: only } : {};
+  const rest = drawGames(progress, Math.random, (only ?? MINIGAMES).filter((g) => !forced.includes(g)));
+  return { games: [forced[0]!, forced[1] ?? rest[1], rest[2]] };
 }
 
 /**
