@@ -70,8 +70,11 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    fallback for a character added without one, or `?place=home`) laid
    out like the house: the helper by a magic circle, two side doors, later a secret
    door, and a way out (the house's front door, a glowing portal anywhere else).
-   The helper (the ally, or the dad who woke her) teaches a spell: she
-   stands in the magic circle, presses green, and the word flies into her. That word
+   The helper (the ally, or the dad who woke her) plays a short story scene that gives
+   her a **gift word** (item 037, `content/house/scenes.ts`, one of 2–3 per helper: a
+   spell, a dish chef Dada Jason cooks up, a gadget builder Dada Matt builds, a toy).
+   Its prop pops up with the word on it, the last line trails off into the word, she
+   stands on the glowing spot, presses green, and the word flies into her. That word
    is her first battle move. Then two side doors pop out of the wall. **A door she
    cannot use yet is not there at all** (her first play: told to find the two doors,
    she walked to the shut front door), so every door and exit appears, with a little
@@ -86,8 +89,8 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    (`WE CAN USE THE NET`, `JULIA NEEDS THE CAT`). Pass 1 is read to her karaoke-style and stops at the key
    word, which pulses in silence (skipped once that frame is solid). Pass 2 is hers:
    each green lights the next word and says it, and yellow says the lit word. At the key
-   word three things wake up on pedestals (yellow now sounds the key word's letters one
-   at a time, never blended, and never says the word itself); she
+   word three things wake up on pedestals (yellow now sounds the key word one sound at a
+   time, SH of SHIP as one, never blended, and never says the word itself); she
    walks to the one the key word names and presses green. Right: the whole sentence
    is read back and the thing flies into her bag (top left). Wrong: a funny retry.
    Each finished room hangs its prize on its door; with both done the front door appears.
@@ -97,7 +100,8 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    she walks her hero onto that pad and presses green. A wrong pad fires nothing: the
    fight stays frozen and the partner says "That wasn't ICE, that was HUG! Find ICE!"
    until she picks the right one, which fires the supercharged move. The first choice
-   is the spell she learned. It ends with the villain's ultimate: "Too strong! Retreat!", and the
+   is the gift word. Reading a pad casts its word: a teammate's own move when one
+   answers to it, else the word's own effect, fired by her hero. It ends with the villain's ultimate: "Too strong! Retreat!", and the
    heroes pick themselves up and run for home.
 7. **The quest place, part 2.** Back in the hub a secret door pops out: the attic (or the
    place's secret room: the cave behind the waterfall), with the
@@ -115,14 +119,16 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    green plays again.
 
 Key words never repeat until her **word bag** has gone round: every key word (both side
-rooms and the attic) is drawn without replacement from the decodable CVC words, kept
-with her progress, leaning toward the words she has missed (a word leaves the bag only
+rooms and the attic) is drawn without replacement from the word bank's pictured words
+(item 037: CVC, then blends and digraphs as the level below firms up), kept
+with her progress, leaning toward the words she has missed and the vowels and first
+sounds she has met least (a word leaves the bag only
 when she reads it right first time, so a missed word comes round again soon, and a dev
 `?scene=` jump spends nothing). Frames repeat on purpose so their little words become sight words. Details in
 `docs/content.md`, "Key words and the word bag"; the grown-ups page (F9) shows the bag.
 
-The battle's move words come round the same way (item 018): 26 move words, each move
-answering to several, and a **move bag** that decides which ones she is asked to find,
+The battle's move words come round the same way (item 018): every action word in the bank
+(item 037), and a **move bag** that decides which ones she is asked to find,
 so fight after fight she meets new ones (`docs/content.md`, "Move words and the move
 bag"). A super shows a fan of its word's picture; the beaten villain, good again, says
 two lines of its own (`reformed` in the roster: the first as the battle ends, the second
@@ -201,7 +207,7 @@ A giant villain (roster `size` 2 or more: Evil Tiamat) is staged as one: she hol
 own half of the arena instead of walking over the heroes (`stomp` in
 `src/battle/movement.ts`), steps to the front for her ultimate so growing fills the
 screen floor to top, and her ultimate also sweeps the whole arena (`giantSweep`).
-Ellie fights with bubbles (item 016): giant bubbles (BIG, the spell she teaches), a
+Ellie fights with bubbles (item 016): giant bubbles (BIG), a
 Bubble Trap that floats an enemy away (POP), a bubble shield and the Mega Bubble Storm,
 all drawn with the generated `fx_bubble` texture, plus one sword move, Spinny Swords
 (ZIP), whose `prop_silver_sword` the `orbit` kind draws round her, so they show with
@@ -212,7 +218,7 @@ seconds on the title screen. On that page, **F8** twice erases all progress.
 
 Dev keys: **F2** skip the current step, **F4** answer correctly. Jump straight into a
 step with a URL, e.g. `http://localhost:5174/?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug`.
-Later steps get the episode they would have had by then (spell learned, earlier rooms
+Later steps get the episode they would have had by then (gift word given, earlier rooms
 done, items in the bag):
 
 | URL | Opens |

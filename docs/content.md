@@ -34,11 +34,12 @@ One `CharacterSpec` in `ROSTER`:
   - optional `mount` (`'carpet'` is drawn; any emoji works, e.g. `'🧹'`) and `trail`
     (`{ tint: [colours], shape: 'spark' | 'star' | 'smoke' | 'square' }`, its aura).
   - `speed` (px/s), `size` (1 person, 1.4 big, 1.8 giant), `hp` (cosmetic).
-  - `abilities`: three or more `AbilitySpec`; at least two on the good side should carry
-    a `word` from `MOVE_WORDS`, so the move-choice pads have words to offer, and each
-    can list more words that suit it in `words` (item 018: every good fighter answers
-    to six or more; see "Move words and the move bag" below). As a helper, its first
-    `word` the hero lacks is the spell it teaches in the hub (`src/rules/spell.ts`).
+  - `abilities`: three or more `AbilitySpec`. A `word` and more `words` that suit it are
+    flavour (item 037): bank action words (`MOVE_WORDS`), or POW and ICE, which are
+    never on a pad. When a pad's word is one a teammate's ability answers to, that
+    teammate fires the styled move instead of the word's own effect; as a helper, its
+    words are twice as likely to be the gift word, which her hero then fires with its
+    move (see "Move words and the move bag" below).
   - `reformed` (on the character, beside `counter`): two or more short, kid-funny lines
     the villain says in its good voice once beaten ("Sorry I was so stormy!"); the
     battle's end says the first, the victory scene the second (item 027), so the
@@ -78,7 +79,8 @@ How the house looks once this one is the villain (`src/world/houseMood.ts` lays 
 the bedroom after the news, the hub and every side room; no room art is per-villain):
 
 - `threat`: a clause for Dada Matt's wake-up, "Bad news, EvilRilla is coming, and
-  `he's going to eat Dada Jason's car`!" Fun, not scary, no CVC reading words.
+  `he's going to eat Dada Jason's car`!" Fun, not scary, no reading words (no pictured bank word: warlock Dada
+  Jason's toad is not a FROG); its words are kept off that episode's pads and gift word.
   Optional `threatSay` (same word count) when edge-tts needs help.
 - `tint`: laid over every room at low alpha.
 - `decals`: `{ id, glyph, look, count }`, things it left lying about. Prefix the id with
@@ -91,17 +93,18 @@ The attic's sentence after the retreat is drawn fresh each episode (item 015): a
 counter frame (`{villain} IS SCARED OF THE {x}`, `HATES THE`, `RUNS FROM THE`,
 `CAN NOT STAND THE`, weighted toward shaky frames) and a counter word from her word bag
 (see "Key words and the word bag" below). A villain's weakness does not have to make
-sense: any pictured, decodable word can beat any villain. The picture she finds swells
+sense: any pictured bank word can beat any villain. The picture she finds swells
 into itself, flies into her bag, and in battle 2 a swarm of it scurries at the villain,
 who leaps up ("EEK!", "NOT THE MOP!") while the ultimate fizzles. The narrator says
 `got_counter_any` ("That is just what we need!"), which fits every word.
 
 The counter word obeys the 009 rule, now checked on the draw: never a word on battle
 1's move pads (planned with the episode, item 018), never a word fetched this episode (battle 1's item banners), never a word
-any of the episode's three sentences shows, never the taught spell, and never a word
-the episode's hero, ally or villain says or shows first (`saidEarly` in
-`src/rules/sentences.ts`: names, abilities, ultimates, taunts, minions, the threat,
-their combo). The unit test "the counter is random: any pictured, decodable word,
+any of the episode's three sentences shows, never the gift word or any word on either
+battle's pads (no key word is), and never a word the episode's hero, ally or villain
+says or shows first (`saidEarly` in `src/rules/sentences.ts`: names, abilities,
+ultimates, taunts, minions, the threat, their combo) or the quest line and hub scene
+say. The unit test "the counter is random: any pictured, decodable word,
 under the 009 exclusions" checks it for every villain.
 
 **Named counter items are flavour.** When the draw lands on the villain's own
@@ -187,7 +190,7 @@ Item 025 gave the dads forms that change more than clothes: weightlifter, cyberd
 spell-blade Dada Matt (`dada_matt_lifter`, `dada_matt_cyber`, `dada_matt_blade`), warrior
 and warlock Dada Jason (`dada_jason_warrior`, `dada_jason_warlock`). Each is a full
 `CharacterSpec` in `ROSTER` with `person: 'dada_matt'` and a `form` name (`lifter`):
-its own good and evil fighters, abilities (move words from `MOVE_WORDS`), taunts,
+its own good and evil fighters, abilities (flavour move words from `MOVE_WORDS`), taunts,
 ultimate, counter item, arena, house mood and reformed lines, and a quest. The person's
 own entry carries the default form's name (`form: 'builder'`). What follows from `person`:
 
@@ -204,17 +207,21 @@ own entry carries the default form's name (`form: 'builder'`). What follows from
 - Combos are written for persons (Julia and any Dada Matt high-five).
 
 To add one: a roster entry like `dada_matt_lifter`, a `SPELL_WORDS` triple, a quest,
-then `voice:lines`, `voice:build`, `art:placeholders`, and `art:alts` for its three
+hub scenes, then `voice:lines`, `voice:build`, `art:placeholders`, and `art:alts` for its three
 images, its counter item and its decals. Hyphens stay out of its lines (README,
 *Operational facts*).
 
 ## A quest (`content/house/quests.ts`) and a quest place (`PLACES`, `content/house/house.ts`)
 
-A quest is `QUESTS[<roster id>] = { place, text, say? }`: the place the helper takes her
-and the setup line the helper says in the bedroom after the bad news, in their own
-voice (`quest_<id>`, group core). No reading words in it (rules.test.ts), and its words
-never become key words that episode (`saidBefore`). A character with no entry takes
-`HOME_QUEST`: the house, and the narrator's "we have to train right here at home".
+A quest is `QUESTS[<roster id>] = { place, lines }`: the place the helper takes her,
+and the setup lines (`{ text, say? }`, three each today), one of which the helper says
+in the bedroom after the bad news, in their own voice (`quest_<id>_<n>`, group core).
+Each episode draws one with the cast (`src/rules/story.ts`; `?cast=default` always says
+the first, so the tests hear the same line). A new line is one more entry in `lines`.
+No bank word at all in it, thing or action (rules.test.ts), no interjection, and commas
+rather than a mid-line "!" or "."; its words never become key words, pads or the gift
+that episode (`storyWords`). A character with no entry takes `HOME_QUEST`: the house,
+and the narrator's "we have to train right here at home" (`nar_<narrator>_quest_home_<n>`).
 
 A place is `{ id, name, glyph, look, palette, rooms: [two side rooms], secret }`, and
 optionally `outdoor: true` (open sky behind: the villain's decals all lie on the floor,
@@ -225,6 +232,28 @@ helper, the magic circle, the doors and a `prop_portal` way out on top) and
 `room_side_<room id>` for each room. Several characters may share a place; tier-two
 places share the `secret_hideout` secret room. The glyph is the journey map's stop and
 the secret door's plaque. Look at one with `?place=<id>`.
+
+## A hub scene (`HUB_SCENES`, `content/house/scenes.ts`)
+
+How the helper gives her the gift word in the hub (item 037): a spell from a caster,
+something chef Dada Jason cooks up, a gadget builder Dada Matt builds, a toy Ellie
+shares. `HUB_SCENES[<roster id>]` is a list of scenes (2–3 per helper, each dad form its
+own); each episode draws one (`src/rules/story.ts`, variant 1 with `?cast=default`). A
+scene is `S(prop, lines, circle, done)`:
+
+- `prop`: what pops up over the helper with the word written on it: an art id
+  (`prop_scroll`) or an emoji drawn on a white card.
+- `lines`: two to four, in the helper's person's voice. The word is drawn from the bank
+  (any action word), so no line may name it or hint at which: the last trails off ("When
+  you press the button, it goes...") into the narrator's `gift_word_<word>` clip.
+- `circle`: sends her to the glowing spot (`SPOT(...)` / `CIRCLE(...)`); yellow says it
+  again. `done`: once the word has flown into her ("..., let us look around!").
+
+The same rules as a quest line: no bank word, no interjection, commas not a mid-line
+"!" or "." (rules.test.ts). Voiced as `hub_<owner>_<n>_<key>` (`line1`…, `circle`,
+`done`) in the owner's person's narrator group. A helper without scenes plays
+`ANY_SCENES`, voiced per narrator (`nar_<narrator>_hub_any_<n>_<key>`). Then
+`voice:lines` and `voice:build`. Look at one with `?scene=house&ally=<id>&seed=<n>`.
 
 ## A minigame (`MINIGAMES`, `src/rules/minigames.ts`)
 
@@ -312,30 +341,62 @@ apart, never blended. A wrong tile makes a silly word ("That makes... ZAT! A sil
 word!"). A visit is `WORD_MACHINE.rounds` words, up to `perFamily` from one family, then
 another family; every word built is a battle item.
 
-- **Families come from the pictured words.** Any rime with two or more decodable CVC
-  words in `words.ts` and an entry in `RIMES` is a family (today -AT, -AN, -AP, -EN, -ET,
-  -OG, -UG). A new pictured word (TOP) opens -OP once `RIMES` has `op`. A family word
-  is a full word: a `FETCH_ITEMS` battle item, a `PICTURES` brief and `pic_` art, and
-  look-alikes in `LOOKALIKES` (MUG beside CUP and JUG, item 035).
+- **Families come from the word bank.** Any rime with an entry in `RIMES` and two or
+  more bank words whose onset is a single letter (any role: CAT and VAT are things, ZAP
+  and NAP actions) is a family. `Family.words` are its pictured words (make mode shows
+  a picture, so only those are built); `Family.all` every single-onset word with the
+  rime, for the later modes and the silly-word checks. A blend or digraph onset (FROG,
+  SHIP) is not one tile, so it is in no family. A new bank word with a rime in `RIMES`
+  joins its family by itself; a new rime needs its `RIMES` entry.
 - **A rime** is `{ say, silly }`: `say` is the edge-tts spelling of the rime alone (one
   syllable, about 0.7 s; "Ett" came back 1.4 s, read as letters, so -ET is "Eht"); its line
   is `rime_<rime>`, a placeholder for Matt's recording.
 - **Silly onsets** make the wrong tiles: each must be nonsense (not a word, not a name,
-  not slang, not a homophone of a real word: no KAT, NAT, ZAP, YEN, JAN, and never J or F
-  before AP), at least `tiles - 1` per family. Each is a `silly_<word>` line.
+  not slang, not a homophone of a real word, nothing near a slur: no KAT, NAT, ZAP, YEN,
+  JAN, NOX; never J or F before AP, N before IG, W before OP or OG), at least `tiles - 1`
+  per family where the language allows (-IN has only HIN). Each is a `silly_<word>` line.
 - Then `voice:lines`, `voice:build`. The unit tests check every silly word against the
   game's words and a block list.
 - **Later modes** (`flip`, `real_or_silly`): `MachineMode` in `src/rules/wordMachine.ts`;
   each tile already carries what it makes and whether that is a real word. A mode is a
   plan there and a branch at `startRound` in the scene.
 
-## Words (`content/phonics/words.ts`)
+## A word (`content/phonics/bank.ts`)
 
-`{ word, glyph | draw, decodable: true }` for a CVC word with a picture; sight words
-(`decodable: false`) use a character's name-free face card as the picture.
-`SPECIAL_WORDS` are non-CVC sentence key words kept for the story (MICE). Every
-`CVC_WORDS` entry can stand in a side room as a wrong-answer object. (The parked Blend
-Path uses only decodable words; Word to Picture mixes in one sight word per round.)
+Every word she reads is one entry in the word bank (item 037). An entry is
+`T(word, glyph?, extra?)` for a `thing` (a clear picture: a room's object, a key word,
+the counter, a warm-up picture, a fetched battle item), `A(...)` for an `action` (a
+clear battle effect: a move pad, the gift word) or `B(...)` for `both` (NET, flung or
+fetched). `glyph` is the placeholder card's emoji (avoid Emoji 13+); `draw` a canvas
+drawing where Windows 10 has none; `say` a respelling where edge-tts misreads it.
+
+Its tags are derived from the spelling, never typed: `units` (SH CH TH CK kept
+together), `level` (1 CVC, 2 a consonant blend, 3 a digraph; both is 3), `vowel`,
+`onset`, `rime`. A word must have exactly one short vowel between consonants (`tag()`
+throws otherwise), and no word with a sound unit lacking a letter sound. To add one:
+
+1. The entry, in its level's block of `ENTRIES`.
+2. Its picture brief in `PICTURES` (`content/art/prompts.ts`): "a frog: a bright green
+   frog ...", one clear thing a 4-year-old knows, no writing; say what it is not where
+   it could be mistaken ("a plum, not a fig"). Art is `pic_<word>`.
+3. Its battle effect in `content/phonics/effects.ts`: a thing or `both` with
+   `use(word, kind, color, extra)` in `THING_EFFECTS` (id `item_<word>`, `...pic(word)`
+   to fling or drop its own picture), an action with `act(...)` in `ACTION_EFFECTS` (id
+   `word_<word>`); `look` says what it does. A `summon` needs a `MinionSpec`.
+4. Look-alikes in `LOOKALIKES` (`content/phonics/sentences.ts`) if a picture could be
+   taken for another (FIG and PLUM), and a `RIMES` entry if it opens a family.
+5. `voice:lines`, `voice:build` (its `word_<word>` line; an action also gets every
+   narrator's `use_move_`, `gift_word_`, `not_move_`, `was_move_`, `find_move_` lines),
+   `art:placeholders`, then `art:alts` / `art:gen` for the real picture.
+
+Keep it out of every narrator line, threat, quest line and hub scene (rules.test.ts
+says which line says it), and a `both` or action word out of the roster's counter
+words. A new word joins her bags' rounds already under way (`topUpBag`, `topUpMoves`).
+
+`content/phonics/words.ts` reads the bank: `CVC_WORDS` (the name stayed) is every
+thing and `both` word, `MOVE_PICTURES` every pure action; sight words (`decodable: false`) use a character's
+name-free face card as the picture; `SPECIAL_WORDS` are non-bank key words kept for the
+story (MICE); `FLAVOUR_PICTURES` keep POW and ICE's art for the roster.
 
 ## A sentence frame (`content/phonics/sentences.ts`)
 
@@ -348,7 +409,7 @@ One `Frame` in `FRAMES`: `{ id, text, use }`.
   episode, weighted the same way) and name the villain.
 - Keep to the little words that should become sight words (IS, THE, A, OF, WE, CAN,
   NO, FOR): repetition is the point, and 3–5 frames of each kind is right. A frame word
-  that is also a CVC word (CAN) is fine: the draw keeps every word of the episode's
+  that is also a bank word (CAN) is fine: the draw keeps every word of the episode's
   three sentences out of its key words, so WE CAN USE THE CAN never happens.
 - Today: fetch `we_can_use_the`, `helper_needs_a`, `go_get_the`, `we_need_a`,
   `hero_needs_the`; counter `scared_of_the`, `villain_hates_the` (a fetch frame until
@@ -360,55 +421,71 @@ One `Frame` in `FRAMES`: `{ id, text, use }`.
 - Progress is per frame (`frames` in ProgressStore): `SENTENCE_SOLID` in
   `src/config.ts` says when a frame skips the listening pass.
 
-## A fetchable item (`FETCH_ITEMS`, same file)
+## What a word does in battle (`content/phonics/effects.ts`)
 
-`{ word, look, ability }`: a key word a side room can ask for, and what it does when it
-pops out of her bag in both battles.
-
-- `word`: CVC, already in `CVC_WORDS` with a `pic_<word>` picture. Every CVC word has
-  an item since item 015; a new CVC word needs one too, or it can only be a counter.
-- `ability`: write it with the `use(word, kind, color, extra)` helper, so its id is
-  `item_<word>` and its banner "The net". Any ability kind works; a `summon` item needs
-  a `MinionSpec` in `MINIONS` (`hen`, `dog` fight on her side). `...pic(word)` makes a
-  `bolt` or `rain` fling or drop the word's own picture, the right way up.
+One `WordEffect` per bank word, `{ word, look, ability }`, whoever fires it (the unit
+test checks one each). A thing's is its fetched item: it pops out of her bag in both
+battles with a THE NET! banner; `FETCH_ITEMS` (`content/phonics/sentences.ts`) is every
+thing's effect. An action's is its move: reading its pad casts it, her hero fires it
+supercharged with a SUPER JUMP! banner. Write a thing's with `use(word, kind, color,
+extra)` (id `item_<word>`, `both` words too) and an action's with `act(...)` (id `word_<word>`). Any
+ability kind works; a `summon` needs a `MinionSpec` in `MINIONS` (`hen`, `dog` fight on
+her side). `...pic(word)` makes a `bolt` or `rain` fling or drop the word's own picture,
+the right way up.
 
 ## Key words and the word bag (`src/rules/sentences.ts`, ProgressStore `bag`)
 
 Every key word (both side rooms and the attic) comes out of her word bag: every
-decodable `CVC_WORDS` word (`BAG_WORDS`), drawn without replacement and kept with her
-progress in localStorage. A word leaves the bag when she reads it right first time
+pictured bank word (`BAG_WORDS`, the bank's things), drawn without replacement and kept
+with her progress in localStorage. A word leaves the bag when she reads it right first time
 (drawing alone spends nothing, so an abandoned episode or a `?scene=` jump costs her
 bag no words); when no word the episode can use is left, the bag refills (a new
-round, minus this episode's words). Within the bag, shaky words are drawn more often
-(`shakiness`), and a word she missed (any wrong try) stays in, so it comes round
-again soon. No key word repeats within
-an episode. The grown-ups page (F9) shows the round, words seen and left, and the
-shaky words. Erasing progress (F8 twice) empties the bag too.
+round, minus this episode's words). Within the bag every draw weighs a word by the
+bank's one weighting (`src/rules/bank.ts`): **shakiness × coverage × level gate**.
+Shaky words come more often, and a word she missed (any wrong try) stays in, so it
+comes round again soon; coverage favours the vowels, first sounds and levels she has
+met least; the gate keeps blends shut until enough CVC words are solid and digraphs
+until enough blends are (`BANK_DRAW` in `src/config.ts`: `levels[2]` opens at `start`
+of level 1 solid, at weight `min`, full at `full`; `solid` is the shakiness that counts).
+The same weighting draws the move pads, the gift word, the warm-up's word and the word
+machine's words. A room's other pictures are chosen for reading (`distractorsFor`):
+while the key word is new they start with other letters; once it is firm (`BANK_DRAW.firm`)
+one shares its first sound or rime (CAT beside HAT), so she reads past the first
+letter. No key word repeats within an episode, and none is on that episode's move pads. The grown-ups page (F9) shows the round, words seen and left, the
+bank's coverage by level (with each gate's open %), vowel and first sound; green flips
+to page 2, every word. Erasing progress (F8 twice) empties the bag too.
 
 A word new to the game joins a round already under way (item 035, `topUpBag`): the
 store remembers the bag words it last saw (`bagKnown`), and any word since goes into the
-bag, so she meets MUG, RUG and JUG without waiting for the bag to empty. Progress saved
-before item 035 knew `LEGACY_BAG_WORDS`. Adding a word needs nothing more.
+bag, so she meets new words without waiting for the bag to empty; a word the game no
+longer has leaves it. Progress saved before item 035 knew `LEGACY_BAG_WORDS`. Adding a
+word needs nothing more.
 
 ## Move words and the move bag (`src/rules/moves.ts`, ProgressStore `moveBag`)
 
-`MOVE_WORDS` (`content/battle/roster.ts`) is the pool, 26 words since item 018. An
-ability answers to its `word` and its `words`. When the house is planned,
-`planMoves` plans all four move choices too (two per battle part): the first of each
-part is the spell, the other right words come out of her **move bag**, the 015 bag
-logic over the move words (without replacement across episodes, shaky words more
-often, a word leaves only when she picks it right first time). Each choice shows 2 or
-3 pads; the wrong ones are her team's other words, ones she has not seen this episode
-first. The owner of the right word fires it (her hero fires the spell, with the
-helper's move). Planning up front is what lets the attic's counter word keep clear of
-exactly the words battle 1 shows (`battle1Words`).
+`MOVE_WORDS` (`content/battle/roster.ts`) is the pool: every bank action word (role
+`action` or `both`, item 037). Reading a pad casts its word (word magic): when a
+teammate's ability answers to it (`word`/`words`), that teammate fires the styled move;
+otherwise her hero fires the word's own effect (`content/phonics/effects.ts`). POW and
+ICE are flavour on abilities, never on a pad.
 
-A new move word: add it to `MOVE_WORDS`, to an ability's `words`, and give it a
-picture: a reading word's own `pic_<word>`, or a `MOVE_PICTURES` entry
-(`content/phonics/words.ts`) plus its line in `PICTURES` (`content/art/prompts.ts`).
-The super shows a fan of that picture and the recap shows it beside the word. Then
-`voice:lines`, `voice:build`, `art:placeholders` (narrator `use_move_`, `teach_word_`,
-`not_move_`, `was_move_`, `find_move_` lines and its `word_` line are composed).
+The **gift word** is the word the helper gives her in the hub scene (`drawGift`): an
+action word from her move bag by the bank's weighting, never one said before the
+battle (the threat, the quest line, the hub scene), the helper's own words weighted
+double; her hero fires it with the helper's move when the helper has one. When the
+house is planned, `planMoves` plans all four move choices too (two per battle part):
+the first of each part is the gift word, the other right words come out of her **move
+bag**, the 015 bag logic over the move words by the same weighting (without replacement
+across episodes, a word leaves only when she picks it right first time). Each choice
+shows 2 or 3 pads; the wrong ones are other action words from the levels open to her,
+chosen for reading (`distractorsFor`), ones not yet shown this episode first. Planning
+up front is what lets the room key words keep clear of every pad, and the attic's
+counter word of exactly the words battle 1 shows (`battle1Words`).
+
+A new move word is a new bank word with role `action` ("A word" above): its entry, its
+`PICTURES` brief (the super shows a fan of that picture and the recap shows it beside
+the word), its effect with `act(...)`; optionally a teammate's ability `words`, to
+style it. Then `voice:lines`, `voice:build`, `art:placeholders`.
 
 ## A bedroom, or a bedroom object (`content/house/house.ts`)
 
@@ -433,6 +510,8 @@ room she pokes for fun. Art: `obj_<id>`, so object ids are unique across bedroom
 
 `say` is the edge-tts placeholder. Real phonemes replace them line by line with
 `npm run voice:clip -- letter_<x>_sound <file.mp3>` (see `docs/recording.md`).
+The digraphs SH CH TH CK are one sound unit each (`DIGRAPH_SOUNDS`, item 037:
+`letter_sh_sound`); every hint sounds a digraph as one sound and lights both letters.
 
 Letter **names** (item 033, the home warm-up spells with them) are `LETTER_NAMES` in the
 same file: `letter_<x>_name`, shown as the bare capital, `say` the name spelled out for
@@ -441,8 +520,8 @@ recording replaces one the same way: `npm run voice:clip -- letter_<x>_name <fil
 
 ## The home warm-up (`GRAB` in `src/config.ts`, `src/rules/grab.ts`)
 
-Any decodable CVC word in `content/phonics/words.ts` with a picture can be asked for;
-adding a word adds it. `GRAB.startLevel` is where a word she has never grabbed starts
+Any pictured bank word can be asked for, by her grabs' shakiness times the bank's
+coverage and level gate; adding a word adds it. `GRAB.startLevel` is where a word she has never grabbed starts
 (1 word + names + sounds, 2 names + sounds, 3 sounds only), `GRAB.helpAfter` how many
 misses before the clue adds the word, `GRAB.objects` how many pictures stand in the hall
 (`ENTRY_HALL.spots` in `content/house/house.ts` has a place for each).

@@ -14,8 +14,9 @@ the good news, the helper, and the bad news: the villain and its threat; the hou
 on the villain's mood) → the **entry hall warm-up** (item 033, `src/scenes/EntryScene.ts`:
 "Before we head out, let's grab the ...", nine labelled pictures, a clue in letter names
 and letter sounds at the word's level on a ramp, `GRAB` in `src/config.ts`; the grabbed
-thing is her first battle item) → **house part 1** (the hub: the helper teaches her a spell, which
-becomes her first battle move word; two side-room doors, one **sentence game** each,
+thing is her first battle item) → **house part 1** (the hub: the helper's story scene, item 037,
+`content/house/scenes.ts`: a spell, a dish, a gadget, a toy, trailing off into the **gift
+word**, an action word from the bank, which becomes her first battle move word; two side-room doors, one **sentence game** each,
 fetching battle items; the front door appears once both are done: a door she cannot use
 yet is not there at all) → **battle part 1** (the
 items are used, then the villain's ultimate still wins: "too strong, retreat") → **house
@@ -61,12 +62,15 @@ audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__0
 | `content/battle/roster.ts` | **Every character**, good and evil: style, abilities, taunts, ultimate, counter-item. Every roster character is also a villain. The dads' forms are roster characters with `person` (voiced, narrating and waking as the dad). |
 | `content/battle/fights.ts`, `src/battle/stages/` | Fight styles (item 031): a sky race, a rope pull, a spell-beam clash, a cook-off, the brawl. `fight` on a villain, `fightNudge` on an ally; each kind's staging. |
 | `content/battle/forms.ts` | Outfits: a character's images for a scenario (Julia the chef beside chef Dada Jason, the knight beside warrior Dada Jason). |
-| `content/house/quests.ts` | Quests: each ally's place to train and setup line; places themselves are `PLACES` in `house.ts`. |
-| `src/rules/grab.ts` | The home warm-up (item 033): the word draw, the hall's pictures, the ramp, the clue per level. |
+| `content/house/quests.ts` | Quests: each ally's place to train and its setup lines (three variants, `quest_<owner>_<n>`); places themselves are `PLACES` in `house.ts`. |
+| `content/house/scenes.ts`, `src/rules/story.ts` | The hub's story scenes (item 037): 2–3 per helper, each ending in the narrator's `gift_word_<w>`; the draw of the episode's quest line and scene (variant 1 of each with `?cast=default`). |
+| `content/phonics/bank.ts`, `src/rules/bank.ts` | **The word bank** (item 037): every word she reads, levels (1 CVC, 2 blend, 3 digraph), vowel / onset / rime derived from the spelling, role `thing` / `action` / `both`. The one weighting every draw uses (shakiness × coverage × level gate, `BANK_DRAW` in `src/config.ts`) and the distractors (sharing onset or rime once a word is firm). |
+| `content/phonics/effects.ts`, `src/rules/moves.ts` | Every bank word's battle effect (a thing is a fetched item, an action a move pad her hero casts; a teammate's own word fires their styled ability); the episode's move choices and the gift word (`drawGift`). |
+| `src/rules/grab.ts` | The home warm-up (item 033): the word draw, the hall's pictures, the ramp, the clue per level (a digraph is one sound). |
 | `src/rules/cast.ts`, `src/rules/minigames.ts` | The episode's cast draw; the rooms' weighted minigame pool (the sentence game's frames, the word machine). |
-| `content/phonics/families.ts`, `src/rules/wordMachine.ts` | The word machine (item 026): word families (rimes from the pictured words, silly onsets) and each visit's rounds. |
-| `content/phonics/` | Letter sounds (placeholder spellings by sound class), words, and `sentences.ts` (frames, fetchable key words and their battle items). |
-| `content/house/house.ts` | Bedrooms (objects and their reactions), the hub layout, side rooms. |
+| `content/phonics/families.ts`, `src/rules/wordMachine.ts` | The word machine (item 026): word families (rimes from the bank's single-onset words, silly onsets) and each visit's rounds. |
+| `content/phonics/` | Letter sounds (placeholder spellings by sound class; `DIGRAPH_SOUNDS` SH CH TH CK), `words.ts` (the bank's pictured words as `CVC_WORDS`, sight words, move pictures), and `sentences.ts` (frames, key-word look-alikes; `FETCH_ITEMS` from the bank's things). |
+| `content/house/house.ts` | Bedrooms (objects and their reactions), the hub layout, side rooms, quest places. |
 | `content/house/endings.ts`, `src/rules/endings.ts` | The victory scenes (item 027): backgrounds, props, lines by role; the draw and who says what. |
 | `content/voice/` | `script.ts` (narrator templates), `ids.ts` (line ids), `voices.json`, `lines.json` (generated), `clips/` (recordings that override edge-tts). |
 | `content/art/assets.ts` | Every art asset id, size and brief. |
@@ -130,7 +134,7 @@ Adding a character, ability, word or line is data work: edit `content/`, then
   ready", never as losing. Part 2 always ends in victory.
 - **Speech rule:** voice everything except the word she must read. That word is spoken
   only after she answers, as confirmation. Letter SOUNDS, never letter names. The hint
-  sounds out letters one by one and never blends them. Two deliberate exceptions:
+  sounds out letters one by one (a digraph, SH CH TH CK, as one sound) and never blends them. Two deliberate exceptions:
   Spell the Spell says its word first (it is writing, not reading; the ghost boxes
   show every letter), and the battle's move choice has the partner say which word to
   pick (the brief's design: she hears it and finds it written). Letter sounds are never
@@ -147,7 +151,7 @@ Adding a character, ability, word or line is data work: edit `content/`, then
   the key word, which pulses in a beat of silence; pass 2 (her turn) starts with nothing
   lit, each green lights the next word and says it (a parent reads along; green waits for
   the word), except the key word, which lights in silence. Yellow on a frame word says that
-  word, yellow on the key word sounds its letters one by one, never blended (a
+  word, yellow on the key word sounds its letters one by one (SH as one), never blended (a
   non-decodable key word like MICE gets only its first sound). Right: the whole sentence
   is read with the key word. Voice is a prefix line ("EvilRilla is scared of...") plus the
   key word's own `word_<x>` line, so no line can leak the key word. Sentences come from a
@@ -196,8 +200,10 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 | Matt says | Run |
 | --- | --- |
 | "add a character / ability / taunt" | edit `content/battle/roster.ts`, then `voice:lines`, `voice:build`, `art:placeholders` |
-| "add words" | edit `content/phonics/words.ts`, same three commands |
-| "add a sentence / frame / fetchable item" | edit `content/phonics/sentences.ts` (frames, `FETCH_ITEMS`), same three commands |
+| "add words" / "add a move word" | a `BANK` entry in `content/phonics/bank.ts` (role `thing`, `action` or `both`), its picture brief in `PICTURES` (`content/art/prompts.ts`) and its battle effect in `content/phonics/effects.ts` (`docs/content.md`, "A word"), same three commands |
+| "add a sentence / frame" / "what X does in battle" | `FRAMES` in `content/phonics/sentences.ts`; X's effect in `content/phonics/effects.ts`; same three commands |
+| "add a hub scene / quest line" | `HUB_SCENES` in `content/house/scenes.ts`; a quest's `lines` in `content/house/quests.ts` (`docs/content.md`, "A hub scene", "A quest"), same three commands |
+| "blends sooner / later" / "digraphs sooner / later" | `BANK_DRAW.levels` in `src/config.ts` (`start`, `full`, `min` per level) |
 | "add a bedroom / side room / villain mood" | edit `content/house/house.ts` or the villain's `house` in the roster, same three commands |
 | "turn the pick screens back on" / "always the same cast" | `EPISODE_DEFAULTS` in `src/config.ts` (`pickScreens`, `randomCast: false`) |
 | "Matt should wake her more / less often" | `CAST_ODDS` in `src/config.ts` |
