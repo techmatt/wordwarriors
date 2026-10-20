@@ -263,6 +263,37 @@ test('F9 out of a sentence room and back: it restarts cleanly', SLOW, async ({ p
   expectNoErrors(errors);
 });
 
+test('F9 in a sentence room keeps a miss, and back from it after the find goes on to the hub, fetched once (item 039)', SLOW, async ({ page }) => {
+  test.setTimeout(240_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=a&nojourney=1');
+  const backToRoom = async (): Promise<void> => {
+    await page.keyboard.press('F9');
+    await until(page, (s) => s.scene === 'Parent', 10_000, 'parent');
+    await press(page, 'red');
+    const back = await until(page, (s) => s.scene === 'Hub' || s.scene === 'SentenceRoom', 15_000, 'back from parent');
+    if (back.scene === 'Hub' && !back.episode.house.done.includes('a')) await hubGo(page, 'door_a');
+  };
+  // A miss, then F9 and back: it is still a miss.
+  const first = await readToKeyWord(page);
+  const key = first.room!.sentence!.key;
+  const bad = (await until(page, (s) => Boolean(s.room && !s.room.locked && s.room.spots.some((sp) => sp.correct === false)), 60_000, 'objects up')).room!.spots.find((sp) => sp.correct === false)!;
+  await choose(page, bad.id);
+  await until(page, (s) => s.room?.sentence?.pass === 'find' && !s.room.locked, 60_000, 'retry open');
+  await backToRoom();
+  await readToKeyWord(page);
+  // The right one, then F9 in the middle of the celebration and back.
+  await choose(page);
+  await until(page, (s) => s.room?.sentence?.pass === 'done', 10_000, 'found');
+  await backToRoom();
+  const hub = await until(page, (s) => s.scene === 'Hub', 30_000, 'hub');
+  expect(hub.episode.fetched).toEqual([key]);
+  const rec = hub.progress.words[key]!;
+  expect(rec.seen).toBe(1);
+  expect(rec.recent).toEqual([false]);
+  expectNoErrors(errors);
+});
+
 test('chef scenario: with Dada Jason as ally, Julia wakes up as chef Julia and fights as her', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=bedroom&ally=dada_jason&nojourney=1');

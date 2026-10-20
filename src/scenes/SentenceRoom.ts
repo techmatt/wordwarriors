@@ -151,10 +151,13 @@ export class SentenceRoom extends Minigame {
     // Each room its own stable mess; calm, because she is reading in here.
     applyHouseMood(this, episode.villain, { seed: roomSeed(this.plan.room), floor: this.floor, calm: true });
     this.bag = new Bag(this);
+    this.readDot = makeButtonDot(this, 0, 0, 'green', 16).setDepth(DEPTH.hud).setVisible(false);
     // Back from the parent page (F9) after she found it, mid-celebration: the
     // room is done, so straight back to the hub (item 039: it replayed, and a
-    // second find fetched and recorded the word twice).
+    // second find fetched and recorded the word twice). No banner: the last
+    // run's boxes are gone with it.
     if (episode.house.done.includes(this.slot)) {
+      this.tokenBoxes = [];
       this.locked = true;
       this.time.delayedCall(600, () => backToHub(this, this.slot));
       return;
@@ -172,7 +175,6 @@ export class SentenceRoom extends Minigame {
     void voiceBank.ensure(wordLine(s.key));
 
     this.makeBanner();
-    this.readDot = makeButtonDot(this, 0, 0, 'green', 16).setDepth(DEPTH.hud).setVisible(false);
 
     // The three objects, asleep until the read-along reaches the key word.
     this.plan.objects.forEach((word, i) => {
