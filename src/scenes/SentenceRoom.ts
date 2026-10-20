@@ -252,10 +252,30 @@ export class SentenceRoom extends Minigame {
       return rows;
     };
     const rowWidth = (row: number[]) => row.reduce((n, i, k) => n + widths[i]! + (k ? gapBetween(row[k - 1]!, i) : 0), 0);
+    /**
+     * Two rows split where they come out most even, not greedily (item 039:
+     * greedy left the key word alone on the second row, SMAUG IS NO MATCH FOR
+     * THE / BUN). Any other count stays greedy.
+     */
+    const balanced = (greedy: number[][]): number[][] => {
+      if (greedy.length !== 2) return greedy;
+      const all = widths.map((_, i) => i);
+      let best = greedy;
+      let bestW = Math.max(...greedy.map(rowWidth));
+      for (let k = 1; k < all.length; k++) {
+        const split = [all.slice(0, k), all.slice(k)];
+        const w = Math.max(...split.map(rowWidth));
+        if (w * 1.1 <= room && w < bestW) {
+          best = split;
+          bestW = w;
+        }
+      }
+      return best;
+    };
     let rows: number[][];
     for (;;) {
       build();
-      rows = rowsOf();
+      rows = balanced(rowsOf());
       const fits = rows.every((r) => rowWidth(r) * 1.1 <= room);
       // One row down to 40 px; past that, more rows are better than smaller words.
       if ((rows.length === 1 && fits) || (size <= 40 && fits && rows.length <= 3) || size <= 20) break;
@@ -265,7 +285,7 @@ export class SentenceRoom extends Minigame {
     // The cream panel is about the middle half of the banner art, a little
     // below its centre (the pole and cords are above): a wrapped sentence gets
     // a taller banner, with its rows centred on the panel.
-    this.bannerH = rows.length > 1 ? Math.max(140, (rows.length * lineH) / 0.5) : 140;
+    this.bannerH = rows.length > 1 ? Math.max(140, (rows.length * lineH) / 0.44) : 140;
     const panelY = rows.length > 1 ? this.bannerH * 0.06 : 0;
     rows.forEach((row, r) => {
       let x = -rowWidth(row) / 2;

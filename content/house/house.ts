@@ -163,7 +163,8 @@ export const PLACES: PlaceSpec[] = [
     secret: room('mainframe_core', 'Mainframe Core', '💠', [0x0a0a2a, 0x3ae0ff], 'The secret mainframe core: a huge glowing crystal computer core in the middle of a round chamber, rings of cyan and magenta light, a treasure-hunt feeling (no letters or numbers anywhere)'),
   },
   {
-    id: 'rune_dojo', name: 'Rune Dojo', glyph: '🗡️', palette: [0x2a4aa0, 0xd8f0ff],
+    // Not a sword: on the journey map a sword is a battle (item 039).
+    id: 'rune_dojo', name: 'Rune Dojo', glyph: '🥋', palette: [0x2a4aa0, 0xd8f0ff],
     outdoor: true,
     look: "Dada Matt's rune dojo on a mountain top, seen side-on: a polished wooden training floor across the lower half, sword racks, glowing blue rune stones, paper lanterns, snowy peaks and clouds behind",
     rooms: [

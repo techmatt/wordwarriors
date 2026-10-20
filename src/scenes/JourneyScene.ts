@@ -56,8 +56,10 @@ export class JourneyScene extends Phaser.Scene {
       popIn(this, icon, 1, i * 40);
     });
 
-    // The villain waits at the battles, small and grumpy.
-    const vStop = stops.findIndex((s, i) => i > here && s.icon === '⚔️');
+    // The villain waits at the battle she is heading for, small and grumpy:
+    // this one, when this stop is a battle (item 039: it stood at the next one,
+    // and before battle 2 it was gone).
+    const vStop = stops.findIndex((s, i) => i >= here && s.icon === '⚔️');
     if (vStop >= 0) {
       const v = fitImage(this.add.image(pos[vStop]!.x + 30, pos[vStop]!.y - 50, castArt(villainSpec().id, true)).setOrigin(0.5, 1), 60, 75);
       this.tweens.add({ targets: v, y: v.y - 6, duration: 400, yoyo: true, repeat: -1 });

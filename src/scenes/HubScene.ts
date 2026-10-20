@@ -183,6 +183,9 @@ export class HubScene extends RoomScene {
     this.circle = this.addSpot('circle', x, y, [glow, img], null);
     this.circle.obj.setDepth(DEPTH.floor + 2);
     this.circle.enabled = false;
+    // Once its word is caught the circle is spent: it is not there to draw her
+    // away from the doors (item 039: it glowed on through part 2).
+    if (episode.house.taught) this.circle.obj.setVisible(false);
   }
 
   private buildDoors(): void {
@@ -371,6 +374,7 @@ export class HubScene extends RoomScene {
     const circle = this.circle!;
     circle.enabled = false;
     circle.correct = null;
+    this.tweens.add({ targets: circle.obj, alpha: 0, duration: 900, delay: 700, onComplete: () => circle.obj.setVisible(false) });
     sfxSummon();
     flash(this, 0xd8c8ff, 250);
     shockwave(this, circle.x, circle.y - 20, 0x9a7aff, 260, 600);

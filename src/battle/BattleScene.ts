@@ -983,6 +983,17 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     // "I am here": a white ring at her hero's feet, so she finds herself among the signs.
     const here = this.add.ellipse(me.x, me.y, 150, 52).setStrokeStyle(6, 0xffffff, 0.95).setDepth(DEPTH.prompt - 6);
     objs.push(here);
+    // The fight's effects fade back while it is frozen (item 039: Jörmungandr's
+    // coil, timed on the scene clock, circled over the pads for the whole choice).
+    const veiled: { o: Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.AlphaSingle; alpha: number }[] = [];
+    for (const o of this.children.list) {
+      const d = (o as unknown as { depth: number }).depth;
+      const a = o as unknown as Phaser.GameObjects.Components.AlphaSingle;
+      if (d >= DEPTH.fx && d < DEPTH.prompt - 10 && typeof a.alpha === 'number' && !objs.includes(o)) {
+        veiled.push({ o: o as never, alpha: a.alpha });
+        a.setAlpha(a.alpha * 0.2);
+      }
+    }
 
     let misses = 0;
     await new Promise<void>((resolve) => {
@@ -1003,6 +1014,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     });
 
     for (const o of objs) o.destroy();
+    for (const v of veiled) if (v.o.active) v.o.setAlpha(v.alpha);
     me.lean = 0;
     this.choice = null;
     this.simRate = 1;
@@ -1513,6 +1525,9 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     burst(this, v.x, v.y - 90, { count: 60, speed: 400, colors: [0xff9ad5, 0xffffff] });
     v.alive = false;
     v.root.setVisible(false);
+    // Good again: the corner label drops its EVIL too (item 039).
+    const goodName = CHARACTER_BY_ID[episode.villain]?.good.displayName;
+    if (goodName) this.hudLabels.at(-1)?.setText(goodName.toUpperCase());
     for (const h of this.heroes) h.invulnerable = false;
     // Good again, the villain says sorry (or asks to come next time) in its own
     // voice, in a bubble over its good self. The victory says another.

@@ -23,6 +23,10 @@ import { makeButtonDot } from '../ui/ButtonDot';
 import { Caption, type KeepOut } from '../ui/Caption';
 import { fitText } from '../ui/fitText';
 
+/** The recap's row of cards: along the bottom, a little smaller than full size. */
+const CARD_Y = 628;
+const CARD_SCALE = 0.82;
+
 export class VictoryScene extends Phaser.Scene {
   private controls!: Controls;
   private ready = false;
@@ -86,18 +90,23 @@ export class VictoryScene extends Phaser.Scene {
       },
     });
 
-    const cast = [episode.hero, ...(episode.ally ? [episode.ally] : [])];
-    const ids = [...cast, episode.villain];
-    const all = ids.map((id) => castArt(id));
-    all.forEach((key, i) => {
-      const x = GAME_WIDTH / 2 + (i - (all.length - 1) / 2) * 220;
+    // Everyone stands on a block of the podium in the art (item 039: they stood
+    // in front of it, and her dad had the top step): she has the top one, her
+    // ally the left, the villain, good again, the right.
+    const blocks = { top: { x: 640, y: 450 }, left: { x: 405, y: 516 }, right: { x: 878, y: 528 } };
+    const places = [
+      { id: episode.hero, at: blocks.top },
+      ...(episode.ally ? [{ id: episode.ally, at: blocks.left }] : []),
+      { id: episode.villain, at: blocks.right },
+    ];
+    places.forEach(({ id, at }, i) => {
       // Depth by feet, as in the rooms, so the speaker's glow sits under them.
       // Each as tall beside her as their size says (item 030: Scar just under her).
-      const h = 150 * castScale(ids[i]!);
-      const img = fitImage(this.add.image(x, 605, key).setOrigin(0.5, 1), h * 0.95, h).setDepth(605);
+      const h = 150 * castScale(id);
+      const img = fitImage(this.add.image(at.x, at.y, castArt(id)).setOrigin(0.5, 1), h * 0.95, h).setDepth(at.y);
       podium.push(img);
-      caption.track(ids[i]!, () => (img.active ? { x: img.x, y: 605 } : null));
-      this.tweens.add({ targets: img, y: 575, duration: 300 + i * 40, yoyo: true, repeat: -1, ease: 'Quad.easeOut' });
+      caption.track(id, () => (img.active ? { x: img.x, y: at.y } : null));
+      this.tweens.add({ targets: img, y: at.y - 30, duration: 300 + i * 40, yoyo: true, repeat: -1, ease: 'Quad.easeOut' });
       this.tweens.add({ targets: img, scaleY: img.scaleY * 0.9, scaleX: img.scaleX * 1.08, duration: 300 + i * 40, yoyo: true, repeat: -1, delay: 300 + i * 40 });
     });
 
@@ -129,14 +138,19 @@ export class VictoryScene extends Phaser.Scene {
    * Order is the order she read them (episode.read); words show upper case.
    */
   private async recap(gone: () => boolean): Promise<void> {
-    // Seven cards fit. A word machine visit reads four words, so when there
-    // are more than seven the counter word (what beat the villain) and what
-    // she read after it always stay, and the earliest words fill the rest.
-    const max = 7;
-    const at = episode.read.indexOf(counterWord());
-    const tail = episode.read.length > max && at >= 0 ? episode.read.slice(at, at + max) : [];
-    const words = [...episode.read.slice(0, max - tail.length), ...tail];
-    const gap = 150;
+    // Eight cards fit. A word machine visit reads four words, so when there
+    // are more than eight the gift word (her first move), the counter word
+    // (what beat the villain) and what she read after it always stay, and the
+    // earliest words fill the rest, in the order she read them (item 039: the
+    // cut used to drop the gift word and battle 1's moves).
+    const max = 8;
+    const read = episode.read;
+    const at = read.indexOf(counterWord());
+    const must = new Set([...(episode.spell ? [episode.spell] : []), ...(at >= 0 ? read.slice(at) : [])].filter((w) => read.includes(w)));
+    const pick = new Set([...must].slice(0, max));
+    for (const w of read) if (pick.size < max) pick.add(w);
+    const words = read.filter((w) => pick.has(w));
+    const gap = 140;
     for (const [i, w] of words.entries()) {
       if (gone()) return;
       const x = GAME_WIDTH / 2 + (i - (words.length - 1) / 2) * gap;
@@ -147,20 +161,22 @@ export class VictoryScene extends Phaser.Scene {
       if (pic) parts.push(fitImage(this.add.image(0, -22, pic), 100, 100));
       // Shrunk to the card if the word is long (a name); never cut off.
       parts.push(fitText(this.add.text(0, 58, w.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '38px', color: '#1a1030' }).setOrigin(0.5), 120, 50));
-      const c = this.add.container(x, 345, parts).setDepth(DEPTH.hud);
+      // Along the bottom, in front of the podium's feet: in the middle of the
+      // screen they hid the grown-ups' heads (item 039).
+      const c = this.add.container(x, CARD_Y, parts).setDepth(DEPTH.hud);
       this.cards.push(c);
       c.setScale(0);
-      this.tweens.add({ targets: c, scale: 1, duration: 300, ease: 'Back.easeOut' });
-      this.tweens.add({ targets: c, y: 335, duration: 700, yoyo: true, repeat: -1, delay: 300 + i * 90, ease: 'Sine.easeInOut' });
+      this.tweens.add({ targets: c, scale: CARD_SCALE, duration: 300, ease: 'Back.easeOut' });
+      this.tweens.add({ targets: c, y: CARD_Y - 8, duration: 700, yoyo: true, repeat: -1, delay: 300 + i * 90, ease: 'Sine.easeInOut' });
       sfxRight();
-      burst(this, x, 345, { count: 30, speed: 300 });
+      burst(this, x, CARD_Y, { count: 30, speed: 300 });
       // The card is the highlighter: lit gold and a little bigger while its word is said.
       card.setStrokeStyle(10, 0xffd23f);
-      this.tweens.add({ targets: c, scale: 1.12, duration: 200, delay: 300, ease: 'Back.easeOut' });
+      this.tweens.add({ targets: c, scale: CARD_SCALE * 1.12, duration: 200, delay: 300, ease: 'Back.easeOut' });
       await voiceBus.say(wordLine(w));
       if (gone()) return;
       card.setStrokeStyle(6, 0x5a4a8a);
-      this.tweens.add({ targets: c, scale: 1, duration: 200 });
+      this.tweens.add({ targets: c, scale: CARD_SCALE, duration: 200 });
     }
   }
 

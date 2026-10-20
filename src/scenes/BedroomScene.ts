@@ -229,9 +229,8 @@ export class BedroomScene extends RoomScene {
     this.round = 'bedroom:quest';
     await this.speak(questSetupLine());
 
-    await this.speak(wakeLine(w, 'door'));
-    this.newsDone = true;
-    this.round = 'bedroom:door';
+    // The door pops out as "Find the door!" starts, not after it (item 039:
+    // she was told to find a door that was not there yet).
     if (this.doorSpot) {
       this.showDoor();
       sfxSummon();
@@ -242,6 +241,9 @@ export class BedroomScene extends RoomScene {
       this.doorSpot.obj.addAt(light, 0);
       this.tweens.add({ targets: light, alpha: 0.95, scale: 2.6, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     }
+    await this.speak(wakeLine(w, 'door'));
+    this.newsDone = true;
+    this.round = 'bedroom:door';
     // The grown-ups step over beside the door, off the toys: the way out.
     // The waker just below the door's sill (right of the blocks), the helper
     // between the robot and the door: no toy and no part of the door covered.
