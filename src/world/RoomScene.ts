@@ -209,7 +209,12 @@ export abstract class RoomScene extends Phaser.Scene {
     const out: KeepOut[] = [];
     for (const s of this.spots) {
       if (!s.obj.active || !s.obj.visible) continue;
+      // At its full size: a thing popping in as a line starts measures nothing
+      // yet, and the box used to settle over it (item 039).
+      const { scaleX, scaleY } = s.obj;
+      s.obj.setScale(s.baseScale);
       const b = s.obj.getBounds();
+      s.obj.setScale(scaleX, scaleY);
       out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: s.enabled ? 3 : 1 });
     }
     if (this.player?.root.active) {
