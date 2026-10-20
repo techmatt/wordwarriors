@@ -1966,12 +1966,14 @@ export class BattleScene extends Phaser.Scene implements StageHost {
       icon.setScale(0);
       this.tweens.add({ targets: icon, scale: s, duration: 300, delay: 300 + i * 120, ease: 'Back.easeOut' });
     });
-    // Charge the Spell's runes (item 053), on a row of their own below, for the part they fire in.
+    // Charge the Spell's runes (item 053), for the part they fire in: a row under the
+    // heroes' bars, left of x 300, where no fight style's meter or PICK A MOVE! goes.
     const runes = episode.charged?.part === this.part ? episode.charged.sounds.filter((s) => RUNE_BY_SOUND[s]) : [];
     runes.forEach((sound, i) => {
-      const x = 370 + i * 46;
-      const chip = fitImage(this.add.image(x, 92, 'prop_rune_stone'), 42, 42).setDepth(DEPTH.hud + 1);
-      const t = this.add.text(x, 93, sound.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: sound.length > 1 ? '17px' : '24px', color: '#1a1030' }).setOrigin(0.5).setDepth(DEPTH.hud + 2);
+      const x = 46 + i * 34;
+      const y = 38 + this.heroes.length * 44 - 8;
+      const chip = fitImage(this.add.image(x, y, 'prop_rune_stone'), 30, 30).setDepth(DEPTH.hud + 1);
+      const t = this.add.text(x, y + 1, sound.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: sound.length > 1 ? '13px' : '18px', color: '#1a1030' }).setOrigin(0.5).setDepth(DEPTH.hud + 2);
       for (const o of [chip, t]) {
         const s = o.scale;
         o.setScale(0);
