@@ -56,6 +56,15 @@ three episodes back to back), plus a static review of the 037/038 surfaces.
 | 39 | Hub | The sword yard's door sign was ⚔️, a battle on the journey map. Now 🎯. | contact sheet |
 | 40 | Battle move choice | Pads were placed among the villain's minions (skeletons, dragon babies). They keep clear of every fighter now. | contact sheet |
 | 41 | Words | The stem rule for compounds first matched any long ending (KITCHEN kept KIT out, BATTLES BAT, CAPTAIN CAP). Only doubled endings and real second halves count. | `tests/unit/bughunt039.test.ts` |
+| 42 | Battle move choice | A dash's white afterimage (a 350 ms fade on the frozen clock: about nine seconds) stood over her ally as a white silhouette through the whole choice. Cleared as a choice opens. | contact sheet |
+| 43 | Battle move choice | BLAST ran over its sign's edges. Words shrink to their sign. | contact sheet |
+| 44 | Battle move choice | Her hero was drawn over the signs, and standing under one her head hid its last letter (TOP read TO). The signs are over her now; her white ring shows where she is. | contact sheet |
+| 45 | Hub | The door signs' emoji lost their tops (as the gift card's had). | contact sheet |
+| 46 | Rooms | The idle stick hint's arrows were under its nub, so it read as a dark ball. | contact sheet |
+| 47 | Word machine | The silly-word lines ("That makes... ZAT! Silly!") covered the tiles she picks from next. | contact sheet |
+| 48 | Entry hall | The idle re-prompt and the miss lines ("We need the...") covered the bottom row of pictures, the one she was stuck on among them. While she looks, the pictures weigh more than the board. | contact sheet |
+
+Pacing, measured at real speed (an instant-answering child, seed 101): about 5.9 minutes title to recap; the longest stretch she cannot act is the hub's story scene, 13 s; no silent stretch over 2 s. With wrong answers the entry hall's clue repeats make up to 60 s of talk before she can pick (M3).
 
 ### Matt's calls
 
@@ -65,9 +74,10 @@ Most important first; the hunt's pick is in **bold**.
 | --- | --- | --- | --- |
 | M1 | Battle move choice | The partner's prompt is captioned "USE ZAP!" with ZAP lit, while the pads show ZAP, DOT, WET: she can match letter shapes from the caption instead of reading the pads. | (a) keep; **(b) the caption hides the word ("USE ...!"), so she hears it and finds it written, the brief's design**; (c) no caption during the choice |
 | M2 | Every reading room, victory | Word confirmations, letter sounds and sentence prefixes are the `phonics` voice, Dada Matt's (his recordings will replace it), so his face pops up between the narrator's lines, also in episodes he is not in (Scar narrating, Jason waking): the speaker swaps mid-sentence. | (a) keep, Dada Matt is always the reading voice; **(b) his face only when he is in the episode, otherwise no face (the banner or card is lit anyway)**; (c) no face for phonics lines anywhere; (d) the narrator's own voice for word lines (about 4x the word audio) |
-| M3 | Hub, entry hall | Before she can move: the hub's story scene keeps her input locked about 33 s (three lines, the gift word, the circle line), the entry hall's ask and clue about 30 s at level 1 (measured at speed 5, in game time). Long for a four-year-old standing still. | (a) keep; **(b) let her walk during the story lines (green still waits), so the wait is play**; (c) trim the hub scenes to two lines |
-| M5 | Sentence banner | A sentence that does not fit one row at full size shrinks to 40 px before it may wrap ("one row down to 40 px"), so a long counter sentence (SMAUG IS NO MATCH FOR THE BUN) reads at about half size. | (a) keep; **(b) two rows at 56 px before one row at 40 px** |
-| M4 | Battle move choice | The pad signs stand over the fighters behind them: a tall ally (a dad) disappears behind a sign, and Julia can be drawn over her ally on a pad. | (a) keep, the signs are what she reads; **(b) the team steps back off the pad row while a choice is open** |
+| M3 | Hub, entry hall | She cannot act through the hub's story scene (13 s at real speed: three lines, the gift word, the circle line) or the entry hall's ask and clue (10 s); after two misses the hall's repeated clues come to about 60 s of talk. Long for a four-year-old standing still. | (a) keep; **(b) let her walk during story lines and clues (green still waits), so the wait is play**; (c) trim the hub scenes to two lines and give the full clue again only from the second miss |
+| M4 | Sentence banner | A sentence that does not fit one row at full size shrinks to 40 px before it may wrap ("one row down to 40 px"), so a long counter sentence (SMAUG IS NO MATCH FOR THE BUN) reads at about half size. | (a) keep; **(b) two rows at 56 px before one row at 40 px** |
+| M5 | Battle move choice | Standing still in a choice brings only "USE HUM!" again every 10 s; the rooms' stick hint is not there, and nothing shows that she may walk. | (a) keep; **(b) the stick hint beside her hero after 4 s, as in the rooms**; (c) also pulse the pads |
+| M6 | Battle move choice | The pad signs stand over the fighters behind them: a tall ally (a dad) disappears behind a sign. | (a) keep, the signs are what she reads; **(b) the team steps back off the pad row while a choice is open** |
 
 ### Won't fix
 
@@ -77,8 +87,8 @@ Most important first; the hunt's pick is in **bold**.
 | W2 | Battle | Comic words (BAM!, a move's name) overlap each other and pop in from tiny. | They are effects, gone in under a second; the checker ignores them in battle. |
 | W3 | Hub | While "Stand in the circle..." plays, the box covers the gift card. | The word has been said and caught; the circle is what she needs then (fix 1). |
 | W4 | Battle (spell clash) | A yellow striped diamond at Evil Bavmorda's feet all battle. | It is her broom (`mount: '🧹'` in the roster), as Segoe UI Emoji draws it. |
-| W5 | Entry hall | On a miss ("That's the CAT! We need the...") and the door line, the box sits over the bottom row of pictures. | Only while the line plays, and the letter board it keeps clear is what she matches next. |
-| W7 | Sentence room | The banner's rod runs under the bag's item row at the top left. | The items stay readable; moving either is an art and layout pass. |
-| W8 | Victory scene, battle | Bubbles over other characters' heads in the victory scene; the counter shout (NOT THE FOX!) touching the HP bar; a lightning bolt from just before a move choice lingering over a sign (the frozen clock slows its fade). | Each lasts a line or less; noted for a polish pass. |
+| W5 | Entry hall | On the door line the box can sit over the bottom row of pictures. | Only while the line plays, and she is going to the door, not the pictures. |
+| W6 | Art and glyphs | Julia half behind the cook-off stove's pot; the journey map's background dragon bigger than the villain marker; the kitchen door's 🍳 reads as a magnifying glass and the imp nursery's 👿 as "the bad guy's door"; the treehouse hub's doors hang behind the deck railing; the tug's water is a flat blue panel the reformed villain ends up standing in; the HOP card's picture is a faint sketch; SUPER FAN's wind is a hard-edged rectangle; "Look what I built, a little helper robot!" with no robot shown; the workshop art's own charging pad outshines the hub circle. | Art and content polish, each seen once; listed for an art pass, not bugs in the code. |
+| W7 | Sentence room, hub | The banner's rod runs under the bag's item row; the villain's decals (flames, coins) land on door signs and the bag row; the first bag item tucks under the backpack button. | The items stay readable; a layout pass. |
+| W8 | Victory scene, battle | Bubbles over other characters' heads in the victory scene; the counter shout (NOT THE FOX!) touching the HP bar; a lightning bolt from just before a move choice lingering over a sign (the frozen clock slows its fade); Smaug cut off at the left edge in race 2's choice; the spell clash hides its meter during a choice. | Each lasts a line or a choice; noted for a polish pass. |
 | W9 | Word machine | Standing on a used tile, she shows through it. | On purpose: the tile is over her so its letter is never hidden. |
-| W6 | Battle (cook-off), journey map | Julia half behind the stove's pot; the map's background dragon bigger than the villain marker. | Cosmetic, seen once each; noted for an art pass. |
