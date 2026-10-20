@@ -308,7 +308,11 @@ If 5184 is busy (another worktree's run) the suite fails at once rather than tes
 wrong code. To run on another port (a conductor item is given one), serve it yourself and
 point the suite at it: `npx vite --port <p> --strictPort` in the background, then
 `WW_BASE_URL=http://localhost:<p> npx playwright test --grep-invert @slow` (the fast
-lane's browser half; `npm run test:unit` for the rest).
+lane's browser half; `npm run test:unit` for the rest). From a Claude Code session, give
+that vite a background `timeout` longer than the run (the whole suite takes about 25
+minutes, the real-time episode alone 6): at the default 10 minutes the harness stops the
+server mid-suite and every later test fails (item 043). A playwright run loads its spec
+files once at its start, so a spec edited mid-run needs a rerun.
 
 **Screenshots for judging the UI by eye** (not tests; item 024):
 `SHOTS_TAG=<tag> npx playwright test --config tests/shots/shots.config.ts` plays the
