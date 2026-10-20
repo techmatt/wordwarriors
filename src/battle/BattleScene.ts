@@ -983,23 +983,28 @@ export class BattleScene extends Phaser.Scene implements StageHost {
       if (f === me || !f.active) continue;
       const h = Math.max(60, f.y - f.top);
       const half = f.bodyHalf;
-      const blocked = (x: number, y: number): boolean => {
+      /** How much of the body the signs would cover there, as a share of it; a ring underfoot or a crowded spot counts as covered. */
+      const covered = (x: number, y: number): number => {
         const body = new Phaser.Geom.Rectangle(x - half, y - h, half * 2, h);
-        return (
-          signs.some((s) => Phaser.Geom.Intersects.RectangleToRectangle(s, body)) ||
-          pads.some((p) => Math.abs(x - p.x) < 95 + half * 0.5 && Math.abs(y - p.y) < 60) ||
-          taken.some((t) => Math.abs(x - t.x) < 110 && Math.abs(y - t.y) < 50)
-        );
+        let area = 0;
+        for (const sg of signs) {
+          const o = Phaser.Geom.Rectangle.Intersection(sg, body);
+          area += Math.max(0, o.width) * Math.max(0, o.height);
+        }
+        const ring = pads.some((p) => Math.abs(x - p.x) < 95 + half * 0.5 && Math.abs(y - p.y) < 60);
+        const crowd = taken.some((t) => Math.abs(x - t.x) < 110 && Math.abs(y - t.y) < 50);
+        return area / (body.width * body.height) + (ring || crowd ? 1 : 0);
       };
+      // The nearest clear spot; when the pads fill the row (three signs across it),
+      // the least covered one, so as much of them shows as the floor allows.
       let to = { x: f.x, y: f.y };
-      if (blocked(f.x, f.y)) {
+      if (covered(f.x, f.y) > 0) {
         let best = Infinity;
         for (let x = ARENA_LEFT + 40; x <= ARENA_RIGHT - 40; x += 20) {
           for (let y = FLOOR_TOP + 20; y <= FLOOR_BOTTOM; y += 20) {
-            if (blocked(x, y)) continue;
-            const d = Math.hypot(x - f.x, (y - f.y) * 1.5);
-            if (d < best) {
-              best = d;
+            const cost = covered(x, y) * 10_000 + Math.hypot(x - f.x, (y - f.y) * 1.5);
+            if (cost < best) {
+              best = cost;
               to = { x, y };
             }
           }
