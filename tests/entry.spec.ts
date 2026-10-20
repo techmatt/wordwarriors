@@ -80,6 +80,8 @@ test('warm-up levels: 1 says the word first, 3 gives the sounds only; a first-ti
   expect((got.progress as unknown as { grabLevels: Record<string, number> }).grabLevels[w1]).toBe(2);
 
   const page3 = await page.context().newPage();
+  // A tab behind another gets no animation frames on the GPU channel, so the game never boots in it.
+  await page3.bringToFront();
   await seedProgress(page3, { version: 1, grabLevels: allAt(3) });
   await boot(page3, '?scene=grab&nojourney=1');
   const three = await clued(page3);

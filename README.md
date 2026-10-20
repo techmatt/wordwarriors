@@ -505,6 +505,14 @@ npm run art:pick -- <id> <n>
   (labelled `current`), then each candidate labelled with its `<n>`, cut exactly as the
   game would cut it and all drawn at one scale. `--sheet-only` rebuilds the sheet
   without drawing.
+- Several `art:alts` runs side by side on disjoint ids draw fine (item 040: four runs,
+  33 images in about 12 minutes). Run directly, the tool wants its subcommand first
+  (`npx tsx tools/art/alts.ts alts <ids…>`); without it the first id is taken as the
+  command and skipped. A run whose id list names a picture deleted meanwhile still
+  draws its candidates and fails only at the sheet: rebuild it with `--sheet-only`.
+- A `tsx` script in `scratch/` imports the main checkout's code, not a worktree's:
+  `scratch/` is a junction to the main checkout's. Import by `file:///` URL, or keep
+  the script in the worktree.
 - `art:pick -- <id> <n>` makes candidate `n` the game's art: it becomes
   `art-originals/<id>.png` and is cut into `public/art/<id>.png` by the same keying,
   trimming and palette shrink as `art:gen`. Commit the PNG afterwards. The first pick of

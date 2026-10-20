@@ -85,8 +85,10 @@ export class ParentScene extends Phaser.Scene {
     this.coverageView(30, 300);
     // The sentence game keeps progress per frame ("WE CAN USE THE ..."), so
     // the little words recur until they are sight words.
-    this.grid('Sentence frames', 'frames', FRAMES.map((f) => f.id), 880, 300, FRAMES.length, 300);
-    const framesEnd = 300 + 30 + FRAMES.length * 30 + 6;
+    // Two columns: thirteen frames in one ran off the page (item 040's counter frames).
+    const framesPerCol = Math.ceil(FRAMES.length / 2);
+    this.grid('Sentence frames', 'frames', FRAMES.map((f) => f.id), 880, 300, framesPerCol, 190);
+    const framesEnd = 300 + 30 + framesPerCol * 30 + 6;
     fitText(this.add.text(880, framesEnd, [
       `Solid frames skip the listening pass`,
       `(${SENTENCE_SOLID.tries}+ tries, last ${SENTENCE_SOLID.lastRight} right).`,
