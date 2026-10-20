@@ -307,14 +307,15 @@ empty never got past the boot's loading. Seen in item 034 when the machine was l
 in any run where `src/` changed underneath: the dev server reloads the page): the same
 tests passed when rerun alone. Rerun them alone before suspecting the code.
 If 5184 is busy (another worktree's run) the suite fails at once rather than testing the
-wrong code. To run on another port (a conductor item is given one), serve it yourself and
-point the suite at it: `npx vite --port <p> --strictPort` in the background, then
-`WW_BASE_URL=http://localhost:<p> npx playwright test --grep-invert @slow` (the fast
-lane's browser half; `npm run test:unit` for the rest). From a Claude Code session, give
-that vite a background `timeout` longer than the run (the whole suite takes about 25
-minutes, the real-time episode alone 6): at the default 10 minutes the harness stops the
-server mid-suite and every later test fails (item 043). A playwright run loads its spec
-files once at its start, so a spec edited mid-run needs a rerun.
+wrong code. With `CONDUCTOR_PORT` set (a conductor item is given one) the suite serves
+itself on that port instead (item 047), so a conductor run needs nothing started by hand:
+`npm test` or `npx playwright test <spec>` as usual. Do not serve vite yourself from a
+Claude Code session and point `WW_BASE_URL` at it: a backgrounded server is stopped after
+its background `timeout` (10 minutes by default), mid-suite, and every later test fails
+(item 043). Run the playwright process itself in the background instead; the server it
+starts lives exactly as long as the run. `WW_BASE_URL` stays for a server you keep
+running yourself (a `vite preview` of a build). A playwright run loads its spec files
+once at its start, so a spec edited mid-run needs a rerun.
 
 **Screenshots for judging the UI by eye** (not tests; item 024):
 `SHOTS_TAG=<tag> npx playwright test --config tests/shots/shots.config.ts` plays the
@@ -684,7 +685,8 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   Test pages add `?hooks=1`, which turns the test hooks on in a production build.
 - Until 2026-10-18 the suite reused whatever answered on 5174, so a run in a worktree
   silently tested the main checkout's dev server. It now always starts its own vite on
-  5184 (`TEST_PORT`) and never reuses one; with `WW_BASE_URL` set it starts none.
+  5184 (`TEST_PORT`; `CONDUCTOR_PORT` when set, item 047) and never reuses one; with
+  `WW_BASE_URL` set it starts none.
 - The full-episode test (`npm run test:slow`) takes about 6 minutes: every line is
   real speech and green is ignored until an instruction finishes. It is the one test at
   real time; everything else runs at clock speed 5 (3 before item 036 moved the tests to

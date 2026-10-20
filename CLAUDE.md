@@ -39,8 +39,8 @@ Blend Path, Word → Picture, Spell the Spell, the alarm and the camp retreat.
 
 **Stack** (decided 2026-10-18): TypeScript + Phaser ^3.90 (not 4) + Vite, npm.
 Playwright (workers 1) for browser tests, `node:test` via tsx for pure rules. Dev port
-**5174**; Playwright serves its own on **5184** and never reuses a server (both in
-`src/port.ts`).
+**5174**; Playwright serves its own on **5184** (`CONDUCTOR_PORT` when set) and never reuses a
+server (both in `src/port.ts`).
 The sibling game `C:\Code\seraphinas\seraphinas-secret` is read-only reference; the
 audit of what was taken from it is `wordwarriors-control/reports/wordwarriors__001_seraphina_audit.md`.
 
