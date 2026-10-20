@@ -62,7 +62,7 @@ export class ParentScene extends Phaser.Scene {
     const snap = progress.snapshot();
     // Every text here wraps or shrinks to its column (item 020): nothing runs off the page.
     fitText(this.add.text(30, 18, `Grown-ups: Julia's progress  ·  episodes finished: ${snap.episodes}`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '26px', color: '#222' }), GAME_WIDTH - 60, 34);
-    fitText(this.add.text(30, 54, `tries · first-try right (recent) · today.  Red = shaky (comes up more often), green = solid. Green / Space: ${this.page ? 'back to page 1' : 'every word (page 2)'}. Red button / Esc / F9: back. F8 twice: erase. ` (below Esc), anywhere: dad lock.`, {
+    fitText(this.add.text(30, 54, `tries · first-try right (recent) · today.  Red = shaky (comes up more often), green = solid. Green / Space: ${this.page ? 'back to page 1' : 'every word (page 2)'}. Red button / Esc / F9: back. F8 twice: erase. \` / ~ (below Esc), anywhere: dad lock.`, {
       fontFamily: 'Segoe UI, sans-serif',
       fontSize: '15px',
       color: '#555',
