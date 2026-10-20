@@ -40,6 +40,21 @@ const BUTTONS: Button[] = ['green', 'red', 'blue', 'yellow', 'lb', 'rb', 'lt', '
 
 const DIRECTIONS = new Set<Button>(['up', 'down', 'left', 'right']);
 
+/**
+ * Keys physically held, by key code, whatever scene is running (item 039).
+ * A scene's keys are made fresh and up; a key held across a scene change
+ * goes down in the new scene on the OS's next auto-repeat, which looked like
+ * a press: holding Space on the victory screen started an episode and then
+ * skipped its title. A new Controls seeds its first frame from this, so a
+ * key already held counts as held, never as pressed.
+ */
+const physicallyHeld = new Set<number>();
+if (typeof window !== 'undefined') {
+  window.addEventListener('keydown', (e) => physicallyHeld.add(e.keyCode), true);
+  window.addEventListener('keyup', (e) => physicallyHeld.delete(e.keyCode), true);
+  window.addEventListener('blur', () => physicallyHeld.clear());
+}
+
 /** Standard-mapping indices (Xbox 360 pad in Chrome). */
 const PAD_INDEX: Record<Button, number> = {
   green: 0,
@@ -96,6 +111,8 @@ export class Controls {
   private down = new Set<Button>();
   private edges = new Set<Button>();
   private seeded = false;
+  /** Key codes already held when this scene's controls started (see `physicallyHeld`). */
+  private readonly carried = new Set<number>();
   private padIndex = -1;
   /** Movement vector this frame, length 0..1. */
   readonly move = new Phaser.Math.Vector2();
@@ -133,6 +150,9 @@ export class Controls {
 
   /** Call first thing in the scene's update(). */
   update(): void {
+    // Keys held since before this scene stay held (never a press) until let go.
+    if (!this.seeded) for (const c of physicallyHeld) this.carried.add(c);
+    for (const c of this.carried) if (!physicallyHeld.has(c)) this.carried.delete(c);
     const pad = this.pad();
     const now = new Set<Button>();
     let sx = 0;
@@ -150,7 +170,7 @@ export class Controls {
     }
 
     for (const b of BUTTONS) {
-      for (const key of this.keys[b] ?? []) if (key.isDown) now.add(b);
+      for (const key of this.keys[b] ?? []) if (key.isDown || this.carried.has(key.keyCode)) now.add(b);
     }
     for (const b of virtualPad.held) now.add(b);
     const queued = virtualPad.queued.shift();

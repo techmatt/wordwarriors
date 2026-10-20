@@ -20,6 +20,7 @@ import { advance, resetEpisode } from '../episode/Episode';
 import { bob, burst, fitImage } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
+import { dadLock } from '../input/dadLock';
 import { hookState } from '../testHooks';
 import { makeButtonDot } from '../ui/ButtonDot';
 
@@ -137,7 +138,8 @@ export class TitleScene extends Phaser.Scene {
   override update(_t: number, delta: number): void {
     this.controls.update();
     if (this.leaving) return;
-    if (this.controls.held('lb') && this.controls.held('rb')) {
+    // Dad lock opens nothing, the grown-ups page included (item 039).
+    if (!dadLock.locked && this.controls.held('lb') && this.controls.held('rb')) {
       this.shoulderHeld += delta;
       if (this.shoulderHeld > 2000) this.scene.start('Parent', { back: 'Title' });
     } else this.shoulderHeld = 0;

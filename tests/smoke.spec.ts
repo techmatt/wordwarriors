@@ -213,6 +213,33 @@ test('dad lock: the backquote key stops every press but not walking, and again c
   expectNoErrors(errors);
 });
 
+test('a key held through a scene change is held, not pressed again by its auto-repeat (item 039)', async ({ page }) => {
+  const errors = collectErrors(page);
+  await boot(page, '?scene=parent');
+  await until(page, (s) => s.scene === 'Parent', 30_000, 'parent page');
+  const onPage2 = () =>
+    page.evaluate(() => (window as unknown as { __ww: { texts(): { text: string }[] } }).__ww.texts().some((t) => t.text.includes('back to page 1')));
+  // Space flips the page, and the page restarts its scene (fresh keys, up).
+  await page.waitForTimeout(300);
+  await page.keyboard.down('Space');
+  await expect.poll(onPage2, { timeout: 5_000 }).toBe(true);
+  // Held: the OS repeats keydown (repeat = true). Before the fix each one flipped the page again
+  // (an odd number of them, so the flips cannot cancel out).
+  for (let i = 0; i < 5; i++) {
+    await page.keyboard.down('Space');
+    await page.waitForTimeout(120);
+  }
+  expect(await onPage2()).toBe(true);
+  await page.keyboard.up('Space');
+  await page.waitForTimeout(150);
+  // A fresh press (held a frame or two, as a finger does) still flips it.
+  await page.keyboard.down('Space');
+  await page.waitForTimeout(100);
+  await page.keyboard.up('Space');
+  await expect.poll(onPage2, { timeout: 5_000 }).toBe(false);
+  expectNoErrors(errors);
+});
+
 test('F9 out of a sentence room and back: it restarts cleanly', SLOW, async ({ page }) => {
   test.setTimeout(180_000);
   const errors = collectErrors(page);
