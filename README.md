@@ -470,6 +470,10 @@ npm run art:pick -- <id> <n>
 - Item 032's weightlifter Dada Matt redraw (good, evil, face; T-shirt and dumbbell, the
   best promoted) is `scratch/art_alts_032_lifter.png` and `scratch/art_alts_032_lifter.json`.
   Each candidate took 35 to 60 s with the photo reference (2026-10-19).
+- Item 035's -UG pictures (MUG, RUG, JUG, and CUP redrawn as a teacup so it is not a
+  mug; the best promoted) are `scratch/art_alts_035_ug.png` and
+  `scratch/art_alts_035_ug.json`. A word picture took 30 to 50 s, about 0.3% of Codex's
+  5-hour window each (2026-10-19).
 - A new `prop_word_machine` means refitting `WINDOW` / `PANEL` in
   `src/scenes/WordMachine.ts`: fractions of the cut `public/art` PNG (centre and radius
   of the glass, centre and size of the blank panel), checked with machine.spec's

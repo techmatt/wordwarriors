@@ -314,7 +314,9 @@ another family; every word built is a battle item.
 
 - **Families come from the pictured words.** Any rime with two or more decodable CVC
   words in `words.ts` and an entry in `RIMES` is a family (today -AT, -AN, -AP, -EN, -ET,
-  -OG). A new pictured word (MUG, RUG) opens -UG once `RIMES` has `ug`.
+  -OG, -UG). A new pictured word (TOP) opens -OP once `RIMES` has `op`. A family word
+  is a full word: a `FETCH_ITEMS` battle item, a `PICTURES` brief and `pic_` art, and
+  look-alikes in `LOOKALIKES` (MUG beside CUP and JUG, item 035).
 - **A rime** is `{ say, silly }`: `say` is the edge-tts spelling of the rime alone (one
   syllable, about 0.7 s; "Ett" came back 1.4 s, read as letters, so -ET is "Eht"); its line
   is `rime_<rime>`, a placeholder for Matt's recording.
@@ -382,6 +384,11 @@ round, minus this episode's words). Within the bag, shaky words are drawn more o
 again soon. No key word repeats within
 an episode. The grown-ups page (F9) shows the round, words seen and left, and the
 shaky words. Erasing progress (F8 twice) empties the bag too.
+
+A word new to the game joins a round already under way (item 035, `topUpBag`): the
+store remembers the bag words it last saw (`bagKnown`), and any word since goes into the
+bag, so she meets MUG, RUG and JUG without waiting for the bag to empty. Progress saved
+before item 035 knew `LEGACY_BAG_WORDS`. Adding a word needs nothing more.
 
 ## Move words and the move bag (`src/rules/moves.ts`, ProgressStore `moveBag`)
 
