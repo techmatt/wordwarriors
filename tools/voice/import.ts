@@ -269,26 +269,39 @@ const hash8 = (b: Buffer) => createHash('sha256').update(b).digest('hex').slice(
 async function install(index: ClipIndex, id: string, mp3: Buffer, seconds: number, provider: string, recorded: string, lines: Map<string, LineSpec>): Promise<string> {
   const audio = `${id}.${hash8(mp3)}.mp3`;
   await writeFile(path.join(CLIP_DIR, audio), mp3);
-  const before = index.clips[id]?.audio ?? index.waiting?.[id]?.audio;
+  const before = [index.clips[id]?.audio, index.waiting?.[id]?.audio];
   const line = lines.get(id);
   if (line) {
     index.clips[id] = clipRecord(line, audio, seconds, provider);
     if (index.waiting) delete index.waiting[id];
   } else (index.waiting ??= {})[id] = { provider, recorded, audio, seconds, ingested: new Date().toISOString().slice(0, 10) };
-  if (before && before !== audio && !usedBy(index, before)) await rm(path.join(CLIP_DIR, before), { force: true });
+  await dropUnused(index, before);
   return line ? 'installed' : 'kept (no line yet)';
+}
+
+/** Delete these clip files unless something in the index still uses them. */
+async function dropUnused(index: ClipIndex, files: (string | undefined)[]): Promise<void> {
+  for (const f of new Set(files)) if (f && !usedBy(index, f)) await rm(path.join(CLIP_DIR, f), { force: true });
 }
 
 const usedBy = (index: ClipIndex, audio: string) => [...Object.values(index.clips), ...Object.values(index.waiting ?? {})].some((c) => c.audio === audio);
 
-/** Waiting clips whose line now exists move into `clips`. */
-function promoteWaiting(index: ClipIndex, lines: Map<string, LineSpec>): string[] {
+/**
+ * Waiting clips whose line now exists move into `clips`. A line that already
+ * has a clip (recorded since, by `voice:clip` or a later import) keeps it, and
+ * the older waiting take is dropped.
+ */
+async function promoteWaiting(index: ClipIndex, lines: Map<string, LineSpec>): Promise<string[]> {
   const moved: string[] = [];
   for (const [id, w] of Object.entries(index.waiting ?? {})) {
     const line = lines.get(id);
     if (!line) continue;
-    index.clips[id] = clipRecord(line, w.audio, w.seconds, w.provider);
     delete index.waiting![id];
+    if (index.clips[id]) {
+      await dropUnused(index, [w.audio]);
+      continue;
+    }
+    index.clips[id] = clipRecord(line, w.audio, w.seconds, w.provider);
     moved.push(id);
   }
   if (index.waiting && !Object.keys(index.waiting).length) delete index.waiting;
@@ -393,11 +406,14 @@ export async function voiceImport(argv: string[]): Promise<void> {
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
     if (a === '--dry') dry = true;
-    else if (a === '--take') only = argv[++i];
+    else if (a === '--take') {
+      only = argv[++i];
+      if (!only || only.startsWith('--')) throw new Error('voice:import: --take needs a card, e.g. --take g04 (or 4)');
+    }
     else if (!a.startsWith('--') && !zip) zip = a;
     else throw new Error(`voice:import: what is "${a}"?`);
   }
-  if (!zip || only === '') throw new Error('usage: npm run voice:import -- <zip> [--take gNN] [--dry]');
+  if (!zip) throw new Error('usage: npm run voice:import -- <zip> [--take gNN] [--dry]');
   if (only && /^\d+$/.test(only)) only = `g${only.padStart(2, '0')}`;
   const files = unzip(await readFile(zip));
   const mf = files.get('manifest.json');
@@ -406,7 +422,9 @@ export async function voiceImport(argv: string[]): Promise<void> {
   if (!FORMATS.includes(manifest.format)) throw new Error(`${zip} is format "${manifest.format}"; this importer reads ${FORMATS.join(', ')}`);
   const recorder = manifest.recorder?.trim() || (manifest.format === 'phonics-recorder/1' ? DEFAULT_RECORDER : null);
   if (!recorder) throw new Error(`${zip} names nobody as its recorder`);
-  const provider = recorder.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || 'matt';
+  // Who made it, as the clips' provider: any name's letters, never quietly someone else's.
+  const provider = recorder.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '_').replace(/^_|_$/g, '');
+  if (!provider) throw new Error(`${zip}: the recorder's name "${recorder}" has no letters in it`);
   const takes = manifest.takes.filter((t) => !only || t.group === only);
   if (!takes.length) throw new Error(only ? `${zip} has no take ${only} (it has ${manifest.takes.map((t) => t.group).join(', ')})` : `${zip} has no takes`);
 
@@ -442,7 +460,7 @@ export async function voiceImport(argv: string[]): Promise<void> {
     }
     report.push(`  card ${String(t.card).padStart(2)} ${t.name}: ${done.join(', ')}`);
   }
-  const moved = dry ? [] : promoteWaiting(index, lines);
+  const moved = dry ? [] : await promoteWaiting(index, lines);
   if (!dry) await writeFile(CLIP_INDEX, `${JSON.stringify(index, null, 2)}\n`);
   console.log(`voice:import ${path.basename(zip)} (recorded by ${recorder})${dry ? ', dry run: nothing installed' : ''}`);
   for (const r of report) console.log(r);

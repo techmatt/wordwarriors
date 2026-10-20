@@ -9,7 +9,7 @@
  * 0.5). Then run `npm run voice:build`.
  */
 
-import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { CLIP_DIR, CLIP_INDEX, isMain, readClipIndex, spokenFor, spokenHash, type ClipRecord } from './clips.js';
@@ -47,6 +47,12 @@ export async function addClip(argv: string[]): Promise<void> {
   await copyFile(file, path.join(CLIP_DIR, audio));
   const index = await readClipIndex();
   index.clips[id] = clipRecord(line, audio, Number(secs ?? 0.5));
+  // A recording made by hand replaces one voice:import kept waiting for this line.
+  const waiting = index.waiting?.[id];
+  if (waiting) {
+    delete index.waiting![id];
+    await rm(path.join(CLIP_DIR, waiting.audio), { force: true });
+  }
   await writeFile(CLIP_INDEX, `${JSON.stringify(index, null, 2)}\n`);
   console.log(`clip: ${id} ← ${file}. Now run npm run voice:build.`);
 }
