@@ -306,6 +306,9 @@ A test that times out "waiting for title" (or "parent page", "hub quiet") with `
 empty never got past the boot's loading. Seen in item 034 when the machine was loaded (and
 in any run where `src/` changed underneath: the dev server reloads the page): the same
 tests passed when rerun alone. Rerun them alone before suspecting the code.
+To force a key word, seed the progress blob with `bag: { left: [word], round: 1 }` **and**
+`bagKnown: BAG_WORDS` (`tests/kywords.spec.ts`): a blob without `bagKnown` counts as one
+from before item 035, and the store tops the bag up with every word added since (item 048).
 If 5184 is busy (another worktree's run) the suite fails at once rather than testing the
 wrong code. With `CONDUCTOR_PORT` set (a conductor item is given one) the suite serves
 itself on that port instead (item 047), so a conductor run needs nothing started by hand:
