@@ -319,7 +319,8 @@ export function composeLines(): LineSpec[] {
 if (isMain(import.meta.url)) {
   const lines = composeLines();
   const file = path.join('content', 'voice', 'lines.json');
-  await writeFile(file, `${JSON.stringify(lines, null, 1)}\n`);
+  // One line per object (item 047): ~10k lines rather than ~60k, a change is one diff line.
+  await writeFile(file, `[\n${lines.map((l) => JSON.stringify(l)).join(',\n')}\n]\n`);
   const groups = new Map<string, number>();
   for (const l of lines) groups.set(l.group, (groups.get(l.group) ?? 0) + 1);
   console.log(`voice:lines: ${lines.length} lines in ${groups.size} groups -> ${file}`);
