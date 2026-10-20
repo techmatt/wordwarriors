@@ -259,9 +259,11 @@ Two lanes (re-measured in item 036, 2026-10-19):
   word machine opening, the cast and fight-style overrides and the cast's own fight
   style, never last episode's victory scene, and the three text-fit checks.
   `npm run test:unit` runs the unit tests alone.
-- **Everything, before every commit: `npm run test:all`** (about 18 minutes). The fast lane plus
+- **Everything: `npm run test:all`** (about 18 minutes). The fast lane plus
   the slow lane, which `npm run test:slow` runs alone: every test tagged `@slow`, the one
-  whole episode at real time, and two drawn-cast episodes back to back.
+  whole episode at real time, and two drawn-cast episodes back to back. Not run by default
+  (Matt, 2026-10-20): before a commit, the fast lane plus the browser specs that cover what
+  changed; the full suite only when clearly needed, such as a change touching every scene.
 
 A new browser test that takes more than about 10 s gets `SLOW` (`{ tag: '@slow' }`, from
 `tests/harness.ts`) as its options; `--grep @slow` matches the tag, not the title. Before adding
@@ -578,6 +580,24 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   the thing to find.
 - Item 041's cyber briefs use `MATT_LIFTER`'s wording (fit, not bulky), not
   `MATT_FACE`'s bodybuilder.
+- Item 043's round (evil chef Jason without the moustache, cyber Matt's face card):
+  `scratch/art_alts_044.png` / `.json` (one run per brief, `scratch/art_alts_044_<brief>.*`),
+  briefs `scratch/044_evilchef_*.txt` and `scratch/044_cyberface_*.txt`. Matt picked
+  `char_dada_jason_evil` 1 and `face_dada_matt_cyber` 4 (promoted by item 046; a face
+  card's brief goes into `HAND`, since its derived prompt follows the full-body `look`).
+- Item 044's round (the dads' good forms recoloured: Jason forest green, builder and
+  lifter Matt blue): `scratch/art_alts_045_palettes.png` / `.json`, briefs
+  `scratch/045_<form>_<green|blue|trim>.txt`. Matt's picks were promoted by item 046,
+  whose face round is `scratch/art_alts_046_faces.png` / `.json`.
+- **Green family art must leave `NO_GREEN`.** Every family sprite is keyed as having no
+  green (`FAMILY_ART` in `content/art/prompts.ts`), so `keyGreen` treats any green lean as
+  screen showing through: a forest-green Jason comes out grey-teal and see-through. Item
+  046 carved Jason's three good forms and their face cards out (`GREEN_JASON`); his evil
+  forms stay keyed. A green candidate must be out of the set before `art:pick` and
+  before `art:alts` cuts the sheet (item 044's per-run sheets
+  `scratch/art_alts_045_palettes_jason_*.png` still show the washed-out cut). Without
+  the keying, light green screen caught inside the subject stays (between whisk wires,
+  in a glow): item 046's chef and warlock carry a little of it.
 - `npm test` empties `test-results/` as it starts (Playwright's output folder): a
   script or log kept there by a run beside it is deleted. Keep logs in `scratch/`.
 - A new `prop_word_machine` means refitting `WINDOW` / `PANEL` in

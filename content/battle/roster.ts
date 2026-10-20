@@ -387,7 +387,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A big-hearted builder dad with a giant hammer who builds walls and towers in a blink.',
     arena: 'castle',
     good: {
-      displayName: 'Dada Matt', trail: { tint: [0xc8643a, 0xff8c42], shape: 'square' }, look: 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, short light-brown hair thinning on top with a high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile, in chunky orange-and-steel builder armour with a tool belt, holding a huge friendly hammer',
+      displayName: 'Dada Matt', trail: { tint: [0xc8643a, 0xff8c42], shape: 'square' }, look: 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, short light-brown hair thinning on top with a high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile, in chunky deep-blue-and-steel builder armour (a rich royal-to-navy blue) with a tool belt, holding a huge friendly hammer. Bright, sturdy and friendly',
       palette: [0xff8c42, 0x4a4a5a], glyph: '🔨', style: 'twirl', speed: 200, size: 1.2, hp: 130,
       abilities: [
         ab('hammer_spin', 'Hammer Spin', 'spin', 5, 0xff8c42, 2, { word: 'pow', shout: true, words: ['top'] }),
@@ -457,7 +457,7 @@ export const ROSTER: CharacterSpec[] = [
     fight: 'cook_off',
     fightNudge: { fight: 'cook_off', chance: 0.7 },
     good: {
-      displayName: 'Dada Jason', trail: { tint: [0xffbe0b, 0xe63946], shape: 'star' }, look: 'a big, sturdy, round-faced chef dad: warm light-brown skin, very short dark curly hair receding at the front, black browline glasses, a short dark goatee beard flecked with grey, a tiny hoop earring, a big laughing smile, in crisp white chef\'s whites with a tall white chef\'s hat and a red neckerchief, holding a giant whisk',
+      displayName: 'Dada Jason', trail: { tint: [0xffbe0b, 0xe63946], shape: 'star' }, look: 'a big, sturdy, round-faced chef dad: warm light-brown skin, very short dark curly hair receding at the front, black browline glasses, a short dark goatee beard flecked with grey, a tiny hoop earring, a big laughing smile, in crisp white chef\'s whites trimmed in deep forest green (a dark, rich pine green, not lime or bright grass green): a forest-green collar, cuffs and buttons, a forest-green apron, a tall white chef\'s hat with a forest-green band and a forest-green neckerchief, holding a giant whisk. Bright, warm and friendly',
       palette: [0xe63946, 0xffbe0b], glyph: '🍳', style: 'hover', speed: 170, size: 1.2, hp: 120,
       abilities: [
         ab('pancake_flip', 'Pancake Flip', 'bolt', 2.4, 0xffbe0b, 1, { count: 3, glyph: '🥞', word: 'pop', words: ['pan', 'hop'] }),
@@ -476,7 +476,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Dada Jason', trail: { tint: [0xc8ff3a, 0x2a1a3a], shape: 'smoke' }, look: 'a mischievous villain chef: the same big round-faced dad with warm light-brown skin, very short dark curly hair, black browline glasses and a short dark goatee, plus a twirly villain moustache and a sly grin, in a black chef\'s jacket and a floppy dark-purple chef\'s hat, waving a giant dripping spatula',
+      displayName: 'Evil Dada Jason', trail: { tint: [0xc8ff3a, 0x2a1a3a], shape: 'smoke' }, look: 'a fun, mischievous villain chef for a children\'s game, NOT scary: the same big, sturdy, round-faced dad as the good chef, warm light-brown skin, very short dark curly hair receding at the front, his black browline glasses, his own short dark goatee beard flecked with grey, a tiny hoop earring and a sly, cheeky grin. NO moustache, NO whiskers, NO twirly or curled facial hair: his own face, just as in the photo. He wears a black chef\'s jacket with purple buttons and purple piping, a black apron and a floppy dark-purple chef\'s hat: a black-and-purple palette with glowing purple accents, no green anywhere. He holds up a giant ladle dripping with glowing purple sauce, a few purple drips splashing. A clear, simple silhouette that still reads at small sprite size',
       palette: [0x2a1a3a, 0xc8ff3a], glyph: '🥦', style: 'blink', speed: 180, size: 1.2, hp: 150,
       abilities: [
         ab('broccoli', 'Broccoli Barrage', 'bolt', 2.6, 0x4aa62a, 1, { count: 4, glyph: '🥦' }),
@@ -1293,7 +1293,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A huge-hearted weightlifter dad who lifts dumbbells, teddies and the whole team.',
     arena: 'meadow',
     good: {
-      displayName: 'Dada Matt', trail: { tint: [0xffd23f, 0xe63946], shape: 'star' }, look: `${MATT_LIFTER}, in a normal red short-sleeved gym T-shirt with a gold star on the chest (sleeves, not a singlet or a tank top), dark gym shorts, a black lifting belt, wristbands and red sneakers, holding one red-and-gold dumbbell of ordinary gym size low in one hand at his side`,
+      displayName: 'Dada Matt', trail: { tint: [0xffd23f, 0xe63946], shape: 'star' }, look: `${MATT_LIFTER}, in a normal deep-blue short-sleeved gym T-shirt (a rich royal-to-navy blue) with a gold star on the chest (sleeves, not a singlet or a tank top), dark gym shorts, a black lifting belt, wristbands and blue sneakers, holding one blue-and-gold dumbbell of ordinary gym size low in one hand at his side. Bright, sporty and friendly`,
       palette: [0xe63946, 0xffd23f], glyph: '💪', style: 'twirl', speed: 190, size: 1.25, hp: 140,
       abilities: [
         ab('dumbbell_spin', 'Dumbbell Spin', 'spin', 5, 0xffd23f, 2, { word: 'big', shout: true, words: ['top'] }),
@@ -1492,7 +1492,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A bold fantasy warrior dad in shining armour, with a round shield, a big friendly axe and the loudest battle cry in the land.',
     arena: 'castle',
     good: {
-      displayName: 'Dada Jason', trail: { tint: [0xffd23f, 0xe63946], shape: 'spark' }, look: `${JASON_FACE}, as a fantasy warrior: shining silver armour with gold trim, a red cape, a round red shield with a golden sun on it on one arm and a big friendly double-headed battle axe in the other hand`,
+      displayName: 'Dada Jason', trail: { tint: [0xffd23f, 0xe63946], shape: 'spark' }, look: `${JASON_FACE}, as a fantasy warrior: shining silver armour with gold trim and a deep forest-green tunic showing under it (a dark, rich pine green, not lime or bright grass green), a forest-green cape, a round silver shield with a golden sun on it on one arm and a big friendly double-headed battle axe with a forest-green wrapped handle in the other hand. Bright, heroic and friendly`,
       palette: [0xc8c8d8, 0xe63946], glyph: '🛡️', style: 'twirl', speed: 190, size: 1.25, hp: 140,
       abilities: [
         ab('axe_spin', 'Axe Spin', 'spin', 5, 0xc8c8d8, 2, { word: 'top', shout: true, words: ['zip'] }),
@@ -1559,7 +1559,7 @@ export const ROSTER: CharacterSpec[] = [
     arena: 'city',
     fight: 'spell_clash',
     good: {
-      displayName: 'Dada Jason', trail: { tint: [0xb04aff, 0xff9ad5], shape: 'smoke' }, look: `${JASON_FACE}, as a friendly warlock: long deep-purple robes with silver stars, a pointed hood pushed back, a tall wooden staff topped with a glowing violet crystal, little purple flames dancing round his free hand, and a tiny cheeky purple imp on his shoulder`,
+      displayName: 'Dada Jason', trail: { tint: [0xb04aff, 0xff9ad5], shape: 'smoke' }, look: `${JASON_FACE}, as a friendly warlock: long deep forest-green robes (a dark, rich pine green, not lime or bright grass green) with golden stars, a pointed hood pushed back, a tall wooden staff topped with a glowing golden-amber crystal, little warm golden flames dancing round his free hand, and a tiny cheeky purple imp on his shoulder. Bright, magical and friendly`,
       palette: [0x4a1a7a, 0xb04aff], glyph: '🔮', style: 'blink', speed: 170, size: 1.2, hp: 120,
       abilities: [
         ab('imp_party', 'Imp Party', 'summon', 12, 0xb04aff, 2, { minion: 'imp', count: 3, word: 'pop', words: ['hop'] }),

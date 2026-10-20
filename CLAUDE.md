@@ -91,7 +91,7 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `npm run dev` | Serve at http://localhost:5174 |
 | `npm run build` | Typecheck, then static `dist/` |
 | `npm test` | Fast lane, after every change (~1 min): unit tests, then the browser tests under 10 s each |
-| `npm run test:all` | Everything, before every commit (~18 min): fast lane + slow lane. Browser tests draw on the GPU; `WW_GPU=0` for software GL |
+| `npm run test:all` | Everything (~18 min): fast lane + slow lane. **Not by default** (Matt, 2026-10-20): before a commit run the fast lane plus the browser specs covering what changed (`npx playwright test <spec>`); the full suite only when clearly needed (a change touching every scene). Browser tests draw on the GPU; `WW_GPU=0` for software GL |
 | `npm run test:slow` | Slow lane alone: tests tagged `@slow`, the real-time full episode, the two-episode soak |
 | `npm run typecheck` | `src`, `tests`, `content`, `tools` |
 | `npm run voice:lines` | Regenerate `content/voice/lines.json` from roster + script + phonics |
