@@ -221,7 +221,9 @@ export class RaceStage extends BaseStage {
     if (f === this.host.villain) return f.init.size >= 2 ? 655 : 570;
     if (f === this.host.helper) return 455;
     const i = this.host.heroes.indexOf(f);
-    return [505, 625][i] ?? 560;
+    // Her lane in front: a grown-up ally behind her shows over her head, where
+    // in front he hid her (item 034).
+    return [625, 505][i] ?? 560;
   }
 
   /** Height off the floor: everybody is airborne; a giant only skims, so her head stays on screen. */

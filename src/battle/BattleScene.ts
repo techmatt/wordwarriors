@@ -866,10 +866,14 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     for (let x = ARENA_LEFT + 110; x <= ARENA_RIGHT - 110; x += 40) xs.push(x);
     // A contest keeps its pads on her side of the villain (item 034): a pad
     // past him had her fire her super from inside his coils, off her rope.
+    // When her side is too narrow for them all, anywhere but on him.
     if (this.show.anchored) {
       const v = this.villain;
+      const fits = (c: number[]) => c.length > 0 && Math.abs(c[c.length - 1]! - c[0]!) >= (n - 1) * PAD_GAP;
       const mine = xs.filter((x) => (me.x < v.x ? x < v.x - v.bodyHalf - 100 : x > v.x + v.bodyHalf + 100));
-      if (mine.length && Math.abs(mine[mine.length - 1]! - mine[0]!) >= (n - 1) * PAD_GAP) xs = mine;
+      const offHim = xs.filter((x) => Math.abs(x - v.x) > v.bodyHalf + 90);
+      if (fits(mine)) xs = mine;
+      else if (fits(offHim)) xs = offHim;
     }
     let best: { x: number; y: number }[] = [];
     let bestScore = -Infinity;
@@ -1596,6 +1600,9 @@ export class BattleScene extends Phaser.Scene implements StageHost {
         // across, at once, the bigger one giving less. Not while one is in
         // the air (a leap passes over), and her hero in a move choice is hers.
         if (body(a) && body(b)) {
+          // Her hero in a move choice is the cursor: she walks past anyone,
+          // and never shoves her ally ahead of her across the arena.
+          if (this.choice && (a === this.heroes[0] || b === this.heroes[0])) continue;
           // One passing over the other (a leap, a flyer high above) is not standing in it.
           if (Math.abs(a.lift - b.lift) > Math.min(a.height, b.height) * 0.6) continue;
           // Side by side at about one depth, or one standing behind the other
@@ -1609,7 +1616,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
           if (Math.abs(dx) >= need) continue;
           const dir = Math.abs(dx) > 0.5 ? Math.sign(dx) : a.team === 'hero' ? 1 : -1;
           const over = need - Math.abs(dx);
-          const pinned = (f: Fighter) => (f === this.heroes[0] && Boolean(this.choice)) || f === this.villain;
+          const pinned = (f: Fighter) => f === this.villain;
           let wa = b.init.size / (a.init.size + b.init.size);
           if (pinned(a)) wa = 0;
           else if (pinned(b)) wa = 1;
