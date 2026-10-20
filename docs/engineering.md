@@ -68,7 +68,16 @@ without a new measurement.
   asserts on it.
 - Serving a production build (`vite preview`) instead of the dev server saved nothing
   worth its 5 s build: smoke suite 2m12s against 2m24s. GPU (`channel: 'chromium'`,
-  `--use-angle=d3d11`) at speed 3 was 1m55s in one run and 3m05s in another; not adopted.
+  `--use-angle=d3d11`) at speed 3 was 1m55s in one run and 3m05s in another; not adopted
+  then. Re-measured 2026-10-19 (item 036): one fight style through both battles 53 s on
+  the GPU against 78 s in software, the fast lane 76 s against 82 s, so the GPU is now
+  the default (`WW_GPU=0` for software). Three workers with `--fully-parallel` on the
+  fast lane: 89 s against 82 s on one, so still one worker.
+- Battle fighters move by `min(0.05 s, frame delta) × time scale` (`BattleScene.update`),
+  while the director's clock (`now`) takes the frame delta unclamped. At software GL's
+  11-18 fps and clock speed 3 a frame can be well over 50 ms of game time, so fighters
+  can fall behind the director's timeline; at the GPU's ~56 fps the clamp rarely bites
+  (read from the code, not measured).
 - Fixed cost of any Playwright run here: about 9 s (vite start, browser launch).
 - The soak's heap line: 60 MB after both episodes at speed 1, 86 MB after both at speed 3
   (2026-10-18). Flat between episodes either way, which is what it watches; compare like

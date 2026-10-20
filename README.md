@@ -233,18 +233,27 @@ battle items; that is the default), `nojourney` (skip the map).
 
 ## Tests
 
-Two lanes:
+Two lanes (re-measured in item 036, 2026-10-19):
 
-- **Fast lane, after every change: `npm test`** (about 45 s). The unit tests, then the
-  quick browser tests: title, a solid sentence frame, the chef scenario, Spell the Spell.
-- **Everything, before every commit: `npm run test:all`** (about 12 minutes). The fast lane plus the
-  slow lane, which `npm run test:slow` runs alone (about 11½ minutes): the tests tagged `@slow`
-  (bedroom, hub part 1, a whole sentence room, F9 out of a room, battle part 2), one
-  whole episode at real time, and two episodes back to back.
+- **Fast lane, after every change: `npm test`** (about FASTT). The unit tests (3 s), then
+  the browser tests not tagged `@slow`, each under 10 s: title and the grown-ups page, a
+  solid sentence frame, Spell the Spell, the word machine opening, the cast and fight-style
+  overrides, never last episode's victory scene, and the three text-fit checks.
+- **Everything, before every commit: `npm run test:all`** (about ALLT). The fast lane plus
+  the slow lane, which `npm run test:slow` runs alone: every test tagged `@slow`, the one
+  whole episode at real time, and two drawn-cast episodes back to back.
+
+A new browser test that takes more than about 10 s gets `{ tag: '@slow' }`. Before adding
+a slow test, look for a walk that already goes there: item 036 took the full run from 45
+minutes back down by folding new checks into walks that were already played (a drawn
+cast's bedroom checks into the warm-up's seed sweep, the random-cast episodes into the
+soak and the word machine's episode, the brawl's checks into every whole episode).
 
 Every browser test plays the fixed default episode (`tests/harness.ts` adds
-`cast=default`) unless its URL asks for a draw (`seed=`): `tests/cast.spec.ts` plays
-drawn casts, and in the slow lane three whole random episodes (item 025). The same
+`cast=default`) unless its URL asks for a draw (`seed=`): drawn casts walk from the bedroom
+through the warm-up to the quest place in `tests/entry.spec.ts` (four seeds), and three
+whole random episodes play in the slow lane, two in `tests/soak.spec.ts` (seed 1 and the
+draw after it) and one in the word machine's episode (seed 19) (item 025). The same
 way, every browser test's rooms play the sentence game (the harness adds
 `games=sentence`) unless its URL asks for a game (`game=word_machine`) or the whole pool
 (`games=all`): `tests/machine.spec.ts` opens the word machine in the fast lane, and in
@@ -253,12 +262,20 @@ episode with it behind door a (item 026). `leaveBedroom` also plays the entry ha
 warm-up (item 033) unless given `{ grab: false }`, so a test that walks out of the bedroom
 lands in the hub as before; `tests/entry.spec.ts` (slow lane) plays the warm-up itself:
 each level's clue, three misses, F9 out and back, and four drawn casts from the bedroom.
+`playEpisode` checks each battle part's length (45-120 s of simulation time) for whatever
+fight style the cast drew; `tests/fights.spec.ts` sweeps the four contests through both
+battles (the brawl is the default episode's own).
 
 The browser tests run the page's clocks 3× fast (`WW_SPEED`, default 3; `tests/harness.ts`):
 timers, tweens, the game loop and voice playback together. The full-episode test alone
 runs at real time (speed 1), so real pacing stays covered. `WW_SPEED=1 npm test` runs
-the fast lane at real time. A new browser test that takes more than about 10 s gets
-`{ tag: '@slow' }`.
+the fast lane at real time.
+
+The browser draws with the GPU (Playwright's full `chromium` channel, `--use-angle=d3d11`;
+`playwright.config.ts`): battles run at ~56 fps instead of headless software GL's 11-18,
+and a fight-style test takes 53 s instead of 78 s. `WW_GPU=0` goes back to software GL (for
+a machine without a usable GPU, or to rule the GPU out when something looks wrong). One
+worker: three workers with `--fully-parallel` made the fast lane slower (89 s against 82 s).
 
 The suite starts its own server on port 5184 (`TEST_PORT` in `src/port.ts`), never the dev
 port 5174, so a test run in a worktree cannot attach to the main checkout's dev server.

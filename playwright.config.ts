@@ -32,13 +32,15 @@ export default defineConfig({
     },
   },
 
-  // WW_GPU=1 draws with the GPU (full Chromium, ANGLE on D3D11) instead of software GL.
+  // The GPU draws (full Chromium, ANGLE on D3D11) unless WW_GPU=0, which goes back to
+  // headless software GL. Measured 2026-10-19 (item 036): one fight style 53 s against
+  // 78 s, the fast lane 76 s against 82 s; the battle holds ~56 fps instead of 11-18.
   projects: [
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        ...(process.env.WW_GPU ? { channel: 'chromium', launchOptions: { args: ['--autoplay-policy=no-user-gesture-required', '--use-angle=d3d11', '--enable-gpu'] } } : {}),
+        ...(process.env.WW_GPU === '0' ? {} : { channel: 'chromium', launchOptions: { args: ['--autoplay-policy=no-user-gesture-required', '--use-angle=d3d11', '--enable-gpu'] } }),
       },
     },
   ],
