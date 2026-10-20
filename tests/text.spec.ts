@@ -73,6 +73,12 @@ test('the longest caption and the longest bubble stay on screen, even at the edg
   // Once the hub's own line is over and it is quiet: otherwise its next
   // line cuts the test's bubble off within a frame or two of popping in.
   await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:2:secret' && !s.room.locked && !s.voice.busy, 60_000, 'hub quiet');
+  // And kept quiet: dad lock holds off the room's idle re-prompt (15 s of game
+  // clock, 3 s of ours). That re-prompt is an instruction, and an instruction
+  // cuts a bark, one still decoding included (its claim is a bark since item
+  // 054): the first bark's clip is outside the loaded groups, so it is fetched,
+  // and the re-prompt landing then dropped it before it ever showed.
+  await page.evaluate(() => (window as unknown as { __ww: { dadLock(on?: boolean): boolean } }).__ww.dadLock(true));
   // Narrator lines are instructions (the ribbon); taunts and reformed lines are barks (bubbles).
   const instruction = longest((l) => l.id.startsWith('nar_') || l.id.startsWith('core_'));
   const lastWord = instruction.text.split(/\s+/).pop()!.toUpperCase();
