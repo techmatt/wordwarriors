@@ -260,7 +260,9 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   });
   // The Stretchy Bridge (item 054) reads several words too, planned the same
   // way; its far-bank pictures are shown, so no room's key word is one of them.
-  const bridges: (BridgePlan | null)[] = games.map((g) => (g.bridge ? planBridge(store, { avoid: [...avoid, ...moves], taken: machines.flatMap((m) => (m ? machineWords(m) : [])) }, rand) : null));
+  // Nor the villain's own named counter word (HAT for Evil Tiamat), so the attic can still draw it.
+  const namedCounter = CHARACTER_BY_ID[fill.villain]?.counter.word;
+  const bridges: (BridgePlan | null)[] = games.map((g) => (g.bridge ? planBridge(store, { avoid: [...avoid, ...moves, ...(namedCounter ? [namedCounter] : [])], taken: machines.flatMap((m) => (m ? machineWords(m) : [])) }, rand) : null));
   const taken = [...machines.flatMap((m) => (m ? machineWords(m) : [])), ...bridges.flatMap((b) => (b ? bridgeWords(b) : []))];
   const pictured = bridges.flatMap((b) => (b ? bridgeShown(b) : []));
 

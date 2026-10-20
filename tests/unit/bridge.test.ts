@@ -16,7 +16,7 @@ import { lookalikesOf } from '../../content/phonics/sentences';
 import { GAP_BY_PLACE, PLACES, SIDE_ROOMS, gapFor } from '../../content/house/house';
 import { narratorLine } from '../../content/voice/ids';
 import { NARRATOR_LINES } from '../../content/voice/script';
-import { PERSONS } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, PERSONS } from '../../content/battle/roster';
 import { holdPlan, holdSamples } from '../../src/audio/holdSound';
 import { BRIDGE } from '../../src/config';
 import { BRIDGE_WORDS, bridgeGate, bridgeLevel, bridgePictures, bridgeTier, bridgeWords, nextBridgeLevel, planBridge, sharedStart, whereDiffers } from '../../src/rules/bridge';
@@ -255,6 +255,9 @@ test('episodePlans with the bridge: its words are the fetches, its last the key;
     assert.deepEqual(b.fetches, words);
     assert.equal(b.key, words.at(-1));
     const shown = b.bridge.rounds.flatMap((r) => r.pictures);
+    // Evil Tiamat's named counter word (HAT) is the attic's to draw: never on the bridge.
+    const named = CHARACTER_BY_ID.tiamat!.counter.word;
+    assert.ok(!words.includes(named) && !shown.includes(named), `seed ${seed}: ${named} on the bridge`);
     for (const p of plans.slice(1)) {
       assert.ok(!words.includes(p.key), `seed ${seed}: ${p.slot} key ${p.key} is a bridge word`);
       assert.ok(!shown.includes(p.key), `seed ${seed}: ${p.slot} key ${p.key} is on the far bank`);

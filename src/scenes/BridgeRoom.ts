@@ -410,8 +410,9 @@ export class BridgeRoom extends Minigame {
     super.update(time, deltaMs);
     if (!this.stones.length) return;
     const p = this.player;
-    // The bridge is closed until it is ready, and while a pick plays out.
-    if ((this.phase === 'intro' || this.phase === 'check') && p.x > GAP.left - 40 && p.x < FAR_X) p.place(GAP.left - 40, p.y);
+    // The bridge is closed until it is ready, and while a pick plays out (she is on the far bank then).
+    if (this.phase === 'intro' && p.x > GAP.left - 40 && p.x < FAR_X) p.place(GAP.left - 40, p.y);
+    else if (this.phase === 'check' && p.x > GAP.left - 40 && p.x < FAR_X) p.place(FAR_X, p.y);
     // On the stones she keeps to their row.
     if (this.onBridge()) p.place(p.x, STONE_Y + FEET_ON_STONE);
     else if (p.y < this.floor.top) p.place(p.x, this.floor.top);
@@ -753,11 +754,19 @@ export class BridgeRoom extends Minigame {
     return false;
   }
 
-  /** An instruction unlocks input when it ends; mid-pick or mid-replay the room stays locked. */
+  /**
+   * An instruction unlocks input when it ends, unless the room has moved on
+   * meanwhile (a newer line or flow took over: that one unlocks when it is
+   * done), or a pick or a replay is playing out.
+   */
   protected override async narrate(...keys: string[]): Promise<void> {
+    const n = ++this.narrations;
+    const f = this.flow;
     await super.narrate(...keys);
-    if (this.phase === 'intro' || this.phase === 'check' || this.phase === 'replay' || this.phase === 'done') this.locked = true;
+    if (n !== this.narrations || f !== this.flow || this.phase === 'intro' || this.phase === 'check' || this.phase === 'replay' || this.phase === 'done') this.locked = true;
   }
+
+  private narrations = 0;
 
   protected override extraHooks(): Partial<RoomInfo> {
     const r = this.current;

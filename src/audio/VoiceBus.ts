@@ -103,11 +103,14 @@ class Bus {
    * not decoded yet) it still "plays", silent, so the flow is the same.
    */
   hold(id: string, mode: HoldMode, maxMs: number): HeldSound | null {
-    if (this.current?.u.priority === 'instruction' || this.queue.length) return null;
+    // Only a bark gives way: an instruction, or one still decoding (its claim), keeps the voice.
+    if ((this.current && this.current.u.priority !== 'bark') || this.queue.length) return null;
     if (this.current) this.cut();
     if (voiceBank.has(id) && !voiceBank.ready(id)) void voiceBank.ensure(id);
     const ctx = getAudioContext();
     const clip = ctx?.state === 'running' ? voiceBank.held(id, mode) : null;
+    // A held sound too short to hold (the cut found no steady part) plays once.
+    const loops = mode === 'hold' && (!clip || clip.loopStart !== null);
     let stopAudio = () => undefined as void;
     let ended: Promise<void> | null = null;
     if (ctx && clip) {
@@ -116,9 +119,9 @@ class Bus {
       gain.connect(ctx.destination);
       const source = ctx.createBufferSource();
       source.buffer = clip.buffer;
-      if (mode === 'hold' && clip.loopStart !== null) {
+      if (loops) {
         source.loop = true;
-        source.loopStart = clip.loopStart;
+        source.loopStart = clip.loopStart!;
         source.loopEnd = clip.buffer.duration;
       }
       source.connect(gain);
@@ -145,7 +148,7 @@ class Bus {
       speaker: line?.speaker ?? '',
       priority: 'instruction',
       startedAt,
-      duration: mode === 'hold' ? maxMs / 1000 : length,
+      duration: loops ? maxMs / 1000 : length,
       time: () => (performance.now() - startedAt) / 1000,
     };
     let released = false;
@@ -161,9 +164,9 @@ class Bus {
     setSfxLevel(0.45);
     setMusicDuck(0.35);
     for (const fn of this.listeners) fn(u);
-    // A once sound ends by itself; a held one at `maxMs` at the latest.
-    if (mode === 'once' && ended) void ended.then(release);
-    else setTimeout(release, mode === 'once' ? length * 1000 : maxMs);
+    // A once sound ends by itself (a backstop in case the audio never ends); a held one at `maxMs` at the latest.
+    if (!loops && ended) void ended.then(release);
+    setTimeout(release, loops ? maxMs : length * 1000 + (ended ? 1500 : 0));
     return { id, release, get playing() { return !released; } };
   }
 
@@ -186,7 +189,7 @@ class Bus {
 
   private async start(id: string, priority: Priority, anchor: unknown): Promise<boolean> {
     // Claim the voice before any await, so nothing else starts meanwhile.
-    const claim = { u: { id } as Utterance, playback: null, done: () => undefined };
+    const claim = { u: { id, priority } as Utterance, playback: null, done: () => undefined };
     this.current = claim;
     if (voiceBank.has(id) && !voiceBank.ready(id)) await voiceBank.ensure(id);
     // hush() or a newer line may have taken the voice while this one decoded;
