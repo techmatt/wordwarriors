@@ -42,8 +42,17 @@ const FRAME_S = 0.01;
 const QUIET_DB = 50;
 /** A clip whose loudest frame is under this is silence. */
 const SILENT_DB = -80;
-/** A frame whose zero-crossing rate is over this is noise (a hiss or a burst; SH's is about 0.3, a vowel's under 0.12). */
-const NOISY = 0.18;
+/**
+ * A frame whose zero-crossing rate (crossings per second) is over this is
+ * noise (a hiss or a burst; SH's is about 7,000, a vowel's under 3,000).
+ * Per second, not per sample: the browser decodes at the AudioContext's rate,
+ * usually 48 kHz, and per sample a 48 kHz hiss counts half what it does at
+ * 24 kHz (item 057: a recorded CH played 0.06 s of its 0.25 s at 48 kHz).
+ * The values are 054's per-sample ones at 24 kHz, times 24,000.
+ */
+const NOISY = 4320;
+/** A hum's crossings rising by this much (per second) is the schwa coming in (M N L into "uh"). */
+const RISE = 720;
 /** The steady part of a held sound stays within this of the loudest frame. */
 const HELD_DB = 12;
 /** A voiced stop (B D G) keeps this much of its onset. */
@@ -68,7 +77,7 @@ function frames(x: Float32Array, rate: number): { hop: number; f: Frame[] } {
       e += x[i]! * x[i]!;
       if (i > k && (x[i]! >= 0) !== (x[i - 1]! >= 0)) z++;
     }
-    f.push({ db: 10 * Math.log10(e / hop + 1e-18), zcr: z / (hop - 1) });
+    f.push({ db: 10 * Math.log10(e / hop + 1e-18), zcr: (z / (hop - 1)) * rate });
   }
   return { hop, f };
 }
@@ -150,7 +159,7 @@ export function holdPlan(x: Float32Array, rate: number, mode: HoldMode): HoldPla
     const head = f.slice(settle, settle + ms(0.06));
     const zcr = median(head.map((fr) => fr.zcr));
     const db = median(head.map((fr) => fr.db));
-    const rise = firstRun(f, settle + ms(0.04), off, 3, (fr) => fr.zcr > zcr + 0.03);
+    const rise = firstRun(f, settle + ms(0.04), off, 3, (fr) => fr.zcr > zcr + RISE);
     const jump = firstRun(f, settle, off, 2, (fr) => fr.db > db + 6);
     const fade = firstRun(f, settle, off, 2, (fr) => fr.db < Math.max(db, peak - HELD_DB) - HELD_DB);
     end = Math.min(...[rise, jump, fade, off + 1].filter((i) => i >= 0));

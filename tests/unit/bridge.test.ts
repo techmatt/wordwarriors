@@ -104,6 +104,40 @@ test('held sounds: the loop seam runs on smoothly, and the samples start from si
   assert.deepEqual(holdPlan(new Float32Array(4800), RATE, 'hold'), { mode: 'hold', start: 0, end: 4800 });
 });
 
+test('held sounds: the cut is the same at 48 kHz as at 24 kHz (the browser decodes at its own rate)', () => {
+  // The same sound at twice the rate: linear interpolation keeps its spectrum,
+  // as decoding a clip at 48 kHz does. Per-sample crossings would halve (item 057).
+  const up = (x: Float32Array) => Float32Array.from({ length: x.length * 2 }, (_, i) => (i % 2 ? (x[(i - 1) / 2]! + (x[(i + 1) / 2] ?? 0)) / 2 : x[i / 2]!));
+  const cases: [string, Float32Array, 'hold' | 'once'][] = [
+    ['S', clip(['quiet', 0.25], ['noise', 0.18, 0.08], ['tone', 0.3, 0.5, 160], ['quiet', 0.2]), 'hold'],
+    ['M', clip(['quiet', 0.25], ['tone', 0.16, 0.25, 110], ['tone', 0.25, 0.4, 900], ['quiet', 0.2]), 'hold'],
+    ['T', clip(['quiet', 0.25], ['noise', 0.07, 0.1], ['tone', 0.3, 0.5, 160], ['quiet', 0.2]), 'once'],
+    ['CH', clip(['quiet', 0.1], ['noise', 0.25, 0.2], ['quiet', 0.1]), 'once'],
+    ['X', clip(['quiet', 0.25], ['noise', 0.06, 0.1], ['tone', 0.25, 0.5, 160], ['noise', 0.2, 0.1], ['quiet', 0.2]), 'once'],
+  ];
+  // A recorded CH: a hiss of 1.5-5 kHz (about 6,000 crossings a second; 0.25 a
+  // sample at 24 kHz but 0.13 at 48 kHz, where 054 took it for a voiced stop).
+  const ch = (rate: number) => {
+    const tones = Array.from({ length: 40 }, (_, k) => [1500 + ((k * 7919) % 3500), (k * 2.39996) % (2 * Math.PI)] as const);
+    const n = Math.round(0.25 * rate);
+    const pad = new Array<number>(Math.round(0.1 * rate)).fill(0);
+    const hiss = Array.from({ length: n }, (_, i) => (0.04 * tones.reduce((s, [hz, ph]) => s + Math.sin((2 * Math.PI * hz * i) / rate + ph), 0)) / Math.sqrt(tones.length));
+    return Float32Array.from([...pad, ...hiss, ...pad]);
+  };
+  const a = holdPlan(ch(RATE), RATE, 'once');
+  const b = holdPlan(ch(RATE * 2), RATE * 2, 'once');
+  near(sec(a.end - a.start), 0.25);
+  near((b.end - b.start) / (RATE * 2), 0.25);
+  for (const [name, x, mode] of cases) {
+    const a = holdPlan(x, RATE, mode);
+    const b = holdPlan(up(x), RATE * 2, mode);
+    assert.equal(b.mode, a.mode, name);
+    near(b.start / (RATE * 2), sec(a.start), 0.011);
+    near(b.end / (RATE * 2), sec(a.end), 0.021);
+    assert.equal(Boolean(b.tail), Boolean(a.tail), `${name}'s tail`);
+  }
+});
+
 test('held sounds: the vowels, hums and hisses hold; stops, H, W, Y and X play once', () => {
   for (const s of [...'aeioumnlrvzsf', 'sh', 'th', 'long_e', 'long_o']) assert.ok(canHold(s), s);
   for (const s of [...'bcdgkptjhwyxq', 'ch', 'ck']) assert.ok(!canHold(s), s);
