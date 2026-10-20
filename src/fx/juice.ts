@@ -186,10 +186,20 @@ export function speedLines(scene: Phaser.Scene, cx: number, cy: number, color = 
 }
 
 export function flash(scene: Phaser.Scene, color = 0xffffff, ms = 140): void {
+  // Never more than about two full-screen flashes a second, whatever asks
+  // (item 039: a busy battle asked for twelve in one second; three is the
+  // photosensitivity line, WCAG 2.3.1). The rest are simply skipped.
+  const now = performance.now();
+  if (now - lastFlash < FLASH_GAP_MS) return;
+  lastFlash = now;
   fxStats.flashes++;
   const c = Phaser.Display.Color.IntegerToRGB(color);
   scene.cameras.main.flash(ms, c.r, c.g, c.b);
 }
+
+/** The least time between two full-screen flashes (ms). */
+export const FLASH_GAP_MS = 450;
+let lastFlash = -Infinity;
 
 /** Time scale shared by a scene's simulation, tweens and particles. */
 const scales = new WeakMap<Phaser.Scene, { hitstopUntil: number; slowUntil: number; slow: number }>();

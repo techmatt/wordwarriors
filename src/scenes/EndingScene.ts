@@ -56,6 +56,9 @@ export class EndingScene extends Phaser.Scene {
     if (!episode.ending) {
       episode.ending = forced && ENDING_BY_ID[forced] ? forced : pickEnding(episode, progress.lastEnding());
       progress.endingPlayed(episode.ending);
+      // The episode is won here: counted now, not when green leaves the
+      // victory screen (item 039: closing the tab there never counted it).
+      progress.episodeDone();
     }
     const e = ENDING_BY_ID[episode.ending]!;
     const people = endingPeople(episode);

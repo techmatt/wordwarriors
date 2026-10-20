@@ -103,7 +103,8 @@ export class Caption {
     this.box = scene.add.graphics();
     this.slab = scene.add.graphics();
     this.text = scene.add.container(0, 0);
-    this.root = scene.add.container(0, 0, [this.box, this.slab, this.text]).setDepth(DEPTH.hud).setVisible(false);
+    // Over the rest of the HUD: a top box sat under the bag's row of items, which covered the face (item 039).
+    this.root = scene.add.container(0, 0, [this.box, this.slab, this.text]).setDepth(DEPTH.hud + 5).setVisible(false);
     this.off = voiceBus.on((u) => this.show(u));
     // Phaser keeps a scene's event emitter across restarts, so the per-frame
     // listener must go when the scene shuts down: an old Caption ticking on

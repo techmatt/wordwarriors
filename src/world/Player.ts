@@ -84,12 +84,13 @@ export class Player {
       this.walkT += dt * 11;
       // Walking bounce: hop and a slight squash at the bottom of each step.
       const hop = Math.abs(Math.sin(this.walkT));
-      this.sprite.y = -hop * 10;
-      this.sprite.setScale(this.baseScale * this.facing * (1 + (1 - hop) * 0.05), this.baseScale * (1 - (1 - hop) * 0.05));
+      this.sprite.y = -hop * 10 + this.hopY;
+      // A wobble (a wrong pick on the move) has the scale while it plays.
+      if (!this.wobbling) this.sprite.setScale(this.baseScale * this.facing * (1 + (1 - hop) * 0.05), this.baseScale * (1 - (1 - hop) * 0.05));
     } else {
       if (was) this.land();
       this.walkT += dt * 2.5;
-      this.sprite.y = -Math.abs(Math.sin(this.walkT)) * 3;
+      this.sprite.y = -Math.abs(Math.sin(this.walkT)) * 3 + this.hopY;
     }
     // Draw order follows the feet.
     this.root.setDepth(this.root.y);
@@ -108,13 +109,25 @@ export class Player {
 
   /** The press: a happy little hop. */
   hop(): void {
-    this.scene.tweens.add({ targets: this.sprite, y: -40, duration: 140, yoyo: true, ease: 'Quad.easeOut' });
+    // Its own offset: update() sets the sprite's y every frame (the walk and
+    // idle bob), which wrote over a tween on y, so the hop never showed (item 039).
+    this.scene.tweens.killTweensOf(this.hopper);
+    this.hopper.y = 0;
+    this.scene.tweens.add({ targets: this.hopper, y: -40, duration: 140, yoyo: true, ease: 'Quad.easeOut' });
+  }
+
+  private readonly hopper = { y: 0 };
+  private wobbling = false;
+
+  private get hopY(): number {
+    return this.hopper.y;
   }
 
   /** A no-penalty bump: sheepish wobble. */
   wobble(): void {
     // A sheepish squash-wobble (no rotation: sprites only bob and squash).
     const b = this.baseScale;
+    this.wobbling = true;
     this.scene.tweens.add({
       targets: this.sprite,
       scaleX: { from: b * this.facing * 1.15, to: b * this.facing * 0.9 },
@@ -122,7 +135,10 @@ export class Player {
       duration: 90,
       yoyo: true,
       repeat: 3,
-      onComplete: () => this.sprite.setScale(b * this.facing, b),
+      onComplete: () => {
+        this.wobbling = false;
+        this.sprite.setScale(b * this.facing, b);
+      },
     });
   }
 }

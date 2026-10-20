@@ -99,8 +99,10 @@ export interface EpisodeState {
   moves: MovePlan | null;
   /**
    * The house: which room holds which sentence, and which rooms are done.
-   * `misses`: wrong tries on a round not yet answered, by `<slot>:<word>`, so a
-   * trip to the parent page (F9) and back does not turn a miss into a first try (item 039).
+   * `misses`: wrong tries on a round not yet answered, by `<slot>:<word>` (a
+   * room) or `move:<part>:<n>` (a battle's move choice; `...:done` once it is
+   * recorded), so a trip to the parent page (F9) and back neither turns a miss
+   * into a first try nor records a choice twice (item 039).
    */
   house: { plan: RoomPlan[] | null; done: Slot[]; taught: boolean; misses?: Record<string, number> };
   /**
@@ -563,7 +565,9 @@ export function startStep(scene: Phaser.Scene): void {
   const step = currentStep();
   voiceBus.hush();
   const key = step.kind === 'prep' ? prepScene(step.game) : SCENE_FOR[step.kind];
-  void voiceBank.loadGroups(episodeGroups());
+  // Not for the title: it draws a fresh cast as it opens, and its one line is
+  // core (item 039: it decoded the old cast's narrator, ~500 clips, for nothing).
+  if (step.kind !== 'title') void voiceBank.loadGroups(episodeGroups());
   scene.scene.start(key, { step });
 }
 
@@ -586,7 +590,7 @@ export function advance(scene: Phaser.Scene): void {
   if (currentStep().kind === 'title' && episode.villainWasRandom) progress.villainMet(personOf(episode.villain));
   episode.stepIndex++;
   if (episode.stepIndex >= steps().length) {
-    progress.episodeDone();
+    // progress.episodeDone() ran as the victory scene opened (EndingScene).
     episodeCount++;
     resetEpisode();
   }

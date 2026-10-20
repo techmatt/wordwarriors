@@ -94,7 +94,7 @@ export interface StorageLike {
 
 export class ProgressStore {
   private data: ProgressData;
-  private readonly session: ProgressData = empty();
+  private session: ProgressData = empty();
 
   constructor(
     private readonly storage: StorageLike | null = typeof localStorage === 'undefined' ? null : localStorage,
@@ -282,6 +282,8 @@ export class ProgressStore {
   /** Dev/tests only. */
   reset(): void {
     this.data = empty();
+    // Today's column too: an erase that left it showed counts for words with none (item 039).
+    this.session = empty();
     this.save();
   }
 }

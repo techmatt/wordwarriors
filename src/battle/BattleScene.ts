@@ -355,6 +355,9 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     // Nothing left over (a sword ring flung late) dents the villain while her
     // ultimate charges: that is her big moment, and a white hit flash spoils it.
     if (this.phase === 'ultimate' && target === this.villain) return;
+    // Nothing touches her hero while she walks to a pad: a trap or a slowed
+    // bolt turned her into a pig or an ice block mid-choice (item 039).
+    if (this.choice && target === this.heroes[0]) return;
     if (target.invulnerable || target.shieldUntil > this.now) {
       burst(this, target.cx, target.cy, { count: 12, speed: 200, colors: [0xffffff, color] });
       if (target.isMain && Math.random() < 0.3) floatText(this, target.cx, target.top, 'BLOCK!', '#7ad9ff', 30, HIT_FLOAT);
@@ -947,6 +950,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     if (!planned || !owner || planned.words.length < 2) return;
     const { words, right } = planned;
     this.choicesOpened++;
+    // Which choice this is, for what survives a trip to the grown-ups page (F9 restarts the battle).
+    const choiceKey = `move:${this.part}:${this.choicesOpened}`;
 
     this.phase = 'choice';
     this.simRate = 0.04;
@@ -997,7 +1002,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
 
     let misses = 0;
     await new Promise<void>((resolve) => {
-      const c: Choice = { words, right, objs, pads, near: null, dot, here, open: false, promptedAt: 0, idle: 0, at, misses: 0, resolve: () => {
+      const c: Choice = { words, right, objs, pads, near: null, dot, here, open: false, promptedAt: 0, idle: 0, at, misses: episode.house.misses?.[choiceKey] ?? 0, resolve: () => {
         misses = c.misses;
         resolve();
       } };
@@ -1020,12 +1025,18 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     this.simRate = 1;
     this.stats.movePicks++;
     // Only the right pad ever closes the choice; the misses are recorded, never punished.
-    progress.record('words', right, misses === 0, misses);
-    // Her move bag spends a word only when she picks it right first time; a missed one stays in.
-    if (misses === 0) progress.takeFromBag(right, 'moves');
-    else progress.returnToBag(right, 'moves');
-    // The wrong pads have had their turn: others come up next time (item 038).
-    for (const w of words) if (w !== right) progress.takeFromBag(w, 'pads');
+    // Once per choice per episode: back from F9 the battle replays, and a
+    // choice already answered must not be recorded or bagged twice (item 039).
+    const answered = (episode.house.misses ??= {});
+    if (answered[`${choiceKey}:done`] === undefined) {
+      answered[`${choiceKey}:done`] = misses;
+      progress.record('words', right, misses === 0, misses);
+      // Her move bag spends a word only when she picks it right first time; a missed one stays in.
+      if (misses === 0) progress.takeFromBag(right, 'moves');
+      else progress.returnToBag(right, 'moves');
+      // The wrong pads have had their turn: others come up next time (item 038).
+      for (const w of words) if (w !== right) progress.takeFromBag(w, 'pads');
+    }
     // The victory recap reads episode.read: a battle word she picked right is one she read.
     if (!episode.read.includes(right)) episode.read.push(right);
     const { f, ab } = owner;
@@ -1072,6 +1083,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
    */
   private async missChoice(c: Choice, word: string): Promise<void> {
     c.misses++;
+    (episode.house.misses ??= {})[`move:${this.part}:${this.choicesOpened}`] = c.misses;
     sfxWrong();
     const pad = c.pads.find((p) => p.word === word);
     if (pad) pad.wiggleAt = performance.now();

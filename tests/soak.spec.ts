@@ -45,7 +45,8 @@ test('two episodes back to back @slow', async ({ page }) => {
   await page.screenshot({ path: `tests/screenshots/025_seed1_second_victory_${second.end.episode.villain}.png` });
 
   const end = await state(page);
-  expect(end.progress.episodes).toBe(1);
+  // Counted as each victory scene opens (item 039): both, the second before its green.
+  expect(end.progress.episodes).toBe(2);
   const heap2 = await page.evaluate(() => (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0);
   console.log(`heap after episode 1: ${(heap1 / 1e6).toFixed(0)} MB, after episode 2: ${(heap2 / 1e6).toFixed(0)} MB`);
   expectNoErrors(errors);

@@ -23,6 +23,7 @@ import { Controls } from '../input/Controls';
 import { dadLock } from '../input/dadLock';
 import { hookState } from '../testHooks';
 import { makeButtonDot } from '../ui/ButtonDot';
+import { Caption } from '../ui/Caption';
 
 export class TitleScene extends Phaser.Scene {
   private controls!: Controls;
@@ -89,6 +90,8 @@ export class TitleScene extends Phaser.Scene {
 
     // The welcome can only be heard once audio is unlocked, i.e. coming back
     // here after an episode; on a cold start the first press is the unlock.
+    // Captioned like every instruction (item 039: it was the one line with no box).
+    new Caption(this);
     if (getAudioContext()?.state === 'running') this.time.delayedCall(700, () => void voiceBus.say('core_title'));
 
     // Whether a gamepad press counts as a user gesture for audio in Chrome is
