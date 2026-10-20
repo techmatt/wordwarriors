@@ -92,7 +92,7 @@ export const ENDINGS: EndingSpec[] = [
     open: { text: 'Picnic time! Grab a sandwich!', say: 'Picnic time, grab a sandwich!' },
     cheer: { text: 'Yay! Come and sit on the blanket!', say: 'Yay, come and sit on the blanket!' },
     close: { text: 'Sharing is the best!' },
-    fit: { form: 'dada_matt_cyber', text: 'My drone brought the sandwiches!' },
+    fit: { form: 'dada_matt_cyber', text: 'My power glove made the sandwiches!' },
     villains: ['rilla', 'dada_matt_cyber'],
   },
   {
