@@ -10,7 +10,7 @@
  * they keep changing; the counter word is drawn too, not fixed per villain.
  *
  * Voice: each frame × name fill has one "prefix" line (the sentence up to the
- * key word, trailing off: "EvilRilla is scared of...") read by the phonics
+ * key word, trailing off: "Rilla is scared of...") read by the phonics
  * speaker (Matt's reading voice, replaceable by his recordings). The key word
  * is its own `word_<x>` line, so the whole sentence after an answer is the
  * prefix then the word, and no line ever contains a key word before she
@@ -150,10 +150,13 @@ export function prefixLineId(frameId: string, name: string | null): string {
   return name ? `sent_${frameId}_${name}` : `sent_${frameId}`;
 }
 
-/** A name as shown in a sentence: the villain's evil name, the helper's or hero's good name. */
-export function nameFor(slot: NameSlot, id: string): { show: string; say: string } {
-  const c = CHARACTER_BY_ID[id]!;
-  const f = slot === 'villain' ? c.evil : c.good;
+/**
+ * A name as shown in a sentence: the bare character name in every slot (item
+ * 038). The villain is still drawn evil; EVIL only made a long sentence longer
+ * (JORMUNGANDR RUNS FROM THE FAN, not EVIL JORMUNGANDR ...).
+ */
+export function nameFor(_slot: NameSlot, id: string): { show: string; say: string } {
+  const f = CHARACTER_BY_ID[id]!.good;
   return { show: f.displayName, say: f.sayName ?? f.displayName };
 }
 
@@ -163,11 +166,11 @@ export function sentence(frameId: string, fill: Fill, key: string): Sentence {
   const text = frame.text
     .replace(/\{(villain|helper|hero)\}/, name ? nameFor(name.slot, name.id).show.toUpperCase() : '')
     .replace('{x}', key.toUpperCase());
-  // A form reads and sounds like its person (EVIL DADA MATT for every Matt), so it shares the person's prefix line.
+  // A form reads and sounds like its person (DADA MATT for every Matt), so it shares the person's prefix line.
   return { frame: frameId, tokens: text.split(/\s+/).filter(Boolean), key, prefixLine: prefixLineId(frameId, name ? personOf(name.id) : null) };
 }
 
-/** A sentence token's own word line (`word_evilrilla`, `word_the`). */
+/** A sentence token's own word line (`word_rilla`, `word_the`). */
 export function tokenWord(token: string): string {
   return token.toLowerCase().replace(/[^a-z]/g, '');
 }

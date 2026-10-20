@@ -14,7 +14,7 @@
  * No mid-line "!" or "." where a `say` with a comma would do, because edge-tts
  * leaves about 0.9 s of dead air after one.
  *
- * Placeholders: {hero} the hero's name, {villain} the villain's display name,
+ * Placeholders: {hero} the hero's name, {villain} the villain's name,
  * {item} the counter item's name, {word} a move word, {helper} a helper's
  * name, {threat} the villain's house threat (wake lines only).
  */
@@ -126,7 +126,11 @@ export const NARRATOR_LINES: Template[] = [
 /** Composed per narrator × hero. */
 export const HERO_LINES: Template[] = [{ key: 'alarm_hero', text: 'Bad news, {hero}!' }];
 
-/** Composed per narrator × villain. {item} is the counter item's name. */
+/**
+ * Composed per narrator × villain. {item} is the counter item's name. {villain}
+ * is the bare name ("Only the Magic Hat can stop Tiamat!", item 038), except in
+ * `alarm_villain`, which announces the villain, as the bedroom's `bad` does.
+ */
 export const VILLAIN_LINES: Template[] = [
   { key: 'alarm_villain', text: '{villain} is coming!' },
   { key: 'need_item', text: 'Only the {item} can stop {villain}!' },

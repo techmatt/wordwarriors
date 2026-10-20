@@ -59,6 +59,18 @@ test('sentence() is upper case, key word last, with the right prefix line', () =
   assert.deepEqual(sentence('runs_from_the', FILL, 'bus').tokens.slice(-4), ['RUNS', 'FROM', 'THE', 'BUS']);
 });
 
+test('a villain is named bare in sentences, never EVIL (item 038)', () => {
+  for (const frame of FRAMES.filter((f) => slotOf(f) === 'villain')) {
+    for (const c of ROSTER) {
+      const s = sentence(frame.id, { ...FILL, villain: c.id }, 'fan');
+      assert.ok(!s.tokens.some((t) => t.startsWith('EVIL')), `${frame.id} × ${c.id}: ${s.tokens.join(' ')}`);
+    }
+  }
+  assert.deepEqual(sentence('runs_from_the', { ...FILL, villain: 'jormungandr' }, 'fan').tokens, ['JORMUNGANDR', 'RUNS', 'FROM', 'THE', 'FAN']);
+  for (const p of allPrefixes()) assert.ok(!/\bevil/i.test(`${p.text} ${p.say ?? ''}`), `${p.id}: ${p.text}`);
+  assert.ok(!allFrameTokens().some((t) => t.startsWith('evil')), 'no EVIL token');
+});
+
 test("the Playwright harness's FETCH_FRAMES matches the fetch frames", async () => {
   const { FETCH_FRAMES } = await import('../harness');
   assert.deepEqual([...FETCH_FRAMES].sort(), FRAMES.filter((f) => f.use === 'fetch').map((f) => f.id).sort());

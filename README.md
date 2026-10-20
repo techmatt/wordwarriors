@@ -105,7 +105,7 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    heroes pick themselves up and run for home.
 7. **The quest place, part 2.** Back in the hub a secret door pops out: the attic (or the
    place's secret room: the cave behind the waterfall), with the
-   villain's counter sentence (`EVIL TIAMAT RUNS FROM THE BUS`: the frame and the word
+   villain's counter sentence (`TIAMAT RUNS FROM THE BUS`: the frame and the word
    are drawn each episode). Then the front door again.
 8. **Battle part 2**: the counter beats the ultimate (a swarm of its picture: "NOT THE
    BUS!"; the villain's named item, Evil Tiamat's Magic Hat, when its own word comes

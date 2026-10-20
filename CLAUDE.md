@@ -153,9 +153,10 @@ Adding a character, ability, word or line is data work: edit `content/`, then
   the word), except the key word, which lights in silence. Yellow on a frame word says that
   word, yellow on the key word sounds its letters one by one (SH as one), never blended (a
   non-decodable key word like MICE gets only its first sound). Right: the whole sentence
-  is read with the key word. Voice is a prefix line ("EvilRilla is scared of...") plus the
+  is read with the key word. Voice is a prefix line ("Rilla is scared of...") plus the
   key word's own `word_<x>` line, so no line can leak the key word. Sentences come from a
-  few repeating frames (`content/phonics/sentences.ts`); once a frame is solid
+  few repeating frames (`content/phonics/sentences.ts`); a name in a sentence is the bare
+  character name, the villain too (JORMUNGANDR RUNS FROM THE FAN, item 038); once a frame is solid
   (`SENTENCE_SOLID` in `src/config.ts`) its listening pass is skipped. Key words, the
   attic's counter word included, come from her word bag (item 015): without replacement
   across episodes, leaning to shaky words, never one the episode says or shows first.

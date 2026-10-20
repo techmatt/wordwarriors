@@ -3,7 +3,7 @@
  * and three things standing on pedestals. She reads the sentence, then walks
  * to the thing its last word names and presses green; it flies into her bag.
  *
- *   EVILRILLA IS SCARED OF MICE        (mice, a hen, a jet on pedestals)
+ *   RILLA IS SCARED OF MICE            (mice, a hen, a jet on pedestals)
  *
  * Three passes, all no-fail:
  *

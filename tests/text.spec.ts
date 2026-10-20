@@ -98,7 +98,7 @@ test('the longest caption and the longest bubble stay on screen, even at the edg
 
 test('the longest counter sentence fits its banner, one row or wrapped between words', async ({ page }) => {
   const errors = collectErrors(page);
-  // EVIL OZYMANDIAS IS NO MATCH FOR THE ...: the longest name, and the counter frames are the longest.
+  // OZYMANDIAS IS NO MATCH FOR THE ...: a long name, and the counter frames are the longest.
   await boot(page, '?scene=room&slot=counter&villain=ozymandias&nojourney=1');
   const s = await until(page, (st) => st.scene === 'SentenceRoom' && Boolean(st.room?.sentence), 30_000, 'sentence room');
   await page.waitForTimeout(800);

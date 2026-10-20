@@ -92,7 +92,7 @@ function fill(t: Template, f: Fill): { text: string; say?: string } {
 
 /**
  * How a sentence token is spoken on its own: the way it is written in a name
- * ("Evil", "Dada", "EvilRilla") with the name's sayName word for edge-tts, or
+ * ("Dada", "Matt", "Jormungandr") with the name's sayName word for edge-tts, or
  * lower case for the little words ("is", "the", "a").
  */
 function tokenForms(): Map<string, { show: string; say?: string }> {
@@ -265,11 +265,12 @@ export function composeLines(): LineSpec[] {
     }
     for (const villain of ROSTER) {
       for (const t of VILLAIN_LINES) {
+        // The bare name (item 038) once the villain is known; "Evil" only where it announces them.
         lines.push({
           id: narratorLine(n, `${t.key}_${villain.id}`),
           speaker: n,
           group: g,
-          ...fill(t, { villain: villain.evil, item: villain.counter.name, ...(villain.counter.sayName ? { itemSay: villain.counter.sayName } : {}) }),
+          ...fill(t, { villain: t.key === 'alarm_villain' ? villain.evil : villain.good, item: villain.counter.name, ...(villain.counter.sayName ? { itemSay: villain.counter.sayName } : {}) }),
         });
       }
     }
