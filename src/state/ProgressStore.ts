@@ -49,6 +49,8 @@ export interface ProgressData {
   bagKnown?: string[] | 'legacy';
   /** Her move bag: the battle's move words, drawn the same way (item 018). */
   moveBag: WordBag;
+  /** The wrong move pads (item 038): a word leaves when a choice has shown it, so they rotate across episodes. */
+  padBag: WordBag;
   episodes: number;
   /** The villains (persons) of her last few episodes, newest last (item 025): the cast draw avoids them. */
   villains: string[];
@@ -67,8 +69,8 @@ export interface WordBag {
   round: number;
 }
 
-/** Which bag: the sentence key words, or the battle's move words. */
-export type BagKind = 'keys' | 'moves';
+/** Which bag: the sentence key words, the battle's right move words, or its wrong pads. */
+export type BagKind = 'keys' | 'moves' | 'pads';
 
 export type ItemKind = 'sounds' | 'words' | 'spelling' | 'frames' | 'rimes' | 'onsets' | 'grabs';
 
@@ -79,7 +81,7 @@ function emptyStat(): Stat {
 }
 
 function empty(): ProgressData {
-  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, grabs: {}, grabLevels: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, episodes: 0, villains: [], ending: null };
+  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, grabs: {}, grabLevels: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, padBag: { left: [], round: 0 }, episodes: 0, villains: [], ending: null };
 }
 
 /** How many past villains the store keeps. */
@@ -115,6 +117,8 @@ export class ProgressStore {
       // Item 015, the same way: an empty bag with round 0 fills on the first draw.
       parsed.bag ??= { left: [], round: 0 };
       parsed.moveBag ??= { left: [], round: 0 };
+      // Item 038, the same way.
+      parsed.padBag ??= { left: [], round: 0 };
       parsed.episodes ??= 0;
       // Item 025, the same way.
       parsed.villains ??= [];
@@ -197,8 +201,8 @@ export class ProgressStore {
     this.save();
   }
 
-  private bagField(which: BagKind): 'bag' | 'moveBag' {
-    return which === 'keys' ? 'bag' : 'moveBag';
+  private bagField(which: BagKind): 'bag' | 'moveBag' | 'padBag' {
+    return which === 'keys' ? 'bag' : which === 'moves' ? 'moveBag' : 'padBag';
   }
 
   /** A word bag, as stored (a copy). */

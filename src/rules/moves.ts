@@ -9,7 +9,10 @@
  * coverage × level gate): without replacement across episodes, so fight after
  * fight she meets new ones. A word leaves the bag only when she picks it
  * right first time (BattleScene). The wrong pads are other action words,
- * chosen for reading (`distractorsFor`), fresh ones first.
+ * chosen for reading (`distractorsFor`), fresh ones first: not yet shown this
+ * episode, then still in her pad bag (ProgressStore `padBag`, item 038; a word
+ * leaves it once a choice has shown it as a wrong pad), weighed by coverage.
+ * Without the pad bag a few wrong pads came back episode after episode.
  *
  * Every pad word is a bank action word (MOVE_WORDS), and reading it casts it
  * (item 037, word magic). Who fires it: a teammate whose own ability answers
@@ -25,7 +28,7 @@ import { CHARACTER_BY_ID, MOVE_WORDS, abilityWords } from '../../content/battle/
 import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import type { ProgressStore } from '../state/ProgressStore';
-import { distractorsFor, drawWords, gates } from './bank';
+import { coverage, distractorsFor, drawWords, gates, isFirm, met } from './bank';
 import type { Rand } from './sentences';
 
 /**
@@ -149,6 +152,23 @@ export function drawGift(store: ProgressStore, input: { helper: string; avoid?: 
   return drawWords(store, pool, 1, rand, (w) => (helperWords.has(w) ? 2 : 1))[0]!;
 }
 
+/** How much a wrong pad that has had its turn this round weighs against one still in the pad bag. */
+export const PAD_SHOWN_WEIGHT = 0.05;
+
+/**
+ * The weight of a word as a wrong pad: still in the pad bag (refilled with
+ * every pad word once fewer than `need` are left) × the bank's coverage term.
+ * Shakiness is no reason to show a wrong pad, and the pool is already the
+ * open levels, so the rest of `wordWeight` is left out.
+ */
+function padWeights(store: ProgressStore, pool: string[], need: number): (w: string) => number {
+  const left = () => new Set(store.bag('pads').left);
+  if (pool.filter((w) => left().has(w)).length < need) store.refillBag(MOVE_WORDS, 'pads');
+  const inBag = left();
+  const m = met(store);
+  return (w) => (inBag.has(w) ? 1 : PAD_SHOWN_WEIGHT) * coverage(store, w, m);
+}
+
 export interface MoveInput {
   hero: string;
   /** Her team in the battle: the hero and the ally. */
@@ -174,6 +194,8 @@ export function planMoves(store: ProgressStore, input: MoveInput, rand: Rand = M
   const g = gates(store);
   const open = all.filter((w) => (g[BANK_BY_WORD[w]?.level ?? 1] ?? 1) > 0);
   const wrongPool = open.length >= 6 ? open : all;
+  // An episode shows at most 2 wrong pads per choice.
+  const padWeight = padWeights(store, wrongPool, CHOICES_PER_PART * 2 * 2);
   const rights: string[] = [];
   const shown = new Set<string>();
   const choice = (first: boolean): MoveChoicePlan | null => {
@@ -187,8 +209,9 @@ export function planMoves(store: ProgressStore, input: MoveInput, rand: Rand = M
     rights.push(right);
     const n = rand() < 0.5 ? 2 : 3;
     // Wrong pads: words not yet shown this episode first, then any.
-    const wrong = distractorsFor(store, right, wrongPool, n - 1, rand, shown);
-    if (wrong.length < n - 1) wrong.push(...distractorsFor(store, right, wrongPool, n - 1 - wrong.length, rand, wrong));
+    const firm = isFirm(store, right);
+    const wrong = distractorsFor(store, right, wrongPool, n - 1, rand, shown, firm, padWeight);
+    if (wrong.length < n - 1) wrong.push(...distractorsFor(store, right, wrongPool, n - 1 - wrong.length, rand, wrong, firm, padWeight));
     const words = shuffle([right, ...wrong], rand);
     for (const w of words) shown.add(w);
     return { words, right, owner: ownerFor(right, input, rand) };

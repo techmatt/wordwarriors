@@ -44,6 +44,7 @@ function playRight(store: ProgressStore, p: MovePlan): void {
   for (const c of choices(p)) {
     store.record('words', c.right, true, 0);
     store.takeFromBag(c.right, 'moves');
+    for (const w of c.words) if (w !== c.right) store.takeFromBag(w, 'pads');
   }
 }
 
@@ -154,6 +155,30 @@ test('the move bag: the right words go round before any comes back', () => {
     playRight(store, p);
   }
   assert.equal(new Set(seen).size, seen.length, `a word came back early: ${seen.join(', ')}`);
+});
+
+test('the pad bag (item 038): back-to-back episodes rarely share a wrong pad', () => {
+  let shared = 0;
+  let pairs = 0;
+  for (let seed = 1; seed <= 20; seed++) {
+    const store = new ProgressStore(memory());
+    const rand = seeded(seed);
+    let last = new Set<string>();
+    for (let ep = 0; ep < 6; ep++) {
+      // A new gift each episode, as drawGift gives: a gift she has firmed up wants
+      // a pad sharing its first sound or rime, and one word has only a few.
+      const p = planMoves(store, input(['jump', 'spin', 'swim', 'flip', 'stomp', 'slam'][ep]!), rand);
+      const wrong = new Set(choices(p).flatMap((c) => c.words.filter((w) => w !== c.right)));
+      if (ep > 0) {
+        pairs++;
+        if ([...wrong].some((w) => last.has(w))) shared++;
+      }
+      last = wrong;
+      playRight(store, p);
+    }
+  }
+  // Measured: without spending the pad bag 58 of these 100 pairs shared one; with it, 15.
+  assert.ok(shared / pairs < 0.25, `${shared} of ${pairs} back-to-back episodes shared a wrong pad`);
 });
 
 test('the move bag: a word she missed comes round again sooner', () => {

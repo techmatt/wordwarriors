@@ -133,6 +133,8 @@ export function sharesSound(target: string, other: string): boolean {
  * its first sound or its rime (CAT beside CAN or HAT), so the first letter is
  * not enough; the rest still start with another letter. If a rule leaves too
  * few, it gives way. `firm` overrides the judgement (the hall judges by grabs).
+ * `weight` weighs the candidates (uniform by default; the move pads lean to
+ * words still in their bag, item 038).
  */
 export function distractorsFor(
   store: ProgressStore,
@@ -142,6 +144,7 @@ export function distractorsFor(
   rand: Rand = Math.random,
   banned: Iterable<string> = [],
   firm: boolean = isFirm(store, target),
+  weight: (w: string) => number = () => 1,
 ): string[] {
   const out = new Set([target, ...banned]);
   const all = [...new Set(pool)].filter((w) => !out.has(w));
@@ -149,11 +152,11 @@ export function distractorsFor(
   const picked: string[] = [];
   if (firm && n > 0) {
     const share = all.filter((w) => sharesSound(target, w));
-    picked.push(...pickWeighted(share, () => 1, 1, rand));
+    picked.push(...pickWeighted(share, weight, 1, rand));
   }
   const rest = unlike.filter((w) => !picked.includes(w));
   const from = rest.length >= n - picked.length ? rest : all.filter((w) => !picked.includes(w));
-  picked.push(...pickWeighted(from, () => 1, n - picked.length, rand));
+  picked.push(...pickWeighted(from, weight, n - picked.length, rand));
   return picked;
 }
 

@@ -1010,6 +1010,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     // Her move bag spends a word only when she picks it right first time; a missed one stays in.
     if (misses === 0) progress.takeFromBag(right, 'moves');
     else progress.returnToBag(right, 'moves');
+    // The wrong pads have had their turn: others come up next time (item 038).
+    for (const w of words) if (w !== right) progress.takeFromBag(w, 'pads');
     // The victory recap reads episode.read: a battle word she picked right is one she read.
     if (!episode.read.includes(right)) episode.read.push(right);
     const { f, ab } = owner;
