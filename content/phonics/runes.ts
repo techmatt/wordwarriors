@@ -78,7 +78,7 @@ export const RUNES: RuneSound[] = [
   rune('r', 1, '🐯', 'shake', 'The tiger growls, it goes...', 'slam', 0xffa53d, { power: 3 }),
   rune('v', 1, '🏎️', 'fly', 'The race car zooms past, it goes...', 'dash', 0xff3d3d, { power: 3 }),
   rune('z', 1, '🐝', 'weave', 'The bee buzzes about, it goes...', 'bolt', 0xffd23f, { count: 5, homing: true }),
-  rune('e', 1, '👐', 'shake', 'Crack the egg open, it goes...', 'lightning', 0xfff4b0),
+  rune('e', 1, '👐', 'shake', 'Knock knock, crack it open, it goes...', 'lightning', 0xfff4b0),
   rune('i', 1, '👃', 'shake', 'Wiggle your nose like a mouse, it goes...', 'bolt', 0xc0c0d0, { count: 3, homing: true }),
   rune('o', 1, '🔦', 'blink', 'Flick the light on and off, it goes...', 'beam', 0xfff59a, { color2: 0xffffff }),
   rune('u', 1, '☂️', 'pulse', 'Put up the umbrella, it goes...', 'shield', 0x9b5de5, { duration: 4 }),

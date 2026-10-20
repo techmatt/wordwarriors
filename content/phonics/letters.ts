@@ -80,6 +80,12 @@ export const DIGRAPH_SOUNDS: LetterSound[] = [
   { letter: 'ch', say: 'Chuh', cls: 'stop', example: 'chick', note: 'an affricate; a schwa like the stops' },
   { letter: 'th', say: 'Thuh', cls: 'fricative', example: 'moth', note: 'voiceless as in moth; "Thuh" may come back voiced, as in "the"' },
   { letter: 'ck', say: 'Kuh', cls: 'stop', example: 'duck', note: 'the same sound as c and k, its own line so a recording can differ' },
+  // Item 056: NG (KING, RING, WING; never first) and voiced TH (THIS, THAT: no
+  // familiar picture, so no bank word has it yet; a word marks it by hand with
+  // `spelled`, as `th_voiced`, since TH alone is the voiceless MOTH sound).
+  // QU is a unit too, sounding as Q ("Kwuh"), so it needs no line of its own.
+  { letter: 'ng', say: 'Ngg', cls: 'continuant', example: 'king', note: 'the hum at the end of KING; a placeholder, edge-tts may read it as letters' },
+  { letter: 'th_voiced', say: 'Thuh', cls: 'fricative', example: 'this', note: 'voiced as in THIS; the same placeholder as TH until Matt records the two apart' },
 ];
 
 /**
@@ -92,6 +98,10 @@ export const DIGRAPH_SOUNDS: LetterSound[] = [
 export const LONG_VOWEL_SOUNDS: LetterSound[] = [
   { letter: 'long_e', say: 'Ee', cls: 'vowel', example: 'key', note: 'long e, the vowel of KEY (spelled EY there)' },
   { letter: 'long_o', say: 'Oh', cls: 'vowel', example: 'yoyo', note: 'long o, both vowels of YOYO' },
+  // Item 056: the other three, for the magic-E words (KITE, CAKE) and later ones.
+  { letter: 'long_a', say: 'Ay', cls: 'vowel', example: 'cake', note: 'long a, the vowel of CAKE (A and a silent E)' },
+  { letter: 'long_i', say: 'Eye', cls: 'vowel', example: 'kite', note: 'long i, the vowel of KITE (I and a silent E)' },
+  { letter: 'long_u', say: 'You', cls: 'vowel', example: 'cube', note: 'long u, the vowel of CUBE; no familiar bank word has it yet' },
 ];
 
 /** Every sound unit's sound: a single letter's, a digraph's or a long vowel's. */
@@ -107,7 +117,7 @@ export const SOUND_BY_UNIT: Record<string, LetterSound> = Object.fromEntries(
  */
 export function canHold(sound: string): boolean {
   const s = SOUND_BY_UNIT[sound];
-  return Boolean(s) && (s!.cls === 'vowel' || s!.cls === 'continuant' || ['f', 's', 'sh', 'th'].includes(sound));
+  return Boolean(s) && (s!.cls === 'vowel' || s!.cls === 'continuant' || ['f', 's', 'sh', 'th', 'th_voiced'].includes(sound));
 }
 
 /**

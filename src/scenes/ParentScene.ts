@@ -88,7 +88,9 @@ export class ParentScene extends Phaser.Scene {
     // Five full columns, narrow enough to stay left of the warm-up's levels.
     // The number in a sound's dot is its Charge the Spell help level (item 053), once she has charged it.
     const charged = (id: string) => (snap.chargeLevels?.[id] !== undefined ? String(chargeLevel(progress, id)) : null);
-    this.grid('Letter sounds', 'sounds', [...LETTERS, ...DIGRAPH_SOUNDS].map((l) => l.letter), 30, 90, 6, 162, 30, charged);
+    // Item 056's NG and voiced TH are left out: no rune drills them alone, and a sixth column would run into the warm-up's levels.
+    const drilled = DIGRAPH_SOUNDS.filter((l) => l.letter !== 'ng' && l.letter !== 'th_voiced');
+    this.grid('Letter sounds', 'sounds', [...LETTERS, ...drilled].map((l) => l.letter), 30, 90, 6, 162, 30, charged);
     fitText(this.add.text(200, 94, 'number in the dot: Charge the Spell help (1 sound + gesture first, 2 gesture only, 3 rune alone)', { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#555' }), 1030 - 200, 22);
     const spelled = Object.entries(snap.spelling ?? {}).map(([w, st]) => `${w} ×${st.seen}`);
     fitText(this.add.text(1040, 90, ['Spelled (typing, kept apart', 'from reading):', ...spelled.slice(0, 3)], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - 1040 - 20, 85);

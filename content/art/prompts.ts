@@ -48,6 +48,8 @@ const FIGHT_PROPS = FIGHTS.flatMap((f) => (f.props ?? []).map((p) => fightPropAr
 // Item 040's words: none is green.
 // Item 054's words: none is green.
 const BANK_054 = ['mat', 'man', 'lid', 'lock'].map((w) => `pic_${w}`);
+// Item 056's words but the green ones (GRASS, ELF).
+const BANK_056 = ['egg', 'bell', 'doll', 'tap', 'glass', 'sink', 'king', 'ring', 'wing', 'shell', 'chips', 'bush', 'thumb', 'lamb', 'quest', 'quilt', 'queen', 'goat', 'jeep', 'sheep', 'three', 'cheese', 'kite', 'bike', 'vase', 'cake'].map((w) => `pic_${w}`);
 const BANK_040 = ['vet', 'chest', 'bin', 'rock', 'clock', 'stick', 'brush', 'truck', 'bath', 'plant', 'crib', 'key', 'yoyo'].map((w) => `pic_${w}`);
 const BANK_037 = ['jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'gum', 'bun', 'hut', 'sub', 'nap', 'wag', 'jab', 'red', 'hex', 'jig', 'mix', 'jog', 'bop', 'dot', 'hum', 'yum', 'drum', 'crab', 'flag', 'sled', 'nest', 'tent', 'desk', 'belt', 'vest', 'gift', 'lamp', 'hand', 'mask', 'raft', 'plug', 'ant', 'milk', 'jump', 'spin', 'swim', 'flip', 'stomp', 'slam', 'grab', 'clap', 'bump', 'skip', 'twist', 'melt', 'lift', 'plop', 'flop', 'trap', 'blast', 'drip', 'ship', 'fish', 'duck', 'sock', 'moth', 'shed', 'chick', 'chop', 'kick', 'rush'].map((w) => `pic_${w}`);
 /**
@@ -62,7 +64,7 @@ export function keyMode(id: string): 'keep' | 'noGreen' | 'lightGreen' {
   return NO_GREEN.has(id) ? 'noGreen' : LIGHT_GREEN.has(id) ? 'lightGreen' : 'keep';
 }
 
-export const NO_GREEN = new Set([...BANK_037, ...BANK_040, ...BANK_054,...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
+export const NO_GREEN = new Set([...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
 
 /**
  * Likeness references for the family (Matt, 2026-10-18): a photo in the
@@ -500,6 +502,35 @@ const PICTURES: Record<string, string> = {
   man: 'a man: one friendly grown-up man standing and waving, short brown hair, a blue jumper and jeans, smiling, full body; an ordinary man, not a dad from the family, not a superhero',
   lid: 'a lid: one round shiny silver saucepan lid with a black knob handle on top, tilted so the knob shows; a lid alone, no pot, no pan',
   lock: 'a lock: one big shiny gold padlock, closed, with a keyhole on its front and a curved silver shackle on top; a lock alone, no key, no door',
+  // Item 056: the coverage audit's words.
+  egg: "an egg: one whole white hen's egg, smooth and oval, standing upright; not cracked, not a nest",
+  bell: 'a bell: one shiny gold hand bell with a wooden handle, ringing, little motion lines; a bell alone',
+  doll: 'a doll: a soft rag doll girl with yarn hair and a dress, sitting; a toy, not a real child',
+  tap: 'a tap: one shiny silver kitchen tap (faucet) with a drop of water dripping from it; no sink',
+  elf: 'an elf: a cheerful little Christmas elf in green with a pointy hat with a bell and pointy ears, standing',
+  grass: 'grass: a tuft of bright green lawn grass, long blades, nothing else; no flowers, not a plant in a pot',
+  glass: 'a glass: one clear drinking glass of water, see-through, a little shine; a glass, not a cup or a mug',
+  sink: 'a sink: a white kitchen sink basin with a silver tap above it, seen from the front; no dishes',
+  king: 'a king: a smiling cartoon king with a gold crown, a red cape and a white fur collar, standing',
+  ring: 'a ring: one gold finger ring with a big sparkly blue gem on top',
+  wing: 'a wing: one big white feathery bird wing, spread open, alone; no bird, not an angel',
+  shell: 'a shell: one pink and cream spiral seashell, the kind found on a beach',
+  chips: 'chips: a red paper carton of golden potato chips (fries)',
+  bush: 'a bush: one round leafy green garden bush, alone; not a tree, no flowers',
+  thumb: 'a thumb: a cartoon hand giving a big thumbs up, the thumb clearly up',
+  lamb: 'a lamb: a fluffy white baby sheep, small and woolly, standing side-on; a baby, not a big sheep',
+  quest: 'a quest: a brave little explorer with a backpack setting off along a winding path to a far castle',
+  quilt: 'a quilt: a colourful patchwork quilt of bright squares, folded over the end of a bed',
+  queen: 'a queen: a smiling cartoon queen with a gold crown and a long royal purple gown, standing',
+  goat: 'a goat: a white goat with little horns and a small beard, standing side-on',
+  jeep: 'a jeep: a green open-top safari jeep with big chunky wheels, side-on; a jeep, not a van or a truck',
+  sheep: 'a sheep: a big fluffy white woolly sheep with a black face, standing side-on',
+  three: 'three: a big bright red number 3 made of shiny balloons, nothing else; the numeral alone, no letters',
+  cheese: 'cheese: one yellow wedge of cheese full of round holes',
+  kite: 'a kite: a diamond-shaped red and yellow kite flying, a long tail of bows',
+  bike: "a bike: a child's red bicycle with two wheels, side-on",
+  vase: 'a vase: a blue china vase with a bunch of bright flowers in it',
+  cake: 'a cake: a round pink birthday cake with white icing and candles lit on top',
 };
 
 const HAND: Record<string, string> = {

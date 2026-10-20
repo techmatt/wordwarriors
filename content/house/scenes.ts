@@ -218,7 +218,7 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
   ],
   tiamat: [
     S('👑', [
-      'A dragon queen knows many royal words, and I will give you one!',
+      'A royal dragon knows many royal words, and I will give you one!',
       'Use it well, little hero, and stand up tall.',
       'By royal order, the word is...',
     ], 'Stand in the royal circle, and press green, to receive it!', 'Wonderful, you are royal now, let us look around!'),
@@ -277,11 +277,12 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
     ], 'Stand in the golden circle, and press green, to take the word!', 'Strong as stone, let us look around!'),
   ],
   jormungandr: [
-    S('🐚', [
-      'Deep in my grotto, I found a magic shell.',
+    // Item 056: a conch, since SHELL is a bank word now (and its picture no prop).
+    S('🔮', [
+      'Deep in my grotto, I found a magic conch.',
       'Hold it to your ear, and you will hear a word inside.',
-      'Listen, the shell says...',
-    ], CIRCLE('to take the shell'), 'The sea is on your side now, let us look around!'),
+      'Listen, the conch says...',
+    ], CIRCLE('to take the conch'), 'The sea is on your side now, let us look around!'),
     S('🦪', [
       'The sea gave me a pearl, and the pearl has a secret.',
       'I curled my tail around it for a hundred years, to keep it safe.',

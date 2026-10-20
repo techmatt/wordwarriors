@@ -18,6 +18,7 @@
     "voice:clip": "tsx tools/voice/addClip.ts",
     "voice:status": "tsx tools/voice/status.ts",
     "test:unit": "tsx --test tests/unit/*.test.ts",
+    "bank:audit": "tsx tools/phonics/audit.ts",
     "test": "npm run test:unit && playwright test --grep-invert @slow",
     "test:slow": "playwright test --grep @slow",
     "test:all": "npm run test:unit && playwright test"

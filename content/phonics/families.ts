@@ -101,6 +101,16 @@ const RIMES: Record<string, { say: string; silly: SillyOnset[] }> = {
   // TUB SUB. Out: CUB DUB HUB NUB PUB RUB (words), BUB (slang), LUB (a heartbeat), YUB
   // (a film's word), GUB (Scots slang), WUB (slang).
   ub: { say: 'Ubb', silly: [{ letter: 'z', say: 'Zub' }, { letter: 'v', say: 'Vub' }] },
+  // Item 056: the bank's NG, doubled-letter and CK rimes (KING RING WING, BELL WELL,
+  // ROCK SOCK LOCK). -ING: out ZING DING PING SING TING LING BING (words), MING (slang),
+  // FING (too near worse), GING JING (too near GINGER, JINGLE). "Ell" alone is the letter L.
+  ing: { say: 'Ihng', silly: [{ letter: 'v', say: 'Ving' }, { letter: 'h', say: 'Hing' }] },
+  // -ELL: out H (never), FELL DELL CELL SELL TELL YELL JELL (words), NELL KELL (names),
+  // GELL (sounds like GEL), MELL PELL (word-ish).
+  ell: { say: 'Ehl', silly: [{ letter: 'z', say: 'Zell' }, { letter: 'v', say: 'Vell' }] },
+  // -OCK: out F (never), MOCK DOCK HOCK NOCK POCK TOCK JOCK (words), BOCK (a beer),
+  // YOCK (near a slur), WOK (sounds like it), COCK, KOCK (no).
+  ock: { say: 'Ock', silly: [{ letter: 'z', say: 'Zock' }, { letter: 'v', say: 'Vock' }] },
 };
 
 /** A word's first sound and rime: the bank's tags (FROG is FR + OG), or first letter + rest for a silly word. */

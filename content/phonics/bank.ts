@@ -6,8 +6,9 @@
  *
  * A word's phonics tags are derived from its spelling, never typed by hand:
  *
- * - `units`: its sound units, the letters with SH CH TH CK kept together
- *   (the hint sounds a unit, never a lone letter of one);
+ * - `units`: its sound units, the letters with SH CH TH CK NG QU kept
+ *   together, and a doubled letter (EGG, BELL) as one (the hint sounds a
+ *   unit, never a lone letter of one);
  * - `level`: 1 = CVC (CAT), 2 = a consonant blend (FROG, JUMP), 3 = a digraph
  *   (SHIP, DUCK; a word with both is 3);
  * - `vowel`: its short vowel; `onset` the sound units before it (`fr`, `sh`,
@@ -26,6 +27,22 @@
  * `draw` a canvas drawing where Windows 10's emoji font has none. `say` is a
  * respelling for edge-tts where it misreads the word.
  *
+ * Coverage (item 056, `COVERAGE` below; README, "The word bank's coverage
+ * rule"). Counting familiar pictured words only (THINGS), the bank keeps:
+ *
+ * - 3 per first sound, every letter sound and digraph (QU as Q), or the lower
+ *   target COVERAGE.first gives with its reason (no familiar one-vowel
+ *   picture starts with I, O, U, X, Z or voiced TH; A E Q W Y TH have 1-2);
+ * - a last sound: 3 for B D G K L M N P S T X CK NG SH, fewer for F Z CH TH;
+ * - 8 per short vowel; 2 pictures per word-machine family, the listed
+ *   families staying families;
+ * - the Stretchy Bridge: 3 early words (levels 1-2, short vowel) per first
+ *   sound, so its far bank can show two that start alike and differ later;
+ * - long vowels: E 3, O A I 2 each, U none yet.
+ *
+ * tests/unit/coverage.test.ts fails on any row under target; `npm run
+ * bank:audit` prints the table. Lower a target only with its reason.
+ *
  * Pure data: no Phaser, so the voice composer and the unit tests read it.
  */
 
@@ -40,7 +57,7 @@ export interface BankEntry {
   draw?: 'fan' | 'log' | 'mop' | 'pot' | 'mug' | 'rug';
   say?: string;
   /** The item that added it: before 037 (`old`), 037, 040 or 054. */
-  since?: '037' | '040' | '054';
+  since?: '037' | '040' | '054' | '056';
   /** It sounds like a spell (ZAP, HEX, POP; not MUD or NAP): a caster's gift leans to it (item 038, `drawGift`). */
   spell?: true;
   /**
@@ -59,6 +76,12 @@ export interface BankEntry {
    * tag, never in a word family.
    */
   spelled?: [letters: string, sound: string][];
+  /**
+   * Item 056: a long-vowel word that comes later, at level 3 with the
+   * digraphs (QUEEN, GOAT, KITE), where KEY and YOYO are level 1. A silent
+   * letter's sound is `` (the E of KITE): the hint lights it and says nothing.
+   */
+  late?: true;
 }
 
 export interface BankWord extends BankEntry {
@@ -83,6 +106,7 @@ const ODD = { odd: true as const };
 const NEW_ODD = { ...NEW, ...ODD };
 const NEW_040 = { since: '040' as const };
 const NEW_054 = { since: '054' as const };
+const NEW_056 = { since: '056' as const };
 
 const ENTRIES: BankEntry[] = [
   // Level 1: CVC. The pictured words from before 037.
@@ -135,18 +159,45 @@ const ENTRIES: BankEntry[] = [
   // start and differ later; the sounds you can hold had almost none (MAP had
   // only MASK). MAT and MAN beside MAP, LID beside LIP, LOCK beside LOG.
   T('mat', '🟫', NEW_054), T('man', '👨', NEW_054), T('lid', '🍲', NEW_054), T('lock', '🔒', NEW_054),
+  // Item 056, the coverage audit: three familiar first-sound pictures for every
+  // letter sound the language allows (COVERAGE above). Short-vowel words first:
+  // doubled letters (EGG, BELL), NG (KING), the -ING -ELL -OCK families, S and T
+  // pictures for the bridge.
+  T('egg', '🥚', NEW_056), T('bell', '🔔', NEW_056), T('doll', '🪆', NEW_056), T('tap', '🚰', NEW_056),
+  T('elf', '🧝', NEW_056), T('grass', '🌾', NEW_056), T('glass', '🥤', NEW_056), T('sink', '🧽', NEW_056),
+  T('king', '🤴', NEW_056), T('ring', '💍', NEW_056), T('wing', '🦅', NEW_056), T('shell', '🐚', NEW_056),
+  T('chips', '🍟', NEW_056), T('bush', '🌳', NEW_056),
+  T('thumb', '👍', { ...NEW_056, spelled: [['th', 'th'], ['u', 'u'], ['mb', 'm']] }),
+  T('lamb', '🐑', { ...NEW_056, spelled: [['l', 'l'], ['a', 'a'], ['mb', 'm']] }),
+  A('quest', '🧭', NEW_056),
+  T('quilt', '🛏️', { ...NEW_056, odd: true }),
+  // Long vowels where no familiar short-vowel picture starts with the sound
+  // (Q, J, G, K, V, TH, SH, CH), and magic-E words with a silent E: level 3,
+  // `late` (Matt's default, 2026-10-20), so they come with the digraphs.
+  T('queen', '👸', { ...NEW_056, late: true, spelled: [['qu', 'q'], ['ee', 'long_e'], ['n', 'n']] }),
+  T('goat', '🐐', { ...NEW_056, late: true, spelled: [['g', 'g'], ['oa', 'long_o'], ['t', 't']] }),
+  T('jeep', '🚙', { ...NEW_056, late: true, spelled: [['j', 'j'], ['ee', 'long_e'], ['p', 'p']] }),
+  T('sheep', '🐏', { ...NEW_056, late: true, spelled: [['sh', 'sh'], ['ee', 'long_e'], ['p', 'p']] }),
+  T('three', '3️⃣', { ...NEW_056, late: true, spelled: [['th', 'th'], ['r', 'r'], ['ee', 'long_e']] }),
+  T('cheese', '🧀', { ...NEW_056, late: true, spelled: [['ch', 'ch'], ['ee', 'long_e'], ['s', 'z'], ['e', '']] }),
+  T('kite', '🪁', { ...NEW_056, late: true, spelled: [['k', 'k'], ['i', 'long_i'], ['t', 't'], ['e', '']] }),
+  T('bike', '🚲', { ...NEW_056, late: true, spelled: [['b', 'b'], ['i', 'long_i'], ['k', 'k'], ['e', '']] }),
+  T('vase', '💐', { ...NEW_056, late: true, spelled: [['v', 'v'], ['a', 'long_a'], ['s', 's'], ['e', '']] }),
+  T('cake', '🎂', { ...NEW_056, late: true, spelled: [['c', 'c'], ['a', 'long_a'], ['k', 'k'], ['e', '']] }),
 ];
 
-/** The digraphs that are one sound unit. */
-export const DIGRAPHS = ['sh', 'ch', 'th', 'ck'] as const;
+/** The digraphs that are one sound unit (item 056: NG, and QU, whose sound is Q's "kw"). */
+export const DIGRAPHS = ['sh', 'ch', 'th', 'ck', 'ng', 'qu'] as const;
+/** Doubled letters that are one sound (item 056): EGG is E GG, BELL is B E LL; the sound is the single letter's. Not a digraph: BELL stays level 1. */
+export const DOUBLED = ['ff', 'll', 'ss', 'zz', 'gg'] as const;
 const VOWELS = 'aeiou';
 
-/** A word's sound units: SHIP is SH I P, DUCK is D U CK, FROG is F R O G. */
+/** A word's sound units: SHIP is SH I P, DUCK is D U CK, FROG is F R O G, QUEST is QU E S T, BELL is B E LL. */
 export function unitsOf(word: string): string[] {
   const out: string[] = [];
   for (let i = 0; i < word.length; i++) {
     const two = word.slice(i, i + 2);
-    if ((DIGRAPHS as readonly string[]).includes(two)) {
+    if ((DIGRAPHS as readonly string[]).includes(two) || (DOUBLED as readonly string[]).includes(two)) {
       out.push(two);
       i++;
     } else out.push(word[i]!);
@@ -154,23 +205,44 @@ export function unitsOf(word: string): string[] {
   return out;
 }
 
+/** A unit's sound key: QU is Q's, a doubled letter its single letter's, anything else itself. */
+export function soundOf(unit: string): string {
+  if (unit === 'qu') return 'q';
+  if ((DOUBLED as readonly string[]).includes(unit)) return unit[0]!;
+  return unit;
+}
+
+/** A short vowel's sound key, or a long one (`long_e`), or `` for a silent letter (the E of KITE). */
+const isShort = (sound: string) => sound.length === 1 && VOWELS.includes(sound);
+
+/** Level from the units around the vowel: a digraph (SH, NG, QU, MB, TCH; not a doubled letter) is 3, a blend 2, else 1. */
+function levelOf(units: string[], vi: number): Level {
+  const digraph = units.some((u) => u.length >= 2 && !(DOUBLED as readonly string[]).includes(u));
+  const blend = vi > 1 || units.length - vi - 1 > 1;
+  return digraph ? 3 : blend ? 2 : 1;
+}
+
 /** Tags from the spelling. Throws for a word that is not one short vowel between consonants, unless `spelled` spells it out. */
 export function tag(e: BankEntry): BankWord {
   if (e.spelled) {
     const units = e.spelled.map(([letters]) => letters);
     if (units.join('') !== e.word) throw new Error(`bank: ${e.word} is spelled ${units.join('')}`);
-    return { ...e, units, sounds: e.spelled.map(([, s]) => s), level: 1, vowel: null, onset: units[0]!, rime: units.slice(1).join('') };
+    const sounds = e.spelled.map(([, s]) => s);
+    // Item 056: a hand-spelled word with one short vowel and nothing long or
+    // silent (THUMB is TH U MB, MB saying M) is tagged like any word.
+    const vi = sounds.findIndex(isShort);
+    if (sounds.filter(isShort).length === 1 && !sounds.some((s) => !s || s.startsWith('long_'))) {
+      return { ...e, units, sounds, level: levelOf(units, vi), vowel: sounds[vi] as Vowel, onset: units.slice(0, vi).join(''), rime: units.slice(vi).join('') };
+    }
+    // A long-vowel word: level 1 (KEY, YOYO), or `late` (item 056) 3, with the digraphs.
+    return { ...e, units, sounds, level: e.late ? 3 : 1, vowel: null, onset: units[0]!, rime: units.slice(1).join('') };
   }
   const units = unitsOf(e.word);
   const vi = units.findIndex((u) => VOWELS.includes(u));
   const vowels = units.filter((u) => VOWELS.includes(u));
   if (vi < 0 || vowels.length !== 1) throw new Error(`bank: ${e.word} is not a one-short-vowel word`);
   const onset = units.slice(0, vi);
-  const coda = units.slice(vi + 1);
-  const digraph = units.some((u) => u.length === 2);
-  const blend = onset.length > 1 || coda.length > 1;
-  const level: Level = digraph ? 3 : blend ? 2 : 1;
-  return { ...e, units, sounds: units, level, vowel: units[vi] as Vowel, onset: onset.join(''), rime: units.slice(vi).join('') };
+  return { ...e, units, sounds: units.map(soundOf), level: levelOf(units, vi), vowel: units[vi] as Vowel, onset: onset.join(''), rime: units.slice(vi).join('') };
 }
 
 export const BANK: BankWord[] = ENTRIES.map(tag);
@@ -184,6 +256,66 @@ export const ACTIONS: BankWord[] = BANK.filter((w) => w.role !== 'thing');
 export const LIVE: BankWord[] = BANK.filter((w) => THINGS.includes(w) || ACTIONS.includes(w));
 /** The `odd` things out of play (item 040): kept with their pictures and lines, in case Matt overrules one. */
 export const DROPPED: BankWord[] = BANK.filter((w) => !LIVE.includes(w));
+
+export interface CoverageTarget {
+  target: number;
+  /** Why it is under the usual target. */
+  why?: string;
+}
+
+/** The coverage rule (item 056): see the header. src/rules/bankAudit.ts measures it; tests/unit/coverage.test.ts fails on a gap. */
+export const COVERAGE = {
+  /** Familiar pictures per first sound, every letter sound and digraph, unless `first` says less and why. */
+  firstTarget: 3,
+  first: {
+    a: { target: 1, why: 'ANT; APPLE and ALLIGATOR have more than one vowel' },
+    e: { target: 2, why: 'EGG, ELF; ELK and EDGE are no picture she knows' },
+    i: { target: 0, why: 'IGLOO and INSECT have more vowels; INK and INCH no clear picture' },
+    o: { target: 0, why: 'OCTOPUS and OTTER have more vowels; an OX she would call a cow' },
+    u: { target: 0, why: 'UMBRELLA has more vowels; UP is an idea, not a picture' },
+    q: { target: 1, why: 'QUEEN; QUILT she would call a blanket (odd); QUEST is an action word' },
+    x: { target: 0, why: 'no word starts with its KS sound' },
+    w: { target: 2, why: 'WEB, WING; WIG is odd, WELL and WITCH are said in hub scenes (WELL DONE, a good witch)' },
+    y: { target: 1, why: 'YOYO; YAK is odd; YAWN, YARN and YOLK need sounds the bank has not got' },
+    z: { target: 0, why: 'ZEBRA and ZOO need a schwa or OO; ZAP and ZIP are move words with no zip picture' },
+    th: { target: 2, why: 'THUMB, THREE; THORN and THIMBLE she would not know' },
+    th_voiced: { target: 0, why: 'THIS, THAT, THE: no picture' },
+    ck: { target: 0, why: 'never first' },
+    ng: { target: 0, why: 'never first' },
+  } as Record<string, CoverageTarget>,
+  /** Familiar pictures per last sound, where English ends words on it. */
+  last: {
+    b: { target: 3 }, d: { target: 3 }, g: { target: 3 }, k: { target: 3 }, l: { target: 3 }, m: { target: 3 },
+    n: { target: 3 }, p: { target: 3 }, s: { target: 3 }, t: { target: 3 }, x: { target: 3 },
+    ck: { target: 3 }, ng: { target: 3 }, sh: { target: 3 },
+    f: { target: 1, why: 'ELF; CLIFF and LEAF are no clear picture or need a long vowel' },
+    z: { target: 1, why: 'CHEESE; QUIZ and FIZZ are no picture' },
+    ch: { target: 0, why: 'WITCH is said in a hub scene; PEACH and BENCH want sounds to come' },
+    th: { target: 1, why: 'BATH; MOTH is odd, TEETH to come' },
+  } as Record<string, CoverageTarget>,
+  /** Familiar pictures per short vowel. */
+  vowelTarget: 8,
+  /** Familiar pictures per word-machine family (it needs two to build), and the families that must stay families. */
+  familyTarget: 2,
+  families: ['at', 'an', 'ap', 'en', 'et', 'og', 'ug', 'in', 'ox', 'un', 'ing', 'ock'],
+  /** The Stretchy Bridge (item 054): early words (levels 1-2, short vowel) per first sound, so its far bank shows two that start alike and differ later. */
+  bridgeTarget: 3,
+  bridgeStarts: ['m', 's', 'f', 'l', 'n', 'r', 'v', 'b', 'c', 'd', 'h', 'p', 't', 'g', 'j'],
+  bridge: {
+    r: { target: 2, why: 'RAT, RUG; ROCK and RING are level 3, RAFT and RAM odd' },
+    v: { target: 2, why: 'VAN, VET; VEST is odd, VASE level 3' },
+    g: { target: 2, why: 'GRASS, GLASS; GIFT too; GUM is odd, GOAT level 3' },
+    j: { target: 2, why: 'JUG, JAM; JET is odd, JEEP level 3' },
+  } as Record<string, CoverageTarget>,
+  /** Familiar pictures per long vowel (each its own sound line). */
+  long: {
+    long_e: { target: 3 },
+    long_o: { target: 2 },
+    long_a: { target: 2 },
+    long_i: { target: 2 },
+    long_u: { target: 0, why: 'for later: CUBE and MULE are no picture she knows' },
+  } as Record<string, CoverageTarget>,
+};
 
 export const VOWEL_LIST: Vowel[] = ['a', 'e', 'i', 'o', 'u'];
 export const LEVELS: Level[] = [1, 2, 3];

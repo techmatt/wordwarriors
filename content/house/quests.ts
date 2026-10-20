@@ -130,7 +130,7 @@ export const QUESTS: Record<string, Quest> = {
     lines: [
       { text: 'To be mighty enough, we have to train on the dragon mountain!' },
       { text: 'Climb on my back, little one, we are flying to the dragon mountain to train!' },
-      { text: 'A queen needs a strong friend, so we have to train together on the dragon mountain!' },
+      { text: 'A dragon needs a strong friend, so we have to train together on the dragon mountain!' },
     ],
   },
   elsa: {

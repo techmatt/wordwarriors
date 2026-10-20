@@ -992,7 +992,7 @@ export const ROSTER: CharacterSpec[] = [
       how: 'swallow', word: 'hat',
     },
     house: {
-      threat: 'she wants to be the queen of the whole house',
+      threat: 'she wants to rule the whole house',
       tint: 0x9b5de5,
       decals: [
         { id: 'tiamat_scale', glyph: '💜', look: 'big shiny purple dragon scales', count: 3 },

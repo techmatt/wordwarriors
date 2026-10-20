@@ -373,8 +373,9 @@ clear battle effect: a move pad, the gift word) or `B(...)` for `both` (NET, flu
 fetched). `glyph` is the placeholder card's emoji (avoid Emoji 13+); `draw` a canvas
 drawing where Windows 10 has none; `say` a respelling where edge-tts misreads it.
 
-Its tags are derived from the spelling, never typed: `units` (SH CH TH CK kept
-together), `level` (1 CVC, 2 a consonant blend, 3 a digraph; both is 3), `vowel`,
+Its tags are derived from the spelling, never typed: `units` (SH CH TH CK NG QU kept
+together, QU sounding as Q; a doubled letter, EGG's GG, one unit with the letter's sound
+and no level of its own: item 056), `level` (1 CVC, 2 a consonant blend, 3 a digraph; both is 3), `vowel`,
 `onset`, `rime`. A word must have exactly one short vowel between consonants (`tag()`
 throws otherwise), and no word with a sound unit lacking a letter sound. The exception
 is a **long-vowel** word (item 043: KEY for K, YOYO for Y, where no familiar short-vowel
@@ -384,7 +385,11 @@ otherwise like any word (item 048): every hint sounds every unit (K, then long E
 EY; Y, long O, Y, long O), and it can be the counter. A long vowel is its own sound
 line (`LONG_VOWEL_SOUNDS` in `content/phonics/letters.ts`, `letter_long_e_sound`), a
 placeholder until Matt records it; a new one goes there. A hyphen breaks the line and picture ids: YO-YO is `yoyo`, printed YOYO,
-with `say: 'yo-yo'`. To add one:
+with `say: 'yo-yo'`. Item 056: a long-vowel word marked `late` is level 3 (QUEEN, GOAT,
+KITE come with the digraphs); a silent letter's sound is `''` (KITE's E: the hint
+lights it and says nothing); a `spelled` word with one short vowel and nothing long or
+silent (THUMB: TH U MB, MB saying M) is tagged like any word. A new word must keep the
+coverage rule (README, "The word bank's coverage rule"; `npm run bank:audit`). To add one:
 
 1. The entry, in its level's block of `ENTRIES`.
 2. Its picture brief in `PICTURES` (`content/art/prompts.ts`): "a frog: a bright green

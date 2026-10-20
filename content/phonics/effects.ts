@@ -150,6 +150,34 @@ const THING_EFFECTS: WordEffect[] = [
   { word: 'man', look: 'a friendly strong man who shields the whole team with his arms wide', ability: use('man', 'shield', 0x7ad9ff, { duration: 3 }) },
   { word: 'lid', look: 'pot lids that clang down on the villain, bong bong', ability: use('lid', 'rain', 0xb8c4d0, { ...pic('lid'), count: 8 }) },
   { word: 'lock', look: 'a giant padlock that clicks shut on the villain: it cannot move for a moment', ability: use('lock', 'freeze', 0xffd23f, { duration: 2 }) },
+  // Item 056: the coverage audit's pictures.
+  { word: 'egg', look: 'eggs raining down on the villain, splat splat', ability: use('egg', 'rain', 0xfff4e0, { ...pic('egg'), count: 10 }) },
+  { word: 'bell', look: 'a giant bell that rings DONG: the villain is dizzy', ability: use('bell', 'slam', 0xffd23f, { power: 3, status: 'stun', duration: 1.5 }) },
+  { word: 'doll', look: 'toy dolls that march round her, then at the villain', ability: use('doll', 'orbit', 0xff9ad5, { ...pic('doll'), count: 4, duration: 1.6 }) },
+  { word: 'tap', look: 'a giant tap that gushes a wave of water across the arena', ability: use('tap', 'wave', 0x7ad9ff, { color2: 0xbfefff }) },
+  { word: 'elf', look: 'a helpful elf who patches the whole team up: strong again', ability: use('elf', 'heal', 0x3ac060, { color2: 0xffd23f }) },
+  { word: 'grass', look: 'long grass that grows round the villain and holds it tight', ability: use('grass', 'trap', 0x6ad66a, { glyph: '🌾', count: 3 }) },
+  { word: 'glass', look: 'a glass of water for the whole team: strong again', ability: use('glass', 'heal', 0xbfefff, { color2: 0xffffff }) },
+  { word: 'sink', look: 'a kitchen sink that drops down on the villain, clang', ability: use('sink', 'slam', 0xc0c8d0, { power: 3 }) },
+  { word: 'king', look: 'a kind king who holds up his hand: the villain stops for a moment', ability: use('king', 'freeze', 0xffd23f, { duration: 2 }) },
+  { word: 'ring', look: 'a magic ring that glows round the team: a shield', ability: use('ring', 'shield', 0xffd23f, { duration: 4 }) },
+  { word: 'wing', look: 'wings for the hero: she swoops straight through the villain', ability: use('wing', 'dash', 0xffffff, { power: 3 }) },
+  { word: 'shell', look: 'seashells flying at the villain, clack clack', ability: use('shell', 'bolt', 0xffc8a0, { ...pic('shell'), count: 5, homing: true }) },
+  { word: 'chips', look: 'chips raining down on the villain, crunch', ability: use('chips', 'rain', 0xffd23f, { ...pic('chips'), count: 12 }) },
+  { word: 'bush', look: 'a bush that grows round the villain and holds it tight', ability: use('bush', 'trap', 0x3ac060, { glyph: '🌿', count: 3 }) },
+  { word: 'thumb', look: 'a giant thumb that squishes down on the villain, squish', ability: use('thumb', 'slam', 0xffc8a0, { power: 3 }) },
+  { word: 'lamb', look: 'fluffy lambs bouncing at the villain, baa', ability: use('lamb', 'bolt', 0xffffff, { ...pic('lamb'), count: 4, homing: true }) },
+  { word: 'quilt', look: 'a giant quilt that drops over the villain: it cannot see!', ability: use('quilt', 'slam', 0xff9ad5, { power: 2, status: 'stun', duration: 2 }) },
+  { word: 'queen', look: 'a kind queen who holds up her sceptre: a shield for the team', ability: use('queen', 'shield', 0xffd23f, { duration: 4 }) },
+  { word: 'goat', look: 'a goat that charges headfirst through the villain, baa', ability: use('goat', 'dash', 0xf0e6d2, { power: 3 }) },
+  { word: 'jeep', look: 'a jeep that drives straight through the villain, beep beep', ability: use('jeep', 'dash', 0x6a8a3a, { power: 3 }) },
+  { word: 'sheep', look: 'a flock of woolly sheep bouncing at the villain', ability: use('sheep', 'bolt', 0xffffff, { ...pic('sheep'), count: 4, homing: true }) },
+  { word: 'three', look: 'three big stars that drop down on the villain, one, two, three', ability: use('three', 'rain', 0xffd23f, { glyph: '⭐', count: 3, power: 3 }) },
+  { word: 'cheese', look: 'cheese wedges raining down on the villain, smelly', ability: use('cheese', 'rain', 0xffd23f, { ...pic('cheese'), count: 10 }) },
+  { word: 'kite', look: 'kites that swoop round her, then dive at the villain', ability: use('kite', 'orbit', 0xff5ab4, { ...pic('kite'), count: 4, duration: 1.6 }) },
+  { word: 'bike', look: 'a bike that rides straight through the villain, ring ring', ability: use('bike', 'dash', 0xe63946, { power: 3 }) },
+  { word: 'vase', look: 'vases of flowers dropping on the villain, crash', ability: use('vase', 'rain', 0x9b5de5, { ...pic('vase'), count: 6 }) },
+  { word: 'cake', look: 'a big cake for the whole team: strong again, yum', ability: use('cake', 'heal', 0xff9ad5, { color2: 0xffffff }) },
 ];
 
 /**
@@ -210,6 +238,8 @@ const ACTION_EFFECTS: WordEffect[] = [
   { word: 'chop', look: 'she pops up beside the villain: karate chop!', ability: act('chop', 'teleport', 0xffd6a5, { power: 3, shout: true }) },
   { word: 'kick', look: 'balls kicked at the villain, goal!', ability: act('kick', 'bolt', 0xffffff, { glyph: '⚽', count: 3, homing: true, shout: true }) },
   { word: 'rush', look: 'a rush of wind that blows the villain back', ability: act('rush', 'cone', 0xbaf2ff, { color2: 0xffffff }) },
+  // Item 056: Q's move word.
+  { word: 'quest', look: 'a quest! a glowing map path leads her straight through the villain', ability: act('quest', 'dash', 0xffd23f, { power: 3, color2: 0xffffff }) },
 ];
 
 export const EFFECTS: WordEffect[] = [...THING_EFFECTS, ...ACTION_EFFECTS];

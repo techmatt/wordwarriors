@@ -458,6 +458,37 @@ npm run voice:build     # synthesise new or changed lines into public/voice-gen/
 npm run art:placeholders  # paint missing art, rewrite docs/art.md
 ```
 
+### The word bank's coverage rule (item 056)
+
+The bank covers phonics by rule, not by luck. Counting only familiar pictured words
+(`THINGS`: not `odd`, not actions), `COVERAGE` in `content/phonics/bank.ts` asks for:
+
+- **3 per first sound**, every letter sound and digraph (QU counts as Q), unless an
+  entry there gives a lower target and why: no familiar one-vowel picture starts with
+  I, O, U, X, Z or voiced TH; A, E, Q, W, Y and TH have 1 or 2;
+- **a last sound** for the sounds words end on: 3 each for B D G K L M N P S T X CK NG
+  SH, fewer for F Z CH TH, with reasons;
+- **8 per short vowel**; **2 pictures per word-machine family**, and the families listed
+  must stay families (-ING and -OCK joined in 056);
+- **the Stretchy Bridge**: 3 early words (levels 1–2, a short vowel) per first sound,
+  so the far bank can show two that start like the word and differ later;
+- **long vowels**: long E 3, long O, A and I 2 each, long U none yet.
+
+`npm run bank:audit` prints the table (`-- --gaps` only the shortfalls) and the
+two-sound trios (MAT MAP MAN). `tests/unit/coverage.test.ts` fails when a row drops
+under its target, so removing a word, marking one `odd` or retiring a family that
+leaves a letter short goes red. Lower a target only with its reason.
+
+Sound units (056): QU and NG are units like SH (QU sounds as Q's "Kwuh"), and doubled
+letters (EGG, BELL: FF LL SS ZZ GG) are one unit sounding as the letter, without
+raising the level. A hand-`spelled` word with one short vowel (THUMB: TH U MB, MB
+saying M) is tagged like any word; a long-vowel one marked `late` is level 3, and a
+silent letter (the E of KITE) has the sound `''`: the hint lights it and says nothing.
+A word that is said in a narrator line, a threat, a quest line, a hub scene or a rune
+gesture cannot join the bank until that line is reworded (the unit tests name it):
+WELL ("well done"), WITCH (Bavmorda), SAND (Jasmine's threat) and SWING (a rune) stayed
+out for that; QUEEN, EGG and SHELL went in after their lines were reworded.
+
 ## Storage
 
 Every file has exactly one home (Matt, 2026-10-18):

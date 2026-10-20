@@ -58,7 +58,8 @@ test('the bank: unique words, every vowel and level present, things and actions 
     // Item 040: an `odd` word (YAK) is no picture to match.
     assert.equal(THINGS.includes(w), w.role !== 'action' && !w.odd, w.word);
     assert.equal(ACTIONS.includes(w), w.role !== 'thing', w.word);
-    for (const u of w.sounds) assert.ok(SOUND_BY_UNIT[u], `${w.word}: no sound for ${u}`);
+    // Item 056: a silent letter (the E of KITE) has no sound, ``.
+    for (const u of w.sounds) assert.ok(u === '' || SOUND_BY_UNIT[u], `${w.word}: no sound for ${u}`);
   }
 });
 
