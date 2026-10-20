@@ -9,17 +9,17 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom, playEpisode, seedProgress, slideAcross, state, stick, until, type WWState } from './harness';
+import { BRIDGE_WORDS } from '../src/rules/bridge';
+import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom, playEpisode, press, seedProgress, slideAcross, state, stick, until, type WWState } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/054_${name}.png` });
 
 const bridge = (s: WWState) => s.room?.bridge;
 const levels = (s: WWState) => (s.progress as unknown as { bridgeLevels: Record<string, number> }).bridgeLevels;
 
-/** Every bridge word at help level `n`. */
+/** Every bridge word at help level `n` (all of them: at level 2 or more the later tiers open too). */
 async function seedLevels(page: Page, n: number): Promise<void> {
-  const all = ['map', 'mop', 'mug', 'mat', 'man', 'sun', 'six', 'fan', 'fox', 'log', 'leg', 'lip', 'lid', 'net', 'nut', 'rat', 'rug', 'van', 'vet'];
-  await seedProgress(page, { version: 1, bridgeLevels: Object.fromEntries(all.map((w) => [w, n])) });
+  await seedProgress(page, { version: 1, bridgeLevels: Object.fromEntries(BRIDGE_WORDS.map((w) => [w, n])) });
 }
 
 /** Slide onto stone `i` and stop there. */
@@ -179,7 +179,10 @@ test('the beta: every drawn episode has a phonics room behind door a, Charge the
 test('Stretchy Bridge in a drawn episode: behind door a, every word a battle item', SLOW, async ({ page }) => {
   test.setTimeout(600_000);
   const errors = collectErrors(page);
-  await boot(page, '?seed=54&games=all&room=bridge');
+  await boot(page, '?seed=54&games=all&room=bridge&nojourney=1');
+  await until(page, (s) => s.scene === 'Title', 30_000, 'title');
+  await page.waitForTimeout(300);
+  await press(page, 'green');
   const { end } = await playEpisode(page);
   const plan = end.episode.house.plan!.find((p) => p.slot === 'a')!;
   expect(plan.kind).toBe('bridge');
