@@ -14,7 +14,10 @@ helper, and the bad news, the villain; the house takes on the villain's mood; no
 reading) → **entry hall warm-up** (`src/scenes/EntryScene.ts`: grab one of nine labelled
 pictures from a letter clue; it is her first battle item) → **house part 1** (the hub:
 the helper's story scene ends in the **gift word**, her first move word; two side-room
-doors, one **sentence game** each, fetch battle items; the front door appears once both
+doors, a minigame each from a weighted pool (the **sentence game**, the word machine),
+fetching battle items; for the beta one door is always **Charge the Spell** (letter
+sounds said aloud, Dad judges with keys 1 / 2; its runes fire in the battle,
+`FORCE_PHONICS_ROOM`); the front door appears once both
 are done) → **battle part 1** (the villain's ultimate wins: "too strong, retreat") →
 **house part 2** (a secret attic door: the counter sentence fetches the counter-item) →
 **battle part 2** (the counter beats the ultimate) → **victory scene**
