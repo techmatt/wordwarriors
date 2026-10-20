@@ -50,6 +50,12 @@ three episodes back to back), plus a static review of the 037/038 surfaces.
 | 33 | Grown-ups page | F8 twice erased the record but not today's column. | static review |
 | 34 | Title | Its line was the one instruction with no caption. | static review |
 | 35 | Title | Each visit decoded the voice of a cast it then threw away (a narrator is ~500 clips), delaying the bedroom's first lines. | static review |
+| 36 | Speech rule | A door's sign is its room's glyph, and a bank word drawn the same way could be that room's key word: the 🛁 door led to GO GET THE TUB (also 🥚 NEST, ⚙️ COG, 🍳 PAN, 🔧 FIX). Those words stay out of that episode's keys. | static check over every room |
+| 37 | Victory | The closing lines' box covered the recap cards (cards weigh most for the box now), and with no ally the left block stood empty: the dad who woke her stands there. Nine cards fit. | contact sheet |
+| 38 | Entry hall | "Out the door!" came before the door appeared. | contact sheet |
+| 39 | Hub | The sword yard's door sign was ⚔️, a battle on the journey map. Now 🎯. | contact sheet |
+| 40 | Battle move choice | Pads were placed among the villain's minions (skeletons, dragon babies). They keep clear of every fighter now. | contact sheet |
+| 41 | Words | The stem rule for compounds first matched any long ending (KITCHEN kept KIT out, BATTLES BAT, CAPTAIN CAP). Only doubled endings and real second halves count. | `tests/unit/bughunt039.test.ts` |
 
 ### Matt's calls
 
@@ -60,6 +66,7 @@ Most important first; the hunt's pick is in **bold**.
 | M1 | Battle move choice | The partner's prompt is captioned "USE ZAP!" with ZAP lit, while the pads show ZAP, DOT, WET: she can match letter shapes from the caption instead of reading the pads. | (a) keep; **(b) the caption hides the word ("USE ...!"), so she hears it and finds it written, the brief's design**; (c) no caption during the choice |
 | M2 | Every reading room, victory | Word confirmations, letter sounds and sentence prefixes are the `phonics` voice, Dada Matt's (his recordings will replace it), so his face pops up between the narrator's lines, also in episodes he is not in (Scar narrating, Jason waking): the speaker swaps mid-sentence. | (a) keep, Dada Matt is always the reading voice; **(b) his face only when he is in the episode, otherwise no face (the banner or card is lit anyway)**; (c) no face for phonics lines anywhere; (d) the narrator's own voice for word lines (about 4x the word audio) |
 | M3 | Hub, entry hall | Before she can move: the hub's story scene keeps her input locked about 33 s (three lines, the gift word, the circle line), the entry hall's ask and clue about 30 s at level 1 (measured at speed 5, in game time). Long for a four-year-old standing still. | (a) keep; **(b) let her walk during the story lines (green still waits), so the wait is play**; (c) trim the hub scenes to two lines |
+| M5 | Sentence banner | A sentence that does not fit one row at full size shrinks to 40 px before it may wrap ("one row down to 40 px"), so a long counter sentence (SMAUG IS NO MATCH FOR THE BUN) reads at about half size. | (a) keep; **(b) two rows at 56 px before one row at 40 px** |
 | M4 | Battle move choice | The pad signs stand over the fighters behind them: a tall ally (a dad) disappears behind a sign, and Julia can be drawn over her ally on a pad. | (a) keep, the signs are what she reads; **(b) the team steps back off the pad row while a choice is open** |
 
 ### Won't fix
@@ -71,4 +78,7 @@ Most important first; the hunt's pick is in **bold**.
 | W3 | Hub | While "Stand in the circle..." plays, the box covers the gift card. | The word has been said and caught; the circle is what she needs then (fix 1). |
 | W4 | Battle (spell clash) | A yellow striped diamond at Evil Bavmorda's feet all battle. | It is her broom (`mount: '🧹'` in the roster), as Segoe UI Emoji draws it. |
 | W5 | Entry hall | On a miss ("That's the CAT! We need the...") and the door line, the box sits over the bottom row of pictures. | Only while the line plays, and the letter board it keeps clear is what she matches next. |
+| W7 | Sentence room | The banner's rod runs under the bag's item row at the top left. | The items stay readable; moving either is an art and layout pass. |
+| W8 | Victory scene, battle | Bubbles over other characters' heads in the victory scene; the counter shout (NOT THE FOX!) touching the HP bar; a lightning bolt from just before a move choice lingering over a sign (the frozen clock slows its fade). | Each lasts a line or less; noted for a polish pass. |
+| W9 | Word machine | Standing on a used tile, she shows through it. | On purpose: the tile is over her so its letter is never hidden. |
 | W6 | Battle (cook-off), journey map | Julia half behind the stove's pot; the map's background dragon bigger than the villain marker. | Cosmetic, seen once each; noted for an art pass. |
