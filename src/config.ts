@@ -137,10 +137,45 @@ export const CHARGE = {
 };
 
 /**
+ * The Stretchy Bridge (item 054, src/scenes/BridgeRoom.ts): the word's
+ * letters are stepping stones over a gap; while she stands on one its sound
+ * is held, so how slowly she slides is how slowly she stretches the word.
+ * `words` per visit, `pictures` on the far bank (the word's included).
+ * `slide`: her speed on the stones, a share of her walking speed. A held
+ * sound stops after `maxHoldMs`. Each word has its own help level: 1 = the
+ * stones sound themselves and the pictures show from the start; 2 = silent
+ * stones, Dad's 2 is a hint (they sound); 3 = she says the word aloud first,
+ * Dad's 2 brings the pictures, his 1 replays the slide with sounds (each
+ * stone `replayMs`). Nothing from Dad for `dadWaitMs` counts as his 1; after
+ * `replays` the pictures come anyway. `startLevel` is a word she has never
+ * crossed. `tiers`: CVC words starting with a sound you can hold (M S F L N R
+ * V Z) first; CVC words starting with a stop sound join once `start` of those
+ * are at level 2 or more, at weight `min`, full at `full`; then the blends and
+ * digraphs (also behind the bank's own level gates) off the stop-sound words.
+ * `weight` is its weight in the rooms' pool.
+ */
+export const BRIDGE = {
+  words: 3,
+  pictures: 3,
+  startLevel: 1 as 1 | 2 | 3,
+  weight: 1,
+  slide: 0.55,
+  maxHoldMs: 2500,
+  replayMs: 700,
+  dadWaitMs: 12000,
+  replays: 2,
+  tiers: {
+    2: { start: 0.3, full: 0.7, min: 0.25 },
+    3: { start: 0.3, full: 0.7, min: 0.2 },
+  } as Record<2 | 3, { start: number; full: number; min: number }>,
+};
+
+/**
  * Beta (item 053): every episode has one of the phonics games (Charge the
- * Spell; 054's game once it lands) behind one of the two side doors. Off, the
- * game is only its weight in the pool. A test URL that picks its own games
- * (`?games=sentence`, `?game=`) is left alone; `?room=charge` forces it anyway.
+ * Spell or the Stretchy Bridge, item 054, drawn by weight) behind one of the
+ * two side doors. Off, each is only its weight in the pool. A test URL that
+ * picks its own games (`?games=sentence`, `?game=`) is left alone;
+ * `?room=charge` or `?room=bridge` forces that one anyway.
  */
 export const FORCE_PHONICS_ROOM = true;
 

@@ -46,6 +46,8 @@ const ENDING_PROPS = ENDINGS.flatMap((e) => e.props.map((p) => endingPropArt(p.i
 const FIGHT_PROPS = FIGHTS.flatMap((f) => (f.props ?? []).map((p) => fightPropArt(p.id)));
 // The word bank's new words (item 037) with no green of their own: not frog, twig, pod, plum, fig, slug or snap (a crocodile).
 // Item 040's words: none is green.
+// Item 054's words: none is green.
+const BANK_054 = ['mat', 'man', 'lid', 'lock'].map((w) => `pic_${w}`);
 const BANK_040 = ['vet', 'chest', 'bin', 'rock', 'clock', 'stick', 'brush', 'truck', 'bath', 'plant', 'crib', 'key', 'yoyo'].map((w) => `pic_${w}`);
 const BANK_037 = ['jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'gum', 'bun', 'hut', 'sub', 'nap', 'wag', 'jab', 'red', 'hex', 'jig', 'mix', 'jog', 'bop', 'dot', 'hum', 'yum', 'drum', 'crab', 'flag', 'sled', 'nest', 'tent', 'desk', 'belt', 'vest', 'gift', 'lamp', 'hand', 'mask', 'raft', 'plug', 'ant', 'milk', 'jump', 'spin', 'swim', 'flip', 'stomp', 'slam', 'grab', 'clap', 'bump', 'skip', 'twist', 'melt', 'lift', 'plop', 'flop', 'trap', 'blast', 'drip', 'ship', 'fish', 'duck', 'sock', 'moth', 'shed', 'chick', 'chop', 'kick', 'rush'].map((w) => `pic_${w}`);
 /**
@@ -60,7 +62,7 @@ export function keyMode(id: string): 'keep' | 'noGreen' | 'lightGreen' {
   return NO_GREEN.has(id) ? 'noGreen' : LIGHT_GREEN.has(id) ? 'lightGreen' : 'keep';
 }
 
-export const NO_GREEN = new Set([...BANK_037, ...BANK_040,...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
+export const NO_GREEN = new Set([...BANK_037, ...BANK_040, ...BANK_054,...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
 
 /**
  * Likeness references for the family (Matt, 2026-10-18): a photo in the
@@ -493,6 +495,11 @@ const PICTURES: Record<string, string> = {
   // Item 043: the K and Y pictures (long-vowel words).
   key: 'a key: one big shiny gold door key with a round loop handle and simple teeth, lying side-on; a key alone, no lock, no keyring',
   yoyo: 'a yo-yo: one bright red toy yo-yo hanging from its white string, the string looped round a finger at the top, a few motion lines',
+  // Item 054: the Stretchy Bridge's pictures beside MAP, LIP and LOG.
+  mat: 'a mat: a thick rectangular red-and-yellow striped play mat lying flat on the floor, seen from slightly above, tassels on its short ends; a mat alone, not a rug with a pattern of roads, no writing',
+  man: 'a man: one friendly grown-up man standing and waving, short brown hair, a blue jumper and jeans, smiling, full body; an ordinary man, not a dad from the family, not a superhero',
+  lid: 'a lid: one round shiny silver saucepan lid with a black knob handle on top, tilted so the knob shows; a lid alone, no pot, no pan',
+  lock: 'a lock: one big shiny gold padlock, closed, with a keyhole on its front and a curved silver shackle on top; a lock alone, no key, no door',
 };
 
 const HAND: Record<string, string> = {

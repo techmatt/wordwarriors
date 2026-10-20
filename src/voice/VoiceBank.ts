@@ -10,6 +10,7 @@
  */
 
 import { getAudioContext, unlockAudio } from '../audio/context';
+import { holdPlan, holdSamples, type HoldMode } from '../audio/holdSound';
 
 export interface TimedWord {
   word: string;
@@ -126,6 +127,33 @@ export class VoiceBank {
     if (line && ctx) await this.decodeLine(ctx, line, base);
   }
 
+  /**
+   * A letter sound cut for the Stretchy Bridge (item 054, src/audio/holdSound.ts):
+   * held (its steady part looping from `loopStart`, in seconds) or once (no
+   * schwa). Worked out from the decoded clip the first time, and again if the
+   * clip is decoded anew, so a recording that replaces a placeholder is cut
+   * by its own shape. Null until the line is decoded.
+   */
+  held(id: string, mode: HoldMode): HeldClip | null {
+    const ctx = getAudioContext();
+    const buffer = this.buffers.get(id);
+    if (!ctx || !buffer) return null;
+    let cuts = this.cuts.get(buffer);
+    if (!cuts) this.cuts.set(buffer, (cuts = {}));
+    const done = cuts[mode];
+    if (done) return done;
+    const x = buffer.getChannelData(0);
+    const plan = holdPlan(x, buffer.sampleRate, mode);
+    const { data, loopStart } = holdSamples(x, plan, buffer.sampleRate);
+    const out = ctx.createBuffer(1, data.length, buffer.sampleRate);
+    out.copyToChannel(data, 0);
+    const clip: HeldClip = { buffer: out, loopStart: loopStart === null ? null : loopStart / buffer.sampleRate };
+    cuts[mode] = clip;
+    return clip;
+  }
+
+  private readonly cuts = new WeakMap<AudioBuffer, Partial<Record<HoldMode, HeldClip>>>();
+
   get ids(): string[] {
     return [...this.lines.keys()];
   }
@@ -142,6 +170,13 @@ export class VoiceBank {
     source.start();
     return new VoicePlayback(ctx, source, buffer.duration);
   }
+}
+
+/** A letter sound cut to hold or play once (`VoiceBank.held`). */
+export interface HeldClip {
+  buffer: AudioBuffer;
+  /** Where a held clip loops back to, in seconds; null for a once clip. */
+  loopStart: number | null;
 }
 
 export class VoicePlayback {

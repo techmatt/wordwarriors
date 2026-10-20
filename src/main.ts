@@ -10,6 +10,7 @@ import { HubScene } from './scenes/HubScene';
 import { SentenceRoom } from './scenes/SentenceRoom';
 import { WordMachine } from './scenes/WordMachine';
 import { ChargeRoom } from './scenes/ChargeRoom';
+import { BridgeRoom } from './scenes/BridgeRoom';
 import { BlendPath } from './scenes/minigames/BlendPath';
 import { SoundToLetter } from './scenes/minigames/SoundToLetter';
 import { Spelling } from './scenes/minigames/Spelling';
@@ -71,6 +72,7 @@ const game = new Phaser.Game({
     SentenceRoom,
     WordMachine,
     ChargeRoom,
+    BridgeRoom,
     BattleScene,
     EndingScene,
     VictoryScene,

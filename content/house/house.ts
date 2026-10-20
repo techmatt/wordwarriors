@@ -272,6 +272,37 @@ export const ALL_SIDE_ROOMS: SideRoomSpec[] = [...new Map([...SIDE_ROOMS, ...PLA
 
 export const SIDE_ROOM_BY_ID: Record<string, SideRoomSpec> = Object.fromEntries(ALL_SIDE_ROOMS.map((r) => [r.id, r]));
 
+/**
+ * The Stretchy Bridge's gap (item 054, src/scenes/BridgeRoom.ts): what its
+ * stepping stones cross, drawn by the game over the room's floor. In the
+ * house the floor is lava (the game every child plays on the sofa); each
+ * quest place has the gap that fits it.
+ */
+export type BridgeGap = 'lava' | 'river' | 'chasm';
+
+export const GAP_BY_PLACE: Record<string, BridgeGap> = {
+  home: 'lava',
+  treehouse: 'river',
+  forest_gym: 'river',
+  hacker_den: 'chasm',
+  rune_dojo: 'chasm',
+  secret_kitchen: 'lava',
+  knight_camp: 'river',
+  moon_tower: 'chasm',
+  bubble_castle: 'river',
+  dragon_mountain: 'lava',
+  ice_castle: 'chasm',
+  desert_oasis: 'river',
+  sea_grotto: 'river',
+  robot_workshop: 'lava',
+};
+
+/** A side room's gap: its place's (a shared secret room takes the first place that has it), else the house's lava. */
+export function gapFor(roomId: string): BridgeGap {
+  const place = PLACES.find((p) => p.rooms.some((r) => r.id === roomId) || p.secret.id === roomId);
+  return GAP_BY_PLACE[place?.id ?? HOME] ?? 'lava';
+}
+
 /** The hub's art: the house's `room_hub`, or a place's own. */
 export const hubArt = (place: string) => (place === HOME ? 'room_hub' : `room_place_${place}`);
 

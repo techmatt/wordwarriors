@@ -258,6 +258,11 @@ export abstract class RoomScene extends Phaser.Scene {
     return false;
   }
 
+  /** Her speed now, a share of walking (the Stretchy Bridge's stones are slower, item 054). */
+  protected moveScale(): number {
+    return 1;
+  }
+
   /** The spot a correct answer is at (dev F4 and tests). */
   protected correctSpot(): Spot | undefined {
     return this.spots.find((s) => s.correct === true && s.enabled);
@@ -266,7 +271,8 @@ export abstract class RoomScene extends Phaser.Scene {
   override update(_time: number, deltaMs: number): void {
     const dt = Math.min(0.05, deltaMs / 1000);
     this.controls.update();
-    this.player.update(this.controls.move, dt);
+    const k = this.moveScale();
+    this.player.update(k === 1 ? this.controls.move : this.controls.move.clone().scale(k), dt);
 
     // Nearest enabled spot within reach.
     let best: Spot | null = null;

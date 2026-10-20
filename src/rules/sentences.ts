@@ -34,6 +34,7 @@ import { ACTIONS, THINGS } from '../../content/phonics/bank';
 import { MINIGAMES, drawGames, type Minigame } from './minigames';
 import { machineWords, planMachine, type MachinePlan } from './wordMachine';
 import { planCharge, type ChargePlan } from './charge';
+import { bridgeShown, bridgeWords, planBridge, type BridgePlan } from './bridge';
 import { SENTENCE_SOLID } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { distractorsFor, drawFromBag, shuffle, withStems, type Rand } from './bank';
@@ -76,7 +77,13 @@ export interface ChargeRoomPlan extends PlanBase {
   charge: ChargePlan;
 }
 
-export type RoomPlan = SentencePlan | MachineRoomPlan | ChargeRoomPlan;
+/** The Stretchy Bridge's room (item 054): the words it crosses, `fetches`, in its plan's rounds. */
+export interface BridgeRoomPlan extends PlanBase {
+  kind: 'bridge';
+  bridge: BridgePlan;
+}
+
+export type RoomPlan = SentencePlan | MachineRoomPlan | ChargeRoomPlan | BridgeRoomPlan;
 
 /** Every word the bag holds: the bank's pictured words (item 037: CVC, blends and digraphs). */
 export const BAG_WORDS: string[] = THINGS.map((w) => w.word);
@@ -224,8 +231,9 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   const games = [...(input.games ?? drawGames(store, rand, input.pool))] as [Minigame, Minigame, Minigame];
   if (games[2].machine) throw new Error('episodePlans: the word machine is a fetch room, not the counter');
   if (games[2].charge) throw new Error('episodePlans: Charge the Spell is a fetch room, not the counter');
+  if (games[2].bridge) throw new Error('episodePlans: the Stretchy Bridge is a fetch room, not the counter');
   const frames = games.map((g) => {
-    if (!g.frame && !g.machine && !g.charge) throw new Error(`episodePlans: ${g.id} is not a sentence game, the word machine or Charge the Spell`);
+    if (!g.frame && !g.machine && !g.charge && !g.bridge) throw new Error(`episodePlans: ${g.id} is not a sentence game, the word machine, Charge the Spell or the Stretchy Bridge`);
     return g.frame;
   });
 
@@ -250,7 +258,11 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
     machines[i] = null;
     for (const t of sentence(spare.frame!, fill, 'x').tokens.slice(0, -1)) avoid.add(tokenWord(t));
   });
-  const taken = machines.flatMap((m) => (m ? machineWords(m) : []));
+  // The Stretchy Bridge (item 054) reads several words too, planned the same
+  // way; its far-bank pictures are shown, so no room's key word is one of them.
+  const bridges: (BridgePlan | null)[] = games.map((g) => (g.bridge ? planBridge(store, { avoid: [...avoid, ...moves], taken: machines.flatMap((m) => (m ? machineWords(m) : [])) }, rand) : null));
+  const taken = [...machines.flatMap((m) => (m ? machineWords(m) : [])), ...bridges.flatMap((b) => (b ? bridgeWords(b) : []))];
+  const pictured = bridges.flatMap((b) => (b ? bridgeShown(b) : []));
 
   // A frame ending "...A {x}" takes no word starting with a vowel: no WE NEED A ANT (item 039).
   const fits = (i: number) => {
@@ -271,14 +283,19 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
       keys.push(machineWords(m).at(-1) ?? '');
       continue;
     }
-    const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w)).filter(fits(i));
+    const b = bridges[i];
+    if (b) {
+      keys.push(bridgeWords(b).at(-1) ?? '');
+      continue;
+    }
+    const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w)).filter(fits(i));
     keys.push(drawKey(store, eligible, rand, [...keys, ...taken]));
   }
   // The counter: not a word on battle 1's move pads, not a word fetched this
   // episode (battle 1 shouts THE NET!). Every bag word is decodable (item 009;
   // KEY and YOYO too since item 048).
   const named = CHARACTER_BY_ID[fill.villain]?.counter.word;
-  const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w)).filter(fits(2));
+  const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w)).filter(fits(2));
   keys.push(drawKey(store, eligible, rand, [...keys, ...taken], (w) => (w === named ? NAMED_COUNTER_BOOST : 1)));
 
   const slots = ['a', 'b', 'counter'] as const;
@@ -289,6 +306,8 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
     if (m) return { ...base, kind: 'machine', machine: m, fetches: machineWords(m) };
     const c = charges[i];
     if (c) return { ...base, kind: 'charge', charge: c, fetches: [] };
+    const b = bridges[i];
+    if (b) return { ...base, kind: 'bridge', bridge: b, fetches: bridgeWords(b) };
     const s = sentence(frames[i]!, fill, keys[i]!);
     // No room offers the gift word or another of the episode's key words as a wrong picture.
     const others = [gift, ...keys.filter((k) => k && k !== keys[i]), ...taken];

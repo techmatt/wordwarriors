@@ -34,7 +34,7 @@ export interface WWState {
     /** The home warm-up (item 033): the word grabbed in the entry hall and the hall's pictures. */
     grab: { word: string; objects: string[] } | null;
     house: {
-      plan: { slot: string; room: string; game: string; kind: 'sentence' | 'machine' | 'charge'; key: string; fetches: string[]; charge?: { runes: string[] }; sentence?: { key: string; frame: string }; machine?: { mode: string; rounds: { word: string; rime: string }[] } }[] | null;
+      plan: { slot: string; room: string; game: string; kind: 'sentence' | 'machine' | 'charge' | 'bridge'; key: string; fetches: string[]; charge?: { runes: string[] }; bridge?: { rounds: { word: string; units: string[]; pictures: string[] }[] }; sentence?: { key: string; frame: string }; machine?: { mode: string; rounds: { word: string; rime: string }[] } }[] | null;
       done: string[];
       taught: boolean;
     };
@@ -77,6 +77,25 @@ export interface WWState {
       assists: number;
       timeouts: number;
       charged: string[];
+    };
+    /** The Stretchy Bridge (item 054). */
+    bridge?: {
+      words: string[];
+      index: number;
+      word: string;
+      units: string[];
+      pictures: string[];
+      level: number;
+      phase: 'intro' | 'slide' | 'say' | 'replay' | 'pick' | 'check' | 'done';
+      stone: number;
+      voiced: boolean;
+      aided: boolean;
+      picturesUp: boolean;
+      replays: number;
+      timeouts: number;
+      misses: number;
+      asking: boolean;
+      holding: string | null;
     };
   } | null;
   battle: {
@@ -373,14 +392,68 @@ export async function playChargeRoom(page: Page, noFirst = false): Promise<strin
   return runes;
 }
 
+/** Slide her across the Stretchy Bridge (item 054): the stick held right until she is on the far bank. */
+export async function slideAcross(page: Page, speed = 1): Promise<void> {
+  const start = Date.now();
+  for (;;) {
+    const s = await state(page);
+    const b = s.room?.bridge;
+    if (!b || b.phase !== 'slide' || (s.room?.player.x ?? 0) > 935) break;
+    if (Date.now() - start > 30_000) throw new Error(`could not cross the bridge from ${s.room?.player.x}`);
+    await stick(page, speed, 0);
+    await page.waitForTimeout(60);
+  }
+  await stick(page, 0, 0);
+}
+
+/**
+ * Play the Stretchy Bridge (item 054): for each word, slide across, Dad's yes
+ * where he is asked (level 3), then the right picture; with `wrongFirst`, a
+ * wrong picture first on the first word (it is sounded out, she slides
+ * again). Returns the words read (each a battle item).
+ */
+export async function playBridgeRoom(page: Page, wrongFirst = false): Promise<string[]> {
+  const first = await until(page, (s) => s.scene === 'BridgeRoom' && Boolean(s.room?.bridge), 30_000, 'bridge room');
+  const words = first.room!.bridge!.words;
+  let wrong = wrongFirst;
+  for (let i = first.room!.bridge!.index; i < words.length; i++) {
+    for (;;) {
+      const s = await until(page, (st) => st.scene !== 'BridgeRoom' || (st.room?.bridge?.index === i && st.room.bridge.phase === 'slide' && !st.room.locked), 90_000, `bridge ${i} (${words[i]}) ready`);
+      if (s.scene !== 'BridgeRoom') return words;
+      await slideAcross(page);
+      const at = await until(page, (st) => (st.room?.bridge?.phase === 'say' || st.room?.bridge?.phase === 'pick') && !st.room.locked, 60_000, `far bank of ${words[i]}`);
+      if (at.room!.bridge!.phase === 'say') {
+        await dad(page, 'yes');
+        await until(page, (st) => st.room?.bridge?.phase === 'pick' && !st.room.locked, 60_000, 'pictures up');
+      }
+      if (wrong) {
+        wrong = false;
+        const other = at.room!.bridge!.pictures.find((w) => w !== words[i])!;
+        await choose(page, other);
+        continue;
+      }
+      await choose(page, words[i]);
+      await until(page, (st) => st.scene !== 'BridgeRoom' || (st.room?.bridge?.index ?? 0) > i || st.room?.bridge?.phase === 'done', 60_000, `${words[i]} read`);
+      break;
+    }
+  }
+  await until(page, (st) => st.scene !== 'BridgeRoom', 60_000, 'out of the bridge room');
+  return words;
+}
+
 /**
  * Play whichever game the room has: a sentence room (its key word), the word
- * machine (every word built), or Charge the Spell (nothing: it fetches no word).
+ * machine (every word built), Charge the Spell (nothing: it fetches no word),
+ * or the Stretchy Bridge (every word read).
  */
 export async function playRoom(page: Page): Promise<string[]> {
   const s = await until(
     page,
-    (st) => (st.scene === 'SentenceRoom' && Boolean(st.room?.sentence)) || (st.scene === 'WordMachine' && Boolean(st.room?.machine)) || (st.scene === 'ChargeRoom' && Boolean(st.room?.charge)),
+    (st) =>
+      (st.scene === 'SentenceRoom' && Boolean(st.room?.sentence)) ||
+      (st.scene === 'WordMachine' && Boolean(st.room?.machine)) ||
+      (st.scene === 'ChargeRoom' && Boolean(st.room?.charge)) ||
+      (st.scene === 'BridgeRoom' && Boolean(st.room?.bridge)),
     30_000,
     'a side room',
   );
@@ -388,6 +461,7 @@ export async function playRoom(page: Page): Promise<string[]> {
     await playChargeRoom(page);
     return [];
   }
+  if (s.scene === 'BridgeRoom') return playBridgeRoom(page);
   return s.scene === 'WordMachine' ? playWordMachine(page) : [await playSentenceRoom(page)];
 }
 

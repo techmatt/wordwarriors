@@ -60,7 +60,8 @@ test('families: every bank rime in RIMES with two or more one-letter-onset words
       assert.ok(FETCH_BY_WORD[w], `${w} is a battle item`);
     }
   }
-  assert.deepEqual(FAMILY_BY_RIME.at!.words.sort(), ['bat', 'cat', 'hat', 'rat']);
+  // Item 054's MAT joins -AT by itself.
+  assert.deepEqual(FAMILY_BY_RIME.at!.words.sort(), ['bat', 'cat', 'hat', 'mat', 'rat']);
   assert.deepEqual(FAMILY_BY_RIME.ug!.words.sort(), ['bug', 'jug', 'mug', 'rug']);
   assert.deepEqual(FAMILY_BY_RIME.ug!.all.sort(), ['bug', 'hug', 'jug', 'mug', 'rug', 'tug']);
   // A blend or digraph onset is not one tile: SLUG and PLUG are not -UG's, CHOP not -OP's.
@@ -168,8 +169,8 @@ test('the pool: the machine is a fetch game, drawn about every other episode, ne
     if (games.slice(0, 2).some((g) => g.machine)) n++;
   }
   assert.ok(n > 120 && n < 300, `machine drawn in ${n}/400 episodes`);
-  // The word machine and Charge the Spell (item 053).
-  assert.equal(MINIGAMES.length, SENTENCE_GAMES.length + 2);
+  // The word machine, Charge the Spell (item 053) and the Stretchy Bridge (item 054).
+  assert.equal(MINIGAMES.length, SENTENCE_GAMES.length + 3);
 });
 
 test('episodePlans with the machine: its words are the room\'s fetches, kept out of every other room and the counter', () => {

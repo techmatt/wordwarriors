@@ -135,6 +135,9 @@ export function leakIssues(s: WWState, l: Layout, voiceSinceRound: Since['voice'
   const m = s.room?.machine;
   // The machine's word is built from its rime and a tile, never printed whole before it is made.
   if (m && (m.phase === 'pick' || m.phase === 'intro') && m.word) check(m.word, `machine ${m.rime}`, 0);
+  // The bridge's word is its stones, a letter each, never printed whole or said before she picks its picture (item 054).
+  const b = s.room?.bridge;
+  if (b && b.phase !== 'check' && b.phase !== 'done') check(b.word, `bridge ${b.index}`, 0);
   return out;
 }
 

@@ -145,6 +145,11 @@ const THING_EFFECTS: WordEffect[] = [
   // Item 043: the K and Y pictures.
   { word: 'key', look: 'a giant golden key that locks the villain still for a moment, click', ability: use('key', 'freeze', 0xffd23f, { duration: 2 }) },
   { word: 'yoyo', look: 'yo-yos that zip out and bonk the villain, then zip back', ability: use('yoyo', 'bolt', 0xe63946, { ...pic('yoyo'), count: 4, homing: true }) },
+  // Item 054: the bridge's new pictures.
+  { word: 'mat', look: 'a giant mat that rolls out and sweeps the villain off its feet, whoosh', ability: use('mat', 'wave', 0xc8553d, { color2: 0xffd23f }) },
+  { word: 'man', look: 'a friendly strong man who shields the whole team with his arms wide', ability: use('man', 'shield', 0x7ad9ff, { duration: 3 }) },
+  { word: 'lid', look: 'pot lids that clang down on the villain, bong bong', ability: use('lid', 'rain', 0xb8c4d0, { ...pic('lid'), count: 8 }) },
+  { word: 'lock', look: 'a giant padlock that clicks shut on the villain: it cannot move for a moment', ability: use('lock', 'freeze', 0xffd23f, { duration: 2 }) },
 ];
 
 /**

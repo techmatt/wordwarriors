@@ -135,6 +135,25 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'charge_yes_4', text: 'What a spell!' },
   { key: 'charge_done', text: 'All charged! Our spells are ready for the fight!', say: 'All charged, our spells are ready for the fight!' },
   { key: 'use_runes', text: 'Spell power, go!' },
+  // The Stretchy Bridge (item 054, src/scenes/BridgeRoom.ts). No line names a
+  // letter, a sound or a word: the stones' sounds are letter_ lines, and the
+  // word is said (word_) only once she has picked its picture. `bridge_start`,
+  // `_middle` and `_end` trail off into the sound where her pick went wrong.
+  { key: 'bridge_intro', text: 'A bridge of magic stones! Slide across, nice and slow, and stretch the sounds.', say: 'A bridge of magic stones, slide across, nice and slow, and stretch the sounds.' },
+  { key: 'bridge_slide', text: 'Slide across the stones!' },
+  { key: 'bridge_quiet', text: 'These stones are quiet. Read them yourself!', say: 'These stones are quiet, read them yourself!' },
+  { key: 'bridge_say', text: 'Now say the whole word out loud!' },
+  { key: 'bridge_listen', text: 'Listen to the stones!' },
+  { key: 'bridge_your_turn', text: 'Now you say it!' },
+  { key: 'bridge_hint', text: "Here's a hint! The stones will help.", say: "Here's a hint, the stones will help." },
+  { key: 'bridge_find', text: 'Which picture did you read? Walk to it!', say: 'Which picture did you read? Walk to it.' },
+  { key: 'bridge_picked', text: 'You picked...' },
+  { key: 'bridge_start', text: 'But the bridge starts with...' },
+  { key: 'bridge_middle', text: 'But in the middle, the bridge has...' },
+  { key: 'bridge_end', text: 'But the bridge ends with...' },
+  { key: 'bridge_again', text: 'Slide across again!' },
+  { key: 'bridge_next', text: 'Here comes a new bridge!' },
+  { key: 'bridge_done', text: 'We crossed every bridge! Our things are ready for the fight!', say: 'We crossed every bridge, our things are ready for the fight!' },
   // Each fight style's own beats (item 031, content/battle/fights.ts): `fight_<id>_<beat>`.
   ...FIGHTS.flatMap((f) => FIGHT_BEATS.flatMap((b) => (f.lines[b] ? [{ key: fightKey(f.id, b), ...f.lines[b] }] : []))),
 ];

@@ -17,7 +17,8 @@
  * shows and flow-control awaits still resolve.
  */
 
-import { getAudioContext } from './context';
+import { getAudioContext, unlockAudio } from './context';
+import type { HoldMode } from './holdSound';
 import { setMusicDuck } from './music';
 import { setSfxLevel } from './sfx';
 import { voiceBank, type VoiceLine, type VoicePlayback } from '../voice/VoiceBank';
@@ -43,7 +44,7 @@ type Listener = (u: Utterance | null) => void;
 const BARK_GAP_MS = 900;
 
 class Bus {
-  private current: { u: Utterance; playback: VoicePlayback | null; done: () => void } | null = null;
+  private current: { u: Utterance; playback: Pick<VoicePlayback, 'stop'> | null; done: () => void } | null = null;
   private queue: ((() => void) & { drop?: () => void })[] = [];
   private hushes = 0;
   private listeners = new Set<Listener>();
@@ -89,6 +90,81 @@ class Bus {
       if (this.hushes !== epoch) return;
       await this.say(id, 'instruction', anchor);
     }
+  }
+
+  /**
+   * Hold a letter sound (item 054, the Stretchy Bridge): it plays while she
+   * stands on its stone and stops, with a short fade, on `release()`. A `hold`
+   * sound loops its steady part (up to `maxMs`); a `once` sound plays its cut
+   * once, never with a schwa (VoiceBank `held`, src/audio/holdSound.ts). It is
+   * a line like any other to the listeners and the history, so a bark waits
+   * and an instruction queues behind it. Null while an instruction is playing
+   * or queued: a stone never talks over the narrator. With no audio (muted,
+   * not decoded yet) it still "plays", silent, so the flow is the same.
+   */
+  hold(id: string, mode: HoldMode, maxMs: number): HeldSound | null {
+    if (this.current?.u.priority === 'instruction' || this.queue.length) return null;
+    if (this.current) this.cut();
+    if (voiceBank.has(id) && !voiceBank.ready(id)) void voiceBank.ensure(id);
+    const ctx = getAudioContext();
+    const clip = ctx?.state === 'running' ? voiceBank.held(id, mode) : null;
+    let stopAudio = () => undefined as void;
+    let ended: Promise<void> | null = null;
+    if (ctx && clip) {
+      unlockAudio();
+      const gain = ctx.createGain();
+      gain.connect(ctx.destination);
+      const source = ctx.createBufferSource();
+      source.buffer = clip.buffer;
+      if (mode === 'hold' && clip.loopStart !== null) {
+        source.loop = true;
+        source.loopStart = clip.loopStart;
+        source.loopEnd = clip.buffer.duration;
+      }
+      source.connect(gain);
+      source.start();
+      ended = new Promise((resolve) => (source.onended = () => resolve()));
+      stopAudio = () => {
+        const t = ctx.currentTime;
+        gain.gain.setValueAtTime(gain.gain.value, t);
+        gain.gain.linearRampToValueAtTime(0, t + HOLD_FADE_S);
+        try {
+          source.stop(t + HOLD_FADE_S + 0.01);
+        } catch {
+          // Already ended.
+        }
+      };
+    }
+    const line = voiceBank.get(id);
+    const startedAt = performance.now();
+    const length = clip ? clip.buffer.duration : 0.15;
+    const u: Utterance = {
+      id,
+      line,
+      text: line?.text ?? '',
+      speaker: line?.speaker ?? '',
+      priority: 'instruction',
+      startedAt,
+      duration: mode === 'hold' ? maxMs / 1000 : length,
+      time: () => (performance.now() - startedAt) / 1000,
+    };
+    let released = false;
+    const release = () => {
+      if (released) return;
+      released = true;
+      stopAudio();
+      if (this.current?.u === u) this.finish();
+    };
+    this.current = { u, playback: { stop: release }, done: () => undefined };
+    this.history.push(id);
+    if (this.history.length > 200) this.history.shift();
+    setSfxLevel(0.45);
+    setMusicDuck(0.35);
+    for (const fn of this.listeners) fn(u);
+    // A once sound ends by itself; a held one at `maxMs` at the latest.
+    if (mode === 'once' && ended) void ended.then(release);
+    else setTimeout(release, mode === 'once' ? length * 1000 : maxMs);
+    return { id, release, get playing() { return !released; } };
   }
 
   /** Stop everything, queue included (scene change). */
@@ -170,5 +246,16 @@ class Bus {
     if (next) next();
   }
 }
+
+/** A held letter sound (`voiceBus.hold`). */
+export interface HeldSound {
+  id: string;
+  /** Stop it (a short fade); safe to call again. */
+  release(): void;
+  readonly playing: boolean;
+}
+
+/** A held sound fades out over this when she steps off its stone. */
+const HOLD_FADE_S = 0.04;
 
 export const voiceBus = new Bus();

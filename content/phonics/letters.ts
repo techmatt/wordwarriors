@@ -100,6 +100,17 @@ export const SOUND_BY_UNIT: Record<string, LetterSound> = Object.fromEntries(
 );
 
 /**
+ * The sounds you can hold (item 054, the Stretchy Bridge): the vowels, the
+ * hums (M N L R V Z) and the hisses (F S SH TH). The bridge holds them while
+ * she stands on their stone and plays every other sound (the stops, H W Y X)
+ * once, never with an "uh" (src/audio/holdSound.ts).
+ */
+export function canHold(sound: string): boolean {
+  const s = SOUND_BY_UNIT[sound];
+  return Boolean(s) && (s!.cls === 'vowel' || s!.cls === 'continuant' || ['f', 's', 'sh', 'th'].includes(sound));
+}
+
+/**
  * Letter NAMES (item 033): the home warm-up spells its word with them before
  * it gives the sounds, because names are what she already knows. Each is its
  * own line (`letterNameLine`), in the phonics voice like the sounds, so a

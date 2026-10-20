@@ -39,7 +39,7 @@ import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
 import { endingPeople } from '../rules/endings';
 import { withStems, type Rand } from '../rules/bank';
 import { episodePlans, wordsOf, type RoomPlan } from '../rules/sentences';
-import { CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
+import { BRIDGE_GAME, CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
 import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
 import { hallObjects, pickGrab } from '../rules/grab';
 import { BEDROOM_TAUNTS, DEFAULT_LINES, DEFAULT_STORY, drawLines, drawStory, type LineVariants, type Story } from '../rules/story';
@@ -493,8 +493,10 @@ export function grabPlan(): { word: string; objects: string[] } {
  * The beta's phonics room (item 053): with FORCE_PHONICS_ROOM on, a phonics
  * game (PHONICS_GAMES, drawn by weight) is behind door a of every episode,
  * unless the URL picks its own games (`?games=sentence`, `?game=`: the tests'
- * rooms stay theirs; `?games=all` is the real draw, so it is forced there). `?room=charge` forces Charge the Spell whatever else is
- * asked: behind door a, or door b when `?game=` holds door a.
+ * rooms stay theirs; `?games=all` is the real draw, so it is forced there).
+ * `?room=charge` forces Charge the Spell and `?room=bridge` the Stretchy
+ * Bridge (item 054) whatever else is asked: behind door a, or door b when
+ * `?game=` holds door a.
  */
 function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[] } {
   const q = new URLSearchParams(typeof location === 'undefined' ? '' : location.search);
@@ -502,6 +504,7 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
   const asked = MINIGAME_BY_ID[q.get('game') ?? ''];
   const phonics =
     q.get('room') === 'charge' ? CHARGE_GAME
+      : q.get('room') === 'bridge' ? BRIDGE_GAME
       : FORCE_PHONICS_ROOM && !only && !asked ? MINIGAME_BY_ID[pickWeighted(PHONICS_GAMES.map((g) => g.id), (id) => MINIGAME_BY_ID[id]!.weight, 1)[0]!]
         : undefined;
   const forced = [asked, phonics].filter((g, i, all): g is Minigame => Boolean(g) && all.indexOf(g) === i);

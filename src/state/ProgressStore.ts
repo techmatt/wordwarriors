@@ -49,6 +49,13 @@ export interface ProgressData {
    * CHARGE.startLevel. What she said is recorded under `sounds`.
    */
   chargeLevels: Record<string, number>;
+  /**
+   * The Stretchy Bridge (item 054): per word, its help level (1 the stones
+   * sound themselves and the pictures show, 2 silent stones, 3 she says the
+   * word to Dad before the pictures come); absent = BRIDGE.startLevel. Her
+   * reads there are recorded under `words`.
+   */
+  bridgeLevels: Record<string, number>;
   /** Her word bag: the sentence key words drawn without replacement (item 015). */
   bag: WordBag;
   /** The bag words the game had when `bag` was last topped up (`topUpBag`); `'legacy'` for a blob from before item 035. */
@@ -87,7 +94,7 @@ function emptyStat(): Stat {
 }
 
 function empty(): ProgressData {
-  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, grabs: {}, grabLevels: {}, chargeLevels: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, padBag: { left: [], round: 0 }, episodes: 0, villains: [], ending: null };
+  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, grabs: {}, grabLevels: {}, chargeLevels: {}, bridgeLevels: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, padBag: { left: [], round: 0 }, episodes: 0, villains: [], ending: null };
 }
 
 /** How many past villains the store keeps. */
@@ -138,6 +145,8 @@ export class ProgressStore {
       parsed.grabLevels ??= {};
       // Item 053, the same way.
       parsed.chargeLevels ??= {};
+      // Item 054, the same way.
+      parsed.bridgeLevels ??= {};
       // Item 035: a blob with no `bagKnown` knew the bag words before MUG RUG JUG.
       parsed.bagKnown ??= 'legacy';
       return parsed;
@@ -216,6 +225,16 @@ export class ProgressStore {
 
   setChargeLevel(sound: string, level: number): void {
     this.data.chargeLevels[sound] = level;
+    this.save();
+  }
+
+  /** A word's Stretchy Bridge help level (item 054), or `fallback` (BRIDGE.startLevel) if she has never crossed with it. */
+  bridgeLevel(word: string, fallback: number): number {
+    return this.data.bridgeLevels[word] ?? fallback;
+  }
+
+  setBridgeLevel(word: string, level: number): void {
+    this.data.bridgeLevels[word] = level;
     this.save();
   }
 

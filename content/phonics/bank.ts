@@ -39,8 +39,8 @@ export interface BankEntry {
   glyph?: string;
   draw?: 'fan' | 'log' | 'mop' | 'pot' | 'mug' | 'rug';
   say?: string;
-  /** The item that added it: before 037 (`old`), 037 or 040. */
-  since?: '037' | '040';
+  /** The item that added it: before 037 (`old`), 037, 040 or 054. */
+  since?: '037' | '040' | '054';
   /** It sounds like a spell (ZAP, HEX, POP; not MUD or NAP): a caster's gift leans to it (item 038, `drawGift`). */
   spell?: true;
   /**
@@ -82,6 +82,7 @@ const NEW_SPELL = { ...NEW, ...SPELL };
 const ODD = { odd: true as const };
 const NEW_ODD = { ...NEW, ...ODD };
 const NEW_040 = { since: '040' as const };
+const NEW_054 = { since: '054' as const };
 
 const ENTRIES: BankEntry[] = [
   // Level 1: CVC. The pictured words from before 037.
@@ -130,6 +131,10 @@ const ENTRIES: BankEntry[] = [
   // spelled out by sound (item 048).
   T('key', '🔑', { spelled: [['k', 'k'], ['ey', 'long_e']] }),
   T('yoyo', '🪀', { say: 'yo-yo', spelled: [['y', 'y'], ['o', 'long_o'], ['y', 'y'], ['o', 'long_o']] }),
+  // Item 054: the Stretchy Bridge's far bank needs pictures that share a word's
+  // start and differ later; the sounds you can hold had almost none (MAP had
+  // only MASK). MAT and MAN beside MAP, LID beside LIP, LOCK beside LOG.
+  T('mat', '🟫', NEW_054), T('man', '👨', NEW_054), T('lid', '🍲', NEW_054), T('lock', '🔒', NEW_054),
 ];
 
 /** The digraphs that are one sound unit. */

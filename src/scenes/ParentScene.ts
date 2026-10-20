@@ -14,7 +14,8 @@
  * the bank's coverage (by level, vowel and first sound: words · read · solid);
  * page 2 has every word, one row each. A letter sound she has charged in
  * Charge the Spell (item 053) carries its help level in its dot (1 the sound
- * and gesture first, 2 the gesture only, 3 the rune alone).
+ * and gesture first, 2 the gesture only, 3 the rune alone); a word she has
+ * crossed on the Stretchy Bridge (item 054) its bridge level, on page 2.
  */
 
 import Phaser from 'phaser';
@@ -29,6 +30,7 @@ import { BANK_DRAW, GAME_HEIGHT, GAME_WIDTH, GRAB, SENTENCE_SOLID } from '../con
 import { coverageTable, levelGate, type CoverageRow } from '../rules/bank';
 import { GRAB_WORDS, grabLevel } from '../rules/grab';
 import { chargeLevel } from '../rules/charge';
+import { bridgeLevel } from '../rules/bridge';
 import { fitText } from '../ui/fitText';
 import type { Step } from '../episode/Episode';
 import { Controls } from '../input/Controls';
@@ -75,7 +77,10 @@ export class ParentScene extends Phaser.Scene {
       // Every word in the content, plus any other word she has met (spelling, move words).
       const words = [...new Set([...WORDS.map((w) => w.word), ...Object.keys(snap.words)])];
       const perCol = 22;
-      this.grid('Words', 'words', words, 30, 90, perCol, (GAME_WIDTH - 60) / Math.max(5, Math.ceil(words.length / perCol)), 26);
+      // The number in a word's dot is its Stretchy Bridge help level (item 054), once she has crossed it.
+      const bridged = (id: string) => (snap.bridgeLevels?.[id] !== undefined ? String(bridgeLevel(progress, id)) : null);
+      this.grid('Words', 'words', words, 30, 90, perCol, (GAME_WIDTH - 60) / Math.max(5, Math.ceil(words.length / perCol)), 26, bridged);
+      fitText(this.add.text(200, 94, 'number in the dot: Stretchy Bridge help (1 stones sound + pictures shown, 2 silent stones, 3 says it to Dad first)', { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#555' }), GAME_WIDTH - 200 - 30, 22);
       return;
     }
 

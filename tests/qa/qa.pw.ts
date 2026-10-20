@@ -21,7 +21,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { test, type Page } from '@playwright/test';
 
 import { BANK } from '../../content/phonics/bank';
-import { boot, choose, collectErrors, hubGo, leaveBedroom, playBattle, playChargeRoom, playEntry, playWordMachine, press, readToKeyWord, seedProgress, state, until, type WWState } from '../harness';
+import { boot, choose, collectErrors, hubGo, leaveBedroom, playBattle, playBridgeRoom, playChargeRoom, playEntry, playWordMachine, press, readToKeyWord, seedProgress, state, until, type WWState } from '../harness';
 import { layoutIssues, leakIssues, logIssues, placeholderArt, type Issue, type Layout, type Since } from './checks';
 
 const TAG = process.env.QA_TAG ?? 'now';
@@ -79,6 +79,8 @@ const SCENARIOS: Scenario[] = [
   { name: 'seed209', query: 'seed=209&games=all', wrong: true, more: true },
   // Charge the Spell (item 053): every `games=all` scenario meets it too (FORCE_PHONICS_ROOM); this one with Dad's no first.
   { name: 'charge_no_first', query: 'seed=115&room=charge', wrong: true, more: true },
+  // The Stretchy Bridge (item 054): half the `games=all` scenarios meet it; this one with a wrong picture first.
+  { name: 'bridge_wrong_first', query: 'seed=116&room=bridge', wrong: true, more: true },
 ];
 
 /** Every level-1 word solid (`firm`), or every word (`all`): six right first tries each. */
@@ -193,12 +195,17 @@ async function sentenceRoom(page: Page, wrong: boolean, idle = false): Promise<s
 async function room(page: Page, wrong: boolean, idle = false): Promise<void> {
   const s = await until(
     page,
-    (st) => (st.scene === 'SentenceRoom' && Boolean(st.room?.sentence)) || (st.scene === 'WordMachine' && Boolean(st.room?.machine)) || (st.scene === 'ChargeRoom' && Boolean(st.room?.charge)),
+    (st) =>
+      (st.scene === 'SentenceRoom' && Boolean(st.room?.sentence)) ||
+      (st.scene === 'WordMachine' && Boolean(st.room?.machine)) ||
+      (st.scene === 'ChargeRoom' && Boolean(st.room?.charge)) ||
+      (st.scene === 'BridgeRoom' && Boolean(st.room?.bridge)),
     30_000,
     'a side room',
   );
   if (s.scene === 'WordMachine') await playWordMachine(page, wrong);
   else if (s.scene === 'ChargeRoom') await playChargeRoom(page, wrong);
+  else if (s.scene === 'BridgeRoom') await playBridgeRoom(page, wrong);
   else await sentenceRoom(page, wrong, idle);
 }
 
@@ -246,7 +253,7 @@ async function episode(page: Page, sc: Scenario, rec: Recorder): Promise<void> {
     await standStill(page, sc, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:doors' && !s.room.locked, 'doors open');
     await hubGo(page, door);
     if (sc.dadLock && door === 'door_a') {
-      const s = await until(page, (st) => st.scene === 'SentenceRoom' || st.scene === 'WordMachine' || st.scene === 'ChargeRoom', 30_000, 'side room');
+      const s = await until(page, (st) => st.scene === 'SentenceRoom' || st.scene === 'WordMachine' || st.scene === 'ChargeRoom' || st.scene === 'BridgeRoom', 30_000, 'side room');
       if (s.scene === 'SentenceRoom') await until(page, (st) => st.room?.sentence?.pass === 'read' && !st.room.locked, 90_000, 'read pass');
       await dadLockProbe(page, rec);
     }

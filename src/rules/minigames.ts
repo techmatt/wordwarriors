@@ -9,7 +9,8 @@
  * is (so a frame she keeps missing comes back sooner, as before), and the word
  * machine (item 026, fetch rooms only), times how shaky her word families are,
  * and Charge the Spell (item 053, fetch rooms only), times how shaky her
- * letter sounds are.
+ * letter sounds are, and the Stretchy Bridge (item 054, fetch rooms only),
+ * times how shaky the words it can give her are.
  *
  * A new minigame is one entry here: its scene, a weight, the slots it can
  * fill. Whatever it is, it must end in a key word she has read (the thing
@@ -20,9 +21,10 @@
 
 import { FAMILIES } from '../../content/phonics/families';
 import { FRAMES } from '../../content/phonics/sentences';
-import { CHARGE, WORD_MACHINE } from '../config';
+import { BRIDGE, CHARGE, WORD_MACHINE } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
 import type { Rand } from './bank';
+import { bridgeShakiness } from './bridge';
 import { soundShakiness } from './charge';
 
 export type GameSlot = 'fetch' | 'counter';
@@ -42,6 +44,8 @@ export interface Minigame {
   machine?: boolean;
   /** Charge the Spell (item 053): letter sounds said aloud, judged by Dad; its plan is the visit's runes (src/rules/charge.ts). */
   charge?: boolean;
+  /** The Stretchy Bridge (item 054): words blended across stepping stones; its plan is the visit's words (src/rules/bridge.ts). */
+  bridge?: boolean;
 }
 
 /** The sentence game in each of its frames: the pool before item 026, and the tests' default (`?games=sentence`). */
@@ -57,11 +61,18 @@ export const WORD_MACHINE_GAME: Minigame = { id: 'word_machine', scene: 'WordMac
  */
 export const CHARGE_GAME: Minigame = { id: 'charge', scene: 'ChargeRoom', weight: CHARGE.weight, slots: ['fetch'], charge: true };
 
-/** The phonics games FORCE_PHONICS_ROOM puts in every episode (054's joins here). */
-export const PHONICS_GAMES: Minigame[] = [CHARGE_GAME];
+/**
+ * The Stretchy Bridge (item 054): a fetch room only. Every word she reads
+ * across it is a battle item, like the machine's. For the beta it is one of
+ * the two forced phonics rooms (FORCE_PHONICS_ROOM).
+ */
+export const BRIDGE_GAME: Minigame = { id: 'bridge', scene: 'BridgeRoom', weight: BRIDGE.weight, slots: ['fetch'], bridge: true };
+
+/** The phonics games FORCE_PHONICS_ROOM puts in every episode, one of them, by weight. */
+export const PHONICS_GAMES: Minigame[] = [CHARGE_GAME, BRIDGE_GAME];
 
 /** The pool. */
-export const MINIGAMES: Minigame[] = [...SENTENCE_GAMES, WORD_MACHINE_GAME, CHARGE_GAME];
+export const MINIGAMES: Minigame[] = [...SENTENCE_GAMES, WORD_MACHINE_GAME, CHARGE_GAME, BRIDGE_GAME];
 
 export const MINIGAME_BY_ID: Record<string, Minigame> = Object.fromEntries(MINIGAMES.map((g) => [g.id, g]));
 
@@ -78,7 +89,7 @@ function familyShakiness(store: ProgressStore): number {
 export function drawGames(store: ProgressStore, rand: Rand = Math.random, pool: Minigame[] = MINIGAMES): [Minigame, Minigame, Minigame] {
   const weight = (id: string) => {
     const g = pool.find((m) => m.id === id)!;
-    return g.weight * (g.frame ? store.shakiness('frames', g.frame) : g.machine ? familyShakiness(store) : g.charge ? soundShakiness(store) : 1);
+    return g.weight * (g.frame ? store.shakiness('frames', g.frame) : g.machine ? familyShakiness(store) : g.charge ? soundShakiness(store) : g.bridge ? bridgeShakiness(store) : 1);
   };
   const fits = (slot: GameSlot) => pool.filter((g) => g.slots.includes(slot)).map((g) => g.id);
   const fetch = pickWeighted(fits('fetch'), weight, 2, rand);

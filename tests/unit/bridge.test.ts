@@ -1,0 +1,276 @@
+/**
+ * The Stretchy Bridge's pure rules (item 054): the held-sound cuts, the word
+ * draw (sounds you can hold first, tiers opening as she comes along), the far
+ * bank's pictures (sharing the word's start, never only its first letter's
+ * rime where the bank has better), the help-level ramp and its store field,
+ * and the room's place in the episode.
+ * `npx tsx --test tests/unit/bridge.test.ts` (also part of `npm run test:unit`).
+ */
+
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
+import { SOUND_BY_UNIT, canHold } from '../../content/phonics/letters';
+import { lookalikesOf } from '../../content/phonics/sentences';
+import { GAP_BY_PLACE, PLACES, SIDE_ROOMS, gapFor } from '../../content/house/house';
+import { narratorLine } from '../../content/voice/ids';
+import { NARRATOR_LINES } from '../../content/voice/script';
+import { PERSONS } from '../../content/battle/roster';
+import { holdPlan, holdSamples } from '../../src/audio/holdSound';
+import { BRIDGE } from '../../src/config';
+import { BRIDGE_WORDS, bridgeGate, bridgeLevel, bridgePictures, bridgeTier, bridgeWords, nextBridgeLevel, planBridge, sharedStart, whereDiffers } from '../../src/rules/bridge';
+import { BRIDGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, drawGames } from '../../src/rules/minigames';
+import { episodePlans } from '../../src/rules/sentences';
+import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
+import { composeLines } from '../../tools/voice/compose';
+
+function memory(): StorageLike {
+  const data = new Map<string, string>();
+  return { getItem: (k) => data.get(k) ?? null, setItem: (k, v) => void data.set(k, v) };
+}
+
+function seeded(seed = 1): () => number {
+  let s = seed;
+  return () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
+}
+
+// ---- Held sounds ----------------------------------------------------------
+
+const RATE = 24000;
+/** A clip from parts: silence, noise (a hiss or burst) and tones (a hum or a vowel), each `[kind, seconds, amplitude, hz]`. */
+function clip(...parts: [kind: 'quiet' | 'noise' | 'tone', s: number, amp?: number, hz?: number][]): Float32Array {
+  const out: number[] = [];
+  let r = 7;
+  const rnd = () => ((r = (r * 16807) % 2147483647) / 2147483647) * 2 - 1;
+  for (const [kind, s, amp = 0.3, hz = 140] of parts) {
+    const n = Math.round(s * RATE);
+    for (let i = 0; i < n; i++) out.push(kind === 'quiet' ? 0 : kind === 'noise' ? amp * rnd() : amp * Math.sin((2 * Math.PI * hz * i) / RATE));
+  }
+  return Float32Array.from(out);
+}
+const sec = (samples: number) => samples / RATE;
+const near = (a: number, b: number, tol = 0.025) => assert.ok(Math.abs(a - b) <= tol, `${a.toFixed(3)} is not within ${tol} of ${b}`);
+
+test('held sounds: a hiss before a vowel ("Suh") holds the hiss only, looping inside it', () => {
+  const x = clip(['quiet', 0.25], ['noise', 0.18, 0.08], ['tone', 0.3, 0.5, 160], ['quiet', 0.2]);
+  const p = holdPlan(x, RATE, 'hold');
+  assert.equal(p.mode, 'hold');
+  near(sec(p.start), 0.25);
+  near(sec(p.end), 0.43);
+  assert.ok(p.loopStart! > p.start && p.loopStart! < p.end);
+});
+
+test('held sounds: a hum into a schwa ("Mmm" then "uh") holds the hum; a clean recording holds whole', () => {
+  // The schwa: louder, and with many more zero crossings than the hum.
+  const x = clip(['quiet', 0.25], ['tone', 0.16, 0.25, 110], ['tone', 0.25, 0.4, 900], ['quiet', 0.2]);
+  const p = holdPlan(x, RATE, 'hold');
+  near(sec(p.start), 0.25);
+  near(sec(p.end), 0.41, 0.04);
+  // Matt's recording of a bare hum: no schwa to find.
+  const m = holdPlan(clip(['quiet', 0.1], ['tone', 0.4, 0.3, 120], ['quiet', 0.1]), RATE, 'hold');
+  near(sec(m.end - m.start), 0.4, 0.03);
+});
+
+test('held sounds: a stop plays once with no "uh"; a voiced stop keeps its first instant; X keeps its final hiss', () => {
+  // T: a burst, then the vowel.
+  const t = holdPlan(clip(['quiet', 0.25], ['noise', 0.07, 0.1], ['tone', 0.3, 0.5, 160], ['quiet', 0.2]), RATE, 'once');
+  assert.equal(t.mode, 'once');
+  near(sec(t.start), 0.25);
+  near(sec(t.end), 0.32);
+  assert.equal(t.tail, undefined);
+  // B: voiced from the first instant.
+  const b = holdPlan(clip(['quiet', 0.25], ['tone', 0.35, 0.5, 160], ['quiet', 0.2]), RATE, 'once');
+  assert.ok(sec(b.end - b.start) <= 0.1, `B plays ${sec(b.end - b.start)} s`);
+  // X ("Kuhs"): the K's burst, then (skipping the vowel) the S.
+  const x = holdPlan(clip(['quiet', 0.25], ['noise', 0.06, 0.1], ['tone', 0.25, 0.5, 160], ['noise', 0.2, 0.1], ['quiet', 0.2]), RATE, 'once');
+  assert.ok(x.tail, 'X has its final hiss');
+  near(sec(x.tail![0]), 0.56);
+  const { data } = holdSamples(clip(['quiet', 0.25], ['noise', 0.06, 0.1], ['tone', 0.25, 0.5, 160], ['noise', 0.2, 0.1], ['quiet', 0.2]), x, RATE);
+  assert.equal(data.length, x.end - x.start + x.tail![1] - x.tail![0]);
+});
+
+test('held sounds: the loop seam runs on smoothly, and the samples start from silence', () => {
+  const x = clip(['quiet', 0.2], ['tone', 0.4, 0.3, 120], ['quiet', 0.1]);
+  const p = holdPlan(x, RATE, 'hold');
+  const { data, loopStart } = holdSamples(x, p, RATE);
+  assert.ok(loopStart !== null && loopStart > 0 && loopStart < data.length);
+  // The last sample flows into the loop's first: the crossfaded tail is the sound just before it.
+  const jump = Math.abs(data[data.length - 1]! - data[loopStart!]!);
+  const step = Math.max(...Array.from({ length: 200 }, (_, i) => Math.abs(x[p.start + 500 + i + 1]! - x[p.start + 500 + i]!)));
+  assert.ok(jump <= step * 1.5, `the seam jumps ${jump.toFixed(4)} (a step is ${step.toFixed(4)})`);
+  assert.ok(Math.abs(data[0]!) < 0.01, 'fades in');
+  // A sound that is all silence plays as it is.
+  assert.deepEqual(holdPlan(new Float32Array(4800), RATE, 'hold'), { mode: 'hold', start: 0, end: 4800 });
+});
+
+test('held sounds: the vowels, hums and hisses hold; stops, H, W, Y and X play once', () => {
+  for (const s of [...'aeioumnlrvzsf', 'sh', 'th', 'long_e', 'long_o']) assert.ok(canHold(s), s);
+  for (const s of [...'bcdgkptjhwyxq', 'ch', 'ck']) assert.ok(!canHold(s), s);
+  for (const s of Object.keys(SOUND_BY_UNIT)) assert.equal(typeof canHold(s), 'boolean');
+});
+
+// ---- The word draw --------------------------------------------------------
+
+test('bridge words: pictured things with a short vowel; tiers are hold-sound CVC, stop CVC, blends and digraphs', () => {
+  assert.ok(BRIDGE_WORDS.length > 50);
+  for (const w of BRIDGE_WORDS) {
+    const b = BANK_BY_WORD[w]!;
+    assert.ok(THINGS.includes(b) && b.vowel, `${w} is a familiar short-vowel thing`);
+  }
+  assert.ok(!BRIDGE_WORDS.includes('key') && !BRIDGE_WORDS.includes('yak'));
+  assert.equal(bridgeTier('map'), 1);
+  assert.equal(bridgeTier('sun'), 1);
+  assert.equal(bridgeTier('cat'), 2);
+  assert.equal(bridgeTier('hat'), 2);
+  assert.equal(bridgeTier('frog'), 3);
+  assert.equal(bridgeTier('ship'), 3);
+  // Item 054's words are in.
+  for (const w of ['mat', 'man', 'lid', 'lock']) assert.ok(BRIDGE_WORDS.includes(w), w);
+});
+
+test('bridge draw: a fresh store crosses only hold-sound CVC words; stops open once those come along', () => {
+  for (let seed = 1; seed <= 40; seed++) {
+    const store = new ProgressStore(memory());
+    const plan = planBridge(store, { avoid: [], taken: [] }, seeded(seed));
+    assert.equal(plan.rounds.length, BRIDGE.words);
+    for (const r of plan.rounds) assert.equal(bridgeTier(r.word), 1, `seed ${seed}: ${r.word}`);
+    assert.equal(new Set(bridgeWords(plan)).size, BRIDGE.words);
+  }
+  const store = new ProgressStore(memory());
+  assert.equal(bridgeGate(store, 2), 0);
+  // Tier 1 at level 2: stop-sound words open, blends not yet.
+  for (const w of BRIDGE_WORDS.filter((x) => bridgeTier(x) === 1)) store.setBridgeLevel(w, 2);
+  assert.equal(bridgeGate(store, 2), 1);
+  assert.equal(bridgeGate(store, 3), 0);
+  let stops = 0;
+  for (let seed = 1; seed <= 40; seed++) {
+    const plan = planBridge(store, { avoid: [], taken: [] }, seeded(seed));
+    for (const r of plan.rounds) assert.notEqual(bridgeTier(r.word), 3, `seed ${seed}: ${r.word} is a blend`);
+    if (plan.rounds.some((r) => bridgeTier(r.word) === 2)) stops++;
+    // The easier tier first.
+    const tiers = plan.rounds.map((r) => bridgeTier(r.word));
+    assert.deepEqual(tiers, [...tiers].sort());
+  }
+  assert.ok(stops > 20, `stop-sound words in ${stops}/40 visits`);
+});
+
+test('bridge draw: never a word the episode says, shows or has planned elsewhere', () => {
+  const avoid = ['map', 'mop', 'mug', 'sun', 'six', 'fan', 'fox'];
+  for (let seed = 1; seed <= 30; seed++) {
+    const plan = planBridge(new ProgressStore(memory()), { avoid, taken: ['log', 'leg'] }, seeded(seed));
+    for (const r of plan.rounds) {
+      assert.ok(!avoid.includes(r.word) && !['log', 'leg'].includes(r.word), r.word);
+      for (const p of r.pictures) assert.ok(!avoid.includes(p) && !['log', 'leg'].includes(p), `${r.word}'s picture ${p}`);
+    }
+  }
+});
+
+// ---- The far bank -----------------------------------------------------------
+
+test("far bank: the pictures share the word's start and differ later, never only its first letter's rime where the bank has better", () => {
+  assert.equal(sharedStart('map', 'mat'), 2);
+  assert.equal(sharedStart('map', 'mop'), 1);
+  assert.equal(sharedStart('cat', 'kit'), 1, 'a hard C is K');
+  assert.equal(sharedStart('cat', 'hat'), 0);
+  for (let seed = 1; seed <= 20; seed++) {
+    // MAP: MAT and MAN (item 054) share M-A.
+    const map = bridgePictures('map', 2, seeded(seed));
+    for (const p of map) assert.ok(sharedStart('map', p) >= 2, `MAP beside ${p}`);
+    // LIP: LID shares L-I, then an L word.
+    const lip = bridgePictures('lip', 2, seeded(seed));
+    assert.ok(lip.includes('lid'), `LIP beside ${lip}`);
+    for (const p of lip) assert.ok(sharedStart('lip', p) >= 1);
+  }
+  for (const w of BRIDGE_WORDS) {
+    const pics = bridgePictures(w, BRIDGE.pictures - 1, seeded(3));
+    assert.equal(pics.length, BRIDGE.pictures - 1, w);
+    assert.ok(!pics.includes(w));
+    for (const p of pics) assert.ok(!lookalikesOf(w).includes(p), `${w} beside its look-alike ${p}`);
+    // Every hold-sound word has a picture that starts like it: the first letter is never enough.
+    if (bridgeTier(w) === 1) assert.ok(pics.some((p) => sharedStart(w, p) >= 1), `${w}: ${pics}`);
+  }
+  // The plan's pictures hold the word itself, the others in the room's order.
+  const plan = planBridge(new ProgressStore(memory()), { avoid: [], taken: [] }, seeded(9));
+  for (const r of plan.rounds) {
+    assert.equal(r.pictures.length, BRIDGE.pictures);
+    assert.ok(r.pictures.includes(r.word));
+    assert.deepEqual(r.units, BANK_BY_WORD[r.word]!.units);
+  }
+});
+
+test('a wrong pick: where the bridge differs, start, middle or end, and its sound there', () => {
+  assert.deepEqual(whereDiffers('mat', 'map'), { where: 'end', index: 2, sound: 't' });
+  assert.deepEqual(whereDiffers('map', 'mop'), { where: 'middle', index: 1, sound: 'a' });
+  assert.deepEqual(whereDiffers('cat', 'hat'), { where: 'start', index: 0, sound: 'c' });
+  assert.deepEqual(whereDiffers('net', 'nest'), { where: 'end', index: 2, sound: 't' });
+  assert.deepEqual(whereDiffers('ship', 'sun'), { where: 'start', index: 0, sound: 'sh' });
+});
+
+// ---- Help levels ------------------------------------------------------------
+
+test('help levels: start at 1, up one when right first time with no help, down one with help; saved', () => {
+  const storage = memory();
+  const store = new ProgressStore(storage);
+  assert.equal(bridgeLevel(store, 'map'), BRIDGE.startLevel);
+  assert.equal(nextBridgeLevel(1, true), 2);
+  assert.equal(nextBridgeLevel(3, true), 3);
+  assert.equal(nextBridgeLevel(2, false), 1);
+  assert.equal(nextBridgeLevel(1, false), 1);
+  store.setBridgeLevel('map', 3);
+  assert.equal(new ProgressStore(storage).bridgeLevel('map', 1), 3);
+  // An old blob with no bridgeLevels reads fine.
+  const old = memory();
+  old.setItem(STORE_KEY, JSON.stringify({ version: 1, words: {} }));
+  assert.equal(bridgeLevel(new ProgressStore(old), 'map'), 1);
+});
+
+// ---- The room in the episode ----------------------------------------------
+
+test('the pool: the bridge is a fetch room and one of the two forced phonics rooms, never the counter', () => {
+  assert.equal(MINIGAME_BY_ID.bridge, BRIDGE_GAME);
+  assert.deepEqual(BRIDGE_GAME.slots, ['fetch']);
+  assert.equal(BRIDGE_GAME.scene, 'BridgeRoom');
+  assert.ok(MINIGAMES.includes(BRIDGE_GAME));
+  assert.deepEqual(PHONICS_GAMES.map((g) => g.id).sort(), ['bridge', 'charge']);
+  const store = new ProgressStore(memory());
+  const rand = seeded(11);
+  for (let i = 0; i < 200; i++) assert.notEqual(drawGames(store, rand)[2].id, 'bridge');
+});
+
+test('episodePlans with the bridge: its words are the fetches, its last the key; no other room reads one or shows its pictures as a key', () => {
+  const sentence = MINIGAMES.find((g) => g.frame && g.slots.includes('fetch'))!;
+  const counter = MINIGAMES.find((g) => g.frame && g.slots.includes('counter'))!;
+  for (let seed = 1; seed <= 30; seed++) {
+    const store = new ProgressStore(memory());
+    const plans = episodePlans(
+      store,
+      { fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic', games: [BRIDGE_GAME, sentence, counter] },
+      seeded(seed),
+    );
+    const b = plans[0];
+    assert.equal(b.kind, 'bridge');
+    if (b.kind !== 'bridge') return;
+    const words = bridgeWords(b.bridge);
+    assert.deepEqual(b.fetches, words);
+    assert.equal(b.key, words.at(-1));
+    const shown = b.bridge.rounds.flatMap((r) => r.pictures);
+    for (const p of plans.slice(1)) {
+      assert.ok(!words.includes(p.key), `seed ${seed}: ${p.slot} key ${p.key} is a bridge word`);
+      assert.ok(!shown.includes(p.key), `seed ${seed}: ${p.slot} key ${p.key} is on the far bank`);
+    }
+  }
+});
+
+test('gaps: every place has one; the house is lava', () => {
+  for (const p of PLACES) assert.ok(GAP_BY_PLACE[p.id], p.id);
+  for (const r of SIDE_ROOMS) assert.equal(gapFor(r.id), 'lava');
+  assert.equal(gapFor(PLACES.find((p) => p.id === 'sea_grotto')!.rooms[0]!.id), 'river');
+});
+
+test("the bridge's lines exist for every narrator", () => {
+  const keys = NARRATOR_LINES.filter((t) => t.key.startsWith('bridge_'));
+  assert.ok(keys.length >= 12);
+  const ids = new Set(composeLines().map((l) => l.id));
+  for (const n of PERSONS.map((p) => p.id)) for (const t of keys) assert.ok(ids.has(narratorLine(n, t.key)), narratorLine(n, t.key));
+});

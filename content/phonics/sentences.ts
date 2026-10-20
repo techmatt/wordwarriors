@@ -103,6 +103,10 @@ export const LOOKALIKES: string[][] = [
   ['moth', 'bat'],
   ['yak', 'ram'],
   ['duck', 'hen', 'chick'],
+  // Item 054's words: a mat is a small rug, a lid sits on a pot or a pan, a lock takes a key.
+  ['mat', 'rug'],
+  ['lid', 'pot', 'pan'],
+  ['lock', 'key'],
   ['pot', 'vat', 'tub'],
   ['jug', 'milk', 'mug', 'cup'],
   ['peg', 'pin'],

@@ -74,6 +74,31 @@ export interface RoomInfo {
     timeouts: number;
     charged: string[];
   };
+  /**
+   * The Stretchy Bridge (item 054): the visit's words, the one on the bridge
+   * (`index`, `word`, its stones' `units`, the far bank's `pictures`, its help
+   * `level`), the phase, the stone she stands on (-1 none), whether the stones
+   * sound now, any help so far, whether the pictures are up, Dad's replays and
+   * timeouts, wrong picks, whether Dad is being asked, and the sound held now.
+   */
+  bridge?: {
+    words: string[];
+    index: number;
+    word: string;
+    units: string[];
+    pictures: string[];
+    level: number;
+    phase: 'intro' | 'slide' | 'say' | 'replay' | 'pick' | 'check' | 'done';
+    stone: number;
+    voiced: boolean;
+    aided: boolean;
+    picturesUp: boolean;
+    replays: number;
+    timeouts: number;
+    misses: number;
+    asking: boolean;
+    holding: string | null;
+  };
 }
 
 export interface BattleInfo {
