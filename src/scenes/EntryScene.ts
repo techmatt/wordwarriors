@@ -84,6 +84,11 @@ export class EntryScene extends RoomScene {
    */
   protected override keepOut(): KeepOut[] {
     const out = super.keepOut();
+    // While she looks for it, the pictures weigh more than the board: the
+    // re-prompt ("We need the...") hid the very picture she was stuck on (item 039).
+    if (this.phase === 'find') {
+      for (const s of this.spots) if (s.id.startsWith('grab_') && s.enabled) out.push({ x: s.x - 75, y: s.y - 160, w: 150, h: 165, weight: 6 });
+    }
     if (this.board?.active && this.board.visible) {
       const b = this.board.getBounds();
       out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: 5 });

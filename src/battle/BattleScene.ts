@@ -931,9 +931,12 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     const sy = y - SIGN_RISE;
     const plate = this.add.rectangle(0, 0, 230, 100, 0xfff8e8, 0.97).setStrokeStyle(7, PAD_GLOW);
     const stake = this.add.rectangle(0, 62, 10, 26, 0xfff8e8, 0.9);
-    const label = this.add
-      .text(0, 0, word.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '76px', color: '#1a1030' })
-      .setOrigin(0.5);
+    // Shrunk to the plate if long (BLAST ran over its edges, item 039).
+    const label = fitText(
+      this.add.text(0, 0, word.toUpperCase(), { fontFamily: '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif', fontSize: '76px', color: '#1a1030' }).setOrigin(0.5),
+      210,
+      92,
+    );
     const sign = this.add.container(x, sy, [stake, plate, label]).setDepth(DEPTH.prompt - 10);
     // Popped in from nothing by updateChoice, on wall-clock time.
     sign.setScale(0);
@@ -992,10 +995,13 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     // The fight's effects fade back while it is frozen (item 039: Jörmungandr's
     // coil, timed on the scene clock, circled over the pads for the whole choice).
     const veiled: { o: Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.AlphaSingle; alpha: number }[] = [];
+    // A dash's white afterimage fades in 350 ms of the frozen clock, about nine
+    // real seconds: it stood over her ally as a white silhouette (item 039).
+    for (const o of [...this.children.list]) if (o.getData('afterimage')) o.destroy();
     for (const o of this.children.list) {
       const d = (o as unknown as { depth: number }).depth;
       const a = o as unknown as Phaser.GameObjects.Components.AlphaSingle;
-      if (d >= DEPTH.fx && d < DEPTH.prompt - 10 && typeof a.alpha === 'number' && !objs.includes(o)) {
+      if (d >= DEPTH.fx && d < DEPTH.prompt - 10 && typeof a.alpha === 'number' && !objs.includes(o) && o !== me.root) {
         veiled.push({ o: o as never, alpha: a.alpha });
         a.setAlpha(a.alpha * 0.2);
       }
@@ -1107,8 +1113,10 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     me.lift = c.at.lift;
     me.hop = 0;
     me.spin = 0;
-    // Above the word signs while she steers (updateVisual sets depth by y, so this runs after it).
-    me.root.setDepth(DEPTH.prompt - 5);
+    // Over every fighter while she steers, but under the word signs: standing
+    // below one, her head hid its last letter (TOP read TO, item 039). Her
+    // white ring shows where she is. (updateVisual sets depth by y, so this runs after it.)
+    me.root.setDepth(DEPTH.prompt - 12);
     c.here.setPosition(me.x, me.y).setScale(1 + 0.1 * Math.sin(performance.now() / 180));
   }
 

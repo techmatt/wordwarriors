@@ -351,7 +351,8 @@ export abstract class RoomScene extends Phaser.Scene {
     const ring = this.add.circle(0, 0, 30, 0x222233, 0.85).setStrokeStyle(4, 0xffffff, 0.9);
     const nub = this.add.circle(0, 0, 14, 0xdddddd, 1);
     const arrows = this.add.text(0, 0, '↔', { fontSize: '44px', color: '#ffd23f', stroke: '#000000', strokeThickness: 6 }).setOrigin(0.5, 0.55);
-    this.stickHint = this.add.container(this.player.x + 90, this.player.y - 70, [ring, arrows, nub]).setDepth(DEPTH.prompt);
+    // The arrows over the nub: under it they were hidden and the hint read as a dark ball (item 039).
+    this.stickHint = this.add.container(this.player.x + 90, this.player.y - 70, [ring, nub, arrows]).setDepth(DEPTH.prompt);
     this.tweens.add({ targets: nub, x: { from: -14, to: 14 }, duration: 450, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
   }
 

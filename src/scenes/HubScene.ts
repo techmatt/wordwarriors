@@ -231,7 +231,8 @@ export class HubScene extends RoomScene {
   /** A door's sign: its room's picture on a round plaque, gently bobbing. */
   private plaque(glyph: string): Phaser.GameObjects.Container {
     const board = this.add.circle(0, 0, 34, 0xffffff, 1).setStrokeStyle(5, 0xffd23f, 1);
-    const pic = this.add.text(0, 2, glyph, { fontSize: '56px' }).setOrigin(0.5);
+    // Padded, as the gift card's: Phaser measures an emoji short and cut its top off (item 039).
+    const pic = this.add.text(0, 2, glyph, { fontSize: '56px', padding: { top: 14, bottom: 6 } }).setOrigin(0.5);
     const sign = this.add.container(0, -DOOR_H - 40, [board, pic]);
     bob(this, sign, 4, 1100);
     return sign;

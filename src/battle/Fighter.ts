@@ -416,7 +416,8 @@ export class Fighter {
       .setTintFill(color)
       .setAlpha(0.5)
       .setDepth(this.y - 1)
-      .setBlendMode(Phaser.BlendModes.ADD);
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .setData('afterimage', true);
     this.scene.tweens.add({ targets: ghost, alpha: 0, scale: ghost.scale * 1.1, duration: 350, onComplete: () => ghost.destroy() });
   }
 
