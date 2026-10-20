@@ -235,7 +235,8 @@ the secret door's plaque. Look at one with `?place=<id>`.
 
 ## A hub scene (`HUB_SCENES`, `content/house/scenes.ts`)
 
-How the helper gives her the gift word in the hub (item 037): a spell from a caster,
+How the helper gives her the gift word in the hub (item 037): a spell from a caster
+(`CASTERS`; only theirs may say "spell"),
 something chef Dada Jason cooks up, a gadget builder Dada Matt builds, a toy Ellie
 shares. `HUB_SCENES[<roster id>]` is a list of scenes (2–3 per helper, each dad form its
 own); each episode draws one (`src/rules/story.ts`, variant 1 with `?cast=default`). A
@@ -472,13 +473,21 @@ ICE are flavour on abilities, never on a pad.
 The **gift word** is the word the helper gives her in the hub scene (`drawGift`): an
 action word from her move bag by the bank's weighting, never one said before the
 battle (the threat, the quest line, the hub scene), the helper's own words weighted
-double; her hero fires it with the helper's move when the helper has one. When the
+double. A caster's gift is a spell (item 038): for a helper in `CASTERS`
+(`content/house/scenes.ts`: Elsa, Bavmorda, Tiamat, Moriarty, warlock Jason, spell-blade
+Matt) the bank's `spell` words (ZAP ZIP POP HEX MIX, and SPIN SNAP FLIP TWIST MELT BLAST
+once blends open) weigh `CASTER_SPELL_BOOST` (25) times more, about four gifts in five;
+only casters' scenes may call the gift a spell (a unit test). Her hero fires it with the helper's move when the helper has one. When the
 house is planned, `planMoves` plans all four move choices too (two per battle part):
 the first of each part is the gift word, the other right words come out of her **move
 bag**, the 015 bag logic over the move words by the same weighting (without replacement
 across episodes, a word leaves only when she picks it right first time). Each choice
 shows 2 or 3 pads; the wrong ones are other action words from the levels open to her,
-chosen for reading (`distractorsFor`), ones not yet shown this episode first. Planning
+chosen for reading (`distractorsFor`), ones not yet shown this episode first, then
+ones still in her **pad bag** (ProgressStore `padBag`, item 038: a word leaves it once a
+choice has shown it as a wrong pad; one that has had its turn weighs `PAD_SHOWN_WEIGHT`,
+0.05), weighed by coverage. Without it, about three back-to-back episodes in five shared
+a wrong pad; with it, about one in seven. Planning
 up front is what lets the room key words keep clear of every pad, and the attic's
 counter word of exactly the words battle 1 shows (`battle1Words`).
 
