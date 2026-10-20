@@ -235,11 +235,11 @@ battle items; that is the default), `nojourney` (skip the map).
 
 Two lanes (re-measured in item 036, 2026-10-19):
 
-- **Fast lane, after every change: `npm test`** (about FASTT). The unit tests (3 s), then
+- **Fast lane, after every change: `npm test`** (about a minute). The unit tests (3 s), then
   the browser tests not tagged `@slow`, each under 10 s: title and the grown-ups page, a
   solid sentence frame, Spell the Spell, the word machine opening, the cast and fight-style
   overrides, never last episode's victory scene, and the three text-fit checks.
-- **Everything, before every commit: `npm run test:all`** (about ALLT). The fast lane plus
+- **Everything, before every commit: `npm run test:all`** (about 18 minutes). The fast lane plus
   the slow lane, which `npm run test:slow` runs alone: every test tagged `@slow`, the one
   whole episode at real time, and two drawn-cast episodes back to back.
 
@@ -542,10 +542,11 @@ npm run art:pick -- <id> <n>
   and stop that PID. A killed `npm run test:all` does the same on 5184 (the next run then
   fails at once with "5184 is already used"; seen 2026-10-18): check the PID's command
   line is this worktree's vite before stopping it. Background `test:all` needs a timeout
-  over its ~12 minutes; a 10-minute limit kills it partway. With items 025 and 026's
-  slow tests it took 26 minutes (2026-10-19, 2:55am); with item 031's fight styles 37
-  minutes (2026-10-19, 1:15pm); with item 033's warm-up spec 45 minutes (2026-10-19,
-  3:37pm), so give it 60.
+  over its ~18 minutes; a 10-minute limit kills it partway, so give it 40. It had grown
+  to 26 minutes with items 025 and 026, 37 with item 031's fight styles and 45 with item
+  033's warm-up spec (2026-10-19); item 036 brought it back to 18 (8:49pm the same day):
+  duplicated walks folded together, the GPU, clock speed 5. The one real-time episode is
+  6 of those minutes.
 - Every active ally × villain pair (item 030): `WW_PAIRS=+ npx playwright test tests/pairs.spec.ts`
   (about 1.8 minutes a pair at clock speed 3, an hour for all 36; `WW_PAIRS=scar+` plays one
   ally's four). Off unless `WW_PAIRS` is set. Shots and voiced ids land in `tests/screenshots/pairs_*`.
@@ -553,8 +554,9 @@ npm run art:pick -- <id> <n>
   machine ran out of memory). An edit to `src/` mid-run reloads the dev server's page and
   fails the pair in play ("execution context was destroyed"): use a build, below.
   The 36 took 1.2 hours on 2026-10-19 (item 031, about 2 minutes a pair).
-- Every fight style through both battles (item 031): `tests/fights.spec.ts`, slow lane,
-  about 8 minutes; shots of each style's big beats (combo, ultimate, counter, finish)
+- Every contest fight style through both battles (item 031): `tests/fights.spec.ts`, slow
+  lane, about 2½ minutes (the brawl is the default episode's own, played by every default
+  whole episode); shots of each style's big beats (combo, ultimate, counter, finish)
   land in `tests/screenshots/fights_*`. `-g cook_off` plays one style.
 - Long Playwright runs: point them at a build so edits to `src/` do not hot-reload the
   page under test: `npx vite build --outDir scratch/dist-test`, `npx vite preview --outDir
@@ -563,12 +565,17 @@ npm run art:pick -- <id> <n>
 - Until 2026-10-18 the suite reused whatever answered on 5174, so a run in a worktree
   silently tested the main checkout's dev server. It now always starts its own vite on
   5184 (`TEST_PORT`) and never reuses one; with `WW_BASE_URL` set it starts none.
-- The full-episode test (`npm run test:slow`) takes about 5 minutes: every line is
+- The full-episode test (`npm run test:slow`) takes about 6 minutes: every line is
   real speech and green is ignored until an instruction finishes. It is the one test at
   real time; everything else runs at clock speed 5 (3 before item 036 moved the tests to
   the GPU). Speed 6 in software GL was slower, not faster (her
   walking overshoots at headless frame rates); measurements in `docs/engineering.md`.
 - Headless Chromium renders the battle at roughly 8–18 fps (software GL). With the GPU
   (Playwright `channel: 'chromium'` plus `--use-angle=d3d11`) the same battle holds a
-  steady 56 fps on this machine (measured 2026-10-18, 2 heroes vs Evil Smaug). Tests
-  never assert on frame rate or displacement.
+  steady 56 fps on this machine (measured 2026-10-18, 2 heroes vs Evil Smaug); the tests
+  draw that way since item 036 (`WW_GPU=0` for software). Tests never assert on frame
+  rate or displacement.
+- On the GPU, vite's terminal shows `voice: could not decode ... Failed to fetch` warnings
+  and `at async Promise.all` stack lines during a test run: a test ending while its page is
+  still decoding voice groups aborts the fetches. Harmless; the tests' own checks only count
+  voice problems while the page is up.
