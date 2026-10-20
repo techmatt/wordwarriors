@@ -11,9 +11,13 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
-import { BANK_BY_WORD } from '../content/phonics/bank';
+import { readFileSync } from 'node:fs';
+import { BANK_BY_WORD, THINGS } from '../content/phonics/bank';
+import { withStems } from '../src/rules/bank';
 
 import { SLOW, boot, choose, collectErrors, expectNoErrors, leaveBedroom, playEntry, press, seedProgress, state, until, type WWState } from './harness';
+
+const LINE_BY_ID = new Map((JSON.parse(readFileSync('content/voice/lines.json', 'utf8')) as { id: string; text: string; say?: string }[]).map((l) => [l.id, l]));
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/033_${name}.png` });
 
@@ -23,9 +27,9 @@ const clueLines = (s: WWState) => s.voice.history.filter((id) => /^letter_|^word
 const names = (w: string) => [...w].map((c) => `letter_${c}_name`);
 // By sound unit: a special word (KEY, item 043) has only its first letter's.
 const sounds = (w: string) => (BANK_BY_WORD[w]?.units ?? [...w]).map((c) => `letter_${c}_sound`);
-// The bank's pictured CVC words (item 037): a new player's grab is one of these, blends wait behind the level gate.
-const WORDS = ['cat', 'dog', 'fox', 'bug', 'hat', 'bed', 'cup', 'map', 'bus', 'hen', 'box', 'pen', 'van', 'bat', 'bag', 'can', 'nut', 'tub', 'cap', 'pin', 'log', 'mop', 'pot', 'rat', 'mug', 'rug', 'jug', 'sun', 'fan', 'web', 'net', 'jet', 'pig', 'pan', 'ram', 'top', 'jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'fig', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'pod', 'gum', 'bun', 'hut', 'sub', 'key', 'yoyo'];
-const allAt = (level: number) => Object.fromEntries(WORDS.map((w) => [w, level]));
+// Every word the hall can ask for (the bank's things), each at one ramp level. Read from the
+// bank, not listed: a hand list missed VET and BIN, so a draw of either started at 2 (item 047).
+const allAt = (level: number) => Object.fromEntries(THINGS.map((w) => [w.word, level]));
 
 /** Into the hall with the clue given and her free to walk. */
 async function clued(page: Page): Promise<WWState> {
@@ -195,7 +199,12 @@ for (const seed of [3, 11, 25, 40]) {
     const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'hub');
     expect(hub.episode.fetched).toEqual([g.word]);
     // ...and the front door led to the quest place.
-    await until(page, (st) => st.scene === 'Hub' && st.room?.round === 'hub:1:circle', 90_000, 'circle offered');
+    const circle = await until(page, (st) => st.scene === 'Hub' && st.room?.round === 'hub:1:circle', 90_000, 'circle offered');
+    // Nor is it a word of the quest line or the hub scene, stemmed (item 047: the warm-up avoids what every other draw does).
+    const story = circle.voice.history.filter((id) => /^quest_.+_\d$|_quest_home_\d$|^hub_/.test(id));
+    expect(story.length).toBeGreaterThan(1);
+    const said = withStems(story.flatMap((id) => [LINE_BY_ID.get(id)?.text, LINE_BY_ID.get(id)?.say]).flatMap((t) => (t ?? '').toLowerCase().split(/[^a-z]+/).filter(Boolean)));
+    expect(said, `${g.word} is said in the story`).not.toContain(g.word);
     await page.screenshot({ path: `tests/screenshots/025_seed${seed}_hub_${ep.place}.png` });
     test.info().annotations.push({ type: 'warm-up', description: `seed ${seed}: ${g.word} at level ${g.level}, ${Math.round((Date.now() - t0) / 100) / 10}s scaled` });
     expectNoErrors(errors);

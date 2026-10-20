@@ -438,7 +438,9 @@ function grabWord(): string {
     // Not a word on either battle's move pads (planned up front) either: she reads those.
     // Nor the villain's named counter word (HAT for Evil Tiamat): that would keep her named counter out this episode.
     const named = CHARACTER_BY_ID[episode.villain]?.counter.word;
-    const avoid = [gift, ...moveWords(), ...bedroomWords(), ...(named ? [named] : []), ...(episode.house.plan ? readingWords() : [])];
+    // Nor a word said before the battle (the bedroom, the hall's own lines, the quest
+    // line and hub scene, the fight style), stemmed like every other draw (item 047).
+    const avoid = withStems([gift, ...moveWords(), ...saidBeforeBattle(), ...(named ? [named] : []), ...(episode.house.plan ? readingWords() : [])]);
     // `level` is read when the hall opens, `misses` counted there: kept here so a trip to the parent page loses neither.
     episode.grab = { word: pickGrab(progress, avoid), objects: [], level: null, misses: 0 };
   }
@@ -489,7 +491,8 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
 }
 
 /**
- * Words said before the battle, which no pad and not the gift word may be: the
+ * Words said before the battle, which no pad, not the gift word and not the
+ * warm-up's word (`grabWord`, item 047) may be: the
  * wake-up threat (the bedroom), the quest's setup line and the hub scene
  * (`storyWords`: the variants drawn with the cast). The battle keeps its own
  * banners and lines clear of pad words as it goes (BattleScene `textGivesAway`).
