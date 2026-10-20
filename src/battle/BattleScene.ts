@@ -43,7 +43,7 @@ import { fighterId, moveKey, moveLine, nameLine, narratorLine, reformedLine, tau
 import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxSelect, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh, sfxWrong } from '../audio/sfx';
-import { DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH, REACH, WALK_SPEED } from '../config';
+import { DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH, REACH, STICK_HINT_MS, WALK_SPEED } from '../config';
 import { formFor } from '../../content/battle/forms';
 import { advance, castArt, castScale, counterArt, counterWord, episode, fightStyle, helper, movePlan, namedCounter, narrator, reformedOf, villainSpec, type Step } from '../episode/Episode';
 import { fightLineKey, type FightSpec } from '../../content/battle/fights';
@@ -60,6 +60,7 @@ import { makeButtonDot } from '../ui/ButtonDot';
 import { Bubbles } from '../ui/Bubbles';
 import { Caption } from '../ui/Caption';
 import { fitText } from '../ui/fitText';
+import { STICK_HINT_OFFSET, makeStickHint } from '../ui/stickHint';
 import { cast, type Projectile, type Trap } from './abilities';
 import { Fighter, FLOOR_BOTTOM, FLOOR_TOP, initFromMinion, initFromSpec, type FighterInit } from './Fighter';
 import { dadLock } from '../input/dadLock';
@@ -81,6 +82,10 @@ const PAD_GLOW = 0x7ad9ff;
 const SIGN_RISE = 215;
 /** Least distance between two pads' columns: a sign is 230 wide, so signs never touch. */
 const PAD_GAP = 270;
+/** How long her team takes to step off the pad row when a choice opens (wall-clock ms; the fight's clock is frozen). */
+const STEP_BACK_MS = 450;
+/** The move choice's prompt lines that say the right word (`use_move_zap`, `find_move_zap`, `not_move_zap`): its caption hides it. */
+const CHOICE_PROMPT = /_(?:use_move|find_move|not_move)_([a-z]+)$/;
 /** The brawl's run-in spots (a contest's stage has its own): the i-th hero at `x + i * dx`, the villain at `villainX`. */
 const INTRO_SPOTS = { x: 260, dx: 140, villainX: 960 };
 /**
@@ -134,6 +139,13 @@ interface Choice {
   at: { x: number; y: number; lift: number };
   /** Wrong pads she has picked so far in this choice. */
   misses: number;
+  /** Seconds she has stood still while the pads are open (not reset by the re-prompt): the stick hint's clock (item 043, M5). */
+  still: number;
+  /** The stick hint beside her hero, while she stands still. */
+  stickHint: Phaser.GameObjects.Container | null;
+  /** Her team stepping off the pad row (item 043, M6): each from where it stood to a spot no sign or ring covers, on wall-clock time from `stepAt`. */
+  stepBack: { f: Fighter; from: { x: number; y: number }; to: { x: number; y: number } }[];
+  stepAt: number;
   resolve: () => void;
 }
 
@@ -216,7 +228,9 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     this.darkRect = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0a0018, 0).setDepth(FLOOR_TOP - 5);
     this.controls = new Controls(this);
     // Lighter in battle: a small box and face at the bottom, so the fight stays in view.
-    new Caption(this, { compact: true });
+    // The move choice's prompts say the word to find; the box prints "USE …!"
+    // so she finds it on the pads by reading (item 043, M1).
+    new Caption(this, { compact: true, hideWord: (u) => CHOICE_PROMPT.exec(u.id)?.[1] });
     // A bubble keeps clear of the bars at the top and of the banner showing (item 034), measured at its full size.
     new Bubbles(this, () => {
       const t = this.bannerText;
@@ -952,6 +966,51 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     return { word, x, y, ring, sign, bornAt };
   }
 
+  /**
+   * Where her teammates stand while a choice is open (item 043, M6): a tall
+   * ally behind a sign disappeared. Each one standing where a sign or a ring
+   * would cover them (or they it) steps to the nearest spot that is clear of
+   * every sign, every ring, her hero and each other. Not in a contest, whose
+   * staging holds everyone in place (a rope, a race lane).
+   */
+  private teamStepBack(me: Fighter, pads: MovePad[]): Choice['stepBack'] {
+    if (this.show.anchored) return [];
+    // The plate (230 x 100) and its stake, with a margin.
+    const signs = pads.map((p) => new Phaser.Geom.Rectangle(p.x - 125, p.y - SIGN_RISE - 60, 250, 150));
+    const taken: { x: number; y: number }[] = [{ x: me.x, y: me.y }];
+    const out: Choice['stepBack'] = [];
+    for (const f of this.heroes) {
+      if (f === me || !f.active) continue;
+      const h = Math.max(60, f.y - f.top);
+      const half = f.bodyHalf;
+      const blocked = (x: number, y: number): boolean => {
+        const body = new Phaser.Geom.Rectangle(x - half, y - h, half * 2, h);
+        return (
+          signs.some((s) => Phaser.Geom.Intersects.RectangleToRectangle(s, body)) ||
+          pads.some((p) => Math.abs(x - p.x) < 95 + half * 0.5 && Math.abs(y - p.y) < 60) ||
+          taken.some((t) => Math.abs(x - t.x) < 110 && Math.abs(y - t.y) < 50)
+        );
+      };
+      let to = { x: f.x, y: f.y };
+      if (blocked(f.x, f.y)) {
+        let best = Infinity;
+        for (let x = ARENA_LEFT + 40; x <= ARENA_RIGHT - 40; x += 20) {
+          for (let y = FLOOR_TOP + 20; y <= FLOOR_BOTTOM; y += 20) {
+            if (blocked(x, y)) continue;
+            const d = Math.hypot(x - f.x, (y - f.y) * 1.5);
+            if (d < best) {
+              best = d;
+              to = { x, y };
+            }
+          }
+        }
+      }
+      taken.push(to);
+      if (to.x !== f.x || to.y !== f.y) out.push({ f, from: { x: f.x, y: f.y }, to });
+    }
+    return out;
+  }
+
   /** The move-choice pause. */
   private async moveChoice(): Promise<void> {
     // The words were planned with the episode (src/rules/moves.ts): the first
@@ -1017,7 +1076,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
 
     let misses = 0;
     await new Promise<void>((resolve) => {
-      const c: Choice = { words, right, objs, pads, near: null, dot, here, open: false, promptedAt: 0, idle: 0, at, misses: episode.house.misses?.[choiceKey] ?? 0, resolve: () => {
+      const c: Choice = { words, right, objs, pads, near: null, dot, here, open: false, promptedAt: 0, idle: 0, at, misses: episode.house.misses?.[choiceKey] ?? 0, still: 0, stickHint: null, stepBack: this.teamStepBack(me, pads), stepAt: performance.now(), resolve: () => {
         misses = c.misses;
         resolve();
       } };
@@ -1144,6 +1203,13 @@ export class BattleScene extends Phaser.Scene implements StageHost {
       me.lean = Phaser.Math.Clamp(mv.x * 0.2, -0.25, 0.25);
     } else me.lean = 0;
     this.holdHero();
+    // Her team steps off the pad row (item 043, M6), and stays there while the fight is frozen.
+    const k = Phaser.Math.Easing.Sine.Out(Math.min(1, (performance.now() - c.stepAt) / STEP_BACK_MS));
+    for (const s of c.stepBack) {
+      if (!s.f.active) continue;
+      s.f.x = Phaser.Math.Linear(s.from.x, s.to.x, k);
+      s.f.y = Phaser.Math.Linear(s.from.y, s.to.y, k);
+    }
 
     let near: MovePad | null = null;
     let best = REACH;
@@ -1182,6 +1248,17 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     }
     if (walking || dadLock.locked) c.idle = 0;
     else if (c.open && !voiceBus.busy) c.idle += realDt;
+    // Standing still: the rooms' stick hint beside her hero, gone when she walks (item 043, M5).
+    if (walking || !c.open) c.still = 0;
+    else c.still += realDt;
+    if (walking) {
+      c.stickHint?.destroy();
+      c.stickHint = null;
+    } else if (c.still * 1000 > STICK_HINT_MS && !c.stickHint) {
+      c.stickHint = makeStickHint(this, c.at.x, c.at.y);
+      c.objs.push(c.stickHint);
+    }
+    c.stickHint?.setPosition(c.at.x + STICK_HINT_OFFSET.x, c.at.y + STICK_HINT_OFFSET.y);
     if (c.open && (this.controls.pressed('yellow') || c.idle > 10)) {
       // Green is ignored while the instruction plays, as on the first prompt:
       // the pads close for the line and open again when it ends.
@@ -1922,7 +1999,17 @@ export class BattleScene extends Phaser.Scene implements StageHost {
       itemsUsed: this.itemsUsed,
       me: this.heroes[0] ? { x: Math.round(this.heroes[0].x), y: Math.round(this.heroes[0].y) } : null,
       choice: this.choice
-        ? { words: this.choice.words, right: this.choice.right, open: this.choice.open, misses: this.choice.misses, spots: this.choice.pads.map((p) => ({ word: p.word, x: p.x, y: p.y })) }
+        ? {
+            words: this.choice.words,
+            right: this.choice.right,
+            open: this.choice.open,
+            misses: this.choice.misses,
+            spots: this.choice.pads.map((p) => ({ word: p.word, x: p.x, y: p.y })),
+            stickHint: Boolean(this.choice.stickHint?.active),
+            // Item 043, M6: each sign's plate and each teammate's body, in screen coordinates.
+            signs: this.choice.pads.map((p) => [p.x - 115, p.y - SIGN_RISE - 50, p.x + 115, p.y - SIGN_RISE + 50]),
+            team: this.heroes.filter((f) => f !== this.heroes[0] && f.active).map((f) => ({ id: f.init.id, box: [f.x - f.bodyHalf, f.top, f.x + f.bodyHalf, f.y] })),
+          }
         : null,
     };
   }

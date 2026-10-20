@@ -138,7 +138,8 @@ test('coverageTable: per level, vowel and first sound, words · read · solid ad
   store.record('words', 'frog', false, 1);
   const t = coverageTable(store);
   for (const rows of [t.level, t.vowel, t.onset]) {
-    assert.equal(rows.reduce((n, r) => n + r.words, 0), LIVE.length);
+    // A special word (KEY) has no vowel row.
+    assert.equal(rows.reduce((n, r) => n + r.words, 0), LIVE.filter((w) => rows !== t.vowel || w.vowel).length);
     assert.equal(rows.reduce((n, r) => n + r.readWords, 0), 2);
     assert.equal(rows.reduce((n, r) => n + r.solid, 0), 1);
   }

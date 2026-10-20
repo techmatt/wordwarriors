@@ -43,7 +43,7 @@ const ENDING_PROPS = ENDINGS.flatMap((e) => e.props.map((p) => endingPropArt(p.i
 const FIGHT_PROPS = FIGHTS.flatMap((f) => (f.props ?? []).map((p) => fightPropArt(p.id)));
 // The word bank's new words (item 037) with no green of their own: not frog, twig, pod, plum, fig, slug or snap (a crocodile).
 // Item 040's words: none is green.
-const BANK_040 = ['vet', 'chest', 'bin', 'rock', 'clock', 'stick', 'brush', 'truck', 'bath', 'plant', 'crib'].map((w) => `pic_${w}`);
+const BANK_040 = ['vet', 'chest', 'bin', 'rock', 'clock', 'stick', 'brush', 'truck', 'bath', 'plant', 'crib', 'key', 'yoyo'].map((w) => `pic_${w}`);
 const BANK_037 = ['jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'gum', 'bun', 'hut', 'sub', 'nap', 'wag', 'jab', 'red', 'hex', 'jig', 'mix', 'jog', 'bop', 'dot', 'hum', 'yum', 'drum', 'crab', 'flag', 'sled', 'nest', 'tent', 'desk', 'belt', 'vest', 'gift', 'lamp', 'hand', 'mask', 'raft', 'plug', 'ant', 'milk', 'jump', 'spin', 'swim', 'flip', 'stomp', 'slam', 'grab', 'clap', 'bump', 'skip', 'twist', 'melt', 'lift', 'plop', 'flop', 'trap', 'blast', 'drip', 'ship', 'fish', 'duck', 'sock', 'moth', 'shed', 'chick', 'chop', 'kick', 'rush'].map((w) => `pic_${w}`);
 export const NO_GREEN = new Set([...BANK_037, ...BANK_040,...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
 
@@ -155,6 +155,12 @@ export const PICK_NOTES: Record<string, string> = {
   prop_machine_tile: "The word machine's letter tiles, a letter painted on each by the game. `current` is candidate 3, promoted by item 026: the flattest blank top for a letter (1 is a cube seen corner-on). 0 is the painted placeholder.",
   ...pickedBy025(),
   ...pickedBy032(),
+  // Item 043: Matt's 040 pick, and the cyber Dada Matt redesign (brief 041_cyber_gauntlet_engineer).
+  pic_key: "New word KEY (item 043, a special word for K: level 1, the hint sounds only its K; rooms, warm-up, battle item). `current` is candidate 1, promoted by item 043: the boldest teeth; all three are nearly the same gold key. `0` is the painted placeholder.",
+  pic_yoyo: "New word YOYO (item 043, a special word for Y, printed YOYO: level 1, the hint sounds only its Y; rooms, warm-up, battle item). `current` is candidate 1, promoted by item 043: the biggest yo-yo, its string clearest. `0` is the painted placeholder. Watch: kept apart from TOP (both spinning toys).",
+  pic_chest: "Item 040's word CHEST. `current` is candidate 3, Matt's pick (item 043). `0` is the painted placeholder.",
+  char_dada_matt_cyber_good: "Cyber Dada Matt redrawn as a gauntlet engineer (item 041's brief round). `current` is candidate 10, Matt's pick (item 043, brief 041_cyber_gauntlet_engineer): the cyan power gauntlet projecting hologram tools, goggles up. 1 to 3 are item 025's hacker design; `0` is the painted placeholder.",
+  char_dada_matt_cyber_evil: "Evil cyber Dada Matt in the same gauntlet-engineer look (item 043): the same build and gauntlet, glowing red. `current` is candidate 5, promoted by item 043: red gauntlet and hologram tools, goggles up, no green (4 has a teal shirt). 1 to 3 are item 025's hacker design (2 was Matt's item 032 pick); `0` is the painted placeholder.",
   // Item 037: the word bank's new words (picked by a review pass; Matt's picker is art_alts_037_words).
   pic_ant: "New word ANT (item 037, level 2, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 3, promoted by item 037: a friendly red ant whose six legs and segmented body show most clearly. The cut is clean. All three are good. `0` is the painted placeholder.",
   pic_belt: "New word BELT (item 037, level 2, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 2, promoted by item 037: a coiled belt with its buckle, keeper loop and a full row of holes. It is the clearest belt shape and the cut is clean. `0` is the painted placeholder.",
@@ -250,8 +256,6 @@ function pickedBy032(): Record<string, string> {
     char_dada_jason_warrior_evil: [3, 2, 'a horned crown helmet, a spiked round shield, a jagged axe, a tattered red cape, grinning'],
     char_dada_jason_warrior_good: [3, 2, 'gold-trimmed silver plate, a red cape, a sun shield, a double-headed axe held high'],
     char_dada_matt_blade_good: [6, 5, 'bare-armed rune armour, the sword held low, a blue magic swirl raised'],
-    char_dada_matt_cyber_evil: [2, 1, 'a red visor, a spike-shouldered jacket, a red code tablet in his palm, two red drones'],
-    char_dada_matt_cyber_good: [3, 1, 'typing on a floating cyan keyboard, a smiling drone at his shoulder'],
     decal_dada_jason_warlock_flame: [2, 1, 'one cheeky purple flame with a face, small flames round it'],
     decal_dada_jason_warrior_shield: [1, 2, 'two dented black shields, a snapped axe, a spilled coin pouch'],
     decal_dada_matt_cyber_cable: [1, 2, 'a tangle of red-glowing cables and plugs'],
@@ -457,6 +461,9 @@ const PICTURES: Record<string, string> = {
   plant: 'a plant: a green leafy plant in a round orange flowerpot',
   crib: "a crib: a baby's white wooden crib with bars, a soft blue blanket and a little teddy inside, side-on",
   bath: 'a bath: a white bathtub full of foamy bubbles, a yellow rubber duck on top, side-on',
+  // Item 043: the K and Y pictures (special words).
+  key: 'a key: one big shiny gold door key with a round loop handle and simple teeth, lying side-on; a key alone, no lock, no keyring',
+  yoyo: 'a yo-yo: one bright red toy yo-yo hanging from its white string, the string looped round a finger at the top, a few motion lines',
 };
 
 const HAND: Record<string, string> = {

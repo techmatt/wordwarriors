@@ -80,7 +80,7 @@ export interface WWState {
     heroes: { id: string; hp: number; status: string | null; art: string }[];
     villains: { id: string; hp: number; status: string | null; art: string }[];
     /** The move words stand in the arena as pads (`spots`); she walks her hero onto one. */
-    choice: { words: string[]; right: string; open: boolean; misses: number; spots: { word: string; x: number; y: number }[] } | null;
+    choice: { words: string[]; right: string; open: boolean; misses: number; spots: { word: string; x: number; y: number }[]; stickHint: boolean; signs: number[][]; team: { id: string; box: number[] }[] } | null;
     /** Her hero's position. */
     me: { x: number; y: number } | null;
     itemsUsed: number;

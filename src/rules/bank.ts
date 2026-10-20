@@ -48,7 +48,7 @@ export function met(store: ProgressStore, words: BankWord[] = LIVE): Met {
   const out: Met = { vowel: {}, onset: {}, level: {} };
   for (const w of words) {
     const n = store.stat('words', w.word).seen;
-    out.vowel[w.vowel] = (out.vowel[w.vowel] ?? 0) + n;
+    if (w.vowel) out.vowel[w.vowel] = (out.vowel[w.vowel] ?? 0) + n;
     out.onset[w.onset] = (out.onset[w.onset] ?? 0) + n;
     out.level[w.level] = (out.level[w.level] ?? 0) + n;
   }
@@ -69,7 +69,8 @@ export function coverage(store: ProgressStore, word: string, m: Met = met(store)
   const w = BANK_BY_WORD[word];
   if (!w) return 1;
   const f =
-    factor(m.vowel, w.vowel, VOWEL_LIST) *
+    // A special word (KEY) has no vowel to cover.
+    (w.vowel ? factor(m.vowel, w.vowel, VOWEL_LIST) : 1) *
     factor(m.onset, w.onset, ONSETS) *
     factor(m.level, String(w.level), LEVELS.map(String));
   // The cube root keeps it one term of three, not a cube of small numbers.
@@ -277,7 +278,7 @@ export function coverageTable(store: ProgressStore): { vowel: CoverageRow[]; ons
       };
     });
   return {
-    vowel: rows(VOWEL_LIST, (w) => w.vowel),
+    vowel: rows(VOWEL_LIST, (w) => w.vowel ?? ''),
     onset: rows([...ONSETS].sort((a, b) => a.length - b.length || a.localeCompare(b)), (w) => w.onset),
     level: rows(LEVELS.map(String), (w) => String(w.level)),
   };

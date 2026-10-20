@@ -74,7 +74,7 @@ const RIMES: Record<string, { say: string; silly: SillyOnset[] }> = {
   // PIG WIG FIG. Out: never N; BIG DIG JIG GIG RIG ZIG (words), CIG (slang), MIG (a jet),
   // TIG, LIG (British slang), SIG, VIG (abbreviations, slang), YIG (a storybook god).
   ig: { say: 'Ihg', silly: [{ letter: 'h', say: 'Hihg' }, { letter: 'k', say: 'Kig' }] },
-  // PIN FIN. Every other onset is a word, a name or a drink (BIN DIN GIN KIN SIN TIN WIN
+  // PIN BIN (item 043: Matt says PIN is familiar; FIN is odd). Every other onset is a word, a name or a drink (BIN DIN GIN KIN SIN TIN WIN
   // YIN; JIN LIN RIN MIN VIN; ZIN slang; CIN sounds like SIN), so -IN lays two tiles, with HIN.
   in: { say: 'Inn', silly: [{ letter: 'h', say: 'Hin' }] },
   // LEG PEG. Out: BEG KEG (words), MEG GREG (names), REG VEG (slang), NEG (slang), FEG

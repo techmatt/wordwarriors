@@ -11,10 +11,11 @@
 
 import Phaser from 'phaser';
 
-import { CHARACTER_BY_ID, personOf } from '../../content/battle/roster';
+import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import type { Utterance } from '../audio/VoiceBus';
 import { FONT_ROUNDED as NAME_FONT } from '../config';
-import { castArt, castFace, castId, episode, waker } from '../episode/Episode';
+import { castArt, castFace, castId, episode } from '../episode/Episode';
+import { phonicsFace } from '../rules/cast';
 
 export interface Speaker {
   id: string;
@@ -23,13 +24,14 @@ export interface Speaker {
 
 /**
  * The character behind a line. `phonics` (word confirmations, letter sounds)
- * is the primary dad's voice: the one who woke her (Dada Matt, or Dada Jason
- * when she plays as Dada Matt). Null when the speaker is not a character.
+ * is Dada Matt's voice, shown with his face only in episodes he is in on her
+ * side (`phonicsFace`). Null when the speaker is not a character, or no face.
  */
 export function speakerOf(u: Pick<Utterance, 'speaker'>): Speaker | null {
-  // Phonics is Dada Matt's voice (his recordings replace it); while he is the
-  // villain, the dad who woke her shows instead (item 025).
-  const raw = u.speaker === 'phonics' ? (personOf(episode.villain) === 'dada_matt' ? personOf(waker()) : 'dada_matt') : u.speaker;
+  // Phonics is Dada Matt's voice (his recordings replace it): his face only
+  // when he is in the episode on her side, else none (item 043, M2).
+  const raw = u.speaker === 'phonics' ? phonicsFace(episode) : u.speaker;
+  if (!raw) return null;
   const evil = raw.endsWith('_evil');
   const id = raw.replace(/_evil$/, '');
   return CHARACTER_BY_ID[id] ? { id, evil } : null;

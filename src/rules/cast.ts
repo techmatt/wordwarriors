@@ -162,6 +162,18 @@ export function wakerOf(cast: Pick<Cast, 'hero' | 'ally' | 'primary' | 'villain'
   return DADS.find((d) => d !== hero && d !== personOf(cast.villain)) ?? DADS.find((d) => d !== hero) ?? DADS[0];
 }
 
+/**
+ * Whose face the `phonics` voice (word confirmations, letter sounds, sentence
+ * prefixes: Dada Matt's voice) shows: Dada Matt's, only when he is in the
+ * episode on her side (the dad who woke her, the other dad, the ally, or her
+ * hero); otherwise none, so no one who is not there pops up mid-sentence
+ * (item 043, M2). The banner or card the line is about is lit anyway.
+ */
+export function phonicsFace(cast: Pick<Cast, 'hero' | 'ally' | 'primary' | 'secondary'>): string | null {
+  const here = [cast.primary, cast.secondary, cast.ally, cast.hero].some((c) => c && personOf(c) === 'dada_matt');
+  return here ? 'dada_matt' : null;
+}
+
 /** A seeded random source (mulberry32), for `?seed=` and the tests. */
 export function seededRand(seed: number): Rand {
   let a = seed >>> 0;

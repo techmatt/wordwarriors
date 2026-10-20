@@ -207,7 +207,7 @@ export class HubScene extends RoomScene {
     // The secret door: only in part 2, and only once it has been found.
     const cpos = HUB.doors.counter;
     const cimg = this.art('prop_door', DOOR_W, DOOR_H);
-    const csign = this.plaque(SIDE_ROOM_BY_ID[planFor('counter').room]?.glyph ?? '🗝️');
+    const csign = this.plaque(SIDE_ROOM_BY_ID[planFor('counter').room]?.glyph ?? '🧭');
     const counter = this.addSpot('door_counter', cpos.x, cpos.y, [cimg, csign], null);
     counter.enabled = false;
     counter.obj.setVisible(false);

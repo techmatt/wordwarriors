@@ -81,7 +81,7 @@ export const SIDE_ROOMS: SideRoomSpec[] = [
   { id: 'kitchen', name: 'Kitchen', look: 'A cartoon family kitchen: counters, a fridge with drawings, pots on hooks, a tiled floor', glyph: '🍳', palette: [0xffe0b0, 0xc89a6a], spots: [[300, 470], [640, 470], [980, 470]], entry: { x: 640, y: 580 } },
   { id: 'playroom', name: 'Playroom', look: 'A bright playroom: toy boxes, a slide, beanbags, a carpet with a road map', glyph: '🧸', palette: [0xb0e0ff, 0xff9ad5], spots: [[300, 470], [640, 470], [980, 470]], entry: { x: 640, y: 580 } },
   { id: 'garage', name: 'Garage', look: "A tidy garage: a workbench, bikes on the wall, Dada Jason's car under a sheet", glyph: '🔧', palette: [0x9aa6b8, 0x5a6a7a], spots: [[300, 470], [640, 470], [980, 470]], entry: { x: 640, y: 580 } },
-  { id: 'attic', name: 'Attic', look: 'A secret attic: sloped roof beams, old trunks, a round window with moonlight, cobwebs, a treasure-hunt feeling', glyph: '🗝️', palette: [0x5a3a2a, 0xffc87a], spots: [[300, 480], [640, 480], [980, 480]], entry: { x: 640, y: 580 } },
+  { id: 'attic', name: 'Attic', look: 'A secret attic: sloped roof beams, old trunks, a round window with moonlight, cobwebs, a treasure-hunt feeling', glyph: '🧭', palette: [0x5a3a2a, 0xffc87a], spots: [[300, 480], [640, 480], [980, 480]], entry: { x: 640, y: 580 } },
 ];
 
 /** The home's fetch rooms (everything in the house but the counter room). */
@@ -191,7 +191,7 @@ export const PLACES: PlaceSpec[] = [
       room('armoury', 'Armoury', '🛡️', [0x8a8a9a, 0xe63946], 'The armoury tent of the knights camp: shiny suits of armour on stands, round shields on the walls, a forge glowing in the corner, a straw floor'),
       room('practice_ring', 'Practice Ring', '🎯', [0xc8a07a, 0xffd23f], 'The practice ring of the knights camp: a wooden fence ring, round straw targets, a wooden horse on wheels, flags flapping'),
     ],
-    secret: room('tower_room', 'Tower Room', '🗝️', [0x4a4a5a, 0xffc87a], 'The secret room at the top of the castle tower: a round stone room, a great round window, an old chest, a sword stuck in a stone, torches, a treasure-hunt feeling'),
+    secret: room('tower_room', 'Tower Room', '🧭', [0x4a4a5a, 0xffc87a], 'The secret room at the top of the castle tower: a round stone room, a great round window, an old chest, a sword stuck in a stone, torches, a treasure-hunt feeling'),
   },
   {
     id: 'moon_tower', name: 'Purple Moon Tower', glyph: '🌙', palette: [0x3a1a5a, 0xb04aff],

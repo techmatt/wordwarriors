@@ -50,12 +50,20 @@ export interface BankEntry {
    * word keeps its action role (pads, the gift), a `thing` drops out of play.
    */
   odd?: true;
+  /**
+   * Not a short-vowel word, but the right familiar picture for a first sound
+   * the bank had none of (item 043: KEY for K, YOYO for Y), as MICE is for its
+   * sentence. Level 1, no vowel tag, and only its first letter is a sound unit:
+   * the hint sounds just that (it is not decodable), never the rest.
+   */
+  special?: true;
 }
 
 export interface BankWord extends BankEntry {
   units: string[];
   level: Level;
-  vowel: Vowel;
+  /** Its short vowel; null for a `special` word (KEY), which has none. */
+  vowel: Vowel | null;
   onset: string;
   rime: string;
 }
@@ -69,13 +77,14 @@ const NEW_SPELL = { ...NEW, ...SPELL };
 const ODD = { odd: true as const };
 const NEW_ODD = { ...NEW, ...ODD };
 const NEW_040 = { since: '040' as const };
+const SPECIAL = { special: true as const };
 
 const ENTRIES: BankEntry[] = [
   // Level 1: CVC. The pictured words from before 037.
   T('cat', '🐱'), T('dog', '🐶'), T('fox', '🦊'), T('bug', '🐛'), T('hat', '🎩'), T('bed', '🛏️'),
   T('cup', '☕'), T('map', '🗺️'), T('bus', '🚌'), T('hen', '🐔'), T('box', '📦'), T('pen', '🖊️'),
   T('van', '🚐'), T('bat', '🦇'), T('bag', '👜'), T('can', '🥫'), T('nut', '🥜'), T('tub', '🛁'),
-  T('cap', '🧢'), T('pin', '📌', ODD), T('log', undefined, { draw: 'log' }), T('mop', undefined, { draw: 'mop' }),
+  T('cap', '🧢'), T('pin', '📌'), T('log', undefined, { draw: 'log' }), T('mop', undefined, { draw: 'mop' }),
   T('pot', undefined, { draw: 'pot' }), T('rat', '🐀'), T('mug', undefined, { draw: 'mug' }),
   T('rug', undefined, { draw: 'rug' }), T('jug', '🏺'),
   // Pictured words that were move words too.
@@ -112,6 +121,9 @@ const ENTRIES: BankEntry[] = [
   T('vet', '🩺', NEW_040), T('chest', '🧰', NEW_040), T('bin', '🗑️', NEW_040), T('rock', '🪨', NEW_040), T('clock', '🕰️', NEW_040),
   T('stick', '🥢', NEW_040), T('brush', '🪥', NEW_040), T('truck', '🚚', NEW_040), T('bath', '🧼', NEW_040),
   T('plant', '🪴', NEW_040), T('crib', '🛌', NEW_040),
+  // Item 043: the only pictured K and Y words were odd (KIT, YAK), and no familiar
+  // short-vowel picture starts with either, so these two are special words.
+  T('key', '🔑', SPECIAL), T('yoyo', '🪀', { ...SPECIAL, say: 'yo-yo' }),
 ];
 
 /** The digraphs that are one sound unit. */
@@ -133,6 +145,7 @@ export function unitsOf(word: string): string[] {
 
 /** Tags from the spelling. Throws for a word that is not one short vowel between consonants. */
 export function tag(e: BankEntry): BankWord {
+  if (e.special) return { ...e, units: [e.word.charAt(0)], level: 1, vowel: null, onset: e.word.charAt(0), rime: e.word.slice(1) };
   const units = unitsOf(e.word);
   const vi = units.findIndex((u) => VOWELS.includes(u));
   const vowels = units.filter((u) => VOWELS.includes(u));

@@ -45,7 +45,8 @@ test('families: every bank rime in RIMES with two or more one-letter-onset words
   const pictured = new Set(CVC_WORDS.filter((w) => w.decodable).map((w) => w.word));
   // Item 037: the bank's new rimes joined 035's seven. Item 040: a family needs two
   // familiar pictures, so -AM -EG -IG -IN -OD -OP -UB -UT left (WIG, PEG, ROD... are odd).
-  assert.deepEqual(FAMILIES.map((f) => f.rime).sort(), ['an', 'ap', 'at', 'en', 'et', 'og', 'ox', 'ug', 'un']);
+  // Item 043: PIN is familiar again, so -IN (PIN BIN) is back; -IG still has only PIG.
+  assert.deepEqual(FAMILIES.map((f) => f.rime).sort(), ['an', 'ap', 'at', 'en', 'et', 'in', 'og', 'ox', 'ug', 'un']);
   for (const f of FAMILIES) {
     assert.ok(f.all.length >= 2, `${f.rime} has ${f.all.join(', ')}`);
     assert.ok(f.words.length >= 2, `${f.rime} has two pictures to build: ${f.words.join(', ')}`);

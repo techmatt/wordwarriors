@@ -50,6 +50,8 @@ import { ARRIVE_MS, INK, LIT, Minigame } from './minigames/Minigame';
 type Pass = 'listen' | 'read' | 'find' | 'done';
 
 const BANNER_W = 1040;
+/** The banner's word size once a sentence takes two rows (item 043, M4): two rows at this before one smaller row. */
+const TWO_ROWS_PX = 56;
 const BANNER_Y = 120;
 /** The silent beat on the key word at the end of the listening pass. */
 const KEY_BEAT_MS = 1200;
@@ -274,8 +276,10 @@ export class SentenceRoom extends Minigame {
       build();
       rows = balanced(rowsOf());
       const fits = rows.every((r) => rowWidth(r) * 1.1 <= room);
-      // One row down to 40 px; past that, more rows are better than smaller words.
-      if ((rows.length === 1 && fits) || (size <= 40 && fits && rows.length <= 3) || size <= 20) break;
+      // One row while it fits at 60 px or more; then two rows at 56 px before
+      // one smaller row (item 043, M4: the long counter sentences read at about
+      // half size on one row); past 40 px, more rows are better than smaller words.
+      if ((rows.length === 1 && fits) || (size <= TWO_ROWS_PX && fits && rows.length <= 2) || (size <= 40 && fits && rows.length <= 3) || size <= 20) break;
       size -= 4;
     }
     const lineH = size * 1.2;

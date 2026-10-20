@@ -258,7 +258,7 @@ test('new words (MUG RUG JUG, then 037\'s) join a round under way; a fresh bag a
   const NEW = BAG_WORDS.filter((w) => !LEGACY_BAG_WORDS.includes(w));
   assert.equal(LEGACY_BAG_WORDS.length, 30);
   assert.ok(['mug', 'rug', 'jug', 'frog', 'ship'].every((w) => NEW.includes(w)));
-  // Item 040: only an `odd` word (PIN) left it.
+  // Item 040: only an `odd` word left it (PIN did, until item 043).
   assert.ok(LEGACY_BAG_WORDS.every((w) => BAG_WORDS.includes(w) || BANK_BY_WORD[w]?.odd), 'no pre-035 word left the bag but the odd ones');
   // Saved before item 035, mid-round, none of them ever in it.
   const old = memory();

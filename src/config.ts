@@ -153,3 +153,6 @@ export const PAD_COLOR = {
 } as const;
 
 export type PadColorName = keyof typeof PAD_COLOR;
+
+/** Standing still this long brings the stick hint beside her (the rooms before she first moves; the battle's move choice, item 043). */
+export const STICK_HINT_MS = 4000;

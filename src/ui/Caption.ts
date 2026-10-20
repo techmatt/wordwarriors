@@ -58,6 +58,12 @@ export interface CaptionOptions {
   mode?: (u: Utterance) => CaptionMode | undefined;
   /** Whether to print the speaker's name under their face (default yes). */
   showName?: (s: Speaker) => boolean;
+  /**
+   * A word the line says but the box must not print (lower case): shown as
+   * "…" and never lit. The battle's move choice (item 043, M1): she hears the
+   * word and finds it on the pads, not by matching the caption's letters.
+   */
+  hideWord?: (u: Utterance) => string | undefined;
 }
 
 interface Layout {
@@ -85,6 +91,8 @@ export class Caption {
   private readonly text: Phaser.GameObjects.Container;
   private portrait: (Portrait & { speaker: Speaker; baseY: number; name: boolean }) | null = null;
   private words: Phaser.GameObjects.Text[] = [];
+  /** Indexes of `words` shown as "…" (`hideWord`): never lit. */
+  private hidden = new Set<number>();
   private slabH = 54;
   private current: Utterance | null = null;
   private glow: Phaser.GameObjects.Image | null = null;
@@ -168,6 +176,7 @@ export class Caption {
     this.root.setAlpha(1);
     for (const w of this.words) w.destroy();
     this.words = [];
+    this.hidden.clear();
     this.box.clear();
     this.slab.clear();
 
@@ -180,8 +189,11 @@ export class Caption {
     if (mode === 'show' && u.line) {
       // All text in the game is upper case (Matt, 2026-10-18); only the display
       // changes, the line texts stay as written.
+      const hide = this.opts.hideWord?.(u);
       for (const w of u.line.words) {
-        this.words.push(this.scene.add.text(0, 0, w.word.toUpperCase(), { fontFamily: FONT_ROUNDED,fontSize: `${this.L.fontSize}px`, color: INK }).setOrigin(0.5, 0.5));
+        const masked = Boolean(hide) && w.word.toLowerCase().replace(/[^a-z]/g, '') === hide;
+        if (masked) this.hidden.add(this.words.length);
+        this.words.push(this.scene.add.text(0, 0, masked ? w.word.replace(/[a-z]+/gi, '…') : w.word.toUpperCase(), { fontFamily: FONT_ROUNDED,fontSize: `${this.L.fontSize}px`, color: INK }).setOrigin(0.5, 0.5));
       }
       this.text.add(this.words);
     }
@@ -429,7 +441,7 @@ export class Caption {
     u.line.words.forEach((w, i) => {
       if (time >= w.start && time < Math.max(w.end, w.start + 0.12)) lit = i;
     });
-    const target = this.words[lit];
+    const target = this.hidden.has(lit) ? undefined : this.words[lit];
     if (target) {
       const w = target.width + 12;
       this.slab.fillStyle(SLAB, 1).fillRoundedRect(target.x - w / 2, target.y - this.slabH / 2 + 2, w, this.slabH - 4, 10);

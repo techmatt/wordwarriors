@@ -75,7 +75,18 @@ export interface BattleInfo {
   combos: number;
   movePicks: number;
   /** The move choice: its words standing in the arena as pads (`spots`) she walks onto. */
-  choice: { words: string[]; right: string; open: boolean; misses: number; spots: { word: string; x: number; y: number }[] } | null;
+  choice: {
+    words: string[];
+    right: string;
+    open: boolean;
+    misses: number;
+    spots: { word: string; x: number; y: number }[];
+    /** The idle stick hint is beside her hero (item 043, M5). */
+    stickHint: boolean;
+    /** Each sign's plate and each teammate's body, [left, top, right, bottom] (item 043, M6). */
+    signs: number[][];
+    team: { id: string; box: number[] }[];
+  } | null;
   /** Her hero's position on the arena floor. */
   me: { x: number; y: number } | null;
   /** Fetched items used this part. */

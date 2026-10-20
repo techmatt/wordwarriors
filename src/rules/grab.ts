@@ -119,7 +119,8 @@ export function clue(word: string, level: GrabLevel, help = false): ClueStep[] {
   if (level === 1 || help) out.push({ id: wordLine(word), kind: 'word', index: null, span: 0 });
   if (level <= 2) letters.forEach((ch, index) => out.push({ id: letterNameLine(ch), kind: 'name', index, span: 1 }));
   let index = 0;
-  for (const unit of unitsOf(word)) {
+  // A special word (KEY) has one sound unit, its first letter (content/phonics/bank.ts).
+  for (const unit of BANK_BY_WORD[word]?.units ?? unitsOf(word)) {
     if (SOUND_BY_UNIT[unit]) out.push({ id: letterSoundLine(unit), kind: 'sound', index, span: unit.length });
     index += unit.length;
   }

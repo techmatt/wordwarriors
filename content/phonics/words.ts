@@ -35,7 +35,7 @@ export interface Word {
 export const CVC_WORDS: Word[] = THINGS.map(asWord);
 
 function asWord(w: BankWord): Word {
-  return { word: w.word, decodable: true, ...(w.glyph ? { glyph: w.glyph } : {}), ...(w.draw ? { draw: w.draw } : {}) };
+  return { word: w.word, decodable: !w.special, ...(w.glyph ? { glyph: w.glyph } : {}), ...(w.draw ? { draw: w.draw } : {}) };
 }
 
 /** Character names as sight words. The picture is the character's own card. */

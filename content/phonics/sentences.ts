@@ -120,6 +120,8 @@ export const LOOKALIKES: string[][] = [
   ['rock', 'nut'],
   ['plant', 'nest'],
   ['crib', 'bed'],
+  // Item 043's: a yo-yo and a spinning top are both round spinning toys.
+  ['yoyo', 'top'],
 ];
 
 /** The words whose pictures look like `word`'s (not including `word`). */

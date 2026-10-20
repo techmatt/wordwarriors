@@ -2904,10 +2904,10 @@
   "text": "Beep boop, got you!"
  },
  {
-  "id": "taunt_dada_matt_cyber_drones",
+  "id": "taunt_dada_matt_cyber_tools",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt_cyber",
-  "text": "Drones, go!"
+  "text": "Tools, go!"
  },
  {
   "id": "taunt_dada_matt_cyber_upload",
@@ -2934,16 +2934,16 @@
   "text": "Data Storm!"
  },
  {
-  "id": "move_dada_matt_cyber_drone_swarm",
+  "id": "move_dada_matt_cyber_hologram_tools",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt_cyber",
-  "text": "Drone Swarm!"
+  "text": "Hologram Tools!"
  },
  {
-  "id": "move_dada_matt_cyber_laser_net",
+  "id": "move_dada_matt_cyber_hologram_grid",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt_cyber",
-  "text": "Laser Net!"
+  "text": "Hologram Grid!"
  },
  {
   "id": "name_dada_matt_cyber_evil",
@@ -3006,16 +3006,16 @@
   "text": "Glitch Jump!"
  },
  {
-  "id": "move_dada_matt_cyber_evil_red_lasers",
+  "id": "move_dada_matt_cyber_evil_red_grid",
   "speaker": "dada_matt_evil",
   "group": "fighter_dada_matt_cyber_evil",
-  "text": "Red Laser Grid!"
+  "text": "Red Hologram Grid!"
  },
  {
-  "id": "move_dada_matt_cyber_evil_evil_drones",
+  "id": "move_dada_matt_cyber_evil_glitch_tools",
   "speaker": "dada_matt_evil",
   "group": "fighter_dada_matt_cyber_evil",
-  "text": "Evil Drones!"
+  "text": "Glitch Tools!"
  },
  {
   "id": "reformed_dada_matt_cyber_cartoons",
@@ -3036,10 +3036,10 @@
   "text": "Beep, sorry! System is friendly now."
  },
  {
-  "id": "reformed_dada_matt_cyber_drone",
+  "id": "reformed_dada_matt_cyber_gauntlet",
   "speaker": "dada_matt",
   "group": "fighter_dada_matt_cyber_evil",
-  "text": "Want to fly my drone?"
+  "text": "Want to try my power glove?"
  },
  {
   "id": "reformed_dada_matt_cyber_game",
@@ -5766,6 +5766,19 @@
   "text": "Wug!"
  },
  {
+  "id": "rime_in",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Inn.",
+  "note": "placeholder for the rime -in said alone; replace with a recorded clip"
+ },
+ {
+  "id": "silly_hin",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "Hin!"
+ },
+ {
   "id": "rime_ox",
   "speaker": "phonics",
   "group": "phonics",
@@ -6258,6 +6271,12 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "jump!"
+ },
+ {
+  "id": "word_key",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "key!"
  },
  {
   "id": "word_kick",
@@ -6786,6 +6805,13 @@
   "speaker": "phonics",
   "group": "phonics",
   "text": "yak!"
+ },
+ {
+  "id": "word_yoyo",
+  "speaker": "phonics",
+  "group": "phonics",
+  "text": "yoyo!",
+  "say": "yo-yo!"
  },
  {
   "id": "word_yum",
@@ -60511,7 +60537,7 @@
   "id": "end_dada_matt_picnic_fit",
   "speaker": "dada_matt",
   "group": "end_dada_matt",
-  "text": "My drone brought the sandwiches!"
+  "text": "My power glove made the sandwiches!"
  },
  {
   "id": "end_dada_matt_mountain_fit",

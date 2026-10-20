@@ -14,7 +14,7 @@
 
 import Phaser from 'phaser';
 
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH } from '../config';
+import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, STICK_HINT_MS } from '../config';
 import { narratorLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
@@ -27,6 +27,7 @@ import { makeButtonDot } from '../ui/ButtonDot';
 import { Bubbles } from '../ui/Bubbles';
 import { Caption, type CaptionMode, type KeepOut } from '../ui/Caption';
 import type { Speaker } from '../ui/Portrait';
+import { STICK_HINT_OFFSET, makeStickHint } from '../ui/stickHint';
 import { PLAYER_HEIGHT, Player } from './Player';
 
 /** Nothing happening for this long offers the prompt again. */
@@ -339,8 +340,8 @@ export abstract class RoomScene extends Phaser.Scene {
       return;
     }
     this.idleMs += deltaMs;
-    if (this.walking && !this.hasMoved && this.idleMs > 4000 && !this.stickHint) this.showStickHint();
-    if (this.stickHint) this.stickHint.setPosition(this.player.x + 90, this.player.y - 70);
+    if (this.walking && !this.hasMoved && this.idleMs > STICK_HINT_MS && !this.stickHint) this.stickHint = makeStickHint(this, this.player.x, this.player.y);
+    if (this.stickHint) this.stickHint.setPosition(this.player.x + STICK_HINT_OFFSET.x, this.player.y + STICK_HINT_OFFSET.y);
     if (this.idleMs > IDLE_REPROMPT_MS) {
       this.idleMs = 0;
       this.hint(true);
@@ -350,15 +351,6 @@ export abstract class RoomScene extends Phaser.Scene {
   /** Something she did that is not a stick or a button (typing), for the idle timer. */
   protected noteActivity(): void {
     this.idleMs = 0;
-  }
-
-  private showStickHint(): void {
-    const ring = this.add.circle(0, 0, 30, 0x222233, 0.85).setStrokeStyle(4, 0xffffff, 0.9);
-    const nub = this.add.circle(0, 0, 14, 0xdddddd, 1);
-    const arrows = this.add.text(0, 0, '↔', { fontSize: '44px', color: '#ffd23f', stroke: '#000000', strokeThickness: 6 }).setOrigin(0.5, 0.55);
-    // The arrows over the nub: under it they were hidden and the hint read as a dark ball (item 039).
-    this.stickHint = this.add.container(this.player.x + 90, this.player.y - 70, [ring, nub, arrows]).setDepth(DEPTH.prompt);
-    this.tweens.add({ targets: nub, x: { from: -14, to: 14 }, duration: 450, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
   }
 
   private publish(deltaMs: number): void {

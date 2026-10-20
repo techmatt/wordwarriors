@@ -142,6 +142,9 @@ const THING_EFFECTS: WordEffect[] = [
   { word: 'plant', look: 'a magic plant that grows round the villain and holds it tight', ability: use('plant', 'trap', 0x3ac060, { glyph: '🌿', count: 3 }) },
   { word: 'crib', look: 'a cosy crib that drops on the villain: nap time, it nods off', ability: use('crib', 'slam', 0x9ad8ff, { power: 3, status: 'stun', duration: 1.5 }) },
   { word: 'bath', look: 'a bubbly bath that sloshes a wave of bubbles across the arena', ability: use('bath', 'wave', 0x9ad8ff, { color2: 0xffffff }) },
+  // Item 043: the K and Y pictures.
+  { word: 'key', look: 'a giant golden key that locks the villain still for a moment, click', ability: use('key', 'freeze', 0xffd23f, { duration: 2 }) },
+  { word: 'yoyo', look: 'yo-yos that zip out and bonk the villain, then zip back', ability: use('yoyo', 'bolt', 0xe63946, { ...pic('yoyo'), count: 4, homing: true }) },
 ];
 
 /**
