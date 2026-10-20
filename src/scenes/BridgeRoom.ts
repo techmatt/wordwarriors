@@ -79,7 +79,7 @@ const GAP = { left: 330, right: 900, top: 418 };
 const GAP_HEIGHT_END = GAME_HEIGHT + 10;
 /** The stones' row; her feet sit just below their middle while she is on one. */
 const STONE_Y = 585;
-const FEET_ON_STONE = 22;
+const FEET_ON_STONE = 4;
 const STONE_H = 104;
 /** Where she waits for a new bridge. */
 const NEAR = { x: 175, y: 600 };

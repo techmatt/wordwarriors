@@ -120,8 +120,9 @@ test('Charge the Spell: the charged runes fire as her hero\'s moves in the next 
 test('Charge the Spell: the beta forces it behind a door of a drawn episode; F4 is Dad\'s yes', async ({ page }) => {
   test.setTimeout(120_000);
   const errors = collectErrors(page);
-  // `games=all`: no test pool, so FORCE_PHONICS_ROOM puts the phonics room behind door a.
-  await boot(page, '?scene=room&slot=a&seed=7&games=all');
+  // `games=all`: no test pool, so FORCE_PHONICS_ROOM puts a phonics room behind door a;
+  // since item 054 it is this or the Stretchy Bridge at random, so `room=charge` pins it.
+  await boot(page, '?scene=room&slot=a&seed=7&games=all&room=charge');
   const s = await until(page, (st) => st.scene === 'ChargeRoom' && Boolean(st.room?.charge), 30_000, 'the forced charge room');
   expect(s.episode.house.plan!.filter((p) => p.kind === 'charge')).toHaveLength(1);
   await until(page, (st) => st.room?.charge?.phase === 'approach' && !st.room.locked, 60_000, 'altar offered');
@@ -141,7 +142,8 @@ test('the beta: a whole drawn episode with Charge the Spell forced behind door a
   test.setTimeout(900_000);
   const errors = collectErrors(page);
   // `games=all` is the real draw, so FORCE_PHONICS_ROOM applies; playEpisode checks each battle's length.
-  await boot(page, '?games=all&seed=19&nojourney=1');
+  // Charge the Spell or the Stretchy Bridge at random since item 054: `room=charge` pins it.
+  await boot(page, '?games=all&seed=19&nojourney=1&room=charge');
   await until(page, (s) => s.scene === 'Title', 30_000, 'title');
   await page.waitForTimeout(300);
   await press(page, 'green');

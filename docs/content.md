@@ -561,6 +561,18 @@ for it, shaped like a word effect (no `pic_` art). Then `voice:lines`, `voice:bu
 (each narrator says each gesture: `nar_<n>_charge_gesture_<sound>`). Tuning is `CHARGE`
 in `src/config.ts`.
 
+## The Stretchy Bridge's pictures (`src/rules/bridge.ts`)
+
+The bridge (item 054) needs nothing per word: any familiar short-vowel thing in the bank
+can be crossed, and its far bank is drawn from the same words. What makes it work is
+pictures that **share a word's start and differ later**: two sounds from the start (MAP,
+MAT, MAN), else one (MAP, MOP, MUG), so the first letter is never enough. A word with
+none falls back to its rime (CAT, HAT), which the first letter can win, so when adding
+words, a familiar picture beside a CVC word that starts with a sound you can hold (M S F
+L N R V Z) is worth most: item 054 added MAT, MAN, LID and LOCK for that. A look-alike
+(`LOOKALIKES`: MAT and RUG) never stands beside it. The order is `BRIDGE.tiers` in
+`src/config.ts`; the lines are the narrator's `bridge_*` (none says a letter or a word).
+
 ## The home warm-up (`GRAB` in `src/config.ts`, `src/rules/grab.ts`)
 
 Any pictured bank word can be asked for, by her grabs' shakiness times the bank's

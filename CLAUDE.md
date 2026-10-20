@@ -15,9 +15,11 @@ reading) → **entry hall warm-up** (`src/scenes/EntryScene.ts`: grab one of nin
 pictures from a letter clue; it is her first battle item) → **house part 1** (the hub:
 the helper's story scene ends in the **gift word**, her first move word; two side-room
 doors, a minigame each from a weighted pool (the **sentence game**, the word machine),
-fetching battle items; for the beta one door is always **Charge the Spell** (letter
-sounds said aloud, Dad judges with keys 1 / 2; its runes fire in the battle,
-`FORCE_PHONICS_ROOM`); the front door appears once both
+fetching battle items; for the beta one door is always a phonics game, at random
+**Charge the Spell** (letter sounds said aloud, Dad judges with keys 1 / 2; its runes
+fire in the battle) or the **Stretchy Bridge** (she slides over a word's letter stones,
+each sound held, and blends the whole word to pick its picture; `FORCE_PHONICS_ROOM`);
+the front door appears once both
 are done) → **battle part 1** (the villain's ultimate wins: "too strong, retreat") →
 **house part 2** (a secret attic door: the counter sentence fetches the counter-item) →
 **battle part 2** (the counter beats the ultimate) → **victory scene**
@@ -43,11 +45,11 @@ Playwright serves its own (README, *Tests*). The sibling game
 | Path | What |
 | --- | --- |
 | `src/` | Game source. `main.ts` boots Phaser; `config.ts` sizes, depth bands, pad colours and every tuning knob named below. |
-| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine, ChargeRoom), Journey, Ending (the victory scene), Victory, Parent; parked: Pick, Alarm, Retreat and `minigames/` (the v0.1 games, Spell the Spell among them). |
+| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom), Journey, Ending (the victory scene), Victory, Parent; parked: Pick, Alarm, Retreat and `minigames/` (the v0.1 games, Spell the Spell among them). |
 | `src/battle/` | The battle simulation: `BattleScene` (the director scripts `part1`/`part2`), `Fighter`, `abilities`, `movement`; `stages/` stages each fight style. |
 | `src/episode/Episode.ts` | The episode's state and step list. Scenes call `advance()`; nothing else decides flow. |
 | `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only), `dadLock`, `dadButtons` (keys 1 / 2, Dad's no / yes). |
-| `src/audio/` | `context`, `sfx` and `music` (synthesised), `VoiceBus` (the one voice arbiter). |
+| `src/audio/` | `context`, `sfx` and `music` (synthesised), `VoiceBus` (the one voice arbiter), `holdSound` (letter sounds cut to hold or play once). |
 | `src/voice/VoiceBank.ts` | Reads `public/voice-gen/manifest.json` only, decodes by group. |
 | `src/state/` | `ProgressStore` (localStorage, versioned, per sound and per word). |
 | `src/rules/` | Phaser-free, unit-tested: the cast, word bank, moves and gift word, warm-up, sentences, word machine, minigame pool, story and victory-scene draws. |
@@ -212,7 +214,9 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 | "here are my letter sound recordings" | `docs/recording.md` |
 | "more / fewer runes" / "Dad should wait longer" / "quick sounds sooner / later" | `CHARGE` in `src/config.ts` (`runes`, `timeoutMs`, `assists`, `startLevel`, `tiers`) |
 | "a new gesture for X" / "X's rune should fire Y" | X's entry in `RUNES` (`content/phonics/runes.ts`: `gesture`, `move`), then `voice:lines`, `voice:build` |
-| "stop forcing the phonics room" | `FORCE_PHONICS_ROOM` in `src/config.ts` (it stays a weighted entry, `CHARGE.weight`) |
+| "stop forcing the phonics room" | `FORCE_PHONICS_ROOM` in `src/config.ts` (both stay weighted entries, `CHARGE.weight`, `BRIDGE.weight`) |
+| "more / fewer bridge words" / "slower slide" / "stop sounds sooner / later" / "Dad should wait longer on the bridge" | `BRIDGE` in `src/config.ts` (`words`, `slide`, `tiers`, `dadWaitMs`, `replays`, `startLevel`) |
+| "the bridge needs pictures like X" | a familiar `BANK` thing starting like X (`docs/content.md`, "The Stretchy Bridge's pictures"), the three commands, `art:gen` |
 | "the warm-up is too hard / too easy" / "start new words at level N" | `GRAB.startLevel` (and `helpAfter`) in `src/config.ts` |
 | "for X I pick n" (from an `art_alts_*` sheet) | `npm run art:pick -- X n`, commit `public/art/X.png`; if it prints a brief, write it into X's roster `look` (or `HAND`) in the same commit |
 | "try a new look for X" / "draw X as …" | a brief file in `scratch/`, then `npm run art:alts -- X --n=2 --brief=scratch/<name>.txt --sheet=scratch/art_alts_<item>_<name>.png` (readonly; Matt picks) |

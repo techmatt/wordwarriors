@@ -90,7 +90,8 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    like AT on the machine, letter tiles on the floor that say their sounds, green slots
    one in and the machine says the two parts apart; the right one makes the picture's
    word, said only then, and into her bag it goes; a wrong one makes a silly word like ZAT;
-   several words of one family, then another; or Charge the Spell, item 053, below). The sentence game is one sentence each, on a banner, key word last
+   several words of one family, then another; or Charge the Spell, item 053, or the
+   Stretchy Bridge, item 054, below). The sentence game is one sentence each, on a banner, key word last
    (`WE CAN USE THE NET`, `JULIA NEEDS THE CAT`). Pass 1 is read to her karaoke-style and stops at the key
    word, which pulses in silence (skipped once that frame is solid). Pass 2 is hers:
    each green lights the next word and says it, and yellow says the lit word. At the key
@@ -248,10 +249,44 @@ number in a sound's dot on the grown-ups page). Six runes a visit, continuous so
 first (M S F A L N R V Z, the short vowels), the quick sounds once those are solid, then
 SH CH TH (`src/rules/charge.ts`, `CHARGE` in `src/config.ts`). Each charged rune is a
 move her hero fires in the next battle (`episode.charged`, BattleScene `useCharged`).
-For the beta, `FORCE_PHONICS_ROOM` (on) puts it behind door a of every episode; the
-dad lock pauses its 8 s wait.
+For the beta, `FORCE_PHONICS_ROOM` (on) puts it or the Stretchy Bridge behind door a of
+every episode; the dad lock pauses its 8 s wait.
 
-Dev keys: **F2** skip the current step, **F4** answer correctly (in Charge the Spell, Dad's yes). Jump straight into a
+**The Stretchy Bridge** (item 054, `src/scenes/BridgeRoom.ts`): a side room where she
+blends a whole word. A gap crosses the room (lava in the house, a river or a chasm at a
+quest place: `GAP_BY_PLACE` in `content/house/house.ts`), and the word's letters are
+stepping stones over it (SH is one stone). She pushes the stick to slide across, slower
+than she walks; while she is on a stone its sound is **held**, so a slow slide is
+"mmm-aaa-t". A vowel or a sound you can stretch (M S F L N R V Z SH TH) goes on while she
+stays (up to 2.5 s); a stop sound plays once, never with an "uh". On the far bank are 2–3
+pictures that share the word's start and differ later (MAP, MAT, MAN; else MAP, MOP, MUG;
+only where the bank has nothing better, the same rime). She walks to the one she read and
+presses green; only then is the word said, and its picture goes into her bag (every word
+read there is a battle item). Help fades per word (`bridgeLevels` in the progress, the
+number in a word's dot on page 2 of the grown-ups page): level 1 the stones sound
+themselves and the pictures show from the start; level 2 silent stones, and Dad's **2** is
+a hint (the stones sound in turn, then as she slides); level 3 silent stones, on the far
+bank she says the whole word aloud, Dad presses **2** and the pictures appear, his **1**
+(or nothing for 12 s) replays the slide with sounds, and after two replays the pictures
+come anyway. Right first time with no help is one level less help next time; a hint, a
+replay or a wrong picture one more. A wrong picture is never punished but costs time: the
+game sounds out what she picked, its letters over its picture ("You picked... M, A, P"),
+then where the bridge differs ("But the bridge ends with... T", that stone flashing), and
+she slides again. Three words a visit: CVC words starting with a sound you can hold
+first, stop-sound CVC words once those come along, then the bank's blends and digraphs
+(`src/rules/bridge.ts`, `BRIDGE` in `src/config.ts`).
+
+**Held sounds and Matt's recordings:** the bridge cuts whatever clip is in place
+(`src/audio/holdSound.ts`, by 10 ms frames of loudness and zero crossings): a hiss up to
+the vowel after it (the S of the "Suh" placeholder), a hum up to where the schwa comes in
+(the M of "Mmm-uh", the V of "Vuh"), a vowel's steady part, a stop's burst (T, K) or a
+voiced stop's first instant (B, D), and X's K and final S around its vowel. The held part
+loops, crossfaded at the seam. A recording put in place with `voice:clip` is cut by its own
+shape the same way, so no code changes: record a sound you can hold as a steady sound of
+half a second or more (a clean "mmmm", "ssss", "aaa") and a stop as a crisp sound with no
+vowel after it ("t", not "tuh"). A recording with no schwa plays as it is, held whole or once.
+
+Dev keys: **F2** skip the current step, **F4** answer correctly (in Charge the Spell, Dad's yes; on the Stretchy Bridge, across in one go, then Dad's yes or the right picture). Jump straight into a
 step with a URL, e.g. `http://localhost:5174/?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug`.
 Later steps get the episode they would have had by then (gift word given, earlier rooms
 done, items in the bag):
@@ -263,6 +298,7 @@ done, items in the bag):
 | `?scene=room&slot=a` (or `b`, `counter`) | A side room; `counter` is the attic |
 | `?scene=room&slot=a&game=word_machine` | The word machine (`game=` puts that game behind door a, in any URL) |
 | `?scene=room&slot=a&room=charge` | Charge the Spell (`room=charge` forces it behind door a, or door b when `game=` holds door a, in any URL) |
+| `?scene=room&slot=a&room=bridge` | The Stretchy Bridge (`room=bridge`, the same way) |
 | `?scene=battle&part=1&charged=m,s,a` | A battle that fires those charged runes (default: the plan's charge room's, in part 1) |
 | `?scene=battle&part=1` (or `2`) | A battle |
 | `?scene=victory&read=cat,sun,julia` | The victory scene, then the victory recapping those words |
@@ -309,7 +345,11 @@ and any `game=` keep the test's own rooms, while `games=all` (the real draw) and
 game itself get Charge the Spell behind door a, so `playRoom` and the bug-hunt checker
 play it (`playChargeRoom`: the altar, then Dad's yes per rune); `tests/charge.spec.ts`
 covers the room, the dad keys, the timeout under dad lock and the runes in battle
-(item 053). `tests/machine.spec.ts` opens the word machine in the fast lane, and in
+(item 053). The forced room is Charge the Spell or the Stretchy Bridge at random, so
+`playRoom` and the bug-hunt checker play the bridge too (`playBridgeRoom`: slide across
+with the stick, Dad's yes where he is asked, the right picture); `tests/bridge.spec.ts`
+covers its three help levels, a wrong picture and a drawn episode (item 054).
+`tests/machine.spec.ts` opens the word machine in the fast lane, and in
 the slow lane plays whole visits (a silly tile first, F9 out and back) and a whole
 episode with it behind door a (item 026). `leaveBedroom` also plays the entry hall's
 warm-up (item 033) unless given `{ grab: false }`, so a test that walks out of the bedroom
