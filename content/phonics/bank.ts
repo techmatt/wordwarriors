@@ -13,7 +13,8 @@
  * - `vowel`: its short vowel; `onset` the sound units before it (`fr`, `sh`,
  *   or `` for ANT); `rime` the rest (`og`).
  *
- * `role` is what the word can be: a `thing` with a clear picture (a room's
+ * `role` is what the word can be (and `odd`, item 040, marks a picture a
+ * four-year-old would not know: such a word is never a picture to match): a `thing` with a clear picture (a room's
  * object, a key word, the counter, a warm-up picture, a fetched battle item),
  * an `action` with a clear battle effect (a move pad, the ally's gift), or
  * `both` (NET flung, or fetched).

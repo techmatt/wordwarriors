@@ -204,6 +204,8 @@ Adding a character, ability, word or line is data work: edit `content/`, then
 | --- | --- |
 | "add a character / ability / taunt" | edit `content/battle/roster.ts`, then `voice:lines`, `voice:build`, `art:placeholders` |
 | "add words" / "add a move word" | a `BANK` entry in `content/phonics/bank.ts` (role `thing`, `action` or `both`), its picture brief in `PICTURES` (`content/art/prompts.ts`) and its battle effect in `content/phonics/effects.ts` (`docs/content.md`, "A word"), same three commands |
+| "Julia knows X" / "she doesn't know what X is" | remove / add `odd` on X's `BANK` entry in `content/phonics/bank.ts` (an odd word is never a picture to match; `docs/content.md`, "A word") |
+| "more wake-up lines" / "another sorry for X" | `WAKE_LINES` in `content/voice/script.ts` (`up_<n>`, `good_<n>`, `door_<n>`, `WAKE_VARIANTS`); `reformed.sorry` / `.ending` on X in the roster; then `voice:lines`, `voice:build` |
 | "add a sentence / frame" / "what X does in battle" | `FRAMES` in `content/phonics/sentences.ts`; X's effect in `content/phonics/effects.ts`; same three commands |
 | "add a hub scene / quest line" | `HUB_SCENES` in `content/house/scenes.ts`; a quest's `lines` in `content/house/quests.ts` (`docs/content.md`, "A hub scene", "A quest"), same three commands |
 | "X casts spells" / "X's gift should sound like a spell" | `CASTERS` in `content/house/scenes.ts`; spell-sounding words are `spell` on `BANK` entries in `content/phonics/bank.ts` |

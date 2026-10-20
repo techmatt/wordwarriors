@@ -132,14 +132,14 @@ const THING_EFFECTS: WordEffect[] = [
   { word: 'chick', look: 'a flurry of fluffy chicks flapping at the villain', ability: use('chick', 'bolt', 0xffe14a, { ...pic('chick'), count: 5, homing: true }) },
   // Item 040: familiar replacements.
   { word: 'vet', look: 'a kind vet who patches the whole team up: strong again', ability: use('vet', 'heal', 0x7ad9ff, { color2: 0xffffff }) },
-  { word: 'chest', look: 'a treasure chest bursts open: gold coins rain on the villain', ability: use('chest', 'rain', 0xffd23f, { glyph: '🪙', count: 14 }) },
+  { word: 'chest', look: 'a treasure chest bursts open: gold coins rain on the villain', ability: use('chest', 'rain', 0xffd23f, { glyph: '💰', count: 14 }) },
   { word: 'bin', look: 'a wheelie bin that rolls straight through the villain', ability: use('bin', 'dash', 0x3ac060, { power: 3 }) },
   { word: 'rock', look: 'rocks tumbling down on the villain, thud', ability: use('rock', 'rain', 0x8a8a8a, { ...pic('rock'), count: 8, power: 3 }) },
   { word: 'clock', look: 'a giant clock that ticks: the villain freezes for a moment', ability: use('clock', 'freeze', 0xe8d8b0, { duration: 2 }) },
   { word: 'stick', look: 'sticks tumbling down on the villain, snap crackle', ability: use('stick', 'rain', 0x8a5a2a, { ...pic('stick'), count: 10 }) },
   { word: 'brush', look: 'a giant brush that sweeps through the villain, swish', ability: use('brush', 'dash', 0xffc83d, { power: 3 }) },
   { word: 'truck', look: 'a big truck that drives straight through the villain', ability: use('truck', 'dash', 0xe63946, { power: 3 }) },
-  { word: 'plant', look: 'a magic plant that grows round the villain and holds it tight', ability: use('plant', 'trap', 0x3ac060, { glyph: '🪴', count: 3 }) },
+  { word: 'plant', look: 'a magic plant that grows round the villain and holds it tight', ability: use('plant', 'trap', 0x3ac060, { glyph: '🌿', count: 3 }) },
   { word: 'crib', look: 'a cosy crib that drops on the villain: nap time, it nods off', ability: use('crib', 'slam', 0x9ad8ff, { power: 3, status: 'stun', duration: 1.5 }) },
   { word: 'bath', look: 'a bubbly bath that sloshes a wave of bubbles across the arena', ability: use('bath', 'wave', 0x9ad8ff, { color2: 0xffffff }) },
 ];

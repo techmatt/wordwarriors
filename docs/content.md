@@ -394,8 +394,19 @@ Keep it out of every narrator line, threat, quest line and hub scene (rules.test
 says which line says it), and a `both` or action word out of the roster's counter
 words. A new word joins her bags' rounds already under way (`topUpBag`, `topUpMoves`).
 
+**Familiar or `odd`** (item 040). A thing must be one a typical four-year-old knows
+from its picture alone (everyday objects, animals, food, toys, body parts, a house or a
+picture book), because rooms, the counter, the warm-up and the word machine ask her to
+find its picture. Otherwise mark it `odd` (`ODD`, or `NEW_ODD` for 037's): an odd
+`both` word (RAM, JET) keeps its action role, pads and the gift, where its picture only
+comes after she reads it; an odd thing (YAK, VAT) is out of play (`DROPPED`), its
+picture, effect and lines kept so Matt can overrule it by deleting the flag. Watch for
+a picture she would name otherwise (JET is "a plane", FIN "a shark"). `THINGS` is the
+familiar things, `ACTIONS` every action and `both` word, `LIVE` both; coverage and
+level firmness count `LIVE` only. A family needs two familiar pictures.
+
 `content/phonics/words.ts` reads the bank: `CVC_WORDS` (the name stayed) is every
-thing and `both` word, `MOVE_PICTURES` every pure action; sight words (`decodable: false`) use a character's
+familiar thing and `both` word, `MOVE_PICTURES` every other bank word (actions, odd ones); sight words (`decodable: false`) use a character's
 name-free face card as the picture; `SPECIAL_WORDS` are non-bank key words kept for the
 story (MICE); `FLAVOUR_PICTURES` keep POW and ICE's art for the roster.
 
