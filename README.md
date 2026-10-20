@@ -522,6 +522,10 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   `content/battle/roster.ts` (its prompt is derived from that, so `docs/art.md` follows;
   rerun `art:placeholders`), anything else a `HAND` entry in `content/art/prompts.ts`.
   Otherwise `art:gen --force` and later rounds would draw the old look.
+- **A brand-new id** (a new word's `pic_<word>`): run `art:placeholders` before
+  `art:alts`. The drawing works without it, but the sheet's `current` tile reads
+  `public/art/<id>.png` and the run fails at the sheet with ENOENT (item 043); then
+  `art:alts -- <ids…> --sheet=<same> --sheet-only` finishes it without redrawing.
 
 `art:alts` writes a picker manifest for conductor's picker page by itself, `scratch/<name>.json` beside the sheet, with each candidate cut as the game shows it into `scratch/<name>/` (row notes: `PICK_NOTES` in `content/art/prompts.ts`); `--manifest-only` rewrites it without drawing.
 

@@ -375,7 +375,12 @@ drawing where Windows 10 has none; `say` a respelling where edge-tts misreads it
 Its tags are derived from the spelling, never typed: `units` (SH CH TH CK kept
 together), `level` (1 CVC, 2 a consonant blend, 3 a digraph; both is 3), `vowel`,
 `onset`, `rime`. A word must have exactly one short vowel between consonants (`tag()`
-throws otherwise), and no word with a sound unit lacking a letter sound. To add one:
+throws otherwise), and no word with a sound unit lacking a letter sound. The exception
+is a **`special`** word (item 043: KEY for K, YOYO for Y, where no familiar short-vowel
+picture exists): level 1, no vowel tag, one sound unit (its first letter), so every hint
+sounds only that, as for MICE; never in a word family, never the counter (a decodable
+word, item 009). A hyphen breaks the line and picture ids: YO-YO is `yoyo`, printed YOYO,
+with `say: 'yo-yo'`. To add one:
 
 1. The entry, in its level's block of `ENTRIES`.
 2. Its picture brief in `PICTURES` (`content/art/prompts.ts`): "a frog: a bright green
