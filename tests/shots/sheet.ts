@@ -18,7 +18,7 @@ const ROWS: [string, string, string][] = [
   ['Bedroom: the bad news (Dada Matt wakes her)', 'default_bedroom', 'wake_dada_matt_bad_tiamat'],
   ['Bedroom: the villain heard from afar', 'noally_bedroom', 'taunt_rilla_evil_hungry'],
   ['Bedroom: find the door (no ally, Dada Matt)', 'noally_bedroom', 'wake_dada_matt_door'],
-  ['Hub: Ellie teaches the spell', 'default_hub', 'nar_ellie_teach_word_big'],
+  ['Hub: Ellie gives the gift word', 'default_hub', 'hub_ellie_1_circle'],
   ['Hub: Dada Jason sends her to the doors', 'jason_hub', 'nar_dada_jason_house_doors'],
   ['Side room: listening pass (the banner lights, the reader shows)', 'default_room', 'sent_'],
   ['Side room: her turn, a word said on green', 'anna_room', 'word_'],

@@ -16,7 +16,7 @@ import { ARENAS, MINIONS, ROSTER } from '../battle/roster.js';
 import { ENDINGS, endingArt, endingPropArt } from '../house/endings.js';
 import { FIGHTS, fightPropArt } from '../battle/fights.js';
 import { ALL_SIDE_ROOMS, BEDROOMS, ENTRY_HALL, HUB, PLACES, hubArt } from '../house/house.js';
-import { CVC_WORDS, MOVE_PICTURES, SPECIAL_WORDS, WORD_BY_ID } from '../phonics/words.js';
+import { CVC_WORDS, FLAVOUR_PICTURES, MOVE_PICTURES, SPECIAL_WORDS, WORD_BY_ID } from '../phonics/words.js';
 
 export type AssetKind = 'character' | 'minion' | 'arena' | 'room' | 'picture' | 'item' | 'prop';
 
@@ -201,7 +201,7 @@ for (const c of ROSTER) {
 // Word pictures: every CVC word, the special words (MICE), the move words
 // (item 018: the victory recap pictures them) and any counter sentence key
 // word not already among them (its picture is the item's glyph).
-const picWords = [...CVC_WORDS, ...SPECIAL_WORDS, ...MOVE_PICTURES];
+const picWords = [...CVC_WORDS, ...SPECIAL_WORDS, ...MOVE_PICTURES, ...FLAVOUR_PICTURES];
 for (const c of ROSTER) {
   const key = c.counter.word;
   if (key && !picWords.some((w) => w.word === key)) picWords.push(WORD_BY_ID[key] ?? { word: key, glyph: c.counter.glyph, decodable: true });

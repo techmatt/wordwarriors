@@ -77,10 +77,9 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'victory_1', text: 'We won! Hooray!', say: 'We won, hooray!' },
   { key: 'victory_2', text: 'You are a real Word Warrior!' },
   { key: 'again', text: 'Press green to play again!' },
-  // The house (v0.2): the hub's magic circle, its doors, and the sentence rooms.
-  { key: 'teach_1', text: 'I will teach you a magic spell!' },
-  { key: 'teach_circle', text: 'Stand in the magic circle, and press green!' },
-  { key: 'teach_done', text: 'You know the spell now! Let us look around.', say: 'You know the spell now, let us look around.' },
+  // The house (v0.2): the hub's doors and the sentence rooms. The hub's story
+  // scene, which gives her the gift word, is the helper's own (item 037,
+  // content/house/scenes.ts), composed in tools/voice/compose.ts.
   { key: 'house_doors', text: 'Two doors! Walk to one, and press green.', say: 'Two doors, walk to one, and press green.' },
   { key: 'house_more', text: 'One more door to go!' },
   { key: 'house_front', text: 'The front door is open! Let us go!', say: 'The front door is open, let us go!' },
@@ -106,10 +105,9 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'machine_silly_2', text: 'That is not a word, you silly! Try again!', say: 'That is not a word, you silly, try again!' },
   { key: 'machine_silly_3', text: 'The machine is giggling! Try another one!', say: 'The machine is giggling, try another one!' },
   { key: 'machine_done', text: 'We made them all!' },
-  // Quests (item 025). The home quest's setup line, for a helper with no quest
-  // place of their own (content/house/quests.ts), and the hub's lines in a
-  // quest place, where there is no front door and no stairs up.
-  { key: 'quest_home', text: 'To get ready, we have to train right here at home!' },
+  // Quests (item 025): the hub's lines in a quest place, where there is no
+  // front door and no stairs up. The home quest's setup lines, for a helper
+  // with no place of their own, are `HOME_QUEST` in content/house/quests.ts.
   { key: 'away_secret', text: 'Look, a secret door! Let us go in!', say: 'Look, a secret door, let us go in!' },
   { key: 'away_front', text: 'The way out is open! Let us go!', say: 'The way out is open, let us go!' },
   { key: 'away_ready', text: 'We are ready now! Off to the fight!', say: 'We are ready now, off to the fight!' },
@@ -142,7 +140,9 @@ export const VILLAIN_LINES: Template[] = [
 /** Composed per narrator × move word. The move word is the deliberate exception to the speech rule. */
 export const MOVE_LINES: Template[] = [
   { key: 'use_move', text: 'Use {word}!' },
-  { key: 'teach_word', text: 'This spell is called {word}!' },
+  // The hub scene's last clip (item 037): its reveal line trails off ("...and
+  // it goes...") into the gift word, said alone.
+  { key: 'gift_word', text: '{word}!' },
   // A wrong move pick, said in order: "That wasn't ICE," + "that was HUG!" +
   // "Find ICE!". The picked word may be said: she has already picked it.
   { key: 'not_move', text: "That wasn't {word}," },

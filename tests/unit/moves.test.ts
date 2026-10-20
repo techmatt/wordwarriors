@@ -1,7 +1,7 @@
 /**
- * The battle's move choices (item 018): the plan, the move bag, the counter
- * keeping clear of battle 1's pads, every move word pictured and voiced, and
- * the reformed villain's lines.
+ * The battle's move choices (items 018, 037): the gift word, the plan, the
+ * move bag, who fires each word, the counter keeping clear of battle 1's
+ * pads, every move word pictured and voiced, and the reformed villain's lines.
  * `npx tsx --test tests/unit/moves.test.ts` (also part of `npm run test:unit`).
  */
 
@@ -11,12 +11,12 @@ import { test } from 'node:test';
 
 import { ART_BY_ID } from '../../content/art/assets';
 import { CHARACTER_BY_ID, MOVE_WORDS, ROSTER, abilityWords, personOf } from '../../content/battle/roster';
+import { ACTIONS } from '../../content/phonics/bank';
 import { CVC_WORDS, SPECIAL_WORDS } from '../../content/phonics/words';
 import { reformedLine, wordLine } from '../../content/voice/ids';
 import { EPISODE_DEFAULTS } from '../../src/config';
-import { CHOICES_PER_PART, battle1Words, planMoves, teamMoveWords, type MoveInput, type MovePlan } from '../../src/rules/moves';
+import { CHOICES_PER_PART, battle1Words, drawGift, effectId, planMoves, teamMoveWords, type MoveInput, type MovePlan } from '../../src/rules/moves';
 import { episodePlans, type EpisodeInput } from '../../src/rules/sentences';
-import { spellFor } from '../../src/rules/spell';
 import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
 
@@ -32,8 +32,10 @@ function seeded(seed = 1): () => number {
 
 const HERO = EPISODE_DEFAULTS.hero;
 const ALLY = EPISODE_DEFAULTS.ally ?? 'ellie';
-const SPELL = spellFor(HERO, ALLY);
-const INPUT: MoveInput = { hero: HERO, team: [HERO, ALLY], helper: ALLY, spell: SPELL };
+/** A gift word that is one of Ellie's (her Giant Bubbles), and one that is nobody's on the team. */
+const STYLED = 'big';
+const PLAIN = 'jump';
+const input = (spell: string): MoveInput => ({ hero: HERO, team: [HERO, ALLY], helper: ALLY, spell });
 
 const choices = (p: MovePlan) => [...p.part1, ...p.part2];
 
@@ -45,15 +47,13 @@ function playRight(store: ProgressStore, p: MovePlan): void {
   }
 }
 
-test('roster: every move word is in MOVE_WORDS, and every good fighter answers to six or more', () => {
+test('MOVE_WORDS are the bank\'s action words; roster move words are bank action words or flavour (POW, ICE)', () => {
+  assert.deepEqual([...MOVE_WORDS].sort(), ACTIONS.map((w) => w.word).sort());
   const moves = new Set<string>(MOVE_WORDS);
   for (const c of ROSTER) {
-    for (const f of [c.good, c.evil]) for (const ab of f.abilities) for (const w of abilityWords(ab)) assert.ok(moves.has(w), `${c.id}.${ab.id}: ${w}`);
-    assert.ok(teamMoveWords([c.id]).size >= 6, `${c.id} answers to ${[...teamMoveWords([c.id]).keys()].join(', ')}`);
+    for (const f of [c.good, c.evil]) for (const ab of f.abilities) for (const w of abilityWords(ab)) assert.ok(moves.has(w) || ['pow', 'ice'].includes(w), `${c.id}.${ab.id}: ${w}`);
   }
-  // Every word in the pool belongs to somebody's move.
-  const used = new Set(ROSTER.flatMap((c) => c.good.abilities.flatMap(abilityWords)));
-  for (const w of MOVE_WORDS) assert.ok(used.has(w), `${w} is nobody's move`);
+  assert.ok(teamMoveWords([ALLY]).has(STYLED) && !teamMoveWords([HERO, ALLY]).has(PLAIN), 'the test words still mean what they say');
 });
 
 test('every move word has a picture and a word line', () => {
@@ -70,38 +70,87 @@ test('every word the recap can show has a picture: key words, move words, counte
   for (const w of [...words, ...MOVE_WORDS]) assert.ok(ART_BY_ID[`pic_${w}`], `pic_${w}`);
 });
 
-test('planMoves: two choices a part, 2 or 3 different words each, the spell opens each part', () => {
-  for (let seed = 1; seed <= 40; seed++) {
-    const p = planMoves(new ProgressStore(memory()), INPUT, seeded(seed));
-    assert.equal(p.part1.length, CHOICES_PER_PART);
-    assert.equal(p.part2.length, CHOICES_PER_PART);
-    assert.equal(p.part1[0]!.right, SPELL);
-    assert.equal(p.part2[0]!.right, SPELL);
-    const own = teamMoveWords(INPUT.team);
-    for (const c of choices(p)) {
-      assert.ok(c.words.length === 2 || c.words.length === 3, c.words.join(','));
-      assert.equal(new Set(c.words).size, c.words.length);
-      assert.ok(c.words.includes(c.right));
-      for (const w of c.words) assert.ok(own.has(w) || w === SPELL, `${w} is not her team's`);
-      // The owner's move really answers to the word.
-      const ab = CHARACTER_BY_ID[c.owner.from]!.good.abilities.find((a) => a.id === c.owner.ability)!;
-      assert.ok(abilityWords(ab).includes(c.right), `${c.owner.from}.${ab.id} for ${c.right}`);
-      assert.ok(INPUT.team.includes(c.owner.fighter));
+test('planMoves: two choices a part, 2 or 3 different bank action words each, the gift word opens each part', () => {
+  for (const spell of [STYLED, PLAIN]) {
+    for (let seed = 1; seed <= 40; seed++) {
+      const p = planMoves(new ProgressStore(memory()), input(spell), seeded(seed));
+      assert.equal(p.part1.length, CHOICES_PER_PART);
+      assert.equal(p.part2.length, CHOICES_PER_PART);
+      assert.equal(p.part1[0]!.right, spell);
+      assert.equal(p.part2[0]!.right, spell);
+      for (const c of choices(p)) {
+        assert.ok(c.words.length === 2 || c.words.length === 3, c.words.join(','));
+        assert.equal(new Set(c.words).size, c.words.length);
+        assert.ok(c.words.includes(c.right));
+        for (const w of c.words) assert.ok(MOVE_WORDS.includes(w), `${w} is not a bank action word`);
+      }
+      const others = choices(p).filter((c) => c.right !== spell).map((c) => c.right);
+      assert.equal(new Set(others).size, others.length, 'no right word twice but the gift word');
     }
-    const others = choices(p).filter((c) => c.right !== SPELL).map((c) => c.right);
-    assert.equal(new Set(others).size, others.length, 'no right word twice but the spell');
   }
 });
 
-test('the move bag: the right words go round the whole pool before any comes back', () => {
+test('owners: a teammate whose move answers to the word fires it styled; any other word is word magic', () => {
+  const team = teamMoveWords([HERO, ALLY]);
+  for (const spell of [STYLED, PLAIN]) {
+    for (let seed = 1; seed <= 40; seed++) {
+      const p = planMoves(new ProgressStore(memory()), input(spell), seeded(seed));
+      for (const c of choices(p)) {
+        const o = c.owner;
+        if (c.right === spell && spell === STYLED) {
+          // The gift word Ellie has: her hero fires Ellie's move for it.
+          assert.deepEqual([o.fighter, o.from], [HERO, ALLY]);
+        } else if (c.right === spell || !team.has(c.right)) {
+          assert.equal(o.from, null, `${c.right} is word magic`);
+          assert.equal(o.fighter, HERO);
+          assert.equal(o.ability, effectId(c.right));
+          continue;
+        } else assert.ok([HERO, ALLY].includes(o.fighter) && o.from === o.fighter, `${c.right}: a teammate's own move`);
+        const ab = CHARACTER_BY_ID[o.from!]!.good.abilities.find((a) => a.id === o.ability)!;
+        assert.ok(abilityWords(ab).includes(c.right), `${o.from}.${ab.id} for ${c.right}`);
+      }
+    }
+  }
+});
+
+test('planMoves: no pad shows a word the episode has said before the battle', () => {
+  const avoid = ['zap', 'hop', 'pop', 'run', 'hug', 'dig'];
+  for (let seed = 1; seed <= 40; seed++) {
+    const p = planMoves(new ProgressStore(memory()), { ...input(PLAIN), avoid }, seeded(seed));
+    for (const c of choices(p)) for (const w of c.words) assert.ok(!avoid.includes(w), `seed ${seed}: ${w}`);
+  }
+});
+
+test('drawGift: a bank action word, never one to avoid, leaning to the helper\'s own words, without spending the bag', () => {
   const store = new ProgressStore(memory());
-  const pool = [...teamMoveWords(INPUT.team).keys()].filter((w) => w !== SPELL);
+  const rand = seeded(5);
+  const avoid = ['big', 'zap'];
+  const ellie = new Set(teamMoveWords([ALLY]).keys());
+  const counts = new Map<string, number>();
+  const before = store.bag('moves');
+  for (let i = 0; i < 2000; i++) {
+    const w = drawGift(store, { helper: ALLY, avoid }, rand);
+    assert.ok(MOVE_WORDS.includes(w) && !avoid.includes(w), w);
+    counts.set(w, (counts.get(w) ?? 0) + 1);
+  }
+  assert.deepEqual(store.bag('moves'), before, 'drawing the gift spends nothing');
+  const open = [...counts.keys()];
+  assert.ok(open.length >= 10, `only ${open.join(', ')}`);
+  // Per word, Ellie's words come up about twice as often as the rest.
+  const mean = (ws: string[]) => ws.reduce((n, w) => n + counts.get(w)!, 0) / Math.max(1, ws.length);
+  const hers = open.filter((w) => ellie.has(w));
+  const rest = open.filter((w) => !ellie.has(w));
+  assert.ok(hers.length && mean(hers) > 1.4 * mean(rest), `hers ${mean(hers)} vs ${mean(rest)}`);
+});
+
+test('the move bag: the right words go round before any comes back', () => {
+  const store = new ProgressStore(memory());
   const seen: string[] = [];
   const rand = seeded(7);
-  // Each episode draws two non-spell right words.
-  for (let ep = 0; ep < Math.floor(pool.length / 2); ep++) {
-    const p = planMoves(store, INPUT, rand);
-    seen.push(...choices(p).map((c) => c.right).filter((w) => w !== SPELL));
+  // Each episode draws two right words besides the gift; ten episodes stay well inside one round.
+  for (let ep = 0; ep < 10; ep++) {
+    const p = planMoves(store, input(PLAIN), rand);
+    seen.push(...choices(p).map((c) => c.right).filter((w) => w !== PLAIN));
     playRight(store, p);
   }
   assert.equal(new Set(seen).size, seen.length, `a word came back early: ${seen.join(', ')}`);
@@ -109,34 +158,50 @@ test('the move bag: the right words go round the whole pool before any comes bac
 
 test('the move bag: a word she missed comes round again sooner', () => {
   const store = new ProgressStore(memory());
-  const p = planMoves(store, INPUT, seeded(3));
+  const p = planMoves(store, input(PLAIN), seeded(3));
   const missed = p.part1[1]!.right;
   store.record('words', missed, false, 2);
   store.returnToBag(missed, 'moves');
   assert.ok(store.bag('moves').left.includes(missed));
 });
 
-test('variety: across episodes she meets many move words', () => {
+test('the move bag: action words new to the game join a round under way', () => {
+  const store = new ProgressStore(memory());
+  // A round started before item 037: only the old move words in it, some already taken.
+  store.refillBag(['zap', 'bam', 'zip', 'hop'], 'moves');
+  store.record('words', 'pop', true, 0);
+  planMoves(store, input(PLAIN), seeded(4));
+  const left = store.bag('moves').left;
+  assert.ok(left.includes('stomp') && left.includes('nap'), 'new words are in');
+  assert.ok(!left.includes('pop'), 'a word she has read (taken this round) stays out');
+});
+
+test('spread: across episodes the pads cover many words, vowels and first sounds', () => {
   const store = new ProgressStore(memory());
   const met = new Set<string>();
   const rand = seeded(11);
-  for (let ep = 0; ep < 6; ep++) {
-    const p = planMoves(store, INPUT, rand);
+  for (let ep = 0; ep < 8; ep++) {
+    const p = planMoves(store, input(drawGift(store, { helper: ALLY }, rand)), rand);
     for (const c of choices(p)) for (const w of c.words) met.add(w);
     playRight(store, p);
   }
-  assert.ok(met.size >= 11, `only ${[...met].join(', ')}`);
+  const words = [...met];
+  assert.ok(words.length >= 20, `only ${words.join(', ')}`);
+  const vowels = new Set(words.map((w) => ACTIONS.find((a) => a.word === w)!.vowel));
+  assert.equal(vowels.size, 5, `vowels: ${[...vowels].join('')}`);
+  assert.ok(new Set(words.map((w) => w.charAt(0))).size >= 10, 'first letters');
 });
 
-test("the counter word is never on battle 1's pads, and bag words that are move words can still be key words", () => {
+test("the counter word is never on battle 1's pads, and the counter still varies", () => {
   const counters = new Set<string>();
   for (let seed = 1; seed <= 60; seed++) {
     const store = new ProgressStore(memory());
     const rand = seeded(seed);
-    const p = planMoves(store, INPUT, rand);
+    const spell = drawGift(store, { helper: ALLY }, rand);
+    const p = planMoves(store, input(spell), rand);
     const pads = battle1Words(p);
-    const input: EpisodeInput = { fill: { villain: EPISODE_DEFAULTS.villain, helper: ALLY, hero: HERO }, ally: ALLY, spell: SPELL, rooms: ['kitchen', 'garage'], counterRoom: 'attic', battle1Moves: pads };
-    const key = episodePlans(store, input, rand)[2].key;
+    const ep: EpisodeInput = { fill: { villain: EPISODE_DEFAULTS.villain, helper: ALLY, hero: HERO }, ally: ALLY, spell, rooms: ['kitchen', 'garage'], counterRoom: 'attic', battle1Moves: pads };
+    const key = episodePlans(store, ep, rand)[2].key;
     assert.ok(!pads.includes(key), `seed ${seed}: ${key} is on battle 1's pads (${pads.join(', ')})`);
     counters.add(key);
   }

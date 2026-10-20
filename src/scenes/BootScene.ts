@@ -30,10 +30,9 @@ import { ART_ASSETS } from '../../content/art/assets';
 import { CHARACTER_BY_ID, formId } from '../../content/battle/roster';
 import { group } from '../../content/voice/ids';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { enterRoom, episode, episodeGroups, helper, isStepKind, jumpTo, planFor, setCastOptions, startStep, steps, type PrepGame, type Slot } from '../episode/Episode';
+import { enterRoom, episode, episodeGroups, giftWord, isStepKind, jumpTo, planFor, setCastOptions, startStep, steps, type PrepGame, type Slot } from '../episode/Episode';
 import { DADS, seededRand, type CastOverrides } from '../rules/cast';
 import { makeTextures } from '../fx/textures';
-import { spellFor } from '../rules/spell';
 import { voiceBank } from '../voice/VoiceBank';
 
 /**
@@ -127,7 +126,7 @@ export class BootScene extends Phaser.Scene {
     // The episode as it would be by a given point.
     const learned = (): void => {
       episode.house.taught = true;
-      episode.spell = spellFor(episode.hero, helper());
+      giftWord();
     };
     const fetchedAll = (): void => {
       episode.fetched = fetched ? fetched.split(',') : (['a', 'b'] as Slot[]).flatMap((s) => planFor(s).fetches);

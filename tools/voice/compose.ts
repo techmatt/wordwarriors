@@ -17,10 +17,12 @@ import path from 'node:path';
 
 import { MOVE_WORDS, PERSONS, ROSTER, abilityCallout, personOf } from '../../content/battle/roster.js';
 import { ENDINGS } from '../../content/house/endings.js';
-import { QUESTS, questLine } from '../../content/house/quests.js';
+import { HOME_QUEST, QUESTS, homeQuestLine, questLine } from '../../content/house/quests.js';
+import { ANY_SCENES, HUB_SCENES, hubStoryIds, type HubStory } from '../../content/house/scenes.js';
 import type { FighterSpec } from '../../content/battle/types.js';
 import { FAMILIES, sillyWord } from '../../content/phonics/families.js';
-import { LETTERS, LETTER_NAMES } from '../../content/phonics/letters.js';
+import { BANK_BY_WORD, BANK } from '../../content/phonics/bank.js';
+import { DIGRAPH_SOUNDS, LETTERS, LETTER_NAMES } from '../../content/phonics/letters.js';
 import { FETCH_ITEMS, allFrameTokens, allPrefixes, tokenWord } from '../../content/phonics/sentences.js';
 import { SPELL_WORDS } from '../../content/phonics/spelling.js';
 import { SPECIAL_WORDS, WORDS, spokenWord } from '../../content/phonics/words.js';
@@ -147,13 +149,26 @@ export function composeLines(): LineSpec[] {
     }
   }
 
-  // The quests' setup lines (item 025), in the owner's (person's) voice. Group
-  // core: the bedroom says them, before any narrator group is sure to be loaded.
+  // The quests' setup lines (item 025; a few each since 037), in the owner's
+  // (person's) voice. Group core: the bedroom says them, before any narrator
+  // group is sure to be loaded.
   for (const [owner, q] of Object.entries(QUESTS)) {
-    lines.push({ id: questLine(owner), speaker: personOf(owner), group: group.core, text: q.text, ...(q.say ? { say: q.say } : {}) });
+    q.lines.forEach((l, i) => lines.push({ id: questLine(owner, i + 1), speaker: personOf(owner), group: group.core, text: l.text, ...(l.say ? { say: l.say } : {}) }));
   }
 
-  for (const l of LETTERS) {
+  // The hub scenes (item 037): each helper's (form's) lines in its person's
+  // voice, in that person's narrator group: whenever it helps, it narrates.
+  const pushScene = (ids: ReturnType<typeof hubStoryIds>, s: HubStory, speaker: string) => {
+    const said = [...s.lines.map((l, i) => [ids.lines[i]!, l] as const), [ids.circle, s.circle] as const, [ids.done, s.done] as const];
+    for (const [id, l] of said) lines.push({ id, speaker, group: group.narrator(speaker), text: l.text, ...(l.say ? { say: l.say } : {}) });
+  };
+  for (const [owner, scenes] of Object.entries(HUB_SCENES)) {
+    const person = personOf(owner);
+    scenes.forEach((s, i) => pushScene(hubStoryIds(owner, person, i + 1, s), s, person));
+  }
+
+  // Letter sounds, then the digraphs' (item 037: SH CH TH CK, one sound unit each, `letter_sh_sound`).
+  for (const l of [...LETTERS, ...DIGRAPH_SOUNDS]) {
     lines.push({
       id: letterSoundLine(l.letter),
       speaker: PHONICS_SPEAKER,
@@ -184,15 +199,18 @@ export function composeLines(): LineSpec[] {
   for (const w of SPECIAL_WORDS) spellWords.add(w.word);
   // Move words: a right pick in the battle goes into the victory recap, which says it.
   for (const w of MOVE_WORDS) spellWords.add(w);
+  // Every bank word (item 037): pictures, move pads and gift words alike.
+  for (const w of BANK) spellWords.add(w.word);
   for (const w of [...spellWords].sort()) {
-    const sayName = ROSTER.find((c) => c.id === w)?.good.sayName;
+    // A name's sayName, or the bank's respelling where edge-tts misreads a word.
+    const sayName = ROSTER.find((c) => c.id === w)?.good.sayName ?? BANK_BY_WORD[w]?.say;
     lines.push({
       id: wordLine(w),
       speaker: PHONICS_SPEAKER,
       group: group.phonics,
       // Lowercase, as she reads it on the card: the caption must match the word.
       // Names keep their capital, as they are written everywhere else.
-      text: `${sayName || ROSTER.some((c) => c.id === w) ? spokenWord(w) : w}!`,
+      text: `${ROSTER.some((c) => c.id === w) ? spokenWord(w) : w}!`,
       ...(sayName ? { say: `${sayName}!` } : {}),
     });
   }
@@ -258,6 +276,10 @@ export function composeLines(): LineSpec[] {
     for (const word of MOVE_WORDS) {
       for (const t of MOVE_LINES) lines.push({ id: narratorLine(n, `${t.key}_${word}`), speaker: n, group: g, ...fill(t, { word }) });
     }
+    // For a helper with no quest place or no hub scene of their own: the
+    // home quest's lines and the fallback scene, in every narrator's voice.
+    HOME_QUEST.lines.forEach((l, i) => lines.push({ id: homeQuestLine(n, i + 1), speaker: n, group: g, text: l.text, ...(l.say ? { say: l.say } : {}) }));
+    ANY_SCENES.forEach((s, i) => pushScene(hubStoryIds(null, n, i + 1, s), s, n));
   }
 
   // Victory scenes (item 027): every role line in every person's voice, since

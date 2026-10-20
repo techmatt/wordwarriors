@@ -44,7 +44,8 @@ PAIRS.forEach(([ally, villain], i) => {
     const door = await until(page, (s) => s.room?.round === 'bedroom:door', 180_000, 'the news, the quest, the door');
     expect(door.episode.ally).toBe(ally);
     expect(door.episode.villain).toBe(villain);
-    expect(door.voice.history.some((id) => id === `quest_${ally}`)).toBe(true);
+    // One of the ally's setup lines (item 037: drawn with the cast).
+    expect(door.voice.history.some((id) => new RegExp(`^quest_${ally}_\\d$`).test(id))).toBe(true);
     expect(door.voice.history.some((id) => id.startsWith('wake_') && id.endsWith(`_bad_${villain}`))).toBe(true);
     await shot(page, `${name}_1_bedroom`);
     await leaveBedroom(page);

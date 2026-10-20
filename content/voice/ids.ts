@@ -36,6 +36,14 @@ export const fighterId = (character: string, evil: boolean) => (evil ? `${charac
 export const endingLine = (person: string, scene: string, key: string) => `end_${person}_${scene}_${key}`;
 
 /**
+ * A hub scene's line (item 037, content/house/scenes.ts), said by the helper
+ * (a roster id: each dad form has its own scenes) in its person's voice:
+ * `hub_dada_jason_2_line1`, `hub_ellie_1_circle`. Group: the narrator group
+ * of the owner's person, who is the episode's narrator whenever it helps.
+ */
+export const hubLine = (owner: string, n: number, key: string) => `hub_${owner}_${n}_${key}`;
+
+/**
  * The bedroom wake-up, said by whichever dad comes in to wake the hero (the
  * episode's primary dad, src/rules/cast.ts), in his own voice whatever his
  * form. Keys: `up`, `good_<hero>`, `helper_<person>`, `bad_<villain>` (any

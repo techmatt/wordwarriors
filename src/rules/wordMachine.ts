@@ -6,8 +6,9 @@
  * A visit is `WORD_MACHINE.rounds` rounds: up to `perFamily` words of one
  * family (CAT, then HAT, then BAT: the rime stays, the first sound changes),
  * then a switch to a second family for the rest. The family is weighted
- * toward shaky rimes (ProgressStore `rimes`), each word toward shaky words
- * times shaky first sounds (`words` × `onsets`).
+ * toward shaky rimes (ProgressStore `rimes`), each word by the one word
+ * weighting (`wordWeight`, src/rules/bank.ts: shakiness × coverage × level
+ * gate) times how shaky its first sound is (`onsets`).
  *
  * The words come out of her word bag (item 015) like any key word: a word
  * still in the bag, never one in `avoid` (whatever the episode says or shows
@@ -28,6 +29,7 @@
 import { FAMILIES, FAMILY_BY_RIME, onsetOf, rimeOf, sillyWord, type Family } from '../../content/phonics/families';
 import { WORD_MACHINE } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
+import { gates, met, wordWeight as bankWeight } from './bank';
 import { BAG_WORDS, LEGACY_BAG_WORDS, type Rand } from './sentences';
 
 export type MachineMode = 'make' | 'flip' | 'real_or_silly';
@@ -110,7 +112,9 @@ export function planMachine(store: ProgressStore, input: MachineInput, rand: Ran
   }
   if (!usable(pool).length) pool = [...eligible];
 
-  const wordWeight = (w: string) => store.shakiness('words', w) * store.shakiness('onsets', onsetOf(w));
+  const m = met(store);
+  const g = gates(store);
+  const wordWeight = (w: string) => bankWeight(store, w, m, g) * store.shakiness('onsets', onsetOf(w));
   const rimeWeight = (r: string) => store.shakiness('rimes', r);
   const words: string[] = [];
 

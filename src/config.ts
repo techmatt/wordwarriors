@@ -119,6 +119,24 @@ export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2 };
  */
 export const GRAB = { startLevel: 2 as 1 | 2 | 3, helpAfter: 3, objects: 9 };
 
+/**
+ * The word bank's draws (item 037, src/rules/bank.ts). A word is `solid` at
+ * or under this shakiness (about one miss in four recent first tries, after
+ * three or more); `firm` is when a room's other pictures and the other move
+ * pads start to share its first sound or rime. `levels`: level 2 (blends)
+ * opens once `start` of the level-1 words are solid, at weight `min`, rising
+ * to full weight at `full`; level 3 (digraphs) the same off level 2. Level 2
+ * starts low on purpose, so she meets a few blends early.
+ */
+export const BANK_DRAW = {
+  solid: 0.3,
+  firm: 0.35,
+  levels: {
+    2: { start: 0.03, full: 0.4, min: 0.15 },
+    3: { start: 0.2, full: 0.6, min: 0.1 },
+  } as Record<2 | 3, { start: number; full: number; min: number }>,
+};
+
 /** How long in the bedroom (ms, after the news) before the door starts to sparkle. */
 export const DOOR_SPARKLE_MS = 12_000;
 

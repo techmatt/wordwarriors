@@ -69,6 +69,25 @@ export const LETTER_BY_CHAR: Record<string, LetterSound> = Object.fromEntries(
 );
 
 /**
+ * The digraphs' sounds (item 037): SH CH TH CK are one sound each, so a hint
+ * that sounds a word out says SHIP as SH, I, P, never S, H, I, P (`unitsOf` in
+ * content/phonics/bank.ts). `letter` is the two letters; each is its own line
+ * (`letterSoundLine('sh')` is `letter_sh_sound`), a placeholder by sound class
+ * like the single letters, until Matt records them.
+ */
+export const DIGRAPH_SOUNDS: LetterSound[] = [
+  { letter: 'sh', say: 'Shh', cls: 'fricative', example: 'ship', note: 'a hush; the one fricative edge-tts says as a sound, being a word' },
+  { letter: 'ch', say: 'Chuh', cls: 'stop', example: 'chick', note: 'an affricate; a schwa like the stops' },
+  { letter: 'th', say: 'Thuh', cls: 'fricative', example: 'moth', note: 'voiceless as in moth; "Thuh" may come back voiced, as in "the"' },
+  { letter: 'ck', say: 'Kuh', cls: 'stop', example: 'duck', note: 'the same sound as c and k, its own line so a recording can differ' },
+];
+
+/** Every sound unit's sound: a single letter's or a digraph's. */
+export const SOUND_BY_UNIT: Record<string, LetterSound> = Object.fromEntries(
+  [...LETTERS, ...DIGRAPH_SOUNDS].map((l) => [l.letter, l]),
+);
+
+/**
  * Letter NAMES (item 033): the home warm-up spells its word with them before
  * it gives the sounds, because names are what she already knows. Each is its
  * own line (`letterNameLine`), in the phonics voice like the sounds, so a

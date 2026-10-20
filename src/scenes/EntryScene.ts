@@ -8,7 +8,8 @@
  * gives the clue at the word's level on the ramp (src/rules/grab.ts): the
  * word (easiest level only), its letter names, its letter sounds one at a
  * time. A board over the hall shows the word's letters as their names are
- * said and lights each as its sound is; at the sounds-only level it shows
+ * said and lights each as its sound is (a digraph's two letters together,
+ * one sound: SH of SHIP); at the sounds-only level it shows
  * blank boxes, lit in turn, so the letters themselves are not given away.
  *
  * She walks to a picture and presses green. Right: a burst, the word, and it
@@ -214,12 +215,13 @@ export class EntryScene extends RoomScene {
     }
     const help = this.misses >= GRAB.helpAfter;
     for (const step of clue(this.word, this.level, help)) {
-      const t = step.index === null ? null : this.tiles[step.index];
-      if (t) {
+      // A digraph's sound (SH) lights both its boxes at once.
+      const lit = step.index === null ? [] : this.tiles.slice(step.index, step.index + step.span);
+      if (lit.length) {
         for (const o of this.tiles) o.box.setFillStyle(0xfff8e6, 1);
-        t.box.setFillStyle(step.kind === 'name' ? 0xffe066 : 0x9be7ff, 1);
-        if (step.kind === 'name') t.letter.setText(this.word[step.index!]!.toUpperCase());
-        this.tweens.add({ targets: [t.box, t.letter], scale: 1.18, duration: 130, yoyo: true });
+        for (const t of lit) t.box.setFillStyle(step.kind === 'name' ? 0xffe066 : 0x9be7ff, 1);
+        if (step.kind === 'name') lit[0]!.letter.setText(this.word[step.index!]!.toUpperCase());
+        this.tweens.add({ targets: lit.flatMap((t) => [t.box, t.letter]), scale: 1.18, duration: 130, yoyo: true });
       } else {
         // The word itself: every box lights at once.
         for (const o of this.tiles) o.box.setFillStyle(0xffe066, 1);

@@ -3,7 +3,7 @@
  * no Phaser, unit-tested.
  *
  * After the quest's setup line she walks into the entry hall, where nine
- * pictured CVC words stand, each with its word printed on it. The narrator
+ * pictured bank words stand, each with its word printed on it. The narrator
  * asks for one and gives a clue that links letter names to letter sounds to
  * the word, at the word's own level on a ramp (GRAB in src/config.ts):
  *
@@ -22,21 +22,22 @@
  * ProgressStore `grabs`, never `words` or the word bag.
  */
 
+import { BANK_BY_WORD, THINGS, unitsOf } from '../../content/phonics/bank';
 import { lookalikesOf } from '../../content/phonics/sentences';
-import { CVC_WORDS } from '../../content/phonics/words';
-import { LETTER_BY_CHAR } from '../../content/phonics/letters';
+import { SOUND_BY_UNIT } from '../../content/phonics/letters';
 import { letterNameLine, letterSoundLine, wordLine } from '../../content/voice/ids';
 import { GRAB } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
+import { coverage, distractorsFor, gates, isFirm, met } from './bank';
 
 export type Rand = () => number;
 export type GrabLevel = 1 | 2 | 3;
 
-/** Words the hall can ask for: the pictured, decodable CVC words (each has a battle item). */
-export const GRAB_WORDS: string[] = CVC_WORDS.filter((w) => w.decodable).map((w) => w.word);
+/** Words the hall can ask for: the bank's pictured words (each has a battle item). */
+export const GRAB_WORDS: string[] = THINGS.map((w) => w.word);
 
 /** Every picture the hall can show, the asked-for word included. */
-const HALL_WORDS: string[] = CVC_WORDS.map((w) => w.word);
+const HALL_WORDS: string[] = GRAB_WORDS;
 
 /** A word's level now. */
 export function grabLevel(store: ProgressStore, word: string): GrabLevel {
@@ -51,8 +52,11 @@ export function nextLevel(level: GrabLevel, firstTry: boolean): GrabLevel {
 
 /**
  * The word to grab this episode: weighted toward the shaky ones (she has
- * missed, or never grabbed), never one in `avoid`, and not last episode's
- * grab (the most recently grabbed word) while another will do.
+ * missed, or never grabbed), times the bank's coverage and level gate
+ * (src/rules/bank.ts: the vowels and first sounds she has met least, blends
+ * once CVC is firm), never one in `avoid`, and not last episode's grab (the
+ * most recently grabbed word) while another will do. Its shakiness is her
+ * grabs', not her reads': a grab is exposure.
  */
 export function pickGrab(store: ProgressStore, avoid: Iterable<string> = [], rand: Rand = Math.random): string {
   const out = new Set(avoid);
@@ -65,22 +69,31 @@ export function pickGrab(store: ProgressStore, avoid: Iterable<string> = [], ran
     if (at > lastAt) [last, lastAt] = [w, at];
   }
   const fresh = all.filter((w) => w !== last);
-  return pickWeighted(fresh.length ? fresh : all, (w) => store.shakiness('grabs', w), 1, rand)[0]!;
+  const from = fresh.length ? fresh : all;
+  const m = met(store);
+  const g = gates(store);
+  // A word whose level is still shut comes up only when nothing else can (as `drawWords`).
+  const open = from.filter((w) => g[BANK_BY_WORD[w]?.level ?? 1]! > 0);
+  const weight = (w: string) => store.shakiness('grabs', w) * coverage(store, w, m) * (g[BANK_BY_WORD[w]?.level ?? 1] ?? 1);
+  return pickWeighted(open.length ? open : from, weight, 1, rand)[0]!;
 }
 
 /**
  * The hall's pictures, left to right and back to front: `word` and
  * `n - 1` others, none in `avoid` (every word the episode has her read) and
- * no look-alike of `word` (no MOP beside the MAP she is asked for). If that
- * leaves too few, the look-alike rule gives way, then `avoid`.
+ * no look-alike of `word` (no MOP beside the MAP she is asked for). Chosen for
+ * reading (`distractorsFor`): while the grab word is new none starts with its
+ * first letter; once her grabs of it are firm, one shares its first sound or
+ * rime (HAT among CAT's neighbours), so she reads past the first letter. If
+ * that leaves too few, the look-alike rule gives way, then `avoid`.
  */
-export function hallObjects(word: string, avoid: Iterable<string> = [], rand: Rand = Math.random, n = GRAB.objects): string[] {
-  const out = new Set(avoid);
-  const like = new Set(lookalikesOf(word));
+export function hallObjects(store: ProgressStore, word: string, avoid: Iterable<string> = [], rand: Rand = Math.random, n = GRAB.objects): string[] {
+  const out = [...avoid];
+  const like = lookalikesOf(word);
   const others = HALL_WORDS.filter((w) => w !== word);
-  const tiers = [others.filter((w) => !out.has(w) && !like.has(w)), others.filter((w) => !out.has(w)), others];
-  const pool = tiers.find((t) => t.length >= n - 1) ?? others;
-  const all = [word, ...pickWeighted(pool, () => 1, n - 1, rand)];
+  const tiers = [[...out, ...like], out, []];
+  const banned = tiers.find((t) => others.filter((w) => !t.includes(w)).length >= n - 1) ?? [];
+  const all = [word, ...distractorsFor(store, word, others, n - 1, rand, banned, isFirm(store, word, 'grabs'))];
   for (let i = all.length - 1; i > 0; i--) {
     const j = Math.floor(rand() * (i + 1));
     [all[i], all[j]] = [all[j]!, all[i]!];
@@ -88,25 +101,33 @@ export function hallObjects(word: string, avoid: Iterable<string> = [], rand: Ra
   return all;
 }
 
-/** One part of a clue: a line, and which letter of the word it lights (null for the word itself). */
+/**
+ * One part of a clue: a line, and which letters of the word it lights: from
+ * `index` (null for the word itself), `span` letters (2 for a digraph's sound).
+ */
 export interface ClueStep {
   id: string;
   kind: 'word' | 'name' | 'sound';
   index: number | null;
+  span: number;
 }
 
 /**
  * The clue at a level: the word first (level 1, or `help` after enough
- * misses), then its letter names (levels 1 and 2), then its letter sounds,
- * one at a time and never blended.
+ * misses), then its letter names (levels 1 and 2), then its sounds, one at a
+ * time and never blended. Names go letter by letter (S, H, I, P: names are
+ * what she knows); sounds go by sound unit (SH, I, P: `unitsOf`), so a
+ * digraph is one sound lighting both its letters.
  */
 export function clue(word: string, level: GrabLevel, help = false): ClueStep[] {
   const letters = [...word];
   const out: ClueStep[] = [];
-  if (level === 1 || help) out.push({ id: wordLine(word), kind: 'word', index: null });
-  if (level <= 2) letters.forEach((ch, index) => out.push({ id: letterNameLine(ch), kind: 'name', index }));
-  letters.forEach((ch, index) => {
-    if (LETTER_BY_CHAR[ch]) out.push({ id: letterSoundLine(ch), kind: 'sound', index });
-  });
+  if (level === 1 || help) out.push({ id: wordLine(word), kind: 'word', index: null, span: 0 });
+  if (level <= 2) letters.forEach((ch, index) => out.push({ id: letterNameLine(ch), kind: 'name', index, span: 1 }));
+  let index = 0;
+  for (const unit of unitsOf(word)) {
+    if (SOUND_BY_UNIT[unit]) out.push({ id: letterSoundLine(unit), kind: 'sound', index, span: unit.length });
+    index += unit.length;
+  }
   return out;
 }

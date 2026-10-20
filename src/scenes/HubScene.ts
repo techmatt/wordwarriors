@@ -1,9 +1,11 @@
 /**
  * The hub: the small main room of the house, and the heart of an episode.
  *
- * Part 1 (before the first battle): the helper teaches her a spell (a scroll
- * with the move word on it, "stand in the magic circle and press green", the
- * word flies into her), then two side-room doors pop out of the wall onto
+ * Part 1 (before the first battle): the helper's story scene gives her the
+ * gift word (item 037, content/house/scenes.ts: a spell, a dish, a gadget, a
+ * toy; its prop pops up with the word written on it, the last line trails off
+ * into the word itself, "stand on the glowing spot and press green", the word
+ * flies into her), then two side-room doors pop out of the wall onto
  * the sentence games. Each room she finishes hangs its prize's picture on its
  * door; when both are done the front door appears, bursts open, and out she
  * goes to battle.
@@ -25,14 +27,16 @@
 
 import Phaser from 'phaser';
 
-import { CHARACTER_BY_ID } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, abilityWords } from '../../content/battle/roster';
 import { HUB, PLACE_BY_ID, SIDE_ROOM_BY_ID, hubArt } from '../../content/house/house';
+import { EFFECT_BY_WORD } from '../../content/phonics/effects';
+import type { AbilitySpec } from '../../content/battle/types';
+import { narratorLine } from '../../content/voice/ids';
 import { sfxFanfare, sfxSelect, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../config';
-import { away, enterRoom, episode, helper, planFor, type Slot, type Step } from '../episode/Episode';
+import { away, enterRoom, episode, giftWord, helper, hubScene, narrator, planFor, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, flash, popIn, shockwave, squash } from '../fx/juice';
 import { TEX } from '../fx/textures';
-import { spellFor } from '../rules/spell';
 import { Bag } from '../ui/Bag';
 import type { KeepOut } from '../ui/Caption';
 import { applyHouseMood } from '../world/houseMood';
@@ -45,19 +49,23 @@ const DOOR_W = 120;
 const DOOR_H = 180;
 const FRONT_W = 150;
 const FRONT_H = 220;
-/** The spell scroll's height on the wall (its centre), above the helper. */
+/** The gift's prop's height on the wall (its centre), above the helper. */
 const SCROLL_Y = 150;
+/** A prop drawn as an emoji on a card (scenes.ts `prop` that is not an art id): the card's size. */
+const CARD_W = 220;
+const CARD_H = 96;
 
 export class HubScene extends RoomScene {
   private part: 1 | 2 = 1;
   private from: Slot | null = null;
   private phase: Phase = 'intro';
-  /** What yellow says again: narrator keys. */
-  private hintKeys: string[] = [];
+  /** What yellow says again: line ids (narrator lines, or the hub scene's circle line). */
+  private hintIds: string[] = [];
   private doors: Partial<Record<'door_a' | 'door_b' | 'door_counter' | 'door_front', Spot>> = {};
   private circle: Spot | null = null;
+  /** The gift's prop with the word written on it (a scroll, a card). */
   private scroll: Phaser.GameObjects.Container | null = null;
-  /** The spell's own things (Ellie's giant bubbles) circling the helper while she teaches it. */
+  /** The gift's own things (Ellie's giant bubbles, a word's picture) circling the helper while she gives it. */
   private ring: Phaser.GameObjects.Image[] = [];
 
   constructor() {
@@ -69,7 +77,7 @@ export class HubScene extends RoomScene {
     this.part = this.step.kind === 'house' ? this.step.part : 1;
     this.from = data.from ?? null;
     this.phase = 'intro';
-    this.hintKeys = [];
+    this.hintIds = [];
     this.doors = {};
     this.circle = null;
     this.scroll = null;
@@ -89,13 +97,19 @@ export class HubScene extends RoomScene {
     return key === 'house_front' ? 'away_front' : key === 'house_ready' ? 'away_ready' : 'away_secret';
   }
 
+  /** A narrator line's id, in this episode's narrator's voice. */
+  private nar(key: string): string {
+    return narratorLine(narrator(), key);
+  }
+
+  /** `hint`: the line ids yellow says again in this phase. */
   private setPhase(phase: Phase, ...hint: string[]): void {
     this.phase = phase;
-    if (hint.length) this.hintKeys = hint;
+    if (hint.length) this.hintIds = hint;
     this.round = `hub:${this.part}:${phase}`;
   }
 
-  /** The spell scroll is a word she reads: the dialogue box keeps off it. */
+  /** The gift's prop carries a word she reads: the dialogue box keeps off it. */
   protected override keepOut(): KeepOut[] {
     const out = super.keepOut();
     if (this.scroll?.active) {
@@ -239,22 +253,27 @@ export class HubScene extends RoomScene {
     });
   }
 
-  /** Part 1, first time in: the helper teaches the spell. */
+  /**
+   * Part 1, first time in: the helper's scene (item 037). Its lines up to the
+   * reveal, then the prop pops up with the word on it, and the reveal line
+   * trails off into the word itself (the narrator's `gift_word_<word>`: a pad
+   * word, deliberately said), then the circle line.
+   */
   private async teach(): Promise<void> {
-    episode.spell ??= spellFor(episode.hero, helper());
-    const spell = episode.spell;
+    const spell = giftWord();
+    const { story, ids } = hubScene();
+    const reveal = ids.lines[ids.lines.length - 1]!;
     await this.wait(500);
-    await this.narrate('teach_1');
+    await this.speak(...ids.lines.slice(0, -1));
 
-    // The scroll pops up over the helper, the spell written on it: high on the
+    // The prop pops up over the helper, the word written on it: high on the
     // wall between doors a and b, so it covers neither door nor its sign.
     const sx = HUB.helper.x;
     const sy = SCROLL_Y;
-    const paper = this.art('prop_scroll', 210, 120, 0, 60);
     const word = this.add
       .text(0, 0, spell.toUpperCase(), { fontFamily: FONT, fontSize: '54px', color: '#3a1a5a', stroke: '#ffffff', strokeThickness: 6 })
       .setOrigin(0.5);
-    this.scroll = this.add.container(sx, sy, [paper, word]).setDepth(DEPTH.fx);
+    this.scroll = this.add.container(sx, sy, [...this.propBehind(story.prop), word]).setDepth(DEPTH.fx);
     this.scroll.setData('word', word);
     popIn(this, this.scroll);
     sfxWhoosh();
@@ -262,21 +281,39 @@ export class HubScene extends RoomScene {
     this.tweens.add({ targets: word, scale: 1.12, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     this.summonRing(spell);
 
-    await this.narrate(`teach_word_${spell}`, 'teach_circle');
+    await this.speak(reveal, this.nar(`gift_word_${spell}`), ids.circle);
     if (this.circle) {
       this.circle.enabled = true;
       this.circle.correct = true;
       burst(this, this.circle.x, this.circle.y - 20, { count: 30, colors: [0x9a7aff, 0xffffff] });
     }
-    this.setPhase('circle', 'teach_circle');
+    this.setPhase('circle', ids.circle);
   }
 
   /**
-   * If the spell is a move with its own art (Ellie's BIG, giant bubbles; a
-   * sword), the helper summons three of them, circling her while she teaches it.
+   * What the gift's word is written on: a prop's art (the scroll, the sword),
+   * or a white card with the scene's emoji standing on top of it.
+   */
+  private propBehind(prop: string): Phaser.GameObjects.GameObject[] {
+    if (prop.startsWith('prop_') && this.textures.exists(prop)) {
+      // The scroll is wide and flat; anything else gets the same box, the word across its middle.
+      return [this.art(prop, 210, 120, 0, 60)];
+    }
+    const card = this.add.graphics();
+    card.fillStyle(0xffffff, 1).fillRoundedRect(-CARD_W / 2, -CARD_H / 2, CARD_W, CARD_H, 22);
+    card.lineStyle(6, 0xffd23f, 1).strokeRoundedRect(-CARD_W / 2, -CARD_H / 2, CARD_W, CARD_H, 22);
+    const glyph = this.add.text(0, -CARD_H / 2 - 4, prop.startsWith('prop_') ? '✨' : prop, { fontSize: '60px' }).setOrigin(0.5, 0.8);
+    return [card, glyph];
+  }
+
+  /**
+   * If the gift has things of its own to show (Ellie's BIG, giant bubbles; a
+   * sword; else the word's own effect art, a flung picture), the helper
+   * summons three of them, circling her while she gives it.
    */
   private summonRing(spell: string): void {
-    const ab = CHARACTER_BY_ID[helper()]?.good.abilities.find((a) => a.word === spell);
+    const own = CHARACTER_BY_ID[helper()]?.good.abilities.find((a) => abilityWords(a).includes(spell));
+    const ab: AbilitySpec | undefined = own?.art ? own : EFFECT_BY_WORD[spell]?.ability;
     if (!ab?.art || !this.textures.exists(ab.art)) return;
     const cx = HUB.helper.x;
     const cy = HUB.helper.y - 70;
@@ -387,7 +424,7 @@ export class HubScene extends RoomScene {
     // The doors light up while the helper speaks (still locked: nothing can
     // be chosen early); offerDoors finds them already open.
     this.openSideDoors();
-    await this.narrate('teach_done');
+    await this.speak(hubScene().ids.done);
     await this.offerDoors();
   }
 
@@ -396,7 +433,7 @@ export class HubScene extends RoomScene {
     const left = this.openSideDoors();
     if (left === 0) return this.openFront(this.line('house_front'));
     await this.narrate(left === 2 ? 'house_doors' : 'house_more');
-    this.setPhase('doors', left === 2 ? 'house_doors' : 'house_more');
+    this.setPhase('doors', this.nar(left === 2 ? 'house_doors' : 'house_more'));
   }
 
   /** Back from a side room: one more, or out the front. */
@@ -405,7 +442,7 @@ export class HubScene extends RoomScene {
     const left = this.openSideDoors();
     if (left === 0) return this.openFront(this.line('house_front'));
     await this.narrate('house_more');
-    this.setPhase('doors', 'house_more');
+    this.setPhase('doors', this.nar('house_more'));
   }
 
   /** Enable the side doors not done; returns how many. */
@@ -454,7 +491,7 @@ export class HubScene extends RoomScene {
     front.enabled = true;
     front.correct = true;
     await this.narrate(line);
-    this.setPhase('front', line);
+    this.setPhase('front', this.nar(line));
   }
 
   /** Part 2: back from the retreat; a secret door appears. */
@@ -472,7 +509,7 @@ export class HubScene extends RoomScene {
     await this.narrate(this.line('secret_door'));
     door.enabled = true;
     door.correct = true;
-    this.setPhase('secret', this.line('secret_door'));
+    this.setPhase('secret', this.nar(this.line('secret_door')));
   }
 
   /** Part 2, back from the attic: out the front door. */
@@ -500,7 +537,7 @@ export class HubScene extends RoomScene {
   // -- input ------------------------------------------------------------------
 
   protected override hint(): void {
-    if (this.hintKeys.length && this.phase !== 'leaving' && this.phase !== 'intro') void this.narrate(...this.hintKeys);
+    if (this.hintIds.length && this.phase !== 'leaving' && this.phase !== 'intro') void this.speak(...this.hintIds);
   }
 
   protected choose(spot: Spot): void {

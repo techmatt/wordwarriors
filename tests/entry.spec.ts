@@ -21,7 +21,8 @@ const clueLines = (s: WWState) => s.voice.history.filter((id) => /^letter_|^word
 
 const names = (w: string) => [...w].map((c) => `letter_${c}_name`);
 const sounds = (w: string) => [...w].map((c) => `letter_${c}_sound`);
-const WORDS = ['cat', 'dog', 'sun', 'fox', 'bug', 'pig', 'hat', 'bed', 'cup', 'map', 'fan', 'web', 'bus', 'hen', 'box', 'net', 'pen', 'van', 'bat', 'bag', 'can', 'nut', 'tub', 'cap', 'pin', 'jet', 'log', 'mop', 'pot', 'rat', 'mug', 'rug', 'jug'];
+// The bank's pictured CVC words (item 037): a new player's grab is one of these, blends wait behind the level gate.
+const WORDS = ['cat', 'dog', 'fox', 'bug', 'hat', 'bed', 'cup', 'map', 'bus', 'hen', 'box', 'pen', 'van', 'bat', 'bag', 'can', 'nut', 'tub', 'cap', 'pin', 'log', 'mop', 'pot', 'rat', 'mug', 'rug', 'jug', 'sun', 'fan', 'web', 'net', 'jet', 'pig', 'pan', 'ram', 'top', 'jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'fig', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'pod', 'gum', 'bun', 'hut', 'sub'];
 const allAt = (level: number) => Object.fromEntries(WORDS.map((w) => [w, level]));
 
 /** Into the hall with the clue given and her free to walk. */
@@ -173,7 +174,7 @@ for (const seed of [3, 11, 25, 40]) {
     const ep = s.episode as unknown as { ally: string | null; villain: string; place: string };
     expect(ep.villain).toBeTruthy();
     expect(ep.ally).toBeTruthy();
-    expect(s.voice.history.some((id) => id.startsWith('quest_') || id.endsWith('_quest_home'))).toBe(true);
+    expect(s.voice.history.some((id) => /^quest_.+_\d$/.test(id) || /_quest_home_\d$/.test(id))).toBe(true);
     expect(s.voice.history.some((id) => id.startsWith('wake_') && id.endsWith(`_bad_${ep.villain}`))).toBe(true);
     await shot(page, `seed${seed}_hall`);
     const plan = s.episode.house.plan!;

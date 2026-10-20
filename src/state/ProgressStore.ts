@@ -226,15 +226,19 @@ export class ProgressStore {
    * already under way, so she meets them this round, not after the bag
    * empties. `catalogue` is every bag word the game has now; `bagKnown`
    * remembers the catalogue last seen, and a blob saved before item 035
-   * (`'legacy'`) knew `legacy`. A word in neither goes into the bag.
+   * (`'legacy'`) knew `legacy`. A word in neither goes into the bag (item
+   * 037's words, from a blob that remembers 035's catalogue). A word the game
+   * no longer has leaves the bag, so a bag of only such words counts as
+   * empty and refills.
    */
   topUpBag(catalogue: string[], legacy: string[]): void {
     const was = this.data.bagKnown;
     const known = was === 'legacy' ? legacy : (was ?? catalogue);
     const b = this.data.bag;
     const add = b.round ? catalogue.filter((w) => !known.includes(w) && !b.left.includes(w)) : [];
-    b.left.push(...add);
-    const changed = add.length > 0 || !was || was === 'legacy' || catalogue.some((w) => !was.includes(w));
+    const gone = b.left.filter((w) => !catalogue.includes(w));
+    b.left = [...b.left.filter((w) => catalogue.includes(w)), ...add];
+    const changed = add.length > 0 || gone.length > 0 || !was || was === 'legacy' || catalogue.some((w) => !was.includes(w));
     this.data.bagKnown = [...catalogue];
     if (changed) this.save();
   }

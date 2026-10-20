@@ -10,8 +10,8 @@ import { test } from 'node:test';
 
 import { ART_BY_ID } from '../../content/art/assets';
 import { FIGHTS, FIGHT_BEATS, FIGHT_BY_ID, fightLineKey, fightPropArt } from '../../content/battle/fights';
-import { ARENAS, CHARACTER_BY_ID, MOVE_WORDS, ROSTER } from '../../content/battle/roster';
-import { CVC_WORDS } from '../../content/phonics/words';
+import { ARENAS, CHARACTER_BY_ID, ROSTER } from '../../content/battle/roster';
+import { BANK } from '../../content/phonics/bank';
 import { narratorLine } from '../../content/voice/ids';
 import { ACTIVE_CAST } from '../../src/config';
 import { seededRand } from '../../src/rules/cast';
@@ -71,7 +71,8 @@ test('fights: chef Dada Jason as the ally makes a cook-off likely, against anyon
 });
 
 test('fights: nothing a style shows or says has a move word or a reading word', () => {
-  const banned = new Set<string>([...MOVE_WORDS, ...CVC_WORDS.map((w) => w.word)]);
+  // Every bank word: the move pads are its action words, the reading words its things (item 037).
+  const banned = new Set<string>(BANK.map((w) => w.word));
   for (const f of FIGHTS) {
     const texts = [...f.banner, f.tooStrong, f.win, ...Object.values(f.lines).flatMap((l) => [l.text, l.say ?? ''])];
     for (const t of texts) {

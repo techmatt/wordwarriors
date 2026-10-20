@@ -6,6 +6,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
+import { BANK, BANK_BY_WORD } from '../../content/phonics/bank';
 import { FAMILIES, FAMILY_BY_RIME, FAMILY_WORDS, onsetOf, rimeOf, sillyWord } from '../../content/phonics/families';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { MOVE_WORDS } from '../../content/battle/roster';
@@ -40,29 +41,52 @@ const INPUT: EpisodeInput = {
   counterRoom: 'attic',
 };
 
-test('families: every rime with two or more pictured words, and only pictured, decodable CVC words', () => {
+test('families: every bank rime in RIMES with two or more one-letter-onset words; make mode builds only the pictured ones', () => {
   const pictured = new Set(CVC_WORDS.filter((w) => w.decodable).map((w) => w.word));
-  assert.deepEqual(FAMILIES.map((f) => f.rime).sort(), ['an', 'ap', 'at', 'en', 'et', 'og', 'ug']);
+  // Item 037: the bank's new rimes joined 035's seven.
+  assert.deepEqual(FAMILIES.map((f) => f.rime).sort(), ['am', 'an', 'ap', 'at', 'eg', 'en', 'et', 'ig', 'in', 'od', 'og', 'op', 'ox', 'ub', 'ug', 'un', 'ut']);
   for (const f of FAMILIES) {
-    assert.ok(f.words.length >= 2, `${f.rime} has ${f.words.join(', ')}`);
-    for (const w of f.words) {
-      assert.ok(pictured.has(w), `${w} is a pictured CVC word`);
+    assert.ok(f.all.length >= 2, `${f.rime} has ${f.all.join(', ')}`);
+    assert.ok(f.words.length >= 2, `${f.rime} has two pictures to build: ${f.words.join(', ')}`);
+    for (const w of f.all) {
+      assert.equal(BANK_BY_WORD[w]!.onset.length, 1, `${w} has a one-letter onset`);
       assert.equal(rimeOf(w), f.rime);
+    }
+    for (const w of f.words) {
+      assert.ok(f.all.includes(w));
+      assert.ok(pictured.has(w), `${w} is a pictured word`);
       assert.ok(FETCH_BY_WORD[w], `${w} is a battle item`);
     }
   }
-  assert.deepEqual(FAMILY_BY_RIME.at!.words.sort(), ['bat', 'cat', 'hat', 'rat']);
+  assert.deepEqual(FAMILY_BY_RIME.at!.words.sort(), ['bat', 'cat', 'hat', 'rat', 'vat']);
   assert.deepEqual(FAMILY_BY_RIME.ug!.words.sort(), ['bug', 'jug', 'mug', 'rug']);
+  assert.deepEqual(FAMILY_BY_RIME.ug!.all.sort(), ['bug', 'hug', 'jug', 'mug', 'rug', 'tug']);
+  assert.deepEqual(FAMILY_BY_RIME.ig!.words.sort(), ['fig', 'pig', 'wig']);
+  // A blend or digraph onset is not one tile: SLUG and PLUG are not -UG's, CHOP not -OP's.
+  assert.ok(!FAMILY_BY_RIME.ug!.all.includes('slug'));
+  assert.ok(!FAMILY_BY_RIME.op!.all.includes('chop'));
 });
 
-test('silly onsets make nonsense: no pictured word, no move word, never the family\'s own onsets, nothing on the block list', () => {
-  const real = new Set<string>([...CVC_WORDS.map((w) => w.word), ...MOVE_WORDS]);
-  // Real words, names and slurs a careless list could make; none may be a silly word.
+test('silly onsets make nonsense: no bank word, no move word, never the family\'s own onsets, nothing on the block list', () => {
+  // Every word the bank has, from any rime: no silly word may be one of them.
+  const real = new Set<string>([...BANK.map((w) => w.word), ...CVC_WORDS.map((w) => w.word), ...MOVE_WORDS]);
+  // Real words, names, homophones and slurs a careless list could make; none may be a silly word.
   const blocked = [
     'zap', 'yap', 'jap', 'fap', 'dap', 'bap', 'wap', 'zen', 'yen', 'fen', 'wen', 'sen', 'jen', 'ken', 'ben', 'len', 'ren', 'den', 'ten', 'men',
     'jan', 'dan', 'nan', 'han', 'yan', 'gan', 'kan', 'wan', 'kat', 'nat', 'wat', 'gat', 'jat', 'vat', 'fat', 'yet', 'fet', 'ret', 'het',
     'fog', 'hog', 'jog', 'bog', 'cog', 'kog', 'nog', 'pog', 'tog', 'gog', 'vog', 'zog', 'mog', 'wog', 'set', 'get', 'let', 'met', 'pet', 'vet', 'wet',
     'dug', 'lug', 'pug', 'vug', 'fug', 'hug', 'tug', 'nug', 'zug', 'cug', 'gug', 'sug',
+    // Item 037's rimes.
+    'nig', 'big', 'dig', 'gig', 'jig', 'rig', 'zig', 'cig', 'mig', 'tig', 'lig', 'sig', 'vig', 'yig',
+    'bin', 'din', 'gin', 'kin', 'sin', 'tin', 'win', 'yin', 'jin', 'lin', 'rin', 'min', 'vin', 'zin', 'cin',
+    'beg', 'keg', 'meg', 'reg', 'veg', 'neg', 'feg', 'deg', 'geg',
+    'bam', 'cam', 'dam', 'ham', 'lam', 'tam', 'yam', 'pam', 'sam', 'gam', 'fam', 'nam', 'kam',
+    'wop', 'vop', 'bop', 'hop', 'pop', 'cop', 'lop', 'sop', 'fop', 'kop', 'gop', 'dop',
+    'jox', 'nox', 'rox', 'mox', 'hox', 'dox', 'kox', 'lox', 'pox', 'sox', 'vox', 'cox', 'tox',
+    'cod', 'god', 'hod', 'nod', 'sod', 'tod', 'bod', 'mod', 'kod', 'zod', 'yod', 'lod', 'vod', 'wod',
+    'run', 'dun', 'fun', 'gun', 'nun', 'pun', 'tun', 'hun', 'jun', 'yun', 'kun', 'mun', 'wun', 'lun',
+    'but', 'cut', 'gut', 'jut', 'put', 'rut', 'tut', 'mut', 'kut', 'wut', 'zut', 'yut', 'fut', 'sut',
+    'cub', 'dub', 'hub', 'nub', 'pub', 'rub', 'bub', 'lub', 'yub', 'gub', 'wub',
   ];
   for (const f of FAMILIES) {
     assert.ok(f.silly.length >= 1, `${f.rime} has a silly tile`);
@@ -70,7 +94,7 @@ test('silly onsets make nonsense: no pictured word, no move word, never the fami
       const w = sillyWord(s.letter, f.rime);
       assert.ok(!real.has(w), `${w} is a real word in the game`);
       assert.ok(!blocked.includes(w), `${w} is blocked`);
-      assert.ok(!f.words.some((x) => onsetOf(x) === s.letter), `${w}: ${s.letter} is a real onset of -${f.rime}`);
+      assert.ok(!f.all.some((x) => onsetOf(x) === s.letter), `${w}: ${s.letter} is a real onset of -${f.rime}`);
     }
   }
 });

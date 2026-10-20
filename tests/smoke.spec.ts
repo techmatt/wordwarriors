@@ -74,13 +74,20 @@ test('bedroom: the wake-up news, a toy reacts to green, the door leads to the hu
   expectNoErrors(errors);
 });
 
-test('hub part 1: the circle teaches the spell, then door a opens a sentence room', SLOW, async ({ page }) => {
+test('hub part 1: the helper\'s scene gives the gift word in the circle, then door a opens a sentence room', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=house&nojourney=1');
   const circle = await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:circle' && !s.room.locked, 90_000, 'circle offered');
   expect(circle.episode.spell).toBeTruthy();
   expect(circle.episode.house.taught).toBe(false);
-  expect(circle.voice.history).toContain(`nar_ellie_teach_word_${circle.episode.spell}`);
+  // The default cast plays Ellie's first scene (item 037): its lines, the
+  // reveal trailing off into the gift word's own clip, then the circle line.
+  const h = circle.voice.history;
+  const gift = h.indexOf(`nar_ellie_gift_word_${circle.episode.spell}`);
+  expect(gift).toBeGreaterThan(0);
+  expect(h[gift - 1]).toBe('hub_ellie_1_line3');
+  expect(h[gift + 1]).toBe('hub_ellie_1_circle');
+  expect(h).toContain('hub_ellie_1_line1');
   // A door she cannot use yet is not there at all.
   for (const d of ['door_a', 'door_b', 'door_front', 'door_counter']) expect(circle.room!.shown).not.toContain(d);
 

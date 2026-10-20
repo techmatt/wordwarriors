@@ -1,5 +1,5 @@
 /**
- * The reading words: short CVC words with an unmistakable picture, plus the
+ * The reading words: the bank's pictured words (content/phonics/bank.ts), plus the
  * roster's names as sight words.
  *
  * `glyph` is what the placeholder picture card draws (an emoji, rendered by
@@ -13,6 +13,8 @@
  * "Jasmine" does not blend.
  */
 
+import { BANK, THINGS, type BankWord } from './bank.js';
+
 export interface Word {
   word: string;
   glyph?: string;
@@ -23,42 +25,19 @@ export interface Word {
   character?: string;
 }
 
-export const CVC_WORDS: Word[] = [
-  { word: 'cat', glyph: '🐱', decodable: true },
-  { word: 'dog', glyph: '🐶', decodable: true },
-  { word: 'sun', glyph: '☀️', decodable: true },
-  { word: 'fox', glyph: '🦊', decodable: true },
-  { word: 'bug', glyph: '🐛', decodable: true },
-  { word: 'pig', glyph: '🐷', decodable: true },
-  { word: 'hat', glyph: '🎩', decodable: true },
-  { word: 'bed', glyph: '🛏️', decodable: true },
-  { word: 'cup', glyph: '☕', decodable: true },
-  { word: 'map', glyph: '🗺️', decodable: true },
-  { word: 'fan', draw: 'fan', decodable: true },
-  { word: 'web', glyph: '🕸️', decodable: true },
-  { word: 'bus', glyph: '🚌', decodable: true },
-  { word: 'hen', glyph: '🐔', decodable: true },
-  { word: 'box', glyph: '📦', decodable: true },
-  { word: 'net', glyph: '🥅', decodable: true },
-  { word: 'pen', glyph: '🖊️', decodable: true },
-  { word: 'van', glyph: '🚐', decodable: true },
-  { word: 'bat', glyph: '🦇', decodable: true },
-  { word: 'bag', glyph: '👜', decodable: true },
-  { word: 'can', glyph: '🥫', decodable: true },
-  { word: 'nut', glyph: '🥜', decodable: true },
-  { word: 'tub', glyph: '🛁', decodable: true },
-  { word: 'cap', glyph: '🧢', decodable: true },
-  { word: 'pin', glyph: '📌', decodable: true },
-  { word: 'jet', glyph: '✈️', decodable: true },
-  { word: 'log', draw: 'log', decodable: true },
-  { word: 'mop', draw: 'mop', decodable: true },
-  { word: 'pot', draw: 'pot', decodable: true },
-  { word: 'rat', glyph: '🐀', decodable: true },
-  // Item 035: the -UG family with BUG (content/phonics/families.ts).
-  { word: 'mug', draw: 'mug', decodable: true },
-  { word: 'rug', draw: 'rug', decodable: true },
-  { word: 'jug', glyph: '🏺', decodable: true },
-];
+/**
+ * The pictured reading words: every bank word with a clear picture
+ * (content/phonics/bank.ts, role `thing` or `both`). Before item 037 these
+ * were 33 hand-listed CVC words; since then they come from the bank and run
+ * to blends (FROG) and digraphs (SHIP). The name stayed so the parked
+ * minigames and the room code read on unchanged.
+ */
+export const CVC_WORDS: Word[] = THINGS.map(asWord);
+export const PICTURED_WORDS = CVC_WORDS;
+
+function asWord(w: BankWord): Word {
+  return { word: w.word, decodable: true, ...(w.glyph ? { glyph: w.glyph } : {}), ...(w.draw ? { draw: w.draw } : {}) };
+}
 
 /** Character names as sight words. The picture is the character's own card. */
 export const SIGHT_WORDS: Word[] = [
@@ -85,33 +64,21 @@ export const SPECIAL_WORDS: Word[] = [{ word: 'mice', glyph: '🐭', decodable: 
 export const WORDS: Word[] = [...CVC_WORDS, ...SIGHT_WORDS, ...SPECIAL_WORDS];
 
 /**
- * Pictures for the battle's move words that are not reading words of their
- * own (item 018): the victory recap shows every word she read with its
- * picture, move words included. Not in WORDS: they are never key words or
- * room objects. A move word that is a CVC word (SUN, JET, NET) uses its
- * existing `pic_<word>`.
+ * The bank's action words (role `action`): the battle's move pads and the
+ * ally's gift word (item 037). Each has a picture of what it does (the
+ * victory recap and the fan on its super). Not in WORDS: they are never key
+ * words or room objects. A `both` word (NET, JET) is in CVC_WORDS instead.
  */
-export const MOVE_PICTURES: Word[] = [
-  { word: 'zap', glyph: '⚡', decodable: true },
-  { word: 'pow', glyph: '🥊', decodable: true },
-  { word: 'bam', glyph: '🔨', decodable: true },
-  { word: 'zip', glyph: '☄️', decodable: true },
-  { word: 'hop', glyph: '🐇', decodable: true },
-  { word: 'pop', glyph: '🎈', decodable: true },
-  { word: 'hug', glyph: '🧸', decodable: true },
-  { word: 'big', glyph: '🐘', decodable: true },
-  { word: 'hot', glyph: '🌶️', decodable: true },
+export const MOVE_PICTURES: Word[] = BANK.filter((w) => w.role === 'action').map(asWord);
+
+/**
+ * Pictures kept for roster flavour words that left the reading pool in item
+ * 037: POW and ICE are not one-short-vowel words, so she no longer reads them,
+ * but abilities still carry them as their own name.
+ */
+export const FLAVOUR_PICTURES: Word[] = [
+  { word: 'pow', glyph: '🥊', decodable: false },
   { word: 'ice', glyph: '🧊', decodable: false },
-  { word: 'dig', glyph: '⛏️', decodable: true },
-  { word: 'run', glyph: '👟', decodable: true },
-  { word: 'mud', glyph: '🟤', decodable: true },
-  { word: 'wet', glyph: '💦', decodable: true },
-  { word: 'fog', glyph: '🌫️', decodable: true },
-  { word: 'top', glyph: '🌀', decodable: true },
-  { word: 'tug', glyph: '➰', decodable: true },
-  { word: 'fix', glyph: '🔧', decodable: true },
-  { word: 'pan', glyph: '🍳', decodable: true },
-  { word: 'ram', glyph: '🐏', decodable: true },
 ];
 
 export const WORD_BY_ID: Record<string, Word> = Object.fromEntries(WORDS.map((w) => [w.word, w]));

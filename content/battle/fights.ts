@@ -95,7 +95,7 @@ export const FIGHTS: FightSpec[] = [
     tooStrong: 'WHOA! TOO STRONG!',
     win: 'WE PULLED IT!',
     lines: {
-      start: { text: 'A rope pull! Grab the rope and pull!', say: 'A rope pull, grab the rope and pull!' },
+      start: { text: 'A rope pull! Hold the rope and pull!', say: 'A rope pull, hold the rope and pull!' },
       start2: { text: 'Pull again! We are stronger now!', say: 'Pull again, we are stronger now!' },
       retreat: { text: 'Too strong! Let go, let go!', say: 'Too strong, let go, let go!' },
       finish: { text: 'All together now! Pull!', say: 'All together now, pull!' },

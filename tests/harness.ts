@@ -426,7 +426,7 @@ export async function playEpisode(page: Page): Promise<{ end: WWState; keys: str
   const grab = await playEntry(page);
   const keys: string[] = [];
 
-  // Hub part 1: the spell, then both side rooms, then out the front door.
+  // Hub part 1: the helper's scene and its gift word in the circle, then both side rooms, then out the front door.
   await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:circle', 90_000, 'circle offered');
   await hubGo(page, 'circle');
   for (const door of ['door_a', 'door_b']) {

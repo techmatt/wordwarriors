@@ -9,7 +9,9 @@ import { test } from 'node:test';
 
 import { ART_ASSETS } from '../../content/art/assets';
 import { CHARACTER_BY_ID, MINIONS, MOVE_WORDS, PERSONS, ROSTER, formId } from '../../content/battle/roster';
-import { QUESTS, questLine } from '../../content/house/quests';
+import { HOME_QUEST, QUESTS, homeQuestLine, questLine } from '../../content/house/quests';
+import { ANY_SCENES, HUB_SCENES, hubStoryIds, storyTexts } from '../../content/house/scenes';
+import { BANK, THINGS } from '../../content/phonics/bank';
 import { LETTERS } from '../../content/phonics/letters';
 import { FETCH_ITEMS, FRAMES, allFrameTokens, allPrefixes, sentence, tokenWord } from '../../content/phonics/sentences';
 import { SPELL_WORDS, spellWordsFor } from '../../content/phonics/spelling';
@@ -118,7 +120,8 @@ test('roster: every character is complete, good and evil', () => {
       assert.ok(f.ultimate, `${f.displayName} has an ultimate`);
       for (const ab of [...f.abilities, f.ultimate]) {
         if (ab.minion) assert.ok(MINIONS[ab.minion], `${ab.id} summons a known minion`);
-        if (ab.word) assert.ok((MOVE_WORDS as readonly string[]).includes(ab.word), `${ab.id} word ${ab.word} is a move word`);
+        // Flavour since item 037: a bank word, or POW / ICE, which she no longer reads.
+        if (ab.word) assert.ok([...MOVE_WORDS, 'pow', 'ice'].includes(ab.word), `${ab.id} word ${ab.word} is a move word or flavour`);
       }
     }
     assert.ok(c.good.abilities.filter((a) => a.word).length >= 2, `${c.id} offers at least two move words`);
@@ -178,11 +181,18 @@ test('voice: every line id the game derives exists in lines.json and the manifes
     for (const t of NARRATOR_LINES) want.push(narratorLine(c.id, t.key));
     for (const v of ROSTER) want.push(narratorLine(c.id, `alarm_villain_${v.id}`), narratorLine(c.id, `need_item_${v.id}`), narratorLine(c.id, `made_item_${v.id}`));
     for (const h of PERSONS) if (h.id !== c.id) want.push(narratorLine(c.id, `alarm_hero_${h.id}`));
-    for (const w of MOVE_WORDS) want.push(narratorLine(c.id, `use_move_${w}`), narratorLine(c.id, `teach_word_${w}`));
+    // Every move word (the bank's actions): its pad lines, and the hub's gift clip (item 037).
+    for (const w of MOVE_WORDS) for (const k of ['use_move', 'gift_word', 'not_move', 'was_move', 'find_move']) want.push(narratorLine(c.id, `${k}_${w}`));
     for (const v of ROSTER) want.push(narratorLine(c.id, `need_counter_${v.id}`), narratorLine(c.id, `got_counter_${v.id}`));
+    // The home quest and the fallback hub scene, for a helper without their own.
+    HOME_QUEST.lines.forEach((_, i) => want.push(homeQuestLine(c.id, i + 1)));
+    ANY_SCENES.forEach((s, i) => {
+      const ids = hubStoryIds(null, c.id, i + 1, s);
+      want.push(...ids.lines, ids.circle, ids.done);
+    });
   }
   // The house: wake-ups by both wakers, sentence prefixes, and a word line for every sentence token and key word.
-  for (const k of ['teach_1', 'teach_circle', 'teach_done', 'house_doors', 'house_more', 'house_front', 'secret_door', 'house_ready', 'room_listen', 'room_your_turn', 'room_find', 'got_item', 'use_bag', 'got_counter_any', 'quest_home', 'away_secret', 'away_front', 'away_ready']) {
+  for (const k of ['house_doors', 'house_more', 'house_front', 'secret_door', 'house_ready', 'room_listen', 'room_your_turn', 'room_find', 'got_item', 'use_bag', 'got_counter_any', 'away_secret', 'away_front', 'away_ready']) {
     assert.ok(NARRATOR_LINES.some((t) => t.key === k), `narrator line ${k}`);
   }
   for (const waker of WAKERS) {
@@ -190,8 +200,16 @@ test('voice: every line id the game derives exists in lines.json and the manifes
     for (const c of PERSONS) if (c.id !== waker) want.push(wakeLine(waker, `good_${c.id}`), wakeLine(waker, `helper_${c.id}`));
     for (const c of ROSTER) want.push(wakeLine(waker, `bad_${c.id}`));
   }
-  // The quests' setup lines (item 025).
-  for (const owner of Object.keys(QUESTS)) want.push(questLine(owner));
+  // The quests' setup lines (item 025), every variant (item 037).
+  for (const [owner, q] of Object.entries(QUESTS)) q.lines.forEach((_, i) => want.push(questLine(owner, i + 1)));
+  // The hub scenes (item 037): every helper's every variant.
+  for (const [owner, scenes] of Object.entries(HUB_SCENES)) {
+    scenes.forEach((s, i) => {
+      const ids = hubStoryIds(owner, owner, i + 1, s);
+      want.push(...ids.lines, ids.circle, ids.done);
+    });
+  }
+  assert.ok(!lines.some((l) => /_teach_(1|circle|done|word_)/.test(l.id)), 'the old teach-a-spell lines are gone');
   for (const p of allPrefixes()) want.push(p.id);
   for (const t of allFrameTokens()) want.push(wordLine(t));
   for (const f of FETCH_ITEMS) want.push(wordLine(f.word));
@@ -212,9 +230,10 @@ test('voice: every line id the game derives exists in lines.json and the manifes
 });
 
 test('speech rule: no narrator line contains a reading word', () => {
-  // Reading words: every CVC word and every sentence key word (fetched items, counter words, MICE).
+  // Reading words: every pictured bank word (item 037: THINGS, from CVC to
+  // SHIP) and every sentence key word (fetched items, counter words, MICE).
   const keys = new Set<string>([...FETCH_ITEMS.map((f) => f.word), ...BAG_WORDS, ...ROSTER.map((c) => c.counter.word), ...SPECIAL_WORDS.map((w) => w.word)]);
-  const readable = new Set<string>([...CVC_WORDS.map((w) => w.word), ...keys]);
+  const readable = new Set<string>([...THINGS.map((w) => w.word), ...CVC_WORDS.map((w) => w.word), ...keys]);
   const words = (s: string) => s.toLowerCase().split(/[^a-z]+/);
   // need_item ("Only the {item} CAN stop...") belongs to the parked Spell the
   // Spell flow, where CAN is never a target; rewording it would re-synthesise 169 lines.
@@ -228,11 +247,31 @@ test('speech rule: no narrator line contains a reading word', () => {
       for (const token of words(s)) assert.ok(!readable.has(token), `${c.id}'s threat "${s}" says the reading word "${token}"`);
     }
   }
-  // The quests' setup lines (item 025) are said before any room, like the threats.
-  for (const [owner, q] of Object.entries(QUESTS)) {
-    for (const s of [q.text, q.say ?? '']) {
-      for (const token of words(s)) assert.ok(!readable.has(token), `${owner}'s quest "${s}" says the reading word "${token}"`);
-    }
+  // The quests' setup lines (item 025, every variant) and the hub scenes
+  // (item 037) are said before any room. They say no bank word at all: not a
+  // thing she may read, and not an action, which could be this episode's gift
+  // word or a pad (the gift is said only by its own clip, after the reveal).
+  const bank = new Set(BANK.map((w) => w.word));
+  const told: [string, string][] = [];
+  for (const [owner, q] of Object.entries(QUESTS)) for (const l of q.lines) told.push([`${owner}'s quest`, l.text], [`${owner}'s quest`, l.say ?? '']);
+  for (const l of HOME_QUEST.lines) told.push(['the home quest', l.text], ['the home quest', l.say ?? '']);
+  for (const [owner, scenes] of Object.entries(HUB_SCENES)) for (const s of scenes) for (const t of storyTexts(s)) told.push([`${owner}'s hub scene`, t]);
+  for (const s of ANY_SCENES) for (const t of storyTexts(s)) told.push(['the fallback hub scene', t]);
+  for (const [who, s] of told) {
+    for (const token of words(s)) assert.ok(!bank.has(token) && !readable.has(token), `${who} "${s}" says the bank word "${token}"`);
+  }
+  // No interjections, and commas rather than a mid-line "!" or "." (edge-tts
+  // leaves dead air after one) in what is spoken.
+  const spoken = [
+    ...Object.values(QUESTS).flatMap((q) => q.lines),
+    ...HOME_QUEST.lines,
+    ...[...Object.values(HUB_SCENES).flat(), ...ANY_SCENES].flatMap((s) => [...s.lines, s.circle, s.done]),
+  ];
+  for (const l of spoken) {
+    const said = (l.say ?? l.text).replace(/\.\.\.$/, '');
+    assert.ok(!/[!.?]\s/.test(said), `"${said}" stops mid-line`);
+    assert.ok(!/\b(Ha|Hmph|Yay|Ta da)\b/i.test(said), `"${said}" has an interjection`);
+    if (l.say) assert.equal(l.say.split(/\s+/).length, l.text.split(/\s+/).length, `"${l.say}" has the text's word count`);
   }
   // A prefix line stops before the key word; it must not say it earlier either
   // (WE CAN USE THE CAN would). Every sentence an episode plans, for every villain.

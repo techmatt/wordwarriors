@@ -15,8 +15,8 @@
  *   Yellow says the lit word. When the light reaches the key word (silent),
  *   the pass becomes...
  * - `find`: the pedestals wake up and she walks to the answer. Yellow sounds
- *   out the key word's letters one at a time, never blended (a non-decodable
- *   word like MICE gives only its first sound).
+ *   out the key word one sound at a time, never blended (SH of SHIP is one
+ *   sound; a non-decodable word like MICE gives only its first sound).
  *
  * The key word is never spoken until she has answered: the prefix line stops
  * before it, and its own `word_<key>` line plays only as confirmation, after
@@ -25,8 +25,9 @@
 
 import Phaser from 'phaser';
 
+import { unitsOf } from '../../content/phonics/bank';
 import { tokenWord } from '../../content/phonics/sentences';
-import { LETTER_BY_CHAR } from '../../content/phonics/letters';
+import { SOUND_BY_UNIT } from '../../content/phonics/letters';
 import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
@@ -408,21 +409,28 @@ export class SentenceRoom extends Minigame {
     await this.soundOut();
   }
 
-  /** The key word's letters, one sound at a time, never blended. Only while she is finding it. */
+  /**
+   * The key word's sounds, one at a time, never blended. Only while she is
+   * finding it. A digraph is one sound (SHIP is SH, I, P: `unitsOf`), both
+   * its letters lit together.
+   */
   private async soundOut(): Promise<void> {
     if (this.pass !== 'find') return;
     const key = this.plan.sentence.key;
     this.locked = true;
     const letters = this.tokenTexts[this.keyIndex]!;
+    const units = unitsOf(key);
     // A word that does not sound out (MICE) gets just its first sound.
-    const n = WORD_BY_ID[key]?.decodable === false ? 1 : letters.length;
+    const n = WORD_BY_ID[key]?.decodable === false ? 1 : units.length;
+    let at = 0;
     for (let i = 0; i < n && this.pass === 'find'; i++) {
-      const t = letters[i]!;
-      const ch = key[i]!;
+      const unit = units[i]!;
+      const lit = letters.slice(at, at + unit.length);
+      at += unit.length;
       for (const other of letters) other.setColor(INK);
-      t.setColor(LIT);
-      this.tweens.add({ targets: t, scale: 1.35, duration: 140, yoyo: true });
-      if (LETTER_BY_CHAR[ch]) await this.say(letterSoundLine(ch));
+      for (const t of lit) t.setColor(LIT);
+      this.tweens.add({ targets: lit, scale: 1.35, duration: 140, yoyo: true });
+      if (SOUND_BY_UNIT[unit]) await this.say(letterSoundLine(unit));
       // A beat on each letter, still lit, so the sounds stay apart.
       await this.wait(LETTER_GAP_MS);
     }

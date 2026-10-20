@@ -28,25 +28,28 @@
  * sorceress, her brave sister, a desert princess with a flying carpet), not as
  * lookalikes of anybody's films. The art prompts in docs/art.md say the same.
  *
- * Move words (`word`, `words`) must come from MOVE_WORDS: each has a "Use zap!" line per
- * narrator. Taunts are short, because a bubble over a moving fighter has to be
+ * Move words (`word`, `words`) are flavour (see MOVE_WORDS): a pad word one of
+ * them answers to fires that ability, styled. Taunts are short, because a bubble over a moving fighter has to be
  * readable at a glance, and they never name the word she must read.
  */
 
+import { ACTIONS } from '../phonics/bank.js';
 import type { AbilitySpec, CharacterSpec, ComboSpec, MinionSpec } from './types.js';
 
 /**
- * The words a move-choice pause can offer. Short and decodable where possible.
- * Item 018 widened the pool: an ability carries its main `word` and more that
- * suit it (`words`), and each episode draws which ones she meets from her move
- * bag (src/rules/moves.ts). Every one has a picture (`pic_<word>`: a reading
- * word's own, or MOVE_PICTURES in content/phonics/words.ts) for the battle's
- * super and the victory recap.
+ * The words a move-choice pause can offer: the word bank's action words (role
+ * `action` or `both`, content/phonics/bank.ts), each with a battle effect of
+ * its own (content/phonics/effects.ts), a picture and a "Use X!" line per
+ * narrator. Each episode draws which ones she meets from her move bag
+ * (src/rules/moves.ts).
+ *
+ * Since item 037 an ability's `word`/`words` no longer limit what she reads:
+ * they are flavour. When a pad's word is one a teammate's ability answers to,
+ * that teammate fires the styled version (Ellie's Giant Bubbles for BIG);
+ * otherwise her hero fires the word's own effect. POW and ICE are not bank
+ * words: they stay on abilities as flavour and are never on a pad.
  */
-export const MOVE_WORDS = [
-  'zap', 'pow', 'bam', 'zip', 'hop', 'pop', 'sun', 'hug', 'fan', 'big', 'hot', 'ice',
-  'dig', 'run', 'jet', 'mud', 'wet', 'fog', 'top', 'web', 'net', 'tug', 'fix', 'pan', 'ram', 'pig',
-] as const;
+export const MOVE_WORDS: string[] = ACTIONS.map((w) => w.word);
 
 /** What a big move is called out as, voiced and on its banner: `callout`, else its name. */
 export const abilityCallout = (a: AbilitySpec): string => a.callout ?? `${a.name}!`;
@@ -232,8 +235,8 @@ export const ROSTER: CharacterSpec[] = [
       displayName: 'Ellie', trail: { tint: [0x9ad8ff, 0xff9ad5], shape: 'spark' }, look: 'a cheerful chubby toddler girl of about two: a fine, wispy pale strawberry-blonde bob (very light blonde with a faint peach tint, not golden or orange) with a straight fringe, big blue eyes, chubby rosy cheeks, fair skin, in cosy cream footie pyjamas with rust-orange and brown stripes, waving a giant bubble wand with big shiny pink-and-blue bubbles floating around her',
       palette: [0xff9ad5, 0x9ad8ff], glyph: '🍼', style: 'dodge', speed: 230, size: 0.8, hp: 90,
       abilities: [
-        // BIG first: it is the spell Ellie teaches Julia in the hub (spellFor
-        // takes the first word Julia has not got; she already has POP and HOP).
+        // When the hub's gift word is one of Ellie's (BIG, POP, HOP...),
+        // Julia fires Ellie's move for it (src/rules/moves.ts spellOwner).
         ab('giant_bubbles', 'Giant Bubbles', 'bolt', 2.4, 0x9ad8ff, 1, { count: 4, art: 'fx_bubble', upright: true, homing: true, color2: 0xff9ad5, word: 'big', words: ['wet'] }),
         ab('bubble_trap', 'Bubble Trap', 'bolt', 7, 0xff9ad5, 2, { count: 2, art: 'fx_bubble', upright: true, homing: true, status: 'bubble', duration: 2.5, color2: 0x9ad8ff, word: 'pop', words: ['fog'] }),
         ab('bubble_shield', 'Bubble Shield', 'shield', 10, 0x9ad8ff, 1, { duration: 4, words: ['hug'] }),
@@ -1436,7 +1439,8 @@ export const ROSTER: CharacterSpec[] = [
       how: 'reveal', word: 'bus',
     },
     house: {
-      threat: 'he wants to turn everybody into a little purple frog',
+      // Not a frog: FROG is a reading word since item 037.
+      threat: 'he wants to turn everybody into a little purple toad',
       tint: 0x4a1a7a,
       decals: [{ id: 'dada_jason_warlock_flame', glyph: '🔥', look: 'a cheeky purple flame with a grinning face, little flames flickering round it', count: 3 }],
       fx: 'embers',

@@ -1,0 +1,197 @@
+/**
+ * What every bank word does in the battle (item 037): one effect per word,
+ * whoever fires it.
+ *
+ * - A pictured word (`thing`) is a fetched battle item: her bag pops, the
+ *   picture flies out, and the hero fires `ability` with a THE NET! banner
+ *   (BattleScene `useFetched`).
+ * - An action word is a move pad: reading it casts it. Her hero fires the
+ *   word's own `ability`, supercharged, with a SUPER JUMP! banner. When the
+ *   word is also one of a teammate's own abilities (`word`/`words` in the
+ *   roster), that styled version fires instead (src/rules/moves.ts).
+ * - A `both` word (NET) uses the same effect either way.
+ *
+ * `look` says what it does, for docs and art prompts. The ability's `id` is
+ * `item_<word>` for things and `word_<word>` for actions; its `name` is never
+ * shown (the banner is the word).
+ *
+ * Pure data: no Phaser.
+ */
+
+import type { AbilitySpec } from '../battle/types.js';
+
+export interface WordEffect {
+  word: string;
+  /** What it does, for docs and art prompts. */
+  look: string;
+  ability: AbilitySpec;
+}
+
+function use(word: string, kind: AbilitySpec['kind'], color: number, extra: Partial<AbilitySpec> = {}): AbilitySpec {
+  return { id: `item_${word}`, name: `The ${word}`, kind, cooldown: 0, color, power: 2, ...extra };
+}
+
+/** An action word's effect: the same, with its own id. */
+function act(word: string, kind: AbilitySpec['kind'], color: number, extra: Partial<AbilitySpec> = {}): AbilitySpec {
+  return { ...use(word, kind, color, extra), id: `word_${word}`, name: word.toUpperCase() };
+}
+
+/** The word's own picture as the thing flung or dropped, the right way up. */
+function pic(word: string): Partial<AbilitySpec> {
+  return { art: `pic_${word}`, upright: true };
+}
+
+const THING_EFFECTS: WordEffect[] = [
+  { word: 'net', look: 'a big net flung over the villain: tangled and dizzy', ability: use('net', 'bolt', 0xffffff, { glyph: '🥅', count: 3, status: 'stun', duration: 2, homing: true }) },
+  { word: 'fan', look: 'a giant fan that blows a gale across the arena', ability: use('fan', 'wave', 0xbfefff, { color2: 0xffffff }) },
+  { word: 'mop', look: 'a mop that sweeps in and slams down, splash', ability: use('mop', 'slam', 0x7ad9ff, { power: 3 }) },
+  { word: 'jet', look: 'a toy jet that zooms through the villain', ability: use('jet', 'dash', 0xff5a3c, { power: 3 }) },
+  { word: 'hen', look: 'a flock of brave hens that peck at the villain', ability: use('hen', 'summon', 0xffffff, { minion: 'hen', count: 3 }) },
+  { word: 'dog', look: 'the family dog, who bounds in barking', ability: use('dog', 'summon', 0xc8884a, { minion: 'dog', count: 1 }) },
+  // Not CAN: it is a frame word (WE CAN USE THE), so the prefix line would say it.
+  { word: 'pot', look: 'pots and pans clanging down one after another', ability: use('pot', 'rain', 0xc0c8d0, { count: 12 }) },
+  { word: 'web', look: 'a sticky web laid on the ground: a trap', ability: use('web', 'trap', 0xe8e8ff, { glyph: '🕸️', count: 3 }) },
+  { word: 'box', look: 'cardboard boxes raining down on the villain', ability: use('box', 'rain', 0xc8a070, { glyph: '📦', count: 14 }) },
+  { word: 'pin', look: 'a volley of pins, ouch', ability: use('pin', 'bolt', 0xff3d7a, { glyph: '📌', count: 5, homing: true }) },
+  { word: 'bus', look: 'a school bus that drives straight through the villain', ability: use('bus', 'dash', 0xffc83d, { power: 3 }) },
+  { word: 'sun', look: 'a burst of sunshine beamed at the villain', ability: use('sun', 'beam', 0xffd23f, { color2: 0xffffff }) },
+  // Item 015: the rest of the CVC words. Most fling or drop the word's own picture.
+  { word: 'cat', look: 'a pounce of cats leaping at the villain', ability: use('cat', 'bolt', 0xffb347, { ...pic('cat'), count: 3, homing: true }) },
+  { word: 'fox', look: 'a quick fox that dashes straight through the villain', ability: use('fox', 'dash', 0xff7b3a, { power: 3 }) },
+  { word: 'bug', look: 'a cloud of bugs raining down, tickly', ability: use('bug', 'rain', 0x6ad66a, { ...pic('bug'), count: 10 }) },
+  { word: 'pig', look: 'a magic pig that turns the villain into a pig for a moment', ability: use('pig', 'bolt', 0xff9ac8, { ...pic('pig'), count: 1, status: 'pig', duration: 2, homing: true }) },
+  { word: 'hat', look: 'hats raining down and plopping onto the villain', ability: use('hat', 'rain', 0x9b5de5, { ...pic('hat'), count: 8 }) },
+  { word: 'bed', look: 'a big comfy bed that flops down on the villain', ability: use('bed', 'slam', 0x7aa6ff, { power: 3 }) },
+  { word: 'cup', look: 'cups tumbling down, splish', ability: use('cup', 'rain', 0xc8884a, { ...pic('cup'), count: 10 }) },
+  { word: 'map', look: 'maps flapping at the villain, which way is up?', ability: use('map', 'bolt', 0xe8c890, { ...pic('map'), count: 3, homing: true }) },
+  { word: 'pen', look: 'a volley of pens, scribble scribble', ability: use('pen', 'bolt', 0x3a86ff, { ...pic('pen'), count: 5, homing: true }) },
+  { word: 'van', look: 'a van that drives straight through the villain', ability: use('van', 'dash', 0xffffff, { power: 3 }) },
+  { word: 'bat', look: 'a flutter of bats swooping at the villain', ability: use('bat', 'bolt', 0x5a2a7a, { ...pic('bat'), count: 4, homing: true }) },
+  { word: 'bag', look: 'bags dropping onto the villain, plop plop', ability: use('bag', 'rain', 0xff7ad9, { ...pic('bag'), count: 8 }) },
+  { word: 'can', look: 'cans clattering down on the villain', ability: use('can', 'rain', 0xc0c8d0, { ...pic('can'), count: 12 }) },
+  { word: 'nut', look: 'a hail of nuts, bonk bonk', ability: use('nut', 'rain', 0xc8884a, { ...pic('nut'), count: 14 }) },
+  { word: 'tub', look: 'a bathtub that slams down, splash', ability: use('tub', 'slam', 0x7ad9ff, { power: 3 }) },
+  { word: 'cap', look: 'caps flung like flying saucers', ability: use('cap', 'bolt', 0xe63946, { ...pic('cap'), count: 4, homing: true }) },
+  { word: 'log', look: 'logs rolling down from the sky, thump', ability: use('log', 'rain', 0x8a5a2a, { ...pic('log'), count: 6, power: 3 }) },
+  { word: 'rat', look: 'brave rats scurrying at the villain', ability: use('rat', 'bolt', 0xa0a0a0, { ...pic('rat'), count: 6, homing: true }) },
+  // Item 035: the -UG family.
+  { word: 'mug', look: 'mugs of cocoa tumbling down, warm and sloshy', ability: use('mug', 'rain', 0x3a86ff, { ...pic('mug'), count: 8 }) },
+  { word: 'rug', look: 'a magic flying rug that swoops straight through the villain', ability: use('rug', 'dash', 0xe63946, { power: 3 }) },
+  { word: 'jug', look: 'a giant jug that pours a wave of milk across the arena', ability: use('jug', 'wave', 0xffffff, { color2: 0xbfefff }) },
+  // Item 037: the pictured words that were move words too (`both`), then the new things.
+  { word: 'pan', look: 'frying pans that fly and BONG the villain, seeing stars', ability: use('pan', 'bolt', 0x5a5a6a, { ...pic('pan'), count: 2, power: 3, status: 'stun', duration: 1.5, homing: true }) },
+  { word: 'ram', look: 'a big woolly ram that charges headfirst through the villain', ability: use('ram', 'dash', 0xf0e6d2, { power: 3 }) },
+  { word: 'top', look: 'a giant spinning top that whirls through the baddies', ability: use('top', 'spin', 0xff5ab4, { count: 3, color2: 0xffd23f }) },
+  { word: 'fin', look: 'shark fins circling in through the water, chomp', ability: use('fin', 'bolt', 0x5a8ab0, { ...pic('fin'), count: 3, homing: true }) },
+  { word: 'jam', look: 'jars of sticky jam plopping down on the villain', ability: use('jam', 'rain', 0xe63946, { ...pic('jam'), count: 8 }) },
+  { word: 'yak', look: 'a shaggy yak that stampedes straight through the villain', ability: use('yak', 'dash', 0x8a5a2a, { power: 3 }) },
+  { word: 'vat', look: 'a huge vat tips over: a wave of bubbly green soup', ability: use('vat', 'wave', 0x6ad66a, { color2: 0xd8ffb0 }) },
+  { word: 'leg', look: 'a giant leg that stomps down on the villain, thump', ability: use('leg', 'slam', 0xffc8a0, { power: 3 }) },
+  { word: 'peg', look: 'clothes pegs that pinch the villain, ouch', ability: use('peg', 'bolt', 0x3ad0a0, { ...pic('peg'), count: 5, homing: true }) },
+  { word: 'wig', look: 'a silly wig that lands on the villain\'s head: it cannot see!', ability: use('wig', 'bolt', 0xffd23f, { ...pic('wig'), count: 1, status: 'stun', duration: 2, homing: true }) },
+  { word: 'bib', look: 'baby bibs flying at the villain, messy', ability: use('bib', 'bolt', 0x9ad8ff, { ...pic('bib'), count: 3, homing: true }) },
+  { word: 'fig', look: 'figs plopping down, squish', ability: use('fig', 'rain', 0x7b2cbf, { ...pic('fig'), count: 10 }) },
+  { word: 'six', look: 'six big dice tumbling down on the villain', ability: use('six', 'rain', 0xffffff, { ...pic('six'), count: 6, power: 3 }) },
+  { word: 'kit', look: 'a toolkit that builds a wall round the team', ability: use('kit', 'shield', 0xe63946, { duration: 4 }) },
+  { word: 'lip', look: 'big smoochy kisses flying at the villain, yuck!', ability: use('lip', 'bolt', 0xff3d7a, { ...pic('lip'), count: 4, homing: true }) },
+  // Not upright: a cog spins as it flies.
+  { word: 'cog', look: 'spinning cogs whizzing at the villain', ability: use('cog', 'bolt', 0xc0c8d0, { art: 'pic_cog', count: 4, homing: true }) },
+  { word: 'rod', look: 'a fishing rod that hooks the villain: stuck on the line', ability: use('rod', 'bolt', 0x3a86ff, { ...pic('rod'), count: 1, status: 'stun', duration: 2, homing: true }) },
+  { word: 'pod', look: 'peas pinging out of a pod, ping ping ping', ability: use('pod', 'bolt', 0x6ad66a, { ...pic('pod'), count: 5, homing: true }) },
+  { word: 'gum', look: 'sticky pink gum on the ground: step in it, stuck!', ability: use('gum', 'trap', 0xff9ad5, { glyph: '🍬', count: 3 }) },
+  { word: 'bun', look: 'soft buns raining down, boing', ability: use('bun', 'rain', 0xe8b070, { ...pic('bun'), count: 10 }) },
+  { word: 'hut', look: 'a little hut that drops down on the villain, thump', ability: use('hut', 'slam', 0xc8a070, { power: 3 }) },
+  { word: 'sub', look: 'a yellow submarine that zooms straight through the villain', ability: use('sub', 'dash', 0xffd23f, { power: 3 }) },
+  { word: 'frog', look: 'frogs leaping at the villain, ribbit', ability: use('frog', 'bolt', 0x2ec27e, { ...pic('frog'), count: 4, homing: true }) },
+  { word: 'drum', look: 'a giant drum, BOOM, that shakes the whole arena', ability: use('drum', 'slam', 0xe63946, { power: 3, color2: 0xffd23f }) },
+  { word: 'crab', look: 'crabs scuttling at the villain, pinch pinch', ability: use('crab', 'bolt', 0xff5a3c, { ...pic('crab'), count: 4, homing: true }) },
+  { word: 'flag', look: 'a big flag waved high: the team stands tall behind a shield', ability: use('flag', 'shield', 0xe63946, { duration: 4 }) },
+  { word: 'sled', look: 'a sled that whooshes downhill through the villain', ability: use('sled', 'dash', 0xbfefff, { power: 3 }) },
+  { word: 'nest', look: 'a big nest on the ground: the villain sits in it, stuck', ability: use('nest', 'trap', 0xc8884a, { glyph: '🪺', count: 2 }) },
+  { word: 'tent', look: 'a tent that pops up over the team', ability: use('tent', 'shield', 0x2a9d8f, { duration: 4 }) },
+  { word: 'desk', look: 'a heavy desk that drops on the villain, thud', ability: use('desk', 'slam', 0x8a5a2a, { power: 3 }) },
+  { word: 'belt', look: 'a belt flung like a lasso: the villain is tied up', ability: use('belt', 'bolt', 0x5a3a2a, { ...pic('belt'), count: 1, status: 'stun', duration: 2, homing: true }) },
+  { word: 'vest', look: 'a glowing safety vest for everyone: a shield', ability: use('vest', 'shield', 0xff8c42, { duration: 4 }) },
+  { word: 'plum', look: 'plums plopping down, squish', ability: use('plum', 'rain', 0x9b5de5, { ...pic('plum'), count: 10 }) },
+  { word: 'gift', look: 'surprise gifts raining down on the villain', ability: use('gift', 'rain', 0xff5ab4, { ...pic('gift'), count: 8 }) },
+  { word: 'lamp', look: 'a lamp that beams bright light in the villain\'s eyes', ability: use('lamp', 'beam', 0xfff07a, { color2: 0xffffff }) },
+  { word: 'hand', look: 'a giant hand that flicks the villain, flick!', ability: use('hand', 'bolt', 0xffc8a0, { ...pic('hand'), count: 1, power: 3, homing: true }) },
+  { word: 'mask', look: 'masks on: three of her pop up, which one is real?', ability: use('mask', 'clones', 0x9b5de5, { count: 3 }) },
+  { word: 'raft', look: 'a raft that surfs in on a big wave', ability: use('raft', 'wave', 0x7ad9ff, { color2: 0xc8a070 }) },
+  { word: 'plug', look: 'a plug that sparks: zaps crackle down from the sky', ability: use('plug', 'lightning', 0x3ae0ff, { count: 3 }) },
+  { word: 'slug', look: 'slimy slug trails on the ground: slip and slide', ability: use('slug', 'trap', 0xb0d060, { glyph: '🐌', count: 3 }) },
+  { word: 'twig', look: 'twigs tumbling down, snap crackle', ability: use('twig', 'rain', 0x6a8a3a, { ...pic('twig'), count: 12 }) },
+  { word: 'ant', look: 'an army of ants marching down on the villain', ability: use('ant', 'rain', 0x5a2a2a, { ...pic('ant'), count: 16 }) },
+  { word: 'milk', look: 'a glass of milk for the whole team: strong again', ability: use('milk', 'heal', 0xffffff, { color2: 0xbfefff }) },
+  { word: 'ship', look: 'a pirate ship that sails straight through the villain', ability: use('ship', 'dash', 0x8a5a2a, { power: 3 }) },
+  { word: 'fish', look: 'fish flopping at the villain, slap slap', ability: use('fish', 'bolt', 0x3a86ff, { ...pic('fish'), count: 4, homing: true }) },
+  { word: 'duck', look: 'rubber ducks bonking the villain, squeak', ability: use('duck', 'bolt', 0xffd23f, { ...pic('duck'), count: 5, homing: true }) },
+  { word: 'sock', look: 'stinky socks raining down on the villain, pee-yew', ability: use('sock', 'rain', 0xffffff, { ...pic('sock'), count: 10 }) },
+  { word: 'moth', look: 'moths that flutter round her, then fly at the villain', ability: use('moth', 'orbit', 0xe8d8b0, { ...pic('moth'), count: 5, duration: 1.6 }) },
+  { word: 'shed', look: 'a garden shed that drops down on the villain, crash', ability: use('shed', 'slam', 0x8a6a4a, { power: 3 }) },
+  { word: 'chick', look: 'a flock of fluffy chicks that peck at the villain', ability: use('chick', 'summon', 0xffe14a, { minion: 'hen', count: 4 }) },
+];
+
+/**
+ * The action words' effects (role `action`). The pre-037 move words keep the
+ * flavour their roster abilities had (ZAP bolts, BAM a slam, HUG a shield);
+ * a teammate with the word fires its own styled version instead.
+ */
+const ACTION_EFFECTS: WordEffect[] = [
+  { word: 'zap', look: 'zaps of star power fired at the villain', ability: act('zap', 'bolt', 0xffd23f, { glyph: '⚡', count: 3, homing: true, shout: true }) },
+  { word: 'bam', look: 'a ground pound, BAM, that knocks everyone flying', ability: act('bam', 'slam', 0xff8c42, { power: 3, shout: true }) },
+  { word: 'zip', look: 'comets zipping round her, then at the villain', ability: act('zip', 'orbit', 0x3ae0ff, { glyph: '☄️', count: 5, duration: 1.4, color2: 0xffffff }) },
+  { word: 'hop', look: 'a bunny hop: she pops up right beside the villain, boing', ability: act('hop', 'teleport', 0x9b5de5) },
+  { word: 'pop', look: 'balloons raining down, pop pop pop', ability: act('pop', 'rain', 0xff5ab4, { glyph: '🎈', count: 12 }) },
+  { word: 'hug', look: 'a big warm hug: a shield round the whole team', ability: act('hug', 'shield', 0xff9ad5, { duration: 4 }) },
+  { word: 'big', look: 'she grows giant for a while, stomp stomp', ability: act('big', 'grow', 0x9b5de5, { duration: 5 }) },
+  { word: 'hot', look: 'a breath of hot, hot fire', ability: act('hot', 'cone', 0xff7b00, { color2: 0xffd23f }) },
+  { word: 'dig', look: 'holes dug in the ground: the villain falls in, whoops', ability: act('dig', 'trap', 0x8a5a2a, { glyph: '🕳️', count: 3 }) },
+  { word: 'run', look: 'a running charge straight through the villain', ability: act('run', 'dash', 0xe63946) },
+  { word: 'mud', look: 'mud pies raining down, splat', ability: act('mud', 'rain', 0x7a4a2a, { glyph: '🟤', count: 14 }) },
+  { word: 'wet', look: 'splashes of water squirted at the villain', ability: act('wet', 'bolt', 0x7ad9ff, { glyph: '💧', count: 4, homing: true }) },
+  { word: 'fog', look: 'a big grey fog blown over the villain: where did everyone go?', ability: act('fog', 'cone', 0xc0c8d0, { color2: 0xffffff }) },
+  { word: 'tug', look: 'a rope that loops round the villain and tugs it tight', ability: act('tug', 'coil', 0xc8a070, { duration: 3 }) },
+  { word: 'fix', look: 'a wrench of sparkles that fixes up the whole team', ability: act('fix', 'heal', 0x80ffdb) },
+  // Item 037, level 1.
+  { word: 'nap', look: 'sleepy Zs that put the villain to sleep', ability: act('nap', 'bolt', 0xaec8ff, { glyph: '💤', count: 3, status: 'stun', duration: 3, homing: true }) },
+  { word: 'wag', look: 'happy dogs that bound in, tails wagging', ability: act('wag', 'summon', 0xc8884a, { minion: 'dog', count: 2 }) },
+  { word: 'jab', look: 'boxing gloves that boing out, jab jab jab', ability: act('jab', 'bolt', 0xe63946, { glyph: '🥊', count: 3, homing: true, shout: true }) },
+  { word: 'red', look: 'splats of red paint all over the villain', ability: act('red', 'bolt', 0xe63946, { glyph: '🔴', count: 6, color2: 0xff8a8a }) },
+  { word: 'hex', look: 'a purple hex: glowing magic lines across the arena', ability: act('hex', 'grid', 0x9b5de5, { color2: 0xff9ad5, power: 3 }) },
+  { word: 'jig', look: 'a twirly dance that spins through the baddies', ability: act('jig', 'spin', 0xff9ad5, { count: 3, color2: 0xffd23f }) },
+  { word: 'mix', look: 'eggs and spoons tumbling down: a big mix-up', ability: act('mix', 'rain', 0xfff1d6, { glyph: '🥚', count: 12 }) },
+  { word: 'jog', look: 'she jogs in circles round the baddies, bumping each one', ability: act('jog', 'spin', 0x2a9d8f, { count: 3 }) },
+  { word: 'bop', look: 'a squeaky toy hammer bops the villain on the head: seeing stars', ability: act('bop', 'bolt', 0xff8c42, { glyph: '🔨', count: 1, power: 3, status: 'stun', duration: 1.5, homing: true }) },
+  { word: 'dot', look: 'polka dots pelting the villain, dot dot dot', ability: act('dot', 'bolt', 0x3a86ff, { glyph: '🔵', count: 7 }) },
+  { word: 'hum', look: 'music notes hummed at the villain, it sways', ability: act('hum', 'bolt', 0xb15cff, { glyph: '🎵', count: 4, homing: true }) },
+  { word: 'yum', look: 'a yummy snack for the team: everyone feels better', ability: act('yum', 'heal', 0xffb3c6, { color2: 0xffd23f }) },
+  // Item 037, level 2.
+  { word: 'jump', look: 'a big jump and a slam down from above', ability: act('jump', 'slam', 0x3a86ff, { power: 3, shout: true }) },
+  { word: 'spin', look: 'a spin so fast it whirls through every baddie', ability: act('spin', 'spin', 0x3ae0ff, { count: 4, color2: 0xffffff }) },
+  { word: 'swim', look: 'she swims in on a big blue wave', ability: act('swim', 'wave', 0x3a86ff, { color2: 0xbfefff }) },
+  { word: 'flip', look: 'pancakes flipped high, landing on the villain', ability: act('flip', 'bolt', 0xffbe0b, { glyph: '🥞', count: 3, homing: true }) },
+  { word: 'stomp', look: 'a dino stomp that sends a shockwave across the arena', ability: act('stomp', 'wave', 0x6ad66a, { color2: 0xc8a070, power: 3, status: 'stun', duration: 1.5 }) },
+  { word: 'slam', look: 'a leap and a SLAM that shakes the whole arena', ability: act('slam', 'slam', 0xff5a3c, { power: 3, color2: 0xffd23f }) },
+  { word: 'grab', look: 'a grabber claw that shoots out and grabs the villain', ability: act('grab', 'bolt', 0xc0c8d0, { ...pic('grab'), count: 1, power: 3, status: 'stun', duration: 2, homing: true }) },
+  { word: 'clap', look: 'a thunder clap: booms strike down from the sky', ability: act('clap', 'lightning', 0xffd23f, { count: 3, color2: 0xffffff }) },
+  { word: 'bump', look: 'a bumper car that bumps right through the villain', ability: act('bump', 'dash', 0xff5ab4, { power: 3 }) },
+  { word: 'snap', look: 'snappy crocodile jaws hidden on the ground: SNAP!', ability: act('snap', 'trap', 0x2ec27e, { glyph: '🐊', count: 3 }) },
+  { word: 'skip', look: 'skipping stones that bounce, bounce, bonk', ability: act('skip', 'bolt', 0xa0a0a0, { glyph: '🪨', count: 4, homing: true }) },
+  { word: 'twist', look: 'a twisty tornado that wraps round the villain', ability: act('twist', 'coil', 0xbfefff, { duration: 3, color2: 0xffffff }) },
+  { word: 'melt', look: 'a wave of warm, gooey melt sweeping across', ability: act('melt', 'wave', 0xffb347, { color2: 0xfff1d6 }) },
+  { word: 'lift', look: 'balloons lift the villain up, up and away, then pop!', ability: act('lift', 'polymorph', 0xff5ab4, { status: 'bubble', duration: 2.5, color2: 0x9ad8ff }) },
+  { word: 'plop', look: 'big drops of water plopping down, splosh', ability: act('plop', 'rain', 0x3a86ff, { glyph: '💦', count: 8, power: 3 }) },
+  { word: 'flop', look: 'a giant belly flop onto the villain', ability: act('flop', 'slam', 0xff9ad5, { power: 3 }) },
+  { word: 'trap', look: 'mouse traps hidden on the ground: snap!', ability: act('trap', 'trap', 0xc8a070, { glyph: '🪤', count: 3 }) },
+  { word: 'blast', look: 'a rocket blast beamed at the villain', ability: act('blast', 'beam', 0xff6a3a, { color2: 0xffd23f, power: 3 }) },
+  { word: 'drip', look: 'icy drips that freeze the villain solid', ability: act('drip', 'freeze', 0x7cc7ff, { status: 'freeze', duration: 3 }) },
+  // Item 037, level 3.
+  { word: 'chop', look: 'she pops up beside the villain: karate chop!', ability: act('chop', 'teleport', 0xffd6a5, { power: 3, shout: true }) },
+  { word: 'kick', look: 'balls kicked at the villain, goal!', ability: act('kick', 'bolt', 0xffffff, { glyph: '⚽', count: 3, homing: true, shout: true }) },
+  { word: 'rush', look: 'a rush of wind that blows the villain back', ability: act('rush', 'cone', 0xbaf2ff, { color2: 0xffffff }) },
+];
+
+export const EFFECTS: WordEffect[] = [...THING_EFFECTS, ...ACTION_EFFECTS];
+
+export const EFFECT_BY_WORD: Record<string, WordEffect> = Object.fromEntries(EFFECTS.map((e) => [e.word, e]));

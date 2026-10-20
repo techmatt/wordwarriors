@@ -8,6 +8,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
+import { BANK, BANK_BY_WORD } from '../../content/phonics/bank';
 import { lookalikesOf } from '../../content/phonics/sentences';
 import { CVC_WORDS } from '../../content/phonics/words';
 import { letterNameLine, letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
@@ -51,6 +52,19 @@ test('clue: level 1 is the word, names, sounds; level 2 names and sounds; level 
   assert.deepEqual(ids(3), sounds);
   assert.deepEqual(ids(3, true), [wordLine('van'), ...sounds]);
   assert.deepEqual(ids(2, true), [wordLine('van'), ...names, ...sounds]);
+  // Each step lights one letter; the word itself lights none.
+  assert.deepEqual(clue('van', 1).map((s) => [s.index, s.span]), [[null, 0], [0, 1], [1, 1], [2, 1], [0, 1], [1, 1], [2, 1]]);
+});
+
+test('clue: names go letter by letter, sounds by sound unit (SH of SHIP is one sound lighting two letters)', () => {
+  const ship = clue('ship', 2);
+  assert.deepEqual(ship.filter((s) => s.kind === 'name').map((s) => s.id), ['s', 'h', 'i', 'p'].map(letterNameLine));
+  const sounds = ship.filter((s) => s.kind === 'sound');
+  assert.deepEqual(sounds.map((s) => s.id), ['sh', 'i', 'p'].map(letterSoundLine));
+  assert.deepEqual(sounds.map((s) => [s.index, s.span]), [[0, 2], [2, 1], [3, 1]]);
+  // DUCK ends in CK; FROG's blend is two sounds, never one.
+  assert.deepEqual(clue('duck', 3).map((s) => s.id), ['d', 'u', 'ck'].map(letterSoundLine));
+  assert.deepEqual(clue('frog', 3).map((s) => s.id), ['f', 'r', 'o', 'g'].map(letterSoundLine));
 });
 
 test('voice: every clue line, and the warm-up narrator lines, exist; letter names say the name and show the capital', () => {
@@ -75,11 +89,13 @@ test('pickGrab: avoids what it is told to, and last episode’s word while anoth
   for (let i = 0; i < 20; i++) assert.equal(pickGrab(clocked, avoidAll, seeded(i + 1)), 'dog');
 });
 
-test('hallObjects: nine distinct pictures, the word among them, none avoided, no look-alike of it', () => {
+test('hallObjects: nine distinct pictures, the word among them, none avoided, no look-alike of it; while new, none starts like it', () => {
+  const store = new ProgressStore(memory());
   for (let seed = 1; seed <= 40; seed++) {
     const word = GRAB_WORDS[seed % GRAB_WORDS.length]!;
     const avoid = ['cat', 'dog', 'sun', 'net', 'fan', 'pig'].filter((w) => w !== word);
-    const objs = hallObjects(word, avoid, seeded(seed));
+    const objs = hallObjects(store, word, avoid, seeded(seed));
+    for (const w of objs) if (w !== word) assert.notEqual(w[0], word[0], `${w} starts like ${word}, a new grab`);
     assert.equal(objs.length, GRAB.objects);
     assert.equal(new Set(objs).size, objs.length);
     assert.ok(objs.includes(word));
@@ -91,6 +107,30 @@ test('hallObjects: nine distinct pictures, the word among them, none avoided, no
       }
     }
   }
+});
+
+test('hallObjects: once her grabs of the word are firm, one picture shares its first sound or rime', () => {
+  const store = new ProgressStore(memory());
+  for (let i = 0; i < 4; i++) store.record('grabs', 'cat', true, 0);
+  for (let seed = 1; seed <= 30; seed++) {
+    const objs = hallObjects(store, 'cat', [], seeded(seed)).filter((w) => w !== 'cat');
+    const share = objs.filter((w) => w[0] === 'c' || w.endsWith('at'));
+    assert.ok(share.length >= 1, `seed ${seed}: ${objs.join(' ')}`);
+    assert.ok(!objs.includes('rat') && !objs.includes('bat'), 'never a look-alike');
+  }
+});
+
+test('pickGrab: a blend or digraph word waits until CVC firms up (the level gate)', () => {
+  // One stream: this generator's first draw from a small seed is always near 0.
+  const rand = seeded(7);
+  const fresh = new ProgressStore(memory());
+  for (let i = 0; i < 60; i++) assert.equal(BANK_BY_WORD[pickGrab(fresh, [], rand)]!.level, 1);
+  // Every CVC word read solidly: blends open, and come up.
+  const firm = new ProgressStore(memory());
+  for (const w of BANK.filter((b) => b.level === 1)) for (let i = 0; i < 4; i++) firm.record('words', w.word, true, 0);
+  const levels = new Set<number>();
+  for (let i = 0; i < 200; i++) levels.add(BANK_BY_WORD[pickGrab(firm, [], rand)]!.level);
+  assert.ok(levels.has(2), 'a blend comes up once CVC is firm');
 });
 
 test('said early: the grab word, passed as saidBefore, is never a room key, the counter or a word machine word', () => {

@@ -7,10 +7,12 @@ import { test } from 'node:test';
 import { FORMS } from '../../content/battle/forms';
 import { CHARACTER_BY_ID, PERSONS, ROSTER, formsOf, personOf } from '../../content/battle/roster';
 import { HOME, PLACES, PLACE_BY_ID, SIDE_ROOM_BY_ID, hubArt } from '../../content/house/house';
-import { QUESTS, questFor } from '../../content/house/quests';
+import { HOME_QUEST, QUESTS, questFor, questSetup } from '../../content/house/quests';
+import { HUB_SCENES, hubStory } from '../../content/house/scenes';
 import { ART_BY_ID } from '../../content/art/assets';
 import { ACTIVE_CAST, CAST_ODDS } from '../../src/config';
 import { DADS, drawCast, seededRand, wakerOf } from '../../src/rules/cast';
+import { drawStory } from '../../src/rules/story';
 import { MINIGAMES, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/sentences';
 import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
@@ -159,6 +161,9 @@ test('quests: every possible ally has one; places and their rooms exist with art
   for (const id of Object.keys(QUESTS)) assert.ok(CHARACTER_BY_ID[id], `quest owner ${id} is in the roster`);
   // Every dad form and Ellie have a quest of their own (Matt, item 025).
   for (const id of [...ROSTER.filter((c) => DADS.includes(personOf(c.id) as never)).map((c) => c.id), 'ellie']) assert.ok(QUESTS[id], id);
+  // Item 037: everybody has their own, with two or three setup lines to draw from.
+  for (const c of ROSTER) assert.ok(QUESTS[c.id], `${c.id} has a quest`);
+  for (const [id, q] of [...Object.entries(QUESTS), ['home', HOME_QUEST] as const]) assert.ok(q.lines.length >= 2 && q.lines.length <= 3, `${id}: ${q.lines.length} setup lines`);
   for (const p of PLACES) {
     assert.ok(ART_BY_ID[hubArt(p.id)], hubArt(p.id));
     assert.equal(p.rooms.length, 2, p.id);
@@ -168,6 +173,55 @@ test('quests: every possible ally has one; places and their rooms exist with art
     }
   }
   assert.ok(PERSONS.length < ROSTER.length);
+});
+
+test('hub scenes: every possible helper has two or three, each trailing off into the gift word', () => {
+  // Item 037. Julia is the hero, so never the helper.
+  for (const c of ROSTER.filter((x) => x.id !== 'julia')) {
+    const scenes = HUB_SCENES[c.id];
+    assert.ok(scenes && scenes.length >= 2 && scenes.length <= 3, `${c.id} has 2-3 hub scenes`);
+    for (const s of scenes) {
+      assert.ok(s.lines.length >= 2 && s.lines.length <= 4, `${c.id}: 2-4 lines`);
+      assert.ok(s.lines[s.lines.length - 1]!.text.endsWith('...'), `${c.id}: "${s.lines.at(-1)!.text}" trails off into the word`);
+      for (const l of s.lines.slice(0, -1)) assert.ok(!l.text.endsWith('...'), `${c.id}: only the reveal trails off`);
+      // The prop: a painted prop, or an emoji on a card.
+      assert.ok(s.prop.startsWith('prop_') ? ART_BY_ID[s.prop] : !/^[a-z_]+$/.test(s.prop), `${c.id}: prop ${s.prop}`);
+    }
+  }
+  for (const id of Object.keys(HUB_SCENES)) assert.ok(CHARACTER_BY_ID[id], `hub scene owner ${id} is in the roster`);
+});
+
+test('story: the quest line and hub scene are drawn with the cast, the same for the same seed, variant 1 for the default cast', () => {
+  const ids = ROSTER.filter((c) => c.id !== 'julia').map((c) => c.id);
+  const run = (seed: number) => {
+    const rand = seededRand(seed);
+    return ids.map((id) => drawStory(id, rand, false));
+  };
+  assert.deepEqual(run(5), run(5), 'deterministic under a seeded rand');
+  assert.notDeepEqual(run(5), run(6), 'another seed, other variants');
+  for (const id of ids) assert.deepEqual(drawStory(id, seededRand(9), true), { quest: 1, scene: 1 }, `${id}: the default cast pins variant 1`);
+  // Every variant comes up, and only real ones.
+  const rand = seededRand(11);
+  for (const id of ids) {
+    const quests = new Set<number>();
+    const scenes = new Set<number>();
+    for (let i = 0; i < 200; i++) {
+      const s = drawStory(id, rand, false);
+      quests.add(s.quest);
+      scenes.add(s.scene);
+    }
+    assert.equal(quests.size, QUESTS[id]!.lines.length, `${id}: every quest line`);
+    assert.equal(scenes.size, HUB_SCENES[id]!.length, `${id}: every hub scene`);
+    assert.ok(Math.max(...quests) === QUESTS[id]!.lines.length && Math.max(...scenes) === HUB_SCENES[id]!.length);
+  }
+  // Ids: the owner's own lines; with none of their own, the narrator's home quest and fallback scene.
+  assert.equal(questSetup('dada_jason', 'dada_jason', 2).id, 'quest_dada_jason_2');
+  assert.equal(questSetup('nobody', 'dada_matt', 3).id, 'nar_dada_matt_quest_home_3');
+  assert.deepEqual(hubStory('ellie', 'ellie', 1).ids.lines, ['hub_ellie_1_line1', 'hub_ellie_1_line2', 'hub_ellie_1_line3']);
+  assert.equal(hubStory('dada_matt_cyber', 'dada_matt', 2).ids.circle, 'hub_dada_matt_cyber_2_circle');
+  assert.equal(hubStory('nobody', 'dada_jason', 1).ids.done, 'nar_dada_jason_hub_any_1_done');
+  // A variant drawn for one helper still names a line for another (wrapped).
+  assert.equal(hubStory('seraphina', 'seraphina', 3).ids.done, 'hub_seraphina_1_done');
 });
 
 test('minigames: three different games a episode, fetch twice then the counter, weighted, from the pool', () => {

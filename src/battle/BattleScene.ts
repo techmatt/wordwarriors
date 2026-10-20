@@ -25,8 +25,9 @@
  * room. A wrong pick fires nothing: the fight stays frozen and the partner
  * says what she picked and what to find ("That wasn't ICE, that was HUG! Find
  * ICE!"), as often as it takes; the right one fires the supercharged move
- * (Julia's first play, 2026-10-18). The first choice of each part is the spell the helper taught
- * her in the house, so the word she learned is the one she fires first.
+ * (Julia's first play, 2026-10-18). The first choice of each part is the word the helper gave
+ * her in the hub, so the word she was given is the one she fires first. Reading a pad casts
+ * its word (item 037): a teammate's own move when one answers to it, else the word's effect.
  *
  * Time: `now` is simulation time. Slow-mo, hit-stop and the choice freeze all
  * scale it, and the scene's tweens and timers with it (fx/juice timeScale).
@@ -36,6 +37,7 @@ import Phaser from 'phaser';
 
 import { CHARACTER_BY_ID, MINIONS, abilityCallout, comboFor, comboPart } from '../../content/battle/roster';
 import type { AbilitySpec, Status } from '../../content/battle/types';
+import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { fighterId, moveLine, nameLine, narratorLine, reformedLine, tauntLine, ultimateLine } from '../../content/voice/ids';
 import { startMusic, stopMusic } from '../audio/music';
@@ -153,7 +155,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
   private floors = { heroMain: 0.3, villainMain: 0.4 };
   private stats = { abilitiesFired: 0, ultimates: 0, combos: 0, movePicks: 0 };
   private targetOf = new Map<number, { f: Fighter; until: number }>();
-  /** Move choices opened this part: the first one is the learned spell. */
+  /** Move choices opened this part: the first one is the hub's gift word. */
   private choicesOpened = 0;
   /** Fetched items used this part, for the tests. */
   private itemsUsed = 0;
@@ -767,12 +769,17 @@ export class BattleScene extends Phaser.Scene implements StageHost {
   }
 
   /**
-   * Who fires a planned move word: the owner hero (her own hero for the spell
-   * the helper taught her) with the ability of character `from`.
+   * Who fires a planned move word: the owner hero (her own hero for the gift
+   * word) with the ability of character `from`, or with no `from` the word's
+   * own effect (item 037, word magic). A word whose effect is missing still
+   * fires: a plain bolt in gold, so a choice never fizzles for want of data.
    */
-  private ownerOf(o: MoveOwner): { f: Fighter; ab: AbilitySpec } | null {
+  private ownerOf(o: MoveOwner, word: string): { f: Fighter; ab: AbilitySpec } | null {
     const f = this.heroes.find((h) => h.init.id === o.fighter) ?? this.heroes[0];
-    const ab = CHARACTER_BY_ID[o.from]?.good.abilities.find((a) => a.id === o.ability);
+    const ab =
+      o.from === null
+        ? (EFFECT_BY_WORD[word]?.ability ?? { id: `word_${word}`, name: word.toUpperCase(), kind: 'bolt', cooldown: 0, color: 0xffd23f, power: 2, count: 3, homing: true })
+        : CHARACTER_BY_ID[o.from]?.good.abilities.find((a) => a.id === o.ability);
     return f && ab ? { f, ab } : null;
   }
 
@@ -930,10 +937,10 @@ export class BattleScene extends Phaser.Scene implements StageHost {
   /** The move-choice pause. */
   private async moveChoice(): Promise<void> {
     // The words were planned with the episode (src/rules/moves.ts): the first
-    // of each part is the spell she learned, the rest come from her move bag.
+    // of each part is the hub's gift word, the rest come from her move bag.
     const planned = movePlan()[this.part === 1 ? 'part1' : 'part2'][this.choicesOpened];
     const me = this.heroes[0]!;
-    const owner = planned && this.ownerOf(planned.owner);
+    const owner = planned && this.ownerOf(planned.owner, planned.right);
     if (!planned || !owner || planned.words.length < 2) return;
     const { words, right } = planned;
     this.choicesOpened++;
