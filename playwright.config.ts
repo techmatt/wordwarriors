@@ -45,15 +45,16 @@ export default defineConfig({
   // The GPU draws (full Chromium, ANGLE on D3D11) unless WW_GPU=0, which goes back to
   // headless software GL. Measured 2026-10-19 (item 036): one fight style 53 s against
   // 78 s, the fast lane 76 s against 82 s; the battle holds ~56 fps instead of 11-18.
-  // Item 081: the whole episodes (2-3.5 minutes each) are a project of their own, listed
-  // first, so the three workers start on them: by file name the soak started 4.9 minutes
-  // into the full run and ended it.
-  projects: process.env.WW_NAME_ORDER
-    ? gpuProjects()
-    : gpuProjects().flatMap((p) => [
+  // Files go to workers in plain name order. Item 081 made the whole episodes a project
+  // listed first; once item 083 cut them to under 75 s each, item 085 timed it against name
+  // order on the same tree, three workers, no retries: 5.3 and 5.3 minutes against 4.7 and
+  // 4.7. `WW_EPISODES_FIRST=1` brings that project back.
+  projects: process.env.WW_EPISODES_FIRST
+    ? gpuProjects().flatMap((p) => [
         { ...p, name: 'episodes', testMatch: LONG_SPECS },
         { ...p, testIgnore: LONG_SPECS },
-      ]),
+      ])
+    : gpuProjects(),
 
   // A build served by `vite preview` (item 079, tests/vite.test.config.ts): pages boot
   // from one bundle, and edits to src/ mid-run reach no page. WW_DEV_SERVER=1 serves

@@ -96,8 +96,8 @@ Three commands (item 079, 2026-10-21; times on this machine, the GPU, three work
   Spell the Spell, the cast and fight-style overrides, never last episode's victory scene,
   and the three text-fit checks. It stops itself at 6 minutes, so a hang fails inside
   Claude Code's 10-minute background cap instead of being killed by it.
-- **Everything: `npm run test:all`** (about 5.8 minutes, 100 tests: 5.6 of browser tests
-  after the unit tests, item 083, one run; 7.2 in item 081, 10.2 in item 079, about 20 before
+- **Everything: `npm run test:all`** (about 5 minutes, 103 tests: 4.7 of browser tests
+  after the unit tests, item 085; 5.8 in item 083; 7.2 in item 081, 10.2 in item 079, about 20 before
   it): the unit tests, then every browser test. The slow lane alone is `npm run test:slow` (most of the
   full run's time; not timed alone since item 081): every test tagged `@slow`. Its longest
   (item 083): the soak (72 s, Charge the Spell's whole episodes too), real-time battle 1 (72 s),
@@ -107,12 +107,14 @@ Three commands (item 079, 2026-10-21; times on this machine, the GPU, three work
   (10 s). Item 083 cut it with test-only shortcuts (*Speed, GPU and workers*): instant voice,
   teleporting to a spot, short battles, the real-time episode split three ways, one battle
   part per fight style. Not run by default (Matt, 2026-10-20): only when clearly needed, such
-  as a change touching every scene. Files go to workers in name order, and the soak started
-  4.9 minutes into the run and ended it; since item 081 the whole-episode specs (`episode`,
-  `soak`, `drawn`) are a Playwright project of their own, `episodes`, listed first
-  (`playwright.config.ts`), so the three workers start on them. Item 083 began an A/B of
-  that project against plain name order but stopped it partway (Matt was playtesting), so it
-  stays, untimed against the alternative.
+  as a change touching every scene. Files go to workers in plain name order. Item 081 put
+  the whole-episode specs (`episode`, `soak`, `drawn`) in a project listed first; item 085
+  timed it against name order on the same tree (three workers, `--retries=0`): 5.3 and 5.3
+  minutes against 4.7 and 4.7, so name order is back (`WW_EPISODES_FIRST=1` restores the
+  project). Item 085 also ran it green twice in a row with no retries (4.7 minutes, 103
+  tests) after two test fixes: Charge's rune-timing test on real voice (instant voice let
+  the harness's polling swallow a line before the test's frame sampler saw it) and battle
+  part 2's ability count under `battle=short`.
 
 **The suite serves a build** (item 079, `tests/vite.test.config.ts`): Playwright's server
 runs `vite build` (about 5 s; into `node_modules/.ww-test-dist`, leaving `public/` where it

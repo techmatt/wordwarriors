@@ -85,7 +85,7 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `npm run test:unit` | The unit tests alone (~7 s) |
 | `npm run test:browser` | Before a commit (~50 s): every browser test not tagged `@slow`, plus the specs covering what changed (`npx playwright test <spec>`). A new browser test over ~10 s gets `SLOW` (README, *Tests*) |
 | `npm run test:slow` | The slow lane alone (most of the full run: `@slow`, the part-real-time episode, the soak) |
-| `npm run test:all` | The full run (~6 min): unit tests and every browser test. **Not by default:** only for a change touching every scene |
+| `npm run test:all` | The full run (~5 min): unit tests and every browser test. **Not by default:** only for a change touching every scene |
 | `npm run voice:lines` | Regenerate `content/voice/lines.json` from roster + script + phonics |
 | `npm run voice:build` | Synthesise new/changed lines (`--force` all, `--prune` drop unused). Needs `uv` and network |
 | `npm run voice:status` | Recorded / stale / still edge-tts, letter sounds first |
