@@ -62,28 +62,46 @@ variety (`DIFFICULTY`, `VARIETY`).
 
 ## Tests
 
-Two lanes (re-measured in item 061, 2026-10-20):
+Three commands (item 079, 2026-10-21; times on this machine, the GPU, three workers):
 
-- **Fast lane, after every change: `npm test`** (about 1½ minutes: the unit tests 5 s, then 20
-  browser tests in 87 s on two workers, most 3-7 s each, none over 12 s on one worker;
-  130 s with `--workers=1`). The browser tests not tagged
-  `@slow`: one of each newer room (the bridge at level 3, a Charge round, free play's
-  shots and jump, the word machine opening), the cover check on Smaug's counter banner, the
-  two layout checks, title and the grown-ups page, a solid sentence frame, dad lock, a key
-  held through a scene change, Spell the Spell, the cast and fight-style overrides, never
-  last episode's victory scene, and the three text-fit checks. It stops itself at 6
-  minutes (`--global-timeout`), so a hang fails inside Claude Code's 10-minute background
-  cap instead of being killed by it. `npm run test:unit` runs the unit tests alone (5 s).
-  On 2026-10-21 (item 068, after item 067's variety test) the lane was 22 browser tests in
-  2.0 minutes. `npm run typecheck` checks `src`, `tests`, `content` and `tools` (both
-  tsconfigs; `npm run build` runs it first), which the tests do not.
-- **Everything: `npm run test:all`** (about 19 minutes; 31 before item 061). The fast lane
-  plus the slow lane, which `npm run test:slow` runs alone (about 17 minutes, 58 tests on two
-  workers): every test tagged `@slow`, the one whole episode at real time (6 minutes, the
-  lane's floor: the other worker plays everything else meanwhile), the whole drawn episodes
-  (1.5-1.9 minutes each), the soak (3 minutes). Not run by default (Matt, 2026-10-20): before a commit, the fast lane
-  plus the browser specs that cover what changed (`npx playwright test <spec>`, both
-  lanes of it); the full suite only when clearly needed, such as a change touching every scene.
+- **Fast lane, after every change: `npm test`** (about 20 s; 3.4 minutes before item 079): the unit tests (5-7 s), then the
+  three browser tests tagged `@smoke` (`SMOKE` in `tests/harness.ts`): the title and the
+  grown-ups page, the hub's free play, and a sentence room's banner. It stops itself at 2
+  minutes (`--global-timeout`). `npm run test:unit` runs the unit tests alone.
+  `npm run typecheck` checks `src`, `tests`, `content` and `tools` (both tsconfigs, about
+  2 s; `npm run build` runs it first), which the tests do not.
+- **Before a commit: `npm run test:browser`** (about 50 s, 24 tests; 197 s and one flaky as
+  item 079 found it, then the fast lane) plus the specs that cover
+  what changed (`npx playwright test <spec>`, both lanes of it). `test:browser` is every
+  browser test not tagged `@slow` (the smoke three among them): one of each newer room
+  (the bridge at level 3, a Charge round, free play's shots and jump, the word machine
+  opening), the cover check on Smaug's counter banner, the two layout checks, title and
+  the grown-ups page, a solid sentence frame, dad lock, a key held through a scene change,
+  Spell the Spell, the cast and fight-style overrides, never last episode's victory scene,
+  and the three text-fit checks. It stops itself at 6 minutes, so a hang fails inside
+  Claude Code's 10-minute background cap instead of being killed by it.
+- **Everything: `npm run test:all`** (about 10 minutes, 91 tests; about 20 before item
+  079): the unit tests, then every browser test. The slow lane alone is `npm run test:slow`
+  (about 9.6 minutes, 67 tests; 16.3 before): every test tagged `@slow`, the one whole
+  episode at real time (6 minutes, the lane's floor: the other workers play everything
+  else meanwhile), the whole drawn episodes (1.3-1.7 minutes), the soak (2.7 minutes). Not run by default
+  (Matt, 2026-10-20): only when clearly needed, such as a change touching every scene.
+
+**The suite serves a build** (item 079, `tests/vite.test.config.ts`): Playwright's server
+runs `vite build` (about 5 s; into `node_modules/.ww-test-dist`, leaving `public/` where it
+is) and then `vite preview`, which serves `/art/` and `/voice-gen/` straight from `public/`.
+On the dev server every page boot fetched a few hundred modules transformed on request,
+and with two workers boots and voice fetches stretched: the before-and-after is in
+`docs/engineering.md` (the text-fit caption test 66 s on the dev server, 6 s on the build; the
+solid-frame test 28-57 s and flaky, 5 s). A build also means edits to `src/` mid-run reach
+no page under test, so a long run beside edits needs nothing set up. A run tests the code
+as it was when the run started. `WW_DEV_SERVER=1` serves the dev server instead (as before
+item 079), for a run that wants hot reload or to rule the build out.
+
+Item 079 measured the old dev-server lanes from a cold worktree too: the first run after
+`npm ci` (vite optimising its dependencies, nothing transformed yet) took the then fast
+lane to its 6-minute cap with three tests failing at "waiting for booted; scene=". The
+build has no cold start of that kind.
 
 ### Writing a browser test
 
@@ -91,7 +109,9 @@ A new browser test that takes more than about 10 s gets `SLOW` (`{ tag: '@slow' 
 `tests/harness.ts`) as its options; `--grep @slow` matches the tag, not the title. Item 061
 found the fast lane at 7.8 minutes because 19 tests over 10 s (most of `cover`, `freeplay`,
 `bridge` and `charge`) had come in untagged; keep one cheap test of a new feature in the fast
-lane and tag the rest. A test that fails only on some draws is not flaky: the bridge's
+lane and tag the rest. `SMOKE` (`@smoke`, `npm test`) stays at three tests of a few seconds
+each (item 079): a new feature gets an untagged test in `test:browser`, not a fourth smoke
+test. A test that fails only on some draws is not flaky: the bridge's
 level-1 test failed whenever it drew EGG (it expected `letter_gg_sound`; a doubled letter
 sounds as its single letter, `soundOf`) and passed on the retry's other draw; the level-3
 test the same way on THUMB and LAMB (MB sounds as M; item 072: the spec now takes each
@@ -147,8 +167,8 @@ battles (the brawl is the default episode's own).
 
 The browser tests run the page's clocks 5× fast (`WW_SPEED`, default 5; `tests/harness.ts`):
 timers, tweens, the game loop and voice playback together. The full-episode test alone
-runs at real time (speed 1), so real pacing stays covered. `WW_SPEED=1 npm test` runs
-the fast lane at real time.
+runs at real time (speed 1), so real pacing stays covered. `WW_SPEED=1 npm run test:browser`
+runs the browser lane at real time.
 
 The game's own timeouts run on that clock too, except the network's: until item 069
 `VoiceBank`'s 15 s voice fetch timeout was 3 s of real time in a test, so on a loaded
@@ -166,14 +186,13 @@ so it asserts there too.
 The browser draws with the GPU (Playwright's full `chromium` channel, `--use-angle=d3d11`;
 `playwright.config.ts`): battles run at ~56 fps instead of headless software GL's 11-18,
 and a fight-style test takes 53 s instead of 78 s. `WW_GPU=0` goes back to software GL (for
-a machine without a usable GPU, or to rule the GPU out when something looks wrong). Two
-workers on the GPU, one on software GL (item 061, `playwright.config.ts`): two take the fast
-lane from 130 s to 87 s and the slow lane to 17 minutes (one worker: 23 minutes before item
-061 moved 19 tests into it, so about 27 now, not measured), each test 20-30% slower
-(up to 2× beside the real-time episode) but two at a time; three saved nothing more (83 s)
-and stretched a Charge round's game time past its limit. Tests are spread by file, so two
-tests of one spec never run at once. A run that times something (the Charge round's
-limits, above) wants `--workers=1`.
+a machine without a usable GPU, or to rule the GPU out when something looks wrong). Three
+workers on the GPU, one on software GL (`playwright.config.ts`). Item 061 chose two on the
+dev server (the old fast lane 130 s on one, 87 s on two, 83 s on three, with a Charge round
+stretched past its limit); item 079, serving a build, took the slow lane from 779 s on two
+to 578 s on three, green, and the timed round asserts only on one worker anyway. Tests are
+spread by file, so two tests of one spec never run at once. A run that times something
+(the Charge round's limits, above) wants `--workers=1`.
 
 ### Ports and servers
 
@@ -191,14 +210,14 @@ running yourself (a `vite preview` of a build).
 
 A test that times out "waiting for title" (or "parent page", "hub quiet") with `scene=`
 empty never got past the boot's loading. Seen in item 034 when the machine was loaded (and
-in any run where `src/` changed underneath: the dev server reloads the page): the same
+in any run where `src/` changed underneath on the dev server, which reloads the page): the same
 tests passed when rerun alone. Rerun them alone before suspecting the code. Item 076 saw
 the same with the CPU at 100% from other programs: `(Get-CimInstance
 Win32_Processor).LoadPercentage` in PowerShell shows it; at ~20% the same specs passed. The same
 reload shows as "page.evaluate: Execution context was destroyed, most likely because of a
-navigation" (item 067: five slow specs lost to edits made mid-run). Do not edit `src/`
-or `content/` while a browser run is going, or point the run at a `vite preview` build
-with `WW_BASE_URL` (*Operational facts*, "Long Playwright runs"). A playwright run loads its spec files
+navigation" (item 067: five slow specs lost to edits made mid-run). Since item 079 the
+suite serves a build (*Tests*), so edits to `src/` or `content/` mid-run reach no page;
+only a `WW_DEV_SERVER=1` run still reloads under them. A playwright run loads its spec files
 once at its start, so a spec edited mid-run needs a rerun.
 
 ### Not tests: boot timings and screenshots
@@ -793,14 +812,12 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   lane, about 2½ minutes (the brawl is the default episode's own, played by every default
   whole episode); shots of each style's big beats (combo, ultimate, counter, finish)
   land in `tests/screenshots/fights_*`. `-g cook_off` plays one style.
-- Long Playwright runs: point them at a build so edits to `src/` do not hot-reload the
-  page under test: `npx vite build --outDir scratch/dist-test`, `npx vite preview --outDir
-  scratch/dist-test --port 5175`, then `WW_BASE_URL=http://localhost:5175 npx playwright test`.
-  That is the by-hand port; under conductor use its port instead, `--port $CONDUCTOR_PORT`
-  and `WW_BASE_URL=http://localhost:$CONDUCTOR_PORT` (another item's server may hold 5175).
-  Test pages add `?hooks=1`, which turns the test hooks on in a production build.
+- Long Playwright runs: since item 079 every run serves a build of the code as it was at
+  its start (*Tests*, "The suite serves a build"), so edits to `src/` mid-run reach no page
+  under test and nothing needs setting up. Test pages add `?hooks=1`, which turns the test
+  hooks on in a production build.
 - Until 2026-10-18 the suite reused whatever answered on 5174, so a run in a worktree
-  silently tested the main checkout's dev server. It now always starts its own vite on
+  silently tested the main checkout's dev server. It now always starts its own server on
   5184 (`TEST_PORT`; `CONDUCTOR_PORT` when set, item 047) and never reuses one; with
   `WW_BASE_URL` set it starts none.
 - The full-episode test (`npm run test:slow`) takes about 6 minutes: every line is

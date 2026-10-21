@@ -59,7 +59,8 @@ without a new measurement.
 
 ## Browser and tests
 
-- Playwright **workers: 2** on the GPU since item 061 (2026-10-20), 1 on software GL. Fast
+- Playwright **workers: 2** on the GPU from item 061 (2026-10-20) to item 079 (3 since, on a
+  build: below), 1 on software GL. Fast
   lane (20 tests, files spread over workers, not `--fully-parallel`): 1 worker 130 s, 2
   workers 87 s, 3 workers 83 s with a Charge round stretched to 28 s of game time to the
   read (17 s otherwise; the start-up burst of three boots at once). Slow lane on 2: 58 tests
@@ -81,6 +82,18 @@ without a new measurement.
   hub's opening lines at speed 5. Before, five hub boots in a row ran slower each (7.8 →
   11.8 s): every boot pulled 45 MB through vite; after, the five were within 0.1 s. The
   first run of a server's life is slower (vite transforms the modules) and is not counted.
+- **The suite serves a build (item 079, 2026-10-21)**, `vite build` (about 5 s, `public/`
+  not copied: copying its 190 MB cost 14 s) then `vite preview` serving `public/` beside it
+  (`tests/vite.test.config.ts`). Same machine, GPU, two workers, warm dev server for the
+  before: the browser tests not `@slow` 197 s (one flaky: a boot that never finished) →
+  56 s, no retry; the slow lane 977 s (one flaky, the same) → 779 s, no retry. Per test on
+  the dev server: the text-fit caption test 68.5 s → 5.7 s, the solid-frame test 57 s
+  (failed) / 28 s → 4.3 s, the bridge's level 3 18 s → 11 s, a hub boot 14.5 s → 4.6 s. The
+  whole episodes moved least (the real-time one 365 → 367 s; the soak 206 → 161 s). The
+  first run after `npm ci` on the dev server (cold: dependencies optimised, nothing
+  transformed) took the same lane to its 6-minute cap with 3 failures, every one a boot
+  that never reached a scene. Three workers on the build: the slow lane 779 → 578 s, green;
+  the real-time episode (6.1 minutes) is now near its floor.
 - **Art and voice share the dev server's six HTTP/1.1 connections** (item 065). `<img>`
   requests rank below `fetch` in Chromium and starved behind the voice bank's twelve
   clip fetches (a battle sat in the Wait scene); `priority: 'low'` fetches are held

@@ -20,9 +20,11 @@ export default defineConfig({
   // round's game time stretch past its limit (28 s to the read against 17 s) and
   // saved nothing (83 s). Software GL (WW_GPU=0) falls back to one: there two
   // workers made every test 2.3-2.4x slower (Seraphina's Secret, 2026-08-15).
-  // `--workers=1` for a run that times anything by eye.
+  // `--workers=1` for a run that times anything by eye. Three since item 079 (2026-10-21),
+  // once the suite served a build: the slow lane 779 s on two, 578 s on three, green, the
+  // timed Charge round asserting only on one worker since item 072.
   fullyParallel: false,
-  workers: process.env.WW_GPU === '0' ? 1 : 2,
+  workers: process.env.WW_GPU === '0' ? 1 : 3,
   // A trace is bought on the retry only: tracing every run cost 44% of wall clock there.
   retries: 1,
   reporter: [['list']],

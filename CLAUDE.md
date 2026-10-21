@@ -34,7 +34,7 @@ tests play): hero Julia, helper Ellie, villain Evil Tiamat. **Parked** (code kep
 of the episode, reachable by `?scene=`): Sound → Letter, Blend Path, Word → Picture,
 Spell the Spell, the alarm and the camp retreat.
 
-**Stack:** TypeScript + Phaser ^3.90 (not 4) + Vite, npm. Playwright (two workers) for
+**Stack:** TypeScript + Phaser ^3.90 (not 4) + Vite, npm. Playwright (three workers, on a build) for
 browser tests, `node:test` via tsx for pure rules. Dev port **5174** (`src/port.ts`);
 Playwright serves its own (README, *Ports and servers*). The sibling game
 `C:\Code\seraphinas\seraphinas-secret` is read-only reference.
@@ -81,10 +81,11 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `npm run dev` | Serve at http://localhost:5174 |
 | `npm run build` / `npm run preview` | Typecheck, then static `dist/` / serve it |
 | `npm run typecheck` | `src`, `tests`, `content`, `tools` |
-| `npm test` | Fast lane, after every change (~2 min): unit tests, then the browser tests not tagged `@slow`; stops itself at 6 min. A new browser test over ~10 s gets `SLOW` (README, *Tests*) |
-| `npm run test:unit` | The unit tests alone (~5 s) |
-| `npm run test:slow` | The slow lane alone (~17 min: `@slow`, the real-time episode, the soak) |
-| `npm run test:all` | Both lanes (~19 min). **Not by default:** before a commit, the fast lane plus the specs covering what changed (`npx playwright test <spec>`); the full suite only for a change touching every scene |
+| `npm test` | Fast lane, after every change (~20 s): unit tests, then the three `@smoke` browser tests |
+| `npm run test:unit` | The unit tests alone (~7 s) |
+| `npm run test:browser` | Before a commit (~50 s): every browser test not tagged `@slow`, plus the specs covering what changed (`npx playwright test <spec>`). A new browser test over ~10 s gets `SLOW` (README, *Tests*) |
+| `npm run test:slow` | The slow lane alone (~10 min: `@slow`, the real-time episode, the soak) |
+| `npm run test:all` | The full run (~10 min): unit tests and every browser test. **Not by default:** only for a change touching every scene |
 | `npm run voice:lines` | Regenerate `content/voice/lines.json` from roster + script + phonics |
 | `npm run voice:build` | Synthesise new/changed lines (`--force` all, `--prune` drop unused). Needs `uv` and network |
 | `npm run voice:status` | Recorded / stale / still edge-tts, letter sounds first |
@@ -104,9 +105,9 @@ The timed Charge round asserts its limits only on one worker:
 `npx playwright test tests/charge.spec.ts -g snappy --workers=1` (README, *Speed, GPU and
 workers*).
 
-Never edit `src/` or `content/` while a browser run is going: its server hot-reloads every
-open page ("Execution context was destroyed"). For a long run beside edits, point it at a
-build (README, *Operational facts*, "Long Playwright runs").
+The suite serves a build made as the run starts (`tests/vite.test.config.ts`), so edits to
+`src/` or `content/` mid-run reach no page under test; only `WW_DEV_SERVER=1` (the dev
+server, hot reload and all) still reloads under them (README, *Tests*).
 
 Adding a character, ability, word or line is data work: edit `content/`, then
 `npm run voice:lines && npm run voice:build && npm run art:placeholders` ("the three
