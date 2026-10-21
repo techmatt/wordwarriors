@@ -53,13 +53,15 @@ export function spellingIssues(l: Layout, voice: Since['voice'], scene: string):
  */
 export const GIVEAWAY_PX = 140;
 
-export function giveawayIssues(l: Layout, scene: string): Issue[] {
+export function giveawayIssues(l: Layout, scene: string, read: readonly string[] = []): Issue[] {
   const out: Issue[] = [];
   // The victory recap and the parent page show words with pictures on purpose: she has read them.
   if (scene === 'Victory' || scene === 'Parent') return out;
   for (const im of l.images) {
     if (!im.key.startsWith('pic_')) continue;
     const word = im.key.slice(4).toUpperCase();
+    // A word she has read this episode (a fetched thing used in battle: THE ANT!) gives nothing away (item 069).
+    if (read.some((r) => r.toUpperCase() === word)) continue;
     const near = l.texts.find((t) => t.text.replace(/[^A-Z ]/gi, ' ').toUpperCase().split(/\s+/).includes(word) && gap(im.b, t.b) <= GIVEAWAY_PX);
     if (near) out.push({ kind: 'giveaway', severity: 'bug', scene, detail: `${word} printed beside its picture ("${near.text.slice(0, 30)}")`, key: `giveaway:${scene}:${word}` });
   }

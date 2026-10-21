@@ -85,7 +85,8 @@ without a new measurement.
 - **The cook-off fight test fails on main too** (checked 2026-10-20 11:48pm with main's
   `src`): `fights.spec` cook_off collects 128-216 `voice: could not decode … AbortError`
   (VoiceBank's 15 s fetch timeout, 3 s real at speed 5) across its two boots. Not item
-  065's; the other fight styles pass.
+  065's; the other fight styles pass. Item 069 put the voice and art fetch timeouts on the
+  wall clock (`src/realTime.ts`), so test speed no longer shortens them.
 - Before item 061: workers 1 (Seraphina measured 2 workers as 2.3–2.4× slower per test,
   and frame-rate-sensitive assertions broke). Re-measured here 2026-10-18 on the 9 smoke
   tests at clock speed 3 (`--fully-parallel`): 1 worker 2m24s, 2 workers 2m02s, 3 workers

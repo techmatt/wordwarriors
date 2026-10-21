@@ -212,7 +212,7 @@ class Recorder {
     this.add(layoutIssues(l, s.scene, PLACEHOLDERS), shot);
     this.add(leakIssues(s, l, q.voice.filter((v) => v.t >= this.roundStart)), shot);
     this.add(spellingIssues(l, q.voice, s.scene), shot);
-    this.add(giveawayIssues(l, s.scene), shot);
+    this.add(giveawayIssues(l, s.scene, s.episode.read), shot);
   }
 
   async stop(): Promise<void> {

@@ -342,7 +342,10 @@ export async function readToKeyWord(page: Page): Promise<WWState> {
     const sent = s.room!.sentence!;
     if (sent.pass === 'find') return s;
     await press(page, 'green');
-    await until(page, (st) => st.room?.sentence?.pass !== 'read' || st.room.sentence.index !== sent.index, 10_000, `read-along past word ${sent.index}`);
+    // A green that landed while a yellow replay held the room (a busy child, item 069) is a hop, not a step: the loop presses again.
+    const moved = (st: WWState) => st.room?.sentence?.pass !== 'read' || st.room.sentence.index !== sent.index;
+    await until(page, (st) => moved(st) || !st.room?.locked, 10_000, `read-along past word ${sent.index}`);
+    if (!moved(await state(page))) await until(page, moved, 1_500, `read-along past word ${sent.index}`).catch(() => undefined);
   }
   throw new Error('the read-along never reached the key word');
 }
