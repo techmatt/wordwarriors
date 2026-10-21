@@ -195,7 +195,8 @@ export class ParentScene extends Phaser.Scene {
       const mark = badge?.(id);
       this.add.circle(x + 8, y + 11, mark ? 9 : 7, c);
       if (mark) this.add.text(x + 8, y + 11, mark, { fontFamily: 'Segoe UI, sans-serif', fontSize: '12px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
-      fitText(this.add.text(x + 22, y, `${id}  ${s.seen} · ${recent} · ${today.seen}`, { fontFamily: 'Consolas, monospace', fontSize: '16px', color: '#222' }), colW - 30, rowH - 2);
+      // One row each, shrunk to fit (item 080): with the row's height, two wrapped rows fitted and a frame's last count fell under it.
+      fitText(this.add.text(x + 22, y, `${id}  ${s.seen} · ${recent} · ${today.seen}`, { fontFamily: 'Consolas, monospace', fontSize: '16px', color: '#222' }), colW - 30, Math.min(rowH - 2, 22));
     });
   }
 

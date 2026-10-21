@@ -191,3 +191,50 @@ Most important first; the hunt's pick is in **bold**. Matt took every pick (item
 | W13 | Stretchy Bridge | After a wrong pick, its letters (R O CK) sit over the next picture for the feedback line. | The room is locked then, and the plate fades before she slides again. |
 | W14 | Battle, free play | Free play's jump puffs and big-shot rings started just before a choice hang faintly through it. | Same as W8: a faint effect for one choice. |
 | W15 | Word machine | The capital Y in Comic Sans looks like a lower-case y. | It is the font's capital Y; the game's letters are all capitals. |
+
+## Hunt 3 (item 080, 2026-10-21)
+
+The lenses the first two hunts never ran, as the checker's fourth batch (`QA_SET=lenses`,
+README, "The bug-hunt checker"): reloading at five points, a tab hidden every 9 s, six
+window sizes, slow and failing fetches, dad lock and the grown-ups page at thirteen
+points of an episode, 48 URL flags and odd values, F2 and F4 through an episode; and a
+code read over six lenses (reload and the store, focus and resize, the network, every
+flag and dev key, the grown-ups page with dad lock, items 070-079), each finding checked
+by a second reader trying to refute it. Cut short at Matt's word (one round).
+
+What held: a reload anywhere leaves the store as it was and the game at the title; F9 and
+back at all thirteen points came back to the same scene and changed nothing stored; dad
+lock let no press through at any point and no re-prompt played while locked; slowed
+fetches (0.3 to 1.5 s each) made no line silent and no art late; with one fetch in seven
+failing (243 in an episode) the episode still finished and every art id retried in.
+
+### Fixed
+
+| # | Where | What | Kept fixed by |
+| --- | --- | --- | --- |
+| 77 | Dev keys | A held F-key repeated: a long F8 on the grown-ups page armed and erased the whole record, a long F2 raced through steps, a long F9 flipped between the page and the scene. A held F-key is one press. | `tests/lenses.spec.ts` "a held F8" |
+| 78 | Grown-ups page | Under dad lock its green, red and Esc did nothing (only F9 got back), though its help line offers them. The page is Dad's: they work under the lock. | `tests/lenses.spec.ts` |
+| 79 | Battle move choice | Under dad lock the stick hint still came up beside her hero (the rooms hold it back). It waits with the lock now. | `tests/lenses.spec.ts` |
+| 80 | Dad lock, Dad's 1 / 2 | After a resize (F11, maximise, a smaller window) the DAD LOCK badge and Dad's 1 ✗ / 2 ✓ cue were placed by the canvas as it was before Phaser refitted it, so they hung mid-screen or off the canvas. Placed again after the refit. | `tests/lenses.spec.ts` |
+| 81 | Every scene | A hidden tab (switching tabs or windows) froze the picture but not the voice: Phaser sleeps its loop, the game's own audio context played on, and lines chained on their audio (the hub's story, the gift word) played out unseen. The context now suspends with the loop, a line's backstop waits for a suspended clip, and a line that comes up while hidden starts when the tab is back. | `tests/lenses.spec.ts` "a hidden tab holds the voice" |
+| 82 | Grown-ups page | The sentence frames' counts wrapped, the last number on a row of its own under the frame's name. One row each, shrunk to fit. | contact sheet |
+| 83 | Grown-ups page | The third number was labelled "today" but counts since the page opened (a reload starts it again). Labelled so. | static review |
+
+The checker itself: the clipped-line heuristic no longer flags "Quick, pick a move!", "Now's
+our chance!", "Ready, set, go!" or "Look, a secret door!", and flags every "X for
+everybody!" with no verb (M18); `tests/unit/qacategories.test.ts`.
+
+### Matt's calls
+
+| # | Where | What | Options | Ruling |
+| --- | --- | --- | --- | --- |
+| M18 | Victory scene | The reformed villains' sorries are clipped by the category list (complete, natural sentences): Ellie "Sorry! Bubbles for everybody!", Smaug "Gold coins for everybody!", Bavmorda "Cauldron soup for everybody, it is yummy!", Rilla "Gorilla hugs for everybody!", blade Dada Matt "Sparkles for everybody!", warlock Dada Jason "Sparkles and giggles for everybody!" and "Happy magic for everybody!" (Chef Jason's "There are seconds for everybody!" is whole). | (a) keep, a cheer; **(b) "Sorry! I made bubbles for everybody!", "I have gold coins for everybody!", "I made cauldron soup for everybody, and it is yummy!", "I have gorilla hugs for everybody!", "I made sparkles for everybody!", "I have sparkles and giggles for everybody!", "I have happy magic for everybody!"; then `voice:lines`, `voice:build`** | Asked in item 080; Matt chose to list it here. |
+| M19 | Every scene (no voice manifest) | With `public/voice-gen/manifest.json` missing or unreadable (a fresh checkout before `voice:build`, a broken junction), line texts are gone too (they live in the manifest), so every instruction is a blank 0.6 s with no caption: the game runs on with nothing said or shown. | (a) keep: the game is played from a built checkout; **(b) captions from `content/voice/lines.json` when the manifest fails (about the size of the manifest in the bundle), each timed by its words**; (c) a full-screen "voice not built" notice instead of playing on | |
+
+### Won't fix
+
+| # | Where | What | Why |
+| --- | --- | --- | --- |
+| W16 | Dad lock | Under the lock the bedroom's wake-up story, the warm-up's intro (its letter names and sounds) and the victory scene's lines into the recap run on by themselves. | W10's kind: no press moves them, they are the flow; W10 names the places if Matt wants the lock to pause it. |
+| W17 | Network | With one fetch in seven failing, two lines in an episode played silent (their clip's fetch failed again when asked). | Every art id and nearly every clip retried in; the game needs no network (README, *Operational facts*). |
+| W18 | Reload | The rotations remember an episode's cast and rooms from the bedroom on, so an episode reloaded early still counts as seen for the next draws. | By design (`src/episode/draws.ts`): an episode she has begun has shown its villain and rooms. |

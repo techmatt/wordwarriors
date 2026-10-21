@@ -480,7 +480,9 @@ function probes(page: Page, sc: Scenario, rec: Recorder, reloadAt: Point | null,
       const said = await page.evaluate((t) => (window as unknown as { __wwqa: { since(t: number): Since } }).__wwqa.since(t).voice.map((v) => v.id), t0);
       const badge = await page.evaluate(() => Boolean(document.getElementById('dad-lock')?.isConnected));
       log.push({ point: p, scene: before.scene, moved: where(after) !== where(before), before: where(before), after: where(after), said, badge });
-      if (where(after) !== where(before)) rec.add([{ kind: 'dadlock-leak', severity: 'bug', scene: before.scene, detail: `${p}: ${where(before)} -> ${where(after)}`, key: `dadlock:${p}` }], rec.lastShot);
+      // The bedroom's wake-up, the warm-up's intro and the victory scene run on by themselves (W10): a look there.
+      const flows = p === 'bedroom' || p === 'entry' || p === 'ending';
+      if (where(after) !== where(before)) rec.add([{ kind: flows ? 'dadlock-flow' : 'dadlock-leak', severity: flows ? 'look' : 'bug', scene: before.scene, detail: `${p}: ${where(before)} -> ${where(after)}`, key: `dadlock:${p}` }], rec.lastShot);
       if (!badge) rec.add([{ kind: 'dadlock-badge', severity: 'bug', scene: before.scene, detail: `${p}: no DAD LOCK badge while locked`, key: `dadbadge:${p}` }], rec.lastShot);
       await page.keyboard.press('Backquote');
     }
