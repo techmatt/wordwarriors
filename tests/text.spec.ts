@@ -13,6 +13,7 @@ import { SMOKE, type TextInfo, boot, collectErrors, expectNoErrors, texts, until
 
 interface Line {
   id: string;
+  speaker: string;
   text: string;
 }
 
@@ -58,7 +59,10 @@ test('the longest caption and the longest bubble stay on screen, even at the edg
   const errors = collectErrors(page);
   // The hub has both the ribbon and the bubbles. Part 2's: it says one line
   // (the secret door), where part 1 gives the gift word first (20-40 s).
-  await boot(page, '?scene=house&part=2&nojourney=1');
+  // The longest bark's speaker is the villain, so the hub has its art (item 082:
+  // Bavmorda's reworded sorry became the longest, and she was not in the cast).
+  const bark = longest((l) => l.id.startsWith('taunt_') || l.id.startsWith('reformed_'));
+  await boot(page, `?scene=house&part=2&nojourney=1&villain=${bark.speaker}`);
   // Once the hub's own line is over and it is quiet: otherwise its next
   // line cuts the test's bubble off within a frame or two of popping in.
   await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:2:secret' && !s.room.locked && !s.voice.busy, 60_000, 'hub quiet');
@@ -76,7 +80,6 @@ test('the longest caption and the longest bubble stay on screen, even at the edg
   const ribbon = await untilTexts(page, (t) => t.some((x) => x.text === lastWord), `the ribbon showing "${instruction.text}"`);
   expect(ribbon.filter((t) => t.offscreen), instruction.text).toEqual([]);
 
-  const bark = longest((l) => l.id.startsWith('taunt_') || l.id.startsWith('reformed_'));
   const words = bark.text.toUpperCase().split(/\s+/).join(' ');
   for (const at of [{ x: 0, y: 0 }, { x: 1280, y: 720 }, { x: 640, y: 360 }]) {
     await say(page, bark.id, 'bark', at);
