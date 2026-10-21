@@ -156,8 +156,8 @@ or side-room pair, nor a word.
 | 72 | Speech rule | A compound whose first half is not a bank word hid its second half: lifter Dada Matt's DUMBBELL SPIN (and KETTLEBELL CRASH) before BELL as the attic's word; Bavmorda's BROOMSTICK before STICK. A listed first half (BATH, BROOM, DUMB, KETTLE, EAR, HAND, HAZEL, SNOW, WAR) gives its second half. | `tests/unit/wordrules.test.ts` |
 | 73 | Speech rule | With no ally the helper steps into the combo (its banner and name), but the name was not counted as said. | `tests/unit/wordrules.test.ts` |
 | 74 | Speech rule | The bedroom's toy drum, rubber duck and night-light show DRUM, DUCK and LAMP every episode (and Chef Jason's hub prop 🍲 is LID's picture), yet those words could be read later that episode. They count as shown, like the door signs. | code review |
-| 76 | Sentence rooms | SCAR NEEDS A CHEESE: the "A" frames took words with no "A" (CHEESE, MILK, JAM, GRASS, CHIPS). | `tests/unit/wordrules.test.ts` |
 | 75 | Charge the Spell | "Let's sound it out together!" played the sounds back to back, which runs toward a blend (worse with Matt's tightly cut recordings). A 400 ms beat between them, as the entry hall's and the sentence room's sound-outs have. | `tests/charge.spec.ts` (item 059's round) |
+| 76 | Sentence rooms | SCAR NEEDS A CHEESE: the "A" frames took words with no "A" (CHEESE, MILK, JAM, GRASS, CHIPS). | `tests/unit/wordrules.test.ts` |
 
 The checker itself: a busy child's yellow waits while the driver answers (it stalled the
 driver, not the game); the giveaway check skips words already read and the warm-up's
