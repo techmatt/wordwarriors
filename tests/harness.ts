@@ -272,11 +272,26 @@ async function steer(page: Page, x: number, y: number, close: number, at: (s: WW
 export async function choose(page: Page, id?: string): Promise<string> {
   const s = await until(page, (st) => Boolean(st.room && !st.room.locked && st.room.spots.some((sp) => (id ? sp.id === id : sp.correct === true))), 90_000, `spot ${id ?? 'correct'}`);
   const spot = s.room!.spots.find((sp) => (id ? sp.id === id : sp.correct === true))!;
-  await walkTo(page, spot.x, spot.y + 12);
-  await until(page, (st) => Boolean(st.room && !st.room.locked), 30_000, 'room unlocked');
-  await press(page, 'green');
+  driver.busy++;
+  try {
+    await walkTo(page, spot.x, spot.y + 12);
+    await until(page, (st) => Boolean(st.room && !st.room.locked), 30_000, 'room unlocked');
+    await press(page, 'green');
+    // One frame for the press to land before a busy child's yellow may lock the room again.
+    await page.waitForTimeout(150);
+  } finally {
+    driver.busy--;
+  }
   return spot.id;
 }
+
+/**
+ * The driver is about to press green on an answer (`choose`, the read-along):
+ * the bug-hunt checker's busy child (item 069) holds its yellow meanwhile, or
+ * a replay it starts would lock the room just as green lands, a hop and no
+ * answer, and the driver would wait for an answer that never comes.
+ */
+export const driver = { busy: 0 };
 
 /**
  * Play a battle part, answering each move choice; `wrongFirst` picks a wrong
@@ -341,11 +356,13 @@ export async function readToKeyWord(page: Page): Promise<WWState> {
     );
     const sent = s.room!.sentence!;
     if (sent.pass === 'find') return s;
-    await press(page, 'green');
-    // A green that landed while a yellow replay held the room (a busy child, item 069) is a hop, not a step: the loop presses again.
-    const moved = (st: WWState) => st.room?.sentence?.pass !== 'read' || st.room.sentence.index !== sent.index;
-    await until(page, (st) => moved(st) || !st.room?.locked, 10_000, `read-along past word ${sent.index}`);
-    if (!moved(await state(page))) await until(page, moved, 1_500, `read-along past word ${sent.index}`).catch(() => undefined);
+    driver.busy++;
+    try {
+      await press(page, 'green');
+      await until(page, (st) => st.room?.sentence?.pass !== 'read' || st.room.sentence.index !== sent.index, 10_000, `read-along past word ${sent.index}`);
+    } finally {
+      driver.busy--;
+    }
   }
   throw new Error('the read-along never reached the key word');
 }

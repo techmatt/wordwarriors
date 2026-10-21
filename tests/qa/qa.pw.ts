@@ -23,7 +23,7 @@ import { test, type Page } from '@playwright/test';
 
 import { BANK } from '../../content/phonics/bank';
 import { FREE_PLAY } from '../../src/config';
-import { boot, choose, collectErrors, hubGo, leaveBedroom, playBattle, playBridgeRoom, playChargeRoom, playEntry, playWordMachine, press, readToKeyWord, seedProgress, state, until, type WWState } from '../harness';
+import { boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBattle, playBridgeRoom, playChargeRoom, playEntry, playWordMachine, press, readToKeyWord, seedProgress, state, until, type WWState } from '../harness';
 import { layoutIssues, leakIssues, logIssues, placeholderArt, voiceBuildIssues, type Issue, type Layout, type Since } from './checks';
 import { clippedIssues, giveawayIssues, pacingIssues, spellingIssues } from './wording';
 
@@ -272,7 +272,9 @@ function mash(page: Page): { stop(): Promise<void> } {
   let on = true;
   const loop = (async () => {
     for (let n = 0; on; n++) {
-      await press(page, (['blue', 'red', 'yellow'] as const)[n % 3]!).catch(() => undefined);
+      const b = (['blue', 'red', 'yellow'] as const)[n % 3]!;
+      // Yellow waits while the driver answers (`driver` in the harness).
+      if (b !== 'yellow' || driver.busy === 0) await press(page, b).catch(() => undefined);
       await page.waitForTimeout(MASH_MS).catch(() => undefined);
     }
   })();

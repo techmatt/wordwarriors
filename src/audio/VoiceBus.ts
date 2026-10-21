@@ -21,6 +21,7 @@ import { getAudioContext, unlockAudio } from './context';
 import type { HoldMode } from './holdSound';
 import { setMusicDuck } from './music';
 import { setSfxLevel } from './sfx';
+import { realTimeout } from '../realTime';
 import { voiceBank, type VoiceLine, type VoicePlayback } from '../voice/VoiceBank';
 
 export type Priority = 'instruction' | 'bark';
@@ -57,7 +58,8 @@ export const ENSURE_TIMEOUT_MS = 4000;
 /** Wait for a line's decode, at most `ms`: 'done', 'failed', or 'late' when it has not settled. */
 function decodeWithin(p: Promise<void>, ms: number): Promise<'done' | 'failed' | 'late'> {
   let timer: ReturnType<typeof setTimeout> | undefined;
-  const late = new Promise<'late'>((resolve) => (timer = setTimeout(() => resolve('late'), ms)));
+  // Wall-clock time (item 069): a decode is real work, and at test speed 5 the wait was 0.8 s.
+  const late = new Promise<'late'>((resolve) => (timer = realTimeout(() => resolve('late'), ms)));
   const settled = p.then(
     () => 'done' as const,
     () => 'failed' as const,
