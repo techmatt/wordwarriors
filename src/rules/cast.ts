@@ -11,7 +11,9 @@
  *     forms do not crowd the pool), in their episode form for a dad. Never
  *     one of her last few villains while another is left.
  *   - The ally: a person from the active cast's allies who is neither the
- *     hero nor the villain; a dad sometimes, in his episode form.
+ *     hero nor the villain; a dad sometimes, in his episode form. Her last
+ *     allies sit out, and each dad's last forms, while two are left to choose
+ *     from (item 067, src/rules/recent.ts `fresh`).
  *   - The primary dad wakes her (and narrates when there is no ally): Dada
  *     Matt 60% of the time, Dada Jason 40%. In half the episodes the other dad
  *     comes into the bedroom too, as the secondary. A dad already playing the
@@ -25,6 +27,7 @@
 import { PERSONS, formId, formsOf, personOf } from '../../content/battle/roster';
 import { ACTIVE_CAST, CAST_ODDS } from '../config';
 import type { Rand } from './bank';
+import { fresh } from './recent';
 
 /** The two dads: the only wakers (their wake-up lines are voiced). */
 export const DADS = ['dada_matt', 'dada_jason'] as const;
@@ -58,6 +61,10 @@ export interface CastInput {
   hero: string;
   /** Her recent villains (persons), newest last: avoided while any other is left. */
   recent?: string[];
+  /** Her recent allies (persons), newest last (item 067): avoided the same way. */
+  recentAllies?: string[];
+  /** Each dad's recent forms (roster ids), newest last (item 067): avoided the same way. */
+  recentForms?: Partial<Record<string, string[]>>;
   overrides?: CastOverrides;
 }
 
@@ -92,7 +99,7 @@ export function drawCast(input: CastInput, rand: Rand = Math.random, active: { a
   for (const dad of DADS) {
     const fixed = o.forms?.[dad];
     const byRole = [o.ally, o.villain].find((id) => id && personOf(id) === dad);
-    forms[dad] = byRole ?? (fixed ? formId(dad, fixed) : undefined) ?? pick(formsOf(dad), rand).id;
+    forms[dad] = byRole ?? (fixed ? formId(dad, fixed) : undefined) ?? pick(fresh(formsOf(dad).map((f) => f.id), input.recentForms?.[dad] ?? []), rand);
   }
   const inForm = (person: string) => (isDad(person) ? forms[person]! : person);
 
@@ -125,7 +132,8 @@ export function drawCast(input: CastInput, rand: Rand = Math.random, active: { a
   if (o.ally !== undefined) ally = o.ally;
   else {
     const pool = activePersons(active.allies).filter((p) => p !== heroPerson && p !== villainPerson);
-    ally = pool.length ? inForm(pick(pool, rand)) : null;
+    // Her last allies sit out like her villains (item 067), leaving two to choose from.
+    ally = pool.length ? inForm(pick(fresh(pool, input.recentAllies ?? []), rand)) : null;
   }
   const allyPerson = ally ? personOf(ally) : null;
 

@@ -15,8 +15,9 @@ import type { AbilityKind } from '../../content/battle/types';
 import { chargeKey, letterSoundLine, narratorLine } from '../../content/voice/ids';
 import { CHARGE_GESTURES, NARRATOR_LINES } from '../../content/voice/script';
 import { PERSONS } from '../../content/battle/roster';
-import { CHARGE } from '../../src/config';
-import { CHARGE_WORDS, RUNE_SOUNDS, chargeLevel, nextChargeLevel, planCharge, tierGate } from '../../src/rules/charge';
+import { CHARGE, DIFFICULTY } from '../../src/config';
+import { CHARGE_WORDS, RUNE_SOUNDS, chargeLevel, nextChargeLevel, planCharge, recordedChargeLevel } from '../../src/rules/charge';
+import { setDifficulty } from '../../src/rules/difficulty';
 import { CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, drawGames } from '../../src/rules/minigames';
 import { withStems } from '../../src/rules/bank';
 import { episodePlans } from '../../src/rules/sentences';
@@ -90,7 +91,15 @@ test('ramp: a new sound starts at level 1; an unaided yes is less help, an assis
   assert.equal(nextChargeLevel(3, true), 3);
   assert.equal(nextChargeLevel(1, false), 1);
   store.setChargeLevel('m', 3);
-  assert.equal(chargeLevel(new ProgressStore(storage), 'm'), 3);
+  assert.equal(recordedChargeLevel(new ProgressStore(storage), 'm'), 3);
+  // Item 067: the level given is held at the start at base, up to the knob above it.
+  assert.equal(chargeLevel(new ProgressStore(storage), 'm'), 1);
+  setDifficulty(3);
+  try {
+    assert.equal(chargeLevel(new ProgressStore(storage), 'm'), 3);
+  } finally {
+    setDifficulty(DIFFICULTY);
+  }
   // A blob from before item 053 (no chargeLevels) loads, history kept.
   const old = memory();
   const blob = { ...new ProgressStore(memory()).snapshot(), episodes: 4 } as Record<string, unknown>;
@@ -114,30 +123,26 @@ test('words (item 058): every charge word is a familiar picture of 3-4 units, ea
   }
 });
 
-test('draw: a fresh store spells a word of continuous sounds, through the bank', () => {
+test('draw (item 067): a fresh store spells any charge word, quick sounds and digraphs included, through the bank', () => {
   const rand = seeded(3);
+  let quick = 0;
   for (let seed = 1; seed <= 60; seed++) {
     const { word, units, runes } = planCharge(new ProgressStore(memory()), { avoid: [] }, rand);
     assert.ok(CHARGE_WORDS.includes(word), word);
     assert.deepEqual(units, BANK_BY_WORD[word]!.units);
     assert.deepEqual(runes, BANK_BY_WORD[word]!.sounds);
-    assert.ok(runes.every((s) => tier(s) === 1), `seed ${seed}: ${word} is all continuous`);
+    if (runes.some((s) => tier(s) > 1)) quick++;
   }
+  assert.ok(quick > 30, `words with a quick sound or digraph came up ${quick}/60 times`);
 });
 
-test('draw: quick sounds join once the continuous ones are solid; avoided words never come up', () => {
+test('draw: avoided words never come up', () => {
   const store = new ProgressStore(memory());
-  assert.equal(tierGate(store, 2), 0);
-  for (const r of RUNES.filter((x) => x.tier === 1)) for (let i = 0; i < 4; i++) store.record('sounds', r.sound, true, 0);
-  assert.equal(tierGate(store, 2), 1);
-  let quick = 0;
   const rand = seeded(9);
   for (let k = 0; k < 60; k++) {
-    const { word, runes } = planCharge(store, { avoid: ['cat', 'dog'] }, rand);
+    const { word } = planCharge(store, { avoid: ['cat', 'dog'] }, rand);
     assert.ok(word !== 'cat' && word !== 'dog');
-    if (runes.some((s) => tier(s) === 2)) quick++;
   }
-  assert.ok(quick > 30, `words with a quick sound came up ${quick} times`);
 });
 
 test('draw: a word with a shaky sound comes up more than one with only solid sounds', () => {

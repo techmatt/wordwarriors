@@ -13,6 +13,7 @@ import { questFor } from '../../content/house/quests';
 import { WAKE_VARIANTS } from '../../content/voice/script';
 import { scenesFor } from '../../content/house/scenes';
 import type { Rand } from './bank';
+import { fresh } from './recent';
 
 /** Variant numbers, from 1. */
 export interface Story {
@@ -22,10 +23,34 @@ export interface Story {
 
 export const DEFAULT_STORY: Story = { quest: 1, scene: 1 };
 
-/** One of `count` variants, from 1; always 1 when `fixed`. */
-export function pickVariant(count: number, rand: Rand, fixed: boolean): number {
+/**
+ * One of `count` variants, from 1; always 1 when `fixed`. Her `recent`
+ * variants of it (newest last) sit out while two are left (item 067,
+ * src/rules/recent.ts `fresh`); with none recent the draw is as before.
+ */
+export function pickVariant(count: number, rand: Rand, fixed: boolean, recent: readonly number[] = []): number {
   if (fixed || count <= 1) return 1;
-  return 1 + Math.min(count - 1, Math.floor(rand() * count));
+  const from = fresh(Array.from({ length: count }, (_, i) => i + 1), recent);
+  return from[Math.min(from.length - 1, Math.floor(rand() * from.length))]!;
+}
+
+/** Recent variants per key (the store's `recent`, as numbers), for `drawStory` and `drawLines`. */
+export type RecentVariants = (key: string) => number[];
+
+const none: RecentVariants = () => [];
+
+/** The store keys of an episode's variants (item 067): `quest_<helper>`, `scene_<helper>`, `line_<key>` (the villain's own lines by villain). */
+export function variantKeys(helper: string, villain: string): { quest: string; scene: string } & Record<keyof LineVariants, string> {
+  return {
+    quest: `quest_${helper}`,
+    scene: `scene_${helper}`,
+    up: 'line_up',
+    good: 'line_good',
+    door: 'line_door',
+    taunt: `line_taunt_${villain}`,
+    sorry: `line_sorry_${villain}`,
+    ending: `line_ending_${villain}`,
+  };
 }
 
 /**
@@ -49,22 +74,24 @@ export const DEFAULT_LINES: LineVariants = { up: 1, good: 1, door: 1, taunt: 1, 
 export const BEDROOM_TAUNTS = 3;
 
 /** One episode's line variants, drawn after the story with the same rand; all 1 when `fixed`. */
-export function drawLines(villain: string, rand: Rand, fixed: boolean): LineVariants {
+export function drawLines(villain: string, rand: Rand, fixed: boolean, recent: RecentVariants = none): LineVariants {
   const v = CHARACTER_BY_ID[villain];
+  const k = variantKeys('', villain);
   return {
-    up: pickVariant(WAKE_VARIANTS, rand, fixed),
-    good: pickVariant(WAKE_VARIANTS, rand, fixed),
-    door: pickVariant(WAKE_VARIANTS, rand, fixed),
-    taunt: pickVariant(Math.min(BEDROOM_TAUNTS, v?.evil.taunts.length ?? 1), rand, fixed),
-    sorry: pickVariant(v?.reformed.sorry.length ?? 1, rand, fixed),
-    ending: pickVariant(v?.reformed.ending.length ?? 1, rand, fixed),
+    up: pickVariant(WAKE_VARIANTS, rand, fixed, recent(k.up)),
+    good: pickVariant(WAKE_VARIANTS, rand, fixed, recent(k.good)),
+    door: pickVariant(WAKE_VARIANTS, rand, fixed, recent(k.door)),
+    taunt: pickVariant(Math.min(BEDROOM_TAUNTS, v?.evil.taunts.length ?? 1), rand, fixed, recent(k.taunt)),
+    sorry: pickVariant(v?.reformed.sorry.length ?? 1, rand, fixed, recent(k.sorry)),
+    ending: pickVariant(v?.reformed.ending.length ?? 1, rand, fixed, recent(k.ending)),
   };
 }
 
 /** The helper's quest line and hub scene for one episode. */
-export function drawStory(helper: string, rand: Rand, fixed: boolean): Story {
+export function drawStory(helper: string, rand: Rand, fixed: boolean, recent: RecentVariants = none): Story {
+  const k = variantKeys(helper, '');
   return {
-    quest: pickVariant(questFor(helper).lines.length, rand, fixed),
-    scene: pickVariant(scenesFor(helper).length, rand, fixed),
+    quest: pickVariant(questFor(helper).lines.length, rand, fixed, recent(k.quest)),
+    scene: pickVariant(scenesFor(helper).length, rand, fixed, recent(k.scene)),
   };
 }

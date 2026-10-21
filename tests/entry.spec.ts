@@ -76,11 +76,11 @@ test('warm-up, a new player: each letter name then its sound and never the word,
   expectNoErrors(errors);
 });
 
-test('warm-up levels: 2 gives the sounds with the letters shown, 3 the sounds only; never the word; a first-time right at 2 moves up to 3', SLOW, async ({ page }) => {
-  test.setTimeout(120_000);
+test('warm-up levels (at ?difficulty=3): 2 gives the sounds with the letters shown, 3 the sounds only; never the word; a first-time right at 2 moves up to 3; at base a word recorded at 3 still gets level 1', SLOW, async ({ page }) => {
+  test.setTimeout(150_000);
   const errors = collectErrors(page);
   await seedProgress(page, { version: 1, grabLevels: allAt(2) });
-  await boot(page, '?scene=grab&nojourney=1');
+  await boot(page, '?scene=grab&nojourney=1&difficulty=3');
   const two = await clued(page);
   const w2 = two.room!.grab!.word;
   expect(two.room!.grab!.level).toBe(2);
@@ -97,12 +97,26 @@ test('warm-up levels: 2 gives the sounds with the letters shown, 3 the sounds on
   // A tab behind another gets no animation frames on the GPU channel, so the game never boots in it.
   await page3.bringToFront();
   await seedProgress(page3, { version: 1, grabLevels: allAt(3) });
-  await boot(page3, '?scene=grab&nojourney=1');
+  await boot(page3, '?scene=grab&nojourney=1&difficulty=3');
   const three = await clued(page3);
   const w3 = three.room!.grab!.word;
   expect(three.room!.grab!.level).toBe(3);
   expect(clueLines(three)).toEqual([`nar_ellie_grab_ask`, ...sounds(w3)]);
   await shot(page3, 'level3');
+
+  // Base difficulty (item 067): the ramp is recorded but held at its start.
+  const base = await page.context().newPage();
+  await base.bringToFront();
+  await seedProgress(base, { version: 1, grabLevels: allAt(3) });
+  await boot(base, '?scene=grab&nojourney=1');
+  const one = await clued(base);
+  const w1 = one.room!.grab!.word;
+  expect(one.room!.grab!.level).toBe(1);
+  expect(clueLines(one)).toEqual([`nar_ellie_grab_ask`, ...namesAndSounds(w1)]);
+  await choose(base, `grab_${w1}`);
+  const held = await until(base, (st) => st.room?.round === 'entry:door', 60_000, 'grabbed at base');
+  // Right first time: her recorded level stays at the top (3), the hall gave 1.
+  expect((held.progress as unknown as { grabLevels: Record<string, number> }).grabLevels[w1]).toBe(3);
   expectNoErrors(errors);
 });
 

@@ -36,7 +36,7 @@ import { sfxRight, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
 import { backToHub, castFace, counterArt, episode, namedCounter, narrator, planFor, villainSpec, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
-import { asSentence, frameIsSolid, type SentencePlan } from '../rules/sentences';
+import { asSentence, skipsListening, type SentencePlan } from '../rules/sentences';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../testHooks';
 import { Bag } from '../ui/Bag';
@@ -386,7 +386,7 @@ export class SentenceRoom extends Minigame {
 
   private async flow(): Promise<void> {
     const s = this.plan.sentence;
-    this.skipped = frameIsSolid(progress, s.frame);
+    this.skipped = skipsListening(progress, s.frame);
     // She has just walked in: let her see the room before the first instruction.
     await this.wait(ARRIVE_MS);
     if (this.pass !== 'listen') return; // F4 jumped ahead meanwhile

@@ -31,7 +31,7 @@ import { DEPTH, FONT_ROUNDED, GAME_WIDTH, GRAB } from '../config';
 import { episode, grabPlan, helper, waker, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, shockwave, squash, wiggle } from '../fx/juice';
 import { TEX } from '../fx/textures';
-import { clue, grabLevel, nextLevel, type GrabLevel } from '../rules/grab';
+import { clue, grabLevel, nextLevel, recordedGrabLevel, type GrabLevel } from '../rules/grab';
 import { progress } from '../state/progress';
 import { Bag } from '../ui/Bag';
 import type { KeepOut } from '../ui/Caption';
@@ -309,7 +309,8 @@ export class EntryScene extends RoomScene {
     const firstTry = this.misses === 0;
     // Exposure, not a read: the warm-up's own record and the ramp, never `words` or the word bag.
     progress.record('grabs', this.word, firstTry, this.misses);
-    progress.setGrabLevel(this.word, nextLevel(this.level, firstTry));
+    // The ramp moves on her recorded level, whatever the hall gave (item 067: DIFFICULTY caps only what she gets).
+    progress.setGrabLevel(this.word, nextLevel(recordedGrabLevel(progress, this.word), firstTry));
     if (!episode.fetched.includes(this.word)) episode.fetched.push(this.word);
 
     const y = spot.y - 80;

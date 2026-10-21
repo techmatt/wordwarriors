@@ -12,7 +12,8 @@
  *   3. sounds only, blank boxes.
  *
  * Right first time moves the word up a level, a miss on its first try moves
- * it down. After GRAB.helpAfter misses the clue is the slow sound-out with
+ * it down: recorded always, but the hall gives `helpLevel` of it (item 067:
+ * level 1 at base, DIFFICULTY in src/config.ts). After GRAB.helpAfter misses the clue is the slow sound-out with
  * the letters shown, still never blended.
  *
  * The word is spoken once she has it (the confirmation), so it is kept out of the episode's
@@ -29,21 +30,30 @@ import { SOUND_BY_UNIT } from '../../content/phonics/letters';
 import { letterNameLine, letterSoundLine } from '../../content/voice/ids';
 import { GRAB } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
-import { coverage, distractorsFor, gates, isFirm, met, openIn, shuffle, type Rand } from './bank';
+import { coverage, distractorsFor, isFirm, met, shuffle, type Rand } from './bank';
+import { helpLevel } from './difficulty';
 
 export type GrabLevel = 1 | 2 | 3;
 
-/** Words the hall can ask for: the bank's pictured words (each has a battle item). */
-export const GRAB_WORDS: string[] = THINGS.map((w) => w.word);
+/** Words the hall can ask for: the bank's short pictured words (each has a battle item), GRAB.maxUnits sound units at most (item 067). */
+export const GRAB_WORDS: string[] = THINGS.filter((w) => w.units.length <= GRAB.maxUnits).map((w) => w.word);
 
-/** Every picture the hall can show, the asked-for word included. */
-const HALL_WORDS: string[] = GRAB_WORDS;
+/** Every picture the hall can show, the asked-for word included: any pictured word (she does not read the others). */
+const HALL_WORDS: string[] = THINGS.map((w) => w.word);
 
-/** A word's level now. */
-export function grabLevel(store: ProgressStore, word: string): GrabLevel {
+/** The level her grabs of a word have reached (the ramp, recorded for the grown-ups page). */
+export function recordedGrabLevel(store: ProgressStore, word: string): GrabLevel {
   const l = store.grabLevel(word, GRAB.startLevel);
   return (l <= 1 ? 1 : l >= 3 ? 3 : 2) as GrabLevel;
 }
+
+/** The level the hall gives a word now: GRAB.startLevel at base, else her recorded level up to DIFFICULTY (item 067). */
+export function grabLevel(store: ProgressStore, word: string): GrabLevel {
+  return helpLevel(recordedGrabLevel(store, word), GRAB.startLevel);
+}
+
+/** How many of her latest grabs the next pick keeps clear of, while another word will do (item 067; was 1). */
+export const RECENT_GRABS = 3;
 
 /** The ramp: right first time is one level harder, a first-try miss one easier. */
 export function nextLevel(level: GrabLevel, firstTry: boolean): GrabLevel {
@@ -51,31 +61,28 @@ export function nextLevel(level: GrabLevel, firstTry: boolean): GrabLevel {
 }
 
 /**
- * The word to grab this episode: weighted toward the shaky ones (she has
- * missed, or never grabbed), times the bank's coverage and level gate
- * (src/rules/bank.ts: the vowels and first sounds she has met least, blends
- * once CVC is firm), never one in `avoid`, and not last episode's grab (the
- * most recently grabbed word) while another will do. Its shakiness is her
- * grabs', not her reads': a grab is exposure.
+ * The word to grab this episode: a short word (GRAB_WORDS), weighted toward
+ * the shaky ones (she has missed, or never grabbed), times the bank's
+ * coverage (src/rules/bank.ts: the vowels and first sounds she has met
+ * least), never one in `avoid`, and none of her last RECENT_GRABS grabs while
+ * another will do (across episodes: by when each was grabbed). Its shakiness
+ * is her grabs', not her reads': a grab is exposure. Every level is in play
+ * (item 067).
  */
 export function pickGrab(store: ProgressStore, avoid: Iterable<string> = [], rand: Rand = Math.random): string {
   const out = new Set(avoid);
   const pool = GRAB_WORDS.filter((w) => !out.has(w));
   const all = pool.length ? pool : GRAB_WORDS;
-  let last: string | null = null;
-  let lastAt = 0;
-  for (const w of all) {
-    const at = store.stat('grabs', w).last;
-    if (at > lastAt) [last, lastAt] = [w, at];
-  }
-  const fresh = all.filter((w) => w !== last);
+  const recent = new Set(
+    GRAB_WORDS.filter((w) => store.stat('grabs', w).last > 0)
+      .sort((a, b) => store.stat('grabs', b).last - store.stat('grabs', a).last)
+      .slice(0, RECENT_GRABS),
+  );
+  const fresh = all.filter((w) => !recent.has(w));
   const from = fresh.length ? fresh : all;
   const m = met(store);
-  const g = gates(store);
-  // A word whose level is still shut comes up only when nothing else can (as `drawWords`).
-  const open = from.filter(openIn(g));
-  const weight = (w: string) => store.shakiness('grabs', w) * coverage(store, w, m) * (g[BANK_BY_WORD[w]?.level ?? 1] ?? 1);
-  return pickWeighted(open.length ? open : from, weight, 1, rand)[0]!;
+  const weight = (w: string) => store.shakiness('grabs', w) * coverage(store, w, m);
+  return pickWeighted(from, weight, 1, rand)[0]!;
 }
 
 /**

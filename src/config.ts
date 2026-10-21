@@ -97,9 +97,41 @@ export const CAST_ODDS = {
 };
 
 /**
+ * How far the help ramps may go (item 067, Matt's ruling: no automatic
+ * difficulty). Every per-word or per-sound help ramp (the warm-up's clue
+ * level, the Stretchy Bridge's, Charge the Spell's) still records her level as
+ * she plays, for the grown-ups page, but the game gives at most this level:
+ *
+ * - 1, base: every ramp stays at its most helpful start (`startLevel`); a
+ *   solid sentence frame still plays its listening pass; distractors never
+ *   start to share a firm word's first sound or rime;
+ * - 2: the ramps may reach their level 2 (her recorded level, up to 2); solid
+ *   frames skip the listening pass; firm words get sound-alike distractors;
+ * - 3: the ramps go all the way, as before item 067.
+ *
+ * Matt raises it himself; the grown-ups page shows it. `?difficulty=` sets it
+ * for a session (tests).
+ */
+export const DIFFICULTY: 1 | 2 | 3 = 1;
+
+/**
+ * Variety across episodes (item 067): how many past episodes each rotation
+ * remembers and avoids while another choice is left (always leaving two to
+ * choose from). `rotations`: the ally, each dad's form, the house's side
+ * rooms, the side-room games, the helper's quest line and hub scene, the line
+ * variants and the victory scene (the villain keeps its own 4, item 025).
+ * `words`: how many of her latest right-first-time reads weigh `wordWeight`
+ * in the bank's draws (src/rules/bank.ts `drawWords`), so last episode's
+ * words rarely come straight back; a word she missed keeps its full weight.
+ * `gameWeight`: a game played last episode weighs this much in the pool.
+ */
+export const VARIETY = { rotations: 2, words: 24, wordWeight: 0.25, gameWeight: 0.35 };
+
+/**
  * When a sentence frame counts as solid, so its sentences skip the listening
- * pass and start on her turn. Conservative: at least `tries` answers recorded
- * for the frame and the last `lastRight` of them right first time.
+ * pass and start on her turn (only from DIFFICULTY 2, item 067). Conservative:
+ * at least `tries` answers recorded for the frame and the last `lastRight` of
+ * them right first time.
  */
 export const SENTENCE_SOLID = { tries: 6, lastRight: 5 };
 
@@ -108,9 +140,10 @@ export const SENTENCE_SOLID = { tries: 6, lastRight: 5 };
  * the first family before it switches to another, and letter tiles on the
  * floor per word (the right one and silly ones). `weight` is its weight in
  * the rooms' minigame pool (a sentence frame is 1; 2 gives it about every
- * other episode), times how shaky her word families are.
+ * other episode), times how shaky her word families are. `maxUnits`: the
+ * longest word it builds, in sound units (item 067; SH is one).
  */
-export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2 };
+export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2, maxUnits: 4 };
 
 /**
  * Charge the Spell (item 053, src/scenes/ChargeRoom.ts): a visit spells one
@@ -120,10 +153,9 @@ export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2 };
  * (right) or 1 (they sound it out together); `readTimeoutMs` with no answer
  * counts as his 1. `startLevel` is a sound's help level before it has one
  * (the ramp of item 053 is kept in the store, unused by the room since
- * item 059). `tiers`: the quick sounds (stops, H W Y J...) join once `start` of
- * the continuous ones (M S F A L N R V Z, the short vowels) are solid, at
- * weight `min`, full at `full`; the digraphs (SH CH TH) the same off the
- * quick ones. `weight` is its weight in the rooms' pool (a frame is 1).
+ * item 059; DIFFICULTY caps it). `units` is the game's word length limit;
+ * every sound is in play from the start (item 067: no tiers). `weight` is its
+ * weight in the rooms' pool (a frame is 1).
  */
 export const CHARGE = {
   units: [3, 4] as [number, number],
@@ -131,10 +163,6 @@ export const CHARGE = {
   readTimeoutMs: 10000,
   startLevel: 1 as 1 | 2 | 3,
   weight: 1,
-  tiers: {
-    2: { start: 0.3, full: 0.7, min: 0.25 },
-    3: { start: 0.3, full: 0.7, min: 0.2 },
-  } as Record<2 | 3, { start: number; full: number; min: number }>,
 };
 
 /**
@@ -152,26 +180,23 @@ export const CHARGE = {
  * Dad's 2 brings the pictures, his 1 replays the slide with sounds (each
  * stone `replayMs`). Nothing from Dad for `dadWaitMs` counts as his 1; after
  * `replays` the pictures come anyway. `startLevel` is a word she has never
- * crossed. `tiers`: CVC words starting with a sound you can hold (M S F L N R
- * V Z) first; CVC words starting with a stop sound join once `start` of those
- * are at level 2 or more, at weight `min`, full at `full`; then the blends and
- * digraphs (also behind the bank's own level gates) off the stop-sound words.
- * `weight` is its weight in the rooms' pool.
+ * crossed (DIFFICULTY caps the ramp). `maxUnits`: the longest word she
+ * crosses, in sound units (item 067: every short word is in play from the
+ * start, no tiers; a visit still plays words starting with a sound you can
+ * hold first). The far bank's other pictures may be longer: she does not
+ * read them. `weight` is its weight in the rooms' pool.
  */
 export const BRIDGE = {
   words: 3,
   pictures: 3,
   startLevel: 1 as 1 | 2 | 3,
+  maxUnits: 4,
   weight: 1,
   slide: 0.55,
   resoundMs: 2000,
   replayMs: 700,
   dadWaitMs: 12000,
   replays: 2,
-  tiers: {
-    2: { start: 0.3, full: 0.7, min: 0.25 },
-    3: { start: 0.3, full: 0.7, min: 0.2 },
-  } as Record<2 | 3, { start: number; full: number; min: number }>,
 };
 
 /**
@@ -190,27 +215,25 @@ export const FORCE_PHONICS_ROOM = true;
  * sound unit's letter names, then its sound; 2 = sounds only, the letters
  * shown; 3 = sounds only, blank boxes. `startLevel` is where a word she has
  * never grabbed starts; right first time moves a word up a level, a miss on
- * its first try moves it down. From `helpAfter` misses the clue is the slow
- * sound-out, letters shown, never blended. `objects` pictures stand in the hall.
+ * its first try moves it down (recorded always; DIFFICULTY caps the level the
+ * hall gives). From `helpAfter` misses the clue is the slow sound-out, letters
+ * shown, never blended. `objects` pictures stand in the hall. `maxUnits`: the
+ * longest word she is asked to grab, in sound units (item 067); the other
+ * pictures may be longer.
  */
-export const GRAB = { startLevel: 1 as 1 | 2 | 3, helpAfter: 3, objects: 9 };
+export const GRAB = { startLevel: 1 as 1 | 2 | 3, helpAfter: 3, objects: 9, maxUnits: 4 };
 
 /**
  * The word bank's draws (item 037, src/rules/bank.ts). A word is `solid` at
  * or under this shakiness (about one miss in four recent first tries, after
  * three or more); `firm` is when a room's other pictures and the other move
- * pads start to share its first sound or rime. `levels`: level 2 (blends)
- * opens once `start` of the level-1 words are solid, at weight `min`, rising
- * to full weight at `full`; level 3 (digraphs) the same off level 2. Level 2
- * starts low on purpose, so she meets a few blends early.
+ * pads start to share its first sound or rime (from DIFFICULTY 2). Every
+ * familiar word is in play (item 067: no level gate); the decoding games keep
+ * to short words by their own `maxUnits` / `units`.
  */
 export const BANK_DRAW = {
   solid: 0.3,
   firm: 0.35,
-  levels: {
-    2: { start: 0.03, full: 0.4, min: 0.15 },
-    3: { start: 0.2, full: 0.6, min: 0.1 },
-  } as Record<2 | 3, { start: number; full: number; min: number }>,
 };
 
 /** How long in the bedroom (ms, after the news) before the door starts to sparkle. */

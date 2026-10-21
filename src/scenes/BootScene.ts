@@ -33,6 +33,7 @@ import { group } from '../../content/voice/ids';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { enterRoom, episode, episodeGroups, giftWord, isStepKind, jumpTo, planFor, setCastOptions, startStep, steps, type PrepGame, type Slot } from '../episode/Episode';
 import { DADS, seededRand, type CastOverrides } from '../rules/cast';
+import { setDifficulty } from '../rules/difficulty';
 import { artBank } from '../art/ArtBank';
 import { artFor } from '../art/needs';
 import { makeTextures } from '../fx/textures';
@@ -111,6 +112,8 @@ export class BootScene extends Phaser.Scene {
 
     const q = new URLSearchParams(location.search);
     const target = q.get('scene');
+    // The difficulty knob for this session (item 067; DIFFICULTY in config otherwise): before any plan is drawn.
+    if (q.get('difficulty')) setDifficulty(Number(q.get('difficulty')));
     setCastOptions(castOptions(q));
     const read = q.get('read');
     if (read) episode.read = read.split(',');

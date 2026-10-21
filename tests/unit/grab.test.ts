@@ -8,12 +8,13 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { BANK, BANK_BY_WORD } from '../../content/phonics/bank';
+import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { lookalikesOf } from '../../content/phonics/sentences';
 import { CVC_WORDS } from '../../content/phonics/words';
 import { letterNameLine, letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
-import { GRAB } from '../../src/config';
-import { GRAB_WORDS, clue, grabLevel, hallObjects, nextLevel, pickGrab } from '../../src/rules/grab';
+import { DIFFICULTY, GRAB } from '../../src/config';
+import { setDifficulty } from '../../src/rules/difficulty';
+import { GRAB_WORDS, RECENT_GRABS, clue, grabLevel, hallObjects, nextLevel, pickGrab, recordedGrabLevel } from '../../src/rules/grab';
 import { episodePlans, type EpisodeInput } from '../../src/rules/sentences';
 import { machineWords } from '../../src/rules/wordMachine';
 import { MINIGAME_BY_ID } from '../../src/rules/minigames';
@@ -40,8 +41,18 @@ test('ramp: a new word starts at GRAB.startLevel (1); right first time is harder
   assert.equal(nextLevel(3, true), 3);
   assert.equal(nextLevel(1, false), 1);
   store.setGrabLevel('van', 3);
-  assert.equal(grabLevel(store, 'van'), 3);
+  assert.equal(recordedGrabLevel(store, 'van'), 3);
   assert.equal(grabLevel(new ProgressStore(memory()), 'van'), 1);
+  // Item 067: the hall gives the start level at base, whatever she has reached; up to the knob above it.
+  assert.equal(grabLevel(store, 'van'), 1);
+  setDifficulty(2);
+  try {
+    assert.equal(grabLevel(store, 'van'), 2);
+    setDifficulty(3);
+    assert.equal(grabLevel(store, 'van'), 3);
+  } finally {
+    setDifficulty(DIFFICULTY);
+  }
 });
 
 test('clue: level 1 each letter name then its sound; 2 the sounds, letters shown; 3 the sounds, blank; help the sound-out, letters shown', () => {
@@ -133,28 +144,40 @@ test('hallObjects: nine distinct pictures, the word among them, none avoided, no
   }
 });
 
-test('hallObjects: once her grabs of the word are firm, one picture shares its first sound or rime', () => {
+test('hallObjects: once her grabs of the word are firm (from difficulty 2, item 067), one picture shares its first sound or rime', () => {
   const store = new ProgressStore(memory());
   for (let i = 0; i < 4; i++) store.record('grabs', 'cat', true, 0);
-  for (let seed = 1; seed <= 30; seed++) {
-    const objs = hallObjects(store, 'cat', [], seeded(seed)).filter((w) => w !== 'cat');
-    const share = objs.filter((w) => w[0] === 'c' || w.endsWith('at'));
-    assert.ok(share.length >= 1, `seed ${seed}: ${objs.join(' ')}`);
-    assert.ok(!objs.includes('rat') && !objs.includes('bat'), 'never a look-alike');
+  setDifficulty(2);
+  try {
+    for (let seed = 1; seed <= 30; seed++) {
+      const objs = hallObjects(store, 'cat', [], seeded(seed)).filter((w) => w !== 'cat');
+      const share = objs.filter((w) => w[0] === 'c' || w.endsWith('at'));
+      assert.ok(share.length >= 1, `seed ${seed}: ${objs.join(' ')}`);
+      assert.ok(!objs.includes('rat') && !objs.includes('bat'), 'never a look-alike');
+    }
+  } finally {
+    setDifficulty(DIFFICULTY);
   }
 });
 
-test('pickGrab: a blend or digraph word waits until CVC firms up (the level gate)', () => {
-  // One stream: this generator's first draw from a small seed is always near 0.
+test('pickGrab (item 067): every level from a fresh store, never a word over GRAB.maxUnits; none of her last RECENT_GRABS grabs', () => {
+  for (const w of GRAB_WORDS) assert.ok(BANK_BY_WORD[w]!.units.length <= GRAB.maxUnits, w);
+  assert.ok(!GRAB_WORDS.includes('octopus') && !GRAB_WORDS.includes('umbrella'));
   const rand = seeded(7);
   const fresh = new ProgressStore(memory());
-  for (let i = 0; i < 60; i++) assert.equal(BANK_BY_WORD[pickGrab(fresh, [], rand)]!.level, 1);
-  // Every CVC word read solidly: blends open, and come up.
-  const firm = new ProgressStore(memory());
-  for (const w of BANK.filter((b) => b.level === 1)) for (let i = 0; i < 4; i++) firm.record('words', w.word, true, 0);
   const levels = new Set<number>();
-  for (let i = 0; i < 200; i++) levels.add(BANK_BY_WORD[pickGrab(firm, [], rand)]!.level);
-  assert.ok(levels.has(2), 'a blend comes up once CVC is firm');
+  for (let i = 0; i < 200; i++) levels.add(BANK_BY_WORD[pickGrab(fresh, [], rand)]!.level);
+  assert.deepEqual([...levels].sort(), [1, 2, 3]);
+  // Across episodes: her last three grabs sit out.
+  let t = 1;
+  const store = new ProgressStore(memory(), () => t++);
+  const got: string[] = [];
+  for (let e = 0; e < 12; e++) {
+    const w = pickGrab(store, [], rand);
+    assert.ok(!got.slice(-RECENT_GRABS).includes(w), `episode ${e}: ${w} again after ${got.slice(-RECENT_GRABS)}`);
+    got.push(w);
+    store.record('grabs', w, true, 0);
+  }
 });
 
 test('said early: the grab word, passed as saidBefore, is never a room key, the counter or a word machine word', () => {

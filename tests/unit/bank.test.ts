@@ -1,17 +1,18 @@
 /**
  * Item 037: the word bank's tags, and the one weighting every draw goes
- * through (src/rules/bank.ts): the level gate, coverage, and distractors
- * chosen for reading.
+ * through (src/rules/bank.ts): every level in play and the recency lean
+ * (item 067), coverage, and distractors chosen for reading.
  * `npx tsx --test tests/unit/bank.test.ts` (also part of `npm run test:unit`).
  */
 
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { after, test } from 'node:test';
 
 import { ACTIONS, BANK, BANK_BY_WORD, LIVE, THINGS, tag, unitsOf } from '../../content/phonics/bank';
 import { SOUND_BY_UNIT } from '../../content/phonics/letters';
-import { BANK_DRAW } from '../../src/config';
-import { coverage, coverageTable, distractorsFor, drawWords, isFirm, levelGate, sharesSound } from '../../src/rules/bank';
+import { DIFFICULTY, VARIETY } from '../../src/config';
+import { coverage, coverageTable, distractorsFor, drawWords, isFirm, recentWords, sharesSound, wordWeight } from '../../src/rules/bank';
+import { setDifficulty } from '../../src/rules/difficulty';
 import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
 
 function memory(): StorageLike {
@@ -63,31 +64,47 @@ test('the bank: unique words, every vowel and level present, things and actions 
   }
 });
 
-test('level gate: level 1 always open; blends open as CVC firms up, digraphs as blends do', () => {
-  const store = new ProgressStore(memory());
-  assert.equal(levelGate(store, 1), 1);
-  assert.equal(levelGate(store, 2), 0);
-  assert.equal(levelGate(store, 3), 0);
-  const cvc = BANK.filter((w) => w.level === 1);
-  // A few solid CVC words: blends begin to open, a little.
-  const some = Math.ceil(cvc.length * (BANK_DRAW.levels[2].start + 0.05));
-  for (const w of cvc.slice(0, some)) solid(store, w.word);
-  const partly = levelGate(store, 2);
-  assert.ok(partly > 0 && partly < 1, `partly open: ${partly}`);
-  assert.equal(levelGate(store, 3), 0);
-  for (const w of cvc) solid(store, w.word);
-  assert.equal(levelGate(store, 2), 1);
-  assert.equal(levelGate(store, 3), 0, 'digraphs wait for blends');
-  for (const w of BANK.filter((b) => b.level === 2)) solid(store, w.word);
-  assert.equal(levelGate(store, 3), 1);
-});
-
-test('drawWords: a fresh store draws only CVC; a shut level comes up only when nothing else can', () => {
+test('drawWords (item 067): every level is in play from a fresh store, long words like OCTOPUS included', () => {
   const store = new ProgressStore(memory());
   const pool = THINGS.map((w) => w.word);
   const rand = seeded(3);
-  for (let i = 0; i < 100; i++) assert.equal(BANK_BY_WORD[drawWords(store, pool, 1, rand)[0]!]!.level, 1);
-  assert.deepEqual(drawWords(store, ['frog'], 1, rand), ['frog']);
+  const levels = new Set<number>();
+  const drawn = new Set<string>();
+  for (let i = 0; i < 400; i++) {
+    const w = drawWords(store, pool, 1, rand)[0]!;
+    levels.add(BANK_BY_WORD[w]!.level);
+    drawn.add(w);
+  }
+  assert.deepEqual([...levels].sort(), [1, 2, 3]);
+  assert.ok([...drawn].some((w) => BANK_BY_WORD[w]!.units.length >= 5), 'a long word comes up');
+  assert.deepEqual(drawWords(store, ['octopus'], 1, rand), ['octopus']);
+});
+
+test('recency (item 067): a word read right first time lately weighs VARIETY.wordWeight; a miss restores it', () => {
+  const store = new ProgressStore(memory());
+  const before = wordWeight(store, 'cat');
+  store.record('words', 'cat', true, 0);
+  const shakyAfter = store.shakiness('words', 'cat');
+  assert.ok(recentWords(store).has('cat'));
+  assert.ok(Math.abs(wordWeight(store, 'cat') - shakyAfter * coverage(store, 'cat') * VARIETY.wordWeight) < 1e-9);
+  assert.ok(wordWeight(store, 'cat') < before);
+  store.record('words', 'cat', false, 1);
+  assert.ok(!recentWords(store).has('cat'), 'a miss leaves the recent list');
+  // The list keeps only the latest VARIETY.words.
+  for (const w of THINGS.slice(0, VARIETY.words + 5)) store.record('words', w.word, true, 0);
+  assert.equal(store.recentOf('words').length, VARIETY.words);
+});
+
+test('isFirm (item 067): never at base difficulty, from difficulty 2 as before', () => {
+  const store = new ProgressStore(memory());
+  solid(store, 'cat');
+  assert.equal(isFirm(store, 'cat'), false);
+  setDifficulty(2);
+  try {
+    assert.equal(isFirm(store, 'cat'), true);
+  } finally {
+    setDifficulty(DIFFICULTY);
+  }
 });
 
 test('coverage favours unmet vowels and first sounds', () => {
@@ -104,7 +121,7 @@ test('coverage favours unmet vowels and first sounds', () => {
   assert.ok(a < 300 / pool.length, `short A drawn ${a}/300`);
 });
 
-test('distractorsFor: a new word gets other first letters; a firm word one sharing its onset or rime; banned never', () => {
+test('distractorsFor: a new word gets other first letters; a firm word (from difficulty 2) one sharing its onset or rime; banned never', () => {
   const pool = THINGS.map((w) => w.word);
   const store = new ProgressStore(memory());
   const rand = seeded(5);
@@ -116,6 +133,10 @@ test('distractorsFor: a new word gets other first letters; a firm word one shari
     for (const w of d) assert.notEqual(w[0], 'c', `${w} beside a new CAT`);
   }
   solid(store, 'cat');
+  // At base (item 067) a solid CAT still gets other first letters.
+  for (let i = 0; i < 20; i++) for (const w of distractorsFor(store, 'cat', pool, 2, rand, ['hat'])) assert.notEqual(w[0], 'c', `${w} beside CAT at base`);
+  setDifficulty(2);
+  after(() => setDifficulty(DIFFICULTY));
   assert.ok(isFirm(store, 'cat'));
   for (let i = 0; i < 50; i++) {
     const d = distractorsFor(store, 'cat', pool, 2, rand, ['hat']);
@@ -131,6 +152,7 @@ test('distractorsFor: a new word gets other first letters; a firm word one shari
   assert.equal(sharesSound('ant', 'ash'), false);
   // Too small a pool: the rule gives way rather than come up short.
   assert.equal(distractorsFor(new ProgressStore(memory()), 'cat', ['cap', 'can', 'dog'], 2, rand).length, 2);
+  setDifficulty(DIFFICULTY);
 });
 
 test('coverageTable: per level, vowel and first sound, words · read · solid add up to the bank', () => {

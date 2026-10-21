@@ -12,6 +12,8 @@
  * it under Node with a fake storage.
  */
 
+import { VARIETY } from '../config';
+
 export const STORE_KEY = 'wordwarriors.progress';
 export const STORE_VERSION = 1;
 
@@ -69,6 +71,13 @@ export interface ProgressData {
   villains: string[];
   /** The victory scene of her last episode (item 027): the next one is different. */
   ending: string | null;
+  /**
+   * Rotations remembered across episodes (item 067), per kind, newest last:
+   * `ally`, `form_<dad>`, `rooms`, `games`, `quest_<helper>`, `scene_<helper>`,
+   * `line_<key>`, `ending`; `words` her latest right-first-time reads
+   * (VARIETY.words), which the bank's draws lean away from.
+   */
+  recent: Record<string, string[]>;
 }
 
 /**
@@ -94,7 +103,7 @@ function emptyStat(): Stat {
 }
 
 function empty(): ProgressData {
-  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, grabs: {}, grabLevels: {}, chargeLevels: {}, bridgeLevels: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, padBag: { left: [], round: 0 }, episodes: 0, villains: [], ending: null };
+  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, grabs: {}, grabLevels: {}, chargeLevels: {}, bridgeLevels: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, padBag: { left: [], round: 0 }, episodes: 0, villains: [], ending: null, recent: {} };
 }
 
 /** How many past villains the store keeps. */
@@ -147,6 +156,8 @@ export class ProgressStore {
       parsed.chargeLevels ??= {};
       // Item 054, the same way.
       parsed.bridgeLevels ??= {};
+      // Item 067, the same way: her last victory scene seeds its rotation.
+      parsed.recent ??= parsed.ending ? { ending: [parsed.ending] } : {};
       // Item 035: a blob with no `bagKnown` knew the bag words before MUG RUG JUG.
       parsed.bagKnown ??= 'legacy';
       return parsed;
@@ -177,6 +188,24 @@ export class ProgressStore {
       s.recent = [...s.recent, firstTry].slice(-RECENT);
       s.last = this.now();
     }
+    // Item 067: a word read right first time joins her latest reads, which the draws lean away
+    // from; a missed one leaves them, so it keeps its full weight.
+    if (kind === 'words') {
+      const was = (this.data.recent.words ?? []).filter((w) => w !== id);
+      this.data.recent.words = firstTry ? [...was, id].slice(-VARIETY.words) : was;
+    }
+    this.save();
+  }
+
+  /** A rotation's recent picks, newest last (item 067; `recent` in ProgressData). */
+  recentOf(kind: string): string[] {
+    return [...(this.data.recent[kind] ?? [])];
+  }
+
+  /** An episode used `id` for rotation `kind`: kept (the latest `keep`) so the next episodes differ. */
+  remember(kind: string, id: string, keep: number = VARIETY.rotations): void {
+    const was = (this.data.recent[kind] ?? []).filter((x) => x !== id);
+    this.data.recent[kind] = [...was, id].slice(-Math.max(1, keep));
     this.save();
   }
 
@@ -199,7 +228,7 @@ export class ProgressStore {
   /** A victory scene was played: the next episode draws another. */
   endingPlayed(id: string): void {
     this.data.ending = id;
-    this.save();
+    this.remember('ending', id);
   }
 
   /** An episode was cast with this villain (a person): kept so the next ones differ. */

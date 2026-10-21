@@ -56,7 +56,7 @@ import { burst, fitImage, floatText, popIn, shockwave, wiggle } from '../fx/juic
 import { TEX } from '../fx/textures';
 import { dadPress, openDadButtons, setDadAsking, type DadAnswer } from '../input/dadButtons';
 import { dadLock } from '../input/dadLock';
-import { bridgeLevel, nextBridgeLevel, whereDiffers, type BridgeLevel, type BridgePlan, type BridgeRound } from '../rules/bridge';
+import { bridgeLevel, nextBridgeLevel, recordedBridgeLevel, whereDiffers, type BridgeLevel, type BridgePlan, type BridgeRound } from '../rules/bridge';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../testHooks';
 import { Bag } from '../ui/Bag';
@@ -718,7 +718,8 @@ export class BridgeRoom extends Minigame {
     this.locked = true;
     setDadAsking(false);
     progress.record('words', r.word, firstTry, this.wrongTries);
-    progress.setBridgeLevel(r.word, nextBridgeLevel(this.level, unaided));
+    // The ramp moves on her recorded level, whatever the room gave (item 067: DIFFICULTY caps only what she gets).
+    progress.setBridgeLevel(r.word, nextBridgeLevel(recordedBridgeLevel(progress, r.word), unaided));
     // Her word bag: read right first time, it is done for this round of the bag.
     if (firstTry) progress.takeFromBag(r.word);
     else progress.returnToBag(r.word);

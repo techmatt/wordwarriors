@@ -5,24 +5,32 @@
  * Every draw (the rooms' key words and the counter, the move pads, the ally's
  * gift word, the warm-up's word, the word machine's words) weighs a word by
  *
- *   shakiness × coverage × level gate
+ *   shakiness × coverage × recency
  *
  * - shakiness: how often she has missed it (ProgressStore, as before 037);
  * - coverage: favours the vowels, first sounds and levels she has met least,
  *   so the draws spread across the phonics rather than circle the same few;
- * - level gate: level 2 (blends) comes in as level 1 firms up, level 3
- *   (digraphs) as level 2 does (BANK_DRAW.levels in src/config.ts).
+ * - recency (item 067): a word among her latest right-first-time reads
+ *   (VARIETY.words in src/config.ts) weighs VARIETY.wordWeight, so last
+ *   episode's words rarely come straight back.
+ *
+ * Every familiar word is in play (item 067, Matt's ruling: no level gate,
+ * OCTOPUS included). A game where she sounds a word out unit by unit keeps to
+ * short words by its own limit (GRAB / BRIDGE / WORD_MACHINE `maxUnits`,
+ * CHARGE `units`); the recognition roles (key words, the counter, pads, the
+ * gift) take any word.
  *
  * Distractors (a room's other pictures, the other move pads, the hall's other
  * labels) are chosen for reading too: while a word is new they differ from it
- * in the first sound, so the first letter is enough; once it is firm one of
- * them shares its first sound or its rime, so she has to read past the first
- * letter.
+ * in the first sound, so the first letter is enough; once it is firm (and
+ * only from DIFFICULTY 2, item 067) one of them shares its first sound or its
+ * rime, so she has to read past the first letter.
  */
 
-import { BANK, BANK_BY_WORD, LEVELS, LIVE, VOWEL_LIST, type BankWord, type Level } from '../../content/phonics/bank';
-import { BANK_DRAW } from '../config';
+import { BANK, BANK_BY_WORD, LEVELS, LIVE, VOWEL_LIST, type BankWord } from '../../content/phonics/bank';
+import { BANK_DRAW, VARIETY } from '../config';
 import { pickWeighted, type BagKind, type ProgressStore } from '../state/ProgressStore';
+import { rampsAdvance } from './difficulty';
 
 /** A random source, 0..1 like Math.random: seeded in tests and with `?seed=`. */
 export type Rand = () => number;
@@ -77,34 +85,17 @@ export function coverage(store: ProgressStore, word: string, m: Met = met(store)
   return Math.cbrt(f);
 }
 
-/** The share of a level's words that are solid (shakiness at or under BANK_DRAW.solid). */
-export function firmness(store: ProgressStore, level: Level): number {
-  const words = LIVE.filter((w) => w.level === level);
-  const solid = words.filter((w) => store.stat('words', w.word).seen > 0 && store.shakiness('words', w.word) <= BANK_DRAW.solid);
-  return solid.length / Math.max(1, words.length);
+/** Her latest right-first-time reads, the words the draws lean away from (VARIETY.words; item 067). */
+export function recentWords(store: ProgressStore): Set<string> {
+  return new Set(store.recentOf('words'));
 }
 
-/** A level's gate, 0..1: level 1 is always open; a level opens as the one below firms up. */
-export function levelGate(store: ProgressStore, level: Level): number {
-  if (level === 1) return 1;
-  const g = BANK_DRAW.levels[level];
-  const firm = firmness(store, (level - 1) as Level);
-  if (firm < g.start) return 0;
-  return Math.min(1, g.min + ((1 - g.min) * (firm - g.start)) / Math.max(0.001, g.full - g.start));
-}
-
-/** A word's weight in any draw: shakiness × coverage × level gate (× `boost`). Words outside the bank (names) weigh shakiness only. */
-export function wordWeight(store: ProgressStore, word: string, m: Met = met(store), gates?: Record<number, number>): number {
+/** A word's weight in any draw: shakiness × coverage × recency. Words outside the bank (names) weigh shakiness only. */
+export function wordWeight(store: ProgressStore, word: string, m: Met = met(store), recent: Set<string> = recentWords(store)): number {
   const w = BANK_BY_WORD[word];
   const shaky = store.shakiness('words', word);
   if (!w) return shaky;
-  const gate = gates ? gates[w.level]! : levelGate(store, w.level);
-  return shaky * coverage(store, word, m) * gate;
-}
-
-/** The gates of every level, worked out once per draw. */
-export function gates(store: ProgressStore): Record<number, number> {
-  return Object.fromEntries(LEVELS.map((l) => [l, levelGate(store, l)]));
+  return shaky * coverage(store, word, m) * (recent.has(word) ? VARIETY.wordWeight : 1);
 }
 
 /**
@@ -144,27 +135,11 @@ export function withStems(said: Iterable<string>): string[] {
 const COMPOUND_HALVES = new Set(['cake', 'shine', 'let', 'ball', 'fish', 'man', 'box', 'dom']);
 
 /**
- * Is a word's level open to her (its gate above 0)? A bag draw whose pool
- * holds only shut words looks wider before falling back on them (item 039:
- * the end of a bag round left only digraphs in it, and they were drawn as
- * the gift, the moves and the keys while digraphs were still shut).
- */
-export function openWords(store: ProgressStore): (w: string) => boolean {
-  return openIn(gates(store));
-}
-
-/** `openWords` by gates already worked out (`gates`); a word outside the bank is open. */
-export function openIn(g: Record<number, number>): (w: string) => boolean {
-  return (w) => !BANK_BY_WORD[w] || g[BANK_BY_WORD[w]!.level]! > 0;
-}
-
-/**
  * Draw one word from bag `which`: an `eligible` word still in it, by
- * `wordWeight` × `boost`. When none of them is open (a bag left with only
- * words of a shut level counts as spent, item 039) the bag refills with
- * `catalogue` but `keepOut` (this episode's words so far); failing that, any
- * open eligible word, then any eligible word. Drawing never spends the word.
- * The caller tops the bag up first (`topUpBag`, `topUpMoves`).
+ * `wordWeight` × `boost`. When none is left the bag refills with `catalogue`
+ * but `keepOut` (this episode's words so far); failing that, any eligible
+ * word. Drawing never spends the word. The caller tops the bag up first
+ * (`topUpBag`, `topUpMoves`).
  */
 export function drawFromBag(
   store: ProgressStore,
@@ -176,36 +151,30 @@ export function drawFromBag(
   boost?: (w: string) => number,
 ): string {
   const ok = new Set(eligible);
-  const open = openWords(store);
   let pool = store.bag(which).left.filter((w) => ok.has(w));
-  if (!pool.some(open)) {
+  if (!pool.length) {
     store.refillBag(catalogue.filter((w) => !keepOut.includes(w)), which);
     pool = store.bag(which).left.filter((w) => ok.has(w));
   }
-  if (!pool.some(open) && eligible.some(open)) pool = eligible.filter(open);
   if (!pool.length) pool = [...eligible];
   return drawWords(store, pool, 1, rand, boost)[0]!;
 }
 
-/**
- * Draw `n` distinct words from `pool` by `wordWeight` × `boost`. A word whose
- * level is still shut has weight 0 and comes up only when nothing else can
- * (pickWeighted's floor), so a pool of only shut words still draws.
- */
+/** Draw `n` distinct words from `pool` by `wordWeight` × `boost`. */
 export function drawWords(store: ProgressStore, pool: string[], n: number, rand: Rand = Math.random, boost: (w: string) => number = () => 1): string[] {
   const m = met(store);
-  const g = gates(store);
-  const open = pool.filter(openIn(g));
-  const from = open.length >= n ? open : pool;
-  return pickWeighted(from, (w) => wordWeight(store, w, m, g) * boost(w), n, rand);
+  const recent = recentWords(store);
+  return pickWeighted(pool, (w) => wordWeight(store, w, m, recent) * boost(w), n, rand);
 }
 
 /**
  * Is a word firm enough for distractors that share its sound (BANK_DRAW.firm)?
- * `kind` is the record to judge by: her reads (`words`), or the warm-up's
- * grabs for the hall's word (a grab is exposure, kept apart from reads).
+ * Never at base difficulty (item 067: no ramp steps up by itself; DIFFICULTY
+ * 2 lets it). `kind` is the record to judge by: her reads (`words`), or the
+ * warm-up's grabs for the hall's word (a grab is exposure, kept apart from reads).
  */
 export function isFirm(store: ProgressStore, word: string, kind: 'words' | 'grabs' = 'words'): boolean {
+  if (!rampsAdvance()) return false;
   const s = store.stat(kind, word);
   return s.recent.length >= 2 && store.shakiness(kind, word) <= BANK_DRAW.firm;
 }
@@ -262,7 +231,7 @@ export interface CoverageRow {
   words: number;
   /** Words she has read at least once. */
   readWords: number;
-  /** Words solid (as `firmness` counts them). */
+  /** Words solid: read, and shakiness at or under BANK_DRAW.solid. */
   solid: number;
   reads: number;
 }

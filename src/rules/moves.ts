@@ -6,7 +6,7 @@
  * gift word the helper gave her in the hub (`episode.gift`, `drawGift`). The
  * other right words come out of her move bag (ProgressStore `moveBag`, the 015
  * bag logic) by the bank's one weighting (src/rules/bank.ts: shakiness ×
- * coverage × level gate): without replacement across episodes, so fight after
+ * coverage × recency; every level, item 067): without replacement across episodes, so fight after
  * fight she meets new ones. A word leaves the bag only when she picks it
  * right first time (BattleScene). The wrong pads are other action words,
  * chosen for reading (`distractorsFor`), fresh ones first: not yet shown this
@@ -30,7 +30,7 @@ import { CASTERS } from '../../content/house/scenes';
 import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import type { ProgressStore } from '../state/ProgressStore';
-import { coverage, distractorsFor, drawFromBag, drawWords, isFirm, met, openWords, shuffle, type Rand } from './bank';
+import { coverage, distractorsFor, drawFromBag, drawWords, isFirm, met, shuffle, type Rand } from './bank';
 
 /**
  * Who fires a move word: a hero on her team, with ability `ability` of
@@ -143,9 +143,8 @@ export function drawGift(store: ProgressStore, input: { helper: string; avoid?: 
   const inBag = new Set(store.bag('moves').left);
   const left = all.filter((w) => inBag.has(w));
   const helperWords = new Set((CHARACTER_BY_ID[input.helper]?.good.abilities ?? []).flatMap(abilityWords));
-  // The bag's words, unless only shut levels are left in it (item 039): then any open word.
-  const open = openWords(store);
-  const pool = left.some(open) ? left : all.some(open) ? all.filter(open) : all.length ? all : MOVE_WORDS;
+  // The bag's words; with none left, any (every level is open, item 067).
+  const pool = left.length ? left : all.length ? all : MOVE_WORDS;
   const caster = CASTERS.has(input.helper);
   return drawWords(store, pool, 1, rand, (w) => (helperWords.has(w) ? 2 : 1) * (caster && BANK_BY_WORD[w]?.spell ? CASTER_SPELL_BOOST : 1))[0]!;
 }
@@ -156,8 +155,8 @@ export const PAD_SHOWN_WEIGHT = 0.05;
 /**
  * The weight of a word as a wrong pad: still in the pad bag (refilled with
  * every pad word once fewer than `need` are left) × the bank's coverage term.
- * Shakiness is no reason to show a wrong pad, and the pool is already the
- * open levels, so the rest of `wordWeight` is left out.
+ * Shakiness is no reason to show a wrong pad, so the rest of `wordWeight`
+ * is left out.
  */
 function padWeights(store: ProgressStore, pool: string[], need: number): (w: string) => number {
   const left = () => new Set(store.bag('pads').left);
@@ -187,10 +186,8 @@ export function planMoves(store: ProgressStore, input: MoveInput, rand: Rand = M
   const gift = input.gift;
   const avoid = new Set(input.avoid ?? []);
   const all = MOVE_WORDS.filter((w) => !avoid.has(w) || w === gift);
-  // Wrong pads from the levels open to her, while there are enough of them:
-  // a pad she cannot decode yet is no help as a distractor.
-  const open = all.filter(openWords(store));
-  const wrongPool = open.length >= 6 ? open : all;
+  // Wrong pads from every move word: a pad is a recognition role (item 067: no level gate).
+  const wrongPool = all;
   // An episode shows at most 2 wrong pads per choice.
   const padWeight = padWeights(store, wrongPool, CHOICES_PER_PART * 2 * 2);
   const rights: string[] = [];

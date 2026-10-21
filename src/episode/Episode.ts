@@ -32,8 +32,9 @@ import { hubStory, storyTexts, type HubStory, type HubStoryIds } from '../../con
 import { group, wakeCastKey } from '../../content/voice/ids';
 import { NARRATOR_LINES, wakeTemplate, wakeVariant } from '../../content/voice/script';
 import { voiceBus } from '../audio/VoiceBus';
-import { ADULT_HEIGHT, EPISODE_DEFAULTS, FORCE_PHONICS_ROOM } from '../config';
-import { drawCast, isGrownUp, wakerOf, type CastOverrides } from '../rules/cast';
+import { ADULT_HEIGHT, EPISODE_DEFAULTS, FORCE_PHONICS_ROOM, VARIETY } from '../config';
+import { DADS, drawCast, isGrownUp, wakerOf, type CastOverrides } from '../rules/cast';
+import { leastRecent } from '../rules/recent';
 import { fightSpec, pickFight } from '../rules/fights';
 import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
 import { endingPeople, pickEnding } from '../rules/endings';
@@ -43,7 +44,7 @@ import { episodePlans, wordsOf, type RoomPlan } from '../rules/sentences';
 import { BRIDGE_GAME, CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
 import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
 import { hallObjects, pickGrab } from '../rules/grab';
-import { BEDROOM_TAUNTS, DEFAULT_LINES, DEFAULT_STORY, drawLines, drawStory, type LineVariants, type Story } from '../rules/story';
+import { BEDROOM_TAUNTS, DEFAULT_LINES, DEFAULT_STORY, drawLines, drawStory, variantKeys, type LineVariants, type Story } from '../rules/story';
 import { progress } from '../state/progress';
 import { pickWeighted } from '../state/ProgressStore';
 import { voiceBank } from '../voice/VoiceBank';
@@ -336,7 +337,11 @@ export function castEpisode(picked: CastOverrides = {}): void {
       }
     : {};
   const overrides = { ...fixed, ...castOverrides, ...picked };
-  const c = drawCast({ hero: EPISODE_DEFAULTS.hero, recent: progress.recentVillains(), overrides }, castRand);
+  // Item 067: her recent allies and each dad's recent forms sit out, as her villains do.
+  const recentForms = Object.fromEntries(DADS.map((d) => [d, progress.recentOf(`form_${d}`)]));
+  const c = drawCast({ hero: EPISODE_DEFAULTS.hero, recent: progress.recentVillains(), recentAllies: progress.recentOf('ally'), recentForms, overrides }, castRand);
+  const byRole = (d: string) => [overrides.ally, overrides.villain, overrides.hero].some((id) => id && personOf(id) === d);
+  drawnFreely = { ally: overrides.ally === undefined, forms: DADS.filter((d) => !overrides.forms?.[d] && !byRole(d)), variants: !castDefault };
   episode.hero = c.hero;
   episode.ally = c.ally;
   episode.villain = c.villain;
@@ -349,9 +354,56 @@ export function castEpisode(picked: CastOverrides = {}): void {
   episode.fight = null;
   // The helper's quest line and hub scene (item 037): after the cast, so a
   // seed draws the same cast as before; the default cast always plays the first.
-  episode.story = drawStory(helper(), castRand, castDefault);
+  // Her recent variants of each sit out (item 067).
+  const recentVariants = (key: string) => progress.recentOf(key).map(Number);
+  episode.story = drawStory(helper(), castRand, castDefault, recentVariants);
   // The wake-up and the villain's lines (item 040): after the story, so a seed's story is unchanged.
-  episode.lines = drawLines(episode.villain, castRand, castDefault);
+  episode.lines = drawLines(episode.villain, castRand, castDefault, recentVariants);
+}
+
+/** What the last cast draw chose freely (item 067), so only that is remembered: an override or the default cast is not her rotation. */
+let drawnFreely: { ally: boolean; forms: string[]; variants: boolean } = { ally: false, forms: [], variants: false };
+
+/** Whether this episode's cast and its house plan have been remembered (item 067): once each per episode. */
+const remembered = { cast: false, plan: false };
+
+/**
+ * Remember this episode's cast and story picks across episodes (item 067),
+ * as she presses on from the title: the cast is drawn more often than
+ * episodes are played (at boot, at the title). The villain as before (item
+ * 025); the ally, each dad's form she meets, the quest line, hub scene and
+ * line variants.
+ */
+function rememberCast(): void {
+  if (remembered.cast) return;
+  remembered.cast = true;
+  if (episode.villainWasRandom) progress.villainMet(personOf(episode.villain));
+  if (drawnFreely.ally && episode.ally) progress.remember('ally', personOf(episode.ally));
+  const roles = [episode.primary, episode.secondary, episode.ally, episode.villain];
+  for (const dad of drawnFreely.forms) {
+    const form = roles.find((id) => id && personOf(id) === dad);
+    if (form) progress.remember(`form_${dad}`, form);
+  }
+  if (!drawnFreely.variants) return;
+  const k = variantKeys(helper(), episode.villain);
+  progress.remember(k.quest, String(episode.story.quest));
+  progress.remember(k.scene, String(episode.story.scene));
+  for (const key of Object.keys(episode.lines) as (keyof LineVariants)[]) progress.remember(k[key], String(episode.lines[key]));
+}
+
+/**
+ * Remember the house plan's side rooms and games (item 067), once per
+ * episode: when she presses on from the title, or when the plan is made
+ * after that (the title may draw it early, to prefetch the bedroom's art).
+ */
+function rememberPlan(): void {
+  const plan = episode.house.plan;
+  if (remembered.plan || !plan || currentStep().kind === 'title') return;
+  remembered.plan = true;
+  if (!away()) for (const p of plan.slice(0, 2)) progress.remember('rooms', p.room, FETCH_ROOMS.length + 1);
+  for (const p of plan) progress.remember('games', p.game, 3 * VARIETY.rotations);
+  const phonics = plan.find((p) => PHONICS_GAMES.some((g) => g.id === p.game));
+  if (phonics) progress.remember('phonics', phonics.game, 1);
 }
 
 /** The waker's wake line `key` (`up`, `good_<hero>`, `door`) in this episode's variant: `wake_<waker>_up_2`. */
@@ -400,6 +452,8 @@ export function resetEpisode(): void {
   episode.endingCounted = false;
   episode.fight = null;
   episode.stepIndex = 0;
+  remembered.cast = false;
+  remembered.plan = false;
 }
 
 /** Pick a random villain (any form) that is not the hero's or ally's own person: the pick screen's surprise. */
@@ -422,7 +476,8 @@ export function housePlan(): RoomPlan[] {
     const place = away() ? PLACE_BY_ID[episode.place]! : null;
     const rooms = place
       ? ([place.rooms[0]!.id, place.rooms[1]!.id] as [string, string])
-      : (Phaser.Utils.Array.Shuffle([...FETCH_ROOMS]).slice(0, 2) as [string, string]);
+      : // The rooms she has gone longest without (item 067: the one left out last episode comes back).
+        (leastRecent(FETCH_ROOMS, progress.recentOf('rooms'), 2, Math.random) as [string, string]);
     const counterRoom = place ? place.secret.id : COUNTER_ROOM;
     // The three key words come out of her word bag here; the counter keeps
     // clear of battle 1's move pads, and none is a word of the helper's quest
@@ -438,6 +493,7 @@ export function housePlan(): RoomPlan[] {
     const saidBefore = [...storyWords(), ...bedroomWords(), ...signWords, ...(episode.grab ? [episode.grab.word] : [grabWord()])];
     const games = roomGames();
     episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, gift, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore, ...games });
+    rememberPlan();
   }
   return episode.house.plan;
 }
@@ -511,7 +567,7 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
   const phonics =
     q.get('room') === 'charge' ? CHARGE_GAME
       : q.get('room') === 'bridge' ? BRIDGE_GAME
-      : FORCE_PHONICS_ROOM && !only && !asked ? MINIGAME_BY_ID[pickWeighted(PHONICS_GAMES.map((g) => g.id), (id) => MINIGAME_BY_ID[id]!.weight, 1)[0]!]
+      : FORCE_PHONICS_ROOM && !only && !asked ? MINIGAME_BY_ID[pickWeighted(PHONICS_GAMES.map((g) => g.id), (id) => MINIGAME_BY_ID[id]!.weight * (progress.recentOf('phonics').includes(id) ? VARIETY.gameWeight : 1), 1)[0]!]
         : undefined;
   const forced = [asked, phonics].filter((g, i, all): g is Minigame => Boolean(g) && all.indexOf(g) === i);
   if (!forced.length) return only ? { pool: only } : {};
@@ -605,7 +661,7 @@ export function counterArt(): string {
 export function drawEnding(): string {
   if (!episode.ending) {
     const forced = typeof location === 'undefined' ? null : new URLSearchParams(location.search).get('ending');
-    episode.ending = forced && ENDING_BY_ID[forced] ? forced : pickEnding(episode, progress.lastEnding());
+    episode.ending = forced && ENDING_BY_ID[forced] ? forced : pickEnding(episode, progress.recentOf('ending'));
   }
   return episode.ending;
 }
@@ -656,9 +712,11 @@ export function backToHub(scene: Phaser.Scene, from: Slot): void {
 /** The current step is done; go to the next one. */
 export function advance(scene: Phaser.Scene): void {
   // The cast is drawn more often than episodes are played (at boot, at the
-  // title): her villain counts as met only when she presses on from the title.
-  if (currentStep().kind === 'title' && episode.villainWasRandom) progress.villainMet(personOf(episode.villain));
+  // title): her villain (and since item 067 the rest of her rotations) counts
+  // as met only when she presses on from the title.
+  if (currentStep().kind === 'title') rememberCast();
   episode.stepIndex++;
+  rememberPlan();
   if (episode.stepIndex >= steps().length) {
     // progress.episodeDone() ran as the victory scene opened (EndingScene).
     episodeCount++;

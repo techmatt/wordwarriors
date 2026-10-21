@@ -7,8 +7,9 @@
  * family (CAT, then HAT, then BAT: the rime stays, the first sound changes),
  * then a switch to a second family for the rest. The family is weighted
  * toward shaky rimes (ProgressStore `rimes`), each word by the one word
- * weighting (`wordWeight`, src/rules/bank.ts: shakiness × coverage × level
- * gate) times how shaky its first sound is (`onsets`).
+ * weighting (`wordWeight`, src/rules/bank.ts: shakiness × coverage ×
+ * recency) times how shaky its first sound is (`onsets`). Only words of
+ * WORD_MACHINE.maxUnits sound units or fewer (item 067: a decoding game).
  *
  * The words come out of her word bag (item 015) like any key word: a word
  * still in the bag, never one in `avoid` (whatever the episode says or shows
@@ -26,10 +27,11 @@
  * a new `MachineMode`, a plan for it here, and its handler in the scene.
  */
 
+import { BANK_BY_WORD, unitsOf } from '../../content/phonics/bank';
 import { FAMILIES, FAMILY_BY_RIME, onsetOf, rimeOf, sillyWord, type Family } from '../../content/phonics/families';
 import { WORD_MACHINE } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
-import { gates, met, shuffle, wordWeight as bankWeight, type Rand } from './bank';
+import { met, recentWords, shuffle, wordWeight as bankWeight, type Rand } from './bank';
 import { BAG_WORDS, LEGACY_BAG_WORDS } from './sentences';
 
 export type MachineMode = 'make' | 'flip' | 'real_or_silly';
@@ -68,6 +70,8 @@ export interface MachineRules {
   rounds: number;
   perFamily: number;
   tiles: number;
+  /** The longest word it builds, in sound units (item 067); absent: no limit. */
+  maxUnits?: number;
 }
 
 /** The words of `fam` in `pool`. */
@@ -92,7 +96,8 @@ export function tilesFor(word: string, n: number, rand: Rand): MachineTile[] {
  */
 export function planMachine(store: ProgressStore, input: MachineInput, rand: Rand = Math.random, rules: MachineRules = WORD_MACHINE): MachinePlan {
   const avoid = new Set(input.avoid);
-  const eligible = BAG_WORDS.filter((w) => FAMILIES.some((f) => f.words.includes(w)) && !avoid.has(w) && !input.taken.includes(w));
+  // Short words only (item 067: WORD_MACHINE.maxUnits sound units, a decoding game).
+  const eligible = BAG_WORDS.filter((w) => FAMILIES.some((f) => f.words.includes(w)) && (BANK_BY_WORD[w]?.units ?? unitsOf(w)).length <= (rules.maxUnits ?? Infinity) && !avoid.has(w) && !input.taken.includes(w));
   const usable = (pool: string[]) => FAMILIES.filter((f) => inFamily(f, pool).length >= 2);
 
   // The bag is shared with the sentence rooms: it refills only once it is
@@ -109,8 +114,8 @@ export function planMachine(store: ProgressStore, input: MachineInput, rand: Ran
   if (!usable(pool).length) pool = [...eligible];
 
   const m = met(store);
-  const g = gates(store);
-  const wordWeight = (w: string) => bankWeight(store, w, m, g) * store.shakiness('onsets', onsetOf(w));
+  const recent = recentWords(store);
+  const wordWeight = (w: string) => bankWeight(store, w, m, recent) * store.shakiness('onsets', onsetOf(w));
   const rimeWeight = (r: string) => store.shakiness('rimes', r);
   const words: string[] = [];
 

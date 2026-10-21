@@ -7,29 +7,27 @@
  * runes charge in order, the helper saying each letter sound and she saying
  * it back (no presses, item 059), then she reads the whole word aloud for
  * Dad. The
- * word is drawn through the bank's path (`drawWords`: shakiness × coverage ×
- * level gate) from the familiar pictured words whose every unit is a rune
- * (`CHARGE_WORDS`: no Q, X, CK, long vowel, doubled letter or repeated
- * sound), times its sounds' gate: a word whose sounds are all in open tiers
- * draws (tier 1, the continuous sounds, is always open; tier 2, quick
- * sounds, opens as tier 1 firms up and tier 3, digraphs, as tier 2 does:
- * CHARGE.tiers, BANK_DRAW.solid), leaning to shaky sounds; a word with a
- * shut tier's sound only as a last resort. The word is a battle item like
- * any room's fetched word.
+ * word is drawn through the bank's path (`drawWords`: shakiness × coverage,
+ * last episode's words leaning back) from the familiar pictured words whose
+ * every unit is a rune (`CHARGE_WORDS`: CHARGE.units long, no Q, X, CK, long
+ * vowel, doubled letter or repeated sound), leaning to shaky sounds. Every
+ * sound is in play from the start (item 067: no sound tiers). The word is a
+ * battle item like any room's fetched word.
  *
  * Each sound has a help level on a ramp (item 053: 1 the sound and gesture
  * first, 2 the gesture only, 3 the rune alone; an unhelped yes up a level, a
  * help down one). Since item 059 the room says every sound for her and
  * judges only the word, so the ramp is kept (and its saved levels) but
- * unused by the room.
+ * unused by the room; DIFFICULTY caps it like every ramp (item 067).
  */
 
 import { BANK_BY_WORD, THINGS, type BankWord } from '../../content/phonics/bank';
-import { RUNES, RUNE_BY_SOUND, type RuneTier } from '../../content/phonics/runes';
+import { RUNES, RUNE_BY_SOUND } from '../../content/phonics/runes';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
-import { BANK_DRAW, CHARGE } from '../config';
+import { CHARGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { drawWords, factor, type Rand } from './bank';
+import { helpLevel } from './difficulty';
 
 export type ChargeLevel = 1 | 2 | 3;
 
@@ -43,12 +41,15 @@ export interface ChargePlan {
 /** Every sound a rune can carry. */
 export const RUNE_SOUNDS: string[] = RUNES.map((r) => r.sound);
 
-const TIERS: RuneTier[] = [1, 2, 3];
-
-/** A sound's help level now. */
-export function chargeLevel(store: ProgressStore, sound: string): ChargeLevel {
+/** The help level a sound's ramp has reached (recorded for the grown-ups page). */
+export function recordedChargeLevel(store: ProgressStore, sound: string): ChargeLevel {
   const l = store.chargeLevel(sound, CHARGE.startLevel);
   return (l <= 1 ? 1 : l >= 3 ? 3 : 2) as ChargeLevel;
+}
+
+/** A sound's help level now: CHARGE.startLevel at base, else its recorded level up to DIFFICULTY (item 067). */
+export function chargeLevel(store: ProgressStore, sound: string): ChargeLevel {
+  return helpLevel(recordedChargeLevel(store, sound), CHARGE.startLevel);
 }
 
 /** The ramp: a yes with no assist is one level less help, an assisted rune one level more. */
@@ -56,31 +57,10 @@ export function nextChargeLevel(level: ChargeLevel, unaided: boolean): ChargeLev
   return Math.max(1, Math.min(3, level + (unaided ? 1 : -1))) as ChargeLevel;
 }
 
-/** The share of a tier's sounds that are solid (charged, shakiness at or under BANK_DRAW.solid). */
-export function tierFirmness(store: ProgressStore, tier: RuneTier): number {
-  const sounds = RUNES.filter((r) => r.tier === tier);
-  const solid = sounds.filter((r) => store.stat('sounds', r.sound).seen > 0 && store.shakiness('sounds', r.sound) <= BANK_DRAW.solid);
-  return solid.length / Math.max(1, sounds.length);
-}
-
-/** A tier's gate, 0..1: tier 1 always open; a tier opens as the one before it firms up. */
-export function tierGate(store: ProgressStore, tier: RuneTier): number {
-  if (tier === 1) return 1;
-  const g = CHARGE.tiers[tier];
-  const firm = tierFirmness(store, (tier - 1) as RuneTier);
-  if (firm < g.start) return 0;
-  return Math.min(1, g.min + ((1 - g.min) * (firm - g.start)) / Math.max(0.001, g.full - g.start));
-}
-
-/** A sound's weight in the draw: shakiness × coverage × its tier's gate. */
-export function runeWeight(store: ProgressStore, sound: string, gates: Record<number, number> = gatesOf(store), seen: Record<string, number> = seenOf(store)): number {
-  const r = RUNE_BY_SOUND[sound];
-  if (!r) return 0;
-  return store.shakiness('sounds', sound) * factor(seen, sound, RUNE_SOUNDS) * (gates[r.tier] ?? 0);
-}
-
-function gatesOf(store: ProgressStore): Record<number, number> {
-  return Object.fromEntries(TIERS.map((t) => [t, tierGate(store, t)]));
+/** A sound's weight in the draw: shakiness × coverage. */
+export function runeWeight(store: ProgressStore, sound: string, seen: Record<string, number> = seenOf(store)): number {
+  if (!RUNE_BY_SOUND[sound]) return 0;
+  return store.shakiness('sounds', sound) * factor(seen, sound, RUNE_SOUNDS);
 }
 
 function seenOf(store: ProgressStore): Record<string, number> {
@@ -106,43 +86,30 @@ function chargeable(w: BankWord): boolean {
 /** Every word Charge the Spell can spell. */
 export const CHARGE_WORDS: string[] = THINGS.filter(chargeable).map((w) => w.word);
 
-/** A word's gate: its least open sound's tier gate (a word with a shut tier's sound is 0). */
-export function chargeWordGate(word: string, gates: Record<number, number>): number {
-  const w = BANK_BY_WORD[word];
-  if (!w) return 0;
-  return Math.min(...w.sounds.map((s) => gates[RUNE_BY_SOUND[s]?.tier ?? 3] ?? 0));
-}
-
 export interface ChargeInput {
   /** Words the episode says or shows first, its move pads and gift, and other rooms' words: never the charge word. */
   avoid: string[];
 }
 
 /**
- * A visit's word: drawn by the bank's weight × its sounds' gate × how shaky
- * its sounds are (½ to 1½), never a word in `avoid`. A word with a shut
- * tier's sound draws only when no open one is left; with every word avoided,
- * the avoid list gives way (a visit always has a word).
+ * A visit's word: drawn by the bank's weight × how shaky its sounds are (½
+ * to 1½), never a word in `avoid`; with every word avoided, the avoid list
+ * gives way (a visit always has a word).
  */
 export function planCharge(store: ProgressStore, input: ChargeInput = { avoid: [] }, rand: Rand = Math.random): ChargePlan {
-  const gates = gatesOf(store);
   const avoid = new Set(input.avoid);
   let pool = CHARGE_WORDS.filter((w) => !avoid.has(w));
   if (!pool.length) pool = [...CHARGE_WORDS];
-  const open = pool.filter((w) => chargeWordGate(w, gates) > 0);
   const shaky = (w: string) => {
     const s = BANK_BY_WORD[w]!.sounds;
     return 0.5 + s.reduce((n, x) => n + store.shakiness('sounds', x), 0) / s.length;
   };
-  const from = open.length ? open : pool;
-  const word = drawWords(store, from, 1, rand, (w) => Math.max(0.05, chargeWordGate(w, gates)) * shaky(w))[0]!;
+  const word = drawWords(store, pool, 1, rand, shaky)[0]!;
   const b = BANK_BY_WORD[word]!;
   return { word, units: [...b.units], runes: [...b.sounds] };
 }
 
-/** How shaky her letter sounds are, on average over the open runes: the room's lean in the minigame pool. */
+/** How shaky her letter sounds are, on average over every rune: the room's lean in the minigame pool. */
 export function soundShakiness(store: ProgressStore): number {
-  const gates = gatesOf(store);
-  const open = RUNES.filter((r) => (gates[r.tier] ?? 0) > 0);
-  return open.reduce((n, r) => n + store.shakiness('sounds', r.sound), 0) / Math.max(1, open.length);
+  return RUNES.reduce((n, r) => n + store.shakiness('sounds', r.sound), 0) / Math.max(1, RUNES.length);
 }

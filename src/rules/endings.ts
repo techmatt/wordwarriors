@@ -18,6 +18,7 @@ import { ENDINGS, ENDING_BY_ID, type EndingSpec } from '../../content/house/endi
 import { endingLine, reformedLine } from '../../content/voice/ids';
 import { wakerOf, type Cast } from './cast';
 import type { Rand } from './bank';
+import { fresh } from './recent';
 
 /** How much likelier a scene that fits the cast is. */
 export const FIT_WEIGHT = 3;
@@ -78,10 +79,13 @@ export function standXs(e: EndingSpec, n: number): number[] {
   return [...spread(left, gap[0] - margin, k), ...(n - k ? spread(gap[1] + margin, right, n - k) : [])];
 }
 
-/** Draw a scene id: never `last` (while another is left), a fitting one `FIT_WEIGHT` times likelier. */
-export function pickEnding(cast: EndingCast, last: string | null, rand: Rand = Math.random): string {
-  const pool = ENDINGS.filter((e) => e.id !== last);
-  const from = pool.length ? pool : ENDINGS;
+/**
+ * Draw a scene id: none of her `recent` scenes (newest last; item 067, was
+ * only the last one) while two are left, a fitting one `FIT_WEIGHT` times likelier.
+ */
+export function pickEnding(cast: EndingCast, recent: string | null | readonly string[], rand: Rand = Math.random): string {
+  const rec = recent === null ? [] : typeof recent === 'string' ? [recent] : recent;
+  const from = fresh(ENDINGS, ENDINGS.filter((e) => rec.includes(e.id)).sort((a, b) => rec.indexOf(a.id) - rec.indexOf(b.id)));
   const weights = from.map((e) => (endingFits(e, cast) ? FIT_WEIGHT : 1));
   let r = rand() * weights.reduce((a, b) => a + b, 0);
   for (const [i, e] of from.entries()) {

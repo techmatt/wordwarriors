@@ -21,7 +21,7 @@
 
 import { FAMILIES } from '../../content/phonics/families';
 import { FRAMES } from '../../content/phonics/sentences';
-import { BRIDGE, CHARGE, WORD_MACHINE } from '../config';
+import { BRIDGE, CHARGE, VARIETY, WORD_MACHINE } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
 import type { Rand } from './bank';
 import { bridgeShakiness } from './bridge';
@@ -84,12 +84,16 @@ function familyShakiness(store: ProgressStore): number {
 /**
  * The episode's three games: two different fetch games (doors a and b), then
  * the counter game. A sentence game's weight is scaled by its frame's
- * shakiness, the word machine's by her families'.
+ * shakiness, the word machine's by her families'. A game she played in her
+ * last episodes (the store's `games`) weighs VARIETY.gameWeight as much
+ * (item 067), so the rooms rotate.
  */
 export function drawGames(store: ProgressStore, rand: Rand = Math.random, pool: Minigame[] = MINIGAMES): [Minigame, Minigame, Minigame] {
+  const recent = new Set(store.recentOf('games'));
   const weight = (id: string) => {
     const g = pool.find((m) => m.id === id)!;
-    return g.weight * (g.frame ? store.shakiness('frames', g.frame) : g.machine ? familyShakiness(store) : g.charge ? soundShakiness(store) : g.bridge ? bridgeShakiness(store) : 1);
+    const lean = g.frame ? store.shakiness('frames', g.frame) : g.machine ? familyShakiness(store) : g.charge ? soundShakiness(store) : g.bridge ? bridgeShakiness(store) : 1;
+    return g.weight * lean * (recent.has(id) ? VARIETY.gameWeight : 1);
   };
   const fits = (slot: GameSlot) => pool.filter((g) => g.slots.includes(slot)).map((g) => g.id);
   const fetch = pickWeighted(fits('fetch'), weight, 2, rand);

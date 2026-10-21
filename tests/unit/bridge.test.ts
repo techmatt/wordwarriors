@@ -18,8 +18,9 @@ import { narratorLine } from '../../content/voice/ids';
 import { NARRATOR_LINES } from '../../content/voice/script';
 import { CHARACTER_BY_ID, PERSONS } from '../../content/battle/roster';
 import { holdPlan, holdSamples } from '../../src/audio/holdSound';
-import { BRIDGE } from '../../src/config';
-import { BRIDGE_WORDS, bridgeGate, bridgeLevel, bridgePictures, bridgeTier, bridgeWords, nextBridgeLevel, planBridge, sharedStart, whereDiffers } from '../../src/rules/bridge';
+import { BRIDGE, DIFFICULTY } from '../../src/config';
+import { BRIDGE_WORDS, CROSS_WORDS, bridgeLevel, bridgePictures, bridgeTier, bridgeWords, nextBridgeLevel, planBridge, recordedBridgeLevel, sharedStart, whereDiffers } from '../../src/rules/bridge';
+import { setDifficulty } from '../../src/rules/difficulty';
 import { BRIDGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/sentences';
 import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
@@ -163,30 +164,39 @@ test('bridge words: pictured things with a short vowel; tiers are hold-sound CVC
   for (const w of ['mat', 'man', 'lid', 'lock']) assert.ok(BRIDGE_WORDS.includes(w), w);
 });
 
-test('bridge draw: a fresh store crosses only hold-sound CVC words; stops open once those come along', () => {
-  for (let seed = 1; seed <= 40; seed++) {
+test('bridge draw (item 067): a fresh store crosses any short word, every tier, never one over BRIDGE.maxUnits; the easier tier first', () => {
+  for (const w of CROSS_WORDS) assert.ok(BANK_BY_WORD[w]!.units.length <= BRIDGE.maxUnits, w);
+  assert.ok(CROSS_WORDS.length > 50);
+  const tiersSeen = new Set<number>();
+  for (let seed = 1; seed <= 60; seed++) {
     const store = new ProgressStore(memory());
     const plan = planBridge(store, { avoid: [], taken: [] }, seeded(seed));
     assert.equal(plan.rounds.length, BRIDGE.words);
-    for (const r of plan.rounds) assert.equal(bridgeTier(r.word), 1, `seed ${seed}: ${r.word}`);
     assert.equal(new Set(bridgeWords(plan)).size, BRIDGE.words);
-  }
-  const store = new ProgressStore(memory());
-  assert.equal(bridgeGate(store, 2), 0);
-  // Tier 1 at level 2: stop-sound words open, blends not yet.
-  for (const w of BRIDGE_WORDS.filter((x) => bridgeTier(x) === 1)) store.setBridgeLevel(w, 2);
-  assert.equal(bridgeGate(store, 2), 1);
-  assert.equal(bridgeGate(store, 3), 0);
-  let stops = 0;
-  for (let seed = 1; seed <= 40; seed++) {
-    const plan = planBridge(store, { avoid: [], taken: [] }, seeded(seed));
-    for (const r of plan.rounds) assert.notEqual(bridgeTier(r.word), 3, `seed ${seed}: ${r.word} is a blend`);
-    if (plan.rounds.some((r) => bridgeTier(r.word) === 2)) stops++;
+    for (const r of plan.rounds) {
+      assert.ok(CROSS_WORDS.includes(r.word), `seed ${seed}: ${r.word} is short`);
+      tiersSeen.add(bridgeTier(r.word));
+    }
     // The easier tier first.
     const tiers = plan.rounds.map((r) => bridgeTier(r.word));
     assert.deepEqual(tiers, [...tiers].sort());
   }
-  assert.ok(stops > 20, `stop-sound words in ${stops}/40 visits`);
+  assert.deepEqual([...tiersSeen].sort(), [1, 2, 3], 'stop-sound words and blends from the first visit');
+});
+
+test('bridge help (item 067): held at level 1 at base whatever she has reached; up to the knob above it', () => {
+  const store = new ProgressStore(memory());
+  store.setBridgeLevel('map', 3);
+  assert.equal(recordedBridgeLevel(store, 'map'), 3);
+  assert.equal(bridgeLevel(store, 'map'), 1);
+  setDifficulty(2);
+  try {
+    assert.equal(bridgeLevel(store, 'map'), 2);
+    setDifficulty(3);
+    assert.equal(bridgeLevel(store, 'map'), 3);
+  } finally {
+    setDifficulty(DIFFICULTY);
+  }
 });
 
 test('bridge draw: never a word the episode says, shows or has planned elsewhere', () => {

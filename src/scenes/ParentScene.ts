@@ -28,10 +28,11 @@ import { startScene } from '../art/gate';
 import { stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { BANK_DRAW, GAME_HEIGHT, GAME_WIDTH, GRAB, SENTENCE_SOLID } from '../config';
-import { coverageTable, levelGate, type CoverageRow } from '../rules/bank';
-import { GRAB_WORDS, grabLevel } from '../rules/grab';
-import { chargeLevel } from '../rules/charge';
-import { bridgeLevel } from '../rules/bridge';
+import { coverageTable, type CoverageRow } from '../rules/bank';
+import { GRAB_WORDS, recordedGrabLevel } from '../rules/grab';
+import { recordedChargeLevel } from '../rules/charge';
+import { recordedBridgeLevel } from '../rules/bridge';
+import { difficulty } from '../rules/difficulty';
 import { fitText } from '../ui/fitText';
 import type { Step } from '../episode/Episode';
 import { Controls } from '../input/Controls';
@@ -67,7 +68,7 @@ export class ParentScene extends Phaser.Scene {
     this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xf6f2e8);
     const snap = progress.snapshot();
     // Every text here wraps or shrinks to its column (item 020): nothing runs off the page.
-    fitText(this.add.text(30, 18, `Grown-ups: Julia's progress  ·  episodes finished: ${snap.episodes}`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '26px', color: '#222' }), GAME_WIDTH - 60, 34);
+    fitText(this.add.text(30, 18, `Grown-ups: Julia's progress  ·  episodes finished: ${snap.episodes}  ·  difficulty ${difficulty()}${difficulty() === 1 ? ' (base: help stays at its start)' : ''}`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '26px', color: '#222' }), GAME_WIDTH - 60, 34);
     fitText(this.add.text(30, 54, `tries · first-try right (recent) · today.  Red = shaky (comes up more often), green = solid. Green / Space: ${this.page ? 'back to page 1' : 'every word (page 2)'}. Red button / Esc / F9: back. F8 twice: erase. \` / ~ (below Esc), anywhere: dad lock.`, {
       fontFamily: 'Segoe UI, sans-serif',
       fontSize: '15px',
@@ -79,20 +80,20 @@ export class ParentScene extends Phaser.Scene {
       const words = [...new Set([...WORDS.map((w) => w.word), ...Object.keys(snap.words)])];
       const perCol = 22;
       // The number in a word's dot is its Stretchy Bridge help level (item 054), once she has crossed it.
-      const bridged = (id: string) => (snap.bridgeLevels?.[id] !== undefined ? String(bridgeLevel(progress, id)) : null);
+      const bridged = (id: string) => (snap.bridgeLevels?.[id] !== undefined ? String(recordedBridgeLevel(progress, id)) : null);
       this.grid('Words', 'words', words, 30, 90, perCol, (GAME_WIDTH - 60) / Math.max(5, Math.ceil(words.length / perCol)), 26, bridged);
-      fitText(this.add.text(200, 94, 'number in the dot: Stretchy Bridge help (1 stones sound + pictures shown, 2 silent stones, 3 says it to Dad first)', { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#555' }), GAME_WIDTH - 200 - 30, 22);
+      fitText(this.add.text(200, 94, `number in the dot: Stretchy Bridge level reached (1 stones sound + pictures shown, 2 silent stones, 3 says it to Dad first)${difficulty() === 1 ? '; at difficulty 1 every word gets 1' : `; the room gives up to ${difficulty()}`}`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#555' }), GAME_WIDTH - 200 - 30, 22);
       return;
     }
 
     // The digraphs' sounds (SH CH TH CK) sit with the letters': each is one sound unit.
     // Five full columns, narrow enough to stay left of the warm-up's levels.
     // The number in a sound's dot is its Charge the Spell help level (item 053), once she has charged it.
-    const charged = (id: string) => (snap.chargeLevels?.[id] !== undefined ? String(chargeLevel(progress, id)) : null);
+    const charged = (id: string) => (snap.chargeLevels?.[id] !== undefined ? String(recordedChargeLevel(progress, id)) : null);
     // Item 056's NG and voiced TH are left out: no rune drills them alone, and a sixth column would run into the warm-up's levels.
     const drilled = DIGRAPH_SOUNDS.filter((l) => l.letter !== 'ng' && l.letter !== 'th_voiced');
     this.grid('Letter sounds', 'sounds', [...LETTERS, ...drilled].map((l) => l.letter), 30, 90, 6, 162, 30, charged);
-    fitText(this.add.text(200, 94, 'number in the dot: Charge the Spell help (1 sound + gesture first, 2 gesture only, 3 rune alone)', { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#555' }), 1030 - 200, 22);
+    fitText(this.add.text(200, 94, 'number in the dot: Charge the Spell level reached (1 sound + gesture first, 2 gesture only, 3 rune alone)', { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#555' }), 1030 - 200, 22);
     const spelled = Object.entries(snap.spelling ?? {}).map(([w, st]) => `${w} ×${st.seen}`);
     fitText(this.add.text(1040, 90, ['Spelled (typing, kept apart', 'from reading):', ...spelled.slice(0, 3)], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - 1040 - 20, 85);
     this.grabView(840, 182, GAME_WIDTH - 840 - 20, 112);
@@ -104,8 +105,8 @@ export class ParentScene extends Phaser.Scene {
     this.grid('Sentence frames', 'frames', FRAMES.map((f) => f.id), 880, 300, framesPerCol, 190);
     const framesEnd = 300 + 30 + framesPerCol * 30 + 6;
     fitText(this.add.text(880, framesEnd, [
-      `Solid frames skip the listening pass`,
-      `(${SENTENCE_SOLID.tries}+ tries, last ${SENTENCE_SOLID.lastRight} right).`,
+      `Solid (${SENTENCE_SOLID.tries}+ tries, last ${SENTENCE_SOLID.lastRight} right)`,
+      difficulty() === 1 ? `frames skip the listening pass from difficulty 2.` : `frames skip the listening pass.`,
     ], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#555' }), GAME_WIDTH - 880 - 20, 40);
     this.bagView(880, framesEnd + 44);
   }
@@ -113,10 +114,11 @@ export class ParentScene extends Phaser.Scene {
   /**
    * The home warm-up (item 033): each word's level on the ramp, with its grabs
    * (tries · first-try right, recent). Words she has never grabbed are at the start level.
+   * The level is the one she has reached (item 067); DIFFICULTY caps what the hall gives.
    */
   private grabView(x: number, y: number, w: number, h: number): void {
     const rows = ([1, 2, 3] as const).map((l) => {
-      const ws = GRAB_WORDS.filter((word) => progress.stat('grabs', word).seen > 0 && grabLevel(progress, word) === l);
+      const ws = GRAB_WORDS.filter((word) => progress.stat('grabs', word).seen > 0 && recordedGrabLevel(progress, word) === l);
       // The shakiest eight and a count: the full list grew past its box after ~20 episodes (item 039).
       const shown = [...ws].sort((a, b) => progress.shakiness('grabs', b) - progress.shakiness('grabs', a)).slice(0, 8);
       const list = shown.map((word) => {
@@ -127,7 +129,7 @@ export class ParentScene extends Phaser.Scene {
       return `${l} ${['names + sounds', 'sounds, letters shown', 'sounds only'][l - 1]}: ${list.join('  ') || '–'}${more}`;
     });
     this.add.text(x, y, 'Warm-up levels', { fontFamily: 'Segoe UI, sans-serif', fontSize: '17px', color: '#333', fontStyle: 'bold' });
-    fitText(this.add.text(x, y + 24, [...rows, `New words start at ${GRAB.startLevel}; right first time: up one, a first-try miss: down one.`], { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#444' }), w, h - 24);
+    fitText(this.add.text(x, y + 24, [...rows, `Reached: new words start at ${GRAB.startLevel}; right first time: up one, a first-try miss: down one. ${difficulty() === 1 ? `Difficulty 1: the hall gives every word ${GRAB.startLevel}.` : `The hall gives up to ${difficulty()}.`}`], { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#444' }), w, h - 24);
   }
 
   /** Her word bag: key words drawn without replacement, and the shaky ones that come back early. */
@@ -150,8 +152,8 @@ export class ParentScene extends Phaser.Scene {
   /**
    * The word bank's coverage (item 037, `coverageTable`): per level, vowel and
    * first sound, how many words the bank has, how many she has read, how many
-   * are solid. The draws favour what she has met least, and open blends and
-   * digraphs as the level below firms up (the gate, as a percentage).
+   * are solid. The draws favour what she has met least; every level is in play
+   * (item 067: no level gate).
    */
   private coverageView(x: number, y: number): void {
     const table = coverageTable(progress);
@@ -163,11 +165,8 @@ export class ParentScene extends Phaser.Scene {
     };
     this.add.text(x, y, 'Word bank: words · read · solid', { fontFamily: 'Segoe UI, sans-serif', fontSize: '20px', color: '#333', fontStyle: 'bold' });
     const top = y + 32;
-    this.add.text(x, top, 'By level (open %)', head);
-    table.level.forEach((r, i) => {
-      const gate = Math.round(100 * levelGate(progress, Number(r.tag) as 1 | 2 | 3));
-      row(r, `${r.tag} ${LEVEL_NAMES[i]} ${gate}%`, x, top + 24 + i * 24, 250);
-    });
+    this.add.text(x, top, 'By level', head);
+    table.level.forEach((r, i) => row(r, `${r.tag} ${LEVEL_NAMES[i]}`, x, top + 24 + i * 24, 250));
     const vy = top + 24 + 3 * 24 + 10;
     this.add.text(x, vy, 'By vowel', head);
     table.vowel.forEach((r, i) => row(r, `short ${r.tag.toUpperCase()}`, x, vy + 24 + i * 24, 250));

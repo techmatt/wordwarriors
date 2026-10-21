@@ -12,8 +12,8 @@
  *
  * Item 037: the bag is every pictured word of the word bank
  * (content/phonics/bank.ts), and every draw weighs a word through
- * src/rules/bank.ts (shakiness x coverage x level gate), so key words spread
- * over the vowels and first sounds, and blends come in as CVC firms up. The
+ * src/rules/bank.ts (shakiness x coverage x recency), so key words spread
+ * over the vowels and first sounds; every word is in play (item 067). The
  * room's other pictures are chosen for reading (`distractorsFor`): another
  * first letter while the key word is new, one sharing its first sound or
  * rime once it is firm. No key word is on any of the episode's move pads
@@ -38,6 +38,7 @@ import { bridgeShown, bridgeWords, planBridge, type BridgePlan } from './bridge'
 import { SENTENCE_SOLID } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { distractorsFor, drawFromBag, shuffle, withStems, type Rand } from './bank';
+import { rampsAdvance } from './difficulty';
 
 interface PlanBase {
   /** `a` and `b` are the hub's two side-room doors; `counter` is the attic. */
@@ -109,9 +110,11 @@ const FETCHABLE = new Set(FETCH_ITEMS.map((i) => i.word));
  * How much more likely the villain's own named counter word is than any
  * other, when it is in the bag: the named items (Evil Tiamat's Magic Hat
  * swallowing her storm) are the best-staged defeats, so they come up a bit
- * more often, without breaking the bag.
+ * more often, without breaking the bag. Item 067 doubled the pool (every
+ * level in play, 109 pictured words where 51 were open), so 3 became 6 to
+ * keep the same share.
  */
-export const NAMED_COUNTER_BOOST = 3;
+export const NAMED_COUNTER_BOOST = 6;
 
 /**
  * Two picture words for the room's other objects: not the key word, not a
@@ -170,7 +173,7 @@ export function saidEarly(cast: { hero: string; ally: string | null; villain: st
 
 /**
  * Draw one key word from the bag: an `eligible` word still in it, weighted
- * by `wordWeight` (shakiness x coverage x level gate, src/rules/bank.ts)
+ * by `wordWeight` (shakiness x coverage x recency, src/rules/bank.ts)
  * times `boost`. When no eligible word is left, the bag
  * refills (a new round) with every bag word except `keepOut` (this episode's
  * words so far, so they do not open the new round too). It falls back to
@@ -327,7 +330,15 @@ export function asSentence(plan: RoomPlan): SentencePlan {
   return plan;
 }
 
-/** A solid frame skips the listening pass (SENTENCE_SOLID in config). */
+/**
+ * Does a frame's listening pass get skipped? Only above base difficulty
+ * (item 067: no ramp steps up by itself), and only once it is solid.
+ */
+export function skipsListening(store: ProgressStore, frameId: string): boolean {
+  return rampsAdvance() && frameIsSolid(store, frameId);
+}
+
+/** Is a frame solid (SENTENCE_SOLID in config)? Recorded for the grown-ups page; `skipsListening` is what the room asks. */
 export function frameIsSolid(store: ProgressStore, frameId: string, rule = SENTENCE_SOLID): boolean {
   const s = store.stat('frames', frameId);
   if (s.seen < rule.tries) return false;

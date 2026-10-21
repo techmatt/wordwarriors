@@ -6,17 +6,17 @@
  */
 
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { after, test } from 'node:test';
 
 import { CHARACTER_BY_ID, ROSTER } from '../../content/battle/roster';
 import { ACTIONS, BANK_BY_WORD } from '../../content/phonics/bank';
-import { EPISODE_DEFAULTS } from '../../src/config';
+import { DIFFICULTY, EPISODE_DEFAULTS } from '../../src/config';
+import { setDifficulty } from '../../src/rules/difficulty';
 import { FETCH_ITEMS, FRAMES, FRAME_BY_ID, allFrameTokens, allPrefixes, lookalikesOf, sentence, slotOf, tokenWord } from '../../content/phonics/sentences';
 import { CVC_WORDS } from '../../content/phonics/words';
 import { wordLine } from '../../content/voice/ids';
-import { BAG_WORDS, LEGACY_BAG_WORDS, distractors, drawKey, frameIsSolid, saidEarly, type EpisodeInput, type SentencePlan } from '../../src/rules/sentences';
+import { BAG_WORDS, LEGACY_BAG_WORDS, distractors, drawKey, frameIsSolid, saidEarly, skipsListening, type EpisodeInput, type SentencePlan } from '../../src/rules/sentences';
 import { sentencePlans } from './plans';
-import { openWords } from '../../src/rules/bank';
 import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
 
 function memory(): StorageLike {
@@ -177,8 +177,7 @@ test('the word bag: no key word comes back until the bag has gone round', () => 
   const store = new ProgressStore(memory());
   const rand = seeded(7);
   const drawn: string[] = [];
-  // Round 1 goes through every word of the levels open to her; words of a
-  // level still shut stay in the bag and do not hold the round open (item 039).
+  // Round 1 goes through every bag word (item 067: every level is in play).
   for (;;) {
     const w = drawKey(store, BAG_WORDS, rand);
     if (store.bag().round !== 1) break;
@@ -186,10 +185,8 @@ test('the word bag: no key word comes back until the bag has gone round', () => 
     readRight(store, w);
   }
   assert.equal(new Set(drawn).size, drawn.length, 'a whole round without a repeat');
-  const open = openWords(store);
-  assert.ok(drawn.length >= BAG_WORDS.filter(open).length - 1, `the round drew the open words (${drawn.length})`);
+  assert.equal(drawn.length, BAG_WORDS.length, `the round drew every word (${drawn.length})`);
   assert.equal(store.bag().round, 2, 'then it refills');
-  assert.ok(BAG_WORDS.filter((w) => !drawn.includes(w)).every((w) => !openWords(store)(w) || store.bag().left.includes(w)));
 
   // Across whole episodes she plays through: four episodes (12 key words) without a repeat.
   for (let seed = 1; seed <= 20; seed++) {
@@ -300,8 +297,8 @@ test('new words (MUG RUG JUG, then 037\'s) join a round under way; a fresh bag a
 
 test("the villain's named counter word still comes up, and is boosted", () => {
   // Evil Tiamat's HAT (the Magic Hat swallows her storm) is in the draw like
-  // any word, more often than chance (a fresh store draws from the 40-odd
-  // level-1 pictures that are not action words: one in forty).
+  // any word, more often than chance (a fresh store draws from the hundred-odd
+  // pictures, every level since item 067).
   const named = CHARACTER_BY_ID[VILLAIN]!.counter.word;
   let n = 0;
   for (let seed = 1; seed <= 200; seed++) if (sentencePlans(new ProgressStore(memory()), input(), seeded(seed))[2].sentence.key === named) n++;
@@ -320,6 +317,16 @@ test('frameIsSolid: new is not solid; 6 tries with the last 5 right is; one miss
   const shaky = new ProgressStore(memory());
   for (let i = 0; i < 6; i++) shaky.record('frames', 'we_need_a', i !== 3, i === 3 ? 1 : 0);
   assert.equal(frameIsSolid(shaky, 'we_need_a'), false);
+
+  // Item 067: a solid frame keeps its listening pass at base difficulty; from 2 it skips it.
+  assert.equal(skipsListening(store, 'go_get_the'), false);
+  setDifficulty(2);
+  try {
+    assert.equal(skipsListening(store, 'go_get_the'), true);
+    assert.equal(skipsListening(shaky, 'we_need_a'), false);
+  } finally {
+    setDifficulty(DIFFICULTY);
+  }
 });
 
 test("every frame token's word line is in allFrameTokens", () => {
@@ -383,9 +390,13 @@ test("room objects for a new key word never share its first letter (no MAP besid
   }
 });
 
-test('room objects for a firm key word: one shares its first sound or rime (CAT beside HAT or CAN), the other does not start like it', () => {
+test('room objects for a firm key word (from difficulty 2, item 067): one shares its first sound or rime (CAT beside HAT or CAN), the other does not start like it', () => {
   const store = new ProgressStore(memory());
   for (let i = 0; i < 4; i++) store.record('words', 'cat', true, 0);
+  // At base the firm CAT still stands among other first letters.
+  for (let seed = 1; seed <= 20; seed++) for (const o of distractors(store, 'cat', seeded(seed), 2, ['we', 'can', 'use', 'the'])) assert.notEqual(o[0], 'c', `${o} beside CAT at base`);
+  setDifficulty(2);
+  after(() => setDifficulty(DIFFICULTY));
   for (let seed = 1; seed <= 40; seed++) {
     const objs = distractors(store, 'cat', seeded(seed), 2, ['we', 'can', 'use', 'the']);
     assert.equal(objs.length, 2);

@@ -1,5 +1,5 @@
 /**
- * Word rules across the draws (item 039's bug hunt, kept fixed): a bag of shut levels is spent, no
+ * Word rules across the draws (item 039's bug hunt, kept fixed): every level in play (item 067), no
  * "A" frame before a vowel, other pictures start with another sound, stems count as said, and no
  * fight style floats a bank word. `npx tsx --test tests/unit/wordrules.test.ts` (also part of `npm run test:unit`).
  */
@@ -10,7 +10,7 @@ import { test } from 'node:test';
 
 import { MOVE_WORDS } from '../../content/battle/roster';
 import { BANK, BANK_BY_WORD } from '../../content/phonics/bank';
-import { distractorsFor, gates, withStems } from '../../src/rules/bank';
+import { distractorsFor, withStems } from '../../src/rules/bank';
 import { MINIGAME_BY_ID } from '../../src/rules/minigames';
 import { drawGift, drawMove } from '../../src/rules/moves';
 import { BAG_WORDS, drawKey, episodePlans, type EpisodeInput } from '../../src/rules/sentences';
@@ -31,20 +31,24 @@ function seeded(seed = 1): () => number {
 
 const level = (w: string) => BANK_BY_WORD[w]?.level ?? 1;
 
-test('a bag left holding only shut-level words is spent: the gift, the moves and the keys stay on open levels', () => {
+test('every level is in play (item 067): a fresh store\'s bag of only digraph words draws them, the gift, the moves and the keys alike', () => {
   const store = new ProgressStore(memory());
-  // A fresh store: only level 1 is open.
-  assert.equal(gates(store)[3], 0);
   const digraphActions = MOVE_WORDS.filter((w) => level(w) === 3);
   const digraphThings = BAG_WORDS.filter((w) => level(w) === 3);
   assert.ok(digraphActions.length && digraphThings.length);
   store.refillBag(digraphActions, 'moves');
   store.refillBag(digraphThings);
-  for (let seed = 1; seed <= 30; seed++) {
-    assert.equal(level(drawGift(store, { helper: 'ellie' }, seeded(seed))), 1, 'gift');
-    assert.equal(level(drawMove(store, MOVE_WORDS, seeded(seed))), 1, 'move');
-    assert.equal(level(drawKey(store, BAG_WORDS, seeded(seed))), 1, 'key');
+  for (let seed = 1; seed <= 30; seed++) assert.equal(level(drawKey(store, BAG_WORDS, seeded(seed))), 3, 'the key bag of digraph words is drawn from, not spent');
+  // The gift and the moves: blends and digraphs from a fresh store (her move bag takes back every unread move word, `topUpMoves`).
+  const rand = seeded(11);
+  const levels = { gift: new Set<number>(), move: new Set<number>() };
+  for (let i = 0; i < 300; i++) {
+    const s = new ProgressStore(memory());
+    levels.gift.add(level(drawGift(s, { helper: 'ellie' }, rand)));
+    levels.move.add(level(drawMove(s, MOVE_WORDS, rand)));
   }
+  const above1 = (xs: Set<number>) => [...xs].some((l) => l > 1);
+  assert.ok(above1(levels.gift) && above1(levels.move), `gift ${[...levels.gift]}, move ${[...levels.move]}`);
 });
 
 test('no "A" frame takes a word starting with a vowel (WE NEED A ANT)', () => {
