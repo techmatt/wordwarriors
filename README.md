@@ -525,8 +525,9 @@ The bank covers phonics by rule, not by luck. Counting only familiar pictured wo
 (`THINGS`: not `odd`, not actions), `COVERAGE` in `content/phonics/bank.ts` asks for:
 
 - **3 per first sound**, every letter sound and digraph (QU counts as Q), unless an
-  entry there gives a lower target and why: no familiar one-vowel picture starts with
-  I, O, U, X, Z or voiced TH; A, E, Q, W, Y and TH have 1 or 2;
+  entry there gives a lower target and why: I, O, U and X have 1 and A and Z 2, through
+  words with sounds she has not been taught (item 058, below); E, Q, W, Y and TH have
+  1 or 2; voiced TH none;
 - **a last sound** for the sounds words end on: 3 each for B D G K L M N P S T X CK NG
   SH, fewer for F Z CH TH, with reasons;
 - **8 per short vowel**; **2 pictures per word-machine family**, and the families listed
@@ -546,6 +547,19 @@ raising the level. A hand-`spelled` word with one short vowel (THUMB: TH U MB, M
 saying M) is tagged like any word; a long-vowel one marked `late` is level 3, and a
 silent letter (the E of KITE) has the sound `''`: the hints (the sentence game's and the
 warm-up's clue) light it and say nothing.
+
+Untaught sounds (item 058, Matt's ruling): a familiar picture word may hold a sound she
+has not been taught. It is spelled by hand, each unit with its sound, and each such
+sound is its own placeholder line like a long vowel (`UNTAUGHT_SOUNDS` in
+`content/phonics/letters.ts`, the end of `LONG_VOWEL_SOUNDS`): `long_oo` "Oo" (ZOO,
+IGLOO), `schwa` "Uh" (ZEBRA's A, OCTOPUS's second O and U, UMBRELLA's A) and `x_name`
+"Ecks" (X-RAY, X said by its name; the audit counts it in the X row, since no familiar
+picture starts with KS). A word holding one takes the long path: level 3 (`late`), no
+short-vowel tag, never in a family or on the bridge. That is how Z (ZOO, ZEBRA), A
+(APPLE, beside ANT), I (IGLOO), O (OCTOPUS), U (UMBRELLA) and X (X-RAY) got pictures.
+The U rune's gesture became a finger pointing up, since its umbrella is now a word's
+picture.
+
 A word that is said in a narrator line, a threat, a quest line, a hub scene or a rune
 gesture cannot join the bank until that line is reworded (the unit tests name it):
 WELL ("well done"), WITCH (Bavmorda), SAND (Jasmine's threat) and SWING (a rune) stayed

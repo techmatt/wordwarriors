@@ -388,7 +388,12 @@ placeholder until Matt records it; a new one goes there. A hyphen breaks the lin
 with `say: 'yo-yo'`. Item 056: a long-vowel word marked `late` is level 3 (QUEEN, GOAT,
 KITE come with the digraphs); a silent letter's sound is `''` (KITE's E: the hint
 lights it and says nothing); a `spelled` word with one short vowel and nothing long or
-silent (THUMB: TH U MB, MB saying M) is tagged like any word. A new word must keep the
+silent (THUMB: TH U MB, MB saying M) is tagged like any word. Item 058 (Matt's ruling):
+a familiar picture may hold a sound she has not been taught; spell it by hand with that
+sound's key from `UNTAUGHT_SOUNDS` (`content/phonics/letters.ts`: `long_oo` for ZOO,
+`schwa` for ZEBRA's A, `x_name` for X-RAY's X), mark it `late`, and it takes the long
+path (no vowel tag, no family, no bridge). A new untaught sound goes in that list, which
+gives it its `letter_<key>_sound` line. A new word must keep the
 coverage rule (README, "The word bank's coverage rule"; `npm run bank:audit`). To add one:
 
 1. The entry, in its level's block of `ENTRIES`.

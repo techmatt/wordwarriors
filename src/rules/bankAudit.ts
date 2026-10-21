@@ -11,7 +11,7 @@
 
 import { COVERAGE, THINGS, VOWEL_LIST, type BankWord } from '../../content/phonics/bank.js';
 import { FAMILIES } from '../../content/phonics/families.js';
-import { DIGRAPH_SOUNDS, LETTERS, LONG_VOWEL_SOUNDS } from '../../content/phonics/letters.js';
+import { DIGRAPH_SOUNDS, LETTERS, LONG_VOWEL_SOUNDS, isUntaught } from '../../content/phonics/letters.js';
 
 export interface CoverageRow {
   /** What is counted: `first m`, `last ng`, `vowel a`, `family at`, `bridge m`, `long long_a`. */
@@ -26,7 +26,13 @@ export interface CoverageRow {
 /** Every sound a word can start or end on: the letters (C and K apart), the digraphs, QU's Q. */
 const SOUNDS = [...LETTERS, ...DIGRAPH_SOUNDS].map((s) => s.letter);
 
-const firstSound = (w: BankWord) => w.sounds[0]!;
+/**
+ * A first sound that counts for a letter's row (item 058): X-RAY starts on X
+ * said by its name (`x_name`), not X's KS; no familiar picture starts with KS,
+ * so the X row counts X-RAY, the one familiar X picture there is.
+ */
+const COUNTS_AS: Record<string, string> = { x_name: 'x' };
+const firstSound = (w: BankWord) => COUNTS_AS[w.sounds[0]!] ?? w.sounds[0]!;
 /** The last sound heard: CHEESE ends on Z, its E silent. */
 const lastSound = (w: BankWord) => w.sounds.filter(Boolean).at(-1)!;
 
@@ -60,7 +66,8 @@ export function coverageRows(words: BankWord[] = THINGS): CoverageRow[] {
   }
   // The bridge's far bank: early words sharing a first sound, so two pictures beside the word start like it and differ later.
   for (const s of COVERAGE.bridgeStarts) row(`bridge ${s}`, words.filter((w) => early(w) && firstSound(w) === s), COVERAGE.bridge[s] ?? { target: COVERAGE.bridgeTarget });
-  for (const l of LONG_VOWEL_SOUNDS) row(`long ${l.letter}`, words.filter((w) => w.sounds.includes(l.letter)), COVERAGE.long[l.letter] ?? { target: 1 });
+  // The long vowels; not the untaught sounds (item 058) the list ends with, which have no target.
+  for (const l of LONG_VOWEL_SOUNDS.filter((s) => !isUntaught(s.letter))) row(`long ${l.letter}`, words.filter((w) => w.sounds.includes(l.letter)), COVERAGE.long[l.letter] ?? { target: 1 });
   return rows;
 }
 

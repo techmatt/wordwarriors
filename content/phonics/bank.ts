@@ -31,8 +31,10 @@
  * rule"). Counting familiar pictured words only (THINGS), the bank keeps:
  *
  * - 3 per first sound, every letter sound and digraph (QU as Q), or the lower
- *   target COVERAGE.first gives with its reason (no familiar one-vowel
- *   picture starts with I, O, U, X, Z or voiced TH; A E Q W Y TH have 1-2);
+ *   target COVERAGE.first gives with its reason: I O U X have 1 and A Z 2,
+ *   through words with sounds she has not been taught (item 058: IGLOO,
+ *   OCTOPUS, UMBRELLA, X-RAY, APPLE, ZOO, ZEBRA); E Q W Y TH have 1-2; voiced
+ *   TH none;
  * - a last sound: 3 for B D G K L M N P S T X CK NG SH, fewer for F Z CH TH;
  * - 8 per short vowel; 2 pictures per word-machine family, the listed
  *   families staying families;
@@ -46,6 +48,8 @@
  * Pure data: no Phaser, so the voice composer and the unit tests read it.
  */
 
+import { isUntaught } from './letters.js';
+
 export type Role = 'thing' | 'action' | 'both';
 export type Level = 1 | 2 | 3;
 export type Vowel = 'a' | 'e' | 'i' | 'o' | 'u';
@@ -56,8 +60,8 @@ export interface BankEntry {
   glyph?: string;
   draw?: 'fan' | 'log' | 'mop' | 'pot' | 'mug' | 'rug';
   say?: string;
-  /** The item that added it: before 037 (`old`), 037, 040 or 054. */
-  since?: '037' | '040' | '054' | '056';
+  /** The item that added it: before 037 (`old`), 037, 040, 054, 056 or 058. */
+  since?: '037' | '040' | '054' | '056' | '058';
   /** It sounds like a spell (ZAP, HEX, POP; not MUD or NAP): a caster's gift leans to it (item 038, `drawGift`). */
   spell?: true;
   /**
@@ -109,6 +113,8 @@ const NEW_ODD = { ...NEW, ...ODD };
 const NEW_040 = { since: '040' as const };
 const NEW_054 = { since: '054' as const };
 const NEW_056 = { since: '056' as const };
+/** Item 058: a familiar picture holding a sound she has not been taught (UNTAUGHT_SOUNDS): level 3, with the digraphs. */
+const UNTAUGHT_058 = { since: '058' as const, late: true as const };
 
 const ENTRIES: BankEntry[] = [
   // Level 1: CVC. The pictured words from before 037.
@@ -187,6 +193,21 @@ const ENTRIES: BankEntry[] = [
   T('bike', '🚲', { ...NEW_056, late: true, spelled: [['b', 'b'], ['i', 'long_i'], ['k', 'k'], ['e', '']] }),
   T('vase', '💐', { ...NEW_056, late: true, spelled: [['v', 'v'], ['a', 'long_a'], ['s', 's'], ['e', '']] }),
   T('cake', '🎂', { ...NEW_056, late: true, spelled: [['c', 'c'], ['a', 'long_a'], ['k', 'k'], ['e', '']] }),
+  // Item 058, under the untaught-sounds ruling (Matt's): a familiar picture may
+  // hold a sound she has not been taught (UNTAUGHT_SOUNDS in letters.ts: long
+  // OO, the schwa, X said by its name), spelled by hand with each unit's sound.
+  // The first sounds the bank had none or one of: Z, A, I, O, U, X. Level 3
+  // (`late`), on the long path (no short-vowel tag, no family, no bridge).
+  T('zoo', '🎪', { ...UNTAUGHT_058, spelled: [['z', 'z'], ['oo', 'long_oo']] }),
+  T('zebra', '🦓', { ...UNTAUGHT_058, spelled: [['z', 'z'], ['e', 'long_e'], ['b', 'b'], ['r', 'r'], ['a', 'schwa']] }),
+  // APPLE: A, P, L, its E silent as in KITE (the L carries the "ul").
+  T('apple', '🍎', { ...UNTAUGHT_058, spelled: [['a', 'a'], ['pp', 'p'], ['l', 'l'], ['e', '']] }),
+  T('igloo', '🧊', { ...UNTAUGHT_058, spelled: [['i', 'i'], ['g', 'g'], ['l', 'l'], ['oo', 'long_oo']] }),
+  T('octopus', '🐙', { ...UNTAUGHT_058, spelled: [['o', 'o'], ['c', 'c'], ['t', 't'], ['o', 'schwa'], ['p', 'p'], ['u', 'schwa'], ['s', 's']] }),
+  T('umbrella', '☂️', { ...UNTAUGHT_058, spelled: [['u', 'u'], ['m', 'm'], ['b', 'b'], ['r', 'r'], ['e', 'e'], ['ll', 'l'], ['a', 'schwa']] }),
+  // X-RAY: no familiar picture starts with X's KS sound; X-RAY says the
+  // letter's name (`x_name`), and the audit counts it as X's first sound.
+  T('xray', '🦴', { ...UNTAUGHT_058, say: 'x-ray', spelled: [['x', 'x_name'], ['r', 'r'], ['ay', 'long_a']] }),
 ];
 
 /** The digraphs that are one sound unit (item 056: NG, and QU, whose sound is Q's "kw"). */
@@ -231,13 +252,14 @@ export function tag(e: BankEntry): BankWord {
     const units = e.spelled.map(([letters]) => letters);
     if (units.join('') !== e.word) throw new Error(`bank: ${e.word} is spelled ${units.join('')}`);
     const sounds = e.spelled.map(([, s]) => s);
-    // Item 056: a hand-spelled word with one short vowel and nothing long or
-    // silent (THUMB is TH U MB, MB saying M) is tagged like any word.
+    // Item 056: a hand-spelled word with one short vowel and nothing long,
+    // silent or (item 058) untaught (THUMB is TH U MB, MB saying M) is tagged
+    // like any word. ZEBRA, APPLE, UMBRELLA take the long path.
     const vi = sounds.findIndex(isShort);
-    if (sounds.filter(isShort).length === 1 && !sounds.some((s) => !s || s.startsWith('long_'))) {
+    if (sounds.filter(isShort).length === 1 && !sounds.some((s) => !s || s.startsWith('long_') || isUntaught(s))) {
       return { ...e, units, sounds, level: levelOf(units, vi), vowel: sounds[vi] as Vowel, onset: units.slice(0, vi).join(''), rime: units.slice(vi).join('') };
     }
-    // A long-vowel word: level 1 (KEY, YOYO), or `late` (item 056) 3, with the digraphs.
+    // A long-vowel or untaught-sound word: level 1 (KEY, YOYO), or `late` (item 056) 3, with the digraphs.
     return { ...e, units, sounds, level: e.late ? 3 : 1, vowel: null, onset: units[0]!, rime: units.slice(1).join('') };
   }
   const units = unitsOf(e.word);
@@ -271,16 +293,16 @@ export const COVERAGE = {
   /** Familiar pictures per first sound, every letter sound and digraph, unless `first` says less and why. */
   firstTarget: 3,
   first: {
-    a: { target: 1, why: 'ANT; APPLE and ALLIGATOR have more than one vowel' },
+    a: { target: 2, why: 'ANT, APPLE; ALLIGATOR and ASTRONAUT she would not read for years' },
     e: { target: 2, why: 'EGG, ELF; ELK and EDGE are no picture she knows' },
-    i: { target: 0, why: 'IGLOO and INSECT have more vowels; INK and INCH no clear picture' },
-    o: { target: 0, why: 'OCTOPUS and OTTER have more vowels; an OX she would call a cow' },
-    u: { target: 0, why: 'UMBRELLA has more vowels; UP is an idea, not a picture' },
+    i: { target: 1, why: 'IGLOO (untaught OO); INSECT she would call a bug, INK and INCH no clear picture' },
+    o: { target: 1, why: 'OCTOPUS (untaught schwas); OTTER she would not know, an OX she would call a cow' },
+    u: { target: 1, why: 'UMBRELLA (an untaught schwa); UP is an idea, UNDER a place, not a picture' },
     q: { target: 1, why: 'QUEEN; QUILT she would call a blanket (odd); QUEST is an action word' },
-    x: { target: 0, why: 'no word starts with its KS sound' },
+    x: { target: 1, why: 'X-RAY, its X said by name (x_name); no word starts with the KS sound' },
     w: { target: 2, why: 'WEB, WING; WIG is odd, WELL and WITCH are said in hub scenes (WELL DONE, a good witch)' },
     y: { target: 1, why: 'YOYO; YAK is odd; YAWN, YARN and YOLK need sounds the bank has not got' },
-    z: { target: 0, why: 'ZEBRA and ZOO need a schwa or OO; ZAP and ZIP are move words with no zip picture' },
+    z: { target: 2, why: 'ZOO, ZEBRA (untaught OO, schwa); ZAP and ZIP are move words, ZIGZAG and ZERO no picture she knows' },
     th: { target: 2, why: 'THUMB, THREE; THORN and THIMBLE she would not know' },
     th_voiced: { target: 0, why: 'THIS, THAT, THE: no picture' },
     ck: { target: 0, why: 'never first' },

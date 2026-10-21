@@ -532,6 +532,14 @@ const PICTURES: Record<string, string> = {
   bike: "a bike: a child's red bicycle with two wheels, side-on",
   vase: 'a vase: a blue china vase with a bunch of bright flowers in it',
   cake: 'a cake: a round pink birthday cake with white icing and candles lit on top',
+  // Item 058: the untaught-sounds words (first sounds Z A I O U X).
+  zoo: 'a zoo: a big friendly zoo gate with a lion, a giraffe and an elephant peeking over the fence behind it; a zoo, not a farm or a circus, no writing on the gate',
+  zebra: 'a zebra: one black and white striped zebra standing side-on; a zebra, not a horse',
+  apple: 'an apple: one shiny red apple with a short brown stem and one green leaf; an apple, not a cherry or a tomato',
+  igloo: 'an igloo: a round white dome house made of snow blocks with a small arched doorway, on snowy ground; not a tent, no people',
+  octopus: 'an octopus: one cute purple octopus with eight curly arms and big friendly eyes, seen from the front',
+  umbrella: 'an umbrella: one open bright red umbrella with a curved handle, a few raindrops falling on it',
+  xray: 'an x-ray: a glowing blue x-ray picture of a hand, the white finger bones clear, clipped to a bright light box; no writing, not a skeleton costume',
 };
 
 const HAND: Record<string, string> = {

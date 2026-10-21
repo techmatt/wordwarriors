@@ -89,11 +89,36 @@ export const DIGRAPH_SOUNDS: LetterSound[] = [
 ];
 
 /**
+ * Untaught sounds (item 058, Matt's ruling): a familiar picture word may hold
+ * a sound she has not been taught, a long OO, a schwa, a letter said by its
+ * name. The bank spells such a word by hand (`spelled`), each unit with its
+ * sound, and each of these sounds is its own line (`letter_long_oo_sound`)
+ * like the long vowels, a placeholder until Matt records it. A word holding
+ * one is a long-path word: no short-vowel tag, level 3 (`late`), never in a
+ * word family or on the bridge.
+ *
+ * - `long_oo`: ZOO, IGLOO;
+ * - `schwa`: the lazy "uh" of ZEBRA's A, OCTOPUS's second O and U,
+ *   UMBRELLA's A (the same placeholder as short U until recorded apart);
+ * - `x_name`: X-RAY's X, which says the letter's name, "ecks": no familiar
+ *   picture starts with X's own KS sound.
+ */
+export const UNTAUGHT_SOUNDS: LetterSound[] = [
+  { letter: 'long_oo', say: 'Oo', cls: 'vowel', example: 'zoo', note: 'long oo, the vowel of ZOO and the end of IGLOO' },
+  { letter: 'schwa', say: 'Uh', cls: 'vowel', example: 'zebra', note: 'the schwa, the A of ZEBRA; the same placeholder as short u until Matt records the two apart' },
+  { letter: 'x_name', say: 'Ecks', cls: 'fricative', example: 'xray', note: 'X said by its name, the X of X-RAY; not the KS sound at the end of FOX' },
+];
+
+/**
  * Long vowels (item 048), for the bank's hand-spelled words: KEY is K, long E
  * (on its EY), YOYO is Y, long O, twice. `letter` is the sound's key, not
  * letters (`letterSoundLine('long_e')` is `letter_long_e_sound`), each its own
  * line, a placeholder until Matt records them. A long vowel says its letter's
  * name, so edge-tts gets the name's spelling, as in LETTER_NAMES.
+ *
+ * Item 058: the list ends with UNTAUGHT_SOUNDS, so every hand-spelled sound
+ * gets its `letter_<key>_sound` line from one list (the voice composer and
+ * the line test read it); the coverage audit's long rows skip the untaught ones.
  */
 export const LONG_VOWEL_SOUNDS: LetterSound[] = [
   { letter: 'long_e', say: 'Ee', cls: 'vowel', example: 'key', note: 'long e, the vowel of KEY (spelled EY there)' },
@@ -102,9 +127,13 @@ export const LONG_VOWEL_SOUNDS: LetterSound[] = [
   { letter: 'long_a', say: 'Ay', cls: 'vowel', example: 'cake', note: 'long a, the vowel of CAKE (A and a silent E)' },
   { letter: 'long_i', say: 'Eye', cls: 'vowel', example: 'kite', note: 'long i, the vowel of KITE (I and a silent E)' },
   { letter: 'long_u', say: 'You', cls: 'vowel', example: 'cube', note: 'long u, the vowel of CUBE; no familiar bank word has it yet' },
+  ...UNTAUGHT_SOUNDS,
 ];
 
-/** Every sound unit's sound: a single letter's, a digraph's or a long vowel's. */
+/** Is this sound key one she has not been taught (item 058: `long_oo`, `schwa`, `x_name`)? */
+export const isUntaught = (sound: string): boolean => UNTAUGHT_SOUNDS.some((l) => l.letter === sound);
+
+/** Every sound unit's sound: a single letter's, a digraph's, a long vowel's or an untaught one's. */
 export const SOUND_BY_UNIT: Record<string, LetterSound> = Object.fromEntries(
   [...LETTERS, ...DIGRAPH_SOUNDS, ...LONG_VOWEL_SOUNDS].map((l) => [l.letter, l]),
 );

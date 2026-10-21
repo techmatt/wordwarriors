@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { BANK_BY_WORD, COVERAGE, THINGS, soundOf, unitsOf } from '../../content/phonics/bank';
-import { DIGRAPH_SOUNDS, LETTERS, SOUND_BY_UNIT } from '../../content/phonics/letters';
+import { DIGRAPH_SOUNDS, LETTERS, LONG_VOWEL_SOUNDS, SOUND_BY_UNIT, UNTAUGHT_SOUNDS } from '../../content/phonics/letters';
 import { coverageGaps, coverageRows } from '../../src/rules/bankAudit';
 
 test('coverage: every row of the audit meets its target', () => {
@@ -50,4 +50,22 @@ test('units (item 056): QU and NG are units, doubled letters one sound, silent E
   assert.deepEqual(t('kite'), [3, null, 'k', 'ite', 'k long_i t ']);
   assert.deepEqual(t('key'), [1, null, 'k', 'ey', 'k long_e']);
   for (const s of ['q', 'ng', 'th_voiced', 'long_a', 'long_i', 'long_u']) assert.ok(SOUND_BY_UNIT[s], s);
+});
+
+test('untaught sounds (item 058): a word holding one is a late long-path word; X-RAY counts for X', () => {
+  const t = (w: string) => {
+    const b = BANK_BY_WORD[w]!;
+    return [b.level, b.vowel, b.sounds.join(' ')];
+  };
+  assert.deepEqual(t('zoo'), [3, null, 'z long_oo']);
+  assert.deepEqual(t('zebra'), [3, null, 'z long_e b r schwa']);
+  assert.deepEqual(t('apple'), [3, null, 'a p l ']);
+  assert.deepEqual(t('igloo'), [3, null, 'i g l long_oo']);
+  assert.deepEqual(t('octopus'), [3, null, 'o c t schwa p schwa s']);
+  assert.deepEqual(t('umbrella'), [3, null, 'u m b r e l schwa']);
+  assert.deepEqual(t('xray'), [3, null, 'x_name r long_a']);
+  for (const s of UNTAUGHT_SOUNDS) assert.ok(SOUND_BY_UNIT[s.letter] && LONG_VOWEL_SOUNDS.includes(s), `${s.letter} has its own line`);
+  const row = (tag: string) => coverageRows().find((r) => r.tag === tag)!.words;
+  assert.ok(row('first x').includes('xray'), 'X-RAY counts for X');
+  assert.ok(!coverageRows().some((r) => r.tag.startsWith('long ') && UNTAUGHT_SOUNDS.some((s) => r.tag === `long ${s.letter}`)), 'no long row for an untaught sound');
 });

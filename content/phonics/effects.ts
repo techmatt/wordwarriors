@@ -178,6 +178,14 @@ const THING_EFFECTS: WordEffect[] = [
   { word: 'bike', look: 'a bike that rides straight through the villain, ring ring', ability: use('bike', 'dash', 0xe63946, { power: 3 }) },
   { word: 'vase', look: 'vases of flowers dropping on the villain, crash', ability: use('vase', 'rain', 0x9b5de5, { ...pic('vase'), count: 6 }) },
   { word: 'cake', look: 'a big cake for the whole team: strong again, yum', ability: use('cake', 'heal', 0xff9ad5, { color2: 0xffffff }) },
+  // Item 058: the untaught-sounds words.
+  { word: 'zoo', look: 'the whole zoo stampedes across the arena, a wave of animals', ability: use('zoo', 'wave', 0xffb347, { color2: 0x6ad66a }) },
+  { word: 'zebra', look: 'a stripy zebra that gallops straight through the villain', ability: use('zebra', 'dash', 0xffffff, { power: 3 }) },
+  { word: 'apple', look: 'apples raining down on the villain, bonk bonk', ability: use('apple', 'rain', 0xe63946, { ...pic('apple'), count: 10 }) },
+  { word: 'igloo', look: 'an icy igloo that drops over the villain: frozen for a moment, brr', ability: use('igloo', 'freeze', 0xbfefff, { duration: 2 }) },
+  { word: 'octopus', look: 'a friendly octopus whose eight arms wrap the villain up tight', ability: use('octopus', 'trap', 0xff6ad5, { glyph: '🐙', count: 3 }) },
+  { word: 'umbrella', look: 'a giant umbrella that opens over the whole team: a shield', ability: use('umbrella', 'shield', 0x9b5de5, { duration: 4 }) },
+  { word: 'xray', look: 'an x-ray beam that shines right through the villain, it can see its bones', ability: use('xray', 'beam', 0x7ad9ff, { color2: 0xffffff }) },
 ];
 
 /**

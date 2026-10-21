@@ -120,6 +120,9 @@ export const LOOKALIKES: string[][] = [
   ['quilt', 'rug', 'mat', 'bed'],
   ['doll', 'elf'],
   ['egg', 'nest', 'pan'],
+  // Item 058's words: an apple beside the other round fruit, an igloo beside the other little shelters.
+  ['apple', 'plum', 'fig'],
+  ['igloo', 'tent', 'hut'],
   ['glass', 'jug'],
   ['king', 'queen'],
   ['thumb', 'hand'],
