@@ -154,7 +154,9 @@ export const PICK_NOTES: Record<string, string> = {
   pic_top: 'Move word TOP (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 2, promoted by item 018: 1 has a green band keyed half-clear. 0 is the painted placeholder.',
   pic_tug: 'Move word TUG (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 2, promoted by item 018: the tightest rope; all three are long and thin. 0 is the painted placeholder.',
   pic_fix: 'Move word FIX (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 2, promoted by item 018. 0 is the painted placeholder.',
-  pic_pan: 'Move word PAN (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 1, promoted by item 018. 0 is the painted placeholder.',
+  pic_pan: "Move word PAN (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 2 of item 070's round, Matt's pick (item 073): an empty pan, so it never reads as EGG. 0 is the painted placeholder.",
+  pic_mat: "`current` is candidate 3 of item 070's round, Matt's pick (item 073): jigsaw foam tiles, so it never reads as RUG. `0` is the old striped mat with tassels.",
+  pic_rock: "`current` is candidate 4 of item 070's round, Matt's pick (item 073): bold, outlined and orange-brown, apart from the bridge room's grey boulders. Its `0` is not a usable image.",
   pic_ram: 'Move word RAM (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 1, promoted by item 018: charging head down. 0 is the painted placeholder.',
   char_tiamat_good: "`current` is candidate 3, Matt's pick (item 016): wings spread open, hands clasped over her belly. 0 is item 013's first promotion (candidate 1).",
   char_tiamat_evil: "`current` is candidate 3, Matt's pick (item 016): gold collar and cuffs, one hand on her hip. 0 is item 013's first promotion (candidate 2, the plainest dragon belly).",
@@ -399,7 +401,8 @@ const PICTURES: Record<string, string> = {
   top: 'a top: a colourful striped spinning top toy spinning on its point, curved swirl marks around it',
   tug: 'a tug: two little cartoon hands pulling hard on a thick rope in a tug of war, the rope pulled tight with a knot in the middle',
   fix: 'a fix: a silver spanner and a sticking plaster crossed over each other, with sparkles',
-  pan: 'a pan: a black frying pan with a long handle, a fried egg sizzling in it',
+  // Item 073 (069's M9): Matt's pick from 070's brief round, empty so it never reads as EGG.
+  pan: 'a pan: one empty black frying pan with a long straight handle, seen from above at a slant so the whole round inside of the pan and the full handle both show, a shiny silver rim and a little shine on the black inside; completely empty, no food, no egg, no steam; clearly a frying pan, not a pot, a plate, a bowl or a tennis racket; the pan large',
   ram: 'a ram: a white ram (a woolly sheep with big curly horns) charging forward, side-on',
   // Item 037: the word bank's new words (content/phonics/bank.ts).
   jam: 'jam: a small glass jar of bright red strawberry jam with a red gingham cloth over the lid, a spoon beside it, no label',
@@ -488,7 +491,8 @@ const PICTURES: Record<string, string> = {
   vet: 'a vet: a smiling animal doctor in a blue tunic with a stethoscope, gently holding a little puppy with a bandaged paw',
   chest: 'a chest: a wooden pirate treasure chest with gold bands, its lid open, gold coins and a few jewels spilling out',
   bin: 'a bin: a green wheelie rubbish bin with its lid shut, side-on, a banana peel peeking out',
-  rock: 'a rock: one big round grey rock, chunky and solid, a few small pebbles beside it',
+  // Item 073 (069's M9): Matt's pick from 070's brief round, bold and orange so it stands apart from the bridge room's grey boulders.
+  rock: 'a rock: one chunky lumpy rock in warm orange-brown with flat cracked faces, darker cracks and speckles, a thick black outline all round and a bright white highlight on top, sitting on its own with a soft shadow under it, a little smaller and much bolder than a boulder; clearly one rock you could pick up with two hands, not a potato, a loaf of bread or a mountain; no grass, no pebbles, no other stones',
   clock: 'a clock: a round red alarm clock with two bells on top, a white face and black hands',
   stick: 'a stick: one long brown wooden stick from a tree, a little bent, with a small leaf on it, lying side-on',
   brush: 'a brush: a pink hairbrush with a round head of soft bristles and a long handle, side-on',
@@ -500,7 +504,8 @@ const PICTURES: Record<string, string> = {
   key: 'a key: one big shiny gold door key with a round loop handle and simple teeth, lying side-on; a key alone, no lock, no keyring',
   yoyo: 'a yo-yo: one bright red toy yo-yo hanging from its white string, the string looped round a finger at the top, a few motion lines',
   // Item 054: the Stretchy Bridge's pictures beside MAP, LIP and LOG.
-  mat: 'a mat: a thick rectangular red-and-yellow striped play mat lying flat on the floor, seen from slightly above, tassels on its short ends; a mat alone, not a rug with a pattern of roads, no writing',
+  // Item 073 (069's M9): Matt's pick from 070's brief round, jigsaw foam tiles so it never reads as RUG.
+  mat: "a mat: a children's foam play mat made of six thick interlocking jigsaw-edged foam squares in bright red, blue, yellow and orange, fitted together into one flat rectangle on the floor, seen from slightly above, the jigsaw edges clearly showing and the foam visibly thick; no tassels or fringe, no stripes, no letters, numbers or pictures on it; clearly a play mat, not a rug, a carpet or a puzzle on a table",
   man: 'a man: one friendly grown-up man standing and waving, short brown hair, a blue jumper and jeans, smiling, full body; an ordinary man, not a dad from the family, not a superhero',
   lid: 'a lid: one round shiny silver saucepan lid with a black knob handle on top, tilted so the knob shows; a lid alone, no pot, no pan',
   lock: 'a lock: one big shiny gold padlock, closed, with a keyhole on its front and a curved silver shackle on top; a lock alone, no key, no door',
