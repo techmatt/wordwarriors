@@ -45,7 +45,7 @@ import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
-import { ARRIVE_MS, INK, LIT, Minigame } from './minigames/Minigame';
+import { ARRIVE_MS, INK, LIT, SideRoom } from '../world/SideRoom';
 
 type Pass = 'listen' | 'read' | 'find' | 'done';
 
@@ -77,7 +77,7 @@ function roomSeed(id: string): number {
   return h;
 }
 
-export class SentenceRoom extends Minigame {
+export class SentenceRoom extends SideRoom {
   /** The banner is in keepOut() below, and key words are never names: the box places itself and names its speaker. */
   protected override dialogueAware = true;
   private slot: Slot = 'a';

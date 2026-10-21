@@ -1,5 +1,6 @@
 /**
- * What every minigame shares: a round of 3–5 items, a piece meter that
+ * What every side room's game shares (item 072: was `Minigame`, a name now kept
+ * for the pool's entries, `src/rules/minigames.ts`): a round of 3–5 items, a piece meter that
  * visibly builds the thing the battle will use, and the no-fail answer rules.
  *
  * - Right: coin chime, burst, a piece flies to the meter, praise, and the
@@ -14,18 +15,18 @@
 
 import Phaser from 'phaser';
 
-import { narratorLine } from '../../../content/voice/ids';
-import { RIGHT_VARIANTS, WRONG_VARIANTS } from '../../../content/voice/script';
-import { sfxRight, sfxSummon, sfxWrong } from '../../audio/sfx';
-import { DEPTH, GAME_WIDTH } from '../../config';
-import { episode, narrator } from '../../episode/Episode';
-import { burst, fitImage, floatText, popIn, shockwave, wiggle } from '../../fx/juice';
-import { TEX } from '../../fx/textures';
-import { progress } from '../../state/progress';
-import type { ItemKind } from '../../state/ProgressStore';
-import type { KeepOut } from '../../ui/Caption';
-import type { Speaker } from '../../ui/Portrait';
-import { RoomScene } from '../../world/RoomScene';
+import { narratorLine } from '../../content/voice/ids';
+import { RIGHT_VARIANTS, WRONG_VARIANTS } from '../../content/voice/script';
+import { sfxRight, sfxSummon, sfxWrong } from '../audio/sfx';
+import { DEPTH, GAME_WIDTH } from '../config';
+import { episode, narrator } from '../episode/Episode';
+import { burst, fitImage, floatText, popIn, shockwave, wiggle } from '../fx/juice';
+import { TEX } from '../fx/textures';
+import { progress } from '../state/progress';
+import type { ItemKind } from '../state/ProgressStore';
+import type { KeepOut } from '../ui/Caption';
+import type { Speaker } from '../ui/Portrait';
+import { RoomScene } from './RoomScene';
 
 /** The side rooms' words (the sentence banner, the machine's panel): ink, and lit while said. */
 export const INK = '#1a1030';
@@ -33,7 +34,7 @@ export const LIT = '#ff3d7a';
 /** A moment to look round a side room she has just walked into, before anyone talks. */
 export const ARRIVE_MS = 800;
 
-export abstract class Minigame extends RoomScene {
+export abstract class SideRoom extends RoomScene {
   /**
    * The parked v0.1 games put names and words up as reading targets the
    * dialogue box does not know about (Word to Picture reads ELLIE beside her

@@ -20,11 +20,11 @@ import { bob, popIn } from '../../fx/juice';
 import { choiceCount, pictureRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
 import type { Spot } from '../../world/RoomScene';
-import { Minigame } from './Minigame';
+import { SideRoom } from '../../world/SideRoom';
 
 const ITEMS = 4;
 
-export class WordToPicture extends Minigame {
+export class WordToPicture extends SideRoom {
   private items: WordItem[] = [];
   private banner: Phaser.GameObjects.Container | null = null;
   private letters: Phaser.GameObjects.Text[] = [];

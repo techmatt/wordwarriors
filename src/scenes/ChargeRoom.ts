@@ -52,7 +52,7 @@ import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
 import { sidePlan, type Spot } from '../world/RoomScene';
-import { ARRIVE_MS, INK, LIT, Minigame } from './minigames/Minigame';
+import { ARRIVE_MS, INK, LIT, SideRoom } from '../world/SideRoom';
 
 /**
  * `explain`: the helper explains, no rune yet. `prompt`: a rune is lit and
@@ -74,7 +74,7 @@ const PICTURE = 120;
 /** The beat between the sounds when they are sounded out together (the entry hall's is 400, the sentence room's 450). */
 const SOUND_GAP_MS = 400;
 
-export class ChargeRoom extends Minigame {
+export class ChargeRoom extends SideRoom {
   protected override dialogueAware = true;
   /** Nothing to walk to here: no stick hint (item 059 review). */
   protected override walking = false;

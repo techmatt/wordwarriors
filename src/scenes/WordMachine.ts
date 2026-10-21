@@ -47,7 +47,7 @@ import { fontPx } from '../ui/fitText';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
 import { sidePlan, type Spot } from '../world/RoomScene';
-import { ARRIVE_MS, INK, LIT, Minigame } from './minigames/Minigame';
+import { ARRIVE_MS, INK, LIT, SideRoom } from '../world/SideRoom';
 
 type Phase = 'intro' | 'pick' | 'check' | 'done';
 
@@ -71,7 +71,7 @@ const TILE_DEPTH = 9_999;
 /** The beat between the onset's sound and the rime's, so they never run together. */
 const PART_GAP_MS = 450;
 
-export class WordMachine extends Minigame {
+export class WordMachine extends SideRoom {
   /** No names in here, and the machine is in keepOut(): the box places itself and names its speaker. */
   protected override dialogueAware = true;
   private slot: Slot = 'a';

@@ -26,7 +26,7 @@ import { castFace, episode, narrator, villainSpec } from '../../episode/Episode'
 import { burst, fitImage, popIn, shake, wiggle } from '../../fx/juice';
 import { openTextEntry } from '../../input/TextEntry';
 import type { Spot } from '../../world/RoomScene';
-import { Minigame } from './Minigame';
+import { SideRoom } from '../../world/SideRoom';
 
 interface Box {
   letter: string;
@@ -35,7 +35,7 @@ interface Box {
   filled: Phaser.GameObjects.Text | null;
 }
 
-export class Spelling extends Minigame {
+export class Spelling extends SideRoom {
   private words: string[] = [];
   private boxes: Box[] = [];
   private cursor = 0;

@@ -21,13 +21,13 @@ import { burst, popIn } from '../../fx/juice';
 import { choiceCount, blendRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
 import type { Spot } from '../../world/RoomScene';
-import { Minigame } from './Minigame';
+import { SideRoom } from '../../world/SideRoom';
 
 const ITEMS = 3;
 const TILE_Y = 470;
 const TILE_COLORS = [0xff7ad9, 0xffd23f, 0x7ad9ff, 0x8aff8a];
 
-export class BlendPath extends Minigame {
+export class BlendPath extends SideRoom {
   private items: WordItem[] = [];
   private tiles: { letter: string; x: number; img: Phaser.GameObjects.Container; stepped: boolean }[] = [];
   private onTile = -1;

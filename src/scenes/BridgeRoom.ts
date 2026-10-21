@@ -64,7 +64,7 @@ import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
 import { sidePlan, type Spot } from '../world/RoomScene';
-import { ARRIVE_MS, INK, LIT, Minigame } from './minigames/Minigame';
+import { ARRIVE_MS, INK, LIT, SideRoom } from '../world/SideRoom';
 
 /**
  * `intro`: a new bridge appears and the helper talks; she waits on the near
@@ -110,7 +110,7 @@ interface Stone {
   sound: string;
 }
 
-export class BridgeRoom extends Minigame {
+export class BridgeRoom extends SideRoom {
   protected override dialogueAware = true;
   private slot: Slot = 'a';
   private plan!: BridgePlan;

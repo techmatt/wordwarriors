@@ -14,12 +14,12 @@ import { bob, popIn, shockwave } from '../../fx/juice';
 import { soundRound, type SoundItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
 import type { Spot } from '../../world/RoomScene';
-import { Minigame } from './Minigame';
+import { SideRoom } from '../../world/SideRoom';
 
 const ITEMS = 4;
 const STONE_COLORS = [0xff7ad9, 0x7ad9ff, 0xffd23f, 0x8aff8a];
 
-export class SoundToLetter extends Minigame {
+export class SoundToLetter extends SideRoom {
   private items: SoundItem[] = [];
 
   constructor() {
