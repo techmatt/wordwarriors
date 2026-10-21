@@ -18,10 +18,12 @@ import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, STICK_HINT_MS } from '../config'
 import { narratorLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
-import { advance, castArt, castScale, episode, narrator, type Step } from '../episode/Episode';
+import { advance, castArt, castScale, episode, narrator, planFor, type Slot, type Step } from '../episode/Episode';
 import { formFor } from '../../content/battle/forms';
 import { FreePlay } from '../fx/freePlay';
 import { fitImage } from '../fx/juice';
+import { SceneGen } from '../fx/sceneGen';
+import type { RoomPlan } from '../rules/sentences';
 import { Controls } from '../input/Controls';
 import { dadLock } from '../input/dadLock';
 import { hookState, type SpotInfo } from '../hookState';
@@ -46,6 +48,13 @@ export interface Spot {
   /** Called when she walks into reach (e.g. say a name, sound a tile). */
   onNear?: () => void;
   baseScale: number;
+}
+
+/** A side room's plan for `slot`, which must be a `kind` game: `scene` names the room in the error. */
+export function sidePlan<K extends RoomPlan['kind']>(scene: string, slot: Slot, kind: K): Extract<RoomPlan, { kind: K }> {
+  const p = planFor(slot);
+  if (p.kind !== kind) throw new Error(`${scene}: room ${slot} plays ${p.game}`);
+  return p as Extract<RoomPlan, { kind: K }>;
 }
 
 export abstract class RoomScene extends Phaser.Scene {
@@ -123,11 +132,7 @@ export abstract class RoomScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.gen++;
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.gen++;
-      voiceBus.hush();
-    });
+    this.runs.begin(() => voiceBus.hush());
     hookState.scene = this.scene.key;
     const bg = this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, this.background()).setDepth(DEPTH.ground);
     bg.setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
@@ -187,19 +192,15 @@ export abstract class RoomScene extends Phaser.Scene {
   }
 
   /**
-   * Scene generation. Phaser reuses a Scene object, and a room's flow is a
-   * chain of awaits; when the scene shuts down (F9, F2, a fast advance) the
-   * chain must stop rather than carry on building stones in the next run.
-   * Every await in a room goes through `guard`, which never resolves once the
-   * generation it started in is over.
+   * Scene generation (`SceneGen`): a room's flow is a chain of awaits that
+   * must stop when the scene shuts down rather than carry on building stones
+   * in the next run. Every await in a room goes through `guard`, which never
+   * resolves once the generation it started in is over.
    */
-  private gen = 0;
+  private runs = new SceneGen(this);
 
   protected guard<T>(p: Promise<T>): Promise<T> {
-    const g = this.gen;
-    return p.then((v) => new Promise<T>((resolve) => {
-      if (this.gen === g && this.sys.isActive()) resolve(v);
-    }));
+    return this.runs.guard(p);
   }
 
   /** Say a line as an instruction (guarded). */

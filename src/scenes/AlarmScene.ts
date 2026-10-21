@@ -16,6 +16,7 @@ import { sfxBoom, sfxSiren, sfxUltimate } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { advance, castArt, episode, narrator, villainSpec } from '../episode/Episode';
 import { bob, burst, fitImage, flash, floatText, shake } from '../fx/juice';
+import { SceneGen } from '../fx/sceneGen';
 import { Controls } from '../input/Controls';
 import { hookState } from '../hookState';
 import { Bubbles } from '../ui/Bubbles';
@@ -23,7 +24,7 @@ import { Caption } from '../ui/Caption';
 
 export class AlarmScene extends Phaser.Scene {
   private controls!: Controls;
-  private gen = 0;
+  private runs = new SceneGen(this);
   private heroImgs: Phaser.GameObjects.Image[] = [];
 
   constructor() {
@@ -31,8 +32,7 @@ export class AlarmScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.gen++;
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.gen++);
+    this.runs.begin();
     hookState.scene = 'Alarm';
     hookState.room = null;
     this.heroImgs = [];
@@ -56,8 +56,7 @@ export class AlarmScene extends Phaser.Scene {
 
   private async run(): Promise<void> {
     // Stop if this run of the scene ends (F2) while a line is playing.
-    const g = this.gen;
-    const gone = () => g !== this.gen;
+    const gone = this.runs.watch();
     // Siren and a red pulse first: something is happening.
     sfxSiren();
     const red = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xff2040, 0).setDepth(DEPTH.hud - 1);

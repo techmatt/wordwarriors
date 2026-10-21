@@ -12,6 +12,7 @@ import { GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { castFace, episode } from '../episode/Episode';
 import { TEX } from '../fx/textures';
 import { bob, fitImage } from '../fx/juice';
+import { SceneGen } from '../fx/sceneGen';
 import { hookState } from '../hookState';
 
 /** How long the wait stays invisible: a load that lands within it shows nothing at all. */
@@ -24,15 +25,14 @@ export interface WaitData {
 }
 
 export class WaitScene extends Phaser.Scene {
-  private gen = 0;
+  private runs = new SceneGen(this);
 
   constructor() {
     super('Wait');
   }
 
   create(w: WaitData): void {
-    const g = ++this.gen;
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.gen++);
+    const gone = this.runs.begin();
     hookState.scene = 'Wait';
     hookState.room = null;
     const layer = this.add.container(GAME_WIDTH / 2, GAME_HEIGHT / 2).setAlpha(0);
@@ -61,7 +61,7 @@ export class WaitScene extends Phaser.Scene {
     }
     this.tweens.add({ targets: layer, alpha: 1, duration: 300, delay: SHOW_AFTER_MS });
     void artBank.ensure(w.ids).then(() => {
-      if (g === this.gen) this.scene.start(w.key, w.data);
+      if (!gone()) this.scene.start(w.key, w.data);
     });
   }
 }

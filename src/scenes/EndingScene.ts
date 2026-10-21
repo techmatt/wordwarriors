@@ -18,6 +18,7 @@ import { GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { startScene } from '../art/gate';
 import { castArt, castScale, drawEnding, episode, type Step } from '../episode/Episode';
 import { burst, fitImage } from '../fx/juice';
+import { SceneGen } from '../fx/sceneGen';
 import { Controls } from '../input/Controls';
 import { endingPeople, endingScript, standXs } from '../rules/endings';
 import { progress } from '../state/progress';
@@ -29,11 +30,11 @@ import { Bubbles, type BubbleAnchor } from '../ui/Bubbles';
  * breath between lines, a moment after the last. With the fades the scene
  * runs about 18–24 s (measured over drawn casts, tests/unit/endings.test.ts).
  */
-export const ENDING_PAUSE = { intro: 3000, between: 1500, outro: 3000 };
+const ENDING_PAUSE = { intro: 3000, between: 1500, outro: 3000 };
 
 export class EndingScene extends Phaser.Scene {
   private controls!: Controls;
-  private gen = 0;
+  private runs = new SceneGen(this);
   private step: Step | undefined;
   private leaving = false;
 
@@ -42,10 +43,8 @@ export class EndingScene extends Phaser.Scene {
   }
 
   create(data: { step?: Step }): void {
-    this.gen++;
-    const g = this.gen;
-    const gone = () => g !== this.gen || this.leaving;
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.gen++);
+    const over = this.runs.begin();
+    const gone = () => over() || this.leaving;
     this.step = data?.step;
     this.leaving = false;
     hookState.scene = 'Ending';

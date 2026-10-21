@@ -51,6 +51,7 @@ import { fightLineKey, type FightSpec } from '../../content/battle/fights';
 import { hex } from '../fx/colour';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { FreePlay } from '../fx/freePlay';
+import { SceneGen } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { withStems } from '../rules/bank';
@@ -226,8 +227,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
   }
 
   create(): void {
-    this.gen++;
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.gen++);
+    this.runs.begin();
     hookState.scene = 'Battle';
     hookState.room = null;
     const v = villainSpec();
@@ -452,13 +452,10 @@ export class BattleScene extends Phaser.Scene implements StageHost {
    * The director is a chain of awaits; once this run of the scene is over
    * (F2, the advance to the next step) nothing in the chain may resume.
    */
-  private gen = 0;
+  private runs = new SceneGen(this);
 
   private guard<T>(p: Promise<T>): Promise<T> {
-    const g = this.gen;
-    return p.then((v) => new Promise<T>((resolve) => {
-      if (this.gen === g && this.sys.isActive()) resolve(v);
-    }));
+    return this.runs.guard(p);
   }
 
   /** Falling/rising ambience per arena: embers, snow, sand, bubbles, sparks. */

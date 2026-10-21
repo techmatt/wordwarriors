@@ -16,6 +16,7 @@ import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { advance, castArt, castFace, castId, castScale, counterWord, episode, narrator, villainSpec, waker } from '../episode/Episode';
 import { burst, fitImage, shockwave } from '../fx/juice';
+import { SceneGen } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { hookState } from '../hookState';
@@ -31,7 +32,7 @@ const CARD_SCALE = 0.82;
 export class VictoryScene extends Phaser.Scene {
   private controls!: Controls;
   private ready = false;
-  private gen = 0;
+  private runs = new SceneGen(this);
   /** The recap's cards: the caption keeps off them. */
   private cards: Phaser.GameObjects.Container[] = [];
 
@@ -40,10 +41,7 @@ export class VictoryScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.gen++;
-    const g = this.gen;
-    const gone = () => g !== this.gen;
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.gen++);
+    const gone = this.runs.begin();
     hookState.scene = 'Victory';
     // The battle's last state stays readable here, for tests asking how it ended.
     hookState.room = null;

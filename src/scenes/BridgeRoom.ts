@@ -51,7 +51,7 @@ import { HELD_MS } from '../audio/holdSound';
 import { voiceBus, type HeldSound, type Utterance } from '../audio/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon, sfxWhoosh, sfxWrong } from '../audio/sfx';
 import { BRIDGE, DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { backToHub, episode, narrator, planFor, type Slot, type Step } from '../episode/Episode';
+import { backToHub, episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { burst, fitImage, floatText, popIn, shockwave, wiggle } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { dadPress, openDadButtons, setDadAsking, type DadAnswer } from '../input/dadButtons';
@@ -63,7 +63,7 @@ import { Bag } from '../ui/Bag';
 import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
-import type { Spot } from '../world/RoomScene';
+import { sidePlan, type Spot } from '../world/RoomScene';
 import { ARRIVE_MS, INK, LIT, Minigame } from './minigames/Minigame';
 
 /**
@@ -153,8 +153,7 @@ export class BridgeRoom extends Minigame {
   override init(data: { step?: Step; slot?: Slot }): void {
     super.init(data);
     this.slot = data.slot ?? 'a';
-    const p = planFor(this.slot);
-    if (p.kind !== 'bridge') throw new Error(`BridgeRoom: room ${this.slot} plays ${p.game}`);
+    const p = sidePlan('BridgeRoom', this.slot, 'bridge');
     this.plan = p.bridge;
     this.roomId = p.room;
     // Back from the parent page (F9) mid-visit: on from the first word not yet read.

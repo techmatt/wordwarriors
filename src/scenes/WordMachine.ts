@@ -36,7 +36,7 @@ import { RIGHT_VARIANTS, SILLY_VARIANTS } from '../../content/voice/script';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { sfxBoing, sfxPoof, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxWrong } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH } from '../config';
-import { backToHub, castFace, episode, narrator, planFor, type Slot, type Step } from '../episode/Episode';
+import { backToHub, castFace, episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, shockwave, squash, wiggle } from '../fx/juice';
 import type { MachineMode, MachinePlan, MachineRound, MachineTile } from '../rules/wordMachine';
 import { progress } from '../state/progress';
@@ -46,7 +46,7 @@ import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { fontPx } from '../ui/fitText';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
-import type { Spot } from '../world/RoomScene';
+import { sidePlan, type Spot } from '../world/RoomScene';
 import { ARRIVE_MS, INK, LIT, Minigame } from './minigames/Minigame';
 
 type Phase = 'intro' | 'pick' | 'check' | 'done';
@@ -103,8 +103,7 @@ export class WordMachine extends Minigame {
   override init(data: { step?: Step; slot?: Slot }): void {
     super.init(data);
     this.slot = data.slot ?? 'a';
-    const p = planFor(this.slot);
-    if (p.kind !== 'machine') throw new Error(`WordMachine: room ${this.slot} plays ${p.game}`);
+    const p = sidePlan('WordMachine', this.slot, 'machine');
     this.plan = p.machine;
     this.roomId = p.room;
     // Back from the parent page (F9) mid-visit: on from the first word not yet built.

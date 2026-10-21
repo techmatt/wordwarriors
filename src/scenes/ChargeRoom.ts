@@ -39,7 +39,7 @@ import { RIGHT_VARIANTS } from '../../content/voice/script';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxZap } from '../audio/sfx';
 import { CHARGE, DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
-import { backToHub, castFace, currentStep, episode, helper, narrator, planFor, type Slot, type Step } from '../episode/Episode';
+import { backToHub, castFace, currentStep, episode, helper, narrator, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, punch, shake, shockwave, squash } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { dadPress, openDadButtons, setDadAsking, type DadAnswer } from '../input/dadButtons';
@@ -51,7 +51,7 @@ import { Bag } from '../ui/Bag';
 import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
-import type { Spot } from '../world/RoomScene';
+import { sidePlan, type Spot } from '../world/RoomScene';
 import { ARRIVE_MS, INK, LIT, Minigame } from './minigames/Minigame';
 
 /**
@@ -124,8 +124,7 @@ export class ChargeRoom extends Minigame {
   override init(data: { step?: Step; slot?: Slot }): void {
     super.init(data);
     this.slot = data.slot ?? 'a';
-    const p = planFor(this.slot);
-    if (p.kind !== 'charge') throw new Error(`ChargeRoom: room ${this.slot} plays ${p.game}`);
+    const p = sidePlan('ChargeRoom', this.slot, 'charge');
     this.plan = p.charge;
     this.roomId = p.room;
     // Back from the parent page (F9) mid-visit: on from the first rune not yet charged, or the read.
@@ -522,7 +521,7 @@ export class ChargeRoom extends Minigame {
     this.locked = true;
     setDadAsking(false);
     progress.record('words', word, right, right ? 0 : 1);
-    // Its sounds with it: a word read right is its sounds said right (they open the quicker sounds' tiers).
+    // Its sounds with it: a word read right is its sounds said right (the draws lean to shaky sounds).
     for (const s of new Set(this.plan.runes)) progress.record('sounds', s, right, right ? 0 : 1);
     // Her word bag: read right, it is done for this round of the bag.
     if (right) progress.takeFromBag(word);
