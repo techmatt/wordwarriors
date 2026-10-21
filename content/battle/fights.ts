@@ -79,10 +79,10 @@ export const FIGHTS: FightSpec[] = [
     tooStrong: 'WHOA! TOO FAST!',
     win: 'WINNERS!',
     lines: {
-      start: { text: 'A race! Ready, set, go!', say: 'A race, ready, set, go!' },
-      start2: { text: 'The rematch! Fly faster this time!', say: 'The rematch, fly faster this time!' },
-      retreat: { text: 'Too fast! Back to practise!', say: 'Too fast, back to practise!' },
-      finish: { text: 'The finish line! All together, zoom!', say: 'The finish line, all together, zoom!' },
+      start: { text: "It's a race! Ready, set, go!", say: "It's a race, ready, set, go!" },
+      start2: { text: "It's the rematch! Let's fly faster this time!", say: "It's the rematch, let's fly faster this time!" },
+      retreat: { text: "They are too fast for us! Let's go and practice!", say: "They are too fast for us, let's go and practice!" },
+      finish: { text: "There's the finish line! Let's all zoom together!", say: "There's the finish line, let's all zoom together!" },
     },
     props: [
       { id: 'finish_flag', look: 'a big chequered black-and-white finish-line banner on two tall golden poles, with little gold coins and jewels on the tops of the poles', glyph: '🏁', w: 300, h: 420 },
@@ -97,10 +97,10 @@ export const FIGHTS: FightSpec[] = [
     tooStrong: 'WHOA! TOO STRONG!',
     win: 'WE PULLED IT!',
     lines: {
-      start: { text: 'A rope pull! Hold the rope and pull!', say: 'A rope pull, hold the rope and pull!' },
-      start2: { text: 'Pull again! We are stronger now!', say: 'Pull again, we are stronger now!' },
-      retreat: { text: 'Too strong! Let go, let go!', say: 'Too strong, let go, let go!' },
-      finish: { text: 'All together now! Pull!', say: 'All together now, pull!' },
+      start: { text: "It's a rope pull! Hold the rope and pull!", say: "It's a rope pull, hold the rope and pull!" },
+      start2: { text: "Let's pull again! We are stronger now!", say: "Let's pull again, we are stronger now!" },
+      retreat: { text: "They are too strong for us! Let's go and get ready!", say: "They are too strong for us, let's go and get ready!" },
+      finish: { text: "Now let's all pull together!" },
     },
   },
   {
@@ -112,10 +112,10 @@ export const FIGHTS: FightSpec[] = [
     tooStrong: 'WHOA! TOO STRONG!',
     win: 'SPELL BROKEN!',
     lines: {
-      start: { text: 'Magic against magic! Push the beam!', say: 'Magic against magic, push the beam!' },
-      start2: { text: 'Our magic is stronger now! Push!', say: 'Our magic is stronger now, push!' },
-      retreat: { text: 'That spell is too strong! Retreat!', say: 'That spell is too strong, retreat!' },
-      finish: { text: 'All our magic together! Push!', say: 'All our magic together, push!' },
+      start: { text: "It's magic against magic! Push the beam!", say: "It's magic against magic, push the beam!" },
+      start2: { text: "Our magic is stronger now! Let's push!", say: "Our magic is stronger now, let's push!" },
+      retreat: { text: "That spell is too strong for us! Let's go back and get ready!", say: "That spell is too strong for us, let's go back and get ready!" },
+      finish: { text: "Let's push with all our magic together!" },
     },
   },
   {
@@ -124,13 +124,13 @@ export const FIGHTS: FightSpec[] = [
     name: 'Cook-off',
     arena: 'cook_show',
     banner: ['COOK-OFF!', 'COOK-OFF TWO!'],
-    tooStrong: 'WHOA! TEN OUT OF TEN!',
+    tooStrong: 'WHOA! A PERFECT SCORE!',
     win: 'BEST DISH EVER!',
     lines: {
-      start: { text: 'A cook-off! The yummiest dish wins!', say: 'A cook-off, the yummiest dish wins!' },
-      start2: { text: 'Round two! We know the recipe now!', say: 'Round two, we know the recipe now!' },
-      retreat: { text: 'Their dish was too yummy! Back to practise!', say: 'Their dish was too yummy, back to practise!' },
-      finish: { text: 'Now the topping! All together!', say: 'Now the topping, all together!' },
+      start: { text: "It's a cook-off! The yummiest dish wins!", say: "It's a cook-off, the yummiest dish wins!" },
+      start2: { text: "It's round two, and now we know the recipe!" },
+      retreat: { text: "Their dish was too yummy! Let's go and practice!", say: "Their dish was too yummy, let's go and practice!" },
+      finish: { text: "Now let's add the topping, all together!" },
     },
     props: [
       { id: 'cook_station', look: 'a chunky cartoon cooking station: a little red stove with a big shiny pot on top, a wooden counter with a chopping board, a whisk and a rolling pin, seen from the front', glyph: '🍳', w: 300, h: 260 },

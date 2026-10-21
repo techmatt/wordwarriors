@@ -59,45 +59,45 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
   dada_matt: [
     S('🛠️', [
       'I have been building something special for you, all night long!',
-      'Bolts here, a little hammering there, and one shiny button.',
+      'I put in some bolts, did a little hammering, and added one shiny button.',
       'When you press the button, it goes...',
-    ], SPOT('to charge it up'), 'It is all yours now, let us look around!'),
+    ], SPOT('to charge it up'), 'It is all yours now, let\'s look around!'),
     S('🤖', [
       'Look what I built in my workshop, a little helper robot!',
       'It only knows one word, and it shouts it super loud.',
       'Wind it up, and it says...',
-    ], SPOT('to make it yours'), 'Your robot is ready, let us look around!'),
+    ], SPOT('to make it yours'), 'Your robot is ready, let\'s look around!'),
     S('🔨', [
       'Every builder needs a power tool, so I made you one!',
       'It is the size of a banana, and it makes a mighty noise.',
       'Switch it on, and it goes...',
-    ], SPOT('to power it up'), 'Careful, it is very strong, let us look around!'),
+    ], SPOT('to power it up'), 'Careful, it is very strong, let\'s look around!'),
   ],
   // Lifter Dada Matt: a workout move from the forest gym.
   dada_matt_lifter: [
     S('🏋️', [
-      'Warm up time, stretch up high, and touch your toes!',
+      'It is time to warm up, so stretch up high, and touch your toes!',
       'Now I will show you my best workout move, it makes the squirrels cheer.',
-      'Ready, steady, and shout...',
-    ], SPOT('to power up'), 'Look at those muscles, let us look around!'),
+      'Get ready, get set, and shout...',
+    ], SPOT('to power up'), 'Look at those muscles, let\'s look around!'),
     S('💪', [
       'Every champion has a secret move, and today you get mine!',
-      'I practised it on a tree, and the tree said wow.',
+      'I practiced it on a tree, and the tree said wow.',
       'Take a deep breath, and shout...',
-    ], SPOT('to get strong'), 'You are a champion now, let us look around!'),
+    ], SPOT('to get strong'), 'You are a champion now, let\'s look around!'),
   ],
   // Cyber Dada Matt: a program for her armour.
   dada_matt_cyber: [
     S('💾', [
-      'Your armour needs a new program, so I wrote one just for you!',
-      'The screens are blinking, it is loading, nearly there.',
+      'Your armor needs a new program, so I wrote one just for you!',
+      'The screens are blinking, and it is loading, it is nearly done.',
       'Start the program, and it goes...',
-    ], SPOT('to upload it'), 'Upload complete, let us look around!'),
+    ], SPOT('to upload it'), 'The upload is all done, let\'s look around!'),
     S('💻', [
-      'I typed a secret code for your armour, a hundred lines long!',
+      'I typed a secret code for your armor, a hundred lines long!',
       'It only needs one word to start it up.',
       'The secret code word is...',
-    ], SPOT('to load the code'), 'Your armour knows the code now, let us look around!'),
+    ], SPOT('to load the code'), 'Your armor knows the code now, let\'s look around!'),
   ],
   // Spell-blade Dada Matt: a rune spell.
   dada_matt_blade: [
@@ -105,43 +105,43 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'A sword is good, but a sword and a spell is even better!',
       'This rune glows when a hero is ready, and look, it is glowing for you.',
       'Say it with me, the rune says...',
-    ], 'Stand in the rune circle, and press green, to learn it!', 'Sword and spell, you have both now, let us look around!'),
+    ], 'Stand in the rune circle, and press green, to learn it!', 'Now you have a sword and a spell, let\'s look around!'),
     S('prop_silver_sword', [
       'Every rune knight carves one magic word on their sword.',
       'I carved one on this little sword, just for you.',
       'Hold it up high, and say...',
-    ], 'Stand in the rune circle, and press green, to take the sword!', 'A true rune knight, let us look around!'),
+    ], 'Stand in the rune circle, and press green, to take the sword!', 'You are a true rune knight now, let\'s look around!'),
   ],
   // Chef Dada Jason: something cooked up in the secret kitchen.
   dada_jason: [
     S('🍲', [
       'A hero needs a good snack, so I am cooking up something special!',
-      'A pinch of this, a sprinkle of that, and a good stir.',
+      'I add a pinch of this, a sprinkle of that, and give it a good stir.',
       'Take one bite, and it goes...',
-    ], SPOT('to taste it'), 'Delicious, now you are full of power, let us look around!'),
+    ], SPOT('to taste it'), 'That was delicious, and now you are full of power, let\'s look around!'),
     S('🧁', [
       'In my secret kitchen, I bake magic cupcakes.',
       'This one has rainbow sprinkles, and a surprise inside.',
       'One nibble, and you will shout...',
-    ], SPOT('to eat it up'), 'Every crumb is gone, let us look around!'),
+    ], SPOT('to eat it up'), 'Every crumb is gone, let\'s look around!'),
     S('🥣', [
       'My grandma taught me a magic soup, and now I will teach you!',
       'It bubbles and it sizzles, and it smells like winning.',
       'One spoonful, and the soup says...',
-    ], SPOT('to have a spoonful'), 'Yummy and mighty, let us look around!'),
+    ], SPOT('to have a spoonful'), 'That was yummy, and now you are mighty, let\'s look around!'),
   ],
   // Warrior Dada Jason: a knight's battle trick.
   dada_jason_warrior: [
     S('🛡️', [
       'Every knight learns a battle trick, and now it is your turn!',
-      'Shield up, feet ready, eyes on the bad guy.',
+      'Hold your shield up, get your feet ready, and keep your eyes on the bad guy.',
       'Then charge, and shout...',
-    ], SPOT('to learn the trick'), 'Well done, brave knight, let us look around!'),
+    ], SPOT('to learn the trick'), 'Well done, brave knight, let\'s look around!'),
     S('⚔️', [
       'Knights have a battle cry, so the bad guys know we are coming!',
       'Mine is so loud, it scares the crows off the castle.',
       'Here is yours, take a breath, and shout...',
-    ], SPOT('to learn the battle cry'), 'What a mighty knight, let us look around!'),
+    ], SPOT('to learn the battle cry'), 'What a mighty knight you are, let\'s look around!'),
   ],
   // Warlock Dada Jason: a spooky spell, or a potion.
   dada_jason_warlock: [
@@ -149,132 +149,132 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'In my moon tower, I keep a book of spooky spells.',
       'This one is not too spooky, just spooky enough.',
       'Wave your arms, and say...',
-    ], 'Stand in the magic circle, and press green, to learn the spell!', 'You know a spooky spell now, let us look around!'),
+    ], 'Stand in the magic circle, and press green, to learn the spell!', 'You know a spooky spell now, let\'s look around!'),
     S('🧪', [
       'I brewed a purple potion, under the light of the moon.',
       'It fizzes, it bubbles, and it tickles your nose.',
       'Drink it up, and you will say...',
-    ], 'Stand in the magic circle, and press green, to drink the potion!', 'Spooky and strong, let us look around!'),
+    ], 'Stand in the magic circle, and press green, to drink the potion!', 'Now you are spooky and strong, let\'s look around!'),
   ],
   // Ellie: a toy she shares.
   ellie: [
     S('🔵', [
-      'I want to share my favourite bubble with you!',
+      'I want to share my favorite bubble with you!',
       'It is the biggest, shiniest bubble in the whole castle.',
       'Blow on it, and it goes...',
-    ], 'Stand in the bubble circle, and press green, to catch it!', 'Now we both have bubble power, let us look around!'),
+    ], 'Stand in the bubble circle, and press green, to catch it!', 'Now we both have bubble power, let\'s look around!'),
     S('🧸', [
       'This is my teddy, and he knows a secret word.',
       'I am going to share him with you, because sharing is nice.',
       'Squeeze him, and he says...',
-    ], CIRCLE('to give him a cuddle'), 'Thank you for looking after teddy, let us look around!'),
+    ], CIRCLE('to give him a cuddle'), 'Thank you for taking care of teddy, let\'s look around!'),
     S('🎈', [
       'I have a magic balloon, and I am going to share it!',
       'It floats, it bounces, and it whispers.',
       'Listen, the balloon whispers...',
-    ], CIRCLE('to catch the balloon'), 'Now the balloon is yours, let us look around!'),
+    ], CIRCLE('to catch the balloon'), 'Now the balloon is yours, let\'s look around!'),
   ],
   // Scar: an upgrade from the robot workshop.
   scar: [
     S('🔋', [
-      'I have an upgrade for your armour, fresh from my workshop!',
-      'Hold still, installing, this will only tickle a little.',
-      'Upgrade ready, it goes...',
-    ], 'Stand on the charging spot, and press green, to install it!', 'Upgrade installed, let us look around!'),
+      'I have an upgrade for your armor, fresh from my workshop!',
+      'Hold still while I install it, it will only tickle a little.',
+      'The upgrade is ready, and it goes...',
+    ], 'Stand on the charging spot, and press green, to install it!', 'The upgrade is all done, let\'s look around!'),
     S('🔩', [
       'My power core made a spare spark, and I saved it for you!',
       'It is warm and glowy, and it buzzes when it is happy.',
       'Switch it on, and it goes...',
-    ], 'Stand on the charging spot, and press green, to power up!', 'Spark installed, let us look around!'),
+    ], 'Stand on the charging spot, and press green, to power up!', 'Your spark is all set, let\'s look around!'),
     S('🛰️', [
       'Robots have special codes, and I am giving you mine!',
-      'Do not tell the bad guys, it is super secret.',
+      "Don't tell the bad guys, it is super secret.",
       'Say it out loud, the code is...',
-    ], 'Stand on the charging spot, and press green, to load the code!', 'Code loaded, let us look around!'),
+    ], 'Stand on the charging spot, and press green, to load the code!', 'The code is loaded, let\'s look around!'),
   ],
   seraphina: [
     S('🐉', [
       'My dragons taught me a trick, and now I will teach you!',
-      'You call, they fly, and the bad guys hide.',
+      'When you call them, they fly, and the bad guys hide.',
       'Just call out...',
-    ], CIRCLE('to learn it'), 'The dragons will listen to you now, let us look around!'),
+    ], CIRCLE('to learn it'), 'The dragons will listen to you now, let\'s look around!'),
     S('prop_scroll', [
       'Here is an old dragon scroll, it was hidden in a cave.',
       'Only a dragon friend may read it, and that is you.',
       'The scroll says...',
-    ], CIRCLE('to take the scroll'), 'Now you are a dragon friend, let us look around!'),
+    ], CIRCLE('to take the scroll'), 'Now you are a dragon friend, let\'s look around!'),
   ],
   smaug: [
     S('💰', [
       'I am a dragon, so of course I have treasure!',
       'But this treasure is special, it is a word made of gold.',
-      'Shiny, shiny, and it says...',
-    ], CIRCLE('to take it'), 'Keep it safe, treasure friend, let us look around!'),
+      'It is so shiny, and it says...',
+    ], CIRCLE('to take it'), 'Keep it safe, treasure friend, let\'s look around!'),
     S('💎', [
       'I found a magic jewel in my pile of gold, and I want you to have it.',
       'Dragons do not usually share, but you are my friend.',
       'Rub the jewel, and it says...',
-    ], CIRCLE('to take the jewel'), 'Shiny and strong, let us look around!'),
+    ], CIRCLE('to take the jewel'), 'Now you are shiny and strong, let\'s look around!'),
   ],
   tiamat: [
     S('👑', [
       'A royal dragon knows many royal words, and I will give you one!',
       'Use it well, little hero, and stand up tall.',
       'By royal order, the word is...',
-    ], 'Stand in the royal circle, and press green, to receive it!', 'Wonderful, you are royal now, let us look around!'),
+    ], 'Stand in the royal circle, and press green, to receive it!', 'Wonderful, you are royal now, let\'s look around!'),
     S('prop_scroll', [
       'This scroll is older than the mountain, and it has one spell inside.',
       'I have kept it safe for a thousand years, just for you.',
       'Unroll it, and it says...',
-    ], 'Stand in the royal circle, and press green, to take the scroll!', 'A royal spell for a royal friend, let us look around!'),
+    ], 'Stand in the royal circle, and press green, to take the scroll!', 'That is a royal spell for a royal friend, let\'s look around!'),
   ],
   elsa: [
     S('❄️', [
       'Every snowflake is different, and this one is magic!',
-      'I made it just for you, it sparkles every colour.',
+      'I made it just for you, it sparkles in every color.',
       'Catch it, and it whispers...',
-    ], 'Stand in the frosty circle, and press green, to catch it!', 'That is a cool spell, let us look around!'),
+    ], 'Stand in the frosty circle, and press green, to catch it!', 'That is a cool spell, let\'s look around!'),
     S('prop_scroll', [
       'In my ice castle, the walls keep frozen spells.',
       'This one came out of the ice this morning, for you.',
       'The frozen spell says...',
-    ], 'Stand in the frosty circle, and press green, to learn the spell!', 'Frosty and fierce, let us look around!'),
+    ], 'Stand in the frosty circle, and press green, to learn the spell!', 'Now you are frosty and fierce, let\'s look around!'),
   ],
   anna: [
     S('🛡️', [
       'My sister does the magic, but I know a brave trick!',
-      'Shield up, chin up, and never give up.',
+      'Keep your shield up, keep your chin up, and never give up.',
       'Then you shout...',
-    ], SPOT('to learn it'), 'You are as brave as anything now, let us look around!'),
+    ], SPOT('to learn it'), 'You are as brave as anything now, let\'s look around!'),
     S('🍫', [
       'Being brave makes me hungry, so here is my lucky chocolate.',
       'One bite, and you feel strong all over.',
       'Take a bite, and you say...',
-    ], SPOT('to have a bite'), 'Brave and full, let us look around!'),
+    ], SPOT('to have a bite'), 'Now you are brave and full, let\'s look around!'),
   ],
   jasmine: [
     S('✨', [
       'My flying carpet knows a magic word, and it told me a secret.',
       'It wants you to have the word too.',
       'Whisper it to the wind, it is...',
-    ], CIRCLE('to catch the word'), 'The wind will help you now, let us look around!'),
+    ], CIRCLE('to catch the word'), 'The wind will help you now, let\'s look around!'),
     S('💎', [
       'At the oasis, I found a treasure under the palm tree.',
       'It is a magic jewel, and it glows when you are brave.',
       'Rub it, and it says...',
-    ], CIRCLE('to take the jewel'), 'It is glowing for you, let us look around!'),
+    ], CIRCLE('to take the jewel'), 'It is glowing for you, let\'s look around!'),
   ],
   ozymandias: [
     S('prop_scroll', [
       'I am a pharaoh, and pharaohs keep secrets in the pyramids.',
       'This secret is very old, and very powerful.',
       'Here it is, the secret word is...',
-    ], 'Stand in the golden circle, and press green, to learn it!', 'Mighty, you know a pharaoh secret now, let us look around!'),
+    ], 'Stand in the golden circle, and press green, to learn it!', 'Now you know a mighty pharaoh secret, let\'s look around!'),
     S('prop_stone', [
       'This old stone has a magic word carved on it.',
       'Long ago, it helped me win every battle.',
       'Touch the stone, and it says...',
-    ], 'Stand in the golden circle, and press green, to take the word!', 'Strong as stone, let us look around!'),
+    ], 'Stand in the golden circle, and press green, to take the word!', 'Now you are as strong as stone, let\'s look around!'),
   ],
   jormungandr: [
     // Item 056: a sea horn, since SHELL is a bank word now (and its picture no prop).
@@ -282,48 +282,48 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'Deep in my grotto, I found a magic horn.',
       'Hold it to your ear, and you will hear a word inside.',
       'Listen, the horn says...',
-    ], CIRCLE('to take the horn'), 'The sea is on your side now, let us look around!'),
+    ], CIRCLE('to take the horn'), 'The sea is on your side now, let\'s look around!'),
     S('🦪', [
       'The sea gave me a pearl, and the pearl has a secret.',
       'I curled my tail around it for a hundred years, to keep it safe.',
       'Open it up, and it says...',
-    ], CIRCLE('to take the pearl'), 'Keep it close, let us look around!'),
+    ], CIRCLE('to take the pearl'), 'Keep it close, let\'s look around!'),
   ],
   moriarty: [
     S('🃏', [
       'Pick a card, any card, no, not that one, this one!',
       'It is my best trick card, and now it belongs to you.',
       'Turn it over, and it says...',
-    ], CIRCLE('to take the card'), 'A true magician, let us look around!'),
+    ], CIRCLE('to take the card'), 'You are a true magician now, let\'s look around!'),
     S('🎩', [
       'Every good magician has a magic word, and I will lend you mine.',
-      'Do not tell anybody, it is my favourite.',
+      "Don't tell anybody, it is my favorite.",
       'Wave your arms like a magician, and say...',
-    ], CIRCLE('to learn it'), 'Now you know my best trick, let us look around!'),
+    ], CIRCLE('to learn it'), 'Now you know my best trick, let\'s look around!'),
   ],
   bavmorda: [
     S('🧪', [
       'My cauldron has been bubbling all morning, for you!',
-      'Flower petals, a bit of moonlight, and one giggle.',
+      'I put in flower petals, a bit of moonlight, and one giggle.',
       'Drink up, and the potion says...',
-    ], 'Stand in the magic circle, and press green, to drink it!', 'A kind potion for a kind hero, let us look around!'),
+    ], 'Stand in the magic circle, and press green, to drink it!', 'That is a kind potion for a kind hero, let\'s look around!'),
     S('prop_scroll', [
       'I am a good witch now, and good witches share their spells.',
-      'This one is my favourite, it smells like roses.',
+      'This one is my favorite, it smells like roses.',
       'Say it with me, the spell is...',
-    ], 'Stand in the magic circle, and press green, to learn the spell!', 'A kind spell for a kind hero, let us look around!'),
+    ], 'Stand in the magic circle, and press green, to learn the spell!', 'That is a kind spell for a kind hero, let\'s look around!'),
   ],
   rilla: [
     S('🍌', [
       'Rilla strong, and Rilla share, here is my power banana!',
       'Eat the banana, and you get a mighty power.',
       'Then thump your tummy, and shout...',
-    ], SPOT('to get the power'), 'Now you are gorilla strong, let us look around!'),
+    ], SPOT('to get the power'), 'Now you are gorilla strong, let\'s look around!'),
     S('🦾', [
       'My robot arms are very strong, but my best trick is a word.',
       'I am giving it to you, because you are my friend.',
-      'Fists up, and shout...',
-    ], SPOT('to get the trick'), 'Strong like Rilla, let us look around!'),
+      'Put your fists up, and shout...',
+    ], SPOT('to get the trick'), 'Now you are strong like Rilla, let\'s look around!'),
   ],
 };
 
@@ -340,7 +340,7 @@ export const ANY_SCENES: HubStory[] = [
   S('prop_scroll', [
     'I have something special for you, a word of power!',
     'Use it in the fight, and it goes...',
-  ], CIRCLE('to take it'), 'It is yours now, let us look around!'),
+  ], CIRCLE('to take it'), 'It is yours now, let\'s look around!'),
 ];
 
 /** The scene's line ids, in the order they are said. */

@@ -250,7 +250,7 @@ scene is `S(prop, lines, circle, done)`:
   (any action word), so no line may name it or hint at which: the last trails off ("When
   you press the button, it goes...") into the narrator's `gift_word_<word>` clip.
 - `circle`: sends her to the glowing spot (`SPOT(...)` / `CIRCLE(...)`); yellow says it
-  again. `done`: once the word has flown into her ("..., let us look around!").
+  again. `done`: once the word has flown into her ("..., let's look around!"; item 059: complete, natural sentences, "let's", not "let us").
 
 The same rules as a quest line: no bank word, no interjection, commas not a mid-line
 "!" or "." (rules.test.ts). Voiced as `hub_<owner>_<n>_<key>` (`line1`…, `circle`,

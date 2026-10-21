@@ -176,7 +176,7 @@ export class ParentScene extends Phaser.Scene {
     const perCol = 13;
     const colW = (850 - ox) / Math.max(1, Math.ceil(table.onset.length / perCol));
     table.onset.forEach((r, i) => row(r, (r.tag || '–').toUpperCase().padEnd(3), ox + Math.floor(i / perCol) * colW, top + 24 + (i % perCol) * 24, colW - 6));
-    fitText(this.add.text(x, vy + 24 + 5 * 24 + 6, `Solid: shakiness ≤ ${BANK_DRAW.solid}. Grey: not read yet; green: half or more solid.`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '13px', color: '#555' }), 250, 40);
+    fitText(this.add.text(x, vy + 24 + 5 * 24 + 6, `Solid: shakiness ≤ ${BANK_DRAW.solid}. Gray: not read yet; green: half or more solid.`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '13px', color: '#555' }), 250, 40);
   }
 
   /** A column grid of items; `badge` puts a short mark (a help level) in an item's dot. */

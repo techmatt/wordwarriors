@@ -48,7 +48,7 @@ export const QUESTS: Record<string, Quest> = {
     place: 'treehouse',
     lines: [
       { text: 'To build a plan strong enough to beat them, we have to train in my secret treehouse workshop!' },
-      { text: 'To get ready, we are going up to my treehouse workshop, mind the wobbly ladder!' },
+      { text: 'To get ready, we are going up to my treehouse workshop, watch out for the wobbly ladder!' },
       { text: 'My treehouse workshop has a hammer for everybody, even a tiny one for you, so up we go!' },
     ],
   },
@@ -56,7 +56,7 @@ export const QUESTS: Record<string, Quest> = {
     place: 'forest_gym',
     lines: [
       { text: 'To get strong enough to fight them, we have to train in my secret gym in the forest!' },
-      { text: 'Time to get strong, my secret forest gym has boulders for weights and squirrels for coaches!' },
+      { text: 'It is time to get strong, and my secret forest gym has boulders for weights and squirrels for coaches!' },
       { text: 'To beat them we need muscles, so off to my gym in the forest, where even the trees do push ups!' },
     ],
   },
@@ -73,7 +73,7 @@ export const QUESTS: Record<string, Quest> = {
     lines: [
       { text: 'To learn sword and spell, we have to train in my rune dojo on the mountain!' },
       { text: 'To be a sword and spell hero, we have to climb up to my rune dojo, high on the mountain!' },
-      { text: 'My rune dojo is way up the mountain, where the clouds come to practise too, so let us go!' },
+      { text: 'My rune dojo is way up the mountain, where the clouds come to practice too, so let\'s go!' },
     ],
   },
   dada_jason: {
@@ -88,7 +88,7 @@ export const QUESTS: Record<string, Quest> = {
     place: 'knight_camp',
     lines: [
       { text: "To be brave enough to fight them, we have to train at my knights' camp by the castle!", say: 'To be brave enough to fight them, we have to train at my knights camp by the castle!' },
-      { text: 'To fight like a knight, we have to practise at the camp where the knights train, by the castle!' },
+      { text: 'To fight like a knight, we have to practice at the camp where the knights train, by the castle!' },
       { text: 'Polish your shield, little knight, we are off to train at the camp by the castle!' },
     ],
   },
@@ -188,7 +188,7 @@ export const QUESTS: Record<string, Quest> = {
     lines: [
       { text: "To get ready, we have to play in Dada's treehouse workshop!", say: 'To get ready, we have to play in Dadas treehouse workshop!' },
       { text: 'To get ready, we have to play in the treehouse workshop, up the ladder we go!' },
-      { text: 'Let us go to the treehouse workshop, where Dada lets me use the little hammer!' },
+      { text: 'Let\'s go to the treehouse workshop, where Dada lets me use the little hammer!' },
     ],
   },
   moriarty: {
@@ -196,7 +196,7 @@ export const QUESTS: Record<string, Quest> = {
     lines: [
       { text: 'To learn the best tricks, we have to train in the purple moon tower!' },
       { text: 'To learn some clever tricks, we have to train in the purple moon tower, watch closely!' },
-      { text: 'Every good magician practises, so we are going to the purple moon tower!' },
+      { text: 'Every good magician practices, so we are going to the purple moon tower!' },
     ],
   },
   bavmorda: {

@@ -190,7 +190,7 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'wand', text: 'My wand is sparkly!' },
         { key: 'brave', text: 'I am super brave!' },
         { key: 'boop', text: 'Got you!' },
-        { key: 'giggle', text: 'You can not catch me!' },
+        { key: 'giggle', text: "You can't catch me!" },
         { key: 'team', text: 'We are a super team!' },
       ],
     },
@@ -216,7 +216,7 @@ export const ROSTER: CharacterSpec[] = [
       sorry: [
         { key: 'share', text: 'Sorry! I will share all my toys now.' },
         { key: 'grumpy', text: 'Sorry, I was a grumpy girl.' },
-        { key: 'play', text: 'Sorry! Let us all play together.' },
+        { key: 'play', text: "Sorry! Let's all play together." },
       ],
       ending: [
         { key: 'next', text: 'Can I come on the next adventure?' },
@@ -432,7 +432,7 @@ export const ROSTER: CharacterSpec[] = [
       ending: [
         { key: 'fixing', text: 'No more smashing. Only fixing!' },
         { key: 'piggyback', text: 'Who wants a piggyback ride?' },
-        { key: 'build', text: 'Let us build something together!' },
+        { key: 'build', text: "Let's build something together!" },
       ],
     },
     counter: {
@@ -501,8 +501,8 @@ export const ROSTER: CharacterSpec[] = [
       ],
       ending: [
         { key: 'yummy', text: 'I promise to cook yummy food, not yucky food!' },
-        { key: 'seconds', text: 'Seconds for everybody!' },
-        { key: 'party', text: 'Best party ever!' },
+        { key: 'seconds', text: 'There are seconds for everybody!' },
+        { key: 'party', text: 'This is the best party ever!' },
       ],
     },
     counter: {
@@ -568,7 +568,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
       ending: [
         { key: 'snowman', text: 'Can I make you a snowman?' },
-        { key: 'cosy', text: 'It is so warm and cosy now!' },
+        { key: 'cosy', text: 'It is so warm and cozy now!' },
         { key: 'snowflake', text: 'Can I give you a snowflake?' },
       ],
     },
@@ -689,7 +689,7 @@ export const ROSTER: CharacterSpec[] = [
       taunts: [
         { key: 'sand', text: 'Sand in your shoes!' },
         { key: 'storm', text: 'Here comes the storm!' },
-        { key: 'catch', text: 'You can not catch me!' },
+        { key: 'catch', text: "You can't catch me!" },
         { key: 'dust', text: 'Dusty, dusty!' },
         { key: 'swirl', text: 'Swirl and twirl!' },
         { key: 'gone', text: 'Gone with the wind!' },
@@ -704,7 +704,7 @@ export const ROSTER: CharacterSpec[] = [
       ending: [
         { key: 'ride', text: 'Want a ride on my carpet?' },
         { key: 'magic', text: 'What a magic day!' },
-        { key: 'dance', text: 'Let us dance and twirl!' },
+        { key: 'dance', text: "Let's dance and twirl!" },
       ],
     },
     counter: {
@@ -779,7 +779,7 @@ export const ROSTER: CharacterSpec[] = [
       how: 'scare', word: 'rat',
     },
     house: {
-      threat: 'he wants a giant statue of himself in the garden',
+      threat: 'he wants a giant statue of himself in the yard',
       tint: 0xd9b26f,
       decals: [
         { id: 'ozymandias_statue', glyph: '🗿', look: 'a stone head poking out of the floor', count: 1 },
@@ -903,7 +903,7 @@ export const ROSTER: CharacterSpec[] = [
     reformed: {
       sorry: [
         { key: 'treasure', text: 'Sorry! You can share my treasure.' },
-        { key: 'gold', text: 'Sorry! I do not need all the gold.' },
+        { key: 'gold', text: "Sorry! I don't need all the gold." },
         { key: 'greedy', text: 'Sorry I was so greedy!' },
       ],
       ending: [
@@ -1042,7 +1042,7 @@ export const ROSTER: CharacterSpec[] = [
       taunts: [
         { key: 'tiny', text: 'Tiny but terrible!' },
         { key: 'target', text: 'Target locked!' },
-        { key: 'resist', text: 'You can not win!' },
+        { key: 'resist', text: "You can't win!" },
         { key: 'core', text: 'Core overload!' },
         { key: 'stomp', text: 'Rocket stomp!' },
         { key: 'robot', text: 'Robots rule!' },
@@ -1124,8 +1124,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'puzzle', text: 'Sorry I was such a puzzle!' },
       ],
       ending: [
-        { key: 'mystery', text: 'Next time, let us solve a mystery together!' },
-        { key: 'idea', text: 'I have a clever idea, let us play!' },
+        { key: 'mystery', text: "Next time, let's solve a mystery together!" },
+        { key: 'idea', text: "I have a clever idea, let's play!" },
         { key: 'best', text: 'This is the best mystery ever!' },
       ],
     },
@@ -1194,7 +1194,7 @@ export const ROSTER: CharacterSpec[] = [
       ending: [
         { key: 'potion', text: 'Can I brew you a happy potion?' },
         { key: 'soup', text: 'Cauldron soup for everybody, it is yummy!' },
-        { key: 'dance', text: 'Let us dance round the cauldron!' },
+        { key: 'dance', text: "Let's dance around the cauldron!" },
       ],
     },
     counter: {
@@ -1333,7 +1333,7 @@ export const ROSTER: CharacterSpec[] = [
       sorry: [
         { key: 'teddies', text: 'Sorry! Want to lift teddies with me?' },
         { key: 'jacks', text: 'Sorry! No more jumping jacks.' },
-        { key: 'rest', text: 'Sorry, kiddo! Let us take a rest.' },
+        { key: 'rest', text: "Sorry, kiddo! Let's take a rest." },
       ],
       ending: [
         { key: 'fives', text: 'No more showing off. Only high fives!' },
@@ -1400,11 +1400,11 @@ export const ROSTER: CharacterSpec[] = [
       sorry: [
         { key: 'cartoons', text: 'Sorry! I will only hack cartoons now.' },
         { key: 'lights', text: 'Sorry! I fixed all the lights.' },
-        { key: 'friendly', text: 'Beep, sorry! System is friendly now.' },
+        { key: 'friendly', text: 'Beep, sorry! My system is friendly now.' },
       ],
       ending: [
         { key: 'gauntlet', text: 'Want to try my power glove?' },
-        { key: 'game', text: 'Let us play a video game together!' },
+        { key: 'game', text: "Let's play a video game together!" },
         { key: 'party', text: 'Party mode, switched on!' },
       ],
     },
@@ -1471,7 +1471,7 @@ export const ROSTER: CharacterSpec[] = [
       ending: [
         { key: 'tickle', text: 'My sword is only for tickling now!' },
         { key: 'sparkles', text: 'Sparkles for everybody!' },
-        { key: 'wish', text: 'Let us make a wish together!' },
+        { key: 'wish', text: "Let's make a wish together!" },
       ],
     },
     counter: {
