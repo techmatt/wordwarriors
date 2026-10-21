@@ -856,6 +856,12 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
 
 ## Operational facts
 
+- **Phaser sizes a Text by a fixed sample string (`|MÃ‰qgy`), not its own glyphs**
+  (item 085): in Chrome on Windows an emoji stands about 14% of the font size above that
+  sample and 3% below it, so every emoji drawn as text (the journey map's 🏰, the ear on
+  the yellow dot) had its top cut flat. `installGlyphMetrics` (`src/ui/glyphMetrics.ts`,
+  called once in `main.ts`) measures a text's emoji with the sample, so no hand padding is
+  needed; text without emoji measures as before.
 - **Stopping a backgrounded Playwright run leaves it running** (item 069): Claude Code's
   TaskStop on the shell kills the shell, not the `node …@playwright\test\cli.js`, its
   worker or the `vite` it serves, which keeps the port. Find them by command line
