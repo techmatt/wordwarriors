@@ -13,7 +13,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { FREE_PLAY, REACH } from '../src/config';
-import { SLOW, boot, collectErrors, expectNoErrors, press, stick, until, walkTo, state, type WWState } from './harness';
+import { SLOW, SMOKE, boot, collectErrors, expectNoErrors, press, stick, until, walkTo, state, type WWState } from './harness';
 
 interface Play {
   jumps: number;
@@ -90,7 +90,7 @@ async function hub(page: Page, speed?: number): Promise<WWState> {
   return until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:2:secret' && !s.room.locked, 60_000, 'hub part 2 open');
 }
 
-test('hub: blue taps a shot, a held red fires a big one, green away from spots jumps', async ({ page }) => {
+test('hub: blue taps a shot, a held red fires a big one, green away from spots jumps', SMOKE, async ({ page }) => {
   const errors = collectErrors(page);
   await hub(page);
   await walkClear(page);

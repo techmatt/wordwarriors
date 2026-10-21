@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { type TextInfo, boot, collectErrors, expectNoErrors, texts, until } from './harness';
+import { SMOKE, type TextInfo, boot, collectErrors, expectNoErrors, texts, until } from './harness';
 
 interface Line {
   id: string;
@@ -91,7 +91,7 @@ test('the longest caption and the longest bubble stay on screen, even at the edg
   expectNoErrors(errors);
 });
 
-test('the longest counter sentence fits its banner, one row or wrapped between words', async ({ page }) => {
+test('the longest counter sentence fits its banner, one row or wrapped between words', SMOKE, async ({ page }) => {
   const errors = collectErrors(page);
   // OZYMANDIAS IS NO MATCH FOR THE ...: a long name, and the counter frames are the longest.
   await boot(page, '?scene=room&slot=counter&villain=ozymandias&nojourney=1');

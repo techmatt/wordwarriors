@@ -10,6 +10,7 @@ import { test, expect } from '@playwright/test';
 import {
   FETCH_FRAMES,
   SLOW,
+  SMOKE,
   boot,
   choose,
   collectErrors,
@@ -27,7 +28,7 @@ import {
   walkTo,
 } from './harness';
 
-test('title boots, F9 opens the grown-ups page and returns, green starts the bedroom', async ({ page }) => {
+test('title boots, F9 opens the grown-ups page and returns, green starts the bedroom', SMOKE, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page);
   await until(page, (s) => s.scene === 'Title', 30_000, 'title');

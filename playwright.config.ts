@@ -42,11 +42,16 @@ export default defineConfig({
   // 78 s, the fast lane 76 s against 82 s; the battle holds ~56 fps instead of 11-18.
   projects: gpuProjects(),
 
+  // A build served by `vite preview` (item 079, tests/vite.test.config.ts): pages boot
+  // from one bundle, and edits to src/ mid-run reach no page. WW_DEV_SERVER=1 serves
+  // the dev server instead (hot reload and all).
   webServer: process.env.WW_BASE_URL
     ? undefined
     : {
         // strictPort (vite.config.ts) makes a busy port fail loudly.
-        command: `npx vite --port ${SERVE_PORT}`,
+        command: process.env.WW_DEV_SERVER
+          ? `npx vite --port ${SERVE_PORT}`
+          : `npx vite build -c tests/vite.test.config.ts --logLevel warn && npx vite preview -c tests/vite.test.config.ts --port ${SERVE_PORT}`,
         url: BASE_URL,
         reuseExistingServer: false,
         timeout: 120_000,

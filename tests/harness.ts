@@ -17,6 +17,12 @@ import { expect, type Page } from '@playwright/test';
 /** A browser test over about 10 s: the slow lane (`--grep @slow` matches the tag). */
 export const SLOW = { tag: '@slow' };
 
+/**
+ * One of the few browser tests `npm test` runs after every change (item 079): the
+ * title, the hub and a room, a few seconds each. Everything not SLOW is `npm run test:browser`.
+ */
+export const SMOKE = { tag: '@smoke' };
+
 export interface WWState {
   scene: string;
   fps: number;
