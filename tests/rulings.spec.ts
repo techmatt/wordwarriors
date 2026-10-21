@@ -1,20 +1,11 @@
 /**
- * Item 043: Matt's rulings on 039's design calls (docs/qa-findings.md, M1-M6).
+ * Matt's rulings on the bug hunt's design calls (item 043; docs/qa-findings.md,
+ * "Matt's calls"): M1, M3-M6 in the running game. M2, the phonics voice's face,
+ * is a unit test (tests/unit/cast.test.ts).
  */
 
-import { test, expect, type Page } from '@playwright/test';
-import { SLOW, boot, collectErrors, expectNoErrors, state, stick, until } from './harness';
-
-interface TextInfo {
-  scene: string;
-  text: string;
-  bounds: number[];
-  offscreen: boolean;
-}
-
-function texts(page: Page): Promise<TextInfo[]> {
-  return page.evaluate(() => (window as unknown as { __ww: { texts(): TextInfo[] } }).__ww.texts());
-}
+import { test, expect } from '@playwright/test';
+import { SLOW, boot, collectErrors, expectNoErrors, state, stick, texts, until } from './harness';
 
 const overlap = (a: number[], b: number[]) => a[0]! < b[2]! && b[0]! < a[2]! && a[1]! < b[3]! && b[1]! < a[3]!;
 

@@ -9,26 +9,15 @@ import { readFileSync } from 'node:fs';
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { boot, collectErrors, expectNoErrors, until } from './harness';
+import { type TextInfo, boot, collectErrors, expectNoErrors, texts, until } from './harness';
 
 interface Line {
   id: string;
   text: string;
 }
 
-interface TextInfo {
-  scene: string;
-  text: string;
-  bounds: number[];
-  offscreen: boolean;
-}
-
 const LINES = JSON.parse(readFileSync('content/voice/lines.json', 'utf8')) as Line[];
 const longest = (pred: (l: Line) => boolean) => LINES.filter(pred).sort((a, b) => b.text.length - a.text.length)[0]!;
-
-function texts(page: Page): Promise<TextInfo[]> {
-  return page.evaluate(() => (window as unknown as { __ww: { texts(): TextInfo[] } }).__ww.texts());
-}
 
 /** Poll until `pred` holds over the visible texts; returns them. */
 async function untilTexts(page: Page, pred: (t: TextInfo[]) => boolean, what: string): Promise<TextInfo[]> {

@@ -1,7 +1,8 @@
 /**
- * Item 043: a familiar picture for every first sound (KEY for K, YOYO for Y),
- * and PIN familiar again (the -IN family). Item 048: KEY and YOYO sound out
- * in full, long vowels and all, and may be the counter.
+ * A familiar picture for every first sound (item 043: KEY for K, YOYO for Y),
+ * the secret door's sign clear of KEY, and PIN familiar again (the -IN
+ * family). Item 048: KEY and YOYO sound out in full, long vowels and all, and
+ * may be the counter.
  */
 
 import { test } from 'node:test';
@@ -16,7 +17,6 @@ import { ALL_SIDE_ROOMS } from '../../content/house/house';
 import { letterSoundLine } from '../../content/voice/ids';
 import { GRAB_WORDS, clue } from '../../src/rules/grab';
 import { BAG_WORDS } from '../../src/rules/sentences';
-import { phonicsFace } from '../../src/rules/cast';
 
 test('K and Y: a familiar pictured word each, in the rooms, the warm-up and the bag', () => {
   for (const letter of ['k', 'y']) {
@@ -63,12 +63,4 @@ test('PIN is familiar again (Matt, item 043): the -IN family builds PIN and BIN'
   assert.ok(!BANK_BY_WORD.pin!.odd);
   assert.deepEqual([...FAMILY_BY_RIME.in!.words].sort(), ['bin', 'pin']);
   assert.ok(!FAMILY_BY_RIME.ig, '-IG has one familiar picture (PIG) only');
-});
-
-test('M2: the phonics voice shows Dada Matt only when he is in the episode on her side', () => {
-  const base = { hero: 'julia', ally: 'ellie', primary: null, secondary: null };
-  assert.equal(phonicsFace({ ...base, primary: 'dada_matt_cyber' }), 'dada_matt');
-  assert.equal(phonicsFace({ ...base, primary: 'dada_jason', secondary: 'dada_matt' }), 'dada_matt');
-  assert.equal(phonicsFace({ ...base, primary: 'dada_jason_warrior' }), null, 'Jason woke her, no Matt: no face');
-  assert.equal(phonicsFace({ ...base, ally: 'scar', primary: null }), null);
 });

@@ -2,7 +2,7 @@
  * Item 048: KEY and YOYO sound out in full. A miss in the sentence room sounds
  * every unit, the long vowels on their own lines: KEY is K, long E; YOYO is
  * Y, long O, Y, long O. The counter draw and the warm-up clue are unit tests
- * (tests/unit/sentences.test.ts, tests/unit/kywords.test.ts).
+ * (tests/unit/sentences.test.ts, tests/unit/firstsounds.test.ts).
  */
 
 import { test, expect } from '@playwright/test';

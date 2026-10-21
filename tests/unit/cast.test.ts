@@ -1,5 +1,6 @@
 /**
- * Item 025: the random cast, the dads' forms, the quests and the minigame pool.
+ * Item 025: the random cast, the dads' forms, the quests and the minigame pool;
+ * the phonics voice's face (Matt's ruling M2, item 043).
  */
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
@@ -11,7 +12,7 @@ import { HOME_QUEST, QUESTS, questFor, questSetup } from '../../content/house/qu
 import { HUB_SCENES, hubStory } from '../../content/house/scenes';
 import { ART_BY_ID } from '../../content/art/assets';
 import { ACTIVE_CAST, CAST_ODDS } from '../../src/config';
-import { DADS, drawCast, seededRand, wakerOf } from '../../src/rules/cast';
+import { DADS, drawCast, phonicsFace, seededRand, wakerOf } from '../../src/rules/cast';
 import { drawStory } from '../../src/rules/story';
 import { MINIGAMES, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/sentences';
@@ -144,6 +145,15 @@ test('cast: the same seed draws the same episodes', () => {
   const a = seededRand(9);
   const b = seededRand(9);
   for (let i = 0; i < 20; i++) assert.deepEqual(drawCast({ hero: 'julia' }, a), drawCast({ hero: 'julia' }, b));
+});
+
+// Matt's ruling M2 (item 043, docs/qa-findings.md); the other rulings are tests/rulings.spec.ts.
+test('M2: the phonics voice shows Dada Matt only when he is in the episode on her side', () => {
+  const base = { hero: 'julia', ally: 'ellie', primary: null, secondary: null };
+  assert.equal(phonicsFace({ ...base, primary: 'dada_matt_cyber' }), 'dada_matt');
+  assert.equal(phonicsFace({ ...base, primary: 'dada_jason', secondary: 'dada_matt' }), 'dada_matt');
+  assert.equal(phonicsFace({ ...base, primary: 'dada_jason_warrior' }), null, 'Jason woke her, no Matt: no face');
+  assert.equal(phonicsFace({ ...base, ally: 'scar', primary: null }), null);
 });
 
 test('forms: every dad form has its good, evil and face art, and its outfits are drawn', () => {

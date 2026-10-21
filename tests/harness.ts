@@ -193,6 +193,19 @@ export function state(page: Page): Promise<WWState> {
   return page.evaluate(() => (window as unknown as { __ww: { state(): WWState } }).__ww.state());
 }
 
+/** A visible Text in a running scene, with its world bounds; `offscreen` when it leaves the 1280×720 frame. */
+export interface TextInfo {
+  scene: string;
+  text: string;
+  bounds: number[];
+  offscreen: boolean;
+}
+
+/** Every visible Text in the running scenes. */
+export function texts(page: Page): Promise<TextInfo[]> {
+  return page.evaluate(() => (window as unknown as { __ww: { texts(): TextInfo[] } }).__ww.texts());
+}
+
 export async function press(page: Page, button: string): Promise<void> {
   await page.evaluate((b) => (window as unknown as { __ww: { input: { press(b: string): void } } }).__ww.input.press(b), button);
 }
