@@ -17,7 +17,7 @@ import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { advance, castArt, episode, narrator, villainSpec } from '../episode/Episode';
 import { bob, burst, fitImage, flash, floatText, shake } from '../fx/juice';
 import { Controls } from '../input/Controls';
-import { hookState } from '../testHooks';
+import { hookState } from '../hookState';
 import { Bubbles } from '../ui/Bubbles';
 import { Caption } from '../ui/Caption';
 

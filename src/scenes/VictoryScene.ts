@@ -18,7 +18,7 @@ import { advance, castArt, castFace, castId, castScale, counterWord, episode, na
 import { burst, fitImage, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
-import { hookState } from '../testHooks';
+import { hookState } from '../hookState';
 import { Bubbles } from '../ui/Bubbles';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { Caption, type KeepOut } from '../ui/Caption';

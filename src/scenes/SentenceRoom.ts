@@ -38,7 +38,7 @@ import { backToHub, castFace, counterArt, episode, namedCounter, narrator, planF
 import { bob, burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
 import { asSentence, skipsListening, type SentencePlan } from '../rules/sentences';
 import { progress } from '../state/progress';
-import type { RoomInfo } from '../testHooks';
+import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
 import { makeButtonDot } from '../ui/ButtonDot';
 import type { CaptionMode, KeepOut } from '../ui/Caption';

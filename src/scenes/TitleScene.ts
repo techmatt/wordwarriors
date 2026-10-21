@@ -24,7 +24,7 @@ import { bob, burst, fitImage } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { dadLock } from '../input/dadLock';
-import { hookState } from '../testHooks';
+import { hookState } from '../hookState';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { Caption } from '../ui/Caption';
 

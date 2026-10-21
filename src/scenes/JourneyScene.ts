@@ -15,7 +15,7 @@ import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { castArt, episode, journeyStops, startStep, villainSpec } from '../episode/Episode';
 import { burst, fitImage, popIn } from '../fx/juice';
 import { Controls } from '../input/Controls';
-import { hookState } from '../testHooks';
+import { hookState } from '../hookState';
 
 const HOLD_MS = 2200;
 

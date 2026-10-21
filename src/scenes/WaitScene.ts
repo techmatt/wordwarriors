@@ -12,7 +12,7 @@ import { GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { castFace, episode } from '../episode/Episode';
 import { TEX } from '../fx/textures';
 import { bob, fitImage } from '../fx/juice';
-import { hookState } from '../testHooks';
+import { hookState } from '../hookState';
 
 /** How long the wait stays invisible: a load that lands within it shows nothing at all. */
 const SHOW_AFTER_MS = 150;

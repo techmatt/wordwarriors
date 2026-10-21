@@ -40,9 +40,10 @@ import { backToHub, castFace, episode, narrator, planFor, type Slot, type Step }
 import { bob, burst, fitImage, floatText, popIn, shockwave, squash, wiggle } from '../fx/juice';
 import type { MachineMode, MachinePlan, MachineRound, MachineTile } from '../rules/wordMachine';
 import { progress } from '../state/progress';
-import type { RoomInfo } from '../testHooks';
+import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
 import type { CaptionMode, KeepOut } from '../ui/Caption';
+import { fontPx } from '../ui/fitText';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
@@ -223,7 +224,7 @@ export class WordMachine extends Minigame {
 
   /** The onset's slot: an empty box (lit while the hint says its sound), or nothing behind a letter. */
   private drawSlot(filled: boolean, lit = false): void {
-    const h = this.onsetText.style.fontSize ? parseInt(String(this.onsetText.style.fontSize), 10) : 60;
+    const h = fontPx(this.onsetText);
     const s = h * 1.05;
     this.slotBox.clear();
     if (filled) return;

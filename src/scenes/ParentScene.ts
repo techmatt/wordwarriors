@@ -39,7 +39,7 @@ import { Controls } from '../input/Controls';
 import { BAG_WORDS } from '../rules/sentences';
 import { progress } from '../state/progress';
 import type { ItemKind } from '../state/ProgressStore';
-import { hookState } from '../testHooks';
+import { hookState } from '../hookState';
 
 const LEVEL_NAMES = ['CVC (CAT)', 'blends (FROG)', 'digraphs (SHIP)'];
 

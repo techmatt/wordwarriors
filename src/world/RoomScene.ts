@@ -24,7 +24,7 @@ import { FreePlay } from '../fx/freePlay';
 import { fitImage } from '../fx/juice';
 import { Controls } from '../input/Controls';
 import { dadLock } from '../input/dadLock';
-import { hookState, type SpotInfo } from '../testHooks';
+import { hookState, type SpotInfo } from '../hookState';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { Bubbles } from '../ui/Bubbles';
 import { Caption, type CaptionMode, type KeepOut } from '../ui/Caption';

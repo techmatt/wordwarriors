@@ -21,7 +21,7 @@ import { burst, fitImage } from '../fx/juice';
 import { Controls } from '../input/Controls';
 import { endingPeople, endingScript, standXs } from '../rules/endings';
 import { progress } from '../state/progress';
-import { hookState } from '../testHooks';
+import { hookState } from '../hookState';
 import { Bubbles, type BubbleAnchor } from '../ui/Bubbles';
 
 /**

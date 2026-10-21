@@ -23,7 +23,7 @@ import { dadLock } from '../input/dadLock';
 import { voiceBank } from '../voice/VoiceBank';
 import { artBank } from '../art/ArtBank';
 import { artFor } from '../art/needs';
-import { hookState } from '../testHooks';
+import { hookState, walkObjects } from '../hookState';
 
 export interface QaVoice {
   /** Game-clock ms (the page's warped `performance.now`). */
@@ -287,14 +287,8 @@ function counts(game: Phaser.Game): Record<string, number> {
   let tweens = 0;
   let timers = 0;
   let listeners = 0;
-  const countIn = (objs: Phaser.GameObjects.GameObject[]): void => {
-    for (const o of objs) {
-      objects++;
-      if (o instanceof Phaser.GameObjects.Container) countIn(o.list);
-    }
-  };
   for (const s of game.scene.getScenes(false)) {
-    countIn(s.children?.list ?? []);
+    walkObjects(s.children?.list ?? [], () => objects++);
     tweens += s.tweens?.getTweens().length ?? 0;
     timers += (s.time as unknown as { _active?: unknown[] })?._active?.length ?? 0;
     for (const n of s.events.eventNames()) listeners += s.events.listenerCount(n);

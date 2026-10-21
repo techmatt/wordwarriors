@@ -46,7 +46,7 @@ import { dadPress, openDadButtons, setDadAsking, type DadAnswer } from '../input
 import { dadLock } from '../input/dadLock';
 import { chargeLevel, type ChargeLevel, type ChargePlan } from '../rules/charge';
 import { progress } from '../state/progress';
-import type { RoomInfo } from '../testHooks';
+import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
 import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';

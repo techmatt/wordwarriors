@@ -58,7 +58,7 @@ import { dadPress, openDadButtons, setDadAsking, type DadAnswer } from '../input
 import { dadLock } from '../input/dadLock';
 import { bridgeLevel, nextBridgeLevel, recordedBridgeLevel, whereDiffers, type BridgeLevel, type BridgePlan, type BridgeRound } from '../rules/bridge';
 import { progress } from '../state/progress';
-import type { RoomInfo } from '../testHooks';
+import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
 import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
