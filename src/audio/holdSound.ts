@@ -13,8 +13,8 @@
  *   L N R V Z SH TH) keeps its steady part: a hiss up to the vowel after it
  *   (S of "Suh": noise, many crossings, then the quieter-crossing vowel), a hum
  *   up to where the crossings rise into the schwa (M N L), or a vowel's loud
- *   middle. That part loops for as long as she stays, the loop's end
- *   crossfaded into the sound just before its start, so the seam is smooth;
+ *   middle. That part is stretched smoothly (overlap-add, not a loop: item
+ *   058) to one long sound of HELD_MS, which fades and goes quiet;
  * - a **once** sound (the stops, H, W, Y, X) plays once and never with an
  *   "uh": a burst or hiss up to the vowel (T, K, CH), the final hiss after it
  *   too (X is "Kuhs": K then S), or a voiced stop's first instant (B D G),
@@ -26,12 +26,19 @@
 
 export type HoldMode = 'hold' | 'once';
 
-/** What to play, in samples: `start`..`end` of the clip; a held clip loops `loopStart`..`end`. */
+/**
+ * How long a held sound sounds (item 058), its fade-out included: one smooth
+ * "mmmm", then quiet. Here, not in BRIDGE (src/config.ts), because
+ * tools/voice/import.ts builds this file under NodeNext, and config.ts is not.
+ */
+export const HELD_MS = 1300;
+
+/** What to play, in samples: `start`..`end` of the clip; a held clip's steady part is `loopStart`..`end`. */
 export interface HoldPlan {
   mode: HoldMode;
   start: number;
   end: number;
-  /** Only for `hold`: where the loop goes back to. */
+  /** Only for `hold`: where the attack ends and the steady part (stretched) begins. */
   loopStart?: number;
   /** Once sounds with a final hiss (X): this second stretch follows the first. */
   tail?: [number, number];
@@ -58,7 +65,7 @@ const HELD_DB = 12;
 /** A voiced stop (B D G) keeps this much of its onset. */
 const VOICED_STOP_S = 0.06;
 const MIN_HOLD_S = 0.06;
-/** The longest held stretch kept (the loop covers the rest). */
+/** The longest held stretch kept (the stretch covers the rest). */
 const MAX_HOLD_S = 0.45;
 const MAX_BURST_S = 0.3;
 
@@ -171,18 +178,82 @@ export function holdPlan(x: Float32Array, rate: number, mode: HoldMode): HoldPla
   return { mode, start: at(on), end: at(end), loopStart: at(loop) };
 }
 
-/** The crossfade at a held clip's loop seam, and the fades at either end. */
-const SEAM_S = 0.025;
+/** The fades at either end of a once clip's parts. */
 const FADE_IN_S = 0.004;
 const FADE_OUT_S = 0.02;
+/** A stretched sound's grains (Hann windows, half overlapping), and how far each may shift to line up with the last. */
+const GRAIN_S = 0.04;
+const ALIGN_S = 0.012;
+/** How fast the grains' place drifts through the steady part, a share of real time (the rest is the stretch). */
+const DRIFT = 0.3;
+/** A stretched sound's own fade-out, so it ends "mmmm" and not cut off. */
+const END_FADE_S = 0.2;
+/** The silence a held clip ends on, which VoiceBus "loops" until it lets go. */
+const REST_S = 0.1;
+
+/**
+ * Item 058: the held part, stretched to `n` samples by overlap-add (WSOLA).
+ * Each grain is taken from the steady part `lo`..`hi`, where it lines up
+ * best with the grain before (so a hum's waves run on, no beat), drifting
+ * back and forth through it slowly, each grain's level evened to the part's,
+ * so nothing repeats on a short beat and the level does not pulse. The first
+ * grain is the clip itself at `lo`, so it joins the attack seamlessly.
+ */
+function stretch(x: Float32Array, lo: number, hi: number, n: number, half: number, rate: number): Float32Array {
+  const out = new Float32Array(n);
+  const g = half * 2;
+  const tol = Math.max(0, Math.min(Math.round(ALIGN_S * rate), Math.floor((hi - lo - g) / 4)));
+  const last = hi - g; // the latest a grain may start
+  const win = Float32Array.from({ length: g }, (_, i) => 0.5 - 0.5 * Math.cos((2 * Math.PI * i) / g));
+  const rms = (a: number) => {
+    let e = 0;
+    for (let i = 0; i < g; i++) e += (x[a + i]! * win[i]!) ** 2;
+    return Math.sqrt(e / g);
+  };
+  const levels: number[] = [];
+  for (let a = lo; a <= last; a += half) levels.push(rms(a));
+  const level = median(levels);
+  // The target drifts lo..last and back (with room to shift by `tol`).
+  const span = Math.max(0, last - lo - 2 * tol);
+  let target = 0;
+  let dir = 1;
+  let prev = lo;
+  for (let o = 0, k = 0; o < n; o += half, k++) {
+    let pos = lo;
+    if (k > 0) {
+      // Line up with how the previous grain's sound goes on: x[prev + half ..].
+      target += dir * half * DRIFT;
+      if (target > span) (target = 2 * span - target), (dir = -1);
+      if (target < 0) (target = -target), (dir = 1);
+      const centre = lo + tol + Math.round(Math.min(span, Math.max(0, target)));
+      const want = Math.min(prev + half, last);
+      let best = -Infinity;
+      for (let c = Math.max(lo, centre - tol); c <= Math.min(last, centre + tol); c++) {
+        let s = 0;
+        for (let i = 0; i < half; i += 2) s += x[c + i]! * x[want + i]!;
+        if (s > best) (best = s), (pos = c);
+      }
+    }
+    const r = rms(pos);
+    const gain = k === 0 || r <= 0 || level <= 0 ? 1 : Math.min(4, Math.max(0.25, level / r));
+    for (let i = 0; i < g && o + i < n; i++) out[o + i]! += x[pos + i]! * win[i]! * gain;
+    prev = pos;
+  }
+  return out;
+}
 
 /**
  * The samples to play for a plan, and where a held one loops back to (an
- * index into them). A held clip's last SEAM_S is crossfaded (equal power)
- * into the sound just before its loop start, so the loop runs on smoothly.
- * A once clip fades out over its last FADE_OUT_S, and joins its tail.
+ * index into them). A once clip fades out over its last FADE_OUT_S, and joins
+ * its tail. A held clip (item 058) is its attack, then its steady part
+ * stretched smoothly (`stretch`) to HELD_MS in all, fading out, then
+ * REST_S of silence, which is its loop: so it sounds once, one long "mmmm",
+ * and is quiet until it is let go. (054 looped the steady part itself, and
+ * that is 70-300 ms on every clip, placeholders and recordings alike: M's
+ * 110 ms loop was a stutter of "m"s, nine a second.)
  */
 export function holdSamples(x: Float32Array, plan: HoldPlan, rate: number): { data: Float32Array<ArrayBuffer>; loopStart: number | null } {
+  if (plan.mode === 'hold' && plan.loopStart !== undefined) return heldSamples(x, plan, rate, plan.loopStart);
   const parts: [number, number][] = [[plan.start, plan.end], ...(plan.tail ? [plan.tail] : [])];
   const len = parts.reduce((n, [a, b]) => n + Math.max(0, b - a), 0);
   const data = new Float32Array(Math.max(1, len));
@@ -198,13 +269,35 @@ export function holdSamples(x: Float32Array, plan: HoldPlan, rate: number): { da
     }
     o += b - a;
   }
-  if (plan.mode !== 'hold' || plan.loopStart === undefined) return { data, loopStart: null };
-  const ls = plan.loopStart - plan.start;
-  const seam = Math.min(Math.round(SEAM_S * rate), ls, Math.floor((len - ls) / 2));
-  for (let i = 0; i < seam; i++) {
-    const t = (i + 0.5) / seam;
-    const k = len - seam + i;
-    data[k] = data[k]! * Math.cos((t * Math.PI) / 2) + x[plan.loopStart - seam + i]! * Math.sin((t * Math.PI) / 2);
+  return { data, loopStart: null };
+}
+
+/** A held clip: attack, the steady part stretched to HELD_MS, a fade, then silence (its loop). */
+function heldSamples(x: Float32Array, plan: HoldPlan, rate: number, loopStart: number): { data: Float32Array<ArrayBuffer>; loopStart: number } {
+  const { start, end } = plan;
+  const total = Math.max(1, Math.round((HELD_MS / 1000) * rate));
+  const rest = Math.max(1, Math.round(REST_S * rate));
+  const data = new Float32Array(total + rest);
+  let half = Math.round((GRAIN_S * rate) / 2);
+  // The attack (up to the loop start) as it is, crossfading into the first
+  // grain over `half`; with no room for that, the stretch is all of it.
+  let lo = loopStart - half;
+  if (lo < start || end - lo < 2 * half) {
+    lo = start;
+    half = Math.max(1, Math.min(half, Math.floor((end - start) / 2)));
   }
-  return { data, loopStart: ls };
+  const at = lo - start;
+  const body = stretch(x, lo, end, Math.max(0, total - at), half, rate);
+  data.set(body.subarray(0, total - at), at);
+  for (let i = 0; i < loopStart - lo && lo > start; i++) {
+    // The window's complement: the attack's fade-out and the first grain's fade-in sum to one.
+    const w = 0.5 + 0.5 * Math.cos((Math.PI * i) / half);
+    data[at + i]! += x[lo + i]! * w;
+  }
+  if (lo > start) data.set(x.subarray(start, lo), 0);
+  const fi = Math.min(Math.round(FADE_IN_S * rate), total);
+  for (let i = 0; i < fi; i++) data[i]! *= i / fi;
+  const fo = Math.min(Math.round(END_FADE_S * rate), Math.floor(total / 2));
+  for (let i = 0; i < fo; i++) data[total - 1 - i]! *= 0.5 - 0.5 * Math.cos((Math.PI * i) / fo);
+  return { data, loopStart: total };
 }

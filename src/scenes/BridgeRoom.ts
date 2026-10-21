@@ -7,10 +7,11 @@
  * stones over it, one stone per sound unit (SH is one stone). She pushes the
  * stick and slides across, slower than she walks (BRIDGE.slide). While she is
  * on a stone its sound plays **held** (`voiceBus.hold`, src/audio/holdSound.ts):
- * a vowel or a sound you can stretch (M S F L N R V Z SH TH) goes on for as
- * long as she stays, so a slow slide is "mmm-aaa-t", and how slowly she
- * slides is how slowly she stretches the word; a stop sound plays once, never
- * with an "uh". It works from whatever clip is in place, so Matt's
+ * a vowel or a sound you can stretch (M S F L N R V Z SH TH) is one smooth
+ * stretched sound (HELD_MS; cut short when she steps off), so a slow
+ * slide is "mmm-aaa-t", and how slowly she slides is how slowly she stretches
+ * the word; standing on, it sounds again after BRIDGE.resoundMs of quiet. A
+ * stop sound plays once each step on, never with an "uh". It works from whatever clip is in place, so Matt's
  * recordings (`voice:clip`) drop in.
  *
  * On the far bank are 2–3 pictures that share the word's start and differ
@@ -46,6 +47,7 @@ import { canHold } from '../../content/phonics/letters';
 import { SIDE_ROOM_BY_ID, gapFor, type BridgeGap } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { RIGHT_VARIANTS } from '../../content/voice/script';
+import { HELD_MS } from '../audio/holdSound';
 import { voiceBus, type HeldSound, type Utterance } from '../audio/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon, sfxWhoosh, sfxWrong } from '../audio/sfx';
 import { BRIDGE, DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
@@ -131,6 +133,8 @@ export class BridgeRoom extends Minigame {
   /** She stepped on a stone that has not sounded yet (a line was playing): it sounds when the room is quiet. */
   private pendingSound = false;
   private held: HeldSound | null = null;
+  /** How long her stone's held sound has been quiet (it sounds again at BRIDGE.resoundMs). */
+  private quietMs = 0;
   private lit = -1;
   private waitMs = 0;
   private timeouts = 0;
@@ -422,6 +426,7 @@ export class BridgeRoom extends Minigame {
     const i = this.onBridge() ? this.stones.findIndex((s) => Math.abs(p.x - s.x) <= s.half) : -1;
     if (i !== this.onStone) this.stepOn(i);
     else if (this.pendingSound && !voiceBus.busy) this.soundStone(i);
+    else this.resound(i, deltaMs);
 
     if (this.phase === 'slide' && p.x >= FAR_X) void this.arrive();
     if (this.phase === 'say' && !dadLock.locked && !voiceBus.busy) {
@@ -443,15 +448,40 @@ export class BridgeRoom extends Minigame {
     this.light(i);
     if (i < 0) return;
     this.noteActivity();
-    if (this.voiced && (this.phase === 'slide' || this.phase === 'say' || this.phase === 'pick')) this.soundStone(i);
+    if (this.stonesSound()) this.soundStone(i);
   }
 
-  /** Stone `i`'s sound, held while she stays on it (a stop sound once). Waits for the room to be quiet. */
+  /** Do the stones sound now (voiced, and she is sliding or on the far bank). */
+  private stonesSound(): boolean {
+    return this.voiced && (this.phase === 'slide' || this.phase === 'say' || this.phase === 'pick');
+  }
+
+  /**
+   * Still on stone `i` (item 058): a held sound, once it has played out and
+   * BRIDGE.resoundMs of quiet has passed, sounds again. A stop sound plays
+   * once each time she steps on.
+   */
+  private resound(i: number, deltaMs: number): void {
+    const s = this.stones[i];
+    if (!s || !this.held || this.held.playing || !canHold(s.sound) || !this.stonesSound()) {
+      this.quietMs = 0;
+      return;
+    }
+    this.quietMs += deltaMs;
+    if (this.quietMs >= BRIDGE.resoundMs && !voiceBus.busy) this.soundStone(i);
+  }
+
+  /**
+   * Stone `i`'s sound: a held one is one smooth stretched sound of
+   * HELD_MS (src/audio/holdSound.ts), then quiet; a stop sound once.
+   * Waits for the room to be quiet.
+   */
   private soundStone(i: number): void {
     const s = this.stones[i];
     this.pendingSound = false;
+    this.quietMs = 0;
     if (!s) return;
-    const held = voiceBus.hold(letterSoundLine(s.sound), canHold(s.sound) ? 'hold' : 'once', BRIDGE.maxHoldMs);
+    const held = voiceBus.hold(letterSoundLine(s.sound), canHold(s.sound) ? 'hold' : 'once', HELD_MS);
     if (held) this.held = held;
     else this.pendingSound = true;
   }
@@ -566,7 +596,7 @@ export class BridgeRoom extends Minigame {
       const s = this.stones[i]!;
       this.tweens.add({ targets: orb, x: s.x, duration: 160, ease: 'Sine.easeInOut' });
       this.light(i);
-      const held = voiceBus.hold(letterSoundLine(s.sound), canHold(s.sound) ? 'hold' : 'once', BRIDGE.maxHoldMs);
+      const held = voiceBus.hold(letterSoundLine(s.sound), canHold(s.sound) ? 'hold' : 'once', HELD_MS);
       await this.wait(canHold(s.sound) ? BRIDGE.replayMs : REPLAY_ONCE_MS);
       held?.release();
       if (f !== this.flow) {

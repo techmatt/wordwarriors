@@ -146,9 +146,10 @@ export const CHARGE = {
  * is held, so how slowly she slides is how slowly she stretches the word.
  * `words` per visit, `pictures` on the far bank (the word's included).
  * `slide`: her speed on the stones, a share of her walking speed. A held
- * sound is one smooth stretched sound `holdMs` long, then quiet; while she
- * stays on its stone it sounds again after `resoundMs` of quiet (a stop sound
- * plays once each time she steps on). Each word has its own help level: 1 = the
+ * sound is one smooth stretched sound (HELD_MS in src/audio/holdSound.ts,
+ * 1.3 s), then quiet; while she stays on its stone it sounds again after
+ * `resoundMs` of quiet (a stop sound plays once each time she steps on).
+ * Each word has its own help level: 1 = the
  * stones sound themselves and the pictures show from the start; 2 = silent
  * stones, Dad's 2 is a hint (they sound); 3 = she says the word aloud first,
  * Dad's 2 brings the pictures, his 1 replays the slide with sounds (each
@@ -166,7 +167,6 @@ export const BRIDGE = {
   startLevel: 1 as 1 | 2 | 3,
   weight: 1,
   slide: 0.55,
-  holdMs: 1300,
   resoundMs: 2000,
   replayMs: 700,
   dadWaitMs: 12000,

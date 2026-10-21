@@ -59,14 +59,23 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
   // Onto the first stone and stand still: its sound is held.
   await standOn(page, 0);
   await until(page, (st) => bridge(st)?.holding === `letter_${b0.units[0]}_sound`, 10_000, 'first stone held');
-  // The clocks run at SPEED (5x): 200 ms is a second of standing still, under BRIDGE.maxHoldMs.
-  await page.waitForTimeout(200);
-  expect(bridge(await state(page))!.holding).toBe(`letter_${b0.units[0]}_sound`);
   await shot(page, 'on_stone');
+  // Item 058: one stretched sound (HELD_MS, 1.3 s: 260 ms at SPEED 5x, too
+  // short to time from here under load), then quiet; still standing there, it
+  // sounds again after a pause.
+  const first = `letter_${b0.units[0]}_sound`;
+  const count = (st: WWState) => st.voice.history.filter((id) => id === first).length;
+  const quiet = await until(page, (st) => bridge(st)?.holding === null, 10_000, 'held sound played out');
+  expect(count(quiet)).toBe(1);
+  expect(bridge(quiet)!.stone).toBe(0);
+  const resounded = await until(page, (st) => bridge(st)?.holding === first, 10_000, 'sounds again after a pause');
+  expect(count(resounded)).toBe(2);
+  expect(bridge(resounded)!.stone).toBe(0);
   // Across: every stone's sound, in order; the word itself not yet.
   await slideAcross(page);
   const far = await until(page, (st) => bridge(st)?.phase === 'pick' && !st.room!.locked, 60_000, 'far bank');
-  const sounds = far.voice.history.filter((id) => id.startsWith('letter_'));
+  // (The first stone sounded twice while she stood on it.)
+  const sounds = far.voice.history.filter((id) => id.startsWith('letter_')).filter((id, k, all) => id !== all[k - 1]);
   expect(sounds.slice(0, b0.units.length)).toEqual(b0.units.map((u) => `letter_${u}_sound`));
   expect(far.voice.history).not.toContain(`word_${b0.word}`);
   await shot(page, 'far_bank');
