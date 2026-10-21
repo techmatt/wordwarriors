@@ -22,13 +22,15 @@ import { test, type Page } from '@playwright/test';
 
 import { BANK } from '../../content/phonics/bank';
 import { boot, choose, collectErrors, hubGo, leaveBedroom, playBattle, playBridgeRoom, playChargeRoom, playEntry, playWordMachine, press, readToKeyWord, seedProgress, state, until, type WWState } from '../harness';
-import { layoutIssues, leakIssues, logIssues, placeholderArt, type Issue, type Layout, type Since } from './checks';
+import { layoutIssues, leakIssues, logIssues, placeholderArt, voiceBuildIssues, type Issue, type Layout, type Since } from './checks';
 import { clippedIssues, giveawayIssues, pacingIssues, spellingIssues } from './wording';
 
 const TAG = process.env.QA_TAG ?? 'now';
 const OUT = `scratch/qa/${TAG}`;
 const SPEED = Number(process.env.WW_SPEED ?? 5);
 const PLACEHOLDERS = placeholderArt();
+// Lines with no clip, or a clip for old text: the same for every scenario, so read once (item 062).
+const VOICE_BUILD = voiceBuildIssues();
 
 interface Scenario {
   name: string;
@@ -341,6 +343,7 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     const q = await page.evaluate(() => (window as unknown as { __wwqa: { since(t: number): Since } }).__wwqa.since(0));
     // The whole run's flashes at once: a burst can straddle two polls.
     rec.add(logIssues({ ...q, voice: [], locks: [], spikes: [] }));
+    rec.add(VOICE_BUILD);
     for (const e of errors) rec.add([{ kind: 'page-error', severity: 'bug', scene: '', detail: e, key: `pageerror:${e.slice(0, 80)}` }]);
     // Growth from one episode to the next.
     for (let i = 1; i < counts.length; i++) {

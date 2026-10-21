@@ -34,11 +34,32 @@ interface VoiceManifestFile {
   lines: VoiceLine[];
 }
 
+/** Clips fetched and decoded at once: the dev server's HTTP/1.1 allows six connections a host. */
+const DECODE_SLOTS = 6;
+/** A clip's fetch is given up after this (item 057 saw one hang 60 s), freeing its slot. */
+const FETCH_TIMEOUT_MS = 15_000;
+
+interface DecodeJob {
+  id: string;
+  group: string;
+  /** Asked for by `ensure` (a line about to be said), not only by its group. */
+  urgent: boolean;
+  done: Promise<void>;
+  run(): Promise<void>;
+  /** Taken off the queue before it ran: its awaiters resolve, nothing decoded. */
+  cancel(): void;
+}
+
 export class VoiceBank {
   private readonly lines = new Map<string, VoiceLine>();
   private readonly buffers = new Map<string, AudioBuffer>();
   private readonly groups = new Map<string, Promise<void>>();
   private manifest: Promise<boolean> | null = null;
+  /** Decodes queued or under way, by line id; `waiting` is the queue, front first. */
+  private readonly jobs = new Map<string, DecodeJob>();
+  private readonly waiting: DecodeJob[] = [];
+  private readonly failed = new Set<string>();
+  private active = 0;
 
   /** Read the manifest only; cheap. */
   load(base = import.meta.env.BASE_URL): Promise<boolean> {
@@ -76,20 +97,82 @@ export class VoiceBank {
     const ctx = getAudioContext();
     if (!ctx) return;
     const lines = [...this.lines.values()].filter((l) => l.group === name);
-    // A few at a time: decodeAudioData on hundreds of clips at once stalls the frame.
-    for (let i = 0; i < lines.length; i += 12) {
-      await Promise.all(lines.slice(i, i + 12).map((line) => this.decodeLine(ctx, line, base)));
+    await Promise.all(lines.map((line) => this.request(ctx, line, base, false)));
+  }
+
+  /**
+   * One queue for every clip, `DECODE_SLOTS` fetching and decoding at a time
+   * (decodeAudioData on hundreds at once stalls the frame). A line about to be
+   * said (`ensure`) goes to the front and shares a decode already under way.
+   * Item 062: each group used to decode in its own batches of 12, so an episode's
+   * six or more groups put 70-odd fetches ahead of the line being said, past
+   * VoiceBus's ENSURE_TIMEOUT_MS: the caption showed and nothing was said.
+   */
+  private request(ctx: AudioContext, line: VoiceLine, base: string, urgent: boolean): Promise<void> {
+    if (this.buffers.has(line.id)) return Promise.resolve();
+    const known = this.jobs.get(line.id);
+    if (known) {
+      const i = this.waiting.indexOf(known);
+      if (urgent && i > 0) this.waiting.unshift(...this.waiting.splice(i, 1));
+      known.urgent ||= urgent;
+      return known.done;
+    }
+    let settle = () => undefined as void;
+    const done = new Promise<void>((resolve) => (settle = resolve));
+    const job: DecodeJob = {
+      id: line.id,
+      group: line.group,
+      urgent,
+      done,
+      cancel: () => {
+        this.jobs.delete(line.id);
+        settle();
+      },
+      run: async () => {
+        // A fetch that never answers would hold its slot for good; past this it fails like any other.
+        const abort = new AbortController();
+        const timer = setTimeout(() => abort.abort(), FETCH_TIMEOUT_MS);
+        try {
+          const bytes = await (await fetch(`${base}${line.audio}`, { signal: abort.signal })).arrayBuffer();
+          const buffer = await ctx.decodeAudioData(bytes);
+          // A group retain() let go while this was under way stays let go, unless a line asked for it.
+          if (job.urgent || this.groups.has(line.group)) this.buffers.set(line.id, buffer);
+          this.failed.delete(line.id);
+        } catch (error) {
+          this.failed.add(line.id);
+          console.warn(`voice: could not decode ${line.id}`, error);
+        } finally {
+          clearTimeout(timer);
+          this.jobs.delete(line.id);
+          settle();
+        }
+      },
+    };
+    this.jobs.set(line.id, job);
+    if (urgent) this.waiting.unshift(job);
+    else this.waiting.push(job);
+    this.pump();
+    return done;
+  }
+
+  private pump(): void {
+    while (this.active < DECODE_SLOTS && this.waiting.length) {
+      const job = this.waiting.shift()!;
+      this.active++;
+      void job.run().finally(() => {
+        this.active--;
+        this.pump();
+      });
     }
   }
 
-  private async decodeLine(ctx: AudioContext, line: VoiceLine, base: string): Promise<void> {
-    if (this.buffers.has(line.id)) return;
-    try {
-      const bytes = await (await fetch(`${base}${line.audio}`)).arrayBuffer();
-      this.buffers.set(line.id, await ctx.decodeAudioData(bytes));
-    } catch (error) {
-      console.warn(`voice: could not decode ${line.id}`, error);
-    }
+  /** Where a line's audio stands, for the bug-hunt checker's silent-line reason. */
+  state(id: string): 'ready' | 'queued' | 'decoding' | 'failed' | 'none' {
+    if (this.buffers.has(id)) return 'ready';
+    const job = this.jobs.get(id);
+    if (job) return this.waiting.includes(job) ? 'queued' : 'decoding';
+    if (this.failed.has(id)) return 'failed';
+    return 'none';
   }
 
   /**
@@ -104,6 +187,11 @@ export class VoiceBank {
       if (k.has(name)) continue;
       this.groups.delete(name);
       for (const line of this.lines.values()) if (line.group === name) this.buffers.delete(line.id);
+      // Not yet started: drop them, or they would decode a group just let go.
+      for (const job of this.waiting.filter((j) => j.group === name)) {
+        this.waiting.splice(this.waiting.indexOf(job), 1);
+        job.cancel();
+      }
     }
   }
 
@@ -120,11 +208,11 @@ export class VoiceBank {
     return this.buffers.has(id);
   }
 
-  /** Make sure one line is decoded (for a line outside the loaded groups). */
+  /** Make sure one line is decoded, ahead of any group still decoding. */
   async ensure(id: string, base = import.meta.env.BASE_URL): Promise<void> {
     const line = this.lines.get(id);
     const ctx = getAudioContext();
-    if (line && ctx) await this.decodeLine(ctx, line, base);
+    if (line && ctx) await this.request(ctx, line, base, true);
   }
 
   /**

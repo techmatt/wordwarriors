@@ -594,6 +594,7 @@ export function counterArt(): string {
 
 /** Voice groups the current episode will need from here on. */
 export function episodeGroups(): string[] {
+  // In decode order (item 062: one queue). The letter sounds first: a bridge stone's held sound does not wait for its decode.
   const g = [group.core, group.phonics, group.narrator(narrator())];
   g.push(group.fighter(episode.hero), group.fighter(`${episode.villain}_evil`));
   if (episode.ally) g.push(group.fighter(episode.ally));

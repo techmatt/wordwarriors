@@ -15,24 +15,23 @@ npm run dev
 
 Then open **http://localhost:5174** in Chrome or Edge and press F11 for fullscreen. Plug
 the Xbox 360 pad in first; press green (A) on the title screen. The keyboard works too:
-arrows to walk, Space/Enter for green, Tab for yellow (say it again / hint), and the
+arrows to walk, Space/Enter for green, Tab for yellow (say it again / hint), Esc for red, 3 for blue, and the
 backquote / tilde key for dad lock (below). The number keys **1** (no) and **2** (yes) are
 Dad's, for the games that ask him whether she said it (below).
 
 **Free play** (item 060): wherever she is free to move and no answer is open (the rooms,
 the bedroom once she is awake, the hub, the battle's fight outside a move choice), her
 character has toys. Green jumps: a tap hops, a hold goes higher and floats down. Blue
-(Shift), red (Esc) and yellow (Tab) cast: blue bolts, red sparkle stars, yellow fun
+(the **3** key), red (Esc) and yellow (Tab) cast: blue bolts, red sparkle stars, yellow fun
 things (stars, hearts, snowballs; the chef throws donuts and cookies, the knight sword
 flashes and gold stars). A tap is one shot; a hold charges a big one. A button that
 means something there keeps its meaning (green on a door, sign or thing in reach; yellow
 says it again where there is something to say). It is pure play: it never changes an
 answer, a battle or what a scene does. Dad lock silences it. At most
 `FREE_PLAY.maxShots` shots fly at once (one more and the oldest just goes); the knobs are
-`FREE_PLAY` in `src/config.ts`. On Julia's machine, turn off Windows' **Sticky Keys
-shortcut** (Settings, Ease of Access, Keyboard: untick "Allow the shortcut key to start
-Sticky Keys"): five Shift presses in a row, easy when blue fires bolts, otherwise pop a
-dialog that takes the keyboard from the game until a grown-up closes it.
+`FREE_PLAY` in `src/config.ts`. Blue is a number key, not Shift, because five Shift
+presses in a row open Windows' Sticky Keys dialog (amendment 1579); the game binds
+nothing to Shift.
 
 **Sound:** browsers keep audio off until a click or key press, and it is not confirmed
 that a gamepad press counts. While sound is still off, the title shows a small grown-up
@@ -71,14 +70,18 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    bedroom door opens on the front hall, where nine pictures stand on the floor, with no
    words on them (item 059: with CAT and VAN printed she matched letters instead of
    sounding the word out). The helper asks "Before we head out, let's grab the..."
-   and gives a clue by the word's **level** on a ramp: 1 the word, its letter names
-   ("Vee, Ay, En") and its letter sounds; 2 names and sounds, no word; 3 sounds only.
-   A board over the hall fills in each letter as its name is said and lights it for its
-   sound (blank boxes at level 3). She walks to the thing and presses green: right, a
-   burst, the word, and into her bag as a battle item (her first), then the front door
-   appears. Wrong: "That's the... CAT! We need the..." and the clue again at the same
-   level; from the third miss the clue adds the whole word. Yellow repeats the clue.
-   A new word starts at level 2 (**`GRAB.startLevel` in `src/config.ts`**); right first
+   and gives a phonics clue by the word's **level** on a ramp, never saying the word
+   (amendment 1549: a phonics task, not a listening one): 1 each letter's name, then
+   its sound ("Vee, vvv; Ay, a; En, nnn"; a digraph's two names, then its one sound);
+   2 the sounds alone, by sound unit; 3 the sounds over blank boxes. A board over the
+   hall fills in each letter as it is named or sounded (levels 1–2) and lights each in
+   turn. She walks to the thing and presses green: right, a burst, the word (its first
+   saying, the confirmation), and into her bag as a battle item (her first), then the
+   front door appears. Wrong: "That's the... CAT! We need the..." and the clue again at
+   the same level; from the third miss (`GRAB.helpAfter`) the clue is the word sounded
+   out slowly by its units with the letters on the board, one sound at a time, never
+   blended. Yellow repeats the clue.
+   A new word starts at level 1 (**`GRAB.startLevel` in `src/config.ts`**); right first
    time moves that word up a level, a miss on its first try moves it down. The levels
    and grabs are on the grown-ups page ("Warm-up levels"). The word is said, so it never
    becomes a room's key word, the counter, a word machine word or a move pad that
@@ -475,7 +478,9 @@ About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it r
 - **Checks at each shot** (`tests/qa/checks.ts`): words off the screen, lower-case
   text, tiny text, text over text, a target under the dialogue box, placeholder art; the
   sentence key word or the machine's word said or shown before she answers; lines with
-  no manifest entry or no audio; console warnings; input locked over 20 s or silent over
+  no manifest entry (`voice-no-line`) or played with no clip (`voice-silent`, with why:
+  its decode `queued` or `decoding`, `failed`, `none` asked for, or the audio context
+  `suspended`); console warnings; input locked over 20 s or silent over
   2.5 s; frames over 250 ms; objects, tweens, timers and listeners growing from one
   episode to the next; and a stall (any wait timing out) with its last shot.
 - **Matt's categories** (item 059; the list heads `docs/qa-findings.md`, and a hunt
@@ -485,6 +490,10 @@ About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it r
   shouts are left out), and a room past its game-time budget (`slow-room`,
   `ROOM_BUDGET_MS`; scenarios that answer wrong on purpose are not timed).
   `tests/unit/qacategories.test.ts` holds every line in `lines.json` to American spelling.
+  Missing voice lines (item 062): every scenario also lists each line in `lines.json`
+  with no manifest entry (`voice-unbuilt`), a clip for older text (`voice-stale`) or no
+  mp3 (`voice-no-clip`); the same check is a unit test, and `rules.test.ts` fails when
+  `lines.json` is not what `voice:lines` composes.
 - **The probe** (`src/qa/probe.ts`) is what the page adds for it, only with `?qa=1` (and
   the test hooks): the voice log, frame times and long tasks per scene, lock stretches,
   missing art, console capture, `layout()` and `counts()` on `window.__wwqa`.
@@ -655,7 +664,11 @@ voice folder is shared, `voice:build` keeps mp3s of lines that left `lines.json`
 branch may still speak them); `voice:build -- --prune` deletes them. The flip side: there
 is one `manifest.json`, so a branch that changes a line's text and runs `voice:build`
 changes what main speaks for that id too, before the branch lands (item 009 re-voiced
-630 `need_item_*`/`made_item_*`/`got_counter_*` lines this way). A checkout without
+630 `need_item_*`/`made_item_*`/`got_counter_*` lines this way). The same goes for
+lines: a build writes the manifest from its own `lines.json`, so one from a checkout
+without some lines (an older branch, a worktree cut before a merge) drops them for
+everyone. Since item 062 it says so in a `DROPPED:` block; if main still speaks them, run
+`voice:build` in main. A checkout without
 `public/voice-gen/` runs mute with captions, and the unit test that checks the manifest
 fails. To link one by hand: `mklink /J public\voice-gen C:\Code\gdrive-sync\wordwarriors\voice-gen`
 (in `cmd`, from the checkout root).

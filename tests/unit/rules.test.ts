@@ -231,6 +231,15 @@ test('voice: every line id the game derives exists in lines.json and the manifes
   assert.deepEqual(missing, [], 'composed');
   const unbuilt = want.filter((id) => !built.has(id));
   assert.deepEqual(unbuilt, [], 'built into the manifest (run npm run voice:build)');
+  // Item 062: every composed line is in lines.json as composed, and every line has a clip for its current text.
+  const file = JSON.parse(readFileSync('content/voice/lines.json', 'utf8')) as typeof lines;
+  const inFile = new Map(file.map((l) => [l.id, JSON.stringify(l)]));
+  const drift = [...lines.filter((l) => inFile.get(l.id) !== JSON.stringify(l)).map((l) => l.id), ...file.filter((l) => !ids.has(l.id)).map((l) => l.id)];
+  assert.deepEqual(drift.slice(0, 20), [], 'lines.json is what compose makes (run npm run voice:lines)');
+  const texts = new Map(manifest.lines.map((l) => [l.id, (l as { text?: string }).text]));
+  const stale = lines.filter((l) => built.has(l.id) && texts.get(l.id) !== l.text).map((l) => l.id);
+  assert.deepEqual(stale, [], 'every clip says its line as written now (run npm run voice:build)');
+  assert.deepEqual(lines.filter((l) => !built.has(l.id)).map((l) => l.id), [], 'every line in lines.json is built');
   assert.ok(!lines.some((l) => /\b(Ha|Hmph)!/.test(l.text)), 'interjections are SFX, not lines');
 });
 

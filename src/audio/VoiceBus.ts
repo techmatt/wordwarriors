@@ -47,7 +47,10 @@ const BARK_GAP_MS = 900;
  * How long a line waits for its voice group to decode (item 058: item 057 saw
  * a hub line hang 60 s on one). Past this the line goes on without audio, as a
  * line with no clip does: its caption shows for the line's estimated length.
- * The decode carries on; the line never starts its audio late.
+ * The decode carries on; the line never starts its audio late. Item 062: a
+ * line went past it when its fetch queued behind its groups' (70-odd at once,
+ * a busy dev server taking 1-2 s each); VoiceBank's one decode queue now puts
+ * the line being said first, so it waits for at most six others.
  */
 export const ENSURE_TIMEOUT_MS = 4000;
 

@@ -217,6 +217,8 @@ export class BridgeRoom extends Minigame {
     burst(this, this.player.x, this.player.y - 40, { count: 16, speed: 220 });
     sfxWhoosh();
     for (const r of this.plan.rounds) void voiceBank.ensure(wordLine(r.word));
+    // A stone's held sound plays only if decoded (VoiceBus.hold does not wait): its sounds go first (item 062).
+    for (const s of new Set(this.plan.rounds.flatMap((r) => r.sounds))) if (s) void voiceBank.ensure(letterSoundLine(s));
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.releaseHeld();
       this.closeDad?.();

@@ -217,6 +217,17 @@ export async function buildVoice(argv: string[]): Promise<void> {
     console.log(`\n${rule}\nSTALE: ${stale.length} recorded line(s) no longer match their text; using edge-tts.\n${rule}`);
     for (const { line, clip } of stale) console.log(`  ${line.id}\n    recorded: ${clip.spoken}\n    now:      ${spokenFor(line)}`);
   }
+  // Item 062: the manifest is shared, so a build from a checkout without some
+  // lines (an older branch, a worktree cut before a merge) drops what another
+  // checkout built, and that checkout's game then has no voice for them. Said
+  // loudly; the fix is a voice:build in the checkout that plays.
+  const dropped = (previous?.lines ?? []).filter((e) => !ids.has(e.id)).map((e) => e.id);
+  if (dropped.length) {
+    const rule = '='.repeat(72);
+    console.log(`\n${rule}\nDROPPED: ${dropped.length} line(s) the shared manifest had are not in this checkout's lines.json.\nIf another checkout (main) still speaks them, run npm run voice:build there.\n${rule}`);
+    for (const id of dropped.slice(0, 20)) console.log(`  ${id}`);
+    if (dropped.length > 20) console.log(`  … and ${dropped.length - 20} more`);
+  }
   if (failed.length) {
     console.log(`\nFAILED: ${failed.length} line(s) could not be built and are missing from the manifest (the game shows their text silently):`);
     for (const { line, error } of failed.slice(0, 30)) console.log(`  ${line.id}: ${error}`);

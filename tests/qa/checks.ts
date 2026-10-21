@@ -4,7 +4,7 @@
  * Each returns issues; `key` dedupes one issue seen at many captures.
  */
 
-import { readdirSync, readFileSync } from 'node:fs';
+import { readdirSync, readFileSync, statSync } from 'node:fs';
 
 import type { WWState } from '../harness';
 
@@ -73,7 +73,7 @@ export function coverIssues(l: Pick<Layout, 'texts' | 'targets' | 'covers' | 'hu
 }
 
 export interface Since {
-  voice: { t: number; id: string; scene: string; priority: string; text: string; noLine: boolean; silent: boolean }[];
+  voice: { t: number; id: string; scene: string; priority: string; text: string; noLine: boolean; silent: boolean; why?: string }[];
   locks: { scene: string; round: string; start: number; ms: number; silentMs: number }[];
   spikes: { scene: string; t: number; ms: number; kind: string }[];
   flashes: { scene: string; t: number }[];
@@ -174,12 +174,47 @@ export function leakIssues(s: WWState, l: Layout, voiceSinceRound: Since['voice'
   return out;
 }
 
+/**
+ * Every line in `lines.json` with no clip: no manifest entry (`voice-unbuilt`),
+ * a manifest entry for other text (`voice-stale`: the clip says an old line),
+ * or a missing or empty mp3 (`voice-no-clip`). Item 062: Matt heard captions
+ * with nothing said. The static half of "a line plays with no clip"; the
+ * played half is `voice-silent` (logIssues), which names why.
+ */
+export function voiceBuildIssues(linesFile = 'content/voice/lines.json', out = 'public'): Issue[] {
+  const lines = JSON.parse(readFileSync(linesFile, 'utf8')) as { id: string; text: string }[];
+  let manifest: { lines: { id: string; text: string; audio: string }[] };
+  try {
+    manifest = JSON.parse(readFileSync(`${out}/voice-gen/manifest.json`, 'utf8'));
+  } catch {
+    return [{ kind: 'voice-unbuilt', severity: 'bug', scene: '', detail: 'no voice manifest: every line plays silent (npm run voice:build)', key: 'unbuilt:manifest' }];
+  }
+  const built = new Map(manifest.lines.map((l) => [l.id, l]));
+  const issues: Issue[] = [];
+  for (const l of lines) {
+    const m = built.get(l.id);
+    if (!m) issues.push({ kind: 'voice-unbuilt', severity: 'bug', scene: '', detail: `${l.id}: not in the manifest (npm run voice:build)`, key: `unbuilt:${l.id}` });
+    else if (m.text !== l.text) issues.push({ kind: 'voice-stale', severity: 'bug', scene: '', detail: `${l.id}: the clip says "${m.text}", the line is "${l.text}"`, key: `stale:${l.id}` });
+    else if (!clipSize(`${out}/${m.audio}`)) issues.push({ kind: 'voice-no-clip', severity: 'bug', scene: '', detail: `${l.id}: ${m.audio} missing or empty`, key: `noclip:${l.id}` });
+  }
+  return issues;
+}
+
+function clipSize(file: string): number {
+  try {
+    return statSync(file).size;
+  } catch {
+    return 0;
+  }
+}
+
 /** Voice with no line or no audio; console warnings; long locked or silent stretches; frame spikes. */
 export function logIssues(q: Since): Issue[] {
   const out: Issue[] = [];
   for (const v of q.voice) {
     if (v.noLine) out.push({ kind: 'voice-no-line', severity: 'bug', scene: v.scene, detail: v.id, key: `noline:${v.id}` });
-    else if (v.silent) out.push({ kind: 'voice-silent', severity: 'bug', scene: v.scene, detail: v.id, key: `silent:${v.id}` });
+    // A line plays with no clip: its caption shows and nothing is said (item 062).
+    else if (v.silent) out.push({ kind: 'voice-silent', severity: 'bug', scene: v.scene, detail: `${v.id}: played with no clip (${v.why ?? 'not decoded'})`, key: `silent:${v.id}` });
   }
   for (const c of q.console) {
     if (/^art: missing|^voice: (no line|could not)/.test(c.text)) continue;

@@ -33,6 +33,8 @@ export interface QaVoice {
   noLine: boolean;
   /** In the manifest but not decoded, or the audio context not running: it played silent. */
   silent: boolean;
+  /** Why a silent line had no clip (item 062): its decode still queued or under way, failed, never asked for, or the context not running. */
+  why?: 'queued' | 'decoding' | 'failed' | 'none' | 'suspended';
 }
 
 export interface QaLock {
@@ -119,6 +121,8 @@ export function installProbe(game: Phaser.Game): void {
   voiceBus.on((u) => {
     if (!u) return;
     const ctx = getAudioContext();
+    const state = voiceBank.state(u.id);
+    const silent = Boolean(u.line) && (state !== 'ready' || ctx?.state !== 'running');
     log.voice.push({
       t: performance.now(),
       id: u.id,
@@ -126,7 +130,8 @@ export function installProbe(game: Phaser.Game): void {
       priority: u.priority,
       text: u.text,
       noLine: !u.line,
-      silent: Boolean(u.line) && (!voiceBank.ready(u.id) || ctx?.state !== 'running'),
+      silent,
+      ...(silent ? { why: !ctx || state === 'ready' ? ('suspended' as const) : state } : {}),
     });
     if (log.voice.length > 4000) log.voice.splice(0, 1000);
   });
