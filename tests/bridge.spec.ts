@@ -1,20 +1,25 @@
 /**
- * Item 054: the Stretchy Bridge. Fast lane: a visit at level 1 (the stones
- * sound as she slides, a held sound while she stands still, a wrong picture
- * sounded out, then the right one; levels saved, the words fetched); level 3
- * (silent stones, the pictures only after Dad's yes, his no replays the
- * stones); level 2 (Dad's 2 is a hint). Slow lane: a drawn episode with the
- * bridge behind door a. Screenshots land in tests/screenshots/ (ignored).
+ * Item 054: the Stretchy Bridge. Fast lane: level 3 (silent stones, the
+ * pictures only after Dad's yes, his no replays the stones). Slow lane
+ * (item 061: 15-25 s each): a visit at level 1 (the stones sound as she
+ * slides, a held sound while she stands still, a wrong picture sounded out,
+ * then the right one; levels saved, the words fetched); level 2 (Dad's 2 is a
+ * hint); the drawn episodes' door a; a drawn episode with the bridge behind
+ * door a. Screenshots land in tests/screenshots/ (ignored).
  */
 
 import { test, expect, type Page } from '@playwright/test';
 
+import { soundOf } from '../content/phonics/bank';
+import { letterSoundLine } from '../content/voice/ids';
 import { BRIDGE_WORDS } from '../src/rules/bridge';
 import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom, playEpisode, press, seedProgress, slideAcross, state, stick, until, type WWState } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/054_${name}.png` });
 
 const bridge = (s: WWState) => s.room?.bridge;
+/** Each stone's sound line: a doubled letter sounds as its single letter (EGG is E, then G's sound). */
+const soundLines = (units: string[]) => units.map((u) => letterSoundLine(soundOf(u)));
 const levels = (s: WWState) => (s.progress as unknown as { bridgeLevels: Record<string, number> }).bridgeLevels;
 
 /** Every bridge word at help level `n` (all of them: at level 2 or more the later tiers open too). */
@@ -36,7 +41,7 @@ async function standOn(page: Page, i: number): Promise<WWState> {
   throw new Error(`never reached stone ${i}`);
 }
 
-test('Stretchy Bridge, level 1: the stones sound as she slides, held while she stays; a wrong picture is sounded out; the word only after the right one', async ({ page }) => {
+test('Stretchy Bridge, level 1: the stones sound as she slides, held while she stays; a wrong picture is sounded out; the word only after the right one', SLOW, async ({ page }) => {
   test.setTimeout(150_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&room=bridge');
@@ -58,12 +63,12 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
 
   // Onto the first stone and stand still: its sound is held.
   await standOn(page, 0);
-  await until(page, (st) => bridge(st)?.holding === `letter_${b0.units[0]}_sound`, 10_000, 'first stone held');
+  await until(page, (st) => bridge(st)?.holding === soundLines(b0.units)[0], 10_000, 'first stone held');
   await shot(page, 'on_stone');
   // Item 058: one stretched sound (HELD_MS, 1.3 s: 260 ms at SPEED 5x, too
   // short to time from here under load), then quiet; still standing there, it
   // sounds again after a pause.
-  const first = `letter_${b0.units[0]}_sound`;
+  const first = soundLines(b0.units)[0];
   const count = (st: WWState) => st.voice.history.filter((id) => id === first).length;
   const quiet = await until(page, (st) => bridge(st)?.holding === null, 10_000, 'held sound played out');
   expect(count(quiet)).toBe(1);
@@ -76,7 +81,7 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
   const far = await until(page, (st) => bridge(st)?.phase === 'pick' && !st.room!.locked, 60_000, 'far bank');
   // (The first stone sounded twice while she stood on it.)
   const sounds = far.voice.history.filter((id) => id.startsWith('letter_')).filter((id, k, all) => id !== all[k - 1]);
-  expect(sounds.slice(0, b0.units.length)).toEqual(b0.units.map((u) => `letter_${u}_sound`));
+  expect(sounds.slice(0, b0.units.length)).toEqual(soundLines(b0.units));
   expect(far.voice.history).not.toContain(`word_${b0.word}`);
   await shot(page, 'far_bank');
 
@@ -134,7 +139,7 @@ test('Stretchy Bridge, level 3: silent stones; the pictures only after Dad says 
   await page.keyboard.press('Digit1');
   const asked = await until(page, (st) => bridge(st)?.asking === true && bridge(st)!.replays === 1, 60_000, 'replayed, asks again');
   const replay = asked.voice.history.slice(say.voice.history.length);
-  expect(replay.filter((id) => id.startsWith('letter_'))).toEqual(b0.units.map((u) => `letter_${u}_sound`));
+  expect(replay.filter((id) => id.startsWith('letter_'))).toEqual(soundLines(b0.units));
   expect(asked.room!.spots).toHaveLength(0);
   // His yes (key 2): the pictures come.
   await page.keyboard.press('Digit2');
@@ -148,7 +153,7 @@ test('Stretchy Bridge, level 3: silent stones; the pictures only after Dad says 
   expectNoErrors(errors);
 });
 
-test("Stretchy Bridge, level 2: silent stones until Dad's 2, a hint that sounds them", async ({ page }) => {
+test("Stretchy Bridge, level 2: silent stones until Dad's 2, a hint that sounds them", SLOW, async ({ page }) => {
   test.setTimeout(120_000);
   const errors = collectErrors(page);
   await seedLevels(page, 2);
@@ -161,7 +166,7 @@ test("Stretchy Bridge, level 2: silent stones until Dad's 2, a hint that sounds 
   await dad(page, 'yes');
   const hinted = await until(page, (st) => bridge(st)?.phase === 'slide' && !st.room!.locked && bridge(st)!.voiced, 60_000, 'hint given');
   expect(bridge(hinted)!.aided).toBe(true);
-  expect(hinted.voice.history.filter((id) => id.startsWith('letter_'))).toEqual(b0.units.map((u) => `letter_${u}_sound`));
+  expect(hinted.voice.history.filter((id) => id.startsWith('letter_'))).toEqual(soundLines(b0.units));
   // Now the stones sound as she slides.
   await slideAcross(page);
   const far = await until(page, (st) => bridge(st)?.phase === 'pick' && !st.room!.locked, 60_000, 'far bank');
@@ -172,7 +177,7 @@ test("Stretchy Bridge, level 2: silent stones until Dad's 2, a hint that sounds 
   expectNoErrors(errors);
 });
 
-test('the beta: every drawn episode has a phonics room behind door a, Charge the Spell or the Stretchy Bridge', async ({ page }) => {
+test('the beta: every drawn episode has a phonics room behind door a, Charge the Spell or the Stretchy Bridge', SLOW, async ({ page }) => {
   test.setTimeout(60_000);
   const seen = new Set<string>();
   for (let i = 0; i < 6 && seen.size < 2; i++) {
