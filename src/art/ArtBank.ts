@@ -3,7 +3,7 @@
  * all 459 pictures (47 MB) before the title. Now nothing loads until a scene
  * asks: `ensure(ids)` (a scene about to show: front of the queue) or
  * `prefetch(ids)` (the scene after it, in the background). Each picture is
- * fetched once, decoded off the main thread where it can be (`Image.decode`) and handed to
+ * fetched once (by `fetch`, at a priority), decoded off the main thread where it can (`Image.decode`) and handed to
  * Phaser's texture manager, so it outlives every scene.
  *
  * Which scene needs what is `src/art/needs.ts`; the gate that keeps a scene
@@ -29,13 +29,16 @@ const SLOTS = 8;
  */
 const BACKGROUND_SLOTS = 3;
 /**
- * A fetch still out after this gives up its slot so the queue moves on, but is
- * never given up itself: a slow picture is waited for (behind the Wait scene),
- * never painted magenta. Item 065's bug-hunt sweep saw pictures queue 12 s
- * behind voice clips on the dev server's six connections; given up, they
- * showed as magenta squares in the battle.
+ * A fetch still out after this is aborted and asked again (`TRIES` in all), so
+ * nothing hangs for good. Long: a fetch waits its turn behind the voice
+ * clips, and aborting one re-queues it at the back (30 s, 6 s real at test
+ * speed 5, thrashed: the slow-art test took a minute instead of 5 s).
  */
-const SLOT_MS = 30_000;
+const FETCH_TIMEOUT_MS = 120_000;
+const TRIES = 3;
+
+/** The file is not there, or not a picture: no point asking again. */
+class NotThere extends Error {}
 
 interface Job {
   id: string;
@@ -138,52 +141,64 @@ export class ArtBank {
       if (!this.waiting[0]!.urgent && this.active >= BACKGROUND_SLOTS) return;
       const job = this.waiting.shift()!;
       this.active++;
-      let freed = false;
-      const free = () => {
-        if (freed) return;
-        freed = true;
-        this.active--;
-        this.pump();
-      };
-      const slow = window.setTimeout(free, SLOT_MS);
-      void this.load(job.id)
+      void this.load(job)
         .then(
           () => this.loaded.add(job.id),
           (error: unknown) => this.fail(job.id, error),
         )
         .finally(() => {
-          window.clearTimeout(slow);
+          this.active--;
           this.jobs.delete(job.id);
           job.resolve();
-          free();
+          this.pump();
         });
     }
   }
 
-  /** One retry: a failed fetch may be the network blinking, not a missing file. */
-  private async load(id: string): Promise<void> {
-    try {
-      await this.fetchImage(id);
-    } catch {
-      await this.fetchImage(id);
+  /**
+   * A fetch that stalls is aborted and asked again, up to `TRIES` times; only a
+   * file that is not there (or never arrives) gets the magenta square.
+   */
+  private async load(job: Job): Promise<void> {
+    for (let attempt = 1; ; attempt++) {
+      try {
+        await this.fetchImage(job);
+        return;
+      } catch (error) {
+        if (error instanceof NotThere || attempt >= TRIES) throw error;
+      }
     }
   }
 
-  private fetchImage(id: string): Promise<void> {
+  /**
+   * By `fetch`, not an `<img>` request: Chromium ranks image requests below the
+   * voice bank's fetches and starved them for minutes (item 065's slow lane
+   * stuck in the Wait scene). A scene about to show asks at high priority, the
+   * background at low, so the voice being said keeps the connections.
+   */
+  private async fetchImage(job: Job): Promise<void> {
     const game = this.game;
-    if (!game) return Promise.reject(new Error('art bank not installed'));
+    if (!game) throw new Error('art bank not installed');
+    const abort = new AbortController();
+    const timer = window.setTimeout(() => abort.abort(), FETCH_TIMEOUT_MS);
+    let blob: Blob;
+    try {
+      const response = await fetch(`${import.meta.env.BASE_URL}art/${job.id}.png`, { signal: abort.signal, priority: job.urgent ? 'high' : 'low' } as RequestInit);
+      if (response.status === 404) throw new NotThere('not found');
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      blob = await response.blob();
+    } finally {
+      window.clearTimeout(timer);
+    }
     const img = new Image();
-    return new Promise<void>((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       img.onload = () => resolve();
-      img.onerror = () => reject(new Error('not found'));
-      img.src = `${import.meta.env.BASE_URL}art/${id}.png`;
-    })
-      .then(async () => {
-        // Decoded off the main thread where it can be. Chromium sometimes refuses
-        // (`EncodingError`) with many at once; the loaded image is still good, decoded on first draw.
-        await img.decode().catch(() => undefined);
-        if (!this.exists(id)) this.add(() => game.textures.addImage(id, img));
-      });
+      img.onerror = () => reject(new NotThere('not a picture'));
+      img.src = URL.createObjectURL(blob);
+    });
+    // Chromium sometimes refuses to pre-decode (`EncodingError`) with many at once; the image is still good.
+    await img.decode().catch(() => undefined);
+    if (!this.exists(job.id)) this.add(() => game.textures.addImage(job.id, img));
   }
 
   /** A missing art file must not stop the game: the magenta square boot always painted. */
