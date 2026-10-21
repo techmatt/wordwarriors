@@ -33,7 +33,7 @@ import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, villainKey, wordLine } from '../../content/voice/ids';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { sfxRight, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
-import { DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH } from '../config';
 import { backToHub, castFace, counterArt, episode, namedCounter, narrator, planFor, villainSpec, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
 import { asSentence, skipsListening, type SentencePlan } from '../rules/sentences';
@@ -177,8 +177,14 @@ export class SentenceRoom extends Minigame {
     const highest = Math.min(...room.spots.slice(0, this.plan.objects.length).map(([, y]) => y));
     // The thing she is next to grows by NEAR_SCALE from its feet (RoomScene), so its top rises too.
     const drop = Math.max(0, Math.ceil(bannerBottom + BANNER_GAP - (highest - PIC_TOP * NEAR_SCALE - PIC_BOB)));
-    // She comes in below them, so she is not standing on one when they wake.
-    this.player.place(room.entry.x, Math.min(Math.max(room.entry.y, highest + drop + 70), this.floor.bottom - 10));
+    // She comes in below them, out of reach, so she is not standing on one when they wake (item 069:
+    // under a two-row banner she came in 70 px under the middle one and a mashed green chose it).
+    const spots = room.spots.slice(0, this.plan.objects.length).map(([x, y]) => ({ x, y: y + drop }));
+    const y = Math.min(Math.max(room.entry.y, highest + drop + REACH + 10), this.floor.bottom - 10);
+    const inReach = (x: number) => spots.some((sp) => Math.hypot(sp.x - x, sp.y - y) <= REACH);
+    // Floor too short for that: between two of them instead.
+    const x = !inReach(room.entry.x) || spots.length < 2 ? room.entry.x : (spots[0]!.x + spots[1]!.x) / 2;
+    this.player.place(x, y);
     // Arriving: a hop and a puff where she comes in.
     this.player.hop();
     burst(this, this.player.x, this.player.y - 40, { count: 16, speed: 220 });
@@ -419,6 +425,8 @@ export class SentenceRoom extends Minigame {
       spot.enabled = true;
       this.tweens.add({ targets: spot.obj, alpha: 1, duration: 250 });
     }
+    // Two misses kept across F9 keep their sparkle too (item 069: it came back only on a third miss).
+    if (this.wrongTries >= 2) this.sparkleAnswer();
     if (narrate) await this.narrate('room_find');
   }
 

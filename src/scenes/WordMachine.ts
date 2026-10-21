@@ -270,6 +270,8 @@ export class WordMachine extends Minigame {
     this.phase = 'pick';
     this.walking = true;
     this.locked = false;
+    // Two misses kept across F9 keep their sparkle too (item 069).
+    if (this.wrongTries >= 2) this.sparkleAnswer();
   }
 
   /** The picture in the window: the last one shrinks away, the new one pops in, gently bobbing. */

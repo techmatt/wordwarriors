@@ -56,6 +56,20 @@ if (typeof window !== 'undefined') {
   window.addEventListener('blur', () => physicallyHeld.clear());
 }
 
+/** Buttons held on any connected pad, read straight from the browser (not Phaser's copy, a frame behind on a scene's first visit). */
+function nativePadHeld(): Set<Button> {
+  const out = new Set<Button>();
+  const pads = typeof navigator !== 'undefined' && navigator.getGamepads ? navigator.getGamepads() : [];
+  for (const p of pads) {
+    if (!p?.connected) continue;
+    for (const b of BUTTONS) {
+      const btn = p.buttons[PAD_INDEX[b]];
+      if (btn && (btn.pressed || btn.value > 0.5)) out.add(b);
+    }
+  }
+  return out;
+}
+
 /** Standard-mapping indices (Xbox 360 pad in Chrome). */
 const PAD_INDEX: Record<Button, number> = {
   green: 0,
@@ -114,6 +128,8 @@ export class Controls {
   private seeded = false;
   /** Key codes already held when this scene's controls started (see `physicallyHeld`). */
   private readonly carried = new Set<number>();
+  /** Pad buttons held since before this scene, as the browser's own pads report them; held, never pressed, until let go. */
+  private readonly carriedPad = new Set<Button>();
   private padIndex = -1;
   /** Movement vector this frame, length 0..1. */
   readonly move = new Phaser.Math.Vector2();
@@ -155,6 +171,13 @@ export class Controls {
     // Keys held since before this scene stay held (never a press) until let go.
     if (!this.seeded) for (const c of physicallyHeld) this.carried.add(c);
     for (const c of this.carried) if (!physicallyHeld.has(c)) this.carried.delete(c);
+    // Pad buttons too (item 069): on a scene's first visit Phaser's pad starts all up and syncs a
+    // frame later, so a button held through the change (A on the victory screen) read as a press.
+    if (!this.seeded || this.carriedPad.size) {
+      const native = nativePadHeld();
+      if (!this.seeded) for (const b of native) this.carriedPad.add(b);
+      for (const b of this.carriedPad) if (!native.has(b)) this.carriedPad.delete(b);
+    }
     const pad = this.pad();
     const now = new Set<Button>();
     let sx = 0;
@@ -175,6 +198,7 @@ export class Controls {
       for (const key of this.keys[b] ?? []) if (key.isDown || this.carried.has(key.keyCode)) now.add(b);
     }
     for (const b of virtualPad.held) now.add(b);
+    for (const b of this.carriedPad) now.add(b);
     const queued = virtualPad.queued.shift();
 
     // D-pad and arrows steer when the stick is idle.

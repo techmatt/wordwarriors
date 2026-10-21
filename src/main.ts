@@ -94,6 +94,11 @@ artBank.install(game);
 
 installDadLock();
 installDadButtons();
+// Tab is yellow, never the browser's focus move: in scenes with no Controls (Boot, Wait) it took
+// focus off the page and the keyboard went dead until a click (item 069).
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Tab') e.preventDefault();
+}, { capture: true });
 
 // After the game exists: the hooks read its scenes (texts).
 installTestHooks(game);

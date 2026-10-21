@@ -362,7 +362,8 @@ export class BedroomScene extends RoomScene {
   }
 
   protected override hint(): void {
-    if (this.newsDone) void this.speak(wakeLine(personOf(wakerId()), 'door'));
+    // The door line she heard, its variant too (item 069: yellow always said variant 1).
+    if (this.newsDone) void this.speak(wakeLine(personOf(wakerId()), wakeKey('door')));
   }
 
   /** Free play (item 060): not while she is tucked in (any button is the 💤 puff then); once she is up, yes. */

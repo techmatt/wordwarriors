@@ -22,6 +22,13 @@ test('slow art: the hub waits behind the transition, then opens with no gaps', a
     return s.scene === 'Hub';
   }, 60_000, 'hub');
   expect(seen.has('Wait')).toBe(true);
+  // Tab is yellow everywhere, never the browser's focus move (item 069: in Wait and Boot, with no Controls, focus left the page).
+  const tabKept = await page.evaluate(() => {
+    const e = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+    document.body.dispatchEvent(e);
+    return e.defaultPrevented;
+  });
+  expect(tabKept).toBe(true);
   // Every image on screen has its own texture: none is Phaser's missing square, and nothing asked early.
   const art = await page.evaluate(() => (window as unknown as { __ww: { art(): { missing: number; late: string[] } } }).__ww.art());
   expect(art.missing).toBe(0);

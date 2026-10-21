@@ -73,6 +73,21 @@ test('bedroom: the wake-up news, a toy reacts to green, the door leads to the hu
   expectNoErrors(errors);
 });
 
+test('bedroom (item 069): yellow at the door says again the door line she heard, its drawn variant', SLOW, async ({ page }) => {
+  const errors = collectErrors(page);
+  // Seeds whose draws give the door line a variant (door_2, door_3): yellow said variant 1 instead.
+  for (const seed of [3, 5, 8, 13]) {
+    await boot(page, `?scene=bedroom&seed=${seed}&nojourney=1`);
+    const s = await until(page, (st) => st.scene === 'Bedroom' && st.room?.round === 'bedroom:door' && !st.room.locked, 90_000, 'door open');
+    const heard = [...s.voice.history].reverse().find((id) => /^wake_.*_door(_\d)?$/.test(id))!;
+    expect(heard, 'the door line was said').toBeTruthy();
+    await press(page, 'yellow');
+    const again = await until(page, (st) => st.voice.history.length > s.voice.history.length, 10_000, 'said again');
+    expect(again.voice.history.at(-1)).toBe(heard);
+  }
+  expectNoErrors(errors);
+});
+
 test('hub part 1: the helper\'s scene gives the gift word in the circle, then door a opens a sentence room', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=house&nojourney=1');
@@ -243,6 +258,31 @@ test('a key held through a scene change is held, not pressed again by its auto-r
   await page.waitForTimeout(100);
   await page.keyboard.up('Space');
   await expect.poll(onPage2, { timeout: 5_000 }).toBe(false);
+  expectNoErrors(errors);
+});
+
+test('a pad button held through a scene change is held, not pressed (item 069)', async ({ page }) => {
+  const errors = collectErrors(page);
+  // A stand-in Xbox pad with A (green) held from before the page opens.
+  await page.addInitScript(() => {
+    const buttons = Array.from({ length: 17 }, () => ({ pressed: false, touched: false, value: 0 }));
+    buttons[0] = { pressed: true, touched: true, value: 1 };
+    const pad = { id: 'Xbox 360 Controller (STANDARD GAMEPAD)', index: 0, connected: true, mapping: 'standard', axes: [0, 0, 0, 0], buttons, get timestamp() { return performance.now(); } };
+    (window as unknown as { __padA: (down: boolean) => void }).__padA = (down) => (buttons[0] = { pressed: down, touched: down, value: down ? 1 : 0 });
+    Object.defineProperty(navigator, 'getGamepads', { value: () => [pad, null, null, null] });
+  });
+  await boot(page, '?scene=parent');
+  await until(page, (s) => s.scene === 'Parent', 30_000, 'parent page');
+  const onPage2 = () =>
+    page.evaluate(() => (window as unknown as { __ww: { texts(): { text: string }[] } }).__ww.texts().some((t) => t.text.includes('back to page 1')));
+  // Held all along: before the fix Phaser's pad caught up a frame late and A read as a press (page 2).
+  await page.waitForTimeout(800);
+  expect(await onPage2()).toBe(false);
+  // Let go and press: that is a press.
+  await page.evaluate(() => (window as unknown as { __padA: (down: boolean) => void }).__padA(false));
+  await page.waitForTimeout(200);
+  await page.evaluate(() => (window as unknown as { __padA: (down: boolean) => void }).__padA(true));
+  await expect.poll(onPage2, { timeout: 5_000 }).toBe(true);
   expectNoErrors(errors);
 });
 

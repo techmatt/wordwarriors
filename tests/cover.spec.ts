@@ -14,6 +14,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
+import { REACH } from '../src/config';
 import { SLOW, boot, collectErrors, expectNoErrors, readToKeyWord, until, type WWState } from './harness';
 import { coverIssues, type Issue, type Layout } from './qa/checks';
 
@@ -53,7 +54,10 @@ for (const [name, query, fast] of [
     const first = await sample(page, 2500, 'SentenceRoom');
     expect(first.targets, 'the three pictures are targets').toBe(3);
     // Her turn to find it: "find the..." is captioned while the pictures wake.
-    await readToKeyWord(page);
+    const awake = await readToKeyWord(page);
+    // She came in out of reach of every picture (item 069: under two rows, 70 px under the middle one, and green chose it).
+    const p = awake.room!.player;
+    for (const sp of awake.room!.spots) expect(Math.hypot(sp.x - p.x, sp.y - p.y), `out of reach of ${sp.id}`).toBeGreaterThan(REACH);
     const find = await sample(page, 2000, 'SentenceRoom');
     expect([...first.issues, ...find.issues]).toEqual([]);
     expectNoErrors(errors);

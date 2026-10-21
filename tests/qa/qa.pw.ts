@@ -212,7 +212,9 @@ class Recorder {
     this.add(layoutIssues(l, s.scene, PLACEHOLDERS), shot);
     this.add(leakIssues(s, l, q.voice.filter((v) => v.t >= this.roundStart)), shot);
     this.add(spellingIssues(l, q.voice, s.scene), shot);
-    this.add(giveawayIssues(l, s.scene, s.episode.read), shot);
+    // Words she has read, and the warm-up's (said once she has grabbed it): their pictures may wear them.
+    const done = [...s.episode.read, ...(s.episode.grab && (s.scene !== 'Entry' || !['intro', 'find'].includes(s.room?.grab?.phase ?? 'intro')) ? [s.episode.grab.word] : [])];
+    this.add(giveawayIssues(l, s.scene, done), shot);
   }
 
   async stop(): Promise<void> {
