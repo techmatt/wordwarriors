@@ -41,7 +41,9 @@ import { RoomScene, type Spot } from '../world/RoomScene';
 type Phase = 'intro' | 'find' | 'got' | 'door';
 
 const PIC = 108;
-const BOARD_Y = 118;
+// Below a one- or two-row dialogue box in the top band, above the top row of pictures (their tops
+// at about 300): at 118 the board, drawn over the box, hid "WE NEED THE..." on every miss (item 069).
+const BOARD_Y = 205;
 const TILE = 76;
 const TILE_GAP = 14;
 /** A beat after each letter, so the names and sounds stay apart (the sentence room's is 450). */

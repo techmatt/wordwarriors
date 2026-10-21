@@ -156,6 +156,8 @@ export class MoveChoice {
     // A dash's white afterimage fades in 350 ms of the frozen clock, about nine
     // real seconds: it stood over her ally as a white silhouette (item 039).
     for (const o of [...scene.children.list]) if (o.getData('afterimage')) o.destroy();
+    // ...and none made after: a dash's or slam's afterimage timer runs on the frozen clock too (item 069).
+    scene.data.set('noAfterimages', true);
     for (const o of scene.children.list) {
       const d = (o as unknown as { depth: number }).depth;
       const a = o as unknown as Phaser.GameObjects.Components.AlphaSingle;
@@ -186,6 +188,7 @@ export class MoveChoice {
   close(): void {
     const c = this.current;
     if (!c) return;
+    this.host.stage.data.set('noAfterimages', false);
     for (const o of c.objs) o.destroy();
     // Back as they were, unless something has set their alpha since (a fade-out finishing).
     for (const v of c.veiled) if (v.o.active && Math.abs(v.o.alpha - v.alpha * 0.2) < 0.01) v.o.setAlpha(v.alpha);

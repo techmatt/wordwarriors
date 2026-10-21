@@ -409,6 +409,8 @@ export class Fighter {
 
   /** A fading copy of the sprite where it stands: dodgers, dashers, blinkers. */
   afterimage(color = this.init.palette[1]): void {
+    // Not while a move choice holds the fight (moveChoice.ts): it would hang for seconds on the frozen clock.
+    if (this.scene.data?.get('noAfterimages')) return;
     const ghost = this.scene.add
       .image(this.x, this.y - this.lift, this.init.art)
       .setOrigin(0.5, 1)

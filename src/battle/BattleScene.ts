@@ -139,6 +139,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   init(data: { step?: Step }): void {
     this.step = data.step;
     this.part = data.step?.kind === 'battle' ? data.step.part : 1;
+    // Scene data outlives a restart: F9 out of an open choice must not leave afterimages off (moveChoice.ts).
+    this.data.set('noAfterimages', false);
     this.now = 0;
     this.fighters = [];
     this.projectiles = [];

@@ -14,7 +14,9 @@
 import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { BANK_BY_WORD, THINGS } from '../content/phonics/bank';
+import { DEPTH } from '../src/config';
 import { withStems } from '../src/rules/bank';
+import type { Layout } from './qa/checks';
 
 import { SLOW, boot, choose, collectErrors, expectNoErrors, leaveBedroom, playEntry, press, seedProgress, state, until, type WWState } from './harness';
 
@@ -233,3 +235,23 @@ for (const seed of [3, 11, 25, 40]) {
     expectNoErrors(errors);
   });
 }
+
+test('the letter board keeps clear of the dialogue on the miss lines (item 069)', SLOW, async ({ page }) => {
+  const errors = collectErrors(page);
+  await boot(page, '?scene=grab&nojourney=1&qa=1');
+  const s = await clued(page);
+  const g = s.room!.grab!;
+  await choose(page, `grab_${g.objects.find((w) => w !== g.word)!}`);
+  // The miss lines ("We need the...") play now: at BOARD_Y 118 the board, drawn over the box, hid them.
+  const hits = new Set<string>();
+  const end = Date.now() + 4000;
+  while (Date.now() < end) {
+    const l = await page.evaluate(() => (window as unknown as { __wwqa: { layout(): Layout } }).__wwqa.layout());
+    const board = l.texts.filter((t) => t.scene === 'Entry' && t.depth === DEPTH.hud + 6 && t.text.trim());
+    for (const c of l.covers.filter((c) => c.scene === 'Entry'))
+      for (const t of board) if (t.b[0] < c.b[2] && c.b[0] < t.b[2] && t.b[1] < c.b[3] && c.b[1] < t.b[3]) hits.add(`${t.text} under ${c.kind}`);
+    await page.waitForTimeout(150);
+  }
+  expect([...hits]).toEqual([]);
+  expectNoErrors(errors);
+});

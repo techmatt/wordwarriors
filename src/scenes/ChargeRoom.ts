@@ -180,8 +180,9 @@ export class ChargeRoom extends Minigame {
     this.floor.setTo(80, 420, GAME_WIDTH - 160, 260);
     applyHouseMood(this, episode.villain, { seed: 0x2053, floor: this.floor, calm: true });
     const room = SIDE_ROOM_BY_ID[this.roomId];
-    // She stands before the altar from the start: nothing to walk to or press.
-    this.player.place(ALTAR.x - 150, Math.min(room?.entry.y ?? ALTAR.y + 40, this.floor.bottom - 10));
+    // She stands beside the altar from the start: nothing to walk to or press. Clear of its
+    // footprint (item 069: 20 px inside it, the altar was drawn over her arm and dress all round).
+    this.player.place(ALTAR.x - ALTAR.w / 2 - 50, Math.min(room?.entry.y ?? ALTAR.y + 40, this.floor.bottom - 10));
     this.player.hop();
     burst(this, this.player.x, this.player.y - 40, { count: 16, speed: 220 });
     sfxWhoosh();

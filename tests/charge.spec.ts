@@ -12,6 +12,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { SLOW, boot, collectErrors, dad, expectNoErrors, playEpisode, press, state, until } from './harness';
+import type { Layout } from './qa/checks';
 import { CHARGE_WORDS } from '../src/rules/charge';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/053_${name}.png` });
@@ -83,9 +84,13 @@ test('Charge the Spell: dad lock holds the say-back beat; nothing from Dad on th
 test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on the read sounds it out together and it is a battle item all the same', async ({ page }) => {
   test.setTimeout(120_000);
   const errors = collectErrors(page);
-  await boot(page, '?scene=room&slot=a&room=charge');
+  await boot(page, '?scene=room&slot=a&room=charge&qa=1');
   const s0 = await until(page, (st) => st.scene === 'ChargeRoom' && Boolean(st.room?.charge), 60_000, 'charge room');
   const { word, runes } = s0.room!.charge!;
+  // She stands beside the altar, not inside it (item 069: the altar was drawn over her arm and dress all round).
+  const l = await page.evaluate(() => (window as unknown as { __wwqa: { layout(): Layout } }).__wwqa.layout());
+  const altar = l.images.find((im) => im.key === 'prop_rune_altar')!;
+  expect(s0.room!.player.x).toBeLessThan(altar.b[0]);
   const read = await until(page, (st) => st.room?.charge?.phase === 'read', 60_000, 'the read');
   const toRead = read.room!.charge!.readAtMs;
   // Nothing was pressed and nothing asked before the read.
