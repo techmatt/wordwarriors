@@ -477,7 +477,14 @@ Every file has exactly one home (Matt, 2026-10-18):
 The main checkout holds the junctions; conductor links each worktree's to the same Drive
 folders, so a worktree shares one copy and never needs a full voice rebuild. Because the
 voice folder is shared, `voice:build` keeps mp3s of lines that left `lines.json` (another
-branch may still speak them); `voice:build -- --prune` deletes them. The flip side: there
+branch may still speak them) and lists them at its end, with their count and size.
+**Stale voice audio** (item 078): `npm run voice:build -- --prune` deletes them and prints
+what went (`PRUNED:`). Run it from main, or from a branch at main, after the item that
+retired the lines has landed: from a checkout behind main it deletes audio main still
+speaks (the fix is a `voice:build` in main). The manifest and `.build-cache.json` need no
+pruning: every build writes them from its own `lines.json`. Item 078 pruned 997 mp3s
+(11.2 MB), retired lines since the voice folder began (old moves, item 059's Charge lines,
+item 071's two rainbow lines). The flip side: there
 is one `manifest.json`, so a branch that changes a line's text and runs `voice:build`
 changes what main speaks for that id too, before the branch lands (item 009 re-voiced
 630 `need_item_*`/`made_item_*`/`got_counter_*` lines this way). The same goes for
@@ -789,6 +796,8 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
 - Long Playwright runs: point them at a build so edits to `src/` do not hot-reload the
   page under test: `npx vite build --outDir scratch/dist-test`, `npx vite preview --outDir
   scratch/dist-test --port 5175`, then `WW_BASE_URL=http://localhost:5175 npx playwright test`.
+  That is the by-hand port; under conductor use its port instead, `--port $CONDUCTOR_PORT`
+  and `WW_BASE_URL=http://localhost:$CONDUCTOR_PORT` (another item's server may hold 5175).
   Test pages add `?hooks=1`, which turns the test hooks on in a production build.
 - Until 2026-10-18 the suite reused whatever answered on 5174, so a run in a worktree
   silently tested the main checkout's dev server. It now always starts its own vite on

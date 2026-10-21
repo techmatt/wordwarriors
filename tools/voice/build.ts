@@ -7,8 +7,10 @@
  *
  * `public/voice-gen/` is untracked: a junction to the Drive-synced folder, shared
  * by the main checkout and every worktree (README, "Storage"). Because it is
- * shared, mp3s of lines no longer in lines.json are kept unless `--prune` is
- * passed: another checkout's branch may still speak them.
+ * shared, mp3s of lines no longer in lines.json are kept (and listed) unless
+ * `--prune` is passed: another checkout's branch may still speak them. So prune
+ * only from main or a branch at main, never from one behind it. The manifest
+ * and the build cache need no pruning: every build writes them from lines.json.
  *
  * Two things can fill a line in, chosen per line:
  * - **a recorded clip** under `content/voice/clips/`, used only while its hash
@@ -21,11 +23,11 @@
  * fingerprint because two speakers can share a voice config and still need
  * separate audio once one of them is re-tuned. `--force` rebuilds everything;
  * `--no-clips` ignores the clip store for a pure edge-tts build; `--prune`
- * deletes orphaned mp3s.
+ * deletes orphaned mp3s (those of no current line) and says how many and how big.
  */
 
 import { createHash } from 'node:crypto';
-import { copyFile, mkdir, readFile, readdir, unlink, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, readdir, stat, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { exists, isMain, LINES_FILE } from '../shared.js';
@@ -203,14 +205,23 @@ export async function buildVoice(argv: string[]): Promise<void> {
   const nextHashes = Object.fromEntries(lines.filter((l) => nextCache[l.id]).map((l) => [l.id, nextCache[l.id]!.hash]));
   await writeFile(cacheFile, `${JSON.stringify(nextHashes, null, 1)}\n`);
 
-  const orphans = (await readdir(opts.out)).filter((f) => f.endsWith('.mp3') && !ids.has(f.slice(0, -4)));
-  if (opts.prune) {
-    for (const orphan of orphans) {
-      await unlink(path.join(opts.out, orphan));
-      console.log(`  removed orphan ${orphan}`);
-    }
+  // Item 078: audio of retired lines. The manifest and cache above already hold
+  // only this checkout's lines; the mp3s stay until `--prune`, listed meanwhile.
+  const orphans = (await readdir(opts.out)).filter((f) => f.endsWith('.mp3') && !ids.has(f.slice(0, -4))).sort();
+  let orphanBytes = 0;
+  for (const orphan of orphans) orphanBytes += (await stat(path.join(opts.out, orphan))).size;
+  const mb = (orphanBytes / 1e6).toFixed(1);
+  if (orphans.length && opts.prune) {
+    for (const orphan of orphans) await unlink(path.join(opts.out, orphan));
+    console.log(`\nPRUNED: ${orphans.length} mp3(s) of lines not in this checkout's lines.json, ${mb} MB.`);
+    for (const orphan of orphans.slice(0, 20)) console.log(`  ${orphan}`);
+    if (orphans.length > 20) console.log(`  … and ${orphans.length - 20} more`);
   } else if (orphans.length) {
-    console.log(`  ${orphans.length} orphaned mp3(s) kept (shared folder; --prune deletes them)`);
+    console.log(`\n${orphans.length} orphaned mp3(s), ${mb} MB, kept (shared folder; from main, voice:build -- --prune deletes them):`);
+    for (const orphan of orphans.slice(0, 20)) console.log(`  ${orphan}`);
+    if (orphans.length > 20) console.log(`  … and ${orphans.length - 20} more`);
+  } else if (opts.prune) {
+    console.log('  prune: no orphaned mp3s');
   }
 
   if (stale.length) {
