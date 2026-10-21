@@ -235,20 +235,27 @@ lock included, and do nothing where no game is asking; a game that asks shows a 
 `DAD 1 ✗ 2 ✓` cue in the bottom-right corner (lit while a question is waiting).
 `src/input/dadButtons.ts` (`openDadButtons`), for 054 and later games too.
 
-**Charge the Spell** (item 053, `src/scenes/ChargeRoom.ts`): a side room where she says
-letter SOUNDS aloud. She walks to the altar and presses green; a big rune lights (an
-upper-case letter) and the helper asks for its sound. She says it, Dad presses **2**: the
-rune fires into her power bar and its sound is said back. Dad presses **1**, or nothing
-comes for 8 s: the helper models it with the sound's gesture (Jolly Phonics style: a
-hissing snake 🐍 for S, a tummy rub for M; `content/phonics/runes.ts`) and asks again;
-after two helps they say it together and move on, and it charges anyway. Help fades per
-sound: level 1 the sound and gesture first and she copies, level 2 the gesture only (its
-line trails off where the sound goes), level 3 the rune alone; an unhelped yes is one
-level less help next time, a helped rune one more (`chargeLevels` in the progress, the
-number in a sound's dot on the grown-ups page). Six runes a visit, continuous sounds
-first (M S F A L N R V Z, the short vowels), the quick sounds once those are solid, then
-SH CH TH (`src/rules/charge.ts`, `CHARGE` in `src/config.ts`). Each charged rune is a
-move her hero fires in the next battle (`episode.charged`, BattleScene `useCharged`).
+**Charge the Spell** (item 053, `src/scenes/ChargeRoom.ts`; one short word a visit since
+item 058): a side room where she says letter SOUNDS aloud, then reads the word they
+spell. The visit's word (3-4 sound units, every one a rune, so no Q, X or CK) shows at the
+top from the start, a slot per unit. She walks to the altar and presses green; the word's
+first rune lights on it (an upper-case letter; its slot pulses). She says its sound, Dad
+presses **2**: the rune fires up into its slot and its sound is said back. Dad presses
+**1**, or nothing comes for 8 s: the helper shows the sound's gesture (Jolly Phonics
+style: a hissing snake 🐍 for S, a tummy rub for M; `content/phonics/runes.ts`) and says
+the sound, and she tries again; after two helps they say it together and it charges
+anyway. Every cue is a few words at most, by the sound's help level: level 1 the gesture
+and the sound first ("Now you say it!"), level 2 the gesture and "It goes...", level 3
+the rune alone; an unhelped yes is one level less help next time, a helped rune one more
+(`chargeLevels` in the progress, the number in a sound's dot on the grown-ups page). With
+every rune charged the word lights up and she reads it aloud ("Now read the whole
+spell!"): Dad's **2** says it; his **1**, or 10 s with nothing, sounds it out once and says
+it; either way its picture shows and goes into her bag as a battle item. A round with Dad
+answering at once is about 30 s. The word is drawn like any room's (`drawWords`, from the
+familiar pictured words), leaning to shaky sounds: continuous sounds first (M S F A L N R
+V Z, the short vowels), quick sounds once those are solid, then SH CH TH
+(`src/rules/charge.ts`, `CHARGE` in `src/config.ts`). Each charged rune is still a move her
+hero fires in the next battle (`episode.charged`, BattleScene `useCharged`).
 For the beta, `FORCE_PHONICS_ROOM` (on) puts it or the Stretchy Bridge behind door a of
 every episode; the dad lock pauses its 8 s wait.
 
@@ -347,7 +354,7 @@ way, every browser test's rooms play the sentence game (the harness adds
 (`games=all`). `FORCE_PHONICS_ROOM` follows the same rule: the harness's `games=sentence`
 and any `game=` keep the test's own rooms, while `games=all` (the real draw) and the
 game itself get Charge the Spell behind door a, so `playRoom` and the bug-hunt checker
-play it (`playChargeRoom`: the altar, then Dad's yes per rune); `tests/charge.spec.ts`
+play it (`playChargeRoom`: the altar, then Dad's yes per rune and on the word); `tests/charge.spec.ts`
 covers the room, the dad keys, the timeout under dad lock and the runes in battle
 (item 053). The forced room is Charge the Spell or the Stretchy Bridge at random, so
 `playRoom` and the bug-hunt checker play the bridge too (`playBridgeRoom`: slide across

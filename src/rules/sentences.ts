@@ -274,7 +274,8 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   const fits = (i: number) => {
     const f = frames[i];
     const article = f ? tokenWord(sentence(f, fill, 'x').tokens.at(-2) ?? '') : '';
-    return (w: string) => article !== 'a' || !/^[aeiou]/.test(w);
+    // X-RAY starts on a vowel sound too (item 058: no WE NEED A XRAY).
+    return (w: string) => article !== 'a' || !/^[aeiou]|^x/.test(w);
   };
   const keys: string[] = [];
   for (let i = 0; i < 2; i++) {
