@@ -63,21 +63,23 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
   // Level 1 asks nothing of Dad: no cue.
   await expect(page.locator('#dad-buttons')).toHaveCount(0);
 
-  // Onto the first stone and stand still: its sound is held.
-  await standOn(page, 0);
-  await until(page, (st) => bridge(st)?.holding === soundLines(b0.units)[0], 10_000, 'first stone held');
+  // Onto the first held stone (a stop like BAG's B plays once: since item 067 the first word
+  // may start with one; every word has a vowel) and stand still: its sound is held.
+  const h = b0.units.findIndex((u) => canHold(soundOf(u)));
+  await standOn(page, h);
+  const first = soundLines(b0.units)[h]!;
+  await until(page, (st) => bridge(st)?.holding === first, 10_000, 'first held stone held');
   await shot(page, 'on_stone');
   // Item 058: one stretched sound (HELD_MS, 1.3 s: 260 ms at SPEED 5x, too
   // short to time from here under load), then quiet; still standing there, it
   // sounds again after a pause.
-  const first = soundLines(b0.units)[0];
   const count = (st: WWState) => st.voice.history.filter((id) => id === first).length;
   const quiet = await until(page, (st) => bridge(st)?.holding === null, 10_000, 'held sound played out');
   expect(count(quiet)).toBe(1);
-  expect(bridge(quiet)!.stone).toBe(0);
+  expect(bridge(quiet)!.stone).toBe(h);
   const resounded = await until(page, (st) => bridge(st)?.holding === first, 10_000, 'sounds again after a pause');
   expect(count(resounded)).toBe(2);
-  expect(bridge(resounded)!.stone).toBe(0);
+  expect(bridge(resounded)!.stone).toBe(h);
   // Across: every stone's sound, in order; the word itself not yet.
   await slideAcross(page);
   const far = await until(page, (st) => bridge(st)?.phase === 'pick' && !st.room!.locked, 60_000, 'far bank');

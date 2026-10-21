@@ -138,9 +138,10 @@ test('Charge the Spell: the charged runes fire as her hero\'s moves in the next 
   await until(page, (st) => st.scene === 'Battle' && (st.battle?.runesFired ?? 0) === 3, 60_000, 'three runes fired');
   const s = await until(page, (st) => ['m', 's', 'a'].every((r) => st.voice.history.includes(`letter_${r}_sound`)), 60_000, 'the runes said');
   expect(s.voice.history.some((id) => id.endsWith('_use_runes'))).toBe(true);
-  // Each rune's sound is said while its own stone is up: the nth sound as the nth rune fires.
+  // Each rune's sound starts as its own stone pops up, just before that rune fires (runesFired counts the ones before it).
+  // Before the fix the sounds queued behind the use-runes line and came a rune or two late (about 2, 3, 3).
   const at = await page.evaluate(() => (window as unknown as { __runeAt: Record<string, number> }).__runeAt);
-  expect(at).toEqual({ letter_m_sound: 1, letter_s_sound: 2, letter_a_sound: 3 });
+  expect(at).toEqual({ letter_m_sound: 0, letter_s_sound: 1, letter_a_sound: 2 });
   await shot(page, 'battle');
   expectNoErrors(errors);
 });
