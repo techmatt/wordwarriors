@@ -26,6 +26,11 @@ without a new measurement.
   every checkout shares the one folder, so a tracked manifest would drift from the audio
   as soon as two branches built. The source of truth that stays tracked is
   `content/voice/lines.json`, `voices.json` and `clips/` (recordings and their hashes).
+  The old voice stays in git history: 4,002 blobs under `public/voice/`, 56.6 MB
+  (measured 2026-10-21, `git rev-list --objects --all`).
+- **A sentence is read as two clips:** the frame's prefix line ("Rilla is scared of...")
+  and the key word's own `word_<x>`, so no line can leak a key word and Matt's
+  recordings can replace either. The cost: the read-back can sound choppy at the join.
 - **Build cache** stores fingerprints only; entries are read back from the previous
   manifest, so manifest data is stored once (saved ~0.6 MB). Reused entries are re-based
   onto the current output folder, so moving the folder needs no rebuild.
@@ -48,7 +53,9 @@ without a new measurement.
   heard. Only "Mmm" kept its doubling; l n r v z use "Luh" "Nuh" "Err" "Vuh" "Zuh".
 - So: placeholders by class here (`content/phonics/letters.ts`), each its own line id;
   Matt's recorded phoneme clips replace them through `content/voice/clips/`. The
-  spellings other than "Mmm" and "Suh" are untested by ear.
+  spellings other than "Mmm" and "Suh" are untested by ear, except that the short A and
+  short O placeholders sound nearly alike when held on the Stretchy Bridge (heard in
+  item 054); recordings fix it.
 
 ## Browser and tests
 

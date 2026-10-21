@@ -504,7 +504,9 @@ word needs nothing more.
 `action` or `both`, item 037). Reading a pad casts its word (word magic): when a
 teammate's ability answers to it (its `words`), that teammate fires the styled move;
 otherwise her hero fires the word's own effect (`content/phonics/effects.ts`). POW and
-ICE are flavour on abilities, never on a pad.
+ICE are flavour on abilities, never on a pad. Move words are said by the partner at the
+choice by design, so a villain line holding a pad's word (Evil Bavmorda's "Everybody
+Pigs!") gives nothing away; only key words are protected from being said first.
 
 The **gift word** is the word the helper gives her in the hub scene (`drawGift`): an
 action word from her move bag by the bank's weighting, never one said before the
@@ -606,7 +608,10 @@ is the slow sound-out with the letters shown, `GRAB.objects` how many pictures s
 ## Narrator lines (`content/voice/script.ts`)
 
 Templates composed once per narrator (`{hero}`, `{villain}`, `{item}`, `{word}`).
-Never put a reading word in one: the unit tests check. A template keyed per hero,
+Never put a reading word in one: the unit tests check. `{villain}` is the bare name
+(TIAMAT, RILLA: "Only the Magic Hat can stop Tiamat!"), as in the sentences; "Evil" stays
+only where the villain is announced (`alarm_villain`, the wake-up's bad news, name barks,
+nameplates). A template keyed per hero,
 villain or move word (`HERO_LINES`, `VILLAIN_LINES`, `MOVE_LINES`) needs its key added
 to the matching kind in `content/voice/ids.ts`, and the game builds the key with that
 file's `heroKey` / `villainKey` / `moveKey`, never by hand. A new `right_<n>`,

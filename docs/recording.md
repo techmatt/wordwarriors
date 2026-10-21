@@ -13,7 +13,10 @@ Firefly / recording-folder loop from Seraphina's Secret (`voice:tasks`,
    "VAN … vvvv … vvvv … vvvv …… PIG … p … p … p ……". Leave at least half a second
    between sounds and a second before the next word. Stretch held sounds (half a
    second or so is enough, with no "uh": "ffff", not "fuh"), and keep short sounds
-   crisp. A hiss (S, SH, F, TH) can be much quieter than the word; that's fine. The page counts the
+   crisp. A hiss (S, SH, F, TH) can be much quieter than the word; that's fine. For F,
+let the breath stop after "ffff" with no "uh" at all, even a quiet one (the importer
+measures the hiss against the voiced "uh" and keeps too little); L passes only with a
+long "llll", so make it longer than feels needed. The page counts the
    sounds in each take as soon as it stops, and saves a take automatically only when
    all 12 are there.
 2. Press **Download zip**. It saves `phonics-<name>.zip`.

@@ -376,7 +376,8 @@ splitter `tools/voice/split.ts`, ported from item 055's prototype):
 Then `npm run voice:build` (no network: recorded lines are copied, not synthesised).
 The recorder counts each take with the importer's own detector (its `detector:begin` /
 `detector:end` block; `tests/unit/voiceImport.test.ts` runs the two side by side), so a
-take the page says counts out is one the importer takes.
+take the page says counts out is one the importer takes. Matt's card 1 is a real take in
+the unit tests (`tests/fixtures/voice/matt-g01-good.wav`).
 
 Matt's recording 2 (2026-10-20, all 12 cards, recorded with the format-1 page before
 these changes): cards 2, 4, 6, 8 and 9 went in (D P H J G Y E I O U SH CH and 15 words);

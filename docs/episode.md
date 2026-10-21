@@ -16,7 +16,8 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    the other dad comes in too. Then: "Good
    news, Julia! Ellie is here to play! Bad news, Evil Tiamat is coming, and she wants to
    be the queen of the whole house!" The room darkens under the villain's mood (purple
-   smoke, dragon scales, a royal banner). Then the helper says where they will train,
+   smoke, dragon scales, a royal banner), and the villain is heard from afar, not seen:
+   one of its first three taunts (`BEDROOM_TAUNTS`, `src/rules/story.ts`). Then the helper says where they will train,
    the **quest** ("To get ready, we have to play in my bubble castle up in the clouds!").
    No reading: every toy does something silly on green. The door
    is there only for the waker's entrance and again once the news is told ("Find the
@@ -176,9 +177,10 @@ Not every showdown is a brawl (item 031). Each villain has a **fight style**
 (`fight` in the roster; `content/battle/fights.ts`): Evil Smaug races the heroes
 through his treasure cave (`sky_race`), Evil Jörmungandr pulls a rope against them
 over the sea (`sea_tug`), Evil Bavmorda meets their magic beam for beam
-(`spell_clash`), and Evil Tiamat keeps her giant free-for-all (`brawl`, also every
-villain without a style). With chef Dada Jason as the ally a **cook-off** is likely
-(70%, `fightNudge`), whoever the villain is. The episode draws it once, at the first
+(`spell_clash`, warlock Dada Jason's too), and Evil Tiamat keeps her giant free-for-all
+(`brawl`, also every villain without a style). Evil chef Dada Jason's own style is the
+**cook-off**, and with chef Dada Jason as the ally a cook-off is likely (70%,
+`fightNudge`), whoever the villain is. The episode draws it once, at the first
 battle (`episode.fight`, `src/rules/fights.ts`), so both battles are the same contest.
 Every style keeps the episode's shape (part 1's ultimate wins the round, part 2's
 counter turns it), the same beats, timing and move choices; only the staging changes
@@ -232,7 +234,7 @@ game time: about 3.2 s a rune, 17 s to the read for three runes, 21 s for four, 
 under 22 s to the read, 32 s in all with his 1). The word is drawn like any room's (`drawWords`, from the familiar pictured words),
 leaning to shaky sounds, every sound in play from the start (item 067: the old sound
 tiers are gone), 3-4 sound units (`CHARGE.units`; `src/rules/charge.ts`, `CHARGE` in
-`src/config.ts`). Each charged rune is still a move her hero fires in the next battle
+`src/config.ts`). Each charged rune is still a move her hero fires in the next battle, at 1.3× power
 (`episode.charged`, BattleScene `useCharged`). For the beta, `FORCE_PHONICS_ROOM` (on)
 puts it or the Stretchy Bridge behind door a of every episode.
 
@@ -241,8 +243,10 @@ blends a whole word. A gap crosses the room (lava in the house, a river or a cha
 quest place: `GAP_BY_PLACE` in `content/house/house.ts`), and the word's letters are
 stepping stones over it (SH is one stone). She pushes the stick to slide across, slower
 than she walks; while she is on a stone its sound is **held**, so a slow slide is
-"mmm-aaa-t". A vowel or a sound you can stretch (M S F L N R V Z SH TH) goes on while she
-stays (up to 2.5 s); a stop sound plays once, never with an "uh". On the far bank are 2–3
+"mmm-aaa-t". A vowel or a sound you can stretch (M S F L N R V Z SH TH) is held for
+1.3 s, then goes quiet and sounds again after 2 s if she stays (`BRIDGE.resoundMs`), or at
+once when she steps on again; a stop sound plays once each landing, never with an "uh".
+The room fetches its stones' sounds and words as it opens, so the first slide is not silent. On the far bank are 2–3
 pictures that share the word's start and differ later (MAP, MAT, MAN; else MAP, MOP, MUG;
 only where the bank has nothing better, the same rime). She walks to the one she read and
 presses green; only then is the word said, and its picture goes into her bag (every word
@@ -334,7 +338,8 @@ pictures may be longer), `WORD_MACHINE.maxUnits`, `CHARGE.units`.
 **Variety across episodes.** Each rotation keeps its recent picks in the progress store
 (`recent`, `src/rules/recent.ts`; how many: `VARIETY` in `src/config.ts`) and avoids
 them while two choices are left: the ally and each dad's form (`src/rules/cast.ts`), the
-villain (its own last 4, item 025), the quest line, hub scene and each line variant
+villain (its own list in the store, `villains`, the last 4 kept; the draw avoids as many
+as still leave two, so the last 2 with four active), the quest line, hub scene and each line variant
 (`src/rules/story.ts`), the victory scene, the side rooms (the one left out last episode
 comes back), the games (last episodes' weigh `VARIETY.gameWeight`) and the phonics door
 (Charge vs Bridge), and the warm-up's last 3 words. Her latest right-first-time reads
@@ -345,4 +350,5 @@ is unchanged. The cast and its variants are remembered as she walks into the bed
 (from the title, or the last parked pick screen), the rooms and games once the house plan
 is made after that; a fixed cast (`?cast=default`), an override, a dev `?scene=` jump or
 games the URL forces (`?room=`, `?game=`, `?games=`) are not remembered. The fight style follows the villain
-(and chef Dada Jason's nudge), so it rotates with the villain.
+(and chef Dada Jason's nudge), so it rotates with the villain. Which dad wakes her has no
+memory: it is the 60/40 draw (`CAST_ODDS`) every episode.
