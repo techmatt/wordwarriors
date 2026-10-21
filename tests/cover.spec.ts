@@ -15,7 +15,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { REACH } from '../src/config';
-import { SLOW, boot, collectErrors, expectNoErrors, readToKeyWord, until, type WWState } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, hubGo, readToKeyWord, until, type WWState } from './harness';
 import { coverIssues, type Issue, type Layout } from './qa/checks';
 
 function layout(page: Page): Promise<Layout> {
@@ -77,6 +77,33 @@ for (const [name, query, scene] of [
     const { issues, targets } = await sample(page, 6000, scene);
     expect(targets, 'targets drawn').toBeGreaterThan(0);
     expect(issues).toEqual([]);
+    expectNoErrors(errors);
+  });
+}
+
+// Item 071, M13: the lines that send her walking take a narrow box that keeps off her, the cursor.
+for (const [name, query, scene, line] of [
+  ['the hub\'s door line', '?scene=house&nojourney=1', 'Hub', /_house_doors$/],
+  ['the attic\'s find line (two-row banner)', '?scene=room&slot=counter&villain=jormungandr&nojourney=1', 'SentenceRoom', /_room_find$/],
+] as const) {
+  test(`${name}: the dialogue box keeps off her`, SLOW, async ({ page }) => {
+    const errors = collectErrors(page);
+    await boot(page, `${query}&qa=1`);
+    // The door line follows the gift scene's circle; the find line, her read-along to the key word.
+    if (scene === 'Hub') {
+      await until(page, (st) => st.room?.round === 'hub:1:circle' && !st.room.locked, 90_000, 'circle offered');
+      await hubGo(page, 'circle');
+    } else await readToKeyWord(page);
+    const s = await until(page, (st) => st.scene === scene && line.test(st.voice.speaking ?? ''), 60_000, 'the line');
+    await page.waitForTimeout(150);
+    const l = await layout(page);
+    const me = l.images.filter((i) => i.scene === scene && i.key === s.room!.player.art).sort((a, b) => b.b[3] - a.b[3])[0];
+    expect(me, 'her sprite').toBeTruthy();
+    const area = (b: number[]) => Math.max(0, b[2]! - b[0]!) * Math.max(0, b[3]! - b[1]!);
+    const under = l.covers
+      .filter((c) => c.scene === scene && c.kind === 'dialogue')
+      .reduce((n, c) => n + area([Math.max(c.b[0], me!.b[0]), Math.max(c.b[1], me!.b[1]), Math.min(c.b[2], me!.b[2]), Math.min(c.b[3], me!.b[3])]), 0);
+    expect(under / area(me!.b), 'share of her under the box').toBeLessThanOrEqual(0.1);
     expectNoErrors(errors);
   });
 }

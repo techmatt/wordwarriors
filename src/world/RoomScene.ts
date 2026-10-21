@@ -147,7 +147,7 @@ export abstract class RoomScene extends Phaser.Scene {
     this.idleMs = 0;
     this.hasMoved = false;
     this.stickHint = null;
-    this.caption = new Caption(this, { avoid: () => this.keepOut(), mode: (u) => this.captionMode(u), showName: (s) => this.showSpeakerName(s) });
+    this.caption = new Caption(this, { avoid: () => this.keepOut(), mode: (u) => this.captionMode(u), showName: (s) => this.showSpeakerName(s), narrow: (u) => this.narrowLine(u) });
     new Bubbles(this);
     this.cameras.main.fadeIn(250, 0, 0, 0);
     startMusic(this.music());
@@ -254,6 +254,11 @@ export abstract class RoomScene extends Phaser.Scene {
   /** How a line shows in the dialogue box; undefined keeps the box's own rules. */
   protected captionMode(_u: Utterance): CaptionMode | undefined {
     return undefined;
+  }
+
+  /** Whether a line takes the narrow dialogue box, which keeps off her (item 071, M13). */
+  protected narrowLine(_u: Utterance): boolean {
+    return false;
   }
 
   protected wait(ms: number): Promise<void> {

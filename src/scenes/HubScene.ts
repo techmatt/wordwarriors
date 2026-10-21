@@ -32,7 +32,7 @@ import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import type { AbilitySpec } from '../../content/battle/types';
 import { moveKey, narratorLine, villainKey } from '../../content/voice/ids';
 import { sfxFanfare, sfxSelect, sfxSummon, sfxWhoosh } from '../audio/sfx';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { DEPTH, FONT_ROUNDED, GAME_WIDTH } from '../config';
 import { away, enterRoom, episode, giftWord, helper, hubScene, narrator, planFor, type Slot, type Step } from '../episode/Episode';
 import { helperAbilityFor } from '../rules/moves';
@@ -103,6 +103,15 @@ export class HubScene extends RoomScene {
   /** A narrator line's id, in this episode's narrator's voice. */
   private nar(key: string): string {
     return narratorLine(narrator(), key);
+  }
+
+  /**
+   * The door lines take the narrow box (item 071, M13): the full-width one
+   * went to the bottom over her, the cursor they tell her to walk, or (the
+   * gift scene's last line, as the doors light) to the top over the door signs.
+   */
+  protected override narrowLine(u: Utterance): boolean {
+    return u.id === this.nar('house_doors') || u.id === this.nar('house_more') || u.id === hubScene().ids.done;
   }
 
   /** `hint`: the line ids yellow says again in this phase. */

@@ -129,6 +129,11 @@ export class SentenceRoom extends Minigame {
    * each word on her turn, the key word's sounds) show only the reader's face,
    * never a second copy of the words in the box.
    */
+  /** The attic's find line takes the narrow box (item 071, M13): its two-row banner holds the top, and the full-width box at the bottom covered her. */
+  protected override narrowLine(u: Utterance): boolean {
+    return this.slot === 'counter' && u.id === narratorLine(narrator(), 'room_find');
+  }
+
   protected override captionMode(u: Utterance): CaptionMode | undefined {
     return u.id.startsWith('sent_') || u.id.startsWith('word_') || u.id.startsWith('letter_') ? 'portrait' : undefined;
   }

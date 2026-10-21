@@ -36,6 +36,9 @@ const BOX_FILL = 0xfffaf0;
 const BOX_LINE = 0x3a2a5a;
 const SLAB = 0xffd23f;
 const MAX_ROWS = 3;
+/** A narrow box's text width and rows (CaptionOptions.narrow). */
+const NARROW_TEXT_W = 320;
+const NARROW_ROWS = 4;
 
 /** Something the box should not cover, in screen coordinates; heavier counts more. */
 export interface KeepOut {
@@ -64,6 +67,12 @@ export interface CaptionOptions {
    * word and finds it on the pads, not by matching the caption's letters.
    */
   hideWord?: (u: Utterance) => string | undefined;
+  /**
+   * A line that sends her walking (item 071, M13: the hub's door lines, the
+   * attic's find line): a narrow box on whichever side and band covers least,
+   * so the full-width one does not hide her, the cursor she is told to walk.
+   */
+  narrow?: (u: Utterance) => boolean;
 }
 
 interface Layout {
@@ -101,6 +110,8 @@ export class Caption {
   private readonly off: () => void;
   private readonly L: Layout;
   private band: 'top' | 'bottom' = 'bottom';
+  /** The line on show takes the narrow box (CaptionOptions.narrow). */
+  private narrow = false;
   /** The box and the face card as last laid out, [left, top, right, bottom] each: what the QA probe reports. */
   private coverRects: [number, number, number, number][] = [];
 
@@ -190,6 +201,7 @@ export class Caption {
     const side: 'left' | 'right' = where ? (where.x < GAME_WIDTH / 2 ? 'left' : 'right') : speaker?.evil ? 'right' : 'left';
     this.setPortrait(speaker);
     this.setGlow(u);
+    this.narrow = !this.opts.compact && Boolean(this.opts.narrow?.(u));
 
     if (mode === 'show' && u.line) {
       // All text in the game is upper case (Matt, 2026-10-18); only the display
@@ -284,6 +296,8 @@ export class Caption {
   /** Words in rows (wrapped between words, up to three, shrinking until they fit), then the box, the face and the tail. */
   private layout(sideHint: { side: 'left' | 'right'; fixed: boolean }): void {
     const L = this.L;
+    const textMax = this.narrow ? NARROW_TEXT_W : L.textW;
+    const rowsMax = this.narrow ? NARROW_ROWS : MAX_ROWS;
     let size = L.fontSize;
     let rows: Phaser.GameObjects.Text[][] = [];
     for (;;) {
@@ -293,7 +307,7 @@ export class Caption {
       let x = 0;
       for (const t of this.words) {
         const row = rows[rows.length - 1]!;
-        if (row.length && x + gap + t.width > L.textW) {
+        if (row.length && x + gap + t.width > textMax) {
           rows.push([t]);
           x = t.width;
         } else {
@@ -301,7 +315,7 @@ export class Caption {
           row.push(t);
         }
       }
-      const fits = this.words.every((t) => t.width <= L.textW) && rows.length <= MAX_ROWS;
+      const fits = this.words.every((t) => t.width <= textMax) && rows.length <= rowsMax;
       if (fits || size <= 14) break;
       size -= 2;
     }
@@ -411,6 +425,16 @@ export class Caption {
       return c;
     };
     const other = hint.side === 'left' ? 'right' : 'left';
+    // A narrow box goes wherever it covers least, its speaker's side or not:
+    // it is there to keep off her (M13).
+    if (this.narrow) {
+      let best = { band: this.band, side: hint.side, c: Infinity };
+      for (const side of [hint.side, other] as const) for (const band of [this.band, this.band === 'top' ? 'bottom' : 'top'] as const) {
+        const c = cost(band, side);
+        if (c < best.c) best = { band, side, c };
+      }
+      return { band: best.band, side: best.side };
+    }
     const sides: ('left' | 'right')[] = hint.fixed ? [hint.side] : [hint.side, other];
     const stay = this.band;
     const flip: 'top' | 'bottom' = stay === 'top' ? 'bottom' : 'top';
