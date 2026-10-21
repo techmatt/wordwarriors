@@ -26,9 +26,14 @@ export const SPLIT = {
   threshFrac: 0.25,
   /** Gaps under this are inside a word (a stop's closure: up to 0.11 s), not pauses (0.58 s and up). */
   mergeS: 0.25,
-  /** Runs shorter than this, or this far under the take's peak, are blips, breaths or clicks. */
+  /**
+   * Runs shorter than this, or this far under the take's peak, are blips, breaths or clicks.
+   * A hiss (S, SH, F, TH) is naturally far quieter than a voiced word: Matt's good card 1
+   * (tests/fixtures/voice/matt-g01-good.wav, item 063) has its SSSS 18 to 24 dB under MOP,
+   * so 20 dropped two of them. Every real run under 30 so far is a blip already too short.
+   */
   minRunS: 0.06,
-  dropDb: 20,
+  dropDb: 30,
 } as const;
 
 /** How each clip is finished. */

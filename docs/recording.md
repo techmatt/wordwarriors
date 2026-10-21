@@ -11,8 +11,9 @@ Firefly / recording-folder loop from Seraphina's Secret (`voice:tasks`,
 1. Open the recorder (README, *Matt's recordings*), type your name, and record the 12
    cards. Each card is three words, and each word is followed by its sound three times:
    "VAN … vvvv … vvvv … vvvv …… PIG … p … p … p ……". Leave at least half a second
-   between sounds and a second before the next word. Stretch held sounds (about a
-   second, no "uh": "ffff", not "fuh"), and keep short sounds crisp. The page counts the
+   between sounds and a second before the next word. Stretch held sounds (half a
+   second or so is enough, with no "uh": "ffff", not "fuh"), and keep short sounds
+   crisp. A hiss (S, SH, F, TH) can be much quieter than the word; that's fine. The page counts the
    sounds in each take as soon as it stops, and saves a take automatically only when
    all 12 are there.
 2. Press **Download zip**. It saves `phonics-<name>.zip`.

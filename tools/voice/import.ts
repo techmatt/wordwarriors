@@ -244,7 +244,7 @@ export function processTake(group: string, raw: Float32Array, rate: number, entr
     if (pick === undefined) {
       const best = Math.max(...repeats.map((r) => r.hold!.loopS ?? 0));
       res.notes.push(
-        `card ${card}: no repeat of ${e.sound.toUpperCase()} holds on the bridge (its longest loop is ${best.toFixed(2)} s, it needs ${MIN_LOOP_S} s): the sound is skipped; re-record it stretched, about a second`,
+        `card ${card}: no repeat of ${e.sound.toUpperCase()} holds on the bridge (its longest loop is ${best.toFixed(2)} s, it needs ${MIN_LOOP_S} s): the sound is skipped; re-record it stretched, half a second or so of the sound itself`,
       );
     } else {
       const r = repeats[pick]!;

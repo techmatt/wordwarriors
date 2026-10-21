@@ -548,7 +548,8 @@ splitter `tools/voice/split.ts`, ported from item 055's prototype):
   exactly 12 sounds (word, three repeats, three times). Otherwise it installs nothing
   and says which card to re-record and why. "No sound" is an empty take; "found 10
   sounds, expected 12: sounds ran together at 8.4 s" means pauses under about 0.25 s;
-  "too quiet to tell from noise" is a sound more than 20 dB under the card's loudest;
+  "too quiet to tell from noise" is a sound more than 30 dB under the card's loudest
+  (20 until item 063: a held SSSS sits 18 to 24 dB under its word, and was dropped);
   "did it stop early?" means the take is short;
 - each clip is widened to its soft edges, faded (5 / 15 ms), normalised to -17 dBFS RMS
   (peak at most -1 dBFS), padded with 30 ms of digital silence, and encoded as 96 kbps

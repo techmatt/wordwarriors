@@ -110,6 +110,37 @@ test('voice import: a silent card is refused as empty; an extra sound is refused
   assert.match(processTake('g09', extra, RATE, ENTRIES, ids).refused!, /found 13 sounds, expected 12: an extra sound/);
 });
 
+test('voice import: Matt\'s good card 1 (quiet SSSS, half-second MMMM) counts 12 on the page and in the importer, and installs', () => {
+  // Item 063: recorded on the page as MOP · CAT · SUN; its SSSS sit 18-24 dB under MOP's peak.
+  const { x, rate } = readWav(readFileSync('tests/fixtures/voice/matt-g01-good.wav'));
+  const entries: Entry[] = [
+    { sound: 'm', word: 'mop', kind: 'hold', repeats: 3 },
+    { sound: 'c', word: 'cat', kind: 'short', repeats: 3 },
+    { sound: 's', word: 'sun', kind: 'hold', repeats: 3 },
+  ];
+  const p = page().countTake(x, rate, 12);
+  const s = splitTake(highpass(x, rate), rate, entries);
+  assert.equal(p.status, 'ok');
+  assert.equal(p.found, 12);
+  assert.equal(s.status, 'ok');
+  assert.equal(s.found, 12);
+  const r = processTake('g01', x, rate, entries, new Set(['letter_m_sound', 'letter_c_sound', 'letter_s_sound', 'word_mop', 'word_cat', 'word_sun']));
+  assert.equal(r.refused, undefined);
+  for (const e of r.entries) assert.ok(e.repeats.some((q) => q.picked), `a repeat of ${e.entry.sound} installs`);
+});
+
+test('voice import: a repeat that is truly missing, or a take cut short, is still refused, on the page and in the importer', () => {
+  // A hiss 40 dB under the words is not a sound the importer can use: one repeat short.
+  const faint = card();
+  faint[5] = [0.8, 'hiss', 0.003];
+  const xf = take(faint, 0.7);
+  assert.equal(page().countTake(xf, RATE, 12).found, 11);
+  assert.match(processTake('g09', xf, RATE, ENTRIES, ids).refused!, /found 11 sounds, expected 12/);
+  const short = take(card().slice(0, 7), 0.7);
+  assert.equal(page().countTake(short, RATE, 12).found, 7);
+  assert.match(processTake('g09', short, RATE, ENTRIES, ids).refused!, /found 7 sounds, expected 12: sounds missing .* did it stop early/);
+});
+
 test('voice import: the K card is the CK sound too; a word the game lacks is not installed', () => {
   const entries: Entry[] = [
     { sound: 'k', word: 'key', kind: 'short', repeats: 3 },
