@@ -289,12 +289,12 @@ export const ROSTER: CharacterSpec[] = [
     reformed: {
       sorry: [
         { key: 'bubbles', text: 'Sorry! Bubbles for everybody!' },
-        { key: 'good', text: 'Sorry! Ellie good now.' },
+        { key: 'good', text: 'Sorry! Ellie is good now.' },
         { key: 'sorry', text: 'Sorry, sorry, sorry!' },
       ],
       ending: [
         { key: 'cuddle', text: 'I want a cuddle now!' },
-        { key: 'happy', text: 'Ellie happy!' },
+        { key: 'happy', text: 'Ellie is so happy!' },
         { key: 'please', text: 'More bubbles, please!' },
       ],
     },
@@ -430,7 +430,7 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'silly', text: 'Sorry! Daddy got a bit silly.' },
       ],
       ending: [
-        { key: 'fixing', text: 'No more smashing. Only fixing!' },
+        { key: 'fixing', text: 'No more smashing, I will only build things now!' },
         { key: 'piggyback', text: 'Who wants a piggyback ride?' },
         { key: 'build', text: "Let's build something together!" },
       ],
@@ -497,7 +497,7 @@ export const ROSTER: CharacterSpec[] = [
       sorry: [
         { key: 'pancakes', text: 'Sorry! Who wants pancakes?' },
         { key: 'broccoli', text: 'Sorry! No more broccoli for breakfast.' },
-        { key: 'dessert', text: 'Sorry, kiddo! Dessert first today.' },
+        { key: 'dessert', text: 'Sorry, kiddo! Today we will have dessert first.', say: 'Sorry, kiddo, today we will have dessert first.' },
       ],
       ending: [
         { key: 'yummy', text: 'I promise to cook yummy food, not yucky food!' },
@@ -1051,13 +1051,13 @@ export const ROSTER: CharacterSpec[] = [
     reformed: {
       sorry: [
         { key: 'mess', text: 'Beep boop! Sorry about the mess!' },
-        { key: 'good', text: 'Beep, sorry! Scar good now.' },
+        { key: 'good', text: 'Beep, sorry! Scar is good now.' },
         { key: 'lights', text: 'Sorry! I will switch the lights back on.' },
       ],
       ending: [
-        { key: 'friend', text: 'Robot friend mode, switched on!' },
+        { key: 'friend', text: 'My robot friend mode is switched on!' },
         { key: 'parties', text: 'Beep boop, I love parties!' },
-        { key: 'dance', text: 'Happy robot dance!' },
+        { key: 'dance', text: "Let's do a happy robot dance!" },
       ],
     },
     counter: {
@@ -1262,7 +1262,7 @@ export const ROSTER: CharacterSpec[] = [
       ending: [
         { key: 'hugs', text: 'Gorilla hugs for everybody!' },
         { key: 'bananas', text: 'Bananas for the whole team!' },
-        { key: 'happy', text: 'Rilla happy now!' },
+        { key: 'happy', text: 'Rilla is happy now!' },
       ],
     },
     counter: {
@@ -1336,9 +1336,9 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'rest', text: "Sorry, kiddo! Let's take a rest." },
       ],
       ending: [
-        { key: 'fives', text: 'No more showing off. Only high fives!' },
+        { key: 'fives', text: 'No more showing off, I only want high fives now!' },
         { key: 'high', text: 'Who wants to be lifted up high?' },
-        { key: 'strong', text: 'Strong hearts, strong friends!' },
+        { key: 'strong', text: 'We have strong hearts, and we are strong friends!' },
       ],
     },
     counter: {
@@ -1405,7 +1405,7 @@ export const ROSTER: CharacterSpec[] = [
       ending: [
         { key: 'gauntlet', text: 'Want to try my power glove?' },
         { key: 'game', text: "Let's play a video game together!" },
-        { key: 'party', text: 'Party mode, switched on!' },
+        { key: 'party', text: 'My party mode is switched on!' },
       ],
     },
     counter: {
@@ -1535,7 +1535,7 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'axe', text: 'Sorry, kiddo! I put my axe away.' },
       ],
       ending: [
-        { key: 'battles', text: 'No more battles. Only hugs!' },
+        { key: 'battles', text: 'No more battles, I only want hugs now!' },
         { key: 'cheers', text: 'Three cheers for the heroes!' },
         { key: 'feast', text: 'A feast for the whole castle!' },
       ],
