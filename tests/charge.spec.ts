@@ -2,11 +2,11 @@
  * Item 053: Charge the Spell and the dad buttons; item 058: one word a visit;
  * item 059: no presses per rune (the helper says each sound, she says it
  * back), one Dad press on the read. Fast lane: a round with Dad's 1 on the
- * read (sounded out together), timed, and the word a battle item; the runes
- * fired in battle; the forced room in a drawn episode, F4 as Dad's yes on the
- * read only. Slow lane: a round with Dad's real key 2, nothing asked before
- * the read; dad lock (the say-back beat waits, the keys stay live) and the
- * read's timeout. Screenshots land in tests/screenshots/ (ignored) for a look.
+ * read (sounded out together), timed, and the word a battle item. Slow lane:
+ * the runes fired in battle; the forced room in a drawn episode, F4 as Dad's
+ * yes on the read only (both moved in item 061, 10-13 s each); a round with
+ * Dad's real key 2, nothing asked before the read; dad lock (the say-back
+ * beat waits, the keys stay live) and the read's timeout. Screenshots land in tests/screenshots/ (ignored) for a look.
  */
 
 import { test, expect, type Page } from '@playwright/test';
@@ -118,7 +118,7 @@ function narratorLineEnd(h: string[], suffix: string): string {
   return [...h].reverse().find((id) => id.endsWith(suffix)) ?? '';
 }
 
-test('Charge the Spell: the charged runes fire as her hero\'s moves in the next battle', async ({ page }) => {
+test('Charge the Spell: the charged runes fire as her hero\'s moves in the next battle', SLOW, async ({ page }) => {
   test.setTimeout(90_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=battle&part=1&charged=m,s,a&nojourney=1');
@@ -130,7 +130,7 @@ test('Charge the Spell: the charged runes fire as her hero\'s moves in the next 
   expectNoErrors(errors);
 });
 
-test('Charge the Spell: the beta forces it behind a door of a drawn episode; F4 is Dad\'s yes on the read only', async ({ page }) => {
+test('Charge the Spell: the beta forces it behind a door of a drawn episode; F4 is Dad\'s yes on the read only', SLOW, async ({ page }) => {
   test.setTimeout(120_000);
   const errors = collectErrors(page);
   // `games=all`: no test pool, so FORCE_PHONICS_ROOM puts a phonics room behind door a;

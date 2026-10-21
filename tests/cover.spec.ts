@@ -14,7 +14,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { boot, collectErrors, expectNoErrors, readToKeyWord, until, type WWState } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, readToKeyWord, until, type WWState } from './harness';
 import { coverIssues, type Issue, type Layout } from './qa/checks';
 
 function layout(page: Page): Promise<Layout> {
@@ -38,13 +38,14 @@ async function sample(page: Page, ms: number, scene: string): Promise<{ issues: 
 const inRoom = (st: WWState) => st.scene === 'SentenceRoom' && Boolean(st.room?.sentence);
 
 // The longest names make the tallest banners: two rows (JORMUNGANDR) and the longest counter sentence (OZYMANDIAS).
-for (const [name, query] of [
-  ['a side room, one row', '?scene=room&slot=a&nojourney=1'],
-  ['the counter, Smaug', '?scene=room&slot=counter&villain=smaug&nojourney=1'],
-  ['the counter, Jormungandr (two rows)', '?scene=room&slot=counter&villain=jormungandr&nojourney=1'],
-  ['the counter, Ozymandias (the longest)', '?scene=room&slot=counter&villain=ozymandias&nojourney=1'],
+// Smaug's (the banner Matt saw over the pictures) is the fast lane's; the rest are slow (item 061: 13-21 s each).
+for (const [name, query, fast] of [
+  ['a side room, one row', '?scene=room&slot=a&nojourney=1', false],
+  ['the counter, Smaug', '?scene=room&slot=counter&villain=smaug&nojourney=1', true],
+  ['the counter, Jormungandr (two rows)', '?scene=room&slot=counter&villain=jormungandr&nojourney=1', false],
+  ['the counter, Ozymandias (the longest)', '?scene=room&slot=counter&villain=ozymandias&nojourney=1', false],
 ] as const) {
-  test(`sentence room, ${name}: the banner and the dialogue keep off the pictures`, async ({ page }) => {
+  test(`sentence room, ${name}: the banner and the dialogue keep off the pictures`, fast ? {} : SLOW, async ({ page }) => {
     const errors = collectErrors(page);
     await boot(page, `${query}&qa=1`);
     await until(page, inRoom, 90_000, 'sentence room');
@@ -65,7 +66,7 @@ for (const [name, query, scene] of [
   ['the word machine', '?scene=room&slot=a&game=word_machine&nojourney=1', 'WordMachine'],
   ['the stretchy bridge', '?scene=room&slot=a&room=bridge&nojourney=1', 'BridgeRoom'],
 ] as const) {
-  test(`${name}: nothing covers a target`, async ({ page }) => {
+  test(`${name}: nothing covers a target`, SLOW, async ({ page }) => {
     const errors = collectErrors(page);
     await boot(page, `${query}&qa=1`);
     await until(page, (st) => st.scene === scene, 90_000, scene);
@@ -76,7 +77,7 @@ for (const [name, query, scene] of [
   });
 }
 
-test('the battle move choice: the dialogue and bubbles keep off the pads and their signs', async ({ page }) => {
+test('the battle move choice: the dialogue and bubbles keep off the pads and their signs', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=battle&part=1&nojourney=1&qa=1');
   await until(page, (st) => Boolean(st.battle?.choice?.open), 90_000, 'choice open');
@@ -86,7 +87,7 @@ test('the battle move choice: the dialogue and bubbles keep off the pads and the
   expectNoErrors(errors);
 });
 
-test('the victory recap: nothing covers the word cards', async ({ page }) => {
+test('the victory recap: nothing covers the word cards', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=victory&nojourney=1&read=bed,hat,zap&qa=1');
   await until(page, (st) => st.scene === 'Victory', 90_000, 'victory');

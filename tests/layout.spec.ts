@@ -4,12 +4,12 @@
  * (`src/qa/probe.ts`, `tests/qa/checks.ts`): the hub's circle as "Stand in the
  * circle..." plays, the word machine's tiles as "Walk on a letter..." plays.
  * Both things pop in as their line starts, which is how the box came to cover them.
- * @slow.
+ * Fast lane since item 061 (5-6 s each at clock speed 5).
  */
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, expectNoErrors, until } from './harness';
+import { boot, collectErrors, expectNoErrors, until } from './harness';
 import { layoutIssues, type Layout } from './qa/checks';
 
 function layout(page: Page): Promise<Layout> {
@@ -23,7 +23,7 @@ function boxOf(l: Layout): [number, number, number, number] | null {
   return [Math.min(...words.map((t) => t.b[0])), Math.min(...words.map((t) => t.b[1])), Math.max(...words.map((t) => t.b[2])), Math.max(...words.map((t) => t.b[3]))];
 }
 
-test('hub: "stand in the circle" keeps the box off the circle', SLOW, async ({ page }) => {
+test('hub: "stand in the circle" keeps the box off the circle', async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=house&nojourney=1&qa=1');
   const s = await until(page, (st) => st.scene === 'Hub' && /_circle$/.test(st.voice.speaking ?? ''), 90_000, 'the circle line');
@@ -37,7 +37,7 @@ test('hub: "stand in the circle" keeps the box off the circle', SLOW, async ({ p
   expectNoErrors(errors);
 });
 
-test('word machine: "walk on a letter" keeps the box off the tiles', SLOW, async ({ page }) => {
+test('word machine: "walk on a letter" keeps the box off the tiles', async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&game=word_machine&nojourney=1&qa=1');
   await until(page, (st) => st.scene === 'WordMachine' && /_machine_go$/.test(st.voice.speaking ?? ''), 90_000, 'the go line');

@@ -3,7 +3,7 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
-import { boot, collectErrors, expectNoErrors, state, stick, until } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, state, stick, until } from './harness';
 
 interface TextInfo {
   scene: string;
@@ -18,7 +18,7 @@ function texts(page: Page): Promise<TextInfo[]> {
 
 const overlap = (a: number[], b: number[]) => a[0]! < b[2]! && b[0]! < a[2]! && a[1]! < b[3]! && b[1]! < a[3]!;
 
-test('M1, M5, M6: the move choice hides its word in the caption, shows the stick hint, and the team stands clear of the signs', async ({ page }) => {
+test('M1, M5, M6: the move choice hides its word in the caption, shows the stick hint, and the team stands clear of the signs', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=battle&part=1&ally=dada_jason&nojourney=1');
   const s = await until(page, (st) => Boolean(st.battle?.choice?.open), 90_000, 'choice open');

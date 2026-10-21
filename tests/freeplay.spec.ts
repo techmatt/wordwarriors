@@ -13,7 +13,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { FREE_PLAY, REACH } from '../src/config';
-import { boot, collectErrors, expectNoErrors, press, stick, until, walkTo, state, type WWState } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, press, stick, until, walkTo, state, type WWState } from './harness';
 
 interface Play {
   jumps: number;
@@ -115,7 +115,7 @@ test('hub: blue taps a shot, a held red fires a big one, green away from spots j
   expectNoErrors(errors);
 });
 
-test('hub: thirty blue presses never put more than the cap of shots on screen', async ({ page }) => {
+test('hub: thirty blue presses never put more than the cap of shots on screen', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   // Real time, so the shots stay up long enough to pile against the cap.
   await hub(page, 1);
@@ -131,7 +131,7 @@ test('hub: thirty blue presses never put more than the cap of shots on screen', 
   expectNoErrors(errors);
 });
 
-test('hub: with the door in reach, green chooses the door and does not jump', async ({ page }) => {
+test('hub: with the door in reach, green chooses the door and does not jump', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   const s = await hub(page);
   const door = s.room!.spots.find((sp) => sp.id === 'door_counter')!;
@@ -147,7 +147,7 @@ test('hub: with the door in reach, green chooses the door and does not jump', as
   expectNoErrors(errors);
 });
 
-test('dad lock: blue, red and green do nothing in play until it is off again', async ({ page }) => {
+test('dad lock: blue, red and green do nothing in play until it is off again', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await hub(page);
   await walkClear(page);
@@ -170,7 +170,7 @@ test('dad lock: blue, red and green do nothing in play until it is off again', a
   expectNoErrors(errors);
 });
 
-test('an open answer closes play: blue fires nothing while the entry hall waits for her pick', async ({ page }) => {
+test('an open answer closes play: blue fires nothing while the entry hall waits for her pick', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=grab&nojourney=1');
   const s = await until(page, (st) => st.scene === 'Entry' && st.room?.round === 'entry:find' && !st.room.locked, 60_000, 'clue given');
@@ -192,7 +192,7 @@ test('an open answer closes play: blue fires nothing while the entry hall waits 
   expectNoErrors(errors);
 });
 
-test('battle: blue fires in the fight and the fight carries on; in a move choice blue fires nothing', async ({ page }) => {
+test('battle: blue fires in the fight and the fight carries on; in a move choice blue fires nothing', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=battle&part=1&nojourney=1');
   await until(page, (st) => st.battle?.phase === 'fight' && !st.battle.choice, 90_000, 'fight phase');
