@@ -41,10 +41,11 @@ One `CharacterSpec` in `ROSTER`:
     words are twice as likely to be the gift word, which her hero then fires with its
     move (see "Move words and the move bag" below). At least two of a character's good
     abilities have `words` (one list per ability since item 047).
-  - `reformed` (on the character, beside `counter`): two or more short, kid-funny lines
-    the villain says in its good voice once beaten ("Sorry I was so stormy!"); the
-    battle's end says the first, the victory scene the second (item 027), so the
-    second should work as something said to friends at a party. Voiced as
+  - `reformed` (on the character, beside `counter`): `{ sorry, ending }`, short,
+    kid-funny lines the villain says in its good voice once beaten ("Sorry I was so
+    stormy!"), one of each drawn per episode (item 040); the battle's end says a
+    `sorry`, the victory scene an `ending`, so an `ending` should work as something
+    said to friends at a party. Voiced as
     `reformed_<id>_<key>` in the villain's voice group.
   - `ultimate`: the evil one floors the heroes in Part 1 and is countered in Part 2.
   - `taunts`: `{ key, text }`, short, no interjections ("Ha!" is an SFX).
@@ -92,7 +93,8 @@ the bedroom after the news, the hub and every side room; no room art is per-vill
 
 The attic's sentence after the retreat is drawn fresh each episode (item 015): a
 counter frame (`{villain} IS SCARED OF THE {x}`, `HATES THE`, `RUNS FROM THE`,
-`CAN NOT STAND THE`, weighted toward shaky frames) and a counter word from her word bag
+`IS NO MATCH FOR THE`, `CAN NOT BEAT THE`, `HIDES FROM THE`, `DOES NOT LIKE THE`,
+`SAYS YUCK TO THE`, weighted toward shaky frames) and a counter word from her word bag
 (see "Key words and the word bag" below). A villain's weakness does not have to make
 sense: any pictured bank word can beat any villain. The picture she finds swells
 into itself, flies into her bag, and in battle 2 a swarm of it scurries at the villain,
@@ -111,7 +113,7 @@ under the 009 exclusions" checks it for every villain.
 **Named counter items are flavour.** When the draw lands on the villain's own
 `counter.word` (HAT for Evil Tiamat), battle 2 shows the named item (`item_<id>` art,
 its banner, its `how`) and the narrator says `got_counter_<villain>` ("We found the Magic
-Hat!"). That word is drawn `NAMED_COUNTER_BOOST` (3) times as often as any other while
+Hat!"). That word is drawn `NAMED_COUNTER_BOOST` (6) times as often as any other while
 it is in the bag. A named word is a whole word of the item's `name` and stays out of
 every name, ability, ultimate, taunt and threat in the roster (unit test "named counter
 words are pictured, and never in any name, ability, taunt or threat"). MICE is not
@@ -261,12 +263,14 @@ The same rules as a quest line: no bank word, no interjection, commas not a mid-
 ## A minigame (`MINIGAMES`, `src/rules/minigames.ts`)
 
 Each episode draws three games from the pool, one per room (two fetch games, then
-the counter game), weighted, never the same entry twice, apart from the quest. An
-entry is `{ id, scene, weight, slots: ['fetch'] | ['counter'] | both, frame?, machine? }`:
-each sentence frame is one entry (`sentence:<frame>`, weight 1 times the frame's
-shakiness), and the word machine is one more (`word_machine`, fetch rooms only, weight
-`WORD_MACHINE.weight` in `src/config.ts` times how shaky her word families are: about
-every other episode). A new game is one entry and its scene; the room's `RoomPlan`
+the counter game), weighted, never the same entry twice, apart from the quest; a game
+from her last episodes (the store's `recent.games`) weighs `VARIETY.gameWeight` (item
+067). An entry is `{ id, scene, weight, slots: ['fetch'] | ['counter'] | both, frame?,
+machine?, charge?, bridge? }`: each sentence frame is one entry (`sentence:<frame>`,
+weight 1 times the frame's shakiness), and the word machine is one more
+(`word_machine`, fetch rooms only, weight `WORD_MACHINE.weight` in `src/config.ts` times
+how shaky her word families are: about every other episode); Charge the Spell and the
+Stretchy Bridge are one each (`charge`, `bridge`, fetch rooms only). A new game is one entry and its scene; the room's `RoomPlan`
 (a union by `kind`, `src/rules/sentences.ts`) carries `game` and `scene`, and `enterRoom`
 starts that scene. Whatever it plays, it must end in a word she read: `plan.key` (the
 prize on the hub door, or the counter) and `plan.fetches` (every word read there, each a
@@ -294,13 +298,13 @@ props, stand, open, cheer, close, fit?, villains }`:
 - `open` (the host: the narrator), `cheer` (the hero), `close` (someone else there):
   `{ text, say? }`, with no names, so any cast can say them; each is voiced for every
   person (`end_<person>_<scene>_<key>`, group `end_<person>`). The villain's line between
-  `open` and `cheer` is its own second `reformed` line, so the replies must follow any of
+  `open` and `cheer` is one of its `reformed.ending` lines, so the replies must follow any of
   them ("Yay! Come and sit with us!").
 - `fit`: `{ form, text }`, a dad form (roster id) that suits the scene; when he is there
   (not as the villain) he says it in place of `close`, voiced only for him. `villains`:
   roster ids whose reformed line suits it. A scene that fits the cast either way is
-  `FIT_WEIGHT` (3) times likelier; last episode's scene (ProgressStore `ending`) is
-  never drawn.
+  `FIT_WEIGHT` (3) times likelier; her last `VARIETY.rotations` scenes (the store's
+  `recent.ending`) sit out while two are left (item 067).
 
 Four lines plus the pauses (`ENDING_PAUSE`) come to about 18–24 s; the unit test checks
 every scene for every cast shape against the built voice and keeps it under 30 s. After
@@ -318,7 +322,7 @@ Item 031: not every showdown is a brawl. A style is data plus a staging:
   own arena. `banner` is the big word as each part starts, `tooStrong` floats over the
   floored heroes at the end of part 1, `win` is the last hit's banner. `lines` are the
   narrator's `start`, `start2`, `retreat` and `finish`, voiced for every narrator
-  (`<narrator>_fight_<id>_<beat>`); a beat without one uses the brawl's. Props are art
+  (`nar_<narrator>_fight_<id>_<beat>`); a beat without one uses the brawl's. Props are art
   `prop_fight_<id>`. Nothing shown or said may hold a move word or a reading word
   (`tests/unit/fights.test.ts` checks): the rope pull never says TUG.
 - **Whose**: `fight: '<id>'` on the villain's roster entry (absent: `brawl`);
@@ -507,15 +511,15 @@ action word from her move bag by the bank's weighting, never one said before the
 battle (the threat, the quest line, the hub scene), the helper's own words weighted
 double. A caster's gift is a spell (item 038): for a helper in `CASTERS`
 (`content/house/scenes.ts`: Elsa, Bavmorda, Tiamat, Moriarty, warlock Jason, spell-blade
-Matt) the bank's `spell` words (ZAP ZIP POP HEX MIX, and SPIN SNAP FLIP TWIST MELT BLAST
-once blends open) weigh `CASTER_SPELL_BOOST` (25) times more, about four gifts in five;
+Matt) the bank's `spell` words (ZAP ZIP POP HEX MIX SPIN SNAP FLIP TWIST MELT BLAST, all
+in play since item 067 removed the level gate) weigh `CASTER_SPELL_BOOST` (25) times more, about four gifts in five;
 only casters' scenes may call the gift a spell (a unit test). Her hero fires it with the helper's move when the helper has one. When the
 house is planned, `planMoves` plans all four move choices too (two per battle part):
 the first of each part is the gift word, the other right words come out of her **move
 bag**, the 015 bag logic over the move words by the same weighting (without replacement
 across episodes, a word leaves only when she picks it right first time). Each choice
-shows 2 or 3 pads; the wrong ones are other action words from the levels open to her,
-chosen for reading (`distractorsFor`), ones not yet shown this episode first, then
+shows 2 or 3 pads; the wrong ones are other move words (any level, item 067: a pad is
+a recognition role), chosen for reading (`distractorsFor`), ones not yet shown this episode first, then
 ones still in her **pad bag** (ProgressStore `padBag`, item 038: a word leaves it once a
 choice has shown it as a wrong pad; one that has had its turn weighs `PAD_SHOWN_WEIGHT`,
 0.05), weighed by coverage. Without it, about three back-to-back episodes in five shared
@@ -562,8 +566,9 @@ recording replaces one the same way: `npm run voice:clip -- letter_<x>_name <fil
 ## A rune (Charge the Spell, `content/phonics/runes.ts`)
 
 Each entry in `RUNES` is one sound unit she can charge: `rune(sound, tier, glyph,
-motion, text, kind, color, extra)`. `tier` 1 is a continuous sound (drawn first), 2 a
-quick one (opens as tier 1 firms up), 3 a digraph. The gesture is the narrator's: their
+motion, text, kind, color, extra)`. `tier` 1 is a continuous sound, 2 a quick one, 3 a
+digraph: a label only (the unit tests read it), since item 067 put every sound in play
+from the start. The gesture is the narrator's: their
 sprite bobs in time while `glyph` (an emoji, never a bank word's picture) does `motion`
 beside them, and they say `text`, which trails off into `letter_<sound>_sound`, so it
 must never name the letter or spell the sound, and says no bank word at all
@@ -610,6 +615,6 @@ file's `heroKey` / `villainKey` / `moveKey`, never by hand. A new `right_<n>`,
 ## Art
 
 Every id is in `docs/art.md` with its size and brief. Drop a PNG at
-`public/art/<id>.png`; the painter will never overwrite it. When real *character* art
-lands, set `FLIP_TO_FACE = true` in `src/config.ts` so she faces the way she walks
-(off now because mirroring a placeholder card mirrors its name).
+`public/art/<id>.png`; the painter will never overwrite it. `FLIP_TO_FACE` in
+`src/config.ts` (on since every character got real art) mirrors her to face the way she
+walks; a placeholder card mirrored would mirror its name.

@@ -146,7 +146,7 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
 
 Key words never repeat until her **word bag** has gone round: every key word (both side
 rooms and the attic) is drawn without replacement from the word bank's pictured words
-(item 037: CVC, then blends and digraphs as the level below firms up), kept
+(item 037; every level in play since item 067 removed the level gate), kept
 with her progress, leaning toward the words she has missed and the vowels and first
 sounds she has met least (a word leaves the bag only
 when she reads it right first time, so a missed word comes round again soon, and a dev

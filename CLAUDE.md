@@ -25,7 +25,7 @@ are done) → **battle part 1** (the villain's ultimate wins: "too strong, retre
 **house part 2** (a secret attic door: the counter sentence fetches the counter-item) →
 **battle part 2** (the counter beats the ultimate) → **victory scene**
 (`content/house/endings.ts`) → victory with a reading recap. A journey map shows before
-each battle and the victory.
+each battle, house part 2 (the way home after the retreat) and the victory.
 
 The cast is drawn every episode (`src/rules/cast.ts`, `ACTIVE_CAST` and `CAST_ODDS` in
 `src/config.ts`): villain, ally, the waking dad and each dad's form, and the helper's
@@ -45,9 +45,9 @@ Playwright serves its own (README, *Tests*). The sibling game
 
 | Path | What |
 | --- | --- |
-| `src/` | Game source. `main.ts` boots Phaser; `config.ts` sizes, depth bands, pad colours and every tuning knob named below. |
+| `src/` | Game source. `main.ts` boots Phaser; `config.ts` sizes, depth bands, pad colours and every tuning knob named below; `hookState.ts` what scenes publish for the tests (and `walkObjects`). |
 | `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom), Journey, Ending (the victory scene), Victory, Parent, and Wait (shown while a scene's art loads); parked: Pick, Alarm, Retreat and `minigames/` (the v0.1 games, Spell the Spell among them; also `Minigame.ts`, the base class the live side rooms extend). |
-| `src/battle/` | The battle simulation: `BattleScene` (the director scripts `part1`/`part2`), `Fighter`, `abilities`, `movement`; `stages/` stages each fight style. |
+| `src/battle/` | The battle simulation: `BattleScene` (the director scripts `part1`/`part2`), `Fighter`, `abilities`, `movement`, `hud` (`BattleHud`: names, bars, fetched things, runes); `stages/` stages each fight style. |
 | `src/episode/Episode.ts` | The episode's state and step list. Scenes call `advance()`; nothing else decides flow. |
 | `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only), `dadLock`, `dadButtons` (keys 1 / 2, Dad's no / yes). |
 | `src/audio/` | `context`, `sfx` and `music` (synthesised), `VoiceBus` (the one voice arbiter), `holdSound` (letter sounds cut to hold or play once). |
@@ -56,7 +56,7 @@ Playwright serves its own (README, *Tests*). The sibling game
 | `src/state/` | `ProgressStore` (localStorage, versioned, per sound and per word). |
 | `src/rules/` | Phaser-free, unit-tested: the cast, word bank, moves and gift word, warm-up, sentences, word machine, minigame pool, story and victory-scene draws; `difficulty` (the `DIFFICULTY` knob over every help ramp) and `recent` (rotations across episodes). |
 | `src/world/` | `RoomScene` (walk-to-answer rooms), `Player` (her character as the cursor), `houseMood`. |
-| `src/ui/`, `src/fx/` | Caption ribbon, follow-the-speaker bubbles, button dots, bag; particles and juice. |
+| `src/ui/`, `src/fx/` | Caption ribbon, follow-the-speaker bubbles, button dots, bag; particles and juice, `sceneGen` (`SceneGen`: stops a scene run's await chain at shutdown). |
 | `src/qa/` | The bug-hunt checker's in-page probe (`?qa=1`; README, *The bug-hunt checker*). |
 | `content/battle/roster.ts` | **Every character**, good and evil: style, abilities, taunts, ultimate, counter-item, the villain's house mood. Every roster character is also a villain. The dads' forms are roster characters with `person`. |
 | `content/battle/fights.ts`, `forms.ts` | Fight styles (race, rope pull, beam clash, cook-off, brawl); outfits (a character's images for a scenario). |
@@ -67,6 +67,7 @@ Playwright serves its own (README, *Tests*). The sibling game
 | `public/art/` | Generated, committed. Do not hand-edit. |
 | `public/voice-gen/`, `art-originals/` | Untracked junctions to the Drive folder (README, *Storage*): generated voice; full-res art and Matt's private photos. Do not hand-edit. |
 | `tools/voice/`, `tools/art/` | `compose.ts` (lines.json from data), `build.ts` (audio + manifest), `import.ts` + `split.ts` (a recorder zip into clips); `placeholders.ts`, `generate.ts`, `alts.ts`. |
+| `tools/shared.ts`, `tools/phonics/audit.ts` | `isMain`, `exists`, `readLines`, shared by the voice and art tools; `bank:audit` (the word bank's coverage table). |
 | `tools/recorder/` | `phonics-recorder.html`, the page Matt records the letter sounds on (README, *Matt's recordings*); its hosted copy is synced by the planner, never edited here. |
 | `tests/` | Playwright specs + `harness.ts`; `unit/` for node:test; `shots/` UI screenshots (README, *Tests*); `qa/` the bug-hunt checker. |
 | `docs/` | `systems.md` entry points; `engineering.md` measured facts; `content.md` how to add each kind of content; `recording.md` Matt's voice side; `art.md` (generated) the art brief; `qa-findings.md` the bug-hunt findings (known issues and Matt's calls). |
