@@ -18,7 +18,8 @@
  *   this, the green press that picked a hero would also pick an ally.
  *
  * Buttons are colours, never A/B: `pressed('green')`. Keyboard: arrows move,
- * Space/Enter green, Escape red, Tab yellow, Shift blue. Letters are left alone
+ * Space/Enter green, Escape red, Tab yellow, 3 blue (the digit row or the
+ * numpad; 1 and 2 are Dad's, `dadButtons.ts`). Letters are left alone
  * entirely, because the spelling game owns A–Z (see TextEntry). Dev keys are
  * F-keys only. Backquote is dad lock (`dadLock.ts`): while it is on, only the
  * directions report presses.
@@ -129,7 +130,8 @@ export class Controls {
         green: add(K.SPACE, K.ENTER),
         red: add(K.ESC),
         yellow: add(K.TAB),
-        blue: add(K.SHIFT),
+        // Not Shift: five Shift presses open Windows' Sticky Keys dialog (amendment 1579).
+        blue: add(K.THREE, K.NUMPAD_THREE),
         up: add(K.UP),
         down: add(K.DOWN),
         left: add(K.LEFT),

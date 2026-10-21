@@ -182,7 +182,7 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 - **A door she cannot use yet is not there at all.**
 - **Sprites move only by bob and squash/scale.**
 - **Keyboard:** A–Z belongs to spelling. Arrows move, Space/Enter green, Esc red, Tab
-  yellow, Shift blue. In free play (item 060) green jumps and blue / red / yellow cast
+  yellow, 3 blue (never Shift: five presses open Sticky Keys). In free play (item 060) green jumps and blue / red / yellow cast
   wherever they mean nothing else. **1 / 2 are Dad's no / yes** (`src/input/dadButtons.ts`), live even under dad
   lock, and only where a game asks him, with a small 1 ✗ / 2 ✓ cue in a corner. Dev keys
   are F-keys only: F2 skip step, F4 auto-answer (Dad's yes where he is asked), F9 parent page.

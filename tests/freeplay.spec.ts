@@ -97,8 +97,19 @@ test('hub: blue taps a shot, a held red fires a big one, green away from spots j
   const p0 = await play(page);
 
   await press(page, 'blue');
-  const p1 = await untilPlay(page, (p) => p.shots > p0.shots, 'blue fired');
-  expect(p1.big).toBe(p0.big);
+  const p0b = await untilPlay(page, (p) => p.shots > p0.shots, 'blue fired');
+  expect(p0b.big).toBe(p0.big);
+
+  // The real keys (amendment 1579): 3 is blue; Shift is nothing (five Shifts open Sticky Keys).
+  await page.keyboard.down('Digit3');
+  await page.waitForTimeout(50);
+  await page.keyboard.up('Digit3');
+  const p1 = await untilPlay(page, (p) => p.shots > p0b.shots, 'the 3 key fired blue');
+  await page.keyboard.down('Shift');
+  await page.waitForTimeout(50);
+  await page.keyboard.up('Shift');
+  await frames(page);
+  expect((await play(page)).shots, 'Shift casts nothing').toBe(p1.shots);
 
   // Hold red well past chargeMs (game time runs SPEED times fast), then let go.
   await input(page, 'hold', 'red');
