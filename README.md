@@ -383,9 +383,10 @@ comes back), the games (last episodes' weigh `VARIETY.gameWeight`) and the phoni
 (`VARIETY.words`) weigh `VARIETY.wordWeight` in every word draw, so last episode's words
 rarely come straight back; a missed word keeps its full weight. The bags (key words,
 moves, pads) still draw without replacement. Coverage weighting (vowels, first sounds)
-is unchanged. The cast and its variants are remembered when she presses on from the
-title, the rooms and games once the house plan is made after it; a fixed cast
-(`?cast=default`) or an override is not remembered. The fight style follows the villain
+is unchanged. The cast and its variants are remembered as she walks into the bedroom
+(from the title, or the last parked pick screen), the rooms and games once the house plan
+is made after that; a fixed cast (`?cast=default`), an override, a dev `?scene=` jump or
+games the URL forces (`?room=`, `?game=`, `?games=`) are not remembered. The fight style follows the villain
 (and chef Dada Jason's nudge), so it rotates with the villain.
 
 ## Tests

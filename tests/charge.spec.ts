@@ -12,6 +12,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { SLOW, boot, collectErrors, dad, expectNoErrors, playEpisode, press, state, until } from './harness';
+import { CHARGE_WORDS } from '../src/rules/charge';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/053_${name}.png` });
 
@@ -24,8 +25,8 @@ test('Charge the Spell: the runes charge by themselves, each sound said; one pre
   // Item 058: one word of 3-4 sound units, its runes its sounds in order.
   expect(c0.runes.length).toBeGreaterThanOrEqual(3);
   expect(c0.runes.length).toBeLessThanOrEqual(4);
-  // A fresh store: a word of continuous sounds (M S F A L N R V Z, the short vowels).
-  for (const r of c0.runes) expect('mesfalnrvziou').toContain(r);
+  // A fresh store: any charge word (item 067: every sound in play, no tiers).
+  expect(CHARGE_WORDS).toContain(c0.word);
   expect(s0.episode.house.plan!.find((p) => p.slot === 'a')!.kind).toBe('charge');
   expect(s0.episode.house.plan!.find((p) => p.slot === 'a')!.fetches).toEqual([c0.word]);
   // Rune 0 is said, then her beat to say it back; Dad is not asked and green is not needed.

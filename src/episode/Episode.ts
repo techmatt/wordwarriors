@@ -369,8 +369,8 @@ const remembered = { cast: false, plan: false };
 
 /**
  * Remember this episode's cast and story picks across episodes (item 067),
- * as she presses on from the title: the cast is drawn more often than
- * episodes are played (at boot, at the title). The villain as before (item
+ * as she walks into the bedroom: the cast is drawn more often than episodes
+ * are played (at boot, at the title, after the parked pick screens). The villain as before (item
  * 025); the ally, each dad's form she meets, the quest line, hub scene and
  * line variants.
  */
@@ -393,18 +393,25 @@ function rememberCast(): void {
 
 /**
  * Remember the house plan's side rooms and games (item 067), once per
- * episode: when she presses on from the title, or when the plan is made
- * after that (the title may draw it early, to prefetch the bedroom's art).
+ * episode, and only in an episode she entered from the title (`rememberCast`
+ * has run: a dev `?scene=` jump is not her rotation): as she walks into the
+ * bedroom, or when the plan is made after that (the title may draw it early,
+ * to prefetch the bedroom's art). A game the URL forced (`?room=`, `?game=`,
+ * `?games=`) is not remembered either.
  */
 function rememberPlan(): void {
   const plan = episode.house.plan;
-  if (remembered.plan || !plan || currentStep().kind === 'title') return;
+  if (remembered.plan || !plan || !remembered.cast) return;
   remembered.plan = true;
   if (!away()) for (const p of plan.slice(0, 2)) progress.remember('rooms', p.room, FETCH_ROOMS.length + 1);
+  if (urlGames) return;
   for (const p of plan) progress.remember('games', p.game, 3 * VARIETY.rotations);
   const phonics = plan.find((p) => PHONICS_GAMES.some((g) => g.id === p.game));
   if (phonics) progress.remember('phonics', phonics.game, 1);
 }
+
+/** Whether the URL picks the rooms' games (`?room=`, `?game=`, `?games=`; `roomGames`): then they are not her rotation. */
+let urlGames = false;
 
 /** The waker's wake line `key` (`up`, `good_<hero>`, `door`) in this episode's variant: `wake_<waker>_up_2`. */
 export function wakeKey(key: 'up' | 'good' | 'door', state: EpisodeState = episode): string {
@@ -564,6 +571,7 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
   const q = new URLSearchParams(typeof location === 'undefined' ? '' : location.search);
   const only = q.get('games') === 'sentence' ? SENTENCE_GAMES : undefined;
   const asked = MINIGAME_BY_ID[q.get('game') ?? ''];
+  urlGames = Boolean(only || asked || q.get('room') === 'charge' || q.get('room') === 'bridge' || q.get('games'));
   const phonics =
     q.get('room') === 'charge' ? CHARGE_GAME
       : q.get('room') === 'bridge' ? BRIDGE_GAME
@@ -711,11 +719,12 @@ export function backToHub(scene: Phaser.Scene, from: Slot): void {
 
 /** The current step is done; go to the next one. */
 export function advance(scene: Phaser.Scene): void {
-  // The cast is drawn more often than episodes are played (at boot, at the
-  // title): her villain (and since item 067 the rest of her rotations) counts
-  // as met only when she presses on from the title.
-  if (currentStep().kind === 'title') rememberCast();
   episode.stepIndex++;
+  // The cast is drawn more often than episodes are played (at boot, at the
+  // title, and again after the parked pick screens): her villain (and since
+  // item 067 the rest of her rotations) counts as met only as she walks into
+  // the bedroom from the title or the last pick, the cast she really plays.
+  if (currentStep().kind === 'bedroom') rememberCast();
   rememberPlan();
   if (episode.stepIndex >= steps().length) {
     // progress.episodeDone() ran as the victory scene opened (EndingScene).

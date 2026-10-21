@@ -1,6 +1,7 @@
 /**
  * The difficulty knob (item 067; DIFFICULTY in src/config.ts). Pure: no
- * Phaser, unit-tested (tests/unit/difficulty.test.ts).
+ * Phaser, unit-tested (tests/unit/variety.test.ts; through each ramp in the
+ * grab, bridge, charge, sentences and bank tests).
  *
  * Nothing steps up by itself. Each help ramp (the warm-up's, the Stretchy
  * Bridge's, Charge the Spell's) records her level as before, but the level a
