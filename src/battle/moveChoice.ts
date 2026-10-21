@@ -434,9 +434,10 @@ export class MoveChoice {
     if (walking || dadLock.locked) c.idle = 0;
     else if (c.open && !voiceBus.busy) c.idle += realDt;
     // Standing still: the rooms' stick hint beside her hero, gone when she walks (item 043, M5).
-    if (walking || !c.open) c.still = 0;
+    // Under dad lock the hint waits too, as in the rooms (item 080).
+    if (walking || !c.open || dadLock.locked) c.still = 0;
     else c.still += realDt;
-    if (walking) {
+    if (walking || dadLock.locked) {
       c.stickHint?.destroy();
       c.stickHint = null;
     } else if (c.still * 1000 > STICK_HINT_MS && !c.stickHint) {

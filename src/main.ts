@@ -27,6 +27,7 @@ import { artBank } from './art/ArtBank';
 import { installTestHooks } from './testHooks';
 import { installDadButtons } from './input/dadButtons';
 import { installDadLock } from './input/dadLock';
+import { getAudioContext } from './audio/context';
 
 
 /**
@@ -94,6 +95,16 @@ artBank.install(game);
 
 installDadLock();
 installDadButtons();
+// A hidden tab (item 080): Phaser sleeps its loop, so the voice, chimes and music
+// sleep with it; a story told by lines alone no longer plays on unseen.
+game.events.on(Phaser.Core.Events.HIDDEN, () => {
+  const c = getAudioContext();
+  if (c?.state === 'running') void c.suspend().catch(() => undefined);
+});
+game.events.on(Phaser.Core.Events.VISIBLE, () => {
+  const c = getAudioContext();
+  if (c?.state === 'suspended') void c.resume().catch(() => undefined);
+});
 // Tab is yellow, never the browser's focus move: in scenes with no Controls (Boot, Wait) it took
 // focus off the page and the keyboard went dead until a click (item 069).
 window.addEventListener('keydown', (e) => {

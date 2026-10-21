@@ -17,7 +17,7 @@
  * shows and flow-control awaits still resolve.
  */
 
-import { getAudioContext, unlockAudio } from './context';
+import { getAudioContext, unlockAudio, whenVisible } from './context';
 import type { HoldMode } from './holdSound';
 import { setMusicDuck } from './music';
 import { setSfxLevel } from './sfx';
@@ -221,6 +221,8 @@ class Bus {
       if (decoded === 'late') console.warn(`voice: ${id} not decoded after ${ENSURE_TIMEOUT_MS} ms; it plays without audio`);
       if (decoded === 'failed') console.warn(`voice: ${id} failed to decode; it plays without audio`);
     }
+    // A tab hidden as the line comes up (item 080): it starts once she is back.
+    if (typeof document !== 'undefined' && document.hidden) await whenVisible();
     // hush() or a newer line may have taken the voice while this one decoded;
     // then this line is dropped rather than talking over (and orphaning) it.
     if (this.current !== claim) return false;
@@ -256,12 +258,28 @@ class Bus {
       this.current = { u, playback, done };
       for (const fn of this.listeners) fn(u);
       if (playback) void playback.ended.then(() => this.current?.u === u && this.finish());
-      // Always a backstop: whatever happens to the audio, the line ends.
-      setTimeout(() => {
-        if (this.current?.u !== u) return;
-        playback?.stop();
-        this.finish();
-      }, (duration + (playback ? 1.5 : 0)) * 1000);
+      // Always a backstop: whatever happens to the audio, the line ends. A context
+      // suspended under it (a hidden tab, item 080) holds the clip, so the backstop
+      // waits for it and then for what is left of the clip.
+      let held = false;
+      const backstop = (ms: number) =>
+        setTimeout(() => {
+          if (this.current?.u !== u) return;
+          const state = getAudioContext()?.state;
+          if (playback && state === 'suspended') {
+            held = true;
+            backstop(500);
+            return;
+          }
+          if (playback && held && state === 'running' && playback.time < playback.length) {
+            held = false;
+            backstop((playback.length - playback.time + 1.5) * 1000);
+            return;
+          }
+          playback?.stop();
+          this.finish();
+        }, ms);
+      backstop((duration + (playback ? 1.5 : 0)) * 1000);
     });
   }
 

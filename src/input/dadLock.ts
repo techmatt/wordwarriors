@@ -37,7 +37,11 @@ export function installDadLock(): void {
     },
     true,
   );
-  window.addEventListener('resize', place);
+  // Phaser refits the canvas on its next frame, not on the event (item 080): place again after it.
+  window.addEventListener('resize', () => {
+    place();
+    requestAnimationFrame(() => requestAnimationFrame(place));
+  });
 }
 
 function showBadge(): void {

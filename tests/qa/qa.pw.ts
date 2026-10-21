@@ -501,9 +501,10 @@ function probes(page: Page, sc: Scenario, rec: Recorder, reloadAt: Point | null,
       if (changed.length) rec.add([{ kind: 'parent-store', severity: 'look', scene: before.scene, detail: `${p}: the grown-ups page and back changed ${changed.join(', ')}`, key: `parentstore:${p}` }], rec.lastShot);
     }
     if (reloadAt === p) {
+      await rec.capture(`reload_${p}`);
+      // Read right before the reload: a live room (Charge's wait for Dad) records on its own meanwhile.
       const before = await state(page);
       const was = await store(page);
-      await rec.capture(`reload_${p}`);
       await page.reload();
       await page.waitForFunction(() => Boolean((window as unknown as { __ww?: unknown }).__ww));
       await page.mouse.click(20, 20);

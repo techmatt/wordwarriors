@@ -32,3 +32,23 @@ export function unlockAudio(): void {
   const c = getAudioContext();
   if (c && c.state === 'suspended') void c.resume().catch(() => undefined);
 }
+
+/**
+ * Resolves once the tab is visible again and the context has had its chance to
+ * resume (item 080): a line that comes up while the tab is hidden waits for her,
+ * rather than running silent on the estimated clock. Never waits on a context
+ * that cannot resume yet (no gesture so far): a second at most.
+ */
+export function whenVisible(): Promise<void> {
+  if (typeof document === 'undefined' || !document.hidden) return Promise.resolve();
+  return new Promise((resolve) => {
+    const check = () => {
+      if (document.hidden) return;
+      document.removeEventListener('visibilitychange', check);
+      const c = getAudioContext();
+      const resumed = c?.state === 'suspended' ? c.resume().catch(() => undefined) : Promise.resolve();
+      void Promise.race([resumed, new Promise((r) => setTimeout(r, 1000))]).then(() => resolve());
+    };
+    document.addEventListener('visibilitychange', check);
+  });
+}

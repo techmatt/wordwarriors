@@ -156,7 +156,8 @@ export class Controls {
       kb.on('keydown', (e: KeyboardEvent) => {
         unlockAudio();
         if (/^F\d+$/.test(e.key)) {
-          this.devKeys.add(e.key);
+          // A held F-key is one press (item 080): its auto-repeat erased everything on a long F8.
+          if (!e.repeat) this.devKeys.add(e.key);
           if (e.key !== 'F11' && e.key !== 'F12' && e.key !== 'F5') e.preventDefault();
         }
         if (e.key === 'Tab') e.preventDefault();
@@ -220,7 +221,8 @@ export class Controls {
     if (queued) this.edges.add(queued);
     // Dad lock: she can walk, but no press does anything. Held buttons still
     // seed `prev`, so one held through the unlock does not fire either.
-    if (dadLock.locked) for (const b of this.edges) if (!DIRECTIONS.has(b)) this.edges.delete(b);
+    // The grown-ups page is Dad's own (item 080): its green, red and Esc work under the lock.
+    if (dadLock.locked && this.scene.scene.key !== 'Parent') for (const b of this.edges) if (!DIRECTIONS.has(b)) this.edges.delete(b);
     this.seeded = true;
     this.prev = now;
     this.down = now;

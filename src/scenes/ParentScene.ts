@@ -3,7 +3,7 @@
  * frame, from the ProgressStore. Mixed case is fine here: it is not for her. Reached by F9 anywhere, or holding LB+RB on the title.
  *
  * Each item shows: tries ever, first-try-right rate over her recent tries, and
- * today's tries. Colour is the shakiness the game uses to pick targets: red
+ * tries since the page opened (a reload starts it again, item 080). Colour is the shakiness the game uses to pick targets: red
  * items come up more often. Red / Esc / F9 goes back to the scene it came
  * from, restarted with the data it was given (`{ back, data }`; the older
  * `{ back, step }` means data `{ step }`), so a side room comes back as the
@@ -66,7 +66,7 @@ export class ParentScene extends Phaser.Scene {
     const snap = progress.snapshot();
     // Every text here wraps or shrinks to its column (item 020): nothing runs off the page.
     fitText(this.add.text(30, 18, `Grown-ups: Julia's progress  ·  episodes finished: ${snap.episodes}  ·  difficulty ${difficulty()}${difficulty() === 1 ? ' (base: help stays at its start)' : ''}`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '26px', color: '#222' }), GAME_WIDTH - 60, 34);
-    fitText(this.add.text(30, 54, `tries · first-try right (recent) · today.  Red = shaky (comes up more often), green = solid. Green / Space: ${this.page ? 'back to page 1' : 'every word (page 2)'}. Red button / Esc / F9: back. F8 twice: erase. \` / ~ (below Esc), anywhere: dad lock.`, {
+    fitText(this.add.text(30, 54, `tries · first-try right (recent) · since the page opened.  Red = shaky (comes up more often), green = solid. Green / Space: ${this.page ? 'back to page 1' : 'every word (page 2)'}. Red button / Esc / F9: back. F8 twice: erase. \` / ~ (below Esc), anywhere: dad lock.`, {
       fontFamily: 'Segoe UI, sans-serif',
       fontSize: '15px',
       color: '#555',
