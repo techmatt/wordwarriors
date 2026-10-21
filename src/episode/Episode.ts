@@ -20,38 +20,53 @@
  * The four v0.1 prep games (Sound → Letter, Blend Path, Word → Picture, Spell
  * the Spell) are parked: their scenes and `prep`/`spell` step kinds stay so
  * `?scene=sound` etc. still open them, but no episode includes them.
+ *
+ * This module is the state and the flow. The cast lookups live in
+ * `./cast.ts`, the episode's draws (house plan, warm-up, gift, moves,
+ * counter, fight style, ending) in `./plans.ts`; both are re-exported here,
+ * so importers only ever name this module. They import `episode` back (a
+ * cycle): safe while neither reads an Episode.ts binding at module load.
  */
 
 import Phaser from 'phaser';
 
-import { charArt } from '../../content/art/assets';
-import { formFor } from '../../content/battle/forms';
-import { CHARACTER_BY_ID, ROSTER, personOf } from '../../content/battle/roster';
-import type { CharacterSpec, CounterItem, Taunt } from '../../content/battle/types';
-import { COUNTER_ROOM, FETCH_ROOMS, HOME, PLACE_BY_ID, SIDE_ROOM_BY_ID } from '../../content/house/house';
-import { BANK } from '../../content/phonics/bank';
-import { questFor, questSetup, type Line } from '../../content/house/quests';
-import { hubStory, storyTexts, type HubStory, type HubStoryIds } from '../../content/house/scenes';
-import { group, wakeCastKey } from '../../content/voice/ids';
-import { NARRATOR_LINES, wakeTemplate, wakeVariant } from '../../content/voice/script';
+import { personOf } from '../../content/battle/roster';
+import { HOME, PLACE_BY_ID } from '../../content/house/house';
+import { questFor } from '../../content/house/quests';
+import { group } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
-import { ADULT_HEIGHT, EPISODE_DEFAULTS, FORCE_PHONICS_ROOM, VARIETY } from '../config';
-import { DADS, drawCast, isGrownUp, wakerOf, type CastOverrides } from '../rules/cast';
-import { leastRecent } from '../rules/recent';
-import { fightSpec, pickFight } from '../rules/fights';
-import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
-import { endingPeople, pickEnding } from '../rules/endings';
-import { ENDING_BY_ID } from '../../content/house/endings';
-import { withStems, type Rand } from '../rules/bank';
-import { episodePlans, wordsOf, type RoomPlan } from '../rules/sentences';
-import { BRIDGE_GAME, CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
-import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
-import { hallObjects, pickGrab } from '../rules/grab';
-import { BEDROOM_TAUNTS, DEFAULT_LINES, DEFAULT_STORY, drawLines, drawStory, variantKeys, type LineVariants, type Story } from '../rules/story';
+import { EPISODE_DEFAULTS } from '../config';
+import { DADS, drawCast, type CastOverrides } from '../rules/cast';
+import { endingPeople } from '../rules/endings';
+import type { Rand } from '../rules/bank';
+import type { RoomPlan } from '../rules/sentences';
+import type { MovePlan } from '../rules/moves';
+import { DEFAULT_LINES, DEFAULT_STORY, drawLines, drawStory, variantKeys, type LineVariants, type Story } from '../rules/story';
 import { progress } from '../state/progress';
-import { pickWeighted } from '../state/ProgressStore';
 import { voiceBank } from '../voice/VoiceBank';
 import { startScene } from '../art/gate';
+import { away, helper, narrator } from './cast';
+import { planFor, rememberPlan } from './plans';
+
+export {
+  away,
+  bedroomTaunt,
+  castArt,
+  castFace,
+  castId,
+  castScale,
+  helper,
+  hubScene,
+  narrator,
+  questSetupLine,
+  randomVillain,
+  reformedOf,
+  storyWords,
+  villainSpec,
+  wakeKey,
+  waker,
+} from './cast';
+export { counterArt, counterWord, drawEnding, fightStyle, giftWord, grabPlan, housePlan, movePlan, namedCounter, planFor } from './plans';
 
 export type PrepGame = 'sound' | 'blend' | 'picture';
 
@@ -224,105 +239,13 @@ export function currentStep(): Step {
   return steps()[episode.stepIndex] ?? { kind: 'title' };
 }
 
-/** The dad who wakes her (src/rules/cast.ts `wakerOf`), in his form. */
-export function waker(state: EpisodeState = episode): string {
-  return wakerOf(state);
-}
-
-/**
- * The helper (gives the gift word, fills `{helper}` in sentences, takes her on
- * the quest): the ally, or with no ally the dad who woke her. A roster id, so
- * a dad's form, whose abilities may style the gift word's move.
- */
-export function helper(state: EpisodeState = episode): string {
-  return state.ally ?? waker(state);
-}
-
-/**
- * Who gives instructions: the helper's person (narrator lines are voiced per
- * person: lifter Dada Matt narrates as `dada_matt`).
- */
-export function narrator(state: EpisodeState = episode): string {
-  return personOf(helper(state));
-}
-
-/**
- * The roster id `id` plays in this episode: a person's form when they are in
- * the cast (`dada_matt` → `dada_matt_cyber` when Dada Matt is the cyberdecker
- * today), else `id`. The voice speaks as the person; this is who to draw.
- */
-export function castId(id: string, state: EpisodeState = episode): string {
-  const person = personOf(id);
-  const inCast = [state.ally, state.villain, state.primary, state.secondary, state.hero].find((c) => c && personOf(c) === person);
-  return inCast ?? id;
-}
-
-/**
- * The image `id` appears as in this episode, once she is awake: its outfit
- * (content/battle/forms.ts: Julia the chef when Dada Jason is the ally), else
- * the roster image of the form it plays (`castId`). The title, the pick
- * screens and Julia asleep in bed use `charArt` directly: the default images.
- */
-export function castArt(id: string, evil = false, state: EpisodeState = episode): string {
-  const c = castId(id, state);
-  if (evil) return charArt(c, true);
-  return formFor(c, state)?.art ?? charArt(c, false);
-}
-
-/**
- * How tall `id` stands beside the hero outside battles (item 028): the size
- * of the form it plays over hers, kept between 0.7 and 1.3 so a dragon still
- * fits a room. A dad is grown-up height beside her, `ADULT_HEIGHT` (item
- * 034); Scar and Ellie a little shorter.
- */
-export function castScale(id: string, state: EpisodeState = episode): number {
-  const c = CHARACTER_BY_ID[castId(id, state)];
-  const hero = CHARACTER_BY_ID[castId(state.hero, state)];
-  if (!c || !hero) return 1;
-  if (isGrownUp(c.id) && !isGrownUp(hero.id)) return ADULT_HEIGHT;
-  return Phaser.Math.Clamp(c.good.size / hero.good.size, 0.7, 1.3);
-}
-
-/** The name-free face card for `id` in this episode (names as sight words): its outfit's, else its form's `face_<id>`. */
-export function castFace(id: string, state: EpisodeState = episode): string {
-  const c = castId(id, state);
-  return formFor(c, state)?.face ?? `face_${c}`;
-}
-
-/** The quest's setup line this episode (its id and words), said in the bedroom in the helper's voice: theirs, or the narrator's "right here at home". */
-function questSetupOf(state: EpisodeState = episode): { id: string; line: Line } {
-  return questSetup(helper(state), narrator(state), state.story.quest);
-}
-
-/** The quest's setup line id, for the bedroom. */
-export function questSetupLine(state: EpisodeState = episode): string {
-  return questSetupOf(state).id;
-}
-
-/** The hub scene this episode (item 037, content/house/scenes.ts): the helper's lines that give her the gift word. */
-export function hubScene(state: EpisodeState = episode): { story: HubStory; ids: HubStoryIds } {
-  return hubStory(helper(state), narrator(state), state.story.scene);
-}
-
-/**
- * Every word the helper's story says before the side rooms: the quest line
- * (the bedroom) and the hub scene. None may be a key word, a pad or the gift.
- */
-export function storyWords(state: EpisodeState = episode): string[] {
-  const q = questSetupOf(state).line;
-  return [q.text, q.say ?? '', ...storyTexts(hubScene(state).story)].flatMap((s) => wordsOf(s));
-}
-
-/** True when the episode trains somewhere other than the house. */
-export function away(state: EpisodeState = episode): boolean {
-  return state.place !== HOME && Boolean(PLACE_BY_ID[state.place]);
-}
-
 let castOverrides: CastOverrides = {};
-let castRand: Rand = Math.random;
+/** The cast's draws (`?seed=`); the fight style draws with it too (`./plans.ts`). */
+export let castRand: Rand = Math.random;
 let castDefault = !EPISODE_DEFAULTS.randomCast;
 let placeOverride: string | null = null;
-let fightOverride: string | null = null;
+/** `?fight=<id>`, read by the fight style's draw (`./plans.ts`). */
+export let fightOverride: string | null = null;
 
 /**
  * Fix parts of every episode's cast this session (`?ally=`, `?villain=`,
@@ -381,8 +304,8 @@ export function castEpisode(picked: CastOverrides = {}): void {
 /** What the last cast draw chose freely (item 067), so only that is remembered: an override or the default cast is not her rotation. */
 let drawnFreely: { ally: boolean; forms: string[]; variants: boolean } = { ally: false, forms: [], variants: false };
 
-/** Whether this episode's cast and its house plan have been remembered (item 067): once each per episode. */
-const remembered = { cast: false, plan: false };
+/** Whether this episode's cast and its house plan have been remembered (item 067): once each per episode (the plan's in `./plans.ts`). */
+export const remembered = { cast: false, plan: false };
 
 /**
  * Remember this episode's cast and story picks across episodes (item 067),
@@ -408,276 +331,11 @@ function rememberCast(): void {
   for (const key of Object.keys(episode.lines) as (keyof LineVariants)[]) progress.remember(k[key], String(episode.lines[key]));
 }
 
-/**
- * Remember the house plan's side rooms and games (item 067), once per
- * episode, and only in an episode she entered from the title (`rememberCast`
- * has run: a dev `?scene=` jump is not her rotation): as she walks into the
- * bedroom, or when the plan is made after that (the title may draw it early,
- * to prefetch the bedroom's art). A game the URL forced (`?room=`, `?game=`,
- * `?games=`) is not remembered either.
- */
-function rememberPlan(): void {
-  const plan = episode.house.plan;
-  if (remembered.plan || !plan || !remembered.cast) return;
-  remembered.plan = true;
-  if (!away()) for (const p of plan.slice(0, 2)) progress.remember('rooms', p.room, FETCH_ROOMS.length + 1);
-  if (urlGames) return;
-  for (const p of plan) progress.remember('games', p.game, 3 * VARIETY.rotations);
-  const phonics = plan.find((p) => PHONICS_GAMES.some((g) => g.id === p.game));
-  if (phonics) progress.remember('phonics', phonics.game, 1);
-}
-
-/** Whether the URL picks the rooms' games (`?room=`, `?game=`, `?games=`; `roomGames`): then they are not her rotation. */
-let urlGames = false;
-
-/** The waker's wake line `key` (`up`, `good_<hero>`, `door`) in this episode's variant: `wake_<waker>_up_2`. */
-export function wakeKey(key: 'up' | 'good' | 'door', state: EpisodeState = episode): string {
-  const n = state.lines[key];
-  return key === 'good' ? wakeVariant(wakeCastKey('good', personOf(state.hero)), n) : wakeVariant(key, n);
-}
-
-/** The villain's far-off bedroom taunt this episode: one of its first `BEDROOM_TAUNTS` (item 040). */
-export function bedroomTaunt(state: EpisodeState = episode): Taunt | undefined {
-  const t = CHARACTER_BY_ID[state.villain]?.evil.taunts ?? [];
-  return t[Math.min(state.lines.taunt, BEDROOM_TAUNTS, t.length) - 1];
-}
-
-/** The villain's sorry after battle 2 and its line in the victory scene, this episode's variants (item 040). */
-export function reformedOf(which: 'sorry' | 'ending', state: EpisodeState = episode): Taunt | undefined {
-  const r = CHARACTER_BY_ID[state.villain]?.reformed[which] ?? [];
-  return r[Math.min(state.lines[which], r.length) - 1];
-}
-
-/**
- * The showdown's fight style (item 031, src/rules/fights.ts): drawn on first
- * need, so both battles are the same contest; `?fight=<id>` fixes it.
- */
-export function fightStyle(): FightSpec {
-  if (!episode.fight) episode.fight = fightOverride && FIGHT_BY_ID[fightOverride] ? fightOverride : pickFight(episode, castRand);
-  return fightSpec(episode.fight);
-}
-
-export function villainSpec(): CharacterSpec {
-  return CHARACTER_BY_ID[episode.villain]!;
-}
-
 export function resetEpisode(): void {
   castEpisode();
   Object.assign(episode, freshProgress());
   remembered.cast = false;
   remembered.plan = false;
-}
-
-/** Pick a random villain (any form) that is not the hero's or ally's own person: the pick screen's surprise. */
-export function randomVillain(rand = Math.random): string {
-  const pool = ROSTER.filter((c) => personOf(c.id) !== personOf(episode.hero) && (!episode.ally || personOf(c.id) !== personOf(episode.ally)));
-  return pool[Math.floor(rand() * pool.length)]!.id;
-}
-
-/**
- * The house plan: two fetch rooms with a sentence each, and the attic with
- * the villain's counter sentence. Made once per episode, on first need.
- */
-export function housePlan(): RoomPlan[] {
-  if (!episode.house.plan) {
-    // The gift word first: the hub says and shows it before the side rooms,
-    // so no room may make it a key word; nor the attic's counter word.
-    const gift = giftWord();
-    const fill = { villain: episode.villain, helper: helper(), hero: episode.hero };
-    // The rooms: the quest place's own, or two of the house's.
-    const place = away() ? PLACE_BY_ID[episode.place]! : null;
-    const rooms = place
-      ? ([place.rooms[0]!.id, place.rooms[1]!.id] as [string, string])
-      : // The rooms she has gone longest without (item 067: the one left out last episode comes back).
-        (leastRecent(FETCH_ROOMS, progress.recentOf('rooms'), 2, Math.random) as [string, string]);
-    const counterRoom = place ? place.secret.id : COUNTER_ROOM;
-    // The three key words come out of her word bag here; the counter keeps
-    // clear of battle 1's move pads, and none is a word of the helper's quest
-    // line or hub scene (item 037), both said before any room.
-    const battle1Moves = battle1Words(movePlan());
-    // The warm-up's word is said in the entry hall (item 033): drawn first, kept out too.
-    // The doors' signs show their rooms' glyphs: a bank word drawn the same way is
-    // shown before she reads it (item 039: the 🛁 door led to GO GET THE TUB).
-    // The journey map's stops too (🛏️ 🏠, the place's glyph): it shows before the attic.
-    const signs = new Set([...rooms, counterRoom].map((r) => SIDE_ROOM_BY_ID[r]?.glyph).filter(Boolean));
-    for (const s of journeyStops()) signs.add(s.icon);
-    const signWords = BANK.filter((w) => w.glyph && signs.has(w.glyph)).map((w) => w.word);
-    const saidBefore = [...storyWords(), ...bedroomWords(), ...signWords, ...(episode.grab ? [episode.grab.word] : [grabWord()])];
-    const games = roomGames();
-    episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, gift, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore, ...games });
-    rememberPlan();
-  }
-  return episode.house.plan;
-}
-
-/**
- * The warm-up's word (item 033), drawn on first need: before the house plan,
- * which then keeps it out of the rooms, the counter and the word machine. If
- * the plan was made first (a dev jump), the word keeps clear of its words.
- */
-function grabWord(): string {
-  if (!episode.grab) {
-    const gift = giftWord();
-    // Not a word on either battle's move pads (planned up front) either: she reads those.
-    // Nor the villain's named counter word (HAT for Evil Tiamat): that would keep her named counter out this episode.
-    const named = CHARACTER_BY_ID[episode.villain]?.counter.word;
-    // Nor a word said before the battle (the bedroom, the hall's own lines, the quest
-    // line and hub scene, the fight style), stemmed like every other draw (item 047).
-    const avoid = withStems([gift, ...moveWords(), ...saidBeforeBattle(), ...(named ? [named] : []), ...(episode.house.plan ? readingWords() : [])]);
-    // `level` is read when the hall opens, `misses` counted there: kept here so a trip to the parent page loses neither.
-    episode.grab = { word: pickGrab(progress, avoid), objects: [], level: null, misses: 0 };
-  }
-  return episode.grab.word;
-}
-
-/** Every word on both battles' move pads. */
-function moveWords(): string[] {
-  const m = movePlan();
-  return [...m.part1, ...m.part2].flatMap((c) => c.words);
-}
-
-/** Every word the episode has her read after the hall: the rooms' (machine words included), the counter, the move pads, the gift word. */
-function readingWords(): string[] {
-  const plan = episode.house.plan ?? [];
-  return [...new Set([...(episode.gift ? [episode.gift] : []), ...plan.flatMap((p) => [p.key, ...p.fetches]), ...moveWords()])];
-}
-
-/**
- * The warm-up (item 033): its word and the hall's pictures. The word comes
- * first; the house plan is made next (keeping the word out of it); then the
- * other pictures, clear of every word she will read this episode.
- */
-export function grabPlan(): { word: string; objects: string[] } {
-  const word = grabWord();
-  const grab = episode.grab!;
-  if (!grab.objects.length) {
-    housePlan();
-    grab.objects = hallObjects(progress, word, readingWords().filter((w) => w !== word));
-  }
-  return { word, objects: grab.objects };
-}
-
-/**
- * The rooms' games, as the URL asks (tests, and a look at one game):
- * `?game=word_machine` puts that game behind door a (the rest drawn as
- * usual), `?games=sentence` draws from the sentence game only (the tests'
- * default, so a test that plays sentence rooms gets them). Otherwise nothing:
- * the whole pool.
- *
- * The beta's phonics room (item 053): with FORCE_PHONICS_ROOM on, a phonics
- * game (PHONICS_GAMES, drawn by weight) is behind door a of every episode,
- * unless the URL picks its own games (`?games=sentence`, `?game=`: the tests'
- * rooms stay theirs; `?games=all` is the real draw, so it is forced there).
- * `?room=charge` forces Charge the Spell and `?room=bridge` the Stretchy
- * Bridge (item 054) whatever else is asked: behind door a, or door b when
- * `?game=` holds door a.
- */
-function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[] } {
-  const q = new URLSearchParams(typeof location === 'undefined' ? '' : location.search);
-  const only = q.get('games') === 'sentence' ? SENTENCE_GAMES : undefined;
-  const asked = MINIGAME_BY_ID[q.get('game') ?? ''];
-  // `?games=all` is the real draw (and the drawn-episode tests'): only a narrowed or forced pick is the URL's.
-  urlGames = Boolean(only || asked || q.get('room') === 'charge' || q.get('room') === 'bridge');
-  const phonics =
-    q.get('room') === 'charge' ? CHARGE_GAME
-      : q.get('room') === 'bridge' ? BRIDGE_GAME
-      : FORCE_PHONICS_ROOM && !only && !asked ? MINIGAME_BY_ID[pickWeighted(PHONICS_GAMES.map((g) => g.id), (id) => MINIGAME_BY_ID[id]!.weight * (progress.recentOf('phonics').includes(id) ? VARIETY.gameWeight : 1), 1)[0]!]
-        : undefined;
-  const forced = [asked, phonics].filter((g, i, all): g is Minigame => Boolean(g) && all.indexOf(g) === i);
-  if (!forced.length) return only ? { pool: only } : {};
-  const rest = drawGames(progress, Math.random, (only ?? MINIGAMES).filter((g) => !forced.includes(g)));
-  return { games: [forced[0]!, forced[1] ?? rest[1], rest[2]] };
-}
-
-/**
- * Words said before the battle, which no pad, not the gift word and not the
- * warm-up's word (`grabWord`, item 047) may be: the
- * wake-up threat (the bedroom), the quest's setup line and the hub scene
- * (`storyWords`: the variants drawn with the cast). The battle keeps its own
- * banners and lines clear of pad words as it goes (BattleScene `textGivesAway`).
- */
-function saidBeforeBattle(): string[] {
-  return withStems([...bedroomWords(), ...HALL_LINE_WORDS, ...storyWords(), ...fightWords()]);
-}
-
-/**
- * What the fight style says and shows around the pads (item 039: the
- * cook-off's "the yummiest dish wins!" came before a YUM pad): its banners,
- * its "too strong" call and its start and retreat lines. Drawing the style
- * here is drawing it a little sooner; it is the cast's last draw either way.
- */
-function fightWords(): string[] {
-  const f = fightStyle();
-  const lines = (['start', 'start2', 'retreat'] as const).flatMap((b) => [f.lines[b]?.text, f.lines[b]?.say]);
-  return [...f.banner, f.tooStrong, ...lines].flatMap((t) => wordsOf(t));
-}
-
-/** What the bedroom says about the villain: its wake-up threat and the taunt it shouts (BedroomScene). */
-function bedroomWords(): string[] {
-  const v = CHARACTER_BY_ID[episode.villain];
-  const taunt = bedroomTaunt();
-  // The wake-up's own lines too, whichever variants were drawn (item 040).
-  const wake = (['up', 'good', 'door'] as const).map((k) => wakeTemplate(wakeVariant(k, episode.lines[k])));
-  return [...wake.flatMap((t) => [...wordsOf(t?.text), ...wordsOf(t?.say)]), ...wordsOf(v?.house.threat), ...wordsOf(v?.house.threatSay), ...wordsOf(taunt?.text), ...wordsOf(taunt?.say)];
-}
-
-/** The entry hall's own lines ("let's grab the..."): GRAB is a bank word, so it is never a pad or the gift. */
-const HALL_LINE_WORDS = NARRATOR_LINES.filter((t) => t.key.startsWith('grab_')).flatMap((t) => [...wordsOf(t.text), ...wordsOf(t.say)]);
-
-/**
- * The hub's gift word (item 037): an action word from the bank, drawn on
- * first need (the hub, the move plan, the house plan, whichever asks first).
- */
-export function giftWord(): string {
-  episode.gift ??= drawGift(progress, { helper: helper(), avoid: saidBeforeBattle() });
-  return episode.gift;
-}
-
-/** The battles' move choices: made once per episode, on first need (the house plan needs battle 1's). */
-export function movePlan(): MovePlan {
-  if (!episode.moves) {
-    const gift = giftWord();
-    const team = [episode.hero, ...(episode.ally ? [episode.ally] : [])];
-    episode.moves = planMoves(progress, { hero: episode.hero, team, helper: helper(), gift, avoid: saidBeforeBattle() });
-  }
-  return episode.moves;
-}
-
-export function planFor(slot: Slot): RoomPlan {
-  return housePlan().find((p) => p.slot === slot)!;
-}
-
-/** The word the attic's counter sentence ends in: whatever beats the villain this episode. */
-export function counterWord(): string {
-  return planFor('counter').key;
-}
-
-/**
- * The villain's named counter item when this episode's counter word is its
- * own word (Evil Tiamat and the HAT: the Magic Hat), else null and the
- * counter is just the thing in the picture.
- */
-export function namedCounter(): CounterItem | null {
-  const c = villainSpec().counter;
-  return c.word === counterWord() ? c : null;
-}
-
-/** The counter's art: the named item's card, or the word's own picture. */
-export function counterArt(): string {
-  const named = namedCounter();
-  return named ? `item_${named.id}` : `pic_${counterWord()}`;
-}
-
-/**
- * The victory scene (item 027), drawn once per episode: by the second battle
- * (item 065: so its art loads during the fight) or as it opens. `?ending=` forces one.
- */
-export function drawEnding(): string {
-  if (!episode.ending) {
-    const forced = typeof location === 'undefined' ? null : new URLSearchParams(location.search).get('ending');
-    episode.ending = forced && ENDING_BY_ID[forced] ? forced : pickEnding(episode, progress.recentOf('ending'));
-  }
-  return episode.ending;
 }
 
 /** Voice groups the current episode will need from here on. */
