@@ -14,12 +14,14 @@ export default defineConfig({
   testDir: './tests',
   testMatch: '*.spec.ts',
   outputDir: './test-results',
-  // One worker, measured in Seraphina's Secret (2026-08-15): two workers made
-  // every test 2.3–2.4x slower, because headless Chromium draws in software and
-  // the second browser halves the frame rate of both. Do not re-litigate
-  // without a profile.
+  // Two workers since item 061 (2026-10-20), on the GPU: the fast lane 87 s against
+  // 130 s on one, each test 20-30% slower but two at a time. Three made a Charge
+  // round's game time stretch past its limit (28 s to the read against 17 s) and
+  // saved nothing (83 s). Software GL (WW_GPU=0) falls back to one: there two
+  // workers made every test 2.3-2.4x slower (Seraphina's Secret, 2026-08-15).
+  // `--workers=1` for a run that times anything by eye.
   fullyParallel: false,
-  workers: 1,
+  workers: process.env.WW_GPU === '0' ? 1 : 2,
   // A trace is bought on the retry only: tracing every run cost 44% of wall clock there.
   retries: 1,
   reporter: [['list']],

@@ -52,7 +52,16 @@ without a new measurement.
 
 ## Browser and tests
 
-- Playwright **workers: 1** (Seraphina measured 2 workers as 2.3–2.4× slower per test,
+- Playwright **workers: 2** on the GPU since item 061 (2026-10-20), 1 on software GL. Fast
+  lane (20 tests, files spread over workers, not `--fully-parallel`): 1 worker 130 s, 2
+  workers 87 s, 3 workers 83 s with a Charge round stretched to 28 s of game time to the
+  read (17 s otherwise; the start-up burst of three boots at once). Slow lane on 2: 58 tests
+  in 16.7 minutes, green; the whole real-time episode (6.3 minutes) sets its floor. Per test
+  2 workers cost 20-30% (up to 2× for a test sharing the machine with an episode). The boot
+  floor is about 2.8 s a test to a quiet hub (page and modules 0.65 s, then 459 PNGs and the
+  core voice); fulfilling `/art/` and `/voice-gen/` from an in-memory `page.route` cache made
+  it slower (4.0 s), so every test still fetches through vite.
+- Before item 061: workers 1 (Seraphina measured 2 workers as 2.3–2.4× slower per test,
   and frame-rate-sensitive assertions broke). Re-measured here 2026-10-18 on the 9 smoke
   tests at clock speed 3 (`--fully-parallel`): 1 worker 2m24s, 2 workers 2m02s, 3 workers
   1m48s; each test ran 1.5–2× slower, so it bought 15–25% at a flake risk, and stayed off.

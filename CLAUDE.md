@@ -34,7 +34,7 @@ tests play): hero Julia, helper Ellie, villain Evil Tiamat. **Parked** (code kep
 of the episode, reachable by `?scene=`): Sound → Letter, Blend Path, Word → Picture,
 Spell the Spell, the alarm and the camp retreat.
 
-**Stack:** TypeScript + Phaser ^3.90 (not 4) + Vite, npm. Playwright (one worker) for
+**Stack:** TypeScript + Phaser ^3.90 (not 4) + Vite, npm. Playwright (two workers) for
 browser tests, `node:test` via tsx for pure rules. Dev port **5174** (`src/port.ts`);
 Playwright serves its own (README, *Tests*). The sibling game
 `C:\Code\seraphinas\seraphinas-secret` is read-only reference.
@@ -79,10 +79,10 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `npm run dev` | Serve at http://localhost:5174 |
 | `npm run build` / `npm run preview` | Typecheck, then static `dist/` / serve it |
 | `npm run typecheck` | `src`, `tests`, `content`, `tools` |
-| `npm test` | Fast lane, after every change (~1 min): unit tests, then the browser tests not tagged `@slow` |
-| `npm run test:unit` | The unit tests alone (~3 s) |
-| `npm run test:slow` | The slow lane alone (`@slow`, the real-time episode, the soak) |
-| `npm run test:all` | Both lanes (~18 min). **Not by default:** before a commit run the fast lane plus the specs covering what changed (`npx playwright test <spec>`); the full suite only for a change touching every scene |
+| `npm test` | Fast lane, after every change (~1½ min): unit tests, then the 20 browser tests not tagged `@slow`; stops itself at 6 min. A new browser test over ~10 s gets `SLOW` (README, *Tests*) |
+| `npm run test:unit` | The unit tests alone (~5 s) |
+| `npm run test:slow` | The slow lane alone (~17 min: `@slow`, the real-time episode, the soak) |
+| `npm run test:all` | Both lanes, the full run (~19 min). **Not by default:** before a commit run the fast lane plus the specs covering what changed (`npx playwright test <spec>`); the full suite only for a change touching every scene |
 | `npm run voice:lines` | Regenerate `content/voice/lines.json` from roster + script + phonics |
 | `npm run voice:build` | Synthesise new/changed lines (`--force` all, `--prune` drop unused). Needs `uv` and network |
 | `npm run voice:status` | Recorded / stale / still edge-tts, letter sounds first |

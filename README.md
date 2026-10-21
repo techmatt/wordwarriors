@@ -342,22 +342,33 @@ battle items; that is the default), `nojourney` (skip the map).
 
 ## Tests
 
-Two lanes (re-measured in item 036, 2026-10-19):
+Two lanes (re-measured in item 061, 2026-10-20):
 
-- **Fast lane, after every change: `npm test`** (about a minute). The unit tests (3 s), then
-  the browser tests not tagged `@slow`, each under 10 s: title and the grown-ups page, a
-  solid sentence frame, dad lock, a key held through a scene change, Spell the Spell, the
-  word machine opening, the cast and fight-style overrides and the cast's own fight
-  style, never last episode's victory scene, and the three text-fit checks.
-  `npm run test:unit` runs the unit tests alone.
-- **Everything: `npm run test:all`** (about 18 minutes). The fast lane plus
-  the slow lane, which `npm run test:slow` runs alone: every test tagged `@slow`, the one
-  whole episode at real time, and two drawn-cast episodes back to back. Not run by default
-  (Matt, 2026-10-20): before a commit, the fast lane plus the browser specs that cover what
-  changed; the full suite only when clearly needed, such as a change touching every scene.
+- **Fast lane, after every change: `npm test`** (about 1½ minutes: the unit tests 5 s, then 20
+  browser tests in 87 s on two workers, most 3-7 s each, none over 12 s on one worker;
+  130 s with `--workers=1`). The browser tests not tagged
+  `@slow`: one of each newer room (the bridge at level 3, a Charge round, free play's
+  shots and jump, the word machine opening), the cover check on Smaug's counter banner, the
+  two layout checks, title and the grown-ups page, a solid sentence frame, dad lock, a key
+  held through a scene change, Spell the Spell, the cast and fight-style overrides, never
+  last episode's victory scene, and the three text-fit checks. It stops itself at 6
+  minutes (`--global-timeout`), so a hang fails inside Claude Code's 10-minute background
+  cap instead of being killed by it. `npm run test:unit` runs the unit tests alone (5 s).
+- **Everything: `npm run test:all`** (about 19 minutes; 31 before item 061). The fast lane
+  plus the slow lane, which `npm run test:slow` runs alone (about 17 minutes, 58 tests on two
+  workers): every test tagged `@slow`, the one whole episode at real time (6 minutes, the
+  lane's floor: the other worker plays everything else meanwhile), the whole drawn episodes
+  (1.5-1.9 minutes each), the soak (3 minutes). Not run by default (Matt, 2026-10-20): before a commit, the fast lane
+  plus the browser specs that cover what changed (`npx playwright test <spec>`, both
+  lanes of it); the full suite only when clearly needed, such as a change touching every scene.
 
 A new browser test that takes more than about 10 s gets `SLOW` (`{ tag: '@slow' }`, from
-`tests/harness.ts`) as its options; `--grep @slow` matches the tag, not the title. Before adding
+`tests/harness.ts`) as its options; `--grep @slow` matches the tag, not the title. Item 061
+found the fast lane at 7.8 minutes because 19 tests over 10 s (most of `cover`, `freeplay`,
+`bridge` and `charge`) had come in untagged; keep one cheap test of a new feature in the fast
+lane and tag the rest. A test that fails only on some draws is not flaky: the bridge's
+level-1 test failed whenever it drew EGG (it expected `letter_gg_sound`; a doubled letter
+sounds as its single letter, `soundOf`) and passed on the retry's other draw. Before adding
 a slow test, look for a walk that already goes there: item 036 took the full run from 45
 minutes back down by folding new checks into walks that were already played (a drawn
 cast's bedroom checks into the warm-up's seed sweep, the random-cast episodes into the
@@ -397,8 +408,14 @@ the fast lane at real time.
 The browser draws with the GPU (Playwright's full `chromium` channel, `--use-angle=d3d11`;
 `playwright.config.ts`): battles run at ~56 fps instead of headless software GL's 11-18,
 and a fight-style test takes 53 s instead of 78 s. `WW_GPU=0` goes back to software GL (for
-a machine without a usable GPU, or to rule the GPU out when something looks wrong). One
-worker: three workers with `--fully-parallel` made the fast lane slower (89 s against 82 s).
+a machine without a usable GPU, or to rule the GPU out when something looks wrong). Two
+workers on the GPU, one on software GL (item 061, `playwright.config.ts`): two take the fast
+lane from 130 s to 87 s and the slow lane to 17 minutes (one worker: 23 minutes before item
+061 moved 19 tests into it, so about 27 now, not measured), each test 20-30% slower
+(up to 2× beside the real-time episode) but two at a time; three saved nothing more (83 s)
+and stretched a Charge round's game time past its limit. Tests are spread by file, so two
+tests of one spec never run at once. A run that times something by eye (a Charge round's
+logged length) wants `--workers=1`.
 
 The suite starts its own server on port 5184 (`TEST_PORT` in `src/port.ts`), never the dev
 port 5174, so a test run in a worktree cannot attach to the main checkout's dev server.
