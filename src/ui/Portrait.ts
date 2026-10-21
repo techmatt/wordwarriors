@@ -38,13 +38,13 @@ export function speakerOf(u: Pick<Utterance, 'speaker'>): Speaker | null {
 }
 
 /** The speaker's name as printed under the portrait, upper case like every text. */
-export function speakerName(s: Speaker): string {
+function speakerName(s: Speaker): string {
   const c = CHARACTER_BY_ID[s.id]!;
   return (s.evil ? c.evil : c.good).displayName.toUpperCase();
 }
 
 /** The speaker's frame colour: their own palette, so each character's card looks like theirs. */
-export function speakerColour(s: Speaker): number {
+function speakerColour(s: Speaker): number {
   // The form they play today: lifter Dada Matt's red, not the builder's orange.
   const c = CHARACTER_BY_ID[castId(s.id)] ?? CHARACTER_BY_ID[s.id]!;
   return (s.evil ? c.evil : c.good).palette[0];
@@ -60,7 +60,7 @@ export function sameSpeaker(a: Speaker | null, b: Speaker | null): boolean {
  * their face card; evil ones (and anyone without a card) the top of their
  * full-body image, cropped square.
  */
-export function faceImage(scene: Phaser.Scene, s: Speaker, size: number): Phaser.GameObjects.Image | null {
+function faceImage(scene: Phaser.Scene, s: Speaker, size: number): Phaser.GameObjects.Image | null {
   const card = s.evil ? null : castFace(s.id);
   if (card && scene.textures.exists(card)) {
     const img = scene.add.image(0, 0, card);

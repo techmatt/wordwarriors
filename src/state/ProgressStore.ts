@@ -15,7 +15,7 @@
 import { VARIETY } from '../config';
 
 export const STORE_KEY = 'wordwarriors.progress';
-export const STORE_VERSION = 1;
+const STORE_VERSION = 1;
 
 export interface Stat {
   seen: number;

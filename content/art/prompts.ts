@@ -16,7 +16,7 @@ import { FIGHTS, fightPropArt } from '../battle/fights.js';
 import { ENDINGS, endingPropArt } from '../house/endings.js';
 import { ART_ASSETS, type ArtAsset } from './assets.js';
 
-export const STYLE =
+const STYLE =
   "Bright, bold children's game art for a 4-year-old: friendly cartoon style, thick clean dark outlines, flat cel shading, saturated cheerful colors, simple readable shapes, storybook warmth. No text, letters or numbers anywhere in the image.";
 
 export const SPRITE_STYLE = `${STYLE} Single subject centered, full body, on a flat pure #00FF00 green background (sprites only).`;

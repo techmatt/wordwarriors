@@ -146,7 +146,7 @@ const SCENE_FOR: Record<Step['kind'], string> = {
   spell: 'Spelling',
 };
 
-export function prepScene(game: PrepGame): string {
+function prepScene(game: PrepGame): string {
   return game === 'sound' ? 'SoundToLetter' : game === 'blend' ? 'BlendPath' : 'WordToPicture';
 }
 
@@ -290,7 +290,7 @@ export function castFace(id: string, state: EpisodeState = episode): string {
 }
 
 /** The quest's setup line this episode (its id and words), said in the bedroom in the helper's voice: theirs, or the narrator's "right here at home". */
-export function questSetupOf(state: EpisodeState = episode): { id: string; line: Line } {
+function questSetupOf(state: EpisodeState = episode): { id: string; line: Line } {
   return questSetup(helper(state), narrator(state), state.story.quest);
 }
 

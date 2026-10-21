@@ -180,13 +180,13 @@ export interface Sentence {
 }
 
 /** The character a frame's name slot is filled with, or null for a frame with no name. */
-export function frameName(frame: Frame, fill: Fill): { slot: NameSlot; id: string } | null {
+function frameName(frame: Frame, fill: Fill): { slot: NameSlot; id: string } | null {
   const slot = slotOf(frame);
   return slot ? { slot, id: fill[slot] } : null;
 }
 
 /** The prefix line id: `sent_<frame>` or `sent_<frame>_<character>`. */
-export function prefixLineId(frameId: string, name: string | null): string {
+function prefixLineId(frameId: string, name: string | null): string {
   return sentenceLine(frameId, name);
 }
 
@@ -195,7 +195,7 @@ export function prefixLineId(frameId: string, name: string | null): string {
  * 038). The villain is still drawn evil; EVIL only made a long sentence longer
  * (JORMUNGANDR RUNS FROM THE FAN, not EVIL JORMUNGANDR ...).
  */
-export function nameFor(_slot: NameSlot, id: string): { show: string; say: string } {
+function nameFor(_slot: NameSlot, id: string): { show: string; say: string } {
   const f = CHARACTER_BY_ID[id]!.good;
   return { show: f.displayName, say: f.sayName ?? f.displayName };
 }

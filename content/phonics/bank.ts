@@ -213,9 +213,9 @@ const ENTRIES: BankEntry[] = [
 ];
 
 /** The digraphs that are one sound unit (item 056: NG, and QU, whose sound is Q's "kw"). */
-export const DIGRAPHS = ['sh', 'ch', 'th', 'ck', 'ng', 'qu'] as const;
+const DIGRAPHS = ['sh', 'ch', 'th', 'ck', 'ng', 'qu'] as const;
 /** Doubled letters that are one sound (item 056): EGG is E GG, BELL is B E LL; the sound is the single letter's. Not a digraph: BELL stays level 1. */
-export const DOUBLED = ['ff', 'll', 'ss', 'zz', 'gg'] as const;
+const DOUBLED = ['ff', 'll', 'ss', 'zz', 'gg'] as const;
 const VOWELS = 'aeiou';
 
 /** A word's sound units: SHIP is SH I P, DUCK is D U CK, FROG is F R O G, QUEST is QU E S T, BELL is B E LL. */

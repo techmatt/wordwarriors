@@ -198,7 +198,7 @@ export function flash(scene: Phaser.Scene, color = 0xffffff, ms = 140): void {
 }
 
 /** The least time between two full-screen flashes (ms). */
-export const FLASH_GAP_MS = 450;
+const FLASH_GAP_MS = 450;
 let lastFlash = -Infinity;
 
 /** Time scale shared by a scene's simulation, tweens and particles. */

@@ -24,7 +24,7 @@ import { GAME_HEIGHT, GAME_WIDTH } from './config';
 import { installProbe } from './qa/probe';
 import { hookState, walkObjects } from './hookState';
 
-export function hooksEnabled(): boolean {
+function hooksEnabled(): boolean {
   return import.meta.env.DEV || new URLSearchParams(location.search).has('hooks');
 }
 

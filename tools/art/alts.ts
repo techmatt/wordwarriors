@@ -38,9 +38,9 @@ import { NOTES, PICK_NOTES, refFor } from '../../content/art/prompts.js';
 import { exists, isMain } from '../shared.js';
 import { ORIGINALS, OUT, codexPrompt, cut, describeUsage, gamePng, isBackground, openPage, refCrop, runCodex } from './generate.js';
 
-export const ALTS = path.join(ORIGINALS, 'alts');
+const ALTS =path.join(ORIGINALS, 'alts');
 /** What the game had before an id's first pick, for `art:pick -- <id> 0`. */
-export const RESTORE = path.join(ORIGINALS, 'restore');
+const RESTORE =path.join(ORIGINALS, 'restore');
 
 const altFile = (id: string, k: number) => path.join(ALTS, `${id}-${k}.png`);
 const sidecarFile = (id: string, k: number) => path.join(ALTS, `${id}-${k}.json`);
@@ -71,7 +71,7 @@ export interface Sidecar extends Brief {
   prompt: string;
 }
 
-export async function sidecar(id: string, k: number): Promise<Sidecar | undefined> {
+async function sidecar(id: string, k: number): Promise<Sidecar | undefined> {
   const f = sidecarFile(id, k);
   return (await exists(f)) ? (JSON.parse(await readFile(f, 'utf8')) as Sidecar) : undefined;
 }
@@ -209,7 +209,7 @@ function briefNote(r: Row): string | undefined {
   return `Drawn from briefs, not the game's prompt (art:alts --brief; promoting one writes its brief into the game): ${[...by].map(([b, ks]) => `${ks.join(', ')} ${b}`).join('; ')}.`;
 }
 
-export async function altSheet(rows: Row[], page: Page, file: string): Promise<void> {
+async function altSheet(rows: Row[], page: Page, file: string): Promise<void> {
   const ids = rows.map((r) => r.id);
   const tiles = async (r: Row) => Promise.all(r.tiles.map(async (t) => ({ label: t.key, brief: t.brief ?? '', src: `data:image/png;base64,${(await readFile(t.file)).toString('base64')}` })));
   const sheetRows = await Promise.all(rows.map(async (r) => ({ id: r.id, tiles: await tiles(r) })));

@@ -8,7 +8,7 @@ import Phaser from 'phaser';
 import { PAD_COLOR, type PadColorName } from '../config';
 import { TEX } from '../fx/textures';
 
-export function makeGlow(scene: Phaser.Scene, x: number, y: number, radius: number, color: number, alpha = 1): Phaser.GameObjects.Image {
+function makeGlow(scene: Phaser.Scene, x: number, y: number, radius: number, color: number, alpha = 1): Phaser.GameObjects.Image {
   return scene.add
     .image(x, y, TEX.glow)
     .setScale(radius / 64)

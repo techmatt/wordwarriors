@@ -58,7 +58,7 @@ export type FightBeat = 'start' | 'start2' | 'retreat' | 'finish';
 export const FIGHT_BEATS: FightBeat[] = ['start', 'start2', 'retreat', 'finish'];
 
 /** The brawl's own lines for each beat (script.ts NARRATOR_LINES keys). */
-export const BRAWL_LINE: Record<FightBeat, string> = { start: 'battle_start', start2: 'battle2_start', retreat: 'retreat_1', finish: 'finish' };
+const BRAWL_LINE: Record<FightBeat, string> = { start: 'battle_start', start2: 'battle2_start', retreat: 'retreat_1', finish: 'finish' };
 
 export const FIGHTS: FightSpec[] = [
   {

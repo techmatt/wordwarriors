@@ -12,7 +12,7 @@
 import type { TimedWord } from './types.js';
 
 /** Tokens are whitespace-separated; that keeps `words.join(' ') === text`. */
-export function tokenize(text: string): string[] {
+function tokenize(text: string): string[] {
   return text.trim().split(/\s+/).filter(Boolean);
 }
 

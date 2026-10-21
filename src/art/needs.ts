@@ -131,7 +131,7 @@ function endingSet(draw: boolean): string[] {
 }
 
 /** The parked v0.1 games draw their rounds as they open, from every picture: they wait for the lot. */
-const PARKED = new Set(['Prep', 'SoundToLetter', 'BlendPath', 'WordToPicture', 'Spelling', 'Alarm', 'Retreat']);
+const PARKED = new Set(['SoundToLetter', 'BlendPath', 'WordToPicture', 'Spelling', 'Alarm', 'Retreat']);
 
 /**
  * The art scene `key` draws, for the episode as it is. `draw`: make the plans

@@ -80,7 +80,7 @@ function inFamily(fam: Family, pool: string[]): string[] {
 }
 
 /** The tiles for building `word`: its own onset and silly ones, shuffled. */
-export function tilesFor(word: string, n: number, rand: Rand): MachineTile[] {
+function tilesFor(word: string, n: number, rand: Rand): MachineTile[] {
   const fam = FAMILY_BY_RIME[rimeOf(word)]!;
   const silly = pickWeighted(fam.silly.map((s) => s.letter), () => 1, Math.max(1, n - 1), rand);
   const tiles: MachineTile[] = [

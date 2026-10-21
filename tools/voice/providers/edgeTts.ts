@@ -20,7 +20,7 @@ import { fileURLToPath } from 'node:url';
 import type { Synthesis, TimedWord, VoiceConfig, VoiceProvider } from '../types.js';
 
 /** The Python package version known to pass Microsoft's handshake. */
-export const EDGE_TTS_PIN = 'edge-tts==7.3.1';
+const EDGE_TTS_PIN ='edge-tts==7.3.1';
 
 const WORKERS = 4;
 const ATTEMPTS = 3;

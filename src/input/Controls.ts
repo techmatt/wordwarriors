@@ -74,7 +74,7 @@ const PAD_INDEX: Record<Button, number> = {
   right: 15,
 };
 
-export const STICK_DEADZONE = 0.25;
+const STICK_DEADZONE = 0.25;
 
 /** The test-only input source. Shared by every Controls instance. */
 export const virtualPad = {
@@ -98,7 +98,7 @@ export const virtualPad = {
 };
 
 /** Rescale past the deadzone so output ramps from 0 at the edge to 1 at full tilt. */
-export function applyDeadzone(x: number, y: number, dz = STICK_DEADZONE): { x: number; y: number } {
+function applyDeadzone(x: number, y: number, dz = STICK_DEADZONE): { x: number; y: number } {
   const len = Math.hypot(x, y);
   if (len <= dz) return { x: 0, y: 0 };
   const scaled = Math.min(1, (len - dz) / (1 - dz));

@@ -21,7 +21,7 @@ export function setDadLock(on: boolean): void {
   else badge?.remove();
 }
 
-export function toggleDadLock(): void {
+function toggleDadLock(): void {
   setDadLock(!dadLock.locked);
 }
 
