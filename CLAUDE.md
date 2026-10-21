@@ -8,20 +8,20 @@ letters on a keyboard. She loves exploring rooms and stories that start with her
 woken up in bed. Reading fetches things from the rooms of a small house, and the reward
 is a flashy mock battle between characters she likes, which those things power up.
 
-One **episode** (step list in `src/episode/Episode.ts`; walked through in
+One **episode** (step list in `src/episode/state.ts`; walked through in
 `docs/episode.md`): title → **bedroom** (a dad wakes her with the good news, the
 helper, and the bad news, the villain; the house takes on the villain's mood; no
 reading) → **entry hall warm-up** (`src/scenes/EntryScene.ts`: grab one of nine pictures
 from a letter-sound clue; it is her first battle item) → **house part 1** (the hub:
 the helper's story scene ends in the **gift word**, her first move word; two side-room
-doors, a minigame each from a weighted pool (the **sentence game**, the word machine),
-fetching battle items; for the beta one door is always a phonics game, at random
-**Charge the Spell** (one short word: the helper says each rune's sound and she says it
-back, no presses, then she reads the word and Dad judges with keys 1 / 2; the word is a battle item and its runes
-fire in the battle) or the **Stretchy Bridge** (she slides over a word's letter stones,
-each sound held, and blends the whole word to pick its picture; `FORCE_PHONICS_ROOM`);
-the front door appears once both
-are done) → **battle part 1** (the villain's ultimate wins: "too strong, retreat") →
+doors, each a minigame from a weighted pool (the **sentence game**, the word machine)
+fetching battle items; the front door appears once both are done). For the beta one
+door is always a phonics game (`FORCE_PHONICS_ROOM`), at random **Charge the Spell**
+(one short word: the helper says each rune's sound and she says it back, no presses;
+then she reads the word and Dad judges with keys 1 / 2; the word is a battle item and
+its runes fire in the battle) or the **Stretchy Bridge** (she slides over a word's
+letter stones, each sound held, and blends the whole word to pick its picture). Then
+→ **battle part 1** (the villain's ultimate wins: "too strong, retreat") →
 **house part 2** (a secret attic door: the counter sentence fetches the counter-item) →
 **battle part 2** (the counter beats the ultimate) → **victory scene**
 (`content/house/endings.ts`) → victory with a reading recap. A journey map shows before
@@ -36,7 +36,7 @@ Spell the Spell, the alarm and the camp retreat.
 
 **Stack:** TypeScript + Phaser ^3.90 (not 4) + Vite, npm. Playwright (two workers) for
 browser tests, `node:test` via tsx for pure rules. Dev port **5174** (`src/port.ts`);
-Playwright serves its own (README, *Tests*). The sibling game
+Playwright serves its own (README, *Ports and servers*). The sibling game
 `C:\Code\seraphinas\seraphinas-secret` is read-only reference.
 
 ## Where things live
@@ -45,14 +45,14 @@ Playwright serves its own (README, *Tests*). The sibling game
 
 | Path | What |
 | --- | --- |
-| `src/` | Game source. `main.ts` boots Phaser; `config.ts` sizes, depth bands, pad colours and every tuning knob named below; `hookState.ts` what scenes publish for the tests (and `walkObjects`). |
+| `src/` | Game source. `main.ts` boots Phaser; `config.ts` sizes, depth bands, pad colours and every tuning knob named below; `hookState.ts` what scenes publish for the tests (and `walkObjects`), `testHooks.ts` installs `window.__ww`; `realTime.ts` wall-clock timeouts (network, decode) the tests' fast clocks do not stretch. |
 | `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom), Journey, Ending (the victory scene), Victory, Parent, and Wait (shown while a scene's art loads); parked: Pick, Alarm, Retreat and `minigames/` (the v0.1 games, Spell the Spell among them). "Minigame" means only a pool entry (`src/rules/minigames.ts`). |
-| `src/battle/` | The battle simulation: `BattleScene` (the director scripts `part1`/`part2`), `Fighter`, `abilities`, `movement`, `moveChoice` (`MoveChoice`: the frozen-fight word pick; `padPlace` where its pads go), `hud` (`BattleHud`: names, bars, fetched things, runes); `stages/` stages each fight style. |
-| `src/episode/` | `Episode.ts` the episode's flow (scenes call `advance()`; nothing else decides flow), re-exporting `state.ts` (`episode`, the step list), `draws.ts` (the cast draw and what is remembered), `cast.ts` (who plays whom) and `plans.ts` (the episode's other draws). Phaser-free but `Episode.ts`. |
+| `src/battle/` | The battle simulation: `BattleScene` (the director scripts `part1`/`part2`), `Fighter`, `abilities`, `movement`, `moveChoice` (`MoveChoice`: the frozen-fight word pick), `padPlace` (where its pads go), `hud` (`BattleHud`: names, bars, fetched things, runes); `stages/` stages each fight style. |
+| `src/episode/` | `Episode.ts` the episode's flow (scenes call `advance()`; nothing else decides flow), re-exporting `state.ts` (`episode`, the step list), `draws.ts` (the cast draw and what is remembered), `cast.ts` (who plays whom) and `plans.ts` (the episode's other draws). All but `Episode.ts` are Phaser-free. |
 | `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only), `dadLock`, `dadButtons` (keys 1 / 2, Dad's no / yes). |
 | `src/audio/` | `context`, `sfx` and `music` (synthesised), `VoiceBus` (the one voice arbiter), `holdSound` (letter sounds cut to hold or play once). |
 | `src/voice/VoiceBank.ts` | Reads `public/voice-gen/manifest.json` only, decodes by group. |
-| `src/art/` | Art on demand (item 065): `ArtBank` (load, the `art: not ready` safety net), `needs` (`artFor`: each scene's art), `gate` (`startScene`: every scene starts through it, behind the Wait scene when its art lags). |
+| `src/art/` | Art on demand: `ArtBank` (load, the `art: not ready` safety net), `needs` (`artFor`: each scene's art), `gate` (`startScene`: every scene starts through it, behind the Wait scene when its art lags). |
 | `src/state/` | `ProgressStore` (localStorage, versioned, per sound and per word). |
 | `src/rules/` | Phaser-free, unit-tested: the cast, word bank, moves and gift word, warm-up, sentences, word machine, minigame pool, story and victory-scene draws; `difficulty` (the `DIFFICULTY` knob over every help ramp) and `recent` (rotations across episodes). |
 | `src/world/` | `RoomScene` (walk-to-answer rooms), `SideRoom` (the base class every side room's game extends, the parked v0.1 games too: piece meter, no-fail `right()` / `wrong()`), `Player` (her character as the cursor), `houseMood`. |
@@ -61,7 +61,7 @@ Playwright serves its own (README, *Tests*). The sibling game
 | `content/battle/roster.ts` | **Every character**, good and evil: style, abilities, taunts, ultimate, counter-item, the villain's house mood. Every roster character is also a villain. The dads' forms are roster characters with `person`. |
 | `content/battle/fights.ts`, `forms.ts` | Fight styles (race, rope pull, beam clash, cook-off, brawl); outfits (a character's images for a scenario). |
 | `content/house/` | `house.ts` bedrooms, hub, side rooms, entry hall, quest places (`PLACES`); `quests.ts` each ally's quest; `scenes.ts` the hub's story scenes; `endings.ts` the victory scenes. |
-| `content/phonics/` | `bank.ts` **the word bank** (every word she reads: level, role `thing` / `action` / `both`); `effects.ts` each word's battle effect; `letters.ts` letter sounds; `sentences.ts` frames; `families.ts` the word machine's rimes; `words.ts`, `spelling.ts`. |
+| `content/phonics/` | `bank.ts` **the word bank** (every word she reads: level, role `thing` / `action` / `both`); `effects.ts` each word's battle effect; `letters.ts` letter sounds; `sentences.ts` frames; `families.ts` the word machine's rimes; `runes.ts` Charge the Spell's runes; `words.ts`, `spelling.ts`. |
 | `content/voice/` | `script.ts` (narrator templates), `ids.ts` (every line id and narrator key comes from its builders, in game and composer alike: never spell `find_move_${w}` by hand), `voices.json`, `lines.json` (generated), `clips/` (recordings that override edge-tts). |
 | `content/art/` | `assets.ts` every art id and size; `prompts.ts` the real-art prompts. |
 | `public/art/` | Generated, committed. Do not hand-edit. |
@@ -69,7 +69,7 @@ Playwright serves its own (README, *Tests*). The sibling game
 | `tools/voice/`, `tools/art/` | `compose.ts` (lines.json from data), `build.ts` (audio + manifest), `import.ts` + `split.ts` (a recorder zip into clips); `placeholders.ts`, `generate.ts`, `alts.ts`. |
 | `tools/shared.ts`, `tools/phonics/audit.ts` | `isMain`, `exists`, `readLines`, shared by the voice and art tools; `bank:audit` (the word bank's coverage table). |
 | `tools/recorder/` | `phonics-recorder.html`, the page Matt records the letter sounds on (README, *Matt's recordings*); its hosted copy is synced by the planner, never edited here. |
-| `tests/` | Playwright specs + `harness.ts`; `unit/` for node:test; `shots/` UI screenshots (README, *Tests*); `qa/` the bug-hunt checker. |
+| `tests/` | Playwright specs + `harness.ts`; `unit/` for node:test; `shots/` UI screenshots and `perf/` boot timings (README, *Not tests*); `qa/` the bug-hunt checker. |
 | `docs/` | `systems.md` entry points; `episode.md` an episode step by step (the cast draw, dad lock, the phonics rooms, dev keys and `?scene=` URLs, difficulty and variety); `engineering.md` measured facts; `content.md` how to add each kind of content; `recording.md` Matt's voice side; `art.md` (generated) the art brief; `qa-findings.md` the bug-hunt findings (known issues and Matt's calls). |
 
 ## Commands
@@ -84,7 +84,7 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `npm test` | Fast lane, after every change (~2 min): unit tests, then the browser tests not tagged `@slow`; stops itself at 6 min. A new browser test over ~10 s gets `SLOW` (README, *Tests*) |
 | `npm run test:unit` | The unit tests alone (~5 s) |
 | `npm run test:slow` | The slow lane alone (~17 min: `@slow`, the real-time episode, the soak) |
-| `npm run test:all` | Both lanes, the full run (~19 min). **Not by default:** before a commit run the fast lane plus the specs covering what changed (`npx playwright test <spec>`); the full suite only for a change touching every scene |
+| `npm run test:all` | Both lanes (~19 min). **Not by default:** before a commit, the fast lane plus the specs covering what changed (`npx playwright test <spec>`); the full suite only for a change touching every scene |
 | `npm run voice:lines` | Regenerate `content/voice/lines.json` from roster + script + phonics |
 | `npm run voice:build` | Synthesise new/changed lines (`--force` all, `--prune` drop unused). Needs `uv` and network |
 | `npm run voice:status` | Recorded / stale / still edge-tts, letter sounds first |
@@ -100,9 +100,9 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `QA_TAG=<tag> npm run qa [-- -g <scenario>]` | The bug-hunt checker (README, *The bug-hunt checker*) |
 | `npm run test:pairs` | Every ally × villain pair (~1 h; `WW_PAIRS=<part>` for some). Otherwise `pairs.spec.ts` shows one skipped test |
 
-The timed Charge round (`charge.spec.ts`, the snappy round) asserts its limits only on one
-worker: `npx playwright test tests/charge.spec.ts -g snappy --workers=1` (README, *Speed,
-GPU and workers*); the two-worker lanes log its time.
+The timed Charge round asserts its limits only on one worker:
+`npx playwright test tests/charge.spec.ts -g snappy --workers=1` (README, *Speed, GPU and
+workers*).
 
 Never edit `src/` or `content/` while a browser run is going: its server hot-reloads every
 open page ("Execution context was destroyed"). For a long run beside edits, point it at a
@@ -114,10 +114,8 @@ commands" below).
 
 A **candidate round** (`art:alts`) changes nothing tracked, so it may run as a
 **readonly** item; a new look is a `--brief` file in `scratch/`, not an edit to
-`content/art/prompts.ts`. **Promotion** (`art:pick`) is a normal item: commit the PNG,
-and for a brief's candidate write the brief it prints into the roster `look` (a
-character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
-*Candidates*).
+`content/art/prompts.ts`. **Promotion** (`art:pick`) is a normal item ("for X I pick n"
+below; README, *Candidates*).
 
 ## Standing contract
 
@@ -138,10 +136,9 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 
 ## Standing design rules (law)
 
-- **No automatic difficulty** (item 067). Every help ramp (warm-up, bridge, a solid
-  frame's skipped listening pass, sound-alike distractors; charge's is kept but unused
-  since item 059) records her level but
-  gives its most helpful start until Matt raises `DIFFICULTY`. Words are chosen per game
+- **No automatic difficulty.** Every help ramp (warm-up, bridge, a solid frame's skipped
+  listening pass, sound-alike distractors; Charge's is kept but unused) records her level
+  but gives its most helpful start until Matt raises `DIFFICULTY`. Words are chosen per game
   by length in sound units, never by level: decoding games short, recognition roles any.
   Every rotation (cast, forms, rooms, games, variants, scenes, words) remembers across
   episodes through the store's `recent` (`src/rules/recent.ts`).
@@ -180,10 +177,10 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
   `lines.json` keep their case (changing them re-synthesises audio). The grown-ups page
   may stay mixed case.
 - **Reading targets never print their answer:** word pictures carry no text; names as
-  sight words use the name-free `face_<id>` cards. The entry hall's warm-up too, since
-  item 059: its pictures carry no words (with them she matched letters instead of
-  sounding out); its word is spoken, so it is never read later that episode, and the
-  hall shows none of the words she will read.
+  sight words use the name-free `face_<id>` cards. The entry hall's warm-up too: its
+  pictures carry no words (with them she matched letters instead of sounding out); its
+  word is spoken, so it is never read later that episode, and the hall shows none of the
+  words she will read.
 - **Every instruction speaks with the spoken word highlighted** (the caption ribbon; in the
   sentence game the banner highlights and the caption stays out of the way).
 - **Narrator** = the episode's ally, or with no ally the dad who woke her, in his own
@@ -196,8 +193,7 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
   recorded apart from reading (`spelling` in ProgressStore).
 - **Selection is walking, everywhere.** Her character is the cursor; every choice (room
   objects, doors, the battle's move words) is a place she walks to and presses green
-  on, never a coloured button. In the move choice her hero walks onto the word's pad
-  while the fight is frozen. The only button prompt is a green dot over the thing in
+  on, never a coloured button (in the move choice, the word's pad). The only button prompt is a green dot over the thing in
   reach. Yellow always = say it again / hint; green is ignored while an instruction plays.
 - **The house is data:** rooms in `content/house/house.ts`; the villain's mood over the
   house (tint, decals, ambient fx, the wake-up threat) is `house` on the villain in the
@@ -205,12 +201,13 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 - **A door she cannot use yet is not there at all.**
 - **Sprites move only by bob and squash/scale.**
 - **Keyboard:** A–Z belongs to spelling. Arrows move, Space/Enter green, Esc red, Tab
-  yellow, 3 blue (never Shift: five presses open Sticky Keys). In free play (item 060) green jumps and blue / red / yellow cast
-  wherever they mean nothing else. **1 / 2 are Dad's no / yes** (`src/input/dadButtons.ts`), live even under dad
-  lock, and only where a game asks him, with a small 1 ✗ / 2 ✓ cue in a corner. Dev keys
-  are F-keys only: F2 skip step, F4 auto-answer (Dad's yes where he is asked), F9 parent page.
-  Backquote / tilde is **dad lock**: she walks, no press does anything, timed re-prompts
-  wait; again to unlock.
+  yellow, 3 blue (never Shift: five presses open Sticky Keys). In free play green jumps
+  and blue / red / yellow cast wherever they mean nothing else. **1 / 2 are Dad's no /
+  yes** (`src/input/dadButtons.ts`): live even under dad lock, only where a game asks him,
+  with a small 1 ✗ / 2 ✓ cue in a corner. Dev keys are F-keys only: F2 skip step, F4
+  auto-answer (Dad's yes where he is asked), F9 parent page. Backquote / tilde toggles
+  **dad lock**: she walks, no press does anything, timed re-prompts wait
+  (`docs/episode.md`, *Dad lock*).
 - Elsa, Anna and Jasmine are named in data and lines but described and drawn as
   original archetypes, not lookalikes.
 
@@ -228,7 +225,7 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 | "add a hub scene / quest line" | `HUB_SCENES` in `content/house/scenes.ts`; a quest's `lines` in `content/house/quests.ts` (`docs/content.md`, "A hub scene", "A quest"), the three commands |
 | "X casts spells" / "X's gift should sound like a spell" | `CASTERS` in `content/house/scenes.ts`; `spell` on `BANK` entries marks spell-sounding words |
 | "make it harder / easier" / "let the help fade" / "back to base" | `DIFFICULTY` in `src/config.ts` (1 base: every help ramp held at its start; 2; 3 all the way); shown on the grown-ups page |
-| "longer / shorter words in X" (warm-up, bridge, word machine, charge) | `GRAB.maxUnits`, `BRIDGE.maxUnits`, `WORD_MACHINE.maxUnits`, `CHARGE.units` in `src/config.ts` (sound units: SH is one). Every word is in play otherwise (item 067: no level gate) |
+| "longer / shorter words in X" (warm-up, bridge, word machine, charge) | `GRAB.maxUnits`, `BRIDGE.maxUnits`, `WORD_MACHINE.maxUnits`, `CHARGE.units` in `src/config.ts` (sound units: SH is one). No level gate otherwise |
 | "she sees X too often" / "repeats too soon" | `VARIETY` in `src/config.ts` (`rotations`, `words`, `wordWeight`, `gameWeight`; `docs/episode.md`, *Variety across episodes*) |
 | "add a bedroom / side room / villain mood" | `content/house/house.ts` or the villain's `house` in the roster, the three commands |
 | "turn the pick screens back on" / "always the same cast" | `EPISODE_DEFAULTS` in `src/config.ts` (`pickScreens`, `randomCast: false`) |
