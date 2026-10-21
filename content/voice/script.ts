@@ -35,7 +35,7 @@ export const CORE_LINES: Template[] = [
   { key: 'pick_hero', text: 'Who will be our hero? Walk to one and press green!', say: 'Who will be our hero? Walk to one, and press green!' },
   { key: 'pick_ally', text: 'Who will help? Pick a friend, or nobody!', say: 'Who will help? Pick a friend, or nobody.' },
   { key: 'pick_villain', text: 'Who is the bad guy? Pick one, or the surprise!', say: 'Who is the bad guy? Pick one, or the surprise.' },
-  { key: 'surprise', text: 'A surprise villain!' },
+  { key: 'surprise', text: "It's a surprise villain!" },
   { key: 'nobody', text: 'No helper? I will help you then!', say: 'No helper? I will help you, then!' },
 ];
 
@@ -66,9 +66,9 @@ export const NARRATOR_LINES: Template[] = [
   // Item 059: said once she has picked the right move word and it fires,
   // supercharged ("Super power!" read oddly to Matt).
   { key: 'move_great', text: 'Great reading! Your word made it extra strong!', say: 'Great reading, your word made it extra strong!' },
-  { key: 'use_gem', text: 'Power gem, shine!' },
+  { key: 'use_gem', text: "Let's make the power gem shine!" },
   { key: 'use_ammo', text: 'Fire the star ammo!' },
-  { key: 'use_helper', text: 'Go, helper friend!' },
+  { key: 'use_helper', text: "It's your turn, helper friend, go!" },
   { key: 'use_item', text: "Now's our chance! Let's use it!", say: "Now's our chance, let's use it!" },
   { key: 'retreat_1', text: "They are too strong for us! Let's go back and get ready!", say: "They are too strong for us, let's go back and get ready!" },
   { key: 'retreat_2', text: 'That was close! We need a plan!', say: 'That was close, we need a plan!' },
