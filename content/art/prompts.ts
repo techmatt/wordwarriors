@@ -518,7 +518,8 @@ const PICTURES: Record<string, string> = {
   ring: 'a ring: one gold finger ring with a big sparkly blue gem on top',
   wing: 'a wing: one big white feathery bird wing, spread open, alone; no bird, not an angel',
   shell: 'a shell: one pink and cream spiral seashell, the kind found on a beach',
-  chips: 'chips: a red paper carton of golden potato chips (fries)',
+  // Item 062: chips are American chips, a bag of potato chips; never fries.
+  chips: 'chips: an open crinkly snack bag of thin round golden potato chips, a few wavy chips spilling out in front; American potato chips, NOT french fries, no fries carton',
   bush: 'a bush: one round leafy green garden bush, alone; not a tree, no flowers',
   thumb: 'a thumb: a cartoon hand giving a big thumbs up, the thumb clearly up',
   lamb: 'a lamb: a fluffy white baby sheep, small and woolly, standing side-on; a baby, not a big sheep',

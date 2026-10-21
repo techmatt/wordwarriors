@@ -176,7 +176,7 @@ const ENTRIES: BankEntry[] = [
   T('egg', '🥚', NEW_056), T('bell', '🔔', NEW_056), T('doll', '🎎', NEW_056), T('tap', '🚰', NEW_056),
   T('elf', '🧝', NEW_056), T('grass', '🌾', NEW_056), T('glass', '🥤', NEW_056), T('sink', '🧽', NEW_056),
   T('king', '🤴', NEW_056), T('ring', '💍', NEW_056), T('wing', '🦅', NEW_056), T('shell', '🐚', NEW_056),
-  T('chips', '🍟', NEW_056), T('bush', '🌳', NEW_056),
+  T('chips', '🥔', NEW_056), T('bush', '🌳', NEW_056),
   T('thumb', '👍', { ...NEW_056, spelled: [['th', 'th'], ['u', 'u'], ['mb', 'm']] }),
   T('lamb', '🐑', { ...NEW_056, spelled: [['l', 'l'], ['a', 'a'], ['mb', 'm']] }),
   A('quest', '🧭', NEW_056),
