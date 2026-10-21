@@ -27,13 +27,12 @@ import { fitText } from '../ui/fitText';
 import { STICK_HINT_OFFSET, makeStickHint } from '../ui/stickHint';
 import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter } from './Fighter';
 import { ARENA_LEFT, ARENA_RIGHT } from './movement';
+import { SIGN_RISE, clearSpot, placePads, type PlaceBody } from './padPlace';
 
 /** The move pads' glow. One colour for all: the word on the sign is the choice, never a colour. */
 const PAD_GLOW = 0x7ad9ff;
-/** How far a pad's word sign stands above its ring. */
-const SIGN_RISE = 215;
-/** Least distance between two pads' columns: a sign is 230 wide, so signs never touch. */
-const PAD_GAP = 270;
+/** Where a fighter stepping off the pads may go. */
+const FLOOR = { left: ARENA_LEFT, right: ARENA_RIGHT, top: FLOOR_TOP, bottom: FLOOR_BOTTOM };
 /** How long her team takes to step off the pad row when a choice opens (wall-clock ms; the fight's clock is frozen). */
 const STEP_BACK_MS = 450;
 
@@ -107,9 +106,11 @@ interface Choice {
   still: number;
   /** The stick hint beside her hero, while she stands still. */
   stickHint: Phaser.GameObjects.Container | null;
-  /** Her team stepping off the pad row (item 043, M6): each from where it stood to a spot no sign or ring covers, on wall-clock time from `stepAt`. */
-  stepBack: { f: Fighter; from: { x: number; y: number }; to: { x: number; y: number } }[];
+  /** Her team stepping off the pad row (item 043, M6), and the villain once settled (M8): each from where it stood to a spot no sign or ring covers, on wall-clock time from its `at` (else `stepAt`). */
+  stepBack: { f: Fighter; from: { x: number; y: number }; to: { x: number; y: number }; at?: number }[];
   stepAt: number;
+  /** Where the villain was last seen moving, and when (wall-clock ms): his step back waits until he settles. */
+  villainSeen?: { x: number; y: number; lift: number; at: number };
   resolve: () => void;
 }
 
@@ -214,65 +215,22 @@ export class MoveChoice {
       : null;
   }
 
-  /**
-   * Where the pads go: one row across the floor, so every sign stands right
-   * above its own ring and no two pads share a column (a stacked pair put the
-   * lower pad's word over the upper ring). The row and the columns are picked
-   * to keep rings and signs clear of her hero and of the villain (and the
-   * other big fighters), so she never walks into a fighter's card to choose.
-   */
+  /** Where the pads go (padPlace.ts): clear of every fighter, no sign over the villain or a contest's held team. */
   private padSpots(n: number, me: Fighter): { x: number; y: number }[] {
+    const body = (f: Fighter): PlaceBody => ({ x: f.x, y: f.y, cx: f.cx, cy: f.cy, half: f.bodyHalf, top: f.top });
+    const v = this.host.villain;
     // Minions too (item 039: a pad under a crowd of skeletons or dragon babies did not read as a place to stand).
-    const avoid = [me, this.host.villain, ...this.host.fighters.filter((f) => f.active)].filter((f, i, a) => f?.active && a.indexOf(f) === i);
-    /** How far a pad at (x, y) stays from every fighter: ring against feet, sign against body. */
-    const clearance = (x: number, y: number): number => {
-      let d = Infinity;
-      for (const f of avoid) {
-        // From the edge of the body, not its middle: a giant's pad stood inside her (item 034).
-        d = Math.min(d, Math.hypot(Math.max(0, Math.abs(x - f.x) - f.bodyHalf), (y - f.y) * 1.5), Math.hypot(Math.max(0, Math.abs(x - f.cx) - f.bodyHalf), y - SIGN_RISE - f.cy));
-      }
-      return d;
-    };
-    let xs: number[] = [];
-    for (let x = ARENA_LEFT + 110; x <= ARENA_RIGHT - 110; x += 40) xs.push(x);
-    // A contest keeps its pads on her side of the villain (item 034): a pad
-    // past him had her fire her super from inside his coils, off her rope.
-    // When her side is too narrow for them all, anywhere but on him.
-    if (this.host.anchored) {
-      const v = this.host.villain;
-      const fits = (c: number[]) => c.length > 0 && Math.abs(c[c.length - 1]! - c[0]!) >= (n - 1) * PAD_GAP;
-      const mine = xs.filter((x) => (me.x < v.x ? x < v.x - v.bodyHalf - 100 : x > v.x + v.bodyHalf + 100));
-      const offHim = xs.filter((x) => Math.abs(x - v.x) > v.bodyHalf + 90);
-      if (fits(mine)) xs = mine;
-      else if (fits(offHim)) xs = offHim;
-    }
-    let best: { x: number; y: number }[] = [];
-    let bestScore = -Infinity;
-    // Not 640: a pad there sits under the caption ribbon while its word is said.
-    for (const y of [480, 560]) {
-      // Every set of n columns at least PAD_GAP apart (n is 2 or 3, so this is small).
-      const walk = (from: number, picked: number[]): void => {
-        if (picked.length === n) {
-          const clear = Math.min(...picked.map((x) => clearance(x, y)));
-          let gap = Infinity;
-          for (let i = 1; i < picked.length; i++) gap = Math.min(gap, picked[i]! - picked[i - 1]!);
-          // Clear enough counts the same however far; then spread out, then a little luck.
-          const score = Math.min(clear, 240) * 3 + Math.min(gap, 420) * 0.25 + Math.random() * 25;
-          if (score > bestScore) {
-            bestScore = score;
-            best = picked.map((x) => ({ x, y }));
-          }
-          return;
-        }
-        for (let i = from; i < xs.length; i++) {
-          const x = xs[i]!;
-          if (picked.length && x - picked[picked.length - 1]! < PAD_GAP) continue;
-          walk(i + 1, [...picked, x]);
-        }
-      };
-      walk(0, []);
-    }
-    return best;
+    const avoid = [me, v, ...this.host.fighters.filter((f) => f.active)].filter((f, i, a) => f?.active && a.indexOf(f) === i);
+    // The team steps back off the signs in a fight (M6), but holds its stations in a contest (M17).
+    const team = this.host.anchored ? this.host.fighters.filter((f) => f !== me && f.active && (this.host.heroes.includes(f) || f.init.kind === 'helper')) : [];
+    return placePads({
+      n,
+      avoid: avoid.map(body),
+      cover: [...(v?.active ? [v] : []), ...team].map(body),
+      contest: this.host.anchored && v?.active ? { meX: me.x, villain: body(v) } : undefined,
+      left: ARENA_LEFT,
+      right: ARENA_RIGHT,
+    });
   }
 
   /** One move word as a place: a glowing rune ring on the floor and its word on a sign above. */
@@ -311,49 +269,47 @@ export class MoveChoice {
    * ally behind a sign disappeared. Each one standing where a sign or a ring
    * would cover them (or they it) steps to the nearest spot that is clear of
    * every sign, every ring, her hero and each other. Not in a contest, whose
-   * staging holds everyone in place (a rope, a race lane).
+   * staging holds everyone in place (a rope, a race lane); the pads keep off
+   * them there instead (padSpots).
    */
   private teamStepBack(me: Fighter, pads: MovePad[]): Choice['stepBack'] {
     if (this.host.anchored) return [];
-    // The plate (230 x 100) and its stake, with a margin.
-    const signs = pads.map((p) => new Phaser.Geom.Rectangle(p.x - 125, p.y - SIGN_RISE - 60, 250, 150));
     const taken: { x: number; y: number }[] = [{ x: me.x, y: me.y }];
     const out: Choice['stepBack'] = [];
     for (const f of this.host.heroes) {
       if (f === me || !f.active) continue;
-      const h = Math.max(60, f.y - f.top);
-      const half = f.bodyHalf;
-      /** How much of the body the signs would cover there, as a share of it; a ring underfoot or a crowded spot counts as covered. */
-      const covered = (x: number, y: number): number => {
-        const body = new Phaser.Geom.Rectangle(x - half, y - h, half * 2, h);
-        let area = 0;
-        for (const sg of signs) {
-          const o = Phaser.Geom.Rectangle.Intersection(sg, body);
-          area += Math.max(0, o.width) * Math.max(0, o.height);
-        }
-        const ring = pads.some((p) => Math.abs(x - p.x) < 95 + half * 0.5 && Math.abs(y - p.y) < 60);
-        const crowd = taken.some((t) => Math.abs(x - t.x) < 110 && Math.abs(y - t.y) < 50);
-        return area / (body.width * body.height) + (ring || crowd ? 1 : 0);
-      };
-      // The nearest clear spot; when the pads fill the row (three signs across it),
-      // the least covered one, so as much of them shows as the floor allows.
-      let to = { x: f.x, y: f.y };
-      if (covered(f.x, f.y) > 0) {
-        let best = Infinity;
-        for (let x = ARENA_LEFT + 40; x <= ARENA_RIGHT - 40; x += 20) {
-          for (let y = FLOOR_TOP + 20; y <= FLOOR_BOTTOM; y += 20) {
-            const cost = covered(x, y) * 10_000 + Math.hypot(x - f.x, (y - f.y) * 1.5);
-            if (cost < best) {
-              best = cost;
-              to = { x, y };
-            }
-          }
-        }
-      }
+      const to = clearSpot({ x: f.x, y: f.y, half: f.bodyHalf, h: Math.max(60, f.y - f.top) }, pads, taken, FLOOR);
       taken.push(to);
       if (to.x !== f.x || to.y !== f.y) out.push({ f, from: { x: f.x, y: f.y }, to });
     }
     return out;
+  }
+
+  /**
+   * The villain steps back off the pads too (item 071, M8), once he has
+   * settled: one mid-leap when the choice opened lands on the frozen clock,
+   * after the pads were placed, and came down on a ring (QUEST under Evil
+   * Tiamat). Settled is a second of wall-clock time without moving; then he
+   * steps clear like the team and holds there. Not in a contest (he holds his station).
+   */
+  private villainStepBack(c: Choice, me: Fighter): void {
+    const v = this.host.villain;
+    if (this.host.anchored || c.stepBack.some((s) => s.f === v) || !v?.active) return;
+    const wall = performance.now();
+    const seen = c.villainSeen;
+    if (!seen || Math.abs(seen.x - v.x) > 1 || Math.abs(seen.y - v.y) > 1 || Math.abs(seen.lift - v.lift) > 1) {
+      c.villainSeen = { x: v.x, y: v.y, lift: v.lift, at: wall };
+      return;
+    }
+    if (wall - seen.at < 1000) return;
+    const taken = [{ x: me.x, y: me.y }, ...c.stepBack.map((s) => s.to)];
+    const to = clearSpot({ x: v.x, y: v.y, half: v.bodyHalf, h: Math.max(60, v.y - v.top) }, c.pads, taken, FLOOR);
+    if (to.x === v.x && to.y === v.y) {
+      // Clear where he stands: look again in a second, in case he moves on.
+      c.villainSeen = { x: v.x, y: v.y, lift: v.lift, at: wall };
+      return;
+    }
+    c.stepBack.push({ f: v, from: { x: v.x, y: v.y }, to, at: wall });
   }
 
   /** Pick a word: green on a lit pad, or F4. Only the right word closes the choice. */
@@ -387,10 +343,22 @@ export class MoveChoice {
     c.idle = 0;
   }
 
+  /** Everyone stepping back, where the step has them now: written before the fighters move and again after. */
+  private holdStepBack(c: Choice): void {
+    const wall = performance.now();
+    for (const s of c.stepBack) {
+      if (!s.f.active) continue;
+      const k = Phaser.Math.Easing.Sine.Out(Math.min(1, (wall - (s.at ?? c.stepAt)) / STEP_BACK_MS));
+      s.f.x = Phaser.Math.Linear(s.from.x, s.to.x, k);
+      s.f.y = Phaser.Math.Linear(s.from.y, s.to.y, k);
+    }
+  }
+
   /** Pin her hero to where she walked in the choice: no leftover move timer or hop moves her. */
   holdHero(): void {
     const c = this.current;
     const me = this.host.heroes[0];
+    if (c) this.holdStepBack(c);
     if (!c || !me?.active) return;
     me.x = c.at.x;
     me.y = c.at.y;
@@ -421,13 +389,9 @@ export class MoveChoice {
       me.lean = Phaser.Math.Clamp(mv.x * 0.2, -0.25, 0.25);
     } else me.lean = 0;
     this.holdHero();
-    // Her team steps off the pad row (item 043, M6), and stays there while the fight is frozen.
-    const k = Phaser.Math.Easing.Sine.Out(Math.min(1, (performance.now() - c.stepAt) / STEP_BACK_MS));
-    for (const s of c.stepBack) {
-      if (!s.f.active) continue;
-      s.f.x = Phaser.Math.Linear(s.from.x, s.to.x, k);
-      s.f.y = Phaser.Math.Linear(s.from.y, s.to.y, k);
-    }
+    // Her team steps off the pad row (item 043, M6), the villain once he settles (M8), and they stay there while the fight is frozen.
+    this.villainStepBack(c, me);
+    this.holdStepBack(c);
 
     let near: MovePad | null = null;
     let best = REACH;
