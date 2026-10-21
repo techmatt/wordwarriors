@@ -981,7 +981,9 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   5-hour window; with a photo reference 35 to 75 s and up to 0.5% (items 032, 035,
   037, 041, 2026-10-19 to 20). Four runs of about 20 ids side by side drew 243 images in
   about 50 minutes and took the 5-hour window from 7% to 66%, the weekly from 30% to 39%
-  (item 037).
+  (item 037). Five runs side by side (two `art:gen`, three `art:alts`) drew 19 word
+  pictures in about 4 minutes, 31 to 52 s each, and took the 5-hour window to 5%
+  (about 0.25% each), the weekly not past 7% (item 070, 2026-10-21).
 - An action word's picture is the hardest to make name itself (SNAP comes out a
   crocodile, LIFT a crane): it is only ever shown after she has read the word, never as
   the thing to find.

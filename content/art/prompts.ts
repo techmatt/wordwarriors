@@ -537,13 +537,14 @@ const PICTURES: Record<string, string> = {
   vase: 'a vase: a blue china vase with a bunch of bright flowers in it',
   cake: 'a cake: a round pink birthday cake with white icing and candles lit on top',
   // Item 058: the untaught-sounds words (first sounds Z A I O U X).
-  zoo: 'a zoo: a big friendly zoo gate with a lion, a giraffe and an elephant peeking over the fence behind it; a zoo, not a farm or a circus, no writing on the gate',
-  zebra: 'a zebra: one black and white striped zebra standing side-on; a zebra, not a horse',
-  apple: 'an apple: one shiny red apple with a short brown stem and one green leaf; an apple, not a cherry or a tomato',
-  igloo: 'an igloo: a round white dome house made of snow blocks with a small arched doorway, on snowy ground; not a tent, no people',
-  octopus: 'an octopus: one cute purple octopus with eight curly arms and big friendly eyes, seen from the front',
-  umbrella: 'an umbrella: one open bright red umbrella with a curved handle, a few raindrops falling on it',
-  xray: 'an x-ray: a glowing blue x-ray picture of a hand, the white finger bones clear, clipped to a bright light box; no writing, not a skeleton costume',
+  // Item 070: redrawn from the placeholders (069's M9), each so a 4-year-old names it at a glance.
+  zoo: 'a zoo: a big arched zoo entrance gate with tall iron bars, and a lion, a giraffe with its long neck and an elephant with its trunk raised all peeking over the fence behind it, a few trees; clearly a place full of wild animals, not a farm, a circus or a single animal; no writing or sign text on the gate',
+  zebra: 'a zebra: one cute cartoon zebra standing side-on, bold black and white stripes all over its body and legs, a short black-and-white striped mane standing up; clearly a zebra, not a horse or a donkey',
+  apple: 'an apple: one big shiny bright red apple, round with the dip at the top, a short brown stem and one leaf, a little white shine on its skin; clearly an apple, not a cherry, a tomato or a ball',
+  igloo: 'an igloo: a round white snow-dome house built of rows of big snow bricks with the brick lines clearly drawn, a little tunnel doorway sticking out at the front with a dark round opening, sitting on snowy ground with a little snow around its base, seen from the front a little to one side; clearly a snow house you can crawl into, not an ice cube, a block of ice, a tent or a dome cake; no people',
+  octopus: 'an octopus: one cute cartoon purple octopus with a big round head, big friendly eyes, a smile and eight wavy curling arms with suckers spread out around it, seen from the front; clearly an octopus, not a squid or a jellyfish, no water around it',
+  umbrella: 'an umbrella: one open bright red umbrella seen from the side a little below, its canopy wide with pointed scalloped edges and a tip on top, a long straight shaft and a curved J-shaped handle at the bottom, a few raindrops bouncing off the top; clearly an umbrella, not a tent or a mushroom',
+  xray: "an x-ray: a doctor's x-ray of a hand, a black rectangular film with the white bones of a whole hand and its five fingers glowing on it, clipped to a bright lit-up light box on legs; clearly a picture of bones you see at the doctor's, not a skeleton, a glove or a hand itself; no writing",
 };
 
 const HAND: Record<string, string> = {
