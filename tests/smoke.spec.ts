@@ -76,8 +76,9 @@ test('bedroom: the wake-up news, a toy reacts to green, the door leads to the hu
 
 test('bedroom (item 069): yellow at the door says again the door line she heard, its drawn variant', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
-  // Seeds whose draws give the door line a variant (door_2, door_3): yellow said variant 1 instead.
-  for (const seed of [3, 5, 8, 13]) {
+  // Yellow said variant 1 instead of the drawn one: seed 13 draws Dada Matt's door_2, seed 3
+  // Dada Jason's first line (item 081: four seeds until then; 5 and 8 drew a first line too).
+  for (const seed of [3, 13]) {
     await boot(page, `?scene=bedroom&seed=${seed}&nojourney=1`);
     const s = await until(page, (st) => st.scene === 'Bedroom' && st.room?.round === 'bedroom:door' && !st.room.locked, 90_000, 'door open');
     const heard = [...s.voice.history].reverse().find((id) => /^wake_.*_door(_\d)?$/.test(id))!;

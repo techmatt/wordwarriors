@@ -2,13 +2,13 @@
  * Item 026: the word machine. Fast lane: the room opens right. Slow lane: a
  * room of it played by the virtual pad (a silly tile first, then every word),
  * checking the speech rule on the voice history; F9 out and back mid-visit;
- * and a whole episode where the pool draws it for door a. Screenshots land in
- * tests/screenshots/ (ignored) for a look.
+ * its whole episode behind door a is tests/drawn.spec.ts's, shared with the
+ * Stretchy Bridge (item 081). Screenshots land in tests/screenshots/ (ignored) for a look.
  */
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, choose, collectErrors, expectNoErrors, playEpisode, playWordMachine, press, state, until } from './harness';
+import { SLOW, boot, choose, collectErrors, expectNoErrors, playWordMachine, press, state, until } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/026_${name}.png` });
 
@@ -95,28 +95,6 @@ test('the word machine: tiles say their sounds, a silly tile giggles and pops ou
   expect(back.progress.bag?.left).toContain(m.word);
   for (const w of m.rounds.slice(1)) expect(back.progress.bag?.left).not.toContain(w);
   await shot(page, 'hub_badge');
-  expectNoErrors(errors);
-});
-
-test('the pool draws the word machine: a whole episode with it behind door a', SLOW, async ({ page }) => {
-  test.setTimeout(900_000);
-  const errors = collectErrors(page);
-  // A drawn cast (seed 19): also one of item 025's whole random episodes.
-  await boot(page, '?game=word_machine&seed=19&nojourney=1');
-  await until(page, (s) => s.scene === 'Title', 30_000, 'title');
-  await page.waitForTimeout(300);
-  await press(page, 'green');
-  const { end, keys } = await playEpisode(page);
-  const plan = end.episode.house.plan ?? [];
-  const machine = plan.find((p) => p.slot === 'a')!;
-  expect(machine.game).toBe('word_machine');
-  const words = machine.fetches;
-  // Battle 1 used every word she built, and the counter is none of them.
-  for (const w of words) expect(end.episode.fetched).toContain(w);
-  expect(words).not.toContain(plan.find((p) => p.slot === 'counter')!.key);
-  for (const k of keys) expect(end.episode.read).toContain(k);
-  expect(end.battle?.villains[0]?.hp).toBe(0);
-  await shot(page, 'episode_victory');
   expectNoErrors(errors);
 });
 

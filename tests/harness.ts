@@ -154,19 +154,36 @@ export function collectErrors(page: Page): string[] {
  */
 export const SPEED = Number(process.env.WW_SPEED ?? 5);
 
-/** Install the clock warp before the page's scripts run (once per page; it survives reloads). */
-function warpClocks(k: number): void {
-  const w = window as unknown as { __wwSpeed?: number };
+/**
+ * Install the clock warp before the page's scripts run (once per page; it survives reloads).
+ * `__wwSetSpeed(k)` changes the factor mid-run (`setSpeed`, item 081): each clock is
+ * rebased where it stands, so no clock jumps; timers already set keep their old rate.
+ */
+function warpClocks(k0: number): void {
+  const w = window as unknown as { __wwSpeed?: number; __wwSetSpeed?: (k: number) => void };
   if (w.__wwSpeed) return;
+  let k = k0;
   w.__wwSpeed = k;
-  if (k === 1) return;
   const pNow = performance.now.bind(performance);
-  const p0 = pNow();
-  const warp = (t: number) => p0 + (t - p0) * k;
-  performance.now = () => warp(pNow());
   const dNow = Date.now;
-  const d0 = dNow();
-  Date.now = () => d0 + (dNow() - d0) * k;
+  // Each clock reads base + (real - real at the last change) × k.
+  let pReal = pNow();
+  let pBase = pReal;
+  let dReal = dNow();
+  let dBase = dReal;
+  const warp = (t: number) => pBase + (t - pReal) * k;
+  w.__wwSetSpeed = (n: number) => {
+    const p = pNow();
+    const d = dNow();
+    pBase = warp(p);
+    pReal = p;
+    dBase = dBase + (d - dReal) * k;
+    dReal = d;
+    k = n;
+    w.__wwSpeed = n;
+  };
+  performance.now = () => warp(pNow());
+  Date.now = () => dBase + (dNow() - dReal) * k;
   const setT = window.setTimeout.bind(window);
   const setI = window.setInterval.bind(window);
   // Network waits stay on the wall clock (`src/realTime.ts`, item 069).
@@ -180,6 +197,11 @@ function warpClocks(k: number): void {
     this.playbackRate.value *= k;
     return start.apply(this, a);
   };
+}
+
+/** Change the page's clock speed mid-run (item 081): from now on, timers, tweens and new voice clips at `k`. */
+export async function setSpeed(page: Page, k: number): Promise<void> {
+  await page.evaluate((n) => (window as unknown as { __wwSetSpeed(k: number): void }).__wwSetSpeed(n), k);
 }
 
 /**
@@ -552,18 +574,54 @@ export async function seedProgress(page: Page, data: Record<string, unknown>): P
 /** The fetch frames (`use: 'fetch'` in content/phonics/sentences.ts). */
 export const FETCH_FRAMES = ['we_can_use_the', 'helper_needs_a', 'go_get_the', 'we_need_a', 'hero_needs_the'];
 
-/** From the bedroom to the victory screen. Returns the victory state, the keys read and fetched, and the warm-up's word (fetched, not read). */
-export async function playEpisode(page: Page): Promise<{ end: WWState; keys: string[]; grab: string }> {
+/** The parts of an episode `playEpisode` can run at a clock speed of their own (item 081). */
+export type EpisodePart = 'bedroom' | 'entry' | 'hub1' | 'door_a' | 'door_b' | 'battle1' | 'hub2' | 'battle2' | 'victory';
+
+/**
+ * The clock speed whole episodes play their battles at (item 081): a fight's checks
+ * are counts and simulation time, which hold at a faster clock than her walking does.
+ * `WW_BATTLE_SPEED` sets it; a run that sets only `WW_SPEED` gets that for battles too.
+ */
+export const BATTLE_SPEED = Number(process.env.WW_BATTLE_SPEED ?? (process.env.WW_SPEED ? SPEED : 10));
+
+/**
+ * From the bedroom to the victory screen. Returns the victory state, the keys read and fetched,
+ * the warm-up's word (fetched, not read), and the real seconds each part took. `speeds` sets
+ * the clock as each part starts (`setSpeed`); unset, the battles run at `BATTLE_SPEED` and the
+ * rest at the speed the page booted with.
+ */
+export async function playEpisode(
+  page: Page,
+  speeds: Partial<Record<EpisodePart, number>> = {},
+): Promise<{ end: WWState; keys: string[]; grab: string; times: Partial<Record<EpisodePart, number>> }> {
+  const booted = await page.evaluate(() => (window as unknown as { __wwSpeed: number }).__wwSpeed);
+  const plan: Partial<Record<EpisodePart, number>> = { battle1: BATTLE_SPEED, hub2: booted, battle2: BATTLE_SPEED, victory: booted, ...speeds };
+  const times: Partial<Record<EpisodePart, number>> = {};
+  let current: { part: EpisodePart; at: number } | null = null;
+  let speed = booted;
+  const part = async (p: EpisodePart) => {
+    if (current) times[current.part] = Math.round((Date.now() - current.at) / 100) / 10;
+    current = { part: p, at: Date.now() };
+    const k = plan[p];
+    if (k !== undefined && k !== speed) {
+      await setSpeed(page, k);
+      speed = k;
+    }
+  };
+  await part('bedroom');
   await until(page, (s) => s.scene === 'Bedroom', 30_000, 'bedroom');
   await leaveBedroom(page, { grab: false });
   // The entry hall's warm-up: its word is her first battle item.
+  await part('entry');
   const grab = await playEntry(page);
   const keys: string[] = [];
+  await part('hub1');
 
   // Hub part 1: the helper's scene and its gift word in the circle, then both side rooms, then out the front door.
   await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:circle', 90_000, 'circle offered');
   await hubGo(page, 'circle');
-  for (const door of ['door_a', 'door_b']) {
+  for (const door of ['door_a', 'door_b'] as const) {
+    await part(door);
     await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:doors', 90_000, `${door} offered`);
     await hubGo(page, door);
     keys.push(...(await playRoom(page)));
@@ -573,6 +631,7 @@ export async function playEpisode(page: Page): Promise<{ end: WWState; keys: str
   await hubGo(page, 'door_front');
 
   // Battle 1: the fetched things are used, the ultimate still wins.
+  await part('battle1');
   const b1 = await until(page, (s) => s.scene === 'Battle', 30_000, 'battle 1');
   expect(b1.battle?.part).toBe(1);
   const afterB1 = await playBattle(page, 1);
@@ -585,6 +644,7 @@ export async function playEpisode(page: Page): Promise<{ end: WWState; keys: str
   expectFightLength(afterB1);
 
   // Hub part 2: the secret door, the attic's counter sentence, out again.
+  await part('hub2');
   await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:2:secret', 90_000, 'secret door');
   await hubGo(page, 'door_counter');
   const counterKey = await playSentenceRoom(page);
@@ -592,11 +652,14 @@ export async function playEpisode(page: Page): Promise<{ end: WWState; keys: str
   expect(ready.episode.made.item).toBe(true);
   await hubGo(page, 'door_front');
 
+  await part('battle2');
   await until(page, (s) => s.scene === 'Battle', 30_000, 'battle 2');
   await playBattle(page, 2);
   const end = await until(page, (s) => s.scene === 'Victory', 30_000, 'victory');
   expectFightLength(end);
-  return { end, keys: [...keys, counterKey], grab };
+  // The victory's own pacing (its recap, its green) runs at the room speed, until the caller is done.
+  await part('victory');
+  return { end, keys: [...keys, counterKey], grab, times };
 }
 
 /**

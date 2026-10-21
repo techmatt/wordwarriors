@@ -135,9 +135,9 @@ from before item 035, and the store tops the bag up with every word added since 
 
 Every browser test plays the fixed default episode (`tests/harness.ts` adds
 `cast=default`) unless its URL asks for a draw (`seed=`): drawn casts walk from the bedroom
-through the warm-up to the quest place in `tests/entry.spec.ts` (four seeds), and three
-whole random episodes play in the slow lane, two in `tests/soak.spec.ts` (seed 1 and the
-draw after it) and one in the word machine's episode (seed 19) (item 025).
+through the warm-up to the quest place in `tests/entry.spec.ts` (two seeds; four until
+item 081), and three whole random episodes play in the slow lane, two in `tests/soak.spec.ts`
+(seed 1 and the draw after it) and one in `tests/drawn.spec.ts` (seed 19) (item 025).
 
 The same way, every browser test's rooms play the sentence game (the harness adds
 `games=sentence`) unless its URL asks for a game (`game=word_machine`) or the whole pool
@@ -149,15 +149,19 @@ covers the room, the dad key, dad lock, the read's timeout, the round's length a
 runes in battle (items 053, 059). The forced room is Charge the Spell or the Stretchy Bridge at random, so
 `playRoom` and the bug-hunt checker play the bridge too (`playBridgeRoom`: slide across
 with the stick, Dad's yes where he is asked, the right picture); `tests/bridge.spec.ts`
-covers its three help levels, a wrong picture and a drawn episode (item 054).
+covers its three help levels and a wrong picture (item 054).
 `tests/machine.spec.ts` opens the word machine in the fast lane, and in
-the slow lane plays whole visits (a silly tile first, F9 out and back) and a whole
-episode with it behind door a (item 026).
+the slow lane plays whole visits (a silly tile first, F9 out and back) (item 026).
+The newer rooms' whole episodes share walks (item 081): `tests/drawn.spec.ts` plays one
+drawn episode with the word machine behind door a and the bridge behind door b
+(`?game=word_machine&room=bridge`) in its `beforeAll`, and a test for each room checks
+its own; the soak's two episodes have Charge the Spell behind door a (`room=charge`,
+`games=all`) and check it in each.
 
 `leaveBedroom` also plays the entry hall's
 warm-up (item 033) unless given `{ grab: false }`, so a test that walks out of the bedroom
 lands in the hub as before; `tests/entry.spec.ts` (slow lane) plays the warm-up itself:
-each level's clue, three misses, F9 out and back, and four drawn casts from the bedroom.
+each level's clue, three misses, F9 out and back, and two drawn casts from the bedroom.
 
 `playEpisode` checks each battle part's length (45-120 s of simulation time) for whatever
 fight style the cast drew; `tests/fights.spec.ts` sweeps the four contests through both
@@ -173,9 +177,18 @@ key's down and up can land between two frames, and Phaser's polled keys miss it.
 ### Speed, GPU and workers
 
 The browser tests run the page's clocks 5× fast (`WW_SPEED`, default 5; `tests/harness.ts`):
-timers, tweens, the game loop and voice playback together. The full-episode test alone
-runs at real time (speed 1), so real pacing stays covered. `WW_SPEED=1 npm run test:browser`
-runs the browser lane at real time.
+timers, tweens, the game loop and voice playback together. `setSpeed(page, k)` changes it
+mid-run (item 081: each clock is rebased where it stands), and `playEpisode(page, speeds)`
+sets it as each part of an episode starts. Whole episodes play their battles at clock speed
+10 (`BATTLE_SPEED`, `WW_BATTLE_SPEED`; a run that sets only `WW_SPEED` gets that for battles
+too), and so does `tests/fights.spec.ts`: a fight's checks are counts and simulation time.
+Speed 10 held green on every fight style over three runs once the race's finish-flag check
+read the flag a frame after hearing the line (the battle publishes its state once a frame,
+the voice live); speed 8 gained nothing over 10 there. The full-episode test
+(`tests/episode.spec.ts`) keeps real pacing covered: one scene of each kind at real time
+(speed 1: the bedroom, the warm-up, the hub's helper scene, door a's sentence room and
+battle 1), the rest at 5 and battle 2 at 10. `WW_SPEED=1 npm run test:browser` runs the
+browser lane at real time.
 
 The game's own timeouts run on that clock too, except the network's: until item 069
 `VoiceBank`'s 15 s voice fetch timeout was 3 s of real time in a test, so on a loaded
@@ -820,8 +833,8 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   over its ~18 minutes; a 10-minute limit kills it partway, so give it 40. It had grown
   to 26 minutes with items 025 and 026, 37 with item 031's fight styles and 45 with item
   033's warm-up spec (2026-10-19); item 036 brought it back to 18 (8:49pm the same day):
-  duplicated walks folded together, the GPU, clock speed 5. The one real-time episode is
-  6 of those minutes.
+  duplicated walks folded together, the GPU, clock speed 5. The one real-time episode was
+  6 of those minutes (3.5 since item 081 played half of it at speed).
 - Every active ally × villain pair (item 030): `npm run test:pairs`
   (about 1.8 minutes a pair at clock speed 3, an hour for all 36; `WW_PAIRS=scar+ npm run
   test:pairs` plays one ally's four). Off unless run by that script or with `WW_PAIRS` set:
@@ -833,7 +846,7 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   fails the pair in play ("execution context was destroyed"): use a build, below.
   The 36 took 1.2 hours on 2026-10-19 (item 031, about 2 minutes a pair).
 - Every contest fight style through both battles (item 031): `tests/fights.spec.ts`, slow
-  lane, about 2½ minutes (the brawl is the default episode's own, played by every default
+  lane, about 22 s a style at clock speed 10 (33 s at 5 until item 081; the brawl is the default episode's own, played by every default
   whole episode); shots of each style's big beats (combo, ultimate, counter, finish)
   land in `tests/screenshots/fights_*`. `-g cook_off` plays one style.
 - Long Playwright runs: since item 079 every run serves a build of the code as it was at
@@ -844,9 +857,10 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   silently tested the main checkout's dev server. It now always starts its own server on
   5184 (`TEST_PORT`; `CONDUCTOR_PORT` when set, item 047) and never reuses one; with
   `WW_BASE_URL` set it starts none.
-- The full-episode test (`npm run test:slow`) takes about 6 minutes: every line is
-  real speech and green is ignored until an instruction finishes. It is the one test at
-  real time; everything else runs at clock speed 5 (3 before item 036 moved the tests to
+- The full-episode test (`npm run test:slow`) takes about 3.5 minutes (6 until item 081,
+  when it was all at real time): in its real-time parts every line is real speech and green
+  is ignored until an instruction finishes. It is the one test with real-time parts;
+  everything else runs at clock speed 5, battles at 10 (3 before item 036 moved the tests to
   the GPU). Speed 6 in software GL was slower, not faster (her
   walking overshoots at headless frame rates); measurements in `docs/engineering.md`.
 - Headless Chromium renders the battle at roughly 8–18 fps (software GL). With the GPU

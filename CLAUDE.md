@@ -101,6 +101,10 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `QA_TAG=<tag> npm run qa [-- -g <scenario>]` | The bug-hunt checker (README, *The bug-hunt checker*) |
 | `npm run test:pairs` | Every ally × villain pair (~1 h; `WW_PAIRS=<part>` for some). Otherwise `pairs.spec.ts` shows one skipped test |
 
+**Faster tests over thorough tests where reasonable** (Matt, 2026-10-21): fewer seeds, a
+faster clock, one walk shared by several checks; Matt scales coverage up when he notices
+problems.
+
 The timed Charge round asserts its limits only on one worker:
 `npx playwright test tests/charge.spec.ts -g snappy --workers=1` (README, *Speed, GPU and
 workers*).

@@ -4,8 +4,8 @@
  * (item 061: 15-25 s each): a visit at level 1 (the stones sound as she
  * slides, a held sound while she stands still, a wrong picture sounded out,
  * then the right one; levels saved, the words fetched); level 2 (Dad's 2 is a
- * hint); the drawn episodes' door a; a drawn episode with the bridge behind
- * door a. Screenshots land in tests/screenshots/ (ignored).
+ * hint); the drawn episodes' door a. The bridge's whole drawn episode (behind door
+ * b) is tests/drawn.spec.ts's, shared with the word machine (item 081). Screenshots land in tests/screenshots/ (ignored).
  */
 
 import { test, expect, type Page } from '@playwright/test';
@@ -14,7 +14,7 @@ import { BANK_BY_WORD } from '../content/phonics/bank';
 import { canHold } from '../content/phonics/letters';
 import { letterSoundLine } from '../content/voice/ids';
 import { BRIDGE_PICTURES, CROSS_WORDS, bridgeEase } from '../src/rules/bridge';
-import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom, playEpisode, press, seedProgress, slideAcross, state, stick, until, type WWState } from './harness';
+import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom, press, seedProgress, slideAcross, state, stick, until, type WWState } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/054_${name}.png` });
 
@@ -253,18 +253,4 @@ test('the beta: every drawn episode has a phonics room behind door a, Charge the
     seen.add(a.kind);
   }
   expect(seen.size).toBeGreaterThanOrEqual(1);
-});
-
-test('Stretchy Bridge in a drawn episode: behind door a, every word a battle item', SLOW, async ({ page }) => {
-  test.setTimeout(600_000);
-  const errors = collectErrors(page);
-  await boot(page, '?seed=54&games=all&room=bridge&nojourney=1');
-  await until(page, (s) => s.scene === 'Title', 30_000, 'title');
-  await page.waitForTimeout(300);
-  await press(page, 'green');
-  const { end } = await playEpisode(page);
-  const plan = end.episode.house.plan!.find((p) => p.slot === 'a')!;
-  expect(plan.kind).toBe('bridge');
-  for (const w of plan.fetches) expect(end.episode.read).toContain(w);
-  expectNoErrors(errors);
 });

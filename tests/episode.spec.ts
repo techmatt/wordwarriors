@@ -8,7 +8,10 @@
 
 import { test, expect } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, expectNoErrors, playEpisode, press, state, until } from './harness';
+import { BATTLE_SPEED, SLOW, SPEED, boot, collectErrors, expectNoErrors, playEpisode, press, state, until } from './harness';
+
+/** Real time (speed 1) for one scene of each kind, the rest at the suite's speeds (item 081). */
+const REAL = { bedroom: 1, entry: 1, hub1: 1, door_a: 1, door_b: SPEED, battle1: 1, hub2: SPEED, battle2: BATTLE_SPEED, victory: SPEED };
 
 test('a full episode plays end to end', SLOW, async ({ page }) => {
   test.setTimeout(900_000);
@@ -18,7 +21,8 @@ test('a full episode plays end to end', SLOW, async ({ page }) => {
   await page.waitForTimeout(500);
   await press(page, 'green');
 
-  const { end, keys } = await playEpisode(page);
+  const { end, keys, times } = await playEpisode(page, REAL);
+  console.log(`episode parts (real s): ${JSON.stringify(times)}`);
   expect(end.episode.fetched.length).toBe(3);
   expect(end.episode.made.item).toBe(true);
   expect(end.battle?.villains[0]?.hp).toBe(0);

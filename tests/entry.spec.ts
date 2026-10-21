@@ -193,7 +193,8 @@ test('F9 and back: a miss before it still counts; after the grab the hall comes 
   expectNoErrors(errors);
 });
 
-for (const seed of [3, 11, 25, 40]) {
+// Two drawn casts (four until item 081: 17-18 s each; the soak and tests/drawn.spec.ts play three more through the warm-up).
+for (const seed of [3, 25]) {
   test(`seed ${seed}: the drawn cast wakes her, the helper says the quest, through the warm-up to the quest place; the grab word is never read this episode`, SLOW, async ({ page }) => {
     test.setTimeout(240_000);
     const errors = collectErrors(page);

@@ -6,12 +6,13 @@
  * the runes fired in battle; the forced room in a drawn episode, F4 as Dad's
  * yes on the read only (both moved in item 061, 10-13 s each); a round with
  * Dad's real key 2, nothing asked before the read; dad lock (the say-back
- * beat waits, the keys stay live) and the read's timeout. Screenshots land in tests/screenshots/ (ignored) for a look.
+ * beat waits, the keys stay live) and the read's timeout. Its whole drawn
+ * episodes are the soak's (tests/soak.spec.ts, item 081). Screenshots land in tests/screenshots/ (ignored) for a look.
  */
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, dad, expectNoErrors, playEpisode, press, state, until } from './harness';
+import { SLOW, boot, collectErrors, dad, expectNoErrors, state, until } from './harness';
 import type { Layout } from './qa/checks';
 import { CHARGE_WORDS } from '../src/rules/charge';
 
@@ -195,26 +196,5 @@ test('Charge the Spell: the beta forces it behind a door of a drawn episode; F4 
   await page.keyboard.press('F4');
   const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'F4 read it');
   expect(hub.progress.words[r.room!.charge!.word]!.recent).toEqual([true]);
-  expectNoErrors(errors);
-});
-
-test('the beta: a whole drawn episode with Charge the Spell forced behind door a', SLOW, async ({ page }) => {
-  test.setTimeout(900_000);
-  const errors = collectErrors(page);
-  // `games=all` is the real draw, so FORCE_PHONICS_ROOM applies; playEpisode checks each battle's length.
-  // Charge the Spell or the Stretchy Bridge at random since item 054: `room=charge` pins it.
-  await boot(page, '?games=all&seed=19&nojourney=1&room=charge');
-  await until(page, (s) => s.scene === 'Title', 30_000, 'title');
-  await page.waitForTimeout(300);
-  await press(page, 'green');
-  const { end } = await playEpisode(page);
-  const plan = end.episode.house.plan ?? [];
-  expect(plan.find((p) => p.slot === 'a')!.kind).toBe('charge');
-  const word = (plan.find((p) => p.slot === 'a') as { key: string }).key;
-  // Every unit of a charge word is its own rune, so the runes spell it.
-  expect(end.episode.charged?.sounds.join('')).toBe(word);
-  expect(end.episode.fetched).toContain(word);
-  expect(end.episode.charged?.part).toBe(1);
-  expect(end.battle?.villains[0]?.hp).toBe(0);
   expectNoErrors(errors);
 });

@@ -9,7 +9,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { FIGHTS } from '../content/battle/fights';
-import { SLOW, boot, playBattle, until } from './harness';
+import { BATTLE_SPEED, SLOW, boot, playBattle, state, until } from './harness';
 
 /** Each style against a villain it was not written for, so nothing leans on one villain. */
 const AGAINST: Record<string, string> = { brawl: 'tiamat', sky_race: 'smaug', sea_tug: 'jormungandr', spell_clash: 'bavmorda', cook_off: 'tiamat' };
@@ -47,7 +47,7 @@ for (const f of FIGHTS.filter((x) => x.id !== 'brawl')) {
     const villain = AGAINST[f.id] ?? 'tiamat';
     const times: number[] = [];
     for (const part of [1, 2]) {
-      await boot(page, `?scene=battle&part=${part}&villain=${villain}&fight=${f.id}&nojourney=1`);
+      await boot(page, `?scene=battle&part=${part}&villain=${villain}&fight=${f.id}&nojourney=1`, BATTLE_SPEED);
       const going = await until(page, (s) => s.scene === 'Battle' && (s.battle?.abilitiesFired ?? 0) >= 4, 60_000, `${f.id} part ${part} under way`);
       expect(going.battle?.fight).toBe(f.id);
       await shot(page, `${f.id}_${part}_a`);
@@ -64,7 +64,15 @@ for (const f of FIGHTS.filter((x) => x.id !== 'brawl')) {
       // The race's finish line is on the floor while the narrator names it (item 069: it came 3.5 s later).
       const flagged =
         f.id === 'sky_race' && part === 2
-          ? until(page, (s) => s.scene !== 'Battle' || Boolean(s.voice.speaking?.endsWith('_fight_sky_race_finish')), 240_000, 'the finish line said').then((s) => s.scene !== 'Battle' || s.battle?.stage.flag === true)
+          ? until(page, (s) => s.scene !== 'Battle' || Boolean(s.voice.speaking?.endsWith('_fight_sky_race_finish')), 240_000, 'the finish line said').then(async (s) => {
+              if (s.scene !== 'Battle') return true;
+              // The battle's state is published once a frame and the voice's is live, so the line can
+              // show a frame before the flag it raised (item 081: 1 run in 3 at clock speed 8-10); the
+              // flag never comes down, and the line lasts well past a frame.
+              await page.waitForTimeout(60);
+              const now = await state(page);
+              return now.scene !== 'Battle' || now.battle?.stage.flag === true;
+            })
           : Promise.resolve(true);
       const end = await playBattle(page, part);
       await Promise.all(shots);
