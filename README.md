@@ -289,7 +289,9 @@ first, stop-sound CVC words once those come along, then the bank's blends and di
 the vowel after it (the S of the "Suh" placeholder), a hum up to where the schwa comes in
 (the M of "Mmm-uh", the V of "Vuh"), a vowel's steady part, a stop's burst (T, K) or a
 voiced stop's first instant (B, D), and X's K and final S around its vowel. The held part
-loops, crossfaded at the seam. A recording put in place with `voice:import` or `voice:clip` is cut by its own
+is stretched by overlap-add into one smooth sound 1.3 s long (`HELD_MS`), then quiet;
+standing on, it sounds again after `BRIDGE.resoundMs` (item 058: looping the 70-300 ms
+steady part every clip has was a fast stutter of "m"s). A recording put in place with `voice:import` or `voice:clip` is cut by its own
 shape the same way, so no code changes: record a sound you can hold as a steady sound of
 half a second or more (a clean "mmmm", "ssss", "aaa") and a stop as a crisp sound with no
 vowel after it ("t", not "tuh"). A recording with no schwa plays as it is, held whole or once.
