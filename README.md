@@ -477,6 +477,13 @@ timers, tweens, the game loop and voice playback together. The full-episode test
 runs at real time (speed 1), so real pacing stays covered. `WW_SPEED=1 npm test` runs
 the fast lane at real time.
 
+The game's own timeouts run on that clock too: `VoiceBank`'s 15 s voice fetch timeout is
+3 s of real time in a test, so on a loaded machine voice fetches abort (`voice: could not
+decode … AbortError: signal is aborted without reason`), and `tests/fights.spec.ts`, which
+counts those, fails 1-2 of its 5 tests and passes on the retry (seen on main and item 068,
+2026-10-21). Load also stretches the Charge round's timed test (`charge.spec.ts:83`) past
+its limit; rerun a red that looks like either alone with `--workers=1`.
+
 The browser draws with the GPU (Playwright's full `chromium` channel, `--use-angle=d3d11`;
 `playwright.config.ts`): battles run at ~56 fps instead of headless software GL's 11-18,
 and a fight-style test takes 53 s instead of 78 s. `WW_GPU=0` goes back to software GL (for
