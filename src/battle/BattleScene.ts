@@ -50,6 +50,7 @@ import { advance, castArt, castScale, counterArt, counterWord, episode, fightSty
 import { fightLineKey, type FightSpec } from '../../content/battle/fights';
 import { hex } from '../fx/colour';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
+import { FreePlay } from '../fx/freePlay';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { withStems } from '../rules/bank';
@@ -174,6 +175,10 @@ export class BattleScene extends Phaser.Scene implements StageHost {
   private teamNextCast = { hero: 0, villain: 0 };
   private nextTaunt = 4000;
   private choice: Choice | null = null;
+  /** Free play (item 060): her jump and casts while she steers her hero. */
+  private play!: FreePlay;
+  /** Her hero's `hop` is the free-play jump's (so landing zeroes only that one). */
+  private playHop = false;
   /** Health floors (fraction of max) the director allows right now. */
   private floors = { heroMain: 0.3, villainMain: 0.4 };
   private stats = { abilitiesFired: 0, ultimates: 0, combos: 0, movePicks: 0 };
@@ -231,6 +236,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, `arena_${this.arenaKey}`).setDisplaySize(GAME_WIDTH, GAME_HEIGHT).setDepth(DEPTH.ground);
     this.darkRect = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0a0018, 0).setDepth(FLOOR_TOP - 5);
     this.controls = new Controls(this);
+    this.play = new FreePlay(this, formFor(episode.hero, episode)?.id ?? null);
+    this.playHop = false;
     // Lighter in battle: a small box and face at the bottom, so the fight stays in view.
     // The move choice's prompts say the word to find; the box prints "USE …!"
     // so she finds it on the pads by reading (item 043, M1).
@@ -1155,6 +1162,9 @@ export class BattleScene extends Phaser.Scene implements StageHost {
         resolve();
       } };
       this.choice = c;
+      // No charge, jump or shot in flight carries into the choice (holdHero zeroes the hop).
+      this.play.reset();
+      this.playHop = false;
       void (async () => {
         await this.say('move_pick');
         await this.say(moveKey('use_move', right));
@@ -2011,7 +2021,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     // Particle emitters keep their own clock; without this they pour out at
     // full rate through the move-choice freeze and hit-stop.
     for (const obj of this.children.list) {
-      if (obj instanceof Phaser.GameObjects.Particles.ParticleEmitter) obj.timeScale = ts;
+      // Free play's pooled emitters stay on real time, like its shots.
+      if (obj instanceof Phaser.GameObjects.Particles.ParticleEmitter && !obj.getData('freePlay')) obj.timeScale = ts;
     }
     const realDt = Math.min(0.05, deltaMs / 1000);
     const dt = realDt * ts;
@@ -2025,12 +2036,24 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     // The choice runs on real time: she walks while the fight is frozen.
     if (this.choice) this.updateChoice(realDt);
 
-    // Green outside a choice makes her hero hop with a sparkle: buttons always answer.
+    // Free play (item 060): outside a choice, while she steers her hero, green
+    // jumps and blue / red / yellow cast. Pure show: shots hit nothing, and the
+    // jump only lifts her sprite (on real time, so slow-mo does not hang her in the air).
     const me = this.heroes[0];
-    if (!this.choice && this.controls.pressed('green') && me?.active && !me.floored && this.phase === 'fight' && me.hop === 0) {
-      this.tweens.addCounter({ from: 0, to: 1, duration: 420, onUpdate: (tw) => (me.hop = Math.sin((tw.getValue() ?? 0) * Math.PI) * 90), onComplete: () => (me.hop = 0) });
-      burst(this, me.cx, me.y, { count: 18, speed: 220, colors: [me.init.palette[1], 0xffffff] });
-      me.squash(0.3);
+    if (me) {
+      const open = !this.choice && me.active && !me.floored && (this.phase === 'fight' || this.phase === 'combo');
+      const wasUp = this.play.airborne;
+      const body = { x: me.cx, y: me.y, mid: me.y - me.cy + me.height * 0.05, face: Math.sign(this.villain.x - me.x) || 1 };
+      this.play.update(this.controls, realDt, body, open, { green: true, cast: ['blue', 'red', 'yellow'] });
+      if (this.play.airborne) {
+        if (!wasUp) me.squash(0.3);
+        me.hop = this.play.height;
+        this.playHop = true;
+      } else if (this.playHop) {
+        // Only the hop free play set: the retreat's bounce owns its own.
+        me.hop = 0;
+        this.playHop = false;
+      }
     }
 
     for (const f of this.fighters) {

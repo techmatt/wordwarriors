@@ -561,6 +561,11 @@ export class HubScene extends RoomScene {
     if (this.hintIds.length && this.phase !== 'leaving' && this.phase !== 'intro') void this.speak(...this.hintIds);
   }
 
+  /** Yellow says something again only where hint() does; elsewhere it casts (free play, item 060: the hub is always open). */
+  protected override hasHint(): boolean {
+    return this.hintIds.length > 0 && this.phase !== 'leaving' && this.phase !== 'intro';
+  }
+
   protected choose(spot: Spot): void {
     if (this.locked || this.phase === 'leaving' || !spot.correct) return;
     if (spot.id === 'circle' && this.phase === 'circle') {

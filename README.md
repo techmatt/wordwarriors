@@ -19,6 +19,21 @@ arrows to walk, Space/Enter for green, Tab for yellow (say it again / hint), and
 backquote / tilde key for dad lock (below). The number keys **1** (no) and **2** (yes) are
 Dad's, for the games that ask him whether she said it (below).
 
+**Free play** (item 060): wherever she is free to move and no answer is open (the rooms,
+the bedroom once she is awake, the hub, the battle's fight outside a move choice), her
+character has toys. Green jumps: a tap hops, a hold goes higher and floats down. Blue
+(Shift), red (Esc) and yellow (Tab) cast: blue bolts, red sparkle stars, yellow fun
+things (stars, hearts, snowballs; the chef throws donuts and cookies, the knight sword
+flashes and gold stars). A tap is one shot; a hold charges a big one. A button that
+means something there keeps its meaning (green on a door, sign or thing in reach; yellow
+says it again where there is something to say). It is pure play: it never changes an
+answer, a battle or what a scene does. Dad lock silences it. At most
+`FREE_PLAY.maxShots` shots fly at once (one more and the oldest just goes); the knobs are
+`FREE_PLAY` in `src/config.ts`. On Julia's machine, turn off Windows' **Sticky Keys
+shortcut** (Settings, Ease of Access, Keyboard: untick "Allow the shortcut key to start
+Sticky Keys"): five Shift presses in a row, easy when blue fires bolts, otherwise pop a
+dialog that takes the keyboard from the game until a grown-up closes it.
+
 **Sound:** browsers keep audio off until a click or key press, and it is not confirmed
 that a gamepad press counts. While sound is still off, the title shows a small grown-up
 note; one mouse click (or Space) turns it on. To skip that entirely, open the game in a

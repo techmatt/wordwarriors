@@ -365,6 +365,16 @@ export class BedroomScene extends RoomScene {
     if (this.newsDone) void this.speak(wakeLine(personOf(wakerId()), 'door'));
   }
 
+  /** Free play (item 060): not while she is tucked in (any button is the 💤 puff then); once she is up, yes. */
+  protected override playOpen(): boolean {
+    return !this.asleep && this.walking;
+  }
+
+  /** Yellow says the door line only once the news is done; before that it casts. */
+  protected override hasHint(): boolean {
+    return this.newsDone;
+  }
+
   protected choose(spot: Spot): void {
     if (spot.id === 'bed') {
       if (this.asleep && !this.locked) this.wakeResolve?.();

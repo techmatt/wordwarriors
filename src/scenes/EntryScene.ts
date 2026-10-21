@@ -247,6 +247,22 @@ export class EntryScene extends RoomScene {
     } else if (this.phase === 'door' && !this.locked) void this.narrate('grab_door');
   }
 
+  /**
+   * Free play (item 060): closed while the warm-up's answer is open, from the
+   * first clue (the board up) until she has found it; open in the hall
+   * before the clue, once she has it, and at the door.
+   */
+  protected override playOpen(): boolean {
+    if (this.phase === 'find') return false;
+    if (this.phase === 'intro' && this.board?.visible) return false;
+    return this.walking;
+  }
+
+  /** Yellow speaks only while she looks (the clue again) and at the door. */
+  protected override hasHint(): boolean {
+    return this.phase === 'find' || this.phase === 'door';
+  }
+
   protected choose(spot: Spot): void {
     if (this.locked) return;
     if (spot.id === 'door') {

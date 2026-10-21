@@ -182,7 +182,8 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 - **A door she cannot use yet is not there at all.**
 - **Sprites move only by bob and squash/scale.**
 - **Keyboard:** A–Z belongs to spelling. Arrows move, Space/Enter green, Esc red, Tab
-  yellow. **1 / 2 are Dad's no / yes** (`src/input/dadButtons.ts`), live even under dad
+  yellow, Shift blue. In free play (item 060) green jumps and blue / red / yellow cast
+  wherever they mean nothing else. **1 / 2 are Dad's no / yes** (`src/input/dadButtons.ts`), live even under dad
   lock, and only where a game asks him, with a small 1 ✗ / 2 ✓ cue in a corner. Dev keys
   are F-keys only: F2 skip step, F4 auto-answer (Dad's yes where he is asked), F9 parent page.
   Backquote / tilde is **dad lock**: she walks, no press does anything, timed re-prompts
@@ -217,6 +218,7 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 | "here are my letter sound recordings" / "here is a recorder zip" | `npm run voice:import -- <zip>`, then `voice:build`; report each card installed or refused and why (`docs/recording.md`) |
 | "longer / shorter charge words" / "a longer / shorter beat to say each sound back" / "Dad should wait longer" / "quick sounds sooner / later" | `CHARGE` in `src/config.ts` (`units`, `sayBackMs`, `readTimeoutMs`, `tiers`) |
 | "a new gesture for X" / "X's rune should fire Y" | X's entry in `RUNES` (`content/phonics/runes.ts`: `gesture`, `move`), then `voice:lines`, `voice:build` |
+| "higher / floatier jumps" / "more or fewer shots" / "charge sooner" | `FREE_PLAY` in `src/config.ts` (`jump`, `maxShots`, `chargeMs`, `fullChargeMs`, `shotSpeed`, `shotLifeMs`) |
 | "stop forcing the phonics room" | `FORCE_PHONICS_ROOM` in `src/config.ts` (both stay weighted entries, `CHARGE.weight`, `BRIDGE.weight`) |
 | "more / fewer bridge words" / "slower slide" / "stop sounds sooner / later" / "Dad should wait longer on the bridge" | `BRIDGE` in `src/config.ts` (`words`, `slide`, `tiers`, `dadWaitMs`, `replays`, `startLevel`) |
 | "the bridge needs pictures like X" | a familiar `BANK` thing starting like X (`docs/content.md`, "The Stretchy Bridge's pictures"), the three commands, `art:gen` |

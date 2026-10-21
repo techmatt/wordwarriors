@@ -95,6 +95,11 @@ export class PickScene extends RoomScene {
     void this.speak(coreLine(`pick_${this.what}`));
   }
 
+  /** Free play (item 060): closed, the whole scene is a choice. */
+  protected override playOpen(): boolean {
+    return false;
+  }
+
   protected choose(spot: Spot): void {
     // One pick per visit: a second press during the name line must not pick
     // again (or re-roll the surprise villain after it was shown).

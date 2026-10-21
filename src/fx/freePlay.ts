@@ -14,7 +14,7 @@
  * buttons are free (a button with a meaning there keeps it). Dad lock
  * silences it all: presses never arrive (Controls), and a charge or a held
  * float is dropped while it is on. Live shots are capped (`FREE_PLAY.maxShots`):
- * one more pops the oldest early.
+ * one more removes the oldest quietly. Bursts come from pooled emitters.
  */
 
 import Phaser from 'phaser';
@@ -116,6 +116,7 @@ export class FreePlay {
   private shots: Shot[] = [];
   private readonly aim = new Phaser.Math.Vector2(1, 0);
   private readonly trails = new Map<string, Phaser.GameObjects.Particles.ParticleEmitter>();
+  private readonly puffs = new Map<string, Phaser.GameObjects.Particles.ParticleEmitter>();
   private readonly turn: Record<CastColor, number> = { blue: 0, red: 0, yellow: 0 };
   private frame = 0;
   private aimed = false;
@@ -205,10 +206,45 @@ export class FreePlay {
     this.charges.delete(c);
   }
 
-  /** Put down everything in hand (the scene closed play: a choice opened). */
+  /**
+   * Put down everything in hand (the scene closed play: a choice opened).
+   * Shots in flight vanish quietly too: a pop made after the battle veils its
+   * effects would hang over the move pads (item 039's frozen-effect bug).
+   */
   reset(): void {
     for (const c of CAST_COLORS) this.drop(c);
     this.jump = null;
+    for (const s of this.shots) s.obj.destroy();
+    this.shots = [];
+    playStats.live = 0;
+  }
+
+  /**
+   * A burst from a pooled emitter (one per look of burst), so mashing makes
+   * particles, not emitters. Marked `freePlay`: the battle leaves its clock
+   * alone (the shots fly on real time, so do their sparks).
+   */
+  private puff(x: number, y: number, o: { count: number; speed: number; colors: number[]; texture: string; scale: number; life: number; gravity: number }): void {
+    const key = `${o.texture}|${o.colors.join(',')}|${o.speed}|${o.scale}|${o.life}|${o.gravity}`;
+    let e = this.puffs.get(key);
+    if (!e || !e.active) {
+      e = this.scene.add
+        .particles(0, 0, o.texture, {
+          speed: { min: o.speed * 0.3, max: o.speed },
+          angle: { min: 0, max: 360 },
+          scale: { start: o.scale, end: 0 },
+          alpha: { start: 1, end: 0 },
+          lifespan: { min: o.life * 0.5, max: o.life },
+          gravityY: o.gravity,
+          tint: o.colors,
+          blendMode: Phaser.BlendModes.ADD,
+          emitting: false,
+        })
+        .setDepth(DEPTH.fx + 2)
+        .setData('freePlay', true);
+      this.puffs.set(key, e);
+    }
+    e.explode(Math.max(3, Math.round(o.count * fxQuality.level)), x, y);
   }
 
   private look(c: CastColor): Look {
@@ -218,7 +254,8 @@ export class FreePlay {
   }
 
   private fire(c: CastColor, x: number, y: number, big: boolean, power: number, feetY: number): void {
-    for (let n = overCap(this.shots.length); n > 0; n--) this.pop(this.shots[0]!);
+    // Over the cap the oldest just goes (no pop: a press makes one burst, not two).
+    for (let n = overCap(this.shots.length); n > 0; n--) this.pop(this.shots[0]!, true);
     const look = this.look(c);
     const scale = (TEX_SCALE[look.tex] ?? 1.3) * (big ? 2.2 + 1.6 * power : 1);
     const obj = this.scene.add.image(x, y, look.tex).setDepth(DEPTH.fx + 1).setScale(scale).setTint(look.tints[0]!);
@@ -248,7 +285,7 @@ export class FreePlay {
     playStats.live = this.shots.length;
     playStats.maxLive = Math.max(playStats.maxLive, this.shots.length);
     // The muzzle flash, and a sound per colour.
-    burst(this.scene, x, y, { count: big ? 26 : 8, speed: big ? 360 : 180, colors: look.trailTints, texture: look.trail, scale: 0.7, life: 320, gravity: 0, depth: DEPTH.fx + 2 });
+    this.puff(x, y, { count: big ? 26 : 8, speed: big ? 360 : 180, colors: look.trailTints, texture: look.trail, scale: 0.7, life: 320, gravity: 0 });
     if (big) {
       shockwave(this.scene, x, y, look.tints[0]!, 140, 380);
       sfxBoom(1);
@@ -299,20 +336,22 @@ export class FreePlay {
           blendMode: Phaser.BlendModes.ADD,
           emitting: false,
         })
-        .setDepth(DEPTH.fx);
+        .setDepth(DEPTH.fx)
+        .setData('freePlay', true);
       this.trails.set(key, e);
     }
     e.emitParticleAt(x, y, n);
   }
 
   /** A shot ends in a burst of its own things. */
-  private pop(s: Shot): void {
+  private pop(s: Shot, quiet = false): void {
     this.shots = this.shots.filter((o) => o !== s);
     playStats.live = this.shots.length;
     const { x, y } = s.obj;
     s.obj.destroy();
+    if (quiet) return;
     const tex = s.look.tex === TEX.glow || s.look.tex === TEX.streak ? s.look.trail : s.look.tex;
-    burst(this.scene, x, y, {
+    this.puff(x, y, {
       count: s.big ? 40 : 12,
       speed: s.big ? 420 : 220,
       colors: [...s.look.tints, ...s.look.trailTints],
@@ -320,7 +359,6 @@ export class FreePlay {
       scale: tex === TEX.spark ? 1.2 : 0.6,
       life: s.big ? 700 : 450,
       gravity: s.color === 'yellow' ? 500 : 120,
-      depth: DEPTH.fx + 2,
     });
     if (s.big) shockwave(this.scene, x, y, s.look.tints[0]!, 220, 450);
   }

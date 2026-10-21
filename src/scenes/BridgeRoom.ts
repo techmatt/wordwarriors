@@ -764,6 +764,20 @@ export class BridgeRoom extends Minigame {
     this.fadeOutThen(() => backToHub(this, this.slot));
   }
 
+  /**
+   * Free play (item 060): while a bridge is introduced and when the last is
+   * crossed. Closed while she slides, blends aloud for Dad, picks, or a pick
+   * plays out.
+   */
+  protected override playOpen(): boolean {
+    return (this.phase === 'intro' || this.phase === 'done') && this.walking;
+  }
+
+  /** Yellow says the instruction again only where hint() has one. */
+  protected override hasHint(): boolean {
+    return this.phase === 'slide' || this.phase === 'pick' || this.phase === 'say';
+  }
+
   /** Yellow: the instruction again (never extra help: the stones' help is the level's, or Dad's). */
   protected override hint(idle = false): void {
     const key = this.phase === 'slide' ? (this.voiced ? 'bridge_slide' : 'bridge_quiet') : this.phase === 'pick' ? 'bridge_find' : this.phase === 'say' && !idle ? 'bridge_say' : null;

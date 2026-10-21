@@ -451,6 +451,20 @@ export class WordMachine extends Minigame {
     this.fadeOutThen(() => backToHub(this, this.slot));
   }
 
+  /**
+   * Free play (item 060): while a round is introduced (once she is walking)
+   * and when the last word is built; never while a tile choice is open or
+   * being checked.
+   */
+  protected override playOpen(): boolean {
+    return (this.phase === 'intro' || this.phase === 'done') && this.walking;
+  }
+
+  /** Yellow says the word's parts again only while she picks. */
+  protected override hasHint(): boolean {
+    return this.phase === 'pick';
+  }
+
   /** Yellow: the picture's word in parts, the onset's sound then the rime, never blended. Idle: the instruction first. */
   protected override hint(idle = false): void {
     if (this.phase !== 'pick') return;

@@ -50,6 +50,14 @@ export abstract class Minigame extends RoomScene {
     return this.dialogueAware && super.showSpeakerName(s);
   }
 
+  /**
+   * Free play (item 060): closed. The parked v0.1 games are answer rooms
+   * throughout; each live room opens it in its own phases where no answer waits.
+   */
+  protected override playOpen(): boolean {
+    return false;
+  }
+
   protected itemIndex = 0;
   protected wrongTries = 0;
   private rightN = 0;

@@ -444,6 +444,16 @@ export class SentenceRoom extends Minigame {
     return true;
   }
 
+  /** Free play (item 060): only once the key word is found; listening, reading along and finding are all answers. */
+  protected override playOpen(): boolean {
+    return this.pass === 'done' && this.walking;
+  }
+
+  /** Yellow says something again only on her read-along and while she finds the key word. */
+  protected override hasHint(): boolean {
+    return this.pass === 'read' || this.pass === 'find';
+  }
+
   protected override hint(idle = false): void {
     if (this.pass === 'read') {
       if (idle) {

@@ -588,6 +588,21 @@ export class ChargeRoom extends Minigame {
     }
   }
 
+  /**
+   * Free play (item 060): only while the game is explained and once it is
+   * done. Never from the first rune to Dad's answer: she says sounds back and
+   * reads the word aloud, and Dad listens to her voice, so no SFX then.
+   * `walking` stays false here (no stick hint), so it is not consulted.
+   */
+  protected override playOpen(): boolean {
+    return this.phase === 'explain' || this.phase === 'done';
+  }
+
+  /** Yellow asks the read again only while Dad is asked. */
+  protected override hasHint(): boolean {
+    return this.phase === 'read';
+  }
+
   /** Yellow (never asked for here): on the word, the read ask again. */
   protected override hint(idle = false): void {
     if (idle || this.phase !== 'read') return;
