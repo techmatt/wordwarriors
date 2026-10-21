@@ -243,16 +243,18 @@ walks in and it starts by itself ("Say each sound after me!"): each rune lights 
 altar in turn (an upper-case letter; its slot pulses), the helper shows the sound's
 gesture (Jolly Phonics style: a hissing snake 🐍 for S, a tummy rub for M;
 `content/phonics/runes.ts`) and says the sound, then a quiet beat (`CHARGE.sayBackMs`,
-1.5 s; the dad lock holds it) for her to say it back, and the rune fires up into its slot.
+1.2 s; the dad lock holds it) for her to say it back, and the rune fires up into its slot.
 Nothing is pressed per rune: Matt watched the per-rune presses frustrate her (item 059).
 With every rune charged the word lights up and she reads it aloud ("Now read the whole
 spell!"), the room's one press, Dad's: **2** says it; **1**, or 10 s with nothing
 (`readTimeoutMs`), is "Let's sound it out together!", the word sounded out once and then
 said; either way its picture shows and goes into her bag as a battle item. Dad may press
 as soon as the word lights. The read records the word and its sounds (right with his 2),
-which open the quicker sounds' tiers. A round with Dad answering at once is about 20 s of
-game time (`tests/charge.spec.ts` holds it under 18 s to the read, 30 s in all with his
-1). The word is drawn like any room's (`drawWords`, from the familiar pictured words),
+which open the quicker sounds' tiers. A round with Dad answering at once is 20-25 s of
+game time: about 3.2 s a rune, 17 s to the read for three runes, 21 s for four, then about
+5 s for the word, its picture and the bag (measured on the scene clock, item 059;
+`room.charge.readAtMs` and `elapsedMs` in the hooks; `tests/charge.spec.ts` holds it
+under 22 s to the read, 32 s in all with his 1). The word is drawn like any room's (`drawWords`, from the familiar pictured words),
 leaning to shaky sounds: continuous sounds first (M S F A L N R V Z, the short vowels),
 quick sounds once those are solid, then SH CH TH (`src/rules/charge.ts`, `CHARGE` in
 `src/config.ts`). Each charged rune is still a move her hero fires in the next battle

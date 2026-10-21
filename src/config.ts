@@ -127,7 +127,7 @@ export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2 };
  */
 export const CHARGE = {
   units: [3, 4] as [number, number],
-  sayBackMs: 1500,
+  sayBackMs: 1200,
   readTimeoutMs: 10000,
   startLevel: 1 as 1 | 2 | 3,
   weight: 1,

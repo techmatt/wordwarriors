@@ -76,6 +76,9 @@ export interface RoomInfo {
     assists: number;
     timeouts: number;
     charged: string[];
+    /** Game time (scene clock) since the visit began, and when the read was first asked (0 before): the round's length (item 059). */
+    elapsedMs: number;
+    readAtMs: number;
   };
   /**
    * The Stretchy Bridge (item 054): the visit's words, the one on the bridge

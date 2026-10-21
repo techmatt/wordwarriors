@@ -80,6 +80,8 @@ export interface WWState {
       assists: number;
       timeouts: number;
       charged: string[];
+      elapsedMs: number;
+      readAtMs: number;
     };
     /** The Stretchy Bridge (item 054). */
     bridge?: {
@@ -446,8 +448,10 @@ export async function playRoom(page: Page): Promise<string[]> {
     'a side room',
   );
   if (s.scene === 'ChargeRoom') {
+    // Its word is a battle item (item 058), fetched like any room's.
+    const word = s.room!.charge!.word;
     await playChargeRoom(page);
-    return [];
+    return [word];
   }
   if (s.scene === 'BridgeRoom') return playBridgeRoom(page);
   return s.scene === 'WordMachine' ? playWordMachine(page) : [await playSentenceRoom(page)];

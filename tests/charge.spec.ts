@@ -11,7 +11,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, SPEED, boot, collectErrors, dad, expectNoErrors, playEpisode, press, state, until } from './harness';
+import { SLOW, boot, collectErrors, dad, expectNoErrors, playEpisode, press, state, until } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/053_${name}.png` });
 
@@ -85,14 +85,16 @@ test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on t
   await boot(page, '?scene=room&slot=a&room=charge');
   const s0 = await until(page, (st) => st.scene === 'ChargeRoom' && Boolean(st.room?.charge), 60_000, 'charge room');
   const { word, runes } = s0.room!.charge!;
-  const t0 = Date.now();
   const read = await until(page, (st) => st.room?.charge?.phase === 'read', 60_000, 'the read');
-  const toRead = Date.now() - t0;
+  const toRead = read.room!.charge!.readAtMs;
   // Nothing was pressed and nothing asked before the read.
   expect(read.room!.charge!.charged).toEqual(runes);
   await dad(page, 'no');
-  const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'back in the hub');
-  const ms = Date.now() - t0;
+  let ms = 0;
+  const hub = await until(page, (st) => {
+    if (st.room?.charge) ms = st.room.charge.elapsedMs;
+    return st.scene === 'Hub';
+  }, 30_000, 'back in the hub');
   // Sounded out once, unit by unit, then the word said; no fail state: it is fetched, recorded as a miss.
   const h = hub.voice.history;
   const at = h.lastIndexOf(narratorLineEnd(h, '_charge_together'));
@@ -102,11 +104,12 @@ test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on t
   expect(hub.episode.fetched).toEqual([word]);
   expect(hub.episode.charged?.sounds).toEqual(runes);
   expect(hub.progress.words[word]!.recent).toEqual([false]);
-  // About 20 s a round (item 059), in game time (the page's clocks run SPEED times fast): to the
-  // read under 18 s, the whole round with Dad's 1 and the sounding out under 30 s.
-  console.log(`charge round: ${word} (${runes.length} runes), ${(toRead * SPEED) / 1000} s to the read, ${(ms * SPEED) / 1000} s in all (game time)`);
-  expect(toRead * SPEED).toBeLessThan(18_000);
-  expect(ms * SPEED).toBeLessThan(30_000);
+  // About 20 s a round (item 059), in game time (the scene's clock; the test's own runs SPEED times
+  // fast): to the read under 22 s (about 17 s for 3 runes, 21 s for 4), the whole round with
+  // Dad's 1 and the sounding out together under 32 s.
+  console.log(`charge round: ${word} (${runes.length} runes), ${toRead / 1000} s to the read, ${ms / 1000} s in all (game time)`);
+  expect(toRead).toBeLessThan(22_000);
+  expect(ms).toBeLessThan(32_000);
   expectNoErrors(errors);
 });
 

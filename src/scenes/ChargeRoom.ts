@@ -89,6 +89,11 @@ export class ChargeRoom extends Minigame {
   /** How the word's read went: Dad's yes, or a no / timeout (sounded out). */
   private readAnswer: 'yes' | 'no' | 'timeout' | null = null;
   private finished = false;
+  /** Scene time at the start of the visit and when the read was asked (the round's length in game time, for the tests). */
+  private startedAt = 0;
+  private readAt = 0;
+  /** The say-back beat running now: its time left (it stands still under dad lock). */
+  private beat: { left: number; done: () => void } | null = null;
   private closeDad: (() => void) | null = null;
   private altar!: Phaser.GameObjects.Image;
   private stone!: Phaser.GameObjects.Image;
@@ -134,6 +139,7 @@ export class ChargeRoom extends Minigame {
     this.waitMs = 0;
     this.timeouts = 0;
     this.readAnswer = null;
+    this.beat = null;
     this.barSlots = [];
     this.barTexts = [];
     this.slotPulse = null;
@@ -206,6 +212,8 @@ export class ChargeRoom extends Minigame {
     });
 
     this.locked = true;
+    // Set on the first frame: in build() the scene clock has not caught up with the game's yet.
+    this.startedAt = -1;
     if (this.finished) {
       this.phase = 'done';
       this.time.delayedCall(600, () => backToHub(this, this.slot));
@@ -328,14 +336,13 @@ export class ChargeRoom extends Minigame {
     await this.charge();
   }
 
-  /** `ms` of scene time, paused under dad lock (a timed wait for her waits while Dad holds the game). */
-  private async waitUnlocked(ms: number): Promise<void> {
-    let left = ms;
-    while (left > 0) {
-      await this.wait(100);
-      if (!dadLock.locked) left -= 100;
-      if (!this.scene.isActive()) return;
-    }
+  /** `ms` of scene time, paused under dad lock (a timed wait for her waits while Dad holds the game); counted in update(). */
+  private waitUnlocked(ms: number): Promise<void> {
+    return this.guard(
+      new Promise<void>((resolve) => {
+        this.beat = { left: ms, done: resolve };
+      }),
+    );
   }
 
   /**
@@ -493,6 +500,7 @@ export class ChargeRoom extends Minigame {
     await this.narrate('charge_read');
     if (f !== this.flow) return;
     this.phase = 'read';
+    this.readAt = this.time.now - this.startedAt;
     this.waitMs = 0;
     this.locked = false;
     setDadAsking(true);
@@ -562,6 +570,15 @@ export class ChargeRoom extends Minigame {
   /** Waiting for Dad on the read: nothing for CHARGE.readTimeoutMs counts as his 1 (paused under dad lock and while a line plays). */
   override update(time: number, deltaMs: number): void {
     super.update(time, deltaMs);
+    if (this.startedAt < 0) this.startedAt = this.time.now;
+    if (this.beat && !dadLock.locked) {
+      this.beat.left -= deltaMs;
+      if (this.beat.left <= 0) {
+        const { done } = this.beat;
+        this.beat = null;
+        done();
+      }
+    }
     if (this.phase !== 'read') return;
     if (dadLock.locked || voiceBus.busy) return;
     this.waitMs += deltaMs;
@@ -616,6 +633,8 @@ export class ChargeRoom extends Minigame {
         timeouts: this.timeouts,
         read: this.readAnswer,
         charged: [...(episode.charged?.sounds ?? [])],
+        elapsedMs: this.time.now - this.startedAt,
+        readAtMs: this.readAt,
       },
     };
   }
