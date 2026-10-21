@@ -1,6 +1,6 @@
 /**
- * Loads every art asset, generates the particle textures, reads the voice
- * manifest and decodes the core group, then hands over to the title, or, with
+ * Generates the particle textures, loads the title's art (the rest loads on
+ * demand, item 065: src/art/), reads the voice manifest and decodes the core group, then hands over to the title, or, with
  * `?scene=<step>`, straight into a step of a plausible episode (tests, and
  * Matt wanting to look at one thing).
  *
@@ -28,12 +28,13 @@
 
 import Phaser from 'phaser';
 
-import { ART_ASSETS } from '../../content/art/assets';
 import { CHARACTER_BY_ID, formId } from '../../content/battle/roster';
 import { group } from '../../content/voice/ids';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { enterRoom, episode, episodeGroups, giftWord, isStepKind, jumpTo, planFor, setCastOptions, startStep, steps, type PrepGame, type Slot } from '../episode/Episode';
 import { DADS, seededRand, type CastOverrides } from '../rules/cast';
+import { artBank } from '../art/ArtBank';
+import { artFor } from '../art/needs';
 import { makeTextures } from '../fx/textures';
 import { voiceBank } from '../voice/VoiceBank';
 
@@ -84,31 +85,29 @@ function castOptions(q: URLSearchParams): Parameters<typeof setCastOptions>[0] {
 }
 
 export class BootScene extends Phaser.Scene {
+  private bar!: Phaser.GameObjects.Rectangle;
+
   constructor() {
     super('Boot');
   }
 
   preload(): void {
-    const bar = this.add.rectangle(GAME_WIDTH / 2 - 300, GAME_HEIGHT / 2, 4, 24, 0xffd23f).setOrigin(0, 0.5);
     this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, 608, 32).setStrokeStyle(3, 0xffffff);
-    this.load.on('progress', (p: number) => (bar.width = 600 * p));
-    for (const a of ART_ASSETS) this.load.image(a.id, `art/${a.id}.png`);
-    // A missing art file must not stop the game: it falls back to a texture made below.
-    this.load.on('loaderror', (file: Phaser.Loader.File) => console.warn(`art: missing ${file.key}`));
+    this.bar = this.add.rectangle(GAME_WIDTH / 2 - 300, GAME_HEIGHT / 2, 4, 24, 0xffd23f).setOrigin(0, 0.5);
   }
 
   async create(): Promise<void> {
     makeTextures(this);
-    for (const a of ART_ASSETS) {
-      if (!this.textures.exists(a.id)) {
-        const g = this.make.graphics({ x: 0, y: 0 }, false);
-        g.fillStyle(0xff00ff, 1).fillRect(0, 0, 64, 64);
-        g.generateTexture(a.id, 64, 64);
-        g.destroy();
-      }
-    }
-    await voiceBank.load();
-    await voiceBank.loadGroups([group.core]);
+    // Art loads on demand (item 065): only the title's, and only on a plain start;
+    // a `?scene=` jump waits at the gate (src/art/gate.ts) for its own.
+    const plain = !new URLSearchParams(location.search).get('scene');
+    const title = plain ? artBank.missing(artFor('Title', true)) : [];
+    let got = 0;
+    const tick = () => (this.bar.width = 4 + 596 * (title.length ? got / title.length : 1));
+    await Promise.all([
+      ...title.map((id) => artBank.ensure([id]).then(() => (got++, tick()))),
+      voiceBank.load().then(() => voiceBank.loadGroups([group.core])),
+    ]);
 
     const q = new URLSearchParams(location.search);
     const target = q.get('scene');

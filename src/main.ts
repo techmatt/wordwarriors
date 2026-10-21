@@ -22,6 +22,8 @@ import { TitleScene } from './scenes/TitleScene';
 import { EndingScene } from './scenes/EndingScene';
 import { EntryScene } from './scenes/EntryScene';
 import { VictoryScene } from './scenes/VictoryScene';
+import { WaitScene } from './scenes/WaitScene';
+import { artBank } from './art/ArtBank';
 import { installTestHooks } from './testHooks';
 import { installDadButtons } from './input/dadButtons';
 import { installDadLock } from './input/dadLock';
@@ -83,8 +85,12 @@ const game = new Phaser.Game({
     WordToPicture,
     RetreatScene,
     Spelling,
+    WaitScene,
   ],
 });
+
+// Art loads on demand (item 065, src/art/): before any scene asks for a texture.
+artBank.install(game);
 
 installDadLock();
 installDadButtons();

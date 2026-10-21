@@ -16,6 +16,7 @@ import { virtualPad, type Button } from './input/Controls';
 import { dadButtonsOpen, dadPress, type DadAnswer } from './input/dadButtons';
 import { dadLock, setDadLock } from './input/dadLock';
 import { typeLetter } from './input/TextEntry';
+import { artBank } from './art/ArtBank';
 import { voiceBus } from './audio/VoiceBus';
 import { episode, currentStep } from './episode/Episode';
 import { progress } from './state/progress';
@@ -223,6 +224,18 @@ export function installTestHooks(game: Phaser.Game): void {
       music: musicPlaying(),
       progress: progress.snapshot(),
     }),
+    /** Art on demand (item 065): images on screen drawn with Phaser's missing texture, art asked for before it loaded, loads in flight. */
+    art: () => {
+      let missing = 0;
+      const walk = (list: Phaser.GameObjects.GameObject[]) => {
+        for (const o of list) {
+          if ((o as unknown as { texture?: { key: string } }).texture?.key === '__MISSING') missing++;
+          if (o instanceof Phaser.GameObjects.Container) walk(o.list);
+        }
+      };
+      for (const s of game.scene.getScenes(true)) walk(s.children.list);
+      return { missing, late: artBank.late.map((l) => `${l.id} (${l.scene})`), pending: artBank.pending() };
+    },
     input: {
       press: (b: Button) => virtualPad.press(b),
       stick: (x: number, y: number) => virtualPad.stick(x, y),

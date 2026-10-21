@@ -15,10 +15,11 @@ import { ENDING_BY_ID, endingArt, endingPropArt } from '../../content/house/endi
 import { voiceBus } from '../audio/VoiceBus';
 import { startMusic } from '../audio/music';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { castArt, castScale, episode, type Step } from '../episode/Episode';
+import { startScene } from '../art/gate';
+import { castArt, castScale, drawEnding, episode, type Step } from '../episode/Episode';
 import { burst, fitImage } from '../fx/juice';
 import { Controls } from '../input/Controls';
-import { endingPeople, endingScript, pickEnding, standXs } from '../rules/endings';
+import { endingPeople, endingScript, standXs } from '../rules/endings';
 import { progress } from '../state/progress';
 import { hookState } from '../testHooks';
 import { Bubbles, type BubbleAnchor } from '../ui/Bubbles';
@@ -52,15 +53,15 @@ export class EndingScene extends Phaser.Scene {
     this.controls = new Controls(this);
 
     // Drawn once per episode (a trip to the grown-ups page comes back to the same one).
-    const forced = new URLSearchParams(location.search).get('ending');
-    if (!episode.ending) {
-      episode.ending = forced && ENDING_BY_ID[forced] ? forced : pickEnding(episode, progress.lastEnding());
-      progress.endingPlayed(episode.ending);
+    // Drawn early (item 065: the second battle draws it so its art loads during the fight); counted here.
+    if (!episode.endingCounted) {
+      episode.endingCounted = true;
+      progress.endingPlayed(drawEnding());
       // The episode is won here: counted now, not when green leaves the
       // victory screen (item 039: closing the tab there never counted it).
       progress.episodeDone();
     }
-    const e = ENDING_BY_ID[episode.ending]!;
+    const e = ENDING_BY_ID[drawEnding()]!;
     const people = endingPeople(episode);
     const script = endingScript(episode, e.id, episode.lines.ending);
 
@@ -147,7 +148,7 @@ export class EndingScene extends Phaser.Scene {
     this.leaving = true;
     voiceBus.hush();
     this.cameras.main.fadeOut(400, 255, 255, 255);
-    this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start('Victory', { step: this.step }));
+    this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => startScene(this, 'Victory', { step: this.step }));
   }
 
   override update(): void {

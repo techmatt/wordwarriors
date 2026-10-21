@@ -79,6 +79,8 @@ export interface Since {
   flashes: { scene: string; t: number }[];
   console: { level: string; text: string; scene: string }[];
   missingArt: string[];
+  /** Art drawn before it loaded, or a scene opened with its art still loading (item 065). */
+  lateArt?: { scene: string; id: string }[];
   frames: Record<string, { n: number; over50: number; over100: number; max: number }>;
   now: number;
 }
@@ -217,10 +219,11 @@ export function logIssues(q: Since): Issue[] {
     else if (v.silent) out.push({ kind: 'voice-silent', severity: 'bug', scene: v.scene, detail: `${v.id}: played with no clip (${v.why ?? 'not decoded'})`, key: `silent:${v.id}` });
   }
   for (const c of q.console) {
-    if (/^art: missing|^voice: (no line|could not)/.test(c.text)) continue;
+    if (/^art: (missing|not ready)|^voice: (no line|could not)/.test(c.text)) continue;
     out.push({ kind: `console-${c.level}`, severity: c.level === 'error' ? 'bug' : 'look', scene: c.scene, detail: c.text, key: `console:${c.text.slice(0, 80)}` });
   }
   for (const a of q.missingArt) out.push({ kind: 'art-missing', severity: 'bug', scene: '', detail: a, key: `missing:${a}` });
+  for (const a of q.lateArt ?? []) out.push({ kind: 'art-late', severity: 'bug', scene: a.scene, detail: `${a.id}: shown before it loaded`, key: `late:${a.scene}:${a.id}` });
   for (const k of q.locks) {
     if (k.silentMs > 2500) out.push({ kind: 'locked-silent', severity: 'look', scene: k.scene, detail: `${k.round}: input locked ${(k.ms / 1000).toFixed(1)} s, ${(k.silentMs / 1000).toFixed(1)} s of it silent`, key: `lsilent:${k.scene}:${k.round.replace(/:\w+$/, '')}` });
     else if (k.ms > 20_000) out.push({ kind: 'locked-long', severity: 'look', scene: k.scene, detail: `${k.round}: input locked ${(k.ms / 1000).toFixed(1)} s (talking)`, key: `llong:${k.scene}:${k.round.replace(/:\w+$/, '')}` });

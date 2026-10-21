@@ -36,7 +36,8 @@ import { ADULT_HEIGHT, EPISODE_DEFAULTS, FORCE_PHONICS_ROOM } from '../config';
 import { drawCast, isGrownUp, wakerOf, type CastOverrides } from '../rules/cast';
 import { fightSpec, pickFight } from '../rules/fights';
 import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
-import { endingPeople } from '../rules/endings';
+import { endingPeople, pickEnding } from '../rules/endings';
+import { ENDING_BY_ID } from '../../content/house/endings';
 import { withStems, type Rand } from '../rules/bank';
 import { episodePlans, wordsOf, type RoomPlan } from '../rules/sentences';
 import { BRIDGE_GAME, CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
@@ -46,6 +47,7 @@ import { BEDROOM_TAUNTS, DEFAULT_LINES, DEFAULT_STORY, drawLines, drawStory, typ
 import { progress } from '../state/progress';
 import { pickWeighted } from '../state/ProgressStore';
 import { voiceBank } from '../voice/VoiceBank';
+import { startScene } from '../art/gate';
 
 export type PrepGame = 'sound' | 'blend' | 'picture';
 
@@ -113,6 +115,8 @@ export interface EpisodeState {
   grab: { word: string; objects: string[]; level: number | null; misses: number } | null;
   /** The victory scene (content/house/endings.ts id), drawn when it starts (item 027). */
   ending: string | null;
+  /** The victory scene has been counted (progress `endingPlayed`, `episodeDone`): it may be drawn earlier than it opens. */
+  endingCounted: boolean;
   /** The showdown's fight style (content/battle/fights.ts id), drawn at the first battle (item 031). */
   fight: string | null;
   /** Which quest setup line and hub scene the helper plays (item 037, src/rules/story.ts), drawn with the cast. */
@@ -170,6 +174,7 @@ export const episode: EpisodeState = {
   house: { plan: null, done: [], taught: false },
   grab: null,
   ending: null,
+  endingCounted: false,
   fight: null,
   story: { ...DEFAULT_STORY },
   lines: { ...DEFAULT_LINES },
@@ -392,6 +397,7 @@ export function resetEpisode(): void {
   episode.house = { plan: null, done: [], taught: false };
   episode.grab = null;
   episode.ending = null;
+  episode.endingCounted = false;
   episode.fight = null;
   episode.stepIndex = 0;
 }
@@ -592,6 +598,18 @@ export function counterArt(): string {
   return named ? `item_${named.id}` : `pic_${counterWord()}`;
 }
 
+/**
+ * The victory scene (item 027), drawn once per episode: by the second battle
+ * (item 065: so its art loads during the fight) or as it opens. `?ending=` forces one.
+ */
+export function drawEnding(): string {
+  if (!episode.ending) {
+    const forced = typeof location === 'undefined' ? null : new URLSearchParams(location.search).get('ending');
+    episode.ending = forced && ENDING_BY_ID[forced] ? forced : pickEnding(episode, progress.lastEnding());
+  }
+  return episode.ending;
+}
+
 /** Voice groups the current episode will need from here on. */
 export function episodeGroups(): string[] {
   // In decode order (item 062: one queue). The letter sounds first: a bridge stone's held sound does not wait for its decode.
@@ -620,19 +638,19 @@ export function startStep(scene: Phaser.Scene): void {
     if (step.kind === 'bedroom') voiceBank.retain(episodeGroups());
     void voiceBank.loadGroups(episodeGroups());
   }
-  scene.scene.start(key, { step });
+  startScene(scene, key, { step });
 }
 
 /** From the hub into a side room: the scene of the minigame drawn for it (src/rules/minigames.ts). */
 export function enterRoom(scene: Phaser.Scene, slot: Slot): void {
   voiceBus.hush();
-  scene.scene.start(planFor(slot).scene, { step: currentStep(), slot });
+  startScene(scene, planFor(slot).scene, { step: currentStep(), slot });
 }
 
 /** From a side room back to the hub, standing at that room's door. */
 export function backToHub(scene: Phaser.Scene, from: Slot): void {
   voiceBus.hush();
-  scene.scene.start('Hub', { step: currentStep(), from });
+  startScene(scene, 'Hub', { step: currentStep(), from });
 }
 
 /** The current step is done; go to the next one. */
@@ -653,7 +671,7 @@ export function advance(scene: Phaser.Scene): void {
   if ((JOURNEY_BEFORE.includes(next.kind) || (next.kind === 'house' && next.part === 2)) && !skipJourney) {
     voiceBus.hush();
     void voiceBank.loadGroups(episodeGroups());
-    scene.scene.start('Journey');
+    startScene(scene, 'Journey');
     return;
   }
   startStep(scene);
@@ -701,7 +719,7 @@ export function jumpTo(scene: Phaser.Scene, kind: Step['kind'], extra: Partial<E
           : ({ kind } as Step);
     voiceBus.hush();
     void voiceBank.loadGroups(episodeGroups());
-    scene.scene.start(parked.kind === 'prep' ? prepScene(parked.game) : SCENE_FOR[parked.kind], { step: parked });
+    startScene(scene, parked.kind === 'prep' ? prepScene(parked.game) : SCENE_FOR[parked.kind], { step: parked });
     return;
   }
   episode.stepIndex = i;

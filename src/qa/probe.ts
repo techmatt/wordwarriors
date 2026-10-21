@@ -6,7 +6,8 @@
  * It keeps logs the checker cannot get by polling: every line the voice bus
  * starts (and whether it had audio), frame-time spikes and long tasks per
  * scene, stretches where her input was locked (and how much of each was
- * silent), full-screen flashes, art that failed to load, and console warnings. `layout()` lists
+ * silent), full-screen flashes, art that failed to load or was drawn before it
+ * loaded (item 065), and console warnings. `layout()` lists
  * what is drawn right now (texts, images, the targets she can walk to) for
  * the overlap and placeholder checks; `counts()` the objects, tweens and
  * timers alive, for growth across episodes.
@@ -20,6 +21,8 @@ import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { fxStats } from '../fx/juice';
 import { dadLock } from '../input/dadLock';
 import { voiceBank } from '../voice/VoiceBank';
+import { artBank } from '../art/ArtBank';
+import { artFor } from '../art/needs';
 import { hookState } from '../testHooks';
 
 export interface QaVoice {
@@ -109,6 +112,8 @@ const log = {
   locks: [] as QaLock[],
   spikes: [] as QaSpike[],
   missingArt: [] as string[],
+  /** Art a scene asked for before it had loaded, and scenes that opened with their art still loading (item 065). */
+  lateArt: [] as { scene: string; id: string }[],
   console: [] as { level: string; text: string; scene: string }[],
   frames: {} as Record<string, { n: number; over50: number; over100: number; max: number }>,
   /** Full-screen camera flashes (game-clock ms), for the flashes-per-second check. */
@@ -143,6 +148,8 @@ export function installProbe(game: Phaser.Game): void {
       log.console.push({ level, text: text.slice(0, 300), scene: hookState.scene });
       const m = /^art: missing (\S+)/.exec(text);
       if (m) log.missingArt.push(m[1]!);
+      const late = /^art: not ready (\S+) \((\S+)\)/.exec(text);
+      if (late) log.lateArt.push({ id: late[1]!, scene: late[2]! });
       orig(...args);
     };
   }
@@ -155,6 +162,14 @@ export function installProbe(game: Phaser.Game): void {
     }).observe({ type: 'longtask', buffered: false });
   } catch {
     // No long-task timing in this browser: the frame times still count.
+  }
+
+  // A scene that opens with its own art still loading (item 065): the gate (src/art/gate.ts) should never let one.
+  for (const scene of game.scene.getScenes(false)) {
+    scene.events.on(Phaser.Scenes.Events.CREATE, () => {
+      const key = scene.scene.key;
+      for (const id of artBank.missing(artFor(key, false))) log.lateArt.push({ id, scene: key });
+    });
   }
 
   // Frame times and lock stretches, once a frame.
@@ -205,6 +220,7 @@ export function installProbe(game: Phaser.Game): void {
       flashes: log.flashes.filter((f) => f.t > t),
       console: log.console.slice(),
       missingArt: log.missingArt.slice(),
+      lateArt: log.lateArt.slice(),
       frames: log.frames,
       now: performance.now(),
     }),

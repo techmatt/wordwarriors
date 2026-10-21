@@ -10,6 +10,7 @@
 import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
+import { artBank } from '../art/ArtBank';
 import { PERSONS, ROSTER } from '../../content/battle/roster';
 import { coreLine } from '../../content/voice/ids';
 import { getAudioContext, unlockAudio } from '../audio/context';
@@ -114,8 +115,13 @@ export class TitleScene extends Phaser.Scene {
 
   private clash(): void {
     if (this.leaving) return;
-    const good = ROSTER[Math.floor(Math.random() * ROSTER.length)]!;
-    const bad = ROSTER[Math.floor(Math.random() * ROSTER.length)]!;
+    // From whoever has loaded (item 065: the rest of the roster loads in the background); the parade's persons always have.
+    const ready = (evil: boolean) => ROSTER.filter((c) => artBank.has(charArt(c.id, evil)));
+    const goods = ready(false);
+    const bads = ready(true);
+    if (!goods.length || !bads.length) return;
+    const good = goods[Math.floor(Math.random() * goods.length)]!;
+    const bad = bads[Math.floor(Math.random() * bads.length)]!;
     const y = 545;
     const a = fitImage(this.add.image(-120, y, charArt(good.id, false)).setOrigin(0.5, 1), 110, 140).setDepth(5);
     const b = fitImage(this.add.image(GAME_WIDTH + 120, y, charArt(bad.id, true)).setOrigin(0.5, 1), 110, 140).setDepth(5);

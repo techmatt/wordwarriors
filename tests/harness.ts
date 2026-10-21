@@ -133,6 +133,10 @@ export interface WWState {
 export function collectErrors(page: Page): string[] {
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
+  // Art drawn before it loaded (item 065, src/art/ArtBank.ts): a gap on screen, so an error.
+  page.on('console', (m) => {
+    if (m.type() === 'warning' && m.text().startsWith('art: not ready')) errors.push(m.text());
+  });
   return errors;
 }
 
