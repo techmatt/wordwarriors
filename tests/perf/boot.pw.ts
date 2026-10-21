@@ -28,7 +28,8 @@ async function once(browser: Browser, query: string, scene: string, quiet: boole
   page.on('response', (r) => {
     if (!/\/art\/[^/]+\.png/.test(r.url())) return;
     art++;
-    void r.body().then((b) => (artBytes += b.length)).catch(() => undefined);
+    // The size from the header: the game fetches art (item 065), and a fetch's body is not always readable here.
+    void r.allHeaders().then((h) => (artBytes += Number(h['content-length'] ?? 0))).catch(() => undefined);
   });
   const t0 = Date.now();
   await boot(page, query);
