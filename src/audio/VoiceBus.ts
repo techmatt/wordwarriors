@@ -17,7 +17,7 @@
  * shows and flow-control awaits still resolve.
  */
 
-import { getAudioContext, unlockAudio, whenVisible } from './context';
+import { audioHeld, getAudioContext, unlockAudio, whenAudible } from './context';
 import type { HoldMode } from './holdSound';
 import { setMusicDuck } from './music';
 import { setSfxLevel } from './sfx';
@@ -222,7 +222,7 @@ class Bus {
       if (decoded === 'failed') console.warn(`voice: ${id} failed to decode; it plays without audio`);
     }
     // A tab hidden as the line comes up (item 080): it starts once she is back.
-    if (typeof document !== 'undefined' && document.hidden) await whenVisible();
+    if (audioHeld()) await whenAudible();
     // hush() or a newer line may have taken the voice while this one decoded;
     // then this line is dropped rather than talking over (and orphaning) it.
     if (this.current !== claim) return false;

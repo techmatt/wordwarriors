@@ -6,6 +6,8 @@
  * `currentTime` on it is the clock the word highlighting rides on.
  */
 
+import { realTimeout } from '../realTime';
+
 let ctx: AudioContext | null = null;
 
 export function getAudioContext(): AudioContext | null {
@@ -33,22 +35,48 @@ export function unlockAudio(): void {
   if (c && c.state === 'suspended') void c.resume().catch(() => undefined);
 }
 
+/** Set while a hidden tab holds the context (item 080), until it has resumed. */
+let held: { done: Promise<void>; release: () => void } | null = null;
+
 /**
- * Resolves once the tab is visible again and the context has had its chance to
- * resume (item 080): a line that comes up while the tab is hidden waits for her,
- * rather than running silent on the estimated clock. Never waits on a context
- * that cannot resume yet (no gesture so far): a second at most.
+ * The tab went hidden (Phaser's HIDDEN, item 080): the context sleeps with the
+ * game loop, so the voice, chimes and music wait with the picture.
  */
-export function whenVisible(): Promise<void> {
-  if (typeof document === 'undefined' || !document.hidden) return Promise.resolve();
-  return new Promise((resolve) => {
-    const check = () => {
-      if (document.hidden) return;
-      document.removeEventListener('visibilitychange', check);
-      const c = getAudioContext();
-      const resumed = c?.state === 'suspended' ? c.resume().catch(() => undefined) : Promise.resolve();
-      void Promise.race([resumed, new Promise((r) => setTimeout(r, 1000))]).then(() => resolve());
-    };
-    document.addEventListener('visibilitychange', check);
-  });
+export function holdAudio(): void {
+  const c = getAudioContext();
+  // Not yet unlocked (suspended, nothing held): nothing plays to hold.
+  if (!c || (c.state !== 'running' && !held)) return;
+  holds++;
+  if (!held) {
+    let release = () => undefined as void;
+    held = { done: new Promise<void>((r) => (release = r)), release: () => release() };
+  }
+  void c.suspend().catch(() => undefined);
+}
+
+/** Bumped by each hold, so a resume that ends after the tab hid again keeps the hold. */
+let holds = 0;
+
+/** The tab is back (Phaser's VISIBLE): resume, and let waiting lines start once it has (a second at most). */
+export function releaseAudio(): void {
+  const h = held;
+  if (!h) return;
+  const at = holds;
+  const end = () => {
+    if (held !== h || holds !== at) return;
+    held = null;
+    h.release();
+  };
+  const resumed = getAudioContext()?.resume().catch(() => undefined) ?? Promise.resolve();
+  void Promise.race([resumed, new Promise<void>((r) => realTimeout(r, 1000))]).then(end);
+}
+
+/** A hidden tab holds the audio: a line coming up now waits for `whenAudible()`. */
+export function audioHeld(): boolean {
+  return held !== null;
+}
+
+/** Resolves once the tab is back and the context running again (at once when nothing holds it). */
+export function whenAudible(): Promise<void> {
+  return held ? held.done : Promise.resolve();
 }

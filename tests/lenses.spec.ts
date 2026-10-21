@@ -5,7 +5,7 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
-import { boot, collectErrors, expectNoErrors, seedProgress, state, until } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, press, seedProgress, state, until } from './harness';
 
 /** A tab switched away or back, as Phaser's visibility handler hears it. */
 async function setHidden(page: Page, hide: boolean): Promise<void> {
@@ -35,12 +35,13 @@ test('a held F8 on the grown-ups page is one press: the record is not erased', a
   expectNoErrors(errors);
 });
 
-test('under dad lock the grown-ups page still takes Esc and green', async ({ page }) => {
+test('under dad lock the grown-ups page still takes red (Esc)', async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=parent');
   await until(page, (s) => s.scene === 'Parent', 30_000, 'parent page');
   await page.keyboard.press('Backquote');
-  await page.keyboard.press('Escape');
+  // Red (Esc, the pad's B) through the virtual pad: a keyboard press can fall between two frames.
+  await press(page, 'red');
   await until(page, (s) => s.scene === 'Title', 10_000, 'back to the title under dad lock');
   await page.keyboard.press('Backquote');
   expectNoErrors(errors);
@@ -83,7 +84,7 @@ test('a hidden tab holds the voice: the line playing does not end until the tab 
   expectNoErrors(errors);
 });
 
-test('under dad lock the move choice shows no stick hint', async ({ page }) => {
+test('under dad lock the move choice shows no stick hint', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=battle&part=1&nojourney=1');
   await until(page, (st) => Boolean(st.battle?.choice?.open), 90_000, 'choice open');

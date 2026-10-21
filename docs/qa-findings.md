@@ -206,7 +206,11 @@ What held: a reload anywhere leaves the store as it was and the game at the titl
 back at all thirteen points came back to the same scene and changed nothing stored; dad
 lock let no press through at any point and no re-prompt played while locked; slowed
 fetches (0.3 to 1.5 s each) made no line silent and no art late; with one fetch in seven
-failing (243 in an episode) the episode still finished and every art id retried in.
+failing (243 in an episode) the episode still finished and every art id retried in; six
+window sizes kept the picture letterboxed and every check clean; all 48 URLs (every
+`?scene=`, unknown ids, `seed=abc`, `difficulty=9`, a bogus place, fight, game, room,
+ending or slot) booted with no page error and none stuck in Boot or Wait; F2 at every
+step, then an episode played through, and F4 with green to the recap ran clean.
 
 ### Fixed
 
@@ -216,7 +220,7 @@ failing (243 in an episode) the episode still finished and every art id retried 
 | 78 | Grown-ups page | Under dad lock its green, red and Esc did nothing (only F9 got back), though its help line offers them. The page is Dad's: they work under the lock. | `tests/lenses.spec.ts` |
 | 79 | Battle move choice | Under dad lock the stick hint still came up beside her hero (the rooms hold it back). It waits with the lock now. | `tests/lenses.spec.ts` |
 | 80 | Dad lock, Dad's 1 / 2 | After a resize (F11, maximise, a smaller window) the DAD LOCK badge and Dad's 1 ✗ / 2 ✓ cue were placed by the canvas as it was before Phaser refitted it, so they hung mid-screen or off the canvas. Placed again after the refit. | `tests/lenses.spec.ts` |
-| 81 | Every scene | A hidden tab (switching tabs or windows) froze the picture but not the voice: Phaser sleeps its loop, the game's own audio context played on, and lines chained on their audio (the hub's story, the gift word) played out unseen. The context now suspends with the loop, a line's backstop waits for a suspended clip, and a line that comes up while hidden starts when the tab is back. | `tests/lenses.spec.ts` "a hidden tab holds the voice" |
+| 81 | Every scene | A hidden tab (switching tabs or windows) froze the picture but not the voice: Phaser sleeps its loop, the game's own audio context played on, and lines chained on their audio (the hub's story, the gift word) played out unseen. The context now suspends with the loop (`holdAudio` in `src/audio/context.ts`), a line's backstop waits for a suspended clip, and a line that comes up while hidden, or as the tab comes back, starts once the context has resumed. | `tests/lenses.spec.ts` "a hidden tab holds the voice"; checker `hidden_tab` (no line silent) |
 | 82 | Grown-ups page | The sentence frames' counts wrapped, the last number on a row of its own under the frame's name. One row each, shrunk to fit. | contact sheet |
 | 83 | Grown-ups page | The third number was labelled "today" but counts since the page opened (a reload starts it again). Labelled so. | static review |
 

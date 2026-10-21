@@ -760,7 +760,9 @@ for (const mode of flagSet && !LOOK ? (['skip', 'auto'] as const) : []) {
         if (s.scene === 'Victory' && (mode === 'skip' || (!s.voice.busy && s.recap.length > 0))) break;
         if (mode === 'skip') {
           await page.waitForTimeout(2500);
-          await page.keyboard.press('F2');
+          // The title has no F2 (nothing to skip): green starts the episode.
+          if (s.scene === 'Title') await press(page, 'green');
+          else await page.keyboard.press('F2');
         } else {
           await page.keyboard.press('F4');
           await page.waitForTimeout(1000);
