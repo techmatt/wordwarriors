@@ -11,8 +11,8 @@ is a flashy mock battle between characters she likes, which those things power u
 One **episode** (step list in `src/episode/Episode.ts`; walked through in README,
 *Playing an episode*): title → **bedroom** (a dad wakes her with the good news, the
 helper, and the bad news, the villain; the house takes on the villain's mood; no
-reading) → **entry hall warm-up** (`src/scenes/EntryScene.ts`: grab one of nine labelled
-pictures from a letter clue; it is her first battle item) → **house part 1** (the hub:
+reading) → **entry hall warm-up** (`src/scenes/EntryScene.ts`: grab one of nine pictures
+from a letter-sound clue; it is her first battle item) → **house part 1** (the hub:
 the helper's story scene ends in the **gift word**, her first move word; two side-room
 doors, a minigame each from a weighted pool (the **sentence game**, the word machine),
 fetching battle items; for the beta one door is always a phonics game, at random
@@ -157,10 +157,10 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
   `lines.json` keep their case (changing them re-synthesises audio). The grown-ups page
   may stay mixed case.
 - **Reading targets never print their answer:** word pictures carry no text; names as
-  sight words use the name-free `face_<id>` cards. The one exception is the entry hall's
-  warm-up: she finds a word by its letters, so each picture has its word on a plaque;
-  that word is spoken, so it is never read later that episode, and the hall shows none
-  of the words she will read.
+  sight words use the name-free `face_<id>` cards. The entry hall's warm-up too, since
+  item 059: its pictures carry no words (with them she matched letters instead of
+  sounding out); its word is spoken, so it is never read later that episode, and the
+  hall shows none of the words she will read.
 - **Every instruction speaks with the spoken word highlighted** (the caption ribbon; in the
   sentence game the banner highlights and the caption stays out of the way).
 - **Narrator** = the episode's ally, or with no ally the dad who woke her, in his own

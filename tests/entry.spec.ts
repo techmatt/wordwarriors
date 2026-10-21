@@ -36,7 +36,7 @@ async function clued(page: Page): Promise<WWState> {
   return until(page, (st) => st.scene === 'Entry' && st.room?.round === 'entry:find' && !st.room.locked, 60_000, 'clue given');
 }
 
-test('warm-up, a new player: names then sounds and no word, nine labelled pictures; right first time moves the word up to 3; out to the hub', SLOW, async ({ page }) => {
+test('warm-up, a new player: names then sounds and no word, nine pictures with no words; right first time moves the word up to 3; out to the hub', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=grab&nojourney=1');
   const s = await clued(page);
@@ -46,9 +46,9 @@ test('warm-up, a new player: names then sounds and no word, nine labelled pictur
   expect(g.objects).toContain(g.word);
   expect(s.room!.spots.map((sp) => sp.id).sort()).toEqual(g.objects.map((w) => `grab_${w}`).sort());
   expect(s.room!.spots.filter((sp) => sp.correct).map((sp) => sp.id)).toEqual([`grab_${g.word}`]);
-  // Every picture carries its word, upper case.
+  // No picture carries its word (item 059: she matched the letters instead of sounding it out).
   const texts = await page.evaluate(() => (window as unknown as { __ww: { texts: () => { text: string }[] } }).__ww.texts().map((t) => t.text));
-  for (const w of g.objects) expect(texts).toContain(w.toUpperCase());
+  for (const w of g.objects) expect(texts).not.toContain(w.toUpperCase());
   // The door is not there until she has the thing.
   expect(s.room!.shown).not.toContain('door');
   expect(clueLines(s)).toEqual([`nar_ellie_grab_ask`, ...names(g.word), ...sounds(g.word)]);

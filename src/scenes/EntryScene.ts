@@ -2,9 +2,8 @@
  * The entry hall: the home warm-up (item 033), between the bedroom and the
  * quest. "Before we head out, let's grab the ..."
  *
- * Nine pictures stand on the floor, each with its word printed on it in upper
- * case (the one place a picture carries its word: here she finds a word by
- * its letters, so the label is the point). The narrator asks for one and
+ * Nine pictures stand on the floor, with no words on them (item 059: with
+ * its word printed under each she matched letters instead of sounding out). The narrator asks for one and
  * gives the clue at the word's level on the ramp (src/rules/grab.ts): the
  * word (easiest level only), its letter names, its letter sounds one at a
  * time. A board over the hall shows the word's letters as their names are
@@ -39,7 +38,7 @@ import { RoomScene, type Spot } from '../world/RoomScene';
 
 type Phase = 'intro' | 'find' | 'got' | 'door';
 
-const PIC = 96;
+const PIC = 108;
 const BOARD_Y = 118;
 const TILE = 76;
 const TILE_GAP = 14;
@@ -131,13 +130,12 @@ export class EntryScene extends RoomScene {
       this.caption.track(personOf(w), () => (dad.active ? { x: dad.x, y: dad.y } : null));
     }
 
-    // The nine pictures, each with its word on a plaque at its feet.
+    // The nine pictures, no words on them (item 059): with its word printed
+    // she matched letters instead of sounding it out.
     plan.objects.forEach((word, i) => {
       const p = ENTRY_HALL.spots[i]!;
-      const pic = fitImage(this.add.image(0, -34, `pic_${word}`).setOrigin(0.5, 1), PIC, PIC);
-      const plate = this.add.rectangle(0, -16, 112, 36, 0xfff8e6, 1).setStrokeStyle(3, 0x5a3a22, 1);
-      const label = this.add.text(0, -16, word.toUpperCase(), { fontFamily: FONT_ROUNDED, fontSize: '28px', color: '#3a2412' }).setOrigin(0.5);
-      const spot = this.addSpot(`grab_${word}`, p.x, p.y, [pic, plate, label], word === this.word);
+      const pic = fitImage(this.add.image(0, -4, `pic_${word}`).setOrigin(0.5, 1), PIC, PIC);
+      const spot = this.addSpot(`grab_${word}`, p.x, p.y, [pic], word === this.word);
       spot.obj.setData('word', word);
       if (got) {
         // Back from the parent page with it in her bag: the hall as she left it.
@@ -304,7 +302,7 @@ export class EntryScene extends RoomScene {
     await this.say(wordLine(this.word));
 
     // Into the bag it goes.
-    // Its picture and plaque leave the floor as it flies.
+    // Its picture leaves the floor as it flies.
     this.tweens.add({ targets: spot.obj, alpha: 0, duration: 250 });
     sfxSummon();
     await this.guard(this.bag?.receive(`pic_${this.word}`, spot.x, y) ?? Promise.resolve());
