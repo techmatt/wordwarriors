@@ -169,6 +169,22 @@ const MATT_FACE = 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, s
 const MATT_LIFTER = 'a tall, strong, broad-shouldered dad, fit but not bulky (not a bodybuilder): fair skin, short light-brown hair thinning on top with a high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile';
 const JASON_FACE = 'a big, sturdy, round-faced dad: warm light-brown skin, very short dark curly hair receding at the front, black browline glasses, a short dark goatee beard flecked with grey, a tiny hoop earring, a big laughing smile';
 
+/**
+ * Each dad's colour (item 046: Matt blue, Jason forest green), the one place it is
+ * set. Every good form drawn in it takes its palette, trail and themed move colours
+ * from here, so a new colour moves them all (item 078; rules.test.ts checks). `deep`
+ * is the cloth, `bright` the same hue lifted to read as a trail or a glow on any arena.
+ * Cyber Matt keeps his own cyan and magenta: he was never recoloured.
+ */
+export const DAD_COLOURS: Record<string, { deep: number; bright: number }> = {
+  dada_matt: { deep: 0x2a4aa0, bright: 0x7ab8ff },
+  dada_jason: { deep: 0x1f5a32, bright: 0x5ac878 },
+};
+const MATT = DAD_COLOURS.dada_matt!;
+const JASON = DAD_COLOURS.dada_jason!;
+/** The dads' good forms that keep colours of their own (see DAD_COLOURS). */
+export const OWN_COLOURS = new Set(['dada_matt_cyber']);
+
 export const ROSTER: CharacterSpec[] = [
   {
     id: 'julia',
@@ -387,15 +403,15 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A big-hearted builder dad with a giant hammer who builds walls and towers in a blink.',
     arena: 'castle',
     good: {
-      displayName: 'Dada Matt', trail: { tint: [0xc8643a, 0xff8c42], shape: 'square' }, look: 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, short light-brown hair thinning on top with a high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile, in chunky deep-blue-and-steel builder armour (a rich royal-to-navy blue) with a tool belt, holding a huge friendly hammer. Bright, sturdy and friendly',
-      palette: [0xff8c42, 0x4a4a5a], glyph: '🔨', style: 'twirl', speed: 200, size: 1.2, hp: 130,
+      displayName: 'Dada Matt', trail: { tint: [MATT.bright, 0xc8d0dc], shape: 'square' }, look: 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, short light-brown hair thinning on top with a high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile, in chunky deep-blue-and-steel builder armour (a rich royal-to-navy blue) with a tool belt, holding a huge friendly hammer. Bright, sturdy and friendly',
+      palette: [MATT.deep, 0xc8d0dc], glyph: '🔨', style: 'twirl', speed: 200, size: 1.2, hp: 130,
       abilities: [
-        ab('hammer_spin', 'Hammer Spin', 'spin', 5, 0xff8c42, 2, { shout: true, words: ['pow', 'top'] }),
+        ab('hammer_spin', 'Hammer Spin', 'spin', 5, MATT.bright, 2, { shout: true, words: ['pow', 'top'] }),
         ab('brick_wall', 'Brick Wall', 'shield', 10, 0xc8643a, 1, { duration: 4, words: ['big', 'fix'] }),
         ab('nail_storm', 'Nail Storm', 'bolt', 2.6, 0xc8c8d8, 1, { count: 5, glyph: '🔩', words: ['zip'] }),
-        ab('ground_pound', 'Ground Pound', 'slam', 7, 0xff8c42, 3, { shout: true, words: ['bam', 'dig', 'mud'] }),
+        ab('ground_pound', 'Ground Pound', 'slam', 7, MATT.bright, 3, { shout: true, words: ['bam', 'dig', 'mud'] }),
       ],
-      ultimate: ult('tower_drop', 'Tower Drop', 'rain',0xc8643a, 3, { count: 20, glyph: '🧱', color2: 0xff8c42 }),
+      ultimate: ult('tower_drop', 'Tower Drop', 'rain',0xc8643a, 3, { count: 20, glyph: '🧱', color2: MATT.bright }),
       taunts: [
         { key: 'build', text: 'Let me build that!' },
         { key: 'strong', text: 'Strong like a castle!' },
@@ -457,8 +473,8 @@ export const ROSTER: CharacterSpec[] = [
     fight: 'cook_off',
     fightNudge: { fight: 'cook_off', chance: 0.7 },
     good: {
-      displayName: 'Dada Jason', trail: { tint: [0xffbe0b, 0xe63946], shape: 'star' }, look: 'a big, sturdy, round-faced chef dad: warm light-brown skin, very short dark curly hair receding at the front, black browline glasses, a short dark goatee beard flecked with grey, a tiny hoop earring, a big laughing smile, in crisp white chef\'s whites trimmed in deep forest green (a dark, rich pine green, not lime or bright grass green): a forest-green collar, cuffs and buttons, a forest-green apron, a tall white chef\'s hat with a forest-green band and a forest-green neckerchief, holding a giant whisk. Bright, warm and friendly',
-      palette: [0xe63946, 0xffbe0b], glyph: '🍳', style: 'hover', speed: 170, size: 1.2, hp: 120,
+      displayName: 'Dada Jason', trail: { tint: [JASON.bright, 0xffffff], shape: 'star' }, look: 'a big, sturdy, round-faced chef dad: warm light-brown skin, very short dark curly hair receding at the front, black browline glasses, a short dark goatee beard flecked with grey, a tiny hoop earring, a big laughing smile, in crisp white chef\'s whites trimmed in deep forest green (a dark, rich pine green, not lime or bright grass green): a forest-green collar, cuffs and buttons, a forest-green apron, a tall white chef\'s hat with a forest-green band and a forest-green neckerchief, holding a giant whisk. Bright, warm and friendly',
+      palette: [JASON.deep, 0xfff1d6], glyph: '🍳', style: 'hover', speed: 170, size: 1.2, hp: 120,
       abilities: [
         ab('pancake_flip', 'Pancake Flip', 'bolt', 2.4, 0xffbe0b, 1, { count: 3, glyph: '🥞', words: ['pop', 'pan', 'hop'] }),
         ab('whisk_whirl', 'Whisk Whirl', 'spin', 5, 0xfff1d6, 2, { shout: true, words: ['zip', 'top'] }),
@@ -1293,15 +1309,15 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A huge-hearted weightlifter dad who lifts dumbbells, teddies and the whole team.',
     arena: 'meadow',
     good: {
-      displayName: 'Dada Matt', trail: { tint: [0xffd23f, 0xe63946], shape: 'star' }, look: `${MATT_LIFTER}, in a normal deep-blue short-sleeved gym T-shirt (a rich royal-to-navy blue) with a gold star on the chest (sleeves, not a singlet or a tank top), dark gym shorts, a black lifting belt, wristbands and blue sneakers, holding one blue-and-gold dumbbell of ordinary gym size low in one hand at his side. Bright, sporty and friendly`,
-      palette: [0xe63946, 0xffd23f], glyph: '💪', style: 'twirl', speed: 190, size: 1.25, hp: 140,
+      displayName: 'Dada Matt', trail: { tint: [MATT.bright, 0xffd23f], shape: 'star' }, look: `${MATT_LIFTER}, in a normal deep-blue short-sleeved gym T-shirt (a rich royal-to-navy blue) with a gold star on the chest (sleeves, not a singlet or a tank top), dark gym shorts, a black lifting belt, wristbands and blue sneakers, holding one blue-and-gold dumbbell of ordinary gym size low in one hand at his side. Bright, sporty and friendly`,
+      palette: [MATT.deep, 0xffd23f], glyph: '💪', style: 'twirl', speed: 190, size: 1.25, hp: 140,
       abilities: [
         ab('dumbbell_spin', 'Dumbbell Spin', 'spin', 5, 0xffd23f, 2, { shout: true, words: ['big', 'top'] }),
         ab('dumbbell_toss', 'Dumbbell Toss', 'bolt', 2.6, 0xc8c8d8, 1, { count: 3, glyph: '💪', words: ['pow', 'hop'] }),
-        ab('muscle_flex', 'Muscle Flex', 'shield', 10, 0xe63946, 1, { duration: 4, words: ['hug', 'fix'] }),
+        ab('muscle_flex', 'Muscle Flex', 'shield', 10, MATT.bright, 1, { duration: 4, words: ['hug', 'fix'] }),
         ab('mega_squat', 'Mega Squat Slam', 'slam', 7, 0xffd23f, 3, { shout: true, words: ['bam', 'tug', 'dig'] }),
       ],
-      ultimate: ult('trophy_shower', 'Trophy Shower', 'rain',0xffd23f, 3, { count: 24, glyph: '🏆', color2: 0xe63946 }),
+      ultimate: ult('trophy_shower', 'Trophy Shower', 'rain',0xffd23f, 3, { count: 24, glyph: '🏆', color2: MATT.bright }),
       taunts: [
         { key: 'power', text: 'Feel the power!' },
         { key: 'rep', text: 'One more rep!' },
@@ -1426,15 +1442,15 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A buff spell-blade dad: a runed sword in one hand and arcane bursts of blue magic in the other.',
     arena: 'castle',
     good: {
-      displayName: 'Dada Matt', trail: { tint: [0x7ab8ff, 0xffffff], shape: 'star' }, look: `${MATT_FACE}, as a buff spell-blade hero: sleek blue-and-silver rune armour that shows his big arms, a flowing dark-blue cape, a glowing silver sword with blue runes along the blade in one hand and a swirl of blue arcane magic in the other`,
-      palette: [0x2a4aa0, 0x7ab8ff], glyph: '🗡️', style: 'twirl', speed: 210, size: 1.2, hp: 130,
+      displayName: 'Dada Matt', trail: { tint: [MATT.bright, 0xffffff], shape: 'star' }, look: `${MATT_FACE}, as a buff spell-blade hero: sleek blue-and-silver rune armour that shows his big arms, a flowing dark-blue cape, a glowing silver sword with blue runes along the blade in one hand and a swirl of blue arcane magic in the other`,
+      palette: [MATT.deep, MATT.bright], glyph: '🗡️', style: 'twirl', speed: 210, size: 1.2, hp: 130,
       abilities: [
-        ab('rune_slash', 'Rune Slash', 'dash', 5, 0x7ab8ff, 2, { shout: true, words: ['pow', 'run'] }),
-        ab('arcane_burst', 'Arcane Burst', 'bolt', 2.4, 0x7ab8ff, 1, { count: 3, glyph: '✨', homing: true, words: ['zap', 'pop'] }),
+        ab('rune_slash', 'Rune Slash', 'dash', 5, MATT.bright, 2, { shout: true, words: ['pow', 'run'] }),
+        ab('arcane_burst', 'Arcane Burst', 'bolt', 2.4, MATT.bright, 1, { count: 3, glyph: '✨', homing: true, words: ['zap', 'pop'] }),
         ab('frost_rune', 'Frost Rune', 'freeze', 9, 0xbfefff, 2, { status: 'freeze', duration: 2, words: ['ice', 'fog'] }),
         ab('blade_spin', 'Blade Spin', 'spin', 6, 0xffffff, 2, { count: 4, words: ['top', 'zip'] }),
       ],
-      ultimate: ult('rune_storm', 'Rune Storm', 'lightning',0x7ab8ff, 3, { count: 8, color2: 0xffffff }),
+      ultimate: ult('rune_storm', 'Rune Storm', 'lightning',MATT.bright, 3, { count: 8, color2: 0xffffff }),
       taunts: [
         { key: 'sword', text: 'Sword and spell!' },
         { key: 'runes', text: 'By the runes!' },
@@ -1492,11 +1508,11 @@ export const ROSTER: CharacterSpec[] = [
     description: 'A bold fantasy warrior dad in shining armour, with a round shield, a big friendly axe and the loudest battle cry in the land.',
     arena: 'castle',
     good: {
-      displayName: 'Dada Jason', trail: { tint: [0xffd23f, 0xe63946], shape: 'spark' }, look: `${JASON_FACE}, as a fantasy warrior: shining silver armour with gold trim and a deep forest-green tunic showing under it (a dark, rich pine green, not lime or bright grass green), a forest-green cape, a round silver shield with a golden sun on it on one arm and a big friendly double-headed battle axe with a forest-green wrapped handle in the other hand. Bright, heroic and friendly`,
-      palette: [0xc8c8d8, 0xe63946], glyph: '🛡️', style: 'twirl', speed: 190, size: 1.25, hp: 140,
+      displayName: 'Dada Jason', trail: { tint: [JASON.bright, 0xffd23f], shape: 'spark' }, look: `${JASON_FACE}, as a fantasy warrior: shining silver armour with gold trim and a deep forest-green tunic showing under it (a dark, rich pine green, not lime or bright grass green), a forest-green cape, a round silver shield with a golden sun on it on one arm and a big friendly double-headed battle axe with a forest-green wrapped handle in the other hand. Bright, heroic and friendly`,
+      palette: [JASON.deep, 0xc8c8d8], glyph: '🛡️', style: 'twirl', speed: 190, size: 1.25, hp: 140,
       abilities: [
         ab('axe_spin', 'Axe Spin', 'spin', 5, 0xc8c8d8, 2, { shout: true, words: ['top', 'zip'] }),
-        ab('shield_bash', 'Shield Bash', 'dash', 6, 0xe63946, 2, { shout: true, words: ['ram', 'run'] }),
+        ab('shield_bash', 'Shield Bash', 'dash', 6, JASON.bright, 2, { shout: true, words: ['ram', 'run'] }),
         ab('battle_cry', 'Battle Cry', 'shield', 10, 0xffd23f, 1, { duration: 4, words: ['big', 'hug'] }),
         ab('sword_leap', 'Sword Leap', 'slam', 7, 0xffd23f, 3, { shout: true, words: ['bam', 'hop', 'pow'] }),
       ],
@@ -1559,8 +1575,8 @@ export const ROSTER: CharacterSpec[] = [
     arena: 'city',
     fight: 'spell_clash',
     good: {
-      displayName: 'Dada Jason', trail: { tint: [0xb04aff, 0xff9ad5], shape: 'smoke' }, look: `${JASON_FACE}, as a friendly warlock: long deep forest-green robes (a dark, rich pine green, not lime or bright grass green) with golden stars, a pointed hood pushed back, a tall wooden staff topped with a glowing golden-amber crystal, little warm golden flames dancing round his free hand, and a tiny cheeky purple imp on his shoulder. Bright, magical and friendly`,
-      palette: [0x4a1a7a, 0xb04aff], glyph: '🔮', style: 'blink', speed: 170, size: 1.2, hp: 120,
+      displayName: 'Dada Jason', trail: { tint: [JASON.bright, 0xffb84a], shape: 'smoke' }, look: `${JASON_FACE}, as a friendly warlock: long deep forest-green robes (a dark, rich pine green, not lime or bright grass green) with golden stars, a pointed hood pushed back, a tall wooden staff topped with a glowing golden-amber crystal, little warm golden flames dancing round his free hand, and a tiny cheeky purple imp on his shoulder. Bright, magical and friendly`,
+      palette: [JASON.deep, 0xffb84a], glyph: '🔮', style: 'blink', speed: 170, size: 1.2, hp: 120,
       abilities: [
         ab('imp_party', 'Imp Party', 'summon', 12, 0xb04aff, 2, { minion: 'imp', count: 3, words: ['pop', 'hop'] }),
         ab('purple_fire', 'Purple Fire', 'cone', 6, 0xb04aff, 2, { color2: 0xff9ad5, words: ['hot', 'fog'] }),
@@ -1646,11 +1662,11 @@ export const COMBOS: ComboSpec[] = [
   { pair: ['elsa', 'anna'], ability: ab('sister_storm', 'Sister Storm', 'spin', 16, 0xaee6ff, 3, { count: 5, color2: 0xe63946 }) },
   { pair: ['seraphina', 'smaug'], ability: ab('dragon_duet', 'Dragon Duet', 'cone', 16, 0xff7b00, 3, { color2: 0x6ad66a }) },
   { pair: ['jasmine', 'ozymandias'], ability: ab('desert_duo', 'Desert Duo', 'wave', 16, 0xffc857, 3, { color2: 0x1fb5a8 }) },
-  { pair: ['dada_matt', 'dada_jason'], ability: ab('dad_squad', 'Dad Squad', 'slam', 16, 0xff8c42, 3, { color2: 0x3a86ff }) },
-  { pair: ['julia', 'dada_matt'], ability: ab('high_five', 'Mega High Five', 'lightning', 16, 0xffd23f, 3, { count: 6, color2: 0x3a86ff }) },
+  { pair: ['dada_matt', 'dada_jason'], ability: ab('dad_squad', 'Dad Squad', 'slam', 16, MATT.bright, 3, { color2: JASON.bright }) },
+  { pair: ['julia', 'dada_matt'], ability: ab('high_five', 'Mega High Five', 'lightning', 16, 0xffd23f, 3, { count: 6, color2: MATT.bright }) },
   // Item 028: the active cast's allies each have one with her. Dada Jason
   // charges in with her on his back, whatever his form.
-  { pair: ['julia', 'dada_jason'], ability: ab('piggyback_charge', 'Piggyback Charge', 'dash', 16, 0xffd23f, 3, { color2: 0xff8c42 }) },
+  { pair: ['julia', 'dada_jason'], ability: ab('piggyback_charge', 'Piggyback Charge', 'dash', 16, 0xffd23f, 3, { color2: JASON.bright }) },
   // Scar's rockets carry her stars up, and they all come down together.
   { pair: ['julia', 'scar'], ability: ab('star_rocket_rain', 'Star Rocket Rain', 'rain', 16, 0xffc233, 3, { count: 26, glyph: '🚀', color2: 0xffd23f }) },
   // Ellie rings them both in giant bubbles; Julia's stars fly out through the

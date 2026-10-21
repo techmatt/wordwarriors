@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { ART_ASSETS } from '../../content/art/assets';
-import { CHARACTER_BY_ID, MINIONS, MOVE_WORDS, PERSONS, ROSTER, abilityWords, formId } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, DAD_COLOURS, MINIONS, MOVE_WORDS, OWN_COLOURS, PERSONS, ROSTER, abilityWords, formId, formsOf } from '../../content/battle/roster';
 import { HOME_QUEST, QUESTS, homeQuestLine, questLine } from '../../content/house/quests';
 import { ANY_SCENES, HUB_SCENES, hubStoryIds, storyTexts } from '../../content/house/scenes';
 import { BANK, THINGS } from '../../content/phonics/bank';
@@ -131,6 +131,17 @@ test('roster: every character is complete, good and evil', () => {
     assert.ok(spell, `${c.id} has Spell the Spell words`);
     assert.equal(spell.length, 3);
     for (const w of spell) assert.match(w, /^[a-z]{2,5}$/, `${c.id} spell word ${w} is short`);
+  }
+});
+
+test("roster: each dad's good forms wear his colour (item 078)", () => {
+  for (const [person, colour] of Object.entries(DAD_COLOURS)) {
+    const forms = formsOf(person).filter((c) => !OWN_COLOURS.has(c.id));
+    assert.ok(forms.length >= 3, `${person} has forms in his colour`);
+    for (const c of forms) {
+      assert.ok(c.good.palette.includes(colour.deep), `${c.id}'s palette carries ${person}'s deep colour`);
+      assert.equal(c.good.trail?.tint[0], colour.bright, `${c.id}'s trail leads with ${person}'s bright colour`);
+    }
   }
 });
 
