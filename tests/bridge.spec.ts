@@ -11,6 +11,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { soundOf } from '../content/phonics/bank';
+import { canHold } from '../content/phonics/letters';
 import { letterSoundLine } from '../content/voice/ids';
 import { BRIDGE_WORDS, CROSS_WORDS, bridgeTier } from '../src/rules/bridge';
 import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom, playEpisode, press, seedProgress, slideAcross, state, stick, until, type WWState } from './harness';
@@ -151,6 +152,65 @@ test('Stretchy Bridge, level 3: silent stones; the pictures only after Dad says 
   const s1 = await until(page, (st) => bridge(st)?.index === 1, 60_000, 'second bridge');
   // A replay is help: one level more help next time.
   expect(levels(s1)[b0.word]).toBe(2);
+  expectNoErrors(errors);
+});
+
+test("Stretchy Bridge (item 069): Dad's 2 during a replay brings the pictures, not a dropped press and another replay", SLOW, async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors = collectErrors(page);
+  await seedLevels(page, 3);
+  await boot(page, '?scene=room&slot=a&room=bridge&difficulty=3');
+  await until(page, (st) => bridge(st)?.phase === 'slide' && !st.room!.locked, 60_000, 'first bridge');
+  await slideAcross(page);
+  await until(page, (st) => bridge(st)?.asking === true, 60_000, 'asks Dad');
+  await page.keyboard.press('Digit1');
+  await until(page, (st) => bridge(st)?.phase === 'replay', 10_000, 'replaying');
+  await page.keyboard.press('Digit2');
+  const pick = await until(page, (st) => bridge(st)?.phase === 'pick', 10_000, 'pictures up from the yes');
+  expect(bridge(pick)!.replays).toBe(1);
+  expectNoErrors(errors);
+});
+
+test('Stretchy Bridge (item 069): after yellow on a held stone, the stone sounds again while she stays', SLOW, async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=a&room=bridge');
+  const s0 = await until(page, (st) => bridge(st)?.phase === 'slide' && !st.room!.locked, 60_000, 'first bridge');
+  const b0 = bridge(s0)!;
+  // A held sound to stand on (MAP's M, not a stop like CAT's C).
+  const i = b0.units.findIndex((u) => canHold(soundOf(u)));
+  test.skip(i < 0, `${b0.word} has no held sound`);
+  const first = soundLines(b0.units)[i]!;
+  await standOn(page, i);
+  await until(page, (st) => bridge(st)?.holding === first, 10_000, 'held');
+  await press(page, 'yellow');
+  const said = await until(page, (st) => st.room!.locked, 5_000, 'the instruction again');
+  const n = said.voice.history.filter((id) => id === first).length;
+  const again = await until(page, (st) => !st.room!.locked && st.voice.history.filter((id) => id === first).length > n, 15_000, 'her stone sounds again');
+  expect(bridge(again)!.stone).toBe(i);
+  expectNoErrors(errors);
+});
+
+test("Stretchy Bridge (item 069): Dad's hint survives F9 and back, so the helped word does not move up", SLOW, async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors = collectErrors(page);
+  await seedLevels(page, 2);
+  await boot(page, '?scene=room&slot=a&room=bridge&difficulty=3');
+  const s0 = await until(page, (st) => bridge(st)?.phase === 'slide' && !st.room!.locked, 60_000, 'first bridge');
+  const b0 = bridge(s0)!;
+  await dad(page, 'yes');
+  await until(page, (st) => bridge(st)?.phase === 'slide' && !st.room!.locked && bridge(st)!.aided, 60_000, 'hint given');
+  await page.keyboard.press('F9');
+  await until(page, (st) => st.scene === 'Parent', 10_000, 'parent');
+  await press(page, 'red');
+  const back = await until(page, (st) => st.scene === 'BridgeRoom' && bridge(st)?.phase === 'slide' && !st.room!.locked, 60_000, 'back on the bridge');
+  expect(bridge(back)!.word).toBe(b0.word);
+  expect(bridge(back)!.aided).toBe(true);
+  await slideAcross(page);
+  await until(page, (st) => bridge(st)?.phase === 'pick' && !st.room!.locked, 60_000, 'far bank');
+  await choose(page, b0.word);
+  const s1 = await until(page, (st) => bridge(st)?.index === 1, 60_000, 'second bridge');
+  expect(levels(s1)[b0.word]).toBe(1);
   expectNoErrors(errors);
 });
 

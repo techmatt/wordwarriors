@@ -106,7 +106,9 @@ export function sharedStart(a: string, b: string): number {
  */
 export function bridgePictures(word: string, n: number, rand: Rand = Math.random, avoid: Iterable<string> = [], pool: string[] = BRIDGE_WORDS): string[] {
   const out = new Set([word, ...lookalikesOf(word), ...avoid]);
-  const all = [...new Set(pool)].filter((w) => !out.has(w) && w !== word);
+  // Nor the word plus a sound (TEN: TENT, BELL: BELT): every stone is in it, so a miss has no stone to show (item 069).
+  const len = BANK_BY_WORD[word]?.sounds.length ?? word.length;
+  const all = [...new Set(pool)].filter((w) => !out.has(w) && w !== word && sharedStart(word, w) < len);
   const rime = BANK_BY_WORD[word]?.rime;
   const groups = [
     all.filter((w) => sharedStart(word, w) >= 2),

@@ -600,7 +600,9 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       if (!rune || !h?.active || h.floored) continue;
       if (!said) {
         said = true;
-        void this.say('use_runes');
+        // Said first, so each rune's sound comes with its own stone, not under the next (item 069).
+        await this.say('use_runes');
+        if (!h.active || h.floored) return;
       }
       const color = rune.move.color;
       const spot = this.revealSpot(h, 110, 110, 10);
@@ -617,7 +619,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       this.tweens.add({ targets: letter, scale: 1, duration: 220, delay: 60, ease: 'Back.easeOut' });
       sfxSummon();
       burst(this, at.x, at.y, { count: 40, speed: 340, texture: TEX.star, colors: [color, 0xffffff, 0xffd23f] });
-      void this.guard(voiceBus.say(letterSoundLine(sound)));
+      const heard = this.guard(voiceBus.say(letterSoundLine(sound)));
       await this.simWait(0.3);
       this.banner(`${sound.toUpperCase()}!`, color === 0xffffff ? 0x7ad9ff : color, true);
       speedLines(this, at.x, at.y, color, 400);
@@ -638,7 +640,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
           letter.destroy();
         },
       });
-      await this.simWait(gap);
+      // The next stone waits for this one's sound as well as the gap.
+      await Promise.all([heard, this.simWait(gap)]);
     }
   }
 
@@ -829,7 +832,9 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   /** Every word on a move pad still to come this episode. */
   private upcomingPads(): Set<string> {
     const plan = movePlan();
-    const ahead = [...plan.part1.slice(this.part === 1 ? this.choicesOpened : plan.part1.length), ...plan.part2.slice(this.part === 2 ? this.choicesOpened : 0)];
+    // The open choice's pads count until it closes (item 069: a hit floated ZAP! over a fighter beside the ZAP pad).
+    const from = this.choices.active ? this.choicesOpened - 1 : this.choicesOpened;
+    const ahead = [...plan.part1.slice(this.part === 1 ? from : plan.part1.length), ...plan.part2.slice(this.part === 2 ? from : 0)];
     return new Set(ahead.flatMap((c) => c.words));
   }
 

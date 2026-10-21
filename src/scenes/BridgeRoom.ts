@@ -177,6 +177,12 @@ export class BridgeRoom extends Minigame {
     return `${this.slot}:${this.current.word}`;
   }
 
+  /** Dad helped on this word (a hint, a replay): kept on the episode like the misses, so F9 and back does not make it unaided (item 069). */
+  private markAided(): void {
+    this.aided = true;
+    (episode.house.misses ??= {})[`${this.missKey}:aided`] = 1;
+  }
+
   protected override sceneData(): object {
     return { step: this.step, slot: this.slot };
   }
@@ -330,7 +336,7 @@ export class BridgeRoom extends Minigame {
     this.locked = true;
     this.level = bridgeLevel(progress, r.word);
     this.voiced = this.level === 1;
-    this.aided = false;
+    this.aided = Boolean(episode.house.misses?.[`${this.missKey}:aided`]);
     this.replays = 0;
     this.toldFind = false;
     this.waitMs = 0;
@@ -544,19 +550,22 @@ export class BridgeRoom extends Minigame {
     this.noteActivity();
     if (this.level === 2) {
       if (a !== 'yes' || this.voiced || !(this.phase === 'slide' || this.phase === 'pick')) return;
-      this.aided = true;
+      this.markAided();
       this.voiced = true;
       void this.replay('bridge_hint');
       return;
     }
-    if (this.level !== 3 || this.phase !== 'say') return;
+    // His yes counts during a replay he asked for too (item 069: it was dropped while the cue flashed green, then the wait ran out as a no).
+    const asked = this.phase === 'say' || (this.phase === 'replay' && this.resumePhase === 'say' && a === 'yes');
+    if (this.level !== 3 || !asked) return;
     setDadAsking(false);
     voiceBus.hush();
     if (a === 'yes') {
+      if (this.phase === 'replay') this.light(-1);
       void this.toPictures();
       return;
     }
-    this.aided = true;
+    this.markAided();
     this.replays++;
     if (this.replays > BRIDGE.replays) {
       // Enough listening: the pictures come anyway.
@@ -722,7 +731,10 @@ export class BridgeRoom extends Minigame {
     // Her word bag: read right first time, it is done for this round of the bag.
     if (firstTry) progress.takeFromBag(r.word);
     else progress.returnToBag(r.word);
-    if (episode.house.misses) delete episode.house.misses[this.missKey];
+    if (episode.house.misses) {
+      delete episode.house.misses[this.missKey];
+      delete episode.house.misses[`${this.missKey}:aided`];
+    }
     if (!episode.read.includes(r.word)) episode.read.push(r.word);
     if (!episode.fetched.includes(r.word)) episode.fetched.push(r.word);
     if (last && !episode.house.done.includes(this.slot)) episode.house.done.push(this.slot);
@@ -787,7 +799,10 @@ export class BridgeRoom extends Minigame {
     const phase = this.phase;
     this.releaseHeld();
     void this.narrate(key).then(() => {
-      if (this.phase === phase) this.locked = false;
+      if (this.phase !== phase) return;
+      this.locked = false;
+      // Her stone sounds again: the line cut its held sound (item 069: it stayed silent until she stepped off).
+      if (this.stonesSound() && this.onStone >= 0) this.pendingSound = true;
     });
   }
 

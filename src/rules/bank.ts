@@ -137,8 +137,8 @@ const COMPOUND_HALVES = new Set(['cake', 'shine', 'let', 'ball', 'fish', 'man', 
 /**
  * Draw one word from bag `which`: an `eligible` word still in it, by
  * `wordWeight` × `boost`. When none is left the bag refills with `catalogue`
- * but `keepOut` (this episode's words so far); failing that, any eligible
- * word. Drawing never spends the word. The caller tops the bag up first
+ * and draws from it but `keepOut` (this episode's words so far); failing
+ * that, any eligible word. Drawing never spends the word. The caller tops the bag up first
  * (`topUpBag`, `topUpMoves`).
  */
 export function drawFromBag(
@@ -153,8 +153,10 @@ export function drawFromBag(
   const ok = new Set(eligible);
   let pool = store.bag(which).left.filter((w) => ok.has(w));
   if (!pool.length) {
-    store.refillBag(catalogue.filter((w) => !keepOut.includes(w)), which);
-    pool = store.bag(which).left.filter((w) => ok.has(w));
+    // The new round holds every word; this episode's are only not drawn now (item 069: kept out of
+    // the refill, they were lost for the whole round when the episode was left before reading them).
+    store.refillBag(catalogue, which);
+    pool = store.bag(which).left.filter((w) => ok.has(w) && !keepOut.includes(w));
   }
   if (!pool.length) pool = [...eligible];
   return drawWords(store, pool, 1, rand, boost)[0]!;

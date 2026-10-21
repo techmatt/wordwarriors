@@ -123,10 +123,24 @@ test('Charge the Spell: the charged runes fire as her hero\'s moves in the next 
   test.setTimeout(90_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=battle&part=1&charged=m,s,a&nojourney=1');
+  // Every frame: which rune had popped up when each letter sound began (item 069: each sound came a rune late).
+  await page.evaluate(() => {
+    const w = window as unknown as { __ww: { state(): { voice: { speaking: string | null }; battle: { runesFired: number } | null } }; __runeAt: Record<string, number> };
+    w.__runeAt = {};
+    const tick = () => {
+      const st = w.__ww.state();
+      const id = st.voice.speaking;
+      if (id?.startsWith('letter_') && !(id in w.__runeAt)) w.__runeAt[id] = st.battle?.runesFired ?? -1;
+      requestAnimationFrame(tick);
+    };
+    tick();
+  });
   await until(page, (st) => st.scene === 'Battle' && (st.battle?.runesFired ?? 0) === 3, 60_000, 'three runes fired');
-  // Each rune's sound is said as it fires (queued behind the battle's opening lines).
   const s = await until(page, (st) => ['m', 's', 'a'].every((r) => st.voice.history.includes(`letter_${r}_sound`)), 60_000, 'the runes said');
   expect(s.voice.history.some((id) => id.endsWith('_use_runes'))).toBe(true);
+  // Each rune's sound is said while its own stone is up: the nth sound as the nth rune fires.
+  const at = await page.evaluate(() => (window as unknown as { __runeAt: Record<string, number> }).__runeAt);
+  expect(at).toEqual({ letter_m_sound: 1, letter_s_sound: 2, letter_a_sound: 3 });
   await shot(page, 'battle');
   expectNoErrors(errors);
 });

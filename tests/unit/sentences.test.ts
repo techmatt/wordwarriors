@@ -211,7 +211,7 @@ test('the word bag: drawing spends nothing; an abandoned episode or a dev jump k
   assert.deepEqual(store.bag(), before);
 });
 
-test('the word bag: a refill keeps out the words this episode has already drawn', () => {
+test('the word bag: a refill draws none of the words this episode has already drawn, and keeps them for the round', () => {
   const store = new ProgressStore(memory());
   store.refillBag(['cat']);
   const rand = seeded(3);
@@ -219,7 +219,11 @@ test('the word bag: a refill keeps out the words this episode has already drawn'
   assert.equal(a, 'cat');
   const b = drawKey(store, BAG_WORDS.filter((w) => w !== a), rand, [a]);
   assert.notEqual(b, 'cat');
-  assert.ok(!store.bag().left.includes('cat'), 'the new round does not open with this episode\'s word');
+  // Item 069: kept out of the refill, CAT was lost for the whole round when the episode was left before it was read.
+  assert.ok(store.bag().left.includes('cat'), 'the new round holds this episode\'s word');
+  // Read right first time, it is spent as before (once read, it does not come again this round).
+  store.takeFromBag('cat');
+  assert.ok(!store.bag().left.includes('cat'));
 });
 
 test('the word bag: a missed word stays in (or goes back in); shaky words are drawn more often', () => {

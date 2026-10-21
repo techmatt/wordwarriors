@@ -234,6 +234,16 @@ test("far bank: the pictures share the word's start and differ later, never only
     // Every hold-sound word has a picture that starts like it: the first letter is never enough.
     if (bridgeTier(w) === 1) assert.ok(pics.some((p) => sharedStart(w, p) >= 1), `${w}: ${pics}`);
   }
+  // Never the word plus a sound (item 069): beside TEN, TENT had every one of TEN's stones, so a miss on it lit a stone they share.
+  for (const w of BRIDGE_WORDS) {
+    for (let seed = 1; seed <= 5; seed++) {
+      for (const p of bridgePictures(w, BRIDGE.pictures - 1, seeded(seed))) {
+        assert.ok(sharedStart(w, p) < BANK_BY_WORD[w]!.sounds.length, `${w} beside ${p}`);
+        const d = whereDiffers(w, p);
+        assert.notEqual(BANK_BY_WORD[p]!.sounds[d.index], d.sound, `${w} vs ${p}: the stone shown is one they share`);
+      }
+    }
+  }
   // The plan's pictures hold the word itself, the others in the room's order.
   const plan = planBridge(new ProgressStore(memory()), { avoid: [], taken: [] }, seeded(9));
   for (const r of plan.rounds) {
