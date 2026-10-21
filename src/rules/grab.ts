@@ -31,9 +31,9 @@ import { letterNameLine, letterSoundLine } from '../../content/voice/ids';
 import { GRAB } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
 import { coverage, distractorsFor, isFirm, met, shuffle, type Rand } from './bank';
-import { helpLevel } from './difficulty';
+import { clampLevel, helpLevel, stepLevel, type HelpLevel } from './difficulty';
 
-export type GrabLevel = 1 | 2 | 3;
+export type GrabLevel = HelpLevel;
 
 /** Words the hall can ask for: the bank's short pictured words (each has a battle item), GRAB.maxUnits sound units at most (item 067). */
 export const GRAB_WORDS: string[] = THINGS.filter((w) => w.units.length <= GRAB.maxUnits).map((w) => w.word);
@@ -43,8 +43,7 @@ const HALL_WORDS: string[] = THINGS.map((w) => w.word);
 
 /** The level her grabs of a word have reached (the ramp, recorded for the grown-ups page). */
 export function recordedGrabLevel(store: ProgressStore, word: string): GrabLevel {
-  const l = store.grabLevel(word, GRAB.startLevel);
-  return (l <= 1 ? 1 : l >= 3 ? 3 : 2) as GrabLevel;
+  return clampLevel(store.grabLevel(word, GRAB.startLevel));
 }
 
 /** The level the hall gives a word now: GRAB.startLevel at base, else her recorded level up to DIFFICULTY (item 067). */
@@ -57,7 +56,7 @@ export const RECENT_GRABS = 3;
 
 /** The ramp: right first time is one level harder, a first-try miss one easier. */
 export function nextLevel(level: GrabLevel, firstTry: boolean): GrabLevel {
-  return Math.max(1, Math.min(3, level + (firstTry ? 1 : -1))) as GrabLevel;
+  return stepLevel(level, firstTry);
 }
 
 /**

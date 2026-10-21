@@ -35,9 +35,9 @@ import { lookalikesOf } from '../../content/phonics/sentences';
 import { BRIDGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { drawWords, shuffle, type Rand } from './bank';
-import { helpLevel } from './difficulty';
+import { clampLevel, helpLevel, stepLevel, type HelpLevel } from './difficulty';
 
-export type BridgeLevel = 1 | 2 | 3;
+export type BridgeLevel = HelpLevel;
 export type BridgeTier = 1 | 2 | 3;
 
 export interface BridgeRound {
@@ -74,8 +74,7 @@ export function bridgeTier(word: string): BridgeTier {
 
 /** The help level her crossings of a word have reached (the ramp, recorded for the grown-ups page). */
 export function recordedBridgeLevel(store: ProgressStore, word: string): BridgeLevel {
-  const l = store.bridgeLevel(word, BRIDGE.startLevel);
-  return (l <= 1 ? 1 : l >= 3 ? 3 : 2) as BridgeLevel;
+  return clampLevel(store.bridgeLevel(word, BRIDGE.startLevel));
 }
 
 /** The help level the room gives a word now: BRIDGE.startLevel at base, else her recorded level up to DIFFICULTY (item 067). */
@@ -85,7 +84,7 @@ export function bridgeLevel(store: ProgressStore, word: string): BridgeLevel {
 
 /** The ramp: right first time with no help is one level less help; any help or a wrong picture, one more. */
 export function nextBridgeLevel(level: BridgeLevel, unaided: boolean): BridgeLevel {
-  return Math.max(1, Math.min(3, level + (unaided ? 1 : -1))) as BridgeLevel;
+  return stepLevel(level, unaided);
 }
 
 /** How many sound units two words share from the start, by sound (CAT and KIT share one). */

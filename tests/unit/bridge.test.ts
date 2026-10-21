@@ -18,13 +18,14 @@ import { narratorLine } from '../../content/voice/ids';
 import { NARRATOR_LINES } from '../../content/voice/script';
 import { CHARACTER_BY_ID, PERSONS } from '../../content/battle/roster';
 import { holdPlan, holdSamples } from '../../src/audio/holdSound';
-import { BRIDGE, DIFFICULTY } from '../../src/config';
+import { BRIDGE } from '../../src/config';
 import { BRIDGE_WORDS, CROSS_WORDS, bridgeLevel, bridgePictures, bridgeTier, bridgeWords, nextBridgeLevel, planBridge, recordedBridgeLevel, sharedStart, whereDiffers } from '../../src/rules/bridge';
-import { setDifficulty } from '../../src/rules/difficulty';
 import { BRIDGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/sentences';
 import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
+import { withDifficulty } from './difficulty';
+import { spread } from './seeds';
 
 function memory(): StorageLike {
   const data = new Map<string, string>();
@@ -170,7 +171,7 @@ test('bridge draw (item 067): a fresh store crosses any short word, every tier, 
   const tiersSeen = new Set<number>();
   for (let seed = 1; seed <= 60; seed++) {
     const store = new ProgressStore(memory());
-    const plan = planBridge(store, { avoid: [], taken: [] }, seeded(seed));
+    const plan = planBridge(store, { avoid: [], taken: [] }, seeded(spread(seed)));
     assert.equal(plan.rounds.length, BRIDGE.words);
     assert.equal(new Set(bridgeWords(plan)).size, BRIDGE.words);
     for (const r of plan.rounds) {
@@ -189,20 +190,14 @@ test('bridge help (item 067): held at level 1 at base whatever she has reached; 
   store.setBridgeLevel('map', 3);
   assert.equal(recordedBridgeLevel(store, 'map'), 3);
   assert.equal(bridgeLevel(store, 'map'), 1);
-  setDifficulty(2);
-  try {
-    assert.equal(bridgeLevel(store, 'map'), 2);
-    setDifficulty(3);
-    assert.equal(bridgeLevel(store, 'map'), 3);
-  } finally {
-    setDifficulty(DIFFICULTY);
-  }
+  withDifficulty(2, () => assert.equal(bridgeLevel(store, 'map'), 2));
+  withDifficulty(3, () => assert.equal(bridgeLevel(store, 'map'), 3));
 });
 
 test('bridge draw: never a word the episode says, shows or has planned elsewhere', () => {
   const avoid = ['map', 'mop', 'mug', 'sun', 'six', 'fan', 'fox'];
   for (let seed = 1; seed <= 30; seed++) {
-    const plan = planBridge(new ProgressStore(memory()), { avoid, taken: ['log', 'leg'] }, seeded(seed));
+    const plan = planBridge(new ProgressStore(memory()), { avoid, taken: ['log', 'leg'] }, seeded(spread(seed)));
     for (const r of plan.rounds) {
       assert.ok(!avoid.includes(r.word) && !['log', 'leg'].includes(r.word), r.word);
       for (const p of r.pictures) assert.ok(!avoid.includes(p) && !['log', 'leg'].includes(p), `${r.word}'s picture ${p}`);
@@ -219,10 +214,10 @@ test("far bank: the pictures share the word's start and differ later, never only
   assert.equal(sharedStart('cat', 'hat'), 0);
   for (let seed = 1; seed <= 20; seed++) {
     // MAP: MAT and MAN (item 054) share M-A.
-    const map = bridgePictures('map', 2, seeded(seed));
+    const map = bridgePictures('map', 2, seeded(spread(seed)));
     for (const p of map) assert.ok(sharedStart('map', p) >= 2, `MAP beside ${p}`);
     // LIP: LID shares L-I, then an L word.
-    const lip = bridgePictures('lip', 2, seeded(seed));
+    const lip = bridgePictures('lip', 2, seeded(spread(seed)));
     assert.ok(lip.includes('lid'), `LIP beside ${lip}`);
     for (const p of lip) assert.ok(sharedStart('lip', p) >= 1);
   }
@@ -237,7 +232,7 @@ test("far bank: the pictures share the word's start and differ later, never only
   // Never the word plus a sound (item 069): beside TEN, TENT had every one of TEN's stones, so a miss on it lit a stone they share.
   for (const w of BRIDGE_WORDS) {
     for (let seed = 1; seed <= 5; seed++) {
-      for (const p of bridgePictures(w, BRIDGE.pictures - 1, seeded(seed))) {
+      for (const p of bridgePictures(w, BRIDGE.pictures - 1, seeded(spread(seed)))) {
         assert.ok(sharedStart(w, p) < BANK_BY_WORD[w]!.sounds.length, `${w} beside ${p}`);
         const d = whereDiffers(w, p);
         assert.notEqual(BANK_BY_WORD[p]!.sounds[d.index], d.sound, `${w} vs ${p}: the stone shown is one they share`);
@@ -300,7 +295,7 @@ test('episodePlans with the bridge: its words are the fetches, its last the key;
     const plans = episodePlans(
       store,
       { fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic', games: [BRIDGE_GAME, sentence, counter] },
-      seeded(seed),
+      seeded(spread(seed)),
     );
     const b = plans[0];
     assert.equal(b.kind, 'bridge');

@@ -15,14 +15,14 @@ import type { AbilityKind } from '../../content/battle/types';
 import { chargeKey, letterSoundLine, narratorLine } from '../../content/voice/ids';
 import { CHARGE_GESTURES, NARRATOR_LINES } from '../../content/voice/script';
 import { PERSONS } from '../../content/battle/roster';
-import { CHARGE, DIFFICULTY } from '../../src/config';
+import { CHARGE } from '../../src/config';
 import { CHARGE_WORDS, GESTURE_WORDS, RUNE_SOUNDS, chargeLevel, nextChargeLevel, planCharge, recordedChargeLevel } from '../../src/rules/charge';
-import { setDifficulty } from '../../src/rules/difficulty';
 import { CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, drawGames } from '../../src/rules/minigames';
 import { withStems } from '../../src/rules/bank';
 import { episodePlans } from '../../src/rules/sentences';
 import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
+import { withDifficulty } from './difficulty';
 
 function memory(): StorageLike {
   const data = new Map<string, string>();
@@ -99,12 +99,7 @@ test('ramp: a new sound starts at level 1; an unaided yes is less help, an assis
   assert.equal(recordedChargeLevel(new ProgressStore(storage), 'm'), 3);
   // Item 067: the level given is held at the start at base, up to the knob above it.
   assert.equal(chargeLevel(new ProgressStore(storage), 'm'), 1);
-  setDifficulty(3);
-  try {
-    assert.equal(chargeLevel(new ProgressStore(storage), 'm'), 3);
-  } finally {
-    setDifficulty(DIFFICULTY);
-  }
+  withDifficulty(3, () => assert.equal(chargeLevel(new ProgressStore(storage), 'm'), 3));
   // A blob from before item 053 (no chargeLevels) loads, history kept.
   const old = memory();
   const blob = { ...new ProgressStore(memory()).snapshot(), episodes: 4 } as Record<string, unknown>;

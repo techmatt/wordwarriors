@@ -27,9 +27,9 @@ import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { CHARGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { drawWords, withStems, type Rand } from './bank';
-import { helpLevel } from './difficulty';
+import { clampLevel, helpLevel, stepLevel, type HelpLevel } from './difficulty';
 
-export type ChargeLevel = 1 | 2 | 3;
+export type ChargeLevel = HelpLevel;
 
 /** A visit's plan: the word it spells, its units (as shown), and their runes (sounds) in order. */
 export interface ChargePlan {
@@ -71,8 +71,7 @@ export const GESTURE_WORDS: string[] = gestureWords(RUNE_SOUNDS);
 
 /** The help level a sound's ramp has reached (recorded for the grown-ups page). */
 export function recordedChargeLevel(store: ProgressStore, sound: string): ChargeLevel {
-  const l = store.chargeLevel(sound, CHARGE.startLevel);
-  return (l <= 1 ? 1 : l >= 3 ? 3 : 2) as ChargeLevel;
+  return clampLevel(store.chargeLevel(sound, CHARGE.startLevel));
 }
 
 /** A sound's help level now: CHARGE.startLevel at base, else its recorded level up to DIFFICULTY (item 067). */
@@ -82,7 +81,7 @@ export function chargeLevel(store: ProgressStore, sound: string): ChargeLevel {
 
 /** The ramp: a yes with no assist is one level less help, an assisted rune one level more. */
 export function nextChargeLevel(level: ChargeLevel, unaided: boolean): ChargeLevel {
-  return Math.max(1, Math.min(3, level + (unaided ? 1 : -1))) as ChargeLevel;
+  return stepLevel(level, unaided);
 }
 
 /**

@@ -6,14 +6,14 @@
  */
 
 import assert from 'node:assert/strict';
-import { after, test } from 'node:test';
+import { test } from 'node:test';
 
 import { ACTIONS, BANK, BANK_BY_WORD, LIVE, THINGS, tag, unitsOf } from '../../content/phonics/bank';
 import { SOUND_BY_UNIT } from '../../content/phonics/letters';
-import { DIFFICULTY, VARIETY } from '../../src/config';
+import { VARIETY } from '../../src/config';
 import { coverage, coverageTable, distractorsFor, drawWords, isFirm, recentWords, sharesSound, wordWeight } from '../../src/rules/bank';
-import { setDifficulty } from '../../src/rules/difficulty';
 import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
+import { withDifficulty } from './difficulty';
 
 function memory(): StorageLike {
   const m = new Map<string, string>();
@@ -99,12 +99,7 @@ test('isFirm (item 067): never at base difficulty, from difficulty 2 as before',
   const store = new ProgressStore(memory());
   solid(store, 'cat');
   assert.equal(isFirm(store, 'cat'), false);
-  setDifficulty(2);
-  try {
-    assert.equal(isFirm(store, 'cat'), true);
-  } finally {
-    setDifficulty(DIFFICULTY);
-  }
+  withDifficulty(2, () => assert.equal(isFirm(store, 'cat'), true));
 });
 
 test('coverage favours unmet vowels and first sounds', () => {
@@ -135,15 +130,15 @@ test('distractorsFor: a new word gets other first letters; a firm word (from dif
   solid(store, 'cat');
   // At base (item 067) a solid CAT still gets other first letters.
   for (let i = 0; i < 20; i++) for (const w of distractorsFor(store, 'cat', pool, 2, rand, ['hat'])) assert.notEqual(w[0], 'c', `${w} beside CAT at base`);
-  setDifficulty(2);
-  after(() => setDifficulty(DIFFICULTY));
-  assert.ok(isFirm(store, 'cat'));
-  for (let i = 0; i < 50; i++) {
-    const d = distractorsFor(store, 'cat', pool, 2, rand, ['hat']);
-    assert.equal(d.filter((w) => sharesSound('cat', w)).length >= 1, true, d.join(' '));
-    assert.ok(d.filter((w) => w[0] === 'c').length <= 1, `${d.join(' ')}: at most the one shares the C`);
-    assert.ok(!d.includes('hat'));
-  }
+  withDifficulty(2, () => {
+    assert.ok(isFirm(store, 'cat'));
+    for (let i = 0; i < 50; i++) {
+      const d = distractorsFor(store, 'cat', pool, 2, rand, ['hat']);
+      assert.equal(d.filter((w) => sharesSound('cat', w)).length >= 1, true, d.join(' '));
+      assert.ok(d.filter((w) => w[0] === 'c').length <= 1, `${d.join(' ')}: at most the one shares the C`);
+      assert.ok(!d.includes('hat'));
+    }
+  });
   // The share is by sound unit: SHIP's onset is SH, so SOCK does not share it, SHED does.
   assert.equal(sharesSound('ship', 'sock'), false);
   assert.equal(sharesSound('ship', 'shed'), true);
@@ -152,7 +147,6 @@ test('distractorsFor: a new word gets other first letters; a firm word (from dif
   assert.equal(sharesSound('ant', 'ash'), false);
   // Too small a pool: the rule gives way rather than come up short.
   assert.equal(distractorsFor(new ProgressStore(memory()), 'cat', ['cap', 'can', 'dog'], 2, rand).length, 2);
-  setDifficulty(DIFFICULTY);
 });
 
 test('coverageTable: per level, vowel and first sound, words · read · solid add up to the bank', () => {

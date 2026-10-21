@@ -19,6 +19,7 @@ import { episodePlans, type EpisodeInput } from '../../src/rules/sentences';
 import { machineWords, planMachine } from '../../src/rules/wordMachine';
 import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
+import { spread } from './seeds';
 
 function memory(): StorageLike {
   const m = new Map<string, string>();
@@ -105,7 +106,7 @@ test('silly onsets make nonsense: no bank word, no move word, never the family\'
 test('planMachine: several words of one family, then another; tiles are the right one and silly ones', () => {
   for (let seed = 1; seed <= 60; seed++) {
     const store = new ProgressStore(memory());
-    const plan = planMachine(store, { avoid: ['can'], taken: [] }, seeded(seed));
+    const plan = planMachine(store, { avoid: ['can'], taken: [] }, seeded(spread(seed)));
     const words = machineWords(plan);
     assert.equal(plan.mode, 'make');
     assert.equal(words.length, WORD_MACHINE.rounds, `seed ${seed}: ${words.join(' ')}`);
@@ -132,14 +133,14 @@ test('planMachine leans to shaky families and shaky first sounds, and keeps to t
     const store = new ProgressStore(memory());
     // Every rime solid but -OG.
     for (const f of FAMILIES) for (let i = 0; i < 4; i++) store.record('rimes', f.rime, f.rime !== 'og', 0);
-    if (rimeOf(machineWords(planMachine(store, { avoid: [], taken: [] }, seeded(seed)))[0]!) === 'og') og++;
+    if (rimeOf(machineWords(planMachine(store, { avoid: [], taken: [] }, seeded(spread(seed))))[0]!) === 'og') og++;
   }
   assert.ok(og > 200 / FAMILIES.length * 2, `the shaky family came first ${og}/200`);
 
   // A bag without -AT: no AT word unless the bag has to refill.
   const store = new ProgressStore(memory());
   store.refillBag(FAMILY_WORDS.filter((w) => rimeOf(w) !== 'at'));
-  for (let seed = 1; seed <= 30; seed++) assert.ok(!machineWords(planMachine(store, { avoid: [], taken: [] }, seeded(seed))).some((w) => rimeOf(w) === 'at'));
+  for (let seed = 1; seed <= 30; seed++) assert.ok(!machineWords(planMachine(store, { avoid: [], taken: [] }, seeded(spread(seed)))).some((w) => rimeOf(w) === 'at'));
 });
 
 test('planMachine never starts a new round of the shared bag while other words are still in it', () => {
@@ -180,7 +181,7 @@ test('episodePlans with the machine: its words are the room\'s fetches, kept out
     const store = new ProgressStore(memory());
     const fetchSentence = SENTENCE_GAMES.find((g) => g.slots.includes('fetch'))!;
     const counter = SENTENCE_GAMES.find((g) => g.slots.includes('counter'))!;
-    const plans = episodePlans(store, { ...INPUT, games: [machineGame, fetchSentence, counter] }, seeded(seed));
+    const plans = episodePlans(store, { ...INPUT, games: [machineGame, fetchSentence, counter] }, seeded(spread(seed)));
     const [a, b, c] = plans;
     assert.equal(a.kind, 'machine');
     assert.equal(a.scene, 'WordMachine');

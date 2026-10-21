@@ -14,6 +14,19 @@ import { DIFFICULTY } from '../config';
 
 export type Difficulty = 1 | 2 | 3;
 
+/** A help ramp's level (the warm-up's, the bridge's, Charge's): 1 the most help. */
+export type HelpLevel = 1 | 2 | 3;
+
+/** A stored level as a help level: 1 at most, 3 at least, anything between 2. */
+export function clampLevel(l: number): HelpLevel {
+  return l <= 1 ? 1 : l >= 3 ? 3 : 2;
+}
+
+/** Every ramp's step: one level up (less help) when `up`, else one down, kept within 1..3. */
+export function stepLevel(level: HelpLevel, up: boolean): HelpLevel {
+  return Math.max(1, Math.min(3, level + (up ? 1 : -1))) as HelpLevel;
+}
+
 let current: Difficulty = DIFFICULTY;
 
 /** The knob now: DIFFICULTY, or this session's `?difficulty=`. */
@@ -36,8 +49,7 @@ export function rampsAdvance(d: Difficulty = current): boolean {
  * (1..3), never past the knob. A word or sound she has never met records
  * nothing, so its recorded level is `start`.
  */
-export function helpLevel(recorded: number, start: number, d: Difficulty = current): 1 | 2 | 3 {
-  const clamp = (l: number) => (l <= 1 ? 1 : l >= 3 ? 3 : 2) as 1 | 2 | 3;
-  if (!rampsAdvance(d)) return clamp(start);
-  return clamp(Math.min(recorded, d));
+export function helpLevel(recorded: number, start: number, d: Difficulty = current): HelpLevel {
+  if (!rampsAdvance(d)) return clampLevel(start);
+  return clampLevel(Math.min(recorded, d));
 }

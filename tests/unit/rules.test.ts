@@ -26,6 +26,7 @@ import { sentencePlans } from './plans';
 import { align } from '../../tools/voice/align';
 import { composeLines } from '../../tools/voice/compose';
 import { trimMp3 } from '../../tools/voice/mp3';
+import { spread } from './seeds';
 
 function memory(): StorageLike & { data: Map<string, string> } {
   const data = new Map<string, string>();
@@ -299,7 +300,7 @@ test('speech rule: no narrator line contains a reading word', () => {
     for (const helper of ['elsa', 'ellie', c.id]) {
       const fill = { villain: c.id, helper, hero: 'julia' };
       for (let seed = 1; seed <= 25; seed++) {
-        const plans = sentencePlans(new ProgressStore(memory()), { fill, ally: helper, gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic' }, seeded(seed));
+        const plans = sentencePlans(new ProgressStore(memory()), { fill, ally: helper, gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic' }, seeded(spread(seed)));
         for (const p of plans) check(p.sentence);
       }
     }

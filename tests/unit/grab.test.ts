@@ -12,14 +12,15 @@ import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { lookalikesOf } from '../../content/phonics/sentences';
 import { CVC_WORDS } from '../../content/phonics/words';
 import { letterNameLine, letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
-import { DIFFICULTY, GRAB } from '../../src/config';
-import { setDifficulty } from '../../src/rules/difficulty';
+import { GRAB } from '../../src/config';
 import { GRAB_WORDS, RECENT_GRABS, clue, grabLevel, hallObjects, nextLevel, pickGrab, recordedGrabLevel } from '../../src/rules/grab';
 import { episodePlans, type EpisodeInput } from '../../src/rules/sentences';
 import { machineWords } from '../../src/rules/wordMachine';
 import { MINIGAME_BY_ID } from '../../src/rules/minigames';
 import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
+import { withDifficulty } from './difficulty';
+import { spread } from './seeds';
 
 function memory(): StorageLike {
   const data = new Map<string, string>();
@@ -45,14 +46,8 @@ test('ramp: a new word starts at GRAB.startLevel (1); right first time is harder
   assert.equal(grabLevel(new ProgressStore(memory()), 'van'), 1);
   // Item 067: the hall gives the start level at base, whatever she has reached; up to the knob above it.
   assert.equal(grabLevel(store, 'van'), 1);
-  setDifficulty(2);
-  try {
-    assert.equal(grabLevel(store, 'van'), 2);
-    setDifficulty(3);
-    assert.equal(grabLevel(store, 'van'), 3);
-  } finally {
-    setDifficulty(DIFFICULTY);
-  }
+  withDifficulty(2, () => assert.equal(grabLevel(store, 'van'), 2));
+  withDifficulty(3, () => assert.equal(grabLevel(store, 'van'), 3));
 });
 
 test('clue: level 1 each letter name then its sound; 2 the sounds, letters shown; 3 the sounds, blank; help the sound-out, letters shown', () => {
@@ -115,13 +110,13 @@ test('voice: every clue line, and the warm-up narrator lines, exist; letter name
 test('pickGrab: avoids what it is told to, and last episode’s word while another will do; leans to shaky words', () => {
   const store = new ProgressStore(memory());
   const avoid = GRAB_WORDS.slice(0, 20);
-  for (let i = 0; i < 50; i++) assert.ok(!avoid.includes(pickGrab(store, avoid, seeded(i + 1))));
+  for (let i = 0; i < 50; i++) assert.ok(!avoid.includes(pickGrab(store, avoid, seeded(spread(i + 1)))));
   let t = 1;
   const clocked = new ProgressStore(memory(), () => t++);
   clocked.record('grabs', 'cat', true, 0);
   const pool = ['cat', 'dog'];
   const avoidAll = GRAB_WORDS.filter((w) => !pool.includes(w));
-  for (let i = 0; i < 20; i++) assert.equal(pickGrab(clocked, avoidAll, seeded(i + 1)), 'dog');
+  for (let i = 0; i < 20; i++) assert.equal(pickGrab(clocked, avoidAll, seeded(spread(i + 1))), 'dog');
 });
 
 test('hallObjects: nine distinct pictures, the word among them, none avoided, no look-alike of it; while new, none starts like it', () => {
@@ -129,7 +124,7 @@ test('hallObjects: nine distinct pictures, the word among them, none avoided, no
   for (let seed = 1; seed <= 40; seed++) {
     const word = GRAB_WORDS[seed % GRAB_WORDS.length]!;
     const avoid = ['cat', 'dog', 'sun', 'net', 'fan', 'pig'].filter((w) => w !== word);
-    const objs = hallObjects(store, word, avoid, seeded(seed));
+    const objs = hallObjects(store, word, avoid, seeded(spread(seed)));
     for (const w of objs) if (w !== word) assert.notEqual(w[0], word[0], `${w} starts like ${word}, a new grab`);
     assert.equal(objs.length, GRAB.objects);
     assert.equal(new Set(objs).size, objs.length);
@@ -147,17 +142,14 @@ test('hallObjects: nine distinct pictures, the word among them, none avoided, no
 test('hallObjects: once her grabs of the word are firm (from difficulty 2, item 067), one picture shares its first sound or rime', () => {
   const store = new ProgressStore(memory());
   for (let i = 0; i < 4; i++) store.record('grabs', 'cat', true, 0);
-  setDifficulty(2);
-  try {
+  withDifficulty(2, () => {
     for (let seed = 1; seed <= 30; seed++) {
-      const objs = hallObjects(store, 'cat', [], seeded(seed)).filter((w) => w !== 'cat');
+      const objs = hallObjects(store, 'cat', [], seeded(spread(seed))).filter((w) => w !== 'cat');
       const share = objs.filter((w) => w[0] === 'c' || w.endsWith('at'));
       assert.ok(share.length >= 1, `seed ${seed}: ${objs.join(' ')}`);
       assert.ok(!objs.includes('rat') && !objs.includes('bat'), 'never a look-alike');
     }
-  } finally {
-    setDifficulty(DIFFICULTY);
-  }
+  });
 });
 
 test('pickGrab (item 067): every level from a fresh store, never a word over GRAB.maxUnits; none of her last RECENT_GRABS grabs', () => {
@@ -184,10 +176,10 @@ test('said early: the grab word, passed as saidBefore, is never a room key, the 
   const machine = MINIGAME_BY_ID['word_machine'];
   for (let seed = 1; seed <= 60; seed++) {
     const store = new ProgressStore(memory());
-    const word = pickGrab(store, ['zap'], seeded(seed));
+    const word = pickGrab(store, ['zap'], seeded(spread(seed)));
     const games = machine && seed % 2 ? { games: [machine, MINIGAME_BY_ID['sentence:we_can_use_the']!, MINIGAME_BY_ID['sentence:scared_of_the']!] as EpisodeInput['games'] } : {};
     const input: EpisodeInput = { fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic', saidBefore: [word], ...games };
-    const plans = episodePlans(store, input, seeded(seed + 100));
+    const plans = episodePlans(store, input, seeded(spread(seed + 100)));
     for (const p of plans) {
       assert.notEqual(p.key, word, `seed ${seed}: ${p.slot} key`);
       assert.ok(!p.fetches.includes(word), `seed ${seed}: ${p.slot} fetches`);

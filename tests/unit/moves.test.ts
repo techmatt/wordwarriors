@@ -20,6 +20,7 @@ import { CHOICES_PER_PART, battle1Words, drawGift, effectId, planMoves, teamMove
 import { episodePlans, type EpisodeInput } from '../../src/rules/sentences';
 import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
+import { spread } from './seeds';
 
 function memory(): StorageLike {
   const data = new Map<string, string>();
@@ -75,7 +76,7 @@ test('every word the recap can show has a picture: key words, move words, counte
 test('planMoves: two choices a part, 2 or 3 different bank action words each, the gift word opens each part', () => {
   for (const gift of [STYLED, PLAIN]) {
     for (let seed = 1; seed <= 40; seed++) {
-      const p = planMoves(new ProgressStore(memory()), input(gift), seeded(seed));
+      const p = planMoves(new ProgressStore(memory()), input(gift), seeded(spread(seed)));
       assert.equal(p.part1.length, CHOICES_PER_PART);
       assert.equal(p.part2.length, CHOICES_PER_PART);
       assert.equal(p.part1[0]!.right, gift);
@@ -96,7 +97,7 @@ test('owners: a teammate whose move answers to the word fires it styled; any oth
   const team = teamMoveWords([HERO, ALLY]);
   for (const gift of [STYLED, PLAIN]) {
     for (let seed = 1; seed <= 40; seed++) {
-      const p = planMoves(new ProgressStore(memory()), input(gift), seeded(seed));
+      const p = planMoves(new ProgressStore(memory()), input(gift), seeded(spread(seed)));
       for (const c of choices(p)) {
         const o = c.owner;
         if (c.right === gift && gift === STYLED) {
@@ -118,7 +119,7 @@ test('owners: a teammate whose move answers to the word fires it styled; any oth
 test('planMoves: no pad shows a word the episode has said before the battle', () => {
   const avoid = ['zap', 'hop', 'pop', 'run', 'hug', 'dig'];
   for (let seed = 1; seed <= 40; seed++) {
-    const p = planMoves(new ProgressStore(memory()), { ...input(PLAIN), avoid }, seeded(seed));
+    const p = planMoves(new ProgressStore(memory()), { ...input(PLAIN), avoid }, seeded(spread(seed)));
     for (const c of choices(p)) for (const w of c.words) assert.ok(!avoid.includes(w), `seed ${seed}: ${w}`);
   }
 });
@@ -179,7 +180,7 @@ test('the pad bag (item 038): back-to-back episodes rarely share a wrong pad', (
   let pairs = 0;
   for (let seed = 1; seed <= 20; seed++) {
     const store = new ProgressStore(memory());
-    const rand = seeded(seed);
+    const rand = seeded(spread(seed));
     let last = new Set<string>();
     for (let ep = 0; ep < 6; ep++) {
       // A new gift each episode, as drawGift gives: a gift she has firmed up wants
@@ -238,7 +239,7 @@ test("the counter word is never on battle 1's pads, and the counter still varies
   const counters = new Set<string>();
   for (let seed = 1; seed <= 60; seed++) {
     const store = new ProgressStore(memory());
-    const rand = seeded(seed);
+    const rand = seeded(spread(seed));
     const gift = drawGift(store, { helper: ALLY }, rand);
     const p = planMoves(store, input(gift), rand);
     const pads = battle1Words(p);

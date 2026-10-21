@@ -6,17 +6,18 @@
  */
 
 import assert from 'node:assert/strict';
-import { after, test } from 'node:test';
+import { test } from 'node:test';
 
 import { CHARACTER_BY_ID, ROSTER } from '../../content/battle/roster';
 import { ACTIONS, BANK_BY_WORD } from '../../content/phonics/bank';
-import { DIFFICULTY, EPISODE_DEFAULTS } from '../../src/config';
-import { setDifficulty } from '../../src/rules/difficulty';
+import { EPISODE_DEFAULTS } from '../../src/config';
 import { FETCH_ITEMS, FRAMES, FRAME_BY_ID, allFrameTokens, allPrefixes, lookalikesOf, sentence, slotOf, tokenWord } from '../../content/phonics/sentences';
 import { CVC_WORDS } from '../../content/phonics/words';
 import { wordLine } from '../../content/voice/ids';
 import { BAG_WORDS, LEGACY_BAG_WORDS, distractors, drawKey, frameIsSolid, saidEarly, skipsListening, type EpisodeInput, type SentencePlan } from '../../src/rules/sentences';
 import { sentencePlans } from './plans';
+import { withDifficulty } from './difficulty';
+import { spread } from './seeds';
 import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
 
 function memory(): StorageLike {
@@ -90,7 +91,7 @@ test('frames: a few of each, and every fetch and counter frame ends in the key w
 test('episodePlans: rooms a, b and the attic; the right kinds of frame; three different key words; three objects each', () => {
   for (let seed = 1; seed <= 40; seed++) {
     const store = new ProgressStore(memory());
-    const [a, b, c] = sentencePlans(store, input(), seeded(seed));
+    const [a, b, c] = sentencePlans(store, input(), seeded(spread(seed)));
     assert.deepEqual([a.slot, b.slot, c.slot], ['a', 'b', 'counter']);
     assert.deepEqual([a.room, b.room, c.room], ['kitchen', 'garage', 'attic']);
     assert.notEqual(a.sentence.frame, b.sentence.frame);
@@ -110,7 +111,7 @@ test('episodePlans: rooms a, b and the attic; the right kinds of frame; three di
 test('KEY and YOYO can be the counter (item 048)', () => {
   const seen = new Set<string>();
   for (let seed = 1; seed <= 400 && seen.size < 2; seed++) {
-    const k = sentencePlans(new ProgressStore(memory()), input(), seeded(seed))[2].sentence.key;
+    const k = sentencePlans(new ProgressStore(memory()), input(), seeded(spread(seed)))[2].sentence.key;
     if (k === 'key' || k === 'yoyo') seen.add(k);
   }
   assert.deepEqual([...seen].sort(), ['key', 'yoyo']);
@@ -131,7 +132,7 @@ test('the counter is random: any pictured, decodable word, under the 009 exclusi
       if (helper === v.id) continue;
       const early = new Set(saidEarly({ hero: HERO, ally: helper, villain: v.id, helper }));
       for (let seed = 1; seed <= 12; seed++) {
-        const plans = sentencePlans(new ProgressStore(memory()), input(v.id, helper, HERO, 'pop'), seeded(seed));
+        const plans = sentencePlans(new ProgressStore(memory()), input(v.id, helper, HERO, 'pop'), seeded(spread(seed)));
         const counter = plans[2];
         const key = counter.sentence.key;
         const fetched = plans.slice(0, 2).map((p) => p.sentence.key);
@@ -159,7 +160,7 @@ test('the counter varies: many words and every counter frame come up for one vil
   const keys = new Set<string>();
   const frames = new Set<string>();
   for (let seed = 1; seed <= 60; seed++) {
-    const c = sentencePlans(new ProgressStore(memory()), input(), seeded(seed))[2];
+    const c = sentencePlans(new ProgressStore(memory()), input(), seeded(spread(seed)))[2];
     keys.add(c.sentence.key);
     frames.add(c.sentence.frame);
   }
@@ -193,7 +194,7 @@ test('the word bag: no key word comes back until the bag has gone round', () => 
     const s = new ProgressStore(memory());
     const keys: string[] = [];
     for (let e = 0; e < 4; e++) {
-      const ks = sentencePlans(s, input(), seeded(seed * 10 + e)).map((p) => p.sentence.key);
+      const ks = sentencePlans(s, input(), seeded(spread(seed * 10 + e))).map((p) => p.sentence.key);
       for (const k of ks) readRight(s, k);
       keys.push(...ks);
     }
@@ -241,10 +242,12 @@ test('the word bag: a missed word stays in (or goes back in); shaky words are dr
   for (let seed = 1; seed <= 100; seed++) {
     const s = new ProgressStore(memory());
     for (const word of BAG_WORDS) for (let i = 0; i < 3; i++) s.record('words', word, word !== 'cat', word === 'cat' ? 1 : 0);
-    if (drawKey(s, BAG_WORDS, seeded(seed)) === 'cat') cat++;
+    if (drawKey(s, BAG_WORDS, seeded(spread(seed))) === 'cat') cat++;
   }
-  // Chance alone is 1 in BAG_WORDS.length (about 90); a shaky word against solid ones comes up far more.
-  assert.ok(cat >= 20, `cat drawn ${cat} times in 100`);
+  // Chance alone is 1 in BAG_WORDS.length (about 110: once in 100 draws); a shaky word against solid
+  // ones comes up far more, about 15 in 100 over spread seeds (item 076; 100 in 100 before the
+  // seeds were spread, as every small seed drew the same).
+  assert.ok(cat >= 8, `cat drawn ${cat} times in 100`);
 });
 
 test('the word bag is kept with her progress, and an older save without one still loads', () => {
@@ -305,7 +308,7 @@ test("the villain's named counter word still comes up, and is boosted", () => {
   // pictures, every level since item 067).
   const named = CHARACTER_BY_ID[VILLAIN]!.counter.word;
   let n = 0;
-  for (let seed = 1; seed <= 200; seed++) if (sentencePlans(new ProgressStore(memory()), input(), seeded(seed))[2].sentence.key === named) n++;
+  for (let seed = 1; seed <= 200; seed++) if (sentencePlans(new ProgressStore(memory()), input(), seeded(spread(seed)))[2].sentence.key === named) n++;
   assert.ok(n >= 10, `${named} came up ${n} times in 200`);
 });
 
@@ -324,13 +327,10 @@ test('frameIsSolid: new is not solid; 6 tries with the last 5 right is; one miss
 
   // Item 067: a solid frame keeps its listening pass at base difficulty; from 2 it skips it.
   assert.equal(skipsListening(store, 'go_get_the'), false);
-  setDifficulty(2);
-  try {
+  withDifficulty(2, () => {
     assert.equal(skipsListening(store, 'go_get_the'), true);
     assert.equal(skipsListening(shaky, 'we_need_a'), false);
-  } finally {
-    setDifficulty(DIFFICULTY);
-  }
+  });
 });
 
 test("every frame token's word line is in allFrameTokens", () => {
@@ -359,7 +359,7 @@ test('room objects: no look-alike of the key, no word of the sentence, not the g
   };
   for (const c of ROSTER) {
     for (let seed = 1; seed <= 20; seed++) {
-      const plans = sentencePlans(new ProgressStore(memory()), input(c.id, 'elsa', HERO, 'fan'), seeded(seed));
+      const plans = sentencePlans(new ProgressStore(memory()), input(c.id, 'elsa', HERO, 'fan'), seeded(spread(seed)));
       const keys = plans.map((p) => p.sentence.key);
       for (const p of plans) check(p, ['fan', ...keys.filter((k) => k !== p.sentence.key)]);
     }
@@ -367,7 +367,7 @@ test('room objects: no look-alike of the key, no word of the sentence, not the g
   // WE CAN USE THE ...: CAN is a frame word, so never a picture in that room.
   const store = new ProgressStore(memory());
   for (let seed = 1; seed <= 50; seed++) {
-    const objs = distractors(store, 'mop', seeded(seed), 2, ['we', 'can', 'use', 'the']);
+    const objs = distractors(store, 'mop', seeded(spread(seed)), 2, ['we', 'can', 'use', 'the']);
     assert.ok(!objs.includes('can'));
   }
   assert.ok(lookalikesOf('mice').includes('rat'));
@@ -376,18 +376,18 @@ test('room objects: no look-alike of the key, no word of the sentence, not the g
   // Item 037's look-alikes: a fin beside a fish, a hut beside a tent.
   assert.ok(lookalikesOf('fish').includes('fin'));
   assert.ok(lookalikesOf('tent').includes('hut'));
-  for (let seed = 1; seed <= 50; seed++) assert.ok(!distractors(store, 'mice', seeded(seed)).includes('rat'));
+  for (let seed = 1; seed <= 50; seed++) assert.ok(!distractors(store, 'mice', seeded(spread(seed))).includes('rat'));
   // A firm key word keeps its look-alikes out too.
   const firm = new ProgressStore(memory());
   for (let i = 0; i < 4; i++) firm.record('words', 'fish', true, 0);
-  for (let seed = 1; seed <= 50; seed++) assert.ok(!distractors(firm, 'fish', seeded(seed)).includes('fin'));
+  for (let seed = 1; seed <= 50; seed++) assert.ok(!distractors(firm, 'fish', seeded(spread(seed))).includes('fin'));
 });
 
 test("room objects for a new key word never share its first letter (no MAP beside the MOP)", () => {
   const store = new ProgressStore(memory());
   for (const key of BAG_WORDS) {
     for (let seed = 1; seed <= 30; seed++) {
-      const objs = distractors(store, key, seeded(seed), 2, ['we', 'can', 'use', 'the']);
+      const objs = distractors(store, key, seeded(spread(seed)), 2, ['we', 'can', 'use', 'the']);
       assert.equal(objs.length, 2, key);
       for (const o of objs) assert.notEqual(o[0], key[0], `${o} starts like ${key}`);
     }
@@ -398,17 +398,17 @@ test('room objects for a firm key word (from difficulty 2, item 067): one shares
   const store = new ProgressStore(memory());
   for (let i = 0; i < 4; i++) store.record('words', 'cat', true, 0);
   // At base the firm CAT still stands among other first letters.
-  for (let seed = 1; seed <= 20; seed++) for (const o of distractors(store, 'cat', seeded(seed), 2, ['we', 'can', 'use', 'the'])) assert.notEqual(o[0], 'c', `${o} beside CAT at base`);
-  setDifficulty(2);
-  after(() => setDifficulty(DIFFICULTY));
-  for (let seed = 1; seed <= 40; seed++) {
-    const objs = distractors(store, 'cat', seeded(seed), 2, ['we', 'can', 'use', 'the']);
-    assert.equal(objs.length, 2);
-    const share = objs.filter((o) => o[0] === 'c' || o.endsWith('at'));
-    assert.ok(share.length >= 1, `seed ${seed}: ${objs.join(', ')} share nothing with cat`);
-    assert.ok(objs.some((o) => o[0] !== 'c'), `seed ${seed}: both start like cat`);
-    assert.ok(!objs.includes('rat') && !objs.includes('bat'), 'never a look-alike');
-  }
+  for (let seed = 1; seed <= 20; seed++) for (const o of distractors(store, 'cat', seeded(spread(seed)), 2, ['we', 'can', 'use', 'the'])) assert.notEqual(o[0], 'c', `${o} beside CAT at base`);
+  withDifficulty(2, () => {
+    for (let seed = 1; seed <= 40; seed++) {
+      const objs = distractors(store, 'cat', seeded(spread(seed)), 2, ['we', 'can', 'use', 'the']);
+      assert.equal(objs.length, 2);
+      const share = objs.filter((o) => o[0] === 'c' || o.endsWith('at'));
+      assert.ok(share.length >= 1, `seed ${seed}: ${objs.join(', ')} share nothing with cat`);
+      assert.ok(objs.some((o) => o[0] !== 'c'), `seed ${seed}: both start like cat`);
+      assert.ok(!objs.includes('rat') && !objs.includes('bat'), 'never a look-alike');
+    }
+  });
 });
 
 test('moveWords: no room key word, the counter included, is on any of the episode\'s move pads; by default none is an action word', () => {
@@ -417,13 +417,13 @@ test('moveWords: no room key word, the counter included, is on any of the episod
   const pads = ['net', 'sun', 'fan', 'web', 'zap', 'hop'];
   for (let seed = 1; seed <= 60; seed++) {
     const store = new ProgressStore(memory());
-    const plans = sentencePlans(store, { ...input(), moveWords: pads }, seeded(seed));
+    const plans = sentencePlans(store, { ...input(), moveWords: pads }, seeded(spread(seed)));
     for (const p of plans) assert.ok(!pads.includes(p.sentence.key), `seed ${seed}: ${p.slot} asks for ${p.sentence.key}, a pad word`);
-    const plain = sentencePlans(new ProgressStore(memory()), input(), seeded(seed));
+    const plain = sentencePlans(new ProgressStore(memory()), input(), seeded(spread(seed)));
     for (const p of plain) assert.ok(!actions.has(p.sentence.key), `seed ${seed}: ${p.sentence.key} is an action word`);
   }
   // Given the episode's own pads, a `both` word off them can be a key word.
   const keys = new Set<string>();
-  for (let seed = 1; seed <= 300; seed++) for (const p of sentencePlans(new ProgressStore(memory()), { ...input(), moveWords: ['zap'] }, seeded(seed))) keys.add(p.sentence.key);
+  for (let seed = 1; seed <= 300; seed++) for (const p of sentencePlans(new ProgressStore(memory()), { ...input(), moveWords: ['zap'] }, seeded(spread(seed)))) keys.add(p.sentence.key);
   assert.ok([...keys].some((k) => actions.has(k)), `no both word came up: ${[...keys].join(' ')}`);
 });

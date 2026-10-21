@@ -16,6 +16,7 @@ import { MINIGAME_BY_ID, SENTENCE_GAMES } from '../../src/rules/minigames';
 import { drawGift, drawMove } from '../../src/rules/moves';
 import { BAG_WORDS, NO_ARTICLE, drawKey, episodePlans, saidEarly, type EpisodeInput } from '../../src/rules/sentences';
 import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
+import { spread } from './seeds';
 
 function memory(): StorageLike {
   const m = new Map<string, string>();
@@ -39,7 +40,7 @@ test('every level is in play (item 067): a fresh store\'s bag of only digraph wo
   assert.ok(digraphActions.length && digraphThings.length);
   store.refillBag(digraphActions, 'moves');
   store.refillBag(digraphThings);
-  for (let seed = 1; seed <= 30; seed++) assert.equal(level(drawKey(store, BAG_WORDS, seeded(seed))), 3, 'the key bag of digraph words is drawn from, not spent');
+  for (let seed = 1; seed <= 30; seed++) assert.equal(level(drawKey(store, BAG_WORDS, seeded(spread(seed)))), 3, 'the key bag of digraph words is drawn from, not spent');
   // The gift and the moves: blends and digraphs from a fresh store (her move bag takes back every unread move word, `topUpMoves`).
   const rand = seeded(11);
   const levels = { gift: new Set<number>(), move: new Set<number>() };
@@ -68,7 +69,7 @@ test('no "A" frame takes a word starting with a vowel (WE NEED A ANT)', () => {
       counterRoom: 'attic',
       games: [g('we_need_a'), g('helper_needs_a'), g('runs_from_the')],
     };
-    for (const p of episodePlans(store, input, seeded(seed))) {
+    for (const p of episodePlans(store, input, seeded(spread(seed)))) {
       if (p.kind !== 'sentence') continue;
       const t = p.sentence.tokens;
       assert.ok(!(t.at(-2) === 'A' && /^[AEIOU]/.test(t.at(-1)!)), t.join(' '));
@@ -82,8 +83,8 @@ test('a new word\'s other pictures start with another sound: no KIT beside CAT, 
   const store = new ProgressStore(memory());
   const pool = BAG_WORDS;
   for (let seed = 1; seed <= 400; seed++) {
-    for (const d of distractorsFor(store, 'cat', pool, 2, seeded(seed))) assert.ok(!d.startsWith('k'), `cat beside ${d}`);
-    for (const d of distractorsFor(store, 'kit', pool, 2, seeded(seed))) assert.ok(!(d.startsWith('c') && !d.startsWith('ch')), `kit beside ${d}`);
+    for (const d of distractorsFor(store, 'cat', pool, 2, seeded(spread(seed)))) assert.ok(!d.startsWith('k'), `cat beside ${d}`);
+    for (const d of distractorsFor(store, 'kit', pool, 2, seeded(spread(seed)))) assert.ok(!(d.startsWith('c') && !d.startsWith('ch')), `kit beside ${d}`);
   }
 });
 
@@ -114,11 +115,11 @@ test("the runes' gestures (items 071, 074): what they say counts as said only on
   // Spread seeds: this LCG's first draw barely moves over seeds 1 to 200.
   const seen = new Set<string>();
   for (let seed = 1; seed <= 200; seed++) {
-    const free = planCharge(store, { avoid: [] }, seeded(seed * 104729));
+    const free = planCharge(store, { avoid: [] }, seeded(spread(seed)));
     assert.ok(!gestureWords(free.runes).includes(free.word), `${free.word}'s own gesture says it`);
     seen.add(free.runes.includes('e') ? 'e' : '-');
     // TAP read later (a pad, a key): no /e/ word, whose gesture would say TAP first.
-    const c = planCharge(store, { avoid: [], later: ['tap'] }, seeded(seed * 104729));
+    const c = planCharge(store, { avoid: [], later: ['tap'] }, seeded(spread(seed)));
     assert.ok(!gestureWords(c.runes).includes('tap'), `${c.word} says TAP before it is read`);
   }
   assert.ok(seen.has('e'), 'with nothing read later, an /e/ word is still drawn');
@@ -131,7 +132,7 @@ test('the runes\' gestures (item 074): TAP and EGG are words like any other, but
   const counter = SENTENCE_GAMES.find((g) => g.slots.includes('counter'))!;
   let eWords = 0;
   for (let seed = 1; seed <= 150; seed++) {
-    const plans = episodePlans(store, input([MINIGAME_BY_ID.charge!, sentence, counter]), seeded(seed * 104729));
+    const plans = episodePlans(store, input([MINIGAME_BY_ID.charge!, sentence, counter]), seeded(spread(seed)));
     const charge = plans[0];
     if (charge.kind !== 'charge') throw new Error('door a is Charge');
     const said = gestureWords(charge.charge.runes);

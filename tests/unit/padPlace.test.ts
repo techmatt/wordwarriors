@@ -10,6 +10,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { bodyBox, clearSpot, coveredShare, placePads, signBox, type PlaceBody } from '../../src/battle/padPlace';
+import { spread } from './seeds';
 
 /** A fighter standing at (x, y), `w` wide and `h` tall. */
 const body = (x: number, y: number, w: number, h: number): PlaceBody => ({ x, y, cx: x, cy: y - h / 2, half: w / 2, top: y - h });
@@ -25,7 +26,7 @@ test('padPlace: a contest keeps every sign off a tall teammate at his station an
     const me = body(265 + (seed % 3) * 20, 505, 120, 220);
     const jason = body(150 + ((seed % 5) - 2) * 8, 450, 150 + (seed % 4) * 20, 300);
     const villain = body(1020, 505, 200 + (seed % 3) * 40, 300);
-    const spots = placePads({ n: 3, avoid: [me, jason, villain], cover: [villain, jason], contest: { meX: me.x, villain }, ...floor, rand: seeded(seed) });
+    const spots = placePads({ n: 3, avoid: [me, jason, villain], cover: [villain, jason], contest: { meX: me.x, villain }, ...floor, rand: seeded(spread(seed)) });
     assert.equal(spots.length, 3);
     for (const b of [jason, villain]) assert.equal(coveredShare(bodyBox(b), signs(spots)), 0, `seed ${seed}: ${JSON.stringify(spots)}`);
     for (const p of spots) assert.ok(p.x < villain.x - villain.half, `seed ${seed}: on her side`);
@@ -48,7 +49,7 @@ test('padPlace: the rope pull keeps three pads on her side when it is narrow, ne
     // The knot on her side: the line shifted towards her, a wide serpent at the rope's end.
     const team = [body(360, 548, 110, 200), body(225, 590, 110, 200), body(90, 632, 110, 200)];
     const villain = body(895, 565, 320, 260);
-    const spots = placePads({ n: 3, avoid: [...team, villain], cover: [villain, ...team.slice(1)], contest: { meX: 360, villain }, ...floor, rand: seeded(seed) });
+    const spots = placePads({ n: 3, avoid: [...team, villain], cover: [villain, ...team.slice(1)], contest: { meX: 360, villain }, ...floor, rand: seeded(spread(seed)) });
     assert.equal(spots.length, 3);
     for (const p of spots) assert.ok(p.x + 115 < villain.x - villain.half, `seed ${seed}: ${p.x} reaches him`);
     for (let i = 1; i < spots.length; i++) assert.ok(spots[i]!.x - spots[i - 1]!.x >= 240, 'the plates never touch');
@@ -59,7 +60,7 @@ test('padPlace: a fight keeps every sign off the villain', () => {
   for (let seed = 1; seed <= 20; seed++) {
     const me = body(300, 560, 120, 220);
     const villain = body(500 + seed * 25, 520, 260, 340);
-    const spots = placePads({ n: 3, avoid: [me, villain], cover: [villain], ...floor, rand: seeded(seed) });
+    const spots = placePads({ n: 3, avoid: [me, villain], cover: [villain], ...floor, rand: seeded(spread(seed)) });
     assert.equal(spots.length, 3);
     assert.equal(coveredShare(bodyBox(villain), signs(spots)), 0, `seed ${seed}`);
   }
