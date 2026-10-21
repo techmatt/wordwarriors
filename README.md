@@ -80,12 +80,18 @@ Three commands (item 079, 2026-10-21; times on this machine, the GPU, three work
   Spell the Spell, the cast and fight-style overrides, never last episode's victory scene,
   and the three text-fit checks. It stops itself at 6 minutes, so a hang fails inside
   Claude Code's 10-minute background cap instead of being killed by it.
-- **Everything: `npm run test:all`** (about 10 minutes, 91 tests; about 20 before item
-  079): the unit tests, then every browser test. The slow lane alone is `npm run test:slow`
-  (about 9.6 minutes, 67 tests; 16.3 before): every test tagged `@slow`, the one whole
-  episode at real time (6 minutes, the lane's floor: the other workers play everything
-  else meanwhile), the whole drawn episodes (1.3-1.7 minutes), the soak (2.7 minutes). Not run by default
-  (Matt, 2026-10-20): only when clearly needed, such as a change touching every scene.
+- **Everything: `npm run test:all`** (about 7.2 minutes, 95 tests: 7.1 of browser tests
+  after 6 s of unit tests, item 081; 10.2 minutes in item 079, about 20 before it): the unit
+  tests, then every browser test. The slow lane alone is `npm run test:slow` (66 tests, most of the
+  full run's time; not timed alone since item 081): every test tagged `@slow`. Its longest: the full episode, real time for one scene of each kind
+  (3.5 minutes; 6 before item 081), the soak (2.2 minutes, Charge the Spell's whole episodes
+  too), the shared drawn episode (`tests/drawn.spec.ts`, 81 s, the word machine and the
+  bridge; they were 88 s and 101 s apart), each contest fight style at clock speed 10 (21 s).
+  Not run by default (Matt, 2026-10-20): only when clearly needed, such as a change
+  touching every scene. Files go to workers in name order, and the soak started 4.9
+  minutes into the run and ended it; since item 081 the whole-episode specs (`episode`,
+  `soak`, `drawn`) are a Playwright project of their own, `episodes`, listed first
+  (`playwright.config.ts`), so the three workers start on them (not yet timed in a full run).
 
 **The suite serves a build** (item 079, `tests/vite.test.config.ts`): Playwright's server
 runs `vite build` (about 5 s; into `node_modules/.ww-test-dist`, leaving `public/` where it

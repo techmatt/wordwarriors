@@ -8,7 +8,10 @@ import { gpuProjects } from './tests/gpu';
 // Otherwise the suite starts its own server, never reusing one (whatever already
 // answers there may be another checkout's code): on CONDUCTOR_PORT when set (a
 // conductor item's port, item 047), else TEST_PORT, never the dev port.
-const SERVE_PORT = Number(process.env.CONDUCTOR_PORT) || TEST_PORT;
+/** The specs that play whole episodes, run first (`projects`, below). */
+const LONG_SPECS = ['**/episode.spec.ts', '**/soak.spec.ts', '**/drawn.spec.ts'];
+
+const SERVE_PORT =Number(process.env.CONDUCTOR_PORT) || TEST_PORT;
 const BASE_URL = process.env.WW_BASE_URL ?? `http://localhost:${SERVE_PORT}`;
 
 export default defineConfig({
@@ -42,7 +45,13 @@ export default defineConfig({
   // The GPU draws (full Chromium, ANGLE on D3D11) unless WW_GPU=0, which goes back to
   // headless software GL. Measured 2026-10-19 (item 036): one fight style 53 s against
   // 78 s, the fast lane 76 s against 82 s; the battle holds ~56 fps instead of 11-18.
-  projects: gpuProjects(),
+  // Item 081: the whole episodes (2-3.5 minutes each) are a project of their own, listed
+  // first, so the three workers start on them: by file name the soak started 4.9 minutes
+  // into the full run and ended it.
+  projects: gpuProjects().flatMap((p) => [
+    { ...p, name: 'episodes', testMatch: LONG_SPECS },
+    { ...p, testIgnore: LONG_SPECS },
+  ]),
 
   // A build served by `vite preview` (item 079, tests/vite.test.config.ts): pages boot
   // from one bundle, and edits to src/ mid-run reach no page. WW_DEV_SERVER=1 serves
