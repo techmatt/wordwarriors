@@ -7,7 +7,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, expectNoErrors, seedProgress, until, type WWState } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, press, seedProgress, state, stick, until, type WWState } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/027_${name}.png` });
 
@@ -72,5 +72,39 @@ test('never last episode\'s scene', async ({ page }) => {
   expect(s.ending!.id).not.toBe('picnic');
   // ...and this one is kept for the next episode.
   expect((s.progress as unknown as { recent: Record<string, string[]> }).recent.ending?.at(-1)).toBe(s.ending!.id);
+  expectNoErrors(errors);
+});
+
+test('only Dad\'s 2 leaves the victory recap: her buttons and walking do not', async ({ page }) => {
+  const errors = collectErrors(page);
+  await boot(page, '?scene=victory&seed=2&nojourney=1&read=bed,hat');
+  await until(page, (s) => s.scene === 'Ending', 30_000, 'the victory scene');
+  await page.keyboard.press('F2');
+  await until(page, (s) => s.scene === 'Victory', 30_000, 'the recap');
+  // Hush each line as it comes, until the recap is said and Dad's buttons open.
+  await expect
+    .poll(() => page.evaluate(() => {
+      const ww = (window as unknown as { __ww: { hush(): void; dad(): boolean } }).__ww;
+      ww.hush();
+      return ww.dad();
+    }), { timeout: 30_000 })
+    .toBe(true);
+  await expect(page.locator('#dad-buttons')).toContainText('PRESS 2');
+
+  // Everything she has: every pad button, the stick, the keys (and Dad's 1, his no).
+  for (const b of ['green', 'red', 'blue', 'yellow', 'start', 'back', 'lb', 'rb']) await press(page, b);
+  await stick(page, 1, 0);
+  await page.waitForTimeout(300);
+  await stick(page, 0, 0);
+  for (const k of ['Space', 'Enter', 'Escape', 'Tab', 'Digit3', 'ArrowLeft', 'KeyA', 'Digit1']) await page.keyboard.press(k);
+  await page.waitForTimeout(1500);
+  expect((await state(page)).scene).toBe('Victory');
+
+  // Dad's 2, under dad lock too: a fresh episode from the title.
+  await page.keyboard.press('Backquote');
+  await page.keyboard.press('Digit2');
+  const t = await until(page, (s) => s.scene === 'Title', 30_000, 'the title');
+  expect(t.episode.read).toEqual([]);
+  await expect(page.locator('#dad-buttons')).toHaveCount(0);
   expectNoErrors(errors);
 });

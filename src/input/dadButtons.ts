@@ -5,7 +5,8 @@
  * her presses, not his), and do nothing where no game is asking.
  *
  * A game that asks Dad calls `openDadButtons(onPress)` while it is open and
- * the closer it returns when it leaves; while it is open a small 1 ✗ / 2 ✓
+ * the closer it returns when it leaves (item 082: the victory recap opens them
+ * too, its 2 the only way on to a new episode, with its own cue label); while it is open a small 1 ✗ / 2 ✓
  * cue sits in the canvas's bottom-right corner (the dad-lock badge has the
  * bottom-left), and `setDadAsking(true)` lights it while a question is
  * actually waiting. The cue is a DOM element like the dad-lock badge: it is
@@ -57,10 +58,10 @@ export function dadPress(a: DadAnswer): void {
 }
 
 /** A game that asks Dad opens the buttons while it runs; call the closer when it leaves. */
-export function openDadButtons(onPress: Handler): () => void {
+export function openDadButtons(onPress: Handler, label = JUDGE_CUE): () => void {
   handler = onPress;
   asking = false;
-  showCue();
+  showCue(label);
   const mine = onPress;
   return () => {
     if (handler !== mine) return;
@@ -81,11 +82,13 @@ export function setDadAsking(on: boolean): void {
   style();
 }
 
-function showCue(): void {
+/** The cue for a yes / no question; a game asking something else gives its own (the victory's "press 2"). */
+const JUDGE_CUE = '<span>DAD</span> <b>1</b> ✗ &nbsp; <b>2</b> ✓';
+
+function showCue(label: string): void {
   if (!cue) {
     cue = document.createElement('div');
     cue.id = 'dad-buttons';
-    cue.innerHTML = '<span>DAD</span> <b>1</b> ✗ &nbsp; <b>2</b> ✓';
     Object.assign(cue.style, {
       position: 'fixed',
       zIndex: '10',
@@ -97,6 +100,7 @@ function showCue(): void {
       transition: 'opacity 150ms, border-color 150ms',
     } satisfies Partial<CSSStyleDeclaration>);
   }
+  cue.innerHTML = label;
   document.body.appendChild(cue);
   style();
   place();

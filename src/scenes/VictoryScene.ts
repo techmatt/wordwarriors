@@ -1,6 +1,8 @@
 /**
  * Victory: fireworks, confetti, the heroes bouncing on a podium, the villain
- * turned good again and bouncing with them, and the recap. Green plays again.
+ * turned good again and bouncing with them, and the recap. Only Dad's 2 plays
+ * again (item 082): her buttons do nothing here, so a new episode never starts
+ * without a grown-up there; a small DOM cue in the corner tells him.
  * The victory scene (EndingScene, item 027) plays first; the villain's own
  * line is said there, so nothing here says it again.
  */
@@ -19,9 +21,9 @@ import { burst, fitImage, shockwave } from '../fx/juice';
 import { SceneGen } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
+import { openDadButtons, setDadAsking } from '../input/dadButtons';
 import { hookState } from '../hookState';
 import { Bubbles } from '../ui/Bubbles';
-import { makeButtonDot } from '../ui/ButtonDot';
 import { Caption, type KeepOut } from '../ui/Caption';
 import { fitText } from '../ui/fitText';
 
@@ -31,7 +33,8 @@ const CARD_SCALE = 0.82;
 
 export class VictoryScene extends Phaser.Scene {
   private controls!: Controls;
-  private ready = false;
+  /** Dad's buttons, open once the recap is said; closed as the scene leaves. */
+  private closeDad: (() => void) | null = null;
   private runs = new SceneGen(this);
   /** The recap's cards: the caption keeps off them. */
   private cards: Phaser.GameObjects.Container[] = [];
@@ -46,7 +49,11 @@ export class VictoryScene extends Phaser.Scene {
     // The battle's last state stays readable here, for tests asking how it ended.
     hookState.room = null;
     hookState.recap = [];
-    this.ready = false;
+    this.closeDad = null;
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.closeDad?.();
+      this.closeDad = null;
+    });
     this.cards = [];
     this.controls = new Controls(this);
     this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'room_victory').setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
@@ -127,10 +134,17 @@ export class VictoryScene extends Phaser.Scene {
       if (gone()) return;
       await this.recap(gone);
       if (gone()) return;
-      await voiceBus.sequence([narratorLine(n, 'victory_2'), narratorLine(n, 'again')]);
+      await voiceBus.say(narratorLine(n, 'victory_2'));
       if (gone()) return;
-      makeButtonDot(this, GAME_WIDTH / 2, 215, 'green', 30).setDepth(DEPTH.hud);
-      this.ready = true;
+      // Her buttons stay dead; Dad's 2 (dad lock or not) starts the next episode.
+      this.closeDad = openDadButtons((a) => {
+        if (a !== 'yes') return;
+        this.closeDad?.();
+        this.closeDad = null;
+        sfxSelect();
+        advance(this);
+      }, '<span>DAD:</span> PRESS <b>2</b> TO PLAY AGAIN');
+      setDadAsking(true);
     })();
   }
 
@@ -199,8 +213,7 @@ export class VictoryScene extends Phaser.Scene {
 
   override update(): void {
     this.controls.update();
-    if ((this.ready && this.controls.pressed('green')) || this.controls.dev('F2')) {
-      this.ready = false;
+    if (this.controls.dev('F2')) {
       sfxSelect();
       advance(this);
     }

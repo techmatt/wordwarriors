@@ -17,7 +17,9 @@ Then open **http://localhost:5174** in Chrome or Edge and press F11 for fullscre
 the Xbox 360 pad in first; press green (A) on the title screen. The keyboard works too:
 arrows to walk, Space/Enter for green, Tab for yellow (say it again / hint), Esc for red, 3 for blue, and the
 backquote / tilde key for dad lock (`docs/episode.md`, *Dad lock*). The number keys **1** (no) and **2** (yes) are
-Dad's, for the games that ask him whether she said it (`docs/episode.md`, *Dad buttons*).
+Dad's, for the games that ask him whether she said it (`docs/episode.md`, *Dad buttons*);
+at the end of an episode only Dad's **2** starts the next one (her buttons do nothing on the
+recap, so she never starts a new episode without a grown-up there).
 
 **Free play** (item 060): wherever she is free to move and no answer is open (the rooms,
 the bedroom once she is awake, the hub, the battle's fight outside a move choice), her

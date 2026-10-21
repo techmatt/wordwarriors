@@ -76,7 +76,6 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'finish', text: "Now let's all finish it together!" },
   { key: 'victory_1', text: 'We won! Hooray!', say: 'We won, hooray!' },
   { key: 'victory_2', text: 'You are a real Word Warrior!' },
-  { key: 'again', text: 'Press green to play again!' },
   // The house (v0.2): the hub's doors and the sentence rooms. The hub's story
   // scene, which gives her the gift word, is the helper's own (item 037,
   // content/house/scenes.ts), composed in tools/voice/compose.ts.

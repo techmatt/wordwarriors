@@ -644,7 +644,8 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
         drawn.push({ ally: ep.ally, villain: ep.villain, fight: rec.fight, ending: rec.endingId, games: plan.map((p) => p.game), rooms: plan.filter((p) => p.slot !== 'counter').map((p) => p.room).sort(), words: [...ep.read] });
         counts.push(await page.evaluate(() => (window as unknown as { __wwqa: { counts(): Record<string, number> } }).__wwqa.counts()));
         heap.push(await page.evaluate(() => (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0));
-        if (e + 1 < total) await press(page, 'green');
+        // Only Dad's 2 leaves the recap (item 082).
+        if (e + 1 < total) await page.keyboard.press('2');
       }
     } catch (err) {
       stalled = String(err).split('\n')[0]!;
@@ -772,7 +773,8 @@ for (const mode of flagSet && !LOOK ? (['skip', 'auto'] as const) : []) {
       if ((await state(page)).scene !== 'Victory') throw new Error(`devkeys ${mode}: no victory in 8 minutes; path ${path.slice(-6).join(' > ')}`);
       if (mode === 'skip') {
         await page.waitForTimeout(2500);
-        await press(page, 'green');
+        // Only Dad's 2 leaves the recap (item 082).
+        await page.keyboard.press('2');
         await episode(page, sc, rec);
       }
     } catch (err) {

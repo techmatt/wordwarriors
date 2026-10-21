@@ -98,8 +98,10 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    a picnic, the top of a mountain, a pillow fort, a boat ride, stargazing, a campfire or
    a snow day, drawn at random and never last episode's. Four voiced lines in bubbles,
    about 20 seconds: the host opens, the villain says its own line, Julia cheers, a dad
-   closes (chef Dada Jason baked the cake). Then the victory replays the words she read;
-   green plays again.
+   closes (chef Dada Jason baked the cake). Then the victory replays the words she read.
+   Only **Dad's 2** plays again (item 082): her buttons, the stick and the keys do nothing
+   there, so a new episode never starts without a grown-up; once the recap is said a small
+   `DAD: PRESS 2 TO PLAY AGAIN` cue lights in the bottom-right corner (dad lock or not).
 
 Key words never repeat until her **word bag** has gone round: every key word (both side
 rooms and the attic) is drawn without replacement from the word bank's pictured words
@@ -211,7 +213,9 @@ grown-ups page; red and Esc do not while locked). `src/input/dadLock.ts`.
 **Dad buttons** (item 053): keyboard **1** = no, **2** = yes. They are always live, dad
 lock included, and do nothing where no game is asking; a game that asks shows a small
 `DAD 1 ✗ 2 ✓` cue in the bottom-right corner (lit while a question is waiting).
-`src/input/dadButtons.ts` (`openDadButtons`), for 054 and later games too.
+`src/input/dadButtons.ts` (`openDadButtons`), for 054 and later games too. The victory
+recap opens them as well (item 082), with its own cue (`DAD: PRESS 2 TO PLAY AGAIN`): 2 is the
+only way on to the next episode, and 1 does nothing there.
 
 **Charge the Spell** (item 053, `src/scenes/ChargeRoom.ts`; one short word a visit since
 item 058; no presses per rune since item 059): a side room where she says letter SOUNDS

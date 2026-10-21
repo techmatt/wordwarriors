@@ -1,6 +1,6 @@
 /**
  * Two whole episodes back to back, the way she will play on a good morning:
- * Victory, green, and straight into the next one. Catches anything that
+ * Victory, Dad's 2 (item 082), and straight into the next one. Catches anything that
  * only breaks on the second run of a scene (listeners, stale state, leaks):
  * the hub is restarted many times an episode, so it is the one to watch.
  * @slow. Runs at clock speed `WW_SPEED` (5): what it guards is the second
@@ -41,10 +41,10 @@ test('two episodes back to back', SLOW, async ({ page }) => {
   await page.screenshot({ path: `tests/screenshots/025_seed1_victory_${first.end.episode.villain}.png` });
   const heap1 = await page.evaluate(() => (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0);
 
-  // Victory: green when the dot appears, then the title, then green again.
+  // Victory: Dad's 2 once his buttons open (item 082), then the title, then green.
   await until(page, (s) => s.scene === 'Victory' && !s.voice.busy, 90_000, 'victory quiet');
-  await page.waitForTimeout(600);
-  await press(page, 'green');
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __ww: { dad(): boolean } }).__ww.dad()), { timeout: 10_000 }).toBe(true);
+  await page.keyboard.press('2');
   await until(page, (s) => s.scene === 'Title', 30_000, 'title again');
   // A fresh episode: nothing carried over from the first.
   const fresh = await state(page);
@@ -60,7 +60,7 @@ test('two episodes back to back', SLOW, async ({ page }) => {
   await page.screenshot({ path: `tests/screenshots/025_seed1_second_victory_${second.end.episode.villain}.png` });
 
   const end = await state(page);
-  // Counted as each victory scene opens (item 039): both, the second before its green.
+  // Counted as each victory scene opens (item 039): both, the second before Dad's 2.
   expect(end.progress.episodes).toBe(2);
   const heap2 = await page.evaluate(() => (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0);
   console.log(`heap after episode 1: ${(heap1 / 1e6).toFixed(0)} MB, after episode 2: ${(heap2 / 1e6).toFixed(0)} MB`);
