@@ -1,8 +1,9 @@
 /**
  * Item 033: the home warm-up in the entry hall, "Before we head out, let's
- * grab the ...". All slow lane (each over 10 s): a new player's clue (names
- * and sounds, no word), the right pick, the level up, and out to the hub;
- * each level's clue; three misses (the word added as help, the level down);
+ * grab the ...". All slow lane (each over 10 s): a new player's clue (each
+ * letter name then its sound, never the word: amendment 1549), the right
+ * pick, the level up, and out to the hub; levels 2 and 3's clues; three
+ * misses (the slow sound-out as help, the level down);
  * F9 out and back; and a sweep of drawn casts from the bedroom, checking the
  * grab word stays out of the episode's reading, and (item 025's checks, once
  * their own walk through the same bedroom) that the drawn cast wakes her and
@@ -24,9 +25,11 @@ const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screen
 /** The warm-up's own lines, in order: its narrator lines, letter names and sounds, word lines. */
 const clueLines = (s: WWState) => s.voice.history.filter((id) => /^letter_|^word_|_grab_/.test(id));
 
-const names = (w: string) => [...w].map((c) => `letter_${c}_name`);
-// By sound unit: a long-vowel word spells its own (KEY is K, long E: item 048).
-const sounds = (w: string) => (BANK_BY_WORD[w]?.sounds ?? [...w]).map((c) => `letter_${c}_sound`);
+// By sound unit: a long-vowel word spells its own (KEY is K, long E: item 048); a silent letter says nothing.
+const unitSounds = (w: string) => BANK_BY_WORD[w]!.units.map((u, i) => [u, BANK_BY_WORD[w]!.sounds[i] ?? u] as const);
+const sounds = (w: string) => unitSounds(w).flatMap(([, s]) => (s ? [`letter_${s}_sound`] : []));
+// Level 1 (amendment 1549): each unit's letter names, then its sound.
+const namesAndSounds = (w: string) => unitSounds(w).flatMap(([u, s]) => [...[...u].map((c) => `letter_${c}_name`), ...(s ? [`letter_${s}_sound`] : [])]);
 // Every word the hall can ask for (the bank's things), each at one ramp level. Read from the
 // bank, not listed: a hand list missed VET and BIN, so a draw of either started at 2 (item 047).
 const allAt = (level: number) => Object.fromEntries(THINGS.map((w) => [w.word, level]));
@@ -36,12 +39,12 @@ async function clued(page: Page): Promise<WWState> {
   return until(page, (st) => st.scene === 'Entry' && st.room?.round === 'entry:find' && !st.room.locked, 60_000, 'clue given');
 }
 
-test('warm-up, a new player: names then sounds and no word, nine pictures with no words; right first time moves the word up to 3; out to the hub', SLOW, async ({ page }) => {
+test('warm-up, a new player: each letter name then its sound and never the word, nine pictures with no words; right first time moves the word up to 2; out to the hub', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=grab&nojourney=1');
   const s = await clued(page);
   const g = s.room!.grab!;
-  expect(g.level).toBe(2);
+  expect(g.level).toBe(1);
   expect(g.objects).toHaveLength(9);
   expect(g.objects).toContain(g.word);
   expect(s.room!.spots.map((sp) => sp.id).sort()).toEqual(g.objects.map((w) => `grab_${w}`).sort());
@@ -51,7 +54,9 @@ test('warm-up, a new player: names then sounds and no word, nine pictures with n
   for (const w of g.objects) expect(texts).not.toContain(w.toUpperCase());
   // The door is not there until she has the thing.
   expect(s.room!.shown).not.toContain('door');
-  expect(clueLines(s)).toEqual([`nar_ellie_grab_ask`, ...names(g.word), ...sounds(g.word)]);
+  // A phonics task, never a listening one (amendment 1549): the word is not said before she has it.
+  expect(clueLines(s)).toEqual([`nar_ellie_grab_ask`, ...namesAndSounds(g.word)]);
+  expect(s.voice.history).not.toContain(`word_${g.word}`);
   await shot(page, 'clue');
 
   await choose(page, `grab_${g.word}`);
@@ -61,7 +66,7 @@ test('warm-up, a new player: names then sounds and no word, nine pictures with n
   expect(clueLines(out).slice(-2)).toEqual([`word_${g.word}`, 'nar_ellie_grab_door']);
   const p = out.progress as unknown as { grabs: Record<string, { seen: number; recent: boolean[] }>; grabLevels: Record<string, number>; words: Record<string, unknown> };
   expect(p.grabs[g.word]).toMatchObject({ seen: 1, recent: [true] });
-  expect(p.grabLevels[g.word]).toBe(3);
+  expect(p.grabLevels[g.word]).toBe(2);
   // Exposure, not a read.
   expect(p.words[g.word]).toBeUndefined();
   expect(out.episode.read).not.toContain(g.word);
@@ -71,19 +76,22 @@ test('warm-up, a new player: names then sounds and no word, nine pictures with n
   expectNoErrors(errors);
 });
 
-test('warm-up levels: 1 says the word first, 3 gives the sounds only; a first-time right at 1 moves up to 2', SLOW, async ({ page }) => {
+test('warm-up levels: 2 gives the sounds with the letters shown, 3 the sounds only; never the word; a first-time right at 2 moves up to 3', SLOW, async ({ page }) => {
   test.setTimeout(120_000);
   const errors = collectErrors(page);
-  await seedProgress(page, { version: 1, grabLevels: allAt(1) });
+  await seedProgress(page, { version: 1, grabLevels: allAt(2) });
   await boot(page, '?scene=grab&nojourney=1');
-  const one = await clued(page);
-  const w1 = one.room!.grab!.word;
-  expect(one.room!.grab!.level).toBe(1);
-  expect(clueLines(one)).toEqual([`nar_ellie_grab_ask`, `word_${w1}`, ...names(w1), ...sounds(w1)]);
-  await shot(page, 'level1');
-  await choose(page, `grab_${w1}`);
+  const two = await clued(page);
+  const w2 = two.room!.grab!.word;
+  expect(two.room!.grab!.level).toBe(2);
+  expect(clueLines(two)).toEqual([`nar_ellie_grab_ask`, ...sounds(w2)]);
+  // The board shows the letters as they are sounded.
+  const texts = await page.evaluate(() => (window as unknown as { __ww: { texts: () => { text: string }[] } }).__ww.texts().map((t) => t.text));
+  for (const c of w2.toUpperCase()) expect(texts).toContain(c);
+  await shot(page, 'level2');
+  await choose(page, `grab_${w2}`);
   const got = await until(page, (st) => st.room?.round === 'entry:door', 60_000, 'grabbed');
-  expect((got.progress as unknown as { grabLevels: Record<string, number> }).grabLevels[w1]).toBe(2);
+  expect((got.progress as unknown as { grabLevels: Record<string, number> }).grabLevels[w2]).toBe(3);
 
   const page3 = await page.context().newPage();
   // A tab behind another gets no animation frames on the GPU channel, so the game never boots in it.
@@ -98,7 +106,7 @@ test('warm-up levels: 1 says the word first, 3 gives the sounds only; a first-ti
   expectNoErrors(errors);
 });
 
-test('warm-up misses: "that\'s the CAT, we need the ...", the clue again at the same level; after 3 the word is added; the level goes down', SLOW, async ({ page }) => {
+test('warm-up misses: "that\'s the CAT, we need the ...", the clue again at the same level; from 3 the slow sound-out, never the word; the level stays down', SLOW, async ({ page }) => {
   test.setTimeout(180_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=grab&nojourney=1');
@@ -115,10 +123,11 @@ test('warm-up misses: "that\'s the CAT, we need the ...", the clue again at the 
   const after = await state(page);
   const lines = clueLines(after);
   const miss = (i: number) => lines.slice(marks[i], marks[i + 1] ?? lines.length);
-  // Misses 1 and 2: the picked word is said, never the right one; names and sounds again (level 2).
-  for (const i of [0, 1]) expect(miss(i)).toEqual(['nar_ellie_grab_wrong', `word_${others[i]}`, 'nar_ellie_grab_need', ...names(g.word), ...sounds(g.word)]);
-  // Miss 3: the whole word as help.
-  expect(miss(2)).toEqual(['nar_ellie_grab_wrong', `word_${others[2]}`, 'nar_ellie_grab_need', `word_${g.word}`, ...names(g.word), ...sounds(g.word)]);
+  // Misses 1 and 2: the picked word is said, never the right one; names and sounds again (level 1).
+  for (const i of [0, 1]) expect(miss(i)).toEqual(['nar_ellie_grab_wrong', `word_${others[i]}`, 'nar_ellie_grab_need', ...namesAndSounds(g.word)]);
+  // Miss 3: the help sounds it out unit by unit, never the whole word (amendment 1549).
+  expect(miss(2)).toEqual(['nar_ellie_grab_wrong', `word_${others[2]}`, 'nar_ellie_grab_need', ...sounds(g.word)]);
+  expect(lines).not.toContain(`word_${g.word}`);
   expect(after.episode.fetched).toEqual([]);
   await shot(page, 'missed');
 
@@ -145,7 +154,7 @@ test('F9 and back: a miss before it still counts; after the grab the hall comes 
   await shot(page, 'parent');
   await press(page, 'red');
   const back = await clued(page);
-  expect(back.room!.grab).toMatchObject({ word: g.word, level: 2, misses: 1 });
+  expect(back.room!.grab).toMatchObject({ word: g.word, level: 1, misses: 1 });
   await choose(page, `grab_${g.word}`);
   const got = await until(page, (st) => st.room?.round === 'entry:door' && !st.room.locked, 60_000, 'door open');
   const rec = () => (got.progress as unknown as { grabs: Record<string, { seen: number; recent: boolean[] }>; grabLevels: Record<string, number> });

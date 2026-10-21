@@ -30,38 +30,60 @@ function seeded(seed = 1): () => number {
   return () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
 }
 
-test('ramp: a new word starts at GRAB.startLevel (2); right first time is harder, a first-try miss easier, kept within 1..3', () => {
+test('ramp: a new word starts at GRAB.startLevel (1); right first time is harder, a first-try miss easier, kept within 1..3', () => {
   const store = new ProgressStore(memory());
-  assert.equal(GRAB.startLevel, 2);
-  assert.equal(grabLevel(store, 'van'), 2);
+  assert.equal(GRAB.startLevel, 1);
+  assert.equal(grabLevel(store, 'van'), 1);
+  assert.equal(nextLevel(1, true), 2);
   assert.equal(nextLevel(2, true), 3);
   assert.equal(nextLevel(2, false), 1);
   assert.equal(nextLevel(3, true), 3);
   assert.equal(nextLevel(1, false), 1);
   store.setGrabLevel('van', 3);
   assert.equal(grabLevel(store, 'van'), 3);
-  assert.equal(grabLevel(new ProgressStore(memory()), 'van'), 2);
+  assert.equal(grabLevel(new ProgressStore(memory()), 'van'), 1);
 });
 
-test('clue: level 1 is the word, names, sounds; level 2 names and sounds; level 3 sounds only; help adds the word', () => {
+test('clue: level 1 each letter name then its sound; 2 the sounds, letters shown; 3 the sounds, blank; help the sound-out, letters shown', () => {
   const ids = (l: 1 | 2 | 3, help = false) => clue('van', l, help).map((s) => s.id);
-  const names = ['v', 'a', 'n'].map(letterNameLine);
+  const [nv, na, nn] = ['v', 'a', 'n'].map(letterNameLine);
   const sounds = ['v', 'a', 'n'].map(letterSoundLine);
-  assert.deepEqual(ids(1), [wordLine('van'), ...names, ...sounds]);
-  assert.deepEqual(ids(2), [...names, ...sounds]);
+  const [sv, sa, sn] = sounds;
+  assert.deepEqual(ids(1), [nv, sv, na, sa, nn, sn]);
+  assert.deepEqual(ids(2), sounds);
   assert.deepEqual(ids(3), sounds);
-  assert.deepEqual(ids(3, true), [wordLine('van'), ...sounds]);
-  assert.deepEqual(ids(2, true), [wordLine('van'), ...names, ...sounds]);
-  // Each step lights one letter; the word itself lights none.
-  assert.deepEqual(clue('van', 1).map((s) => [s.index, s.span]), [[null, 0], [0, 1], [1, 1], [2, 1], [0, 1], [1, 1], [2, 1]]);
+  for (const l of [1, 2, 3] as const) assert.deepEqual(ids(l, true), sounds);
+  // Which letters show on the board: everything but level 3's sounds.
+  assert.deepEqual(clue('van', 1).map((s) => [s.index, s.span, s.show]), [[0, 1, true], [0, 1, true], [1, 1, true], [1, 1, true], [2, 1, true], [2, 1, true]]);
+  assert.ok(clue('van', 2).every((s) => s.show));
+  assert.ok(clue('van', 3).every((s) => !s.show));
+  assert.ok(clue('van', 3, true).every((s) => s.show));
+});
+
+test('clue: never the word (amendment 1549): no step is its word_ line or a line whose text has it, at any level, with or without help', () => {
+  const byId = new Map(composeLines().map((l) => [l.id, l]));
+  for (const w of GRAB_WORDS) {
+    for (const l of [1, 2, 3] as const) {
+      for (const help of [false, true]) {
+        for (const s of clue(w, l, help)) {
+          assert.notEqual(s.id, wordLine(w), `${w} level ${l}${help ? ' help' : ''}`);
+          const line = byId.get(s.id);
+          for (const t of [line?.text, line?.say]) assert.ok(!(t ?? '').toLowerCase().split(/[^a-z]+/).includes(w), `${s.id} says ${w}`);
+        }
+      }
+    }
+  }
 });
 
 test('clue: names go letter by letter, sounds by sound unit (SH of SHIP is one sound lighting two letters)', () => {
-  const ship = clue('ship', 2);
-  assert.deepEqual(ship.filter((s) => s.kind === 'name').map((s) => s.id), ['s', 'h', 'i', 'p'].map(letterNameLine));
+  const ship = clue('ship', 1);
+  assert.deepEqual(ship.map((s) => s.id), [letterNameLine('s'), letterNameLine('h'), letterSoundLine('sh'), letterNameLine('i'), letterSoundLine('i'), letterNameLine('p'), letterSoundLine('p')]);
+  assert.deepEqual(ship.filter((s) => s.kind === 'name').map((s) => s.index), [0, 1, 2, 3]);
   const sounds = ship.filter((s) => s.kind === 'sound');
   assert.deepEqual(sounds.map((s) => s.id), ['sh', 'i', 'p'].map(letterSoundLine));
   assert.deepEqual(sounds.map((s) => [s.index, s.span]), [[0, 2], [2, 1], [3, 1]]);
+  // The help sounds it out by the same units, never blended.
+  assert.deepEqual(clue('ship', 3, true).map((s) => s.id), ['sh', 'i', 'p'].map(letterSoundLine));
   // DUCK ends in CK; FROG's blend is two sounds, never one.
   assert.deepEqual(clue('duck', 3).map((s) => s.id), ['d', 'u', 'ck'].map(letterSoundLine));
   assert.deepEqual(clue('frog', 3).map((s) => s.id), ['f', 'r', 'o', 'g'].map(letterSoundLine));
@@ -71,7 +93,7 @@ test('voice: every clue line, and the warm-up narrator lines, exist; letter name
   const lines = composeLines();
   const byId = new Map(lines.map((l) => [l.id, l]));
   // A silent letter's step (KITE's E, item 056) has no line: it only lights.
-  for (const w of GRAB_WORDS) for (const l of [1, 2, 3] as const) for (const s of clue(w, l, true)) assert.ok(s.id === '' || byId.has(s.id), s.id);
+  for (const w of GRAB_WORDS) for (const l of [1, 2, 3] as const) for (const s of [...clue(w, l), ...clue(w, l, true)]) assert.ok(s.id === '' || byId.has(s.id), s.id);
   assert.deepEqual(clue('kite', 3).map((s) => [s.index, s.id === '']), [[0, false], [1, false], [2, false], [3, true]]);
   for (const k of ['grab_ask', 'grab_wrong', 'grab_need', 'grab_door']) assert.ok(byId.has(narratorLine('dada_matt', k)), k);
   const v = byId.get(letterNameLine('v'))!;

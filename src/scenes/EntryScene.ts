@@ -4,17 +4,19 @@
  *
  * Nine pictures stand on the floor, with no words on them (item 059: with
  * its word printed under each she matched letters instead of sounding out). The narrator asks for one and
- * gives the clue at the word's level on the ramp (src/rules/grab.ts): the
- * word (easiest level only), its letter names, its letter sounds one at a
- * time. A board over the hall shows the word's letters as their names are
- * said and lights each as its sound is (a digraph's two letters together,
- * one sound: SH of SHIP); at the sounds-only level it shows
- * blank boxes, lit in turn, so the letters themselves are not given away.
+ * gives the clue at the word's level on the ramp (src/rules/grab.ts), a
+ * phonics task that never says the word (amendment 1549): level 1 each
+ * sound unit's letter names then its sound, level 2 the sounds with the
+ * letters, level 3 the sounds over blank boxes. A board over the hall shows
+ * the letters as they are named or sounded and lights each in turn (a
+ * digraph's two letters together, one sound: SH of SHIP).
  *
- * She walks to a picture and presses green. Right: a burst, the word, and it
+ * She walks to a picture and presses green. Right: a burst, the word (the
+ * first time it is said), and it
  * flies into her bag as a battle item; then the front door appears. Wrong: a
  * giggle and "That's the CAT! We need the ..." and the clue again at the same
- * level; after GRAB.helpAfter misses the clue adds the whole word. No penalty;
+ * level; from GRAB.helpAfter misses the clue is the slow sound-out, the
+ * letters shown, never blended. No penalty;
  * misses are recorded (ProgressStore `grabs`, exposure, never a read).
  * Yellow, or a long quiet spell, gives the clue again.
  */
@@ -45,6 +47,8 @@ const TILE_GAP = 14;
 /** A beat after each letter, so the names and sounds stay apart (the sentence room's is 450). */
 const NAME_GAP_MS = 220;
 const SOUND_GAP_MS = 400;
+/** The help's sound-out goes slower: each sound stands on its own, never run together. */
+const HELP_GAP_MS = 700;
 
 export class EntryScene extends RoomScene {
   private phase: Phase = 'intro';
@@ -211,8 +215,10 @@ export class EntryScene extends RoomScene {
   }
 
   /**
-   * The clue at the word's level (and the whole word too once she has missed
-   * GRAB.helpAfter times): names fill the board's boxes, sounds light them.
+   * The clue at the word's level, never the word itself (amendment 1549):
+   * names and shown sounds write their letters into the board's boxes, every
+   * step lights its own. From GRAB.helpAfter misses: the slow sound-out, the
+   * letters shown.
    */
   private async giveClue(): Promise<void> {
     this.locked = true;
@@ -223,18 +229,15 @@ export class EntryScene extends RoomScene {
     const help = this.misses >= GRAB.helpAfter;
     for (const step of clue(this.word, this.level, help)) {
       // A digraph's sound (SH) lights both its boxes at once.
-      const lit = step.index === null ? [] : this.tiles.slice(step.index, step.index + step.span);
-      if (lit.length) {
-        for (const o of this.tiles) o.box.setFillStyle(0xfff8e6, 1);
-        for (const t of lit) t.box.setFillStyle(step.kind === 'name' ? 0xffe066 : 0x9be7ff, 1);
-        if (step.kind === 'name') lit[0]!.letter.setText(this.word[step.index!]!.toUpperCase());
-        this.tweens.add({ targets: lit.flatMap((t) => [t.box, t.letter]), scale: 1.18, duration: 130, yoyo: true });
-      } else {
-        // The word itself: every box lights at once.
-        for (const o of this.tiles) o.box.setFillStyle(0xffe066, 1);
-      }
+      const lit = this.tiles.slice(step.index, step.index + step.span);
+      for (const o of this.tiles) o.box.setFillStyle(0xfff8e6, 1);
+      lit.forEach((t, j) => {
+        t.box.setFillStyle(step.kind === 'name' ? 0xffe066 : 0x9be7ff, 1);
+        if (step.show) t.letter.setText(this.word[step.index + j]!.toUpperCase());
+      });
+      this.tweens.add({ targets: lit.flatMap((t) => [t.box, t.letter]), scale: 1.18, duration: 130, yoyo: true });
       if (step.id) await this.say(step.id);
-      await this.wait(step.kind === 'name' ? NAME_GAP_MS : step.kind === 'sound' ? SOUND_GAP_MS : 250);
+      await this.wait(step.kind === 'name' ? NAME_GAP_MS : help ? HELP_GAP_MS : SOUND_GAP_MS);
     }
     for (const o of this.tiles) o.box.setFillStyle(0xfff8e6, 1);
     if (this.phase === 'intro' || this.phase === 'find') this.locked = false;

@@ -112,8 +112,8 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'away_front', text: "The way out is open! Let's go!", say: "The way out is open, let's go!" },
   { key: 'away_ready', text: "We are ready now! Let's go to the fight!", say: "We are ready now, let's go to the fight!" },
   // The home warm-up (item 033, src/scenes/EntryScene.ts). `grab_ask` and
-  // `grab_need` trail off into the clue (letter names, letter sounds, and at
-  // the easiest level the word's own word_ line); `grab_wrong` trails off into
+  // `grab_need` trail off into the clue (letter names and letter sounds, never
+  // the word: amendment 1549; its word_ line confirms it once she has it); `grab_wrong` trails off into
   // the word she picked (word_cat): she has picked it, so it may be said.
   { key: 'grab_ask', text: "Before we head out, let's grab the..." },
   { key: 'grab_wrong', text: "That's the..." },

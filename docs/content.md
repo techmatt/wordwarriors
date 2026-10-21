@@ -589,8 +589,9 @@ L N R V Z) is worth most: item 054 added MAT, MAN, LID and LOCK for that. A look
 
 Any pictured bank word can be asked for, by her grabs' shakiness times the bank's
 coverage and level gate; adding a word adds it. `GRAB.startLevel` is where a word she has never grabbed starts
-(1 word + names + sounds, 2 names + sounds, 3 sounds only), `GRAB.helpAfter` how many
-misses before the clue adds the word, `GRAB.objects` how many pictures stand in the hall
+(1 each letter's name then its sound, 2 sounds with the letters shown, 3 sounds only; no
+level says the word, amendment 1549), `GRAB.helpAfter` how many misses before the clue
+is the slow sound-out with the letters shown, `GRAB.objects` how many pictures stand in the hall
 (`ENTRY_HALL.spots` in `content/house/house.ts` has a place for each).
 
 ## Narrator lines (`content/voice/script.ts`)

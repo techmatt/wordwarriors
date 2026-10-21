@@ -186,13 +186,14 @@ export const FORCE_PHONICS_ROOM = true;
 /**
  * The home warm-up (item 033, src/scenes/EntryScene.ts): "Before we head out,
  * let's grab the ..." in the entry hall. Each word has its own level on a
- * ramp: 1 = the word, its letter names and its letter sounds; 2 = names and
- * sounds, no word; 3 = sounds only. `startLevel` is where a word she has never
- * grabbed starts; right first time moves a word up a level, a miss on its
- * first try moves it down. `helpAfter` misses add the whole word to the clue.
- * `objects` labelled pictures stand in the hall.
+ * ramp, a phonics clue that never says the word (amendment 1549): 1 = each
+ * sound unit's letter names, then its sound; 2 = sounds only, the letters
+ * shown; 3 = sounds only, blank boxes. `startLevel` is where a word she has
+ * never grabbed starts; right first time moves a word up a level, a miss on
+ * its first try moves it down. From `helpAfter` misses the clue is the slow
+ * sound-out, letters shown, never blended. `objects` pictures stand in the hall.
  */
-export const GRAB = { startLevel: 2 as 1 | 2 | 3, helpAfter: 3, objects: 9 };
+export const GRAB = { startLevel: 1 as 1 | 2 | 3, helpAfter: 3, objects: 9 };
 
 /**
  * The word bank's draws (item 037, src/rules/bank.ts). A word is `solid` at

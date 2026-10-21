@@ -3,18 +3,19 @@
  * no Phaser, unit-tested.
  *
  * After the quest's setup line she walks into the entry hall, where nine
- * pictured bank words stand, each with its word printed on it. The narrator
- * asks for one and gives a clue that links letter names to letter sounds to
- * the word, at the word's own level on a ramp (GRAB in src/config.ts):
+ * pictured bank words stand, with no words on them (item 059). The narrator
+ * asks for one and gives a phonics clue, never the word itself (amendment
+ * 1549), at the word's own level on a ramp (GRAB in src/config.ts; `clue`):
  *
- *   1. the word, its letter names, its letter sounds;
- *   2. names and sounds, no word;
- *   3. sounds only.
+ *   1. letter names and sounds, unit by unit;
+ *   2. sounds only, the letters shown;
+ *   3. sounds only, blank boxes.
  *
  * Right first time moves the word up a level, a miss on its first try moves
- * it down. After GRAB.helpAfter misses the clue adds the whole word.
+ * it down. After GRAB.helpAfter misses the clue is the slow sound-out with
+ * the letters shown, still never blended.
  *
- * The word is spoken during the episode, so it is kept out of the episode's
+ * The word is spoken once she has it (the confirmation), so it is kept out of the episode's
  * reading key words, the counter and the word machine (015's "said early"
  * rule: Episode.ts passes it into `saidBefore`). The other eight labels are
  * drawn after the house plan and keep clear of every word she will read, so
@@ -25,7 +26,7 @@
 import { BANK_BY_WORD, THINGS, unitsOf } from '../../content/phonics/bank';
 import { lookalikesOf } from '../../content/phonics/sentences';
 import { SOUND_BY_UNIT } from '../../content/phonics/letters';
-import { letterNameLine, letterSoundLine, wordLine } from '../../content/voice/ids';
+import { letterNameLine, letterSoundLine } from '../../content/voice/ids';
 import { GRAB } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
 import { coverage, distractorsFor, gates, isFirm, met, openIn, shuffle, type Rand } from './bank';
@@ -97,37 +98,46 @@ export function hallObjects(store: ProgressStore, word: string, avoid: Iterable<
 
 /**
  * One part of a clue: a line, and which letters of the word it lights: from
- * `index` (null for the word itself), `span` letters (2 for a digraph's sound).
+ * `index`, `span` letters (2 for a digraph's sound). `show`: the step writes
+ * its letters into the board's boxes (a name always; a sound at levels 1-2
+ * and in the help, never at level 3, where the boxes stay blank).
  */
 export interface ClueStep {
   /** The line to say; `` for a silent letter (item 056), which only lights. */
   id: string;
-  kind: 'word' | 'name' | 'sound';
-  index: number | null;
+  kind: 'name' | 'sound';
+  index: number;
   span: number;
+  show: boolean;
 }
 
 /**
- * The clue at a level: the word first (level 1, or `help` after enough
- * misses), then its letter names (levels 1 and 2), then its sounds, one at a
- * time and never blended. Names go letter by letter (S, H, I, P: names are
- * what she knows); sounds go by sound unit (SH, I, P: `unitsOf`), so a
- * digraph is one sound lighting both its letters.
+ * The clue at a level (amendment 1549: a phonics task, never a listening
+ * one, so no step ever says the word; its `word_` line is the confirmation
+ * after she has it). Sound by sound unit (SH, I, P: the bank's `units` and
+ * `spelled` sounds), one at a time and never blended, so a digraph is one
+ * sound lighting both its letters:
+ *
+ *   1. each unit's letter names, then its sound (S, H, "sh"; I, "i"; P, "p");
+ *   2. the sounds alone, each unit's letters appearing on the board with it;
+ *   3. the sounds alone over blank boxes.
+ *
+ * `help` (after GRAB.helpAfter misses, any level) is the sound-out alone,
+ * the letters on the board, which the scene gives a longer beat per sound.
  */
 export function clue(word: string, level: GrabLevel, help = false): ClueStep[] {
-  const letters = [...word];
   const out: ClueStep[] = [];
-  if (level === 1 || help) out.push({ id: wordLine(word), kind: 'word', index: null, span: 0 });
-  if (level <= 2) letters.forEach((ch, index) => out.push({ id: letterNameLine(ch), kind: 'name', index, span: 1 }));
   let index = 0;
   // A long-vowel word spells its sounds out (KEY is K, then long E on EY: content/phonics/bank.ts).
   const b = BANK_BY_WORD[word];
   const units = b?.units ?? unitsOf(word);
   units.forEach((unit, i) => {
+    if (level === 1 && !help) [...unit].forEach((ch, j) => out.push({ id: letterNameLine(ch), kind: 'name', index: index + j, span: 1, show: true }));
     const sound = b?.sounds[i] ?? unit;
-    if (SOUND_BY_UNIT[sound]) out.push({ id: letterSoundLine(sound), kind: 'sound', index, span: unit.length });
+    const show = help || level <= 2;
+    if (SOUND_BY_UNIT[sound]) out.push({ id: letterSoundLine(sound), kind: 'sound', index, span: unit.length, show });
     // A silent letter (KITE's E, item 056) lights in its turn and says nothing: no line id.
-    else if (sound === '') out.push({ id: '', kind: 'sound', index, span: unit.length });
+    else if (sound === '') out.push({ id: '', kind: 'sound', index, span: unit.length, show });
     index += unit.length;
   });
   return out;
