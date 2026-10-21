@@ -14,6 +14,7 @@ import Phaser from 'phaser';
 import { ROSTER } from '../../content/battle/roster';
 import { charArt } from '../../content/art/assets';
 import { currentStep, episode, planFor, steps, type Slot, type Step } from '../episode/Episode';
+import { voiceBank } from '../voice/VoiceBank';
 import { artBank } from './ArtBank';
 import { artFor } from './needs';
 
@@ -81,5 +82,7 @@ export function startScene(from: Phaser.Scene, key: string, data?: object): void
     from.scene.start(key, data);
     return;
   }
+  // Nothing is said while it waits: the art goes first, the voice queue after (VoiceBank.pauseWhile).
+  voiceBank.pauseWhile(artBank.ensure(missing));
   from.scene.start('Wait', { key, data, ids: missing });
 }

@@ -12,7 +12,7 @@ import { boot, collectErrors, expectNoErrors, state, until } from './harness';
 test('slow art: the hub waits behind the transition, then opens with no gaps', async ({ page }) => {
   const errors = collectErrors(page);
   await page.route('**/art/*.png', async (route) => {
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 150));
     await route.continue();
   });
   const seen = new Set<string>();

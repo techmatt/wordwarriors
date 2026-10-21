@@ -380,7 +380,7 @@ soak and the word machine's episode, the brawl's checks into every whole episode
 **Art loads on demand** (item 065): a test that reaches a scene with `?scene=` may pass
 through the Wait scene (`s.scene === 'Wait'`) while that scene's art loads, so wait for
 the scene you want, never for "anything but Boot". `tests/lazyart.spec.ts` (fast lane)
-slows every picture by 400 ms and checks the hub waits, then opens with nothing missing.
+slows every picture by 150 ms and checks the hub waits, then opens with nothing missing.
 A browser test fails on any `art: not ready` warning (`collectErrors`).
 
 **Boot timings:** `npx playwright test --config tests/perf/perf.config.ts` (about 1.5

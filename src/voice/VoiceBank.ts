@@ -159,8 +159,30 @@ export class VoiceBank {
     return done;
   }
 
+  /**
+   * Start no new background decodes until `until` settles (item 065): while a
+   * scene's art loads behind the Wait scene nothing is being said, and the
+   * clips' fetches queued behind the pictures past their timeout. A line about
+   * to be said (`ensure`) still goes.
+   */
+  pauseWhile(until: Promise<unknown>): void {
+    const held = until.then(
+      () => undefined,
+      () => undefined,
+    );
+    this.paused = held;
+    void held.then(() => {
+      if (this.paused !== held) return;
+      this.paused = null;
+      this.pump();
+    });
+  }
+
+  private paused: Promise<void> | null = null;
+
   private pump(): void {
     while (this.active < DECODE_SLOTS && this.waiting.length) {
+      if (this.paused && !this.waiting[0]!.urgent) return;
       const job = this.waiting.shift()!;
       this.active++;
       void job.run().finally(() => {

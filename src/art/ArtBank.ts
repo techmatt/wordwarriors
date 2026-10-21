@@ -20,14 +20,18 @@ import Phaser from 'phaser';
 
 import { ART_BY_ID } from '../../content/art/assets';
 
-/** Pictures fetched and decoded at once for a scene about to show. */
-const SLOTS = 8;
+/**
+ * Pictures fetched at once for a scene about to show. Four, not more: the dev
+ * server speaks HTTP/1.1 (six connections a host), and eight took them all, so
+ * the voice clips queued past their timeout (item 065, the cook-off test).
+ */
+const SLOTS = 4;
 /**
  * At once for the background (the next scene's): fewer, so the voice clips the
  * scene is saying now keep the connections (item 065's sweep: with more, lines
  * played with no clip, `voice-silent`).
  */
-const BACKGROUND_SLOTS = 3;
+const BACKGROUND_SLOTS = 2;
 /**
  * A fetch still out after this is aborted and asked again (`TRIES` in all), so
  * nothing hangs for good. Long: a fetch waits its turn behind the voice
@@ -45,6 +49,8 @@ interface Job {
   urgent: boolean;
   done: Promise<void>;
   resolve(): void;
+  /** The fetch in flight, asked at background priority: made urgent, it is asked again at high. */
+  slow?: AbortController;
 }
 
 export interface LateArt {
@@ -119,8 +125,10 @@ export class ArtBank {
         const i = this.waiting.indexOf(job);
         if (i >= 0) {
           this.waiting.splice(i, 1);
-          this.waiting.splice(this.waiting.findIndex((j) => !j.urgent) >>> 0, 0, job);
-        }
+          const at = this.waiting.findIndex((j) => !j.urgent);
+          this.waiting.splice(at < 0 ? this.waiting.length : at, 0, job);
+          this.pump();
+        } else job.slow?.abort();
       }
       return job.done;
     }
@@ -161,10 +169,16 @@ export class ArtBank {
    */
   private async load(job: Job): Promise<void> {
     for (let attempt = 1; ; attempt++) {
+      const promoted = !job.urgent;
       try {
         await this.fetchImage(job);
         return;
       } catch (error) {
+        // Made urgent while in flight: asked again at high priority, not counted as a try.
+        if (promoted && job.urgent && !(error instanceof NotThere)) {
+          attempt--;
+          continue;
+        }
         if (error instanceof NotThere || attempt >= TRIES) throw error;
       }
     }
@@ -174,21 +188,24 @@ export class ArtBank {
    * By `fetch`, not an `<img>` request: Chromium ranks image requests below the
    * voice bank's fetches and starved them for minutes (item 065's slow lane
    * stuck in the Wait scene). A scene about to show asks at high priority, the
-   * background at low, so the voice being said keeps the connections.
+   * background (two at a time) at the default.
    */
   private async fetchImage(job: Job): Promise<void> {
     const game = this.game;
     if (!game) throw new Error('art bank not installed');
     const abort = new AbortController();
+    if (!job.urgent) job.slow = abort;
     const timer = window.setTimeout(() => abort.abort(), FETCH_TIMEOUT_MS);
     let blob: Blob;
     try {
-      const response = await fetch(`${import.meta.env.BASE_URL}art/${job.id}.png`, { signal: abort.signal, priority: job.urgent ? 'high' : 'low' } as RequestInit);
+      // Background at the default priority: Chromium holds `low` back for as long as higher ones keep coming.
+      const response = await fetch(`${import.meta.env.BASE_URL}art/${job.id}.png`, { signal: abort.signal, ...(job.urgent ? { priority: 'high' } : {}) } as RequestInit);
       if (response.status === 404) throw new NotThere('not found');
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       blob = await response.blob();
     } finally {
       window.clearTimeout(timer);
+      job.slow = undefined;
     }
     const img = new Image();
     await new Promise<void>((resolve, reject) => {
