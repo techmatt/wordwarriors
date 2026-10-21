@@ -34,8 +34,12 @@ interface VoiceManifestFile {
   lines: VoiceLine[];
 }
 
-/** Clips fetched and decoded at once: the dev server's HTTP/1.1 allows six connections a host. */
-const DECODE_SLOTS = 6;
+/**
+ * Clips fetched and decoded at once: what one group used to run (item 062).
+ * Six (HTTP/1.1's connections a host) left the connections idle while clips
+ * decoded, and boot, which waits for core's ~290 clips, took twice as long.
+ */
+const DECODE_SLOTS = 12;
 /** A clip's fetch is given up after this (item 057 saw one hang 60 s), freeing its slot. */
 const FETCH_TIMEOUT_MS = 15_000;
 

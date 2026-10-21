@@ -55,13 +55,13 @@ test('a line about to be said decodes ahead of its groups, sharing their decode;
 
   void bank.loadGroups(['nar', 'old'], '/');
   for (let i = 0; i < 5; i++) await tick();
-  assert.equal(fetched.length, 6, 'six at a time, not a batch per group');
+  assert.equal(fetched.length, 12, 'twelve at a time in all, not twelve per group');
   assert.equal(bank.state('nar_30'), 'queued');
 
   const said = bank.ensure('said', '/');
   const again = bank.ensure('said', '/');
   await answerAll();
-  assert.equal(fetched[6], '/voice-gen/said.mp3', 'the line being said is next, ahead of 50-odd group clips');
+  assert.equal(fetched[12], '/voice-gen/said.mp3', 'the line being said is next, ahead of 40-odd group clips');
   while (!bank.ready('said')) await answerAll();
   await Promise.all([said, again]);
   assert.equal(fetched.filter((u) => u.endsWith('said.mp3')).length, 1, 'fetched once, not again behind the group or for a second ask');

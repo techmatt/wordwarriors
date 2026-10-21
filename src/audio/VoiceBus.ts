@@ -50,7 +50,7 @@ const BARK_GAP_MS = 900;
  * The decode carries on; the line never starts its audio late. Item 062: a
  * line went past it when its fetch queued behind its groups' (70-odd at once,
  * a busy dev server taking 1-2 s each); VoiceBank's one decode queue now puts
- * the line being said first, so it waits for at most six others.
+ * the line being said first, so it waits for at most twelve others.
  */
 export const ENSURE_TIMEOUT_MS = 4000;
 
