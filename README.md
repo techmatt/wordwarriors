@@ -569,6 +569,15 @@ Every file has exactly one home (Matt, 2026-10-18):
   checkout (junctions unlinked first, *Battle shots*), then `git worktree prune`; its
   `conductor/*` branch stays. Item 052 did this for everything to date: `alts/` 1.3 GB
   to 39 MB, `scratch/` 1.2 GB to 22 MB, the worktrees folder 1.4 GB to 0.3 GB.
+- **The archive** (item 084): `C:\Code\gdrive-sync\wordwarriors\archive\` holds what
+  is irreplaceable but not needed day to day, at its old relative path. It has Matt's raw
+  phonics-recorder zips and takes (`archive\scratch\voice-import\`), which
+  `voice:import` already cut into `content/voice/clips/`. Item 084 deleted the
+  bug-hunt PNGs and contact sheets of hunts 2 and 3 (`scratch/` 8.5 GB to 8 MB). The main
+  checkout is now `node_modules/` (~285 MB) and `.git` (~120 MB, 45 MB of that the
+  edge-tts mp3s committed under `public/voice/` before the voice moved to Drive).
+  Measure with a walk that never follows a link (`os.scandir`, skipping
+  `is_junction()` / `is_symlink()`), so Drive is counted once, at its real home.
 
 The main checkout holds the junctions; conductor links each worktree's to the same Drive
 folders, so a worktree shares one copy and never needs a full voice rebuild. Because the
