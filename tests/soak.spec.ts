@@ -8,8 +8,8 @@
  * drawn casts (seed 1, then the next draw), so they are also two of the
  * whole random episodes item 025 asks for (the third is tests/drawn.spec.ts's).
  * Item 081: they are also Charge the Spell's whole episodes (`room=charge` pins
- * the beta's phonics room behind door a; `games=all` draws door b from the whole
- * pool), checked in each: the runes spell its word, fetched, fired in part 1.
+ * the beta's phonics room behind door a; door b stays the harness's sentence
+ * room), checked in each: the runes spell its word, fetched, fired in part 1.
  */
 
 import { test, expect } from '@playwright/test';
@@ -30,7 +30,7 @@ function expectCharged(end: WWState): void {
 test('two episodes back to back', SLOW, async ({ page }) => {
   test.setTimeout(1_500_000);
   const errors = collectErrors(page);
-  await boot(page, '?seed=1&games=all&room=charge');
+  await boot(page, '?seed=1&room=charge');
   await until(page, (s) => s.scene === 'Title', 30_000, 'title');
   await page.waitForTimeout(500);
   await press(page, 'green');

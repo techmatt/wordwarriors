@@ -19,6 +19,7 @@ let played: { end: WWState; keys: string[] };
 
 test.beforeAll(async ({ browser }) => {
   test.setTimeout(600_000);
+  const t0 = Date.now();
   page = await browser.newPage();
   errors = collectErrors(page);
   await boot(page, '?game=word_machine&room=bridge&seed=19&nojourney=1');
@@ -27,6 +28,8 @@ test.beforeAll(async ({ browser }) => {
   await press(page, 'green');
   played = await playEpisode(page);
   await page.screenshot({ path: 'tests/screenshots/081_drawn_victory.png' });
+  // A hook's time is no test's in the report: the episode's own line says it.
+  console.log(`drawn episode: ${Math.round((Date.now() - t0) / 1000)} s`);
 });
 
 test.afterAll(async () => {

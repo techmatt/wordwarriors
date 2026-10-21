@@ -155,8 +155,8 @@ the slow lane plays whole visits (a silly tile first, F9 out and back) (item 026
 The newer rooms' whole episodes share walks (item 081): `tests/drawn.spec.ts` plays one
 drawn episode with the word machine behind door a and the bridge behind door b
 (`?game=word_machine&room=bridge`) in its `beforeAll`, and a test for each room checks
-its own; the soak's two episodes have Charge the Spell behind door a (`room=charge`,
-`games=all`) and check it in each.
+its own; the soak's two episodes have Charge the Spell behind door a (`room=charge`; door b
+a sentence room) and check it in each.
 
 `leaveBedroom` also plays the entry hall's
 warm-up (item 033) unless given `{ grab: false }`, so a test that walks out of the bedroom

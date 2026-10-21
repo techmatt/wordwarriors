@@ -94,6 +94,17 @@ without a new measurement.
   transformed) took the same lane to its 6-minute cap with 3 failures, every one a boot
   that never reached a scene. Three workers on the build: the slow lane 779 → 578 s, green;
   the real-time episode (6.1 minutes) is now near its floor.
+- **A faster slow lane (item 081, 2026-10-21)**, three workers on the build. The real-time
+  episode at speed 1 throughout was 361 s; real for the bedroom, the warm-up, the hub's
+  helper scene, door a's sentence room and battle 1, the rest at 5 and battle 2 at 10, it is
+  about 210 s (real seconds per part: bedroom 31, warm-up 22, hub scene 18, door a 32, door
+  b 8 at speed 5, battle 1 73, hub part 2 11 at 5, battle 2 11 at 10). A contest fight style
+  through both battles: 33 s at clock speed 5, 24-28 s at 8, 21-23 s at 10. Speed 10 and 8
+  each failed sky_race 1 run in 3 on the finish-flag check until it read the flag a frame
+  after hearing the line (the battle publishes its state once a frame, the voice live); then
+  10 was green three runs running. The whole drawn episodes for the bridge (101 s), the
+  machine (88 s) and Charge (77 s) became one shared episode (`tests/drawn.spec.ts`) and the
+  soak's own two.
 - **Art and voice share the dev server's six HTTP/1.1 connections** (item 065). `<img>`
   requests rank below `fetch` in Chromium and starved behind the voice bank's twelve
   clip fetches (a battle sat in the Wait scene); `priority: 'low'` fetches are held
