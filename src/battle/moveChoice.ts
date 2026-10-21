@@ -304,7 +304,8 @@ export class MoveChoice {
       return;
     }
     if (wall - seen.at < 1000) return;
-    const taken = [{ x: me.x, y: me.y }, ...c.stepBack.map((s) => s.to)];
+    // Her and every teammate where they stand once stepped, a teammate who never had to step included.
+    const taken = [me, ...this.host.heroes.filter((f) => f !== me && f.active)].map((f) => c.stepBack.find((s) => s.f === f)?.to ?? { x: f.x, y: f.y });
     const to = clearSpot({ x: v.x, y: v.y, half: v.bodyHalf, h: Math.max(60, v.y - v.top) }, c.pads, taken, FLOOR);
     if (to.x === v.x && to.y === v.y) {
       // Clear where he stands: look again in a second, in case he moves on.

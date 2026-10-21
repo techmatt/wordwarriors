@@ -109,14 +109,20 @@ export function placePads(inp: PlaceInput): { x: number; y: number }[] {
     let bestScore = -Infinity;
     let bestCover = Infinity;
     for (const ys of rows) {
-      const cands = xs.flatMap((x) => ys.map((y) => ({ x, y })));
+      // Each spot's clearance and cover once (a share sums over the signs, so a set's cover is its spots' sum).
+      const cands = xs.flatMap((x) =>
+        ys.map((y) => {
+          const sign = [signBox(x, y)];
+          return { x, y, clear: clearance(x, y), cov: coverBoxes.reduce((s, b) => s + coveredShare(b, sign), 0) };
+        }),
+      );
+      type Cand = (typeof cands)[number];
       // Every set of n spots left to right: in one row at least `gap` apart,
       // across the rows STAGGER_GAP (n is 2 or 3, so this stays small).
-      const walk = (from: number, picked: Spot[]): void => {
+      const walk = (from: number, picked: Cand[]): void => {
         if (picked.length === n) {
-          const signs = picked.map((p) => signBox(p.x, p.y));
-          const cov = coverBoxes.reduce((s, b) => s + coveredShare(b, signs), 0);
-          const clear = Math.min(...picked.map((p) => clearance(p.x, p.y)));
+          const cov = picked.reduce((s, p) => s + p.cov, 0);
+          const clear = Math.min(...picked.map((p) => p.clear));
           let spread = Infinity;
           for (let i = 1; i < picked.length; i++) spread = Math.min(spread, picked[i]!.x - picked[i - 1]!.x);
           // Covering nobody first; then clear enough counts the same however
@@ -126,7 +132,7 @@ export function placePads(inp: PlaceInput): { x: number; y: number }[] {
           if (score > bestScore) {
             bestScore = score;
             bestCover = cov;
-            best = picked;
+            best = picked.map((p) => ({ x: p.x, y: p.y }));
           }
           return;
         }
