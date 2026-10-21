@@ -46,7 +46,7 @@ Playwright serves its own (README, *Tests*). The sibling game
 | Path | What |
 | --- | --- |
 | `src/` | Game source. `main.ts` boots Phaser; `config.ts` sizes, depth bands, pad colours and every tuning knob named below. |
-| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom), Journey, Ending (the victory scene), Victory, Parent; parked: Pick, Alarm, Retreat and `minigames/` (the v0.1 games, Spell the Spell among them). |
+| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom), Journey, Ending (the victory scene), Victory, Parent, and Wait (shown while a scene's art loads); parked: Pick, Alarm, Retreat and `minigames/` (the v0.1 games, Spell the Spell among them; also `Minigame.ts`, the base class the live side rooms extend). |
 | `src/battle/` | The battle simulation: `BattleScene` (the director scripts `part1`/`part2`), `Fighter`, `abilities`, `movement`; `stages/` stages each fight style. |
 | `src/episode/Episode.ts` | The episode's state and step list. Scenes call `advance()`; nothing else decides flow. |
 | `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only), `dadLock`, `dadButtons` (keys 1 / 2, Dad's no / yes). |
@@ -80,7 +80,7 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `npm run dev` | Serve at http://localhost:5174 |
 | `npm run build` / `npm run preview` | Typecheck, then static `dist/` / serve it |
 | `npm run typecheck` | `src`, `tests`, `content`, `tools` |
-| `npm test` | Fast lane, after every change (~1½ min): unit tests, then the 20 browser tests not tagged `@slow`; stops itself at 6 min. A new browser test over ~10 s gets `SLOW` (README, *Tests*) |
+| `npm test` | Fast lane, after every change (~2 min): unit tests, then the browser tests not tagged `@slow`; stops itself at 6 min. A new browser test over ~10 s gets `SLOW` (README, *Tests*) |
 | `npm run test:unit` | The unit tests alone (~5 s) |
 | `npm run test:slow` | The slow lane alone (~17 min: `@slow`, the real-time episode, the soak) |
 | `npm run test:all` | Both lanes, the full run (~19 min). **Not by default:** before a commit run the fast lane plus the specs covering what changed (`npx playwright test <spec>`); the full suite only for a change touching every scene |
@@ -93,6 +93,13 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `npm run art:gen -- <ids…>` | Real art via Codex's image tool (README, *Real art*) |
 | `npm run art:alts -- <ids…> --sheet=<file>` | Draw candidates (3 per id) and a comparison sheet; the game's art is untouched |
 | `npm run art:pick -- <id> <n>` | Make candidate `n` the game's art (`0` restores the original) |
+| `npm run bank:audit` | The word bank's coverage table (`-- --gaps` the shortfalls; README, *The word bank's coverage rule*) |
+
+Not npm scripts, each a Playwright config of its own (README, *Tests*): boot timings
+(`--config tests/perf/perf.config.ts`), UI and battle screenshots (`SHOTS_TAG=<tag>`,
+`--config tests/shots/shots.config.ts`), the bug-hunt checker (`QA_TAG=<tag>`,
+`--config tests/qa/qa.config.ts`), every ally × villain pair (`WW_PAIRS=+ npx playwright
+test tests/pairs.spec.ts`; without `WW_PAIRS` the spec has no tests).
 
 Adding a character, ability, word or line is data work: edit `content/`, then
 `npm run voice:lines && npm run voice:build && npm run art:placeholders` ("the three

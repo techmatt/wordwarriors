@@ -403,6 +403,9 @@ Two lanes (re-measured in item 061, 2026-10-20):
   last episode's victory scene, and the three text-fit checks. It stops itself at 6
   minutes (`--global-timeout`), so a hang fails inside Claude Code's 10-minute background
   cap instead of being killed by it. `npm run test:unit` runs the unit tests alone (5 s).
+  On 2026-10-21 (item 068, after item 067's variety test) the lane was 22 browser tests in
+  2.0 minutes. `npm run typecheck` checks `src`, `tests`, `content` and `tools` (both
+  tsconfigs; `npm run build` runs it first), which the tests do not.
 - **Everything: `npm run test:all`** (about 19 minutes; 31 before item 061). The fast lane
   plus the slow lane, which `npm run test:slow` runs alone (about 17 minutes, 58 tests on two
   workers): every test tagged `@slow`, the one whole episode at real time (6 minutes, the
@@ -490,7 +493,7 @@ navigation" (item 067: five slow specs lost to edits made mid-run). Do not edit 
 or `content/` while a browser run is going, or point the run at a `vite preview` build
 with `WW_BASE_URL`.
 To force a key word, seed the progress blob with `bag: { left: [word], round: 1 }` **and**
-`bagKnown: BAG_WORDS` (`tests/kywords.spec.ts`): a blob without `bagKnown` counts as one
+`bagKnown: BAG_WORDS` (`tests/soundout.spec.ts`): a blob without `bagKnown` counts as one
 from before item 035, and the store tops the bag up with every word added since (item 048).
 If 5184 is busy (another worktree's run) the suite fails at once rather than testing the
 wrong code. With `CONDUCTOR_PORT` set (a conductor item is given one) the suite serves
@@ -588,6 +591,9 @@ npm run voice:lines     # regenerate content/voice/lines.json
 npm run voice:build     # synthesise new or changed lines into public/voice-gen/
 npm run art:placeholders  # paint missing art, rewrite docs/art.md
 ```
+
+`npm run voice:status` lists every line as recorded, stale (the text changed since the
+recording) or still edge-tts, letter sounds first (`docs/recording.md`).
 
 ### Matt's recordings: the phonics recorder and `voice:import` (item 057)
 

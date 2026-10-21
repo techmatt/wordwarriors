@@ -29,9 +29,9 @@ without a new measurement.
 - **Build cache** stores fingerprints only; entries are read back from the previous
   manifest, so manifest data is stored once (saved ~0.6 MB). Reused entries are re-based
   onto the current output folder, so moving the folder needs no rebuild.
-- `en-AU-WilliamMultilingualNeural` failed "No audio was received" on most lines.
-- edge-tts sometimes times "Dragon Parade" as one boundary; `align.ts` splits merged
-  tokens by letter count.
+- The edge-tts quirks met while building (a voice that returns no audio, merged and split
+  word boundaries, hyphens, rime and letter-name spellings) are in README, *Operational
+  facts*, with the workaround for each.
 
 ## Phonics spike (from Seraphina's Secret, `git show ca4eee9:scratch/voice_pipeline_spike_report.md`)
 
