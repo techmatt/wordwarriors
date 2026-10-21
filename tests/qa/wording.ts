@@ -80,8 +80,8 @@ function gap(a: [number, number, number, number], b: [number, number, number, nu
  * three words or fewer, with no pronoun or verb to make it a sentence, is a
  * look (item 059: TOO STRONG, LET GO).
  */
-const WHOLE = /^(yes|no|wow|bad news|good news|oh no|uh oh|hooray|yay|well done|got it|good job|great job|thank you|thanks|ready|go|let'?s go|hello|hi|bye|goodbye|ha+|oops|whoa|yum|look|listen|come on|watch out|you did it|we did it|again|nice|cool|perfect|amazing|brilliant|super|super duper|ta-?da|sorry|please|kiddo|sleepyhead|oopsie|shh|whe+|beep|boop|beep boop|guess what|good morning|wake up|rise and shine|great reading|welcome|all aboard)$/i;
-const SENTENCE_WORD = /\b(i|you|we|he|she|it|they|me|us|them|is|are|am|was|were|be|let'?s|can|will|do|does|did|have|has|had|i'?m|you'?re|we'?re|it'?s|that'?s|there'?s|here'?s|what'?s|look|find|get|go|come|say|read|help|try|walk|press|stand|see|grab|use)\b/i;
+const WHOLE = /^(yes|no|wow|bad news|good news|oh no|uh oh|hooray|yay|well done|got it|good job|great job|thank you|thanks|ready|go|let'?s go|hello|hi|bye|goodbye|ha+|oops|whoa|yum|look|listen|come on|watch out|you did it|we did it|again|nice|cool|perfect|amazing|brilliant|super|super duper|ta-?da|sorry|please|kiddo|sleepyhead|oopsie|shh|whe+|beep|boop|beep boop|guess what|good morning|wake up|rise and shine|great reading|welcome|all aboard|ready,? set,? go)$/i;
+const SENTENCE_WORD = /\b(i|you|we|he|she|it|they|me|us|them|is|are|am|was|were|be|let'?s|can|will|do|does|did|have|has|had|i'?m|you'?re|we'?re|it'?s|that'?s|there'?s|here'?s|what'?s|look|find|get|go|come|say|read|help|try|walk|press|stand|see|grab|use|pick|now'?s)\b/i;
 
 /** A clipped line: a sentence of a few words that is no sentence (no pronoun, no verb) and no everyday exclamation. */
 export function clippedIn(text: string): string | null {
@@ -92,10 +92,15 @@ export function clippedIn(text: string): string | null {
   if (sentences.length === 1 && !/\s/.test(text.trim())) return null;
   for (const raw of sentences) {
     const s = raw.replace(/[.!?…]+$/g, '').trim();
+    // "Gold coins for everybody!" (item 080, M18): a thing for everybody with no verb, however long.
+    const head = s.split(/,\s*/)[0]!;
+    if (/ for everybody$/i.test(head) && !SENTENCE_WORD.test(head)) return raw.trim();
     const words = s.split(/[\s,]+/).filter(Boolean);
     if (words.length === 0 || words.length > 5 || WHOLE.test(s)) continue;
     // Each comma part on its own: "Too strong, let go" is two clipped halves. A
     // lone capitalized word is someone named ("Bad news, Julia").
+    // "Look, a secret door!" points at something: whole (item 080).
+    if (/^look,/i.test(s)) continue;
     const parts = s.split(/,\s*/).filter((p) => !WHOLE.test(p) && !/^[A-Z][a-z]+$/.test(p) && !/^(Dada|Evil) [A-Z][a-z]+$/.test(p));
     if (parts.some((p) => p.split(/\s+/).length <= 3 && !SENTENCE_WORD.test(p))) return raw.trim();
   }

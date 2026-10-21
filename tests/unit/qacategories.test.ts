@@ -27,6 +27,12 @@ test('clipped lines: TOO STRONG, LET GO is clipped; whole sentences and everyday
   assert.equal(clippedIn('Wow! You did it!'), null);
   assert.equal(clippedIn('Now read the whole spell!'), null);
   assert.equal(clippedIn("Before we head out, let's grab the..."), null);
+  // Item 080: natural lines the heuristic used to flag; "X for everybody!" stays a look (Matt's call M18).
+  assert.equal(clippedIn('Quick, pick a move!'), null);
+  assert.equal(clippedIn("Now's our chance! Let's use it!"), null);
+  assert.equal(clippedIn("It's a race! Ready, set, go!"), null);
+  assert.equal(clippedIn("Look, a secret door! Let's go through it!"), null);
+  assert.ok(clippedIn('Gold coins for everybody!'));
 });
 
 test('giveaway: a picture with its own word printed beside it is a bug (item 059: the entry hall\'s VAN)', () => {
