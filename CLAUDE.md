@@ -54,7 +54,7 @@ Playwright serves its own (README, *Tests*). The sibling game
 | `src/voice/VoiceBank.ts` | Reads `public/voice-gen/manifest.json` only, decodes by group. |
 | `src/art/` | Art on demand (item 065): `ArtBank` (load, the `art: not ready` safety net), `needs` (`artFor`: each scene's art), `gate` (`startScene`: every scene starts through it, behind the Wait scene when its art lags). |
 | `src/state/` | `ProgressStore` (localStorage, versioned, per sound and per word). |
-| `src/rules/` | Phaser-free, unit-tested: the cast, word bank, moves and gift word, warm-up, sentences, word machine, minigame pool, story and victory-scene draws. |
+| `src/rules/` | Phaser-free, unit-tested: the cast, word bank, moves and gift word, warm-up, sentences, word machine, minigame pool, story and victory-scene draws; `difficulty` (the `DIFFICULTY` knob over every help ramp) and `recent` (rotations across episodes). |
 | `src/world/` | `RoomScene` (walk-to-answer rooms), `Player` (her character as the cursor), `houseMood`. |
 | `src/ui/`, `src/fx/` | Caption ribbon, follow-the-speaker bubbles, button dots, bag; particles and juice. |
 | `src/qa/` | The bug-hunt checker's in-page probe (`?qa=1`; README, *The bug-hunt checker*). |
@@ -124,6 +124,12 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 
 ## Standing design rules (law)
 
+- **No automatic difficulty** (item 067). Every help ramp (warm-up, bridge, charge, a
+  solid frame's skipped listening pass, sound-alike distractors) records her level but
+  gives its most helpful start until Matt raises `DIFFICULTY`. Words are chosen per game
+  by length in sound units, never by level: decoding games short, recognition roles any.
+  Every rotation (cast, forms, rooms, games, variants, scenes, words) remembers across
+  episodes through the store's `recent` (`src/rules/recent.ts`).
 - **No fail states.** A wrong answer gets a gentle, funny retry (fizzle-and-giggle SFX,
   a wiggle, a joke line) and no penalty. Battles cannot be lost: Part 1 always ends with
   the villain's ultimate flooring the heroes, framed as "too strong, retreat and get
@@ -144,7 +150,8 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
   move. Misses are recorded, never punished.
 - **Sentence game:** the sentence's last word is the **key word**, never spoken until
   she has answered. Pass 1 (listen) is voiced karaoke that stops at the key word, which
-  pulses in a beat of silence; it is skipped once the frame is solid (`SENTENCE_SOLID`).
+  pulses in a beat of silence; it is skipped once the frame is solid (`SENTENCE_SOLID`),
+  only from `DIFFICULTY` 2.
   Pass 2 (her turn) starts with nothing lit; each green lights the next word and says
   it (green waits for the word), except the key word, which lights in silence. Yellow on
   a frame word says it; yellow on the key word sounds its letters one by one, never
@@ -205,7 +212,9 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 | "add a sentence / frame" / "what X does in battle" | `FRAMES` in `content/phonics/sentences.ts`; X's effect in `content/phonics/effects.ts`; the three commands |
 | "add a hub scene / quest line" | `HUB_SCENES` in `content/house/scenes.ts`; a quest's `lines` in `content/house/quests.ts` (`docs/content.md`, "A hub scene", "A quest"), the three commands |
 | "X casts spells" / "X's gift should sound like a spell" | `CASTERS` in `content/house/scenes.ts`; `spell` on `BANK` entries marks spell-sounding words |
-| "blends sooner / later" / "digraphs sooner / later" | `BANK_DRAW.levels` in `src/config.ts` (`start`, `full`, `min` per level) |
+| "make it harder / easier" / "let the help fade" / "back to base" | `DIFFICULTY` in `src/config.ts` (1 base: every help ramp held at its start; 2; 3 all the way); shown on the grown-ups page |
+| "longer / shorter words in X" (warm-up, bridge, word machine, charge) | `GRAB.maxUnits`, `BRIDGE.maxUnits`, `WORD_MACHINE.maxUnits`, `CHARGE.units` in `src/config.ts` (sound units: SH is one). Every word is in play otherwise (item 067: no level gate) |
+| "she sees X too often" / "repeats too soon" | `VARIETY` in `src/config.ts` (`rotations`, `words`, `wordWeight`, `gameWeight`; README, *Variety*) |
 | "add a bedroom / side room / villain mood" | `content/house/house.ts` or the villain's `house` in the roster, the three commands |
 | "turn the pick screens back on" / "always the same cast" | `EPISODE_DEFAULTS` in `src/config.ts` (`pickScreens`, `randomCast: false`) |
 | "Matt should wake her more / less often" | `CAST_ODDS` in `src/config.ts` |
@@ -217,12 +226,12 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 | "make it the chef episode" | `?ally=dada_jason` (Julia's chef form follows; outfits are `content/battle/forms.ts`) |
 | "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`) |
 | "here are my letter sound recordings" / "here is a recorder zip" | `npm run voice:import -- <zip>`, then `voice:build`; report each card installed or refused and why (`docs/recording.md`) |
-| "longer / shorter charge words" / "a longer / shorter beat to say each sound back" / "Dad should wait longer" / "quick sounds sooner / later" | `CHARGE` in `src/config.ts` (`units`, `sayBackMs`, `readTimeoutMs`, `tiers`) |
+| "longer / shorter charge words" / "a longer / shorter beat to say each sound back" / "Dad should wait longer" | `CHARGE` in `src/config.ts` (`units`, `sayBackMs`, `readTimeoutMs`) |
 | "a new gesture for X" / "X's rune should fire Y" | X's entry in `RUNES` (`content/phonics/runes.ts`: `gesture`, `move`), then `voice:lines`, `voice:build` |
 | "higher / floatier jumps" / "more or fewer shots" / "charge sooner" | `FREE_PLAY` in `src/config.ts` (`jump`, `maxShots`, `chargeMs`, `fullChargeMs`, `shotSpeed`, `shotLifeMs`) |
 | "stop forcing the phonics room" | `FORCE_PHONICS_ROOM` in `src/config.ts` (both stay weighted entries, `CHARGE.weight`, `BRIDGE.weight`) |
-| "more / fewer bridge words" / "slower slide" / "stop sounds sooner / later" / "Dad should wait longer on the bridge" | `BRIDGE` in `src/config.ts` (`words`, `slide`, `tiers`, `dadWaitMs`, `replays`, `startLevel`) |
+| "more / fewer bridge words" / "slower slide" / "Dad should wait longer on the bridge" | `BRIDGE` in `src/config.ts` (`words`, `slide`, `maxUnits`, `dadWaitMs`, `replays`, `startLevel`) |
 | "the bridge needs pictures like X" | a familiar `BANK` thing starting like X (`docs/content.md`, "The Stretchy Bridge's pictures"), the three commands, `art:gen` |
-| "the warm-up is too hard / too easy" / "start new words at level N" | `GRAB.startLevel` (and `helpAfter`) in `src/config.ts` |
+| "the warm-up is too hard / too easy" / "start new words at level N" | `GRAB.startLevel` (and `helpAfter`) in `src/config.ts`; past the start level only with `DIFFICULTY` 2+ |
 | "for X I pick n" (from an `art_alts_*` sheet) | `npm run art:pick -- X n`, commit `public/art/X.png`; if it prints a brief, write it into X's roster `look` (or `HAND`) in the same commit |
 | "try a new look for X" / "draw X as …" | a brief file in `scratch/`, then `npm run art:alts -- X --n=2 --brief=scratch/<name>.txt --sheet=scratch/art_alts_<item>_<name>.png` (readonly; Matt picks) |

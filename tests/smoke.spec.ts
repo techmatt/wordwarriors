@@ -161,7 +161,7 @@ test('sentence room: listen, read along, a wrong object costs nothing, the right
   expectNoErrors(errors);
 });
 
-test('a solid sentence frame skips the listening pass', async ({ page }) => {
+test('a solid sentence frame skips the listening pass (from ?difficulty=2; at base it keeps it, item 067)', async ({ page }) => {
   const errors = collectErrors(page);
   const stat = { seen: 6, right: 6, wrong: 0, recent: [true, true, true, true, true, true], last: Date.now() };
   await seedProgress(page, {
@@ -172,7 +172,7 @@ test('a solid sentence frame skips the listening pass', async ({ page }) => {
     frames: Object.fromEntries(FETCH_FRAMES.map((f) => [f, stat])),
     episodes: 0,
   });
-  await boot(page, '?scene=room&slot=a&nojourney=1');
+  await boot(page, '?scene=room&slot=a&nojourney=1&difficulty=2');
   const s = await until(page, (st) => st.scene === 'SentenceRoom' && Boolean(st.room?.sentence), 30_000, 'sentence room');
   expect(s.room!.sentence!.skipped).toBe(true);
   // The room opens with an arrival beat (ARRIVE_MS) before any pass runs, so the
@@ -180,6 +180,13 @@ test('a solid sentence frame skips the listening pass', async ({ page }) => {
   const read = await until(page, (st) => st.room?.sentence?.pass === 'read' && !st.room.locked, 30_000, 'read pass');
   expect(read.voice.history).not.toContain('nar_ellie_room_listen');
   expect(read.voice.history).toContain('nar_ellie_room_your_turn');
+
+  // Base difficulty (item 067): the same solid frames keep their listening pass.
+  const base = await page.context().newPage();
+  await base.bringToFront();
+  await boot(base, '?scene=room&slot=a&nojourney=1');
+  const b = await until(base, (st) => st.scene === 'SentenceRoom' && Boolean(st.room?.sentence), 30_000, 'sentence room at base');
+  expect(b.room!.sentence!.skipped).toBe(false);
   expectNoErrors(errors);
 });
 
@@ -187,7 +194,7 @@ test('dad lock: the backquote key stops every press but not walking, and again c
   const errors = collectErrors(page);
   const stat = { seen: 6, right: 6, wrong: 0, recent: [true, true, true, true, true, true], last: Date.now() };
   await seedProgress(page, { version: 1, sounds: {}, words: {}, spelling: {}, frames: Object.fromEntries(FETCH_FRAMES.map((f) => [f, stat])), episodes: 0 });
-  await boot(page, '?scene=room&slot=a&nojourney=1');
+  await boot(page, '?scene=room&slot=a&nojourney=1&difficulty=2');
   const read = await until(page, (st) => st.room?.sentence?.pass === 'read' && !st.room.locked, 30_000, 'read pass');
   const lock = () => page.evaluate(() => (window as unknown as { __ww: { dadLock(): boolean } }).__ww.dadLock());
   await page.keyboard.press('Backquote');

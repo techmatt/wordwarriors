@@ -83,7 +83,9 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    blended. Yellow repeats the clue.
    A new word starts at level 1 (**`GRAB.startLevel` in `src/config.ts`**); right first
    time moves that word up a level, a miss on its first try moves it down. The levels
-   and grabs are on the grown-ups page ("Warm-up levels"). The word is said, so it never
+   are recorded, but at base difficulty the hall gives every word level 1 (item 067,
+   *Difficulty and variety* below). The levels reached and grabs are on the grown-ups
+   page ("Warm-up levels"). Only short words are asked for (`GRAB.maxUnits`, 4 sound units). The word is said, so it never
    becomes a room's key word, the counter, a word machine word or a move pad that
    episode, and the hall's other eight pictures are none of the words she will read. A
    grab is exposure, not a read (ProgressStore `grabs`, never `words` or the word bag).
@@ -267,14 +269,13 @@ With every rune charged the word lights up and she reads it aloud ("Now read the
 spell!"), the room's one press, Dad's: **2** says it; **1**, or 10 s with nothing
 (`readTimeoutMs`), is "Let's sound it out together!", the word sounded out once and then
 said; either way its picture shows and goes into her bag as a battle item. Dad may press
-as soon as the word lights. The read records the word and its sounds (right with his 2),
-which open the quicker sounds' tiers. A round with Dad answering at once is 20-25 s of
+as soon as the word lights. The read records the word and its sounds (right with his 2). A round with Dad answering at once is 20-25 s of
 game time: about 3.2 s a rune, 17 s to the read for three runes, 21 s for four, then about
 5 s for the word, its picture and the bag (measured on the scene clock, item 059;
 `room.charge.readAtMs` and `elapsedMs` in the hooks; `tests/charge.spec.ts` holds it
 under 22 s to the read, 32 s in all with his 1). The word is drawn like any room's (`drawWords`, from the familiar pictured words),
-leaning to shaky sounds: continuous sounds first (M S F A L N R V Z, the short vowels),
-quick sounds once those are solid, then SH CH TH (`src/rules/charge.ts`, `CHARGE` in
+leaning to shaky sounds, every sound in play from the start (item 067: the old sound
+tiers are gone), 3-4 sound units (`CHARGE.units`; `src/rules/charge.ts`, `CHARGE` in
 `src/config.ts`). Each charged rune is still a move her hero fires in the next battle
 (`episode.charged`, BattleScene `useCharged`). For the beta, `FORCE_PHONICS_ROOM` (on)
 puts it or the Stretchy Bridge behind door a of every episode.
@@ -289,8 +290,10 @@ stays (up to 2.5 s); a stop sound plays once, never with an "uh". On the far ban
 pictures that share the word's start and differ later (MAP, MAT, MAN; else MAP, MOP, MUG;
 only where the bank has nothing better, the same rime). She walks to the one she read and
 presses green; only then is the word said, and its picture goes into her bag (every word
-read there is a battle item). Help fades per word (`bridgeLevels` in the progress, the
-number in a word's dot on page 2 of the grown-ups page): level 1 the stones sound
+read there is a battle item). Its words are any short pictured word (`BRIDGE.maxUnits`,
+4 sound units; item 067), the easier first in a visit. Help can fade per word
+(`bridgeLevels` in the progress, the level reached is the number in a word's dot on page 2
+of the grown-ups page; at base difficulty every word gets level 1): level 1 the stones sound
 themselves and the pictures show from the start; level 2 silent stones, and Dad's **2** is
 a hint (the stones sound in turn, then as she slides); level 3 silent stones, on the far
 bank she says the whole word aloud, Dad presses **2** and the pictures appear, his **1**
@@ -341,7 +344,49 @@ done, items in the bag):
 
 Extras: the cast (above: `seed=`, `cast=default`, `hero=`, `ally=`, `villain=`,
 `form=`, `primary=`, `secondary=`, `place=`, `fight=`), `fetched=net,fan` (the
-battle items; that is the default), `nojourney` (skip the map).
+battle items; that is the default), `nojourney` (skip the map), `difficulty=2` (the
+difficulty knob for this session; below).
+
+### Difficulty and variety (item 067)
+
+Matt's ruling: **no automatic difficulty**. Every help ramp still records her level
+(the warm-up's `grabLevels`, the bridge's `bridgeLevels`, Charge the Spell's
+`chargeLevels`, and frames' and words' first tries), and the grown-ups page shows the
+level reached, but the game gives at most **`DIFFICULTY`** (`src/config.ts`, shown in the
+grown-ups page's title line):
+
+- **1, base (the default):** every ramp gives its start level (`startLevel`, the most
+  help); a solid sentence frame still plays its listening pass; a firm word's
+  distractors still start with other letters.
+- **2:** her recorded levels apply up to 2; solid frames skip the listening pass; firm
+  words get a sound-alike distractor (CAT beside HAT).
+- **3:** the ramps go all the way, as before item 067.
+
+Raising it changes nothing saved: her recorded levels take effect at once, and lowering
+it holds them again. `?difficulty=` sets it for one session (the browser tests use it to
+reach levels 2 and 3).
+
+**Words by length, not level.** Every familiar bank word is in play from the first
+episode (no level gate; OCTOPUS and UMBRELLA included). The recognition roles (key
+words, the counter, move pads, the gift, fetches, the recap) take any word. The games
+where she sounds a word out unit by unit keep to short words, in sound units (SH is one):
+`GRAB.maxUnits` (the warm-up), `BRIDGE.maxUnits` (the bridge's words; its far-bank
+pictures may be longer), `WORD_MACHINE.maxUnits`, `CHARGE.units`.
+
+**Variety across episodes.** Each rotation keeps its recent picks in the progress store
+(`recent`, `src/rules/recent.ts`; how many: `VARIETY` in `src/config.ts`) and avoids
+them while two choices are left: the ally and each dad's form (`src/rules/cast.ts`), the
+villain (its own last 4, item 025), the quest line, hub scene and each line variant
+(`src/rules/story.ts`), the victory scene, the side rooms (the one left out last episode
+comes back), the games (last episodes' weigh `VARIETY.gameWeight`) and the phonics door
+(Charge vs Bridge), and the warm-up's last 3 words. Her latest right-first-time reads
+(`VARIETY.words`) weigh `VARIETY.wordWeight` in every word draw, so last episode's words
+rarely come straight back; a missed word keeps its full weight. The bags (key words,
+moves, pads) still draw without replacement. Coverage weighting (vowels, first sounds)
+is unchanged. The cast and its variants are remembered when she presses on from the
+title, the rooms and games once the house plan is made after it; a fixed cast
+(`?cast=default`) or an override is not remembered. The fight style follows the villain
+(and chef Dada Jason's nudge), so it rotates with the villain.
 
 ## Tests
 

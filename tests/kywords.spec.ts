@@ -31,7 +31,7 @@ for (const [word, sounds] of Object.entries(SOUNDS)) {
       bagKnown: BAG_WORDS,
       episodes: 0,
     });
-    await boot(page, '?scene=room&slot=a&nojourney=1');
+    await boot(page, '?scene=room&slot=a&nojourney=1&difficulty=2');
     const first = await until(page, (s) => s.scene === 'SentenceRoom' && Boolean(s.room?.sentence), 60_000, 'sentence room').catch((e: Error) => {
       throw new Error(`${e.message}; page errors: ${errors.join(' | ')}`);
     });

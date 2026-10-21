@@ -473,19 +473,20 @@ with her progress in localStorage. A word leaves the bag when she reads it right
 (drawing alone spends nothing, so an abandoned episode or a `?scene=` jump costs her
 bag no words); when no word the episode can use is left, the bag refills (a new
 round, minus this episode's words). Within the bag every draw weighs a word by the
-bank's one weighting (`src/rules/bank.ts`): **shakiness × coverage × level gate**.
+bank's one weighting (`src/rules/bank.ts`): **shakiness × coverage × recency**.
 Shaky words come more often, and a word she missed (any wrong try) stays in, so it
 comes round again soon; coverage favours the vowels, first sounds and levels she has
-met least; the gate keeps blends shut until enough CVC words are solid and digraphs
-until enough blends are (`BANK_DRAW` in `src/config.ts`: `levels[2]` opens at `start`
-of level 1 solid, at weight `min`, full at `full`; `solid` is the shakiness that counts).
-The same weighting draws the move pads, the gift word, the warm-up's word and the word
-machine's words. A room's other pictures are chosen for reading (`distractorsFor`):
-while the key word is new they start with other letters; once it is firm (`BANK_DRAW.firm`)
-one shares its first sound or rime (CAT beside HAT), so she reads past the first
-letter. No key word repeats within an episode, and none is on that episode's move pads. The grown-ups page (F9) shows the round, words seen and left, the
-bank's coverage by level (with each gate's open %), vowel and first sound; green flips
-to page 2, every word. Erasing progress (F8 twice) empties the bag too.
+met least; recency (item 067) makes her latest right-first-time reads weigh
+`VARIETY.wordWeight`. Every word is in play from the start (item 067: no level gate);
+the decoding games keep to short words by their own limits (README, *Difficulty and
+variety*). The same weighting draws the move pads, the gift word, the warm-up's word and
+the word machine's words. A room's other pictures are chosen for reading
+(`distractorsFor`): while the key word is new they start with other letters; once it is
+firm (`BANK_DRAW.firm`, and only from `DIFFICULTY` 2) one shares its first sound or rime
+(CAT beside HAT), so she reads past the first letter. No key word repeats within an
+episode, and none is on that episode's move pads. The grown-ups page (F9) shows the
+round, words seen and left, the bank's coverage by level, vowel and first sound; green
+flips to page 2, every word. Erasing progress (F8 twice) empties the bag too.
 
 A word new to the game joins a round already under way (item 035, `topUpBag`): the
 store remembers the bag words it last saw (`bagKnown`), and any word since goes into the
@@ -582,13 +583,16 @@ MAT, MAN), else one (MAP, MOP, MUG), so the first letter is never enough. A word
 none falls back to its rime (CAT, HAT), which the first letter can win, so when adding
 words, a familiar picture beside a CVC word that starts with a sound you can hold (M S F
 L N R V Z) is worth most: item 054 added MAT, MAN, LID and LOCK for that. A look-alike
-(`LOOKALIKES`: MAT and RUG) never stands beside it. The order is `BRIDGE.tiers` in
-`src/config.ts`; the lines are the narrator's `bridge_*` (none says a letter or a word).
+(`LOOKALIKES`: MAT and RUG) never stands beside it. Every short word (`BRIDGE.maxUnits`
+in `src/config.ts`) can be crossed from the start (item 067: no tiers); a visit plays
+hold-sound CVC words first, then stop-sound CVC, then blends and digraphs. The lines are the narrator's `bridge_*` (none says a letter or a word).
 
 ## The home warm-up (`GRAB` in `src/config.ts`, `src/rules/grab.ts`)
 
-Any pictured bank word can be asked for, by her grabs' shakiness times the bank's
-coverage and level gate; adding a word adds it. `GRAB.startLevel` is where a word she has never grabbed starts
+Any short pictured bank word (`GRAB.maxUnits` sound units) can be asked for, by her
+grabs' shakiness times the bank's coverage, never one of her last 3 grabs; adding a word
+adds it. `GRAB.startLevel` is where a word she has never grabbed starts, and at base
+`DIFFICULTY` where every word stays
 (1 each letter's name then its sound, 2 sounds with the letters shown, 3 sounds only; no
 level says the word, amendment 1549), `GRAB.helpAfter` how many misses before the clue
 is the slow sound-out with the letters shown, `GRAB.objects` how many pictures stand in the hall

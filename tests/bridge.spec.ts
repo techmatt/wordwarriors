@@ -1,5 +1,5 @@
 /**
- * Item 054: the Stretchy Bridge. Fast lane: level 3 (silent stones, the
+ * Item 054: the Stretchy Bridge. Fast lane: level 3 at ?difficulty=3 (silent stones, the
  * pictures only after Dad's yes, his no replays the stones). Slow lane
  * (item 061: 15-25 s each): a visit at level 1 (the stones sound as she
  * slides, a held sound while she stands still, a wrong picture sounded out,
@@ -12,7 +12,7 @@ import { test, expect, type Page } from '@playwright/test';
 
 import { soundOf } from '../content/phonics/bank';
 import { letterSoundLine } from '../content/voice/ids';
-import { BRIDGE_WORDS } from '../src/rules/bridge';
+import { BRIDGE_WORDS, CROSS_WORDS, bridgeTier } from '../src/rules/bridge';
 import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom, playEpisode, press, seedProgress, slideAcross, state, stick, until, type WWState } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/054_${name}.png` });
@@ -52,8 +52,9 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
   expect(b0.voiced).toBe(true);
   expect(b0.picturesUp).toBe(true);
   expect(s0.episode.house.plan!.find((p) => p.slot === 'a')!.kind).toBe('bridge');
-  // A fresh store: CVC words starting with a sound you can hold (a short vowel too: EGG, ELF since item 056).
-  for (const w of b0.words) expect('mslfnrvzaeiou').toContain(w[0]!);
+  // A fresh store (item 067): any short word, every tier, the easier tier first.
+  for (const w of b0.words) expect(CROSS_WORDS).toContain(w);
+  expect(b0.words.map(bridgeTier)).toEqual([...b0.words.map(bridgeTier)].sort());
   // The stones are the word's letters, upper case, one text each; the word is never one text.
   const texts = (await page.evaluate(() => (window as unknown as { __ww: { texts(): { text: string }[] } }).__ww.texts())).map((t) => t.text);
   for (const u of b0.units) expect(texts).toContain(u.toUpperCase());
@@ -120,7 +121,7 @@ test('Stretchy Bridge, level 3: silent stones; the pictures only after Dad says 
   test.setTimeout(150_000);
   const errors = collectErrors(page);
   await seedLevels(page, 3);
-  await boot(page, '?scene=room&slot=a&room=bridge');
+  await boot(page, '?scene=room&slot=a&room=bridge&difficulty=3');
   const s0 = await until(page, (st) => bridge(st)?.phase === 'slide' && !st.room!.locked, 60_000, 'first bridge');
   const b0 = bridge(s0)!;
   expect(b0.level).toBe(3);
@@ -157,7 +158,7 @@ test("Stretchy Bridge, level 2: silent stones until Dad's 2, a hint that sounds 
   test.setTimeout(120_000);
   const errors = collectErrors(page);
   await seedLevels(page, 2);
-  await boot(page, '?scene=room&slot=a&room=bridge');
+  await boot(page, '?scene=room&slot=a&room=bridge&difficulty=3');
   const s0 = await until(page, (st) => bridge(st)?.phase === 'slide' && !st.room!.locked, 60_000, 'first bridge');
   const b0 = bridge(s0)!;
   expect(b0.level).toBe(2);
