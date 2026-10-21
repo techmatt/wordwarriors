@@ -15,13 +15,13 @@
  * same list (content/art/assets.ts).
  */
 
-import { mkdir, readFile, readdir, stat, unlink, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { chromium } from '@playwright/test';
 
 import { ART_ASSETS, type ArtAsset } from '../../content/art/assets.js';
-import { isMain } from '../voice/clips.js';
+import { exists, isMain } from '../shared.js';
 
 const OUT = path.join('public', 'art');
 const MARK_KEY = 'WordWarriors';
@@ -808,13 +808,6 @@ function artDoc(): string {
 }
 
 // -- main ----------------------------------------------------------------------
-
-async function exists(file: string): Promise<boolean> {
-  return stat(file).then(
-    () => true,
-    () => false,
-  );
-}
 
 export async function paintPlaceholders(argv: string[]): Promise<void> {
   const onlyMissing = argv.includes('--missing');

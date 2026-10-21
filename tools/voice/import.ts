@@ -27,8 +27,9 @@ import { Mp3Encoder } from '@breezystack/lamejs';
 import { canHold } from '../../content/phonics/letters.js';
 import { letterSoundLine, wordLine } from '../../content/voice/ids.js';
 import { holdPlan, holdSamples } from '../../src/audio/holdSound.js';
-import { clipRecord, readLines } from './addClip.js';
-import { CLIP_DIR, CLIP_INDEX, isMain, readClipIndex, type ClipIndex } from './clips.js';
+import { isMain, readLines } from '../shared.js';
+import { clipRecord } from './addClip.js';
+import { CLIP_DIR, CLIP_INDEX, readClipIndex, type ClipIndex } from './clips.js';
 import { MIN_LOOP_S, countReason, finish, highpass, rankRepeats, splitTake, type Cut, type Entry, type TakeSplit } from './split.js';
 import type { LineSpec } from './types.js';
 

@@ -20,10 +20,10 @@
  */
 
 import { createHash } from 'node:crypto';
-import { readFile, stat } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
+import { exists } from '../shared.js';
 import type { LineSpec, TimedWord } from './types.js';
 
 export const CLIP_DIR = path.join('content', 'voice', 'clips');
@@ -102,20 +102,10 @@ export function clipStateFor(line: LineSpec, index: ClipIndex): ClipState {
 export async function forgetMissingAudio(index: ClipIndex, dir = CLIP_DIR): Promise<string[]> {
   const dropped: string[] = [];
   for (const [id, clip] of Object.entries(index.clips)) {
-    const there = await stat(path.join(dir, clip.audio)).then(
-      () => true,
-      () => false,
-    );
-    if (!there) {
+    if (!(await exists(path.join(dir, clip.audio)))) {
       delete index.clips[id];
       dropped.push(id);
     }
   }
   return dropped;
-}
-
-/** Was this module the one that was run, rather than imported? */
-export function isMain(url: string): boolean {
-  const entry = process.argv[1];
-  return Boolean(entry) && path.resolve(entry!) === path.resolve(fileURLToPath(url));
 }

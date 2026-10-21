@@ -25,11 +25,12 @@
  */
 
 import { createHash } from 'node:crypto';
-import { copyFile, mkdir, readFile, readdir, stat, unlink, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, readdir, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
+import { exists, isMain, LINES_FILE } from '../shared.js';
 import { align, isSpeakable } from './align.js';
-import { CLIP_DIR, clipStateFor, forgetMissingAudio, isMain, readClipIndex, spokenFor, type ClipIndex, type ClipRecord } from './clips.js';
+import { CLIP_DIR, clipStateFor, forgetMissingAudio, readClipIndex, spokenFor, type ClipIndex, type ClipRecord } from './clips.js';
 import { trimMp3 } from './mp3.js';
 import { EdgeTtsProvider } from './providers/edgeTts.js';
 import type { LineSpec, ManifestLine, VoiceBook, VoiceConfig, VoiceManifest, VoiceProvider } from './types.js';
@@ -56,7 +57,7 @@ interface Options {
 
 function parseArgs(argv: string[]): Options {
   const opts: Options = {
-    lines: path.join('content', 'voice', 'lines.json'),
+    lines: LINES_FILE,
     voices: path.join('content', 'voice', 'voices.json'),
     clips: CLIP_DIR,
     out: path.join('public', 'voice-gen'),
@@ -262,15 +263,6 @@ function entry(opts: Options, line: LineSpec, name: string, words: ManifestLine[
     words,
     duration: words.length ? words[words.length - 1]!.end : 0,
   };
-}
-
-async function exists(file: string): Promise<boolean> {
-  try {
-    await stat(file);
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 if (isMain(import.meta.url)) {

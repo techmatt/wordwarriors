@@ -13,7 +13,6 @@
  */
 
 import { writeFile } from 'node:fs/promises';
-import path from 'node:path';
 
 import { CHARACTER_BY_ID, MOVE_WORDS, PERSONS, ROSTER, abilityCallout, personOf } from '../../content/battle/roster.js';
 import { ENDINGS } from '../../content/house/endings.js';
@@ -52,7 +51,7 @@ import {
   wordLine,
 } from '../../content/voice/ids.js';
 import { CHARGE_GESTURES, CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE_LINES, WAKE_VARIANTS, wakeVariant, type Template } from '../../content/voice/script.js';
-import { isMain } from './clips.js';
+import { isMain, LINES_FILE } from '../shared.js';
 import type { LineSpec } from './types.js';
 
 interface Fill {
@@ -321,7 +320,7 @@ export function composeLines(): LineSpec[] {
 
 if (isMain(import.meta.url)) {
   const lines = composeLines();
-  const file = path.join('content', 'voice', 'lines.json');
+  const file = LINES_FILE;
   // One line per object (item 047): ~10k lines rather than ~60k, a change is one diff line.
   await writeFile(file, `[\n${lines.map((l) => JSON.stringify(l)).join(',\n')}\n]\n`);
   const groups = new Map<string, number>();

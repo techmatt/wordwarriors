@@ -32,7 +32,7 @@ import sharp from 'sharp';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
 import { ART_PROMPTS, BACKGROUND_STYLE, keyMode, NOTES, REFS, SPRITE_STYLE, refFor } from '../../content/art/prompts.js';
-import { isMain } from '../voice/clips.js';
+import { exists, isMain } from '../shared.js';
 import { keyGreen } from './chroma.js';
 import { isPlaceholder } from './placeholders.js';
 
@@ -86,12 +86,6 @@ interface CodexRun {
   lastMessage?: string;
   usage?: unknown;
 }
-
-export const exists = (f: string) =>
-  stat(f).then(
-    () => true,
-    () => false,
-  );
 
 export async function runCodex(prompt: string, image?: string): Promise<CodexRun> {
   const workdir = path.resolve('scratch', 'codex');

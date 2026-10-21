@@ -9,13 +9,12 @@
  * 0.5). Then run `npm run voice:build`.
  */
 
-import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { CLIP_DIR, CLIP_INDEX, isMain, readClipIndex, spokenFor, spokenHash, type ClipRecord } from './clips.js';
+import { isMain, readLines } from '../shared.js';
+import { CLIP_DIR, CLIP_INDEX, readClipIndex, spokenFor, spokenHash, type ClipRecord } from './clips.js';
 import type { LineSpec } from './types.js';
-
-export const readLines = async () => JSON.parse(await readFile(path.join('content', 'voice', 'lines.json'), 'utf8')) as LineSpec[];
 
 /**
  * A line's clip entry: the hash of the line as it stands, and its words

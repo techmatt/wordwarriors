@@ -35,8 +35,8 @@ import type { Page } from '@playwright/test';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
 import { NOTES, PICK_NOTES, refFor } from '../../content/art/prompts.js';
-import { isMain } from '../voice/clips.js';
-import { ORIGINALS, OUT, codexPrompt, cut, describeUsage, exists, gamePng, isBackground, openPage, refCrop, runCodex } from './generate.js';
+import { exists, isMain } from '../shared.js';
+import { ORIGINALS, OUT, codexPrompt, cut, describeUsage, gamePng, isBackground, openPage, refCrop, runCodex } from './generate.js';
 
 export const ALTS = path.join(ORIGINALS, 'alts');
 /** What the game had before an id's first pick, for `art:pick -- <id> 0`. */

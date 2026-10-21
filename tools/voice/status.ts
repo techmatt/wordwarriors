@@ -5,14 +5,11 @@
  * matter most and the ones edge-tts cannot say properly (docs/recording.md).
  */
 
-import { readFile } from 'node:fs/promises';
-import path from 'node:path';
-
-import { clipStateFor, isMain, readClipIndex } from './clips.js';
-import type { LineSpec } from './types.js';
+import { isMain, readLines } from '../shared.js';
+import { clipStateFor, readClipIndex } from './clips.js';
 
 export async function voiceStatus(): Promise<void> {
-  const lines = JSON.parse(await readFile(path.join('content', 'voice', 'lines.json'), 'utf8')) as LineSpec[];
+  const lines = await readLines();
   const index = await readClipIndex();
   const by = { fresh: [] as string[], stale: [] as string[], missing: [] as string[] };
   for (const l of lines) by[clipStateFor(l, index).state].push(l.id);
