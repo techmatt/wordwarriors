@@ -272,3 +272,11 @@ export const FREE_PLAY = {
   shotSpeed: 760,
   shotLifeMs: 900,
 };
+
+/**
+ * The victory scene's beats of quiet (ms, `src/scenes/EndingScene.ts`): time to
+ * take the scene in before the first line, a breath between lines, a moment
+ * after the last. With its four lines and the fades the scene runs 15–30 s
+ * (asserted over drawn casts, tests/unit/endings.test.ts).
+ */
+export const ENDING_PAUSE = { intro: 3000, between: 1500, outro: 3000 };

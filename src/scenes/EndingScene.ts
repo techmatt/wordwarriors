@@ -14,7 +14,7 @@ import Phaser from 'phaser';
 import { ENDING_BY_ID, endingArt, endingPropArt } from '../../content/house/endings';
 import { voiceBus } from '../audio/VoiceBus';
 import { startMusic } from '../audio/music';
-import { GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { ENDING_PAUSE, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { startScene } from '../art/gate';
 import { castArt, castScale, drawEnding, episode, type Step } from '../episode/Episode';
 import { burst, fitImage } from '../fx/juice';
@@ -24,13 +24,6 @@ import { endingPeople, endingScript, standXs } from '../rules/endings';
 import { progress } from '../state/progress';
 import { hookState } from '../hookState';
 import { Bubbles, type BubbleAnchor } from '../ui/Bubbles';
-
-/**
- * Beats of quiet (ms): time to take the scene in before the first line, a
- * breath between lines, a moment after the last. With the fades the scene
- * runs about 18–24 s (measured over drawn casts, tests/unit/endings.test.ts).
- */
-const ENDING_PAUSE = { intro: 3000, between: 1500, outro: 3000 };
 
 export class EndingScene extends Phaser.Scene {
   private controls!: Controls;

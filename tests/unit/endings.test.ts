@@ -9,6 +9,7 @@ import { test } from 'node:test';
 import { ART_BY_ID } from '../../content/art/assets';
 import { CHARACTER_BY_ID, personOf } from '../../content/battle/roster';
 import { ENDINGS, ENDING_BY_ID, endingArt, endingPropArt } from '../../content/house/endings';
+import { ENDING_PAUSE } from '../../src/config';
 import { drawCast, seededRand, type Cast } from '../../src/rules/cast';
 import { FIT_WEIGHT, endingFits, endingPeople, endingScript, pickEnding, standXs } from '../../src/rules/endings';
 import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
@@ -77,9 +78,9 @@ test('endings: every scene works for every cast: four lines, all voiced, by peop
       }
     }
   }
-  // About 20–30 s in all: the lines, the pauses before, between and after, and the fades.
+  // 15–30 s in all: the four lines, the pauses before, between (three) and after, and the fades (0.5 s in, 0.4 s out).
   if (built) {
-    const around = 3 + 3 * 1.5 + 3 + 0.9;
+    const around = (ENDING_PAUSE.intro + 3 * ENDING_PAUSE.between + ENDING_PAUSE.outro) / 1000 + 0.9;
     assert.ok(longest + around <= 30, `longest scene ${(longest + around).toFixed(1)} s`);
     assert.ok(shortest + around >= 15, `shortest scene ${(shortest + around).toFixed(1)} s`);
   }
