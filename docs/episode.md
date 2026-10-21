@@ -313,8 +313,7 @@ difficulty knob for this session; below).
 
 Matt's ruling: **no automatic difficulty**. Every help ramp still records her level
 (the warm-up's `grabLevels`, the bridge's `bridgeLevels`, and frames' and words' first
-tries; Charge the Spell's `chargeLevels` are kept but nothing records them since item
-059), and the grown-ups page shows the
+tries; Charge the Spell has no ramp since item 078), and the grown-ups page shows the
 level reached, but the game gives at most **`DIFFICULTY`** (`src/config.ts`, shown in the
 grown-ups page's title line):
 

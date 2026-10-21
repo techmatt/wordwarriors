@@ -74,7 +74,6 @@ export interface WWState {
       runes: string[];
       index: number;
       sound: string;
-      level: number;
       phase: 'explain' | 'prompt' | 'sayback' | 'charging' | 'read' | 'reading' | 'done';
       asking: boolean;
       assists: number;

@@ -99,7 +99,7 @@ export const CAST_ODDS = {
 /**
  * How far the help ramps may go (item 067, Matt's ruling: no automatic
  * difficulty). Every per-word or per-sound help ramp (the warm-up's clue
- * level, the Stretchy Bridge's, Charge the Spell's) still records her level as
+ * level, the Stretchy Bridge's) still records her level as
  * she plays, for the grown-ups page, but the game gives at most this level:
  *
  * - 1, base: every ramp stays at its most helpful start (`startLevel`); a
@@ -151,9 +151,8 @@ export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2, maxU
  * rune's letter sound and she says it back in `sayBackMs` of quiet, with no
  * presses (item 059); then she reads the whole word aloud and Dad presses 2
  * (right) or 1 (they sound it out together); `readTimeoutMs` with no answer
- * counts as his 1. `startLevel` is a sound's help level before it has one
- * (the ramp of item 053 is kept in the store, unused by the room since
- * item 059; DIFFICULTY caps it). `units` is the game's word length limit;
+ * counts as his 1. It has no help ramp (item 053's went in item 078: the
+ * room says every sound since item 059). `units` is the game's word length limit;
  * every sound is in play from the start (item 067: no tiers). `weight` is its
  * weight in the rooms' pool (a frame is 1).
  */
@@ -161,7 +160,6 @@ export const CHARGE = {
   units: [3, 4] as [number, number],
   sayBackMs: 1200,
   readTimeoutMs: 10000,
-  startLevel: 1 as 1 | 2 | 3,
   weight: 1,
 };
 

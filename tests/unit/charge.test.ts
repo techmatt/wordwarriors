@@ -16,13 +16,12 @@ import { chargeKey, letterSoundLine, narratorLine } from '../../content/voice/id
 import { CHARGE_GESTURES, NARRATOR_LINES } from '../../content/voice/script';
 import { PERSONS } from '../../content/battle/roster';
 import { CHARGE } from '../../src/config';
-import { CHARGE_WORDS, GESTURE_WORDS, RUNE_SOUNDS, chargeLevel, nextChargeLevel, planCharge, recordedChargeLevel } from '../../src/rules/charge';
+import { CHARGE_WORDS, GESTURE_WORDS, RUNE_SOUNDS, planCharge } from '../../src/rules/charge';
 import { CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, drawGames } from '../../src/rules/minigames';
 import { withStems } from '../../src/rules/bank';
 import { episodePlans } from '../../src/rules/sentences';
 import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
-import { withDifficulty } from './difficulty';
 
 function memory(): StorageLike {
   const data = new Map<string, string>();
@@ -86,28 +85,13 @@ test('voice: every narrator says every gesture, and every rune has its sound lin
   for (const r of RUNES) assert.ok(ids.has(letterSoundLine(r.sound)), r.sound);
 });
 
-test('ramp: a new sound starts at level 1; an unaided yes is less help, an assist more, kept within 1..3 and saved', () => {
-  const storage = memory();
-  const store = new ProgressStore(storage);
-  assert.equal(CHARGE.startLevel, 1);
-  assert.equal(chargeLevel(store, 'm'), 1);
-  assert.equal(nextChargeLevel(1, true), 2);
-  assert.equal(nextChargeLevel(2, false), 1);
-  assert.equal(nextChargeLevel(3, true), 3);
-  assert.equal(nextChargeLevel(1, false), 1);
-  store.setChargeLevel('m', 3);
-  assert.equal(recordedChargeLevel(new ProgressStore(storage), 'm'), 3);
-  // Item 067: the level given is held at the start at base, up to the knob above it.
-  assert.equal(chargeLevel(new ProgressStore(storage), 'm'), 1);
-  withDifficulty(3, () => assert.equal(chargeLevel(new ProgressStore(storage), 'm'), 3));
-  // A blob from before item 053 (no chargeLevels) loads, history kept.
+test('store (item 078): a blob with item 053\'s chargeLevels loads cleanly, history kept, and drops them', () => {
   const old = memory();
-  const blob = { ...new ProgressStore(memory()).snapshot(), episodes: 4 } as Record<string, unknown>;
-  delete blob.chargeLevels;
+  const blob = { ...new ProgressStore(memory()).snapshot(), episodes: 4, chargeLevels: { m: 3 } };
   old.setItem(STORE_KEY, JSON.stringify(blob));
   const back = new ProgressStore(old);
   assert.equal(back.snapshot().episodes, 4);
-  assert.equal(chargeLevel(back, 's'), 1);
+  assert.equal('chargeLevels' in back.snapshot(), false);
 });
 
 test('words (item 058): every charge word is a familiar picture of 3-4 units, each its own rune, no sound twice; no Q, X or CK', () => {

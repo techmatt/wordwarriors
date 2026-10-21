@@ -43,7 +43,7 @@ import { bob, burst, fitImage, floatText, popIn, punch, shake, shockwave, squash
 import { TEX } from '../fx/textures';
 import { dadPress, openDadButtons, setDadAsking, type DadAnswer } from '../input/dadButtons';
 import { dadLock } from '../input/dadLock';
-import { chargeLevel, type ChargeLevel, type ChargePlan } from '../rules/charge';
+import type { ChargePlan } from '../rules/charge';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
@@ -82,8 +82,6 @@ export class ChargeRoom extends SideRoom {
   private roomId = '';
   private index = 0;
   private phase: Phase = 'explain';
-  /** The rune's help level (kept for the grown-ups page; every rune is said for her since item 059). */
-  private level: ChargeLevel = 1;
   /** Time spent waiting for Dad on the read (scene clock, paused under dad lock and while a line plays). */
   private waitMs = 0;
   private timeouts = 0;
@@ -133,7 +131,6 @@ export class ChargeRoom extends SideRoom {
     this.index = Math.min(charged.length, this.plan.runes.length);
     this.finished = episode.fetched.includes(this.plan.word) || episode.house.done.includes(this.slot);
     this.phase = 'explain';
-    this.level = 1;
     this.flow++;
     this.stopGesture = null;
     this.waitMs = 0;
@@ -312,7 +309,6 @@ export class ChargeRoom extends SideRoom {
     this.round = `charge:${this.index}:${sound}`;
     this.phase = 'prompt';
     this.locked = true;
-    this.level = chargeLevel(progress, sound);
     this.markSlot(this.index);
     this.runeText.setText((this.plan.units[this.index] ?? sound).toUpperCase()).setColor(INK).setScale(1).setAlpha(1);
     this.stone.setVisible(true).clearTint();
@@ -644,7 +640,6 @@ export class ChargeRoom extends SideRoom {
         runes: [...this.plan.runes],
         index: this.index,
         sound: this.rune,
-        level: this.level,
         phase: this.phase,
         asking: this.phase === 'read',
         assists: 0,

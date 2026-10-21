@@ -12,10 +12,8 @@
  * Two pages (item 037; the word bank outgrew one): green / Space flips
  * between them. Page 1 has the sounds, the warm-up, the frames, the bag and
  * the bank's coverage (by level, vowel and first sound: words · read · solid);
- * page 2 has every word, one row each. A letter sound she has charged in
- * Charge the Spell (item 053) carries its help level in its dot (1 the sound
- * and gesture first, 2 the gesture only, 3 the rune alone); a word she has
- * crossed on the Stretchy Bridge (item 054) its bridge level, on page 2.
+ * page 2 has every word, one row each. A word she has crossed on the
+ * Stretchy Bridge (item 054) carries its bridge level in its dot, on page 2.
  */
 
 import Phaser from 'phaser';
@@ -30,7 +28,6 @@ import { voiceBus } from '../audio/VoiceBus';
 import { BANK_DRAW, GAME_HEIGHT, GAME_WIDTH, GRAB, SENTENCE_SOLID } from '../config';
 import { coverageTable, type CoverageRow } from '../rules/bank';
 import { GRAB_WORDS, recordedGrabLevel } from '../rules/grab';
-import { recordedChargeLevel } from '../rules/charge';
 import { recordedBridgeLevel } from '../rules/bridge';
 import { difficulty } from '../rules/difficulty';
 import { fitText } from '../ui/fitText';
@@ -88,12 +85,9 @@ export class ParentScene extends Phaser.Scene {
 
     // The digraphs' sounds (SH CH TH CK) sit with the letters': each is one sound unit.
     // Five full columns, narrow enough to stay left of the warm-up's levels.
-    // The number in a sound's dot is its Charge the Spell help level (item 053), once she has charged it.
-    const charged = (id: string) => (snap.chargeLevels?.[id] !== undefined ? String(recordedChargeLevel(progress, id)) : null);
     // Item 056's NG and voiced TH are left out: no rune drills them alone, and a sixth column would run into the warm-up's levels.
     const drilled = DIGRAPH_SOUNDS.filter((l) => l.letter !== 'ng' && l.letter !== 'th_voiced');
-    this.grid('Letter sounds', 'sounds', [...LETTERS, ...drilled].map((l) => l.letter), 30, 90, 6, 162, 30, charged);
-    fitText(this.add.text(200, 94, 'number in the dot: Charge the Spell level reached (1 sound + gesture first, 2 gesture only, 3 rune alone)', { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#555' }), 1030 - 200, 22);
+    this.grid('Letter sounds', 'sounds', [...LETTERS, ...drilled].map((l) => l.letter), 30, 90, 6, 162, 30);
     const spelled = Object.entries(snap.spelling ?? {}).map(([w, st]) => `${w} ×${st.seen}`);
     fitText(this.add.text(1040, 90, ['Spelled (typing, kept apart', 'from reading):', ...spelled.slice(0, 3)], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - 1040 - 20, 85);
     this.grabView(840, 182, GAME_WIDTH - 840 - 20, 112);

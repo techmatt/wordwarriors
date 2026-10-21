@@ -1,6 +1,6 @@
 /**
  * Charge the Spell (item 053; one word a visit since item 058): which word a
- * visit spells, its runes, and how much help each gets. Pure: no Phaser,
+ * visit spells and its runes. Pure: no Phaser,
  * unit-tested (tests/unit/charge.test.ts).
  *
  * A visit is one word of CHARGE.units sound units, shown at the top; its
@@ -14,11 +14,8 @@
  * sound is in play from the start (item 067: no sound tiers). The word is a
  * battle item like any room's fetched word.
  *
- * Each sound has a help level on a ramp (item 053: 1 the sound and gesture
- * first, 2 the gesture only, 3 the rune alone; an unhelped yes up a level, a
- * help down one). Since item 059 the room says every sound for her and
- * judges only the word, so the ramp is kept (and its saved levels) but
- * unused by the room; DIFFICULTY caps it like every ramp (item 067).
+ * The room says every sound for her and judges only the word (item 059), so
+ * it has no help ramp: item 053's per-sound levels went in item 078.
  */
 
 import { BANK, BANK_BY_WORD, THINGS, type BankWord } from '../../content/phonics/bank';
@@ -27,9 +24,6 @@ import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { CHARGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { drawWords, withStems, type Rand } from './bank';
-import { clampLevel, helpLevel, stepLevel, type HelpLevel } from './difficulty';
-
-export type ChargeLevel = HelpLevel;
 
 /** A visit's plan: the word it spells, its units (as shown), and their runes (sounds) in order. */
 export interface ChargePlan {
@@ -68,21 +62,6 @@ export function gestureWords(sounds: Iterable<string>): string[] {
 
 /** Every rune's gesture words (the runes test's allowance). */
 export const GESTURE_WORDS: string[] = gestureWords(RUNE_SOUNDS);
-
-/** The help level a sound's ramp has reached (recorded for the grown-ups page). */
-export function recordedChargeLevel(store: ProgressStore, sound: string): ChargeLevel {
-  return clampLevel(store.chargeLevel(sound, CHARGE.startLevel));
-}
-
-/** A sound's help level now: CHARGE.startLevel at base, else its recorded level up to DIFFICULTY (item 067). */
-export function chargeLevel(store: ProgressStore, sound: string): ChargeLevel {
-  return helpLevel(recordedChargeLevel(store, sound), CHARGE.startLevel);
-}
-
-/** The ramp: a yes with no assist is one level less help, an assisted rune one level more. */
-export function nextChargeLevel(level: ChargeLevel, unaided: boolean): ChargeLevel {
-  return stepLevel(level, unaided);
-}
 
 /**
  * A word the room can spell: a familiar pictured thing (with a battle item)

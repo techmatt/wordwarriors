@@ -137,7 +137,7 @@ below; README, *Candidates*).
 ## Standing design rules (law)
 
 - **No automatic difficulty.** Every help ramp (warm-up, bridge, a solid frame's skipped
-  listening pass, sound-alike distractors; Charge's is kept but unused) records her level
+  listening pass, sound-alike distractors; Charge the Spell has none) records her level
   but gives its most helpful start until Matt raises `DIFFICULTY`. Words are chosen per game
   by length in sound units, never by level: decoding games short, recognition roles any.
   Every rotation (cast, forms, rooms, games, variants, scenes, words) remembers across

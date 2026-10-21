@@ -45,7 +45,7 @@ export interface RoomInfo {
   };
   /**
    * Charge the Spell (item 053): the visit's runes, the one lit (`index`,
-   * `sound`, its help `level`), the phase, whether Dad is being asked now, its
+   * `sound`), the phase, whether Dad is being asked now, its
    * helps and timeouts so far, and what is charged.
    */
   charge?: {
@@ -55,7 +55,6 @@ export interface RoomInfo {
     runes: string[];
     index: number;
     sound: string;
-    level: number;
     phase: 'explain' | 'prompt' | 'sayback' | 'charging' | 'read' | 'reading' | 'done';
     asking: boolean;
     assists: number;

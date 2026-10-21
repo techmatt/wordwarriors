@@ -46,12 +46,6 @@ export interface ProgressData {
   /** The warm-up's ramp level per word (1 names + sounds, 2 sounds with the letters, 3 sounds; amendment 1549); absent = GRAB.startLevel. */
   grabLevels: Record<string, number>;
   /**
-   * Charge the Spell (item 053): per letter sound, its help level (1 the sound
-   * and gesture first, 2 the gesture only, 3 the rune alone); absent =
-   * CHARGE.startLevel. What she said is recorded under `sounds`.
-   */
-  chargeLevels: Record<string, number>;
-  /**
    * The Stretchy Bridge (item 054): per word, its help level (1 the stones
    * sound themselves and the pictures show, 2 silent stones, 3 she says the
    * word to Dad before the pictures come); absent = BRIDGE.startLevel. Her
@@ -100,18 +94,20 @@ function emptyStat(): Stat {
 }
 
 function empty(): ProgressData {
-  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, grabs: {}, grabLevels: {}, chargeLevels: {}, bridgeLevels: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, padBag: { left: [], round: 0 }, episodes: 0, recent: {} };
+  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, grabs: {}, grabLevels: {}, bridgeLevels: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, padBag: { left: [], round: 0 }, episodes: 0, recent: {} };
 }
 
 /** How many past villains the store keeps. */
 const VILLAINS_KEPT = 4;
 
-/** Fields an older blob may still carry, moved into `recent` on load (item 076). */
+/** Fields an older blob may still carry, moved into `recent` (item 076) or dropped (item 078) on load. */
 interface LegacyData {
   /** Item 025's recent villains, newest last: now `recent.villain`. */
   villains?: string[];
   /** Item 027's last victory scene: now `recent.ending`. */
   ending?: string | null;
+  /** Item 053's Charge the Spell help level per sound, unused since item 059. */
+  chargeLevels?: Record<string, number>;
 }
 
 export interface StorageLike {
@@ -153,8 +149,6 @@ export class ProgressStore {
       // Item 033, the same way.
       parsed.grabs ??= {};
       parsed.grabLevels ??= {};
-      // Item 053, the same way.
-      parsed.chargeLevels ??= {};
       // Item 054, the same way.
       parsed.bridgeLevels ??= {};
       // Item 067, the same way: her last victory scene (item 027's `ending`) seeds its rotation.
@@ -163,6 +157,8 @@ export class ProgressStore {
       if (parsed.villains?.length && !parsed.recent.villain) parsed.recent.villain = parsed.villains.slice(-VILLAINS_KEPT);
       delete parsed.villains;
       delete parsed.ending;
+      // Item 078: Charge the Spell's help ramp (item 053, unused since 059) is gone.
+      delete parsed.chargeLevels;
       // Item 035: a blob with no `bagKnown` knew the bag words before MUG RUG JUG.
       parsed.bagKnown ??= 'legacy';
       return parsed;
@@ -232,16 +228,6 @@ export class ProgressStore {
 
   setGrabLevel(word: string, level: number): void {
     this.data.grabLevels[word] = level;
-    this.save();
-  }
-
-  /** A sound's Charge the Spell help level (item 053), or `fallback` (CHARGE.startLevel) if she has never charged it. */
-  chargeLevel(sound: string, fallback: number): number {
-    return this.data.chargeLevels[sound] ?? fallback;
-  }
-
-  setChargeLevel(sound: string, level: number): void {
-    this.data.chargeLevels[sound] = level;
     this.save();
   }
 
