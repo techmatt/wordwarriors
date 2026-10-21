@@ -156,6 +156,15 @@ export function collectErrors(page: Page): string[] {
 export const SPEED = Number(process.env.WW_SPEED ?? 5);
 
 /**
+ * Test voice (item 083): by default `?voice=instant` (no audio; a line ends as soon as the
+ * test's `state()` has reported it, its own length the backstop), since tests assert on line
+ * ids, not audio. `boot(..., { voice: 'real' })` keeps real voice for a test about the voice
+ * itself, its captions or real pacing; `WW_VOICE=real` keeps it for a whole run, and a file
+ * that looks or listens (the bug-hunt checker, the shots) sets `VOICE.mode = 'real'`.
+ */
+export const VOICE = { mode: process.env.WW_VOICE ?? 'instant' };
+
+/**
  * Install the clock warp before the page's scripts run (once per page; it survives reloads).
  * `__wwSetSpeed(k)` changes the factor mid-run (`setSpeed`, item 081): each clock is
  * rebased where it stands, so no clock jumps; timers already set keep their old rate.
@@ -209,12 +218,14 @@ export async function setSpeed(page: Page, k: number): Promise<void> {
  * Load the game with test hooks on (`?hooks=1` works in a production build too), its clocks at `speed`.
  * The cast is the fixed default episode (`cast=default`) unless the query asks for a draw (`seed=`, `cast=random`).
  */
-export async function boot(page: Page, query = '', speed = SPEED): Promise<void> {
+export async function boot(page: Page, query = '', speed = SPEED, opts: { voice?: 'real' } = {}): Promise<void> {
   await page.addInitScript(warpClocks, speed);
   const cast = /[?&](seed|cast)=/.test(query) ? '' : 'cast=default&';
   // The rooms play the sentence game unless the query asks for a game (`game=word_machine`) or the whole pool (`games=all`).
   const games = /[?&]games?=/.test(query) ? '' : 'games=sentence&';
-  await page.goto(`/${query ? `${query}&` : '?'}${cast}${games}hooks=1`);
+  // Instant voice (item 083) unless the test asks for the real thing: a line ends once `state()` has seen it.
+  const voice = opts.voice === 'real' || VOICE.mode === 'real' || /[?&]voice=/.test(query) ? '' : 'voice=instant&';
+  await page.goto(`/${query ? `${query}&` : '?'}${cast}${games}${voice}hooks=1`);
   await page.waitForFunction(() => Boolean((window as unknown as { __ww?: unknown }).__ww));
   await page.mouse.click(20, 20);
 }
@@ -302,7 +313,8 @@ export async function choose(page: Page, id?: string): Promise<string> {
   const spot = s.room!.spots.find((sp) => (id ? sp.id === id : sp.correct === true))!;
   driver.busy++;
   try {
-    await walkTo(page, spot.x, spot.y + 12);
+    if (driver.walk) await walkTo(page, spot.x, spot.y + 12);
+    else await place(page, spot.x, spot.y + 12);
     await until(page, (st) => Boolean(st.room && !st.room.locked), 30_000, 'room unlocked');
     await press(page, 'green');
     // One frame for the press to land before a busy child's yellow may lock the room again.
@@ -314,12 +326,24 @@ export async function choose(page: Page, id?: string): Promise<string> {
 }
 
 /**
+ * Teleport her (item 083, `__ww.place`): in a room, or her hero in an open move choice. `choose`
+ * and the move choice land this way unless `driver.walk` is set (the bug-hunt checker, the
+ * real-time scene tests); tests about walking steer with `walkTo` and `stick`.
+ */
+export async function place(page: Page, x: number, y: number): Promise<void> {
+  const ok = await page.evaluate(([px, py]) => (window as unknown as { __ww: { place(x: number, y: number): boolean } }).__ww.place(px!, py!), [x, y]);
+  if (!ok) throw new Error(`nothing to place at ${x},${y}`);
+  // A frame for the room to see her there (its nearest spot, the green dot).
+  await page.waitForTimeout(60);
+}
+
+/**
  * The driver is about to press green on an answer (`choose`, the read-along):
  * the bug-hunt checker's busy child (item 069) holds its yellow meanwhile, or
  * a replay it starts would lock the room just as green lands, a hop and no
  * answer, and the driver would wait for an answer that never comes.
  */
-export const driver = { busy: 0 };
+export const driver = { busy: 0, walk: false };
 
 /**
  * Play a battle part, answering each move choice; `wrongFirst` picks a wrong
@@ -347,7 +371,8 @@ export async function playBattle(page: Page, part: number, wrongFirst = false): 
 /** In a move choice: walk onto a word's pad and press green until the pick is taken. */
 async function pickPad(page: Page, word: string): Promise<void> {
   const pad = (await state(page)).battle!.choice!.spots.find((sp) => sp.word === word)!;
-  await walkHeroTo(page, pad.x, pad.y);
+  if (driver.walk) await walkHeroTo(page, pad.x, pad.y);
+  else await place(page, pad.x, pad.y);
   // Green is ignored while a line plays (the choice closes for it): wait for
   // it to open again, then press.
   for (let tries = 0; ; tries++) {

@@ -110,7 +110,7 @@ for (const [name, query, scene, line] of [
 
 test('the battle move choice: the dialogue and bubbles keep off the pads and their signs', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
-  await boot(page, '?scene=battle&part=1&nojourney=1&qa=1');
+  await boot(page, '?scene=battle&part=1&battle=short&nojourney=1&qa=1');
   await until(page, (st) => Boolean(st.battle?.choice?.open), 90_000, 'choice open');
   const { issues, targets } = await sample(page, 3000, 'Battle');
   expect(targets, 'pads and signs').toBeGreaterThan(0);

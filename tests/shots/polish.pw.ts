@@ -14,7 +14,10 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 
 import { test, type Page } from '@playwright/test';
 
-import { boot, leaveBedroom, playBattle, state, until } from '../harness';
+import { boot, leaveBedroom, playBattle, state, until, VOICE } from '../harness';
+
+// Item 083: real voice, so a shot catches the line and its caption.
+VOICE.mode = 'real';
 
 const TAG = process.env.SHOTS_TAG ?? 'now';
 const OUT = `scratch/polish_034/${TAG}`;

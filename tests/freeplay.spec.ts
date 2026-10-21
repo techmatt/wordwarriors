@@ -205,7 +205,7 @@ test('an open answer closes play: blue fires nothing while the entry hall waits 
 
 test('battle: blue fires in the fight and the fight carries on; in a move choice blue fires nothing', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
-  await boot(page, '?scene=battle&part=1&nojourney=1');
+  await boot(page, '?scene=battle&part=1&battle=short&nojourney=1');
   await until(page, (st) => st.battle?.phase === 'fight' && !st.battle.choice, 90_000, 'fight phase');
 
   // Cast in the fight: retry while the phase holds (a combo or choice may cut in).

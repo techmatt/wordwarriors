@@ -86,6 +86,9 @@ const INTRO_SPOTS = { x: 260, dx: 140, villainX: 960 };
  * The brawl's sides for the ultimate: the i-th hero at (`x + i * dx`, `y + i * dy`),
  * the helper behind, the villain on the right (a giant further out, on the front edge of the floor).
  */
+/** `?battle=short`: the director's waits at this share of their length (item 083). */
+const SHORT_BEATS = 0.2;
+
 const ULT_SPOTS = { x: 260, dx: 150, y: 500, dy: 70, helper: { x: 150, y: 600 }, villain: { x: 900, y: 560 }, giantX: 960 };
 
 export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
@@ -109,6 +112,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   /** The names, bars, fetched things and runes along the top (hud.ts). */
   private hud!: BattleHud;
   private simRate = 1;
+  /** `?battle=short` (item 083): the director's waits cut (`beat`). */
+  private readonly short = new URLSearchParams(location.search).get('battle') === 'short';
   private teamNextCast = { hero: 0, villain: 0 };
   private nextTaunt = 4000;
   /** The move choice's pads and her walk to them (moveChoice.ts). */
@@ -231,9 +236,23 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     return this.show.anchored;
   }
 
+  /** Tests (`__ww.place`, item 083): her hero onto (x, y) in a move choice; false outside one. */
+  placeHero(x: number, y: number): boolean {
+    return this.choices.active && this.choices.place(x, y);
+  }
+
   stopPlay(): void {
     this.play.reset();
     this.playHop = false;
+  }
+
+  /**
+   * A director's beat, in seconds: `?battle=short` (item 083, tests that need only the move
+   * choice or the finish) cuts the waits between the story beats to a fifth; the beats
+   * themselves (the combo, the ultimate, the finish) keep their length.
+   */
+  private beat(s: number): number {
+    return this.short ? s * SHORT_BEATS : s;
   }
 
   wait(s: number): Promise<void> {
@@ -471,7 +490,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       shake(this, 4, 250);
       burst(this, GAME_WIDTH / 2, GAME_HEIGHT / 2 - 40, { count: 80, speed: 700, depth: DEPTH.overlay + 6, colors: [0xffd23f, 0xffffff, 0xff5ab4] });
     });
-    await this.simWait(2.0);
+    await this.simWait(this.beat(2.0));
     this.tweens.add({ targets: ui, alpha: 0, duration: 300, onComplete: () => ui.destroy() });
     await this.simWait(0.3);
   }
@@ -496,23 +515,23 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
 
   private async part1(): Promise<void> {
     await this.intro();
-    await this.simWait(1.5);
-    await this.useAllFetched(3.5);
-    await this.useCharged(1.1);
-    await this.useMade(['helper', 'gem', 'ammo'], 3);
-    await this.simWait(2.5);
+    await this.simWait(this.beat(1.5));
+    await this.useAllFetched(this.beat(3.5));
+    await this.useCharged(this.beat(1.1));
+    await this.useMade(['helper', 'gem', 'ammo'], this.beat(3));
+    await this.simWait(this.beat(2.5));
     await this.moveChoice();
-    await this.simWait(7);
+    await this.simWait(this.beat(7));
     await this.combo();
-    await this.simWait(6);
+    await this.simWait(this.beat(6));
     await this.moveChoice();
-    await this.simWait(7);
+    await this.simWait(this.beat(7));
     await this.ultimate();
     this.phase = 'end';
     await this.villainSays();
     await this.say(fightLineKey(this.fight, 'retreat'));
     this.retreat();
-    await this.simWait(1.4);
+    await this.simWait(this.beat(1.4));
     this.cameras.main.fadeOut(500);
     await this.simWait(0.6);
     advance(this);
@@ -520,21 +539,21 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
 
   private async part2(): Promise<void> {
     await this.intro();
-    await this.simWait(1);
-    await this.useAllFetched(3);
-    await this.useCharged(1.1);
-    await this.useMade(['helper', 'ammo', 'gem'], 2.5);
-    await this.simWait(2);
+    await this.simWait(this.beat(1));
+    await this.useAllFetched(this.beat(3));
+    await this.useCharged(this.beat(1.1));
+    await this.useMade(['helper', 'ammo', 'gem'], this.beat(2.5));
+    await this.simWait(this.beat(2));
     await this.moveChoice();
-    await this.simWait(6);
+    await this.simWait(this.beat(6));
     await this.combo();
-    await this.simWait(5);
+    await this.simWait(this.beat(5));
     await this.moveChoice();
-    await this.simWait(5);
+    await this.simWait(this.beat(5));
     await this.ultimate();
     await this.finish();
     this.phase = 'end';
-    await this.simWait(1.2);
+    await this.simWait(this.beat(1.2));
     this.cameras.main.fadeOut(500, 255, 255, 255);
     await this.simWait(0.6);
     advance(this);

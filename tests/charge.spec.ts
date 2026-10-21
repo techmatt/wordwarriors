@@ -155,7 +155,7 @@ function narratorLineEnd(h: string[], suffix: string): string {
 test('Charge the Spell: the charged runes fire as her hero\'s moves in the next battle', SLOW, async ({ page }) => {
   test.setTimeout(90_000);
   const errors = collectErrors(page);
-  await boot(page, '?scene=battle&part=1&charged=m,s,a&nojourney=1');
+  await boot(page, '?scene=battle&part=1&battle=short&charged=m,s,a&nojourney=1');
   // Every frame: which rune had popped up when each letter sound began (item 069: each sound came a rune late).
   await page.evaluate(() => {
     const w = window as unknown as { __ww: { state(): { voice: { speaking: string | null }; battle: { runesFired: number } | null } }; __runeAt: Record<string, number> };

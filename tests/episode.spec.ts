@@ -1,29 +1,78 @@
 /**
- * One whole episode, title to victory, played through the virtual pad:
- * bedroom, the hub and both side rooms, battle 1, the attic, battle 2.
- * Slow (minutes of real voice), so it is @slow. It is the one test with
- * real-time parts (clock speed 1, not `WW_SPEED`): it keeps the real pacing of
- * speech, karaoke and timers covered. Item 081: real time only for one scene
- * of each kind (the bedroom, the warm-up, the hub's helper scene, a sentence
- * room, a battle), the rest at the suite's speeds: 361 s to about 210 s.
+ * The default episode, title to victory, played through the virtual pad, and real
+ * pacing covered one scene of each kind at a time.
+ *
+ * Item 083: the real-time episode (item 081: real for the bedroom, the warm-up, the
+ * hub's helper scene, a sentence room and battle 1, about 210 s in one test) is now
+ * three tests at clock speed 1, each from its own `?scene=` (or the title), so they
+ * run on separate workers: the bedroom and the warm-up, a sentence room, battle 1.
+ * They keep real voice and steer her walking, so speech, karaoke, timers and walking
+ * are covered at real time. The whole episode's end-to-end checks play at the suite's
+ * speeds with instant voice.
  */
 
 import { test, expect } from '@playwright/test';
 
-import { BATTLE_SPEED, SLOW, SPEED, boot, collectErrors, expectNoErrors, playEpisode, press, state, until } from './harness';
+import { SLOW, boot, collectErrors, driver, expectFightLength, expectNoErrors, leaveBedroom, playBattle, playEpisode, playSentenceRoom, press, state, until } from './harness';
 
-/** Real time (speed 1) for one scene of each kind, the rest at the suite's speeds (item 081). */
-const REAL = { bedroom: 1, entry: 1, hub1: 1, door_a: 1, door_b: SPEED, battle1: 1, hub2: SPEED, battle2: BATTLE_SPEED, victory: SPEED };
-
-test('a full episode plays end to end', SLOW, async ({ page }) => {
-  test.setTimeout(900_000);
+/** Real time: real voice and her own walking (the harness's teleport off), for the test's length. */
+async function realTime(page: Parameters<typeof boot>[0], query: string): Promise<string[]> {
   const errors = collectErrors(page);
-  await boot(page, '', 1);
+  driver.walk = true;
+  await boot(page, query, 1, { voice: 'real' });
+  return errors;
+}
+
+test.afterEach(() => {
+  driver.walk = false;
+});
+
+test('real time: the title, the bedroom and the warm-up', SLOW, async ({ page }) => {
+  test.setTimeout(300_000);
+  const errors = await realTime(page, '');
   await until(page, (s) => s.scene === 'Title', 30_000, 'title');
   await page.waitForTimeout(500);
   await press(page, 'green');
+  await until(page, (s) => s.scene === 'Bedroom', 30_000, 'bedroom');
+  await leaveBedroom(page);
+  const hub = await until(page, (s) => s.scene === 'Hub', 30_000, 'the hub');
+  expect(hub.episode.grab?.word).toBeTruthy();
+  expect(hub.episode.fetched).toEqual([hub.episode.grab!.word]);
+  expectNoErrors(errors);
+});
 
-  const { end, keys, times } = await playEpisode(page, REAL);
+test('real time: a sentence room', SLOW, async ({ page }) => {
+  test.setTimeout(300_000);
+  const errors = await realTime(page, '?scene=room&slot=a&nojourney=1');
+  const key = await playSentenceRoom(page);
+  const after = await state(page);
+  expect(after.episode.read).toContain(key);
+  expect(Object.keys(after.progress.frames ?? {}).length).toBeGreaterThan(0);
+  expectNoErrors(errors);
+});
+
+test('real time: battle 1', SLOW, async ({ page }) => {
+  test.setTimeout(300_000);
+  const errors = await realTime(page, '?scene=battle&part=1&nojourney=1');
+  await until(page, (s) => s.scene === 'Battle', 30_000, 'battle 1');
+  const after = await playBattle(page, 1);
+  expect(after.battle?.ultimates).toBe(1);
+  expect(after.battle?.movePicks).toBe(2);
+  // The ultimate floors them, then the retreat stands them back up: never a floored team at the end.
+  expect(after.battle?.heroes.every((h) => h.status !== 'floored')).toBe(true);
+  expectFightLength(after);
+  expectNoErrors(errors);
+});
+
+test('a full episode plays end to end', SLOW, async ({ page }) => {
+  test.setTimeout(600_000);
+  const errors = collectErrors(page);
+  await boot(page);
+  await until(page, (s) => s.scene === 'Title', 30_000, 'title');
+  await page.waitForTimeout(100);
+  await press(page, 'green');
+
+  const { end, keys, times } = await playEpisode(page);
   console.log(`episode parts (real s): ${JSON.stringify(times)}`);
   expect(end.episode.fetched.length).toBe(3);
   expect(end.episode.made.item).toBe(true);

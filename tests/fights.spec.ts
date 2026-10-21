@@ -1,5 +1,5 @@
 /**
- * Item 031: every fight style plays both battles through with the episode's
+ * Item 031: every fight style plays a battle through (item 083: one part each, alternating) with the episode's
  * shape kept: the part 1 ultimate still wins the round (heroes floored, then
  * they retreat), part 2's counter and finish still win, the move choices
  * still fire, and a contest takes about as long as the brawl. Screenshots
@@ -13,6 +13,13 @@ import { BATTLE_SPEED, SLOW, boot, playBattle, state, until } from './harness';
 
 /** Each style against a villain it was not written for, so nothing leans on one villain. */
 const AGAINST: Record<string, string> = { brawl: 'tiamat', sky_race: 'smaug', sea_tug: 'jormungandr', spell_clash: 'bavmorda', cook_off: 'tiamat' };
+
+/**
+ * One battle part per style (item 083), the parts alternating across the styles: the race
+ * plays part 2 (its finish line), the rope pull 1, the beam clash 2, the cook-off 1. Each
+ * part keeps the shape checks; the brawl's both parts are every default episode's.
+ */
+const PART: Record<string, 1 | 2> = { sky_race: 2, sea_tug: 1, spell_clash: 2, cook_off: 1 };
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/fights_${name}.png` });
 
@@ -41,12 +48,12 @@ test('the cast draw picks the villain\'s own style; ?fight= fixes another', asyn
 // default whole episode and smoke's Battle part 2 already play it with these checks,
 // the length too (`expectFightLength` in playEpisode): only the contests are swept here.
 for (const f of FIGHTS.filter((x) => x.id !== 'brawl')) {
-  test(`${f.id}: both battles keep the episode's shape`, SLOW, async ({ page }) => {
+  test(`${f.id}: battle ${PART[f.id] ?? 1} keeps the episode's shape`, SLOW, async ({ page }) => {
     test.setTimeout(600_000);
     const problems = collectProblems(page);
     const villain = AGAINST[f.id] ?? 'tiamat';
     const times: number[] = [];
-    for (const part of [1, 2]) {
+    for (const part of [PART[f.id] ?? 1]) {
       await boot(page, `?scene=battle&part=${part}&villain=${villain}&fight=${f.id}&nojourney=1`, BATTLE_SPEED);
       const going = await until(page, (s) => s.scene === 'Battle' && (s.battle?.abilitiesFired ?? 0) >= 4, 60_000, `${f.id} part ${part} under way`);
       expect(going.battle?.fight).toBe(f.id);

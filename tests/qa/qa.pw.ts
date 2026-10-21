@@ -23,7 +23,11 @@ import { test, type Page } from '@playwright/test';
 
 import { BANK } from '../../content/phonics/bank';
 import { FREE_PLAY } from '../../src/config';
-import { boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBattle, playBridgeRoom, playChargeRoom, playEntry, playWordMachine, press, readToKeyWord, seedProgress, state, until, type WWState } from '../harness';
+import { boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBattle, playBridgeRoom, playChargeRoom, playEntry, playWordMachine, press, readToKeyWord, seedProgress, state, until, type WWState, VOICE } from '../harness';
+
+// Item 083: real voice and real walking: the checker looks and listens as she would.
+VOICE.mode = 'real';
+driver.walk = true;
 import { layoutIssues, leakIssues, logIssues, placeholderArt, voiceBuildIssues, type Issue, type Layout, type Since } from './checks';
 import { clippedIssues, giveawayIssues, pacingIssues, spellingIssues } from './wording';
 

@@ -289,6 +289,13 @@ export abstract class RoomScene extends Phaser.Scene {
     return 1;
   }
 
+  /** Tests (`__ww.place`, item 083): put her at (x, y) without walking there. */
+  placeHero(x: number, y: number): boolean {
+    if (!this.player?.root.active) return false;
+    this.player.place(x, y);
+    return true;
+  }
+
   /** The spot a correct answer is at (dev F4 and tests). */
   protected correctSpot(): Spot | undefined {
     return this.spots.find((s) => s.correct === true && s.enabled);

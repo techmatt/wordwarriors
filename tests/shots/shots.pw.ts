@@ -12,7 +12,10 @@ import { mkdirSync } from 'node:fs';
 
 import { test, type Page } from '@playwright/test';
 
-import { boot, choose, hubGo, press, readToKeyWord, state, until } from '../harness';
+import { boot, choose, hubGo, press, readToKeyWord, state, until, VOICE } from '../harness';
+
+// Item 083: real voice, so a shot catches the line and its caption.
+VOICE.mode = 'real';
 
 const TAG = process.env.SHOTS_TAG ?? 'now';
 const OUT = `scratch/ui_shots/${TAG}`;

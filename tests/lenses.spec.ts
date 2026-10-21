@@ -86,7 +86,7 @@ test('a hidden tab holds the voice: the line playing does not end until the tab 
 
 test('under dad lock the move choice shows no stick hint', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
-  await boot(page, '?scene=battle&part=1&nojourney=1');
+  await boot(page, '?scene=battle&part=1&battle=short&nojourney=1');
   await until(page, (st) => Boolean(st.battle?.choice?.open), 90_000, 'choice open');
   await page.keyboard.press('Backquote');
   // STICK_HINT_MS (4 s) of game time is under a second here: wait well past it.

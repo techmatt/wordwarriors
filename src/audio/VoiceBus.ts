@@ -75,6 +75,11 @@ class Bus {
   private lastBarkEnd = 0;
   /** Lines started, by id, in order: the tests' view of what was said. */
   readonly history: string[] = [];
+  /**
+   * Test-only (`?voice=instant` with the hooks, item 083): no audio, and a line ends as soon
+   * as the tests' `__ww.state()` has reported it (`seen()`), its estimated length the backstop.
+   */
+  instant = false;
 
   on(fn: Listener): () => void {
     this.listeners.add(fn);
@@ -132,7 +137,7 @@ class Bus {
     if (this.current) this.cut();
     if (voiceBank.has(id) && !voiceBank.ready(id)) void voiceBank.ensure(id);
     const ctx = getAudioContext();
-    const clip = ctx?.state === 'running' ? voiceBank.held(id, mode) : null;
+    const clip = ctx?.state === 'running' && !this.instant ? voiceBank.held(id, mode) : null;
     // A held sound too short to hold (the cut found no steady part) plays once.
     const loops = mode === 'hold' && (!clip || clip.loopStart !== null);
     let stopAudio = () => undefined as void;
@@ -194,6 +199,16 @@ class Bus {
     return { id, release, get playing() { return !released; } };
   }
 
+  /** The tests have read the line now speaking (`instant`): it ends on the next tick. */
+  seen(): void {
+    const c = this.current;
+    // Only a started line (a claim still decoding has no clock yet), never a held sound (it ends on release).
+    if (!this.instant || !c || c.playback || !c.u.time) return;
+    setTimeout(() => {
+      if (this.current === c) this.finish();
+    }, 0);
+  }
+
   /** Stop everything, queue included (scene change). */
   hush(): void {
     this.hushes++;
@@ -215,7 +230,8 @@ class Bus {
     // Claim the voice before any await, so nothing else starts meanwhile.
     const claim = { u: { id, priority } as Utterance, playback: null, done: () => undefined };
     this.current = claim;
-    if (voiceBank.has(id) && !voiceBank.ready(id)) {
+    // Instant (tests, item 083) plays no audio, so it waits for no decode.
+    if (!this.instant && voiceBank.has(id) && !voiceBank.ready(id)) {
       // A decode that hangs or fails leaves the line without audio (below), never stuck.
       const decoded = await decodeWithin(voiceBank.ensure(id), ENSURE_TIMEOUT_MS);
       if (decoded === 'late') console.warn(`voice: ${id} not decoded after ${ENSURE_TIMEOUT_MS} ms; it plays without audio`);
@@ -231,7 +247,7 @@ class Bus {
     if (!line) console.warn(`voice: no line ${id}`);
     // A suspended context (audio not yet unlocked) never ends a clip, so it
     // would hang every await on this line: run on the estimated clock instead.
-    const live = getAudioContext()?.state === 'running';
+    const live = getAudioContext()?.state === 'running' && !this.instant;
     const playback = line && live ? voiceBank.play(id) : null;
     const text = line?.text ?? '';
     const words = text.split(/\s+/).length;

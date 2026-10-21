@@ -351,7 +351,7 @@ test('chef scenario: with Dada Jason as ally, Julia wakes up as chef Julia and f
   const up = await until(page, (st) => st.scene === 'Bedroom' && st.room?.round === 'bedroom:news', 90_000, 'awake');
   expect(up.room!.player.art).toBe('char_julia_chef');
 
-  await boot(page, '?scene=battle&part=1&ally=dada_jason&nojourney=1');
+  await boot(page, '?scene=battle&part=1&battle=short&ally=dada_jason&nojourney=1');
   const b = await until(page, (s) => s.scene === 'Battle' && (s.battle?.heroes.length ?? 0) > 0, 30_000, 'battle');
   expect(b.battle!.heroes.find((h) => h.id === 'julia')?.art).toBe('char_julia_chef');
   expect(b.battle!.heroes.find((h) => h.id === 'dada_jason')?.art).toBe('char_dada_jason_good');
@@ -378,7 +378,7 @@ test('Spell the Spell (parked): ghost boxes fill only with the right letter', as
 test('Battle part 2: a wrong and a right walking pick, counter-item, finish, victory', SLOW, async ({ page }) => {
   test.setTimeout(240_000);
   const errors = collectErrors(page);
-  await boot(page, '?scene=battle&part=2&hero=elsa&ally=anna&villain=scar&nojourney=1');
+  await boot(page, '?scene=battle&part=2&battle=short&hero=elsa&ally=anna&villain=scar&nojourney=1');
   const b = await until(page, (s) => s.scene === 'Battle', 30_000, 'battle');
   expect(b.battle?.part).toBe(2);
   await playBattle(page, 2, true);

@@ -58,26 +58,48 @@ function visibleText(game: Phaser.Game): TextInfo[] {
   return out;
 }
 
+/** What `__ww.state()` reports. */
+function snapshot(): unknown {
+  return {
+    scene: hookState.scene,
+    fps: hookState.fps,
+    step: currentStep(),
+    episode: JSON.parse(JSON.stringify(episode)) as unknown,
+    room: hookState.room,
+    battle: hookState.battle,
+    recap: hookState.recap,
+    ending: hookState.ending,
+    voice: { speaking: voiceBus.speaking?.id ?? null, busy: voiceBus.busy, history: [...voiceBus.history] },
+    fx: { ...fxStats },
+    play: { ...playStats },
+    music: musicPlaying(),
+    progress: progress.snapshot(),
+  };
+}
+
 export function installTestHooks(game: Phaser.Game): void {
   if (!hooksEnabled()) return;
   // The bug-hunt checker's probe (item 039, tests/qa/): `?qa=1` only.
   if (new URLSearchParams(location.search).has('qa')) installProbe(game);
+  // Test-only instant voice (item 083): a line ends once `state()` has reported it.
+  voiceBus.instant = new URLSearchParams(location.search).get('voice') === 'instant';
   (window as unknown as { __ww: unknown }).__ww = {
-    state: () => ({
-      scene: hookState.scene,
-      fps: hookState.fps,
-      step: currentStep(),
-      episode: JSON.parse(JSON.stringify(episode)) as unknown,
-      room: hookState.room,
-      battle: hookState.battle,
-      recap: hookState.recap,
-      ending: hookState.ending,
-      voice: { speaking: voiceBus.speaking?.id ?? null, busy: voiceBus.busy, history: [...voiceBus.history] },
-      fx: { ...fxStats },
-      play: { ...playStats },
-      music: musicPlaying(),
-      progress: progress.snapshot(),
-    }),
+    state: () => {
+      const s = snapshot();
+      voiceBus.seen();
+      return s;
+    },
+    /**
+     * Teleport her (item 083): in a room, or her hero in an open move choice. Tests that are
+     * not about walking land on the spot instead of steering. False when nothing can be placed.
+     */
+    place: (x: number, y: number) => {
+      for (const s of game.scene.getScenes(true)) {
+        const p = (s as unknown as { placeHero?: (x: number, y: number) => boolean }).placeHero;
+        if (p?.call(s, x, y)) return true;
+      }
+      return false;
+    },
     /** Art on demand (item 065): images on screen drawn with Phaser's missing texture, art asked for before it loaded, loads in flight. */
     art: () => {
       let missing = 0;

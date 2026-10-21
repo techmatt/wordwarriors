@@ -361,6 +361,16 @@ export class MoveChoice {
     }
   }
 
+  /** Tests (`__ww.place`, item 083): put her hero at (x, y) in an open choice, as if she had walked there. */
+  place(x: number, y: number): boolean {
+    const c = this.current;
+    if (!c) return false;
+    c.at.x = Phaser.Math.Clamp(x, ARENA_LEFT, ARENA_RIGHT);
+    c.at.y = Phaser.Math.Clamp(y, FLOOR_TOP, FLOOR_BOTTOM);
+    this.holdHero();
+    return true;
+  }
+
   /** Pin her hero to where she walked in the choice: no leftover move timer or hop moves her. */
   holdHero(): void {
     const c = this.current;

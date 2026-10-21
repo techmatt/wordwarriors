@@ -13,7 +13,7 @@ test('M1, M5, M6: the move choice hides its word in the caption, shows the stick
   const errors = collectErrors(page);
   // A brawl: Jason's fightNudge makes most of his fights a cook-off, whose staging holds the
   // team in place (teamStepBack skips contests), so M6's step-back is checked where it runs.
-  await boot(page, '?scene=battle&part=1&ally=dada_jason&fight=brawl&nojourney=1');
+  await boot(page, '?scene=battle&part=1&battle=short&ally=dada_jason&fight=brawl&nojourney=1');
   const s = await until(page, (st) => Boolean(st.battle?.choice?.open), 90_000, 'choice open');
   const c = s.battle!.choice!;
   // M1: the prompt has been captioned by now; the box never printed the right word.
@@ -42,8 +42,8 @@ test('M1, M5, M6: the move choice hides its word in the caption, shows the stick
 // and off the villain, on her side of him (the cook-off's Dada Jason was a third covered; the
 // rope pull's third pad went past the serpent).
 for (const [name, query] of [
-  ['the cook-off, Dada Jason behind her', '?scene=battle&part=1&ally=dada_jason&fight=cook_off&nojourney=1'],
-  ['the rope pull, Jormungandr', '?scene=battle&part=1&villain=jormungandr&fight=sea_tug&nojourney=1'],
+  ['the cook-off, Dada Jason behind her', '?scene=battle&part=1&battle=short&ally=dada_jason&fight=cook_off&nojourney=1'],
+  ['the rope pull, Jormungandr', '?scene=battle&part=1&battle=short&villain=jormungandr&fight=sea_tug&nojourney=1'],
 ] as const) {
   test(`M7, M17: ${name}: no sign covers a teammate or the villain, and the pads stay on her side`, SLOW, async ({ page }) => {
     const errors = collectErrors(page);
