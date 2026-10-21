@@ -164,6 +164,8 @@ function warpClocks(k: number): void {
   Date.now = () => d0 + (dNow() - d0) * k;
   const setT = window.setTimeout.bind(window);
   const setI = window.setInterval.bind(window);
+  // Network waits stay on the wall clock (`src/realTime.ts`, item 069).
+  (window as unknown as { __wwRealSetTimeout: unknown }).__wwRealSetTimeout = setT;
   (window as unknown as { setTimeout: unknown }).setTimeout = (fn: TimerHandler, ms = 0, ...a: unknown[]) => setT(fn, ms / k, ...a);
   (window as unknown as { setInterval: unknown }).setInterval = (fn: TimerHandler, ms = 0, ...a: unknown[]) => setI(fn, ms / k, ...a);
   const raf = window.requestAnimationFrame.bind(window);

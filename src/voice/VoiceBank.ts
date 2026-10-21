@@ -11,6 +11,7 @@
 
 import { getAudioContext, unlockAudio } from '../audio/context';
 import { holdPlan, holdSamples, type HoldMode } from '../audio/holdSound';
+import { realTimeout } from '../realTime';
 
 export interface TimedWord {
   word: string;
@@ -40,7 +41,7 @@ interface VoiceManifestFile {
  * decoded, and boot, which waits for core's ~290 clips, took twice as long.
  */
 const DECODE_SLOTS = 12;
-/** A clip's fetch is given up after this (item 057 saw one hang 60 s), freeing its slot. */
+/** A clip's fetch is given up after this (item 057 saw one hang 60 s), freeing its slot. Wall-clock time (`realTimeout`). */
 const FETCH_TIMEOUT_MS = 15_000;
 
 interface DecodeJob {
@@ -135,7 +136,7 @@ export class VoiceBank {
       run: async () => {
         // A fetch that never answers would hold its slot for good; past this it fails like any other.
         const abort = new AbortController();
-        const timer = setTimeout(() => abort.abort(), FETCH_TIMEOUT_MS);
+        const timer = realTimeout(() => abort.abort(), FETCH_TIMEOUT_MS);
         try {
           const bytes = await (await fetch(`${base}${line.audio}`, { signal: abort.signal })).arrayBuffer();
           const buffer = await ctx.decodeAudioData(bytes);

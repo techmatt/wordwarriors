@@ -19,6 +19,7 @@
 import Phaser from 'phaser';
 
 import { ART_BY_ID } from '../../content/art/assets';
+import { realTimeout } from '../realTime';
 
 /**
  * Pictures fetched at once for a scene about to show. Four, not more: the dev
@@ -37,6 +38,7 @@ const BACKGROUND_SLOTS = 2;
  * nothing hangs for good. Long: a fetch waits its turn behind the voice
  * clips, and aborting one re-queues it at the back (30 s, 6 s real at test
  * speed 5, thrashed: the slow-art test took a minute instead of 5 s).
+ * Wall-clock time since item 069 (`realTimeout`): test speed no longer shortens it.
  */
 const FETCH_TIMEOUT_MS = 120_000;
 const TRIES = 3;
@@ -195,7 +197,7 @@ export class ArtBank {
     if (!game) throw new Error('art bank not installed');
     const abort = new AbortController();
     if (!job.urgent) job.slow = abort;
-    const timer = window.setTimeout(() => abort.abort(), FETCH_TIMEOUT_MS);
+    const timer = realTimeout(() => abort.abort(), FETCH_TIMEOUT_MS);
     let blob: Blob;
     try {
       // Background at the default priority: Chromium holds `low` back for as long as higher ones keep coming.

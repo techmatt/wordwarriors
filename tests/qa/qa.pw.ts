@@ -11,7 +11,8 @@
  * `<scenario>.json` (issues, counts, lock and frame stats), then
  * `npx tsx tests/qa/report.ts <tag>` for `summary.md` and contact sheets.
  * `QA_SET=quick` plays three scenarios, `more` the second batch (places, forms,
- * an idle child), `all` both; the default plays the first batch.
+ * an idle child), `new` the third (item 069: a busy child, the difficulty
+ * levels, real draws back to back), `all` every batch; the default plays the first.
  * A scenario that stalls records a `stall` issue with its last shot and the
  * next one runs. README, "The bug-hunt checker"; findings: docs/qa-findings.md.
  */
@@ -21,6 +22,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { test, type Page } from '@playwright/test';
 
 import { BANK } from '../../content/phonics/bank';
+import { FREE_PLAY } from '../../src/config';
 import { boot, choose, collectErrors, hubGo, leaveBedroom, playBattle, playBridgeRoom, playChargeRoom, playEntry, playWordMachine, press, readToKeyWord, seedProgress, state, until, type WWState } from '../harness';
 import { layoutIssues, leakIssues, logIssues, placeholderArt, voiceBuildIssues, type Issue, type Layout, type Since } from './checks';
 import { clippedIssues, giveawayIssues, pacingIssues, spellingIssues } from './wording';
@@ -45,9 +47,13 @@ interface Scenario {
   dadLock?: boolean;
   /** Stand still for `IDLE_MS` at each choice first (the stick hint, the re-prompts). */
   idle?: boolean;
+  /** A busy child (item 069): blue, red and yellow pressed all episode (free play's casts, yellow's replays). */
+  mash?: boolean;
   quick?: boolean;
   /** Only with `QA_SET=more` (or `all`): the second batch, added by the first hunt. */
   more?: boolean;
+  /** Only with `QA_SET=new` (or `all`): the third batch, added by the second hunt (item 069). */
+  added?: boolean;
 }
 
 /** How long an idle scenario stands still at each choice (real ms; 5x that in game time). */
@@ -84,7 +90,20 @@ const SCENARIOS: Scenario[] = [
   { name: 'charge_no_first', query: 'seed=115&room=charge', wrong: true, more: true },
   // The Stretchy Bridge (item 054): half the `games=all` scenarios meet it; this one with a wrong picture first.
   { name: 'bridge_wrong_first', query: 'seed=116&room=bridge', wrong: true, more: true },
+  // The second hunt (item 069): free play under a busy child, the difficulty levels above base
+  // (item 067), the phonics rooms answered right, and a real draw across episodes (rotations).
+  { name: 'mash_default', query: 'cast=default&games=all', mash: true, added: true },
+  { name: 'mash_wrong_seed301', query: 'seed=301&games=all', mash: true, wrong: true, added: true },
+  { name: 'diff2_firm', query: 'seed=302&games=all&difficulty=2', progress: 'firm', added: true },
+  { name: 'diff3_solid', query: 'seed=303&games=all&difficulty=3', progress: 'all', added: true },
+  { name: 'diff3_wrong', query: 'seed=304&games=all&difficulty=3', progress: 'firm', wrong: true, added: true },
+  { name: 'charge_yes', query: 'seed=305&room=charge', added: true },
+  { name: 'bridge_diff3', query: 'seed=306&room=bridge&difficulty=3', progress: 'firm', added: true },
+  { name: 'drawn4', query: 'cast=random&games=all', episodes: 4, added: true },
 ];
+
+/** How often a busy child presses something (real ms). */
+const MASH_MS = 650;
 
 /** Every level-1 word solid (`firm`), or every word (`all`): six right first tries each. */
 function seededProgress(kind: 'firm' | 'all'): Record<string, unknown> {
@@ -104,6 +123,11 @@ class Recorder {
   private qaT = 0;
   last: WWState | null = null;
   lastShot = '';
+  /** The episode's victory scene and fight style, kept as they pass (the variety check, item 069). */
+  endingId = '';
+  fight = '';
+  /** Free play's shots in the scene with the most (a mash scenario reports that its presses landed). */
+  shotsFired = 0;
   /** Each scene's visits, real ms (item 059's pacing check); `wrong` when the scenario answers wrong on purpose. */
   private visit = { scene: '', at: 0 };
   visits: { scene: string; ms: number; wrong: boolean }[] = [];
@@ -139,6 +163,14 @@ class Recorder {
   private async tick(): Promise<void> {
     const s = await state(this.page);
     this.last = s;
+    if (s.ending?.id) this.endingId = s.ending.id;
+    if (s.battle?.fight) this.fight = s.battle.fight;
+    // Free play (item 060): never more live shots than the cap.
+    const play = (s as WWState & { play?: { maxLive: number; shots: number } }).play;
+    if (play) {
+      this.shotsFired = Math.max(this.shotsFired, play.shots);
+      if (play.maxLive > FREE_PLAY.maxShots) this.add([{ kind: 'shots-over-cap', severity: 'bug', scene: s.scene, detail: `${play.maxLive} live shots (cap ${FREE_PLAY.maxShots})`, key: `shotcap:${s.scene}` }], this.lastShot);
+    }
     const q = await this.page.evaluate((t) => (window as unknown as { __wwqa: { since(t: number): Since } }).__wwqa.since(t), this.qaT);
     this.qaT = q.now;
     this.add(logIssues({ ...q, console: [], missingArt: [], flashes: [] }));
@@ -232,6 +264,60 @@ async function standStill(page: Page, sc: Scenario, ready: (s: WWState) => boole
 }
 
 /**
+ * A busy child (item 069): blue, red and yellow in turn every `MASH_MS`
+ * beside the driver, all episode, until `stop()`. Never green: green is the
+ * driver's (her answers), and a stray green near a thing would answer for her.
+ */
+function mash(page: Page): { stop(): Promise<void> } {
+  let on = true;
+  const loop = (async () => {
+    for (let n = 0; on; n++) {
+      await press(page, (['blue', 'red', 'yellow'] as const)[n % 3]!).catch(() => undefined);
+      await page.waitForTimeout(MASH_MS).catch(() => undefined);
+    }
+  })();
+  return {
+    stop: async () => {
+      on = false;
+      await loop;
+    },
+  };
+}
+
+/** What an episode drew, for the variety check across episodes (item 069). */
+interface Drawn {
+  ally: string | null;
+  villain: string;
+  fight: string;
+  ending: string;
+  games: string[];
+  rooms: string[];
+  words: string[];
+}
+
+/**
+ * Rotations across episodes (item 067, `src/rules/recent.ts`) in a real draw:
+ * the villain, the victory scene and the house's rooms never the same as the
+ * episode before; a key word read again within the run. Only for a scenario
+ * whose URL forces none of them.
+ */
+function varietyIssues(eps: Drawn[]): Issue[] {
+  const out: Issue[] = [];
+  const add = (kind: string, severity: Issue['severity'], detail: string) => out.push({ kind, severity, scene: 'Victory', detail, key: `${kind}:${detail}` });
+  for (let i = 1; i < eps.length; i++) {
+    const [a, b] = [eps[i - 1]!, eps[i]!];
+    const at = `episodes ${i} and ${i + 1}`;
+    if (a.villain === b.villain) add('repeat', 'bug', `villain ${b.villain} in ${at}`);
+    if (a.ending && a.ending === b.ending) add('repeat', 'bug', `victory scene ${b.ending} in ${at}`);
+    if (a.ally && a.ally === b.ally) add('repeat', 'look', `ally ${b.ally} in ${at}`);
+    if (a.rooms.join() === b.rooms.join()) add('repeat', 'look', `side rooms ${b.rooms.join(', ')} in ${at}`);
+    const again = b.words.filter((w) => eps.slice(0, i).some((e) => e.words.includes(w)));
+    if (again.length) add('repeat-word', 'look', `${again.join(', ')} read again in episode ${i + 1}`);
+  }
+  return out;
+}
+
+/**
  * Dad lock (item 038) in a room: lock, press green and yellow, check the round
  * and the room did not move, unlock. Returns an issue when a press got through.
  */
@@ -314,7 +400,7 @@ if (LOOK) {
 }
 
 const set = process.env.QA_SET;
-const inSet = (x: Scenario) => (set === 'quick' ? Boolean(x.quick) : set === 'more' ? Boolean(x.more) : set === 'all' ? true : !x.more);
+const inSet = (x: Scenario) => (set === 'quick' ? Boolean(x.quick) : set === 'more' ? Boolean(x.more) : set === 'new' ? Boolean(x.added) : set === 'all' ? true : !x.more && !x.added);
 for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
   test(`qa ${sc.name}`, async ({ page }) => {
     const errors = collectErrors(page);
@@ -327,9 +413,16 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     const counts: Record<string, number>[] = [];
     const heap: number[] = [];
     let stalled: string | null = null;
+    const drawn: Drawn[] = [];
+    const masher = sc.mash ? mash(page) : null;
     try {
       for (let e = 0; e < (sc.episodes ?? 1); e++) {
+        rec.endingId = '';
+        rec.fight = '';
         await episode(page, sc, rec);
+        const ep = (await state(page)).episode;
+        const plan = ep.house.plan ?? [];
+        drawn.push({ ally: ep.ally, villain: ep.villain, fight: rec.fight, ending: rec.endingId, games: plan.map((p) => p.game), rooms: plan.filter((p) => p.slot !== 'counter').map((p) => p.room).sort(), words: [...ep.read] });
         counts.push(await page.evaluate(() => (window as unknown as { __wwqa: { counts(): Record<string, number> } }).__wwqa.counts()));
         heap.push(await page.evaluate(() => (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0));
         if (e + 1 < (sc.episodes ?? 1)) await press(page, 'green');
@@ -339,7 +432,11 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
       await rec.capture('stall');
       rec.add([{ kind: 'stall', severity: 'bug', scene: rec.last?.scene ?? '', detail: stalled, key: `stall:${sc.name}` }], rec.lastShot);
     }
+    await masher?.stop();
     await rec.stop();
+    // Rotations only where the URL forces nothing they rotate.
+    if (!/(^|&)(seed|ally|villain|place|fight|game|room)=|cast=default/.test(sc.query)) rec.add(varietyIssues(drawn));
+    if (sc.mash && rec.shotsFired === 0) rec.add([{ kind: 'mash-dead', severity: 'bug', scene: '', detail: 'a busy child pressed blue, red and yellow all episode and free play never fired a shot', key: 'mash-dead' }]);
     const q = await page.evaluate(() => (window as unknown as { __wwqa: { since(t: number): Since } }).__wwqa.since(0));
     // The whole run's flashes at once: a burst can straddle two polls.
     rec.add(logIssues({ ...q, voice: [], locks: [], spikes: [] }));
@@ -362,6 +459,7 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
           stalled,
           shots: rec.shots,
           cast: end ? { hero: end.episode.hero, ally: end.episode.ally, villain: end.episode.villain, fight: end.battle?.fight, read: end.episode.read, fetched: end.episode.fetched } : null,
+          drawn,
           counts,
           heapMB: heap.map((h) => Math.round(h / 1e6)),
           frames: q.frames,

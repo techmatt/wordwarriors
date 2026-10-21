@@ -477,12 +477,14 @@ timers, tweens, the game loop and voice playback together. The full-episode test
 runs at real time (speed 1), so real pacing stays covered. `WW_SPEED=1 npm test` runs
 the fast lane at real time.
 
-The game's own timeouts run on that clock too: `VoiceBank`'s 15 s voice fetch timeout is
-3 s of real time in a test, so on a loaded machine voice fetches abort (`voice: could not
-decode … AbortError: signal is aborted without reason`), and `tests/fights.spec.ts`, which
-counts those, fails 1-2 of its 5 tests and passes on the retry (seen on main and item 068,
-2026-10-21). Load also stretches the Charge round's timed test (`charge.spec.ts:83`) past
-its limit; rerun a red that looks like either alone with `--workers=1`.
+The game's own timeouts run on that clock too, except the network's: until item 069
+`VoiceBank`'s 15 s voice fetch timeout was 3 s of real time in a test, so on a loaded
+machine voice fetches aborted (`voice: could not decode … AbortError: signal is aborted
+without reason`), lines played with no audio, and `tests/fights.spec.ts` failed 1-2 of its
+5 tests. The voice and art fetch timeouts now run on the wall clock (`src/realTime.ts`;
+the harness keeps the real `setTimeout` as `__wwRealSetTimeout`). Load still stretches
+the Charge round's timed test (`charge.spec.ts:83`) past its limit; rerun a red that looks
+like it alone with `--workers=1`.
 
 The browser draws with the GPU (Playwright's full `chromium` channel, `--use-angle=d3d11`;
 `playwright.config.ts`): battles run at ~56 fps instead of headless software GL's 11-18,
@@ -558,8 +560,19 @@ clock speed 5 across casts, dads' forms, places, all five fight styles, the word
 wrong answers everywhere, dad lock, seeded progress (blends and digraphs open) and three
 episodes back to back (`SCENARIOS` in `tests/qa/qa.pw.ts`; `-g <name>` for one,
 `QA_SET=quick` for three, `QA_SET=more` for the second batch: the other places and dads'
-forms, an idle child who stands still at every choice, more seeds; `QA_SET=all` both).
+forms, an idle child who stands still at every choice, more seeds; `QA_SET=new` for the
+third, item 069's: a busy child pressing blue, red and yellow all episode (free play),
+`DIFFICULTY` 2 and 3 with seeded progress, Charge and the bridge answered right, and four
+real draws back to back; `QA_SET=all` every batch).
 About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it records.
+In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
+
+- **Item 069's checks:** free play never over its cap of live shots (`shots-over-cap`), a
+  busy child whose casts never fired (`mash-dead`), and in a scenario whose URL forces no
+  cast or room, the rotations across episodes (`repeat`: the villain or victory scene of
+  the episode before is a bug, the same ally or side rooms a look; `repeat-word`: a word
+  read in an earlier episode of the run). Each scenario's JSON lists what each episode
+  drew (`drawn`).
 
 - **Shots only at moments:** each scene change, each line (a moment in, so the box and
   karaoke are up), each new round, move choice and battle phase, each victory-scene line,
