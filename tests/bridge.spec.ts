@@ -47,8 +47,8 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
   expect(b0.voiced).toBe(true);
   expect(b0.picturesUp).toBe(true);
   expect(s0.episode.house.plan!.find((p) => p.slot === 'a')!.kind).toBe('bridge');
-  // A fresh store: CVC words starting with a sound you can hold.
-  for (const w of b0.words) expect('mslfnrvz').toContain(w[0]!);
+  // A fresh store: CVC words starting with a sound you can hold (a short vowel too: EGG, ELF since item 056).
+  for (const w of b0.words) expect('mslfnrvzaeiou').toContain(w[0]!);
   // The stones are the word's letters, upper case, one text each; the word is never one text.
   const texts = (await page.evaluate(() => (window as unknown as { __ww: { texts(): { text: string }[] } }).__ww.texts())).map((t) => t.text);
   for (const u of b0.units) expect(texts).toContain(u.toUpperCase());
