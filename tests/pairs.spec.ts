@@ -5,8 +5,9 @@
  * victory scene up to the recap. Screenshots and each pair's voiced line ids
  * land in tests/screenshots/ (ignored) for a look.
  *
- * Off unless asked for (all 36 take about an hour): `WW_PAIRS=scar` (a
- * substring of `ally+villain`) plays the pairs that match, `WW_PAIRS=+` all.
+ * Off unless asked for (all 36 take about an hour): `npm run test:pairs` plays
+ * them all, `WW_PAIRS=scar` (a substring of `ally+villain`) the pairs that
+ * match, `WW_PAIRS=+` all. Off, the spec shows one skipped test saying so.
  */
 
 import { writeFile } from 'node:fs/promises';
@@ -18,7 +19,15 @@ import { ACTIVE_CAST } from '../src/config';
 import { SLOW, boot, leaveBedroom, playBattle, until } from './harness';
 
 const ALLIES = ACTIVE_CAST.allies.flatMap((p) => formsOf(p).map((f) => f.id));
-const PAIRS = ALLIES.flatMap((a) => ACTIVE_CAST.villains.map((v) => [a, v] as const)).filter(([a, v]) => process.env.WW_PAIRS && `${a}+${v}`.includes(process.env.WW_PAIRS));
+// `npm run test:pairs` means all of them (an npm script cannot set WW_PAIRS itself under Windows' cmd).
+const WANT = process.env.WW_PAIRS ?? (process.env.npm_lifecycle_event === 'test:pairs' ? '+' : undefined);
+const PAIRS = ALLIES.flatMap((a) => ACTIVE_CAST.villains.map((v) => [a, v] as const)).filter(([a, v]) => WANT && `${a}+${v}`.includes(WANT));
+
+if (PAIRS.length === 0) {
+  test('every ally × villain pair', () => {
+    test.skip(true, WANT ? `WW_PAIRS=${WANT} matches no pair` : 'off unless asked for: npm run test:pairs, or WW_PAIRS=<part of ally+villain>');
+  });
+}
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/pairs_${name}.png` });
 

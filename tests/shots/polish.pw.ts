@@ -3,7 +3,7 @@
  * fight style and shoots the arena on a timer and at each new phase, so
  * overlaps, banners over bubbles and the bag reveal can be judged by eye.
  * Not a test: run it with its own config,
- *   npx playwright test --config tests/shots/shots.config.ts polish
+ *   SHOTS_TAG=<tag> npm run shots -- polish.pw
  * and it writes `scratch/polish_034/<SHOTS_TAG>/<cast>_p<part>_<n>_<what>.png`
  * and each battle's voice history (`<cast>_p<part>_voice.json`), where a line
  * said twice in a row shows up as `twice`. `-g <cast>` for one cast; WW_SPEED

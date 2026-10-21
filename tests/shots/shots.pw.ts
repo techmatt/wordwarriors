@@ -1,7 +1,7 @@
 /**
  * Screenshots of every non-battle scene where words are on screen (item 024),
  * for judging the dialogue UI by eye. Not a test: run it with its own config,
- *   npx playwright test --config tests/shots/shots.config.ts
+ *   SHOTS_TAG=<tag> npm run shots -- shots.pw
  * and it writes `scratch/ui_shots/<SHOTS_TAG>/<cast>_<scene>_<n>_<line>.png`
  * (`-g bedroom` and the like for one scene).
  * A recorder polls the voice bus beside the walking helpers and shoots each

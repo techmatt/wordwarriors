@@ -22,6 +22,10 @@
     "test": "npm run test:unit && playwright test --grep-invert @slow --global-timeout=360000",
     "test:slow": "playwright test --grep @slow",
     "test:all": "npm run test:unit && playwright test",
+    "test:pairs": "playwright test tests/pairs.spec.ts",
+    "perf": "playwright test --config tests/perf/perf.config.ts",
+    "shots": "playwright test --config tests/shots/shots.config.ts",
+    "qa": "playwright test --config tests/qa/qa.config.ts",
     "voice:import": "tsx tools/voice/import.ts"
   },
   "devDependencies": {

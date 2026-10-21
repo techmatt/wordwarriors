@@ -5,7 +5,7 @@
  * each battle phase, the ending and the recap) and runs the automatic checks
  * in `checks.ts` at each. Run it with its own config:
  *
- *   QA_TAG=<tag> npx playwright test --config tests/qa/qa.config.ts [-g <scenario>]
+ *   QA_TAG=<tag> npm run qa [-- -g <scenario>]
  *
  * and read `scratch/qa/<tag>/`: one folder of shots per scenario, its
  * `<scenario>.json` (issues, counts, lock and frame stats), then

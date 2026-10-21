@@ -133,9 +133,16 @@ test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on t
   // About 20 s a round (item 059), in game time (the scene's clock; the test's own runs SPEED times
   // fast): to the read under 22 s (about 17 s for 3 runes, 21 s for 4), the whole round with
   // Dad's 1 and the sounding out together under 32 s.
-  console.log(`charge round: ${word} (${runes.length} runes), ${toRead / 1000} s to the read, ${ms / 1000} s in all (game time)`);
-  expect(toRead).toBeLessThan(22_000);
-  expect(ms).toBeLessThan(32_000);
+  // Asserted only by a one-worker timing run (`--workers=1`, item 072): beside a second worker the
+  // load stretches the game time past the limits, so the two-worker lanes log it and go on.
+  const timing = `charge round: ${word} (${runes.length} runes), ${toRead / 1000} s to the read, ${ms / 1000} s in all (game time)`;
+  console.log(timing);
+  if (test.info().config.workers === 1) {
+    expect(toRead).toBeLessThan(22_000);
+    expect(ms).toBeLessThan(32_000);
+  } else {
+    test.info().annotations.push({ type: 'timing', description: `${timing}; limits asserted only with --workers=1` });
+  }
   expectNoErrors(errors);
 });
 

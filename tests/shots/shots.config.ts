@@ -1,12 +1,16 @@
 /**
  * Playwright config for `tests/shots/*.pw.ts` (screenshots and probes, not tests;
- * the `.pw.ts` name keeps it out of the suite).
- * Its own port, so it never meets the dev server or a test run.
+ * the `.pw.ts` name keeps it out of the suite). `npm run shots`.
+ * The GPU draws, as in the suite (`WW_GPU=0` for software GL). Its server is the
+ * checker's (no file watching, item 072): edits during a run wait for the next one.
+ * Port: `SHOTS_PORT`, else 5194, so it never meets the dev server or a test run.
  */
 
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
 
-const PORT = 5194;
+import { gpuProjects } from '../gpu';
+
+const PORT = Number(process.env.SHOTS_PORT ?? 5194);
 
 export default defineConfig({
   testDir: '.',
@@ -21,9 +25,9 @@ export default defineConfig({
     viewport: { width: 1280, height: 720 },
     launchOptions: { args: ['--autoplay-policy=no-user-gesture-required'] },
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 720 } } }],
+  projects: gpuProjects({ use: { viewport: { width: 1280, height: 720 } } }),
   webServer: {
-    command: `npx vite --port ${PORT} --strictPort`,
+    command: `npx vite --config tests/qa/vite.qa.config.ts --port ${PORT} --strictPort`,
     cwd: '../..',
     url: `http://localhost:${PORT}`,
     reuseExistingServer: false,

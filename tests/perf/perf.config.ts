@@ -4,7 +4,7 @@
  * machine with what is being timed. Its server is the checker's (no file
  * watching). Port: `PERF_PORT`, else `CONDUCTOR_PORT`, else 5196.
  *
- *   npx playwright test --config tests/perf/perf.config.ts
+ *   npm run perf
  */
 
 import { defineConfig } from '@playwright/test';
