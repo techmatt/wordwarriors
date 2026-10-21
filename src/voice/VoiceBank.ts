@@ -6,7 +6,7 @@
  * ally), so nothing decodes up front. `loadGroups([...])` fetches and decodes
  * exactly the groups a scene is about to use, and is safe to call repeatedly.
  * Voice loading must never be what stops a four-year-old playing: no manifest
- * means a mute game with the captions still showing.
+ * means a mute game with the captions still showing (from lines.json, M19).
  */
 
 import { getAudioContext, unlockAudio } from '../audio/context';
@@ -43,6 +43,8 @@ interface VoiceManifestFile {
 const DECODE_SLOTS = 12;
 /** A clip's fetch is given up after this (item 057 saw one hang 60 s), freeing its slot. Wall-clock time (`realTimeout`). */
 const FETCH_TIMEOUT_MS = 15_000;
+/** A caption-only line's pace, a word every this many seconds (VoiceBus's estimate for a line with no clip). */
+const WORD_S = 0.35;
 
 interface DecodeJob {
   id: string;
@@ -76,11 +78,30 @@ export class VoiceBank {
         for (const line of manifest.lines) this.lines.set(line.id, line);
         return true;
       } catch (error) {
-        console.warn('voice: no manifest, running mute', error);
+        console.warn('voice: no manifest, running mute with captions from lines.json', error);
+        await this.captionsOnly();
         return false;
       }
     })();
     return this.manifest;
+  }
+
+  /**
+   * M19 (item 082): with no manifest (a fresh checkout before `voice:build`, a
+   * broken junction) the line texts come from `content/voice/lines.json`, its own
+   * chunk fetched only here, so every instruction still shows its caption, each
+   * word timed at WORD_S. No audio: nothing is fetched or decoded for them.
+   */
+  private async captionsOnly(): Promise<void> {
+    try {
+      const { default: lines } = (await import('../../content/voice/lines.json')) as { default: { id: string; speaker: string; group: string; text: string }[] };
+      for (const l of lines) {
+        const words = l.text.split(/\s+/).filter(Boolean).map((word, i) => ({ word, start: i * WORD_S, end: (i + 1) * WORD_S - 0.05 }));
+        this.lines.set(l.id, { id: l.id, speaker: l.speaker, group: l.group, text: l.text, audio: '', words, duration: words.length * WORD_S });
+      }
+    } catch (error) {
+      console.warn('voice: no lines.json either, running without captions', error);
+    }
   }
 
   /** Decode every clip in these groups. Resolves when all are ready (or failed). */
@@ -114,7 +135,8 @@ export class VoiceBank {
    * VoiceBus's ENSURE_TIMEOUT_MS: the caption showed and nothing was said.
    */
   private request(ctx: AudioContext, line: VoiceLine, base: string, urgent: boolean): Promise<void> {
-    if (this.buffers.has(line.id)) return Promise.resolve();
+    // A caption-only line (no manifest, M19) has no clip to fetch.
+    if (this.buffers.has(line.id) || !line.audio) return Promise.resolve();
     const known = this.jobs.get(line.id);
     if (known) {
       const i = this.waiting.indexOf(known);

@@ -556,7 +556,8 @@ lines: a build writes the manifest from its own `lines.json`, so one from a chec
 without some lines (an older branch, a worktree cut before a merge) drops them for
 everyone. Since item 062 it says so in a `DROPPED:` block; if main still speaks them, run
 `voice:build` in main. A checkout without
-`public/voice-gen/` runs mute with captions, and the unit test that checks the manifest
+`public/voice-gen/` runs mute with captions (since item 082 their texts come from
+`content/voice/lines.json`, loaded only then), and the unit test that checks the manifest
 fails. To link one by hand: `mklink /J public\voice-gen C:\Code\gdrive-sync\wordwarriors\voice-gen`
 (in `cmd`, from the checkout root).
 
