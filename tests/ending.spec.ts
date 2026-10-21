@@ -65,11 +65,12 @@ test('a fitting dad says his own line: chef Dada Jason baked the cake', SLOW, as
 
 test('never last episode\'s scene', async ({ page }) => {
   const errors = collectErrors(page);
+  // An old blob's `ending` (item 027) loads as `recent.ending` (items 067, 076).
   await seedProgress(page, { version: 1, ending: 'picnic' });
   await boot(page, '?scene=victory&seed=2&nojourney=1&read=bed');
   const s = await until(page, (st) => st.scene === 'Ending' && Boolean(st.ending), 30_000, 'the victory scene');
   expect(s.ending!.id).not.toBe('picnic');
   // ...and this one is kept for the next episode.
-  expect((s.progress as { ending?: string | null }).ending).toBe(s.ending!.id);
+  expect((s.progress as unknown as { recent: Record<string, string[]> }).recent.ending?.at(-1)).toBe(s.ending!.id);
   expectNoErrors(errors);
 });

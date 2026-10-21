@@ -34,6 +34,10 @@ test('a drawn cast is remembered once: its villain, ally, the dads it meets and 
   assert.equal(remembered.cast, true);
   assert.deepEqual(progress.recentOf('villain'), [personOf(episode.villain)]);
   if (episode.ally) assert.deepEqual(progress.recentOf('ally'), [personOf(episode.ally)]);
+  // Each dad she meets in a drawn form (seed 12: both dads, one waking her, one there too).
+  const dads = [episode.primary, episode.secondary].filter((id): id is string => Boolean(id));
+  assert.ok(dads.length > 0, 'seed 12 draws a dad');
+  for (const id of dads) assert.deepEqual(progress.recentOf(`form_${personOf(id)}`), [id], id);
   const keys = Object.keys(progress.snapshot().recent);
   assert.ok(keys.some((k) => k.startsWith('quest_')), keys.join(' '));
   assert.ok(keys.includes('line_up'), keys.join(' '));
