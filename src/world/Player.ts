@@ -119,8 +119,11 @@ export class Player {
   private readonly hopper = { y: 0 };
   private wobbling = false;
 
+  /** Free play's jump height (item 060), set by the room each frame; her shadow stays on the floor. */
+  lift = 0;
+
   private get hopY(): number {
-    return this.hopper.y;
+    return this.hopper.y - this.lift;
   }
 
   /** A no-penalty bump: sheepish wobble. */

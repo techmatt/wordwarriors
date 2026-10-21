@@ -19,6 +19,9 @@ export const TEX = {
   pixel: 'fx_pixel',
   /** A see-through soap bubble, white so a tint colours it (Ellie's bubbles; AbilitySpec.art `fx_bubble`). */
   bubble: 'fx_bubble',
+  /** Free play's fun shots (item 060): white, so a tint colours them. */
+  heart: 'fx_heart',
+  snowball: 'fx_snowball',
 } as const;
 
 export function makeTextures(scene: Phaser.Scene): void {
@@ -97,5 +100,21 @@ export function makeTextures(scene: Phaser.Scene): void {
     g.fillStyle(0xffffff, 0.9);
     g.fillEllipse(32, 28, 20, 11);
     g.fillCircle(22, 42, 4);
+  });
+
+  make(TEX.heart, 32, 32, (g) => {
+    g.fillStyle(0xffffff, 1);
+    g.fillCircle(10, 11, 8);
+    g.fillCircle(22, 11, 8);
+    g.fillTriangle(3, 14, 29, 14, 16, 29);
+  });
+
+  make(TEX.snowball, 32, 32, (g) => {
+    g.fillStyle(0xffffff, 1);
+    g.fillCircle(16, 16, 13);
+    g.fillStyle(0xd8ecff, 1);
+    g.fillCircle(19, 19, 7);
+    g.fillStyle(0xffffff, 1);
+    g.fillCircle(11, 10, 4);
   });
 }

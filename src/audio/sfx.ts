@@ -157,6 +157,22 @@ export function sfxBoing(): void {
   playNotes([{ freq: 220, to: 660, at: 0, dur: 0.25, peak: 0.16, type: 'sine' }]);
 }
 
+/** Free play's jump (item 060): a quick rising blip, quieter than a boing. */
+export function sfxJump(): void {
+  if (!budget()) return;
+  playNotes([{ freq: 330, to: 880, at: 0, dur: 0.14, peak: 0.07, type: 'square' }]);
+}
+
+/** Free play's sparkle shot: three bright little bells. */
+export function sfxTwinkle(): void {
+  if (!budget()) return;
+  playNotes([
+    { freq: 1568, at: 0, dur: 0.12, peak: 0.06, type: 'sine' },
+    { freq: 2093, at: 0.05, dur: 0.12, peak: 0.05, type: 'sine' },
+    { freq: 2637, at: 0.1, dur: 0.16, peak: 0.04, type: 'sine' },
+  ]);
+}
+
 export function sfxFanfare(): void {
   playNotes([
     { freq: 523.3, at: 0, dur: 0.18 },

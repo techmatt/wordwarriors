@@ -19,6 +19,8 @@ import { narratorLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { advance, castArt, castScale, episode, narrator, type Step } from '../episode/Episode';
+import { formFor } from '../../content/battle/forms';
+import { FreePlay } from '../fx/freePlay';
 import { fitImage } from '../fx/juice';
 import { Controls } from '../input/Controls';
 import { dadLock } from '../input/dadLock';
@@ -51,6 +53,8 @@ export abstract class RoomScene extends Phaser.Scene {
   /** The dialogue box: rooms tell it who stands where (`track`). */
   protected caption!: Caption;
   protected player!: Player;
+  /** Her jumps and casts when she is free to play (item 060). */
+  protected play!: FreePlay;
   protected spots: Spot[] = [];
   protected floor = new Phaser.Geom.Rectangle(80, 300, GAME_WIDTH - 160, GAME_HEIGHT - 430);
   protected step!: Step;
@@ -104,6 +108,20 @@ export abstract class RoomScene extends Phaser.Scene {
     return false;
   }
 
+  /**
+   * Free play (item 060): may she jump and cast now? Not while a question
+   * waits for her answer (a room overrides with its phases), and not where she
+   * does not walk.
+   */
+  protected playOpen(): boolean {
+    return this.walking;
+  }
+
+  /** Does yellow have something to say again now? Then yellow keeps that meaning and does not cast. */
+  protected hasHint(): boolean {
+    return true;
+  }
+
   create(): void {
     this.gen++;
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -115,6 +133,7 @@ export abstract class RoomScene extends Phaser.Scene {
     bg.setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
     this.controls = new Controls(this);
     this.player = new Player(this, this.floor.centerX, this.floor.bottom - 10, this.playerArt(), this.floor);
+    this.play = new FreePlay(this, formFor(this.playerCharacter(), episode)?.id ?? null);
     this.dot = makeButtonDot(this, 0, 0, 'green', 18).setDepth(DEPTH.prompt).setVisible(false);
     // Yellow is always "say it again": a yellow dot with an ear, top right.
     this.helpDot = this.add
@@ -299,21 +318,34 @@ export abstract class RoomScene extends Phaser.Scene {
       this.dot.setPosition(best.x, bounds.top - 26).setVisible(!this.locked);
     } else this.dot.setVisible(false);
 
+    // Free play: green jumps only when it means nothing else here, yellow casts
+    // only when there is nothing to say again (item 060).
+    const open = this.playOpen();
+    let greenFree = false;
     if (this.controls.pressed('green') && !this.locked) {
-      if (!this.onGreen() && best) {
-        this.player.hop();
-        this.choose(best);
+      if (!this.onGreen()) {
+        if (best) {
+          this.player.hop();
+          this.choose(best);
+        } else greenFree = true;
       }
-    } else if (this.controls.pressed('green') && this.locked && this.walking && this.time.now >= this.ignoredHopAt) {
+    } else if (this.controls.pressed('green') && this.locked && open) greenFree = true;
+    else if (this.controls.pressed('green') && this.locked && this.walking && this.time.now >= this.ignoredHopAt) {
       // Buttons always answer: a little hop while an instruction plays. It
       // never chooses or skips anything; throttled so mashing does not stack.
       this.ignoredHopAt = this.time.now + 300;
       this.player.hop();
     }
-    if (this.controls.pressed('yellow') && !this.locked) {
+    const yellowHints = !this.locked && this.hasHint();
+    if (this.controls.pressed('yellow') && yellowHints) {
       this.tweens.add({ targets: this.helpDot, scale: 1.4, duration: 120, yoyo: true });
       this.hint();
     }
+    this.play.update(this.controls, dt, { x: this.player.x, y: this.player.y, mid: PLAYER_HEIGHT * 0.55, face: this.player.facing }, open, {
+      green: greenFree,
+      cast: yellowHints ? ['blue', 'red'] : ['blue', 'red', 'yellow'],
+    });
+    this.player.lift = this.play.height;
     this.idleHelp(deltaMs);
 
     if (this.controls.dev('F2')) advance(this);

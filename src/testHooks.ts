@@ -10,6 +10,7 @@
 import Phaser from 'phaser';
 
 import { musicPlaying } from './audio/music';
+import { playStats } from './fx/freePlay';
 import { fxStats } from './fx/juice';
 import { virtualPad, type Button } from './input/Controls';
 import { dadButtonsOpen, dadPress, type DadAnswer } from './input/dadButtons';
@@ -218,6 +219,7 @@ export function installTestHooks(game: Phaser.Game): void {
       ending: hookState.ending,
       voice: { speaking: voiceBus.speaking?.id ?? null, busy: voiceBus.busy, history: [...voiceBus.history] },
       fx: { ...fxStats },
+      play: { ...playStats },
       music: musicPlaying(),
       progress: progress.snapshot(),
     }),

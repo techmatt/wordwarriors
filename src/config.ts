@@ -227,3 +227,24 @@ export type PadColorName = keyof typeof PAD_COLOR;
 
 /** Standing still this long brings the stick hint beside her (the rooms before she first moves; the battle's move choice, item 043). */
 export const STICK_HINT_MS = 4000;
+
+/**
+ * Free play (item 060): green jumps, blue / red / yellow cast, wherever she is
+ * free to move and no answer is open (`src/fx/freePlay.ts`). Pure play: it
+ * never touches a fight or an answer.
+ *
+ * - `maxShots`: live shots at once; one more pops the oldest early.
+ * - `chargeMs`: a cast button held this long charges a big shot (shorter is a tap);
+ *   `fullChargeMs` is fully charged.
+ * - `jump`: launch speed and gravity (px/s, px/s²); holding green softens gravity
+ *   (`holdGravity`, a share) for up to `holdMs`, so a hold goes higher and floats down.
+ * - `shotSpeed`, `shotLifeMs`: how fast and how long a shot flies.
+ */
+export const FREE_PLAY = {
+  maxShots: 10,
+  chargeMs: 260,
+  fullChargeMs: 900,
+  jump: { speed: 560, gravity: 2600, holdGravity: 0.38, holdMs: 420 },
+  shotSpeed: 760,
+  shotLifeMs: 900,
+};

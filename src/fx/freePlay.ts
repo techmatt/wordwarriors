@@ -1,0 +1,327 @@
+/**
+ * Free play (item 060): her character's own toys, wherever she is free to
+ * move and no answer is open. Green jumps (a tap hops, a hold goes higher
+ * and floats down); blue, red and yellow cast (a tap is one shot, a hold
+ * charges one big one):
+ *
+ * - **blue**: zig-zag bolts with a crackling trail;
+ * - **red**: spinning sparkle stars;
+ * - **yellow**: lobbed fun things, stars, hearts and snowballs (her form adds
+ *   its own: donuts and cookies for the chef, gold stars for the knight).
+ *
+ * Pure play: a shot hits nothing, a jump moves nothing; the scene only reads
+ * `height` to lift her sprite. The scene decides when play is open and which
+ * buttons are free (a button with a meaning there keeps it). Dad lock
+ * silences it all: presses never arrive (Controls), and a charge or a held
+ * float is dropped while it is on. Live shots are capped (`FREE_PLAY.maxShots`):
+ * one more pops the oldest early.
+ */
+
+import Phaser from 'phaser';
+
+import { DEPTH, FREE_PLAY, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { sfxBoom, sfxJump, sfxPew, sfxTwinkle, sfxZap } from '../audio/sfx';
+import type { Controls } from '../input/Controls';
+import { dadLock } from '../input/dadLock';
+import { castPower, overCap, startJump, stepJump, type Jump } from '../rules/freePlay';
+import { burst, fxQuality, shockwave } from './juice';
+import { TEX } from './textures';
+
+export type CastColor = 'blue' | 'red' | 'yellow';
+
+const CAST_COLORS: CastColor[] = ['blue', 'red', 'yellow'];
+
+/** For tests: what free play has done in this scene and how many shots fly now. */
+export const playStats = { jumps: 0, shots: 0, big: 0, live: 0, maxLive: 0 };
+
+/** A shot's look: its texture, tints and trail. */
+interface Look {
+  tex: string;
+  tints: number[];
+  trail: string;
+  trailTints: number[];
+}
+
+const LOOKS: Record<CastColor, Look[]> = {
+  blue: [{ tex: TEX.glow, tints: [0x7ad9ff], trail: TEX.spark, trailTints: [0x7ad9ff, 0xffffff, 0x3d7fe0] }],
+  red: [
+    { tex: TEX.star, tints: [0xff5ab4], trail: TEX.star, trailTints: [0xff5ab4, 0xffd23f, 0xffffff] },
+    { tex: TEX.star, tints: [0xff3b3b], trail: TEX.spark, trailTints: [0xff3b3b, 0xffd23f, 0xff9de0] },
+  ],
+  yellow: [
+    { tex: TEX.star, tints: [0xffd23f], trail: TEX.spark, trailTints: [0xffd23f, 0xffffff] },
+    { tex: TEX.heart, tints: [0xff5ab4], trail: TEX.heart, trailTints: [0xff5ab4, 0xff9de0] },
+    { tex: TEX.snowball, tints: [0xffffff], trail: TEX.spark, trailTints: [0xd8ecff, 0xffffff] },
+  ],
+};
+
+/** Her form's own extras (cheap: existing textures, new tints). */
+const FORM_LOOKS: Record<string, Partial<Record<CastColor, Look[]>>> = {
+  chef: {
+    yellow: [
+      // A pink-iced donut and a cookie.
+      { tex: TEX.ring, tints: [0xff8fc8], trail: TEX.square, trailTints: [0xff5ab4, 0x7ad9ff, 0xffd23f, 0x7cf27c] },
+      { tex: TEX.snowball, tints: [0xd9a066], trail: TEX.square, trailTints: [0x6b3f1d, 0xd9a066] },
+    ],
+    // Sprinkles.
+    red: [{ tex: TEX.square, tints: [0xff5ab4], trail: TEX.square, trailTints: [0xff5ab4, 0x7ad9ff, 0xffd23f, 0x7cf27c] }],
+  },
+  knight: {
+    // A flashing sword-swipe of light and gold stars.
+    blue: [{ tex: TEX.streak, tints: [0xe8f4ff], trail: TEX.spark, trailTints: [0xe8f4ff, 0xffd23f] }],
+    yellow: [{ tex: TEX.star, tints: [0xffb800], trail: TEX.star, trailTints: [0xffd23f, 0xffffff] }],
+  },
+};
+
+/** Base on-screen size of each texture at scale 1 (they differ wildly). */
+const TEX_SCALE: Record<string, number> = { [TEX.glow]: 0.4, [TEX.ring]: 0.32, [TEX.streak]: 1.2 };
+
+interface Shot {
+  color: CastColor;
+  obj: Phaser.GameObjects.Image;
+  look: Look;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  /** Lobbed shots fall and pop at this height. */
+  floorY: number | null;
+  age: number;
+  life: number;
+  big: boolean;
+  scale: number;
+  spin: number;
+  seed: number;
+}
+
+interface Charge {
+  heldMs: number;
+  orb: Phaser.GameObjects.Image | null;
+}
+
+/** Where her character is this frame. */
+export interface PlayBody {
+  /** Her feet. */
+  x: number;
+  y: number;
+  /** Her middle, above her feet, before any jump. */
+  mid: number;
+  /** Which way she faces when she is not moving (1 right, -1 left). */
+  face: number;
+}
+
+export class FreePlay {
+  private jump: Jump | null = null;
+  private readonly charges = new Map<CastColor, Charge>();
+  private shots: Shot[] = [];
+  private readonly aim = new Phaser.Math.Vector2(1, 0);
+  private readonly trails = new Map<string, Phaser.GameObjects.Particles.ParticleEmitter>();
+  private readonly turn: Record<CastColor, number> = { blue: 0, red: 0, yellow: 0 };
+  private frame = 0;
+  private aimed = false;
+
+  /** `form`: her form this episode (`chef`, `knight`), for its extra shots. */
+  constructor(
+    private readonly scene: Phaser.Scene,
+    private readonly form: string | null = null,
+  ) {
+    playStats.jumps = 0;
+    playStats.shots = 0;
+    playStats.big = 0;
+    playStats.live = 0;
+    playStats.maxLive = 0;
+  }
+
+  /** How high she is off the floor (px): the scene lifts her sprite by it. */
+  get height(): number {
+    return this.jump?.h ?? 0;
+  }
+
+  get airborne(): boolean {
+    return this.jump !== null;
+  }
+
+  /**
+   * Once per frame. `open`: play is allowed now. `green` / `cast`: which
+   * buttons are free (a scene where green or yellow means something keeps it).
+   * `dt` in seconds, real time.
+   */
+  update(controls: Controls, dt: number, body: PlayBody, open: boolean, free: { green: boolean; cast: CastColor[] }): void {
+    this.frame++;
+    const live = open && !dadLock.locked;
+    // She shoots the way she last pushed the stick; before that, the way she faces.
+    if (controls.move.lengthSq() > 0.04) {
+      this.aim.copy(controls.move).normalize();
+      this.aimed = true;
+    } else if (!this.aimed) this.aim.set(body.face, 0);
+
+    // Jump.
+    if (live && free.green && !this.jump && controls.pressed('green')) {
+      this.jump = startJump();
+      playStats.jumps++;
+      sfxJump();
+      burst(this.scene, body.x, body.y, { count: 10, speed: 160, colors: [0xffffff, 0xffd23f], gravity: 200, life: 380 });
+    }
+    if (this.jump) {
+      const was = this.jump;
+      this.jump = stepJump(was, dt, live && controls.held('green'));
+      if (!this.jump && was.v < -300) burst(this.scene, body.x, body.y, { count: 8, speed: 140, colors: [0xffffff], gravity: 0, life: 300 });
+    }
+
+    // Casts: a press starts a charge, letting go fires it.
+    const from = { x: body.x + this.aim.x * 34, y: body.y - body.mid - this.height };
+    for (const c of CAST_COLORS) {
+      const charge = this.charges.get(c);
+      if (!live || !free.cast.includes(c)) {
+        if (charge) this.drop(c);
+        continue;
+      }
+      if (!charge) {
+        if (controls.pressed(c)) this.charges.set(c, { heldMs: 0, orb: null });
+        continue;
+      }
+      if (controls.held(c)) {
+        charge.heldMs += dt * 1000;
+        const p = castPower(charge.heldMs);
+        if (p.charged) {
+          charge.orb ??= this.scene.add.image(from.x, from.y, TEX.glow).setBlendMode(Phaser.BlendModes.ADD).setDepth(DEPTH.fx).setTint(LOOKS[c][0]!.tints[0]!);
+          const pulse = 1 + 0.12 * Math.sin(charge.heldMs / 50);
+          charge.orb.setPosition(from.x, from.y).setScale((0.3 + 0.9 * p.power) * pulse);
+          if (this.frame % 3 === 0) this.trail(LOOKS[c][0]!, from.x + Phaser.Math.Between(-50, 50), from.y + Phaser.Math.Between(-50, 50));
+        }
+        continue;
+      }
+      const p = castPower(charge.heldMs);
+      this.drop(c);
+      this.fire(c, from.x, from.y, p.charged, p.power, body.y);
+    }
+
+    this.step(dt);
+  }
+
+  /** Forget a charge, its orb with it. */
+  private drop(c: CastColor): void {
+    this.charges.get(c)?.orb?.destroy();
+    this.charges.delete(c);
+  }
+
+  /** Put down everything in hand (the scene closed play: a choice opened). */
+  reset(): void {
+    for (const c of CAST_COLORS) this.drop(c);
+    this.jump = null;
+  }
+
+  private look(c: CastColor): Look {
+    const extra = (this.form && FORM_LOOKS[this.form]?.[c]) || [];
+    const all = [...LOOKS[c], ...extra, ...extra];
+    return all[this.turn[c]++ % all.length]!;
+  }
+
+  private fire(c: CastColor, x: number, y: number, big: boolean, power: number, feetY: number): void {
+    for (let n = overCap(this.shots.length); n > 0; n--) this.pop(this.shots[0]!);
+    const look = this.look(c);
+    const scale = (TEX_SCALE[look.tex] ?? 1.3) * (big ? 2.2 + 1.6 * power : 1);
+    const obj = this.scene.add.image(x, y, look.tex).setDepth(DEPTH.fx + 1).setScale(scale).setTint(look.tints[0]!);
+    if (c !== 'yellow' || look.tex === TEX.glow) obj.setBlendMode(Phaser.BlendModes.ADD);
+    const speed = FREE_PLAY.shotSpeed * (big ? 0.8 : 1);
+    const lob = c === 'yellow';
+    const shot: Shot = {
+      color: c,
+      obj,
+      look,
+      x,
+      y,
+      vx: this.aim.x * speed * (lob ? 0.75 : 1),
+      vy: this.aim.y * speed * (lob ? 0.5 : 1) - (lob ? 620 : 0),
+      floorY: lob ? Math.max(feetY, y + 40) + Math.max(0, this.aim.y) * 160 : null,
+      age: 0,
+      life: FREE_PLAY.shotLifeMs * (big ? 1.4 : 1),
+      big,
+      scale,
+      spin: c === 'blue' ? 0 : Phaser.Math.FloatBetween(6, 12) * (Math.random() < 0.5 ? -1 : 1),
+      seed: Math.random() * 10,
+    };
+    if (look.tex === TEX.streak) obj.setRotation(Math.atan2(shot.vy, shot.vx));
+    this.shots.push(shot);
+    playStats.shots++;
+    if (big) playStats.big++;
+    playStats.live = this.shots.length;
+    playStats.maxLive = Math.max(playStats.maxLive, this.shots.length);
+    // The muzzle flash, and a sound per colour.
+    burst(this.scene, x, y, { count: big ? 26 : 8, speed: big ? 360 : 180, colors: look.trailTints, texture: look.trail, scale: 0.7, life: 320, gravity: 0, depth: DEPTH.fx + 2 });
+    if (big) {
+      shockwave(this.scene, x, y, look.tints[0]!, 140, 380);
+      sfxBoom(1);
+    }
+    if (c === 'blue') sfxZap();
+    else if (c === 'red') sfxTwinkle();
+    else sfxPew();
+  }
+
+  private step(dt: number): void {
+    const margin = 30;
+    for (const s of [...this.shots]) {
+      s.age += dt * 1000;
+      if (s.floorY !== null) s.vy += 1500 * dt;
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
+      // Bolts zig-zag across their path.
+      let wx = 0;
+      let wy = 0;
+      if (s.color === 'blue' && s.look.tex !== TEX.streak) {
+        const z = Math.sin(s.age / 28 + s.seed) * (s.big ? 22 : 12);
+        const len = Math.hypot(s.vx, s.vy) || 1;
+        wx = (-s.vy / len) * z;
+        wy = (s.vx / len) * z;
+      }
+      const pulse = 1 + 0.15 * Math.sin(s.age / 45 + s.seed);
+      s.obj.setPosition(s.x + wx, s.y + wy).setScale(s.scale * pulse);
+      if (s.spin) s.obj.rotation += s.spin * dt;
+      // A trail, thinned when frames drop.
+      if (this.frame % (fxQuality.level < 0.7 ? 3 : 1) === 0) this.trail(s.look, s.x + wx, s.y + wy, s.big ? 2 : 1);
+      const out = s.x < margin || s.x > GAME_WIDTH - margin || s.y < margin || s.y > GAME_HEIGHT - margin;
+      if (out || s.age > s.life || (s.floorY !== null && s.vy > 0 && s.y >= s.floorY)) this.pop(s);
+    }
+  }
+
+  private trail(look: Look, x: number, y: number, n = 1): void {
+    const key = `${look.trail}|${look.trailTints.join(',')}`;
+    let e = this.trails.get(key);
+    if (!e || !e.active) {
+      e = this.scene.add
+        .particles(0, 0, look.trail, {
+          speed: { min: 10, max: 90 },
+          angle: { min: 0, max: 360 },
+          scale: { start: look.trail === TEX.spark ? 1.1 : 0.55, end: 0 },
+          alpha: { start: 0.9, end: 0 },
+          lifespan: 320,
+          tint: look.trailTints,
+          blendMode: Phaser.BlendModes.ADD,
+          emitting: false,
+        })
+        .setDepth(DEPTH.fx);
+      this.trails.set(key, e);
+    }
+    e.emitParticleAt(x, y, n);
+  }
+
+  /** A shot ends in a burst of its own things. */
+  private pop(s: Shot): void {
+    this.shots = this.shots.filter((o) => o !== s);
+    playStats.live = this.shots.length;
+    const { x, y } = s.obj;
+    s.obj.destroy();
+    const tex = s.look.tex === TEX.glow || s.look.tex === TEX.streak ? s.look.trail : s.look.tex;
+    burst(this.scene, x, y, {
+      count: s.big ? 40 : 12,
+      speed: s.big ? 420 : 220,
+      colors: [...s.look.tints, ...s.look.trailTints],
+      texture: tex,
+      scale: tex === TEX.spark ? 1.2 : 0.6,
+      life: s.big ? 700 : 450,
+      gravity: s.color === 'yellow' ? 500 : 120,
+      depth: DEPTH.fx + 2,
+    });
+    if (s.big) shockwave(this.scene, x, y, s.look.tints[0]!, 220, 450);
+  }
+}
