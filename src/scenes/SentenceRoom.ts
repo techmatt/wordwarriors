@@ -53,6 +53,14 @@ const BANNER_W = 1040;
 /** The banner's word size once a sentence takes two rows (item 043, M4): two rows at this before one smaller row. */
 const TWO_ROWS_PX = 56;
 const BANNER_Y = 120;
+/** A banner of two or more rows: its top edge, and how much of its height the rows fill. */
+const TALL_BANNER_TOP = 6;
+const MULTI_ROW_FILL = 0.56;
+/** The picture on its pedestal: how high above the spot its top is (pedestal 100 + picture 150), and its bob. */
+const PIC_TOP = 250;
+const PIC_BOB = 5;
+/** Clear air between the banner's bottom edge and the tallest picture's top. */
+const BANNER_GAP = 10;
 /** The silent beat on the key word at the end of the listening pass. */
 const KEY_BEAT_MS = 1200;
 /** How big the lit word grows (the layout leaves room for it). */
@@ -160,7 +168,14 @@ export class SentenceRoom extends Minigame {
       return;
     }
     const room = SIDE_ROOM_BY_ID[this.plan.room]!;
-    this.player.place(room.entry.x, Math.min(room.entry.y, this.floor.bottom - 10));
+    this.makeBanner();
+    // The pictures stand clear of the banner (item 059): a tall banner (a long
+    // sentence on two or three rows) moves them down the floor, never over them.
+    const bannerBottom = this.banner.y + this.bannerH / 2;
+    const highest = Math.min(...room.spots.slice(0, this.plan.objects.length).map(([, y]) => y));
+    const drop = Math.max(0, Math.ceil(bannerBottom + BANNER_GAP - (highest - PIC_TOP - PIC_BOB)));
+    // She comes in below them, so she is not standing on one when they wake.
+    this.player.place(room.entry.x, Math.min(Math.max(room.entry.y, highest + drop + 70), this.floor.bottom - 10));
     // Arriving: a hop and a puff where she comes in.
     this.player.hop();
     burst(this, this.player.x, this.player.y - 40, { count: 16, speed: 220 });
@@ -171,16 +186,18 @@ export class SentenceRoom extends Minigame {
     void voiceBank.ensure(s.prefixLine);
     void voiceBank.ensure(wordLine(s.key));
 
-    this.makeBanner();
-
     // The three objects, asleep until the read-along reaches the key word.
     this.plan.objects.forEach((word, i) => {
-      const [x, y] = room.spots[i]!;
+      const [x, y0] = room.spots[i]!;
+      const y = y0 + drop;
       const w = WORD_BY_ID[word];
       const pedestal = this.art('prop_pedestal', 170, 100);
       const pic = this.art(w ? pictureFor(w, castFace) : `pic_${word}`, 150, 150, 0, -100);
       const spot = this.addSpot(word, x, y, [pedestal, pic], word === s.key);
       spot.obj.setData('pic', pic);
+      // What must stay in view is the picture; the pedestal's foot may sit behind the dialogue box.
+      spot.obj.data.remove('qaTarget');
+      pic.setData('qaTarget', word);
       spot.enabled = false;
       spot.obj.setAlpha(0.75);
       bob(this, pic, 5, 900 + i * 120);
@@ -283,11 +300,13 @@ export class SentenceRoom extends Minigame {
       size -= 4;
     }
     const lineH = size * 1.2;
-    // The cream panel is about the middle half of the banner art, a little
-    // below its centre (the pole and cords are above): a wrapped sentence gets
-    // a taller banner, with its rows centred on the panel.
-    this.bannerH = rows.length > 1 ? Math.max(140, (rows.length * lineH) / 0.44) : 140;
-    const panelY = rows.length > 1 ? this.bannerH * 0.06 : 0;
+    // The panel (cream and its red edges) is about the middle half of the
+    // banner art, a little below its centre (the pole and cords are above): a
+    // wrapped sentence gets a taller banner, with its rows centred on the
+    // panel. No taller than that (item 059: at 0.44 a two-row banner was 305
+    // px and hung over the tops of the pictures she chooses between).
+    this.bannerH = rows.length > 1 ? Math.max(140, (rows.length * lineH) / MULTI_ROW_FILL) : 140;
+    const panelY = rows.length > 1 ? this.bannerH * 0.03 : 0;
     rows.forEach((row, r) => {
       let x = -rowWidth(row) / 2;
       const y = panelY + (r - (rows.length - 1) / 2) * lineH;
@@ -298,7 +317,11 @@ export class SentenceRoom extends Minigame {
       });
     });
     const bg = this.add.image(0, 0, 'prop_banner').setDisplaySize(BANNER_W, this.bannerH);
-    this.banner = this.add.container(GAME_WIDTH / 2, BANNER_Y + (this.bannerH - 140) / 2, [bg, ...this.tokenBoxes]).setDepth(DEPTH.hud - 1);
+    // One row hangs at BANNER_Y; a taller banner goes up to the top of the screen (its pole is all that is up there).
+    const y = rows.length > 1 ? TALL_BANNER_TOP + this.bannerH / 2 : BANNER_Y;
+    this.banner = this.add.container(GAME_WIDTH / 2, y, [bg, ...this.tokenBoxes]).setDepth(DEPTH.hud - 1);
+    // A cover for the bug-hunt checker's probe: it must never hang over a picture (item 059).
+    this.banner.setData('qaCover', 'banner');
     popIn(this, this.banner, 1);
   }
 

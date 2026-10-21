@@ -24,7 +24,52 @@ export interface Layout {
   texts: { scene: string; text: string; b: Box; depth: number; group: number; size: number }[];
   images: { scene: string; key: string; b: Box; depth: number }[];
   spots: { id: string; x: number; y: number }[];
+  /** What she must look at or choose (`qaTarget` in the game): pictures, doors, pads, recap cards. */
+  targets: { scene: string; id: string; b: Box; depth: number }[];
+  /** What may hang over the scene (`qaCover`): the dialogue box and face card, bubbles, the sentence banner. */
+  covers: { scene: string; kind: string; b: Box; depth: number }[];
   hudDepth: number;
+}
+
+/**
+ * Banners and dialogue over the things she must look at or choose (item 059,
+ * Matt: "a banner or dialogue box must never cover a picture or target"):
+ * every tagged cover, and any untagged lettered text at speech depth or
+ * above (a new banner nobody tagged), boxed per container, against every
+ * target's bounds. Only a cover drawn above the target counts (the victory's
+ * recap cards stand over the dialogue box on purpose), and only a real
+ * overlap, more than a few pixels each way. Words inside a target (its
+ * label) or inside a tagged cover (the box's own words) are not covers.
+ */
+export function coverIssues(l: Pick<Layout, 'texts' | 'targets' | 'covers' | 'hudDepth'>, scene: string): Issue[] {
+  const out: Issue[] = [];
+  const centre = (b: Box) => [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2] as const;
+  const within = (b: Box, outer: Box) => inside(...centre(b), outer);
+  const covers = [...l.covers];
+  const groups = new Map<number, { b: Box; depth: number }>();
+  for (const t of l.texts) {
+    if (t.depth < l.hudDepth || !/[A-Za-z]/.test(t.text)) continue;
+    if (l.covers.some((c) => within(t.b, c.b)) || l.targets.some((g) => within(t.b, g.b))) continue;
+    const g = groups.get(t.group);
+    groups.set(t.group, g ? { b: [Math.min(g.b[0], t.b[0]), Math.min(g.b[1], t.b[1]), Math.max(g.b[2], t.b[2]), Math.max(g.b[3], t.b[3])], depth: Math.max(g.depth, t.depth) } : { b: [...t.b], depth: t.depth });
+  }
+  for (const g of groups.values()) covers.push({ scene, kind: 'hud-text', ...g });
+  for (const t of l.targets) {
+    for (const c of covers) {
+      if (c.depth <= t.depth) continue;
+      const w = Math.min(t.b[2], c.b[2]) - Math.max(t.b[0], c.b[0]);
+      const h = Math.min(t.b[3], c.b[3]) - Math.max(t.b[1], c.b[1]);
+      if (w <= 4 || h <= 4) continue;
+      out.push({
+        kind: 'target-covered',
+        severity: 'bug',
+        scene,
+        detail: `${t.id} [${t.b.join(',')}] under the ${c.kind} [${c.b.join(',')}], ${w}x${h} px`,
+        key: `covered:${scene}:${c.kind}:${t.id}`,
+      });
+    }
+  }
+  return out;
 }
 
 export interface Since {
@@ -90,20 +135,8 @@ export function layoutIssues(l: Layout, scene: string, placeholders: Set<string>
       }
     }
   }
-  // A target under the dialogue: the box's words (and the face cards) at speech depth and above.
-  const hud = l.texts.filter((t) => t.depth >= l.hudDepth);
-  const groups = new Map<number, Box>();
-  for (const t of hud) {
-    const g = groups.get(t.group);
-    groups.set(t.group, g ? [Math.min(g[0], t.b[0]), Math.min(g[1], t.b[1]), Math.max(g[2], t.b[2]), Math.max(g[3], t.b[3])] : [...t.b]);
-  }
-  for (const s of l.spots) {
-    for (const g of groups.values()) {
-      const padded: Box = [g[0] - 20, g[1] - 16, g[2] + 20, g[3] + 16];
-      // The thing stands on its spot: its middle is about 50 px above.
-      if (inside(s.x, s.y - 50, padded)) out.push({ kind: 'target-covered', severity: 'look', scene, detail: `${s.id} under dialogue text`, key: `covered:${scene}:${s.id}` });
-    }
-  }
+  // A target under a banner, the dialogue box or a bubble (item 059: real boxes, a bug).
+  out.push(...coverIssues(l, scene));
   for (const im of l.images) {
     if (placeholders.has(im.key)) out.push({ kind: 'placeholder-art', severity: 'look', scene, detail: im.key, key: `placeholder:${im.key}` });
   }

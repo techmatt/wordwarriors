@@ -1025,6 +1025,10 @@ export class BattleScene extends Phaser.Scene implements StageHost {
       92,
     );
     const sign = this.add.container(x, sy, [stake, plate, label]).setDepth(DEPTH.prompt - 10);
+    // What she reads and walks to: the bug-hunt checker's probe checks nothing covers them (item 059).
+    sign.setData('qaTarget', `sign_${word}`);
+    // The disc, not the ring's container: its soft glow spreads twice as wide and is not what she walks onto.
+    disc.setData('qaTarget', `pad_${word}`);
     // Popped in from nothing by updateChoice, on wall-clock time.
     sign.setScale(0);
     ring.setScale(0);

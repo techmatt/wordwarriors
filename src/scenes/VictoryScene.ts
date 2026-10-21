@@ -168,7 +168,7 @@ export class VictoryScene extends Phaser.Scene {
       // Along the bottom, in front of the podium's feet: in the middle of the
       // screen they hid the grown-ups' heads (item 039).
       // Over the dialogue box (DEPTH.hud + 5): the card being said is the highlighter.
-      const c = this.add.container(x, CARD_Y, parts).setDepth(DEPTH.hud + 6);
+      const c = this.add.container(x, CARD_Y, parts).setDepth(DEPTH.hud + 6).setData('qaTarget', `card_${w}`);
       this.cards.push(c);
       c.setScale(0);
       this.tweens.add({ targets: c, scale: CARD_SCALE, duration: 300, ease: 'Back.easeOut' });

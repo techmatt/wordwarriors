@@ -88,6 +88,10 @@ export class Bubbles {
     this.bubble.setData('w', w);
     this.bubble.setData('tail', tail);
     this.bubble.setData('tailX', NaN);
+    // For the bug-hunt checker's probe (item 059): the bubble's box, as drawn now, must not cover a target.
+    const bubble = this.bubble;
+    this.bubble.setData('qaCover', 'bubble');
+    this.bubble.setData('qaCoverRects', () => [[bubble.x - (w / 2) * bubble.scaleX, bubble.y - (h / 2) * bubble.scaleY, bubble.x + (w / 2) * bubble.scaleX, bubble.y + (h / 2) * bubble.scaleY]]);
     this.bubble.setScale(0.2);
     this.scene.tweens.add({ targets: this.bubble, scale: 1, duration: 180, ease: 'Back.easeOut' });
     this.follow();

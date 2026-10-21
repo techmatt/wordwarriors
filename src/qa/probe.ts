@@ -71,6 +71,37 @@ interface DrawnImage {
   depth: number;
 }
 
+type Rect = [number, number, number, number];
+
+/**
+ * A thing she has to look at or choose (a room's spot, a battle pad): tagged
+ * `qaTarget` (its id) by the scene that draws it, with its bounds now.
+ */
+interface DrawnTarget {
+  scene: string;
+  id: string;
+  b: Rect;
+  depth: number;
+}
+
+/**
+ * Something that may stand over the scene and hide it (the dialogue box and
+ * its face card, a speech bubble, the sentence banner): tagged `qaCover`, a
+ * kind name, by whatever draws it. Its `qaCoverRects` (a function), when set,
+ * gives the boxes actually drawn (a Graphics box has no bounds of its own).
+ */
+interface DrawnCover {
+  scene: string;
+  kind: string;
+  b: Rect;
+  depth: number;
+}
+
+/** A game object's own data value, without creating a data manager on every object the probe walks. */
+function tag(o: Phaser.GameObjects.GameObject, key: string): unknown {
+  return (o as unknown as { data?: Phaser.Data.DataManager | null }).data?.get(key);
+}
+
 const log = {
   voice: [] as QaVoice[],
   locks: [] as QaLock[],
@@ -178,9 +209,18 @@ export function installProbe(game: Phaser.Game): void {
 }
 
 /** What is drawn now: visible texts and images with world bounds, and the room's targets. */
-function layout(game: Phaser.Game): { texts: DrawnText[]; images: DrawnImage[]; spots: { id: string; x: number; y: number }[]; hudDepth: number } {
+function layout(game: Phaser.Game): {
+  texts: DrawnText[];
+  images: DrawnImage[];
+  spots: { id: string; x: number; y: number }[];
+  targets: DrawnTarget[];
+  covers: DrawnCover[];
+  hudDepth: number;
+} {
   const texts: DrawnText[] = [];
   const images: DrawnImage[] = [];
+  const targets: DrawnTarget[] = [];
+  const covers: DrawnCover[] = [];
   let groupId = 0;
   const box = (o: { getBounds(): Phaser.Geom.Rectangle }): [number, number, number, number] => {
     const b = o.getBounds();
@@ -193,6 +233,14 @@ function layout(game: Phaser.Game): { texts: DrawnText[]; images: DrawnImage[]; 
       if (!vis) continue;
       const d = (o as unknown as { depth?: number }).depth ?? 0;
       const own = group ? depth : d;
+      const target = tag(o, 'qaTarget');
+      if (typeof target === 'string' && 'getBounds' in o) targets.push({ scene: scene.scene.key, id: target, b: box(o as unknown as { getBounds(): Phaser.Geom.Rectangle }), depth: own });
+      const cover = tag(o, 'qaCover');
+      if (typeof cover === 'string') {
+        const rects = tag(o, 'qaCoverRects');
+        const list: Rect[] = typeof rects === 'function' ? (rects as () => Rect[])() : 'getBounds' in o ? [box(o as unknown as { getBounds(): Phaser.Geom.Rectangle })] : [];
+        for (const r of list) covers.push({ scene: scene.scene.key, kind: cover, b: r.map(Math.round) as Rect, depth: own });
+      }
       if (o instanceof Phaser.GameObjects.Container) walk(scene, o.list, vis, own, ++groupId, a);
       else if (o instanceof Phaser.GameObjects.Text && o.text.trim()) {
         texts.push({ scene: scene.scene.key, text: o.text, b: box(o), depth: own, group, size: Number.parseFloat(String(o.style.fontSize)) * Math.abs(o.scaleY) });
@@ -204,7 +252,7 @@ function layout(game: Phaser.Game): { texts: DrawnText[]; images: DrawnImage[]; 
   };
   for (const scene of game.scene.getScenes(true)) walk(scene, scene.children.list, true, 0, 0, 1);
   const spots = hookState.room?.spots.map((s) => ({ id: s.id, x: s.x, y: s.y })) ?? hookState.battle?.choice?.spots.map((s) => ({ id: s.word, x: s.x, y: s.y })) ?? [];
-  return { texts, images, spots, hudDepth: DEPTH.speech };
+  return { texts, images, spots, targets, covers, hudDepth: DEPTH.speech };
 }
 
 /** Objects, tweens and timers alive, for growth from one episode to the next. */

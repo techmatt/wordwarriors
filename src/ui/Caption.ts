@@ -101,6 +101,8 @@ export class Caption {
   private readonly off: () => void;
   private readonly L: Layout;
   private band: 'top' | 'bottom' = 'bottom';
+  /** The box and the face card as last laid out, [left, top, right, bottom] each: what the QA probe reports. */
+  private coverRects: [number, number, number, number][] = [];
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -112,6 +114,9 @@ export class Caption {
     this.text = scene.add.container(0, 0);
     // Over the rest of the HUD: a top box sat under the bag's row of items, which covered the face (item 039).
     this.root = scene.add.container(0, 0, [this.box, this.slab, this.text]).setDepth(DEPTH.hud + 5).setVisible(false);
+    // For the bug-hunt checker's probe (item 059): the box and face card as laid out, which must not cover a target.
+    this.root.setData('qaCover', 'dialogue');
+    this.root.setData('qaCoverRects', () => this.coverRects);
     this.off = voiceBus.on((u) => this.show(u));
     // Phaser keeps a scene's event emitter across restarts, so the per-frame
     // listener must go when the scene shuts down: an old Caption ticking on
@@ -341,6 +346,10 @@ export class Caption {
     this.band = band;
     const { cy, faceX, boxX, boxY } = place(band, side);
     const cardMid = p ? cy + p.cardY : cy;
+    this.coverRects = [
+      ...(p ? [[faceX - pw / 2, cy - ph / 2, faceX + pw / 2, cy + ph / 2] as [number, number, number, number]] : []),
+      ...(hasBox ? [[boxX - boxW / 2, boxY - boxH / 2, boxX + boxW / 2, boxY + boxH / 2] as [number, number, number, number]] : []),
+    ];
     if (p) {
       p.root.setPosition(faceX, cy);
       p.baseY = cy;

@@ -142,7 +142,8 @@ export abstract class RoomScene extends Phaser.Scene {
 
   /** Add a choosable thing standing in the room. */
   protected addSpot(id: string, x: number, y: number, children: Phaser.GameObjects.GameObject[], correct: boolean | null = null, onNear?: () => void): Spot {
-    const obj = this.add.container(x, y, children).setDepth(y);
+    // `qaTarget`: the bug-hunt checker's probe reports its bounds, so nothing may cover it (item 059).
+    const obj = this.add.container(x, y, children).setDepth(y).setData('qaTarget', id);
     const spot: Spot = { id, x, y, obj, correct, enabled: true, baseScale: 1, ...(onNear ? { onNear } : {}) };
     this.spots.push(spot);
     return spot;
