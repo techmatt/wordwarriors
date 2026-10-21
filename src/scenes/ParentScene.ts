@@ -24,6 +24,7 @@ import { FAMILIES } from '../../content/phonics/families';
 import { DIGRAPH_SOUNDS, LETTERS } from '../../content/phonics/letters';
 import { FRAMES } from '../../content/phonics/sentences';
 import { WORDS } from '../../content/phonics/words';
+import { startScene } from '../art/gate';
 import { stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { BANK_DRAW, GAME_HEIGHT, GAME_WIDTH, GRAB, SENTENCE_SOLID } from '../config';
@@ -224,8 +225,9 @@ export class ParentScene extends Phaser.Scene {
       return;
     }
     if (this.controls.pressed('red') || this.controls.dev('F9')) {
-      if (this.back === 'Title') this.scene.start('Title');
-      else this.scene.start(this.back, this.backData);
+      // Through the art gate (item 065): after a `?scene=parent` boot nothing has loaded yet.
+      if (this.back === 'Title') startScene(this, 'Title');
+      else startScene(this, this.back, this.backData);
     }
     this.controls.endFrame();
   }

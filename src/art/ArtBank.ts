@@ -3,7 +3,7 @@
  * all 459 pictures (47 MB) before the title. Now nothing loads until a scene
  * asks: `ensure(ids)` (a scene about to show: front of the queue) or
  * `prefetch(ids)` (the scene after it, in the background). Each picture is
- * fetched once, decoded off the main thread (`Image.decode`) and handed to
+ * fetched once, decoded off the main thread where it can be (`Image.decode`) and handed to
  * Phaser's texture manager, so it outlives every scene.
  *
  * Which scene needs what is `src/art/needs.ts`; the gate that keeps a scene
@@ -22,8 +22,12 @@ import { ART_BY_ID } from '../../content/art/assets';
 
 /** Pictures fetched and decoded at once. */
 const SLOTS = 8;
-/** A fetch is given up after this, freeing its slot (the file gets the magenta square). */
-const FETCH_TIMEOUT_MS = 20_000;
+/**
+ * A fetch is given up after this and tried once more, then the file gets the
+ * magenta square. Long: test clocks run fast (`WW_SPEED` 5 makes it 12 s real)
+ * and a slow lane fetches through a busy dev server (20 s timed out there).
+ */
+const FETCH_TIMEOUT_MS = 60_000;
 
 interface Job {
   id: string;
@@ -139,17 +143,33 @@ export class ArtBank {
     }
   }
 
+  /** One retry: under load a fetch can stall, and that must not leave her a magenta square. */
   private async load(id: string): Promise<void> {
+    try {
+      await this.fetchImage(id);
+    } catch {
+      await this.fetchImage(id);
+    }
+  }
+
+  private fetchImage(id: string): Promise<void> {
     const game = this.game;
-    if (!game) throw new Error('art bank not installed');
+    if (!game) return Promise.reject(new Error('art bank not installed'));
     const img = new Image();
-    img.src = `${import.meta.env.BASE_URL}art/${id}.png`;
     let timer = 0;
-    await Promise.race([
-      img.decode(),
-      new Promise((_, reject) => (timer = window.setTimeout(() => reject(new Error('timed out')), FETCH_TIMEOUT_MS))),
-    ]).finally(() => window.clearTimeout(timer));
-    if (!this.exists(id)) this.add(() => game.textures.addImage(id, img));
+    return new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error('not found'));
+      timer = window.setTimeout(() => reject(new Error('timed out')), FETCH_TIMEOUT_MS);
+      img.src = `${import.meta.env.BASE_URL}art/${id}.png`;
+    })
+      .finally(() => window.clearTimeout(timer))
+      .then(async () => {
+        // Decoded off the main thread where it can be. Chromium sometimes refuses
+        // (`EncodingError`) with many at once; the loaded image is still good, decoded on first draw.
+        await img.decode().catch(() => undefined);
+        if (!this.exists(id)) this.add(() => game.textures.addImage(id, img));
+      });
   }
 
   /** A missing art file must not stop the game: the magenta square boot always painted. */

@@ -165,12 +165,17 @@ export function installProbe(game: Phaser.Game): void {
   }
 
   // A scene that opens with its own art still loading (item 065): the gate (src/art/gate.ts) should never let one.
-  for (const scene of game.scene.getScenes(false)) {
-    scene.events.on(Phaser.Scenes.Events.CREATE, () => {
-      const key = scene.scene.key;
-      for (const id of artBank.missing(artFor(key, false))) log.lateArt.push({ id, scene: key });
-    });
-  }
+  // The scenes are only made once the game boots (installProbe runs before).
+  const watchScenes = () => {
+    for (const scene of game.scene.getScenes(false)) {
+      scene.events.on(Phaser.Scenes.Events.CREATE, () => {
+        const key = scene.scene.key;
+        for (const id of artBank.missing(artFor(key, false))) log.lateArt.push({ id, scene: key });
+      });
+    }
+  };
+  if (game.isBooted) watchScenes();
+  else game.events.once(Phaser.Core.Events.READY, watchScenes);
 
   // Frame times and lock stretches, once a frame.
   let open: QaLock | null = null;

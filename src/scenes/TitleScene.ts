@@ -11,6 +11,7 @@ import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
 import { artBank } from '../art/ArtBank';
+import { castSet } from '../art/needs';
 import { PERSONS, ROSTER } from '../../content/battle/roster';
 import { coreLine } from '../../content/voice/ids';
 import { getAudioContext, unlockAudio } from '../audio/context';
@@ -94,7 +95,10 @@ export class TitleScene extends Phaser.Scene {
     // here after an episode; on a cold start the first press is the unlock.
     // Captioned like every instruction (item 039: it was the one line with no box).
     new Caption(this);
-    if (getAudioContext()?.state === 'running') this.time.delayedCall(700, () => void voiceBus.say(coreLine('title')));
+    // Its caption shows the narrator's face, and the cast was just drawn (item 065: wait for their art).
+    const castArt = artBank.ensure(castSet());
+    if (getAudioContext()?.state === 'running') this.time.delayedCall(700, () => void castArt.then(() => this.scene.isActive() && !this.leaving && voiceBus.say(coreLine('title'))));
+    artBank.prefetch(castSet());
 
     // Whether a gamepad press counts as a user gesture for audio in Chrome is
     // unconfirmed (2026-10-18), so while audio is still locked a grown-up note

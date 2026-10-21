@@ -44,7 +44,7 @@ import { helperAbilityFor } from '../rules/moves';
 const family = (prefix: string) => ART_ASSETS.filter((a) => a.id.startsWith(prefix)).map((a) => a.id);
 
 /** Every character a scene of this episode may show, as each image they may appear as. */
-function castSet(): string[] {
+export function castSet(): string[] {
   const ids = [episode.hero, episode.ally, episode.villain, episode.primary, episode.secondary, helper(), waker(), ...(episode.ending ? endingPeople(episode) : [])];
   const out: string[] = [];
   for (const id of ids) {
@@ -131,7 +131,7 @@ function endingSet(draw: boolean): string[] {
 }
 
 /** The parked v0.1 games draw their rounds as they open, from every picture: they wait for the lot. */
-const PARKED = new Set(['Prep', 'SoundToLetter', 'BlendPath', 'WordToPicture', 'Spelling', 'Alarm', 'Retreat', 'Pick']);
+const PARKED = new Set(['Prep', 'SoundToLetter', 'BlendPath', 'WordToPicture', 'Spelling', 'Alarm', 'Retreat']);
 
 /**
  * The art scene `key` draws, for the episode as it is. `draw`: make the plans
@@ -147,6 +147,10 @@ export function artFor(key: string, draw: boolean): string[] {
     case 'Title':
       // The parade is every person, good and evil by turns; the duel picks from what has loaded (TitleScene).
       return ['room_title', ...ROSTER.filter((c) => !c.person).flatMap((c) => [charArt(c.id, false), charArt(c.id, true)])];
+    case 'Pick':
+      // Every person's card, good or evil, and the surprise villain (any form).
+      out.push('room_pick', ...ROSTER.flatMap((c) => [charArt(c.id, false), charArt(c.id, true)]));
+      break;
     case 'Journey':
       out.push('room_title');
       break;

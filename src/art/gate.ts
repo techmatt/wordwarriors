@@ -33,6 +33,7 @@ function upcoming(key: string): string[] {
   };
   switch (key) {
     case 'Title':
+      add(sceneOf(next));
       add('Bedroom');
       // The duel under the logo picks from what has loaded (TitleScene): every form, in the background.
       out.push(...ROSTER.flatMap((c) => [charArt(c.id, false), charArt(c.id, true)]));
@@ -55,6 +56,9 @@ function upcoming(key: string): string[] {
       break;
     case 'Victory':
       add('Title');
+      break;
+    case 'Pick':
+      add(sceneOf(next));
       break;
     default:
       if (key.endsWith('Room') || key === 'WordMachine') add('Hub');
