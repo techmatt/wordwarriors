@@ -56,7 +56,7 @@ import { Controls } from '../input/Controls';
 import { withStems } from '../rules/bank';
 import type { MoveOwner } from '../rules/moves';
 import { progress } from '../state/progress';
-import { hookState } from '../testHooks';
+import { hookState } from '../hookState';
 import { voiceBank } from '../voice/VoiceBank';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { Bubbles } from '../ui/Bubbles';
@@ -67,6 +67,7 @@ import { cast, type Projectile, type Trap } from './abilities';
 import { Fighter, FLOOR_BOTTOM, FLOOR_TOP, initFromMinion, initFromSpec, type FighterInit } from './Fighter';
 import { dadLock } from '../input/dadLock';
 import { ARENA_LEFT, ARENA_RIGHT, STEER } from './movement';
+import { BattleHud } from './hud';
 import { makeStage } from './stages';
 import type { FightStage, Phase, StageHost } from './stages/stage';
 
@@ -169,8 +170,8 @@ export class BattleScene extends Phaser.Scene implements StageHost {
   private arenaKey = 'meadow';
   private controls!: Controls;
   private darkRect!: Phaser.GameObjects.Rectangle;
-  private hud!: Phaser.GameObjects.Graphics;
-  private hudLabels: Phaser.GameObjects.Text[] = [];
+  /** The names, bars, fetched things and runes along the top (hud.ts). */
+  private hud!: BattleHud;
   private simRate = 1;
   private teamNextCast = { hero: 0, villain: 0 };
   private nextTaunt = 4000;
@@ -220,7 +221,6 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     this.itemsUsed = 0;
     this.runesFired = 0;
     this.bagSaid = false;
-    this.hudLabels = [];
     this.bannerText = null;
     this.bannerBig = 0;
   }
@@ -248,7 +248,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
       if (!t?.active || t.alpha < 0.2) return [HUD_BAND];
       return [HUD_BAND, new Phaser.Geom.Rectangle(t.x - t.width / 2 - 10, t.y - t.height / 2 - 10, t.width + 20, t.height + 20)];
     });
-    this.hud = this.add.graphics().setDepth(DEPTH.hud);
+    this.hud = new BattleHud(this);
     this.cameras.main.fadeIn(300);
 
     // The cast.
@@ -264,7 +264,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     this.show = makeStage(this.fight.kind, this);
     this.show.setup();
 
-    this.makeHudLabels();
+    this.hud.makeLabels(this.heroes, this.villain, this.part);
     fxQuality.level = 1;
     this.ambience();
     startMusic('battle');
@@ -1729,7 +1729,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     v.root.setVisible(false);
     // Good again: the corner label drops its EVIL too (item 039).
     const goodName = CHARACTER_BY_ID[episode.villain]?.good.displayName;
-    if (goodName) this.hudLabels.at(-1)?.setText(goodName.toUpperCase());
+    if (goodName) this.hud.renameVillain(goodName.toUpperCase());
     for (const h of this.heroes) h.invulnerable = false;
     // Good again, the villain says sorry (or asks to come next time) in its own
     // voice, in a bubble over its good self. The victory says another.
@@ -1957,59 +1957,6 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     });
   }
 
-  // -- HUD -------------------------------------------------------------------------
-
-  private makeHudLabels(): void {
-    const style = { fontFamily: '"Arial Black", sans-serif', fontSize: '18px', color: '#ffffff', stroke: '#000000', strokeThickness: 5 };
-    this.heroes.forEach((h, i) => {
-      this.hudLabels.push(this.add.text(30, 14 + i * 44, h.init.name.toUpperCase(), style).setDepth(DEPTH.hud + 1));
-    });
-    this.hudLabels.push(this.add.text(GAME_WIDTH - 30, 14, this.villain.init.name.toUpperCase(), style).setOrigin(1, 0).setDepth(DEPTH.hud + 1));
-
-    // What she fetched in the house (and the counter-item, once made), in a
-    // row beside the heroes' bars, so the link from reading to the fight
-    // stays on screen the whole battle. The parked games' things too, if set.
-    const made: string[] = episode.fetched.filter((w) => FETCH_BY_WORD[w]).map((w) => `pic_${w}`);
-    if (episode.made.gem) made.push('prop_gem');
-    if (episode.made.ammo) made.push('prop_ammo');
-    if (episode.made.helper) made.push('minion_helper');
-    if (episode.made.item) made.push(counterArt());
-    made.forEach((key, i) => {
-      const icon = fitImage(this.add.image(370 + i * 58, 40, key), 50, 50).setDepth(DEPTH.hud + 1);
-      const s = icon.scale;
-      icon.setScale(0);
-      this.tweens.add({ targets: icon, scale: s, duration: 300, delay: 300 + i * 120, ease: 'Back.easeOut' });
-    });
-    // Charge the Spell's runes (item 053), for the part they fire in: a row under the
-    // heroes' bars, left of x 300, where no fight style's meter or PICK A MOVE! goes.
-    const runes = episode.charged?.part === this.part ? episode.charged.sounds.filter((s) => RUNE_BY_SOUND[s]) : [];
-    runes.forEach((sound, i) => {
-      const x = 46 + i * 34;
-      const y = 38 + this.heroes.length * 44 - 8;
-      const chip = fitImage(this.add.image(x, y, 'prop_rune_stone'), 30, 30).setDepth(DEPTH.hud + 1);
-      const t = this.add.text(x, y + 1, sound.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: sound.length > 1 ? '13px' : '18px', color: '#1a1030' }).setOrigin(0.5).setDepth(DEPTH.hud + 2);
-      for (const o of [chip, t]) {
-        const s = o.scale;
-        o.setScale(0);
-        this.tweens.add({ targets: o, scale: s, duration: 300, delay: 600 + i * 100, ease: 'Back.easeOut' });
-      }
-    });
-  }
-
-  private drawHud(): void {
-    const g = this.hud;
-    g.clear();
-    if (this.show.drawHud(g)) return;
-    const bar = (x: number, y: number, w: number, frac: number, color: number, alignRight: boolean) => {
-      g.fillStyle(0x000000, 0.6).fillRoundedRect(x - 3, y - 3, w + 6, 20, 8);
-      const fw = Math.max(0, w * frac);
-      g.fillStyle(color, 1).fillRoundedRect(alignRight ? x + w - fw : x, y, fw, 14, 6);
-      g.fillStyle(0xffffff, 0.35).fillRect(alignRight ? x + w - fw : x, y + 2, fw, 4);
-    };
-    this.heroes.forEach((h, i) => bar(30, 38 + i * 44, 300, h.hp / h.maxHp, 0x44d95a, false));
-    bar(GAME_WIDTH - 30 - 420, 38, 420, this.villain.hp / this.villain.maxHp, 0xe8483f, true);
-  }
-
   // -- frame -------------------------------------------------------------------------
 
   override update(_time: number, deltaMs: number): void {
@@ -2070,7 +2017,7 @@ export class BattleScene extends Phaser.Scene implements StageHost {
     this.updateProjectiles(dt);
     this.updateTraps();
     this.taunt();
-    this.drawHud();
+    this.hud.draw(this.heroes, this.villain, this.show);
 
     if (this.controls.dev('F2')) advance(this);
     else if (this.controls.dev('F9')) {

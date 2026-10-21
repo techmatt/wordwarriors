@@ -1,0 +1,85 @@
+/**
+ * The battle's HUD: the names in the corners, the health bars (or a contest's
+ * own meter, drawn by its stage), the things she fetched in the house and
+ * Charge the Spell's runes. BattleScene makes one in `create()` and draws it
+ * every frame, after the fighters.
+ */
+
+import type Phaser from 'phaser';
+
+import { RUNE_BY_SOUND } from '../../content/phonics/runes';
+import { FETCH_BY_WORD } from '../../content/phonics/sentences';
+import { DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
+import { counterArt, episode } from '../episode/Episode';
+import { fitImage } from '../fx/juice';
+import type { Fighter } from './Fighter';
+import type { FightStage } from './stages/stage';
+
+export class BattleHud {
+  private readonly g: Phaser.GameObjects.Graphics;
+  private readonly labels: Phaser.GameObjects.Text[] = [];
+
+  /** The bars' graphics, at the HUD's depth. */
+  constructor(private readonly scene: Phaser.Scene) {
+    this.g = scene.add.graphics().setDepth(DEPTH.hud);
+  }
+
+  /** The names, the fetched things and the runes, once the cast has spawned. */
+  makeLabels(heroes: readonly Fighter[], villain: Fighter, part: 1 | 2): void {
+    const scene = this.scene;
+    const style = { fontFamily: '"Arial Black", sans-serif', fontSize: '18px', color: '#ffffff', stroke: '#000000', strokeThickness: 5 };
+    heroes.forEach((h, i) => {
+      this.labels.push(scene.add.text(30, 14 + i * 44, h.init.name.toUpperCase(), style).setDepth(DEPTH.hud + 1));
+    });
+    this.labels.push(scene.add.text(GAME_WIDTH - 30, 14, villain.init.name.toUpperCase(), style).setOrigin(1, 0).setDepth(DEPTH.hud + 1));
+
+    // What she fetched in the house (and the counter-item, once made), in a
+    // row beside the heroes' bars, so the link from reading to the fight
+    // stays on screen the whole battle. The parked games' things too, if set.
+    const made: string[] = episode.fetched.filter((w) => FETCH_BY_WORD[w]).map((w) => `pic_${w}`);
+    if (episode.made.gem) made.push('prop_gem');
+    if (episode.made.ammo) made.push('prop_ammo');
+    if (episode.made.helper) made.push('minion_helper');
+    if (episode.made.item) made.push(counterArt());
+    made.forEach((key, i) => {
+      const icon = fitImage(scene.add.image(370 + i * 58, 40, key), 50, 50).setDepth(DEPTH.hud + 1);
+      const s = icon.scale;
+      icon.setScale(0);
+      scene.tweens.add({ targets: icon, scale: s, duration: 300, delay: 300 + i * 120, ease: 'Back.easeOut' });
+    });
+    // Charge the Spell's runes (item 053), for the part they fire in: a row under the
+    // heroes' bars, left of x 300, where no fight style's meter or PICK A MOVE! goes.
+    const runes = episode.charged?.part === part ? episode.charged.sounds.filter((s) => RUNE_BY_SOUND[s]) : [];
+    runes.forEach((sound, i) => {
+      const x = 46 + i * 34;
+      const y = 38 + heroes.length * 44 - 8;
+      const chip = fitImage(scene.add.image(x, y, 'prop_rune_stone'), 30, 30).setDepth(DEPTH.hud + 1);
+      const t = scene.add.text(x, y + 1, sound.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: sound.length > 1 ? '13px' : '18px', color: '#1a1030' }).setOrigin(0.5).setDepth(DEPTH.hud + 2);
+      for (const o of [chip, t]) {
+        const s = o.scale;
+        o.setScale(0);
+        scene.tweens.add({ targets: o, scale: s, duration: 300, delay: 600 + i * 100, ease: 'Back.easeOut' });
+      }
+    });
+  }
+
+  /** The villain's corner label, renamed (good again, item 039). */
+  renameVillain(name: string): void {
+    this.labels.at(-1)?.setText(name);
+  }
+
+  /** Every frame: the stage's own bars, else the health bars. */
+  draw(heroes: readonly Fighter[], villain: Fighter, show: FightStage): void {
+    const g = this.g;
+    g.clear();
+    if (show.drawHud(g)) return;
+    const bar = (x: number, y: number, w: number, frac: number, color: number, alignRight: boolean) => {
+      g.fillStyle(0x000000, 0.6).fillRoundedRect(x - 3, y - 3, w + 6, 20, 8);
+      const fw = Math.max(0, w * frac);
+      g.fillStyle(color, 1).fillRoundedRect(alignRight ? x + w - fw : x, y, fw, 14, 6);
+      g.fillStyle(0xffffff, 0.35).fillRect(alignRight ? x + w - fw : x, y + 2, fw, 4);
+    };
+    heroes.forEach((h, i) => bar(30, 38 + i * 44, 300, h.hp / h.maxHp, 0x44d95a, false));
+    bar(GAME_WIDTH - 30 - 420, 38, 420, villain.hp / villain.maxHp, 0xe8483f, true);
+  }
+}

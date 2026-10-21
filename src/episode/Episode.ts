@@ -4,15 +4,18 @@
  *
  *   title → (hero → ally → villain picks, off by default) → bedroom
  *   → the entry hall's warm-up ("before we head out, let's grab the ...")
- *   → house part 1 (hub: the gift word, two side-room sentence games,
- *     out the front door) → battle part 1 (the villain's ultimate wins)
- *   → house part 2 (back to the hub, the counter sentence game in the attic,
- *     out the front door) → battle part 2 (the counter wins) → victory → title
+ *   → house part 1 (hub: the gift word, two side-room doors, a minigame each
+ *     from the pool, one a phonics game while FORCE_PHONICS_ROOM; out the
+ *     front door) → map → battle part 1 (the villain's ultimate wins)
+ *   → map → house part 2 (the counter sentence in the attic) → map
+ *   → battle part 2 (the counter wins) → map → victory (the victory scene,
+ *     then the recap) → title
  *
  * Scenes never decide where to go next: they call `advance(scene)` when they
- * are done and this module starts the next step's scene. Inside a house step
- * the hub and its side rooms pass control between themselves (`enterRoom`,
- * `backToHub`); the front door is the hub's `advance()`.
+ * are done and this module starts the next step's scene, by the journey map
+ * (`Journey`) where the arrows say. Inside a house step the hub and its side
+ * rooms pass control between themselves (`enterRoom`, `backToHub`); the
+ * front door is the hub's `advance()`.
  *
  * The four v0.1 prep games (Sound → Letter, Blend Path, Word → Picture, Spell
  * the Spell) are parked: their scenes and `prep`/`spell` step kinds stay so
@@ -137,6 +140,7 @@ const SCENE_FOR: Record<Step['kind'], string> = {
   // The victory step opens on its scene (item 027), which goes on to the recap.
   victory: 'Ending',
   alarm: 'Alarm',
+  // No scene has this key: a prep step opens its game's scene (`prepScene`).
   prep: 'Prep',
   retreat: 'Retreat',
   spell: 'Spelling',
@@ -157,6 +161,25 @@ function choosePrep(): PrepGame[] {
   return all[episodeCount % all.length]!;
 }
 
+/** Everything an episode starts afresh, the cast aside (`castEpisode` draws that): the start state and `resetEpisode`'s. */
+function freshProgress(): Omit<EpisodeState, 'hero' | 'ally' | 'villain' | 'villainWasRandom' | 'primary' | 'secondary' | 'place' | 'story' | 'lines'> {
+  return {
+    prep: choosePrep(),
+    made: { gem: false, ammo: false, helper: false, item: false },
+    read: [],
+    fetched: [],
+    charged: null,
+    gift: null,
+    moves: null,
+    house: { plan: null, done: [], taught: false },
+    grab: null,
+    ending: null,
+    endingCounted: false,
+    fight: null,
+    stepIndex: 0,
+  };
+}
+
 export const episode: EpisodeState = {
   hero: EPISODE_DEFAULTS.hero,
   ally: EPISODE_DEFAULTS.ally,
@@ -165,24 +188,18 @@ export const episode: EpisodeState = {
   primary: EPISODE_DEFAULTS.primary,
   secondary: null,
   place: HOME,
-  prep: choosePrep(),
-  made: { gem: false, ammo: false, helper: false, item: false },
-  read: [],
-  fetched: [],
-  charged: null,
-  gift: null,
-  moves: null,
-  house: { plan: null, done: [], taught: false },
-  grab: null,
-  ending: null,
-  endingCounted: false,
-  fight: null,
   story: { ...DEFAULT_STORY },
   lines: { ...DEFAULT_LINES },
-  stepIndex: 0,
+  ...freshProgress(),
 };
 
-export function steps(_state: EpisodeState = episode): Step[] {
+/** Steps that get the journey map first. */
+const JOURNEY_BEFORE: Step['kind'][] = ['battle', 'victory'];
+
+/** Tests may turn the map off to save time; the game never does. */
+const skipJourney = new URLSearchParams(typeof location === 'undefined' ? '' : location.search).has('nojourney');
+
+export function steps(): Step[] {
   const picks: Step[] = EPISODE_DEFAULTS.pickScreens
     ? [
         { kind: 'pick', what: 'hero' },
@@ -446,19 +463,7 @@ export function villainSpec(): CharacterSpec {
 
 export function resetEpisode(): void {
   castEpisode();
-  episode.prep = choosePrep();
-  episode.made = { gem: false, ammo: false, helper: false, item: false };
-  episode.read = [];
-  episode.fetched = [];
-  episode.charged = null;
-  episode.gift = null;
-  episode.moves = null;
-  episode.house = { plan: null, done: [], taught: false };
-  episode.grab = null;
-  episode.ending = null;
-  episode.endingCounted = false;
-  episode.fight = null;
-  episode.stepIndex = 0;
+  Object.assign(episode, freshProgress());
   remembered.cast = false;
   remembered.plan = false;
 }
@@ -744,12 +749,6 @@ export function advance(scene: Phaser.Scene): void {
   }
   startStep(scene);
 }
-
-/** Steps that get the journey map first. */
-const JOURNEY_BEFORE: Step['kind'][] = ['battle', 'victory'];
-
-/** Tests may turn the map off to save time; the game never does. */
-const skipJourney = new URLSearchParams(typeof location === 'undefined' ? '' : location.search).has('nojourney');
 
 /** The journey stops: every step from the bedroom to victory, with an icon each. */
 export function journeyStops(): { icon: string; index: number }[] {
