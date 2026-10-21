@@ -304,7 +304,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     reformed: {
       sorry: [
-        { key: 'bubbles', text: 'Sorry! Bubbles for everybody!' },
+        { key: 'bubbles', text: 'Sorry! I made bubbles for everybody!' },
         { key: 'good', text: 'Sorry! Ellie is good now.' },
         { key: 'sorry', text: 'Sorry, sorry, sorry!' },
       ],
@@ -924,7 +924,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
       ending: [
         { key: 'marshmallows', text: 'I will only toast marshmallows now!' },
-        { key: 'coins', text: 'Gold coins for everybody!' },
+        { key: 'coins', text: 'I have gold coins for everybody!' },
         { key: 'warm', text: 'I will keep you nice and warm!' },
       ],
     },
@@ -1209,7 +1209,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
       ending: [
         { key: 'potion', text: 'Can I brew you a happy potion?' },
-        { key: 'soup', text: 'Cauldron soup for everybody, it is yummy!' },
+        { key: 'soup', text: 'I made cauldron soup for everybody, and it is yummy!' },
         { key: 'dance', text: "Let's dance around the cauldron!" },
       ],
     },
@@ -1276,7 +1276,7 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'hungry', text: 'Sorry, so sorry, I was hungry!' },
       ],
       ending: [
-        { key: 'hugs', text: 'Gorilla hugs for everybody!' },
+        { key: 'hugs', text: 'I have gorilla hugs for everybody!' },
         { key: 'bananas', text: 'Bananas for the whole team!' },
         { key: 'happy', text: 'Rilla is happy now!' },
       ],
@@ -1486,7 +1486,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
       ending: [
         { key: 'tickle', text: 'My sword is only for tickling now!' },
-        { key: 'sparkles', text: 'Sparkles for everybody!' },
+        { key: 'sparkles', text: 'I made sparkles for everybody!' },
         { key: 'wish', text: "Let's make a wish together!" },
       ],
     },
@@ -1619,8 +1619,8 @@ export const ROSTER: CharacterSpec[] = [
       ],
       ending: [
         { key: 'happy', text: 'From now on, only happy spells!' },
-        { key: 'giggles', text: 'Sparkles and giggles for everybody!' },
-        { key: 'magic', text: 'Happy magic for everybody!' },
+        { key: 'giggles', text: 'I have sparkles and giggles for everybody!' },
+        { key: 'magic', text: 'I have happy magic for everybody!' },
       ],
     },
     counter: {
