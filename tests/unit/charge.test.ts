@@ -1,7 +1,6 @@
 /**
- * Charge the Spell's pure rules (item 053): the rune draw (continuous sounds
- * first, tiers opening as she firms up, no look-alikes or same sounds in one
- * round), the help-level ramp and its store field, the room's place in the
+ * Charge the Spell's pure rules (item 053; item 058's one word a visit): the
+ * word draw (continuous sounds first, tiers opening as she firms up), the help-level ramp and its store field, the room's place in the
  * episode, and the speech rules its lines keep.
  * `npx tsx --test tests/unit/charge.test.ts` (also part of `npm run test:unit`).
  */
@@ -9,15 +8,15 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { BANK } from '../../content/phonics/bank';
+import { BANK, BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
 import { SOUND_BY_UNIT } from '../../content/phonics/letters';
-import { LOOKALIKE_RUNES, RUNES, RUNE_BY_SOUND, SAME_SOUND } from '../../content/phonics/runes';
+import { RUNES, RUNE_BY_SOUND } from '../../content/phonics/runes';
 import type { AbilityKind } from '../../content/battle/types';
 import { chargeKey, letterSoundLine, narratorLine } from '../../content/voice/ids';
 import { CHARGE_GESTURES, NARRATOR_LINES } from '../../content/voice/script';
 import { PERSONS } from '../../content/battle/roster';
 import { CHARGE } from '../../src/config';
-import { RUNE_SOUNDS, chargeLevel, nextChargeLevel, planCharge, tierGate } from '../../src/rules/charge';
+import { CHARGE_WORDS, RUNE_SOUNDS, chargeLevel, nextChargeLevel, planCharge, tierGate } from '../../src/rules/charge';
 import { CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, drawGames } from '../../src/rules/minigames';
 import { withStems } from '../../src/rules/bank';
 import { episodePlans } from '../../src/rules/sentences';
@@ -102,46 +101,62 @@ test('ramp: a new sound starts at level 1; an unaided yes is less help, an assis
   assert.equal(chargeLevel(back, 's'), 1);
 });
 
-test('draw: a fresh store charges six continuous sounds, never two look-alikes or two same sounds', () => {
-  for (let seed = 1; seed <= 60; seed++) {
-    const { runes } = planCharge(new ProgressStore(memory()), seeded(seed));
-    assert.equal(runes.length, CHARGE.runes);
-    assert.equal(new Set(runes).size, runes.length);
-    assert.ok(runes.every((s) => tier(s) === 1), `seed ${seed}: ${runes} are all continuous`);
+test('words (item 058): every charge word is a familiar picture of 3-4 units, each its own rune, no sound twice; no Q, X or CK', () => {
+  assert.ok(CHARGE_WORDS.length >= 20, `${CHARGE_WORDS.length} words`);
+  for (const w of CHARGE_WORDS) {
+    const b = BANK_BY_WORD[w]!;
+    assert.ok(THINGS.includes(b), `${w} is a familiar picture`);
+    assert.ok(b.units.length >= CHARGE.units[0] && b.units.length <= CHARGE.units[1], w);
+    assert.deepEqual(b.units, b.sounds, `${w}: every unit shows as its sound`);
+    for (const u of b.units) assert.ok(RUNE_BY_SOUND[u], `${w}: ${u} is a rune`);
+    assert.equal(new Set(b.sounds).size, b.sounds.length, `${w}: no sound twice`);
+    for (const s of ['q', 'x', 'ck']) assert.ok(!b.sounds.includes(s), w);
   }
 });
 
-test('draw: quick sounds join once the continuous ones are solid, and come after them in the round', () => {
+test('draw: a fresh store spells a word of continuous sounds, through the bank', () => {
+  const rand = seeded(3);
+  for (let seed = 1; seed <= 60; seed++) {
+    const { word, units, runes } = planCharge(new ProgressStore(memory()), { avoid: [] }, rand);
+    assert.ok(CHARGE_WORDS.includes(word), word);
+    assert.deepEqual(units, BANK_BY_WORD[word]!.units);
+    assert.deepEqual(runes, BANK_BY_WORD[word]!.sounds);
+    assert.ok(runes.every((s) => tier(s) === 1), `seed ${seed}: ${word} is all continuous`);
+  }
+});
+
+test('draw: quick sounds join once the continuous ones are solid; avoided words never come up', () => {
   const store = new ProgressStore(memory());
   assert.equal(tierGate(store, 2), 0);
   for (const r of RUNES.filter((x) => x.tier === 1)) for (let i = 0; i < 4; i++) store.record('sounds', r.sound, true, 0);
   assert.equal(tierGate(store, 2), 1);
   let quick = 0;
-  for (let seed = 1; seed <= 60; seed++) {
-    const { runes } = planCharge(store, seeded(seed));
-    const tiers = runes.map(tier);
-    assert.deepEqual(tiers, [...tiers].sort((a, b) => a - b), `seed ${seed}: continuous first (${runes})`);
-    for (const set of [...LOOKALIKE_RUNES, ...SAME_SOUND]) assert.ok(runes.filter((s) => set.includes(s)).length <= 1, `seed ${seed}: one of ${set} (${runes})`);
-    quick += runes.filter((s) => tier(s) === 2).length;
+  const rand = seeded(9);
+  for (let k = 0; k < 60; k++) {
+    const { word, runes } = planCharge(store, { avoid: ['cat', 'dog'] }, rand);
+    assert.ok(word !== 'cat' && word !== 'dog');
+    if (runes.some((s) => tier(s) === 2)) quick++;
   }
-  // Solid sounds weigh little against new ones: most of each round is quick sounds now.
-  assert.ok(quick > 60 * 3, `quick sounds came up ${quick} times`);
+  assert.ok(quick > 30, `words with a quick sound came up ${quick} times`);
 });
 
-test('draw: a shaky sound comes up more than a solid one', () => {
+test('draw: a word with a shaky sound comes up more than one with only solid sounds', () => {
   const store = new ProgressStore(memory());
   for (const r of RUNES.filter((x) => x.tier === 1)) for (let i = 0; i < 4; i++) store.record('sounds', r.sound, r.sound !== 'm', r.sound === 'm' ? 1 : 0);
+  // Per word carrying the sound, so the bank's spread of M and S words does not count.
+  const per = (x: string) => CHARGE_WORDS.filter((w) => BANK_BY_WORD[w]!.sounds.includes(x)).length;
   let m = 0;
   let s = 0;
-  for (let seed = 1; seed <= 200; seed++) {
-    const { runes } = planCharge(store, seeded(seed));
+  const rand = seeded(5);
+  for (let k = 0; k < 400; k++) {
+    const { runes } = planCharge(store, { avoid: [] }, rand);
     if (runes.includes('m')) m++;
     if (runes.includes('s')) s++;
   }
-  assert.ok(m > s, `M (missed) ${m} times, S (solid) ${s}`);
+  assert.ok(m / per('m') > s / per('s'), `M (missed) ${m} draws over ${per('m')} words, S (solid) ${s} over ${per('s')}`);
 });
 
-test('pool: Charge the Spell is a fetch room only, its plan reads no word and draws nothing from the bag', () => {
+test('pool: Charge the Spell is a fetch room only; its plan spells a word', () => {
   assert.ok(MINIGAMES.includes(CHARGE_GAME));
   assert.deepEqual(CHARGE_GAME.slots, ['fetch']);
   assert.equal(MINIGAME_BY_ID.charge, CHARGE_GAME);
@@ -151,9 +166,11 @@ test('pool: Charge the Spell is a fetch room only, its plan reads no word and dr
   const a = plans[0];
   assert.equal(a.kind, 'charge');
   assert.equal(a.scene, 'ChargeRoom');
-  assert.equal(a.key, '');
-  assert.deepEqual(a.fetches, []);
-  if (a.kind === 'charge') assert.equal(a.charge.runes.length, CHARGE.runes);
+  // Item 058: it spells a word, a battle item, kept off the other rooms.
+  assert.ok(a.kind === 'charge' && CHARGE_WORDS.includes(a.key));
+  assert.deepEqual(a.fetches, [a.key]);
+  if (a.kind === 'charge') assert.equal(a.charge.word, a.key);
   assert.ok(plans[1].key && plans[2].key, 'door b and the attic still read their words');
+  assert.ok(!plans[1].fetches.includes(a.key) && plans[2].key !== a.key);
   assert.throws(() => episodePlans(store, { fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic', games: [b, b, CHARGE_GAME] }, seeded(4)));
 });

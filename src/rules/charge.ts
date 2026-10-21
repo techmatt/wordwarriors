@@ -1,16 +1,20 @@
 /**
- * Charge the Spell (item 053): which runes a visit lights, and how much help
- * each gets. Pure: no Phaser, unit-tested (tests/unit/charge.test.ts).
+ * Charge the Spell (item 053; one word a visit since item 058): which word a
+ * visit spells, its runes, and how much help each gets. Pure: no Phaser,
+ * unit-tested (tests/unit/charge.test.ts).
  *
- * She says a rune's letter sound aloud; Dad presses 2 (yes) or 1 (no). The
- * draw is the word bank's path for sounds: each sound weighs its shakiness
- * (ProgressStore `sounds`) × its coverage (the sounds she has charged least
- * come up, the bank's `factor`) × its tier's gate. Tier 1, the continuous
- * sounds, is always open; tier 2 (quick sounds) opens as tier 1 firms up and
- * tier 3 (digraphs) as tier 2 does (CHARGE.tiers, BANK_DRAW.solid), a shut
- * tier only as a last resort. A round has one rune of each look-alike set
- * (B D P) and one of each same-sound set (C K), and plays continuous sounds
- * first.
+ * A visit is one word of CHARGE.units sound units, shown at the top; she
+ * charges its runes in order, saying each letter sound aloud while Dad
+ * presses 2 (yes) or 1 (no), then reads the whole word aloud for Dad. The
+ * word is drawn through the bank's path (`drawWords`: shakiness × coverage ×
+ * level gate) from the familiar pictured words whose every unit is a rune
+ * (`CHARGE_WORDS`: no Q, X, CK, long vowel, doubled letter or repeated
+ * sound), times its sounds' gate: a word whose sounds are all in open tiers
+ * draws (tier 1, the continuous sounds, is always open; tier 2, quick
+ * sounds, opens as tier 1 firms up and tier 3, digraphs, as tier 2 does:
+ * CHARGE.tiers, BANK_DRAW.solid), leaning to shaky sounds; a word with a
+ * shut tier's sound only as a last resort. The word is a battle item like
+ * any room's fetched word.
  *
  * Each sound has a help level on a ramp, like the warm-up's words:
  *   1. the sound and its gesture first, she copies;
@@ -20,15 +24,19 @@
  * for CHARGE.timeoutMs) moves it down one.
  */
 
-import { LOOKALIKE_RUNES, RUNES, RUNE_BY_SOUND, SAME_SOUND, type RuneTier } from '../../content/phonics/runes';
+import { BANK_BY_WORD, THINGS, type BankWord } from '../../content/phonics/bank';
+import { RUNES, RUNE_BY_SOUND, type RuneTier } from '../../content/phonics/runes';
+import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { BANK_DRAW, CHARGE } from '../config';
-import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
-import { factor, type Rand } from './bank';
+import type { ProgressStore } from '../state/ProgressStore';
+import { drawWords, factor, type Rand } from './bank';
 
 export type ChargeLevel = 1 | 2 | 3;
 
-/** A visit's plan: the runes, in the order they light (continuous sounds first). */
+/** A visit's plan: the word it spells, its units (as shown), and their runes (sounds) in order. */
 export interface ChargePlan {
+  word: string;
+  units: string[];
   runes: string[];
 }
 
@@ -79,31 +87,57 @@ function seenOf(store: ProgressStore): Record<string, number> {
   return Object.fromEntries(RUNE_SOUNDS.map((s) => [s, store.stat('sounds', s).seen]));
 }
 
-/** The sounds a round cannot have beside `sound`: its look-alikes and its same-sound partners. */
-function clashes(sound: string): string[] {
-  return [...LOOKALIKE_RUNES, ...SAME_SOUND].filter((set) => set.includes(sound)).flat();
+/**
+ * A word the room can spell: a familiar pictured thing (with a battle item)
+ * of CHARGE.units sound units, each unit a rune shown as itself (no doubled
+ * BELL, no THUMB's MB) and no sound twice (each rune charges once).
+ */
+function chargeable(w: BankWord): boolean {
+  const [lo, hi] = CHARGE.units;
+  return (
+    w.units.length >= lo &&
+    w.units.length <= hi &&
+    Boolean(FETCH_BY_WORD[w.word]) &&
+    w.units.every((u, i) => u === w.sounds[i] && Boolean(RUNE_BY_SOUND[u])) &&
+    new Set(w.sounds).size === w.sounds.length
+  );
+}
+
+/** Every word Charge the Spell can spell. */
+export const CHARGE_WORDS: string[] = THINGS.filter(chargeable).map((w) => w.word);
+
+/** A word's gate: its least open sound's tier gate (a word with a shut tier's sound is 0). */
+export function chargeWordGate(word: string, gates: Record<number, number>): number {
+  const w = BANK_BY_WORD[word];
+  if (!w) return 0;
+  return Math.min(...w.sounds.map((s) => gates[RUNE_BY_SOUND[s]?.tier ?? 3] ?? 0));
+}
+
+export interface ChargeInput {
+  /** Words the episode says or shows first, its move pads and gift, and other rooms' words: never the charge word. */
+  avoid: string[];
 }
 
 /**
- * A visit's runes: `n` sounds, weighted as above, none clashing, continuous
- * sounds first (then in the order drawn). A shut tier's sound comes up only
- * when the open ones run out.
+ * A visit's word: drawn by the bank's weight × its sounds' gate × how shaky
+ * its sounds are (½ to 1½), never a word in `avoid`. A word with a shut
+ * tier's sound draws only when no open one is left; with every word avoided,
+ * the avoid list gives way (a visit always has a word).
  */
-export function planCharge(store: ProgressStore, rand: Rand = Math.random, n = CHARGE.runes): ChargePlan {
+export function planCharge(store: ProgressStore, input: ChargeInput = { avoid: [] }, rand: Rand = Math.random): ChargePlan {
   const gates = gatesOf(store);
-  const seen = seenOf(store);
-  const weight = (s: string) => runeWeight(store, s, gates, seen);
-  let pool = [...RUNE_SOUNDS];
-  const out: string[] = [];
-  while (out.length < n && pool.length) {
-    const open = pool.filter((s) => (gates[RUNE_BY_SOUND[s]!.tier] ?? 0) > 0);
-    const pick = pickWeighted(open.length ? open : pool, weight, 1, rand)[0]!;
-    out.push(pick);
-    const gone = new Set([pick, ...clashes(pick)]);
-    pool = pool.filter((s) => !gone.has(s));
-  }
-  const tier = (s: string) => RUNE_BY_SOUND[s]!.tier;
-  return { runes: out.map((s, i) => ({ s, i })).sort((a, b) => tier(a.s) - tier(b.s) || a.i - b.i).map((x) => x.s) };
+  const avoid = new Set(input.avoid);
+  let pool = CHARGE_WORDS.filter((w) => !avoid.has(w));
+  if (!pool.length) pool = [...CHARGE_WORDS];
+  const open = pool.filter((w) => chargeWordGate(w, gates) > 0);
+  const shaky = (w: string) => {
+    const s = BANK_BY_WORD[w]!.sounds;
+    return 0.5 + s.reduce((n, x) => n + store.shakiness('sounds', x), 0) / s.length;
+  };
+  const from = open.length ? open : pool;
+  const word = drawWords(store, from, 1, rand, (w) => Math.max(0.05, chargeWordGate(w, gates)) * shaky(w))[0]!;
+  const b = BANK_BY_WORD[word]!;
+  return { word, units: [...b.units], runes: [...b.sounds] };
 }
 
 /** How shaky her letter sounds are, on average over the open runes: the room's lean in the minigame pool. */

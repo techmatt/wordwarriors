@@ -68,9 +68,9 @@ export interface MachineRoomPlan extends PlanBase {
 }
 
 /**
- * Charge the Spell's room (item 053): the visit's runes. It reads no word, so
- * `key` is '' and `fetches` is empty; what it gives the battle is
- * `episode.charged`.
+ * Charge the Spell's room (item 053): the visit's word and its runes (item
+ * 058). `key` and `fetches` are the word, a battle item; the runes go to the
+ * battle as `episode.charged`.
  */
 export interface ChargeRoomPlan extends PlanBase {
   kind: 'charge';
@@ -263,8 +263,12 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   // Nor the villain's own named counter word (HAT for Evil Tiamat), so the attic can still draw it.
   const namedCounter = CHARACTER_BY_ID[fill.villain]?.counter.word;
   const bridges: (BridgePlan | null)[] = games.map((g) => (g.bridge ? planBridge(store, { avoid: [...avoid, ...moves, ...(namedCounter ? [namedCounter] : [])], taken: machines.flatMap((m) => (m ? machineWords(m) : [])) }, rand) : null));
-  const taken = [...machines.flatMap((m) => (m ? machineWords(m) : [])), ...bridges.flatMap((b) => (b ? bridgeWords(b) : []))];
   const pictured = bridges.flatMap((b) => (b ? bridgeShown(b) : []));
+  // Charge the Spell (item 058) spells one word, planned the same way: a battle item, kept off every other room.
+  const built = [...machines.flatMap((m) => (m ? machineWords(m) : [])), ...bridges.flatMap((b) => (b ? bridgeWords(b) : []))];
+  const charges: (ChargePlan | null)[] = [];
+  for (const g of games) charges.push(g.charge ? planCharge(store, { avoid: [...avoid, ...moves, ...built, ...pictured, ...(namedCounter ? [namedCounter] : []), ...charges.map((c) => c?.word ?? '')] }, rand) : null);
+  const taken = [...built, ...charges.flatMap((c) => (c ? [c.word] : []))];
 
   // A frame ending "...A {x}" takes no word starting with a vowel: no WE NEED A ANT (item 039).
   const fits = (i: number) => {
@@ -272,12 +276,11 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
     const article = f ? tokenWord(sentence(f, fill, 'x').tokens.at(-2) ?? '') : '';
     return (w: string) => article !== 'a' || !/^[aeiou]/.test(w);
   };
-  // Charge the Spell (item 053) reads no word: its key is '' and it draws nothing from the bag.
-  const charges: (ChargePlan | null)[] = games.map((g) => (g.charge ? planCharge(store, rand) : null));
   const keys: string[] = [];
   for (let i = 0; i < 2; i++) {
-    if (charges[i]) {
-      keys.push('');
+    const c = charges[i];
+    if (c) {
+      keys.push(c.word);
       continue;
     }
     const m = machines[i];
@@ -307,7 +310,7 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
     const m = machines[i];
     if (m) return { ...base, kind: 'machine', machine: m, fetches: machineWords(m) };
     const c = charges[i];
-    if (c) return { ...base, kind: 'charge', charge: c, fetches: [] };
+    if (c) return { ...base, kind: 'charge', charge: c, fetches: [c.word] };
     const b = bridges[i];
     if (b) return { ...base, kind: 'bridge', bridge: b, fetches: bridgeWords(b) };
     const s = sentence(frames[i]!, fill, keys[i]!);

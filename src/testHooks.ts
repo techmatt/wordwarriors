@@ -64,11 +64,14 @@ export interface RoomInfo {
    * helps and timeouts so far, and what is charged.
    */
   charge?: {
+    /** The word the runes spell (item 058), and how its read went (Dad's yes, no or a timeout; null before). */
+    word: string;
+    read: 'yes' | 'no' | 'timeout' | null;
     runes: string[];
     index: number;
     sound: string;
     level: number;
-    phase: 'approach' | 'explain' | 'resume' | 'prompt' | 'ask' | 'help' | 'charging' | 'done';
+    phase: 'approach' | 'explain' | 'resume' | 'prompt' | 'ask' | 'help' | 'charging' | 'read' | 'reading' | 'done';
     asking: boolean;
     assists: number;
     timeouts: number;

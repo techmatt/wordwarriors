@@ -121,18 +121,16 @@ export const NARRATOR_LINES: Template[] = [
   // letter or spells a sound: each sound is its own letter_ line, and the
   // gestures (`CHARGE_GESTURES`) trail off into it. `use_runes` is the battle's.
   { key: 'charge_intro', text: 'A magic altar! Walk up to it and press green.', say: 'A magic altar, walk up to it and press green.' },
-  { key: 'charge_explain', text: 'Each rune needs its sound to charge our spell. Say it out loud!', say: 'Each rune needs its sound to charge our spell, say it out loud!' },
+  // Item 058: a visit spells one word, so every cue per rune is a few words at most.
+  { key: 'charge_explain', text: 'Say each rune out loud to charge our magic spell!' },
+  { key: 'charge_goes', text: 'It goes...' },
+  { key: 'charge_read', text: 'Now read the whole spell!' },
+  { key: 'charge_listen', text: 'Listen!' },
   { key: 'charge_ask_1', text: 'What sound does this rune make?' },
   { key: 'charge_ask_2', text: 'Say this rune out loud!' },
   { key: 'charge_ask_3', text: 'What does this rune say?' },
-  { key: 'charge_watch', text: 'Watch me first!' },
   { key: 'charge_your_turn', text: 'Now you say it!' },
-  { key: 'charge_help', text: 'Let me help. Watch!', say: 'Let me help, watch!' },
   { key: 'charge_together', text: "Let's say it together!" },
-  { key: 'charge_yes_1', text: 'Charged!' },
-  { key: 'charge_yes_2', text: 'The rune is glowing!' },
-  { key: 'charge_yes_3', text: 'Full power!' },
-  { key: 'charge_yes_4', text: 'What a spell!' },
   { key: 'charge_done', text: 'All charged! Our spells are ready for the fight!', say: 'All charged, our spells are ready for the fight!' },
   { key: 'use_runes', text: 'Spell power, go!' },
   // The Stretchy Bridge (item 054, src/scenes/BridgeRoom.ts). No line names a
@@ -163,15 +161,16 @@ const variants = (base: string) => NARRATOR_LINES.filter((t) => new RegExp(`^${b
 export const RIGHT_VARIANTS = variants('right');
 export const WRONG_VARIANTS = variants('wrong');
 export const SILLY_VARIANTS = variants('machine_silly');
-/** Charge the Spell's asks and its yes lines (item 053). */
+/** Charge the Spell's asks (item 053). */
 export const CHARGE_ASK_VARIANTS = variants('charge_ask');
-export const CHARGE_YES_VARIANTS = variants('charge_yes');
 
 /**
  * Charge the Spell's gestures (item 053), composed per narrator × rune
  * (`chargeKey('charge_gesture', sound)`): the rune's action, trailing off
  * into its sound's own line. The texts live with the runes
- * (content/phonics/runes.ts).
+ * (content/phonics/runes.ts). Since item 058 the room says none of them (a
+ * cue per rune is a few words; the gesture is shown, not told); they stay
+ * composed for a longer teaching mode, should Matt want one back.
  */
 export const CHARGE_GESTURES: (Template & { sound: string })[] = RUNES.map((r) => ({ sound: r.sound, key: chargeKey('charge_gesture', r.sound), text: r.gesture.text, ...(r.gesture.say ? { say: r.gesture.say } : {}) }));
 

@@ -113,10 +113,13 @@ export const SENTENCE_SOLID = { tries: 6, lastRight: 5 };
 export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2 };
 
 /**
- * Charge the Spell (item 053, src/scenes/ChargeRoom.ts): she says each rune's
- * letter sound aloud and Dad presses 2 (yes) or 1 (no). `runes` per visit;
- * `timeoutMs` with no answer counts as a no (the game helps); `assists` helps
- * per rune before the game says it with her and moves on. Each sound has its
+ * Charge the Spell (item 053, src/scenes/ChargeRoom.ts): a visit spells one
+ * word of `units` (fewest, most) sound units (item 058); she says each rune's
+ * letter sound aloud and Dad presses 2 (yes) or 1 (no), then she reads the
+ * whole word aloud and Dad judges that too (`readTimeoutMs` with no answer,
+ * or his 1, sounds it out once and moves on). `timeoutMs` with no answer on a
+ * rune counts as a no (the game helps); `assists` helps per rune before the
+ * game says it with her and moves on. Each sound has its
  * own help level: 1 = the sound and its gesture first, she copies; 2 = the
  * gesture only; 3 = the rune alone. `startLevel` is a sound she has never
  * charged. `tiers`: the quick sounds (stops, H W Y J...) join once `start` of
@@ -125,8 +128,9 @@ export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2 };
  * quick ones. `weight` is its weight in the rooms' pool (a frame is 1).
  */
 export const CHARGE = {
-  runes: 6,
+  units: [3, 4] as [number, number],
   timeoutMs: 8000,
+  readTimeoutMs: 10000,
   assists: 2,
   startLevel: 1 as 1 | 2 | 3,
   weight: 1,
@@ -142,7 +146,9 @@ export const CHARGE = {
  * is held, so how slowly she slides is how slowly she stretches the word.
  * `words` per visit, `pictures` on the far bank (the word's included).
  * `slide`: her speed on the stones, a share of her walking speed. A held
- * sound stops after `maxHoldMs`. Each word has its own help level: 1 = the
+ * sound is one smooth stretched sound `holdMs` long, then quiet; while she
+ * stays on its stone it sounds again after `resoundMs` of quiet (a stop sound
+ * plays once each time she steps on). Each word has its own help level: 1 = the
  * stones sound themselves and the pictures show from the start; 2 = silent
  * stones, Dad's 2 is a hint (they sound); 3 = she says the word aloud first,
  * Dad's 2 brings the pictures, his 1 replays the slide with sounds (each
@@ -160,7 +166,8 @@ export const BRIDGE = {
   startLevel: 1 as 1 | 2 | 3,
   weight: 1,
   slide: 0.55,
-  maxHoldMs: 2500,
+  holdMs: 1300,
+  resoundMs: 2000,
   replayMs: 700,
   dadWaitMs: 12000,
   replays: 2,

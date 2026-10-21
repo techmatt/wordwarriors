@@ -68,11 +68,14 @@ export interface WWState {
     };
     /** Charge the Spell (item 053). */
     charge?: {
+      /** Item 058: the word the runes spell, and how its read went. */
+      word: string;
+      read: 'yes' | 'no' | 'timeout' | null;
       runes: string[];
       index: number;
       sound: string;
       level: number;
-      phase: 'approach' | 'explain' | 'resume' | 'prompt' | 'ask' | 'help' | 'charging' | 'done';
+      phase: 'approach' | 'explain' | 'resume' | 'prompt' | 'ask' | 'help' | 'charging' | 'read' | 'reading' | 'done';
       asking: boolean;
       assists: number;
       timeouts: number;
@@ -369,10 +372,10 @@ export async function dad(page: Page, a: 'yes' | 'no'): Promise<void> {
 /**
  * Play Charge the Spell (item 053): walk to the altar and press green, then
  * Dad says yes to each rune as it asks; with `noFirst`, a no on the first
- * rune first (the helper models it, then asks again). Returns the sounds
- * charged (it fetches no word).
+ * rune first (the helper models it, then asks again); then Dad's `read` on
+ * the word they spell (item 058). Returns the sounds charged.
  */
-export async function playChargeRoom(page: Page, noFirst = false): Promise<string[]> {
+export async function playChargeRoom(page: Page, noFirst = false, read: 'yes' | 'no' = 'yes'): Promise<string[]> {
   const first = await until(page, (s) => s.scene === 'ChargeRoom' && Boolean(s.room?.charge), 30_000, 'charge room');
   if (first.room!.charge!.phase === 'approach') {
     await until(page, (s) => s.room?.charge?.phase === 'approach' && !s.room.locked, 60_000, 'altar offered');
@@ -388,6 +391,9 @@ export async function playChargeRoom(page: Page, noFirst = false): Promise<strin
     await dad(page, 'yes');
     await until(page, (st) => st.scene !== 'ChargeRoom' || (st.room?.charge?.index ?? 0) > i || st.room?.charge?.phase === 'done', 60_000, `rune ${i} charged`);
   }
+  // Item 058: the word they spell, read aloud; Dad says `read` (yes by default).
+  const at = await until(page, (st) => st.scene !== 'ChargeRoom' || st.room?.charge?.phase === 'read' || st.room?.charge?.phase === 'done', 60_000, 'the word to read');
+  if (at.room?.charge?.phase === 'read') await dad(page, read);
   await until(page, (st) => st.scene !== 'ChargeRoom', 60_000, 'out of the charge room');
   return runes;
 }
