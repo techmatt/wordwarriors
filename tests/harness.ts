@@ -150,7 +150,8 @@ export function collectErrors(page: Page): string[] {
  * reads is scaled together: `performance.now`, `Date.now`, timers, the
  * animation-frame timestamp (so Phaser's loop, timers and tweens), and voice
  * clips play `speed` times faster, so they end in step with the timers that
- * wait for them. The slow lane's full episode passes 1: real time.
+ * wait for them. The slow lane's full episode boots at 1, real time, for one scene of each
+ * kind (`playEpisode`'s `speeds`, item 081).
  */
 export const SPEED = Number(process.env.WW_SPEED ?? 5);
 

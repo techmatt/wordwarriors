@@ -1,9 +1,11 @@
 /**
  * One whole episode, title to victory, played through the virtual pad:
  * bedroom, the hub and both side rooms, battle 1, the attic, battle 2.
- * Slow (several minutes of real voice), so it is @slow. It is the one test
- * that runs at real time (clock speed 1, not `WW_SPEED`): it keeps the real
- * pacing of speech, karaoke and timers covered.
+ * Slow (minutes of real voice), so it is @slow. It is the one test with
+ * real-time parts (clock speed 1, not `WW_SPEED`): it keeps the real pacing of
+ * speech, karaoke and timers covered. Item 081: real time only for one scene
+ * of each kind (the bedroom, the warm-up, the hub's helper scene, a sentence
+ * room, a battle), the rest at the suite's speeds: 361 s to about 210 s.
  */
 
 import { test, expect } from '@playwright/test';
