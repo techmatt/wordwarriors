@@ -53,9 +53,9 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    door!"), when it pops out and glows; it sparkles if she has not gone through it 12
    seconds after the news (`DOOR_SPARKLE_MS`).
 3. **The entry hall: the home warm-up** (item 033, `src/scenes/EntryScene.ts`). The
-   bedroom door opens on the front hall, where nine pictures stand on the floor, each
-   with its word on a plaque (CAT, VAN; the one place a picture shows its word: here she
-   finds a word by its letters). The helper asks "Before we head out, let's grab the..."
+   bedroom door opens on the front hall, where nine pictures stand on the floor, with no
+   words on them (item 059: with CAT and VAN printed she matched letters instead of
+   sounding the word out). The helper asks "Before we head out, let's grab the..."
    and gives a clue by the word's **level** on a ramp: 1 the word, its letter names
    ("Vee, Ay, En") and its letter sounds; 2 names and sounds, no word; 3 sounds only.
    A board over the hall fills in each letter as its name is said and lights it for its
@@ -445,6 +445,13 @@ About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it r
   no manifest entry or no audio; console warnings; input locked over 20 s or silent over
   2.5 s; frames over 250 ms; objects, tweens, timers and listeners growing from one
   episode to the next; and a stall (any wait timing out) with its last shot.
+- **Matt's categories** (item 059; the list heads `docs/qa-findings.md`, and a hunt
+  checks every one), automated where they can be in `tests/qa/wording.ts`: British
+  spelling on screen or said (`not-american`), a picture with its own word printed
+  beside it (`giveaway`), a clipped line (`clipped-line`, a heuristic look; battle
+  shouts are left out), and a room past its game-time budget (`slow-room`,
+  `ROOM_BUDGET_MS`; scenarios that answer wrong on purpose are not timed).
+  `tests/unit/qacategories.test.ts` holds every line in `lines.json` to American spelling.
 - **The probe** (`src/qa/probe.ts`) is what the page adds for it, only with `?qa=1` (and
   the test hooks): the voice log, frame times and long tasks per scene, lock stretches,
   missing art, console capture, `layout()` and `counts()` on `window.__wwqa`.

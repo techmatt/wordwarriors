@@ -1,5 +1,23 @@
 # QA findings
 
+## Categories to hunt (Matt)
+
+Matt's list from watching Julia play (item 059). A bug hunt checks every category, and
+more broadly anything like them, in every scene. Where the checker (`tests/qa/`,
+`checks.ts` and `wording.ts`) flags a category automatically its issue kind is named;
+the rest is a human look (contact sheet, a read of `content/voice/lines.json`, a played
+round).
+
+| Category | Item 059's example | Checker |
+| --- | --- | --- |
+| Spelling that isn't American, on screen or said. | PRACTISE (also colour, favourite, armoury). | `not-american` (bug); `tests/unit/qacategories.test.ts` holds every line |
+| UI (banners, dialogue, bubbles, badges) covering a picture or target she needs. | The sentence banner SMAUG CAN NOT BEAT THE GIFT over the tops of the pictures. | `target-covered` (bug: real box overlap of a banner, dialogue box, bubble or face card with a picture or target; `tests/cover.spec.ts`) |
+| Giveaways: the answer's letters visible, so she can match letters instead of reading or sounding out. | The entry hall printed VAN under the van picture. | `giveaway` (a `pic_<word>` with its word printed within 140 px), `shows-target` |
+| Pictures a four-year-old wouldn't recognize as the word. | SIX was a die (she said DICE); now a decorated numeral 6. | human look: the contact sheet, each picture named aloud as she would |
+| Clipped or incomplete lines instead of complete, natural sentences. | TOO STRONG, LET GO (meant: let's go). | `clipped-line` (look; a heuristic, battle shouts excluded) |
+| Words or phrases that feel odd in their moment. | SUPER POWER. | human look: read each line where it plays |
+| Pacing: anything slow, repetitive, or asking for presses that don't teach; every minigame snappy for an impatient four-year-old. | Charge the Spell asked Dad for a press per rune and green and yellow presses besides; it frustrated her. Now about 20 s, one press. | `slow-room` (look; per-room budgets in `ROOM_BUDGET_MS`), `locked-long`, `locked-silent` |
+
 What bug hunts found, and what became of each: **fixed** (with the test that keeps it
 fixed), **Matt** (a design call, with the hunt's recommendation), or **won't fix** (with
 the reason). A hunt reads this first and does not re-report what is here. The checker

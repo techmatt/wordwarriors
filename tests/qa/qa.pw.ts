@@ -23,6 +23,7 @@ import { test, type Page } from '@playwright/test';
 import { BANK } from '../../content/phonics/bank';
 import { boot, choose, collectErrors, hubGo, leaveBedroom, playBattle, playBridgeRoom, playChargeRoom, playEntry, playWordMachine, press, readToKeyWord, seedProgress, state, until, type WWState } from '../harness';
 import { layoutIssues, leakIssues, logIssues, placeholderArt, type Issue, type Layout, type Since } from './checks';
+import { clippedIssues, giveawayIssues, pacingIssues, spellingIssues } from './wording';
 
 const TAG = process.env.QA_TAG ?? 'now';
 const OUT = `scratch/qa/${TAG}`;
@@ -101,6 +102,10 @@ class Recorder {
   private qaT = 0;
   last: WWState | null = null;
   lastShot = '';
+  /** Each scene's visits, real ms (item 059's pacing check); `wrong` when the scenario answers wrong on purpose. */
+  private visit = { scene: '', at: 0 };
+  visits: { scene: string; ms: number; wrong: boolean }[] = [];
+  wrong = false;
   constructor(
     private readonly page: Page,
     private readonly dir: string,
@@ -135,6 +140,11 @@ class Recorder {
     const q = await this.page.evaluate((t) => (window as unknown as { __wwqa: { since(t: number): Since } }).__wwqa.since(t), this.qaT);
     this.qaT = q.now;
     this.add(logIssues({ ...q, console: [], missingArt: [], flashes: [] }));
+    this.add(clippedIssues(q.voice));
+    if (s.scene !== this.visit.scene) {
+      if (this.visit.scene) this.visits.push({ scene: this.visit.scene, ms: (Date.now() - this.visit.at) * SPEED, wrong: this.wrong });
+      this.visit = { scene: s.scene, at: Date.now() };
+    }
     const sig = {
       scene: s.scene,
       voice: s.voice.speaking && !s.voice.speaking.startsWith('letter_') ? s.voice.speaking : this.sig.voice,
@@ -167,11 +177,14 @@ class Recorder {
     }
     this.add(layoutIssues(l, s.scene, PLACEHOLDERS), shot);
     this.add(leakIssues(s, l, q.voice.filter((v) => v.t >= this.roundStart)), shot);
+    this.add(spellingIssues(l, q.voice, s.scene), shot);
+    this.add(giveawayIssues(l, s.scene), shot);
   }
 
   async stop(): Promise<void> {
     this.running = false;
     await this.loop;
+    this.add(pacingIssues(this.visits));
   }
 }
 
@@ -204,7 +217,7 @@ async function room(page: Page, wrong: boolean, idle = false): Promise<void> {
     'a side room',
   );
   if (s.scene === 'WordMachine') await playWordMachine(page, wrong);
-  else if (s.scene === 'ChargeRoom') await playChargeRoom(page, wrong, wrong ? 'no' : 'yes');
+  else if (s.scene === 'ChargeRoom') await playChargeRoom(page, wrong ? 'no' : 'yes');
   else if (s.scene === 'BridgeRoom') await playBridgeRoom(page, wrong);
   else await sentenceRoom(page, wrong, idle);
 }
@@ -307,6 +320,7 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     await boot(page, `?${sc.query}&qa=1`, SPEED);
     const dir = `${OUT}/${sc.name}`;
     const rec = new Recorder(page, dir);
+    rec.wrong = Boolean(sc.wrong);
     const started = Date.now();
     const counts: Record<string, number>[] = [];
     const heap: number[] = [];
