@@ -204,7 +204,7 @@ async function room(page: Page, wrong: boolean, idle = false): Promise<void> {
     'a side room',
   );
   if (s.scene === 'WordMachine') await playWordMachine(page, wrong);
-  else if (s.scene === 'ChargeRoom') await playChargeRoom(page, wrong);
+  else if (s.scene === 'ChargeRoom') await playChargeRoom(page, wrong, wrong ? 'no' : 'yes');
   else if (s.scene === 'BridgeRoom') await playBridgeRoom(page, wrong);
   else await sentenceRoom(page, wrong, idle);
 }

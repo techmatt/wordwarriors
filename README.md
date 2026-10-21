@@ -251,7 +251,8 @@ the rune alone; an unhelped yes is one level less help next time, a helped rune 
 every rune charged the word lights up and she reads it aloud ("Now read the whole
 spell!"): Dad's **2** says it; his **1**, or 10 s with nothing, sounds it out once and says
 it; either way its picture shows and goes into her bag as a battle item. A round with Dad
-answering at once is about 30 s. The word is drawn like any room's (`drawWords`, from the
+answering at once should be 30-45 s by its timings (an estimate: the tests' clock runs
+fast, about 6 s). The word is drawn like any room's (`drawWords`, from the
 familiar pictured words), leaning to shaky sounds: continuous sounds first (M S F A L N R
 V Z, the short vowels), quick sounds once those are solid, then SH CH TH
 (`src/rules/charge.ts`, `CHARGE` in `src/config.ts`). Each charged rune is still a move her
