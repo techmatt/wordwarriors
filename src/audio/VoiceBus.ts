@@ -13,7 +13,7 @@
  *
  * Listeners (the bubble layer, the caption) hear about every line that starts,
  * so text and voice can never disagree. When a clip is missing (mute build,
- * failed line) the line still "plays" for an estimated duration so the caption
+ * failed line, a decode still pending after ENSURE_TIMEOUT_MS) the line still "plays" for an estimated duration so the caption
  * shows and flow-control awaits still resolve.
  */
 
@@ -42,6 +42,25 @@ export interface Utterance {
 type Listener = (u: Utterance | null) => void;
 
 const BARK_GAP_MS = 900;
+
+/**
+ * How long a line waits for its voice group to decode (item 058: item 057 saw
+ * a hub line hang 60 s on one). Past this the line goes on without audio, as a
+ * line with no clip does: its caption shows for the line's estimated length.
+ * The decode carries on; the line never starts its audio late.
+ */
+export const ENSURE_TIMEOUT_MS = 4000;
+
+/** Wait for a line's decode, at most `ms`: 'done', 'failed', or 'late' when it has not settled. */
+function decodeWithin(p: Promise<void>, ms: number): Promise<'done' | 'failed' | 'late'> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const late = new Promise<'late'>((resolve) => (timer = setTimeout(() => resolve('late'), ms)));
+  const settled = p.then(
+    () => 'done' as const,
+    () => 'failed' as const,
+  );
+  return Promise.race([settled, late]).finally(() => clearTimeout(timer));
+}
 
 class Bus {
   private current: { u: Utterance; playback: Pick<VoicePlayback, 'stop'> | null; done: () => void } | null = null;
@@ -191,7 +210,12 @@ class Bus {
     // Claim the voice before any await, so nothing else starts meanwhile.
     const claim = { u: { id, priority } as Utterance, playback: null, done: () => undefined };
     this.current = claim;
-    if (voiceBank.has(id) && !voiceBank.ready(id)) await voiceBank.ensure(id);
+    if (voiceBank.has(id) && !voiceBank.ready(id)) {
+      // A decode that hangs or fails leaves the line without audio (below), never stuck.
+      const decoded = await decodeWithin(voiceBank.ensure(id), ENSURE_TIMEOUT_MS);
+      if (decoded === 'late') console.warn(`voice: ${id} not decoded after ${ENSURE_TIMEOUT_MS} ms; it plays without audio`);
+      if (decoded === 'failed') console.warn(`voice: ${id} failed to decode; it plays without audio`);
+    }
     // hush() or a newer line may have taken the voice while this one decoded;
     // then this line is dropped rather than talking over (and orphaning) it.
     if (this.current !== claim) return false;
