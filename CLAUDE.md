@@ -110,12 +110,12 @@ build (README, *Operational facts*, "Long Playwright runs").
 
 Adding a character, ability, word or line is data work: edit `content/`, then
 `npm run voice:lines && npm run voice:build && npm run art:placeholders` ("the three
-commands" below).
+commands").
 
 A **candidate round** (`art:alts`) changes nothing tracked, so it may run as a
 **readonly** item; a new look is a `--brief` file in `scratch/`, not an edit to
 `content/art/prompts.ts`. **Promotion** (`art:pick`) is a normal item ("for X I pick n"
-below; README, *Candidates*).
+in `docs/content.md`, *Matt says X → run Y*; README, *Candidates*).
 
 ## Standing contract
 
@@ -128,9 +128,12 @@ below; README, *Candidates*).
   (the `npx tsx …` / `playwright` process itself), never on a launcher wrapper.
 - **LF line endings** (`.gitattributes` `* text=auto eol=lf`).
 - **Operational facts learned while working go into the README**, never only into a report.
-- **Matt never edits config or content by hand**; prompts apply the values he dictates.
+
+## House rules
+
 - **Never commit 20 MB or more of tree bytes without Matt's explicit prior confirmation.**
   Art counts; generated voice is untracked and does not.
+- **Matt never edits config or content by hand**; prompts apply the values he dictates.
 - **Every file has one home** (README, *Storage*): git, the Drive folder behind the
   junctions, or nowhere for anything rebuilt cheaply.
 
@@ -215,35 +218,5 @@ below; README, *Candidates*).
 
 "The three commands" are `voice:lines`, `voice:build`, `art:placeholders`.
 
-| Matt says | Run |
-| --- | --- |
-| "add a character / ability / taunt" | `content/battle/roster.ts`, the three commands |
-| "add words" / "add a move word" | a `BANK` entry in `content/phonics/bank.ts` (role `thing`, `action` or `both`), its picture brief in `PICTURES` (`content/art/prompts.ts`), its battle effect in `content/phonics/effects.ts` (`docs/content.md`, "A word"), the three commands |
-| "Julia knows X" / "she doesn't know what X is" | remove / add `odd` on X's `BANK` entry (an odd word is never a picture to match) |
-| "more wake-up lines" / "another sorry for X" | `WAKE_LINES` in `content/voice/script.ts` (`up_<n>`, `good_<n>`, `door_<n>`, `WAKE_VARIANTS`); `reformed.sorry` / `.ending` on X in the roster; then `voice:lines`, `voice:build` |
-| "add a sentence / frame" / "what X does in battle" | `FRAMES` in `content/phonics/sentences.ts`; X's effect in `content/phonics/effects.ts`; the three commands |
-| "add a hub scene / quest line" | `HUB_SCENES` in `content/house/scenes.ts`; a quest's `lines` in `content/house/quests.ts` (`docs/content.md`, "A hub scene", "A quest"), the three commands |
-| "X casts spells" / "X's gift should sound like a spell" | `CASTERS` in `content/house/scenes.ts`; `spell` on `BANK` entries marks spell-sounding words |
-| "make it harder / easier" / "let the help fade" / "back to base" | `DIFFICULTY` in `src/config.ts` (1 base: every help ramp held at its start; 2; 3 all the way); shown on the grown-ups page |
-| "longer / shorter words in X" (warm-up, bridge, word machine, charge) | `GRAB.maxUnits`, `BRIDGE.maxUnits`, `WORD_MACHINE.maxUnits`, `CHARGE.units` in `src/config.ts` (sound units: SH is one). No level gate otherwise |
-| "she sees X too often" / "repeats too soon" | `VARIETY` in `src/config.ts` (`rotations`, `words`, `wordWeight`, `gameWeight`; `docs/episode.md`, *Variety across episodes*) |
-| "add a bedroom / side room / villain mood" | `content/house/house.ts` or the villain's `house` in the roster, the three commands |
-| "turn the pick screens back on" / "always the same cast" | `EPISODE_DEFAULTS` in `src/config.ts` (`pickScreens`, `randomCast: false`) |
-| "Matt should wake her more / less often" | `CAST_ODDS` in `src/config.ts` |
-| "switch X on / off" (in the random cast) | `ACTIVE_CAST` in `src/config.ts` (allies, villains; persons, a dad in all his forms) |
-| "add a dad form" / "add a quest" / "add a minigame" | `docs/content.md`: a roster entry with `person`; `QUESTS` + `PLACES`; `MINIGAMES` |
-| "add a word family / silly word" / "more or fewer machine words" | `RIMES` in `content/phonics/families.ts` (then `voice:lines`, `voice:build`); `WORD_MACHINE` in `src/config.ts` |
-| "add a victory scene" / "change what they say at the end" | `ENDINGS` in `content/house/endings.ts` (`docs/content.md`, "A victory scene"), the three commands, then `art:alts` |
-| "make X a race / a cook-off" / "chef Jason should cook more" | `fight` on X in the roster; `fightNudge.chance` on `dada_jason` (`docs/content.md`, "A fight style") |
-| "make it the chef episode" | `?ally=dada_jason` (Julia's chef form follows; outfits are `content/battle/forms.ts`) |
-| "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`) |
-| "here are my letter sound recordings" / "here is a recorder zip" | `npm run voice:import -- <zip>`, then `voice:build`; report each card installed or refused and why (`docs/recording.md`) |
-| "longer / shorter charge words" / "a longer / shorter beat to say each sound back" / "Dad should wait longer" | `CHARGE` in `src/config.ts` (`units`, `sayBackMs`, `readTimeoutMs`) |
-| "a new gesture for X" / "X's rune should fire Y" | X's entry in `RUNES` (`content/phonics/runes.ts`: `gesture`, `move`), then `voice:lines`, `voice:build` |
-| "higher / floatier jumps" / "more or fewer shots" / "charge sooner" | `FREE_PLAY` in `src/config.ts` (`jump`, `maxShots`, `chargeMs`, `fullChargeMs`, `shotSpeed`, `shotLifeMs`) |
-| "stop forcing the phonics room" | `FORCE_PHONICS_ROOM` in `src/config.ts` (both stay weighted entries, `CHARGE.weight`, `BRIDGE.weight`) |
-| "more / fewer bridge words" / "slower slide" / "Dad should wait longer on the bridge" | `BRIDGE` in `src/config.ts` (`words`, `slide`, `maxUnits`, `dadWaitMs`, `replays`, `startLevel`) |
-| "the bridge needs pictures like X" | a familiar `BANK` thing starting like X (`docs/content.md`, "The Stretchy Bridge's pictures"), the three commands, `art:gen` |
-| "the warm-up is too hard / too easy" / "start new words at level N" | `GRAB.startLevel` (and `helpAfter`) in `src/config.ts`; past the start level only with `DIFFICULTY` 2+ |
-| "for X I pick n" (from an `art_alts_*` sheet) | `npm run art:pick -- X n`, commit `public/art/X.png`; if it prints a brief, write it into X's roster `look` (or `HAND`) in the same commit |
-| "try a new look for X" / "draw X as …" | a brief file in `scratch/`, then `npm run art:alts -- X --n=2 --brief=scratch/<name>.txt --sheet=scratch/art_alts_<item>_<name>.png` (readonly; Matt picks) |
+What to run when Matt asks for a content or tuning change ("add a character", "make it
+harder", "for X I pick n"): `docs/content.md`, *Matt says X → run Y*.
