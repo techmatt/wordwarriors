@@ -83,9 +83,8 @@ export function standXs(e: EndingSpec, n: number): number[] {
  * Draw a scene id: none of her `recent` scenes (newest last; item 067, was
  * only the last one) while two are left, a fitting one `FIT_WEIGHT` times likelier.
  */
-export function pickEnding(cast: EndingCast, recent: string | null | readonly string[], rand: Rand = Math.random): string {
-  const rec = recent === null ? [] : typeof recent === 'string' ? [recent] : recent;
-  const from = fresh(ENDINGS, ENDINGS.filter((e) => rec.includes(e.id)).sort((a, b) => rec.indexOf(a.id) - rec.indexOf(b.id)));
+export function pickEnding(cast: EndingCast, recent: readonly string[], rand: Rand = Math.random): string {
+  const from = fresh(ENDINGS, ENDINGS.filter((e) => recent.includes(e.id)).sort((a, b) => recent.indexOf(a.id) - recent.indexOf(b.id)));
   const weights = from.map((e) => (endingFits(e, cast) ? FIT_WEIGHT : 1));
   let r = rand() * weights.reduce((a, b) => a + b, 0);
   for (const [i, e] of from.entries()) {

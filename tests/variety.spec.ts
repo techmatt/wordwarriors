@@ -10,7 +10,7 @@ import { test, expect } from '@playwright/test';
 import { personOf } from '../content/battle/roster';
 import { boot, collectErrors, expectNoErrors, press, until } from './harness';
 
-type Recent = { recent?: Record<string, string[]>; villains?: string[] };
+type Recent = { recent?: Record<string, string[]> };
 
 test('a drawn episode remembers its cast and variants as she walks into the bedroom, its rooms and games with the plan', async ({ page }) => {
   const errors = collectErrors(page);
@@ -24,7 +24,7 @@ test('a drawn episode remembers its cast and variants as she walks into the bedr
   if (bed.episode.ally) expect(p.recent?.ally).toEqual([personOf(bed.episode.ally)]);
   expect(keys.some((k) => k.startsWith('quest_'))).toBe(true);
   expect(keys).toContain('line_up');
-  expect(p.villains?.length).toBe(1);
+  expect(p.recent?.villain?.length).toBe(1);
   // The bedroom draws the plan early (its art): its side rooms and games are remembered too.
   const later = await until(page, (st) => Boolean(st.episode.house.plan) && Boolean((st.progress as unknown as Recent).recent?.games), 30_000, 'the plan remembered');
   const games = (later.progress as unknown as Recent).recent!.games!;
@@ -38,6 +38,5 @@ test('a dev jump with the fixed cast remembers no cast and no plan', async ({ pa
   const hub = await until(page, (st) => st.scene === 'Hub' && Boolean(st.episode.house.plan), 30_000, 'hub with its plan');
   const p = hub.progress as unknown as Recent;
   expect(p.recent ?? {}).toEqual({});
-  expect(p.villains ?? []).toEqual([]);
   expectNoErrors(errors);
 });

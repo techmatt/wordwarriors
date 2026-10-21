@@ -1,12 +1,12 @@
 /**
  * Variety across episodes (item 067). Pure: no Phaser, unit-tested
- * (tests/unit/recent.test.ts).
+ * (tests/unit/variety.test.ts).
  *
- * Each rotation (the ally, a dad's form, the side rooms, the games, the story
- * and line variants, the victory scene) keeps its recent picks in the
+ * Each rotation (the villain, the ally, a dad's form, the side rooms, the games,
+ * the story and line variants, the victory scene) keeps its recent picks in the
  * progress store (`recentOf` / `remember`, VARIETY in src/config.ts) and
  * draws through `fresh` or `leastRecent`, so she rarely sees a repeat soon.
- * The villain keeps its own list (item 025, the same rule as `fresh`).
+ * The villain's draw (src/rules/cast.ts) writes `fresh`'s rule out inline.
  */
 
 import type { Rand } from './bank';

@@ -48,7 +48,7 @@ export class EndingScene extends Phaser.Scene {
     // Drawn early (item 065: the second battle draws it so its art loads during the fight); counted here.
     if (!episode.endingCounted) {
       episode.endingCounted = true;
-      progress.endingPlayed(drawEnding());
+      progress.remember('ending', drawEnding());
       // The episode is won here: counted now, not when green leaves the
       // victory screen (item 039: closing the tab there never counted it).
       progress.episodeDone();

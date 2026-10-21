@@ -127,7 +127,7 @@ test('endings: never last episode\'s scene, and a fitting one is likelier', () =
   const counts = new Map<string, number>();
   const N = 8000;
   for (let i = 0; i < N; i++) {
-    const id = pickEnding(chef, 'picnic', rand);
+    const id = pickEnding(chef, ['picnic'], rand);
     assert.notEqual(id, 'picnic');
     counts.set(id, (counts.get(id) ?? 0) + 1);
   }
@@ -143,7 +143,7 @@ test('endings: never last episode\'s scene, and a fitting one is likelier', () =
 test('endings: the store keeps her last scene', () => {
   const storage = memory();
   const a = new ProgressStore(storage);
-  assert.equal(a.lastEnding(), null);
-  a.endingPlayed('boat');
-  assert.equal(new ProgressStore(storage).lastEnding(), 'boat');
+  assert.deepEqual(a.recentOf('ending'), []);
+  a.remember('ending', 'boat');
+  assert.deepEqual(new ProgressStore(storage).recentOf('ending'), ['boat']);
 });

@@ -20,6 +20,7 @@ import { MINIGAMES, drawGames } from '../../src/rules/minigames';
 import { fresh, leastRecent } from '../../src/rules/recent';
 import { drawLines, drawStory, pickVariant } from '../../src/rules/story';
 import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
+import { withDifficulty } from './difficulty';
 
 function memory(): StorageLike {
   const m = new Map<string, string>();
@@ -42,9 +43,7 @@ test('difficulty: base by default; helpLevel holds every ramp at its start at ba
   assert.equal(helpLevel(1, 2, 1), 2);
   setDifficulty(7);
   assert.equal(difficulty(), DIFFICULTY, 'anything but 1-3 is ignored');
-  setDifficulty(3);
-  assert.equal(difficulty(), 3);
-  setDifficulty(DIFFICULTY);
+  withDifficulty(3, () => assert.equal(difficulty(), 3));
 });
 
 // ---- The helpers -------------------------------------------------------------
@@ -81,7 +80,7 @@ test('the store remembers rotations across page loads; an old blob loads with it
   a.remember('ally', 'scar');
   a.remember('ally', 'dada_matt');
   assert.deepEqual(new ProgressStore(storage).recentOf('ally'), ['scar', 'dada_matt'], `keeps VARIETY.rotations (${VARIETY.rotations}), newest last, no repeats`);
-  a.endingPlayed('boat');
+  a.remember('ending', 'boat');
   assert.deepEqual(new ProgressStore(storage).recentOf('ending'), ['boat']);
   // A blob from before item 067: words, levels and its ending survive; `recent` starts from the ending.
   const old = memory();
@@ -92,6 +91,17 @@ test('the store remembers rotations across page loads; an old blob loads with it
   assert.equal(back.snapshot().episodes, 9);
   assert.deepEqual(back.recentOf('ending'), ['picnic']);
   assert.deepEqual(back.recentOf('words'), []);
+  assert.equal('ending' in back.snapshot(), false, 'the old field leaves the blob');
+  // Item 076: item 025's own villain list joins the rotations, its last 4 kept, and leaves the blob.
+  const villains = memory();
+  villains.setItem(STORE_KEY, JSON.stringify({ version: 1, villains: ['smaug', 'tiamat', 'bavmorda', 'jormungandr', 'moriarty'], recent: { ally: ['ellie'] } }));
+  const met = new ProgressStore(villains);
+  assert.deepEqual(met.recentOf('villain'), ['tiamat', 'bavmorda', 'jormungandr', 'moriarty']);
+  assert.deepEqual(met.recentOf('ally'), ['ellie']);
+  assert.equal('villains' in met.snapshot(), false);
+  met.villainMet('smaug');
+  met.villainMet('tiamat');
+  assert.deepEqual(new ProgressStore(villains).recentOf('villain'), ['jormungandr', 'moriarty', 'smaug', 'tiamat'], 'met again moves to newest; 4 kept');
 });
 
 // ---- The rotations -------------------------------------------------------------
@@ -106,7 +116,7 @@ test('cast: her recent allies and each dad\'s recent forms sit out across episod
   const allies: string[] = [];
   const matt: string[] = [];
   for (let e = 0; e < 40; e++) {
-    const c = drawCast({ hero: 'julia', recent: store.recentVillains(), recentAllies: store.recentOf('ally'), recentForms: { dada_matt: store.recentOf('form_dada_matt') } }, rand);
+    const c = drawCast({ hero: 'julia', recent: store.recentOf('villain'), recentAllies: store.recentOf('ally'), recentForms: { dada_matt: store.recentOf('form_dada_matt') } }, rand);
     store.villainMet(personOf(c.villain));
     if (c.ally) {
       const p = personOf(c.ally);
@@ -146,8 +156,7 @@ test('victory scene: none of her recent scenes while two are left (was only the 
   const rand = seededRand(4);
   const recent = ENDINGS.slice(0, 2).map((e) => e.id);
   for (let i = 0; i < 100; i++) assert.ok(!recent.includes(pickEnding(cast, recent, rand)));
-  // A single id (the old form) still works.
-  for (let i = 0; i < 50; i++) assert.notEqual(pickEnding(cast, ENDINGS[0]!.id, rand), ENDINGS[0]!.id);
+  for (let i = 0; i < 50; i++) assert.notEqual(pickEnding(cast, [ENDINGS[0]!.id], rand), ENDINGS[0]!.id);
 });
 
 test('games: a game she played in her last episodes weighs VARIETY.gameWeight, so the doors rotate', () => {

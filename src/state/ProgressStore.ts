@@ -67,15 +67,12 @@ export interface ProgressData {
   /** The wrong move pads (item 038): a word leaves when a choice has shown it, so they rotate across episodes. */
   padBag: WordBag;
   episodes: number;
-  /** The villains (persons) of her last few episodes, newest last (item 025): the cast draw avoids them. */
-  villains: string[];
-  /** The victory scene of her last episode (item 027): the next one is different. */
-  ending: string | null;
   /**
    * Rotations remembered across episodes (item 067), per kind, newest last:
-   * `ally`, `form_<dad>`, `rooms`, `games`, `quest_<helper>`, `scene_<helper>`,
-   * `line_<key>`, `ending`; `words` her latest right-first-time reads
-   * (VARIETY.words), which the bank's draws lean away from.
+   * `villain` (persons, the last VILLAINS_KEPT), `ally`, `form_<dad>`, `rooms`,
+   * `games`, `quest_<helper>`, `scene_<helper>`, `line_<key>`, `ending`;
+   * `words` her latest right-first-time reads (VARIETY.words), which the
+   * bank's draws lean away from.
    */
   recent: Record<string, string[]>;
 }
@@ -103,11 +100,19 @@ function emptyStat(): Stat {
 }
 
 function empty(): ProgressData {
-  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, grabs: {}, grabLevels: {}, chargeLevels: {}, bridgeLevels: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, padBag: { left: [], round: 0 }, episodes: 0, villains: [], ending: null, recent: {} };
+  return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, grabs: {}, grabLevels: {}, chargeLevels: {}, bridgeLevels: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, padBag: { left: [], round: 0 }, episodes: 0, recent: {} };
 }
 
 /** How many past villains the store keeps. */
 const VILLAINS_KEPT = 4;
+
+/** Fields an older blob may still carry, moved into `recent` on load (item 076). */
+interface LegacyData {
+  /** Item 025's recent villains, newest last: now `recent.villain`. */
+  villains?: string[];
+  /** Item 027's last victory scene: now `recent.ending`. */
+  ending?: string | null;
+}
 
 export interface StorageLike {
   getItem(key: string): string | null;
@@ -129,7 +134,7 @@ export class ProgressStore {
     const raw = this.storage?.getItem(STORE_KEY);
     if (!raw) return empty();
     try {
-      const parsed = JSON.parse(raw) as ProgressData;
+      const parsed = JSON.parse(raw) as ProgressData & LegacyData;
       if (parsed.version !== STORE_VERSION) throw new Error(`version ${parsed.version}`);
       parsed.sounds ??= {};
       parsed.words ??= {};
@@ -142,13 +147,9 @@ export class ProgressStore {
       // Item 038, the same way.
       parsed.padBag ??= { left: [], round: 0 };
       parsed.episodes ??= 0;
-      // Item 025, the same way.
-      parsed.villains ??= [];
       // Item 026, the same way.
       parsed.rimes ??= {};
       parsed.onsets ??= {};
-      // Item 027, the same way.
-      parsed.ending ??= null;
       // Item 033, the same way.
       parsed.grabs ??= {};
       parsed.grabLevels ??= {};
@@ -156,8 +157,12 @@ export class ProgressStore {
       parsed.chargeLevels ??= {};
       // Item 054, the same way.
       parsed.bridgeLevels ??= {};
-      // Item 067, the same way: her last victory scene seeds its rotation.
+      // Item 067, the same way: her last victory scene (item 027's `ending`) seeds its rotation.
       parsed.recent ??= parsed.ending ? { ending: [parsed.ending] } : {};
+      // Item 076: item 025's own villain list joins the rotations.
+      if (parsed.villains?.length && !parsed.recent.villain) parsed.recent.villain = parsed.villains.slice(-VILLAINS_KEPT);
+      delete parsed.villains;
+      delete parsed.ending;
       // Item 035: a blob with no `bagKnown` knew the bag words before MUG RUG JUG.
       parsed.bagKnown ??= 'legacy';
       return parsed;
@@ -215,26 +220,9 @@ export class ProgressStore {
     this.save();
   }
 
-  /** Her recent villains (persons), newest last. */
-  recentVillains(): string[] {
-    return [...this.data.villains];
-  }
-
-  /** Her last episode's victory scene, or null. */
-  lastEnding(): string | null {
-    return this.data.ending;
-  }
-
-  /** A victory scene was played: the next episode draws another. */
-  endingPlayed(id: string): void {
-    this.data.ending = id;
-    this.remember('ending', id);
-  }
-
-  /** An episode was cast with this villain (a person): kept so the next ones differ. */
+  /** An episode was cast with this villain (a person): the last VILLAINS_KEPT are kept (`recent.villain`) so the next ones differ. */
   villainMet(person: string): void {
-    this.data.villains = [...this.data.villains.filter((v) => v !== person), person].slice(-VILLAINS_KEPT);
-    this.save();
+    this.remember('villain', person, VILLAINS_KEPT);
   }
 
   /** A word's warm-up level (item 033), or `fallback` (GRAB.startLevel) if she has never grabbed it. */

@@ -2,9 +2,8 @@
  * The episode's draws (split from Episode.ts, which re-exports them): the
  * house plan, the warm-up, the gift word, the move plan, the counter, the
  * fight style and the victory scene, each made once per episode on first
- * need, and the words said before each that it keeps clear of. Nothing here
- * runs at module load but `HALL_LINE_WORDS` (content only), so the import
- * cycle with Episode.ts is safe.
+ * need, and the words said before each that it keeps clear of; and the
+ * journey map's stops. No Phaser and no import of Episode.ts (item 076).
  */
 
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
@@ -27,7 +26,8 @@ import { hallObjects, pickGrab } from '../rules/grab';
 import { progress } from '../state/progress';
 import { pickWeighted } from '../state/ProgressStore';
 import { away, bedroomTaunt, helper, hubScene, storyWords, villainSpec } from './cast';
-import { castRand, episode, fightOverride, journeyStops, remembered, type Slot } from './Episode';
+import { castRand, fightOverride, remembered } from './draws';
+import { episode, steps, type Slot, type Step } from './state';
 
 /**
  * Remember the house plan's side rooms and games (item 067), once per
@@ -276,4 +276,20 @@ export function drawEnding(): string {
     episode.ending = forced && ENDING_BY_ID[forced] ? forced : pickEnding(episode, progress.recentOf('ending'));
   }
   return episode.ending;
+}
+
+/** The journey stops: every step from the bedroom to victory, with an icon each. */
+export function journeyStops(): { icon: string; index: number }[] {
+  const icon = (s: Step): string => {
+    if (s.kind === 'bedroom') return '🛏️';
+    if (s.kind === 'house') return away() ? PLACE_BY_ID[episode.place]!.glyph : '🏠';
+    if (s.kind === 'battle') return '⚔️';
+    if (s.kind === 'victory') return '🏆';
+    return '•';
+  };
+  return steps()
+    .map((s, index) => ({ s, index }))
+    // The warm-up is still home, part of the morning: no stop of its own.
+    .filter(({ s }) => s.kind !== 'title' && s.kind !== 'pick' && s.kind !== 'grab')
+    .map(({ s, index }) => ({ icon: icon(s), index }));
 }

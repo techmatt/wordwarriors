@@ -338,7 +338,7 @@ pictures may be longer), `WORD_MACHINE.maxUnits`, `CHARGE.units`.
 **Variety across episodes.** Each rotation keeps its recent picks in the progress store
 (`recent`, `src/rules/recent.ts`; how many: `VARIETY` in `src/config.ts`) and avoids
 them while two choices are left: the ally and each dad's form (`src/rules/cast.ts`), the
-villain (its own list in the store, `villains`, the last 4 kept; the draw avoids as many
+villain (`recent.villain`, the last 4 kept; the draw avoids as many
 as still leave two, so the last 2 with four active), the quest line, hub scene and each line variant
 (`src/rules/story.ts`), the victory scene, the side rooms (the one left out last episode
 comes back), the games (last episodes' weigh `VARIETY.gameWeight`) and the phonics door

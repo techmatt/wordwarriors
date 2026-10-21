@@ -2,11 +2,9 @@
  * The episode's cast lookups (split from Episode.ts, which re-exports them):
  * who the helper, narrator and waker are, how each character is drawn this
  * episode, and the cast's lines (the quest setup, the hub scene, the wake-up,
- * the villain's taunt and sorry). Pure reads of `episode`: nothing here runs
- * at module load, so the import cycle with Episode.ts is safe.
+ * the villain's taunt and sorry). Pure reads of `episode` (`./state.ts`):
+ * no Phaser and no import of Episode.ts (item 076).
  */
-
-import Phaser from 'phaser';
 
 import { charArt } from '../../content/art/assets';
 import { formFor } from '../../content/battle/forms';
@@ -21,7 +19,7 @@ import { ADULT_HEIGHT } from '../config';
 import { isGrownUp, wakerOf } from '../rules/cast';
 import { wordsOf } from '../rules/sentences';
 import { BEDROOM_TAUNTS } from '../rules/story';
-import { episode, type EpisodeState } from './Episode';
+import { episode, type EpisodeState } from './state';
 
 /** The dad who wakes her (src/rules/cast.ts `wakerOf`), in his form. */
 export function waker(state: EpisodeState = episode): string {
@@ -79,7 +77,7 @@ export function castScale(id: string, state: EpisodeState = episode): number {
   const hero = CHARACTER_BY_ID[castId(state.hero, state)];
   if (!c || !hero) return 1;
   if (isGrownUp(c.id) && !isGrownUp(hero.id)) return ADULT_HEIGHT;
-  return Phaser.Math.Clamp(c.good.size / hero.good.size, 0.7, 1.3);
+  return Math.min(1.3, Math.max(0.7, c.good.size / hero.good.size));
 }
 
 /** The name-free face card for `id` in this episode (names as sight words): its outfit's, else its form's `face_<id>`. */
