@@ -116,6 +116,9 @@ const FETCHABLE = new Set(FETCH_ITEMS.map((i) => i.word));
  */
 export const NAMED_COUNTER_BOOST = 6;
 
+/** Bank things that take no "A" (some, not one): never the key word of a "...A {x}" frame (item 069). */
+export const NO_ARTICLE = new Set(['cheese', 'milk', 'jam', 'grass', 'chips']);
+
 /**
  * Two picture words for the room's other objects: not the key word, not a
  * look-alike of it (LOOKALIKES), and nothing in `avoid` (the sentence's own
@@ -279,8 +282,9 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   const fits = (i: number) => {
     const f = frames[i];
     const article = f ? tokenWord(sentence(f, fill, 'x').tokens.at(-2) ?? '') : '';
-    // X-RAY starts on a vowel sound too (item 058: no WE NEED A XRAY).
-    return (w: string) => article !== 'a' || !/^[aeiou]|^x/.test(w);
+    // X-RAY starts on a vowel sound too (item 058: no WE NEED A XRAY); nor a word that takes
+    // no "A" (item 069: SCAR NEEDS A CHEESE).
+    return (w: string) => article !== 'a' || (!/^[aeiou]|^x/.test(w) && !NO_ARTICLE.has(w));
   };
   const keys: string[] = [];
   for (let i = 0; i < 2; i++) {

@@ -1022,6 +1022,11 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
 
 ## Operational facts
 
+- **Stopping a backgrounded Playwright run leaves it running** (item 069): Claude Code's
+  TaskStop on the shell kills the shell, not the `node …@playwright\test\cli.js`, its
+  worker or the `vite` it serves, which keeps the port. Find them by command line
+  (PowerShell `Get-CimInstance Win32_Process | ? CommandLine -like '*<worktree>*'`) and
+  `Stop-Process` them before starting another run on that port.
 - **edge-tts runs through Python, via `uvx`.** On 2026-10-18 Microsoft's endpoint refused
   the npm `edge-tts-universal` 1.4.0 handshake with HTTP 403 (the websocket never opens
   and the library hangs instead of erroring). Upstream Python `edge-tts` 7.3.1 had moved

@@ -13,7 +13,7 @@ import { BANK, BANK_BY_WORD } from '../../content/phonics/bank';
 import { distractorsFor, withStems } from '../../src/rules/bank';
 import { MINIGAME_BY_ID } from '../../src/rules/minigames';
 import { drawGift, drawMove } from '../../src/rules/moves';
-import { BAG_WORDS, drawKey, episodePlans, saidEarly, type EpisodeInput } from '../../src/rules/sentences';
+import { BAG_WORDS, NO_ARTICLE, drawKey, episodePlans, saidEarly, type EpisodeInput } from '../../src/rules/sentences';
 import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
 
 function memory(): StorageLike {
@@ -71,6 +71,8 @@ test('no "A" frame takes a word starting with a vowel (WE NEED A ANT)', () => {
       if (p.kind !== 'sentence') continue;
       const t = p.sentence.tokens;
       assert.ok(!(t.at(-2) === 'A' && /^[AEIOU]/.test(t.at(-1)!)), t.join(' '));
+      // Nor a word that takes no "A" (item 069: SCAR NEEDS A CHEESE).
+      assert.ok(!(t.at(-2) === 'A' && NO_ARTICLE.has(t.at(-1)!.toLowerCase())), t.join(' '));
     }
   }
 });

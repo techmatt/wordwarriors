@@ -180,9 +180,10 @@ export class SentenceRoom extends Minigame {
     // She comes in below them, out of reach, so she is not standing on one when they wake (item 069:
     // under a two-row banner she came in 70 px under the middle one and a mashed green chose it).
     const spots = room.spots.slice(0, this.plan.objects.length).map(([x, y]) => ({ x, y: y + drop }));
-    const y = Math.min(Math.max(room.entry.y, highest + drop + REACH + 10), this.floor.bottom - 10);
+    // Not lower down instead: the bottom dialogue box ("Now find it") would cover her, the cursor.
+    const y = Math.min(Math.max(room.entry.y, highest + drop + 70), this.floor.bottom - 10);
     const inReach = (x: number) => spots.some((sp) => Math.hypot(sp.x - x, sp.y - y) <= REACH);
-    // Floor too short for that: between two of them instead.
+    // In reach of the middle one: between the first two instead.
     const x = !inReach(room.entry.x) || spots.length < 2 ? room.entry.x : (spots[0]!.x + spots[1]!.x) / 2;
     this.player.place(x, y);
     // Arriving: a hop and a puff where she comes in.
