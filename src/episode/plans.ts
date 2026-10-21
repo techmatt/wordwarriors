@@ -11,6 +11,7 @@ import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import type { CounterItem } from '../../content/battle/types';
 import { COUNTER_ROOM, FETCH_ROOMS, PLACE_BY_ID, SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { BANK } from '../../content/phonics/bank';
+import { FRAMES } from '../../content/phonics/sentences';
 import { NARRATOR_LINES, wakeTemplate, wakeVariant } from '../../content/voice/script';
 import { FORCE_PHONICS_ROOM, VARIETY } from '../config';
 import { leastRecent } from '../rules/recent';
@@ -182,8 +183,15 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
  * banners and lines clear of pad words as it goes (BattleScene `textGivesAway`).
  */
 function saidBeforeBattle(): string[] {
-  return withStems([...bedroomWords(), ...HALL_LINE_WORDS, ...storyWords(), ...fightWords()]);
+  return withStems([...bedroomWords(), ...HALL_LINE_WORDS, ...storyWords(), ...fightWords(), ...FRAME_WORDS]);
 }
+
+/**
+ * Every sentence frame's own words: the rooms' frames are drawn after the
+ * pads, and the attic's {villain} RUNS FROM THE showed and said RUNS before
+ * a battle-2 RUN pad (item 069).
+ */
+const FRAME_WORDS = FRAMES.flatMap((f) => wordsOf(f.text.replace(/\{\w+\}/g, ' ')));
 
 /**
  * What the fight style says and shows around the pads (item 039: the
