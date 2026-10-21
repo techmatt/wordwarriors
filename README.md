@@ -414,6 +414,8 @@ Two lanes (re-measured in item 061, 2026-10-20):
   plus the browser specs that cover what changed (`npx playwright test <spec>`, both
   lanes of it); the full suite only when clearly needed, such as a change touching every scene.
 
+### Writing a browser test
+
 A new browser test that takes more than about 10 s gets `SLOW` (`{ tag: '@slow' }`, from
 `tests/harness.ts`) as its options; `--grep @slow` matches the tag, not the title. Item 061
 found the fast lane at 7.8 minutes because 19 tests over 10 s (most of `cover`, `freeplay`,
@@ -432,19 +434,19 @@ the scene you want, never for "anything but Boot". `tests/lazyart.spec.ts` (fast
 slows every picture by 150 ms and checks the hub waits, then opens with nothing missing.
 A browser test fails on any `art: not ready` warning (`collectErrors`).
 
-**Boot timings:** `npx playwright test --config tests/perf/perf.config.ts` (about 1.5
-minutes; not a test, it prints) times page load to the title and to a quiet hub
-(`?scene=house`: input free, nobody talking, still so 0.6 s later), each from a fresh
-browser context, median of `PERF_RUNS` (5), and the art each fetched. Its server takes
-`PERF_PORT`, else `CONDUCTOR_PORT`, else 5196. Item 065's before and after are in
-`docs/engineering.md`.
+To force a key word, seed the progress blob with `bag: { left: [word], round: 1 }` **and**
+`bagKnown: BAG_WORDS` (`tests/soundout.spec.ts`): a blob without `bagKnown` counts as one
+from before item 035, and the store tops the bag up with every word added since (item 048).
+
+### What each spec plays
 
 Every browser test plays the fixed default episode (`tests/harness.ts` adds
 `cast=default`) unless its URL asks for a draw (`seed=`): drawn casts walk from the bedroom
 through the warm-up to the quest place in `tests/entry.spec.ts` (four seeds), and three
 whole random episodes play in the slow lane, two in `tests/soak.spec.ts` (seed 1 and the
-draw after it) and one in the word machine's episode (seed 19) (item 025). The same
-way, every browser test's rooms play the sentence game (the harness adds
+draw after it) and one in the word machine's episode (seed 19) (item 025).
+
+The same way, every browser test's rooms play the sentence game (the harness adds
 `games=sentence`) unless its URL asks for a game (`game=word_machine`) or the whole pool
 (`games=all`). `FORCE_PHONICS_ROOM` follows the same rule: the harness's `games=sentence`
 and any `game=` keep the test's own rooms, while `games=all` (the real draw) and the
@@ -457,13 +459,18 @@ with the stick, Dad's yes where he is asked, the right picture); `tests/bridge.s
 covers its three help levels, a wrong picture and a drawn episode (item 054).
 `tests/machine.spec.ts` opens the word machine in the fast lane, and in
 the slow lane plays whole visits (a silly tile first, F9 out and back) and a whole
-episode with it behind door a (item 026). `leaveBedroom` also plays the entry hall's
+episode with it behind door a (item 026).
+
+`leaveBedroom` also plays the entry hall's
 warm-up (item 033) unless given `{ grab: false }`, so a test that walks out of the bedroom
 lands in the hub as before; `tests/entry.spec.ts` (slow lane) plays the warm-up itself:
 each level's clue, three misses, F9 out and back, and four drawn casts from the bedroom.
+
 `playEpisode` checks each battle part's length (45-120 s of simulation time) for whatever
 fight style the cast drew; `tests/fights.spec.ts` sweeps the four contests through both
 battles (the brawl is the default episode's own).
+
+### Speed, GPU and workers
 
 The browser tests run the page's clocks 5× fast (`WW_SPEED`, default 5; `tests/harness.ts`):
 timers, tweens, the game loop and voice playback together. The full-episode test alone
@@ -482,19 +489,10 @@ and stretched a Charge round's game time past its limit. Tests are spread by fil
 tests of one spec never run at once. A run that times something by eye (a Charge round's
 logged length) wants `--workers=1`.
 
+### Ports and servers
+
 The suite starts its own server on port 5184 (`TEST_PORT` in `src/port.ts`), never the dev
 port 5174, so a test run in a worktree cannot attach to the main checkout's dev server.
-A test that times out "waiting for title" (or "parent page", "hub quiet") with `scene=`
-empty never got past the boot's loading. Seen in item 034 when the machine was loaded (and
-in any run where `src/` changed underneath: the dev server reloads the page): the same
-tests passed when rerun alone. Rerun them alone before suspecting the code. The same
-reload shows as "page.evaluate: Execution context was destroyed, most likely because of a
-navigation" (item 067: five slow specs lost to edits made mid-run). Do not edit `src/`
-or `content/` while a browser run is going, or point the run at a `vite preview` build
-with `WW_BASE_URL`.
-To force a key word, seed the progress blob with `bag: { left: [word], round: 1 }` **and**
-`bagKnown: BAG_WORDS` (`tests/soundout.spec.ts`): a blob without `bagKnown` counts as one
-from before item 035, and the store tops the bag up with every word added since (item 048).
 If 5184 is busy (another worktree's run) the suite fails at once rather than testing the
 wrong code. With `CONDUCTOR_PORT` set (a conductor item is given one) the suite serves
 itself on that port instead (item 047), so a conductor run needs nothing started by hand:
@@ -503,8 +501,26 @@ Claude Code session and point `WW_BASE_URL` at it: a backgrounded server is stop
 its background `timeout` (10 minutes by default), mid-suite, and every later test fails
 (item 043). Run the playwright process itself in the background instead; the server it
 starts lives exactly as long as the run. `WW_BASE_URL` stays for a server you keep
-running yourself (a `vite preview` of a build). A playwright run loads its spec files
+running yourself (a `vite preview` of a build).
+
+A test that times out "waiting for title" (or "parent page", "hub quiet") with `scene=`
+empty never got past the boot's loading. Seen in item 034 when the machine was loaded (and
+in any run where `src/` changed underneath: the dev server reloads the page): the same
+tests passed when rerun alone. Rerun them alone before suspecting the code. The same
+reload shows as "page.evaluate: Execution context was destroyed, most likely because of a
+navigation" (item 067: five slow specs lost to edits made mid-run). Do not edit `src/`
+or `content/` while a browser run is going, or point the run at a `vite preview` build
+with `WW_BASE_URL`. A playwright run loads its spec files
 once at its start, so a spec edited mid-run needs a rerun.
+
+### Not tests: boot timings and screenshots
+
+**Boot timings:** `npx playwright test --config tests/perf/perf.config.ts` (about 1.5
+minutes; not a test, it prints) times page load to the title and to a quiet hub
+(`?scene=house`: input free, nobody talking, still so 0.6 s later), each from a fresh
+browser context, median of `PERF_RUNS` (5), and the art each fetched. Its server takes
+`PERF_PORT`, else `CONDUCTOR_PORT`, else 5196. Item 065's before and after are in
+`docs/engineering.md`.
 
 **Screenshots for judging the UI by eye** (not tests; item 024):
 `SHOTS_TAG=<tag> npx playwright test --config tests/shots/shots.config.ts` plays the
