@@ -211,6 +211,8 @@ export class MoveChoice {
           // Item 043, M6: each sign's plate and each teammate's body, in screen coordinates.
           signs: c.pads.map((p) => [p.x - 115, p.y - SIGN_RISE - 50, p.x + 115, p.y - SIGN_RISE + 50]),
           team: heroes.filter((f) => f !== heroes[0] && f.active).map((f) => ({ id: f.init.id, box: [f.x - f.bodyHalf, f.top, f.x + f.bodyHalf, f.y] })),
+          // Item 071, M8 and M17: the villain's body, which no sign may cover.
+          villain: this.host.villain?.active ? [this.host.villain.x - this.host.villain.bodyHalf, this.host.villain.top, this.host.villain.x + this.host.villain.bodyHalf, this.host.villain.y] : null,
         }
       : null;
   }

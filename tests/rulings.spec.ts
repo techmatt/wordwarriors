@@ -38,6 +38,30 @@ test('M1, M5, M6: the move choice hides its word in the caption, shows the stick
   expectNoErrors(errors);
 });
 
+// Item 071 (hunt 2's M7, M17): in a contest the team holds its stations, so the pads keep off them,
+// and off the villain, on her side of him (the cook-off's Dada Jason was a third covered; the
+// rope pull's third pad went past the serpent).
+for (const [name, query] of [
+  ['the cook-off, Dada Jason behind her', '?scene=battle&part=1&ally=dada_jason&fight=cook_off&nojourney=1'],
+  ['the rope pull, Jormungandr', '?scene=battle&part=1&villain=jormungandr&fight=sea_tug&nojourney=1'],
+] as const) {
+  test(`M7, M17: ${name}: no sign covers a teammate or the villain, and the pads stay on her side`, SLOW, async ({ page }) => {
+    const errors = collectErrors(page);
+    await boot(page, query);
+    const s = await until(page, (st) => Boolean(st.battle?.choice?.open), 90_000, 'choice open');
+    const c = s.battle!.choice!;
+    const area = (b: number[]) => Math.max(0, b[2]! - b[0]!) * Math.max(0, b[3]! - b[1]!);
+    const under = (box: number[]) => c.signs.reduce((n, sg) => n + area([Math.max(box[0]!, sg[0]!), Math.max(box[1]!, sg[1]!), Math.min(box[2]!, sg[2]!), Math.min(box[3]!, sg[3]!)]), 0) / area(box);
+    for (const m of c.team) expect(under(m.box), `${m.id} behind the signs`).toBe(0);
+    expect(c.villain, 'the villain stands').toBeTruthy();
+    expect(under(c.villain!), 'the villain behind the signs').toBe(0);
+    const me = s.battle!.me!;
+    const vx = (c.villain![0]! + c.villain![2]!) / 2;
+    for (const p of c.spots) expect(Math.sign(p.x - vx), `${p.word} on her side`).toBe(Math.sign(me.x - vx));
+    expectNoErrors(errors);
+  });
+}
+
 test('M3: she can walk while the hall gives its clue (green still waits)', async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=grab&nojourney=1');

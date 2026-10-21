@@ -119,6 +119,8 @@ export interface BattleInfo {
     /** Each sign's plate and each teammate's body, [left, top, right, bottom] (item 043, M6). */
     signs: number[][];
     team: { id: string; box: number[] }[];
+    /** The villain's body, the same way (item 071, M8, M17), or null with no villain standing. */
+    villain: number[] | null;
   } | null;
   /** Her hero's position on the arena floor. */
   me: { x: number; y: number } | null;
