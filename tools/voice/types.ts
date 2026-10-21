@@ -22,6 +22,12 @@ export interface LineSpec {
    * number; word identity is not checked when `say` is set.
    */
   say?: string;
+  /**
+   * Item 085: `say` is a carrier word and only its opening vowel is kept: from
+   * the onset to where loudness first falls `keepDb` under the peak
+   * (tools/voice/carrier.ts). edge-tts only; a recorded clip is used whole.
+   */
+  cut?: { keepDb: number };
   /** Per-line prosody, replacing the speaker's. Same units as VoiceConfig. */
   rate?: string;
   pitch?: string;

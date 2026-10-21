@@ -56,6 +56,24 @@ without a new measurement.
   spellings other than "Mmm" and "Suh" are untested by ear, except that the short A and
   short O placeholders sound nearly alike when held on the Stretchy Bridge (heard in
   item 054); recordings fix it.
+- **Short A is cut from a carrier word** (item 085: Matt heard CAP's A as "I"). Measured
+  with LPC formants (median over the vowel's middle, GuyNeural at -20%;
+  `scratch/085/formants.py`, `envelope.py`): edge-tts "Aah", "Ah" and "Ahh" are the same
+  vowel, F1 806 / F2 1217 Hz, the O of HOT, not the A of CAT (F2 about 1,700). "Aa" is
+  F1 464 / F2 2210 (an EH or AY), "Am", "Ap" and "Ant" glide or are read as letters. Inside a
+  word the vowel is right: "Add" 797 / 1705, "At" 785 / 1706, "Cap" 800 / 1707, "Cat" 832 /
+  1692. Matt's recording of "Aah" (item 063) starts at 680 / 1810 and rises to 636 / 1920:
+  it glides up toward EH / I, and the bridge's hold planner stretches its last 0.29 s,
+  which is the most glided part. So `letters.ts` gives A a `carrier` ("Add"). The line asks
+  edge-tts for "Add." and the build (`tools/voice/carrier.ts`) decodes it
+  (`decode_mp3.py`, miniaudio under `uv`), keeps the onset to where loudness first falls
+  6 dB under the peak (before the D), then finishes it like a recording (fades, -17 dB RMS,
+  30 ms pads). Result: 0.37 s, steady F1 794 / F2 1711 (thirds 793/1680, 787/1712,
+  818/1751), hold-checked as `hold` with a 0.21 s steady part. Changing the line's spoken
+  text marked Matt's A clip stale (Matt's call, by default, item 085). `voice:status` lists
+  it under "stale (re-record)", and a new recording overrides the cut as before.
+- **Short O needs no carrier**: edge-tts "Ah" is F1 806 / F2 1217 (HOT is 870 / 1342, "Odd"
+  816 / 1261), and Matt's recorded O, the one that plays, is a steady 706 / 1183.
 
 ## Browser and tests
 

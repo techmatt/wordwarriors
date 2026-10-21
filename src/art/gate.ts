@@ -61,6 +61,9 @@ function upcoming(key: string): string[] {
       add('Victory');
       break;
     case 'Victory':
+      add('TheEnd');
+      break;
+    case 'TheEnd':
       add('Title');
       break;
     case 'Pick':

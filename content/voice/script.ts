@@ -85,7 +85,7 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'secret_door', text: "Look, a secret door! Let's go up!", say: "Look, a secret door, let's go up!" },
   { key: 'house_ready', text: "We are ready now! Let's go out the front door!", say: "We are ready now, let's go out the front door!" },
   { key: 'room_listen', text: 'Listen!' },
-  { key: 'room_your_turn', text: "Now it's your turn! Press green for each word.", say: "Now it's your turn, press green for each word." },
+  { key: 'room_your_turn', text: "Now it's your turn! Press green to read it.", say: "Now it's your turn, press green to read it." },
   { key: 'room_find', text: 'Now find it, and press green!' },
   { key: 'got_item', text: 'We got it!' },
   // The attic's counter, whatever word the bag drew (item 015). A named item

@@ -30,8 +30,8 @@ const clueLines = (s: WWState) => s.voice.history.filter((id) => /^letter_|^word
 // By sound unit: a long-vowel word spells its own (KEY is K, long E: item 048); a silent letter says nothing.
 const unitSounds = (w: string) => BANK_BY_WORD[w]!.units.map((u, i) => [u, BANK_BY_WORD[w]!.sounds[i] ?? u] as const);
 const sounds = (w: string) => unitSounds(w).flatMap(([, s]) => (s ? [`letter_${s}_sound`] : []));
-// Level 1 (amendment 1549): each unit's letter names, then its sound.
-const namesAndSounds = (w: string) => unitSounds(w).flatMap(([u, s]) => [...[...u].map((c) => `letter_${c}_name`), ...(s ? [`letter_${s}_sound`] : [])]);
+// Level 1 (amendment 1549): a single letter's name, then its sound; a multi-letter unit (NG, SH, LL) only its sound (item 085).
+const namesAndSounds = (w: string) => unitSounds(w).flatMap(([u, s]) => [...(u.length === 1 ? [`letter_${u}_name`] : []), ...(s ? [`letter_${s}_sound`] : [])]);
 // Every word the hall can ask for (the bank's things), each at one ramp level. Read from the
 // bank, not listed: a hand list missed VET and BIN, so a draw of either started at 2 (item 047).
 const allAt = (level: number) => Object.fromEntries(THINGS.map((w) => [w.word, level]));

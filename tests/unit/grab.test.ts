@@ -81,10 +81,12 @@ test('clue: never the word (amendment 1549): no step is its word_ line or a line
   }
 });
 
-test('clue: names go letter by letter, sounds by sound unit (SH of SHIP is one sound lighting two letters)', () => {
+test('clue: names only for single letters, sounds by sound unit (SH of SHIP is one sound lighting two letters, never named S, H: item 085)', () => {
   const ship = clue('ship', 1);
-  assert.deepEqual(ship.map((s) => s.id), [letterNameLine('s'), letterNameLine('h'), letterSoundLine('sh'), letterNameLine('i'), letterSoundLine('i'), letterNameLine('p'), letterSoundLine('p')]);
-  assert.deepEqual(ship.filter((s) => s.kind === 'name').map((s) => s.index), [0, 1, 2, 3]);
+  assert.deepEqual(ship.map((s) => s.id), [letterSoundLine('sh'), letterNameLine('i'), letterSoundLine('i'), letterNameLine('p'), letterSoundLine('p')]);
+  assert.deepEqual(ship.filter((s) => s.kind === 'name').map((s) => s.index), [2, 3]);
+  // KING is "kay, kuh, eye, ih, ng": never "en, gee" before its NG.
+  assert.deepEqual(clue('king', 1).map((s) => s.id), [letterNameLine('k'), letterSoundLine('k'), letterNameLine('i'), letterSoundLine('i'), letterSoundLine('ng')]);
   const sounds = ship.filter((s) => s.kind === 'sound');
   assert.deepEqual(sounds.map((s) => s.id), ['sh', 'i', 'p'].map(letterSoundLine));
   assert.deepEqual(sounds.map((s) => [s.index, s.span]), [[0, 2], [2, 1], [3, 1]]);

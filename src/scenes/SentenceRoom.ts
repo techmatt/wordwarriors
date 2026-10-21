@@ -10,13 +10,16 @@
  * - `listen` (skipped once the frame is solid): the sentence is read to her
  *   up to the key word, each banner word lighting as it is spoken. At the key
  *   word the voice stops and the word pulses in silence: that one is hers.
- * - `read`: her turn. Each green press lights the next word and says it (a
- *   grown-up reads along with her); the first press lights the first word.
- *   Yellow says the lit word. When the light reaches the key word (silent),
- *   the pass becomes...
- * - `find`: the pedestals wake up and she walks to the answer. Yellow sounds
- *   out the key word one sound at a time, never blended (SH of SHIP is one
- *   sound; a non-decodable word like MICE gives only its first sound).
+ * - `read`: her turn, nothing lit. Her one green reads the sentence aloud,
+ *   word by word, each banner word lighting as its `word_<x>` line is said
+ *   (item 085: no more one green per word). The read stops at the key word,
+ *   which lights in silence and is then sounded out one sound at a time,
+ *   never blended and never said whole. Yellow before that green says the
+ *   instruction again. Then the pass becomes...
+ * - `find`: the pedestals wake up and she walks to the answer; her next green
+ *   takes the picture she stands at. Yellow sounds out the key word again
+ *   (SH of SHIP is one sound; a non-decodable word like MICE gives only its
+ *   first sound), and so does a miss.
  *
  * The key word is never spoken until she has answered: the prefix line stops
  * before it, and its own `word_<key>` line plays only as confirmation, after
@@ -69,6 +72,10 @@ const KEY_BEAT_MS = 1200;
 const LIT_SCALE = 1.08;
 /** The pause after each letter sound, so the sounds never run together. */
 const LETTER_GAP_MS = 450;
+/** Her green's read: the breath between one word's line and the next. */
+const WORD_GAP_MS = 120;
+/** Her green's read: the key word lit in silence before its sounds. */
+const KEY_LIT_MS = 600;
 
 /** A stable scatter seed per side room (FNV-1a of its id). */
 function roomSeed(id: string): number {
@@ -86,6 +93,10 @@ export class SentenceRoom extends SideRoom {
   private skipped = false;
   /** The highlighted token, or -1. */
   private index = -1;
+  /** Her green's read is under way (pass `read`, from the press until the pedestals wake). */
+  private reading = false;
+  /** Every token her green's read lit, in order (the tests' hook). */
+  private readLit: number[] = [];
   /** One container per token, centred on the word, so it can pulse in place. */
   private tokenBoxes: Phaser.GameObjects.Container[] = [];
   /** The banner's height: 140 for one row, taller when the sentence wraps. */
@@ -96,7 +107,7 @@ export class SentenceRoom extends SideRoom {
   private karaoke: { id: string; n: number } | null = null;
   private bag!: Bag;
   private banner!: Phaser.GameObjects.Container;
-  /** In `read`, a green dot under the lit word: that light is hers to move. */
+  /** In `read`, before her green, a green dot under the first word: the read is hers to start. */
   private readDot!: Phaser.GameObjects.Container;
 
   constructor() {
@@ -110,6 +121,8 @@ export class SentenceRoom extends SideRoom {
     this.pass = 'listen';
     this.skipped = false;
     this.index = -1;
+    this.reading = false;
+    this.readLit = [];
     this.karaoke = null;
     // Back from the parent page (F9) after a miss: still a miss.
     this.wrongTries = episode.house.misses?.[this.missKey] ?? 0;
@@ -201,7 +214,7 @@ export class SentenceRoom extends SideRoom {
     void voiceBank.ensure(s.prefixLine);
     void voiceBank.ensure(wordLine(s.key));
 
-    // The three objects, asleep until the read-along reaches the key word.
+    // The three objects, asleep until her read has sounded out the key word.
     this.plan.objects.forEach((word, i) => {
       const [x, y0] = room.spots[i]!;
       const y = y0 + drop;
@@ -422,9 +435,10 @@ export class SentenceRoom extends SideRoom {
     await this.narrate('room_your_turn');
   }
 
-  /** The light has reached the key word: wake the pedestals. */
+  /** Her green's read is over (or F4 skipped it): wake the pedestals. */
   private async startFind(narrate = true): Promise<void> {
     this.pass = 'find';
+    this.reading = false;
     this.walking = true;
     this.light(this.keyIndex);
     for (const spot of this.spots) {
@@ -437,25 +451,56 @@ export class SentenceRoom extends SideRoom {
   }
 
   /**
-   * In `read`, green lights the next word and says it (input waits for the
-   * word, so the voice and the light stay together); the key word lights in
-   * silence and wakes the pedestals. Everywhere but `find` green is consumed.
+   * In `read`, her one green reads the whole sentence (`readAloud`). In
+   * `find` green takes the picture she stands at. Everywhere else it is
+   * consumed (and input is locked while the read plays anyway).
    */
   protected override onGreen(): boolean {
     if (this.pass === 'find') return false;
-    if (this.pass !== 'read') return true;
-    const next = this.index + 1;
-    sfxStep(next);
-    if (next >= this.keyIndex) void this.startFind();
-    else {
-      this.light(next);
-      const token = this.plan.sentence.tokens[next];
-      if (token) void this.speak(wordLine(tokenWord(token)));
-    }
-    // Every press answered on the word itself: a little puff on the newly lit word.
-    const box = this.tokenBoxes[Math.min(next, this.keyIndex)]!;
-    burst(this, this.banner.x + box.x, this.banner.y + box.y, { count: 12, speed: 200 });
+    if (this.pass === 'read' && !this.reading) void this.readAloud();
     return true;
+  }
+
+  /** A little puff on a banner word as it lights. */
+  private puff(i: number): void {
+    const box = this.tokenBoxes[i];
+    if (box) burst(this, this.banner.x + box.x, this.banner.y + box.y, { count: 12, speed: 200 });
+  }
+
+  /**
+   * Her green's read (item 085): each frame word lit and said in turn, with
+   * its own `word_<x>` line, so light and voice stay together; then the key
+   * word lights in silence and is sounded out, unit by unit, never said
+   * whole; then the pedestals wake. Locked throughout; F4 may cut it short.
+   */
+  private async readAloud(): Promise<void> {
+    const s = this.plan.sentence;
+    this.reading = true;
+    this.locked = true;
+    this.readLit = [];
+    sfxStep(0);
+    for (let i = 0; i < this.keyIndex; i++) {
+      if (this.pass !== 'read') return;
+      this.light(i);
+      this.readLit.push(i);
+      this.puff(i);
+      await this.say(wordLine(tokenWord(s.tokens[i]!)));
+      if (this.pass !== 'read') return;
+      await this.wait(WORD_GAP_MS);
+    }
+    if (this.pass !== 'read') return;
+    // The key word: lit, and silent. That one is hers.
+    this.light(this.keyIndex);
+    this.readLit.push(this.keyIndex);
+    this.puff(this.keyIndex);
+    const box = this.tokenBoxes[this.keyIndex]!;
+    this.tweens.killTweensOf(box);
+    this.tweens.add({ targets: box, scale: 1.25, duration: 180, yoyo: true, ease: 'Sine.easeInOut' });
+    await this.wait(KEY_LIT_MS);
+    if (this.pass !== 'read') return;
+    await this.soundOut();
+    if (this.pass !== 'read') return;
+    await this.startFind();
   }
 
   /** Free play (item 060): only once the key word is found; listening, reading along and finding are all answers. */
@@ -463,20 +508,14 @@ export class SentenceRoom extends SideRoom {
     return this.pass === 'done' && this.walking;
   }
 
-  /** Yellow says something again only on her read-along and while she finds the key word. */
+  /** Yellow says something again only before her read (the instruction) and while she finds the key word. */
   protected override hasHint(): boolean {
-    return this.pass === 'read' || this.pass === 'find';
+    return (this.pass === 'read' && !this.reading) || this.pass === 'find';
   }
 
   protected override hint(idle = false): void {
     if (this.pass === 'read') {
-      if (idle) {
-        void this.narrate('room_your_turn');
-        return;
-      }
-      const token = this.plan.sentence.tokens[this.index];
-      if (token) void this.speak(wordLine(tokenWord(token)));
-      else void this.narrate('room_your_turn');
+      if (!this.reading) void this.narrate('room_your_turn');
       return;
     }
     if (this.pass !== 'find') return;
@@ -495,12 +534,13 @@ export class SentenceRoom extends SideRoom {
   }
 
   /**
-   * The key word's sounds, one at a time, never blended. Only while she is
-   * finding it. A digraph is one sound (SHIP is SH, I, P: `unitsOf`), both
-   * its letters lit together.
+   * The key word's sounds, one at a time, never blended. At the end of her
+   * green's read and while she is finding it. A digraph is one sound (SHIP is
+   * SH, I, P: `unitsOf`), both its letters lit together.
    */
   private async soundOut(): Promise<void> {
-    if (this.pass !== 'find') return;
+    const live = () => this.pass === 'find' || (this.pass === 'read' && this.reading);
+    if (!live()) return;
     const key = this.plan.sentence.key;
     this.locked = true;
     const letters = this.tokenTexts[this.keyIndex]!;
@@ -510,7 +550,7 @@ export class SentenceRoom extends SideRoom {
     // A word that does not sound out (MICE) gets just its first sound.
     const n = WORD_BY_ID[key]?.decodable === false ? 1 : units.length;
     let at = 0;
-    for (let i = 0; i < n && this.pass === 'find'; i++) {
+    for (let i = 0; i < n && live(); i++) {
       const unit = units[i]!;
       const sound = b?.sounds[i] ?? unit;
       const lit = letters.slice(at, at + unit.length);
@@ -631,6 +671,6 @@ export class SentenceRoom extends SideRoom {
 
   protected override extraHooks(): Partial<RoomInfo> {
     const s = this.plan.sentence;
-    return { sentence: { tokens: [...s.tokens], key: s.key, frame: s.frame, pass: this.pass, index: this.index, skipped: this.skipped } };
+    return { sentence: { tokens: [...s.tokens], key: s.key, frame: s.frame, pass: this.pass, index: this.index, skipped: this.skipped, readLit: [...this.readLit] } };
   }
 }

@@ -7,7 +7,7 @@
  * asks for one and gives a phonics clue, never the word itself (amendment
  * 1549), at the word's own level on a ramp (GRAB in src/config.ts; `clue`):
  *
- *   1. letter names and sounds, unit by unit;
+ *   1. letter names and sounds, unit by unit (a multi-letter unit its sound only);
  *   2. sounds only, the letters shown;
  *   3. sounds only, blank boxes.
  *
@@ -24,14 +24,14 @@
  * ProgressStore `grabs`, never `words` or the word bag.
  */
 
-import { BANK_BY_WORD, THINGS, unitsOf } from '../../content/phonics/bank';
+import { THINGS } from '../../content/phonics/bank';
 import { lookalikesOf } from '../../content/phonics/sentences';
-import { SOUND_BY_UNIT } from '../../content/phonics/letters';
-import { letterNameLine, letterSoundLine } from '../../content/voice/ids';
+import { letterNameLine } from '../../content/voice/ids';
 import { GRAB } from '../config';
 import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
 import { coverage, distractorsFor, isFirm, met, shuffle, type Rand } from './bank';
 import { clampLevel, helpLevel, stepLevel, type HelpLevel } from './difficulty';
+import { soundOut } from './soundOut';
 
 export type GrabLevel = HelpLevel;
 
@@ -124,7 +124,8 @@ export interface ClueStep {
  * `spelled` sounds), one at a time and never blended, so a digraph is one
  * sound lighting both its letters:
  *
- *   1. each unit's letter names, then its sound (S, H, "sh"; I, "i"; P, "p");
+ *   1. a single letter's name, then its sound (I, "i"; P, "p"); a
+ *      multi-letter unit only its sound, both letters lit ("sh", item 085);
  *   2. the sounds alone, each unit's letters appearing on the board with it;
  *   3. the sounds alone over blank boxes.
  *
@@ -133,18 +134,15 @@ export interface ClueStep {
  */
 export function clue(word: string, level: GrabLevel, help = false): ClueStep[] {
   const out: ClueStep[] = [];
-  let index = 0;
-  // A long-vowel word spells its sounds out (KEY is K, then long E on EY: content/phonics/bank.ts).
-  const b = BANK_BY_WORD[word];
-  const units = b?.units ?? unitsOf(word);
-  units.forEach((unit, i) => {
-    if (level === 1 && !help) [...unit].forEach((ch, j) => out.push({ id: letterNameLine(ch), kind: 'name', index: index + j, span: 1, show: true }));
-    const sound = b?.sounds[i] ?? unit;
+  // By sound unit (src/rules/soundOut.ts): a long-vowel word spells its sounds out (KEY is K, then long E on EY).
+  for (const s of soundOut(word)) {
+    // Item 085: only a single letter is named first. A multi-letter unit (NG,
+    // SH, CK, LL, EE...) is its one sound alone, both letters lit: KING is
+    // "kay, kuh, eye, ih, ng", never "en, gee, ng".
+    if (level === 1 && !help && s.span === 1) out.push({ id: letterNameLine(s.unit), kind: 'name', index: s.index, span: 1, show: true });
     const show = help || level <= 2;
-    if (SOUND_BY_UNIT[sound]) out.push({ id: letterSoundLine(sound), kind: 'sound', index, span: unit.length, show });
     // A silent letter (KITE's E, item 056) lights in its turn and says nothing: no line id.
-    else if (sound === '') out.push({ id: '', kind: 'sound', index, span: unit.length, show });
-    index += unit.length;
-  });
+    if (s.id || s.sound === '') out.push({ id: s.id, kind: 'sound', index: s.index, span: s.span, show });
+  }
   return out;
 }

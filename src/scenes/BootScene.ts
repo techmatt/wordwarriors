@@ -9,6 +9,7 @@
  *   ?scene=room&slot=a|b|counter        (a side room; counter is the attic, part 2)
  *   ?scene=battle&part=2&hero=elsa&ally=anna&villain=smaug   (ally=none for no ally; the cast: castOptions)
  *   ?scene=victory&read=cat,sun,julia   (the words the recap shows)
+ *   ?scene=theend                       (THE END, the victory step's last screen: Dad's 2 starts a new episode)
  *   ?scene=pick | parent
  *   ?fetched=net,fan                    (the battle items fetched; default: the house plan's)
  *   ?charged=m,s,a                      (Charge the Spell's runes, fired in this battle part; default: the plan's charge room's, in part 1)
@@ -36,6 +37,7 @@ import { DADS, seededRand, type CastOverrides } from '../rules/cast';
 import { setDifficulty } from '../rules/difficulty';
 import { artBank } from '../art/ArtBank';
 import { artFor } from '../art/needs';
+import { startScene } from '../art/gate';
 import { makeTextures } from '../fx/textures';
 import { voiceBank } from '../voice/VoiceBank';
 
@@ -172,13 +174,19 @@ export class BootScene extends Phaser.Scene {
       learned();
       fetchedAll();
     }
-    if (target === 'battle' || target === 'victory') {
+    if (target === 'battle' || target === 'victory' || target === 'theend') {
       learned();
       fetchedAll();
-      if (part === 2 || target === 'victory') {
+      if (part === 2 || target !== 'battle') {
         episode.house.done = ['a', 'b', 'counter'];
         episode.made.item = true;
       }
+    }
+    if (target === 'theend') {
+      // The victory step, at its last screen (item 085).
+      episode.stepIndex = steps().findIndex((s) => s.kind === 'victory');
+      startScene(this, 'TheEnd', { step: steps()[episode.stepIndex] });
+      return;
     }
     if (!isStepKind(target)) {
       console.warn(`?scene=${target} is not a step; starting the title`);

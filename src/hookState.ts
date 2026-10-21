@@ -26,8 +26,8 @@ export interface RoomInfo {
   shown: string[];
   /** Ghost boxes in Spelling: the word and how many letters are in. */
   spelling?: { word: string; filled: number };
-  /** The sentence game: its tokens (upper case), key word, frame, which pass, and the token in play. */
-  sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean };
+  /** The sentence game: its tokens (upper case), key word, frame, which pass, the token in play, and every token her green's read lit, in order. */
+  sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean; readLit: number[] };
   /** The home warm-up (item 033): the word to grab, its level on the ramp (1 easiest), misses so far, the hall's pictures. */
   grab?: { word: string; level: number; misses: number; objects: string[]; phase: string };
   /** The word machine (item 026): the round in play (`index` of `rounds`), its tiles, and what is in the slot. */
@@ -145,11 +145,31 @@ export interface EndingInfo {
   done: boolean;
 }
 
-export const hookState: { room: RoomInfo | null; battle: BattleInfo | null; recap: RecapCard[]; ending: EndingInfo | null; scene: string; fps: number } = {
+/** THE END (item 085): its background art, the heroes on it, its words, and whether Dad's 2 is waiting. */
+export interface TheEndInfo {
+  art: string;
+  heroes: string[];
+  text: string;
+  dad: boolean;
+}
+
+export const hookState: {
+  room: RoomInfo | null;
+  battle: BattleInfo | null;
+  recap: RecapCard[];
+  /** The recap is said and its green is live (on to THE END, item 085). */
+  recapDone: boolean;
+  ending: EndingInfo | null;
+  theEnd: TheEndInfo | null;
+  scene: string;
+  fps: number;
+} = {
   room: null,
   battle: null,
   recap: [],
+  recapDone: false,
   ending: null,
+  theEnd: null,
   scene: '',
   fps: 0,
 };

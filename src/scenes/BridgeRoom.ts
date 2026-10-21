@@ -8,9 +8,9 @@
  * stick and slides across, slower than she walks (BRIDGE.slide). While she is
  * on a stone its sound plays **held** (`voiceBus.hold`, src/audio/holdSound.ts):
  * a vowel or a sound you can stretch (M S F L N R V Z SH TH) is one smooth
- * stretched sound (HELD_MS; cut short when she steps off), so a slow
- * slide is "mmm-aaa-t", and how slowly she slides is how slowly she stretches
- * the word; standing on, it sounds again after BRIDGE.resoundMs of quiet. A
+ * stretched sound (BRIDGE.stretchMs; cut short when she steps off), so a slow
+ * slide is "mmm-aaa-t". It plays once per step on: standing on, it stays
+ * quiet (item 085: no repeat). A
  * stop sound plays once each step on, never with an "uh". It works from whatever clip is in place, so Matt's
  * recordings (`voice:clip`) drop in.
  *
@@ -42,12 +42,10 @@
 
 import Phaser from 'phaser';
 
-import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { canHold } from '../../content/phonics/letters';
 import { SIDE_ROOM_BY_ID, gapFor, type BridgeGap } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { RIGHT_VARIANTS } from '../../content/voice/script';
-import { HELD_MS } from '../audio/holdSound';
 import { voiceBus, type HeldSound, type Utterance } from '../audio/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon, sfxWhoosh, sfxWrong } from '../audio/sfx';
 import { BRIDGE, DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
@@ -57,6 +55,7 @@ import { TEX } from '../fx/textures';
 import { dadPress, openDadButtons, setDadAsking, type DadAnswer } from '../input/dadButtons';
 import { dadLock } from '../input/dadLock';
 import { bridgeLevel, nextBridgeLevel, recordedBridgeLevel, whereDiffers, type BridgeLevel, type BridgePlan, type BridgeRound } from '../rules/bridge';
+import { soundOut } from '../rules/soundOut';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
@@ -133,8 +132,6 @@ export class BridgeRoom extends SideRoom {
   /** She stepped on a stone that has not sounded yet (a line was playing): it sounds when the room is quiet. */
   private pendingSound = false;
   private held: HeldSound | null = null;
-  /** How long her stone's held sound has been quiet (it sounds again at BRIDGE.resoundMs). */
-  private quietMs = 0;
   private lit = -1;
   private waitMs = 0;
   private timeouts = 0;
@@ -433,7 +430,6 @@ export class BridgeRoom extends SideRoom {
     const i = this.onBridge() ? this.stones.findIndex((s) => Math.abs(p.x - s.x) <= s.half) : -1;
     if (i !== this.onStone) this.stepOn(i);
     else if (this.pendingSound && !voiceBus.busy) this.soundStone(i);
-    else this.resound(i, deltaMs);
 
     if (this.phase === 'slide' && p.x >= FAR_X) void this.arrive();
     if (this.phase === 'say' && !dadLock.locked && !voiceBus.busy) {
@@ -464,31 +460,16 @@ export class BridgeRoom extends SideRoom {
   }
 
   /**
-   * Still on stone `i` (item 058): a held sound, once it has played out and
-   * BRIDGE.resoundMs of quiet has passed, sounds again. A stop sound plays
-   * once each time she steps on.
-   */
-  private resound(i: number, deltaMs: number): void {
-    const s = this.stones[i];
-    if (!s || !this.held || this.held.playing || !canHold(s.sound) || !this.stonesSound()) {
-      this.quietMs = 0;
-      return;
-    }
-    this.quietMs += deltaMs;
-    if (this.quietMs >= BRIDGE.resoundMs && !voiceBus.busy) this.soundStone(i);
-  }
-
-  /**
-   * Stone `i`'s sound: a held one is one smooth stretched sound of
-   * HELD_MS (src/audio/holdSound.ts), then quiet; a stop sound once.
+   * Stone `i`'s sound: a held one is one short natural stretch of
+   * BRIDGE.stretchMs (src/audio/holdSound.ts), then quiet for as long as she
+   * stays (item 085: it no longer sounds again); a stop sound once.
    * Waits for the room to be quiet.
    */
   private soundStone(i: number): void {
     const s = this.stones[i];
     this.pendingSound = false;
-    this.quietMs = 0;
     if (!s) return;
-    const held = voiceBus.hold(letterSoundLine(s.sound), canHold(s.sound) ? 'hold' : 'once', HELD_MS);
+    const held = voiceBus.hold(letterSoundLine(s.sound), canHold(s.sound) ? 'hold' : 'once', BRIDGE.stretchMs);
     if (held) this.held = held;
     else this.pendingSound = true;
   }
@@ -606,7 +587,7 @@ export class BridgeRoom extends SideRoom {
       const s = this.stones[i]!;
       this.tweens.add({ targets: orb, x: s.x, duration: 160, ease: 'Sine.easeInOut' });
       this.light(i);
-      const held = voiceBus.hold(letterSoundLine(s.sound), canHold(s.sound) ? 'hold' : 'once', HELD_MS);
+      const held = voiceBus.hold(letterSoundLine(s.sound), canHold(s.sound) ? 'hold' : 'once', BRIDGE.stretchMs);
       await this.wait(canHold(s.sound) ? BRIDGE.replayMs : REPLAY_ONCE_MS);
       held?.release();
       if (f !== this.flow) {
@@ -661,8 +642,9 @@ export class BridgeRoom extends SideRoom {
     await this.narrate('bridge_picked');
     if (f !== this.flow) return;
     // Her pick's letters over its picture, each lit while its sound plays.
-    const units = BANK_BY_WORD[picked]?.units ?? [...picked];
-    const sounds = BANK_BY_WORD[picked]?.sounds ?? [...picked];
+    // By sound unit, one line each (src/rules/soundOut.ts): SH is one sound, never S then H.
+    const steps = soundOut(picked);
+    const units = steps.map((s) => s.unit);
     // Over its picture, kept on the screen (the rightmost picture's row would run off it).
     const rowW = units.length * 62 + 30;
     const row = this.add.container(Math.min(spot.x, GAME_WIDTH - rowW / 2 - 12), spot.y - PICTURE_SIZE - 50).setDepth(DEPTH.sparkles);
@@ -676,7 +658,7 @@ export class BridgeRoom extends SideRoom {
     popIn(this, row, 1);
     for (let i = 0; i < units.length; i++) {
       letters[i]!.setColor(LIT);
-      await this.say(letterSoundLine(sounds[i]!));
+      if (steps[i]!.id) await this.say(steps[i]!.id);
       letters[i]!.setColor(INK);
       if (f !== this.flow) {
         row.destroy();

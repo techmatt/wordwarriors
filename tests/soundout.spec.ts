@@ -39,12 +39,16 @@ for (const [word, sounds] of Object.entries(SOUNDS)) {
     await readToKeyWord(page);
     const awake = await until(page, (s) => (s.room?.spots.length ?? 0) === 3 && !s.room!.locked, 30_000, 'three objects');
     const wrong = awake.room!.spots.find((sp) => sp.correct === false)!;
-    await walkTo(page, wrong.x, wrong.y + 12);
-    await until(page, (s) => Boolean(s.room && !s.room.locked), 30_000, 'room listening');
-    await press(page, 'green');
     const want = sounds.map((u) => `letter_${u}_sound`);
-    const heard = await until(page, (s) => s.voice.history.filter((id) => /^letter_.*_sound$/.test(id)).length >= want.length && !s.room!.locked, 30_000, 'hint sounded');
-    expect(heard.voice.history.filter((id) => /^letter_.*_sound$/.test(id))).toEqual(want);
+    const letters = (h: string[]) => h.filter((id) => /^letter_.*_sound$/.test(id));
+    // Her green's read already sounded the key word out once (item 085).
+    expect(letters(awake.voice.history)).toEqual(want);
+    await walkTo(page, wrong.x, wrong.y + 12);
+    const ready = await until(page, (s) => Boolean(s.room && !s.room.locked), 30_000, 'room listening');
+    const before = ready.voice.history.length;
+    await press(page, 'green');
+    const heard = await until(page, (s) => letters(s.voice.history.slice(before)).length >= want.length && !s.room!.locked, 30_000, 'hint sounded');
+    expect(letters(heard.voice.history.slice(before))).toEqual(want);
     expect(heard.voice.history).not.toContain(`word_${word}`);
     expectNoErrors(errors);
   });

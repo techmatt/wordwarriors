@@ -5,7 +5,7 @@
  * her presses, not his), and do nothing where no game is asking.
  *
  * A game that asks Dad calls `openDadButtons(onPress)` while it is open and
- * the closer it returns when it leaves (item 082: the victory recap opens them
+ * the closer it returns when it leaves (item 082, moved to THE END after the victory recap in item 085: it opens them
  * too, its 2 the only way on to a new episode, with its own cue label); while it is open a small 1 ✗ / 2 ✓
  * cue sits in the canvas's bottom-right corner (the dad-lock badge has the
  * bottom-left), and `setDadAsking(true)` lights it while a question is
@@ -82,7 +82,7 @@ export function setDadAsking(on: boolean): void {
   style();
 }
 
-/** The cue for a yes / no question; a game asking something else gives its own (the victory's "press 2"). */
+/** The cue for a yes / no question; a game asking something else gives its own (THE END's "press 2"). */
 const JUDGE_CUE = '<span>DAD</span> <b>1</b> ✗ &nbsp; <b>2</b> ✓';
 
 function showCue(label: string): void {

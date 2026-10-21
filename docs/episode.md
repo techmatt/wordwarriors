@@ -71,9 +71,10 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    Stretchy Bridge, item 054, below). The sentence game is one sentence each, on a banner, key word last
    (`WE CAN USE THE NET`, `JULIA NEEDS THE CAT`). Pass 1 is read to her karaoke-style and stops at the key
    word, which pulses in silence (skipped once that frame is solid). Pass 2 is hers:
-   each green lights the next word and says it, and yellow says the lit word. At the key
-   word three things wake up on pedestals (yellow now sounds the key word one sound at a
-   time, SH of SHIP as one, never blended, and never says the word itself); she
+   her one green reads the whole sentence, each word lit as it is said, and stops at the
+   key word, which lights in silence and is sounded out one sound at a time (SH of SHIP
+   as one, never blended, and never the word itself; item 085). Then three things wake
+   up on pedestals (yellow sounds the key word out again); she
    walks to the one the key word names and presses green. Right: the whole sentence
    is read back and the thing flies into her bag (top left). Wrong: a funny retry.
    Each finished room hangs its prize on its door; with both done the front door appears.
@@ -99,8 +100,12 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    a snow day, drawn at random and never last episode's. Four voiced lines in bubbles,
    about 20 seconds: the host opens, the villain says its own line, Julia cheers, a dad
    closes (chef Dada Jason baked the cake). Then the victory replays the words she read.
-   Only **Dad's 2** plays again (item 082): her buttons, the stick and the keys do nothing
-   there, so a new episode never starts without a grown-up; once the recap is said a small
+   Once the recap is said a green dot shows; her green fades it out to **THE END**
+   (item 085, `src/scenes/TheEndScene.ts`): this episode's hub (home or the quest place)
+   full screen, her heroes (her, and her ally or the dad who woke her) bouncing on it,
+   THE END in big letters, a fanfare, no voice. Only **Dad's 2** plays again there
+   (item 082's wait, moved from the recap): her buttons, the stick, the keys and Dad's 1
+   do nothing, so a new episode never starts without a grown-up; a small
    `DAD: PRESS 2 TO PLAY AGAIN` cue lights in the bottom-right corner (dad lock or not).
 
 Key words never repeat until her **word bag** has gone round: every key word (both side
@@ -213,8 +218,8 @@ grown-ups page; red and Esc do not while locked). `src/input/dadLock.ts`.
 **Dad buttons** (item 053): keyboard **1** = no, **2** = yes. They are always live, dad
 lock included, and do nothing where no game is asking; a game that asks shows a small
 `DAD 1 ✗ 2 ✓` cue in the bottom-right corner (lit while a question is waiting).
-`src/input/dadButtons.ts` (`openDadButtons`), for 054 and later games too. The victory
-recap opens them as well (item 082), with its own cue (`DAD: PRESS 2 TO PLAY AGAIN`): 2 is the
+`src/input/dadButtons.ts` (`openDadButtons`), for 054 and later games too. THE END
+after the victory recap opens them as well (items 082, 085), with its own cue (`DAD: PRESS 2 TO PLAY AGAIN`): 2 is the
 only way on to the next episode, and 1 does nothing there.
 
 **Charge the Spell** (item 053, `src/scenes/ChargeRoom.ts`; one short word a visit since
@@ -247,9 +252,11 @@ blends a whole word. A gap crosses the room (lava in the house, a river or a cha
 quest place: `GAP_BY_PLACE` in `content/house/house.ts`), and the word's letters are
 stepping stones over it (SH is one stone). She pushes the stick to slide across, slower
 than she walks; while she is on a stone its sound is **held**, so a slow slide is
-"mmm-aaa-t". A vowel or a sound you can stretch (M S F L N R V Z SH TH) is held for
-1.3 s, then goes quiet and sounds again after 2 s if she stays (`BRIDGE.resoundMs`), or at
-once when she steps on again; a stop sound plays once each landing, never with an "uh".
+"mmm-aaa-t". A vowel or a sound you can stretch (M S F L N R V Z NG SH TH) gets one short
+natural stretch, 0.6 s with its fade (`BRIDGE.stretchMs`, item 085; it was 1.3 s), then stays
+quiet while she stands there: no looped repeat. It sounds again when she steps on again, or on
+yellow. A stop sound (P T K B D G, and H W Y X CH) plays its burst once each landing, never
+with an "uh". Matt will revisit the length once the phonics clips are final.
 The room fetches its stones' sounds and words as it opens, so the first slide is not silent. On the far bank are 2–3
 pictures that share the word's start and differ later (MAP, MAT, MAN; else MAP, MOP, MUG;
 only where the bank has nothing better, the same rime). She walks to the one she read and
@@ -275,9 +282,10 @@ first, stop-sound CVC words once those come along, then the bank's blends and di
 the vowel after it (the S of the "Suh" placeholder), a hum up to where the schwa comes in
 (the M of "Mmm-uh", the V of "Vuh"), a vowel's steady part, a stop's burst (T, K) or a
 voiced stop's first instant (B, D), and X's K and final S around its vowel. The held part
-is stretched by overlap-add into one smooth sound 1.3 s long (`HELD_MS`), then quiet;
-standing on, it sounds again after `BRIDGE.resoundMs` (item 058: looping the 70-300 ms
-steady part every clip has was a fast stutter of "m"s). A recording put in place with `voice:import` or `voice:clip` is cut by its own
+is stretched by overlap-add into one smooth sound `BRIDGE.stretchMs` long (0.6 s; `HELD_MS` in
+`holdSound.ts` is the voice tools' copy of the default and a unit test keeps the two equal), then
+quiet (item 058: looping the 70-300 ms steady part every clip has was a fast stutter of "m"s;
+item 085 dropped the re-sound after 2 s of standing). A recording put in place with `voice:import` or `voice:clip` is cut by its own
 shape the same way, so no code changes: record a sound you can hold as a steady sound of
 half a second or more (a clean "mmmm", "ssss", "aaa") and a stop as a crisp sound with no
 vowel after it ("t", not "tuh"). A recording with no schwa plays as it is, held whole or once.
@@ -305,6 +313,7 @@ done, items in the bag):
 | `?scene=battle&part=1` (or `2`) | A battle |
 | `?scene=victory&read=cat,sun,julia` | The victory scene, then the victory recapping those words |
 | `?scene=victory&ending=boat` | That victory scene (`content/house/endings.ts` ids); F2 skips to the recap |
+| `?scene=theend` | THE END, the victory step's last screen (the recap's green opens it); only Dad's 2 starts a new episode |
 | `?scene=pick`, `?scene=parent` | A pick screen; the grown-ups page |
 | `?scene=sound` / `blend` / `picture` / `spell` / `alarm` / `retreat` | Parked v0.1 steps |
 

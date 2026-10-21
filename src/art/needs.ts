@@ -179,6 +179,10 @@ export function artFor(key: string, draw: boolean): string[] {
     case 'Victory':
       out.push('room_victory', ...words(episode.read), counterArt());
       break;
+    case 'TheEnd':
+      // One of this episode's own places (item 085): its hub, home or the quest place; the heroes come with the cast.
+      out.push(hubArt(episode.place));
+      break;
     default:
       // Dev jumps only (`?scene=`): every picture, as boot used to load.
       if (PARKED.has(key)) out.push(...ART_ASSETS.map((a) => a.id));

@@ -6,7 +6,8 @@
  * its word printed under each she matched letters instead of sounding out). The narrator asks for one and
  * gives the clue at the word's level on the ramp (src/rules/grab.ts), a
  * phonics task that never says the word (amendment 1549): level 1 each
- * sound unit's letter names then its sound, level 2 the sounds with the
+ * single letter's name then its sound (a multi-letter unit, NG SH CK LL,
+ * only its one sound: item 085), level 2 the sounds with the
  * letters, level 3 the sounds over blank boxes. A board over the hall shows
  * the letters as they are named or sounded and lights each in turn (a
  * digraph's two letters together, one sound: SH of SHIP).

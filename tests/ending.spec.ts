@@ -7,7 +7,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, expectNoErrors, press, seedProgress, state, stick, until, type WWState } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, press, seedProgress, state, stick, toTheEnd, until, type WWState } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/027_${name}.png` });
 
@@ -75,21 +75,39 @@ test('never last episode\'s scene', async ({ page }) => {
   expectNoErrors(errors);
 });
 
-test('only Dad\'s 2 leaves the victory recap: her buttons and walking do not', async ({ page }) => {
+test('the recap\'s green goes on to THE END, and only Dad\'s 2 leaves it', async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=victory&seed=2&nojourney=1&read=bed,hat');
   await until(page, (s) => s.scene === 'Ending', 30_000, 'the victory scene');
   await page.keyboard.press('F2');
   await until(page, (s) => s.scene === 'Victory', 30_000, 'the recap');
-  // Hush each line as it comes, until the recap is said and Dad's buttons open.
-  await expect
-    .poll(() => page.evaluate(() => {
-      const ww = (window as unknown as { __ww: { hush(): void; dad(): boolean } }).__ww;
-      ww.hush();
-      return ww.dad();
-    }), { timeout: 30_000 })
-    .toBe(true);
+  // Green while the recap is still being said does nothing.
+  await press(page, 'green');
+  await page.waitForTimeout(300);
+  expect((await state(page)).scene).toBe('Victory');
+  // The recap no longer waits for Dad (item 085): no cue there.
+  await expect(page.locator('#dad-buttons')).toHaveCount(0);
+
+  // Said, then green: THE END, with Dad's 2 waiting.
+  const end = await toTheEnd(page, { hush: true });
+  expect(end.recap.map((c) => c.word)).toEqual(['bed', 'hat']);
+  const te = end.theEnd!;
+  expect(te.text).toBe('THE END');
+  // One of this episode's places: its hub, home or the quest place.
+  expect(te.art).toBe(end.episode.place === 'home' ? 'room_hub' : `room_place_${end.episode.place}`);
+  expect(te.heroes[0]).toBe(end.episode.hero);
+  expect(te.heroes).not.toContain(end.episode.villain);
   await expect(page.locator('#dad-buttons')).toContainText('PRESS 2');
+  await page.waitForTimeout(1200);
+  // Drawn: no missing art, and the words on screen, in full.
+  const look = await page.evaluate(() => {
+    const ww = (window as unknown as { __ww: { art(): { missing: number }; texts(): { scene: string; text: string; offscreen: boolean }[] } }).__ww;
+    return { missing: ww.art().missing, texts: ww.texts().filter((t) => t.scene === 'TheEnd') };
+  });
+  expect(look.missing).toBe(0);
+  expect(look.texts.map((t) => t.text)).toEqual(['THE END']);
+  expect(look.texts[0]!.offscreen).toBe(false);
+  await page.screenshot({ path: 'scratch/085/shots/the_end.png' });
 
   // Everything she has: every pad button, the stick, the keys (and Dad's 1, his no).
   for (const b of ['green', 'red', 'blue', 'yellow', 'start', 'back', 'lb', 'rb']) await press(page, b);
@@ -98,13 +116,26 @@ test('only Dad\'s 2 leaves the victory recap: her buttons and walking do not', a
   await stick(page, 0, 0);
   for (const k of ['Space', 'Enter', 'Escape', 'Tab', 'Digit3', 'ArrowLeft', 'KeyA', 'Digit1']) await page.keyboard.press(k);
   await page.waitForTimeout(1500);
-  expect((await state(page)).scene).toBe('Victory');
+  const still = await state(page);
+  expect(still.scene).toBe('TheEnd');
+  expect(still.theEnd?.dad).toBe(true);
 
   // Dad's 2, under dad lock too: a fresh episode from the title.
   await page.keyboard.press('Backquote');
   await page.keyboard.press('Digit2');
   const t = await until(page, (s) => s.scene === 'Title', 30_000, 'the title');
   expect(t.episode.read).toEqual([]);
+  expect(t.theEnd).toBeNull();
   await expect(page.locator('#dad-buttons')).toHaveCount(0);
+  expectNoErrors(errors);
+});
+
+test('?scene=theend opens THE END, Dad\'s 2 waiting', async ({ page }) => {
+  const errors = collectErrors(page);
+  await boot(page, '?scene=theend&ally=none');
+  const s = await until(page, (st) => st.scene === 'TheEnd' && Boolean(st.theEnd?.dad), 30_000, 'THE END');
+  // With no ally, the dad who woke her stands with her (as on the podium).
+  expect(s.theEnd!.heroes[0]).toBe(s.episode.hero);
+  expect(s.step.kind).toBe('victory');
   expectNoErrors(errors);
 });

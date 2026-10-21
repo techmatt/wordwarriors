@@ -15,7 +15,8 @@ import { defineConfig, mergeConfig, type Plugin } from 'vite';
 
 import base from '../vite.config';
 
-export const TEST_DIST = 'node_modules/.ww-test-dist';
+/** `WW_TEST_DIST` gives a concurrent run in the same worktree a build of its own (item 085). */
+export const TEST_DIST = process.env.WW_TEST_DIST ?? 'node_modules/.ww-test-dist';
 
 const TYPES: Record<string, string> = {
   '.png': 'image/png',

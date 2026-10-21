@@ -10,7 +10,7 @@
  */
 
 import { getAudioContext, unlockAudio } from '../audio/context';
-import { holdPlan, holdSamples, type HoldMode } from '../audio/holdSound';
+import { HELD_MS, holdPlan, holdSamples, type HoldMode } from '../audio/holdSound';
 import { realTimeout } from '../realTime';
 
 export interface TimedWord {
@@ -269,27 +269,29 @@ export class VoiceBank {
    * held (its steady part looping from `loopStart`, in seconds) or once (no
    * schwa). Worked out from the decoded clip the first time, and again if the
    * clip is decoded anew, so a recording that replaces a placeholder is cut
-   * by its own shape. Null until the line is decoded.
+   * by its own shape. A held sound is `heldMs` long in all (the bridge
+   * passes BRIDGE.stretchMs). Null until the line is decoded.
    */
-  held(id: string, mode: HoldMode): HeldClip | null {
+  held(id: string, mode: HoldMode, heldMs = HELD_MS): HeldClip | null {
     const ctx = getAudioContext();
     const buffer = this.buffers.get(id);
     if (!ctx || !buffer) return null;
     let cuts = this.cuts.get(buffer);
     if (!cuts) this.cuts.set(buffer, (cuts = {}));
-    const done = cuts[mode];
+    const key = `${mode}:${heldMs}`;
+    const done = cuts[key];
     if (done) return done;
     const x = buffer.getChannelData(0);
     const plan = holdPlan(x, buffer.sampleRate, mode);
-    const { data, loopStart } = holdSamples(x, plan, buffer.sampleRate);
+    const { data, loopStart } = holdSamples(x, plan, buffer.sampleRate, heldMs);
     const out = ctx.createBuffer(1, data.length, buffer.sampleRate);
     out.copyToChannel(data, 0);
     const clip: HeldClip = { buffer: out, loopStart: loopStart === null ? null : loopStart / buffer.sampleRate };
-    cuts[mode] = clip;
+    cuts[key] = clip;
     return clip;
   }
 
-  private readonly cuts = new WeakMap<AudioBuffer, Partial<Record<HoldMode, HeldClip>>>();
+  private readonly cuts = new WeakMap<AudioBuffer, Record<string, HeldClip>>();
 
   get ids(): string[] {
     return [...this.lines.keys()];

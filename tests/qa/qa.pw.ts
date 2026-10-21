@@ -23,7 +23,7 @@ import { test, type Page } from '@playwright/test';
 
 import { BANK } from '../../content/phonics/bank';
 import { FREE_PLAY } from '../../src/config';
-import { boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBattle, playBridgeRoom, playChargeRoom, playEntry, playWordMachine, press, readToKeyWord, seedProgress, state, until, type WWState, VOICE } from '../harness';
+import { boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBattle, playBridgeRoom, playChargeRoom, playAgain, playEntry, playWordMachine, press, readToKeyWord, seedProgress, state, until, type WWState, VOICE } from '../harness';
 
 // Item 083: real voice and real walking: the checker looks and listens as she would.
 VOICE.mode = 'real';
@@ -648,8 +648,8 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
         drawn.push({ ally: ep.ally, villain: ep.villain, fight: rec.fight, ending: rec.endingId, games: plan.map((p) => p.game), rooms: plan.filter((p) => p.slot !== 'counter').map((p) => p.room).sort(), words: [...ep.read] });
         counts.push(await page.evaluate(() => (window as unknown as { __wwqa: { counts(): Record<string, number> } }).__wwqa.counts()));
         heap.push(await page.evaluate(() => (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0));
-        // Only Dad's 2 leaves the recap (item 082).
-        if (e + 1 < total) await page.keyboard.press('2');
+        // The recap's green, then only Dad's 2 leaves THE END (items 082, 085).
+        if (e + 1 < total) await playAgain(page);
       }
     } catch (err) {
       stalled = String(err).split('\n')[0]!;
@@ -763,6 +763,8 @@ for (const mode of flagSet && !LOOK ? (['skip', 'auto'] as const) : []) {
         const at = `${s.scene}:${s.room?.round ?? s.battle?.phase ?? ''}`;
         if (path.at(-1) !== at) path.push(at);
         if (s.scene === 'Victory' && (mode === 'skip' || (!s.voice.busy && s.recap.length > 0))) break;
+        // Auto's green can land on the said recap and open THE END (item 085), where its next F4 would be Dad's yes.
+        if (s.scene === 'TheEnd') break;
         if (mode === 'skip') {
           await page.waitForTimeout(2500);
           // The title has no F2 (nothing to skip): green starts the episode.
@@ -774,11 +776,10 @@ for (const mode of flagSet && !LOOK ? (['skip', 'auto'] as const) : []) {
           if (n % 2) await press(page, 'green');
         }
       }
-      if ((await state(page)).scene !== 'Victory') throw new Error(`devkeys ${mode}: no victory in 8 minutes; path ${path.slice(-6).join(' > ')}`);
+      if (!['Victory', 'TheEnd'].includes((await state(page)).scene)) throw new Error(`devkeys ${mode}: no victory in 8 minutes; path ${path.slice(-6).join(' > ')}`);
       if (mode === 'skip') {
-        await page.waitForTimeout(2500);
-        // Only Dad's 2 leaves the recap (item 082).
-        await page.keyboard.press('2');
+        // The recap's green, then only Dad's 2 leaves THE END (items 082, 085).
+        await playAgain(page, { hush: true });
         await episode(page, sc, rec);
       }
     } catch (err) {

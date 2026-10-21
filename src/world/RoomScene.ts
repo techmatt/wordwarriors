@@ -110,7 +110,7 @@ export abstract class RoomScene extends Phaser.Scene {
   protected hint(_idle = false): void {}
   /**
    * Green, before any spot is chosen. A room that uses green for something
-   * else at times (the sentence read-along steps a word) returns true to
+   * else at times (the sentence room's green starts her read) returns true to
    * consume the press; the default lets the nearest spot be chosen.
    */
   protected onGreen(): boolean {
@@ -141,9 +141,11 @@ export abstract class RoomScene extends Phaser.Scene {
     this.play = new FreePlay(this, formFor(this.playerCharacter(), episode)?.id ?? null);
     this.dot = makeButtonDot(this, 0, 0, 'green', 18).setDepth(DEPTH.prompt).setVisible(false);
     // Yellow is always "say it again": a yellow dot with an ear, top right.
-    this.helpDot = this.add
-      .container(GAME_WIDTH - 60, 60, [makeButtonDot(this, 0, 0, 'yellow', 22, false), this.add.text(0, 44, '👂', { fontSize: '30px' }).setOrigin(0.5)])
-      .setDepth(DEPTH.hud);
+    // Item 085 (Matt): the ear sits on the dot, in front of it, whole. The
+    // text gets padding: an emoji's glyph overhangs Phaser's measured box, which
+    // cut its edges off.
+    const ear = this.add.text(0, 1, '👂', { fontSize: '30px', padding: { x: 6, y: 6 } }).setOrigin(0.5);
+    this.helpDot = this.add.container(GAME_WIDTH - 60, 60, [makeButtonDot(this, 0, 0, 'yellow', 26, false), ear]).setDepth(DEPTH.hud);
     this.idleMs = 0;
     this.hasMoved = false;
     this.stickHint = null;

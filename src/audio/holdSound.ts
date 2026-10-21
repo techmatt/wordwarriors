@@ -14,7 +14,8 @@
  *   (S of "Suh": noise, many crossings, then the quieter-crossing vowel), a hum
  *   up to where the crossings rise into the schwa (M N L), or a vowel's loud
  *   middle. That part is stretched smoothly (overlap-add, not a loop: item
- *   058) to one long sound of HELD_MS, which fades and goes quiet;
+ *   058) to one short natural stretch (`heldMs`, BRIDGE.stretchMs in the
+ *   game), which fades and goes quiet: once, never repeated (item 085);
  * - a **once** sound (the stops, H, W, Y, X) plays once and never with an
  *   "uh": a burst or hiss up to the vowel (T, K, CH), the final hiss after it
  *   too (X is "Kuhs": K then S), or a voiced stop's first instant (B D G),
@@ -27,11 +28,13 @@
 export type HoldMode = 'hold' | 'once';
 
 /**
- * How long a held sound sounds (item 058), its fade-out included: one smooth
- * "mmmm", then quiet. Here, not in BRIDGE (src/config.ts), because
- * tools/voice/import.ts builds this file under NodeNext, and config.ts is not.
+ * How long a held sound sounds by default, its fade-out included: one short
+ * "mmm", then quiet. The game passes BRIDGE.stretchMs (src/config.ts, the
+ * knob: item 085, 1.3 s before); this default is for tools/voice/import.ts,
+ * which builds this file under NodeNext, where config.ts does not build.
+ * tests/unit/holdSound.test.ts keeps the two equal.
  */
-export const HELD_MS = 1300;
+export const HELD_MS = 600;
 
 /** What to play, in samples: `start`..`end` of the clip; a held clip's steady part is `loopStart`..`end`. */
 export interface HoldPlan {
@@ -246,14 +249,15 @@ function stretch(x: Float32Array, lo: number, hi: number, n: number, half: numbe
  * The samples to play for a plan, and where a held one loops back to (an
  * index into them). A once clip fades out over its last FADE_OUT_S, and joins
  * its tail. A held clip (item 058) is its attack, then its steady part
- * stretched smoothly (`stretch`) to HELD_MS in all, fading out, then
- * REST_S of silence, which is its loop: so it sounds once, one long "mmmm",
+ * stretched smoothly (`stretch`) to `heldMs` in all (BRIDGE.stretchMs in the
+ * game, HELD_MS by default), fading out, then
+ * REST_S of silence, which is its loop: so it sounds once, one short "mmm",
  * and is quiet until it is let go. (054 looped the steady part itself, and
  * that is 70-300 ms on every clip, placeholders and recordings alike: M's
  * 110 ms loop was a stutter of "m"s, nine a second.)
  */
-export function holdSamples(x: Float32Array, plan: HoldPlan, rate: number): { data: Float32Array<ArrayBuffer>; loopStart: number | null } {
-  if (plan.mode === 'hold' && plan.loopStart !== undefined) return heldSamples(x, plan, rate, plan.loopStart);
+export function holdSamples(x: Float32Array, plan: HoldPlan, rate: number, heldMs = HELD_MS): { data: Float32Array<ArrayBuffer>; loopStart: number | null } {
+  if (plan.mode === 'hold' && plan.loopStart !== undefined) return heldSamples(x, plan, rate, plan.loopStart, heldMs);
   const parts: [number, number][] = [[plan.start, plan.end], ...(plan.tail ? [plan.tail] : [])];
   const len = parts.reduce((n, [a, b]) => n + Math.max(0, b - a), 0);
   const data = new Float32Array(Math.max(1, len));
@@ -272,12 +276,9 @@ export function holdSamples(x: Float32Array, plan: HoldPlan, rate: number): { da
   return { data, loopStart: null };
 }
 
-/** A held clip: attack, the steady part stretched to HELD_MS, a fade, then silence (its loop). */
-function heldSamples(x: Float32Array, plan: HoldPlan, rate: number, loopStart: number): { data: Float32Array<ArrayBuffer>; loopStart: number } {
+/** A held clip: attack, the steady part stretched to `heldMs` in all, a fade, then silence (its loop). */
+function heldSamples(x: Float32Array, plan: HoldPlan, rate: number, loopStart: number, heldMs: number): { data: Float32Array<ArrayBuffer>; loopStart: number } {
   const { start, end } = plan;
-  const total = Math.max(1, Math.round((HELD_MS / 1000) * rate));
-  const rest = Math.max(1, Math.round(REST_S * rate));
-  const data = new Float32Array(total + rest);
   let half = Math.round((GRAIN_S * rate) / 2);
   // The attack (up to the loop start) as it is, crossfading into the first
   // grain over `half`; with no room for that, the stretch is all of it.
@@ -287,6 +288,10 @@ function heldSamples(x: Float32Array, plan: HoldPlan, rate: number, loopStart: n
     half = Math.max(1, Math.min(half, Math.floor((end - start) / 2)));
   }
   const at = lo - start;
+  // Never shorter than the attack and one grain, whatever the knob says.
+  const total = Math.max(at + 2 * half, Math.round((heldMs / 1000) * rate));
+  const rest = Math.max(1, Math.round(REST_S * rate));
+  const data = new Float32Array(total + rest);
   const body = stretch(x, lo, end, Math.max(0, total - at), half, rate);
   data.set(body.subarray(0, total - at), at);
   for (let i = 0; i < loopStart - lo && lo > start; i++) {

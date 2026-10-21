@@ -1,6 +1,6 @@
 /**
  * Two whole episodes back to back, the way she will play on a good morning:
- * Victory, Dad's 2 (item 082), and straight into the next one. Catches anything that
+ * Victory, THE END, Dad's 2 (items 082, 085), and straight into the next one. Catches anything that
  * only breaks on the second run of a scene (listeners, stale state, leaks):
  * the hub is restarted many times an episode, so it is the one to watch.
  * @slow. Runs at clock speed `WW_SPEED` (5): what it guards is the second
@@ -14,7 +14,7 @@
 
 import { test, expect } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, expectNoErrors, playEpisode, press, state, until, type WWState } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, playAgain, playEpisode, press, state, until, type WWState } from './harness';
 
 /** Charge the Spell behind door a, its word a battle item, its runes fired in battle 1. */
 function expectCharged(end: WWState): void {
@@ -41,11 +41,8 @@ test('two episodes back to back', SLOW, async ({ page }) => {
   await page.screenshot({ path: `tests/screenshots/025_seed1_victory_${first.end.episode.villain}.png` });
   const heap1 = await page.evaluate(() => (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0);
 
-  // Victory: Dad's 2 once his buttons open (item 082), then the title, then green.
-  await until(page, (s) => s.scene === 'Victory' && !s.voice.busy, 90_000, 'victory quiet');
-  await expect.poll(() => page.evaluate(() => (window as unknown as { __ww: { dad(): boolean } }).__ww.dad()), { timeout: 10_000 }).toBe(true);
-  await page.keyboard.press('2');
-  await until(page, (s) => s.scene === 'Title', 30_000, 'title again');
+  // Victory: the recap's green, then Dad's 2 on THE END (items 082, 085), then the title, then green.
+  await playAgain(page);
   // A fresh episode: nothing carried over from the first.
   const fresh = await state(page);
   expect(fresh.episode.fetched).toEqual([]);

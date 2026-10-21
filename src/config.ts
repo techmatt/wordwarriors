@@ -169,9 +169,12 @@ export const CHARGE = {
  * is held, so how slowly she slides is how slowly she stretches the word.
  * `words` per visit, `pictures` on the far bank (the word's included).
  * `slide`: her speed on the stones, a share of her walking speed. A held
- * sound is one smooth stretched sound (HELD_MS in src/audio/holdSound.ts,
- * 1.3 s), then quiet; while she stays on its stone it sounds again after
- * `resoundMs` of quiet (a stop sound plays once each time she steps on).
+ * sound (a vowel, M N L R V Z, F S SH TH: `canHold`) is one short natural
+ * stretch, `stretchMs` long in all, its 0.2 s fade-out included
+ * (src/audio/holdSound.ts), then quiet for as long as she stays on its stone:
+ * no repeat (item 085, Matt's call, to revisit once the phonics clips are
+ * final; it was 1.3 s and sounded again every 2 s). A stop sound (P T K B D
+ * G, and H W Y X CH) plays once, its burst only, each time she steps on.
  * Each word has its own help level: 1 = the
  * stones sound themselves and the pictures show from the start; 2 = silent
  * stones, Dad's 2 is a hint (they sound); 3 = she says the word aloud first,
@@ -191,7 +194,7 @@ export const BRIDGE = {
   maxUnits: 4,
   weight: 1,
   slide: 0.55,
-  resoundMs: 2000,
+  stretchMs: 600,
   replayMs: 700,
   dadWaitMs: 12000,
   replays: 2,
@@ -210,7 +213,8 @@ export const FORCE_PHONICS_ROOM = true;
  * The home warm-up (item 033, src/scenes/EntryScene.ts): "Before we head out,
  * let's grab the ..." in the entry hall. Each word has its own level on a
  * ramp, a phonics clue that never says the word (amendment 1549): 1 = each
- * sound unit's letter names, then its sound; 2 = sounds only, the letters
+ * single letter's name, then its sound (a multi-letter unit, NG SH CK LL,
+ * only its one sound: item 085); 2 = sounds only, the letters
  * shown; 3 = sounds only, blank boxes. `startLevel` is where a word she has
  * never grabbed starts; right first time moves a word up a level, a miss on
  * its first try moves it down (recorded always; DIFFICULTY caps the level the

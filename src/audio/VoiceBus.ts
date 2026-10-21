@@ -124,7 +124,8 @@ class Bus {
   /**
    * Hold a letter sound (item 054, the Stretchy Bridge): it plays while she
    * stands on its stone and stops, with a short fade, on `release()`. A `hold`
-   * sound loops its steady part (up to `maxMs`); a `once` sound plays its cut
+   * sound is its steady part stretched once to `maxMs` in all, then quiet
+   * (item 085: never repeated); a `once` sound plays its cut
    * once, never with a schwa (VoiceBank `held`, src/audio/holdSound.ts). It is
    * a line like any other to the listeners and the history, so a bark waits
    * and an instruction queues behind it. Null while an instruction is playing
@@ -137,7 +138,7 @@ class Bus {
     if (this.current) this.cut();
     if (voiceBank.has(id) && !voiceBank.ready(id)) void voiceBank.ensure(id);
     const ctx = getAudioContext();
-    const clip = ctx?.state === 'running' && !this.instant ? voiceBank.held(id, mode) : null;
+    const clip = ctx?.state === 'running' && !this.instant ? voiceBank.held(id, mode, maxMs) : null;
     // A held sound too short to hold (the cut found no steady part) plays once.
     const loops = mode === 'hold' && (!clip || clip.loopStart !== null);
     let stopAudio = () => undefined as void;

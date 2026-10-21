@@ -22,7 +22,7 @@ import { withStems } from '../rules/bank';
 import { episodePlans, wordsOf, type RoomPlan } from '../rules/sentences';
 import { BRIDGE_GAME, CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
 import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
-import { hallObjects, pickGrab } from '../rules/grab';
+import { GRAB_WORDS, hallObjects, pickGrab } from '../rules/grab';
 import { progress } from '../state/progress';
 import { pickWeighted } from '../state/ProgressStore';
 import { away, bedroomTaunt, helper, hubScene, storyWords, villainSpec } from './cast';
@@ -116,7 +116,9 @@ function grabWord(): string {
     // line and hub scene, the fight style), stemmed like every other draw (item 047).
     const avoid = withStems([gift, ...moveWords(), ...saidBeforeBattle(), ...(named ? [named] : []), ...(episode.house.plan ? readingWords() : [])]);
     // `level` is read when the hall opens, `misses` counted there: kept here so a trip to the parent page loses neither.
-    episode.grab = { word: pickGrab(progress, avoid), objects: [], level: null, misses: 0 };
+    // `?grab=king` (tests, item 085): that word, when the hall can ask for it.
+    const asked = typeof location === 'undefined' ? null : new URLSearchParams(location.search).get('grab');
+    episode.grab = { word: asked && GRAB_WORDS.includes(asked) ? asked : pickGrab(progress, avoid), objects: [], level: null, misses: 0 };
   }
   return episode.grab.word;
 }

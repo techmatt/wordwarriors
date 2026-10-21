@@ -24,7 +24,7 @@ letter stones, each sound held, and blends the whole word to pick its picture). 
 → **battle part 1** (the villain's ultimate wins: "too strong, retreat") →
 **house part 2** (a secret attic door: the counter sentence fetches the counter-item) →
 **battle part 2** (the counter beats the ultimate) → **victory scene**
-(`content/house/endings.ts`) → victory with a reading recap. A journey map shows before
+(`content/house/endings.ts`) → victory with a reading recap → THE END (only Dad's 2 starts the next episode). A journey map shows before
 each battle, house part 2 (the way home after the retreat) and the victory.
 
 The cast is drawn every episode (`src/rules/cast.ts`, `ACTIVE_CAST` and `CAST_ODDS` in
@@ -46,7 +46,7 @@ Playwright serves its own (README, *Ports and servers*). The sibling game
 | Path | What |
 | --- | --- |
 | `src/` | Game source. `main.ts` boots Phaser; `config.ts` sizes, depth bands, pad colours and every tuning knob named below; `hookState.ts` what scenes publish for the tests (and `walkObjects`), `testHooks.ts` installs `window.__ww`; `realTime.ts` wall-clock timeouts (network, decode) the tests' fast clocks do not stretch. |
-| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom), Journey, Ending (the victory scene), Victory, Parent, and Wait (shown while a scene's art loads); parked: Pick, Alarm, Retreat and `minigames/` (the v0.1 games, Spell the Spell among them). "Minigame" means only a pool entry (`src/rules/minigames.ts`). |
+| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom), Journey, Ending (the victory scene), Victory (the recap), TheEnd, Parent, and Wait (shown while a scene's art loads); parked: Pick, Alarm, Retreat and `minigames/` (the v0.1 games, Spell the Spell among them). "Minigame" means only a pool entry (`src/rules/minigames.ts`). |
 | `src/battle/` | The battle simulation: `BattleScene` (the director scripts `part1`/`part2`), `Fighter`, `abilities`, `movement`, `moveChoice` (`MoveChoice`: the frozen-fight word pick), `padPlace` (where its pads go), `hud` (`BattleHud`: names, bars, fetched things, runes); `stages/` stages each fight style. |
 | `src/episode/` | `Episode.ts` the episode's flow (scenes call `advance()`; nothing else decides flow), re-exporting `state.ts` (`episode`, the step list), `draws.ts` (the cast draw and what is remembered), `cast.ts` (who plays whom) and `plans.ts` (the episode's other draws). All but `Episode.ts` are Phaser-free. |
 | `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only), `dadLock`, `dadButtons` (keys 1 / 2, Dad's no / yes). |
@@ -176,10 +176,13 @@ in `docs/content.md`, *Matt says X → run Y*; README, *Candidates*).
   she has answered. Pass 1 (listen) is voiced karaoke that stops at the key word, which
   pulses in a beat of silence; it is skipped once the frame is solid (`SENTENCE_SOLID`),
   only from `DIFFICULTY` 2.
-  Pass 2 (her turn) starts with nothing lit; each green lights the next word and says
-  it (green waits for the word), except the key word, which lights in silence. Yellow on
-  a frame word says it; yellow on the key word sounds its letters one by one, never
-  blended (a non-decodable key word like MICE gets only its first sound). Right: the
+  Pass 2 (her turn) starts with nothing lit; her one green reads the whole sentence,
+  each frame word lit as its own line is said, and stops at the key word, which lights
+  in silence and is then sounded out unit by unit (a digraph one sound), never blended
+  and never said whole (a non-decodable key word like MICE gets only its first sound).
+  Then the pictures wake and her next green takes the one she stands at. Yellow before
+  that first green says the instruction again; after it, yellow (and a miss) sounds the
+  key word out again. Right: the
   whole sentence is read with the key word. Voice is a prefix line ("Rilla is scared
   of...") plus the key word's own `word_<x>` line, so no line can leak the key word. A
   name in a sentence is the bare character name, the villain's too. Key words, the

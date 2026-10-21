@@ -1,7 +1,8 @@
 /**
  * Held letter sounds, as played (item 058, src/audio/holdSound.ts): standing
- * on a Stretchy Bridge stone, a sound you can hold is one smooth stretched
- * sound of HELD_MS, then quiet. 054 looped the clip's steady part, and
+ * on a Stretchy Bridge stone, a sound you can hold is one short natural
+ * stretch of BRIDGE.stretchMs (item 085: 0.6 s, was 1.3 s), then quiet, never
+ * repeated; a stop plays once. 054 looped the clip's steady part, and
  * on every real clip that part is 70-300 ms (M's was 110 ms), so the loop was
  * a fast stutter of "m"s; these tests would have caught it. (The cuts
  * themselves are tested in bridge.test.ts.)
@@ -12,6 +13,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { HELD_MS, holdPlan, holdSamples } from '../../src/audio/holdSound';
+import { BRIDGE } from '../../src/config';
 
 const RATE = 48000;
 type Part = [kind: 'quiet' | 'noise' | 'hum', s: number, amp?: number, hz?: number, ampEnd?: number];
@@ -54,17 +56,17 @@ const CASES: [string, Float32Array][] = [
 ];
 
 for (const [name, x] of CASES) {
-  test(`held ${name}: one smooth sound of HELD_MS, then quiet, never a short loop`, () => {
+  test(`held ${name}: one smooth sound of BRIDGE.stretchMs, then quiet, never a short loop`, () => {
     const plan = holdPlan(x, RATE, 'hold');
     assert.equal(plan.mode, 'hold', name);
-    const { data, loopStart } = holdSamples(x, plan, RATE);
-    const sound = Math.round((HELD_MS / 1000) * RATE);
-    // It sounds for HELD_MS; whatever loops (if anything does) is silence.
+    const { data, loopStart } = holdSamples(x, plan, RATE, BRIDGE.stretchMs);
+    const sound = Math.round((BRIDGE.stretchMs / 1000) * RATE);
+    // It sounds for BRIDGE.stretchMs; whatever loops (if anything does) is silence.
     assert.equal(loopStart, sound, `${name}: the loop starts where the sound ends`);
     assert.ok(data.length > sound);
     for (let i = sound; i < data.length; i++) assert.equal(data[i], 0, `${name}: the loop is silent`);
     const env = envelope(data, Math.round(0.03 * RATE), sound - Math.round(0.25 * RATE));
-    assert.ok(env.length >= 40, `${name}: ${env.length} frames of held sound`);
+    assert.ok(env.length >= 10, `${name}: ${env.length} frames of held sound`);
     // Smooth: no beat of dips and swells (a loop's seam), the level steady.
     const range = Math.max(...env) - Math.min(...env);
     assert.ok(range <= 4, `${name}: the level wanders ${range.toFixed(1)} dB`);
@@ -93,4 +95,17 @@ test('once sounds are unchanged: played once, nothing looped, no stretch', () =>
   const { data, loopStart } = holdSamples(t, plan, RATE);
   assert.equal(loopStart, null);
   assert.equal(data.length, plan.end - plan.start);
+});
+
+test('the stretch is the BRIDGE.stretchMs knob (item 085): the default matches it, and the knob sets the length', () => {
+  // holdSound.ts cannot import config.ts (tools/voice/import.ts builds it under NodeNext), so it keeps a default.
+  assert.equal(HELD_MS, BRIDGE.stretchMs);
+  // A short natural stretch, not the long 1.3 s hold it was.
+  assert.ok(BRIDGE.stretchMs >= 300 && BRIDGE.stretchMs <= 900, `${BRIDGE.stretchMs} ms`);
+  const x = CASES[0]![1];
+  const plan = holdPlan(x, RATE, 'hold');
+  for (const ms of [400, 600, 1000]) assert.equal(holdSamples(x, plan, RATE, ms).loopStart, Math.round((ms / 1000) * RATE), `${ms} ms`);
+  // A knob shorter than the attack still plays the attack and a grain, never a negative stretch.
+  const tiny = holdSamples(x, plan, RATE, 1);
+  assert.ok(tiny.loopStart! > 0 && tiny.data.length > tiny.loopStart!);
 });

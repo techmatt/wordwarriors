@@ -33,10 +33,21 @@ export interface LetterSound {
   /** An example word with a picture, for the parent screen and future hints. */
   example: string;
   note?: string;
+  /**
+   * Item 085: edge-tts says this sound right only inside a word, so it is asked
+   * for the carrier word `say` (vowel first) and the build keeps the opening
+   * vowel, up to where loudness falls `keepDb` under its peak
+   * (tools/voice/carrier.ts). The line's text stays the placeholder spelling.
+   */
+  carrier?: { say: string; keepDb: number };
 }
 
 export const LETTERS: LetterSound[] = [
-  { letter: 'a', say: 'Aah', cls: 'vowel', example: 'cat', note: 'short a as in cat; edge-tts gets close to /æ/ only with a drawn-out spelling' },
+  {
+    letter: 'a', say: 'Aah', cls: 'vowel', example: 'cat',
+    note: 'short a as in cat; edge-tts says "Aah" as the O of HOT, so the vowel is cut from "Add" (item 085: F1 800 / F2 1,700 Hz)',
+    carrier: { say: 'Add', keepDb: 6 },
+  },
   { letter: 'b', say: 'Buh', cls: 'stop', example: 'bat' },
   { letter: 'c', say: 'Kuh', cls: 'stop', example: 'cat', note: 'hard c, same sound as k' },
   { letter: 'd', say: 'Duh', cls: 'stop', example: 'dog' },

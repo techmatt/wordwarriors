@@ -1,14 +1,51 @@
 /**
  * Free play's pure rules (item 060): a cast button's tap or charge, the jump's
- * arc (a hold floats higher and longer, once per jump), and the live-shot cap.
+ * arc (a hold floats higher and longer, once per jump), the live-shot cap, and
+ * each cast button's colours (item 085).
  * `npx tsx --test tests/unit/freePlay.test.ts` (also part of `npm run test:unit`).
  */
 
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { FREE_PLAY } from '../../src/config';
-import { castPower, overCap, startJump, stepJump, type Jump } from '../../src/rules/freePlay';
+import { FREE_PLAY, PAD_COLOR } from '../../src/config';
+import { CAST_COLORS, castPalette, castPower, mixColor, overCap, startJump, stepJump, type Jump } from '../../src/rules/freePlay';
+
+/** Hue in degrees, or null for a grey. */
+function hue(c: number): number | null {
+  const r = ((c >> 16) & 0xff) / 255;
+  const g = ((c >> 8) & 0xff) / 255;
+  const b = (c & 0xff) / 255;
+  const max = Math.max(r, g, b);
+  const d = max - Math.min(r, g, b);
+  if (d < 0.02) return null;
+  const h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  return (h * 60 + 360) % 360;
+}
+
+const hueGap = (a: number, b: number) => Math.min(Math.abs(a - b), 360 - Math.abs(a - b));
+
+test('castPalette: every tint of a cast button is its own pad colour, a shade of it, never another button\'s or a grey', () => {
+  for (const c of CAST_COLORS) {
+    const pal = castPalette(c);
+    const padHue = hue(PAD_COLOR[c])!;
+    for (const t of [pal.body, ...pal.trail]) {
+      const h = hue(t);
+      assert.ok(h !== null, `${c}: ${t.toString(16)} is a grey`);
+      assert.ok(hueGap(h, padHue) < 6, `${c}: ${t.toString(16)} is off its pad's hue`);
+      for (const o of CAST_COLORS) if (o !== c) assert.ok(hueGap(h, hue(PAD_COLOR[o])!) > 30, `${c}: ${t.toString(16)} is near ${o}`);
+    }
+  }
+  // No two buttons share a tint.
+  const all = CAST_COLORS.flatMap((c) => [castPalette(c).body, ...castPalette(c).trail]);
+  assert.equal(new Set(all).size, all.length);
+});
+
+test('mixColor: the ends are the colours themselves; halfway is the channel mean', () => {
+  assert.equal(mixColor(0x3d7fe0, 0xffffff, 0), 0x3d7fe0);
+  assert.equal(mixColor(0x3d7fe0, 0xffffff, 1), 0xffffff);
+  assert.equal(mixColor(0x000000, 0xffffff, 0.5), 0x808080);
+});
 
 const DT = 1 / 60;
 

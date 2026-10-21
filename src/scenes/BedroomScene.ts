@@ -2,7 +2,8 @@
  * The bedroom: where every episode starts. She is asleep; somebody comes in
  * to wake her with the news.
  *
- * She is in bed, peeking over the cover and breathing; any button puffs a 💤.
+ * She is lying on her bed (drawn in front of it) and breathing; any button
+ * puffs a 💤.
  * Dada Matt (Dada Jason when Dada Matt is the hero) walks in from the door:
  * "Wake up, wake up!" A green dot shows over the bed and she presses green to
  * jump out (or she pops out by herself after WAKE_WAIT_MS, so nothing stalls).
@@ -115,12 +116,17 @@ export class BedroomScene extends RoomScene {
     const room = this.room;
     this.round = 'bedroom:sleep';
 
-    // The bed, with her tucked in it: her feet are above the bed's, so she
-    // draws behind it and only her top peeks over the cover. The bed is a
-    // spot (off until "Wake up!") so green on it jumps her out.
+    // The bed, with her lying on it. Item 085 (Matt): she is drawn in front
+    // of the bed, never behind it. The room sorts by feet (depth = y) and
+    // hers in bed (`tuckIn`) are above the bed's, which hid her behind the
+    // cover; so the bed, against the wall, sits at the bottom of the sorted
+    // band and everyone on the floor (her, asleep or walking past, and the
+    // grown-ups) draws over it. The bed is a spot (off until "Wake up!") so
+    // green on it jumps her out.
     this.bedSpot = this.addSpot('bed', room.bed.x, room.bed.y, [this.art('prop_bed', 280, 190)], true);
+    this.bedSpot.obj.setDepth(0);
     this.bedSpot.enabled = false;
-    this.player.place(room.bed.x - 30, room.bed.y - 30);
+    this.tuckIn();
     this.breathing = this.tweens.add({ targets: this.player.root, scaleY: 0.95, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     this.zzz = this.time.addEvent({ delay: 900, loop: true, callback: () => this.floatZ() });
 
@@ -275,6 +281,12 @@ export class BedroomScene extends RoomScene {
     this.bedSpot.enabled = false;
   }
 
+  /** In bed, on the pillow end. */
+  private tuckIn(): void {
+    const { x, y } = this.room.bed;
+    this.player.place(x - 30, y - 30);
+  }
+
   /** A little 💤 rising off the bed while she sleeps. */
   private floatZ(): void {
     if (!this.asleep) return;
@@ -350,7 +362,7 @@ export class BedroomScene extends RoomScene {
     super.update(time, deltaMs);
     if (!this.asleep) return;
     // Tucked in: she stays in bed until she is woken.
-    this.player.place(this.room.bed.x - 30, this.room.bed.y - 30);
+    this.tuckIn();
     // Any button while asleep: a puff of 💤 and a little boing (green on the
     // bed while "Wake up!" waits is the wake-up itself, not a puff).
     const waking = this.wakeResolve && !this.locked && this.controls.pressed('green');

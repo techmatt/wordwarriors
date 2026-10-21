@@ -16,9 +16,10 @@
  * - **a recorded clip** under `content/voice/clips/`, used only while its hash
  *   still matches the line (see clips.ts);
  * - **edge-tts**, synthesised now: the fallback for a line never recorded and
- *   the *loud* fallback for one edited since it was.
+ *   the *loud* fallback for one edited since it was. A line with `cut` (item
+ *   085) is a carrier word edge-tts says, cut to its vowel (carrier.ts).
  *
- * Incremental: a line whose fingerprint (source, speaker, voice, text, say) is
+ * Incremental: a line whose fingerprint (source, speaker, voice, text, say, cut) is
  * unchanged and whose mp3 is on disk is skipped. The speaker is in the
  * fingerprint because two speakers can share a voice config and still need
  * separate audio once one of them is re-tuned. `--force` rebuilds everything;
@@ -32,6 +33,9 @@ import path from 'node:path';
 
 import { exists, isMain, LINES_FILE } from '../shared.js';
 import { align, isSpeakable } from './align.js';
+import { decodeMp3, vowelSpan } from './carrier.js';
+import { mp3Bytes } from './import.js';
+import { finish } from './split.js';
 import { CLIP_DIR, clipStateFor, forgetMissingAudio, readClipIndex, spokenFor, type ClipIndex, type ClipRecord } from './clips.js';
 import { trimMp3 } from './mp3.js';
 import { EdgeTtsProvider } from './providers/edgeTts.js';
@@ -166,7 +170,7 @@ export async function buildVoice(argv: string[]): Promise<void> {
     const voice = resolveVoice(line, book);
     const hash = clip
       ? fingerprint({ source: clip.provider, clip: clip.audio, spoken: clip.spokenHash, speaker: line.speaker, text: line.text, group: line.group })
-      : fingerprint({ source: book.provider, speaker: line.speaker, voice, text: line.text, say: line.say ?? null, group: line.group });
+      : fingerprint({ source: book.provider, speaker: line.speaker, voice, text: line.text, say: line.say ?? null, group: line.group, ...(line.cut ? { cut: line.cut } : {}) });
     const cached = cache[line.id];
     if (cached?.hash === hash && (await exists(path.join(opts.out, path.basename(cached.entry.audio))))) {
       // Re-based, so moving the folder (voice/ became voice-gen/) needs no rebuild.
@@ -258,6 +262,15 @@ async function fromProvider(opts: Options, line: LineSpec, voice: VoiceConfig, p
   const result = await provider.synthesize(line.say ?? line.text, voice);
   const words = align(line.text, result.words, line.say !== undefined);
   const name = `${line.id}.${result.extension}`;
+  if (line.cut && result.extension === 'mp3') {
+    // Item 085: a carrier word, cut to its vowel (carrier.ts), finished like a recording.
+    const { x, rate } = await decodeMp3(result.audio);
+    const { start, end } = vowelSpan(x, rate, line.cut.keepDb);
+    const { data } = finish(x.subarray(start, end), rate);
+    await writeFile(path.join(opts.out, name), mp3Bytes(data, rate));
+    const seconds = Math.round((data.length / rate) * 1000) / 1000;
+    return entry(opts, line, name, words.length === 1 ? [{ word: words[0]!.word, start: 0, end: seconds }] : words);
+  }
   const last = words.length ? words[words.length - 1]!.end : 0;
   const audio = result.extension === 'mp3' ? trimMp3(result.audio, last + TAIL_SECONDS) : result.audio;
   await writeFile(path.join(opts.out, name), audio);

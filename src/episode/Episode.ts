@@ -9,7 +9,7 @@
  *     front door) → map → battle part 1 (the villain's ultimate wins)
  *   → map → house part 2 (the counter sentence in the attic) → map
  *   → battle part 2 (the counter wins) → map → victory (the victory scene,
- *     then the recap) → title
+ *     then the recap, then THE END, where Dad's 2 goes on) → title
  *
  * Scenes never decide where to go next: they call `advance(scene)` when they
  * are done and this module starts the next step's scene, by the journey map

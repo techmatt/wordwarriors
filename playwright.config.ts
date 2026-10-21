@@ -48,10 +48,12 @@ export default defineConfig({
   // Item 081: the whole episodes (2-3.5 minutes each) are a project of their own, listed
   // first, so the three workers start on them: by file name the soak started 4.9 minutes
   // into the full run and ended it.
-  projects: gpuProjects().flatMap((p) => [
-    { ...p, name: 'episodes', testMatch: LONG_SPECS },
-    { ...p, testIgnore: LONG_SPECS },
-  ]),
+  projects: process.env.WW_NAME_ORDER
+    ? gpuProjects()
+    : gpuProjects().flatMap((p) => [
+        { ...p, name: 'episodes', testMatch: LONG_SPECS },
+        { ...p, testIgnore: LONG_SPECS },
+      ]),
 
   // A build served by `vite preview` (item 079, tests/vite.test.config.ts): pages boot
   // from one bundle, and edits to src/ mid-run reach no page. WW_DEV_SERVER=1 serves

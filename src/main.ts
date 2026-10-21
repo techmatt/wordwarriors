@@ -22,11 +22,13 @@ import { TitleScene } from './scenes/TitleScene';
 import { EndingScene } from './scenes/EndingScene';
 import { EntryScene } from './scenes/EntryScene';
 import { VictoryScene } from './scenes/VictoryScene';
+import { TheEndScene } from './scenes/TheEndScene';
 import { WaitScene } from './scenes/WaitScene';
 import { artBank } from './art/ArtBank';
 import { installTestHooks } from './testHooks';
 import { installDadButtons } from './input/dadButtons';
 import { installDadLock } from './input/dadLock';
+import { installGlyphMetrics } from './ui/glyphMetrics';
 import { holdAudio, releaseAudio } from './audio/context';
 
 
@@ -52,6 +54,9 @@ Phaser.Game.prototype.step = function guardedStep(this: Phaser.Game, time: numbe
     }
   }
 };
+
+// Emoji drawn as Text measured on themselves, so none is cut flat (item 085, src/ui/glyphMetrics.ts).
+installGlyphMetrics(Phaser.GameObjects.Text);
 
 const game = new Phaser.Game({
   type: Phaser.AUTO,
@@ -79,6 +84,7 @@ const game = new Phaser.Game({
     BattleScene,
     EndingScene,
     VictoryScene,
+    TheEndScene,
     ParentScene,
     AlarmScene,
     SoundToLetter,

@@ -7,7 +7,11 @@
  * - **blue**: zig-zag bolts with a crackling trail;
  * - **red**: spinning sparkle stars;
  * - **yellow**: lobbed fun things, stars, hearts and snowballs (her form adds
- *   its own: donuts and cookies for the chef, gold stars for the knight).
+ *   its own: donuts and cookies for the chef, stars for the knight).
+ *
+ * Each button's shots, trails and bursts are all in its own pad colour
+ * (`castPalette`, item 085), so the three look clearly different; a form's
+ * shapes keep their shapes and take the colour.
  *
  * Pure play: a shot hits nothing, a jump moves nothing; the scene only reads
  * `height` to lift her sprite. The scene decides when play is open and which
@@ -23,55 +27,57 @@ import { DEPTH, FREE_PLAY, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { sfxBoom, sfxJump, sfxPew, sfxTwinkle, sfxZap } from '../audio/sfx';
 import type { Controls } from '../input/Controls';
 import { dadLock } from '../input/dadLock';
-import { castPower, overCap, startJump, stepJump, type Jump } from '../rules/freePlay';
+import { CAST_COLORS, castPalette, castPower, overCap, startJump, stepJump, type CastColor, type CastPalette, type Jump } from '../rules/freePlay';
 import { burst, fxQuality, shockwave } from './juice';
 import { TEX } from './textures';
 
-export type CastColor = 'blue' | 'red' | 'yellow';
-
-const CAST_COLORS: CastColor[] = ['blue', 'red', 'yellow'];
+export type { CastColor };
 
 /** For tests: what free play has done in this scene and how many shots fly now. */
 export const playStats = { jumps: 0, shots: 0, big: 0, live: 0, maxLive: 0 };
 
-/** A shot's look: its texture, tints and trail. */
+/** A shot's look: its texture and its trail's; the tints are its button's (`castPalette`). */
 interface Look {
   tex: string;
-  tints: number[];
   trail: string;
-  trailTints: number[];
 }
 
-const LOOKS: Record<CastColor, Look[]> = {
-  blue: [{ tex: TEX.glow, tints: [0x7ad9ff], trail: TEX.spark, trailTints: [0x7ad9ff, 0xffffff, 0x3d7fe0] }],
+/**
+ * The shapes per button. Item 085 (Matt): each button's shots, trails and
+ * bursts are in its own pad colour, so blue, red and yellow look clearly
+ * different; a shape (the chef's donut) keeps its shape and takes the colour.
+ */
+const SHAPES: Record<CastColor, Look[]> = {
+  blue: [{ tex: TEX.glow, trail: TEX.spark }],
   red: [
-    { tex: TEX.star, tints: [0xff5ab4], trail: TEX.star, trailTints: [0xff5ab4, 0xffd23f, 0xffffff] },
-    { tex: TEX.star, tints: [0xff3b3b], trail: TEX.spark, trailTints: [0xff3b3b, 0xffd23f, 0xff9de0] },
+    { tex: TEX.star, trail: TEX.star },
+    { tex: TEX.star, trail: TEX.spark },
   ],
   yellow: [
-    { tex: TEX.star, tints: [0xffd23f], trail: TEX.spark, trailTints: [0xffd23f, 0xffffff] },
-    { tex: TEX.heart, tints: [0xff5ab4], trail: TEX.heart, trailTints: [0xff5ab4, 0xff9de0] },
-    { tex: TEX.snowball, tints: [0xffffff], trail: TEX.spark, trailTints: [0xd8ecff, 0xffffff] },
+    { tex: TEX.star, trail: TEX.spark },
+    { tex: TEX.heart, trail: TEX.heart },
+    { tex: TEX.snowball, trail: TEX.spark },
   ],
 };
 
-/** Her form's own extras (cheap: existing textures, new tints). */
-const FORM_LOOKS: Record<string, Partial<Record<CastColor, Look[]>>> = {
+/** Her form's own extra shapes (cheap: existing textures, her button's tints). */
+const FORM_SHAPES: Record<string, Partial<Record<CastColor, Look[]>>> = {
   chef: {
+    // A donut and a cookie; sprinkles.
     yellow: [
-      // A pink-iced donut and a cookie.
-      { tex: TEX.ring, tints: [0xff8fc8], trail: TEX.square, trailTints: [0xff5ab4, 0x7ad9ff, 0xffd23f, 0x7cf27c] },
-      { tex: TEX.snowball, tints: [0xd9a066], trail: TEX.square, trailTints: [0x6b3f1d, 0xd9a066] },
+      { tex: TEX.ring, trail: TEX.square },
+      { tex: TEX.snowball, trail: TEX.square },
     ],
-    // Sprinkles.
-    red: [{ tex: TEX.square, tints: [0xff5ab4], trail: TEX.square, trailTints: [0xff5ab4, 0x7ad9ff, 0xffd23f, 0x7cf27c] }],
+    red: [{ tex: TEX.square, trail: TEX.square }],
   },
   knight: {
-    // A flashing sword-swipe of light and gold stars.
-    blue: [{ tex: TEX.streak, tints: [0xe8f4ff], trail: TEX.spark, trailTints: [0xe8f4ff, 0xffd23f] }],
-    yellow: [{ tex: TEX.star, tints: [0xffb800], trail: TEX.star, trailTints: [0xffd23f, 0xffffff] }],
+    // A flashing sword-swipe of light and stars.
+    blue: [{ tex: TEX.streak, trail: TEX.spark }],
+    yellow: [{ tex: TEX.star, trail: TEX.star }],
   },
 };
+
+const PALETTE: Record<CastColor, CastPalette> = { blue: castPalette('blue'), red: castPalette('red'), yellow: castPalette('yellow') };
 
 /** Base on-screen size of each texture at scale 1 (they differ wildly). */
 const TEX_SCALE: Record<string, number> = { [TEX.glow]: 0.4, [TEX.ring]: 0.32, [TEX.streak]: 1.2 };
@@ -185,10 +191,10 @@ export class FreePlay {
         charge.heldMs += dt * 1000;
         const p = castPower(charge.heldMs);
         if (p.charged) {
-          charge.orb ??= this.scene.add.image(from.x, from.y, TEX.glow).setBlendMode(Phaser.BlendModes.ADD).setDepth(DEPTH.fx).setTint(LOOKS[c][0]!.tints[0]!);
+          charge.orb ??= this.scene.add.image(from.x, from.y, TEX.glow).setDepth(DEPTH.fx).setTint(PALETTE[c].body);
           const pulse = 1 + 0.12 * Math.sin(charge.heldMs / 50);
           charge.orb.setPosition(from.x, from.y).setScale((0.3 + 0.9 * p.power) * pulse);
-          if (this.frame % 3 === 0) this.trail(LOOKS[c][0]!, from.x + Phaser.Math.Between(-50, 50), from.y + Phaser.Math.Between(-50, 50));
+          if (this.frame % 3 === 0) this.trail(c, SHAPES[c][0]!, from.x + Phaser.Math.Between(-50, 50), from.y + Phaser.Math.Between(-50, 50));
         }
         continue;
       }
@@ -237,7 +243,6 @@ export class FreePlay {
           lifespan: { min: o.life * 0.5, max: o.life },
           gravityY: o.gravity,
           tint: o.colors,
-          blendMode: Phaser.BlendModes.ADD,
           emitting: false,
         })
         .setDepth(DEPTH.fx + 2)
@@ -248,8 +253,8 @@ export class FreePlay {
   }
 
   private look(c: CastColor): Look {
-    const extra = (this.form && FORM_LOOKS[this.form]?.[c]) || [];
-    const all = [...LOOKS[c], ...extra, ...extra];
+    const extra = (this.form && FORM_SHAPES[this.form]?.[c]) || [];
+    const all = [...SHAPES[c], ...extra, ...extra];
     return all[this.turn[c]++ % all.length]!;
   }
 
@@ -258,8 +263,10 @@ export class FreePlay {
     for (let n = overCap(this.shots.length); n > 0; n--) this.pop(this.shots[0]!, true);
     const look = this.look(c);
     const scale = (TEX_SCALE[look.tex] ?? 1.3) * (big ? 2.2 + 1.6 * power : 1);
-    const obj = this.scene.add.image(x, y, look.tex).setDepth(DEPTH.fx + 1).setScale(scale).setTint(look.tints[0]!);
-    if (c !== 'yellow' || look.tex === TEX.glow) obj.setBlendMode(Phaser.BlendModes.ADD);
+    const pal = PALETTE[c];
+    // Normal blend, not additive: over a pale room an additive shot washed out
+    // toward white and the three buttons looked alike (item 085).
+    const obj = this.scene.add.image(x, y, look.tex).setDepth(DEPTH.fx + 1).setScale(scale).setTint(pal.body);
     const speed = FREE_PLAY.shotSpeed * (big ? 0.8 : 1);
     const lob = c === 'yellow';
     const shot: Shot = {
@@ -285,9 +292,9 @@ export class FreePlay {
     playStats.live = this.shots.length;
     playStats.maxLive = Math.max(playStats.maxLive, this.shots.length);
     // The muzzle flash, and a sound per colour.
-    this.puff(x, y, { count: big ? 26 : 8, speed: big ? 360 : 180, colors: look.trailTints, texture: look.trail, scale: 0.7, life: 320, gravity: 0 });
+    this.puff(x, y, { count: big ? 26 : 8, speed: big ? 360 : 180, colors: pal.trail, texture: look.trail, scale: 0.7, life: 320, gravity: 0 });
     if (big) {
-      shockwave(this.scene, x, y, look.tints[0]!, 140, 380);
+      shockwave(this.scene, x, y, pal.body, 140, 380);
       sfxBoom(1);
     }
     if (c === 'blue') sfxZap();
@@ -315,14 +322,15 @@ export class FreePlay {
       s.obj.setPosition(s.x + wx, s.y + wy).setScale(s.scale * pulse);
       if (s.spin) s.obj.rotation += s.spin * dt;
       // A trail, thinned when frames drop.
-      if (this.frame % (fxQuality.level < 0.7 ? 3 : 1) === 0) this.trail(s.look, s.x + wx, s.y + wy, s.big ? 2 : 1);
+      if (this.frame % (fxQuality.level < 0.7 ? 3 : 1) === 0) this.trail(s.color, s.look, s.x + wx, s.y + wy, s.big ? 2 : 1);
       const out = s.x < margin || s.x > GAME_WIDTH - margin || s.y < margin || s.y > GAME_HEIGHT - margin;
       if (out || s.age > s.life || (s.floorY !== null && s.vy > 0 && s.y >= s.floorY)) this.pop(s);
     }
   }
 
-  private trail(look: Look, x: number, y: number, n = 1): void {
-    const key = `${look.trail}|${look.trailTints.join(',')}`;
+  private trail(c: CastColor, look: Look, x: number, y: number, n = 1): void {
+    const tints = PALETTE[c].trail;
+    const key = `${look.trail}|${tints.join(',')}`;
     let e = this.trails.get(key);
     if (!e || !e.active) {
       e = this.scene.add
@@ -332,8 +340,7 @@ export class FreePlay {
           scale: { start: look.trail === TEX.spark ? 1.1 : 0.55, end: 0 },
           alpha: { start: 0.9, end: 0 },
           lifespan: 320,
-          tint: look.trailTints,
-          blendMode: Phaser.BlendModes.ADD,
+          tint: tints,
           emitting: false,
         })
         .setDepth(DEPTH.fx)
@@ -354,12 +361,12 @@ export class FreePlay {
     this.puff(x, y, {
       count: s.big ? 40 : 12,
       speed: s.big ? 420 : 220,
-      colors: [...s.look.tints, ...s.look.trailTints],
+      colors: [PALETTE[s.color].body, ...PALETTE[s.color].trail],
       texture: tex,
       scale: tex === TEX.spark ? 1.2 : 0.6,
       life: s.big ? 700 : 450,
       gravity: s.color === 'yellow' ? 500 : 120,
     });
-    if (s.big) shockwave(this.scene, x, y, s.look.tints[0]!, 220, 450);
+    if (s.big) shockwave(this.scene, x, y, PALETTE[s.color].body, 220, 450);
   }
 }

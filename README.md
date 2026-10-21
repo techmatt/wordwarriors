@@ -18,8 +18,9 @@ the Xbox 360 pad in first; press green (A) on the title screen. The keyboard wor
 arrows to walk, Space/Enter for green, Tab for yellow (say it again / hint), Esc for red, 3 for blue, and the
 backquote / tilde key for dad lock (`docs/episode.md`, *Dad lock*). The number keys **1** (no) and **2** (yes) are
 Dad's, for the games that ask him whether she said it (`docs/episode.md`, *Dad buttons*);
-at the end of an episode only Dad's **2** starts the next one (her buttons do nothing on the
-recap, so she never starts a new episode without a grown-up there).
+at the end of an episode her green takes the recap to a **THE END** screen (item 085: this
+episode's hub full screen, her heroes on it), and only Dad's **2** starts the next one there
+(her buttons and Dad's 1 do nothing, so she never starts a new episode without a grown-up).
 
 **Free play** (item 060): wherever she is free to move and no answer is open (the rooms,
 the bedroom once she is awake, the hub, the battle's fight outside a move choice), her
@@ -54,8 +55,21 @@ machine, so a worktree does not need them again.
 Title → bedroom (a dad wakes her: the helper, the villain) → the entry hall's warm-up →
 the quest place (the hub: the gift word, two side-room doors, one of them Charge the Spell
 or the Stretchy Bridge) → battle part 1 (too strong, retreat) → the hub again (the attic's
-counter word) → battle part 2 → the victory scene → the recap. Selection is walking
-everywhere; yellow (Tab) says it again or hints.
+counter word) → battle part 2 → the victory scene → the recap → THE END (Dad's 2 plays
+again). Selection is walking everywhere; yellow (Tab) says it again or hints.
+
+Item 085 (Matt's playtest, 2026-10-21) changed three things a grown-up will notice:
+- **Sentence room:** her first green reads the whole sentence, each word lit as it is said,
+  stops at the key word, lights it in silence and sounds it out one sound at a time (a
+  digraph as one sound; the word itself only after she answers). Her next green takes the
+  picture she stands at. There is no more one green per word.
+- **Stretchy Bridge:** a sound you can stretch (M, S, SH, F, the vowels…) gets one short
+  natural stretch, 0.6 s (`BRIDGE.stretchMs`), and no looped repeat while she stands on it; a
+  stop sound plays once. To be revisited once the phonics clips are final.
+- **THE END:** green on the said recap fades it out to THE END (`src/scenes/TheEndScene.ts`,
+  `?scene=theend`): the episode's hub, her heroes bouncing on it, a fanfare. Item 082's
+  dad-button wait and its `DAD: PRESS 2 TO PLAY AGAIN` cue moved there from the recap.
+  Tests reach it with `toTheEnd(page)` and leave it with `playAgain(page)` (`tests/harness.ts`).
 
 **[`docs/episode.md`](docs/episode.md)** walks through every step, who is in an episode
 (the cast draw, `EPISODE_DEFAULTS`), dad lock and Dad's buttons, Charge the Spell, the
@@ -182,6 +196,13 @@ each (item 083, alternating: the race and the beam clash part 2, the race for it
 line; the rope pull and the cook-off part 1; both parts until then), and the brawl is the
 default episode's own.
 
+Item 085's specs: `tests/digraphs.spec.ts` sounds KING and SHELL out in the entry hall
+(`?grab=<word>` picks the hall's word) and checks each multi-letter unit is said once, as
+its sound, never its letters; `tests/sentenceread.spec.ts` plays the sentence room's
+single-green read, then a wrong and a right picture; `tests/ending.spec.ts` the recap →
+THE END → only Dad's 2. `voice.history` keeps only the last 200 line ids
+(`src/audio/VoiceBus.ts`), so a test slicing it from a saved length saves that length late.
+
 `tests/lenses.spec.ts` (item 080) keeps the third bug hunt's fixes: a held F8, the
 grown-ups page under dad lock, the lock badge after a resize, a hidden tab holding the
 voice (it fakes the tab switch: `document.hidden` and a `visibilitychange`, which is what
@@ -267,6 +288,14 @@ its background `timeout` (10 minutes by default), mid-suite, and every later tes
 (item 043). Run the playwright process itself in the background instead; the server it
 starts lives exactly as long as the run. `WW_BASE_URL` stays for a server you keep
 running yourself (a `vite preview` of a build).
+
+**Two runs in one worktree at once** (item 085, parallel helpers): each needs its own port,
+build folder and output folder, or the second build overwrites the first one's served files
+and the second run empties the first one's `test-results/`:
+`CONDUCTOR_PORT=<free port> WW_TEST_DIST=node_modules/.ww-test-dist-<tag> npx playwright test <spec> --output=test-results-<tag>`.
+A spec or config under `scratch/` does not work: `scratch/` is a junction to the main
+checkout's, so it loads the main checkout's `node_modules` ("two different versions of
+@playwright/test"); throwaway specs live under `tests/`.
 
 A test that times out "waiting for title" (or "parent page", "hub quiet") with `scene=`
 empty never got past the boot's loading. Seen in item 034 when the machine was loaded (and
@@ -838,6 +867,11 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   to a "v2" token and works. `voice:build` spawns `uvx --from edge-tts==7.3.1 python
   tools/voice/providers/edge_tts_worker.py`; `uv` must be on PATH. If the endpoint
   breaks again, bump the pin in `tools/voice/providers/edgeTts.ts`.
+- **A carrier line (`cut` in `lines.json`, item 085: the short A, cut from "Add") is
+  decoded by `uv run --no-project --with miniaudio python tools/voice/decode_mp3.py`.**
+  The first such build fetches `miniaudio`, so it needs network like the rest. The cut's
+  thresholds (`tools/voice/carrier.ts`) are not in the line's fingerprint: after changing
+  them, `voice:build -- --force` (or delete `letter_a_sound.mp3`) to re-cut.
 - `en-AU-WilliamMultilingualNeural` returned "No audio was received" for most lines
   (2026-10-18); Jormungandr uses `en-NZ-MitchellNeural` instead.
 - edge-tts sometimes times a two-word name as one boundary ("Dragon Parade");

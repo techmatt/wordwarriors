@@ -239,8 +239,8 @@ export class HubScene extends RoomScene {
   /** A door's sign: its room's picture on a round plaque, gently bobbing. */
   private plaque(glyph: string): Phaser.GameObjects.Container {
     const board = this.add.circle(0, 0, 34, 0xffffff, 1).setStrokeStyle(5, 0xffd23f, 1);
-    // Padded, as the gift card's: Phaser measures an emoji short and cut its top off (item 039).
-    const pic = this.add.text(0, 2, glyph, { fontSize: '56px', padding: { top: 14, bottom: 6 } }).setOrigin(0.5);
+    // No padding since item 085: an emoji Text is measured on itself (src/ui/glyphMetrics.ts), centred on the plaque.
+    const pic = this.add.text(0, 2, glyph, { fontSize: '56px' }).setOrigin(0.5);
     const sign = this.add.container(0, -DOOR_H - 40, [board, pic]);
     bob(this, sign, 4, 1100);
     return sign;
@@ -330,7 +330,8 @@ export class HubScene extends RoomScene {
     const card = this.add.graphics();
     card.fillStyle(0xffffff, 1).fillRoundedRect(-CARD_W / 2, -CARD_H / 2, CARD_W, CARD_H, 22);
     card.lineStyle(6, 0xffd23f, 1).strokeRoundedRect(-CARD_W / 2, -CARD_H / 2, CARD_W, CARD_H, 22);
-    // Padded: Phaser measures an emoji shorter than it draws, and 🔵 lost its top (item 039).
+    // Padded: Phaser measured an emoji shorter than it draws, and 🔵 lost its top (item 039). Since item 085
+    // glyphMetrics measures it whole; the padding stays only so the glyph stands where it did on the card.
     const glyph = this.add.text(0, -CARD_H / 2 - 4, prop.startsWith('prop_') ? '✨' : prop, { fontSize: '60px', padding: { top: 14, bottom: 6 } }).setOrigin(0.5, 0.8);
     return [card, glyph];
   }

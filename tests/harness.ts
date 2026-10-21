@@ -31,6 +31,8 @@ export interface WWState {
     hero: string;
     ally: string | null;
     villain: string;
+    /** The quest place (content/house/house.ts PLACES id, or `home`). */
+    place: string;
     made: Record<string, boolean>;
     read: string[];
     fetched: string[];
@@ -50,6 +52,10 @@ export interface WWState {
   recap: { word: string; picture: string | null }[];
   /** The victory scene (item 027): which, who is in it (villain last), its lines, what has been said. */
   ending: { id: string; people: string[]; art: string[]; lines: string[]; said: string[]; done: boolean } | null;
+  /** The recap is said and its green is live, on to THE END (item 085). */
+  recapDone: boolean;
+  /** THE END (item 085): its background, the heroes on it, its words, whether Dad's 2 is waiting. */
+  theEnd: { art: string; heroes: string[]; text: string; dad: boolean } | null;
   room: {
     scene: string;
     round: string;
@@ -59,7 +65,7 @@ export interface WWState {
     shown: string[];
     spelling?: { word: string; filled: number };
     grab?: { word: string; level: number; misses: number; objects: string[]; phase: string };
-    sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean };
+    sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean; readLit: number[] };
     machine?: {
       mode: string;
       index: number;
@@ -397,12 +403,13 @@ async function walkHeroTo(page: Page, x: number, y: number, close = 20): Promise
 }
 
 /**
- * Step the sentence room's read-along to the key word: wait for pass `read`
- * (or `find`, when it is already there), then one green per word, each press
- * only once the room is listening and the last one has landed.
+ * Take the sentence room to its key word: wait for pass `read` (or `find`,
+ * when it is already there), then her one green, which reads the sentence and
+ * sounds out the key word (item 085); pressed again only if the press was not
+ * taken. Returns once the pass is `find`.
  */
 export async function readToKeyWord(page: Page): Promise<WWState> {
-  for (let guard = 0; guard < 40; guard++) {
+  for (let guard = 0; guard < 10; guard++) {
     const s = await until(
       page,
       (st) => st.scene === 'SentenceRoom' && Boolean(st.room?.sentence) && (st.room!.sentence!.pass === 'find' || (st.room!.sentence!.pass === 'read' && !st.room!.locked)),
@@ -414,12 +421,12 @@ export async function readToKeyWord(page: Page): Promise<WWState> {
     driver.busy++;
     try {
       await press(page, 'green');
-      await until(page, (st) => st.room?.sentence?.pass !== 'read' || st.room.sentence.index !== sent.index, 10_000, `read-along past word ${sent.index}`);
+      await until(page, (st) => st.room?.sentence?.pass !== 'read' || st.room.sentence.readLit.length > 0, 10_000, 'the read under way');
     } finally {
       driver.busy--;
     }
   }
-  throw new Error('the read-along never reached the key word');
+  throw new Error('her read never reached the key word');
 }
 
 /**
@@ -463,6 +470,31 @@ export async function playWordMachine(page: Page, wrongFirst = false): Promise<s
 /** Dad's buttons (item 053): `yes` is key 2, `no` key 1, through the hooks. */
 export async function dad(page: Page, a: 'yes' | 'no'): Promise<void> {
   await page.evaluate((v) => (window as unknown as { __ww: { dad(a: string): boolean } }).__ww.dad(v), a);
+}
+
+/**
+ * From the victory recap to THE END (item 085): wait for the recap to be said
+ * (`hush` speeds it, line by line), then green. Returns THE END's state once
+ * Dad's 2 is waiting there.
+ */
+export async function toTheEnd(page: Page, { hush = false } = {}): Promise<WWState> {
+  await until(page, (s) => s.scene === 'Victory', 60_000, 'the recap');
+  await expect
+    .poll(() => page.evaluate((h) => {
+      const ww = (window as unknown as { __ww: { hush(): void; state(): { recapDone: boolean } } }).__ww;
+      if (h) ww.hush();
+      return ww.state().recapDone;
+    }, hush), { timeout: 120_000 })
+    .toBe(true);
+  await press(page, 'green');
+  return until(page, (s) => s.scene === 'TheEnd' && Boolean(s.theEnd?.dad), 30_000, 'THE END');
+}
+
+/** The recap, THE END, then Dad's 2 (item 085: the only way on): a fresh episode at the title. */
+export async function playAgain(page: Page, opts: { hush?: boolean } = {}): Promise<WWState> {
+  await toTheEnd(page, opts);
+  await page.keyboard.press('Digit2');
+  return until(page, (s) => s.scene === 'Title', 30_000, 'the title again');
 }
 
 /** Play Charge the Spell (item 053; no presses per rune since item 059): wait for the read, then Dad's `read`. Returns the sounds charged. */

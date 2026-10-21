@@ -143,13 +143,7 @@ test('sentence room: listen, read along, a wrong object costs nothing, the right
   expect(read.room!.sentence!.index).toBe(-1);
   expect(read.room!.spots.length).toBe(0);
 
-  // Green lights the first word and says it.
-  await press(page, 'green');
-  const lit0 = await until(page, (s) => s.room?.sentence?.index === 0 && !s.room.locked, 10_000, 'light on word 1, said');
-  expect(lit0.voice.history.at(-1)).toMatch(/^word_/);
-  expect(lit0.voice.history.filter((id) => id.startsWith('word_')).length).toBe(1);
-
-  // On to the key word: the three objects wake up.
+  // Her one green reads it all to the key word (item 085); the three objects wake up.
   const find = await readToKeyWord(page);
   expect(find.room!.sentence!.index).toBe(sent.tokens.length - 1);
   const awake = await until(page, (s) => (s.room?.spots.length ?? 0) === 3, 10_000, 'three objects');

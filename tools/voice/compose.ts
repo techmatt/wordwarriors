@@ -179,6 +179,8 @@ export function composeLines(): LineSpec[] {
       speaker: PHONICS_SPEAKER,
       group: group.phonics,
       text: l.say,
+      // Item 085: a carrier word, cut to its vowel by the build (tools/voice/carrier.ts).
+      ...(l.carrier ? { say: `${l.carrier.say}.`, cut: { keepDb: l.carrier.keepDb } } : {}),
       note: `placeholder for the /${l.letter}/ sound (${l.cls}); replace with a recorded clip`,
     });
   }
