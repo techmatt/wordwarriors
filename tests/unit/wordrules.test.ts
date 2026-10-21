@@ -11,6 +11,7 @@ import { test } from 'node:test';
 import { MOVE_WORDS } from '../../content/battle/roster';
 import { BANK, BANK_BY_WORD } from '../../content/phonics/bank';
 import { distractorsFor, withStems } from '../../src/rules/bank';
+import { GESTURE_WORDS, planCharge } from '../../src/rules/charge';
 import { MINIGAME_BY_ID } from '../../src/rules/minigames';
 import { drawGift, drawMove } from '../../src/rules/moves';
 import { BAG_WORDS, NO_ARTICLE, drawKey, episodePlans, saidEarly, type EpisodeInput } from '../../src/rules/sentences';
@@ -98,6 +99,19 @@ test("withStems (item 069): a pet form inside a compound (PIGGYBACK: PIG) and a 
   for (const w of ['elf', 'ten', 'red', 'king']) assert.ok(!said.includes(w), w);
   // With no ally the helper steps into the combo: its name (PIGGYBACK CHARGE with Dada Jason) is said too.
   assert.ok(withStems(saidEarly({ hero: 'julia', ally: null, villain: 'tiamat', helper: 'dada_jason' })).includes('pig'));
+});
+
+test('withStems (item 071, M16): a LOLLIPOP says POP', () => {
+  if (BANK_BY_WORD.pop) assert.ok(withStems(['lollipop']).includes('pop'));
+});
+
+test("the runes' gestures (item 071): the words they say or show count as said, and Charge never spells one", () => {
+  // The /e/ rune's "Tap the egg, crack it open" and its egg picture.
+  for (const w of ['tap', 'egg']) if (BANK_BY_WORD[w]) assert.ok(GESTURE_WORDS.includes(w), w);
+  // No gesture says LIPS, LICK or POP any more (the /l/ rune sings la, la, la).
+  for (const w of ['lips', 'lick', 'pop']) assert.ok(!GESTURE_WORDS.includes(w), w);
+  const store = new ProgressStore(memory());
+  for (let seed = 1; seed <= 200; seed++) assert.ok(!GESTURE_WORDS.includes(planCharge(store, { avoid: [] }, seeded(seed)).word));
 });
 
 test("the fight styles' floating words are never bank words (the cook-off's YUM! and FLIP! were pads to come)", () => {

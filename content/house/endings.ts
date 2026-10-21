@@ -132,7 +132,7 @@ export const ENDINGS: EndingSpec[] = [
     stand: { y: 545, left: 300, right: 990, h: 180 },
     open: { text: 'All aboard the boat!' },
     cheer: { text: 'Wheee! Splash, splash!', say: 'Wheee, splash, splash!' },
-    close: { text: 'Look! A fish is waving at us!', say: 'Look, a fish is waving at us!' },
+    close: { text: 'Our boat bobs on the little waves!' },
     fit: { form: 'dada_jason_warrior', text: 'I will be the captain! Row, row, row!', say: 'I will be the captain, row, row, row!' },
     villains: ['jormungandr', 'jasmine', 'dada_jason_warrior'],
   },

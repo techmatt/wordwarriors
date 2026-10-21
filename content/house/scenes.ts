@@ -86,18 +86,18 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'Take a deep breath, and shout...',
     ], SPOT('to get strong'), 'You are a champion now, let\'s look around!'),
   ],
-  // Cyber Dada Matt: a program for her armour.
+  // Cyber Dada Matt: a program for her powers (item 071: not her armour, she wears none).
   dada_matt_cyber: [
     S('💾', [
-      'Your armor needs a new program, so I wrote one just for you!',
+      'Your powers need a new program, so I wrote one just for you!',
       'The screens are blinking, and it is loading, it is nearly done.',
       'Start the program, and it goes...',
     ], SPOT('to upload it'), 'The upload is all done, let\'s look around!'),
     S('💻', [
-      'I typed a secret code for your armor, a hundred lines long!',
+      'I typed a secret code for your powers, a hundred lines long!',
       'It only needs one word to start it up.',
       'The secret code word is...',
-    ], SPOT('to load the code'), 'Your armor knows the code now, let\'s look around!'),
+    ], SPOT('to load the code'), 'Your powers know the code now, let\'s look around!'),
   ],
   // Spell-blade Dada Matt: a rune spell.
   dada_matt_blade: [
@@ -177,7 +177,7 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
   // Scar: an upgrade from the robot workshop.
   scar: [
     S('🔋', [
-      'I have an upgrade for your armor, fresh from my workshop!',
+      'I have an upgrade for your powers, fresh from my workshop!',
       'Hold still while I install it, it will only tickle a little.',
       'The upgrade is ready, and it goes...',
     ], 'Stand on the charging spot, and press green, to install it!', 'The upgrade is all done, let\'s look around!'),

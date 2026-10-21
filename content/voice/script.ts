@@ -99,7 +99,7 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'machine_intro', text: 'Look, a word machine! It makes the word for the picture.', say: 'Look, a word machine, it makes the word for the picture.' },
   { key: 'machine_go', text: 'Walk on a letter to hear it. Press green to put it in!', say: 'Walk on a letter to hear it, press green to put it in!' },
   { key: 'machine_change', text: 'Change the first sound to make a new word!' },
-  { key: 'machine_switch', text: "Here are some new sounds! Let's make one more.", say: "Here are some new sounds, let's make one more." },
+  { key: 'machine_switch', text: "Here are some new sounds! Let's make a new word!", say: "Here are some new sounds, let's make a new word!" },
   { key: 'machine_makes', text: 'That makes...' },
   { key: 'machine_silly_1', text: "That's a silly word! Try another letter!", say: "That's a silly word, try another letter!" },
   { key: 'machine_silly_2', text: 'That is not a word, you silly! Try again!', say: 'That is not a word, you silly, try again!' },

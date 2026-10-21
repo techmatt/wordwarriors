@@ -21,12 +21,12 @@
  * unused by the room; DIFFICULTY caps it like every ramp (item 067).
  */
 
-import { BANK_BY_WORD, THINGS, type BankWord } from '../../content/phonics/bank';
+import { BANK, BANK_BY_WORD, THINGS, type BankWord } from '../../content/phonics/bank';
 import { RUNES, RUNE_BY_SOUND } from '../../content/phonics/runes';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { CHARGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
-import { drawWords, type Rand } from './bank';
+import { drawWords, withStems, type Rand } from './bank';
 import { helpLevel } from './difficulty';
 
 export type ChargeLevel = 1 | 2 | 3;
@@ -40,6 +40,20 @@ export interface ChargePlan {
 
 /** Every sound a rune can carry. */
 export const RUNE_SOUNDS: string[] = RUNES.map((r) => r.sound);
+
+/**
+ * The bank words the runes' gestures say or show (item 071): the /e/ rune's
+ * "Tap the egg" says TAP and EGG, and its 🥚 is EGG's picture. Charge the
+ * Spell plays before the battle and the attic, so they count as said in
+ * every episode, like the sentence frames' words: never a pad, the gift, the
+ * warm-up's word or a key word.
+ */
+export const GESTURE_WORDS: string[] = [
+  ...new Set([
+    ...withStems(RUNES.flatMap((r) => r.gesture.text.toLowerCase().replace(/[^a-z ]/g, ' ').split(/\s+/).filter(Boolean))).filter((w) => BANK_BY_WORD[w]),
+    ...BANK.filter((w) => w.glyph && RUNES.some((r) => r.gesture.glyph === w.glyph)).map((w) => w.word),
+  ]),
+];
 
 /** The help level a sound's ramp has reached (recorded for the grown-ups page). */
 export function recordedChargeLevel(store: ProgressStore, sound: string): ChargeLevel {
@@ -87,7 +101,8 @@ export interface ChargeInput {
  * gives way (a visit always has a word).
  */
 export function planCharge(store: ProgressStore, input: ChargeInput = { avoid: [] }, rand: Rand = Math.random): ChargePlan {
-  const avoid = new Set(input.avoid);
+  // Nor a word a gesture says: the /e/ rune's "Tap the egg" before EGG would read it for her.
+  const avoid = new Set([...input.avoid, ...GESTURE_WORDS]);
   let pool = CHARGE_WORDS.filter((w) => !avoid.has(w));
   if (!pool.length) pool = [...CHARGE_WORDS];
   const shaky = (w: string) => {

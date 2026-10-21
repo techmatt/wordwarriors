@@ -23,6 +23,7 @@ import { withStems } from '../rules/bank';
 import { episodePlans, wordsOf, type RoomPlan } from '../rules/sentences';
 import { BRIDGE_GAME, CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
 import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
+import { GESTURE_WORDS } from '../rules/charge';
 import { hallObjects, pickGrab } from '../rules/grab';
 import { progress } from '../state/progress';
 import { pickWeighted } from '../state/ProgressStore';
@@ -93,7 +94,7 @@ export function housePlan(): RoomPlan[] {
     const prop = hubScene().story.prop;
     if (!prop.startsWith('prop_')) signs.add(prop);
     const signWords = BANK.filter((w) => w.glyph && signs.has(w.glyph)).map((w) => w.word);
-    const saidBefore = [...storyWords(), ...bedroomWords(), ...signWords, ...(episode.grab ? [episode.grab.word] : [grabWord()])];
+    const saidBefore = [...storyWords(), ...bedroomWords(), ...signWords, ...GESTURE_WORDS, ...(episode.grab ? [episode.grab.word] : [grabWord()])];
     const games = roomGames();
     episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, gift, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore, ...games });
     rememberPlan();
@@ -188,7 +189,7 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
  * banners and lines clear of pad words as it goes (BattleScene `textGivesAway`).
  */
 function saidBeforeBattle(): string[] {
-  return withStems([...bedroomWords(), ...HALL_LINE_WORDS, ...storyWords(), ...fightWords(), ...FRAME_WORDS]);
+  return withStems([...bedroomWords(), ...HALL_LINE_WORDS, ...storyWords(), ...fightWords(), ...FRAME_WORDS, ...GESTURE_WORDS]);
 }
 
 /**

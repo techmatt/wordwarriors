@@ -146,8 +146,8 @@ const COMPOUND_HALVES = new Set(['cake', 'shine', 'let', 'ball', 'fish', 'man', 
  * (item 069): DUMB-BELL says BELL, BROOM-STICK STICK, BATH-TUB TUB. Listed,
  * not any ending: HERSELF, LISTEN and KITCHEN do not say ELF, TEN or HEN.
  */
-// Not LOLLI yet: the /l/ rune's "Lick a lollipop" says POP, a pad word (qa-findings M16); add it once that line changes.
-const COMPOUND_HEADS = ['bath', 'broom', 'dumb', 'kettle', 'ear', 'hand', 'hazel', 'snow', 'war'];
+// LOLLI (item 071, M16): a LOLLIPOP says POP.
+const COMPOUND_HEADS = ['bath', 'broom', 'dumb', 'kettle', 'ear', 'hand', 'hazel', 'snow', 'war', 'lolli'];
 
 /**
  * Draw one word from bag `which`: an `eligible` word still in it, by

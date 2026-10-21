@@ -502,7 +502,7 @@ export const ROSTER: CharacterSpec[] = [
       ending: [
         { key: 'yummy', text: 'I promise to cook yummy food, not yucky food!' },
         { key: 'seconds', text: 'There are seconds for everybody!' },
-        { key: 'party', text: 'This is the best party ever!' },
+        { key: 'party', text: "Let's have a party every day!" },
       ],
     },
     counter: {
@@ -839,7 +839,7 @@ export const ROSTER: CharacterSpec[] = [
       ending: [
         { key: 'join', text: 'Can I join your next adventure?' },
         { key: 'slide', text: 'I can be a slide for you!' },
-        { key: 'rainbow', text: 'Look, I am a big rainbow noodle!' },
+        { key: 'green', text: 'I am a happy green noodle now!' },
       ],
     },
     counter: {
@@ -1175,14 +1175,14 @@ export const ROSTER: CharacterSpec[] = [
         ab('pig_curse', 'Pig Curse', 'polymorph', 7, 0x39ff14, 2, { status: 'pig', duration: 3.5, callout: 'Curly Tail Curse!' }),
         ab('dark_bolts', 'Dark Bolts', 'bolt', 2.4, 0x39ff14, 2, { count: 3, homing: true }),
       ],
-      ultimate: ult('all_pigs', 'Everybody Pigs!', 'polymorph',0x39ff14, 3, { status: 'pig', duration: 6, count: 6 }),
+      ultimate: ult('all_pigs', 'Everybody Pigs', 'polymorph',0x39ff14, 3, { status: 'pig', duration: 6, count: 6 }),
       taunts: [
         { key: 'pigs', text: 'You will all be pigs!' },
         { key: 'rise', text: 'Rise, my skeletons!' },
         { key: 'kneel', text: 'Bow to the queen!', say: 'Bough to the queen!' },
-        { key: 'cackle', text: 'Bow, little hero!', say: 'Bough, little hero!' },
+        { key: 'cackle', text: 'You cannot stop my magic, little hero!' },
         { key: 'cauldron', text: 'Into my cauldron!' },
-        { key: 'piglets', text: 'Bow, little piglets!', say: 'Bough, little piglets!' },
+        { key: 'piglets', text: 'Off you go, little piglets!' },
       ],
     },
     reformed: {
@@ -1603,7 +1603,7 @@ export const ROSTER: CharacterSpec[] = [
       ],
       ending: [
         { key: 'happy', text: 'From now on, only happy spells!' },
-        { key: 'rainbow', text: 'Look, a rainbow spell!' },
+        { key: 'giggles', text: 'Sparkles and giggles for everybody!' },
         { key: 'magic', text: 'Happy magic for everybody!' },
       ],
     },

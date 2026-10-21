@@ -16,7 +16,7 @@ import { chargeKey, letterSoundLine, narratorLine } from '../../content/voice/id
 import { CHARGE_GESTURES, NARRATOR_LINES } from '../../content/voice/script';
 import { PERSONS } from '../../content/battle/roster';
 import { CHARGE, DIFFICULTY } from '../../src/config';
-import { CHARGE_WORDS, RUNE_SOUNDS, chargeLevel, nextChargeLevel, planCharge, recordedChargeLevel } from '../../src/rules/charge';
+import { CHARGE_WORDS, GESTURE_WORDS, RUNE_SOUNDS, chargeLevel, nextChargeLevel, planCharge, recordedChargeLevel } from '../../src/rules/charge';
 import { setDifficulty } from '../../src/rules/difficulty';
 import { CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, drawGames } from '../../src/rules/minigames';
 import { withStems } from '../../src/rules/bank';
@@ -59,7 +59,11 @@ test('runes: every rune is a sound with its own line, a gesture and a battle mov
 
 test('runes: no gesture shows a bank word\'s picture or says a bank word (they are voiced before the battle)', () => {
   const glyphs = new Map(BANK.filter((w) => w.glyph).map((w) => [w.glyph!, w.word]));
-  const bank = new Set(BANK.map((w) => w.word));
+  // Except Matt's /e/ gesture (item 071, M11: "Tap the egg, crack it open"), whose words count as
+  // said in every episode (GESTURE_WORDS), so they are never a pad, the gift or a word she reads.
+  const allowed = new Set(['tap', 'egg']);
+  for (const w of allowed) assert.ok(GESTURE_WORDS.includes(w), `${w} counts as said`);
+  const bank = new Set(BANK.map((w) => w.word).filter((w) => !allowed.has(w)));
   const words = (s: string) => s.toLowerCase().split(/[^a-z]+/).filter(Boolean);
   for (const r of RUNES) assert.ok(!glyphs.has(r.gesture.glyph), `${r.sound}'s ${r.gesture.glyph} is ${glyphs.get(r.gesture.glyph)}'s picture`);
   const charge = NARRATOR_LINES.filter((t) => t.key.startsWith('charge_') || t.key === 'use_runes');
