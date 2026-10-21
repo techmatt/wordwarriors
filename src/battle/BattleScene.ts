@@ -1303,6 +1303,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   private async finish(): Promise<void> {
     this.phase = 'finish';
     const v = this.villain;
+    this.show.finishLine();
     await this.say(fightLineKey(this.fight, 'finish'));
     // Low, but not zero: the last hit below is the one that wins.
     this.floors.villainMain = 0.06;

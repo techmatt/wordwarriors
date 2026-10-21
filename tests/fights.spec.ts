@@ -61,8 +61,14 @@ for (const f of FIGHTS.filter((x) => x.id !== 'brawl')) {
           })
           .catch(() => undefined);
       const shots = part === 1 ? [watch('combo', 400, 'combo'), watch('ultimate', 1400, 'ultimate')] : [watch('counter', 900, 'counter'), watch('finish', 1500, 'finish')];
+      // The race's finish line is on the floor while the narrator names it (item 069: it came 3.5 s later).
+      const flagged =
+        f.id === 'sky_race' && part === 2
+          ? until(page, (s) => s.scene !== 'Battle' || Boolean(s.voice.speaking?.endsWith('_fight_sky_race_finish')), 240_000, 'the finish line said').then((s) => s.scene !== 'Battle' || s.battle?.stage.flag === true)
+          : Promise.resolve(true);
       const end = await playBattle(page, part);
       await Promise.all(shots);
+      expect(await flagged, 'the finish flag is up as the line names it').toBe(true);
       expect(end.battle?.ultimates).toBe(1);
       expect(end.battle?.movePicks).toBe(2);
       if (part === 1) expect(end.battle?.heroes.every((h) => h.status !== 'floored')).toBe(true);

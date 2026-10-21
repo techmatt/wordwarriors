@@ -508,6 +508,11 @@ export class RaceStage extends BaseStage {
     await this.host.wait(1.2);
   }
 
+  /** The flag comes in as the narrator says "There's the finish line!", not after the finishers (item 069). */
+  override finishLine(): void {
+    this.sweepFlag();
+  }
+
   override async finish(_v: Fighter): Promise<void> {
     const h = this.host;
     this.beat = 'finish';
@@ -546,7 +551,7 @@ export class RaceStage extends BaseStage {
 
   override info(): Record<string, unknown> {
     const prog = (team: 'hero' | 'villain') => this.racers.filter((r) => r.f.team === team).map((r) => Math.round(r.prog * 100) / 100);
-    return { lead: Math.round(this.lead * 100) / 100, beat: this.beat, speed: Math.round(this.speed * 100) / 100, heroes: prog('hero'), villain: prog('villain')[0] ?? 0, winner: this.heroesWon ? 'heroes' : this.villainWon ? 'villain' : null };
+    return { lead: Math.round(this.lead * 100) / 100, beat: this.beat, speed: Math.round(this.speed * 100) / 100, heroes: prog('hero'), villain: prog('villain')[0] ?? 0, winner: this.heroesWon ? 'heroes' : this.villainWon ? 'villain' : null, flag: Boolean(this.flag) };
   }
 
   // -- the beats' pieces --------------------------------------------------------------

@@ -85,6 +85,8 @@ export interface FightStage {
   ultimate1(v: Fighter, ult: AbilitySpec): Promise<void>;
   /** Part 2: the counter has undone the ultimate. Turn the contest the heroes' way; about 1.5 s at most. */
   counter2(v: Fighter): Promise<void>;
+  /** Part 2: the narrator's finish line starts ("There's the finish line!"): show what it names now (item 069). */
+  finishLine(): void;
   /** Part 2: everyone's finisher has fired; stage the heroes winning, just before the last hit. About 1.5 s at most. */
   finish(v: Fighter): Promise<void>;
   /** Part 1's end, as the heroes run off to get ready. */
@@ -154,6 +156,7 @@ export class BaseStage implements FightStage {
     await this.host.wait(2.2);
   }
   async counter2(_v: Fighter): Promise<void> {}
+  finishLine(): void {}
   async finish(_v: Fighter): Promise<void> {}
   retreat(): void {}
   info(): Record<string, unknown> {
