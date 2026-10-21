@@ -33,7 +33,7 @@ import { FETCH_ITEMS, lookalikesOf, sentence, tokenWord, type Fill, type Sentenc
 import { ACTIONS, THINGS } from '../../content/phonics/bank';
 import { MINIGAMES, drawGames, type Minigame } from './minigames';
 import { machineWords, planMachine, type MachinePlan } from './wordMachine';
-import { planCharge, type ChargePlan } from './charge';
+import { gestureWords, planCharge, type ChargePlan } from './charge';
 import { bridgeShown, bridgeWords, planBridge, type BridgePlan } from './bridge';
 import { SENTENCE_SOLID } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
@@ -275,7 +275,11 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   // Charge the Spell (item 058) spells one word, planned the same way: a battle item, kept off every other room.
   const built = [...machines.flatMap((m) => (m ? machineWords(m) : [])), ...bridges.flatMap((b) => (b ? bridgeWords(b) : []))];
   const charges: (ChargePlan | null)[] = [];
-  for (const g of games) charges.push(g.charge ? planCharge(store, { avoid: [...avoid, ...moves, ...built, ...pictured, ...(namedCounter ? [namedCounter] : []), ...charges.map((c) => c?.word ?? '')] }, rand) : null);
+  // Its runes' gestures speak (item 074: "Tap the egg"), so it is no word whose gestures say a
+  // word she reads after it; the keys drawn below keep clear of what its gestures say.
+  const later = [gift, ...moves, ...built, ...pictured, ...(namedCounter ? [namedCounter] : [])];
+  for (const g of games) charges.push(g.charge ? planCharge(store, { avoid: [...avoid, ...moves, ...built, ...pictured, ...(namedCounter ? [namedCounter] : []), ...charges.map((c) => c?.word ?? '')], later }, rand) : null);
+  for (const c of charges) if (c) for (const w of gestureWords(c.runes)) avoid.add(w);
   const taken = [...built, ...charges.flatMap((c) => (c ? [c.word] : []))];
 
   // A frame ending "...A {x}" takes no word starting with a vowel: no WE NEED A ANT (item 039).

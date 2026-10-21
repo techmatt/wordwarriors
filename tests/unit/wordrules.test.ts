@@ -11,8 +11,8 @@ import { test } from 'node:test';
 import { MOVE_WORDS } from '../../content/battle/roster';
 import { BANK, BANK_BY_WORD } from '../../content/phonics/bank';
 import { distractorsFor, withStems } from '../../src/rules/bank';
-import { GESTURE_WORDS, planCharge } from '../../src/rules/charge';
-import { MINIGAME_BY_ID } from '../../src/rules/minigames';
+import { GESTURE_WORDS, gestureWords, planCharge } from '../../src/rules/charge';
+import { MINIGAME_BY_ID, SENTENCE_GAMES } from '../../src/rules/minigames';
 import { drawGift, drawMove } from '../../src/rules/moves';
 import { BAG_WORDS, NO_ARTICLE, drawKey, episodePlans, saidEarly, type EpisodeInput } from '../../src/rules/sentences';
 import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
@@ -105,13 +105,40 @@ test('withStems (item 071, M16): a LOLLIPOP says POP', () => {
   if (BANK_BY_WORD.pop) assert.ok(withStems(['lollipop']).includes('pop'));
 });
 
-test("the runes' gestures (item 071): the words they say or show count as said, and Charge never spells one", () => {
-  // The /e/ rune's "Tap the egg, crack it open" and its egg picture.
-  for (const w of ['tap', 'egg']) if (BANK_BY_WORD[w]) assert.ok(GESTURE_WORDS.includes(w), w);
+test("the runes' gestures (items 071, 074): what they say counts as said only once played, so Charge never spells a word its gestures say before a word she reads later", () => {
+  // The /e/ rune's "Tap the egg, crack it open".
+  for (const w of ['tap', 'egg']) if (BANK_BY_WORD[w]) assert.ok(gestureWords(['e']).includes(w), w);
   // No gesture says LIPS, LICK or POP any more (the /l/ rune sings la, la, la).
   for (const w of ['lips', 'lick', 'pop']) assert.ok(!GESTURE_WORDS.includes(w), w);
   const store = new ProgressStore(memory());
-  for (let seed = 1; seed <= 200; seed++) assert.ok(!GESTURE_WORDS.includes(planCharge(store, { avoid: [] }, seeded(seed)).word));
+  // Spread seeds: this LCG's first draw barely moves over seeds 1 to 200.
+  const seen = new Set<string>();
+  for (let seed = 1; seed <= 200; seed++) {
+    const free = planCharge(store, { avoid: [] }, seeded(seed * 104729));
+    assert.ok(!gestureWords(free.runes).includes(free.word), `${free.word}'s own gesture says it`);
+    seen.add(free.runes.includes('e') ? 'e' : '-');
+    // TAP read later (a pad, a key): no /e/ word, whose gesture would say TAP first.
+    const c = planCharge(store, { avoid: [], later: ['tap'] }, seeded(seed * 104729));
+    assert.ok(!gestureWords(c.runes).includes('tap'), `${c.word} says TAP before it is read`);
+  }
+  assert.ok(seen.has('e'), 'with nothing read later, an /e/ word is still drawn');
+});
+
+test('the runes\' gestures (item 074): TAP and EGG are words like any other, but no key drawn after an /e/ Charge word is one', () => {
+  const store = new ProgressStore(memory());
+  const input = (games: EpisodeInput['games']): EpisodeInput => ({ fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic', games });
+  const sentence = SENTENCE_GAMES.find((g) => g.slots.includes('fetch'))!;
+  const counter = SENTENCE_GAMES.find((g) => g.slots.includes('counter'))!;
+  let eWords = 0;
+  for (let seed = 1; seed <= 150; seed++) {
+    const plans = episodePlans(store, input([MINIGAME_BY_ID.charge!, sentence, counter]), seeded(seed * 104729));
+    const charge = plans[0];
+    if (charge.kind !== 'charge') throw new Error('door a is Charge');
+    const said = gestureWords(charge.charge.runes);
+    if (said.length) eWords++;
+    for (const p of plans.slice(1)) for (const w of [p.key, ...p.fetches]) assert.ok(!said.includes(w), `${w} after ${charge.key}'s gestures`);
+  }
+  assert.ok(eWords > 0, 'some seeds spell an /e/ word');
 });
 
 test("the fight styles' floating words are never bank words (the cook-off's YUM! and FLIP! were pads to come)", () => {

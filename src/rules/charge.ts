@@ -41,19 +41,33 @@ export interface ChargePlan {
 /** Every sound a rune can carry. */
 export const RUNE_SOUNDS: string[] = RUNES.map((r) => r.sound);
 
-/**
- * The bank words the runes' gestures say or show (item 071): the /e/ rune's
- * "Tap the egg" says TAP and EGG, and its 🥚 is EGG's picture. Charge the
- * Spell plays before the battle and the attic, so they count as said in
- * every episode, like the sentence frames' words: never a pad, the gift, the
- * warm-up's word or a key word.
- */
-export const GESTURE_WORDS: string[] = [
-  ...new Set([
-    ...withStems(RUNES.flatMap((r) => r.gesture.text.toLowerCase().replace(/[^a-z ]/g, ' ').split(/\s+/).filter(Boolean))).filter((w) => BANK_BY_WORD[w]),
-    ...BANK.filter((w) => w.glyph && RUNES.some((r) => r.gesture.glyph === w.glyph)).map((w) => w.word),
+/** Each rune's gesture's bank words: what its line says (stemmed) and a word whose picture is its glyph. */
+const RUNE_WORDS: Record<string, string[]> = Object.fromEntries(
+  RUNES.map((r) => [
+    r.sound,
+    [
+      ...new Set([
+        ...withStems(r.gesture.text.toLowerCase().replace(/[^a-z ]/g, ' ').split(/\s+/).filter(Boolean)).filter((w) => BANK_BY_WORD[w]),
+        ...BANK.filter((w) => w.glyph && w.glyph === r.gesture.glyph).map((w) => w.word),
+      ]),
+    ],
   ]),
-];
+);
+
+/**
+ * The bank words these runes' gestures say or show: the /e/ rune's "Tap the
+ * egg" says TAP and EGG (item 071). Since item 074 they count as said only in
+ * an episode whose Charge word has that rune, and only from when it plays:
+ * the Charge word is never one whose gestures say a word she reads later
+ * (`later` in `planCharge`), and `episodePlans` keeps the keys drawn after it
+ * clear of them. Elsewhere TAP and EGG are words like any other.
+ */
+export function gestureWords(sounds: Iterable<string>): string[] {
+  return [...new Set([...sounds].flatMap((s) => RUNE_WORDS[s] ?? []))];
+}
+
+/** Every rune's gesture words (the runes test's allowance). */
+export const GESTURE_WORDS: string[] = gestureWords(RUNE_SOUNDS);
 
 /** The help level a sound's ramp has reached (recorded for the grown-ups page). */
 export function recordedChargeLevel(store: ProgressStore, sound: string): ChargeLevel {
@@ -93,18 +107,23 @@ export const CHARGE_WORDS: string[] = THINGS.filter(chargeable).map((w) => w.wor
 export interface ChargeInput {
   /** Words the episode says or shows first, its move pads and gift, and other rooms' words: never the charge word. */
   avoid: string[];
+  /** Words she reads after the room (the gift and move pads, other rooms' words, the attic's): no gesture of the word's runes says one (item 074). */
+  later?: string[];
 }
 
 /**
  * A visit's word: drawn by the bank's weight × how shaky its sounds are (½
- * to 1½), never a word in `avoid`; with every word avoided, the avoid list
- * gives way (a visit always has a word).
+ * to 1½), never a word in `avoid`, nor one whose runes' gestures say itself
+ * or a word in `later` (the /e/ rune's "Tap the egg" would read EGG for her);
+ * with every word avoided, the avoid list gives way, then the gestures' rule
+ * (a visit always has a word).
  */
 export function planCharge(store: ProgressStore, input: ChargeInput = { avoid: [] }, rand: Rand = Math.random): ChargePlan {
-  // Nor a word a gesture says: the /e/ rune's "Tap the egg" before EGG would read it for her.
-  const avoid = new Set([...input.avoid, ...GESTURE_WORDS]);
-  let pool = CHARGE_WORDS.filter((w) => !avoid.has(w));
-  if (!pool.length) pool = [...CHARGE_WORDS];
+  const avoid = new Set(input.avoid);
+  const later = new Set(input.later ?? []);
+  const quiet = CHARGE_WORDS.filter((w) => !gestureWords(BANK_BY_WORD[w]!.sounds).some((g) => g === w || later.has(g)));
+  let pool = quiet.filter((w) => !avoid.has(w));
+  if (!pool.length) pool = quiet.length ? quiet : [...CHARGE_WORDS];
   const shaky = (w: string) => {
     const s = BANK_BY_WORD[w]!.sounds;
     return 0.5 + s.reduce((n, x) => n + store.shakiness('sounds', x), 0) / s.length;

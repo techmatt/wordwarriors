@@ -60,7 +60,8 @@ test('runes: every rune is a sound with its own line, a gesture and a battle mov
 test('runes: no gesture shows a bank word\'s picture or says a bank word (they are voiced before the battle)', () => {
   const glyphs = new Map(BANK.filter((w) => w.glyph).map((w) => [w.glyph!, w.word]));
   // Except Matt's /e/ gesture (item 071, M11: "Tap the egg, crack it open"), whose words count as
-  // said in every episode (GESTURE_WORDS), so they are never a pad, the gift or a word she reads.
+  // said only in an episode whose Charge word has /e/, from when it plays (item 074: `gestureWords`,
+  // wordrules.test.ts), so no word she reads after it is one of them.
   const allowed = new Set(['tap', 'egg']);
   for (const w of allowed) assert.ok(GESTURE_WORDS.includes(w), `${w} counts as said`);
   const bank = new Set(BANK.map((w) => w.word).filter((w) => !allowed.has(w)));
