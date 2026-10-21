@@ -7,7 +7,9 @@
  *   npx playwright test --config tests/perf/perf.config.ts
  */
 
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
+
+import { gpuProjects } from '../gpu';
 
 const PORT = Number(process.env.PERF_PORT ?? process.env.CONDUCTOR_PORT ?? 5196);
 
@@ -24,16 +26,7 @@ export default defineConfig({
     viewport: { width: 1280, height: 720 },
     launchOptions: { args: ['--autoplay-policy=no-user-gesture-required'] },
   },
-  projects: [
-    {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: 1280, height: 720 },
-        ...(process.env.WW_GPU === '0' ? {} : { channel: 'chromium', launchOptions: { args: ['--autoplay-policy=no-user-gesture-required', '--use-angle=d3d11', '--enable-gpu'] } }),
-      },
-    },
-  ],
+  projects: gpuProjects({ use: { viewport: { width: 1280, height: 720 } } }),
   webServer: {
     command: `npx vite --config tests/qa/vite.qa.config.ts --port ${PORT} --strictPort`,
     cwd: '../..',

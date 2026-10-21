@@ -21,7 +21,7 @@ import path from 'node:path';
 import { chromium } from '@playwright/test';
 
 import { ART_ASSETS, type ArtAsset } from '../../content/art/assets.js';
-import { exists, isMain } from '../shared.js';
+import { blankPage, exists, isMain } from '../shared.js';
 
 const OUT = path.join('public', 'art');
 const MARK_KEY = 'WordWarriors';
@@ -830,11 +830,7 @@ export async function paintPlaceholders(argv: string[]): Promise<void> {
   if (todo.length) {
     const browser = await chromium.launch();
     try {
-      const page = await browser.newPage();
-      await page.setContent('<html><body></body></html>');
-      // tsx compiles with keepNames, which wraps inner functions in `__name(...)`;
-      // the page has no such helper unless we give it one.
-      await page.evaluate('window.__name = (f) => f');
+      const page = await blankPage(browser);
       const painted = await page.evaluate(paintAll, todo);
       for (const [id, url] of Object.entries(painted)) {
         const png = Buffer.from(url.slice(url.indexOf(',') + 1), 'base64');

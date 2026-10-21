@@ -32,7 +32,7 @@ import sharp from 'sharp';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
 import { ART_PROMPTS, BACKGROUND_STYLE, keyMode, NOTES, REFS, SPRITE_STYLE, refFor } from '../../content/art/prompts.js';
-import { exists, isMain } from '../shared.js';
+import { blankPage, exists, isMain } from '../shared.js';
 import { keyGreen } from './chroma.js';
 import { isPlaceholder } from './placeholders.js';
 
@@ -172,9 +172,7 @@ export function describeUsage(u: unknown): string {
 
 export async function openPage(): Promise<{ page: Page; close: () => Promise<void> }> {
   const browser = await chromium.launch();
-  const page = await browser.newPage();
-  await page.setContent('<html><body></body></html>');
-  await page.evaluate('window.__name = (f) => f');
+  const page = await blankPage(browser);
   await page.addScriptTag({ content: `window.keyGreen = ${keyGreen.toString()};` });
   return { page, close: () => browser.close() };
 }

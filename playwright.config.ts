@@ -1,6 +1,7 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
 
 import { TEST_PORT } from './src/port';
+import { gpuProjects } from './tests/gpu';
 
 // WW_BASE_URL points the suite at an already-running server (e.g. a `vite preview`
 // of a build on another port), so a long run is not reloaded by edits to src/.
@@ -39,15 +40,7 @@ export default defineConfig({
   // The GPU draws (full Chromium, ANGLE on D3D11) unless WW_GPU=0, which goes back to
   // headless software GL. Measured 2026-10-19 (item 036): one fight style 53 s against
   // 78 s, the fast lane 76 s against 82 s; the battle holds ~56 fps instead of 11-18.
-  projects: [
-    {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        ...(process.env.WW_GPU === '0' ? {} : { channel: 'chromium', launchOptions: { args: ['--autoplay-policy=no-user-gesture-required', '--use-angle=d3d11', '--enable-gpu'] } }),
-      },
-    },
-  ],
+  projects: gpuProjects(),
 
   webServer: process.env.WW_BASE_URL
     ? undefined
