@@ -573,6 +573,15 @@ In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
   the episode before is a bug, the same ally or side rooms a look; `repeat-word`: a word
   read in an earlier episode of the run). Each scenario's JSON lists what each episode
   drew (`drawn`).
+- **Silent lines at test speed are a look, not a bug** (item 069): at speed 5 the game asks
+  for lines five times faster than the decode queue serves them (a drawn narrator's ~500
+  clips), so lines still `queued` or `decoding` play silent in a sweep, while a whole
+  episode at real speed had none. Check one at real speed before calling it a bug:
+  `WW_SPEED=1 QA_TAG=<tag> npx playwright test --config tests/qa/qa.config.ts -g "qa seed101$"`
+  (about 7 minutes). `failed`, `none` and `suspended` stay bugs at any speed.
+- **A busy child and the driver:** the mash scenarios' yellow waits while the driver answers
+  (`driver.busy` in the harness), or a replay it starts locks the room as green lands and
+  the driver waits for an answer that never comes.
 
 - **Shots only at moments:** each scene change, each line (a moment in, so the box and
   karaoke are up), each new round, move choice and battle phase, each victory-scene line,

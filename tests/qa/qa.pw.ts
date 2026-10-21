@@ -173,7 +173,7 @@ class Recorder {
     }
     const q = await this.page.evaluate((t) => (window as unknown as { __wwqa: { since(t: number): Since } }).__wwqa.since(t), this.qaT);
     this.qaT = q.now;
-    this.add(logIssues({ ...q, console: [], missingArt: [], flashes: [] }));
+    this.add(logIssues({ ...q, console: [], missingArt: [], flashes: [] }, SPEED));
     this.add(clippedIssues(q.voice));
     if (s.scene !== this.visit.scene) {
       if (this.visit.scene) this.visits.push({ scene: this.visit.scene, ms: (Date.now() - this.visit.at) * SPEED, wrong: this.wrong });
@@ -443,7 +443,7 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     if (sc.mash && rec.shotsFired === 0) rec.add([{ kind: 'mash-dead', severity: 'bug', scene: '', detail: 'a busy child pressed blue, red and yellow all episode and free play never fired a shot', key: 'mash-dead' }]);
     const q = await page.evaluate(() => (window as unknown as { __wwqa: { since(t: number): Since } }).__wwqa.since(0));
     // The whole run's flashes at once: a burst can straddle two polls.
-    rec.add(logIssues({ ...q, voice: [], locks: [], spikes: [] }));
+    rec.add(logIssues({ ...q, voice: [], locks: [], spikes: [] }, SPEED));
     rec.add(VOICE_BUILD);
     for (const e of errors) rec.add([{ kind: 'page-error', severity: 'bug', scene: '', detail: e, key: `pageerror:${e.slice(0, 80)}` }]);
     // Growth from one episode to the next.

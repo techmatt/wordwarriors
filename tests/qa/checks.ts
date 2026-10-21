@@ -211,12 +211,18 @@ function clipSize(file: string): number {
 }
 
 /** Voice with no line or no audio; console warnings; long locked or silent stretches; frame spikes. */
-export function logIssues(q: Since): Issue[] {
+export function logIssues(q: Since, speed = 1): Issue[] {
   const out: Issue[] = [];
   for (const v of q.voice) {
     if (v.noLine) out.push({ kind: 'voice-no-line', severity: 'bug', scene: v.scene, detail: v.id, key: `noline:${v.id}` });
     // A line plays with no clip: its caption shows and nothing is said (item 062).
-    else if (v.silent) out.push({ kind: 'voice-silent', severity: 'bug', scene: v.scene, detail: `${v.id}: played with no clip (${v.why ?? 'not decoded'})`, key: `silent:${v.id}` });
+    else if (v.silent) {
+      // Item 069: at test speed the game asks for lines `speed` times faster than the decode queue
+      // can serve them (a whole episode at real speed had none silent), so a line still queued or
+      // decoding is a look there; failed, none or a suspended context are bugs at any speed.
+      const lag = speed > 1 && (v.why === 'queued' || v.why === 'decoding');
+      out.push({ kind: 'voice-silent', severity: lag ? 'look' : 'bug', scene: v.scene, detail: `${v.id}: played with no clip (${v.why ?? 'not decoded'})${lag ? `, at speed ${speed}: check at WW_SPEED=1` : ''}`, key: `silent:${v.id}` });
+    }
   }
   for (const c of q.console) {
     if (/^art: (missing|not ready)|^voice: (no line|could not)/.test(c.text)) continue;
