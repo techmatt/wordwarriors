@@ -116,3 +116,70 @@ Most important first; the hunt's pick is in **bold**. Matt ruled (b) on all six 
 | W8 | Victory scene, battle | Bubbles over other characters' heads in the victory scene; the counter shout (NOT THE FOX!) touching the HP bar; a lightning bolt from just before a move choice lingering over a sign (the frozen clock slows its fade); Smaug cut off at the left edge in race 2's choice; the spell clash hides its meter during a choice. | Each lasts a line or a choice; noted for a polish pass. |
 | W9 | Word machine | Standing on a used tile, she shows through it. The intro line ("This is the word machine...") puts the box over the tiles, and after the last word about 3 s pass with no line (celebration, bag, fade). | The tile is over her on purpose, so its letter is never hidden; the intro is about the machine, the tiles are not yet hers to pick; the last 3 s are full of effects. |
 | W10 | Dad lock | While locked, the bedroom still wakes her by itself after 6 s, the journey map still moves on after 2 s, and the green dot still shows over things in reach. | Item 038 asks only that her presses do nothing and re-prompts wait ("nothing else changes while locked"); if Matt wants the lock to pause the whole flow, those three are the places. |
+
+## Hunt 2 (item 069, 2026-10-21)
+
+The checker's third batch (`QA_SET=new`: a busy child pressing blue, red and yellow all
+episode, `DIFFICULTY` 2 and 3 on seeded progress, Charge and the bridge answered right,
+four real draws back to back), the first batch again, one episode at real speed, a
+review of every contact sheet, and three rounds of code review over everything since
+hunt 1 (each finding checked by a second reader trying to refute it).
+
+At real speed (seed 101, a drawn cast): 7.2 minutes title to recap, no line silent, no
+console warning, the longest stretch she cannot act the hub's story scene (17 s), frames
+under 170 ms. Four real draws back to back never repeated a villain, ally, victory scene
+or side-room pair, nor a word.
+
+### Fixed
+
+| # | Where | What | Kept fixed by |
+| --- | --- | --- | --- |
+| 53 | Tests, checker | The voice and art fetch timeouts and a line's wait for its decode ran on the page clock, which the tests run 5x fast: a 15 s fetch timeout was 3 s, a 4 s decode wait 0.8 s, so fetches aborted (`AbortError`, the cook-off test's known red) and lines played silent in every sweep. They run on the wall clock now (`src/realTime.ts`). | `tests/unit/realTime.test.ts` |
+| 54 | Battle (Charge's runes) | Each rune's letter sound queued behind "Now let's use our spell power!" and played a rune or two late, under the next rune's letter: the battle taught the wrong sound for a letter. The line is said first, and each stone waits for its own sound. | `tests/charge.spec.ts` "runes fire" (fails on the old code: 2, 3, 3) |
+| 55 | Battle move choice | A hit while a choice was open could float that choice's own pad word (ZAP!, BAM!) over a fighter, for the rest of the choice on the frozen clock. The open choice's words count as still to come. | code review |
+| 56 | Stretchy Bridge, level 3 | Dad's 2 pressed while the stones replayed was dropped (his cue still flashed green), and after 12 s the wait counted as a no and replayed again. His yes now brings the pictures. | `tests/bridge.spec.ts` (item 069) |
+| 57 | Stretchy Bridge | Yellow (or the idle re-prompt) on a held stone cut its sound, and it stayed silent until she stepped off. It sounds again after the line. | `tests/bridge.spec.ts` (item 069) |
+| 58 | Stretchy Bridge | F9 and back forgot Dad's hint or replay, so a helped crossing counted as unaided and moved the word's level up. Kept on the episode with the misses. | `tests/bridge.spec.ts` (item 069) |
+| 59 | Stretchy Bridge | TENT beside TEN (BELT by BELL, LAMP by LAMB): every stone of the word is in the picked one, so a miss lit a stone they share. No picture is the word plus a sound. | `tests/unit/bridge.test.ts` |
+| 60 | Word bag | When the key-word bag ran out mid-plan, the new round left out this episode's words; an episode left before reading them lost them for the whole round. The new round keeps them; they are only not drawn again now. | `tests/unit/sentences.test.ts` |
+| 61 | Sentence room | Under a two-row banner she came in 70 px under the middle picture, inside reach: a mashed green after "Now find it" chose it without walking. She comes in out of reach. | `tests/cover.spec.ts` (four banners) |
+| 62 | Bedroom | Yellow at the door said door line variant 1, not the variant this episode said. | `tests/smoke.spec.ts` (item 069) |
+| 63 | Sentence room, word machine | Two misses kept across F9 came back without the right answer's sparkle (it returned only on a third miss). | code review |
+| 64 | Input | Tab in the Boot and Wait scenes (no Controls there) moved the browser's focus off the page, and the keyboard was dead until a click. | `tests/lazyart.spec.ts` |
+| 65 | Input | A pad button held through a scene change (A on the victory screen or the journey map) read as a press on a scene's first visit: Phaser's pad starts all up and catches up a frame later. Held buttons are read from the browser's own pads. | `tests/smoke.spec.ts` "a pad button held" |
+| 66 | Speech rule | The attic's {villain} RUNS FROM THE showed and said RUNS before a battle-2 RUN pad. Every frame's words stay off the pads. | code review |
+| 67 | Entry hall | On every miss line ("WE NEED THE...") the letter board, drawn over the dialogue box, hid most of its words and their highlight. The board sits under a top-band box now. | `tests/entry.spec.ts` (item 069) |
+| 68 | Charge the Spell | She stood 20 px inside the altar's footprint, so the altar was drawn over her arm and dress all round. She stands beside it. | `tests/charge.spec.ts` (item 059's round) |
+| 69 | Battle move choice | A dash's or slam's afterimage timer runs on the frozen clock, so new white silhouettes kept appearing (and hanging for seconds) after fix 42 cleared the old ones. None are made while a choice is open. | contact sheet |
+| 70 | Battle (sky race) | "There's the finish line!" played about 3.5 s before the flag came in. The flag sweeps in as the line starts. | `tests/fights.spec.ts` sky_race |
+
+The checker itself: a busy child's yellow waits while the driver answers (it stalled the
+driver, not the game); the giveaway check skips words already read and the warm-up's
+word once grabbed (THE ANT! in battle); a line still queued or decoding at test speed
+is a look, not a bug (README, "The bug-hunt checker").
+
+### Matt's calls
+
+Most important first; the hunt's pick is in **bold**.
+
+| # | Where | What | Options |
+| --- | --- | --- | --- |
+| M7 | Battle move choice (sea tug) | With three pads and the knot on her side, the pads do not fit between her and Jormungandr, so one goes past him, under his coils (seen: FLIP). Item 034's rule (her side only) gives way to "anywhere but on him". | (a) keep; **(b) on her side always: try a narrower gap, or the second row for one pad, before going past him**; (c) count the coils as part of him |
+| M8 | Battle move choice | A villain mid-leap when a choice opens lands on a pad's ring after the pads are placed (QUEST under Evil Tiamat): fix 40 places pads by where fighters stand at that moment, and the villain is not stepped back like the team (M6). | (a) keep; **(b) the villain's side steps back off the pads too, as the team does**; (c) place pads by where a leaping fighter will land |
+| M9 | Pictures | Seven bank words are still placeholder pictures: ZOO, ZEBRA, APPLE, IGLOO (an ice cube in a box: she would say ICE), OCTOPUS, UMBRELLA, X-RAY; the rune altar and stone props too. MAT and RUG are drawn alike (a striped mat with tassels), so beside each other they read as two rugs. | **(b) `npm run art:gen -- pic_igloo pic_zebra pic_apple pic_octopus pic_umbrella pic_xray pic_zoo prop_rune_altar prop_rune_stone`, and `art:alts` for MAT (a play mat without tassels)**; (a) keep IGLOO and MAT out of play (`odd`) until then |
+| M10 | Lines that point at nothing | "Look! A fish is waving at us!" (the boat scene, no fish); reformed Jormungandr's "Look, I am a big rainbow noodle!" (he is green); reformed Warlock Jason's "Look, a rainbow spell!" (no spell shows). Same kind as W6's robot. | **(b) reword the three (no "Look" at something not drawn), then `voice:lines`, `voice:build`**; (c) add a fish prop and a rainbow burst on those lines |
+| M11 | Wording | The word machine's "Here are some new sounds! Let's make one more." plays when two words are left (a first family of only two words: NET/VET, DOG/LOG, PIN/BIN, FOX/BOX, SUN/BUN). Evil Bavmorda's ultimate shows and says EVERYBODY PIGS!! (two marks). The /e/ rune's gesture "Knock knock, crack it open" never names the egg and shares "knock" with /k/. Three of Bavmorda's six taunts start "Bow...". Scar's and cyber Dada Matt's gift scenes say "your armor" (she wears none in their episodes). | **(b) reword each: "Let's make a new word!", drop the roster's own "!" on Everybody Pigs, "Tap the egg, crack it open, it goes...", a new cackle taunt, "your powers"; then `voice:lines`, `voice:build`** |
+| M12 | Victory (dessert, reformed Chef Jason) | With Chef Jason as the villain, his reformed line and the scene's close are the same sentence ("This is the best party ever!"), said twice in a row. | **(b) a different party line for him**; (c) the script skips a close the villain just said |
+| M13 | Hub | On "There are two doors! Walk to one..." the box goes to the bottom and hides most of Julia, the cursor she is told to walk; on the line before, the top box hides the door signs as they pop in. | (a) keep (one line each); **(b) the hub's door lines use a narrower box on the side away from her** |
+| M14 | Victory | The last lines' box ("PRESS GREEN TO PLAY AGAIN!") covers the big VICTORY! title. | **(a) keep: she cannot read it, and the recap cards stay clear**; (b) the box keeps off the title |
+| M15 | Grown-ups (dev) | A `?scene=victory` jump (and a URL-forced `?ending=`) records the victory scene's rotation and counts an episode, where every other rotation skips dev jumps (item 067). Only Matt's jumps; `tests/ending.spec.ts` relies on it. | **(a) keep**; (b) gate it on a real episode like the cast, and move the test to a played episode |
+
+### Won't fix
+
+| # | Where | What | Why |
+| --- | --- | --- | --- |
+| W11 | Every scene, at test speed | Lines played with no clip in speed-5 sweeps (`voice-silent`, queued or decoding), up to dozens an episode with a drawn narrator. | The game asks five times faster than the decode queue serves; a whole episode at real speed had none. The checker calls these a look at test speed. |
+| W12 | Bedroom, entry hall, hub | The bedroom door's spot box (with its glow) under the face card; the warm-up's confirmation bubble on a corner of a picture after the grab; the magic circle's bottom 27 px under the story's last line. | The door itself is clear; the answer is already made; the circle cannot be used yet (as W3). |
+| W13 | Stretchy Bridge | After a wrong pick, its letters (R O CK) sit over the next picture for the feedback line. | The room is locked then, and the plate fades before she slides again. |
+| W14 | Battle, free play | Free play's jump puffs and big-shot rings started just before a choice hang faintly through it. | Same as W8: a faint effect for one choice. |
+| W15 | Word machine | The capital Y in Comic Sans looks like a lower-case y. | It is the font's capital Y; the game's letters are all capitals. |
