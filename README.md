@@ -695,9 +695,10 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   under 120) stays solid. `art:gen`, `--reprocess`, `art:alts` and `art:pick` all take
   the mode from `keyMode`. A family form that wears dark green goes in `LIGHT_GREEN`,
   not `NO_GREEN`.
-- A script in `scratch/` that imports `../tools/…` gets the **main checkout's** copy, not
-  the worktree's: `scratch/` is a junction and Node resolves the real path (item 049).
-  Import by absolute path (`pathToFileURL(path.resolve('tools/…'))`) from the worktree root.
+- A script in `scratch/` that imports `../tools/…` or `../content/…` (or `../src/…`) gets
+  the **main checkout's** copy, not the worktree's: `scratch/` is a junction and Node
+  resolves the real path (item 049; `content/` the same, item 074). Import by absolute path
+  (`pathToFileURL(path.resolve('content/…'))`) from the worktree root.
 - `npm test` empties `test-results/` as it starts (Playwright's output folder): a
   script or log kept there by a run beside it is deleted. Keep logs in `scratch/`.
 - A new `prop_word_machine` means refitting `WINDOW` / `PANEL` in
