@@ -312,14 +312,16 @@ difficulty knob for this session; below).
 ## Difficulty and variety (item 067)
 
 Matt's ruling: **no automatic difficulty**. Every help ramp still records her level
-(the warm-up's `grabLevels`, the bridge's `bridgeLevels`, Charge the Spell's
-`chargeLevels`, and frames' and words' first tries), and the grown-ups page shows the
+(the warm-up's `grabLevels`, the bridge's `bridgeLevels`, and frames' and words' first
+tries; Charge the Spell's `chargeLevels` are kept but nothing records them since item
+059), and the grown-ups page shows the
 level reached, but the game gives at most **`DIFFICULTY`** (`src/config.ts`, shown in the
 grown-ups page's title line):
 
 - **1, base (the default):** every ramp gives its start level (`startLevel`, the most
   help); a solid sentence frame still plays its listening pass; a firm word's
-  distractors still start with other letters.
+  distractors (the warm-up's pictures, the move pads, the key word's choices) still
+  start with other letters.
 - **2:** her recorded levels apply up to 2; solid frames skip the listening pass; firm
   words get a sound-alike distractor (CAT beside HAT).
 - **3:** the ramps go all the way, as before item 067.
@@ -327,6 +329,12 @@ grown-ups page's title line):
 Raising it changes nothing saved: her recorded levels take effect at once, and lowering
 it holds them again. `?difficulty=` sets it for one session (the browser tests use it to
 reach levels 2 and 3).
+
+This is the list: a new ramp that steps up with success goes through `helpLevel` or
+`rampsAdvance` (`src/rules/difficulty.ts`) and is added here. Tests: the knob in
+`tests/unit/variety.test.ts`; each ramp in its game's unit test (`grab`, `bridge`,
+`charge`, `sentences`, `bank`, each with `withDifficulty` from `tests/unit/difficulty.ts`);
+in the browser `?difficulty=` in `bridge.spec.ts`, `entry.spec.ts` and `smoke.spec.ts`.
 
 **Words by length, not level.** Every familiar bank word is in play from the first
 episode (no level gate; OCTOPUS and UMBRELLA included). The recognition roles (key

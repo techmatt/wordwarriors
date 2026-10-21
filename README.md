@@ -181,7 +181,7 @@ The suite starts its own server on port 5184 (`TEST_PORT` in `src/port.ts`), nev
 port 5174, so a test run in a worktree cannot attach to the main checkout's dev server.
 If 5184 is busy (another worktree's run) the suite fails at once rather than testing the
 wrong code. With `CONDUCTOR_PORT` set (a conductor item is given one) the suite serves
-itself on that port instead (item 047), so a conductor run needs nothing started by hand:
+itself on that port instead (item 047, `playwright.config.ts`), so a conductor run needs nothing started by hand:
 `npm test` or `npx playwright test <spec>` as usual. Do not serve vite yourself from a
 Claude Code session and point `WW_BASE_URL` at it: a backgrounded server is stopped after
 its background `timeout` (10 minutes by default), mid-suite, and every later test fails
@@ -196,7 +196,7 @@ tests passed when rerun alone. Rerun them alone before suspecting the code. The 
 reload shows as "page.evaluate: Execution context was destroyed, most likely because of a
 navigation" (item 067: five slow specs lost to edits made mid-run). Do not edit `src/`
 or `content/` while a browser run is going, or point the run at a `vite preview` build
-with `WW_BASE_URL`. A playwright run loads its spec files
+with `WW_BASE_URL` (*Operational facts*, "Long Playwright runs"). A playwright run loads its spec files
 once at its start, so a spec edited mid-run needs a rerun.
 
 ### Not tests: boot timings and screenshots

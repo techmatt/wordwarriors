@@ -14,7 +14,7 @@
  * coverage, last episode's words leaning back) over every short word
  * (BRIDGE.maxUnits sound units at most; item 067: no tier or level gate, so
  * every one is in play from the start). Words still in her word bag lean
- * ahead, and a visit plays its easier tiers first:
+ * ahead, and a visit plays its easier words first (`bridgeEase`):
  *   1. CVC words starting with a sound you can hold (M S F L N R V Z);
  *   2. CVC words starting with a stop sound;
  *   3. blends and digraphs.
@@ -38,7 +38,7 @@ import { drawWords, shuffle, type Rand } from './bank';
 import { clampLevel, helpLevel, stepLevel, type HelpLevel } from './difficulty';
 
 export type BridgeLevel = HelpLevel;
-export type BridgeTier = 1 | 2 | 3;
+export type BridgeEase = 1 | 2 | 3;
 
 export interface BridgeRound {
   word: string;
@@ -59,14 +59,14 @@ const sameSound = (s: string) => (s === 'c' || s === 'ck' ? 'k' : s);
 /** A word the bridge can cross: a pictured thing with a short vowel (KEY and YOYO have none). */
 const bridgeable = (w: BankWord) => w.vowel !== null;
 
-/** Every picture the bridge can show: the bank's familiar things with a short vowel. */
-export const BRIDGE_WORDS: string[] = THINGS.filter(bridgeable).map((w) => w.word);
+/** Every picture the bridge can show: the bank's familiar things with a short vowel (the words she crosses, CROSS_WORDS, are the short ones). */
+export const BRIDGE_PICTURES: string[] = THINGS.filter(bridgeable).map((w) => w.word);
 
 /** Every word she can cross: the short ones, BRIDGE.maxUnits sound units at most (item 067). */
 export const CROSS_WORDS: string[] = THINGS.filter((w) => bridgeable(w) && w.units.length <= BRIDGE.maxUnits).map((w) => w.word);
 
-/** A word's tier: a CVC word starting with a sound you can hold, a CVC word starting with a stop, or a blend or digraph. */
-export function bridgeTier(word: string): BridgeTier {
+/** How easy a word is to stretch, which orders a visit (not a gate, item 067): 1 a CVC word starting with a sound you can hold, 2 a CVC word starting with a stop, 3 a blend or digraph. */
+export function bridgeEase(word: string): BridgeEase {
   const w = BANK_BY_WORD[word];
   if (!w || w.level > 1) return 3;
   return canHold(w.sounds[0]!) ? 1 : 2;
@@ -103,7 +103,7 @@ export function sharedStart(a: string, b: string): number {
  * MUG), so the first letter is never enough; only then its rime (CAT: HAT),
  * then anything.
  */
-export function bridgePictures(word: string, n: number, rand: Rand = Math.random, avoid: Iterable<string> = [], pool: string[] = BRIDGE_WORDS): string[] {
+export function bridgePictures(word: string, n: number, rand: Rand = Math.random, avoid: Iterable<string> = [], pool: string[] = BRIDGE_PICTURES): string[] {
   const out = new Set([word, ...lookalikesOf(word), ...avoid]);
   // Nor the word plus a sound (TEN: TENT, BELL: BELT): every stone is in it, so a miss has no stone to show (item 069).
   const len = BANK_BY_WORD[word]?.sounds.length ?? word.length;
@@ -140,7 +140,7 @@ export interface BridgeInput {
 /**
  * A visit's words: `n` short words (CROSS_WORDS) by the bank's weight (× 2
  * for a word still in her word bag), none of them the episode's other words,
- * the easier tiers first; each with its far-bank pictures.
+ * the easier words first (`bridgeEase`); each with its far-bank pictures.
  */
 export function planBridge(store: ProgressStore, input: BridgeInput, rand: Rand = Math.random, n = BRIDGE.words): BridgePlan {
   const avoid = new Set([...input.avoid, ...input.taken]);
@@ -153,7 +153,7 @@ export function planBridge(store: ProgressStore, input: BridgeInput, rand: Rand 
     if (!pool.length) break;
     words.push(drawWords(store, pool, 1, rand, boost)[0]!);
   }
-  const ordered = words.map((w, i) => ({ w, i })).sort((a, b) => bridgeTier(a.w) - bridgeTier(b.w) || a.i - b.i).map((x) => x.w);
+  const ordered = words.map((w, i) => ({ w, i })).sort((a, b) => bridgeEase(a.w) - bridgeEase(b.w) || a.i - b.i).map((x) => x.w);
   return {
     rounds: ordered.map((word) => {
       const b = BANK_BY_WORD[word]!;

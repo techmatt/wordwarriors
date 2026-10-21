@@ -18,7 +18,8 @@
  *
  * `tier`: 1 the continuous sounds (she can hold them: M S F A L N R V Z and
  * the short vowels), 2 the quick ones (stops, H W Y J), 3 the digraphs, one
- * sound each. Q and X are left out (their placeholders are too unlike the
+ * sound each: a label only since item 067 (no draw reads it; the unit tests
+ * do), every sound in play from the start. Q and X are left out (their placeholders are too unlike the
  * sound, as in the parked games), CK too (C's sound, never first).
  *
  * `move`: the ability her hero fires for the rune in the next battle (the
@@ -82,7 +83,7 @@ export const RUNES: RuneSound[] = [
   rune('i', 1, '👃', 'shake', 'Wiggle your nose like a mouse, it goes...', 'bolt', 0xc0c0d0, { count: 3, homing: true }),
   rune('o', 1, '🔦', 'blink', 'Flick the light on and off, it goes...', 'beam', 0xfff59a, { color2: 0xffffff }),
   rune('u', 1, '👆', 'climb', 'Point up, up, up, it goes...', 'shield', 0x9b5de5, { duration: 4 }),
-  // Tier 2: quick sounds, once the continuous ones are solid.
+  // Tier 2: quick sounds.
   rune('t', 2, '🎾', 'bounce', 'Watch the tennis ball go back and forth...', 'bolt', 0xd8ff3d, { count: 4, homing: true }),
   rune('p', 2, '🕯️', 'puff', 'Puff out the candle, it goes...', 'wave', 0xffe0a0, { color2: 0xffffff }),
   rune('b', 2, '⚾', 'bounce', 'Swing hard at the ball, it goes...', 'bolt', 0xffffff, { count: 3, homing: true, power: 3 }),

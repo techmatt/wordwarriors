@@ -1,6 +1,6 @@
 /**
  * The Stretchy Bridge's pure rules (item 054): the held-sound cuts, the word
- * draw (sounds you can hold first, tiers opening as she comes along), the far
+ * draw (every short word in play, a visit's easier words first: `bridgeEase`), the far
  * bank's pictures (sharing the word's start, never only its first letter's
  * rime where the bank has better), the help-level ramp and its store field,
  * and the room's place in the episode.
@@ -19,7 +19,7 @@ import { NARRATOR_LINES } from '../../content/voice/script';
 import { CHARACTER_BY_ID, PERSONS } from '../../content/battle/roster';
 import { holdPlan, holdSamples } from '../../src/audio/holdSound';
 import { BRIDGE } from '../../src/config';
-import { BRIDGE_WORDS, CROSS_WORDS, bridgeLevel, bridgePictures, bridgeTier, bridgeWords, nextBridgeLevel, planBridge, recordedBridgeLevel, sharedStart, whereDiffers } from '../../src/rules/bridge';
+import { BRIDGE_PICTURES, CROSS_WORDS, bridgeLevel, bridgePictures, bridgeEase, bridgeWords, nextBridgeLevel, planBridge, recordedBridgeLevel, sharedStart, whereDiffers } from '../../src/rules/bridge';
 import { BRIDGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/sentences';
 import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
@@ -149,20 +149,20 @@ test('held sounds: the vowels, hums and hisses hold; stops, H, W, Y and X play o
 // ---- The word draw --------------------------------------------------------
 
 test('bridge words: pictured things with a short vowel; tiers are hold-sound CVC, stop CVC, blends and digraphs', () => {
-  assert.ok(BRIDGE_WORDS.length > 50);
-  for (const w of BRIDGE_WORDS) {
+  assert.ok(BRIDGE_PICTURES.length > 50);
+  for (const w of BRIDGE_PICTURES) {
     const b = BANK_BY_WORD[w]!;
     assert.ok(THINGS.includes(b) && b.vowel, `${w} is a familiar short-vowel thing`);
   }
-  assert.ok(!BRIDGE_WORDS.includes('key') && !BRIDGE_WORDS.includes('yak'));
-  assert.equal(bridgeTier('map'), 1);
-  assert.equal(bridgeTier('sun'), 1);
-  assert.equal(bridgeTier('cat'), 2);
-  assert.equal(bridgeTier('hat'), 2);
-  assert.equal(bridgeTier('frog'), 3);
-  assert.equal(bridgeTier('ship'), 3);
+  assert.ok(!BRIDGE_PICTURES.includes('key') && !BRIDGE_PICTURES.includes('yak'));
+  assert.equal(bridgeEase('map'), 1);
+  assert.equal(bridgeEase('sun'), 1);
+  assert.equal(bridgeEase('cat'), 2);
+  assert.equal(bridgeEase('hat'), 2);
+  assert.equal(bridgeEase('frog'), 3);
+  assert.equal(bridgeEase('ship'), 3);
   // Item 054's words are in.
-  for (const w of ['mat', 'man', 'lid', 'lock']) assert.ok(BRIDGE_WORDS.includes(w), w);
+  for (const w of ['mat', 'man', 'lid', 'lock']) assert.ok(BRIDGE_PICTURES.includes(w), w);
 });
 
 test('bridge draw (item 067): a fresh store crosses any short word, every tier, never one over BRIDGE.maxUnits; the easier tier first', () => {
@@ -176,10 +176,10 @@ test('bridge draw (item 067): a fresh store crosses any short word, every tier, 
     assert.equal(new Set(bridgeWords(plan)).size, BRIDGE.words);
     for (const r of plan.rounds) {
       assert.ok(CROSS_WORDS.includes(r.word), `seed ${seed}: ${r.word} is short`);
-      tiersSeen.add(bridgeTier(r.word));
+      tiersSeen.add(bridgeEase(r.word));
     }
     // The easier tier first.
-    const tiers = plan.rounds.map((r) => bridgeTier(r.word));
+    const tiers = plan.rounds.map((r) => bridgeEase(r.word));
     assert.deepEqual(tiers, [...tiers].sort());
   }
   assert.deepEqual([...tiersSeen].sort(), [1, 2, 3], 'stop-sound words and blends from the first visit');
@@ -221,16 +221,16 @@ test("far bank: the pictures share the word's start and differ later, never only
     assert.ok(lip.includes('lid'), `LIP beside ${lip}`);
     for (const p of lip) assert.ok(sharedStart('lip', p) >= 1);
   }
-  for (const w of BRIDGE_WORDS) {
+  for (const w of BRIDGE_PICTURES) {
     const pics = bridgePictures(w, BRIDGE.pictures - 1, seeded(3));
     assert.equal(pics.length, BRIDGE.pictures - 1, w);
     assert.ok(!pics.includes(w));
     for (const p of pics) assert.ok(!lookalikesOf(w).includes(p), `${w} beside its look-alike ${p}`);
     // Every hold-sound word has a picture that starts like it: the first letter is never enough.
-    if (bridgeTier(w) === 1) assert.ok(pics.some((p) => sharedStart(w, p) >= 1), `${w}: ${pics}`);
+    if (bridgeEase(w) === 1) assert.ok(pics.some((p) => sharedStart(w, p) >= 1), `${w}: ${pics}`);
   }
   // Never the word plus a sound (item 069): beside TEN, TENT had every one of TEN's stones, so a miss on it lit a stone they share.
-  for (const w of BRIDGE_WORDS) {
+  for (const w of BRIDGE_PICTURES) {
     for (let seed = 1; seed <= 5; seed++) {
       for (const p of bridgePictures(w, BRIDGE.pictures - 1, seeded(spread(seed)))) {
         assert.ok(sharedStart(w, p) < BANK_BY_WORD[w]!.sounds.length, `${w} beside ${p}`);

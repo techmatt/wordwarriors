@@ -19,8 +19,7 @@
  * nothing for CHARGE.readTimeoutMs: "Let's sound it out together!", the word
  * sounded out once, unit by unit (never blended), then said, and the picture
  * goes into the bag all the same. The read is recorded under `words`, and its
- * runes' sounds under `sounds` (right with his 2), which open the quicker
- * sounds' tiers; the word is a battle item (`episode.fetched`). A round runs
+ * runes' sounds under `sounds` (right with his 2); the word is a battle item (`episode.fetched`). A round runs
  * about 20 s.
  *
  * Each charged rune becomes a move her hero fires in the next battle

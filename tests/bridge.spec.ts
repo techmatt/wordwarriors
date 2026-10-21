@@ -13,7 +13,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { BANK_BY_WORD } from '../content/phonics/bank';
 import { canHold } from '../content/phonics/letters';
 import { letterSoundLine } from '../content/voice/ids';
-import { BRIDGE_WORDS, CROSS_WORDS, bridgeTier } from '../src/rules/bridge';
+import { BRIDGE_PICTURES, CROSS_WORDS, bridgeEase } from '../src/rules/bridge';
 import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom, playEpisode, press, seedProgress, slideAcross, state, stick, until, type WWState } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/054_${name}.png` });
@@ -25,9 +25,9 @@ const soundsOf = (b: { word: string }) => BANK_BY_WORD[b.word]!.sounds;
 const soundLines = (b: { word: string }) => soundsOf(b).map(letterSoundLine);
 const levels = (s: WWState) => (s.progress as unknown as { bridgeLevels: Record<string, number> }).bridgeLevels;
 
-/** Every bridge word at help level `n` (all of them: at level 2 or more the later tiers open too). */
+/** Every bridge picture at help level `n` (a superset of the words she can cross). */
 async function seedLevels(page: Page, n: number): Promise<void> {
-  await seedProgress(page, { version: 1, bridgeLevels: Object.fromEntries(BRIDGE_WORDS.map((w) => [w, n])) });
+  await seedProgress(page, { version: 1, bridgeLevels: Object.fromEntries(BRIDGE_PICTURES.map((w) => [w, n])) });
 }
 
 /** Slide onto stone `i` and stop there. */
@@ -57,7 +57,7 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
   expect(s0.episode.house.plan!.find((p) => p.slot === 'a')!.kind).toBe('bridge');
   // A fresh store (item 067): any short word, every tier, the easier tier first.
   for (const w of b0.words) expect(CROSS_WORDS).toContain(w);
-  expect(b0.words.map(bridgeTier)).toEqual([...b0.words.map(bridgeTier)].sort());
+  expect(b0.words.map(bridgeEase)).toEqual([...b0.words.map(bridgeEase)].sort());
   // The stones are the word's letters, upper case, one text each; the word is never one text.
   const texts = (await page.evaluate(() => (window as unknown as { __ww: { texts(): { text: string }[] } }).__ww.texts())).map((t) => t.text);
   for (const u of b0.units) expect(texts).toContain(u.toUpperCase());

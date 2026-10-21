@@ -1,6 +1,6 @@
 /**
  * Charge the Spell's pure rules (item 053; item 058's one word a visit): the
- * word draw (continuous sounds first, tiers opening as she firms up), the help-level ramp and its store field, the room's place in the
+ * word draw (every sound in play since item 067; `tier` is a label), the help-level ramp and its store field, the room's place in the
  * episode, and the speech rules its lines keep.
  * `npx tsx --test tests/unit/charge.test.ts` (also part of `npm run test:unit`).
  */

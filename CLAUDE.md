@@ -104,6 +104,10 @@ The timed Charge round (`charge.spec.ts`, the snappy round) asserts its limits o
 worker: `npx playwright test tests/charge.spec.ts -g snappy --workers=1` (README, *Speed,
 GPU and workers*); the two-worker lanes log its time.
 
+Never edit `src/` or `content/` while a browser run is going: its server hot-reloads every
+open page ("Execution context was destroyed"). For a long run beside edits, point it at a
+build (README, *Operational facts*, "Long Playwright runs").
+
 Adding a character, ability, word or line is data work: edit `content/`, then
 `npm run voice:lines && npm run voice:build && npm run art:placeholders` ("the three
 commands" below).
@@ -134,8 +138,9 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 
 ## Standing design rules (law)
 
-- **No automatic difficulty** (item 067). Every help ramp (warm-up, bridge, charge, a
-  solid frame's skipped listening pass, sound-alike distractors) records her level but
+- **No automatic difficulty** (item 067). Every help ramp (warm-up, bridge, a solid
+  frame's skipped listening pass, sound-alike distractors; charge's is kept but unused
+  since item 059) records her level but
   gives its most helpful start until Matt raises `DIFFICULTY`. Words are chosen per game
   by length in sound units, never by level: decoding games short, recognition roles any.
   Every rotation (cast, forms, rooms, games, variants, scenes, words) remembers across
