@@ -11,7 +11,9 @@ const overlap = (a: number[], b: number[]) => a[0]! < b[2]! && b[0]! < a[2]! && 
 
 test('M1, M5, M6: the move choice hides its word in the caption, shows the stick hint, and the team stands clear of the signs', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
-  await boot(page, '?scene=battle&part=1&ally=dada_jason&nojourney=1');
+  // A brawl: Jason's fightNudge makes most of his fights a cook-off, whose staging holds the
+  // team in place (teamStepBack skips contests), so M6's step-back is checked where it runs.
+  await boot(page, '?scene=battle&part=1&ally=dada_jason&fight=brawl&nojourney=1');
   const s = await until(page, (st) => Boolean(st.battle?.choice?.open), 90_000, 'choice open');
   const c = s.battle!.choice!;
   // M1: the prompt has been captioned by now; the box never printed the right word.
