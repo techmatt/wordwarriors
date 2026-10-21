@@ -224,7 +224,8 @@ export async function boot(page: Page, query = '', speed = SPEED, opts: { voice?
   // The rooms play the sentence game unless the query asks for a game (`game=word_machine`) or the whole pool (`games=all`).
   const games = /[?&]games?=/.test(query) ? '' : 'games=sentence&';
   // Instant voice (item 083) unless the test asks for the real thing: a line ends once `state()` has seen it.
-  const voice = opts.voice === 'real' || VOICE.mode === 'real' || /[?&]voice=/.test(query) ? '' : 'voice=instant&';
+  // The bug-hunt checker's probe (`qa=1`) checks the caption box against what its line points at: real voice there too.
+  const voice = opts.voice === 'real' || VOICE.mode === 'real' || /[?&](voice|qa)=/.test(query) ? '' : 'voice=instant&';
   await page.goto(`/${query ? `${query}&` : '?'}${cast}${games}${voice}hooks=1`);
   await page.waitForFunction(() => Boolean((window as unknown as { __ww?: unknown }).__ww));
   await page.mouse.click(20, 20);
@@ -266,7 +267,8 @@ export async function until(page: Page, pred: (s: WWState) => boolean, timeout =
     const s = await state(page);
     if (pred(s)) return s;
     if (Date.now() - start > timeout) throw new Error(`timed out waiting for ${what}; scene=${s.scene} room=${JSON.stringify(s.room?.round)} battle=${s.battle?.phase}`);
-    await page.waitForTimeout(100);
+    // 50 ms (100 until item 083): with instant voice a line lasts until the next poll sees it.
+    await page.waitForTimeout(50);
   }
 }
 

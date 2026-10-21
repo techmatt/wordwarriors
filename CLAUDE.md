@@ -85,7 +85,7 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `npm run test:unit` | The unit tests alone (~7 s) |
 | `npm run test:browser` | Before a commit (~50 s): every browser test not tagged `@slow`, plus the specs covering what changed (`npx playwright test <spec>`). A new browser test over ~10 s gets `SLOW` (README, *Tests*) |
 | `npm run test:slow` | The slow lane alone (most of the full run: `@slow`, the part-real-time episode, the soak) |
-| `npm run test:all` | The full run (~7 min): unit tests and every browser test. **Not by default:** only for a change touching every scene |
+| `npm run test:all` | The full run (~6 min): unit tests and every browser test. **Not by default:** only for a change touching every scene |
 | `npm run voice:lines` | Regenerate `content/voice/lines.json` from roster + script + phonics |
 | `npm run voice:build` | Synthesise new/changed lines (`--force` all, `--prune` drop unused). Needs `uv` and network |
 | `npm run voice:status` | Recorded / stale / still edge-tts, letter sounds first |
@@ -103,7 +103,11 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 
 **Faster tests over thorough tests where reasonable** (Matt, 2026-10-21): fewer seeds, a
 faster clock, one walk shared by several checks; Matt scales coverage up when he notices
-problems.
+problems. Test-only shortcuts (README, *Speed, GPU and workers*): `boot` adds
+`?voice=instant` (a line ends once `__ww.state()` has seen it; `{ voice: 'real' }` for a test
+about voice, captions or pacing), `choose` and the move choice teleport with `__ww.place(x, y)`
+(`driver.walk` or `walkTo` for walking tests), and `?battle=short` cuts the director's waits
+for tests needing only the move choice or the finish.
 
 The timed Charge round asserts its limits only on one worker:
 `npx playwright test tests/charge.spec.ts -g snappy --workers=1` (README, *Speed, GPU and

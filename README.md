@@ -82,18 +82,23 @@ Three commands (item 079, 2026-10-21; times on this machine, the GPU, three work
   Spell the Spell, the cast and fight-style overrides, never last episode's victory scene,
   and the three text-fit checks. It stops itself at 6 minutes, so a hang fails inside
   Claude Code's 10-minute background cap instead of being killed by it.
-- **Everything: `npm run test:all`** (about 7.2 minutes, 95 tests: 7.1 of browser tests
-  after 6 s of unit tests, item 081; 10.2 minutes in item 079, about 20 before it): the unit
-  tests, then every browser test. The slow lane alone is `npm run test:slow` (66 tests, most of the
-  full run's time; not timed alone since item 081): every test tagged `@slow`. Its longest: the full episode, real time for one scene of each kind
-  (3.5 minutes; 6 before item 081), the soak (2.2 minutes, Charge the Spell's whole episodes
-  too), the shared drawn episode (`tests/drawn.spec.ts`, 81 s, the word machine and the
-  bridge; they were 88 s and 101 s apart), each contest fight style at clock speed 10 (21 s).
-  Not run by default (Matt, 2026-10-20): only when clearly needed, such as a change
-  touching every scene. Files go to workers in name order, and the soak started 4.9
-  minutes into the run and ended it; since item 081 the whole-episode specs (`episode`,
+- **Everything: `npm run test:all`** (about 5.8 minutes, 100 tests: 5.6 of browser tests
+  after the unit tests, item 083, one run; 7.2 in item 081, 10.2 in item 079, about 20 before
+  it): the unit tests, then every browser test. The slow lane alone is `npm run test:slow` (most of the
+  full run's time; not timed alone since item 081): every test tagged `@slow`. Its longest
+  (item 083): the soak (72 s, Charge the Spell's whole episodes too), real-time battle 1 (72 s),
+  the real-time title, bedroom and warm-up (55 s), the default whole episode at speed (36 s),
+  the real-time sentence room (23 s), the shared drawn episode (`tests/drawn.spec.ts`, the
+  word machine and the bridge), and each contest fight style's one part at clock speed 10
+  (10 s). Item 083 cut it with test-only shortcuts (*Speed, GPU and workers*): instant voice,
+  teleporting to a spot, short battles, the real-time episode split three ways, one battle
+  part per fight style. Not run by default (Matt, 2026-10-20): only when clearly needed, such
+  as a change touching every scene. Files go to workers in name order, and the soak started
+  4.9 minutes into the run and ended it; since item 081 the whole-episode specs (`episode`,
   `soak`, `drawn`) are a Playwright project of their own, `episodes`, listed first
-  (`playwright.config.ts`), so the three workers start on them (not yet timed in a full run).
+  (`playwright.config.ts`), so the three workers start on them. Item 083 began an A/B of
+  that project against plain name order but stopped it partway (Matt was playtesting), so it
+  stays, untimed against the alternative.
 
 **The suite serves a build** (item 079, `tests/vite.test.config.ts`): Playwright's server
 runs `vite build` (about 5 s; into `node_modules/.ww-test-dist`, leaving `public/` where it
@@ -172,8 +177,10 @@ lands in the hub as before; `tests/entry.spec.ts` (slow lane) plays the warm-up 
 each level's clue, three misses, F9 out and back, and two drawn casts from the bedroom.
 
 `playEpisode` checks each battle part's length (45-120 s of simulation time) for whatever
-fight style the cast drew; `tests/fights.spec.ts` sweeps the four contests through both
-battles (the brawl is the default episode's own).
+fight style the cast drew; `tests/fights.spec.ts` sweeps the four contests, one battle part
+each (item 083, alternating: the race and the beam clash part 2, the race for its finish
+line; the rope pull and the cook-off part 1; both parts until then), and the brawl is the
+default episode's own.
 
 `tests/lenses.spec.ts` (item 080) keeps the third bug hunt's fixes: a held F8, the
 grown-ups page under dad lock, the lock badge after a resize, a hidden tab holding the
@@ -192,11 +199,36 @@ sets it as each part of an episode starts. Whole episodes play their battles at 
 too), and so does `tests/fights.spec.ts`: a fight's checks are counts and simulation time.
 Speed 10 held green on every fight style over three runs once the race's finish-flag check
 read the flag a frame after hearing the line (the battle publishes its state once a frame,
-the voice live); speed 8 gained nothing over 10 there. The full-episode test
-(`tests/episode.spec.ts`) keeps real pacing covered: one scene of each kind at real time
-(speed 1: the bedroom, the warm-up, the hub's helper scene, door a's sentence room and
-battle 1), the rest at 5 and battle 2 at 10. `WW_SPEED=1 npm run test:browser` runs the
-browser lane at real time.
+the voice live); speed 8 gained nothing over 10 there. Real pacing is covered by three
+tests in `tests/episode.spec.ts` at clock speed 1 with real voice and real walking (item 083;
+until then one episode with those parts at real time, about 210 s): the title, the bedroom
+and the warm-up (about 55 s); a sentence room from `?scene=room&slot=a` (23 s); battle 1 from
+`?scene=battle&part=1` at full length (72 s). Each is its own test, so they run on separate
+workers. The default episode's end-to-end checks (three fetched, the villain's two reformed
+lines, the recap's pictures) play the whole episode at the suite's speeds (about 35 s).
+`WW_SPEED=1 npm run test:browser` runs the browser lane at real time.
+
+**Test-only shortcuts** (item 083; tests assert on state and line ids, not on audio or walking):
+
+- **Instant voice**, `?voice=instant`, which `boot` adds unless told otherwise: no audio, no
+  decode wait, and a line ends as soon as a `__ww.state()` call has reported it as speaking
+  (`VoiceBus.seen`; its estimated length is the backstop), so `until` on `voice.speaking`
+  still sees every line and `voice.history` keeps every id. `until` polls every 50 ms (100
+  until item 083). Real voice: `boot(page, query, speed, { voice: 'real' })` for a test about
+  the voice, its captions or real pacing (the real-time scene tests, the hidden tab); any
+  `qa=1` boot (the probe's caption box checks: `layout.spec`, `cover.spec`); a file that
+  sets `VOICE.mode = 'real'` (the bug-hunt checker, the shots); or `WW_VOICE=real` for a
+  whole run.
+- **Teleport**, `__ww.place(x, y)` (`place` in the harness): puts her at (x, y) in a room, or
+  her hero in an open move choice. `choose` and the move choice's pad pick land that way, so
+  a test not about walking no longer steers. `driver.walk = true` steers instead (the
+  bug-hunt checker, the real-time tests); `walkTo` and `stick` always steer, for tests
+  about walking (free play, M3, the stick hint, the bridge's slide).
+- **Short battle**, `?battle=short`: the director's waits between story beats at a fifth
+  (`SHORT_BEATS`, `BattleScene.beat`); the combo, the ultimate and the finish keep their
+  length. For tests that need only the move choice or the finish (rulings, lenses' stick
+  hint, Charge's runes in battle, cover, free play's battle, smoke's two battles). A short
+  battle fails `expectFightLength`; fights, whole episodes and pairs keep the full length.
 
 The game's own timeouts run on that clock too, except the network's: until item 069
 `VoiceBank`'s 15 s voice fetch timeout was 3 s of real time in a test, so on a loaded

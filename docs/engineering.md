@@ -105,6 +105,20 @@ without a new measurement.
   10 was green three runs running. The whole drawn episodes for the bridge (101 s), the
   machine (88 s) and Charge (77 s) became one shared episode (`tests/drawn.spec.ts`) and the
   soak's own two.
+- **Test-only shortcuts (item 083, 2026-10-21)**, three workers on the build. The full run was
+  5.6 minutes of browser tests (one run, 96 passed, 3 failed: the two layout checks and the
+  hidden-tab test, which need real voice; fixed after it), against 7.1 in item 081. The sum of
+  every test's time was 810 s (plus the shared drawn episode's `beforeAll`), so three
+  workers are near the floor. The default whole episode with instant voice, teleports, room
+  parts at 5 and battles at 10 took 36 s (parts: bedroom 3.9, warm-up 2.4, hub scene 1.0, door
+  a 2.9, door b 3.2, battle 1 7.0, hub part 2 4.2, battle 2 8.2). The real time split three
+  ways: title, bedroom and warm-up 55 s, a sentence room 23 s, battle 1 72 s. Each contest
+  fight style's one part took about 10 s. The soak took 72 s, against 2.2 minutes in item 081.
+  The rope pull's pad miss (M7/M17, 0.26% of Jormungandr under a sign) had two causes:
+  `placePads` returned a layout under 0.5% cover as "covering nobody", and in a contest the
+  held bodies keep rocking through the choice's slow clock after the pads are placed (the
+  tug's rock is up to 26 px). Now any cover counts, and a contest keeps the signs 40 px off
+  them (`CONTEST_SWAY`, moveChoice.ts). The two rulings tests were 10 of 10 green after it.
 - **Art and voice share the dev server's six HTTP/1.1 connections** (item 065). `<img>`
   requests rank below `fetch` in Chromium and starved behind the voice bank's twelve
   clip fetches (a battle sat in the Wait scene); `priority: 'low'` fetches are held

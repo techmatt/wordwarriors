@@ -72,7 +72,8 @@ test('the dad lock badge stays in the canvas corner after a resize', async ({ pa
 
 test('a hidden tab holds the voice: the line playing does not end until the tab is back', async ({ page }) => {
   const errors = collectErrors(page);
-  await boot(page, '?scene=bedroom');
+  // Real voice (item 083): the test is about a playing line's audio.
+  await boot(page, '?scene=bedroom', undefined, { voice: 'real' });
   const s = await until(page, (st) => st.scene === 'Bedroom' && Boolean(st.voice.speaking), 30_000, 'a bedroom line');
   const id = s.voice.speaking;
   await setHidden(page, true);
