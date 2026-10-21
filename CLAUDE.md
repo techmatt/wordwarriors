@@ -8,8 +8,8 @@ letters on a keyboard. She loves exploring rooms and stories that start with her
 woken up in bed. Reading fetches things from the rooms of a small house, and the reward
 is a flashy mock battle between characters she likes, which those things power up.
 
-One **episode** (step list in `src/episode/Episode.ts`; walked through in README,
-*Playing an episode*): title → **bedroom** (a dad wakes her with the good news, the
+One **episode** (step list in `src/episode/Episode.ts`; walked through in
+`docs/episode.md`): title → **bedroom** (a dad wakes her with the good news, the
 helper, and the bad news, the villain; the house takes on the villain's mood; no
 reading) → **entry hall warm-up** (`src/scenes/EntryScene.ts`: grab one of nine pictures
 from a letter-sound clue; it is her first battle item) → **house part 1** (the hub:
@@ -46,7 +46,7 @@ Playwright serves its own (README, *Tests*). The sibling game
 | Path | What |
 | --- | --- |
 | `src/` | Game source. `main.ts` boots Phaser; `config.ts` sizes, depth bands, pad colours and every tuning knob named below; `hookState.ts` what scenes publish for the tests (and `walkObjects`). |
-| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom), Journey, Ending (the victory scene), Victory, Parent, and Wait (shown while a scene's art loads); parked: Pick, Alarm, Retreat and `minigames/` (the v0.1 games, Spell the Spell among them; also `Minigame.ts`, the base class the live side rooms extend). |
+| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom), Journey, Ending (the victory scene), Victory, Parent, and Wait (shown while a scene's art loads); parked: Pick, Alarm, Retreat and `minigames/` (the v0.1 games, Spell the Spell among them). "Minigame" means only a pool entry (`src/rules/minigames.ts`). |
 | `src/battle/` | The battle simulation: `BattleScene` (the director scripts `part1`/`part2`), `Fighter`, `abilities`, `movement`, `moveChoice` (`MoveChoice`: the frozen-fight word pick; `padPlace` where its pads go), `hud` (`BattleHud`: names, bars, fetched things, runes); `stages/` stages each fight style. |
 | `src/episode/` | `Episode.ts` the episode's state and step list (scenes call `advance()`; nothing else decides flow), re-exporting `cast.ts` (who plays whom) and `plans.ts` (the episode's draws). |
 | `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only), `dadLock`, `dadButtons` (keys 1 / 2, Dad's no / yes). |
@@ -55,7 +55,7 @@ Playwright serves its own (README, *Tests*). The sibling game
 | `src/art/` | Art on demand (item 065): `ArtBank` (load, the `art: not ready` safety net), `needs` (`artFor`: each scene's art), `gate` (`startScene`: every scene starts through it, behind the Wait scene when its art lags). |
 | `src/state/` | `ProgressStore` (localStorage, versioned, per sound and per word). |
 | `src/rules/` | Phaser-free, unit-tested: the cast, word bank, moves and gift word, warm-up, sentences, word machine, minigame pool, story and victory-scene draws; `difficulty` (the `DIFFICULTY` knob over every help ramp) and `recent` (rotations across episodes). |
-| `src/world/` | `RoomScene` (walk-to-answer rooms), `Player` (her character as the cursor), `houseMood`. |
+| `src/world/` | `RoomScene` (walk-to-answer rooms), `SideRoom` (the base class every side room's game extends, the parked v0.1 games too: piece meter, no-fail `right()` / `wrong()`), `Player` (her character as the cursor), `houseMood`. |
 | `src/ui/`, `src/fx/` | Caption ribbon, follow-the-speaker bubbles, button dots, bag; particles and juice, `sceneGen` (`SceneGen`: stops a scene run's await chain at shutdown). |
 | `src/qa/` | The bug-hunt checker's in-page probe (`?qa=1`; README, *The bug-hunt checker*). |
 | `content/battle/roster.ts` | **Every character**, good and evil: style, abilities, taunts, ultimate, counter-item, the villain's house mood. Every roster character is also a villain. The dads' forms are roster characters with `person`. |
@@ -70,7 +70,7 @@ Playwright serves its own (README, *Tests*). The sibling game
 | `tools/shared.ts`, `tools/phonics/audit.ts` | `isMain`, `exists`, `readLines`, shared by the voice and art tools; `bank:audit` (the word bank's coverage table). |
 | `tools/recorder/` | `phonics-recorder.html`, the page Matt records the letter sounds on (README, *Matt's recordings*); its hosted copy is synced by the planner, never edited here. |
 | `tests/` | Playwright specs + `harness.ts`; `unit/` for node:test; `shots/` UI screenshots (README, *Tests*); `qa/` the bug-hunt checker. |
-| `docs/` | `systems.md` entry points; `engineering.md` measured facts; `content.md` how to add each kind of content; `recording.md` Matt's voice side; `art.md` (generated) the art brief; `qa-findings.md` the bug-hunt findings (known issues and Matt's calls). |
+| `docs/` | `systems.md` entry points; `episode.md` an episode step by step (the cast draw, dad lock, the phonics rooms, dev keys and `?scene=` URLs, difficulty and variety); `engineering.md` measured facts; `content.md` how to add each kind of content; `recording.md` Matt's voice side; `art.md` (generated) the art brief; `qa-findings.md` the bug-hunt findings (known issues and Matt's calls). |
 
 ## Commands
 
@@ -95,12 +95,14 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `npm run art:alts -- <ids…> --sheet=<file>` | Draw candidates (3 per id) and a comparison sheet; the game's art is untouched |
 | `npm run art:pick -- <id> <n>` | Make candidate `n` the game's art (`0` restores the original) |
 | `npm run bank:audit` | The word bank's coverage table (`-- --gaps` the shortfalls; README, *The word bank's coverage rule*) |
+| `npm run perf` | Boot timings (~1.5 min; its own Playwright config, `tests/perf/`) |
+| `SHOTS_TAG=<tag> npm run shots [-- shots.pw \| polish.pw]` | UI and battle screenshots into `scratch/` (README, *Not tests*) |
+| `QA_TAG=<tag> npm run qa [-- -g <scenario>]` | The bug-hunt checker (README, *The bug-hunt checker*) |
+| `npm run test:pairs` | Every ally × villain pair (~1 h; `WW_PAIRS=<part>` for some). Otherwise `pairs.spec.ts` shows one skipped test |
 
-Not npm scripts, each a Playwright config of its own (README, *Tests*): boot timings
-(`--config tests/perf/perf.config.ts`), UI and battle screenshots (`SHOTS_TAG=<tag>`,
-`--config tests/shots/shots.config.ts`), the bug-hunt checker (`QA_TAG=<tag>`,
-`--config tests/qa/qa.config.ts`), every ally × villain pair (`WW_PAIRS=+ npx playwright
-test tests/pairs.spec.ts`; without `WW_PAIRS` the spec has no tests).
+The timed Charge round (`charge.spec.ts`, the snappy round) asserts its limits only on one
+worker: `npx playwright test tests/charge.spec.ts -g snappy --workers=1` (README, *Speed,
+GPU and workers*); the two-worker lanes log its time.
 
 Adding a character, ability, word or line is data work: edit `content/`, then
 `npm run voice:lines && npm run voice:build && npm run art:placeholders` ("the three
@@ -222,7 +224,7 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 | "X casts spells" / "X's gift should sound like a spell" | `CASTERS` in `content/house/scenes.ts`; `spell` on `BANK` entries marks spell-sounding words |
 | "make it harder / easier" / "let the help fade" / "back to base" | `DIFFICULTY` in `src/config.ts` (1 base: every help ramp held at its start; 2; 3 all the way); shown on the grown-ups page |
 | "longer / shorter words in X" (warm-up, bridge, word machine, charge) | `GRAB.maxUnits`, `BRIDGE.maxUnits`, `WORD_MACHINE.maxUnits`, `CHARGE.units` in `src/config.ts` (sound units: SH is one). Every word is in play otherwise (item 067: no level gate) |
-| "she sees X too often" / "repeats too soon" | `VARIETY` in `src/config.ts` (`rotations`, `words`, `wordWeight`, `gameWeight`; README, *Variety*) |
+| "she sees X too often" / "repeats too soon" | `VARIETY` in `src/config.ts` (`rotations`, `words`, `wordWeight`, `gameWeight`; `docs/episode.md`, *Variety across episodes*) |
 | "add a bedroom / side room / villain mood" | `content/house/house.ts` or the villain's `house` in the roster, the three commands |
 | "turn the pick screens back on" / "always the same cast" | `EPISODE_DEFAULTS` in `src/config.ts` (`pickScreens`, `randomCast: false`) |
 | "Matt should wake her more / less often" | `CAST_ODDS` in `src/config.ts` |

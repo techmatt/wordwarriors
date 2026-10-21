@@ -482,7 +482,7 @@ Shaky words come more often, and a word she missed (any wrong try) stays in, so 
 comes round again soon; coverage favours the vowels, first sounds and levels she has
 met least; recency (item 067) makes her latest right-first-time reads weigh
 `VARIETY.wordWeight`. Every word is in play from the start (item 067: no level gate);
-the decoding games keep to short words by their own limits (README, *Difficulty and
+the decoding games keep to short words by their own limits (`docs/episode.md`, *Difficulty and
 variety*). The same weighting draws the move pads, the gift word, the warm-up's word and
 the word machine's words. A room's other pictures are chosen for reading
 (`distractorsFor`): while the key word is new they start with other letters; once it is
