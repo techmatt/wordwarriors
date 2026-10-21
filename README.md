@@ -16,7 +16,7 @@ npm run dev
 Then open **http://localhost:5174** in Chrome or Edge and press F11 for fullscreen. Plug
 the Xbox 360 pad in first; press green (A) on the title screen. The keyboard works too:
 arrows to walk, Space/Enter for green, Tab for yellow (say it again / hint), Esc for red, 3 for blue, and the
-backquote / tilde key for dad lock (`docs/episode.md`). The number keys **1** (no) and **2** (yes) are
+backquote / tilde key for dad lock (`docs/episode.md`, *Dad lock*). The number keys **1** (no) and **2** (yes) are
 Dad's, for the games that ask him whether she said it (`docs/episode.md`, *Dad buttons*).
 
 **Free play** (item 060): wherever she is free to move and no answer is open (the rooms,
@@ -93,7 +93,9 @@ found the fast lane at 7.8 minutes because 19 tests over 10 s (most of `cover`, 
 `bridge` and `charge`) had come in untagged; keep one cheap test of a new feature in the fast
 lane and tag the rest. A test that fails only on some draws is not flaky: the bridge's
 level-1 test failed whenever it drew EGG (it expected `letter_gg_sound`; a doubled letter
-sounds as its single letter, `soundOf`) and passed on the retry's other draw. Before adding
+sounds as its single letter, `soundOf`) and passed on the retry's other draw; the level-3
+test the same way on THUMB and LAMB (MB sounds as M; item 072: the spec now takes each
+stone's sound from the bank's `sounds`, as the room does). Before adding
 a slow test, look for a walk that already goes there: item 036 took the full run from 45
 minutes back down by folding new checks into walks that were already played (a drawn
 cast's bedroom checks into the warm-up's seed sweep, the random-cast episodes into the

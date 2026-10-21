@@ -10,7 +10,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { soundOf } from '../content/phonics/bank';
+import { BANK_BY_WORD } from '../content/phonics/bank';
 import { canHold } from '../content/phonics/letters';
 import { letterSoundLine } from '../content/voice/ids';
 import { BRIDGE_WORDS, CROSS_WORDS, bridgeTier } from '../src/rules/bridge';
@@ -19,8 +19,10 @@ import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom,
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/054_${name}.png` });
 
 const bridge = (s: WWState) => s.room?.bridge;
-/** Each stone's sound line: a doubled letter sounds as its single letter (EGG is E, then G's sound). */
-const soundLines = (units: string[]) => units.map((u) => letterSoundLine(soundOf(u)));
+/** Each stone's sound, as the bank spells the word (EGG's GG is G's sound, THUMB's MB is M's: item 072). */
+const soundsOf = (b: { word: string }) => BANK_BY_WORD[b.word]!.sounds;
+/** Each stone's sound line. */
+const soundLines = (b: { word: string }) => soundsOf(b).map(letterSoundLine);
 const levels = (s: WWState) => (s.progress as unknown as { bridgeLevels: Record<string, number> }).bridgeLevels;
 
 /** Every bridge word at help level `n` (all of them: at level 2 or more the later tiers open too). */
@@ -65,9 +67,9 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
 
   // Onto the first held stone (a stop like BAG's B plays once: since item 067 the first word
   // may start with one; every word has a vowel) and stand still: its sound is held.
-  const h = b0.units.findIndex((u) => canHold(soundOf(u)));
+  const h = soundsOf(b0).findIndex(canHold);
   await standOn(page, h);
-  const first = soundLines(b0.units)[h]!;
+  const first = soundLines(b0)[h]!;
   await until(page, (st) => bridge(st)?.holding === first, 10_000, 'first held stone held');
   await shot(page, 'on_stone');
   // Item 058: one stretched sound (HELD_MS, 1.3 s: 260 ms at SPEED 5x, too
@@ -85,7 +87,7 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
   const far = await until(page, (st) => bridge(st)?.phase === 'pick' && !st.room!.locked, 60_000, 'far bank');
   // (The first stone sounded twice while she stood on it.)
   const sounds = far.voice.history.filter((id) => id.startsWith('letter_')).filter((id, k, all) => id !== all[k - 1]);
-  expect(sounds.slice(0, b0.units.length)).toEqual(soundLines(b0.units));
+  expect(sounds.slice(0, b0.units.length)).toEqual(soundLines(b0));
   expect(far.voice.history).not.toContain(`word_${b0.word}`);
   await shot(page, 'far_bank');
 
@@ -143,7 +145,7 @@ test('Stretchy Bridge, level 3: silent stones; the pictures only after Dad says 
   await page.keyboard.press('Digit1');
   const asked = await until(page, (st) => bridge(st)?.asking === true && bridge(st)!.replays === 1, 60_000, 'replayed, asks again');
   const replay = asked.voice.history.slice(say.voice.history.length);
-  expect(replay.filter((id) => id.startsWith('letter_'))).toEqual(soundLines(b0.units));
+  expect(replay.filter((id) => id.startsWith('letter_'))).toEqual(soundLines(b0));
   expect(asked.room!.spots).toHaveLength(0);
   // His yes (key 2): the pictures come.
   await page.keyboard.press('Digit2');
@@ -180,9 +182,9 @@ test('Stretchy Bridge (item 069): after yellow on a held stone, the stone sounds
   const s0 = await until(page, (st) => bridge(st)?.phase === 'slide' && !st.room!.locked, 60_000, 'first bridge');
   const b0 = bridge(s0)!;
   // A held sound to stand on (MAP's M, not a stop like CAT's C).
-  const i = b0.units.findIndex((u) => canHold(soundOf(u)));
+  const i = soundsOf(b0).findIndex(canHold);
   test.skip(i < 0, `${b0.word} has no held sound`);
-  const first = soundLines(b0.units)[i]!;
+  const first = soundLines(b0)[i]!;
   await standOn(page, i);
   await until(page, (st) => bridge(st)?.holding === first, 10_000, 'held');
   await press(page, 'yellow');
@@ -229,7 +231,7 @@ test("Stretchy Bridge, level 2: silent stones until Dad's 2, a hint that sounds 
   await dad(page, 'yes');
   const hinted = await until(page, (st) => bridge(st)?.phase === 'slide' && !st.room!.locked && bridge(st)!.voiced, 60_000, 'hint given');
   expect(bridge(hinted)!.aided).toBe(true);
-  expect(hinted.voice.history.filter((id) => id.startsWith('letter_'))).toEqual(soundLines(b0.units));
+  expect(hinted.voice.history.filter((id) => id.startsWith('letter_'))).toEqual(soundLines(b0));
   // Now the stones sound as she slides.
   await slideAcross(page);
   const far = await until(page, (st) => bridge(st)?.phase === 'pick' && !st.room!.locked, 60_000, 'far bank');
