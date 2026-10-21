@@ -61,7 +61,7 @@ export interface BankEntry {
   draw?: 'fan' | 'log' | 'mop' | 'pot' | 'mug' | 'rug';
   say?: string;
   /** The item that added it: before 037 (`old`), 037, 040, 054, 056 or 058. */
-  since?: '037' | '040' | '054' | '056' | '058';
+  since?: '037' | '040' | '054' | '056' | '058' | '059';
   /** It sounds like a spell (ZAP, HEX, POP; not MUD or NAP): a caster's gift leans to it (item 038, `drawGift`). */
   spell?: true;
   /**
@@ -133,7 +133,7 @@ const ENTRIES: BankEntry[] = [
   A('fog', '🌫️'), A('tug', '➰'), A('fix', '🔧'),
   // Item 037, level 1: short i, short e and the rare first sounds (Y, V, K, L, J, G).
   T('jam', '🍓', NEW), T('yak', '🐂', NEW_ODD), T('vat', '🍯', NEW_ODD), T('leg', '🦵', NEW), T('peg', '📎', NEW_ODD),
-  T('wig', '💇', NEW_ODD), T('bib', '👶', NEW), T('fig', '🟣', NEW_ODD), T('six', '🎲', NEW), B('fin', '🦈', NEW_ODD),
+  T('wig', '💇', NEW_ODD), T('bib', '👶', NEW), T('fig', '🟣', NEW_ODD), T('six', '6️⃣', NEW), B('fin', '🦈', NEW_ODD),
   T('kit', '🧰', NEW_ODD), T('lip', '👄', NEW), T('cog', '⚙️', NEW_ODD), T('rod', '🎣', NEW_ODD), T('pod', '🌱', NEW_ODD),
   T('gum', '🍬', NEW_ODD), T('bun', '🍞', NEW), T('hut', '🏠', NEW_ODD), T('sub', '🐳', NEW_ODD),
   A('nap', '😴', NEW), A('wag', '🐕', NEW), A('jab', '🥊', NEW), A('red', '🔴', NEW), A('hex', '🔮', NEW_SPELL),
@@ -171,6 +171,8 @@ const ENTRIES: BankEntry[] = [
   // letter sound the language allows (COVERAGE above). Short-vowel words first:
   // doubled letters (EGG, BELL), NG (KING), the -ING and -OCK families, S and T
   // pictures for the bridge.
+  // Item 059: number words are big decorated numerals (a die read as DICE, not SIX).
+  T('ten', '🔟', { since: '059' }),
   T('egg', '🥚', NEW_056), T('bell', '🔔', NEW_056), T('doll', '🎎', NEW_056), T('tap', '🚰', NEW_056),
   T('elf', '🧝', NEW_056), T('grass', '🌾', NEW_056), T('glass', '🥤', NEW_056), T('sink', '🧽', NEW_056),
   T('king', '🤴', NEW_056), T('ring', '💍', NEW_056), T('wing', '🦅', NEW_056), T('shell', '🐚', NEW_056),

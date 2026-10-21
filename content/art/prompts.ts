@@ -48,8 +48,8 @@ const FIGHT_PROPS = FIGHTS.flatMap((f) => (f.props ?? []).map((p) => fightPropAr
 // Item 040's words: none is green.
 // Item 054's words: none is green.
 const BANK_054 = ['mat', 'man', 'lid', 'lock'].map((w) => `pic_${w}`);
-// Item 056's words but the green ones (GRASS, ELF, BUSH).
-const BANK_056 = ['egg', 'bell', 'doll', 'tap', 'glass', 'sink', 'king', 'ring', 'wing', 'shell', 'chips', 'thumb', 'lamb', 'quest', 'quilt', 'queen', 'goat', 'jeep', 'sheep', 'three', 'cheese', 'kite', 'bike', 'vase', 'cake'].map((w) => `pic_${w}`);
+// Item 056's words but the green ones (GRASS, ELF, BUSH), and item 059's TEN.
+const BANK_056 = ['egg', 'bell', 'doll', 'tap', 'glass', 'sink', 'king', 'ring', 'wing', 'shell', 'chips', 'thumb', 'lamb', 'quest', 'quilt', 'queen', 'goat', 'jeep', 'sheep', 'three', 'cheese', 'kite', 'bike', 'vase', 'cake', 'ten'].map((w) => `pic_${w}`);
 const BANK_040 = ['vet', 'chest', 'bin', 'rock', 'clock', 'stick', 'brush', 'truck', 'bath', 'plant', 'crib', 'key', 'yoyo'].map((w) => `pic_${w}`);
 const BANK_037 = ['jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'gum', 'bun', 'hut', 'sub', 'nap', 'wag', 'jab', 'red', 'hex', 'jig', 'mix', 'jog', 'bop', 'dot', 'hum', 'yum', 'drum', 'crab', 'flag', 'sled', 'nest', 'tent', 'desk', 'belt', 'vest', 'gift', 'lamp', 'hand', 'mask', 'raft', 'plug', 'ant', 'milk', 'jump', 'spin', 'swim', 'flip', 'stomp', 'slam', 'grab', 'clap', 'bump', 'skip', 'twist', 'melt', 'lift', 'plop', 'flop', 'trap', 'blast', 'drip', 'ship', 'fish', 'duck', 'sock', 'moth', 'shed', 'chick', 'chop', 'kick', 'rush'].map((w) => `pic_${w}`);
 /**
@@ -255,7 +255,8 @@ export const PICK_NOTES: Record<string, string> = {
   pic_rush: "New word RUSH (item 037, level 3, a move word: the victory recap and the fan on its super). `current` is candidate 3, promoted by item 037: strongest sense of fast, sweeping motion: big wind swirls and leaves flying across the frame. `0` is the painted placeholder. Watch: All three show a gust of wind with leaves. A 4-year-old will say WIND or BLOW, not RUSH. If RUSH has to be pictured, it probably needs a running figure hurrying with speed lines.",
   pic_shed: "New word SHED (item 037, level 3, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 2, promoted by item 037: a small wooden garden shed with a plank door and hinges, cleanly cut; 1 and 3 are just as good. `0` is the painted placeholder. Watch: Any of the three could still be named HUT or HOUSE; the plank door and hinges are what make it read as a shed.",
   pic_ship: "New word SHIP (item 037, level 3, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 3, promoted by item 037: the simplest sailing ship, fewest ropes. `0` is the painted placeholder.",
-  pic_six: "New word SIX (item 037, level 1, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 2, promoted by item 037: cleanest, biggest die face with six pips and no numerals. `0` is the painted placeholder. Watch: May be named DICE rather than SIX. Fine if she counts the dots.",
+  pic_six: "Word SIX (item 037). Redrawn by item 059 as a big decorated numeral 6 (blue, polka dots and stars): the die of item 037 read as DICE, not SIX. `0` is the painted placeholder.",
+  pic_ten: "New word TEN (item 059, level 1, a picture to read): a big decorated numeral 10, a purple 1 and an orange 0 with rainbow stripes. `0` is the painted placeholder.",
   pic_skip: "New word SKIP (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 1, promoted by item 037: skipping rope with the most visible motion lines; clean cut. `0` is the painted placeholder. Watch: With no child skipping, it reads as ROPE or JUMP ROPE, not the action SKIP. A child mid-skip would be better.",
   pic_slam: "New word SLAM (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 2, promoted by item 037: fist hitting the ground with rocks flying, so it reads as a smash rather than a glowing magic circle. `0` is the painted placeholder. Watch: Could be named PUNCH or SMASH.",
   pic_sled: "New word SLED (item 037, level 2, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 2, promoted by item 037: the three-quarter view shows both curled runners and the slats on snow. Side-on views 1 and 3 look a bit more like a bench. `0` is the painted placeholder. Watch: She may say SLEIGH, but SLED is the more likely word for a child.",
@@ -409,7 +410,8 @@ const PICTURES: Record<string, string> = {
   wig: 'a wig: a big fluffy curly pink party wig on its own, no head and no stand inside it',
   bib: "a bib: a baby's white bib with a pink trim and ties, a few blue polka dots, no picture or writing on it",
   fig: 'a fig: one purple fig cut in half showing its bright pink seedy inside, the other half whole beside it; a fig, not a plum',
-  six: 'six: a single white dice showing its face of six black dots in two rows of three, facing the viewer',
+  // Item 059: number words are decorated numerals; a die read as DICE.
+  six: 'six: a big bold number 6, decorated: bright blue and covered in colourful polka dots and little stars, standing alone; the numeral alone, no dice, no dots to count, no letters',
   fin: "a fin: a grey shark's fin poking up out of blue water, little ripples round it, nothing else of the shark showing",
   kit: 'a kit: an open red toolbox with a spanner, a hammer and a screwdriver sticking out of it, no label',
   lip: 'a lip: a pair of smiling shiny red cartoon lips, nothing else of the face',
@@ -527,6 +529,7 @@ const PICTURES: Record<string, string> = {
   jeep: 'a jeep: a green open-top safari jeep with big chunky wheels, side-on; a jeep, not a van or a truck',
   sheep: 'a sheep: a big fluffy white woolly sheep with a black face, standing side-on',
   three: 'three: a big bright red number 3 made of shiny balloons, nothing else; the numeral alone, no letters',
+  ten: 'ten: a big bold number 10, decorated: a bright purple 1 and an orange 0 with rainbow stripes and little sparkles, side by side; the numeral alone, no letters',
   cheese: 'cheese: one yellow wedge of cheese full of round holes',
   kite: 'a kite: a diamond-shaped red and yellow kite flying, a long tail of bows',
   bike: "a bike: a child's red bicycle with two wheels, side-on",

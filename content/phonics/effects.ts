@@ -91,7 +91,7 @@ const THING_EFFECTS: WordEffect[] = [
   { word: 'wig', look: 'a silly wig that lands on the villain\'s head: it cannot see!', ability: use('wig', 'bolt', 0xffd23f, { ...pic('wig'), count: 1, status: 'stun', duration: 2, homing: true }) },
   { word: 'bib', look: 'baby bibs flying at the villain, messy', ability: use('bib', 'bolt', 0x9ad8ff, { ...pic('bib'), count: 3, homing: true }) },
   { word: 'fig', look: 'figs plopping down, squish', ability: use('fig', 'rain', 0x7b2cbf, { ...pic('fig'), count: 10 }) },
-  { word: 'six', look: 'six big dice tumbling down on the villain', ability: use('six', 'rain', 0xffffff, { ...pic('six'), count: 6, power: 3 }) },
+  { word: 'six', look: 'six big number sixes tumbling down on the villain', ability: use('six', 'rain', 0xffffff, { ...pic('six'), count: 6, power: 3 }) },
   { word: 'kit', look: 'a toolkit that builds a wall round the team', ability: use('kit', 'shield', 0xe63946, { duration: 4 }) },
   { word: 'lip', look: 'big smoochy kisses flying at the villain, yuck!', ability: use('lip', 'bolt', 0xff3d7a, { ...pic('lip'), count: 4, homing: true }) },
   // Not upright: a cog spins as it flies.
@@ -172,6 +172,7 @@ const THING_EFFECTS: WordEffect[] = [
   { word: 'goat', look: 'a goat that charges headfirst through the villain, baa', ability: use('goat', 'dash', 0xf0e6d2, { power: 3 }) },
   { word: 'jeep', look: 'a jeep that drives straight through the villain, beep beep', ability: use('jeep', 'dash', 0x6a8a3a, { power: 3 }) },
   { word: 'sheep', look: 'a flock of woolly sheep bouncing at the villain', ability: use('sheep', 'bolt', 0xffffff, { ...pic('sheep'), count: 4, homing: true }) },
+  { word: 'ten', look: 'ten bright stars raining down on the villain, ten, nine, eight...', ability: use('ten', 'rain', 0x7bd389, { glyph: '⭐', count: 10, power: 3 }) },
   { word: 'three', look: 'three big stars that drop down on the villain, one, two, three', ability: use('three', 'rain', 0xffd23f, { glyph: '⭐', count: 3, power: 3 }) },
   { word: 'cheese', look: 'cheese wedges raining down on the villain, smelly', ability: use('cheese', 'rain', 0xffd23f, { ...pic('cheese'), count: 10 }) },
   { word: 'kite', look: 'kites that swoop round her, then dive at the villain', ability: use('kite', 'orbit', 0xff5ab4, { ...pic('kite'), count: 4, duration: 1.6 }) },
