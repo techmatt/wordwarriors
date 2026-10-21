@@ -71,6 +71,8 @@ const HELPER = { x: ALTAR.x - 330, y: 620 };
 /** The word at the top: her face, then a slot per sound unit; its picture shows at the right once read. */
 const BAR = { x: GAME_WIDTH / 2, y: 78, slot: 104, gap: 14 };
 const PICTURE = 120;
+/** The beat between the sounds when they are sounded out together (the entry hall's is 400, the sentence room's 450). */
+const SOUND_GAP_MS = 400;
 
 export class ChargeRoom extends Minigame {
   protected override dialogueAware = true;
@@ -541,6 +543,8 @@ export class ChargeRoom extends Minigame {
         const t = this.barTexts[k];
         this.tweens.add({ targets: [t, this.barSlots[k]], scale: 1.3, duration: 160, yoyo: true });
         await this.say(letterSoundLine(this.plan.runes[k]!));
+        // A beat between sounds, as every other sound-out has (item 069: back to back they ran toward a blend).
+        if (k < this.plan.runes.length - 1) await this.wait(SOUND_GAP_MS);
       }
       await this.wait(200);
     } else {

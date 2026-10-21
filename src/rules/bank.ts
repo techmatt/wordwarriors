@@ -102,7 +102,8 @@ export function wordWeight(store: ProgressStore, word: string, m: Met = met(stor
  * `said` plus every bank word heard inside one of them (item 039): a plural
  * (LEGS: LEG, FOXES: FOX), an ending on a doubled last letter (PIGGY, PIGGIES,
  * BIGGEST, TOPPING, YUMMIEST), a plain ending (JUMPING), or a compound whose
- * other half is a word (CUPCAKES, PANCAKES, SUNSHINE, PIGLETS). Exact-word
+ * other half is a word (CUPCAKES, PANCAKES, SUNSHINE, PIGLETS, PIGGYBACK), or
+ * a compound's second half after a listed first half (DUMBBELL: BELL). Exact-word
  * matching let Smaug's "piggy bank" threat come before PIG as a key word.
  * Not any prefix: FIND, FIGHT, HATES, KITCHEN, BATTLES, CAPTAIN stay clear.
  */
@@ -121,10 +122,16 @@ export function withStems(said: Iterable<string>): string[] {
       const ending =
         new RegExp(`^${last}(y|ie|ies|ing|er|est|iest|ed)$`).test(rest) || (/[^aeiou]{2}$/.test(b.word) && /^(y|ies|ing|er|est|ed)$/.test(rest));
       const half = rest.replace(/s$/, '');
-      const compound = rest.length >= 3 && (Boolean(BANK_BY_WORD[half]) || COMPOUND_HALVES.has(half));
+      // A pet form inside a compound (item 069: PIG-GY-BACK, from "Piggyback Charge").
+      const pet = new RegExp(`^${last}(?:y|ie)([a-z]{3,})$`).exec(rest)?.[1]?.replace(/s$/, '');
+      const compound = (rest.length >= 3 && (Boolean(BANK_BY_WORD[half]) || COMPOUND_HALVES.has(half))) || Boolean(pet && (BANK_BY_WORD[pet] || COMPOUND_HALVES.has(pet)));
       if (plural || ending || compound) out.add(b.word);
       // Item 056: a compound's other half when it is a bank word too (CUP-CAKES says CAKE).
       if (compound && BANK_BY_WORD[half]) out.add(half);
+    }
+    for (const h of COMPOUND_HEADS) {
+      const tail = w.startsWith(h) ? w.slice(h.length).replace(/s$/, '') : '';
+      if (tail && BANK_BY_WORD[tail]) out.add(tail);
     }
   }
   return [...out];
@@ -132,7 +139,15 @@ export function withStems(said: Iterable<string>): string[] {
 
 /** Second halves of compounds the game says, beyond bank words (CUP-CAKES, SUN-SHINE, PIG-LETS). */
 // Item 056: DOM, so KINGDOM says KING.
-const COMPOUND_HALVES = new Set(['cake', 'shine', 'let', 'ball', 'fish', 'man', 'box', 'dom']);
+const COMPOUND_HALVES = new Set(['cake', 'shine', 'let', 'ball', 'fish', 'man', 'box', 'dom', 'back']);
+
+/**
+ * First halves of compounds the game says whose second half is a bank word
+ * (item 069): DUMB-BELL says BELL, BROOM-STICK STICK, BATH-TUB TUB. Listed,
+ * not any ending: HERSELF, LISTEN and KITCHEN do not say ELF, TEN or HEN.
+ */
+// Not LOLLI yet: the /l/ rune's "Lick a lollipop" says POP, a pad word (qa-findings M16); add it once that line changes.
+const COMPOUND_HEADS = ['bath', 'broom', 'dumb', 'kettle', 'ear', 'hand', 'hazel', 'snow', 'war'];
 
 /**
  * Draw one word from bag `which`: an `eligible` word still in it, by

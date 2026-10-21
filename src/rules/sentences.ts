@@ -167,7 +167,9 @@ export function saidEarly(cast: { hero: string; ally: string | null; villain: st
     add(wordsOf(v.house.threat));
     add(wordsOf(v.house.threatSay));
   }
-  if (cast.ally) for (const [a, b] of [[cast.hero, cast.ally], [cast.ally, cast.hero]] as const) add(wordsOf(comboPart(a, b).name));
+  // The combo's name: with no ally the helper steps in for it (BattleScene.combo), so its name is said too (item 069).
+  const partner = cast.ally ?? cast.helper;
+  for (const [a, b] of [[cast.hero, partner], [partner, cast.hero]] as const) add(wordsOf(comboPart(a, b).name));
   return [...out];
 }
 

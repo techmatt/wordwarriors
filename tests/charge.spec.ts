@@ -95,6 +95,21 @@ test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on t
   const toRead = read.room!.charge!.readAtMs;
   // Nothing was pressed and nothing asked before the read.
   expect(read.room!.charge!.charged).toEqual(runes);
+  // Every frame from here: when each letter sound starts and stops (game clock), for the gaps below.
+  await page.evaluate(() => {
+    const w = window as unknown as { __ww: { state(): { voice: { speaking: string | null } } }; __sounds: { id: string; from: number; to: number }[] };
+    w.__sounds = [];
+    let cur: { id: string; from: number; to: number } | null = null;
+    const tick = () => {
+      const id = w.__ww.state().voice.speaking;
+      const now = performance.now();
+      if (cur && cur.id !== id) cur = null;
+      if (!cur && id?.startsWith('letter_')) w.__sounds.push((cur = { id, from: now, to: now }));
+      if (cur) cur.to = now;
+      requestAnimationFrame(tick);
+    };
+    tick();
+  });
   await dad(page, 'no');
   let ms = 0;
   const hub = await until(page, (st) => {
@@ -107,6 +122,11 @@ test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on t
   expect(at).toBeGreaterThan(-1);
   expect(h.slice(at + 1, at + 1 + runes.length)).toEqual(runes.map((r) => `letter_${r}_sound`));
   expect(h.indexOf(`word_${word}`)).toBeGreaterThan(at);
+  // A beat between the sounds, never back to back (item 069: they ran toward a blend).
+  const sounds = await page.evaluate(() => (window as unknown as { __sounds: { id: string; from: number; to: number }[] }).__sounds);
+  const together = sounds.slice(-runes.length);
+  expect(together.map((x) => x.id)).toEqual(runes.map((r) => `letter_${r}_sound`));
+  for (let i = 1; i < together.length; i++) expect(together[i]!.from - together[i - 1]!.to, `gap before ${together[i]!.id}`).toBeGreaterThan(250);
   expect(hub.episode.fetched).toEqual([word]);
   expect(hub.episode.charged?.sounds).toEqual(runes);
   expect(hub.progress.words[word]!.recent).toEqual([false]);

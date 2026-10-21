@@ -13,7 +13,7 @@ import { BANK, BANK_BY_WORD } from '../../content/phonics/bank';
 import { distractorsFor, withStems } from '../../src/rules/bank';
 import { MINIGAME_BY_ID } from '../../src/rules/minigames';
 import { drawGift, drawMove } from '../../src/rules/moves';
-import { BAG_WORDS, drawKey, episodePlans, type EpisodeInput } from '../../src/rules/sentences';
+import { BAG_WORDS, drawKey, episodePlans, saidEarly, type EpisodeInput } from '../../src/rules/sentences';
 import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
 
 function memory(): StorageLike {
@@ -88,6 +88,14 @@ test('withStems: a bank word heard inside a plural, a pet form, an ending or a c
   const said = withStems(['piggy', 'legs', 'cupcakes', 'pancakes', 'foxes', 'biggest', 'topping', 'yummiest', 'sunshine', 'find', 'fight', 'fighting', 'hates', 'hating', 'kitchen', 'battles', 'captain']);
   for (const w of ['pig', 'leg', 'cup', 'pan', 'fox', 'big', 'top', 'yum', 'sun']) if (BANK_BY_WORD[w]) assert.ok(said.includes(w), w);
   for (const w of ['fin', 'fig', 'hat', 'kit', 'bat', 'cap']) assert.ok(!said.includes(w), w);
+});
+
+test("withStems (item 069): a pet form inside a compound (PIGGYBACK: PIG) and a listed compound's second half (DUMBBELL: BELL, BROOMSTICK: STICK); HERSELF, LISTEN, SCARED are not ELF, TEN, RED", () => {
+  const said = withStems(['piggyback', 'dumbbell', 'kettlebell', 'broomstick', 'bathtub', 'earrings', 'herself', 'listen', 'scared', 'walking']);
+  for (const w of ['pig', 'bell', 'stick', 'tub', 'ring']) if (BANK_BY_WORD[w]) assert.ok(said.includes(w), w);
+  for (const w of ['elf', 'ten', 'red', 'king']) assert.ok(!said.includes(w), w);
+  // With no ally the helper steps into the combo: its name (PIGGYBACK CHARGE with Dada Jason) is said too.
+  assert.ok(withStems(saidEarly({ hero: 'julia', ally: null, villain: 'tiamat', helper: 'dada_jason' })).includes('pig'));
 });
 
 test("the fight styles' floating words are never bank words (the cook-off's YUM! and FLIP! were pads to come)", () => {
