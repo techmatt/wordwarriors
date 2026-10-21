@@ -38,6 +38,11 @@ function upcoming(key: string): string[] {
       // The duel under the logo picks from what has loaded (TitleScene): every form, in the background.
       out.push(...ROSTER.flatMap((c) => [charArt(c.id, false), charArt(c.id, true)]));
       break;
+    case 'Bedroom':
+      // The warm-up's word and pictures are drawn here, early: the bedroom has no
+      // reading, so her progress is what the hall would have drawn from.
+      add(sceneOf(next), next?.kind === 'grab');
+      break;
     case 'Journey':
       add(sceneOf(currentStep()));
       break;

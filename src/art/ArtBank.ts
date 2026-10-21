@@ -20,14 +20,22 @@ import Phaser from 'phaser';
 
 import { ART_BY_ID } from '../../content/art/assets';
 
-/** Pictures fetched and decoded at once. */
+/** Pictures fetched and decoded at once for a scene about to show. */
 const SLOTS = 8;
 /**
- * A fetch is given up after this and tried once more, then the file gets the
- * magenta square. Long: test clocks run fast (`WW_SPEED` 5 makes it 12 s real)
- * and a slow lane fetches through a busy dev server (20 s timed out there).
+ * At once for the background (the next scene's): fewer, so the voice clips the
+ * scene is saying now keep the connections (item 065's sweep: with more, lines
+ * played with no clip, `voice-silent`).
  */
-const FETCH_TIMEOUT_MS = 60_000;
+const BACKGROUND_SLOTS = 3;
+/**
+ * A fetch still out after this gives up its slot so the queue moves on, but is
+ * never given up itself: a slow picture is waited for (behind the Wait scene),
+ * never painted magenta. Item 065's bug-hunt sweep saw pictures queue 12 s
+ * behind voice clips on the dev server's six connections; given up, they
+ * showed as magenta squares in the battle.
+ */
+const SLOT_MS = 30_000;
 
 interface Job {
   id: string;
@@ -127,23 +135,32 @@ export class ArtBank {
 
   private pump(): void {
     while (this.active < SLOTS && this.waiting.length) {
+      if (!this.waiting[0]!.urgent && this.active >= BACKGROUND_SLOTS) return;
       const job = this.waiting.shift()!;
       this.active++;
+      let freed = false;
+      const free = () => {
+        if (freed) return;
+        freed = true;
+        this.active--;
+        this.pump();
+      };
+      const slow = window.setTimeout(free, SLOT_MS);
       void this.load(job.id)
         .then(
           () => this.loaded.add(job.id),
           (error: unknown) => this.fail(job.id, error),
         )
         .finally(() => {
-          this.active--;
+          window.clearTimeout(slow);
           this.jobs.delete(job.id);
           job.resolve();
-          this.pump();
+          free();
         });
     }
   }
 
-  /** One retry: under load a fetch can stall, and that must not leave her a magenta square. */
+  /** One retry: a failed fetch may be the network blinking, not a missing file. */
   private async load(id: string): Promise<void> {
     try {
       await this.fetchImage(id);
@@ -156,14 +173,11 @@ export class ArtBank {
     const game = this.game;
     if (!game) return Promise.reject(new Error('art bank not installed'));
     const img = new Image();
-    let timer = 0;
     return new Promise<void>((resolve, reject) => {
       img.onload = () => resolve();
       img.onerror = () => reject(new Error('not found'));
-      timer = window.setTimeout(() => reject(new Error('timed out')), FETCH_TIMEOUT_MS);
       img.src = `${import.meta.env.BASE_URL}art/${id}.png`;
     })
-      .finally(() => window.clearTimeout(timer))
       .then(async () => {
         // Decoded off the main thread where it can be. Chromium sometimes refuses
         // (`EncodingError`) with many at once; the loaded image is still good, decoded on first draw.
