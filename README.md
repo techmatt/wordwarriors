@@ -236,29 +236,28 @@ lock included, and do nothing where no game is asking; a game that asks shows a 
 `src/input/dadButtons.ts` (`openDadButtons`), for 054 and later games too.
 
 **Charge the Spell** (item 053, `src/scenes/ChargeRoom.ts`; one short word a visit since
-item 058): a side room where she says letter SOUNDS aloud, then reads the word they
-spell. The visit's word (3-4 sound units, every one a rune, so no Q, X or CK) shows at the
-top from the start, a slot per unit. She walks to the altar and presses green; the word's
-first rune lights on it (an upper-case letter; its slot pulses). She says its sound, Dad
-presses **2**: the rune fires up into its slot and its sound is said back. Dad presses
-**1**, or nothing comes for 8 s: the helper shows the sound's gesture (Jolly Phonics
-style: a hissing snake 🐍 for S, a tummy rub for M; `content/phonics/runes.ts`) and says
-the sound, and she tries again; after two helps they say it together and it charges
-anyway. Every cue is a few words at most, by the sound's help level: level 1 the gesture
-and the sound first ("Now you say it!"), level 2 the gesture and "It goes...", level 3
-the rune alone; an unhelped yes is one level less help next time, a helped rune one more
-(`chargeLevels` in the progress, the number in a sound's dot on the grown-ups page). With
-every rune charged the word lights up and she reads it aloud ("Now read the whole
-spell!"): Dad's **2** says it; his **1**, or 10 s with nothing, sounds it out once and says
-it; either way its picture shows and goes into her bag as a battle item. A round with Dad
-answering at once should be 30-45 s by its timings (an estimate: the tests' clock runs
-fast, about 6 s). The word is drawn like any room's (`drawWords`, from the
-familiar pictured words), leaning to shaky sounds: continuous sounds first (M S F A L N R
-V Z, the short vowels), quick sounds once those are solid, then SH CH TH
-(`src/rules/charge.ts`, `CHARGE` in `src/config.ts`). Each charged rune is still a move her
-hero fires in the next battle (`episode.charged`, BattleScene `useCharged`).
-For the beta, `FORCE_PHONICS_ROOM` (on) puts it or the Stretchy Bridge behind door a of
-every episode; the dad lock pauses its 8 s wait.
+item 058; no presses per rune since item 059): a side room where she says letter SOUNDS
+aloud after the helper, then reads the word they spell. The visit's word (3-4 sound units,
+every one a rune, so no Q, X or CK) shows at the top from the start, a slot per unit. She
+walks in and it starts by itself ("Say each sound after me!"): each rune lights on the
+altar in turn (an upper-case letter; its slot pulses), the helper shows the sound's
+gesture (Jolly Phonics style: a hissing snake 🐍 for S, a tummy rub for M;
+`content/phonics/runes.ts`) and says the sound, then a quiet beat (`CHARGE.sayBackMs`,
+1.5 s; the dad lock holds it) for her to say it back, and the rune fires up into its slot.
+Nothing is pressed per rune: Matt watched the per-rune presses frustrate her (item 059).
+With every rune charged the word lights up and she reads it aloud ("Now read the whole
+spell!"), the room's one press, Dad's: **2** says it; **1**, or 10 s with nothing
+(`readTimeoutMs`), is "Let's sound it out together!", the word sounded out once and then
+said; either way its picture shows and goes into her bag as a battle item. Dad may press
+as soon as the word lights. The read records the word and its sounds (right with his 2),
+which open the quicker sounds' tiers. A round with Dad answering at once is about 20 s of
+game time (`tests/charge.spec.ts` holds it under 18 s to the read, 30 s in all with his
+1). The word is drawn like any room's (`drawWords`, from the familiar pictured words),
+leaning to shaky sounds: continuous sounds first (M S F A L N R V Z, the short vowels),
+quick sounds once those are solid, then SH CH TH (`src/rules/charge.ts`, `CHARGE` in
+`src/config.ts`). Each charged rune is still a move her hero fires in the next battle
+(`episode.charged`, BattleScene `useCharged`). For the beta, `FORCE_PHONICS_ROOM` (on)
+puts it or the Stretchy Bridge behind door a of every episode.
 
 **The Stretchy Bridge** (item 054, `src/scenes/BridgeRoom.ts`): a side room where she
 blends a whole word. A gap crosses the room (lava in the house, a river or a chasm at a
@@ -357,9 +356,9 @@ way, every browser test's rooms play the sentence game (the harness adds
 (`games=all`). `FORCE_PHONICS_ROOM` follows the same rule: the harness's `games=sentence`
 and any `game=` keep the test's own rooms, while `games=all` (the real draw) and the
 game itself get Charge the Spell behind door a, so `playRoom` and the bug-hunt checker
-play it (`playChargeRoom`: the altar, then Dad's yes per rune and on the word); `tests/charge.spec.ts`
-covers the room, the dad keys, the timeout under dad lock and the runes in battle
-(item 053). The forced room is Charge the Spell or the Stretchy Bridge at random, so
+play it (`playChargeRoom`: wait for the read, then Dad's answer); `tests/charge.spec.ts`
+covers the room, the dad key, dad lock, the read's timeout, the round's length and the
+runes in battle (items 053, 059). The forced room is Charge the Spell or the Stretchy Bridge at random, so
 `playRoom` and the bug-hunt checker play the bridge too (`playBridgeRoom`: slide across
 with the stick, Dad's yes where he is asked, the right picture); `tests/bridge.spec.ts`
 covers its three help levels, a wrong picture and a drawn episode (item 054).

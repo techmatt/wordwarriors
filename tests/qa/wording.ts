@@ -24,7 +24,7 @@ export const BRITISH: Record<string, string> = {
   travelled: 'traveled', travelling: 'traveling', cancelled: 'canceled', jewellery: 'jewelry',
   cosy: 'cozy', pyjamas: 'pajamas', tyre: 'tire', mum: 'mom', mummy: 'mommy', maths: 'math',
   aeroplane: 'airplane', programme: 'program', defence: 'defense', offence: 'offense',
-  catalogue: 'catalog', moustache: 'mustache', plough: 'plow', sceptre: 'scepter',
+  jelly: 'Jell-O (the wobbly dessert)', catalogue: 'catalog', moustache: 'mustache', plough: 'plow', sceptre: 'scepter',
 };
 
 const BRITISH_RE = new RegExp(`\\b(${Object.keys(BRITISH).join('|')})\\b`, 'gi');

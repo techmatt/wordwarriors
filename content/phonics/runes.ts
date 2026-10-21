@@ -91,7 +91,7 @@ export const RUNES: RuneSound[] = [
   rune('k', 2, '🚪', 'shake', 'Knock on the door, it goes...', 'rain', 0xa0703a, { count: 10 }),
   rune('g', 2, '🚿', 'weave', 'Water gurgles down the drain, it goes...', 'wave', 0x3d9bff, { color2: 0xbfefff }),
   rune('h', 2, '😮', 'pulse', 'Pant like a puppy, it goes...', 'cone', 0xffffff, { color2: 0xbfefff }),
-  rune('j', 2, '🍮', 'pulse', 'The jelly wobbles on a plate, it goes...', 'orbit', 0xffb347, { count: 3 }),
+  rune('j', 2, '🍮', 'pulse', 'The Jell-O wobbles on a plate, it goes...', 'orbit', 0xffb347, { count: 3 }),
   rune('w', 2, '🌬️', 'puff', 'Blow like the wind, it goes...', 'wave', 0xd8f0ff, { color2: 0xffffff }),
   rune('y', 2, '🥄', 'pulse', 'A spoon of yogurt, so good, it goes...', 'rain', 0xfff4e0, { count: 10 }),
   // Tier 3: two letters, one sound.

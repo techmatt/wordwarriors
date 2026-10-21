@@ -140,9 +140,9 @@ export class WordMachine extends Minigame {
       const b = this.machine.getBounds();
       out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: 6 });
     }
-    // The lines that send her to the letters keep off the letters (item 039:
-    // "Walk on a letter..." hid every tile it was talking about).
-    if (/_machine_(go|change|switch|makes|silly_\d)$|^silly_/.test(voiceBus.speaking?.id ?? '')) {
+    // Every line keeps off the letters (item 039: "Walk on a letter..." hid
+    // every tile it was talking about; item 059: no box ever covers a thing she chooses).
+    {
       // Each tile's full footprint: they pop in from nothing as the line starts, so their bounds are still empty then.
       for (const s of this.spots) {
         if (!s.id.startsWith('tile_') || !s.obj.active) continue;

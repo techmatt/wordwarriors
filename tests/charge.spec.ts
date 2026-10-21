@@ -11,7 +11,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, dad, expectNoErrors, playEpisode, press, state, until } from './harness';
+import { SLOW, SPEED, boot, collectErrors, dad, expectNoErrors, playEpisode, press, state, until } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/053_${name}.png` });
 
@@ -102,10 +102,11 @@ test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on t
   expect(hub.episode.fetched).toEqual([word]);
   expect(hub.episode.charged?.sounds).toEqual(runes);
   expect(hub.progress.words[word]!.recent).toEqual([false]);
-  // About 20 s a round (item 059): to the read well under that, the whole round with the sounding out under 30 s.
-  console.log(`charge round: ${word}, ${toRead} ms to the read, ${ms} ms in all`);
-  expect(toRead).toBeLessThan(20_000);
-  expect(ms).toBeLessThan(30_000);
+  // About 20 s a round (item 059), in game time (the page's clocks run SPEED times fast): to the
+  // read under 18 s, the whole round with Dad's 1 and the sounding out under 30 s.
+  console.log(`charge round: ${word} (${runes.length} runes), ${(toRead * SPEED) / 1000} s to the read, ${(ms * SPEED) / 1000} s in all (game time)`);
+  expect(toRead * SPEED).toBeLessThan(18_000);
+  expect(ms * SPEED).toBeLessThan(30_000);
   expectNoErrors(errors);
 });
 

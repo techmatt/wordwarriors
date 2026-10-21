@@ -569,7 +569,7 @@ must never name the letter or spell the sound, and says no bank word at all
 (`tests/unit/charge.test.ts` checks both). The rest is the battle move her hero fires
 for it, shaped like a word effect (no `pic_` art). Then `voice:lines`, `voice:build`
 (each narrator has each gesture line, `nar_<n>_charge_gesture_<sound>`, though since item
-058 the room shows the gesture with only the sound or "It goes..."). Tuning is `CHARGE`
+058 the room shows the gesture with only the sound, which the helper says and she says back). Tuning is `CHARGE`
 in `src/config.ts`. The room spells words: a new rune widens `CHARGE_WORDS`
 (`src/rules/charge.ts`), the familiar pictured words of 3-4 units that are all runes.
 

@@ -124,10 +124,10 @@ export const NARRATOR_LINES: Template[] = [
   // gestures (`CHARGE_GESTURES`) trail off into it. `use_runes` is the battle's.
   // Item 059: the helper says each rune's sound and she says it back, no presses;
   // then she reads the word and Dad's one press judges it.
-  { key: 'charge_explain', text: 'I say each sound, and then you say it back to me!', say: 'I say each sound, and then you say it back to me.' },
+  { key: 'charge_explain', text: 'Say each sound after me!' },
   { key: 'charge_read', text: 'Now read the whole spell!' },
   { key: 'charge_together', text: "Let's sound it out together!" },
-  { key: 'charge_done', text: 'Every rune is charged! Our spells are ready for the fight!', say: 'Every rune is charged, our spells are ready for the fight!' },
+  { key: 'charge_done', text: 'Our spell is ready for the fight!' },
   { key: 'use_runes', text: "Now let's use our spell power!" },
   // The Stretchy Bridge (item 054, src/scenes/BridgeRoom.ts). No line names a
   // letter, a sound or a word: the stones' sounds are letter_ lines, and the

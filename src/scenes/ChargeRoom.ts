@@ -74,6 +74,8 @@ const PICTURE = 120;
 
 export class ChargeRoom extends Minigame {
   protected override dialogueAware = true;
+  /** Nothing to walk to here: no stick hint (item 059 review). */
+  protected override walking = false;
   private slot: Slot = 'a';
   private plan!: ChargePlan;
   private roomId = '';
@@ -312,7 +314,7 @@ export class ChargeRoom extends Minigame {
     this.tweens.add({ targets: this.glow, alpha: 0.85, scale: 3.1, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     sfxZap();
     burst(this, RUNE.x, RUNE.y, { count: 40, speed: 280, colors: [0xb28dff, 0xffffff] });
-    await this.wait(250);
+    await this.wait(150);
     if (f !== this.flow) return;
     await this.gesture(sound, f);
     if (f !== this.flow) return;
@@ -363,7 +365,7 @@ export class ChargeRoom extends Minigame {
     };
     this.stopGesture = stop;
     // A beat of the action before the sound, so she sees it.
-    await this.wait(300);
+    await this.wait(200);
     if (f === this.flow) await this.saySound(sound);
     if (this.stopGesture === stop) stop();
   }
@@ -403,7 +405,8 @@ export class ChargeRoom extends Minigame {
 
   /** Dad's button (or the timeout, or F4): only the word's read asks him. A no sounds it out together first. */
   private answer(a: DadAnswer, timedOut = false): void {
-    if (this.phase !== 'read') return;
+    // From the moment the word lights: Dad may answer while "Now read the whole spell!" still plays.
+    if (this.phase !== 'read' && !(this.phase === 'reading' && this.readAnswer === null && this.allCharged)) return;
     this.noteActivity();
     setDadAsking(false);
     this.flow++;
@@ -553,7 +556,6 @@ export class ChargeRoom extends Minigame {
     this.phase = 'done';
     sfxSelect();
     await this.say(narratorLine(narrator(), 'charge_done'));
-    await this.wait(200);
     this.fadeOutThen(() => backToHub(this, this.slot));
   }
 

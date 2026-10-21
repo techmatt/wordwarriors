@@ -59,6 +59,8 @@ const MULTI_ROW_FILL = 0.56;
 /** The picture on its pedestal: how high above the spot its top is (pedestal 100 + picture 150), and its bob. */
 const PIC_TOP = 250;
 const PIC_BOB = 5;
+/** How much the thing she stands next to grows (RoomScene's near tween). */
+const NEAR_SCALE = 1.1;
 /** Clear air between the banner's bottom edge and the tallest picture's top. */
 const BANNER_GAP = 10;
 /** The silent beat on the key word at the end of the listening pass. */
@@ -173,7 +175,8 @@ export class SentenceRoom extends Minigame {
     // sentence on two or three rows) moves them down the floor, never over them.
     const bannerBottom = this.banner.y + this.bannerH / 2;
     const highest = Math.min(...room.spots.slice(0, this.plan.objects.length).map(([, y]) => y));
-    const drop = Math.max(0, Math.ceil(bannerBottom + BANNER_GAP - (highest - PIC_TOP - PIC_BOB)));
+    // The thing she is next to grows by NEAR_SCALE from its feet (RoomScene), so its top rises too.
+    const drop = Math.max(0, Math.ceil(bannerBottom + BANNER_GAP - (highest - PIC_TOP * NEAR_SCALE - PIC_BOB)));
     // She comes in below them, so she is not standing on one when they wake.
     this.player.place(room.entry.x, Math.min(Math.max(room.entry.y, highest + drop + 70), this.floor.bottom - 10));
     // Arriving: a hop and a puff where she comes in.
@@ -306,7 +309,8 @@ export class SentenceRoom extends Minigame {
     // panel. No taller than that (item 059: at 0.44 a two-row banner was 305
     // px and hung over the tops of the pictures she chooses between).
     this.bannerH = rows.length > 1 ? Math.max(140, (rows.length * lineH) / MULTI_ROW_FILL) : 140;
-    const panelY = rows.length > 1 ? this.bannerH * 0.03 : 0;
+    // The cream panel's middle sits about 0.077 of the height below the art's (item 059 review: at 0.03 the rows ran off it).
+    const panelY = rows.length > 1 ? this.bannerH * 0.077 : 0;
     rows.forEach((row, r) => {
       let x = -rowWidth(row) / 2;
       const y = panelY + (r - (rows.length - 1) / 2) * lineH;

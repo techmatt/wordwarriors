@@ -16,8 +16,8 @@ from a letter-sound clue; it is her first battle item) → **house part 1** (the
 the helper's story scene ends in the **gift word**, her first move word; two side-room
 doors, a minigame each from a weighted pool (the **sentence game**, the word machine),
 fetching battle items; for the beta one door is always a phonics game, at random
-**Charge the Spell** (one short word: its letter sounds said aloud rune by rune, then the
-word read, Dad judging with keys 1 / 2; the word is a battle item and its runes
+**Charge the Spell** (one short word: the helper says each rune's sound and she says it
+back, no presses, then she reads the word and Dad judges with keys 1 / 2; the word is a battle item and its runes
 fire in the battle) or the **Stretchy Bridge** (she slides over a word's letter stones,
 each sound held, and blends the whole word to pick its picture; `FORCE_PHONICS_ROOM`);
 the front door appears once both
@@ -215,7 +215,7 @@ character) or `HAND` in `content/art/prompts.ts`, in the same commit (README,
 | "make it the chef episode" | `?ally=dada_jason` (Julia's chef form follows; outfits are `content/battle/forms.ts`) |
 | "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`) |
 | "here are my letter sound recordings" / "here is a recorder zip" | `npm run voice:import -- <zip>`, then `voice:build`; report each card installed or refused and why (`docs/recording.md`) |
-| "longer / shorter charge words" / "Dad should wait longer" / "quick sounds sooner / later" | `CHARGE` in `src/config.ts` (`units`, `timeoutMs`, `readTimeoutMs`, `assists`, `startLevel`, `tiers`) |
+| "longer / shorter charge words" / "a longer / shorter beat to say each sound back" / "Dad should wait longer" / "quick sounds sooner / later" | `CHARGE` in `src/config.ts` (`units`, `sayBackMs`, `readTimeoutMs`, `tiers`) |
 | "a new gesture for X" / "X's rune should fire Y" | X's entry in `RUNES` (`content/phonics/runes.ts`: `gesture`, `move`), then `voice:lines`, `voice:build` |
 | "stop forcing the phonics room" | `FORCE_PHONICS_ROOM` in `src/config.ts` (both stay weighted entries, `CHARGE.weight`, `BRIDGE.weight`) |
 | "more / fewer bridge words" / "slower slide" / "stop sounds sooner / later" / "Dad should wait longer on the bridge" | `BRIDGE` in `src/config.ts` (`words`, `slide`, `tiers`, `dadWaitMs`, `replays`, `startLevel`) |

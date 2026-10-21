@@ -3,9 +3,10 @@
  * visit spells, its runes, and how much help each gets. Pure: no Phaser,
  * unit-tested (tests/unit/charge.test.ts).
  *
- * A visit is one word of CHARGE.units sound units, shown at the top; she
- * charges its runes in order, saying each letter sound aloud while Dad
- * presses 2 (yes) or 1 (no), then reads the whole word aloud for Dad. The
+ * A visit is one word of CHARGE.units sound units, shown at the top; its
+ * runes charge in order, the helper saying each letter sound and she saying
+ * it back (no presses, item 059), then she reads the whole word aloud for
+ * Dad. The
  * word is drawn through the bank's path (`drawWords`: shakiness × coverage ×
  * level gate) from the familiar pictured words whose every unit is a rune
  * (`CHARGE_WORDS`: no Q, X, CK, long vowel, doubled letter or repeated
@@ -16,12 +17,11 @@
  * shut tier's sound only as a last resort. The word is a battle item like
  * any room's fetched word.
  *
- * Each sound has a help level on a ramp, like the warm-up's words:
- *   1. the sound and its gesture first, she copies;
- *   2. the gesture only (its line trails off where the sound would be);
- *   3. the rune alone.
- * A yes with no assist moves it up a level; an assist (Dad's no, or nothing
- * for CHARGE.timeoutMs) moves it down one.
+ * Each sound has a help level on a ramp (item 053: 1 the sound and gesture
+ * first, 2 the gesture only, 3 the rune alone; an unhelped yes up a level, a
+ * help down one). Since item 059 the room says every sound for her and
+ * judges only the word, so the ramp is kept (and its saved levels) but
+ * unused by the room.
  */
 
 import { BANK_BY_WORD, THINGS, type BankWord } from '../../content/phonics/bank';
