@@ -116,14 +116,10 @@ export function drawCast(input: CastInput, rand: Rand = Math.random, active: { a
     const can = (p: string) => p !== heroPerson && p !== allyPerson && wakerLeft(p);
     const actives = activePersons(active.villains).filter(can);
     const ok = actives.length ? actives : PERSONS.map((c) => c.id).filter(can);
-    // Her last few villains sit out, but always leaving two to choose from (a
-    // short active list would otherwise turn into a fixed rotation), and
-    // never last episode's while another is left.
-    const recent = input.recent ?? [];
-    const n = Math.min(recent.length, Math.max(1, ok.length - 2));
-    const avoid = recent.slice(recent.length - n);
-    const fresh = ok.filter((p) => !avoid.includes(p));
-    villain = inForm(pick(fresh.length ? fresh : ok, rand));
+    // Her last few villains sit out, but always leaving two to choose from, and
+    // never last episode's while another is left; one who has left the pool
+    // (switched off in ACTIVE_CAST) no longer counts (item 078).
+    villain = inForm(pick(fresh(ok, input.recent ?? []), rand));
   }
   const villainPerson = personOf(villain);
 

@@ -6,7 +6,6 @@
  * the story and line variants, the victory scene) keeps its recent picks in the
  * progress store (`recentOf` / `remember`, VARIETY in src/config.ts) and
  * draws through `fresh` or `leastRecent`, so she rarely sees a repeat soon.
- * The villain's draw (src/rules/cast.ts) writes `fresh`'s rule out inline.
  */
 
 import type { Rand } from './bank';

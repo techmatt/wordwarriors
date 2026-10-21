@@ -122,6 +122,18 @@ test("cast: never last episode's villain, and none of the last few while others 
   assert.ok(nexts.size > ACTIVE_CAST.villains.length * 2, 'more than one villain can follow the same two');
 });
 
+test('cast (item 078): a recent villain switched off in ACTIVE_CAST no longer counts toward who sits out', () => {
+  const pool = PERSONS.map((c) => c.id).filter((p) => p !== 'julia' && !DADS.includes(p as (typeof DADS)[number])).slice(0, 4);
+  const gone = PERSONS.map((c) => c.id).find((p) => p !== 'julia' && !pool.includes(p))!;
+  const [a, b] = pool;
+  const rand = seededRand(7);
+  for (let i = 0; i < 200; i++) {
+    // Before, the newest two of these sat out, the switched-off one among them, so A could come back.
+    const p = personOf(drawCast({ hero: 'julia', recent: [a!, b!, gone] }, rand, { allies: pool, villains: pool }).villain);
+    assert.ok(p !== a && p !== b, `${p} after ${a}, ${b} (and ${gone}, switched off)`);
+  }
+});
+
 test('cast: overrides fix any part; a dad picked by person plays his own form', () => {
   const rand = seededRand(5);
   const c = drawCast({ hero: 'julia', overrides: { ally: 'dada_jason', villain: 'tiamat', primary: 'dada_matt', secondary: false, forms: { dada_matt: 'lifter' } } }, rand);
