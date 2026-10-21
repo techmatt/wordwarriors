@@ -163,6 +163,13 @@ each level's clue, three misses, F9 out and back, and four drawn casts from the 
 fight style the cast drew; `tests/fights.spec.ts` sweeps the four contests through both
 battles (the brawl is the default episode's own).
 
+`tests/lenses.spec.ts` (item 080) keeps the third bug hunt's fixes: a held F8, the
+grown-ups page under dad lock, the lock badge after a resize, a hidden tab holding the
+voice (it fakes the tab switch: `document.hidden` and a `visibilitychange`, which is what
+Phaser and the game listen for), and the move choice's stick hint under dad lock (slow
+lane). Press a button through the virtual pad (`press`), not `page.keyboard.press`: a
+key's down and up can land between two frames, and Phaser's polled keys miss it.
+
 ### Speed, GPU and workers
 
 The browser tests run the page's clocks 5× fast (`WW_SPEED`, default 5; `tests/harness.ts`):
