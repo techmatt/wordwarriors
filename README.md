@@ -377,6 +377,19 @@ minutes back down by folding new checks into walks that were already played (a d
 cast's bedroom checks into the warm-up's seed sweep, the random-cast episodes into the
 soak and the word machine's episode, the brawl's checks into every whole episode).
 
+**Art loads on demand** (item 065): a test that reaches a scene with `?scene=` may pass
+through the Wait scene (`s.scene === 'Wait'`) while that scene's art loads, so wait for
+the scene you want, never for "anything but Boot". `tests/lazyart.spec.ts` (fast lane)
+slows every picture by 400 ms and checks the hub waits, then opens with nothing missing.
+A browser test fails on any `art: not ready` warning (`collectErrors`).
+
+**Boot timings:** `npx playwright test --config tests/perf/perf.config.ts` (about 1.5
+minutes; not a test, it prints) times page load to the title and to a quiet hub
+(`?scene=house`: input free, nobody talking, still so 0.6 s later), each from a fresh
+browser context, median of `PERF_RUNS` (5), and the art each fetched. Its server takes
+`PERF_PORT`, else `CONDUCTOR_PORT`, else 5196. Item 065's before and after are in
+`docs/engineering.md`.
+
 Every browser test plays the fixed default episode (`tests/harness.ts` adds
 `cast=default`) unless its URL asks for a draw (`seed=`): drawn casts walk from the bedroom
 through the warm-up to the quest place in `tests/entry.spec.ts` (four seeds), and three
@@ -494,6 +507,11 @@ About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it r
   with no manifest entry (`voice-unbuilt`), a clip for older text (`voice-stale`) or no
   mp3 (`voice-no-clip`); the same check is a unit test, and `rules.test.ts` fails when
   `lines.json` is not what `voice:lines` composes.
+- **Art shown before it loaded** (item 065, `art-late`, a bug): art loads on demand
+  (`src/art/`, `docs/systems.md`, "Art on demand"), so the probe logs every art id a
+  scene asked for before it was in (`art: not ready <id> (<scene>)`) and every scene that
+  opened with any of its `artFor` art still loading. The browser tests count the same
+  warning as an error (`collectErrors`).
 - **The probe** (`src/qa/probe.ts`) is what the page adds for it, only with `?qa=1` (and
   the test hooks): the voice log, frame times and long tasks per scene, lock stretches,
   missing art, console capture, `layout()` and `counts()` on `window.__wwqa`.

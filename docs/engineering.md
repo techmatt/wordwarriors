@@ -58,9 +58,20 @@ without a new measurement.
   read (17 s otherwise; the start-up burst of three boots at once). Slow lane on 2: 58 tests
   in 16.7 minutes, green; the whole real-time episode (6.3 minutes) sets its floor. Per test
   2 workers cost 20-30% (up to 2× for a test sharing the machine with an episode). The boot
-  floor is about 2.8 s a test to a quiet hub (page and modules 0.65 s, then 459 PNGs and the
-  core voice); fulfilling `/art/` and `/voice-gen/` from an in-memory `page.route` cache made
+  floor was about 2.8 s a test to a quiet hub (page and modules 0.65 s, then 459 PNGs and the
+  core voice; item 065 loads art on demand, below); fulfilling `/art/` and `/voice-gen/` from an in-memory `page.route` cache made
   it slower (4.0 s), so every test still fetches through vite.
+- **Art on demand (item 065, 2026-10-20, 11:30pm), boot timings** (`tests/perf/boot.pw.ts`,
+  one worker, GPU, clock speed 5, a fresh browser context each run, median of 5):
+  | | before (all 459 PNGs, 45 MB, at boot) | after (on demand) |
+  | --- | --- | --- |
+  | page load → title | 3.20 s | 1.24 s (49 files, 2.6 MB) |
+  | `?scene=house` → hub shown | 3.21 s (runs between title runs); 7.55 s (five in a row) | 1.51 s (111 files, 7.0 MB) |
+  | `?scene=house` → quiet hub | 7.70 s; 11.23 s (five in a row) | 5.21 s |
+  "Quiet" is input free and nobody talking, still so 0.6 s later; about 3.7 s of it is the
+  hub's opening lines at speed 5. Before, five hub boots in a row ran slower each (7.8 →
+  11.8 s): every boot pulled 45 MB through vite; after, the five were within 0.1 s. The
+  first run of a server's life is slower (vite transforms the modules) and is not counted.
 - Before item 061: workers 1 (Seraphina measured 2 workers as 2.3–2.4× slower per test,
   and frame-rate-sensitive assertions broke). Re-measured here 2026-10-18 on the 9 smoke
   tests at clock speed 3 (`--fully-parallel`): 1 worker 2m24s, 2 workers 2m02s, 3 workers
