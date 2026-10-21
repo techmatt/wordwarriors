@@ -42,9 +42,9 @@ export const CORE_LINES: Template[] = [
 /** Composed per narrator. */
 export const NARRATOR_LINES: Template[] = [
   { key: 'alarm_ready', text: 'We need to get ready!' },
-  { key: 'prep_gem', text: 'First, let us make a power gem!', say: 'First, let us make a power gem.' },
-  { key: 'prep_ammo', text: 'Let us make magic star ammo!', say: 'Let us make magic star ammo.' },
-  { key: 'prep_helper', text: 'Let us call a helper friend!', say: 'Let us call a helper friend.' },
+  { key: 'prep_gem', text: "First, let's make a power gem!", say: "First, let's make a power gem." },
+  { key: 'prep_ammo', text: "Let's make magic star ammo!", say: "Let's make magic star ammo." },
+  { key: 'prep_helper', text: "Let's call a helper friend!", say: "Let's call a helper friend." },
   { key: 'inst_sound', text: 'Listen! Walk to the letter that makes this sound.', say: 'Listen, walk to the letter that makes this sound.' },
   { key: 'inst_blend', text: 'Walk on the letters, then pick the right door!' },
   { key: 'inst_picture', text: 'Read the word, then walk to its picture!' },
@@ -60,31 +60,33 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'made_gem', text: 'We made a power gem!' },
   { key: 'made_ammo', text: 'We made star ammo!' },
   { key: 'made_helper', text: 'A helper friend is here!' },
-  { key: 'battle_start', text: 'Let us go! Charge!', say: 'Let us go, charge!' },
-  { key: 'battle2_start', text: 'Round two! We are ready now!', say: 'Round two, we are ready now!' },
-  { key: 'move_pick', text: 'Quick! Pick a move!', say: 'Quick, pick a move!' },
-  { key: 'move_great', text: 'Super power!' },
+  { key: 'battle_start', text: "Let's go! Charge!", say: "Let's go, charge!" },
+  { key: 'battle2_start', text: "It's round two, and we are ready now!" },
+  { key: 'move_pick', text: 'Quick, pick a move!' },
+  // Item 059: said once she has picked the right move word and it fires,
+  // supercharged ("Super power!" read oddly to Matt).
+  { key: 'move_great', text: 'Great reading! Your word made it extra strong!', say: 'Great reading, your word made it extra strong!' },
   { key: 'use_gem', text: 'Power gem, shine!' },
   { key: 'use_ammo', text: 'Fire the star ammo!' },
   { key: 'use_helper', text: 'Go, helper friend!' },
-  { key: 'use_item', text: 'Now! Use it!', say: 'Now, use it!' },
-  { key: 'retreat_1', text: 'Too strong! Retreat, retreat!', say: 'Too strong, retreat, retreat!' },
+  { key: 'use_item', text: "Now's our chance! Let's use it!", say: "Now's our chance, let's use it!" },
+  { key: 'retreat_1', text: "They are too strong for us! Let's go back and get ready!", say: "They are too strong for us, let's go back and get ready!" },
   { key: 'retreat_2', text: 'That was close! We need a plan!', say: 'That was close, we need a plan!' },
-  { key: 'forge_intro', text: 'Let us make it! Spell the magic words!', say: 'Let us make it, spell the magic words!' },
-  { key: 'finish', text: 'Now, all together! Finish it!', say: 'Now, all together, finish it!' },
+  { key: 'forge_intro', text: "Let's make it! Spell the magic words!", say: "Let's make it, spell the magic words!" },
+  { key: 'finish', text: "Now let's all finish it together!" },
   { key: 'victory_1', text: 'We won! Hooray!', say: 'We won, hooray!' },
   { key: 'victory_2', text: 'You are a real Word Warrior!' },
   { key: 'again', text: 'Press green to play again!' },
   // The house (v0.2): the hub's doors and the sentence rooms. The hub's story
   // scene, which gives her the gift word, is the helper's own (item 037,
   // content/house/scenes.ts), composed in tools/voice/compose.ts.
-  { key: 'house_doors', text: 'Two doors! Walk to one, and press green.', say: 'Two doors, walk to one, and press green.' },
-  { key: 'house_more', text: 'One more door to go!' },
-  { key: 'house_front', text: 'The front door is open! Let us go!', say: 'The front door is open, let us go!' },
-  { key: 'secret_door', text: 'Look, a secret door! Let us go up!', say: 'Look, a secret door, let us go up!' },
-  { key: 'house_ready', text: 'We are ready now! Out the front door!', say: 'We are ready now, out the front door!' },
+  { key: 'house_doors', text: 'There are two doors! Walk to one, and press green.', say: 'There are two doors, walk to one, and press green.' },
+  { key: 'house_more', text: 'There is one more door to go!' },
+  { key: 'house_front', text: "The front door is open! Let's go!", say: "The front door is open, let's go!" },
+  { key: 'secret_door', text: "Look, a secret door! Let's go up!", say: "Look, a secret door, let's go up!" },
+  { key: 'house_ready', text: "We are ready now! Let's go out the front door!", say: "We are ready now, let's go out the front door!" },
   { key: 'room_listen', text: 'Listen!' },
-  { key: 'room_your_turn', text: 'Your turn! Press green for each word.', say: 'Your turn, press green for each word.' },
+  { key: 'room_your_turn', text: "Now it's your turn! Press green for each word.", say: "Now it's your turn, press green for each word." },
   { key: 'room_find', text: 'Now find it, and press green!' },
   { key: 'got_item', text: 'We got it!' },
   // The attic's counter, whatever word the bag drew (item 015). A named item
@@ -94,21 +96,21 @@ export const NARRATOR_LINES: Template[] = [
   // The word machine (item 026). No line names a word it builds (or any CVC
   // word): the built word is said only by its word_ line, once it is built.
   // `machine_makes` trails off into the silly word's own line (silly_zat).
-  { key: 'machine_intro', text: 'A word machine! It makes the word for the picture.', say: 'A word machine, it makes the word for the picture.' },
+  { key: 'machine_intro', text: 'Look, a word machine! It makes the word for the picture.', say: 'Look, a word machine, it makes the word for the picture.' },
   { key: 'machine_go', text: 'Walk on a letter to hear it. Press green to put it in!', say: 'Walk on a letter to hear it, press green to put it in!' },
   { key: 'machine_change', text: 'Change the first sound to make a new word!' },
-  { key: 'machine_switch', text: 'New sounds! Let us make one more.', say: 'New sounds, let us make one more.' },
+  { key: 'machine_switch', text: "Here are some new sounds! Let's make one more.", say: "Here are some new sounds, let's make one more." },
   { key: 'machine_makes', text: 'That makes...' },
-  { key: 'machine_silly_1', text: 'A silly word! Try another letter!', say: 'A silly word, try another letter!' },
+  { key: 'machine_silly_1', text: "That's a silly word! Try another letter!", say: "That's a silly word, try another letter!" },
   { key: 'machine_silly_2', text: 'That is not a word, you silly! Try again!', say: 'That is not a word, you silly, try again!' },
   { key: 'machine_silly_3', text: 'The machine is giggling! Try another one!', say: 'The machine is giggling, try another one!' },
   { key: 'machine_done', text: 'We made them all!' },
   // Quests (item 025): the hub's lines in a quest place, where there is no
   // front door and no stairs up. The home quest's setup lines, for a helper
   // with no place of their own, are `HOME_QUEST` in content/house/quests.ts.
-  { key: 'away_secret', text: 'Look, a secret door! Let us go in!', say: 'Look, a secret door, let us go in!' },
-  { key: 'away_front', text: 'The way out is open! Let us go!', say: 'The way out is open, let us go!' },
-  { key: 'away_ready', text: 'We are ready now! Off to the fight!', say: 'We are ready now, off to the fight!' },
+  { key: 'away_secret', text: "Look, a secret door! Let's go through it!", say: "Look, a secret door, let's go through it!" },
+  { key: 'away_front', text: "The way out is open! Let's go!", say: "The way out is open, let's go!" },
+  { key: 'away_ready', text: "We are ready now! Let's go to the fight!", say: "We are ready now, let's go to the fight!" },
   // The home warm-up (item 033, src/scenes/EntryScene.ts). `grab_ask` and
   // `grab_need` trail off into the clue (letter names, letter sounds, and at
   // the easiest level the word's own word_ line); `grab_wrong` trails off into
@@ -116,7 +118,7 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'grab_ask', text: "Before we head out, let's grab the..." },
   { key: 'grab_wrong', text: "That's the..." },
   { key: 'grab_need', text: 'We need the...' },
-  { key: 'grab_door', text: 'Got it! Now, out the door!', say: 'Got it, now, out the door!' },
+  { key: 'grab_door', text: "You got it! Now let's go out the door!", say: "You got it, now let's go out the door!" },
   // Charge the Spell (item 053, src/scenes/ChargeRoom.ts). No line names a
   // letter or spells a sound: each sound is its own letter_ line, and the
   // gestures (`CHARGE_GESTURES`) trail off into it. `use_runes` is the battle's.
@@ -137,7 +139,7 @@ export const NARRATOR_LINES: Template[] = [
   // letter, a sound or a word: the stones' sounds are letter_ lines, and the
   // word is said (word_) only once she has picked its picture. `bridge_start`,
   // `_middle` and `_end` trail off into the sound where her pick went wrong.
-  { key: 'bridge_intro', text: 'A bridge of magic stones! Slide across, nice and slow, and stretch the sounds.', say: 'A bridge of magic stones, slide across, nice and slow, and stretch the sounds.' },
+  { key: 'bridge_intro', text: 'Look, a bridge of magic stones! Slide across nice and slow, and stretch the sounds.', say: 'Look, a bridge of magic stones, slide across nice and slow, and stretch the sounds.' },
   { key: 'bridge_slide', text: 'Slide across the stones!' },
   { key: 'bridge_quiet', text: 'These stones are quiet. Read them yourself!', say: 'These stones are quiet, read them yourself!' },
   { key: 'bridge_say', text: 'Now say the whole word out loud!' },
@@ -225,8 +227,8 @@ export const WAKE_LINES: Template[] = [
   { key: 'good_3', text: 'Hey {hero}, I have good news!', say: 'Hey {hero}, I have good news!' },
   { key: 'helper', text: '{helper} is here to play!' },
   { key: 'bad', text: 'Bad news, {villain} is coming, and {threat}!' },
-  { key: 'door', text: 'Come on, let us go! Find the door!', say: 'Come on, let us go, find the door!' },
-  { key: 'door_2', text: 'Quick, to the door!' },
+  { key: 'door', text: "Come on, let's go! Find the door!", say: "Come on, let's go, find the door!" },
+  { key: 'door_2', text: "Quick, let's go to the door!" },
   { key: 'door_3', text: 'Off we go! Walk to the door!', say: 'Off we go, walk to the door!' },
   // The other dad, when he comes into the bedroom too (item 025).
   { key: 'hi', text: 'Good morning, sleepyhead!' },
