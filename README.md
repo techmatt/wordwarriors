@@ -192,7 +192,9 @@ running yourself (a `vite preview` of a build).
 A test that times out "waiting for title" (or "parent page", "hub quiet") with `scene=`
 empty never got past the boot's loading. Seen in item 034 when the machine was loaded (and
 in any run where `src/` changed underneath: the dev server reloads the page): the same
-tests passed when rerun alone. Rerun them alone before suspecting the code. The same
+tests passed when rerun alone. Rerun them alone before suspecting the code. Item 076 saw
+the same with the CPU at 100% from other programs: `(Get-CimInstance
+Win32_Processor).LoadPercentage` in PowerShell shows it; at ~20% the same specs passed. The same
 reload shows as "page.evaluate: Execution context was destroyed, most likely because of a
 navigation" (item 067: five slow specs lost to edits made mid-run). Do not edit `src/`
 or `content/` while a browser run is going, or point the run at a `vite preview` build
