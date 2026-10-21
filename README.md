@@ -579,6 +579,13 @@ these changes): cards 2, 4, 6, 8 and 9 went in (D P H J G Y E I O U SH CH and 15
 and K hisses, card 3 stopped after 5.6 s). F, L and V were said "fuh", "luh", "vuh" with
 about 0.1 s of the sound itself, so none of their repeats holds on the bridge.
 
+Matt's recording 3 (`phonics-matt.zip`, 2026-10-20, all 12 cards on the format-2 page,
+item 063) replaced it: every card counted 12 and went in, 67 clips. F is still skipped:
+each repeat is about 0.2 s of hiss at -47 dB and then half a second of voiced "uh" 35 dB
+louder, so the bridge keeps 0.06 s. L and V now hold. Card 10's KEY replaces card 7's
+(the later card wins); THIS, ACORN, ICE and UNICORN are not game words, so card 11 and
+12 install their sounds only.
+
 ### The word bank's coverage rule (item 056)
 
 The bank covers phonics by rule, not by luck. Counting only familiar pictured words
