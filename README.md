@@ -484,7 +484,11 @@ port 5174, so a test run in a worktree cannot attach to the main checkout's dev 
 A test that times out "waiting for title" (or "parent page", "hub quiet") with `scene=`
 empty never got past the boot's loading. Seen in item 034 when the machine was loaded (and
 in any run where `src/` changed underneath: the dev server reloads the page): the same
-tests passed when rerun alone. Rerun them alone before suspecting the code.
+tests passed when rerun alone. Rerun them alone before suspecting the code. The same
+reload shows as "page.evaluate: Execution context was destroyed, most likely because of a
+navigation" (item 067: five slow specs lost to edits made mid-run). Do not edit `src/`
+or `content/` while a browser run is going, or point the run at a `vite preview` build
+with `WW_BASE_URL`.
 To force a key word, seed the progress blob with `bag: { left: [word], round: 1 }` **and**
 `bagKnown: BAG_WORDS` (`tests/kywords.spec.ts`): a blob without `bagKnown` counts as one
 from before item 035, and the store tops the bag up with every word added since (item 048).

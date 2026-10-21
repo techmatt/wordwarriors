@@ -571,7 +571,8 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
   const q = new URLSearchParams(typeof location === 'undefined' ? '' : location.search);
   const only = q.get('games') === 'sentence' ? SENTENCE_GAMES : undefined;
   const asked = MINIGAME_BY_ID[q.get('game') ?? ''];
-  urlGames = Boolean(only || asked || q.get('room') === 'charge' || q.get('room') === 'bridge' || q.get('games'));
+  // `?games=all` is the real draw (and the drawn-episode tests'): only a narrowed or forced pick is the URL's.
+  urlGames = Boolean(only || asked || q.get('room') === 'charge' || q.get('room') === 'bridge');
   const phonics =
     q.get('room') === 'charge' ? CHARGE_GAME
       : q.get('room') === 'bridge' ? BRIDGE_GAME
