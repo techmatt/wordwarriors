@@ -270,7 +270,7 @@ episodes back to back (`SCENARIOS` in `tests/qa/qa.pw.ts`; `-g <name>` for one,
 forms, an idle child who stands still at every choice, more seeds; `QA_SET=new` for the
 third, item 069's: a busy child pressing blue, red and yellow all episode (free play),
 `DIFFICULTY` 2 and 3 with seeded progress, Charge and the bridge answered right, and four
-real draws back to back; `QA_SET=all` every batch).
+real draws back to back; `QA_SET=lenses` the fourth, item 080's, below; `QA_SET=all` every batch).
 About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it records.
 In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
 
@@ -280,6 +280,23 @@ In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
   the episode before is a bug, the same ally or side rooms a look; `repeat-word`: a word
   read in an earlier episode of the run). Each scenario's JSON lists what each episode
   drew (`drawn`).
+- **Item 080's lenses** (`QA_SET=lenses`, about 25 minutes): `reload_points` reloads the
+  page at five points (bedroom, a side room, battle 1's choice, hub part 2, the victory
+  scene), one episode each, and lists what the store held either side (`probes` in its
+  JSON; `reload-store` when a reload itself changed it); `hidden_tab` switches the tab
+  away for 2.5 s every 9 s (Phaser's visibility and blur events; a real hidden tab also
+  stops animation frames, which this does not, so its frame spikes are expected);
+  `resize` cycles six window sizes; `slow_net` slows every voice and art fetch by 0.3 to
+  1.5 s, `flaky_net` fails one in seven (never the manifest; `netFailed` lists them);
+  `lock_all` turns dad lock on at thirteen points of an episode, presses every button and
+  checks nothing moved (`dadlock-leak`) and the badge shows (`dadlock-badge`), listing the
+  lines that started while locked; `parent_all` opens the grown-ups page at each point
+  and checks F9 comes back to the same scene (`parent-return`) and the store did not
+  change (`parent-store`); `parent_none` is the same seed with no visits, to compare.
+  Also `qa flags <url>`, 48 URLs and odd values each watched 9 s (`flag-stuck` when one
+  never leaves Boot or Wait; JSON and shots in `flags/`), and `qa devkeys skip` (F2 at
+  every step, then an episode played through) and `qa devkeys auto` (F4 and green to the
+  recap).
 - **Silent lines at test speed are a look, not a bug** (item 069): at speed 5 the game asks
   for lines five times faster than the decode queue serves them (a drawn narrator's ~500
   clips), so lines still `queued` or `decoding` play silent in a sweep, while a whole
