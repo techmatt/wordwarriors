@@ -56,6 +56,34 @@ test('padPlace: the rope pull keeps three pads on her side when it is narrow, ne
   }
 });
 
+test('padPlace: a contest\'s signs stay off the serpent wherever it rocks on its station (item 083, M7/M17)', () => {
+  for (let seed = 1; seed <= 30; seed++) {
+    // The rope pull as the choice opens: the line where the lead has it, the serpent anywhere in its rock.
+    const lead = ((seed % 5) - 2) * 10;
+    const team = [body(360 - lead, 548, 110, 200), body(225 - lead, 590, 110, 200), body(90 - lead, 632, 110, 200)];
+    const vx = 895 - lead + ((seed % 5) - 2) * 6;
+    const villain = body(vx, 565, 320, 260);
+    const spots = placePads({ n: 3, avoid: [...team, villain], cover: [villain, ...team.slice(1)], contest: { meX: team[0]!.x, villain }, sway: 40, ...floor, rand: seeded(spread(seed)) });
+    assert.equal(spots.length, 3);
+    // The published sign plate (moveChoice info()) over the body wherever it drifts within its rock.
+    const plates = spots.map((p): [number, number, number, number] => [p.x - 115, p.y - 265, p.x + 115, p.y - 165]);
+    for (const dx of [-30, -15, 0, 15, 30]) {
+      const moved = bodyBox({ ...villain, x: villain.x + dx });
+      assert.equal(coveredShare(moved, plates), 0, `seed ${seed}, rocked ${dx}: ${JSON.stringify(spots)}`);
+    }
+  }
+});
+
+test('padPlace: a sliver of cover is still cover: a clear way beats one under 0.5% (item 083)', () => {
+  // Any clear layout must win over a layout covering a tiny share, whatever its clearance.
+  for (let seed = 1; seed <= 20; seed++) {
+    const me = body(300, 560, 120, 220);
+    const villain = body(760 + seed * 5, 520, 260, 340);
+    const spots = placePads({ n: 2, avoid: [me, villain], cover: [villain], ...floor, rand: seeded(spread(seed)) });
+    assert.equal(coveredShare(bodyBox(villain), signs(spots)), 0, `seed ${seed}`);
+  }
+});
+
 test('padPlace: a fight keeps every sign off the villain', () => {
   for (let seed = 1; seed <= 20; seed++) {
     const me = body(300, 560, 120, 220);

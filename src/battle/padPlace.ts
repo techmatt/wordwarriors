@@ -46,6 +46,12 @@ export interface PlaceInput {
   /** The floor's left and right ends. */
   left: number;
   right: number;
+  /**
+   * How far a covered body may drift, each way, while the choice is open (item 083): a
+   * contest's held team and villain keep rocking on their stations at the freeze's slow
+   * clock (the rope pull's serpent went 0.26% under a sign), so no sign may come within it.
+   */
+  sway?: number;
   /** Tie-break luck, 0..1. */
   rand?: () => number;
 }
@@ -87,7 +93,11 @@ export function placePads(inp: PlaceInput): { x: number; y: number }[] {
     return d;
   };
   // Every covered body's share under the signs, summed: 0 is the rule, more only when nothing else fits.
-  const coverBoxes = cover.map(bodyBox);
+  const sway = inp.sway ?? 0;
+  const coverBoxes = cover.map((b): Box => {
+    const [l, t, r, btm] = bodyBox(b);
+    return [l - sway, t, r + sway, btm];
+  });
   const columns = (edge: number): number[] => {
     const out: number[] = [];
     for (let x = inp.left + edge; x <= inp.right - edge; x += 20) out.push(x);
@@ -125,10 +135,10 @@ export function placePads(inp: PlaceInput): { x: number; y: number }[] {
           const clear = Math.min(...picked.map((p) => p.clear));
           let spread = Infinity;
           for (let i = 1; i < picked.length; i++) spread = Math.min(spread, picked[i]!.x - picked[i - 1]!.x);
-          // Covering nobody first; then clear enough counts the same however
+          // Covering nobody first (any cover at all outweighs the rest, item 083); then clear enough counts the same however
           // far; then one row over a staggered pair, spread out, a little luck.
           const rowsUsed = new Set(picked.map((p) => p.y)).size;
-          const score = -cov * 100_000 + Math.min(clear, 240) * 3 - (rowsUsed - 1) * 200 + Math.min(spread, 420) * 0.25 + rand() * 25;
+          const score = -cov * 1e9 + Math.min(clear, 240) * 3 - (rowsUsed - 1) * 200 + Math.min(spread, 420) * 0.25 + rand() * 25;
           if (score > bestScore) {
             bestScore = score;
             bestCover = cov;
@@ -178,9 +188,10 @@ export function placePads(inp: PlaceInput): { x: number; y: number }[] {
     for (const way of ways) {
       const laid = lay(way);
       if (!laid.spots.length) continue;
-      if (laid.cover < 0.005) return laid.spots;
+      // Nobody covered at all: a sliver counts (item 083: 0.26% of the serpent passed a 0.5% bar).
+      if (laid.cover === 0) return laid.spots;
       // Every way so far covers someone: keep the least covering, the earlier on a tie.
-      if (!fallback || laid.cover < fallback.cover - 0.005) fallback = laid;
+      if (!fallback || laid.cover < fallback.cover - 1e-9) fallback = laid;
     }
     if (fallback) return fallback.spots;
   }

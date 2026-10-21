@@ -35,6 +35,8 @@ const PAD_GLOW = 0x7ad9ff;
 const FLOOR = { left: ARENA_LEFT, right: ARENA_RIGHT, top: FLOOR_TOP, bottom: FLOOR_BOTTOM };
 /** How long her team takes to step off the pad row when a choice opens (wall-clock ms; the fight's clock is frozen). */
 const STEP_BACK_MS = 450;
+/** How far a contest's held fighter may rock either way while the choice is open (the rope pull's rock is up to 26 px, item 083). */
+const CONTEST_SWAY = 40;
 
 /** What the battle lends the move choice. */
 export interface ChoiceHost {
@@ -230,6 +232,8 @@ export class MoveChoice {
       avoid: avoid.map(body),
       cover: [...(v?.active ? [v] : []), ...team].map(body),
       contest: this.host.anchored && v?.active ? { meX: me.x, villain: body(v) } : undefined,
+      // A contest's held bodies keep rocking at the freeze's slow clock (item 083, the rope pull's serpent).
+      sway: this.host.anchored ? CONTEST_SWAY : 0,
       left: ARENA_LEFT,
       right: ARENA_RIGHT,
     });
