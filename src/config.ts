@@ -22,7 +22,7 @@ export const FLIP_TO_FACE = true;
 /** How close (px, centre to centre) she must be for a spot to light up its green dot. */
 export const REACH = 95;
 
-/** The two text faces: rounded (the dialogue box, the hub's gift word, the hall's plaques) and comic (the side rooms' banner and tiles). */
+/** The two text faces: rounded (the dialogue box, the hub's gift word, the hall's letter board) and comic (the side rooms' banner and tiles). */
 export const FONT_ROUNDED = '"Arial Rounded MT Bold", "Arial Black", sans-serif';
 export const FONT_COMIC = '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif';
 
@@ -114,24 +114,21 @@ export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2 };
 
 /**
  * Charge the Spell (item 053, src/scenes/ChargeRoom.ts): a visit spells one
- * word of `units` (fewest, most) sound units (item 058); she says each rune's
- * letter sound aloud and Dad presses 2 (yes) or 1 (no), then she reads the
- * whole word aloud and Dad judges that too (`readTimeoutMs` with no answer,
- * or his 1, sounds it out once and moves on). `timeoutMs` with no answer on a
- * rune counts as a no (the game helps); `assists` helps per rune before the
- * game says it with her and moves on. Each sound has its
- * own help level: 1 = the sound and its gesture first, she copies; 2 = the
- * gesture only; 3 = the rune alone. `startLevel` is a sound she has never
- * charged. `tiers`: the quick sounds (stops, H W Y J...) join once `start` of
+ * word of `units` (fewest, most) sound units (item 058). The helper says each
+ * rune's letter sound and she says it back in `sayBackMs` of quiet, with no
+ * presses (item 059); then she reads the whole word aloud and Dad presses 2
+ * (right) or 1 (they sound it out together); `readTimeoutMs` with no answer
+ * counts as his 1. `startLevel` is a sound's help level before it has one
+ * (the ramp of item 053 is kept in the store, unused by the room since
+ * item 059). `tiers`: the quick sounds (stops, H W Y J...) join once `start` of
  * the continuous ones (M S F A L N R V Z, the short vowels) are solid, at
  * weight `min`, full at `full`; the digraphs (SH CH TH) the same off the
  * quick ones. `weight` is its weight in the rooms' pool (a frame is 1).
  */
 export const CHARGE = {
   units: [3, 4] as [number, number],
-  timeoutMs: 8000,
+  sayBackMs: 1500,
   readTimeoutMs: 10000,
-  assists: 2,
   startLevel: 1 as 1 | 2 | 3,
   weight: 1,
   tiers: {

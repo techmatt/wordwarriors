@@ -1,33 +1,27 @@
 /**
- * Charge the Spell (item 053; one word a visit since item 058): a side room
- * where she says letter SOUNDS aloud and Dad judges, then reads the word
- * they spell. Her real gap is sounds (she knows the names), and nothing here
- * can be won from a first letter or a guess: she has to say it.
+ * Charge the Spell (item 053; one word a visit since item 058; no presses per
+ * rune since item 059): a side room where she says letter SOUNDS aloud after
+ * the helper, then reads the word they spell for Dad. Her real gap is sounds
+ * (she knows the names).
  *
  * The visit's word (src/rules/charge.ts: 3-4 sound units, every one a rune)
- * is shown at the top from the start, one slot per unit. She walks up to the
- * magic altar and presses green. The word's first rune lights on the altar
- * (its slot at the top pulses); she says its sound, and Dad presses 2 (the
- * dad buttons, src/input/dadButtons.ts): the rune fires into its slot,
- * heavy with particles, its sound said as confirmation. Dad presses 1, or
- * nothing comes for CHARGE.timeoutMs: the helper shows its gesture (Jolly
- * Phonics style, content/phonics/runes.ts: a hissing snake, a tummy rub) and
- * says the sound, and she tries again. After CHARGE.assists helps they say it
- * together and the rune charges all the same (no fail states).
- *
- * Every cue is a few words at most (item 058), by the sound's help level
- * (src/rules/charge.ts): at level 1 the helper shows the gesture and says the
- * sound first ("Now you say it!"); at level 2 the gesture and "It goes..."
- * (a cloze); at level 3 the rune alone. A 2 with no help moves the sound up a
- * level, any help moves it down one; the answer is recorded under `sounds`,
- * the level under `chargeLevels`.
+ * is shown at the top from the start, one slot per unit. She walks in and it
+ * starts by itself ("I say each sound, and then you say it back to me"). Each
+ * rune lights on the altar in turn (its slot at the top pulses); the helper
+ * shows its gesture (Jolly Phonics style, content/phonics/runes.ts) and says
+ * its sound, then a beat (CHARGE.sayBackMs) of quiet for her to say it back,
+ * and the rune fires into its slot, heavy with particles. Nothing is pressed
+ * per rune: Matt found the per-rune presses slow and frustrating (item 059).
  *
  * With every rune charged the whole word lights at the top and she reads it
- * aloud ("Now read the whole spell!"). Dad's 2: the word is said, its picture
- * shows and flies into her bag. His 1, or nothing for CHARGE.readTimeoutMs:
- * the word is sounded out once, unit by unit (never blended), then said, and
- * the picture goes into the bag all the same. The read is recorded under
- * `words`, and the word is a battle item (`episode.fetched`).
+ * aloud ("Now read the whole spell!"): the room's one press, Dad's. His 2:
+ * the word is said, its picture shows and flies into her bag. His 1, or
+ * nothing for CHARGE.readTimeoutMs: "Let's sound it out together!", the word
+ * sounded out once, unit by unit (never blended), then said, and the picture
+ * goes into the bag all the same. The read is recorded under `words`, and its
+ * runes' sounds under `sounds` (right with his 2), which open the quicker
+ * sounds' tiers; the word is a battle item (`episode.fetched`). A round runs
+ * about 20 s.
  *
  * Each charged rune becomes a move her hero fires in the next battle
  * (`episode.charged`, BattleScene `useCharged`).
@@ -41,7 +35,7 @@ import Phaser from 'phaser';
 import { RUNE_BY_SOUND, type GestureMotion } from '../../content/phonics/runes';
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
-import { CHARGE_ASK_VARIANTS, RIGHT_VARIANTS } from '../../content/voice/script';
+import { RIGHT_VARIANTS } from '../../content/voice/script';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxZap } from '../audio/sfx';
 import { CHARGE, DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
@@ -50,7 +44,7 @@ import { bob, burst, fitImage, floatText, popIn, punch, shake, shockwave, squash
 import { TEX } from '../fx/textures';
 import { dadPress, openDadButtons, setDadAsking, type DadAnswer } from '../input/dadButtons';
 import { dadLock } from '../input/dadLock';
-import { chargeLevel, nextChargeLevel, type ChargeLevel, type ChargePlan } from '../rules/charge';
+import { chargeLevel, type ChargeLevel, type ChargePlan } from '../rules/charge';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../testHooks';
 import { Bag } from '../ui/Bag';
@@ -61,15 +55,13 @@ import type { Spot } from '../world/RoomScene';
 import { ARRIVE_MS, INK, LIT, Minigame } from './minigames/Minigame';
 
 /**
- * `approach`: walk to the altar. `explain`: the helper explains, no rune yet.
- * `resume`: back from the parent page, the rune not lit yet. `prompt`: the
- * rune is lit and the helper is cueing it. `ask`: waiting for Dad. `help`:
- * the helper models it after a no. `charging`: the payoff. `read`: every
- * rune charged, she reads the word, waiting for Dad. `reading`: the word's
- * payoff (said, or sounded out and said). `done`: back to the hub. Dad's
- * buttons count only in `prompt`, `ask`, (a yes) `help` and `read`.
+ * `explain`: the helper explains, no rune yet. `prompt`: a rune is lit and
+ * the helper says it. `sayback`: her beat to say it back. `charging`: the
+ * payoff. `read`: every rune charged, she reads the word, waiting for Dad.
+ * `reading`: the word's payoff (said, or sounded out and said). `done`: back
+ * to the hub. Dad's buttons count only in `read`.
  */
-type Phase = 'approach' | 'explain' | 'resume' | 'prompt' | 'ask' | 'help' | 'charging' | 'read' | 'reading' | 'done';
+type Phase = 'explain' | 'prompt' | 'sayback' | 'charging' | 'read' | 'reading' | 'done';
 
 const ALTAR = { x: GAME_WIDTH / 2 + 60, y: 600, w: 340, h: 250 };
 /** The rune stands on the altar's top. */
@@ -86,12 +78,10 @@ export class ChargeRoom extends Minigame {
   private plan!: ChargePlan;
   private roomId = '';
   private index = 0;
-  private phase: Phase = 'approach';
-  /** This rune's helps so far (Dad's no, or a timeout). */
-  private assists = 0;
-  /** Its help level as the rune lit (the ramp moves from this). */
+  private phase: Phase = 'explain';
+  /** The rune's help level (kept for the grown-ups page; every rune is said for her since item 059). */
   private level: ChargeLevel = 1;
-  /** Time spent waiting for Dad on this ask (scene clock, paused under dad lock and while a line plays). */
+  /** Time spent waiting for Dad on the read (scene clock, paused under dad lock and while a line plays). */
   private waitMs = 0;
   private timeouts = 0;
   /** How the word's read went: Dad's yes, or a no / timeout (sounded out). */
@@ -110,12 +100,12 @@ export class ChargeRoom extends Minigame {
   /** The pulse on the slot of the rune lit now. */
   private slotPulse: Phaser.Tweens.Tween | null = null;
   /**
-   * The flow in charge: every chain (a prompt, a help, a payoff) takes the
-   * number when it starts and stops at its next await once Dad's answer has
-   * moved it on, so a press mid-line never leaves two chains talking.
+   * The flow in charge: every chain takes the number when it starts and
+   * stops at its next await once Dad's answer has moved it on, so a press
+   * mid-line never leaves two chains talking.
    */
   private flow = 0;
-  /** The gesture playing now, to stop it at once when Dad answers mid-gesture. */
+  /** The gesture playing now, to stop it at once when the room moves on. */
   private stopGesture: (() => void) | null = null;
   /** The helper's scale at rest: every gesture's squash starts and ends there. */
   private friendScale = { x: 1, y: 1 };
@@ -135,11 +125,10 @@ export class ChargeRoom extends Minigame {
     const charged = episode.charged?.sounds ?? [];
     this.index = Math.min(charged.length, this.plan.runes.length);
     this.finished = episode.fetched.includes(this.plan.word) || episode.house.done.includes(this.slot);
-    this.phase = this.index > 0 ? 'resume' : 'approach';
+    this.phase = 'explain';
     this.level = 1;
     this.flow++;
     this.stopGesture = null;
-    this.assists = this.missesNow();
     this.waitMs = 0;
     this.timeouts = 0;
     this.readAnswer = null;
@@ -154,15 +143,6 @@ export class ChargeRoom extends Minigame {
 
   private get allCharged(): boolean {
     return this.index >= this.plan.runes.length;
-  }
-
-  private get missKey(): string {
-    return `${this.slot}:${this.rune}`;
-  }
-
-  /** This rune's helps before a trip to the parent page: still helps (as the machine's misses, item 039). */
-  private missesNow(): number {
-    return episode.house.misses?.[this.missKey] ?? 0;
   }
 
   protected override sceneData(): object {
@@ -193,7 +173,8 @@ export class ChargeRoom extends Minigame {
     this.floor.setTo(80, 420, GAME_WIDTH - 160, 260);
     applyHouseMood(this, episode.villain, { seed: 0x2053, floor: this.floor, calm: true });
     const room = SIDE_ROOM_BY_ID[this.roomId];
-    this.player.place(170, Math.min(room?.entry.y ?? 600, this.floor.bottom - 10));
+    // She stands before the altar from the start: nothing to walk to or press.
+    this.player.place(ALTAR.x - 150, Math.min(room?.entry.y ?? ALTAR.y + 40, this.floor.bottom - 10));
     this.player.hop();
     burst(this, this.player.x, this.player.y - 40, { count: 16, speed: 220 });
     sfxWhoosh();
@@ -204,9 +185,8 @@ export class ChargeRoom extends Minigame {
     this.caption.track(helper(), () => (this.friend.active ? { x: this.friend.x, y: this.friend.y } : null));
     bob(this, this.friend, 4, 1300);
 
-    this.altar = this.art('prop_rune_altar', ALTAR.w, ALTAR.h);
-    const spot = this.addSpot('altar', ALTAR.x, ALTAR.y, [this.altar], true);
-    popIn(this, spot.obj, 1);
+    this.altar = this.art('prop_rune_altar', ALTAR.w, ALTAR.h, ALTAR.x, ALTAR.y).setDepth(ALTAR.y);
+    popIn(this, this.altar, this.altar.scale);
     this.glow = this.add.image(RUNE.x, RUNE.y, TEX.glow).setDepth(ALTAR.y - 2).setScale(2.6).setAlpha(0).setTint(0xb28dff).setBlendMode(Phaser.BlendModes.ADD);
     this.stone = fitImage(this.add.image(RUNE.x, RUNE.y, 'prop_rune_stone'), RUNE.size, RUNE.size).setDepth(ALTAR.y - 1).setVisible(false);
     this.runeText = this.add
@@ -223,23 +203,28 @@ export class ChargeRoom extends Minigame {
       this.closeDad = null;
     });
 
+    this.locked = true;
     if (this.finished) {
-      this.locked = true;
       this.phase = 'done';
       this.time.delayedCall(600, () => backToHub(this, this.slot));
       return;
     }
-    if (this.phase === 'approach') void this.intro();
-    else {
-      // Back mid-visit: she is at the altar already.
-      spot.enabled = false;
-      this.player.place(ALTAR.x - 150, ALTAR.y + 40);
-      void this.wait(ARRIVE_MS).then(() => {
-        if (this.phase !== 'resume') return;
-        if (this.allCharged) void this.askRead();
-        else void this.lightRune();
-      });
-    }
+    const f = this.flow;
+    void (async () => {
+      await this.wait(ARRIVE_MS);
+      if (f !== this.flow) return;
+      // Back mid-visit (the parent page), she knows the game: straight on.
+      if (this.index === 0) {
+        sfxSummon();
+        squash(this, this.altar, this.altar.scaleX, this.altar.scaleY, 0.12);
+        burst(this, ALTAR.x, ALTAR.y - ALTAR.h * 0.8, { count: 50, speed: 360, texture: TEX.star, colors: [0xb28dff, 0xffd23f, 0xffffff] });
+        shockwave(this, ALTAR.x, ALTAR.y - ALTAR.h * 0.6, 0xb28dff, 220);
+        await this.narrate('charge_explain');
+        if (f !== this.flow) return;
+      }
+      if (this.allCharged) await this.askRead();
+      else await this.lightRune();
+    })();
   }
 
   /** Her face, then the word, a slot per sound unit (its letters dim until charged); slots charged this visit are lit. */
@@ -287,7 +272,7 @@ export class ChargeRoom extends Minigame {
     this.slotPulse = this.tweens.add({ targets: r, scale: 1.12, duration: 420, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
   }
 
-  /** A slot takes its rune: the move's colour, its letters lit. */
+  /** A slot takes its rune: the move's color, its letters lit. */
   private fillSlot(i: number, fresh: boolean): void {
     const r = this.barSlots[i];
     const t = this.barTexts[i];
@@ -306,40 +291,17 @@ export class ChargeRoom extends Minigame {
     }
   }
 
-  private async intro(): Promise<void> {
-    this.locked = true;
-    await this.wait(ARRIVE_MS);
-    await this.narrate('charge_intro');
-    if (this.phase === 'approach') this.locked = false;
-  }
+  /** Nothing to walk to: the room runs itself until the read. */
+  protected choose(_spot: Spot): void {}
 
-  /** Green at the altar: it wakes, the helper explains, the first rune lights. */
-  protected choose(spot: Spot): void {
-    if (this.phase !== 'approach' || spot.id !== 'altar') return;
-    spot.enabled = false;
-    this.phase = 'explain';
-    this.locked = true;
-    voiceBus.hush();
-    sfxSummon();
-    squash(this, spot.obj, 1, 1, 0.12);
-    burst(this, ALTAR.x, ALTAR.y - ALTAR.h * 0.8, { count: 50, speed: 360, texture: TEX.star, colors: [0xb28dff, 0xffd23f, 0xffffff] });
-    shockwave(this, ALTAR.x, ALTAR.y - ALTAR.h * 0.6, 0xb28dff, 220);
-    void (async () => {
-      await this.narrate('charge_explain');
-      if (this.phase === 'explain') await this.lightRune();
-    })();
-  }
-
-  /** The word's next rune lights on the altar and the helper cues it, with the help its level gives. */
+  /** The word's next rune lights on the altar; the helper shows its gesture and says it; a beat for her to say it back; it charges. */
   private async lightRune(): Promise<void> {
     const sound = this.rune;
     const f = ++this.flow;
     this.round = `charge:${this.index}:${sound}`;
     this.phase = 'prompt';
     this.locked = true;
-    this.assists = this.missesNow();
     this.level = chargeLevel(progress, sound);
-    this.waitMs = 0;
     this.markSlot(this.index);
     this.runeText.setText((this.plan.units[this.index] ?? sound).toUpperCase()).setColor(INK).setScale(1).setAlpha(1);
     this.stone.setVisible(true).clearTint();
@@ -350,44 +312,36 @@ export class ChargeRoom extends Minigame {
     this.tweens.add({ targets: this.glow, alpha: 0.85, scale: 3.1, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     sfxZap();
     burst(this, RUNE.x, RUNE.y, { count: 40, speed: 280, colors: [0xb28dff, 0xffffff] });
-    await this.wait(300);
-    if (f !== this.flow || this.phase !== 'prompt') return;
-    await this.prompt(f);
+    await this.wait(250);
+    if (f !== this.flow) return;
+    await this.gesture(sound, f);
+    if (f !== this.flow) return;
+    // Her turn: the rune glows and the room is quiet while she says it back.
+    this.phase = 'sayback';
+    this.tweens.add({ targets: this.runeText, scale: 1.15, duration: 300, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    await this.waitUnlocked(CHARGE.sayBackMs);
+    if (f !== this.flow) return;
+    this.tweens.killTweensOf(this.runeText);
+    this.runeText.setScale(1);
+    await this.charge();
   }
 
-  /** The cue, a few words at most, as the rune's level (and any help so far) says; `f` is the flow it belongs to. */
-  private async prompt(f: number, again = false): Promise<void> {
-    const sound = this.rune;
-    const on = () => f === this.flow && this.phase === 'prompt';
-    if (this.assists === 0 && this.level === 1) {
-      // Level 1: the gesture and the sound first; she copies.
-      await this.gesture(sound, 'sound', f);
-      if (!on()) return;
-      await this.narrate('charge_your_turn');
-    } else if (this.assists === 0 && this.level === 2) {
-      // Level 2: the gesture and "It goes...", where the sound would be.
-      await this.gesture(sound, 'cloze', f);
-    } else if (this.index === 0 || this.assists > 0 || again) {
-      // Level 3 (or asked again after help): the rune alone, a short ask.
-      await this.narrate(`charge_ask_${(this.index % CHARGE_ASK_VARIANTS) + 1}`);
+  /** `ms` of scene time, paused under dad lock (a timed wait for her waits while Dad holds the game). */
+  private async waitUnlocked(ms: number): Promise<void> {
+    let left = ms;
+    while (left > 0) {
+      await this.wait(100);
+      if (!dadLock.locked) left -= 100;
+      if (!this.scene.isActive()) return;
     }
-    // Level 3 after the first rune: the rune alone, no words; she knows the game by now.
-    if (on()) this.startAsking();
-  }
-
-  private startAsking(): void {
-    this.phase = 'ask';
-    this.waitMs = 0;
-    this.locked = false;
-    setDadAsking(true);
   }
 
   /**
    * The helper performs the rune's gesture: they bob and squash in its
    * rhythm while its glyph does the action beside them, and say the sound
-   * (`sound`, the rune lit while it plays) or "It goes..." (`cloze`).
+   * (the rune lit while it plays).
    */
-  private async gesture(sound: string, cue: 'sound' | 'cloze', f: number): Promise<void> {
+  private async gesture(sound: string, f: number): Promise<void> {
     const r = RUNE_BY_SOUND[sound];
     if (!r) return;
     // One gesture at a time, from the helper's rest scale.
@@ -408,13 +362,9 @@ export class ChargeRoom extends Minigame {
       this.tweens.add({ targets: prop, scale: 0, alpha: 0, duration: 220, onComplete: () => prop.destroy() });
     };
     this.stopGesture = stop;
-    this.locked = true;
-    // A beat of the action before anything is said, so she sees it.
-    await this.wait(450);
-    if (f === this.flow) {
-      if (cue === 'sound') await this.saySound(sound);
-      else await this.say(narratorLine(narrator(), 'charge_goes'));
-    }
+    // A beat of the action before the sound, so she sees it.
+    await this.wait(300);
+    if (f === this.flow) await this.saySound(sound);
     if (this.stopGesture === stop) stop();
   }
 
@@ -451,75 +401,23 @@ export class ChargeRoom extends Minigame {
     this.runeText.setColor(INK);
   }
 
-  /**
-   * Dad's button (or the timeout, or F4). On a rune, a yes charges it (while
-   * the helper is still helping too: she said it) and a no gets help; on the
-   * word, either moves on (a no sounds it out first).
-   */
+  /** Dad's button (or the timeout, or F4): only the word's read asks him. A no sounds it out together first. */
   private answer(a: DadAnswer, timedOut = false): void {
-    if (this.phase === 'read') {
-      this.noteActivity();
-      setDadAsking(false);
-      this.flow++;
-      voiceBus.hush();
-      void this.readWord(a === 'yes' ? 'yes' : timedOut ? 'timeout' : 'no');
-      return;
-    }
-    if (this.phase !== 'prompt' && this.phase !== 'ask' && !(this.phase === 'help' && a === 'yes')) return;
+    if (this.phase !== 'read') return;
     this.noteActivity();
     setDadAsking(false);
-    // Whatever was being said or shown for this rune stops here.
     this.flow++;
-    this.stopGesture?.();
     voiceBus.hush();
-    if (a === 'yes') void this.charge(false);
-    else void this.help(timedOut);
+    void this.readWord(a === 'yes' ? 'yes' : timedOut ? 'timeout' : 'no');
   }
 
-  /** A no or a timeout: the helper shows the gesture and says the sound, and she tries again; after enough help, together. */
-  private async help(timedOut: boolean): Promise<void> {
-    if (timedOut) this.timeouts++;
-    const first = this.assists === 0;
-    this.assists++;
-    (episode.house.misses ??= {})[this.missKey] = this.assists;
-    // The ramp moves once per rune, on its first help.
-    if (first) progress.setChargeLevel(this.rune, nextChargeLevel(this.level, false));
-    this.phase = 'help';
-    this.locked = true;
-    const f = this.flow;
-    const on = () => f === this.flow && this.phase === 'help';
-    if (this.assists > CHARGE.assists) {
-      // Enough: the helper says it with her, and the rune charges all the same.
-      await this.narrate('charge_together');
-      if (!on()) return;
-      await this.gesture(this.rune, 'sound', f);
-      if (!on()) return;
-      await this.charge(true);
-      return;
-    }
-    await this.gesture(this.rune, 'sound', f);
-    if (!on()) return;
-    await this.narrate('charge_your_turn');
-    if (!on()) return;
-    this.phase = 'prompt';
-    this.startAsking();
-  }
-
-  /**
-   * The rune charges: recorded first (so a skip mid-payoff loses nothing),
-   * then it fires into its slot in the word with heavy particles, its sound
-   * said as confirmation unless the helper just said it with her.
-   */
-  private async charge(together: boolean): Promise<void> {
+  /** The rune charges: it fires into its slot in the word with heavy particles, and the next lights. */
+  private async charge(): Promise<void> {
     const sound = this.rune;
     const i = this.index;
-    const unaided = this.assists === 0;
+    const f = this.flow;
     this.phase = 'charging';
     this.locked = true;
-    setDadAsking(false);
-    progress.record('sounds', sound, unaided, this.assists);
-    if (unaided) progress.setChargeLevel(sound, nextChargeLevel(this.level, true));
-    if (episode.house.misses) delete episode.house.misses[this.missKey];
     // They fire in the next battle: the house part's own number.
     const step = currentStep();
     const charged = (episode.charged ??= { sounds: [], part: step.kind === 'house' ? step.part : 1 });
@@ -533,10 +431,7 @@ export class ChargeRoom extends Minigame {
     shockwave(this, RUNE.x, RUNE.y, color, 260);
     burst(this, RUNE.x, RUNE.y, { count: 90, speed: 620, scale: 2.2, texture: TEX.star, gravity: 900, life: 1000, colors: [color, 0xffd23f, 0xffffff] });
     burst(this, RUNE.x, RUNE.y, { count: 40, speed: 300, scale: 2.6, texture: TEX.glow, gravity: 0, life: 700, colors: [color, 0xffffff] });
-    floatText(this, RUNE.x, RUNE.y - 140, unaided ? 'WOW!' : 'YES!', '#ffd23f');
-    this.runeText.setColor(LIT);
-    if (!together) await this.saySound(sound);
-    this.runeText.setColor(LIT);
+    floatText(this, RUNE.x, RUNE.y - 140, 'YES!', '#ffd23f');
 
     // The rune flies up into its slot in the word, trailing sparks.
     const to = this.slotPos(i);
@@ -550,7 +445,7 @@ export class ChargeRoom extends Minigame {
     sfxWhoosh();
     await this.guard(
       new Promise<void>((resolve) =>
-        this.tweens.add({ targets: flyer, x: to.x, y: to.y, scale: 0.5, duration: 450, ease: 'Cubic.easeIn', onComplete: () => resolve() }),
+        this.tweens.add({ targets: flyer, x: to.x, y: to.y, scale: 0.5, duration: 400, ease: 'Cubic.easeIn', onComplete: () => resolve() }),
       ),
     );
     trail.stop();
@@ -566,7 +461,8 @@ export class ChargeRoom extends Minigame {
     this.glow.setAlpha(0);
     this.stone.setVisible(false);
     this.index++;
-    await this.wait(250);
+    await this.wait(150);
+    if (f !== this.flow) return;
     if (!this.allCharged) {
       await this.lightRune();
       return;
@@ -601,8 +497,9 @@ export class ChargeRoom extends Minigame {
 
   /**
    * The word's payoff, recorded first: Dad's yes says it; his no or the
-   * timeout sounds it out once, unit by unit, then says it. Either way its
-   * picture shows and flies into her bag (a battle item), and back to the hub.
+   * timeout sounds it out together once, unit by unit, then says it. Either
+   * way its picture shows and flies into her bag (a battle item), and back
+   * to the hub.
    */
   private async readWord(answer: 'yes' | 'no' | 'timeout'): Promise<void> {
     const word = this.plan.word;
@@ -614,6 +511,8 @@ export class ChargeRoom extends Minigame {
     this.locked = true;
     setDadAsking(false);
     progress.record('words', word, right, right ? 0 : 1);
+    // Its sounds with it: a word read right is its sounds said right (they open the quicker sounds' tiers).
+    for (const s of new Set(this.plan.runes)) progress.record('sounds', s, right, right ? 0 : 1);
     // Her word bag: read right, it is done for this round of the bag.
     if (right) progress.takeFromBag(word);
     else progress.returnToBag(word);
@@ -624,8 +523,8 @@ export class ChargeRoom extends Minigame {
     this.bar.setScale(1);
 
     if (!right) {
-      // Sounded out once, each unit lit as it is said; never blended.
-      await this.narrate('charge_listen');
+      // Sounded out together once, each unit lit as it is said; never blended.
+      await this.narrate('charge_together');
       for (let k = 0; k < this.plan.runes.length; k++) {
         if (f !== this.flow) return;
         const t = this.barTexts[k];
@@ -654,40 +553,27 @@ export class ChargeRoom extends Minigame {
     this.phase = 'done';
     sfxSelect();
     await this.say(narratorLine(narrator(), 'charge_done'));
-    await this.wait(300);
+    await this.wait(200);
     this.fadeOutThen(() => backToHub(this, this.slot));
   }
 
-  /** Waiting for Dad: nothing for CHARGE.timeoutMs (a rune) or CHARGE.readTimeoutMs (the word) counts as a no (paused under dad lock and while a line plays). */
+  /** Waiting for Dad on the read: nothing for CHARGE.readTimeoutMs counts as his 1 (paused under dad lock and while a line plays). */
   override update(time: number, deltaMs: number): void {
     super.update(time, deltaMs);
-    if (this.phase !== 'ask' && this.phase !== 'read') return;
+    if (this.phase !== 'read') return;
     if (dadLock.locked || voiceBus.busy) return;
     this.waitMs += deltaMs;
-    if (this.waitMs >= (this.phase === 'read' ? CHARGE.readTimeoutMs : CHARGE.timeoutMs)) {
+    if (this.waitMs >= CHARGE.readTimeoutMs) {
       this.waitMs = 0;
       this.answer('no', true);
     }
   }
 
-  /** Yellow: the cue again, at its level (no extra help, so not counted); on the word, the read ask again. Idle before the altar: the intro again. */
+  /** Yellow (never asked for here): on the word, the read ask again. */
   protected override hint(idle = false): void {
-    if (this.phase === 'approach') {
-      void this.narrate('charge_intro').then(() => {
-        if (this.phase === 'approach') this.locked = false;
-      });
-      return;
-    }
-    if (idle) return;
-    if (this.phase === 'read') {
-      setDadAsking(false);
-      void this.askReadAgain();
-      return;
-    }
-    if (this.phase !== 'ask') return;
+    if (idle || this.phase !== 'read') return;
     setDadAsking(false);
-    this.phase = 'prompt';
-    void this.prompt(++this.flow, true);
+    void this.askReadAgain();
   }
 
   private async askReadAgain(): Promise<void> {
@@ -702,19 +588,16 @@ export class ChargeRoom extends Minigame {
     setDadAsking(true);
   }
 
-  /** F4 at the altar walks up to it; with a rune lit, or the word to read, it is Dad's yes. */
+  /** F4: with the word to read, Dad's yes; otherwise nothing (the runes move on by themselves). */
   protected override autoAnswer(): boolean {
-    if (this.phase === 'prompt' || this.phase === 'ask' || this.phase === 'help' || this.phase === 'read') {
-      dadPress('yes');
-      return true;
-    }
-    return false;
+    if (this.phase === 'read') dadPress('yes');
+    return true;
   }
 
-  /** An instruction unlocks input when it ends; mid-rune the room stays as its phase says. */
+  /** An instruction unlocks input when it ends; the room stays locked except while Dad is asked. */
   protected override async narrate(...keys: string[]): Promise<void> {
     await super.narrate(...keys);
-    if (this.phase !== 'approach' && this.phase !== 'ask' && this.phase !== 'read') this.locked = true;
+    if (this.phase !== 'read') this.locked = true;
   }
 
   protected override extraHooks(): Partial<RoomInfo> {
@@ -726,8 +609,8 @@ export class ChargeRoom extends Minigame {
         sound: this.rune,
         level: this.level,
         phase: this.phase,
-        asking: this.phase === 'ask' || this.phase === 'read',
-        assists: this.assists,
+        asking: this.phase === 'read',
+        assists: 0,
         timeouts: this.timeouts,
         read: this.readAnswer,
         charged: [...(episode.charged?.sounds ?? [])],

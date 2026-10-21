@@ -122,19 +122,13 @@ export const NARRATOR_LINES: Template[] = [
   // Charge the Spell (item 053, src/scenes/ChargeRoom.ts). No line names a
   // letter or spells a sound: each sound is its own letter_ line, and the
   // gestures (`CHARGE_GESTURES`) trail off into it. `use_runes` is the battle's.
-  { key: 'charge_intro', text: 'A magic altar! Walk up to it and press green.', say: 'A magic altar, walk up to it and press green.' },
-  // Item 058: a visit spells one word, so every cue per rune is a few words at most.
-  { key: 'charge_explain', text: 'Say each rune out loud to charge our magic spell!' },
-  { key: 'charge_goes', text: 'It goes...' },
+  // Item 059: the helper says each rune's sound and she says it back, no presses;
+  // then she reads the word and Dad's one press judges it.
+  { key: 'charge_explain', text: 'I say each sound, and then you say it back to me!', say: 'I say each sound, and then you say it back to me.' },
   { key: 'charge_read', text: 'Now read the whole spell!' },
-  { key: 'charge_listen', text: 'Listen!' },
-  { key: 'charge_ask_1', text: 'What sound does this rune make?' },
-  { key: 'charge_ask_2', text: 'Say this rune out loud!' },
-  { key: 'charge_ask_3', text: 'What does this rune say?' },
-  { key: 'charge_your_turn', text: 'Now you say it!' },
-  { key: 'charge_together', text: "Let's say it together!" },
-  { key: 'charge_done', text: 'All charged! Our spells are ready for the fight!', say: 'All charged, our spells are ready for the fight!' },
-  { key: 'use_runes', text: 'Spell power, go!' },
+  { key: 'charge_together', text: "Let's sound it out together!" },
+  { key: 'charge_done', text: 'Every rune is charged! Our spells are ready for the fight!', say: 'Every rune is charged, our spells are ready for the fight!' },
+  { key: 'use_runes', text: "Now let's use our spell power!" },
   // The Stretchy Bridge (item 054, src/scenes/BridgeRoom.ts). No line names a
   // letter, a sound or a word: the stones' sounds are letter_ lines, and the
   // word is said (word_) only once she has picked its picture. `bridge_start`,
@@ -164,7 +158,6 @@ export const RIGHT_VARIANTS = variants('right');
 export const WRONG_VARIANTS = variants('wrong');
 export const SILLY_VARIANTS = variants('machine_silly');
 /** Charge the Spell's asks (item 053). */
-export const CHARGE_ASK_VARIANTS = variants('charge_ask');
 
 /**
  * Charge the Spell's gestures (item 053), composed per narrator × rune
