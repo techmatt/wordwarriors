@@ -26,7 +26,7 @@ import { RUNES, RUNE_BY_SOUND } from '../../content/phonics/runes';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { CHARGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
-import { drawWords, factor, type Rand } from './bank';
+import { drawWords, type Rand } from './bank';
 import { helpLevel } from './difficulty';
 
 export type ChargeLevel = 1 | 2 | 3;
@@ -55,16 +55,6 @@ export function chargeLevel(store: ProgressStore, sound: string): ChargeLevel {
 /** The ramp: a yes with no assist is one level less help, an assisted rune one level more. */
 export function nextChargeLevel(level: ChargeLevel, unaided: boolean): ChargeLevel {
   return Math.max(1, Math.min(3, level + (unaided ? 1 : -1))) as ChargeLevel;
-}
-
-/** A sound's weight in the draw: shakiness × coverage. */
-export function runeWeight(store: ProgressStore, sound: string, seen: Record<string, number> = seenOf(store)): number {
-  if (!RUNE_BY_SOUND[sound]) return 0;
-  return store.shakiness('sounds', sound) * factor(seen, sound, RUNE_SOUNDS);
-}
-
-function seenOf(store: ProgressStore): Record<string, number> {
-  return Object.fromEntries(RUNE_SOUNDS.map((s) => [s, store.stat('sounds', s).seen]));
 }
 
 /**

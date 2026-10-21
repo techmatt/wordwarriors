@@ -25,6 +25,7 @@ import { sfxHit, sfxStomp } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { burst, fitImage, shake } from '../fx/juice';
 import { TEX } from '../fx/textures';
+import { seededRand } from '../rules/cast';
 
 export interface HouseMoodOptions {
   /** Scatter seed: one per room, so each room has its own stable mess. */
@@ -60,18 +61,6 @@ const WALL = new Phaser.Geom.Rectangle(210, 70, 880, 130);
 /** Decal ids that read as lying on the floor; anything else may go on the wall. */
 const FLOOR_LIKE = /foot|print|step|track|puddle|crumb|peel|banana|scorch|rubble|pile|mud|slime|bone|coin|sand|leaf|leaves|feather|dust/;
 
-/** A small seeded random (mulberry32), so a room's scatter is stable. */
-function seeded(seed: number): () => number {
-  let a = seed >>> 0;
-  return () => {
-    a = (a + 0x6d2b79f5) >>> 0;
-    let t = a;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
 export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: HouseMoodOptions = {}): HouseMoodHandle {
   const mood: HouseMood | undefined = CHARACTER_BY_ID[villainId]?.house;
   const objects: Phaser.GameObjects.GameObject[] = [];
@@ -84,7 +73,8 @@ export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: Hou
   };
   if (!mood) return { revealed: Promise.resolve(), destroy };
 
-  const rand = seeded(opts.seed ?? 1);
+  // Seeded (mulberry32), so a room's scatter is stable.
+  const rand = seededRand(opts.seed ?? 1);
   const floor = opts.floor ?? new Phaser.Geom.Rectangle(80, 420, GAME_WIDTH - 160, 260);
 
   // The tint sits just above the background, under everything that stands.

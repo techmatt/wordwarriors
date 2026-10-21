@@ -101,9 +101,3 @@ export const RUNES: RuneSound[] = [
 ];
 
 export const RUNE_BY_SOUND: Record<string, RuneSound> = Object.fromEntries(RUNES.map((r) => [r.sound, r]));
-
-/** The sounds that share one sound with another rune (C and K): a round has only one of them. */
-export const SAME_SOUND: string[][] = [['c', 'k']];
-
-/** Runes that look alike on the altar (mirrored B D P): a round has only one of them. */
-export const LOOKALIKE_RUNES: string[][] = [['b', 'd', 'p']];
