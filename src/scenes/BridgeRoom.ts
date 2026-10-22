@@ -749,7 +749,7 @@ export class BridgeRoom extends HouseSideRoom {
     if (!key) return;
     const phase = this.phase;
     this.releaseHeld();
-    void this.narrate(key).then(() => {
+    void this.narrateAgain(key).then(() => {
       if (this.phase !== phase) return;
       this.locked = false;
       // Her stone sounds again: the line cut its held sound (item 069: it stayed silent until she stepped off).

@@ -89,6 +89,8 @@ export abstract class RoomScene extends Phaser.Scene {
     this.round = '';
     this.lastNear = null;
     this.ignoredHopAt = 0;
+    this.fading = false;
+    this.heard.clear();
   }
 
   /** The room's background art id. */
@@ -223,8 +225,28 @@ export abstract class RoomScene extends Phaser.Scene {
   /** Say narrator line(s) as instructions, locking input until done; a key with variants says its next (item 087). */
   protected async narrate(...keys: string[]): Promise<void> {
     this.locked = true;
-    await this.guard(voiceBus.sequence(keys.map((k) => narratorLine(narrator(), variant(k)))));
+    // Resolved before the first await, so a subclass's narrate() wrapping this one keeps `again`.
+    const ids = keys.map((k) => {
+      const v = (this.again && this.heard.get(k)) || variant(k);
+      this.heard.set(k, v);
+      return narratorLine(narrator(), v);
+    });
+    this.again = false;
+    await this.guard(voiceBus.sequence(ids));
     this.locked = false;
+  }
+
+  /** The variant of each narrator key last said in this run (item 089), for `narrateAgain`. */
+  private heard = new Map<string, string>();
+  private again = false;
+
+  /**
+   * Narrator line(s) again as she heard them (yellow, an idle re-prompt; item
+   * 089): "say it again" is the same words, not the key's next variant.
+   */
+  protected narrateAgain(...keys: string[]): Promise<void> {
+    this.again = true;
+    return this.narrate(...keys);
   }
 
   /** Say arbitrary line ids as instructions, locking input until done. */
@@ -282,8 +304,12 @@ export abstract class RoomScene extends Phaser.Scene {
     this.fadeOutThen(() => advance(this));
   }
 
+  /** Fading out to leave (`fadeOutThen`): F2 and F9 wait for the next room. */
+  private fading = false;
+
   /** Fade to black, then (just after the fade ends) `then`: leaving the room. */
   protected fadeOutThen(then: () => void): void {
+    this.fading = true;
     this.cameras.main.fadeOut(300, 0, 0, 0);
     this.time.delayedCall(320, then);
   }
@@ -373,12 +399,13 @@ export abstract class RoomScene extends Phaser.Scene {
     this.player.lift = this.play.height;
     this.idleHelp(deltaMs);
 
-    if (this.controls.dev('F2')) advance(this);
+    // Not while the room fades out to leave (item 089): F2 skipped a second step, F9 came back to a room already left.
+    if (this.controls.dev('F2') && !this.fading) advance(this);
     if (this.controls.dev('F4') && !this.autoAnswer()) {
       const c = this.correctSpot();
       if (c && !this.locked) this.choose(c);
     }
-    if (this.controls.dev('F9')) this.scene.start('Parent', { back: this.scene.key, data: this.sceneData() });
+    if (this.controls.dev('F9') && !this.fading) this.scene.start('Parent', { back: this.scene.key, data: this.sceneData() });
     this.controls.endFrame();
 
     this.publish(deltaMs);

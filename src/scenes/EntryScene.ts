@@ -246,8 +246,8 @@ export class EntryScene extends RoomScene {
   protected override hint(): void {
     if (this.phase === 'find' && !this.locked) {
       this.locked = true;
-      void this.narrate('grab_need').then(() => this.giveClue());
-    } else if (this.phase === 'door' && !this.locked) void this.narrate('grab_door');
+      void this.narrateAgain('grab_need').then(() => this.giveClue());
+    } else if (this.phase === 'door' && !this.locked) void this.narrateAgain('grab_door');
   }
 
   /**

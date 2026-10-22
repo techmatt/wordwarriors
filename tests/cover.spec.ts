@@ -104,6 +104,23 @@ for (const [name, query, scene, line] of [
   });
 }
 
+// Item 089: the line sending her to the circle went to the top, kept off the circle, and hid the gift's card.
+test("the hub's circle line: the dialogue box keeps off the gift's card and the circle", SLOW, async ({ page }) => {
+  const errors = collectErrors(page);
+  await boot(page, '?scene=house&nojourney=1&qa=1');
+  const s = await until(page, (st) => st.scene === 'Hub' && /^hub_\w+_circle$/.test(st.voice.speaking ?? ''), 90_000, 'the circle line');
+  await page.waitForTimeout(300);
+  const l = await layout(page);
+  const gift = s.episode.gift!.toUpperCase();
+  const card = l.texts.find((t) => t.scene === 'Hub' && t.text === gift);
+  expect(card, `the gift's card (${gift})`).toBeTruthy();
+  const boxes = l.covers.filter((c) => c.scene === 'Hub' && c.kind === 'dialogue');
+  expect(boxes.length, 'the dialogue box').toBeGreaterThan(0);
+  expect(boxes.reduce((n, c) => n + inter(c.b, card!.b), 0), 'card under the box').toBe(0);
+  expect(coverIssues(l, 'Hub')).toEqual([]);
+  expectNoErrors(errors);
+});
+
 test('the battle move choice: the dialogue and bubbles keep off the pads and their signs', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=battle&part=1&battle=short&nojourney=1&qa=1');

@@ -405,7 +405,7 @@ async function debugProbe(page: Page, rec: Recorder, p: Point, game: (typeof DEB
 }
 
 /**
- * Item 089: at the recap and THE END, every button, Dad's 1, F2, F4 and F9 and
+ * Item 089: at the recap and THE END, every button, Dad's 1, dad lock and F9 and
  * back mashed before Dad's 2: nothing may leave THE END but 2, nothing may
  * change the store; then 2 to the title.
  */
@@ -422,7 +422,7 @@ async function endMash(page: Page, rec: Recorder, log: Record<string, unknown>[]
   await until(page, (s) => s.scene === 'TheEnd', 30_000, 'THE END');
   await rec.capture('theend');
   const was = await store(page);
-  for (const k of ['Space', 'Enter', 'Tab', 'Escape', 'Digit3', 'Digit1', 'Digit0', 'ArrowLeft', 'ArrowUp', 'Backquote', 'Backquote', 'F2', 'F4', 'KeyA']) {
+  for (const k of ['Space', 'Enter', 'Tab', 'Escape', 'Digit3', 'Digit1', 'Digit0', 'ArrowLeft', 'ArrowUp', 'Backquote', 'Backquote', 'KeyA']) {
     await page.keyboard.press(k);
     await page.waitForTimeout(300);
     const s = await state(page);

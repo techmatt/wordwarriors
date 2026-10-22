@@ -498,13 +498,13 @@ export class SentenceRoom extends HouseSideRoom {
 
   protected override hint(idle = false): void {
     if (this.pass === 'read') {
-      if (!this.reading) void this.narrate('room_your_turn');
+      if (!this.reading) void this.narrateAgain('room_your_turn');
       return;
     }
     if (this.pass !== 'find') return;
     if (idle) {
       // Stuck: the instruction again, then help with the word itself.
-      void this.narrate('room_find').then(() => this.soundOut());
+      void this.narrateAgain('room_find').then(() => this.soundOut());
       return;
     }
     void this.soundOut();

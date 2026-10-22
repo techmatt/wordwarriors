@@ -14,6 +14,7 @@ import Phaser from 'phaser';
 import { ROSTER } from '../../content/battle/roster';
 import { charArt } from '../../content/art/assets';
 import { currentStep, episode, planFor, sceneForStep, steps, type Slot, type Step } from '../episode/Episode';
+import { markLeaving } from '../fx/sceneGen';
 import { voiceBank } from '../voice/VoiceBank';
 import { artBank } from './ArtBank';
 import { artFor } from './needs';
@@ -81,6 +82,8 @@ function upcoming(key: string): string[] {
 export function startScene(from: Phaser.Scene, key: string, data?: object): void {
   const missing = artBank.missing(artFor(key, true));
   const target = from.game.scene.getScene(key);
+  // Its await chains stop now, not when Phaser stops it on the next step (item 089).
+  markLeaving(from);
   target?.events.once(Phaser.Scenes.Events.CREATE, () => artBank.prefetch(upcoming(key)));
   if (!missing.length) {
     from.scene.start(key, data);

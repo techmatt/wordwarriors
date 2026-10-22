@@ -16,6 +16,7 @@
 import Phaser from 'phaser';
 
 import { hubArt } from '../../content/house/house';
+import { startMusic } from '../audio/music';
 import { sfxFanfare, sfxSelect } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { advance, castArt, castScale, episode, podiumSecond } from '../episode/Episode';
@@ -53,6 +54,8 @@ export class TheEndScene extends Phaser.Scene {
       hookState.theEnd = null;
     });
     this.controls = new Controls(this);
+    // The recap's track plays on; back from the grown-ups page (which stops it) it starts again (item 089).
+    startMusic('title');
     const art = theEndArt();
     this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, art).setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
     // A soft wash so the heroes and the words stand out from the room.

@@ -111,9 +111,12 @@ export class HubScene extends RoomScene {
    * The door lines take the narrow box (item 071, M13): the full-width one
    * went to the bottom over her, the cursor they tell her to walk, or (the
    * gift scene's last line, as the doors light) to the top over the door signs.
+   * So does the line sending her to the circle (item 089): kept off the circle
+   * at the bottom, the full-width box went to the top over the gift's card.
    */
   protected override narrowLine(u: Utterance): boolean {
-    return isVariant(u.id, this.nar('house_doors')) || isVariant(u.id, this.nar('house_more')) || u.id === hubScene().ids.done;
+    const ids = hubScene().ids;
+    return isVariant(u.id, this.nar('house_doors')) || isVariant(u.id, this.nar('house_more')) || u.id === ids.done || u.id === ids.circle;
   }
 
   /** `hint`: the line ids yellow says again in this phase. */

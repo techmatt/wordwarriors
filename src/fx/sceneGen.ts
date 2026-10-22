@@ -30,11 +30,32 @@ export class SceneGen {
     return () => g !== this.gen;
   }
 
-  /** `p`, but never resolving once the run it started in is over or the scene is not active. */
+  /** `p`, but never resolving once the run it started in is over, the scene is not active, or it is on its way out. */
   guard<T>(p: Promise<T>): Promise<T> {
     const g = this.gen;
     return p.then((v) => new Promise<T>((resolve) => {
-      if (this.gen === g && this.scene.sys.isActive()) resolve(v);
+      if (this.gen === g && this.scene.sys.isActive() && !leaving.has(this.scene)) resolve(v);
     }));
   }
+}
+
+/**
+ * Scenes whose stop is queued (item 089). Phaser stops a scene on its next
+ * step, so a chain resolved in between (a line cut by `hush()` as key 0 left
+ * a debug game) ran one more step in the old scene, after the debug sandbox
+ * had ended: its next line's variant was saved for real. `startScene`
+ * (src/art/gate.ts) marks the scene it leaves; its shutdown or next start clears it.
+ */
+const leaving = new WeakSet<Phaser.Scene>();
+
+export function markLeaving(scene: Phaser.Scene): void {
+  if (leaving.has(scene)) return;
+  leaving.add(scene);
+  const clear = () => {
+    leaving.delete(scene);
+    scene.events.off(Phaser.Scenes.Events.SHUTDOWN, clear);
+    scene.events.off(Phaser.Scenes.Events.START, clear);
+  };
+  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, clear);
+  scene.events.once(Phaser.Scenes.Events.START, clear);
 }

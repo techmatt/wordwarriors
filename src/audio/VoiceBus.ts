@@ -252,6 +252,8 @@ class Bus {
     const words = text.split(/\s+/).length;
     const duration = playback ? playback.length : line ? Math.max(0.8, line.duration + 0.3) : Math.max(0.6, words * 0.35);
     const startedAt = performance.now();
+    // A line with no clip runs on this clock; a hidden tab starts it again (below).
+    let clock = startedAt;
     const u: Utterance = {
       id,
       line,
@@ -261,7 +263,7 @@ class Bus {
       anchor,
       startedAt,
       duration,
-      time: () => (playback ? playback.time : (performance.now() - startedAt) / 1000),
+      time: () => (playback ? playback.time : (performance.now() - clock) / 1000),
     };
 
     return new Promise((resolve) => {
@@ -285,6 +287,19 @@ class Bus {
           if (playback && held && state === 'running' && playback.time < playback.length) {
             held = false;
             backstop((playback.length - playback.time + 1.5) * 1000);
+            return;
+          }
+          // A line with no clip (captions only, M19; a failed decode) that ran out
+          // behind a hidden tab (item 089): once she is back, its caption again in full.
+          if (!playback && (audioHeld() || held)) {
+            held = true;
+            if (audioHeld()) {
+              backstop(500);
+              return;
+            }
+            held = false;
+            clock = performance.now();
+            backstop(duration * 1000);
             return;
           }
           playback?.stop();

@@ -76,8 +76,12 @@ export class DebugRoom extends RoomScene {
     this.locked = true;
     sfxSelect();
     if (spot.id === 'debug:door') {
-      const origin = stopDebug();
-      this.fadeOutThen(() => (origin?.slot ? backToHub(this, origin.slot) : advance(this)));
+      // Debug stays on through the fade (item 089: F9 in it came back to a debug room with debug off).
+      this.fadeOutThen(() => {
+        const origin = stopDebug();
+        if (origin?.slot) backToHub(this, origin.slot);
+        else advance(this);
+      });
       return;
     }
     const { scene, slot } = beginRun(spot.id.slice('debug:'.length));

@@ -237,7 +237,8 @@ export class VictoryScene extends Phaser.Scene {
     this.controls.update();
     // Green is ignored until the recap is said; F2 (skip) goes on at any time.
     if ((this.ready && this.controls.pressed('green')) || this.controls.dev('F2')) this.toTheEnd();
-    if (this.controls.dev('F9')) this.scene.start('Parent', { back: 'Victory' });
+    // Not on the way out to THE END (item 089: back from the page, the whole recap played again).
+    if (this.controls.dev('F9') && !this.leaving) this.scene.start('Parent', { back: 'Victory' });
     this.controls.endFrame();
   }
 }
