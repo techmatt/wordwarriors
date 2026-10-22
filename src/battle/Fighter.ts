@@ -18,8 +18,8 @@ import Phaser from 'phaser';
 import type { AbilitySpec, FighterSpec, MinionSpec, MoveStyle, Status } from '../../content/battle/types';
 import { sfxPoof } from '../audio/sfx';
 import { TEX } from '../fx/textures';
-import { ADULT_HEIGHT, GAME_WIDTH } from '../config';
-import { isGrownUp } from '../rules/cast';
+import { GAME_WIDTH } from '../config';
+import { adultHeight, isGrownUp } from '../rules/cast';
 import { burst, fitImage } from '../fx/juice';
 
 export type Team = 'hero' | 'villain';
@@ -52,7 +52,8 @@ export interface FighterInit {
 
 export function initFromSpec(spec: FighterSpec, id: string, art: string, team: Team): FighterInit {
   return {
-    ...(isGrownUp(id) ? { tall: Math.max(spec.size, ADULT_HEIGHT) } : {}),
+    // His own height, head to soles, in every form (item 093: Dada Matt 5-10% shorter than Dada Jason).
+    ...(isGrownUp(id) ? { tall: adultHeight(id, art) } : {}),
     id,
     name: spec.displayName,
     art,

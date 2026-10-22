@@ -108,12 +108,16 @@ export function installTestHooks(game: Phaser.Game): void {
     /** Art on demand (item 065): images on screen drawn with Phaser's missing texture, art asked for before it loaded, loads in flight. */
     art: () => {
       let missing = 0;
+      let magenta = 0;
+      const failed = artBank.failedIds();
       for (const s of game.scene.getScenes(true)) {
         walkObjects(s.children.list, (o) => {
-          if ((o as unknown as { texture?: { key: string } }).texture?.key === '__MISSING') missing++;
+          const key = (o as unknown as { texture?: { key: string } }).texture?.key;
+          if (key === '__MISSING') missing++;
+          if (key && failed.includes(key)) magenta++;
         });
       }
-      return { missing, late: artBank.late.map((l) => `${l.id} (${l.scene})`), pending: artBank.pending() };
+      return { missing, late: artBank.late.map((l) => `${l.id} (${l.scene})`), pending: artBank.pending(), failed, magenta };
     },
     input: {
       press: (b: Button) => virtualPad.press(b),

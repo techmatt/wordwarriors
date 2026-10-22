@@ -80,7 +80,10 @@ function upcoming(key: string): string[] {
 
 /** Start scene `key` from `from` once its art is loaded; meanwhile the Wait scene shows. */
 export function startScene(from: Phaser.Scene, key: string, data?: object): void {
-  const missing = artBank.missing(artFor(key, true));
+  const need = artFor(key, true);
+  // Art lost to a passing network error is asked again, in the background (M25).
+  artBank.retryFailed(need);
+  const missing = artBank.missing(need);
   const target = from.game.scene.getScene(key);
   // Its await chains stop now, not when Phaser stops it on the next step (item 089).
   markLeaving(from);

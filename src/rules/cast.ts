@@ -25,7 +25,7 @@
  */
 
 import { PERSONS, formId, formsOf, personOf } from '../../content/battle/roster';
-import { ACTIVE_CAST, CAST_ODDS } from '../config';
+import { ACTIVE_CAST, ADULT_FILL, ADULT_HEIGHT, ADULT_HEIGHTS, CAST_ODDS } from '../config';
 import { pick, type Rand } from './random';
 import { fresh } from './recent';
 
@@ -76,6 +76,16 @@ const isDad = (person: string) => (DADS as readonly string[]).includes(person);
 /** Is `id` (a character, form or fighter id: `dada_jason_warlock_evil`) a grown-up, a dad in any form? */
 export function isGrownUp(id: string): boolean {
   return isDad(personOf(id.replace(/_(good|evil)$/, '')));
+}
+
+/**
+ * How tall grown-up `id` (any form, `_good` / `_evil` or not) shown as
+ * picture `art` is drawn beside her (item 093): the picture sized so the
+ * person in it, head to soles, is his own height.
+ */
+export function adultHeight(id: string, art: string): number {
+  const person = ADULT_HEIGHTS[personOf(id.replace(/_(good|evil)$/, ''))] ?? ADULT_HEIGHT;
+  return person / (ADULT_FILL[art] ?? 0.96);
 }
 
 /** The persons of `active` that are in the roster, or every person when it names none. */

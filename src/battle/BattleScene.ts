@@ -489,7 +489,9 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       const ch = Math.min(340, (220 * h.height) / me);
       return fitImage(this.add.image(-300 + i * 30, 440 + i * 40, h.init.art).setOrigin(0.5, 1), ch * 0.95, ch);
     });
-    const villainCard = fitImage(this.add.image(GAME_WIDTH + 300, 450, this.villain.init.art).setOrigin(0.5, 1), 300, 360);
+    // A grown-up villain's card too (item 093: Evil Dada Matt's was the full 360, taller than Dada Jason's 330 across from him).
+    const vh = this.villain.init.tall ? Math.min(360, (220 * this.villain.height) / me) : 360;
+    const villainCard = fitImage(this.add.image(GAME_WIDTH + 300, 450, this.villain.init.art).setOrigin(0.5, 1), 300, vh);
     ui.add([...heroCards, villainCard]);
     const vs = this.add
       .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 40, 'VS', { fontFamily: FONT_HEAVY, fontSize: '160px', color: '#ffd23f', stroke: '#000000', strokeThickness: 20 })

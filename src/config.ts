@@ -81,12 +81,50 @@ export const ACTIVE_CAST = {
 };
 
 /**
- * A grown-up (a dad, in any form) stands at least this many times her height,
- * everywhere: rooms, battles, the victory scene and the podium (item 034:
- * at a dad's roster size, 1.2 to 1.25, lifter Dada Matt and warlock Dada Jason
- * read as only a little taller than her).
+ * A grown-up (a dad, in any form) stands this tall beside her, everywhere:
+ * rooms, battles, VS cards, the victory scene and the podium (item 034: at a
+ * dad's roster size, 1.2 to 1.25, lifter Dada Matt and warlock Dada Jason read
+ * as only a little taller than her). Since item 093 it is the person's own
+ * height, head to soles, in her heights (her picture is 1): his picture is
+ * drawn `ADULT_HEIGHTS[person] / ADULT_FILL[art]` tall (`adultHeight`).
  */
-export const ADULT_HEIGHT = 1.5;
+export const ADULT_HEIGHT = 1.44;
+
+/**
+ * Each dad's own height, head to soles (Matt, item 093: Dada Matt 5-10%
+ * shorter than Dada Jason beside him, in every form). Until item 093 every dad
+ * picture was 1.5 tall, so the chef's hat, the warlock's hood and the
+ * warrior's helmet came out of his height: Jason read 3-10% SHORTER than Matt.
+ * Now Jason is what Matt was (1.44: builder Matt's head to soles in a 1.5
+ * picture) and Matt 7.5% under him. So Matt shrinks a little beside her
+ * (pictures 1.36-1.42, were 1.5) and Jason's hatted forms grow (the chef's
+ * picture 1.62-1.64), still well under a giant's 2.
+ */
+export const ADULT_HEIGHTS: Readonly<Record<string, number>> = { dada_jason: ADULT_HEIGHT, dada_matt: 1.33 };
+
+/**
+ * How much of each grown-up picture's height is the person, the top of his
+ * head (not a hat, hood, horns, goggles or a raised weapon) to his soles,
+ * measured by eye on a 1% grid in item 093 (`tests/unit/heights.test.ts`
+ * checks each against the art's own alpha). New dad art needs its line here;
+ * a picture with none counts as 0.96, a bare head.
+ */
+export const ADULT_FILL: Readonly<Record<string, number>> = {
+  char_dada_jason_good: 0.888,
+  char_dada_jason_evil: 0.876,
+  char_dada_jason_warlock_good: 0.947,
+  char_dada_jason_warlock_evil: 0.902,
+  char_dada_jason_warrior_good: 0.937,
+  char_dada_jason_warrior_evil: 0.9,
+  char_dada_matt_good: 0.969,
+  char_dada_matt_evil: 0.942,
+  char_dada_matt_lifter_good: 0.965,
+  char_dada_matt_lifter_evil: 0.965,
+  char_dada_matt_cyber_good: 0.968,
+  char_dada_matt_cyber_evil: 0.979,
+  char_dada_matt_blade_good: 0.982,
+  char_dada_matt_blade_evil: 0.943,
+};
 
 /** The cast draw's odds (Matt, item 025). */
 export const CAST_ODDS = {
