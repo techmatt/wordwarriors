@@ -36,7 +36,7 @@
 import Phaser from 'phaser';
 
 import { CHARACTER_BY_ID, MINIONS, abilityCallout, comboFor, comboPart } from '../../content/battle/roster';
-import type { AbilitySpec, Status } from '../../content/battle/types';
+import type { AbilitySpec, CounterItem, Status } from '../../content/battle/types';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import { RUNE_BY_SOUND } from '../../content/phonics/runes';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
@@ -44,13 +44,13 @@ import { fighterId, letterSoundLine, moveLine, nameLine, narratorLine, reformedL
 import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh } from '../audio/sfx';
-import { DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_COMIC, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { formFor } from '../../content/battle/forms';
 import { advance, castArt, castScale, counterArt, counterWord, episode, fightStyle, helper, movePlan, namedCounter, narrator, reformedOf, villainSpec, type Step } from '../episode/Episode';
-import { tauntsSaid, variant } from '../episode/lineVariants';
+import { pickTaunt, unsayTaunt, variant } from '../episode/lineVariants';
 import { fightLineKey, type FightSpec } from '../../content/battle/fights';
 import { hex } from '../fx/colour';
-import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
+import { burst, fitImage, flash, floatText, fxQuality, hitstop, popIn, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { FreePlay } from '../fx/freePlay';
 import { SceneGen } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
@@ -65,7 +65,7 @@ import { Caption } from '../ui/Caption';
 import { fitText } from '../ui/fitText';
 import { cast, type Projectile, type Trap } from './abilities';
 import { Fighter, FLOOR_BOTTOM, FLOOR_TOP, initFromMinion, initFromSpec, type FighterInit } from './Fighter';
-import { ARENA_LEFT, ARENA_RIGHT, STEER } from './movement';
+import { ARENA_LEFT, ARENA_RIGHT, integrate, STEER } from './movement';
 import { BattleHud } from './hud';
 import { MoveChoice, type ChoiceHost } from './moveChoice';
 import { makeStage } from './stages';
@@ -83,17 +83,30 @@ const HUD_BAND = new Phaser.Geom.Rectangle(0, 0, GAME_WIDTH, 128);
 const CHOICE_PROMPT = /_(?:use_move|find_move|not_move)_([a-z]+)$/;
 /** The brawl's run-in spots (a contest's stage has its own): the i-th hero at `x + i * dx`, the villain at `villainX`. */
 const INTRO_SPOTS = { x: 260, dx: 140, villainX: 960 };
-/**
- * The brawl's sides for the ultimate: the i-th hero at (`x + i * dx`, `y + i * dy`),
- * the helper behind, the villain on the right (a giant further out, on the front edge of the floor).
- */
 /** `?battle=short`: the director's waits at this share of their length (item 083). */
 const SHORT_BEATS = 0.2;
 
 /** A taunt is said at most this often an episode (item 087). */
 const TAUNT_MAX = 2;
 
+/**
+ * The brawl's sides for the ultimate: the i-th hero at (`x + i * dx`, `y + i * dy`),
+ * the helper behind, the villain on the right (a giant further out, on the front edge of the floor).
+ */
 const ULT_SPOTS = { x: 260, dx: 150, y: 500, dy: 70, helper: { x: 150, y: 600 }, villain: { x: 900, y: 560 }, giantX: 960 };
+
+/** What Part 2's counter stagings share (`ultimateCountered`): her hero `h`, and the counter-item's picture, its glow and its scale before the pop-in. */
+interface CounterBeat {
+  v: Fighter;
+  ult: AbilitySpec;
+  giant: boolean;
+  h: Fighter;
+  item: Phaser.GameObjects.Image;
+  halo: Phaser.GameObjects.Image;
+  s: number;
+  name: string;
+  how: CounterItem['how'];
+}
 
 export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   part: 1 | 2 = 1;
@@ -128,14 +141,11 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   private playHop = false;
   /** Health floors (fraction of max) the director allows right now. */
   private floors = { heroMain: 0.3, villainMain: 0.4 };
-  private stats = { abilitiesFired: 0, ultimates: 0, combos: 0, movePicks: 0 };
+  /** Counts for the tests (hookState.battle): `itemsUsed` the fetched items used, `runesFired` Charge the Spell's runes (item 053), this part. */
+  private stats = { abilitiesFired: 0, ultimates: 0, combos: 0, movePicks: 0, itemsUsed: 0, runesFired: 0 };
   private targetOf = new Map<number, { f: Fighter; until: number }>();
   /** Move choices opened this part: the first one is the hub's gift word. */
   private choicesOpened = 0;
-  /** Fetched items used this part, for the tests. */
-  private itemsUsed = 0;
-  /** Charge the Spell's runes fired this part (item 053). */
-  private runesFired = 0;
   /** "Look what we found!" is said once per part, at the first item out of the bag. */
   private bagSaid = false;
   /** Big moves called out this part: each once (item 087: the same call three times in a fight was too many). */
@@ -165,11 +175,9 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     this.nextTaunt = 4000;
     this.choices.reset();
     this.floors = { heroMain: 0.3, villainMain: this.part === 1 ? 0.45 : 0.3 };
-    this.stats = { abilitiesFired: 0, ultimates: 0, combos: 0, movePicks: 0 };
+    this.stats = { abilitiesFired: 0, ultimates: 0, combos: 0, movePicks: 0, itemsUsed: 0, runesFired: 0 };
     this.targetOf = new Map();
     this.choicesOpened = 0;
-    this.itemsUsed = 0;
-    this.runesFired = 0;
     this.bagSaid = false;
     this.calledOut = new Set();
     this.bannerText = null;
@@ -262,10 +270,6 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     return this.short ? s * SHORT_BEATS : s;
   }
 
-  wait(s: number): Promise<void> {
-    return this.simWait(s);
-  }
-
   team(): Fighter[] {
     return [...this.heroes, ...(this.helper ? [this.helper] : [])].filter((f) => f.active);
   }
@@ -336,7 +340,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     if (big) this.bannerBig = this.now + 1400;
     const t = this.add
       .text(GAME_WIDTH / 2, big ? 230 : 150, text, {
-        fontFamily: '"Arial Black", sans-serif',
+        fontFamily: FONT_HEAVY,
         fontSize: big ? '76px' : '44px',
         color: '#ffffff',
         stroke: hex(color),
@@ -385,7 +389,6 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     target.hp = Math.min(target.hp, Math.max(floor, target.hp - dmg));
     target.flashWhite();
     target.squash(Math.min(0.4, 0.12 + power * 0.06));
-    target.lastHitAt = this.now;
     if (from) target.x = Phaser.Math.Clamp(target.x + Math.sign(target.x - from.x || 1) * Math.min(40, power * 10), ARENA_LEFT, ARENA_RIGHT);
     sfxHit(power);
     burst(this, target.cx, target.cy, { count: Math.min(40, 8 + power * 6), speed: 200 + power * 60, colors: [color, 0xffffff] });
@@ -414,8 +417,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
 
   // -- director ----------------------------------------------------------------------
 
-  /** Resolve after `s` seconds of simulation time. */
-  private simWait(s: number): Promise<void> {
+  /** Resolve after `s` seconds of simulation time (the director's and the stages' waits). */
+  wait(s: number): Promise<void> {
     return this.guard(new Promise((resolve) => this.waits.push({ until: this.now + s * 1000, resolve })));
   }
 
@@ -482,7 +485,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     const villainCard = fitImage(this.add.image(GAME_WIDTH + 300, 450, this.villain.init.art).setOrigin(0.5, 1), 300, 360);
     ui.add([...heroCards, villainCard]);
     const vs = this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 40, 'VS', { fontFamily: '"Arial Black", sans-serif', fontSize: '160px', color: '#ffd23f', stroke: '#000000', strokeThickness: 20 })
+      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 40, 'VS', { fontFamily: FONT_HEAVY, fontSize: '160px', color: '#ffd23f', stroke: '#000000', strokeThickness: 20 })
       .setOrigin(0.5)
       .setScale(0);
     ui.add(vs);
@@ -497,9 +500,9 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       shake(this, 4, 250);
       burst(this, GAME_WIDTH / 2, GAME_HEIGHT / 2 - 40, { count: 80, speed: 700, depth: DEPTH.overlay + 6, colors: [0xffd23f, 0xffffff, 0xff5ab4] });
     });
-    await this.simWait(this.beat(2.0));
+    await this.wait(this.beat(2.0));
     this.tweens.add({ targets: ui, alpha: 0, duration: 300, onComplete: () => ui.destroy() });
-    await this.simWait(0.3);
+    await this.wait(0.3);
   }
 
   private async intro(): Promise<void> {
@@ -522,47 +525,47 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
 
   private async part1(): Promise<void> {
     await this.intro();
-    await this.simWait(this.beat(1.5));
+    await this.wait(this.beat(1.5));
     await this.useAllFetched(this.beat(3.5));
     await this.useCharged(this.beat(1.1));
     await this.useMade(['helper', 'gem', 'ammo'], this.beat(3));
-    await this.simWait(this.beat(2.5));
+    await this.wait(this.beat(2.5));
     await this.moveChoice();
-    await this.simWait(this.beat(7));
+    await this.wait(this.beat(7));
     await this.combo();
-    await this.simWait(this.beat(6));
+    await this.wait(this.beat(6));
     await this.moveChoice();
-    await this.simWait(this.beat(7));
+    await this.wait(this.beat(7));
     await this.ultimate();
     this.phase = 'end';
     await this.villainSays();
     await this.say(fightLineKey(this.fight, 'retreat'));
     this.retreat();
-    await this.simWait(this.beat(1.4));
+    await this.wait(this.beat(1.4));
     this.cameras.main.fadeOut(500);
-    await this.simWait(0.6);
+    await this.wait(0.6);
     advance(this);
   }
 
   private async part2(): Promise<void> {
     await this.intro();
-    await this.simWait(this.beat(1));
+    await this.wait(this.beat(1));
     await this.useAllFetched(this.beat(3));
     await this.useCharged(this.beat(1.1));
     await this.useMade(['helper', 'ammo', 'gem'], this.beat(2.5));
-    await this.simWait(this.beat(2));
+    await this.wait(this.beat(2));
     await this.moveChoice();
-    await this.simWait(this.beat(6));
+    await this.wait(this.beat(6));
     await this.combo();
-    await this.simWait(this.beat(5));
+    await this.wait(this.beat(5));
     await this.moveChoice();
-    await this.simWait(this.beat(5));
+    await this.wait(this.beat(5));
     await this.ultimate();
     await this.finish();
     this.phase = 'end';
-    await this.simWait(this.beat(1.2));
+    await this.wait(this.beat(1.2));
     this.cameras.main.fadeOut(500, 255, 255, 255);
-    await this.simWait(0.6);
+    await this.wait(0.6);
     advance(this);
   }
 
@@ -571,8 +574,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
    * the fade is on a retreat, never on a floored team. The villain stomps.
    */
   private retreat(): void {
-    const team = [...this.heroes, ...(this.helper ? [this.helper] : [])].filter((h) => h.active);
-    team.forEach((h, i) => {
+    this.team().forEach((h, i) => {
       // Off the stage edge: the on-screen clamp lets go, and no shove pins her to the wall.
       h.onStage = false;
       h.busyUntil = Infinity;
@@ -606,7 +608,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     for (const word of episode.fetched) {
       if (!FETCH_BY_WORD[word]) continue;
       await this.useFetched(word);
-      await this.simWait(gap);
+      await this.wait(gap);
     }
   }
 
@@ -639,22 +641,19 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
         .text(at.x, at.y + 2, sound.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: sound.length > 1 ? '48px' : '64px', color: '#ff3d7a', stroke: '#ffffff', strokeThickness: 6 })
         .setOrigin(0.5)
         .setDepth(DEPTH.fx + 7);
-      const ss = stone.scale;
-      stone.setScale(0);
-      letter.setScale(0);
-      this.tweens.add({ targets: stone, scale: ss, duration: 220, ease: 'Back.easeOut' });
-      this.tweens.add({ targets: letter, scale: 1, duration: 220, delay: 60, ease: 'Back.easeOut' });
+      popIn(this, stone, stone.scale, 0, 220);
+      popIn(this, letter, 1, 60, 220);
       sfxSummon();
       burst(this, at.x, at.y, { count: 40, speed: 340, texture: TEX.star, colors: [color, 0xffffff, 0xffd23f] });
       const heard = this.guard(voiceBus.say(letterSoundLine(sound)));
-      await this.simWait(0.3);
+      await this.wait(0.3);
       this.banner(`${sound.toUpperCase()}!`, color === 0xffffff ? 0x7ad9ff : color, true);
       speedLines(this, at.x, at.y, color, 400);
       h.castFrom = at;
       cast(this, h, rune.move, this.villain, 1.3);
       this.after(700, () => (h.castFrom = null));
       this.stats.abilitiesFired++;
-      this.runesFired++;
+      this.stats.runesFired++;
       this.tweens.add({
         targets: [stone, letter],
         scale: 0,
@@ -668,15 +667,10 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
         },
       });
       // The next stone waits for this one's sound as well as the gap.
-      await Promise.all([heard, this.simWait(gap)]);
+      await Promise.all([heard, this.wait(gap)]);
     }
   }
 
-  /**
-   * One fetched thing: her bag pops up over her hero, the item's picture
-   * jumps out of it with a sparkle, a big "THE NET!" banner, and her hero
-   * fires the item's own ability. Summon items (hens, the dog) fight on her side.
-   */
   /**
    * Where a reveal `w` wide whose bottom edge sits `bottomGap` above her head
    * and reaches `ht` up can go, clear of every other fighter's body (item 034:
@@ -697,6 +691,11 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     return { x: h.cx, y };
   }
 
+  /**
+   * One fetched thing: her bag pops up over her hero, the item's picture
+   * jumps out of it with a sparkle, a big "THE NET!" banner, and her hero
+   * fires the item's own ability. Summon items (hens, the dog) fight on her side.
+   */
   private async useFetched(word: string): Promise<void> {
     const item = FETCH_BY_WORD[word];
     const h = this.heroes[0];
@@ -707,14 +706,13 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     const spot = this.revealSpot(h, 150, 86 + 110 + 72, 7);
     const bag = fitImage(this.add.image(spot.x, spot.y - 43, 'prop_bag'), 86, 86).setDepth(DEPTH.fx + 5);
     const bs = bag.scale;
-    bag.setScale(0);
-    this.tweens.add({ targets: bag, scale: bs, duration: 260, ease: 'Back.easeOut' });
+    popIn(this, bag, bs, 0, 260);
     sfxWhoosh();
     if (!this.bagSaid) {
       this.bagSaid = true;
       void this.say('use_bag');
     }
-    await this.simWait(0.35);
+    await this.wait(0.35);
     // The picture jumps out of the bag, a squash on the bag as it goes.
     this.tweens.add({ targets: bag, scaleX: bs * 1.3, scaleY: bs * 0.7, duration: 90, yoyo: true });
     const pic = fitImage(this.add.image(bag.x, bag.y, `pic_${word}`), 120, 120).setDepth(DEPTH.fx + 6);
@@ -726,7 +724,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     this.tweens.add({ targets: halo, scale: 3.4, alpha: 0.6, duration: 400, yoyo: true, repeat: 1 });
     sfxSummon();
     burst(this, pic.x, bag.y - 110, { count: 50, speed: 380, colors: [0xfff3a0, color, 0xffffff] });
-    await this.simWait(0.45);
+    await this.wait(0.45);
     // Its name, big, and then it is really used.
     this.banner(`THE ${word.toUpperCase()}!`, color === 0xffffff ? 0x7ad9ff : color, true);
     slowmo(this, 0.4, 700);
@@ -736,7 +734,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     cast(this, h, item.ability, this.villain, 1.8);
     this.after(900, () => (h.castFrom = null));
     this.stats.abilitiesFired++;
-    this.itemsUsed++;
+    this.stats.itemsUsed++;
     // The picture flies off towards the villain and fades; the bag closes.
     this.tweens.add({ targets: pic, x: this.villain.cx, y: this.villain.cy, scale: ps * 0.6, alpha: 0, delay: 300, duration: 500, ease: 'Quad.easeIn', onComplete: () => pic.destroy() });
     this.tweens.add({ targets: halo, alpha: 0, delay: 300, duration: 400, onComplete: () => halo.destroy() });
@@ -750,7 +748,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       if (what === 'helper') await this.useHelper();
       else if (what === 'gem') await this.useGem();
       else await this.useAmmo();
-      await this.simWait(gap);
+      await this.wait(gap);
     }
   }
 
@@ -774,9 +772,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     h.power = Math.max(h.power, 1.35);
     void this.say('use_gem');
     const gem = fitImage(this.add.image(h.cx, h.top - 50, 'prop_gem'), 90, 90).setDepth(DEPTH.fx);
-    gem.setScale(0);
-    this.tweens.add({ targets: gem, scale: 90 / Math.max(gem.width, gem.height), duration: 300, ease: 'Back.easeOut' });
-    await this.simWait(0.6);
+    popIn(this, gem, 90 / Math.max(gem.width, gem.height), 0, 300);
+    await this.wait(0.6);
     const rainbow: AbilitySpec = { id: 'gem_beam', name: 'Power Gem', kind: 'beam', cooldown: 0, color: 0xff5ab4, color2: 0x7ad9ff, power: 3 };
     this.banner('POWER GEM!', 0xff5ab4, true);
     slowmo(this, 0.4, 600);
@@ -810,7 +807,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       cameo.invulnerable = true;
       b = cameo;
       void voiceBus.say(nameLine(id), 'bark', cameo);
-      await this.simWait(0.45);
+      await this.wait(0.45);
     }
     this.phase = 'combo';
     const ab = comboFor(a.init.id, b.init.id);
@@ -825,14 +822,14 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     slowmo(this, 0.35, 900);
     flash(this, ab.color, 160);
     speedLines(this, (a.cx + b.cx) / 2, (a.cy + b.cy) / 2, ab.color, 800);
-    await this.simWait(0.4);
+    await this.wait(0.4);
     punch(this, 0.06, 180);
     cast(this, a, comboPart(a.init.id, b.init.id), this.villain, 2.2);
     cast(this, b, comboPart(b.init.id, a.init.id), this.villain, 1.4);
     this.show.combo(a, b);
     this.stats.combos++;
     this.stats.abilitiesFired += 2;
-    await this.simWait(1.5);
+    await this.wait(1.5);
     if (cameo) {
       const c = cameo;
       c.busyUntil = this.now + 10_000;
@@ -906,12 +903,10 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     const n = fxQuality.level < 1 ? 5 : 8;
     for (let i = 0; i < n; i++) {
       const img = fitImage(this.add.image(f.cx, f.cy, key), 90, 90).setDepth(DEPTH.fx);
-      const s = img.scale;
-      img.setScale(0);
       const tx = (v?.active ? v.cx : f.cx + 300) + Phaser.Math.Between(-170, 170);
       const ty = (v?.active ? v.cy : f.cy) + Phaser.Math.Between(-140, 110);
       const delay = i * 70;
-      this.tweens.add({ targets: img, scale: s, duration: 220, delay, ease: 'Back.easeOut' });
+      popIn(this, img, img.scale, delay, 220);
       this.tweens.add({ targets: img, x: tx, y: ty, duration: 650, delay, ease: 'Quad.easeOut' });
       this.tweens.add({
         targets: img,
@@ -1066,7 +1061,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       if (!this.show.anchored) this.tweens.add({ targets: h, x: ULT_SPOTS.x + i * ULT_SPOTS.dx, y: ULT_SPOTS.y + i * ULT_SPOTS.dy, duration: 600, ease: 'Quad.easeOut' });
     });
     if (this.helper?.active && !this.show.anchored) this.tweens.add({ targets: this.helper, x: ULT_SPOTS.helper.x, y: ULT_SPOTS.helper.y, duration: 600 });
-    await this.simWait(0.6);
+    await this.wait(0.6);
     sfxUltimate();
     this.darken(0.55, 800);
     shake(this, 3, 1400);
@@ -1098,7 +1093,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     punch(this, 0.08, 300);
     if (!this.lineGivesAway(ultimateLine(v.init.id))) void voiceBus.say(ultimateLine(v.init.id), 'instruction', v);
     this.stats.ultimates++;
-    await this.simWait(1.4);
+    await this.wait(1.4);
     return { v, ult, giant, aura };
   }
 
@@ -1114,8 +1109,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     shake(this, 8, 600);
     punch(this, 0.1, 220);
     sfxBoom(3);
-    for (const h of [...this.heroes, ...(this.helper ? [this.helper] : [])]) {
-      if (!h.active) continue;
+    for (const h of this.team()) {
       h.hp = Math.min(h.hp, h.maxHp * 0.08);
       h.floored = true;
       h.lift = 0;
@@ -1124,7 +1118,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     }
     floatText(this, GAME_WIDTH / 2 - 200, 300, this.fight.tooStrong, '#ffd23f', 60);
     this.darken(0.35, 600);
-    await this.simWait(1.2);
+    await this.wait(1.2);
   }
 
   /**
@@ -1138,155 +1132,25 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     const named = namedCounter();
     const word = counterWord();
     const counter = { name: named?.name ?? `The ${word}`, how: named?.how ?? 'scare' };
-    for (const h of this.heroes) h.invulnerable = true;
-    if (this.helper) this.helper.invulnerable = true;
+    for (const f of this.team()) f.invulnerable = true;
     const h = this.heroes[0]!;
     void this.say('use_item');
     const at = this.revealSpot(h, 190, 190, 0);
     const item = fitImage(this.add.image(at.x, at.y - 95, counterArt()), 130, 130).setDepth(DEPTH.fx + 5);
     const s = item.scale;
-    item.setScale(0);
-    this.tweens.add({ targets: item, scale: s * 1.4, duration: 400, ease: 'Back.easeOut' });
+    popIn(this, item, s * 1.4, 0, 400);
     const halo = this.add.image(item.x, item.y, TEX.glow).setTint(0xfff3a0).setScale(3).setBlendMode(Phaser.BlendModes.ADD).setDepth(FLOOR_TOP - 4);
     this.tweens.add({ targets: halo, scale: 5, alpha: 0.6, duration: 500, yoyo: true, repeat: -1 });
     sfxSummon();
     flash(this, 0xfff3a0, 250);
     speedLines(this, item.x, item.y, 0xfff3a0, 900);
     this.banner(`${counter.name.toUpperCase()}!`, 0xffb703, true);
-    await this.simWait(0.6);
+    await this.wait(0.6);
 
-    if (counter.how === 'scare') {
-      // A swarm of the thing (wind-up mice, brave rats, cats, buses, mops)
-      // scurries along the floor at the villain, who leaps up in fright
-      // mid-ultimate (a stretch and a lift, no spin), and the ultimate fizzles
-      // out before it is ever fired. Its picture whenever there is one, named
-      // counters too (Matt's 017 call); the item's glyph otherwise.
-      for (let i = 0; i < 12; i++) this.after(i * 70, () => this.scurry(h, v, i, `pic_${word}`));
-      await this.simWait(0.75);
-      aura.stop();
-      v.growUntil = 0;
-      sfxShout(1.6);
-      floatText(this, v.cx, v.top - 40, 'EEK!', '#ff9ad5', 84);
-      // Not the mop! She has read the word by now, so the villain may wail it.
-      if (!named) this.after(350, () => floatText(this, v.cx - 40, v.top - 130, `NOT THE ${word.toUpperCase()}!`, '#ffd23f', 56));
-      shake(this, 3, 300);
-      // A giant (Evil Tiamat, standing at the front) only hops and stretches a
-      // little, so her head stays on screen (she now takes this branch whenever
-      // the counter is not her Magic Hat).
-      const leap = giant ? 50 : 190;
-      const stretch = giant ? 1.12 : 1.45;
-      // From the height it is at: a flyer leaps up from the air, not from the floor.
-      const lift0 = v.lift;
-      this.tweens.addCounter({ from: 0, to: 1, duration: 750, ease: 'Sine.easeInOut', onUpdate: (tw) => (v.lift = lift0 + Math.sin((tw.getValue() ?? 0) * Math.PI) * leap), onComplete: () => (v.lift = lift0) });
-      const bs = v.baseScale;
-      this.tweens.add({ targets: v.sprite, scaleX: bs * (giant ? 0.9 : 0.72), scaleY: bs * stretch, duration: 170, yoyo: true, repeat: 1, onComplete: () => v.sprite.setScale(bs) });
-      await this.simWait(0.8);
-      // The fizzle: the charge goes out of it in a grey puff.
-      sfxPoof();
-      burst(this, v.cx, v.cy, { count: 50, speed: 260, colors: [0x888888, 0xcccccc, ult.color], life: 900 });
-      floatText(this, v.cx + 60, v.cy, 'FIZZLE!', '#cccccc', 44);
-      await this.simWait(1.0);
-    } else if (counter.how === 'block' || counter.how === 'reflect' || counter.how === 'swallow') {
-      // A dome over the heroes, all of them (the ally can be well apart from
-      // her); the ultimate crashes into it.
-      const team = [...this.heroes, ...(this.helper ? [this.helper] : [])].filter((f) => f.active);
-      const xs = team.map((f) => f.x);
-      const ys = team.map((f) => f.cy);
-      const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
-      const dome = this.add
-        .ellipse((x0 + x1) / 2, (y0 + y1) / 2 - 20, Math.max(520, x1 - x0 + 300), Math.max(360, y1 - y0 + 280), 0x9ad8ff, 0.18)
-        .setStrokeStyle(10, 0xffffff, 0.9)
-        .setDepth(DEPTH.fx + 3);
-      dome.setScale(0);
-      this.tweens.add({ targets: dome, scale: 1, duration: 300, ease: 'Back.easeOut' });
-      sfxShield();
-      cast(this, v, ult, h, 2.2);
-      const pour = giant ? this.giantSweep(v, ult, false, counter.how === 'swallow' ? 3000 : 1600) : null;
-      if (counter.how !== 'swallow') {
-        await this.simWait(1.8);
-        floatText(this, h.x + 60, h.y - 280, 'BLOCKED!', '#7ad9ff', 70);
-      } else {
-        // The item (the Magic Hat, drawn brim up) flies up between them while
-        // the storm is still falling and sucks it all inside like a magic trick;
-        // she shrinks back to size behind the GULP.
-        await this.simWait(0.6);
-        this.tweens.killTweensOf(halo);
-        this.tweens.add({ targets: [item, halo], x: GAME_WIDTH / 2, y: 260, duration: 500, ease: 'Back.easeOut' });
-        this.tweens.add({ targets: item, scale: s * 2, duration: 500, ease: 'Back.easeOut' });
-        await this.simWait(0.5);
-        pour?.stop();
-        const vortex = this.add
-          .particles(0, 0, TEX.smoke, {
-            x: { min: 0, max: GAME_WIDTH },
-            y: { min: 0, max: GAME_HEIGHT },
-            moveToX: item.x,
-            moveToY: item.y + 30,
-            scale: { start: 1.4, end: 0.1 },
-            alpha: { start: 0.9, end: 0.2 },
-            lifespan: 700,
-            frequency: 6,
-            quantity: 3,
-            tint: [ult.color, ult.color2 ?? 0xffffff, v.init.palette[1]],
-            blendMode: Phaser.BlendModes.ADD,
-          })
-          .setDepth(DEPTH.fx + 4);
-        sfxWhoosh();
-        this.after(400, () => sfxWhoosh());
-        this.after(800, () => sfxWhoosh());
-        this.tweens.add({ targets: item, scaleX: item.scaleX * 1.25, scaleY: item.scaleY * 0.8, duration: 120, yoyo: true, repeat: 6 });
-        this.darken(0.2, 1200);
-        await this.simWait(1.4);
-        vortex.stop();
-        floatText(this, item.x, item.y - 110, 'GULP!', '#ffd23f', 84);
-        sfxPoof();
-        burst(this, item.x, item.y, { count: 70, speed: 420, colors: [0xffd23f, 0xffffff, ult.color] });
-        burst(this, v.cx, v.cy, { count: 50, speed: 320, colors: [0xffffff, ult.color, v.init.palette[1]] });
-        v.growUntil = 0;
-        this.after(900, () => vortex.destroy());
-        await this.simWait(0.8);
-      }
-      if (counter.how === 'reflect') {
-        this.banner('BOUNCE BACK!', 0x7ad9ff, true);
-        const mirrored: AbilitySpec = { ...ult, power: ult.power };
-        cast(this, h, mirrored, v, 2.4);
-        await this.simWait(1.6);
-      }
-      this.tweens.add({ targets: dome, alpha: 0, duration: 400, onComplete: () => dome.destroy() });
-    } else {
-      // The ultimate really happens first (the sun is swallowed, the clones
-      // appear, the lasers fire), with the heroes shielded by the item's glow;
-      // then the item visibly undoes it.
-      cast(this, v, ult, h, 2.0);
-      await this.simWait(1.6);
-      // A beam of the item's own light straight into the villain.
-      const light: AbilitySpec = { id: 'counter_light', name: counter.name, kind: 'beam', cooldown: 0, color: 0xfff3a0, color2: 0xffb703, power: 3 };
-      cast(this, h, light, v, 2.4);
-      if (counter.how === 'restore') {
-        // The light comes back: the sun pops into the sky with rays.
-        this.darken(0, 900);
-        const sun = this.add.image(GAME_WIDTH * 0.72, 120, 'prop_sun').setDisplaySize(160, 160).setDepth(FLOOR_TOP - 3);
-        const ss = sun.scale;
-        sun.setScale(0);
-        this.tweens.add({ targets: sun, scale: ss, duration: 500, ease: 'Back.easeOut' });
-        speedLines(this, sun.x, sun.y, 0xffd23f, 900);
-        burst(this, sun.x, sun.y, { count: 90, speed: 500, colors: [0xffd23f, 0xffffff, 0xff9a3c] });
-        sfxFanfare();
-      }
-      if (counter.how === 'reveal') {
-        for (const c of this.fighters.filter((f) => f.init.kind === 'clone')) this.hit(c, 1, 0xffffff, h);
-      }
-      if (counter.how === 'shutdown') {
-        await this.simWait(0.6);
-        v.baseTint = 0x777777;
-        v.restoreTint();
-        floatText(this, v.cx, v.top, 'POWER OFF!', '#ff5a6a', 56);
-      }
-      if (counter.how === 'calm') {
-        await this.simWait(0.4);
-        for (let i = 0; i < 12; i++) this.after(i * 80, () => floatText(this, v.cx + (Math.random() - 0.5) * 200, v.cy + (Math.random() - 0.5) * 120, '💖', '#ff5ab4', 40));
-      }
-      await this.simWait(1.4);
-    }
+    const beat: CounterBeat = { v, ult, giant, h, item, halo, s, name: counter.name, how: counter.how };
+    if (counter.how === 'scare') await this.counterScare(beat, aura, word, !!named);
+    else if (counter.how === 'block' || counter.how === 'reflect' || counter.how === 'swallow') await this.counterShield(beat);
+    else await this.counterUndo(beat);
     this.tweens.killTweensOf(halo);
     halo.destroy();
     this.tweens.add({ targets: item, alpha: 0, scale: 0, duration: 400, onComplete: () => item.destroy() });
@@ -1296,16 +1160,157 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     v.growUntil = 0;
     v.setStatus('stun', 99, this.now);
     floatText(this, v.cx, v.top - 20, 'DIZZY!', '#ffd23f', 56);
-    await this.simWait(0.8);
+    await this.wait(0.8);
   }
 
   /**
-   * One of the swarm (a wind-up mouse, or `art`, the counter word's picture):
-   * low and fast along the floor from her side to the villain, then off the edge.
+   * A swarm of the thing (wind-up mice, brave rats, cats, buses, mops)
+   * scurries along the floor at the villain, who leaps up in fright
+   * mid-ultimate (a stretch and a lift, no spin), and the ultimate fizzles
+   * out before it is ever fired. Its picture whenever there is one, named
+   * counters too (Matt's 017 call); the item's glyph otherwise.
    */
-  private scurry(from: Fighter, to: Fighter, i: number, art: string | null = null): void {
+  private async counterScare({ v, ult, giant, h }: CounterBeat, aura: Phaser.GameObjects.Particles.ParticleEmitter, word: string, named: boolean): Promise<void> {
+    for (let i = 0; i < 12; i++) this.after(i * 70, () => this.scurry(h, v, i, `pic_${word}`));
+    await this.wait(0.75);
+    aura.stop();
+    v.growUntil = 0;
+    sfxShout(1.6);
+    floatText(this, v.cx, v.top - 40, 'EEK!', '#ff9ad5', 84);
+    // Not the mop! She has read the word by now, so the villain may wail it.
+    if (!named) this.after(350, () => floatText(this, v.cx - 40, v.top - 130, `NOT THE ${word.toUpperCase()}!`, '#ffd23f', 56));
+    shake(this, 3, 300);
+    // A giant (Evil Tiamat, standing at the front) only hops and stretches a
+    // little, so her head stays on screen (she now takes this branch whenever
+    // the counter is not her Magic Hat).
+    const leap = giant ? 50 : 190;
+    const stretch = giant ? 1.12 : 1.45;
+    // From the height it is at: a flyer leaps up from the air, not from the floor.
+    const lift0 = v.lift;
+    this.tweens.addCounter({ from: 0, to: 1, duration: 750, ease: 'Sine.easeInOut', onUpdate: (tw) => (v.lift = lift0 + Math.sin((tw.getValue() ?? 0) * Math.PI) * leap), onComplete: () => (v.lift = lift0) });
+    const bs = v.baseScale;
+    this.tweens.add({ targets: v.sprite, scaleX: bs * (giant ? 0.9 : 0.72), scaleY: bs * stretch, duration: 170, yoyo: true, repeat: 1, onComplete: () => v.sprite.setScale(bs) });
+    await this.wait(0.8);
+    // The fizzle: the charge goes out of it in a grey puff.
+    sfxPoof();
+    burst(this, v.cx, v.cy, { count: 50, speed: 260, colors: [0x888888, 0xcccccc, ult.color], life: 900 });
+    floatText(this, v.cx + 60, v.cy, 'FIZZLE!', '#cccccc', 44);
+    await this.wait(1.0);
+  }
+
+  /**
+   * `block`, `reflect`, `swallow`: a dome over the heroes, all of them (the
+   * ally can be well apart from her); the ultimate crashes into it. A
+   * `swallow` item then sucks the storm inside; a `reflect` sends it back.
+   */
+  private async counterShield({ v, ult, giant, h, item, halo, s, how }: CounterBeat): Promise<void> {
+    const team = this.team();
+    const xs = team.map((f) => f.x);
+    const ys = team.map((f) => f.cy);
+    const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+    const dome = this.add
+      .ellipse((x0 + x1) / 2, (y0 + y1) / 2 - 20, Math.max(520, x1 - x0 + 300), Math.max(360, y1 - y0 + 280), 0x9ad8ff, 0.18)
+      .setStrokeStyle(10, 0xffffff, 0.9)
+      .setDepth(DEPTH.fx + 3);
+    popIn(this, dome, 1, 0, 300);
+    sfxShield();
+    cast(this, v, ult, h, 2.2);
+    const pour = giant ? this.giantSweep(v, ult, false, how === 'swallow' ? 3000 : 1600) : null;
+    if (how !== 'swallow') {
+      await this.wait(1.8);
+      floatText(this, h.x + 60, h.y - 280, 'BLOCKED!', '#7ad9ff', 70);
+    } else {
+      // The item (the Magic Hat, drawn brim up) flies up between them while
+      // the storm is still falling and sucks it all inside like a magic trick;
+      // she shrinks back to size behind the GULP.
+      await this.wait(0.6);
+      this.tweens.killTweensOf(halo);
+      this.tweens.add({ targets: [item, halo], x: GAME_WIDTH / 2, y: 260, duration: 500, ease: 'Back.easeOut' });
+      this.tweens.add({ targets: item, scale: s * 2, duration: 500, ease: 'Back.easeOut' });
+      await this.wait(0.5);
+      pour?.stop();
+      const vortex = this.add
+        .particles(0, 0, TEX.smoke, {
+          x: { min: 0, max: GAME_WIDTH },
+          y: { min: 0, max: GAME_HEIGHT },
+          moveToX: item.x,
+          moveToY: item.y + 30,
+          scale: { start: 1.4, end: 0.1 },
+          alpha: { start: 0.9, end: 0.2 },
+          lifespan: 700,
+          frequency: 6,
+          quantity: 3,
+          tint: [ult.color, ult.color2 ?? 0xffffff, v.init.palette[1]],
+          blendMode: Phaser.BlendModes.ADD,
+        })
+        .setDepth(DEPTH.fx + 4);
+      sfxWhoosh();
+      this.after(400, () => sfxWhoosh());
+      this.after(800, () => sfxWhoosh());
+      this.tweens.add({ targets: item, scaleX: item.scaleX * 1.25, scaleY: item.scaleY * 0.8, duration: 120, yoyo: true, repeat: 6 });
+      this.darken(0.2, 1200);
+      await this.wait(1.4);
+      vortex.stop();
+      floatText(this, item.x, item.y - 110, 'GULP!', '#ffd23f', 84);
+      sfxPoof();
+      burst(this, item.x, item.y, { count: 70, speed: 420, colors: [0xffd23f, 0xffffff, ult.color] });
+      burst(this, v.cx, v.cy, { count: 50, speed: 320, colors: [0xffffff, ult.color, v.init.palette[1]] });
+      v.growUntil = 0;
+      this.after(900, () => vortex.destroy());
+      await this.wait(0.8);
+    }
+    if (how === 'reflect') {
+      this.banner('BOUNCE BACK!', 0x7ad9ff, true);
+      cast(this, h, ult, v, 2.4);
+      await this.wait(1.6);
+    }
+    this.tweens.add({ targets: dome, alpha: 0, duration: 400, onComplete: () => dome.destroy() });
+  }
+
+  /**
+   * `restore`, `reveal`, `shutdown`, `calm`: the ultimate really happens first
+   * (the sun is swallowed, the clones appear, the lasers fire), with the
+   * heroes shielded by the item's glow; then the item visibly undoes it.
+   */
+  private async counterUndo({ v, ult, h, name, how }: CounterBeat): Promise<void> {
+    cast(this, v, ult, h, 2.0);
+    await this.wait(1.6);
+    // A beam of the item's own light straight into the villain.
+    const light: AbilitySpec = { id: 'counter_light', name, kind: 'beam', cooldown: 0, color: 0xfff3a0, color2: 0xffb703, power: 3 };
+    cast(this, h, light, v, 2.4);
+    if (how === 'restore') {
+      // The light comes back: the sun pops into the sky with rays.
+      this.darken(0, 900);
+      const sun = this.add.image(GAME_WIDTH * 0.72, 120, 'prop_sun').setDisplaySize(160, 160).setDepth(FLOOR_TOP - 3);
+      popIn(this, sun, sun.scale, 0, 500);
+      speedLines(this, sun.x, sun.y, 0xffd23f, 900);
+      burst(this, sun.x, sun.y, { count: 90, speed: 500, colors: [0xffd23f, 0xffffff, 0xff9a3c] });
+      sfxFanfare();
+    }
+    if (how === 'reveal') {
+      for (const c of this.fighters.filter((f) => f.init.kind === 'clone')) this.hit(c, 1, 0xffffff, h);
+    }
+    if (how === 'shutdown') {
+      await this.wait(0.6);
+      v.baseTint = 0x777777;
+      v.restoreTint();
+      floatText(this, v.cx, v.top, 'POWER OFF!', '#ff5a6a', 56);
+    }
+    if (how === 'calm') {
+      await this.wait(0.4);
+      for (let i = 0; i < 12; i++) this.after(i * 80, () => floatText(this, v.cx + (Math.random() - 0.5) * 200, v.cy + (Math.random() - 0.5) * 120, '💖', '#ff5ab4', 40));
+    }
+    await this.wait(1.4);
+  }
+
+  /**
+   * One of the swarm (`art`, the counter word's picture, or the villain's
+   * counter glyph if that art is missing): low and fast along the floor from
+   * her side to the villain, then off the edge.
+   */
+  private scurry(from: Fighter, to: Fighter, i: number, art: string): void {
     const y0 = Phaser.Math.Clamp(from.y + (Math.random() - 0.5) * 60, FLOOR_TOP, FLOOR_BOTTOM);
-    const m = art && this.textures.exists(art)
+    const m = this.textures.exists(art)
       ? fitImage(this.add.image(from.x + 30, y0, art), 58, 58).setOrigin(0.5, 1).setDepth(y0 + 2)
       : this.add.text(from.x + 30, y0, villainSpec().counter.glyph, { fontSize: '42px' }).setOrigin(0.5, 1).setDepth(y0 + 2);
     const ty = Phaser.Math.Clamp(to.y + (Math.random() - 0.5) * 70, FLOOR_TOP, FLOOR_BOTTOM);
@@ -1337,7 +1342,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     await this.say(fightLineKey(this.fight, 'finish'));
     // Low, but not zero: the last hit below is the one that wins.
     this.floors.villainMain = 0.06;
-    const team = [...this.heroes, ...(this.helper ? [this.helper] : [])];
+    const team = this.team();
     for (const [i, h] of team.entries()) {
       this.after(i * 700, () => {
         const ab = h.init.ultimate ?? h.init.abilities[0]!;
@@ -1345,9 +1350,9 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
         this.stats.abilitiesFired++;
       });
     }
-    await this.simWait(team.length * 0.7 + 0.5);
+    await this.wait(team.length * 0.7 + 0.5);
     if (episode.made.ammo) await this.useAmmo();
-    await this.simWait(1.6);
+    await this.wait(1.6);
     await this.show.finish(v);
     // The last hit.
     stopMusic();
@@ -1364,21 +1369,18 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     burst(this, v.cx, v.cy, { count: 200, speed: 900, life: 1500, colors: [0xffd23f, 0xff5ab4, 0x7ad9ff, 0xffffff] });
     this.banner(this.fight.win, 0xffd23f, true);
     for (const f of this.fighters) if (f.team === 'villain' && !f.isMain && f.active) this.kill(f);
-    // The villain spins, shrinks into a puff, and comes back as the good version.
+    // The villain stretches up and squashes into a puff, and comes back as the good version.
     // A stretch up, then a squash to nothing: scale only.
     v.alive = false;
-    this.tweens.add({ targets: v.body, scaleX: 0.4, scaleY: 1.6, duration: 350, ease: 'Quad.easeOut', yoyo: false });
+    this.tweens.add({ targets: v.body, scaleX: 0.4, scaleY: 1.6, duration: 350, ease: 'Quad.easeOut' });
     this.tweens.add({ targets: v.body, scaleX: 1.8, scaleY: 0, duration: 500, delay: 350, ease: 'Back.easeIn' });
-    await this.simWait(1.0);
+    await this.wait(1.0);
     sfxPoof();
     // As tall beside her hero as the villain's good size says (Scar just under her).
     const gh = (this.heroes[0]?.height ?? 150) * castScale(episode.villain);
     const good = fitImage(this.add.image(v.x, v.y, castArt(episode.villain)).setOrigin(0.5, 1), gh * 0.95, gh).setDepth(v.y + 1);
-    const gs = good.scale;
-    good.setScale(0);
-    this.tweens.add({ targets: good, scale: gs, duration: 500, ease: 'Back.easeOut' });
+    popIn(this, good, good.scale, 0, 500);
     burst(this, v.x, v.y - 90, { count: 60, speed: 400, colors: [0xff9ad5, 0xffffff] });
-    v.alive = false;
     v.root.setVisible(false);
     // Good again: the corner label drops its EVIL too (item 039).
     const goodName = CHARACTER_BY_ID[episode.villain]?.good.displayName;
@@ -1387,7 +1389,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     // Good again, the villain says sorry (or asks to come next time) in its own
     // voice, in a bubble over its good self. The victory says another.
     // One of three, drawn with the cast (item 040).
-    await this.simWait(0.6);
+    await this.wait(0.6);
     const sorry = reformedOf('sorry');
     if (sorry) await this.guard(voiceBus.say(reformedLine(episode.villain, sorry.key), 'bark', { x: good.x, y: good.y, bubbleOffset: good.displayHeight, active: true }));
   }
@@ -1433,9 +1435,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       const sp = f.init.speed * 1.3;
       f.vx = this.controls.move.x * sp;
       f.vy = this.controls.move.y * sp * 0.7;
-      f.x = Phaser.Math.Clamp(f.x + f.vx * dt, ARENA_LEFT, ARENA_RIGHT);
-      f.y = Phaser.Math.Clamp(f.y + f.vy * dt, FLOOR_TOP, FLOOR_BOTTOM);
-      f.lean = Phaser.Math.Clamp(f.vx / 900, -0.25, 0.25);
+      integrate(f, dt);
     } else if (moving) STEER[f.init.style](f, { scene: this, now: this.now, dt, target });
     // Each side drifts back towards its own ground, so the fight stays framed
     // heroes-left, villain-right instead of wandering off one edge.
@@ -1610,9 +1610,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       if (ok) return;
       this.nextTaunt = this.now + 1200;
       // Not said, so not counted.
-      const said = tauntsSaid.get(f.init.id) ?? [];
-      const at = said.lastIndexOf(key);
-      if (at >= 0) tauntsSaid.set(f.init.id, [...said.slice(0, at), ...said.slice(at + 1)]);
+      unsayTaunt(f.init.id, key);
     });
   }
 
@@ -1621,14 +1619,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
    * a third time (a fighter who has said all of them twice goes quiet).
    */
   private pickTaunt(f: Fighter): string | undefined {
-    const said = tauntsSaid.get(f.init.id) ?? [];
-    const times = (k: string) => said.filter((s) => s === k).length;
-    const keys = this.safeTaunts(f).filter((k) => times(k) < TAUNT_MAX);
-    const least = Math.min(...keys.map(times));
-    const pool = keys.filter((k) => times(k) === least);
-    const key = pool[Math.floor(Math.random() * pool.length)];
-    if (key) tauntsSaid.set(f.init.id, [...said, key]);
-    return key;
+    return pickTaunt(f.init.id, this.safeTaunts(f), TAUNT_MAX);
   }
 
   // -- frame -------------------------------------------------------------------------
@@ -1728,8 +1719,6 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       villains: [info(this.villain)],
       minions: this.fighters.filter((f) => f.active && !f.isMain).length,
       ...this.stats,
-      itemsUsed: this.itemsUsed,
-      runesFired: this.runesFired,
       me: this.heroes[0] ? { x: Math.round(this.heroes[0].x), y: Math.round(this.heroes[0].y) } : null,
       choice: this.choices.info(),
     };

@@ -8,7 +8,7 @@
  * per the house rule;
  * no animation frames exist yet, and real art will drop in under the same ids.
  *
- * Arena space: x across, y = depth on the floor (420..670). `lift` is height
+ * Arena space: x across, y = depth on the floor (FLOOR_TOP..FLOOR_BOTTOM, 430..670). `lift` is height
  * off the floor (flyers, leaps); the sprite draws at y - lift and the shadow
  * stays on the floor.
  */
@@ -18,7 +18,7 @@ import Phaser from 'phaser';
 import type { AbilitySpec, FighterSpec, MinionSpec, MoveStyle, Status } from '../../content/battle/types';
 import { sfxPoof } from '../audio/sfx';
 import { TEX } from '../fx/textures';
-import { ADULT_HEIGHT } from '../config';
+import { ADULT_HEIGHT, GAME_WIDTH } from '../config';
 import { isGrownUp } from '../rules/cast';
 import { burst, fitImage } from '../fx/juice';
 
@@ -43,8 +43,6 @@ export interface FighterInit {
   ultimate: AbilitySpec | null;
   palette: [number, number];
   kind: 'main' | 'minion' | 'clone' | 'helper';
-  /** Voice speaker id for taunts (main fighters only). */
-  voice?: string;
   mount?: string;
   trail?: FighterSpec['trail'];
   taunts?: string[];
@@ -67,7 +65,6 @@ export function initFromSpec(spec: FighterSpec, id: string, art: string, team: T
     ultimate: spec.ultimate,
     palette: spec.palette,
     kind: 'main',
-    voice: id,
     taunts: spec.taunts.map((t) => t.key),
     ...(spec.mount ? { mount: spec.mount } : {}),
     ...(spec.trail ? { trail: spec.trail } : {}),
@@ -139,7 +136,6 @@ export class Fighter {
   castFrom: { x: number; y: number } | null = null;
   /** Clone of which fighter, for Moriarty's tricks. */
   cloneOf: Fighter | null = null;
-  lastHitAt = 0;
   private lastFlash = 0;
   /** The battle's simulation clock (ms), which slow-mo and hit-stop scale. */
   now = 0;
@@ -288,7 +284,7 @@ export class Fighter {
     // Keep the whole card on screen, not just its centre.
     if (this.onStage || this.init.kind !== 'main') {
       const half = this.height * 0.4 * this.scaleMul + 10;
-      this.x = Math.min(Math.max(this.x, half), 1280 - half);
+      this.x = Math.min(Math.max(this.x, half), GAME_WIDTH - half);
     }
     this.root.setPosition(this.x, this.y);
     this.root.setDepth(this.y);

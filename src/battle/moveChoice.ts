@@ -16,7 +16,7 @@ import Phaser from 'phaser';
 import { moveKey, narratorLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxSelect, sfxWrong } from '../audio/sfx';
-import { DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH, REACH, STICK_HINT_MS, WALK_SPEED } from '../config';
+import { DEPTH, FONT_COMIC, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH, REACH, STICK_HINT_MS, WALK_SPEED } from '../config';
 import { episode, narrator } from '../episode/Episode';
 import { TEX } from '../fx/textures';
 import type { BattleInfo } from '../hookState';
@@ -24,7 +24,7 @@ import type { Controls } from '../input/Controls';
 import { dadLock } from '../input/dadLock';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { fitText } from '../ui/fitText';
-import { STICK_HINT_OFFSET, makeStickHint } from '../ui/stickHint';
+import { makeStickHint, placeStickHint } from '../ui/stickHint';
 import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter } from './Fighter';
 import { ARENA_LEFT, ARENA_RIGHT } from './movement';
 import { SIGN_RISE, clearSpot, placePads, type PlaceBody } from './padPlace';
@@ -87,8 +87,6 @@ interface Choice {
   /** The "I am here" ring at her hero's feet. */
   here: Phaser.GameObjects.Ellipse;
   open: boolean;
-  /** Wall-clock time the word was last said. */
-  promptedAt: number;
   /**
    * Quiet seconds since the word was last said, on the clamped frame clock her
    * walk uses, for the idle re-prompt (item 034): only while the pads are open,
@@ -142,7 +140,7 @@ export class MoveChoice {
     objs.push(scene.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0a0018, 0.3).setDepth(FLOOR_TOP - 3.5));
     objs.push(
       scene.add
-        .text(GAME_WIDTH / 2, 110, 'PICK A MOVE!', { fontFamily: '"Arial Black", sans-serif', fontSize: '56px', color: '#ffd23f', stroke: '#000000', strokeThickness: 12 })
+        .text(GAME_WIDTH / 2, 110, 'PICK A MOVE!', { fontFamily: FONT_HEAVY, fontSize: '56px', color: '#ffd23f', stroke: '#000000', strokeThickness: 12 })
         .setOrigin(0.5)
         .setDepth(DEPTH.overlay),
     );
@@ -171,18 +169,14 @@ export class MoveChoice {
     }
 
     return new Promise<number>((resolve) => {
-      const c: Choice = { words, right, key, objs, veiled, pads, near: null, dot, here, open: false, promptedAt: 0, idle: 0, at, misses: episode.house.misses?.[key] ?? 0, still: 0, stickHint: null, stepBack: this.teamStepBack(me, pads), stepAt: performance.now(), resolve: () => resolve(c.misses) };
+      const c: Choice = { words, right, key, objs, veiled, pads, near: null, dot, here, open: false, idle: 0, at, misses: episode.house.misses?.[key] ?? 0, still: 0, stickHint: null, stepBack: this.teamStepBack(me, pads), stepAt: performance.now(), resolve: () => resolve(c.misses) };
       this.current = c;
       // No charge, jump or shot in flight carries into the choice (holdHero zeroes the hop).
       this.host.stopPlay();
       void (async () => {
         await this.host.say('move_pick');
         await this.host.say(moveKey('use_move', right));
-        if (this.current) {
-          this.current.open = true;
-          this.current.promptedAt = performance.now();
-          this.current.idle = 0;
-        }
+        if (this.current) this.reopen(this.current);
       })();
     });
   }
@@ -345,8 +339,12 @@ export class MoveChoice {
     const n = narrator();
     await this.host.guard(voiceBus.sequence([narratorLine(n, moveKey('not_move', c.right)), narratorLine(n, moveKey('was_move', word)), narratorLine(n, moveKey('find_move', c.right))]));
     if (this.current !== c) return;
+    this.reopen(c);
+  }
+
+  /** The pads open again once a line has been said, the idle re-prompt's count from zero. */
+  private reopen(c: Choice): void {
     c.open = true;
-    c.promptedAt = performance.now();
     c.idle = 0;
   }
 
@@ -458,18 +456,15 @@ export class MoveChoice {
       c.stickHint = makeStickHint(this.host.stage, c.at.x, c.at.y);
       c.objs.push(c.stickHint);
     }
-    c.stickHint?.setPosition(c.at.x + STICK_HINT_OFFSET.x, c.at.y + STICK_HINT_OFFSET.y);
+    if (c.stickHint) placeStickHint(c.stickHint, c.at.x, c.at.y);
     if (c.open && (controls.pressed('yellow') || c.idle > 10)) {
       // Green is ignored while the instruction plays, as on the first prompt:
       // the pads close for the line and open again when it ends.
       c.open = false;
-      c.promptedAt = wall;
       c.idle = 0;
       void voiceBus.say(narratorLine(narrator(), moveKey('use_move', c.right))).then(() => {
         if (this.current !== c) return;
-        c.open = true;
-        c.promptedAt = performance.now();
-        c.idle = 0;
+        this.reopen(c);
       });
     }
   }

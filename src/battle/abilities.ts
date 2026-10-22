@@ -5,8 +5,8 @@
  * using one of these kinds with its own colours, counts, glyphs and statuses.
  * A new *kind* is one new function here.
  *
- * `mult` scales everything: 1 normal, ~1.8 for a supercharged move-choice pick
- * or a gem-powered hero, ~2.5 for ultimates. Particles are deliberately
+ * `mult` scales everything: 1 normal, ~1.3-1.8 for the fetched things and
+ * runes, 2.4 for the supercharged pick, 2-2.6 for ultimates. Particles are deliberately
  * overdone, because the spectacle is the reward.
  */
 
@@ -32,7 +32,6 @@ import {
   sfxZap,
 } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { hex } from '../fx/colour';
 import { burst, dustPuff, flash, groundRing, shake, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter, type FighterInit, type Team } from './Fighter';
@@ -88,7 +87,7 @@ export interface BattleWorld {
    * teleport) then play where it stands and send their force across, instead
    * of carrying it over to the villain.
    */
-  held?(f: Fighter): boolean;
+  held(f: Fighter): boolean;
 }
 
 const MINION_CAP = 7;
@@ -312,7 +311,7 @@ const slam: Cast = (w, f, ab, target, mult) => {
   const s = w.stage;
   w.busy(f, 900);
   if (ab.shout) sfxShout(f.init.size > 1.2 ? 0.7 : 1);
-  const held = w.held?.(f) ?? false;
+  const held = w.held(f);
   const leap = f.init.style !== 'stomp' && !held;
   const fromX = f.x;
   const toX = leap ? besideX(f, target, 90, f.team === 'hero' ? -1 : 1) : f.x;
@@ -369,7 +368,7 @@ const spin: Cast = (w, f, ab, target, mult) => {
   if (ab.shout) sfxShout();
   w.busy(f, victims.length * 280 + 200);
   // Held in a contest, it spins where it stands and the whirl flies across.
-  const held = w.held?.(f) ?? false;
+  const held = w.held(f);
   victims.forEach((v, i) => {
     w.after(i * 280, () => {
       if (!v.active || !f.active) return;
@@ -413,7 +412,7 @@ const dash: Cast = (w, f, ab, target, mult) => {
       const fx = f.x;
       const fy = f.y;
       const dir = Math.sign(t.x - f.x) || 1;
-      if (w.held?.(f)) {
+      if (w.held(f)) {
         // Held in a contest: a lunge on the spot, and the charge's streak flies across.
         let q = 0;
         const lunge = s.time.addEvent({
@@ -528,7 +527,7 @@ const teleport: Cast = (w, f, ab, target, mult) => {
   sfxPoof();
   burst(s, f.cx, f.cy, { count: 30, speed: 260, colors: [ab.color, 0xffffff] });
   // Held in a contest, it pops out and back in on its own spot.
-  const held = w.held?.(f) ?? false;
+  const held = w.held(f);
   w.after(160, () => {
     if (!target.active) return;
     if (!held) {
@@ -824,8 +823,7 @@ const grid: Cast = (w, f, ab, _target, mult) => {
 /**
  * Ellie's swords (or bubbles): `count` of them pop out around the caster and circle her for
  * `duration` seconds (a flat ellipse, the back half behind her), cutting
- * whatever they pass; with `guard` she is shielded while they spin. Then the
- * whole ring is flung at the enemy, spinning, as homing projectiles.
+ * whatever they pass. Then the whole ring is flung at the enemy, spinning, as homing projectiles.
  */
 const orbit: Cast = (w, f, ab, target, mult) => {
   const s = w.stage;
@@ -837,7 +835,6 @@ const orbit: Cast = (w, f, ab, target, mult) => {
   f.squash(0.2);
   sfxSummon();
   if (ab.shout) sfxShout();
-  if (ab.guard) f.setShield(hold / 1000, ab.color, w.now);
   const swords = Array.from({ length: n }, () => artObj(w, ab, f.cx, f.cy, swordH) ?? projectileObj(w, ab, f.cx, f.cy, mult));
   const glints = swords.map((sw) => {
     const g = trail(w, ab.color, mult * 0.7);
@@ -966,5 +963,3 @@ export function cast(w: BattleWorld, f: Fighter, ab: AbilitySpec, target: Fighte
   if (banner) w.banner(abilityCallout(ab).toUpperCase(), ab.color, mult > 1.5);
   CASTS[ab.kind](w, f, ab, t ?? f, mult);
 }
-
-export { hex };

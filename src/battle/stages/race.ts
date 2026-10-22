@@ -21,8 +21,8 @@ import Phaser from 'phaser';
 import { fightPropArt } from '../../../content/battle/fights';
 import type { AbilitySpec } from '../../../content/battle/types';
 import { sfxFanfare, sfxWhoosh } from '../../audio/sfx';
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../../config';
-import { burst, fitImage, floatText, fxQuality, shockwave, speedLines } from '../../fx/juice';
+import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../../config';
+import { burst, fitImage, floatText, fxQuality, popIn, shockwave, speedLines } from '../../fx/juice';
 import { TEX } from '../../fx/textures';
 import { FLOOR_TOP, type Fighter } from '../Fighter';
 import { ARENA_RIGHT } from '../movement';
@@ -137,7 +137,7 @@ export class RaceStage extends BaseStage {
       .setDepth(FLOOR_TOP - 4);
     for (const f of [...this.host.heroes, this.host.villain]) this.addRacer(f);
     this.startLabel = s.add
-      .text(TRACK.x0 - 12, TRACK.y, 'START', { fontFamily: '"Arial Black", sans-serif', fontSize: '15px', color: '#ffffff', stroke: '#000000', strokeThickness: 4 })
+      .text(TRACK.x0 - 12, TRACK.y, 'START', { fontFamily: FONT_HEAVY, fontSize: '15px', color: '#ffffff', stroke: '#000000', strokeThickness: 4 })
       .setOrigin(1, 0.5)
       .setDepth(DEPTH.hud + 1);
   }
@@ -563,8 +563,8 @@ export class RaceStage extends BaseStage {
 
   /** Fading copies streaming off a boosted racer. */
   private ghosts(f: Fighter, color: number, n: number): void {
-    for (let i = 0; i < n; i++) this.host.after(i * 80, () => {
-      if (f.active && this.scene.sys.isActive()) f.afterimage(color);
+    for (let i = 0; i < n; i++) this.later(i * 80, () => {
+      if (f.active) f.afterimage(color);
     });
   }
 
@@ -621,9 +621,7 @@ export class RaceStage extends BaseStage {
     if (!this.trophy) {
       const obj = this.prop('trophy', '🏆', 110, 120).setOrigin(0.5, 1).setDepth(DEPTH.fx + 3);
       obj.setPosition(f.x, Math.max(f.top - 70, 140));
-      const sc = obj.scale;
-      obj.setScale(0);
-      s.tweens.add({ targets: obj, scale: sc, duration: 420, ease: 'Back.easeOut' });
+      popIn(s, obj, obj.scale, 0, 420);
       this.trophy = { obj, on: f };
     }
     sfxFanfare();

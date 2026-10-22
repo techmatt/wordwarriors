@@ -41,7 +41,8 @@ function approach(f: Fighter, tx: number, ty: number, speed: number, dt: number,
   f.vy += ((dy / d) * want - f.vy) * k;
 }
 
-function integrate(f: Fighter, dt: number): void {
+/** Move by velocity for `dt`, kept on the floor, leaning into the run. */
+export function integrate(f: Fighter, dt: number): void {
   f.x = Phaser.Math.Clamp(f.x + f.vx * dt, ARENA_LEFT, ARENA_RIGHT);
   f.y = Phaser.Math.Clamp(f.y + f.vy * dt, FLOOR_TOP, FLOOR_BOTTOM);
   f.lean = Phaser.Math.Clamp(f.vx / 900, -0.25, 0.25);

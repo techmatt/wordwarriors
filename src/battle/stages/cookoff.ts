@@ -19,9 +19,9 @@ import Phaser from 'phaser';
 import { fightPropArt } from '../../../content/battle/fights';
 import type { AbilitySpec } from '../../../content/battle/types';
 import { sfxBoing, sfxBoom, sfxFanfare, sfxGrow, sfxHeal, sfxPoof, sfxStep, sfxWhoosh } from '../../audio/sfx';
-import { DEPTH } from '../../config';
+import { DEPTH, FONT_HEAVY } from '../../config';
 import { rgb } from '../../fx/colour';
-import { burst, fitImage, floatText, fxQuality, shockwave } from '../../fx/juice';
+import { burst, fitImage, floatText, fxQuality, popIn, shockwave } from '../../fx/juice';
 import { TEX } from '../../fx/textures';
 import type { Fighter } from '../Fighter';
 import { BaseStage } from './stage';
@@ -174,9 +174,8 @@ export class CookoffStage extends BaseStage {
     // Floored heroes stay where they lie; her hero is hers during a move choice.
     if (f.floored) return true;
     if (h.choosing && f === h.heroes[0]) return false;
+    if (!this.holds(f)) return false;
     const i = h.heroes.indexOf(f);
-    const mine = f === h.villain || i >= 0 || (f === h.helper && f.active);
-    if (!mine) return false;
     if (this.comboHold && this.t < this.comboHold.until && (f === this.comboHold.a || f === this.comboHold.b)) return true;
     const to = this.spot(f, Math.max(0, i));
     // Busy cooks: a little stirring sway at the counter.
@@ -580,7 +579,7 @@ export class CookoffStage extends BaseStage {
       const x = cx + (i - 1) * 88;
       const stick = sc.add.rectangle(0, 52, 10, 50, 0x8a5a2a);
       const card = sc.add.rectangle(0, 0, 76, 92, 0xffffff).setStrokeStyle(6, n >= 8 ? 0xffd23f : 0x9ad8ff);
-      const num = sc.add.text(0, 2, String(n), { fontFamily: '"Arial Black", sans-serif', fontSize: n >= 10 ? '44px' : '54px', color: n >= 8 ? '#e8102e' : '#2a5ab4' }).setOrigin(0.5);
+      const num = sc.add.text(0, 2, String(n), { fontFamily: FONT_HEAVY, fontSize: n >= 10 ? '44px' : '54px', color: n >= 8 ? '#e8102e' : '#2a5ab4' }).setOrigin(0.5);
       const c = sc.add.container(x, 230, [stick, card, num]).setDepth(DEPTH.fx + 50).setScale(0).setAngle((i - 1) * 7);
       sc.tweens.add({ targets: c, y: 175, scale: 1, duration: 320, delay: i * 140, ease: 'Back.easeOut' });
       this.later(i * 140, () => sfxStep(i));
@@ -596,9 +595,7 @@ export class CookoffStage extends BaseStage {
     const y = Math.max(160, s.topY - 50);
     const glow = sc.add.image(s.topX, y, TEX.glow).setTint(0xffd23f).setBlendMode(Phaser.BlendModes.ADD).setScale(2.2).setAlpha(0.8).setDepth(DEPTH.fx + 9);
     const img = fitImage(sc.add.image(s.topX, y, fightPropArt('trophy')), 110, 120).setDepth(DEPTH.fx + 10);
-    const cs = img.scale;
-    img.setScale(0);
-    sc.tweens.add({ targets: img, scale: cs, duration: 450, ease: 'Back.easeOut' });
+    popIn(sc, img, img.scale, 0, 450);
     sc.tweens.add({ targets: glow, alpha: 0.4, duration: 400, yoyo: true, repeat: -1 });
     this.cup = { side: s, img, glow };
     burst(sc, s.topX, y, { count: 60, speed: 420, texture: TEX.star, colors: [0xffd23f, 0xffffff, 0xff9a3c] });

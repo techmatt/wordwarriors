@@ -9,9 +9,9 @@ import type Phaser from 'phaser';
 
 import { RUNE_BY_SOUND } from '../../content/phonics/runes';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
-import { DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_COMIC, FONT_HEAVY, GAME_WIDTH } from '../config';
 import { counterArt, episode } from '../episode/Episode';
-import { fitImage } from '../fx/juice';
+import { fitImage, popIn } from '../fx/juice';
 import type { Fighter } from './Fighter';
 import type { FightStage } from './stages/stage';
 
@@ -27,7 +27,7 @@ export class BattleHud {
   /** The names, the fetched things and the runes, once the cast has spawned. */
   makeLabels(heroes: readonly Fighter[], villain: Fighter, part: 1 | 2): void {
     const scene = this.scene;
-    const style = { fontFamily: '"Arial Black", sans-serif', fontSize: '18px', color: '#ffffff', stroke: '#000000', strokeThickness: 5 };
+    const style = { fontFamily: FONT_HEAVY, fontSize: '18px', color: '#ffffff', stroke: '#000000', strokeThickness: 5 };
     heroes.forEach((h, i) => {
       this.labels.push(scene.add.text(30, 14 + i * 44, h.init.name.toUpperCase(), style).setDepth(DEPTH.hud + 1));
     });
@@ -43,9 +43,7 @@ export class BattleHud {
     if (episode.made.item) made.push(counterArt());
     made.forEach((key, i) => {
       const icon = fitImage(scene.add.image(370 + i * 58, 40, key), 50, 50).setDepth(DEPTH.hud + 1);
-      const s = icon.scale;
-      icon.setScale(0);
-      scene.tweens.add({ targets: icon, scale: s, duration: 300, delay: 300 + i * 120, ease: 'Back.easeOut' });
+      popIn(scene, icon, icon.scale, 300 + i * 120, 300);
     });
     // Charge the Spell's runes (item 053), for the part they fire in: a row under the
     // heroes' bars, left of x 300, where no fight style's meter or PICK A MOVE! goes.
@@ -55,11 +53,7 @@ export class BattleHud {
       const y = 38 + heroes.length * 44 - 8;
       const chip = fitImage(scene.add.image(x, y, 'prop_rune_stone'), 30, 30).setDepth(DEPTH.hud + 1);
       const t = scene.add.text(x, y + 1, sound.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: sound.length > 1 ? '13px' : '18px', color: '#1a1030' }).setOrigin(0.5).setDepth(DEPTH.hud + 2);
-      for (const o of [chip, t]) {
-        const s = o.scale;
-        o.setScale(0);
-        scene.tweens.add({ targets: o, scale: s, duration: 300, delay: 600 + i * 100, ease: 'Back.easeOut' });
-      }
+      for (const o of [chip, t]) popIn(scene, o, o.scale, 600 + i * 100, 300);
     });
   }
 
