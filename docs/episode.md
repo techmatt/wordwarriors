@@ -226,7 +226,8 @@ Stretchy Bridge; every sentence frame is one sentence pedestal, which draws a fr
 time, a counter frame in the attic and house part 2). Green at a pedestal plays that game
 on a plan drawn just for it; finishing it brings her back with a ✔ on its pedestal (0 or
 F2 in the game comes back too, without one). The open door leaves debug: from a side
-room back to the hub, from the hub or the hall on to the next step, as F2 would. Key 0
+room back to the hub, from the hub or the hall on to the next step, as F2 would (F2 in
+the debug room goes on too, debug off). Key 0
 in the debug room turns it off and the room comes back from its start data, as the
 grown-ups page brings it back (its opening lines play again).
 

@@ -38,7 +38,7 @@ import { endingPeople } from '../rules/endings';
 import { voiceBank } from '../voice/VoiceBank';
 import { startScene } from '../art/gate';
 import { narrator } from './cast';
-import { debugMode, endRun } from './debug';
+import { debugMode, endRun, stopDebug } from './debug';
 import { rememberCast, resetEpisode } from './draws';
 import { planFor, rememberPlan } from './plans';
 import { countEpisode, currentStep, episode, steps, type EpisodeState, type PrepGame, type Slot, type Step } from './state';
@@ -151,6 +151,8 @@ export function debugBack(scene: Phaser.Scene, finished: boolean): void {
 export function advance(scene: Phaser.Scene): void {
   // A game played from debug mode (F2 in it) goes back to the debug room, unfinished.
   if (debugMode.run) return debugBack(scene, false);
+  // F2 in the debug room: on, as its door would, with debug off.
+  if (debugMode.on) stopDebug();
   episode.stepIndex++;
   // The cast is drawn more often than episodes are played (at boot, at the
   // title, and again after the parked pick screens): her villain (and since

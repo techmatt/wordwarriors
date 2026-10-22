@@ -111,6 +111,8 @@ export function beginRun(id: string, rand: () => number = Math.random): { scene:
   debugMode.run = { game: id, episode: JSON.stringify(episode), remembered: JSON.stringify(remembered) };
   progress.hold();
   const plan = debugPlan(game, slot);
+  // The game actually planned gets the check mark (a machine with no family to build falls back to a sentence game).
+  debugMode.run.game = plan.kind === 'sentence' ? 'sentence' : plan.game;
   // A fresh visit: nothing read, fetched, charged or missed yet, the room not done.
   episode.house.plan = episode.house.plan!.map((p) => (p.slot === slot ? plan : p));
   episode.house.done = [];
