@@ -203,12 +203,24 @@ export const SENTENCE_SOLID = { tries: 6, lastRight: 5 };
 export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2, maxUnits: 4 };
 
 /**
+ * Dad isn't here (item 106): a game that asks Dad (Charge the Spell's read,
+ * the Stretchy Bridge's level 3) waits this long from her turn (scene time,
+ * paused under dad lock and while a line plays), then the episode goes solo:
+ * the helper joins in where Dad would have judged, and stays that way for
+ * the rest of the episode (`episode.solo`). Any Dad 1 / 2 switches back.
+ */
+export const DAD_AWAY_MS = 8000;
+
+/**
  * Charge the Spell (item 053, src/scenes/ChargeRoom.ts): a visit spells one
  * word of `units` (fewest, most) sound units (item 058). The helper says each
  * rune's letter sound and she says it back in `sayBackMs` of quiet, with no
  * presses (item 059); then she reads the whole word aloud and Dad presses 2
- * (right) or 1 (they sound it out together); `readTimeoutMs` with no answer
- * counts as his 1. It has no help ramp (item 053's went in item 078: the
+ * (right) or 1 (they sound it out together); nothing from him for
+ * DAD_AWAY_MS turns on the episode's solo mode (item 106). In solo mode the
+ * helper says each sound with her ("Say it with me!") and charges the rune
+ * after `soloBeatMs`, then they read the word together; those are recorded as
+ * modelled, not as her reads. It has no help ramp (item 053's went in item 078: the
  * room says every sound since item 059). `units` is the game's word length limit;
  * every sound is in play from the start (item 067: no tiers). `weight` is its
  * weight in the rooms' pool (a frame is 1).
@@ -216,7 +228,7 @@ export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2, maxU
 export const CHARGE = {
   units: [3, 4] as [number, number],
   sayBackMs: 1200,
-  readTimeoutMs: 10000,
+  soloBeatMs: 600,
   weight: 1,
 };
 
@@ -236,8 +248,9 @@ export const CHARGE = {
  * stones sound themselves and the pictures show from the start; 2 = silent
  * stones, Dad's 2 is a hint (they sound); 3 = she says the word aloud first,
  * Dad's 2 brings the pictures, his 1 replays the slide with sounds (each
- * stone `replayMs`). Nothing from Dad for `dadWaitMs` counts as his 1; after
- * `replays` the pictures come anyway. `startLevel` is a word she has never
+ * stone `replayMs`). Nothing from Dad for DAD_AWAY_MS turns on solo mode
+ * (item 106): the pictures come, no help counted, and while solo level 3
+ * skips the say step; after `replays` the pictures come anyway. `startLevel` is a word she has never
  * crossed (DIFFICULTY caps the ramp). `maxUnits`: the longest word she
  * crosses, in sound units (item 067: every short word is in play from the
  * start, no tiers; a visit still plays words starting with a sound you can
@@ -253,7 +266,6 @@ export const BRIDGE = {
   slide: 0.55,
   stretchMs: 600,
   replayMs: 700,
-  dadWaitMs: 12000,
   replays: 2,
 };
 

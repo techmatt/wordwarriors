@@ -22,9 +22,11 @@
  *   1. the stones sound themselves as she slides; the pictures show from the start;
  *   2. the stones are silent unless Dad presses 2 for a hint (then they sound);
  *   3. silent stones; on the far bank she says the whole word aloud and Dad
- *      presses 2, and only then do the pictures appear. Dad's 1 (or nothing
- *      for BRIDGE.dadWaitMs) replays the slide with sounds; after
- *      BRIDGE.replays the pictures come anyway.
+ *      presses 2, and only then do the pictures appear. Dad's 1 replays the
+ *      slide with sounds; after BRIDGE.replays the pictures come anyway.
+ *      Nothing from him for DAD_AWAY_MS (item 106): he isn't here, the
+ *      episode goes solo (`episode.solo`) and the pictures come, no help
+ *      counted; while solo, level 3 skips the say step. His 1 / 2 ends solo.
  * Right first time with no help moves the word up a level; a hint, a replay
  * or a wrong picture moves it down one. The level is recorded every crossing
  * (`recordedBridgeLevel`), but the room gives at most DIFFICULTY's level
@@ -50,7 +52,7 @@ import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids
 import { variant } from '../episode/lineVariants';
 import { voiceBus, type HeldSound } from '../audio/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon } from '../audio/sfx';
-import { BRIDGE, DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { BRIDGE, DAD_AWAY_MS, DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -419,10 +421,13 @@ export class BridgeRoom extends HouseSideRoom {
     }
     if (this.phase === 'say' && !dadLock.locked && !voiceBus.busy) {
       this.waitMs += deltaMs;
-      if (this.waitMs >= BRIDGE.dadWaitMs) {
+      if (this.waitMs >= DAD_AWAY_MS) {
+        // Item 106: he isn't here. Solo from now on; the pictures come, and his absence is no help asked for.
         this.waitMs = 0;
         this.timeouts++;
-        this.answer('no');
+        episode.solo = true;
+        setDadAsking(false);
+        void this.toPictures();
       }
     }
   }
@@ -488,6 +493,11 @@ export class BridgeRoom extends HouseSideRoom {
   private async arrive(): Promise<void> {
     const f = ++this.flow;
     this.releaseHeld();
+    // Solo (item 106): nobody to say it to, so the pictures come now.
+    if (!this.picturesUp && episode.solo) {
+      await this.toPictures();
+      return;
+    }
     if (this.picturesUp) {
       this.phase = 'pick';
       if (this.toldFind) return;
@@ -514,6 +524,8 @@ export class BridgeRoom extends HouseSideRoom {
    */
   private answer(a: DadAnswer): void {
     this.noteActivity();
+    // Item 106: he is here after all.
+    episode.solo = false;
     if (this.level === 2) {
       if (a !== 'yes' || this.voiced) return;
       // Item 092: his 2 while the helper talks (the intro, a miss's feedback) was dropped, though

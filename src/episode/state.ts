@@ -59,6 +59,12 @@ export interface EpisodeState {
    * `read` and `fetched`; the word itself is read and fetched (item 058).
    */
   charged: { sounds: string[]; part: 1 | 2 } | null;
+  /**
+   * Dad isn't here (item 106): a game that asks Dad got nothing from him for
+   * DAD_AWAY_MS, so the helper joins in where he would judge, for the rest of
+   * the episode. Any Dad 1 / 2 turns it off. `?solo` starts an episode solo.
+   */
+  solo: boolean;
   /** The battles' move choices (item 018), planned with the house: battle 1's words never become the counter word. */
   moves: MovePlan | null;
   /**
@@ -114,6 +120,7 @@ export function freshProgress(): Omit<EpisodeState, 'hero' | 'ally' | 'villain' 
     read: [],
     fetched: [],
     charged: null,
+    solo: typeof location !== 'undefined' && new URLSearchParams(location.search).has('solo'),
     gift: null,
     moves: null,
     house: { plan: null, done: [], taught: false },

@@ -19,7 +19,8 @@ fetching battle items; the front door appears once both are done). For the beta 
 door is always a phonics game (`FORCE_PHONICS_ROOM`), at random **Charge the Spell**
 (one short word: the helper says each rune's sound and she says it back, no presses;
 then she reads the word and Dad judges with keys 1 / 2; the word is a battle item and
-its runes fire in the battle) or the **Stretchy Bridge** (she slides over a word's
+its runes fire in the battle; with no press for 8 s the episode goes **solo**, the helper
+saying the sounds and the word with her, recorded as modelled, until Dad presses again) or the **Stretchy Bridge** (she slides over a word's
 letter stones, each sound held, and blends the whole word to pick its picture); the
 other is always the **Shape-Shifter** (`FORCE_SHIFTER_ROOM`: the villain's spell walks a
 creature down a one-letter word chain, CAT BAT BAG; she reads each new word on it and

@@ -25,6 +25,12 @@ export interface Stat {
   /** Rolling record of the last few first tries: true = right first time. */
   recent: boolean[];
   last: number;
+  /**
+   * Said with the helper, not read by her (item 106: Charge the Spell with no
+   * Dad to judge). Counted apart: seen, right, wrong and recent (so
+   * shakiness and the bags) never see it. Absent in an older blob.
+   */
+  modelled?: number;
 }
 
 export interface ProgressData {
@@ -241,6 +247,15 @@ export class ProgressStore {
     if (kind === 'words') {
       const was = (this.data.recent.words ?? []).filter((w) => w !== id);
       this.data.recent.words = firstTry ? [...was, id].slice(-VARIETY.words) : was;
+    }
+    this.save();
+  }
+
+  /** She said an item along with the helper (item 106): counted as modelled, never as a read. */
+  model(kind: ItemKind, id: string): void {
+    for (const d of [this.data, this.session]) {
+      const s = (d[kind][id] ??= emptyStat());
+      s.modelled = (s.modelled ?? 0) + 1;
     }
     this.save();
   }

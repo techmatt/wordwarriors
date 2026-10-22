@@ -40,11 +40,12 @@ Moved from CLAUDE.md (item 078). "The three commands" are `voice:lines`, `voice:
 | "make it the chef episode" | `?ally=dada_jason` (Julia's chef form follows; outfits are `content/battle/forms.ts`) |
 | "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`) |
 | "here are my letter sound recordings" / "here is a recorder zip" | `npm run voice:import -- <zip>`, then `voice:build`; report each card installed or refused and why (`docs/recording.md`) |
-| "longer / shorter charge words" / "a longer / shorter beat to say each sound back" / "Dad should wait longer" | `CHARGE` in `src/config.ts` (`units`, `sayBackMs`, `readTimeoutMs`) |
+| "longer / shorter charge words" / "a longer / shorter beat to say each sound back" / "a longer / shorter beat when the helper says it with her" | `CHARGE` in `src/config.ts` (`units`, `sayBackMs`, `soloBeatMs`) |
+| "Dad should wait longer" / "go solo sooner when Dad isn't there" (Charge's read, the bridge's level 3) | `DAD_AWAY_MS` in `src/config.ts` (item 106) |
 | "a new gesture for X" / "X's rune should fire Y" | X's entry in `RUNES` (`content/phonics/runes.ts`: `gesture`, `move`), then `voice:lines`, `voice:build` |
 | "higher / floatier jumps" / "more or fewer shots" / "charge sooner" | `FREE_PLAY` in `src/config.ts` (`jump`, `maxShots`, `chargeMs`, `fullChargeMs`, `shotSpeed`, `shotLifeMs`) |
 | "stop forcing the phonics room" | `FORCE_PHONICS_ROOM` in `src/config.ts` (both stay weighted entries, `CHARGE.weight`, `BRIDGE.weight`) |
-| "more / fewer bridge words" / "slower slide" / "Dad should wait longer on the bridge" | `BRIDGE` in `src/config.ts` (`words`, `slide`, `maxUnits`, `dadWaitMs`, `replays`, `startLevel`) |
+| "more / fewer bridge words" / "slower slide" | `BRIDGE` in `src/config.ts` (`words`, `slide`, `maxUnits`, `replays`, `startLevel`) |
 | "the bridge needs pictures like X" | a familiar `BANK` thing starting like X (`docs/content.md`, "The Stretchy Bridge's pictures"), the three commands, `art:gen` |
 | "the warm-up is too hard / too easy" / "start new words at level N" | `GRAB.startLevel` (and `helpAfter`) in `src/config.ts`; past the start level only with `DIFFICULTY` 2+ |
 | "for X I pick n" (from an `art_alts_*` sheet) | `npm run art:pick -- X n`, commit `public/art/X.png`; if it prints a brief, write it into X's roster `look` (or `HAND`) in the same commit |

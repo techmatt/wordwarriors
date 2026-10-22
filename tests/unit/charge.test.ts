@@ -83,6 +83,27 @@ test('store (item 078): a blob with item 053\'s chargeLevels loads cleanly, hist
   assert.equal('chargeLevels' in back.snapshot(), false);
 });
 
+test('store (item 106): a modelled sound or word is counted apart, never as a read; shakiness and the bag do not move', () => {
+  const mem = memory();
+  const p = new ProgressStore(mem);
+  p.refillBag(['cat', 'mug']);
+  const was = p.shakiness('sounds', 'm');
+  p.model('sounds', 'm');
+  p.model('sounds', 'm');
+  p.model('words', 'cat');
+  const m = p.stat('sounds', 'm');
+  assert.deepEqual({ seen: m.seen, right: m.right, wrong: m.wrong, recent: m.recent, modelled: m.modelled }, { seen: 0, right: 0, wrong: 0, recent: [], modelled: 2 });
+  assert.equal(p.stat('sounds', 'm', 'session').modelled, 2);
+  assert.equal(p.shakiness('sounds', 'm'), was);
+  assert.equal(p.stat('words', 'cat').seen, 0);
+  assert.deepEqual(p.bag().left, ['cat', 'mug']);
+  assert.deepEqual(p.recentOf('words'), []);
+  // A read after it counts as usual, the modelled count kept.
+  p.record('sounds', 'm', true, 0);
+  assert.deepEqual(new ProgressStore(mem).stat('sounds', 'm').recent, [true]);
+  assert.equal(new ProgressStore(mem).stat('sounds', 'm').modelled, 2);
+});
+
 test('words (item 058): every charge word is a familiar picture of 3-4 units, each its own rune, no sound twice; no Q, X or CK', () => {
   assert.ok(CHARGE_WORDS.length >= 20, `${CHARGE_WORDS.length} words`);
   for (const w of CHARGE_WORDS) {

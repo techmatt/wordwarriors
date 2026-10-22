@@ -6,7 +6,9 @@
  * the runes fired in battle; the forced room in a drawn episode, F4 as Dad's
  * yes on the read only (both moved in item 061, 10-13 s each); a round with
  * Dad's real key 2, nothing asked before the read; dad lock (the say-back
- * beat waits, the keys stay live) and the read's timeout. Its whole drawn
+ * beat waits, the keys stay live) and the read's timeout, which goes solo
+ * (item 106: read with the helper, modelled). Untagged too: solo from the
+ * start, Dad's 2 mid-room switching back. Its whole drawn
  * episodes are the soak's (tests/soak.spec.ts, item 081). Screenshots land in tests/screenshots/ (ignored) for a look.
  */
 
@@ -62,11 +64,13 @@ test('Charge the Spell: the runes charge by themselves, each sound said; one pre
   expectNoErrors(errors);
 });
 
-test('Charge the Spell: dad lock holds the say-back beat; nothing from Dad on the read for 10 s sounds it out together', SLOW, async ({ page }) => {
+test('Charge the Spell: dad lock holds the say-back beat; no 1 / 2 at all (item 106): the read goes solo, read together, recorded as modelled', SLOW, async ({ page }) => {
   test.setTimeout(120_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&room=charge');
-  await until(page, (st) => st.room?.charge?.index === 0 && st.room.charge.phase === 'sayback', 60_000, 'rune 0 said back');
+  const s0 = await until(page, (st) => st.room?.charge?.index === 0 && st.room.charge.phase === 'sayback', 60_000, 'rune 0 said back');
+  const { word, runes } = s0.room!.charge!;
+  expect(s0.room!.charge!.solo).toBe(false);
   await dadLock(page, true);
   await page.waitForTimeout(3000);
   const held = await state(page);
@@ -74,10 +78,54 @@ test('Charge the Spell: dad lock holds the say-back beat; nothing from Dad on th
   expect(held.room!.charge!.phase).toBe('sayback');
   await dadLock(page, false);
   await until(page, (st) => st.room?.charge?.phase === 'read', 60_000, 'the read');
-  // Nobody answers: after the timeout it is sounded out together, and fetched all the same.
-  const hub = await until(page, (st) => st.scene === 'Hub', 60_000, 'timed out, back in the hub');
-  expect(hub.voice.history.some((id) => id.endsWith('_charge_together'))).toBe(true);
-  expect(hub.episode.fetched).toHaveLength(1);
+  // Nobody answers: after DAD_AWAY_MS the helper reads it with her, and the room finishes.
+  const solo = await until(page, (st) => st.room?.charge?.read === 'modelled', 60_000, 'gone solo');
+  expect(solo.room!.charge!.solo).toBe(true);
+  expect(solo.room!.charge!.timeouts).toBe(1);
+  const hub = await until(page, (st) => st.scene === 'Hub', 60_000, 'read together, back in the hub');
+  const h = hub.voice.history;
+  const at = h.lastIndexOf(narratorLineEnd(h, '_charge_read_together'));
+  expect(at).toBeGreaterThan(-1);
+  expect(h.slice(at + 1, at + 1 + runes.length)).toEqual(runes.map((r) => `letter_${r}_sound`));
+  expect(h.indexOf(`word_${word}`)).toBeGreaterThan(at);
+  // Nothing about Dad, no "sound it out together" miss.
+  expect(h.some((id) => id.endsWith('_charge_together'))).toBe(false);
+  // Fetched and done all the same; in the store modelled, never her read: no seen, no recent, so no shakiness moves.
+  expect(hub.episode.fetched).toEqual([word]);
+  expect(hub.episode.house.done).toContain('a');
+  expect(hub.episode.solo).toBe(true);
+  expect(hub.progress.words[word]).toMatchObject({ seen: 0, recent: [], modelled: 1 });
+  for (const r of runes) expect(hub.progress.sounds[r], r).toMatchObject({ seen: 0, recent: [], modelled: 1 });
+  expectNoErrors(errors);
+});
+
+test('Charge the Spell (item 106): solo, the helper says each sound with her; Dad\'s 2 mid-room switches back, and the read asks him', async ({ page }) => {
+  test.setTimeout(90_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=a&room=charge&solo=1');
+  const withMe = (id: string) => /_charge_with_me(_\d+)?$/.test(id);
+  const s0 = await until(page, (st) => st.room?.charge?.index === 0 && st.voice.history.some(withMe), 60_000, 'rune 0 said with her');
+  const { word, runes } = s0.room!.charge!;
+  expect(s0.room!.charge!.solo).toBe(true);
+  expect(s0.voice.history.some((id) => id.endsWith('_charge_explain_solo'))).toBe(true);
+  // Dad is here after all: his 2 during the first rune (not the last, so it is no early read) ends solo.
+  await dad(page, 'yes');
+  // The room's hooks are published each frame: wait a frame for them, the episode's flag is already off.
+  const s1 = await until(page, (st) => st.room?.charge?.solo === false, 5_000, 'solo off');
+  expect(s1.episode.solo).toBe(false);
+  // The runes after it get the normal say-back beat, no "with me" (the press lands in rune 0, or rune 1 on a slow poll).
+  const said = s1.voice.history.filter(withMe).length;
+  expect(said).toBeLessThan(runes.length);
+  const read = await until(page, (st) => st.room?.charge?.phase === 'read', 60_000, 'the read, Dad asked');
+  expect(read.voice.history.filter(withMe)).toHaveLength(said);
+  expect(read.room!.charge!.asking).toBe(true);
+  await dad(page, 'yes');
+  const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'back in the hub');
+  // His yes is her read; the rune said with the helper is modelled as well.
+  expect(hub.progress.words[word]!.recent).toEqual([true]);
+  expect(hub.progress.words[word]!.modelled).toBeUndefined();
+  expect(hub.progress.sounds[runes[0]!]).toMatchObject({ recent: [true], modelled: 1 });
+  expect(hub.progress.sounds[runes[runes.length - 1]!]!.modelled).toBeUndefined();
   expectNoErrors(errors);
 });
 
@@ -154,6 +202,9 @@ test('Charge the Spell (M24): Dad\'s 2 pressed during the last rune is kept, and
   const { word, runes } = s0.room!.charge!;
   const last = runes.length - 1;
   await until(page, (st) => st.room?.charge?.index === last && st.room.charge.phase === 'sayback', 60_000, 'the last rune said back');
+  // Dad lock holds the beat (his keys stay live): under a busy lane the 1.2 s beat (0.24 s at SPEED) ran out
+  // during the layout check below, and the 2 landed after the read was asked (item 106).
+  await dadLock(page, true);
   // Item 103: the stone shows the rune's picture letter, big on its face, no painted letter.
   const room = await qaLayout(page);
   const stone = room.images.find((im) => im.key === 'prop_rune_stone')!;
@@ -165,6 +216,7 @@ test('Charge the Spell (M24): Dad\'s 2 pressed during the last rune is kept, and
   expect(room.texts.some((t) => t.text === runes[last]!.toUpperCase() && t.size > 100)).toBe(false);
   await shot(page, 'picture_rune');
   await page.keyboard.press('Digit2');
+  await dadLock(page, false);
   const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'back in the hub');
   // Its door wears the stone with the word's first rune as a picture letter.
   await page.waitForTimeout(600);

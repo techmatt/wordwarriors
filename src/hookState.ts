@@ -53,7 +53,9 @@ export interface RoomInfo {
   charge?: {
     /** The word the runes spell (item 058), and how its read went (Dad's yes, no or a timeout; null before). */
     word: string;
-    read: 'yes' | 'no' | 'timeout' | null;
+    read: 'yes' | 'no' | 'modelled' | null;
+    /** Solo mode (item 106): the helper says each sound with her and they read the word together. */
+    solo: boolean;
     runes: string[];
     index: number;
     sound: string;

@@ -162,6 +162,34 @@ test('Stretchy Bridge, level 3: silent stones; the pictures only after Dad says 
   expectNoErrors(errors);
 });
 
+test('Stretchy Bridge, level 3 (item 106): no Dad for 8 s goes solo, the pictures come with no help counted, and the next bridge skips the ask', SLOW, async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors = collectErrors(page);
+  await seedLevels(page, 3);
+  await boot(page, '?scene=room&slot=a&room=bridge&difficulty=3');
+  const s0 = await until(page, (st) => bridge(st)?.phase === 'slide' && !st.room!.locked, 60_000, 'first bridge');
+  const b0 = bridge(s0)!;
+  expect(s0.episode.solo).toBe(false);
+  await slideAcross(page);
+  await until(page, (st) => bridge(st)?.asking === true, 60_000, 'asks Dad');
+  // Nobody presses: the pictures come, no replay, and the episode is solo.
+  const pick = await until(page, (st) => bridge(st)?.phase === 'pick' && !st.room!.locked, 60_000, 'pictures up without Dad');
+  expect(bridge(pick)!.timeouts).toBe(1);
+  expect(bridge(pick)!.replays).toBe(0);
+  expect(pick.episode.solo).toBe(true);
+  await choose(page, b0.word);
+  const s1 = await until(page, (st) => bridge(st)?.index === 1 && bridge(st)!.phase === 'slide' && !st.room!.locked, 60_000, 'second bridge');
+  // His absence was no help: the word keeps level 3.
+  expect(levels(s1)[b0.word]).toBe(3);
+  expect(s1.progress.words[b0.word]!.recent).toEqual([true]);
+  // Solo, the next far bank brings the pictures at once, Dad not asked.
+  await slideAcross(page);
+  const p1 = await until(page, (st) => bridge(st)?.phase === 'pick' && !st.room!.locked, 60_000, 'pictures up at once');
+  expect(p1.voice.history.slice(s1.voice.history.length).some((id) => id.endsWith('_bridge_say'))).toBe(false);
+  expect(bridge(p1)!.timeouts).toBe(1);
+  expectNoErrors(errors);
+});
+
 test("Stretchy Bridge (item 069): Dad's 2 during a replay brings the pictures, not a dropped press and another replay", SLOW, async ({ page }) => {
   test.setTimeout(120_000);
   const errors = collectErrors(page);

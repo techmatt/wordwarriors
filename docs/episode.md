@@ -260,10 +260,10 @@ gesture (Jolly Phonics style: a hissing snake 🐍 for S, a tummy rub for M;
 1.2 s; the dad lock holds it) for her to say it back, and the rune fires up into its slot.
 Nothing is pressed per rune: Matt watched the per-rune presses frustrate her (item 059).
 With every rune charged the word lights up and she reads it aloud ("Now read the whole
-spell!"), the room's one press, Dad's: **2** says it; **1**, or 10 s with nothing
-(`readTimeoutMs`), is "Let's sound it out together!", the word sounded out once and then
-said; either way its picture shows and goes into her bag as a battle item. Dad may press
-as soon as the word lights. The read records the word and its sounds (right with his 2). A round with Dad answering at once is 20-25 s of
+spell!"), the room's one press, Dad's: **2** says it; **1** is "Let's sound it out
+together!", the word sounded out once and then said; either way its picture shows and goes
+into her bag as a battle item. Dad may press as soon as the word lights. The read records
+the word and its sounds (right with his 2). A round with Dad answering at once is 20-25 s of
 game time: about 3.2 s a rune, 17 s to the read for three runes, 21 s for four, then about
 5 s for the word, its picture and the bag (measured on the scene clock, item 059;
 `room.charge.readAtMs` and `elapsedMs` in the hooks; `tests/charge.spec.ts` holds it
@@ -273,6 +273,22 @@ tiers are gone), 3-4 sound units (`CHARGE.units`; `src/rules/charge.ts`, `CHARGE
 `src/config.ts`). Each charged rune is still a move her hero fires in the next battle, at 1.3× power
 (`episode.charged`, BattleScene `useCharged`). For the beta, `FORCE_PHONICS_ROOM` (on)
 puts it or the Stretchy Bridge behind door a of every episode.
+
+**Solo mode: Dad isn't here** (item 106). Dad is often beside her, not always. If a game
+that asks him (Charge's read, the Stretchy Bridge's level 3) gets no 1 / 2 for
+`DAD_AWAY_MS` (8 s in `src/config.ts`, from her turn; paused under dad lock and while a line
+plays), the episode goes solo (`episode.solo`) for the rest of the episode, Bluey-style: the
+helper simply joins in, and no line mentions Dad. In Charge the read is done together
+("Let's read the whole spell together!", sounded out, then said); on later runes the helper
+says "Say it with me!" (or "With me!", "Together!") before each sound, with a shorter beat
+(`CHARGE.soloBeatMs`), and the read needs no one. Those runes and that word are recorded as
+**modelled** (ProgressStore `model`, a `modelled` count on the stat, `+n` on the grown-ups
+page), never as her reads: seen, recent, shakiness and the word bag do not move. On the
+bridge, the pictures come at once with no help counted, and level 3 skips its say-to-Dad
+step while solo. Any Dad 1 / 2 in a room that has his buttons open switches back at once
+(in Charge from the next rune; during the solo read before it is recorded, it is his
+answer). `?solo` starts an episode solo. THE END still waits for his 2: the episode is
+over, and starting the next is his call.
 
 **The Shape-Shifter** (item 096, `src/scenes/ShifterRoom.ts`): a side room where she
 reads every letter of a word, not just the first, alone: walking and green only, nothing
@@ -340,8 +356,8 @@ of the grown-ups page; at base difficulty every word gets level 1): level 1 the 
 themselves and the pictures show from the start; level 2 silent stones, and Dad's **2** is
 a hint (the stones sound in turn, then as she slides); level 3 silent stones, on the far
 bank she says the whole word aloud, Dad presses **2** and the pictures appear, his **1**
-(or nothing for 12 s) replays the slide with sounds, and after two replays the pictures
-come anyway. Right first time with no help is one level less help next time; a hint, a
+replays the slide with sounds, and after two replays the pictures come anyway; nothing
+from him for 8 s goes solo (*Solo mode* above: the pictures come, no help counted). Right first time with no help is one level less help next time; a hint, a
 replay or a wrong picture one more. A wrong picture is never punished but costs time: the
 game sounds out what she picked, its letters over its picture ("You picked... M, A, P"),
 then where the bridge differs ("But the bridge ends with... T", that stone flashing), and
@@ -380,6 +396,7 @@ done, items in the bag):
 | `?scene=room&slot=a` (or `b`, `counter`) | A side room; `counter` is the attic |
 | `?scene=room&slot=a&game=word_machine` | The word machine (`game=` puts that game behind door a, in any URL) |
 | `?scene=room&slot=a&room=charge` | Charge the Spell (`room=charge` forces it behind door a, or door b when `game=` holds door a, in any URL) |
+| `?scene=room&slot=a&room=charge&solo=1` | Charge the Spell in solo mode (item 106: Dad isn't here; `solo` in any URL starts the episode solo) |
 | `?scene=room&slot=a&room=bridge` | The Stretchy Bridge (`room=bridge`, the same way) |
 | `?scene=room&slot=a&room=shifter` | The Shape-Shifter (`room=shifter` forces it behind door a; otherwise `FORCE_SHIFTER_ROOM` has it behind door b) |
 | `?scene=battle&part=1&charged=m,s,a` | A battle that fires those charged runes (default: the plan's charge room's, in part 1) |

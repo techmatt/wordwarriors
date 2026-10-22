@@ -169,6 +169,13 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'charge_explain', text: 'Say each sound after me!' },
   { key: 'charge_read', text: 'Now read the whole spell!' },
   { key: 'charge_together', text: "Let's sound it out together!" },
+  // Item 106, solo mode (no Dad to judge): the helper says each sound with her
+  // and they read the word together. Nothing here mentions Dad.
+  { key: 'charge_explain_solo', text: "Let's say each sound together!" },
+  { key: 'charge_with_me', text: 'Say it with me!' },
+  { key: 'charge_with_me_2', text: 'With me!' },
+  { key: 'charge_with_me_3', text: 'Together!' },
+  { key: 'charge_read_together', text: "Let's read the whole spell together!" },
   { key: 'charge_done', text: 'Our spell is all charged up!' },
   { key: 'charge_done_2', text: "The spell is ready! Let's take it to the fight!", say: "The spell is ready, let's take it to the fight!" },
   { key: 'use_runes', text: "Now let's cast our spell!" },

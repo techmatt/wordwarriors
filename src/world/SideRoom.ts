@@ -301,6 +301,16 @@ export abstract class HouseSideRoom extends SideRoom {
     progress.record('words', word, firstTry, wrongTries);
     if (firstTry) progress.takeFromBag(word);
     else progress.returnToBag(word);
+    this.recordDone(word, { fetch, last });
+  }
+
+  /** Read with the helper, no grown-up to judge (item 106): modelled in the store (no read, the bag untouched), and done for the episode like a read. */
+  protected recordModelled(word: string, { fetch = true, last = true } = {}): void {
+    progress.model('words', word);
+    this.recordDone(word, { fetch, last });
+  }
+
+  private recordDone(word: string, { fetch, last }: { fetch: boolean; last: boolean }): void {
     if (!episode.read.includes(word)) episode.read.push(word);
     if (fetch && !episode.fetched.includes(word)) episode.fetched.push(word);
     if (last && !episode.house.done.includes(this.slot)) episode.house.done.push(this.slot);

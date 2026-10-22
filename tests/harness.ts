@@ -41,6 +41,8 @@ export interface WWState {
     fetched: string[];
     /** Charge the Spell (item 053): the sounds charged, and the battle part they fire in. */
     charged: { sounds: string[]; part: number } | null;
+    /** Item 106: Dad isn't here, the helper joins in (Charge, the bridge's level 3). */
+    solo: boolean;
     gift: string | null;
     /** The home warm-up (item 033): the word grabbed in the entry hall and the hall's pictures. */
     grab: { word: string; objects: string[] } | null;
@@ -89,7 +91,8 @@ export interface WWState {
     charge?: {
       /** Item 058: the word the runes spell, and how its read went. */
       word: string;
-      read: 'yes' | 'no' | 'timeout' | null;
+      read: 'yes' | 'no' | 'modelled' | null;
+      solo: boolean;
       runes: string[];
       index: number;
       sound: string;
@@ -147,8 +150,8 @@ export interface WWState {
   /** Free play (item 060, src/fx/freePlay.ts `playStats`): jumps, shots fired, big shots, shots live now and the most live at once. */
   play: { jumps: number; shots: number; big: number; live: number; maxLive: number };
   progress: {
-    sounds: Record<string, { seen: number; recent: boolean[] }>;
-    words: Record<string, { seen: number; recent: boolean[] }>;
+    sounds: Record<string, { seen: number; recent: boolean[]; modelled?: number }>;
+    words: Record<string, { seen: number; recent: boolean[]; modelled?: number }>;
     frames?: Record<string, { seen: number; recent: boolean[] }>;
     rimes?: Record<string, { seen: number; recent: boolean[] }>;
     onsets?: Record<string, { seen: number; recent: boolean[] }>;

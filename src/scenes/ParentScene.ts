@@ -3,7 +3,9 @@
  * frame, from the ProgressStore. Mixed case is fine here: it is not for her. Reached by F9 anywhere, or holding LB+RB on the title.
  *
  * Each item shows: tries ever, first-try-right rate over her recent tries, and
- * tries since the page opened (a reload starts it again, item 080). Colour is the shakiness the game uses to pick targets: red
+ * tries since the page opened (a reload starts it again, item 080), and `+n`
+ * for times said along with the helper in solo mode (item 106: modelled, not
+ * her reads; shakiness ignores them). Colour is the shakiness the game uses to pick targets: red
  * items come up more often. Red / Esc / F9 goes back to the scene it came
  * from, restarted with the data it was given (`{ back, data }`), so a side
  * room comes back as the same room. With no back, or back 'Title', it goes to the title.
@@ -74,7 +76,7 @@ export class ParentScene extends Phaser.Scene {
     const snap = progress.snapshot();
     // Every text here wraps or shrinks to its column (item 020): nothing runs off the page.
     fitText(this.add.text(30, 18, `Grown-ups: Julia's progress  ·  episodes finished: ${snap.episodes}  ·  difficulty ${difficulty()}${difficulty() === 1 ? ' (base: help stays at its start)' : ''}`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '26px', color: '#222' }), GAME_WIDTH - 60, 34);
-    fitText(this.add.text(30, 54, `tries · first-try right (recent) · since the page opened.  Red = shaky (comes up more often), green = solid. Green / Space: ${this.page ? 'back to page 1' : 'every word (page 2)'}. Red button / Esc / F9: back. F8 twice: erase. \` / ~ (below Esc), anywhere: dad lock.`, {
+    fitText(this.add.text(30, 54, `tries · first-try right (recent) · since the page opened; +n: said with the helper, Dad not there (not counted as reads).  Red = shaky (comes up more often), green = solid. Green / Space: ${this.page ? 'back to page 1' : 'every word (page 2)'}. Red button / Esc / F9: back. F8 twice: erase. \` / ~ (below Esc), anywhere: dad lock.`, {
       fontFamily: 'Segoe UI, sans-serif',
       fontSize: '15px',
       color: '#555',
@@ -225,7 +227,7 @@ export class ParentScene extends Phaser.Scene {
       this.add.circle(x + 8, y + 11, mark ? 9 : 7, c);
       if (mark) this.add.text(x + 8, y + 11, mark, { fontFamily: 'Segoe UI, sans-serif', fontSize: '12px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
       // One row each, shrunk to fit (item 080): with the row's height, two wrapped rows fitted and a frame's last count fell under it.
-      fitText(this.add.text(x + 22, y, `${id}  ${s.seen} · ${recent} · ${today.seen}`, { fontFamily: 'Consolas, monospace', fontSize: '16px', color: '#222' }), colW - 30, Math.min(rowH - 2, 22));
+      fitText(this.add.text(x + 22, y, `${id}  ${s.seen} · ${recent} · ${today.seen}${s.modelled ? ` +${s.modelled}` : ''}`, { fontFamily: 'Consolas, monospace', fontSize: '16px', color: '#222' }), colW - 30, Math.min(rowH - 2, 22));
     });
   }
 

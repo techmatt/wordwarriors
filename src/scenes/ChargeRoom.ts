@@ -15,12 +15,20 @@
  *
  * With every rune charged the whole word lights at the top and she reads it
  * aloud ("Now read the whole spell!"): the room's one press, Dad's. His 2:
- * the word is said, its picture shows and flies into her bag. His 1, or
- * nothing for CHARGE.readTimeoutMs: "Let's sound it out together!", the word
- * sounded out once, unit by unit (never blended), then said, and the picture
- * goes into the bag all the same. The read is recorded under `words`, and its
- * runes' sounds under `sounds` (right with his 2); the word is a battle item (`episode.fetched`). A round runs
+ * the word is said, its picture shows and flies into her bag. His 1: "Let's
+ * sound it out together!", the word sounded out once, unit by unit (never
+ * blended), then said, and the picture goes into the bag all the same. The
+ * read is recorded under `words`, and its runes' sounds under `sounds` (right
+ * with his 2); the word is a battle item (`episode.fetched`). A round runs
  * about 20 s.
+ *
+ * Solo mode (item 106, `episode.solo`): nothing from Dad for DAD_AWAY_MS on
+ * the read means he isn't there, so the helper joins in instead, for the rest
+ * of the episode: "Say it with me!" before each rune's sound, a shorter beat
+ * (CHARGE.soloBeatMs), and the read done together ("Let's read the whole
+ * spell together!", sounded out, then said). Those runes and that word are
+ * recorded as modelled (`progress.model`), never as her reads. His 1 / 2 at
+ * any time switches back (and during the solo read, it is his answer).
  *
  * Each charged rune becomes a move her hero fires in the next battle
  * (`episode.charged`, BattleScene `useCharged`).
@@ -37,7 +45,7 @@ import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids
 import { variant } from '../episode/lineVariants';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxZap } from '../audio/sfx';
-import { CHARGE, DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
+import { CHARGE, DAD_AWAY_MS, DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
 import { castFace, currentStep, episode, helper, narrator, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, punch, shake, shockwave, squash } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -83,9 +91,14 @@ export class ChargeRoom extends HouseSideRoom {
   private phase: Phase = 'explain';
   /** Time spent waiting for Dad on the read (scene clock, paused under dad lock and while a line plays). */
   private waitMs = 0;
+  /** Times the read's wait ran out and the room went solo. */
   private timeouts = 0;
-  /** How the word's read went: Dad's yes, or a no / timeout (sounded out). */
-  private readAnswer: 'yes' | 'no' | 'timeout' | null = null;
+  /** How the word's read went: Dad's yes, his no (sounded out), or read with the helper (solo). */
+  private readAnswer: 'yes' | 'no' | 'modelled' | null = null;
+  /** The solo read is recorded once it is sounded out; until then a Dad press is his answer. */
+  private readRecorded = false;
+  /** Sounds this visit already recorded as modelled (a solo rune), so the solo read does not count them twice. */
+  private modelledSounds = new Set<string>();
   /** Dad's 1 / 2 while the last rune is said or charges (she can read the word on the bar by then): acted on as the read is asked (M24). */
   private earlyAnswer: DadAnswer | null = null;
   /** The rune charging now (phase `charging`). */
@@ -139,6 +152,8 @@ export class ChargeRoom extends HouseSideRoom {
     this.waitMs = 0;
     this.timeouts = 0;
     this.readAnswer = null;
+    this.readRecorded = false;
+    this.modelledSounds = new Set();
     this.earlyAnswer = null;
     this.chargingIndex = -1;
     this.beat = null;
@@ -209,7 +224,7 @@ export class ChargeRoom extends HouseSideRoom {
         squash(this, this.altar, this.altar.scaleX, this.altar.scaleY, 0.12);
         burst(this, ALTAR.x, ALTAR.y - ALTAR.h * 0.8, { count: 50, speed: 360, texture: TEX.star, colors: [0xb28dff, 0xffd23f, 0xffffff] });
         shockwave(this, ALTAR.x, ALTAR.y - ALTAR.h * 0.6, 0xb28dff, 220);
-        await this.narrate('charge_explain');
+        await this.narrate(episode.solo ? 'charge_explain_solo' : 'charge_explain');
         if (f !== this.flow) return;
       }
       if (this.allCharged) await this.askRead();
@@ -304,15 +319,21 @@ export class ChargeRoom extends HouseSideRoom {
     burst(this, RUNE.x, RUNE.y, { count: 40, speed: 280, colors: [0xb28dff, 0xffffff] });
     await this.wait(150);
     if (f !== this.flow) return;
-    await this.gesture(sound, f);
+    // Solo (item 106): the helper says it with her. Fixed as the rune lights: Dad's press mid-rune counts from the next.
+    const solo = episode.solo;
+    await this.gesture(sound, f, solo);
     if (f !== this.flow) return;
-    // Her turn: the rune glows and the room is quiet while she says it back.
+    // Her turn: the rune glows and the room is quiet while she says it back (solo: a shorter beat, she said it with the helper).
     this.phase = 'sayback';
     this.tweens.add({ targets: this.runePic, scale: this.runeScale * 1.15, duration: 300, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-    await this.waitUnlocked(CHARGE.sayBackMs);
+    await this.waitUnlocked(solo ? CHARGE.soloBeatMs : CHARGE.sayBackMs);
     if (f !== this.flow) return;
     this.tweens.killTweensOf(this.runePic);
     this.runePic.setScale(this.runeScale);
+    if (solo && !this.modelledSounds.has(sound)) {
+      this.modelledSounds.add(sound);
+      progress.model('sounds', sound);
+    }
     await this.charge();
   }
 
@@ -328,9 +349,9 @@ export class ChargeRoom extends HouseSideRoom {
   /**
    * The helper performs the rune's gesture: they bob and squash in its
    * rhythm while its glyph does the action beside them, and say the sound
-   * (the rune lit while it plays).
+   * (the rune lit while it plays); solo, "Say it with me!" first.
    */
-  private async gesture(sound: string, f: number): Promise<void> {
+  private async gesture(sound: string, f: number, solo: boolean): Promise<void> {
     const r = RUNE_BY_SOUND[sound];
     if (!r) return;
     // One gesture at a time, from the helper's rest scale.
@@ -353,6 +374,7 @@ export class ChargeRoom extends HouseSideRoom {
     this.stopGesture = stop;
     // A beat of the action before the sound, so she sees it.
     await this.wait(200);
+    if (solo && f === this.flow) await this.narrate('charge_with_me');
     if (f === this.flow) await this.saySound(sound);
     if (this.stopGesture === stop) stop();
   }
@@ -388,25 +410,41 @@ export class ChargeRoom extends HouseSideRoom {
     await this.say(letterSoundLine(sound));
   }
 
-  /** Dad's button (or the timeout, or F4): only the word's read asks him. A no sounds it out together first. */
-  private answer(a: DadAnswer, timedOut = false): void {
+  /** Dad's button (or F4): only the word's read asks him. A no sounds it out together first. Any press ends solo mode. */
+  private answer(a: DadAnswer): void {
+    // Item 106: he is here after all; from the next rune (or the read) the room asks him again.
+    if (episode.solo) {
+      episode.solo = false;
+      this.noteActivity();
+    }
     // Item 093 (M24): his press once the last rune is lit was dropped, though his cue flashed as if
     // it landed; it is kept (his latest press) and acted on as the read is asked.
     // Charging, by the rune that flies (`index` is already the last one's in the beat after the one before it charges).
     const last = this.plan.runes.length - 1;
     const lastRune = this.phase === 'charging' ? this.chargingIndex === last : this.index === last && (this.phase === 'prompt' || this.phase === 'sayback');
-    if (lastRune && !timedOut) {
+    if (lastRune) {
       this.noteActivity();
       this.earlyAnswer = a;
       return;
     }
-    // From the moment the word lights: Dad may answer while "Now read the whole spell!" still plays.
-    if (this.phase !== 'read' && !(this.phase === 'reading' && this.readAnswer === null && this.allCharged)) return;
+    // From the moment the word lights: Dad may answer while "Now read the whole spell!" still plays,
+    // or while a solo read is sounded out together, until it is recorded.
+    const open = this.readAnswer === null || (this.readAnswer === 'modelled' && !this.readRecorded);
+    if (this.phase !== 'read' && !(this.phase === 'reading' && open && this.allCharged)) return;
     this.noteActivity();
     setDadAsking(false);
     this.flow++;
     voiceBus.hush();
-    void this.readWord(a === 'yes' ? 'yes' : timedOut ? 'timeout' : 'no');
+    void this.readWord(a === 'yes' ? 'yes' : 'no');
+  }
+
+  /** Nothing from Dad on the read (item 106): he isn't here, so the episode goes solo and the helper reads it with her. */
+  private goSolo(): void {
+    this.timeouts++;
+    episode.solo = true;
+    setDadAsking(false);
+    this.flow++;
+    void this.readWord('modelled');
   }
 
   /** The rune charges: it fires into its slot in the word with heavy particles, and the next lights. */
@@ -495,6 +533,13 @@ export class ChargeRoom extends HouseSideRoom {
       this.answer(early);
       return;
     }
+    if (episode.solo) {
+      // Solo (item 106): nobody to ask; the word lights all through, then they read it together.
+      await this.wait(this.barTexts.length * 90 + 200);
+      if (f !== this.flow) return;
+      await this.readWord('modelled');
+      return;
+    }
     await this.narrate('charge_read');
     if (f !== this.flow) return;
     this.phase = 'read';
@@ -505,30 +550,35 @@ export class ChargeRoom extends HouseSideRoom {
   }
 
   /**
-   * The word's payoff, recorded first: Dad's yes says it; his no or the
-   * timeout sounds it out together once, unit by unit, then says it. Either
-   * way its picture shows and flies into her bag (a battle item), and back
-   * to the hub.
+   * The word's payoff: Dad's yes says it; his no sounds it out together
+   * once, unit by unit, then says it; solo, they read it together the same
+   * way. Either way its picture shows and flies into her bag (a battle item),
+   * and back to the hub. His answer is recorded first; a solo read once it is
+   * sounded out (a Dad press until then is his answer).
    */
-  private async readWord(answer: 'yes' | 'no' | 'timeout'): Promise<void> {
+  private async readWord(answer: 'yes' | 'no' | 'modelled'): Promise<void> {
     const word = this.plan.word;
     const f = this.flow;
     const right = answer === 'yes';
+    const modelled = answer === 'modelled';
     this.readAnswer = answer;
-    if (answer === 'timeout') this.timeouts++;
+    this.readRecorded = false;
     this.phase = 'reading';
     this.locked = true;
     setDadAsking(false);
-    // Dad's yes is a first-try read; his no or the timeout one miss.
-    this.recordRead(word, right, right ? 0 : 1);
-    // Its sounds with it: a word read right is its sounds said right (the draws lean to shaky sounds).
-    for (const s of new Set(this.plan.runes)) progress.record('sounds', s, right, right ? 0 : 1);
+    if (!modelled) {
+      // Dad's yes is a first-try read; his no one miss.
+      this.recordRead(word, right, right ? 0 : 1);
+      // Its sounds with it: a word read right is its sounds said right (the draws lean to shaky sounds).
+      for (const s of new Set(this.plan.runes)) progress.record('sounds', s, right, right ? 0 : 1);
+      this.readRecorded = true;
+    }
     this.tweens.killTweensOf(this.bar);
     this.bar.setScale(1);
 
     if (!right) {
       // Sounded out together once, each unit lit as it is said; never blended.
-      await this.narrate('charge_together');
+      await this.narrate(modelled ? 'charge_read_together' : 'charge_together');
       for (let k = 0; k < this.plan.runes.length; k++) {
         if (f !== this.flow) return;
         const t = this.barTexts[k];
@@ -543,6 +593,16 @@ export class ChargeRoom extends HouseSideRoom {
       floatText(this, BAR.x, BAR.y + 110, 'WOW!', '#ffd23f');
     }
     if (f !== this.flow) return;
+    if (modelled) {
+      // Read with the helper: modelled, never her read (item 106); its sounds too, unless a solo rune already counted them.
+      this.recordModelled(word);
+      for (const s of new Set(this.plan.runes)) {
+        if (this.modelledSounds.has(s)) continue;
+        this.modelledSounds.add(s);
+        progress.model('sounds', s);
+      }
+      this.readRecorded = true;
+    }
     // Only now is the word said, and its picture shown.
     const n = this.barSlots.length;
     const px = this.slotPos(n - 1).x + BAR.slot / 2 + 30 + PICTURE / 2;
@@ -562,7 +622,7 @@ export class ChargeRoom extends HouseSideRoom {
     this.fadeToHub();
   }
 
-  /** Waiting for Dad on the read: nothing for CHARGE.readTimeoutMs counts as his 1 (paused under dad lock and while a line plays). */
+  /** Waiting for Dad on the read: nothing for DAD_AWAY_MS and the room goes solo (paused under dad lock and while a line plays). */
   override update(time: number, deltaMs: number): void {
     super.update(time, deltaMs);
     if (this.startedAt < 0) this.startedAt = this.time.now;
@@ -577,9 +637,9 @@ export class ChargeRoom extends HouseSideRoom {
     if (this.phase !== 'read') return;
     if (dadLock.locked || voiceBus.busy) return;
     this.waitMs += deltaMs;
-    if (this.waitMs >= CHARGE.readTimeoutMs) {
+    if (this.waitMs >= DAD_AWAY_MS) {
       this.waitMs = 0;
-      this.answer('no', true);
+      this.goSolo();
     }
   }
 
@@ -640,6 +700,7 @@ export class ChargeRoom extends HouseSideRoom {
         asking: this.phase === 'read',
         timeouts: this.timeouts,
         read: this.readAnswer,
+        solo: episode.solo,
         charged: [...(episode.charged?.sounds ?? [])],
         elapsedMs: this.time.now - this.startedAt,
         readAtMs: this.readAt,
