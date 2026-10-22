@@ -62,7 +62,9 @@ const BANK_056 = ['egg', 'bell', 'doll', 'tap', 'glass', 'sink', 'king', 'ring',
  * the screen showing through (a cage's faint back bars), not just the edges.
  * Leave out anything meant to have green in it (a leaf, a dragon).
  */
-const NO_GREEN = new Set([...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
+// Item 111: Julia's outfits beside the new allies and Seraphina's pink dragon, no green of their own.
+const ART_111 = ['keeper', 'snow', 'explorer'].flatMap((o) => [`char_julia_${o}`, `face_julia_${o}`]).concat('minion_pink_dragon');
+const NO_GREEN = new Set([...ART_111, ...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
 
 /**
  * Sprites in dark green of their own (item 049): keying takes out only the

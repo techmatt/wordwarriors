@@ -192,17 +192,24 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'Say it out loud, the code is...',
     ], 'Stand on the charging spot, and press green, to load the code!', 'The code is loaded, let\'s look around!'),
   ],
+  // Seraphina (item 111, Matt): the secret hatchery of Seraphina's Secret,
+  // baby dragons fed and hidden from the grown-ups, her little pink dragon.
   seraphina: [
+    S('🍓', [
+      'The baby dragons are hungry, so we have to feed them their favorite berries!',
+      'Munch quietly, babies, or the grown-ups will hear, and our secret is out.',
+      'The littlest one gave a happy burp, and it sounded like...',
+    ], CIRCLE('to say thank you'), 'The babies are full and sleepy, let\'s look around!'),
+    S('🥚', [
+      'This speckled one in the straw has been wiggling all morning, I think it is hatching!',
+      'Keep it warm, and keep it secret, nobody else knows it is here.',
+      'Crack, crack, and the baby dragon\'s very first word is...',
+    ], CIRCLE('to meet the baby'), 'You are a secret dragon keeper now, let\'s look around!'),
     S('🐉', [
-      'My dragons taught me a trick, and now I will teach you!',
-      'When you call them, they fly, and the bad guys hide.',
-      'Just call out...',
-    ], CIRCLE('to learn it'), 'The dragons will listen to you now, let\'s look around!'),
-    S('prop_scroll', [
-      'Here is an old dragon scroll, it was hidden in a cave.',
-      'Only a dragon friend may read it, and that is you.',
-      'The scroll says...',
-    ], CIRCLE('to take the scroll'), 'Now you are a dragon friend, let\'s look around!'),
+      'My little pink dragon goes everywhere with me, even to sleep!',
+      'It learned a brand new trick, just for you.',
+      'Watch it flutter, and it squeaks...',
+    ], CIRCLE('to learn the trick'), 'Now it will fight right beside us, let\'s look around!'),
   ],
   smaug: [
     S('💰', [
@@ -239,6 +246,11 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'This one came out of the ice this morning, for you.',
       'The frozen spell says...',
     ], 'Stand in the frosty circle, and press green, to learn the spell!', 'Now you are frosty and fierce, let\'s look around!'),
+    S('🎵', [
+      'I carved you a little music maker, out of shiny ice.',
+      'It plays a frosty tune, and at the very end, it sings one magic word.',
+      'Wind it up, and listen, it sings...',
+    ], 'Stand in the frosty circle, and press green, to hear the song!', 'That is a frosty spell for a warm heart, let\'s look around!'),
   ],
   anna: [
     S('🛡️', [
@@ -251,6 +263,11 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'One bite, and you feel strong all over.',
       'Take a bite, and you say...',
     ], SPOT('to have a bite'), 'Now you are brave and full, let\'s look around!'),
+    S('🎀', [
+      'This is my lucky ribbon, I wear it on every adventure!',
+      'I tripped over a snowman this morning, and it still stayed on.',
+      'Tie it on, stand up tall, and give a brave shout...',
+    ], SPOT('to tie it on'), 'Now we are adventure buddies, let\'s look around!'),
   ],
   jasmine: [
     S('✨', [
@@ -263,6 +280,11 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'It is a magic jewel, and it glows when you are brave.',
       'Rub it, and it says...',
     ], CIRCLE('to take the jewel'), 'It is glowing for you, let\'s look around!'),
+    S('🏺', [
+      'I found a magic jar by the oasis pool, and it is humming a tune.',
+      'Give it a little shake, but not too hard, it is very ticklish.',
+      'Shake, shake, and out puffs a word...',
+    ], CIRCLE('to catch the puff'), 'The jar is giggling, let\'s look around!'),
   ],
   ozymandias: [
     S('prop_scroll', [

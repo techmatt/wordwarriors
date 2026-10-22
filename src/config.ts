@@ -76,7 +76,8 @@ export const EPISODE_DEFAULTS = {
  * the draw by being added here. The dads wake her whatever this says.
  */
 export const ACTIVE_CAST = {
-  allies: ['dada_matt', 'dada_jason', 'scar', 'ellie'],
+  // Item 111: Seraphina, Elsa, Anna and Jasmine join (Matt, 2026-10-22).
+  allies: ['dada_matt', 'dada_jason', 'scar', 'ellie', 'seraphina', 'elsa', 'anna', 'jasmine'],
   villains: ['jormungandr', 'smaug', 'bavmorda', 'tiamat'],
 };
 
@@ -143,6 +144,12 @@ export const OUTFIT_FILL: Readonly<Record<string, number>> = {
   char_julia_good: 0.957,
   char_julia_chef: 0.843,
   char_julia_knight: 0.868,
+  // Item 111: eyes to soles against her dress picture's (she is drawn at one
+  // scale in all three, the glasses 97 px wide in each), so the goggles, the
+  // sun hat and the bobble hat are not her height.
+  char_julia_keeper: 0.945,
+  char_julia_explorer: 0.95,
+  char_julia_snow: 0.9,
 };
 
 /** The cast draw's odds (Matt, item 025). */

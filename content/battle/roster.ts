@@ -82,6 +82,13 @@ export const MINIONS: Record<string, MinionSpec> = {
     palette: [0x6ad66a, 0xfff07a], style: 'fly', speed: 150, size: 0.55, hp: 30,
     ability: ab('puff', 'Puff', 'bolt', 2.2, 0xff9a3c, 1, { glyph: '🔥' }),
   },
+  // Seraphina's own pet (item 111, Matt): her little pink dragon, the one on
+  // her shoulder, which flies down and fights beside her (her Dragon Call).
+  pink_dragon: {
+    id: 'pink_dragon', name: 'Little Pink Dragon', glyph: '🐉', look: 'a small round bubblegum-pink baby dragon with a pale yellow tummy, little lilac wings and stubby horns, big happy eyes, puffing a heart-shaped pink flame, friendly',
+    palette: [0xff8ac8, 0xfff07a], style: 'fly', speed: 170, size: 0.55, hp: 40,
+    ability: ab('pink_puff', 'Pink Puff', 'bolt', 1.8, 0xff5ab4, 1, { glyph: '💖' }),
+  },
   snow_golem: {
     id: 'snow_golem', name: 'Snow Buddy', glyph: '⛄', look: 'a round friendly snowman with stick arms',
     palette: [0xe8f6ff, 0x7cc7ff], style: 'march', speed: 70, size: 0.6, hp: 40,
@@ -330,13 +337,17 @@ export const ROSTER: CharacterSpec[] = [
   },
   {
     id: 'seraphina',
-    description: 'A little girl who keeps dragons: she calls them, rides them and talks to them.',
+    // Item 111 (Matt): from his earlier game Seraphina's Secret, where she
+    // secretly raises baby dragons in a hidden hatchery; her little pink pet
+    // dragon goes everywhere with her and fights beside her.
+    description: 'A little girl who keeps dragons: she secretly raises baby dragons, and her little pink pet dragon goes everywhere with her.',
     arena: 'volcano',
     good: {
-      displayName: 'Seraphina', trail: { tint: [0x6ad66a, 0xff7b3a], shape: 'spark' }, look: 'a little girl with wild red hair in a green tunic, a tiny dragon on her shoulder',
+      displayName: 'Seraphina', trail: { tint: [0x6ad66a, 0xff7b3a], shape: 'spark' }, look: 'a little girl with wild red hair in a green tunic, a tiny bubblegum-pink pet dragon with lilac wings on her shoulder',
       palette: [0x2ec27e, 0xff7b3a], glyph: '🐉', style: 'hover', speed: 170, size: 1, hp: 100,
       abilities: [
-        ab('dragon_call', 'Dragon Call', 'summon', 12, 0x6ad66a, 2, { minion: 'baby_dragon', count: 2, words: ['pop', 'jet'] }),
+        // Her pet first (item 111): the little pink dragon flies down to fight beside her.
+        ab('dragon_call', 'Dragon Call', 'summon', 9, 0xff8ac8, 2, { minion: 'pink_dragon', count: 1, words: ['pop', 'jet'] }),
         ab('ember_flick', 'Ember Flick', 'bolt', 2.2, 0xff7b3a, 1, { count: 2, glyph: '🔥', words: ['hot', 'zip'] }),
         ab('wing_gust', 'Dragon Wind', 'cone', 5, 0xbaffc9, 2, { words: ['fan', 'fog'] }),
         ab('scale_shield', 'Scale Shield', 'shield', 10, 0x2ec27e, 1, { duration: 4, words: ['hug'] }),
@@ -349,6 +360,8 @@ export const ROSTER: CharacterSpec[] = [
         { key: 'friends', text: 'Dragons are my friends!' },
         { key: 'wings', text: 'Spread your wings!' },
         { key: 'hot', text: 'Careful, my dragons breathe fire!' },
+        // Item 111 (Matt): her pet fights beside her.
+        { key: 'pet', text: 'Go get them, little pink dragon!' },
       ],
     },
     evil: {
@@ -1677,6 +1690,17 @@ export const COMBOS: ComboSpec[] = [
   },
   { pair: ['seraphina', 'tiamat'], ability: ab('dragon_queen_ride', 'Dragon Queen Ride', 'dash', 16, 0xc77dff, 3, { color2: 0x6ad66a }) },
   { pair: ['julia', 'seraphina'], ability: ab('best_friends', 'Best Friend Blast', 'beam', 16, 0xff5ab4, 3, { color2: 0x2ec27e }) },
+  // Item 111: the new allies each have one with her too. Elsa rings them in
+  // snowflakes while Julia's stars fly out through the ring.
+  {
+    pair: ['julia', 'elsa'],
+    ability: ab('frosty_star_swirl', 'Frosty Star Swirl', 'bolt', 16, 0xffd23f, 3, { count: 4, glyph: '⭐', homing: true, color2: 0xaee6ff }),
+    second: ab('frosty_star_ring', 'Frosty Star Swirl', 'rain', 16, 0xe8f6ff, 3, { count: 22, glyph: '❄️', color2: 0x7cc7ff }),
+  },
+  // Anna lifts her up on her shield and they charge together.
+  { pair: ['julia', 'anna'], ability: ab('brave_buddy_charge', 'Brave Buddy Charge', 'dash', 16, 0xffb703, 3, { shout: true, color2: 0xe63946 }) },
+  // Julia hops on the flying carpet: a sweep of wind full of stars and jewels.
+  { pair: ['julia', 'jasmine'], ability: ab('carpet_star_sweep', 'Carpet Star Sweep', 'wave', 16, 0xffc857, 3, { color2: 0xff5ab4 }) },
 ];
 
 /** Any two heroes without a written combo still team up with this. */

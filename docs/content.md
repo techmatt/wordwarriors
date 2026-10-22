@@ -237,6 +237,8 @@ keep her default images. To add one: an outfit entry in `content/art/assets.ts` 
 images, then a line in `FORMS` with a `when` on the ally, the villain or both. The
 first match wins. The `when` names a roster id, so a dad's form counts: Julia is a little
 knight (`char_julia_knight`) beside warrior Dada Jason (`dada_jason_warrior`, item 025).
+Item 111 added a dragon keeper (Seraphina), snow gear (Elsa and Anna: one outfit, two
+`FORMS` lines) and a desert explorer (Jasmine).
 `skipTaunts` lists taunt keys that do not fit the outfit (chef and knight Julia never
 say "My wand is sparkly!"). **New outfit art needs its `OUTFIT_FILL`** (`src/config.ts`,
 hunt 6, M32): how much of the picture is her, head to soles, measured as `ADULT_FILL` is

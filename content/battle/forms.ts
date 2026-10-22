@@ -38,6 +38,13 @@ export const FORMS: Record<string, Form[]> = {
     { id: 'chef', art: 'char_julia_chef', face: 'face_julia_chef', when: { ally: 'dada_jason' }, skipTaunts: ['wand'] },
     // The knights' camp: warrior Dada Jason is her ally (item 025).
     { id: 'knight', art: 'char_julia_knight', face: 'face_julia_knight', when: { ally: 'dada_jason_warrior' }, skipTaunts: ['wand'] },
+    // Item 111: a little dragon keeper in Seraphina's secret hatchery (an egg
+    // in her arms, no wand), snow gear at Elsa's and Anna's ice castle (the
+    // wand kept), a desert explorer at Jasmine's oasis (a compass, no wand).
+    { id: 'keeper', art: 'char_julia_keeper', face: 'face_julia_keeper', when: { ally: 'seraphina' }, skipTaunts: ['wand'] },
+    { id: 'snow', art: 'char_julia_snow', face: 'face_julia_snow', when: { ally: 'elsa' } },
+    { id: 'snow', art: 'char_julia_snow', face: 'face_julia_snow', when: { ally: 'anna' } },
+    { id: 'explorer', art: 'char_julia_explorer', face: 'face_julia_explorer', when: { ally: 'jasmine' }, skipTaunts: ['wand'] },
   ],
 };
 

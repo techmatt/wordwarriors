@@ -223,6 +223,17 @@ export const PLACES: PlaceSpec[] = [
     secret: HIDEOUT,
   },
   {
+    // Item 111: Seraphina's own (Matt: from Seraphina's Secret, where she
+    // raises baby dragons her dad does not know about).
+    id: 'dragon_hatchery', name: 'Secret Dragon Hatchery', glyph: '🐲', palette: [0xffd6a5, 0xff9ad5],
+    look: "Seraphina's secret dragon hatchery, hidden in a big hollow under the roots of a giant old tree, seen side-on: a soft floor of straw and moss across the lower half, round straw nests holding big speckled pastel dragon eggs, a curtain of hanging ivy over the entrance to hide it from grown-ups, little glowing lanterns, warm stones and a blanket fort, cosy and secret",
+    rooms: [
+      room('snack_corner', 'Dragon Snack Corner', '🍓', [0xff9ad5, 0xffd6a5], 'The feeding corner of the secret dragon hatchery: little wooden feeding bowls on the straw, baskets of strawberries and blueberries, a toy wagon full of apples, a little hammock, cosy roots overhead'),
+      room('hatching_nook', 'Hatching Nook', '🥚', [0xffc87a, 0xb04aff], 'The hatching nook of the secret dragon hatchery: speckled dragon eggs tucked under knitted blankets in soft nests, warm glowing stones, a little crack in one egg, hanging lanterns, tree roots curling overhead'),
+    ],
+    secret: HIDEOUT,
+  },
+  {
     id: 'ice_castle', name: 'Ice Castle', glyph: '❄️', palette: [0xd8f0ff, 0x7cc7ff],
     look: 'A sparkly ice castle hall, seen side-on: crystal pillars, a frozen fountain, falling snowflakes, a shiny ice floor dusted with snow across the lower half',
     rooms: [
@@ -291,6 +302,7 @@ export const GAP_BY_PLACE: Record<string, BridgeGap> = {
   moon_tower: 'chasm',
   bubble_castle: 'river',
   dragon_mountain: 'lava',
+  dragon_hatchery: 'river',
   ice_castle: 'chasm',
   desert_oasis: 'river',
   sea_grotto: 'river',

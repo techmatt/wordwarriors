@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { FORMS } from '../../content/battle/forms';
-import { CHARACTER_BY_ID, PERSONS, ROSTER, formsOf, personOf } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, DEFAULT_COMBO, PERSONS, ROSTER, comboFor, formsOf, personOf } from '../../content/battle/roster';
 import { HOME, PLACES, PLACE_BY_ID, SIDE_ROOM_BY_ID, hubArt } from '../../content/house/house';
 import { HOME_QUEST, QUESTS, questFor, questSetup } from '../../content/house/quests';
 import { HUB_SCENES, hubStory } from '../../content/house/scenes';
@@ -82,7 +82,7 @@ test('cast: the active cast (item 028) draws only its allies and villains, every
     pairs.add(`${c.ally}+${c.villain}`);
   }
   const allyForms = ACTIVE_CAST.allies.flatMap((p) => formsOf(p).map((f) => f.id));
-  assert.equal(allyForms.length, 9, 'four Dada Matts, three Dada Jasons, Scar and Ellie');
+  assert.equal(allyForms.length, 13, 'four Dada Matts, three Dada Jasons, Scar, Ellie, Seraphina, Elsa, Anna and Jasmine');
   for (const a of allyForms) for (const v of ACTIVE_CAST.villains) assert.ok(pairs.has(`${a}+${v}`), `${a} + ${v}`);
   // Anybody off the list is still a fixed override away.
   assert.equal(drawCast({ hero: 'julia', overrides: { ally: 'anna', villain: 'rilla' } }, rand).villain, 'rilla');
@@ -239,7 +239,25 @@ test('story: the quest line and hub scene are drawn with the cast, the same for 
   assert.equal(hubStory('dada_matt_cyber', 'dada_matt', 2).ids.circle, 'hub_dada_matt_cyber_2_circle');
   assert.equal(hubStory('nobody', 'dada_jason', 1).ids.done, 'nar_dada_jason_hub_any_1_done');
   // A variant drawn for one helper still names a line for another (wrapped).
-  assert.equal(hubStory('seraphina', 'seraphina', 3).ids.done, 'hub_seraphina_1_done');
+  assert.equal(hubStory('moriarty', 'moriarty', 3).ids.done, 'hub_moriarty_1_done');
+});
+
+test('active allies (item 111): each has what an ally in the draw uses', () => {
+  for (const person of ACTIVE_CAST.allies) {
+    for (const f of formsOf(person)) {
+      const id = f.id;
+      // A place of their own, not the home quest, with three setup lines.
+      assert.ok(QUESTS[id] && QUESTS[id]!.place !== HOME && QUESTS[id]!.lines.length === 3, `${id}: own quest place, three lines`);
+      // Three hub scenes, as Ellie and Scar have (a dad's other forms two or more).
+      assert.ok(HUB_SCENES[id]!.length >= (f.person ? 2 : 3), `${id}: hub scenes`);
+    }
+    // A combo written with her, not the default team blast.
+    assert.notEqual(comboFor('julia', person), DEFAULT_COMBO, `${person}: a combo with Julia`);
+  }
+  for (const id of ['seraphina', 'elsa', 'anna', 'jasmine']) assert.ok(ACTIVE_CAST.allies.includes(id), `${id} is in the draw`);
+  // Seraphina (amendment, Matt): her secret dragon hatchery and her pink pet dragon in the fight.
+  assert.equal(QUESTS.seraphina!.place, 'dragon_hatchery');
+  assert.ok(CHARACTER_BY_ID.seraphina!.good.abilities.some((a) => a.minion === 'pink_dragon'));
 });
 
 test('minigames: three different games a episode, fetch twice then the counter, weighted, from the pool', () => {

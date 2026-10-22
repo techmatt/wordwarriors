@@ -106,12 +106,14 @@ export const QUESTS: Record<string, Quest> = {
       { text: 'To get ready, we go to my bubble castle in the sky, the floor is made of bubbles!' },
     ],
   },
+  // Item 111 (Matt): from Seraphina's Secret, where she raises baby dragons
+  // the grown-ups do not know about, her little pink dragon always with her.
   seraphina: {
-    place: 'dragon_mountain',
+    place: 'dragon_hatchery',
     lines: [
-      { text: 'To fly fast enough, we have to train with the dragons on my mountain!' },
-      { text: 'My dragons want to meet you, so we have to train on my mountain, hold on tight!' },
-      { text: 'To be brave like a dragon rider, we fly to my mountain, where the dragons live!' },
+      { text: 'Shh, it is a secret, we have to train in my hidden dragon hatchery, and no grown-ups allowed!' },
+      { text: 'My baby dragons are hungry, so we have to sneak off to my secret hatchery and feed them!' },
+      { text: 'Follow me and my little pink dragon to the secret hatchery, where the dragon babies are hiding!' },
     ],
   },
   smaug: {

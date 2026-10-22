@@ -124,6 +124,50 @@ assets.push({
   glyph: '🛡️',
   palette: julia.palette,
 });
+// Item 111: her outfits beside the new allies (content/battle/forms.ts). Each
+// is a character sprite and its name-free face card, like the chef's.
+const OUTFITS_111: { word: string; who: string; label: string; glyph: string; body: string; face: string }[] = [
+  {
+    // Seraphina's secret dragon hatchery.
+    word: 'keeper', who: 'dragon keeper', label: 'KEEPER', glyph: '🥚',
+    body: "in a little dragon keeper's outfit: a warm orange padded vest over a purple long-sleeved top, a brown satchel of dragon snacks on a strap, brown boots, round brass goggles pushed up on her head, hugging a big speckled pastel-pink dragon egg in both arms",
+    face: "in a warm orange padded vest over a purple top, round brass goggles pushed up on her head",
+  },
+  {
+    // Elsa's and Anna's ice castle.
+    word: 'snow', who: 'snow adventurer', label: 'SNOW', glyph: '❄️',
+    body: 'in a cosy puffy pink-and-purple snowsuit with fluffy white trim at the hood, a knitted purple bobble hat with a big white pompom, striped mittens and little white snow boots, holding up her golden star wand',
+    face: 'in a cosy puffy pink-and-purple snowsuit with fluffy white trim, a knitted purple bobble hat with a big white pompom',
+  },
+  {
+    // Jasmine's desert oasis.
+    word: 'explorer', who: 'desert explorer', label: 'EXPLORER', glyph: '🧭',
+    body: 'in a little desert explorer outfit: a sunny-yellow tunic over loose coral-pink trousers, a wide straw sun hat with a pink ribbon, a light striped scarf, little sandals, holding up a small shiny brass compass',
+    face: 'in a sunny-yellow tunic and a light striped scarf, a wide straw sun hat with a pink ribbon',
+  },
+];
+for (const o of OUTFITS_111) {
+  assets.push({
+    id: `char_julia_${o.word}`,
+    kind: 'character',
+    w: 200,
+    h: 250,
+    content: `Julia the little ${o.who}: ${julia.look.split(', in a ')[0]}, ${o.body}. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background.`,
+    label: o.label,
+    glyph: o.glyph,
+    palette: julia.palette,
+  });
+  assets.push({
+    id: `face_julia_${o.word}`,
+    kind: 'character',
+    w: 200,
+    h: 200,
+    content: `Julia's face, a friendly head-and-shoulders portrait of ${julia.look.split(', in a ')[0]}, ${o.face}. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
+    label: '',
+    glyph: o.glyph,
+    palette: julia.palette,
+  });
+}
 
 for (const m of Object.values(MINIONS)) {
   assets.push({
