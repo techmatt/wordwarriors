@@ -64,3 +64,26 @@ test('debug mode: key 0 in the hub, a game from its pedestal checked off, out th
   expect(await stored(page)).toBe(blob);
   expectNoErrors(errors);
 });
+
+test('debug mode: every other game opens from its pedestal in house part 2; key 0 in it comes back unchecked, the store untouched', async ({ page }) => {
+  test.setTimeout(60_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=house&part=2&nojourney=1');
+  await until(page, (s) => s.scene === 'Hub' && Boolean(s.room?.player), 30_000, 'hub');
+  const before = (await state(page)).progress;
+  const blob = await stored(page);
+  await page.keyboard.press('0');
+  for (const [id, scene] of [['word_machine', 'WordMachine'], ['charge', 'ChargeRoom'], ['bridge', 'BridgeRoom'], ['sentence', 'SentenceRoom']] as const) {
+    await until(page, (st) => st.scene === 'Debug' && (st.room?.spots.length ?? 0) > 0 && !st.room!.locked, 30_000, `debug room before ${id}`);
+    await choose(page, `debug:${id}`);
+    const s = await until(page, (st) => st.scene === scene && Boolean(st.room?.player), 30_000, `${id} open`);
+    // The attic's sentence game is the counter sentence.
+    if (id === 'sentence') expect(s.episode.house.plan!.find((p) => p.game.startsWith('sentence:') && p.slot === 'counter')).toBeTruthy();
+    await page.keyboard.press('0');
+  }
+  const s = await until(page, (st) => st.scene === 'Debug' && Boolean(st.room?.debug), 30_000, 'debug room at the end');
+  expect(s.room!.debug!.done).toEqual([]);
+  expect(s.progress).toEqual(before);
+  expect(await stored(page)).toBe(blob);
+  expectNoErrors(errors);
+});
