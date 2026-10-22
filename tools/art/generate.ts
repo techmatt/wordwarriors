@@ -68,6 +68,8 @@ export function codexPrompt(id: string, withRef = false, prompt = ART_PROMPTS[id
           '',
           REFS[refFor(id)!]!.style
             ? `The attached picture is a style reference only: ${REFS[refFor(id)!]!.who}. Take its chunky armour and general feel, and its colours unless the description below gives others, and draw an original character of your own design as described below, as a flat, simple cartoon with thick outlines, not a 3D render. Do not copy the picture's design, proportions, pose or background.`
+            : REFS[refFor(id)!]!.toy
+            ? `The attached photo is a likeness reference only, for ${REFS[refFor(id)!]!.who}. Draw that toy brought to life as the cartoon character below: keep its colours, its round soft shapes, its face and the proportions of its body, arms, hands and feet as in the photo, so a child would know it is her toy, simplified into the style: a flat, simple cartoon with thick outlines, not a realistic painting and not a 3D render. Do not copy the photo's sitting pose, floor, rug or background.`
             : `The attached photo is a likeness reference only, for ${REFS[refFor(id)!]!.who}. Draw that person as the cartoon character below: keep their face shape, hair, eye colour, skin tone, glasses and beard as in the photo, simplified into the style: a flat, simple cartoon with thick outlines, not a realistic painting. Do not copy the photo's clothes, pose or background, and draw nobody else from it.`,
         ]
       : []),

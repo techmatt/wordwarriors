@@ -772,6 +772,10 @@ a time.
   A photo pulls the drawing towards a realistic painting, so the prompt asks for a flat
   cartoon. If a photo run brings back no image it is retried with text alone;
   `--no-ref` skips the photo. The roster looks still describe each person in words.
+  Two other kinds of `REFS` entry: `style` (Scar, item 028: a picture to take the feel
+  from, not to copy) and `toy` (Bluerilla, item 110: Julia's plush gorilla, kept as a
+  likeness of the toy, not a person). An entry's `ids` limits it to those ids, so the
+  plush photo goes only with `char_rilla_good`, not EvilRilla or `face_rilla`.
 - **Allowance:** Codex logs the plan's usage in its session file
   (`~/.codex/sessions/…/rollout-*-<thread>.jsonl`, `rate_limits`: percent of a 5-hour
   and a 1-week window). The script prints it after each image and stops at the first

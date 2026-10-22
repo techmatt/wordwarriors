@@ -87,10 +87,14 @@ export function keyMode(id: string): KeyMode {
  * that character; `--no-ref` sends the text alone. The roster looks describe
  * the same people in words, so the prompts still work without the photos.
  */
-export const REFS: Record<string, { photo: string; box: [number, number, number, number]; who: string; style?: boolean }> = {
+export const REFS: Record<string, { photo: string; box: [number, number, number, number]; who: string; style?: boolean; toy?: boolean; ids?: string[] }> = {
   // Item 028: Matt's picture of a gold mech, a style reference (`style`) for an
   // original design, not a likeness: the prompt says not to copy it.
   scar: { photo: 'scar_reference.png', box: [0, 0, 512, 512], who: 'a chunky gold-and-black armoured mech with a cyan visor, a glowing orange chest core and a blaster arm', style: true },
+  // Item 110: Bluerilla, Rilla's good side, is Julia's plush gorilla (`toy`: a
+  // likeness of a soft toy, not a person). Only the good image (`ids`): EvilRilla
+  // and the face card keep their own looks.
+  rilla: { photo: 'bluerilla_reference.png', box: [280, 70, 840, 890], who: "Julia's plush toy gorilla", toy: true, ids: ['char_rilla_good'] },
   julia: { photo: 'julia_and_ellie.png', box: [270, 160, 420, 500], who: 'the girl with pink glasses' },
   ellie: { photo: 'julia_and_ellie.png', box: [600, 320, 560, 560], who: 'the toddler' },
   dada_matt: { photo: 'family_dada_matt_far_left.png', box: [360, 260, 300, 380], who: 'the man in front with the beard and the teal shirt (not the baby, not the man behind him)' },
@@ -100,7 +104,7 @@ export const REFS: Record<string, { photo: string; box: [number, number, number,
 /** The character whose likeness reference an asset id uses, if any: `char_<c>_<good|evil|outfit>` and `face_<c>[_<outfit>]`. */
 export function refFor(id: string): string | undefined {
   // `[a-z_]+`: a dad's form is `char_dada_matt_lifter_good` (item 025).
-  return Object.keys(REFS).find((c) => new RegExp(`^face_${c}(_[a-z]+)*$`).test(id) || new RegExp(`^char_${c}_[a-z_]+$`).test(id));
+  return Object.keys(REFS).find((c) => (REFS[c]!.ids ? REFS[c]!.ids!.includes(id) : new RegExp(`^face_${c}(_[a-z]+)*$`).test(id) || new RegExp(`^char_${c}_[a-z_]+$`).test(id)));
 }
 
 /**
@@ -139,6 +143,7 @@ export const PICK_NOTES: Record<string, string> = {
   prop_fight_finish_flag: 'The sky race\'s finish line (item 031), swept in at the end of each race. `current` is candidate 1, Matt\'s pick (item 034): the slimmer gold posts with jewelled tops. 2 was item 031\'s promotion; `0` is the painted placeholder.',
   prop_fight_trophy: 'Over the winner of a race or a cook-off (item 031). `current` is candidate 3, Matt\'s pick (item 034): the ornate cup with a gold filigree crest round its ruby. 1 was item 031\'s promotion; `0` is the painted placeholder.',
   prop_fight_cook_station: 'Each side\'s station in the cook-off (item 031); the dish is stacked on its counter top. `current` is candidate 2, promoted by item 031: the clearest counter top. `0` is the painted placeholder.',
+  char_rilla_good: "Bluerilla (item 110): Rilla's good side drawn from Julia's plush gorilla (Matt's photo attached to each prompt). `current` is the old pastel-blue robot gorilla. Brief `110_bluerilla_plush` keeps the toy's soft stitched look, arms open for a hug; `110_bluerilla_furry` makes him a living shaggy gorilla, waving.",
   char_scar_good: "Scar's redesign (items 028/030): a tiny gold mech, a little shorter than Julia. `current` is candidate 2, promoted by item 030 and kept by Matt (item 034): the biggest head and shortest legs (the smallest-reading), and a smiling visor. `0` is the old design.",
   char_scar_evil: "`current` is candidate 1, Matt's pick (item 034): a round black helmet with smoking exhaust stacks, a scowling red visor, blaster thrust forward and fist clenched. 3 was item 030's promotion; `0` is the old design.",
   face_scar: "`current` is candidate 2, Matt's pick (item 034): a laughing visor with his smiling mouth showing beneath it, blue jets behind. 4 was item 030's promotion; `0` is the old design.",
