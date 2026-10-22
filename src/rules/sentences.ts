@@ -29,7 +29,7 @@
 
 import { CHARACTER_BY_ID, MINIONS, comboPart } from '../../content/battle/roster';
 import type { FighterSpec } from '../../content/battle/types';
-import { FETCH_ITEMS, lookalikesOf, sentence, tokenWord, type Fill, type Sentence } from '../../content/phonics/sentences';
+import { FETCH_ITEMS, FRAME_BY_ID, NUMBER_WORDS, lookalikesOf, sentence, tokenWord, type Fill, type Sentence } from '../../content/phonics/sentences';
 import { ACTIONS, THINGS } from '../../content/phonics/bank';
 import { MINIGAMES, drawGames, type Minigame, type MinigameKind } from './minigames';
 import { machineWords, planMachine, type MachinePlan } from './wordMachine';
@@ -403,9 +403,11 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   const fits = (i: number) => {
     const f = games[i]!.frame;
     const article = f ? tokenWord(sentence(f, fill, 'x').tokens.at(-2) ?? '') : '';
+    // A number word only where it reads right (item 093, M23: no WE NEED A THREE, no TIAMAT HIDES FROM THE THREE).
+    const numbers = !f || FRAME_BY_ID[f]?.numbers === true;
     // X-RAY starts on a vowel sound too (item 058: no WE NEED A XRAY); nor a word that takes
     // no "A" (item 069: SCAR NEEDS A CHEESE).
-    return (w: string) => article !== 'a' || (!/^[aeiou]|^x/.test(w) && !NO_ARTICLE.has(w));
+    return (w: string) => (numbers || !NUMBER_WORDS.has(w)) && (article !== 'a' || (!/^[aeiou]|^x/.test(w) && !NO_ARTICLE.has(w)));
   };
   const keys: string[] = [];
   for (let i = 0; i < 2; i++) {

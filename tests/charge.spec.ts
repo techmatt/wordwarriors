@@ -146,6 +146,26 @@ test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on t
   expectNoErrors(errors);
 });
 
+test('Charge the Spell (M24): Dad\'s 2 pressed during the last rune is kept, and counts as the read is asked', async ({ page }) => {
+  test.setTimeout(90_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=a&room=charge');
+  const s0 = await until(page, (st) => st.scene === 'ChargeRoom' && Boolean(st.room?.charge), 60_000, 'charge room');
+  const { word, runes } = s0.room!.charge!;
+  const last = runes.length - 1;
+  await until(page, (st) => st.room?.charge?.index === last && st.room.charge.phase === 'sayback', 60_000, 'the last rune said back');
+  await page.keyboard.press('Digit2');
+  const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'back in the hub');
+  // Read right on his early 2: never asked again, never timed out, never sounded out together.
+  expect(hub.progress.words[word]!.recent).toEqual([true]);
+  expect(hub.episode.read).toEqual([word]);
+  const h = hub.voice.history;
+  expect(h.some((id) => id.endsWith('_charge_read'))).toBe(false);
+  expect(h.some((id) => id.endsWith('_charge_together'))).toBe(false);
+  expect(h).toContain(`word_${word}`);
+  expectNoErrors(errors);
+});
+
 /** The last line id in `h` ending with `suffix` (a narrator line, whoever narrates). */
 function narratorLineEnd(h: string[], suffix: string): string {
   return [...h].reverse().find((id) => id.endsWith(suffix)) ?? '';

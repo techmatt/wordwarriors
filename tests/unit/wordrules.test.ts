@@ -10,6 +10,7 @@ import { test } from 'node:test';
 
 import { MOVE_WORDS } from '../../content/battle/roster';
 import { BANK, BANK_BY_WORD } from '../../content/phonics/bank';
+import { FRAMES, NUMBER_WORDS } from '../../content/phonics/sentences';
 import { distractorsFor, withStems } from '../../src/rules/bank';
 import { GESTURE_WORDS, gestureWords, planCharge } from '../../src/rules/charge';
 import { MINIGAME_BY_ID, SENTENCE_GAMES } from '../../src/rules/minigames';
@@ -64,6 +65,39 @@ test('no "A" frame takes a word starting with a vowel (WE NEED A ANT)', () => {
       assert.ok(!(t.at(-2) === 'A' && NO_ARTICLE.has(t.at(-1)!.toLowerCase())), t.join(' '));
     }
   }
+});
+
+test('no number word in an "A" frame (WE NEED A THREE) nor in a frame where it reads wrong (TIAMAT HIDES FROM THE THREE): M23', () => {
+  // Every bank thing named for a number is in NUMBER_WORDS.
+  const names = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'zero'];
+  for (const w of BANK) if (names.includes(w.word)) assert.ok(NUMBER_WORDS.has(w.word), w.word);
+  assert.ok([...NUMBER_WORDS].every((w) => BAG_WORDS.includes(w)), 'every number word is a key word somewhere');
+  const g = (id: string) => MINIGAME_BY_ID[`sentence:${id}`]!;
+  const aFrames = FRAMES.filter((f) => / A \{x\}$/.test(f.text));
+  assert.ok(aFrames.length >= 2 && aFrames.every((f) => !f.numbers), 'an "A" frame never takes numbers');
+  const fetch = FRAMES.filter((f) => f.use === 'fetch');
+  const counter = FRAMES.filter((f) => f.use === 'counter');
+  const seen = { numbersFrame: 0 };
+  for (let seed = 1; seed <= 120; seed++) {
+    // A key bag of only number words, so any frame that would take one draws it.
+    const store = new ProgressStore(memory());
+    store.refillBag([...NUMBER_WORDS]);
+    const a = fetch[seed % fetch.length]!;
+    const b = fetch[(seed + 1 + Math.floor(seed / fetch.length)) % fetch.length]!;
+    const games = [g(a.id), g(b === a ? fetch[(seed + 2) % fetch.length]!.id : b.id), g(counter[seed % counter.length]!.id)] as EpisodeInput['games'];
+    const input: EpisodeInput = { fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic', games };
+    for (const p of episodePlans(store, input, seeded(spread(seed)))) {
+      if (p.kind !== 'sentence') continue;
+      const t = p.sentence.tokens;
+      const frame = FRAMES.find((f) => f.id === p.sentence.frame)!;
+      if (!NUMBER_WORDS.has(p.key)) continue;
+      assert.notEqual(t.at(-2), 'A', t.join(' '));
+      assert.ok(frame.numbers, `${t.join(' ')}: ${frame.id} does not take numbers`);
+      seen.numbersFrame++;
+    }
+  }
+  // The test bites: the frames that take numbers do draw them from this bag.
+  assert.ok(seen.numbersFrame > 20, `${seen.numbersFrame} number keys in the frames that take them`);
 });
 
 test('a new word\'s other pictures start with another sound: no KIT beside CAT, no CAT beside KIT', () => {

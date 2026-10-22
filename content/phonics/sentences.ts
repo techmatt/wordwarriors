@@ -31,7 +31,12 @@ export interface Frame {
   text: string;
   /** Fetch frames fill the two side rooms; counter frames fill the attic (the villain's weakness). */
   use: 'fetch' | 'counter';
+  /** A number word (THREE) reads right as this frame's key word: GO GET THE TEN, not WE NEED A THREE or TIAMAT HIDES FROM THE THREE (item 093, M23). */
+  numbers?: true;
 }
+
+/** The bank's number words: key words only in frames marked `numbers` (item 093, M23); the warm-up and the bridge keep them. */
+export const NUMBER_WORDS: ReadonlySet<string> = new Set(['six', 'ten', 'three']);
 
 /**
  * Few frames on purpose (item 015): the small words recur until they are
@@ -41,11 +46,11 @@ export interface Frame {
  * its progress and its prefix lines) when it moved to the counter.
  */
 export const FRAMES: Frame[] = [
-  { id: 'we_can_use_the', text: 'WE CAN USE THE {x}', use: 'fetch' },
+  { id: 'we_can_use_the', text: 'WE CAN USE THE {x}', use: 'fetch', numbers: true },
   { id: 'helper_needs_a', text: '{helper} NEEDS A {x}', use: 'fetch' },
-  { id: 'go_get_the', text: 'GO GET THE {x}', use: 'fetch' },
+  { id: 'go_get_the', text: 'GO GET THE {x}', use: 'fetch', numbers: true },
   { id: 'we_need_a', text: 'WE NEED A {x}', use: 'fetch' },
-  { id: 'hero_needs_the', text: '{hero} NEEDS THE {x}', use: 'fetch' },
+  { id: 'hero_needs_the', text: '{hero} NEEDS THE {x}', use: 'fetch', numbers: true },
   { id: 'scared_of_the', text: '{villain} IS SCARED OF THE {x}', use: 'counter' },
   { id: 'villain_hates_the', text: '{villain} HATES THE {x}', use: 'counter' },
   { id: 'runs_from_the', text: '{villain} RUNS FROM THE {x}', use: 'counter' },

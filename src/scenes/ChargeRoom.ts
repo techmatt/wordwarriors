@@ -84,6 +84,8 @@ export class ChargeRoom extends HouseSideRoom {
   private timeouts = 0;
   /** How the word's read went: Dad's yes, or a no / timeout (sounded out). */
   private readAnswer: 'yes' | 'no' | 'timeout' | null = null;
+  /** Dad's 1 / 2 while the last rune is said or charges (she can read the word on the bar by then): acted on as the read is asked (M24). */
+  private earlyAnswer: DadAnswer | null = null;
   private finished = false;
   /** Scene time at the start of the visit and when the read was asked (the round's length in game time, for the tests). */
   private startedAt = 0;
@@ -131,6 +133,7 @@ export class ChargeRoom extends HouseSideRoom {
     this.waitMs = 0;
     this.timeouts = 0;
     this.readAnswer = null;
+    this.earlyAnswer = null;
     this.beat = null;
     this.barSlots = [];
     this.barTexts = [];
@@ -384,6 +387,14 @@ export class ChargeRoom extends HouseSideRoom {
 
   /** Dad's button (or the timeout, or F4): only the word's read asks him. A no sounds it out together first. */
   private answer(a: DadAnswer, timedOut = false): void {
+    // Item 093 (M24): his press once the last rune is lit was dropped, though his cue flashed as if
+    // it landed; it is kept (his latest press) and acted on as the read is asked.
+    const lastRune = this.index >= this.plan.runes.length - 1 && (this.phase === 'prompt' || this.phase === 'sayback' || this.phase === 'charging');
+    if (lastRune && !timedOut) {
+      this.noteActivity();
+      this.earlyAnswer = a;
+      return;
+    }
     // From the moment the word lights: Dad may answer while "Now read the whole spell!" still plays.
     if (this.phase !== 'read' && !(this.phase === 'reading' && this.readAnswer === null && this.allCharged)) return;
     this.noteActivity();
@@ -469,6 +480,15 @@ export class ChargeRoom extends HouseSideRoom {
       }),
     );
     this.tweens.add({ targets: this.bar, scale: 1.08, duration: 520, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    const early = this.earlyAnswer;
+    this.earlyAnswer = null;
+    if (early) {
+      // Dad answered during the last rune: the word lights all through, then his answer, unasked.
+      await this.wait(this.barTexts.length * 90 + 200);
+      if (f !== this.flow) return;
+      this.answer(early);
+      return;
+    }
     await this.narrate('charge_read');
     if (f !== this.flow) return;
     this.phase = 'read';
