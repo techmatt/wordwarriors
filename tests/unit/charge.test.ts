@@ -12,7 +12,7 @@ import { test } from 'node:test';
 import { BANK, BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
 import { SOUND_BY_UNIT } from '../../content/phonics/letters';
 import { RUNES, RUNE_BY_SOUND } from '../../content/phonics/runes';
-import type { AbilityKind } from '../../content/battle/types';
+import { ABILITY_KINDS } from '../../content/battle/types';
 import { chargeKey, letterSoundLine, narratorLine } from '../../content/voice/ids';
 import { CHARGE_GESTURES, NARRATOR_LINES } from '../../content/voice/script';
 import { PERSONS } from '../../content/battle/roster';
@@ -25,11 +25,8 @@ import { ProgressStore, STORE_KEY } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
 import { memory, seeded } from './seeds';
 
-/** The ability kinds BattleScene can cast (abilities.ts CASTS, mirrored as tests/unit/effects.test.ts does). */
-const KINDS: AbilityKind[] = [
-  'bolt', 'beam', 'cone', 'lightning', 'slam', 'spin', 'dash', 'summon', 'polymorph', 'freeze', 'teleport',
-  'clones', 'trap', 'rain', 'shield', 'heal', 'grow', 'coil', 'eclipse', 'wave', 'grid', 'orbit',
-];
+/** The ability kinds BattleScene can cast (abilities.ts CASTS is keyed by them). */
+const KINDS: readonly string[] = ABILITY_KINDS;
 
 const tier = (s: string) => RUNE_BY_SOUND[s]!.tier;
 

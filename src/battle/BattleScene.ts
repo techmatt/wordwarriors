@@ -81,19 +81,26 @@ const HIT_FLOAT = DEPTH.prompt - 20;
 const HUD_BAND = new Phaser.Geom.Rectangle(0, 0, GAME_WIDTH, 128);
 /** The move choice's prompt lines that say the right word (`use_move_zap`, `find_move_zap`, `not_move_zap`): its caption hides it. */
 const CHOICE_PROMPT = /_(?:use_move|find_move|not_move)_([a-z]+)$/;
-/** The brawl's run-in spots (a contest's stage has its own): the i-th hero at `x + i * dx`, the villain at `villainX`. */
-const INTRO_SPOTS = { x: 260, dx: 140, villainX: 960 };
+/**
+ * Where the brawl puts everybody (a contest's stage has its own places: `show.home`,
+ * `show.anchored`, `show.steer`). `intro`: the run-in, the i-th hero at `x + i * dx`, the
+ * villain at `villainX`. `fight`: the ground each side drifts back to while fighting, so it
+ * stays framed heroes-left, villain-right: the i-th hero's at `heroX - i * heroDx` (each
+ * their own, item 034), pulled at `heroPull` a second, the villain's at `villainX` at
+ * `villainPull`. `ult`: the sides for the ultimate, the i-th hero at (`x + i * dx`,
+ * `y + i * dy`), the helper behind, the villain on the right (a giant further out, on the
+ * front edge of the floor).
+ */
+const BRAWL = {
+  intro: { x: 260, dx: 140, villainX: 960 },
+  fight: { heroX: 430, heroDx: 160, heroPull: 0.8, villainX: 900, villainPull: 1.2 },
+  ult: { x: 260, dx: 150, y: 500, dy: 70, helper: { x: 150, y: 600 }, villain: { x: 900, y: 560 }, giantX: 960 },
+} as const;
 /** `?battle=short`: the director's waits at this share of their length (item 083). */
 const SHORT_BEATS = 0.2;
 
 /** A taunt is said at most this often an episode (item 087). */
 const TAUNT_MAX = 2;
-
-/**
- * The brawl's sides for the ultimate: the i-th hero at (`x + i * dx`, `y + i * dy`),
- * the helper behind, the villain on the right (a giant further out, on the front edge of the floor).
- */
-const ULT_SPOTS = { x: 260, dx: 150, y: 500, dy: 70, helper: { x: 150, y: 600 }, villain: { x: 900, y: 560 }, giantX: 960 };
 
 /** What Part 2's counter stagings share (`ultimateCountered`): her hero `h`, and the counter-item's picture, its glow and its scale before the pop-in. */
 interface CounterBeat {
@@ -510,10 +517,10 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     if (this.part === 1) await this.versus();
     // Everybody runs in from the sides (to the style's own spots, if it has them).
     this.heroes.forEach((h, i) => {
-      const to = this.show.home(h, i) ?? { x: INTRO_SPOTS.x + i * INTRO_SPOTS.dx, y: h.y };
+      const to = this.show.home(h, i) ?? { x: BRAWL.intro.x + i * BRAWL.intro.dx, y: h.y };
       this.tweens.add({ targets: h, x: to.x, y: to.y, duration: 900, ease: 'Quad.easeOut' });
     });
-    const vto = this.show.home(this.villain, 0) ?? { x: INTRO_SPOTS.villainX, y: this.villain.y };
+    const vto = this.show.home(this.villain, 0) ?? { x: BRAWL.intro.villainX, y: this.villain.y };
     this.tweens.add({ targets: this.villain, x: vto.x, y: vto.y, duration: 1100, ease: 'Quad.easeOut' });
     this.banner(this.fight.banner[this.part - 1]!, 0xff3d7a, true);
     sfxFanfare();
@@ -1053,14 +1060,14 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     // ultimate fills the screen from the floor to near the top, head still in view.
     const giant = v.init.size >= 2;
     // A contest's stage keeps everybody where its contest has them.
-    if (!this.show.anchored) this.tweens.add({ targets: v, x: giant ? ULT_SPOTS.giantX : ULT_SPOTS.villain.x, y: giant ? FLOOR_BOTTOM : ULT_SPOTS.villain.y, duration: 600 });
+    if (!this.show.anchored) this.tweens.add({ targets: v, x: giant ? BRAWL.ult.giantX : BRAWL.ult.villain.x, y: giant ? FLOOR_BOTTOM : BRAWL.ult.villain.y, duration: 600 });
     // Everyone back to their own side, so the big moment reads left against right.
     this.heroes.forEach((h, i) => {
       h.status = null;
       h.clearOverlay();
-      if (!this.show.anchored) this.tweens.add({ targets: h, x: ULT_SPOTS.x + i * ULT_SPOTS.dx, y: ULT_SPOTS.y + i * ULT_SPOTS.dy, duration: 600, ease: 'Quad.easeOut' });
+      if (!this.show.anchored) this.tweens.add({ targets: h, x: BRAWL.ult.x + i * BRAWL.ult.dx, y: BRAWL.ult.y + i * BRAWL.ult.dy, duration: 600, ease: 'Quad.easeOut' });
     });
-    if (this.helper?.active && !this.show.anchored) this.tweens.add({ targets: this.helper, x: ULT_SPOTS.helper.x, y: ULT_SPOTS.helper.y, duration: 600 });
+    if (this.helper?.active && !this.show.anchored) this.tweens.add({ targets: this.helper, x: BRAWL.ult.helper.x, y: BRAWL.ult.helper.y, duration: 600 });
     await this.wait(0.6);
     sfxUltimate();
     this.darken(0.55, 800);
@@ -1441,8 +1448,9 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     // heroes-left, villain-right instead of wandering off one edge.
     if (moving && !steered && !placed && (f.isMain || f.init.kind === 'helper')) {
       // Each hero has a ground of their own, so she and her ally never share one spot (item 034).
-      const home = f.team === 'hero' ? 430 - Math.max(0, this.heroes.indexOf(f)) * 160 : 900;
-      f.x += (home - f.x) * Math.min(1, (f.team === 'villain' ? 1.2 : 0.8) * dt);
+      const g = BRAWL.fight;
+      const home = f.team === 'hero' ? g.heroX - Math.max(0, this.heroes.indexOf(f)) * g.heroDx : g.villainX;
+      f.x += (home - f.x) * Math.min(1, (f.team === 'villain' ? g.villainPull : g.heroPull) * dt);
     }
     // A giant's wings would hang off the edge of the screen: keep all of her in.
     if (f.init.size >= 2) f.x = Phaser.Math.Clamp(f.x, ARENA_LEFT + f.height * 0.45, ARENA_RIGHT - f.height * 0.45);

@@ -23,11 +23,8 @@ const PART: Record<string, 1 | 2> = { sky_race: 2, sea_tug: 1, spell_clash: 2, c
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/fights_${name}.png` });
 
-/**
- * Page errors and voice lines asked for that are not there. The art-not-ready check stays
- * off here as it always was: turning it on is a change of its own, run against this spec first.
- */
-const collectProblems = (page: Page): string[] => collectErrors(page, { voice: true, art: false });
+/** Page errors, art drawn before it loaded (on since item 090), and voice lines asked for that are not there. */
+const collectProblems = (page: Page): string[] => collectErrors(page, { voice: true });
 
 test('the cast draw picks the villain\'s own style; ?fight= fixes another', async ({ page }) => {
   // The style and its staging are made with the scene, so the versus intro need not play out.

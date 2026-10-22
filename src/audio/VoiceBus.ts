@@ -126,23 +126,21 @@ class Bus {
   /**
    * Hold a letter sound (item 054, the Stretchy Bridge): it plays while she
    * stands on its stone and stops, with a short fade, on `release()`. A `hold`
-   * sound is its steady part stretched once to `maxMs` in all, then quiet
-   * (item 085: never repeated); a `once` sound plays its cut
-   * once, never with a schwa (VoiceBank `held`, src/audio/holdSound.ts). It is
+   * sound is its steady part stretched once to `heldMs` in all; a `once` sound
+   * plays its cut, never with a schwa (VoiceBank `held`, src/audio/holdSound.ts).
+   * Either plays once and ends by itself (item 090: no silent loop). It is
    * a line like any other to the listeners and the history, so a bark waits
    * and an instruction queues behind it. Null while an instruction is playing
    * or queued: a stone never talks over the narrator. With no audio (muted,
    * not decoded yet) it still "plays", silent, so the flow is the same.
    */
-  hold(id: string, mode: HoldMode, maxMs: number): HeldSound | null {
+  hold(id: string, mode: HoldMode, heldMs: number): HeldSound | null {
     // Only a bark gives way: an instruction, or one still decoding (its claim), keeps the voice.
     if ((this.current && this.current.u.priority !== 'bark') || this.queue.length) return null;
     if (this.current) this.cut();
     if (voiceBank.has(id) && !voiceBank.ready(id)) void voiceBank.ensure(id);
     const ctx = getAudioContext();
-    const clip = ctx?.state === 'running' && !this.instant ? voiceBank.held(id, mode, maxMs) : null;
-    // A held sound too short to hold (the cut found no steady part) plays once.
-    const loops = mode === 'hold' && (!clip || clip.loopStart !== null);
+    const clip = ctx?.state === 'running' && !this.instant ? voiceBank.held(id, mode, heldMs) : null;
     let stopAudio = () => undefined as void;
     let ended: Promise<void> | null = null;
     if (ctx && clip) {
@@ -151,11 +149,6 @@ class Bus {
       gain.connect(ctx.destination);
       const source = ctx.createBufferSource();
       source.buffer = clip.buffer;
-      if (loops) {
-        source.loop = true;
-        source.loopStart = clip.loopStart!;
-        source.loopEnd = clip.buffer.duration;
-      }
       source.connect(gain);
       source.start();
       ended = new Promise((resolve) => (source.onended = () => resolve()));
@@ -172,7 +165,8 @@ class Bus {
     }
     const line = voiceBank.get(id);
     const startedAt = performance.now();
-    const length = clip ? clip.buffer.duration : 0.15;
+    // With no audio a held sound is as long, silent, as it would have sounded.
+    const length = clip ? clip.buffer.duration : mode === 'hold' ? heldMs / 1000 : 0.15;
     const u: Utterance = {
       id,
       line,
@@ -180,7 +174,7 @@ class Bus {
       speaker: line?.speaker ?? '',
       priority: 'instruction',
       startedAt,
-      duration: loops ? maxMs / 1000 : length,
+      duration: length,
       time: () => (performance.now() - startedAt) / 1000,
     };
     let released = false;
@@ -192,9 +186,9 @@ class Bus {
     };
     this.current = { u, playback: { stop: release }, done: () => undefined };
     this.begin(u);
-    // A once sound ends by itself (a backstop in case the audio never ends); a held one at `maxMs` at the latest.
-    if (!loops && ended) void ended.then(release);
-    setTimeout(release, loops ? maxMs : length * 1000 + (ended ? 1500 : 0));
+    // It ends by itself (a backstop in case the audio never ends).
+    if (ended) void ended.then(release);
+    setTimeout(release, length * 1000 + (ended ? 1500 : 0));
     return { id, release, get playing() { return !released; } };
   }
 

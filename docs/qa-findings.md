@@ -24,7 +24,7 @@ fixed), **Matt** (a design call, with the hunt's recommendation), or **won't fix
 the reason). A hunt reads this first and does not re-report what is here. The checker
 that finds most of these is `tests/qa/` (README, "The bug-hunt checker").
 
-## Hunt 1 (item 039, 2026-10-19 to 20)
+## Hunt 1 (2026-10-19 to 20)
 
 Fifteen scenarios of whole episodes (seeds, every fight style, every dad form as the
 ally, no ally, the word machine, wrong answers everywhere, dad lock, seeded progress,
@@ -117,7 +117,7 @@ Most important first; the hunt's pick is in **bold**. Matt ruled (b) on all six 
 | W9 | Word machine | Standing on a used tile, she shows through it. The intro line ("This is the word machine...") puts the box over the tiles, and after the last word about 3 s pass with no line (celebration, bag, fade). | The tile is over her on purpose, so its letter is never hidden; the intro is about the machine, the tiles are not yet hers to pick; the last 3 s are full of effects. |
 | W10 | Dad lock | While locked, the bedroom still wakes her by itself after 6 s, the journey map still moves on after 2 s, and the green dot still shows over things in reach. | Item 038 asks only that her presses do nothing and re-prompts wait ("nothing else changes while locked"); if Matt wants the lock to pause the whole flow, those three are the places. |
 
-## Hunt 2 (item 069, 2026-10-21)
+## Hunt 2 (2026-10-21)
 
 The checker's third batch (`QA_SET=new`: a busy child pressing blue, red and yellow all
 episode, `DIFFICULTY` 2 and 3 on seeded progress, Charge and the bridge answered right,
@@ -192,7 +192,7 @@ Most important first; the hunt's pick is in **bold**. Matt took every pick (item
 | W14 | Battle, free play | Free play's jump puffs and big-shot rings started just before a choice hang faintly through it. | Same as W8: a faint effect for one choice. |
 | W15 | Word machine | The capital Y in Comic Sans looks like a lower-case y. | It is the font's capital Y; the game's letters are all capitals. |
 
-## Hunt 3 (item 080, 2026-10-21)
+## Hunt 3 (2026-10-21)
 
 The lenses the first two hunts never ran, as the checker's fourth batch (`QA_SET=lenses`,
 README, "The bug-hunt checker"): reloading at five points, a tab hidden every 9 s, six
@@ -243,7 +243,7 @@ everybody!" with no verb (M18); `tests/unit/qacategories.test.ts`.
 | W17 | Network | With one fetch in seven failing, two lines in an episode played silent (their clip's fetch failed again when asked). | Every art id and nearly every clip retried in; the game needs no network (README, *Operational facts*). |
 | W18 | Reload | The rotations remember an episode's cast and rooms from the bedroom on, so an episode reloaded early still counts as seen for the next draws. | By design (`src/episode/draws.ts`): an episode she has begun has shown its villain and rooms. |
 
-## Language pass (item 087, 2026-10-21)
+## Language pass (2026-10-21)
 
 Every line changed or added by the pass, old → new, for Matt to skim. `nar_*_<key>` is a
 narrator template (the same text in all fifteen narrators' voices); `wake_*_<key>` both
@@ -544,7 +544,7 @@ change.
 | `nar_*_fight_cook_off_retreat` | Their dish was too yummy! Let's go and practice! | Their dish was too yummy! Let's go home and practice! |
 | `nar_*_fight_cook_off_finish` | Now let's add the topping, all together! | Let's add the topping, all together now! |
 
-## Hunt 4 (item 089, 2026-10-21)
+## Hunt 4 (2026-10-21)
 
 Cut short at Matt's word (wrap up so items 090 and 091 can run; another hunt follows).
 One round: seven scenarios of the main batch at clock speed 5, reviewed shot by shot, and

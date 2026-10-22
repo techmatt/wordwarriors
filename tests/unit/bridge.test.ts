@@ -44,7 +44,7 @@ function clip(...parts: [kind: 'quiet' | 'noise' | 'tone', s: number, amp?: numb
 const sec = (samples: number) => samples / RATE;
 const near = (a: number, b: number, tol = 0.025) => assert.ok(Math.abs(a - b) <= tol, `${a.toFixed(3)} is not within ${tol} of ${b}`);
 
-test('held sounds: a hiss before a vowel ("Suh") holds the hiss only, looping inside it', () => {
+test('held sounds: a hiss before a vowel ("Suh") holds the hiss only, stretching it', () => {
   const x = clip(['quiet', 0.25], ['noise', 0.18, 0.08], ['tone', 0.3, 0.5, 160], ['quiet', 0.2]);
   const p = holdPlan(x, RATE, 'hold');
   assert.equal(p.mode, 'hold');
@@ -78,20 +78,16 @@ test('held sounds: a stop plays once with no "uh"; a voiced stop keeps its first
   const x = holdPlan(clip(['quiet', 0.25], ['noise', 0.06, 0.1], ['tone', 0.25, 0.5, 160], ['noise', 0.2, 0.1], ['quiet', 0.2]), RATE, 'once');
   assert.ok(x.tail, 'X has its final hiss');
   near(sec(x.tail![0]), 0.56);
-  const { data } = holdSamples(clip(['quiet', 0.25], ['noise', 0.06, 0.1], ['tone', 0.25, 0.5, 160], ['noise', 0.2, 0.1], ['quiet', 0.2]), x, RATE);
+  const data = holdSamples(clip(['quiet', 0.25], ['noise', 0.06, 0.1], ['tone', 0.25, 0.5, 160], ['noise', 0.2, 0.1], ['quiet', 0.2]), x, RATE);
   assert.equal(data.length, x.end - x.start + x.tail![1] - x.tail![0]);
 });
 
-test('held sounds: the loop seam runs on smoothly, and the samples start from silence', () => {
+test('held sounds: played once, starting and ending in silence', () => {
   const x = clip(['quiet', 0.2], ['tone', 0.4, 0.3, 120], ['quiet', 0.1]);
   const p = holdPlan(x, RATE, 'hold');
-  const { data, loopStart } = holdSamples(x, p, RATE);
-  assert.ok(loopStart !== null && loopStart > 0 && loopStart < data.length);
-  // The last sample flows into the loop's first: the crossfaded tail is the sound just before it.
-  const jump = Math.abs(data[data.length - 1]! - data[loopStart!]!);
-  const step = Math.max(...Array.from({ length: 200 }, (_, i) => Math.abs(x[p.start + 500 + i + 1]! - x[p.start + 500 + i]!)));
-  assert.ok(jump <= step * 1.5, `the seam jumps ${jump.toFixed(4)} (a step is ${step.toFixed(4)})`);
+  const data = holdSamples(x, p, RATE);
   assert.ok(Math.abs(data[0]!) < 0.01, 'fades in');
+  assert.ok(Math.abs(data[data.length - 1]!) < 0.01, 'fades out');
   // A sound that is all silence plays as it is.
   assert.deepEqual(holdPlan(new Float32Array(4800), RATE, 'hold'), { mode: 'hold', start: 0, end: 4800 });
 });

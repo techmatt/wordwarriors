@@ -191,8 +191,6 @@ const ALIGN_S = 0.012;
 const DRIFT = 0.3;
 /** A stretched sound's own fade-out, so it ends "mmmm" and not cut off. */
 const END_FADE_S = 0.2;
-/** The silence a held clip ends on, which VoiceBus "loops" until it lets go. */
-const REST_S = 0.1;
 
 /**
  * Item 058: the held part, stretched to `n` samples by overlap-add (WSOLA).
@@ -246,17 +244,16 @@ function stretch(x: Float32Array, lo: number, hi: number, n: number, half: numbe
 }
 
 /**
- * The samples to play for a plan, and where a held one loops back to (an
- * index into them). A once clip fades out over its last FADE_OUT_S, and joins
- * its tail. A held clip (item 058) is its attack, then its steady part
- * stretched smoothly (`stretch`) to `heldMs` in all (BRIDGE.stretchMs in the
- * game, HELD_MS by default), fading out, then
- * REST_S of silence, which is its loop: so it sounds once, one short "mmm",
- * and is quiet until it is let go. (054 looped the steady part itself, and
- * that is 70-300 ms on every clip, placeholders and recordings alike: M's
- * 110 ms loop was a stutter of "m"s, nine a second.)
+ * The samples to play for a plan, played once. A once clip fades out over its
+ * last FADE_OUT_S, and joins its tail. A held clip (item 058) is its attack,
+ * then its steady part stretched smoothly (`stretch`) to `heldMs` in all
+ * (BRIDGE.stretchMs in the game, HELD_MS by default), fading out: one short
+ * "mmm". Nothing loops (item 090: 085 ended it on a silence VoiceBus looped
+ * until she let go, and the release at `heldMs` came about when that loop
+ * would start; 054 looped the steady part itself, and that is 70-300 ms on
+ * every clip: M's 110 ms loop was a stutter of "m"s, nine a second).
  */
-export function holdSamples(x: Float32Array, plan: HoldPlan, rate: number, heldMs = HELD_MS): { data: Float32Array<ArrayBuffer>; loopStart: number | null } {
+export function holdSamples(x: Float32Array, plan: HoldPlan, rate: number, heldMs = HELD_MS): Float32Array<ArrayBuffer> {
   if (plan.mode === 'hold' && plan.steadyStart !== undefined) return heldSamples(x, plan, rate, plan.steadyStart, heldMs);
   const parts: [number, number][] = [[plan.start, plan.end], ...(plan.tail ? [plan.tail] : [])];
   const len = parts.reduce((n, [a, b]) => n + Math.max(0, b - a), 0);
@@ -273,11 +270,11 @@ export function holdSamples(x: Float32Array, plan: HoldPlan, rate: number, heldM
     }
     o += b - a;
   }
-  return { data, loopStart: null };
+  return data;
 }
 
-/** A held clip: attack, the steady part stretched to `heldMs` in all, a fade, then silence (its loop). */
-function heldSamples(x: Float32Array, plan: HoldPlan, rate: number, steadyStart: number, heldMs: number): { data: Float32Array<ArrayBuffer>; loopStart: number } {
+/** A held clip: attack, the steady part stretched to `heldMs` in all, and a fade. */
+function heldSamples(x: Float32Array, plan: HoldPlan, rate: number, steadyStart: number, heldMs: number): Float32Array<ArrayBuffer> {
   const { start, end } = plan;
   let half = Math.round((GRAIN_S * rate) / 2);
   // The attack (up to the steady part) as it is, crossfading into the first
@@ -290,8 +287,7 @@ function heldSamples(x: Float32Array, plan: HoldPlan, rate: number, steadyStart:
   const at = lo - start;
   // Never shorter than the attack and one grain, whatever the knob says.
   const total = Math.max(at + 2 * half, Math.round((heldMs / 1000) * rate));
-  const rest = Math.max(1, Math.round(REST_S * rate));
-  const data = new Float32Array(total + rest);
+  const data = new Float32Array(total);
   const body = stretch(x, lo, end, Math.max(0, total - at), half, rate);
   data.set(body.subarray(0, total - at), at);
   for (let i = 0; i < steadyStart - lo && lo > start; i++) {
@@ -304,5 +300,5 @@ function heldSamples(x: Float32Array, plan: HoldPlan, rate: number, steadyStart:
   for (let i = 0; i < fi; i++) data[i]! *= i / fi;
   const fo = Math.min(Math.round(END_FADE_S * rate), Math.floor(total / 2));
   for (let i = 0; i < fo; i++) data[total - 1 - i]! *= 0.5 - 0.5 * Math.cos((Math.PI * i) / fo);
-  return { data, loopStart: total };
+  return data;
 }

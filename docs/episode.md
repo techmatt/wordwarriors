@@ -351,7 +351,7 @@ the hall can ask for; item 085), `prep=sound,blend` (the parked prep games: `sou
 `qa=1`) are in the README: *Speed, GPU and workers*, *The bug-hunt checker* and, for
 `hooks=1`, *Operational facts*.
 
-## Difficulty and variety (item 067)
+## Difficulty and variety
 
 Matt's ruling: **no automatic difficulty**. Every help ramp still records her level
 (the warm-up's `grabLevels`, the bridge's `bridgeLevels`, and frames' and words' first

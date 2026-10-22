@@ -266,8 +266,8 @@ export class VoiceBank {
 
   /**
    * A letter sound cut for the Stretchy Bridge (item 054, src/audio/holdSound.ts):
-   * held (its steady part stretched once to `heldMs`, then a short silence;
-   * `loopStart` is where that silence starts, in seconds) or once (no schwa).
+   * held (its steady part stretched once to `heldMs`) or once (no schwa);
+   * either plays once, nothing loops (item 090).
    * Worked out from the decoded clip the first time, and again if the clip is
    * decoded anew, so a recording that replaces a placeholder is cut
    * by its own shape. A held sound is `heldMs` long in all (the bridge
@@ -284,10 +284,10 @@ export class VoiceBank {
     if (done) return done;
     const x = buffer.getChannelData(0);
     const plan = holdPlan(x, buffer.sampleRate, mode);
-    const { data, loopStart } = holdSamples(x, plan, buffer.sampleRate, heldMs);
+    const data = holdSamples(x, plan, buffer.sampleRate, heldMs);
     const out = ctx.createBuffer(1, data.length, buffer.sampleRate);
     out.copyToChannel(data, 0);
-    const clip: HeldClip = { buffer: out, loopStart: loopStart === null ? null : loopStart / buffer.sampleRate };
+    const clip: HeldClip = { buffer: out };
     cuts[key] = clip;
     return clip;
   }
@@ -311,8 +311,6 @@ export class VoiceBank {
 /** A letter sound cut to hold or play once (`VoiceBank.held`). */
 export interface HeldClip {
   buffer: AudioBuffer;
-  /** Where a held clip loops back to, in seconds; null for a once clip. */
-  loopStart: number | null;
 }
 
 export class VoicePlayback {

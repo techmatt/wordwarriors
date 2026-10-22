@@ -7,15 +7,12 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { MINIONS } from '../../content/battle/roster';
-import type { AbilityKind, Status } from '../../content/battle/types';
+import { ABILITY_KINDS, type Status } from '../../content/battle/types';
 import { BANK, BANK_BY_WORD } from '../../content/phonics/bank';
 import { EFFECTS, EFFECT_BY_WORD } from '../../content/phonics/effects';
 
-// Every key of CASTS in src/battle/abilities.ts (which needs Phaser, so it is listed here).
-const KINDS: AbilityKind[] = [
-  'bolt', 'beam', 'cone', 'lightning', 'slam', 'spin', 'dash', 'summon', 'polymorph', 'freeze', 'teleport',
-  'clones', 'trap', 'rain', 'shield', 'heal', 'grow', 'coil', 'eclipse', 'wave', 'grid', 'orbit',
-];
+// Every key of CASTS in src/battle/abilities.ts (a Record over the kinds, so it casts each).
+const KINDS: readonly string[] = ABILITY_KINDS;
 const STATUSES: Status[] = ['freeze', 'pig', 'stun', 'burn', 'bubble'];
 
 test('every bank word has exactly one effect, and every effect is a bank word', () => {

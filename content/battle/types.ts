@@ -32,30 +32,33 @@ export type MoveStyle =
 /**
  * What an ability does. Every kind is one function in src/battle/abilities.ts,
  * parameterised by the fields on AbilitySpec, so most new abilities are data.
+ * The list is the kinds' one home: `AbilityKind` derives from it, the tests read it.
  */
-export type AbilityKind =
-  | 'bolt' // projectiles at a target (count, spread, glyph, homing)
-  | 'beam' // a sustained ray from caster to target
-  | 'cone' // a breath of particles (fire, frost, sand)
-  | 'lightning' // jagged strikes from the sky onto targets
-  | 'slam' // ground pound around self, or leap onto the target and slam
-  | 'spin' // twirl through several enemies in a row
-  | 'dash' // a straight charge through the target
-  | 'summon' // spawn minions
-  | 'polymorph' // turn a target into a pig for a while
-  | 'freeze' // encase a target in ice for a while
-  | 'teleport' // blink beside the target and strike, leaving afterimages
-  | 'clones' // decoy copies of the caster
-  | 'trap' // lay traps (cards, runes) that burst when an enemy comes near
-  | 'rain' // many things falling from the top of the screen
-  | 'shield' // a bubble on self and friends
-  | 'heal' // sparkles that top up friends
-  | 'grow' // become huge for a while
-  | 'coil' // a ring of serpent body squeezing the arena
-  | 'eclipse' // the sky goes dark; the sun is swallowed
-  | 'wave' // a wall sweeping across the arena
-  | 'grid' // a lattice of lasers across the arena
-  | 'orbit'; // things (Ellie's swords) circle the caster, hitting what they pass, then fly at the enemy
+export const ABILITY_KINDS = [
+  'bolt', // projectiles at a target (count, spread, glyph, homing)
+  'beam', // a sustained ray from caster to target
+  'cone', // a breath of particles (fire, frost, sand)
+  'lightning', // jagged strikes from the sky onto targets
+  'slam', // ground pound around self, or leap onto the target and slam
+  'spin', // twirl through several enemies in a row
+  'dash', // a straight charge through the target
+  'summon', // spawn minions
+  'polymorph', // turn a target into a pig for a while
+  'freeze', // encase a target in ice for a while
+  'teleport', // blink beside the target and strike, leaving afterimages
+  'clones', // decoy copies of the caster
+  'trap', // lay traps (cards, runes) that burst when an enemy comes near
+  'rain', // many things falling from the top of the screen
+  'shield', // a bubble on self and friends
+  'heal', // sparkles that top up friends
+  'grow', // become huge for a while
+  'coil', // a ring of serpent body squeezing the arena
+  'eclipse', // the sky goes dark; the sun is swallowed
+  'wave', // a wall sweeping across the arena
+  'grid', // a lattice of lasers across the arena
+  'orbit', // things (Ellie's swords) circle the caster, hitting what they pass, then fly at the enemy
+] as const;
+export type AbilityKind = (typeof ABILITY_KINDS)[number];
 
 /** `bubble`: caught in a giant bubble that floats up and away, then pops and drops it. */
 export type Status = 'freeze' | 'pig' | 'stun' | 'burn' | 'bubble';

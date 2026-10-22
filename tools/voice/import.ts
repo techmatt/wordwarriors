@@ -27,7 +27,7 @@ import { holdPlan, holdSamples } from '../../src/audio/holdSound.js';
 import { readLines, runMain } from '../shared.js';
 import { mp3Bytes, readWav, wavBytes } from './audio.js';
 import { CLIP_DIR, CLIP_INDEX, clipRecord, dropUnused, installClip, readClipIndex, type ClipIndex } from './clips.js';
-import { MIN_LOOP_S, countReason, finish, highpass, rankRepeats, splitTake, type Cut, type Entry, type TakeSplit } from './split.js';
+import { MIN_STEADY_S, countReason, finish, highpass, rankRepeats, splitTake, type Cut, type Entry, type TakeSplit } from './split.js';
 import type { LineSpec } from './types.js';
 
 const FORMATS = ['phonics-recorder/1', 'phonics-recorder/2'];
@@ -38,8 +38,6 @@ const ALSO = { k: ['ck'] } as Record<string, string[]>;
 const REVIEW_DIR = path.join('scratch', 'voice-import');
 const REVIEW = path.join(REVIEW_DIR, 'review.html');
 const REVIEW_AUDIO = path.join(REVIEW_DIR, 'review');
-/** How long the review's bridge preview holds a held sound. */
-const PREVIEW_S = 1.5;
 
 interface Manifest {
   format: string;
@@ -83,16 +81,16 @@ export interface HoldCheck {
   mode: 'hold' | 'once';
   asked: 'hold' | 'once';
   playedS: number;
-  loopS?: number;
+  steadyS?: number;
   ok: boolean;
 }
 
-/** What the bridge makes of a clip: a held sound needs a loop of MIN_LOOP_S or more. */
+/** What the bridge makes of a clip: a held sound needs a steady part of MIN_STEADY_S or more. */
 export function holdCheck(x: Float32Array, rate: number, asked: 'hold' | 'once'): HoldCheck {
   const p = holdPlan(x, rate, asked);
-  const loopS = p.steadyStart === undefined ? undefined : (p.end - p.steadyStart) / rate;
-  const ok = asked === 'once' ? p.mode === 'once' : p.mode === 'hold' && (loopS ?? 0) >= MIN_LOOP_S;
-  return { mode: p.mode, asked, playedS: (p.end - p.start) / rate, ...(loopS === undefined ? {} : { loopS }), ok };
+  const steadyS = p.steadyStart === undefined ? undefined : (p.end - p.steadyStart) / rate;
+  const ok = asked === 'once' ? p.mode === 'once' : p.mode === 'hold' && (steadyS ?? 0) >= MIN_STEADY_S;
+  return { mode: p.mode, asked, playedS: (p.end - p.start) / rate, ...(steadyS === undefined ? {} : { steadyS }), ok };
 }
 
 interface Clip {
@@ -105,7 +103,7 @@ interface Clip {
   hold?: HoldCheck;
   distance?: number;
   picked?: boolean;
-  /** For the review: the bridge's cut, looped. */
+  /** For the review: the bridge's cut, as it plays. */
   preview?: Float32Array;
 }
 
@@ -124,18 +122,9 @@ interface TakeResult {
 
 const cardOf = (group: string) => Number(group.replace(/\D/g, '')) || 0;
 
+/** The bridge's cut, as the bridge plays it: once (item 090: nothing loops). */
 function preview(x: Float32Array, rate: number, mode: 'hold' | 'once'): Float32Array {
-  const { data, loopStart } = holdSamples(x, holdPlan(x, rate, mode), rate);
-  if (loopStart === null) return data;
-  const n = Math.round(PREVIEW_S * rate);
-  const out = new Float32Array(n);
-  for (let k = 0, j = 0; k < n; k++, j++) {
-    if (j >= data.length) j = loopStart;
-    out[k] = data[j]!;
-  }
-  const fade = Math.round(0.04 * rate);
-  for (let k = 0; k < fade; k++) out[n - 1 - k]! *= k / fade;
-  return out;
+  return holdSamples(x, holdPlan(x, rate, mode), rate);
 }
 
 export function processTake(group: string, raw: Float32Array, rate: number, entries: Entry[], lineIds: Set<string>): TakeResult {
@@ -179,9 +168,9 @@ export function processTake(group: string, raw: Float32Array, rate: number, entr
       targets.push(word.id);
     } else res.notes.push(`card ${card}: the game has no word ${e.word.toUpperCase()}, so its word clip is not used`);
     if (pick === undefined) {
-      const best = Math.max(...repeats.map((r) => r.hold!.loopS ?? 0));
+      const best = Math.max(...repeats.map((r) => r.hold!.steadyS ?? 0));
       res.notes.push(
-        `card ${card}: no repeat of ${e.sound.toUpperCase()} holds on the bridge (its longest loop is ${best.toFixed(2)} s, it needs ${MIN_LOOP_S} s): the sound is skipped; re-record it stretched, half a second or so of the sound itself`,
+        `card ${card}: no repeat of ${e.sound.toUpperCase()} holds on the bridge (its longest steady part is ${best.toFixed(2)} s, it needs ${MIN_STEADY_S} s): the sound is skipped; re-record it stretched, half a second or so of the sound itself`,
       );
     } else {
       const r = repeats[pick]!;
@@ -274,7 +263,7 @@ async function writeReview(zip: string, manifest: Manifest, recorder: string, re
     '<style>body{font:14px system-ui;background:#1b1b1f;color:#ddd;margin:24px;max-width:1150px}h2{margin-top:36px}table{border-collapse:collapse;margin:8px 0}td,th{padding:4px 10px;border-bottom:1px solid #333;text-align:left;vertical-align:middle}code{color:#93c5fd}.pick{background:#14532d55}.bad{color:#f87171}.ok{color:#4ade80}.note{color:#999;font-size:12px}audio{height:30px}</style>',
     `<h1>Voice import review: ${esc(path.basename(zip))}</h1>`,
     `<p>Recorded by ${esc(recorder)}. ${dry ? '<b>Dry run</b>: nothing was installed.' : 'Clips marked with a target id were installed into <code>content/voice/clips/</code>.'}</p>`,
-    '<p class=note>Each card: its envelope (20 ms RMS in dB, after an 80 Hz high-pass) with each cut shaded, the detection threshold and the floor. Then each entry: the word clip and the three sound repeats, each with what the Stretchy Bridge makes of it (src/audio/holdSound.ts) and a <b>bridge</b> preview: a held sound looped to 1.5 s, a short one as the bridge plays it. The picked repeat is green. Clips are trimmed, faded, normalised to -17 dBFS RMS (peak at most -1 dBFS) and padded with 30 ms of silence.</p>',
+    '<p class=note>Each card: its envelope (20 ms RMS in dB, after an 80 Hz high-pass) with each cut shaded, the detection threshold and the floor. Then each entry: the word clip and the three sound repeats, each with what the Stretchy Bridge makes of it (src/audio/holdSound.ts) and a <b>bridge</b> preview: the cut as the bridge plays it, once. The picked repeat is green. Clips are trimmed, faded, normalised to -17 dBFS RMS (peak at most -1 dBFS) and padded with 30 ms of silence.</p>',
     `<p class=note>Cards missing from this zip: ${esc((manifest.missing ?? []).join(', ') || 'none')}.</p>`,
   ];
   for (const t of results) {
@@ -295,7 +284,7 @@ async function writeReview(zip: string, manifest: Manifest, recorder: string, re
       h.push(`<tr><td>${w.id ? `<code>${w.id}</code>` : '<span class=note>not in the game</span>'}</td><td>${await audio(`${t.group}_${e.entry.word}`, w.data, t.rate)}</td><td>${w.seconds.toFixed(2)} s</td><td>${w.gainDb >= 0 ? '+' : ''}${w.gainDb.toFixed(1)} dB</td><td></td><td></td></tr>`);
       for (const r of e.repeats) {
         const hd = r.hold!;
-        const desc = `${hd.mode}, plays ${hd.playedS.toFixed(2)} s${hd.loopS === undefined ? '' : `, loops ${hd.loopS.toFixed(2)} s`} <span class=${hd.ok ? 'ok' : 'bad'}>${hd.ok ? 'ok' : 'fails'}</span>`;
+        const desc = `${hd.mode}, plays ${hd.playedS.toFixed(2)} s${hd.steadyS === undefined ? '' : `, steady ${hd.steadyS.toFixed(2)} s`} <span class=${hd.ok ? 'ok' : 'bad'}>${hd.ok ? 'ok' : 'fails'}</span>`;
         const tag = r.picked ? `<code>${e.targets.filter((id) => id !== w.id).join('</code>, <code>')}</code> ← picked` : `<span class=note>${esc(r.label)}</span>`;
         const file = `${t.group}_${e.entry.sound}_${r.label.split(' ')[1]}`;
         h.push(

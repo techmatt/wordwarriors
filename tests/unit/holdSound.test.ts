@@ -2,7 +2,7 @@
  * Held letter sounds, as played (item 058, src/audio/holdSound.ts): standing
  * on a Stretchy Bridge stone, a sound you can hold is one short natural
  * stretch of BRIDGE.stretchMs (item 085: 0.6 s, was 1.3 s), then quiet, never
- * repeated; a stop plays once. 054 looped the clip's steady part, and
+ * repeated, nothing looped (item 090); a stop plays once. 054 looped the clip's steady part, and
  * on every real clip that part is 70-300 ms (M's was 110 ms), so the loop was
  * a fast stutter of "m"s; these tests would have caught it. (The cuts
  * themselves are tested in bridge.test.ts.)
@@ -56,15 +56,13 @@ const CASES: [string, Float32Array][] = [
 ];
 
 for (const [name, x] of CASES) {
-  test(`held ${name}: one smooth sound of BRIDGE.stretchMs, then quiet, never a short loop`, () => {
+  test(`held ${name}: one smooth sound of BRIDGE.stretchMs, played once`, () => {
     const plan = holdPlan(x, RATE, 'hold');
     assert.equal(plan.mode, 'hold', name);
-    const { data, loopStart } = holdSamples(x, plan, RATE, BRIDGE.stretchMs);
+    const data = holdSamples(x, plan, RATE, BRIDGE.stretchMs);
     const sound = Math.round((BRIDGE.stretchMs / 1000) * RATE);
-    // It sounds for BRIDGE.stretchMs; whatever loops (if anything does) is silence.
-    assert.equal(loopStart, sound, `${name}: the loop starts where the sound ends`);
-    assert.ok(data.length > sound);
-    for (let i = sound; i < data.length; i++) assert.equal(data[i], 0, `${name}: the loop is silent`);
+    // It is BRIDGE.stretchMs long, nothing after it to loop.
+    assert.equal(data.length, sound, `${name}: the clip is the stretch`);
     const env = envelope(data, Math.round(0.03 * RATE), sound - Math.round(0.25 * RATE));
     assert.ok(env.length >= 10, `${name}: ${env.length} frames of held sound`);
     // Smooth: no beat of dips and swells (a loop's seam), the level steady.
@@ -80,7 +78,7 @@ for (const [name, x] of CASES) {
 test('held: the attack plays as it is, joining the stretch with no click', () => {
   const x = CASES[0]![1];
   const plan = holdPlan(x, RATE, 'hold');
-  const { data } = holdSamples(x, plan, RATE);
+  const data = holdSamples(x, plan, RATE);
   // Past the fade-in, up to the join, the samples are the clip's.
   for (let i = Math.round(0.005 * RATE); i < Math.round(0.015 * RATE); i++) assert.equal(data[i], x[plan.start + i]);
   // No sample jumps by more than the clip's own largest step (with room for the level evening).
@@ -92,8 +90,7 @@ test('held: the attack plays as it is, joining the stretch with no click', () =>
 test('once sounds are unchanged: played once, nothing looped, no stretch', () => {
   const t = clip(['quiet', 0.25], ['noise', 0.07, 0.1], ['hum', 0.3, 0.5, 160], ['quiet', 0.2]);
   const plan = holdPlan(t, RATE, 'once');
-  const { data, loopStart } = holdSamples(t, plan, RATE);
-  assert.equal(loopStart, null);
+  const data = holdSamples(t, plan, RATE);
   assert.equal(data.length, plan.end - plan.start);
 });
 
@@ -104,8 +101,8 @@ test('the stretch is the BRIDGE.stretchMs knob (item 085): the default matches i
   assert.ok(BRIDGE.stretchMs >= 300 && BRIDGE.stretchMs <= 900, `${BRIDGE.stretchMs} ms`);
   const x = CASES[0]![1];
   const plan = holdPlan(x, RATE, 'hold');
-  for (const ms of [400, 600, 1000]) assert.equal(holdSamples(x, plan, RATE, ms).loopStart, Math.round((ms / 1000) * RATE), `${ms} ms`);
+  for (const ms of [400, 600, 1000]) assert.equal(holdSamples(x, plan, RATE, ms).length, Math.round((ms / 1000) * RATE), `${ms} ms`);
   // A knob shorter than the attack still plays the attack and a grain, never a negative stretch.
   const tiny = holdSamples(x, plan, RATE, 1);
-  assert.ok(tiny.loopStart! > 0 && tiny.data.length > tiny.loopStart!);
+  assert.ok(tiny.length > Math.round(0.04 * RATE), `${tiny.length} samples`);
 });

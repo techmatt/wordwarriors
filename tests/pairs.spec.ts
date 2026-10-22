@@ -31,11 +31,8 @@ if (PAIRS.length === 0) {
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/pairs_${name}.png` });
 
-/**
- * Page errors, and voice lines asked for that are not there or do not decode. The
- * art-not-ready check stays off here as it always was (a change of its own).
- */
-const collectProblems = (page: Page): string[] => collectErrors(page, { voice: true, art: false });
+/** Page errors, art drawn before it loaded (on since item 090), and voice lines asked for that are not there or do not decode. */
+const collectProblems = (page: Page): string[] => collectErrors(page, { voice: true });
 
 PAIRS.forEach(([ally, villain], i) => {
   test(`${ally} + ${villain}: bedroom, quest place, both battles and the victory scene`, SLOW, async ({ page }) => {

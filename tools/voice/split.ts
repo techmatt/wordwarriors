@@ -53,8 +53,8 @@ const FINISH = {
   padS: 0.03,
 } as const;
 
-/** A held sound's loop must be this long for the bridge (its seam crossfade is 25 ms each side). */
-export const MIN_LOOP_S = 0.1;
+/** A held sound's steady part must be this long for the bridge to stretch it (a few of its 40 ms grains). */
+export const MIN_STEADY_S = 0.1;
 
 export interface Entry {
   sound: string;

@@ -345,7 +345,7 @@ base commit's code; the server no longer reloads under edits), run it from a sec
 junctions (`cmd /c rmdir <path>`) before `git worktree remove --force`, so nothing is
 deleted through them.
 
-### The bug-hunt checker (item 039)
+### The bug-hunt checker
 
 `QA_TAG=<tag> npm run qa` plays whole episodes at
 clock speed 5 across casts, dads' forms, places, all five fight styles, the word machine,
@@ -470,7 +470,7 @@ npm run art:placeholders  # paint missing art, rewrite docs/art.md
 `npm run voice:status` lists every line as recorded, stale (the text changed since the
 recording) or still edge-tts, letter sounds first (`docs/recording.md`).
 
-### Matt's recordings: the phonics recorder and `voice:import` (item 057)
+### Matt's recordings: the phonics recorder and `voice:import`
 
 **The recorder** is one self-contained page, `tools/recorder/phonics-recorder.html`: 12
 cards, each three words with their sounds (`docs/recording.md` says how to record). To
@@ -515,7 +515,7 @@ splitter `tools/voice/split.ts`, ported from item 055's prototype):
   `index.json`'s `waiting` map and is moved in by the next import once the line exists;
 - every run writes `scratch/voice-import/review.html` (with its audio in `review/`):
   each card's envelope, cuts, threshold and floor, then every clip with a player, its
-  target id and the bridge's cut of each repeat, looped. `--dry` writes only that.
+  target id and the bridge's cut of each repeat, played once as the bridge plays it. `--dry` writes only that.
 
 Then `npm run voice:build` (no network: recorded lines are copied, not synthesised).
 The recorder counts each take with the importer's own detector (its `detector:begin` /
@@ -536,7 +536,7 @@ louder, so the bridge keeps 0.06 s. L and V now hold. Card 10's KEY replaces car
 (the later card wins); THIS, ACORN, ICE and UNICORN are not game words, so card 11 and
 12 install their sounds only.
 
-### The word bank's coverage rule (item 056)
+### The word bank's coverage rule
 
 The bank covers phonics by rule, not by luck. Counting only familiar pictured words
 (`THINGS`: not `odd`, not actions), `COVERAGE` in `content/phonics/bank.ts` asks for:
