@@ -304,8 +304,13 @@ export abstract class RoomScene extends Phaser.Scene {
     this.fadeOutThen(() => advance(this));
   }
 
-  /** Fading out to leave (`fadeOutThen`): F2 and F9 wait for the next room. */
+  /** Fading out to leave (`fadeOutThen`): F2, F9 and key 0 wait for the next room. */
   private fading = false;
+
+  /** On its way out (`fadeOutThen`): key 0 leaves it be (item 092). */
+  get fadingOut(): boolean {
+    return this.fading;
+  }
 
   /** Fade to black, then (just after the fade ends) `then`: leaving the room. */
   protected fadeOutThen(then: () => void): void {

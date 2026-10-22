@@ -177,9 +177,10 @@ export class Caption {
       // Leave the last line up briefly, so a short line can still be read.
       // Unless a new line has taken the box by then (a bark in a bubble has not).
       const ended = this.current;
-      this.scene.time.delayedCall(250, () => {
+      // Not the scene's clock: the battle's move choice runs it at 0.04x, and the box stayed up 10 s (item 092).
+      window.setTimeout(() => {
         if (this.root.active && this.current === ended && voiceBus.speaking !== ended) this.hide();
-      });
+      }, 250);
       return;
     }
     const mode = this.modeOf(u);
@@ -223,6 +224,17 @@ export class Caption {
     return this.scene.tweens;
   }
 
+  /**
+   * A short tween of the box at its own pace whatever the scene's clock (item 092): the
+   * battle's move choice slows the scene's tweens to 0.04x, so a 160 ms fade took 4 s and a
+   * face card popped in over 6 s. Only for tweens that end; a pulse would race once the clock is back.
+   */
+  private uiTween(config: Phaser.Types.Tweens.TweenBuilderConfig): Phaser.Tweens.Tween {
+    const t = this.tweens().add(config);
+    t.timeScale = 1 / Math.max(0.02, this.tweens().timeScale);
+    return t;
+  }
+
   /** Where the speaker stands: a tracked character, or the bark's anchor. */
   private whereIs(u: Utterance): Where {
     const p = this.trackerOf(u)?.();
@@ -250,7 +262,7 @@ export class Caption {
     this.portrait = { ...p, speaker: s, baseY: 0, name };
     this.root.add(p.root);
     p.root.setScale(0.4);
-    this.tweens().add({ targets: p.root, scale: 1, duration: 260, ease: 'Back.easeOut' });
+    this.uiTween({ targets: p.root, scale: 1, duration: 260, ease: 'Back.easeOut' });
   }
 
   /** A soft light at the feet of a speaker who is standing in the scene. */
@@ -284,7 +296,7 @@ export class Caption {
       this.root.setVisible(false);
       return;
     }
-    this.tweens().add({
+    this.uiTween({
       targets: this.root,
       alpha: 0,
       duration: 160,

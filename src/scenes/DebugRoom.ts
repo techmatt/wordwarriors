@@ -18,6 +18,7 @@ import { startScene } from '../art/gate';
 import { DEBUG_GAMES, DEBUG_ROOMS, beginRun, debugMode, startDebug, stopDebug } from '../episode/debug';
 import { advance, backToHub, currentStep, debugBack } from '../episode/Episode';
 import { popIn } from '../fx/juice';
+import { isLeaving } from '../fx/sceneGen';
 import type { RoomInfo } from '../hookState';
 import { RoomScene, type Spot } from '../world/RoomScene';
 
@@ -108,6 +109,9 @@ export function toggleDebug(game: Phaser.Game): boolean {
   if (switching) return true;
   const scene = game.scene.getScenes(true).find((s) => s instanceof RoomScene && (s.scene.key === 'Debug' || DEBUG_ROOMS.includes(s.scene.key))) as RoomScene | undefined;
   if (!scene) return false;
+  // A room already on its way out (its fade, or a change queued for Phaser's next step) is left be,
+  // as F2 and F9 leave it (item 092): acting on it ran two scene changes, or took the wrong room as the origin.
+  if (scene.fadingOut || isLeaving(scene)) return true;
   voiceBus.hush();
   const go = (key: string, run: () => void) => {
     switching = true;

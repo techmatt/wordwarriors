@@ -383,11 +383,11 @@ In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
   lines that started while locked; `parent_all` opens the grown-ups page at each point
   and checks F9 comes back to the same scene (`parent-return`) and the store did not
   change (`parent-store`); `parent_none` is the same seed with no visits, to compare.
-  Also `qa flags <url>`, 48 URLs and odd values each watched 9 s (`flag-stuck` when one
+  Also `qa flags <url>`, 58 URLs and odd values each watched 9 s (`flag-stuck` when one
   never leaves Boot or Wait; JSON and shots in `flags/`), and `qa devkeys skip` (F2 at
   every step, then an episode played through) and `qa devkeys auto` (F4 and green to the
   recap).
-- **Item 089's batch** (`QA_SET=recent`, items 081-088's changes; not yet swept):
+- **Item 089's batch** (`QA_SET=recent`, items 081-088's changes; first swept in item 092, about 17 minutes):
   `debug_rooms` turns minigame debug mode on at six points (the warm-up, the hub in both
   parts, both side rooms, the attic), plays a game from its pedestal at each (the four in
   turn) and turns it off: the store, the episode and the room must be as they were
@@ -398,7 +398,16 @@ In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
   episodes; `voiceless` plays one with the voice manifest missing (captions only).
   Every scenario also checks the transcript: a narrator line's variants said in turn
   across the run (`variant-repeat`, a look: a variant picked while the voice bus dropped
-  it shows as a gap) and no taunt over twice an episode (`taunt-over-cap`).
+  it shows as a gap; not with debug games in the run, whose sandbox puts the rounds back)
+  and no taunt over twice an episode (`taunt-over-cap`).
+- **Item 092's additions:** a store change names its fields (`wordwarriors.progress
+  words.box`; a room started again after key 0 or F9 says its opening line's next
+  variant, `debug-restart-line`, a look); the overlaps already ruled on (W5, W12, W21) are
+  `target-covered-ruled`, a look; `voiceless` really runs with no manifest (its 404 goes in
+  before boot) and its silent lines are the point; ten more URL flags (`scene=theend`,
+  `grab=`, `battle=`, `cast=`, `games=`). A move choice whose pad never takes green stops
+  the run naming her position, the pads and the running scenes (M20 in
+  `docs/qa-findings.md`).
 - **A busy machine slows the sweep's own server:** with many agents or a typecheck
   running beside it, voice fetches from the checker's Vite server passed their 15 s
   timeout (`voice: could not decode ... AbortError` in the log) and lines played silent.

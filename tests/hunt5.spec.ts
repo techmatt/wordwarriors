@@ -9,7 +9,7 @@ import { BANK } from '../content/phonics/bank';
 import { FAMILIES } from '../content/phonics/families';
 import { FRAMES } from '../content/phonics/sentences';
 import { RUNE_SOUNDS } from '../src/rules/charge';
-import { SLOW, boot, collectErrors, expectNoErrors, press, seedProgress, state, toTheEnd, until } from './harness';
+import { SLOW, boot, choose, collectErrors, expectNoErrors, press, seedProgress, state, texts, toTheEnd, until } from './harness';
 import { layoutIssues } from './qa/checks';
 import { qaLayout } from './qa/probe';
 
@@ -142,5 +142,65 @@ test('a returning player with everything maxed: the grown-ups page fits both pag
   await until(page, (s) => s.scene === 'Title', 60_000, 'the title');
   await press(page, 'green');
   await until(page, (s) => s.scene === 'Bedroom', 30_000, 'the bedroom');
+  expectNoErrors(errors);
+});
+
+/** A busy child's green, ten presses 60 ms apart, right after a choice. */
+async function mashGreen(page: Page): Promise<void> {
+  for (let i = 0; i < 10; i++) {
+    await press(page, 'green');
+    await page.waitForTimeout(60);
+  }
+}
+
+test('green mashed after each choice: the bedroom door, the warm-up grab and its door, a hub door each count once', SLOW, async ({ page }) => {
+  test.setTimeout(150_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=bedroom&nojourney=1');
+  await until(page, (s) => s.scene === 'Bedroom' && s.room?.round === 'bedroom:door' && !s.room.locked, 90_000, 'bedroom door open');
+  const start = (await state(page)).episode.stepIndex;
+  await choose(page, 'door');
+  await mashGreen(page);
+  const ask = await until(page, (s) => s.scene === 'Entry' && s.room?.round === 'entry:find' && !s.room.locked, 90_000, 'warm-up clue');
+  expect(ask.episode.stepIndex, 'one step on from the bedroom').toBe(start + 1);
+  const word = ask.room!.grab!.word;
+  await choose(page, `grab_${word}`);
+  await mashGreen(page);
+  const door = await until(page, (s) => s.scene === 'Entry' && s.room?.round === 'entry:door' && !s.room.locked, 60_000, 'front door open');
+  expect(door.episode.fetched.filter((w) => w === word), 'the warm-up word fetched once').toEqual([word]);
+  expect(door.room!.grab!.misses, 'no miss from the mashing').toBe(0);
+  await choose(page, 'door');
+  await mashGreen(page);
+  const hub = await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:circle', 90_000, 'the circle');
+  expect(hub.episode.stepIndex, 'one step on from the warm-up').toBe(start + 2);
+  await choose(page, 'circle');
+  await mashGreen(page);
+  await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:doors' && !s.room.locked, 90_000, 'the doors');
+  await choose(page, 'door_a');
+  await mashGreen(page);
+  const room = await until(page, (s) => s.scene !== 'Hub' && s.scene !== 'Wait' && Boolean(s.room?.player), 30_000, 'side room a');
+  expect(room.episode.house.done, 'no room done yet').toEqual([]);
+  expect(room.episode.stepIndex, 'still house part 1').toBe(start + 2);
+  expectNoErrors(errors);
+});
+
+test("the move choice's caption clears as its line ends, and the stick hint's nub sways (item 092: both ran on the frozen fight's clock)", async ({ page }) => {
+  test.setTimeout(90_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=battle&battle=short&nojourney=1');
+  const caption = async () => (await texts(page)).some((t) => t.scene === 'Battle' && /^USE\b/.test(t.text));
+  await until(page, (s) => Boolean(s.battle?.choice) && /_use_move_[a-z]+$/.test(s.voice.speaking ?? ''), 60_000, 'the USE prompt');
+  expect(await caption(), 'the prompt captioned').toBe(true);
+  await until(page, (s) => Boolean(s.battle?.choice?.open) && !s.voice.busy, 30_000, 'the prompt said');
+  // The box lingers 250 ms and fades in 160 ms; on the frozen clock it stayed up about 10 s.
+  await expect.poll(caption, { timeout: 1_000, intervals: [100] }).toBe(false);
+  // Standing still brings the stick hint; its nub sways 28 px each way-and-back in 900 ms.
+  await until(page, (s) => s.battle?.choice?.stickNub != null, 30_000, 'the stick hint');
+  const at: number[] = [];
+  for (let i = 0; i < 6; i++) {
+    at.push((await state(page)).battle!.choice!.stickNub!);
+    await page.waitForTimeout(40);
+  }
+  expect(Math.max(...at) - Math.min(...at), `the nub at ${at.map((x) => x.toFixed(1)).join(', ')}`).toBeGreaterThan(10);
   expectNoErrors(errors);
 });

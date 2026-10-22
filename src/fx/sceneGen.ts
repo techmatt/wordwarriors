@@ -48,6 +48,11 @@ export class SceneGen {
  */
 const leaving = new WeakSet<Phaser.Scene>();
 
+/** Whether `scene`'s change is already queued (item 092: key 0 must not act on a room on its way out). */
+export function isLeaving(scene: Phaser.Scene): boolean {
+  return leaving.has(scene);
+}
+
 export function markLeaving(scene: Phaser.Scene): void {
   if (leaving.has(scene)) return;
   leaving.add(scene);

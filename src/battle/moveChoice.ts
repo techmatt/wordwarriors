@@ -204,6 +204,7 @@ export class MoveChoice {
           misses: c.misses,
           spots: c.pads.map((p) => ({ word: p.word, x: p.x, y: p.y })),
           stickHint: Boolean(c.stickHint?.active),
+          stickNub: c.stickHint?.active ? (c.stickHint.list[1] as Phaser.GameObjects.Arc).x : null,
           // Item 043, M6: each sign's plate and each teammate's body, in screen coordinates.
           signs: c.pads.map((p) => [p.x - 115, p.y - SIGN_RISE - 50, p.x + 115, p.y - SIGN_RISE + 50]),
           team: heroes.filter((f) => f !== heroes[0] && f.active).map((f) => ({ id: f.init.id, box: [f.x - f.bodyHalf, f.top, f.x + f.bodyHalf, f.y] })),

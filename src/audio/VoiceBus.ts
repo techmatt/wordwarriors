@@ -70,7 +70,7 @@ function decodeWithin(p: Promise<void>, ms: number): Promise<'done' | 'failed' |
 }
 
 class Bus {
-  private current: { u: Utterance; playback: Pick<VoicePlayback, 'stop'> | null; done: () => void } | null = null;
+  private current: { u: Utterance; playback: Pick<VoicePlayback, 'stop'> | null; done: (said: boolean) => void } | null = null;
   private queue: ((() => void) & { drop?: () => void })[] = [];
   private hushes = 0;
   private listeners = new Set<Listener>();
@@ -216,7 +216,10 @@ class Bus {
     const c = this.current;
     if (!c) return;
     c.playback?.stop();
-    this.finish();
+    // A bark cut off part-way was not said (item 092: a taunt cut by an instruction counted
+    // toward its twice an episode, a big move's name as called out). An instruction's await
+    // goes on as before: its room checks its own flow.
+    this.finish(c.u.priority !== 'bark');
   }
 
   private async start(id: string, priority: Priority, anchor: unknown): Promise<boolean> {
@@ -261,7 +264,7 @@ class Bus {
     };
 
     return new Promise((resolve) => {
-      const done = () => resolve(true);
+      const done = (said: boolean) => resolve(said);
       this.current = { u, playback, done };
       this.begin(u);
       if (playback) void playback.ended.then(() => this.current?.u === u && this.finish());
@@ -312,7 +315,7 @@ class Bus {
     for (const fn of this.listeners) fn(u);
   }
 
-  private finish(): void {
+  private finish(said = true): void {
     const c = this.current;
     if (!c) return;
     this.current = null;
@@ -320,7 +323,7 @@ class Bus {
     for (const fn of this.listeners) fn(null);
     setSfxLevel(1);
     setMusicDuck(1);
-    c.done();
+    c.done(said);
     const next = this.queue.shift();
     if (next) next();
   }

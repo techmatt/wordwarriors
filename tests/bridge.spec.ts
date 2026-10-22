@@ -255,3 +255,29 @@ test('the beta: every drawn episode has a phonics room behind door a, Charge the
   }
   expect(seen.size).toBeGreaterThanOrEqual(1);
 });
+
+test("Stretchy Bridge, level 2 (item 092): Dad's 2 during the intro is kept for her turn, and on the far bank the find line comes again after the hint", SLOW, async ({ page }) => {
+  test.setTimeout(150_000);
+  const errors = collectErrors(page);
+  await seedLevels(page, 2);
+  await boot(page, '?scene=room&slot=a&room=bridge&difficulty=3', undefined, { voice: 'real' });
+  // While the helper still talks: his 2 was dropped (his cue flashed green all the same).
+  await until(page, (st) => bridge(st)?.phase === 'intro' && /_bridge_(intro|quiet)$/.test(st.voice.speaking ?? ''), 60_000, 'the intro line');
+  await dad(page, 'yes');
+  const hinted = await until(page, (st) => bridge(st)?.phase === 'slide' && !st.room!.locked && bridge(st)!.voiced, 60_000, 'the hint, once she may slide');
+  expect(bridge(hinted)!.aided).toBe(true);
+  expect(hinted.voice.history.some((id) => id.endsWith('_bridge_hint'))).toBe(true);
+  // The next word, unhinted: across, and his 2 as "Which picture did you read?" plays.
+  await slideAcross(page);
+  await until(page, (st) => bridge(st)?.phase === 'pick' && !st.room!.locked, 60_000, 'far bank');
+  await choose(page, bridge(hinted)!.word);
+  await until(page, (st) => bridge(st)?.index === 1 && bridge(st)?.phase === 'slide' && !st.room!.locked, 60_000, 'second bridge');
+  await slideAcross(page);
+  await until(page, (st) => bridge(st)?.phase === 'pick' && /_bridge_find(_\d+)?$/.test(st.voice.speaking ?? ''), 60_000, 'the find line');
+  await dad(page, 'yes');
+  const again = await until(page, (st) => bridge(st)?.phase === 'pick' && !st.room!.locked && bridge(st)!.voiced, 60_000, 'the hint on the far bank');
+  const h = again.voice.history;
+  const hint = h.lastIndexOf(h.filter((id) => id.endsWith('_bridge_hint')).at(-1)!);
+  expect(h.slice(hint).some((id) => /_bridge_find(_\d+)?$/.test(id)), 'the find line after the hint').toBe(true);
+  expectNoErrors(errors);
+});

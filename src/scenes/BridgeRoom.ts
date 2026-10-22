@@ -126,6 +126,8 @@ export class BridgeRoom extends HouseSideRoom {
   private picturesUp = false;
   /** The far-bank instruction is said once per word. */
   private toldFind = false;
+  /** Level 2: Dad asked for the hint while the helper was still talking (the intro, a miss's feedback); it comes once she may slide (item 092). */
+  private hintAsked = false;
   private stones: Stone[] = [];
   private onStone = -1;
   /** She stepped on a stone that has not sounded yet (a line was playing): it sounds when the room is quiet. */
@@ -314,6 +316,7 @@ export class BridgeRoom extends HouseSideRoom {
     this.aided = Boolean(episode.house.misses?.[`${this.missKey}:aided`]);
     this.replays = 0;
     this.toldFind = false;
+    this.hintAsked = false;
     this.waitMs = 0;
     this.wrongTries = episode.house.misses?.[this.missKey] ?? 0;
     this.releaseHeld();
@@ -410,6 +413,10 @@ export class BridgeRoom extends HouseSideRoom {
     else if (this.pendingSound && !voiceBus.busy) this.soundStone(i);
 
     if (this.phase === 'slide' && p.x >= FAR_X) void this.arrive();
+    if (this.hintAsked && this.phase === 'slide' && !this.locked && !voiceBus.busy) {
+      this.hintAsked = false;
+      this.answer('yes');
+    }
     if (this.phase === 'say' && !dadLock.locked && !voiceBus.busy) {
       this.waitMs += deltaMs;
       if (this.waitMs >= BRIDGE.dadWaitMs) {
@@ -508,10 +515,18 @@ export class BridgeRoom extends HouseSideRoom {
   private answer(a: DadAnswer): void {
     this.noteActivity();
     if (this.level === 2) {
-      if (a !== 'yes' || this.voiced || !(this.phase === 'slide' || this.phase === 'pick')) return;
+      if (a !== 'yes' || this.voiced) return;
+      // Item 092: his 2 while the helper talks (the intro, a miss's feedback) was dropped, though
+      // his cue flashed green: it waits for her turn to slide.
+      if (this.phase === 'intro' || this.phase === 'check') {
+        this.hintAsked = true;
+        return;
+      }
+      if (!(this.phase === 'slide' || this.phase === 'pick')) return;
       this.markAided();
       this.voiced = true;
-      void this.replay('bridge_hint');
+      // On the far bank the hint cuts "Which picture did you read?": it is said again after (item 092).
+      void this.replay('bridge_hint', this.phase === 'pick' ? 'bridge_find' : undefined);
       return;
     }
     // His yes counts during a replay he asked for too (item 069: it was dropped while the cue flashed green, then the wait ran out as a no).

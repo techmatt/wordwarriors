@@ -116,6 +116,8 @@ export interface BattleInfo {
     spots: { word: string; x: number; y: number }[];
     /** The idle stick hint is beside her hero (item 043, M5). */
     stickHint: boolean;
+    /** Where the stick hint's nub has swayed to, px from its middle (item 092: it sways on the wall clock); null with no hint. */
+    stickNub: number | null;
     /** Each sign's plate and each teammate's body, [left, top, right, bottom] (item 043, M6). */
     signs: number[][];
     team: { id: string; box: number[] }[];

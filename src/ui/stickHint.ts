@@ -24,6 +24,11 @@ export function makeStickHint(scene: Phaser.Scene, x: number, y: number): Phaser
   // The arrows over the nub: under it they were hidden and the hint read as a dark ball (item 039).
   const hint = scene.add.container(0, 0, [ring, nub, arrows]).setDepth(DEPTH.prompt);
   placeStickHint(hint, x, y);
-  scene.tweens.add({ targets: nub, x: { from: -14, to: 14 }, duration: 450, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+  // The nub sways on the wall clock, 450 ms each way: in the battle's move choice the scene's
+  // tweens run at the frozen fight's 0.04x, and a tween took 11 s a sway (item 092).
+  const sway = () => nub.setX(-14 * Math.cos((performance.now() / 900) * Math.PI * 2));
+  sway();
+  scene.events.on(Phaser.Scenes.Events.UPDATE, sway);
+  hint.once(Phaser.GameObjects.Events.DESTROY, () => scene.events.off(Phaser.Scenes.Events.UPDATE, sway));
   return hint;
 }
