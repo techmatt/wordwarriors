@@ -311,17 +311,22 @@ The same rules as a quest line: no bank word, no interjection, commas not a mid-
 Each episode draws three games from the pool, one per room (two fetch games, then
 the counter game), weighted, never the same entry twice, apart from the quest; a game
 from her last episodes (the store's `recent.games`) weighs `VARIETY.gameWeight` (item
-067). An entry is `{ id, scene, weight, slots: ['fetch'] | ['counter'] | both, frame?,
-machine?, charge?, bridge? }`: each sentence frame is one entry (`sentence:<frame>`,
+067). An entry is `{ id, kind, scene, weight, slots: ['fetch'] | ['counter'] | both, frame? }`
+(`kind`: `sentence`, `machine`, `charge` or `bridge`): each sentence frame is one entry (`sentence:<frame>`,
 weight 1 times the frame's shakiness), and the word machine is one more
 (`word_machine`, fetch rooms only, weight `WORD_MACHINE.weight` in `src/config.ts` times
 how shaky her word families are: about every other episode); Charge the Spell and the
-Stretchy Bridge are one each (`charge`, `bridge`, fetch rooms only). A new game is one entry and its scene; the room's `RoomPlan`
-(a union by `kind`, `src/rules/sentences.ts`) carries `game` and `scene`, and `enterRoom`
-starts that scene. Whatever it plays, it must end in a word she read: `plan.key` (the
+Stretchy Bridge are one each (`charge`, `bridge`, fetch rooms only). A new game of a kind
+already there is one entry and its scene. A new kind is one entry plus its planner: its
+weight's lean (`LEAN`, minigames.ts, by what she finds shaky) and its entry in `PLANNERS`
+(`src/rules/sentences.ts`: the words it shows, its own words planned before any key, what it
+reads, shows as pictures and says, and its room's plan). The room's `RoomPlan` (a union by
+the same `kind`) carries `game` and `scene`, and `enterRoom` starts that scene. Whatever it plays, it must end in a word she read: `plan.key` (the
 prize on the hub door, or the counter) and `plan.fetches` (every word read there, each a
-battle item from a fetch room). Words a game uses are planned in `episodePlans`, so
-they stay out of the other rooms and the counter.
+battle item from a fetch room). Words a game uses are planned in `episodePlans`, kind by
+kind in `PLANNERS` order, so they stay out of the rooms planned after it, the keys and
+the counter; a game with its own words is a fetch room only. `tests/unit/plansGolden.*`
+pins the seeded draws: a change that should not alter them leaves that test green.
 
 Look at one game: `?game=word_machine` puts it behind door a; `?games=sentence` draws
 from the sentence game alone (the tests' default).

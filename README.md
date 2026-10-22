@@ -79,6 +79,10 @@ item: `docs/engineering.md`, *Browser and tests*):
   minutes (`--global-timeout`). `npm run test:unit` runs the unit tests alone.
   `npm run typecheck` checks `src`, `tests`, `content` and `tools` (both tsconfigs, about
   2 s; `npm run build` runs it first), which the tests do not.
+  `tests/unit/plansGolden.test.ts` pins the house plan's seeded draws (every minigame kind
+  behind each door; item 091) against `plansGolden.json`: a refactor leaves it green. A
+  change meant to alter the draws rewrites the JSON on purpose, from the worktree root:
+  `npx tsx -e "import('./tests/unit/plansGolden.ts').then((m) => require('node:fs').writeFileSync('tests/unit/plansGolden.json', JSON.stringify(m.goldenDraws(), null, 1) + '\n'))"`.
 - **Before a commit: `npm run test:browser`** (about 50 s, 24 tests) plus the specs that cover
   what changed (`npx playwright test <spec>`, both lanes of it). `test:browser` is every
   browser test not tagged `@slow` (the smoke three among them): one of each newer room
