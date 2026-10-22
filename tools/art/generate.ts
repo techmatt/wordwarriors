@@ -52,8 +52,17 @@ export const shrinkPng = (png: Buffer): Promise<Buffer> => sharp(png).png({ pale
 
 export const isBackground = (id: string) => ['room', 'arena'].includes(ART_BY_ID[id]!.kind);
 
-/** `prompt` replaces the tracked asset prompt (`art:alts --brief`); the style block, photo wording and NOTES stay. */
-export function codexPrompt(id: string, withRef = false, prompt = ART_PROMPTS[id]): string {
+/**
+ * What the attached image is under `art:alts --ref` (item 112): the same
+ * character's other version, so a redraw keeps her face, hair and build.
+ */
+export const DESIGN_REF = "The attached picture is a design reference: this same character's other version, from this game. Draw the same person: keep the face shape, eyes, hair (colour, cut and style), any freckles and the build exactly as in the picture, in the same art style, so the two read as one character. Change only what the description below gives differently (skin tone, clothes, colours, props, expression); do not copy the picture's pose. Draw it on the flat pure #00FF00 green background the style below asks for, like the picture's.";
+
+/**
+ * `prompt` replaces the tracked asset prompt (`art:alts --brief`); the style block, photo wording and NOTES stay.
+ * `design` attaches an image of the character's other version instead of a photo (`art:alts --ref`).
+ */
+export function codexPrompt(id: string, withRef = false, prompt = ART_PROMPTS[id], design = false): string {
   if (!prompt) throw new Error(`no prompt for ${id} in content/art/prompts.ts`);
   const a = ART_BY_ID[id];
   if (!a) throw new Error(`${id} is not an asset id (content/art/assets.ts)`);
@@ -63,7 +72,8 @@ export function codexPrompt(id: string, withRef = false, prompt = ART_PROMPTS[id
     'Use your built-in image_gen tool ($imagegen) exactly once to generate the image below.',
     'Do not read any files, run any commands, or try to save the image anywhere: just generate it, then stop.',
     `Image shape: ${shape}.`,
-    ...(withRef
+    ...(withRef && design ? ['', DESIGN_REF] : []),
+    ...(withRef && !design
       ? [
           '',
           REFS[refFor(id)!]!.style

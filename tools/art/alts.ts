@@ -1,7 +1,7 @@
 /**
  * Art candidates for Matt to choose from, without touching the game's art.
  *
- * `npm run art:alts -- <ids…> [--n=3] [--sheet=<file>] [--sheet-only] [--no-ref] [--brief=<file>]`
+ * `npm run art:alts -- <ids…> [--n=3] [--sheet=<file>] [--sheet-only] [--no-ref] [--brief=<file>] [--ref=<image>]`
  * draws `n` new candidates per id with the same prompt and photo reference as
  * `art:gen`, and keeps each full-resolution image as
  * `art-originals/alts/<id>-<k>.png` (k counts on from the last one there).
@@ -10,6 +10,9 @@
  * photo reference and NOTES, so trying a new look edits nothing tracked. Each
  * such candidate gets a sidecar `<id>-<k>.json` (the brief's name, its file and
  * text, the whole prompt), and the sheet and picker label it with the name.
+ * `--ref=<image>` (item 112) attaches that image instead of the photo, as the
+ * same character's other version (`DESIGN_REF`): redrawing good Anna from
+ * Evil Anna's art keeps one face, hair and build.
  * `public/art/` is not touched. Every run then cuts each candidate of the named
  * ids exactly as `art:pick` would into previews (`<sheet>/<id>-<k>.png`) and
  * writes, beside them, a contact sheet (`--sheet=<file>`, default
@@ -68,6 +71,8 @@ export interface Sidecar extends Brief {
   k: number;
   at: string;
   ref: boolean;
+  /** The image attached by `--ref`, when it went with the prompt. */
+  design?: string;
   prompt: string;
 }
 
@@ -103,16 +108,18 @@ async function draw(argv: string[]): Promise<void> {
   const briefArg = argv.find((a) => a.startsWith('--brief='))?.slice('--brief='.length);
   const brief = briefArg ? await readBrief(briefArg) : undefined;
   if (brief && ids.length !== 1) throw new Error('--brief draws one id: one run per brief');
-  const prompt = (id: string, withRef = false) => codexPrompt(id, withRef, brief?.text);
+  const design = argv.find((a) => a.startsWith('--ref='))?.slice('--ref='.length);
+  if (design && !(await exists(design))) throw new Error(`--ref: ${design} not found`);
+  const prompt = (id: string, withRef = false) => codexPrompt(id, withRef, brief?.text, !!design);
   for (const id of ids) prompt(id); // fail before spending anything on a bad id
   await mkdir(ALTS, { recursive: true });
   for (const id of ids) {
-    const ref = noRef ? undefined : await refCrop(id);
+    const ref = design ? path.resolve(design) : noRef ? undefined : await refCrop(id);
     for (let i = 0; i < n; i++) {
       const k = Math.max(0, ...(await candidates(id))) + 1;
       console.log(`art:alts: ${id} candidate ${k} (${i + 1}/${n}): asking codex…`);
       const log = (r: Awaited<ReturnType<typeof runCodex>>, withRef: boolean) =>
-        appendFile(path.join(ORIGINALS, 'log.jsonl'), `${JSON.stringify({ id, alt: k, ...(brief ? { brief: brief.name } : {}), at: new Date().toISOString(), ref: withRef, seconds: r.seconds, thread: r.thread, image: r.image, limit: r.limit, usage: r.usage, message: r.lastMessage })}\n`);
+        appendFile(path.join(ORIGINALS, 'log.jsonl'), `${JSON.stringify({ id, alt: k, ...(brief ? { brief: brief.name } : {}), at: new Date().toISOString(), ref: withRef, ...(design ? { design } : {}), seconds: r.seconds, thread: r.thread, image: r.image, limit: r.limit, usage: r.usage, message: r.lastMessage })}\n`);
       let withRef = !!ref;
       let run = await runCodex(prompt(id, withRef), ref);
       await log(run, withRef);
@@ -125,7 +132,7 @@ async function draw(argv: string[]): Promise<void> {
       const keep = async (image: string) => {
         await copyFile(image, altFile(id, k));
         if (brief) {
-          const side: Sidecar = { id, k, ...brief, at: new Date().toISOString(), ref: withRef, prompt: prompt(id, withRef) };
+          const side: Sidecar = { id, k, ...brief, at: new Date().toISOString(), ref: withRef, ...(design && withRef ? { design: design.split(path.sep).join('/') } : {}), prompt: prompt(id, withRef) };
           await writeFile(sidecarFile(id, k), `${JSON.stringify(side, null, 2)}\n`);
         }
       };
@@ -139,7 +146,7 @@ async function draw(argv: string[]): Promise<void> {
         continue;
       }
       await keep(run.image);
-      console.log(`art:alts: ${id}-${k}: ${run.seconds}s${refFor(id) ? (withRef ? ', with photo' : ', text only') : ''}${brief ? `, brief ${brief.name}` : ''}, ${describeUsage(run.usage)}`);
+      console.log(`art:alts: ${id}-${k}: ${run.seconds}s${design || refFor(id) ? (withRef ? `, with ${design ? 'the design reference' : 'photo'}` : ', text only') : ''}${brief ? `, brief ${brief.name}` : ''}, ${describeUsage(run.usage)}`);
     }
   }
 }
@@ -282,7 +289,7 @@ async function altSheet(rows: Row[], page: Page, file: string): Promise<void> {
 
 export async function alts(argv: string[]): Promise<void> {
   const ids = argv.filter((a) => !a.startsWith('--'));
-  if (!ids.length) throw new Error('usage: npm run art:alts -- <ids…> [--n=3] [--sheet=<file>] [--sheet-only] [--manifest-only] [--no-ref] [--brief=<file>]');
+  if (!ids.length) throw new Error('usage: npm run art:alts -- <ids…> [--n=3] [--sheet=<file>] [--sheet-only] [--manifest-only] [--no-ref] [--brief=<file>] [--ref=<image>]');
   for (const id of ids) if (!ART_BY_ID[id]) throw new Error(`${id} is not an asset id (content/art/assets.ts)`);
   const sheet = argv.find((a) => a.startsWith('--sheet='))?.slice('--sheet='.length) ?? defaultSheet();
   const base = sheet.replace(/\.png$/i, '');

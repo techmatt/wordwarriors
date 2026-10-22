@@ -827,7 +827,7 @@ When an image is weak but Matt should see the options before it changes, draw
 candidates instead of overwriting it:
 
 ```
-npm run art:alts -- <ids…> [--n=3] [--sheet=scratch/<name>.png] [--sheet-only] [--manifest-only] [--no-ref] [--brief=scratch/<brief>.txt]
+npm run art:alts -- <ids…> [--n=3] [--sheet=scratch/<name>.png] [--sheet-only] [--manifest-only] [--no-ref] [--brief=scratch/<brief>.txt] [--ref=<image>]
 npm run art:pick -- <id> <n>
 ```
 
@@ -845,6 +845,18 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   `art-originals/alts/<id>-<k>.json` (brief name, file, text, the whole prompt, whether
   the photo went with it), and the sheet and picker label that candidate with the
   brief's name; the row's note lists which candidates came from which brief.
+- **Matching a character's other version: `--ref=<image>`** (item 112). Attaches that
+  image in place of the photo reference, worded as the same character's other version
+  (`DESIGN_REF` in `tools/art/generate.ts`): keep the face, hair and build, change what
+  the prompt or brief changes. Good Anna's round was drawn with
+  `--ref=art-originals/char_anna_evil.png` and a brief per look. The log and the brief's
+  sidecar record the image (`design`). Its first wording ("do not copy the picture's
+  background") got a painted dark backdrop and no green screen, so the cut was ruined:
+  the wording now asks for the green background like the picture's.
+- Stopping a backgrounded `for … npx tsx tools/art/alts.ts …` loop (the shell's task
+  stop) kills the loop but not the running `tsx`: it finishes its candidate in `alts/`
+  and writes into the same log (item 112). Check with `Get-CimInstance Win32_Process`
+  filtered on the id, and delete what it drew before a clean rerun.
 - **Promoting a brief's candidate:** `art:pick` prints the brief after cutting the image.
   Write it into the game in the same commit: a character's `look` in
   `content/battle/roster.ts` (its prompt is derived from that, so `docs/art.md` follows;
@@ -889,10 +901,10 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   only when Matt has chosen for that id: a later round on it numbers from 1 again, and
   an old sheet's numbers no longer exist. Then delete the round's `scratch/` sheet,
   manifest, preview folder and briefs once every id in it is decided. `alts/` holds
-  only rounds still waiting (`ls art-originals/alts/`): on 2026-10-22 item 109's
-  `char_anna_evil` (six candidates from three briefs, `scratch/109_evil_anna_*.txt`;
-  picker `scratch/art_alts_109_evil_anna.json`). Item 009's and item 040's old
-  candidates are gone.
+  only rounds still waiting (`ls art-originals/alts/`): on 2026-10-22 item 112's
+  `char_anna_good` (six candidates from three briefs, `scratch/112_good_anna_*.txt`;
+  picker `scratch/art_alts_112_good_anna.json`). Item 109's evil Anna round is gone
+  (Matt kept `current`), as are item 009's and item 040's.
 - Corrections for an id (what an earlier image got wrong: a likeness, a prop that
   crowds a face) are `NOTES` in `content/art/prompts.ts`; they end the prompt for both
   `art:gen` and `art:alts`.

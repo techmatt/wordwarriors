@@ -8,7 +8,7 @@ import { ART_BY_ID } from '../../content/art/assets.js';
 import { ART_PROMPTS, keyMode, NOTES, SPRITE_STYLE } from '../../content/art/prompts.js';
 import { readBrief } from '../../tools/art/alts.js';
 import { keyGreen } from '../../tools/art/chroma.js';
-import { codexPrompt } from '../../tools/art/generate.js';
+import { DESIGN_REF, codexPrompt } from '../../tools/art/generate.js';
 
 test('every art prompt is keyed to a real asset id', () => {
   for (const id of Object.keys(ART_PROMPTS)) assert.ok(ART_BY_ID[id], `${id} is not in content/art/assets.ts`);
@@ -21,6 +21,13 @@ test('a brief replaces only the asset prompt: the style block and NOTES stay (ar
   assert.ok(!p.includes(ART_PROMPTS[id]!));
   assert.ok(p.includes(NOTES[id]!));
   assert.equal(codexPrompt(id), codexPrompt(id, false, ART_PROMPTS[id]));
+});
+
+test('a design reference is worded as the character\'s other version, for ids with no photo too (art:alts --ref, item 112)', () => {
+  const p = codexPrompt('char_anna_good', true, undefined, true);
+  assert.ok(p.includes(DESIGN_REF));
+  assert.ok(!p.includes('likeness reference'));
+  assert.ok(!codexPrompt('char_anna_good').includes(DESIGN_REF));
 });
 
 test('a brief is named by its file and its text has its whitespace collapsed', async () => {

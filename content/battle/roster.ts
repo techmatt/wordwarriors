@@ -604,8 +604,7 @@ export const ROSTER: CharacterSpec[] = [
     description: 'The ice sorceress\'s brave little sister: a sword-and-shield adventurer who never gives up.',
     arena: 'ice',
     // Split look (Matt's picks, item 011): good Anna and her face card are the
-    // item 009 redesign (dark ponytail, plum and magenta); Evil Anna's art is
-    // still the old copper-curls design, so her look describes that image.
+    // item 009 redesign (dark ponytail, plum and magenta).
     good: {
       displayName: 'Anna', trail: { tint: [0xffb703, 0xe63946], shape: 'spark' }, look: 'a tall, sporty young adventurer of original design with long straight dark-brown hair in one high swinging ponytail tied with a big purple ribbon, a few freckles, a plum-purple tunic with a short magenta cape, white leggings and tall brown boots, a round wooden shield with a golden sun painted on it and a wooden practice sword',
       palette: [0xe63946, 0x2a9d8f], glyph: '🛡️', style: 'twirl', speed: 230, size: 1, hp: 110,
