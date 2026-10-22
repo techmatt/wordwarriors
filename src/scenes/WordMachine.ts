@@ -32,7 +32,7 @@ import { LETTER_BY_CHAR } from '../../content/phonics/letters';
 import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, rimeLine, sillyLine, wordLine } from '../../content/voice/ids';
-import { RIGHT_VARIANTS, SILLY_VARIANTS } from '../../content/voice/script';
+import { variant } from '../episode/lineVariants';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { sfxBoing, sfxPoof, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxWrong } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH } from '../config';
@@ -382,7 +382,7 @@ export class WordMachine extends SideRoom {
     // The whole silly word, lit, said: it is not the word she is making.
     this.onsetText.setColor(LIT);
     this.rimeText.setColor(LIT);
-    await this.speak(narratorLine(narrator(), 'machine_makes'), sillyLine(tile.makes), narratorLine(narrator(), `machine_silly_${((this.misses - 1) % SILLY_VARIANTS) + 1}`));
+    await this.speak(narratorLine(narrator(), 'machine_makes'), sillyLine(tile.makes), narratorLine(narrator(), variant('machine_silly')));
     // Out it pops, back to its place on the floor.
     this.onsetText.setText('').setColor(INK);
     this.rimeText.setColor(INK);
@@ -440,7 +440,7 @@ export class WordMachine extends SideRoom {
     const pic = this.picture;
     this.picture = null;
     pic?.destroy();
-    await Promise.all([this.guard(this.bag.receive(`pic_${r.word}`, win.x, win.y)), this.say(narratorLine(narrator(), `right_${(this.index % RIGHT_VARIANTS) + 1}`))]);
+    await Promise.all([this.guard(this.bag.receive(`pic_${r.word}`, win.x, win.y)), this.say(narratorLine(narrator(), variant('right')))]);
     spot.obj.setAlpha(1);
     if (!last) {
       this.index++;

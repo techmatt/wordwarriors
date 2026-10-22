@@ -16,7 +16,7 @@
 import Phaser from 'phaser';
 
 import { narratorLine } from '../../content/voice/ids';
-import { RIGHT_VARIANTS, WRONG_VARIANTS } from '../../content/voice/script';
+import { variant } from '../episode/lineVariants';
 import { sfxRight, sfxSummon, sfxWrong } from '../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../config';
 import { episode, narrator } from '../episode/Episode';
@@ -163,7 +163,7 @@ export abstract class SideRoom extends RoomScene {
     this.addPiece(x, y, color);
     if (confirmId) await this.say(confirmId);
     this.rightN++;
-    await this.say(narratorLine(narrator(), `right_${((this.rightN - 1) % RIGHT_VARIANTS) + 1}`));
+    await this.say(narratorLine(narrator(), variant('right')));
     this.wrongTries = 0;
   }
 
@@ -190,7 +190,7 @@ export abstract class SideRoom extends RoomScene {
       });
     }
     this.wrongN++;
-    await this.say(narratorLine(narrator(), `wrong_${((this.wrongN - 1) % WRONG_VARIANTS) + 1}`));
+    await this.say(narratorLine(narrator(), variant('wrong')));
     this.locked = false;
     if (this.wrongTries >= 2) this.sparkleAnswer();
   }

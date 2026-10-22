@@ -38,6 +38,7 @@ import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { sfxRight, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH } from '../config';
 import { backToHub, castFace, counterArt, episode, namedCounter, narrator, planFor, villainSpec, type Slot, type Step } from '../episode/Episode';
+import { isVariant, variant } from '../episode/lineVariants';
 import { bob, burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
 import { asSentence, skipsListening, type SentencePlan } from '../rules/sentences';
 import { progress } from '../state/progress';
@@ -144,7 +145,7 @@ export class SentenceRoom extends SideRoom {
    */
   /** The attic's find line takes the narrow box (item 071, M13): its two-row banner holds the top, and the full-width box at the bottom covered her. */
   protected override narrowLine(u: Utterance): boolean {
-    return this.slot === 'counter' && u.id === narratorLine(narrator(), 'room_find');
+    return this.slot === 'counter' && isVariant(u.id, narratorLine(narrator(), 'room_find'));
   }
 
   protected override captionMode(u: Utterance): CaptionMode | undefined {
@@ -663,7 +664,7 @@ export class SentenceRoom extends SideRoom {
       pic?.setVisible(false);
       const w = WORD_BY_ID[s.key];
       const art = w ? pictureFor(w, castFace) : `pic_${s.key}`;
-      await Promise.all([this.guard(this.bag.receive(art, spot.x, picY)), this.say(narratorLine(narrator(), 'got_item'))]);
+      await Promise.all([this.guard(this.bag.receive(art, spot.x, picY)), this.say(narratorLine(narrator(), variant('got_item')))]);
     }
     await this.wait(400);
     this.fadeOutThen(() => backToHub(this, this.slot));

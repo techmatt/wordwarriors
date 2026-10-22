@@ -47,6 +47,7 @@ import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxShield, sfxShout, sf
 import { DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { formFor } from '../../content/battle/forms';
 import { advance, castArt, castScale, counterArt, counterWord, episode, fightStyle, helper, movePlan, namedCounter, narrator, reformedOf, villainSpec, type Step } from '../episode/Episode';
+import { variant } from '../episode/lineVariants';
 import { fightLineKey, type FightSpec } from '../../content/battle/fights';
 import { hex } from '../fx/colour';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
@@ -88,6 +89,9 @@ const INTRO_SPOTS = { x: 260, dx: 140, villainX: 960 };
  */
 /** `?battle=short`: the director's waits at this share of their length (item 083). */
 const SHORT_BEATS = 0.2;
+
+/** Each fighter's taunts said since its round of them began (item 087), kept across both parts. */
+const tauntsSaid = new Map<string, string[]>();
 
 const ULT_SPOTS = { x: 260, dx: 150, y: 500, dy: 70, helper: { x: 150, y: 600 }, villain: { x: 900, y: 560 }, giantX: 960 };
 
@@ -134,6 +138,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   private runesFired = 0;
   /** "Look what we found!" is said once per part, at the first item out of the bag. */
   private bagSaid = false;
+  /** Big moves called out this part: each once (item 087: the same call three times in a fight was too many). */
+  private calledOut = new Set<string>();
   /** The step this battle was started with, so the parent page can come back to it. */
   private step: Step | undefined;
 
@@ -165,6 +171,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     this.itemsUsed = 0;
     this.runesFired = 0;
     this.bagSaid = false;
+    this.calledOut = new Set();
     this.bannerText = null;
     this.bannerBig = 0;
   }
@@ -413,7 +420,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   }
 
   say(key: string): Promise<boolean> {
-    return this.guard(voiceBus.say(narratorLine(narrator(), key)));
+    return this.guard(voiceBus.say(narratorLine(narrator(), variant(key))));
   }
 
   /**
@@ -1448,9 +1455,11 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       // Big moves are called out by name, if nobody else is talking.
       // A move whose name says a word on a pad still to come is never called
       // out: hearing it then would give the choice away (so are taunts).
-      // Never the same call twice in a row (item 034: a move fired again soon after was called out again).
+      // Each call once a part (item 087; item 034 had only kept it from twice in a row).
       const call = moveLine(f.init.id, ab.id);
-      if (f.isMain && ab.power >= 2 && Math.random() < 0.5 && voiceBus.history.at(-1) !== call && !this.lineGivesAway(call)) void voiceBus.say(call, 'bark', f);
+      if (f.isMain && ab.power >= 2 && Math.random() < 0.5 && !this.calledOut.has(call) && !this.lineGivesAway(call)) {
+        void voiceBus.say(call, 'bark', f).then((ok) => ok && this.calledOut.add(call));
+      }
       this.stats.abilitiesFired++;
       if (f.isMain) this.teamNextCast[teamKey] = this.now + (teamKey === 'villain' ? 700 : 500);
       break;
@@ -1591,11 +1600,16 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     const f = speakers[Math.floor(Math.random() * speakers.length)];
     if (!f) return;
     const keys = this.safeTaunts(f);
-    const key = keys[Math.floor(Math.random() * keys.length)];
+    // Item 087: a fighter's taunts go round before any comes again, across both parts.
+    const said = tauntsSaid.get(f.init.id) ?? [];
+    const fresh = keys.filter((k) => !said.includes(k));
+    const pool = fresh.length ? fresh : keys;
+    const key = pool[Math.floor(Math.random() * pool.length)];
     if (!key) return;
     // A dropped taunt (somebody was talking) tries again soon rather than waiting a full turn.
     void voiceBus.say(tauntLine(f.init.id, key), 'bark', f).then((ok) => {
       if (!ok) this.nextTaunt = this.now + 1200;
+      else tauntsSaid.set(f.init.id, fresh.length ? [...said, key] : [key]);
     });
   }
 

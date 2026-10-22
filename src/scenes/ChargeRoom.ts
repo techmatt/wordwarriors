@@ -34,7 +34,7 @@ import Phaser from 'phaser';
 import { RUNE_BY_SOUND, type GestureMotion } from '../../content/phonics/runes';
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
-import { RIGHT_VARIANTS } from '../../content/voice/script';
+import { variant } from '../episode/lineVariants';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxZap } from '../audio/sfx';
 import { CHARGE, DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
@@ -557,12 +557,12 @@ export class ChargeRoom extends SideRoom {
     await this.say(wordLine(word));
     if (f !== this.flow) return;
     pic.setVisible(false);
-    await Promise.all([this.guard(this.bag.receive(`pic_${word}`, pic.x, pic.y)), right ? this.say(narratorLine(narrator(), `right_${(this.timeouts % RIGHT_VARIANTS) + 1}`)) : Promise.resolve(true)]);
+    await Promise.all([this.guard(this.bag.receive(`pic_${word}`, pic.x, pic.y)), right ? this.say(narratorLine(narrator(), variant('right'))) : Promise.resolve(true)]);
     pic.destroy();
     if (f !== this.flow) return;
     this.phase = 'done';
     sfxSelect();
-    await this.say(narratorLine(narrator(), 'charge_done'));
+    await this.say(narratorLine(narrator(), variant('charge_done')));
     this.fadeOutThen(() => backToHub(this, this.slot));
   }
 

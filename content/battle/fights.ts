@@ -81,7 +81,7 @@ export const FIGHTS: FightSpec[] = [
     lines: {
       start: { text: "It's a race! Ready, set, go!", say: "It's a race, ready, set, go!" },
       start2: { text: "It's the rematch! Let's fly faster this time!", say: "It's the rematch, let's fly faster this time!" },
-      retreat: { text: "They are too fast for us! Let's go and practice!", say: "They are too fast for us, let's go and practice!" },
+      retreat: { text: "They're too fast for us! Let's go home and practice!", say: "They're too fast for us, let's go home and practice!" },
       finish: { text: "There's the finish line! Let's all zoom together!", say: "There's the finish line, let's all zoom together!" },
     },
     props: [
@@ -98,8 +98,8 @@ export const FIGHTS: FightSpec[] = [
     win: 'WE PULLED IT!',
     lines: {
       start: { text: "It's a rope pull! Hold the rope and pull!", say: "It's a rope pull, hold the rope and pull!" },
-      start2: { text: "Let's pull again! We are stronger now!", say: "Let's pull again, we are stronger now!" },
-      retreat: { text: "They are too strong for us! Let's go and get ready!", say: "They are too strong for us, let's go and get ready!" },
+      start2: { text: "Let's pull again! We're stronger now!", say: "Let's pull again, we're stronger now!" },
+      retreat: { text: "They're too strong for us! Let's go home and get stronger!", say: "They're too strong for us, let's go home and get stronger!" },
       finish: { text: "Now let's all pull together!" },
     },
   },
@@ -114,7 +114,7 @@ export const FIGHTS: FightSpec[] = [
     lines: {
       start: { text: "It's magic against magic! Push the beam!", say: "It's magic against magic, push the beam!" },
       start2: { text: "Our magic is stronger now! Let's push!", say: "Our magic is stronger now, let's push!" },
-      retreat: { text: "That spell is too strong for us! Let's go back and get ready!", say: "That spell is too strong for us, let's go back and get ready!" },
+      retreat: { text: "That spell is too strong for us! Let's go home and get ready!", say: "That spell is too strong for us, let's go home and get ready!" },
       finish: { text: "Let's push with all our magic together!" },
     },
   },
@@ -129,8 +129,8 @@ export const FIGHTS: FightSpec[] = [
     lines: {
       start: { text: "It's a cook-off! The yummiest dish wins!", say: "It's a cook-off, the yummiest dish wins!" },
       start2: { text: "It's round two, and now we know the recipe!" },
-      retreat: { text: "Their dish was too yummy! Let's go and practice!", say: "Their dish was too yummy, let's go and practice!" },
-      finish: { text: "Now let's add the topping, all together!" },
+      retreat: { text: "Their dish was too yummy! Let's go home and practice!", say: "Their dish was too yummy, let's go home and practice!" },
+      finish: { text: "Let's add the topping, all together now!" },
     },
     props: [
       { id: 'cook_station', look: 'a chunky cartoon cooking station: a little red stove with a big shiny pot on top, a wooden counter with a chopping board, a whisk and a rolling pin, seen from the front', glyph: '🍳', w: 300, h: 260 },

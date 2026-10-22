@@ -45,7 +45,7 @@ import Phaser from 'phaser';
 import { canHold } from '../../content/phonics/letters';
 import { SIDE_ROOM_BY_ID, gapFor, type BridgeGap } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
-import { RIGHT_VARIANTS } from '../../content/voice/script';
+import { variant } from '../episode/lineVariants';
 import { voiceBus, type HeldSound, type Utterance } from '../audio/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon, sfxWhoosh, sfxWrong } from '../audio/sfx';
 import { BRIDGE, DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
@@ -741,7 +741,7 @@ export class BridgeRoom extends SideRoom {
     if (f !== this.flow) return;
     const pic = spot.obj;
     pic.setVisible(false);
-    await Promise.all([this.guard(this.bag.receive(`pic_${r.word}`, top.x, top.y)), this.say(narratorLine(narrator(), `right_${(this.index % RIGHT_VARIANTS) + 1}`))]);
+    await Promise.all([this.guard(this.bag.receive(`pic_${r.word}`, top.x, top.y)), this.say(narratorLine(narrator(), variant('right')))]);
     if (f !== this.flow) return;
     sfxSelect();
     if (!last) {
@@ -755,7 +755,7 @@ export class BridgeRoom extends SideRoom {
     this.phase = 'done';
     this.closeDad?.();
     this.closeDad = null;
-    await this.say(narratorLine(narrator(), 'bridge_done'));
+    await this.say(narratorLine(narrator(), variant('bridge_done')));
     await this.wait(400);
     this.fadeOutThen(() => backToHub(this, this.slot));
   }

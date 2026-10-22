@@ -35,3 +35,12 @@ export function leastRecent<T>(pool: readonly T[], recent: readonly T[], n: numb
   const order = pool.map((p) => ({ p, at: recent.lastIndexOf(p), r: rand() }));
   return order.sort((a, b) => a.at - b.at || a.r - b.r).slice(0, n).map((x) => x.p);
 }
+
+/**
+ * A line's next variant (item 087): the first of `keys` not said lately, so the
+ * variants go round in order, one episode carrying on where the last stopped.
+ * `recent` is newest last; kept `keys.length - 1` long, exactly one key is left.
+ */
+export function nextVariant(keys: readonly string[], recent: readonly string[]): string {
+  return keys.find((k) => !recent.includes(k)) ?? recent.find((r) => keys.includes(r)) ?? keys[0]!;
+}

@@ -422,6 +422,10 @@ In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
   shouts are left out), and a room past its game-time budget (`slow-room`,
   `ROOM_BUDGET_MS`; scenarios that answer wrong on purpose are not timed).
   `tests/unit/qacategories.test.ts` holds every line in `lines.json` to American spelling.
+  Each `<scenario>.json` also carries the run's transcript (`said`, line ids in order)
+  and `repeated`, every line said more than twice (item 087; letter sounds, words,
+  sentence prefixes and the move choice's lines are left out; a several-episode
+  scenario counts all its episodes together).
   Missing voice lines (item 062): every scenario also lists each line in `lines.json`
   with no manifest entry (`voice-unbuilt`), a clip for older text (`voice-stale`) or no
   mp3 (`voice-no-clip`); the same check is a unit test, and `rules.test.ts` fails when

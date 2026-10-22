@@ -652,8 +652,16 @@ only where the villain is announced (`alarm_villain`, the wake-up's bad news, na
 nameplates). A template keyed per hero,
 villain or move word (`HERO_LINES`, `VILLAIN_LINES`, `MOVE_LINES`) needs its key added
 to the matching kind in `content/voice/ids.ts`, and the game builds the key with that
-file's `heroKey` / `villainKey` / `moveKey`, never by hand. A new `right_<n>`,
-`wrong_<n>` or `machine_silly_<n>` variant is picked up by count, nothing else to change.
+file's `heroKey` / `villainKey` / `moveKey`, never by hand.
+
+**Variants** (item 087): a line she hears several times an episode, or every episode,
+has several, said in turn and carried across episodes in the store's `recent`
+(`src/episode/lineVariants.ts`; `variantKeys` in script.ts). Add one as `<key>_<n>` next
+to the plain key (`room_find`, `room_find_2`...) or the numbered set (`right_1`...);
+nothing else changes, as long as the scene says it through `narrate` (rooms), `say`
+(the battle) or `variant(key)`. A line compared by id in a scene (the hub's narrow box)
+uses `isVariant`. Battle barks rotate too: each fighter's taunts all go round before
+one comes again, and a big move is called out once a part.
 
 ## Art
 

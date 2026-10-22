@@ -24,6 +24,7 @@ import { FreePlay } from '../fx/freePlay';
 import { fitImage } from '../fx/juice';
 import { SceneGen } from '../fx/sceneGen';
 import type { DebugOrigin } from '../episode/debug';
+import { variant } from '../episode/lineVariants';
 import type { RoomPlan } from '../rules/sentences';
 import { Controls } from '../input/Controls';
 import { dadLock } from '../input/dadLock';
@@ -211,10 +212,10 @@ export abstract class RoomScene extends Phaser.Scene {
     return this.guard(voiceBus.say(id));
   }
 
-  /** Say narrator line(s) as instructions, locking input until done. */
+  /** Say narrator line(s) as instructions, locking input until done; a key with variants says its next (item 087). */
   protected async narrate(...keys: string[]): Promise<void> {
     this.locked = true;
-    await this.guard(voiceBus.sequence(keys.map((k) => narratorLine(narrator(), k))));
+    await this.guard(voiceBus.sequence(keys.map((k) => narratorLine(narrator(), variant(k)))));
     this.locked = false;
   }
 

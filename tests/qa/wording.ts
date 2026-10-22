@@ -136,3 +136,19 @@ export function pacingIssues(visits: { scene: string; ms: number; wrong: boolean
   }
   return out;
 }
+
+/**
+ * Lines said more than twice in a run (item 087: "Great reading, your word made
+ * it extra strong" every move). Exempt: what must repeat, the letter sounds and
+ * words (`letter_`, `word_`, `rime_`, `silly_`), the sentence prefixes, and the
+ * move choice's own lines (`use_move`, `not_move`, `was_move`, `find_move`). A
+ * run of several episodes counts them all together.
+ */
+export function repeatedLines(ids: readonly string[]): Record<string, number> {
+  const n = new Map<string, number>();
+  for (const id of ids) {
+    if (/^(letter|word|rime|silly|sent)_/.test(id) || /_(use_move|not_move|was_move|find_move)_/.test(id)) continue;
+    n.set(id, (n.get(id) ?? 0) + 1);
+  }
+  return Object.fromEntries([...n].filter(([, c]) => c > 2).sort((a, b) => b[1] - a[1]));
+}

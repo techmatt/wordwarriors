@@ -17,7 +17,8 @@ import { drawCast, seededRand } from '../../src/rules/cast';
 import { difficulty, helpLevel, rampsAdvance, setDifficulty } from '../../src/rules/difficulty';
 import { pickEnding } from '../../src/rules/endings';
 import { MINIGAMES, drawGames } from '../../src/rules/minigames';
-import { fresh, leastRecent } from '../../src/rules/recent';
+import { fresh, leastRecent, nextVariant } from '../../src/rules/recent';
+import { variantKeys } from '../../content/voice/script';
 import { drawLines, drawStory, pickVariant } from '../../src/rules/story';
 import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
 import { withDifficulty } from './difficulty';
@@ -172,4 +173,27 @@ test('games: a game she played in her last episodes weighs VARIETY.gameWeight, s
   const leaned = count(store);
   assert.ok(MINIGAMES.some((g) => g.id === 'word_machine'));
   assert.ok((leaned.word_machine ?? 0) < (plain.word_machine ?? 0) * 0.75, `machine ${plain.word_machine} → ${leaned.word_machine}`);
+});
+
+// ---- Line variants (item 087) ------------------------------------------------
+
+test('line variants: in turn order, every one before a repeat, carried across episodes by the store', () => {
+  assert.deepEqual(variantKeys('house_doors'), ['house_doors', 'house_doors_2', 'house_doors_3', 'house_doors_4']);
+  assert.deepEqual(variantKeys('right').slice(0, 2), ['right_1', 'right_2']);
+  assert.deepEqual(variantKeys('house_front'), ['house_front']);
+  const store = new ProgressStore(memory());
+  const keys = variantKeys('room_find');
+  const said: string[] = [];
+  for (let i = 0; i < keys.length * 2; i++) {
+    const k = nextVariant(keys, store.recentOf('line:room_find'));
+    store.remember('line:room_find', k, keys.length - 1);
+    said.push(k);
+  }
+  assert.deepEqual(said, [...keys, ...keys]);
+});
+
+test('line variants: every line said several times an episode has at least three', () => {
+  for (const k of ['right', 'wrong', 'move_great', 'room_listen', 'room_your_turn', 'room_find', 'got_item', 'house_doors', 'house_more', 'use_bag', 'machine_silly', 'machine_change', 'bridge_find', 'bridge_say', 'bridge_slide']) {
+    assert.ok(variantKeys(k).length >= 3, `${k}: ${variantKeys(k).length}`);
+  }
 });

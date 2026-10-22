@@ -35,6 +35,7 @@ import { sfxFanfare, sfxSelect, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { DEPTH, FONT_ROUNDED, GAME_WIDTH } from '../config';
 import { away, enterRoom, episode, giftWord, helper, hubScene, narrator, planFor, type Slot, type Step } from '../episode/Episode';
+import { isVariant, variant } from '../episode/lineVariants';
 import { helperAbilityFor } from '../rules/moves';
 import { bob, burst, flash, popIn, shockwave, squash } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -111,7 +112,7 @@ export class HubScene extends RoomScene {
    * gift scene's last line, as the doors light) to the top over the door signs.
    */
   protected override narrowLine(u: Utterance): boolean {
-    return u.id === this.nar('house_doors') || u.id === this.nar('house_more') || u.id === hubScene().ids.done;
+    return isVariant(u.id, this.nar('house_doors')) || isVariant(u.id, this.nar('house_more')) || u.id === hubScene().ids.done;
   }
 
   /** `hint`: the line ids yellow says again in this phase. */
@@ -463,8 +464,9 @@ export class HubScene extends RoomScene {
   private async offerDoors(): Promise<void> {
     const left = this.openSideDoors();
     if (left === 0) return this.openFront(this.line('house_front'));
-    await this.narrate(left === 2 ? 'house_doors' : 'house_more');
-    this.setPhase('doors', this.nar(left === 2 ? 'house_doors' : 'house_more'));
+    const line = this.nar(variant(left === 2 ? 'house_doors' : 'house_more'));
+    await this.speak(line);
+    this.setPhase('doors', line);
   }
 
   /** Back from a side room: one more, or out the front. */
@@ -472,8 +474,9 @@ export class HubScene extends RoomScene {
     await this.wait(700);
     const left = this.openSideDoors();
     if (left === 0) return this.openFront(this.line('house_front'));
-    await this.narrate('house_more');
-    this.setPhase('doors', this.nar('house_more'));
+    const line = this.nar(variant('house_more'));
+    await this.speak(line);
+    this.setPhase('doors', line);
   }
 
   /** Enable the side doors not done; returns how many. */

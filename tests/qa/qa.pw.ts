@@ -29,7 +29,7 @@ import { boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBattle, p
 VOICE.mode = 'real';
 driver.walk = true;
 import { layoutIssues, leakIssues, logIssues, placeholderArt, voiceBuildIssues, type Issue, type Layout, type Since } from './checks';
-import { clippedIssues, giveawayIssues, pacingIssues, spellingIssues } from './wording';
+import { clippedIssues, giveawayIssues, pacingIssues, repeatedLines, spellingIssues } from './wording';
 
 const TAG = process.env.QA_TAG ?? 'now';
 const OUT = `scratch/qa/${TAG}`;
@@ -691,6 +691,9 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
           frames: q.frames,
           locks: q.locks.filter((l) => l.ms > 6000 || l.silentMs > 1500),
           voiceLines: q.voice.length,
+          // Item 087: the transcript, line ids in order, and each id said more than twice.
+          said: q.voice.map((v) => v.id),
+          repeated: repeatedLines(q.voice.map((v) => v.id)),
           ...(probeLog.length ? { probes: probeLog } : {}),
           ...(sc.net ? { netFailed: net.failed } : {}),
           ...(hiding ? { hidden: hiding.count() } : {}),
