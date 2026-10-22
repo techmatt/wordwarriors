@@ -315,7 +315,7 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   }
   // The counter: not a word on battle 1's move pads, not a word fetched this
   // episode (battle 1 shouts THE NET!). Every bag word is decodable (item 009;
-  // KEY and YOYO too since item 048).
+  // the long-vowel KEY and YOYO too since item 048, and may be the counter: item 090).
   const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w)).filter(fits(2));
   keys.push(drawKey(store, eligible, rand, [...keys, ...taken], (w) => (w === named ? NAMED_COUNTER_BOOST : 1)));
 

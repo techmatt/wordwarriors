@@ -146,7 +146,10 @@ battle's pads (no key word is), and never a word the episode's hero, ally or vil
 says or shows first (`saidEarly` in `src/rules/sentences.ts`: names, abilities,
 ultimates, taunts, minions, the threat, their combo) or the quest line and hub scene
 say. The unit test "the counter is random: any pictured, decodable word,
-under the 009 exclusions" checks it for every villain.
+under the 009 exclusions" checks it for every villain. The long-vowel words KEY and YOYO
+count as decodable and may be the counter like any bag word (item 048, Matt's ruling
+again in item 090: she sounds them out fine; unit test "a seeded episode can draw KEY or
+YOYO as its counter word").
 
 **Named counter items are flavour.** When the draw lands on the villain's own
 `counter.word` (HAT for Evil Tiamat), battle 2 shows the named item (`item_<id>` art,

@@ -1,7 +1,7 @@
 /**
  * The battle's move choices (items 018, 037): the gift word, the plan, the
  * move bag, who fires each word, the counter keeping clear of battle 1's
- * pads, every move word pictured and voiced, and the reformed villain's lines.
+ * pads (KEY and YOYO among its draws), every move word pictured and voiced, and the reformed villain's lines.
  * `npx tsx --test tests/unit/moves.test.ts` (also part of `npm run test:unit`).
  */
 
@@ -239,6 +239,21 @@ test("the counter word is never on battle 1's pads, and the counter still varies
     counters.add(key);
   }
   assert.ok(counters.size >= 10, `only ${[...counters].join(', ')}`);
+});
+
+test('a seeded episode can draw KEY or YOYO as its counter word (item 090: special words may be counters)', () => {
+  // The whole episode's draw, as the counter test above makes it: the gift, battle 1's pads, the rooms' games.
+  const seen = new Set<string>();
+  for (let seed = 1; seed <= 600 && seen.size < 2; seed++) {
+    const store = new ProgressStore(memory());
+    const rand = seeded(spread(seed));
+    const gift = drawGift(store, { helper: ALLY }, rand);
+    const pads = battle1Words(planMoves(store, input(gift), rand));
+    const ep: EpisodeInput = { fill: { villain: EPISODE_DEFAULTS.villain, helper: ALLY, hero: HERO }, ally: ALLY, gift, rooms: ['kitchen', 'garage'], counterRoom: 'attic', battle1Moves: pads };
+    const key = episodePlans(store, ep, rand)[2].key;
+    if (key === 'key' || key === 'yoyo') seen.add(key);
+  }
+  assert.deepEqual([...seen].sort(), ['key', 'yoyo']);
 });
 
 test('reformed: every character has two or more short lines, each voiced in its good voice', () => {
