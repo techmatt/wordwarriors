@@ -17,6 +17,7 @@ import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { castArt, castFace, castId, castScale, counterWord, episode, narrator, villainSpec, waker } from '../episode/Episode';
+import { variant } from '../episode/lineVariants';
 import { burst, fitImage, shockwave } from '../fx/juice';
 import { SceneGen } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
@@ -140,11 +141,11 @@ export class VictoryScene extends Phaser.Scene {
     this.time.delayedCall(2200, () => startMusic('title'));
     void (async () => {
       const n = narrator();
-      await voiceBus.say(narratorLine(n, 'victory_1'));
+      await voiceBus.say(narratorLine(n, variant('victory_1')));
       if (gone()) return;
       await this.recap(gone);
       if (gone()) return;
-      await voiceBus.say(narratorLine(n, 'victory_2'));
+      await voiceBus.say(narratorLine(n, variant('victory_2')));
       if (gone()) return;
       // Said: a green dot (top right, clear of the title, the podium and the cards), and green goes on to THE END.
       this.dot = makeButtonDot(this, GAME_WIDTH - 90, 105, 'green', 30).setDepth(DEPTH.hud);

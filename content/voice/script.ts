@@ -36,7 +36,7 @@ export const CORE_LINES: Template[] = [
   { key: 'pick_ally', text: 'Who will help? Pick a friend, or nobody!', say: 'Who will help? Pick a friend, or nobody.' },
   { key: 'pick_villain', text: 'Who is the bad guy? Pick one, or the surprise!', say: 'Who is the bad guy? Pick one, or the surprise.' },
   { key: 'surprise', text: "It's a surprise villain!" },
-  { key: 'nobody', text: "No helper? Then I'll help you!" },
+  { key: 'nobody', text: "If nobody helps, I'll help you!" },
 ];
 
 /** Composed per narrator. */
@@ -65,13 +65,16 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'wrong_3', text: 'That one is ticklish! Try again!', say: 'That one is ticklish, try again!' },
   { key: 'wrong_4', text: "You were so close! Let's try another one!", say: "You were so close, let's try another one!" },
   { key: 'wrong_5', text: "Oops, that's a different one! Try again!", say: "Oops, that's a different one, try again!" },
-  { key: 'wrong_6', text: "That's not it, but I know you can find it!" },
+  { key: 'wrong_6', text: "That's not it, but I know you'll find it!" },
   { key: 'made_gem', text: 'We made a power gem!' },
   { key: 'made_ammo', text: 'We made star ammo!' },
   { key: 'made_helper', text: 'A helper friend is here!' },
   { key: 'battle_start', text: "Let's go! Charge!", say: "Let's go, charge!" },
   { key: 'battle2_start', text: "It's round two, and this time we're ready!" },
   { key: 'move_pick', text: 'Quick, pick a move!' },
+  { key: 'move_pick_2', text: "It's your move! Pick one!", say: "It's your move, pick one!" },
+  { key: 'move_pick_3', text: 'Which move should we do?' },
+  { key: 'move_pick_4', text: "Let's pick a move!" },
   // Item 059: said once she has picked the right move word and it fires,
   // supercharged ("Super power!" read oddly to Matt).
   { key: 'move_great', text: 'Great reading! Your word made it extra strong!', say: 'Great reading, your word made it extra strong!' },
@@ -89,7 +92,11 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'forge_intro', text: "Let's make it! Spell the magic words!", say: "Let's make it, spell the magic words!" },
   { key: 'finish', text: "Let's finish this together!" },
   { key: 'victory_1', text: 'We won! Hooray!', say: 'We won, hooray!' },
+  { key: 'victory_1_2', text: 'We did it! We won!', say: 'We did it, we won!' },
+  { key: 'victory_1_3', text: "Hooray, we won! Let's look at what you read!", say: "Hooray, we won, let's look at what you read!" },
   { key: 'victory_2', text: 'You are a real Word Warrior!' },
+  { key: 'victory_2_2', text: "You're the best Word Warrior ever!" },
+  { key: 'victory_2_3', text: 'Look at all that reading! You are a real Word Warrior!', say: 'Look at all that reading, you are a real Word Warrior!' },
   // The house (v0.2): the hub's doors and the sentence rooms. The hub's story
   // scene, which gives her the gift word, is the helper's own (item 037,
   // content/house/scenes.ts), composed in tools/voice/compose.ts.
@@ -110,7 +117,7 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'room_listen_3', text: "Here's a new one! Listen!", say: "Here's a new one, listen!" },
   { key: 'room_listen_4', text: 'Listen to this one!' },
   { key: 'room_your_turn', text: "Now it's your turn! Press green to read it.", say: "Now it's your turn, press green to read it." },
-  { key: 'room_your_turn_2', text: 'Can you read it? Press green!', say: 'Can you read it? Press green!' },
+  { key: 'room_your_turn_2', text: 'Ready to read it? Press green!', say: 'Ready to read it? Press green!' },
   { key: 'room_your_turn_3', text: 'You read this one! Press green.', say: 'You read this one, press green.' },
   { key: 'room_your_turn_4', text: 'Your turn to read! Press green.', say: 'Your turn to read, press green.' },
   { key: 'room_find', text: 'Now find it, and press green!' },
