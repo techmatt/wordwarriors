@@ -418,6 +418,9 @@ async function pickPad(page: Page, word: string): Promise<void> {
     const now = await until(page, (st) => !st.battle?.choice || st.battle.choice.open, 30_000, 'choice open again');
     if (!now.battle?.choice) return;
     const misses = now.battle.choice.misses;
+    // Back onto the pad first if anything moved her while the choice was closed for a line
+    // (item 092, M20: twice she was found off the pad, once 118 px away, and every green missed).
+    if (!driver.walk && tries > 0) await place(page, pad.x, pad.y);
     await press(page, 'green');
     // Taken: the choice closed (right) or counted a miss (wrong). Anything
     // else was the idle re-prompt closing it first: press again.
