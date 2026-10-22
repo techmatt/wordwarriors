@@ -417,7 +417,7 @@
 {"id":"move_bavmorda_evil_skeleton_wave","speaker":"bavmorda_evil","group":"fighter_bavmorda_evil","text":"Skeleton Army!"},
 {"id":"move_bavmorda_evil_pig_curse","speaker":"bavmorda_evil","group":"fighter_bavmorda_evil","text":"Curly Tail Curse!"},
 {"id":"move_bavmorda_evil_dark_bolts","speaker":"bavmorda_evil","group":"fighter_bavmorda_evil","text":"Dark Bolts!"},
-{"id":"reformed_bavmorda_piggy","speaker":"bavmorda","group":"fighter_bavmorda_evil","text":"Sorry, no more piggy spells. Maybe I will do just one."},
+{"id":"reformed_bavmorda_piggy","speaker":"bavmorda","group":"fighter_bavmorda_evil","text":"Sorry, no more piggy spells, I promise!"},
 {"id":"reformed_bavmorda_back","speaker":"bavmorda","group":"fighter_bavmorda_evil","text":"Sorry, I'll turn everybody back."},
 {"id":"reformed_bavmorda_witchy","speaker":"bavmorda","group":"fighter_bavmorda_evil","text":"Sorry I was so witchy!"},
 {"id":"reformed_bavmorda_potion","speaker":"bavmorda","group":"fighter_bavmorda_evil","text":"Can I brew you a happy potion?"},

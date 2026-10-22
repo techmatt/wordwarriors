@@ -1203,7 +1203,7 @@ export const ROSTER: CharacterSpec[] = [
     },
     reformed: {
       sorry: [
-        { key: 'piggy', text: 'Sorry, no more piggy spells. Maybe I will do just one.' },
+        { key: 'piggy', text: 'Sorry, no more piggy spells, I promise!' },
         { key: 'back', text: "Sorry, I'll turn everybody back." },
         { key: 'witchy', text: 'Sorry I was so witchy!' },
       ],

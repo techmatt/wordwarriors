@@ -405,7 +405,7 @@ change.
 | `taunt_bavmorda_evil_cauldron` | Into my cauldron! | Into my cauldron you go! |
 | `ult_bavmorda_evil` | Everybody Pigs! | Piggy Polymorph! |
 | `move_bavmorda_evil_skeleton_wave` | Skeleton Wave! | Skeleton Army! |
-| `reformed_bavmorda_piggy` | Sorry! No more piggy spells. Well, maybe one. | Sorry, no more piggy spells. Maybe I will do just one. |
+| `reformed_bavmorda_piggy` | Sorry! No more piggy spells. Well, maybe one. | Sorry, no more piggy spells, I promise! |
 | `reformed_bavmorda_back` | Sorry! I will turn everybody back. | Sorry, I'll turn everybody back. |
 | `taunt_rilla_bananas` | Bananas, go! | Here come the bananas! |
 | `taunt_rilla_stomp` | Stomp, stomp, hooray! | Watch my giant feet! |
