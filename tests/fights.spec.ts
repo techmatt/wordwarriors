@@ -12,14 +12,15 @@ import { FIGHTS } from '../content/battle/fights';
 import { BATTLE_SPEED, SLOW, boot, collectErrors, playBattle, state, until } from './harness';
 
 /** Each style against a villain it was not written for, so nothing leans on one villain. */
-const AGAINST: Record<string, string> = { brawl: 'tiamat', sky_race: 'smaug', sea_tug: 'jormungandr', spell_clash: 'bavmorda', cook_off: 'tiamat' };
+const AGAINST: Record<string, string> = { brawl: 'tiamat', sky_race: 'smaug', sea_tug: 'jormungandr', spell_clash: 'bavmorda', cook_off: 'tiamat', frost_clash: 'elsa', space_race: 'ozymandias' };
 
 /**
  * One battle part per style (item 083), the parts alternating across the styles: the race
  * plays part 2 (its finish line), the rope pull 1, the beam clash 2, the cook-off 1. Each
- * part keeps the shape checks; the brawl's both parts are every default episode's.
+ * part keeps the shape checks; the brawl's both parts are every default episode's. Item
+ * 115's contests each play their own villain: the frost clash 1, the space race 1.
  */
-const PART: Record<string, 1 | 2> = { sky_race: 2, sea_tug: 1, spell_clash: 2, cook_off: 1 };
+const PART: Record<string, 1 | 2> = { sky_race: 2, sea_tug: 1, spell_clash: 2, cook_off: 1, frost_clash: 1, space_race: 1 };
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/fights_${name}.png` });
 
@@ -40,8 +41,10 @@ test('the cast draw picks the villain\'s own style; ?fight= fixes another', asyn
 // The brawl is the default episode's style (Evil Tiamat has none of her own), so every
 // default whole episode and smoke's Battle part 2 already play it with these checks,
 // the length too (`expectFightLength` in playEpisode): only the contests are swept here.
+// So is a brawl with its own id (item 115, Evil Moriarty's magic show): tests/villains.spec.ts
+// plays his whole episode (booted straight into part 2, a brawl ran 44.5 s, under the 45 s floor).
 // A story fight (item 107) is not a contest: tests/storyFight.spec.ts plays it.
-for (const f of FIGHTS.filter((x) => x.id !== 'brawl' && x.kind !== 'story')) {
+for (const f of FIGHTS.filter((x) => x.kind !== 'brawl' && x.kind !== 'story')) {
   test(`${f.id}: battle ${PART[f.id] ?? 1} keeps the episode's shape`, SLOW, async ({ page }) => {
     test.setTimeout(600_000);
     const problems = collectProblems(page);

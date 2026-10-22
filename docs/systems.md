@@ -77,15 +77,15 @@ a cook-off 70% of the time, whoever the villain is (`pickFight`, drawn once an e
 | Evil Seraphina (`seraphina`) | Free-for-all (`brawl`) |
 | Evil Dada Matt (`dada_matt`) | Free-for-all (`brawl`) |
 | Evil Dada Jason (`dada_jason`) | Cook-off (`cook_off`) |
-| Evil Elsa (`elsa`) | Free-for-all (`brawl`) |
+| Evil Elsa (`elsa`) | Frost-beam clash in the ice palace (`frost_clash`) |
 | Evil Anna (`anna`) | Free-for-all (`brawl`) |
 | Evil Jasmine (`jasmine`) | Free-for-all (`brawl`) |
-| Evil Ozymandias (`ozymandias`) | Free-for-all (`brawl`) |
+| Evil Ozymandias (`ozymandias`) | Space race from the iceberg launch pad (`space_race`) |
 | Evil Jormungandr (`jormungandr`) | Rope pull against the coils (`sea_tug`) |
 | Evil Smaug (`smaug`) | Sky race through the treasure cave (`sky_race`) |
 | Evil Tiamat (`tiamat`) | Free-for-all (`brawl`) |
 | Evil Scar (`scar`) | Free-for-all (`brawl`) |
-| Evil Moriarty (`moriarty`) | Free-for-all (`brawl`) |
+| Evil Moriarty (`moriarty`) | Magic show at the foggy fairground (`magic_show`, the brawl's staging) |
 | Evil Bavmorda (`bavmorda`) | Spell-beam clash (`spell_clash`) |
 | EvilRilla (`rilla`) | Free-for-all (`brawl`) |
 | Evil Dada Matt, lifter (`dada_matt_lifter`) | Free-for-all (`brawl`) |

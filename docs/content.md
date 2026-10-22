@@ -132,10 +132,13 @@ the bedroom after the news, the hub and every side room; no room art is per-vill
   `he's going to eat Dada Jason's car`!" Fun, not scary, no reading words (no pictured bank word: warlock Dada
   Jason's toad is not a FROG); its words are kept off that episode's pads and gift word.
   Optional `threatSay` (same word count) when edge-tts needs help.
-- `tint`: laid over every room at low alpha.
+- `tint`: laid over every room at low alpha; optional `tintAlpha` (default 0.16) lays it
+  stronger (Evil Elsa's white, 0.42: she freezes the house white, item 115).
 - `decals`: `{ id, glyph, look, count }`, things it left lying about. Prefix the id with
   the character id (`rilla_footprint`); each is art `decal_<id>`.
-- `fx`: `frost | embers | quake | sparkle | smoke | none`.
+- `fx`: `frost | freeze | embers | quake | sparkle | smoke | none`. `freeze` (item 115) is
+  thicker frost plus frost creeping in from every edge of the screen, like a frozen window.
+  In a reading room (`calm`) the frost falls half as thick.
 
 ## The counter sentence, and named counter items (`counter.word`)
 
@@ -387,7 +390,10 @@ Item 031: not every showdown is a brawl. A style is data plus a staging:
 - **Data** (`FightSpec`): `{ id, kind, name, arena?, banner, tooStrong, win, lines,
   props? }`. `kind` picks the staging code (`brawl`, `race`, `tug`, `clash`,
   `cookoff`: `src/battle/stages/`), so a second race (a sea race, a broom race) is data
-  only. `arena` is an `ARENAS` key in the roster (art `arena_<key>`), else the villain's
+  only. A race's `scenery` is the treasure cave (absent) or `space` (Evil Ozymandias's
+  `space_race`, item 115: stars, ringed planets and comets over ice floes); a second clash
+  is data only too (Evil Elsa's `frost_clash`), and so is a brawl with its own id (Evil
+  Moriarty's `magic_show`: the free-for-all with its own banners and lines). `arena` is an `ARENAS` key in the roster (art `arena_<key>`), else the villain's
   own arena. `banner` is the big word as each part starts, `tooStrong` floats over the
   floored heroes at the end of part 1, `win` is the last hit's banner. `lines` are the
   narrator's `start`, `start2`, `retreat` and `finish`, voiced for every narrator

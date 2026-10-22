@@ -140,11 +140,15 @@ Spell), the alarm and the retreat camp are **parked**: no episode includes them,
 - **The active cast** (item 028/030): `ACTIVE_CAST` in `src/config.ts` lists who the
   draw picks from, as persons: allies Dada Matt, Dada Jason, Scar, Ellie, Seraphina, Elsa,
   Anna and Jasmine (those four since item 111), Ozymandias, Moriarty and Bluerilla (`rilla`,
-  those three since item 114); villains Jörmungandr, Smaug, Bavmorda and Tiamat. A dad listed comes in all his forms.
+  those three since item 114); villains Jörmungandr, Smaug, Bavmorda and Tiamat, and Evil Elsa, Evil Ozymandias and Evil
+  Moriarty (since item 115). A dad listed comes in all his forms. Elsa, Ozymandias and
+  Moriarty are on both lists, and nobody is ever her own villain: with one as the ally the
+  villain is somebody else.
   Everybody else stays defined and playable by `?ally=` / `?villain=`; adding a name to
   the list switches that character on.
-- **The villain**: one of the active villains, each equally likely; her last two sit
-  out (with four active, always two left to choose from), never last episode's.
+- **The villain**: one of the active villains, each equally likely; her last four sit
+  out (with seven active since item 115, always three left to choose from), never last
+  episode's.
 - **The ally**: one of the active allies who is not the villain; a dad in one of his
   forms.
 - **The dads**: the one who wakes her (and narrates when there is no ally) is Dada Matt
@@ -186,15 +190,19 @@ Any cast can be tried from the URL (and stays for every episode that session):
 | `?form=cyber,warrior` | The dads' forms by name: `builder` `lifter` `cyber` `blade`; `chef` `warrior` `warlock` |
 | `?primary=dada_jason` / `none`, `?secondary=1` / `0` | Who wakes her; whether the other dad comes in |
 | `?place=forest_gym` / `home` | The quest place, whoever the helper is (to look at one) |
-| `?fight=sky_race` | The showdown's fight style, whoever the villain is: `brawl` `sky_race` `sea_tug` `spell_clash` `cook_off` |
+| `?fight=sky_race` | The showdown's fight style, whoever the villain is: `brawl` `sky_race` `space_race` `sea_tug` `spell_clash` `frost_clash` `magic_show` `cook_off` |
 | `?fight=smaug_story` | The **story fight** against Evil Smaug (item 107): forces him as the villain, whatever the cast. `?scene=battle&part=1&fight=smaug_story` (or `part=2`) goes straight to a half |
 
 Not every showdown is a brawl (item 031). Each villain has a **fight style**
 (`fight` in the roster; `content/battle/fights.ts`): Evil Smaug races the heroes
 through his treasure cave (`sky_race`), Evil Jörmungandr pulls a rope against them
 over the sea (`sea_tug`), Evil Bavmorda meets their magic beam for beam
-(`spell_clash`, warlock Dada Jason's too), and Evil Tiamat keeps her giant free-for-all
-(`brawl`, also every villain without a style). Evil chef Dada Jason's own style is the
+(`spell_clash`, warlock Dada Jason's too), Evil Elsa's frost beam meets their warm magic
+in her ice palace (`frost_clash`, item 115), Evil Ozymandias races them through the stars
+from his iceberg launch pad (`space_race`: the sky race with `scenery: 'space'`), Evil
+Moriarty puts on a magic show (`magic_show`: the free-for-all's staging, where his clones,
+card traps and vanishing tricks show off best, with its own banners and lines), and Evil
+Tiamat keeps her giant free-for-all (`brawl`, also every villain without a style). Evil chef Dada Jason's own style is the
 **cook-off**, and with chef Dada Jason as the ally a cook-off is likely (70%,
 `fightNudge`), whoever the villain is. The episode draws it once, at the first
 battle (`episode.fight`, `src/rules/fights.ts`), so both battles are the same contest.
@@ -485,7 +493,7 @@ pictures may be longer), `WORD_MACHINE.maxUnits`, `CHARGE.units`.
 (`recent`, `src/rules/recent.ts`; how many: `VARIETY` in `src/config.ts`) and avoids
 them while two choices are left: the ally and each dad's form (`src/rules/cast.ts`), the
 villain (`recent.villain`, the last 4 kept; the draw avoids as many
-as still leave two, so the last 2 with four active), the quest line, hub scene and each line variant
+as still leave two, so the last 4 with seven active), the quest line, hub scene and each line variant
 (`src/rules/story.ts`), the victory scene, the side rooms (the one left out last episode
 comes back), the games (last episodes' weigh `VARIETY.gameWeight`) and the phonics door
 (Charge vs Bridge), and the warm-up's last 3 words. Her latest right-first-time reads

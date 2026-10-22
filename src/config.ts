@@ -79,7 +79,8 @@ export const ACTIVE_CAST = {
   // Item 111: Seraphina, Elsa, Anna and Jasmine join (Matt, 2026-10-22);
   // item 114: Ozymandias, Moriarty and Bluerilla (`rilla`).
   allies: ['dada_matt', 'dada_jason', 'scar', 'ellie', 'seraphina', 'elsa', 'anna', 'jasmine', 'ozymandias', 'moriarty', 'rilla'],
-  villains: ['jormungandr', 'smaug', 'bavmorda', 'tiamat'],
+  // Item 115: Evil Elsa, Evil Ozymandias and Evil Moriarty join the villains.
+  villains: ['jormungandr', 'smaug', 'bavmorda', 'tiamat', 'elsa', 'ozymandias', 'moriarty'],
 };
 
 /**

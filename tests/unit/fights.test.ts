@@ -52,6 +52,11 @@ test('fights: the active villains each have their own style, and the styles diff
   const own = ACTIVE_CAST.villains.map((v) => ownFight(v));
   assert.equal(new Set(own).size, own.length, `each active villain fights differently: ${own.join(', ')}`);
   assert.equal(ownFight('tiamat'), 'brawl', 'Evil Tiamat keeps her giant battle');
+  // Item 115: Evil Elsa's frost beam, Evil Ozymandias's space race, Evil Moriarty's magic show (a brawl's staging).
+  assert.equal(ownFight('elsa'), 'frost_clash');
+  assert.equal(ownFight('ozymandias'), 'space_race');
+  assert.equal(ownFight('moriarty'), 'magic_show');
+  assert.equal(FIGHT_BY_ID.magic_show!.kind, 'brawl');
   assert.equal(ownFight('nobody'), 'brawl');
   assert.equal(fightSpec('nonsense').id, 'brawl');
 });

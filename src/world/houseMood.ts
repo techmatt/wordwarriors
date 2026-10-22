@@ -58,7 +58,7 @@ const TINT_ALPHA = 0.16;
 /** The strip of back wall above the doors, clear of the HUD corners. */
 const WALL = new Phaser.Geom.Rectangle(210, 70, 880, 130);
 /** Decal ids that read as lying on the floor; anything else may go on the wall. */
-const FLOOR_LIKE = /foot|print|step|track|puddle|crumb|peel|banana|scorch|rubble|pile|mud|slime|bone|coin|sand|leaf|leaves|feather|dust/;
+const FLOOR_LIKE = /foot|print|step|track|puddle|crumb|peel|banana|scorch|rubble|pile|mud|slime|bone|coin|sand|leaf|leaves|feather|dust|penguin/;
 
 /**
  * A side room's scatter seed (FNV-1a of its id), so each room has its own
@@ -81,8 +81,9 @@ export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: Hou
   const floor = opts.floor;
 
   // The tint sits just above the background, under everything that stands.
+  const alpha = mood.tintAlpha ?? TINT_ALPHA;
   const tint = scene.add
-    .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, mood.tint, opts.reveal ? 0 : TINT_ALPHA)
+    .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, mood.tint, opts.reveal ? 0 : alpha)
     .setDepth(DEPTH.ground + 1);
   // Reveal: darken past the resting tint, hold, then settle back to it (never
   // through clear, which a yoyo back to the start would do).
@@ -90,8 +91,8 @@ export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: Hou
     scene.tweens.chain({
       targets: tint,
       tweens: [
-        { fillAlpha: TINT_ALPHA * 1.6, duration: 500, hold: 300 },
-        { fillAlpha: TINT_ALPHA, duration: 500 },
+        { fillAlpha: Math.min(0.6, alpha * 1.6), duration: 500, hold: 300 },
+        { fillAlpha: alpha, duration: 500 },
       ],
     });
   }
@@ -108,7 +109,7 @@ export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: Hou
   let n = 0;
   for (const d of mood.decals) {
     for (let i = 0; i < d.count; i++) {
-      const onFloor = !!opts.floorOnly || FLOOR_LIKE.test(d.id) || (!/crack|web|scratch|claw|frost|ice|hole|smudge|soot/.test(d.id) && n % 2 === 0);
+      const onFloor = !!opts.floorOnly || FLOOR_LIKE.test(d.id) || (!/crack|web|scratch|claw|frost|ice|icicle|hole|smudge|soot/.test(d.id) && n % 2 === 0);
       // Best of a few candidates: the one farthest from what is already down,
       // and out of everything `avoid` keeps clear while any candidate is.
       const size = onFloor ? 64 + rand() * 16 : 84 + rand() * 20;
@@ -160,35 +161,38 @@ export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: Hou
     revealed = new Promise((resolve) => {
       order.forEach((p, i) => scene.time.delayedCall(450 + i * gap, () => showDecal(p, true)));
       scene.time.delayedCall(450 + order.length * gap + 200, () => {
-        startFx(scene, mood.fx, floor, !!opts.calm);
+        startFx(scene, mood.fx, floor, !!opts.calm, rand);
         resolve();
       });
     });
   } else {
     for (const p of order) showDecal(p, false);
-    startFx(scene, mood.fx, floor, !!opts.calm);
+    startFx(scene, mood.fx, floor, !!opts.calm, rand);
     revealed = Promise.resolve();
   }
   return { revealed };
 }
 
 /** The ambient effect, running until the scene ends. */
-function startFx(scene: Phaser.Scene, fx: HouseMood['fx'], floor: Phaser.Geom.Rectangle, calm: boolean): void {
+function startFx(scene: Phaser.Scene, fx: HouseMood['fx'], floor: Phaser.Geom.Rectangle, calm: boolean, rand: () => number): void {
   const depth = DEPTH.fx - 10;
   const zone = (r: Phaser.Geom.Rectangle) => ({ type: 'random', source: r }) as never;
-  if (fx === 'frost') {
+  if (fx === 'frost' || fx === 'freeze') {
+    const thick = fx === 'freeze';
     scene.add
       .particles(0, 0, TEX.spark, {
         emitZone: zone(new Phaser.Geom.Rectangle(0, -10, GAME_WIDTH, 10)),
         speedY: { min: 40, max: 90 },
         speedX: { min: -25, max: 25 },
-        scale: { min: 0.4, max: 1.1 },
+        scale: thick ? { min: 0.5, max: 1.4 } : { min: 0.4, max: 1.1 },
         alpha: { start: 0.9, end: 0.2 },
         lifespan: 9000,
-        frequency: 120,
+        // Calm (she is reading): half as many flakes over the pictures and stones.
+        frequency: (thick ? 70 : 120) * (calm ? 2 : 1),
         tint: [0xffffff, 0xdff4ff],
       })
       .setDepth(depth);
+    if (thick) frostEdges(scene, depth, rand);
   } else if (fx === 'embers') {
     scene.add
       .particles(0, 0, TEX.spark, {
@@ -252,4 +256,41 @@ function startFx(scene: Phaser.Scene, fx: HouseMood['fx'], floor: Phaser.Geom.Re
     scene.time.delayedCall(2500, thump);
   }
   // 'none': nothing ambient.
+}
+
+/**
+ * Frost creeping in from every edge of the screen, like a frozen window
+ * (`freeze`, item 115: Evil Elsa freezes the house white). Bands of white
+ * fading inwards, and frost crystals scattered along them; still, so it never
+ * moves under a reading game.
+ */
+function frostEdges(scene: Phaser.Scene, depth: number, rand: () => number): void {
+  const g = scene.add.graphics().setDepth(depth);
+  const BANDS = 11;
+  const BAND = 7;
+  for (let k = 0; k < BANDS; k++) {
+    const a = 0.5 * (1 - k / BANDS);
+    const o = k * BAND;
+    g.fillStyle(0xffffff, a);
+    g.fillRect(o, o, GAME_WIDTH - 2 * o, BAND);
+    g.fillRect(o, GAME_HEIGHT - o - BAND, GAME_WIDTH - 2 * o, BAND);
+    g.fillRect(o, o + BAND, BAND, GAME_HEIGHT - 2 * o - 2 * BAND);
+    g.fillRect(GAME_WIDTH - o - BAND, o + BAND, BAND, GAME_HEIGHT - 2 * o - 2 * BAND);
+  }
+  // Frost crystals along the edges, thickest in the corners.
+  for (let i = 0; i < 36; i++) {
+    const side = i % 4;
+    const along = rand();
+    const into = rand() * rand() * 55;
+    const corner = Math.min(along, 1 - along) < 0.15 ? 1.4 : 1;
+    const x = side === 0 ? along * GAME_WIDTH : side === 1 ? along * GAME_WIDTH : side === 2 ? into : GAME_WIDTH - into;
+    const y = side === 0 ? into : side === 1 ? GAME_HEIGHT - into : along * GAME_HEIGHT;
+    scene.add
+      .image(x, y, TEX.star)
+      .setTint(0xffffff)
+      .setAlpha(0.45 + rand() * 0.35)
+      .setScale((0.35 + rand() * 0.5) * corner)
+      .setAngle(rand() * 90)
+      .setDepth(depth);
+  }
 }

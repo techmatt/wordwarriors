@@ -558,6 +558,8 @@ export const ROSTER: CharacterSpec[] = [
     id: 'elsa',
     description: 'An ice sorceress who grows crystal towers out of the ground and sculpts snow helpers.',
     arena: 'ice',
+    // Item 115: as the villain, her frost beam against everybody's warm magic.
+    fight: 'frost_clash',
     good: {
       displayName: 'Elsa', trail: { tint: [0xe8f6ff, 0x7cc7ff], shape: 'star' }, look: 'a cheerful winter queen of original design: rosy cheeks and freckles, long pale silver hair, a flowing white-and-gold gown embroidered with golden snowflakes, a little golden crown and a fluffy white fur-trimmed cape, conjuring golden-white sparkles',
       palette: [0x7cc7ff, 0xe8f6ff], glyph: '❄️', style: 'hover', speed: 160, size: 1, hp: 100,
@@ -613,9 +615,12 @@ export const ROSTER: CharacterSpec[] = [
     },
     house: {
       threat: 'she wants to freeze the whole house',
-      tint: 0x9ad8ff,
+      // Item 115: she freezes the house white (a strong white tint, and frost
+      // creeping in from every edge), where Evil Ozymandias's frost is pale blue.
+      tint: 0xf4fbff,
+      tintAlpha: 0.42,
       decals: [{ id: 'elsa_icicle', glyph: '❄️', look: 'icicles and frost patches', count: 4 }],
-      fx: 'frost',
+      fx: 'freeze',
     },
   },
   {
@@ -763,6 +768,8 @@ export const ROSTER: CharacterSpec[] = [
     id: 'ozymandias',
     description: 'A booming explorer-king from Antarctica with a silver rocket ship on an iceberg, a penguin crew and a shiny crown of ice.',
     arena: 'iceberg',
+    // Item 115: as the villain, a race through the stars against his rocket.
+    fight: 'space_race',
     good: {
       displayName: 'Ozymandias', trail: { tint: [0xbfe8ff, 0xc0c8d8], shape: 'spark' }, look: 'a grand, jolly old explorer-king with a big bushy white beard and rosy cheeks, a shiny crown of pale-blue ice crystals, a puffy silver-and-royal-blue space suit with a fluffy white fur-trimmed royal cape, chunky silver moon boots, one arm raised in a booming hello',
       palette: [0x2a5ab4, 0xc0c8d8], glyph: '🚀', style: 'stomp', speed: 90, size: 1.3, hp: 140,
@@ -1118,6 +1125,8 @@ export const ROSTER: CharacterSpec[] = [
     id: 'moriarty',
     description: 'A trickster who makes clones of himself, teleports, and leaves card traps everywhere.',
     arena: 'city',
+    // Item 115: as the villain, a magic show: the free-for-all, so his copies and traps roam.
+    fight: 'magic_show',
     good: {
       displayName: 'Moriarty', trail: { tint: [0xf4a261, 0x95d5b2], shape: 'square' }, look: 'a lanky magician in a green suit and top hat, shuffling glowing cards, winking',
       palette: [0x2d6a4f, 0xf4a261], glyph: '🎩', style: 'blink', speed: 200, size: 1, hp: 100,
@@ -1152,9 +1161,11 @@ export const ROSTER: CharacterSpec[] = [
       ],
       ultimate: ult('hall_of_mirrors', 'Mirror Maze', 'clones',0x9d4edd, 3, { count: 8, color2: 0x1b1b2f }),
       taunts: [
-        { key: 'catch', text: 'Catch me if you can!' },
+        // Item 115: silly, not scary. Was "Catch me if you can!" (CAN is a reading
+        // word) and "Watch your step!" (a little ominous).
+        { key: 'fooled', text: 'Fooled you! That one was a copy!', say: 'Fooled you, that one was a copy!' },
         { key: 'which', text: 'Which one is the real me?' },
-        { key: 'trap', text: 'Watch your step!' },
+        { key: 'riddle', text: 'Riddle me this, riddle me that!' },
         { key: 'clever', text: "I'm too clever for you!" },
         { key: 'puzzle', text: 'Try to solve my puzzle!' },
         { key: 'smoke', text: "Now you see me, now you don't!" },
@@ -1177,8 +1188,9 @@ export const ROSTER: CharacterSpec[] = [
       how: 'reveal', word: 'map',
     },
     house: {
-      threat: 'he wants to play tricks in every room',
-      tint: 0x9d4edd,
+      // Item 115: tricks and riddles, and a foggy blue-grey (was 0x9d4edd, Evil Tiamat's purple).
+      threat: 'he wants to fill the whole house with silly tricks and riddles',
+      tint: 0x5a6a9a,
       decals: [
         { id: 'moriarty_card', glyph: '🃏', look: 'playing cards left as traps', count: 4 },
         { id: 'moriarty_question', glyph: '❓', look: 'a floating question mark', count: 1 },

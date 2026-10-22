@@ -9,6 +9,9 @@
  * START to the chequered flag. The cave sweeps past right to left in three
  * parallax layers (stalactites, lantern strings, coin piles) with wind streaks
  * and glittering coins, so the still background reads as a fast flight.
+ * The space race (item 115, Evil Ozymandias's) is the same race with
+ * `scenery: 'space'`: stars, ringed planets and comets sweep past over ice
+ * floes, with frosty glitter in place of the coins.
  *
  * Beats: a super is a turbo boost; the combo is a shared rainbow slipstream;
  * part 1's ultimate rockets the villain over the finish line to the trophy
@@ -105,11 +108,16 @@ export class RaceStage extends BaseStage {
   private trophy: { obj: Phaser.GameObjects.Image | Phaser.GameObjects.Text; on: Fighter } | null = null;
   private lastCoins = 0;
   private startLabel: Phaser.GameObjects.Text | null = null;
+  /** The space race's scenery (item 115) in place of the treasure cave. */
+  private get space(): boolean {
+    return this.host.fight.scenery === 'space';
+  }
 
   override setup(): void {
     const s = this.scene;
     this.makeLayers();
-    // Wind streaks across the whole cave, and glittering coins along the floor.
+    // Wind streaks across the whole cave, and glittering coins along the floor (in space, star
+    // streaks and glittering frost).
     this.wind = s.add
       .particles(GAME_WIDTH + 80, 0, TEX.streak, {
         y: { min: 130, max: GAME_HEIGHT - 20 },
@@ -119,7 +127,7 @@ export class RaceStage extends BaseStage {
         alpha: { start: 0.45, end: 0 },
         lifespan: 1500,
         frequency: 60,
-        tint: [0xffffff, 0xfff1c0, 0xffd23f],
+        tint: this.space ? [0xffffff, 0xbfe8ff, 0x9ad8ff] : [0xffffff, 0xfff1c0, 0xffd23f],
         blendMode: Phaser.BlendModes.ADD,
       })
       .setDepth(FLOOR_TOP - 4);
@@ -131,7 +139,7 @@ export class RaceStage extends BaseStage {
         alpha: { start: 1, end: 0.2 },
         lifespan: 2600,
         frequency: 90,
-        tint: [0xffd23f, 0xffe98a, 0xffffff],
+        tint: this.space ? [0xffffff, 0xdff4ff, 0xbfe8ff] : [0xffd23f, 0xffe98a, 0xffffff],
         blendMode: Phaser.BlendModes.ADD,
       })
       .setDepth(FLOOR_TOP - 4);
@@ -178,6 +186,7 @@ export class RaceStage extends BaseStage {
   private makeLayers(): void {
     const s = this.scene;
     const span = GAME_WIDTH + 400;
+    if (this.space) return this.makeSpaceLayers(span);
     for (let i = 0; i < 7; i++) {
       const g = s.add.graphics().setDepth(DEPTH.floor).setPosition(-200 + (i * span) / 7, 0);
       for (let k = 0; k < 3; k++) {
@@ -208,6 +217,47 @@ export class RaceStage extends BaseStage {
       g.fillStyle(0xc8901a, 1).fillEllipse(0, 0, w + 10, h * 2 + 8);
       g.fillStyle(0xffc23a, 1).fillEllipse(0, 0, w, h * 2);
       for (let k = 0; k < 6; k++) g.fillStyle(k % 2 ? 0xffffff : 0xff5ab4, 0.9).fillCircle((Math.random() - 0.5) * w * 0.7, -Math.random() * h * 0.8, 3);
+      this.layers.push({ g, speed: 520 });
+    }
+  }
+
+  /** Space sweeping past (item 115, the space race): far stars, ringed planets and comets, near ice floes. */
+  private makeSpaceLayers(span: number): void {
+    const s = this.scene;
+    for (let i = 0; i < 7; i++) {
+      const g = s.add.graphics().setDepth(DEPTH.floor).setPosition(-200 + (i * span) / 7, 0);
+      for (let k = 0; k < 9; k++) {
+        const x = (Math.random() - 0.5) * 180;
+        const y = 20 + Math.random() * 200;
+        const r = 1.5 + Math.random() * 2.5;
+        g.fillStyle(0xffffff, 0.25).fillCircle(x, y, r * 2.4);
+        g.fillStyle(k % 3 ? 0xffffff : 0xffe98a, 0.95).fillCircle(x, y, r);
+      }
+      this.layers.push({ g, speed: 90 });
+    }
+    for (let i = 0; i < 4; i++) {
+      const g = s.add.graphics().setDepth(DEPTH.floor + 1).setPosition(-200 + (i * span) / 4, 150 + Math.random() * 90);
+      if (i % 2 === 0) {
+        // A little ringed planet.
+        const c = RAINBOW[(i * 2 + 1) % RAINBOW.length]!;
+        g.fillStyle(c, 0.3).fillCircle(0, 0, 40);
+        g.fillStyle(c, 1).fillCircle(0, 0, 28);
+        g.fillStyle(0xffffff, 0.35).fillCircle(-9, -9, 9);
+        g.lineStyle(5, 0xffffff, 0.8).strokeEllipse(0, 4, 92, 22);
+      } else {
+        // A comet: a glowing head and a fading tail streaming back to the right.
+        for (let k = 0; k < 6; k++) g.fillStyle(0xbfe8ff, 0.5 - k * 0.07).fillCircle(18 + k * 22, k * 3, 13 - k * 1.6);
+        g.fillStyle(0xffffff, 1).fillCircle(0, 0, 13);
+      }
+      this.layers.push({ g, speed: 210 });
+    }
+    for (let i = 0; i < 6; i++) {
+      const g = s.add.graphics().setDepth(FLOOR_TOP - 6).setPosition(-200 + (i * span) / 6, GAME_HEIGHT + 6);
+      const w = 120 + Math.random() * 90;
+      const h = 34 + Math.random() * 24;
+      g.fillStyle(0x7ab0d8, 1).fillEllipse(0, 0, w + 10, h * 2 + 8);
+      g.fillStyle(0xe8f6ff, 1).fillEllipse(0, 0, w, h * 2);
+      for (let k = 0; k < 6; k++) g.fillStyle(k % 2 ? 0xffffff : 0x9ad8ff, 0.9).fillCircle((Math.random() - 0.5) * w * 0.7, -Math.random() * h * 0.8, 3);
       this.layers.push({ g, speed: 520 });
     }
   }
@@ -424,9 +474,9 @@ export class RaceStage extends BaseStage {
     // The battle's hit() has squashed it already; this only knocks it back in the race.
     r.wobble = Math.min(120, r.wobble + 22 * power);
     if (target === this.host.villain && this.t - this.lastCoins > 0.15) {
-      // Coins spill out of the dragon's hoard (whoever the villain is).
+      // Coins spill out of the dragon's hoard (whoever the villain is); in space, frosty stars.
       this.lastCoins = this.t;
-      burst(this.scene, target.cx, target.cy, { count: 8 + power * 5, speed: 320, texture: TEX.star, gravity: 700, scale: 0.8, colors: [0xffd23f, 0xffe98a, 0xffb703] });
+      burst(this.scene, target.cx, target.cy, { count: 8 + power * 5, speed: 320, texture: TEX.star, gravity: 700, scale: 0.8, colors: this.space ? [0xffffff, 0xbfe8ff, 0xffe98a] : [0xffd23f, 0xffe98a, 0xffb703] });
     }
   }
 

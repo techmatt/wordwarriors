@@ -83,7 +83,15 @@ test('cast: the active cast (item 028) draws only its allies and villains, every
   }
   const allyForms = ACTIVE_CAST.allies.flatMap((p) => formsOf(p).map((f) => f.id));
   assert.equal(allyForms.length, 16, 'four Dada Matts, three Dada Jasons, Scar, Ellie, Seraphina, Elsa, Anna, Jasmine, Ozymandias, Moriarty and Bluerilla');
-  for (const a of allyForms) for (const v of ACTIVE_CAST.villains) assert.ok(pairs.has(`${a}+${v}`), `${a} + ${v}`);
+  // Item 115: Elsa, Ozymandias and Moriarty are both, and nobody is her own villain.
+  for (const a of allyForms) for (const v of ACTIVE_CAST.villains) if (personOf(a) !== v) assert.ok(pairs.has(`${a}+${v}`), `${a} + ${v}`);
+  for (const p of pairs) {
+    const [a, v] = p.split('+');
+    assert.notEqual(personOf(a!), personOf(v!), `${p}: one person, two roles`);
+  }
+  // Every active villain is drawn, the three of item 115 included.
+  const drawn = new Set([...pairs].map((p) => personOf(p.split('+')[1]!)));
+  assert.deepEqual([...drawn].sort(), [...ACTIVE_CAST.villains].sort());
   // Anybody off the list is still a fixed override away.
   assert.equal(drawCast({ hero: 'julia', overrides: { ally: 'anna', villain: 'rilla' } }, rand).villain, 'rilla');
   // An ally who is the only active villain leaves the rest of the roster.
@@ -105,13 +113,13 @@ test("cast: never last episode's villain, and none of the last few while others 
     recent.push(p);
     if (recent.length > 4) recent.shift();
   }
-  // Four active villains (item 028): the last two sit out, so two are left to choose from, not a fixed rotation.
+  // Seven active villains (item 115; four since item 028): the last four sit out, so three are left to choose from, not a fixed rotation.
   const four = seededRand(12);
   const seen: string[] = [];
   const nexts = new Set<string>();
   for (let i = 0; i < 400; i++) {
     const p = personOf(drawCast({ hero: 'julia', recent: seen.slice(-4) }, four).villain);
-    assert.ok(!seen.slice(-2).includes(p), `${p} again after ${seen.slice(-2).join(', ')}`);
+    assert.ok(!seen.slice(-4).includes(p), `${p} again after ${seen.slice(-4).join(', ')}`);
     if (i > 4) nexts.add(`${seen.slice(-2).join('+')}>${p}`);
     seen.push(p);
   }

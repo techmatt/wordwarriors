@@ -236,10 +236,16 @@ export interface HouseMood {
   threatSay?: string;
   /** Laid over every room at low alpha. */
   tint: number;
+  /** How strong the tint lies (default 0.16): Evil Elsa's white is stronger, so the house reads frozen white (item 115). */
+  tintAlpha?: number;
   /** Things the villain left lying about. Each is art `decal_<id>`. */
   decals: { id: string; glyph: string; look: string; count: number }[];
-  /** An ambient effect: falling frost, drifting embers, a thump that shakes the room. */
-  fx: 'frost' | 'embers' | 'quake' | 'sparkle' | 'smoke' | 'none';
+  /**
+   * An ambient effect: falling frost, drifting embers, a thump that shakes the
+   * room. `freeze` (item 115) is frost and more: thicker snow, and frost
+   * creeping in from every edge of the screen like a frozen window.
+   */
+  fx: 'frost' | 'freeze' | 'embers' | 'quake' | 'sparkle' | 'smoke' | 'none';
 }
 
 export interface MinionSpec {

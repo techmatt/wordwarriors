@@ -49,6 +49,8 @@ export interface FightSpec {
   /** Narrator lines; absent beats use the brawl's own (battle_start, battle2_start, retreat_1, finish). */
   lines: Partial<Record<FightBeat, FightLine>>;
   props?: FightProp[];
+  /** A race's scenery sweeping past (item 115): the treasure cave (absent), or space. */
+  scenery?: 'cave' | 'space';
   /** A story fight's script (content/battle/stories/ id). */
   story?: string;
   /** The villain the style is written for: `?fight=<id>` forces him (a story fight). Never drawn at random unless it is a villain's own `fight`. */
@@ -117,6 +119,60 @@ export const FIGHTS: FightSpec[] = [
       start2: { text: "Our magic is stronger now! Let's push!", say: "Our magic is stronger now, let's push!" },
       retreat: { text: "That spell is too strong for us! Let's go home and get ready!", say: "That spell is too strong for us, let's go home and get ready!" },
       finish: { text: "Let's push with all our magic together!" },
+    },
+  },
+  {
+    // Item 115: Evil Elsa's. Her frost beam against everybody's warm magic, in her ice palace.
+    id: 'frost_clash',
+    kind: 'clash',
+    name: 'Frost-beam clash in the ice palace',
+    arena: 'ice',
+    banner: ['FROST CLASH!', 'CLASH TWO!'],
+    tooStrong: 'WHOA! TOO COLD!',
+    win: 'ALL WARMED UP!',
+    lines: {
+      start: { text: "It's frosty magic against warm magic! Let's push the beam!", say: "It's frosty magic against warm magic, let's push the beam!" },
+      start2: { text: "Our magic is warmer now! Let's push!", say: "Our magic is warmer now, let's push!" },
+      retreat: { text: "That frost is too strong for us! Let's go home and warm up!", say: "That frost is too strong for us, let's go home and warm up!" },
+      finish: { text: "Let's push with all our warm magic together!" },
+    },
+  },
+  {
+    // Item 115: Evil Ozymandias's. A race through the stars from his iceberg launch pad:
+    // the sky race's staging with `scenery: 'space'` (stars, comets and ice floes, not the cave).
+    id: 'space_race',
+    kind: 'race',
+    name: 'Space race from the iceberg launch pad',
+    arena: 'iceberg',
+    scenery: 'space',
+    banner: ['READY, SET, LAUNCH!', 'RACE TWO!'],
+    tooStrong: 'WHOA! TOO FAST!',
+    win: 'WINNERS!',
+    lines: {
+      start: { text: "It's a space race! Ready, set, launch!", say: "It's a space race, ready, set, launch!" },
+      start2: { text: "It's the rematch! Let's fly faster through the stars!", say: "It's the rematch, let's fly faster through the stars!" },
+      retreat: { text: "They're too fast for us! Let's go home and practice!", say: "They're too fast for us, let's go home and practice!" },
+      finish: { text: "There's the finish line! Let's all zoom together!", say: "There's the finish line, let's all zoom together!" },
+    },
+    props: [
+      { id: 'finish_flag', look: 'a big chequered black-and-white finish-line banner on two tall golden poles, with little gold coins and jewels on the tops of the poles', glyph: '🏁', w: 300, h: 420 },
+      { id: 'trophy', look: 'a huge shiny golden trophy cup with two big handles, a red jewel on the front and sparkles', glyph: '🏆', w: 200, h: 220 },
+    ],
+  },
+  {
+    // Item 115: Evil Moriarty's. The brawl's staging (clones, card traps and vanishing tricks
+    // need the whole floor), with its own banners and lines, in his own foggy fairground.
+    id: 'magic_show',
+    kind: 'brawl',
+    name: 'Magic show at the foggy fairground',
+    banner: ['SHOWTIME!', 'ACT TWO!'],
+    tooStrong: 'WHOA! TOO TRICKY!',
+    win: 'TRICKS SOLVED!',
+    lines: {
+      start: { text: "It's a magic show! Watch out for tricks!", say: "It's a magic show, watch out for tricks!" },
+      start2: { text: "Now we know the tricks! Let's show some magic of our own!", say: "Now we know the tricks, let's show some magic of our own!" },
+      retreat: { text: "Those tricks are too tricky for us! Let's go home and get ready!", say: "Those tricks are too tricky for us, let's go home and get ready!" },
+      finish: { text: "Let's do the grand finale, all together!" },
     },
   },
   {

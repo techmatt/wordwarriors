@@ -168,7 +168,9 @@ Every browser test plays the fixed default episode (`tests/harness.ts` adds
 `cast=default`) unless its URL asks for a draw (`seed=`): drawn casts walk from the bedroom
 through the warm-up to the quest place in `tests/entry.spec.ts` (two seeds; four until
 item 081), and three whole random episodes play in the slow lane, two in `tests/soak.spec.ts`
-(seed 1 and the draw after it) and one in `tests/drawn.spec.ts` (seed 19) (item 025).
+(seed 1 and the draw after it) and one in `tests/drawn.spec.ts` (seed 19) (item 025), plus
+one per item 115 villain in `tests/villains.spec.ts` (`?villain=elsa`, `ozymandias`,
+`moriarty`, a drawn cast round each, about 30 s apiece).
 
 The same way, every browser test's rooms play the sentence game (the harness adds
 `games=sentence`) unless its URL asks for a game (`game=word_machine`) or the whole pool
@@ -209,10 +211,12 @@ lands in the hub as before; `tests/entry.spec.ts` (slow lane) plays the warm-up 
 each level's clue, three misses, F9 out and back, and two drawn casts from the bedroom.
 
 `playEpisode` checks each battle part's length (45-120 s of simulation time) for whatever
-fight style the cast drew; `tests/fights.spec.ts` sweeps the four contests, one battle part
+fight style the cast drew; `tests/fights.spec.ts` sweeps the contests, one battle part
 each (item 083, alternating: the race and the beam clash part 2, the race for its finish
-line; the rope pull and the cook-off part 1; both parts until then), and the brawl is the
-default episode's own.
+line; the rope pull and the cook-off part 1; both parts until then; item 115's frost clash
+and space race part 1), and the brawl is the default episode's own. A brawl with its own id
+(Evil Moriarty's `magic_show`) is left to `tests/villains.spec.ts`'s whole episode: booted
+straight into part 2 it ran 44.5 s, under the floor, where in an episode it passes.
 
 Item 085's specs: `tests/digraphs.spec.ts` sounds KING and SHELL out in the entry hall
 (`?grab=<word>` picks the hall's word) and checks each multi-letter unit is said once, as
@@ -901,11 +905,10 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   only when Matt has chosen for that id: a later round on it numbers from 1 again, and
   an old sheet's numbers no longer exist. Then delete the round's `scratch/` sheet,
   manifest, preview folder and briefs once every id in it is decided. `alts/` holds
-  only rounds still waiting (`ls art-originals/alts/`): on 2026-10-22 item 113's
-  face cards, `face_anna` and `face_rilla` (picker `scratch/art_alts_113_faces.json`,
-  drawn with `--ref` on each promoted full body). Items 110's and 112's rounds are
-  gone (promoted by item 113: Bluerilla 5, good Anna 1), as are items 109's, 009's and
-  040's.
+  only rounds still waiting (`ls art-originals/alts/`): none on 2026-10-22, since item
+  115 promoted item 113's face cards (`face_anna` 1, `face_rilla` 2, drawn with `--ref` on
+  each promoted full body). Items 110's and 112's rounds are gone too (promoted by item
+  113: Bluerilla 5, good Anna 1), as are items 109's, 009's and 040's.
 - Corrections for an id (what an earlier image got wrong: a likeness, a prop that
   crowds a face) are `NOTES` in `content/art/prompts.ts`; they end the prompt for both
   `art:gen` and `art:alts`.
@@ -1050,7 +1053,12 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   cannot set `WW_PAIRS` under Windows' cmd, so the spec reads npm's `npm_lifecycle_event`
   (`test:pairs`) as `WW_PAIRS=+`. Shots and voiced ids land in `tests/screenshots/pairs_*`.
   Since item 114 the active cast is 16 ally forms × 4 villains, 64 pairs, about 35 s a
-  pair on three workers (2026-10-22). Several allies at once: `WW_PAIRS=+ npx playwright
+  pair on three workers (2026-10-22); since item 115, 16 × 7 less the three where the ally
+  is the villain's own person (Elsa, Ozymandias, Moriarty), 109 pairs. `WW_PAIRS` is a
+  substring of `<ally>+<villain>`, so `WW_PAIRS=+elsa` plays Evil Elsa's pairs only.
+  `--fully-parallel` spreads one run over the three workers: item 115's 45 pairs
+  (`WW_PAIRS=+ npx playwright test tests/pairs.spec.ts -g "\+ (elsa|ozymandias|moriarty):"
+  --fully-parallel`) took 9 minutes, about 35 s a pair, where one worker would take 26. Several allies at once: `WW_PAIRS=+ npx playwright
   test tests/pairs.spec.ts -g "(elsa|anna) \+ "` (a title is `<ally> + <villain>: …`).
   Such a run uses one worker: item 114's 12 pairs (three allies) took 7 minutes.
   Run batches one ally at a time, never beside art generation (item 028 ran both and the

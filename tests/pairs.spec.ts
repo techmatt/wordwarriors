@@ -14,14 +14,15 @@ import { writeFile } from 'node:fs/promises';
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { formsOf } from '../content/battle/roster';
+import { formsOf, personOf } from '../content/battle/roster';
 import { ACTIVE_CAST } from '../src/config';
 import { SLOW, boot, collectErrors, leaveBedroom, playBattle, until } from './harness';
 
 const ALLIES = ACTIVE_CAST.allies.flatMap((p) => formsOf(p).map((f) => f.id));
 // `npm run test:pairs` means all of them (an npm script cannot set WW_PAIRS itself under Windows' cmd).
 const WANT = process.env.WW_PAIRS ?? (process.env.npm_lifecycle_event === 'test:pairs' ? '+' : undefined);
-const PAIRS = ALLIES.flatMap((a) => ACTIVE_CAST.villains.map((v) => [a, v] as const)).filter(([a, v]) => WANT && `${a}+${v}`.includes(WANT));
+// Nobody is her own villain (item 115: Elsa, Ozymandias and Moriarty are on both lists).
+const PAIRS = ALLIES.flatMap((a) => ACTIVE_CAST.villains.map((v) => [a, v] as const)).filter(([a, v]) => personOf(a) !== v && WANT && `${a}+${v}`.includes(WANT));
 
 if (PAIRS.length === 0) {
   test('every ally × villain pair', () => {
