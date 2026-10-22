@@ -215,11 +215,6 @@ export function variantKeys(base: string): string[] {
     .filter((k) => k === base || (k.startsWith(`${base}_`) && /^\d+$/.test(k.slice(base.length + 1))))
     .sort((a, b) => n(a) - n(b));
 }
-/** How many `right_<n>`, `wrong_<n>` and `machine_silly_<n>` lines there are. */
-export const RIGHT_VARIANTS = variantKeys('right').length;
-export const WRONG_VARIANTS = variantKeys('wrong').length;
-export const SILLY_VARIANTS = variantKeys('machine_silly').length;
-/** Charge the Spell's asks (item 053). */
 
 /**
  * Charge the Spell's gestures (item 053), composed per narrator × rune
