@@ -86,6 +86,8 @@ export class ChargeRoom extends HouseSideRoom {
   private readAnswer: 'yes' | 'no' | 'timeout' | null = null;
   /** Dad's 1 / 2 while the last rune is said or charges (she can read the word on the bar by then): acted on as the read is asked (M24). */
   private earlyAnswer: DadAnswer | null = null;
+  /** The rune charging now (phase `charging`). */
+  private chargingIndex = -1;
   private finished = false;
   /** Scene time at the start of the visit and when the read was asked (the round's length in game time, for the tests). */
   private startedAt = 0;
@@ -134,6 +136,7 @@ export class ChargeRoom extends HouseSideRoom {
     this.timeouts = 0;
     this.readAnswer = null;
     this.earlyAnswer = null;
+    this.chargingIndex = -1;
     this.beat = null;
     this.barSlots = [];
     this.barTexts = [];
@@ -389,7 +392,9 @@ export class ChargeRoom extends HouseSideRoom {
   private answer(a: DadAnswer, timedOut = false): void {
     // Item 093 (M24): his press once the last rune is lit was dropped, though his cue flashed as if
     // it landed; it is kept (his latest press) and acted on as the read is asked.
-    const lastRune = this.index >= this.plan.runes.length - 1 && (this.phase === 'prompt' || this.phase === 'sayback' || this.phase === 'charging');
+    // Charging, by the rune that flies (`index` is already the last one's in the beat after the one before it charges).
+    const last = this.plan.runes.length - 1;
+    const lastRune = this.phase === 'charging' ? this.chargingIndex === last : this.index === last && (this.phase === 'prompt' || this.phase === 'sayback');
     if (lastRune && !timedOut) {
       this.noteActivity();
       this.earlyAnswer = a;
@@ -408,6 +413,7 @@ export class ChargeRoom extends HouseSideRoom {
   private async charge(): Promise<void> {
     const sound = this.rune;
     const i = this.index;
+    this.chargingIndex = i;
     const f = this.flow;
     this.phase = 'charging';
     this.locked = true;

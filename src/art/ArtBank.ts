@@ -51,6 +51,14 @@ const TRIES = 3;
 const BACKOFF_MS = [500, 2000];
 /** A picture lost to the network is asked again by a scene starting this long after (wall clock), not by the one it failed for. */
 const REASK_AFTER_MS = 3000;
+/**
+ * How often a picture lost to the network is asked again, one try each with a
+ * shorter wait: on a network that stalls rather than refuses, uncapped re-asks
+ * would hold the two background slots for minutes and starve the next
+ * scene's prefetch.
+ */
+const REASKS = 2;
+const REASK_TIMEOUT_MS = 15_000;
 
 /** The file is not there, or not a picture: no point asking again. */
 class NotThere extends Error {}
@@ -62,6 +70,8 @@ interface Job {
   resolve(): void;
   /** The fetch in flight, asked at background priority: made urgent, it is asked again at high. */
   slow?: AbortController;
+  /** Asking again for a picture lost to the network: one try, `REASK_TIMEOUT_MS`. */
+  reask?: boolean;
 }
 
 export interface LateArt {
@@ -76,6 +86,15 @@ export class ArtBank {
   private readonly failed = new Set<string>();
   /** Failed on the network, not a 404: magenta for now, asked again (in the background) by a later scene (M25). */
   private readonly retry = new Set<string>();
+  /** How often each id has been asked again. */
+  private readonly reasked = new Map<string, number>();
+  /**
+   * Pictures that came on a re-ask while something still showed the magenta
+   * square: its texture is replaced only once nothing does (`applyPending`, as
+   * a scene starts), never under a live image whose scale and tweens were
+   * worked out for the square.
+   */
+  private readonly held = new Map<string, HTMLImageElement>();
   private readonly loaded = new Set<string>();
   private active = 0;
   /** Art asked for before it was loaded, in order (the QA probe reads it). */
@@ -135,13 +154,28 @@ export class ArtBank {
   /**
    * Ask again, in the background, for any of `ids` that failed on the network
    * (a scene starting, or the next one's prefetch): the magenta square stays
-   * drawable meanwhile, and is swapped for the picture if it comes (M25).
+   * drawable meanwhile, and the picture replaces it if it comes, once nothing
+   * shows the square (M25). At most `REASKS` times an id.
    */
   retryFailed(ids: Iterable<string>): void {
     for (const id of new Set(ids)) {
       if (!this.retry.has(id) || this.jobs.has(id)) continue;
       this.retry.delete(id);
-      void this.queue(id, false);
+      this.reasked.set(id, (this.reasked.get(id) ?? 0) + 1);
+      void this.queue(id, false, true);
+    }
+  }
+
+  /**
+   * As a scene starts (the one before it gone, its own images not made yet):
+   * a picture that came while the magenta square still showed replaces it,
+   * if nothing shows it now (M25).
+   */
+  applyHeld(): void {
+    for (const [id, img] of this.held) {
+      if (this.inUse(id)) continue;
+      this.held.delete(id);
+      this.replace(id, img);
     }
   }
 
@@ -150,7 +184,7 @@ export class ArtBank {
     return this.jobs.size;
   }
 
-  private queue(id: string, urgent: boolean): Promise<void> {
+  private queue(id: string, urgent: boolean, reask = false): Promise<void> {
     let job = this.jobs.get(id);
     if (job) {
       if (urgent && !job.urgent) {
@@ -167,7 +201,7 @@ export class ArtBank {
     }
     let resolve!: () => void;
     const done = new Promise<void>((r) => (resolve = r));
-    job = { id, urgent, done, resolve };
+    job = { id, urgent, done, resolve, ...(reask ? { reask } : {}) };
     this.jobs.set(id, job);
     if (urgent) {
       const at = this.waiting.findIndex((j) => !j.urgent);
@@ -185,6 +219,8 @@ export class ArtBank {
       void this.load(job)
         .then(
           () => {
+            // Held: still magenta until nothing shows the square.
+            if (this.held.has(job.id)) return;
             this.loaded.add(job.id);
             this.failed.delete(job.id);
           },
@@ -216,7 +252,7 @@ export class ArtBank {
           attempt--;
           continue;
         }
-        if (error instanceof NotThere || attempt >= TRIES) throw error;
+        if (error instanceof NotThere || attempt >= (job.reask ? 1 : TRIES)) throw error;
       }
       const ms = BACKOFF_MS[Math.min(attempt - 1, BACKOFF_MS.length - 1)]!;
       await new Promise<void>((resolve) => realTimeout(resolve, ms));
@@ -234,7 +270,7 @@ export class ArtBank {
     if (!game) throw new Error('art bank not installed');
     const abort = new AbortController();
     if (!job.urgent) job.slow = abort;
-    const timer = realTimeout(() => abort.abort(), FETCH_TIMEOUT_MS);
+    const timer = realTimeout(() => abort.abort(), job.reask ? REASK_TIMEOUT_MS : FETCH_TIMEOUT_MS);
     let blob: Blob;
     try {
       // Background at the default priority: Chromium holds `low` back for as long as higher ones keep coming.
@@ -254,41 +290,39 @@ export class ArtBank {
     });
     // Chromium sometimes refuses to pre-decode (`EncodingError`) with many at once; the image is still good.
     await img.decode().catch(() => undefined);
-    if (this.failed.has(job.id) && this.exists(job.id)) this.swap(job.id, img);
-    else if (!this.exists(job.id)) this.add(() => game.textures.addImage(job.id, img));
+    if (this.failed.has(job.id) && this.exists(job.id)) {
+      if (this.inUse(job.id)) this.held.set(job.id, img);
+      else this.replace(job.id, img);
+    } else if (!this.exists(job.id)) this.add(() => game.textures.addImage(job.id, img));
   }
 
-  /**
-   * The picture for an id painted magenta after a network error (M25): the
-   * square's texture is replaced, and whatever still shows it takes the
-   * picture, fitted inside the square it filled.
-   */
-  private swap(id: string, img: HTMLImageElement): void {
-    const game = this.game!;
-    const users: { o: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite; w: number; h: number }[] = [];
-    for (const s of game.scene.getScenes(false)) {
+  /** Does any scene's display list (sleeping and paused scenes too) show texture `id`? */
+  private inUse(id: string): boolean {
+    let used = false;
+    for (const s of this.game?.scene.getScenes(false) ?? []) {
       walkObjects(s.sys.displayList?.list ?? [], (o) => {
-        if ((o instanceof Phaser.GameObjects.Image || o instanceof Phaser.GameObjects.Sprite) && o.texture.key === id) users.push({ o, w: o.displayWidth, h: o.displayHeight });
+        if ((o as unknown as { texture?: { key: string } }).texture?.key === id) used = true;
       });
     }
+    return used;
+  }
+
+  /** The magenta square's texture becomes the picture (nothing shows it: `inUse`). */
+  private replace(id: string, img: HTMLImageElement): void {
+    const game = this.game!;
     this.add(() => {
       game.textures.remove(id);
       game.textures.addImage(id, img);
     });
-    for (const { o, w, h } of users) {
-      const sx = Math.sign(o.scaleX) || 1;
-      const sy = Math.sign(o.scaleY) || 1;
-      o.setTexture(id);
-      const k = Math.min(w / img.width, h / img.height);
-      o.setScale(k * sx, k * sy);
-    }
+    this.loaded.add(id);
+    this.failed.delete(id);
   }
 
   /** A missing art file must not stop the game: the magenta square boot always painted. */
   private fail(id: string, error: unknown): void {
     this.failed.add(id);
     // Lost to the network, not a 404 or a broken file: a later scene asks again (M25).
-    if (!(error instanceof NotThere)) realTimeout(() => this.failed.has(id) && this.retry.add(id), REASK_AFTER_MS);
+    if (!(error instanceof NotThere) && (this.reasked.get(id) ?? 0) < REASKS) realTimeout(() => this.failed.has(id) && this.retry.add(id), REASK_AFTER_MS);
     console.warn(`art: missing ${id}`, error instanceof Error ? error.message : '');
     const game = this.game;
     if (!game || this.exists(id)) return;

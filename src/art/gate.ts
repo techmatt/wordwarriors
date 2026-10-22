@@ -88,6 +88,8 @@ export function startScene(from: Phaser.Scene, key: string, data?: object): void
   // Its await chains stop now, not when Phaser stops it on the next step (item 089).
   markLeaving(from);
   target?.events.once(Phaser.Scenes.Events.CREATE, () => artBank.prefetch(upcoming(key)));
+  // The scene before it is gone and its own images not made yet: a picture held for a magenta square takes its place (M25).
+  target?.events.once(Phaser.Scenes.Events.START, () => artBank.applyHeld());
   if (!missing.length) {
     from.scene.start(key, data);
     return;

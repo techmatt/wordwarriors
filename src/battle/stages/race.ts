@@ -232,8 +232,9 @@ export class RaceStage extends BaseStage {
     if (this.tumbleAt >= 0 && f.team === 'hero') return 12;
     const grown = f.growUntil > f.now;
     if (f.init.size >= 2) return grown ? 0 : 16 + wave * 0.5;
-    // A big flyer grown for its ultimate sinks a little, or its head leaves the top.
-    if (grown && f.init.size >= 1.4) return 30;
+    // A big flyer grown for its ultimate sinks a little, or its head leaves the top (a grown-up by
+    // how tall he is drawn, item 093: the chef's 1.65 reached the HUD band).
+    if (grown && (f.init.tall ?? f.init.size) >= 1.4) return 30;
     if (f.init.style === 'fly') return 105 + wave * 2;
     return 62 + wave;
   }

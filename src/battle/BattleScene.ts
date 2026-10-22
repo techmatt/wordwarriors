@@ -79,6 +79,8 @@ const SAME_DEPTH = 70;
 const HIT_FLOAT = DEPTH.prompt - 20;
 /** The top band where the health bars and a contest's meter (the race's track) are drawn: bubbles keep below it. */
 const HUD_BAND = new Phaser.Geom.Rectangle(0, 0, GAME_WIDTH, 128);
+/** The tallest VS card, either side (item 093: 340 cut chef Dada Jason's, 357, so Evil Dada Matt across from him read only 3% shorter). */
+const CARD_MAX = 380;
 /** The move choice's prompt lines that say the right word (`use_move_zap`, `find_move_zap`, `not_move_zap`): its caption hides it. */
 const CHOICE_PROMPT = /_(?:use_move|find_move|not_move)_([a-z]+)$/;
 /**
@@ -486,11 +488,11 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     // Each card as tall beside hers as the fighter stands beside her (item 034: a dad is grown-up height here too).
     const me = this.heroes[0]?.height ?? 150;
     const heroCards = this.heroes.map((h, i) => {
-      const ch = Math.min(340, (220 * h.height) / me);
+      const ch = Math.min(CARD_MAX, (220 * h.height) / me);
       return fitImage(this.add.image(-300 + i * 30, 440 + i * 40, h.init.art).setOrigin(0.5, 1), ch * 0.95, ch);
     });
     // A grown-up villain's card too (item 093: Evil Dada Matt's was the full 360, taller than Dada Jason's 330 across from him).
-    const vh = this.villain.init.tall ? Math.min(360, (220 * this.villain.height) / me) : 360;
+    const vh = this.villain.init.tall ? Math.min(CARD_MAX, (220 * this.villain.height) / me) : 360;
     const villainCard = fitImage(this.add.image(GAME_WIDTH + 300, 450, this.villain.init.art).setOrigin(0.5, 1), 300, vh);
     ui.add([...heroCards, villainCard]);
     const vs = this.add

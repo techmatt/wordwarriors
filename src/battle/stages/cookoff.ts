@@ -112,7 +112,7 @@ export class CookoffStage extends BaseStage {
     const heroTops = h.heroes.map((f, i) => this.spot(f, i).y - f.height * 0.42);
     const vs = this.spot(h.villain, 0);
     // A giant's counter slides right with her, so it still hides her legs.
-    const vx = 950 + Phaser.Math.Clamp(h.villain.init.size - 1, 0, 1.4) * 25;
+    const vx = 950 + Phaser.Math.Clamp((h.villain.init.tall ?? h.villain.init.size) - 1, 0, 1.4) * 25;
     // Each dish sits on the counter's inner end (towards the middle), wholly on the counter.
     this.sides = [
       this.makeSide('hero', 330, 380, Math.max(...heroTops, 430), Math.max(...h.heroes.map((f, i) => this.spot(f, i).y)) + 20),
@@ -149,7 +149,8 @@ export class CookoffStage extends BaseStage {
   /** Behind each station: her hero at the front, the ally just behind; a giant villain further down so she fits. */
   private spot(f: Fighter, i: number): { x: number; y: number } {
     if (f.team === 'villain') {
-      const big = Phaser.Math.Clamp(f.init.size - 1, 0, 1.4);
+      // A grown-up by how tall he is drawn (item 093: the chef, 1.65 at size 1.2, grown for his ultimate reached the HUD band).
+      const big = Phaser.Math.Clamp((f.init.tall ?? f.init.size) - 1, 0, 1.4);
       return { x: 1020 + big * 15, y: 505 + big * 80 };
     }
     if (f.init.kind === 'helper') return { x: 150, y: 600 };

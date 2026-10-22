@@ -62,14 +62,22 @@ test('art lost to a passing network error (M25): tries again after a wait, then 
   // Not asked again by the scene it failed for (the hub's prefetch), only by one starting 3 s on.
   await page.waitForTimeout(3500);
   expect(tries).toHaveLength(3);
-  // The server is back: the next scene asks again, and she is drawn as herself.
+  // The server is back: the next scene asks again (once, unblocked), and she is drawn as herself
+  // from the first scene to start with nothing showing the square (it may be that one, or the next).
   down = false;
+  let asked = 0;
+  page.on('request', (r) => r.url().endsWith(`/art/${id}.png`) && asked++);
   await page.keyboard.press('F2');
+  await expect.poll(() => asked, { timeout: 30_000 }).toBe(1);
+  if ((await artHook(page)).failed.length) {
+    await page.waitForTimeout(500);
+    await page.keyboard.press('F2');
+  }
   await expect.poll(async () => (await artHook(page)).failed, { timeout: 30_000 }).toEqual([]);
   const art = await artHook(page);
   expect(art.magenta).toBe(0);
   expect(art.missing).toBe(0);
   expect(art.late).toEqual([]);
-  expect(tries).toHaveLength(3);
+  expect(asked).toBe(1);
   expectNoErrors(errors);
 });
