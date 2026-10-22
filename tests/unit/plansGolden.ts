@@ -8,6 +8,7 @@
  */
 
 import { createHash } from 'node:crypto';
+import { FAMILIES } from '../../content/phonics/families';
 import { MINIGAMES, MINIGAME_BY_ID, SENTENCE_GAMES, drawGames, type Minigame } from '../../src/rules/minigames';
 import { episodePlans, type EpisodeInput, type RoomPlan } from '../../src/rules/sentences';
 import { ProgressStore } from '../../src/state/ProgressStore';
@@ -92,6 +93,11 @@ export function goldenDraws(): Record<string, string> {
     fixedTrios().forEach((games, i) => {
       for (let seed = 1; seed <= 6; seed++) out[`${name}/fixed${i}:${games.map((g) => g.id).join('+')}/${seed}`] = draw(fresh(), { ...input, games }, spread(seed));
     });
+    // A word machine with no family it can use (every family word said before): its room plays a spare sentence game.
+    for (let seed = 1; seed <= 6; seed++) {
+      const saidBefore = [...(input.saidBefore ?? []), ...FAMILIES.flatMap((f) => f.words)];
+      out[`${name}/machine-spare/${seed}`] = draw(fresh(), { ...input, saidBefore, games: [game('word_machine'), FETCH, COUNTER] }, spread(seed));
+    }
     // One store through a run of episodes: her bag, recent games and records carry over.
     const store = fresh();
     for (let ep = 1; ep <= 15; ep++) {
