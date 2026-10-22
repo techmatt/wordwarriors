@@ -758,7 +758,7 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     // Item 089: line variants in turn over the run, taunts at most twice an episode (item 087).
     const ids = q.voice.map((v) => v.id);
     // Not with debug games in the run: their sandbox puts the store back, variant rounds too, so they repeat on purpose (item 092).
-    if (!sc.debugAt) rec.add(variantIssues(ids, VARIANT_BASES));
+    if (!sc.debugAt) rec.add(variantIssues(ids, VARIANT_BASES, Boolean(sc.idle)));
     rec.add(tauntIssues([...cuts, ids.length].map((c, i, all) => ids.slice(i ? all[i - 1] : 0, c)).filter((x) => x.length)));
     for (const e of errors) rec.add([{ kind: 'page-error', severity: 'bug', scene: '', detail: e, key: `pageerror:${e.slice(0, 80)}` }]);
     // Growth from one episode to the next.

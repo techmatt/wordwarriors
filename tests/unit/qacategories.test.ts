@@ -112,3 +112,10 @@ test('ruled covers (item 092): W12 and W5 are a look, anything past them still a
   assert.ok(!ruledCover('Battle', 'pad_zip', 'dialogue', 40));
   assert.ok(!ruledCover('SentenceRoom', 'leg', 'banner', 16));
 });
+
+test('variant check (item 092): an idle child\'s re-prompts, the same variant again, count once only when asked', () => {
+  const bases = { house_doors: ['house_doors', 'house_doors_2'] };
+  const ids = ['nar_ellie_house_doors', 'nar_ellie_house_doors', 'nar_ellie_house_doors_2'];
+  assert.equal(variantIssues(ids, bases).length, 1);
+  assert.deepEqual(variantIssues(ids, bases, true), []);
+});

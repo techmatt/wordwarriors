@@ -160,15 +160,17 @@ export function repeatedLines(ids: readonly string[]): Record<string, number> {
  * other variant of its line is said. `variant-repeat` when one comes back
  * sooner (a look: a variant picked while the voice bus dropped it shows as a
  * gap). `bases` maps each narrator key with variants to its variant keys.
+ * `again`: a run of one variant counts once (item 092: an idle child's re-prompts
+ * say again the variant she heard, by design since item 089's fix 84).
  */
-export function variantIssues(ids: readonly string[], bases: Record<string, readonly string[]>): Issue[] {
+export function variantIssues(ids: readonly string[], bases: Record<string, readonly string[]>, again = false): Issue[] {
   // Longest keys first, so `right_2` is not read as `right` said by narrator `..._right`.
   const keys = Object.entries(bases).flatMap(([base, vs]) => vs.map((v) => [v, base] as const)).sort((a, b) => b[0].length - a[0].length);
   const said = new Map<string, string[]>();
   for (const id of ids) {
     if (!id.startsWith('nar_')) continue;
     const hit = keys.find(([v]) => id.endsWith(`_${v}`));
-    if (hit) said.set(hit[1], [...(said.get(hit[1]) ?? []), hit[0]]);
+    if (hit && !(again && said.get(hit[1])?.at(-1) === hit[0])) said.set(hit[1], [...(said.get(hit[1]) ?? []), hit[0]]);
   }
   const out: Issue[] = [];
   for (const [base, seq] of said) {
