@@ -96,7 +96,9 @@ export class TitleScene extends Phaser.Scene {
     // Captioned like every instruction (item 039: it was the one line with no box).
     new Caption(this);
     // Its caption shows the narrator's face, and the cast was just drawn (item 065: wait for their art).
-    const castArt = artBank.ensure(castSet());
+    // Its line is always Dada Matt's (`core_title`), whom a draw can leave out (hunt 7: `?seed=abc`
+    // showed his face card before it loaded), so his face is waited for too.
+    const castArt = artBank.ensure([...castSet(), 'face_dada_matt']);
     if (getAudioContext()?.state === 'running') this.time.delayedCall(700, () => void castArt.then(() => this.scene.isActive() && !this.leaving && voiceBus.say(coreLine('title'))));
     artBank.prefetch(castSet());
 

@@ -8,7 +8,7 @@ import { test } from 'node:test';
 
 import { NUMBER_WORDS, lookalikesOf } from '../../content/phonics/sentences';
 import { NO_ARTICLE } from '../../src/rules/sentences';
-import { planShifter } from '../../src/rules/shifter';
+import { planShifter, shifterWords } from '../../src/rules/shifter';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { memory, seeded, spread } from './seeds';
 
@@ -22,4 +22,31 @@ test('planShifter (hunt 6): no link joins two look-alikes, no read-it picture is
     // "It starts as a...": never a number (M23) or a word that takes no A.
     assert.ok(!NUMBER_WORDS.has(p.start) && !NO_ARTICLE.has(p.start), `seed ${seed}: starts as a ${p.start}`);
   }
+});
+
+test('planShifter (hunt 7, M34): her recent reads spread the chains across episodes, at full length', () => {
+  // Six episodes back to back, each chain's words read right first time: a later chain holds at
+  // most one word read lately where four links allow it (45 of 100 shared a word with the
+  // episode before, MAT MAN PAN three in four; 25 since).
+  let shared = 0;
+  let pairs = 0;
+  let links = 0;
+  for (let run = 1; run <= 10; run++) {
+    const store = new ProgressStore(memory());
+    const rand = seeded(spread(run));
+    let before: string[] = [];
+    for (let e = 0; e < 6; e++) {
+      const p = planShifter(store, { avoid: [], taken: [] }, rand)!;
+      const words = shifterWords(p);
+      links += words.length;
+      if (e > 0) {
+        pairs++;
+        if (words.some((w) => before.includes(w))) shared++;
+      }
+      for (const w of words) store.record('words', w, true, 0);
+      before = words;
+    }
+  }
+  assert.ok(shared / pairs <= 0.35, `${shared} of ${pairs} episodes shared a chain word with the one before`);
+  assert.equal(links, 10 * 6 * 4, 'every chain four links');
 });

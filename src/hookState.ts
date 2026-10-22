@@ -138,6 +138,8 @@ export interface BattleInfo {
     right: string;
     open: boolean;
     misses: number;
+    /** Where she stood as the pads went down (hunt 7). */
+    from: { x: number; y: number };
     spots: { word: string; x: number; y: number }[];
     /** The idle stick hint is beside her hero (item 043, M5). */
     stickHint: boolean;

@@ -199,7 +199,9 @@ export class ChargeRoom extends HouseSideRoom {
     popIn(this, this.altar, this.altar.scale);
     this.glow = this.add.image(RUNE.x, RUNE.y, TEX.glow).setDepth(ALTAR.y - 2).setScale(2.6).setAlpha(0).setTint(0xb28dff).setBlendMode(Phaser.BlendModes.ADD);
     this.stone = fitImage(this.add.image(RUNE.x, RUNE.y, 'prop_rune_stone'), RUNE.size, RUNE.size).setDepth(ALTAR.y - 1).setVisible(false);
-    this.runePic = this.add.image(RUNE.x, RUNE.y, runeArt(this.rune || 'm')).setDepth(ALTAR.y).setVisible(false);
+    // Back from the grown-ups page with every rune charged there is no rune at the index: the
+    // word's first stands in (hunt 7: 'm' did, not loaded for a word with no M, so "art: not ready").
+    this.runePic = this.add.image(RUNE.x, RUNE.y, runeArt(this.rune || this.plan.runes[0]!)).setDepth(ALTAR.y).setVisible(false);
     this.makeBar();
     this.bag = new Bag(this);
     void voiceBank.ensure(wordLine(this.plan.word));

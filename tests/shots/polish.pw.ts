@@ -33,6 +33,11 @@ const CASTS: { name: string; query: string }[] = [
   { name: 'clash_bavmorda_lifter', query: 'villain=bavmorda&ally=dada_matt_lifter&fight=spell_clash' },
   { name: 'cook_tiamat_chef', query: 'villain=tiamat&ally=dada_jason&fight=cook_off' },
   { name: 'cook_ozymandias_blade', query: 'villain=ozymandias&ally=dada_matt_blade&fight=cook_off' },
+  // Hunt 7 (item 116): item 115's fights with item 111 and 114's allies, and the story fight.
+  { name: 'frost_elsa_seraphina', query: 'villain=elsa&ally=seraphina&fight=frost_clash' },
+  { name: 'space_ozymandias_anna', query: 'villain=ozymandias&ally=anna&fight=space_race' },
+  { name: 'magic_moriarty_rilla', query: 'villain=moriarty&ally=rilla&fight=magic_show' },
+  { name: 'story_smaug_jasmine', query: 'ally=jasmine&fight=smaug_story' },
 ];
 
 /** Shoot every `every` ms and at each new phase until stopped. */

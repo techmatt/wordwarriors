@@ -53,6 +53,8 @@ export class StoryWalk {
   private resolve!: (r: WalkResult) => void;
   readonly done: Promise<WalkResult>;
   private finished = false;
+  /** A reprompt asked for and not yet over: a second yellow before its line has begun is not another (hunt 7). */
+  private saying = false;
 
   constructor(
     private readonly host: WalkHost,
@@ -122,7 +124,7 @@ export class StoryWalk {
     }
     if (this.kind === 'dodge') {
       // Yellow always says it again.
-      if (c.pressed('yellow') && !voiceBus.busy) void this.reprompt();
+      if (c.pressed('yellow') && !voiceBus.busy) this.sayAgain();
       if (near) this.reached = true;
       if (this.reached && !dadLock.locked) this.sinceReached += realDt;
       if (this.sinceReached >= REACHED_HOLD || this.clock >= this.seconds) this.finish(this.reached && near);
@@ -138,11 +140,19 @@ export class StoryWalk {
     if (near && c.pressed('green') && !voiceBus.busy) return this.finish(true);
     if (walking || dadLock.locked || voiceBus.busy) this.idle = 0;
     else this.idle += realDt;
-    if (c.pressed('yellow') || this.idle > GRAB_REPROMPT) {
+    // Yellow says it again once it has been said (hunt 7: mashed, each press queued another
+    // copy of Dad's long line, green waited them all out and they spilled into the next beats).
+    if ((c.pressed('yellow') && !voiceBus.busy) || this.idle > GRAB_REPROMPT) {
       this.idle = 0;
-      void this.reprompt();
+      this.sayAgain();
     }
     if (this.clock >= this.seconds) this.finish(false);
+  }
+
+  private sayAgain(): void {
+    if (this.saying) return;
+    this.saying = true;
+    void this.reprompt().finally(() => (this.saying = false));
   }
 
   private finish(reached: boolean): void {

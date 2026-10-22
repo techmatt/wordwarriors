@@ -94,6 +94,39 @@ test('padPlace: a fight keeps every sign off the villain', () => {
   }
 });
 
+test('padPlace: no pad opens within her reach, however crowded the floor (hunt 7: the story fight)', () => {
+  // The story fight's crowd: her, Dad, the ally, the villain and her move's helpers, anywhere on the floor.
+  // Without `me` a quarter of these left a pad in her reach, so a mashed green picked it unread.
+  for (let seed = 1; seed <= 200; seed++) {
+    const rand = seeded(spread(seed));
+    const me = body(200 + rand() * 800, 470 + rand() * 180, 90, 170);
+    const dad = body(150 + rand() * 500, 470 + rand() * 180, 110, 230);
+    const ally = body(150 + rand() * 500, 340 + rand() * 300, 110, 170);
+    const villain = body(900 + rand() * 200, 540, 220, 260);
+    const minions = [0, 1, 2].map(() => body(500 + rand() * 500, 480 + rand() * 160, 60, 70));
+    const spots = placePads({ n: 3, avoid: [me, villain, dad, ally, ...minions], cover: [villain], ...floor, rand, me: { x: me.x, y: me.y, reach: 120 } });
+    assert.equal(spots.length, 3);
+    for (const p of spots) assert.ok(Math.hypot(p.x - me.x, p.y - me.y) >= 120, `seed ${seed}: a pad ${Math.round(Math.hypot(p.x - me.x, p.y - me.y))} px from her`);
+  }
+});
+
+test('padPlace: her reach gives way to a contest\'s rules: pads on her side, nobody covered more (hunt 7\'s review)', () => {
+  // Narrow contests (the rope pull, M7): before the review, keeping her reach put a pad past the
+  // villain in 32 of 570 such layouts and a sign over him in 45.
+  for (let seed = 1; seed <= 120; seed++) {
+    const rand = seeded(spread(seed));
+    const villain = body(820 + rand() * 180, 520, 240, 320);
+    const me = body(200 + rand() * 360, 470 + rand() * 160, 110, 200);
+    const base = { n: 3, avoid: [me, villain], cover: [villain], contest: { meX: me.x, villain }, sway: 30, ...floor };
+    const spots = placePads({ ...base, rand: seeded(seed), me: { x: me.x, y: me.y, reach: 120 } });
+    const plain = placePads({ ...base, rand: seeded(seed) });
+    assert.equal(spots.length, 3);
+    for (const p of spots) assert.ok(p.x < villain.x, `seed ${seed}: a pad past the villain at ${p.x}`);
+    const sway = (b: PlaceBody): [number, number, number, number] => { const [l, t, r, btm] = bodyBox(b); return [l - 30, t, r + 30, btm]; };
+    assert.ok(coveredShare(sway(villain), signs(spots)) <= coveredShare(sway(villain), signs(plain)) + 1e-9, `seed ${seed}: covers the villain more`);
+  }
+});
+
 test('padPlace: when nobody can be kept clear, the pads still go up, covering as little as they can', () => {
   // A giant across the whole floor.
   const giant = body(640, 640, 1100, 600);

@@ -736,3 +736,75 @@ word on its label is not a giveaway (it is said and shown, not read).
 - **Look again at real speed:** the Shape-Shifter's pacing (M26) and the warm-up's name
   bridges (M27) once Matt has ruled, and the battle's opening run of items (M28).
 
+## Hunt 7 (2026-10-22)
+
+The day's cast growth and the story fight: the seven new allies (items 111, 114), the three
+new villains and their fights (item 115: frost clash, space race, magic show), Evil Smaug's
+story fight (item 107) and Charge going solo (item 106). The checker's new `QA_SET=cast`
+(each new ally once, against the new villains and older ones, the story fight twice, three
+drawn episodes) swept twice; the item-080 lenses, `parent_all`, `debug_rooms` and eighteen
+new `qa flags` URLs with the new cast drawn; six drawn episodes back to back at real speed;
+the new allies' outfits measured in battle; two code reads (the story fight with item 115's
+staging; Charge solo with the new allies' content), each claim checked before it counted.
+
+### Fixed
+
+| # | Where | What | Kept fixed by |
+| --- | --- | --- | --- |
+| 119 | Battle move choice | In a crowded fight (the story fight: her, Dad, the ally, the villain and minions, props) a pad could open inside her reach, the green dot already over it: a green mashed through "Use HOP!" picked it unread (a quarter of 400 crowded layouts). Placement keeps every pad past her reach (and 25 px) where that costs no older rule: a contest's pads stay on her side and no sign covers anyone more than before (a review of the first try found it breaking both in narrow rope pulls). | `tests/unit/padPlace.test.ts` |
+| 120 | Story fight, the gold grab | Yellow pressed again and again queued a copy of Dad's long "I'll keep him busy! Julia, sneak over to his gold..." for every press (six for six): green waited them all out and they spilled over the next beats. Yellow says it again once its line has begun and ended. | `tests/hunt7.spec.ts` |
+| 121 | Story fight | Dad's spinning attack never spun: a whole turn added is already at rest (a fighter settles to the nearest whole turn), so only the sparks showed. He flips round now. | review (shot) |
+| 122 | Story fight | Helpers her move summoned (Teddy Army for TUG, Penguin Crew for HOP) had nobody to fight and stood by the stone through the next dodges to the end. They go with a poof as the team walks back to its marks. | code read |
+| 123 | Story fight | Off the ledge she dropped 130 px in one frame, then slid home. She comes down with the walk. | code read |
+| 124 | Charge the Spell | Back from the grown-ups page with every rune charged, the room asked for M's rune art for a word with no M ("art: not ready rune_m", the checker's page error). Its first rune stands in. | `tests/hunt7.spec.ts` |
+| 125 | Shape-Shifter, word draws | A chain's words came back episode after episode: a drawn run read MAT, MAN and PAN in three episodes of four, and 45 of 100 simulated episodes shared a chain word with the one before. Her recent words weighed a quarter, but the best-scored pool (M29) is a handful of chains, so the weight hardly moved it. A chain holds at most one word she read lately where a chain that long allows (25 of 100; still four links, a read-it link and all three places changed, as M29 has it); the final drawn run read one repeat an episode at most, where MAT MAN PAN had come back whole; asked of Matt mid-hunt, "your take, correct it now". | `tests/unit/shifterDraws.test.ts`; golden draws rewritten |
+| 126 | Title | The welcome is always Dada Matt's line, but the title waited only for the drawn cast's art: a draw without him (`?seed=abc`, `?cast=bogus`; back at the title after an episode, the same) showed his face card before it loaded ("art: not ready face_dada_matt"). His face is waited for too. | checker `qa flags` |
+
+Checked and clean: Julia's seven new outfits stand her own height head to soles (143.2 to
+144.0 px against 143.5 in her dress; `tests/hunt7.spec.ts`); the story fight is never drawn
+at random and always forces Evil Smaug; every `story_smaug_*` and new fight line exists for
+every narrator; the space race's scenery stays in its race; Evil Elsa's frost edges sit
+under every prompt and the reading targets stay clear of them.
+
+The checker itself: `QA_SET=cast` and the new `qa flags` (README); `pad-in-reach` (look: a move pad
+opening within her reach, measured from where she stood as the pads went down); a picked picture
+popping up as its word is said is no `target-covered` (W33); `spawn-in-reach` leaves
+out a lone answer (the bed she wakes in, the hub's secret door: hunt 6's first hits, read
+against fixes 61, 98 and 104, were these two only); `locked-silent` leaves out Charge (its
+quiet is hers, saying the sounds back); `clipped-line` leaves out the story fight's
+back-and-forth and passes "Ready, set, launch!", "Nice fixing!" and a "doesn't";
+`variant-repeat` allows a busy child's yellow; a battle's fetched things are no
+`giveaway` (a `fetched=` boot flagged "THE BUN!"); `QA_DIST` lets a second sweep run beside
+the real-speed one; its output folder is per `QA_TAG` (a second sweep's start emptied a
+running one's); a reload is bounded at 60 s, so a hang is a `stall` with its shot (one
+`reload_points` sat silent for its whole timeout after reloading at hub part 2, not seen in a
+rerun or in direct reloads). The harness walks her to a pad again when she never set off: with
+fix 119 a sea tug's JAB opened 126 px away and the checker pressed green from her station, which
+pads inside her reach had hidden. `qa devkeys skip` reads the scene again before the recap: its last F2 could land a frame late on the victory screen and skip to THE END, and the checker then waited for a recap that never came.
+
+### Matt's calls
+
+| # | Where | What | Options | Ruling |
+| --- | --- | --- | --- | --- |
+| M33 | Story fight, art | The three story props are still placeholder pictures: the stone she hides behind is a flat grey ball (it reads as a moon), the hoard a crown emoji, the ledge a mountain icon. | **(a) a candidate round, `art:alts prop_fight_stone prop_fight_ledge prop_fight_hoard`, then pick**; (b) keep | |
+| M34 | Charge the Spell, solo | Solo lasts one episode and only Charge's own read (after every rune) or the bridge's level 3 starts it, and an episode has one phonics room: the solo runes ("Say it with me!") are never reached in play, and every visit with Dad away waits the 8 s at the read again. Also, Dad's 2 while the helper is sounding the word out records it as her unaided first-try read (the docs call it his answer). | **(a) solo lasts the session until Dad presses, and a press during the solo read records a helped read (not first try)**; (b) solo for the session only; (c) keep | |
+| M35 | Allies' heights | Elsa, Anna, Jasmine, Seraphina and Moriarty stand at Julia's own height (`size: 1`), Moriarty a grown-up magician beside her in his library and on the picnic blanket; Ozymandias (1.3) and Bluerilla (1.4) stand taller. | **(a) Moriarty 1.3, as Ozymandias (he reads as a grown-up beside Dad); the others keep her height, friends her size**; (b) the grown-ups (Elsa, Moriarty) 1.3, the teens 1.15; (c) keep | |
+| M36 | Shape-Shifter, variety | Fix 125 spreads chains from one episode to the next, but they come back whole three episodes later: the final real-speed run read MUG BUG BUN BIN in episodes 1 and 4, VAN MAN MAP MOP in 2 and 5, CAT CAP CUP in 3 and 6. Her recent words (`VARIETY.words`, 24) hold about two and a half episodes, and the chains changing all three places are few. | **(a) the Shape-Shifter remembers its last six chains as a rotation of its own (`recent`), and a chain sharing a link with one of them waits**; (b) `VARIETY.words` up to 40 (every game's words rotate slower too); (c) keep | |
+
+### Won't fix
+
+| # | Where | What | Why |
+| --- | --- | --- | --- |
+| W30 | Shape-Shifter | The next fix-it link's stones pop in under the praise box for a moment (item 108's overlap; `target-covered` in `debug_rooms`). | Green waits while the line plays; the instruction that follows moves the box to the top. |
+| W31 | Hub scenes | Three new lines hold a bank word inside a longer one (snowman, humming, locks), as older ones do (shells, cupcakes, yummy, biggest). | The draws already keep every such word out (`withStems`); the line test matches whole words on purpose. |
+| W32 | Story fight | The narrator's praise ("Great reading!") after each pick, where the story's characters do the talking. | The narrator is the ally, who is in the fight. |
+| W33 | Sentence room, entry hall | A picked picture pops up into the banner's bottom 15 px (`ozy_tiamat`), and after the warm-up's grab "You got it! Now let's go out the door!" sits over the bottom row (real speed). | The answer is made (W12's kind). |
+| W34 | Battle move choice, contests | In a rope pull a pad can still open inside her reach (`pad-in-reach`, 69 to 76 px in three of the final sweep's sea tugs): her side of the serpent is narrow, and keeping every pad on her side and off him outranks her reach (fix 119, after review). | A wrong pad there is a gentle retry; a right one is the word the partner just said. Widening her side would move the rope's staging. |
+
+
+### Where the next hunt resumes
+
+- **Matt's calls first:** M33 (the story props' art), M34 (Charge solo for the session), M35
+  (Moriarty's height), M36 (the Shape-Shifter's chains coming back every three episodes).
+- **Real speed:** run `variants6` at `WW_SPEED=1` again once M36 is ruled (its shots now run
+  400 an episode, not 400 in all).

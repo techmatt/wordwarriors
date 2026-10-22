@@ -184,6 +184,8 @@ export function planShifter(store: ProgressStore, input: ShifterInput, rand: Ran
     const low = Math.min(...scores);
     return cs.filter((_, i) => scores[i] === low);
   };
+  const m = met(store);
+  const recent = recentWords(store);
   let pool: string[][] = [];
   let allFix: string[][] = [];
   for (let n = SHIFTER.links; n >= SHIFTER.minLinks && !pool.length; n--) {
@@ -191,15 +193,23 @@ export function planShifter(store: ProgressStore, input: ShifterInput, rand: Ran
     // "It starts as a... ten!", M23's case; JAM, fix 92's).
     const chains = chainsOf(n, free).filter((c) => !NUMBER_WORDS.has(c[0]!) && !NO_ARTICLE.has(c[0]!));
     if (!chains.length) continue;
+    // Of those changing the most places (M29), chains holding at most one word she read lately, where
+    // any do (hunt 7: the best-scored chains are few, so recency's weight hardly moved them and MAT MAN
+    // PAN came back three episodes in four; 45 of 100 episodes shared a word with the one before, 25 now).
+    // Under the length, the read-it link and the places changed; above the rest of the score.
+    const fresh = (cs: string[][]) => {
+      const most = Math.max(...cs.map(placesOf));
+      const top = cs.filter((c) => placesOf(c) === most);
+      const f = top.filter((c) => c.slice(1).filter((w) => recent.has(w)).length <= 1);
+      return f.length ? f : cs;
+    };
     // A shorter chain with a read-it link before an all-fix-it one (M29: one visit in twenty had none).
     const mixed = chains.filter(beats);
-    if (mixed.length) pool = best(mixed);
-    else if (!allFix.length) allFix = best(chains);
+    if (mixed.length) pool = best(fresh(mixed));
+    else if (!allFix.length) allFix = best(fresh(chains));
   }
   if (!pool.length) pool = allFix;
   if (!pool.length) return null;
-  const m = met(store);
-  const recent = recentWords(store);
   const each = new Map(free.map((w) => [w, wordWeight(store, w, m, recent)]));
   const weight = (i: string) => pool[Number(i)]!.slice(1).reduce((s, w) => s + each.get(w)!, 0);
   const chain = pool[Number(pickWeighted(pool.map((_, i) => String(i)), weight, 1, rand)[0])]!;

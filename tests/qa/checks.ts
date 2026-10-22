@@ -204,14 +204,35 @@ export function leakIssues(s: WWState, l: Layout, voiceSinceRound: Since['voice'
  * the Shape-Shifter's 104): green mashed through the round's line picks it, unwalked and unread. `was`
  * holds the spot ids standing at the last poll; only a spot new since then counts (the driver puts her on
  * a spot only once the room listens, so a spot she was placed on is never new). Doors and the like
- * (`correct` null) are left out.
+ * (`correct` null) are left out, and so is a lone answer with nothing to tell it from (hunt 7: the bed
+ * she wakes in, the hub's secret door popping out beside her): walking to it reads nothing.
  */
 export function spawnIssues(was: ReadonlySet<string>, s: WWState, reach: number): Issue[] {
   const r = s.room;
   if (!r?.player) return [];
+  if (r.spots.filter((sp) => sp.correct !== null).length < 2) return [];
   return r.spots
     .filter((sp) => sp.correct !== null && !was.has(sp.id) && Math.hypot(sp.x - r.player.x, sp.y - r.player.y) < reach)
     .map((sp) => ({ kind: 'spawn-in-reach', severity: 'bug', scene: s.scene, detail: `${sp.id} appeared ${Math.round(Math.hypot(sp.x - r.player.x, sp.y - r.player.y))} px from her (${r.round})`, key: `spawn:${s.scene}:${r.round}` }));
+}
+
+/**
+ * A move pad opening within her reach (hunt 7, fix 119): the green dot already over it, a green
+ * mashed through "Use HOP!" picks it unread. Checked once per choice, as it first opens (`seen`
+ * holds the choices already checked). A contest may still need one there (her side, nobody
+ * covered, outrank her reach), so a look.
+ */
+export function padReachIssues(seen: Set<string>, s: WWState, reach: number): Issue[] {
+  const c = s.battle?.choice;
+  // Where she stood as the pads went down, not where the driver has walked her since.
+  const me = c?.from;
+  if (!c || !me) return [];
+  const key = `${s.battle!.part}:${c.words.join(',')}`;
+  if (seen.has(key)) return [];
+  seen.add(key);
+  return c.spots
+    .filter((p) => Math.hypot(p.x - me.x, p.y - me.y) < reach)
+    .map((p) => ({ kind: 'pad-in-reach', severity: 'look', scene: s.scene, detail: `${p.word.toUpperCase()} opened ${Math.round(Math.hypot(p.x - me.x, p.y - me.y))} px from her (${s.battle!.fight})`, key: `padreach:${s.battle!.fight}:${p.word}` }));
 }
 
 /**
@@ -269,7 +290,8 @@ export function logIssues(q: Since, speed = 1): Issue[] {
   for (const a of q.missingArt) out.push({ kind: 'art-missing', severity: 'bug', scene: '', detail: a, key: `missing:${a}` });
   for (const a of q.lateArt ?? []) out.push({ kind: 'art-late', severity: 'bug', scene: a.scene, detail: `${a.id}: shown before it loaded`, key: `late:${a.scene}:${a.id}` });
   for (const k of q.locks) {
-    if (k.silentMs > 2500) out.push({ kind: 'locked-silent', severity: 'look', scene: k.scene, detail: `${k.round}: input locked ${(k.ms / 1000).toFixed(1)} s, ${(k.silentMs / 1000).toFixed(1)} s of it silent`, key: `lsilent:${k.scene}:${k.round.replace(/:\w+$/, '')}` });
+    // Charge the Spell's quiet beats are hers: she says each rune's sound back, then reads (hunt 7).
+    if (k.silentMs > 2500 && k.scene !== 'ChargeRoom') out.push({ kind: 'locked-silent', severity: 'look', scene: k.scene, detail: `${k.round}: input locked ${(k.ms / 1000).toFixed(1)} s, ${(k.silentMs / 1000).toFixed(1)} s of it silent`, key: `lsilent:${k.scene}:${k.round.replace(/:\w+$/, '')}` });
     else if (k.ms > 20_000) out.push({ kind: 'locked-long', severity: 'look', scene: k.scene, detail: `${k.round}: input locked ${(k.ms / 1000).toFixed(1)} s (talking)`, key: `llong:${k.scene}:${k.round.replace(/:\w+$/, '')}` });
   }
   // Full-screen flashes: more than three in any second is the photosensitivity line (WCAG 2.3.1).

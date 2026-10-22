@@ -334,7 +334,8 @@ BUG, MUG): chains changing all three places first (hunt 6, M29: the vowel too), 
 first letter first, then the last, the vowel last, going back once at most
 (`src/rules/shifter.ts`; four links, `SHIFTER` in `src/config.ts`; a link with no familiar
 pictured word is left out, so a chain can be shorter, and a shorter chain with a read-it
-link is taken before an all-fix-it one). The first creature is said ("It
+link is taken before an all-fix-it one; of chains that long changing the most places, those
+holding at most one word she read lately first, hunt 7). The first creature is said ("It
 starts as a... CAT"); every later word is read, in one of two beats, mixed through the chain:
 **read it**, the new word appears on the creature's label, not voiced, and three pictures
 stand in the room differing only at the changed letter (BAT, HAT, RAT; at the vowel or the

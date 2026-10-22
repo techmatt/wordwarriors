@@ -54,6 +54,12 @@ export interface PlaceInput {
   sway?: number;
   /** Tie-break luck, 0..1. */
   rand?: () => number;
+  /**
+   * Her feet and her reach (hunt 7): no pad opens within it, or a green mashed through the
+   * partner's "Use HOP!" picks the pad she was left standing at, unread (a crowded story
+   * fight put one there a quarter of the time). Kept unless no layout can keep it.
+   */
+  me?: { x: number; y: number; reach: number };
 }
 
 /** The sign's plate and its stake, with a margin. */
@@ -81,7 +87,17 @@ export function coveredShare(body: Box, over: Box[]): number {
 
 /** The pads' spots, left to right. */
 export function placePads(inp: PlaceInput): { x: number; y: number }[] {
-  const { n, avoid, cover } = inp;
+  const was = layout({ ...inp, me: undefined });
+  if (!inp.me) return was.spots;
+  // Her reach gives way to every older rule (hunt 7's review): kept only where the pads stay in as
+  // early a tier (a contest's on her side, item 034) and cover nobody more than they would without it.
+  const kept = layout(inp);
+  return kept.spots.length && kept.tier <= was.tier && kept.cover <= was.cover + 1e-9 ? kept.spots : was.spots;
+}
+
+/** The pads' spots, with the tier they settled in and how much they cover. */
+function layout(inp: PlaceInput): { spots: { x: number; y: number }[]; tier: number; cover: number } {
+  const { n, avoid, cover, me } = inp;
   const rand = inp.rand ?? Math.random;
   /** How far a pad at (x, y) stays from every fighter: ring against feet, sign against body. */
   const clearance = (x: number, y: number): number => {
@@ -120,12 +136,14 @@ export function placePads(inp: PlaceInput): { x: number; y: number }[] {
     let bestCover = Infinity;
     for (const ys of rows) {
       // Each spot's clearance and cover once (a share sums over the signs, so a set's cover is its spots' sum).
-      const cands = xs.flatMap((x) =>
-        ys.map((y) => {
-          const sign = [signBox(x, y)];
-          return { x, y, clear: clearance(x, y), cov: coverBoxes.reduce((s, b) => s + coveredShare(b, sign), 0) };
-        }),
-      );
+      const cands = xs
+        .flatMap((x) =>
+          ys.map((y) => {
+            const sign = [signBox(x, y)];
+            return { x, y, clear: clearance(x, y), cov: coverBoxes.reduce((s, b) => s + coveredShare(b, sign), 0) };
+          }),
+        )
+        .filter((q) => !me || Math.hypot(q.x - me.x, q.y - me.y) >= me.reach);
       type Cand = (typeof cands)[number];
       // Every set of n spots left to right: in one row at least `gap` apart,
       // across the rows STAGGER_GAP (n is 2 or 3, so this stays small).
@@ -183,19 +201,19 @@ export function placePads(inp: PlaceInput): { x: number; y: number }[] {
     { xs: columns(60), gap: NARROW_GAP, rows: ROWS },
     { xs: columns(60), gap: NARROW_GAP, rows: STAGGERED },
   ]);
-  for (const ways of tiers) {
+  for (const [tier, ways] of tiers.entries()) {
     let fallback: { spots: Spot[]; cover: number } | null = null;
     for (const way of ways) {
       const laid = lay(way);
       if (!laid.spots.length) continue;
       // Nobody covered at all: a sliver counts (item 083: 0.26% of the serpent passed a 0.5% bar).
-      if (laid.cover === 0) return laid.spots;
+      if (laid.cover === 0) return { spots: laid.spots, tier, cover: 0 };
       // Every way so far covers someone: keep the least covering, the earlier on a tie.
       if (!fallback || laid.cover < fallback.cover - 1e-9) fallback = laid;
     }
-    if (fallback) return fallback.spots;
+    if (fallback) return { spots: fallback.spots, tier, cover: fallback.cover };
   }
-  return [];
+  return { spots: [], tier: Infinity, cover: Infinity };
 }
 
 /**

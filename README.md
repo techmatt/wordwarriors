@@ -190,7 +190,9 @@ beats at base level. `tests/hunt6.spec.ts` (item 102) keeps the sixth hunt's Sha
 fixes: the lit letter's pulse, the next link's options clear of her, yellow and green mashed
 through misses and morphs, the grown-ups page at each point of a link, dad lock and key 0,
 a level-1 stone reached while a line plays, Dad's 2 in the frame key 0 leaves a debug Charge
-read, and THE END's tallest grown-up under its title.
+read, and THE END's tallest grown-up under its title. `tests/hunt7.spec.ts` (item 116, slow
+lane) keeps the seventh's: her outfits for items 111 and 114's allies at her dress height, and
+yellow mashed at the story fight's gold grab.
 `playRoom(page, opts)` and `playSentenceRoom(page, opts)` take a `RoomPlay`
 (`{ wrongFirst, idleMs, wrongPauseMs }`: a wrong answer first; in a sentence room a stand
 at the key word and a pause after the wrong object). Other shared steps in
@@ -402,9 +404,20 @@ forms, an idle child who stands still at every choice, more seeds; `QA_SET=new` 
 third, item 069's: a busy child pressing blue, red and yellow all episode (free play),
 `DIFFICULTY` 2 and 3 with seeded progress, Charge and the bridge answered right, and four
 real draws back to back; `QA_SET=lenses` the fourth, item 080's, below; `QA_SET=recent` the
-fifth, item 089's, below; `QA_SET=all` every batch).
+fifth, item 089's, below; `QA_SET=cast` the seventh hunt's, below; `QA_SET=all` every batch).
 About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it records.
-In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
+In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`. The suite (`playwright.config.ts`)
+serves on `CONDUCTOR_PORT` too, so a test run beside a sweep needs another
+(`CONDUCTOR_PORT=<free port> npx playwright test …`), or it stops at "port already used".
+`--workers=3` alone still plays one scenario at a time (the scenarios are one file): add
+`--fully-parallel` (`QA_SET=cast` on three workers: about 6 minutes). A second sweep beside a
+long one (the real-speed `variants6`) needs its own build and port:
+`QA_DIST=node_modules/.ww-qa-dist2 QA_PORT=<free port>`; sharing the build folder would
+rebuild it under the first sweep's pages. A scenario shoots at most 400 shots an episode (`Recorder`'s `max`); past it the run goes on
+unshot, which looks like a hang (hunt 7). Give each its own `QA_TAG` as well: Playwright's
+output folder is per tag (`test-results/qa-<tag>`), since a run empties its folder as it starts. `scratch/` is the main checkout's folder (a
+junction): a probe script kept there that imports `../../src/…` runs the main checkout's
+code, not the worktree's (hunt 7 lost a round to it); keep such scripts in the worktree.
 
 - **Item 069's checks:** free play never over its cap of live shots (`shots-over-cap`), a
   busy child whose casts never fired (`mash-dead`), and in a scenario whose URL forces no
@@ -438,6 +451,15 @@ In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
   at the recap and THE END and goes to the grown-ups page and back: only Dad's 2 may
   leave (`end-leak`) and nothing may be stored (`end-store`); `variants6` plays six drawn
   episodes; `voiceless` plays one with the voice manifest missing (captions only).
+- **The seventh hunt's batch** (`QA_SET=cast`, item 116, about 6 minutes on three workers):
+  each ally from items 111 and 114 once, against the new villains of item 115 and their own
+  fights (frost clash, space race, magic show) and older ones, Evil Smaug's story fight twice
+  (`jasmine_story`; `rilla_story_wrong` with wrong picks and a busy child), and three drawn
+  episodes back to back (`drawn_cast3`). `spawn-in-reach` leaves out a lone answer (the bed
+  she wakes in, the hub's secret door); `locked-silent` leaves out Charge the Spell (its
+  quiet beats are hers to say the sounds back); `clipped-line` leaves out a story fight's
+  back-and-forth (`story_` lines), as it does battle shouts. New check: `pad-in-reach` (look),
+  a move pad opening within her reach (fix 119), once a choice.
   Every scenario also checks the transcript: a narrator line's variants said in turn
   across the run (`variant-repeat`, a look: a variant picked while the voice bus dropped
   it shows as a gap; not with debug games in the run, whose sandbox puts the rounds back)

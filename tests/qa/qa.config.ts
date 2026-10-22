@@ -19,13 +19,18 @@ import { gpuProjects } from '../gpu';
 
 // QA_PORT: a second run beside a sweep (a `QA_LOOK` at one scene) needs its own.
 const PORT = Number(process.env.QA_PORT ?? 5195);
-/** The checker's build, apart from the suite's (`WW_TEST_DIST`, tests/vite.test.config.ts). */
-const QA_DIST = 'node_modules/.ww-qa-dist';
+/**
+ * The checker's build, apart from the suite's (`WW_TEST_DIST`, tests/vite.test.config.ts).
+ * `QA_DIST=<dir>` with its own `QA_PORT` runs a second sweep beside a long one (hunt 7: a
+ * second build into the same folder would swap the files under the first sweep's pages).
+ */
+const QA_DIST = process.env.QA_DIST ?? 'node_modules/.ww-qa-dist';
 
 export default defineConfig({
   testDir: '.',
   testMatch: '*.pw.ts',
-  outputDir: '../../test-results/qa',
+  // Per tag: a second sweep's start empties its output folder, which took a running sweep's trace with it (hunt 7).
+  outputDir: `../../test-results/qa${process.env.QA_TAG ? `-${process.env.QA_TAG}` : ''}`,
   workers: 1,
   retries: 0,
   reporter: [['list']],

@@ -28,7 +28,7 @@ import { SPEED, boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBa
 // Item 083: real voice and real walking: the checker looks and listens as she would.
 VOICE.mode = 'real';
 driver.walk = true;
-import { layoutIssues, leakIssues, logIssues, onlyLineVariants, placeholderArt, spawnIssues, storeChanges, voiceBuildIssues, type Issue } from './checks';
+import { layoutIssues, leakIssues, logIssues, onlyLineVariants, padReachIssues, placeholderArt, spawnIssues, storeChanges, voiceBuildIssues, type Issue } from './checks';
 import { qaLayout, qaSince } from './probe';
 import { clippedIssues, giveawayIssues, pacingIssues, repeatedLines, spellingIssues, tauntIssues, variantIssues } from './wording';
 import { NARRATOR_LINES, lineVariantKeys } from '../../content/voice/script';
@@ -84,6 +84,8 @@ interface Scenario {
   endMash?: boolean;
   /** Item 089: no voice manifest (a fresh checkout, a broken junction): captions only (item 082's M19). */
   voiceless?: boolean;
+  /** Only with `QA_SET=cast` (or `all`): the seventh hunt's (item 116): the new allies and villains, the story fight. */
+  cast?: boolean;
 }
 
 /** Where in an episode the item-080 probes act (`episode` calls `at` at each). */
@@ -151,6 +153,16 @@ const SCENARIOS: Scenario[] = [
   { name: 'end_mash', query: 'seed=502&games=all', episodes: 2, endMash: true, recent: true },
   { name: 'variants6', query: 'cast=random&games=all', episodes: 6, recent: true },
   { name: 'voiceless', query: 'seed=503&games=all', voiceless: true, recent: true },
+  // Item 116, the cast's growth (items 111, 114, 115) and the story fight (item 107): each new
+  // ally once, against each new villain and their own fights, and Evil Smaug's story fight.
+  { name: 'seraphina_frost', query: 'seed=601&ally=seraphina&villain=elsa&games=all', cast: true },
+  { name: 'elsa_space', query: 'seed=602&ally=elsa&villain=ozymandias&games=all', cast: true },
+  { name: 'anna_magic', query: 'seed=603&ally=anna&villain=moriarty&games=all', wrong: true, cast: true },
+  { name: 'jasmine_story', query: 'seed=604&ally=jasmine&fight=smaug_story&games=all', cast: true },
+  { name: 'ozy_tiamat', query: 'seed=605&ally=ozymandias&villain=tiamat&games=all', cast: true },
+  { name: 'moriarty_jorm', query: 'seed=606&ally=moriarty&villain=jormungandr&games=all', cast: true },
+  { name: 'rilla_story_wrong', query: 'seed=607&ally=rilla&fight=smaug_story&games=all', wrong: true, mash: true, cast: true },
+  { name: 'drawn_cast3', query: 'cast=random&games=all', episodes: 3, cast: true },
 ];
 
 /** How often a busy child presses something (real ms). */
@@ -171,6 +183,8 @@ class Recorder {
   private loop: Promise<void>;
   private sig = { scene: '', voice: '', round: '', phase: '', choice: '', said: 0, recap: 0, ult: 0 };
   private roundStart = 0;
+  /** The move choices already checked for a pad in her reach (`padReachIssues`). */
+  private padsSeen = new Set<string>();
   /** The room's spots at the last poll (`spawnIssues`). */
   private spotIds = new Set<string>();
   private qaT = 0;
@@ -231,6 +245,7 @@ class Recorder {
     this.qaT = q.now;
     const ids = new Set(s.room?.spots.map((sp) => sp.id) ?? []);
     this.add(spawnIssues(this.spotIds, s, REACH), this.lastShot);
+    this.add(padReachIssues(this.padsSeen, s, REACH), this.lastShot);
     this.spotIds = ids;
     this.add(logIssues({ ...q, console: [], missingArt: [], flashes: [] }, SPEED));
     this.add(clippedIssues(q.voice));
@@ -268,13 +283,17 @@ class Recorder {
       await this.page.screenshot({ path: shot }).catch(() => undefined);
       this.lastShot = shot;
     }
-    this.add(layoutIssues(l, s.scene, PLACEHOLDERS), shot);
+    // A picked picture pops up as its word is said (hunt 7, W33): the answer is made, so its brush
+    // with the banner or a box is not a covered target.
+    const said = s.voice.speaking?.startsWith('word_') ? s.voice.speaking.slice(5) : null;
+    this.add(layoutIssues(l, s.scene, PLACEHOLDERS).filter((i) => !(said && i.kind === 'target-covered' && i.detail.startsWith(`${said} `))), shot);
     this.add(leakIssues(s, l, q.voice.filter((v) => v.t >= this.roundStart)), shot);
     this.add(spellingIssues(l, q.voice, s.scene), shot);
     // Words she has read, the warm-up's (said once she has grabbed it), and the gift word (item 092: told
     // and shown in the hub's story, its effect beside its card: FIN's fins): their pictures may wear them.
     // The Shape-Shifter's first creature (item 096) is said and labelled: shown, not read (hunt 6).
-    const done = [...s.episode.read, ...(s.episode.grab && (s.scene !== 'Entry' || !['intro', 'find'].includes(s.room?.grab?.phase ?? 'intro')) ? [s.episode.grab.word] : []), ...(s.episode.gift ? [s.episode.gift] : []), ...(s.room?.shifter ? [s.room.shifter.start] : [])];
+    // In a battle her fetched things too: read in the house, or put there by a `fetched=` boot (hunt 7: "THE BUN!").
+    const done = [...s.episode.read, ...(s.scene === 'Battle' ? (s.episode.fetched ?? []) : []), ...(s.episode.grab && (s.scene !== 'Entry' || !['intro', 'find'].includes(s.room?.grab?.phase ?? 'intro')) ? [s.episode.grab.word] : []), ...(s.episode.gift ? [s.episode.gift] : []), ...(s.room?.shifter ? [s.room.shifter.start] : [])];
     this.add(giveawayIssues(l, s.scene, done), shot);
   }
 
@@ -601,8 +620,10 @@ function probes(page: Page, sc: Scenario, rec: Recorder, reloadAt: Point | null,
       // Read right before the reload: a live room (Charge's wait for Dad) records on its own meanwhile.
       const before = await state(page);
       const was = await store(page);
-      await page.reload();
-      await page.waitForFunction(() => Boolean((window as unknown as { __ww?: unknown }).__ww));
+      // Bounded (hunt 7: one reload at hub part 2 never came back, and the scenario sat silent for its
+      // whole 30-minute timeout; not seen again in a rerun): a hang is a stall with its shot.
+      await page.reload({ timeout: 60_000 });
+      await page.waitForFunction(() => Boolean((window as unknown as { __ww?: unknown }).__ww), undefined, { timeout: 60_000 });
       await page.mouse.click(20, 20);
       rec.reloaded();
       const s = await until(page, (st) => st.scene === 'Title', 60_000, `the title after reloading at ${p}`);
@@ -700,7 +721,7 @@ if (LOOK) {
 }
 
 const set = process.env.QA_SET;
-const inSet = (x: Scenario) => (set === 'quick' ? Boolean(x.quick) : set === 'more' ? Boolean(x.more) : set === 'new' ? Boolean(x.added) : set === 'lenses' ? Boolean(x.lens) : set === 'recent' ? Boolean(x.recent) : set === 'all' ? true : !x.more && !x.added && !x.lens && !x.recent);
+const inSet = (x: Scenario) => (set === 'quick' ? Boolean(x.quick) : set === 'more' ? Boolean(x.more) : set === 'new' ? Boolean(x.added) : set === 'lenses' ? Boolean(x.lens) : set === 'recent' ? Boolean(x.recent) : set === 'cast' ? Boolean(x.cast) : set === 'all' ? true : !x.more && !x.added && !x.lens && !x.recent && !x.cast);
 for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
   test(`qa ${sc.name}`, async ({ page }) => {
     const errors = collectErrors(page);
@@ -709,7 +730,8 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     if (sc.voiceless) await page.route(/\/voice-gen\/manifest\.json/, (route) => route.fulfill({ status: 404, body: 'not built' }));
     await boot(page, `?${sc.query}&qa=1`, SPEED);
     const dir = `${OUT}/${sc.name}`;
-    const rec = new Recorder(page, dir);
+    // 400 shots an episode (hunt 7: `variants6` ran out in its third and looked like a hang).
+    const rec = new Recorder(page, dir, 400 * Math.max(1, sc.episodes ?? 1, (sc.reloadAt?.length ?? 0) + 1));
     rec.wrong = Boolean(sc.wrong);
     rec.voiceless = Boolean(sc.voiceless);
     const started = Date.now();
@@ -766,7 +788,8 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     // Item 089: line variants in turn over the run, taunts at most twice an episode (item 087).
     const ids = q.voice.map((v) => v.id);
     // Not with debug games in the run: their sandbox puts the store back, variant rounds too, so they repeat on purpose (item 092).
-    if (!sc.debugAt) rec.add(variantIssues(ids, VARIANT_BASES, Boolean(sc.idle)));
+    // An idle or a busy child (yellow mashed) hears a line again on purpose (hunt 7: `shifter_fix` three times under mash).
+    if (!sc.debugAt) rec.add(variantIssues(ids, VARIANT_BASES, Boolean(sc.idle || sc.mash)));
     rec.add(tauntIssues([...cuts, ids.length].map((c, i, all) => ids.slice(i ? all[i - 1] : 0, c)).filter((x) => x.length)));
     for (const e of errors) rec.add([{ kind: 'page-error', severity: 'bug', scene: '', detail: e, key: `pageerror:${e.slice(0, 80)}` }]);
     // Growth from one episode to the next.
@@ -823,6 +846,11 @@ const FLAGS = [
   'scene=battle&fetched=bogus,zzz', 'scene=battle&charged=zz', 'scene=victory&read=', 'read=cat,dog', 'prep=bogus', 'scene=room&slot=bogus', 'part=7&scene=battle',
   // Item 092: the flags added since (THE END, the warm-up's word, the short battle, the cast and pool switches).
   'scene=theend', 'scene=theend&ally=none', 'grab=cat', 'grab=bogus', 'scene=grab&grab=sheep', 'scene=battle&battle=short', 'battle=bogus', 'cast=bogus', 'games=bogus', 'scene=room&games=bogus',
+  // Hunt 7 (item 116): the Shape-Shifter beside the pool switches (hunt 6's list), the story fight, solo, the new cast.
+  'room=shifter&game=word_machine', 'room=shifter&games=all', 'scene=room&slot=b&room=shifter&games=all', 'scene=room&room=shifter&difficulty=3',
+  'fight=smaug_story', 'scene=battle&fight=smaug_story', 'scene=battle&part=2&fight=smaug_story', 'scene=battle&fight=smaug_story&villain=tiamat', 'scene=battle&fight=smaug_story&ally=none',
+  'solo=1', 'scene=room&room=charge&solo=1', 'scene=room&room=bridge&solo=1&difficulty=3',
+  'scene=battle&fight=frost_clash', 'scene=battle&fight=space_race&villain=smaug', 'scene=battle&fight=magic_show', 'villain=elsa&ally=elsa', 'ally=moriarty&villain=moriarty', 'scene=house&ally=rilla&villain=ozymandias',
 ];
 const flagSet = set === 'lenses' || set === 'all';
 for (const flag of flagSet && !LOOK ? FLAGS : []) {
@@ -884,8 +912,15 @@ for (const mode of flagSet && !LOOK ? (['skip', 'auto'] as const) : []) {
       }
       if (!['Victory', 'TheEnd'].includes((await state(page)).scene)) throw new Error(`devkeys ${mode}: no victory in 8 minutes; path ${path.slice(-6).join(' > ')}`);
       if (mode === 'skip') {
-        // The recap's green, then only Dad's 2 leaves THE END (items 082, 085).
-        await playAgain(page, { hush: true });
+        // The recap's green, then only Dad's 2 leaves THE END (items 082, 085). The last F2 may land on
+        // the victory screen a frame after it was read (the ending runs into it by itself) and skip on
+        // to THE END (hunt 7's stall): from there, Dad's 2.
+        // (Its trip there is a fade, and the Wait scene if THE END's art lags: give it 3 s.)
+        const ended = await until(page, (st) => st.scene === 'TheEnd' && Boolean(st.theEnd?.dad), 3_000, 'a late F2').catch(() => null);
+        if (ended) {
+          await page.keyboard.press('Digit2');
+          await until(page, (st) => st.scene === 'Title', 30_000, 'the title again');
+        } else await playAgain(page, { hush: true });
         await episode(page, sc, rec);
       }
     } catch (err) {

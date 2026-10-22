@@ -100,6 +100,8 @@ interface Choice {
    * opened (its timer still ticking on the frozen clock) cannot pull her off it.
    */
   at: { x: number; y: number; lift: number };
+  /** Where she stood as the pads went down (the bug-hunt checker's `pad-in-reach`, hunt 7). */
+  from: { x: number; y: number };
   /** Wrong pads she has picked so far in this choice. */
   misses: number;
   /** Seconds she has stood still while the pads are open (not reset by the re-prompt): the stick hint's clock (item 043, M5). */
@@ -169,7 +171,7 @@ export class MoveChoice {
     }
 
     return new Promise<number>((resolve) => {
-      const c: Choice = { words, right, key, objs, veiled, pads, near: null, dot, here, open: false, idle: 0, at, misses: episode.house.misses?.[key] ?? 0, still: 0, stickHint: null, stepBack: this.teamStepBack(me, pads), stepAt: performance.now(), resolve: () => resolve(c.misses) };
+      const c: Choice = { words, right, key, objs, veiled, pads, near: null, dot, here, open: false, idle: 0, at, from: { x: Math.round(at.x), y: Math.round(at.y) }, misses: episode.house.misses?.[key] ?? 0, still: 0, stickHint: null, stepBack: this.teamStepBack(me, pads), stepAt: performance.now(), resolve: () => resolve(c.misses) };
       this.current = c;
       // No charge, jump or shot in flight carries into the choice (holdHero zeroes the hop).
       this.host.stopPlay();
@@ -202,6 +204,7 @@ export class MoveChoice {
           right: c.right,
           open: c.open,
           misses: c.misses,
+          from: c.from,
           spots: c.pads.map((p) => ({ word: p.word, x: p.x, y: p.y })),
           stickHint: Boolean(c.stickHint?.active),
           stickNub: c.stickHint?.active ? (c.stickHint.list[1] as Phaser.GameObjects.Arc).x : null,
@@ -231,6 +234,8 @@ export class MoveChoice {
       sway: this.host.anchored ? CONTEST_SWAY : 0,
       left: ARENA_LEFT,
       right: ARENA_RIGHT,
+      // A margin past her reach: she may still be settling when the pads go down.
+      me: { x: me.x, y: me.y, reach: REACH + 25 },
     });
   }
 

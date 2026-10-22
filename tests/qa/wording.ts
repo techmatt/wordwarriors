@@ -80,8 +80,8 @@ function gap(a: [number, number, number, number], b: [number, number, number, nu
  * three words or fewer, with no pronoun or verb to make it a sentence, is a
  * look (item 059: TOO STRONG, LET GO).
  */
-const WHOLE = /^(yes|no|wow|bad news|good news|oh no|uh oh|hooray|yay|well done|got it|good job|great job|thank you|thanks|ready|go|let'?s go|hello|hi|bye|goodbye|ha+|oops|whoa|yum|look|listen|come on|watch out|you did it|we did it|again|nice|cool|perfect|amazing|brilliant|super|super duper|ta-?da|sorry|please|kiddo|sleepyhead|oopsie|shh|whe+|beep|boop|beep boop|guess what|good morning|wake up|rise and shine|great reading|welcome|all aboard|ready,? set,? go)$/i;
-const SENTENCE_WORD = /\b(i|you|we|he|she|it|they|me|us|them|is|are|am|was|were|be|let'?s|can|will|do|does|did|have|has|had|i'?m|you'?re|we'?re|it'?s|that'?s|there'?s|here'?s|what'?s|look|find|get|go|come|say|read|help|try|walk|press|stand|see|grab|use|pick|now'?s)\b/i;
+const WHOLE = /^(yes|no|wow|bad news|good news|oh no|uh oh|hooray|yay|well done|got it|good job|great job|thank you|thanks|ready|go|let'?s go|hello|hi|bye|goodbye|ha+|oops|whoa|yum|look|listen|come on|watch out|you did it|we did it|again|nice|cool|perfect|amazing|brilliant|super|super duper|ta-?da|sorry|please|kiddo|sleepyhead|oopsie|shh|whe+|beep|boop|beep boop|guess what|good morning|wake up|rise and shine|great reading|welcome|all aboard|ready,? set,? (go|launch)|nice fixing|splash,? splash|row,? row,? row)$/i;
+const SENTENCE_WORD = /\b(i|you|we|he|she|it|they|me|us|them|is|are|am|was|were|be|let'?s|can|will|do|does|did|have|has|had|i'?m|you'?re|we'?re|it'?s|that'?s|there'?s|here'?s|what'?s|look|find|get|go|come|say|read|help|try|walk|press|stand|see|grab|use|pick|now'?s|doesn'?t|don'?t|didn'?t|isn'?t|can'?t|won'?t)\b/i;
 
 /** A clipped line: a sentence of a few words that is no sentence (no pronoun, no verb) and no everyday exclamation. */
 export function clippedIn(text: string): string | null {
@@ -110,8 +110,9 @@ export function clippedIn(text: string): string | null {
 export function clippedIssues(voice: Since['voice']): Issue[] {
   const out: Issue[] = [];
   for (const v of voice) {
-    // Battle shouts (a taunt, a move's or an ultimate's name) are shouts, not talk to her.
-    if (/^(letter|word|taunt|move|ult|name)_/.test(v.id) || v.noLine) continue;
+    // Battle shouts (a taunt, a move's or an ultimate's name) are shouts, not talk to her; so is a
+    // story fight's back-and-forth ("Gold guards! Get them!", read through in hunt 7).
+    if (/^(letter|word|taunt|move|ult|name|story)_/.test(v.id) || v.noLine) continue;
     const c = clippedIn(v.text);
     if (c) out.push({ kind: 'clipped-line', severity: 'look', scene: v.scene, detail: `${v.id}: "${c}" in "${v.text.slice(0, 60)}"`, key: `clipped:${v.id}` });
   }

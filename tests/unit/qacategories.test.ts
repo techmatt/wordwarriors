@@ -10,7 +10,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
 
-import { logIssues, onlyLineVariants, ruledCover, spawnIssues, storeChanges, voiceBuildIssues } from '../qa/checks';
+import { logIssues, onlyLineVariants, padReachIssues, ruledCover, spawnIssues, storeChanges, voiceBuildIssues } from '../qa/checks';
 import { britishIn, clippedIn, giveawayIssues, tauntIssues, variantIssues } from '../qa/wording';
 import type { WWState } from '../harness';
 
@@ -32,6 +32,10 @@ test('clipped lines: TOO STRONG, LET GO is clipped; whole sentences and everyday
   assert.equal(clippedIn('Quick, pick a move!'), null);
   assert.equal(clippedIn("Now's our chance! Let's use it!"), null);
   assert.equal(clippedIn("It's a race! Ready, set, go!"), null);
+  // Hunt 7: the space race's start, the fix-it praise, a doesn't.
+  assert.equal(clippedIn("It's a space race! Ready, set, launch!"), null);
+  assert.equal(clippedIn('Nice fixing!'), null);
+  assert.equal(clippedIn("That doesn't match! Try another letter!"), null);
   assert.equal(clippedIn("Look, a secret door! Let's go through it!"), null);
   assert.ok(clippedIn('Gold coins for everybody!'));
 });
@@ -127,4 +131,15 @@ test('spawn-in-reach (hunt 6): a choice that appears within reach of her is a bu
   const s = room([{ id: 'stone_b', x: 640, y: 655, correct: true }, { id: 'stone_d', x: 400, y: 640, correct: false }, { id: 'door', x: 650, y: 650, correct: null }]);
   assert.deepEqual(spawnIssues(new Set(), s, 95).map((i) => i.detail), ['stone_b appeared 5 px from her (shifter:1:bun)']);
   assert.deepEqual(spawnIssues(new Set(['stone_b', 'stone_d', 'door']), s, 95), []);
+  // Hunt 7: a lone answer (the bed she wakes in, the hub's secret door) is nothing to read.
+  assert.deepEqual(spawnIssues(new Set(), room([{ id: 'bed', x: 640, y: 640, correct: true }, { id: 'door', x: 650, y: 650, correct: null }]), 95), []);
+});
+
+test('pad-in-reach (hunt 7): a move pad opening within her reach is flagged once a choice', () => {
+  const at = (x: number) =>
+    ({ scene: 'Battle', battle: { part: 1, fight: 'smaug_story', me: { x: 0, y: 0 }, choice: { open: true, from: { x, y: 590 }, words: ['hop', 'lift'], spots: [{ word: 'hop', x: 760, y: 480 }, { word: 'lift', x: 630, y: 590 }] } } }) as unknown as WWState;
+  const seen = new Set<string>();
+  assert.deepEqual(padReachIssues(seen, at(560), 95).map((i) => i.detail), ['LIFT opened 70 px from her (smaug_story)']);
+  assert.deepEqual(padReachIssues(seen, at(560), 95), [], 'once a choice');
+  assert.deepEqual(padReachIssues(new Set(), at(300), 95), []);
 });

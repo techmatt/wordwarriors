@@ -281,7 +281,9 @@ export class StoryDirector {
     this.spinStop = false;
     const tick = () => {
       if (this.spinStop || !b.scene.isActive()) return;
-      dad.spin += Math.PI * 2;
+      // Half a turn less a hair: a whole turn is already at rest (Fighter settles spin to the
+      // nearest whole turn), so += 2π never flipped at all (hunt 7). From here he flips back round.
+      dad.spin = Math.PI - 0.1;
       burst(b, dad.cx, dad.cy, { count: 30, speed: 380, colors: [0x7ad9ff, 0xffffff, dad.init.palette[0]] });
       shockwave(b, dad.cx, dad.cy, 0x7ad9ff, 140, 380);
       v.flashWhite();
@@ -348,11 +350,16 @@ export class StoryDirector {
   /** Everybody back to their marks after a walk or a charge. */
   private async homeAgain(): Promise<void> {
     const b = this.b;
+    // Helpers her move summoned (Teddy Army for TUG, Penguin Crew for HOP) have nobody to fight
+    // here: they stood by the stone through the next dodges and stayed to the end (hunt 7).
+    const helpers = b.fighters.filter((f) => f.team === 'hero' && !f.isMain && f.active);
+    for (const f of helpers) b.killFighter(f);
+    if (helpers.length) sfxPoof();
     b.heroes.forEach((h, i) => {
       const m = STORY_MARKS.heroes[i] ?? STORY_MARKS.heroes[0];
-      h.lift = storyLift(h);
       h.hop = 0;
-      b.tweens.add({ targets: h, x: m.x, y: m.y, duration: 600, ease: 'Quad.easeOut' });
+      // Down off the ledge with the walk home, not in one frame (hunt 7).
+      b.tweens.add({ targets: h, x: m.x, y: m.y, lift: storyLift(h), duration: 600, ease: 'Quad.easeOut' });
     });
     b.tweens.add({ targets: b.villain, x: STORY_MARKS.villain.x, y: STORY_MARKS.villain.y, duration: 600, ease: 'Quad.easeOut' });
     await b.wait(0.6);
