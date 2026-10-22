@@ -31,7 +31,7 @@ import { chromium, type Page } from '@playwright/test';
 import sharp from 'sharp';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
-import { ART_PROMPTS, BACKGROUND_STYLE, keyMode, NOTES, REFS, SPRITE_STYLE, refFor, type KeyMode } from '../../content/art/prompts.js';
+import { ART_PROMPTS, BACKGROUND_STYLE, keyMode, NOTES, REFS, refFor, spriteStyle, type KeyMode } from '../../content/art/prompts.js';
 import { ART_DIR, blankPage, exists, fromDataUrl, pngDataUrl, runMain } from '../shared.js';
 import { keyGreen } from './chroma.js';
 import { isPlaceholder } from './placeholders.js';
@@ -72,7 +72,7 @@ export function codexPrompt(id: string, withRef = false, prompt = ART_PROMPTS[id
         ]
       : []),
     '',
-    `${isBackground(id) ? BACKGROUND_STYLE : SPRITE_STYLE} ${prompt}`,
+    `${isBackground(id) ? BACKGROUND_STYLE : spriteStyle(id)} ${prompt}`,
     ...(NOTES[id] ? ['', `Important: ${NOTES[id]}`] : []),
   ].join('\n');
 }

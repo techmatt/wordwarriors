@@ -72,6 +72,29 @@ export interface RoomInfo {
    * sound now, any help so far, whether the pictures are up, Dad's replays and
    * timeouts, wrong picks, whether Dad is being asked, and the sound held now.
    */
+  /**
+   * The Shape-Shifter (item 096): the chain's first creature and the words
+   * read, the link now (`index`; `from` the creature before, `word` the new
+   * one, `pos` the letter changed), its beat, what stands in the room
+   * (pictures or letter stones), the label on the creature, the help level,
+   * the phase, wrong picks and any help, and the stone or picture in reach.
+   */
+  shifter?: {
+    start: string;
+    words: string[];
+    index: number;
+    from: string;
+    word: string;
+    pos: number;
+    beat: 'read' | 'fix';
+    options: string[];
+    label: string;
+    level: number;
+    lit: boolean;
+    phase: 'intro' | 'pick' | 'check' | 'done';
+    misses: number;
+    aided: boolean;
+  };
   bridge?: {
     words: string[];
     index: number;

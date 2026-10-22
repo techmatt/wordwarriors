@@ -28,7 +28,7 @@ test('debug mode: key 0 in the hub, a game from its pedestal checked off, out th
   await dadLock(page, false);
   expect(await tagShown(page)).toBe(true);
   const ids = s.room!.spots.map((sp) => sp.id).sort();
-  expect(ids).toEqual(['debug:bridge', 'debug:charge', 'debug:door', 'debug:sentence', 'debug:word_machine']);
+  expect(ids).toEqual(['debug:bridge', 'debug:charge', 'debug:door', 'debug:sentence', 'debug:shifter', 'debug:word_machine']);
   expect(s.room!.debug!.done).toEqual([]);
 
   // Key 0 again: the hub as it was, no debug, no tag.
@@ -72,7 +72,7 @@ test('debug mode: every other game opens from its pedestal in house part 2; key 
   const before = (await state(page)).progress;
   const blob = await stored(page);
   await page.keyboard.press('0');
-  for (const [id, scene] of [['word_machine', 'WordMachine'], ['charge', 'ChargeRoom'], ['bridge', 'BridgeRoom'], ['sentence', 'SentenceRoom']] as const) {
+  for (const [id, scene] of [['word_machine', 'WordMachine'], ['charge', 'ChargeRoom'], ['bridge', 'BridgeRoom'], ['shifter', 'ShifterRoom'], ['sentence', 'SentenceRoom']] as const) {
     await until(page, (st) => st.scene === 'Debug' && (st.room?.spots.length ?? 0) > 0 && !st.room!.locked, 30_000, `debug room before ${id}`);
     await choose(page, `debug:${id}`);
     const s = await until(page, (st) => st.scene === scene && Boolean(st.room?.player), 30_000, `${id} open`);

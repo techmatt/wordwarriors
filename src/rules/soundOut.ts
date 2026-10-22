@@ -10,8 +10,8 @@
  */
 
 import { BANK_BY_WORD, soundOf, unitsOf } from '../../content/phonics/bank';
-import { SOUND_BY_UNIT } from '../../content/phonics/letters';
-import { letterSoundLine } from '../../content/voice/ids';
+import { NAME_HIDES, SOUND_BY_UNIT } from '../../content/phonics/letters';
+import { letterSoundLine, nameHidesLine } from '../../content/voice/ids';
 
 export interface SoundStep {
   /** The unit's letters (`ng`, `ee`, `ll`, `k`). */
@@ -37,4 +37,17 @@ export function soundOut(word: string): SoundStep[] {
     index += unit.length;
   });
   return out;
+}
+
+/**
+ * A letter's sound as a hint or teaching line gives it (item 096): where the
+ * letter's name holds its sound (NAME_HIDES: B D F J K L M N P R S T V Z),
+ * the bridge from the name first ("M's name is Em... squeeze off the front:"),
+ * then the sound; any other letter (C G H W Y X, the vowels) or a
+ * multi-letter unit, the plain sound. `letter` is the unit as written, `sound`
+ * its sound key: a letter not saying its own sound gets no bridge.
+ */
+export function nameToSound(letter: string, sound: string = letter): string[] {
+  const plain = SOUND_BY_UNIT[sound] ? [letterSoundLine(sound)] : [];
+  return NAME_HIDES[letter] && letter === sound ? [nameHidesLine(letter), ...plain] : plain;
 }

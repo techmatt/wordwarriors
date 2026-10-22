@@ -35,6 +35,7 @@ import { MINIGAMES, drawGames, type Minigame, type MinigameKind } from './miniga
 import { machineWords, planMachine, type MachinePlan } from './wordMachine';
 import { gestureWords, planCharge, type ChargePlan } from './charge';
 import { bridgeShown, bridgeWords, planBridge, type BridgePlan } from './bridge';
+import { planShifter, shifterShown, shifterWords, type ShifterPlan } from './shifter';
 import { SENTENCE_SOLID } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { distractorsFor, drawFromBag, withStems } from './bank';
@@ -85,7 +86,13 @@ export interface BridgeRoomPlan extends PlanBase {
   bridge: BridgePlan;
 }
 
-export type RoomPlan = SentencePlan | MachineRoomPlan | ChargeRoomPlan | BridgeRoomPlan;
+/** The Shape-Shifter's room (item 096): the chain it walks, the words read, `fetches`, its links' new words. */
+export interface ShifterRoomPlan extends PlanBase {
+  kind: 'shifter';
+  shifter: ShifterPlan;
+}
+
+export type RoomPlan = SentencePlan | MachineRoomPlan | ChargeRoomPlan | BridgeRoomPlan | ShifterRoomPlan;
 
 /** Every word the bag holds: the bank's pictured words (item 037: CVC, blends and digraphs). */
 export const BAG_WORDS: string[] = THINGS.map((w) => w.word);
@@ -299,6 +306,17 @@ const BRIDGE: OwnWordsPlanner<BridgePlan> = {
   room: (base, b) => ({ ...base, kind: 'bridge', bridge: b, fetches: bridgeWords(b) }),
 };
 
+// The Shape-Shifter (item 096) reads a chain of words; its creatures and
+// read-it pictures are shown, and its first creature is said (not read), so no
+// key word drawn after it is one of them. Nor the villain's named counter word.
+const SHIFTER_PLANNER: OwnWordsPlanner<ShifterPlan> = {
+  plan: (ctx) => planShifter(ctx.store, { avoid: [...ctx.avoid, ...ctx.moves, ...ctx.named, ...ctx.pictured], taken: ctx.taken }, ctx.rand),
+  reads: shifterWords,
+  pictures: shifterShown,
+  says: (p) => [p.start],
+  room: (base, p) => ({ ...base, kind: 'shifter', shifter: p, fetches: shifterWords(p) }),
+};
+
 // Charge the Spell (item 058) spells one word, a battle item. Its runes'
 // gestures speak (item 074: "Tap the egg"), so it is no word whose gestures
 // say a word she reads after it, and the keys keep clear of what they say.
@@ -324,14 +342,14 @@ const SENTENCE: KeyPlanner = {
 };
 
 /** Each kind's planner: a new kind is a minigame entry plus its planner here. */
-const PLANNERS: Record<MinigameKind, KindPlanner> = { machine: MACHINE, bridge: BRIDGE, charge: CHARGE, sentence: SENTENCE };
+const PLANNERS: Record<MinigameKind, KindPlanner> = { machine: MACHINE, bridge: BRIDGE, shifter: SHIFTER_PLANNER, charge: CHARGE, sentence: SENTENCE };
 
 /**
  * The order the kinds with words of their own plan them: each keeps clear of
- * those planned before it (the bridge of the machine's words; Charge of both,
- * and of the bridge's pictures). A new such kind takes its place here.
+ * those planned before it (the bridge of the machine's words; the
+ * Shape-Shifter of both and the bridge's pictures; Charge of all of them). A new such kind takes its place here.
  */
-const PLAN_ORDER: MinigameKind[] = ['machine', 'bridge', 'charge'];
+const PLAN_ORDER: MinigameKind[] = ['machine', 'bridge', 'shifter', 'charge'];
 
 const plannerOf = (g: Minigame): KindPlanner => {
   const p = PLANNERS[g.kind] as KindPlanner | undefined;

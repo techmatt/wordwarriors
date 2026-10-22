@@ -20,7 +20,11 @@ door is always a phonics game (`FORCE_PHONICS_ROOM`), at random **Charge the Spe
 (one short word: the helper says each rune's sound and she says it back, no presses;
 then she reads the word and Dad judges with keys 1 / 2; the word is a battle item and
 its runes fire in the battle) or the **Stretchy Bridge** (she slides over a word's
-letter stones, each sound held, and blends the whole word to pick its picture). Then
+letter stones, each sound held, and blends the whole word to pick its picture); the
+other is always the **Shape-Shifter** (`FORCE_SHIFTER_ROOM`: the villain's spell walks a
+creature down a one-letter word chain, CAT BAT BAG; she reads each new word on it and
+walks to its picture, or walks to the letter stone that fixes its label; walking and
+green only). Then
 → **battle part 1** (the villain's ultimate wins: "too strong, retreat") →
 **house part 2** (a secret attic door: the counter sentence fetches the counter-item) →
 **battle part 2** (the counter beats the ultimate) → **victory scene**
@@ -46,7 +50,7 @@ Playwright serves its own (README, *Ports and servers*). The sibling game
 | Path | What |
 | --- | --- |
 | `src/` | Game source. `main.ts` boots Phaser; `config.ts` sizes, depth bands, pad colours and every tuning knob named below; `hookState.ts` what scenes publish for the tests (and `walkObjects`), `testHooks.ts` installs `window.__ww`; `realTime.ts` wall-clock timeouts (network, decode) the tests' fast clocks do not stretch. |
-| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom), Journey, Ending (the victory scene), Victory (the recap), TheEnd, Parent, Wait (shown while a scene's art loads) and Debug (minigame debug mode's pedestals); parked: Pick, Alarm, Retreat and `minigames/` (the v0.1 games, Spell the Spell among them). "Minigame" means only a pool entry (`src/rules/minigames.ts`). |
+| `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom, ShifterRoom), Journey, Ending (the victory scene), Victory (the recap), TheEnd, Parent, Wait (shown while a scene's art loads) and Debug (minigame debug mode's pedestals); parked: Pick, Alarm, Retreat and `minigames/` (the v0.1 games, Spell the Spell among them). "Minigame" means only a pool entry (`src/rules/minigames.ts`). |
 | `src/battle/` | The battle simulation: `BattleScene` (the director scripts `part1`/`part2`), `Fighter`, `abilities`, `movement`, `moveChoice` (`MoveChoice`: the frozen-fight word pick), `padPlace` (where its pads go), `hud` (`BattleHud`: names, bars, fetched things, runes); `stages/` stages each fight style. |
 | `src/episode/` | `Episode.ts` the episode's flow (scenes call `advance()`; nothing else decides flow), re-exporting `state.ts` (`episode`, the step list), `draws.ts` (the cast draw and what is remembered), `cast.ts` (who plays whom) and `plans.ts` (the episode's other draws); `debug.ts` minigame debug mode's sandboxed runs, `lineVariants.ts` narrator line variants said in turn and the taunts said. All but `Episode.ts` are Phaser-free. |
 | `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only), `dadLock`, `dadButtons` (keys 1 / 2, Dad's no / yes), `debugKey` (key 0, minigame debug mode). |
@@ -55,7 +59,7 @@ Playwright serves its own (README, *Ports and servers*). The sibling game
 | `src/art/` | Art on demand: `ArtBank` (load, the `art: not ready` safety net), `needs` (`artFor`: each scene's art), `gate` (`startScene`: every scene starts through it, behind the Wait scene when its art lags). |
 | `src/state/` | `ProgressStore` (localStorage, versioned, per sound and per word). |
 | `src/rules/` | Phaser-free, unit-tested: the cast, word bank, moves and gift word, warm-up, sentences, word machine, minigame pool, story and victory-scene draws; `difficulty` (the `DIFFICULTY` knob over every help ramp), `recent` (rotations across episodes) and `random` (seeded rand, shuffle, pick). |
-| `src/world/` | `RoomScene` (walk-to-answer rooms), `SideRoom` (the base class every side room's game extends, the parked v0.1 games too: no-fail `wrong()`; the piece meter and `right()` are the parked games' only) and `HouseSideRoom` (the four live rooms' base), `Player` (her character as the cursor), `houseMood`. |
+| `src/world/` | `RoomScene` (walk-to-answer rooms), `SideRoom` (the base class every side room's game extends, the parked v0.1 games too: no-fail `wrong()`; the piece meter and `right()` are the parked games' only) and `HouseSideRoom` (the five live rooms' base), `Player` (her character as the cursor), `houseMood`. |
 | `src/ui/`, `src/fx/` | Caption ribbon, follow-the-speaker bubbles, button dots, bag, `cornerTag` (the grown-ups' DOM corner tags: dad lock, Dad's 1 / 2 cue, DEBUG); particles and juice, `sceneGen` (`SceneGen`: stops a scene run's await chain at shutdown). |
 | `src/qa/` | The bug-hunt checker's in-page probe (`?qa=1`; README, *The bug-hunt checker*). |
 | `content/battle/roster.ts` | **Every character**, good and evil: style, abilities, taunts, ultimate, counter-item, the villain's house mood. Every roster character is also a villain. The dads' forms are roster characters with `person`. |
@@ -161,7 +165,9 @@ in `docs/content.md`, *Matt says X → run Y*; README, *Candidates*).
 - **Speech rule:** voice everything except the word she must read; that word is spoken
   only after she answers, as confirmation. Letter SOUNDS, never letter names. A hint
   sounds out letters one by one (a digraph, SH CH TH CK, as one sound) and never blends
-  them. Letter sounds are never captioned (the placeholder spelling is not text to
+  them. Where a letter's name holds its sound (B D F J K L M N P R S T V Z) a hint or
+  teaching line may say the name as a bridge to it ("M's name is Em... squeeze off the
+  front: mmm", `letter_<x>_hides`, item 096). Letter sounds are never captioned (the placeholder spelling is not text to
   read). Two deliberate exceptions: Spell the Spell says its word first (it is writing,
   not reading; the ghost boxes show every letter), and in the battle's move choice the
   partner says which word to pick (she hears it and finds it written). Choice-word

@@ -14,6 +14,8 @@
 
 import { FIGHTS, fightPropArt } from '../battle/fights.js';
 import { ENDINGS, endingPropArt } from '../house/endings.js';
+import { BANK_BY_WORD } from '../phonics/bank.js';
+import { RUNES, runeArt } from '../phonics/runes.js';
 import { ART_ASSETS, type ArtAsset } from './assets.js';
 
 const STYLE =
@@ -21,7 +23,13 @@ const STYLE =
 
 export const SPRITE_STYLE = `${STYLE} Single subject centered, full body, on a flat pure #00FF00 green background (sprites only).`;
 
-export const BACKGROUND_STYLE = `${STYLE} A full-bleed background painting filling the whole frame edge to edge, no border, no characters.`;
+/** Charge's picture letters (item 097, `rune_<sound>`): the one letter the brief names is the picture, so STYLE's no-letters rule gives way for it alone. */
+export const LETTER_STYLE = `${STYLE.replace('No text, letters or numbers anywhere in the image.', 'The capital letter the description names is the only letter in the image: no other text, letters or numbers.')} Single subject centered, on a flat pure #00FF00 green background (sprites only).`;
+
+/** The style block an id's prompt starts with (not a background's). */
+export const spriteStyle = (id: string) => (id.startsWith('rune_') ? LETTER_STYLE : SPRITE_STYLE);
+
+export const BACKGROUND_STYLE =`${STYLE} A full-bleed background painting filling the whole frame edge to edge, no border, no characters.`;
 
 // Item 046: Dada Jason's good forms and their face cards wear forest green, which
 // the no-green keying (NO_GREEN, below) would fade to see-through grey-teal; his
@@ -286,6 +294,13 @@ export const PICK_NOTES: Record<string, string> = {
   pic_yum: "New word YUM (item 037, level 1, a move word: the victory recap and the fan on its super). `current` is candidate 3, promoted by item 037: a big kid's face licking his lips next to a cupcake. The face is the main subject, which pushes the answer toward YUM rather than CUPCAKE. `0` is the painted placeholder. Watch: She may still name the cupcake. Candidate 2 (emoji face) is a close second.",
 };
 
+// Item 097: Charge's picture letters, one row per rune.
+for (const r of RUNES) {
+  if (!r.picture) continue;
+  const bank = BANK_BY_WORD[r.picture.word] ? ' A bank word: an episode whose Charge uses this rune keeps it out of reading.' : '';
+  PICK_NOTES[runeArt(r.sound)] = `The ${r.sound.toUpperCase()} rune (item 097) as a picture letter: ${r.picture.word.toUpperCase()}, for its sound.${bank} \`current\` is the painted placeholder; the game still paints the bare letter on the stone until a pick is wired in.`;
+}
+
 /**
  * Matt's picks from item 025's sheet (`art_alts_025`), promoted by item 032:
  * the candidate now in the game, what it shows, and item 025's own promotion
@@ -518,7 +533,8 @@ const PICTURES: Record<string, string> = {
   egg: "an egg: one whole white hen's egg, smooth and oval, standing upright; not cracked, not a nest",
   bell: 'a bell: one shiny gold hand bell with a wooden handle, ringing, little motion lines; a bell alone',
   doll: 'a doll: a soft rag doll girl with yarn hair and a dress, sitting; a toy, not a real child',
-  tap: 'a tap: one shiny silver kitchen tap (faucet) with a drop of water dripping from it; no sink',
+  // Item 096: Matt's pick 1 from brief 093_tap_running (a running stream, so it is not DRIP's single drop).
+  tap: 'a tap: one shiny silver kitchen faucet seen from the side, turned on, with a thick steady stream of clear light-blue water pouring down out of its spout and a little splash where the stream ends; no sink, no basin, no hand',
   elf: 'an elf: a cheerful little Christmas elf in green with a pointy hat with a bell and pointy ears, standing',
   // A loose tuft keyed badly (item 056: screen green caught between the blades): a solid block of turf.
   grass: 'grass: a small square block of lawn turf seen side-on, a thick slab of brown soil with a dense carpet of short dark green grass on top, no gaps between the blades; no flowers, not a plant in a pot',

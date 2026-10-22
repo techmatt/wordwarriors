@@ -192,6 +192,10 @@ export function leakIssues(s: WWState, l: Layout, voiceSinceRound: Since['voice'
   // The bridge's word is its stones, a letter each, never printed whole or said before she picks its picture (item 054).
   const b = s.room?.bridge;
   if (b && b.phase !== 'check' && b.phase !== 'done') check(b.word, `bridge ${b.index}`, 0);
+  // The Shape-Shifter's new word (item 096): never said before she has it; read it shows it on the label (a letter
+  // a text, so never one whole text either way), fix it shows only its picture.
+  const sh = s.room?.shifter;
+  if (sh && (sh.phase === 'intro' || sh.phase === 'pick')) check(sh.word, `shifter ${sh.index}`, 0);
   return out;
 }
 

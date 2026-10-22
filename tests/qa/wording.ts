@@ -124,7 +124,7 @@ export function clippedIssues(voice: Since['voice']): Issue[] {
  * times its speed-up). The budgets are what an impatient four-year-old sits
  * through with Dad answering at once: Charge the Spell about 20 s.
  */
-export const ROOM_BUDGET_MS: Record<string, number> = { ChargeRoom: 30_000, Entry: 45_000, SentenceRoom: 60_000, BridgeRoom: 75_000, WordMachine: 75_000 };
+export const ROOM_BUDGET_MS: Record<string, number> = { ChargeRoom: 30_000, Entry: 45_000, SentenceRoom: 60_000, BridgeRoom: 75_000, ShifterRoom: 90_000, WordMachine: 75_000 };
 
 export function pacingIssues(visits: { scene: string; ms: number; wrong: boolean }[]): Issue[] {
   const out: Issue[] = [];

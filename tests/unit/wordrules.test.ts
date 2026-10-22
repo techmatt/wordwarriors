@@ -12,7 +12,8 @@ import { MOVE_WORDS } from '../../content/battle/roster';
 import { BANK, BANK_BY_WORD } from '../../content/phonics/bank';
 import { FRAMES, NUMBER_WORDS } from '../../content/phonics/sentences';
 import { distractorsFor, withStems } from '../../src/rules/bank';
-import { GESTURE_WORDS, gestureWords, planCharge } from '../../src/rules/charge';
+import { RUNE_BY_SOUND } from '../../content/phonics/runes';
+import { CHARGE_WORDS, GESTURE_WORDS, gestureWords, planCharge } from '../../src/rules/charge';
 import { MINIGAME_BY_ID, SENTENCE_GAMES } from '../../src/rules/minigames';
 import { drawGift, drawMove } from '../../src/rules/moves';
 import { BAG_WORDS, NO_ARTICLE, distractors, drawKey, episodePlans, saidEarly, type EpisodeInput } from '../../src/rules/sentences';
@@ -144,6 +145,17 @@ test("the runes' gestures (items 071, 074): what they say counts as said only on
     assert.ok(!gestureWords(c.runes).includes('tap'), `${c.word} says TAP before it is read`);
   }
   assert.ok(seen.has('e'), 'with nothing read later, an /e/ word is still drawn');
+});
+
+test("the runes' picture letters (item 097): every rune Charge teaches has one, its word starts with the rune's sound, and a bank word among them counts as a gesture word", () => {
+  for (const s of new Set(CHARGE_WORDS.flatMap((w) => BANK_BY_WORD[w]!.sounds))) {
+    const p = RUNE_BY_SOUND[s]!.picture;
+    assert.ok(p, `${s} has no picture letter`);
+    assert.ok(p.word.startsWith(s), `${p.word} for ${s}`);
+    if (BANK_BY_WORD[p.word]) assert.ok(gestureWords([s]).includes(p.word), p.word);
+  }
+  assert.ok(gestureWords(['v']).includes('vase'));
+  assert.ok(!gestureWords(['m']).includes('vase'));
 });
 
 test('the runes\' gestures (item 074): TAP and EGG are words like any other, but no key drawn after an /e/ Charge word is one', () => {

@@ -36,7 +36,7 @@ export interface ChargePlan {
 /** Every sound a rune can carry. */
 export const RUNE_SOUNDS: string[] = RUNES.map((r) => r.sound);
 
-/** Each rune's gesture's bank words: what its line says (stemmed) and a word whose picture is its glyph. */
+/** Each rune's gesture's bank words: what its line says (stemmed), a word whose picture is its glyph, and its picture letter's word (item 097: VASE for V). */
 const RUNE_WORDS: Record<string, string[]> = Object.fromEntries(
   RUNES.map((r) => [
     r.sound,
@@ -44,6 +44,7 @@ const RUNE_WORDS: Record<string, string[]> = Object.fromEntries(
       ...new Set([
         ...withStems(r.gesture.text.toLowerCase().replace(/[^a-z ]/g, ' ').split(/\s+/).filter(Boolean)).filter((w) => BANK_BY_WORD[w]),
         ...BANK.filter((w) => w.glyph && w.glyph === r.gesture.glyph).map((w) => w.word),
+        ...(r.picture && BANK_BY_WORD[r.picture.word] ? [r.picture.word] : []),
       ]),
     ],
   ]),
@@ -55,7 +56,8 @@ const RUNE_WORDS: Record<string, string[]> = Object.fromEntries(
  * an episode whose Charge word has that rune, and only from when it plays:
  * the Charge word is never one whose gestures say a word she reads later
  * (`later` in `planCharge`), and `episodePlans` keeps the keys drawn after it
- * clear of them. Elsewhere TAP and EGG are words like any other.
+ * clear of them. Elsewhere TAP and EGG are words like any other. A rune's
+ * picture letter's word counts the same way (item 097: VASE for V).
  */
 export function gestureWords(sounds: Iterable<string>): string[] {
   return [...new Set([...sounds].flatMap((s) => RUNE_WORDS[s] ?? []))];

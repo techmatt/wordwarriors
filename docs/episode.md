@@ -272,6 +272,42 @@ tiers are gone), 3-4 sound units (`CHARGE.units`; `src/rules/charge.ts`, `CHARGE
 (`episode.charged`, BattleScene `useCharged`). For the beta, `FORCE_PHONICS_ROOM` (on)
 puts it or the Stretchy Bridge behind door a of every episode.
 
+**The Shape-Shifter** (item 096, `src/scenes/ShifterRoom.ts`): a side room where she
+reads every letter of a word, not just the first, alone: walking and green only, nothing
+for Dad's 1 / 2. For the beta `FORCE_SHIFTER_ROOM` (on) puts it behind door b of every
+episode (door a holds the forced phonics game). The villain's shape-shifting spell walks a
+creature down a chain of pictured CVC words, one letter changed a link (CAT, BAT, BAG,
+BUG, MUG): the first letter first, then the last, the vowel last, going back once at most
+(`src/rules/shifter.ts`; four links, `SHIFTER` in `src/config.ts`; a link with no familiar
+pictured word is left out, so a chain can be shorter). The first creature is said ("It
+starts as a... CAT"); every later word is read, in one of two beats, mixed through the chain:
+**read it**, the new word appears on the creature's label, not voiced, and three pictures
+stand in the room differing only at the changed letter (BAT, HAT, RAT): she walks to the one
+she read and presses green, the creature morphs into it (it swells, squashes, shrinks, a
+poof of smoke and sparks, and pops back) and the word is said; **fix it**, the creature
+morphs into a picture but its label keeps the old word (a bat labelled CAT), and three
+letter stones with different sounds stand in the room: she walks to the one that fixes
+the label, it flies in and the word is said. Help fades per word (`shifterLevels`; at base
+difficulty every word gets level 1): level 1 the changed letter is lit on the label and
+each stone sounds as she comes near it; level 2 lit, silent stones; level 3 nothing lit.
+Yellow sounds the new letter (read it) or the stone she stands at (fix it), with the
+name's bridge to the sound first where the name holds it (below). A wrong picture is
+sounded out over itself, then "But the spell says..." and the new letter; a wrong stone's
+letter flies at the label, bounces off, and its sound is said ("This letter says...").
+No word is ever made of it: a random letter could spell a word she reads later, or a rude
+one. No penalty; after two misses the answer sparkles. Read it is recorded as reading;
+fix it (a letter for a sound) under spelling, apart from reading, and leaves her word bag alone. Every word read is a battle item; the last
+creature flies into her bag and goes to the fight. `?scene=room&slot=a&room=shifter` opens it.
+
+**The sound hidden in the name** (item 096): where a hint or teaching line gives a
+letter's sound and the letter's name holds it (B D F J K L M N P R S T V Z), the line
+before it bridges from the name: "M's name is Em... squeeze off the front:" then "mmm";
+"B's name is Bee... keep just the start:" then "b" (`letter_<x>_hides`, phonics voice,
+never captioned; `NAME_HIDES` in `content/phonics/letters.ts`, `nameToSound` in
+`src/rules/soundOut.ts`). C G H W Y X and the vowels keep the plain sound: their names
+mislead. Used by the warm-up's level-1 clue (in place of the bare name) and the
+Shape-Shifter's hints; Matt's recordings replace the lines like any other.
+
 **The Stretchy Bridge** (item 054, `src/scenes/BridgeRoom.ts`): a side room where she
 blends a whole word. A gap crosses the room (lava in the house, a river or a chasm at a
 quest place: `GAP_BY_PLACE` in `content/house/house.ts`), and the word's letters are
@@ -334,6 +370,7 @@ done, items in the bag):
 | `?scene=room&slot=a&game=word_machine` | The word machine (`game=` puts that game behind door a, in any URL) |
 | `?scene=room&slot=a&room=charge` | Charge the Spell (`room=charge` forces it behind door a, or door b when `game=` holds door a, in any URL) |
 | `?scene=room&slot=a&room=bridge` | The Stretchy Bridge (`room=bridge`, the same way) |
+| `?scene=room&slot=a&room=shifter` | The Shape-Shifter (`room=shifter` forces it behind door a; otherwise `FORCE_SHIFTER_ROOM` has it behind door b) |
 | `?scene=battle&part=1&charged=m,s,a` | A battle that fires those charged runes (default: the plan's charge room's, in part 1) |
 | `?scene=battle&part=1` (or `2`) | A battle |
 | `?scene=victory&read=cat,sun,julia` | The victory scene, then the victory recapping those words |

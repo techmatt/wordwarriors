@@ -15,8 +15,9 @@ import { boot, collectErrors, expectNoErrors, until } from './harness';
 // KING ends in NG; SHELL starts with SH and ends in a doubled LL (L's one sound).
 const WORDS: Record<string, { said: string[]; never: string[] }> = {
   king: {
-    said: ['letter_k_name', 'letter_k_sound', 'letter_i_name', 'letter_i_sound', 'letter_ng_sound'],
-    never: ['letter_n_name', 'letter_g_name', 'letter_n_sound', 'letter_g_sound'],
+    // K's name holds its sound (item 096): the bridge from the name, not the bare name.
+    said: ['letter_k_hides', 'letter_k_sound', 'letter_i_name', 'letter_i_sound', 'letter_ng_sound'],
+    never: ['letter_k_name', 'letter_n_name', 'letter_g_name', 'letter_n_sound', 'letter_g_sound'],
   },
   shell: {
     said: ['letter_sh_sound', 'letter_e_name', 'letter_e_sound', 'letter_l_sound'],

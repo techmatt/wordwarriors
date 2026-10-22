@@ -48,7 +48,7 @@ const game = (id: string): Minigame => MINIGAME_BY_ID[id]!;
 const FETCH = game('sentence:we_need_a');
 const FETCH2 = game('sentence:go_get_the');
 const COUNTER = game('sentence:scared_of_the');
-const PHONICS = ['word_machine', 'charge', 'bridge'];
+const PHONICS = ['word_machine', 'charge', 'bridge', 'shifter'];
 
 /** Every fixed trio: each phonics kind behind door a and door b, and each pair of them. */
 function fixedTrios(): [Minigame, Minigame, Minigame][] {

@@ -66,6 +66,7 @@ for (const [name, query, scene] of [
   ['the hub, part 2', '?scene=house&part=2&nojourney=1', 'Hub'],
   ['the word machine', '?scene=room&slot=a&game=word_machine&nojourney=1', 'WordMachine'],
   ['the stretchy bridge', '?scene=room&slot=a&room=bridge&nojourney=1', 'BridgeRoom'],
+  ['the shape-shifter', '?scene=room&slot=a&room=shifter&nojourney=1', 'ShifterRoom'],
 ] as const) {
   test(`${name}: nothing covers a target`, SLOW, async ({ page }) => {
     const errors = collectErrors(page);

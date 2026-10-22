@@ -16,6 +16,7 @@ import { ARENAS, MINIONS, ROSTER } from '../battle/roster.js';
 import { ENDINGS, endingArt, endingPropArt } from '../house/endings.js';
 import { FIGHTS, fightPropArt } from '../battle/fights.js';
 import { ALL_SIDE_ROOMS, BEDROOMS, ENTRY_HALL, HUB, PLACES, hubArt } from '../house/house.js';
+import { RUNES, runeArt } from '../phonics/runes.js';
 import { FLAVOUR_PICTURES, MOVE_PICTURES, PICTURE_WORDS, SPECIAL_WORDS, WORD_BY_ID } from '../phonics/words.js';
 
 export type AssetKind = 'character' | 'minion' | 'arena' | 'room' | 'picture' | 'item' | 'prop';
@@ -271,6 +272,23 @@ const PROPS: [string, number, number, string, string, string?][] = [
 ];
 for (const [id, w, h, content, glyph] of PROPS) {
   assets.push({ id: `prop_${id}`, kind: 'prop', w, h, content, label: '', glyph });
+}
+
+// Charge the Spell's picture letters (item 097, content/phonics/runes.ts): the rune's
+// capital letter built out of a thing starting with its sound. Not shown yet: the
+// stone still paints the bare letter until Matt picks from the candidates.
+for (const r of RUNES) {
+  if (!r.picture) continue;
+  const letters = r.sound.toUpperCase();
+  assets.push({
+    id: runeArt(r.sound),
+    kind: 'prop',
+    w: 220,
+    h: 220,
+    content: `The capital letter${letters.length > 1 ? 's' : ''} ${letters.split('').join(' and ')} drawn as a picture letter for a 4-year-old learning letter sounds, the letter's own shape built out of the picture (${r.picture.word}): ${r.picture.look}. The letter stays big, bold and plainly readable as an upper-case ${letters} at a glance, filling the picture; the picture is the letter, not a thing drawn beside it. No other letters, words or text.`,
+    label: letters,
+    glyph: r.gesture.glyph,
+  });
 }
 
 // Victory scenes (item 027, content/house/endings.ts): a background each, the

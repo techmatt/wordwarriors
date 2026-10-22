@@ -170,6 +170,7 @@ export function artFor(key: string, draw: boolean): string[] {
     case 'WordMachine':
     case 'ChargeRoom':
     case 'BridgeRoom':
+    case 'ShifterRoom':
       out.push(...houseSet(draw));
       break;
     case 'Debug':

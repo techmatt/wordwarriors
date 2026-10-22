@@ -455,7 +455,14 @@ a familiar picture may hold a sound she has not been taught; spell it by hand wi
 sound's key from `UNTAUGHT_SOUNDS` (`content/phonics/letters.ts`: `long_oo` for ZOO,
 `schwa` for ZEBRA's A, `x_name` for X-RAY's X), mark it `late`, and it takes the long
 path (no vowel tag, no family, no bridge). A new untaught sound goes in that list, which
-gives it its `letter_<key>_sound` line. A new word must keep the
+gives it its `letter_<key>_sound` line.
+
+**Blend order for level 2** (item 096): final s-blends (-ST, -SK: NEST, VEST, DESK,
+MASK) and initial l-blends (FL-, CL-, BL-, PL-: FLAG, FLIP, CLAP, BLAST, PLUM, PLUG)
+first; final nasal blends (-MP, -ND, -NK, -NT: JUMP, LAMP, HAND, SINK, TENT)
+last.
+
+A new word must keep the
 coverage rule (README, "The word bank's coverage rule"; `npm run bank:audit`). To add one:
 
 1. The entry, in its level's block of `ENTRIES`.

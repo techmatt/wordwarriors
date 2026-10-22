@@ -162,6 +162,20 @@ export function canHold(sound: string): boolean {
 }
 
 /**
+ * The sound hidden in the name (item 096): a letter whose name holds its
+ * sound, and where. `start`: the name starts with it (BEE, then "b"), so keep
+ * just the start; `end`: it ends with it (EM, then "mmm"), so squeeze off the
+ * front. A hint or teaching line that sounds one of these letters may say
+ * the bridge first (`nameHidesLine`, `nameToSound` in src/rules/soundOut.ts).
+ * C G H W Y X and the vowels are left out: their names mislead (SEE is not
+ * "k", AITCH has no "h"), so they keep the plain sound.
+ */
+export const NAME_HIDES: Record<string, 'start' | 'end'> = {
+  b: 'start', d: 'start', j: 'start', k: 'start', p: 'start', t: 'start', v: 'start', z: 'start',
+  f: 'end', l: 'end', m: 'end', n: 'end', r: 'end', s: 'end',
+};
+
+/**
  * Letter NAMES (item 033): the home warm-up spells its word with them before
  * it gives the sounds, because names are what she already knows. Each is its
  * own line (`letterNameLine`), in the phonics voice like the sounds, so a

@@ -26,6 +26,15 @@
  * word effects' shape, content/phonics/effects.ts), by the sound's feel: a
  * held hum is a beam, a hiss a wave, a pop a bolt. Its projectile is the
  * gesture's glyph, never a word's picture. Pure data: no Phaser.
+ *
+ * `picture` (item 097): the rune drawn as a picture letter, its upper-case
+ * letter built out of a thing whose name starts with the letter's SOUND (S a
+ * snake, M two mountains), so the shape carries the sound for a girl who
+ * knows only letter names. Its art is `runeArt(sound)`, its brief `look`. The
+ * picture word counts as a gesture word (`gestureWords` in src/rules/charge.ts):
+ * when it is a bank word, an episode whose Charge uses the rune keeps it out
+ * of reading. Every rune Charge can teach has one (Y and Z start no
+ * chargeable word, so they have none).
  */
 
 import type { AbilitySpec } from '../battle/types.js';
@@ -51,13 +60,25 @@ export type GestureMotion =
   /** The prop climbs from their feet to their head. */
   | 'climb';
 
+/** A rune drawn as a picture letter: the thing it is built from, and how. */
+export interface RunePicture {
+  /** The thing's name, starting with the rune's sound. */
+  word: string;
+  /** The art brief: how the thing makes the letter's shape. */
+  look: string;
+}
+
 export interface RuneSound {
   /** The sound unit: a letter, or a digraph's two letters (`sh`). Its line is `letter_<sound>_sound`. */
   sound: string;
   tier: RuneTier;
   gesture: { glyph: string; motion: GestureMotion; text: string; say?: string };
   move: AbilitySpec;
+  picture?: RunePicture;
 }
+
+/** A rune's picture-letter art id. */
+export const runeArt = (sound: string) => `rune_${sound}`;
 
 function move(sound: string, kind: AbilitySpec['kind'], color: number, glyph: string, extra: Partial<AbilitySpec> = {}): AbilitySpec {
   return { id: `rune_${sound}`, name: `${sound.toUpperCase()} rune`, kind, cooldown: 0, color, power: 2, glyph, ...extra };
@@ -101,4 +122,41 @@ export const RUNES: RuneSound[] = [
   rune('th', 3, '😛', 'pulse', 'Poke your tongue out, it goes...', 'beam', 0xff8fb0, { color2: 0xffffff }),
 ];
 
-export const RUNE_BY_SOUND: Record<string, RuneSound> = Object.fromEntries(RUNES.map((r) => [r.sound, r]));
+/**
+ * Each taught rune's picture letter. The rune's own gesture is the thing where it
+ * draws well (S's snake, F's fire, D's dinosaur, J's jelly as a jellyfish); short
+ * vowels take a short-vowel word (Alligator, not Apron). A bank word here (IGLOO,
+ * OCTOPUS, UMBRELLA, VASE) is kept out of reading as a gesture word is.
+ */
+const PICTURES: Record<string, RunePicture> = {
+  m: { word: 'mountains', look: 'two snowy-topped mountains side by side make the M: the two peaks are its points and the valley between them its middle dip, a little sun peeking over' },
+  s: { word: 'snake', look: 'a friendly smiling snake curls into the S: its body is the S curve, head with a little forked tongue at the top end, tail tip at the bottom end, yellow belly stripe and diamond pattern' },
+  f: { word: 'fire', look: 'the F is a campfire log standing upright with two shorter logs sticking out to the right as its two arms, bright orange and yellow flames dancing along the top of the upright and each arm' },
+  a: { word: 'alligator', look: 'a cartoon alligator stands on its tail with its long jaws wide open pointing down, the two jaws are the two slanted legs of the A, its tongue across the open mouth is the crossbar, a friendly eye at the top point' },
+  l: { word: 'lizard', look: 'an orange lizard makes the L: its body runs straight up as the tall upright, head at the top, and its long tail bends at the bottom and runs out flat to the right as the foot' },
+  n: { word: 'noodle', look: 'one long thick yellow noodle bends into the N: up, diagonally down, and up again, with a fork twirled into the top of the last stroke and a little steam' },
+  r: { word: 'robot', look: 'a boxy friendly robot makes the R: its straight metal body and leg the upright, its round head with glowing eyes the bowl at the top, and one leg kicking out diagonally as the slanted leg' },
+  e: { word: 'elephant', look: 'a grey elephant seen from the side makes the E: its back is the upright, and its trunk, a front leg and a back leg stick out to the right as the three arms, a big ear at the top' },
+  i: { word: 'igloo', look: 'the I is a tall pillar built of white snow bricks with the brick lines drawn, a wide snow-brick cap at the top and a wide base at the bottom, a little round igloo doorway in its foot' },
+  o: { word: 'octopus', look: 'a purple octopus curls its arms all the way round into a perfect ring for the O, its round friendly face with big eyes at the top of the ring, suckers along the arms' },
+  u: { word: 'umbrella', look: 'an open red umbrella hangs upside down so its curved canopy is the U, the two pointed tips its two arms reaching up, a few raindrops falling into it' },
+  t: { word: 'table', look: 'a small round wooden table seen from the side makes the T: its flat top the crossbar, its single central leg the upright, a little cup on top' },
+  p: { word: 'popsicle', look: 'a round pink popsicle on a wooden stick makes the P: the stick runs down from its left side as the upright and the round ice pop is the bowl at the top right, a drip on its side' },
+  b: { word: 'butterfly', look: 'a butterfly seen side-on clings to the B: its straight body is the upright and its two round colourful wings, one above the other, are the two bumps, little antennae at the top' },
+  d: { word: 'dinosaur', look: 'a friendly long-neck dinosaur makes the D: its tall straight neck the upright, its big round back with plates curving out to the right as the bowl, little legs at the bottom' },
+  c: { word: 'caterpillar', look: 'a red-and-yellow striped caterpillar curls round into the C, its smiling face at the top end and its tail at the bottom end, little feet along the inside' },
+  k: { word: 'kangaroo', look: 'a kangaroo stands tall as the K: its straight upright back and tail the upright stroke, its arms reaching up-right and its big foot kicking down-right as the two slanted strokes' },
+  g: { word: 'grapes', look: 'a bunch of round purple grapes curves into the G, grape after grape round the letter, a green leaf and curly stem at the top end and the inward bar at the bottom end made of a short row of grapes' },
+  h: { word: 'house', look: 'the H is a little house: its two side walls are the uprights, the floor of the upstairs room the crossbar, a red roof over the top, a door and windows on the walls' },
+  j: { word: 'jellyfish', look: 'a pink jellyfish makes the J: its round bell head with a smile is the top, and one long tentacle runs down and hooks to the left at the bottom as the J\'s hook, shorter tentacles beside it' },
+  w: { word: 'waves', look: 'two big blue ocean waves side by side make the W: the zigzag water line goes down, up, down, up, white foam curling on the three crests' },
+  v: { word: 'vase', look: 'a blue china vase shaped like the V, wide at the top and coming to a point at the bottom, a bunch of bright flowers poking out of the top' },
+  sh: { word: 'shark', look: 'the S is a friendly grey-blue shark curving through the water, fin up and smiling, and the H beside it is two posts of a wooden dock with a plank across, little waves at their feet; the two letters side by side' },
+  ch: { word: 'cherries', look: 'the C is a curved stem with cherries hanging along it, and the H beside it is two cherry stems standing up with a leafy twig across, a pair of shiny red cherries at the top of each; the two letters side by side' },
+  // Item 097: not THUMB, whose thumbs-up T (a raised digit over a fist) read as a rude finger in both candidates.
+  th: { word: 'thunder', look: 'a grumbly grey storm cloud is the T\'s crossbar with a big yellow lightning bolt coming straight down from its middle as the upright, and the H beside it is two lightning bolts standing as its uprights with a small storm cloud across their middle as the crossbar; the two letters side by side, no hands or people' },
+};
+
+for (const r of RUNES) r.picture = PICTURES[r.sound];
+
+export const RUNE_BY_SOUND: Record<string, RuneSound> =Object.fromEntries(RUNES.map((r) => [r.sound, r]));

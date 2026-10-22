@@ -24,20 +24,22 @@
 
 import { FAMILIES } from '../../content/phonics/families';
 import { FRAMES } from '../../content/phonics/sentences';
-import { BRIDGE, CHARGE, VARIETY, WORD_MACHINE } from '../config';
+import { BRIDGE, CHARGE, SHIFTER, VARIETY, WORD_MACHINE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { pickWeighted, type Rand } from './random';
 import { bridgeShakiness } from './bridge';
 import { soundShakiness } from './charge';
+import { shifterShakiness } from './shifter';
 
 export type GameSlot = 'fetch' | 'counter';
 
 /**
  * What a minigame is: the sentence game (in one of its frames), the word
  * machine (item 026), Charge the Spell (item 053) or the Stretchy Bridge
- * (item 054). The room's plan carries the same kind (`RoomPlan`).
+ * (item 054) or the Shape-Shifter (item 096). The room's plan carries the
+ * same kind (`RoomPlan`).
  */
-export type MinigameKind = 'sentence' | 'machine' | 'charge' | 'bridge';
+export type MinigameKind = 'sentence' | 'machine' | 'charge' | 'bridge' | 'shifter';
 
 export interface Minigame {
   /** Unique: `sentence:<frame>` for the sentence game in a frame. */
@@ -77,11 +79,21 @@ export const CHARGE_GAME: Minigame = { id: 'charge', kind: 'charge', scene: 'Cha
  */
 export const BRIDGE_GAME: Minigame = { id: 'bridge', kind: 'bridge', scene: 'BridgeRoom', weight: BRIDGE.weight, slots: ['fetch'] };
 
+/**
+ * The Shape-Shifter (item 096): a fetch room only. The villain's spell walks
+ * a creature down a chain of words, one letter changed a link; she reads each
+ * link, walking and green only (its plan: src/rules/shifter.ts). Every word
+ * she reads there is a battle item, the last creature among them. For the
+ * beta one is forced per episode (FORCE_SHIFTER_ROOM, src/episode/plans.ts
+ * `roomGames`).
+ */
+export const SHIFTER_GAME: Minigame = { id: 'shifter', kind: 'shifter', scene: 'ShifterRoom', weight: SHIFTER.weight, slots: ['fetch'] };
+
 /** The phonics games FORCE_PHONICS_ROOM puts in every episode, one of them, by weight. */
 export const PHONICS_GAMES: Minigame[] = [CHARGE_GAME, BRIDGE_GAME];
 
 /** The pool. */
-export const MINIGAMES: Minigame[] = [...SENTENCE_GAMES, WORD_MACHINE_GAME, CHARGE_GAME, BRIDGE_GAME];
+export const MINIGAMES: Minigame[] = [...SENTENCE_GAMES, WORD_MACHINE_GAME, CHARGE_GAME, BRIDGE_GAME, SHIFTER_GAME];
 
 export const MINIGAME_BY_ID: Record<string, Minigame> = Object.fromEntries(MINIGAMES.map((g) => [g.id, g]));
 
@@ -93,13 +105,15 @@ function familyShakiness(store: ProgressStore): number {
 /**
  * How much a game's kind leans its weight toward what she finds shaky: a
  * sentence game by its frame, the word machine by her word families, Charge
- * the Spell by her letter sounds, the Stretchy Bridge by its words.
+ * the Spell by her letter sounds, the Stretchy Bridge by its words, the
+ * Shape-Shifter by the words its chains can use.
  */
 const LEAN: Record<MinigameKind, (store: ProgressStore, g: Minigame) => number> = {
   sentence: (store, g) => store.shakiness('frames', g.frame!),
   machine: familyShakiness,
   charge: soundShakiness,
   bridge: bridgeShakiness,
+  shifter: shifterShakiness,
 };
 
 /**

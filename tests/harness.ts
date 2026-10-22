@@ -45,7 +45,7 @@ export interface WWState {
     /** The home warm-up (item 033): the word grabbed in the entry hall and the hall's pictures. */
     grab: { word: string; objects: string[] } | null;
     house: {
-      plan: { slot: string; room: string; game: string; kind: 'sentence' | 'machine' | 'charge' | 'bridge'; key: string; fetches: string[]; charge?: { runes: string[] }; bridge?: { rounds: { word: string; units: string[]; pictures: string[] }[] }; sentence?: { key: string; frame: string }; machine?: { mode: string; rounds: { word: string; rime: string }[] } }[] | null;
+      plan: { slot: string; room: string; game: string; kind: 'sentence' | 'machine' | 'charge' | 'bridge' | 'shifter'; key: string; fetches: string[]; charge?: { runes: string[] }; bridge?: { rounds: { word: string; units: string[]; pictures: string[] }[] }; sentence?: { key: string; frame: string }; machine?: { mode: string; rounds: { word: string; rime: string }[] } }[] | null;
       done: string[];
       taught: boolean;
     };
@@ -70,6 +70,8 @@ export interface WWState {
     debug?: { done: string[]; games: string[] };
     spelling?: { word: string; filled: number };
     grab?: { word: string; level: number; misses: number; objects: string[]; phase: string };
+    /** The Shape-Shifter (item 096, src/hookState.ts `shifter`). */
+    shifter?: { start: string; words: string[]; index: number; from: string; word: string; pos: number; beat: 'read' | 'fix'; options: string[]; label: string; level: number; lit: boolean; phase: 'intro' | 'pick' | 'check' | 'done'; misses: number; aided: boolean };
     sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean; readLit: number[] };
     machine?: {
       mode: string;
@@ -155,6 +157,8 @@ export interface WWState {
     grabLevels: Record<string, number>;
     /** The Stretchy Bridge's help level per word (item 054). */
     bridgeLevels: Record<string, number>;
+    /** The Shape-Shifter's help level per word (item 096). */
+    shifterLevels?: Record<string, number>;
     bag?: { left: string[]; round: number };
     episodes: number;
     /** Every rotation's recent picks, newest last (item 067; src/rules/recent.ts). */
@@ -635,6 +639,30 @@ export async function playBridgeRoom(page: Page, wrongFirst = false): Promise<st
 }
 
 /**
+ * Play the Shape-Shifter (item 096): each link's right picture or stone;
+ * with `wrongFirst`, a wrong one first on the first link (sounded out, then
+ * she picks again). Returns the words read (each a battle item).
+ */
+export async function playShifterRoom(page: Page, wrongFirst = false): Promise<string[]> {
+  const first = await until(page, (s) => s.scene === 'ShifterRoom' && Boolean(s.room?.shifter), 30_000, 'shifter room');
+  const words = first.room!.shifter!.words;
+  let wrong = wrongFirst;
+  for (let i = first.room!.shifter!.index; i < words.length; i++) {
+    const s = await until(page, (st) => st.scene !== 'ShifterRoom' || (st.room?.shifter?.index === i && st.room.shifter.phase === 'pick' && !st.room.locked), 90_000, `link ${i} (${words[i]}) ready`);
+    if (s.scene !== 'ShifterRoom') return words;
+    if (wrong) {
+      wrong = false;
+      await choose(page, s.room!.spots.find((sp) => sp.correct === false)!.id);
+      await until(page, (st) => st.room?.shifter?.phase === 'pick' && !st.room.locked && st.room.shifter.misses > 0, 60_000, 'miss sounded out');
+    }
+    await choose(page);
+    await until(page, (st) => st.scene !== 'ShifterRoom' || (st.room?.shifter?.index ?? 0) > i || st.room?.shifter?.phase === 'done', 60_000, `${words[i]} read`);
+  }
+  await until(page, (st) => st.scene !== 'ShifterRoom', 60_000, 'out of the shifter room');
+  return words;
+}
+
+/**
  * Play whichever game the room has: a sentence room (its key word), the word
  * machine (every word built), Charge the Spell (its one word),
  * or the Stretchy Bridge (every word read); `opts` as `RoomPlay` says.
@@ -646,7 +674,8 @@ export async function playRoom(page: Page, opts: RoomPlay = {}): Promise<string[
       (st.scene === 'SentenceRoom' && Boolean(st.room?.sentence)) ||
       (st.scene === 'WordMachine' && Boolean(st.room?.machine)) ||
       (st.scene === 'ChargeRoom' && Boolean(st.room?.charge)) ||
-      (st.scene === 'BridgeRoom' && Boolean(st.room?.bridge)),
+      (st.scene === 'BridgeRoom' && Boolean(st.room?.bridge)) ||
+      (st.scene === 'ShifterRoom' && Boolean(st.room?.shifter)),
     30_000,
     'a side room',
   );
@@ -657,6 +686,7 @@ export async function playRoom(page: Page, opts: RoomPlay = {}): Promise<string[
     return [word];
   }
   if (s.scene === 'BridgeRoom') return playBridgeRoom(page, opts.wrongFirst);
+  if (s.scene === 'ShifterRoom') return playShifterRoom(page, opts.wrongFirst);
   return s.scene === 'WordMachine' ? playWordMachine(page, opts.wrongFirst) : [await playSentenceRoom(page, opts)];
 }
 

@@ -123,6 +123,8 @@ const SCENARIOS: Scenario[] = [
   { name: 'charge_no_first', query: 'seed=115&room=charge', wrong: true, more: true },
   // The Stretchy Bridge (item 054): half the `games=all` scenarios meet it; this one with a wrong picture first.
   { name: 'bridge_wrong_first', query: 'seed=116&room=bridge', wrong: true, more: true },
+  // The Shape-Shifter (item 096): every `games=all` scenario meets it behind door b (FORCE_SHIFTER_ROOM); this one with a wrong pick first.
+  { name: 'shifter_wrong_first', query: 'seed=117&room=shifter', wrong: true, more: true },
   // The second hunt (item 069): free play under a busy child, the difficulty levels above base
   // (item 067), the phonics rooms answered right, and a real draw across episodes (rotations).
   { name: 'mash_default', query: 'cast=default&games=all', mash: true, added: true },
@@ -373,7 +375,7 @@ async function dadLockProbe(page: Page, rec: Recorder): Promise<void> {
 const probing = (sc: Scenario) => Boolean(sc.lockAll || sc.parentAll || sc.reloadAt || sc.debugAt);
 
 /** The games debug mode offers (item 086), taken in turn by the debug probe. */
-const DEBUG_GAMES = ['sentence', 'word_machine', 'charge', 'bridge'] as const;
+const DEBUG_GAMES = ['sentence', 'word_machine', 'charge', 'bridge', 'shifter'] as const;
 
 /**
  * Item 089: minigame debug mode at a point. Key 0, a game from its pedestal
@@ -478,7 +480,7 @@ async function episode(page: Page, sc: Scenario, rec: Recorder, at: (p: Point) =
     await standStill(page, sc, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:doors' && !s.room.locked, 'doors open');
     await hubGo(page, door);
     if ((sc.dadLock && door === 'door_a') || probing(sc)) {
-      const s = await until(page, (st) => st.scene === 'SentenceRoom' || st.scene === 'WordMachine' || st.scene === 'ChargeRoom' || st.scene === 'BridgeRoom', 30_000, 'side room');
+      const s = await until(page, (st) => st.scene === 'SentenceRoom' || st.scene === 'WordMachine' || st.scene === 'ChargeRoom' || st.scene === 'BridgeRoom' || st.scene === 'ShifterRoom', 30_000, 'side room');
       if (s.scene === 'SentenceRoom') await until(page, (st) => st.room?.sentence?.pass === 'read' && !st.room.locked, 90_000, 'read pass');
       else await until(page, (st) => Boolean(st.room && !st.room.locked), 60_000, 'room listening');
       if (sc.dadLock && door === 'door_a') await dadLockProbe(page, rec);
@@ -532,7 +534,7 @@ async function episode(page: Page, sc: Scenario, rec: Recorder, at: (p: Point) =
 /** Where the episode stands, as far as a press could move it (item 080's dad lock probe). */
 function where(s: WWState): string {
   const r = s.room;
-  return JSON.stringify([s.scene, s.episode.stepIndex, r?.round, r?.sentence?.pass, r?.sentence?.index, r?.machine?.index, r?.machine?.phase, r?.grab?.phase, r?.grab?.misses, r?.charge?.read, r?.bridge?.index, r?.bridge?.misses, s.battle?.choice?.misses, s.battle?.movePicks, s.episode.read.length]);
+  return JSON.stringify([s.scene, s.episode.stepIndex, r?.round, r?.sentence?.pass, r?.sentence?.index, r?.machine?.index, r?.machine?.phase, r?.grab?.phase, r?.grab?.misses, r?.charge?.read, r?.bridge?.index, r?.bridge?.misses, r?.shifter?.index, r?.shifter?.misses, s.battle?.choice?.misses, s.battle?.movePicks, s.episode.read.length]);
 }
 
 /** Everything in the store, raw (item 080's reload probe compares it across a reload). */
@@ -808,7 +810,7 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
 const FLAG_S = 9;
 const FLAGS = [
   'scene=title', 'scene=bedroom', 'scene=grab', 'scene=house', 'scene=house&part=2', 'scene=room', 'scene=room&slot=b', 'scene=room&slot=counter',
-  'scene=room&room=charge', 'scene=room&room=bridge', 'scene=room&game=word_machine', 'scene=battle', 'scene=battle&part=2', 'scene=victory', 'scene=parent',
+  'scene=room&room=charge', 'scene=room&room=bridge', 'scene=room&room=shifter', 'scene=room&game=word_machine', 'scene=battle', 'scene=battle&part=2', 'scene=victory', 'scene=parent',
   'scene=sound', 'scene=blend', 'scene=picture', 'scene=pick', 'scene=alarm', 'scene=retreat', 'scene=spell', 'scene=bogus',
   'seed=abc', 'seed=-5', 'seed=1e99', 'difficulty=0', 'difficulty=9', 'difficulty=abc', 'ally=bogus', 'villain=bogus', 'ally=ellie&villain=ellie',
   'ally=none&primary=none', 'hero=evil_tiamat', 'form=bogus', 'form=lifter,warlock', 'place=bogus', 'fight=bogus', 'game=bogus', 'room=bogus', 'ending=bogus',

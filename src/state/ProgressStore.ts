@@ -52,6 +52,12 @@ export interface ProgressData {
    * reads there are recorded under `words`.
    */
   bridgeLevels: Record<string, number>;
+  /**
+   * The Shape-Shifter (item 096): per word, its help level (1 the changed
+   * letter lit and the stones sounding as she comes near, 2 lit but silent,
+   * 3 nothing lit); absent = SHIFTER.startLevel. Her reads are under `words`.
+   */
+  shifterLevels?: Record<string, number>;
   /** Her word bag: the sentence key words drawn without replacement (item 015). */
   bag: WordBag;
   /** The bag words the game had when `bag` was last topped up (`topUpBag`); `'legacy'` for a blob from before item 035. */
@@ -279,6 +285,16 @@ export class ProgressStore {
 
   setBridgeLevel(word: string, level: number): void {
     this.data.bridgeLevels[word] = level;
+    this.save();
+  }
+
+  /** A word's Shape-Shifter help level (item 096), or `fallback` (SHIFTER.startLevel) if she has never met it there. */
+  shifterLevel(word: string, fallback: number): number {
+    return this.data.shifterLevels?.[word] ?? fallback;
+  }
+
+  setShifterLevel(word: string, level: number): void {
+    (this.data.shifterLevels ??= {})[word] = level;
     this.save();
   }
 

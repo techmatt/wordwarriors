@@ -26,7 +26,8 @@
 
 import { THINGS } from '../../content/phonics/bank';
 import { lookalikesOf } from '../../content/phonics/sentences';
-import { letterNameLine } from '../../content/voice/ids';
+import { NAME_HIDES } from '../../content/phonics/letters';
+import { letterNameLine, nameHidesLine } from '../../content/voice/ids';
 import { GRAB } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { coverage, distractorsFor, isFirm, met } from './bank';
@@ -125,7 +126,9 @@ export interface ClueStep {
  * `spelled` sounds), one at a time and never blended, so a digraph is one
  * sound lighting both its letters:
  *
- *   1. a single letter's name, then its sound (I, "i"; P, "p"); a
+ *   1. a single letter's name, then its sound (I, "i"; P, "p"); where the
+ *      name holds the sound, the bridge from it instead (item 096: "P's name
+ *      is Pee... keep just the start:", then "p"; NAME_HIDES); a
  *      multi-letter unit only its sound, both letters lit ("sh", item 085);
  *   2. the sounds alone, each unit's letters appearing on the board with it;
  *   3. the sounds alone over blank boxes.
@@ -140,7 +143,8 @@ export function clue(word: string, level: GrabLevel, help = false): ClueStep[] {
     // Item 085: only a single letter is named first. A multi-letter unit (NG,
     // SH, CK, LL, EE...) is its one sound alone, both letters lit: KING is
     // "kay, kuh, eye, ih, ng", never "en, gee, ng".
-    if (level === 1 && !help && s.span === 1) out.push({ id: letterNameLine(s.unit), kind: 'name', index: s.index, span: 1, show: true });
+    // Item 096: where the name holds the sound (M, "Em"), the name is the bridge to it ("M's name is Em... squeeze off the front:").
+    if (level === 1 && !help && s.span === 1) out.push({ id: NAME_HIDES[s.unit] && s.sound === s.unit ? nameHidesLine(s.unit) : letterNameLine(s.unit), kind: 'name', index: s.index, span: 1, show: true });
     const show = help || level <= 2;
     // A silent letter (KITE's E, item 056) lights in its turn and says nothing: no line id.
     if (s.id || s.sound === '') out.push({ id: s.id, kind: 'sound', index: s.index, span: s.span, show });

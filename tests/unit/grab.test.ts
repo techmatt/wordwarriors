@@ -11,7 +11,7 @@ import { test } from 'node:test';
 import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { lookalikesOf } from '../../content/phonics/sentences';
 import { PICTURE_WORDS } from '../../content/phonics/words';
-import { letterNameLine, letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
+import { letterNameLine, letterSoundLine, nameHidesLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { GRAB } from '../../src/config';
 import { GRAB_WORDS, RECENT_GRABS, clue, grabLevel, hallObjects, nextLevel, pickGrab, recordedGrabLevel } from '../../src/rules/grab';
 import { episodePlans, type EpisodeInput } from '../../src/rules/sentences';
@@ -42,7 +42,8 @@ test('ramp: a new word starts at GRAB.startLevel (1); right first time is harder
 
 test('clue: level 1 each letter name then its sound; 2 the sounds, letters shown; 3 the sounds, blank; help the sound-out, letters shown', () => {
   const ids = (l: 1 | 2 | 3, help = false) => clue('van', l, help).map((s) => s.id);
-  const [nv, na, nn] = ['v', 'a', 'n'].map(letterNameLine);
+  // V and N hide their sounds in their names (item 096): the bridge from the name; A's misleads, its plain name.
+  const [nv, na, nn] = [nameHidesLine('v'), letterNameLine('a'), nameHidesLine('n')];
   const sounds = ['v', 'a', 'n'].map(letterSoundLine);
   const [sv, sa, sn] = sounds;
   assert.deepEqual(ids(1), [nv, sv, na, sa, nn, sn]);
@@ -73,10 +74,10 @@ test('clue: never the word (amendment 1549): no step is its word_ line or a line
 
 test('clue: names only for single letters, sounds by sound unit (SH of SHIP is one sound lighting two letters, never named S, H: item 085)', () => {
   const ship = clue('ship', 1);
-  assert.deepEqual(ship.map((s) => s.id), [letterSoundLine('sh'), letterNameLine('i'), letterSoundLine('i'), letterNameLine('p'), letterSoundLine('p')]);
+  assert.deepEqual(ship.map((s) => s.id), [letterSoundLine('sh'), letterNameLine('i'), letterSoundLine('i'), nameHidesLine('p'), letterSoundLine('p')]);
   assert.deepEqual(ship.filter((s) => s.kind === 'name').map((s) => s.index), [2, 3]);
   // KING is "kay, kuh, eye, ih, ng": never "en, gee" before its NG.
-  assert.deepEqual(clue('king', 1).map((s) => s.id), [letterNameLine('k'), letterSoundLine('k'), letterNameLine('i'), letterSoundLine('i'), letterSoundLine('ng')]);
+  assert.deepEqual(clue('king', 1).map((s) => s.id), [nameHidesLine('k'), letterSoundLine('k'), letterNameLine('i'), letterSoundLine('i'), letterSoundLine('ng')]);
   const sounds = ship.filter((s) => s.kind === 'sound');
   assert.deepEqual(sounds.map((s) => s.id), ['sh', 'i', 'p'].map(letterSoundLine));
   assert.deepEqual(sounds.map((s) => [s.index, s.span]), [[0, 2], [2, 1], [3, 1]]);
@@ -97,6 +98,10 @@ test('voice: every clue line, and the warm-up narrator lines, exist; letter name
   const v = byId.get(letterNameLine('v'))!;
   assert.equal(v.text, 'V.');
   assert.equal(v.say, 'Vee.');
+  // Item 096: the bridge from a name to its sound, for the letters whose names hold it, and only those.
+  assert.match(byId.get(nameHidesLine('m'))!.text, /^M's name is Em\.\.\. Squeeze off the front/);
+  assert.match(byId.get(nameHidesLine('b'))!.text, /^B's name is Bee\.\.\. Keep just the start/);
+  for (const l of ['c', 'g', 'h', 'w', 'y', 'x', 'a', 'e', 'i', 'o', 'u']) assert.ok(!byId.has(nameHidesLine(l)), l);
 });
 
 test('pickGrab: avoids what it is told to, and last episode’s word while another will do; leans to shaky words', () => {

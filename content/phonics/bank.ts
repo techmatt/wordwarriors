@@ -142,7 +142,7 @@ const ENTRIES: BankEntry[] = [
   A('nap', '😴', NEW), A('wag', '🐕', NEW), A('jab', '🥊', NEW), A('red', '🔴', NEW), A('hex', '🔮', NEW_SPELL),
   A('jig', '💃', NEW), A('mix', '🥣', NEW_SPELL), A('jog', '🏃', NEW), A('bop', '🔨', NEW), A('dot', '⚫', NEW),
   A('hum', '🎵', NEW), A('yum', '😋', NEW),
-  // Item 037, level 2: blends.
+  // Item 037, level 2: blends. Order (item 096): final s-blends (NEST, MASK) and initial l-blends (FLAG, CLAP) first, final nasal blends (JUMP, HAND) last.
   T('frog', '🐸', NEW), T('drum', '🥁', NEW), T('crab', '🦀', NEW), T('flag', '🚩', NEW), T('sled', '🛷', NEW_ODD),
   T('nest', '🥚', NEW), T('tent', '⛺', NEW), T('desk', '🗄️', NEW), T('belt', '🥋', NEW), T('vest', '🦺', NEW_ODD),
   T('plum', '🍑', NEW_ODD), T('gift', '🎁', NEW), T('lamp', '💡', NEW), T('hand', '✋', NEW), T('mask', '🎭', NEW),

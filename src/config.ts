@@ -322,3 +322,32 @@ export const FREE_PLAY = {
  * (asserted over drawn casts, tests/unit/endings.test.ts).
  */
 export const ENDING_PAUSE = { intro: 3000, between: 1500, outro: 3000 };
+
+/**
+ * The Shape-Shifter (item 096, src/scenes/ShifterRoom.ts): the villain's
+ * polymorph spell walks a creature down a chain of pictured CVC words, one
+ * letter changed a link (CAT, BAT, BAG, BUG, MUG). `links` per visit (a
+ * shorter chain where the bank has no longer one; `minLinks` at least, else
+ * the room plays a sentence game). `options`: pictures (read it) or letter
+ * stones (fix it) standing in the room, the answer's included. Each word has
+ * its own help level: 1 = the changed letter lit and each stone sounds as she
+ * comes near it; 2 = lit, silent stones; 3 = nothing lit. Yellow sounds the
+ * changed letter (read it) or the stone in reach (fix it) at any level.
+ * `startLevel` is a word she has never met there (DIFFICULTY caps the ramp).
+ * `weight` is its weight in the rooms' pool.
+ */
+export const SHIFTER = {
+  links: 4,
+  minLinks: 2,
+  options: 3,
+  startLevel: 1 as 1 | 2 | 3,
+  weight: 1,
+};
+
+/**
+ * Beta (item 096): every episode has a Shape-Shifter behind one of the two
+ * side doors (door b, beside FORCE_PHONICS_ROOM's game behind door a). A test
+ * URL that picks its own games (`?games=sentence`, `?game=`) is left alone;
+ * `?room=shifter` forces it anyway.
+ */
+export const FORCE_SHIFTER_ROOM = true;

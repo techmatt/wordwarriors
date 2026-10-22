@@ -169,7 +169,11 @@ covers the room, the dad key, dad lock, the read's timeout, the round's length a
 runes in battle (items 053, 059). The forced room is Charge the Spell or the Stretchy Bridge at random, so
 `playRoom` and the bug-hunt checker play the bridge too (`playBridgeRoom`: slide across
 with the stick, Dad's yes where he is asked, the right picture); `tests/bridge.spec.ts`
-covers its three help levels and a wrong picture (item 054).
+covers its three help levels and a wrong picture (item 054). `FORCE_SHIFTER_ROOM` follows
+the same rule for the Shape-Shifter behind door b (item 096): `playRoom` plays it
+(`playShifterRoom`: each link's right picture or stone, a wrong one first with
+`wrongFirst`), and `tests/shifter.spec.ts` (untagged, ~8 s) plays one room through both
+beats at base level.
 `playRoom(page, opts)` and `playSentenceRoom(page, opts)` take a `RoomPlay`
 (`{ wrongFirst, idleMs, wrongPauseMs }`: a wrong answer first; in a sentence room a stand
 at the key word and a pause after the wrong object). Other shared steps in
@@ -897,6 +901,13 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   `src/scenes/WordMachine.ts`: fractions of the cut `public/art` PNG (centre and radius
   of the glass, centre and size of the blank panel), checked with machine.spec's
   `tests/screenshots/026_round1.png`.
+- **Picture letters (item 097):** Charge's `rune_<sound>` ids are the one art whose prompt
+  asks for a letter: `spriteStyle` in `content/art/prompts.ts` gives them `LETTER_STYLE`,
+  the shared style with "no letters" swapped for "only the named capital letter". Each
+  brief is derived from the rune's `picture` in `content/phonics/runes.ts` (word and how
+  it makes the letter's shape), so a new look edits `look` there. The game does not show
+  them yet (the stone paints the bare letter); item 097's round is
+  `scratch/art_alts_097_picture_runes.*`.
 - When Codex answers "Selected model is at capacity", `art:alts` skips that candidate
   and goes on (2026-10-18), so an id can end up with fewer than `n`. Top it up with
   `art:alts -- <id> --n=1`; it numbers on from the last candidate.

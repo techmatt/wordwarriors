@@ -1,15 +1,15 @@
 /**
  * What every side room's game shares (item 072: was `Minigame`, a name now kept
  * for the pool's entries, `src/rules/minigames.ts`), the parked v0.1 games
- * (src/scenes/minigames/) and the four live rooms alike: the miss count
+ * (src/scenes/minigames/) and the five live rooms alike: the miss count
  * (`wrongTries`), the no-fail `wrong()` (a fizzle-and-giggle, a wiggle, a
  * funny line, the same item again; no penalty, nothing lost), the sparkle on
  * the answer after two misses (`sparkleAnswer`), `ARRIVE_MS`, the words' INK
  * and LIT, and free play closed.
  *
  * The piece meter (`makeMeter`, `addPiece`, `completePrize`) and `right()`
- * belong to the parked games alone. The four live rooms (the sentence game,
- * the word machine, Charge the Spell, the Stretchy Bridge) extend
+ * belong to the parked games alone. The five live rooms (the sentence game,
+ * the word machine, Charge the Spell, the Stretchy Bridge, the Shape-Shifter) extend
  * `HouseSideRoom` below: their slot, the room's art, the arrival and the way
  * back to the hub, the read recorded, and Dad's buttons.
  */
@@ -229,8 +229,8 @@ export abstract class SideRoom extends RoomScene {
 }
 
 /**
- * The four live side rooms (the sentence game, the word machine, Charge the
- * Spell, the Stretchy Bridge): a room off the hub for one of the episode's
+ * The five live side rooms (the sentence game, the word machine, Charge the
+ * Spell, the Stretchy Bridge, the Shape-Shifter): a room off the hub for one of the episode's
  * slots, whose answers it records and whose way out leads back to the hub.
  * The parked v0.1 games extend SideRoom alone.
  */

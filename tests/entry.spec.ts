@@ -14,6 +14,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { BANK_BY_WORD, THINGS } from '../content/phonics/bank';
+import { NAME_HIDES } from '../content/phonics/letters';
 import { DEPTH } from '../src/config';
 import { withStems } from '../src/rules/bank';
 import { qaLayout } from './qa/probe';
@@ -31,7 +32,9 @@ const clueLines = (s: WWState) => s.voice.history.filter((id) => /^letter_|^word
 const unitSounds = (w: string) => BANK_BY_WORD[w]!.units.map((u, i) => [u, BANK_BY_WORD[w]!.sounds[i] ?? u] as const);
 const sounds = (w: string) => unitSounds(w).flatMap(([, s]) => (s ? [`letter_${s}_sound`] : []));
 // Level 1 (amendment 1549): a single letter's name, then its sound; a multi-letter unit (NG, SH, LL) only its sound (item 085).
-const namesAndSounds = (w: string) => unitSounds(w).flatMap(([u, s]) => [...(u.length === 1 ? [`letter_${u}_name`] : []), ...(s ? [`letter_${s}_sound`] : [])]);
+// A letter whose name holds its sound (item 096, NAME_HIDES) gets the bridge from its name instead of the bare name.
+const nameOf = (u: string, s: string) => (NAME_HIDES[u] && u === s ? `letter_${u}_hides` : `letter_${u}_name`);
+const namesAndSounds = (w: string) => unitSounds(w).flatMap(([u, s]) => [...(u.length === 1 ? [nameOf(u, s)] : []), ...(s ? [`letter_${s}_sound`] : [])]);
 // Every word the hall can ask for (the bank's things), each at one ramp level. Read from the
 // bank, not listed: a hand list missed VET and BIN, so a draw of either started at 2 (item 047).
 const allAt = (level: number) => Object.fromEntries(THINGS.map((w) => [w.word, level]));

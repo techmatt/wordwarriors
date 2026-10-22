@@ -12,7 +12,7 @@ import { BEDROOMS, COUNTER_ROOM, FETCH_ROOMS, PLACE_BY_ID, SIDE_ROOM_BY_ID } fro
 import { BANK } from '../../content/phonics/bank';
 import { FRAMES } from '../../content/phonics/sentences';
 import { NARRATOR_LINES, wakeTemplate, wakeVariant } from '../../content/voice/script';
-import { FORCE_PHONICS_ROOM, VARIETY } from '../config';
+import { FORCE_PHONICS_ROOM, FORCE_SHIFTER_ROOM, VARIETY } from '../config';
 import { leastRecent } from '../rules/recent';
 import { fightSpec, pickFight } from '../rules/fights';
 import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
@@ -20,7 +20,7 @@ import { pickEnding } from '../rules/endings';
 import { ENDING_BY_ID } from '../../content/house/endings';
 import { withStems } from '../rules/bank';
 import { episodePlans, wordsOf, type EpisodeInput, type RoomPlan } from '../rules/sentences';
-import { BRIDGE_GAME, CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
+import { BRIDGE_GAME, CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SENTENCE_GAMES, SHIFTER_GAME, drawGames, type Minigame } from '../rules/minigames';
 import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
 import { GRAB_WORDS, hallObjects, pickGrab } from '../rules/grab';
 import { progress } from '../state/progress';
@@ -174,19 +174,25 @@ export function grabPlan(): { word: string; objects: string[] } {
  * `?room=charge` forces Charge the Spell and `?room=bridge` the Stretchy
  * Bridge (item 054) whatever else is asked: behind door a, or door b when
  * `?game=` holds door a.
+ *
+ * The beta's Shape-Shifter (item 096): with FORCE_SHIFTER_ROOM on, it is
+ * behind door b of every episode (door a when no phonics game is forced),
+ * on the same terms; `?room=shifter` forces it whatever else is asked.
  */
 function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[] } {
   const q = new URLSearchParams(typeof location === 'undefined' ? '' : location.search);
   const only = q.get('games') === 'sentence' ? SENTENCE_GAMES : undefined;
   const asked = MINIGAME_BY_ID[q.get('game') ?? ''];
   // `?games=all` is the real draw (and the drawn-episode tests'): only a narrowed or forced pick is the URL's.
-  urlGames = Boolean(only || asked || q.get('room') === 'charge' || q.get('room') === 'bridge');
+  urlGames = Boolean(only || asked || q.get('room') === 'charge' || q.get('room') === 'bridge' || q.get('room') === 'shifter');
   const phonics =
     q.get('room') === 'charge' ? CHARGE_GAME
       : q.get('room') === 'bridge' ? BRIDGE_GAME
       : FORCE_PHONICS_ROOM && !only && !asked ? MINIGAME_BY_ID[pickWeighted(PHONICS_GAMES.map((g) => g.id), (id) => MINIGAME_BY_ID[id]!.weight * (progress.recentOf('phonics').includes(id) ? VARIETY.gameWeight : 1), 1)[0]!]
         : undefined;
-  const forced = [asked, phonics].filter((g, i, all): g is Minigame => Boolean(g) && all.indexOf(g) === i);
+  const shifter = q.get('room') === 'shifter' || (FORCE_SHIFTER_ROOM && !only && !asked) ? SHIFTER_GAME : undefined;
+  // `?room=shifter` takes door a; else it follows the phonics game. Two doors: a third forced game waits its turn.
+  const forced = (q.get('room') === 'shifter' ? [shifter, asked, phonics] : [asked, phonics, shifter]).filter((g, i, all): g is Minigame => Boolean(g) && all.indexOf(g) === i).slice(0, 2);
   if (!forced.length) return only ? { pool: only } : {};
   const rest = drawGames(progress, Math.random, (only ?? MINIGAMES).filter((g) => !forced.includes(g)));
   return { games: [forced[0]!, forced[1] ?? rest[1], rest[2]] };

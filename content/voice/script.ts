@@ -199,6 +199,27 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'bridge_next_2', text: "Look, here's another bridge!", say: "Look, here's another bridge!" },
   { key: 'bridge_done', text: "We crossed every bridge! We're ready to fight!", say: "We crossed every bridge, we're ready to fight!" },
   { key: 'bridge_done_2', text: 'That was every bridge! Great job!', say: 'That was every bridge, great job!' },
+  // The Shape-Shifter (item 096, src/scenes/ShifterRoom.ts). No line names a
+  // letter, a sound or a word she reads: the sounds are letter_ lines (a
+  // name's bridge to its sound first, `letter_<x>_hides`), and a new word is
+  // said (word_) only once she has it. `shifter_starts` trails off into the
+  // first creature's word, said (it is not read); `shifter_picked`,
+  // `shifter_says` and `shifter_stone` into a sound.
+  { key: 'shifter_intro', text: 'Oh no! A shape-shifting spell! It keeps changing one letter!', say: 'Oh no, a shape-shifting spell! It keeps changing one letter!' },
+  { key: 'shifter_starts', text: 'It starts as a...' },
+  { key: 'shifter_read', text: 'Look, a new word! Read it, then walk to its picture!', say: 'Look, a new word! Read it, then walk to its picture.' },
+  { key: 'shifter_read_2', text: 'The spell wrote a new word! Which picture is it?', say: 'The spell wrote a new word! Which picture is it?' },
+  { key: 'shifter_fix', text: 'It changed, but the word did not! Find the letter that fixes it!', say: 'It changed, but the word did not! Find the letter that fixes it.' },
+  { key: 'shifter_fix_2', text: 'Uh oh, the word is wrong now! Walk to the letter that fixes it!', say: 'Uh oh, the word is wrong now! Walk to the letter that fixes it.' },
+  { key: 'shifter_hint', text: 'Listen! The new letter says...' },
+  { key: 'shifter_stone', text: 'This letter says...' },
+  { key: 'shifter_picked', text: 'You picked...' },
+  { key: 'shifter_says', text: 'But the spell says...' },
+  { key: 'shifter_nope', text: "That doesn't match! Try another letter!", say: "That doesn't match! Try another letter." },
+  { key: 'shifter_again', text: 'Read it again, and find its picture!', say: 'Read it again, and find its picture.' },
+  { key: 'shifter_next', text: 'Here comes the spell again!' },
+  { key: 'shifter_next_2', text: 'Uh oh, it is changing again!' },
+  { key: 'shifter_done', text: 'The spell is all used up! This one comes to the fight with us!', say: 'The spell is all used up! This one comes to the fight with us!' },
   // Each fight style's own beats (item 031, content/battle/fights.ts): `fight_<id>_<beat>`.
   ...FIGHTS.flatMap((f) => FIGHT_BEATS.flatMap((b) => (f.lines[b] ? [{ key: fightKey(f.id, b), ...f.lines[b] }] : []))),
 ];

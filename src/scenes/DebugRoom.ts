@@ -28,6 +28,7 @@ const LOOK: Record<string, { glyph: string; name: string }> = {
   word_machine: { glyph: '⚙️', name: 'MACHINE' },
   charge: { glyph: '✨', name: 'CHARGE' },
   bridge: { glyph: '🌉', name: 'BRIDGE' },
+  shifter: { glyph: '🪄', name: 'SHIFTER' },
 };
 
 export class DebugRoom extends RoomScene {
