@@ -554,6 +554,12 @@ it over, and Matt commits it. Nothing leaves their computer until they press
 for all 12 cards). That zip comes back by email or a shared folder; put it in
 `scratch/voice-import/`.
 
+**`?missing`** (item 108) opens the page with only the sounds still to record, each its
+own card of one word and its sound three times: today F (FAN) and A (CAT), the `MISSING`
+list in the page. Its takes are `g02f` and `g07a` (the full card's number and the sound), so
+they never mix with the full page's in the browser's storage, and its zip,
+`phonics-<name>-missing.zip`, imports like any other.
+
 The zip holds `manifest.json` (format `phonics-recorder/2`: `recorder`, the speaker's
 name, now required; each take's card `group` `g01`…`g12`, `entries` of sound, word,
 `kind`, `repeats`, and `counted`, the sounds the page heard) and `takes/gNN.wav`, one

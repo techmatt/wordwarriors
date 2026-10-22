@@ -102,6 +102,8 @@ export class ShifterRoom extends HouseSideRoom {
   private lit = false;
   /** The flow in charge: a chain stops at its next await once something newer has taken over. */
   private flow = 0;
+  /** The last morph's pop back, which plays on after `morph` returns. */
+  private popped: Promise<void> = Promise.resolve();
   private narrations = 0;
   /** Yellow's hint is playing: input stays locked until it is done (its lines are one help). */
   private hinting = false;
@@ -125,6 +127,7 @@ export class ShifterRoom extends HouseSideRoom {
     this.finished = read < 0;
     this.phase = 'intro';
     this.flow++;
+    this.popped = Promise.resolve();
     this.pendingStone = null;
     this.told = new Set();
     this.letters = [];
@@ -215,11 +218,14 @@ export class ShifterRoom extends HouseSideRoom {
 
   /**
    * The polymorph: magic swirls in, the creature swells, squashes, shrinks to
-   * nothing, a poof of smoke and sparks, and it pops back as `word`.
+   * nothing, a poof of smoke and sparks, and it pops back as `word`. `hold`: it swells and wobbles until
+   * that is done too (the word it was, said), so it is never gone before its word is.
    */
-  private async morph(word: string): Promise<void> {
+  private async morph(word: string, hold?: Promise<unknown>): Promise<void> {
     const f = this.flow;
     const { x, y } = this.creature;
+    // The last one springs back in full first.
+    await this.popped;
     sfxSummon();
     const swirl = this.add
       .particles(x, y, TEX.glow, {
@@ -234,10 +240,16 @@ export class ShifterRoom extends HouseSideRoom {
       })
       .setDepth(DEPTH.sparkles);
     // Grow, wobble, shrink.
-    this.tweens.add({ targets: this.creature, scale: 1.3, duration: 260, ease: 'Back.easeOut' });
-    await this.wait(260);
-    this.tweens.add({ targets: this.creature, scaleX: 1.5, scaleY: 1.05, duration: 110, yoyo: true, repeat: 2 });
-    await this.wait(680);
+    // One chain and one wait: each wait ends on a frame, so waits in a row run long, most on a fast test clock.
+    this.tweens.chain({
+      targets: this.creature,
+      tweens: [
+        { scale: 1.3, duration: 260, ease: 'Back.easeOut' },
+        { scaleX: 1.5, scaleY: 1.05, duration: 110, yoyo: true, repeat: 2 },
+      ],
+    });
+    await this.wait(940);
+    if (hold) await hold;
     this.tweens.add({ targets: this.creature, scale: 0, duration: 220, ease: 'Back.easeIn' });
     await this.wait(220);
     swirl.stop();
@@ -255,8 +267,8 @@ export class ShifterRoom extends HouseSideRoom {
     this.time.delayedCall(1000, () => smoke.destroy());
     this.setCreature(word);
     this.tweens.add({ targets: this.creature, scale: 1, duration: 420, ease: 'Back.easeOut' });
-    await this.wait(420);
-    burst(this, x, y - 40, { count: 30, speed: 300, colors: [0xffd23f, 0xffffff] });
+    // Done as the new creature appears: its word is said as it springs back (item 108).
+    this.popped = this.wait(420).then(() => void burst(this, x, y - 40, { count: 30, speed: 300, colors: [0xffd23f, 0xffffff] }));
   }
 
   // ---- A link ---------------------------------------------------------------
@@ -264,8 +276,9 @@ export class ShifterRoom extends HouseSideRoom {
   /**
    * A link: the spell strikes, then its instruction. `praised`, a later link's: the last word's praise
    * and its trip to the bag, which the strike plays under (hunt 6, M26); the instruction waits for it.
+   * `said`, the last word's own line: a read-it strike waits for it, a fix-it strike's morph starts under it.
    */
-  private async startLink(first = false, praised: Promise<unknown> = Promise.resolve()): Promise<void> {
+  private async startLink(first = false, praised: Promise<unknown> = Promise.resolve(), said: Promise<unknown> = Promise.resolve()): Promise<void> {
     const f = ++this.flow;
     const l = this.current;
     this.round = `shifter:${this.index}:${l.to}`;
@@ -292,6 +305,8 @@ export class ShifterRoom extends HouseSideRoom {
     } else if (l.beat === 'read') {
       // Hunt 6, M26: no "Here comes the spell again!" (its strike says so); the read word's label stays lit a beat
       // before the strike rewrites it (a fix-it morph keeps the label).
+      await said;
+      if (f !== this.flow) return;
       await this.wait(LABEL_LIT_MS);
       if (f !== this.flow) return;
     }
@@ -302,7 +317,7 @@ export class ShifterRoom extends HouseSideRoom {
       this.setLabel(l.to, this.lit ? l.pos : -1);
       popIn(this, this.letters[l.pos]!, 1);
     } else {
-      await this.morph(l.to);
+      await this.morph(l.to, said);
       if (f !== this.flow) return;
       // The old label stays; the letter that is now wrong is lit.
       this.setLabel(l.from, this.lit ? l.pos : -1);
@@ -551,21 +566,26 @@ export class ShifterRoom extends HouseSideRoom {
     this.letters.forEach((t, i) => this.time.delayedCall(i * 70, () => t.setColor(LIT)));
     shockwave(this, CREATURE.x, CREATURE.y, 0xffd23f, 200);
     // Only now is the word said.
-    await this.say(wordLine(l.to));
-    if (f !== this.flow) return;
+    const said = this.say(wordLine(l.to));
     // Every word read is a battle item, so a copy of the creature goes into her bag with the praise, as the
     // other rooms' do (hunt 6: the row stood still here and three things turned up in it back in the hub).
     // The last one: the creature itself goes, below.
-    const praised = Promise.all([last ? Promise.resolve() : this.guard(this.bag.receive(this.wordArt(l.to), CREATURE.x, CREATURE.y)), this.say(narratorLine(narrator(), this.praise(l.beat, unaided)))]);
+    const praise = () => Promise.all([last ? Promise.resolve() : this.guard(this.bag.receive(this.wordArt(l.to), CREATURE.x, CREATURE.y)), this.say(narratorLine(narrator(), this.praise(l.beat, unaided)))]);
     if (!last) {
-      // The next spell strikes under the praise (hunt 6, M26: a link locked her out 12 to 15 s).
+      // The next spell strikes under the praise (hunt 6, M26: a link locked her out 12 to 15 s), and a
+      // fix-it strike's swirl and swell start under the word (item 108: after a read-it link that was two
+      // whole morphs back to back, 7 s a link); the creature is gone only once its word is said.
+      const next = this.flow + 1;
+      const praised = said.then(() => (next === this.flow ? praise() : undefined));
       sfxSelect();
       this.clearSpots();
       this.index++;
-      await this.startLink(false, praised);
+      await this.startLink(false, praised, said);
       return;
     }
-    await praised;
+    await said;
+    if (f !== this.flow) return;
+    await praise();
     if (f !== this.flow) return;
     sfxSelect();
     this.clearSpots();

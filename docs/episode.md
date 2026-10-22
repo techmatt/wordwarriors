@@ -334,7 +334,10 @@ letter stones with different sounds stand in the room: she walks to the one that
 the label, it flies in and the word is said. The first link of each beat in a visit says
 the whole instruction ("Look, a new word! Read it, then walk to its picture!"); later ones
 a short cue ("Read it!", "Fix it!"), the next spell striking under the last word's praise
-(hunt 6, M26: 5 to 7 s a link with instant answers, was 12 to 15). Fix it has its own
+(hunt 6, M26: 5 to 7 s a link with instant answers, was 12 to 15). Fix it after read it
+plays both morphs, so they overlap (item 108): the read word is said as its creature pops
+back, and the next spell's swirl and swell start under it, the poof waiting for the word;
+that link is 5.4 to 6.2 s at the tests' clock (was 6.6 to 7), 5 to 5.4 s at real speed. Fix it has its own
 praise ("You fixed it!", M30), and no "by yourself" after help. Help fades per word (`shifterLevels`, listed by level on page 1 of the
 grown-ups page; at base difficulty every word gets level 1): level 1 the changed letter is lit on the label and
 each stone sounds as she comes near it; level 2 lit, silent stones; level 3 nothing lit.

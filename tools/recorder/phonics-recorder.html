@@ -91,13 +91,14 @@ kbd { font-family: var(--f-mono); font-size: .75rem; border: 1px solid var(--lin
 <details class="howto" id="howto" open>
   <summary>How to record (read once)</summary>
   <ul>
+    <li id="missingNote" hidden>This page shows only the <b>sounds still missing</b>: F, held “ffff” with no “uh”, and A, the steady vowel in the middle of CAT. Each card here is <b>one</b> word and its sound three times (4 sounds).</li>
     <li>First type <b>your name</b> at the top: the game credits the voice to it.</li>
     <li>Each take is one card of three: read the <b>word</b>, then say its <b>sound</b> three times. The sound to say is the <b style="color:var(--target)">red</b> part of the word. For example: “VAN … vvvv … vvvv … vvvv …… PIG … p … p … p ……”.</li>
     <li><b>Pause</b> between everything: at least <b>half a second</b> between the sounds (count “one” in your head), and a full <b>second</b> before the next word. Sounds that run together can't be told apart, and the card has to be recorded again.</li>
     <li><b>Hold</b> sounds are stretched: “sssss”, “mmmmm”, “aaaa”, half a second or a little more each, with no “uh” at the end: “ffff”, not “fuh”.</li>
     <li><b>Short</b> sounds are crisp, with <b>no “uh”</b> after them: /c/ not “kuh”, /b/ not “buh”. Whisper-short is fine.</li>
     <li>Vowels are the short sound in the word: A as in ANT, E as in HEN, I as in PIN, O as in FOX, U as in BUG.</li>
-    <li>A quiet room, about a hand's width from the mic. Press <b>Record</b> (or Space), read the card, press <b>Stop</b>. The page counts the sounds it heard (a card is 12: three words and nine sounds). A take that counts out saves itself the first time; one that doesn't says what it heard, so you can record it again. A later take plays back beside the saved one; press <b>Keep new</b> if it's better.</li>
+    <li>A quiet room, about a hand's width from the mic. Press <b>Record</b> (or Space), read the card, press <b>Stop</b>. The page counts the sounds it heard (<span id="cardCount">a card is 12: three words and nine sounds</span>). A take that counts out saves itself the first time; one that doesn't says what it heard, so you can record it again. A later take plays back beside the saved one; press <b>Keep new</b> if it's better.</li>
     <li>When you're done (or any time), press <b>Download zip</b> and send that file back.</li>
   </ul>
 </details>
@@ -136,7 +137,7 @@ kbd { font-family: var(--f-mono); font-size: .75rem; border: 1px solid var(--lin
 "use strict";
 // What to record. id = the game's sound key; word = a familiar picture word from the game's bank.
 // kind: "hold" (a sound you can stretch) or "short" (a stop sound, no "uh").
-const GROUPS = [
+const ALL_GROUPS = [
   [{ id: "m", word: "[M]OP", snd: "m", kind: "hold", tip: "the start of MOP, held: lips closed, mmmm" },
    { id: "c", word: "[C]AT", snd: "c", kind: "short", tip: "the start of CAT, stopped before the A" },
    { id: "s", word: "[S]UN", snd: "s", kind: "hold", tip: "the start of SUN, held: a snake hiss, ssss" }],
@@ -174,8 +175,18 @@ const GROUPS = [
    { id: "long_i", word: "[I]CE", snd: "eye", kind: "hold", tip: "the start of ICE: I says its own name, held: eye" },
    { id: "long_u", word: "[U]NICORN", snd: "you", kind: "hold", tip: "the start of UNICORN: U says its own name, held: you" }],
 ];
+// ?missing: only the sounds still to record, each its own card (the word, then its sound three times).
+// card: the full set's card it comes from; its take is "g" + that card + the sound (g02f), so the importer
+// names the card and the takes never mix with the full page's in this browser's storage.
+const MISSING = [
+  { card: 2, e: { id: "f", word: "[F]AN", snd: "f", kind: "hold", tip: "the start of FAN, held: ffff, with no “uh” at the end (not “fuh”)" } },
+  { card: 7, e: { id: "a", word: "C[A]T", snd: "a", kind: "hold", tip: "the middle of CAT, held steady: aaaa, the same sound all the way through (not sliding toward I)" } },
+];
+const ONLY_MISSING = new URLSearchParams(location.search).has("missing");
+const GROUPS = ONLY_MISSING ? MISSING.map((m) => [m.e]) : ALL_GROUPS;
 const plain = (w) => w.replace(/[\[\]]/g, "");
-const groupId = (i) => "g" + String(i + 1).padStart(2, "0");
+const groupId = (i) => "g" + String(ONLY_MISSING ? MISSING[i].card : i + 1).padStart(2, "0") + (ONLY_MISSING ? MISSING[i].e.id : "");
+const groupIndex = (id) => GROUPS.findIndex((_, i) => groupId(i) === id);
 const groupName = (g) => g.map((e) => plain(e.word)).join(" · ");
 const REPEATS = 3;
 const expectedFor = (i) => GROUPS[i].length * (1 + REPEATS);
@@ -438,7 +449,7 @@ async function downloadZip() {
     made: new Date().toISOString(),
     note: "Each take: for each entry, the word, then its sound three times, with pauses. counted: the sounds the page heard in it.",
     takes: ids.map((id) => {
-      const i = Number(id.slice(1)) - 1;
+      const i = groupIndex(id);
       const take = state.saved[id];
       return { file: "takes/" + id + ".wav", group: id, seconds: +take.seconds.toFixed(2), counted: take.count ? take.count.found : null,
         entries: GROUPS[i].map((e) => ({ sound: e.id, word: plain(e.word).toLowerCase(), kind: e.kind, repeats: REPEATS })) };
@@ -450,7 +461,7 @@ async function downloadZip() {
   const zip = await makeZip(files);
   const a = document.createElement("a");
   const name = who().replace(/[^\w-]+/g, "-").toLowerCase();
-  a.href = URL.createObjectURL(zip); a.download = "phonics-" + name + ".zip";
+  a.href = URL.createObjectURL(zip); a.download = "phonics-" + name + (ONLY_MISSING ? "-missing" : "") + ".zip";
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 10000);
   say(ids.length === GROUPS.length ? `Zip downloaded with all ${GROUPS.length} takes. Send it back. Thank you!` : `Zip downloaded with ${ids.length} of ${GROUPS.length} takes. You can send it now or finish the rest first.`);
@@ -526,13 +537,22 @@ document.addEventListener("keydown", (e) => {
 });
 window.addEventListener("beforeunload", (e) => { if (state.fresh || state.recording) { e.preventDefault(); e.returnValue = ""; } });
 
+if (ONLY_MISSING) {
+  document.title = "Phonics Sound Recorder: the missing sounds";
+  document.querySelector("h1").textContent = document.title;
+  $("missingNote").hidden = false;
+  $("cardCount").textContent = "a card here is 4: one word and three sounds";
+}
 (async () => {
   render();
   const stored = await loadAll();
   for (const [k, blob] of Object.entries(stored)) {
     try {
-      const wav = await toWav(blob), i = Number(k.slice(1)) - 1;
-      if (GROUPS[i]) wav.count = countTake(wav.samples, wav.rate, expectedFor(i));
+      // Only this page's cards: the full set and ?missing keep their takes apart.
+      const i = groupIndex(k);
+      if (i < 0) continue;
+      const wav = await toWav(blob);
+      wav.count = countTake(wav.samples, wav.rate, expectedFor(i));
       state.saved[k] = wav;
     } catch {}
   }
