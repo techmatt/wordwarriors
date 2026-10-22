@@ -878,11 +878,11 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   `--reprocess` reads) and cut, and on `art:pick -- <id> 0` too. So pick from a round
   only when Matt has chosen for that id: a later round on it numbers from 1 again, and
   an old sheet's numbers no longer exist. Then delete the round's `scratch/` sheet,
-  manifest, preview folder and briefs once every id in it is decided. `alts/` now holds
-  only rounds still waiting: item 009's `arena_street`, `char_anna_evil`,
-  `char_dada_matt_evil`, `face_julia` (never promoted; `scratch/art_alts_009*` kept
-  for them) and item 040's `pic_chin`, `pic_dish`, `pic_sand`, `pic_ten` (words
-  since cut from the bank; previews in `scratch/040_alts_pic_*`).
+  manifest, preview folder and briefs once every id in it is decided. `alts/` holds
+  only rounds still waiting (`ls art-originals/alts/`): on 2026-10-22 item 109's
+  `char_anna_evil` (six candidates from three briefs, `scratch/109_evil_anna_*.txt`;
+  picker `scratch/art_alts_109_evil_anna.json`). Item 009's and item 040's old
+  candidates are gone.
 - Corrections for an id (what an earlier image got wrong: a likeness, a prop that
   crowds a face) are `NOTES` in `content/art/prompts.ts`; they end the prompt for both
   `art:gen` and `art:alts`.
