@@ -595,10 +595,14 @@ the grown-ups page, THE END through resizes and a hidden tab), the URL flags add
 hunt 3, a content sweep (every line in `lines.json` read once per distinct text, all 188
 word pictures on contact sheets, the sentence frames against every thing word), the long
 runs (`soak3` at real speed: three episodes in 20 minutes, heap 33 to 47 MB, frames
-under 65 ms) and two rounds of code reading over eight areas (the move choice, the phonics
-rooms, voice, episode flow; the sentence room and word machine, input and the grown-ups
-page, the UI layer, the battle director), each claim checked by a second reader trying to
-refute it.
+under 65 ms) and four rounds of code reading over thirteen areas (the move choice, the
+phonics rooms, voice, episode flow; the sentence room and word machine, input and the
+grown-ups page, the UI layer, the battle director; the word draws, the early scenes; art
+loading, audio, Charge the Spell), each claim checked by a second reader trying to refute
+it. After the fixes: the main batch's first seven scenarios and `debug_rooms`, the second
+batch (`QA_SET=more`, twelve scenarios) and the third (`QA_SET=new`) swept again. That
+regression sweep caught two of this hunt's own first fixes (the word machine's, which
+stalled the driver, and one about cut taunts, reverted: W26).
 
 At real speed (seed 101, a drawn cast, a bridge and a word machine): 8.2 minutes title to
 recap, no line silent, frames under 170 ms (battle under 35), the longest stretch she
