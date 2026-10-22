@@ -72,7 +72,10 @@ One `CharacterSpec` in `ROSTER`:
 - `description`: one sentence, an original archetype.
 - `good` and `evil`: each a `FighterSpec`:
   - `displayName` (`"Evil Smaug"`), optional `sayName` when edge-tts mispronounces
-    (same number of words).
+    (same number of words). On `evil` only, optional `bareName`: the villain's bare
+    name in sentences and the narrator's villain lines ("Rilla is scared of the..."),
+    where it is not the good side's name (item 113: EvilRilla is Rilla, his good side
+    Bluerilla). Without it the bare name is the good side's `displayName`.
   - `look` (the art brief), `palette` `[main, accent]`, `glyph` (placeholder emoji; avoid
     Emoji 13+, Windows 10 lacks them).
   - `style`: `hover | twirl | stomp | dodge | slither | blink | fly | march`.

@@ -901,10 +901,11 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   only when Matt has chosen for that id: a later round on it numbers from 1 again, and
   an old sheet's numbers no longer exist. Then delete the round's `scratch/` sheet,
   manifest, preview folder and briefs once every id in it is decided. `alts/` holds
-  only rounds still waiting (`ls art-originals/alts/`): on 2026-10-22 item 112's
-  `char_anna_good` (six candidates from three briefs, `scratch/112_good_anna_*.txt`;
-  picker `scratch/art_alts_112_good_anna.json`). Item 109's evil Anna round is gone
-  (Matt kept `current`), as are item 009's and item 040's.
+  only rounds still waiting (`ls art-originals/alts/`): on 2026-10-22 item 113's
+  face cards, `face_anna` and `face_rilla` (picker `scratch/art_alts_113_faces.json`,
+  drawn with `--ref` on each promoted full body). Items 110's and 112's rounds are
+  gone (promoted by item 113: Bluerilla 5, good Anna 1), as are items 109's, 009's and
+  040's.
 - Corrections for an id (what an earlier image got wrong: a likeness, a prop that
   crowds a face) are `NOTES` in `content/art/prompts.ts`; they end the prompt for both
   `art:gen` and `art:alts`.

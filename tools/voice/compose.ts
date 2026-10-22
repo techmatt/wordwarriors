@@ -14,7 +14,7 @@
 
 import { writeFile } from 'node:fs/promises';
 
-import { CHARACTER_BY_ID, MOVE_WORDS, PERSONS, ROSTER, abilityCallout, personOf } from '../../content/battle/roster.js';
+import { CHARACTER_BY_ID, MOVE_WORDS, PERSONS, ROSTER, abilityCallout, personOf, villainName } from '../../content/battle/roster.js';
 import { STORIES, storyLines } from '../../content/battle/stories/index.js';
 import { ENDINGS } from '../../content/house/endings.js';
 import { HOME_QUEST, QUESTS } from '../../content/house/quests.js';
@@ -60,10 +60,13 @@ import { CHARGE_GESTURES, CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VI
 import { isMain, LINES_FILE } from '../shared.js';
 import type { LineSpec } from './types.js';
 
+/** What a name placeholder reads: shown and, where edge-tts needs it, spoken. */
+type Named = Pick<FighterSpec, 'displayName' | 'sayName'>;
+
 interface Fill {
-  hero?: FighterSpec;
-  villain?: FighterSpec;
-  helper?: FighterSpec;
+  hero?: Named;
+  villain?: Named;
+  helper?: Named;
   item?: string;
   itemSay?: string;
   word?: string;
@@ -111,7 +114,7 @@ function fill(t: Template, f: Fill): { text: string; say?: string } {
 function tokenForms(): Map<string, { show: string; say?: string }> {
   const forms = new Map<string, { show: string; say?: string }>();
   for (const c of ROSTER) {
-    for (const f of [c.good, c.evil]) {
+    for (const f of [c.good, c.evil, villainName(c)]) {
       const shown = f.displayName.split(/\s+/);
       // sayName has the same word count as displayName, so words pair by index.
       const said = f.sayName?.split(/\s+/);
@@ -294,7 +297,7 @@ export function composeLines(): LineSpec[] {
           id: narratorLine(n, villainKey(t.key, villain.id)),
           speaker: n,
           group: g,
-          ...fill(t, { villain: t.key === 'alarm_villain' ? villain.evil : villain.good, item: villain.counter.name, ...(villain.counter.sayName ? { itemSay: villain.counter.sayName } : {}) }),
+          ...fill(t, { villain: t.key === 'alarm_villain' ? villain.evil : villainName(villain), item: villain.counter.name, ...(villain.counter.sayName ? { itemSay: villain.counter.sayName } : {}) }),
         });
       }
     }

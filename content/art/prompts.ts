@@ -64,7 +64,7 @@ const BANK_056 = ['egg', 'bell', 'doll', 'tap', 'glass', 'sink', 'king', 'ring',
  */
 // Item 111: Julia's outfits beside the new allies and Seraphina's pink dragon, no green of their own.
 const ART_111 = ['keeper', 'snow', 'explorer'].flatMap((o) => [`char_julia_${o}`, `face_julia_${o}`]).concat('minion_pink_dragon');
-const NO_GREEN = new Set([...ART_111, ...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
+const NO_GREEN = new Set([...ART_111, ...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'face_rilla', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
 
 /**
  * Sprites in dark green of their own (item 049): keying takes out only the
@@ -145,7 +145,7 @@ export const PICK_NOTES: Record<string, string> = {
   prop_fight_finish_flag: 'The sky race\'s finish line (item 031), swept in at the end of each race. `current` is candidate 1, Matt\'s pick (item 034): the slimmer gold posts with jewelled tops. 2 was item 031\'s promotion; `0` is the painted placeholder.',
   prop_fight_trophy: 'Over the winner of a race or a cook-off (item 031). `current` is candidate 3, Matt\'s pick (item 034): the ornate cup with a gold filigree crest round its ruby. 1 was item 031\'s promotion; `0` is the painted placeholder.',
   prop_fight_cook_station: 'Each side\'s station in the cook-off (item 031); the dish is stacked on its counter top. `current` is candidate 2, promoted by item 031: the clearest counter top. `0` is the painted placeholder.',
-  char_rilla_good: "Bluerilla (item 110): Rilla's good side drawn from Julia's plush gorilla (Matt's photo attached to each prompt). `current` is the old pastel-blue robot gorilla. Brief `110_bluerilla_plush` keeps the toy's soft stitched look, arms open for a hug; `110_bluerilla_furry` makes him a living shaggy gorilla, waving.",
+  face_rilla: "Bluerilla's face card (item 113), drawn with his promoted full body attached (`art:alts --ref=art-originals/char_rilla_good.png`) so face and fur match it. `current` is the old pastel-blue robot's. Only the good side shows a face card (`Portrait`: none for an evil speaker), so EvilRilla needs none of his own.",
   char_scar_good: "Scar's redesign (items 028/030): a tiny gold mech, a little shorter than Julia. `current` is candidate 2, promoted by item 030 and kept by Matt (item 034): the biggest head and shortest legs (the smallest-reading), and a smiling visor. `0` is the old design.",
   char_scar_evil: "`current` is candidate 1, Matt's pick (item 034): a round black helmet with smoking exhaust stacks, a scowling red visor, blaster thrust forward and fist clenched. 3 was item 030's promotion; `0` is the old design.",
   face_scar: "`current` is candidate 2, Matt's pick (item 034): a laughing visor with his smiling mouth showing beneath it, blue jets behind. 4 was item 030's promotion; `0` is the old design.",
@@ -188,7 +188,7 @@ export const PICK_NOTES: Record<string, string> = {
   char_ellie_good: "`current` is candidate 0, the original bubble-wand Ellie, Matt's pick (item 016); she fights with bubbles and one sword move, and the game draws her swords round her when she uses it. 1 to 3 are item 009's bubble-wand candidates; 4 to 6 (item 014) summon silver swords.",
   char_julia_chef: 'Julia in her chef form (content/battle/forms.ts): every scene after she wakes uses it when Dada Jason is the ally. `current` is candidate 3, promoted by item 012 (closest face and fringe to her other art, pink shoes like hers).',
   face_julia_chef: "New id (item 016): chef Julia's name-free face card, the picture for reading JULIA in a chef episode. `current` is candidate 2, promoted by item 016 (hat, fringe and smile closest to char_julia_chef); 1 and 3 are as good, with a taller hat. `0` is the painted placeholder.",
-  char_anna_good: "Good Anna redrawn as Evil Anna's copper-curls design turned good (item 112; Evil Anna is final, item 109): each candidate is drawn with Evil Anna's art attached (`art:alts --ref`), so the face, hair and build match hers. `current` is item 009's dark-ponytail design. A pick writes its brief into her roster look, and her face card follows in its own round.",
+  face_anna: "Good Anna's face card redrawn to match her promoted copper-curls full body (item 113; drawn with it attached, `art:alts --ref=art-originals/char_anna_good.png`). `current` is item 009's dark-ponytail card; `0` the oldest original, from before item 009.",
   room_bedroom_julia: 'Redrawn with no loose toys of its own: the first one painted a teddy and a rocket that doubled the toys the game puts on the floor.',
   decal_rilla_footprint: 'Redrawn as one giant robot-gorilla footprint: the earlier try still read as bare human feet.',
   prop_word_machine: "The word machine (item 026): the game puts the picture in its round window and draws its own letter panel over the blank lower panel. `current` is candidate 3, Matt's pick (item 032): a round glass dome over a cream panel, with a crank on the side; `WINDOW` / `PANEL` in src/scenes/WordMachine.ts are fitted to it (fractions of the image), so a different pick needs them refitted. 2 is item 026's promotion; 0 is the painted placeholder.",
@@ -583,8 +583,9 @@ const PICTURES: Record<string, string> = {
 const HAND: Record<string, string> = {
   char_rilla_evil:
     'EvilRilla, the villain: a giant, menacing-but-silly gorilla robot, chrome and red armour plates, huge rocket fists, glowing red eyes, a bandolier of banana peels across the chest. Mischievous grin rather than frightening. Standing, facing the viewer.',
+  // Item 113: Matt's pick 5 from item 110's round (brief 110_bluerilla_furry), drawn with Julia's plush attached (REFS).
   char_rilla_good:
-    'Rilla, the good version: the same giant gorilla robot, friendly and gentle, pastel blue armour plates, soft glowing eyes and a big smile, arms open wide for a hug. Standing, facing the viewer.',
+    "Bluerilla, the good version: a big, gentle cartoon gorilla hero modelled on Julia's plush gorilla, a kind, huggable giant. Shaggy deep navy-blue fur all over, a large pale-blue face with a big friendly rounded muzzle and a happy smile, small dark kind eyes, a big round pale-blue chest and belly patch, very long navy arms with big pale-blue hands, and pale-blue feet. Round and chunky like the toy, all soft curves, NOT a robot: no armour, no metal, no glowing eyes. Standing tall, facing the viewer, one big hand waving hello and a warm grin.",
   char_elsa_good:
     // Four wordings with pale hair and an icy-blue snowflake gown were refused by
     // the image tool's safety system (2026-10-18), most likely as too near the film
@@ -634,7 +635,7 @@ const HAND: Record<string, string> = {
     'Wind-up Mice: a round open tin box with three cute grey clockwork toy mice spilling out of it, each with a little silver wind-up key in its back, pink ears and curly tails, a few golden sparkles around them.',
 };
 
-const EMPTY_HANDED_FACES = new Set(['face_ellie', 'face_anna']);
+const EMPTY_HANDED_FACES = new Set(['face_ellie', 'face_anna', 'face_rilla']);
 
 const strip = (s: string) => s.replace(/,?\s*transparent background\.?/gi, '.').replace(/\.\s*\./g, '.').trim();
 

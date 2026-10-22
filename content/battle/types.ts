@@ -125,6 +125,12 @@ export interface FighterSpec {
   displayName: string;
   /** For edge-tts, when the display name mispronounces. Same word count. */
   sayName?: string;
+  /**
+   * Evil side only: the villain's bare name (item 038's sentences and the
+   * narrator's villain lines), where it is not the good side's name (item 113:
+   * EvilRilla is RILLA, his good side Bluerilla). See `villainName`.
+   */
+  bareName?: string;
   /** One line for docs/art.md and the AI art prompt. */
   look: string;
   /** Card colours: main, accent. */

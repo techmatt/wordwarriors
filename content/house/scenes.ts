@@ -337,15 +337,16 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
   ],
   rilla: [
     S('🍌', [
-      'Rilla is strong, and Rilla likes to share, so here is my power banana!',
+      'Bluerilla is strong, and Bluerilla likes to share, so here is my power banana!',
       'Eat the banana, and you get a mighty power.',
       'Then thump your tummy, and shout...',
     ], SPOT('to get the power'), 'Now you are gorilla strong, let\'s look around!'),
-    S('🦾', [
-      'My robot arms are very strong, but my best trick is a word.',
-      'I am giving it to you, because you are my friend.',
+    // Item 113: Bluerilla is a living plush gorilla, not a robot.
+    S('💪', [
+      'My long furry arms are very strong, but my best trick is a word.',
+      'I am giving it to you, with a soft fluffy cuddle, because you are my friend.',
       'Put your fists up, and shout...',
-    ], SPOT('to get the trick'), 'Now you are strong like Rilla, let\'s look around!'),
+    ], SPOT('to get the trick'), 'Now you are strong like Bluerilla, let\'s look around!'),
   ],
 };
 

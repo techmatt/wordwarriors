@@ -20,7 +20,7 @@
  * unit tests read it under Node.
  */
 
-import { CHARACTER_BY_ID, PERSONS, ROSTER, personOf } from '../battle/roster.js';
+import { CHARACTER_BY_ID, PERSONS, ROSTER, personOf, villainName } from '../battle/roster.js';
 import { sentenceLine } from '../voice/ids.js';
 import { THINGS } from './bank.js';
 import { EFFECT_BY_WORD, type WordEffect } from './effects.js';
@@ -198,10 +198,12 @@ function frameName(frame: Frame, fill: Fill): { slot: NameSlot; id: string } | n
 /**
  * A name as shown in a sentence: the bare character name in every slot (item
  * 038). The villain is still drawn evil; EVIL only made a long sentence longer
- * (JORMUNGANDR RUNS FROM THE FAN, not EVIL JORMUNGANDR ...).
+ * (JORMUNGANDR RUNS FROM THE FAN, not EVIL JORMUNGANDR ...). The villain slot
+ * reads `villainName` (RILLA, whose good side is BLUERILLA: item 113).
  */
-function nameFor(id: string): { show: string; say: string } {
-  const f = CHARACTER_BY_ID[id]!.good;
+function nameFor(id: string, slot: NameSlot): { show: string; say: string } {
+  const c = CHARACTER_BY_ID[id]!;
+  const f = slot === 'villain' ? villainName(c) : c.good;
   return { show: f.displayName, say: f.sayName ?? f.displayName };
 }
 
@@ -209,7 +211,7 @@ export function sentence(frameId: string, fill: Fill, key: string): Sentence {
   const frame = FRAME_BY_ID[frameId]!;
   const name = frameName(frame, fill);
   const text = frame.text
-    .replace(/\{(villain|helper|hero)\}/, name ? nameFor(name.id).show.toUpperCase() : '')
+    .replace(/\{(villain|helper|hero)\}/, name ? nameFor(name.id, name.slot).show.toUpperCase() : '')
     .replace('{x}', key.toUpperCase());
   // A form reads and sounds like its person (DADA MATT for every Matt), so it shares the person's prefix line.
   return { frame: frameId, tokens: text.split(/\s+/).filter(Boolean), key, prefixLine: sentenceLine(frameId, name ? personOf(name.id) : null) };
@@ -228,7 +230,7 @@ export function allPrefixes(): { id: string; text: string; say?: string }[] {
     const slot = slotOf(frame);
     const ids = slot ? PERSONS.map((c) => c.id) : [null];
     for (const id of ids) {
-      const name = slot && id ? nameFor(id) : null;
+      const name = slot && id ? nameFor(id, slot) : null;
       // Spoken in sentence case, trailing off where the key word will go.
       const show = words.map((w, i) => (w.startsWith('{') ? name!.show : i === 0 ? cap(w) : w.toLowerCase())).join(' ');
       const say = words.map((w, i) => (w.startsWith('{') ? name!.say : i === 0 ? cap(w) : w.toLowerCase())).join(' ');
@@ -245,7 +247,7 @@ export function allFrameTokens(): string[] {
     for (const w of frame.text.split(/\s+/)) {
       if (w === '{x}') continue;
       if (SLOTS.some((s) => w === `{${s}}`)) {
-        for (const c of ROSTER) for (const t of nameFor(c.id).show.split(/\s+/)) set.add(tokenWord(t));
+        for (const c of ROSTER) for (const s of SLOTS) for (const t of nameFor(c.id, s).show.split(/\s+/)) set.add(tokenWord(t));
       } else set.add(tokenWord(w));
     }
   }

@@ -616,10 +616,11 @@ export const ROSTER: CharacterSpec[] = [
     id: 'anna',
     description: 'The ice sorceress\'s brave little sister: a sword-and-shield adventurer who never gives up.',
     arena: 'ice',
-    // Split look (Matt's picks, item 011): good Anna and her face card are the
-    // item 009 redesign (dark ponytail, plum and magenta).
+    // Good Anna is Evil Anna's copper curls turned good (Matt's pick, item 112's
+    // round, promoted by item 113): brief 112_good_anna_plum. Her face card
+    // still shows item 009's dark ponytail until item 113's face round is picked.
     good: {
-      displayName: 'Anna', trail: { tint: [0xffb703, 0xe63946], shape: 'spark' }, look: 'a tall, sporty young adventurer of original design with long straight dark-brown hair in one high swinging ponytail tied with a big purple ribbon, a few freckles, a plum-purple tunic with a short magenta cape, white leggings and tall brown boots, a round wooden shield with a golden sun painted on it and a wooden practice sword',
+      displayName: 'Anna', trail: { tint: [0xffb703, 0xe63946], shape: 'spark' }, look: 'a freckled young adventurer of original design with a short, curly copper bob and a braid across the top of her head, tied with a big purple ribbon, bright blue eyes and warm peachy skin with rosy cheeks, a big brave happy grin, a plum-purple tunic with a brown belt, a short magenta cape, white leggings and tall brown boots, a round wooden shield with a golden sun painted on it and a wooden practice sword',
       palette: [0xe63946, 0x2a9d8f], glyph: '🛡️', style: 'twirl', speed: 230, size: 1, hp: 110,
       abilities: [
         ab('shield_bash', 'Shield Bash', 'dash', 4, 0xe63946, 2, { shout: true, words: ['bam', 'ram', 'run'] }),
@@ -1241,29 +1242,34 @@ export const ROSTER: CharacterSpec[] = [
   },
   {
     id: 'rilla',
-    description: 'A giant gorilla robot: as a friend all bananas and big hugs, as a villain all rocket fists and an appetite for cars.',
+    // Item 113 (Matt): the good side is Bluerilla, Julia's plush gorilla come
+    // to life, a big kind living gorilla (Matt's pick from item 110's round,
+    // brief 110_bluerilla_furry). The villain stays EvilRilla, the robot, and
+    // is RILLA by his bare name (`bareName`).
+    description: 'Bluerilla, Julia\'s big blue plush gorilla come to life: as a friend all bananas and big furry hugs. As a villain he is EvilRilla, a gorilla robot all rocket fists and an appetite for cars.',
     arena: 'street',
     good: {
-      displayName: 'Rilla', trail: { tint: [0xffe14a, 0x8a6a4a], shape: 'square' }, look: 'a friendly, gentle giant gorilla robot with pastel blue armour plates, soft glowing eyes and a big smile, arms open wide for a hug',
-      palette: [0x8a6a4a, 0xffe14a], glyph: '🦍', style: 'stomp', speed: 110, size: 1.4, hp: 160,
+      displayName: 'Bluerilla', trail: { tint: [0xffe14a, 0x2a4aa8], shape: 'square' }, look: 'a big, gentle cartoon gorilla modelled on a plush toy, a kind, huggable giant: shaggy deep navy-blue fur all over, a large pale-blue face with a big friendly rounded muzzle and a happy smile, small dark kind eyes, a big round pale-blue chest and belly patch, very long navy arms with big pale-blue hands, and pale-blue feet, round and chunky like the toy, all soft curves, NOT a robot: no armour, no metal, no glowing eyes, waving hello with one big hand',
+      palette: [0x1f3a8a, 0xa8d0ff], glyph: '🦍', style: 'stomp', speed: 110, size: 1.4, hp: 160,
       abilities: [
         ab('banana_toss', 'Banana Toss', 'bolt', 2.4, 0xffe14a, 1, { count: 3, glyph: '🍌', words: ['pop', 'top'] }),
-        ab('rocket_punch', 'Rocket Punch', 'bolt', 3, 0xff6a3a, 2, { glyph: '🚀', homing: true, shout: true, words: ['pow', 'jet'] }),
+        ab('vine_swing', 'Vine Swing', 'dash', 4, 0x3a9a4a, 2, { shout: true, words: ['jump', 'run'] }),
         ab('chest_drum', 'Gorilla Thump', 'slam', 6, 0x8a6a4a, 3, { shout: true, words: ['bam', 'big'] }),
         ab('gorilla_hug', 'Gorilla Hug', 'heal', 10, 0xffe14a, 1, { words: ['hug', 'tug'] }),
       ],
-      ultimate: ult('banana_bonanza', 'Banana Bonanza', 'rain',0xffe14a, 3, { count: 32, glyph: '🍌', color2: 0x8a6a4a }),
+      ultimate: ult('banana_bonanza', 'Banana Bonanza', 'rain',0xffe14a, 3, { count: 32, glyph: '🍌', color2: 0x2a4aa8 }),
       taunts: [
         { key: 'hugs', text: 'Hugs for everyone!' },
         { key: 'bananas', text: 'Here come the bananas!' },
         { key: 'gentle', text: 'I am a gentle giant!' },
         { key: 'power', text: 'Gorilla power!' },
+        { key: 'fluffy', text: 'Soft and fluffy, and super strong!' },
         { key: 'snack', text: 'Who wants a banana?' },
         { key: 'stomp', text: 'Watch my giant feet!' },
       ],
     },
     evil: {
-      displayName: 'EvilRilla', trail: { tint: [0xff3a1a, 0x3a2a1a], shape: 'smoke' }, look: 'a giant, menacing-but-silly gorilla robot with chrome and red armour plates, huge rocket fists, glowing red eyes and a bandolier of banana peels across the chest',
+      displayName: 'EvilRilla', bareName: 'Rilla', trail: { tint: [0xff3a1a, 0x3a2a1a], shape: 'smoke' }, look: 'a giant, menacing-but-silly gorilla robot with chrome and red armour plates, huge rocket fists, glowing red eyes and a bandolier of banana peels across the chest',
       palette: [0x3a2a1a, 0xff3a1a], glyph: '🤖', style: 'stomp', speed: 70, size: 1.8, hp: 230,
       abilities: [
         ab('rocket_fists', 'Rocket Fists', 'bolt', 3, 0xff3a1a, 2, { count: 2, glyph: '🚀', homing: true }),
@@ -1284,13 +1290,13 @@ export const ROSTER: CharacterSpec[] = [
     reformed: {
       sorry: [
         { key: 'banana', text: 'Sorry, do you want a banana?' },
-        { key: 'car', text: 'Sorry, Rilla will not eat the car.' },
+        { key: 'car', text: 'Sorry, Bluerilla will not eat the car.' },
         { key: 'hungry', text: 'Sorry, so sorry, I was hungry!' },
       ],
       ending: [
         { key: 'hugs', text: 'I have gorilla hugs for everybody!' },
         { key: 'bananas', text: 'Bananas for the whole team!' },
-        { key: 'happy', text: 'Rilla is happy now!' },
+        { key: 'happy', text: 'Bluerilla is happy now!' },
       ],
     },
     counter: {
@@ -1650,6 +1656,11 @@ export const ROSTER: CharacterSpec[] = [
 ];
 
 export const CHARACTER_BY_ID: Record<string, CharacterSpec> = Object.fromEntries(ROSTER.map((c) => [c.id, c]));
+
+/** The villain's bare name, once known (item 038): `evil.bareName` where set, else the good side's name. */
+export function villainName(c: CharacterSpec): { displayName: string; sayName?: string } {
+  return c.evil.bareName ? { displayName: c.evil.bareName } : c.good;
+}
 
 /** Whose form `id` is: the person for a form (`dada_matt_lifter` → `dada_matt`), else `id` itself. */
 export function personOf(id: string): string {

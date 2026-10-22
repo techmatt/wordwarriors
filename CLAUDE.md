@@ -131,7 +131,9 @@ commands").
 A **candidate round** (`art:alts`) changes nothing tracked, so it may run as a
 **readonly** item; a new look is a `--brief` file in `scratch/`, not an edit to
 `content/art/prompts.ts`. **Promotion** (`art:pick`) is a normal item ("for X I pick n"
-in `docs/content.md`, *Matt says X → run Y*; README, *Candidates*).
+in `docs/content.md`, *Matt says X → run Y*; README, *Candidates*). An art round never
+asks Matt which candidate to promote: it finishes with `pick:` in the report's header,
+and promotion rides a later prompt.
 
 ## Standing contract
 
