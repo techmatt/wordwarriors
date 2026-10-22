@@ -663,3 +663,76 @@ her position, the pads and the running scenes (M20).
 | W24 | Variety | With `ACTIVE_CAST` at four allies and four villains, six drawn episodes repeated whole pairings three and four apart (Ellie against Evil Jormungandr, sea tug, boat, the same rooms). | Matt's beta cast; no rotation rule broken (none back to back). |
 | W25 | Voice | The voice manifest's fetch has no timeout of its own, so a server that answers the game's code but never this one file would hold boot on its loading bar (the code read's finding). | A timeout would switch a slow first load (the manifest is 4 MB) to captions only for the whole sitting, and the game is served from this machine; a hung server shows at once. |
 | W26 | Battle | A taunt or a big move's name cut off by an instruction counts as said (the code read's finding). | Counting it unsaid let it start again: the regression sweep heard Evil Bavmorda's cauldron taunt begin three times in an episode, over item 087's cap of two; the cap is about what she hears begin. |
+
+## Hunt 6 (2026-10-22)
+
+Cut short at Matt's word (close out, and say where the next hunt resumes: below). The
+Shape-Shifter and the name-to-sound lines (items 096 and 101) first: a sweep of six
+scenarios that meet it (`seed101`, `wrong_seed102`, `shifter_wrong_first`, `mash_default`,
+`diff3_wrong`, `lock_all`), reviewed shot by shot; every chain the bank can draw (2032)
+checked link by link; odd input on the room (`tests/hunt6.spec.ts`: yellow and green
+mashed through misses and morphs, the grown-ups page at each point of a link, dad lock,
+key 0). Three rounds of code reading, each claim checked by a second reader trying to
+refute it: the room, its chain rules over hundreds of drawn plans, the name bridge, the
+picture runes, the battle with the new rooms' items; item 093's changes, episode flow with
+the forced room, a content sweep of items 096 and 097; the room above base difficulty, the
+store's new fields, the grown-ups page. One drawn episode at real speed (8.6 minutes title
+to THE END; the six-episode run was stopped in its second episode to close out).
+
+### Fixed
+
+| # | Where | What | Kept fixed by |
+| --- | --- | --- | --- |
+| 102 | Shape-Shifter | "It changed, but the word did not! Find the letter that fixes it!" (three rows) went to the bottom and sat over all three letter stones, and over her: the room kept its creature clear but not its options. The options keep the box off them above all now (the word machine's tiles' weight). | `tests/cover.spec.ts` "the fix-it instruction" |
+| 103 | Shape-Shifter | The changed letter, lit on a read-it label, blinked out every half second: its pulse tween took its start scale once the label's pop-in had it at 0, so it pulsed between nothing and full size. It pulses from full size. | `tests/hunt6.spec.ts` |
+| 104 | Shape-Shifter | Each new link stood its pictures or stones where the last link's were, so one landed under her: green mashed through "Here comes the spell again!" picked it, unwalked and unread (a first-try read and a level up from a guess). She steps up out of reach (the word machine's fix 98, here); the checker now flags any choice appearing within her reach (`spawn-in-reach`). | `tests/hunt6.spec.ts` |
+| 105 | Shape-Shifter | Only the last creature flew into her bag; the three words before it, battle items too, turned up in the bag's row back in the hub with no moment of getting them. A copy of each creature flies in with the praise, as every other room's words do. | review (shots) |
+| 106 | Shape-Shifter | After two misses the answer's sparkle kept rising from the empty floor through the morph, the word and the praise once she had picked it. It stops with the pick. | code read |
+| 107 | Shape-Shifter | Yellow sounded (and counted as help) a stone up to 120 px away, where no green dot showed. It sounds the stone in green's reach. | code read |
+| 108 | Shape-Shifter, level 1 | A stone she reached while a line played (the link opening, a miss playing out, another stone's sound) never sounded until she walked off and back. It sounds once the room is quiet, if she is still there (the word machine's tiles do the same). | `tests/hunt6.spec.ts` |
+| 109 | Shape-Shifter, word draws | Fix-it words (three links in four) are recorded under spelling, so they never joined her recent words and the same chains came back episode after episode (PAN PEN PIN in 6 of 30 simulated episodes). A fix-it word right first time is remembered as recent, without touching her reading or her bag. | code read |
+| 110 | Shape-Shifter | Chains and read-it pictures ignored look-alikes: BAT beside CAT and RAT (half of the read-it links in 300 drawn episodes), and links like BAT to RAT or PIN to PEN, where the creature turns into a picture she cannot tell from the old one. No link joins look-alikes, and no read-it picture is one of the word read. | `tests/unit/shifter.test.ts`; golden draws rewritten |
+| 111 | Moves | "Find the letter that FIXES it!" is said and shown before the battles, and FIX could be a move pad (45 of 300 drawn episodes): item 039's case. The side rooms' lines count as said before the battle. | `tests/unit/moves.test.ts` |
+| 112 | Charge the Spell | The M rune's cake slice and the E rune's hatching chick showed CAKE and CHICK before she could read them later that episode. A glyph close to a bank word's picture counts as showing it (`GLYPH_LOOKS_LIKE`). | `tests/unit/wordrules.test.ts`; golden draws rewritten |
+| 113 | Victory recap | With the Shape-Shifter's four words (and the bridge's three) the nine-card cut dropped battle 1's move words again (fix 19's case) and the creature that went to the fight. The gift, every move word, the counter word and after, and each side room's last word stay (`src/rules/recap.ts`). | `tests/unit/recap.test.ts` |
+| 114 | Battle | A bridge and a Shape-Shifter fetch eight things, and the counter-item made a ninth icon over the left end of the villain's health bar for all of part 2. The row packs tighter as it grows, left of the bar. | code read |
+| 115 | Shape-Shifter | A chain could start on TEN or SIX ("It starts as a... ten!", M23's case) or JAM (no "A", fix 92's). The first creature is never a number or a word that takes no "A" (`NO_ARTICLE` moves to `content/phonics/sentences.ts` beside `NUMBER_WORDS`). | `tests/unit/shifter.test.ts`; golden draws rewritten |
+| 116 | Charge the Spell, the bridge | Dad's 1 / 2 stayed live until Phaser stopped the room, a frame after key 0 or F9: a 2 in that frame acted in full, and out of a debug Charge read it recorded the debug word in the real store and the restored episode. A press once the room is leaving does nothing. | `tests/hunt6.spec.ts` |
+| 117 | THE END | Chef Dada Jason, 1.65 of her height since item 093, bobbed his hat and forehead up under the THE END title (warrior Jason a little less). The figures shrink together, never apart, when the tallest would reach it. | `tests/hunt6.spec.ts` |
+| 118 | Grown-ups page | The "Spelled (typing...)" box fills only from the Shape-Shifter's fix-it links now (Spell the Spell is parked), and it showed the first three words ever stored, never the newer ones, as typing. It shows the latest three, how many more, and says what they are (letters found for sounds). | code read |
+
+The checker itself: `spawn-in-reach` (above); the Shape-Shifter's first creature wearing its
+word on its label is not a giveaway (it is said and shown, not read).
+
+### Matt's calls
+
+| # | Where | What | Options | Ruling |
+| --- | --- | --- | --- | --- |
+| M26 | Shape-Shifter, pacing | Each link locks her out 12 to 15 s even when she answers at once: the word, the praise, "Here comes the spell again!", the morph (about 1.6 s), then the full instruction again ("Look, a new word! Read it, then walk to its picture!"), every link. At real speed a four-link visit took 70 s with instant answers; the checker's `slow-room` budget (90 s) was passed under dad lock probes (97 s). | **(a) the full instruction only the first time each beat comes; later links a short cue ("Read it!" / "Fix it!"), and no "here comes the spell again" before a morph that already says it**; (b) three links instead of four (`SHIFTER.links`); (c) keep | |
+| M27 | Warm-up, level 1 | With the name bridges the clue got long: LAMP locked her out 21 s (about 12 s before item 096), "L's name is Ell... squeeze off the front: lll, A... a, M's name is Em... squeeze off the front: mmm, P's name is Pee... keep just the start: p", and a miss or yellow says every bridge again. | **(a) the bridges the first time a clue is said; again (a miss, yellow) the plain name then sound**; (b) the bridge for the first letter only; (c) keep | |
+| M28 | Battle, pacing | Every fetched thing fires in turn before the first move choice: with a bridge (3) and a Shape-Shifter (4) and the warm-up, eight items, about 34 s in part 1 and 30 s in part 2 before PICK A MOVE! (about 13 s with three). | **(a) a room's earlier words fly out of the bag as one volley, each room's last word keeps its own beat**; (b) the items share a fixed time budget (about 12 s); (c) keep | |
+| M29 | Shape-Shifter, chains | The room is meant to make her read every letter, but most chains never change the vowel (255 of 300 fresh plans), and every read-it link changes the first letter, since no word has two pictured siblings at the vowel or the last letter: she can pick read-it pictures from the first sound alone. About one visit in twenty with a real episode's word list is all fix-it (no read-it link at all). | **(a) score chains by how many of the three places they change, and let a read-it link at the vowel or last letter stand one sibling and one other pictured word; prefer a shorter chain with a read-it link to an all-fix-it one**; (b) keep: fix-it reads every letter too | |
+| M30 | Shape-Shifter, praise | After a fix-it link (a letter found for a sound, after the sparkle sometimes) the praise can be "Wow! You read that all by yourself!" or "Great reading!". | **(a) a small praise set for fix-it ("You fixed it!"), and none claiming "by yourself" after help**; (b) keep: the shared praise is fine | |
+| M31 | Shape-Shifter, wording | "Uh oh, it is changing again!" and "It changed, but the word did not!" are uncontracted, where the wording pass contracted every such line; "it" is first the creature, then the label. | **(a) "Uh oh, it's changing again!" and "It changed, but its word didn't!" (then `voice:lines` and `voice:build`)**; (b) keep | |
+| M32 | Her outfits | Julia's chef and knight pictures count the hat and the raised sword in her height (head to soles 0.85 and 0.87 of the picture against 0.96 in her dress), so beside chef or warrior Dada Jason she stands about 11% shorter than in other episodes: the hat-counts-as-height error item 093 fixed for the grown-ups, on her side. | **(a) a fill for her outfits too, measured as ADULT_FILL was, so she is the same height in every outfit**; (b) keep | |
+
+### Won't fix
+
+| # | Where | What | Why |
+| --- | --- | --- | --- |
+| W27 | Shape-Shifter | `clipped-line` flags "A shape-shifting spell!" in "Oh no! A shape-shifting spell! It keeps changing one letter!". | An exclamation, natural in context (the heuristic's known false alarm). |
+| W28 | Shape-Shifter | The fix-it instruction (three rows) at the top covers the top 60 px of the creature. | The creature stays recognisable, the label is clear, and the stones she walks to must stay clear above all (fix 102). |
+| W29 | Charge the Spell | Dad's 2 before the last rune is lit still flashes his cue and is dropped (the code read's finding). | M24's ruling: a press from the last rune lit is kept; earlier presses are before the read is asked. |
+
+### Where the next hunt resumes
+
+- **Not yet run this hunt:** many episodes back to back at real speed
+  (`WW_SPEED=1 ... -g "qa variants6$" --timeout=6600000`, about 50 minutes; README) and
+  `npm run shots` (`shots.pw`, then `polish.pw`), both asked for by the planner.
+- **Sweep again with this hunt's fixes:** `parent_all` and `debug_rooms` (cut off by a
+  server stop in this hunt's sweep), then `QA_SET=recent` and the `qa flags` URLs with the
+  Shape-Shifter in (`room=shifter` combined with `game=` and `games=`). The new
+  `spawn-in-reach` check has not swept yet: read its first hits against fixes 61, 98 and 104.
+- **Look again at real speed:** the Shape-Shifter's pacing (M26) and the warm-up's name
+  bridges (M27) once Matt has ruled, and the battle's opening run of items (M28).
+

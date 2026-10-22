@@ -34,7 +34,7 @@
  * Read it is recorded as reading (`words`, her word bag); fix it, finding a
  * letter for a sound, under `spelling`, apart from reading.
  *
- * Every word read is a battle item; the last creature flies into her bag and
+ * Every word read is a battle item, a copy flying into her bag; the last creature flies in itself and
  * goes to the fight. Speech rule: a new word is never said before she has
  * it; the first creature is said (it is shown, not read), and sounds are
  * letter_ lines, never captioned.
@@ -46,7 +46,7 @@ import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids
 import { variant } from '../episode/lineVariants';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
-import { DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH as GREEN_REACH, VARIETY } from '../config';
 import { episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { burst, fitImage, floatText, popIn, shake, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -73,8 +73,9 @@ const PICTURE_SIZE = 116;
 const STONE = { w: 120, h: 96 };
 /** Where she walks in. */
 const ENTRY = { x: 130, y: 610 };
-/** How near a stone she must be for yellow to sound it. */
-const REACH = 120;
+/** How near a stone she must be for yellow to sound it: green's reach (it was 120, so yellow sounded, and counted
+ * as help, a stone 100 px off that showed no green dot; hunt 6). */
+const REACH = GREEN_REACH;
 /** The spell's colours. */
 const MAGIC = [0xb04cff, 0xff4cd8, 0xffffff];
 
@@ -100,6 +101,8 @@ export class ShifterRoom extends HouseSideRoom {
   private narrations = 0;
   /** Yellow's hint is playing: input stays locked until it is done (its lines are one help). */
   private hinting = false;
+  /** A level-1 stone she reached while the room could not speak: it sounds once the room is quiet. */
+  private pendingStone: string | null = null;
 
   constructor() {
     super('ShifterRoom');
@@ -116,6 +119,7 @@ export class ShifterRoom extends HouseSideRoom {
     this.finished = read < 0;
     this.phase = 'intro';
     this.flow++;
+    this.pendingStone = null;
     this.letters = [];
     this.label = '';
     this.lit = false;
@@ -133,6 +137,9 @@ export class ShifterRoom extends HouseSideRoom {
   protected override keepOut(): KeepOut[] {
     const out = super.keepOut();
     out.push({ x: CREATURE.x - 170, y: CREATURE.y - CREATURE.size / 2 - 20, w: 340, h: LABEL.y - CREATURE.y + CREATURE.size / 2 + 70, weight: 8 });
+    // The pictures and stones above all, at their full footprint: they pop in from nothing as the
+    // instruction starts, and "Find the letter that fixes it!" sat over all three (hunt 6).
+    for (const s of this.spots) if (s.obj.active) out.push({ x: s.x - 70, y: s.y - PICTURE_SIZE - 30, w: 140, h: PICTURE_SIZE + 40, weight: 40 });
     return out;
   }
 
@@ -193,7 +200,9 @@ export class ShifterRoom extends HouseSideRoom {
       t.setColor(i === litPos ? LIT : INK);
       this.tweens.killTweensOf(t);
       t.setScale(1);
-      if (i === litPos) this.tweens.add({ targets: t, scale: 1.14, duration: 520, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+      // From 1 explicitly: a tween takes its start when it first runs, and the read-it beat's popIn has the letter at 0
+      // by then, so it pulsed from nothing to full size, the lit letter blinking out every half second (hunt 6).
+      if (i === litPos) this.tweens.add({ targets: t, scale: { from: 1, to: 1.14 }, duration: 520, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     });
   }
 
@@ -251,6 +260,7 @@ export class ShifterRoom extends HouseSideRoom {
     this.round = `shifter:${this.index}:${l.to}`;
     this.phase = 'intro';
     this.hinting = false;
+    this.pendingStone = null;
     this.locked = true;
     this.level = shifterLevel(progress, l.to);
     this.lit = this.level <= 2;
@@ -317,12 +327,33 @@ export class ShifterRoom extends HouseSideRoom {
     });
     sfxSummon();
     for (const [x, y] of OPTIONS) burst(this, x, y - 50, { count: 16, speed: 200, colors: MAGIC });
+    // Every link stands its options where the last link's were, so one can land where she stands: she steps
+    // up out of reach, or a green mashed through the instruction picked one she never walked to (hunt 6; the
+    // word machine's fix 98, here).
+    if (this.spots.some((sp) => Phaser.Math.Distance.Between(this.player.x, this.player.y, sp.x, sp.y) < REACH)) this.player.place(this.player.x, Math.min(...OPTIONS.map(([, y]) => y)) - REACH - 15);
   }
 
-  /** A stone in reach sounds itself (level 1), when the room is quiet. */
+  /**
+   * A stone in reach sounds itself (level 1), when the room is quiet; reached while it could not
+   * speak (a line playing, the link opening, a miss playing out), it speaks once the room is quiet,
+   * if she is still on it (hunt 6: it stayed silent until she walked off and back; the word machine's
+   * tiles do the same).
+   */
   private soundNear(letter: string): void {
-    if (this.phase !== 'pick' || this.locked || voiceBus.busy) return;
+    if (this.phase !== 'pick' || this.locked || voiceBus.busy) {
+      this.pendingStone = letter;
+      return;
+    }
+    this.pendingStone = null;
     void voiceBus.say(letterSoundLine(letter));
+  }
+
+  override update(time: number, deltaMs: number): void {
+    super.update(time, deltaMs);
+    const p = this.pendingStone;
+    if (!p || this.phase !== 'pick' || this.locked || voiceBus.busy) return;
+    this.pendingStone = null;
+    if (this.inReach()?.obj.getData('letter') === p) void voiceBus.say(letterSoundLine(p));
   }
 
   /** The stone or picture nearest her, if in reach. */
@@ -345,6 +376,7 @@ export class ShifterRoom extends HouseSideRoom {
   protected choose(spot: Spot): void {
     if (this.phase !== 'pick' || this.hinting) return;
     this.flow++;
+    this.pendingStone = null;
     voiceBus.hush();
     if (spot.correct) void this.gotIt(spot);
     else void this.miss(spot);
@@ -402,6 +434,9 @@ export class ShifterRoom extends HouseSideRoom {
   /** A fix-it link done: recorded under `spelling`, then read and fetched by the episode like any word (`recordRead`). */
   private recordFixed(word: string, firstTry: boolean, last: boolean): void {
     progress.record('spelling', word, firstTry, this.wrongTries);
+    // Kept apart from her reading, but the word draws still lean away from it next episode, as from a word
+    // read right (hunt 6: three links in four are fix it, so the same chains came back episode after episode).
+    if (firstTry) progress.remember('words', word, VARIETY.words);
     if (!episode.read.includes(word)) episode.read.push(word);
     if (!episode.fetched.includes(word)) episode.fetched.push(word);
     if (last && !episode.house.done.includes(this.slot)) episode.house.done.push(this.slot);
@@ -487,13 +522,10 @@ export class ShifterRoom extends HouseSideRoom {
     const top = { x: spot.x, y: spot.y - PICTURE_SIZE / 2 };
     burst(this, top.x, top.y, { count: 50, speed: 420 });
     floatText(this, top.x, top.y - 90, unaided ? 'WOW!' : 'YES!', '#ffd23f');
-    if (l.beat === 'read') {
-      spot.obj.setVisible(false);
-      await this.morph(l.to);
-    } else {
-      spot.obj.setVisible(false);
-      await this.flyLetter(spot, l.to[l.pos]!);
-    }
+    spot.obj.setVisible(false);
+    (spot.obj.getData('sparkle') as Phaser.GameObjects.Particles.ParticleEmitter | undefined)?.destroy();
+    if (l.beat === 'read') await this.morph(l.to);
+    else await this.flyLetter(spot, l.to[l.pos]!);
     if (f !== this.flow) return;
     this.setLabel(l.to);
     this.letters.forEach((t, i) => this.time.delayedCall(i * 70, () => t.setColor(LIT)));
@@ -501,7 +533,10 @@ export class ShifterRoom extends HouseSideRoom {
     // Only now is the word said.
     await this.say(wordLine(l.to));
     if (f !== this.flow) return;
-    await this.say(narratorLine(narrator(), variant('right')));
+    // Every word read is a battle item, so a copy of the creature goes into her bag with the praise, as the
+    // other rooms' do (hunt 6: the row stood still here and three things turned up in it back in the hub).
+    // The last one: the creature itself goes, below.
+    await Promise.all([last ? Promise.resolve() : this.guard(this.bag.receive(this.wordArt(l.to), CREATURE.x, CREATURE.y)), this.say(narratorLine(narrator(), variant('right')))]);
     if (f !== this.flow) return;
     sfxSelect();
     this.clearSpots();

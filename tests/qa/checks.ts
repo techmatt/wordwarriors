@@ -200,6 +200,21 @@ export function leakIssues(s: WWState, l: Layout, voiceSinceRound: Since['voice'
 }
 
 /**
+ * A choice that appears within reach of her (hunt 6; the sentence room's fix 61, the word machine's 98,
+ * the Shape-Shifter's 104): green mashed through the round's line picks it, unwalked and unread. `was`
+ * holds the spot ids standing at the last poll; only a spot new since then counts (the driver puts her on
+ * a spot only once the room listens, so a spot she was placed on is never new). Doors and the like
+ * (`correct` null) are left out.
+ */
+export function spawnIssues(was: ReadonlySet<string>, s: WWState, reach: number): Issue[] {
+  const r = s.room;
+  if (!r?.player) return [];
+  return r.spots
+    .filter((sp) => sp.correct !== null && !was.has(sp.id) && Math.hypot(sp.x - r.player.x, sp.y - r.player.y) < reach)
+    .map((sp) => ({ kind: 'spawn-in-reach', severity: 'bug', scene: s.scene, detail: `${sp.id} appeared ${Math.round(Math.hypot(sp.x - r.player.x, sp.y - r.player.y))} px from her (${r.round})`, key: `spawn:${s.scene}:${r.round}` }));
+}
+
+/**
  * Every line in `lines.json` with no clip: no manifest entry (`voice-unbuilt`),
  * a manifest entry for other text (`voice-stale`: the clip says an old line),
  * or a missing or empty mp3 (`voice-no-clip`). Item 062: Matt heard captions

@@ -5,16 +5,18 @@
  */
 
 import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { BANK_BY_WORD } from '../../content/phonics/bank';
+import { NUMBER_WORDS, lookalikesOf } from '../../content/phonics/sentences';
 import { NAME_HIDES } from '../../content/phonics/letters';
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import { letterSoundLine, nameHidesLine, narratorLine } from '../../content/voice/ids';
 import { SHIFTER } from '../../src/config';
 import { MINIGAMES, MINIGAME_BY_ID, SHIFTER_GAME, drawGames } from '../../src/rules/minigames';
-import { episodePlans } from '../../src/rules/sentences';
-import { SHIFT_WORDS, changedAt, nextShifterLevel, orderBreaks, planShifter, positionsOf, shifterLevel, shifterShown, shifterWords } from '../../src/rules/shifter';
+import { NO_ARTICLE, episodePlans } from '../../src/rules/sentences';
+import { SHIFT_WORDS, chainsOf, changedAt, pictureSiblings, stonesFor, nextShifterLevel, orderBreaks, planShifter, positionsOf, shifterLevel, shifterShown, shifterWords } from '../../src/rules/shifter';
 import { nameToSound } from '../../src/rules/soundOut';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
@@ -57,6 +59,36 @@ test('planShifter: one letter a link, first letter first, back in order once at 
         for (const o of l.options) assert.equal(vowel(o), vowel(right), `${l.to}: ${o}`);
         for (const a of l.options) for (const b of l.options) if (a !== b) assert.ok(!sameSound(a, b), `${a} ${b}`);
       }
+    }
+  }
+});
+
+test('planShifter (hunt 6): no link joins two look-alikes, no read-it picture is a look-alike of the word read, and it never starts as a number', () => {
+  for (let seed = 1; seed <= 200; seed++) {
+    const p = planShifter(new ProgressStore(memory()), { avoid: [], taken: [] }, seeded(spread(seed)))!;
+    for (const l of p.links) {
+      assert.ok(!lookalikesOf(l.from).includes(l.to), `seed ${seed}: ${l.from} to ${l.to}`);
+      if (l.beat === 'read') for (const o of l.options) assert.ok(!lookalikesOf(l.to).includes(o), `seed ${seed}: ${o} beside ${l.to}`);
+    }
+    // "It starts as a...": never a number (M23) or a word that takes no A.
+    assert.ok(!NUMBER_WORDS.has(p.start) && !NO_ARTICLE.has(p.start), `seed ${seed}: starts as a ${p.start}`);
+  }
+});
+
+test('every chain the bank can draw (hunt 6, about 2000): pictured words, one letter a link, no look-alike link, three stones of different sounds never the old letter, read-it pictures never look-alikes', () => {
+  const chains = chainsOf(SHIFTER.links);
+  assert.ok(chains.length > 500, `${chains.length}`);
+  for (const w of SHIFT_WORDS) assert.ok(existsSync(`public/art/pic_${w}.png`), w);
+  const rand = seeded(7);
+  for (const c of chains) {
+    for (let i = 1; i < c.length; i++) {
+      const [from, to] = [c[i - 1]!, c[i]!];
+      const pos = changedAt(from, to);
+      assert.ok(pos !== null && !lookalikesOf(from).includes(to), `${c.join(' ')}: ${from} to ${to}`);
+      const stones = stonesFor(to[pos]!, from[pos]!, SHIFTER.options, rand);
+      assert.equal(new Set(stones).size, SHIFTER.options, `${c.join(' ')}: ${stones.join('')}`);
+      assert.ok(stones.includes(to[pos]!) && !stones.includes(from[pos]!), `${c.join(' ')}: ${stones.join('')}`);
+      for (const o of pictureSiblings(to, pos, from, SHIFT_WORDS)) assert.ok(!lookalikesOf(to).includes(o) && o !== from, `${to}: ${o}`);
     }
   }
 });

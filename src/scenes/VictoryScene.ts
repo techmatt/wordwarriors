@@ -27,6 +27,7 @@ import { makeButtonDot } from '../ui/ButtonDot';
 import { Bubbles } from '../ui/Bubbles';
 import { Caption, type KeepOut } from '../ui/Caption';
 import { fitText } from '../ui/fitText';
+import { recapWords } from '../rules/recap';
 
 /** The recap's row of cards: along the bottom, a little smaller than full size. */
 const CARD_Y = 628;
@@ -176,18 +177,14 @@ export class VictoryScene extends Phaser.Scene {
    * Order is the order she read them (episode.read); words show upper case.
    */
   private async recap(gone: () => boolean): Promise<void> {
-    // Nine cards fit. A word machine visit reads four words, so when there
-    // are more than nine the gift word (her first move), the counter word
-    // (what beat the villain) and what she read after it always stay, and the
-    // earliest words fill the rest, in the order she read them (item 039: the
-    // cut used to drop the gift word and battle 1's moves).
-    const max = 9;
-    const read = episode.read;
-    const at = read.indexOf(counterWord());
-    const must = new Set([...(episode.gift ? [episode.gift] : []), ...(at >= 0 ? read.slice(at) : [])].filter((w) => read.includes(w)));
-    const pick = new Set([...must].slice(0, max));
-    for (const w of read) if (pick.size < max) pick.add(w);
-    const words = read.filter((w) => pick.has(w));
+    // Nine cards fit; which words stay when she read more: `recapWords`.
+    const words = recapWords({
+      read: episode.read,
+      gift: episode.gift,
+      moves: episode.moves ? [...episode.moves.part1, ...episode.moves.part2].map((c) => c.right) : [],
+      counter: counterWord(),
+      keys: (episode.house.plan ?? []).filter((p) => p.slot !== 'counter').map((p) => p.key),
+    });
     const gap = 132;
     for (const [i, w] of words.entries()) {
       if (gone()) return;

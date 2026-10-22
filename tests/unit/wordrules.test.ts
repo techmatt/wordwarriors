@@ -131,6 +131,9 @@ test('withStems (item 071, M16): a LOLLIPOP says POP', () => {
 test("the runes' gestures (items 071, 074): what they say counts as said only once played, so Charge never spells a word its gestures say before a word she reads later", () => {
   // The /e/ rune's "Tap the egg, crack it open".
   for (const w of ['tap', 'egg']) if (BANK_BY_WORD[w]) assert.ok(gestureWords(['e']).includes(w), w);
+  // Hunt 6: a glyph close to a bank word's picture shows it (/m/'s cake slice, /e/'s hatching chick).
+  assert.ok(gestureWords(['m']).includes('cake'));
+  assert.ok(gestureWords(['e']).includes('chick'));
   // No gesture says LIPS, LICK or POP any more (the /l/ rune sings la, la, la).
   for (const w of ['lips', 'lick', 'pop']) assert.ok(!GESTURE_WORDS.includes(w), w);
   const store = new ProgressStore(memory());

@@ -16,6 +16,8 @@ import { ACTIONS, BANK_BY_WORD } from '../../content/phonics/bank';
 import { PICTURE_WORDS, SPECIAL_WORDS } from '../../content/phonics/words';
 import { reformedLine, wordLine } from '../../content/voice/ids';
 import { EPISODE_DEFAULTS } from '../../src/config';
+import { ROOM_LINE_WORDS } from '../../src/episode/plans';
+import { withStems } from '../../src/rules/bank';
 import { CHOICES_PER_PART, battle1Words, drawGift, effectId, planMoves, teamMoveWords, type MoveInput, type MovePlan } from '../../src/rules/moves';
 import { episodePlans, type EpisodeInput } from '../../src/rules/sentences';
 import { ProgressStore } from '../../src/state/ProgressStore';
@@ -112,6 +114,10 @@ test('planMoves: no pad shows a word the episode has said before the battle', ()
     const p = planMoves(new ProgressStore(memory()), { ...input(PLAIN), avoid }, seeded(spread(seed)));
     for (const c of choices(p)) for (const w of c.words) assert.ok(!avoid.includes(w), `seed ${seed}: ${w}`);
   }
+});
+
+test("the side rooms' lines are said before the pads: FIX (the Shape-Shifter's \"the letter that fixes it\") is never a pad or the gift (hunt 6)", () => {
+  assert.ok(withStems(ROOM_LINE_WORDS).includes('fix'));
 });
 
 test('drawGift: a bank action word, never one to avoid, leaning to the helper\'s own words, without spending the bag', () => {

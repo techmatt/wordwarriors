@@ -38,6 +38,9 @@ export interface Frame {
 /** The bank's number words: key words only in frames marked `numbers` (item 093, M23); the warm-up and the bridge keep them. */
 export const NUMBER_WORDS: ReadonlySet<string> = new Set(['six', 'ten', 'three']);
 
+/** Bank things that take no "A" (some, not one): never the key word of a "...A {x}" frame (item 069; GUM item 092), nor the Shape-Shifter's first creature ("It starts as a...", hunt 6). */
+export const NO_ARTICLE: ReadonlySet<string> = new Set(['cheese', 'milk', 'jam', 'grass', 'chips', 'gum']);
+
 /**
  * Few frames on purpose (item 015): the small words recur until they are
  * sight words while the key words keep changing. Only words a four-year-old

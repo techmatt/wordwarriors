@@ -25,6 +25,7 @@ import { backToHub, castFace, episode, narrator, planFor, type Slot, type Step }
 import { burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { openDadButtons, type DadAnswer } from '../input/dadButtons';
+import { isLeaving } from '../fx/sceneGen';
 import type { RoomPlan } from '../rules/sentences';
 import { progress } from '../state/progress';
 import type { ItemKind } from '../state/ProgressStore';
@@ -225,6 +226,9 @@ export abstract class SideRoom extends RoomScene {
       })
       .setDepth(spot.obj.depth + 1);
     spot.obj.once(Phaser.GameObjects.Events.DESTROY, () => glow.destroy());
+    // A room that hides the picked spot before clearing it stops this too (hunt 6: the Shape-Shifter's
+    // stars kept rising from the empty floor through the morph and the praise).
+    spot.obj.setData('sparkle', glow);
   }
 }
 
@@ -302,10 +306,16 @@ export abstract class HouseSideRoom extends SideRoom {
     if (last && !episode.house.done.includes(this.slot)) episode.house.done.push(this.slot);
   }
 
-  /** Dad's buttons open for this room (any set it had open closes first); they close at shutdown. */
+  /**
+   * Dad's buttons open for this room (any set it had open closes first); they close at shutdown. A press
+   * once the room is on its way out does nothing (hunt 6: they stay open until Phaser stops the room, a
+   * frame after key 0 or F9, and a 2 in that frame recorded a debug run's Charge read in the real store).
+   */
   protected openDad(onPress: (a: DadAnswer) => void): void {
     this.closeDad();
-    this.dadCloser = openDadButtons(onPress);
+    this.dadCloser = openDadButtons((a) => {
+      if (!isLeaving(this) && !this.fadingOut) onPress(a);
+    });
   }
 
   protected closeDad(): void {

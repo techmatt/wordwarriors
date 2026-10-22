@@ -36,7 +36,14 @@ export interface ChargePlan {
 /** Every sound a rune can carry. */
 export const RUNE_SOUNDS: string[] = RUNES.map((r) => r.sound);
 
-/** Each rune's gesture's bank words: what its line says (stemmed), a word whose picture is its glyph, and its picture letter's word (item 097: VASE for V). */
+/**
+ * Glyphs close to a bank word's picture, which show that word as surely as its own (hunt 6: the M rune's
+ * cake slice is CAKE's birthday cake to her, the E rune's hatching chick CHICK's chick; runes.ts's header
+ * names the chick as what a glyph must not be).
+ */
+const GLYPH_LOOKS_LIKE: Record<string, string[]> = { m: ['cake'], e: ['chick'] };
+
+/** Each rune's gesture's bank words: what its line says (stemmed), a word whose picture is its glyph or close to it, and its picture letter's word (item 097: VASE for V). */
 const RUNE_WORDS: Record<string, string[]> = Object.fromEntries(
   RUNES.map((r) => [
     r.sound,
@@ -44,6 +51,7 @@ const RUNE_WORDS: Record<string, string[]> = Object.fromEntries(
       ...new Set([
         ...withStems(r.gesture.text.toLowerCase().replace(/[^a-z ]/g, ' ').split(/\s+/).filter(Boolean)).filter((w) => BANK_BY_WORD[w]),
         ...BANK.filter((w) => w.glyph && w.glyph === r.gesture.glyph).map((w) => w.word),
+        ...(GLYPH_LOOKS_LIKE[r.sound] ?? []).filter((w) => BANK_BY_WORD[w]),
         ...(r.picture && BANK_BY_WORD[r.picture.word] ? [r.picture.word] : []),
       ]),
     ],

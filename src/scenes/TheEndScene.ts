@@ -36,6 +36,10 @@ function theEndHeroes(): string[] {
 /** The background: the hub of this episode (home, or the helper's quest place). */
 const theEndArt = (): string => hubArt(episode.place);
 
+/** THE END's figures bob this high; the title's letters (150 px, pulsing to 1.05 around y 170) reach down to here. */
+const BOB = 34;
+const TITLE_BOTTOM = 245;
+
 export class TheEndScene extends Phaser.Scene {
   private controls!: Controls;
   private closeDad: (() => void) | null = null;
@@ -65,14 +69,17 @@ export class TheEndScene extends Phaser.Scene {
     const heroes = theEndHeroes();
     const ground = GAME_HEIGHT - 70;
     const gap = 300;
+    // All of them smaller together, never apart, when the tallest would bob up into the title (hunt 6: chef
+    // Dada Jason, 1.65 of her since item 093, bobbed his hat and forehead under THE END).
+    const fit = Math.min(1, (ground - BOB - TITLE_BOTTOM) / Math.max(...heroes.map((id) => 290 * castScale(id))));
     heroes.forEach((id, i) => {
       const x = GAME_WIDTH / 2 + (i - (heroes.length - 1) / 2) * gap;
-      const h = 290 * castScale(id);
+      const h = 290 * castScale(id) * fit;
       this.add.ellipse(x, ground, h * 0.6, 26, 0x000000, 0.3).setDepth(ground - 1);
       const img = fitImage(this.add.image(x, ground, castArt(id)).setOrigin(0.5, 1), h * 0.95, h).setDepth(ground);
       // Bob and squash only (sprites move only by bob and squash/scale).
       const d = 340 + i * 50;
-      this.tweens.add({ targets: img, y: ground - 34, duration: d, yoyo: true, repeat: -1, ease: 'Quad.easeOut', delay: i * 120 });
+      this.tweens.add({ targets: img, y: ground - BOB, duration: d, yoyo: true, repeat: -1, ease: 'Quad.easeOut', delay: i * 120 });
       this.tweens.add({ targets: img, scaleY: img.scaleY * 0.92, scaleX: img.scaleX * 1.06, duration: d, yoyo: true, repeat: -1, delay: d + i * 120 });
     });
 

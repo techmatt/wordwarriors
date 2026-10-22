@@ -15,7 +15,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { REACH } from '../src/config';
-import { SLOW, boot, collectErrors, expectNoErrors, hubGo, readToKeyWord, until, type WWState } from './harness';
+import { SLOW, boot, choose, collectErrors, expectNoErrors, hubGo, readToKeyWord, until, type WWState } from './harness';
 import { area, coverIssues, inter, type Issue } from './qa/checks';
 import { qaLayout as layout } from './qa/probe';
 
@@ -78,6 +78,20 @@ for (const [name, query, scene] of [
     expectNoErrors(errors);
   });
 }
+
+// Hunt 6 (item 102): "Find the letter that fixes it!" (three rows) sat over all three letter stones.
+test('the shape-shifter: the fix-it instruction keeps off the letter stones', SLOW, async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=a&room=shifter&nojourney=1&qa=1');
+  const fix = await until(page, (st) => st.room?.shifter?.phase === 'pick' && !st.room.locked, 90_000, 'first link');
+  if (fix.room!.shifter!.beat === 'read') await choose(page);
+  await until(page, (st) => st.room?.shifter?.beat === 'fix' && st.room.shifter.phase === 'intro' && st.room.spots.length > 0, 60_000, 'a fix-it link');
+  const { issues, targets } = await sample(page, 3000, 'ShifterRoom');
+  expect(targets, 'the stones are targets').toBeGreaterThanOrEqual(3);
+  expect(issues).toEqual([]);
+  expectNoErrors(errors);
+});
 
 // Item 071, M13: the lines that send her walking take a narrow box that keeps off her, the cursor.
 for (const [name, query, scene, line] of [

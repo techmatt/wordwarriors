@@ -15,6 +15,9 @@ import { fitImage, popIn } from '../fx/juice';
 import type { Fighter } from './Fighter';
 import type { FightStage } from './stages/stage';
 
+/** The fetched things' row: right of the heroes' bars, left of the villain's (GAME_WIDTH - 30 - 420 - 3). */
+const ITEM_ROW = { left: 345, right: GAME_WIDTH - 30 - 420 - 13 };
+
 export class BattleHud {
   private readonly g: Phaser.GameObjects.Graphics;
   private readonly labels: Phaser.GameObjects.Text[] = [];
@@ -41,8 +44,12 @@ export class BattleHud {
     if (episode.made.ammo) made.push('prop_ammo');
     if (episode.made.helper) made.push('minion_helper');
     if (episode.made.item) made.push(counterArt());
+    // Packed tighter as the row grows, so it keeps left of the villain's bar (from x 827): a bridge and a
+    // Shape-Shifter fetch seven, and the counter-item made the ninth sit on it (hunt 6).
+    const step = made.length > 1 ? Math.min(58, (ITEM_ROW.right - ITEM_ROW.left - 50) / (made.length - 1)) : 58;
+    const size = Math.min(50, step - 4);
     made.forEach((key, i) => {
-      const icon = fitImage(scene.add.image(370 + i * 58, 40, key), 50, 50).setDepth(DEPTH.hud + 1);
+      const icon = fitImage(scene.add.image(ITEM_ROW.left + 25 + i * step, 40, key), size, size).setDepth(DEPTH.hud + 1);
       popIn(scene, icon, icon.scale, 300 + i * 120, 300);
     });
     // Charge the Spell's runes (item 053), for the part they fire in: a row under the

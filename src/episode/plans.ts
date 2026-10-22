@@ -206,7 +206,7 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
  * banners and lines clear of pad words as it goes (BattleScene `textGivesAway`).
  */
 function saidBeforeBattle(): string[] {
-  return withStems([...bedroomWords(), ...HALL_LINE_WORDS, ...storyWords(), ...fightWords(), ...FRAME_WORDS]);
+  return withStems([...bedroomWords(), ...HALL_LINE_WORDS, ...ROOM_LINE_WORDS, ...storyWords(), ...fightWords(), ...FRAME_WORDS]);
 }
 
 /**
@@ -239,6 +239,12 @@ function bedroomWords(): string[] {
 
 /** The entry hall's own lines ("let's grab the..."): GRAB is a bank word, so it is never a pad or the gift. */
 const HALL_LINE_WORDS = NARRATOR_LINES.filter((t) => t.key.startsWith('grab_')).flatMap((t) => [...wordsOf(t.text), ...wordsOf(t.say)]);
+
+/**
+ * The side rooms' own lines, said before battle 1 (rooms a and b) and battle 2 (the attic): the
+ * Shape-Shifter's "Find the letter that FIXES it!" came before a FIX pad (hunt 6; item 039's case).
+ */
+export const ROOM_LINE_WORDS = NARRATOR_LINES.filter((t) => /^(shifter|bridge|charge|machine|room|got)_/.test(t.key)).flatMap((t) => [...wordsOf(t.text), ...wordsOf(t.say)]);
 
 /**
  * The hub's gift word (item 037): an action word from the bank, drawn on

@@ -29,7 +29,7 @@
 
 import { CHARACTER_BY_ID, MINIONS, comboPart } from '../../content/battle/roster';
 import type { FighterSpec } from '../../content/battle/types';
-import { FETCH_ITEMS, FRAME_BY_ID, NUMBER_WORDS, lookalikesOf, sentence, tokenWord, type Fill, type Sentence } from '../../content/phonics/sentences';
+import { FETCH_ITEMS, FRAME_BY_ID, NO_ARTICLE, NUMBER_WORDS, lookalikesOf, sentence, tokenWord, type Fill, type Sentence } from '../../content/phonics/sentences';
 import { ACTIONS, THINGS } from '../../content/phonics/bank';
 import { MINIGAMES, drawGames, type Minigame, type MinigameKind } from './minigames';
 import { machineWords, planMachine, type MachinePlan } from './wordMachine';
@@ -124,8 +124,8 @@ const FETCHABLE = new Set(FETCH_ITEMS.map((i) => i.word));
  */
 export const NAMED_COUNTER_BOOST = 6;
 
-/** Bank things that take no "A" (some, not one): never the key word of a "...A {x}" frame (item 069; GUM item 092). */
-export const NO_ARTICLE = new Set(['cheese', 'milk', 'jam', 'grass', 'chips', 'gum']);
+/** Bank things that take no "A": content/phonics/sentences.ts (hunt 6: the Shape-Shifter's first creature needs it too). */
+export { NO_ARTICLE };
 
 /**
  * Two picture words for the room's other objects: not the key word, not a

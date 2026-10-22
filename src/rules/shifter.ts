@@ -30,6 +30,7 @@
  */
 
 import { BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
+import { NO_ARTICLE, NUMBER_WORDS, lookalikesOf } from '../../content/phonics/sentences';
 import { SHIFTER } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { met, recentWords, wordWeight } from './bank';
@@ -89,10 +90,22 @@ export function siblings(word: string, pos: Position, pool: string[] = SHIFT_WOR
   return pool.filter((w) => w !== word && changedAt(word, w) === pos);
 }
 
-/** Every chain of `n` links through `words` (no word twice), each with its positions. */
+/**
+ * A read-it link's wrong pictures: words differing from `to` only at `pos`, never `from` (she is looking at
+ * it) and never a look-alike of `to` (hunt 6: BAT beside CAT and RAT, a fair pick then told it is wrong).
+ */
+export function pictureSiblings(to: string, pos: Position, from: string, pool: string[]): string[] {
+  const like = lookalikesOf(to);
+  return siblings(to, pos, pool).filter((w) => w !== from && !like.includes(w));
+}
+
+/**
+ * Every chain of `n` links through `words` (no word twice), each with its positions. No link joins two
+ * look-alikes (hunt 6: a bat turning into a rat, or a pin into a pen, left her nothing she could see to fix).
+ */
 export function chainsOf(n: number, words: string[] = SHIFT_WORDS): string[][] {
   const out: string[][] = [];
-  const next = new Map(words.map((w) => [w, words.filter((x) => changedAt(w, x) !== null)]));
+  const next = new Map(words.map((w) => [w, words.filter((x) => changedAt(w, x) !== null && !lookalikesOf(w).includes(x))]));
   const walk = (path: string[]) => {
     if (path.length === n + 1) {
       out.push(path);
@@ -110,10 +123,10 @@ export const positionsOf = (chain: string[]): Position[] => chain.slice(1).map((
 /**
  * A link's beat: read it on the even links (the first one too) where `pool`
  * has SHIFTER.options - 1 pictures differing from `to` only there (never
- * `from`, which she is looking at), else fix it.
+ * `from`, which she is looking at, nor a look-alike of `to`), else fix it.
  */
 export function beatFor(i: number, from: string, to: string, pos: Position, pool: string[]): Beat {
-  return i % 2 === 0 && siblings(to, pos, pool).filter((w) => w !== from).length >= SHIFTER.options - 1 ? 'read' : 'fix';
+  return i % 2 === 0 && pictureSiblings(to, pos, from, pool).length >= SHIFTER.options - 1 ? 'read' : 'fix';
 }
 
 /** Fix it's stones for the letter `right` replacing `old`: `right` and n - 1 others of its kind (vowels with a vowel), no two the same sound, never `old`. */
@@ -140,7 +153,9 @@ export function planShifter(store: ProgressStore, input: ShifterInput, rand: Ran
   const avoid = new Set([...input.avoid, ...input.taken]);
   const free = SHIFT_WORDS.filter((w) => !avoid.has(w));
   for (let n = SHIFTER.links; n >= SHIFTER.minLinks; n--) {
-    const chains = chainsOf(n, free);
+    // The first creature is said after "It starts as a...": never a number or a word that takes no A (hunt 6:
+    // "It starts as a... ten!", M23's case; JAM, fix 92's).
+    const chains = chainsOf(n, free).filter((c) => !NUMBER_WORDS.has(c[0]!) && !NO_ARTICLE.has(c[0]!));
     if (!chains.length) continue;
     // In order but for one step back at most (Matt's CAT BAT BAG BIG PIG goes back to the first
     // letter once), the first link changing the first letter; else the least out of order.
@@ -164,7 +179,7 @@ export function planShifter(store: ProgressStore, input: ShifterInput, rand: Ran
       const beat = beatFor(i, from, to, pos, pictures);
       const options =
         beat === 'read'
-          ? shuffle([to, ...shuffle(siblings(to, pos, pictures).filter((w) => w !== from), rand).slice(0, SHIFTER.options - 1)], rand)
+          ? shuffle([to, ...shuffle(pictureSiblings(to, pos, from, pictures), rand).slice(0, SHIFTER.options - 1)], rand)
           : stonesFor(to[pos]!, from[pos]!, SHIFTER.options, rand);
       return { from, to, pos, beat, options };
     });

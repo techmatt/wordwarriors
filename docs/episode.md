@@ -296,8 +296,8 @@ sounded out over itself, then "But the spell says..." and the new letter; a wron
 letter flies at the label, bounces off, and its sound is said ("This letter says...").
 No word is ever made of it: a random letter could spell a word she reads later, or a rude
 one. No penalty; after two misses the answer sparkles. Read it is recorded as reading;
-fix it (a letter for a sound) under spelling, apart from reading, and leaves her word bag alone. Every word read is a battle item; the last
-creature flies into her bag and goes to the fight. `?scene=room&slot=a&room=shifter` opens it.
+fix it (a letter for a sound) under spelling, apart from reading, and leaves her word bag alone. Every word read is a battle item, a copy of each
+creature flying into her bag; the last creature itself flies in and goes to the fight. `?scene=room&slot=a&room=shifter` opens it.
 
 **The sound hidden in the name** (item 096): where a hint or teaching line gives a
 letter's sound and the letter's name holds it (B D F J K L M N P R S T V Z), the line

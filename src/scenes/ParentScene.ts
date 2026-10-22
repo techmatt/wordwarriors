@@ -95,8 +95,13 @@ export class ParentScene extends Phaser.Scene {
     // Item 056's NG and voiced TH are left out: no rune drills them alone, and a sixth column would run into the warm-up's levels.
     const drilled = DIGRAPH_SOUNDS.filter((l) => l.letter !== 'ng' && l.letter !== 'th_voiced');
     this.grid('Letter sounds', 'sounds', [...LETTERS, ...drilled].map((l) => l.letter), 30, 90, 6, 162, 30);
-    const spelled = Object.entries(snap.spelling ?? {}).map(([w, st]) => `${w} ×${st.seen}`);
-    fitText(this.add.text(1040, 90, ['Spelled (typing, kept apart', 'from reading):', ...spelled.slice(0, 3)], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - 1040 - 20, 85);
+    // Since item 096 the Shape-Shifter's fix-it links fill this (a letter found for a sound), Spell the Spell
+    // being parked: the latest first, and how many more (hunt 6: it showed the first three ever, as typing).
+    const spelled = Object.entries(snap.spelling ?? {})
+      .sort(([, a], [, b]) => (b.last ?? 0) - (a.last ?? 0))
+      .map(([w, st]) => `${w} ×${st.seen}`);
+    const more = spelled.length > 3 ? [`+${spelled.length - 3} more`] : [];
+    fitText(this.add.text(1040, 90, ['Letters found for sounds', '(kept apart from reading):', ...spelled.slice(0, 3), ...more], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - 1040 - 20, 85);
     this.grabView(840, 182, GAME_WIDTH - 840 - 20, 112);
     this.coverageView(30, 300);
     // The sentence game keeps progress per frame ("WE CAN USE THE ..."), so

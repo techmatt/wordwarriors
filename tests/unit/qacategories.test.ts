@@ -10,8 +10,9 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
 
-import { logIssues, onlyLineVariants, ruledCover, storeChanges, voiceBuildIssues } from '../qa/checks';
+import { logIssues, onlyLineVariants, ruledCover, spawnIssues, storeChanges, voiceBuildIssues } from '../qa/checks';
 import { britishIn, clippedIn, giveawayIssues, tauntIssues, variantIssues } from '../qa/wording';
+import type { WWState } from '../harness';
 
 const LINES: { id: string; text: string; say?: string }[] = JSON.parse(readFileSync('content/voice/lines.json', 'utf8'));
 
@@ -118,4 +119,12 @@ test('variant check (item 092): an idle child\'s re-prompts, the same variant ag
   const ids = ['nar_ellie_house_doors', 'nar_ellie_house_doors', 'nar_ellie_house_doors_2'];
   assert.equal(variantIssues(ids, bases).length, 1);
   assert.deepEqual(variantIssues(ids, bases, true), []);
+});
+
+test('spawn-in-reach (hunt 6): a choice that appears within reach of her is a bug; one she was put on, or a door, is not', () => {
+  const room = (spots: { id: string; x: number; y: number; correct: boolean | null }[]) =>
+    ({ scene: 'ShifterRoom', room: { round: 'shifter:1:bun', player: { x: 640, y: 660, art: '' }, spots } }) as unknown as WWState;
+  const s = room([{ id: 'stone_b', x: 640, y: 655, correct: true }, { id: 'stone_d', x: 400, y: 640, correct: false }, { id: 'door', x: 650, y: 650, correct: null }]);
+  assert.deepEqual(spawnIssues(new Set(), s, 95).map((i) => i.detail), ['stone_b appeared 5 px from her (shifter:1:bun)']);
+  assert.deepEqual(spawnIssues(new Set(['stone_b', 'stone_d', 'door']), s, 95), []);
 });

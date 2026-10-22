@@ -22,13 +22,13 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { test, type Page } from '@playwright/test';
 
 import { BANK } from '../../content/phonics/bank';
-import { FREE_PLAY } from '../../src/config';
+import { FREE_PLAY, REACH } from '../../src/config';
 import { SPEED, boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBattle, playAgain, playEntry, playRoom, playSentenceRoom, press, seedProgress, state, toTheEnd, until, type RoomPlay, type WWState, VOICE } from '../harness';
 
 // Item 083: real voice and real walking: the checker looks and listens as she would.
 VOICE.mode = 'real';
 driver.walk = true;
-import { layoutIssues, leakIssues, logIssues, onlyLineVariants, placeholderArt, storeChanges, voiceBuildIssues, type Issue } from './checks';
+import { layoutIssues, leakIssues, logIssues, onlyLineVariants, placeholderArt, spawnIssues, storeChanges, voiceBuildIssues, type Issue } from './checks';
 import { qaLayout, qaSince } from './probe';
 import { clippedIssues, giveawayIssues, pacingIssues, repeatedLines, spellingIssues, tauntIssues, variantIssues } from './wording';
 import { NARRATOR_LINES, lineVariantKeys } from '../../content/voice/script';
@@ -171,6 +171,8 @@ class Recorder {
   private loop: Promise<void>;
   private sig = { scene: '', voice: '', round: '', phase: '', choice: '', said: 0, recap: 0, ult: 0 };
   private roundStart = 0;
+  /** The room's spots at the last poll (`spawnIssues`). */
+  private spotIds = new Set<string>();
   private qaT = 0;
   last: WWState | null = null;
   lastShot = '';
@@ -227,6 +229,9 @@ class Recorder {
     }
     const q = await qaSince(this.page, this.qaT);
     this.qaT = q.now;
+    const ids = new Set(s.room?.spots.map((sp) => sp.id) ?? []);
+    this.add(spawnIssues(this.spotIds, s, REACH), this.lastShot);
+    this.spotIds = ids;
     this.add(logIssues({ ...q, console: [], missingArt: [], flashes: [] }, SPEED));
     this.add(clippedIssues(q.voice));
     if (s.scene !== this.visit.scene) {
@@ -268,7 +273,8 @@ class Recorder {
     this.add(spellingIssues(l, q.voice, s.scene), shot);
     // Words she has read, the warm-up's (said once she has grabbed it), and the gift word (item 092: told
     // and shown in the hub's story, its effect beside its card: FIN's fins): their pictures may wear them.
-    const done = [...s.episode.read, ...(s.episode.grab && (s.scene !== 'Entry' || !['intro', 'find'].includes(s.room?.grab?.phase ?? 'intro')) ? [s.episode.grab.word] : []), ...(s.episode.gift ? [s.episode.gift] : [])];
+    // The Shape-Shifter's first creature (item 096) is said and labelled: shown, not read (hunt 6).
+    const done = [...s.episode.read, ...(s.episode.grab && (s.scene !== 'Entry' || !['intro', 'find'].includes(s.room?.grab?.phase ?? 'intro')) ? [s.episode.grab.word] : []), ...(s.episode.gift ? [s.episode.gift] : []), ...(s.room?.shifter ? [s.room.shifter.start] : [])];
     this.add(giveawayIssues(l, s.scene, done), shot);
   }
 

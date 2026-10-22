@@ -173,7 +173,11 @@ covers its three help levels and a wrong picture (item 054). `FORCE_SHIFTER_ROOM
 the same rule for the Shape-Shifter behind door b (item 096): `playRoom` plays it
 (`playShifterRoom`: each link's right picture or stone, a wrong one first with
 `wrongFirst`), and `tests/shifter.spec.ts` (untagged, ~8 s) plays one room through both
-beats at base level.
+beats at base level. `tests/hunt6.spec.ts` (item 102) keeps the sixth hunt's Shape-Shifter
+fixes: the lit letter's pulse, the next link's options clear of her, yellow and green mashed
+through misses and morphs, the grown-ups page at each point of a link, dad lock and key 0,
+a level-1 stone reached while a line plays, Dad's 2 in the frame key 0 leaves a debug Charge
+read, and THE END's tallest grown-up under its title.
 `playRoom(page, opts)` and `playSentenceRoom(page, opts)` take a `RoomPlay`
 (`{ wrongFirst, idleMs, wrongPauseMs }`: a wrong answer first; in a sentence room a stand
 at the key word and a pause after the wrong object). Other shared steps in
@@ -416,6 +420,11 @@ In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
   `grab=`, `battle=`, `cast=`, `games=`). A move choice whose pad never takes green stops
   the run naming her position, the pads and the running scenes (M20 in
   `docs/qa-findings.md`).
+- **Item 102's additions:** a choice that appears within reach of her is a bug
+  (`spawn-in-reach`: green mashed through the round's line picks it unwalked; only spots new
+  since the last poll count, so the driver's teleport onto a spot never does), and the
+  Shape-Shifter's first creature wearing its word on its label is not a giveaway (it is said
+  and shown, not read).
 - **A busy machine slows the sweep's own server:** with many agents or a typecheck
   running beside it, voice fetches from the checker's Vite server passed their 15 s
   timeout (`voice: could not decode ... AbortError` in the log) and lines played silent.
@@ -427,7 +436,9 @@ In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
   clips), so lines still `queued` or `decoding` play silent in a sweep, while a whole
   episode at real speed had none. Check one at real speed before calling it a bug:
   `WW_SPEED=1 QA_TAG=<tag> npm run qa -- -g "qa seed101$"`
-  (about 7 minutes). `failed`, `none` and `suspended` stay bugs at any speed.
+  (about 7 minutes). A scenario of several episodes at real speed outlasts the config's
+  30-minute test timeout: pass Playwright's own (`-- -g "qa variants6$" --timeout=6600000`
+  for six episodes, item 102). `failed`, `none` and `suspended` stay bugs at any speed.
 - **A game controller plugged in can play along** (item 092, M20): the GPU test browser
   reads a real pad once it reports input, and a stick drifting past the 0.25 deadzone walks
   her off a move pad the driver put her on. Twice a sweep stopped "green on the pad never
