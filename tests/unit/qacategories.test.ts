@@ -11,7 +11,7 @@ import path from 'node:path';
 import { test } from 'node:test';
 
 import { logIssues, voiceBuildIssues } from '../qa/checks';
-import { britishIn, clippedIn, giveawayIssues } from '../qa/wording';
+import { britishIn, clippedIn, giveawayIssues, tauntIssues, variantIssues } from '../qa/wording';
 
 const LINES: { id: string; text: string; say?: string }[] = JSON.parse(readFileSync('content/voice/lines.json', 'utf8'));
 
@@ -78,4 +78,15 @@ test('missing voice lines: a line with no clip, or a clip for old text, is a bug
 
 test('missing voice lines: every line the game has is built, for the text it has now', () => {
   assert.deepEqual(voiceBuildIssues().map((i) => i.detail).slice(0, 20), []);
+});
+
+test('variant and taunt checks (item 089): a variant back before its round is done; a taunt over twice an episode', () => {
+  const bases = { right: ['right', 'right_2', 'right_3'], room_find: ['room_find', 'room_find_2'] };
+  // In turn, across narrators whose ids hold underscores: clean.
+  assert.deepEqual(variantIssues(['nar_ellie_right', 'nar_dada_matt_blade_right_2', 'nar_ellie_right_3', 'nar_ellie_right', 'nar_ellie_room_find', 'nar_ellie_room_find_2'], bases), []);
+  const back = variantIssues(['nar_ellie_right', 'nar_ellie_right_2', 'nar_ellie_right'], bases);
+  assert.equal(back[0]?.kind, 'variant-repeat');
+  assert.match(back[0]!.detail, /^right: right again after right_2/);
+  assert.deepEqual(tauntIssues([['taunt_smaug_gold', 'taunt_smaug_gold'], ['taunt_smaug_gold']]), []);
+  assert.deepEqual(tauntIssues([['taunt_smaug_gold', 'x', 'taunt_smaug_gold', 'taunt_smaug_gold']]).map((i) => i.detail), ['taunt_smaug_gold said 3 times in episode 1 (cap 2)']);
 });

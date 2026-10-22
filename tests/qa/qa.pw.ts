@@ -23,14 +23,18 @@ import { test, type Page } from '@playwright/test';
 
 import { BANK } from '../../content/phonics/bank';
 import { FREE_PLAY } from '../../src/config';
-import { SPEED, boot, collectErrors, driver, hubGo, leaveBedroom, playBattle, playAgain, playEntry, playRoom, playSentenceRoom, press, seedProgress, state, until, type RoomPlay, type WWState, VOICE } from '../harness';
+import { SPEED, boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBattle, playAgain, playEntry, playRoom, playSentenceRoom, press, seedProgress, state, toTheEnd, until, type RoomPlay, type WWState, VOICE } from '../harness';
 
 // Item 083: real voice and real walking: the checker looks and listens as she would.
 VOICE.mode = 'real';
 driver.walk = true;
 import { layoutIssues, leakIssues, logIssues, placeholderArt, voiceBuildIssues, type Issue } from './checks';
 import { qaLayout, qaSince } from './probe';
-import { clippedIssues, giveawayIssues, pacingIssues, repeatedLines, spellingIssues } from './wording';
+import { clippedIssues, giveawayIssues, pacingIssues, repeatedLines, spellingIssues, tauntIssues, variantIssues } from './wording';
+import { NARRATOR_LINES, lineVariantKeys } from '../../content/voice/script';
+
+/** Each narrator key with variants (item 087) and its variant keys, for `variantIssues`. */
+const VARIANT_BASES = Object.fromEntries(NARRATOR_LINES.map((t) => t.key).filter((k) => !/_\d+$/.test(k)).map((k) => [k, lineVariantKeys(k)] as const).filter(([, v]) => v.length > 1));
 
 const TAG = process.env.QA_TAG ?? 'now';
 const OUT = `scratch/qa/${TAG}`;
@@ -72,6 +76,14 @@ interface Scenario {
   lockAll?: boolean;
   /** Item 080: at every point, the grown-ups page (F9) and back. */
   parentAll?: boolean;
+  /** Only with `QA_SET=recent` (or `all`): the fifth batch, added by the fourth hunt (item 089). */
+  recent?: boolean;
+  /** Item 089: minigame debug mode (key 0) at each of these points: a game from its pedestal, then 0 back; nothing may stay. */
+  debugAt?: Point[];
+  /** Item 089: every button, F2, F4 and F9 mashed at the recap and THE END before Dad's 2; only 2 may leave. */
+  endMash?: boolean;
+  /** Item 089: no voice manifest (a fresh checkout, a broken junction): captions only (item 082's M19). */
+  voiceless?: boolean;
 }
 
 /** Where in an episode the item-080 probes act (`episode` calls `at` at each). */
@@ -132,6 +144,11 @@ const SCENARIOS: Scenario[] = [
   { name: 'lock_all', query: 'seed=405&games=all', lockAll: true, lens: true },
   { name: 'parent_all', query: 'seed=406&games=all', parentAll: true, lens: true },
   { name: 'parent_none', query: 'seed=406&games=all', lens: true },
+  // Item 089, the recent changes (items 081-088): debug mode, THE END, line variants, no voice manifest.
+  { name: 'debug_rooms', query: 'seed=501&games=all', debugAt: ['entry', 'hub1', 'room_a', 'room_b', 'hub2', 'attic'], recent: true },
+  { name: 'end_mash', query: 'seed=502&games=all', episodes: 2, endMash: true, recent: true },
+  { name: 'variants6', query: 'cast=random&games=all', episodes: 6, recent: true },
+  { name: 'voiceless', query: 'seed=503&games=all', voiceless: true, recent: true },
 ];
 
 /** How often a busy child presses something (real ms). */
@@ -348,6 +365,92 @@ async function dadLockProbe(page: Page, rec: Recorder): Promise<void> {
   await page.keyboard.press('Backquote');
 }
 
+/** Whether the episode stops at every point for a probe (items 080, 089). */
+const probing = (sc: Scenario) => Boolean(sc.lockAll || sc.parentAll || sc.reloadAt || sc.debugAt);
+
+/** The games debug mode offers (item 086), taken in turn by the debug probe. */
+const DEBUG_GAMES = ['sentence', 'word_machine', 'charge', 'bridge'] as const;
+
+/**
+ * Item 089: minigame debug mode at a point. Key 0, a game from its pedestal
+ * played through (it must come back checked off), key 0 back to the room; the
+ * store and the episode must be as they were, and the DEBUG tag gone.
+ */
+async function debugProbe(page: Page, rec: Recorder, p: Point, game: (typeof DEBUG_GAMES)[number], log: Record<string, unknown>[]): Promise<void> {
+  const before = await state(page);
+  const was = await store(page);
+  const ep = (s: WWState) => JSON.stringify([s.episode.read, s.episode.fetched, s.episode.house.done, s.episode.stepIndex]);
+  const tag = () => page.evaluate(() => Boolean(document.getElementById('debug-tag')?.isConnected));
+  const bug = (kind: string, detail: string) => rec.add([{ kind, severity: 'bug', scene: before.scene, detail: `${p}: ${detail}`, key: `${kind}:${p}` }], rec.lastShot);
+  await page.keyboard.press('Digit0');
+  await until(page, (s) => s.scene === 'Debug' && (s.room?.spots.length ?? 0) > 0 && !s.room!.locked, 30_000, `the debug room from ${p}`);
+  await rec.capture(`debug_${p}`);
+  if (!(await tag())) bug('debug-tag', 'no DEBUG tag in the debug room');
+  await choose(page, `debug:${game}`);
+  await until(page, (s) => s.scene !== 'Debug' && s.scene !== 'Wait', 30_000, `${game} from its pedestal`);
+  await playRoom(page, {});
+  const d = await until(page, (s) => s.scene === 'Debug' && Boolean(s.room?.debug) && !s.room!.locked, 60_000, `back in the debug room after ${game}`);
+  await rec.capture(`debug_done_${game}`);
+  if (!d.room!.debug!.done.includes(game)) bug('debug-check', `${game} played through but its pedestal has no check (${d.room!.debug!.done.join(', ')})`);
+  await page.keyboard.press('Digit0');
+  const back = await until(page, (s) => s.scene !== 'Debug' && s.scene !== 'Wait' && Boolean(s.room?.player), 30_000, `back from debug to ${p}`);
+  await page.waitForTimeout(500);
+  const now = await store(page);
+  const changed = Object.keys({ ...was, ...now }).filter((k) => was[k] !== now[k]);
+  log.push({ point: p, game, scene: before.scene, back: back.scene, changed, episode: [ep(before), ep(back)] });
+  if (back.scene !== before.scene) bug('debug-return', `key 0 back came to ${back.scene}`);
+  if (changed.length) bug('debug-leak', `a debug ${game} changed ${changed.join(', ')}`);
+  if (ep(back) !== ep(before)) bug('debug-leak', `a debug ${game} changed the episode: ${ep(before)} -> ${ep(back)}`);
+  if (await tag()) bug('debug-tag', 'the DEBUG tag stayed after debug mode was off');
+}
+
+/**
+ * Item 089: at the recap and THE END, every button, Dad's 1, F2, F4 and F9 and
+ * back mashed before Dad's 2: nothing may leave THE END but 2, nothing may
+ * change the store; then 2 to the title.
+ */
+async function endMash(page: Page, rec: Recorder, log: Record<string, unknown>[]): Promise<void> {
+  await until(page, (s) => s.scene === 'Victory', 60_000, 'the recap');
+  // During the recap: Dad's buttons and her own, which must not cut it short or skip THE END.
+  for (const k of ['Digit2', 'Digit1', 'Digit0', 'Escape', 'Tab', 'Digit3']) {
+    await page.keyboard.press(k);
+    await page.waitForTimeout(250);
+  }
+  const mid = await state(page);
+  if (mid.scene !== 'Victory' && mid.scene !== 'TheEnd') rec.add([{ kind: 'end-leak', severity: 'bug', scene: 'Victory', detail: `a press during the recap left it for ${mid.scene}`, key: 'endleak:recap' }], rec.lastShot);
+  if (mid.scene === 'Victory') await toTheEnd(page);
+  await until(page, (s) => s.scene === 'TheEnd', 30_000, 'THE END');
+  await rec.capture('theend');
+  const was = await store(page);
+  for (const k of ['Space', 'Enter', 'Tab', 'Escape', 'Digit3', 'Digit1', 'Digit0', 'ArrowLeft', 'ArrowUp', 'Backquote', 'Backquote', 'F2', 'F4', 'KeyA']) {
+    await page.keyboard.press(k);
+    await page.waitForTimeout(300);
+    const s = await state(page);
+    if (s.scene !== 'TheEnd') {
+      rec.add([{ kind: 'end-leak', severity: 'bug', scene: 'TheEnd', detail: `${k} left THE END for ${s.scene}`, key: `endleak:${k}` }], rec.lastShot);
+      log.push({ key: k, left: s.scene });
+      return;
+    }
+  }
+  await page.keyboard.press('F9');
+  await until(page, (s) => s.scene === 'Parent', 20_000, 'the grown-ups page from THE END');
+  await page.waitForTimeout(600);
+  await page.keyboard.press('F9');
+  const back = await until(page, (s) => s.scene !== 'Parent' && s.scene !== 'Wait', 30_000, 'back from the grown-ups page to THE END');
+  await page.waitForTimeout(500);
+  await rec.capture('theend_after_f9');
+  if (back.scene !== 'TheEnd') rec.add([{ kind: 'parent-return', severity: 'bug', scene: 'TheEnd', detail: `F9 and back from THE END came back to ${back.scene}`, key: 'parentback:theend' }], rec.lastShot);
+  const now = await store(page);
+  const changed = Object.keys({ ...was, ...now }).filter((k) => was[k] !== now[k]);
+  log.push({ point: 'theend', back: back.scene, changed });
+  if (changed.length) rec.add([{ kind: 'end-store', severity: 'bug', scene: 'TheEnd', detail: `presses at THE END changed ${changed.join(', ')}`, key: 'endstore' }], rec.lastShot);
+  if (back.scene === 'TheEnd') {
+    await until(page, (s) => Boolean(s.theEnd?.dad), 30_000, "THE END's Dad cue");
+    await page.keyboard.press('Digit2');
+  }
+  await until(page, (s) => s.scene === 'Title', 30_000, 'the title again');
+}
+
 /** One episode from the title's green to the victory recap; `at` runs the item-080 probes at each point. */
 async function episode(page: Page, sc: Scenario, rec: Recorder, at: (p: Point) => Promise<void> = async () => undefined): Promise<void> {
   await until(page, (s) => s.scene === 'Title', 90_000, 'title');
@@ -368,7 +471,7 @@ async function episode(page: Page, sc: Scenario, rec: Recorder, at: (p: Point) =
     await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:doors', 90_000, `${door} offered`);
     await standStill(page, sc, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:doors' && !s.room.locked, 'doors open');
     await hubGo(page, door);
-    if ((sc.dadLock && door === 'door_a') || sc.lockAll || sc.parentAll || sc.reloadAt) {
+    if ((sc.dadLock && door === 'door_a') || probing(sc)) {
       const s = await until(page, (st) => st.scene === 'SentenceRoom' || st.scene === 'WordMachine' || st.scene === 'ChargeRoom' || st.scene === 'BridgeRoom', 30_000, 'side room');
       if (s.scene === 'SentenceRoom') await until(page, (st) => st.room?.sentence?.pass === 'read' && !st.room.locked, 90_000, 'read pass');
       else await until(page, (st) => Boolean(st.room && !st.room.locked), 60_000, 'room listening');
@@ -383,7 +486,7 @@ async function episode(page: Page, sc: Scenario, rec: Recorder, at: (p: Point) =
   await page.waitForTimeout(1500);
   await at('battle1');
   await standStill(page, sc, (s) => Boolean(s.battle?.choice?.open), 'first move choice');
-  if (sc.lockAll || sc.parentAll || sc.reloadAt) {
+  if (probing(sc)) {
     await until(page, (s) => Boolean(s.battle?.choice?.open), 120_000, 'first move choice');
     await page.waitForTimeout(800);
     await at('choice1');
@@ -392,7 +495,7 @@ async function episode(page: Page, sc: Scenario, rec: Recorder, at: (p: Point) =
   await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:2:secret', 120_000, 'secret door');
   await at('hub2');
   await hubGo(page, 'door_counter');
-  if (sc.lockAll || sc.parentAll || sc.reloadAt) {
+  if (probing(sc)) {
     await until(page, (st) => st.scene === 'SentenceRoom' && st.room?.sentence?.pass === 'read' && !st.room.locked, 90_000, 'attic read pass');
     await at('attic');
   }
@@ -401,13 +504,13 @@ async function episode(page: Page, sc: Scenario, rec: Recorder, at: (p: Point) =
   await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:2:front', 90_000, 'front door again');
   await hubGo(page, 'door_front');
   await until(page, (s) => s.scene === 'Battle', 60_000, 'battle 2');
-  if (sc.lockAll || sc.parentAll || sc.reloadAt) {
+  if (probing(sc)) {
     await until(page, (s) => Boolean(s.battle?.choice?.open), 120_000, 'battle 2 move choice');
     await page.waitForTimeout(800);
     await at('choice2');
   }
   await playBattle(page, 2, Boolean(sc.wrong));
-  if (sc.lockAll || sc.parentAll || sc.reloadAt) {
+  if (probing(sc)) {
     await until(page, (s) => s.scene === 'Ending' || s.scene === 'Victory', 120_000, 'victory scene');
     if ((await state(page)).scene === 'Ending') {
       await page.waitForTimeout(1500);
@@ -439,7 +542,9 @@ class Reloaded extends Error {}
  * (the store the same after it, the game back at the title).
  */
 function probes(page: Page, sc: Scenario, rec: Recorder, reloadAt: Point | null, log: Record<string, unknown>[]): (p: Point) => Promise<void> {
+  let debugs = 0;
   return async (p) => {
+    if (sc.debugAt?.includes(p)) await debugProbe(page, rec, p, DEBUG_GAMES[debugs++ % DEBUG_GAMES.length]!, log);
     if (sc.lockAll) {
       const before = await state(page);
       const t0 = (await qaSince(page, 0)).now;
@@ -580,7 +685,7 @@ if (LOOK) {
 }
 
 const set = process.env.QA_SET;
-const inSet = (x: Scenario) => (set === 'quick' ? Boolean(x.quick) : set === 'more' ? Boolean(x.more) : set === 'new' ? Boolean(x.added) : set === 'lenses' ? Boolean(x.lens) : set === 'all' ? true : !x.more && !x.added && !x.lens);
+const inSet = (x: Scenario) => (set === 'quick' ? Boolean(x.quick) : set === 'more' ? Boolean(x.more) : set === 'new' ? Boolean(x.added) : set === 'lenses' ? Boolean(x.lens) : set === 'recent' ? Boolean(x.recent) : set === 'all' ? true : !x.more && !x.added && !x.lens && !x.recent);
 for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
   test(`qa ${sc.name}`, async ({ page }) => {
     const errors = collectErrors(page);
@@ -599,6 +704,9 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     const resizing = sc.resize ? resizer(page) : null;
     const net = { failed: [] as string[] };
     if (sc.net) await network(page, sc.net, net);
+    if (sc.voiceless) await page.route(/\/voice-gen\/manifest\.json/, (route) => route.fulfill({ status: 404, body: 'not built' }));
+    // Where each episode's transcript ends (item 089's taunt check), as voice lines so far.
+    const cuts: number[] = [];
     // Item 080's probes: one record per point, and one episode per reload point plus one played through.
     const probeLog: Record<string, unknown>[] = [];
     const reloads = sc.reloadAt ?? [];
@@ -618,8 +726,9 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
         drawn.push({ ally: ep.ally, villain: ep.villain, fight: rec.fight, ending: rec.endingId, games: plan.map((p) => p.game), rooms: plan.filter((p) => p.slot !== 'counter').map((p) => p.room).sort(), words: [...ep.read] });
         counts.push(await page.evaluate(() => (window as unknown as { __wwqa: { counts(): Record<string, number> } }).__wwqa.counts()));
         heap.push(await page.evaluate(() => (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0));
+        cuts.push((await qaSince(page, 0)).voice.length);
         // The recap's green, then only Dad's 2 leaves THE END (items 082, 085).
-        if (e + 1 < total) await playAgain(page);
+        if (e + 1 < total) await (sc.endMash ? endMash(page, rec, probeLog) : playAgain(page));
       }
     } catch (err) {
       stalled = String(err).split('\n')[0]!;
@@ -637,6 +746,10 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     // The whole run's flashes at once: a burst can straddle two polls.
     rec.add(logIssues({ ...q, voice: [], locks: [], spikes: [] }, SPEED));
     rec.add(VOICE_BUILD);
+    // Item 089: line variants in turn over the run, taunts at most twice an episode (item 087).
+    const ids = q.voice.map((v) => v.id);
+    rec.add(variantIssues(ids, VARIANT_BASES));
+    rec.add(tauntIssues([...cuts, ids.length].map((c, i, all) => ids.slice(i ? all[i - 1] : 0, c)).filter((x) => x.length)));
     for (const e of errors) rec.add([{ kind: 'page-error', severity: 'bug', scene: '', detail: e, key: `pageerror:${e.slice(0, 80)}` }]);
     // Growth from one episode to the next.
     for (let i = 1; i < counts.length; i++) {

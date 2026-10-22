@@ -152,3 +152,50 @@ export function repeatedLines(ids: readonly string[]): Record<string, number> {
   }
   return Object.fromEntries([...n].filter(([, c]) => c > 2).sort((a, b) => b[1] - a[1]));
 }
+
+/**
+ * Line variants said in turn (item 087, `src/episode/lineVariants.ts`; item
+ * 089's check): a narrator line with variants (`right`, `right_2`...) takes the
+ * next each time, across episodes, so between two sayings of one variant every
+ * other variant of its line is said. `variant-repeat` when one comes back
+ * sooner (a look: a variant picked while the voice bus dropped it shows as a
+ * gap). `bases` maps each narrator key with variants to its variant keys.
+ */
+export function variantIssues(ids: readonly string[], bases: Record<string, readonly string[]>): Issue[] {
+  // Longest keys first, so `right_2` is not read as `right` said by narrator `..._right`.
+  const keys = Object.entries(bases).flatMap(([base, vs]) => vs.map((v) => [v, base] as const)).sort((a, b) => b[0].length - a[0].length);
+  const said = new Map<string, string[]>();
+  for (const id of ids) {
+    if (!id.startsWith('nar_')) continue;
+    const hit = keys.find(([v]) => id.endsWith(`_${v}`));
+    if (hit) said.set(hit[1], [...(said.get(hit[1]) ?? []), hit[0]]);
+  }
+  const out: Issue[] = [];
+  for (const [base, seq] of said) {
+    const n = bases[base]!.length;
+    for (let i = 0; i < seq.length; i++) {
+      const last = seq.lastIndexOf(seq[i]!, i - 1);
+      if (i === 0 || last < 0) continue;
+      const between = new Set(seq.slice(last + 1, i));
+      if (between.size < n - 1) {
+        out.push({ kind: 'variant-repeat', severity: 'look', scene: '', detail: `${base}: ${seq[i]} again after ${[...between].join(', ') || 'nothing'} (${n} variants; said ${seq.join(' ')})`, key: `variant:${base}` });
+        break;
+      }
+    }
+  }
+  return out;
+}
+
+/**
+ * Taunts (item 087): none more than `max` times an episode (`pickTaunt`).
+ * `episodes` is the transcript cut at each episode's end.
+ */
+export function tauntIssues(episodes: readonly (readonly string[])[], max = 2): Issue[] {
+  const out: Issue[] = [];
+  episodes.forEach((ids, e) => {
+    const n = new Map<string, number>();
+    for (const id of ids) if (id.startsWith('taunt_')) n.set(id, (n.get(id) ?? 0) + 1);
+    for (const [id, c] of n) if (c > max) out.push({ kind: 'taunt-over-cap', severity: 'bug', scene: 'Battle', detail: `${id} said ${c} times in episode ${e + 1} (cap ${max})`, key: `taunt:${id}:${e}` });
+  });
+  return out;
+}
