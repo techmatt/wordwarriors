@@ -8,6 +8,16 @@
  * these same functions and checks the composer writes it and the manifest has it.
  */
 
+/**
+ * A voiced line's words, wherever content declares one (quests, scenes,
+ * endings, fights, taunts, templates): `text` shown and captioned, `say` the
+ * spoken form when edge-tts needs help (same word count).
+ */
+export interface SpokenLine {
+  text: string;
+  say?: string;
+}
+
 /** The fixed narrator before an ally exists, and whenever there is none. */
 export const DEFAULT_NARRATOR = 'dada_matt';
 
@@ -73,6 +83,12 @@ export const homeQuestLine = (narrator: string, n: number) => narratorLine(narra
 
 /** A sentence frame's prefix line (content/phonics/sentences.ts): `sent_<frame>` or `sent_<frame>_<character>`. */
 export const sentenceLine = (frame: string, name: string | null) => (name ? `sent_${frame}_${name}` : `sent_${frame}`);
+
+/**
+ * A line the caption box never shows (src/ui/Caption.ts): every `letter_` line
+ * (`letterSoundLine` and `letterNameLine`) and every `sentenceLine`.
+ */
+export const uncaptioned = (id: string) => id.startsWith('letter_') || id.startsWith('sent_');
 
 /**
  * The bedroom wake-up, said by whichever dad comes in to wake the hero (the

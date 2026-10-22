@@ -17,6 +17,27 @@ export function isMain(url: string): boolean {
   return Boolean(entry) && path.resolve(entry!) === path.resolve(fileURLToPath(url));
 }
 
+/**
+ * A tool's command-line tail: run it when this module is the one that was run,
+ * and on a failure print `prefix` and the message and exit non-zero.
+ */
+export function runMain(url: string, run: () => Promise<void>, prefix = ''): void {
+  if (!isMain(url)) return;
+  run().catch((error: unknown) => {
+    console.error(`${prefix}${error instanceof Error ? error.message : String(error)}`);
+    process.exitCode = 1;
+  });
+}
+
+/** The game's committed art, `public/art/<id>.png`. */
+export const ART_DIR = path.join('public', 'art');
+
+/** A PNG as a data URL, for a Playwright page to draw. */
+export const pngDataUrl = (png: Buffer): string => `data:image/png;base64,${png.toString('base64')}`;
+
+/** The bytes of a base64 data URL a page handed back (`canvas.toDataURL()`). */
+export const fromDataUrl = (url: string): Buffer => Buffer.from(url.slice(url.indexOf(',') + 1), 'base64');
+
 /** Is there a file or folder at this path? */
 export const exists = (f: string): Promise<boolean> =>
   stat(f).then(

@@ -5,7 +5,7 @@
  * matter most and the ones edge-tts cannot say properly (docs/recording.md).
  */
 
-import { isMain, readLines } from '../shared.js';
+import { readLines, runMain } from '../shared.js';
 import { clipStateFor, readClipIndex } from './clips.js';
 
 export async function voiceStatus(): Promise<void> {
@@ -23,9 +23,4 @@ export async function voiceStatus(): Promise<void> {
   if (by.stale.length) console.log(`stale (re-record): ${by.stale.join(', ')}`);
 }
 
-if (isMain(import.meta.url)) {
-  voiceStatus().catch((error: unknown) => {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exitCode = 1;
-  });
-}
+runMain(import.meta.url, () => voiceStatus());

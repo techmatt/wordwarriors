@@ -17,15 +17,11 @@
  * New arenas are ARENAS keys in roster.ts (art `arena_<key>`).
  */
 
-import { fightKey } from '../voice/ids.js';
+import { fightKey, type SpokenLine } from '../voice/ids.js';
 
 export type FightKind = 'brawl' | 'race' | 'tug' | 'clash' | 'cookoff';
 
-export interface FightLine {
-  text: string;
-  /** Spoken form, when edge-tts needs help. Same word count. */
-  say?: string;
-}
+export type FightLine = SpokenLine;
 
 /** A prop a style draws (art `prop_fight_<id>`). */
 export interface FightProp {

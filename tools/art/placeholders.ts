@@ -21,9 +21,8 @@ import path from 'node:path';
 import { chromium } from '@playwright/test';
 
 import { ART_ASSETS, type ArtAsset } from '../../content/art/assets.js';
-import { blankPage, exists, isMain } from '../shared.js';
+import { ART_DIR, blankPage, exists, fromDataUrl, runMain } from '../shared.js';
 
-const OUT = path.join('public', 'art');
 const MARK_KEY = 'WordWarriors';
 const MARK_VALUE = 'placeholder';
 
@@ -811,12 +810,12 @@ function artDoc(): string {
 
 export async function paintPlaceholders(argv: string[]): Promise<void> {
   const onlyMissing = argv.includes('--missing');
-  await mkdir(OUT, { recursive: true });
+  await mkdir(ART_DIR, { recursive: true });
 
   const todo: ArtAsset[] = [];
   const kept: string[] = [];
   for (const a of ART_ASSETS) {
-    const file = path.join(OUT, `${a.id}.png`);
+    const file = path.join(ART_DIR, `${a.id}.png`);
     if (await exists(file)) {
       if (onlyMissing) continue;
       if (!isPlaceholder(await readFile(file))) {
@@ -833,8 +832,8 @@ export async function paintPlaceholders(argv: string[]): Promise<void> {
       const page = await blankPage(browser);
       const painted = await page.evaluate(paintAll, todo);
       for (const [id, url] of Object.entries(painted)) {
-        const png = Buffer.from(url.slice(url.indexOf(',') + 1), 'base64');
-        await writeFile(path.join(OUT, `${id}.png`), withMark(png));
+        const png = fromDataUrl(url);
+        await writeFile(path.join(ART_DIR, `${id}.png`), withMark(png));
       }
     } finally {
       await browser.close();
@@ -844,10 +843,10 @@ export async function paintPlaceholders(argv: string[]): Promise<void> {
   // Placeholders for ids that no longer exist go; anything else (real art) stays.
   const known = new Set(ART_ASSETS.map((a) => `${a.id}.png`));
   const pruned: string[] = [];
-  for (const f of await readdir(OUT)) {
+  for (const f of await readdir(ART_DIR)) {
     if (!f.endsWith('.png') || known.has(f)) continue;
-    if (isPlaceholder(await readFile(path.join(OUT, f)))) {
-      await unlink(path.join(OUT, f));
+    if (isPlaceholder(await readFile(path.join(ART_DIR, f)))) {
+      await unlink(path.join(ART_DIR, f));
       pruned.push(f);
     }
   }
@@ -858,9 +857,4 @@ export async function paintPlaceholders(argv: string[]): Promise<void> {
   console.log(`art: ${todo.length} placeholders painted, ${kept.length} real files left alone${kept.length ? ` (${kept.join(', ')})` : ''}; docs/art.md written`);
 }
 
-if (isMain(import.meta.url)) {
-  paintPlaceholders(process.argv.slice(2)).catch((error: unknown) => {
-    console.error(`art failed: ${error instanceof Error ? error.message : String(error)}`);
-    process.exitCode = 1;
-  });
-}
+runMain(import.meta.url, () => paintPlaceholders(process.argv.slice(2)), 'art failed: ');

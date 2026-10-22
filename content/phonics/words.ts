@@ -13,13 +13,13 @@
  * "Jasmine" does not blend.
  */
 
-import { BANK, THINGS, type BankWord } from './bank.js';
+import { BANK, THINGS, type BankWord, type DrawId } from './bank.js';
 
 export interface Word {
   word: string;
   glyph?: string;
   /** A canvas drawing in tools/art/placeholders.ts, when there is no emoji. */
-  draw?: 'fan' | 'log' | 'mop' | 'pot' | 'mug' | 'rug';
+  draw?: DrawId;
   decodable: boolean;
   /** For sight words: the character whose card is the picture. */
   character?: string;
@@ -29,10 +29,10 @@ export interface Word {
  * The pictured reading words: every bank word with a clear picture
  * (content/phonics/bank.ts, role `thing` or `both`). Before item 037 these
  * were 33 hand-listed CVC words; since then they come from the bank and run
- * to blends (FROG) and digraphs (SHIP). The name stayed so the parked
- * minigames and the room code read on unchanged.
+ * to blends (FROG) and digraphs (SHIP), and the name went from CVC_WORDS to
+ * PICTURE_WORDS (item 088).
  */
-export const CVC_WORDS: Word[] = THINGS.map(asWord);
+export const PICTURE_WORDS: Word[] = THINGS.map(asWord);
 
 function asWord(w: BankWord): Word {
   return { word: w.word, decodable: true, ...(w.glyph ? { glyph: w.glyph } : {}), ...(w.draw ? { draw: w.draw } : {}) };
@@ -60,13 +60,13 @@ export const SIGHT_WORDS: Word[] = [
  */
 export const SPECIAL_WORDS: Word[] = [{ word: 'mice', glyph: '🐭', decodable: false }];
 
-export const WORDS: Word[] = [...CVC_WORDS, ...SIGHT_WORDS, ...SPECIAL_WORDS];
+export const WORDS: Word[] = [...PICTURE_WORDS, ...SIGHT_WORDS, ...SPECIAL_WORDS];
 
 /**
  * The bank's other words: its actions (the battle's move pads and the
  * ally's gift word, item 037) and its `odd` things (item 040). Each has a picture (the
  * victory recap and the fan on its super). Not in WORDS: they are never key
- * words or room objects. A familiar `both` word (NET, PAN) is in CVC_WORDS instead.
+ * words or room objects. A familiar `both` word (NET, PAN) is in PICTURE_WORDS instead.
  */
 export const MOVE_PICTURES: Word[] = BANK.filter((w) => !THINGS.includes(w)).map(asWord);
 

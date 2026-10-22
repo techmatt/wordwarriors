@@ -31,12 +31,11 @@ import { chromium, type Page } from '@playwright/test';
 import sharp from 'sharp';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
-import { ART_PROMPTS, BACKGROUND_STYLE, keyMode, NOTES, REFS, SPRITE_STYLE, refFor } from '../../content/art/prompts.js';
-import { blankPage, exists, isMain } from '../shared.js';
+import { ART_PROMPTS, BACKGROUND_STYLE, keyMode, NOTES, REFS, SPRITE_STYLE, refFor, type KeyMode } from '../../content/art/prompts.js';
+import { ART_DIR, blankPage, exists, fromDataUrl, pngDataUrl, runMain } from '../shared.js';
 import { keyGreen } from './chroma.js';
 import { isPlaceholder } from './placeholders.js';
 
-export const OUT = path.join('public', 'art');
 export const ORIGINALS = 'art-originals';
 const SHEET = path.join('scratch', 'art_contact.png');
 const CODEX_HOME = process.env.CODEX_HOME ?? path.join(os.homedir(), '.codex');
@@ -186,7 +185,7 @@ export interface Processed {
   fringe: number;
 }
 
-export async function processImage(page: Page, png: Buffer, opts: { sprite: boolean; boxW: number; boxH: number; mode: 'keep' | 'noGreen' | 'lightGreen' }): Promise<Processed> {
+export async function processImage(page: Page, png: Buffer, opts: { sprite: boolean; boxW: number; boxH: number; mode: KeyMode }): Promise<Processed> {
   return page.evaluate(
     async ({ src, sprite, boxW, boxH, mode }) => {
       const img = new Image();
@@ -241,12 +240,12 @@ export async function processImage(page: Page, png: Buffer, opts: { sprite: bool
       }
       return { url: out.toDataURL('image/png'), w: out.width, h: out.height, srcW: sw, srcH: sh, fringe };
     },
-    { src: `data:image/png;base64,${png.toString('base64')}`, ...opts },
+    { src: pngDataUrl(png), ...opts },
   );
 }
 
 async function contactSheet(page: Page, ids: string[], sheet = SHEET): Promise<void> {
-  const tiles = await Promise.all(ids.map(async (id) => ({ id, src: `data:image/png;base64,${(await readFile(path.join(OUT, `${id}.png`))).toString('base64')}` })));
+  const tiles = await Promise.all(ids.map(async (id) => ({ id, src: pngDataUrl(await readFile(path.join(ART_DIR, `${id}.png`))) })));
   const url = await page.evaluate(async (list) => {
     const T = 360;
     const L = 40;
@@ -280,7 +279,7 @@ async function contactSheet(page: Page, ids: string[], sheet = SHEET): Promise<v
     return cv.toDataURL('image/png');
   }, tiles);
   await mkdir(path.dirname(sheet), { recursive: true });
-  await writeFile(sheet, Buffer.from(url.slice(url.indexOf(',') + 1), 'base64'));
+  await writeFile(sheet, fromDataUrl(url));
   console.log(`art: contact sheet ${sheet} (${ids.length} tiles)`);
 }
 
@@ -290,19 +289,19 @@ export async function gamePng(page: Page, id: string, original: Buffer): Promise
   const sprite = !isBackground(id);
   const scale = sprite ? SPRITE_SCALE : 1;
   const p = await processImage(page, original, { sprite, boxW: a.w * scale, boxH: a.h * scale, mode: keyMode(id) });
-  return { png: await shrinkPng(Buffer.from(p.url.slice(p.url.indexOf(',') + 1), 'base64')), p };
+  return { png: await shrinkPng(fromDataUrl(p.url)), p };
 }
 
 /** Write the game-sized `public/art/<id>.png` from a full-resolution original. */
 export async function cut(page: Page, id: string, original: Buffer, note: string): Promise<void> {
   const sprite = !isBackground(id);
   const { png, p } = await gamePng(page, id, original);
-  await writeFile(path.join(OUT, `${id}.png`), png);
+  await writeFile(path.join(ART_DIR, `${id}.png`), png);
   console.log(`art: ${id}: ${p.srcW}×${p.srcH} → ${p.w}×${p.h} (${Math.round(png.length / 1024)} KB)${sprite ? `, green fringe px ${p.fringe}` : ''}${note ? `; ${note}` : ''}`);
 }
 
 async function isReal(id: string): Promise<boolean> {
-  const f = path.join(OUT, `${id}.png`);
+  const f = path.join(ART_DIR, `${id}.png`);
   return (await exists(f)) && !isPlaceholder(await readFile(f));
 }
 
@@ -336,7 +335,7 @@ export async function generate(argv: string[]): Promise<void> {
   try {
     if (shrink) {
       for (const id of ids) {
-        const f = path.join(OUT, `${id}.png`);
+        const f = path.join(ART_DIR, `${id}.png`);
         const before = await readFile(f);
         const after = await shrinkPng(before);
         await writeFile(f, after);
@@ -393,9 +392,4 @@ export async function generate(argv: string[]): Promise<void> {
   }
 }
 
-if (isMain(import.meta.url)) {
-  generate(process.argv.slice(2)).catch((error: unknown) => {
-    console.error(`art:gen failed: ${error instanceof Error ? error.message : String(error)}`);
-    process.exitCode = 1;
-  });
-}
+runMain(import.meta.url, () => generate(process.argv.slice(2)), 'art:gen failed: ');

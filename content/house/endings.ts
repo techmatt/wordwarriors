@@ -6,7 +6,8 @@
  *
  * Each scene is four short lines, by role, so it works for any cast:
  *   1. `open`, said by the host (the narrator: the ally, else the waking dad);
- *   2. the villain's own reformed line (`reformed[1]` in the roster, its good voice);
+ *   2. the villain's own reformed line (one of `reformed.ending` in the roster,
+ *      drawn per episode, in its good voice);
  *   3. `cheer`, said by the hero;
  *   4. `close`, said by someone else there (a dad, else the ally, else the host),
  *      or `fit`, said by that dad, when he is there in that form.
@@ -19,10 +20,9 @@
  * drawn over the cast (the table they sit behind, the boat they sit in).
  */
 
-export interface EndingLine {
-  text: string;
-  say?: string;
-}
+import type { SpokenLine } from '../voice/ids.js';
+
+export type EndingLine = SpokenLine;
 
 export interface EndingProp {
   id: string;

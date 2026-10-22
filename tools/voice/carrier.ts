@@ -19,7 +19,7 @@ import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { readWav } from './import.js';
+import { readWav } from './audio.js';
 import { envelope } from './split.js';
 
 /** From the peak back to the onset: frames down to this far under the peak are the vowel's attack. */

@@ -16,7 +16,7 @@ import { ARENAS, MINIONS, ROSTER } from '../battle/roster.js';
 import { ENDINGS, endingArt, endingPropArt } from '../house/endings.js';
 import { FIGHTS, fightPropArt } from '../battle/fights.js';
 import { ALL_SIDE_ROOMS, BEDROOMS, ENTRY_HALL, HUB, PLACES, hubArt } from '../house/house.js';
-import { CVC_WORDS, FLAVOUR_PICTURES, MOVE_PICTURES, SPECIAL_WORDS, WORD_BY_ID } from '../phonics/words.js';
+import { FLAVOUR_PICTURES, MOVE_PICTURES, PICTURE_WORDS, SPECIAL_WORDS, WORD_BY_ID } from '../phonics/words.js';
 
 export type AssetKind = 'character' | 'minion' | 'arena' | 'room' | 'picture' | 'item' | 'prop';
 
@@ -40,11 +40,14 @@ export interface ArtAsset {
 
 const assets: ArtAsset[] = [];
 
+/** A character's default image, good or evil. */
+export const charArt = (character: string, evil: boolean) => `char_${character}_${evil ? 'evil' : 'good'}`;
+
 for (const c of ROSTER) {
   for (const evil of [false, true]) {
     const f = evil ? c.evil : c.good;
     assets.push({
-      id: `char_${c.id}_${evil ? 'evil' : 'good'}`,
+      id: charArt(c.id, evil),
       kind: 'character',
       w: 200,
       h: 250,
@@ -201,7 +204,7 @@ for (const c of ROSTER) {
 // Word pictures: every CVC word, the special words (MICE), the move words
 // (item 018: the victory recap pictures them) and any counter sentence key
 // word not already among them (its picture is the item's glyph).
-const picWords = [...CVC_WORDS, ...SPECIAL_WORDS, ...MOVE_PICTURES, ...FLAVOUR_PICTURES];
+const picWords = [...PICTURE_WORDS, ...SPECIAL_WORDS, ...MOVE_PICTURES, ...FLAVOUR_PICTURES];
 for (const c of ROSTER) {
   const key = c.counter.word;
   if (key && !picWords.some((w) => w.word === key)) picWords.push(WORD_BY_ID[key] ?? { word: key, glyph: c.counter.glyph, decodable: true });
@@ -286,4 +289,3 @@ for (const p of new Map(FIGHTS.flatMap((f) => f.props ?? []).map((p) => [p.id, p
 
 export const ART_ASSETS: ArtAsset[] = assets;
 export const ART_BY_ID: Record<string, ArtAsset> = Object.fromEntries(assets.map((a) => [a.id, a]));
-export const charArt = (character: string, evil: boolean) => `char_${character}_${evil ? 'evil' : 'good'}`;

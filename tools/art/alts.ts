@@ -35,8 +35,8 @@ import type { Page } from '@playwright/test';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
 import { NOTES, PICK_NOTES, refFor } from '../../content/art/prompts.js';
-import { exists, isMain } from '../shared.js';
-import { ORIGINALS, OUT, codexPrompt, cut, describeUsage, gamePng, isBackground, openPage, refCrop, runCodex } from './generate.js';
+import { ART_DIR, exists, fromDataUrl, pngDataUrl, runMain } from '../shared.js';
+import { ORIGINALS, codexPrompt, cut, describeUsage, gamePng, isBackground, openPage, refCrop, runCodex } from './generate.js';
 
 const ALTS =path.join(ORIGINALS, 'alts');
 /** What the game had before an id's first pick, for `art:pick -- <id> 0`. */
@@ -159,7 +159,7 @@ async function previews(page: Page, ids: string[], dir: string): Promise<Row[]> 
   await mkdir(dir, { recursive: true });
   const rows: Row[] = [];
   for (const id of ids) {
-    const tiles: Row['tiles'] = [{ key: 'current', file: path.join(OUT, `${id}.png`) }];
+    const tiles: Row['tiles'] = [{ key: 'current', file: path.join(ART_DIR, `${id}.png`) }];
     if (await exists(restoreGame(id))) tiles.push({ key: '0', label: 'the original, before the first pick', file: restoreGame(id) });
     for (const k of await candidates(id)) {
       const file = path.join(dir, `${id}-${k}.png`);
@@ -211,7 +211,7 @@ function briefNote(r: Row): string | undefined {
 
 async function altSheet(rows: Row[], page: Page, file: string): Promise<void> {
   const ids = rows.map((r) => r.id);
-  const tiles = async (r: Row) => Promise.all(r.tiles.map(async (t) => ({ label: t.key, brief: t.brief ?? '', src: `data:image/png;base64,${(await readFile(t.file)).toString('base64')}` })));
+  const tiles = async (r: Row) => Promise.all(r.tiles.map(async (t) => ({ label: t.key, brief: t.brief ?? '', src: pngDataUrl(await readFile(t.file)) })));
   const sheetRows = await Promise.all(rows.map(async (r) => ({ id: r.id, tiles: await tiles(r) })));
   const wide = ids.some(isBackground);
   const url = await page.evaluate(
@@ -276,7 +276,7 @@ async function altSheet(rows: Row[], page: Page, file: string): Promise<void> {
     { rows: sheetRows, wide },
   );
   await mkdir(path.dirname(file), { recursive: true });
-  await writeFile(file, Buffer.from(url.slice(url.indexOf(',') + 1), 'base64'));
+  await writeFile(file, fromDataUrl(url));
   console.log(`art:alts: contact sheet ${file} (${rows.map((r) => `${r.id} ×${r.tiles.length - 1}`).join(', ')})`);
 }
 
@@ -315,7 +315,7 @@ export async function pick(argv: string[]): Promise<void> {
   if (!id || kArg === undefined || !/^\d+$/.test(kArg)) throw new Error('usage: npm run art:pick -- <id> <n>   (n from the contact sheet; 0 puts the original back)');
   if (!ART_BY_ID[id]) throw new Error(`${id} is not an asset id (content/art/assets.ts)`);
   const k = Number(kArg);
-  const game = path.join(OUT, `${id}.png`);
+  const game = path.join(ART_DIR, `${id}.png`);
   const orig = path.join(ORIGINALS, `${id}.png`);
   if (k === 0) {
     if (!(await exists(restoreGame(id)))) throw new Error(`${id} has no saved original (${restoreGame(id)}): it was never picked`);
@@ -354,10 +354,6 @@ export async function pick(argv: string[]): Promise<void> {
   }
 }
 
-if (isMain(import.meta.url)) {
-  const [cmd, ...rest] = process.argv.slice(2);
-  (cmd === 'pick' ? pick(rest) : alts(rest)).catch((error: unknown) => {
-    console.error(`art:${cmd === 'pick' ? 'pick' : 'alts'} failed: ${error instanceof Error ? error.message : String(error)}`);
-    process.exitCode = 1;
-  });
-}
+// package.json runs this file with `alts` or `pick` first.
+const isPick = process.argv[2] === 'pick';
+runMain(import.meta.url, () => (isPick ? pick(process.argv.slice(3)) : alts(process.argv.slice(3))), `art:${isPick ? 'pick' : 'alts'} failed: `);

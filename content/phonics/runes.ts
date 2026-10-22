@@ -5,11 +5,11 @@
  * The gesture is Jolly Phonics style, one memorable action per sound (S a
  * hissing snake, M rubbing a tummy). The narrator performs it: their sprite
  * bobs and squashes in its `motion` while `glyph` (an emoji prop) does the
- * action beside them, and they say `text`, which trails off into the sound's
- * own `letter_<x>_sound` line. So the text never names the letter (letter
- * SOUNDS, never names) and never spells the sound ("sss" would be captioned,
- * and edge-tts reads it as "ess"); at help level 2 the line plays without
- * the sound after it, a cloze she completes.
+ * action beside them, and they say only the sound's own `letter_<x>_sound`
+ * line. `text` is still composed (CHARGE_GESTURES in content/voice/script.ts)
+ * but not voiced since item 058; it never names the letter (letter SOUNDS,
+ * never names) and never spells the sound ("sss" would be captioned, and
+ * edge-tts reads it as "ess").
  *
  * Lines here are voiced before the battle, so they say no bank word at all,
  * stems included (tests/unit/charge.test.ts), and no glyph is a bank word's

@@ -30,8 +30,9 @@ export interface LetterSound {
   /** What edge-tts is asked to say. A placeholder until Matt records the real phoneme. */
   say: string;
   cls: SoundClass;
-  /** An example word with a picture, for the parent screen and future hints. */
+  /** An example word with the sound in it: an authoring note for whoever records the sound; the game does not read it. */
   example: string;
+  /** Why the placeholder is spelled as it is: an authoring note; the game does not read it. */
   note?: string;
   /**
    * Item 085: edge-tts says this sound right only inside a word, so it is asked

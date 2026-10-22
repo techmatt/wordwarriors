@@ -17,26 +17,22 @@
  * cut of each repeat. `--dry` writes only that. Then run `npm run voice:build`.
  */
 
-import { createHash } from 'node:crypto';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { inflateRawSync } from 'node:zlib';
 
-import { Mp3Encoder } from '@breezystack/lamejs';
-
 import { canHold } from '../../content/phonics/letters.js';
 import { letterSoundLine, wordLine } from '../../content/voice/ids.js';
 import { holdPlan, holdSamples } from '../../src/audio/holdSound.js';
-import { isMain, readLines } from '../shared.js';
-import { clipRecord } from './addClip.js';
-import { CLIP_DIR, CLIP_INDEX, readClipIndex, type ClipIndex } from './clips.js';
+import { readLines, runMain } from '../shared.js';
+import { mp3Bytes, readWav, wavBytes } from './audio.js';
+import { CLIP_DIR, CLIP_INDEX, clipRecord, dropUnused, installClip, readClipIndex, type ClipIndex } from './clips.js';
 import { MIN_LOOP_S, countReason, finish, highpass, rankRepeats, splitTake, type Cut, type Entry, type TakeSplit } from './split.js';
 import type { LineSpec } from './types.js';
 
 const FORMATS = ['phonics-recorder/1', 'phonics-recorder/2'];
 /** Format 1 had no required name; every format-1 zip so far is Matt's. */
 const DEFAULT_RECORDER = 'Matt';
-const MP3_KBPS = 96;
 /** Sounds recorded once that the game has more lines for: the K card is the C-K sound too. */
 const ALSO = { k: ['ck'] } as Record<string, string[]>;
 const REVIEW_DIR = path.join('scratch', 'voice-import');
@@ -81,66 +77,6 @@ export function unzip(buf: Buffer): Map<string, Buffer> {
   return out;
 }
 
-/** A WAV's samples, mixed to mono: 16-bit PCM or 32-bit float. */
-export function readWav(b: Buffer): { x: Float32Array; rate: number } {
-  if (b.toString('ascii', 0, 4) !== 'RIFF' || b.toString('ascii', 8, 12) !== 'WAVE') throw new Error('not a WAV file');
-  let fmt: { tag: number; ch: number; rate: number; bits: number } | null = null;
-  for (let i = 12; i + 8 <= b.length; ) {
-    const id = b.toString('ascii', i, i + 4);
-    const size = b.readUInt32LE(i + 4);
-    if (id === 'fmt ') fmt = { tag: b.readUInt16LE(i + 8), ch: b.readUInt16LE(i + 10), rate: b.readUInt32LE(i + 12), bits: b.readUInt16LE(i + 22) };
-    if (id === 'data') {
-      if (!fmt) throw new Error('WAV data before its format');
-      const { tag, ch, rate, bits } = fmt;
-      const float = tag === 3 && bits === 32;
-      if (!float && !(tag === 1 && bits === 16)) throw new Error(`${bits}-bit WAV (format ${tag}) is not handled`);
-      const step = bits / 8;
-      const n = Math.floor(Math.min(size, b.length - i - 8) / (step * ch));
-      const x = new Float32Array(n);
-      for (let k = 0; k < n; k++) {
-        let s = 0;
-        for (let c = 0; c < ch; c++) {
-          const o = i + 8 + (k * ch + c) * step;
-          s += float ? b.readFloatLE(o) : b.readInt16LE(o) / 32768;
-        }
-        x[k] = s / ch;
-      }
-      return { x, rate };
-    }
-    i += 8 + size + (size & 1);
-  }
-  throw new Error('no data in the WAV');
-}
-
-export function wavBytes(x: Float32Array, rate: number): Buffer {
-  const b = Buffer.alloc(44 + x.length * 2);
-  b.write('RIFF', 0, 'ascii');
-  b.writeUInt32LE(36 + x.length * 2, 4);
-  b.write('WAVEfmt ', 8, 'ascii');
-  b.writeUInt32LE(16, 16);
-  b.writeUInt16LE(1, 20);
-  b.writeUInt16LE(1, 22);
-  b.writeUInt32LE(rate, 24);
-  b.writeUInt32LE(rate * 2, 28);
-  b.writeUInt16LE(2, 32);
-  b.writeUInt16LE(16, 34);
-  b.write('data', 36, 'ascii');
-  b.writeUInt32LE(x.length * 2, 40);
-  for (let k = 0; k < x.length; k++) b.writeInt16LE(Math.round(Math.max(-1, Math.min(1, x[k]!)) * 32767), 44 + 2 * k);
-  return b;
-}
-
-/** Mono MP3 at the take's own rate. */
-export function mp3Bytes(x: Float32Array, rate: number): Buffer {
-  const enc = new Mp3Encoder(1, rate, MP3_KBPS);
-  const pcm = Int16Array.from(x, (v) => Math.round(Math.max(-1, Math.min(1, v)) * 32767));
-  const parts: Buffer[] = [];
-  const keep = (u: ArrayLike<number> & { buffer: ArrayBufferLike; byteOffset: number; length: number }) => parts.push(Buffer.from(u.buffer, u.byteOffset, u.length));
-  for (let i = 0; i < pcm.length; i += 1152) keep(enc.encodeBuffer(pcm.subarray(i, i + 1152)));
-  keep(enc.flush());
-  return Buffer.concat(parts);
-}
-
 // ---- One take --------------------------------------------------------------
 
 export interface HoldCheck {
@@ -154,7 +90,7 @@ export interface HoldCheck {
 /** What the bridge makes of a clip: a held sound needs a loop of MIN_LOOP_S or more. */
 export function holdCheck(x: Float32Array, rate: number, asked: 'hold' | 'once'): HoldCheck {
   const p = holdPlan(x, rate, asked);
-  const loopS = p.loopStart === undefined ? undefined : (p.end - p.loopStart) / rate;
+  const loopS = p.steadyStart === undefined ? undefined : (p.end - p.steadyStart) / rate;
   const ok = asked === 'once' ? p.mode === 'once' : p.mode === 'hold' && (loopS ?? 0) >= MIN_LOOP_S;
   return { mode: p.mode, asked, playedS: (p.end - p.start) / rate, ...(loopS === undefined ? {} : { loopS }), ok };
 }
@@ -260,32 +196,6 @@ export function processTake(group: string, raw: Float32Array, rate: number, entr
 }
 
 // ---- Installing ------------------------------------------------------------
-
-const hash8 = (b: Buffer) => createHash('sha256').update(b).digest('hex').slice(0, 8);
-
-/**
- * Write the clip and point its line (or, with no line yet, its waiting entry)
- * at it; a file it replaces is deleted unless something else still uses it.
- */
-async function install(index: ClipIndex, id: string, mp3: Buffer, seconds: number, provider: string, recorded: string, lines: Map<string, LineSpec>): Promise<string> {
-  const audio = `${id}.${hash8(mp3)}.mp3`;
-  await writeFile(path.join(CLIP_DIR, audio), mp3);
-  const before = [index.clips[id]?.audio, index.waiting?.[id]?.audio];
-  const line = lines.get(id);
-  if (line) {
-    index.clips[id] = clipRecord(line, audio, seconds, provider);
-    if (index.waiting) delete index.waiting[id];
-  } else (index.waiting ??= {})[id] = { provider, recorded, audio, seconds, ingested: new Date().toISOString().slice(0, 10) };
-  await dropUnused(index, before);
-  return line ? 'installed' : 'kept (no line yet)';
-}
-
-/** Delete these clip files unless something in the index still uses them. */
-async function dropUnused(index: ClipIndex, files: (string | undefined)[]): Promise<void> {
-  for (const f of new Set(files)) if (f && !usedBy(index, f)) await rm(path.join(CLIP_DIR, f), { force: true });
-}
-
-const usedBy = (index: ClipIndex, audio: string) => [...Object.values(index.clips), ...Object.values(index.waiting ?? {})].some((c) => c.audio === audio);
 
 /**
  * Waiting clips whose line now exists move into `clips`. A line that already
@@ -454,7 +364,7 @@ export async function voiceImport(argv: string[]): Promise<void> {
       for (const c of clips) {
         const targets = c === e.word ? (c.id ? [c.id] : []) : e.targets.filter((id) => id !== e.word.id);
         for (const id of targets) {
-          const how = dry ? 'would install' : await install(index, id, mp3Bytes(c.data, t.rate), c.seconds, provider, `${e.entry.word} ${e.entry.sound}`, lines);
+          const how = dry ? 'would install' : await installClip(index, id, mp3Bytes(c.data, t.rate), c.seconds, provider, `${e.entry.word} ${e.entry.sound}`, lines);
           done.push(how === 'installed' ? id : `${id} (${how})`);
         }
       }
@@ -473,9 +383,4 @@ export async function voiceImport(argv: string[]): Promise<void> {
   if (!dry && results.some((t) => !t.refused)) console.log('Now run npm run voice:build.');
 }
 
-if (isMain(import.meta.url)) {
-  voiceImport(process.argv.slice(2)).catch((error: unknown) => {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exitCode = 1;
-  });
-}
+runMain(import.meta.url, () => voiceImport(process.argv.slice(2)));

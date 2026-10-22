@@ -7,8 +7,8 @@
  *   (BattleScene `useFetched`).
  * - An action word is a move pad: reading it casts it. Her hero fires the
  *   word's own `ability`, supercharged, with a SUPER JUMP! banner. When the
- *   word is also one of a teammate's own abilities (`word`/`words` in the
- *   roster), that styled version fires instead (src/rules/moves.ts).
+ *   word is also one of a teammate's own abilities (`words` in the
+ *   roster, `abilityWords`), that styled version fires instead (src/rules/moves.ts).
  * - A `both` word (NET) uses the same effect either way.
  *
  * `look` says what it does, for docs and art prompts. The ability's `id` is

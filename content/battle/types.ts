@@ -8,6 +8,8 @@
  * exist yet, and the list of kinds below is the menu.
  */
 
+import type { SpokenLine } from '../voice/ids.js';
+
 /** How a fighter gets about the arena. Each is a steering routine in src/battle/movement.ts. */
 export type MoveStyle =
   /** Floats at range, bobbing; casters. */
@@ -85,8 +87,6 @@ export interface AbilitySpec {
    * neither spinning as a bolt nor falling point first.
    */
   upright?: boolean;
-  /** For `orbit`: the caster is shielded while the ring spins (a whirling guard). */
-  guard?: boolean;
   status?: Status;
   /** For `summon`: which minion (MINIONS key). */
   minion?: string;
@@ -112,12 +112,9 @@ export interface AbilitySpec {
   callout?: string;
 }
 
-export interface Taunt {
+export interface Taunt extends SpokenLine {
   /** Short key, unique within the fighter; the line id is derived from it. */
   key: string;
-  text: string;
-  /** Spoken form, when edge-tts needs help. Same word count as text. */
-  say?: string;
 }
 
 export interface FighterSpec {
@@ -212,7 +209,7 @@ export interface CharacterSpec {
    * villain is (chef Dada Jason makes a cook-off likely): `chance` of `fight`.
    */
   fightNudge?: { fight: string; chance: number };
-  /** How the house looks and what Dada Matt says when this one is the villain. */
+  /** How the house looks and what the waking dad says when this one is the villain. */
   house: HouseMood;
 }
 

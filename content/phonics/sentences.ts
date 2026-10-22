@@ -185,17 +185,12 @@ function frameName(frame: Frame, fill: Fill): { slot: NameSlot; id: string } | n
   return slot ? { slot, id: fill[slot] } : null;
 }
 
-/** The prefix line id: `sent_<frame>` or `sent_<frame>_<character>`. */
-function prefixLineId(frameId: string, name: string | null): string {
-  return sentenceLine(frameId, name);
-}
-
 /**
  * A name as shown in a sentence: the bare character name in every slot (item
  * 038). The villain is still drawn evil; EVIL only made a long sentence longer
  * (JORMUNGANDR RUNS FROM THE FAN, not EVIL JORMUNGANDR ...).
  */
-function nameFor(_slot: NameSlot, id: string): { show: string; say: string } {
+function nameFor(id: string): { show: string; say: string } {
   const f = CHARACTER_BY_ID[id]!.good;
   return { show: f.displayName, say: f.sayName ?? f.displayName };
 }
@@ -204,10 +199,10 @@ export function sentence(frameId: string, fill: Fill, key: string): Sentence {
   const frame = FRAME_BY_ID[frameId]!;
   const name = frameName(frame, fill);
   const text = frame.text
-    .replace(/\{(villain|helper|hero)\}/, name ? nameFor(name.slot, name.id).show.toUpperCase() : '')
+    .replace(/\{(villain|helper|hero)\}/, name ? nameFor(name.id).show.toUpperCase() : '')
     .replace('{x}', key.toUpperCase());
   // A form reads and sounds like its person (DADA MATT for every Matt), so it shares the person's prefix line.
-  return { frame: frameId, tokens: text.split(/\s+/).filter(Boolean), key, prefixLine: prefixLineId(frameId, name ? personOf(name.id) : null) };
+  return { frame: frameId, tokens: text.split(/\s+/).filter(Boolean), key, prefixLine: sentenceLine(frameId, name ? personOf(name.id) : null) };
 }
 
 /** A sentence token's own word line (`word_rilla`, `word_the`). */
@@ -223,11 +218,11 @@ export function allPrefixes(): { id: string; text: string; say?: string }[] {
     const slot = slotOf(frame);
     const ids = slot ? PERSONS.map((c) => c.id) : [null];
     for (const id of ids) {
-      const name = slot && id ? nameFor(slot, id) : null;
+      const name = slot && id ? nameFor(id) : null;
       // Spoken in sentence case, trailing off where the key word will go.
       const show = words.map((w, i) => (w.startsWith('{') ? name!.show : i === 0 ? cap(w) : w.toLowerCase())).join(' ');
       const say = words.map((w, i) => (w.startsWith('{') ? name!.say : i === 0 ? cap(w) : w.toLowerCase())).join(' ');
-      out.push({ id: prefixLineId(frame.id, id), text: `${show}...`, ...(say !== show ? { say: `${say}...` } : {}) });
+      out.push({ id: sentenceLine(frame.id, id), text: `${show}...`, ...(say !== show ? { say: `${say}...` } : {}) });
     }
   }
   return out;
@@ -239,9 +234,8 @@ export function allFrameTokens(): string[] {
   for (const frame of FRAMES) {
     for (const w of frame.text.split(/\s+/)) {
       if (w === '{x}') continue;
-      const slot = SLOTS.find((s) => w === `{${s}}`);
-      if (slot) {
-        for (const c of ROSTER) for (const t of nameFor(slot, c.id).show.split(/\s+/)) set.add(tokenWord(t));
+      if (SLOTS.some((s) => w === `{${s}}`)) {
+        for (const c of ROSTER) for (const t of nameFor(c.id).show.split(/\s+/)) set.add(tokenWord(t));
       } else set.add(tokenWord(w));
     }
   }

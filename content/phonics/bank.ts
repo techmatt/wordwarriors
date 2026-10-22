@@ -54,13 +54,16 @@ export type Role = 'thing' | 'action' | 'both';
 export type Level = 1 | 2 | 3;
 export type Vowel = 'a' | 'e' | 'i' | 'o' | 'u';
 
+/** A canvas drawing in tools/art/placeholders.ts, for a picture with no emoji. */
+export type DrawId = 'fan' | 'log' | 'mop' | 'pot' | 'mug' | 'rug';
+
 export interface BankEntry {
   word: string;
   role: Role;
   glyph?: string;
-  draw?: 'fan' | 'log' | 'mop' | 'pot' | 'mug' | 'rug';
+  draw?: DrawId;
   say?: string;
-  /** The item that added it: before 037 (`old`), 037, 040, 054, 056 or 058. */
+  /** The item that added it: 037, 040, 054, 056, 058 or 059 (unset for older words). Informational: nothing reads it. */
   since?: '037' | '040' | '054' | '056' | '058' | '059';
   /** It sounds like a spell (ZAP, HEX, POP; not MUD or NAP): a caster's gift leans to it (item 038, `drawGift`). */
   spell?: true;
@@ -238,7 +241,7 @@ export function soundOf(unit: string): string {
   return unit;
 }
 
-/** A short vowel's sound key, or a long one (`long_e`), or `` for a silent letter (the E of KITE). */
+/** Is this sound a short vowel? */
 const isShort = (sound: string) => sound.length === 1 && VOWELS.includes(sound);
 
 /** Level from the units around the vowel: a digraph (SH, NG, QU, MB, TCH; not a doubled letter) is 3, a blend 2, else 1. */

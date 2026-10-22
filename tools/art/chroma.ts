@@ -1,6 +1,6 @@
 /**
  * Green-screen keying for generated sprites. Pure and self-contained (no
- * imports, no module-level references) because the generator also ships it
+ * runtime imports, no module-level references) because the generator also ships it
  * into a Playwright page as source text.
  *
  * The key colour is the median of the border pixels (the model's "#00FF00" is
@@ -17,7 +17,10 @@
  * Returns `fringe`: visible pixels touching transparency that are still
  * clearly green, plus visible near-key pixels. 0 is clean.
  */
-export function keyGreen(px: Uint8ClampedArray, w: number, h: number, mode: 'keep' | 'noGreen' | 'lightGreen' = 'keep'): { fringe: number; cleared: number } {
+
+import type { KeyMode } from '../../content/art/prompts.js';
+
+export function keyGreen(px: Uint8ClampedArray, w: number, h: number, mode: KeyMode = 'keep'): { fringe: number; cleared: number } {
   const n = w * h;
   const rs: number[] = [];
   const gs: number[] = [];

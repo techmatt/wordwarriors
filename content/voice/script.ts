@@ -21,12 +21,10 @@
 
 import { FIGHTS, FIGHT_BEATS } from '../battle/fights.js';
 import { RUNES } from '../phonics/runes.js';
-import { chargeKey, fightKey, type HeroKind, type MoveKind, type VillainKind } from './ids.js';
+import { chargeKey, fightKey, type HeroKind, type MoveKind, type SpokenLine, type VillainKind } from './ids.js';
 
-export interface Template {
+export interface Template extends SpokenLine {
   key: string;
-  text: string;
-  say?: string;
 }
 
 /** Said by Dada Matt only, before the ally is picked. */
@@ -209,7 +207,7 @@ export const NARRATOR_LINES: Template[] = [
  * A narrator line's variants (item 087), in turn order: the plain key (if any),
  * then `<key>_1`, `<key>_2`... A key with no variants is a list of one.
  */
-export function variantKeys(base: string): string[] {
+export function lineVariantKeys(base: string): string[] {
   const n = (k: string) => (k === base ? 0 : Number(k.slice(base.length + 1)));
   return NARRATOR_LINES.map((t) => t.key)
     .filter((k) => k === base || (k.startsWith(`${base}_`) && /^\d+$/.test(k.slice(base.length + 1))))

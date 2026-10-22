@@ -31,10 +31,10 @@ import { createHash } from 'node:crypto';
 import { copyFile, mkdir, readFile, readdir, stat, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { exists, isMain, LINES_FILE } from '../shared.js';
+import { exists, LINES_FILE, runMain } from '../shared.js';
 import { align, isSpeakable } from './align.js';
 import { decodeMp3, vowelSpan } from './carrier.js';
-import { mp3Bytes } from './import.js';
+import { mp3Bytes } from './audio.js';
 import { finish } from './split.js';
 import { CLIP_DIR, clipStateFor, forgetMissingAudio, readClipIndex, spokenFor, type ClipIndex, type ClipRecord } from './clips.js';
 import { trimMp3 } from './mp3.js';
@@ -289,9 +289,4 @@ function entry(opts: Options, line: LineSpec, name: string, words: ManifestLine[
   };
 }
 
-if (isMain(import.meta.url)) {
-  buildVoice(process.argv.slice(2)).catch((error: unknown) => {
-    console.error(`voice build failed: ${error instanceof Error ? error.message : String(error)}`);
-    process.exitCode = 1;
-  });
-}
+runMain(import.meta.url, () => buildVoice(process.argv.slice(2)), 'voice build failed: ');

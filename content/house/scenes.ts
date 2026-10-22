@@ -9,8 +9,8 @@
  * caster, something chef Dada Jason cooks up, a gadget builder Dada Matt
  * builds, an upgrade from Scar, a toy Ellie shares.
  *
- * The word itself is drawn from the bank (`giftWord` in src/episode/Episode.ts)
- * and can be any action word, so no line names it or hints at which: the last
+ * The word itself is drawn from the bank (`drawGift` in src/rules/moves.ts, via
+ * `giftWord` in src/episode/plans.ts) and can be any action word, so no line names it or hints at which: the last
  * line trails off ("...and it goes...") into the narrator's `gift_word_<word>`
  * line ("Zap!"). The gift word is a move pad, deliberately said, like "Use
  * zap!". Then `circle` sends her to the glowing circle, and `done` follows

@@ -37,7 +37,7 @@ export interface BedroomSpec {
   bed: { x: number; y: number };
   /** The way out to the hub; sparkles if she has not found it after a while. */
   door: { x: number; y: number };
-  /** Where Dada Matt stands to give the news. */
+  /** Where the waking dad stands to give the news. */
   waker: { x: number; y: number };
   objects: BedroomObject[];
 }
@@ -308,7 +308,7 @@ export const hubArt = (place: string) => (place === HOME ? 'room_hub' : `room_pl
 
 /**
  * The entry hall (item 033): the home warm-up, between the bedroom and the
- * quest. Nine labelled pictures stand on the floor in three staggered rows
+ * quest. Nine pictures (no words on them, item 059) stand on the floor in three staggered rows
  * (`spots`, feet positions, back row first); the grown-ups wait by the front
  * door on the right, which appears once she has grabbed the right thing.
  */

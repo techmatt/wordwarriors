@@ -16,7 +16,7 @@ import { writeFile } from 'node:fs/promises';
 
 import { CHARACTER_BY_ID, MOVE_WORDS, PERSONS, ROSTER, abilityCallout, personOf } from '../../content/battle/roster.js';
 import { ENDINGS } from '../../content/house/endings.js';
-import { HOME_QUEST, QUESTS, homeQuestLine, questLine } from '../../content/house/quests.js';
+import { HOME_QUEST, QUESTS } from '../../content/house/quests.js';
 import { ANY_SCENES, HUB_SCENES, hubStoryIds, type HubStory } from '../../content/house/scenes.js';
 import type { FighterSpec } from '../../content/battle/types.js';
 import { FAMILIES, sillyWord } from '../../content/phonics/families.js';
@@ -24,7 +24,7 @@ import { BANK_BY_WORD, BANK } from '../../content/phonics/bank.js';
 import { DIGRAPH_SOUNDS, LETTERS, LETTER_NAMES, LONG_VOWEL_SOUNDS } from '../../content/phonics/letters.js';
 import { FETCH_ITEMS, allFrameTokens, allPrefixes, tokenWord } from '../../content/phonics/sentences.js';
 import { SPELL_WORDS } from '../../content/phonics/spelling.js';
-import { SPECIAL_WORDS, WORDS, spokenWord } from '../../content/phonics/words.js';
+import { WORDS, spokenWord } from '../../content/phonics/words.js';
 import {
   DEFAULT_NARRATOR,
   coreLine,
@@ -34,12 +34,14 @@ import {
   fighterId,
   group,
   heroKey,
+  homeQuestLine,
   letterNameLine,
   letterSoundLine,
   moveKey,
   moveLine,
   nameLine,
   narratorLine,
+  questLine,
   reformedLine,
   rimeLine,
   sillyLine,
@@ -49,8 +51,9 @@ import {
   wakeCastKey,
   wakeLine,
   wordLine,
+  type SpokenLine,
 } from '../../content/voice/ids.js';
-import { CHARGE_GESTURES, CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE_LINES, WAKE_VARIANTS, wakeVariant, type Template } from '../../content/voice/script.js';
+import { CHARGE_GESTURES, CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE_VARIANTS, wakeTemplate, wakeVariant, type Template } from '../../content/voice/script.js';
 import { isMain, LINES_FILE } from '../shared.js';
 import type { LineSpec } from './types.js';
 
@@ -64,6 +67,9 @@ interface Fill {
   threat?: string;
   threatSay?: string;
 }
+
+/** A content line's words as a line spec carries them (`say` only when it has one). */
+const spoken = (l: SpokenLine): SpokenLine => ({ text: l.text, ...(l.say ? { say: l.say } : {}) });
 
 /** Substitute placeholders into display text and spoken text separately. */
 function fill(t: Template, f: Fill): { text: string; say?: string } {
@@ -138,7 +144,7 @@ export function composeLines(): LineSpec[] {
         ...(spec.sayName ? { text: name.text, say: `${spec.sayName}!` } : { text: name.text }),
       });
       for (const taunt of spec.taunts) {
-        lines.push({ id: tauntLine(fid, taunt.key), speaker, group: group.fighter(fid), text: taunt.text, ...(taunt.say ? { say: taunt.say } : {}) });
+        lines.push({ id: tauntLine(fid, taunt.key), speaker, group: group.fighter(fid), ...spoken(taunt) });
       }
       lines.push({ id: ultimateLine(fid), speaker, group: group.fighter(fid), text: `${spec.ultimate.name}!` });
       // Big moves (power 2+) are called out as they fire.
@@ -149,7 +155,7 @@ export function composeLines(): LineSpec[] {
     // The villain good again, in the good voice, but in the villain's group:
     // only an episode with this villain says them, and it has that group loaded.
     for (const r of [...c.reformed.sorry, ...c.reformed.ending]) {
-      lines.push({ id: reformedLine(c.id, r.key), speaker: personOf(c.id), group: group.fighter(fighterId(c.id, true)), text: r.text, ...(r.say ? { say: r.say } : {}) });
+      lines.push({ id: reformedLine(c.id, r.key), speaker: personOf(c.id), group: group.fighter(fighterId(c.id, true)), ...spoken(r) });
     }
   }
 
@@ -157,14 +163,14 @@ export function composeLines(): LineSpec[] {
   // (person's) voice. Group core: the bedroom says them, before any narrator
   // group is sure to be loaded.
   for (const [owner, q] of Object.entries(QUESTS)) {
-    q.lines.forEach((l, i) => lines.push({ id: questLine(owner, i + 1), speaker: personOf(owner), group: group.core, text: l.text, ...(l.say ? { say: l.say } : {}) }));
+    q.lines.forEach((l, i) => lines.push({ id: questLine(owner, i + 1), speaker: personOf(owner), group: group.core, ...spoken(l) }));
   }
 
   // The hub scenes (item 037): each helper's (form's) lines in its person's
   // voice, in that person's narrator group: whenever it helps, it narrates.
   const pushScene = (ids: ReturnType<typeof hubStoryIds>, s: HubStory, speaker: string) => {
     const said = [...s.lines.map((l, i) => [ids.lines[i]!, l] as const), [ids.circle, s.circle] as const, [ids.done, s.done] as const];
-    for (const [id, l] of said) lines.push({ id, speaker, group: group.narrator(speaker), text: l.text, ...(l.say ? { say: l.say } : {}) });
+    for (const [id, l] of said) lines.push({ id, speaker, group: group.narrator(speaker), ...spoken(l) });
   };
   for (const [owner, scenes] of Object.entries(HUB_SCENES)) {
     const person = personOf(owner);
@@ -203,10 +209,8 @@ export function composeLines(): LineSpec[] {
   // Sentence key words: what the side rooms fetch, and each villain's counter word.
   for (const f of FETCH_ITEMS) wordLineWords.add(f.word);
   for (const c of ROSTER) wordLineWords.add(c.counter.word);
-  for (const w of SPECIAL_WORDS) wordLineWords.add(w.word);
-  // Move words: a right pick in the battle goes into the victory recap, which says it.
-  for (const w of MOVE_WORDS) wordLineWords.add(w);
-  // Every bank word (item 037): pictures, move pads and gift words alike.
+  // Every bank word (item 037): pictures, move pads and gift words alike (a
+  // right move pick goes into the victory recap, which says it).
   for (const w of BANK) wordLineWords.add(w.word);
   for (const w of [...wordLineWords].sort()) {
     // A name's sayName, or the bank's respelling where edge-tts misreads a word.
@@ -226,7 +230,7 @@ export function composeLines(): LineSpec[] {
   // The sentence game. Prefix lines trail off before the key word, so no line
   // says the key word before she has answered; the key word is its word_ line.
   for (const p of allPrefixes()) {
-    lines.push({ id: p.id, speaker: PHONICS_SPEAKER, group: group.phonics, text: p.text, ...(p.say ? { say: p.say } : {}) });
+    lines.push({ id: p.id, speaker: PHONICS_SPEAKER, group: group.phonics, ...spoken(p) });
   }
   // Every other token in a sentence gets a word line, for the yellow hint.
   const forms = tokenForms();
@@ -244,7 +248,7 @@ export function composeLines(): LineSpec[] {
 
   // The bedroom wake-up, in the waker's own voice. Group core: the bedroom is
   // the first thing after the title, before any narrator group is loaded.
-  const wake = (key: string) => WAKE_LINES.find((t) => t.key === key)!;
+  const wake = (key: string) => wakeTemplate(key)!;
   for (const waker of WAKERS) {
     const push = (key: string, t: Template, f: Fill) => lines.push({ id: wakeLine(waker, key), speaker: waker, group: group.core, ...fill(t, f) });
     // Three variants of each (item 040): `up`, `up_2`, `up_3`; `good_<hero>`, `good_<hero>_2`...
@@ -292,7 +296,7 @@ export function composeLines(): LineSpec[] {
     for (const t of CHARGE_GESTURES) lines.push({ id: narratorLine(n, t.key), speaker: n, group: g, ...fill(t, {}) });
     // For a helper with no quest place or no hub scene of their own: the
     // home quest's lines and the fallback scene, in every narrator's voice.
-    HOME_QUEST.lines.forEach((l, i) => lines.push({ id: homeQuestLine(n, i + 1), speaker: n, group: g, text: l.text, ...(l.say ? { say: l.say } : {}) }));
+    HOME_QUEST.lines.forEach((l, i) => lines.push({ id: homeQuestLine(n, i + 1), speaker: n, group: g, ...spoken(l) }));
     ANY_SCENES.forEach((s, i) => pushScene(hubStoryIds(null, n, i + 1, s), s, n));
   }
 
@@ -302,14 +306,14 @@ export function composeLines(): LineSpec[] {
     for (const e of ENDINGS) {
       for (const key of ['open', 'cheer', 'close'] as const) {
         const l = e[key];
-        lines.push({ id: endingLine(p.id, e.id, key), speaker: p.id, group: group.ending(p.id), text: l.text, ...(l.say ? { say: l.say } : {}) });
+        lines.push({ id: endingLine(p.id, e.id, key), speaker: p.id, group: group.ending(p.id), ...spoken(l) });
       }
     }
   }
   for (const e of ENDINGS) {
     if (!e.fit) continue;
     const dad = personOf(e.fit.form);
-    lines.push({ id: endingLine(dad, e.id, 'fit'), speaker: dad, group: group.ending(dad), text: e.fit.text, ...(e.fit.say ? { say: e.fit.say } : {}) });
+    lines.push({ id: endingLine(dad, e.id, 'fit'), speaker: dad, group: group.ending(dad), ...spoken(e.fit) });
   }
 
   // Two lines under one id would silently shadow each other in the manifest.

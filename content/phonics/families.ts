@@ -2,9 +2,10 @@
  * Word families for the word machine (item 026): onset + rime, CAT HAT BAT RAT.
  *
  * Since item 037 a family comes from the word bank (content/phonics/bank.ts):
- * a rime with an entry in RIMES and at least two bank words whose onset is a
- * single letter (any role: CAT and VAT are pictures, ZAP and NAP actions; a
- * family no longer needs three pictures). The game teaches that changing the
+ * a rime with an entry in RIMES and at least two pictured bank words (THINGS)
+ * whose onset is a single letter (item 040; a family no longer needs three
+ * pictures); `all` also lists the action words with the rime (ZAP, NAP), which
+ * do not count toward the two. The game teaches that changing the
  * first sound makes a new word, which needs a second word to change to.
  * `words` are its pictured words (make mode shows a picture, so only those
  * are built); `all` every single-onset word with the rime, for the later
@@ -129,7 +130,7 @@ export const FAMILIES: Family[] = Object.entries(RIMES)
     return { rime, say: r.say, words: ws.filter((w) => THINGS.includes(w)).map((w) => w.word), all: ws.map((w) => w.word), silly: r.silly };
   })
   // Two pictures to build at least (item 040: an `odd` word like WIG is no picture).
-  .filter((f) => f.all.length >= 2 && f.words.length >= 2);
+  .filter((f) => f.words.length >= 2);
 
 export const FAMILY_BY_RIME: Record<string, Family> = Object.fromEntries(FAMILIES.map((f) => [f.rime, f]));
 

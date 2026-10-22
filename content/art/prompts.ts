@@ -23,13 +23,9 @@ export const SPRITE_STYLE = `${STYLE} Single subject centered, full body, on a f
 
 export const BACKGROUND_STYLE = `${STYLE} A full-bleed background painting filling the whole frame edge to edge, no border, no characters.`;
 
-/**
- * Sprites with no green of their own. Keying treats every green tint in them as
- * the screen showing through (a cage's faint back bars), not just the edges.
- * Leave out anything meant to have green in it (a leaf, a dragon).
- */
 // Item 046: Dada Jason's good forms and their face cards wear forest green, which
-// this keying would fade to see-through grey-teal; his evil forms stay in.
+// the no-green keying (NO_GREEN, below) would fade to see-through grey-teal; his
+// evil forms stay in.
 const GREEN_JASON = ['dada_jason', 'dada_jason_warrior', 'dada_jason_warlock'].flatMap((c) => [`char_${c}_good`, `face_${c}`]);
 const FAMILY_ART = ['julia', 'ellie', 'dada_matt', 'dada_jason', 'dada_matt_lifter', 'dada_matt_cyber', 'dada_matt_blade', 'dada_jason_warrior', 'dada_jason_warlock'].flatMap((c) => [`char_${c}_good`, `char_${c}_evil`, `face_${c}`]).filter((id) => !GREEN_JASON.includes(id));
 // Item 025's counters and decals: glows and metal, no green of their own.
@@ -45,26 +41,35 @@ const ENDING_PROPS = ENDINGS.flatMap((e) => e.props.map((p) => endingPropArt(p.i
 // The fight styles' props (item 031): a finish banner, a trophy, a cooking station.
 const FIGHT_PROPS = FIGHTS.flatMap((f) => (f.props ?? []).map((p) => fightPropArt(p.id)));
 // The word bank's new words (item 037) with no green of their own: not frog, twig, pod, plum, fig, slug or snap (a crocodile).
+const BANK_037 = ['jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'gum', 'bun', 'hut', 'sub', 'nap', 'wag', 'jab', 'red', 'hex', 'jig', 'mix', 'jog', 'bop', 'dot', 'hum', 'yum', 'drum', 'crab', 'flag', 'sled', 'nest', 'tent', 'desk', 'belt', 'vest', 'gift', 'lamp', 'hand', 'mask', 'raft', 'plug', 'ant', 'milk', 'jump', 'spin', 'swim', 'flip', 'stomp', 'slam', 'grab', 'clap', 'bump', 'skip', 'twist', 'melt', 'lift', 'plop', 'flop', 'trap', 'blast', 'drip', 'ship', 'fish', 'duck', 'sock', 'moth', 'shed', 'chick', 'chop', 'kick', 'rush'].map((w) => `pic_${w}`);
 // Item 040's words: none is green.
+const BANK_040 = ['vet', 'chest', 'bin', 'rock', 'clock', 'stick', 'brush', 'truck', 'bath', 'plant', 'crib', 'key', 'yoyo'].map((w) => `pic_${w}`);
 // Item 054's words: none is green.
 const BANK_054 = ['mat', 'man', 'lid', 'lock'].map((w) => `pic_${w}`);
 // Item 056's words but the green ones (GRASS, ELF, BUSH), and item 059's TEN.
 const BANK_056 = ['egg', 'bell', 'doll', 'tap', 'glass', 'sink', 'king', 'ring', 'wing', 'shell', 'chips', 'thumb', 'lamb', 'quest', 'quilt', 'queen', 'goat', 'jeep', 'sheep', 'three', 'cheese', 'kite', 'bike', 'vase', 'cake', 'ten'].map((w) => `pic_${w}`);
-const BANK_040 = ['vet', 'chest', 'bin', 'rock', 'clock', 'stick', 'brush', 'truck', 'bath', 'plant', 'crib', 'key', 'yoyo'].map((w) => `pic_${w}`);
-const BANK_037 = ['jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'gum', 'bun', 'hut', 'sub', 'nap', 'wag', 'jab', 'red', 'hex', 'jig', 'mix', 'jog', 'bop', 'dot', 'hum', 'yum', 'drum', 'crab', 'flag', 'sled', 'nest', 'tent', 'desk', 'belt', 'vest', 'gift', 'lamp', 'hand', 'mask', 'raft', 'plug', 'ant', 'milk', 'jump', 'spin', 'swim', 'flip', 'stomp', 'slam', 'grab', 'clap', 'bump', 'skip', 'twist', 'melt', 'lift', 'plop', 'flop', 'trap', 'blast', 'drip', 'ship', 'fish', 'duck', 'sock', 'moth', 'shed', 'chick', 'chop', 'kick', 'rush'].map((w) => `pic_${w}`);
+
+/**
+ * Sprites with no green of their own. Keying treats every green tint in them as
+ * the screen showing through (a cage's faint back bars), not just the edges.
+ * Leave out anything meant to have green in it (a leaf, a dragon).
+ */
+const NO_GREEN = new Set([...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
+
 /**
  * Sprites in dark green of their own (item 049): keying takes out only the
  * bright, light screen green caught in them (between whisk wires, a lime glow)
  * and leaves the dark green. Dada Jason's good forms and face cards.
  */
-export const LIGHT_GREEN = new Set(GREEN_JASON);
+const LIGHT_GREEN = new Set(GREEN_JASON);
+
+/** How `keyGreen` (tools/art/chroma.ts) cuts an image: not at all, every green tint, or only light green. */
+export type KeyMode = 'keep' | 'noGreen' | 'lightGreen';
 
 /** How `keyGreen` cuts an id, for `art:gen`, `art:alts` and `art:pick` alike. */
-export function keyMode(id: string): 'keep' | 'noGreen' | 'lightGreen' {
+export function keyMode(id: string): KeyMode {
   return NO_GREEN.has(id) ? 'noGreen' : LIGHT_GREEN.has(id) ? 'lightGreen' : 'keep';
 }
-
-export const NO_GREEN = new Set([...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS,'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
 
 /**
  * Likeness references for the family (Matt, 2026-10-18): a photo in the
