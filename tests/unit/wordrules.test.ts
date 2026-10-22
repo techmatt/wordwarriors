@@ -147,3 +147,15 @@ test('LEG and SOCK are never beside each other (item 092: LEG\'s picture is a le
     assert.ok(!distractors(new ProgressStore(memory()), 'leg', rand).includes('sock'), `seed ${seed}: SOCK beside LEG`);
   }
 });
+
+test("the villain's named counter word is left for the attic: no side room reads it (item 092: Evil Tiamat's word machine built HAT)", () => {
+  const input = (games: EpisodeInput['games']): EpisodeInput => ({ fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic', games });
+  const sentence = SENTENCE_GAMES.find((g) => g.slots.includes('fetch'))!;
+  const counter = SENTENCE_GAMES.find((g) => g.slots.includes('counter'))!;
+  for (const a of [MINIGAME_BY_ID.word_machine!, sentence]) {
+    for (let seed = 1; seed <= 80; seed++) {
+      const plans = episodePlans(new ProgressStore(memory()), input([a, sentence, counter]), seeded(spread(seed)));
+      for (const p of plans.slice(0, 2)) assert.ok(!p.fetches.includes('hat'), `seed ${seed}: ${p.kind} reads HAT`);
+    }
+  }
+});

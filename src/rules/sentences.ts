@@ -277,9 +277,11 @@ interface KeyPlanner {
 type KindPlanner = OwnWordsPlanner<unknown> | KeyPlanner;
 
 // The word machine builds several words (item 026): no room's word, its own included, is a move pad.
+// Nor the villain's own named counter word, so the attic can still draw it (item 092: Evil Tiamat's
+// machine built HAT and the Magic Hat never came), as the bridge and Charge keep it.
 const MACHINE: OwnWordsPlanner<MachinePlan> = {
   plan: (ctx) => {
-    const m = planMachine(ctx.store, { avoid: [...ctx.avoid, ...ctx.moves] }, ctx.rand);
+    const m = planMachine(ctx.store, { avoid: [...ctx.avoid, ...ctx.moves, ...ctx.named] }, ctx.rand);
     // No family has two words this episode can use (it never happens with today's words).
     return m.rounds.length ? m : null;
   },
@@ -413,7 +415,8 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
       keys.push(o.reads.at(-1) ?? '');
       continue;
     }
-    const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w)).filter(fits(i));
+    // Not the villain's named counter word either: the attic's to draw (item 092).
+    const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w) && !ctx.named.includes(w)).filter(fits(i));
     keys.push(drawKey(store, eligible, rand, [...keys, ...taken]));
   }
   // The counter: not a word on battle 1's move pads, not a word fetched this
