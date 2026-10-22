@@ -20,3 +20,10 @@ export function variant(key: string): string {
 
 /** Whether line id `id` is `base` or one of its variants (`nar_ellie_room_find_2` of `nar_ellie_room_find`). */
 export const isVariant = (id: string, base: string): boolean => id === base || (id.startsWith(`${base}_`) && /^\d+$/.test(id.slice(base.length + 1)));
+
+/**
+ * Each fighter's taunts said since its round of them began (item 087): the
+ * battle draws a taunt not in it (BattleScene `pickTaunt`), and the bedroom's
+ * far-off taunt counts too, so the battle does not say it again soon.
+ */
+export const tauntsSaid = new Map<string, string[]>();

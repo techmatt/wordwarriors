@@ -41,6 +41,7 @@ import {
 } from '../audio/sfx';
 import { DEPTH, DOOR_SPARKLE_MS, GAME_WIDTH } from '../config';
 import { bedroomTaunt, castArt, episode, helper, questSetupLine, wakeKey, waker as wakerId, type Step } from '../episode/Episode';
+import { tauntsSaid } from '../episode/lineVariants';
 import { bob, burst, flash, popIn, shake, squash, wiggle } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { applyHouseMood } from '../world/houseMood';
@@ -228,7 +229,10 @@ export class BedroomScene extends RoomScene {
     const taunt = bedroomTaunt();
     if (taunt) {
       shake(this, 2, 300);
-      await this.guard(voiceBus.say(tauntLine(fighterId(episode.villain, true), taunt.key), 'bark'));
+      // The battle's taunts go round after it (item 087).
+      const id = fighterId(episode.villain, true);
+      tauntsSaid.set(id, [...(tauntsSaid.get(id) ?? []).filter((k) => k !== taunt.key), taunt.key]);
+      await this.guard(voiceBus.say(tauntLine(id, taunt.key), 'bark'));
     }
 
     // The quest (item 025): the helper says where they will train.
