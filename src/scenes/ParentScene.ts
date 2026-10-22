@@ -57,6 +57,11 @@ export class ParentScene extends Phaser.Scene {
   }
 
   create(): void {
+    // During a game played from minigame debug mode (item 086) the page shows the store as it was before it.
+    progress.outsideHold(() => this.draw());
+  }
+
+  private draw(): void {
     hookState.scene = 'Parent';
     this.resetArmed = false;
     this.controls = new Controls(this);

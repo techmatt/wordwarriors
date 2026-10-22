@@ -31,6 +31,10 @@ test('a held store records and draws as usual, saves nothing, and release puts i
   store.setBridgeLevel('dog', 3);
   assert.equal(store.stat('words', 'dog').seen, 1, 'the game under test reads what it recorded');
   assert.equal(storage.getItem(STORE_KEY), blob, 'nothing saved while held');
+  // The grown-ups page, opened during the game, reads the store as it was.
+  assert.equal(store.outsideHold(() => store.stat('words', 'dog').seen), 0);
+  assert.deepEqual(store.outsideHold(() => store.sessionSnapshot()), session);
+  assert.equal(store.stat('words', 'dog').seen, 1, 'and the game\'s own records are back after it');
 
   store.release();
   assert.deepEqual(store.snapshot(), lifetime);
@@ -39,4 +43,15 @@ test('a held store records and draws as usual, saves nothing, and release puts i
   // Saving again after the release.
   store.record('words', 'sun', true, 0);
   assert.notEqual(storage.getItem(STORE_KEY), blob);
+});
+
+test('an erase (F8 twice) during a hold is for good: saved at once and not put back on release', () => {
+  const storage = memory();
+  const store = new ProgressStore(storage);
+  store.record('words', 'cat', true, 0);
+  store.hold();
+  store.reset();
+  store.release();
+  assert.equal(store.stat('words', 'cat').seen, 0);
+  assert.equal(new ProgressStore(storage).stat('words', 'cat').seen, 0);
 });

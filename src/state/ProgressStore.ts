@@ -187,8 +187,26 @@ export class ProgressStore {
     this.held = null;
   }
 
+  /** Read the store as it was before `hold()` (the grown-ups page opened during a debug game shows none of it). */
+  outsideHold<T>(f: () => T): T {
+    if (!this.held) return f();
+    const now = { data: this.data, session: this.session };
+    this.data = this.held.data;
+    this.session = this.held.session;
+    try {
+      return f();
+    } finally {
+      this.data = now.data;
+      this.session = now.session;
+    }
+  }
+
   private save(): void {
     if (this.held) return;
+    this.write();
+  }
+
+  private write(): void {
     try {
       this.storage?.setItem(STORE_KEY, JSON.stringify(this.data));
     } catch {
@@ -344,7 +362,9 @@ export class ProgressStore {
     this.data = empty();
     // Today's column too: an erase that left it showed counts for words with none (item 039).
     this.session = empty();
-    this.save();
+    // Erased during a debug game (item 086): erased for good, not put back on release.
+    if (this.held) this.held = { data: empty(), session: empty() };
+    this.write();
   }
 }
 
