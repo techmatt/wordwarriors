@@ -2,8 +2,15 @@
  * Playwright config for the bug-hunt checker (item 039, `tests/qa/*.pw.ts`;
  * the `.pw.ts` name keeps it out of the suite). Its own port, 5195, so it
  * never meets the dev server, a test run or the screenshot tools.
- * The GPU draws, as in the suite (`WW_GPU=0` for software GL). Its server
- * does not watch files (`vite.qa.config.ts`): edits during a sweep wait for the next one.
+ * The GPU draws, as in the suite (`WW_GPU=0` for software GL).
+ *
+ * It serves a production build, as the suite does (item 092; tests/vite.test.config.ts,
+ * built into its own folder so a test run in the same worktree keeps its own): the dev
+ * server spent its first minutes scanning the tree (the voice and art junctions too),
+ * every scenario of a sweep timed out at boot behind it, and voice fetches took 4 to 9 s
+ * each after. A build is also what Julia plays. `QA_DEV_SERVER=1` serves the dev server
+ * instead (`vite.qa.config.ts`: no watching, no hot reload). Either way edits during a
+ * sweep wait for the next one.
  */
 
 import { defineConfig } from '@playwright/test';
@@ -12,6 +19,8 @@ import { gpuProjects } from '../gpu';
 
 // QA_PORT: a second run beside a sweep (a `QA_LOOK` at one scene) needs its own.
 const PORT = Number(process.env.QA_PORT ?? 5195);
+/** The checker's build, apart from the suite's (`WW_TEST_DIST`, tests/vite.test.config.ts). */
+const QA_DIST = 'node_modules/.ww-qa-dist';
 
 export default defineConfig({
   testDir: '.',
@@ -25,10 +34,13 @@ export default defineConfig({
   use: { baseURL: `http://localhost:${PORT}` },
   projects: gpuProjects({ args: ['--enable-precise-memory-info'] }),
   webServer: {
-    command: `npx vite --config tests/qa/vite.qa.config.ts --port ${PORT} --strictPort`,
+    command: process.env.QA_DEV_SERVER
+      ? `npx vite --config tests/qa/vite.qa.config.ts --port ${PORT} --strictPort`
+      : `npx vite build -c tests/vite.test.config.ts --logLevel warn && npx vite preview -c tests/vite.test.config.ts --port ${PORT} --strictPort`,
     cwd: '../..',
+    env: { WW_TEST_DIST: QA_DIST },
     url: `http://localhost:${PORT}`,
     reuseExistingServer: false,
-    timeout: 60_000,
+    timeout: 120_000,
   },
 });

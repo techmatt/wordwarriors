@@ -28,7 +28,7 @@ import { SPEED, boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBa
 // Item 083: real voice and real walking: the checker looks and listens as she would.
 VOICE.mode = 'real';
 driver.walk = true;
-import { layoutIssues, leakIssues, logIssues, placeholderArt, voiceBuildIssues, type Issue } from './checks';
+import { layoutIssues, leakIssues, logIssues, onlyLineVariants, placeholderArt, storeChanges, voiceBuildIssues, type Issue } from './checks';
 import { qaLayout, qaSince } from './probe';
 import { clippedIssues, giveawayIssues, pacingIssues, repeatedLines, spellingIssues, tauntIssues, variantIssues } from './wording';
 import { NARRATOR_LINES, lineVariantKeys } from '../../content/voice/script';
@@ -181,6 +181,8 @@ class Recorder {
   private visit = { scene: '', at: 0 };
   visits: { scene: string; ms: number; wrong: boolean }[] = [];
   wrong = false;
+  /** No voice manifest on purpose (`voiceless`, M19): every line is a caption with no clip, so `voice-silent ... (none)` is the point, not an issue. */
+  voiceless = false;
   constructor(
     private readonly page: Page,
     private readonly dir: string,
@@ -192,6 +194,7 @@ class Recorder {
 
   add(list: Issue[], shot?: string): void {
     for (const i of list) {
+      if (this.voiceless && i.kind === 'voice-silent' && /\(none\)/.test(i.detail)) continue;
       const have = this.issues.get(i.key);
       if (have) have.count++;
       else this.issues.set(i.key, { ...i, ...(shot ? { shot } : {}), count: 1 });
@@ -396,10 +399,12 @@ async function debugProbe(page: Page, rec: Recorder, p: Point, game: (typeof DEB
   const back = await until(page, (s) => s.scene !== 'Debug' && s.scene !== 'Wait' && Boolean(s.room?.player), 30_000, `back from debug to ${p}`);
   await page.waitForTimeout(500);
   const now = await store(page);
-  const changed = Object.keys({ ...was, ...now }).filter((k) => was[k] !== now[k]);
+  const changed = storeChanges(was, now);
   log.push({ point: p, game, scene: before.scene, back: back.scene, changed, episode: [ep(before), ep(back)] });
   if (back.scene !== before.scene) bug('debug-return', `key 0 back came to ${back.scene}`);
-  if (changed.length) bug('debug-leak', `a debug ${game} changed ${changed.join(', ')}`);
+  // Item 092: the room key 0 brings back starts again and says its opening line's next variant, a look.
+  if (onlyLineVariants(changed)) rec.add([{ kind: 'debug-restart-line', severity: 'look', scene: before.scene, detail: `${p}: the room back from debug said its opening line again: ${changed.join(', ')}`, key: `debugline:${p}` }], rec.lastShot);
+  else if (changed.length) bug('debug-leak', `a debug ${game} changed ${changed.join(', ')}`);
   if (ep(back) !== ep(before)) bug('debug-leak', `a debug ${game} changed the episode: ${ep(before)} -> ${ep(back)}`);
   if (await tag()) bug('debug-tag', 'the DEBUG tag stayed after debug mode was off');
 }
@@ -441,7 +446,7 @@ async function endMash(page: Page, rec: Recorder, log: Record<string, unknown>[]
   await rec.capture('theend_after_f9');
   if (back.scene !== 'TheEnd') rec.add([{ kind: 'parent-return', severity: 'bug', scene: 'TheEnd', detail: `F9 and back from THE END came back to ${back.scene}`, key: 'parentback:theend' }], rec.lastShot);
   const now = await store(page);
-  const changed = Object.keys({ ...was, ...now }).filter((k) => was[k] !== now[k]);
+  const changed = storeChanges(was, now);
   log.push({ point: 'theend', back: back.scene, changed });
   if (changed.length) rec.add([{ kind: 'end-store', severity: 'bug', scene: 'TheEnd', detail: `presses at THE END changed ${changed.join(', ')}`, key: 'endstore' }], rec.lastShot);
   if (back.scene === 'TheEnd') {
@@ -532,6 +537,7 @@ function where(s: WWState): string {
 /** Everything in the store, raw (item 080's reload probe compares it across a reload). */
 const store = (page: Page) => page.evaluate(() => Object.fromEntries(Object.keys(localStorage).map((k) => [k, localStorage.getItem(k)])));
 
+
 /** Thrown by the reload probe: the episode in play is gone, the next starts at the title. */
 class Reloaded extends Error {}
 
@@ -576,7 +582,7 @@ function probes(page: Page, sc: Scenario, rec: Recorder, reloadAt: Point | null,
       const back = await until(page, (s) => s.scene !== 'Parent' && s.scene !== 'Wait', 30_000, `back from the grown-ups page to ${p}`);
       await page.waitForTimeout(500);
       const now = await store(page);
-      const changed = Object.keys({ ...was, ...now }).filter((k) => was[k] !== now[k]);
+      const changed = storeChanges(was, now);
       log.push({ point: p, scene: before.scene, back: back.scene, changed });
       if (back.scene !== before.scene) rec.add([{ kind: 'parent-return', severity: 'bug', scene: before.scene, detail: `${p}: F9 and back came back to ${back.scene}`, key: `parentback:${p}` }], rec.lastShot);
       if (changed.length) rec.add([{ kind: 'parent-store', severity: 'look', scene: before.scene, detail: `${p}: the grown-ups page and back changed ${changed.join(', ')}`, key: `parentstore:${p}` }], rec.lastShot);
@@ -592,7 +598,7 @@ function probes(page: Page, sc: Scenario, rec: Recorder, reloadAt: Point | null,
       rec.reloaded();
       const s = await until(page, (st) => st.scene === 'Title', 60_000, `the title after reloading at ${p}`);
       const now = await store(page);
-      const changed = Object.keys({ ...was, ...now }).filter((k) => was[k] !== now[k]);
+      const changed = storeChanges(was, now);
       log.push({ point: p, scene: before.scene, episodes: [before.progress.episodes, s.progress.episodes], bag: [before.progress.bag, s.progress.bag], changed, was, now });
       if (changed.length) rec.add([{ kind: 'reload-store', severity: 'look', scene: before.scene, detail: `${p}: a reload changed ${changed.join(', ')}`, key: `reloadstore:${p}` }]);
       throw new Reloaded(p);
@@ -690,10 +696,13 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
   test(`qa ${sc.name}`, async ({ page }) => {
     const errors = collectErrors(page);
     if (sc.progress) await seedProgress(page, seededProgress(sc.progress));
+    // Before boot, which loads the manifest (item 092: after it, `voiceless` played with every voice).
+    if (sc.voiceless) await page.route(/\/voice-gen\/manifest\.json/, (route) => route.fulfill({ status: 404, body: 'not built' }));
     await boot(page, `?${sc.query}&qa=1`, SPEED);
     const dir = `${OUT}/${sc.name}`;
     const rec = new Recorder(page, dir);
     rec.wrong = Boolean(sc.wrong);
+    rec.voiceless = Boolean(sc.voiceless);
     const started = Date.now();
     const counts: Record<string, number>[] = [];
     const heap: number[] = [];
@@ -704,7 +713,6 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     const resizing = sc.resize ? resizer(page) : null;
     const net = { failed: [] as string[] };
     if (sc.net) await network(page, sc.net, net);
-    if (sc.voiceless) await page.route(/\/voice-gen\/manifest\.json/, (route) => route.fulfill({ status: 404, body: 'not built' }));
     // Where each episode's transcript ends (item 089's taunt check), as voice lines so far.
     const cuts: number[] = [];
     // Item 080's probes: one record per point, and one episode per reload point plus one played through.

@@ -117,8 +117,8 @@ const FETCHABLE = new Set(FETCH_ITEMS.map((i) => i.word));
  */
 export const NAMED_COUNTER_BOOST = 6;
 
-/** Bank things that take no "A" (some, not one): never the key word of a "...A {x}" frame (item 069). */
-export const NO_ARTICLE = new Set(['cheese', 'milk', 'jam', 'grass', 'chips']);
+/** Bank things that take no "A" (some, not one): never the key word of a "...A {x}" frame (item 069; GUM item 092). */
+export const NO_ARTICLE = new Set(['cheese', 'milk', 'jam', 'grass', 'chips', 'gum']);
 
 /**
  * Two picture words for the room's other objects: not the key word, not a

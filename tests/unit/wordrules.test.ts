@@ -14,7 +14,7 @@ import { distractorsFor, withStems } from '../../src/rules/bank';
 import { GESTURE_WORDS, gestureWords, planCharge } from '../../src/rules/charge';
 import { MINIGAME_BY_ID, SENTENCE_GAMES } from '../../src/rules/minigames';
 import { drawGift, drawMove } from '../../src/rules/moves';
-import { BAG_WORDS, NO_ARTICLE, drawKey, episodePlans, saidEarly, type EpisodeInput } from '../../src/rules/sentences';
+import { BAG_WORDS, NO_ARTICLE, distractors, drawKey, episodePlans, saidEarly, type EpisodeInput } from '../../src/rules/sentences';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { memory, seededLcg as seeded, spread } from './seeds';
 
@@ -137,5 +137,13 @@ test("the fight styles' floating words are never bank words (the cook-off's YUM!
       const hits = m[1]!.toLowerCase().split(/[^a-z]+/).filter((w) => BANK_BY_WORD[w]);
       assert.deepEqual(hits, [], `${f}: ${m[1]}`);
     }
+  }
+});
+
+test('LEG and SOCK are never beside each other (item 092: LEG\'s picture is a leg in a striped sock and a shoe)', () => {
+  for (let seed = 1; seed <= 40; seed++) {
+    const rand = seeded(spread(seed));
+    assert.ok(!distractors(new ProgressStore(memory()), 'sock', rand).includes('leg'), `seed ${seed}: LEG beside SOCK`);
+    assert.ok(!distractors(new ProgressStore(memory()), 'leg', rand).includes('sock'), `seed ${seed}: SOCK beside LEG`);
   }
 });

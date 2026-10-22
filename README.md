@@ -402,7 +402,9 @@ In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
 - **A busy machine slows the sweep's own server:** with many agents or a typecheck
   running beside it, voice fetches from the checker's Vite server passed their 15 s
   timeout (`voice: could not decode ... AbortError` in the log) and lines played silent.
-  Sweep on a quiet machine, or read those `voice-silent` issues as the machine's.
+  Sweep on a quiet machine, or read those `voice-silent` issues as the machine's. Much of
+  that was the dev server's own scan (below): on the build server, item 092's sweeps had no
+  decode failures.
 - **Silent lines at test speed are a look, not a bug** (item 069): at speed 5 the game asks
   for lines five times faster than the decode queue serves them (a drawn narrator's ~500
   clips), so lines still `queued` or `decoding` play silent in a sweep, while a whole
@@ -452,8 +454,13 @@ In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
   and contact sheets in `scratch/qa/<tag>/sheets/`.
 - **One moment instead of a sweep:** `QA_LOOK='scene=house&cast=default' QA_LOOK_S=30
   QA_LOOK_GREEN=0` records that URL for 30 s into `scratch/qa/<tag>/look/`.
-- Its server (port 5195, `QA_PORT` to move it) does not watch files, so editing `src/`
-  during a sweep neither reloads it nor mixes code. **Do not run a second browser run
+- Its server (port 5195, `QA_PORT` to move it) serves a production build made as the
+  sweep starts (`node_modules/.ww-qa-dist`, as the suite does; item 092), so editing
+  `src/` during a sweep neither reloads it nor mixes code. The dev server it used before
+  (`QA_DEV_SERVER=1` brings it back) spent its first minutes scanning the tree, voice and
+  art junctions included: every scenario of a sweep timed out at boot behind it ("timed
+  out waiting for title", an empty shot), and once up it took 4 to 9 s a voice fetch
+  (`could not decode ... AbortError`), on an idle machine. **Do not run a second browser run
   (a look, the test suite) beside a sweep:** on this machine the second GPU browser
   starves the first, and scenarios time out at boot with an empty scene (seen in item 039).
 - Known issues and Matt's calls are in `docs/qa-findings.md`; a hunt reads it first and

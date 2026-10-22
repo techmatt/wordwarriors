@@ -41,6 +41,20 @@ export interface Layout {
  * overlap, more than a few pixels each way. Words inside a target (its
  * label) or inside a tagged cover (the box's own words) are not covers.
  */
+/**
+ * Overlaps already ruled on in docs/qa-findings.md, a look and not a bug
+ * (item 092: every scenario of a sweep reported them): W12's bedroom door
+ * under the face card and the magic circle's edge (up to 30 px) under the story's last line,
+ * W5's entry door on the door line, and W21's move-choice pad ring grazed (up
+ * to 15 px of its bottom edge) by the partner's face card.
+ */
+export function ruledCover(scene: string, target: string, cover: string, overlapH: number): boolean {
+  if (cover !== 'dialogue') return false;
+  if ((scene === 'Bedroom' || scene === 'Entry') && target === 'door') return true;
+  if (scene === 'Hub' && target === 'circle') return overlapH <= 30;
+  return scene === 'Battle' && target.startsWith('pad_') && overlapH <= 15;
+}
+
 export function coverIssues(l: Pick<Layout, 'texts' | 'targets' | 'covers' | 'hudDepth'>, scene: string): Issue[] {
   const out: Issue[] = [];
   const centre = (b: Box) => [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2] as const;
@@ -60,9 +74,10 @@ export function coverIssues(l: Pick<Layout, 'texts' | 'targets' | 'covers' | 'hu
       const w = Math.min(t.b[2], c.b[2]) - Math.max(t.b[0], c.b[0]);
       const h = Math.min(t.b[3], c.b[3]) - Math.max(t.b[1], c.b[1]);
       if (w <= 4 || h <= 4) continue;
+      const ruled = ruledCover(scene, t.id, c.kind, h);
       out.push({
-        kind: 'target-covered',
-        severity: 'bug',
+        kind: ruled ? 'target-covered-ruled' : 'target-covered',
+        severity: ruled ? 'look' : 'bug',
         scene,
         detail: `${t.id} [${t.b.join(',')}] under the ${c.kind} [${c.b.join(',')}], ${w}x${h} px`,
         key: `covered:${scene}:${c.kind}:${t.id}`,
@@ -249,3 +264,39 @@ export function logIssues(q: Since, speed = 1): Issue[] {
   }
   return out;
 }
+
+/**
+ * What changed between two snapshots of localStorage (item 092), named down to
+ * a field's own entry where a value is JSON: `wordwarriors.progress
+ * recent.line:room_listen`, `wordwarriors.progress words.box`.
+ */
+export function storeChanges(was: Record<string, string | null>, now: Record<string, string | null>): string[] {
+  const parse = (v: string | null | undefined): unknown => {
+    try {
+      return v == null ? undefined : JSON.parse(v);
+    } catch {
+      return v;
+    }
+  };
+  const out: string[] = [];
+  const walk = (a: unknown, b: unknown, path: string, depth: number): void => {
+    if (JSON.stringify(a) === JSON.stringify(b)) return;
+    const objects = a && b && typeof a === 'object' && typeof b === 'object' && !Array.isArray(a) && !Array.isArray(b);
+    if (!objects || depth === 0) {
+      out.push(path);
+      return;
+    }
+    const [x, y] = [a as Record<string, unknown>, b as Record<string, unknown>];
+    for (const k of new Set([...Object.keys(x), ...Object.keys(y)])) walk(x[k], y[k], path ? `${path}.${k}` : k, depth - 1);
+  };
+  for (const k of new Set([...Object.keys(was), ...Object.keys(now)])) {
+    if (was[k] === now[k]) continue;
+    const from = out.length;
+    walk(parse(was[k]), parse(now[k]), '', 2);
+    for (let i = from; i < out.length; i++) out[i] = `${k} ${out[i]}`.trim();
+  }
+  return out;
+}
+
+/** Changes that are only line variants said (`recent.line:<key>`): a room started again says its opening line's next variant. */
+export const onlyLineVariants = (changes: string[]): boolean => changes.length > 0 && changes.every((c) => /^wordwarriors\.progress recent\.line:/.test(c));

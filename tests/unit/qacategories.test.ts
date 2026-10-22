@@ -10,7 +10,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
 
-import { logIssues, voiceBuildIssues } from '../qa/checks';
+import { logIssues, onlyLineVariants, ruledCover, storeChanges, voiceBuildIssues } from '../qa/checks';
 import { britishIn, clippedIn, giveawayIssues, tauntIssues, variantIssues } from '../qa/wording';
 
 const LINES: { id: string; text: string; say?: string }[] = JSON.parse(readFileSync('content/voice/lines.json', 'utf8'));
@@ -89,4 +89,26 @@ test('variant and taunt checks (item 089): a variant back before its round is do
   assert.match(back[0]!.detail, /^right: right again after right_2/);
   assert.deepEqual(tauntIssues([['taunt_smaug_gold', 'taunt_smaug_gold'], ['taunt_smaug_gold']]), []);
   assert.deepEqual(tauntIssues([['taunt_smaug_gold', 'x', 'taunt_smaug_gold', 'taunt_smaug_gold']]).map((i) => i.detail), ['taunt_smaug_gold said 3 times in episode 1 (cap 2)']);
+});
+
+test('store changes (item 092): named down to the field, and a restarted room\'s line variant told apart from a leak', () => {
+  const blob = (o: object) => JSON.stringify({ version: 9, words: { box: { seen: 1 } }, recent: { 'line:room_listen': ['a'] }, ...o });
+  const was = { 'wordwarriors.progress': blob({}), other: 'x' };
+  assert.deepEqual(storeChanges(was, { ...was }), []);
+  const variant = storeChanges(was, { ...was, 'wordwarriors.progress': blob({ recent: { 'line:room_listen': ['a', 'b'] } }) });
+  assert.deepEqual(variant, ['wordwarriors.progress recent.line:room_listen']);
+  assert.ok(onlyLineVariants(variant));
+  const leak = storeChanges(was, { 'wordwarriors.progress': blob({ words: { box: { seen: 2 } } }) });
+  assert.deepEqual(leak, ['wordwarriors.progress words.box', 'other']);
+  assert.ok(!onlyLineVariants(leak));
+  assert.ok(!onlyLineVariants([]));
+});
+
+test('ruled covers (item 092): W12 and W5 are a look, anything past them still a bug', () => {
+  assert.ok(ruledCover('Bedroom', 'door', 'dialogue', 36));
+  assert.ok(ruledCover('Hub', 'circle', 'dialogue', 27));
+  assert.ok(!ruledCover('Hub', 'circle', 'dialogue', 60), 'the box over the circle itself (fix 1)');
+  assert.ok(ruledCover('Battle', 'pad_zip', 'dialogue', 14));
+  assert.ok(!ruledCover('Battle', 'pad_zip', 'dialogue', 40));
+  assert.ok(!ruledCover('SentenceRoom', 'leg', 'banner', 16));
 });

@@ -145,6 +145,8 @@ export const LOOKALIKES: string[][] = [
   ['crib', 'bed'],
   // Item 043's: a yo-yo and a spinning top are both round spinning toys.
   ['yoyo', 'top'],
+  // Item 092's: LEG's picture is a leg in a striped sock and a shoe.
+  ['leg', 'sock'],
 ];
 
 /** The words whose pictures look like `word`'s (not including `word`). */
