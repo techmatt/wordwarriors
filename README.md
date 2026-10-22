@@ -245,6 +245,10 @@ lines, the recap's pictures) play the whole episode at the suite's speeds (about
   a test not about walking no longer steers. `driver.walk = true` steers instead (the
   bug-hunt checker, the real-time tests); `walkTo` and `stick` always steer, for tests
   about walking (free play, M3, the stick hint, the bridge's slide).
+- **How tall a fighter stands**: `state().battle.heroes[i].drawn` (and `villains`), its
+  picture's height standing still. Not `qaLayout` bounds: moving squashes a card up to 7%
+  and the villain is always moving, so a 5-10% check on bounds failed 2 runs in 3 (item 093).
+  A dad's head-to-soles height is `drawn × ADULT_FILL[art]` (`src/config.ts`).
 - **Short battle**, `?battle=short`: the director's waits between story beats at a fifth
   (`SHORT_BEATS`, `BattleScene.beat`); the combo, the ultimate and the finish keep their
   length. For tests that need only the move choice or the finish (rulings, lenses' stick
