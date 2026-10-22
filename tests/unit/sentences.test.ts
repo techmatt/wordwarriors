@@ -12,24 +12,13 @@ import { CHARACTER_BY_ID, ROSTER } from '../../content/battle/roster';
 import { ACTIONS, BANK_BY_WORD } from '../../content/phonics/bank';
 import { EPISODE_DEFAULTS } from '../../src/config';
 import { FETCH_ITEMS, FRAMES, FRAME_BY_ID, allFrameTokens, allPrefixes, lookalikesOf, sentence, slotOf, tokenWord } from '../../content/phonics/sentences';
-import { CVC_WORDS } from '../../content/phonics/words';
+import { PICTURE_WORDS } from '../../content/phonics/words';
 import { wordLine } from '../../content/voice/ids';
 import { BAG_WORDS, LEGACY_BAG_WORDS, distractors, drawKey, frameIsSolid, saidEarly, skipsListening, type EpisodeInput, type SentencePlan } from '../../src/rules/sentences';
 import { sentencePlans } from './plans';
 import { withDifficulty } from './difficulty';
-import { spread } from './seeds';
-import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
-
-function memory(): StorageLike {
-  const data = new Map<string, string>();
-  return { getItem: (k) => data.get(k) ?? null, setItem: (k, v) => void data.set(k, v) };
-}
-
-/** Deterministic rand for repeatable plans. */
-function seeded(seed = 1): () => number {
-  let s = seed;
-  return () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
-}
+import { memory, seeded, spread } from './seeds';
+import { ProgressStore, STORE_KEY } from '../../src/state/ProgressStore';
 
 // The default episode's cast (Julia and Ellie against Evil Tiamat since item 014).
 const VILLAIN = EPISODE_DEFAULTS.villain;
@@ -125,7 +114,7 @@ test('the counter is random: any pictured, decodable word, under the 009 exclusi
   // 1's banners); not a word the villain's taunts or anything else the
   // episode's characters say first; not a word any of the episode's sentences
   // shows; not the gift word. The attic offers its picture, and battle 2 uses it.
-  const decodable = new Set(CVC_WORDS.filter((w) => w.decodable).map((w) => w.word));
+  const decodable = new Set(PICTURE_WORDS.filter((w) => w.decodable).map((w) => w.word));
   for (const v of ROSTER) {
     const taunts = new Set(v.evil.taunts.flatMap((t) => [...words(t.text), ...words(t.say ?? '')]));
     for (const helper of ['elsa', 'ellie', v.id === 'jasmine' ? 'anna' : 'jasmine']) {

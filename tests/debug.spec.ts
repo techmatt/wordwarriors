@@ -8,11 +8,10 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
-import { boot, choose, collectErrors, expectNoErrors, playSentenceRoom, press, state, texts, until, walkTo } from './harness';
+import { boot, choose, collectErrors, dadLock, expectNoErrors, playSentenceRoom, press, state, texts, until, walkTo } from './harness';
 
 const tagShown = (page: Page) => page.evaluate(() => Boolean(document.getElementById('debug-tag')?.isConnected));
 const stored = (page: Page) => page.evaluate(() => localStorage.getItem('wordwarriors.progress'));
-const setLock = (page: Page, on: boolean) => page.evaluate((v) => (window as unknown as { __ww: { dadLock(on: boolean): boolean } }).__ww.dadLock(v), on);
 
 test('debug mode: key 0 in the hub, a game from its pedestal checked off, out the open door, progress untouched', async ({ page }) => {
   test.setTimeout(90_000);
@@ -23,10 +22,10 @@ test('debug mode: key 0 in the hub, a game from its pedestal checked off, out th
   const blob = await stored(page);
 
   // Dad lock on: key 0 still works.
-  await setLock(page, true);
+  await dadLock(page, true);
   await page.keyboard.press('0');
   let s = await until(page, (st) => st.scene === 'Debug' && (st.room?.spots.length ?? 0) > 0, 30_000, 'debug room');
-  await setLock(page, false);
+  await dadLock(page, false);
   expect(await tagShown(page)).toBe(true);
   const ids = s.room!.spots.map((sp) => sp.id).sort();
   expect(ids).toEqual(['debug:bridge', 'debug:charge', 'debug:door', 'debug:sentence', 'debug:word_machine']);

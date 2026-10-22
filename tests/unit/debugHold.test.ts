@@ -7,12 +7,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
-
-function memory(): StorageLike {
-  const m = new Map<string, string>();
-  return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => void m.set(k, v) };
-}
+import { ProgressStore, STORE_KEY } from '../../src/state/ProgressStore';
+import { memory } from './seeds';
 
 test('a held store records and draws as usual, saves nothing, and release puts it back as it was', () => {
   const storage = memory();

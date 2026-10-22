@@ -5,7 +5,7 @@
  */
 
 import { SENTENCE_GAMES } from '../../src/rules/minigames';
-import type { Rand } from '../../src/rules/bank';
+import type { Rand } from '../../src/rules/random';
 import { asSentence, episodePlans, type EpisodeInput, type SentencePlan } from '../../src/rules/sentences';
 import type { ProgressStore } from '../../src/state/ProgressStore';
 

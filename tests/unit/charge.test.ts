@@ -1,7 +1,8 @@
 /**
  * Charge the Spell's pure rules (item 053; item 058's one word a visit): the
- * word draw (every sound in play since item 067; `tier` is a label), the help-level ramp and its store field, the room's place in the
- * episode, and the speech rules its lines keep.
+ * word draw (every sound in play since item 067; `tier` is a label), the runes (each a sound
+ * with its line, gesture and battle move), the room's place in the episode, the speech rules
+ * its lines keep, and that a store blob's old `chargeLevels` (the dropped help ramp) loads cleanly.
  * `npx tsx --test tests/unit/charge.test.ts` (also part of `npm run test:unit`).
  */
 
@@ -20,18 +21,9 @@ import { CHARGE_WORDS, GESTURE_WORDS, RUNE_SOUNDS, planCharge } from '../../src/
 import { CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, drawGames } from '../../src/rules/minigames';
 import { withStems } from '../../src/rules/bank';
 import { episodePlans } from '../../src/rules/sentences';
-import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
+import { ProgressStore, STORE_KEY } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
-
-function memory(): StorageLike {
-  const data = new Map<string, string>();
-  return { getItem: (k) => data.get(k) ?? null, setItem: (k, v) => void data.set(k, v) };
-}
-
-function seeded(seed = 1): () => number {
-  let s = seed;
-  return () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
-}
+import { memory, seeded } from './seeds';
 
 /** The ability kinds BattleScene can cast (abilities.ts CASTS, mirrored as tests/unit/effects.test.ts does). */
 const KINDS: AbilityKind[] = [

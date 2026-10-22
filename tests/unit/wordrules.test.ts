@@ -15,21 +15,8 @@ import { GESTURE_WORDS, gestureWords, planCharge } from '../../src/rules/charge'
 import { MINIGAME_BY_ID, SENTENCE_GAMES } from '../../src/rules/minigames';
 import { drawGift, drawMove } from '../../src/rules/moves';
 import { BAG_WORDS, NO_ARTICLE, drawKey, episodePlans, saidEarly, type EpisodeInput } from '../../src/rules/sentences';
-import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
-import { spread } from './seeds';
-
-function memory(): StorageLike {
-  const m = new Map<string, string>();
-  return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => void m.set(k, v) };
-}
-
-function seeded(seed = 1): () => number {
-  let s = seed >>> 0 || 1;
-  return () => {
-    s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
-    return s / 2 ** 32;
-  };
-}
+import { ProgressStore } from '../../src/state/ProgressStore';
+import { memory, seededLcg as seeded, spread } from './seeds';
 
 const level = (w: string) => BANK_BY_WORD[w]?.level ?? 1;
 

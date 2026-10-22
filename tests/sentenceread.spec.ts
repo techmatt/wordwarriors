@@ -9,14 +9,13 @@
 
 import { test, expect } from '@playwright/test';
 import { tokenWord } from '../content/phonics/sentences';
-import { FETCH_FRAMES, boot, choose, collectErrors, expectNoErrors, press, seedProgress, until } from './harness';
+import { boot, choose, collectErrors, expectNoErrors, press, seedSolidFrames, until } from './harness';
 
 test('sentence room: one green reads the sentence and sounds out the key word; the next green on a picture answers', async ({ page }) => {
   test.setTimeout(90_000);
   const errors = collectErrors(page);
   // Solid frames at difficulty 2 skip the listening pass: straight to her turn.
-  const stat = { seen: 6, right: 6, wrong: 0, recent: [true, true, true, true, true, true], last: Date.now() };
-  await seedProgress(page, { version: 1, sounds: {}, words: {}, spelling: {}, frames: Object.fromEntries(FETCH_FRAMES.map((f) => [f, stat])), episodes: 0 });
+  await seedSolidFrames(page);
   await boot(page, '?scene=room&slot=a&nojourney=1&difficulty=2');
   const read = await until(page, (st) => st.room?.sentence?.pass === 'read' && !st.room.locked, 30_000, 'read pass');
   const sent = read.room!.sentence!;

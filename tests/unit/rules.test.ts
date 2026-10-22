@@ -9,35 +9,25 @@ import { test } from 'node:test';
 
 import { ART_ASSETS } from '../../content/art/assets';
 import { CHARACTER_BY_ID, DAD_COLOURS, MINIONS, MOVE_WORDS, OWN_COLOURS, PERSONS, ROSTER, abilityWords, formId, formsOf } from '../../content/battle/roster';
-import { HOME_QUEST, QUESTS, homeQuestLine, questLine } from '../../content/house/quests';
+import { HOME_QUEST, QUESTS } from '../../content/house/quests';
 import { ANY_SCENES, HUB_SCENES, hubStoryIds, storyTexts } from '../../content/house/scenes';
 import { BANK, THINGS } from '../../content/phonics/bank';
 import { FAMILIES, sillyWord } from '../../content/phonics/families';
 import { DIGRAPH_SOUNDS, LETTERS, LONG_VOWEL_SOUNDS } from '../../content/phonics/letters';
 import { FETCH_ITEMS, FRAMES, allFrameTokens, allPrefixes, sentence, tokenWord } from '../../content/phonics/sentences';
 import { SPELL_WORDS, spellWordsFor } from '../../content/phonics/spelling';
-import { CVC_WORDS, SPECIAL_WORDS, WORDS } from '../../content/phonics/words';
-import { WAKERS, coreLine, heroKey, letterSoundLine, moveKey, moveLine, narratorLine, nameLine, rimeLine, sillyLine, tauntLine, ultimateLine, villainKey, wakeCastKey, wakeLine, wordLine } from '../../content/voice/ids';
+import { PICTURE_WORDS, SPECIAL_WORDS, WORDS } from '../../content/phonics/words';
+import { WAKERS, coreLine, heroKey, homeQuestLine, letterSoundLine, moveKey, moveLine, narratorLine, nameLine, questLine, rimeLine, sillyLine, tauntLine, ultimateLine, villainKey, wakeCastKey, wakeLine, wordLine } from '../../content/voice/ids';
 import { CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE_LINES } from '../../content/voice/script';
-import { pickWeighted, ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
+import { ProgressStore, STORE_KEY } from '../../src/state/ProgressStore';
+import { pickWeighted } from '../../src/rules/random';
 import { blendRound, choiceCount, pictureRound, soundRound } from '../../src/rules/rounds';
 import { BAG_WORDS } from '../../src/rules/sentences';
 import { sentencePlans } from './plans';
 import { align } from '../../tools/voice/align';
 import { composeLines } from '../../tools/voice/compose';
 import { trimMp3 } from '../../tools/voice/mp3';
-import { spread } from './seeds';
-
-function memory(): StorageLike & { data: Map<string, string> } {
-  const data = new Map<string, string>();
-  return { data, getItem: (k) => data.get(k) ?? null, setItem: (k, v) => void data.set(k, v) };
-}
-
-/** Deterministic rand for repeatable rounds. */
-function seeded(seed = 1): () => number {
-  let s = seed;
-  return () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
-}
+import { memory, seeded, spread } from './seeds';
 
 test('ProgressStore records, persists and survives a corrupt blob', () => {
   const mem = memory();
@@ -160,7 +150,7 @@ test('roster: named counter words are pictured, and never in any name, ability, 
     }
   }
   const words = (s: string) => s.toLowerCase().split(/[^a-z]+/);
-  const pictured = new Set([...CVC_WORDS, ...SPECIAL_WORDS].map((w) => w.word));
+  const pictured = new Set([...PICTURE_WORDS, ...SPECIAL_WORDS].map((w) => w.word));
   const frameTokens = new Set(allFrameTokens());
   for (const c of ROSTER) {
     const w = c.counter.word;
@@ -259,7 +249,7 @@ test('speech rule: no narrator line contains a reading word', () => {
   // Reading words: every pictured bank word (item 037: THINGS, from CVC to
   // SHIP) and every sentence key word (fetched items, counter words, MICE).
   const keys = new Set<string>([...FETCH_ITEMS.map((f) => f.word), ...BAG_WORDS, ...ROSTER.map((c) => c.counter.word), ...SPECIAL_WORDS.map((w) => w.word)]);
-  const readable = new Set<string>([...THINGS.map((w) => w.word), ...CVC_WORDS.map((w) => w.word), ...keys]);
+  const readable = new Set<string>([...THINGS.map((w) => w.word), ...PICTURE_WORDS.map((w) => w.word), ...keys]);
   const words = (s: string) => s.toLowerCase().split(/[^a-z]+/);
   // need_item ("Only the {item} CAN stop...") belongs to the parked Spell the
   // Spell flow, where CAN is never a target; rewording it would re-synthesise 169 lines.

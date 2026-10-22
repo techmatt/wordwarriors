@@ -1,5 +1,5 @@
 /**
- * Item 054: the Stretchy Bridge. Fast lane: level 3 at ?difficulty=3 (silent stones, the
+ * Item 054: the Stretchy Bridge. Untagged (`npm run test:browser`): level 3 at ?difficulty=3 (silent stones, the
  * pictures only after Dad's yes, his no replays the stones). Slow lane
  * (item 061: 15-25 s each): a visit at level 1 (the stones sound as she
  * slides, a held sound while she stands still, a wrong picture sounded out,
@@ -14,7 +14,7 @@ import { BANK_BY_WORD } from '../content/phonics/bank';
 import { canHold } from '../content/phonics/letters';
 import { letterSoundLine } from '../content/voice/ids';
 import { BRIDGE_PICTURES, CROSS_WORDS, bridgeEase } from '../src/rules/bridge';
-import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom, press, seedProgress, slideAcross, state, stick, until, type WWState } from './harness';
+import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom, press, seedProgress, slideAcross, state, stick, texts, toParentAndBack, until, type WWState } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/054_${name}.png` });
 
@@ -23,7 +23,7 @@ const bridge = (s: WWState) => s.room?.bridge;
 const soundsOf = (b: { word: string }) => BANK_BY_WORD[b.word]!.sounds;
 /** Each stone's sound line. */
 const soundLines = (b: { word: string }) => soundsOf(b).map(letterSoundLine);
-const levels = (s: WWState) => (s.progress as unknown as { bridgeLevels: Record<string, number> }).bridgeLevels;
+const levels = (s: WWState) => s.progress.bridgeLevels;
 
 /** Every bridge picture at help level `n` (a superset of the words she can cross). */
 async function seedLevels(page: Page, n: number): Promise<void> {
@@ -59,9 +59,9 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
   for (const w of b0.words) expect(CROSS_WORDS).toContain(w);
   expect(b0.words.map(bridgeEase)).toEqual([...b0.words.map(bridgeEase)].sort());
   // The stones are the word's letters, upper case, one text each; the word is never one text.
-  const texts = (await page.evaluate(() => (window as unknown as { __ww: { texts(): { text: string }[] } }).__ww.texts())).map((t) => t.text);
-  for (const u of b0.units) expect(texts).toContain(u.toUpperCase());
-  expect(texts).not.toContain(b0.word.toUpperCase());
+  const shown = (await texts(page)).map((t) => t.text);
+  for (const u of b0.units) expect(shown).toContain(u.toUpperCase());
+  expect(shown).not.toContain(b0.word.toUpperCase());
   // Level 1 asks nothing of Dad: no cue.
   await expect(page.locator('#dad-buttons')).toHaveCount(0);
 
@@ -207,9 +207,7 @@ test("Stretchy Bridge (item 069): Dad's hint survives F9 and back, so the helped
   const b0 = bridge(s0)!;
   await dad(page, 'yes');
   await until(page, (st) => bridge(st)?.phase === 'slide' && !st.room!.locked && bridge(st)!.aided, 60_000, 'hint given');
-  await page.keyboard.press('F9');
-  await until(page, (st) => st.scene === 'Parent', 10_000, 'parent');
-  await press(page, 'red');
+  await toParentAndBack(page);
   const back = await until(page, (st) => st.scene === 'BridgeRoom' && bridge(st)?.phase === 'slide' && !st.room!.locked, 60_000, 'back on the bridge');
   expect(bridge(back)!.word).toBe(b0.word);
   expect(bridge(back)!.aided).toBe(true);

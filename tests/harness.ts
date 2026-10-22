@@ -31,6 +31,9 @@ export interface WWState {
     hero: string;
     ally: string | null;
     villain: string;
+    /** The dad who wakes her, in his form (null when both dads are busy), and the other dad in the bedroom, or null. */
+    primary: string | null;
+    secondary: string | null;
     /** The quest place (content/house/house.ts PLACES id, or `home`). */
     place: string;
     made: Record<string, boolean>;
@@ -90,7 +93,6 @@ export interface WWState {
       sound: string;
       phase: 'explain' | 'prompt' | 'sayback' | 'charging' | 'read' | 'reading' | 'done';
       asking: boolean;
-      assists: number;
       timeouts: number;
       charged: string[];
       elapsedMs: number;
@@ -140,15 +142,39 @@ export interface WWState {
   } | null;
   voice: { speaking: string | null; busy: boolean; history: string[] };
   fx: Record<string, number>;
-  progress: { sounds: Record<string, { seen: number; recent: boolean[] }>; words: Record<string, { seen: number; recent: boolean[] }>; frames?: Record<string, { seen: number; recent: boolean[] }>; rimes?: Record<string, { seen: number; recent: boolean[] }>; onsets?: Record<string, { seen: number; recent: boolean[] }>; bag?: { left: string[]; round: number }; episodes: number };
+  /** Free play (item 060, src/fx/freePlay.ts `playStats`): jumps, shots fired, big shots, shots live now and the most live at once. */
+  play: { jumps: number; shots: number; big: number; live: number; maxLive: number };
+  progress: {
+    sounds: Record<string, { seen: number; recent: boolean[] }>;
+    words: Record<string, { seen: number; recent: boolean[] }>;
+    frames?: Record<string, { seen: number; recent: boolean[] }>;
+    rimes?: Record<string, { seen: number; recent: boolean[] }>;
+    onsets?: Record<string, { seen: number; recent: boolean[] }>;
+    /** The entry hall's warm-up (item 033): first-try grabs per word, and each word's help level. */
+    grabs: Record<string, { seen: number; wrong: number; recent: boolean[] }>;
+    grabLevels: Record<string, number>;
+    /** The Stretchy Bridge's help level per word (item 054). */
+    bridgeLevels: Record<string, number>;
+    bag?: { left: string[]; round: number };
+    episodes: number;
+    /** Every rotation's recent picks, newest last (item 067; src/rules/recent.ts). */
+    recent: Record<string, string[]>;
+  };
 }
 
-export function collectErrors(page: Page): string[] {
+/**
+ * Page errors, and the console warnings that count as errors: `art` (on by default) art drawn
+ * before it loaded; `voice` (off by default; the fight and pairs sweeps) a voice line asked
+ * for that is not there or does not decode.
+ */
+export function collectErrors(page: Page, opts: { voice?: boolean; art?: boolean } = {}): string[] {
+  const { voice = false, art = true } = opts;
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  // Art drawn before it loaded (item 065, src/art/ArtBank.ts): a gap on screen, so an error.
   page.on('console', (m) => {
-    if (m.type() === 'warning' && m.text().startsWith('art: not ready')) errors.push(m.text());
+    // Art drawn before it loaded (item 065, src/art/ArtBank.ts): a gap on screen, so an error.
+    if (art && m.type() === 'warning' && m.text().startsWith('art: not ready')) errors.push(m.text());
+    if (voice && /^voice: (no line|could not decode)/.test(m.text())) errors.push(m.text());
   });
   return errors;
 }
@@ -317,7 +343,10 @@ async function steer(page: Page, x: number, y: number, close: number, at: (s: WW
   await page.waitForTimeout(80);
 }
 
-/** Walk to a spot by id (or the correct one) and press green once the room is listening. */
+/**
+ * Go to a spot by id, or the correct one (teleported by default, walked when `driver.walk`),
+ * and press green once the room is listening.
+ */
 export async function choose(page: Page, id?: string): Promise<string> {
   const s = await until(page, (st) => Boolean(st.room && !st.room.locked && st.room.spots.some((sp) => (id ? sp.id === id : sp.correct === true))), 90_000, `spot ${id ?? 'correct'}`);
   const spot = s.room!.spots.find((sp) => (id ? sp.id === id : sp.correct === true))!;
@@ -378,7 +407,7 @@ export async function playBattle(page: Page, part: number, wrongFirst = false): 
   }
 }
 
-/** In a move choice: walk onto a word's pad and press green until the pick is taken. */
+/** In a move choice: onto a word's pad (teleported, or walked when `driver.walk`) and press green until the pick is taken. */
 async function pickPad(page: Page, word: string): Promise<void> {
   const pad = (await state(page)).battle!.choice!.spots.find((sp) => sp.word === word)!;
   if (driver.walk) await walkHeroTo(page, pad.x, pad.y);
@@ -432,20 +461,46 @@ export async function readToKeyWord(page: Page): Promise<WWState> {
 }
 
 /**
- * Play one sentence room: read along to the key word, walk to the right
- * object, green, and wait until she is out of the room. Returns the key word.
+ * In a sentence room's find pass: wait for the objects, choose a wrong one, and
+ * wait for the retry to open (`pauseMs` first, the bug-hunt checker's beat).
  */
-export async function playSentenceRoom(page: Page): Promise<string> {
+export async function chooseWrong(page: Page, pauseMs = 0): Promise<void> {
+  const ready = await until(page, (st) => Boolean(st.room && !st.room.locked && st.room.spots.some((sp) => sp.correct === false)), 60_000, 'objects up');
+  const bad = ready.room!.spots.find((sp) => sp.correct === false)!;
+  await choose(page, bad.id);
+  if (pauseMs) await page.waitForTimeout(pauseMs);
+  await until(page, (st) => st.room?.sentence?.pass === 'find' && !st.room.locked, 60_000, 'retry open');
+}
+
+/**
+ * How `playRoom` and `playSentenceRoom` play a room: `wrongFirst` a wrong answer
+ * first (a wrong object, a silly tile, a wrong picture, Dad's no); in a sentence
+ * room `idleMs` standing still once the key word is reached, and `wrongPauseMs`
+ * after the wrong object (`chooseWrong`).
+ */
+export interface RoomPlay {
+  wrongFirst?: boolean;
+  idleMs?: number;
+  wrongPauseMs?: number;
+}
+
+/**
+ * Play one sentence room: read along to the key word, go to the right object
+ * (`choose`), green, and wait until she is out of the room. Returns the key word.
+ */
+export async function playSentenceRoom(page: Page, opts: RoomPlay = {}): Promise<string> {
   const s = await readToKeyWord(page);
   const key = s.room!.sentence!.key;
+  if (opts.idleMs) await page.waitForTimeout(opts.idleMs);
+  if (opts.wrongFirst) await chooseWrong(page, opts.wrongPauseMs);
   await choose(page);
   await until(page, (st) => st.scene !== 'SentenceRoom', 60_000, `out of the ${key} room`);
   return key;
 }
 
 /**
- * Play the word machine: each round, walk to the tile that makes the
- * picture's word and press green; with `wrongFirst`, a silly tile first,
+ * Play the word machine: each round, go to the tile that makes the
+ * picture's word (`choose`) and press green; with `wrongFirst`, a silly tile first,
  * which holds the round until the right one. Returns the words built.
  */
 export async function playWordMachine(page: Page, wrongFirst = false): Promise<string[]> {
@@ -472,6 +527,18 @@ export async function playWordMachine(page: Page, wrongFirst = false): Promise<s
 /** Dad's buttons (item 053): `yes` is key 2, `no` key 1, through the hooks. */
 export async function dad(page: Page, a: 'yes' | 'no'): Promise<void> {
   await page.evaluate((v) => (window as unknown as { __ww: { dad(a: string): boolean } }).__ww.dad(v), a);
+}
+
+/** Dad lock (`__ww.dadLock`): set it on or off, or with no `on` just read it. Returns whether it is on. */
+export function dadLock(page: Page, on?: boolean): Promise<boolean> {
+  return page.evaluate((v) => (window as unknown as { __ww: { dadLock(on?: boolean): boolean } }).__ww.dadLock(v), on);
+}
+
+/** F9 to the grown-ups page and red back out of it; the caller waits for where she lands. */
+export async function toParentAndBack(page: Page): Promise<void> {
+  await page.keyboard.press('F9');
+  await until(page, (s) => s.scene === 'Parent', 10_000, 'parent');
+  await press(page, 'red');
 }
 
 /**
@@ -561,10 +628,10 @@ export async function playBridgeRoom(page: Page, wrongFirst = false): Promise<st
 
 /**
  * Play whichever game the room has: a sentence room (its key word), the word
- * machine (every word built), Charge the Spell (nothing: it fetches no word),
- * or the Stretchy Bridge (every word read).
+ * machine (every word built), Charge the Spell (its one word),
+ * or the Stretchy Bridge (every word read); `opts` as `RoomPlay` says.
  */
-export async function playRoom(page: Page): Promise<string[]> {
+export async function playRoom(page: Page, opts: RoomPlay = {}): Promise<string[]> {
   const s = await until(
     page,
     (st) =>
@@ -578,11 +645,11 @@ export async function playRoom(page: Page): Promise<string[]> {
   if (s.scene === 'ChargeRoom') {
     // Its word is a battle item (item 058), fetched like any room's.
     const word = s.room!.charge!.word;
-    await playChargeRoom(page);
+    await playChargeRoom(page, opts.wrongFirst ? 'no' : 'yes');
     return [word];
   }
-  if (s.scene === 'BridgeRoom') return playBridgeRoom(page);
-  return s.scene === 'WordMachine' ? playWordMachine(page) : [await playSentenceRoom(page)];
+  if (s.scene === 'BridgeRoom') return playBridgeRoom(page, opts.wrongFirst);
+  return s.scene === 'WordMachine' ? playWordMachine(page, opts.wrongFirst) : [await playSentenceRoom(page, opts)];
 }
 
 /**
@@ -619,7 +686,7 @@ export async function playEntry(page: Page, wrong = 0): Promise<string> {
   return g.word;
 }
 
-/** In the hub: wait for a spot (a door, the circle) to be offered, then walk to it and press green. */
+/** In the hub: wait for a spot (a door, the circle) to be offered, then go to it (`choose`) and press green. */
 export async function hubGo(page: Page, id: string): Promise<void> {
   await until(page, (s) => s.scene === 'Hub', 30_000, 'hub');
   await choose(page, id);
@@ -636,8 +703,18 @@ export async function seedProgress(page: Page, data: Record<string, unknown>): P
 /** The fetch frames (`use: 'fetch'` in content/phonics/sentences.ts). */
 export const FETCH_FRAMES = ['we_can_use_the', 'helper_needs_a', 'go_get_the', 'we_need_a', 'hero_needs_the'];
 
+/**
+ * Seed every fetch frame solid (six right of six), so from `difficulty=2` the
+ * sentence room skips its listening pass; `extra` adds store fields (a bag).
+ * Call before `boot`.
+ */
+export async function seedSolidFrames(page: Page, extra: Record<string, unknown> = {}): Promise<void> {
+  const stat = { seen: 6, right: 6, wrong: 0, recent: [true, true, true, true, true, true], last: Date.now() };
+  await seedProgress(page, { version: 1, sounds: {}, words: {}, spelling: {}, frames: Object.fromEntries(FETCH_FRAMES.map((f) => [f, stat])), episodes: 0, ...extra });
+}
+
 /** The parts of an episode `playEpisode` can run at a clock speed of their own (item 081). */
-export type EpisodePart = 'bedroom' | 'entry' | 'hub1' | 'door_a' | 'door_b' | 'battle1' | 'hub2' | 'battle2' | 'victory';
+type EpisodePart ='bedroom' | 'entry' | 'hub1' | 'door_a' | 'door_b' | 'battle1' | 'hub2' | 'battle2' | 'victory';
 
 /**
  * The clock speed whole episodes play their battles at (item 081): a fight's checks

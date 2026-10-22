@@ -12,21 +12,9 @@ import { ACTIONS, BANK, BANK_BY_WORD, LIVE, THINGS, tag, unitsOf } from '../../c
 import { SOUND_BY_UNIT } from '../../content/phonics/letters';
 import { VARIETY } from '../../src/config';
 import { coverage, coverageTable, distractorsFor, drawWords, isFirm, recentWords, sharesSound, wordWeight } from '../../src/rules/bank';
-import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
+import { ProgressStore } from '../../src/state/ProgressStore';
 import { withDifficulty } from './difficulty';
-
-function memory(): StorageLike {
-  const m = new Map<string, string>();
-  return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => void m.set(k, v) };
-}
-
-function seeded(seed = 1): () => number {
-  let s = seed >>> 0 || 1;
-  return () => {
-    s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
-    return s / 2 ** 32;
-  };
-}
+import { memory, seededLcg as seeded } from './seeds';
 
 /** Read `word` right first time `n` times. */
 function solid(store: ProgressStore, word: string, n = 4): void {

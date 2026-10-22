@@ -16,9 +16,9 @@ import { readFileSync } from 'node:fs';
 import { BANK_BY_WORD, THINGS } from '../content/phonics/bank';
 import { DEPTH } from '../src/config';
 import { withStems } from '../src/rules/bank';
-import type { Layout } from './qa/checks';
+import { qaLayout } from './qa/probe';
 
-import { SLOW, boot, choose, collectErrors, expectNoErrors, leaveBedroom, playEntry, press, seedProgress, state, until, type WWState } from './harness';
+import { SLOW, boot, choose, collectErrors, expectNoErrors, leaveBedroom, playEntry, press, seedProgress, state, texts, until, type WWState } from './harness';
 
 const LINE_BY_ID = new Map((JSON.parse(readFileSync('content/voice/lines.json', 'utf8')) as { id: string; text: string; say?: string }[]).map((l) => [l.id, l]));
 
@@ -52,8 +52,8 @@ test('warm-up, a new player: each letter name then its sound and never the word,
   expect(s.room!.spots.map((sp) => sp.id).sort()).toEqual(g.objects.map((w) => `grab_${w}`).sort());
   expect(s.room!.spots.filter((sp) => sp.correct).map((sp) => sp.id)).toEqual([`grab_${g.word}`]);
   // No picture carries its word (item 059: she matched the letters instead of sounding it out).
-  const texts = await page.evaluate(() => (window as unknown as { __ww: { texts: () => { text: string }[] } }).__ww.texts().map((t) => t.text));
-  for (const w of g.objects) expect(texts).not.toContain(w.toUpperCase());
+  const shown = (await texts(page)).map((t) => t.text);
+  for (const w of g.objects) expect(shown).not.toContain(w.toUpperCase());
   // The door is not there until she has the thing.
   expect(s.room!.shown).not.toContain('door');
   // A phonics task, never a listening one (amendment 1549): the word is not said before she has it.
@@ -66,7 +66,7 @@ test('warm-up, a new player: each letter name then its sound and never the word,
   expect(out.room!.shown).toContain('door');
   expect(out.episode.fetched).toEqual([g.word]);
   expect(clueLines(out).slice(-2)).toEqual([`word_${g.word}`, 'nar_ellie_grab_door']);
-  const p = out.progress as unknown as { grabs: Record<string, { seen: number; recent: boolean[] }>; grabLevels: Record<string, number>; words: Record<string, unknown> };
+  const p = out.progress;
   expect(p.grabs[g.word]).toMatchObject({ seen: 1, recent: [true] });
   expect(p.grabLevels[g.word]).toBe(2);
   // Exposure, not a read.
@@ -88,12 +88,12 @@ test('warm-up levels (at ?difficulty=3): 2 gives the sounds with the letters sho
   expect(two.room!.grab!.level).toBe(2);
   expect(clueLines(two)).toEqual([`nar_ellie_grab_ask`, ...sounds(w2)]);
   // The board shows the letters as they are sounded.
-  const texts = await page.evaluate(() => (window as unknown as { __ww: { texts: () => { text: string }[] } }).__ww.texts().map((t) => t.text));
-  for (const c of w2.toUpperCase()) expect(texts).toContain(c);
+  const shown = (await texts(page)).map((t) => t.text);
+  for (const c of w2.toUpperCase()) expect(shown).toContain(c);
   await shot(page, 'level2');
   await choose(page, `grab_${w2}`);
   const got = await until(page, (st) => st.room?.round === 'entry:door', 60_000, 'grabbed');
-  expect((got.progress as unknown as { grabLevels: Record<string, number> }).grabLevels[w2]).toBe(3);
+  expect(got.progress.grabLevels[w2]).toBe(3);
 
   const page3 = await page.context().newPage();
   // A tab behind another gets no animation frames on the GPU channel, so the game never boots in it.
@@ -118,7 +118,7 @@ test('warm-up levels (at ?difficulty=3): 2 gives the sounds with the letters sho
   await choose(base, `grab_${w1}`);
   const held = await until(base, (st) => st.room?.round === 'entry:door', 60_000, 'grabbed at base');
   // Right first time: her recorded level stays at the top (3), the hall gave 1.
-  expect((held.progress as unknown as { grabLevels: Record<string, number> }).grabLevels[w1]).toBe(3);
+  expect(held.progress.grabLevels[w1]).toBe(3);
   expectNoErrors(errors);
 });
 
@@ -149,7 +149,7 @@ test('warm-up misses: "that\'s the CAT, we need the ...", the clue again at the 
 
   await choose(page, `grab_${g.word}`);
   const got = await until(page, (st) => st.room?.round === 'entry:door', 60_000, 'grabbed');
-  const p = got.progress as unknown as { grabs: Record<string, { seen: number; wrong: number; recent: boolean[] }>; grabLevels: Record<string, number> };
+  const p = got.progress;
   expect(p.grabs[g.word]).toMatchObject({ seen: 1, wrong: 3, recent: [false] });
   expect(p.grabLevels[g.word]).toBe(1);
   expect(got.episode.fetched).toEqual([g.word]);
@@ -173,7 +173,7 @@ test('F9 and back: a miss before it still counts; after the grab the hall comes 
   expect(back.room!.grab).toMatchObject({ word: g.word, level: 1, misses: 1 });
   await choose(page, `grab_${g.word}`);
   const got = await until(page, (st) => st.room?.round === 'entry:door' && !st.room.locked, 60_000, 'door open');
-  const rec = () => (got.progress as unknown as { grabs: Record<string, { seen: number; recent: boolean[] }>; grabLevels: Record<string, number> });
+  const rec = () => got.progress;
   expect(rec().grabs[g.word]).toMatchObject({ seen: 1, recent: [false] });
   expect(rec().grabLevels[g.word]).toBe(1);
 
@@ -184,7 +184,7 @@ test('F9 and back: a miss before it still counts; after the grab the hall comes 
   const done = await until(page, (st) => st.scene === 'Entry' && st.room?.round === 'entry:door' && !st.room.locked, 30_000, 'back at the open door');
   expect(done.room!.shown).toContain('door');
   expect(done.room!.spots.map((sp) => sp.id)).toEqual(['door']);
-  const p = done.progress as unknown as { grabs: Record<string, { seen: number }>; grabLevels: Record<string, number> };
+  const p = done.progress;
   expect(p.grabs[g.word]!.seen).toBe(1);
   expect(p.grabLevels[g.word]).toBe(1);
   expect(done.episode.fetched).toEqual([g.word]);
@@ -205,7 +205,7 @@ for (const seed of [3, 25]) {
     // The drawn cast (item 025): every role filled; the quest's setup line was
     // said (the helper's own, or the narrator's home one); the helper's wake-up
     // introduction is in the waker's voice and the bad news names this villain.
-    const ep = s.episode as unknown as { ally: string | null; villain: string; place: string };
+    const ep = s.episode;
     expect(ep.villain).toBeTruthy();
     expect(ep.ally).toBeTruthy();
     expect(s.voice.history.some((id) => /^quest_.+_\d$/.test(id) || /_quest_home_\d$/.test(id))).toBe(true);
@@ -247,7 +247,7 @@ test('the letter board keeps clear of the dialogue on the miss lines (item 069)'
   const hits = new Set<string>();
   const end = Date.now() + 4000;
   while (Date.now() < end) {
-    const l = await page.evaluate(() => (window as unknown as { __wwqa: { layout(): Layout } }).__wwqa.layout());
+    const l = await qaLayout(page);
     const board = l.texts.filter((t) => t.scene === 'Entry' && t.depth === DEPTH.hud + 6 && t.text.trim());
     for (const c of l.covers.filter((c) => c.scene === 'Entry'))
       for (const t of board) if (t.b[0] < c.b[2] && c.b[0] < t.b[2] && t.b[1] < c.b[3] && c.b[1] < t.b[3]) hits.add(`${t.text} under ${c.kind}`);

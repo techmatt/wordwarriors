@@ -88,8 +88,10 @@ export interface Since {
 const W = 1280;
 const H = 720;
 
-const area = (b: Box) => Math.max(0, b[2] - b[0]) * Math.max(0, b[3] - b[1]);
-const inter = (a: Box, b: Box): number => Math.max(0, Math.min(a[2], b[2]) - Math.max(a[0], b[0])) * Math.max(0, Math.min(a[3], b[3]) - Math.max(a[1], b[1]));
+/** An `[l, t, r, b]` box's area (a `Box`, or a hook's `number[]`); 0 when it is empty. */
+export const area = (b: readonly number[]) => Math.max(0, b[2]! - b[0]!) * Math.max(0, b[3]! - b[1]!);
+/** The area two `[l, t, r, b]` boxes share; 0 when they do not overlap. */
+export const inter = (a: readonly number[], b: readonly number[]): number => Math.max(0, Math.min(a[2]!, b[2]!) - Math.max(a[0]!, b[0]!)) * Math.max(0, Math.min(a[3]!, b[3]!) - Math.max(a[1]!, b[1]!));
 const inside = (x: number, y: number, b: Box) => x >= b[0] && x <= b[2] && y >= b[1] && y <= b[3];
 
 /** Art ids whose PNG is still the placeholder painter's (its tEXt mark). */

@@ -16,12 +16,8 @@ import { DADS, drawCast, phonicsFace, seededRand, wakerOf } from '../../src/rule
 import { drawStory } from '../../src/rules/story';
 import { MINIGAMES, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/sentences';
-import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
-
-function memory(): StorageLike {
-  const m = new Map<string, string>();
-  return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => void m.set(k, v) };
-}
+import { ProgressStore } from '../../src/state/ProgressStore';
+import { memory } from './seeds';
 
 const N = 4000;
 

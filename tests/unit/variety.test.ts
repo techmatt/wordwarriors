@@ -18,15 +18,11 @@ import { difficulty, helpLevel, rampsAdvance, setDifficulty } from '../../src/ru
 import { pickEnding } from '../../src/rules/endings';
 import { MINIGAMES, drawGames } from '../../src/rules/minigames';
 import { fresh, leastRecent, nextVariant } from '../../src/rules/recent';
-import { variantKeys } from '../../content/voice/script';
+import { lineVariantKeys } from '../../content/voice/script';
 import { drawLines, drawStory, pickVariant } from '../../src/rules/story';
-import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
+import { ProgressStore, STORE_KEY } from '../../src/state/ProgressStore';
 import { withDifficulty } from './difficulty';
-
-function memory(): StorageLike {
-  const m = new Map<string, string>();
-  return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => void m.set(k, v) };
-}
+import { memory } from './seeds';
 
 // ---- The difficulty knob ----------------------------------------------------
 
@@ -178,11 +174,11 @@ test('games: a game she played in her last episodes weighs VARIETY.gameWeight, s
 // ---- Line variants (item 087) ------------------------------------------------
 
 test('line variants: in turn order, every one before a repeat, carried across episodes by the store', () => {
-  assert.deepEqual(variantKeys('house_doors'), ['house_doors', 'house_doors_2', 'house_doors_3', 'house_doors_4']);
-  assert.deepEqual(variantKeys('right').slice(0, 2), ['right_1', 'right_2']);
-  assert.deepEqual(variantKeys('house_front'), ['house_front']);
+  assert.deepEqual(lineVariantKeys('house_doors'), ['house_doors', 'house_doors_2', 'house_doors_3', 'house_doors_4']);
+  assert.deepEqual(lineVariantKeys('right').slice(0, 2), ['right_1', 'right_2']);
+  assert.deepEqual(lineVariantKeys('house_front'), ['house_front']);
   const store = new ProgressStore(memory());
-  const keys = variantKeys('room_find');
+  const keys = lineVariantKeys('room_find');
   const said: string[] = [];
   for (let i = 0; i < keys.length * 2; i++) {
     const k = nextVariant(keys, store.recentOf('line:room_find'));
@@ -194,6 +190,6 @@ test('line variants: in turn order, every one before a repeat, carried across ep
 
 test('line variants: every line said several times an episode has at least three', () => {
   for (const k of ['right', 'wrong', 'move_great', 'room_listen', 'room_your_turn', 'room_find', 'got_item', 'house_doors', 'house_more', 'use_bag', 'machine_silly', 'machine_change', 'bridge_find', 'bridge_say', 'bridge_slide']) {
-    assert.ok(variantKeys(k).length >= 3, `${k}: ${variantKeys(k).length}`);
+    assert.ok(lineVariantKeys(k).length >= 3, `${k}: ${lineVariantKeys(k).length}`);
   }
 });

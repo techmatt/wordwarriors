@@ -9,7 +9,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { FIGHTS } from '../content/battle/fights';
-import { BATTLE_SPEED, SLOW, boot, playBattle, state, until } from './harness';
+import { BATTLE_SPEED, SLOW, boot, collectErrors, playBattle, state, until } from './harness';
 
 /** Each style against a villain it was not written for, so nothing leans on one villain. */
 const AGAINST: Record<string, string> = { brawl: 'tiamat', sky_race: 'smaug', sea_tug: 'jormungandr', spell_clash: 'bavmorda', cook_off: 'tiamat' };
@@ -23,15 +23,11 @@ const PART: Record<string, 1 | 2> = { sky_race: 2, sea_tug: 1, spell_clash: 2, c
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/fights_${name}.png` });
 
-/** Page errors and voice lines asked for that are not there. */
-function collectProblems(page: Page): string[] {
-  const problems: string[] = [];
-  page.on('pageerror', (e) => problems.push(e.message));
-  page.on('console', (m) => {
-    if (/^voice: (no line|could not decode)/.test(m.text())) problems.push(m.text());
-  });
-  return problems;
-}
+/**
+ * Page errors and voice lines asked for that are not there. The art-not-ready check stays
+ * off here as it always was: turning it on is a change of its own, run against this spec first.
+ */
+const collectProblems = (page: Page): string[] => collectErrors(page, { voice: true, art: false });
 
 test('the cast draw picks the villain\'s own style; ?fight= fixes another', async ({ page }) => {
   // The style and its staging are made with the scene, so the versus intro need not play out.

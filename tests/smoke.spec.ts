@@ -1,19 +1,21 @@
 /**
  * One page boot per test, many asserts each. Every scene is reached directly
- * with `?scene=`, so a failure points at one step. The quick ones are the fast
- * lane (`npm test`); the ones tagged SLOW (10–50 s each even at clock speed 5)
- * run with the slow lane (`npm run test:slow`, `npm run test:all`).
+ * with `?scene=`, so a failure points at one step. The one tagged SMOKE is
+ * `npm test`'s; the untagged quick ones run with `npm run test:browser`; the
+ * ones tagged SLOW (10–50 s each even at clock speed 5) run with the slow lane
+ * (`npm run test:slow`, `npm run test:all`).
  */
 
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 import {
-  FETCH_FRAMES,
   SLOW,
   SMOKE,
   boot,
   choose,
+  chooseWrong,
   collectErrors,
+  dadLock,
   expectNoErrors,
   hubGo,
   leaveBedroom,
@@ -21,20 +23,23 @@ import {
   playSentenceRoom,
   press,
   readToKeyWord,
-  seedProgress,
+  seedSolidFrames,
   state,
+  texts,
+  toParentAndBack,
   typeLetter,
   until,
   walkTo,
 } from './harness';
 
+/** The grown-ups page is on its page 2 (its "back to page 1" shows). */
+const onPage2 = async (page: Page): Promise<boolean> => (await texts(page)).some((t) => t.text.includes('back to page 1'));
+
 test('title boots, F9 opens the grown-ups page and returns, green starts the bedroom', SMOKE, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page);
   await until(page, (s) => s.scene === 'Title', 30_000, 'title');
-  await page.keyboard.press('F9');
-  await until(page, (s) => s.scene === 'Parent', 10_000, 'parent page');
-  await press(page, 'red');
+  await toParentAndBack(page);
   await until(page, (s) => s.scene === 'Title', 10_000, 'back to title');
   await page.waitForTimeout(300);
   await press(page, 'green');
@@ -174,15 +179,7 @@ test('sentence room: listen, read along, a wrong object costs nothing, the right
 
 test('a solid sentence frame skips the listening pass (from ?difficulty=2; at base it keeps it, item 067)', async ({ page }) => {
   const errors = collectErrors(page);
-  const stat = { seen: 6, right: 6, wrong: 0, recent: [true, true, true, true, true, true], last: Date.now() };
-  await seedProgress(page, {
-    version: 1,
-    sounds: {},
-    words: {},
-    spelling: {},
-    frames: Object.fromEntries(FETCH_FRAMES.map((f) => [f, stat])),
-    episodes: 0,
-  });
+  await seedSolidFrames(page);
   await boot(page, '?scene=room&slot=a&nojourney=1&difficulty=2');
   const s = await until(page, (st) => st.scene === 'SentenceRoom' && Boolean(st.room?.sentence), 30_000, 'sentence room');
   expect(s.room!.sentence!.skipped).toBe(true);
@@ -203,13 +200,11 @@ test('a solid sentence frame skips the listening pass (from ?difficulty=2; at ba
 
 test('dad lock: the backquote key stops every press but not walking, and again carries on where it was', async ({ page }) => {
   const errors = collectErrors(page);
-  const stat = { seen: 6, right: 6, wrong: 0, recent: [true, true, true, true, true, true], last: Date.now() };
-  await seedProgress(page, { version: 1, sounds: {}, words: {}, spelling: {}, frames: Object.fromEntries(FETCH_FRAMES.map((f) => [f, stat])), episodes: 0 });
+  await seedSolidFrames(page);
   await boot(page, '?scene=room&slot=a&nojourney=1&difficulty=2');
   const read = await until(page, (st) => st.room?.sentence?.pass === 'read' && !st.room.locked, 30_000, 'read pass');
-  const lock = () => page.evaluate(() => (window as unknown as { __ww: { dadLock(): boolean } }).__ww.dadLock());
   await page.keyboard.press('Backquote');
-  expect(await lock()).toBe(true);
+  expect(await dadLock(page)).toBe(true);
   await expect(page.locator('#dad-lock')).toBeVisible();
   for (const b of ['green', 'yellow', 'red', 'start']) await press(page, b);
   await page.keyboard.press('Space');
@@ -223,7 +218,7 @@ test('dad lock: the backquote key stops every press but not walking, and again c
   await walkTo(page, from.x + 120, from.y);
   expect((await state(page)).room!.player!.x).toBeGreaterThan(from.x + 60);
   await page.keyboard.press('Shift+Backquote');
-  expect(await lock()).toBe(false);
+  expect(await dadLock(page)).toBe(false);
   await expect(page.locator('#dad-lock')).toHaveCount(0);
   await press(page, 'green');
   await until(page, (st) => st.room?.sentence?.index !== read.room!.sentence!.index, 10_000, 'green reads on after the unlock');
@@ -234,26 +229,24 @@ test('a key held through a scene change is held, not pressed again by its auto-r
   const errors = collectErrors(page);
   await boot(page, '?scene=parent');
   await until(page, (s) => s.scene === 'Parent', 30_000, 'parent page');
-  const onPage2 = () =>
-    page.evaluate(() => (window as unknown as { __ww: { texts(): { text: string }[] } }).__ww.texts().some((t) => t.text.includes('back to page 1')));
   // Space flips the page, and the page restarts its scene (fresh keys, up).
   await page.waitForTimeout(300);
   await page.keyboard.down('Space');
-  await expect.poll(onPage2, { timeout: 5_000 }).toBe(true);
+  await expect.poll(() => onPage2(page), { timeout: 5_000 }).toBe(true);
   // Held: the OS repeats keydown (repeat = true). Before the fix each one flipped the page again
   // (an odd number of them, so the flips cannot cancel out).
   for (let i = 0; i < 5; i++) {
     await page.keyboard.down('Space');
     await page.waitForTimeout(120);
   }
-  expect(await onPage2()).toBe(true);
+  expect(await onPage2(page)).toBe(true);
   await page.keyboard.up('Space');
   await page.waitForTimeout(150);
   // A fresh press (held a frame or two, as a finger does) still flips it.
   await page.keyboard.down('Space');
   await page.waitForTimeout(100);
   await page.keyboard.up('Space');
-  await expect.poll(onPage2, { timeout: 5_000 }).toBe(false);
+  await expect.poll(() => onPage2(page), { timeout: 5_000 }).toBe(false);
   expectNoErrors(errors);
 });
 
@@ -269,16 +262,14 @@ test('a pad button held through a scene change is held, not pressed (item 069)',
   });
   await boot(page, '?scene=parent');
   await until(page, (s) => s.scene === 'Parent', 30_000, 'parent page');
-  const onPage2 = () =>
-    page.evaluate(() => (window as unknown as { __ww: { texts(): { text: string }[] } }).__ww.texts().some((t) => t.text.includes('back to page 1')));
   // Held all along: before the fix Phaser's pad caught up a frame late and A read as a press (page 2).
   await page.waitForTimeout(800);
-  expect(await onPage2()).toBe(false);
+  expect(await onPage2(page)).toBe(false);
   // Let go and press: that is a press.
   await page.evaluate(() => (window as unknown as { __padA: (down: boolean) => void }).__padA(false));
   await page.waitForTimeout(200);
   await page.evaluate(() => (window as unknown as { __padA: (down: boolean) => void }).__padA(true));
-  await expect.poll(onPage2, { timeout: 5_000 }).toBe(true);
+  await expect.poll(() => onPage2(page), { timeout: 5_000 }).toBe(true);
   expectNoErrors(errors);
 });
 
@@ -287,9 +278,7 @@ test('F9 out of a sentence room and back: it restarts cleanly', SLOW, async ({ p
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&nojourney=1');
   await until(page, (s) => s.room?.sentence?.pass === 'read' && !s.room.locked, 90_000, 'read pass');
-  await page.keyboard.press('F9');
-  await until(page, (s) => s.scene === 'Parent', 10_000, 'parent');
-  await press(page, 'red');
+  await toParentAndBack(page);
   // The parent page returns to the current step (the house), so she is back in the hub, room a still open.
   const back = await until(page, (s) => s.scene === 'Hub' || s.scene === 'SentenceRoom', 15_000, 'back from parent');
   if (back.scene === 'Hub') {
@@ -310,18 +299,14 @@ test('F9 in a sentence room keeps a miss, and back from it after the find goes o
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&nojourney=1');
   const backToRoom = async (): Promise<void> => {
-    await page.keyboard.press('F9');
-    await until(page, (s) => s.scene === 'Parent', 10_000, 'parent');
-    await press(page, 'red');
+    await toParentAndBack(page);
     const back = await until(page, (s) => s.scene === 'Hub' || s.scene === 'SentenceRoom', 15_000, 'back from parent');
     if (back.scene === 'Hub' && !back.episode.house.done.includes('a')) await hubGo(page, 'door_a');
   };
   // A miss, then F9 and back: it is still a miss.
   const first = await readToKeyWord(page);
   const key = first.room!.sentence!.key;
-  const bad = (await until(page, (s) => Boolean(s.room && !s.room.locked && s.room.spots.some((sp) => sp.correct === false)), 60_000, 'objects up')).room!.spots.find((sp) => sp.correct === false)!;
-  await choose(page, bad.id);
-  await until(page, (s) => s.room?.sentence?.pass === 'find' && !s.room.locked, 60_000, 'retry open');
+  await chooseWrong(page);
   await backToRoom();
   await readToKeyWord(page);
   // The right one, then F9 in the middle of the celebration and back.

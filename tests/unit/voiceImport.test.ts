@@ -11,7 +11,8 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { deflateRawSync } from 'node:zlib';
 
-import { mp3Bytes, processTake, readWav, unzip, wavBytes } from '../../tools/voice/import';
+import { mp3Bytes, readWav, wavBytes } from '../../tools/voice/audio';
+import { processTake, unzip } from '../../tools/voice/import';
 import { RAN_TOGETHER_S, SPLIT, countReason, finish, highpass, splitTake, type Entry } from '../../tools/voice/split';
 
 interface PageCount {

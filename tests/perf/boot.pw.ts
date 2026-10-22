@@ -9,7 +9,7 @@
 
 import { test, type Browser } from '@playwright/test';
 
-import { boot, state, until } from '../harness';
+import { boot, state, until, type WWState } from '../harness';
 
 const RUNS = Number(process.env.PERF_RUNS ?? 5);
 
@@ -37,14 +37,13 @@ async function once(browser: Browser, query: string, scene: string, quiet: boole
   const shown = Date.now() - t0;
   // Quiet: her input free and nobody talking, and still so 0.6 s later (the hub's opening lines start a beat in).
   let done = shown;
-  const calm = (s: Awaited<ReturnType<typeof state>>) => s.scene === scene && Boolean(s.room) && !s.room!.locked && !s.voice.busy;
+  const calm = (s: WWState) => s.scene === scene && Boolean(s.room) && !s.room!.locked && !s.voice.busy;
   while (quiet) {
     await until(page, calm, 120_000, `${scene} quiet`);
     done = Date.now() - t0;
     await page.waitForTimeout(600);
     if (calm(await state(page))) break;
   }
-  await state(page);
   await context.close();
   return { shown, quiet: done, art, artKB: Math.round(artBytes / 1024) };
 }

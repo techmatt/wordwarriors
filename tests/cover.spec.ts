@@ -16,11 +16,8 @@ import { test, expect, type Page } from '@playwright/test';
 
 import { REACH } from '../src/config';
 import { SLOW, boot, collectErrors, expectNoErrors, hubGo, readToKeyWord, until, type WWState } from './harness';
-import { coverIssues, type Issue, type Layout } from './qa/checks';
-
-function layout(page: Page): Promise<Layout> {
-  return page.evaluate(() => (window as unknown as { __wwqa: { layout(): Layout } }).__wwqa.layout());
-}
+import { area, coverIssues, inter, type Issue } from './qa/checks';
+import { qaLayout as layout } from './qa/probe';
 
 /** Sample the layout every 200 ms for `ms` (our clock); every distinct cover issue seen. */
 async function sample(page: Page, ms: number, scene: string): Promise<{ issues: Issue[]; targets: number }> {
@@ -39,7 +36,7 @@ async function sample(page: Page, ms: number, scene: string): Promise<{ issues: 
 const inRoom = (st: WWState) => st.scene === 'SentenceRoom' && Boolean(st.room?.sentence);
 
 // The longest names make the tallest banners: two rows (JORMUNGANDR) and the longest counter sentence (OZYMANDIAS).
-// Smaug's (the banner Matt saw over the pictures) is the fast lane's; the rest are slow (item 061: 13-21 s each).
+// Smaug's (the banner Matt saw over the pictures) is untagged (`npm run test:browser`); the rest are slow (item 061: 13-21 s each).
 for (const [name, query, fast] of [
   ['a side room, one row', '?scene=room&slot=a&nojourney=1', false],
   ['the counter, Smaug', '?scene=room&slot=counter&villain=smaug&nojourney=1', true],
@@ -99,10 +96,9 @@ for (const [name, query, scene, line] of [
     const l = await layout(page);
     const me = l.images.filter((i) => i.scene === scene && i.key === s.room!.player.art).sort((a, b) => b.b[3] - a.b[3])[0];
     expect(me, 'her sprite').toBeTruthy();
-    const area = (b: number[]) => Math.max(0, b[2]! - b[0]!) * Math.max(0, b[3]! - b[1]!);
     const under = l.covers
       .filter((c) => c.scene === scene && c.kind === 'dialogue')
-      .reduce((n, c) => n + area([Math.max(c.b[0], me!.b[0]), Math.max(c.b[1], me!.b[1]), Math.min(c.b[2], me!.b[2]), Math.min(c.b[3], me!.b[3])]), 0);
+      .reduce((n, c) => n + inter(c.b, me!.b), 0);
     expect(under / area(me!.b), 'share of her under the box').toBeLessThanOrEqual(0.1);
     expectNoErrors(errors);
   });

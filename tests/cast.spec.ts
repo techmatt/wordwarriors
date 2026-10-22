@@ -3,26 +3,17 @@
  * fix one. Drawn casts are played elsewhere (item 036 folded them into walks
  * that were already there): through the bedroom and the warm-up to the quest
  * place in tests/entry.spec.ts, whole episodes in tests/soak.spec.ts (two)
- * and tests/machine.spec.ts (one). Screenshots land in tests/screenshots/
+ * and tests/drawn.spec.ts (one). Screenshots land in tests/screenshots/
  * (ignored) for a look.
  */
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, expectNoErrors, until } from './harness';
-
-interface Ep {
-  hero: string;
-  ally: string | null;
-  villain: string;
-  primary: string | null;
-  secondary: string | null;
-  place: string;
-}
+import { SLOW, boot, collectErrors, expectNoErrors, until, type WWState } from './harness';
 
 /** The episode's cast, once Boot has drawn it (the hooks are up before Boot is done). */
-async function episodeOf(page: Page): Promise<Ep> {
-  return (await until(page, (s) => s.scene !== '' && s.scene !== 'Boot', 30_000, 'booted')).episode as unknown as Ep;
+async function episodeOf(page: Page): Promise<WWState['episode']> {
+  return (await until(page, (s) => s.scene !== '' && s.scene !== 'Boot', 30_000, 'booted')).episode;
 }
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/025_${name}.png` });

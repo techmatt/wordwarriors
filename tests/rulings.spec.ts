@@ -6,8 +6,7 @@
 
 import { test, expect } from '@playwright/test';
 import { SLOW, boot, collectErrors, expectNoErrors, state, stick, texts, until } from './harness';
-
-const overlap = (a: number[], b: number[]) => a[0]! < b[2]! && b[0]! < a[2]! && a[1]! < b[3]! && b[1]! < a[3]!;
+import { area, inter } from './qa/checks';
 
 test('M1, M5, M6: the move choice hides its word in the caption, shows the stick hint, and the team stands clear of the signs', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
@@ -25,8 +24,7 @@ test('M1, M5, M6: the move choice hides its word in the caption, shows the stick
   // M6: no teammate hidden behind the signs: clear of them where the floor allows,
   // and with three signs across the row, most of the body still shows.
   for (const m of c.team) {
-    const area = (b: number[]) => Math.max(0, b[2]! - b[0]!) * Math.max(0, b[3]! - b[1]!);
-    const under = c.signs.filter((sg) => overlap(m.box, sg)).reduce((n, sg) => n + area([Math.max(m.box[0]!, sg[0]!), Math.max(m.box[1]!, sg[1]!), Math.min(m.box[2]!, sg[2]!), Math.min(m.box[3]!, sg[3]!)]), 0);
+    const under = c.signs.reduce((n, sg) => n + inter(m.box, sg), 0);
     expect(under / area(m.box), `${m.id}: share of the body behind signs`).toBeLessThanOrEqual(0.3);
   }
   // M5: standing still brings the stick hint; walking clears it.
@@ -50,8 +48,7 @@ for (const [name, query] of [
     await boot(page, query);
     const s = await until(page, (st) => Boolean(st.battle?.choice?.open), 90_000, 'choice open');
     const c = s.battle!.choice!;
-    const area = (b: number[]) => Math.max(0, b[2]! - b[0]!) * Math.max(0, b[3]! - b[1]!);
-    const under = (box: number[]) => c.signs.reduce((n, sg) => n + area([Math.max(box[0]!, sg[0]!), Math.max(box[1]!, sg[1]!), Math.min(box[2]!, sg[2]!), Math.min(box[3]!, sg[3]!)]), 0) / area(box);
+    const under = (box: number[]) => c.signs.reduce((n, sg) => n + inter(box, sg), 0) / area(box);
     for (const m of c.team) expect(under(m.box), `${m.id} behind the signs`).toBe(0);
     expect(c.villain, 'the villain stands').toBeTruthy();
     expect(under(c.villain!), 'the villain behind the signs').toBe(0);

@@ -13,24 +13,14 @@ import { ART_BY_ID } from '../../content/art/assets';
 import { CHARACTER_BY_ID, MOVE_WORDS, ROSTER, abilityWords, personOf } from '../../content/battle/roster';
 import { CASTERS, HUB_SCENES, storyTexts } from '../../content/house/scenes';
 import { ACTIONS, BANK_BY_WORD } from '../../content/phonics/bank';
-import { CVC_WORDS, SPECIAL_WORDS } from '../../content/phonics/words';
+import { PICTURE_WORDS, SPECIAL_WORDS } from '../../content/phonics/words';
 import { reformedLine, wordLine } from '../../content/voice/ids';
 import { EPISODE_DEFAULTS } from '../../src/config';
 import { CHOICES_PER_PART, battle1Words, drawGift, effectId, planMoves, teamMoveWords, type MoveInput, type MovePlan } from '../../src/rules/moves';
 import { episodePlans, type EpisodeInput } from '../../src/rules/sentences';
-import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
+import { ProgressStore } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
-import { spread } from './seeds';
-
-function memory(): StorageLike {
-  const data = new Map<string, string>();
-  return { getItem: (k) => data.get(k) ?? null, setItem: (k, v) => void data.set(k, v) };
-}
-
-function seeded(seed = 1): () => number {
-  let s = seed;
-  return () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
-}
+import { memory, seeded, spread } from './seeds';
 
 const HERO = EPISODE_DEFAULTS.hero;
 const ALLY = EPISODE_DEFAULTS.ally ?? 'ellie';
@@ -68,7 +58,7 @@ test('every move word has a picture and a word line', () => {
 });
 
 test('every word the recap can show has a picture: key words, move words, counter words', () => {
-  const words = [...CVC_WORDS, ...SPECIAL_WORDS].map((w) => w.word);
+  const words = [...PICTURE_WORDS, ...SPECIAL_WORDS].map((w) => w.word);
   for (const c of ROSTER) words.push(c.counter.word);
   for (const w of [...words, ...MOVE_WORDS]) assert.ok(ART_BY_ID[`pic_${w}`], `pic_${w}`);
 });

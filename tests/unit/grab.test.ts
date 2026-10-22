@@ -10,27 +10,17 @@ import { test } from 'node:test';
 
 import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { lookalikesOf } from '../../content/phonics/sentences';
-import { CVC_WORDS } from '../../content/phonics/words';
+import { PICTURE_WORDS } from '../../content/phonics/words';
 import { letterNameLine, letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { GRAB } from '../../src/config';
 import { GRAB_WORDS, RECENT_GRABS, clue, grabLevel, hallObjects, nextLevel, pickGrab, recordedGrabLevel } from '../../src/rules/grab';
 import { episodePlans, type EpisodeInput } from '../../src/rules/sentences';
 import { machineWords } from '../../src/rules/wordMachine';
 import { MINIGAME_BY_ID } from '../../src/rules/minigames';
-import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
+import { ProgressStore } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
 import { withDifficulty } from './difficulty';
-import { spread } from './seeds';
-
-function memory(): StorageLike {
-  const data = new Map<string, string>();
-  return { getItem: (k) => data.get(k) ?? null, setItem: (k, v) => void data.set(k, v) };
-}
-
-function seeded(seed = 1): () => number {
-  let s = seed;
-  return () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
-}
+import { memory, seeded, spread } from './seeds';
 
 test('ramp: a new word starts at GRAB.startLevel (1); right first time is harder, a first-try miss easier, kept within 1..3', () => {
   const store = new ProgressStore(memory());
@@ -132,7 +122,7 @@ test('hallObjects: nine distinct pictures, the word among them, none avoided, no
     assert.equal(new Set(objs).size, objs.length);
     assert.ok(objs.includes(word));
     for (const w of objs) {
-      assert.ok(CVC_WORDS.some((c) => c.word === w), w);
+      assert.ok(PICTURE_WORDS.some((c) => c.word === w), w);
       if (w !== word) {
         assert.ok(!avoid.includes(w), `${w} avoided`);
         assert.ok(!lookalikesOf(word).includes(w), `${w} looks like ${word}`);

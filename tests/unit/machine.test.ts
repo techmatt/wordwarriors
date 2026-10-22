@@ -10,29 +10,16 @@ import { BANK, BANK_BY_WORD } from '../../content/phonics/bank';
 import { FAMILIES, FAMILY_BY_RIME, FAMILY_WORDS, onsetOf, rimeOf, sillyWord } from '../../content/phonics/families';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { MOVE_WORDS } from '../../content/battle/roster';
-import { CVC_WORDS } from '../../content/phonics/words';
+import { PICTURE_WORDS } from '../../content/phonics/words';
 import { narratorLine, rimeLine, sillyLine } from '../../content/voice/ids';
 import { NARRATOR_LINES } from '../../content/voice/script';
 import { WORD_MACHINE } from '../../src/config';
 import { MINIGAMES, MINIGAME_BY_ID, SENTENCE_GAMES, WORD_MACHINE_GAME, drawGames } from '../../src/rules/minigames';
 import { episodePlans, type EpisodeInput } from '../../src/rules/sentences';
 import { machineWords, planMachine } from '../../src/rules/wordMachine';
-import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
+import { ProgressStore } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
-import { spread } from './seeds';
-
-function memory(): StorageLike {
-  const m = new Map<string, string>();
-  return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => void m.set(k, v) };
-}
-
-function seeded(seed = 1): () => number {
-  let s = seed >>> 0 || 1;
-  return () => {
-    s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
-    return s / 2 ** 32;
-  };
-}
+import { memory, seededLcg as seeded, spread } from './seeds';
 
 const INPUT: EpisodeInput = {
   fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' },
@@ -43,7 +30,7 @@ const INPUT: EpisodeInput = {
 };
 
 test('families: every bank rime in RIMES with two or more one-letter-onset words; make mode builds only the pictured ones', () => {
-  const pictured = new Set(CVC_WORDS.filter((w) => w.decodable).map((w) => w.word));
+  const pictured = new Set(PICTURE_WORDS.filter((w) => w.decodable).map((w) => w.word));
   // Item 037: the bank's new rimes joined 035's seven. Item 040: a family needs two
   // familiar pictures, so -AM -EG -IG -IN -OD -OP -UB -UT left (WIG, PEG, ROD... are odd).
   // Item 043: PIN is familiar again, so -IN (PIN BIN) is back; -IG still has only PIG.
@@ -73,7 +60,7 @@ test('families: every bank rime in RIMES with two or more one-letter-onset words
 
 test('silly onsets make nonsense: no bank word, no move word, never the family\'s own onsets, nothing on the block list', () => {
   // Every word the bank has, from any rime: no silly word may be one of them.
-  const real = new Set<string>([...BANK.map((w) => w.word), ...CVC_WORDS.map((w) => w.word), ...MOVE_WORDS]);
+  const real = new Set<string>([...BANK.map((w) => w.word), ...PICTURE_WORDS.map((w) => w.word), ...MOVE_WORDS]);
   // Real words, names, homophones and slurs a careless list could make; none may be a silly word.
   const blocked = [
     'zap', 'yap', 'jap', 'fap', 'dap', 'bap', 'wap', 'zen', 'yen', 'fen', 'wen', 'sen', 'jen', 'ken', 'ben', 'len', 'ren', 'den', 'ten', 'men',
@@ -106,7 +93,7 @@ test('silly onsets make nonsense: no bank word, no move word, never the family\'
 test('planMachine: several words of one family, then another; tiles are the right one and silly ones', () => {
   for (let seed = 1; seed <= 60; seed++) {
     const store = new ProgressStore(memory());
-    const plan = planMachine(store, { avoid: ['can'], taken: [] }, seeded(spread(seed)));
+    const plan = planMachine(store, { avoid: ['can'] }, seeded(spread(seed)));
     const words = machineWords(plan);
     assert.equal(plan.mode, 'make');
     assert.equal(words.length, WORD_MACHINE.rounds, `seed ${seed}: ${words.join(' ')}`);
@@ -133,14 +120,14 @@ test('planMachine leans to shaky families and shaky first sounds, and keeps to t
     const store = new ProgressStore(memory());
     // Every rime solid but -OG.
     for (const f of FAMILIES) for (let i = 0; i < 4; i++) store.record('rimes', f.rime, f.rime !== 'og', 0);
-    if (rimeOf(machineWords(planMachine(store, { avoid: [], taken: [] }, seeded(spread(seed))))[0]!) === 'og') og++;
+    if (rimeOf(machineWords(planMachine(store, { avoid: [] }, seeded(spread(seed))))[0]!) === 'og') og++;
   }
   assert.ok(og > 200 / FAMILIES.length * 2, `the shaky family came first ${og}/200`);
 
   // A bag without -AT: no AT word unless the bag has to refill.
   const store = new ProgressStore(memory());
   store.refillBag(FAMILY_WORDS.filter((w) => rimeOf(w) !== 'at'));
-  for (let seed = 1; seed <= 30; seed++) assert.ok(!machineWords(planMachine(store, { avoid: [], taken: [] }, seeded(spread(seed)))).some((w) => rimeOf(w) === 'at'));
+  for (let seed = 1; seed <= 30; seed++) assert.ok(!machineWords(planMachine(store, { avoid: [] }, seeded(spread(seed)))).some((w) => rimeOf(w) === 'at'));
 });
 
 test('planMachine never starts a new round of the shared bag while other words are still in it', () => {
@@ -148,13 +135,13 @@ test('planMachine never starts a new round of the shared bag while other words a
   // One word left per family, and sentence words still to come.
   store.refillBag(['rat', 'can', 'cap', 'pen', 'jet', 'log', 'sun', 'fox', 'bug']);
   const round = store.bag().round;
-  const plan = planMachine(store, { avoid: [], taken: [] }, seeded(3));
+  const plan = planMachine(store, { avoid: [] }, seeded(3));
   assert.equal(machineWords(plan).length, WORD_MACHINE.rounds, 'still a full visit, from outside the bag');
   assert.equal(store.bag().round, round, 'no refill');
   assert.ok(store.bag().left.includes('sun'));
   // An empty bag refills.
   const empty = new ProgressStore(memory());
-  planMachine(empty, { avoid: [], taken: [] }, seeded(3));
+  planMachine(empty, { avoid: [] }, seeded(3));
   assert.equal(empty.bag().round, 1);
 });
 

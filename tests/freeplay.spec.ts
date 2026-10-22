@@ -13,17 +13,11 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { FREE_PLAY, REACH } from '../src/config';
-import { SLOW, SMOKE, boot, collectErrors, expectNoErrors, press, stick, until, walkTo, state, type WWState } from './harness';
+import { SLOW, SMOKE, boot, collectErrors, dadLock, expectNoErrors, press, stick, until, walkTo, state, type WWState } from './harness';
 
-interface Play {
-  jumps: number;
-  shots: number;
-  big: number;
-  live: number;
-  maxLive: number;
-}
+type Play = WWState['play'];
 
-const play = async (page: Page): Promise<Play> => ((await state(page)) as WWState & { play: Play }).play;
+const play = async (page: Page): Promise<Play> => (await state(page)).play;
 
 const input = (page: Page, fn: 'hold' | 'release', b?: string) =>
   page.evaluate(([f, btn]) => {
@@ -32,12 +26,10 @@ const input = (page: Page, fn: 'hold' | 'release', b?: string) =>
     else i.release();
   }, [fn, b] as const);
 
-const setDadLock = (page: Page, on: boolean) => page.evaluate((v) => (window as unknown as { __ww: { dadLock(on?: boolean): boolean } }).__ww.dadLock(v), on);
-
 /** Wait until play's counters satisfy `pred` (a few frames at most). */
 async function untilPlay(page: Page, pred: (p: Play) => boolean, what: string, timeout = 5_000): Promise<Play> {
-  const s = await until(page, (st) => pred((st as WWState & { play: Play }).play), timeout, what);
-  return (s as WWState & { play: Play }).play;
+  const s = await until(page, (st) => pred(st.play), timeout, what);
+  return s.play;
 }
 
 /** Give the game a few frames to act on whatever was pressed. */
@@ -153,7 +145,7 @@ test('hub: with the door in reach, green chooses the door and does not jump', SL
   await press(page, 'green');
   // The press lands within a frame or two: the door is taken (the room locks or the scene goes).
   const after = await until(page, (st) => st.scene !== 'Hub' || Boolean(st.room?.locked) || !st.room?.spots.some((sp) => sp.id === 'door_counter'), 10_000, 'door taken');
-  if (after.scene === 'Hub') expect((after as WWState & { play: Play }).play.jumps).toBe(before.jumps);
+  if (after.scene === 'Hub') expect(after.play.jumps).toBe(before.jumps);
   await until(page, (st) => st.scene !== 'Hub', 30_000, 'through the attic door');
   expectNoErrors(errors);
 });
@@ -162,7 +154,7 @@ test('dad lock: blue, red and green do nothing in play until it is off again', S
   const errors = collectErrors(page);
   await hub(page);
   await walkClear(page);
-  await setDadLock(page, true);
+  await dadLock(page, true);
   const p0 = await play(page);
   for (const b of ['blue', 'green', 'red', 'yellow', 'blue', 'green']) await press(page, b);
   await input(page, 'hold', 'red');
@@ -175,7 +167,7 @@ test('dad lock: blue, red and green do nothing in play until it is off again', S
   expect(p1.jumps).toBe(p0.jumps);
   expect((await state(page)).scene).toBe('Hub');
 
-  await setDadLock(page, false);
+  await dadLock(page, false);
   await press(page, 'blue');
   await untilPlay(page, (p) => p.shots > p0.shots, 'blue fires once unlocked');
   expectNoErrors(errors);
@@ -185,7 +177,7 @@ test('an open answer closes play: blue fires nothing while the entry hall waits 
   const errors = collectErrors(page);
   await boot(page, '?scene=grab&nojourney=1');
   const s = await until(page, (st) => st.scene === 'Entry' && st.room?.round === 'entry:find' && !st.room.locked, 60_000, 'clue given');
-  const p0 = (s as WWState & { play: Play }).play;
+  const p0 = s.play;
   for (let i = 0; i < 4; i++) {
     await press(page, 'blue');
     await page.waitForTimeout(60);
@@ -195,7 +187,7 @@ test('an open answer closes play: blue fires nothing while the entry hall waits 
   const now = await state(page);
   // Only meaningful while the find is still open.
   expect(now.room?.round).toBe('entry:find');
-  const p1 = (now as WWState & { play: Play }).play;
+  const p1 = now.play;
   expect(p1.shots).toBe(p0.shots);
   expect(p1.big).toBe(p0.big);
   // Nothing was picked by it either.
@@ -209,17 +201,15 @@ test('battle: blue fires in the fight and the fight carries on; in a move choice
   await until(page, (st) => st.battle?.phase === 'fight' && !st.battle.choice, 90_000, 'fight phase');
 
   // Cast in the fight: retry while the phase holds (a combo or choice may cut in).
-  let fired: (WWState & { play: Play }) | null = null;
+  let fired: WWState | null = null;
   for (let i = 0; i < 20 && !fired; i++) {
-    const before = (await state(page)) as WWState & { play: Play };
+    const before = await state(page);
     if (before.battle?.phase !== 'fight' || before.battle.choice) {
       await until(page, (st) => st.battle?.phase === 'fight' && !st.battle.choice, 60_000, 'back in the fight');
       continue;
     }
     await press(page, 'blue');
-    fired = await until(page, (st) => (st as WWState & { play: Play }).play.shots > before.play.shots, 1_500, 'blue fired in the fight')
-      .then((st) => st as WWState & { play: Play })
-      .catch(() => null);
+    fired = await until(page, (st) => st.play.shots > before.play.shots, 1_500, 'blue fired in the fight').catch(() => null);
   }
   expect(fired, 'blue fired during the fight').not.toBeNull();
   const t0 = fired!.battle!.t;
@@ -237,13 +227,13 @@ test('battle: blue fires in the fight and the fight carries on; in a move choice
 
   // The move choice: blue fires nothing, the choice stays open and unanswered.
   const open = await until(page, (st) => Boolean(st.battle?.choice?.open), 120_000, 'move choice open');
-  const c0 = open as WWState & { play: Play };
+  const c0 = open;
   for (let i = 0; i < 3; i++) {
     await press(page, 'blue');
     await page.waitForTimeout(80);
   }
   await frames(page);
-  const during = (await state(page)) as WWState & { play: Play };
+  const during = await state(page);
   expect(during.battle?.choice, 'still choosing').toBeTruthy();
   expect(during.play.shots).toBe(c0.play.shots);
   expect(during.battle!.choice!.misses).toBe(c0.battle!.choice!.misses);

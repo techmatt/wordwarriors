@@ -21,12 +21,8 @@ export default defineConfig({
   retries: 0,
   reporter: [['list']],
   timeout: 600_000,
-  use: {
-    baseURL: `http://localhost:${PORT}`,
-    viewport: { width: 1280, height: 720 },
-    launchOptions: { args: ['--autoplay-policy=no-user-gesture-required'] },
-  },
-  projects: gpuProjects({ use: { viewport: { width: 1280, height: 720 } } }),
+  use: { baseURL: `http://localhost:${PORT}` },
+  projects: gpuProjects(),
   webServer: {
     command: `npx vite --config tests/qa/vite.qa.config.ts --port ${PORT} --strictPort`,
     cwd: '../..',

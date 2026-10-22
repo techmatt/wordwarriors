@@ -1,7 +1,7 @@
 /**
  * Item 053: Charge the Spell and the dad buttons; item 058: one word a visit;
  * item 059: no presses per rune (the helper says each sound, she says it
- * back), one Dad press on the read. Fast lane: a round with Dad's 1 on the
+ * back), one Dad press on the read. Untagged (`npm run test:browser`): a round with Dad's 1 on the
  * read (sounded out together), timed, and the word a battle item. Slow lane:
  * the runes fired in battle; the forced room in a drawn episode, F4 as Dad's
  * yes on the read only (both moved in item 061, 10-13 s each); a round with
@@ -12,8 +12,8 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, dad, expectNoErrors, state, until } from './harness';
-import type { Layout } from './qa/checks';
+import { SLOW, boot, collectErrors, dad, dadLock, expectNoErrors, state, texts, until } from './harness';
+import { qaLayout } from './qa/probe';
 import { CHARGE_WORDS } from '../src/rules/charge';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/053_${name}.png` });
@@ -39,9 +39,9 @@ test('Charge the Spell: the runes charge by themselves, each sound said; one pre
   // The word is at the top from the start, but never said.
   expect(b0.voice.history).not.toContain(`word_${c0.word}`);
   // The rune is upper case on the altar; the sound is never captioned (no text shows its placeholder).
-  const texts = (await page.evaluate(() => (window as unknown as { __ww: { texts(): { text: string }[] } }).__ww.texts())).map((t) => t.text);
-  expect(texts).toContain(r0.toUpperCase());
-  for (const r of c0.runes) expect(texts).toContain(r.toUpperCase());
+  const shown = (await texts(page)).map((t) => t.text);
+  expect(shown).toContain(r0.toUpperCase());
+  for (const r of c0.runes) expect(shown).toContain(r.toUpperCase());
   await shot(page, 'sayback');
   // Every rune charges by itself, each sound said, and only then is Dad asked.
   const read = await until(page, (st) => st.room?.charge?.phase === 'read', 60_000, 'the read');
@@ -67,13 +67,12 @@ test('Charge the Spell: dad lock holds the say-back beat; nothing from Dad on th
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&room=charge');
   await until(page, (st) => st.room?.charge?.index === 0 && st.room.charge.phase === 'sayback', 60_000, 'rune 0 said back');
-  const lock = (on: boolean) => page.evaluate((v) => (window as unknown as { __ww: { dadLock(on?: boolean): boolean } }).__ww.dadLock(v), on);
-  await lock(true);
+  await dadLock(page, true);
   await page.waitForTimeout(3000);
   const held = await state(page);
   expect(held.room!.charge!.index).toBe(0);
   expect(held.room!.charge!.phase).toBe('sayback');
-  await lock(false);
+  await dadLock(page, false);
   await until(page, (st) => st.room?.charge?.phase === 'read', 60_000, 'the read');
   // Nobody answers: after the timeout it is sounded out together, and fetched all the same.
   const hub = await until(page, (st) => st.scene === 'Hub', 60_000, 'timed out, back in the hub');
@@ -89,7 +88,7 @@ test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on t
   const s0 = await until(page, (st) => st.scene === 'ChargeRoom' && Boolean(st.room?.charge), 60_000, 'charge room');
   const { word, runes } = s0.room!.charge!;
   // She stands beside the altar, not inside it (item 069: the altar was drawn over her arm and dress all round).
-  const l = await page.evaluate(() => (window as unknown as { __wwqa: { layout(): Layout } }).__wwqa.layout());
+  const l = await qaLayout(page);
   const altar = l.images.find((im) => im.key === 'prop_rune_altar')!;
   expect(s0.room!.player.x).toBeLessThan(altar.b[0]);
   const read = await until(page, (st) => st.room?.charge?.phase === 'read', 60_000, 'the read');
@@ -134,8 +133,8 @@ test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on t
   // About 20 s a round (item 059), in game time (the scene's clock; the test's own runs SPEED times
   // fast): to the read under 22 s (about 17 s for 3 runes, 21 s for 4), the whole round with
   // Dad's 1 and the sounding out together under 32 s.
-  // Asserted only by a one-worker timing run (`--workers=1`, item 072): beside a second worker the
-  // load stretches the game time past the limits, so the two-worker lanes log it and go on.
+  // Asserted only by a one-worker timing run (`--workers=1`, item 072): beside other workers the
+  // load stretches the game time past the limits, so the multi-worker lanes log it and go on.
   const timing = `charge round: ${word} (${runes.length} runes), ${toRead / 1000} s to the read, ${ms / 1000} s in all (game time)`;
   console.log(timing);
   if (test.info().config.workers === 1) {

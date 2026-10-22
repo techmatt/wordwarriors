@@ -22,20 +22,10 @@ import { BRIDGE } from '../../src/config';
 import { BRIDGE_PICTURES, CROSS_WORDS, bridgeLevel, bridgePictures, bridgeEase, bridgeWords, nextBridgeLevel, planBridge, recordedBridgeLevel, sharedStart, whereDiffers } from '../../src/rules/bridge';
 import { BRIDGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/sentences';
-import { ProgressStore, STORE_KEY, type StorageLike } from '../../src/state/ProgressStore';
+import { ProgressStore, STORE_KEY } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
 import { withDifficulty } from './difficulty';
-import { spread } from './seeds';
-
-function memory(): StorageLike {
-  const data = new Map<string, string>();
-  return { getItem: (k) => data.get(k) ?? null, setItem: (k, v) => void data.set(k, v) };
-}
-
-function seeded(seed = 1): () => number {
-  let s = seed;
-  return () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
-}
+import { memory, seeded, spread } from './seeds';
 
 // ---- Held sounds ----------------------------------------------------------
 
@@ -60,7 +50,7 @@ test('held sounds: a hiss before a vowel ("Suh") holds the hiss only, looping in
   assert.equal(p.mode, 'hold');
   near(sec(p.start), 0.25);
   near(sec(p.end), 0.43);
-  assert.ok(p.loopStart! > p.start && p.loopStart! < p.end);
+  assert.ok(p.steadyStart! > p.start && p.steadyStart! < p.end);
 });
 
 test('held sounds: a hum into a schwa ("Mmm" then "uh") holds the hum; a clean recording holds whole', () => {

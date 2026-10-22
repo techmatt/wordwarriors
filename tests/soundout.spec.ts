@@ -7,7 +7,7 @@
 
 import { test, expect } from '@playwright/test';
 import { BAG_WORDS } from '../src/rules/sentences';
-import { FETCH_FRAMES, SLOW, boot, collectErrors, expectNoErrors, press, readToKeyWord, seedProgress, until, walkTo } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, press, readToKeyWord, seedSolidFrames, until, walkTo } from './harness';
 
 const SOUNDS: Record<string, string[]> = {
   key: ['k', 'long_e'],
@@ -19,17 +19,10 @@ for (const [word, sounds] of Object.entries(SOUNDS)) {
     test.setTimeout(120_000);
     const errors = collectErrors(page);
     // Solid frames skip the listening pass; a bag of just this word makes it room a's key word.
-    const stat = { seen: 6, right: 6, wrong: 0, recent: [true, true, true, true, true, true], last: Date.now() };
-    await seedProgress(page, {
-      version: 1,
-      sounds: {},
-      words: {},
-      spelling: {},
-      frames: Object.fromEntries(FETCH_FRAMES.map((f) => [f, stat])),
+    await seedSolidFrames(page, {
       // `bagKnown` as now, or the store tops the bag up with every word added since item 035.
       bag: { left: [word], round: 1 },
       bagKnown: BAG_WORDS,
-      episodes: 0,
     });
     await boot(page, '?scene=room&slot=a&nojourney=1&difficulty=2');
     const first = await until(page, (s) => s.scene === 'SentenceRoom' && Boolean(s.room?.sentence), 60_000, 'sentence room').catch((e: Error) => {

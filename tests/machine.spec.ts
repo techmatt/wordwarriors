@@ -1,5 +1,5 @@
 /**
- * Item 026: the word machine. Fast lane: the room opens right. Slow lane: a
+ * Item 026: the word machine. Untagged (`npm run test:browser`): the room opens right. Slow lane: a
  * room of it played by the virtual pad (a silly tile first, then every word),
  * checking the speech rule on the voice history; F9 out and back mid-visit;
  * its whole episode behind door a is tests/drawn.spec.ts's, shared with the
@@ -8,7 +8,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, choose, collectErrors, expectNoErrors, playWordMachine, press, state, until } from './harness';
+import { SLOW, boot, choose, collectErrors, expectNoErrors, playWordMachine, press, state, toParentAndBack, until } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/026_${name}.png` });
 
@@ -106,9 +106,7 @@ test('F9 mid-visit and back: the machine goes on from the next word, nothing fet
   const m = open.room!.machine!;
   await choose(page, `tile_${m.tiles.find((t) => t.makes === m.word)!.letter}`);
   await until(page, (s) => s.room?.machine?.index === 1 && s.room.machine.phase === 'pick' && !s.room.locked, 60_000, 'round 2');
-  await page.keyboard.press('F9');
-  await until(page, (s) => s.scene === 'Parent', 10_000, 'parent');
-  await press(page, 'red');
+  await toParentAndBack(page);
   const back = await until(page, (s) => s.scene === 'WordMachine' && s.room?.machine?.phase === 'pick' && !s.room.locked, 60_000, 'back in the machine');
   expect(back.room!.machine!.index).toBe(1);
   expect(back.episode.fetched).toEqual([m.word]);

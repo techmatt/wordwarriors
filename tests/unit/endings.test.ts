@@ -12,13 +12,9 @@ import { ENDINGS, ENDING_BY_ID, endingArt, endingPropArt } from '../../content/h
 import { ENDING_PAUSE } from '../../src/config';
 import { drawCast, seededRand, type Cast } from '../../src/rules/cast';
 import { FIT_WEIGHT, endingFits, endingPeople, endingScript, pickEnding, standXs } from '../../src/rules/endings';
-import { ProgressStore, type StorageLike } from '../../src/state/ProgressStore';
+import { ProgressStore } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
-
-function memory(): StorageLike {
-  const m = new Map<string, string>();
-  return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => void m.set(k, v) };
-}
+import { memory } from './seeds';
 
 /** Drawn casts, plus the shapes a draw rarely makes: no ally, both dads busy, the dads as ally and villain. */
 function casts(): Cast[] {

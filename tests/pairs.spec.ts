@@ -16,7 +16,7 @@ import { test, expect, type Page } from '@playwright/test';
 
 import { formsOf } from '../content/battle/roster';
 import { ACTIVE_CAST } from '../src/config';
-import { SLOW, boot, leaveBedroom, playBattle, until } from './harness';
+import { SLOW, boot, collectErrors, leaveBedroom, playBattle, until } from './harness';
 
 const ALLIES = ACTIVE_CAST.allies.flatMap((p) => formsOf(p).map((f) => f.id));
 // `npm run test:pairs` means all of them (an npm script cannot set WW_PAIRS itself under Windows' cmd).
@@ -31,15 +31,11 @@ if (PAIRS.length === 0) {
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/pairs_${name}.png` });
 
-/** Page errors, and voice lines asked for that are not there or do not decode. */
-function collectProblems(page: Page): string[] {
-  const problems: string[] = [];
-  page.on('pageerror', (e) => problems.push(e.message));
-  page.on('console', (m) => {
-    if (/^voice: (no line|could not decode)/.test(m.text())) problems.push(m.text());
-  });
-  return problems;
-}
+/**
+ * Page errors, and voice lines asked for that are not there or do not decode. The
+ * art-not-ready check stays off here as it always was (a change of its own).
+ */
+const collectProblems = (page: Page): string[] => collectErrors(page, { voice: true, art: false });
 
 PAIRS.forEach(([ally, villain], i) => {
   test(`${ally} + ${villain}: bedroom, quest place, both battles and the victory scene`, SLOW, async ({ page }) => {

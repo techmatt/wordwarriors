@@ -9,8 +9,7 @@
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 
-import sharp, { type OverlayOptions } from 'sharp';
-
+import { contactSheet } from '../sheets';
 import type { Issue } from './checks';
 
 const [tag = 'now', ...flags] = process.argv.slice(2);
@@ -66,9 +65,6 @@ writeFileSync(`${dir}/summary.md`, `${lines.join('\n')}\n`);
 console.log(`${dir}/summary.md: ${runs.length} runs, ${merged.size} issues`);
 
 if (!flags.includes('--no-sheets')) {
-  const W = 320;
-  const H = 180;
-  const COLS = 6;
   const PER = 48;
   mkdirSync(`${dir}/sheets`, { recursive: true });
   for (const r of runs) {
@@ -77,19 +73,7 @@ if (!flags.includes('--no-sheets')) {
     const files = readdirSync(sd).filter((f) => f.endsWith('.png')).sort();
     for (let p = 0; p * PER < files.length; p++) {
       const list = files.slice(p * PER, (p + 1) * PER);
-      const tiles: OverlayOptions[] = [];
-      for (const [i, f] of list.entries()) {
-        const x = (i % COLS) * W;
-        const y = Math.floor(i / COLS) * (H + 18);
-        tiles.push({ input: await sharp(`${sd}/${f}`).resize(W, H).toBuffer(), left: x, top: y + 18 });
-        const label = f.slice(0, -4).slice(0, 44).replace(/&/g, '&amp;').replace(/</g, '&lt;');
-        tiles.push({ input: Buffer.from(`<svg width="${W}" height="18"><text x="3" y="13" font-family="Arial" font-size="11">${label}</text></svg>`), left: x, top: y });
-      }
-      const rows = Math.ceil(list.length / COLS);
-      await sharp({ create: { width: COLS * W, height: rows * (H + 18), channels: 3, background: '#ffffff' } })
-        .composite(tiles)
-        .png()
-        .toFile(`${dir}/sheets/${r.scenario.name}_${p + 1}.png`);
+      await contactSheet(list, sd, `${dir}/sheets/${r.scenario.name}_${p + 1}.png`, (f) => f.slice(0, -4).slice(0, 44), { x: 3, y: 13, size: 11 });
     }
   }
   console.log(`sheets in ${dir}/sheets/`);

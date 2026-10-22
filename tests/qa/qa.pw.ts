@@ -23,17 +23,17 @@ import { test, type Page } from '@playwright/test';
 
 import { BANK } from '../../content/phonics/bank';
 import { FREE_PLAY } from '../../src/config';
-import { boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBattle, playBridgeRoom, playChargeRoom, playAgain, playEntry, playWordMachine, press, readToKeyWord, seedProgress, state, until, type WWState, VOICE } from '../harness';
+import { SPEED, boot, collectErrors, driver, hubGo, leaveBedroom, playBattle, playAgain, playEntry, playRoom, playSentenceRoom, press, seedProgress, state, until, type RoomPlay, type WWState, VOICE } from '../harness';
 
 // Item 083: real voice and real walking: the checker looks and listens as she would.
 VOICE.mode = 'real';
 driver.walk = true;
-import { layoutIssues, leakIssues, logIssues, placeholderArt, voiceBuildIssues, type Issue, type Layout, type Since } from './checks';
+import { layoutIssues, leakIssues, logIssues, placeholderArt, voiceBuildIssues, type Issue } from './checks';
+import { qaLayout, qaSince } from './probe';
 import { clippedIssues, giveawayIssues, pacingIssues, repeatedLines, spellingIssues } from './wording';
 
 const TAG = process.env.QA_TAG ?? 'now';
 const OUT = `scratch/qa/${TAG}`;
-const SPEED = Number(process.env.WW_SPEED ?? 5);
 const PLACEHOLDERS = placeholderArt();
 // Lines with no clip, or a clip for old text: the same for every scenario, so read once (item 062).
 const VOICE_BUILD = voiceBuildIssues();
@@ -198,12 +198,12 @@ class Recorder {
     if (s.ending?.id) this.endingId = s.ending.id;
     if (s.battle?.fight) this.fight = s.battle.fight;
     // Free play (item 060): never more live shots than the cap.
-    const play = (s as WWState & { play?: { maxLive: number; shots: number } }).play;
+    const play = s.play;
     if (play) {
       this.shotsFired = Math.max(this.shotsFired, play.shots);
       if (play.maxLive > FREE_PLAY.maxShots) this.add([{ kind: 'shots-over-cap', severity: 'bug', scene: s.scene, detail: `${play.maxLive} live shots (cap ${FREE_PLAY.maxShots})`, key: `shotcap:${s.scene}` }], this.lastShot);
     }
-    const q = await this.page.evaluate((t) => (window as unknown as { __wwqa: { since(t: number): Since } }).__wwqa.since(t), this.qaT);
+    const q = await qaSince(this.page, this.qaT);
     this.qaT = q.now;
     this.add(logIssues({ ...q, console: [], missingArt: [], flashes: [] }, SPEED));
     this.add(clippedIssues(q.voice));
@@ -232,8 +232,8 @@ class Recorder {
 
   async capture(label: string): Promise<void> {
     const s = await state(this.page);
-    const l = await this.page.evaluate(() => (window as unknown as { __wwqa: { layout(): Layout } }).__wwqa.layout());
-    const q = await this.page.evaluate(() => (window as unknown as { __wwqa: { since(t: number): Since } }).__wwqa.since(0));
+    const l = await qaLayout(this.page);
+    const q = await qaSince(this.page, 0);
     let shot: string | undefined;
     if (this.shots < this.max) {
       this.shots++;
@@ -262,39 +262,8 @@ class Recorder {
   }
 }
 
-/** A sentence room, a wrong object first when asked. */
-async function sentenceRoom(page: Page, wrong: boolean, idle = false): Promise<string> {
-  const s = await readToKeyWord(page);
-  const key = s.room!.sentence!.key;
-  if (idle) await page.waitForTimeout(IDLE_MS);
-  if (wrong) {
-    const ready = await until(page, (st) => Boolean(st.room && !st.room.locked && st.room.spots.some((sp) => sp.correct === false)), 60_000, 'objects up');
-    const bad = ready.room!.spots.find((sp) => sp.correct === false)!;
-    await choose(page, bad.id);
-    await page.waitForTimeout(400);
-    await until(page, (st) => st.room?.sentence?.pass === 'find' && !st.room.locked, 60_000, 'retry open');
-  }
-  await choose(page);
-  await until(page, (st) => st.scene !== 'SentenceRoom', 60_000, `out of the ${key} room`);
-  return key;
-}
-
-async function room(page: Page, wrong: boolean, idle = false): Promise<void> {
-  const s = await until(
-    page,
-    (st) =>
-      (st.scene === 'SentenceRoom' && Boolean(st.room?.sentence)) ||
-      (st.scene === 'WordMachine' && Boolean(st.room?.machine)) ||
-      (st.scene === 'ChargeRoom' && Boolean(st.room?.charge)) ||
-      (st.scene === 'BridgeRoom' && Boolean(st.room?.bridge)),
-    30_000,
-    'a side room',
-  );
-  if (s.scene === 'WordMachine') await playWordMachine(page, wrong);
-  else if (s.scene === 'ChargeRoom') await playChargeRoom(page, wrong ? 'no' : 'yes');
-  else if (s.scene === 'BridgeRoom') await playBridgeRoom(page, wrong);
-  else await sentenceRoom(page, wrong, idle);
-}
+/** How a scenario plays a room (`playRoom`): wrong first when asked, a beat after a wrong object, standing still at the key word when idle. */
+const roomPlay = (sc: Scenario, idle = Boolean(sc.idle)): RoomPlay => ({ wrongFirst: Boolean(sc.wrong), wrongPauseMs: 400, idleMs: idle ? IDLE_MS : 0 });
 
 /** An idle child: wait for the choice to be up, then stand still. */
 async function standStill(page: Page, sc: Scenario, ready: (s: WWState) => boolean, what: string): Promise<void> {
@@ -406,7 +375,7 @@ async function episode(page: Page, sc: Scenario, rec: Recorder, at: (p: Point) =
       if (sc.dadLock && door === 'door_a') await dadLockProbe(page, rec);
       await at(door === 'door_a' ? 'room_a' : 'room_b');
     }
-    await room(page, Boolean(sc.wrong), Boolean(sc.idle));
+    await playRoom(page, roomPlay(sc));
   }
   await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:front', 90_000, 'front door');
   await hubGo(page, 'door_front');
@@ -427,7 +396,8 @@ async function episode(page: Page, sc: Scenario, rec: Recorder, at: (p: Point) =
     await until(page, (st) => st.scene === 'SentenceRoom' && st.room?.sentence?.pass === 'read' && !st.room.locked, 90_000, 'attic read pass');
     await at('attic');
   }
-  await sentenceRoom(page, Boolean(sc.wrong));
+  // The attic: wrong first when asked, but no standing still at its key word.
+  await playSentenceRoom(page, roomPlay(sc, false));
   await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:2:front', 90_000, 'front door again');
   await hubGo(page, 'door_front');
   await until(page, (s) => s.scene === 'Battle', 60_000, 'battle 2');
@@ -472,7 +442,7 @@ function probes(page: Page, sc: Scenario, rec: Recorder, reloadAt: Point | null,
   return async (p) => {
     if (sc.lockAll) {
       const before = await state(page);
-      const t0 = await page.evaluate(() => (window as unknown as { __wwqa: { since(t: number): Since } }).__wwqa.since(0).now);
+      const t0 = (await qaSince(page, 0)).now;
       await page.keyboard.press('Backquote');
       for (const b of ['green', 'yellow', 'blue', 'red', 'green', 'yellow']) {
         await press(page, b);
@@ -481,7 +451,7 @@ function probes(page: Page, sc: Scenario, rec: Recorder, reloadAt: Point | null,
       await page.waitForTimeout(2500);
       await rec.capture(`lock_${p}`);
       const after = await state(page);
-      const said = await page.evaluate((t) => (window as unknown as { __wwqa: { since(t: number): Since } }).__wwqa.since(t).voice.map((v) => v.id), t0);
+      const said = (await qaSince(page, t0)).voice.map((v) => v.id);
       const badge = await page.evaluate(() => Boolean(document.getElementById('dad-lock')?.isConnected));
       log.push({ point: p, scene: before.scene, moved: where(after) !== where(before), before: where(before), after: where(after), said, badge });
       // The bedroom's wake-up, the warm-up's intro and the victory scene run on by themselves (W10): a look there.
@@ -663,7 +633,7 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     // Rotations only where the URL forces nothing they rotate.
     if (!/(^|&)(seed|ally|villain|place|fight|game|room)=|cast=default/.test(sc.query)) rec.add(varietyIssues(drawn));
     if (sc.mash && rec.shotsFired === 0) rec.add([{ kind: 'mash-dead', severity: 'bug', scene: '', detail: 'a busy child pressed blue, red and yellow all episode and free play never fired a shot', key: 'mash-dead' }]);
-    const q = await page.evaluate(() => (window as unknown as { __wwqa: { since(t: number): Since } }).__wwqa.since(0));
+    const q = await qaSince(page, 0);
     // The whole run's flashes at once: a burst can straddle two polls.
     rec.add(logIssues({ ...q, voice: [], locks: [], spikes: [] }, SPEED));
     rec.add(VOICE_BUILD);
@@ -792,7 +762,7 @@ for (const mode of flagSet && !LOOK ? (['skip', 'auto'] as const) : []) {
     }
     await rec.stop();
     for (const e of errors) rec.add([{ kind: 'page-error', severity: 'bug', scene: '', detail: e, key: `pageerror:${e.slice(0, 80)}` }]);
-    const q = await page.evaluate(() => (window as unknown as { __wwqa: { since(t: number): Since } }).__wwqa.since(0));
+    const q = await qaSince(page, 0);
     rec.add(logIssues({ ...q, voice: [], locks: [], spikes: [] }, SPEED));
     const last = await state(page);
     writeFileSync(`${OUT}/${sc.name}.json`, JSON.stringify({ scenario: sc, stalled, path, progress: last.progress, read: last.episode.read, shots: rec.shots, issues: [...rec.issues.values()] }, null, 1));

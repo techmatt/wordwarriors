@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SMOKE, type TextInfo, boot, collectErrors, expectNoErrors, texts, until } from './harness';
+import { SMOKE, type TextInfo, boot, collectErrors, dadLock, expectNoErrors, texts, until } from './harness';
 
 interface Line {
   id: string;
@@ -71,7 +71,7 @@ test('the longest caption and the longest bubble stay on screen, even at the edg
   // cuts a bark, one still decoding included (its claim is a bark since item
   // 054): the first bark's clip is outside the loaded groups, so it is fetched,
   // and the re-prompt landing then dropped it before it ever showed.
-  await page.evaluate(() => (window as unknown as { __ww: { dadLock(on?: boolean): boolean } }).__ww.dadLock(true));
+  await dadLock(page, true);
   // Narrator lines are instructions (the ribbon); taunts and reformed lines are barks (bubbles).
   const instruction = longest((l) => l.id.startsWith('nar_') || l.id.startsWith('core_'));
   const lastWord = instruction.text.split(/\s+/).pop()!.toUpperCase();

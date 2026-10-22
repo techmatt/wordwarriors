@@ -22,12 +22,8 @@ export default defineConfig({
   reporter: [['list']],
   // One scenario is one or more whole episodes.
   timeout: 1_800_000,
-  use: {
-    baseURL: `http://localhost:${PORT}`,
-    viewport: { width: 1280, height: 720 },
-    launchOptions: { args: ['--autoplay-policy=no-user-gesture-required'] },
-  },
-  projects: gpuProjects({ use: { viewport: { width: 1280, height: 720 } }, args: ['--enable-precise-memory-info'] }),
+  use: { baseURL: `http://localhost:${PORT}` },
+  projects: gpuProjects({ args: ['--enable-precise-memory-info'] }),
   webServer: {
     command: `npx vite --config tests/qa/vite.qa.config.ts --port ${PORT} --strictPort`,
     cwd: '../..',

@@ -4,17 +4,14 @@
  * (`src/qa/probe.ts`, `tests/qa/checks.ts`): the hub's circle as "Stand in the
  * circle..." plays, the word machine's tiles as "Walk on a letter..." plays.
  * Both things pop in as their line starts, which is how the box came to cover them.
- * Fast lane since item 061 (5-6 s each at clock speed 5).
+ * Untagged (`npm run test:browser`) since item 061 (5-6 s each at clock speed 5).
  */
 
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 import { boot, collectErrors, expectNoErrors, until } from './harness';
 import { layoutIssues, type Layout } from './qa/checks';
-
-function layout(page: Page): Promise<Layout> {
-  return page.evaluate(() => (window as unknown as { __wwqa: { layout(): Layout } }).__wwqa.layout());
-}
+import { qaLayout as layout } from './qa/probe';
 
 /** The box's word texts as one rectangle: left, top, right, bottom. */
 function boxOf(l: Layout): [number, number, number, number] | null {

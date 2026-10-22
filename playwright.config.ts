@@ -3,14 +3,14 @@ import { defineConfig } from '@playwright/test';
 import { TEST_PORT } from './src/port';
 import { gpuProjects } from './tests/gpu';
 
+/** The specs that play whole episodes, run first (`projects`, below). */
+const LONG_SPECS = ['**/episode.spec.ts', '**/soak.spec.ts', '**/drawn.spec.ts'];
+
 // WW_BASE_URL points the suite at an already-running server (e.g. a `vite preview`
 // of a build on another port), so a long run is not reloaded by edits to src/.
 // Otherwise the suite starts its own server, never reusing one (whatever already
 // answers there may be another checkout's code): on CONDUCTOR_PORT when set (a
 // conductor item's port, item 047), else TEST_PORT, never the dev port.
-/** The specs that play whole episodes, run first (`projects`, below). */
-const LONG_SPECS = ['**/episode.spec.ts', '**/soak.spec.ts', '**/drawn.spec.ts'];
-
 const SERVE_PORT =Number(process.env.CONDUCTOR_PORT) || TEST_PORT;
 const BASE_URL = process.env.WW_BASE_URL ?? `http://localhost:${SERVE_PORT}`;
 
@@ -18,14 +18,13 @@ export default defineConfig({
   testDir: './tests',
   testMatch: '*.spec.ts',
   outputDir: './test-results',
-  // Two workers since item 061 (2026-10-20), on the GPU: the fast lane 87 s against
-  // 130 s on one, each test 20-30% slower but two at a time. Three made a Charge
-  // round's game time stretch past its limit (28 s to the read against 17 s) and
-  // saved nothing (83 s). Software GL (WW_GPU=0) falls back to one: there two
-  // workers made every test 2.3-2.4x slower (Seraphina's Secret, 2026-08-15).
-  // `--workers=1` for a run that times anything by eye. Three since item 079 (2026-10-21),
-  // once the suite served a build: the slow lane 779 s on two, 578 s on three, green, the
-  // timed Charge round asserting only on one worker since item 072.
+  // Three workers on the GPU since item 079 (2026-10-21), once the suite served a build:
+  // the slow lane 578 s on three against 779 s on two, green (the timed Charge round
+  // asserts only on one worker since item 072). Software GL (WW_GPU=0) runs one: there
+  // two workers made every test 2.3-2.4x slower (Seraphina's Secret, 2026-08-15).
+  // `--workers=1` for a run that times anything by eye. Before the build, item 061
+  // (2026-10-20) measured two against one (the fast lane 87 s against 130 s) and three
+  // saving nothing (83 s) while a Charge round's game time stretched past its limit.
   fullyParallel: false,
   workers: process.env.WW_GPU === '0' ? 1 : 3,
   // A trace is bought on the retry only: tracing every run cost 44% of wall clock there.
@@ -33,13 +32,10 @@ export default defineConfig({
   reporter: [['list']],
   timeout: 150_000,
 
+  // The viewport (Desktop Chrome's 1280×720) and the launch flags are the project's (tests/gpu.ts).
   use: {
     baseURL: BASE_URL,
-    viewport: { width: 1280, height: 720 },
     trace: 'on-first-retry',
-    launchOptions: {
-      args: ['--autoplay-policy=no-user-gesture-required'],
-    },
   },
 
   // The GPU draws (full Chromium, ANGLE on D3D11) unless WW_GPU=0, which goes back to

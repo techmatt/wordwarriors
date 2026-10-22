@@ -11,7 +11,7 @@ import { ACTIONS, BANK, BANK_BY_WORD, DROPPED, LIVE, THINGS } from '../../conten
 import { ROSTER } from '../../content/battle/roster';
 import { FAMILY_WORDS } from '../../content/phonics/families';
 import { FETCH_ITEMS } from '../../content/phonics/sentences';
-import { CVC_WORDS } from '../../content/phonics/words';
+import { PICTURE_WORDS } from '../../content/phonics/words';
 import { WAKE_LINES, WAKE_VARIANTS, wakeVariant } from '../../content/voice/script';
 import { WAKERS, reformedLine, wakeLine } from '../../content/voice/ids';
 import { GRAB_WORDS } from '../../src/rules/grab';
@@ -27,7 +27,7 @@ test('familiar words: no odd word is a picture to match', () => {
     ['the word bag (rooms and the counter)', BAG_WORDS],
     ['the word machine', FAMILY_WORDS],
     ['fetched items', FETCH_ITEMS.map((f) => f.word)],
-    ['pictured words', CVC_WORDS.map((w) => w.word)],
+    ['pictured words', PICTURE_WORDS.map((w) => w.word)],
   ] as const) {
     for (const w of ws) assert.ok(!odd(w), `${what}: ${w} is odd`);
   }

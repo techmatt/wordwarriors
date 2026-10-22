@@ -22,14 +22,14 @@ async function playEnding(page: Page, name: string): Promise<{ ending: NonNullab
   return { ending: done.ending!, end };
 }
 
-// Each plays its four lines out (12-25 s), so all are slow lane; the fast lane keeps
-// the quick check below that a scene is drawn at all.
+// Each plays its four lines out (12-25 s), so all are slow lane; `npm run test:browser`
+// keeps the untagged quick check below that a scene is drawn at all.
 for (const seed of [2, 9, 4, 6, 13]) {
   test(`a random victory scene plays through (seed ${seed})`, SLOW, async ({ page }) => {
     const errors = collectErrors(page);
     await boot(page, `?scene=victory&seed=${seed}&nojourney=1&read=bed,hat,zap`);
     const { ending, end } = await playEnding(page, `seed${seed}`);
-    const ep = end.episode as unknown as { hero: string; villain: string; ally: string | null };
+    const ep = end.episode;
 
     // Everyone is there, one each, the hero first and the villain (good again) last.
     expect(ending.people[0]).toBe(ep.hero);
@@ -71,7 +71,7 @@ test('never last episode\'s scene', async ({ page }) => {
   const s = await until(page, (st) => st.scene === 'Ending' && Boolean(st.ending), 30_000, 'the victory scene');
   expect(s.ending!.id).not.toBe('picnic');
   // ...and this one is kept for the next episode.
-  expect((s.progress as unknown as { recent: Record<string, string[]> }).recent.ending?.at(-1)).toBe(s.ending!.id);
+  expect(s.progress.recent.ending?.at(-1)).toBe(s.ending!.id);
   expectNoErrors(errors);
 });
 
