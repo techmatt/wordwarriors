@@ -13,11 +13,13 @@
  * times how shaky the words it can give her are.
  *
  * A new minigame is one entry here: its kind, its scene, a weight, the
- * slots it can fill; a new kind also takes its lean here (`LEAN`) and its
- * planner (src/rules/sentences.ts `PLANNERS`). Whatever it is, it must end in a key word she has read (the thing
- * fetched, or the counter), which the room's plan carries as `key` (and every
- * word read there as `fetches`); a non-sentence game brings its own plan
- * alongside, as the machine's `machine` (src/rules/sentences.ts `RoomPlan`).
+ * slots it can fill. A new kind is also a `MinigameKind`, its lean here
+ * (`LEAN`), its planner and its room plan (src/rules/sentences.ts `PLANNERS`
+ * and `RoomPlan`; `PLAN_ORDER` if it plans words of its own). Whatever it
+ * is, it must end in a key word she has read (the thing fetched, or the
+ * counter), which the room's plan carries as `key` (and every word read
+ * there as `fetches`); a non-sentence game brings its own plan alongside, as
+ * the machine's `machine`.
  */
 
 import { FAMILIES } from '../../content/phonics/families';
@@ -55,14 +57,14 @@ export interface Minigame {
 /** The sentence game in each of its frames: the pool before item 026, and the tests' default (`?games=sentence`). */
 export const SENTENCE_GAMES: Minigame[] = FRAMES.map((f): Minigame => ({ id: `sentence:${f.id}`, kind: 'sentence', scene: 'SentenceRoom', weight: 1, slots: [f.use], frame: f.id }));
 
-/** The word machine: a fetch room only (the counter belongs to the villain's sentence). Its plan is the visit's words (src/rules/wordMachine.ts). */
+/** The word machine: a fetch room only (the counter belongs to the villain's sentence); its plan is the visit's words (src/rules/wordMachine.ts). */
 export const WORD_MACHINE_GAME: Minigame = { id: 'word_machine', kind: 'machine', scene: 'WordMachine', weight: WORD_MACHINE.weight, slots: ['fetch'] };
 
 /**
  * Charge the Spell (item 053): a fetch room only. One word a visit, each
  * rune's sound said back, then the word read aloud, judged by Dad (its plan:
- * the word and runes, src/rules/charge.ts); the word is a battle item (fetched, item 058) and its runes fire in the
- * next battle. For the beta it is one of the phonics games, one of which is
+ * the word and runes, src/rules/charge.ts); the word is a battle item
+ * (fetched, item 058) and its runes fire in the next battle. For the beta it is one of the phonics games, one of which is
  * forced per episode (FORCE_PHONICS_ROOM, src/episode/plans.ts `roomGames`).
  */
 export const CHARGE_GAME: Minigame = { id: 'charge', kind: 'charge', scene: 'ChargeRoom', weight: CHARGE.weight, slots: ['fetch'] };
@@ -103,9 +105,8 @@ const LEAN: Record<MinigameKind, (store: ProgressStore, g: Minigame) => number> 
 /**
  * The episode's three games: two different fetch games (doors a and b), then
  * the counter game. A game's weight is scaled by its kind's lean (`LEAN`).
- * A game she played in her
- * last episodes (the store's `games`) weighs VARIETY.gameWeight as much
- * (item 067), so the rooms rotate.
+ * A game she played in her last episodes (the store's `games`) weighs
+ * VARIETY.gameWeight as much (item 067), so the rooms rotate.
  */
 export function drawGames(store: ProgressStore, rand: Rand = Math.random, pool: Minigame[] = MINIGAMES): [Minigame, Minigame, Minigame] {
   const recent = new Set(store.recentOf('games'));

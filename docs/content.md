@@ -317,11 +317,13 @@ weight 1 times the frame's shakiness), and the word machine is one more
 (`word_machine`, fetch rooms only, weight `WORD_MACHINE.weight` in `src/config.ts` times
 how shaky her word families are: about every other episode); Charge the Spell and the
 Stretchy Bridge are one each (`charge`, `bridge`, fetch rooms only). A new game of a kind
-already there is one entry and its scene. A new kind is one entry plus its planner: its
-weight's lean (`LEAN`, minigames.ts, by what she finds shaky) and its entry in `PLANNERS`
-(`src/rules/sentences.ts`: the words it shows, its own words planned before any key, what it
-reads, shows as pictures and says, and its room's plan). The room's `RoomPlan` (a union by
-the same `kind`) carries `game` and `scene`, and `enterRoom` starts that scene. Whatever it plays, it must end in a word she read: `plan.key` (the
+already there is one entry and its scene. A new kind is one entry plus its planner: a
+`MinigameKind`, its weight's lean (`LEAN`, minigames.ts, by what she finds shaky), its
+`RoomPlan` variant and its planner in `PLANNERS` (`src/rules/sentences.ts`): a
+`KeyPlanner` (the words it shows, a key drawn from the bag) or an `OwnWordsPlanner` (its
+own words planned before any key, in `PLAN_ORDER`; what it reads, shows as pictures and
+says). The compiler asks for each but `PLAN_ORDER`, which `episodePlans` checks as it
+runs. The room's `RoomPlan` carries `game` and `scene`, and `enterRoom` starts that scene. Whatever it plays, it must end in a word she read: `plan.key` (the
 prize on the hub door, or the counter) and `plan.fetches` (every word read there, each a
 battle item from a fetch room). Words a game uses are planned in `episodePlans`, kind by
 kind in `PLANNERS` order, so they stay out of the rooms planned after it, the keys and

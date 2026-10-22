@@ -248,90 +248,111 @@ interface PlanContext {
   pictured: string[];
 }
 
-/**
- * How one minigame kind plans its room. A game with its own words (`plan`:
- * the word machine, the bridge, Charge the Spell) plans them before any key
- * is drawn, its key the last word it reads, so it is a fetch room only; a
- * game without draws its key from the bag (the sentence game).
- */
-interface KindPlanner<P = unknown> {
-  /** Words the game shows besides its key word, in every room (a frame's own words): never a key word. */
-  shows?(g: Minigame, fill: Fill): string[];
-  /** The room's own words, kept clear of the rooms planned before it; null when it cannot this episode (a sentence game plays instead). */
-  plan?(ctx: PlanContext, g: Minigame): P | null;
-  /** Every word read in a planned room, in order, its key last. */
-  reads?(plan: P): string[];
-  /** The pictures a planned room shows: no other room's key word. */
-  pictures?(plan: P): string[];
-  /** Words a planned room says along the way: no key word drawn after it. */
-  says?(plan: P): string[];
-  /** The room's plan: `base` carries its slot, room, game, scene and key; `plan` its own words, if it planned any. */
-  room(base: Omit<PlanBase, 'fetches'>, plan: P | null, ctx: PlanContext & { keys: string[]; game: Minigame }): RoomPlan;
-}
+type RoomBase = Omit<PlanBase, 'fetches'>;
 
 /**
- * Each kind's planner. Declared in planning order: a game's own words keep
- * clear of those planned above it (the bridge's of the machine's; Charge's
- * of both, and of the bridge's pictures).
+ * How a kind with words of its own plans its room (the word machine, the
+ * bridge, Charge the Spell): before any key is drawn, kept clear of the rooms
+ * planned before it, its key the last word it reads, so a fetch room only.
  */
-const PLANNERS: { [K in MinigameKind]: KindPlanner<KindPlan[K]> } = {
-  // The word machine builds several words (item 026): no room's word, its
-  // own included, is a move pad.
-  machine: {
-    plan: (ctx) => {
-      const m = planMachine(ctx.store, { avoid: [...ctx.avoid, ...ctx.moves] }, ctx.rand);
-      // No family has two words this episode can use (it never happens with today's words).
-      return m.rounds.length ? m : null;
-    },
-    reads: machineWords,
-    room: (base, m) => ({ ...base, kind: 'machine', machine: m!, fetches: machineWords(m!) }),
+interface OwnWordsPlanner<P> {
+  /** The room's own words; null when it cannot this episode (a sentence game plays instead). */
+  plan(ctx: PlanContext, g: Minigame): P | null;
+  /** Every word read there, in order, its key last. */
+  reads(plan: P): string[];
+  /** The pictures it shows: no other room's key word. */
+  pictures?(plan: P): string[];
+  /** Words it says along the way: no key word drawn after it. */
+  says?(plan: P): string[];
+  room(base: RoomBase, plan: P): RoomPlan;
+}
+
+/** How a kind that draws its key from the bag plans its room (the sentence game). */
+interface KeyPlanner {
+  /** Words it shows besides its key word, in every room (a frame's own words): never a key word. */
+  shows(g: Minigame, fill: Fill): string[];
+  room(base: RoomBase, ctx: PlanContext & { keys: string[]; game: Minigame }): RoomPlan;
+}
+
+type KindPlanner = OwnWordsPlanner<unknown> | KeyPlanner;
+
+// The word machine builds several words (item 026): no room's word, its own included, is a move pad.
+const MACHINE: OwnWordsPlanner<MachinePlan> = {
+  plan: (ctx) => {
+    const m = planMachine(ctx.store, { avoid: [...ctx.avoid, ...ctx.moves] }, ctx.rand);
+    // No family has two words this episode can use (it never happens with today's words).
+    return m.rounds.length ? m : null;
   },
-  // The Stretchy Bridge (item 054) reads several words too; its far-bank
-  // pictures are shown, so no room's key word is one of them. Nor is the
-  // villain's own named counter word on it, so the attic can still draw it.
-  bridge: {
-    plan: (ctx) => planBridge(ctx.store, { avoid: [...ctx.avoid, ...ctx.moves, ...ctx.named], taken: ctx.taken }, ctx.rand),
-    reads: bridgeWords,
-    pictures: bridgeShown,
-    room: (base, b) => ({ ...base, kind: 'bridge', bridge: b!, fetches: bridgeWords(b!) }),
+  reads: machineWords,
+  room: (base, m) => ({ ...base, kind: 'machine', machine: m, fetches: machineWords(m) }),
+};
+
+// The Stretchy Bridge (item 054) reads several words too; its far-bank
+// pictures are shown, so no room's key word is one of them. Nor is the
+// villain's own named counter word on it, so the attic can still draw it.
+const BRIDGE: OwnWordsPlanner<BridgePlan> = {
+  plan: (ctx) => planBridge(ctx.store, { avoid: [...ctx.avoid, ...ctx.moves, ...ctx.named], taken: ctx.taken }, ctx.rand),
+  reads: bridgeWords,
+  pictures: bridgeShown,
+  room: (base, b) => ({ ...base, kind: 'bridge', bridge: b, fetches: bridgeWords(b) }),
+};
+
+// Charge the Spell (item 058) spells one word, a battle item. Its runes'
+// gestures speak (item 074: "Tap the egg"), so it is no word whose gestures
+// say a word she reads after it, and the keys keep clear of what they say.
+const CHARGE: OwnWordsPlanner<ChargePlan> = {
+  plan: (ctx) => {
+    const later = [ctx.gift, ...ctx.moves, ...ctx.taken, ...ctx.pictured, ...ctx.named];
+    return planCharge(ctx.store, { avoid: [...ctx.avoid, ...ctx.moves, ...ctx.taken, ...ctx.pictured, ...ctx.named], later }, ctx.rand);
   },
-  // Charge the Spell (item 058) spells one word, a battle item. Its runes'
-  // gestures speak (item 074: "Tap the egg"), so it is no word whose gestures
-  // say a word she reads after it, and the keys keep clear of what they say.
-  charge: {
-    plan: (ctx) => {
-      const later = [ctx.gift, ...ctx.moves, ...ctx.taken, ...ctx.pictured, ...ctx.named];
-      return planCharge(ctx.store, { avoid: [...ctx.avoid, ...ctx.moves, ...ctx.taken, ...ctx.pictured, ...ctx.named], later }, ctx.rand);
-    },
-    reads: (c) => [c.word],
-    says: (c) => gestureWords(c.runes),
-    room: (base, c) => ({ ...base, kind: 'charge', charge: c!, fetches: [c!.word] }),
-  },
-  // The sentence game shows its frame's words in every room; its key word is drawn from the bag.
-  sentence: {
-    shows: (g, fill) => sentence(g.frame!, fill, 'x').tokens.slice(0, -1).map(tokenWord),
-    room: (base, _, { store, rand, fill, gift, keys, taken, game }) => {
-      const s = sentence(game.frame!, fill, base.key);
-      // No room offers the gift word or another of the episode's key words as a wrong picture.
-      const others = [gift, ...keys.filter((k) => k && k !== base.key), ...taken];
-      return { ...base, kind: 'sentence', fetches: [base.key], sentence: s, objects: objectsFor(store, s, rand, others) };
-    },
+  reads: (c) => [c.word],
+  says: (c) => gestureWords(c.runes),
+  room: (base, c) => ({ ...base, kind: 'charge', charge: c, fetches: [c.word] }),
+};
+
+// The sentence game shows its frame's words in every room; its key word is drawn from the bag.
+const SENTENCE: KeyPlanner = {
+  shows: (g, fill) => sentence(g.frame!, fill, 'x').tokens.slice(0, -1).map(tokenWord),
+  room: (base, { store, rand, fill, gift, keys, taken, game }) => {
+    const s = sentence(game.frame!, fill, base.key);
+    // No room offers the gift word or another of the episode's key words as a wrong picture.
+    const others = [gift, ...keys.filter((k) => k && k !== base.key), ...taken];
+    return { ...base, kind: 'sentence', fetches: [base.key], sentence: s, objects: objectsFor(store, s, rand, others) };
   },
 };
 
-/** Each kind's own plan (null: the sentence game draws only its key). */
-interface KindPlan {
-  machine: MachinePlan;
-  bridge: BridgePlan;
-  charge: ChargePlan;
-  sentence: never;
-}
+/** Each kind's planner: a new kind is a minigame entry plus its planner here. */
+const PLANNERS: Record<MinigameKind, KindPlanner> = { machine: MACHINE, bridge: BRIDGE, charge: CHARGE, sentence: SENTENCE };
+
+/**
+ * The order the kinds with words of their own plan them: each keeps clear of
+ * those planned before it (the bridge of the machine's words; Charge of both,
+ * and of the bridge's pictures). A new such kind takes its place here.
+ */
+const PLAN_ORDER: MinigameKind[] = ['machine', 'bridge', 'charge'];
 
 const plannerOf = (g: Minigame): KindPlanner => {
   const p = PLANNERS[g.kind] as KindPlanner | undefined;
   if (!p) throw new Error(`episodePlans: ${g.id} has no planner for its kind (${g.kind})`);
   return p;
 };
+
+/** A room whose game has planned its own words: what it reads and says, and its room's plan. */
+interface Planned {
+  reads: string[];
+  says: string[];
+  room(base: RoomBase): RoomPlan;
+}
+
+/** Plan a game's own words (null: it cannot), adding what it reads and shows to the context for the rooms planned after it. */
+function planOwn<P>(planner: OwnWordsPlanner<P>, ctx: PlanContext, g: Minigame): Planned | null {
+  const p = planner.plan(ctx, g);
+  if (p === null) return null;
+  const reads = planner.reads(p);
+  ctx.taken.push(...reads);
+  ctx.pictured.push(...(planner.pictures?.(p) ?? []));
+  return { reads, says: planner.says?.(p) ?? [], room: (base) => planner.room(base, p) };
+}
 
 /**
  * The episode's three room plans: fetch rooms a and b, then the attic's
@@ -341,11 +362,14 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   const { fill, gift } = input;
   // The rooms' games come from the minigame pool (item 025); each sentence game is a frame.
   const games = [...(input.games ?? drawGames(store, rand, input.pool))] as [Minigame, Minigame, Minigame];
-  if (plannerOf(games[2]).plan) throw new Error(`episodePlans: ${games[2].id} is a fetch room, not the counter`);
+  if ('plan' in plannerOf(games[2])) throw new Error(`episodePlans: ${games[2].id} is a fetch room, not the counter`);
 
   // Every word any of the rooms shows besides its key word: she reads them
   // (and hears them on green) in every room, so none is a key word.
-  const shown = games.flatMap((g) => plannerOf(g).shows?.(g, fill) ?? []);
+  const shown = games.flatMap((g) => {
+    const planner = plannerOf(g);
+    return 'shows' in planner ? planner.shows(g, fill) : [];
+  });
   const avoid = new Set(withStems([gift, ...shown, ...(input.saidBefore ?? []), ...saidEarly({ hero: fill.hero, ally: input.ally, villain: fill.villain, helper: fill.helper })]));
   // The episode's move pads, and battle 1's: no room's word, a game's own included, is one of them.
   const moves = new Set<string>([...(input.moveWords ?? ACTION_WORDS), ...(input.battle1Moves ?? [])]);
@@ -354,26 +378,22 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
 
   // The games with words of their own plan them first, kind by kind, so the
   // sentence rooms and the counter keep clear of all of them.
-  const own: unknown[] = [null, null, null];
-  for (const kind of Object.keys(PLANNERS) as MinigameKind[]) {
+  const own: (Planned | null)[] = [null, null, null];
+  for (const kind of PLAN_ORDER) {
     games.forEach((g, i) => {
       const planner = plannerOf(g);
-      if (g.kind !== kind || !planner.plan) return;
-      const p = planner.plan(ctx, g);
-      if (p === null) {
-        // It cannot this episode: that room plays a sentence game instead.
-        const spare = (input.pool ?? MINIGAMES).find((s) => s.kind === 'sentence' && s.slots.includes('fetch') && !games.includes(s))!;
-        games[i] = spare;
-        for (const w of PLANNERS.sentence.shows!(spare, fill)) avoid.add(w);
-        return;
-      }
-      own[i] = p;
-      ctx.taken.push(...planner.reads!(p));
-      ctx.pictured.push(...(planner.pictures?.(p) ?? []));
+      if (g.kind !== kind || !('plan' in planner)) return;
+      own[i] = planOwn(planner, ctx, g);
+      if (own[i]) return;
+      // It cannot this episode: that room plays a sentence game instead.
+      const spare = (input.pool ?? MINIGAMES).find((s) => s.kind === 'sentence' && s.slots.includes('fetch') && !games.includes(s))!;
+      games[i] = spare;
+      for (const w of SENTENCE.shows(spare, fill)) avoid.add(w);
     });
   }
   games.forEach((g, i) => {
-    if (own[i] !== null) for (const w of plannerOf(g).says?.(own[i]) ?? []) avoid.add(w);
+    if ('plan' in plannerOf(g) && !own[i]) throw new Error(`episodePlans: ${g.kind} has no place in PLAN_ORDER`);
+    for (const w of own[i]?.says ?? []) avoid.add(w);
   });
   const { taken, pictured } = ctx;
 
@@ -388,8 +408,9 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   const keys: string[] = [];
   for (let i = 0; i < 2; i++) {
     // A game with its own words ends on the last of them.
-    if (own[i] !== null) {
-      keys.push(plannerOf(games[i]!).reads!(own[i]).at(-1) ?? '');
+    const o = own[i];
+    if (o) {
+      keys.push(o.reads.at(-1) ?? '');
       continue;
     }
     const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w)).filter(fits(i));
@@ -406,7 +427,9 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   return slots.map((slot, i): RoomPlan => {
     const game = games[i]!;
     const base = { slot, room: roomIds[i]!, game: game.id, scene: game.scene, key: keys[i]! };
-    return plannerOf(game).room(base, own[i], { ...ctx, keys, game });
+    const o = own[i];
+    if (o) return o.room(base);
+    return (plannerOf(game) as KeyPlanner).room(base, { ...ctx, keys, game });
   }) as [RoomPlan, RoomPlan, RoomPlan];
 }
 
