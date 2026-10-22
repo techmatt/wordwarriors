@@ -132,8 +132,10 @@ export function layoutIssues(l: Layout, scene: string, placeholders: Set<string>
     if (lettered(t) && (t.b[0] < -2 || t.b[1] < -2 || t.b[2] > W + 2 || t.b[3] > H + 2)) {
       out.push({ kind: 'text-offscreen', severity: 'bug', scene, detail: `"${name}" at ${t.b.join(',')}`, key: `offscreen:${t.scene}:${name}` });
     }
-    if (!grown && /[a-z]/.test(t.text)) out.push({ kind: 'lower-case', severity: 'bug', scene, detail: `"${name}"`, key: `lower:${t.scene}:${name}` });
-    if (!grown && !fleeting(t) && t.size > 0 && t.size < 14 && /[A-Z]/.test(t.text)) out.push({ kind: 'tiny-text', severity: 'look', scene, detail: `"${name}" at ${t.size.toFixed(0)}px`, key: `tiny:${t.scene}:${name}` });
+    // Each text by its own scene (item 092: a capture taken as the room came back from the
+    // grown-ups page held the page's last frame, and its mixed case read as the room's).
+    if (!grown && t.scene !== 'Parent' && /[a-z]/.test(t.text)) out.push({ kind: 'lower-case', severity: 'bug', scene, detail: `"${name}"`, key: `lower:${t.scene}:${name}` });
+    if (!grown && t.scene !== 'Parent' && !fleeting(t) && t.size > 0 && t.size < 14 && /[A-Z]/.test(t.text)) out.push({ kind: 'tiny-text', severity: 'look', scene, detail: `"${name}" at ${t.size.toFixed(0)}px`, key: `tiny:${t.scene}:${name}` });
   }
   // Text over text: two texts laid out apart (different containers) covering each other.
   for (let i = 0; i < l.texts.length; i++) {
