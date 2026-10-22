@@ -18,7 +18,7 @@ import { sfxStep } from '../../audio/sfx';
 import { DEPTH, FONT_COMIC } from '../../config';
 import { episode } from '../../episode/Episode';
 import { burst, popIn } from '../../fx/juice';
-import { choiceCount, blendRound, type WordItem } from '../../rules/rounds';
+import { blendRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
 import type { Spot } from '../../world/RoomScene';
 import { SideRoom } from '../../world/SideRoom';
@@ -43,7 +43,7 @@ export class BlendPath extends SideRoom {
   }
 
   protected build(): void {
-    this.items = blendRound(progress, ITEMS, Math.random, choiceCount(progress, 'words'));
+    this.items = blendRound(progress, ITEMS);
     this.itemIndex = 0;
     this.makeMeter(ITEMS, 'prop_ammo', '⭐');
     void (async () => {

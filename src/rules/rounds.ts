@@ -4,7 +4,8 @@
  * Targets come from the ProgressStore, weighted toward her shaky items
  * (`pickWeighted`). Distractors are drawn so each choice looks and sounds
  * different from the target: no two choices share a first letter in Word to
- * Picture, and Sound to Letter never offers b/d/p/q together.
+ * Picture, and Sound to Letter never offers b/d/p/q together. Always three
+ * choices: no automatic difficulty (item 090 dropped the struggling session's two).
  */
 
 import { LETTERS } from '../../content/phonics/letters';
@@ -84,20 +85,4 @@ function wordItem(target: string, pool: string[], choices: number, rand: Rand): 
     others.push(w);
   }
   return { target, choices: shuffle([target, ...others], rand) };
-}
-
-/**
- * How many choices to offer: two while she is finding it hard this session
- * (more wrong tries than right answers, over at least three answers), three
- * otherwise. A scaffold, never a penalty: nothing says it changed.
- */
-export function choiceCount(store: ProgressStore, kind: 'sounds' | 'words'): number {
-  const s = store.sessionSnapshot()[kind];
-  let right = 0;
-  let wrong = 0;
-  for (const st of Object.values(s)) {
-    right += st.right;
-    wrong += st.wrong;
-  }
-  return right >= 3 && wrong > right ? 2 : 3;
 }

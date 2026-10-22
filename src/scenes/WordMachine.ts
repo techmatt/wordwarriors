@@ -44,7 +44,7 @@ import { Bag } from '../ui/Bag';
 import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { fontPx } from '../ui/fitText';
 import { voiceBank } from '../voice/VoiceBank';
-import { applyHouseMood } from '../world/houseMood';
+import { applyHouseMood, roomSeed } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
@@ -147,7 +147,7 @@ export class WordMachine extends HouseSideRoom {
 
   protected build(): void {
     this.floor.setTo(80, 420, GAME_WIDTH - 160, 260);
-    applyHouseMood(this, episode.villain, { seed: 0x2026, floor: this.floor, calm: true });
+    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true });
     this.bag = new Bag(this);
     const room = SIDE_ROOM_BY_ID[this.roomId];
     // In from the side, clear of the tiles (a tile in reach would speak at once).

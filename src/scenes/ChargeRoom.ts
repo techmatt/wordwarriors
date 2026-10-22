@@ -49,7 +49,7 @@ import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
 import type { KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
-import { applyHouseMood } from '../world/houseMood';
+import { applyHouseMood, roomSeed } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
@@ -158,7 +158,7 @@ export class ChargeRoom extends HouseSideRoom {
 
   protected build(): void {
     this.floor.setTo(80, 420, GAME_WIDTH - 160, 260);
-    applyHouseMood(this, episode.villain, { seed: 0x2053, floor: this.floor, calm: true });
+    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true });
     const room = SIDE_ROOM_BY_ID[this.roomId];
     // She stands beside the altar from the start: nothing to walk to or press. Clear of its
     // footprint (item 069: 20 px inside it, the altar was drawn over her arm and dress all round).

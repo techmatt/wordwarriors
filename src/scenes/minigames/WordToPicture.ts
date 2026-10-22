@@ -17,7 +17,7 @@ import { letterSoundLine, wordLine } from '../../../content/voice/ids';
 import { DEPTH, FONT_COMIC, GAME_WIDTH } from '../../config';
 import { castFace, episode } from '../../episode/Episode';
 import { bob, popIn } from '../../fx/juice';
-import { choiceCount, pictureRound, type WordItem } from '../../rules/rounds';
+import { pictureRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
 import type { Spot } from '../../world/RoomScene';
 import { SideRoom } from '../../world/SideRoom';
@@ -38,7 +38,7 @@ export class WordToPicture extends SideRoom {
   }
 
   protected build(): void {
-    this.items = pictureRound(progress, ITEMS, Math.random, choiceCount(progress, 'words'));
+    this.items = pictureRound(progress, ITEMS);
     this.itemIndex = 0;
     this.makeMeter(ITEMS, 'minion_helper', '✨');
     this.floor.setTo(80, 420, GAME_WIDTH - 160, 230);

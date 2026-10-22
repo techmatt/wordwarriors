@@ -21,7 +21,7 @@ import { WAKERS, coreLine, heroKey, homeQuestLine, letterSoundLine, moveKey, mov
 import { CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE_LINES } from '../../content/voice/script';
 import { ProgressStore, STORE_KEY } from '../../src/state/ProgressStore';
 import { pickWeighted } from '../../src/rules/random';
-import { blendRound, choiceCount, pictureRound, soundRound } from '../../src/rules/rounds';
+import { blendRound, pictureRound, soundRound } from '../../src/rules/rounds';
 import { BAG_WORDS } from '../../src/rules/sentences';
 import { sentencePlans } from './plans';
 import { align } from '../../tools/voice/align';
@@ -86,13 +86,11 @@ test('rounds: 3–5 items, the target among the choices, choices distinct', () =
   }
 });
 
-test('choiceCount drops to two while she is struggling this session', () => {
+test('rounds offer three choices even while she is struggling (item 090: no automatic choice count)', () => {
   const p = new ProgressStore(memory());
-  assert.equal(choiceCount(p, 'sounds'), 3);
-  for (const l of ['a', 'b', 'c']) p.record('sounds', l, false, 2);
-  assert.equal(choiceCount(p, 'sounds'), 2);
-  for (const l of ['d', 'e', 'f', 'g']) p.record('sounds', l, true, 0);
-  assert.equal(choiceCount(p, 'sounds'), 3);
+  for (const w of ['cat', 'dog', 'sun', 'fox']) p.record('words', w, false, 2);
+  const r = seeded(5);
+  for (const item of [...blendRound(p, 3, r), ...pictureRound(p, 4, r)]) assert.equal(item.choices.length, 3);
 });
 
 test('roster: every character is complete, good and evil', () => {

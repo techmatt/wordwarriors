@@ -60,6 +60,17 @@ const WALL = new Phaser.Geom.Rectangle(210, 70, 880, 130);
 /** Decal ids that read as lying on the floor; anything else may go on the wall. */
 const FLOOR_LIKE = /foot|print|step|track|puddle|crumb|peel|banana|scorch|rubble|pile|mud|slime|bone|coin|sand|leaf|leaves|feather|dust/;
 
+/**
+ * A side room's scatter seed (FNV-1a of its id), so each room has its own
+ * stable mess whatever game it plays (item 090: the word machine, Charge and
+ * the bridge had one fixed seed each, the same decals in every room).
+ */
+export function roomSeed(id: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 0x01000193) >>> 0;
+  return h;
+}
+
 /** Everything it adds lasts until the scene ends: nothing takes it off sooner. */
 export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: HouseMoodOptions): HouseMoodHandle {
   const mood: HouseMood | undefined = CHARACTER_BY_ID[villainId]?.house;

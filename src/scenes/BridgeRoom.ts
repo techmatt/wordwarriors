@@ -63,7 +63,7 @@ import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
 import type { KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
-import { applyHouseMood } from '../world/houseMood';
+import { applyHouseMood, roomSeed } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
@@ -193,7 +193,7 @@ export class BridgeRoom extends HouseSideRoom {
     this.floor.setTo(70, 430, 1140, 270);
     // The villain's mess keeps out of the gap and off the far bank's pictures.
     const avoid = [new Phaser.Geom.Rectangle(GAP.left - 30, GAP.top - 20, GAP.right - GAP.left + 60, GAME_HEIGHT), new Phaser.Geom.Rectangle(FAR_X, PICTURES[0]![1] - PICTURE_SIZE - 30, GAME_WIDTH - FAR_X, GAME_HEIGHT)];
-    applyHouseMood(this, episode.villain, { seed: 0x2054, floor: this.floor, calm: true, avoid });
+    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true, avoid });
     this.bag = new Bag(this);
     const gap = gapFor(this.roomId);
     this.gapLook = GAP_LOOK[gap];

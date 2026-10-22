@@ -46,7 +46,7 @@ import { Bag } from '../ui/Bag';
 import { makeButtonDot } from '../ui/ButtonDot';
 import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
-import { applyHouseMood } from '../world/houseMood';
+import { applyHouseMood, roomSeed } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
@@ -76,13 +76,6 @@ const LETTER_GAP_MS = 450;
 const WORD_GAP_MS = 120;
 /** Her green's read: the key word lit in silence before its sounds. */
 const KEY_LIT_MS = 600;
-
-/** A stable scatter seed per side room (FNV-1a of its id). */
-function roomSeed(id: string): number {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 0x01000193) >>> 0;
-  return h;
-}
 
 export class SentenceRoom extends HouseSideRoom {
   private plan!: SentencePlan;
@@ -162,7 +155,7 @@ export class SentenceRoom extends HouseSideRoom {
     this.round = `sentence:${this.slot}:${s.key}`;
     this.floor.setTo(80, 420, GAME_WIDTH - 160, 240);
     // Each room its own stable mess; calm, because she is reading in here.
-    applyHouseMood(this, episode.villain, { seed: roomSeed(this.plan.room), floor: this.floor, calm: true });
+    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true });
     this.bag = new Bag(this);
     this.readDot = makeButtonDot(this, 0, 0, 'green', 16).setDepth(DEPTH.hud).setVisible(false);
     // Back from the parent page (F9) after she found it, mid-celebration: the
