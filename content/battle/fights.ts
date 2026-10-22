@@ -112,7 +112,7 @@ export const FIGHTS: FightSpec[] = [
     tooStrong: 'WHOA! TOO STRONG!',
     win: 'SPELL BROKEN!',
     lines: {
-      start: { text: "It's magic against magic! Push the beam!", say: "It's magic against magic, push the beam!" },
+      start: { text: "It's magic against magic! Let's push the beam!", say: "It's magic against magic, let's push the beam!" },
       start2: { text: "Our magic is stronger now! Let's push!", say: "Our magic is stronger now, let's push!" },
       retreat: { text: "That spell is too strong for us! Let's go home and get ready!", say: "That spell is too strong for us, let's go home and get ready!" },
       finish: { text: "Let's push with all our magic together!" },

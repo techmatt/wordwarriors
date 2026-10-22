@@ -539,6 +539,7 @@ change.
 | `nar_*_fight_sky_race_retreat` | They are too fast for us! Let's go and practice! | They're too fast for us! Let's go home and practice! |
 | `nar_*_fight_sea_tug_start2` | Let's pull again! We are stronger now! | Let's pull again! We're stronger now! |
 | `nar_*_fight_sea_tug_retreat` | They are too strong for us! Let's go and get ready! | They're too strong for us! Let's go home and get stronger! |
+| `nar_*_fight_spell_clash_start` | It's magic against magic! Push the beam! | It's magic against magic! Let's push the beam! |
 | `nar_*_fight_spell_clash_retreat` | That spell is too strong for us! Let's go back and get ready! | That spell is too strong for us! Let's go home and get ready! |
 | `nar_*_fight_cook_off_retreat` | Their dish was too yummy! Let's go and practice! | Their dish was too yummy! Let's go home and practice! |
 | `nar_*_fight_cook_off_finish` | Now let's add the topping, all together! | Let's add the topping, all together now! |

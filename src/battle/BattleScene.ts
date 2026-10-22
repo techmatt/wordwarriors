@@ -998,7 +998,12 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     this.wordFx(right, f, ab.color);
     this.banner(`SUPER ${right.toUpperCase()}!`, 0xffd23f, true);
     void (async () => {
-      if (voiceBank.has(moveLine(f.init.id, ab.id)) && !this.lineGivesAway(moveLine(f.init.id, ab.id))) await this.guard(voiceBus.say(moveLine(f.init.id, ab.id), 'instruction', f));
+      // Called out once a part, barks and supers alike (item 087).
+      const call = moveLine(f.init.id, ab.id);
+      if (voiceBank.has(call) && !this.calledOut.has(call) && !this.lineGivesAway(call)) {
+        this.calledOut.add(call);
+        await this.guard(voiceBus.say(call, 'instruction', f));
+      }
       await this.say('move_great');
     })();
     this.stats.abilitiesFired++;
