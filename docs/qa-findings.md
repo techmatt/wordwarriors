@@ -250,8 +250,8 @@ narrator template (the same text in all fifteen narrators' voices); `wake_*_<key
 wakers'. A `—` in Old is a new line: mostly variants (`<key>_2`... or `right_5`...) of a
 line she hears several times an episode, now said in turn and carried on from one
 episode to the next (`src/episode/lineVariants.ts`), so a repeat comes only after all
-of them. Battle barks rotate too: a fighter's taunts all go round before one comes
-again (across both battles), and a big move's name is called out once a battle. Move
+of them. Battle barks rotate too: a fighter says its least-said taunt, none more than
+twice an episode, and a big move's name is called out once a battle. Move
 and ultimate names (`move_`, `ult_`) are also banners. Ability and taunt ids did not
 change.
 
@@ -527,6 +527,7 @@ change.
 | `nar_*_charge_done_2` | — | The spell is ready! Let's take it to the fight! |
 | `nar_*_use_runes` | Now let's use our spell power! | Now let's cast our spell! |
 | `nar_*_bridge_slide_2` | — | Slide across, and stretch each sound! |
+| `nar_*_bridge_again` | Slide across again! | Let's slide across again! |
 | `nar_*_bridge_slide_3` | — | Let's slide across the stones! |
 | `nar_*_bridge_say_2` | — | What word did the stones make? Say it! |
 | `nar_*_bridge_say_3` | — | Put the sounds together! What word is it? |

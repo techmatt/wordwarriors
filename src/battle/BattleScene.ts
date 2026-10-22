@@ -90,6 +90,9 @@ const INTRO_SPOTS = { x: 260, dx: 140, villainX: 960 };
 /** `?battle=short`: the director's waits at this share of their length (item 083). */
 const SHORT_BEATS = 0.2;
 
+/** A taunt is said at most this often an episode (item 087). */
+const TAUNT_MAX = 2;
+
 const ULT_SPOTS = { x: 260, dx: 150, y: 500, dy: 70, helper: { x: 150, y: 600 }, villain: { x: 900, y: 560 }, giantX: 960 };
 
 export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
@@ -1599,18 +1602,27 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     if (!key) return;
     // A dropped taunt (somebody was talking) tries again soon rather than waiting a full turn.
     void voiceBus.say(tauntLine(f.init.id, key), 'bark', f).then((ok) => {
-      if (!ok) this.nextTaunt = this.now + 1200;
+      if (ok) return;
+      this.nextTaunt = this.now + 1200;
+      // Not said, so not counted.
+      const said = tauntsSaid.get(f.init.id) ?? [];
+      const at = said.lastIndexOf(key);
+      if (at >= 0) tauntsSaid.set(f.init.id, [...said.slice(0, at), ...said.slice(at + 1)]);
     });
   }
 
-  /** A fighter's next taunt (item 087): all of them go round before any comes again, across both parts. */
+  /**
+   * A fighter's next taunt (item 087): the least said this episode, and none
+   * a third time (a fighter who has said all of them twice goes quiet).
+   */
   private pickTaunt(f: Fighter): string | undefined {
-    const keys = this.safeTaunts(f);
     const said = tauntsSaid.get(f.init.id) ?? [];
-    const fresh = keys.filter((k) => !said.includes(k));
-    const pool = fresh.length ? fresh : keys;
+    const times = (k: string) => said.filter((s) => s === k).length;
+    const keys = this.safeTaunts(f).filter((k) => times(k) < TAUNT_MAX);
+    const least = Math.min(...keys.map(times));
+    const pool = keys.filter((k) => times(k) === least);
     const key = pool[Math.floor(Math.random() * pool.length)];
-    if (key) tauntsSaid.set(f.init.id, fresh.length ? [...said, key] : [key]);
+    if (key) tauntsSaid.set(f.init.id, [...said, key]);
     return key;
   }
 

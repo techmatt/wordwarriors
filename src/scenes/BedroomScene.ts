@@ -227,11 +227,12 @@ export class BedroomScene extends RoomScene {
 
     // A far-off taunt: heard, not seen.
     const taunt = bedroomTaunt();
+    // A new episode's taunts start uncounted; this one counts toward the battle's (item 087).
+    tauntsSaid.clear();
     if (taunt) {
       shake(this, 2, 300);
-      // The battle's taunts go round after it (item 087).
       const id = fighterId(episode.villain, true);
-      tauntsSaid.set(id, [...(tauntsSaid.get(id) ?? []).filter((k) => k !== taunt.key), taunt.key]);
+      tauntsSaid.set(id, [taunt.key]);
       await this.guard(voiceBus.say(tauntLine(id, taunt.key), 'bark'));
     }
 

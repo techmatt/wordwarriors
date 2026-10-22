@@ -196,7 +196,7 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'bridge_start', text: 'But the bridge starts with...' },
   { key: 'bridge_middle', text: 'But in the middle, the bridge has...' },
   { key: 'bridge_end', text: 'But the bridge ends with...' },
-  { key: 'bridge_again', text: 'Slide across again!' },
+  { key: 'bridge_again', text: "Let's slide across again!" },
   { key: 'bridge_next', text: 'Here comes a new bridge!' },
   { key: 'bridge_next_2', text: "Look, here's another bridge!", say: "Look, here's another bridge!" },
   { key: 'bridge_done', text: "We crossed every bridge! We're ready to fight!", say: "We crossed every bridge, we're ready to fight!" },

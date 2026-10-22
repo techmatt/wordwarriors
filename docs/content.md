@@ -660,8 +660,9 @@ has several, said in turn and carried across episodes in the store's `recent`
 to the plain key (`room_find`, `room_find_2`...) or the numbered set (`right_1`...);
 nothing else changes, as long as the scene says it through `narrate` (rooms), `say`
 (the battle) or `variant(key)`. A line compared by id in a scene (the hub's narrow box)
-uses `isVariant`. Battle barks rotate too: each fighter's taunts all go round before
-one comes again, and a big move is called out once a part.
+uses `isVariant`. Battle barks rotate too: a fighter says its least-said taunt, none
+more than twice an episode (the bedroom's far-off taunt counts), and a big move is
+called out once a part.
 
 ## Art
 
