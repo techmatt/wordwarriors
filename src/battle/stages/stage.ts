@@ -24,7 +24,8 @@ import type { AbilitySpec } from '../../../content/battle/types';
 import type { BattleWorld } from '../abilities';
 import type { Fighter } from '../Fighter';
 
-export type Phase = 'intro' | 'fight' | 'choice' | 'combo' | 'ultimate' | 'counter' | 'finish' | 'end';
+/** `story`: a story fight's beat (item 107): nobody fights by themselves. */
+export type Phase = 'intro' | 'fight' | 'choice' | 'combo' | 'ultimate' | 'counter' | 'finish' | 'end' | 'story';
 
 /** What the battle lends a stage. */
 export interface StageHost extends BattleWorld {

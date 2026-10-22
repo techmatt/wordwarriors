@@ -15,6 +15,7 @@
 import { writeFile } from 'node:fs/promises';
 
 import { CHARACTER_BY_ID, MOVE_WORDS, PERSONS, ROSTER, abilityCallout, personOf } from '../../content/battle/roster.js';
+import { STORIES, storyLines } from '../../content/battle/stories/index.js';
 import { ENDINGS } from '../../content/house/endings.js';
 import { HOME_QUEST, QUESTS } from '../../content/house/quests.js';
 import { ANY_SCENES, HUB_SCENES, hubStoryIds, type HubStory } from '../../content/house/scenes.js';
@@ -44,6 +45,7 @@ import {
   narratorLine,
   questLine,
   reformedLine,
+  storyLine,
   rimeLine,
   sillyLine,
   tauntLine,
@@ -305,6 +307,17 @@ export function composeLines(): LineSpec[] {
     // home quest's lines and the fallback scene, in every narrator's voice.
     HOME_QUEST.lines.forEach((l, i) => lines.push({ id: homeQuestLine(n, i + 1), speaker: n, group: g, ...spoken(l) }));
     ANY_SCENES.forEach((s, i) => pushScene(hubStoryIds(null, n, i + 1, s), s, n));
+  }
+
+  // Story fights (item 107): the villain's lines in his evil voice; Dad's and the
+  // ally's in every person's, since whoever plays them says them. Groups of their
+  // own, so only a story fight loads them, and only for the people in it.
+  for (const story of STORIES) {
+    const vid = fighterId(personOf(story.villain), true);
+    for (const l of storyLines(story)) {
+      if (l.who === 'villain') lines.push({ id: storyLine(story.id, l.key), speaker: vid, group: group.story(story.id), ...spoken(l) });
+      else for (const p of PERSONS) lines.push({ id: storyLine(story.id, l.key, p.id), speaker: p.id, group: group.story(story.id, p.id), ...spoken(l) });
+    }
   }
 
   // Victory scenes (item 027): every role line in every person's voice, since

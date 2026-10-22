@@ -40,7 +40,8 @@ test('the cast draw picks the villain\'s own style; ?fight= fixes another', asyn
 // The brawl is the default episode's style (Evil Tiamat has none of her own), so every
 // default whole episode and smoke's Battle part 2 already play it with these checks,
 // the length too (`expectFightLength` in playEpisode): only the contests are swept here.
-for (const f of FIGHTS.filter((x) => x.id !== 'brawl')) {
+// A story fight (item 107) is not a contest: tests/storyFight.spec.ts plays it.
+for (const f of FIGHTS.filter((x) => x.id !== 'brawl' && x.kind !== 'story')) {
   test(`${f.id}: battle ${PART[f.id] ?? 1} keeps the episode's shape`, SLOW, async ({ page }) => {
     test.setTimeout(600_000);
     const problems = collectProblems(page);

@@ -182,6 +182,7 @@ Any cast can be tried from the URL (and stays for every episode that session):
 | `?primary=dada_jason` / `none`, `?secondary=1` / `0` | Who wakes her; whether the other dad comes in |
 | `?place=forest_gym` / `home` | The quest place, whoever the helper is (to look at one) |
 | `?fight=sky_race` | The showdown's fight style, whoever the villain is: `brawl` `sky_race` `sea_tug` `spell_clash` `cook_off` |
+| `?fight=smaug_story` | The **story fight** against Evil Smaug (item 107): forces him as the villain, whatever the cast. `?scene=battle&part=1&fight=smaug_story` (or `part=2`) goes straight to a half |
 
 Not every showdown is a brawl (item 031). Each villain has a **fight style**
 (`fight` in the roster; `content/battle/fights.ts`): Evil Smaug races the heroes
@@ -196,6 +197,27 @@ Every style keeps the episode's shape (part 1's ultimate wins the round, part 2'
 counter turns it), the same beats, timing and move choices; only the staging changes
 (`src/battle/stages/`), and its bars are the steered health shown as a race lead, a
 rope's knot, a clash point or the judges' scores.
+
+**The story fight** (item 107, reached only by `?fight=smaug_story`; no villain draws it
+yet) is a turn-based showdown told like a short story, its beats Evil Smaug's script in
+`content/battle/stories/smaug.ts`, staged by `src/battle/story/StoryDirector.ts`. Heroes
+on the left (her, the ally, and the dad who woke her, unless the ally is a dad), Smaug on
+the right, no health bars. The characters talk, not a narrator: Smaug all bluster ("This
+is MY giant pile of gold!"), Dad and the ally in the fight. Part 1: the boast; her
+fetched things; her gift move from pads; his fire breath, telegraphed by a glowing
+floor, while she walks behind the stone (if she stays put it roars over her head: no
+fail); her answer to the fire from pads (WET, DRIP, MUD or FAN, by her phonics; the
+other pads are any move words, never a second sensible one); his gold guards charging,
+a dodge with pads (HOP, JUMP, SKIP, FLIP); Dad's spinning attack while she sneaks to the
+hoard and presses green; his tail smash while she climbs the ledge; her answer to the
+stuck tail (TUG, GRAB, TWIST, TRAP); then he flies up until he is a dot, dives, floors
+them, and they retreat ("TO BE CONTINUED!"). Part 2 is shorter: fire from the sky
+(behind the stone), her answer, and the dive again, stopped by the episode's
+counter-item; everyone's finisher and he turns good. A big move gets the stage: a splash
+picture behind it, the camera punching in, a held frame, too many particles. A dodge's
+window is 7 s and a grab goes on by itself after 30 s; dad lock holds both, and F4
+answers them. Hooks: `battle.story` (`beat`, and `walk` with its spot while one is open;
+`__ww.place` lands her on it).
 
 A giant villain (roster `size` 2 or more: Evil Tiamat) is staged as one: she holds her
 own half of the arena instead of walking over the heroes (`stomp` in

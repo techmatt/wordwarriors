@@ -36,6 +36,7 @@ Moved from CLAUDE.md (item 078). "The three commands" are `voice:lines`, `voice:
 | "add a dad form" / "add a quest" / "add a minigame" | `docs/content.md`: a roster entry with `person`; `QUESTS` + `PLACES`; `MINIGAMES` |
 | "add a word family / silly word" / "more or fewer machine words" | `RIMES` in `content/phonics/families.ts` (then `voice:lines`, `voice:build`); `WORD_MACHINE` in `src/config.ts` |
 | "add a victory scene" / "change what they say at the end" | `ENDINGS` in `content/house/endings.ts` (`docs/content.md`, "A victory scene"), the three commands, then `art:alts` |
+| "give X a story fight" | a `StoryScript` in `content/battle/stories/` and a `kind: 'story'` style in `FIGHTS` (`docs/content.md`, "A story fight"), then the three commands |
 | "make X a race / a cook-off" / "chef Jason should cook more" | `fight` on X in the roster; `fightNudge.chance` on `dada_jason` (`docs/content.md`, "A fight style") |
 | "make it the chef episode" | `?ally=dada_jason` (Julia's chef form follows; outfits are `content/battle/forms.ts`) |
 | "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`) |
@@ -400,6 +401,38 @@ Item 031: not every showdown is a brawl. A style is data plus a staging:
 
 After adding one: `voice:lines`, `voice:build`, `art:placeholders`, then `art:alts` for
 its arena and props. Look at it with `?scene=battle&part=1&fight=<id>` (any villain).
+
+## A story fight (`STORIES`, `content/battle/stories/`)
+
+Item 107: a turn-based showdown told like a short story, beside the free-simulation
+styles. A story fight is one more `FightSpec` with `kind: 'story'`, `story: '<id>'` and
+`villain: '<roster id>'` (the debug link `?fight=<id>` forces that villain), plus its
+script, a `StoryScript` in its own file under `content/battle/stories/` listed in
+`index.ts`. The staging (`src/battle/story/`) is shared, so a second villain's story is
+data only:
+
+- **Spots**: the places she walks to (a safe spot behind a stone, up on a ledge, the
+  hoard): `{ id, x, y, lift?, prop, propDx?, propDy? }`; `prop` is one of the style's
+  `props` (art `prop_fight_<prop>`).
+- **Splashes**: a big move's comic burst behind the actor (art `fx_story_<id>`).
+- **Beats** (`part1`, `part2`): `talk`, `fetched` (`all`: every fetched thing, else only
+  the charged runes and made things), `counter` (a `pad` input: the right word is drawn
+  from `answers`, the words that make sense against what he just did, by the bank's
+  weighting; `'gift'` is the gift word, part 1's first pick), `attack` (`move`: `fire`,
+  `rain`, `tail` or `guards`; a `dodge` to a spot, or `dodgePads`, HOP or JUMP from
+  pads), `support` (Dad's `spin` while she walks to a spot and grabs), `ultimate` (part
+  1's end: up to a dot, the dive, "To be continued!") and `finale` (part 2's end: the
+  dive, the counter-item, he turns good). `big` gives a beat's move the stage.
+- **Lines**: `{ who: 'villain' | 'dad' | 'ally', key, text, say? }`, before (`lines`)
+  and after (`after`) the action. The villain's are in his evil voice
+  (`story_<story>_<key>`); Dad's and the ally's are composed for every person
+  (`story_<story>_<key>_<person>`), all in the villain's fighter group. Dad is the ally
+  when the ally is a dad, else the dad who woke her joins the fight; with only one of
+  them, either says the other's lines. No line may say a bank word, stems included
+  (`tests/unit/storyFight.test.ts`): "stone", not ROCK.
+
+After adding one: the three commands, then `art:alts` for its props and splashes. Play
+it with `?fight=<id>` (a whole episode) or `?scene=battle&part=1&fight=<id>`.
 
 ## A word family (`content/phonics/families.ts`, the word machine)
 

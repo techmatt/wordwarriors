@@ -15,6 +15,8 @@
 import { ARENAS, MINIONS, ROSTER } from '../battle/roster.js';
 import { ENDINGS, endingArt, endingPropArt } from '../house/endings.js';
 import { FIGHTS, fightPropArt } from '../battle/fights.js';
+import { STORIES } from '../battle/stories/index.js';
+import { storySplashArt } from '../battle/stories/types.js';
 import { ALL_SIDE_ROOMS, BEDROOMS, ENTRY_HALL, HUB, PLACES, hubArt } from '../house/house.js';
 import { RUNES, runeArt } from '../phonics/runes.js';
 import { FLAVOUR_PICTURES, MOVE_PICTURES, PICTURE_WORDS, SPECIAL_WORDS, WORD_BY_ID } from '../phonics/words.js';
@@ -303,6 +305,11 @@ for (const e of ENDINGS) {
 // Fight styles' props (item 031, content/battle/fights.ts); one id per prop, shared by styles.
 for (const p of new Map(FIGHTS.flatMap((f) => f.props ?? []).map((p) => [p.id, p])).values()) {
   assets.push({ id: fightPropArt(p.id), kind: 'prop', w: p.w, h: p.h, content: `${p.look}. No text, chunky cartoon. Transparent background.`, label: '', glyph: p.glyph });
+}
+
+// Story fights' big-move splashes (item 107, content/battle/stories/): a comic burst behind the move.
+for (const sp of new Map(STORIES.flatMap((st) => st.splashes).map((sp) => [sp.id, sp])).values()) {
+  assets.push({ id: storySplashArt(sp.id), kind: 'prop', w: 640, h: 480, content: `${sp.look}. A big move's splash behind a fighter. No text, no characters, chunky cartoon. Transparent background.`, label: '', glyph: sp.glyph });
 }
 
 export const ART_ASSETS: ArtAsset[] = assets;

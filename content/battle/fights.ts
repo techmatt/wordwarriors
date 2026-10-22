@@ -19,7 +19,8 @@
 
 import { fightKey, type SpokenLine } from '../voice/ids.js';
 
-export type FightKind = 'brawl' | 'race' | 'tug' | 'clash' | 'cookoff';
+/** `story` (item 107): a turn-based story fight, its beats a script in content/battle/stories/. */
+export type FightKind = 'brawl' | 'race' | 'tug' | 'clash' | 'cookoff' | 'story';
 
 export type FightLine = SpokenLine;
 
@@ -48,6 +49,10 @@ export interface FightSpec {
   /** Narrator lines; absent beats use the brawl's own (battle_start, battle2_start, retreat_1, finish). */
   lines: Partial<Record<FightBeat, FightLine>>;
   props?: FightProp[];
+  /** A story fight's script (content/battle/stories/ id). */
+  story?: string;
+  /** The villain the style is written for: `?fight=<id>` forces him (a story fight). Never drawn at random unless it is a villain's own `fight`. */
+  villain?: string;
 }
 
 export type FightBeat = 'start' | 'start2' | 'retreat' | 'finish';
@@ -131,6 +136,23 @@ export const FIGHTS: FightSpec[] = [
     props: [
       { id: 'cook_station', look: 'a chunky cartoon cooking station: a little red stove with a big shiny pot on top, a wooden counter with a chopping board, a whisk and a rolling pin, seen from the front', glyph: '🍳', w: 300, h: 260 },
       { id: 'trophy', look: 'a huge shiny golden trophy cup with two big handles, a red jewel on the front and sparkles', glyph: '🏆', w: 200, h: 220 },
+    ],
+  },
+  {
+    // Item 107: reached only by `?fight=smaug_story`, which forces Evil Smaug; no villain's own style.
+    id: 'smaug_story',
+    kind: 'story',
+    name: 'Story fight against Evil Smaug (turn-based)',
+    story: 'smaug',
+    villain: 'smaug',
+    banner: ['STORY FIGHT!', 'PART TWO!'],
+    tooStrong: 'WHOA! TOO STRONG!',
+    win: 'VICTORY!',
+    lines: {},
+    props: [
+      { id: 'stone', look: 'a big round grey boulder with a flat front, big enough for a small child to hide behind, a few gold coins at its foot', glyph: '🌑', w: 220, h: 200 },
+      { id: 'ledge', look: 'a rocky cave ledge seen from the front: a flat stone shelf on a short rocky pillar, wide enough for a child to stand on top', glyph: '⛰️', w: 240, h: 230 },
+      { id: 'hoard', look: "a big glittering heap of gold coins, goblets and jewels, a dragon's treasure pile", glyph: '👑', w: 300, h: 190 },
     ],
   },
 ];

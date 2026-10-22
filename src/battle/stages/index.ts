@@ -5,6 +5,7 @@ import { ClashStage } from './clash';
 import { CookoffStage } from './cookoff';
 import { RaceStage } from './race';
 import { BaseStage, type FightStage, type StageHost } from './stage';
+import { StoryStage } from './story';
 import { TugStage } from './tug';
 
 export function makeStage(kind: FightKind, host: StageHost): FightStage {
@@ -17,6 +18,8 @@ export function makeStage(kind: FightKind, host: StageHost): FightStage {
       return new ClashStage(host);
     case 'cookoff':
       return new CookoffStage(host);
+    case 'story':
+      return new StoryStage(host);
     default:
       return new BaseStage(host);
   }

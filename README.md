@@ -1032,6 +1032,13 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   item 083): `tests/fights.spec.ts`, slow lane, about 10 s a style at clock speed 10 (item
   083; the brawl is the default episode's own, played by every default whole episode); shots of each style's big beats (combo, ultimate, counter, finish)
   land in `tests/screenshots/fights_*`. `-g cook_off` plays one style.
+- The story fight against Evil Smaug (item 107): `tests/storyFight.spec.ts`, slow lane,
+  about 10 s a part at clock speed 10, plus one test with no ally and with a dad as the
+  ally (part 2, `?battle=short`). A story fight is no contest, so `fights.spec.ts` skips
+  it. Its walks (a dodge, the grab) are answered with `__ww.place` onto `battle.story.walk.spot`;
+  shots of the walks, picks and big beats land in `tests/screenshots/story_*`. At real
+  speed with real voice and 3 s to answer each input, part 1 took 2.6 minutes and part 2
+  1.1 minutes (2026-10-22).
 - Long Playwright runs: since item 079 every run serves a build of the code as it was at
   its start (*Tests*, "The suite serves a build"), so edits to `src/` mid-run reach no page
   under test and nothing needs setting up. Test pages add `?hooks=1`, which turns the test

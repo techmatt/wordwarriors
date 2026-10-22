@@ -159,7 +159,7 @@ export const PAD_SHOWN_WEIGHT = 0.05;
  * Shakiness is no reason to show a wrong pad, so the rest of `wordWeight`
  * is left out.
  */
-function padWeights(store: ProgressStore, pool: string[], need: number): (w: string) => number {
+export function padWeights(store: ProgressStore, pool: string[], need: number): (w: string) => number {
   const left = () => new Set(store.bag('pads').left);
   if (pool.filter((w) => left().has(w)).length < need) store.refillBag(MOVE_WORDS, 'pads');
   const inBag = left();

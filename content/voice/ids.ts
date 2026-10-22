@@ -58,6 +58,12 @@ export type ChargeKind = 'charge_gesture';
 export const chargeKey = (kind: ChargeKind, sound: string) => `${kind}_${sound}`;
 /** A fight style's own beat line (item 031, content/battle/fights.ts): `fight_race_start`. */
 export const fightKey = (fight: string, beat: string) => `fight_${fight}_${beat}`;
+/**
+ * A story fight's line (item 107, content/battle/stories/): the villain's
+ * `story_smaug_boast`; Dad's or the ally's per person, `story_smaug_fire_dad_dada_matt`.
+ * Groups `group.story(story)` and `group.story(story, person)`: loaded only for a story fight, only the people in it.
+ */
+export const storyLine = (story: string, key: string, person?: string) => (person ? `story_${story}_${key}_${person}` : `story_${story}_${key}`);
 export const tauntLine = (fighter: string, key: string) => `taunt_${fighter}_${key}`;
 export const ultimateLine = (fighter: string) => `ult_${fighter}`;
 /** A fighter calling out one of its own moves: `move_smaug_evil_inferno`. */
@@ -115,6 +121,8 @@ export const group = {
   phonics: 'phonics',
   narrator: (n: string) => `nar_${n}`,
   fighter: (f: string) => `fighter_${f}`,
+  /** A story fight's lines (item 107): the villain's (`story_<story>`), and one person's Dad and ally lines (`story_<story>_<person>`). */
+  story: (story: string, person?: string) => (person ? `story_${story}_${person}` : `story_${story}`),
   /** A person's victory scene lines (item 027): loaded for everyone in the episode. */
   ending: (person: string) => `end_${person}`,
 };

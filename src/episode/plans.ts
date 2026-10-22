@@ -22,6 +22,8 @@ import { withStems } from '../rules/bank';
 import { episodePlans, wordsOf, type EpisodeInput, type RoomPlan } from '../rules/sentences';
 import { BRIDGE_GAME, CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SENTENCE_GAMES, SHIFTER_GAME, drawGames, type Minigame } from '../rules/minigames';
 import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
+import { planStoryMoves } from '../rules/storyFight';
+import { STORY_BY_ID, storyLines } from '../../content/battle/stories/index';
 import { GRAB_WORDS, hallObjects, pickGrab } from '../rules/grab';
 import { progress } from '../state/progress';
 import { pickWeighted } from '../rules/random';
@@ -225,7 +227,10 @@ const FRAME_WORDS = FRAMES.flatMap((f) => wordsOf(f.text.replace(/\{\w+\}/g, ' '
 function fightWords(): string[] {
   const f = fightStyle();
   const lines = (['start', 'start2', 'retreat'] as const).flatMap((b) => [f.lines[b]?.text, f.lines[b]?.say]);
-  return [...f.banner, f.tooStrong, ...lines].flatMap((t) => wordsOf(t));
+  // A story fight's lines (item 107) say no bank word, but are kept clear all the same.
+  const story = STORY_BY_ID[f.story ?? ''];
+  const told = story ? storyLines(story).flatMap((l) => [l.text, l.say]) : [];
+  return [...f.banner, f.tooStrong, ...lines, ...told].flatMap((t) => wordsOf(t));
 }
 
 /** What the bedroom says about the villain: its wake-up threat and the taunt it shouts (BedroomScene). */
@@ -260,7 +265,10 @@ export function movePlan(): MovePlan {
   if (!episode.moves) {
     const gift = giftWord();
     const team = [episode.hero, ...(episode.ally ? [episode.ally] : [])];
-    episode.moves = planMoves(progress, { hero: episode.hero, team, helper: helper(), gift, avoid: saidBeforeBattle() });
+    const input = { hero: episode.hero, team, helper: helper(), gift, avoid: saidBeforeBattle() };
+    // A story fight (item 107) plans its own choices, one per pad beat, in the same shape.
+    const story = STORY_BY_ID[fightStyle().story ?? ''];
+    episode.moves = story ? planStoryMoves(progress, story, input) : planMoves(progress, input);
   }
   return episode.moves;
 }

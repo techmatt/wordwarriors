@@ -18,7 +18,7 @@ import { seededRand } from '../../src/rules/cast';
 import { fightSpec, ownFight, pickFight } from '../../src/rules/fights';
 import { composeLines } from '../../tools/voice/compose';
 
-const KINDS = ['brawl', 'race', 'tug', 'clash', 'cookoff'];
+const KINDS = ['brawl', 'race', 'tug', 'clash', 'cookoff', 'story'];
 
 test('fights: every style is well formed, with its arena and props drawn', () => {
   assert.ok(FIGHT_BY_ID.brawl, 'the brawl is the default style');

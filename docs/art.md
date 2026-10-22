@@ -529,4 +529,11 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `prop_fight_finish_flag` | 300×420 | a big chequered black-and-white finish-line banner on two tall golden poles, with little gold coins and jewels on the tops of the poles. No text, chunky cartoon. Transparent background. |
 | `prop_fight_trophy` | 200×220 | a huge shiny golden trophy cup with two big handles, a red jewel on the front and sparkles. No text, chunky cartoon. Transparent background. |
 | `prop_fight_cook_station` | 300×260 | a chunky cartoon cooking station: a little red stove with a big shiny pot on top, a wooden counter with a chopping board, a whisk and a rolling pin, seen from the front. No text, chunky cartoon. Transparent background. |
+| `prop_fight_stone` | 220×200 | a big round grey boulder with a flat front, big enough for a small child to hide behind, a few gold coins at its foot. No text, chunky cartoon. Transparent background. |
+| `prop_fight_ledge` | 240×230 | a rocky cave ledge seen from the front: a flat stone shelf on a short rocky pillar, wide enough for a child to stand on top. No text, chunky cartoon. Transparent background. |
+| `prop_fight_hoard` | 300×190 | a big glittering heap of gold coins, goblets and jewels, a dragon's treasure pile. No text, chunky cartoon. Transparent background. |
+| `fx_story_fire` | 640×480 | a huge comic-book burst of orange and yellow dragon fire with jagged edges. A big move's splash behind a fighter. No text, no characters, chunky cartoon. Transparent background. |
+| `fx_story_tail` | 640×480 | a huge comic-book impact burst with a dragon tail slamming down and cracks in the ground. A big move's splash behind a fighter. No text, no characters, chunky cartoon. Transparent background. |
+| `fx_story_spin` | 640×480 | a huge comic-book whirlwind burst, swirling blue and white speed lines in a spinning circle. A big move's splash behind a fighter. No text, no characters, chunky cartoon. Transparent background. |
+| `fx_story_dive` | 640×480 | a huge comic-book burst of gold coins and sparkles exploding outward from the middle. A big move's splash behind a fighter. No text, no characters, chunky cartoon. Transparent background. |
 

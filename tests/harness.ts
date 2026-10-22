@@ -144,6 +144,8 @@ export interface WWState {
     itemsUsed: number;
     /** Charge the Spell's runes fired this part (item 053). */
     runesFired: number;
+    /** A story fight (item 107): the beat playing, and her walk while one is open. */
+    story: { beat: string | null; walk: { kind: string; spot: { id: string; x: number; y: number }; reached: boolean } | null } | null;
   } | null;
   voice: { speaking: string | null; busy: boolean; history: string[] };
   fx: Record<string, number>;

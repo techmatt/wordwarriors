@@ -155,6 +155,8 @@ export interface BattleInfo {
   itemsUsed: number;
   /** Charge the Spell's runes fired this part (item 053). */
   runesFired: number;
+  /** A story fight (item 107): the beat playing, and her walk to a safe spot or the hoard while one is open. */
+  story: { beat: string | null; walk: { kind: string; spot: { id: string; x: number; y: number }; reached: boolean } | null } | null;
 }
 
 /** The victory recap's cards so far: each word and the picture beside it. */

@@ -35,7 +35,7 @@
 
 import Phaser from 'phaser';
 
-import { CHARACTER_BY_ID, MINIONS, abilityCallout, comboFor, comboPart } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, MINIONS, abilityCallout, comboFor, comboPart, personOf } from '../../content/battle/roster';
 import type { AbilitySpec, CounterItem, Status } from '../../content/battle/types';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import { RUNE_BY_SOUND, runeArt } from '../../content/phonics/runes';
@@ -56,7 +56,7 @@ import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { withStems } from '../rules/bank';
-import { outfitTall } from '../rules/cast';
+import { DADS, outfitTall } from '../rules/cast';
 import { fetchBeats } from '../rules/volleys';
 import type { MoveOwner } from '../rules/moves';
 import { progress } from '../state/progress';
@@ -71,6 +71,9 @@ import { ARENA_LEFT, ARENA_RIGHT, integrate, STEER } from './movement';
 import { BattleHud } from './hud';
 import { MoveChoice, type ChoiceHost } from './moveChoice';
 import { makeStage } from './stages';
+import { storyLift } from './stages/story';
+import { StoryDirector } from './story/StoryDirector';
+import type { StoryWalk } from './story/walk';
 import type { FightStage, Phase, StageHost } from './stages/stage';
 
 /** Cosmetic damage per point of ability power. Tuned so bars drift, not drop. */
@@ -166,6 +169,11 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   private calledOut = new Set<string>();
   /** The step this battle was started with, so the parent page can come back to it. */
   private step: Step | undefined;
+  /** A story fight (item 107): its director, the dad and the ally fighting, and her walk while one is open. */
+  private story: StoryDirector | null = null;
+  dad: Fighter | null = null;
+  allyFighter: Fighter | null = null;
+  storyWalk: StoryWalk | null = null;
 
   constructor() {
     super('Battle');
@@ -196,6 +204,10 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     this.calledOut = new Set();
     this.bannerText = null;
     this.bannerBig = 0;
+    this.story = null;
+    this.dad = null;
+    this.allyFighter = null;
+    this.storyWalk = null;
   }
 
   create(): void {
@@ -230,17 +242,61 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       const f = this.spawn(initFromSpec(spec, id, castArt(id), 'hero'), -120 - i * 100, 520 + i * 90);
       this.heroes.push(f);
     });
+    if (episode.ally) this.allyFighter = this.heroes[1] ?? null;
+    if (this.fight.kind === 'story') this.dad = this.storyDad();
     const vid = fighterId(episode.villain, true);
     this.villain = this.spawn(initFromSpec(v.evil, vid, castArt(episode.villain, true), 'villain'), GAME_WIDTH + 160, 540);
     if (this.part === 2) for (const h of this.heroes) h.power = 1.25;
     this.show = makeStage(this.fight.kind, this);
     this.show.setup();
+    if (this.fight.kind === 'story' && this.fight.story) {
+      this.story = new StoryDirector(this);
+      this.story.setup();
+    }
 
     this.hud.makeLabels(this.heroes, this.villain, this.part);
     fxQuality.level = 1;
     this.ambience();
     startMusic('battle');
-    void (this.part === 1 ? this.part1() : this.part2());
+    if (this.story) void this.story.run();
+    else void (this.part === 1 ? this.part1() : this.part2());
+  }
+
+  /**
+   * A story fight's dad (item 107): the ally when the ally is a dad; else the
+   * dad who woke her joins the fight on her side, in his form (not when he is
+   * the villain's or the hero's person). Null with no dad to bring.
+   */
+  private storyDad(): Fighter | null {
+    if (this.allyFighter && (DADS as readonly string[]).includes(personOf(this.allyFighter.init.id))) return this.allyFighter;
+    const id = episode.primary;
+    if (!id || !CHARACTER_BY_ID[id] || personOf(id) === personOf(episode.villain) || personOf(id) === personOf(episode.hero)) return null;
+    const i = this.heroes.length;
+    const f = this.spawn(initFromSpec(CHARACTER_BY_ID[id]!.good, id, castArt(id), 'hero'), -120 - i * 100, 520 + i * 60);
+    this.heroes.push(f);
+    return f;
+  }
+
+  /** A story fight's opening: the versus cards, the run-in, the banner. The characters do the talking after it. */
+  async storyIntro(): Promise<void> {
+    this.phase = 'intro';
+    if (this.part === 1) await this.versus();
+    this.heroes.forEach((h, i) => {
+      const to = this.show.home(h, i)!;
+      this.tweens.add({ targets: h, x: to.x, y: to.y, lift: storyLift(h), duration: 900, ease: 'Quad.easeOut' });
+    });
+    const vto = this.show.home(this.villain, 0)!;
+    this.tweens.add({ targets: this.villain, x: vto.x, y: vto.y, duration: 1100, ease: 'Quad.easeOut' });
+    this.banner(this.fight.banner[this.part - 1]!, 0xff3d7a, true);
+    sfxFanfare();
+    await this.wait(1.4);
+    for (const f of this.fighters) f.onStage = true;
+    this.phase = 'story';
+  }
+
+  /** A story fight's minion done with (item 107). */
+  killFighter(f: Fighter): void {
+    if (f.alive) this.kill(f);
   }
 
   // -- BattleWorld ------------------------------------------------------------------
@@ -267,7 +323,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
 
   /** Tests (`__ww.place`, item 083): her hero onto (x, y) in a move choice; false outside one. */
   placeHero(x: number, y: number): boolean {
-    return this.choices.active && this.choices.place(x, y);
+    if (this.choices.active) return this.choices.place(x, y);
+    return this.storyWalk?.place(x, y) ?? false;
   }
 
   stopPlay(): void {
@@ -280,7 +337,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
    * choice or the finish) cuts the waits between the story beats to a fifth; the beats
    * themselves (the combo, the ultimate, the finish) keep their length.
    */
-  private beat(s: number): number {
+  beat(s: number): number {
     return this.short ? s * SHORT_BEATS : s;
   }
 
@@ -590,7 +647,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
    * Part 1's end: the heroes bounce back up and run off left to get ready, so
    * the fade is on a retreat, never on a floored team. The villain stomps.
    */
-  private retreat(): void {
+  retreat(): void {
     this.team().forEach((h, i) => {
       // Off the stage edge: the on-screen clamp lets go, and no shove pins her to the wall.
       h.onStage = false;
@@ -624,7 +681,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
    * Every key word she fetched in the house, `gap` seconds apart: a room's earlier words fly out of the
    * bag as one volley, each room's last word its own beat (hunt 6, M28: eight things took 34 s).
    */
-  private async useAllFetched(gap: number): Promise<void> {
+  async useAllFetched(gap: number): Promise<void> {
     const rooms = housePlan().map((p) => p.fetches);
     for (const beat of fetchBeats(episode.fetched, rooms)) {
       const words = beat.filter((w) => FETCH_BY_WORD[w]);
@@ -641,7 +698,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
    * (content/phonics/runes.ts) at a little over normal power, so six of them
    * neither end the fight nor run it long (expectFightLength).
    */
-  private async useCharged(gap: number): Promise<void> {
+  async useCharged(gap: number): Promise<void> {
     const c = episode.charged;
     if (!c || c.part !== this.part) return;
     let said = false;
@@ -784,7 +841,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   }
 
   /** The parked v0.1 made things, only if their flags are set (they are not, in v0.2 episodes). */
-  private async useMade(order: ('helper' | 'gem' | 'ammo')[], gap: number): Promise<void> {
+  async useMade(order: ('helper' | 'gem' | 'ammo')[], gap: number): Promise<void> {
     for (const what of order) {
       if (!episode.made[what]) continue;
       if (what === 'helper') await this.useHelper();
@@ -965,7 +1022,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   }
 
   /** The move-choice pause. */
-  private async moveChoice(): Promise<void> {
+  async moveChoice(): Promise<void> {
     // The words were planned with the episode (src/rules/moves.ts): the first
     // of each part is the hub's gift word, the rest come from her move bag.
     const planned = movePlan()[this.part === 1 ? 'part1' : 'part2'][this.choicesOpened];
@@ -1084,7 +1141,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   }
 
   /** Both parts: everyone to their own side, then the villain grows and roars its ultimate. */
-  private async ultimateWindUp(): Promise<{ v: Fighter; ult: AbilitySpec; giant: boolean; aura: Phaser.GameObjects.Particles.ParticleEmitter }> {
+  async ultimateWindUp(): Promise<{ v: Fighter; ult: AbilitySpec; giant: boolean; aura: Phaser.GameObjects.Particles.ParticleEmitter }> {
     this.phase = 'ultimate';
     const v = this.villain;
     const ult = v.init.ultimate!;
@@ -1140,7 +1197,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   }
 
   /** Part 1, too strong: the heroes are floored, dizzy and fine. */
-  private async ultimateFloors(v: Fighter, ult: AbilitySpec, giant: boolean): Promise<void> {
+  async ultimateFloors(v: Fighter, ult: AbilitySpec, giant: boolean): Promise<void> {
     this.floors.heroMain = 0.06;
     cast(this, v, ult, this.heroes[0] ?? null, 2.6);
     if (giant) this.giantSweep(v, ult);
@@ -1169,7 +1226,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
    * draw lands on its word, with its own staging; otherwise the thing in the
    * picture, which scares the villain silly whatever it is (item 015).
    */
-  private async ultimateCountered(v: Fighter, ult: AbilitySpec, giant: boolean, aura: Phaser.GameObjects.Particles.ParticleEmitter): Promise<void> {
+  async ultimateCountered(v: Fighter, ult: AbilitySpec, giant: boolean, aura: Phaser.GameObjects.Particles.ParticleEmitter): Promise<void> {
     this.phase = 'counter';
     const named = namedCounter();
     const word = counterWord();
@@ -1377,7 +1434,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   }
 
   /** Part 2's finish: everyone's biggest move, then the villain is beaten and turns good. */
-  private async finish(): Promise<void> {
+  async finish(): Promise<void> {
     this.phase = 'finish';
     const v = this.villain;
     this.show.finishLine();
@@ -1690,6 +1747,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
 
     // The choice runs on real time: she walks while the fight is frozen.
     if (this.choices.active) this.choices.update(realDt);
+    // A story fight's walk (item 107) runs on real time too.
+    this.storyWalk?.update(realDt);
 
     // Free play (item 060): outside a choice, while she steers her hero, green
     // jumps and blue / red / yellow cast. Pure show: shots hit nothing, and the
@@ -1722,6 +1781,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     }
     this.show.update(dt);
     if (this.choices.active) this.choices.holdHero();
+    this.storyWalk?.holdHero();
     this.updateProjectiles(dt);
     this.updateTraps();
     this.taunt();
@@ -1766,6 +1826,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       ...this.stats,
       me: this.heroes[0] ? { x: Math.round(this.heroes[0].x), y: Math.round(this.heroes[0].y) } : null,
       choice: this.choices.info(),
+      story: this.story?.info() ?? null,
     };
   }
 }

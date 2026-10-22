@@ -7,6 +7,7 @@
  * `rememberPlan` in `./plans.ts`.
  */
 
+import { FIGHT_BY_ID } from '../../content/battle/fights';
 import { personOf } from '../../content/battle/roster';
 import { HOME, PLACE_BY_ID } from '../../content/house/house';
 import { questFor } from '../../content/house/quests';
@@ -56,7 +57,9 @@ export function castEpisode(picked: CastOverrides = {}): void {
         forms: { dada_matt: 'builder', dada_jason: 'chef' },
       }
     : {};
-  const overrides = { ...fixed, ...castOverrides, ...picked };
+  // A style written for one villain (a story fight, item 107) forces him: `?fight=smaug_story` is Evil Smaug.
+  const forced = fightOverride ? FIGHT_BY_ID[fightOverride]?.villain : undefined;
+  const overrides = { ...fixed, ...castOverrides, ...(forced ? { villain: forced } : {}), ...picked };
   // Item 067: her recent allies and each dad's recent forms sit out, as her villains do.
   const recentForms = Object.fromEntries(DADS.map((d) => [d, progress.recentOf(`form_${d}`)]));
   const c = drawCast({ hero: EPISODE_DEFAULTS.hero, recent: progress.recentOf('villain'), recentAllies: progress.recentOf('ally'), recentForms, overrides }, castRand);

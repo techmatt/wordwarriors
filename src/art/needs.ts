@@ -18,6 +18,9 @@
 
 import { ART_ASSETS, ART_BY_ID, charArt } from '../../content/art/assets';
 import { CHARACTER_BY_ID, MINIONS, ROSTER, personOf } from '../../content/battle/roster';
+import { fightPropArt } from '../../content/battle/fights';
+import { STORY_BY_ID } from '../../content/battle/stories/index';
+import { storySplashArt } from '../../content/battle/stories/types';
 import { ENDING_BY_ID, endingArt, endingPropArt } from '../../content/house/endings';
 import { BEDROOMS, hubArt } from '../../content/house/house';
 import { debugMode } from '../episode/debug';
@@ -116,7 +119,10 @@ function battleSet(draw: boolean): string[] {
   const out: string[] = [];
   if (draw || episode.fight) {
     const fight = fightStyle();
-    out.push(`arena_${fight.arena ?? villainSpec().arena}`, ...artIn(fight));
+    out.push(`arena_${fight.arena ?? villainSpec().arena}`, ...artIn(fight), ...(fight.props ?? []).map((p) => fightPropArt(p.id)));
+    // A story fight (item 107): its big moves' splashes, and the dad who joins the fight.
+    const story = STORY_BY_ID[fight.story ?? ''];
+    if (story) out.push(...story.splashes.map((sp) => storySplashArt(sp.id)), ...fighterArt(episode.primary));
   } else out.push(`arena_${villainSpec().arena}`);
   out.push(...family('minion_'), ...Object.values(MINIONS).map((m) => `minion_${m.id}`));
   for (const id of [episode.hero, episode.ally, episode.villain, helper()]) out.push(...fighterArt(id));
