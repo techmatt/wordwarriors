@@ -12,8 +12,9 @@
  * letter sounds are, and the Stretchy Bridge (item 054, fetch rooms only),
  * times how shaky the words it can give her are.
  *
- * A new minigame is one entry here: its scene, a weight, the slots it can
- * fill. Whatever it is, it must end in a key word she has read (the thing
+ * A new minigame is one entry here: its kind, its scene, a weight, the
+ * slots it can fill; a new kind also takes its lean here (`LEAN`) and its
+ * planner (src/rules/sentences.ts `PLANNERS`). Whatever it is, it must end in a key word she has read (the thing
  * fetched, or the counter), which the room's plan carries as `key` (and every
  * word read there as `fetches`); a non-sentence game brings its own plan
  * alongside, as the machine's `machine` (src/rules/sentences.ts `RoomPlan`).
@@ -29,9 +30,18 @@ import { soundShakiness } from './charge';
 
 export type GameSlot = 'fetch' | 'counter';
 
+/**
+ * What a minigame is: the sentence game (in one of its frames), the word
+ * machine (item 026), Charge the Spell (item 053) or the Stretchy Bridge
+ * (item 054). The room's plan carries the same kind (`RoomPlan`).
+ */
+export type MinigameKind = 'sentence' | 'machine' | 'charge' | 'bridge';
+
 export interface Minigame {
   /** Unique: `sentence:<frame>` for the sentence game in a frame. */
   id: string;
+  /** What it is: each kind has its lean here and its planner (src/rules/sentences.ts `PLANNERS`). */
+  kind: MinigameKind;
   /** The Phaser scene that plays it. */
   scene: string;
   /** Relative weight in the draw (1 is ordinary). */
@@ -40,34 +50,30 @@ export interface Minigame {
   slots: GameSlot[];
   /** For the sentence game: its frame (content/phonics/sentences.ts). */
   frame?: string;
-  /** The word machine (item 026): its plan is the visit's words (src/rules/wordMachine.ts). */
-  machine?: boolean;
-  /** Charge the Spell (item 053): each rune's sound said back, then the word read aloud, judged by Dad; its plan is the visit's word and runes (src/rules/charge.ts). */
-  charge?: boolean;
-  /** The Stretchy Bridge (item 054): words blended across stepping stones; its plan is the visit's words (src/rules/bridge.ts). */
-  bridge?: boolean;
 }
 
 /** The sentence game in each of its frames: the pool before item 026, and the tests' default (`?games=sentence`). */
-export const SENTENCE_GAMES: Minigame[] = FRAMES.map((f): Minigame => ({ id: `sentence:${f.id}`, scene: 'SentenceRoom', weight: 1, slots: [f.use], frame: f.id }));
+export const SENTENCE_GAMES: Minigame[] = FRAMES.map((f): Minigame => ({ id: `sentence:${f.id}`, kind: 'sentence', scene: 'SentenceRoom', weight: 1, slots: [f.use], frame: f.id }));
 
-/** The word machine: a fetch room only (the counter belongs to the villain's sentence). */
-export const WORD_MACHINE_GAME: Minigame = { id: 'word_machine', scene: 'WordMachine', weight: WORD_MACHINE.weight, slots: ['fetch'], machine: true };
+/** The word machine: a fetch room only (the counter belongs to the villain's sentence). Its plan is the visit's words (src/rules/wordMachine.ts). */
+export const WORD_MACHINE_GAME: Minigame = { id: 'word_machine', kind: 'machine', scene: 'WordMachine', weight: WORD_MACHINE.weight, slots: ['fetch'] };
 
 /**
- * Charge the Spell (item 053): a fetch room only. One word a visit, read for
- * Dad; the word is a battle item (fetched, item 058) and its runes fire in the
+ * Charge the Spell (item 053): a fetch room only. One word a visit, each
+ * rune's sound said back, then the word read aloud, judged by Dad (its plan:
+ * the word and runes, src/rules/charge.ts); the word is a battle item (fetched, item 058) and its runes fire in the
  * next battle. For the beta it is one of the phonics games, one of which is
  * forced per episode (FORCE_PHONICS_ROOM, src/episode/plans.ts `roomGames`).
  */
-export const CHARGE_GAME: Minigame = { id: 'charge', scene: 'ChargeRoom', weight: CHARGE.weight, slots: ['fetch'], charge: true };
+export const CHARGE_GAME: Minigame = { id: 'charge', kind: 'charge', scene: 'ChargeRoom', weight: CHARGE.weight, slots: ['fetch'] };
 
 /**
- * The Stretchy Bridge (item 054): a fetch room only. Every word she reads
+ * The Stretchy Bridge (item 054): a fetch room only. Words blended across
+ * stepping stones (its plan: src/rules/bridge.ts); every word she reads
  * across it is a battle item, like the machine's. For the beta it is one of
  * the phonics games, one of which is forced per episode (FORCE_PHONICS_ROOM).
  */
-export const BRIDGE_GAME: Minigame = { id: 'bridge', scene: 'BridgeRoom', weight: BRIDGE.weight, slots: ['fetch'], bridge: true };
+export const BRIDGE_GAME: Minigame = { id: 'bridge', kind: 'bridge', scene: 'BridgeRoom', weight: BRIDGE.weight, slots: ['fetch'] };
 
 /** The phonics games FORCE_PHONICS_ROOM puts in every episode, one of them, by weight. */
 export const PHONICS_GAMES: Minigame[] = [CHARGE_GAME, BRIDGE_GAME];
@@ -83,9 +89,21 @@ function familyShakiness(store: ProgressStore): number {
 }
 
 /**
+ * How much a game's kind leans its weight toward what she finds shaky: a
+ * sentence game by its frame, the word machine by her word families, Charge
+ * the Spell by her letter sounds, the Stretchy Bridge by its words.
+ */
+const LEAN: Record<MinigameKind, (store: ProgressStore, g: Minigame) => number> = {
+  sentence: (store, g) => store.shakiness('frames', g.frame!),
+  machine: familyShakiness,
+  charge: soundShakiness,
+  bridge: bridgeShakiness,
+};
+
+/**
  * The episode's three games: two different fetch games (doors a and b), then
- * the counter game. A sentence game's weight is scaled by its frame's
- * shakiness, the word machine's by her families'. A game she played in her
+ * the counter game. A game's weight is scaled by its kind's lean (`LEAN`).
+ * A game she played in her
  * last episodes (the store's `games`) weighs VARIETY.gameWeight as much
  * (item 067), so the rooms rotate.
  */
@@ -93,8 +111,7 @@ export function drawGames(store: ProgressStore, rand: Rand = Math.random, pool: 
   const recent = new Set(store.recentOf('games'));
   const weight = (id: string) => {
     const g = pool.find((m) => m.id === id)!;
-    const lean = g.frame ? store.shakiness('frames', g.frame) : g.machine ? familyShakiness(store) : g.charge ? soundShakiness(store) : g.bridge ? bridgeShakiness(store) : 1;
-    return g.weight * lean * (recent.has(id) ? VARIETY.gameWeight : 1);
+    return g.weight * LEAN[g.kind](store, g) * (recent.has(id) ? VARIETY.gameWeight : 1);
   };
   const fits = (slot: GameSlot) => pool.filter((g) => g.slots.includes(slot)).map((g) => g.id);
   const fetch = pickWeighted(fits('fetch'), weight, 2, rand);

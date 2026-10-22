@@ -155,7 +155,7 @@ test('the pool: the machine is a fetch game, drawn about every other episode, ne
   for (let i = 0; i < 400; i++) {
     const games = drawGames(store, rand);
     assert.notEqual(games[2].id, 'word_machine');
-    if (games.slice(0, 2).some((g) => g.machine)) n++;
+    if (games.slice(0, 2).some((g) => g.kind === 'machine')) n++;
   }
   assert.ok(n > 120 && n < 300, `machine drawn in ${n}/400 episodes`);
   // The word machine, Charge the Spell (item 053) and the Stretchy Bridge (item 054).
