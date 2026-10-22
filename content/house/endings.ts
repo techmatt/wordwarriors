@@ -106,7 +106,7 @@ export const ENDINGS: EndingSpec[] = [
     cheer: { text: 'Wow! I can see our house from here!', say: 'Wow, I can see our house from here!' },
     close: { text: 'Everybody, give a big wave!', say: 'Everybody, give a big wave!' },
     fit: { form: 'dada_matt_lifter', text: 'I carried the snacks all the way up!' },
-    villains: ['seraphina', 'ozymandias', 'dada_matt_lifter'],
+    villains: ['seraphina', 'dada_matt_lifter'],
   },
   {
     id: 'fort',
@@ -147,7 +147,8 @@ export const ENDINGS: EndingSpec[] = [
     cheer: { text: 'I see a shooting star!' },
     close: { text: "Let's all make a wish together!" },
     fit: { form: 'dada_jason_warlock', text: 'I made the stars twinkle extra bright!' },
-    villains: ['moriarty', 'tiamat', 'bavmorda', 'dada_jason_warlock'],
+    // Item 114: Ozymandias, explorer-king with a rocket ship, under the stars.
+    villains: ['moriarty', 'ozymandias', 'tiamat', 'bavmorda', 'dada_jason_warlock'],
   },
   {
     id: 'campfire',

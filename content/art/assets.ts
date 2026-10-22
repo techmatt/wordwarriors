@@ -146,7 +146,28 @@ const OUTFITS_111: { word: string; who: string; label: string; glyph: string; bo
     face: 'in a sunny-yellow tunic and a light striped scarf, a wide straw sun hat with a pink ribbon',
   },
 ];
-for (const o of OUTFITS_111) {
+// Item 114: beside the second wave of allies.
+const OUTFITS_114: typeof OUTFITS_111 = [
+  {
+    // Ozymandias's iceberg launch pad.
+    word: 'astronaut', who: 'polar astronaut', label: 'ASTRONAUT', glyph: '🚀',
+    body: 'in a little puffy white-and-pink space suit with a fluffy white fur-trimmed hood down on her back, chunky silver moon boots and pink mittens, a round space helmet with a clear visor held under one arm',
+    face: 'in a little puffy white-and-pink space suit with a fluffy white fur-trimmed collar',
+  },
+  {
+    // Moriarty's puzzle library.
+    word: 'puzzler', who: 'puzzle master', label: 'PUZZLER', glyph: '🧩',
+    body: 'in a little puzzle-master outfit: a small purple top hat with a golden band, a plum-purple waistcoat with shiny buttons over a white shirt, a big yellow bow tie, little black shoes, holding up a big round brass magnifying glass',
+    face: 'in a plum-purple waistcoat and a big yellow bow tie, a small purple top hat with a golden band',
+  },
+  {
+    // Bluerilla's jungle treetops: dressed as her plush gorilla.
+    word: 'gorilla', who: 'gorilla buddy', label: 'GORILLA', glyph: '🦍',
+    body: 'in a cosy fluffy navy-blue gorilla onesie with a big round pale-blue tummy patch, the hood up over her hair with little round gorilla ears and a pale-blue face patch around her face, little navy feet, both arms up in a happy cheer',
+    face: 'in a cosy fluffy navy-blue gorilla onesie, the hood up over her hair with little round gorilla ears',
+  },
+];
+for (const o of [...OUTFITS_111, ...OUTFITS_114]) {
   assets.push({
     id: `char_julia_${o.word}`,
     kind: 'character',

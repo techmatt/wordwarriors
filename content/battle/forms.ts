@@ -45,6 +45,12 @@ export const FORMS: Record<string, Form[]> = {
     { id: 'snow', art: 'char_julia_snow', face: 'face_julia_snow', when: { ally: 'elsa' } },
     { id: 'snow', art: 'char_julia_snow', face: 'face_julia_snow', when: { ally: 'anna' } },
     { id: 'explorer', art: 'char_julia_explorer', face: 'face_julia_explorer', when: { ally: 'jasmine' }, skipTaunts: ['wand'] },
+    // Item 114: a little polar astronaut on Ozymandias's iceberg (her helmet
+    // under her arm), a puzzle master in Moriarty's library (a magnifying
+    // glass), and Bluerilla's gorilla buddy in a gorilla onesie. No wand.
+    { id: 'astronaut', art: 'char_julia_astronaut', face: 'face_julia_astronaut', when: { ally: 'ozymandias' }, skipTaunts: ['wand'] },
+    { id: 'puzzler', art: 'char_julia_puzzler', face: 'face_julia_puzzler', when: { ally: 'moriarty' }, skipTaunts: ['wand'] },
+    { id: 'gorilla', art: 'char_julia_gorilla', face: 'face_julia_gorilla', when: { ally: 'rilla' }, skipTaunts: ['wand'] },
   ],
 };
 

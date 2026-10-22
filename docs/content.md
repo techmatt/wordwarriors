@@ -189,7 +189,7 @@ The named items (the sentence column is how they read when their word comes up):
 | Evil Elsa | … SCARED OF THE CUP | Cocoa Cup | restore |
 | Evil Anna | … SCARED OF THE CAT | Cuddly Cat | calm |
 | Evil Jasmine | … SCARED OF THE BAT | Flappy Bat | reflect |
-| Evil Ozymandias | … SCARED OF THE RAT | Brave Rat | scare |
+| Evil Ozymandias | … SCARED OF THE FISH | Fish Bucket | calm |
 | Evil Jormungandr | … SCARED OF THE FOX | Tickle Fox | restore |
 | Evil Smaug | … SCARED OF THE BAG | Gold Bag | block |
 | Evil Tiamat | … SCARED OF THE HAT | Magic Hat | swallow |
@@ -241,7 +241,8 @@ images, then a line in `FORMS` with a `when` on the ally, the villain or both. T
 first match wins. The `when` names a roster id, so a dad's form counts: Julia is a little
 knight (`char_julia_knight`) beside warrior Dada Jason (`dada_jason_warrior`, item 025).
 Item 111 added a dragon keeper (Seraphina), snow gear (Elsa and Anna: one outfit, two
-`FORMS` lines) and a desert explorer (Jasmine).
+`FORMS` lines) and a desert explorer (Jasmine); item 114 a polar astronaut
+(Ozymandias), a puzzle master (Moriarty) and a gorilla onesie (Bluerilla).
 `skipTaunts` lists taunt keys that do not fit the outfit (chef and knight Julia never
 say "My wand is sparkly!"). **New outfit art needs its `OUTFIT_FILL`** (`src/config.ts`,
 hunt 6, M32): how much of the picture is her, head to soles, measured as `ADULT_FILL` is

@@ -1049,9 +1049,10 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   otherwise `pairs.spec.ts` shows one skipped test saying so (item 072). An npm script
   cannot set `WW_PAIRS` under Windows' cmd, so the spec reads npm's `npm_lifecycle_event`
   (`test:pairs`) as `WW_PAIRS=+`. Shots and voiced ids land in `tests/screenshots/pairs_*`.
-  Since item 111 the active cast is 13 ally forms × 4 villains, 52 pairs, about 35 s a
+  Since item 114 the active cast is 16 ally forms × 4 villains, 64 pairs, about 35 s a
   pair on three workers (2026-10-22). Several allies at once: `WW_PAIRS=+ npx playwright
   test tests/pairs.spec.ts -g "(elsa|anna) \+ "` (a title is `<ally> + <villain>: …`).
+  Such a run uses one worker: item 114's 12 pairs (three allies) took 7 minutes.
   Run batches one ally at a time, never beside art generation (item 028 ran both and the
   machine ran out of memory). The 36 took 1.2 hours on 2026-10-19 (item 031, about 2 minutes a pair).
 - Every contest fight style, one battle part each (item 031; one part per style since

@@ -516,6 +516,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       kitchen: { tint: [0xffffff, 0xfff1d6], up: true, tex: TEX.smoke },
       castle: { tint: [0xffd23f, 0xff9a3c], up: true, tex: TEX.spark },
       ice: { tint: [0xffffff, 0xdff4ff], up: false, tex: TEX.spark },
+      // Item 114: Ozymandias's iceberg, snow falling.
+      iceberg: { tint: [0xffffff, 0xdff4ff, 0xbfe8ff], up: false, tex: TEX.spark },
       desert: { tint: [0xe8c890, 0xffe8b0], up: false, tex: TEX.pixel },
       sea: { tint: [0x9ad8ff, 0xffffff], up: true, tex: TEX.ring },
       cave: { tint: [0xffd23f, 0xff7b00], up: true, tex: TEX.spark },

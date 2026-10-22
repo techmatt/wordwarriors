@@ -139,7 +139,8 @@ Spell), the alarm and the retreat camp are **parked**: no episode includes them,
 
 - **The active cast** (item 028/030): `ACTIVE_CAST` in `src/config.ts` lists who the
   draw picks from, as persons: allies Dada Matt, Dada Jason, Scar, Ellie, Seraphina, Elsa,
-  Anna and Jasmine (the last four since item 111); villains Jörmungandr, Smaug, Bavmorda and Tiamat. A dad listed comes in all his forms.
+  Anna and Jasmine (those four since item 111), Ozymandias, Moriarty and Bluerilla (`rilla`,
+  those three since item 114); villains Jörmungandr, Smaug, Bavmorda and Tiamat. A dad listed comes in all his forms.
   Everybody else stays defined and playable by `?ally=` / `?villain=`; adding a name to
   the list switches that character on.
 - **The villain**: one of the active villains, each equally likely; her last two sit
@@ -170,7 +171,9 @@ is chef Julia (`char_julia_chef`, her face card `face_julia_chef`) from the mome
 gets out of bed; with warrior Dada Jason she is a little knight (`char_julia_knight`,
 item 025); with Seraphina a little dragon keeper hugging an egg (`char_julia_keeper`),
 with Elsa or Anna in snow gear (`char_julia_snow`), with Jasmine a desert explorer
-(`char_julia_explorer`, item 111). Which outfit goes with which cast is `FORMS` in `content/battle/forms.ts`
+(`char_julia_explorer`, item 111); with Ozymandias a little polar astronaut
+(`char_julia_astronaut`), with Moriarty a puzzle master in a top hat
+(`char_julia_puzzler`), with Bluerilla in a gorilla onesie (`char_julia_gorilla`, item 114). Which outfit goes with which cast is `FORMS` in `content/battle/forms.ts`
 (data; see `docs/content.md`, "A form"). `?ally=dada_jason` tries the chef episode.
 
 Any cast can be tried from the URL (and stays for every episode that session):

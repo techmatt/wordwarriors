@@ -286,17 +286,23 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'Shake, shake, and out puffs a word...',
     ], CIRCLE('to catch the puff'), 'The jar is giggling, let\'s look around!'),
   ],
+  // Item 114 (Matt): from Antarctica, with a rocket ship, a penguin crew and a crown of ice.
   ozymandias: [
-    S('prop_scroll', [
-      'I am a pharaoh, and pharaohs keep secrets in the pyramids.',
-      'This secret is very old, and very powerful.',
-      'Here it is, the secret word is...',
-    ], 'Stand in the golden circle, and press green, to learn it!', 'Now you know a mighty pharaoh secret, let\'s look around!'),
-    S('prop_stone', [
-      'This old stone has a magic word carved on it.',
-      'Long ago, it helped me win every battle.',
-      'Touch the stone, and it says...',
-    ], 'Stand in the golden circle, and press green, to take the word!', 'Now you are as strong as stone, let\'s look around!'),
+    S('🚀', [
+      'My silver rocket has a secret, and only the captain knows it.',
+      'Today, you are my co-captain, so I will tell you.',
+      'Count down with me, and the rocket roars...',
+    ], CIRCLE('to launch the rocket'), 'Now you are a real space explorer, let\'s look around!'),
+    S('🐧', [
+      'My penguin crew found something frozen in the ice this morning.',
+      'They pecked and pecked, and out came a word.',
+      'The littlest penguin squawks...',
+    ], CIRCLE('to take the word'), 'The penguins are cheering for you, let\'s look around!'),
+    S('👑', [
+      'My crown is made of ice, and every crystal holds a word.',
+      'This one sparkles the brightest, so it is yours.',
+      'Hold it up to the stars, and it says...',
+    ], CIRCLE('to take the crystal'), 'Now you shine like an ice crown, let\'s look around!'),
   ],
   jormungandr: [
     // Item 056: a sea horn, since SHELL is a bank word now (and its picture no prop).
@@ -322,6 +328,12 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       "Don't tell anybody, it is my favorite.",
       'Wave your arms like a magician, and say...',
     ], CIRCLE('to learn it'), 'Now you know my best trick, let\'s look around!'),
+    // Item 114: a puzzle from his library, playful, never sinister.
+    S('🧩', [
+      'I built you a little puzzle, with twelve clockwork locks.',
+      'Turn the little handle, click, click, click, and it springs open.',
+      'Out comes a word, and it says...',
+    ], CIRCLE('to solve the puzzle'), 'You solved my puzzle, clever you, let\'s look around!'),
   ],
   bavmorda: [
     S('🧪', [
@@ -347,6 +359,12 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'I am giving it to you, with a soft fluffy cuddle, because you are my friend.',
       'Put your fists up, and shout...',
     ], SPOT('to get the trick'), 'Now you are strong like Bluerilla, let\'s look around!'),
+    // Item 114: a gentle giant's shoulder ride.
+    S('🦍', [
+      'Climb up on my furry shoulders, and hold on tight!',
+      'From way up here, we see the whole jungle.',
+      'Now give a happy thump with me, and shout...',
+    ], SPOT('to climb up'), 'That was the best shoulder ride ever, let\'s look around!'),
   ],
 };
 

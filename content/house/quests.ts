@@ -156,12 +156,13 @@ export const QUESTS: Record<string, Quest> = {
       { text: 'To be quick like the wind, we have to train at the oasis, out in the sandy desert!' },
     ],
   },
+  // Item 114 (Matt): from Antarctica, with a spaceship.
   ozymandias: {
-    place: 'desert_oasis',
+    place: 'iceberg_launchpad',
     lines: [
-      { text: 'To be as strong as stone, we have to train at my desert oasis!' },
-      { text: 'To be mighty like a pharaoh, we have to train at my oasis, by the great pyramids!' },
-      { text: 'Come and train at my desert oasis, where the palm trees are tall and the sand is warm!' },
+      { text: 'To be brave enough, we have to train on my iceberg, where my silver rocket is waiting!' },
+      { text: 'Put on something warm, we are going to train at my launch pad, all the way down in Antarctica!' },
+      { text: 'My penguin crew is getting the rocket ready, so we train on my iceberg, come along!' },
     ],
   },
   jormungandr: {
@@ -190,12 +191,13 @@ export const QUESTS: Record<string, Quest> = {
       { text: 'Let\'s go to the treehouse workshop, where Dada lets me use the little hammer!' },
     ],
   },
+  // Item 114: a playful puzzle-loving gentleman, in a library full of trapdoors.
   moriarty: {
-    place: 'moon_tower',
+    place: 'puzzle_library',
     lines: [
-      { text: 'To learn the best tricks, we have to train in the purple moon tower!' },
-      { text: 'To learn some clever tricks, we have to train in the purple moon tower, watch closely!' },
-      { text: 'Every good magician practices, so we are going to the purple moon tower!' },
+      { text: 'To get clever enough, we have to train in my secret puzzle library!' },
+      { text: 'Every good puzzle needs a puzzle solver, so come to my library, mind the trapdoors!' },
+      { text: 'My clockwork gadgets are ticking, so we train in my puzzle library, follow me!' },
     ],
   },
   bavmorda: {
@@ -206,12 +208,13 @@ export const QUESTS: Record<string, Quest> = {
       { text: 'My broomstick knows the way to the purple moon tower, so that is where we train!' },
     ],
   },
+  // Item 114: Bluerilla's own home, high in the jungle.
   rilla: {
-    place: 'forest_gym',
+    place: 'jungle_treetops',
     lines: [
-      { text: 'To be gorilla strong, we have to train in the secret forest gym!' },
-      { text: 'To be strong like me, we have to train in the secret forest gym, with the bananas!' },
-      { text: 'The secret forest gym has swings made of vines, so that is where we train!' },
+      { text: 'To be gorilla strong, we have to train at my home in the jungle treetops!' },
+      { text: 'Climb up on my shoulders, I will carry you all the way to my jungle treetops!' },
+      { text: 'My jungle treetops have swings made of vines and bananas everywhere, so that is where we train!' },
     ],
   },
 };

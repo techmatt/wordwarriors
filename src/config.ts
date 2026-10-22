@@ -76,8 +76,9 @@ export const EPISODE_DEFAULTS = {
  * the draw by being added here. The dads wake her whatever this says.
  */
 export const ACTIVE_CAST = {
-  // Item 111: Seraphina, Elsa, Anna and Jasmine join (Matt, 2026-10-22).
-  allies: ['dada_matt', 'dada_jason', 'scar', 'ellie', 'seraphina', 'elsa', 'anna', 'jasmine'],
+  // Item 111: Seraphina, Elsa, Anna and Jasmine join (Matt, 2026-10-22);
+  // item 114: Ozymandias, Moriarty and Bluerilla (`rilla`).
+  allies: ['dada_matt', 'dada_jason', 'scar', 'ellie', 'seraphina', 'elsa', 'anna', 'jasmine', 'ozymandias', 'moriarty', 'rilla'],
   villains: ['jormungandr', 'smaug', 'bavmorda', 'tiamat'],
 };
 
@@ -150,6 +151,11 @@ export const OUTFIT_FILL: Readonly<Record<string, number>> = {
   char_julia_keeper: 0.945,
   char_julia_explorer: 0.95,
   char_julia_snow: 0.9,
+  // Item 114: her hair's top to soles, less the dress picture's 0.017 gap
+  // between the two; the top hat and the gorilla hood's ears are not her height.
+  char_julia_astronaut: 0.945,
+  char_julia_puzzler: 0.93,
+  char_julia_gorilla: 0.89,
 };
 
 /** The cast draw's odds (Matt, item 025). */

@@ -82,7 +82,7 @@ test('cast: the active cast (item 028) draws only its allies and villains, every
     pairs.add(`${c.ally}+${c.villain}`);
   }
   const allyForms = ACTIVE_CAST.allies.flatMap((p) => formsOf(p).map((f) => f.id));
-  assert.equal(allyForms.length, 13, 'four Dada Matts, three Dada Jasons, Scar, Ellie, Seraphina, Elsa, Anna and Jasmine');
+  assert.equal(allyForms.length, 16, 'four Dada Matts, three Dada Jasons, Scar, Ellie, Seraphina, Elsa, Anna, Jasmine, Ozymandias, Moriarty and Bluerilla');
   for (const a of allyForms) for (const v of ACTIVE_CAST.villains) assert.ok(pairs.has(`${a}+${v}`), `${a} + ${v}`);
   // Anybody off the list is still a fixed override away.
   assert.equal(drawCast({ hero: 'julia', overrides: { ally: 'anna', villain: 'rilla' } }, rand).villain, 'rilla');
@@ -239,7 +239,7 @@ test('story: the quest line and hub scene are drawn with the cast, the same for 
   assert.equal(hubStory('dada_matt_cyber', 'dada_matt', 2).ids.circle, 'hub_dada_matt_cyber_2_circle');
   assert.equal(hubStory('nobody', 'dada_jason', 1).ids.done, 'nar_dada_jason_hub_any_1_done');
   // A variant drawn for one helper still names a line for another (wrapped).
-  assert.equal(hubStory('moriarty', 'moriarty', 3).ids.done, 'hub_moriarty_1_done');
+  assert.equal(hubStory('jormungandr', 'jormungandr', 3).ids.done, 'hub_jormungandr_1_done');
 });
 
 test('active allies (item 111): each has what an ally in the draw uses', () => {
@@ -258,6 +258,16 @@ test('active allies (item 111): each has what an ally in the draw uses', () => {
   // Seraphina (amendment, Matt): her secret dragon hatchery and her pink pet dragon in the fight.
   assert.equal(QUESTS.seraphina!.place, 'dragon_hatchery');
   assert.ok(CHARACTER_BY_ID.seraphina!.good.abilities.some((a) => a.minion === 'pink_dragon'));
+  // Item 114: the second wave, each in a place of their own, Ozymandias from Antarctica with his penguin crew.
+  for (const id of ['ozymandias', 'moriarty', 'rilla']) assert.ok(ACTIVE_CAST.allies.includes(id), `${id} is in the draw`);
+  assert.deepEqual(['ozymandias', 'moriarty', 'rilla'].map((id) => QUESTS[id]!.place), ['iceberg_launchpad', 'puzzle_library', 'jungle_treetops']);
+  const shared = new Map<string, string[]>();
+  for (const person of ACTIVE_CAST.allies) for (const f of formsOf(person)) shared.set(QUESTS[f.id]!.place, [...(shared.get(QUESTS[f.id]!.place) ?? []), f.id]);
+  for (const id of ['ozymandias', 'moriarty', 'rilla']) assert.deepEqual(shared.get(QUESTS[id]!.place), [id], `${id}: a place of their own`);
+  const ozy = CHARACTER_BY_ID.ozymandias!;
+  assert.equal(ozy.arena, 'iceberg');
+  assert.ok(ozy.good.abilities.some((a) => a.minion === 'penguin'));
+  assert.equal(ozy.counter.word, 'fish');
 });
 
 test('minigames: three different games a episode, fetch twice then the counter, weighted, from the pool', () => {

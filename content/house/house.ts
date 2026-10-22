@@ -272,6 +272,39 @@ export const PLACES: PlaceSpec[] = [
     ],
     secret: HIDEOUT,
   },
+  // Item 114: the second wave of allies, each with a place of their own.
+  {
+    // Ozymandias (Matt): from Antarctica, with a spaceship.
+    id: 'iceberg_launchpad', name: 'Iceberg Launch Pad', glyph: '🐧', palette: [0xd8f0ff, 0x2a5ab4],
+    outdoor: true,
+    look: "Ozymandias's launch pad on a giant Antarctic iceberg, seen side-on: a wide flat snowy ice floor across the lower half, a tall shiny silver rocket ship with round portholes and royal-blue fins standing at the far right edge, little penguins waddling far off, a dark-blue polar sky with twinkling stars and a soft pink-and-violet aurora, distant icebergs in a calm sea (no letters or numbers anywhere)",
+    rooms: [
+      room('rocket_cockpit', 'Rocket Cockpit', '🚀', [0x2a3a6a, 0xc0c8d8], 'The cockpit inside the silver rocket ship: big round portholes onto stars and a snowy iceberg, chunky friendly buttons and levers in bright colours, a big padded captain\'s chair, a tiny penguin-sized seat beside it, a shiny metal floor (no letters or numbers anywhere)'),
+      room('penguin_slide', 'Penguin Slide', '🛷', [0xe8f6ff, 0x7cc7ff], 'The penguin slide on the iceberg: a long twisty ice slide down a snowy slope, a row of little snow sledges, a cosy igloo, fishing holes in the ice with buckets beside them, a starry sky (no letters or numbers anywhere)'),
+    ],
+    secret: HIDEOUT,
+  },
+  {
+    // Moriarty: a playful puzzle-loving gentleman, never sinister.
+    id: 'puzzle_library', name: 'Puzzle Library', glyph: '🧩', palette: [0x6a3a2a, 0xf4a261],
+    look: "Moriarty's secret puzzle library, seen side-on: tall wooden bookshelves with rolling ladders, books with plain blank spines, brass clockwork gadgets ticking on the shelves, big brass gears turning on the walls, a giant half-finished jigsaw on a low table, a cosy armchair and warm lamps, a polished wooden floor across the lower half; playful and cosy, not spooky (no letters or numbers anywhere)",
+    rooms: [
+      room('clockwork_workshop', 'Clockwork Workshop', '⚙️', [0x8a5a2a, 0xffd23f], 'The clockwork workshop of the puzzle library: a long workbench of brass gears, springs and tiny tools, a wind-up toy mouse and a clockwork bird, big turning cogs on the wall, warm lamplight, a wooden floor (no letters or numbers anywhere)'),
+      room('trapdoor_slides', 'Trapdoor Slides', '🎢', [0x4a2a5a, 0xf4a261], 'The trapdoor room of the puzzle library: round trapdoors in the floorboards with curly slides spiralling down out of them, rope pulls and brass levers, shelves of puzzle boxes, a big squashy cushion pile to land on, warm lamplight; playful, not spooky (no letters or numbers anywhere)'),
+    ],
+    secret: HIDEOUT,
+  },
+  {
+    // Bluerilla: Julia's plush gorilla come to life, a gentle giant.
+    id: 'jungle_treetops', name: 'Jungle Treetops', glyph: '🍌', palette: [0x3a9a4a, 0xffe14a],
+    outdoor: true,
+    look: "Bluerilla's cosy home high in the jungle treetops, seen side-on: a big wide treehouse deck of thick wooden planks filling the whole lower half of the picture right down to the bottom edge, a giant soft nest of leaves and fluffy blankets on the branches, bunches of yellow bananas hanging everywhere, long vines and rope swings, bright jungle flowers, a waterfall far behind, warm sunlight",
+    rooms: [
+      room('banana_grove', 'Banana Grove', '🍌', [0x6ac46a, 0xffe14a], 'The banana grove in the jungle: tall banana trees heavy with yellow bunches, woven baskets full of bananas, a big comfy log to sit on, butterflies and flowers, a soft mossy floor'),
+      room('stomping_clearing', 'Stomping Clearing', '🥁', [0x9a7a4a, 0x2a4aa8], 'The stomping clearing in the jungle: a sunny round clearing with big hollow-log drums, round stepping stones to stomp on, splashy puddles, giant leaves and flowers all round, a soft dirt floor'),
+    ],
+    secret: HIDEOUT,
+  },
 ];
 
 export const PLACE_BY_ID: Record<string, PlaceSpec> = Object.fromEntries(PLACES.map((p) => [p.id, p]));
@@ -307,6 +340,9 @@ export const GAP_BY_PLACE: Record<string, BridgeGap> = {
   desert_oasis: 'river',
   sea_grotto: 'river',
   robot_workshop: 'lava',
+  iceberg_launchpad: 'chasm',
+  puzzle_library: 'chasm',
+  jungle_treetops: 'river',
 };
 
 /** A side room's gap: its place's (a shared secret room takes the first place that has it), else the house's lava. */

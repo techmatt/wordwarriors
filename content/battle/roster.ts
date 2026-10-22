@@ -104,15 +104,21 @@ export const MINIONS: Record<string, MinionSpec> = {
     palette: [0xffcc33, 0x8a5a00], style: 'march', speed: 60, size: 0.6, hp: 30,
     ability: ab('coin_toss', 'Coin Toss', 'bolt', 2.2, 0xffd84a, 1, { glyph: '🟡' }),
   },
-  colossus: {
-    id: 'colossus', name: 'Colossus', glyph: '🗿', look: 'a towering sandstone statue of a pharaoh, cracked, slow',
-    palette: [0xd9b26f, 0x7a5a2a], style: 'stomp', speed: 25, size: 1.2, hp: 70,
-    ability: ab('statue_stomp', 'Stomp', 'slam', 3.5, 0xd9b26f, 2),
+  // Ozymandias's crew (item 114): penguins from his Antarctic rocket ship.
+  penguin: {
+    id: 'penguin', name: 'Penguin', glyph: '🐧', look: 'a chubby cheerful penguin with a little red scarf and tiny silver goggles, flippers out, friendly',
+    palette: [0x2a3a5a, 0xffffff], style: 'march', speed: 110, size: 0.45, hp: 20,
+    ability: ab('belly_slide', 'Belly Slide', 'dash', 2.0, 0xbfe8ff, 1),
   },
-  scarab: {
-    id: 'scarab', name: 'Scarab', glyph: '🐞', look: 'a shiny blue-green scarab beetle',
-    palette: [0x2ac7a0, 0x184a5a], style: 'march', speed: 120, size: 0.4, hp: 12,
-    ability: ab('nip', 'Nip', 'dash', 1.8, 0x2ac7a0, 1),
+  penguin_trooper: {
+    id: 'penguin_trooper', name: 'Penguin Trooper', glyph: '🐧', look: 'a grumpy-silly penguin in a round silver space helmet and a tiny dark-blue cape, holding a little snowball blaster, more silly than scary',
+    palette: [0x1a1a3a, 0x7ad8ff], style: 'march', speed: 115, size: 0.45, hp: 14,
+    ability: ab('snow_blaster', 'Snow Blaster', 'bolt', 1.8, 0xe8f6ff, 1, { glyph: '❄️' }),
+  },
+  snow_bot: {
+    id: 'snow_bot', name: 'Snow Bot', glyph: '⛄', look: 'a round robot snowman with a shiny metal top hat, one glowing blue eye and stubby rocket feet, slow',
+    palette: [0xe8f6ff, 0x7ad8ff], style: 'stomp', speed: 35, size: 0.9, hp: 55,
+    ability: ab('snow_stomp', 'Snow Stomp', 'slam', 3.5, 0x7ad8ff, 2),
   },
   drone: {
     id: 'drone', name: 'Drone', glyph: '🛸', look: 'a little round robot drone with one red eye',
@@ -751,70 +757,75 @@ export const ROSTER: CharacterSpec[] = [
     },
   },
   {
+    // Item 114 (Matt): re-themed from a desert pharaoh. He is from Antarctica
+    // and has a spaceship, both sides: a booming explorer-king whose silver
+    // rocket sits on an iceberg, with a penguin crew and a crown of ice.
     id: 'ozymandias',
-    description: 'A sand-pharaoh who raises colossal statues of himself from the dunes.',
-    arena: 'desert',
+    description: 'A booming explorer-king from Antarctica with a silver rocket ship on an iceberg, a penguin crew and a shiny crown of ice.',
+    arena: 'iceberg',
     good: {
-      displayName: 'Ozymandias', trail: { tint: [0xe8c890, 0xffd23f], shape: 'square' }, look: 'a friendly old pharaoh with a golden mask pushed up on his head, a staff of sand',
-      palette: [0xd9a441, 0x2a5ab4], glyph: '🏺', style: 'stomp', speed: 90, size: 1.3, hp: 140,
+      displayName: 'Ozymandias', trail: { tint: [0xbfe8ff, 0xc0c8d8], shape: 'spark' }, look: 'a grand, jolly old explorer-king with a big bushy white beard and rosy cheeks, a shiny crown of pale-blue ice crystals, a puffy silver-and-royal-blue space suit with a fluffy white fur-trimmed royal cape, chunky silver moon boots, one arm raised in a booming hello',
+      palette: [0x2a5ab4, 0xc0c8d8], glyph: '🚀', style: 'stomp', speed: 90, size: 1.3, hp: 140,
       abilities: [
-        ab('sand_spear', 'Sand Spears', 'bolt', 2.6, 0xe8c890, 1, { count: 3, glyph: '🏺', words: ['zip'] }),
-        ab('statue_friend', 'Statue Friend', 'summon', 13, 0xd9b26f, 2, { minion: 'colossus', count: 1, words: ['big', 'tug'] }),
-        ab('dune_slam', 'Desert Smash', 'slam', 6, 0xd9a441, 3, { words: ['bam', 'dig'] }),
-        ab('sun_disc', 'Golden Sunbeam', 'beam', 6, 0xffd23f, 2, { words: ['sun', 'hot', 'zap'] }),
+        ab('snowball_volley', 'Snowball Volley', 'bolt', 2.6, 0xe8f6ff, 1, { count: 3, glyph: '❄️', words: ['zip', 'pop'] }),
+        ab('penguin_crew', 'Penguin Crew', 'summon', 12, 0x2a3a5a, 2, { minion: 'penguin', count: 3, words: ['run', 'hop'] }),
+        ab('moon_boot_stomp', 'Moon Boot Stomp', 'slam', 6, 0xc0c8d8, 3, { shout: true, words: ['bam', 'big'] }),
+        ab('starlight_beam', 'Starlight Beam', 'beam', 6, 0xbfe8ff, 2, { words: ['zap', 'blast'] }),
       ],
-      ultimate: ult('pyramid', 'Pyramid Power', 'lightning',0xffd23f, 3, { count: 8, color2: 0xd9a441 }),
+      ultimate: ult('blast_off', 'Rocket Blast Off', 'rain', 0xff8a3a, 3, { count: 24, glyph: '🚀', color2: 0xbfe8ff }),
       taunts: [
-        { key: 'look', text: 'Come and see my statues!' },
-        { key: 'sand', text: 'Rise up, sand!' },
-        { key: 'king', text: 'I rule the whole desert!' },
-        { key: 'old', text: 'I am very, very old!' },
-        { key: 'pyramid', text: "I'm bigger than a pyramid!" },
-        { key: 'dust', text: 'Sand, sand, everywhere!' },
+        { key: 'rocket', text: 'Come and see my silver rocket!' },
+        { key: 'penguins', text: 'Penguins, march!' },
+        { key: 'king', text: 'I rule the whole South Pole!' },
+        { key: 'countdown', text: 'Countdown time, here we go!' },
+        { key: 'crown', text: 'My crown is made of ice!' },
+        { key: 'chilly', text: 'Snow and ice are my favorite!' },
       ],
     },
     evil: {
-      displayName: 'Evil Ozymandias', trail: { tint: [0xd9b26f, 0x4a3a1a], shape: 'smoke' }, look: 'a towering pharaoh of cracked black sandstone with glowing gold eyes',
-      palette: [0x4a3a1a, 0xffcc33], glyph: '🗿', style: 'stomp', speed: 60, size: 1.7, hp: 200,
+      displayName: 'Evil Ozymandias', trail: { tint: [0x7ad8ff, 0x1a1a3a], shape: 'smoke' }, look: 'a towering frosty space emperor in a dark chrome space suit with a long icy-blue cape, a big frosty white beard, a jagged crown of dark blue ice, glowing pale-blue eyes, a grumpy-silly scowl',
+      palette: [0x1a1a3a, 0x7ad8ff], glyph: '🛸', style: 'stomp', speed: 60, size: 1.7, hp: 200,
       abilities: [
-        ab('colossi', 'Rise, Statues', 'summon', 11, 0xd9b26f, 3, { minion: 'colossus', count: 2 }),
-        ab('scarab_swarm', 'Beetle Swarm', 'summon', 9, 0x2ac7a0, 2, { minion: 'scarab', count: 5 }),
-        ab('sand_quake', 'Sand Quake', 'slam', 6, 0xd9b26f, 3),
+        ab('penguin_troopers', 'Penguin Troopers', 'summon', 10, 0x2a3a5a, 3, { minion: 'penguin_trooper', count: 4 }),
+        ab('snow_bots', 'Snow Bots', 'summon', 11, 0xc0c8d8, 2, { minion: 'snow_bot', count: 2 }),
+        ab('meteor_hail', 'Meteor Hail', 'lightning', 7, 0x7ad8ff, 2, { count: 5, color2: 0xff8a3a }),
+        ab('ice_quake', 'Ice Quake', 'slam', 6, 0x7ad8ff, 3),
       ],
-      ultimate: ult('colossus_march', 'Statue Stampede', 'wave',0xd9b26f, 3, { color2: 0x4a3a1a }),
+      ultimate: ult('comet_crash', 'Comet Crash', 'wave', 0x7ad8ff, 3, { color2: 0x1a1a3a }),
       taunts: [
-        { key: 'despair', text: 'Look at me and tremble!' },
-        { key: 'kneel', text: 'Bow to the pharaoh!', say: 'Bough to the pharaoh!' },
-        { key: 'statues', text: 'My statues are huge!' },
-        { key: 'sand', text: 'Sand will cover everything!' },
-        { key: 'mighty', text: 'Look how mighty I am!' },
-        { key: 'crush', text: "I'll squash you like a sandcastle!" },
+        { key: 'tremble', text: 'Look at me and tremble!' },
+        { key: 'kneel', text: 'Bow to the space emperor!', say: 'Bough to the space emperor!' },
+        { key: 'freeze', text: 'Everything will freeze!' },
+        { key: 'troopers', text: 'Penguin troopers, attack!' },
+        { key: 'launch', text: 'Ready the rocket for launch!' },
+        { key: 'snowball', text: "I'll roll you up like a snowball!" },
       ],
     },
     reformed: {
       sorry: [
-        { key: 'kings', text: 'Sorry, even kings say sorry.' },
-        { key: 'kind', text: "Sorry, I'm a kind pharaoh now." },
-        { key: 'statue', text: 'Sorry about my giant statue!' },
+        { key: 'kings', text: 'Sorry, even space kings say sorry.' },
+        { key: 'kind', text: "Sorry, I'm a kind explorer now." },
+        { key: 'rocket', text: 'Sorry about my noisy rocket!' },
       ],
       ending: [
-        { key: 'visit', text: 'Please come and visit my pyramid!' },
-        { key: 'mighty', text: 'This is a mighty party!' },
-        { key: 'loves', text: 'Even a pharaoh loves a party!' },
+        { key: 'visit', text: 'Please come and ride in my rocket!' },
+        { key: 'mighty', text: 'This party is out of this world!' },
+        { key: 'loves', text: 'Even my penguins love a party!' },
       ],
     },
+    // His penguin crew waddle off to eat, so nobody is left to launch the comet.
     counter: {
-      id: 'brave_rat', name: 'Brave Rat', glyph: '🐀', look: 'a brave little grey rat with a long pink tail and a tiny red cape, leading a squeaking pack of his friends; giant statues are terrified of rats',
-      how: 'scare', word: 'rat',
+      id: 'fish_bucket', name: 'Fish Bucket', glyph: '🐟', look: 'a big shiny silver bucket heaped with fresh silver fish, a splash of icy water and a few snowflakes',
+      how: 'calm', word: 'fish',
     },
     house: {
-      threat: 'he wants a giant statue of himself in the yard',
-      tint: 0xd9b26f,
+      threat: 'he wants to fly our house all the way to the South Pole in his rocket',
+      tint: 0x9ad8ff,
       decals: [
-        { id: 'ozymandias_statue', glyph: '🗿', look: 'a stone head poking out of the floor', count: 1 },
-        { id: 'ozymandias_scarab', glyph: '🐞', look: 'shiny scarab beetles', count: 3 },
+        { id: 'ozymandias_penguin', glyph: '🐧', look: 'a little penguin trooper in a tiny silver space helmet, waddling about', count: 3 },
+        { id: 'ozymandias_snowpile', glyph: '🧊', look: 'a frosty heap of snow and icicles with a little rocket fin poking out', count: 1 },
       ],
-      fx: 'quake',
+      fx: 'frost',
     },
   },
   {
@@ -1125,6 +1136,9 @@ export const ROSTER: CharacterSpec[] = [
         // Was "Look in my hat!": HAT is Evil Tiamat's counter word (item 013).
         { key: 'sleeve', text: 'What is up my sleeve?' },
         { key: 'cards', text: 'I have so many cards!' },
+        // Item 114: as an ally a playful puzzle-loving gentleman.
+        { key: 'riddle', text: 'Here is a riddle for you!' },
+        { key: 'gadget', text: 'Tick, tock, my clockwork gadgets!' },
       ],
     },
     evil: {
@@ -1684,7 +1698,8 @@ export function formId(person: string, form: string): string | undefined {
 export const COMBOS: ComboSpec[] = [
   { pair: ['elsa', 'anna'], ability: ab('sister_storm', 'Sister Storm', 'spin', 16, 0xaee6ff, 3, { count: 5, color2: 0xe63946 }) },
   { pair: ['seraphina', 'smaug'], ability: ab('dragon_duet', 'Dragon Duet', 'cone', 16, 0xff7b00, 3, { color2: 0x6ad66a }) },
-  { pair: ['jasmine', 'ozymandias'], ability: ab('desert_duo', 'Desert Duo', 'wave', 16, 0xffc857, 3, { color2: 0x1fb5a8 }) },
+  // Item 114: Ozymandias is from Antarctica now, so his duo is with Elsa, not Jasmine.
+  { pair: ['elsa', 'ozymandias'], ability: ab('polar_duo', 'Polar Duo', 'wave', 16, 0xaee6ff, 3, { color2: 0xc0c8d8 }) },
   { pair: ['dada_matt', 'dada_jason'], ability: ab('dad_squad', 'Dad Squad', 'slam', 16, MATT.bright, 3, { color2: JASON.bright }) },
   { pair: ['julia', 'dada_matt'], ability: ab('high_five', 'Mega High Five', 'lightning', 16, 0xffd23f, 3, { count: 6, color2: MATT.bright }) },
   // Item 028: the active cast's allies each have one with her. Dada Jason
@@ -1712,6 +1727,21 @@ export const COMBOS: ComboSpec[] = [
   { pair: ['julia', 'anna'], ability: ab('brave_buddy_charge', 'Brave Buddy Charge', 'dash', 16, 0xffb703, 3, { shout: true, color2: 0xe63946 }) },
   // Julia hops on the flying carpet: a sweep of wind full of stars and jewels.
   { pair: ['julia', 'jasmine'], ability: ab('carpet_star_sweep', 'Carpet Star Sweep', 'wave', 16, 0xffc857, 3, { color2: 0xff5ab4 }) },
+  // Item 114: the second wave. Julia and Ozymandias blast off in his rocket,
+  // and down comes a shower of stars and snowflakes from space.
+  {
+    pair: ['julia', 'ozymandias'],
+    ability: ab('rocket_launch', 'Rocket Launch', 'dash', 16, 0xffd23f, 3, { shout: true, color2: 0xc0c8d8 }),
+    second: ab('rocket_launch_rain', 'Rocket Launch', 'rain', 16, 0xbfe8ff, 3, { count: 24, glyph: '⭐', color2: 0xffd23f }),
+  },
+  // Julia's stars fly out of Moriarty's puzzle box, and his copycats pop up to join in.
+  {
+    pair: ['julia', 'moriarty'],
+    ability: ab('puzzle_box_stars', 'Puzzle Box Surprise', 'bolt', 16, 0xffd23f, 3, { count: 5, glyph: '⭐', homing: true, color2: 0xf4a261 }),
+    second: ab('puzzle_box_copycats', 'Puzzle Box Surprise', 'clones', 16, 0xf4a261, 3, { count: 4, color2: 0x95d5b2 }),
+  },
+  // Julia rides on Bluerilla's shoulders and they land in one giant happy stomp.
+  { pair: ['julia', 'rilla'], ability: ab('shoulder_ride_stomp', 'Shoulder Ride Stomp', 'slam', 16, 0x2a4aa8, 3, { shout: true, color2: 0xffd23f }) },
 ];
 
 /** Any two heroes without a written combo still team up with this. */
@@ -1743,6 +1773,8 @@ export const ARENAS: Record<string, { name: string; sky: [number, number]; groun
   castle: { name: 'Castle Courtyard', sky: [0x5a6aa0, 0xc8d0ff], ground: 0x8a8a9a, glyph: '🏰', look: 'a stone castle courtyard with banners and torches' },
   ice: { name: 'Crystal Ice Palace', sky: [0x9ad8ff, 0xf0faff], ground: 0xd8f0ff, glyph: '🏔️', look: 'an ice palace of glittering crystal spires and snow' },
   desert: { name: 'Golden Dunes', sky: [0xffb15a, 0xffe8b0], ground: 0xe8c890, glyph: '🐪', look: 'golden sand dunes with half-buried statues and a pyramid' },
+  // Item 114: Ozymandias's, from Antarctica with a spaceship.
+  iceberg: { name: 'Iceberg Launch Pad', sky: [0x0a1a4a, 0x5a8ad8], ground: 0xe8f6ff, glyph: '🚀', look: 'a wide flat snowy iceberg in a dark-blue polar sea at twilight, a starry sky with a soft pink-and-violet aurora, a tall silver rocket ship on a launch pad far off to one side, little ice cliffs and distant icebergs' },
   sea: { name: 'Serpent Sea', sky: [0x2a5aa0, 0x9ad8ff], ground: 0x2a7ab4, glyph: '🌊', look: 'a stormy sea with rocky islands and huge waves' },
   cave: { name: 'Treasure Cave', sky: [0x1a1a2a, 0x5a4a2a], ground: 0x8a6a2a, glyph: '💰', look: 'a cave piled high with gold coins and jewels, lit by lava cracks' },
   factory: { name: 'Robot Factory', sky: [0x2a2d42, 0x6a7a9a], ground: 0x4a4a5a, glyph: '⚙️', look: 'a neon robot factory with conveyor belts and sparks' },
