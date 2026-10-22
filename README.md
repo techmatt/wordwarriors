@@ -420,6 +420,11 @@ In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
   episode at real speed had none. Check one at real speed before calling it a bug:
   `WW_SPEED=1 QA_TAG=<tag> npm run qa -- -g "qa seed101$"`
   (about 7 minutes). `failed`, `none` and `suspended` stay bugs at any speed.
+- **A game controller plugged in can play along** (item 092, M20): the GPU test browser
+  reads a real pad once it reports input, and a stick drifting past the 0.25 deadzone walks
+  her off a move pad the driver put her on. Twice a sweep stopped "green on the pad never
+  picked" with her hero off the pad; the driver now puts her back before each retry. Sweep
+  with the pad unplugged to rule it out.
 - **A busy child and the driver:** the mash scenarios' yellow waits while the driver answers
   (`driver.busy` in the harness), or a replay it starts locks the room as green lands and
   the driver waits for an answer that never comes.
