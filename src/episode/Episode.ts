@@ -38,6 +38,7 @@ import { endingPeople } from '../rules/endings';
 import { voiceBank } from '../voice/VoiceBank';
 import { startScene } from '../art/gate';
 import { narrator } from './cast';
+import { debugMode, endRun } from './debug';
 import { rememberCast, resetEpisode } from './draws';
 import { planFor, rememberPlan } from './plans';
 import { countEpisode, currentStep, episode, steps, type EpisodeState, type PrepGame, type Slot, type Step } from './state';
@@ -131,11 +132,25 @@ export function enterRoom(scene: Phaser.Scene, slot: Slot): void {
 /** From a side room back to the hub, standing at that room's door. */
 export function backToHub(scene: Phaser.Scene, from: Slot): void {
   voiceBus.hush();
+  if (debugMode.run) return debugBack(scene, true);
   startScene(scene, 'Hub', { step: currentStep(), from });
+}
+
+/**
+ * Out of a game played from minigame debug mode (item 086, ./debug.ts): the
+ * sandbox ends (the episode and the store as they were) and the debug room
+ * comes back, the game checked off when `finished`.
+ */
+export function debugBack(scene: Phaser.Scene, finished: boolean): void {
+  voiceBus.hush();
+  endRun(finished);
+  startScene(scene, 'Debug');
 }
 
 /** The current step is done; go to the next one. */
 export function advance(scene: Phaser.Scene): void {
+  // A game played from debug mode (F2 in it) goes back to the debug room, unfinished.
+  if (debugMode.run) return debugBack(scene, false);
   episode.stepIndex++;
   // The cast is drawn more often than episodes are played (at boot, at the
   // title, and again after the parked pick screens): her villain (and since

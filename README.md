@@ -21,6 +21,12 @@ Dad's, for the games that ask him whether she said it (`docs/episode.md`, *Dad b
 at the end of an episode her green takes the recap to a **THE END** screen (item 085: this
 episode's hub full screen, her heroes on it), and only Dad's **2** starts the next one there
 (her buttons and Dad's 1 do nothing, so she never starts a new episode without a grown-up).
+Key **0** toggles **minigame debug mode** in any game room (the hub, the warm-up, a side
+room or the attic), in real play as in dev builds and under dad lock too: a small DEBUG tag
+shows top left, the room's own things go, its door out is open, and one pedestal per
+minigame stands there; green at one plays it, and finishing puts a ✔ on it. Nothing played
+there counts (no progress, word bag, rotations or recap, nothing on the grown-ups page);
+0 again brings the room back (`docs/episode.md`, *Minigame debug mode*).
 
 **Free play** (item 060): wherever she is free to move and no answer is open (the rooms,
 the bedroom once she is awake, the hub, the battle's fight outside a move choice), her

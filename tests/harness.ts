@@ -63,6 +63,8 @@ export interface WWState {
     player: { x: number; y: number; art: string };
     spots: { id: string; x: number; y: number; correct: boolean | null }[];
     shown: string[];
+    /** Minigame debug mode's room (item 086): its games, and those finished from it. */
+    debug?: { done: string[]; games: string[] };
     spelling?: { word: string; filled: number };
     grab?: { word: string; level: number; misses: number; objects: string[]; phase: string };
     sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean; readLit: number[] };

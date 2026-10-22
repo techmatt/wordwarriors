@@ -24,6 +24,8 @@ export interface RoomInfo {
   spots: SpotInfo[];
   /** Every spot drawn at all (enabled or not), by id: a door she cannot use yet is not drawn. */
   shown: string[];
+  /** Minigame debug mode's room (item 086): the games on its pedestals, and those finished from it (checked). */
+  debug?: { done: string[]; games: string[] };
   /** Ghost boxes in Spelling: the word and how many letters are in. */
   spelling?: { word: string; filled: number };
   /** The sentence game: its tokens (upper case), key word, frame, which pass, the token in play, and every token her green's read lit, in order. */

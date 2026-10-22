@@ -20,6 +20,7 @@ import { ART_ASSETS, ART_BY_ID, charArt } from '../../content/art/assets';
 import { CHARACTER_BY_ID, MINIONS, ROSTER, personOf } from '../../content/battle/roster';
 import { ENDING_BY_ID, endingArt, endingPropArt } from '../../content/house/endings';
 import { BEDROOMS, hubArt } from '../../content/house/house';
+import { debugMode } from '../episode/debug';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import {
   castArt,
@@ -169,6 +170,10 @@ export function artFor(key: string, draw: boolean): string[] {
     case 'ChargeRoom':
     case 'BridgeRoom':
       out.push(...houseSet(draw));
+      break;
+    case 'Debug':
+      // Minigame debug mode (item 086): the room it was turned on in, its pedestals and door.
+      out.push(...(debugMode.origin ? [debugMode.origin.bg, debugMode.origin.art] : []), 'prop_pedestal', 'prop_door');
       break;
     case 'Battle':
       out.push(...battleSet(draw));

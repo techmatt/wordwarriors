@@ -19,6 +19,7 @@ import { typeLetter } from './input/TextEntry';
 import { artBank } from './art/ArtBank';
 import { voiceBus } from './audio/VoiceBus';
 import { episode, currentStep } from './episode/Episode';
+import { debugMode } from './episode/debug';
 import { progress } from './state/progress';
 import { GAME_HEIGHT, GAME_WIDTH } from './config';
 import { installProbe } from './qa/probe';
@@ -129,6 +130,8 @@ export function installTestHooks(game: Phaser.Game): void {
       if (a) dadPress(a);
       return dadButtonsOpen();
     },
+    /** Minigame debug mode (item 086): on or off, the game played from it now, and those finished. */
+    debug: () => ({ on: debugMode.on, run: debugMode.run?.game ?? null, done: [...debugMode.done], origin: debugMode.origin?.key ?? null }),
     resetProgress: () => progress.reset(),
     /** Tests can skip the 15+ s of speech in a long flow. */
     hush: () => voiceBus.hush(),

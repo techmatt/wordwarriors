@@ -23,6 +23,7 @@ import { formFor } from '../../content/battle/forms';
 import { FreePlay } from '../fx/freePlay';
 import { fitImage } from '../fx/juice';
 import { SceneGen } from '../fx/sceneGen';
+import type { DebugOrigin } from '../episode/debug';
 import type { RoomPlan } from '../rules/sentences';
 import { Controls } from '../input/Controls';
 import { dadLock } from '../input/dadLock';
@@ -372,6 +373,13 @@ export abstract class RoomScene extends Phaser.Scene {
     this.controls.endFrame();
 
     this.publish(deltaMs);
+  }
+
+  /** Minigame debug mode (item 086, src/episode/debug.ts): what brings this room back, how it looks, and its door out. */
+  debugOrigin(): DebugOrigin {
+    const data = this.sceneData();
+    const f = this.floor;
+    return { key: this.scene.key, data, bg: this.background(), art: this.player.art, floor: [f.x, f.y, f.width, f.height], slot: (data as { slot?: Slot }).slot ?? null };
   }
 
   /** The start data that recreates this scene (the parent page comes back with it). */

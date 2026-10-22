@@ -247,6 +247,22 @@ export function planFor(slot: Slot): RoomPlan {
   return housePlan().find((p) => p.slot === slot)!;
 }
 
+/**
+ * Minigame debug mode (item 086, ./debug.ts): a one-off plan for `game` in
+ * `slot`, drawn as the house plan draws, the episode's other rooms' games
+ * kept. Its draws take words from the bag, so it runs only inside the debug
+ * sandbox, which puts the store and the episode back afterwards.
+ */
+export function debugPlan(game: Minigame, slot: Slot): RoomPlan {
+  const plan = housePlan();
+  const i = slot === 'a' ? 0 : slot === 'b' ? 1 : 2;
+  const games = plan.map((p) => MINIGAME_BY_ID[p.game]!) as [Minigame, Minigame, Minigame];
+  games[i] = game;
+  const fill = { villain: episode.villain, helper: helper(), hero: episode.hero };
+  const input = { fill, ally: episode.ally, gift: giftWord(), rooms: [plan[0]!.room, plan[1]!.room] as [string, string], counterRoom: plan[2]!.room, battle1Moves: battle1Words(movePlan()), moveWords: [...new Set(moveWords())], games };
+  return episodePlans(progress, input)[i]!;
+}
+
 /** The word the attic's counter sentence ends in: whatever beats the villain this episode. */
 export function counterWord(): string {
   return planFor('counter').key;

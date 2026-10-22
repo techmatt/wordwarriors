@@ -11,6 +11,7 @@ import { SentenceRoom } from './scenes/SentenceRoom';
 import { WordMachine } from './scenes/WordMachine';
 import { ChargeRoom } from './scenes/ChargeRoom';
 import { BridgeRoom } from './scenes/BridgeRoom';
+import { DebugRoom, toggleDebug } from './scenes/DebugRoom';
 import { BlendPath } from './scenes/minigames/BlendPath';
 import { SoundToLetter } from './scenes/minigames/SoundToLetter';
 import { Spelling } from './scenes/minigames/Spelling';
@@ -28,6 +29,7 @@ import { artBank } from './art/ArtBank';
 import { installTestHooks } from './testHooks';
 import { installDadButtons } from './input/dadButtons';
 import { installDadLock } from './input/dadLock';
+import { installDebugKey } from './input/debugKey';
 import { installGlyphMetrics } from './ui/glyphMetrics';
 import { holdAudio, releaseAudio } from './audio/context';
 
@@ -81,6 +83,7 @@ const game = new Phaser.Game({
     WordMachine,
     ChargeRoom,
     BridgeRoom,
+    DebugRoom,
     BattleScene,
     EndingScene,
     VictoryScene,
@@ -101,6 +104,8 @@ artBank.install(game);
 
 installDadLock();
 installDadButtons();
+// Key 0: minigame debug mode (item 086), in real play too.
+installDebugKey(() => toggleDebug(game));
 // A hidden tab (item 080): Phaser sleeps its loop, so the voice, chimes and music
 // sleep with it; a story told by lines alone no longer plays on unseen.
 game.events.on(Phaser.Core.Events.HIDDEN, holdAudio);

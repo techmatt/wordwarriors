@@ -215,6 +215,29 @@ playing finish; the battle's move choice keeps waiting. Press it again and play
 carries on exactly where it was. The F-keys still work (F9 opens and closes the
 grown-ups page; red and Esc do not while locked). `src/input/dadLock.ts`.
 
+**Minigame debug mode** (item 086, Matt): key **0** (or numpad 0) toggles it in a game
+room: the hub (parts 1 and 2), the entry hall's warm-up and the side rooms (the attic
+too). It works in real play, not only dev builds, and dad lock does not block it. Turning
+it on swaps the room for the **Debug** scene (`src/scenes/DebugRoom.ts`): the same
+background with the room's own things gone, a DEBUG tag in the top-left corner, the
+room's door out open as if every minigame were done, and one pedestal per game in the
+pool (`src/rules/minigames.ts`: the sentence game, the word machine, Charge the Spell, the
+Stretchy Bridge; every sentence frame is one sentence pedestal, which draws a frame each
+time, a counter frame in the attic and house part 2). Green at a pedestal plays that game
+on a plan drawn just for it; finishing it brings her back with a ✔ on its pedestal (0 or
+F2 in the game comes back too, without one). The open door leaves debug: from a side
+room back to the hub, from the hub or the hall on to the next step, as F2 would. Key 0
+in the debug room turns it off and the room comes back from its start data, as the
+grown-ups page brings it back (its opening lines play again).
+
+Nothing played from debug counts (`src/episode/debug.ts`). The store is held while a game
+runs (`ProgressStore.hold`): it records for the game's own sake but saves nothing, and is
+put back afterwards. The episode (read, fetched, charged, the house plan and which rooms
+are done) and the draws' memory are copied as the game starts and restored as it ends.
+So no progress, word-bag, rotation-memory or recent-words change, no recap card, and
+nothing on the grown-ups page. Leaving by the open door is not sandboxed: like F2 it
+moves the episode on.
+
 **Dad buttons** (item 053): keyboard **1** = no, **2** = yes. They are always live, dad
 lock included, and do nothing where no game is asking; a game that asks shows a small
 `DAD 1 ✗ 2 ✓` cue in the bottom-right corner (lit while a question is waiting).

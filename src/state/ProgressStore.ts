@@ -168,7 +168,27 @@ export class ProgressStore {
     }
   }
 
+  /**
+   * Minigame debug mode (item 086, src/episode/debug.ts): between `hold()` and
+   * `release()` the store records as usual (the game under test reads it) but
+   * saves nothing, and `release()` puts lifetime and session back as they were.
+   */
+  private held: { data: ProgressData; session: ProgressData } | null = null;
+
+  hold(): void {
+    if (this.held) return;
+    this.held = { data: this.snapshot(), session: this.sessionSnapshot() };
+  }
+
+  release(): void {
+    if (!this.held) return;
+    this.data = this.held.data;
+    this.session = this.held.session;
+    this.held = null;
+  }
+
   private save(): void {
+    if (this.held) return;
     try {
       this.storage?.setItem(STORE_KEY, JSON.stringify(this.data));
     } catch {

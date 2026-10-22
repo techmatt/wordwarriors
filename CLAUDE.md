@@ -222,7 +222,8 @@ in `docs/content.md`, *Matt says X → run Y*; README, *Candidates*).
   with a small 1 ✗ / 2 ✓ cue in a corner. Dev keys are F-keys only: F2 skip step, F4
   auto-answer (Dad's yes where he is asked), F9 parent page. Backquote / tilde toggles
   **dad lock**: she walks, no press does anything, timed re-prompts wait
-  (`docs/episode.md`, *Dad lock*).
+  (`docs/episode.md`, *Dad lock*). **0** toggles **minigame debug mode** in a game room,
+  lock or not; nothing played there counts (`docs/episode.md`, *Minigame debug mode*).
 - Elsa, Anna and Jasmine are named in data and lines but described and drawn as
   original archetypes, not lookalikes.
 
