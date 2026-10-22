@@ -31,8 +31,6 @@ import { CAST_COLORS, castPalette, castPower, overCap, startJump, stepJump, type
 import { burst, fxQuality, shockwave } from './juice';
 import { TEX } from './textures';
 
-export type { CastColor };
-
 /** For tests: what free play has done in this scene and how many shots fly now. */
 export const playStats = { jumps: 0, shots: 0, big: 0, live: 0, maxLive: 0 };
 

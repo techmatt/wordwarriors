@@ -35,7 +35,7 @@ function rep<T>(xs: T[], n: number): T[] {
   return Array.from({ length: n }, () => xs).flat();
 }
 
-const TRACKS: Record<string, Track> = {
+const TRACKS = {
   // Heroic and bright: C major, a marching bass, a fanfare-ish lead.
   title: {
     bpm: 116,
@@ -76,7 +76,10 @@ const TRACKS: Record<string, Track> = {
     bassWave: 'sawtooth',
     level: 0.32,
   },
-};
+} satisfies Record<string, Track>;
+
+/** A track `startMusic` plays: a misspelt name is a type error, not silence. */
+export type TrackName = keyof typeof TRACKS;
 
 let musicGain: GainNode | null = null;
 let current: { name: string; track: Track; step: number; next: number; timer: number } | null = null;
@@ -90,7 +93,8 @@ function mtof(m: number): number {
 function out(c: AudioContext): GainNode {
   if (!musicGain) {
     musicGain = c.createGain();
-    musicGain.gain.value = MASTER;
+    // A line said before the first note (a `?scene=` boot) has set the duck already (item 088).
+    musicGain.gain.value = MASTER * duck;
     musicGain.connect(c.destination);
   }
   return musicGain;
@@ -176,10 +180,10 @@ function schedule(): void {
 }
 
 /** Start a track (no-op if it is already playing). */
-export function startMusic(name: keyof typeof TRACKS): void {
+export function startMusic(name: TrackName): void {
   if (current?.name === name) return;
   stopMusic();
-  const track = TRACKS[name];
+  const track: Track = TRACKS[name];
   const c = getAudioContext();
   if (!track || !c) return;
   current = { name, track, step: 0, next: c.currentTime + 0.1, timer: window.setInterval(schedule, 50) };

@@ -9,9 +9,23 @@
  * element like theirs: for Matt, never game text.
  */
 
+import { FONT_HEAVY } from '../config';
 import { onDebugChange } from '../episode/debug';
+import { CornerTag } from '../ui/cornerTag';
 
-let tag: HTMLElement | null = null;
+const tag = new CornerTag(
+  'debug-tag',
+  'top-left',
+  {
+    padding: '2px 8px',
+    borderRadius: '8px',
+    background: 'rgba(20, 14, 40, 0.8)',
+    border: '2px solid #ff3d7a',
+    color: '#ff3d7a',
+    font: `bold 13px ${FONT_HEAVY}`,
+  },
+  'DEBUG',
+);
 
 /** Installed once, from main.ts; `toggle` answers whether the press meant anything here. */
 export function installDebugKey(toggle: () => boolean): void {
@@ -25,43 +39,5 @@ export function installDebugKey(toggle: () => boolean): void {
     },
     true,
   );
-  onDebugChange(showTag);
-  // Phaser refits the canvas on its next frame, not on the event (item 080): place again after it.
-  window.addEventListener('resize', () => {
-    place();
-    requestAnimationFrame(() => requestAnimationFrame(place));
-  });
-}
-
-function showTag(on: boolean): void {
-  if (!on) {
-    tag?.remove();
-    return;
-  }
-  if (!tag) {
-    tag = document.createElement('div');
-    tag.id = 'debug-tag';
-    tag.textContent = 'DEBUG';
-    Object.assign(tag.style, {
-      position: 'fixed',
-      zIndex: '10',
-      pointerEvents: 'none',
-      padding: '2px 8px',
-      borderRadius: '8px',
-      background: 'rgba(20, 14, 40, 0.8)',
-      border: '2px solid #ff3d7a',
-      color: '#ff3d7a',
-      font: 'bold 13px "Arial Black", sans-serif',
-    } satisfies Partial<CSSStyleDeclaration>);
-  }
-  document.body.appendChild(tag);
-  place();
-}
-
-/** The canvas is scaled to fit and centred: sit inside its top-left corner. */
-function place(): void {
-  if (!tag?.isConnected) return;
-  const r = document.querySelector('#game canvas')?.getBoundingClientRect();
-  tag.style.left = `${(r?.left ?? 0) + 8}px`;
-  tag.style.top = `${(r?.top ?? 0) + 8}px`;
+  onDebugChange((on) => (on ? tag.show() : tag.hide()));
 }

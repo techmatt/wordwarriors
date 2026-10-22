@@ -12,7 +12,7 @@
 
 import Phaser from 'phaser';
 
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { fitText } from '../ui/fitText';
 import { TEX } from './textures';
 
@@ -24,7 +24,7 @@ import { TEX } from './textures';
  */
 export const fxQuality = { level: 1 };
 
-/** Live particle count high-water mark, for tests. */
+/** Effects fired since boot, by kind: the test hooks report it, and the QA probe logs each flash. */
 export const fxStats = { bursts: 0, shakes: 0, hitstops: 0, slowmos: 0, flashes: 0 };
 
 /** A gentle idle bob. Returns the tween so callers can stop it. */
@@ -55,10 +55,10 @@ export function squash(scene: Phaser.Scene, target: Phaser.GameObjects.Component
   });
 }
 
-/** Pop in from nothing with an overshoot. */
-export function popIn(scene: Phaser.Scene, target: Phaser.GameObjects.Components.Transform & Phaser.GameObjects.GameObject, scale = 1, delay = 0): void {
+/** Pop in from nothing with an overshoot, to `scale` over `ms`. */
+export function popIn(scene: Phaser.Scene, target: Phaser.GameObjects.Components.Transform & Phaser.GameObjects.GameObject, scale = 1, delay = 0, ms = 380): void {
   target.setScale(0);
-  scene.tweens.add({ targets: target, scale, duration: 380, delay, ease: 'Back.easeOut' });
+  scene.tweens.add({ targets: target, scale, duration: ms, delay, ease: 'Back.easeOut' });
 }
 
 /** A side-to-side wiggle: the "no, try again" motion. */
@@ -243,7 +243,7 @@ export function timeScale(scene: Phaser.Scene): number {
 /** Floating text that rises and fades ("POW!", "+1"). */
 export function floatText(scene: Phaser.Scene, x: number, y: number, text: string, color = '#ffffff', size = 40, depth: number = DEPTH.sparkles): void {
   const t = scene.add
-    .text(x, y, text, { fontFamily: '"Arial Black", sans-serif', fontSize: `${size}px`, color, stroke: '#000000', strokeThickness: 8, align: 'center' })
+    .text(x, y, text, { fontFamily: FONT_HEAVY, fontSize: `${size}px`, color, stroke: '#000000', strokeThickness: 8, align: 'center' })
     .setOrigin(0.5)
     .setDepth(depth);
   // Wrapped and shrunk to the screen, and kept inside it (it rises 70 px).

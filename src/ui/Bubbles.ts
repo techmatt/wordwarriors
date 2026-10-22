@@ -10,7 +10,7 @@
 
 import Phaser from 'phaser';
 
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { fitText } from './fitText';
 import { makePortrait, speakerOf } from './Portrait';
@@ -64,7 +64,7 @@ export class Bubbles {
     this.anchor = u.anchor as BubbleAnchor;
     const text = this.scene.add
       // All text in the game is upper case; the line keeps its case for the voice.
-      .text(0, 0, u.text.toUpperCase(), { fontFamily: '"Arial Black", sans-serif', fontSize: '26px', color: '#1a1030', align: 'center' })
+      .text(0, 0, u.text.toUpperCase(), { fontFamily: FONT_HEAVY, fontSize: '26px', color: '#1a1030', align: 'center' })
       .setOrigin(0.5);
     // Wrapped between words, and shrunk if it is still too big: never off screen.
     fitText(text, BUBBLE_TEXT_W, BUBBLE_TEXT_H);

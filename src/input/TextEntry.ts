@@ -24,7 +24,9 @@ export function openTextEntry(fn: Sink): () => void {
   sink = fn;
   window.addEventListener('keydown', onKey);
   return () => {
-    if (sink === fn) sink = null;
+    // An older entry's closer leaves a newer one its letters (item 088).
+    if (sink !== fn) return;
+    sink = null;
     window.removeEventListener('keydown', onKey);
   };
 }

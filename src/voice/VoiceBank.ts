@@ -266,9 +266,10 @@ export class VoiceBank {
 
   /**
    * A letter sound cut for the Stretchy Bridge (item 054, src/audio/holdSound.ts):
-   * held (its steady part looping from `loopStart`, in seconds) or once (no
-   * schwa). Worked out from the decoded clip the first time, and again if the
-   * clip is decoded anew, so a recording that replaces a placeholder is cut
+   * held (its steady part stretched once to `heldMs`, then a short silence;
+   * `loopStart` is where that silence starts, in seconds) or once (no schwa).
+   * Worked out from the decoded clip the first time, and again if the clip is
+   * decoded anew, so a recording that replaces a placeholder is cut
    * by its own shape. A held sound is `heldMs` long in all (the bridge
    * passes BRIDGE.stretchMs). Null until the line is decoded.
    */
@@ -293,19 +294,15 @@ export class VoiceBank {
 
   private readonly cuts = new WeakMap<AudioBuffer, Record<string, HeldClip>>();
 
-  get ids(): string[] {
-    return [...this.lines.keys()];
-  }
-
   /** Start a clip; null when there is nothing to play (callers time the caption themselves). */
-  play(id: string, destination?: AudioNode): VoicePlayback | null {
+  play(id: string): VoicePlayback | null {
     const ctx = getAudioContext();
     const buffer = this.buffers.get(id);
     if (!ctx || !buffer) return null;
     unlockAudio();
     const source = ctx.createBufferSource();
     source.buffer = buffer;
-    source.connect(destination ?? ctx.destination);
+    source.connect(ctx.destination);
     source.start();
     return new VoicePlayback(ctx, source, buffer.duration);
   }

@@ -15,14 +15,15 @@
  * - **Re-seeded on scene enter**: `Controls` is created in each scene's
  *   `create()`, and its first frame records what is already held without
  *   reporting it as a press. Word Warriors changes scene constantly; without
- *   this, the green press that picked a hero would also pick an ally.
+ *   this, Space held on the victory screen started an episode and then
+ *   skipped its title.
  *
  * Buttons are colours, never A/B: `pressed('green')`. Keyboard: arrows move,
  * Space/Enter green, Escape red, Tab yellow, 3 blue (the digit row or the
  * numpad; 1 and 2 are Dad's, `dadButtons.ts`). Letters are left alone
  * entirely, because the spelling game owns A–Z (see TextEntry). Dev keys are
  * F-keys only. Backquote is dad lock (`dadLock.ts`): while it is on, only the
- * directions report presses.
+ * directions report presses (except on the grown-ups page, item 080).
  *
  * Tests drive the same state through `virtualPad` (exposed on the hooks
  * object): `press('green')` lands as a press on the next frame, `stick(x, y)`
@@ -253,10 +254,6 @@ export class Controls {
   /** Call at the end of update(), so dev keys never leak into the next frame. */
   endFrame(): void {
     this.devKeys.clear();
-  }
-
-  get padConnected(): boolean {
-    return this.pad() !== null;
   }
 
   private pad(): Phaser.Input.Gamepad.Gamepad | null {

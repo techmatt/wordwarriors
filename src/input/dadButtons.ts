@@ -1,7 +1,8 @@
 /**
  * Dad buttons (item 053): keyboard `1` = no, `2` = yes, for the games that
- * ask a grown-up to judge what she said aloud (Charge the Spell: did she say
- * the rune's sound?). They are always live, dad lock included (the lock stops
+ * ask a grown-up to judge what she said aloud (Charge the Spell: did she read
+ * the word? the Stretchy Bridge from help level 2: hint / pictures; THE END:
+ * 2 starts the next episode). They are always live, dad lock included (the lock stops
  * her presses, not his), and do nothing where no game is asking.
  *
  * A game that asks Dad calls `openDadButtons(onPress)` while it is open and
@@ -16,12 +17,21 @@
  * `dadPress('yes')` through the hooks (`__ww.dad`).
  */
 
+import { FONT_HEAVY } from '../config';
+import { CornerTag } from '../ui/cornerTag';
+
 export type DadAnswer = 'yes' | 'no';
 
 type Handler = (a: DadAnswer) => void;
 
 let handler: Handler | null = null;
-let cue: HTMLElement | null = null;
+const cue = new CornerTag('dad-buttons', 'bottom-right', {
+  padding: '3px 9px',
+  borderRadius: '10px',
+  background: 'rgba(20, 14, 40, 0.7)',
+  font: `bold 14px ${FONT_HEAVY}`,
+  transition: 'opacity 150ms, border-color 150ms',
+});
 let asking = false;
 
 /** Installed once, from main.ts. Capture phase, so the keys reach nothing else while a game asks. */
@@ -37,11 +47,6 @@ export function installDadButtons(): void {
     },
     true,
   );
-  // Phaser refits the canvas on its next frame, not on the event (item 080): place again after it.
-  window.addEventListener('resize', () => {
-    place();
-    requestAnimationFrame(() => requestAnimationFrame(place));
-  });
 }
 
 function answerFor(code: string): DadAnswer | null {
@@ -67,7 +72,7 @@ export function openDadButtons(onPress: Handler, label = JUDGE_CUE): () => void 
     if (handler !== mine) return;
     handler = null;
     asking = false;
-    cue?.remove();
+    cue.hide();
   };
 }
 
@@ -86,44 +91,22 @@ export function setDadAsking(on: boolean): void {
 const JUDGE_CUE = '<span>DAD</span> <b>1</b> ✗ &nbsp; <b>2</b> ✓';
 
 function showCue(label: string): void {
-  if (!cue) {
-    cue = document.createElement('div');
-    cue.id = 'dad-buttons';
-    Object.assign(cue.style, {
-      position: 'fixed',
-      zIndex: '10',
-      pointerEvents: 'none',
-      padding: '3px 9px',
-      borderRadius: '10px',
-      background: 'rgba(20, 14, 40, 0.7)',
-      font: 'bold 14px "Arial Black", sans-serif',
-      transition: 'opacity 150ms, border-color 150ms',
-    } satisfies Partial<CSSStyleDeclaration>);
-  }
-  cue.innerHTML = label;
-  document.body.appendChild(cue);
+  cue.element.innerHTML = label;
+  cue.show();
   style();
-  place();
 }
 
 function style(): void {
-  if (!cue) return;
-  cue.style.opacity = asking ? '1' : '0.45';
-  cue.style.border = `2px solid ${asking ? '#7ad9ff' : '#888'}`;
-  cue.style.color = asking ? '#ffffff' : '#cccccc';
+  if (!cue.made) return;
+  const s = cue.element.style;
+  s.opacity = asking ? '1' : '0.45';
+  s.border = `2px solid ${asking ? '#7ad9ff' : '#888'}`;
+  s.color = asking ? '#ffffff' : '#cccccc';
 }
 
 /** A press shows on the cue for a moment, so Dad sees it landed. */
 function flash(a: DadAnswer): void {
-  if (!cue?.isConnected) return;
-  cue.style.borderColor = a === 'yes' ? '#44d95a' : '#e8483f';
+  if (!cue.shown) return;
+  cue.element.style.borderColor = a === 'yes' ? '#44d95a' : '#e8483f';
   window.setTimeout(style, 250);
-}
-
-/** The canvas is scaled to fit and centred: sit inside its bottom-right corner. */
-function place(): void {
-  if (!cue?.isConnected) return;
-  const r = document.querySelector('#game canvas')?.getBoundingClientRect();
-  cue.style.right = `${window.innerWidth - (r?.right ?? window.innerWidth) + 8}px`;
-  cue.style.bottom = `${window.innerHeight - (r?.bottom ?? window.innerHeight) + 8}px`;
 }

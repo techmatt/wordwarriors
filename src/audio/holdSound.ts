@@ -36,13 +36,13 @@ export type HoldMode = 'hold' | 'once';
  */
 export const HELD_MS = 600;
 
-/** What to play, in samples: `start`..`end` of the clip; a held clip's steady part is `loopStart`..`end`. */
+/** What to play, in samples: `start`..`end` of the clip; a held clip's steady part is `steadyStart`..`end`. */
 export interface HoldPlan {
   mode: HoldMode;
   start: number;
   end: number;
   /** Only for `hold`: where the attack ends and the steady part (stretched) begins. */
-  loopStart?: number;
+  steadyStart?: number;
   /** Once sounds with a final hiss (X): this second stretch follows the first. */
   tail?: [number, number];
 }
@@ -176,9 +176,9 @@ export function holdPlan(x: Float32Array, rate: number, mode: HoldMode): HoldPla
   }
   end = Math.min(end, on + ms(MAX_HOLD_S));
   if (end - on < ms(MIN_HOLD_S)) return { mode: 'once', start: at(on), end: at(Math.max(end, on + ms(MIN_HOLD_S))) };
-  // The loop starts after the attack: a third of the way in, at least 20 ms.
-  const loop = on + Math.max(ms(0.02), Math.round((end - on) / 3));
-  return { mode, start: at(on), end: at(end), loopStart: at(loop) };
+  // The steady part starts after the attack: a third of the way in, at least 20 ms.
+  const steady = on + Math.max(ms(0.02), Math.round((end - on) / 3));
+  return { mode, start: at(on), end: at(end), steadyStart: at(steady) };
 }
 
 /** The fades at either end of a once clip's parts. */
@@ -257,7 +257,7 @@ function stretch(x: Float32Array, lo: number, hi: number, n: number, half: numbe
  * 110 ms loop was a stutter of "m"s, nine a second.)
  */
 export function holdSamples(x: Float32Array, plan: HoldPlan, rate: number, heldMs = HELD_MS): { data: Float32Array<ArrayBuffer>; loopStart: number | null } {
-  if (plan.mode === 'hold' && plan.loopStart !== undefined) return heldSamples(x, plan, rate, plan.loopStart, heldMs);
+  if (plan.mode === 'hold' && plan.steadyStart !== undefined) return heldSamples(x, plan, rate, plan.steadyStart, heldMs);
   const parts: [number, number][] = [[plan.start, plan.end], ...(plan.tail ? [plan.tail] : [])];
   const len = parts.reduce((n, [a, b]) => n + Math.max(0, b - a), 0);
   const data = new Float32Array(Math.max(1, len));
@@ -277,12 +277,12 @@ export function holdSamples(x: Float32Array, plan: HoldPlan, rate: number, heldM
 }
 
 /** A held clip: attack, the steady part stretched to `heldMs` in all, a fade, then silence (its loop). */
-function heldSamples(x: Float32Array, plan: HoldPlan, rate: number, loopStart: number, heldMs: number): { data: Float32Array<ArrayBuffer>; loopStart: number } {
+function heldSamples(x: Float32Array, plan: HoldPlan, rate: number, steadyStart: number, heldMs: number): { data: Float32Array<ArrayBuffer>; loopStart: number } {
   const { start, end } = plan;
   let half = Math.round((GRAIN_S * rate) / 2);
-  // The attack (up to the loop start) as it is, crossfading into the first
+  // The attack (up to the steady part) as it is, crossfading into the first
   // grain over `half`; with no room for that, the stretch is all of it.
-  let lo = loopStart - half;
+  let lo = steadyStart - half;
   if (lo < start || end - lo < 2 * half) {
     lo = start;
     half = Math.max(1, Math.min(half, Math.floor((end - start) / 2)));
@@ -294,7 +294,7 @@ function heldSamples(x: Float32Array, plan: HoldPlan, rate: number, loopStart: n
   const data = new Float32Array(total + rest);
   const body = stretch(x, lo, end, Math.max(0, total - at), half, rate);
   data.set(body.subarray(0, total - at), at);
-  for (let i = 0; i < loopStart - lo && lo > start; i++) {
+  for (let i = 0; i < steadyStart - lo && lo > start; i++) {
     // The window's complement: the attack's fade-out and the first grain's fade-in sum to one.
     const w = 0.5 + 0.5 * Math.cos((Math.PI * i) / half);
     data[at + i]! += x[lo + i]! * w;

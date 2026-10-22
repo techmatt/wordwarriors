@@ -2,7 +2,8 @@
  * The backpack, top left: what she has fetched this episode.
  *
  * A bag icon with the fetched things lined up small beside it: the picture of
- * each key word she found in a side room (`episode.fetched`), then the
+ * each thing she has fetched (`episode.fetched`: the entry hall's warm-up
+ * picture, then each side room's word, whatever its game), then the
  * counter once she has found it (`counterArt()`: its picture, or the
  * villain's named item). They are her battle items, so seeing them pile
  * up is the point of the house: every room she finishes puts something here.

@@ -43,6 +43,8 @@ export interface Utterance {
 type Listener = (u: Utterance | null) => void;
 
 const BARK_GAP_MS = 900;
+/** The bus remembers this many started lines (`history`). */
+const HISTORY_MAX = 200;
 
 /**
  * How long a line waits for its voice group to decode (item 058: item 057 saw
@@ -189,11 +191,7 @@ class Bus {
       if (this.current?.u === u) this.finish();
     };
     this.current = { u, playback: { stop: release }, done: () => undefined };
-    this.history.push(id);
-    if (this.history.length > 200) this.history.shift();
-    setSfxLevel(0.45);
-    setMusicDuck(0.35);
-    for (const fn of this.listeners) fn(u);
+    this.begin(u);
     // A once sound ends by itself (a backstop in case the audio never ends); a held one at `maxMs` at the latest.
     if (!loops && ended) void ended.then(release);
     setTimeout(release, loops ? maxMs : length * 1000 + (ended ? 1500 : 0));
@@ -265,15 +263,11 @@ class Bus {
       duration,
       time: () => (playback ? playback.time : (performance.now() - startedAt) / 1000),
     };
-    this.history.push(id);
-    if (this.history.length > 200) this.history.shift();
-    setSfxLevel(0.45);
-    setMusicDuck(0.35);
 
     return new Promise((resolve) => {
       const done = () => resolve(true);
       this.current = { u, playback, done };
-      for (const fn of this.listeners) fn(u);
+      this.begin(u);
       if (playback) void playback.ended.then(() => this.current?.u === u && this.finish());
       // Always a backstop: whatever happens to the audio, the line ends. A context
       // suspended under it (a hidden tab, item 080) holds the clip, so the backstop
@@ -298,6 +292,15 @@ class Bus {
         }, ms);
       backstop((duration + (playback ? 1.5 : 0)) * 1000);
     });
+  }
+
+  /** A line has started (`this.current` already set): the history, the ducks, the listeners. `finish()` undoes it. */
+  private begin(u: Utterance): void {
+    this.history.push(u.id);
+    if (this.history.length > HISTORY_MAX) this.history.shift();
+    setSfxLevel(0.45);
+    setMusicDuck(0.35);
+    for (const fn of this.listeners) fn(u);
   }
 
   private finish(): void {

@@ -26,6 +26,7 @@
 import Phaser from 'phaser';
 
 import { personOf } from '../../content/battle/roster';
+import { uncaptioned } from '../../content/voice/ids';
 import { DEPTH, FONT_ROUNDED, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { TEX } from '../fx/textures';
@@ -164,7 +165,7 @@ export class Caption {
     // tile or ghost box is what lights up.
     // Sentence prefix lines (`sent_`) are lit word by word on the sentence
     // banner itself, so the box stays out of the way.
-    if (u.id.startsWith('letter_') || u.id.startsWith('sent_')) return 'hide';
+    if (uncaptioned(u.id)) return 'hide';
     if (u.priority === 'instruction') return u.line ? 'show' : 'hide';
     // A bark with no one on screen to hang its bubble on: here, with its face.
     return !this.opts.compact && !u.anchor && u.line ? 'show' : 'hide';
@@ -184,7 +185,7 @@ export class Caption {
     const mode = this.modeOf(u);
     if (mode === 'hide') {
       // A bark in a bubble leaves the instruction box alone; anything else clears it.
-      if (u.priority === 'instruction' || u.id.startsWith('letter_') || u.id.startsWith('sent_')) this.hide(true);
+      if (u.priority === 'instruction' || uncaptioned(u.id)) this.hide(true);
       return;
     }
     this.current = u;

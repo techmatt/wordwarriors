@@ -9,7 +9,7 @@ import type Phaser from 'phaser';
 
 export function fitText(t: Phaser.GameObjects.Text, width: number, height = Infinity, minSize = 10): Phaser.GameObjects.Text {
   t.setWordWrapWidth(width, false);
-  let size = parseFloat(String(t.style.fontSize)) || 16;
+  let size = fontPx(t);
   while ((t.width > width || t.height > height) && size > minSize) {
     size = Math.max(minSize, size - 2);
     t.setFontSize(size);
