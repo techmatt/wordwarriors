@@ -186,9 +186,16 @@ class Bus {
     };
     this.current = { u, playback: { stop: release }, done: () => undefined };
     this.begin(u);
-    // It ends by itself (a backstop in case the audio never ends).
+    // It ends by itself (a backstop in case the audio never ends). Not while a hidden tab holds
+    // the context (item 092): the clip cannot end then, and the backstop cut it as she came back.
     if (ended) void ended.then(release);
-    setTimeout(release, length * 1000 + (ended ? 1500 : 0));
+    const backstop = (ms: number) =>
+      setTimeout(() => {
+        if (released) return;
+        if (ended && (audioHeld() || ctx?.state === 'suspended')) backstop(500);
+        else release();
+      }, ms);
+    backstop(length * 1000 + (ended ? 1500 : 0));
     return { id, release, get playing() { return !released; } };
   }
 
