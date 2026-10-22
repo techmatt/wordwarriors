@@ -73,9 +73,13 @@ variety (`DIFFICULTY`, `VARIETY`).
 Three commands (times on this machine, the GPU, three workers; how each got there, item by
 item: `docs/engineering.md`, *Browser and tests*):
 
-- **Fast lane, after every change: `npm test`** (about 20 s): the unit tests (5-7 s), then the
-  three browser tests tagged `@smoke` (`SMOKE` in `tests/harness.ts`): the title and the
-  grown-ups page, the hub's free play, and a sentence room's banner. It stops itself at 2
+- **Fast lane, after every change: `npm test`** (about 14 s on one worker, item 105, against about 24 s one after the
+  other; 21 s on three workers before it, not yet timed on three since): the unit
+  tests (about 7 s alone) and, at the same time, the three browser tests tagged `@smoke`
+  (`SMOKE` in `tests/harness.ts`): the title and the grown-ups page, the hub's free play, and
+  a sentence room's banner. `tests/fastLane.ts` runs both, streams the browser side and
+  prints the unit tests' output whole when they end; it fails if either fails, and passes its
+  arguments to Playwright (`npm test -- --workers=1`). The browser side stops itself at 2
   minutes (`--global-timeout`). `npm run test:unit` runs the unit tests alone.
   `npm run typecheck` checks `src`, `tests`, `content` and `tools` (both tsconfigs, about
   2 s; `npm run build` runs it first), which the tests do not.
@@ -83,7 +87,8 @@ item: `docs/engineering.md`, *Browser and tests*):
   behind each door; item 091) against `plansGolden.json`: a refactor leaves it green. A
   change meant to alter the draws rewrites the JSON on purpose, from the worktree root:
   `npx tsx -e "import('./tests/unit/plansGolden.ts').then((m) => require('node:fs').writeFileSync('tests/unit/plansGolden.json', JSON.stringify(m.goldenDraws(), null, 1) + '\n'))"`.
-- **Before a commit: `npm run test:browser`** (about 50 s, 24 tests) plus the specs that cover
+- **Before a commit: `npm run test:browser`** (about 90 s, 50 tests, item 105; 24 tests and
+  50 s in item 079) plus the specs that cover
   what changed (`npx playwright test <spec>`, both lanes of it). `test:browser` is every
   browser test not tagged `@slow` (the smoke three among them): one of each newer room
   (the bridge at level 3, a Charge round, free play's shots and jump, the word machine
@@ -92,12 +97,12 @@ item: `docs/engineering.md`, *Browser and tests*):
   Spell the Spell, the cast and fight-style overrides, never last episode's victory scene,
   and the three text-fit checks. It stops itself at 6 minutes, so a hang fails inside
   Claude Code's 10-minute background cap instead of being killed by it.
-- **Everything: `npm run test:all`** (about 5 minutes, 103 tests, item 085): the unit
-  tests, then every browser test. The slow lane alone is `npm run test:slow` (most of the
-  full run's time; not timed alone since item 081): every test tagged `@slow`. Its longest
-  (item 083): the soak (72 s, Charge the Spell's whole episodes too), real-time battle 1 (72 s),
-  the real-time title, bedroom and warm-up (55 s), the default whole episode at speed (36 s),
-  the real-time sentence room (23 s), the shared drawn episode (`tests/drawn.spec.ts`, the
+- **Everything: `npm run test:all`** (about 6.3 minutes, 136 browser tests, item 105): the unit
+  tests, then every browser test. The slow lane alone is `npm run test:slow` (about 5 minutes,
+  86 tests, item 105): every test tagged `@slow`. Its longest (item 105): the soak (67 s,
+  Charge the Spell's whole episodes too), real-time battle 1 (67 s), the real-time title,
+  bedroom and warm-up (56 s), the default whole episode at speed (32 s), the real-time
+  sentence room (28 s), the Shape-Shifter's yellow-and-green mash (19 s), the shared drawn episode (`tests/drawn.spec.ts`, the
   word machine and the bridge), and each contest fight style's one part at clock speed 10
   (10 s). The test-only shortcuts that keep it there: *Speed, GPU and workers*. Not run by
   default (Matt, 2026-10-20): only when clearly needed, such as a change touching every
@@ -108,6 +113,12 @@ item: `docs/engineering.md`, *Browser and tests*):
 **The suite serves a build** (item 079, `tests/vite.test.config.ts`): Playwright's server
 runs `vite build` (about 5 s; into `node_modules/.ww-test-dist`, leaving `public/` where it
 is) and then `vite preview`, which serves `/art/` and `/voice-gen/` straight from `public/`.
+The build is skipped when nothing it is built from changed (item 105, `tests/testBuild.ts`):
+`src/`, `content/`, `index.html`, the vite configs, `tsconfig.json` and the lockfile are
+hashed by content into a stamp beside the build (`.inputs`), and the same hash next run
+serves the build already there (about 0.3 s to check). `WW_REBUILD=1` builds anyway. The
+server starts both with `node`, not `npx`: on this machine every `npx` costs about 2 s
+before the tool starts, `node --import tsx` 0.3 s (item 105).
 On the dev server every page boot fetched a few hundred modules transformed on request,
 and with two workers boots and voice fetches stretched: the before-and-after is in
 `docs/engineering.md` (the text-fit caption test 66 s on the dev server, 6 s on the build; the
@@ -243,7 +254,9 @@ lines, the recap's pictures) play the whole episode at the suite's speeds (about
   decode wait, and a line ends as soon as a `__ww.state()` call has reported it as speaking
   (`VoiceBus.seen`; its estimated length is the backstop), so `until` on `voice.speaking`
   still sees every line and `voice.history` keeps every id. `until` polls every 50 ms (100
-  until item 083). Real voice: `boot(page, query, speed, { voice: 'real' })` for a test about
+  until item 083; `WW_POLL_MS=<ms>` for a run, item 105: at 20 ms the default whole episode
+  took 29 s against 32 s, a line-heavy subset of nine tests 92 s against 96 s, one worker; not
+  the default until a few full runs show it holds green). Real voice: `boot(page, query, speed, { voice: 'real' })` for a test about
   the voice, its captions or real pacing (the real-time scene tests, the hidden tab); any
   `qa=1` boot (the probe's caption box checks: `layout.spec`, `cover.spec`); a file that
   sets `VOICE.mode = 'real'` (the bug-hunt checker, the shots); or `WW_VOICE=real` for a
@@ -292,8 +305,11 @@ The browser draws with the GPU (Playwright's full `chromium` channel, `--use-ang
 and a fight-style test takes 53 s instead of 78 s. `WW_GPU=0` goes back to software GL (for
 a machine without a usable GPU, or to rule the GPU out when something looks wrong). Three
 workers on the GPU, one on software GL (`playwright.config.ts`; the worker timings behind
-it, items 061 and 079: `docs/engineering.md`, *Browser and tests*). Tests are
-spread by file, so two tests of one spec never run at once. A run that times something
+it, items 061 and 079: `docs/engineering.md`, *Browser and tests*). `WW_WORKERS=<n>` sets the
+count for a run (item 105; `WW_WORKERS=1` when the machine is short of memory, as conductor
+sometimes asks). Tests are spread by file, so two tests of one spec never run at once:
+item 105 timed `fullyParallel` on three workers at 6.7 minutes for every browser test against
+6.1 by file (the long tests bunched at the end). A run that times something
 (the Charge round's limits, above) wants `--workers=1`.
 
 ### Ports and servers

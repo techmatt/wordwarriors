@@ -155,6 +155,19 @@ without a new measurement.
   after two test fixes: Charge's rune-timing test on real voice (instant voice let the
   harness's polling swallow a line before the test's frame sampler saw it) and battle part
   2's ability count under `battle=short`.
+- **Item 105 (2026-10-22), lane times before it**, three workers, the GPU: `npm test` 21 s (unit
+  9 s, then the smoke three 12 s), `test:browser` 89 s (50 tests, 229 s summed), `test:slow`
+  297 s (86 tests, 797 s summed, `episode.spec.ts` alone 183 s on one worker), `test:all`
+  about 6.3 minutes (136 browser tests in 6.1). `fullyParallel` on three workers: 6.7 minutes
+  for every browser test (the workers 394 / 306 / 346 s busy: the long tests bunched last),
+  so tests still spread by file. Start-up costs on this machine: `npx <tool>` about 2.2 s
+  before the tool starts, `node --import tsx` 0.3 s, `npm` itself 0.8 s; the suite's
+  `vite build` 4-5 s (18 s once with the machine short of memory). Each unit file alone:
+  36.7 s summed, `shifter.test.ts` the longest (4.7 s; its 200 seeded draws 3 s, one
+  `planShifter` about 15 ms as it lists every chain), then `sentences.test.ts` 3.6 s. After
+  the build skip, `node` for `npx`, the shifter draws in a file of their own and the unit and
+  smoke tests at once (one worker, conductor short of memory): the smoke three 15.1 → 12.6 s,
+  the unit run 9.0 → 6.9 s, `npm test` about 24 → 14 s.
 - **Art and voice share the dev server's six HTTP/1.1 connections** (item 065). `<img>`
   requests rank below `fetch` in Chromium and starved behind the voice bank's twelve
   clip fetches (a battle sat in the Wait scene); `priority: 'low'` fetches are held

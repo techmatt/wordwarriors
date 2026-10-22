@@ -85,11 +85,11 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `npm run dev` | Serve at http://localhost:5174 |
 | `npm run build` / `npm run preview` | Typecheck, then static `dist/` / serve it |
 | `npm run typecheck` | `src`, `tests`, `content`, `tools` |
-| `npm test` | Fast lane, after every change (~20 s): unit tests, then the three `@smoke` browser tests |
+| `npm test` | Fast lane, after every change (~14 s): the unit tests and the three `@smoke` browser tests at once (`tests/fastLane.ts`) |
 | `npm run test:unit` | The unit tests alone (~7 s) |
-| `npm run test:browser` | Before a commit (~50 s): every browser test not tagged `@slow`, plus the specs covering what changed (`npx playwright test <spec>`). A new browser test over ~10 s gets `SLOW` (README, *Tests*) |
-| `npm run test:slow` | The slow lane alone (most of the full run: `@slow`: the real-time scene tests, the whole episodes, the soak) |
-| `npm run test:all` | The full run (~5 min): unit tests and every browser test. **Not by default:** only for a change touching every scene |
+| `npm run test:browser` | Before a commit (~90 s, 50 tests): every browser test not tagged `@slow`, plus the specs covering what changed (`npx playwright test <spec>`). A new browser test over ~10 s gets `SLOW` (README, *Tests*) |
+| `npm run test:slow` | The slow lane alone (~5 min, 86 tests; most of the full run: `@slow`: the real-time scene tests, the whole episodes, the soak) |
+| `npm run test:all` | The full run (~6 min): unit tests and every browser test. **Not by default:** only for a change touching every scene |
 | `npm run voice:lines` | Regenerate `content/voice/lines.json` from roster + script + phonics |
 | `npm run voice:build` | Synthesise new/changed lines (`--force` all, `--prune` drop unused). Needs `uv` and network |
 | `npm run voice:status` | Recorded / stale / still edge-tts, letter sounds first |
@@ -119,7 +119,9 @@ workers*).
 
 The suite serves a build made as the run starts (`tests/vite.test.config.ts`), so edits to
 `src/` or `content/` mid-run reach no page under test; only `WW_DEV_SERVER=1` (the dev
-server, hot reload and all) still reloads under them (README, *Tests*).
+server, hot reload and all) still reloads under them (README, *Tests*). The build is skipped
+when its inputs are unchanged (`tests/testBuild.ts`; `WW_REBUILD=1` forces it), and
+`WW_WORKERS=<n>` sets the worker count (`WW_WORKERS=1` when conductor says memory is short).
 
 Adding a character, ability, word or line is data work: edit `content/`, then
 `npm run voice:lines && npm run voice:build && npm run art:placeholders` ("the three

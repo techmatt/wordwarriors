@@ -306,7 +306,7 @@ export async function until(page: Page, pred: (s: WWState) => boolean, timeout =
     if (pred(s)) return s;
     if (Date.now() - start > timeout) throw new Error(`timed out waiting for ${what}; scene=${s.scene} room=${JSON.stringify(s.room?.round)} battle=${s.battle?.phase}`);
     // 50 ms (100 until item 083): with instant voice a line lasts until the next poll sees it.
-    await page.waitForTimeout(50);
+    await page.waitForTimeout(Number(process.env.WW_POLL_MS ?? 50));
   }
 }
 

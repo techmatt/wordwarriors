@@ -25,8 +25,11 @@ export default defineConfig({
   // `--workers=1` for a run that times anything by eye. Before the build, item 061
   // (2026-10-20) measured two against one (the fast lane 87 s against 130 s) and three
   // saving nothing (83 s) while a Charge round's game time stretched past its limit.
+  // `WW_WORKERS=<n>` overrides the count (item 105: `WW_WORKERS=1` when the machine is short of
+  // memory). Item 105 timed `fullyParallel` on three workers: the full run 6.7 minutes against
+  // 6.1 by file (the long tests bunch at the end), so tests still spread by file.
   fullyParallel: false,
-  workers: process.env.WW_GPU === '0' ? 1 : 3,
+  workers: Number(process.env.WW_WORKERS) || (process.env.WW_GPU === '0' ? 1 : 3),
   // A trace is bought on the retry only: tracing every run cost 44% of wall clock there.
   retries: 1,
   reporter: [['list']],
@@ -54,14 +57,16 @@ export default defineConfig({
 
   // A build served by `vite preview` (item 079, tests/vite.test.config.ts): pages boot
   // from one bundle, and edits to src/ mid-run reach no page. WW_DEV_SERVER=1 serves
-  // the dev server instead (hot reload and all).
+  // the dev server instead (hot reload and all). The build is skipped when its inputs are
+  // unchanged (tests/testBuild.ts, item 105). Node runs the tools directly: each `npx` cost
+  // about 2 s here, `node` 0.2-0.4 s (item 105).
   webServer: process.env.WW_BASE_URL
     ? undefined
     : {
         // strictPort (vite.config.ts) makes a busy port fail loudly.
         command: process.env.WW_DEV_SERVER
-          ? `npx vite --port ${SERVE_PORT}`
-          : `npx vite build -c tests/vite.test.config.ts --logLevel warn && npx vite preview -c tests/vite.test.config.ts --port ${SERVE_PORT}`,
+          ? `node node_modules/vite/bin/vite.js --port ${SERVE_PORT}`
+          : `node --import tsx tests/testBuild.ts && node node_modules/vite/bin/vite.js preview -c tests/vite.test.config.ts --port ${SERVE_PORT}`,
         url: BASE_URL,
         reuseExistingServer: false,
         timeout: 120_000,

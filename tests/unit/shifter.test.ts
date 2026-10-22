@@ -9,13 +9,13 @@ import { existsSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { BANK_BY_WORD } from '../../content/phonics/bank';
-import { NUMBER_WORDS, lookalikesOf } from '../../content/phonics/sentences';
+import { lookalikesOf } from '../../content/phonics/sentences';
 import { NAME_HIDES } from '../../content/phonics/letters';
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import { letterSoundLine, nameHidesLine, narratorLine } from '../../content/voice/ids';
 import { SHIFTER } from '../../src/config';
 import { MINIGAMES, MINIGAME_BY_ID, SHIFTER_GAME, drawGames } from '../../src/rules/minigames';
-import { NO_ARTICLE, episodePlans } from '../../src/rules/sentences';
+import { episodePlans } from '../../src/rules/sentences';
 import { SHIFT_WORDS, chainsOf, changedAt, pictureSiblings, placesOf, wrongPictures, stonesFor, nextShifterLevel, orderBreaks, planShifter, positionsOf, shifterLevel, shifterShown, shifterWords } from '../../src/rules/shifter';
 import { nameToSound } from '../../src/rules/soundOut';
 import { ProgressStore } from '../../src/state/ProgressStore';
@@ -95,17 +95,7 @@ test('wrongPictures (M29): at the vowel or the last letter one sibling and anoth
   for (const w of SHIFT_WORDS) for (const o of wrongPictures(w, 0, '', SHIFT_WORDS)) assert.equal(changedAt(w, o), 0, `the first letter, siblings only: ${w} beside ${o}`);
 });
 
-test('planShifter (hunt 6): no link joins two look-alikes, no read-it picture is a look-alike of the word read, and it never starts as a number', () => {
-  for (let seed = 1; seed <= 200; seed++) {
-    const p = planShifter(new ProgressStore(memory()), { avoid: [], taken: [] }, seeded(spread(seed)))!;
-    for (const l of p.links) {
-      assert.ok(!lookalikesOf(l.from).includes(l.to), `seed ${seed}: ${l.from} to ${l.to}`);
-      if (l.beat === 'read') for (const o of l.options) assert.ok(!lookalikesOf(l.to).includes(o), `seed ${seed}: ${o} beside ${l.to}`);
-    }
-    // "It starts as a...": never a number (M23) or a word that takes no A.
-    assert.ok(!NUMBER_WORDS.has(p.start) && !NO_ARTICLE.has(p.start), `seed ${seed}: starts as a ${p.start}`);
-  }
-});
+// The 200 seeded draws against look-alikes and "starts as a": tests/unit/shifterDraws.test.ts (item 105: its own file, so it runs beside these).
 
 test('every chain the bank can draw (hunt 6, about 2000): pictured words, one letter a link, no look-alike link, three stones of different sounds never the old letter, read-it pictures never look-alikes', () => {
   const chains = chainsOf(SHIFTER.links);
