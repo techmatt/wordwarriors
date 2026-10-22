@@ -5,7 +5,13 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
-import { SLOW, boot, collectErrors, expectNoErrors, state, toTheEnd, until } from './harness';
+import { BANK } from '../content/phonics/bank';
+import { FAMILIES } from '../content/phonics/families';
+import { FRAMES } from '../content/phonics/sentences';
+import { RUNE_SOUNDS } from '../src/rules/charge';
+import { SLOW, boot, collectErrors, expectNoErrors, press, seedProgress, state, toTheEnd, until } from './harness';
+import { layoutIssues } from './qa/checks';
+import { qaLayout } from './qa/probe';
 
 const tagShown = (page: Page) => page.evaluate(() => Boolean(document.getElementById('debug-tag')?.isConnected));
 
@@ -98,5 +104,43 @@ test('THE END through window resizes and a hidden tab: still THE END, its cue pl
   expect((await state(page)).scene).toBe('TheEnd');
   await page.keyboard.press('Digit2');
   await until(page, (s) => s.scene === 'Title', 20_000, 'the title');
+  expectNoErrors(errors);
+});
+
+test('a returning player with everything maxed: the grown-ups page fits both pages, and an episode starts', async ({ page }) => {
+  test.setTimeout(90_000);
+  const errors = collectErrors(page);
+  const stat = { seen: 9999, right: 7777, wrong: 2222, recent: [true, false, true, false, true, false, true, false], last: Date.now() };
+  const each = (ids: readonly string[]) => Object.fromEntries(ids.map((id) => [id, stat]));
+  const words = BANK.map((w) => w.word);
+  await seedProgress(page, {
+    version: 1,
+    sounds: each(RUNE_SOUNDS),
+    words: each(words),
+    spelling: each(words),
+    frames: each(FRAMES.map((f) => f.id)),
+    rimes: each(FAMILIES.map((f) => f.rime)),
+    onsets: {},
+    grabs: each(words),
+    grabLevels: Object.fromEntries(words.map((w) => [w, 3])),
+    bridgeLevels: Object.fromEntries(words.map((w) => [w, 3])),
+    bag: { left: [], round: 999 },
+    moveBag: { left: [], round: 999 },
+    padBag: { left: [], round: 999 },
+    episodes: 9999,
+    recent: { words: words.slice(0, 24) },
+  });
+  await boot(page, '?scene=parent&qa=1');
+  for (const p of [1, 2]) {
+    await until(page, (s) => s.scene === 'Parent', 30_000, `the grown-ups page ${p}`);
+    await page.waitForTimeout(600);
+    const bad = layoutIssues(await qaLayout(page), 'Parent', new Set()).filter((i) => i.kind === 'text-offscreen' || i.kind === 'text-overlap');
+    expect(bad.map((i) => i.detail), `page ${p}`).toEqual([]);
+    await press(page, 'green');
+  }
+  await page.goto('/?qa=1&hooks=1&cast=default');
+  await until(page, (s) => s.scene === 'Title', 60_000, 'the title');
+  await press(page, 'green');
+  await until(page, (s) => s.scene === 'Bedroom', 30_000, 'the bedroom');
   expectNoErrors(errors);
 });
