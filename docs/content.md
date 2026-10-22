@@ -236,7 +236,10 @@ images, then a line in `FORMS` with a `when` on the ally, the villain or both. T
 first match wins. The `when` names a roster id, so a dad's form counts: Julia is a little
 knight (`char_julia_knight`) beside warrior Dada Jason (`dada_jason_warrior`, item 025).
 `skipTaunts` lists taunt keys that do not fit the outfit (chef and knight Julia never
-say "My wand is sparkly!"). (An outfit only swaps images; a dad's form is a whole character: next section.) The game asks `castArt(id)` / `castFace(id)` in
+say "My wand is sparkly!"). **New outfit art needs its `OUTFIT_FILL`** (`src/config.ts`,
+hunt 6, M32): how much of the picture is her, head to soles, measured as `ADULT_FILL` is
+(below), so a hat or a raised sword is not her height; `tests/unit/heights.test.ts` holds
+it to the art. (An outfit only swaps images; a dad's form is a whole character: next section.) The game asks `castArt(id)` / `castFace(id)` in
 `src/episode/Episode.ts`, never `charArt` directly, for anything shown after she wakes.
 
 ## A dad's form: another whole character (`person` in the roster)

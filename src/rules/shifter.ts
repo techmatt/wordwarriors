@@ -121,13 +121,34 @@ export function chainsOf(n: number, words: string[] = SHIFT_WORDS): string[][] {
 export const positionsOf = (chain: string[]): Position[] => chain.slice(1).map((w, i) => changedAt(chain[i]!, w)!);
 
 /**
+ * A read-it link's wrong pictures, as many as `pool` gives up to
+ * SHIFTER.options - 1: its siblings at `pos` first. At the vowel or the last
+ * letter (hunt 6, M29: no word had two pictured siblings there, so every
+ * read-it link changed the first letter and she could pick from the first
+ * sound alone) one sibling may stand with any other pictured word, one with
+ * `to`'s first letter first; never `from`, a look-alike of `to`, or `to`.
+ */
+export function wrongPictures(to: string, pos: Position, from: string, pool: string[], rand?: Rand): string[] {
+  const n = SHIFTER.options - 1;
+  const sibs = pictureSiblings(to, pos, from, pool);
+  const pick = (ws: string[]) => (rand ? shuffle(ws, rand) : ws);
+  if (sibs.length >= n || pos === 0 || !sibs.length) return pick(sibs).slice(0, n);
+  const like = lookalikesOf(to);
+  const others = pool.filter((w) => w !== to && w !== from && !sibs.includes(w) && !like.includes(w));
+  const front = (ws: string[]) => [...pick(ws.filter((w) => w[0] === to[0])), ...pick(ws.filter((w) => w[0] !== to[0]))];
+  return [...pick(sibs), ...front(others)].slice(0, n);
+}
+
+/**
  * A link's beat: read it on the even links (the first one too) where `pool`
- * has SHIFTER.options - 1 pictures differing from `to` only there (never
- * `from`, which she is looking at, nor a look-alike of `to`), else fix it.
+ * has SHIFTER.options - 1 wrong pictures for it (`wrongPictures`), else fix it.
  */
 export function beatFor(i: number, from: string, to: string, pos: Position, pool: string[]): Beat {
-  return i % 2 === 0 && pictureSiblings(to, pos, from, pool).length >= SHIFTER.options - 1 ? 'read' : 'fix';
+  return i % 2 === 0 && wrongPictures(to, pos, from, pool).length >= SHIFTER.options - 1 ? 'read' : 'fix';
 }
+
+/** How many of the word's three places a chain changes (hunt 6, M29: most chains never changed the vowel). */
+export const placesOf = (chain: string[]): number => new Set(positionsOf(chain)).size;
 
 /** Fix it's stones for the letter `right` replacing `old`: `right` and n - 1 others of its kind (vowels with a vowel), no two the same sound, never `old`. */
 export function stonesFor(right: string, old: string, n: number, rand: Rand): string[] {
@@ -152,40 +173,49 @@ export interface ShifterInput {
 export function planShifter(store: ProgressStore, input: ShifterInput, rand: Rand = Math.random): ShifterPlan | null {
   const avoid = new Set([...input.avoid, ...input.taken]);
   const free = SHIFT_WORDS.filter((w) => !avoid.has(w));
-  for (let n = SHIFTER.links; n >= SHIFTER.minLinks; n--) {
+  // Both beats where the bank allows: a chain with a read-it link (its odd links are fix it).
+  const beats = (c: string[]) => c.slice(1).some((to, i) => beatFor(i, c[i]!, to, changedAt(c[i]!, to)!, free.filter((w) => !c.includes(w))) === 'read');
+  // The longest chains that fit, scored: first by how many of the three places they change (hunt 6, M29:
+  // 255 of 300 never changed the vowel), then in order but for one step back at most (Matt's CAT BAT BAG BIG
+  // PIG goes back to the first letter once), the first link changing the first letter; else the least out of order.
+  const score = (c: string[]) => (3 - placesOf(c)) * 10 + Math.max(0, orderBreaks(positionsOf(c)) - 1) * 2 + (positionsOf(c)[0] === 0 ? 0 : 1);
+  const best = (cs: string[][]) => {
+    const scores = cs.map(score);
+    const low = Math.min(...scores);
+    return cs.filter((_, i) => scores[i] === low);
+  };
+  let pool: string[][] = [];
+  let allFix: string[][] = [];
+  for (let n = SHIFTER.links; n >= SHIFTER.minLinks && !pool.length; n--) {
     // The first creature is said after "It starts as a...": never a number or a word that takes no A (hunt 6:
     // "It starts as a... ten!", M23's case; JAM, fix 92's).
     const chains = chainsOf(n, free).filter((c) => !NUMBER_WORDS.has(c[0]!) && !NO_ARTICLE.has(c[0]!));
     if (!chains.length) continue;
-    // In order but for one step back at most (Matt's CAT BAT BAG BIG PIG goes back to the first
-    // letter once), the first link changing the first letter; else the least out of order.
-    const score = (c: string[]) => Math.max(0, orderBreaks(positionsOf(c)) - 1) * 2 + (positionsOf(c)[0] === 0 ? 0 : 1);
-    const best = Math.min(...chains.map(score));
-    const fits = chains.filter((c) => score(c) === best);
-    // Both beats where the bank allows: a chain with a read-it link (its odd links are fix it).
-    const beats = (c: string[]) => c.slice(1).some((to, i) => beatFor(i, c[i]!, to, changedAt(c[i]!, to)!, free.filter((w) => !c.includes(w))) === 'read');
-    const mixed = fits.filter(beats);
-    const pool = mixed.length ? mixed : fits;
-    const m = met(store);
-    const recent = recentWords(store);
-    const each = new Map(free.map((w) => [w, wordWeight(store, w, m, recent)]));
-    const weight = (i: string) => pool[Number(i)]!.slice(1).reduce((s, w) => s + each.get(w)!, 0);
-    const chain = pool[Number(pickWeighted(pool.map((_, i) => String(i)), weight, 1, rand)[0])]!;
-    // A read-it link's other pictures keep clear of the episode's words, and of the chain's own words still to come.
-    const pictures = free.filter((w) => !chain.includes(w));
-    const links = chain.slice(1).map((to, i): ShifterLink => {
-      const from = chain[i]!;
-      const pos = changedAt(from, to)!;
-      const beat = beatFor(i, from, to, pos, pictures);
-      const options =
-        beat === 'read'
-          ? shuffle([to, ...shuffle(pictureSiblings(to, pos, from, pictures), rand).slice(0, SHIFTER.options - 1)], rand)
-          : stonesFor(to[pos]!, from[pos]!, SHIFTER.options, rand);
-      return { from, to, pos, beat, options };
-    });
-    return { start: chain[0]!, links };
+    // A shorter chain with a read-it link before an all-fix-it one (M29: one visit in twenty had none).
+    const mixed = chains.filter(beats);
+    if (mixed.length) pool = best(mixed);
+    else if (!allFix.length) allFix = best(chains);
   }
-  return null;
+  if (!pool.length) pool = allFix;
+  if (!pool.length) return null;
+  const m = met(store);
+  const recent = recentWords(store);
+  const each = new Map(free.map((w) => [w, wordWeight(store, w, m, recent)]));
+  const weight = (i: string) => pool[Number(i)]!.slice(1).reduce((s, w) => s + each.get(w)!, 0);
+  const chain = pool[Number(pickWeighted(pool.map((_, i) => String(i)), weight, 1, rand)[0])]!;
+  // A read-it link's other pictures keep clear of the episode's words, and of the chain's own words still to come.
+  const pictures = free.filter((w) => !chain.includes(w));
+  const links = chain.slice(1).map((to, i): ShifterLink => {
+    const from = chain[i]!;
+    const pos = changedAt(from, to)!;
+    const beat = beatFor(i, from, to, pos, pictures);
+    const options =
+      beat === 'read'
+        ? shuffle([to, ...wrongPictures(to, pos, from, pictures, rand)], rand)
+        : stonesFor(to[pos]!, from[pos]!, SHIFTER.options, rand);
+    return { from, to, pos, beat, options };
+  });
+  return { start: chain[0]!, links };
 }
 
 /** Every word a visit reads, in order: its battle items, the last the creature that goes to the battle. */

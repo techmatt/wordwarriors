@@ -15,7 +15,7 @@ import { questSetup, type Line } from '../../content/house/quests';
 import { hubStory, storyTexts, type HubStory, type HubStoryIds } from '../../content/house/scenes';
 import { wakeCastKey } from '../../content/voice/ids';
 import { wakeVariant } from '../../content/voice/script';
-import { adultHeight, helperOf, isGrownUp, wakerOf } from '../rules/cast';
+import { adultHeight, helperOf, isGrownUp, outfitTall, wakerOf } from '../rules/cast';
 import { pick } from '../rules/random';
 import { wordsOf } from '../rules/sentences';
 import { BEDROOM_TAUNTS } from '../rules/story';
@@ -79,7 +79,8 @@ export function castArt(id: string, evil = false, state: EpisodeState = episode)
  * How tall `id` stands beside the hero outside battles (item 028): the size
  * of the form it plays over hers, kept between 0.7 and 1.3 so a dragon still
  * fits a room. A dad is grown-up height beside her, `adultHeight` (item
- * 034); Scar and Ellie a little shorter.
+ * 034); Scar and Ellie a little shorter. Her in an outfit, her outfit's
+ * picture as much taller as its hat or sword is (`outfitTall`, hunt 6, M32).
  */
 export function castScale(id: string, state: EpisodeState = episode): number {
   const c = CHARACTER_BY_ID[castId(id, state)];
@@ -88,7 +89,7 @@ export function castScale(id: string, state: EpisodeState = episode): number {
   // His own height, head to soles (item 093: Dada Matt a little shorter than Dada Jason), beside her or beside the other dad.
   const tall = (who: string) => adultHeight(castId(who, state), castArt(who, false, state));
   if (isGrownUp(c.id)) return isGrownUp(hero.id) ? tall(id) / tall(state.hero) : tall(id);
-  return Math.min(1.3, Math.max(0.7, c.good.size / hero.good.size));
+  return Math.min(1.3, Math.max(0.7, c.good.size / hero.good.size)) * outfitTall(castArt(id, false, state));
 }
 
 /** The name-free face card for `id` in this episode (names as sight words): its outfit's, else its form's `face_<id>`. */

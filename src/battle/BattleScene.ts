@@ -46,7 +46,7 @@ import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { formFor } from '../../content/battle/forms';
-import { advance, castArt, castScale, counterArt, counterWord, episode, fightStyle, helper, movePlan, namedCounter, narrator, reformedOf, villainSpec, type Step } from '../episode/Episode';
+import { advance, castArt, castScale, counterArt, counterWord, episode, fightStyle, helper, housePlan, movePlan, namedCounter, narrator, reformedOf, villainSpec, type Step } from '../episode/Episode';
 import { pickTaunt, unsayTaunt, variant } from '../episode/lineVariants';
 import { fightLineKey, type FightSpec } from '../../content/battle/fights';
 import { hex } from '../fx/colour';
@@ -56,6 +56,8 @@ import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { withStems } from '../rules/bank';
+import { outfitTall } from '../rules/cast';
+import { fetchBeats } from '../rules/volleys';
 import type { MoveOwner } from '../rules/moves';
 import { progress } from '../state/progress';
 import { hookState } from '../hookState';
@@ -81,6 +83,9 @@ const HIT_FLOAT = DEPTH.prompt - 20;
 const HUD_BAND = new Phaser.Geom.Rectangle(0, 0, GAME_WIDTH, 128);
 /** The tallest VS card, either side (item 093: 340 cut chef Dada Jason's, 357, so Evil Dada Matt across from him read only 3% shorter). */
 const CARD_MAX = 380;
+/** A volley of fetched things (hunt 6, M28): its pictures this far apart over the bag, px, and this far apart in time, s. */
+const VOLLEY_SPREAD = 130;
+const VOLLEY_GAP = 0.3;
 /** The move choice's prompt lines that say the right word (`use_move_zap`, `find_move_zap`, `not_move_zap`): its caption hides it. */
 const CHOICE_PROMPT = /_(?:use_move|find_move|not_move)_([a-z]+)$/;
 /**
@@ -486,7 +491,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     const right = this.add.rectangle(GAME_WIDTH * 1.5, GAME_HEIGHT / 2, GAME_WIDTH / 2 + 60, GAME_HEIGHT, 0xc8102e, 0.92).setOrigin(0.5);
     ui.add([left, right]);
     // Each card as tall beside hers as the fighter stands beside her (item 034: a dad is grown-up height here too).
-    const me = this.heroes[0]?.height ?? 150;
+    // Her own height (hunt 6, M32: an outfit's picture is drawn taller, by its hat).
+    const me = this.heroes[0] ? this.heroes[0].height / outfitTall(this.heroes[0].init.art) : 150;
     const heroCards = this.heroes.map((h, i) => {
       const ch = Math.min(CARD_MAX, (220 * h.height) / me);
       return fitImage(this.add.image(-300 + i * 30, 440 + i * 40, h.init.art).setOrigin(0.5, 1), ch * 0.95, ch);
@@ -614,11 +620,16 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     await this.guard(voiceBus.say(tauntLine(this.villain.init.id, key), 'instruction', this.villain));
   }
 
-  /** Every key word she fetched in the house, used in turn, `gap` seconds apart. */
+  /**
+   * Every key word she fetched in the house, `gap` seconds apart: a room's earlier words fly out of the
+   * bag as one volley, each room's last word its own beat (hunt 6, M28: eight things took 34 s).
+   */
   private async useAllFetched(gap: number): Promise<void> {
-    for (const word of episode.fetched) {
-      if (!FETCH_BY_WORD[word]) continue;
-      await this.useFetched(word);
+    const rooms = housePlan().map((p) => p.fetches);
+    for (const beat of fetchBeats(episode.fetched, rooms)) {
+      const words = beat.filter((w) => FETCH_BY_WORD[w]);
+      if (!words.length) continue;
+      await this.useFetched(words);
       await this.wait(gap);
     }
   }
@@ -701,18 +712,18 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   }
 
   /**
-   * One fetched thing: her bag pops up over her hero, the item's picture
-   * jumps out of it with a sparkle, a big "THE NET!" banner, and her hero
-   * fires the item's own ability. Summon items (hens, the dog) fight on her side.
+   * Fetched things, one beat: her bag pops up over her hero, each item's picture jumps out of it with a
+   * sparkle (a volley's fanned out, a moment apart), a big "THE NET!" banner each, and her hero fires each
+   * item's own ability. Summon items (hens, the dog) fight on her side.
    */
-  private async useFetched(word: string): Promise<void> {
-    const item = FETCH_BY_WORD[word];
+  private async useFetched(words: string[]): Promise<void> {
     const h = this.heroes[0];
-    if (!item || !h?.active || h.floored) return;
-    const color = item.ability.color;
-    // The bag: pops in over her head, or beside it, where it hides nobody;
-    // the picture then rises 110 above it.
-    const spot = this.revealSpot(h, 150, 86 + 110 + 72, 7);
+    const items = words.filter((w) => FETCH_BY_WORD[w]);
+    if (!items.length || !h?.active || h.floored) return;
+    // The bag: pops in over her head, or beside it, where it hides nobody; the pictures then rise 110 above
+    // it, a volley's spread across a fan as wide as theirs.
+    const fan = VOLLEY_SPREAD * (items.length - 1);
+    const spot = this.revealSpot(h, 150 + fan, 86 + 110 + 72, 7);
     const bag = fitImage(this.add.image(spot.x, spot.y - 43, 'prop_bag'), 86, 86).setDepth(DEPTH.fx + 5);
     const bs = bag.scale;
     popIn(this, bag, bs, 0, 260);
@@ -722,32 +733,54 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       void this.say('use_bag');
     }
     await this.wait(0.35);
+    for (let i = 0; i < items.length; i++) {
+      if (i) await this.wait(VOLLEY_GAP);
+      if (!h.active || h.floored) break;
+      this.itemOut(items[i]!, h, bag, bag.x - fan / 2 + i * VOLLEY_SPREAD);
+    }
+    await this.wait(0.45);
+    this.tweens.add({ targets: bag, scale: 0, delay: 500, duration: 250, ease: 'Back.easeIn', onComplete: () => bag.destroy() });
+  }
+
+  /** One fetched thing out of the bag: its picture jumps out to `x`, and 0.45 s on, its name and its ability. */
+  private itemOut(word: string, h: Fighter, bag: Phaser.GameObjects.Image, x: number): void {
+    const item = FETCH_BY_WORD[word]!;
+    const color = item.ability.color;
+    const bs = bag.scale;
+    const y = bag.y - 110;
     // The picture jumps out of the bag, a squash on the bag as it goes.
     this.tweens.add({ targets: bag, scaleX: bs * 1.3, scaleY: bs * 0.7, duration: 90, yoyo: true });
     const pic = fitImage(this.add.image(bag.x, bag.y, `pic_${word}`), 120, 120).setDepth(DEPTH.fx + 6);
     const ps = pic.scale;
     pic.setScale(0.2 * ps);
-    this.tweens.add({ targets: pic, y: bag.y - 110, scale: ps * 1.2, duration: 380, ease: 'Back.easeOut' });
+    this.tweens.add({ targets: pic, x, y, scale: ps * 1.2, duration: 380, ease: 'Back.easeOut' });
     // The glow behind the fighters, so it never washes one out.
-    const halo = this.add.image(pic.x, bag.y - 110, TEX.glow).setTint(0xfff3a0).setScale(2.4).setBlendMode(Phaser.BlendModes.ADD).setDepth(FLOOR_TOP - 4);
+    const halo = this.add.image(x, y, TEX.glow).setTint(0xfff3a0).setScale(2.4).setBlendMode(Phaser.BlendModes.ADD).setDepth(FLOOR_TOP - 4);
     this.tweens.add({ targets: halo, scale: 3.4, alpha: 0.6, duration: 400, yoyo: true, repeat: 1 });
     sfxSummon();
-    burst(this, pic.x, bag.y - 110, { count: 50, speed: 380, colors: [0xfff3a0, color, 0xffffff] });
-    await this.wait(0.45);
-    // Its name, big, and then it is really used.
-    this.banner(`THE ${word.toUpperCase()}!`, color === 0xffffff ? 0x7ad9ff : color, true);
-    slowmo(this, 0.4, 700);
-    speedLines(this, pic.x, pic.y, color, 600);
-    // Its bolts fly out of the picture, not out of her: a volley of big caps hid her (item 034).
-    h.castFrom = { x: pic.x, y: bag.y - 110 };
-    cast(this, h, item.ability, this.villain, 1.8);
-    this.after(900, () => (h.castFrom = null));
-    this.stats.abilitiesFired++;
-    this.stats.itemsUsed++;
-    // The picture flies off towards the villain and fades; the bag closes.
-    this.tweens.add({ targets: pic, x: this.villain.cx, y: this.villain.cy, scale: ps * 0.6, alpha: 0, delay: 300, duration: 500, ease: 'Quad.easeIn', onComplete: () => pic.destroy() });
-    this.tweens.add({ targets: halo, alpha: 0, delay: 300, duration: 400, onComplete: () => halo.destroy() });
-    this.tweens.add({ targets: bag, scale: 0, delay: 500, duration: 250, ease: 'Back.easeIn', onComplete: () => bag.destroy() });
+    burst(this, x, y, { count: 50, speed: 380, colors: [0xfff3a0, color, 0xffffff] });
+    this.after(450, () => {
+      if (!h.active || h.floored) {
+        pic.destroy();
+        halo.destroy();
+        return;
+      }
+      // Its name, big, and then it is really used.
+      this.banner(`THE ${word.toUpperCase()}!`, color === 0xffffff ? 0x7ad9ff : color, true);
+      slowmo(this, 0.4, 700);
+      speedLines(this, x, y, color, 600);
+      // Its bolts fly out of the picture, not out of her: a volley of big caps hid her (item 034).
+      // A volley's next picture takes over as the bolts' source; its own clears it.
+      const from = { x, y };
+      h.castFrom = from;
+      cast(this, h, item.ability, this.villain, 1.8);
+      this.after(900, () => h.castFrom === from && (h.castFrom = null));
+      this.stats.abilitiesFired++;
+      this.stats.itemsUsed++;
+      // The picture flies off towards the villain and fades.
+      this.tweens.add({ targets: pic, x: this.villain.cx, y: this.villain.cy, scale: ps * 0.6, alpha: 0, delay: 300, duration: 500, ease: 'Quad.easeIn', onComplete: () => pic.destroy() });
+      this.tweens.add({ targets: halo, alpha: 0, delay: 300, duration: 400, onComplete: () => halo.destroy() });
+    });
   }
 
   /** The parked v0.1 made things, only if their flags are set (they are not, in v0.2 episodes). */
@@ -1386,7 +1419,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     await this.wait(1.0);
     sfxPoof();
     // As tall beside her hero as the villain's good size says (Scar just under her).
-    const gh = (this.heroes[0]?.height ?? 150) * castScale(episode.villain);
+    const gh = (this.heroes[0] ? this.heroes[0].height / outfitTall(this.heroes[0].init.art) : 150) * castScale(episode.villain);
     const good = fitImage(this.add.image(v.x, v.y, castArt(episode.villain)).setOrigin(0.5, 1), gh * 0.95, gh).setDepth(v.y + 1);
     popIn(this, good, good.scale, 0, 500);
     burst(this, v.x, v.y - 90, { count: 60, speed: 400, colors: [0xff9ad5, 0xffffff] });

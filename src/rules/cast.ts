@@ -25,7 +25,7 @@
  */
 
 import { PERSONS, formId, formsOf, personOf } from '../../content/battle/roster';
-import { ACTIVE_CAST, ADULT_FILL, ADULT_HEIGHT, ADULT_HEIGHTS, CAST_ODDS } from '../config';
+import { ACTIVE_CAST, ADULT_FILL, ADULT_HEIGHT, ADULT_HEIGHTS, CAST_ODDS, OUTFIT_FILL } from '../config';
 import { pick, type Rand } from './random';
 import { fresh } from './recent';
 
@@ -86,6 +86,17 @@ export function isGrownUp(id: string): boolean {
 export function adultHeight(id: string, art: string): number {
   const person = ADULT_HEIGHTS[personOf(id.replace(/_(good|evil)$/, ''))] ?? ADULT_HEIGHT;
   return person / (ADULT_FILL[art] ?? 0.96);
+}
+
+/**
+ * How many times her usual height outfit picture `art` (`char_julia_chef`) is
+ * drawn (hunt 6, M32): sized so she, head to soles, is as tall as in her
+ * dress (`OUTFIT_FILL`). 1 for any picture with no fill there.
+ */
+export function outfitTall(art: string): number {
+  const fill = OUTFIT_FILL[art];
+  const dress = OUTFIT_FILL[`char_${art.split('_')[1]}_good`];
+  return fill && dress ? dress / fill : 1;
 }
 
 /** The persons of `active` that are in the roster, or every person when it names none. */

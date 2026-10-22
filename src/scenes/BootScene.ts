@@ -12,6 +12,7 @@
  *   ?scene=theend                       (THE END, the victory step's last screen: Dad's 2 starts a new episode)
  *   ?scene=pick | parent
  *   ?fetched=net,fan                    (the battle items fetched; default: the house plan's)
+ *   ?warmup=1                           (the entry hall's warm-up word fetched first too, as in an episode)
  *   ?charged=m,s,a                      (Charge the Spell's runes, fired in this battle part; default: the plan's charge room's, in part 1)
  *   ?room=charge                        (Charge the Spell behind door a: Episode.ts roomGames)
  *   parked v0.1 games: ?scene=sound | blend | picture | spell | alarm | retreat
@@ -35,7 +36,7 @@ import Phaser from 'phaser';
 import { CHARACTER_BY_ID, formId } from '../../content/battle/roster';
 import { group } from '../../content/voice/ids';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { enterRoom, episode, episodeGroups, giftWord, isStepKind, jumpTo, planFor, setCastOptions, startStep, steps, type PrepGame, type Slot } from '../episode/Episode';
+import { enterRoom, episode, episodeGroups, giftWord, grabPlan, isStepKind, jumpTo, planFor, setCastOptions, startStep, steps, type PrepGame, type Slot } from '../episode/Episode';
 import { DADS, seededRand, type CastOverrides } from '../rules/cast';
 import { setDifficulty } from '../rules/difficulty';
 import { artBank } from '../art/ArtBank';
@@ -141,6 +142,8 @@ export class BootScene extends Phaser.Scene {
     const charged = q.get('charged');
     const fetchedAll = (): void => {
       episode.fetched = fetched ? fetched.split(',') : (['a', 'b'] as Slot[]).flatMap((s) => planFor(s).fetches);
+      // The warm-up's word, first as in an episode (hunt 6, M28: the battle's opening with all eight things).
+      if (q.get('warmup') === '1' && !fetched) episode.fetched.unshift(grabPlan().word);
       episode.house.done = ['a', 'b'];
       // Charge the Spell's runes (item 053): the ones asked for, or all of the plan's charge room's.
       const room = (['a', 'b'] as Slot[]).map((s) => planFor(s)).find((p) => p.kind === 'charge');

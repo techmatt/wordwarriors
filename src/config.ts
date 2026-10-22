@@ -128,6 +128,23 @@ export const ADULT_FILL: Readonly<Record<string, number>> = {
   char_dada_matt_blade_evil: 0.939,
 };
 
+/**
+ * How much of her pictures' height is her, head to soles, as `ADULT_FILL` is
+ * the dads' (hunt 6, M32: the chef's hat and the knight's raised sword
+ * counted in her height, so beside chef or warrior Dada Jason she stood about
+ * 11% shorter than in her dress). The mean of three measurements (hunt 6's,
+ * crops on a 1% grid scaled by the glasses' width, pixel rows where the head
+ * shows); `tests/unit/heights.test.ts` checks each against the art's alpha.
+ * Her dress (`char_<person>_good`) is the picture the rest are drawn to: an
+ * outfit's picture is drawn `fill(dress) / fill(outfit)` times as tall
+ * (`outfitTall`), so she is the same height in every outfit.
+ */
+export const OUTFIT_FILL: Readonly<Record<string, number>> = {
+  char_julia_good: 0.957,
+  char_julia_chef: 0.843,
+  char_julia_knight: 0.868,
+};
+
 /** The cast draw's odds (Matt, item 025). */
 export const CAST_ODDS = {
   /** The primary dad (the one who wakes her) is Dada Matt this often, else Dada Jason. */

@@ -135,8 +135,11 @@ export interface ClueStep {
  *
  * `help` (after GRAB.helpAfter misses, any level) is the sound-out alone,
  * the letters on the board, which the scene gives a longer beat per sound.
+ * `bridge`: the name's bridge to its sound is the first saying's only (hunt
+ * 6, M27: LAMP's clue ran 21 s, every bridge again on each miss); after it,
+ * the plain name then the sound.
  */
-export function clue(word: string, level: GrabLevel, help = false): ClueStep[] {
+export function clue(word: string, level: GrabLevel, help = false, bridge = true): ClueStep[] {
   const out: ClueStep[] = [];
   // By sound unit (src/rules/soundOut.ts): a long-vowel word spells its sounds out (KEY is K, then long E on EY).
   for (const s of soundOut(word)) {
@@ -144,7 +147,7 @@ export function clue(word: string, level: GrabLevel, help = false): ClueStep[] {
     // SH, CK, LL, EE...) is its one sound alone, both letters lit: KING is
     // "kay, kuh, eye, ih, ng", never "en, gee, ng".
     // Item 096: where the name holds the sound (M, "Em"), the name is the bridge to it ("M's name is Em... squeeze off the front:").
-    if (level === 1 && !help && s.span === 1) out.push({ id: NAME_HIDES[s.unit] && s.sound === s.unit ? nameHidesLine(s.unit) : letterNameLine(s.unit), kind: 'name', index: s.index, span: 1, show: true });
+    if (level === 1 && !help && s.span === 1) out.push({ id: bridge && NAME_HIDES[s.unit] && s.sound === s.unit ? nameHidesLine(s.unit) : letterNameLine(s.unit), kind: 'name', index: s.index, span: 1, show: true });
     const show = help || level <= 2;
     // A silent letter (KITE's E, item 056) lights in its turn and says nothing: no line id.
     if (s.id || s.sound === '') out.push({ id: s.id, kind: 'sound', index: s.index, span: s.span, show });

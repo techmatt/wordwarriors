@@ -19,7 +19,7 @@ import type { AbilitySpec, FighterSpec, MinionSpec, MoveStyle, Status } from '..
 import { sfxPoof } from '../audio/sfx';
 import { TEX } from '../fx/textures';
 import { GAME_WIDTH } from '../config';
-import { adultHeight, isGrownUp } from '../rules/cast';
+import { adultHeight, isGrownUp, outfitTall } from '../rules/cast';
 import { burst, fitImage } from '../fx/juice';
 
 export type Team = 'hero' | 'villain';
@@ -46,14 +46,15 @@ export interface FighterInit {
   mount?: string;
   trail?: FighterSpec['trail'];
   taunts?: string[];
-  /** How tall it is drawn, when not its `size` (a grown-up, item 034); `size` still drives the fight. */
+  /** How tall it is drawn, when not its `size` (a grown-up, item 034; her in an outfit, hunt 6 M32); `size` still drives the fight. */
   tall?: number;
 }
 
 export function initFromSpec(spec: FighterSpec, id: string, art: string, team: Team): FighterInit {
   return {
-    // His own height, head to soles, in every form (item 093: Dada Matt 5-10% shorter than Dada Jason).
-    ...(isGrownUp(id) ? { tall: adultHeight(id, art) } : {}),
+    // His own height, head to soles, in every form (item 093: Dada Matt 5-10% shorter than Dada Jason); hers in
+    // every outfit (hunt 6, M32: the chef's hat and the knight's sword counted in her height).
+    ...(isGrownUp(id) ? { tall: adultHeight(id, art) } : outfitTall(art) !== 1 ? { tall: spec.size * outfitTall(art) } : {}),
     id,
     name: spec.displayName,
     art,

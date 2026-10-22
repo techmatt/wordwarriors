@@ -227,7 +227,11 @@ export class EntryScene extends RoomScene {
       popIn(this, this.board);
     }
     const help = this.misses >= GRAB.helpAfter;
-    for (const step of clue(this.word, this.level, help)) {
+    // The names' bridges the first time only (hunt 6, M27); kept on the episode, so an F9 trip does not say them again.
+    const g = episode.grab;
+    const bridge = !g?.clued;
+    if (g) g.clued = true;
+    for (const step of clue(this.word, this.level, help, bridge)) {
       // A digraph's sound (SH) lights both its boxes at once.
       const lit = this.tiles.slice(step.index, step.index + step.span);
       for (const o of this.tiles) o.box.setFillStyle(0xfff8e6, 1);

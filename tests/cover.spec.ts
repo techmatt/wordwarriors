@@ -84,9 +84,14 @@ test('the shape-shifter: the fix-it instruction keeps off the letter stones', SL
   test.setTimeout(120_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&room=shifter&nojourney=1&qa=1');
-  const fix = await until(page, (st) => st.room?.shifter?.phase === 'pick' && !st.room.locked, 90_000, 'first link');
-  if (fix.room!.shifter!.beat === 'read') await choose(page);
-  await until(page, (st) => st.room?.shifter?.beat === 'fix' && st.room.shifter.phase === 'intro' && st.room.spots.length > 0, 60_000, 'a fix-it link');
+  // Each link read until a fix-it link opens (since M29 the first link can be fix it too).
+  const opening = (st: WWState) => st.room?.shifter?.beat === 'fix' && st.room.shifter.phase === 'intro' && st.room.spots.length > 0;
+  const ready = (i: number) => (st: WWState) => st.room?.shifter?.index === i && st.room.shifter.phase === 'pick' && !st.room.locked;
+  let s = await until(page, (st) => opening(st) || ready(0)(st), 90_000, 'a fix-it link, or the first link');
+  for (let i = 0; !opening(s); i++) {
+    await choose(page);
+    s = await until(page, (st) => opening(st) || ready(i + 1)(st), 60_000, 'a fix-it link');
+  }
   const { issues, targets } = await sample(page, 3000, 'ShifterRoom');
   expect(targets, 'the stones are targets').toBeGreaterThanOrEqual(3);
   expect(issues).toEqual([]);

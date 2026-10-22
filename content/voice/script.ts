@@ -209,7 +209,7 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'shifter_starts', text: 'It starts as a...' },
   { key: 'shifter_read', text: 'Look, a new word! Read it, then walk to its picture!', say: 'Look, a new word! Read it, then walk to its picture.' },
   { key: 'shifter_read_2', text: 'The spell wrote a new word! Which picture is it?', say: 'The spell wrote a new word! Which picture is it?' },
-  { key: 'shifter_fix', text: 'It changed, but the word did not! Find the letter that fixes it!', say: 'It changed, but the word did not! Find the letter that fixes it.' },
+  { key: 'shifter_fix', text: "It changed, but its word didn't! Find the letter that fixes it!", say: "It changed, but its word didn't! Find the letter that fixes it." },
   { key: 'shifter_fix_2', text: 'Uh oh, the word is wrong now! Walk to the letter that fixes it!', say: 'Uh oh, the word is wrong now! Walk to the letter that fixes it.' },
   { key: 'shifter_hint', text: 'Listen! The new letter says...' },
   { key: 'shifter_stone', text: 'This letter says...' },
@@ -217,8 +217,15 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'shifter_says', text: 'But the spell says...' },
   { key: 'shifter_nope', text: "That doesn't match! Try another letter!", say: "That doesn't match! Try another letter." },
   { key: 'shifter_again', text: 'Read it again, and find its picture!', say: 'Read it again, and find its picture.' },
-  { key: 'shifter_next', text: 'Here comes the spell again!' },
-  { key: 'shifter_next_2', text: 'Uh oh, it is changing again!' },
+  // Hunt 6, M26: the full instruction only the first time each beat comes in a visit; then a short cue.
+  // A later link's spell strikes under the last word's praise, with no "Here comes the spell again!"
+  // (`shifter_next`, gone: with it a link took 7 s with instant answers).
+  { key: 'shifter_cue_read', text: 'Read it!' },
+  { key: 'shifter_cue_fix', text: 'Fix it!' },
+  // Hunt 6, M30: fix-it's own praise, never "by yourself" (a letter found for a sound, often after help).
+  { key: 'shifter_fixed', text: 'You fixed it!' },
+  { key: 'shifter_fixed_2', text: 'You fixed the spell!' },
+  { key: 'shifter_fixed_3', text: 'Nice fixing!' },
   { key: 'shifter_done', text: 'The spell is all used up! This one comes to the fight with us!', say: 'The spell is all used up! This one comes to the fight with us!' },
   // Each fight style's own beats (item 031, content/battle/fights.ts): `fight_<id>_<beat>`.
   ...FIGHTS.flatMap((f) => FIGHT_BEATS.flatMap((b) => (f.lines[b] ? [{ key: fightKey(f.id, b), ...f.lines[b] }] : []))),

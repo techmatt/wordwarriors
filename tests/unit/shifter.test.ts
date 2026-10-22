@@ -16,12 +16,15 @@ import { letterSoundLine, nameHidesLine, narratorLine } from '../../content/voic
 import { SHIFTER } from '../../src/config';
 import { MINIGAMES, MINIGAME_BY_ID, SHIFTER_GAME, drawGames } from '../../src/rules/minigames';
 import { NO_ARTICLE, episodePlans } from '../../src/rules/sentences';
-import { SHIFT_WORDS, chainsOf, changedAt, pictureSiblings, stonesFor, nextShifterLevel, orderBreaks, planShifter, positionsOf, shifterLevel, shifterShown, shifterWords } from '../../src/rules/shifter';
+import { SHIFT_WORDS, chainsOf, changedAt, pictureSiblings, placesOf, wrongPictures, stonesFor, nextShifterLevel, orderBreaks, planShifter, positionsOf, shifterLevel, shifterShown, shifterWords } from '../../src/rules/shifter';
 import { nameToSound } from '../../src/rules/soundOut';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
 import { withDifficulty } from './difficulty';
 import { memory, seeded, spread } from './seeds';
+
+/** Seed 1's chain since M29 (it changes the vowel last). */
+const GOLDEN_SEED_1 = ['pan', 'man', 'can', 'cap', 'cup'];
 
 const sameSound = (a: string, b: string) => a === b || [a, b].sort().join('') === 'ck';
 
@@ -35,7 +38,7 @@ test('chain words: familiar pictured CVC words, one letter a sound', () => {
   }
 });
 
-test('planShifter: one letter a link, first letter first, back in order once at most; both beats; read-it pictures differ only there; fix-it stones of different sounds', () => {
+test('planShifter: one letter a link, first letter first, back in order once at most; both beats; read-it pictures a sibling at least (at the first letter all siblings); fix-it stones of different sounds', () => {
   for (let seed = 1; seed <= 40; seed++) {
     const p = planShifter(new ProgressStore(memory()), { avoid: [], taken: [] }, seeded(spread(seed)))!;
     const chain = [p.start, ...shifterWords(p)];
@@ -51,7 +54,11 @@ test('planShifter: one letter a link, first letter first, back in order once at 
       assert.equal(l.options.length, SHIFTER.options);
       if (l.beat === 'read') {
         assert.ok(l.options.includes(l.to) && !l.options.includes(l.from), `${l.to}: ${l.options}`);
-        for (const o of l.options) if (o !== l.to) assert.equal(changedAt(l.to, o), l.pos, `${l.to} beside ${o}`);
+        // At the first letter every other picture differs only there; at the vowel or the last, one sibling at least (M29).
+        const sibs = l.options.filter((o) => o !== l.to && changedAt(l.to, o) === l.pos);
+        if (l.pos === 0) assert.equal(sibs.length, SHIFTER.options - 1, `${l.to}: ${l.options}`);
+        else assert.ok(sibs.length >= 1, `${l.to}: ${l.options}`);
+        assert.equal(new Set(l.options).size, SHIFTER.options, `${l.to}: ${l.options}`);
       } else {
         const right = l.to[l.pos]!;
         assert.ok(l.options.includes(right) && !l.options.includes(l.from[l.pos]!), `${l.to}: ${l.options}`);
@@ -61,6 +68,31 @@ test('planShifter: one letter a link, first letter first, back in order once at 
       }
     }
   }
+});
+
+test('planShifter (hunt 6, M29): seeded draws change all three places, the vowel too, and read it at the last letter, never all fix it', () => {
+  let lastRead = 0;
+  for (let seed = 1; seed <= 40; seed++) {
+    const p = planShifter(new ProgressStore(memory()), { avoid: [], taken: [] }, seeded(spread(seed)))!;
+    const chain = [p.start, ...shifterWords(p)];
+    assert.equal(placesOf(chain), 3, `seed ${seed}: ${chain.join(' ')}`);
+    assert.ok(positionsOf(chain).includes(1), `seed ${seed}: ${chain.join(' ')} never changes the vowel`);
+    assert.ok(p.links.some((l) => l.beat === 'read'), `seed ${seed}: all fix it`);
+    lastRead += p.links.filter((l) => l.beat === 'read' && l.pos === 2).length;
+  }
+  // Before M29 no read-it link could change the last letter (no word had two pictured siblings there).
+  assert.ok(lastRead >= 5, `${lastRead} read-it links at the last letter in 40 draws`);
+  // Golden: seed 1's chain, its vowel changed (rewrite it when the draw changes on purpose).
+  const p = planShifter(new ProgressStore(memory()), { avoid: [], taken: [] }, seeded(spread(1)))!;
+  assert.deepEqual([p.start, ...shifterWords(p)], GOLDEN_SEED_1);
+});
+
+test('wrongPictures (M29): at the vowel or the last letter one sibling and another picture, its first letter first; at the first letter siblings only', () => {
+  // BIG at the last letter: two pictured siblings, BIB and BIN.
+  assert.deepEqual(wrongPictures('big', 2, 'bug', SHIFT_WORDS).sort(), ['bib', 'bin']);
+  const like = wrongPictures('cap', 2, 'cat', ['can', 'cup', 'dog', 'cat']);
+  assert.deepEqual(like, ['can', 'cup'], 'the sibling, then a picture with its first letter before one without');
+  for (const w of SHIFT_WORDS) for (const o of wrongPictures(w, 0, '', SHIFT_WORDS)) assert.equal(changedAt(w, o), 0, `the first letter, siblings only: ${w} beside ${o}`);
 });
 
 test('planShifter (hunt 6): no link joins two look-alikes, no read-it picture is a look-alike of the word read, and it never starts as a number', () => {
@@ -158,5 +190,5 @@ test('the sound hidden in the name (ride-along): the bridge before the sound for
   assert.deepEqual(nameToSound('c', 'k'), [letterSoundLine('k')]);
   assert.deepEqual(nameToSound('sh'), [letterSoundLine('sh')]);
   // The room's own lines, for every narrator voice.
-  for (const k of ['shifter_intro', 'shifter_starts', 'shifter_read', 'shifter_fix', 'shifter_hint', 'shifter_stone', 'shifter_picked', 'shifter_says', 'shifter_nope', 'shifter_again', 'shifter_next', 'shifter_done']) assert.ok(ids.has(narratorLine('dada_matt', k)), k);
+  for (const k of ['shifter_intro', 'shifter_starts', 'shifter_read', 'shifter_fix', 'shifter_hint', 'shifter_stone', 'shifter_picked', 'shifter_says', 'shifter_nope', 'shifter_again', 'shifter_cue_read', 'shifter_cue_fix', 'shifter_fixed', 'shifter_done']) assert.ok(ids.has(narratorLine('dada_matt', k)), k);
 });

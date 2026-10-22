@@ -79,7 +79,9 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    is read back and the thing flies into her bag (top left). Wrong: a funny retry.
    Each finished room hangs its prize on its door; with both done the front door appears.
 6. **Battle part 1** runs by itself (she can steer her hero with the stick; green
-   hops). The fetched things pop out of her bag and are used. At a move choice the
+   hops). The fetched things pop out of her bag and are used: a room's earlier words
+   fly out together as one volley, each room's last word (and the warm-up's) on its own
+   (hunt 6, M28; `src/rules/volleys.ts`). At a move choice the
    fight freezes, 2–3 word pads glow on the arena floor, the partner says which word;
    she walks her hero onto that pad and presses green. A wrong pad fires nothing: the
    fight stays frozen and the partner says "That wasn't ICE, that was HUG! Find ICE!"
@@ -277,17 +279,25 @@ reads every letter of a word, not just the first, alone: walking and green only,
 for Dad's 1 / 2. For the beta `FORCE_SHIFTER_ROOM` (on) puts it behind door b of every
 episode (door a holds the forced phonics game). The villain's shape-shifting spell walks a
 creature down a chain of pictured CVC words, one letter changed a link (CAT, BAT, BAG,
-BUG, MUG): the first letter first, then the last, the vowel last, going back once at most
+BUG, MUG): chains changing all three places first (hunt 6, M29: the vowel too), then the
+first letter first, then the last, the vowel last, going back once at most
 (`src/rules/shifter.ts`; four links, `SHIFTER` in `src/config.ts`; a link with no familiar
-pictured word is left out, so a chain can be shorter). The first creature is said ("It
+pictured word is left out, so a chain can be shorter, and a shorter chain with a read-it
+link is taken before an all-fix-it one). The first creature is said ("It
 starts as a... CAT"); every later word is read, in one of two beats, mixed through the chain:
 **read it**, the new word appears on the creature's label, not voiced, and three pictures
-stand in the room differing only at the changed letter (BAT, HAT, RAT): she walks to the one
+stand in the room differing only at the changed letter (BAT, HAT, RAT; at the vowel or the
+last letter, where the bank rarely has two such pictures, one of them may be another picture,
+one with the word's first letter first: CAP beside CAN and CUP): she walks to the one
 she read and presses green, the creature morphs into it (it swells, squashes, shrinks, a
 poof of smoke and sparks, and pops back) and the word is said; **fix it**, the creature
 morphs into a picture but its label keeps the old word (a bat labelled CAT), and three
 letter stones with different sounds stand in the room: she walks to the one that fixes
-the label, it flies in and the word is said. Help fades per word (`shifterLevels`, listed by level on page 1 of the
+the label, it flies in and the word is said. The first link of each beat in a visit says
+the whole instruction ("Look, a new word! Read it, then walk to its picture!"); later ones
+a short cue ("Read it!", "Fix it!"), the next spell striking under the last word's praise
+(hunt 6, M26: 5 to 7 s a link with instant answers, was 12 to 15). Fix it has its own
+praise ("You fixed it!", M30), and no "by yourself" after help. Help fades per word (`shifterLevels`, listed by level on page 1 of the
 grown-ups page; at base difficulty every word gets level 1): level 1 the changed letter is lit on the label and
 each stone sounds as she comes near it; level 2 lit, silent stones; level 3 nothing lit.
 Yellow sounds the new letter (read it) or the stone she stands at (fix it), with the
@@ -305,7 +315,8 @@ before it bridges from the name: "M's name is Em... squeeze off the front:" then
 "B's name is Bee... keep just the start:" then "b" (`letter_<x>_hides`, phonics voice,
 never captioned; `NAME_HIDES` in `content/phonics/letters.ts`, `nameToSound` in
 `src/rules/soundOut.ts`). C G H W Y X and the vowels keep the plain sound: their names
-mislead. Used by the warm-up's level-1 clue (in place of the bare name) and the
+mislead. Used by the warm-up's level-1 clue (in place of the bare name; only the first time
+the clue is said, a miss or yellow then gives the plain name and sound: hunt 6, M27) and the
 Shape-Shifter's hints; Matt's recordings replace the lines like any other.
 
 **The Stretchy Bridge** (item 054, `src/scenes/BridgeRoom.ts`): a side room where she
@@ -381,7 +392,8 @@ done, items in the bag):
 
 Extras: the cast (above: `seed=`, `cast=default`, `hero=`, `ally=`, `villain=`,
 `form=`, `primary=`, `secondary=`, `place=`, `fight=`), `fetched=net,fan` (the
-battle items; that is the default), `nojourney` (skip the map), `difficulty=2` (the
+battle items; that is the default), `warmup=1` (the warm-up's word fetched first too, as in
+an episode; hunt 6, M28), `nojourney` (skip the map), `difficulty=2` (the
 difficulty knob for this session; below), `grab=king` (the warm-up's word, if it is one
 the hall can ask for; item 085), `prep=sound,blend` (the parked prep games: `sound`
 `blend` `picture`). The test-only ones (`voice=instant`, `battle=short`, `hooks=1`,

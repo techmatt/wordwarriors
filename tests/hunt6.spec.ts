@@ -44,7 +44,12 @@ test('Shape-Shifter: the lit letter on a read-it label pulses at full size, neve
   test.setTimeout(90_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&room=shifter&seed=601');
-  const s = await until(page, (st) => sh(st)?.beat === 'read' && sh(st)!.phase === 'pick', 60_000, 'a read-it link');
+  // Each fix-it link fixed until a read-it link is up (since M29 the first link can be fix it).
+  let s = await until(page, ready(0), 60_000, 'the first link');
+  for (let i = 0; sh(s)!.beat !== 'read'; i++) {
+    await pickRight(page, i);
+    s = await until(page, ready(i + 1), 60_000, 'a read-it link');
+  }
   const l = sh(s)!;
   const heights: number[] = [];
   for (let i = 0; i < 16; i++) {
@@ -168,9 +173,13 @@ test('Shape-Shifter level 1: a stone she reaches while the instruction plays sou
   test.setTimeout(90_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&room=shifter&seed=604');
-  const first = await until(page, ready(0), 60_000, 'first link');
-  if (sh(first)!.beat === 'read') await pickRight(page, 0);
-  const s = await until(page, (st) => sh(st)?.beat === 'fix' && sh(st)!.phase === 'intro' && st.room!.spots.length === 3, 60_000, 'a fix-it link opening');
+  // Each link read until a fix-it link opens (since M29 the first link can be fix it too).
+  const opening = (st: WWState) => sh(st)?.beat === 'fix' && sh(st)!.phase === 'intro' && st.room!.spots.length === 3;
+  let s = await until(page, (st) => opening(st) || ready(0)(st), 60_000, 'a fix-it link opening, or the first link');
+  for (let i = 0; !opening(s); i++) {
+    await pickRight(page, i);
+    s = await until(page, (st) => opening(st) || ready(i + 1)(st), 60_000, 'a fix-it link opening');
+  }
   expect(sh(s)!.level).toBe(1);
   const stone = s.room!.spots.find((sp) => sp.correct === false)!;
   await place(page, stone.x, stone.y + 12);

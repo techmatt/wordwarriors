@@ -256,7 +256,17 @@ lines, the recap's pictures) play the whole episode at the suite's speeds (about
 - **How tall a fighter stands**: `state().battle.heroes[i].drawn` (and `villains`), its
   picture's height standing still. Not `qaLayout` bounds: moving squashes a card up to 7%
   and the villain is always moving, so a 5-10% check on bounds failed 2 runs in 3 (item 093).
-  A dad's head-to-soles height is `drawn × ADULT_FILL[art]` (`src/config.ts`).
+  A dad's head-to-soles height is `drawn × ADULT_FILL[art]` (`src/config.ts`), hers
+  `drawn × OUTFIT_FILL[art]` (hunt 6, M32; `tests/heights.spec.ts` checks chef Julia against
+  her dress).
+- **Timing a room or a battle opening at real speed**: boot with `{ voice: 'real' }` at the
+  usual `SPEED` and read game time, not wall time: `performance.now()` in the page is warped
+  to game time, and `state().battle.t` is the battle's own clock (`tests/shifter.spec.ts`'s
+  pacing test, `tests/opening.spec.ts`). Hunt 6's "34 s to PICK A MOVE!" with eight things
+  counted from the first thing out of the bag: 37.3 s on that measure before M28, 24.7 s after.
+  `?warmup=1` puts the warm-up's word first in a battle boot's fetched things; a second boot
+  with `fetched=` copied from the first draws other rooms (the list feeds the draw), so its
+  words do not group into a room's volley.
 - **Short battle**, `?battle=short`: the director's waits between story beats at a fifth
   (`SHORT_BEATS`, `BattleScene.beat`); the combo, the ultimate and the finish keep their
   length. For tests that need only the move choice or the finish (rulings, lenses' stick

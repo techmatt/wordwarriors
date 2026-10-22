@@ -32,9 +32,10 @@ const clueLines = (s: WWState) => s.voice.history.filter((id) => /^letter_|^word
 const unitSounds = (w: string) => BANK_BY_WORD[w]!.units.map((u, i) => [u, BANK_BY_WORD[w]!.sounds[i] ?? u] as const);
 const sounds = (w: string) => unitSounds(w).flatMap(([, s]) => (s ? [`letter_${s}_sound`] : []));
 // Level 1 (amendment 1549): a single letter's name, then its sound; a multi-letter unit (NG, SH, LL) only its sound (item 085).
-// A letter whose name holds its sound (item 096, NAME_HIDES) gets the bridge from its name instead of the bare name.
-const nameOf = (u: string, s: string) => (NAME_HIDES[u] && u === s ? `letter_${u}_hides` : `letter_${u}_name`);
-const namesAndSounds = (w: string) => unitSounds(w).flatMap(([u, s]) => [...(u.length === 1 ? [nameOf(u, s)] : []), ...(s ? [`letter_${s}_sound`] : [])]);
+// A letter whose name holds its sound (item 096, NAME_HIDES) gets the bridge from its name instead of the bare name,
+// the first time the clue is said only (hunt 6, M27: a miss or yellow, the plain name).
+const nameOf = (u: string, s: string, bridge = true) => (bridge && NAME_HIDES[u] && u === s ? `letter_${u}_hides` : `letter_${u}_name`);
+const namesAndSounds = (w: string, bridge = true) => unitSounds(w).flatMap(([u, s]) => [...(u.length === 1 ? [nameOf(u, s, bridge)] : []), ...(s ? [`letter_${s}_sound`] : [])]);
 // Every word the hall can ask for (the bank's things), each at one ramp level. Read from the
 // bank, not listed: a hand list missed VET and BIN, so a draw of either started at 2 (item 047).
 const allAt = (level: number) => Object.fromEntries(THINGS.map((w) => [w.word, level]));
@@ -142,8 +143,10 @@ test('warm-up misses: "that\'s the CAT, we need the ...", the clue again at the 
   const after = await state(page);
   const lines = clueLines(after);
   const miss = (i: number) => lines.slice(marks[i], marks[i + 1] ?? lines.length);
-  // Misses 1 and 2: the picked word is said, never the right one; names and sounds again (level 1).
-  for (const i of [0, 1]) expect(miss(i)).toEqual(['nar_ellie_grab_wrong', `word_${others[i]}`, 'nar_ellie_grab_need', ...namesAndSounds(g.word)]);
+  // The first clue: the names' bridges (item 096).
+  expect(lines.slice(0, marks[0]).slice(-namesAndSounds(g.word).length)).toEqual(namesAndSounds(g.word));
+  // Misses 1 and 2: the picked word is said, never the right one; names and sounds again (level 1), plain names now (M27).
+  for (const i of [0, 1]) expect(miss(i)).toEqual(['nar_ellie_grab_wrong', `word_${others[i]}`, 'nar_ellie_grab_need', ...namesAndSounds(g.word, false)]);
   // Miss 3: the help sounds it out unit by unit, never the whole word (amendment 1549).
   expect(miss(2)).toEqual(['nar_ellie_grab_wrong', `word_${others[2]}`, 'nar_ellie_grab_need', ...sounds(g.word)]);
   expect(lines).not.toContain(`word_${g.word}`);

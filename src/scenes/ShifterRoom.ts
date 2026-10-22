@@ -78,6 +78,10 @@ const ENTRY = { x: 130, y: 610 };
 const REACH = GREEN_REACH;
 /** The spell's colours. */
 const MAGIC = [0xb04cff, 0xff4cd8, 0xffffff];
+/** The praise variant that says she read it all by herself (`right_5`): never after help. */
+const BY_YOURSELF = 'right_5';
+/** How long a read word's label stays lit before the next spell strikes, ms (its letters light 70 ms apart). */
+const LABEL_LIT_MS = 450;
 
 export class ShifterRoom extends HouseSideRoom {
   private plan!: ShifterPlan;
@@ -103,6 +107,8 @@ export class ShifterRoom extends HouseSideRoom {
   private hinting = false;
   /** A level-1 stone she reached while the room could not speak: it sounds once the room is quiet. */
   private pendingStone: string | null = null;
+  /** The beats whose full instruction this run has said (hunt 6, M26): a later link of one gets its short cue. */
+  private told = new Set<ShifterLink['beat']>();
 
   constructor() {
     super('ShifterRoom');
@@ -120,6 +126,7 @@ export class ShifterRoom extends HouseSideRoom {
     this.phase = 'intro';
     this.flow++;
     this.pendingStone = null;
+    this.told = new Set();
     this.letters = [];
     this.label = '';
     this.lit = false;
@@ -254,7 +261,11 @@ export class ShifterRoom extends HouseSideRoom {
 
   // ---- A link ---------------------------------------------------------------
 
-  private async startLink(first = false): Promise<void> {
+  /**
+   * A link: the spell strikes, then its instruction. `praised`, a later link's: the last word's praise
+   * and its trip to the bag, which the strike plays under (hunt 6, M26); the instruction waits for it.
+   */
+  private async startLink(first = false, praised: Promise<unknown> = Promise.resolve()): Promise<void> {
     const f = ++this.flow;
     const l = this.current;
     this.round = `shifter:${this.index}:${l.to}`;
@@ -278,8 +289,10 @@ export class ShifterRoom extends HouseSideRoom {
         await this.say(wordLine(this.plan.start));
         if (f !== this.flow) return;
       }
-    } else {
-      await this.narrate('shifter_next');
+    } else if (l.beat === 'read') {
+      // Hunt 6, M26: no "Here comes the spell again!" (its strike says so); the read word's label stays lit a beat
+      // before the strike rewrites it (a fix-it morph keeps the label).
+      await this.wait(LABEL_LIT_MS);
       if (f !== this.flow) return;
     }
     // The spell strikes.
@@ -295,9 +308,14 @@ export class ShifterRoom extends HouseSideRoom {
       this.setLabel(l.from, this.lit ? l.pos : -1);
     }
     this.makeOptions(l);
-    await this.wait(300);
+    await Promise.all([praised, this.wait(300)]);
     if (f !== this.flow) return;
-    await this.narrate(l.beat === 'read' ? 'shifter_read' : 'shifter_fix');
+    // The full instruction the first time each beat comes this visit; later, its short cue (hunt 6, M26:
+    // every link locked her out 12 to 15 s). Yellow and an idle re-prompt still give the full one.
+    const told = this.told.has(l.beat);
+    this.told.add(l.beat);
+    if (told) await this.narrate(l.beat === 'read' ? 'shifter_cue_read' : 'shifter_cue_fix');
+    else await this.narrate(l.beat === 'read' ? 'shifter_read' : 'shifter_fix');
     if (f !== this.flow) return;
     this.phase = 'pick';
     this.locked = false;
@@ -403,10 +421,12 @@ export class ShifterRoom extends HouseSideRoom {
       if (f !== this.flow) return;
       await this.soundOutOver(spot.id, spot.x, spot.y - PICTURE_SIZE - 50);
       if (f !== this.flow) return;
-      // Then the label's new letter, flashing.
+      // Then the label's new letter, flashing; beside a picture that has it (BUG for BIG, hunt 6, M29: a
+      // read-it link at the last letter stands one sibling and another picture), the first letter hers is not.
+      const at = (spot.id[l.pos] !== l.to[l.pos] ? l.pos : ([0, 1, 2] as const).find((i) => spot.id[i] !== l.to[i])) ?? l.pos;
       await this.narrate('shifter_says');
       if (f !== this.flow) return;
-      await this.flashLetter(l.pos, nameToSound(l.to[l.pos]!, soundAt(l.to, l.pos)));
+      await this.flashLetter(at, nameToSound(l.to[at]!, soundAt(l.to, at)));
       if (f !== this.flow) return;
       await this.narrate('shifter_again');
     } else {
@@ -536,15 +556,19 @@ export class ShifterRoom extends HouseSideRoom {
     // Every word read is a battle item, so a copy of the creature goes into her bag with the praise, as the
     // other rooms' do (hunt 6: the row stood still here and three things turned up in it back in the hub).
     // The last one: the creature itself goes, below.
-    await Promise.all([last ? Promise.resolve() : this.guard(this.bag.receive(this.wordArt(l.to), CREATURE.x, CREATURE.y)), this.say(narratorLine(narrator(), variant('right')))]);
+    const praised = Promise.all([last ? Promise.resolve() : this.guard(this.bag.receive(this.wordArt(l.to), CREATURE.x, CREATURE.y)), this.say(narratorLine(narrator(), this.praise(l.beat, unaided)))]);
+    if (!last) {
+      // The next spell strikes under the praise (hunt 6, M26: a link locked her out 12 to 15 s).
+      sfxSelect();
+      this.clearSpots();
+      this.index++;
+      await this.startLink(false, praised);
+      return;
+    }
+    await praised;
     if (f !== this.flow) return;
     sfxSelect();
     this.clearSpots();
-    if (!last) {
-      this.index++;
-      await this.startLink();
-      return;
-    }
     // The last creature goes to the fight.
     this.phase = 'done';
     this.creature.setVisible(false);
@@ -552,6 +576,16 @@ export class ShifterRoom extends HouseSideRoom {
     await this.say(narratorLine(narrator(), variant('shifter_done')));
     await this.wait(400);
     this.fadeToHub();
+  }
+
+  /**
+   * The praise for a link (hunt 6, M30): fix-it has its own ("You fixed it!"), and none says "by
+   * yourself" after help, so a read-it link she had help or a miss on takes the next one in turn.
+   */
+  private praise(beat: ShifterLink['beat'], unaided: boolean): string {
+    if (beat === 'fix') return variant('shifter_fixed');
+    const v = variant('right');
+    return !unaided && v === BY_YOURSELF ? variant('right') : v;
   }
 
   // ---- Help -----------------------------------------------------------------

@@ -11,6 +11,7 @@ import Phaser from 'phaser';
 
 import { FLIP_TO_FACE, WALK_SPEED } from '../config';
 import { fitImage } from '../fx/juice';
+import { outfitTall } from '../rules/cast';
 
 const MAX_STEP = 6;
 
@@ -34,7 +35,7 @@ export class Player {
     private readonly floor: Phaser.Geom.Rectangle,
   ) {
     this.shadow = scene.add.ellipse(0, 0, PLAYER_HEIGHT * 0.6, PLAYER_HEIGHT * 0.16, 0x000000, 0.3);
-    this.sprite = fitImage(scene.add.image(0, 0, art).setOrigin(0.5, 1), PLAYER_HEIGHT * 0.8, PLAYER_HEIGHT);
+    this.sprite = fitImage(scene.add.image(0, 0, art).setOrigin(0.5, 1), PLAYER_HEIGHT * 0.8, PLAYER_HEIGHT * outfitTall(art));
     this.baseScale = this.sprite.scale;
     this.root = scene.add.container(x, y, [this.shadow, this.sprite]);
   }
@@ -43,7 +44,8 @@ export class Player {
   setArt(art: string): void {
     this.scene.tweens.killTweensOf(this.sprite);
     this.sprite.setTexture(art);
-    fitImage(this.sprite, PLAYER_HEIGHT * 0.8, PLAYER_HEIGHT);
+    // Her own height in every outfit (hunt 6, M32: a chef's hat is not her height).
+    fitImage(this.sprite, PLAYER_HEIGHT * 0.8, PLAYER_HEIGHT * outfitTall(art));
     this.baseScale = this.sprite.scale;
     this.sprite.setScale(this.baseScale * this.facing, this.baseScale);
   }

@@ -47,6 +47,9 @@ test('clue: level 1 each letter name then its sound; 2 the sounds, letters shown
   const sounds = ['v', 'a', 'n'].map(letterSoundLine);
   const [sv, sa, sn] = sounds;
   assert.deepEqual(ids(1), [nv, sv, na, sa, nn, sn]);
+  // Said again (a miss, yellow: hunt 6, M27): the plain names, no bridge.
+  assert.deepEqual(clue('van', 1, false, false).map((s) => s.id), [letterNameLine('v'), sv, na, sa, letterNameLine('n'), sn]);
+  assert.deepEqual(clue('van', 2, false, false).map((s) => s.id), sounds);
   assert.deepEqual(ids(2), sounds);
   assert.deepEqual(ids(3), sounds);
   for (const l of [1, 2, 3] as const) assert.deepEqual(ids(l, true), sounds);
