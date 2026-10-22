@@ -2,7 +2,8 @@
  * The journey map: a winding path of stops, one per step of the episode, with
  * her character hopping from the stop she just finished to the next one.
  *
- * Shown for about two seconds before each battle and the victory, so a
+ * Shown for about two seconds before each battle, house part 2 (the way home
+ * after the retreat) and the victory, so a
  * four-year-old can see where she is and what is coming: her bed, the house,
  * swords, the house again, swords, a trophy (icons from Episode's
  * journeyStops). Nothing to read and no input needed; green skips ahead.
@@ -59,7 +60,7 @@ export class JourneyScene extends Phaser.Scene {
     // The villain waits at the battle she is heading for, small and grumpy:
     // this one, when this stop is a battle (item 039: it stood at the next one,
     // and before battle 2 it was gone).
-    const vStop = stops.findIndex((s, i) => i >= here && s.icon === '⚔️');
+    const vStop = stops.findIndex((s, i) => i >= here && s.kind === 'battle');
     if (vStop >= 0) {
       // Beside the stop, clear of her when she lands on it.
       const dx = vStop === here ? 78 : 30;

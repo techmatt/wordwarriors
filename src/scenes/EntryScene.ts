@@ -27,11 +27,10 @@ import Phaser from 'phaser';
 import { personOf } from '../../content/battle/roster';
 import { ENTRY_HALL } from '../../content/house/house';
 import { wordLine } from '../../content/voice/ids';
-import { sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxWrong } from '../audio/sfx';
+import { sfxRight, sfxSelect, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, FONT_ROUNDED, GAME_WIDTH, GRAB } from '../config';
 import { episode, grabPlan, helper, waker, type Step } from '../episode/Episode';
-import { bob, burst, fitImage, floatText, popIn, shockwave, squash, wiggle } from '../fx/juice';
-import { TEX } from '../fx/textures';
+import { bob, burst, fitImage, floatText, popIn, shockwave, squash } from '../fx/juice';
 import { clue, grabLevel, nextLevel, recordedGrabLevel, type GrabLevel } from '../rules/grab';
 import { progress } from '../state/progress';
 import { Bag } from '../ui/Bag';
@@ -181,9 +180,7 @@ export class EntryScene extends RoomScene {
     if (d) {
       d.obj.setVisible(true);
       if (pop) popIn(this, d.obj);
-      const light = this.add.image(0, -100, TEX.glow).setTint(0xfff1a8).setBlendMode(Phaser.BlendModes.ADD).setScale(2.2).setAlpha(0.6);
-      d.obj.addAt(light, 0);
-      this.tweens.add({ targets: light, alpha: 0.95, scale: 2.6, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+      this.doorGlow(d, -100);
       if (pop) burst(this, d.x, d.y - 100, { count: 30 });
       d.correct = true;
       d.enabled = true;
@@ -292,10 +289,7 @@ export class EntryScene extends RoomScene {
     this.misses++;
     if (episode.grab) episode.grab.misses = this.misses;
     const picked = spot.obj.getData('word') as string;
-    sfxWrong();
-    wiggle(this, spot.obj);
-    this.player.wobble();
-    floatText(this, spot.x, spot.y - 150, ['OOPS!', 'HEE HEE!', 'SILLY!', 'BOING!'][(this.misses - 1) % 4]!, '#7ad9ff', 34);
+    this.giggle(spot.obj, spot.x, spot.y - 150, this.misses - 1);
     await this.narrate('grab_wrong');
     this.locked = true;
     await this.say(wordLine(picked));

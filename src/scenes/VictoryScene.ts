@@ -9,14 +9,13 @@
 
 import Phaser from 'phaser';
 
-import { personOf } from '../../content/battle/roster';
 import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { narratorLine, wordLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { castArt, castFace, castId, castScale, counterWord, episode, narrator, villainSpec, waker } from '../episode/Episode';
+import { castArt, castFace, castScale, counterWord, episode, narrator, podiumSecond, villainSpec } from '../episode/Episode';
 import { variant } from '../episode/lineVariants';
 import { burst, fitImage, shockwave } from '../fx/juice';
 import { SceneGen } from '../fx/sceneGen';
@@ -113,7 +112,7 @@ export class VictoryScene extends Phaser.Scene {
     // ally the left, the villain, good again, the right.
     const blocks = { top: { x: 640, y: 450 }, left: { x: 405, y: 516 }, right: { x: 878, y: 528 } };
     // With no ally, the dad who woke her (and was there all along) has the left block.
-    const second = episode.ally ?? (personOf(waker()) !== personOf(episode.villain) ? castId(waker()) : null);
+    const second = podiumSecond();
     const places = [
       { id: episode.hero, at: blocks.top },
       ...(second ? [{ id: second, at: blocks.left }] : []),

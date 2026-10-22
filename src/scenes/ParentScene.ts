@@ -5,9 +5,8 @@
  * Each item shows: tries ever, first-try-right rate over her recent tries, and
  * tries since the page opened (a reload starts it again, item 080). Colour is the shakiness the game uses to pick targets: red
  * items come up more often. Red / Esc / F9 goes back to the scene it came
- * from, restarted with the data it was given (`{ back, data }`; the older
- * `{ back, step }` means data `{ step }`), so a side room comes back as the
- * same room. With no back, or back 'Title', it goes to the title.
+ * from, restarted with the data it was given (`{ back, data }`), so a side
+ * room comes back as the same room. With no back, or back 'Title', it goes to the title.
  *
  * Two pages (item 037; the word bank outgrew one): green / Space flips
  * between them. Page 1 has the sounds, the warm-up, the frames, the bag and
@@ -31,7 +30,6 @@ import { GRAB_WORDS, recordedGrabLevel } from '../rules/grab';
 import { recordedBridgeLevel } from '../rules/bridge';
 import { difficulty } from '../rules/difficulty';
 import { fitText } from '../ui/fitText';
-import type { Step } from '../episode/Episode';
 import { Controls } from '../input/Controls';
 import { BAG_WORDS } from '../rules/sentences';
 import { progress } from '../state/progress';
@@ -39,6 +37,10 @@ import type { ItemKind } from '../state/ProgressStore';
 import { hookState } from '../hookState';
 
 const LEVEL_NAMES = ['CVC (CAT)', 'blends (FROG)', 'digraphs (SHIP)'];
+
+/** First-try right over her recent tries, as a percentage; '–' with none. */
+const recentPct = (s: { recent: boolean[] }): string =>
+  s.recent.length ? `${Math.round((100 * s.recent.filter(Boolean).length) / s.recent.length)}%` : '–';
 
 export class ParentScene extends Phaser.Scene {
   private controls!: Controls;
@@ -50,9 +52,9 @@ export class ParentScene extends Phaser.Scene {
     super('Parent');
   }
 
-  init(data: { back?: string; data?: object; step?: Step; page?: number }): void {
+  init(data: { back?: string; data?: object; page?: number }): void {
     this.back = data.back ?? 'Title';
-    this.backData = data.data ?? (data.step ? { step: data.step } : {});
+    this.backData = data.data ?? {};
     this.page = data.page ?? 0;
   }
 
@@ -122,7 +124,8 @@ export class ParentScene extends Phaser.Scene {
       const shown = [...ws].sort((a, b) => progress.shakiness('grabs', b) - progress.shakiness('grabs', a)).slice(0, 8);
       const list = shown.map((word) => {
         const s = progress.stat('grabs', word);
-        return `${word} ${s.seen}·${Math.round((100 * s.recent.filter(Boolean).length) / Math.max(1, s.recent.length))}%`;
+        // Only words she has grabbed are listed, so `recent` is never empty here.
+        return `${word} ${s.seen}·${recentPct(s)}`;
       });
       const more = ws.length > shown.length ? `  +${ws.length - shown.length} more` : '';
       return `${l} ${['names + sounds', 'sounds, letters shown', 'sounds only'][l - 1]}: ${list.join('  ') || '–'}${more}`;
@@ -143,7 +146,7 @@ export class ParentScene extends Phaser.Scene {
       // The word machine (item 026): per family, tries and first-try right (recent).
       `Word families: ${FAMILIES.map((f) => {
         const s = progress.stat('rimes', f.rime);
-        return `-${f.rime} ${s.seen}·${s.recent.length ? `${Math.round((100 * s.recent.filter(Boolean).length) / s.recent.length)}%` : '–'}`;
+        return `-${f.rime} ${s.seen}·${recentPct(s)}`;
       }).join('  ')}`,
     ], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - x - 20, GAME_HEIGHT - y - 10);
   }
@@ -189,7 +192,7 @@ export class ParentScene extends Phaser.Scene {
       const s = progress.stat(kind, id);
       const today = progress.stat(kind, id, 'session');
       const shaky = progress.shakiness(kind, id);
-      const recent = s.recent.length ? `${Math.round((100 * s.recent.filter(Boolean).length) / s.recent.length)}%` : '–';
+      const recent = recentPct(s);
       const color = s.seen === 0 ? 0xcccccc : Phaser.Display.Color.Interpolate.ColorWithColor(
         Phaser.Display.Color.ValueToColor(0x3cb44b),
         Phaser.Display.Color.ValueToColor(0xe6194b),

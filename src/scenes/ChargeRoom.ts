@@ -35,23 +35,23 @@ import { RUNE_BY_SOUND, type GestureMotion } from '../../content/phonics/runes';
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { variant } from '../episode/lineVariants';
-import { voiceBus, type Utterance } from '../audio/VoiceBus';
+import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxZap } from '../audio/sfx';
 import { CHARGE, DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
-import { backToHub, castFace, currentStep, episode, helper, narrator, type Slot, type Step } from '../episode/Episode';
+import { castFace, currentStep, episode, helper, narrator, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, punch, shake, shockwave, squash } from '../fx/juice';
 import { TEX } from '../fx/textures';
-import { dadPress, openDadButtons, setDadAsking, type DadAnswer } from '../input/dadButtons';
+import { dadPress, setDadAsking, type DadAnswer } from '../input/dadButtons';
 import { dadLock } from '../input/dadLock';
 import type { ChargePlan } from '../rules/charge';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
-import type { CaptionMode, KeepOut } from '../ui/Caption';
+import type { KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
-import { sidePlan, type Spot } from '../world/RoomScene';
-import { ARRIVE_MS, INK, LIT, SideRoom } from '../world/SideRoom';
+import type { Spot } from '../world/RoomScene';
+import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
 /**
  * `explain`: the helper explains, no rune yet. `prompt`: a rune is lit and
@@ -73,13 +73,10 @@ const PICTURE = 120;
 /** The beat between the sounds when they are sounded out together (the entry hall's is 400, the sentence room's 450). */
 const SOUND_GAP_MS = 400;
 
-export class ChargeRoom extends SideRoom {
-  protected override dialogueAware = true;
+export class ChargeRoom extends HouseSideRoom {
   /** Nothing to walk to here: no stick hint (item 059 review). */
   protected override walking = false;
-  private slot: Slot = 'a';
   private plan!: ChargePlan;
-  private roomId = '';
   private index = 0;
   private phase: Phase = 'explain';
   /** Time spent waiting for Dad on the read (scene clock, paused under dad lock and while a line plays). */
@@ -93,7 +90,6 @@ export class ChargeRoom extends SideRoom {
   private readAt = 0;
   /** The say-back beat running now: its time left (it stands still under dad lock). */
   private beat: { left: number; done: () => void } | null = null;
-  private closeDad: (() => void) | null = null;
   private altar!: Phaser.GameObjects.Image;
   private stone!: Phaser.GameObjects.Image;
   private glow!: Phaser.GameObjects.Image;
@@ -122,7 +118,6 @@ export class ChargeRoom extends SideRoom {
 
   override init(data: { step?: Step; slot?: Slot }): void {
     super.init(data);
-    this.slot = data.slot ?? 'a';
     const p = sidePlan('ChargeRoom', this.slot, 'charge');
     this.plan = p.charge;
     this.roomId = p.room;
@@ -150,14 +145,6 @@ export class ChargeRoom extends SideRoom {
     return this.index >= this.plan.runes.length;
   }
 
-  protected override sceneData(): object {
-    return { step: this.step, slot: this.slot };
-  }
-
-  protected background(): string {
-    return `room_side_${this.roomId}`;
-  }
-
   /** The rune and the word are what she watches: the box keeps off both. */
   protected override keepOut(): KeepOut[] {
     const out = super.keepOut();
@@ -169,21 +156,13 @@ export class ChargeRoom extends SideRoom {
     return out;
   }
 
-  /** Letter sounds are never captioned (Caption hides `letter_` lines); the rune lights instead. */
-  protected override captionMode(u: Utterance): CaptionMode | undefined {
-    return u.id.startsWith('letter_') ? 'hide' : undefined;
-  }
-
   protected build(): void {
     this.floor.setTo(80, 420, GAME_WIDTH - 160, 260);
     applyHouseMood(this, episode.villain, { seed: 0x2053, floor: this.floor, calm: true });
     const room = SIDE_ROOM_BY_ID[this.roomId];
     // She stands beside the altar from the start: nothing to walk to or press. Clear of its
     // footprint (item 069: 20 px inside it, the altar was drawn over her arm and dress all round).
-    this.player.place(ALTAR.x - ALTAR.w / 2 - 50, Math.min(room?.entry.y ?? ALTAR.y + 40, this.floor.bottom - 10));
-    this.player.hop();
-    burst(this, this.player.x, this.player.y - 40, { count: 16, speed: 220 });
-    sfxWhoosh();
+    this.enter(ALTAR.x - ALTAR.w / 2 - 50, Math.min(room?.entry.y ?? ALTAR.y + 40, this.floor.bottom - 10));
 
     // The helper beside the altar, who performs the gestures.
     this.friend = this.castSprite(helper(), HELPER.x, HELPER.y).setDepth(HELPER.y);
@@ -203,18 +182,14 @@ export class ChargeRoom extends SideRoom {
     this.bag = new Bag(this);
     void voiceBank.ensure(wordLine(this.plan.word));
 
-    this.closeDad = openDadButtons((a) => this.answer(a));
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.closeDad?.();
-      this.closeDad = null;
-    });
+    this.openDad((a) => this.answer(a));
 
     this.locked = true;
     // Set on the first frame: in build() the scene clock has not caught up with the game's yet.
     this.startedAt = -1;
     if (this.finished) {
       this.phase = 'done';
-      this.time.delayedCall(600, () => backToHub(this, this.slot));
+      this.backToHubSoon();
       return;
     }
     const f = this.flow;
@@ -518,15 +493,10 @@ export class ChargeRoom extends SideRoom {
     this.phase = 'reading';
     this.locked = true;
     setDadAsking(false);
-    progress.record('words', word, right, right ? 0 : 1);
+    // Dad's yes is a first-try read; his no or the timeout one miss.
+    this.recordRead(word, right, right ? 0 : 1);
     // Its sounds with it: a word read right is its sounds said right (the draws lean to shaky sounds).
     for (const s of new Set(this.plan.runes)) progress.record('sounds', s, right, right ? 0 : 1);
-    // Her word bag: read right, it is done for this round of the bag.
-    if (right) progress.takeFromBag(word);
-    else progress.returnToBag(word);
-    if (!episode.read.includes(word)) episode.read.push(word);
-    if (!episode.fetched.includes(word)) episode.fetched.push(word);
-    if (!episode.house.done.includes(this.slot)) episode.house.done.push(this.slot);
     this.tweens.killTweensOf(this.bar);
     this.bar.setScale(1);
 
@@ -563,7 +533,7 @@ export class ChargeRoom extends SideRoom {
     this.phase = 'done';
     sfxSelect();
     await this.say(narratorLine(narrator(), variant('charge_done')));
-    this.fadeOutThen(() => backToHub(this, this.slot));
+    this.fadeToHub();
   }
 
   /** Waiting for Dad on the read: nothing for CHARGE.readTimeoutMs counts as his 1 (paused under dad lock and while a line plays). */
@@ -642,7 +612,6 @@ export class ChargeRoom extends SideRoom {
         sound: this.rune,
         phase: this.phase,
         asking: this.phase === 'read',
-        assists: 0,
         timeouts: this.timeouts,
         read: this.readAnswer,
         charged: [...(episode.charged?.sounds ?? [])],

@@ -26,7 +26,9 @@
  *      for BRIDGE.dadWaitMs) replays the slide with sounds; after
  *      BRIDGE.replays the pictures come anyway.
  * Right first time with no help moves the word up a level; a hint, a replay
- * or a wrong picture moves it down one.
+ * or a wrong picture moves it down one. The level is recorded every crossing
+ * (`recordedBridgeLevel`), but the room gives at most DIFFICULTY's level
+ * (`bridgeLevel`, item 067), so at base difficulty every word plays level 1.
  *
  * A wrong pick never penalises, but guessing is slower than reading: the game
  * sounds out what she picked, unit by unit, its letters over its picture
@@ -46,24 +48,24 @@ import { canHold } from '../../content/phonics/letters';
 import { SIDE_ROOM_BY_ID, gapFor, type BridgeGap } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { variant } from '../episode/lineVariants';
-import { voiceBus, type HeldSound, type Utterance } from '../audio/VoiceBus';
-import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon, sfxWhoosh, sfxWrong } from '../audio/sfx';
+import { voiceBus, type HeldSound } from '../audio/VoiceBus';
+import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon } from '../audio/sfx';
 import { BRIDGE, DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { backToHub, episode, narrator, type Slot, type Step } from '../episode/Episode';
-import { burst, fitImage, floatText, popIn, shockwave, wiggle } from '../fx/juice';
+import { episode, narrator, type Slot, type Step } from '../episode/Episode';
+import { burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
-import { dadPress, openDadButtons, setDadAsking, type DadAnswer } from '../input/dadButtons';
+import { dadPress, setDadAsking, type DadAnswer } from '../input/dadButtons';
 import { dadLock } from '../input/dadLock';
 import { bridgeLevel, nextBridgeLevel, recordedBridgeLevel, whereDiffers, type BridgeLevel, type BridgePlan, type BridgeRound } from '../rules/bridge';
 import { soundOut } from '../rules/soundOut';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
-import type { CaptionMode, KeepOut } from '../ui/Caption';
+import type { KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
-import { sidePlan, type Spot } from '../world/RoomScene';
-import { ARRIVE_MS, INK, LIT, SideRoom } from '../world/SideRoom';
+import type { Spot } from '../world/RoomScene';
+import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
 /**
  * `intro`: a new bridge appears and the helper talks; she waits on the near
@@ -109,11 +111,8 @@ interface Stone {
   sound: string;
 }
 
-export class BridgeRoom extends SideRoom {
-  protected override dialogueAware = true;
-  private slot: Slot = 'a';
+export class BridgeRoom extends HouseSideRoom {
   private plan!: BridgePlan;
-  private roomId = '';
   private index = 0;
   private phase: Phase = 'intro';
   private finished = false;
@@ -135,7 +134,6 @@ export class BridgeRoom extends SideRoom {
   private lit = -1;
   private waitMs = 0;
   private timeouts = 0;
-  private closeDad: (() => void) | null = null;
   private bag!: Bag;
   private gapLook = GAP_LOOK.lava;
   /** The flow in charge: a chain stops at its next await once something newer has taken over. */
@@ -149,7 +147,6 @@ export class BridgeRoom extends SideRoom {
 
   override init(data: { step?: Step; slot?: Slot }): void {
     super.init(data);
-    this.slot = data.slot ?? 'a';
     const p = sidePlan('BridgeRoom', this.slot, 'bridge');
     this.plan = p.bridge;
     this.roomId = p.room;
@@ -180,14 +177,6 @@ export class BridgeRoom extends SideRoom {
     (episode.house.misses ??= {})[`${this.missKey}:aided`] = 1;
   }
 
-  protected override sceneData(): object {
-    return { step: this.step, slot: this.slot };
-  }
-
-  protected background(): string {
-    return `room_side_${this.roomId}`;
-  }
-
   /** Slower on the stones: how slowly she slides is how slowly she stretches the word. */
   protected override moveScale(): number {
     return this.onBridge() ? BRIDGE.slide : 1;
@@ -200,11 +189,6 @@ export class BridgeRoom extends SideRoom {
     return out;
   }
 
-  /** Letter sounds are never captioned (Caption hides `letter_` lines); the stones light instead. */
-  protected override captionMode(u: Utterance): CaptionMode | undefined {
-    return u.id.startsWith('letter_') ? 'hide' : undefined;
-  }
-
   protected build(): void {
     this.floor.setTo(70, 430, 1140, 270);
     // The villain's mess keeps out of the gap and off the far bank's pictures.
@@ -214,22 +198,16 @@ export class BridgeRoom extends SideRoom {
     const gap = gapFor(this.roomId);
     this.gapLook = GAP_LOOK[gap];
     this.drawGap(gap);
-    this.player.place(NEAR.x - 60, Math.min(SIDE_ROOM_BY_ID[this.roomId]?.entry.y ?? NEAR.y, NEAR.y));
-    this.player.hop();
-    burst(this, this.player.x, this.player.y - 40, { count: 16, speed: 220 });
-    sfxWhoosh();
+    this.enter(NEAR.x - 60, Math.min(SIDE_ROOM_BY_ID[this.roomId]?.entry.y ?? NEAR.y, NEAR.y));
     for (const r of this.plan.rounds) void voiceBank.ensure(wordLine(r.word));
     // A stone's held sound plays only if decoded (VoiceBus.hold does not wait): its sounds go first (item 062).
     for (const s of new Set(this.plan.rounds.flatMap((r) => r.sounds))) if (s) void voiceBank.ensure(letterSoundLine(s));
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.releaseHeld();
-      this.closeDad?.();
-      this.closeDad = null;
-    });
+    // Dad's buttons close at shutdown too (HouseSideRoom).
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.releaseHeld());
     if (this.finished) {
       this.locked = true;
       this.phase = 'done';
-      this.time.delayedCall(600, () => backToHub(this, this.slot));
+      this.backToHubSoon();
       return;
     }
     void this.startRound(true);
@@ -343,8 +321,8 @@ export class BridgeRoom extends SideRoom {
     this.clearSpots();
     this.picturesUp = false;
     // Dad's buttons: a level-2 hint, or level 3's yes / no.
-    this.closeDad?.();
-    this.closeDad = this.level >= 2 ? openDadButtons((a) => this.answer(a)) : null;
+    if (this.level >= 2) this.openDad((a) => this.answer(a));
+    else this.closeDad();
 
     if (first) await this.wait(ARRIVE_MS);
     if (f !== this.flow) return;
@@ -575,7 +553,7 @@ export class BridgeRoom extends SideRoom {
    */
   private async replay(before: string, after?: string): Promise<void> {
     const f = ++this.flow;
-    this.resumePhase = this.phase === 'say' ? 'say' : this.phase;
+    this.resumePhase = this.phase;
     this.phase = 'replay';
     this.locked = true;
     this.releaseHeld();
@@ -633,10 +611,7 @@ export class BridgeRoom extends SideRoom {
     this.locked = true;
     this.wrongTries++;
     (episode.house.misses ??= {})[this.missKey] = this.wrongTries;
-    sfxWrong();
-    wiggle(this, spot.obj);
-    this.player.wobble();
-    floatText(this, spot.x, spot.y - PICTURE_SIZE - 40, ['OOPS!', 'HEE HEE!', 'SILLY!', 'BOING!'][(this.wrongTries - 1) % 4]!, '#7ad9ff', 34);
+    this.giggle(spot.obj, spot.x, spot.y - PICTURE_SIZE - 40, this.wrongTries - 1);
     await this.wait(350);
     if (f !== this.flow) return;
     await this.narrate('bridge_picked');
@@ -707,19 +682,14 @@ export class BridgeRoom extends SideRoom {
     this.phase = 'check';
     this.locked = true;
     setDadAsking(false);
-    progress.record('words', r.word, firstTry, this.wrongTries);
+    // The slot is done with the last word.
+    this.recordRead(r.word, firstTry, this.wrongTries, { last });
     // The ramp moves on her recorded level, whatever the room gave (item 067: DIFFICULTY caps only what she gets).
     progress.setBridgeLevel(r.word, nextBridgeLevel(recordedBridgeLevel(progress, r.word), unaided));
-    // Her word bag: read right first time, it is done for this round of the bag.
-    if (firstTry) progress.takeFromBag(r.word);
-    else progress.returnToBag(r.word);
     if (episode.house.misses) {
       delete episode.house.misses[this.missKey];
       delete episode.house.misses[`${this.missKey}:aided`];
     }
-    if (!episode.read.includes(r.word)) episode.read.push(r.word);
-    if (!episode.fetched.includes(r.word)) episode.fetched.push(r.word);
-    if (last && !episode.house.done.includes(this.slot)) episode.house.done.push(this.slot);
     for (const s of this.spots) s.enabled = false;
 
     sfxRight();
@@ -753,11 +723,10 @@ export class BridgeRoom extends SideRoom {
       return;
     }
     this.phase = 'done';
-    this.closeDad?.();
-    this.closeDad = null;
+    this.closeDad();
     await this.say(narratorLine(narrator(), variant('bridge_done')));
     await this.wait(400);
-    this.fadeOutThen(() => backToHub(this, this.slot));
+    this.fadeToHub();
   }
 
   /**

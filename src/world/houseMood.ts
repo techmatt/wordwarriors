@@ -31,11 +31,11 @@ export interface HouseMoodOptions {
   /** Scatter seed: one per room, so each room has its own stable mess. */
   seed?: number;
   /** The room's walkable floor; decals keep to its margins. */
-  floor?: Phaser.Geom.Rectangle;
+  floor: Phaser.Geom.Rectangle;
   /** Animate in (the bedroom's bad-news moment). */
   reveal?: boolean;
   /**
-   * A room where she is reading (the sentence rooms): the effect must not
+   * A room where she is reading (a side room's game): the effect must not
    * shake the banner or thump over the voice. 'quake' keeps only small dust
    * puffs at the floor edges.
    */
@@ -52,7 +52,6 @@ export interface HouseMoodOptions {
 export interface HouseMoodHandle {
   /** Resolves when everything is in (at once without `reveal`). */
   readonly revealed: Promise<void>;
-  destroy(): void;
 }
 
 const TINT_ALPHA = 0.16;
@@ -61,27 +60,19 @@ const WALL = new Phaser.Geom.Rectangle(210, 70, 880, 130);
 /** Decal ids that read as lying on the floor; anything else may go on the wall. */
 const FLOOR_LIKE = /foot|print|step|track|puddle|crumb|peel|banana|scorch|rubble|pile|mud|slime|bone|coin|sand|leaf|leaves|feather|dust/;
 
-export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: HouseMoodOptions = {}): HouseMoodHandle {
+/** Everything it adds lasts until the scene ends: nothing takes it off sooner. */
+export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: HouseMoodOptions): HouseMoodHandle {
   const mood: HouseMood | undefined = CHARACTER_BY_ID[villainId]?.house;
-  const objects: Phaser.GameObjects.GameObject[] = [];
-  const timers: Phaser.Time.TimerEvent[] = [];
-  const destroy = () => {
-    for (const t of timers) t.remove();
-    for (const o of objects) o.destroy();
-    objects.length = 0;
-    timers.length = 0;
-  };
-  if (!mood) return { revealed: Promise.resolve(), destroy };
+  if (!mood) return { revealed: Promise.resolve() };
 
   // Seeded (mulberry32), so a room's scatter is stable.
   const rand = seededRand(opts.seed ?? 1);
-  const floor = opts.floor ?? new Phaser.Geom.Rectangle(80, 420, GAME_WIDTH - 160, 260);
+  const floor = opts.floor;
 
   // The tint sits just above the background, under everything that stands.
   const tint = scene.add
     .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, mood.tint, opts.reveal ? 0 : TINT_ALPHA)
     .setDepth(DEPTH.ground + 1);
-  objects.push(tint);
   // Reveal: darken past the resting tint, hold, then settle back to it (never
   // through clear, which a yoyo back to the start would do).
   if (opts.reveal) {
@@ -136,7 +127,6 @@ export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: Hou
     if (!scene.textures.exists(p.key)) return;
     const img = fitImage(scene.add.image(p.x, p.y, p.key).setOrigin(0.5, p.onFloor ? 0.7 : 0.5), p.size, p.size);
     img.setDepth(p.onFloor ? DEPTH.floor + 1 : DEPTH.ground + 2).setAlpha(p.onFloor ? 0.85 : 0.95);
-    objects.push(img);
     if (!animate) return;
     const s = img.scale;
     img.setScale(s * 1.8).setAlpha(0);
@@ -159,89 +149,74 @@ export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: Hou
     revealed = new Promise((resolve) => {
       order.forEach((p, i) => scene.time.delayedCall(450 + i * gap, () => showDecal(p, true)));
       scene.time.delayedCall(450 + order.length * gap + 200, () => {
-        startFx(scene, mood.fx, floor, objects, timers, !!opts.calm);
+        startFx(scene, mood.fx, floor, !!opts.calm);
         resolve();
       });
     });
   } else {
     for (const p of order) showDecal(p, false);
-    startFx(scene, mood.fx, floor, objects, timers, !!opts.calm);
+    startFx(scene, mood.fx, floor, !!opts.calm);
     revealed = Promise.resolve();
   }
-  return { revealed, destroy };
+  return { revealed };
 }
 
-/** The ambient effect, running until the scene ends (or `destroy`). */
-function startFx(
-  scene: Phaser.Scene,
-  fx: HouseMood['fx'],
-  floor: Phaser.Geom.Rectangle,
-  objects: Phaser.GameObjects.GameObject[],
-  timers: Phaser.Time.TimerEvent[],
-  calm: boolean,
-): void {
+/** The ambient effect, running until the scene ends. */
+function startFx(scene: Phaser.Scene, fx: HouseMood['fx'], floor: Phaser.Geom.Rectangle, calm: boolean): void {
   const depth = DEPTH.fx - 10;
   const zone = (r: Phaser.Geom.Rectangle) => ({ type: 'random', source: r }) as never;
   if (fx === 'frost') {
-    objects.push(
-      scene.add
-        .particles(0, 0, TEX.spark, {
-          emitZone: zone(new Phaser.Geom.Rectangle(0, -10, GAME_WIDTH, 10)),
-          speedY: { min: 40, max: 90 },
-          speedX: { min: -25, max: 25 },
-          scale: { min: 0.4, max: 1.1 },
-          alpha: { start: 0.9, end: 0.2 },
-          lifespan: 9000,
-          frequency: 120,
-          tint: [0xffffff, 0xdff4ff],
-        })
-        .setDepth(depth),
-    );
+    scene.add
+      .particles(0, 0, TEX.spark, {
+        emitZone: zone(new Phaser.Geom.Rectangle(0, -10, GAME_WIDTH, 10)),
+        speedY: { min: 40, max: 90 },
+        speedX: { min: -25, max: 25 },
+        scale: { min: 0.4, max: 1.1 },
+        alpha: { start: 0.9, end: 0.2 },
+        lifespan: 9000,
+        frequency: 120,
+        tint: [0xffffff, 0xdff4ff],
+      })
+      .setDepth(depth);
   } else if (fx === 'embers') {
-    objects.push(
-      scene.add
-        .particles(0, 0, TEX.spark, {
-          emitZone: zone(new Phaser.Geom.Rectangle(0, GAME_HEIGHT - 20, GAME_WIDTH, 20)),
-          speedY: { min: -110, max: -50 },
-          speedX: { min: -20, max: 20 },
-          scale: { start: 0.9, end: 0 },
-          alpha: { start: 1, end: 0 },
-          lifespan: 4500,
-          frequency: 140,
-          tint: [0xff7b00, 0xffd23f, 0xff3d00],
-          blendMode: Phaser.BlendModes.ADD,
-        })
-        .setDepth(depth),
-    );
+    scene.add
+      .particles(0, 0, TEX.spark, {
+        emitZone: zone(new Phaser.Geom.Rectangle(0, GAME_HEIGHT - 20, GAME_WIDTH, 20)),
+        speedY: { min: -110, max: -50 },
+        speedX: { min: -20, max: 20 },
+        scale: { start: 0.9, end: 0 },
+        alpha: { start: 1, end: 0 },
+        lifespan: 4500,
+        frequency: 140,
+        tint: [0xff7b00, 0xffd23f, 0xff3d00],
+        blendMode: Phaser.BlendModes.ADD,
+      })
+      .setDepth(depth);
   } else if (fx === 'sparkle') {
-    objects.push(
-      scene.add
-        .particles(0, 0, TEX.star, {
-          emitZone: zone(new Phaser.Geom.Rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT)),
-          scale: { start: 0, end: 0.6, ease: 'Sine.easeOut' },
-          alpha: { start: 1, end: 0 },
-          lifespan: 900,
-          frequency: 220,
-          tint: [0xffffff, 0xff9ad5, 0xffd23f],
-          blendMode: Phaser.BlendModes.ADD,
-        })
-        .setDepth(depth),
-    );
+    scene.add
+      .particles(0, 0, TEX.star, {
+        emitZone: zone(new Phaser.Geom.Rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT)),
+        scale: { start: 0, end: 0.6, ease: 'Sine.easeOut' },
+        alpha: { start: 1, end: 0 },
+        lifespan: 900,
+        frequency: 220,
+        tint: [0xffffff, 0xff9ad5, 0xffd23f],
+        blendMode: Phaser.BlendModes.ADD,
+      })
+      .setDepth(depth);
   } else if (fx === 'smoke') {
-    objects.push(
-      scene.add
-        .particles(0, 0, TEX.smoke, {
-          emitZone: zone(new Phaser.Geom.Rectangle(0, floor.bottom - 40, GAME_WIDTH, 60)),
-          speedX: { min: 10, max: 35 },
-          speedY: { min: -12, max: -4 },
-          scale: { start: 1.5, end: 3 },
-          alpha: { start: 0.18, end: 0 },
-          lifespan: 7000,
-          frequency: 350,
-          tint: [0x666677, 0x887788],
-        })
-        .setDepth(depth),
-    );
+    scene.add
+      .particles(0, 0, TEX.smoke, {
+        emitZone: zone(new Phaser.Geom.Rectangle(0, floor.bottom - 40, GAME_WIDTH, 60)),
+        speedX: { min: 10, max: 35 },
+        speedY: { min: -12, max: -4 },
+        scale: { start: 1.5, end: 3 },
+        alpha: { start: 0.18, end: 0 },
+        lifespan: 7000,
+        frequency: 350,
+        tint: [0x666677, 0x887788],
+      })
+      .setDepth(depth);
   } else if (fx === 'quake') {
     // Something big walking about the house: a thump, a shake, dust from the
     // floor and bits from the ceiling, every few seconds.
@@ -251,7 +226,7 @@ function startFx(
       if (calm) {
         const x = Math.random() < 0.5 ? floor.left + Math.random() * 100 : floor.right - Math.random() * 100;
         burst(scene, x, floor.bottom - Math.random() * 30, { count: 6, colors: [0xb8a890, 0x8a7a66], texture: TEX.smoke, scale: 0.35, speed: 70, gravity: -30, life: 600, blend: false, depth });
-        timers[slot] = scene.time.delayedCall(4000 + Math.random() * 2500, thump);
+        scene.time.delayedCall(4000 + Math.random() * 2500, thump);
         return;
       }
       sfxStomp();
@@ -261,10 +236,9 @@ function startFx(
         burst(scene, x, floor.bottom - Math.random() * 30, { count: 10, colors: [0xb8a890, 0x8a7a66], texture: TEX.smoke, scale: 0.5, speed: 140, gravity: -30, life: 700, blend: false, depth });
       }
       burst(scene, 200 + Math.random() * (GAME_WIDTH - 400), 10, { count: 8, colors: [0xcbbfa8, 0x9a8a76], texture: TEX.square, scale: 0.6, speed: 60, gravity: 700, life: 900, blend: false, depth });
-      timers[slot] = scene.time.delayedCall(4000 + Math.random() * 2500, thump);
+      scene.time.delayedCall(4000 + Math.random() * 2500, thump);
     };
-    const slot = timers.length;
-    timers.push(scene.time.delayedCall(2500, thump));
+    scene.time.delayedCall(2500, thump);
   }
   // 'none': nothing ambient.
 }

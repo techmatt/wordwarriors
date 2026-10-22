@@ -15,39 +15,35 @@
 
 import Phaser from 'phaser';
 
-import { personOf } from '../../content/battle/roster';
 import { hubArt } from '../../content/house/house';
 import { sfxFanfare, sfxSelect } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { advance, castArt, castId, castScale, episode, waker } from '../episode/Episode';
+import { advance, castArt, castScale, episode, podiumSecond } from '../episode/Episode';
 import { burst, fitImage } from '../fx/juice';
-import { SceneGen } from '../fx/sceneGen';
 import { Controls } from '../input/Controls';
 import { dadPress, openDadButtons, setDadAsking } from '../input/dadButtons';
 import { hookState } from '../hookState';
 
-export const THE_END_TEXT = 'THE END';
+const THE_END_TEXT = 'THE END';
 
-/** The episode's heroes, as the recap's podium has them: her, then her ally or the dad who woke her. */
-export function theEndHeroes(): string[] {
-  const second = episode.ally ?? (personOf(waker()) !== personOf(episode.villain) ? castId(waker()) : null);
+/** The episode's heroes, as the recap's podium has them (`podiumSecond`): her, then her ally or the dad who woke her. */
+function theEndHeroes(): string[] {
+  const second = podiumSecond();
   return [episode.hero, ...(second ? [second] : [])];
 }
 
 /** The background: the hub of this episode (home, or the helper's quest place). */
-export const theEndArt = (): string => hubArt(episode.place);
+const theEndArt = (): string => hubArt(episode.place);
 
 export class TheEndScene extends Phaser.Scene {
   private controls!: Controls;
   private closeDad: (() => void) | null = null;
-  private runs = new SceneGen(this);
 
   constructor() {
     super('TheEnd');
   }
 
   create(): void {
-    this.runs.begin();
     hookState.scene = 'TheEnd';
     hookState.room = null;
     this.closeDad = null;

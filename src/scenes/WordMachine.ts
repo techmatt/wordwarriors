@@ -29,15 +29,14 @@ import Phaser from 'phaser';
 
 import { FAMILY_BY_RIME } from '../../content/phonics/families';
 import { LETTER_BY_CHAR } from '../../content/phonics/letters';
-import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, rimeLine, sillyLine, wordLine } from '../../content/voice/ids';
 import { variant } from '../episode/lineVariants';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
-import { sfxBoing, sfxPoof, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxWrong } from '../audio/sfx';
+import { sfxBoing, sfxPoof, sfxRight, sfxSelect, sfxSummon } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH } from '../config';
-import { backToHub, castFace, episode, narrator, type Slot, type Step } from '../episode/Episode';
-import { bob, burst, fitImage, floatText, popIn, shockwave, squash, wiggle } from '../fx/juice';
+import { episode, narrator, type Slot, type Step } from '../episode/Episode';
+import { bob, burst, fitImage, floatText, popIn, shockwave, squash } from '../fx/juice';
 import type { MachineMode, MachinePlan, MachineRound, MachineTile } from '../rules/wordMachine';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../hookState';
@@ -46,8 +45,8 @@ import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { fontPx } from '../ui/fitText';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
-import { sidePlan, type Spot } from '../world/RoomScene';
-import { ARRIVE_MS, INK, LIT, SideRoom } from '../world/SideRoom';
+import type { Spot } from '../world/RoomScene';
+import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
 type Phase = 'intro' | 'pick' | 'check' | 'done';
 
@@ -70,13 +69,11 @@ const TILE_GAP = 250;
 const TILE_DEPTH = 9_999;
 /** The beat between the onset's sound and the rime's, so they never run together. */
 const PART_GAP_MS = 450;
+/** The machine's own giggle words on a silly word, in turn. */
+const MACHINE_GIGGLES = ['SILLY!', 'HEE HEE!', 'BOING!'];
 
-export class WordMachine extends SideRoom {
-  /** No names in here, and the machine is in keepOut(): the box places itself and names its speaker. */
-  protected override dialogueAware = true;
-  private slot: Slot = 'a';
+export class WordMachine extends HouseSideRoom {
   private plan!: MachinePlan;
-  private roomId = '';
   private index = 0;
   private phase: Phase = 'intro';
   /** The tile in the slot now (being checked), or null. */
@@ -89,8 +86,6 @@ export class WordMachine extends SideRoom {
   private slotBox!: Phaser.GameObjects.Graphics;
   private onsetText!: Phaser.GameObjects.Text;
   private rimeText!: Phaser.GameObjects.Text;
-  /** Each round's misses, for the hooks (`wrongTries` resets on the right one). */
-  private misses = 0;
   /** Every word was built before this run of the room (back from F9 at the very end): straight back to the hub. */
   private finished = false;
   /** A tile she reached while it could not speak (a line playing, the round opening): it speaks when it can. */
@@ -102,7 +97,6 @@ export class WordMachine extends SideRoom {
 
   override init(data: { step?: Step; slot?: Slot }): void {
     super.init(data);
-    this.slot = data.slot ?? 'a';
     const p = sidePlan('WordMachine', this.slot, 'machine');
     this.plan = p.machine;
     this.roomId = p.room;
@@ -116,16 +110,10 @@ export class WordMachine extends SideRoom {
     this.pendingTile = null;
     // Back from the parent page (F9) after a silly word: still a miss (item 039).
     this.wrongTries = episode.house.misses?.[this.missKey] ?? 0;
-    this.misses = this.wrongTries;
   }
 
   private get missKey(): string {
     return `${this.slot}:${this.plan.rounds[this.index]?.word ?? ''}`;
-  }
-
-  /** F9 to the parent page and back reopens this same room (from the first word not yet built). */
-  protected override sceneData(): object {
-    return { step: this.step, slot: this.slot };
   }
 
   /** Sounds, rimes, silly words and the built word: the machine shows them; the box shows only who says them. */
@@ -157,20 +145,13 @@ export class WordMachine extends SideRoom {
     return this.plan.rounds[this.index]!;
   }
 
-  protected background(): string {
-    return `room_side_${this.roomId}`;
-  }
-
   protected build(): void {
     this.floor.setTo(80, 420, GAME_WIDTH - 160, 260);
     applyHouseMood(this, episode.villain, { seed: 0x2026, floor: this.floor, calm: true });
     this.bag = new Bag(this);
     const room = SIDE_ROOM_BY_ID[this.roomId];
     // In from the side, clear of the tiles (a tile in reach would speak at once).
-    this.player.place(170, Math.min(room?.entry.y ?? 600, this.floor.bottom - 10));
-    this.player.hop();
-    burst(this, this.player.x, this.player.y - 40, { count: 16, speed: 220 });
-    sfxWhoosh();
+    this.enter(170, Math.min(room?.entry.y ?? 600, this.floor.bottom - 10));
     this.walking = false;
 
     this.machine = this.art('prop_word_machine', MACHINE_W, MACHINE_H, MACHINE_X, MACHINE_Y).setDepth(MACHINE_Y);
@@ -184,7 +165,7 @@ export class WordMachine extends SideRoom {
     }
     if (this.finished) {
       this.locked = true;
-      this.time.delayedCall(600, () => backToHub(this, this.slot));
+      this.backToHubSoon();
       return;
     }
     void this.startRound();
@@ -244,7 +225,6 @@ export class WordMachine extends SideRoom {
     this.phase = 'intro';
     this.locked = true;
     this.wrongTries = episode.house.misses?.[this.missKey] ?? 0;
-    this.misses = this.wrongTries;
     this.pendingTile = null;
     this.clearSpots();
     this.onsetText.setText('');
@@ -280,8 +260,7 @@ export class WordMachine extends SideRoom {
     if (old) this.tweens.add({ targets: old, scale: 0, duration: 220, ease: 'Back.easeIn', onComplete: () => old.destroy() });
     const { x, y } = this.onMachine(WINDOW.x, WINDOW.y);
     const size = WINDOW.r * 2 * this.machineSize.w * 0.9;
-    const w = WORD_BY_ID[word];
-    const pic = fitImage(this.add.image(x, y, w ? pictureFor(w, castFace) : `pic_${word}`), size, size).setDepth(MACHINE_Y + 1);
+    const pic = fitImage(this.add.image(x, y, this.wordArt(word)), size, size).setDepth(MACHINE_Y + 1);
     popIn(this, pic, pic.scale, old ? 200 : 300);
     bob(this, pic, 4, 1000);
     this.picture = pic;
@@ -373,12 +352,8 @@ export class WordMachine extends SideRoom {
   /** A silly word: the machine giggles, the tile pops back onto the floor, try again. */
   private async silly(spot: Spot, tile: MachineTile): Promise<void> {
     this.wrongTries++;
-    this.misses++;
     (episode.house.misses ??= {})[this.missKey] = this.wrongTries;
-    sfxWrong();
-    wiggle(this, this.panel);
-    this.player.wobble();
-    floatText(this, this.panel.x, this.panel.y - 70, ['SILLY!', 'HEE HEE!', 'BOING!'][(this.misses - 1) % 3]!, '#7ad9ff', 34);
+    this.giggle(this.panel, this.panel.x, this.panel.y - 70, this.wrongTries - 1, MACHINE_GIGGLES);
     // The whole silly word, lit, said: it is not the word she is making.
     this.onsetText.setColor(LIT);
     this.rimeText.setColor(LIT);
@@ -403,16 +378,10 @@ export class WordMachine extends SideRoom {
     const r = this.current;
     const last = this.index === this.plan.rounds.length - 1;
     const firstTry = this.wrongTries === 0;
-    progress.record('words', r.word, firstTry, this.wrongTries);
+    // The slot is done with the last word.
+    this.recordRead(r.word, firstTry, this.wrongTries, { last });
     progress.record('rimes', r.rime, firstTry, this.wrongTries);
     progress.record('onsets', r.onset, firstTry, this.wrongTries);
-    // Her word bag: built right first time, it is done for this round of the bag.
-    if (firstTry) progress.takeFromBag(r.word);
-    else progress.returnToBag(r.word);
-    // The episode learns the result now, so a skip mid-celebration loses nothing.
-    if (!episode.read.includes(r.word)) episode.read.push(r.word);
-    if (!episode.fetched.includes(r.word)) episode.fetched.push(r.word);
-    if (last && !episode.house.done.includes(this.slot)) episode.house.done.push(this.slot);
     for (const s of this.spots) s.enabled = false;
     this.phase = last ? 'done' : 'check';
 
@@ -440,7 +409,7 @@ export class WordMachine extends SideRoom {
     const pic = this.picture;
     this.picture = null;
     pic?.destroy();
-    await Promise.all([this.guard(this.bag.receive(`pic_${r.word}`, win.x, win.y)), this.say(narratorLine(narrator(), variant('right')))]);
+    await Promise.all([this.guard(this.bag.receive(this.wordArt(r.word), win.x, win.y)), this.say(narratorLine(narrator(), variant('right')))]);
     spot.obj.setAlpha(1);
     if (!last) {
       this.index++;
@@ -450,7 +419,7 @@ export class WordMachine extends SideRoom {
     this.locked = true;
     await this.say(narratorLine(narrator(), 'machine_done'));
     await this.wait(400);
-    this.fadeOutThen(() => backToHub(this, this.slot));
+    this.fadeToHub();
   }
 
   /**
@@ -507,7 +476,7 @@ export class WordMachine extends SideRoom {
         tiles: r.tiles.map((t) => ({ ...t })),
         phase: this.phase,
         slotted: this.slotted?.letter ?? null,
-        misses: this.misses,
+        misses: this.wrongTries,
       },
     };
   }

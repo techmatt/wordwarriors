@@ -16,6 +16,9 @@
  *   ?room=charge                        (Charge the Spell behind door a: Episode.ts roomGames)
  *   parked v0.1 games: ?scene=sound | blend | picture | spell | alarm | retreat
  *
+ * Not the whole list (?difficulty=, ?prep=, ?read= and more): docs/episode.md,
+ * *Dev keys and URLs*, has every one.
+ *
  * Later steps get the episode they would have had by then: the gift word
  * learned in the hub, the earlier rooms done, the fetched items in the bag (the plan's
  * own sentence words, so hub badges, bag and battle agree). A ?hero= that is
@@ -51,6 +54,7 @@ import { voiceBank } from '../voice/VoiceBank';
  *   ?form=lifter,warlock         the dads' forms by name (builder lifter cyber blade; chef warrior warlock)
  *   ?primary=dada_jason|none     who wakes her; ?secondary=1|0 whether the other dad comes in too
  *   ?place=forest_gym|home       the quest place, whoever the helper is (to look at a place)
+ *   ?fight=sky_race              the showdown's fight style, whoever the villain is
  */
 function castOptions(q: URLSearchParams): Parameters<typeof setCastOptions>[0] {
   const overrides: CastOverrides = {};
@@ -101,9 +105,11 @@ export class BootScene extends Phaser.Scene {
 
   async create(): Promise<void> {
     makeTextures(this);
+    const q = new URLSearchParams(location.search);
+    const target = q.get('scene');
     // Art loads on demand (item 065): only the title's, and only on a plain start;
     // a `?scene=` jump waits at the gate (src/art/gate.ts) for its own.
-    const plain = !new URLSearchParams(location.search).get('scene');
+    const plain = !target;
     const title = plain ? artBank.missing(artFor('Title', true)) : [];
     let got = 0;
     const tick = () => (this.bar.width = 4 + 596 * (title.length ? got / title.length : 1));
@@ -112,8 +118,6 @@ export class BootScene extends Phaser.Scene {
       voiceBank.load().then(() => voiceBank.loadGroups([group.core])),
     ]);
 
-    const q = new URLSearchParams(location.search);
-    const target = q.get('scene');
     // The difficulty knob for this session (item 067; DIFFICULTY in config otherwise): before any plan is drawn.
     if (q.get('difficulty')) setDifficulty(Number(q.get('difficulty')));
     setCastOptions(castOptions(q));

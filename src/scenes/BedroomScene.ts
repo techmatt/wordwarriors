@@ -4,10 +4,10 @@
  *
  * She is lying on her bed (drawn in front of it) and breathing; any button
  * puffs a 💤.
- * Dada Matt (Dada Jason when Dada Matt is the hero) walks in from the door:
- * "Wake up, wake up!" A green dot shows over the bed and she presses green to
+ * The dad who wakes her (the cast draw's primary, `waker()`, in his form for
+ * the episode) walks in from the door: "Wake up, wake up!" A green dot shows over the bed and she presses green to
  * jump out (or she pops out by herself after WAKE_WAIT_MS, so nothing stalls).
- * "Good news!" The helper pops in. Then the room goes dark, the villain's mood
+ * "Good news!" Some mornings the other dad follows him in. The helper pops in. Then the room goes dark, the villain's mood
  * thumps in over the room (EvilRilla's footprints, a cracked window:
  * `CharacterSpec.house`, so it is data), a far-off taunt, and "Come on, let us
  * go! Find the door!" The door pops back out of the wall (it is not there while
@@ -154,6 +154,13 @@ export class BedroomScene extends RoomScene {
     // episode and speaking in his own voice (`w` is the person).
     const wForm = wakerId();
     const w = personOf(wForm);
+    // Where the helper pops in, beside the waker; and where the grown-ups step
+    // aside to once the news is told: the waker just below the door's sill
+    // (right of the blocks), the helper between the robot and the door, no toy
+    // and no part of the door covered. Named once: the mood's decals keep off them.
+    const helperAt = { x: room.waker.x - 140, y: room.waker.y + 20 };
+    const wakerAside = { x: room.door.x, y: room.door.y + 180 };
+    const helperAside = { x: room.door.x - 140, y: room.door.y + 50 };
     await this.wait(800);
 
     // The waker comes in through the door, which goes again behind them.
@@ -200,8 +207,7 @@ export class BedroomScene extends RoomScene {
     const h = helper();
     let friend: Phaser.GameObjects.Image | null = null;
     if (personOf(h) !== w) {
-      const hx = room.waker.x - 140;
-      const hy = room.waker.y + 20;
+      const { x: hx, y: hy } = helperAt;
       const f = this.castSprite(h, hx, hy).setDepth(hy);
       friend = f;
       this.caption.track(personOf(h), () => (f.active ? { x: f.x, y: f.y } : null));
@@ -221,7 +227,7 @@ export class BedroomScene extends RoomScene {
     // Never under the grown-ups: where they stand now and where they step to.
     const feet = (x: number, y: number) => new Phaser.Geom.Rectangle(x - 70, y - 130, 140, 150);
     const toys = room.objects.map((o) => new Phaser.Geom.Rectangle(o.x - o.w / 2, o.y - o.h, o.w, o.h + 20));
-    const avoid = [...toys, feet(room.waker.x, room.waker.y), feet(room.waker.x - 140, room.waker.y + 20), feet(room.door.x, room.door.y + 180), feet(room.door.x - 140, room.door.y + 50), feet(SECOND_SPOT.x, SECOND_SPOT.y)];
+    const avoid = [...toys, feet(room.waker.x, room.waker.y), feet(helperAt.x, helperAt.y), feet(wakerAside.x, wakerAside.y), feet(helperAside.x, helperAside.y), feet(SECOND_SPOT.x, SECOND_SPOT.y)];
     const mood = applyHouseMood(this, episode.villain, { reveal: true, seed: 11, floor: this.floor, avoid });
     await Promise.all([this.speak(wakeLine(w, wakeCastKey('bad', episode.villain))), this.guard(mood.revealed)]);
 
@@ -248,18 +254,14 @@ export class BedroomScene extends RoomScene {
       this.doorSpot.enabled = true;
       burst(this, this.doorSpot.x, this.doorSpot.y - 100, { count: 30 });
       // A warm glow behind the door straight away (the hub's front door look).
-      const light = this.add.image(0, -100, TEX.glow).setTint(0xfff1a8).setBlendMode(Phaser.BlendModes.ADD).setScale(2.2).setAlpha(0.6);
-      this.doorSpot.obj.addAt(light, 0);
-      this.tweens.add({ targets: light, alpha: 0.95, scale: 2.6, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+      this.doorGlow(this.doorSpot, -100);
     }
     await this.speak(wakeLine(w, wakeKey('door')));
     this.newsDone = true;
     this.round = 'bedroom:door';
     // The grown-ups step over beside the door, off the toys: the way out.
-    // The waker just below the door's sill (right of the blocks), the helper
-    // between the robot and the door: no toy and no part of the door covered.
-    this.stepAside(waker, { x: room.door.x, y: room.door.y + 180 });
-    if (friend) this.stepAside(friend, { x: room.door.x - 140, y: room.door.y + 50 });
+    this.stepAside(waker, wakerAside);
+    if (friend) this.stepAside(friend, helperAside);
     this.time.delayedCall(DOOR_SPARKLE_MS, () => this.sparkleDoor());
   }
 
@@ -349,18 +351,7 @@ export class BedroomScene extends RoomScene {
     if (!spot || this.leaving || spot.obj.getData('sparkling')) return;
     spot.obj.setData('sparkling', true);
     const b = spot.obj.getBounds();
-    const glow = this.add
-      .particles(spot.x, b.centerY, TEX.star, {
-        speed: { min: 20, max: 70 },
-        scale: { start: 0.8, end: 0 },
-        lifespan: 900,
-        frequency: 80,
-        emitZone: { type: 'random', source: new Phaser.Geom.Rectangle(-b.width / 2, -b.height / 2, b.width, b.height) } as never,
-        tint: [0xffd23f, 0xffffff],
-        blendMode: Phaser.BlendModes.ADD,
-      })
-      .setDepth(spot.obj.depth + 1);
-    spot.obj.once(Phaser.GameObjects.Events.DESTROY, () => glow.destroy());
+    this.sparkleSpot(spot, b.centerY, b.width, b.height, spot.obj.depth + 1, 0.8, 80);
   }
 
   override update(time: number, deltaMs: number): void {

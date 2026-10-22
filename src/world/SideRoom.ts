@@ -1,27 +1,31 @@
 /**
  * What every side room's game shares (item 072: was `Minigame`, a name now kept
- * for the pool's entries, `src/rules/minigames.ts`): a round of 3–5 items, a piece meter that
- * visibly builds the thing the battle will use, and the no-fail answer rules.
+ * for the pool's entries, `src/rules/minigames.ts`), the parked v0.1 games
+ * (src/scenes/minigames/) and the four live rooms alike: the miss count
+ * (`wrongTries`), the no-fail `wrong()` (a fizzle-and-giggle, a wiggle, a
+ * funny line, the same item again; no penalty, nothing lost), the sparkle on
+ * the answer after two misses (`sparkleAnswer`), `ARRIVE_MS`, the words' INK
+ * and LIT, and free play closed.
  *
- * - Right: coin chime, burst, a piece flies to the meter, praise, and the
- *   target (word or sound) spoken as confirmation.
- * - Wrong: a fizzle-and-giggle, a wiggle, a funny line, and the same item
- *   again. No penalty, no counting, nothing lost. Progress records whether
- *   the first try was right, for weighting future rounds and the parent page.
- *
- * Narrator lines rotate (right_1..4, wrong_1..4) so the jokes do not repeat
- * back to back.
+ * The piece meter (`makeMeter`, `addPiece`, `completePrize`) and `right()`
+ * belong to the parked games alone. The four live rooms (the sentence game,
+ * the word machine, Charge the Spell, the Stretchy Bridge) extend
+ * `HouseSideRoom` below: their slot, the room's art, the arrival and the way
+ * back to the hub, the read recorded, and Dad's buttons.
  */
 
 import Phaser from 'phaser';
 
+import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { narratorLine } from '../../content/voice/ids';
 import { variant } from '../episode/lineVariants';
-import { sfxRight, sfxSummon, sfxWrong } from '../audio/sfx';
+import { sfxRight, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../config';
-import { episode, narrator } from '../episode/Episode';
-import { burst, fitImage, floatText, popIn, shockwave, wiggle } from '../fx/juice';
+import { backToHub, castFace, episode, narrator, planFor, type Slot, type Step } from '../episode/Episode';
+import { burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
+import { openDadButtons, type DadAnswer } from '../input/dadButtons';
+import type { RoomPlan } from '../rules/sentences';
 import { progress } from '../state/progress';
 import type { ItemKind } from '../state/ProgressStore';
 import type { KeepOut } from '../ui/Caption';
@@ -34,12 +38,19 @@ export const LIT = '#ff3d7a';
 /** A moment to look round a side room she has just walked into, before anyone talks. */
 export const ARRIVE_MS = 800;
 
+/** A side room's plan for `slot`, which must be a `kind` game: `scene` names the room in the error. */
+export function sidePlan<K extends RoomPlan['kind']>(scene: string, slot: Slot, kind: K): Extract<RoomPlan, { kind: K }> {
+  const p = planFor(slot);
+  if (p.kind !== kind) throw new Error(`${scene}: room ${slot} plays ${p.game}`);
+  return p as Extract<RoomPlan, { kind: K }>;
+}
+
 export abstract class SideRoom extends RoomScene {
   /**
    * The parked v0.1 games put names and words up as reading targets the
    * dialogue box does not know about (Word to Picture reads ELLIE beside her
    * face card), so there the box stays along the bottom and prints no name.
-   * A game that tells the box what to keep clear (the sentence room) opts in.
+   * Every live room tells the box what to keep clear and opts in (`HouseSideRoom`).
    */
   protected dialogueAware = false;
 
@@ -171,10 +182,7 @@ export abstract class SideRoom extends RoomScene {
   protected async wrong(obj: Phaser.GameObjects.Container): Promise<void> {
     this.locked = true;
     this.wrongTries++;
-    sfxWrong();
-    wiggle(this, obj);
-    this.player.wobble();
-    floatText(this, obj.x, obj.y - 120, ['OOPS!', 'HEE HEE!', 'SILLY!', 'BOING!'][this.wrongN % 4]!, '#7ad9ff', 34);
+    this.giggle(obj, obj.x, obj.y - 120, this.wrongN);
     // Cartoon dizzy stars circle the thing she picked, then pop away: funny, not wrong.
     for (let i = 0; i < 4; i++) {
       const star = this.add.image(obj.x, obj.y - 90, TEX.star).setTint(0xffd23f).setDepth(DEPTH.sparkles);
@@ -218,8 +226,90 @@ export abstract class SideRoom extends RoomScene {
       .setDepth(spot.obj.depth + 1);
     spot.obj.once(Phaser.GameObjects.Events.DESTROY, () => glow.destroy());
   }
+}
 
-  protected override extraHooks() {
-    return {};
+/**
+ * The four live side rooms (the sentence game, the word machine, Charge the
+ * Spell, the Stretchy Bridge): a room off the hub for one of the episode's
+ * slots, whose answers it records and whose way out leads back to the hub.
+ * The parked v0.1 games extend SideRoom alone.
+ */
+export abstract class HouseSideRoom extends SideRoom {
+  /** Every live room keeps its reading targets in keepOut() and shows no names as targets: the box places itself and names its speaker. */
+  protected override dialogueAware = true;
+  /** The episode's slot this room plays (the attic is `counter`). */
+  protected slot: Slot = 'a';
+  /** The side room it plays in (content/house/house.ts): its art, entry and gap. Each room sets it from its plan in init. */
+  protected roomId = '';
+  private dadCloser: (() => void) | null = null;
+
+  override init(data: { step?: Step; slot?: Slot }): void {
+    super.init(data);
+    this.slot = data.slot ?? 'a';
+  }
+
+  override create(): void {
+    super.create();
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.closeDad());
+  }
+
+  /** F9 to the parent page and back reopens this same room. */
+  protected override sceneData(): object {
+    return { step: this.step, slot: this.slot };
+  }
+
+  protected background(): string {
+    return `room_side_${this.roomId}`;
+  }
+
+  /** She walks in at (x, y): a hop and a puff where she comes in. */
+  protected enter(x: number, y: number): void {
+    this.player.place(x, y);
+    this.player.hop();
+    burst(this, this.player.x, this.player.y - 40, { count: 16, speed: 220 });
+    sfxWhoosh();
+  }
+
+  /** The room was done before this run (back from the parent page at the end): straight back to the hub. */
+  protected backToHubSoon(): void {
+    this.time.delayedCall(600, () => backToHub(this, this.slot));
+  }
+
+  /** A word's picture: a character's word shows that character's face in this episode's form (`castFace`). */
+  protected wordArt(word: string): string {
+    const w = WORD_BY_ID[word];
+    return w ? pictureFor(w, castFace) : `pic_${word}`;
+  }
+
+  /** The visit is over: fade out, back to the hub. */
+  protected fadeToHub(): void {
+    this.fadeOutThen(() => backToHub(this, this.slot));
+  }
+
+  /**
+   * A word read: recorded under `words`, taken from her word bag when right
+   * first time (else back in, so it comes round again soon), and learnt by the
+   * episode now, so a skip mid-celebration loses nothing: read, fetched (a
+   * battle item; not the attic's counter, `fetch: false`) and, on the visit's
+   * `last` word, this slot done. Each room records its own extras.
+   */
+  protected recordRead(word: string, firstTry: boolean, wrongTries: number, { fetch = true, last = true } = {}): void {
+    progress.record('words', word, firstTry, wrongTries);
+    if (firstTry) progress.takeFromBag(word);
+    else progress.returnToBag(word);
+    if (!episode.read.includes(word)) episode.read.push(word);
+    if (fetch && !episode.fetched.includes(word)) episode.fetched.push(word);
+    if (last && !episode.house.done.includes(this.slot)) episode.house.done.push(this.slot);
+  }
+
+  /** Dad's buttons open for this room (any set it had open closes first); they close at shutdown. */
+  protected openDad(onPress: (a: DadAnswer) => void): void {
+    this.closeDad();
+    this.dadCloser = openDadButtons(onPress);
+  }
+
+  protected closeDad(): void {
+    this.dadCloser?.();
+    this.dadCloser = null;
   }
 }

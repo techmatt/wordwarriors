@@ -1,5 +1,6 @@
 /**
- * The base of every walking room: picks, prep minigames, the retreat camp.
+ * The base of every walking room: bedroom, entry hall, hub, every side room's
+ * game (SideRoom), the debug room, and the parked Pick and Retreat scenes.
  *
  * Navigation is by walking (Matt, 2026-10-18): her character is the cursor,
  * Stardew-style. Answers are *spots*: things standing in the room. The nearest
@@ -18,14 +19,15 @@ import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, STICK_HINT_MS } from '../config'
 import { narratorLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
-import { advance, castArt, castScale, episode, narrator, planFor, type Slot, type Step } from '../episode/Episode';
+import { sfxWrong } from '../audio/sfx';
+import { advance, castArt, castScale, episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { formFor } from '../../content/battle/forms';
 import { FreePlay } from '../fx/freePlay';
-import { fitImage } from '../fx/juice';
+import { fitImage, floatText, wiggle } from '../fx/juice';
 import { SceneGen } from '../fx/sceneGen';
+import { TEX } from '../fx/textures';
 import type { DebugOrigin } from '../episode/debug';
 import { variant } from '../episode/lineVariants';
-import type { RoomPlan } from '../rules/sentences';
 import { Controls } from '../input/Controls';
 import { dadLock } from '../input/dadLock';
 import { hookState, type SpotInfo } from '../hookState';
@@ -33,11 +35,13 @@ import { makeButtonDot } from '../ui/ButtonDot';
 import { Bubbles } from '../ui/Bubbles';
 import { Caption, type CaptionMode, type KeepOut } from '../ui/Caption';
 import type { Speaker } from '../ui/Portrait';
-import { STICK_HINT_OFFSET, makeStickHint } from '../ui/stickHint';
+import { makeStickHint, placeStickHint } from '../ui/stickHint';
 import { PLAYER_HEIGHT, Player } from './Player';
 
 /** Nothing happening for this long offers the prompt again. */
 const IDLE_REPROMPT_MS = 15_000;
+/** The giggle's words on a miss, in turn (`giggle`). */
+const GIGGLES = ['OOPS!', 'HEE HEE!', 'SILLY!', 'BOING!'];
 
 export interface Spot {
   id: string;
@@ -50,13 +54,6 @@ export interface Spot {
   /** Called when she walks into reach (e.g. say a name, sound a tile). */
   onNear?: () => void;
   baseScale: number;
-}
-
-/** A side room's plan for `slot`, which must be a `kind` game: `scene` names the room in the error. */
-export function sidePlan<K extends RoomPlan['kind']>(scene: string, slot: Slot, kind: K): Extract<RoomPlan, { kind: K }> {
-  const p = planFor(slot);
-  if (p.kind !== kind) throw new Error(`${scene}: room ${slot} plays ${p.game}`);
-  return p as Extract<RoomPlan, { kind: K }>;
 }
 
 export abstract class RoomScene extends Phaser.Scene {
@@ -186,6 +183,17 @@ export abstract class RoomScene extends Phaser.Scene {
   protected castSprite(id: string, x = 0, y = 0): Phaser.GameObjects.Image {
     const h = PLAYER_HEIGHT * castScale(id);
     return this.art(castArt(id), h * 0.95, h, x, y);
+  }
+
+  /**
+   * The no-fail giggle on a miss: the fizzle, `target` wiggles, she wobbles,
+   * and a funny word floats up at (x, y), the `n`th of `words` in turn.
+   */
+  protected giggle(target: Phaser.GameObjects.Components.Transform & Phaser.GameObjects.GameObject, x: number, y: number, n: number, words: readonly string[] = GIGGLES): void {
+    sfxWrong();
+    wiggle(this, target);
+    this.player.wobble();
+    floatText(this, x, y, words[n % words.length]!, '#7ad9ff', 34);
   }
 
   protected clearSpots(): void {
@@ -412,7 +420,7 @@ export abstract class RoomScene extends Phaser.Scene {
     }
     this.idleMs += deltaMs;
     if (this.walking && !this.hasMoved && this.idleMs > STICK_HINT_MS && !this.stickHint) this.stickHint = makeStickHint(this, this.player.x, this.player.y);
-    if (this.stickHint) this.stickHint.setPosition(this.player.x + STICK_HINT_OFFSET.x, this.player.y + STICK_HINT_OFFSET.y);
+    if (this.stickHint) placeStickHint(this.stickHint, this.player.x, this.player.y);
     if (this.idleMs > IDLE_REPROMPT_MS) {
       this.idleMs = 0;
       this.hint(true);
@@ -446,5 +454,32 @@ export abstract class RoomScene extends Phaser.Scene {
 
   protected extraHooks(): Partial<NonNullable<typeof hookState.room>> {
     return {};
+  }
+
+  /** A door's warm glow behind it, pulsing (the hub's front door, the bedroom and entry hall doors): centred `y` above its feet. */
+  protected doorGlow(spot: Spot, y: number): void {
+    const light = this.add.image(0, y, TEX.glow).setTint(0xfff1a8).setBlendMode(Phaser.BlendModes.ADD).setScale(2.2).setAlpha(0.6);
+    spot.obj.addAt(light, 0);
+    this.tweens.add({ targets: light, alpha: 0.95, scale: 2.6, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+  }
+
+  /**
+   * A gentle sparkle over `spot` for as long as it stands: stars from a `w` x
+   * `h` box centred at (spot.x, `cy`), drawn at `depth`. Any guard against a
+   * second sparkle is the caller's.
+   */
+  protected sparkleSpot(spot: Spot, cy: number, w: number, h: number, depth: number, scale = 0.7, frequency = 90): void {
+    const glow = this.add
+      .particles(spot.x, cy, TEX.star, {
+        speed: { min: 20, max: 70 },
+        scale: { start: scale, end: 0 },
+        lifespan: 900,
+        frequency,
+        emitZone: { type: 'random', source: new Phaser.Geom.Rectangle(-w / 2, -h / 2, w, h) } as never,
+        tint: [0xffd23f, 0xffffff],
+        blendMode: Phaser.BlendModes.ADD,
+      })
+      .setDepth(depth);
+    spot.obj.once(Phaser.GameObjects.Events.DESTROY, () => glow.destroy());
   }
 }

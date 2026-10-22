@@ -28,19 +28,18 @@
 
 import Phaser from 'phaser';
 
-import { BANK_BY_WORD, unitsOf } from '../../content/phonics/bank';
 import { tokenWord } from '../../content/phonics/sentences';
-import { SOUND_BY_UNIT } from '../../content/phonics/letters';
-import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
+import { WORD_BY_ID } from '../../content/phonics/words';
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
-import { letterSoundLine, narratorLine, villainKey, wordLine } from '../../content/voice/ids';
+import { narratorLine, villainKey, wordLine } from '../../content/voice/ids';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
-import { sfxRight, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
+import { sfxRight, sfxStep, sfxSummon } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH } from '../config';
-import { backToHub, castFace, counterArt, episode, namedCounter, narrator, planFor, villainSpec, type Slot, type Step } from '../episode/Episode';
+import { counterArt, episode, namedCounter, narrator, villainSpec, type Slot, type Step } from '../episode/Episode';
 import { isVariant, variant } from '../episode/lineVariants';
 import { bob, burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
-import { asSentence, skipsListening, type SentencePlan } from '../rules/sentences';
+import { skipsListening, type SentencePlan } from '../rules/sentences';
+import { soundOut } from '../rules/soundOut';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
@@ -49,7 +48,7 @@ import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
-import { ARRIVE_MS, INK, LIT, SideRoom } from '../world/SideRoom';
+import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
 type Pass = 'listen' | 'read' | 'find' | 'done';
 
@@ -85,10 +84,7 @@ function roomSeed(id: string): number {
   return h;
 }
 
-export class SentenceRoom extends SideRoom {
-  /** The banner is in keepOut() below, and key words are never names: the box places itself and names its speaker. */
-  protected override dialogueAware = true;
-  private slot: Slot = 'a';
+export class SentenceRoom extends HouseSideRoom {
   private plan!: SentencePlan;
   private pass: Pass = 'listen';
   private skipped = false;
@@ -117,8 +113,8 @@ export class SentenceRoom extends SideRoom {
 
   override init(data: { step?: Step; slot?: Slot }): void {
     super.init(data);
-    this.slot = data.slot ?? 'a';
-    this.plan = asSentence(planFor(this.slot));
+    this.plan = sidePlan('SentenceRoom', this.slot, 'sentence');
+    this.roomId = this.plan.room;
     this.pass = 'listen';
     this.skipped = false;
     this.index = -1;
@@ -133,9 +129,9 @@ export class SentenceRoom extends SideRoom {
     return `${this.slot}:${this.plan.sentence.key}`;
   }
 
-  /** F9 to the parent page and back reopens this same room. */
-  protected override sceneData(): object {
-    return { step: this.step, slot: this.slot };
+  /** The attic's find line takes the narrow box (item 071, M13): its two-row banner holds the top, and the full-width box at the bottom covered her. */
+  protected override narrowLine(u: Utterance): boolean {
+    return this.slot === 'counter' && isVariant(u.id, narratorLine(narrator(), 'room_find'));
   }
 
   /**
@@ -143,11 +139,6 @@ export class SentenceRoom extends SideRoom {
    * each word on her turn, the key word's sounds) show only the reader's face,
    * never a second copy of the words in the box.
    */
-  /** The attic's find line takes the narrow box (item 071, M13): its two-row banner holds the top, and the full-width box at the bottom covered her. */
-  protected override narrowLine(u: Utterance): boolean {
-    return this.slot === 'counter' && isVariant(u.id, narratorLine(narrator(), 'room_find'));
-  }
-
   protected override captionMode(u: Utterance): CaptionMode | undefined {
     return u.id.startsWith('sent_') || u.id.startsWith('word_') || u.id.startsWith('letter_') ? 'portrait' : undefined;
   }
@@ -166,10 +157,6 @@ export class SentenceRoom extends SideRoom {
     return this.plan.sentence.tokens.length - 1;
   }
 
-  protected background(): string {
-    return `room_side_${this.plan.room}`;
-  }
-
   protected build(): void {
     const s = this.plan.sentence;
     this.round = `sentence:${this.slot}:${s.key}`;
@@ -185,7 +172,7 @@ export class SentenceRoom extends SideRoom {
     if (episode.house.done.includes(this.slot)) {
       this.tokenBoxes = [];
       this.locked = true;
-      this.time.delayedCall(600, () => backToHub(this, this.slot));
+      this.backToHubSoon();
       return;
     }
     const room = SIDE_ROOM_BY_ID[this.plan.room]!;
@@ -204,11 +191,7 @@ export class SentenceRoom extends SideRoom {
     const inReach = (x: number) => spots.some((sp) => Math.hypot(sp.x - x, sp.y - y) <= REACH);
     // In reach of the middle one: between the first two instead.
     const x = !inReach(room.entry.x) || spots.length < 2 ? room.entry.x : (spots[0]!.x + spots[1]!.x) / 2;
-    this.player.place(x, y);
-    // Arriving: a hop and a puff where she comes in.
-    this.player.hop();
-    burst(this, this.player.x, this.player.y - 40, { count: 16, speed: 220 });
-    sfxWhoosh();
+    this.enter(x, y);
     // Nothing to walk to until the pedestals wake: no stick hint before then.
     this.walking = false;
     // Decode the sentence's lines now, so the banner lights the moment they start.
@@ -219,9 +202,8 @@ export class SentenceRoom extends SideRoom {
     this.plan.objects.forEach((word, i) => {
       const [x, y0] = room.spots[i]!;
       const y = y0 + drop;
-      const w = WORD_BY_ID[word];
       const pedestal = this.art('prop_pedestal', 170, 100);
-      const pic = this.art(w ? pictureFor(w, castFace) : `pic_${word}`, 150, 150, 0, -100);
+      const pic = this.art(this.wordArt(word), 150, 150, 0, -100);
       const spot = this.addSpot(word, x, y, [pedestal, pic], word === s.key);
       spot.obj.setData('pic', pic);
       // What must stay in view is the picture; the pedestal's foot may sit behind the dialogue box.
@@ -545,21 +527,17 @@ export class SentenceRoom extends SideRoom {
     const key = this.plan.sentence.key;
     this.locked = true;
     const letters = this.tokenTexts[this.keyIndex]!;
-    // A long-vowel word spells its sounds out (KEY is K, then long E on EY).
-    const b = BANK_BY_WORD[key];
-    const units = b?.units ?? unitsOf(key);
+    // The shared rule (src/rules/soundOut.ts): a long-vowel word spells its sounds out (KEY is K, then long E on EY).
+    const steps = soundOut(key);
     // A word that does not sound out (MICE) gets just its first sound.
-    const n = WORD_BY_ID[key]?.decodable === false ? 1 : units.length;
-    let at = 0;
-    for (let i = 0; i < n && live(); i++) {
-      const unit = units[i]!;
-      const sound = b?.sounds[i] ?? unit;
-      const lit = letters.slice(at, at + unit.length);
-      at += unit.length;
+    const n = WORD_BY_ID[key]?.decodable === false ? 1 : steps.length;
+    for (const step of steps.slice(0, n)) {
+      if (!live()) break;
+      const lit = letters.slice(step.index, step.index + step.span);
       for (const other of letters) other.setColor(INK);
       for (const t of lit) t.setColor(LIT);
       this.tweens.add({ targets: lit, scale: 1.35, duration: 140, yoyo: true });
-      if (SOUND_BY_UNIT[sound]) await this.say(letterSoundLine(sound));
+      if (step.id) await this.say(step.id);
       // A beat on each letter, still lit, so the sounds stay apart.
       await this.wait(LETTER_GAP_MS);
     }
@@ -611,18 +589,11 @@ export class SentenceRoom extends SideRoom {
     this.locked = true;
     for (const sp of this.spots) sp.enabled = false;
     const firstTry = this.wrongTries === 0;
-    progress.record('words', s.key, firstTry, this.wrongTries);
-    progress.record('frames', s.frame, firstTry, this.wrongTries);
-    // Her word bag: a word read right first time is done for this round; one
-    // she missed stays in (or goes back in), so it comes round again soon.
-    if (firstTry) progress.takeFromBag(s.key);
-    else progress.returnToBag(s.key);
-    if (!episode.read.includes(s.key)) episode.read.push(s.key);
-    // The episode learns the result now, so a skip mid-celebration loses nothing.
+    // The attic's word is not fetched: it makes the counter.
     const counter = this.slot === 'counter';
+    this.recordRead(s.key, firstTry, this.wrongTries, { fetch: !counter });
+    progress.record('frames', s.frame, firstTry, this.wrongTries);
     if (counter) episode.made.item = true;
-    else if (!episode.fetched.includes(s.key)) episode.fetched.push(s.key);
-    if (!episode.house.done.includes(this.slot)) episode.house.done.push(this.slot);
 
     const picY = spot.y - 175;
     sfxRight();
@@ -662,12 +633,11 @@ export class SentenceRoom extends SideRoom {
       await Promise.all([this.guard(this.bag.receive(art, spot.x, picY)), this.say(narratorLine(narrator(), line))]);
     } else {
       pic?.setVisible(false);
-      const w = WORD_BY_ID[s.key];
-      const art = w ? pictureFor(w, castFace) : `pic_${s.key}`;
+      const art = this.wordArt(s.key);
       await Promise.all([this.guard(this.bag.receive(art, spot.x, picY)), this.say(narratorLine(narrator(), variant('got_item')))]);
     }
     await this.wait(400);
-    this.fadeOutThen(() => backToHub(this, this.slot));
+    this.fadeToHub();
   }
 
   protected override extraHooks(): Partial<RoomInfo> {

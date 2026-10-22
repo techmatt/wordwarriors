@@ -5,10 +5,11 @@
  * gift word (item 037, content/house/scenes.ts: a spell, a dish, a gadget, a
  * toy; its prop pops up with the word written on it, the last line trails off
  * into the word itself, "stand on the glowing spot and press green", the word
- * flies into her), then two side-room doors pop out of the wall onto
- * the sentence games. Each room she finishes hangs its prize's picture on its
- * door; when both are done the front door appears, bursts open, and out she
- * goes to battle.
+ * flies into her), then two side-room doors pop out of the wall, each onto a
+ * minigame from the pool (src/rules/minigames.ts). Each room she finishes
+ * hangs its prize's picture on its door (Charge the Spell's, a rune stone);
+ * when both are done the front door appears, bursts open, and out she goes to
+ * battle.
  *
  * A door she cannot use yet is not there at all (Julia's first play: told to
  * find the two doors, she walked to the shut front door). Every door appears,
@@ -168,7 +169,7 @@ export class HubScene extends RoomScene {
         if (!this.from) this.arrive();
         void this.teach();
       }
-      else if (this.from) void this.backFromRoom(this.from);
+      else if (this.from) void this.backFromRoom();
       else void this.offerDoors();
     } else {
       if (done.includes('counter')) {
@@ -251,7 +252,7 @@ export class HubScene extends RoomScene {
   private badge(spot: Spot, slot: Slot, fresh: boolean): void {
     const plan = planFor(slot);
     const ring = this.add.circle(0, -DOOR_H * 0.55, 40, 0xffd23f, 0.35).setStrokeStyle(5, 0xffd23f, 1);
-    // Charge the Spell (item 053) fetches no word: its door wears a charged rune stone.
+    // Charge the Spell (item 053) fetches its word as a battle item (item 058), but its door wears a charged rune stone for its runes.
     const pic = this.art(plan.kind === 'charge' ? 'prop_rune_stone' : `pic_${plan.key}`, 62, 62, 0, -DOOR_H * 0.55 + 31);
     spot.obj.add([ring, pic]);
     spot.enabled = false;
@@ -460,23 +461,23 @@ export class HubScene extends RoomScene {
     await this.offerDoors();
   }
 
-  /** The side doors open for the rooms not yet done. */
-  private async offerDoors(): Promise<void> {
+  /**
+   * The side doors open for the rooms not yet done. `more`: say "one more"
+   * whatever is left (back from a room, even both still open after a debug
+   * mode exit); else that only once one is done.
+   */
+  private async offerDoors(more = false): Promise<void> {
     const left = this.openSideDoors();
     if (left === 0) return this.openFront(this.line('house_front'));
-    const line = this.nar(variant(left === 2 ? 'house_doors' : 'house_more'));
+    const line = this.nar(variant(more || left !== 2 ? 'house_more' : 'house_doors'));
     await this.speak(line);
     this.setPhase('doors', line);
   }
 
   /** Back from a side room: one more, or out the front. */
-  private async backFromRoom(_from: Slot): Promise<void> {
+  private async backFromRoom(): Promise<void> {
     await this.wait(700);
-    const left = this.openSideDoors();
-    if (left === 0) return this.openFront(this.line('house_front'));
-    const line = this.nar(variant('house_more'));
-    await this.speak(line);
-    this.setPhase('doors', line);
+    await this.offerDoors(true);
   }
 
   /** Enable the side doors not done; returns how many. */
@@ -516,9 +517,7 @@ export class HubScene extends RoomScene {
     const img = front.obj.list[0] as Phaser.GameObjects.Image;
     const s = img.scale;
     this.time.delayedCall(380, () => squash(this, img, s, s, 0.2, 160));
-    const light = this.add.image(0, -FRONT_H / 2, TEX.glow).setTint(0xfff1a8).setBlendMode(Phaser.BlendModes.ADD).setScale(2.2).setAlpha(0.6);
-    front.obj.addAt(light, 0);
-    this.tweens.add({ targets: light, alpha: 0.95, scale: 2.6, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    this.doorGlow(front, -FRONT_H / 2);
     burst(this, front.x, front.y - FRONT_H / 2, { count: 70, speed: 480 });
     sfxWhoosh();
     sfxSelect();
@@ -554,24 +553,14 @@ export class HubScene extends RoomScene {
 
   /** A gentle sparkle over a door, for as long as it stands. */
   private sparkle(spot: Spot): void {
-    const glow = this.add
-      .particles(spot.x, spot.y - DOOR_H / 2, TEX.star, {
-        speed: { min: 20, max: 70 },
-        scale: { start: 0.7, end: 0 },
-        lifespan: 900,
-        frequency: 90,
-        emitZone: { type: 'random', source: new Phaser.Geom.Rectangle(-DOOR_W / 2, -DOOR_H / 2, DOOR_W, DOOR_H) } as never,
-        tint: [0xffd23f, 0xffffff],
-        blendMode: Phaser.BlendModes.ADD,
-      })
-      .setDepth(spot.y + 1);
-    spot.obj.once(Phaser.GameObjects.Events.DESTROY, () => glow.destroy());
+    // The door's own box, not its bounds (they take in its glow, ring and badge).
+    this.sparkleSpot(spot, spot.y - DOOR_H / 2, DOOR_W, DOOR_H, spot.y + 1);
   }
 
   // -- input ------------------------------------------------------------------
 
   protected override hint(): void {
-    if (this.hintIds.length && this.phase !== 'leaving' && this.phase !== 'intro') void this.speak(...this.hintIds);
+    if (this.hasHint()) void this.speak(...this.hintIds);
   }
 
   /** Yellow says something again only where hint() does; elsewhere it casts (free play, item 060: the hub is always open). */
