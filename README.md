@@ -355,7 +355,8 @@ episodes back to back (`SCENARIOS` in `tests/qa/qa.pw.ts`; `-g <name>` for one,
 forms, an idle child who stands still at every choice, more seeds; `QA_SET=new` for the
 third, item 069's: a busy child pressing blue, red and yellow all episode (free play),
 `DIFFICULTY` 2 and 3 with seeded progress, Charge and the bridge answered right, and four
-real draws back to back; `QA_SET=lenses` the fourth, item 080's, below; `QA_SET=all` every batch).
+real draws back to back; `QA_SET=lenses` the fourth, item 080's, below; `QA_SET=recent` the
+fifth, item 089's, below; `QA_SET=all` every batch).
 About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it records.
 In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
 
@@ -382,6 +383,22 @@ In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`.
   never leaves Boot or Wait; JSON and shots in `flags/`), and `qa devkeys skip` (F2 at
   every step, then an episode played through) and `qa devkeys auto` (F4 and green to the
   recap).
+- **Item 089's batch** (`QA_SET=recent`, items 081-088's changes; not yet swept):
+  `debug_rooms` turns minigame debug mode on at six points (the warm-up, the hub in both
+  parts, both side rooms, the attic), plays a game from its pedestal at each (the four in
+  turn) and turns it off: the store, the episode and the room must be as they were
+  (`debug-leak`, `debug-return`), the pedestal checked (`debug-check`) and the DEBUG tag
+  only while on (`debug-tag`); `end_mash` presses her buttons, Dad's 1, key 0 and dad lock
+  at the recap and THE END and goes to the grown-ups page and back: only Dad's 2 may
+  leave (`end-leak`) and nothing may be stored (`end-store`); `variants6` plays six drawn
+  episodes; `voiceless` plays one with the voice manifest missing (captions only).
+  Every scenario also checks the transcript: a narrator line's variants said in turn
+  across the run (`variant-repeat`, a look: a variant picked while the voice bus dropped
+  it shows as a gap) and no taunt over twice an episode (`taunt-over-cap`).
+- **A busy machine slows the sweep's own server:** with many agents or a typecheck
+  running beside it, voice fetches from the checker's Vite server passed their 15 s
+  timeout (`voice: could not decode ... AbortError` in the log) and lines played silent.
+  Sweep on a quiet machine, or read those `voice-silent` issues as the machine's.
 - **Silent lines at test speed are a look, not a bug** (item 069): at speed 5 the game asks
   for lines five times faster than the decode queue serves them (a drawn narrator's ~500
   clips), so lines still `queued` or `decoding` play silent in a sweep, while a whole

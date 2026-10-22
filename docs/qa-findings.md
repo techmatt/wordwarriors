@@ -543,3 +543,44 @@ change.
 | `nar_*_fight_spell_clash_retreat` | That spell is too strong for us! Let's go back and get ready! | That spell is too strong for us! Let's go home and get ready! |
 | `nar_*_fight_cook_off_retreat` | Their dish was too yummy! Let's go and practice! | Their dish was too yummy! Let's go home and practice! |
 | `nar_*_fight_cook_off_finish` | Now let's add the topping, all together! | Let's add the topping, all together now! |
+
+## Hunt 4 (item 089, 2026-10-21)
+
+Cut short at Matt's word (wrap up so items 090 and 091 can run; another hunt follows).
+One round: seven scenarios of the main batch at clock speed 5, reviewed shot by shot, and
+a code read over items 081-088 (debug mode, line variants and taunts, THE END and Dad's 2,
+the test-only shortcuts and captions-only voice, item 088's refactors, scene lifecycle),
+each claim checked by two second readers trying to refute it. The checker's new batch
+(`QA_SET=recent`) is built but has not had a sweep yet: the next hunt runs it first.
+
+What held in the seven scenarios: no stall, no page error, no new giveaway, cover or
+spelling issue beyond those already ruled (W12's door and circle edges, M14's VICTORY!
+title, W2's comic words, the "SUPER WET!" banner after she read WET).
+
+### Fixed
+
+| # | Where | What | Kept fixed by |
+| --- | --- | --- | --- |
+| 84 | Sentence room, Stretchy Bridge, warm-up | Yellow (and the idle re-prompt) said the next variant of the instruction (item 087), not the line she had heard: "Ready to read it? Press green!" became "You read this one! Press green." on yellow. A room now says again the variant it last said (`narrateAgain` in `src/world/RoomScene.ts`). | `tests/hunt4.spec.ts` |
+| 85 | Minigame debug mode | Key 0 (or F2) out of a debug game while its word was being said saved the narrator's next "got it" / "right" variant to the real store: the line cut by the hush resolved its await, and the old room ran one more step after the sandbox had ended. A scene's await chains now stop as soon as a scene change is queued (`markLeaving` in `src/fx/sceneGen.ts`, from `startScene`), not on Phaser's next step. | `tests/hunt4.spec.ts` |
+| 86 | Minigame debug mode | F9 inside the debug room's door fade came back to a debug room with debug off: no DEBUG tag, the hub's background, key 0 dead, and its door skipping the house step. Debug now stays on until the fade ends, and a room ignores F2 and F9 while it fades out to leave (F2 there skipped a second step). | `tests/hunt4.spec.ts` |
+| 87 | Victory recap | F9 inside the recap's fade to THE END brought the whole recap back (fanfare, every word said again, the next `victory_1` variant spent). F9 is ignored on the way out, as the victory scene and the journey map already did. | `tests/hunt4.spec.ts` |
+| 88 | THE END | Back from the grown-ups page (which stops the music) THE END was silent until Dad's 2. It starts the recap's track again. | `tests/hunt4.spec.ts` |
+| 89 | Hub | "Stand in the bubble circle, and press green, to catch it!" kept off the circle (fix 1) by going to the top, over the gift's word card, which hid under the box for the whole line. The circle line takes the narrow box (M13's), which keeps off both. | `tests/cover.spec.ts` "the hub's circle line" |
+| 90 | Captions only (M19), any line with no clip | A line with no clip ran out behind a hidden tab, so its caption was gone when she came back (fix 81 held only lines with audio). Such a line now shows its caption again in full once the tab is back. | code read |
+
+The checker itself: `QA_SET=recent` (README, "The bug-hunt checker"): minigame debug mode
+at six points of an episode, a game played from a pedestal at each and nothing allowed to
+stay (`debug-leak`, `debug-check`, `debug-tag`, `debug-return`); the recap and THE END
+mashed (her buttons, Dad's 1, key 0, dad lock, F9 and back) with only Dad's 2 allowed to
+leave (`end-leak`, `end-store`); six drawn episodes back to back; an episode with no voice
+manifest. Every scenario now also checks line variants said in turn across the run
+(`variant-repeat`, a look) and no taunt over twice an episode (`taunt-over-cap`);
+`tests/unit/qacategories.test.ts`.
+
+### Won't fix
+
+| # | Where | What | Why |
+| --- | --- | --- | --- |
+| W19 | Journey map | Back from the grown-ups page its 2-second hop plays without music (the page stops it). | Two seconds, and the next scene starts its own track. |
+| W20 | Battle | Face cards' name tags ("EVIL TIAMAT" in a bubble) are 8 to 10 px (`tiny-text`). | Grown-up labels she does not read; the bubble's face is what she sees. |
