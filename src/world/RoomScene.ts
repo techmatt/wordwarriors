@@ -24,7 +24,7 @@ import { advance, castArt, castScale, episode, narrator, type Slot, type Step } 
 import { formFor } from '../../content/battle/forms';
 import { FreePlay } from '../fx/freePlay';
 import { fitImage, floatText, wiggle } from '../fx/juice';
-import { SceneGen } from '../fx/sceneGen';
+import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import type { DebugOrigin } from '../episode/debug';
 import { variant } from '../episode/lineVariants';
@@ -405,12 +405,17 @@ export abstract class RoomScene extends Phaser.Scene {
     this.idleHelp(deltaMs);
 
     // Not while the room fades out to leave (item 089): F2 skipped a second step, F9 came back to a room already left.
-    if (this.controls.dev('F2') && !this.fading) advance(this);
+    if (this.controls.dev('F2') && !this.fading && !isLeaving(this)) advance(this);
     if (this.controls.dev('F4') && !this.autoAnswer()) {
       const c = this.correctSpot();
       if (c && !this.locked) this.choose(c);
     }
-    if (this.controls.dev('F9') && !this.fading) this.scene.start('Parent', { back: this.scene.key, data: this.sceneData() });
+    if (this.controls.dev('F9') && !this.fading && !isLeaving(this)) {
+      // Marked leaving as startScene marks it (item 092): a line ending, Dad's 1 / 2 or key 0
+      // before Phaser stops the room ran one more step of it, or a second scene change.
+      markLeaving(this);
+      this.scene.start('Parent', { back: this.scene.key, data: this.sceneData() });
+    }
     this.controls.endFrame();
 
     this.publish(deltaMs);

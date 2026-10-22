@@ -204,3 +204,27 @@ test("the move choice's caption clears as its line ends, and the stick hint's nu
   expect(Math.max(...at) - Math.min(...at), `the nub at ${at.map((x) => x.toFixed(1)).join(', ')}`).toBeGreaterThan(10);
   expectNoErrors(errors);
 });
+
+test('the word machine: green mashed through the next round\'s line does not slot the tile laid under her (item 092)', SLOW, async ({ page }) => {
+  test.setTimeout(90_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&game=word_machine&nojourney=1');
+  const first = await until(page, (s) => s.room?.machine?.phase === 'pick' && !s.room.locked, 60_000, 'the first word');
+  const { rounds, family } = first.room!.machine!;
+  // The second word in the first word's family: the same tile row, one tile where she stands.
+  expect(family).toContain(rounds[1]);
+  await choose(page);
+  for (let i = 0; i < 40; i++) {
+    const s = await state(page);
+    if (s.room?.machine?.index === 1 && s.room.machine.phase === 'pick' && !s.room.locked) break;
+    await press(page, 'green');
+    await page.waitForTimeout(60);
+  }
+  await mashGreen(page);
+  const s = await state(page);
+  expect(s.room!.machine!.index, 'still the second word').toBe(1);
+  expect(s.room!.machine!.phase, 'still picking: no tile slotted without walking').toBe('pick');
+  expect(s.room!.machine!.slotted).toBeNull();
+  expect(s.room!.machine!.misses).toBe(0);
+  expectNoErrors(errors);
+});

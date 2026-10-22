@@ -230,8 +230,10 @@ export class Caption {
    * face card popped in over 6 s. Only for tweens that end; a pulse would race once the clock is back.
    */
   private uiTween(config: Phaser.Types.Tweens.TweenBuilderConfig): Phaser.Tweens.Tween {
-    const t = this.tweens().add(config);
-    t.timeScale = 1 / Math.max(0.02, this.tweens().timeScale);
+    const pace = () => 1 / Math.max(0.02, this.tweens().timeScale);
+    // Every frame: the choice's first line comes up before the battle has slowed its clock.
+    const t = this.tweens().add({ ...config, onUpdate: () => (t.timeScale = pace()) });
+    t.timeScale = pace();
     return t;
   }
 

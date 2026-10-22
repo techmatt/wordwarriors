@@ -52,7 +52,7 @@ import { fightLineKey, type FightSpec } from '../../content/battle/fights';
 import { hex } from '../fx/colour';
 import { burst, fitImage, flash, floatText, fxQuality, hitstop, popIn, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { FreePlay } from '../fx/freePlay';
-import { SceneGen } from '../fx/sceneGen';
+import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { withStems } from '../rules/bank';
@@ -1692,9 +1692,11 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     this.taunt();
     this.hud.draw(this.heroes, this.villain, this.show);
 
-    if (this.controls.dev('F2')) advance(this);
-    else if (this.controls.dev('F9')) {
-      // The grown-ups' page; it comes back to this battle (restarted) when closed.
+    if (this.controls.dev('F2') && !isLeaving(this)) advance(this);
+    else if (this.controls.dev('F9') && !isLeaving(this)) {
+      // The grown-ups' page; it comes back to this battle (restarted) when closed. Marked
+      // leaving (item 092): the director's last wait resolving this frame started the next step too.
+      markLeaving(this);
       this.scene.start('Parent', { back: this.scene.key, data: { step: this.step } });
       return;
     }

@@ -593,8 +593,12 @@ from `lifter_tug` on (eight scenarios, `soak3` twice), one episode at real speed
 on the newer screens (`tests/hunt5.spec.ts`: key 0 mashed, key 0 under dad lock and across
 the grown-ups page, THE END through resizes and a hidden tab), the URL flags added since
 hunt 3, a content sweep (every line in `lines.json` read once per distinct text, all 188
-word pictures on contact sheets, the sentence frames against every thing word) and the
-long runs' memory.
+word pictures on contact sheets, the sentence frames against every thing word), the long
+runs (`soak3` at real speed: three episodes in 20 minutes, heap 33 to 47 MB, frames
+under 65 ms) and two rounds of code reading over eight areas (the move choice, the phonics
+rooms, voice, episode flow; the sentence room and word machine, input and the grown-ups
+page, the UI layer, the battle director), each claim checked by a second reader trying to
+refute it.
 
 At real speed (seed 101, a drawn cast, a bridge and a word machine): 8.2 minutes title to
 recap, no line silent, frames under 170 ms (battle under 35), the longest stretch she
@@ -610,11 +614,13 @@ failed or came late.
 | 91 | Pictures (look-alikes) | LEG's picture is a leg in a striped sock and a shoe, and SOCK is a striped sock, but they were not look-alikes: either could stand beside the other as the wrong picture. | `tests/unit/wordrules.test.ts`; golden draws rewritten (only the SOCK and LEG rooms' pictures moved) |
 | 92 | Sentence rooms | WE NEED A GUM / ELLIE NEEDS A GUM could be drawn: GUM takes no "A", like item 069's CHEESE, MILK, JAM, GRASS and CHIPS (`NO_ARTICLE`). | `tests/unit/wordrules.test.ts` (the "A" frames) |
 | 93 | Battle move choice | The stick hint (M5) swayed on the scene's tween clock, which the frozen fight runs at 0.04x: its nub took 11 s a sway and read as a still grey ball. It sways on the wall clock. | `tests/hunt5.spec.ts` |
-| 94 | Battle move choice | The dialogue box stayed up about 10 s after each line ("USE ...!", the re-prompt, the miss lines) and a new face card took 6 s to pop in: the box's 250 ms linger, 160 ms fade and 260 ms pop ran on the frozen clock. They keep their own pace now. | `tests/hunt5.spec.ts` |
+| 94 | Battle move choice | The dialogue box stayed up about 10 s after each line ("USE ...!", the re-prompt, the miss lines) and a new face card took 6 s to pop in: the box's 250 ms linger, 160 ms fade and 260 ms pop ran on the frozen clock. They keep their own pace now, read every frame (the choice's first line comes up before the battle slows its clock: a second code read caught it). | `tests/hunt5.spec.ts` |
 | 95 | Stretchy Bridge, level 2 | Dad's 2 while "Which picture did you read? Walk to it!" played cut the line for the hint, and it never came back (level 3's replay says its own line after; level 2's said none). It is said again after the hint. | `tests/bridge.spec.ts` (item 092) |
 | 96 | Stretchy Bridge, level 2 | Dad's 2 during the intro or a miss's feedback was dropped, though his cue flashed green, which is when he would want to help. It is kept, and the hint plays once she may slide. | `tests/bridge.spec.ts` (item 092) |
 | 97 | Battle | A taunt or a big move's name cut off by an instruction counted as said: toward a taunt's twice an episode, and the move's name as called out for the battle. Only a bark said through counts. | code read |
 | 98 | Minigame debug mode | Key 0 acted on a room already on its way out (its fade, or a scene change queued for Phaser's next step): two scene changes at once, or the wrong room kept as debug mode's origin. It is ignored then, as F2 and F9 are. | code read |
+| 99 | Word machine | Within a word family the next round lays its tiles where the last ones were, so one sat under her; a green mashed through "Change the first sound..." slotted it the moment the line ended, unwalked and unheard (a first-try read if the shuffle put the right one there). A tile laid under her takes green only once she has stepped off it (the sentence room's fix 61, here). | `tests/hunt5.spec.ts` |
+| 100 | Grown-ups page (F9) | F9 opened the page without marking the room or battle as leaving, so in the frame before Phaser stopped it a line ending, Dad's 1 / 2 or key 0 ran one more step of it; in a battle, F9 as the director's last wait ended started the next step as well. F9 marks it leaving, and F2 and F9 do nothing once it is. | code read |
 
 The checker itself: it serves a production build made as the sweep starts, as the suite
 does (the dev server spent its first minutes scanning the tree, voice and art junctions
