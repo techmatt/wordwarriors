@@ -10,11 +10,13 @@ without a new measurement.
   Upstream Python `edge-tts` 7.3.1 uses a v2 Sec-MS-GEC token (modified SHA-256 + CS64)
   and works. `tools/voice/providers/edge_tts_worker.py` runs under `uvx` with a pinned
   version; the TS build talks to a pool of 4 workers over JSON lines.
-- **Size.** Measured at 1,557 lines (now 1,630, ~19 MB). Untrimmed: 23.7 MB, of which 2,976 s speech. edge-tts pads each
+- **Size.** Measured at 1,557 lines (2026-10-18; `lines.json` had 11,543 on
+  2026-10-21). Untrimmed: 23.7 MB, of which 2,976 s speech. edge-tts pads each
   clip with ~1.5 s of silence; `tools/voice/mp3.ts` trims at the last word + 0.2 s on
   MP3 frame boundaries (MPEG-2 Layer III, 24 kHz, 48 kbps, 144-byte / 24 ms frames).
-  Result ~19 MB. Most of it is narrator lines: 13 narrators × ~110 lines.
-- **Size after v0.2** (measured 2026-10-18, `git ls-tree -r -l HEAD public/voice`): 2,771
+  Result ~19 MB then, most of it narrator lines.
+- **Size after v0.2** (history: the committed `public/voice` is gone since item 008,
+  below; measured 2026-10-18, `git ls-tree -r -l HEAD public/voice`): 2,771
   files, 35.9 MB committed; `lines.json` has 2,769 lines. The v0.2 voice commit
   (`c5330e7`) added 1,085 lines and 16.2 MB, under the per-commit gate. The growth is
   per-character multiplication: sentence prefixes (frame × roster name), wake-up lines
@@ -137,6 +139,22 @@ without a new measurement.
   held bodies keep rocking through the choice's slow clock after the pads are placed (the
   tug's rock is up to 26 px). Now any cover counts, and a contest keeps the signs 40 px off
   them (`CONTEST_SWAY`, moveChoice.ts). The two rulings tests were 10 of 10 green after it.
+- **Lane times, item by item** (moved from the README's *Tests* in item 088; this machine,
+  the GPU). `npm test`: 3.4 minutes before item 079, about 20 s since (the smoke three).
+  `test:browser`: 197 s and one flaky as item 079 found it (then the fast lane, on the dev
+  server), about 50 s since. `test:all` (browser tests after the unit tests): 26 minutes
+  with items 025 and 026, 37 with item 031's fight styles, 45 with item 033's warm-up spec
+  (2026-10-19); item 036 brought it back to 18 the same day (duplicated walks folded
+  together, the GPU, clock speed 5), the one real-time episode 6 of them (3.5 once item 081
+  played half of it at speed); about 20 before item 079, 10.2 in item 079, 7.2 in item 081,
+  5.8 in item 083 (5.6 in the run above), 4.7 in item 085. Item 081 put the whole-episode
+  specs (`episode`, `soak`, `drawn`) in a project listed first; item 085 timed it against
+  plain name order on the same tree (three workers, `--retries=0`): 5.3 and 5.3 minutes
+  against 4.7 and 4.7, so name order is back (`WW_EPISODES_FIRST=1` restores the project).
+  Item 085 ran `test:all` green twice in a row with no retries (4.7 minutes, 103 tests)
+  after two test fixes: Charge's rune-timing test on real voice (instant voice let the
+  harness's polling swallow a line before the test's frame sampler saw it) and battle part
+  2's ability count under `battle=short`.
 - **Art and voice share the dev server's six HTTP/1.1 connections** (item 065). `<img>`
   requests rank below `fetch` in Chromium and starved behind the voice bank's twelve
   clip fetches (a battle sat in the Wait scene); `priority: 'low'` fetches are held
@@ -145,7 +163,7 @@ without a new measurement.
   new background decodes while a scene waits for its art. Aborting a slow fetch
   re-queues it at the back: with a 30 s timeout (6 s real at test speed 5) the
   slow-art test thrashed to a minute; the timeout is 2 minutes.
-- **The cook-off fight test fails on main too** (checked 2026-10-20 11:48pm with main's
+- **The cook-off fight test's decode aborts (fixed in item 069)** (checked 2026-10-20 11:48pm with main's
   `src`): `fights.spec` cook_off collects 128-216 `voice: could not decode … AbortError`
   (VoiceBank's 15 s fetch timeout, 3 s real at speed 5) across its two boots. Not item
   065's; the other fight styles pass. Item 069 put the voice and art fetch timeouts on the
@@ -167,13 +185,14 @@ without a new measurement.
 - Serving a production build (`vite preview`) instead of the dev server saved nothing
   worth its 5 s build: smoke suite 2m12s against 2m24s. GPU (`channel: 'chromium'`,
   `--use-angle=d3d11`) at speed 3 was 1m55s in one run and 3m05s in another; not adopted
-  then. Re-measured 2026-10-19 (item 036): one fight style through both battles 53 s on
+  then (2026-10-18; the build was adopted in item 079, above). Re-measured 2026-10-19 (item 036): one fight style through both battles 53 s on
   the GPU against 78 s in software, the fast lane 76 s against 82 s, so the GPU is now
   the default (`WW_GPU=0` for software). With the GPU's frame rate her walking keeps up
   at a faster clock: three slow tests (Battle part 2, the machine wrong-first, a warm-up
   seed) took 99 s at speed 3, 81 s at 4, 73 s at 5, all green, so the default is now 5.
   Three workers with `--fully-parallel` on the
-  fast lane: 89 s against 82 s on one, so still one worker.
+  fast lane: 89 s against 82 s on one, so still one worker (superseded: 2 workers from
+  item 061, 3 since item 079, above).
 - Battle fighters move by `min(0.05 s, frame delta) × time scale` (`BattleScene.update`),
   while the director's clock (`now`) takes the frame delta unclamped. At software GL's
   11-18 fps and clock speed 3 a frame can be well over 50 ms of game time, so fighters

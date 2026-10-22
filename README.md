@@ -10,8 +10,11 @@ npm ci
 npm run dev
 ```
 
-`npm ci` installs exactly what `package-lock.json` pins (a fresh checkout or worktree);
-`npm install <pkg>` only when adding or bumping a dependency, committing the lock file.
+`npm ci` installs exactly what `package-lock.json` pins (about a minute). A fresh checkout
+or conductor worktree has no `node_modules/` and needs it first: without it `npx tsc` lands
+on npm's "this is not the tsc command you are looking for" stub and `npx tsx` cannot find
+`@playwright/test`. `npm install <pkg>` only when adding or bumping a dependency,
+committing the lock file.
 
 Then open **http://localhost:5174** in Chrome or Edge and press F11 for fullscreen. Plug
 the Xbox 360 pad in first; press green (A) on the title screen. The keyboard works too:
@@ -49,12 +52,8 @@ Chrome started with `--autoplay-policy=no-user-gesture-required`, e.g.
 `"C:\Program Files\Google\Chrome\Application\chrome.exe" --autoplay-policy=no-user-gesture-required --user-data-dir=%TEMP%\ww-chrome http://localhost:5174`.
 
 The first install on a machine also needs Playwright's browser for the tests and
-the art painter: `npx playwright install chromium chromium-headless-shell`.
-
-A fresh conductor worktree has no `node_modules/`: run `npm ci` first (about a minute).
-Without it `npx tsc` lands on npm's "this is not the tsc command you are looking for"
-stub and `npx tsx` cannot find `@playwright/test`. The Playwright browsers are per
-machine, so a worktree does not need them again.
+the art painter: `npx playwright install chromium chromium-headless-shell`. The
+Playwright browsers are per machine, so a worktree does not need them again.
 
 ## Playing an episode
 
@@ -64,19 +63,6 @@ or the Stretchy Bridge) → battle part 1 (too strong, retreat) → the hub agai
 counter word) → battle part 2 → the victory scene → the recap → THE END (Dad's 2 plays
 again). Selection is walking everywhere; yellow (Tab) says it again or hints.
 
-Item 085 (Matt's playtest, 2026-10-21) changed three things a grown-up will notice:
-- **Sentence room:** her first green reads the whole sentence, each word lit as it is said,
-  stops at the key word, lights it in silence and sounds it out one sound at a time (a
-  digraph as one sound; the word itself only after she answers). Her next green takes the
-  picture she stands at. There is no more one green per word.
-- **Stretchy Bridge:** a sound you can stretch (M, S, SH, F, the vowels…) gets one short
-  natural stretch, 0.6 s (`BRIDGE.stretchMs`), and no looped repeat while she stands on it; a
-  stop sound plays once. To be revisited once the phonics clips are final.
-- **THE END:** green on the said recap fades it out to THE END (`src/scenes/TheEndScene.ts`,
-  `?scene=theend`): the episode's hub, her heroes bouncing on it, a fanfare. Item 082's
-  dad-button wait and its `DAD: PRESS 2 TO PLAY AGAIN` cue moved there from the recap.
-  Tests reach it with `toTheEnd(page)` and leave it with `playAgain(page)` (`tests/harness.ts`).
-
 **[`docs/episode.md`](docs/episode.md)** walks through every step, who is in an episode
 (the cast draw, `EPISODE_DEFAULTS`), dad lock and Dad's buttons, Charge the Spell, the
 Stretchy Bridge and held sounds, the dev keys and `?scene=` URLs, and difficulty and
@@ -84,16 +70,16 @@ variety (`DIFFICULTY`, `VARIETY`).
 
 ## Tests
 
-Three commands (item 079, 2026-10-21; times on this machine, the GPU, three workers):
+Three commands (times on this machine, the GPU, three workers; how each got there, item by
+item: `docs/engineering.md`, *Browser and tests*):
 
-- **Fast lane, after every change: `npm test`** (about 20 s; 3.4 minutes before item 079): the unit tests (5-7 s), then the
+- **Fast lane, after every change: `npm test`** (about 20 s): the unit tests (5-7 s), then the
   three browser tests tagged `@smoke` (`SMOKE` in `tests/harness.ts`): the title and the
   grown-ups page, the hub's free play, and a sentence room's banner. It stops itself at 2
   minutes (`--global-timeout`). `npm run test:unit` runs the unit tests alone.
   `npm run typecheck` checks `src`, `tests`, `content` and `tools` (both tsconfigs, about
   2 s; `npm run build` runs it first), which the tests do not.
-- **Before a commit: `npm run test:browser`** (about 50 s, 24 tests; 197 s and one flaky as
-  item 079 found it, then the fast lane) plus the specs that cover
+- **Before a commit: `npm run test:browser`** (about 50 s, 24 tests) plus the specs that cover
   what changed (`npx playwright test <spec>`, both lanes of it). `test:browser` is every
   browser test not tagged `@slow` (the smoke three among them): one of each newer room
   (the bridge at level 3, a Charge round, free play's shots and jump, the word machine
@@ -102,25 +88,18 @@ Three commands (item 079, 2026-10-21; times on this machine, the GPU, three work
   Spell the Spell, the cast and fight-style overrides, never last episode's victory scene,
   and the three text-fit checks. It stops itself at 6 minutes, so a hang fails inside
   Claude Code's 10-minute background cap instead of being killed by it.
-- **Everything: `npm run test:all`** (about 5 minutes, 103 tests: 4.7 of browser tests
-  after the unit tests, item 085; 5.8 in item 083; 7.2 in item 081, 10.2 in item 079, about 20 before
-  it): the unit tests, then every browser test. The slow lane alone is `npm run test:slow` (most of the
+- **Everything: `npm run test:all`** (about 5 minutes, 103 tests, item 085): the unit
+  tests, then every browser test. The slow lane alone is `npm run test:slow` (most of the
   full run's time; not timed alone since item 081): every test tagged `@slow`. Its longest
   (item 083): the soak (72 s, Charge the Spell's whole episodes too), real-time battle 1 (72 s),
   the real-time title, bedroom and warm-up (55 s), the default whole episode at speed (36 s),
   the real-time sentence room (23 s), the shared drawn episode (`tests/drawn.spec.ts`, the
   word machine and the bridge), and each contest fight style's one part at clock speed 10
-  (10 s). Item 083 cut it with test-only shortcuts (*Speed, GPU and workers*): instant voice,
-  teleporting to a spot, short battles, the real-time episode split three ways, one battle
-  part per fight style. Not run by default (Matt, 2026-10-20): only when clearly needed, such
-  as a change touching every scene. Files go to workers in plain name order. Item 081 put
-  the whole-episode specs (`episode`, `soak`, `drawn`) in a project listed first; item 085
-  timed it against name order on the same tree (three workers, `--retries=0`): 5.3 and 5.3
-  minutes against 4.7 and 4.7, so name order is back (`WW_EPISODES_FIRST=1` restores the
-  project). Item 085 also ran it green twice in a row with no retries (4.7 minutes, 103
-  tests) after two test fixes: Charge's rune-timing test on real voice (instant voice let
-  the harness's polling swallow a line before the test's frame sampler saw it) and battle
-  part 2's ability count under `battle=short`.
+  (10 s). The test-only shortcuts that keep it there: *Speed, GPU and workers*. Not run by
+  default (Matt, 2026-10-20): only when clearly needed, such as a change touching every
+  scene. Files go to workers in plain name order (`WW_EPISODES_FIRST=1` puts the
+  whole-episode specs, `episode`, `soak` and `drawn`, in a project listed first; item 085
+  timed it slower).
 
 **The suite serves a build** (item 079, `tests/vite.test.config.ts`): Playwright's server
 runs `vite build` (about 5 s; into `node_modules/.ww-test-dist`, leaving `public/` where it
@@ -143,8 +122,8 @@ build has no cold start of that kind.
 A new browser test that takes more than about 10 s gets `SLOW` (`{ tag: '@slow' }`, from
 `tests/harness.ts`) as its options; `--grep @slow` matches the tag, not the title. Item 061
 found the fast lane at 7.8 minutes because 19 tests over 10 s (most of `cover`, `freeplay`,
-`bridge` and `charge`) had come in untagged; keep one cheap test of a new feature in the fast
-lane and tag the rest. `SMOKE` (`@smoke`, `npm test`) stays at three tests of a few seconds
+`bridge` and `charge`) had come in untagged; keep one cheap test of a new feature in the browser
+lane (`test:browser`) and tag the rest. `SMOKE` (`@smoke`, `npm test`) stays at three tests of a few seconds
 each (item 079): a new feature gets an untagged test in `test:browser`, not a fourth smoke
 test. A test that fails only on some draws is not flaky: the bridge's
 level-1 test failed whenever it drew EGG (it expected `letter_gg_sound`; a doubled letter
@@ -158,9 +137,11 @@ soak and the word machine's episode, the brawl's checks into every whole episode
 
 **Art loads on demand** (item 065): a test that reaches a scene with `?scene=` may pass
 through the Wait scene (`s.scene === 'Wait'`) while that scene's art loads, so wait for
-the scene you want, never for "anything but Boot". `tests/lazyart.spec.ts` (fast lane)
+the scene you want, never for "anything but Boot". `tests/lazyart.spec.ts` (the browser lane, `test:browser`)
 slows every picture by 150 ms and checks the hub waits, then opens with nothing missing.
-A browser test fails on any `art: not ready` warning (`collectErrors`).
+A browser test fails on any `art: not ready` warning (`collectErrors(page, { voice, art })`;
+`art` defaults on). The fight and pairs sweeps (`tests/fights.spec.ts`, `pairs.spec.ts`)
+pass `art: false` on purpose: the art check there is deferred.
 
 To force a key word, seed the progress blob with `bag: { left: [word], round: 1 }` **and**
 `bagKnown: BAG_WORDS` (`tests/soundout.spec.ts`): a blob without `bagKnown` counts as one
@@ -185,7 +166,13 @@ runes in battle (items 053, 059). The forced room is Charge the Spell or the Str
 `playRoom` and the bug-hunt checker play the bridge too (`playBridgeRoom`: slide across
 with the stick, Dad's yes where he is asked, the right picture); `tests/bridge.spec.ts`
 covers its three help levels and a wrong picture (item 054).
-`tests/machine.spec.ts` opens the word machine in the fast lane, and in
+`playRoom(page, opts)` and `playSentenceRoom(page, opts)` take a `RoomPlay`
+(`{ wrongFirst, idleMs, wrongPauseMs }`: a wrong answer first; in a sentence room a stand
+at the key word and a pause after the wrong object). Other shared steps in
+`tests/harness.ts`: `chooseWrong(page)` (a wrong object in the find pass, then the retry
+open), `toParentAndBack(page)` (F9 out, red back), `dadLock(page, on?)` (set or read the
+lock) and `seedSolidFrames(page, extra)` (every fetch frame solid, before `boot`).
+`tests/machine.spec.ts` opens the word machine in the browser lane (`test:browser`), and in
 the slow lane plays whole visits (a silly tile first, F9 out and back) (item 026).
 The newer rooms' whole episodes share walks (item 081): `tests/drawn.spec.ts` plays one
 drawn episode with the word machine behind door a and the bridge behind door b
@@ -208,7 +195,8 @@ Item 085's specs: `tests/digraphs.spec.ts` sounds KING and SHELL out in the entr
 (`?grab=<word>` picks the hall's word) and checks each multi-letter unit is said once, as
 its sound, never its letters; `tests/sentenceread.spec.ts` plays the sentence room's
 single-green read, then a wrong and a right picture; `tests/ending.spec.ts` the recap →
-THE END → only Dad's 2. `voice.history` keeps only the last 200 line ids
+THE END → only Dad's 2. Tests reach THE END with `toTheEnd(page)` and leave it with
+`playAgain(page)` (`tests/harness.ts`). `voice.history` keeps only the last 200 line ids
 (`src/audio/VoiceBus.ts`), so a test slicing it from a saved length saves that length late.
 
 `tests/lenses.spec.ts` (item 080) keeps the third bug hunt's fixes: a held F8, the
@@ -234,7 +222,7 @@ until then one episode with those parts at real time, about 210 s): the title, t
 and the warm-up (about 55 s); a sentence room from `?scene=room&slot=a` (23 s); battle 1 from
 `?scene=battle&part=1` at full length (72 s). Each is its own test, so they run on separate
 workers. The default episode's end-to-end checks (three fetched, the villain's two reformed
-lines, the recap's pictures) play the whole episode at the suite's speeds (about 35 s).
+lines, the recap's pictures) play the whole episode at the suite's speeds (about 36 s).
 `WW_SPEED=1 npm run test:browser` runs the browser lane at real time.
 
 **Test-only shortcuts** (item 083; tests assert on state and line ids, not on audio or walking):
@@ -273,13 +261,12 @@ read and 28.7 s in all against 22 s and 32 s, 2026-10-21). `WW_GPU=0` runs on on
 so it asserts there too.
 
 The browser draws with the GPU (Playwright's full `chromium` channel, `--use-angle=d3d11`;
-`playwright.config.ts`): battles run at ~56 fps instead of headless software GL's 11-18,
+`gpuProjects` in `tests/gpu.ts`, the one project every config runs: Desktop Chrome's
+1280×720 viewport, and always `--autoplay-policy=no-user-gesture-required`, GPU or not): battles run at ~56 fps instead of headless software GL's 11-18,
 and a fight-style test takes 53 s instead of 78 s. `WW_GPU=0` goes back to software GL (for
 a machine without a usable GPU, or to rule the GPU out when something looks wrong). Three
-workers on the GPU, one on software GL (`playwright.config.ts`). Item 061 chose two on the
-dev server (the old fast lane 130 s on one, 87 s on two, 83 s on three, with a Charge round
-stretched past its limit); item 079, serving a build, took the slow lane from 779 s on two
-to 578 s on three, green, and the timed round asserts only on one worker anyway. Tests are
+workers on the GPU, one on software GL (`playwright.config.ts`; the worker timings behind
+it, items 061 and 079: `docs/engineering.md`, *Browser and tests*). Tests are
 spread by file, so two tests of one spec never run at once. A run that times something
 (the Charge round's limits, above) wants `--workers=1`.
 
@@ -319,8 +306,9 @@ once at its start, so a spec edited mid-run needs a rerun.
 
 ### Not tests: boot timings and screenshots
 
-Each has a Playwright config of its own, behind an npm script (item 072): `npm run perf`,
-`npm run shots`, `npm run qa` (below), and `npm run test:pairs` (*Operational facts*).
+`npm run perf`, `npm run shots` and `npm run qa` (below) each have a Playwright config of
+their own, behind an npm script (item 072). (`npm run test:pairs` is not one of them: it is a
+normal suite spec on the main config, off unless asked for; *Operational facts*.)
 Arguments for Playwright go after `--` (`npm run qa -- -g "qa seed101$"`). All three
 configs draw on the GPU (`gpuProjects`, `tests/gpu.ts`; `WW_GPU=0` for software GL), on one
 worker, and serve the game from `tests/qa/vite.qa.config.ts`: no file watching, so edits
@@ -666,9 +654,10 @@ a time.
   `tools/art/generate.ts`): a room drops from 1.8 MB to about 0.3 MB, a sprite from about
   280 KB to 40–80 KB, with no visible change on flat cel-shaded art. The whole art folder
   is about 20 MB this way; unquantized it would have been about 75 MB.
-- **Test runs reload under you:** `art:gen` writes into `public/`, and a vite dev server
-  full-reloads the page on that, so a Playwright run during generation fails with
-  "execution context was destroyed". Test after generating, or against a build.
+- **Art written mid-run:** `art:gen` writes into `public/`. Only `npm run dev` or a
+  `WW_DEV_SERVER=1` run reloads the page on that (a Playwright run then fails with
+  "execution context was destroyed"); the default suite serves a build, but it serves
+  `public/` live, so art written mid-run can still reach a test. Test after generating.
 
 - **What it runs:** `codex exec --json --skip-git-repo-check -s read-only -C scratch/codex -`,
   with the prompt on stdin. Codex never writes into the repo. Its built-in `image_gen` tool
@@ -931,45 +920,33 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   still listening on 5174 (seen 2026-10-18). Find it with `netstat -ano | findstr 5174`
   and stop that PID. A killed `npm run test:all` does the same on 5184 (the next run then
   fails at once with "5184 is already used"; seen 2026-10-18): check the PID's command
-  line is this worktree's vite before stopping it. Background `test:all` needs a timeout
-  over its ~18 minutes; a 10-minute limit kills it partway, so give it 40. It had grown
-  to 26 minutes with items 025 and 026, 37 with item 031's fight styles and 45 with item
-  033's warm-up spec (2026-10-19); item 036 brought it back to 18 (8:49pm the same day):
-  duplicated walks folded together, the GPU, clock speed 5. The one real-time episode was
-  6 of those minutes (3.5 since item 081 played half of it at speed).
+  line is this worktree's vite before stopping it. Background `test:all` takes about 5
+  minutes (*Tests*), so a 10-minute background timeout suffices (its history:
+  `docs/engineering.md`, *Lane times, item by item*).
 - Every active ally × villain pair (item 030): `npm run test:pairs`
-  (about 1.8 minutes a pair at clock speed 3, an hour for all 36; `WW_PAIRS=scar+ npm run
+  (about 1.8 minutes a pair, an hour for all 36, measured 2026-10-19 at the then clock
+  speed 3; it boots at the harness default now, 5; `WW_PAIRS=scar+ npm run
   test:pairs` plays one ally's four). Off unless run by that script or with `WW_PAIRS` set:
   otherwise `pairs.spec.ts` shows one skipped test saying so (item 072). An npm script
   cannot set `WW_PAIRS` under Windows' cmd, so the spec reads npm's `npm_lifecycle_event`
   (`test:pairs`) as `WW_PAIRS=+`. Shots and voiced ids land in `tests/screenshots/pairs_*`.
   Run batches one ally at a time, never beside art generation (item 028 ran both and the
-  machine ran out of memory). An edit to `src/` mid-run reloads the dev server's page and
-  fails the pair in play ("execution context was destroyed"): use a build, below.
-  The 36 took 1.2 hours on 2026-10-19 (item 031, about 2 minutes a pair).
-- Every contest fight style through both battles (item 031): `tests/fights.spec.ts`, slow
-  lane, about 22 s a style at clock speed 10 (33 s at 5 until item 081; the brawl is the default episode's own, played by every default
-  whole episode); shots of each style's big beats (combo, ultimate, counter, finish)
+  machine ran out of memory). The 36 took 1.2 hours on 2026-10-19 (item 031, about 2 minutes a pair).
+- Every contest fight style, one battle part each (item 031; one part per style since
+  item 083): `tests/fights.spec.ts`, slow lane, about 10 s a style at clock speed 10 (item
+  083; the brawl is the default episode's own, played by every default whole episode); shots of each style's big beats (combo, ultimate, counter, finish)
   land in `tests/screenshots/fights_*`. `-g cook_off` plays one style.
 - Long Playwright runs: since item 079 every run serves a build of the code as it was at
   its start (*Tests*, "The suite serves a build"), so edits to `src/` mid-run reach no page
   under test and nothing needs setting up. Test pages add `?hooks=1`, which turns the test
   hooks on in a production build.
-- Until 2026-10-18 the suite reused whatever answered on 5174, so a run in a worktree
-  silently tested the main checkout's dev server. It now always starts its own server on
-  5184 (`TEST_PORT`; `CONDUCTOR_PORT` when set, item 047) and never reuses one; with
-  `WW_BASE_URL` set it starts none.
-- The full-episode test (`npm run test:slow`) takes about 3.5 minutes (6 until item 081,
-  when it was all at real time): in its real-time parts every line is real speech and green
-  is ignored until an instruction finishes. It is the one test with real-time parts;
-  everything else runs at clock speed 5, battles at 10 (3 before item 036 moved the tests to
-  the GPU). Speed 6 in software GL was slower, not faster (her
-  walking overshoots at headless frame rates); measurements in `docs/engineering.md`.
-- Headless Chromium renders the battle at roughly 8–18 fps (software GL). With the GPU
-  (Playwright `channel: 'chromium'` plus `--use-angle=d3d11`) the same battle holds a
-  steady 56 fps on this machine (measured 2026-10-18, 2 heroes vs Evil Smaug); the tests
-  draw that way since item 036 (`WW_GPU=0` for software). Tests never assert on frame
-  rate or displacement.
+- Real time is three `@slow` tests in `tests/episode.spec.ts` since item 083 (the title,
+  bedroom and warm-up; a sentence room; battle 1; *Speed, GPU and workers*): in them every
+  line is real speech and green is ignored until an instruction finishes. The default whole
+  episode beside them plays at the suite's speeds. Everything else runs at clock speed 5,
+  battles at 10 (3 before item 036 moved the tests to the GPU). Speed 6 in software GL was
+  slower, not faster (her walking overshoots at headless frame rates); measurements in
+  `docs/engineering.md`.
 - On the GPU, vite's terminal shows `voice: could not decode ... Failed to fetch` warnings
   and `at async Promise.all` stack lines during a test run: a test ending while its page is
   still decoding voice groups aborts the fetches. Harmless; the tests' own checks only count

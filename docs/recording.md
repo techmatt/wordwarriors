@@ -40,14 +40,15 @@ npm run voice:clip -- letter_s_sound C:\path\to\s.mp3 0.4
 npm run voice:build
 ```
 
-`voice:clip` copies the mp3 into `content/voice/clips/` and writes its entry in
-`content/voice/clips/index.json` with a hash of the line as it stands. The build uses the
+`voice:clip` writes the mp3 as `content/voice/clips/<id>.<hash8>.mp3` (the hash is of the
+audio) and its entry in `content/voice/clips/index.json` with a hash of the line as it
+stands; the clip file it replaces, and any take waiting for that line, are deleted. The build uses the
 clip while that hash matches; if the line's text later changes, it falls back to edge-tts
 and prints STALE. A single phoneme needs no aligner: one word spanning the clip (the
 optional third argument is its length in seconds). Line ids are in
-`content/voice/ids.ts` and `content/voice/lines.json`. A clip placed this way keeps its
-id as its file name, so a re-record of the same id needs `voice:build -- --force`;
-`voice:import` names each file by its content hash, so it doesn't.
+`content/voice/ids.ts` and `content/voice/lines.json`. Both `voice:clip` and
+`voice:import` name each file by its content hash, so a re-record of the same line is
+rebuilt by `voice:build` without `--force`.
 
 ## What to record first
 

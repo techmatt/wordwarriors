@@ -51,12 +51,12 @@ Playwright serves its own (README, *Ports and servers*). The sibling game
 | `src/episode/` | `Episode.ts` the episode's flow (scenes call `advance()`; nothing else decides flow), re-exporting `state.ts` (`episode`, the step list), `draws.ts` (the cast draw and what is remembered), `cast.ts` (who plays whom) and `plans.ts` (the episode's other draws); `debug.ts` minigame debug mode's sandboxed runs, `lineVariants.ts` narrator line variants said in turn and the taunts said. All but `Episode.ts` are Phaser-free. |
 | `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only), `dadLock`, `dadButtons` (keys 1 / 2, Dad's no / yes), `debugKey` (key 0, minigame debug mode). |
 | `src/audio/` | `context`, `sfx` and `music` (synthesised), `VoiceBus` (the one voice arbiter), `holdSound` (letter sounds cut to hold or play once). |
-| `src/voice/VoiceBank.ts` | Reads `public/voice-gen/manifest.json` only, decodes by group. |
+| `src/voice/VoiceBank.ts` | Reads `public/voice-gen/manifest.json` (lines.json only for mute captions when the manifest is missing), decodes by group. |
 | `src/art/` | Art on demand: `ArtBank` (load, the `art: not ready` safety net), `needs` (`artFor`: each scene's art), `gate` (`startScene`: every scene starts through it, behind the Wait scene when its art lags). |
 | `src/state/` | `ProgressStore` (localStorage, versioned, per sound and per word). |
-| `src/rules/` | Phaser-free, unit-tested: the cast, word bank, moves and gift word, warm-up, sentences, word machine, minigame pool, story and victory-scene draws; `difficulty` (the `DIFFICULTY` knob over every help ramp) and `recent` (rotations across episodes). |
-| `src/world/` | `RoomScene` (walk-to-answer rooms), `SideRoom` (the base class every side room's game extends, the parked v0.1 games too: piece meter, no-fail `right()` / `wrong()`), `Player` (her character as the cursor), `houseMood`. |
-| `src/ui/`, `src/fx/` | Caption ribbon, follow-the-speaker bubbles, button dots, bag; particles and juice, `sceneGen` (`SceneGen`: stops a scene run's await chain at shutdown). |
+| `src/rules/` | Phaser-free, unit-tested: the cast, word bank, moves and gift word, warm-up, sentences, word machine, minigame pool, story and victory-scene draws; `difficulty` (the `DIFFICULTY` knob over every help ramp), `recent` (rotations across episodes) and `random` (seeded rand, shuffle, pick). |
+| `src/world/` | `RoomScene` (walk-to-answer rooms), `SideRoom` (the base class every side room's game extends, the parked v0.1 games too: no-fail `wrong()`; the piece meter and `right()` are the parked games' only) and `HouseSideRoom` (the four live rooms' base), `Player` (her character as the cursor), `houseMood`. |
+| `src/ui/`, `src/fx/` | Caption ribbon, follow-the-speaker bubbles, button dots, bag, `cornerTag` (the grown-ups' DOM corner tags: dad lock, Dad's 1 / 2 cue, DEBUG); particles and juice, `sceneGen` (`SceneGen`: stops a scene run's await chain at shutdown). |
 | `src/qa/` | The bug-hunt checker's in-page probe (`?qa=1`; README, *The bug-hunt checker*). |
 | `content/battle/roster.ts` | **Every character**, good and evil: style, abilities, taunts, ultimate, counter-item, the villain's house mood. Every roster character is also a villain. The dads' forms are roster characters with `person`. |
 | `content/battle/fights.ts`, `forms.ts` | Fight styles (race, rope pull, beam clash, cook-off, brawl); outfits (a character's images for a scenario). |
@@ -66,10 +66,10 @@ Playwright serves its own (README, *Ports and servers*). The sibling game
 | `content/art/` | `assets.ts` every art id and size; `prompts.ts` the real-art prompts. |
 | `public/art/` | Generated, committed. Do not hand-edit. |
 | `public/voice-gen/`, `art-originals/` | Untracked junctions to the Drive folder (README, *Storage*): generated voice; full-res art and Matt's private photos. Do not hand-edit. |
-| `tools/voice/`, `tools/art/` | `compose.ts` (lines.json from data), `build.ts` (audio + manifest), `import.ts` + `split.ts` (a recorder zip into clips); `placeholders.ts`, `generate.ts`, `alts.ts`. |
-| `tools/shared.ts`, `tools/phonics/audit.ts` | `isMain`, `exists`, `readLines`, shared by the voice and art tools; `bank:audit` (the word bank's coverage table). |
+| `tools/voice/`, `tools/art/` | `compose.ts` (lines.json from data), `build.ts` (audio + manifest), `import.ts` + `split.ts` (a recorder zip into clips), `clips.ts` (`installClip`), `audio.ts` (codecs); `placeholders.ts`, `generate.ts`, `alts.ts`. |
+| `tools/shared.ts`, `tools/phonics/audit.ts` | `isMain`, `runMain`, `exists`, `readLines`, `ART_DIR`, `pngDataUrl` / `fromDataUrl`, shared by the voice and art tools; `bank:audit` (the word bank's coverage table). |
 | `tools/recorder/` | `phonics-recorder.html`, the page Matt records the letter sounds on (README, *Matt's recordings*); its hosted copy is synced by the planner, never edited here. |
-| `tests/` | Playwright specs + `harness.ts`; `unit/` for node:test; `shots/` UI screenshots and `perf/` boot timings (README, *Not tests*); `qa/` the bug-hunt checker. |
+| `tests/` | Playwright specs + `harness.ts`, `sheets.ts` (`contactSheet`); `unit/` for node:test (`unit/seeds.ts`: `memory`, `seeded`, `seededLcg`); `qa/probe.ts` (`qaLayout`, `qaSince`); `shots/` UI screenshots and `perf/` boot timings (README, *Not tests*); `qa/` the bug-hunt checker. |
 | `docs/` | `systems.md` entry points; `episode.md` an episode step by step (the cast draw, dad lock, the phonics rooms, dev keys and `?scene=` URLs, difficulty and variety); `engineering.md` measured facts; `content.md` how to add each kind of content; `recording.md` Matt's voice side; `art.md` (generated) the art brief; `qa-findings.md` the bug-hunt findings (known issues and Matt's calls). |
 
 ## Commands
@@ -84,7 +84,7 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `npm test` | Fast lane, after every change (~20 s): unit tests, then the three `@smoke` browser tests |
 | `npm run test:unit` | The unit tests alone (~7 s) |
 | `npm run test:browser` | Before a commit (~50 s): every browser test not tagged `@slow`, plus the specs covering what changed (`npx playwright test <spec>`). A new browser test over ~10 s gets `SLOW` (README, *Tests*) |
-| `npm run test:slow` | The slow lane alone (most of the full run: `@slow`, the part-real-time episode, the soak) |
+| `npm run test:slow` | The slow lane alone (most of the full run: `@slow`: the real-time scene tests, the whole episodes, the soak) |
 | `npm run test:all` | The full run (~5 min): unit tests and every browser test. **Not by default:** only for a change touching every scene |
 | `npm run voice:lines` | Regenerate `content/voice/lines.json` from roster + script + phonics |
 | `npm run voice:build` | Synthesise new/changed lines (`--force` all, `--prune` drop unused). Needs `uv` and network |

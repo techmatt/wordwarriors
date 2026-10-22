@@ -168,6 +168,11 @@ The named items (the sentence column is how they read when their word comes up):
 | Evil Seraphina | … SCARED OF THE NUT | Golden Nut | calm |
 | Evil Dada Matt | … SCARED OF THE LOG | Giant Log | block |
 | Evil Dada Jason | … SCARED OF THE VAN | Clean-Up Van | restore |
+| Evil Dada Matt (`dada_matt_lifter`) | … SCARED OF THE BOX | Juice Box | calm |
+| Evil Dada Matt (`dada_matt_cyber`) | … SCARED OF THE PEN | Magic Pen | shutdown |
+| Evil Dada Matt (`dada_matt_blade`) | … SCARED OF THE POT | Shiny Pot | reflect |
+| Evil Dada Jason (`dada_jason_warrior`) | … SCARED OF THE MOP | Slippy Mop | block |
+| Evil Dada Jason (`dada_jason_warlock`) | … SCARED OF THE BUS | Sunshine Bus | reveal |
 | Evil Elsa | … SCARED OF THE CUP | Cocoa Cup | restore |
 | Evil Anna | … SCARED OF THE CAT | Cuddly Cat | calm |
 | Evil Jasmine | … SCARED OF THE BAT | Flappy Bat | reflect |
@@ -183,7 +188,7 @@ The named items (the sentence column is how they read when their word comes up):
 ## An ability (`AbilitySpec`)
 
 `{ id, name, kind, cooldown, color, color2?, power, count?, glyph?, status?, minion?,
-duration?, homing?, word?, words?, shout?, art?, upright?, guard?, callout? }`, written
+duration?, homing?, word?, words?, shout?, art?, upright?, callout? }`, written
 `ab(...)` in the roster, an ultimate `ult(...)` (no cooldown: the director fires it). Kinds: `bolt beam cone lightning
 slam spin dash summon polymorph freeze teleport clones trap rain shield heal grow coil
 eclipse wave grid orbit` (one function each in `src/battle/abilities.ts`). `power` 1–3
@@ -192,7 +197,7 @@ id drawn instead of a glyph for bolts, rain and orbits (Ellie's `prop_silver_swo
 drawn point up), or a built-in fx texture: `fx_bubble` is a see-through bubble tinted
 the ability's `color`/`color2` (Ellie's bubbles); `upright: true` keeps it from
 spinning or tilting. `orbit` rings the caster with `count` of them for `duration` seconds,
-then flings them, and `guard: true` shields her while they spin. Statuses: `freeze pig
+then flings them. Statuses: `freeze pig
 stun burn bubble`; `bubble` (Ellie's Bubble Trap) floats the target up and away in a
 giant bubble for `duration` seconds, then pops it.
 
@@ -467,7 +472,7 @@ a picture she would name otherwise (JET is "a plane", FIN "a shark"). `THINGS` i
 familiar things, `ACTIONS` every action and `both` word, `LIVE` both; coverage and
 level firmness count `LIVE` only. A family needs two familiar pictures.
 
-`content/phonics/words.ts` reads the bank: `CVC_WORDS` (the name stayed) is every
+`content/phonics/words.ts` reads the bank: `PICTURE_WORDS` is every
 familiar thing and `both` word, `MOVE_PICTURES` every other bank word (actions, odd ones); sight words (`decodable: false`) use a character's
 name-free face card as the picture; `SPECIAL_WORDS` are non-bank key words kept for the
 story (MICE); `FLAVOUR_PICTURES` keep POW and ICE's art for the roster.
@@ -488,7 +493,8 @@ One `Frame` in `FRAMES`: `{ id, text, use }`.
 - Today: fetch `we_can_use_the`, `helper_needs_a`, `go_get_the`, `we_need_a`,
   `hero_needs_the`; counter `scared_of_the`, `villain_hates_the` (a fetch frame until
   item 015, so it kept its id and progress), `runs_from_the`, `no_match_for_the`
-  (CAN NOT STAND THE until item 020).
+  (CAN NOT STAND THE until item 020), and since item 040 `cannot_beat_the`,
+  `hides_from_the`, `does_not_like_the`, `says_yuck_to_the`.
 - The composer makes one prefix line per frame (`sent_<id>`), or per frame × roster
   character when it has a name slot (`sent_<id>_<character>`), plus a `word_<token>`
   line for any new token. A name-slot frame costs one line per character.
@@ -656,7 +662,7 @@ file's `heroKey` / `villainKey` / `moveKey`, never by hand.
 
 **Variants** (item 087): a line she hears several times an episode, or every episode,
 has several, said in turn and carried across episodes in the store's `recent`
-(`src/episode/lineVariants.ts`; `variantKeys` in script.ts). Add one as `<key>_<n>` next
+(`src/episode/lineVariants.ts`; `lineVariantKeys` in script.ts). Add one as `<key>_<n>` next
 to the plain key (`room_find`, `room_find_2`...) or the numbered set (`right_1`...);
 nothing else changes, as long as the scene says it through `narrate` (rooms), `say`
 (the battle) or `variant(key)`. A line compared by id in a scene (the hub's narrow box)

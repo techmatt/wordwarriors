@@ -125,8 +125,9 @@ two lines of its own (`reformed` in the roster: the first as the battle ends, th
 in the victory scene); the victory recap pictures every word.
 
 A journey map shows before each battle, the trip home after the retreat, and the
-victory. With the test harness answering instantly a v0.2 episode takes about 4.6
-minutes (measured 2026-10-18); a child's pace has not been timed.
+victory. The default episode at the suite's speeds (instant voice, teleports, rooms at
+clock speed 5, battles at 10) takes about 36 s (item 083, `docs/engineering.md`); a
+child's pace has not been timed.
 
 The four v0.1 prep games (Sound to Letter, Blend Path, Word to Picture, Spell the
 Spell), the alarm and the retreat camp are **parked**: no episode includes them, but
@@ -344,7 +345,11 @@ done, items in the bag):
 Extras: the cast (above: `seed=`, `cast=default`, `hero=`, `ally=`, `villain=`,
 `form=`, `primary=`, `secondary=`, `place=`, `fight=`), `fetched=net,fan` (the
 battle items; that is the default), `nojourney` (skip the map), `difficulty=2` (the
-difficulty knob for this session; below).
+difficulty knob for this session; below), `grab=king` (the warm-up's word, if it is one
+the hall can ask for; item 085), `prep=sound,blend` (the parked prep games: `sound`
+`blend` `picture`). The test-only ones (`voice=instant`, `battle=short`, `hooks=1`,
+`qa=1`) are in the README: *Speed, GPU and workers*, *The bug-hunt checker* and, for
+`hooks=1`, *Operational facts*.
 
 ## Difficulty and variety (item 067)
 
@@ -369,8 +374,9 @@ reach levels 2 and 3).
 This is the list: a new ramp that steps up with success goes through `helpLevel` or
 `rampsAdvance` (`src/rules/difficulty.ts`) and is added here. Tests: the knob in
 `tests/unit/variety.test.ts`; each ramp in its game's unit test (`grab`, `bridge`,
-`charge`, `sentences`, `bank`, each with `withDifficulty` from `tests/unit/difficulty.ts`);
-in the browser `?difficulty=` in `bridge.spec.ts`, `entry.spec.ts` and `smoke.spec.ts`.
+`sentences`, `bank`, each with `withDifficulty` from `tests/unit/difficulty.ts`);
+in the browser `?difficulty=` in `bridge.spec.ts`, `entry.spec.ts`, `sentenceread.spec.ts`,
+`soundout.spec.ts` and `smoke.spec.ts`.
 
 **Words by length, not level.** Every familiar bank word is in play from the first
 episode (no level gate; OCTOPUS and UMBRELLA included). The recognition roles (key
