@@ -48,7 +48,7 @@ export interface RoomInfo {
   /**
    * Charge the Spell (item 053): the visit's runes, the one lit (`index`,
    * `sound`), the phase, whether Dad is being asked now, its
-   * helps and timeouts so far, and what is charged.
+   * timeouts so far, and what is charged.
    */
   charge?: {
     /** The word the runes spell (item 058), and how its read went (Dad's yes, no or a timeout; null before). */
@@ -59,7 +59,6 @@ export interface RoomInfo {
     sound: string;
     phase: 'explain' | 'prompt' | 'sayback' | 'charging' | 'read' | 'reading' | 'done';
     asking: boolean;
-    assists: number;
     timeouts: number;
     charged: string[];
     /** Game time (scene clock) since the visit began, and when the read was first asked (0 before): the round's length (item 059). */

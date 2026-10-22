@@ -8,9 +8,9 @@
  */
 
 import { LETTERS } from '../../content/phonics/letters';
-import { CVC_WORDS, SIGHT_WORDS } from '../../content/phonics/words';
-import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
-import { shuffle, type Rand } from './bank';
+import { PICTURE_WORDS, SIGHT_WORDS } from '../../content/phonics/words';
+import type { ProgressStore } from '../state/ProgressStore';
+import { pickWeighted, shuffle, type Rand } from './random';
 
 export interface SoundItem {
   target: string;
@@ -56,7 +56,7 @@ export function soundRound(store: ProgressStore, n: number, rand: Rand = Math.ra
 
 /** Blend Path: decodable CVC words only, doors show pictures. */
 export function blendRound(store: ProgressStore, n: number, rand: Rand = Math.random, choices = 3): WordItem[] {
-  const words = CVC_WORDS.map((w) => w.word);
+  const words = PICTURE_WORDS.map((w) => w.word);
   const targets = pickWeighted(words, (id) => store.shakiness('words', id), n, rand);
   return targets.map((target) => wordItem(target, words, choices, rand));
 }
@@ -66,7 +66,7 @@ export function blendRound(store: ProgressStore, n: number, rand: Rand = Math.ra
  * sight word per round, so the round stays mostly decoding.
  */
 export function pictureRound(store: ProgressStore, n: number, rand: Rand = Math.random, choices = 3): WordItem[] {
-  const cvc = CVC_WORDS.map((w) => w.word);
+  const cvc = PICTURE_WORDS.map((w) => w.word);
   const sight = SIGHT_WORDS.map((w) => w.word);
   const targets = pickWeighted(cvc, (id) => store.shakiness('words', id), n - 1, rand);
   const s = pickWeighted(sight, (id) => store.shakiness('words', id), 1, rand)[0];

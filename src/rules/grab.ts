@@ -18,7 +18,7 @@
  *
  * The word is spoken once she has it (the confirmation), so it is kept out of the episode's
  * reading key words, the counter and the word machine (015's "said early"
- * rule: Episode.ts passes it into `saidBefore`). The other eight labels are
+ * rule: src/episode/plans.ts `housePlan` passes it into `saidBefore`). The other eight pictures are
  * drawn after the house plan and keep clear of every word she will read, so
  * the hall never shows one of them first. A grab is exposure, not a read:
  * ProgressStore `grabs`, never `words` or the word bag.
@@ -28,8 +28,9 @@ import { THINGS } from '../../content/phonics/bank';
 import { lookalikesOf } from '../../content/phonics/sentences';
 import { letterNameLine } from '../../content/voice/ids';
 import { GRAB } from '../config';
-import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
-import { coverage, distractorsFor, isFirm, met, shuffle, type Rand } from './bank';
+import type { ProgressStore } from '../state/ProgressStore';
+import { coverage, distractorsFor, isFirm, met } from './bank';
+import { pickWeighted, shuffle, type Rand } from './random';
 import { clampLevel, helpLevel, stepLevel, type HelpLevel } from './difficulty';
 import { soundOut } from './soundOut';
 

@@ -22,8 +22,8 @@
 import { FAMILIES } from '../../content/phonics/families';
 import { FRAMES } from '../../content/phonics/sentences';
 import { BRIDGE, CHARGE, VARIETY, WORD_MACHINE } from '../config';
-import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
-import type { Rand } from './bank';
+import type { ProgressStore } from '../state/ProgressStore';
+import { pickWeighted, type Rand } from './random';
 import { bridgeShakiness } from './bridge';
 import { soundShakiness } from './charge';
 
@@ -42,7 +42,7 @@ export interface Minigame {
   frame?: string;
   /** The word machine (item 026): its plan is the visit's words (src/rules/wordMachine.ts). */
   machine?: boolean;
-  /** Charge the Spell (item 053): letter sounds said aloud, judged by Dad; its plan is the visit's runes (src/rules/charge.ts). */
+  /** Charge the Spell (item 053): each rune's sound said back, then the word read aloud, judged by Dad; its plan is the visit's word and runes (src/rules/charge.ts). */
   charge?: boolean;
   /** The Stretchy Bridge (item 054): words blended across stepping stones; its plan is the visit's words (src/rules/bridge.ts). */
   bridge?: boolean;
@@ -55,16 +55,17 @@ export const SENTENCE_GAMES: Minigame[] = FRAMES.map((f): Minigame => ({ id: `se
 export const WORD_MACHINE_GAME: Minigame = { id: 'word_machine', scene: 'WordMachine', weight: WORD_MACHINE.weight, slots: ['fetch'], machine: true };
 
 /**
- * Charge the Spell (item 053): a fetch room only. It reads no word, so it
- * fetches none; its runes become her hero's moves in the next battle. For the
- * beta it is forced into every episode (FORCE_PHONICS_ROOM, Episode.ts `roomGames`).
+ * Charge the Spell (item 053): a fetch room only. One word a visit, read for
+ * Dad; the word is a battle item (fetched, item 058) and its runes fire in the
+ * next battle. For the beta it is one of the phonics games, one of which is
+ * forced per episode (FORCE_PHONICS_ROOM, src/episode/plans.ts `roomGames`).
  */
 export const CHARGE_GAME: Minigame = { id: 'charge', scene: 'ChargeRoom', weight: CHARGE.weight, slots: ['fetch'], charge: true };
 
 /**
  * The Stretchy Bridge (item 054): a fetch room only. Every word she reads
  * across it is a battle item, like the machine's. For the beta it is one of
- * the two forced phonics rooms (FORCE_PHONICS_ROOM).
+ * the phonics games, one of which is forced per episode (FORCE_PHONICS_ROOM).
  */
 export const BRIDGE_GAME: Minigame = { id: 'bridge', scene: 'BridgeRoom', weight: BRIDGE.weight, slots: ['fetch'], bridge: true };
 

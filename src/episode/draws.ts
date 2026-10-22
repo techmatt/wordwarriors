@@ -12,10 +12,11 @@ import { HOME, PLACE_BY_ID } from '../../content/house/house';
 import { questFor } from '../../content/house/quests';
 import { EPISODE_DEFAULTS } from '../config';
 import { DADS, drawCast, type CastOverrides } from '../rules/cast';
-import type { Rand } from '../rules/bank';
+import type { Rand } from '../rules/random';
 import { drawLines, drawStory, variantKeys, type LineVariants } from '../rules/story';
 import { progress } from '../state/progress';
 import { helper } from './cast';
+import { tauntsSaid } from './lineVariants';
 import { episode, freshProgress } from './state';
 
 let castOverrides: CastOverrides = {};
@@ -114,6 +115,8 @@ export function rememberCast(): void {
 export function resetEpisode(): void {
   castEpisode();
   Object.assign(episode, freshProgress());
+  // Last episode's taunt counts go too (item 088): a jump or an F2 past the bedroom, which clears them as well, kept them.
+  tauntsSaid.clear();
   remembered.cast = false;
   remembered.plan = false;
 }

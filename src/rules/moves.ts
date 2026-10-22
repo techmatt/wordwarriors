@@ -30,7 +30,8 @@ import { CASTERS } from '../../content/house/scenes';
 import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import type { ProgressStore } from '../state/ProgressStore';
-import { coverage, distractorsFor, drawFromBag, drawWords, isFirm, met, shuffle, type Rand } from './bank';
+import { coverage, distractorsFor, drawFromBag, drawWords, isFirm, met } from './bank';
+import { pick, shuffle, type Rand } from './random';
 
 /**
  * Who fires a move word: a hero on her team, with ability `ability` of
@@ -99,7 +100,7 @@ export function ownerFor(word: string, input: Pick<MoveInput, 'hero' | 'team' | 
   const magic: MoveOwner = { fighter: input.hero, ability: effectId(word), from: null };
   if (word === input.gift) return giftOwner(word, input.hero, input.helper) ?? magic;
   const own = teamMoveWords(input.team).get(word);
-  return own?.length ? own[Math.floor(rand() * own.length)]! : magic;
+  return own?.length ? pick(own, rand) : magic;
 }
 
 /**

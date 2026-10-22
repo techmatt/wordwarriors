@@ -13,16 +13,17 @@ import Phaser from 'phaser';
 
 import { ROSTER } from '../../content/battle/roster';
 import { charArt } from '../../content/art/assets';
-import { currentStep, episode, planFor, steps, type Slot, type Step } from '../episode/Episode';
+import { currentStep, episode, planFor, sceneForStep, steps, type Slot, type Step } from '../episode/Episode';
 import { voiceBank } from '../voice/VoiceBank';
 import { artBank } from './ArtBank';
 import { artFor } from './needs';
 
-/** The scene a step opens on (a copy of Episode's own table, kept here to avoid a cycle at load). */
+/** Parked steps prefetch nothing: a parked scene's `artFor` is every picture. */
+const PARKED: Step['kind'][] = ['alarm', 'prep', 'retreat', 'spell'];
+
+/** The scene a step opens on, or null for none to prefetch. */
 function sceneOf(step: Step | undefined): string | null {
-  if (!step) return null;
-  const map: Partial<Record<Step['kind'], string>> = { title: 'Title', bedroom: 'Bedroom', grab: 'Entry', house: 'Hub', battle: 'Battle', victory: 'Ending', pick: 'Pick' };
-  return map[step.kind] ?? null;
+  return step && !PARKED.includes(step.kind) ? sceneForStep(step) : null;
 }
 
 /** The art of the scenes that may come after `key`, for the background queue. */

@@ -4,8 +4,6 @@
  * Kept apart from main.ts because main.ts constructs the game as a side
  * effect, and scenes importing the entry point back would be a cycle.
  */
-export { PORT } from './port';
-
 export const GAME_WIDTH = 1280;
 export const GAME_HEIGHT = 720;
 
@@ -25,6 +23,8 @@ export const REACH = 95;
 /** The two text faces: rounded (the dialogue box, the hub's gift word, the hall's letter board) and comic (the side rooms' banner and tiles). */
 export const FONT_ROUNDED = '"Arial Rounded MT Bold", "Arial Black", sans-serif';
 export const FONT_COMIC = '"Comic Sans MS", "Arial Rounded MT Bold", sans-serif';
+/** The heavy display face: titles, banners, the speech bubbles, the grown-ups' corner tags. */
+export const FONT_HEAVY = '"Arial Black", sans-serif';
 
 /**
  * Draw order. Rooms and the arena sort world objects by their own y between
@@ -80,7 +80,6 @@ export const ACTIVE_CAST = {
   villains: ['jormungandr', 'smaug', 'bavmorda', 'tiamat'],
 };
 
-/** The cast draw's odds (Matt, item 025). */
 /**
  * A grown-up (a dad, in any form) stands at least this many times her height,
  * everywhere: rooms, battles, the victory scene and the podium (item 034:
@@ -89,6 +88,7 @@ export const ACTIVE_CAST = {
  */
 export const ADULT_HEIGHT = 1.5;
 
+/** The cast draw's odds (Matt, item 025). */
 export const CAST_ODDS = {
   /** The primary dad (the one who wakes her) is Dada Matt this often, else Dada Jason. */
   mattPrimary: 0.6,
@@ -98,7 +98,7 @@ export const CAST_ODDS = {
 
 /**
  * How far the help ramps may go (item 067, Matt's ruling: no automatic
- * difficulty). Every per-word or per-sound help ramp (the warm-up's clue
+ * difficulty). Every per-word help ramp (the warm-up's clue
  * level, the Stretchy Bridge's) still records her level as
  * she plays, for the grown-ups page, but the game gives at most this level:
  *

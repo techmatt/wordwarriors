@@ -26,8 +26,11 @@
 
 import { PERSONS, formId, formsOf, personOf } from '../../content/battle/roster';
 import { ACTIVE_CAST, CAST_ODDS } from '../config';
-import type { Rand } from './bank';
+import { pick, type Rand } from './random';
 import { fresh } from './recent';
+
+/** Its home is ./random.ts (item 088); re-exported for the scenes that seed the cast. */
+export { seededRand } from './random';
 
 /** The two dads: the only wakers (their wake-up lines are voiced). */
 export const DADS = ['dada_matt', 'dada_jason'] as const;
@@ -66,10 +69,6 @@ export interface CastInput {
   /** Each dad's recent forms (roster ids), newest last (item 067): avoided the same way. */
   recentForms?: Partial<Record<string, string[]>>;
   overrides?: CastOverrides;
-}
-
-function pick<T>(xs: readonly T[], rand: Rand): T {
-  return xs[Math.floor(rand() * xs.length)]!;
 }
 
 const isDad = (person: string) => (DADS as readonly string[]).includes(person);
@@ -166,6 +165,11 @@ export function wakerOf(cast: Pick<Cast, 'hero' | 'ally' | 'primary' | 'villain'
   return DADS.find((d) => d !== hero && d !== personOf(cast.villain)) ?? DADS.find((d) => d !== hero) ?? DADS[0];
 }
 
+/** The helper (and narrator): the ally, or with no ally the dad who woke her (`wakerOf`). */
+export function helperOf(cast: Pick<Cast, 'hero' | 'ally' | 'primary' | 'villain'>): string {
+  return cast.ally ?? wakerOf(cast);
+}
+
 /**
  * Whose face the `phonics` voice (word confirmations, letter sounds, sentence
  * prefixes: Dada Matt's voice) shows: Dada Matt's, only when he is in the
@@ -176,16 +180,4 @@ export function wakerOf(cast: Pick<Cast, 'hero' | 'ally' | 'primary' | 'villain'
 export function phonicsFace(cast: Pick<Cast, 'hero' | 'ally' | 'primary' | 'secondary'>): string | null {
   const here = [cast.primary, cast.secondary, cast.ally, cast.hero].some((c) => c && personOf(c) === 'dada_matt');
   return here ? 'dada_matt' : null;
-}
-
-/** A seeded random source (mulberry32), for `?seed=` and the tests. */
-export function seededRand(seed: number): Rand {
-  let a = seed >>> 0;
-  return () => {
-    a = (a + 0x6d2b79f5) >>> 0;
-    let t = a;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
 }

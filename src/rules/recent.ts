@@ -8,7 +8,7 @@
  * draws through `fresh` or `leastRecent`, so she rarely sees a repeat soon.
  */
 
-import type { Rand } from './bank';
+import type { Rand } from './random';
 
 /**
  * `pool` without its recent picks, newest first, while at least `leave` are

@@ -16,7 +16,8 @@ import { hubStory, storyTexts, type HubStory, type HubStoryIds } from '../../con
 import { wakeCastKey } from '../../content/voice/ids';
 import { wakeVariant } from '../../content/voice/script';
 import { ADULT_HEIGHT } from '../config';
-import { isGrownUp, wakerOf } from '../rules/cast';
+import { helperOf, isGrownUp, wakerOf } from '../rules/cast';
+import { pick } from '../rules/random';
 import { wordsOf } from '../rules/sentences';
 import { BEDROOM_TAUNTS } from '../rules/story';
 import { episode, type EpisodeState } from './state';
@@ -32,7 +33,16 @@ export function waker(state: EpisodeState = episode): string {
  * a dad's form, whose abilities may style the gift word's move.
  */
 export function helper(state: EpisodeState = episode): string {
-  return state.ally ?? waker(state);
+  return helperOf(state);
+}
+
+/**
+ * Who stands beside her at the end (the victory podium and THE END): her ally,
+ * or with no ally the dad who woke her in his form, unless he is the villain's
+ * own person; else nobody.
+ */
+export function podiumSecond(state: EpisodeState = episode): string | null {
+  return state.ally ?? (personOf(waker(state)) !== personOf(state.villain) ? castId(waker(state), state) : null);
 }
 
 /**
@@ -140,5 +150,5 @@ export function villainSpec(): CharacterSpec {
 /** Pick a random villain (any form) that is not the hero's or ally's own person: the pick screen's surprise. */
 export function randomVillain(rand = Math.random): string {
   const pool = ROSTER.filter((c) => personOf(c.id) !== personOf(episode.hero) && (!episode.ally || personOf(c.id) !== personOf(episode.ally)));
-  return pool[Math.floor(rand() * pool.length)]!.id;
+  return pick(pool, rand).id;
 }

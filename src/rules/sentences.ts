@@ -37,7 +37,8 @@ import { gestureWords, planCharge, type ChargePlan } from './charge';
 import { bridgeShown, bridgeWords, planBridge, type BridgePlan } from './bridge';
 import { SENTENCE_SOLID } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
-import { distractorsFor, drawFromBag, shuffle, withStems, type Rand } from './bank';
+import { distractorsFor, drawFromBag, withStems } from './bank';
+import { shuffle, type Rand } from './random';
 import { rampsAdvance } from './difficulty';
 
 interface PlanBase {
@@ -255,7 +256,7 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   // The episode's move pads, and battle 1's (kept out of the counter since item 009):
   // no room's word, the machine's included, is one of them.
   const moves = new Set<string>([...(input.moveWords ?? ACTION_WORDS), ...(input.battle1Moves ?? [])]);
-  const machines: (MachinePlan | null)[] = games.map((g) => (g.machine ? planMachine(store, { avoid: [...avoid, ...moves], taken: [] }, rand) : null));
+  const machines: (MachinePlan | null)[] = games.map((g) => (g.machine ? planMachine(store, { avoid: [...avoid, ...moves] }, rand) : null));
   machines.forEach((m, i) => {
     if (!m || m.rounds.length) return;
     // No family has two words this episode can use (it never happens with
@@ -269,16 +270,18 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   // The Stretchy Bridge (item 054) reads several words too, planned the same
   // way; its far-bank pictures are shown, so no room's key word is one of them.
   // Nor the villain's own named counter word (HAT for Evil Tiamat), so the attic can still draw it.
-  const namedCounter = CHARACTER_BY_ID[fill.villain]?.counter.word;
-  const bridges: (BridgePlan | null)[] = games.map((g) => (g.bridge ? planBridge(store, { avoid: [...avoid, ...moves, ...(namedCounter ? [namedCounter] : [])], taken: machines.flatMap((m) => (m ? machineWords(m) : [])) }, rand) : null));
+  const named = CHARACTER_BY_ID[fill.villain]?.counter.word;
+  const namedList = named ? [named] : [];
+  const machineBuilt = machines.flatMap((m) => (m ? machineWords(m) : []));
+  const bridges: (BridgePlan | null)[] = games.map((g) => (g.bridge ? planBridge(store, { avoid: [...avoid, ...moves, ...namedList], taken: machineBuilt }, rand) : null));
   const pictured = bridges.flatMap((b) => (b ? bridgeShown(b) : []));
   // Charge the Spell (item 058) spells one word, planned the same way: a battle item, kept off every other room.
-  const built = [...machines.flatMap((m) => (m ? machineWords(m) : [])), ...bridges.flatMap((b) => (b ? bridgeWords(b) : []))];
+  const built = [...machineBuilt, ...bridges.flatMap((b) => (b ? bridgeWords(b) : []))];
   const charges: (ChargePlan | null)[] = [];
   // Its runes' gestures speak (item 074: "Tap the egg"), so it is no word whose gestures say a
   // word she reads after it; the keys drawn below keep clear of what its gestures say.
-  const later = [gift, ...moves, ...built, ...pictured, ...(namedCounter ? [namedCounter] : [])];
-  for (const g of games) charges.push(g.charge ? planCharge(store, { avoid: [...avoid, ...moves, ...built, ...pictured, ...(namedCounter ? [namedCounter] : []), ...charges.map((c) => c?.word ?? '')], later }, rand) : null);
+  const later = [gift, ...moves, ...built, ...pictured, ...namedList];
+  for (const g of games) charges.push(g.charge ? planCharge(store, { avoid: [...avoid, ...moves, ...built, ...pictured, ...namedList, ...charges.map((c) => c?.word ?? '')], later }, rand) : null);
   for (const c of charges) if (c) for (const w of gestureWords(c.runes)) avoid.add(w);
   const taken = [...built, ...charges.flatMap((c) => (c ? [c.word] : []))];
 
@@ -313,7 +316,6 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   // The counter: not a word on battle 1's move pads, not a word fetched this
   // episode (battle 1 shouts THE NET!). Every bag word is decodable (item 009;
   // KEY and YOYO too since item 048).
-  const named = CHARACTER_BY_ID[fill.villain]?.counter.word;
   const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w)).filter(fits(2));
   keys.push(drawKey(store, eligible, rand, [...keys, ...taken], (w) => (w === named ? NAMED_COUNTER_BOOST : 1)));
 

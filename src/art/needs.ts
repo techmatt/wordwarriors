@@ -62,7 +62,7 @@ function episodeSet(): string[] {
     ...castSet(),
     ...family('prop_'),
     ...(v?.house?.decals ?? []).map((d) => `decal_${d.id}`),
-    ...words(episode.fetched),
+    ...artIn(episode.fetched),
     ...(episode.made.item ? [counterArt()] : []),
   ];
 }
@@ -71,15 +71,15 @@ function episodeSet(): string[] {
  * The art named anywhere in `value` (a plan, a spec, a list of words): art ids
  * themselves, words with a picture, character ids with their faces, side rooms, counter items.
  */
-export function words(value: unknown, depth = 0, out: string[] = []): string[] {
+function artIn(value: unknown, depth = 0, out: string[] = []): string[] {
   if (depth > 6 || value === null || value === undefined) return out;
   if (typeof value === 'string') {
     for (const id of [value, `pic_${value}`, `item_${value}`, `room_side_${value}`, `minion_${value}`]) if (ART_BY_ID[id]) out.push(id);
     if (CHARACTER_BY_ID[value]) out.push(castFace(value), castArt(value), `face_${value}`);
     return out;
   }
-  if (Array.isArray(value)) for (const v of value) words(v, depth + 1, out);
-  else if (typeof value === 'object') for (const v of Object.values(value)) words(v, depth + 1, out);
+  if (Array.isArray(value)) for (const v of value) artIn(v, depth + 1, out);
+  else if (typeof value === 'object') for (const v of Object.values(value)) artIn(v, depth + 1, out);
   return out;
 }
 
@@ -87,13 +87,13 @@ export function words(value: unknown, depth = 0, out: string[] = []): string[] {
 function houseSet(draw: boolean): string[] {
   const out = [hubArt(episode.place)];
   const plan = draw ? housePlan() : episode.house.plan;
-  if (plan) out.push(...words(plan), counterArt(), `pic_${counterWord()}`);
+  if (plan) out.push(...artIn(plan), counterArt(), `pic_${counterWord()}`);
   const gift = draw ? giftWord() : episode.gift;
   if (gift) {
-    out.push(...words(gift));
+    out.push(...artIn(gift));
     const ab = helperAbilityFor(gift, helper())?.art ?? EFFECT_BY_WORD[gift]?.ability.art;
     if (ab) out.push(ab);
-    out.push(...words(hubScene().story));
+    out.push(...artIn(hubScene().story));
   }
   return out;
 }
@@ -101,23 +101,24 @@ function houseSet(draw: boolean): string[] {
 /** A fighter's abilities and summons: everything in their good and evil specs that names art. */
 function fighterArt(id: string | null): string[] {
   const c = id ? CHARACTER_BY_ID[id] : undefined;
-  return c ? words([c.good, c.evil, c.counter]) : [];
+  return c ? artIn([c.good, c.evil, c.counter]) : [];
 }
 
 function battleSet(draw: boolean): string[] {
   const out: string[] = [];
   if (draw || episode.fight) {
     const fight = fightStyle();
-    out.push(`arena_${fight.arena ?? villainSpec().arena}`, ...words(fight));
+    out.push(`arena_${fight.arena ?? villainSpec().arena}`, ...artIn(fight));
   } else out.push(`arena_${villainSpec().arena}`);
   out.push(...family('minion_'), ...Object.values(MINIONS).map((m) => `minion_${m.id}`));
   for (const id of [episode.hero, episode.ally, episode.villain, helper()]) out.push(...fighterArt(id));
   const moves = draw ? movePlan() : episode.moves;
-  if (moves) out.push(...words(moves));
-  const said = [...(moves ? words(moves) : []), ...episode.fetched, ...(episode.gift ? [episode.gift] : [])];
-  for (const w of [...episode.fetched, ...(episode.gift ? [episode.gift] : []), ...said]) {
+  const moveArt = moves ? artIn(moves) : [];
+  out.push(...moveArt);
+  // Each battle item's and move word's effect art (a move's art id is `pic_<word>`).
+  for (const w of new Set([...moveArt, ...episode.fetched, ...(episode.gift ? [episode.gift] : [])])) {
     const e = EFFECT_BY_WORD[w.replace(/^pic_/, '')];
-    if (e) out.push(...words(e));
+    if (e) out.push(...artIn(e));
   }
   if (episode.house.plan) out.push(counterArt(), `pic_${counterWord()}`);
   return out;
@@ -162,7 +163,7 @@ export function artFor(key: string, draw: boolean): string[] {
     }
     case 'Entry':
       out.push('room_entry');
-      if (draw || episode.grab) out.push(...words(grabPlan()));
+      if (draw || episode.grab) out.push(...artIn(grabPlan()));
       break;
     case 'Hub':
     case 'SentenceRoom':
@@ -182,7 +183,7 @@ export function artFor(key: string, draw: boolean): string[] {
       out.push(...endingSet(draw));
       break;
     case 'Victory':
-      out.push('room_victory', ...words(episode.read), counterArt());
+      out.push('room_victory', ...artIn(episode.read), counterArt());
       break;
     case 'TheEnd':
       // One of this episode's own places (item 085): its hub, home or the quest place; the heroes come with the cast.

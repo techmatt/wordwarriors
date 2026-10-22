@@ -23,7 +23,8 @@ import { RUNES, RUNE_BY_SOUND } from '../../content/phonics/runes';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { CHARGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
-import { drawWords, withStems, type Rand } from './bank';
+import { drawWords, withStems } from './bank';
+import type { Rand } from './random';
 
 /** A visit's plan: the word it spells, its units (as shown), and their runes (sounds) in order. */
 export interface ChargePlan {

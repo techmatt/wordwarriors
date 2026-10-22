@@ -64,7 +64,10 @@ export interface ProgressData {
   /**
    * Rotations remembered across episodes (item 067), per kind, newest last:
    * `villain` (persons, the last VILLAINS_KEPT), `ally`, `form_<dad>`, `rooms`,
-   * `games`, `quest_<helper>`, `scene_<helper>`, `line_<key>`, `ending`;
+   * `games`, `phonics` (the last phonics game played), `quest_<helper>`,
+   * `scene_<helper>`, `line_<key>` (the story's line variants, src/rules/story.ts),
+   * `line:<key>` (a narrator line's variant round, item 087,
+   * src/episode/lineVariants.ts: a colon, not an underscore), `ending`;
    * `words` her latest right-first-time reads (VARIETY.words), which the
    * bank's draws lean away from.
    */
@@ -366,22 +369,4 @@ export class ProgressStore {
     if (this.held) this.held = { data: empty(), session: empty() };
     this.write();
   }
-}
-
-/** Weighted pick of `n` distinct ids, weighted toward shaky ones. `rand` in [0,1). */
-export function pickWeighted(ids: string[], weight: (id: string) => number, n: number, rand: () => number = Math.random): string[] {
-  const pool = [...ids];
-  const out: string[] = [];
-  while (out.length < n && pool.length) {
-    const ws = pool.map((id) => Math.max(0.01, weight(id)));
-    const total = ws.reduce((a, b) => a + b, 0);
-    let r = rand() * total;
-    let i = 0;
-    for (; i < pool.length - 1; i++) {
-      r -= ws[i]!;
-      if (r <= 0) break;
-    }
-    out.push(pool.splice(i, 1)[0]!);
-  }
-  return out;
 }

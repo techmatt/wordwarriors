@@ -21,7 +21,7 @@
  * gift) take any word.
  *
  * Distractors (a room's other pictures, the other move pads, the hall's other
- * labels) are chosen for reading too: while a word is new they differ from it
+ * pictures) are chosen for reading too: while a word is new they differ from it
  * in the first sound, so the first letter is enough; once it is firm (and
  * only from DIFFICULTY 2, item 067) one of them shares its first sound or its
  * rime, so she has to read past the first letter.
@@ -29,21 +29,9 @@
 
 import { BANK, BANK_BY_WORD, LEVELS, LIVE, VOWEL_LIST, type BankWord } from '../../content/phonics/bank';
 import { BANK_DRAW, VARIETY } from '../config';
-import { pickWeighted, type BagKind, type ProgressStore } from '../state/ProgressStore';
+import type { BagKind, ProgressStore } from '../state/ProgressStore';
 import { rampsAdvance } from './difficulty';
-
-/** A random source, 0..1 like Math.random: seeded in tests and with `?seed=`. */
-export type Rand = () => number;
-
-/** A shuffled copy of `xs` (Fisher-Yates from the end, one `rand()` per step). */
-export function shuffle<T>(xs: readonly T[], rand: Rand): T[] {
-  const a = [...xs];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [a[i], a[j]] = [a[j]!, a[i]!];
-  }
-  return a;
-}
+import { pickWeighted, type Rand } from './random';
 
 /** How many reads she has had of each vowel, first sound and level: every recorded read of a bank word counts. */
 export interface Met {
@@ -63,8 +51,8 @@ export function met(store: ProgressStore, words: BankWord[] = LIVE): Met {
   return out;
 }
 
-/** One dimension's coverage factor: 1 for a tag never met, about 0.5 at the average, less above it (Charge the Spell's sounds use it too). */
-export function factor(counts: Record<string, number>, tag: string, tags: string[]): number {
+/** One dimension's coverage factor: 1 for a tag never met, about 0.5 at the average, less above it. */
+function factor(counts: Record<string, number>, tag: string, tags: string[]): number {
   const mean = tags.reduce((n, t) => n + (counts[t] ?? 0), 0) / Math.max(1, tags.length);
   return 1 / (1 + (counts[tag] ?? 0) / (1 + mean));
 }

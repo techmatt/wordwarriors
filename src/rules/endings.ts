@@ -16,8 +16,8 @@
 import { CHARACTER_BY_ID, personOf } from '../../content/battle/roster';
 import { ENDINGS, ENDING_BY_ID, type EndingSpec } from '../../content/house/endings';
 import { endingLine, reformedLine } from '../../content/voice/ids';
-import { wakerOf, type Cast } from './cast';
-import type { Rand } from './bank';
+import { helperOf, type Cast } from './cast';
+import { pickWeighted, type Rand } from './random';
 import { fresh } from './recent';
 
 /** How much likelier a scene that fits the cast is. */
@@ -33,12 +33,12 @@ export interface EndingBeat {
 
 /**
  * Who opens the scene: the narrator (the ally, else the dad who woke her,
- * src/episode/Episode.ts `helper`), or the hero when that is nobody in the
+ * src/rules/cast.ts `helperOf`), or the hero when that is nobody in the
  * scene (only URL overrides get there: a dad as hero, no ally, the other dad
  * the villain, so the waker fallback is the villain's own person).
  */
 function host(cast: EndingCast): string {
-  const h = cast.ally ?? wakerOf(cast);
+  const h = helperOf(cast);
   return personOf(h) === personOf(cast.villain) ? cast.hero : h;
 }
 
@@ -85,13 +85,7 @@ export function standXs(e: EndingSpec, n: number): number[] {
  */
 export function pickEnding(cast: EndingCast, recent: readonly string[], rand: Rand = Math.random): string {
   const from = fresh(ENDINGS, ENDINGS.filter((e) => recent.includes(e.id)).sort((a, b) => recent.indexOf(a.id) - recent.indexOf(b.id)));
-  const weights = from.map((e) => (endingFits(e, cast) ? FIT_WEIGHT : 1));
-  let r = rand() * weights.reduce((a, b) => a + b, 0);
-  for (const [i, e] of from.entries()) {
-    r -= weights[i]!;
-    if (r < 0) return e.id;
-  }
-  return from[from.length - 1]!.id;
+  return pickWeighted(from.map((e) => e.id), (id) => (endingFits(ENDING_BY_ID[id]!, cast) ? FIT_WEIGHT : 1), 1, rand)[0]!;
 }
 
 /** The scene's lines in order: open, the villain's own, cheer, close (or the fitting dad's). */

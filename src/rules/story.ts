@@ -12,7 +12,7 @@ import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import { questFor } from '../../content/house/quests';
 import { WAKE_VARIANTS } from '../../content/voice/script';
 import { scenesFor } from '../../content/house/scenes';
-import type { Rand } from './bank';
+import type { Rand } from './random';
 import { fresh } from './recent';
 
 /** Variant numbers, from 1. */

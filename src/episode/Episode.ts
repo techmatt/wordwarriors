@@ -27,6 +27,9 @@
  * gift, moves, counter, fight style, ending, the journey's stops) in
  * `./plans.ts`; all are re-exported here, so importers only ever name this
  * module. None of them imports this one, and none needs Phaser (item 076).
+ * Two siblings are not re-exported and are imported directly: `./debug.ts`
+ * (minigame debug mode's sandboxed runs, item 086) and `./lineVariants.ts`
+ * (narrator line variants in turn and `tauntsSaid`, item 087).
  */
 
 import type Phaser from 'phaser';
@@ -41,10 +44,10 @@ import { narrator } from './cast';
 import { debugMode, endRun, stopDebug } from './debug';
 import { rememberCast, resetEpisode } from './draws';
 import { planFor, rememberPlan } from './plans';
-import { countEpisode, currentStep, episode, steps, type EpisodeState, type PrepGame, type Slot, type Step } from './state';
+import { countEpisode, currentStep, episode, sceneForStep, steps, type EpisodeState, type Slot, type Step } from './state';
 
-export { currentStep, episode, steps, type EpisodeState, type PrepGame, type Slot, type Step } from './state';
-export { castEpisode, castRand, fightOverride, remembered, resetEpisode, setCastOptions } from './draws';
+export { currentStep, episode, isStepKind, sceneForStep, steps, type EpisodeState, type PrepGame, type Slot, type Step } from './state';
+export { castEpisode, remembered, resetEpisode, setCastOptions } from './draws';
 
 export {
   away,
@@ -56,35 +59,15 @@ export {
   helper,
   hubScene,
   narrator,
+  podiumSecond,
   questSetupLine,
   randomVillain,
   reformedOf,
-  storyWords,
   villainSpec,
   wakeKey,
   waker,
 } from './cast';
 export { counterArt, counterWord, drawEnding, fightStyle, giftWord, grabPlan, housePlan, journeyStops, movePlan, namedCounter, planFor } from './plans';
-
-const SCENE_FOR: Record<Step['kind'], string> = {
-  title: 'Title',
-  pick: 'Pick',
-  bedroom: 'Bedroom',
-  grab: 'Entry',
-  house: 'Hub',
-  battle: 'Battle',
-  // The victory step opens on its scene (item 027), which goes on to the recap.
-  victory: 'Ending',
-  alarm: 'Alarm',
-  // No scene has this key: a prep step opens its game's scene (`prepScene`).
-  prep: 'Prep',
-  retreat: 'Retreat',
-  spell: 'Spelling',
-};
-
-function prepScene(game: PrepGame): string {
-  return game === 'sound' ? 'SoundToLetter' : game === 'blend' ? 'BlendPath' : 'WordToPicture';
-}
 
 /** Steps that get the journey map first. */
 const JOURNEY_BEFORE: Step['kind'][] = ['battle', 'victory'];
@@ -103,16 +86,11 @@ export function episodeGroups(): string[] {
   return [...new Set(g)];
 }
 
-/** True for a step kind that has a scene (a `?scene=` value jumpTo can take). */
-export function isStepKind(kind: string): kind is Step['kind'] {
-  return Object.prototype.hasOwnProperty.call(SCENE_FOR, kind);
-}
-
 /** Start the scene for the current step. */
 export function startStep(scene: Phaser.Scene): void {
   const step = currentStep();
   voiceBus.hush();
-  const key = step.kind === 'prep' ? prepScene(step.game) : SCENE_FOR[step.kind];
+  const key = sceneForStep(step);
   // Not for the title: it draws a fresh cast as it opens, and its one line is
   // core (item 039: it decoded the old cast's narrator, ~500 clips, for nothing).
   if (step.kind !== 'title') {
@@ -198,7 +176,7 @@ export function jumpTo(scene: Phaser.Scene, kind: Step['kind'], extra: Partial<E
           : ({ kind } as Step);
     voiceBus.hush();
     void voiceBank.loadGroups(episodeGroups());
-    startScene(scene, parked.kind === 'prep' ? prepScene(parked.game) : SCENE_FOR[parked.kind], { step: parked });
+    startScene(scene, sceneForStep(parked), { step: parked });
     return;
   }
   episode.stepIndex = i;

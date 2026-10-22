@@ -19,12 +19,12 @@ import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
 import { pickEnding } from '../rules/endings';
 import { ENDING_BY_ID } from '../../content/house/endings';
 import { withStems } from '../rules/bank';
-import { episodePlans, wordsOf, type RoomPlan } from '../rules/sentences';
+import { episodePlans, wordsOf, type EpisodeInput, type RoomPlan } from '../rules/sentences';
 import { BRIDGE_GAME, CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SENTENCE_GAMES, drawGames, type Minigame } from '../rules/minigames';
 import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
 import { GRAB_WORDS, hallObjects, pickGrab } from '../rules/grab';
 import { progress } from '../state/progress';
-import { pickWeighted } from '../state/ProgressStore';
+import { pickWeighted } from '../rules/random';
 import { away, bedroomTaunt, helper, hubScene, storyWords, villainSpec } from './cast';
 import { castRand, fightOverride, remembered } from './draws';
 import { episode, steps, type Slot, type Step } from './state';
@@ -69,7 +69,6 @@ export function housePlan(): RoomPlan[] {
     // The gift word first: the hub says and shows it before the side rooms,
     // so no room may make it a key word; nor the attic's counter word.
     const gift = giftWord();
-    const fill = { villain: episode.villain, helper: helper(), hero: episode.hero };
     // The rooms: the quest place's own, or two of the house's.
     const place = away() ? PLACE_BY_ID[episode.place]! : null;
     const rooms = place
@@ -77,28 +76,39 @@ export function housePlan(): RoomPlan[] {
       : // The rooms she has gone longest without (item 067: the one left out last episode comes back).
         (leastRecent(FETCH_ROOMS, progress.recentOf('rooms'), 2, Math.random) as [string, string]);
     const counterRoom = place ? place.secret.id : COUNTER_ROOM;
-    // The three key words come out of her word bag here; the counter keeps
-    // clear of battle 1's move pads, and none is a word of the helper's quest
-    // line or hub scene (item 037), both said before any room.
-    const battle1Moves = battle1Words(movePlan());
-    // The warm-up's word is said in the entry hall (item 033): drawn first, kept out too.
-    // The doors' signs show their rooms' glyphs: a bank word drawn the same way is
-    // shown before she reads it (item 039: the 🛁 door led to GO GET THE TUB).
-    // The journey map's stops too (🛏️ 🏠, the place's glyph): it shows before the attic.
-    const signs = new Set([...rooms, counterRoom].map((r) => SIDE_ROOM_BY_ID[r]?.glyph).filter(Boolean));
-    for (const s of journeyStops()) signs.add(s.icon);
-    // The bedroom's toys (a drum, a duck, a night-light: DRUM, DUCK, LAMP) and the hub story's
-    // prop drawn as an emoji (Chef Jason's 🍲, LID's picture) show before any room too (item 069).
-    for (const b of BEDROOMS) for (const o of b.objects) signs.add(o.glyph);
-    const prop = hubScene().story.prop;
-    if (!prop.startsWith('prop_')) signs.add(prop);
-    const signWords = BANK.filter((w) => w.glyph && signs.has(w.glyph)).map((w) => w.word);
-    const saidBefore = [...storyWords(), ...bedroomWords(), ...signWords, ...(episode.grab ? [episode.grab.word] : [grabWord()])];
+    const input = planInput(gift, rooms, counterRoom);
     const games = roomGames();
-    episode.house.plan = episodePlans(progress, { fill, ally: episode.ally, gift, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore, ...games });
+    episode.house.plan = episodePlans(progress, { ...input, ...games });
     rememberPlan();
   }
   return episode.house.plan;
+}
+
+/**
+ * The house plan's input, the rooms' games aside: `housePlan`'s and
+ * `debugPlan`'s (item 088: a debug run keeps clear of the same words). Draws
+ * the move plan and the warm-up's word if they are not drawn yet, in that order.
+ */
+function planInput(gift: string, rooms: [string, string], counterRoom: string): Omit<EpisodeInput, 'games' | 'pool'> {
+  const fill = { villain: episode.villain, helper: helper(), hero: episode.hero };
+  // The three key words come out of her word bag here; the counter keeps
+  // clear of battle 1's move pads, and none is a word of the helper's quest
+  // line or hub scene (item 037), both said before any room.
+  const battle1Moves = battle1Words(movePlan());
+  // The warm-up's word is said in the entry hall (item 033): drawn first, kept out too.
+  // The doors' signs show their rooms' glyphs: a bank word drawn the same way is
+  // shown before she reads it (item 039: the 🛁 door led to GO GET THE TUB).
+  // The journey map's stops too (🛏️ 🏠, the place's glyph): it shows before the attic.
+  const signs = new Set([...rooms, counterRoom].map((r) => SIDE_ROOM_BY_ID[r]?.glyph).filter(Boolean));
+  for (const s of journeyStops()) signs.add(s.icon);
+  // The bedroom's toys (a drum, a duck, a night-light: DRUM, DUCK, LAMP) and the hub story's
+  // prop drawn as an emoji (Chef Jason's 🍲, LID's picture) show before any room too (item 069).
+  for (const b of BEDROOMS) for (const o of b.objects) signs.add(o.glyph);
+  const prop = hubScene().story.prop;
+  if (!prop.startsWith('prop_')) signs.add(prop);
+  const signWords = BANK.filter((w) => w.glyph && signs.has(w.glyph)).map((w) => w.word);
+  const saidBefore = [...storyWords(), ...bedroomWords(), ...signWords, ...(episode.grab ? [episode.grab.word] : [grabWord()])];
+  return { fill, ally: episode.ally, gift, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore };
 }
 
 /**
@@ -258,9 +268,8 @@ export function debugPlan(game: Minigame, slot: Slot): RoomPlan {
   const i = slot === 'a' ? 0 : slot === 'b' ? 1 : 2;
   const games = plan.map((p) => MINIGAME_BY_ID[p.game]!) as [Minigame, Minigame, Minigame];
   games[i] = game;
-  const fill = { villain: episode.villain, helper: helper(), hero: episode.hero };
-  const input = { fill, ally: episode.ally, gift: giftWord(), rooms: [plan[0]!.room, plan[1]!.room] as [string, string], counterRoom: plan[2]!.room, battle1Moves: battle1Words(movePlan()), moveWords: [...new Set(moveWords())], games };
-  return episodePlans(progress, input)[i]!;
+  const input = planInput(giftWord(), [plan[0]!.room, plan[1]!.room], plan[2]!.room);
+  return episodePlans(progress, { ...input, games })[i]!;
 }
 
 /** The word the attic's counter sentence ends in: whatever beats the villain this episode. */
@@ -296,8 +305,8 @@ export function drawEnding(): string {
   return episode.ending;
 }
 
-/** The journey stops: every step from the bedroom to victory, with an icon each. */
-export function journeyStops(): { icon: string; index: number }[] {
+/** The journey stops: every step from the bedroom to victory, with an icon each (and its step's kind). */
+export function journeyStops(): { icon: string; index: number; kind: Step['kind'] }[] {
   const icon = (s: Step): string => {
     if (s.kind === 'bedroom') return '🛏️';
     if (s.kind === 'house') return away() ? PLACE_BY_ID[episode.place]!.glyph : '🏠';
@@ -309,5 +318,5 @@ export function journeyStops(): { icon: string; index: number }[] {
     .map((s, index) => ({ s, index }))
     // The warm-up is still home, part of the morning: no stop of its own.
     .filter(({ s }) => s.kind !== 'title' && s.kind !== 'pick' && s.kind !== 'grab')
-    .map(({ s, index }) => ({ icon: icon(s), index }));
+    .map(({ s, index }) => ({ icon: icon(s), index, kind: s.kind }));
 }

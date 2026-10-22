@@ -46,7 +46,7 @@ export interface EpisodeState {
   made: { gem: boolean; ammo: boolean; helper: boolean; item: boolean };
   /** Words she read (or spelled) right this episode, in order, for the victory recap. */
   read: string[];
-  /** Key words fetched from the side rooms, in order: each is a battle item. */
+  /** Things fetched, in order (the entry hall's warm-up, then each side room's word): each is a battle item. */
   fetched: string[];
   /**
    * The hub's gift word (item 037): an action word the helper gives her, drawn
@@ -55,8 +55,8 @@ export interface EpisodeState {
   gift: string | null;
   /**
    * Charge the Spell (item 053): the sounds she charged in its room, in order,
-   * and the battle part they fire in (the next one). Never words: they stay
-   * out of `read` and `fetched` (no recap card, no bag picture).
+   * and the battle part they fire in (the next one). The sounds stay out of
+   * `read` and `fetched`; the word itself is read and fetched (item 058).
    */
   charged: { sounds: string[]; part: 1 | 2 } | null;
   /** The battles' move choices (item 018), planned with the house: battle 1's words never become the counter word. */
@@ -160,4 +160,31 @@ export function steps(): Step[] {
 
 export function currentStep(): Step {
   return steps()[episode.stepIndex] ?? { kind: 'title' };
+}
+
+const SCENE_FOR: Record<Step['kind'], string> = {
+  title: 'Title',
+  pick: 'Pick',
+  bedroom: 'Bedroom',
+  grab: 'Entry',
+  house: 'Hub',
+  battle: 'Battle',
+  // The victory step opens on its scene (item 027), which goes on to the recap.
+  victory: 'Ending',
+  alarm: 'Alarm',
+  // No scene has this key: a prep step opens its game's scene (`sceneForStep`).
+  prep: 'Prep',
+  retreat: 'Retreat',
+  spell: 'Spelling',
+};
+
+/** The scene a step opens on: a parked prep step opens its game's scene. */
+export function sceneForStep(step: Step): string {
+  if (step.kind !== 'prep') return SCENE_FOR[step.kind];
+  return step.game === 'sound' ? 'SoundToLetter' : step.game === 'blend' ? 'BlendPath' : 'WordToPicture';
+}
+
+/** True for a step kind that has a scene (a `?scene=` value jumpTo can take). */
+export function isStepKind(kind: string): kind is Step['kind'] {
+  return Object.prototype.hasOwnProperty.call(SCENE_FOR, kind);
 }

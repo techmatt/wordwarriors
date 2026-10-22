@@ -4,7 +4,7 @@
  * grab, bridge, charge, sentences and bank tests).
  *
  * Nothing steps up by itself. Each help ramp (the warm-up's, the Stretchy
- * Bridge's, Charge the Spell's) records her level as before, but the level a
+ * Bridge's; Charge the Spell has none since item 078) records her level as before, but the level a
  * game gives is `helpLevel`: the ramp's start at base, else her recorded level
  * up to the knob. The other success ramps (a solid frame skipping its
  * listening pass, sound-alike distractors for a firm word) ask `rampsAdvance`.
@@ -14,7 +14,7 @@ import { DIFFICULTY } from '../config';
 
 export type Difficulty = 1 | 2 | 3;
 
-/** A help ramp's level (the warm-up's, the bridge's, Charge's): 1 the most help. */
+/** A help ramp's level (the warm-up's, the bridge's): 1 the most help. */
 export type HelpLevel = 1 | 2 | 3;
 
 /** A stored level as a help level: 1 at most, 3 at least, anything between 2. */

@@ -18,6 +18,7 @@
  */
 
 import { MINIGAMES, SENTENCE_GAMES, type Minigame } from '../rules/minigames';
+import { pick } from '../rules/random';
 import { progress } from '../state/progress';
 import { remembered } from './draws';
 import { debugPlan } from './plans';
@@ -105,7 +106,7 @@ export function beginRun(id: string, rand: () => number = Math.random): { scene:
   if (id === 'sentence') {
     const use = counterRoom() ? 'counter' : 'fetch';
     const frames = SENTENCE_GAMES.filter((g) => g.slots.includes(use));
-    game = frames[Math.floor(rand() * frames.length)]!;
+    game = pick(frames, rand);
   } else game = MINIGAMES.find((g) => g.id === id)!;
   const slot: Slot = game.slots.includes('fetch') ? 'a' : 'counter';
   debugMode.run = { game: id, episode: JSON.stringify(episode), remembered: JSON.stringify(remembered) };

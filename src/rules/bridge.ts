@@ -19,7 +19,7 @@
  *   2. CVC words starting with a stop sound;
  *   3. blends and digraphs.
  *
- * Each word has a help level on a ramp, like the warm-up's and the runes':
+ * Each word has a help level on a ramp, like the warm-up's:
  *   1. the stones sound themselves as she slides; the pictures show from the start;
  *   2. the stones are silent unless Dad presses 2 for a hint;
  *   3. she says the whole word aloud and Dad presses 2, and only then do the
@@ -34,7 +34,8 @@ import { canHold } from '../../content/phonics/letters';
 import { lookalikesOf } from '../../content/phonics/sentences';
 import { BRIDGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
-import { drawWords, shuffle, type Rand } from './bank';
+import { drawWords } from './bank';
+import { shuffle, type Rand } from './random';
 import { clampLevel, helpLevel, stepLevel, type HelpLevel } from './difficulty';
 
 export type BridgeLevel = HelpLevel;

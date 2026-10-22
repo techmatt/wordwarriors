@@ -13,8 +13,8 @@
  *
  * The words come out of her word bag (item 015) like any key word: a word
  * still in the bag, never one in `avoid` (whatever the episode says or shows
- * before: the gift word, frame words, the cast's words) nor one another room has
- * (`taken`). When no family has two words left in the bag, the machine uses
+ * before: the gift word, frame words, the cast's words). It is planned before
+ * the other rooms, which keep clear of its words. When no family has two words left in the bag, the machine uses
  * every eligible word instead (the bag, shared with the sentence rooms, refills
  * only when it is empty). Building a word right first time spends it
  * (`takeFromBag`), a miss puts it back.
@@ -30,8 +30,9 @@
 import { BANK_BY_WORD, unitsOf } from '../../content/phonics/bank';
 import { FAMILIES, FAMILY_BY_RIME, onsetOf, rimeOf, sillyWord, type Family } from '../../content/phonics/families';
 import { WORD_MACHINE } from '../config';
-import { pickWeighted, type ProgressStore } from '../state/ProgressStore';
-import { met, recentWords, shuffle, wordWeight as bankWeight, type Rand } from './bank';
+import type { ProgressStore } from '../state/ProgressStore';
+import { met, recentWords, wordWeight as bankWeight } from './bank';
+import { pickWeighted, shuffle, type Rand } from './random';
 import { BAG_WORDS, LEGACY_BAG_WORDS } from './sentences';
 
 export type MachineMode = 'make' | 'flip' | 'real_or_silly';
@@ -62,8 +63,6 @@ export interface MachinePlan {
 export interface MachineInput {
   /** Words the episode says or shows before (never built). */
   avoid: Set<string> | string[];
-  /** Words other rooms already have this episode. */
-  taken: string[];
 }
 
 export interface MachineRules {
@@ -97,7 +96,7 @@ function tilesFor(word: string, n: number, rand: Rand): MachineTile[] {
 export function planMachine(store: ProgressStore, input: MachineInput, rand: Rand = Math.random, rules: MachineRules = WORD_MACHINE): MachinePlan {
   const avoid = new Set(input.avoid);
   // Short words only (item 067: WORD_MACHINE.maxUnits sound units, a decoding game).
-  const eligible = BAG_WORDS.filter((w) => FAMILIES.some((f) => f.words.includes(w)) && (BANK_BY_WORD[w]?.units ?? unitsOf(w)).length <= (rules.maxUnits ?? Infinity) && !avoid.has(w) && !input.taken.includes(w));
+  const eligible = BAG_WORDS.filter((w) => FAMILIES.some((f) => f.words.includes(w)) && (BANK_BY_WORD[w]?.units ?? unitsOf(w)).length <= (rules.maxUnits ?? Infinity) && !avoid.has(w));
   const usable = (pool: string[]) => FAMILIES.filter((f) => inFamily(f, pool).length >= 2);
 
   // The bag is shared with the sentence rooms: it refills only once it is
@@ -108,7 +107,7 @@ export function planMachine(store: ProgressStore, input: MachineInput, rand: Ran
   store.topUpBag(BAG_WORDS, LEGACY_BAG_WORDS);
   let pool = store.bag().left.filter((w) => eligible.includes(w));
   if (!usable(pool).length && !store.bag().left.length) {
-    store.refillBag(BAG_WORDS.filter((w) => !input.taken.includes(w)));
+    store.refillBag(BAG_WORDS);
     pool = store.bag().left.filter((w) => eligible.includes(w));
   }
   if (!usable(pool).length) pool = [...eligible];
