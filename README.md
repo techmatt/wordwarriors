@@ -916,9 +916,11 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   asks for a letter: `spriteStyle` in `content/art/prompts.ts` gives them `LETTER_STYLE`,
   the shared style with "no letters" swapped for "only the named capital letter". Each
   brief is derived from the rune's `picture` in `content/phonics/runes.ts` (word and how
-  it makes the letter's shape), so a new look edits `look` there. The game does not show
-  them yet (the stone paints the bare letter); item 097's round is
-  `scratch/art_alts_097_picture_runes.*`.
+  it makes the letter's shape), so a new look edits `look` there. Since item 103 the
+  stone shows them in place of a painted letter: the Charge room's stone (150 px), a done
+  Charge door's badge (the word's first rune, 54 px) and the battle's charged-move stone
+  (84 px); `artFor` loads only the plan's and `episode.charged`'s runes. The battle HUD's
+  30 px rune chips keep the bare letter: a picture letter does not read at that size.
 - When Codex answers "Selected model is at capacity", `art:alts` skips that candidate
   and goes on (2026-10-18), so an id can end up with fewer than `n`. Top it up with
   `art:alts -- <id> --n=1`; it numbers on from the last candidate.

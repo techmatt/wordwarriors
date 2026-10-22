@@ -31,7 +31,7 @@
 
 import Phaser from 'phaser';
 
-import { RUNE_BY_SOUND, type GestureMotion } from '../../content/phonics/runes';
+import { RUNE_BY_SOUND, runeArt, type GestureMotion } from '../../content/phonics/runes';
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { variant } from '../episode/lineVariants';
@@ -65,6 +65,8 @@ type Phase = 'explain' | 'prompt' | 'sayback' | 'charging' | 'read' | 'reading' 
 const ALTAR = { x: GAME_WIDTH / 2 + 60, y: 600, w: 340, h: 250 };
 /** The rune stands on the altar's top. */
 const RUNE = { x: ALTAR.x, y: 330, size: 200 };
+/** The picture letter on the stone's face (item 103): big enough that its letter reads at a glance. */
+const LETTER = 150;
 /** The helper stands at the altar's left and performs the gestures there. */
 const HELPER = { x: ALTAR.x - 330, y: 620 };
 /** The word at the top: her face, then a slot per sound unit; its picture shows at the right once read. */
@@ -97,7 +99,9 @@ export class ChargeRoom extends HouseSideRoom {
   private altar!: Phaser.GameObjects.Image;
   private stone!: Phaser.GameObjects.Image;
   private glow!: Phaser.GameObjects.Image;
-  private runeText!: Phaser.GameObjects.Text;
+  /** The rune's picture letter (`runeArt`) on the stone; `runeScale` its fitted scale. */
+  private runePic!: Phaser.GameObjects.Image;
+  private runeScale = 1;
   private friend!: Phaser.GameObjects.Image;
   private bar!: Phaser.GameObjects.Container;
   private bag!: Bag;
@@ -180,10 +184,7 @@ export class ChargeRoom extends HouseSideRoom {
     popIn(this, this.altar, this.altar.scale);
     this.glow = this.add.image(RUNE.x, RUNE.y, TEX.glow).setDepth(ALTAR.y - 2).setScale(2.6).setAlpha(0).setTint(0xb28dff).setBlendMode(Phaser.BlendModes.ADD);
     this.stone = fitImage(this.add.image(RUNE.x, RUNE.y, 'prop_rune_stone'), RUNE.size, RUNE.size).setDepth(ALTAR.y - 1).setVisible(false);
-    this.runeText = this.add
-      .text(RUNE.x, RUNE.y + 4, '', { fontFamily: FONT_COMIC, fontSize: '140px', color: INK, stroke: '#ffffff', strokeThickness: 10 })
-      .setOrigin(0.5)
-      .setDepth(ALTAR.y);
+    this.runePic = this.add.image(RUNE.x, RUNE.y, runeArt(this.rune || 'm')).setDepth(ALTAR.y).setVisible(false);
     this.makeBar();
     this.bag = new Bag(this);
     void voiceBank.ensure(wordLine(this.plan.word));
@@ -291,10 +292,11 @@ export class ChargeRoom extends HouseSideRoom {
     this.phase = 'prompt';
     this.locked = true;
     this.markSlot(this.index);
-    this.runeText.setText((this.plan.units[this.index] ?? sound).toUpperCase()).setColor(INK).setScale(1).setAlpha(1);
+    this.runePic.setTexture(runeArt(sound)).clearTint().setAlpha(1).setVisible(true);
+    this.runeScale = fitImage(this.runePic, LETTER, LETTER).scale;
     this.stone.setVisible(true).clearTint();
     popIn(this, this.stone, this.stone.scale);
-    popIn(this, this.runeText, 1, 120);
+    popIn(this, this.runePic, this.runeScale, 120);
     this.tweens.killTweensOf(this.glow);
     this.glow.setAlpha(0.5).setScale(2.6);
     this.tweens.add({ targets: this.glow, alpha: 0.85, scale: 3.1, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
@@ -306,11 +308,11 @@ export class ChargeRoom extends HouseSideRoom {
     if (f !== this.flow) return;
     // Her turn: the rune glows and the room is quiet while she says it back.
     this.phase = 'sayback';
-    this.tweens.add({ targets: this.runeText, scale: 1.15, duration: 300, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    this.tweens.add({ targets: this.runePic, scale: this.runeScale * 1.15, duration: 300, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     await this.waitUnlocked(CHARGE.sayBackMs);
     if (f !== this.flow) return;
-    this.tweens.killTweensOf(this.runeText);
-    this.runeText.setScale(1);
+    this.tweens.killTweensOf(this.runePic);
+    this.runePic.setScale(this.runeScale);
     await this.charge();
   }
 
@@ -382,10 +384,8 @@ export class ChargeRoom extends HouseSideRoom {
 
   /** The sound itself, the rune lit while it plays (never captioned). */
   private async saySound(sound: string): Promise<void> {
-    this.runeText.setColor(LIT);
-    this.tweens.add({ targets: this.runeText, scale: 1.2, duration: 160, yoyo: true });
+    this.tweens.add({ targets: this.runePic, scale: this.runeScale * 1.2, duration: 160, yoyo: true });
     await this.say(letterSoundLine(sound));
-    this.runeText.setColor(INK);
   }
 
   /** Dad's button (or the timeout, or F4): only the word's read asks him. A no sounds it out together first. */
@@ -434,8 +434,8 @@ export class ChargeRoom extends HouseSideRoom {
 
     // The rune flies up into its slot in the word, trailing sparks.
     const to = this.slotPos(i);
-    const flyer = this.add.text(RUNE.x, RUNE.y, this.runeText.text, { fontFamily: FONT_COMIC, fontSize: '140px', color: LIT, stroke: '#ffffff', strokeThickness: 10 }).setOrigin(0.5).setDepth(DEPTH.sparkles);
-    this.runeText.setText('');
+    const flyer = this.add.image(RUNE.x, RUNE.y, runeArt(sound)).setScale(this.runeScale).setDepth(DEPTH.sparkles);
+    this.runePic.setVisible(false);
     this.stone.setTint(0x8a7aa8);
     const trail = this.add
       .particles(0, 0, TEX.spark, { speed: 60, scale: { start: 2, end: 0 }, lifespan: 600, frequency: 12, tint: [color, 0xffffff, 0xffd23f], blendMode: Phaser.BlendModes.ADD })
@@ -444,7 +444,7 @@ export class ChargeRoom extends HouseSideRoom {
     sfxWhoosh();
     await this.guard(
       new Promise<void>((resolve) =>
-        this.tweens.add({ targets: flyer, x: to.x, y: to.y, scale: 0.5, duration: 400, ease: 'Cubic.easeIn', onComplete: () => resolve() }),
+        this.tweens.add({ targets: flyer, x: to.x, y: to.y, scale: this.runeScale * 0.5, duration: 400, ease: 'Cubic.easeIn', onComplete: () => resolve() }),
       ),
     );
     trail.stop();

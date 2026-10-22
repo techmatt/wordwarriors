@@ -30,6 +30,7 @@ import Phaser from 'phaser';
 
 import { HUB, PLACE_BY_ID, SIDE_ROOM_BY_ID, hubArt } from '../../content/house/house';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
+import { runeArt } from '../../content/phonics/runes';
 import type { AbilitySpec } from '../../content/battle/types';
 import { moveKey, narratorLine, villainKey } from '../../content/voice/ids';
 import { sfxFanfare, sfxSelect, sfxSummon, sfxWhoosh } from '../audio/sfx';
@@ -258,6 +259,13 @@ export class HubScene extends RoomScene {
     // Charge the Spell (item 053) fetches its word as a battle item (item 058), but its door wears a charged rune stone for its runes.
     const pic = this.art(plan.kind === 'charge' ? 'prop_rune_stone' : `pic_${plan.key}`, 62, 62, 0, -DOOR_H * 0.55 + 31);
     spot.obj.add([ring, pic]);
+    // On the stone, the word's first rune as its picture letter (item 103).
+    const first = plan.kind === 'charge' ? plan.charge.runes[0] : undefined;
+    if (first) {
+      const letter = this.art(runeArt(first), 54, 54, 0, -DOOR_H * 0.55 + 27);
+      spot.obj.add(letter);
+      if (fresh) popIn(this, letter, letter.scale);
+    }
     spot.enabled = false;
     if (fresh) {
       popIn(this, ring);

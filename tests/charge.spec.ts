@@ -146,16 +146,30 @@ test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on t
   expectNoErrors(errors);
 });
 
-test('Charge the Spell (M24): Dad\'s 2 pressed during the last rune is kept, and counts as the read is asked', async ({ page }) => {
+test('Charge the Spell (M24): Dad\'s 2 pressed during the last rune is kept, and counts as the read is asked; the stone and its door show picture letters', async ({ page }) => {
   test.setTimeout(90_000);
   const errors = collectErrors(page);
-  await boot(page, '?scene=room&slot=a&room=charge');
+  await boot(page, '?scene=room&slot=a&room=charge&qa=1');
   const s0 = await until(page, (st) => st.scene === 'ChargeRoom' && Boolean(st.room?.charge), 60_000, 'charge room');
   const { word, runes } = s0.room!.charge!;
   const last = runes.length - 1;
   await until(page, (st) => st.room?.charge?.index === last && st.room.charge.phase === 'sayback', 60_000, 'the last rune said back');
+  // Item 103: the stone shows the rune's picture letter, big on its face, no painted letter.
+  const room = await qaLayout(page);
+  const stone = room.images.find((im) => im.key === 'prop_rune_stone')!;
+  const pic = room.images.find((im) => im.key === `rune_${runes[last]}`);
+  expect(pic, 'the picture letter on the stone').toBeTruthy();
+  expect(pic!.b[3] - pic!.b[1]).toBeGreaterThanOrEqual(120);
+  expect(pic!.b[0]).toBeGreaterThanOrEqual(stone.b[0] - 10);
+  expect(pic!.b[2]).toBeLessThanOrEqual(stone.b[2] + 10);
+  expect(room.texts.some((t) => t.text === runes[last]!.toUpperCase() && t.size > 100)).toBe(false);
+  await shot(page, 'picture_rune');
   await page.keyboard.press('Digit2');
   const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'back in the hub');
+  // Its door wears the stone with the word's first rune as a picture letter.
+  await page.waitForTimeout(600);
+  expect((await qaLayout(page)).images.some((im) => im.scene === 'Hub' && im.key === `rune_${runes[0]}`)).toBe(true);
+  await shot(page, 'picture_rune_door');
   // Read right on his early 2: never asked again, never timed out, never sounded out together.
   expect(hub.progress.words[word]!.recent).toEqual([true]);
   expect(hub.episode.read).toEqual([word]);

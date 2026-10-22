@@ -9,6 +9,7 @@ import { BANK } from '../content/phonics/bank';
 import { FAMILIES } from '../content/phonics/families';
 import { FRAMES } from '../content/phonics/sentences';
 import { RUNE_SOUNDS } from '../src/rules/charge';
+import { SHIFT_WORDS } from '../src/rules/shifter';
 import { SLOW, boot, choose, collectErrors, expectNoErrors, press, seedProgress, state, texts, toTheEnd, until } from './harness';
 import { layoutIssues } from './qa/checks';
 import { qaLayout } from './qa/probe';
@@ -124,6 +125,8 @@ test('a returning player with everything maxed: the grown-ups page fits both pag
     grabs: each(words),
     grabLevels: Object.fromEntries(words.map((w) => [w, 3])),
     bridgeLevels: Object.fromEntries(words.map((w) => [w, 3])),
+    // Item 103: the Shape-Shifter's levels, every level filled.
+    shifterLevels: Object.fromEntries(SHIFT_WORDS.map((w, i) => [w, (i % 3) + 1])),
     bag: { left: [], round: 999 },
     moveBag: { left: [], round: 999 },
     padBag: { left: [], round: 999 },
@@ -134,6 +137,8 @@ test('a returning player with everything maxed: the grown-ups page fits both pag
   for (const p of [1, 2]) {
     await until(page, (s) => s.scene === 'Parent', 30_000, `the grown-ups page ${p}`);
     await page.waitForTimeout(600);
+    // Item 103: page 1 lists the Shape-Shifter's words by help level.
+    if (p === 1) expect((await texts(page)).some((t) => t.text.includes('Shape-Shifter levels') && t.text.includes(`2: ${SHIFT_WORDS.filter((_, i) => i % 3 === 1).sort()[0]}`))).toBe(true);
     const bad = layoutIssues(await qaLayout(page), 'Parent', new Set()).filter((i) => i.kind === 'text-offscreen' || i.kind === 'text-overlap');
     expect(bad.map((i) => i.detail), `page ${p}`).toEqual([]);
     await press(page, 'green');

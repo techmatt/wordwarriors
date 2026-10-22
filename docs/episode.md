@@ -287,8 +287,8 @@ she read and presses green, the creature morphs into it (it swells, squashes, sh
 poof of smoke and sparks, and pops back) and the word is said; **fix it**, the creature
 morphs into a picture but its label keeps the old word (a bat labelled CAT), and three
 letter stones with different sounds stand in the room: she walks to the one that fixes
-the label, it flies in and the word is said. Help fades per word (`shifterLevels`; at base
-difficulty every word gets level 1): level 1 the changed letter is lit on the label and
+the label, it flies in and the word is said. Help fades per word (`shifterLevels`, listed by level on page 1 of the
+grown-ups page; at base difficulty every word gets level 1): level 1 the changed letter is lit on the label and
 each stone sounds as she comes near it; level 2 lit, silent stones; level 3 nothing lit.
 Yellow sounds the new letter (read it) or the stone she stands at (fix it), with the
 name's bridge to the sound first where the name holds it (below). A wrong picture is

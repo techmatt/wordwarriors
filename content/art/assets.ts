@@ -275,8 +275,8 @@ for (const [id, w, h, content, glyph] of PROPS) {
 }
 
 // Charge the Spell's picture letters (item 097, content/phonics/runes.ts): the rune's
-// capital letter built out of a thing starting with its sound. Not shown yet: the
-// stone still paints the bare letter until Matt picks from the candidates.
+// capital letter built out of a thing starting with its sound, shown on the rune stone
+// (item 103: the Charge room, its door and the battle's charged moves).
 for (const r of RUNES) {
   if (!r.picture) continue;
   const letters = r.sound.toUpperCase();

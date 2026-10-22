@@ -298,7 +298,7 @@ export const PICK_NOTES: Record<string, string> = {
 for (const r of RUNES) {
   if (!r.picture) continue;
   const bank = BANK_BY_WORD[r.picture.word] ? ' A bank word: an episode whose Charge uses this rune keeps it out of reading.' : '';
-  PICK_NOTES[runeArt(r.sound)] = `The ${r.sound.toUpperCase()} rune (item 097) as a picture letter: ${r.picture.word.toUpperCase()}, for its sound.${bank} \`current\` is the painted placeholder; the game still paints the bare letter on the stone until a pick is wired in.`;
+  PICK_NOTES[runeArt(r.sound)] = `The ${r.sound.toUpperCase()} rune (item 097) as a picture letter: ${r.picture.word.toUpperCase()}, for its sound.${bank} The game shows it on the rune stone (item 103).`;
 }
 
 /**

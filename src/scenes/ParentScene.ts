@@ -28,6 +28,7 @@ import { BANK_DRAW, GAME_HEIGHT, GAME_WIDTH, GRAB, SENTENCE_SOLID } from '../con
 import { coverageTable, type CoverageRow } from '../rules/bank';
 import { GRAB_WORDS, recordedGrabLevel } from '../rules/grab';
 import { recordedBridgeLevel } from '../rules/bridge';
+import { recordedShifterLevel } from '../rules/shifter';
 import { difficulty } from '../rules/difficulty';
 import { fitText } from '../ui/fitText';
 import { Controls } from '../input/Controls';
@@ -153,7 +154,22 @@ export class ParentScene extends Phaser.Scene {
         const s = progress.stat('rimes', f.rime);
         return `-${f.rime} ${s.seen}·${recentPct(s)}`;
       }).join('  ')}`,
+      ...this.shifterLines(),
     ], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - x - 20, GAME_HEIGHT - y - 10);
+  }
+
+  /**
+   * The Shape-Shifter's help level per word she has met there (item 103, ProgressStore
+   * `shifterLevels`), by level: alphabetical (the store keeps no order), ten a level and a count.
+   */
+  private shifterLines(): string[] {
+    const met = Object.keys(progress.snapshot().shifterLevels ?? {}).sort();
+    const rows = ([1, 2, 3] as const).map((l) => {
+      const ws = met.filter((w) => recordedShifterLevel(progress, w) === l);
+      const more = ws.length > 10 ? ` +${ws.length - 10} more` : '';
+      return `${l}: ${ws.slice(0, 10).join(' ') || '–'}${more}`;
+    });
+    return [`Shape-Shifter levels (1 letter lit + stones sound, 2 lit, 3 nothing lit${difficulty() === 1 ? '; difficulty 1 gives 1' : ''}):  ${rows.join('   ')}`];
   }
 
   /**

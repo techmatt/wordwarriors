@@ -194,7 +194,7 @@ export const shifterWords = (p: ShifterPlan): string[] => p.links.map((l) => l.t
 /** Every picture a visit shows: its creatures and the read-it pictures. */
 export const shifterShown = (p: ShifterPlan): string[] => [...new Set([p.start, ...p.links.flatMap((l) => [l.to, ...(l.beat === 'read' ? l.options : [])])])];
 
-/** The help level her reads of a word here have reached (the ramp; recorded, not yet shown on the grown-ups page). */
+/** The help level her reads of a word here have reached (the ramp; recorded, and shown on the grown-ups page). */
 export function recordedShifterLevel(store: ProgressStore, word: string): ShifterLevel {
   return clampLevel(store.shifterLevel(word, SHIFTER.startLevel));
 }

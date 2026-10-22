@@ -38,13 +38,13 @@ import Phaser from 'phaser';
 import { CHARACTER_BY_ID, MINIONS, abilityCallout, comboFor, comboPart } from '../../content/battle/roster';
 import type { AbilitySpec, CounterItem, Status } from '../../content/battle/types';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
-import { RUNE_BY_SOUND } from '../../content/phonics/runes';
+import { RUNE_BY_SOUND, runeArt } from '../../content/phonics/runes';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { fighterId, letterSoundLine, moveLine, nameLine, narratorLine, reformedLine, tauntLine, ultimateLine } from '../../content/voice/ids';
 import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh } from '../audio/sfx';
-import { DEPTH, FONT_COMIC, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { formFor } from '../../content/battle/forms';
 import { advance, castArt, castScale, counterArt, counterWord, episode, fightStyle, helper, movePlan, namedCounter, narrator, reformedOf, villainSpec, type Step } from '../episode/Episode';
 import { pickTaunt, unsayTaunt, variant } from '../episode/lineVariants';
@@ -648,12 +648,10 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       const spot = this.revealSpot(h, 110, 110, 10);
       const at = { x: spot.x, y: spot.y - 55 };
       const stone = fitImage(this.add.image(at.x, at.y, 'prop_rune_stone'), 100, 100).setDepth(DEPTH.fx + 6);
-      const letter = this.add
-        .text(at.x, at.y + 2, sound.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: sound.length > 1 ? '48px' : '64px', color: '#ff3d7a', stroke: '#ffffff', strokeThickness: 6 })
-        .setOrigin(0.5)
-        .setDepth(DEPTH.fx + 7);
+      // Its picture letter (item 103), as on the Charge room's stone.
+      const letter = fitImage(this.add.image(at.x, at.y, runeArt(sound)), 84, 84).setDepth(DEPTH.fx + 7);
       popIn(this, stone, stone.scale, 0, 220);
-      popIn(this, letter, 1, 60, 220);
+      popIn(this, letter, letter.scale, 60, 220);
       sfxSummon();
       burst(this, at.x, at.y, { count: 40, speed: 340, texture: TEX.star, colors: [color, 0xffffff, 0xffd23f] });
       const heard = this.guard(voiceBus.say(letterSoundLine(sound)));
