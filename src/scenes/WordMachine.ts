@@ -172,17 +172,7 @@ export class WordMachine extends HouseSideRoom {
   }
 
   /** A tile that could not speak when she reached it speaks once the room is quiet, if she is still on it. */
-  /**
-   * A new round's tile laid where she already stands (a family keeps its tile
-   * row): green ignores it until she has stepped out of its reach, or a green
-   * mashed through the round's line slotted a tile she never walked to or heard
-   * (item 092; the sentence room's fix 61, here).
-   */
-  private underFoot: Spot | null = null;
-
   override update(time: number, deltaMs: number): void {
-    const u = this.underFoot;
-    if (u && Phaser.Math.Distance.Between(this.player.x, this.player.y, u.x, u.y) >= REACH) this.underFoot = null;
     super.update(time, deltaMs);
     const t = this.pendingTile;
     if (!t || this.phase !== 'pick' || this.locked || voiceBus.busy) return;
@@ -250,7 +240,10 @@ export class WordMachine extends HouseSideRoom {
     }
     this.showPicture(r.word);
     this.layTiles(r.tiles);
-    this.underFoot = this.spots.find((sp) => Phaser.Math.Distance.Between(this.player.x, this.player.y, sp.x, sp.y) < REACH) ?? null;
+    // A family keeps its tile row, so a new tile can land where she stands: she steps up out of
+    // reach, or a green mashed through the round's line slotted a tile she never walked to or
+    // heard (item 092; the sentence room's fix 61, here).
+    if (this.spots.some((sp) => Phaser.Math.Distance.Between(this.player.x, this.player.y, sp.x, sp.y) < REACH)) this.player.place(this.player.x, TILE_Y - REACH - 15);
     const mode: MachineMode = this.plan.mode;
     // Only mode 1 is played today; `flip` and `real_or_silly` start here.
     if (mode !== 'make') throw new Error(`WordMachine: mode ${mode} is not built yet`);
@@ -305,7 +298,7 @@ export class WordMachine extends HouseSideRoom {
   }
 
   protected choose(spot: Spot): void {
-    if (this.phase !== 'pick' || spot === this.underFoot) return;
+    if (this.phase !== 'pick') return;
     const tile = spot.obj.getData('tile') as MachineTile | undefined;
     if (!tile) return;
     void this.slotIn(spot, tile);
