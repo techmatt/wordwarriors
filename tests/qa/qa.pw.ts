@@ -264,8 +264,9 @@ class Recorder {
     this.add(layoutIssues(l, s.scene, PLACEHOLDERS), shot);
     this.add(leakIssues(s, l, q.voice.filter((v) => v.t >= this.roundStart)), shot);
     this.add(spellingIssues(l, q.voice, s.scene), shot);
-    // Words she has read, and the warm-up's (said once she has grabbed it): their pictures may wear them.
-    const done = [...s.episode.read, ...(s.episode.grab && (s.scene !== 'Entry' || !['intro', 'find'].includes(s.room?.grab?.phase ?? 'intro')) ? [s.episode.grab.word] : [])];
+    // Words she has read, the warm-up's (said once she has grabbed it), and the gift word (item 092: told
+    // and shown in the hub's story, its effect beside its card: FIN's fins): their pictures may wear them.
+    const done = [...s.episode.read, ...(s.episode.grab && (s.scene !== 'Entry' || !['intro', 'find'].includes(s.room?.grab?.phase ?? 'intro')) ? [s.episode.grab.word] : []), ...(s.episode.gift ? [s.episode.gift] : [])];
     this.add(giveawayIssues(l, s.scene, done), shot);
   }
 
@@ -756,7 +757,8 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     rec.add(VOICE_BUILD);
     // Item 089: line variants in turn over the run, taunts at most twice an episode (item 087).
     const ids = q.voice.map((v) => v.id);
-    rec.add(variantIssues(ids, VARIANT_BASES));
+    // Not with debug games in the run: their sandbox puts the store back, variant rounds too, so they repeat on purpose (item 092).
+    if (!sc.debugAt) rec.add(variantIssues(ids, VARIANT_BASES));
     rec.add(tauntIssues([...cuts, ids.length].map((c, i, all) => ids.slice(i ? all[i - 1] : 0, c)).filter((x) => x.length)));
     for (const e of errors) rec.add([{ kind: 'page-error', severity: 'bug', scene: '', detail: e, key: `pageerror:${e.slice(0, 80)}` }]);
     // Growth from one episode to the next.
@@ -811,6 +813,8 @@ const FLAGS = [
   'seed=abc', 'seed=-5', 'seed=1e99', 'difficulty=0', 'difficulty=9', 'difficulty=abc', 'ally=bogus', 'villain=bogus', 'ally=ellie&villain=ellie',
   'ally=none&primary=none', 'hero=evil_tiamat', 'form=bogus', 'form=lifter,warlock', 'place=bogus', 'fight=bogus', 'game=bogus', 'room=bogus', 'ending=bogus',
   'scene=battle&fetched=bogus,zzz', 'scene=battle&charged=zz', 'scene=victory&read=', 'read=cat,dog', 'prep=bogus', 'scene=room&slot=bogus', 'part=7&scene=battle',
+  // Item 092: the flags added since (THE END, the warm-up's word, the short battle, the cast and pool switches).
+  'scene=theend', 'scene=theend&ally=none', 'grab=cat', 'grab=bogus', 'scene=grab&grab=sheep', 'scene=battle&battle=short', 'battle=bogus', 'cast=bogus', 'games=bogus', 'scene=room&games=bogus',
 ];
 const flagSet = set === 'lenses' || set === 'all';
 for (const flag of flagSet && !LOOK ? FLAGS : []) {

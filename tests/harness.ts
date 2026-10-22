@@ -423,7 +423,12 @@ async function pickPad(page: Page, word: string): Promise<void> {
     // else was the idle re-prompt closing it first: press again.
     const taken = await until(page, (st) => !st.battle?.choice || st.battle.choice.misses !== misses, 2_000, 'green taken').catch(() => null);
     if (taken) return;
-    if (tries > 4) throw new Error('green on the pad never picked');
+    if (tries > 4) {
+      // Where she stood against the pad (item 092: a sea tug's choice stalled here).
+      const b = (await state(page)).battle;
+      const scenes = await page.evaluate(() => (window as unknown as { __ww: { scenes?(): string[] } }).__ww.scenes?.() ?? []);
+      throw new Error(`green on the pad never picked: ${word} at ${pad.x},${pad.y}; her hero at ${JSON.stringify(b?.me)}; pads ${JSON.stringify(b?.choice?.spots)}; open ${b?.choice?.open}; running ${scenes.join(', ')}`);
+    }
     await page.waitForTimeout(200);
   }
 }

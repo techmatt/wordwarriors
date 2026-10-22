@@ -584,3 +584,60 @@ manifest. Every scenario now also checks line variants said in turn across the r
 | --- | --- | --- | --- |
 | W19 | Journey map | Back from the grown-ups page its 2-second hop plays without music (the page stops it). | Two seconds, and the next scene starts its own track. |
 | W20 | Battle | Face cards' name tags ("EVIL TIAMAT" in a bubble) are 8 to 10 px (`tiny-text`). | Grown-up labels she does not read; the bubble's face is what she sees. |
+
+## Hunt 5 (2026-10-21)
+
+The checker's fifth batch swept for the first time (`QA_SET=recent`: debug mode at six
+points, THE END mashed, six drawn episodes back to back, no voice manifest), the main batch
+from `lifter_tug` on (eight scenarios, `soak3` twice), one episode at real speed, odd input
+on the newer screens (`tests/hunt5.spec.ts`: key 0 mashed, key 0 under dad lock and across
+the grown-ups page, THE END through resizes and a hidden tab), the URL flags added since
+hunt 3, a content sweep (every line in `lines.json` read once per distinct text, all 188
+word pictures on contact sheets, the sentence frames against every thing word) and the
+long runs' memory.
+
+At real speed (seed 101, a drawn cast, a bridge and a word machine): 8.2 minutes title to
+recap, no line silent, frames under 170 ms (battle under 35), the longest stretch she
+cannot act the hub's story scene (17 s, M3); the bridge took 58 s for three words, the
+word machine 54 s for four. Six drawn episodes back to back: heap 33 to 63 MB, objects,
+tweens, timers and listeners flat. Every scenario on the build server: no voice fetch
+failed or came late.
+
+### Fixed
+
+| # | Where | What | Kept fixed by |
+| --- | --- | --- | --- |
+| 91 | Pictures (look-alikes) | LEG's picture is a leg in a striped sock and a shoe, and SOCK is a striped sock, but they were not look-alikes: either could stand beside the other as the wrong picture. | `tests/unit/wordrules.test.ts`; golden draws rewritten (only the SOCK and LEG rooms' pictures moved) |
+| 92 | Sentence rooms | WE NEED A GUM / ELLIE NEEDS A GUM could be drawn: GUM takes no "A", like item 069's CHEESE, MILK, JAM, GRASS and CHIPS (`NO_ARTICLE`). | `tests/unit/wordrules.test.ts` (the "A" frames) |
+
+The checker itself: it serves a production build made as the sweep starts, as the suite
+does (the dev server spent its first minutes scanning the tree, voice and art junctions
+included, so every scenario of the first `recent` sweep timed out at boot, and once up
+it took 4 to 9 s a voice fetch on an idle machine: much of what README called a busy
+machine); `voiceless` installs its manifest 404 before boot (after it, the manifest had
+loaded and the scenario played with voice), and a line with no clip is its point, not
+`voice-silent`; store changes are named by field (`storeChanges`), so a room started
+again after debug mode or the grown-ups page, which says its opening line's next variant,
+is a look (`debug-restart-line`) and not `debug-leak`; the overlaps ruled on (W5, W12,
+W21) are a look (`target-covered-ruled`); the gift word may wear its picture in the hub
+(FIN's fins beside its card); a run with debug games skips `variant-repeat` (the sandbox
+puts the variant rounds back on purpose); ten URL flags added since hunt 3 (`scene=theend`,
+`grab=`, `battle=`, `cast=`, `games=` and odd values); a pad that never takes green names
+her position, the pads and the running scenes (M20).
+
+### Matt's calls
+
+| # | Where | What | Options | Ruling |
+| --- | --- | --- | --- | --- |
+| M20 | Battle move choice (sea tug) | Once in two `soak3` runs (episode 2, battle 2's fourth choice, Evil Jormungandr, cyber Dada Matt), her hero stayed at her rope station through six greens on the right pad: the test's teleport never landed, nothing was picked, and the fight stayed frozen. A rerun drew other moves and passed; twelve replays of the tug (`?scene=battle&fight=sea_tug`) did not show it. Nothing in the code but the teleport and her walking moves her in a choice. | **(a) watch: the harness now names her position, the pads and the running scenes when a pad never takes green, so the next sighting says where she was**; (b) a test-only check that a choice's hero answers the stick every frame | |
+| M21 | Pictures | Pictures she may name otherwise: HEN (a chicken), JET (an airliner), KIT (a toolbox), BAG (a handbag), POD (peas), VAT (a tub), DESK (a table), BIN (a trash can), TAP (a faucet: "tap" for a faucet is British; Americans say faucet). None stands beside a look-alike, so a pick is never ambiguous; the word just teaches a new name. | **(a) keep, except TAP: redraw it as a finger tapping a drum or table (`art:alts -- pic_tap`), so the word is the American verb**; (b) keep all; (c) take TAP out of the picture words | |
+| M22 | Memory | Art outlives every scene by design (`ArtBank`): over six episodes the loaded textures rose 192 to 320, and a long sitting tops out at all 459 pictures, about 526 MB decoded (the renderer held 1.1 GB after six episodes). Heap and objects stay flat. | **(a) keep: bounded, and a reload (or THE END's new episode) is never needed**; (b) free a scene's art once two scenes have passed without it | |
+
+### Won't fix
+
+| # | Where | What | Why |
+| --- | --- | --- | --- |
+| W21 | Battle move choice | The partner's face card at the bottom grazes the nearest pad ring's lower edge, 5 to 14 px. | The ring is where she stands, and its sign above is clear; the checker calls it `target-covered-ruled`. |
+| W22 | Sentence room | The picture she picked grows for its celebration into a two-row banner's bottom edge (16 px: LEG, UMBRELLA). | She has answered; it lasts the word's line. |
+| W23 | Debug mode, grown-ups page | The room key 0 (or F9) brings back starts again and says its opening line's next variant, which moves that line's round in the store. | The room is fresh again, as designed; only which wording she hears changes. |
+| W24 | Variety | With `ACTIVE_CAST` at four allies and four villains, six drawn episodes repeated whole pairings three and four apart (Ellie against Evil Jormungandr, sea tug, boat, the same rooms). | Matt's beta cast; no rotation rule broken (none back to back). |
