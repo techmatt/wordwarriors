@@ -56,8 +56,13 @@ A new character is defined but not drawn into random
 episodes until its id is added to `ACTIVE_CAST` in `src/config.ts` (`allies`,
 `villains`, or both); `?ally=<id>` / `?villain=<id>` play it either way. Its `size`
 also sets how tall it stands beside her in rooms and the victory scene (`castScale`),
-except a dad in any form: he is always `ADULT_HEIGHT` (1.5) times her height, in battle
-too, whatever his `size` (item 034; `size` still drives the fight).
+except a dad in any form: he stands his own height, head to soles, in battle too,
+whatever his `size` (item 034; `size` still drives the fight). Since item 093 that is
+`ADULT_HEIGHTS` in `src/config.ts` (Dada Jason 1.44, Dada Matt 1.33: Matt 7.5% shorter),
+and each dad picture is drawn `height / ADULT_FILL[art]` tall, where `ADULT_FILL` is how
+much of the picture is the person, top of his head (not a hat, hood, helmet or raised
+weapon) to his soles. **New dad art (a new form, or a redraw) needs its `ADULT_FILL`
+line**, measured by eye on a 1% grid; `tests/unit/heights.test.ts` fails without one.
 
 One `CharacterSpec` in `ROSTER`:
 

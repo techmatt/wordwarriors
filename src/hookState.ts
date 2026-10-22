@@ -99,9 +99,9 @@ export interface BattleInfo {
   stage: Record<string, unknown>;
   phase: string;
   t: number;
-  /** `art`: the image each fights as (a form's, for a hero in one). */
-  heroes: { id: string; hp: number; status: string | null; art: string }[];
-  villains: { id: string; hp: number; status: string | null; art: string }[];
+  /** `art`: the image each fights as (a form's, for a hero in one); `drawn`: its picture's height on screen standing still (no squash, bob or grow). */
+  heroes: { id: string; hp: number; status: string | null; art: string; drawn: number }[];
+  villains: { id: string; hp: number; status: string | null; art: string; drawn: number }[];
   minions: number;
   abilitiesFired: number;
   ultimates: number;

@@ -130,8 +130,8 @@ export interface WWState {
     combos: number;
     movePicks: number;
     minions: number;
-    heroes: { id: string; hp: number; status: string | null; art: string }[];
-    villains: { id: string; hp: number; status: string | null; art: string }[];
+    heroes: { id: string; hp: number; status: string | null; art: string; drawn: number }[];
+    villains: { id: string; hp: number; status: string | null; art: string; drawn: number }[];
     /** The move words stand in the arena as pads (`spots`); she walks her hero onto one. */
     choice: { words: string[]; right: string; open: boolean; misses: number; spots: { word: string; x: number; y: number }[]; stickHint: boolean; stickNub: number | null; signs: number[][]; team: { id: string; box: number[] }[]; villain: number[] | null } | null;
     /** Her hero's position. */

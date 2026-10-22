@@ -1720,7 +1720,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       this.fpsAcc = 0;
       this.fpsFrames = 0;
     }
-    const info = (f: Fighter) => ({ id: f.init.id, hp: Math.round((100 * f.hp) / f.maxHp), status: f.floored ? 'floored' : (f.status?.kind ?? null), art: f.init.art });
+    const info = (f: Fighter) => ({ id: f.init.id, hp: Math.round((100 * f.hp) / f.maxHp), status: f.floored ? 'floored' : (f.status?.kind ?? null), art: f.init.art, drawn: Math.round(f.sprite.height * f.baseScale) });
     hookState.battle = {
       part: this.part,
       fight: this.fight.id,
