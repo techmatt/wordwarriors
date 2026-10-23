@@ -8,6 +8,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { SLOW, SPEED, boot, choose, collectErrors, expectNoErrors, until, type WWState } from './harness';
+import { letterSoundLine, wordLine } from '../content/voice/ids';
 
 const shifter = (s: WWState) => s.room?.shifter;
 /** Screenshots land in tests/screenshots/ (ignored). */
@@ -20,7 +21,7 @@ test('Shape-Shifter at base level: read it and fix it, a wrong pick on each soun
   const s0 = await until(page, (st) => st.scene === 'ShifterRoom' && shifter(st)?.phase === 'pick' && !st.room!.locked, 60_000, 'first link');
   expect(s0.episode.house.plan!.find((p) => p.slot === 'a')!.kind).toBe('shifter');
   // The first creature is said: it is shown, not read.
-  expect(s0.voice.history).toContain(`word_${shifter(s0)!.start}`);
+  expect(s0.voice.history).toContain(wordLine(shifter(s0)!.start));
   const words = shifter(s0)!.words;
   const beats = new Set<string>();
   const missed = new Set<string>();
@@ -30,7 +31,7 @@ test('Shape-Shifter at base level: read it and fix it, a wrong pick on each soun
     expect(l.level).toBe(1);
     expect(l.lit).toBe(true);
     // Never said before she has it.
-    expect(s.voice.history).not.toContain(`word_${l.word}`);
+    expect(s.voice.history).not.toContain(wordLine(l.word));
     if (!beats.has(l.beat)) await shot(page, l.beat);
     beats.add(l.beat);
     if (l.beat === 'read') {
@@ -53,19 +54,19 @@ test('Shape-Shifter at base level: read it and fix it, a wrong pick on each soun
       if (l.beat === 'read') {
         expect(since.some((id) => id.endsWith('_shifter_picked'))).toBe(true);
         expect(since.some((id) => id.endsWith('_shifter_says'))).toBe(true);
-        expect(since).not.toContain(`word_${wrong}`);
+        expect(since).not.toContain(wordLine(wrong));
       } else {
         // Her letter's sound (a name's bridge first where it holds it), never a word made of it.
         expect(since.some((id) => id.endsWith('_shifter_stone'))).toBe(true);
-        expect(since).toContain(`letter_${wrong.slice('stone_'.length)}_sound`);
+        expect(since).toContain(letterSoundLine(wrong.slice('stone_'.length)));
         expect(since.filter((id) => id.startsWith('word_'))).toEqual([]);
         expect(shifter(again)!.label).toBe(l.from);
       }
-      expect(again.voice.history).not.toContain(`word_${l.word}`);
+      expect(again.voice.history).not.toContain(wordLine(l.word));
     }
     await choose(page);
     const after = await until(page, (st) => st.scene !== 'ShifterRoom' || (shifter(st)?.index ?? 0) > i || shifter(st)?.phase === 'done', 60_000, `${l.word} read`);
-    expect(after.voice.history).toContain(`word_${l.word}`);
+    expect(after.voice.history).toContain(wordLine(l.word));
     expect(after.episode.fetched).toContain(l.word);
   }
   expect([...beats].sort()).toEqual(['fix', 'read']);

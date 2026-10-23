@@ -82,10 +82,10 @@ export function episodeGroups(): string[] {
   g.push(group.fighter(episode.hero), group.fighter(`${episode.villain}_evil`));
   if (episode.ally) g.push(group.fighter(episode.ally));
   // A story fight (item 107; drawn for its villain since item 126): its lines, for who is in it.
-  const story = fightStyle().story;
-  if (story) {
-    g.push(group.story(story));
-    for (const id of [episode.ally, episode.primary]) if (id) g.push(group.story(story, personOf(id)));
+  const storyFight = fightStyle().story;
+  if (storyFight) {
+    g.push(group.story(storyFight));
+    for (const id of [episode.ally, episode.primary]) if (id) g.push(group.story(storyFight, personOf(id)));
   }
   // The victory scene (item 027): everyone in it says a line in their own voice.
   for (const id of endingPeople(episode)) g.push(group.ending(personOf(id)));

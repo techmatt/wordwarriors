@@ -21,29 +21,13 @@ the Xbox 360 pad in first; press green (A) on the title screen. The keyboard wor
 arrows to walk, Space/Enter for green, Tab for yellow (say it again / hint), Esc for red, 3 for blue, and the
 backquote / tilde key for dad lock (`docs/episode.md`, *Dad lock*). The number keys **1** (no) and **2** (yes) are
 Dad's, for the games that ask him whether she said it (`docs/episode.md`, *Dad buttons*);
-at the end of an episode her green takes the recap to a **THE END** screen (item 085: this
-episode's hub full screen, her heroes on it), and only Dad's **2** starts the next one there
-(her buttons and Dad's 1 do nothing, so she never starts a new episode without a grown-up).
-Key **0** toggles **minigame debug mode** in any game room (the hub, the warm-up, a side
-room or the attic), in real play as in dev builds and under dad lock too: a small DEBUG tag
-shows top left, the room's own things go, its door out is open, and one pedestal per
-minigame stands there; green at one plays it, and finishing puts a ✔ on it. Nothing played
-there counts (no progress, word bag, rotations or recap, nothing on the grown-ups page);
-0 again brings the room back (`docs/episode.md`, *Minigame debug mode*).
-
-**Free play** (item 060): wherever she is free to move and no answer is open (the rooms,
-the bedroom once she is awake, the hub, the battle's fight outside a move choice), her
-character has toys. Green jumps: a tap hops, a hold goes higher and floats down. Blue
-(the **3** key), red (Esc) and yellow (Tab) cast: blue bolts, red sparkle stars, yellow fun
-things (stars, hearts, snowballs; the chef throws donuts and cookies, the knight sword
-flashes and gold stars). A tap is one shot; a hold charges a big one. A button that
-means something there keeps its meaning (green on a door, sign or thing in reach; yellow
-says it again where there is something to say). It is pure play: it never changes an
-answer, a battle or what a scene does. Dad lock silences it. At most
-`FREE_PLAY.maxShots` shots fly at once (one more and the oldest just goes); the knobs are
-`FREE_PLAY` in `src/config.ts`. Blue is a number key, not Shift, because five Shift
-presses in a row open Windows' Sticky Keys dialog (amendment 1579); the game binds
-nothing to Shift.
+at **THE END**, after the recap, only Dad's **2** starts the next episode, so she never starts one without a grown-up
+(`docs/episode.md`, step 9).
+Key **0** toggles **minigame debug mode** in any game room, under dad lock too: one
+pedestal per minigame, nothing played there counts (`docs/episode.md`, *Minigame debug
+mode*). Wherever she is free to move, green jumps and blue (**3**), red and yellow cast:
+**free play**, pure play that changes nothing (`docs/episode.md`, *Free play*; nothing is
+bound to Shift, which opens Sticky Keys).
 
 **Sound:** browsers keep audio off until a click or key press, and it is not confirmed
 that a gamepad press counts. While sound is still off, the title shows a small grown-up
@@ -59,7 +43,7 @@ Playwright browsers are per machine, so a worktree does not need them again.
 
 Title → bedroom (a dad wakes her: the helper, the villain) → the entry hall's warm-up →
 the quest place (the hub: the gift word, two side-room doors, one of them Charge the Spell
-or the Stretchy Bridge) → battle part 1 (too strong, retreat) → the hub again (the attic's
+or the Stretchy Bridge, door b the Shape-Shifter about half the time) → battle part 1 (too strong, retreat) → the hub again (the attic's
 counter word) → battle part 2 → the victory scene → the recap → THE END (Dad's 2 plays
 again). Selection is walking everywhere; yellow (Tab) says it again or hints.
 
@@ -73,8 +57,7 @@ variety (`DIFFICULTY`, `VARIETY`).
 Three commands (times on this machine, the GPU, three workers; how each got there, item by
 item: `docs/engineering.md`, *Browser and tests*):
 
-- **Fast lane, after every change: `npm test`** (about 14 s on one worker, item 105, against about 24 s one after the
-  other; 21 s on three workers before it, not yet timed on three since): the unit
+- **Fast lane, after every change: `npm test`** (about 14 s on one worker, item 105): the unit
   tests (about 7 s alone) and, at the same time, the three browser tests tagged `@smoke`
   (`SMOKE` in `tests/harness.ts`): the title and the grown-ups page, the hub's free play, and
   a sentence room's banner. `tests/fastLane.ts` runs both, streams the browser side and
@@ -82,26 +65,29 @@ item: `docs/engineering.md`, *Browser and tests*):
   arguments to Playwright (`npm test -- --workers=1`). The browser side stops itself at 2
   minutes (`--global-timeout`). `npm run test:unit` runs the unit tests alone.
   `npm run typecheck` checks `src`, `tests`, `content` and `tools` (both tsconfigs, about
-  2 s; `npm run build` runs it first), which the tests do not.
+  2 s; `npm run build` runs it first): the test runs themselves do not typecheck.
   `tests/unit/plansGolden.test.ts` pins the house plan's seeded draws (every minigame kind
   behind each door; item 091) against `plansGolden.json`: a refactor leaves it green. A
   change meant to alter the draws rewrites the JSON on purpose, from the worktree root:
   `npx tsx -e "import('./tests/unit/plansGolden.ts').then((m) => require('node:fs').writeFileSync('tests/unit/plansGolden.json', JSON.stringify(m.goldenDraws(), null, 1) + '\n'))"`.
-- **Before a commit: `npm run test:browser`** (about 95 s, 55 tests since hunt 9, one of them the skipped
-  pairs placeholder; 24 tests and 50 s in item 079) plus the specs that cover
+- **Before a commit: `npm run test:browser`** (about 95 s, 55 tests, one of them the skipped
+  pairs placeholder) plus the specs that cover
   what changed (`npx playwright test <spec>`, both lanes of it). `test:browser` is every
   browser test not tagged `@slow` (the smoke three among them): one of each newer room
   (the bridge at level 3, a Charge round, free play's shots and jump, the word machine
-  opening), the cover check on Smaug's counter banner, the two layout checks, title and
-  the grown-ups page, a solid sentence frame, dad lock, a key held through a scene change,
+  opening), the cover check on Smaug's counter banner, the two layout checks (the hub's
+  circle line clear of the circle and the gift card, merged in from `cover.spec` in item
+  132; the word machine's go line), title and the grown-ups page, a solid sentence frame, dad lock, a key held through a scene change,
   Spell the Spell, the cast and fight-style overrides, never last episode's victory scene,
   the three text-fit checks, and the word machine's plate and Word → Picture's banner
   holding their words and the read pass's green dot on its banner (`tests/banner.spec.ts`; its widest-sentence checks are `@slow`). It stops itself at 6 minutes, so a hang fails inside
   Claude Code's 10-minute background cap instead of being killed by it.
-- **Everything: `npm run test:all`** (about 6.3 minutes at item 105's 136 browser tests; 149
-  since item 116): the unit tests, then every browser test. The slow lane alone is
-  `npm run test:slow` (about 5 minutes at item 105's 86 tests; 97 since item 116: the story
-  fight, the new villains' episodes, solo mode): every test tagged `@slow`. Its longest (item 105): the soak (67 s,
+- **Everything: `npm run test:all`** (about 6.3 minutes when last timed, item 105; 154
+  browser tests): the unit tests, then every browser test. The slow lane alone is
+  `npm run test:slow` (about 5 minutes when last timed, item 105; 99 tests): every test
+  tagged `@slow`. Counts are from `npx playwright test --list` (`--grep @slow` for the slow
+  lane, `--grep-invert @slow` for `test:browser`); their history is in `docs/engineering.md`,
+  *Lane times, item by item*. Its longest (item 105): the soak (67 s,
   Charge the Spell's whole episodes too), real-time battle 1 (67 s), the real-time title,
   bedroom and warm-up (56 s), the default whole episode at speed (32 s), the real-time
   sentence room (28 s), the Shape-Shifter's yellow-and-green mash (19 s), the shared drawn episode (`tests/drawn.spec.ts`, the
@@ -157,8 +143,9 @@ through the Wait scene (`s.scene === 'Wait'`) while that scene's art loads, so w
 the scene you want, never for "anything but Boot". `tests/lazyart.spec.ts` (the browser lane, `test:browser`)
 slows every picture by 150 ms and checks the hub waits, then opens with nothing missing.
 A browser test fails on any `art: not ready` warning (`collectErrors(page, { voice, art })`;
-`art` defaults on). The fight and pairs sweeps (`tests/fights.spec.ts`, `pairs.spec.ts`)
-pass `art: false` on purpose: the art check there is deferred.
+`art` defaults on; no test turns it off since item 090). The fight, pairs, story-fight and
+villains sweeps pass `voice: true` too, so a voice line asked for that is missing or does
+not decode is an error there.
 
 To force a key word, seed the progress blob with `bag: { left: [word], round: 1 }` **and**
 `bagKnown: BAG_WORDS` (`tests/soundout.spec.ts`): a blob without `bagKnown` counts as one
@@ -339,9 +326,8 @@ running yourself (a `vite preview` of a build).
 build folder and output folder, or the second build overwrites the first one's served files
 and the second run empties the first one's `test-results/`:
 `CONDUCTOR_PORT=<free port> WW_TEST_DIST=node_modules/.ww-test-dist-<tag> npx playwright test <spec> --output=test-results-<tag>`.
-A spec or config under `scratch/` does not work: `scratch/` is a junction to the main
-checkout's, so it loads the main checkout's `node_modules` ("two different versions of
-@playwright/test"); throwaway specs live under `tests/`.
+A spec or config under `scratch/` does not work (it loads the main checkout's
+`node_modules`: *Operational facts*); throwaway specs live under `tests/`.
 
 A test that times out "waiting for title" (or "parent page", "hub quiet") with `scene=`
 empty never got past the boot's loading. Seen in item 034 when the machine was loaded (and
@@ -362,8 +348,11 @@ their own, behind an npm script (item 072). (`npm run test:pairs` is not one of 
 normal suite spec on the main config, off unless asked for; *Operational facts*.)
 Arguments for Playwright go after `--` (`npm run qa -- -g "qa seed101$"`). All three
 configs draw on the GPU (`gpuProjects`, `tests/gpu.ts`; `WW_GPU=0` for software GL), on one
-worker, and serve the game from `tests/qa/vite.qa.config.ts`: no file watching, so edits
-made during a run wait for the next one instead of reloading the page.
+worker. Perf and shots serve the dev server from `tests/vite.nowatch.config.ts` (started as
+`node node_modules/vite/bin/vite.js`, not `npx vite`; item 132 moved the config from
+`tests/qa/`): no file watching, so edits made during a run wait for the next one instead
+of reloading the page. The bug-hunt checker serves a build like the suite (since item
+092; `QA_DEV_SERVER=1` for that dev server instead: *The bug-hunt checker*, below).
 
 **Boot timings:** `npm run perf` (about 1.5
 minutes; not a test, it prints) times page load to the title and to a quiet hub
@@ -388,12 +377,12 @@ it draws on the GPU, as the suite does, so shots from before then (software GL) 
 from later ones in more than the change being judged. `npx tsx tests/shots/sheet.ts <beforeTag> <afterTag> <out.png>` puts
 two runs side by side.
 
-**Battle shots** (item 034): `SHOTS_TAG=<tag> npm run shots -- polish.pw` plays both battles for eight casts across the five
-fight styles (`CASTS` in `tests/shots/polish.pw.ts`), shooting every 1.5 s and at each new
+**Battle shots** (item 034): `SHOTS_TAG=<tag> npm run shots -- polish.pw` plays both battles for thirteen casts across every
+fight style, the story fight included (`CASTS` in `tests/shots/polish.pw.ts`), shooting every 1.5 s and at each new
 phase into `scratch/polish_034/<tag>/`, with each battle's voice history and any line said
 twice in a row (`*_voice.json`); also the dads' heights in the bedroom, entry hall, hub and
 victory scene, and Pig Curse's callout. About 16 minutes at `WW_SPEED=2` (the default
-there). Name the spec file (`polish.pw`), not `polish`: every path in a worktree called
+there) for item 034's eight casts; not retimed at thirteen. Name the spec file (`polish.pw`), not `polish`: every path in a worktree called
 `…_polish` matches the bare word. `npx tsx tests/shots/contact.ts <tag>` makes one
 contact sheet per battle in `scratch/polish_034/<tag>_sheets/`. To shoot "before" (the
 base commit's code; the server no longer reloads under edits), run it from a second worktree at the base commit
@@ -443,9 +432,9 @@ long one (the real-speed `variants6`) needs its own build and port:
 `QA_DIST=node_modules/.ww-qa-dist2 QA_PORT=<free port>`; sharing the build folder would
 rebuild it under the first sweep's pages. A scenario shoots at most 400 shots an episode (`Recorder`'s `max`); past it the run goes on
 unshot, which looks like a hang (hunt 7). Give each its own `QA_TAG` as well: Playwright's
-output folder is per tag (`test-results/qa-<tag>`), since a run empties its folder as it starts. `scratch/` is the main checkout's folder (a
-junction): a probe script kept there that imports `../../src/…` runs the main checkout's
-code, not the worktree's (hunt 7 lost a round to it); keep such scripts in the worktree.
+output folder is per tag (`test-results/qa-<tag>`), since a run empties its folder as it starts. A probe script kept in `scratch/` runs the
+main checkout's code, not the worktree's (hunt 7 lost a round to it; *Operational facts*):
+keep such scripts in the worktree.
 
 - **Item 128's check, `text-off-panel`:** a word crossing the edge of the panel it is
   printed on (the sentence banner's cream band, the parked Word → Picture's banner, the
@@ -546,6 +535,9 @@ code, not the worktree's (hunt 7 lost a round to it); keep such scripts in the w
   answering)", and that page's last probe log is empty.
 - **A scenario outside the first batch needs its set** even with `-g`: `-g "qa variants6$"`
   alone finds no test ("No tests found"); `QA_SET=recent` (its batch) or `QA_SET=all` with it.
+  A scenario's batch is its `batch` field in `SCENARIOS` (a `QA_SET` name; none is the
+  first batch, `quick: true` puts it in the quick three as well): a new hunt's batch is a new
+  name in `BATCHES` there and a line in the list above.
 - **A busy machine slows the sweep's own server:** with many agents or a typecheck
   running beside it, voice fetches from the checker's Vite server passed their 15 s
   timeout (`voice: could not decode ... AbortError` in the log) and lines played silent.
@@ -747,8 +739,8 @@ for it can go back up), `npm test` and `npm run variety`. The grown-ups page lis
 stored words on page 3, with their reasons; `npm run variety` ends with "Stored words
 drawn: none of the N" and exits 1 if one came up. A stored word stays in a roster
 ability's `words` and in a story beat's `answers`: both are filtered to live move words
-when drawn. Three villains' named counters wait while their word is stored (Gold Bag:
-BAG, Bubble Tub: TUB, Golden Nut: NUT). `odd` (item 040) is older and narrower: an odd
+when drawn. Four villains' named counters wait while their word is stored (Cozy Bed:
+BED, stored in item 130; Gold Bag: BAG, Bubble Tub: TUB, Golden Nut: NUT). `odd` (item 040) is older and narrower: an odd
 thing is out of play, but an odd `both` word keeps its move pad.
 
 Sound units (056): QU and NG are units like SH (QU sounds as Q's "Kwuh"), and doubled
@@ -1072,10 +1064,8 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   under 120) stays solid. `art:gen`, `--reprocess`, `art:alts` and `art:pick` all take
   the mode from `keyMode`. A family form that wears dark green goes in `LIGHT_GREEN`,
   not `NO_GREEN`.
-- A script in `scratch/` that imports `../tools/…` or `../content/…` (or `../src/…`) gets
-  the **main checkout's** copy, not the worktree's: `scratch/` is a junction and Node
-  resolves the real path (item 049; `content/` the same, item 074). Import by absolute path
-  (`pathToFileURL(path.resolve('content/…'))`) from the worktree root.
+- A script in `scratch/` that imports `../tools/…` or `../content/…` gets the **main
+  checkout's** copy, not the worktree's (*Operational facts*).
 - `npm test` empties `test-results/` as it starts (Playwright's output folder): a
   script or log kept there by a run beside it is deleted. Keep logs in `scratch/`.
 - A new `prop_word_machine` means refitting `WINDOW` / `PANEL` in
@@ -1108,10 +1098,8 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   worker or the `vite` it serves, which keeps the port. Find them by command line
   (PowerShell `Get-CimInstance Win32_Process | ? CommandLine -like '*<worktree>*'`) and
   `Stop-Process` them before starting another run on that port.
-- **edge-tts runs through Python, via `uvx`.** On 2026-10-18 Microsoft's endpoint refused
-  the npm `edge-tts-universal` 1.4.0 handshake with HTTP 403 (the websocket never opens
-  and the library hangs instead of erroring). Upstream Python `edge-tts` 7.3.1 had moved
-  to a "v2" token and works. `voice:build` spawns `uvx --from edge-tts==7.3.1 python
+- **edge-tts runs through Python, via `uvx`** (why, measured: `docs/engineering.md`,
+  *Voice*). `voice:build` spawns `uvx --from edge-tts==7.3.1 python
   tools/voice/providers/edge_tts_worker.py`; `uv` must be on PATH. If the endpoint
   breaks again, bump the pin in `tools/voice/providers/edgeTts.ts`.
 - **A carrier line (`cut` in `lines.json`, item 085: the short A, cut from "Add") is
@@ -1141,16 +1129,19 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   word count, so it is "Dubbelyou". Measured 2026-10-19: 0.6–0.9 s each, F 1.35 s, R 1.08 s.
   At real speed the warm-up walked straight (the harness's path) takes about 18 s from the
   hall opening to out of its door.
-- edge-tts pads each clip with ~1.5 s of silence; the build cuts mp3 frames after the
-  last word + 0.2 s (`tools/voice/mp3.ts`). That took the voice folder from 23.7 MB to
-  about 19 MB (1,557 lines then). Generated voice left git on 2026-10-18 (item 008) at
-  3,590 mp3s, 42.3 MB with manifest and cache; it lives in `public/voice-gen/` (*Storage*).
+- The build cuts each clip's edge-tts silence after the last word + 0.2 s
+  (`tools/voice/mp3.ts`); generated voice lives in `public/voice-gen/` (*Storage*). Sizes
+  and their history: `docs/engineering.md`, *Voice*.
 - **A throwaway script that imports game code does not go in `scratch/`.** `scratch/` is
-  a junction into the main checkout, so a `.ts` file run from there with `npx tsx`
-  resolves its relative imports against the main checkout's code, not the worktree's
-  (items 027 and 039: a fix looked "missing"). Put it in the worktree (the root, or
+  a junction into the main checkout and Node resolves the real path, so a `.ts` file run
+  from there with `npx tsx` resolves its relative imports (`../src/…`, `../content/…`,
+  `../tools/…`) against the main checkout's code, not the worktree's (items 027, 039, 049
+  and 074, hunt 7: a fix looked "missing"), and a spec or config there loads the main
+  checkout's `node_modules` ("two different versions of @playwright/test"; throwaway specs
+  live under `tests/`). Put it in the worktree (the root, or
   `test-results/` when no `npm test` runs meanwhile, since that empties it) and delete it
-  after; or import by `file:///` URL; or keep the body in `scratch/` and run it from the
+  after; or import by `file:///` URL (`pathToFileURL(path.resolve('content/…'))` from the
+  worktree root); or keep the body in `scratch/` and run it from the
   worktree root as `node --import tsx --input-type=module -e "$(cat scratch/<file>.mjs)"`
   (its `./content/...` imports then resolve against the root).
 - The bubble pops in over 180 ms (scale 0.2 to 1): a screenshot taken just as a bark
@@ -1162,7 +1153,7 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   still listening on 5174 (seen 2026-10-18). Find it with `netstat -ano | findstr 5174`
   and stop that PID. A killed `npm run test:all` does the same on 5184 (the next run then
   fails at once with "5184 is already used"; seen 2026-10-18): check the PID's command
-  line is this worktree's vite before stopping it. Background `test:all` takes about 5
+  line is this worktree's vite before stopping it. Background `test:all` takes about 6
   minutes (*Tests*), so a 10-minute background timeout suffices (its history:
   `docs/engineering.md`, *Lane times, item by item*).
 - Every active ally × villain pair (item 030): `npm run test:pairs`

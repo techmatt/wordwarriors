@@ -14,9 +14,11 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, dad, dadLock, expectNoErrors, state, texts, until } from './harness';
+import { SLOW, boot, collectErrors, dad, dadLock, expectNoErrors, state, texts, until, type WWState } from './harness';
 import { qaLayout } from './qa/probe';
 import { CHARGE_WORDS } from '../src/rules/charge';
+import type { WWHooks } from '../src/testHooks';
+import { letterSoundLine, wordLine } from '../content/voice/ids';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/053_${name}.png` });
 
@@ -36,10 +38,10 @@ test('Charge the Spell: the runes charge by themselves, each sound said; one pre
   // Rune 0 is said, then her beat to say it back; Dad is not asked and green is not needed.
   const r0 = c0.runes[0]!;
   const b0 = await until(page, (st) => st.room?.charge?.index === 0 && st.room.charge.phase === 'sayback', 60_000, 'rune 0 said back');
-  expect(b0.voice.history).toContain(`letter_${r0}_sound`);
+  expect(b0.voice.history).toContain(letterSoundLine(r0));
   expect(b0.room!.charge!.asking).toBe(false);
   // The word is at the top from the start, but never said.
-  expect(b0.voice.history).not.toContain(`word_${c0.word}`);
+  expect(b0.voice.history).not.toContain(wordLine(c0.word));
   // The word's units are upper case in the bar at the top (the altar shows the rune's picture letter);
   // the sound is never captioned (no text shows its placeholder).
   const shown = (await texts(page)).map((t) => t.text);
@@ -48,7 +50,7 @@ test('Charge the Spell: the runes charge by themselves, each sound said; one pre
   // Every rune charges by itself, each sound said, and only then is Dad asked.
   const read = await until(page, (st) => st.room?.charge?.phase === 'read', 60_000, 'the read');
   expect(read.room!.charge!.charged).toEqual(c0.runes);
-  for (const r of c0.runes) expect(read.voice.history).toContain(`letter_${r}_sound`);
+  for (const r of c0.runes) expect(read.voice.history).toContain(letterSoundLine(r));
   expect(read.room!.charge!.asking).toBe(true);
   await expect(page.locator('#dad-buttons')).toBeVisible();
   await page.keyboard.press('Digit2');
@@ -86,8 +88,8 @@ test('Charge the Spell: dad lock holds the say-back beat; no 1 / 2 at all (item 
   const h = hub.voice.history;
   const at = h.lastIndexOf(narratorLineEnd(h, '_charge_read_together'));
   expect(at).toBeGreaterThan(-1);
-  expect(h.slice(at + 1, at + 1 + runes.length)).toEqual(runes.map((r) => `letter_${r}_sound`));
-  expect(h.indexOf(`word_${word}`)).toBeGreaterThan(at);
+  expect(h.slice(at + 1, at + 1 + runes.length)).toEqual(runes.map((r) => letterSoundLine(r)));
+  expect(h.indexOf(wordLine(word))).toBeGreaterThan(at);
   // Nothing about Dad, no "sound it out together" miss.
   expect(h.some((id) => id.endsWith('_charge_together'))).toBe(false);
   // Fetched and done all the same; in the store modelled, never her read: no seen, no recent, so no shakiness moves.
@@ -145,11 +147,11 @@ test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on t
   expect(read.room!.charge!.charged).toEqual(runes);
   // Every frame from here: when each letter sound starts and stops (game clock), for the gaps below.
   await page.evaluate(() => {
-    const w = window as unknown as { __ww: { state(): { voice: { speaking: string | null } } }; __sounds: { id: string; from: number; to: number }[] };
+    const w = window as unknown as { __ww: WWHooks; __sounds: { id: string; from: number; to: number }[] };
     w.__sounds = [];
     let cur: { id: string; from: number; to: number } | null = null;
     const tick = () => {
-      const id = w.__ww.state().voice.speaking;
+      const id = (w.__ww.state() as WWState).voice.speaking;
       const now = performance.now();
       if (cur && cur.id !== id) cur = null;
       if (!cur && id?.startsWith('letter_')) w.__sounds.push((cur = { id, from: now, to: now }));
@@ -168,12 +170,12 @@ test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on t
   const h = hub.voice.history;
   const at = h.lastIndexOf(narratorLineEnd(h, '_charge_together'));
   expect(at).toBeGreaterThan(-1);
-  expect(h.slice(at + 1, at + 1 + runes.length)).toEqual(runes.map((r) => `letter_${r}_sound`));
-  expect(h.indexOf(`word_${word}`)).toBeGreaterThan(at);
+  expect(h.slice(at + 1, at + 1 + runes.length)).toEqual(runes.map((r) => letterSoundLine(r)));
+  expect(h.indexOf(wordLine(word))).toBeGreaterThan(at);
   // A beat between the sounds, never back to back (item 069: they ran toward a blend).
   const sounds = await page.evaluate(() => (window as unknown as { __sounds: { id: string; from: number; to: number }[] }).__sounds);
   const together = sounds.slice(-runes.length);
-  expect(together.map((x) => x.id)).toEqual(runes.map((r) => `letter_${r}_sound`));
+  expect(together.map((x) => x.id)).toEqual(runes.map((r) => letterSoundLine(r)));
   for (let i = 1; i < together.length; i++) expect(together[i]!.from - together[i - 1]!.to, `gap before ${together[i]!.id}`).toBeGreaterThan(250);
   expect(hub.episode.fetched).toEqual([word]);
   expect(hub.episode.charged?.sounds).toEqual(runes);
@@ -228,7 +230,7 @@ test('Charge the Spell (M24): Dad\'s 2 pressed during the last rune is kept, and
   const h = hub.voice.history;
   expect(h.some((id) => id.endsWith('_charge_read'))).toBe(false);
   expect(h.some((id) => id.endsWith('_charge_together'))).toBe(false);
-  expect(h).toContain(`word_${word}`);
+  expect(h).toContain(wordLine(word));
   expectNoErrors(errors);
 });
 
@@ -245,10 +247,10 @@ test('Charge the Spell: the charged runes fire as her hero\'s moves in the next 
   await boot(page, '?scene=battle&part=1&battle=short&charged=m,s,a&nojourney=1', undefined, { voice: 'real' });
   // Every frame: which rune had popped up when each letter sound began (item 069: each sound came a rune late).
   await page.evaluate(() => {
-    const w = window as unknown as { __ww: { state(): { voice: { speaking: string | null }; battle: { runesFired: number } | null } }; __runeAt: Record<string, number> };
+    const w = window as unknown as { __ww: WWHooks; __runeAt: Record<string, number> };
     w.__runeAt = {};
     const tick = () => {
-      const st = w.__ww.state();
+      const st = w.__ww.state() as WWState;
       const id = st.voice.speaking;
       if (id?.startsWith('letter_') && !(id in w.__runeAt)) w.__runeAt[id] = st.battle?.runesFired ?? -1;
       requestAnimationFrame(tick);
@@ -256,7 +258,7 @@ test('Charge the Spell: the charged runes fire as her hero\'s moves in the next 
     tick();
   });
   await until(page, (st) => st.scene === 'Battle' && (st.battle?.runesFired ?? 0) === 3, 60_000, 'three runes fired');
-  const s = await until(page, (st) => ['m', 's', 'a'].every((r) => st.voice.history.includes(`letter_${r}_sound`)), 60_000, 'the runes said');
+  const s = await until(page, (st) => ['m', 's', 'a'].every((r) => st.voice.history.includes(letterSoundLine(r))), 60_000, 'the runes said');
   expect(s.voice.history.some((id) => id.endsWith('_use_runes'))).toBe(true);
   // Each rune's sound starts as its own stone pops up, just before that rune fires (runesFired counts the ones before it).
   // Before the fix the sounds queued behind the use-runes line and came a rune or two late (about 2, 3, 3).

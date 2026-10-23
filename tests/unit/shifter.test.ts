@@ -14,9 +14,10 @@ import { NAME_HIDES } from '../../content/phonics/letters';
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import { letterSoundLine, nameHidesLine, narratorLine } from '../../content/voice/ids';
 import { SHIFTER } from '../../src/config';
+import { stepLevel } from '../../src/rules/difficulty';
 import { MINIGAMES, MINIGAME_BY_ID, SHIFTER_GAME, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/sentences';
-import { SHIFT_WORDS, chainsOf, changedAt, pictureSiblings, placesOf, wrongPictures, stonesFor, nextShifterLevel, orderBreaks, planShifter, positionsOf, shifterLevel, shifterShown, shifterWords } from '../../src/rules/shifter';
+import { SHIFT_WORDS, chainsOf, changedAt, pictureSiblings, placesOf, wrongPictures, stonesFor, orderBreaks, planShifter, positionsOf, shifterLevel, shifterShown, shifterWords } from '../../src/rules/shifter';
 import { nameToSound } from '../../src/rules/soundOut';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
@@ -136,8 +137,8 @@ test('help ramp: level 1 at base whatever she has done; recorded steps up unaide
   assert.equal(shifterLevel(store, 'bat'), 1);
   withDifficulty(3, () => assert.equal(shifterLevel(store, 'bat'), 3));
   withDifficulty(2, () => assert.equal(shifterLevel(store, 'bat'), 2));
-  assert.equal(nextShifterLevel(1, true), 2);
-  assert.equal(nextShifterLevel(2, false), 1);
+  assert.equal(stepLevel(1, true), 2);
+  assert.equal(stepLevel(2, false), 1);
 });
 
 test('the pool: the Shape-Shifter is a fetch room, never the counter', () => {

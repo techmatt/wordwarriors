@@ -57,7 +57,8 @@ import { episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { dadPress, setDadAsking, type DadAnswer } from '../input/dadButtons';
-import { bridgeLevel, nextBridgeLevel, recordedBridgeLevel, whereDiffers, type BridgeLevel, type BridgePlan, type BridgeRound } from '../rules/bridge';
+import { bridgeLevel, recordedBridgeLevel, whereDiffers, type BridgeLevel, type BridgePlan, type BridgeRound } from '../rules/bridge';
+import { stepLevel } from '../rules/difficulty';
 import { soundOut } from '../rules/soundOut';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../hookState';
@@ -167,14 +168,10 @@ export class BridgeRoom extends HouseSideRoom {
     return this.plan.rounds[Math.min(this.index, this.plan.rounds.length - 1)]!;
   }
 
-  private get missKey(): string {
-    return `${this.slot}:${this.current.word}`;
-  }
-
   /** Dad helped on this word (a hint, a replay): kept on the episode like the misses, so F9 and back does not make it unaided (item 069). */
   private markAided(): void {
     this.aided = true;
-    (episode.house.misses ??= {})[`${this.missKey}:aided`] = 1;
+    this.keepAided(this.current.word);
   }
 
   /** Slower on the stones: how slowly she slides is how slowly she stretches the word. */
@@ -311,12 +308,12 @@ export class BridgeRoom extends HouseSideRoom {
     this.locked = true;
     this.level = bridgeLevel(progress, r.word);
     this.voiced = this.level === 1;
-    this.aided = Boolean(episode.house.misses?.[`${this.missKey}:aided`]);
+    this.aided = this.keptAided(r.word);
     this.replays = 0;
     this.toldFind = false;
     this.hintAsked = false;
     this.resetDadWait();
-    this.wrongTries = episode.house.misses?.[this.missKey] ?? 0;
+    this.wrongTries = this.keptMisses(r.word);
     this.releaseHeld();
     this.clearStones();
     this.clearSpots();
@@ -371,7 +368,7 @@ export class BridgeRoom extends HouseSideRoom {
     r.pictures.forEach((word, i) => {
       const [x, y] = PICTURES[i] ?? PICTURES[PICTURES.length - 1]!;
       const shadow = this.add.ellipse(0, 0, PICTURE_SIZE * 0.8, 22, 0x000000, 0.3);
-      const pic = fitImage(this.add.image(0, -PICTURE_SIZE / 2 - 4, `pic_${word}`), PICTURE_SIZE, PICTURE_SIZE);
+      const pic = fitImage(this.add.image(0, -PICTURE_SIZE / 2 - 4, this.wordArt(word)), PICTURE_SIZE, PICTURE_SIZE);
       const spot = this.addSpot(word, x, y, [shadow, pic], word === r.word);
       spot.obj.setDepth(y);
       spot.obj.setVisible(false);
@@ -621,7 +618,7 @@ export class BridgeRoom extends HouseSideRoom {
     this.phase = 'check';
     this.locked = true;
     this.wrongTries++;
-    (episode.house.misses ??= {})[this.missKey] = this.wrongTries;
+    this.keepMisses(r.word, this.wrongTries);
     this.giggle(spot.obj, spot.x, spot.y - PICTURE_SIZE - 40, this.wrongTries - 1);
     await this.wait(350);
     if (f !== this.flow) return;
@@ -695,12 +692,10 @@ export class BridgeRoom extends HouseSideRoom {
     setDadAsking(false);
     // The slot is done with the last word.
     this.recordRead(r.word, firstTry, this.wrongTries, { last });
-    // The ramp moves on her recorded level, whatever the room gave (item 067: DIFFICULTY caps only what she gets).
-    progress.setBridgeLevel(r.word, nextBridgeLevel(recordedBridgeLevel(progress, r.word), unaided));
-    if (episode.house.misses) {
-      delete episode.house.misses[this.missKey];
-      delete episode.house.misses[`${this.missKey}:aided`];
-    }
+    // The ramp moves on her recorded level, whatever the room gave (item 067: DIFFICULTY caps only what she gets):
+    // right first time with no help is one level less help; any help or a wrong picture, one more.
+    progress.setBridgeLevel(r.word, stepLevel(recordedBridgeLevel(progress, r.word), unaided));
+    this.forgetMisses(r.word);
     for (const s of this.spots) s.enabled = false;
 
     sfxRight();
@@ -720,9 +715,9 @@ export class BridgeRoom extends HouseSideRoom {
     // Only now is the word said.
     await this.say(wordLine(r.word));
     if (f !== this.flow) return;
-    const pic = spot.obj;
-    pic.setVisible(false);
-    await Promise.all([this.guard(this.bag.receive(`pic_${r.word}`, top.x, top.y)), this.say(narratorLine(narrator(), variant('right')))]);
+    spot.obj.setVisible(false);
+    this.stopSparkle(spot);
+    await Promise.all([this.guard(this.bag.receive(this.wordArt(r.word), top.x, top.y)), this.say(narratorLine(narrator(), variant('right')))]);
     if (f !== this.flow) return;
     sfxSelect();
     if (!last) {

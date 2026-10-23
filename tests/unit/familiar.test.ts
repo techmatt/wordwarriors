@@ -15,7 +15,7 @@ import { PICTURE_WORDS } from '../../content/phonics/words';
 import { WAKE_LINES, WAKE_VARIANTS, wakeVariant } from '../../content/voice/script';
 import { WAKERS, reformedLine, wakeLine } from '../../content/voice/ids';
 import { GRAB_WORDS } from '../../src/rules/grab';
-import { BAG_WORDS } from '../../src/rules/sentences';
+import { BAG_WORDS } from '../../src/rules/bank';
 import { BEDROOM_TAUNTS, DEFAULT_LINES, drawLines } from '../../src/rules/story';
 
 const odd = (w: string) => Boolean(BANK_BY_WORD[w]?.odd);

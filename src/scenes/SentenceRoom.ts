@@ -123,11 +123,7 @@ export class SentenceRoom extends HouseSideRoom {
     this.readLit = [];
     this.karaoke = null;
     // Back from the parent page (F9) after a miss: still a miss.
-    this.wrongTries = episode.house.misses?.[this.missKey] ?? 0;
-  }
-
-  private get missKey(): string {
-    return `${this.slot}:${this.plan.sentence.key}`;
+    this.wrongTries = this.keptMisses(this.plan.sentence.key);
   }
 
   /** The attic's find line takes the narrow box (item 071, M13): its two-row banner holds the top, and the full-width box at the bottom covered her. */
@@ -583,7 +579,7 @@ export class SentenceRoom extends HouseSideRoom {
     if (this.pass !== 'find') return;
     if (!spot.correct) {
       void this.wrong(spot.obj);
-      (episode.house.misses ??= {})[this.missKey] = this.wrongTries;
+      this.keepMisses(this.plan.sentence.key, this.wrongTries);
       return;
     }
     void this.found(spot);

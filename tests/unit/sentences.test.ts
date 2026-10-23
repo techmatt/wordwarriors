@@ -14,7 +14,8 @@ import { EPISODE_DEFAULTS } from '../../src/config';
 import { FETCH_ITEMS, FRAMES, FRAME_BY_ID, allFrameTokens, allPrefixes, lookalikesOf, sentence, slotOf, tokenWord } from '../../content/phonics/sentences';
 import { PICTURE_WORDS } from '../../content/phonics/words';
 import { wordLine } from '../../content/voice/ids';
-import { BAG_WORDS, LEGACY_BAG_WORDS, distractors, drawKey, frameIsSolid, saidEarly, skipsListening, type EpisodeInput, type SentencePlan } from '../../src/rules/sentences';
+import { BAG_WORDS, LEGACY_BAG_WORDS, drawKey } from '../../src/rules/bank';
+import { distractors, frameIsSolid, saidEarly, skipsListening, type EpisodeInput, type SentencePlan } from '../../src/rules/sentences';
 import { sentencePlans } from './plans';
 import { withDifficulty } from './difficulty';
 import { memory, seeded, spread } from './seeds';
@@ -60,11 +61,6 @@ test('a villain is named bare in sentences, never EVIL (item 038)', () => {
   assert.deepEqual(sentence('runs_from_the', { ...FILL, villain: 'jormungandr' }, 'fan').tokens, ['JORMUNGANDR', 'RUNS', 'FROM', 'THE', 'FAN']);
   for (const p of allPrefixes()) assert.ok(!/\bevil/i.test(`${p.text} ${p.say ?? ''}`), `${p.id}: ${p.text}`);
   assert.ok(!allFrameTokens().some((t) => t.startsWith('evil')), 'no EVIL token');
-});
-
-test("the Playwright harness's FETCH_FRAMES matches the fetch frames", async () => {
-  const { FETCH_FRAMES } = await import('../harness');
-  assert.deepEqual([...FETCH_FRAMES].sort(), FRAMES.filter((f) => f.use === 'fetch').map((f) => f.id).sort());
 });
 
 test('frames: a few of each, and every fetch and counter frame ends in the key word', () => {

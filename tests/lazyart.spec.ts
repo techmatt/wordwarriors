@@ -8,6 +8,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { boot, collectErrors, expectNoErrors, state, until } from './harness';
+import type { WWHooks } from '../src/testHooks';
 
 test('slow art: the hub waits behind the transition, then opens with no gaps', async ({ page }) => {
   const errors = collectErrors(page);
@@ -30,15 +31,14 @@ test('slow art: the hub waits behind the transition, then opens with no gaps', a
   });
   expect(tabKept).toBe(true);
   // Every image on screen has its own texture: none is Phaser's missing square, and nothing asked early.
-  const art = await page.evaluate(() => (window as unknown as { __ww: { art(): { missing: number; late: string[] } } }).__ww.art());
+  const art = await artHook(page);
   expect(art.missing).toBe(0);
   expect(art.late).toEqual([]);
   expect((await state(page)).scene).toBe('Hub');
   expectNoErrors(errors);
 });
 
-type ArtHook = { missing: number; late: string[]; failed: string[]; magenta: number };
-const artHook = (page: Page) => page.evaluate(() => (window as unknown as { __ww: { art(): ArtHook } }).__ww.art());
+const artHook = (page: Page) => page.evaluate(() => (window as unknown as { __ww: WWHooks }).__ww.art());
 
 test('art lost to a passing network error (M25): tries again after a wait, then a later scene asks again and the magenta square goes', async ({ page }) => {
   test.setTimeout(60_000);

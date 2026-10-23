@@ -4,8 +4,10 @@
  *
  * BattleScene runs the same beats for every style (intro, the fetched things,
  * move choice, combo, move choice, the villain's ultimate; then the retreat,
- * or the counter and the finish), so nothing about reading changes. At each
- * beat it calls the stage, which adds its own background dressing, camera,
+ * or the counter and the finish), so nothing about reading changes; only a
+ * story fight runs its script instead (story/StoryDirector.ts, in place of
+ * part1 / part2). At each beat it calls the stage, which adds its own
+ * background dressing, camera,
  * particles and bars, and holds the fighters where its contest needs them
  * (lanes, the two ends of a rope, cooking stations). The simulation still
  * runs underneath: abilities fire, minions roam, hits land; a contest shows

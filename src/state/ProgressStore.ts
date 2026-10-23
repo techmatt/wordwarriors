@@ -81,7 +81,11 @@ export interface ProgressData {
    * `line:<key>` (a narrator line's variant round, item 087,
    * src/episode/lineVariants.ts: a colon, not an underscore), `ending`;
    * `words` her latest right-first-time reads (VARIETY.words), which the
-   * bank's draws lean away from.
+   * bank's draws lean away from. `rememberPlan` (src/episode/plans.ts) also
+   * keeps `chains` (the Shape-Shifter's chains, CHAINS_KEPT), `shifter_door`
+   * (whether door b had the Shape-Shifter), `story_fight_<person>` (whether a
+   * drawn villain played their story fight, `storyKey`) and `last_episode_words`
+   * (`LAST_READ`, src/rules/shifter.ts: every word the episode had her read).
    */
   recent: Record<string, string[]>;
 }

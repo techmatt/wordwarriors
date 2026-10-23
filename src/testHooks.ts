@@ -19,17 +19,18 @@ import { typeLetter } from './input/TextEntry';
 import { artBank } from './art/ArtBank';
 import { voiceBus } from './audio/VoiceBus';
 import { episode, currentStep } from './episode/Episode';
-import { debugMode } from './episode/debug';
 import { progress } from './state/progress';
 import { GAME_HEIGHT, GAME_WIDTH } from './config';
 import { installProbe } from './qa/probe';
-import { hookState, walkObjects } from './hookState';
+import { walkObjects } from './displayList';
+import { hookState } from './hookState';
 
 function hooksEnabled(): boolean {
   return import.meta.env.DEV || new URLSearchParams(location.search).has('hooks');
 }
 
-interface TextInfo {
+/** A visible Text in a running scene, with its world bounds; `offscreen` when it leaves the 1280×720 frame. */
+export interface TextInfo {
   scene: string;
   text: string;
   bounds: [number, number, number, number];
@@ -86,7 +87,14 @@ export function installTestHooks(game: Phaser.Game): void {
   if (new URLSearchParams(location.search).has('qa')) installProbe(game);
   // Test-only instant voice (item 083): a line ends once `state()` has reported it.
   voiceBus.instant = new URLSearchParams(location.search).get('voice') === 'instant';
-  (window as unknown as { __ww: unknown }).__ww = {
+  (window as unknown as { __ww: WWHooks }).__ww = makeHooks(game);
+}
+
+/** `window.__ww`'s shape: tests/harness.ts imports it as a type, so a renamed or retyped hook fails typecheck there. */
+export type WWHooks = ReturnType<typeof makeHooks>;
+
+function makeHooks(game: Phaser.Game) {
+  return {
     state: () => {
       const s = snapshot();
       voiceBus.seen();
@@ -136,9 +144,6 @@ export function installTestHooks(game: Phaser.Game): void {
       if (a) dadPress(a);
       return dadButtonsOpen();
     },
-    /** Minigame debug mode (item 086): on or off, the game played from it now, and those finished. */
-    debug: () => ({ on: debugMode.on, run: debugMode.run?.game ?? null, done: [...debugMode.done], origin: debugMode.origin?.key ?? null }),
-    resetProgress: () => progress.reset(),
     /** Tests can skip the 15+ s of speech in a long flow. */
     hush: () => voiceBus.hush(),
     texts: () => visibleText(game),

@@ -31,7 +31,7 @@ import { GRAB } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { coverage, distractorsFor, isFirm, met } from './bank';
 import { pickWeighted, shuffle, type Rand } from './random';
-import { clampLevel, helpLevel, stepLevel, type HelpLevel } from './difficulty';
+import { clampLevel, helpLevel, type HelpLevel } from './difficulty';
 import { nameHolds, soundOut } from './soundOut';
 
 export type GrabLevel = HelpLevel;
@@ -54,11 +54,6 @@ export function grabLevel(store: ProgressStore, word: string): GrabLevel {
 
 /** How many of her latest grabs the next pick keeps clear of, while another word will do (item 067; was 1). */
 export const RECENT_GRABS = 3;
-
-/** The ramp: right first time is one level harder, a first-try miss one easier. */
-export function nextLevel(level: GrabLevel, firstTry: boolean): GrabLevel {
-  return stepLevel(level, firstTry);
-}
 
 /**
  * The word to grab this episode: a short word (GRAB_WORDS), weighted toward

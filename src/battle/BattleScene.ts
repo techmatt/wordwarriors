@@ -37,10 +37,10 @@ import Phaser from 'phaser';
 
 import { CHARACTER_BY_ID, MINIONS, abilityCallout, comboFor, comboPart, personOf } from '../../content/battle/roster';
 import type { AbilitySpec, CounterItem, Status } from '../../content/battle/types';
-import { EFFECT_BY_WORD } from '../../content/phonics/effects';
+import { wordEffect } from '../../content/phonics/effects';
 import { RUNE_BY_SOUND, runeArt } from '../../content/phonics/runes';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
-import { fighterId, letterSoundLine, moveLine, nameLine, narratorLine, reformedLine, tauntLine, ultimateLine } from '../../content/voice/ids';
+import { fighterId, letterSoundLine, moveKeyWord, moveLine, nameLine, narratorLine, reformedLine, tauntLine, ultimateLine, type MoveKind } from '../../content/voice/ids';
 import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh } from '../audio/sfx';
@@ -50,7 +50,7 @@ import { advance, castArt, castScale, counterArt, counterWord, episode, fightSty
 import { pickTaunt, unsayTaunt, variant } from '../episode/lineVariants';
 import { fightLineKey, type FightSpec } from '../../content/battle/fights';
 import { hex } from '../fx/colour';
-import { burst, fitImage, flash, floatText, fxQuality, hitstop, popIn, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
+import { burst, fitImage, flash, floatText, FpsMeter, fxQuality, hitstop, popIn, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { FreePlay } from '../fx/freePlay';
 import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
@@ -67,12 +67,12 @@ import { Bubbles } from '../ui/Bubbles';
 import { Caption } from '../ui/Caption';
 import { fitText } from '../ui/fitText';
 import { cast, type Projectile, type Trap } from './abilities';
-import { Fighter, FLOOR_BOTTOM, FLOOR_TOP, initFromMinion, initFromSpec, type FighterInit } from './Fighter';
-import { ARENA_LEFT, ARENA_RIGHT, integrate, restLift, STEER } from './movement';
+import { Fighter, FLOOR_BOTTOM, FLOOR_TOP, initFromMinion, initFromSpec, NO_AFTERIMAGES, type FighterInit } from './Fighter';
+import { ARENA_LEFT, ARENA_RIGHT, integrate, restLift, STEER, STICK_DEADZONE } from './movement';
 import { BattleHud } from './hud';
 import { MoveChoice, type ChoiceHost } from './moveChoice';
 import { makeStage } from './stages';
-import { StoryDirector } from './story/StoryDirector';
+import { StoryDirector, type StoryHost } from './story/StoryDirector';
 import type { StoryWalk } from './story/walk';
 import type { FightStage, Phase, StageHost } from './stages/stage';
 
@@ -90,7 +90,7 @@ const CARD_MAX = 380;
 const VOLLEY_SPREAD = 130;
 const VOLLEY_GAP = 0.3;
 /** The move choice's prompt lines that say the right word (`use_move_zap`, `find_move_zap`, `not_move_zap`): its caption hides it. */
-const CHOICE_PROMPT = /_(?:use_move|find_move|not_move)_([a-z]+)$/;
+const CHOICE_PROMPT: readonly MoveKind[] = ['use_move', 'find_move', 'not_move'];
 /**
  * Where the brawl puts everybody (a contest's stage has its own places: `show.home`,
  * `show.anchored`, `show.steer`). `intro`: the run-in, the i-th hero at `x + i * dx`, the
@@ -125,7 +125,7 @@ interface CounterBeat {
   how: CounterItem['how'];
 }
 
-export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
+export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, StoryHost {
   part: 1 | 2 = 1;
   now = 0;
   fighters: Fighter[] = [];
@@ -145,9 +145,19 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   private darkRect!: Phaser.GameObjects.Rectangle;
   /** The names, bars, fetched things and runes along the top (hud.ts). */
   private hud!: BattleHud;
+  /** The one banner showing, and until when a big one holds off the small ones. */
+  private bannerText: Phaser.GameObjects.Text | null = null;
+  private bannerBig = 0;
+  /** The frame rate, sampled in `publish`; it also sets the particles' `fxQuality`. */
+  private readonly fps = new FpsMeter();
   private simRate = 1;
   /** `?battle=short` (item 083): the director's waits cut (`beat`). */
   private readonly short = new URLSearchParams(location.search).get('battle') === 'short';
+  /**
+   * The director is a chain of awaits; once this run of the scene is over
+   * (F2, the advance to the next step) nothing in the chain may resume.
+   */
+  private runs = new SceneGen(this);
   private teamNextCast = { hero: 0, villain: 0 };
   private nextTaunt = 4000;
   /** The move choice's pads and her walk to them (moveChoice.ts). */
@@ -183,7 +193,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     this.step = data.step;
     this.part = data.step?.kind === 'battle' ? data.step.part : 1;
     // Scene data outlives a restart: F9 out of an open choice must not leave afterimages off (moveChoice.ts).
-    this.data.set('noAfterimages', false);
+    this.data.set(NO_AFTERIMAGES, false);
     this.now = 0;
     this.fighters = [];
     this.projectiles = [];
@@ -225,7 +235,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     // Lighter in battle: a small box and face at the bottom, so the fight stays in view.
     // The move choice's prompts say the word to find; the box prints "USE …!"
     // so she finds it on the pads by reading (item 043, M1).
-    new Caption(this, { compact: true, hideWord: (u) => CHOICE_PROMPT.exec(u.id)?.[1] });
+    new Caption(this, { compact: true, hideWord: (u) => moveKeyWord(u.id, CHOICE_PROMPT) });
     // A bubble keeps clear of the bars at the top and of the banner showing (item 034), measured at its full size.
     new Bubbles(this, () => {
       const t = this.bannerText;
@@ -279,16 +289,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
 
   /** A story fight's opening: the versus cards, the run-in, the banner. The characters do the talking after it. */
   async storyIntro(): Promise<void> {
-    this.phase = 'intro';
-    if (this.part === 1) await this.versus();
-    this.heroes.forEach((h, i) => {
-      const to = this.show.home(h, i)!;
-      this.tweens.add({ targets: h, x: to.x, y: to.y, lift: restLift(h), duration: 900, ease: 'Quad.easeOut' });
-    });
-    const vto = this.show.home(this.villain, 0)!;
-    this.tweens.add({ targets: this.villain, x: vto.x, y: vto.y, duration: 1100, ease: 'Quad.easeOut' });
-    this.banner(this.fight.banner[this.part - 1]!, 0xff3d7a, true);
-    sfxFanfare();
+    await this.runIn(true);
     await this.wait(1.4);
     for (const f of this.fighters) f.onStage = true;
     this.phase = 'story';
@@ -401,9 +402,6 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     this.tweens.add({ targets: this.darkRect, fillAlpha: alpha, duration: ms });
   }
 
-  private bannerText: Phaser.GameObjects.Text | null = null;
-  private bannerBig = 0;
-
   banner(text: string, color: number, big = false): void {
     // One banner at a time; a small one never covers a big one still showing.
     if (!big && this.now < this.bannerBig) return;
@@ -498,12 +496,6 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     return this.guard(voiceBus.say(narratorLine(narrator(), variant(key))));
   }
 
-  /**
-   * The director is a chain of awaits; once this run of the scene is over
-   * (F2, the advance to the next step) nothing in the chain may resume.
-   */
-  private runs = new SceneGen(this);
-
   guard<T>(p: Promise<T>): Promise<T> {
     return this.runs.guard(p);
   }
@@ -586,18 +578,26 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     await this.wait(0.3);
   }
 
-  private async intro(): Promise<void> {
+  /**
+   * Both intros' opening: the versus cards in part 1, everybody running in from the sides
+   * (to the style's own spots, if it has them; `lift`: the heroes up to their resting height
+   * on the way, as a story fight's marks want), the banner and the fanfare.
+   */
+  private async runIn(lift: boolean): Promise<void> {
     this.phase = 'intro';
     if (this.part === 1) await this.versus();
-    // Everybody runs in from the sides (to the style's own spots, if it has them).
     this.heroes.forEach((h, i) => {
       const to = this.show.home(h, i) ?? { x: BRAWL.intro.x + i * BRAWL.intro.dx, y: h.y };
-      this.tweens.add({ targets: h, x: to.x, y: to.y, duration: 900, ease: 'Quad.easeOut' });
+      this.tweens.add({ targets: h, x: to.x, y: to.y, ...(lift ? { lift: restLift(h) } : {}), duration: 900, ease: 'Quad.easeOut' });
     });
     const vto = this.show.home(this.villain, 0) ?? { x: BRAWL.intro.villainX, y: this.villain.y };
     this.tweens.add({ targets: this.villain, x: vto.x, y: vto.y, duration: 1100, ease: 'Quad.easeOut' });
     this.banner(this.fight.banner[this.part - 1]!, 0xff3d7a, true);
     sfxFanfare();
+  }
+
+  private async intro(): Promise<void> {
+    await this.runIn(false);
     await this.say(fightLineKey(this.fight, this.part === 1 ? 'start' : 'start2'));
     if (this.part === 2) await this.villainSays();
     for (const f of this.fighters) f.onStage = true;
@@ -954,7 +954,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     const f = this.heroes.find((h) => h.init.id === o.fighter) ?? this.heroes[0];
     const ab =
       o.from === null
-        ? (EFFECT_BY_WORD[word]?.ability ?? { id: `word_${word}`, name: word.toUpperCase(), kind: 'bolt', cooldown: 0, color: 0xffd23f, power: 2, count: 3, homing: true })
+        ? wordEffect(word)
         : CHARACTER_BY_ID[o.from]?.good.abilities.find((a) => a.id === o.ability);
     return f && ab ? { f, ab } : null;
   }
@@ -1158,7 +1158,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     v.clearOverlay();
     // A giant (Tiamat) steps to the front of her half, so growing for the
     // ultimate fills the screen from the floor to near the top, head still in view.
-    const giant = v.init.size >= 2;
+    const giant = v.giant;
     // A contest's stage keeps everybody where its contest has them.
     if (!this.show.anchored) this.tweens.add({ targets: v, x: giant ? BRAWL.ult.giantX : BRAWL.ult.villain.x, y: giant ? FLOOR_BOTTOM : BRAWL.ult.villain.y, duration: 600 });
     // Everyone back to their own side, so the big moment reads left against right.
@@ -1534,7 +1534,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     // A contest places its fighters itself (lanes, the rope's ends, stations).
     const placed = this.show.steer(f, dt);
     // Her own hero runs where she pushes the stick; everything else stays automatic.
-    const steered = !placed && f === this.heroes[0] && fighting && this.controls.move.lengthSq() > 0.04;
+    const steered = !placed && f === this.heroes[0] && fighting && this.controls.move.lengthSq() > STICK_DEADZONE;
     if (placed) {
       // The stage has placed it.
     } else if (steered) {
@@ -1554,7 +1554,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       f.x += (home - f.x) * Math.min(1, (f.team === 'villain' ? g.villainPull : g.heroPull) * dt);
     }
     // A giant's wings would hang off the edge of the screen: keep all of her in.
-    if (f.init.size >= 2) f.x = Phaser.Math.Clamp(f.x, ARENA_LEFT + f.height * 0.45, ARENA_RIGHT - f.height * 0.45);
+    if (f.giant) f.x = Phaser.Math.Clamp(f.x, ARENA_LEFT + f.height * 0.45, ARENA_RIGHT - f.height * 0.45);
     if (!fighting || !target) return;
 
     // Casting: one team member at a time, so moves read instead of blurring.
@@ -1808,20 +1808,9 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     this.publish();
   }
 
-  private fpsAcc = 0;
-  private fpsFrames = 0;
-
   private publish(): void {
-    this.fpsAcc += this.game.loop.delta;
-    this.fpsFrames++;
-    if (this.fpsAcc > 500) {
-      hookState.fps = Math.round((this.fpsFrames * 1000) / this.fpsAcc);
-      // Thin the particles when frames drop; restore them when they recover.
-      if (hookState.fps < 40) fxQuality.level = Math.max(0.35, fxQuality.level - 0.15);
-      else if (hookState.fps > 55) fxQuality.level = Math.min(1, fxQuality.level + 0.05);
-      this.fpsAcc = 0;
-      this.fpsFrames = 0;
-    }
+    // Thin the particles when frames drop; restore them when they recover.
+    this.fps.sample(this.game.loop.delta, true);
     const info = (f: Fighter) => ({ id: f.init.id, hp: Math.round((100 * f.hp) / f.maxHp), status: f.floored ? 'floored' : (f.status?.kind ?? null), art: f.init.art, drawn: Math.round(f.sprite.height * f.baseScale) });
     hookState.battle = {
       part: this.part,

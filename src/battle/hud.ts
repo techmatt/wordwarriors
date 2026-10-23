@@ -15,8 +15,13 @@ import { fitImage, popIn } from '../fx/juice';
 import type { Fighter } from './Fighter';
 import type { FightStage } from './stages/stage';
 
-/** The fetched things' row: right of the heroes' bars, left of the villain's (GAME_WIDTH - 30 - 420 - 3). */
-const ITEM_ROW = { left: 345, right: GAME_WIDTH - 30 - 420 - 13 };
+/** The health bars: the heroes' down the left, a row each from `y`; the villain's along the top right. */
+const BARS = { x: 30, y: 38, rowH: 44, heroW: 300, villainW: 420 };
+/** The villain's bar's left edge; its dark backing starts 3 px further left (x 827). */
+const VILLAIN_BAR_X = GAME_WIDTH - BARS.x - BARS.villainW;
+
+/** The fetched things' row: right of the heroes' bars, clear of the villain's. */
+const ITEM_ROW = { left: BARS.x + BARS.heroW + 15, right: VILLAIN_BAR_X - 13 };
 
 export class BattleHud {
   private readonly g: Phaser.GameObjects.Graphics;
@@ -32,9 +37,9 @@ export class BattleHud {
     const scene = this.scene;
     const style = { fontFamily: FONT_HEAVY, fontSize: '18px', color: '#ffffff', stroke: '#000000', strokeThickness: 5 };
     heroes.forEach((h, i) => {
-      this.labels.push(scene.add.text(30, 14 + i * 44, h.init.name.toUpperCase(), style).setDepth(DEPTH.hud + 1));
+      this.labels.push(scene.add.text(BARS.x, BARS.y - 24 + i * BARS.rowH, h.init.name.toUpperCase(), style).setDepth(DEPTH.hud + 1));
     });
-    this.labels.push(scene.add.text(GAME_WIDTH - 30, 14, villain.init.name.toUpperCase(), style).setOrigin(1, 0).setDepth(DEPTH.hud + 1));
+    this.labels.push(scene.add.text(GAME_WIDTH - BARS.x, BARS.y - 24, villain.init.name.toUpperCase(), style).setOrigin(1, 0).setDepth(DEPTH.hud + 1));
 
     // What she fetched in the house (and the counter-item, once made), in a
     // row beside the heroes' bars, so the link from reading to the fight
@@ -57,7 +62,7 @@ export class BattleHud {
     const runes = episode.charged?.part === part ? episode.charged.sounds.filter((s) => RUNE_BY_SOUND[s]) : [];
     runes.forEach((sound, i) => {
       const x = 46 + i * 34;
-      const y = 38 + heroes.length * 44 - 8;
+      const y = BARS.y + heroes.length * BARS.rowH - 8;
       const chip = fitImage(scene.add.image(x, y, 'prop_rune_stone'), 30, 30).setDepth(DEPTH.hud + 1);
       const t = scene.add.text(x, y + 1, sound.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: sound.length > 1 ? '13px' : '18px', color: '#1a1030' }).setOrigin(0.5).setDepth(DEPTH.hud + 2);
       for (const o of [chip, t]) popIn(scene, o, o.scale, 600 + i * 100, 300);
@@ -80,7 +85,7 @@ export class BattleHud {
       g.fillStyle(color, 1).fillRoundedRect(alignRight ? x + w - fw : x, y, fw, 14, 6);
       g.fillStyle(0xffffff, 0.35).fillRect(alignRight ? x + w - fw : x, y + 2, fw, 4);
     };
-    heroes.forEach((h, i) => bar(30, 38 + i * 44, 300, h.hp / h.maxHp, 0x44d95a, false));
-    bar(GAME_WIDTH - 30 - 420, 38, 420, villain.hp / villain.maxHp, 0xe8483f, true);
+    heroes.forEach((h, i) => bar(BARS.x, BARS.y + i * BARS.rowH, BARS.heroW, h.hp / h.maxHp, 0x44d95a, false));
+    bar(VILLAIN_BAR_X, BARS.y, BARS.villainW, villain.hp / villain.maxHp, 0xe8483f, true);
   }
 }

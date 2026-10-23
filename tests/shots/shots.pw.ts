@@ -12,6 +12,7 @@ import { mkdirSync } from 'node:fs';
 
 import { test, type Page } from '@playwright/test';
 
+import { ENDINGS } from '../../content/house/endings';
 import { boot, choose, hubGo, press, readToKeyWord, state, until, VOICE } from '../harness';
 
 // Item 083: real voice, so a shot catches the line and its caption.
@@ -107,7 +108,7 @@ for (const cast of CASTS) {
 }
 
 // Every victory scene (item 027) with five there: Julia, Ellie, both dads, Tiamat.
-for (const ending of ['dessert', 'picnic', 'mountain', 'fort', 'boat', 'stars', 'campfire', 'snow']) {
+for (const ending of ENDINGS.map((e) => e.id)) {
   test(`ending: ${ending}`, async ({ page }) => {
     await boot(page, `?scene=victory&ending=${ending}&ally=ellie&villain=tiamat&primary=dada_matt&secondary=1&nojourney=1&read=bed`, 2);
     await until(page, (s) => (s.ending?.said.length ?? 0) >= 1, 30_000, 'a line said');

@@ -34,7 +34,7 @@ import { NO_ARTICLE, NUMBER_WORDS, lookalikesOf } from '../../content/phonics/se
 import { SHIFTER } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { met, recentWords, wordWeight } from './bank';
-import { clampLevel, helpLevel, stepLevel, type HelpLevel } from './difficulty';
+import { clampLevel, helpLevel, type HelpLevel } from './difficulty';
 import { pickWeighted, shuffle, type Rand } from './random';
 
 export type ShifterLevel = HelpLevel;
@@ -298,11 +298,6 @@ export function recordedShifterLevel(store: ProgressStore, word: string): Shifte
 /** The help level the room gives a word now: SHIFTER.startLevel at base, else her recorded level up to DIFFICULTY. */
 export function shifterLevel(store: ProgressStore, word: string): ShifterLevel {
   return helpLevel(recordedShifterLevel(store, word), SHIFTER.startLevel);
-}
-
-/** The ramp: right first time with no help is one level less help; a hint or a miss, one more. */
-export function nextShifterLevel(level: ShifterLevel, unaided: boolean): ShifterLevel {
-  return stepLevel(level, unaided);
 }
 
 /** How shaky the words a chain can use are, on average: the room's lean in the minigame pool. */

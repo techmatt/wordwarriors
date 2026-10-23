@@ -11,6 +11,7 @@
 import { test, expect } from '@playwright/test';
 import { BANK_BY_WORD } from '../content/phonics/bank';
 import { boot, collectErrors, expectNoErrors, until } from './harness';
+import { wordLine } from '../content/voice/ids';
 
 // KING ends in NG; SHELL starts with SH and ends in a doubled LL (L's one sound).
 const WORDS: Record<string, { said: string[]; never: string[] }> = {
@@ -37,7 +38,7 @@ for (const [word, { said, never }] of Object.entries(WORDS)) {
     for (const id of never) expect(letters).not.toContain(id);
     // Each unit's sound exactly once.
     for (const id of said.filter((x) => x.endsWith('_sound'))) expect(letters.filter((x) => x === id)).toHaveLength(1);
-    expect(s.voice.history).not.toContain(`word_${word}`);
+    expect(s.voice.history).not.toContain(wordLine(word));
     expectNoErrors(errors);
   });
 }

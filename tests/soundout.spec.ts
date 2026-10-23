@@ -6,8 +6,9 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { BAG_WORDS } from '../src/rules/sentences';
+import { BAG_WORDS } from '../src/rules/bank';
 import { SLOW, boot, collectErrors, expectNoErrors, press, readToKeyWord, seedSolidFrames, until, walkTo } from './harness';
+import { letterSoundLine, wordLine } from '../content/voice/ids';
 
 const SOUNDS: Record<string, string[]> = {
   key: ['k', 'long_e'],
@@ -32,7 +33,7 @@ for (const [word, sounds] of Object.entries(SOUNDS)) {
     await readToKeyWord(page);
     const awake = await until(page, (s) => (s.room?.spots.length ?? 0) === 3 && !s.room!.locked, 30_000, 'three objects');
     const wrong = awake.room!.spots.find((sp) => sp.correct === false)!;
-    const want = sounds.map((u) => `letter_${u}_sound`);
+    const want = sounds.map((u) => letterSoundLine(u));
     const letters = (h: string[]) => h.filter((id) => /^letter_.*_sound$/.test(id));
     // Her green's read already sounded the key word out once (item 085).
     expect(letters(awake.voice.history)).toEqual(want);
@@ -42,7 +43,7 @@ for (const [word, sounds] of Object.entries(SOUNDS)) {
     await press(page, 'green');
     const heard = await until(page, (s) => letters(s.voice.history.slice(before)).length >= want.length && !s.room!.locked, 30_000, 'hint sounded');
     expect(letters(heard.voice.history.slice(before))).toEqual(want);
-    expect(heard.voice.history).not.toContain(`word_${word}`);
+    expect(heard.voice.history).not.toContain(wordLine(word));
     expectNoErrors(errors);
   });
 }

@@ -27,9 +27,9 @@ read-only reference.
 
 | Path | What |
 | --- | --- |
-| `src/` | `main.ts` boots Phaser; `config.ts` sizes, depth bands and every tuning knob; `hookState.ts` / `testHooks.ts` the tests' `window.__ww`; `realTime.ts` wall-clock timeouts the tests' fast clocks do not stretch |
+| `src/` | `main.ts` boots Phaser; `config.ts` sizes, depth bands and every tuning knob; `hookState.ts` / `testHooks.ts` the tests' `window.__ww`; `realTime.ts` wall-clock timeouts the tests' fast clocks do not stretch; `displayList.ts` `walkObjects`, the display-list walk ArtBank, the hooks and the QA probe share |
 | `src/scenes/` | One scene per episode step, the live side rooms (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom, ShifterRoom), Wait (art loading), Debug (minigame debug mode), Parent; parked: Pick, Alarm, Retreat, `minigames/`. "Minigame" means only a pool entry (`src/rules/minigames.ts`) |
-| `src/battle/` | `BattleScene` (the director, `part1`/`part2`), `Fighter`, `moveChoice` (the frozen-fight word pick), `hud`; `stages/` each fight style; `story/` the story fight |
+| `src/battle/` | `BattleScene` (the director, `part1`/`part2`), `Fighter`, `moveChoice` (the frozen-fight word pick), `hud`, `abilities` (every ability kind, `CASTS`), `movement` (`STEER`), `padPlace` (Phaser-free pad placement); `stages/` each fight style; `story/` the story fight |
 | `src/episode/` | `Episode.ts` the flow (scenes call `advance()`; nothing else decides flow); Phaser-free `state.ts`, `draws.ts`, `cast.ts`, `plans.ts`, `debug.ts`, `lineVariants.ts` |
 | `src/input/` | `Controls` (pad, keys, virtual pad), `TextEntry` (A–Z), `dadLock`, `dadButtons`, `debugKey` |
 | `src/audio/`, `src/voice/` | Synthesised sfx and music, `VoiceBus` (the one voice arbiter), `holdSound`; `VoiceBank` (reads `public/voice-gen/manifest.json`) |
@@ -46,8 +46,8 @@ read-only reference.
 | `public/art/` | Generated, committed. Do not hand-edit |
 | `public/voice-gen/`, `art-originals/` | Untracked junctions to the Drive folder (README, *Storage*). Do not hand-edit |
 | `tools/` | `voice/`, `art/`, `shared.ts`, `phonics/audit.ts`; `recorder/phonics-recorder.html` (its hosted copy is synced by the planner, never edited here) |
-| `tests/` | Playwright specs, `harness.ts`; `unit/` node:test; `shots/`, `perf/`, `qa/` (README, *Not tests*) |
-| `docs/` | `systems.md`, `episode.md`, `engineering.md` (measured facts), `content.md` (adding content), `recording.md`, `art.md` (generated), `qa-findings.md` (known issues and Matt's calls), `rulings.md` (Matt's standing calls no other doc holds) |
+| `tests/` | Playwright specs, `harness.ts`; `unit/` node:test; `shots/`, `perf/`, `qa/`, `variety/` (README, *Not tests*); `fixtures/` (the voice-import test's WAV) |
+| `docs/` | `systems.md`, `episode.md`, `engineering.md` (measured facts), `content.md` (adding content), `recording.md`, `art.md` (generated), `qa-findings.md` (known issues and Matt's calls), `rulings.md` (Matt's standing calls no other doc holds), `language-pass.md` (item 087's old-to-new line table, historical) |
 
 ## Commands
 
@@ -58,7 +58,7 @@ times and test counts: README, *Tests*.
 | --- | --- |
 | `npm run dev` | Serve at http://localhost:5174 |
 | `npm run build` / `npm run preview` | Typecheck, then static `dist/` / serve it |
-| `npm run typecheck` | `src`, `tests`, `content`, `tools` (the tests do not typecheck) |
+| `npm run typecheck` | `src`, `tests`, `content`, `tools` (~2 s; the test runs do not typecheck) |
 | `npm test` | Fast lane, after every change (~14 s): unit tests and the `@smoke` browser tests |
 | `npm run test:unit` | Unit tests alone |
 | `npm run test:browser` | Before a commit (~95 s): every browser test not tagged `@slow`, plus the specs covering what changed (`npx playwright test <spec>`) |
@@ -69,6 +69,7 @@ times and test counts: README, *Tests*.
 | `npm run art:placeholders` / `art:gen -- <ids…>` | Paint missing art and rewrite `docs/art.md` / real art (README, *Real art*) |
 | `npm run art:alts -- <ids…>` / `art:pick -- <id> <n>` | Draw candidates / promote one (README, *Candidates*) |
 | `npm run bank:audit` | The word bank's coverage table (README, *The word bank's coverage rule*) |
+| `npm run variety -- --episodes=300 --seed=1` | Many simulated episodes' rotation and word variety, no browser (README, *Not tests*) |
 | `npm run perf`, `SHOTS_TAG=<tag> npm run shots`, `QA_TAG=<tag> npm run qa` | Boot timings, screenshots, the bug-hunt checker (README, *Not tests*, *The bug-hunt checker*) |
 
 **Faster tests over thorough tests where reasonable** (Matt): fewer seeds, a faster

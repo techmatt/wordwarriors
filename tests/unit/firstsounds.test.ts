@@ -16,7 +16,7 @@ import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import { ALL_SIDE_ROOMS } from '../../content/house/house';
 import { letterSoundLine } from '../../content/voice/ids';
 import { GRAB_WORDS, clue } from '../../src/rules/grab';
-import { BAG_WORDS } from '../../src/rules/sentences';
+import { BAG_WORDS } from '../../src/rules/bank';
 
 test('K and Y: a familiar pictured word each, in the rooms, the warm-up and the bag', () => {
   for (const letter of ['k', 'y']) {

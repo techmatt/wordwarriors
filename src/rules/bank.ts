@@ -27,7 +27,8 @@
  * rime, so she has to read past the first letter.
  */
 
-import { BANK, BANK_BY_WORD, LEVELS, LIVE, VOWEL_LIST, type BankWord } from '../../content/phonics/bank';
+import { BANK, BANK_BY_WORD, LEVELS, LIVE, THINGS, VOWEL_LIST, type BankWord } from '../../content/phonics/bank';
+import { onsetOf, rimeOf } from '../../content/phonics/families';
 import { BANK_DRAW, VARIETY } from '../config';
 import type { BagKind, ProgressStore } from '../state/ProgressStore';
 import { rampsAdvance } from './difficulty';
@@ -153,6 +154,44 @@ const COMPOUND_HALVES = new Set(['cake', 'shine', 'let', 'ball', 'fish', 'man', 
 // LOLLI (item 071, M16): a LOLLIPOP says POP.
 const COMPOUND_HEADS = ['bath', 'broom', 'dumb', 'kettle', 'ear', 'hand', 'hazel', 'snow', 'war', 'lolli'];
 
+/** Every word the key-word bag holds: the bank's pictured words (item 037: CVC, blends and digraphs). */
+export const BAG_WORDS: string[] = THINGS.map((w) => w.word);
+
+/**
+ * The bag words before item 035 added MUG RUG JUG: a progress blob saved then
+ * knew these (`topUpBag`). Spelled out, since the catalogue has moved on; a
+ * blob saved since remembers its own catalogue (`bagKnown`), so 037's words
+ * join a round under way either way.
+ */
+export const LEGACY_BAG_WORDS: string[] = [
+  'cat', 'dog', 'sun', 'fox', 'bug', 'pig', 'hat', 'bed', 'cup', 'map', 'fan', 'web', 'bus', 'hen', 'box',
+  'net', 'pen', 'van', 'bat', 'bag', 'can', 'nut', 'tub', 'cap', 'pin', 'jet', 'log', 'mop', 'pot', 'rat',
+];
+
+/**
+ * Draw one key word from the bag: an `eligible` word still in it, weighted
+ * by `wordWeight` (shakiness x coverage x recency) times `boost`. When no
+ * eligible word is left, the bag
+ * refills (a new round) with every bag word except `keepOut` (this episode's
+ * words so far, so they do not open the new round too). It falls back to
+ * any eligible word only if even a full bag has none.
+ *
+ * Drawing does not spend the word: it leaves the bag only when she reads it
+ * right first time (the room's `recordRead`, src/world/SideRoom.ts, calls `takeFromBag`), so an episode she
+ * abandons, or a dev `?scene=` jump, costs her bag nothing, and a word she
+ * missed simply stays in.
+ */
+export function drawKey(
+  store: ProgressStore,
+  eligible: string[],
+  rand: Rand = Math.random,
+  keepOut: string[] = [],
+  boost: (w: string) => number = () => 1,
+): string {
+  store.topUpBag(BAG_WORDS, LEGACY_BAG_WORDS);
+  return drawFromBag(store, 'keys', BAG_WORDS, eligible, rand, keepOut, boost);
+}
+
 /**
  * Draw one word from bag `which`: an `eligible` word still in it, by
  * `wordWeight` × `boost`. When none is left the bag refills with `catalogue`
@@ -200,10 +239,8 @@ export function isFirm(store: ProgressStore, word: string, kind: 'words' | 'grab
   return s.recent.length >= 2 && store.shakiness(kind, word) <= BANK_DRAW.firm;
 }
 
-const onsetOf = (w: string) => BANK_BY_WORD[w]?.onset ?? w.charAt(0);
 /** A word's first sound, as far as two letters can share one: a hard C and K are one (CH is its own). */
 const firstSound = (w: string) => (w.startsWith('ch') ? 'ch' : w.charAt(0) === 'c' ? 'k' : w.charAt(0));
-const rimeOf = (w: string) => BANK_BY_WORD[w]?.rime ?? w.slice(1);
 
 /** Does `other` share `target`'s first sound (a non-empty onset) or its rime? */
 export function sharesSound(target: string, other: string): boolean {

@@ -16,7 +16,7 @@ import Phaser from 'phaser';
 import { moveKey, narratorLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxSelect, sfxWrong } from '../audio/sfx';
-import { DEPTH, FONT_COMIC, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH, REACH, STICK_HINT_MS, WALK_SPEED } from '../config';
+import { DEPTH, FONT_COMIC, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH, REACH, STICK_HINT_MS } from '../config';
 import { episode, narrator } from '../episode/Episode';
 import { TEX } from '../fx/textures';
 import type { BattleInfo } from '../hookState';
@@ -25,9 +25,9 @@ import { dadLock } from '../input/dadLock';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { fitText } from '../ui/fitText';
 import { makeStickHint, placeStickHint } from '../ui/stickHint';
-import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter } from './Fighter';
-import { ARENA_LEFT, ARENA_RIGHT } from './movement';
-import { SIGN_RISE, clearSpot, placePads, type PlaceBody } from './padPlace';
+import { FLOOR_BOTTOM, FLOOR_TOP, NO_AFTERIMAGES, type Fighter } from './Fighter';
+import { ARENA_LEFT, ARENA_RIGHT, stickWalk } from './movement';
+import { SIGN_H, SIGN_RISE, SIGN_W, clearSpot, placePads, type PlaceBody } from './padPlace';
 
 /** The move pads' glow. One colour for all: the word on the sign is the choice, never a colour. */
 const PAD_GLOW = 0x7ad9ff;
@@ -37,6 +37,8 @@ const FLOOR = { left: ARENA_LEFT, right: ARENA_RIGHT, top: FLOOR_TOP, bottom: FL
 const STEP_BACK_MS = 450;
 /** How far a contest's held fighter may rock either way while the choice is open (the rope pull's rock is up to 26 px, item 083). */
 const CONTEST_SWAY = 40;
+/** Quiet seconds before the partner says which word to find again. */
+const CHOICE_REPROMPT = 10;
 
 /** What the battle lends the move choice. */
 export interface ChoiceHost {
@@ -160,7 +162,7 @@ export class MoveChoice {
     // real seconds: it stood over her ally as a white silhouette (item 039).
     for (const o of [...scene.children.list]) if (o.getData('afterimage')) o.destroy();
     // ...and none made after: a dash's or slam's afterimage timer runs on the frozen clock too (item 069).
-    scene.data.set('noAfterimages', true);
+    scene.data.set(NO_AFTERIMAGES, true);
     for (const o of scene.children.list) {
       const d = (o as unknown as { depth: number }).depth;
       const a = o as unknown as Phaser.GameObjects.Components.AlphaSingle;
@@ -187,7 +189,7 @@ export class MoveChoice {
   close(): void {
     const c = this.current;
     if (!c) return;
-    this.host.stage.data.set('noAfterimages', false);
+    this.host.stage.data.set(NO_AFTERIMAGES, false);
     for (const o of c.objs) o.destroy();
     // Back as they were, unless something has set their alpha since (a fade-out finishing).
     for (const v of c.veiled) if (v.o.active && Math.abs(v.o.alpha - v.alpha * 0.2) < 0.01) v.o.setAlpha(v.alpha);
@@ -209,7 +211,7 @@ export class MoveChoice {
           stickHint: Boolean(c.stickHint?.active),
           stickNub: c.stickHint?.active ? (c.stickHint.list[1] as Phaser.GameObjects.Arc).x : null,
           // Item 043, M6: each sign's plate and each teammate's body, in screen coordinates.
-          signs: c.pads.map((p) => [p.x - 115, p.y - SIGN_RISE - 50, p.x + 115, p.y - SIGN_RISE + 50]),
+          signs: c.pads.map((p) => [p.x - SIGN_W / 2, p.y - SIGN_RISE - SIGN_H / 2, p.x + SIGN_W / 2, p.y - SIGN_RISE + SIGN_H / 2]),
           team: heroes.filter((f) => f !== heroes[0] && f.active).map((f) => ({ id: f.init.id, box: [f.x - f.bodyHalf, f.top, f.x + f.bodyHalf, f.y] })),
           // Item 071, M8 and M17: the villain's body, which no sign may cover.
           villain: this.host.villain?.active ? [this.host.villain.x - this.host.villain.bodyHalf, this.host.villain.top, this.host.villain.x + this.host.villain.bodyHalf, this.host.villain.y] : null,
@@ -251,7 +253,7 @@ export class MoveChoice {
     });
     const ring = add.container(x, y, [glow, disc, inner, ...runes]).setDepth(FLOOR_TOP - 3);
     const sy = y - SIGN_RISE;
-    const plate = add.rectangle(0, 0, 230, 100, 0xfff8e8, 0.97).setStrokeStyle(7, PAD_GLOW);
+    const plate = add.rectangle(0, 0, SIGN_W, SIGN_H, 0xfff8e8, 0.97).setStrokeStyle(7, PAD_GLOW);
     const stake = add.rectangle(0, 62, 10, 26, 0xfff8e8, 0.9);
     // Shrunk to the plate if long (BLAST ran over its edges, item 039).
     const label = fitText(
@@ -402,13 +404,7 @@ export class MoveChoice {
     const c = this.current!;
     const me = this.host.heroes[0]!;
     const controls = this.host.controls;
-    const mv = controls.move;
-    const walking = mv.lengthSq() > 0.04 && me.active;
-    if (walking) {
-      c.at.x = Phaser.Math.Clamp(c.at.x + mv.x * WALK_SPEED * realDt, ARENA_LEFT, ARENA_RIGHT);
-      c.at.y = Phaser.Math.Clamp(c.at.y + mv.y * WALK_SPEED * 0.8 * realDt, FLOOR_TOP, FLOOR_BOTTOM);
-      me.lean = Phaser.Math.Clamp(mv.x * 0.2, -0.25, 0.25);
-    } else me.lean = 0;
+    const walking = stickWalk(me, c.at, controls.move, realDt);
     this.holdHero();
     // Her team steps off the pad row (item 043, M6), the villain once he settles (M8), and they stay there while the fight is frozen.
     this.villainStepBack(c, me);
@@ -463,7 +459,7 @@ export class MoveChoice {
       c.objs.push(c.stickHint);
     }
     if (c.stickHint) placeStickHint(c.stickHint, c.at.x, c.at.y);
-    if (c.open && (controls.pressed('yellow') || c.idle > 10)) {
+    if (c.open && (controls.pressed('yellow') || c.idle > CHOICE_REPROMPT)) {
       // Green is ignored while the instruction plays, as on the first prompt:
       // the pads close for the line and open again when it ends.
       c.open = false;

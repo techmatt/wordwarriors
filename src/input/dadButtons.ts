@@ -5,10 +5,10 @@
  * 2 starts the next episode). They are always live, dad lock included (the lock stops
  * her presses, not his), and do nothing where no game is asking.
  *
- * A game that asks Dad calls `openDadButtons(onPress)` while it is open and
- * the closer it returns when it leaves (item 082, moved to THE END after the victory recap in item 085: it opens them
- * too, its 2 the only way on to a new episode, with its own cue label); while it is open a small 1 ✗ / 2 ✓
- * cue sits in the canvas's bottom-right corner (the dad-lock badge has the
+ * A game that asks Dad calls `openDadButtons(onPress, label?)` while it is
+ * open and the closer it returns when it leaves (item 082). THE END opens
+ * them too, with its own cue label, its 2 the only way on to a new episode
+ * (item 085). While they are open a small 1 ✗ / 2 ✓ cue sits in the canvas's bottom-right corner (the dad-lock badge has the
  * bottom-left), and `setDadAsking(true)` lights it while a question is
  * actually waiting. The cue is a DOM element like the dad-lock badge: it is
  * for him, not her, and never shows up as game text.

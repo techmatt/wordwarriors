@@ -1,5 +1,8 @@
 /** The dads' looks and colours, shared by every form of each. */
 
+/** The two dads, the one list: who can wake her (src/rules/cast.ts) and whose wake-up lines are voiced (`WAKERS`, content/voice/ids.ts). */
+export const DADS = ['dada_matt', 'dada_jason'] as const;
+
 /** The dads as drawn in every form (Matt's photos, 2026-10-18): only the clothes and props change between forms. */
 export const MATT_FACE = 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, short light-brown hair thinning on top with a high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile';
 /** Weightlifter Dada Matt (Matt, item 032): a little less buff than the other forms, in a T-shirt with sleeves. */

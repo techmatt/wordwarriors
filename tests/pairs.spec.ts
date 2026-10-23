@@ -32,13 +32,11 @@ if (PAIRS.length === 0) {
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/pairs_${name}.png` });
 
-/** Page errors, art drawn before it loaded (on since item 090), and voice lines asked for that are not there or do not decode. */
-const collectProblems = (page: Page): string[] => collectErrors(page, { voice: true });
-
 PAIRS.forEach(([ally, villain], i) => {
   test(`${ally} + ${villain}: bedroom, quest place, both battles and the victory scene`, SLOW, async ({ page }) => {
     test.setTimeout(900_000);
-    const problems = collectProblems(page);
+    // Page errors, art drawn before it loaded (on since item 090), and voice lines asked for that are not there or do not decode.
+    const problems = collectErrors(page, { voice: true });
     const name = `${ally}+${villain}`;
     const cast = `ally=${ally}&villain=${villain}&seed=${i + 1}&nojourney=1`;
     const voiced: string[] = [];

@@ -30,14 +30,13 @@ import { startScene } from '../art/gate';
 import { stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { BANK_DRAW, GAME_HEIGHT, GAME_WIDTH, GRAB, SENTENCE_SOLID } from '../config';
-import { NEW_WORDS, coverageTable, type CoverageRow } from '../rules/bank';
+import { BAG_WORDS, NEW_WORDS, coverageTable, type CoverageRow } from '../rules/bank';
 import { GRAB_WORDS, recordedGrabLevel } from '../rules/grab';
 import { recordedBridgeLevel } from '../rules/bridge';
 import { recordedShifterLevel } from '../rules/shifter';
 import { difficulty } from '../rules/difficulty';
 import { fitText } from '../ui/fitText';
 import { Controls } from '../input/Controls';
-import { BAG_WORDS } from '../rules/sentences';
 import { progress } from '../state/progress';
 import type { ItemKind } from '../state/ProgressStore';
 import { hookState } from '../hookState';
@@ -215,7 +214,6 @@ export class ParentScene extends Phaser.Scene {
     fitText(this.add.text(x, vy + 24 + 5 * 24 + 6, `Solid: shakiness ≤ ${BANK_DRAW.solid}. Gray: not read yet; green: half or more solid.`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '13px', color: '#555' }), 250, 40);
   }
 
-  /** A column grid of items; `badge` puts a short mark (a help level) in an item's dot, `tag` a word after its name. */
   /**
    * Page 3 (item 127): the stored words, out of play at every difficulty and
    * kept with their pictures and voice, each with its reason and her tries
@@ -237,6 +235,7 @@ export class ParentScene extends Phaser.Scene {
     fitText(this.add.text(30, y, `Out of play since item 040 (odd: a picture she would not know): ${DROPPED.map((w) => w.word.toUpperCase()).join(' ')}`, { ...font, color: '#555' }), GAME_WIDTH - 60, Math.max(22, GAME_HEIGHT - y - 10));
   }
 
+  /** A column grid of items; `badge` puts a short mark (a help level) in an item's dot, `tag` a word after its name. */
   private grid(title: string, kind: ItemKind, ids: string[], x0: number, y0: number, perCol: number, colW: number, rowH = 30, badge?: (id: string) => string | null, tag?: (id: string) => string): void {
     this.add.text(x0, y0, title, { fontFamily: 'Segoe UI, sans-serif', fontSize: '20px', color: '#333', fontStyle: 'bold' });
     ids.forEach((id, i) => {

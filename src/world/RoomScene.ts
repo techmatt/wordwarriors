@@ -23,7 +23,7 @@ import { sfxWrong } from '../audio/sfx';
 import { advance, castArt, castScale, episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { outfitFor } from '../../content/battle/outfits';
 import { FreePlay } from '../fx/freePlay';
-import { fitImage, floatText, wiggle } from '../fx/juice';
+import { fitImage, floatText, FpsMeter, wiggle } from '../fx/juice';
 import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import type { DebugOrigin } from '../episode/debug';
@@ -73,8 +73,7 @@ export abstract class RoomScene extends Phaser.Scene {
   protected round = '';
   private dot!: Phaser.GameObjects.Container;
   private lastNear: Spot | null = null;
-  private fpsAcc = 0;
-  private fpsFrames = 0;
+  private readonly fps = new FpsMeter();
   private idleMs = 0;
   private hasMoved = false;
   private stickHint: Phaser.GameObjects.Container | null = null;
@@ -346,13 +345,8 @@ export abstract class RoomScene extends Phaser.Scene {
     return this.spots.find((s) => s.correct === true && s.enabled);
   }
 
-  override update(_time: number, deltaMs: number): void {
-    const dt = Math.min(0.05, deltaMs / 1000);
-    this.controls.update();
-    const k = this.moveScale();
-    this.player.update(k === 1 ? this.controls.move : this.controls.move.clone().scale(k), dt);
-
-    // Nearest enabled spot within reach.
+  /** The nearest enabled spot within green's reach (`REACH`), the one green picks, or null. */
+  protected nearestSpot(): Spot | null {
     let best: Spot | null = null;
     let bestD = REACH;
     for (const s of this.spots) {
@@ -363,6 +357,16 @@ export abstract class RoomScene extends Phaser.Scene {
         bestD = d;
       }
     }
+    return best;
+  }
+
+  override update(_time: number, deltaMs: number): void {
+    const dt = Math.min(0.05, deltaMs / 1000);
+    this.controls.update();
+    const k = this.moveScale();
+    this.player.update(k === 1 ? this.controls.move : this.controls.move.clone().scale(k), dt);
+
+    const best = this.nearestSpot();
     if (best !== this.lastNear) {
       if (this.lastNear) this.tweens.add({ targets: this.lastNear.obj, scale: this.lastNear.baseScale, duration: 120 });
       if (best) {
@@ -472,13 +476,7 @@ export abstract class RoomScene extends Phaser.Scene {
   }
 
   private publish(deltaMs: number): void {
-    this.fpsAcc += deltaMs;
-    this.fpsFrames++;
-    if (this.fpsAcc > 500) {
-      hookState.fps = Math.round((this.fpsFrames * 1000) / this.fpsAcc);
-      this.fpsAcc = 0;
-      this.fpsFrames = 0;
-    }
+    this.fps.sample(deltaMs);
     // A spot switched off and on again (a round's tiles) shows afresh: where she stands then.
     for (const s of this.spots) if (!s.enabled) s.from = undefined;
     const spots: SpotInfo[] = this.spots.filter((s) => s.enabled).map((s) => {
@@ -510,9 +508,9 @@ export abstract class RoomScene extends Phaser.Scene {
   /**
    * A gentle sparkle over `spot` for as long as it stands: stars from a `w` x
    * `h` box centred at (spot.x, `cy`), drawn at `depth`. Any guard against a
-   * second sparkle is the caller's.
+   * second sparkle is the caller's. Returns the emitter, for a caller that stops it early.
    */
-  protected sparkleSpot(spot: Spot, cy: number, w: number, h: number, depth: number, scale = 0.7, frequency = 90): void {
+  protected sparkleSpot(spot: Spot, cy: number, w: number, h: number, depth: number, scale = 0.7, frequency = 90): Phaser.GameObjects.Particles.ParticleEmitter {
     const glow = this.add
       .particles(spot.x, cy, TEX.star, {
         speed: { min: 20, max: 70 },
@@ -525,5 +523,6 @@ export abstract class RoomScene extends Phaser.Scene {
       })
       .setDepth(depth);
     spot.obj.once(Phaser.GameObjects.Events.DESTROY, () => glow.destroy());
+    return glow;
   }
 }

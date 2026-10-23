@@ -30,18 +30,18 @@
  * scenes gets `ANY_SCENES`, composed per narrator (`hub_any_<n>_<key>`).
  */
 
-import { hubAnyKey, hubLine, narratorLine } from '../voice/ids.js';
-import { variantIndex, type Line } from './quests.js';
+import { hubAnyKey, hubLine, narratorLine, type SpokenLine } from '../voice/ids.js';
+import { variantIndex } from './quests.js';
 
 export interface HubStory {
   /** What the word is written on: an art id (`prop_...`), or an emoji drawn on a card. */
   prop: string;
   /** Two to four lines; the last trails off into the gift word. */
-  lines: Line[];
+  lines: SpokenLine[];
   /** Sends her to the glowing circle. Yellow says it again. */
-  circle: Line;
+  circle: SpokenLine;
   /** Once the word has flown into her. */
-  done: Line;
+  done: SpokenLine;
 }
 
 const S = (prop: string, lines: string[], circle: string, done: string): HubStory => ({

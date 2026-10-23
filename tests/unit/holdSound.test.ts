@@ -12,7 +12,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { HELD_MS, holdPlan, holdSamples } from '../../src/audio/holdSound';
+import { holdPlan, holdSamples } from '../../src/audio/holdSound';
 import { BRIDGE } from '../../src/config';
 
 const RATE = 48000;
@@ -94,9 +94,7 @@ test('once sounds are unchanged: played once, nothing looped, no stretch', () =>
   assert.equal(data.length, plan.end - plan.start);
 });
 
-test('the stretch is the BRIDGE.stretchMs knob (item 085): the default matches it, and the knob sets the length', () => {
-  // holdSound.ts cannot import config.ts (tools/voice/import.ts builds it under NodeNext), so it keeps a default.
-  assert.equal(HELD_MS, BRIDGE.stretchMs);
+test('the stretch is the BRIDGE.stretchMs knob (item 085): the knob sets the length', () => {
   // A short natural stretch, not the long 1.3 s hold it was.
   assert.ok(BRIDGE.stretchMs >= 300 && BRIDGE.stretchMs <= 900, `${BRIDGE.stretchMs} ms`);
   const x = CASES[0]![1];

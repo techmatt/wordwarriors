@@ -8,6 +8,8 @@
  * these same functions and checks the composer writes it and the manifest has it.
  */
 
+import { DADS } from '../battle/roster/dads.js';
+
 /**
  * A voiced line's words, wherever content declares one (quests, scenes,
  * endings, fights, taunts, templates): `text` shown and captioned, `say` the
@@ -53,6 +55,13 @@ export type MoveKind = 'use_move' | 'gift_word' | 'not_move' | 'was_move' | 'fin
 export const heroKey = (kind: HeroKind, hero: string) => `${kind}_${hero}`;
 export const villainKey = (kind: VillainKind, villain: string) => `${kind}_${villain}`;
 export const moveKey = (kind: MoveKind, word: string) => `${kind}_${word}`;
+/**
+ * `moveKey` read back off a whole line id: the word in `nar_dada_matt_find_move_zap` is `zap`,
+ * for the `kinds` given; undefined for any other line (the battle's caption hides that word).
+ */
+export function moveKeyWord(id: string, kinds: readonly MoveKind[]): string | undefined {
+  return new RegExp(`_(?:${kinds.join('|')})_([a-z]+)$`).exec(id)?.[1];
+}
 /** Charge the Spell (item 053): a rune's gesture line, which trails off into `letter_<sound>_sound` (content/phonics/runes.ts). */
 export type ChargeKind = 'charge_gesture';
 export const chargeKey = (kind: ChargeKind, sound: string) => `${kind}_${sound}`;
@@ -108,9 +117,10 @@ export const uncaptioned = (id: string) => id.startsWith('letter_') || id.starts
  * episode's primary dad, src/rules/cast.ts), in his own voice whatever his
  * form. Keys: `up`, `good_<hero>`, `helper_<person>`, `bad_<villain>` (any
  * roster id: each villain form has its own threat), `door`, and `hi` for the
- * other dad when he comes in too. Group `core`.
+ * other dad when he comes in too. Group `core`. The wakers are the dads,
+ * `DADS` in content/battle/roster/dads.ts.
  */
-export const WAKERS = ['dada_matt', 'dada_jason'] as const;
+export const WAKERS = DADS;
 export const wakeLine = (waker: string, key: string) => `wake_${waker}_${key}`;
 /** A wake key composed per cast member (before any variant suffix): `good_julia`, `helper_ellie`, `bad_tiamat`. */
 export const wakeCastKey = (kind: 'good' | 'helper' | 'bad', id: string) => `${kind}_${id}`;

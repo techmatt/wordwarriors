@@ -6,6 +6,9 @@
  * Drawn with the cast's rand, so `?seed=` replays them too; the fixed default
  * cast (`?cast=default`, what the tests play) always gets variant 1 of each,
  * so a test hears the same lines every run.
+ *
+ * Not the story fights (item 107, the scripted battles): those are
+ * src/rules/storyFight.ts and content/battle/stories/.
  */
 
 import { CHARACTER_BY_ID } from '../../content/battle/roster';

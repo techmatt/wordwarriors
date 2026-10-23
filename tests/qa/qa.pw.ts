@@ -10,9 +10,9 @@
  * and read `scratch/qa/<tag>/`: one folder of shots per scenario, its
  * `<scenario>.json` (issues, counts, lock and frame stats), then
  * `npx tsx tests/qa/report.ts <tag>` for `summary.md` and contact sheets.
- * `QA_SET=quick` plays three scenarios, `more` the second batch (places, forms,
- * an idle child), `new` the third (item 069: a busy child, the difficulty
- * levels, real draws back to back), `all` every batch; the default plays the first.
+ * `QA_SET=quick` plays three scenarios, `QA_SET=<batch>` one later batch (each
+ * scenario's `batch`; the list: README, "The bug-hunt checker"), `all` every
+ * batch; the default plays the first.
  * A scenario that stalls records a `stall` issue with its last shot and the
  * next one runs. README, "The bug-hunt checker"; findings: docs/qa-findings.md.
  */
@@ -23,7 +23,7 @@ import { test, type Page } from '@playwright/test';
 
 import { BANK } from '../../content/phonics/bank';
 import { FREE_PLAY, REACH, SHIFTER } from '../../src/config';
-import { SPEED, boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBattle, playAgain, playEntry, playRoom, playSentenceRoom, press, seedProgress, state, toTheEnd, until, type RoomPlay, type WWState, VOICE } from '../harness';
+import { SPEED, boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBattle, playAgain, playEntry, playRoom, playSentenceRoom, press, seedProgress, state, storedBlob, toTheEnd, until, type RoomPlay, type WWState, VOICE } from '../harness';
 
 // Item 083: real voice and real walking: the checker looks and listens as she would.
 VOICE.mode = 'real';
@@ -58,12 +58,15 @@ interface Scenario {
   /** A busy child (item 069): blue, red and yellow pressed all episode (free play's casts, yellow's replays). */
   mash?: boolean;
   quick?: boolean;
-  /** Only with `QA_SET=more` (or `all`): the second batch, added by the first hunt. */
-  more?: boolean;
-  /** Only with `QA_SET=new` (or `all`): the third batch, added by the second hunt (item 069). */
-  added?: boolean;
-  /** Only with `QA_SET=lenses` (or `all`): the fourth batch, added by the third hunt (item 080). */
-  lens?: boolean;
+  /**
+   * The batch it plays in, only with `QA_SET=<batch>` (or `all`); none: the first batch, the default.
+   * `more` the second, added by the first hunt; `new` the third, by the second hunt (item 069);
+   * `lenses` the fourth, by the third hunt (item 080); `recent` the fifth, by the fourth hunt
+   * (item 089); `cast` the seventh hunt's (item 116): the new allies and villains, the story fight;
+   * `hunt8` the eighth hunt's (item 125): items 119-123's changes; `hunt9` the ninth hunt's
+   * (item 129): items 126-128's changes.
+   */
+  batch?: Batch;
   /** Item 080: reload the page at each of these points, one per episode started from the title. */
   reloadAt?: Point[];
   /** Item 080: switch the tab away and back every so often (Phaser's hidden and blur events). */
@@ -76,25 +79,21 @@ interface Scenario {
   lockAll?: boolean;
   /** Item 080: at every point, the grown-ups page (F9) and back. */
   parentAll?: boolean;
-  /** Only with `QA_SET=recent` (or `all`): the fifth batch, added by the fourth hunt (item 089). */
-  recent?: boolean;
   /** Item 089: minigame debug mode (key 0) at each of these points: a game from its pedestal, then 0 back; nothing may stay. */
   debugAt?: Point[];
   /** Item 089: every button, F2, F4 and F9 mashed at the recap and THE END before Dad's 2; only 2 may leave. */
   endMash?: boolean;
   /** Item 089: no voice manifest (a fresh checkout, a broken junction): captions only (item 082's M19). */
   voiceless?: boolean;
-  /** Only with `QA_SET=cast` (or `all`): the seventh hunt's (item 116): the new allies and villains, the story fight. */
-  cast?: boolean;
-  /** Only with `QA_SET=hunt8` (or `all`): the eighth hunt's (item 125): items 119-123's changes. */
-  hunt8?: boolean;
-  /** Only with `QA_SET=hunt9` (or `all`): the ninth hunt's (item 129): items 126-128's changes. */
-  hunt9?: boolean;
   /** Hunt 9: at each of these points, Dad erases all progress on the grown-ups page (F8 twice) and comes back. */
   eraseAt?: Point[];
   /** Hunt 8: Dad never presses in Charge the Spell, so it goes solo and stays solo for the session (M34). */
   dadAway?: boolean;
 }
+
+/** A scenario batch past the first, named as `QA_SET` names it. */
+const BATCHES = ['more', 'new', 'lenses', 'recent', 'cast', 'hunt8', 'hunt9'] as const;
+type Batch = (typeof BATCHES)[number];
 
 /** Where in an episode the item-080 probes act (`episode` calls `at` at each). */
 type Point = 'title' | 'bedroom' | 'entry' | 'hub1' | 'room_a' | 'room_b' | 'battle1' | 'choice1' | 'hub2' | 'attic' | 'choice2' | 'ending' | 'victory';
@@ -119,84 +118,84 @@ const SCENARIOS: Scenario[] = [
   { name: 'all_solid', query: 'seed=113&games=all', progress: 'all' },
   { name: 'soak3', query: 'seed=114&games=all', episodes: 3 },
   // The second batch (item 039): the other places and forms, an idle child, more random casts.
-  { name: 'idle_default', query: 'cast=default', idle: true, more: true },
-  { name: 'builder_treehouse', query: 'seed=201&ally=dada_matt&villain=bavmorda&games=all', more: true },
-  { name: 'warlock_ally', query: 'seed=202&ally=dada_jason_warlock&villain=jormungandr', more: true },
-  { name: 'ellie_home_race', query: 'seed=203&ally=ellie&villain=smaug&place=home&fight=sky_race&games=all', more: true },
-  { name: 'scar_wrong_clash', query: 'seed=204&ally=scar&villain=bavmorda&fight=spell_clash', wrong: true, more: true },
-  { name: 'jason_wakes', query: 'seed=205&ally=scar&villain=tiamat&primary=dada_jason&secondary=1&games=all', more: true },
-  { name: 'machine_solid', query: 'seed=206&game=word_machine', progress: 'all', more: true },
-  { name: 'seed207', query: 'seed=207&games=all', more: true },
-  { name: 'seed208', query: 'seed=208&games=all', more: true },
-  { name: 'seed209', query: 'seed=209&games=all', wrong: true, more: true },
+  { name: 'idle_default', query: 'cast=default', idle: true, batch: 'more' },
+  { name: 'builder_treehouse', query: 'seed=201&ally=dada_matt&villain=bavmorda&games=all', batch: 'more' },
+  { name: 'warlock_ally', query: 'seed=202&ally=dada_jason_warlock&villain=jormungandr', batch: 'more' },
+  { name: 'ellie_home_race', query: 'seed=203&ally=ellie&villain=smaug&place=home&fight=sky_race&games=all', batch: 'more' },
+  { name: 'scar_wrong_clash', query: 'seed=204&ally=scar&villain=bavmorda&fight=spell_clash', wrong: true, batch: 'more' },
+  { name: 'jason_wakes', query: 'seed=205&ally=scar&villain=tiamat&primary=dada_jason&secondary=1&games=all', batch: 'more' },
+  { name: 'machine_solid', query: 'seed=206&game=word_machine', progress: 'all', batch: 'more' },
+  { name: 'seed207', query: 'seed=207&games=all', batch: 'more' },
+  { name: 'seed208', query: 'seed=208&games=all', batch: 'more' },
+  { name: 'seed209', query: 'seed=209&games=all', wrong: true, batch: 'more' },
   // Charge the Spell (item 053): every `games=all` scenario meets it too (FORCE_PHONICS_ROOM); this one with Dad's no first.
-  { name: 'charge_no_first', query: 'seed=115&room=charge', wrong: true, more: true },
+  { name: 'charge_no_first', query: 'seed=115&room=charge', wrong: true, batch: 'more' },
   // The Stretchy Bridge (item 054): half the `games=all` scenarios meet it; this one with a wrong picture first.
-  { name: 'bridge_wrong_first', query: 'seed=116&room=bridge', wrong: true, more: true },
+  { name: 'bridge_wrong_first', query: 'seed=116&room=bridge', wrong: true, batch: 'more' },
   // The Shape-Shifter (item 096): about half the `games=all` scenarios meet it behind door b (SHIFTER_ROOM); this one with a wrong pick first.
-  { name: 'shifter_wrong_first', query: 'seed=117&room=shifter', wrong: true, more: true },
+  { name: 'shifter_wrong_first', query: 'seed=117&room=shifter', wrong: true, batch: 'more' },
   // The second hunt (item 069): free play under a busy child, the difficulty levels above base
   // (item 067), the phonics rooms answered right, and a real draw across episodes (rotations).
-  { name: 'mash_default', query: 'cast=default&games=all', mash: true, added: true },
-  { name: 'mash_wrong_seed301', query: 'seed=301&games=all', mash: true, wrong: true, added: true },
-  { name: 'diff2_firm', query: 'seed=302&games=all&difficulty=2', progress: 'firm', added: true },
-  { name: 'diff3_solid', query: 'seed=303&games=all&difficulty=3', progress: 'all', added: true },
-  { name: 'diff3_wrong', query: 'seed=304&games=all&difficulty=3', progress: 'firm', wrong: true, added: true },
-  { name: 'charge_yes', query: 'seed=305&room=charge', added: true },
-  { name: 'bridge_diff3', query: 'seed=306&room=bridge&difficulty=3', progress: 'firm', added: true },
-  { name: 'drawn4', query: 'cast=random&games=all', episodes: 4, added: true },
+  { name: 'mash_default', query: 'cast=default&games=all', mash: true, batch: 'new' },
+  { name: 'mash_wrong_seed301', query: 'seed=301&games=all', mash: true, wrong: true, batch: 'new' },
+  { name: 'diff2_firm', query: 'seed=302&games=all&difficulty=2', progress: 'firm', batch: 'new' },
+  { name: 'diff3_solid', query: 'seed=303&games=all&difficulty=3', progress: 'all', batch: 'new' },
+  { name: 'diff3_wrong', query: 'seed=304&games=all&difficulty=3', progress: 'firm', wrong: true, batch: 'new' },
+  { name: 'charge_yes', query: 'seed=305&room=charge', batch: 'new' },
+  { name: 'bridge_diff3', query: 'seed=306&room=bridge&difficulty=3', progress: 'firm', batch: 'new' },
+  { name: 'drawn4', query: 'cast=random&games=all', episodes: 4, batch: 'new' },
   // The third hunt (item 080): the lenses the first two never ran. Reloading mid-flow, a
   // hidden tab and a resized window, a slow or failing network, and dad lock and the
   // grown-ups page at every step of an episode. URL flags and dev keys: `qa flags`, `qa devkeys`.
-  { name: 'reload_points', query: 'seed=401&games=all', reloadAt: ['bedroom', 'room_a', 'choice1', 'hub2', 'ending'], lens: true },
-  { name: 'hidden_tab', query: 'seed=402&games=all', hide: true, lens: true },
-  { name: 'resize', query: 'seed=403&games=all', resize: true, lens: true },
-  { name: 'slow_net', query: 'cast=random&games=all', net: 'slow', lens: true },
-  { name: 'flaky_net', query: 'seed=404&games=all', net: 'flaky', lens: true },
-  { name: 'lock_all', query: 'seed=405&games=all', lockAll: true, lens: true },
-  { name: 'parent_all', query: 'seed=406&games=all', parentAll: true, lens: true },
-  { name: 'parent_none', query: 'seed=406&games=all', lens: true },
+  { name: 'reload_points', query: 'seed=401&games=all', reloadAt: ['bedroom', 'room_a', 'choice1', 'hub2', 'ending'], batch: 'lenses' },
+  { name: 'hidden_tab', query: 'seed=402&games=all', hide: true, batch: 'lenses' },
+  { name: 'resize', query: 'seed=403&games=all', resize: true, batch: 'lenses' },
+  { name: 'slow_net', query: 'cast=random&games=all', net: 'slow', batch: 'lenses' },
+  { name: 'flaky_net', query: 'seed=404&games=all', net: 'flaky', batch: 'lenses' },
+  { name: 'lock_all', query: 'seed=405&games=all', lockAll: true, batch: 'lenses' },
+  { name: 'parent_all', query: 'seed=406&games=all', parentAll: true, batch: 'lenses' },
+  { name: 'parent_none', query: 'seed=406&games=all', batch: 'lenses' },
   // Item 089, the recent changes (items 081-088): debug mode, THE END, line variants, no voice manifest.
-  { name: 'debug_rooms', query: 'seed=501&games=all', debugAt: ['entry', 'hub1', 'room_a', 'room_b', 'hub2', 'attic'], recent: true },
-  { name: 'end_mash', query: 'seed=502&games=all', episodes: 2, endMash: true, recent: true },
-  { name: 'variants6', query: 'cast=random&games=all', episodes: 6, recent: true },
-  { name: 'voiceless', query: 'seed=503&games=all', voiceless: true, recent: true },
+  { name: 'debug_rooms', query: 'seed=501&games=all', debugAt: ['entry', 'hub1', 'room_a', 'room_b', 'hub2', 'attic'], batch: 'recent' },
+  { name: 'end_mash', query: 'seed=502&games=all', episodes: 2, endMash: true, batch: 'recent' },
+  { name: 'variants6', query: 'cast=random&games=all', episodes: 6, batch: 'recent' },
+  { name: 'voiceless', query: 'seed=503&games=all', voiceless: true, batch: 'recent' },
   // Item 116, the cast's growth (items 111, 114, 115) and the story fight (item 107): each new
   // ally once, against each new villain and their own fights, and Evil Smaug's story fight.
-  { name: 'seraphina_frost', query: 'seed=601&ally=seraphina&villain=elsa&games=all', cast: true },
-  { name: 'elsa_space', query: 'seed=602&ally=elsa&villain=ozymandias&games=all', cast: true },
-  { name: 'anna_magic', query: 'seed=603&ally=anna&villain=moriarty&games=all', wrong: true, cast: true },
-  { name: 'jasmine_story', query: 'seed=604&ally=jasmine&fight=smaug_story&games=all', cast: true },
-  { name: 'ozy_tiamat', query: 'seed=605&ally=ozymandias&villain=tiamat&games=all', cast: true },
-  { name: 'moriarty_jorm', query: 'seed=606&ally=moriarty&villain=jormungandr&games=all', cast: true },
-  { name: 'rilla_story_wrong', query: 'seed=607&ally=rilla&fight=smaug_story&games=all', wrong: true, mash: true, cast: true },
-  { name: 'drawn_cast3', query: 'cast=random&games=all', episodes: 3, cast: true },
+  { name: 'seraphina_frost', query: 'seed=601&ally=seraphina&villain=elsa&games=all', batch: 'cast' },
+  { name: 'elsa_space', query: 'seed=602&ally=elsa&villain=ozymandias&games=all', batch: 'cast' },
+  { name: 'anna_magic', query: 'seed=603&ally=anna&villain=moriarty&games=all', wrong: true, batch: 'cast' },
+  { name: 'jasmine_story', query: 'seed=604&ally=jasmine&fight=smaug_story&games=all', batch: 'cast' },
+  { name: 'ozy_tiamat', query: 'seed=605&ally=ozymandias&villain=tiamat&games=all', batch: 'cast' },
+  { name: 'moriarty_jorm', query: 'seed=606&ally=moriarty&villain=jormungandr&games=all', batch: 'cast' },
+  { name: 'rilla_story_wrong', query: 'seed=607&ally=rilla&fight=smaug_story&games=all', wrong: true, mash: true, batch: 'cast' },
+  { name: 'drawn_cast3', query: 'cast=random&games=all', episodes: 3, batch: 'cast' },
   // Hunt 8 (item 125): item 121's new words leaned to, Charge solo across the session and the
   // Shape-Shifter's chain rotation (item 119), the story fight with a dad's outfit and a tall ally.
-  { name: 'newwords3', query: 'cast=random&games=all&words=new', episodes: 3, hunt8: true },
-  { name: 'charge_solo3', query: 'seed=701&room=charge', episodes: 3, dadAway: true, hunt8: true },
-  { name: 'shifter5', query: 'cast=random&room=shifter', episodes: 5, hunt8: true },
-  { name: 'warrior_story', query: 'seed=702&ally=dada_jason_warrior&fight=smaug_story&games=all', hunt8: true },
-  { name: 'moriarty_story_wrong', query: 'seed=703&ally=moriarty&fight=smaug_story&games=all', wrong: true, hunt8: true },
+  { name: 'newwords3', query: 'cast=random&games=all&words=new', episodes: 3, batch: 'hunt8' },
+  { name: 'charge_solo3', query: 'seed=701&room=charge', episodes: 3, dadAway: true, batch: 'hunt8' },
+  { name: 'shifter5', query: 'cast=random&room=shifter', episodes: 5, batch: 'hunt8' },
+  { name: 'warrior_story', query: 'seed=702&ally=dada_jason_warrior&fight=smaug_story&games=all', batch: 'hunt8' },
+  { name: 'moriarty_story_wrong', query: 'seed=703&ally=moriarty&fight=smaug_story&games=all', wrong: true, batch: 'hunt8' },
   // Hunt 9 (item 129): items 126-128's changes. Door b drawn (the Shape-Shifter about half the episodes,
   // a sentence frame or the word machine otherwise); Smaug's story fight drawn, not forced (seeds 976
   // and 965 draw him with it from the title: warlock Dada Jason and cyber Dada Matt are the dads in it);
   // item 126's COW, MOM and DAD leaned to; item 128's banners on the widest sentences.
-  { name: 'doorb5', query: 'cast=random&games=all', episodes: 5, hunt9: true },
-  { name: 'story_drawn_scar', query: 'seed=976&games=all', hunt9: true },
-  { name: 'story_drawn_elsa_wrong', query: 'seed=965&games=all', wrong: true, hunt9: true },
-  { name: 'newwords3_126', query: 'cast=random&games=all&words=cow,mom,dad', episodes: 3, hunt9: true },
-  { name: 'widest_counter', query: 'seed=951&games=all&sentence=no_match_for_the:octopus', hunt9: true },
+  { name: 'doorb5', query: 'cast=random&games=all', episodes: 5, batch: 'hunt9' },
+  { name: 'story_drawn_scar', query: 'seed=976&games=all', batch: 'hunt9' },
+  { name: 'story_drawn_elsa_wrong', query: 'seed=965&games=all', wrong: true, batch: 'hunt9' },
+  { name: 'newwords3_126', query: 'cast=random&games=all&words=cow,mom,dad', episodes: 3, batch: 'hunt9' },
+  { name: 'widest_counter', query: 'seed=951&games=all&sentence=no_match_for_the:octopus', batch: 'hunt9' },
   // A long run (about 15 minutes): ten drawn episodes back to back, for growth, repeats and the door-b rotation.
-  { name: 'drawn10', query: 'cast=random&games=all', episodes: 10, hunt9: true },
+  { name: 'drawn10', query: 'cast=random&games=all', episodes: 10, batch: 'hunt9' },
   // Odd input on the story fight: the grown-ups page, dad lock and reloads at every point. Forced: a seed's
   // draw does not survive them (back from F9 at the title, or reloaded, the title draws the cast again).
-  { name: 'story_parent', query: 'seed=976&fight=smaug_story&games=all', parentAll: true, hunt9: true },
-  { name: 'story_lock', query: 'seed=976&fight=smaug_story&games=all', lockAll: true, hunt9: true },
-  { name: 'story_reload', query: 'seed=976&fight=smaug_story&games=all', reloadAt: ['choice1', 'hub2', 'choice2'], hunt9: true },
-  { name: 'story_hidden', query: 'seed=977&fight=smaug_story&games=all', hide: true, resize: true, hunt9: true },
+  { name: 'story_parent', query: 'seed=976&fight=smaug_story&games=all', parentAll: true, batch: 'hunt9' },
+  { name: 'story_lock', query: 'seed=976&fight=smaug_story&games=all', lockAll: true, batch: 'hunt9' },
+  { name: 'story_reload', query: 'seed=976&fight=smaug_story&games=all', reloadAt: ['choice1', 'hub2', 'choice2'], batch: 'hunt9' },
+  { name: 'story_hidden', query: 'seed=977&fight=smaug_story&games=all', hide: true, resize: true, batch: 'hunt9' },
   // Dad erases all progress mid-episode (a side room, battle 1's choice, the attic), then a second episode on the empty store.
-  { name: 'erase_mid', query: 'cast=random&games=all', eraseAt: ['room_b', 'choice1', 'attic'], episodes: 2, hunt9: true },
+  { name: 'erase_mid', query: 'cast=random&games=all', eraseAt: ['room_b', 'choice1', 'attic'], episodes: 2, batch: 'hunt9' },
 ];
 
 /** How often a busy child presses something (real ms). */
@@ -328,7 +327,7 @@ class Recorder {
     const story = s.scene === 'Hub' && /^hub_\w+_line\d$/.test(s.voice.speaking ?? '');
     // The entry hall once her pick is made (W33: "You got it! Now let's go out the door!" over the bottom row):
     // ruled, not a bug (hunt 9: every sweep flagged it again).
-    const hallDone = s.scene === 'Entry' && (s.room?.round === 'entry-door' || /_grab_door$/.test(s.voice.speaking ?? '') || /grab_door$|entry-door$/.test(label));
+    const hallDone = s.scene === 'Entry' && (s.room?.round === 'entry:door' || /_grab_door$/.test(s.voice.speaking ?? '') || /grab_door$|entry-door$/.test(label));
     // The Shape-Shifter's next stones popping in under the praise box (W30): ruled too (hunt 9: flagged in every sweep).
     const praise = /_(right_\d+|shifter_fixed(_\d+)?)$/;
     const shifterPraise = s.scene === 'ShifterRoom' && (praise.test(s.voice.speaking ?? '') || praise.test(label));
@@ -835,7 +834,9 @@ if (LOOK) {
 }
 
 const set = process.env.QA_SET;
-const inSet = (x: Scenario) => (set === 'quick' ? Boolean(x.quick) : set === 'more' ? Boolean(x.more) : set === 'new' ? Boolean(x.added) : set === 'lenses' ? Boolean(x.lens) : set === 'recent' ? Boolean(x.recent) : set === 'cast' ? Boolean(x.cast) : set === 'hunt8' ? Boolean(x.hunt8) : set === 'hunt9' ? Boolean(x.hunt9) : set === 'all' ? true : !x.more && !x.added && !x.lens && !x.recent && !x.cast && !x.hunt8 && !x.hunt9);
+// Any other `QA_SET` (none, or a typo) plays the first batch.
+const batch = BATCHES.find((b) => b === set);
+const inSet = (x: Scenario) => (set === 'quick' ? Boolean(x.quick) : set === 'all' ? true : x.batch === batch);
 for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
   test(`qa ${sc.name}`, async ({ page }) => {
     const errors = collectErrors(page);
@@ -881,7 +882,7 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
         const plan = ep.house.plan ?? [];
         drawn.push({ ally: ep.ally, villain: ep.villain, fight: rec.fight, ending: rec.endingId, games: plan.map((p) => p.game), rooms: plan.filter((p) => p.slot !== 'counter').map((p) => p.room).sort(), words: [...ep.read] });
         solos.push(ep.solo);
-        chains.push(await page.evaluate(() => (JSON.parse(localStorage.getItem('wordwarriors.progress') ?? '{}') as { recent?: Record<string, string[]> }).recent?.chains ?? []));
+        chains.push((JSON.parse((await storedBlob(page)) ?? '{}') as { recent?: Record<string, string[]> }).recent?.chains ?? []);
         counts.push(await page.evaluate(() => (window as unknown as { __wwqa: { counts(): Record<string, number> } }).__wwqa.counts()));
         heap.push(await page.evaluate(() => (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0));
         cuts.push((await qaSince(page, 0)).voice.length);

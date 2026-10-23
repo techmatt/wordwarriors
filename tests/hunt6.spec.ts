@@ -7,7 +7,8 @@
 import { test, expect, type Page } from '@playwright/test';
 import { REACH } from '../src/config';
 import { qaLayout } from './qa/probe';
-import { SLOW, boot, choose, collectErrors, dadLock, expectNoErrors, mash, place, press, state, texts, until, type WWState } from './harness';
+import { SLOW, boot, choose, collectErrors, dadLock, expectNoErrors, mash, place, press, state, storedBlob, texts, until, type WWState } from './harness';
+import { letterSoundLine } from '../content/voice/ids';
 
 const sh = (s: WWState) => s.room?.shifter;
 const ready = (i: number) => (s: WWState) => s.scene === 'ShifterRoom' && sh(s)?.index === i && sh(s)!.phase === 'pick' && !s.room!.locked;
@@ -182,7 +183,7 @@ test('Shape-Shifter level 1: a stone she reaches while the instruction plays sou
   const since = s.voice.history.length;
   const letter = stone.id.slice('stone_'.length);
   await until(page, ready(sh(s)!.index), 60_000, 'the link open');
-  const sounding = await until(page, (st) => st.voice.history.slice(since).includes(`letter_${letter}_sound`), 10_000, `the ${letter} stone sounding`);
+  const sounding = await until(page, (st) => st.voice.history.slice(since).includes(letterSoundLine(letter)), 10_000, `the ${letter} stone sounding`);
   // Hunt 9, M42 (a): standing at it hides its letter, so a copy rides beside her head while it speaks
   // (the stone's own letter, under her, is lower).
   const her = sounding.room!.player;
@@ -199,7 +200,7 @@ test("minigame debug mode: Dad's 2 in the same frame as key 0 out of a debug Cha
   const errors = collectErrors(page);
   await boot(page, '?scene=house&part=2&nojourney=1');
   await until(page, (s) => s.scene === 'Hub' && Boolean(s.room?.player), 30_000, 'hub');
-  const blob = await page.evaluate(() => localStorage.getItem('wordwarriors.progress'));
+  const blob = await storedBlob(page);
   await page.keyboard.press('0');
   await until(page, (st) => st.scene === 'Debug' && (st.room?.spots.length ?? 0) > 0 && !st.room!.locked, 30_000, 'debug room');
   await choose(page, 'debug:charge');
@@ -210,7 +211,7 @@ test("minigame debug mode: Dad's 2 in the same frame as key 0 out of a debug Cha
   });
   const back = await until(page, (st) => st.scene === 'Debug' && Boolean(st.room?.debug), 30_000, 'the debug room again');
   expect(back.episode.read).not.toContain(read.room!.charge!.word);
-  expect(await page.evaluate(() => localStorage.getItem('wordwarriors.progress'))).toBe(blob);
+  expect(await storedBlob(page)).toBe(blob);
   expectNoErrors(errors);
 });
 

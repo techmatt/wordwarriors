@@ -547,7 +547,7 @@ export class TugStage extends BaseStage {
     // Over the line, but not onto the front hero's head (a giant's card is wide).
     const front = Math.max(...this.host.team().map((f) => f.x), ARENA_LEFT);
     const x1 = Math.min(MID - 30, Math.max(MID - 60 - v.height * 0.15, front + 40 + v.height * 0.4));
-    this.fling = { at: this.t, ms: 800, arc: v.init.size >= 2 ? 60 : 150, moves: v.active ? [{ f: v, x0: v.x, x1, lift0: v.lift }] : [] };
+    this.fling = { at: this.t, ms: 800, arc: v.giant ? 60 : 150, moves: v.active ? [{ f: v, x0: v.x, x1, lift0: v.lift }] : [] };
     this.sparkleWave(true);
     await this.host.wait(0.8);
     this.fling = null;

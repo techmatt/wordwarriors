@@ -22,7 +22,7 @@ import { CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE
 import { ProgressStore, STORE_KEY } from '../../src/state/ProgressStore';
 import { pickWeighted } from '../../src/rules/random';
 import { blendRound, pictureRound, soundRound } from '../../src/rules/rounds';
-import { BAG_WORDS } from '../../src/rules/sentences';
+import { BAG_WORDS } from '../../src/rules/bank';
 import { sentencePlans } from './plans';
 import { align } from '../../tools/voice/align';
 import { composeLines } from '../../tools/voice/compose';

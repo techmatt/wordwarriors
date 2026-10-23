@@ -22,7 +22,7 @@ import type { HoldMode } from './holdSound';
 import { setMusicDuck } from './music';
 import { setSfxLevel } from './sfx';
 import { realTimeout } from '../realTime';
-import { voiceBank, type VoiceLine, type VoicePlayback } from '../voice/VoiceBank';
+import { voiceBank, WORD_S, type VoiceLine, type VoicePlayback } from '../voice/VoiceBank';
 
 export type Priority = 'instruction' | 'bark';
 
@@ -86,6 +86,11 @@ class Bus {
   on(fn: Listener): () => void {
     this.listeners.add(fn);
     return () => this.listeners.delete(fn);
+  }
+
+  /** Listeners subscribed now (the QA probe's `busListeners`, for growth between episodes). */
+  get listenerCount(): number {
+    return this.listeners.size;
   }
 
   get speaking(): Utterance | null {
@@ -251,7 +256,7 @@ class Bus {
     const playback = line && live ? voiceBank.play(id) : null;
     const text = line?.text ?? '';
     const words = text.split(/\s+/).length;
-    const duration = playback ? playback.length : line ? Math.max(0.8, line.duration + 0.3) : Math.max(0.6, words * 0.35);
+    const duration = playback ? playback.length : line ? Math.max(0.8, line.duration + 0.3) : Math.max(0.6, words * WORD_S);
     const startedAt = performance.now();
     // A line with no clip runs on this clock; a hidden tab starts it again (below).
     let clock = startedAt;

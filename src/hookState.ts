@@ -4,8 +4,6 @@
  * (src/qa/probe.ts). Its own module so neither imports the other for it.
  */
 
-import Phaser from 'phaser';
-
 export interface SpotInfo {
   id: string;
   x: number;
@@ -207,14 +205,3 @@ export const hookState: {
   scene: '',
   fps: 0,
 };
-
-/**
- * Every object in `list`, containers' children after their container, all
- * of them (visible or not). Walks that prune hidden branches keep their own.
- */
-export function walkObjects(list: Phaser.GameObjects.GameObject[], visit: (o: Phaser.GameObjects.GameObject) => void): void {
-  for (const o of list) {
-    visit(o);
-    if (o instanceof Phaser.GameObjects.Container) walkObjects(o.list, visit);
-  }
-}

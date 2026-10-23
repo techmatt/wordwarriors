@@ -10,13 +10,11 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { bodyBox, clearSpot, coveredShare, placePads, signBox, type PlaceBody } from '../../src/battle/padPlace';
-import { spread } from './seeds';
+import { seeded, spread } from './seeds';
 
 /** A fighter standing at (x, y), `w` wide and `h` tall. */
 const body = (x: number, y: number, w: number, h: number): PlaceBody => ({ x, y, cx: x, cy: y - h / 2, half: w / 2, top: y - h });
 const floor = { left: 70, right: 1210 };
-/** Seeded luck, so a failure replays. */
-const seeded = (seed: number) => () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
 const signs = (spots: { x: number; y: number }[]) => spots.map((p) => signBox(p.x, p.y));
 
 test('padPlace: a contest keeps every sign off a tall teammate at his station and off the villain (M17)', () => {

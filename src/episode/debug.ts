@@ -45,8 +45,8 @@ export interface DebugGame {
 
 export const DEBUG_GAMES: DebugGame[] = [...new Map(MINIGAMES.map((g) => [g.scene, { id: g.kind === 'sentence' ? 'sentence' : g.id, scene: g.scene }])).values()];
 
-/** The rooms key 0 works in. */
-export const DEBUG_ROOMS = ['Hub', 'Entry', 'SentenceRoom', 'WordMachine', 'ChargeRoom', 'BridgeRoom', 'ShifterRoom'];
+/** The rooms key 0 works in: the hub, the entry hall and every minigame's scene, so a new minigame gets it too. */
+export const DEBUG_ROOMS = ['Hub', 'Entry', ...new Set(MINIGAMES.map((g) => g.scene))];
 
 interface DebugRun {
   game: string;

@@ -49,6 +49,7 @@ Moved from CLAUDE.md (item 078). "The three commands" are `voice:lines`, `voice:
 | "a new gesture for X" / "X's rune should fire Y" | X's entry in `RUNES` (`content/phonics/runes.ts`: `gesture`, `move`), then `voice:lines`, `voice:build` |
 | "higher / floatier jumps" / "more or fewer shots" / "charge sooner" | `FREE_PLAY` in `src/config.ts` (`jump`, `maxShots`, `chargeMs`, `fullChargeMs`, `shotSpeed`, `shotLifeMs`) |
 | "stop forcing the phonics room" | `FORCE_PHONICS_ROOM` in `src/config.ts` (both stay weighted entries, `CHARGE.weight`, `BRIDGE.weight`) |
+| "Smaug's story fight more / less often" | `STORY_FIGHT` in `src/config.ts` (`afterOne`, `afterNone`: its chance after an episode of his with / without it, for a villain drawn freely; 0 and 0 never) |
 | "the Shape-Shifter more / less often" | `SHIFTER_ROOM` in `src/config.ts` (`afterOne`, `afterNone`: its chance behind door b after an episode with / without it; 1 and 1 every episode) |
 | "more / fewer bridge words" / "slower slide" | `BRIDGE` in `src/config.ts` (`words`, `slide`, `maxUnits`, `replays`, `startLevel`) |
 | "the bridge needs pictures like X" | a familiar `BANK` thing starting like X (`docs/content.md`, "The Stretchy Bridge's pictures"), the three commands, `art:gen` |
@@ -125,14 +126,16 @@ One `CharacterSpec` in `ROSTER`:
 - `arena`: a key of `ARENAS`.
 - `house`: its mood as a villain (see "A villain's house mood" below).
 
-Every new character is automatically a hero, an ally (and so a narrator: about 110
-narrator lines in its voice), a villain, and a sight word if added to `SIGHT_WORDS`.
+Every new character is automatically a hero, an ally (and so a narrator: about 680
+narrator lines in its voice, its `nar_<id>` group in `lines.json`), a villain, and a sight word if added to `SIGHT_WORDS`.
 It also multiplies the sentence lines: one `sent_<frame>_<id>` prefix per frame with a
 name slot, and wake-up lines in each waker's voice. Add its two speakers (`<id>`,
 `<id>_evil`) to `content/voice/voices.json`, and bump the roster count in
 `tests/unit/rules.test.ts`.
 
-Size note: each narrator adds ~1.4 MB of voice. Generated voice is not committed (it
+Size note: each narrator adds about 6 to 8 MB of voice (the `nar_<id>_*` files in
+`public/voice-gen/`, measured 2026-10-23: Scar 5.7 MB, Dada Matt 7.3, Ellie 8.5, about 670
+clips each). Generated voice is not committed (it
 lives in `public/voice-gen/`, see README *Storage*), so it does not count against the
 20 MB per-commit gate.
 
@@ -184,7 +187,10 @@ Hat!"). That word is drawn `NAMED_COUNTER_BOOST` (6) times as often as any other
 it is in the bag. A named word is a whole word of the item's `name` and stays out of
 every name, ability, ultimate, taunt and threat in the roster (unit test "named counter
 words are pictured, and never in any name, ability, taunt or threat"). MICE is not
-decodable, so EvilRilla's Wind-up Mice never come up in the episode now. Changing an
+decodable, so EvilRilla's Wind-up Mice never come up in the episode now, and BED, TUB,
+NUT and BAG are stored words (`STORED_WHY` in `content/phonics/bank.ts`, items 127 and 130),
+so Evil Julia's Cozy Bed, Evil Ellie's Bubble Tub, Evil Seraphina's Golden Nut and Evil
+Smaug's Gold Bag wait until their word is brought back (README, *Stored words*). Changing an
 item's `id` needs new `item_<id>` art (`npm run art:gen -- item_<id>`). With `how:
 'scare'` the swarm is the item's `glyph`.
 
@@ -368,6 +374,8 @@ battle item from a fetch room). Words a game uses are planned in `episodePlans`,
 kind in `PLAN_ORDER`, so they stay out of the rooms planned after it, the keys and
 the counter; a game with its own words is a fetch room only. `tests/unit/plansGolden.*`
 pins the seeded draws: a change that should not alter them leaves that test green.
+A new entry's scene gets key 0 and its own pedestal in minigame debug mode by itself
+(`DEBUG_ROOMS` and `DEBUG_GAMES` in `src/episode/debug.ts` are built from `MINIGAMES`).
 
 Look at one game: `?game=word_machine` puts it behind door a; `?games=sentence` draws
 from the sentence game alone (the tests' default).
@@ -553,7 +561,10 @@ coverage rule (README, "The word bank's coverage rule"; `npm run bank:audit`). T
 
 Keep it out of every narrator line, threat, quest line and hub scene (rules.test.ts
 says which line says it), and a `both` or action word out of the roster's counter
-words. A new word joins her bags' rounds already under way (`topUpBag`, `topUpMoves`).
+words. Keep it out of any fixed text the game prints or floats too (hit shouts, corner
+cues, badges, banners): `tests/unit/shouts.test.ts` checks it (item 121's BLOCK moved a
+shout, item 126's DAD a cue; the hit words BAM and ZAP are bank words on purpose, shown
+only where `textGivesAway` lets them). A new word joins her bags' rounds already under way (`topUpBag`, `topUpMoves`).
 
 **Familiar or `odd`** (item 040). A thing must be one a typical four-year-old knows
 from its picture alone (everyday objects, animals, food, toys, body parts, a house or a
@@ -608,10 +619,10 @@ ability kind works; a `summon` needs a `MinionSpec` in `MINIONS` (`hen`, `dog` f
 her side). `...pic(word)` makes a `bolt` or `rain` fling or drop the word's own picture,
 the right way up.
 
-## Key words and the word bag (`src/rules/sentences.ts`, ProgressStore `bag`)
+## Key words and the word bag (`src/rules/sentences.ts`, `src/rules/bank.ts`, ProgressStore `bag`)
 
-Every key word (both side rooms and the attic) comes out of her word bag: every
-pictured bank word (`BAG_WORDS`, the bank's things), drawn without replacement and kept
+Every key word (both side rooms and the attic) comes out of her word bag (`drawKey`):
+every pictured bank word (`BAG_WORDS`, the bank's things; both in `src/rules/bank.ts`), drawn without replacement and kept
 with her progress in localStorage. A word leaves the bag when she reads it right first time
 (drawing alone spends nothing, so an abandoned episode or a `?scene=` jump costs her
 bag no words); when no word the episode can use is left, the bag refills (a new
@@ -634,7 +645,7 @@ flips to page 2, every word. Erasing progress (F8 twice) empties the bag too.
 A word new to the game joins a round already under way (item 035, `topUpBag`): the
 store remembers the bag words it last saw (`bagKnown`), and any word since goes into the
 bag, so she meets new words without waiting for the bag to empty; a word the game no
-longer has leaves it. Progress saved before item 035 knew `LEGACY_BAG_WORDS`. Adding a
+longer has leaves it. Progress saved before item 035 knew `LEGACY_BAG_WORDS` (`src/rules/bank.ts`). Adding a
 word needs nothing more.
 
 ## Move words and the move bag (`src/rules/moves.ts`, ProgressStore `moveBag`)

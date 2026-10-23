@@ -44,7 +44,8 @@ export const DEPTH = {
 
 /**
  * Who is in an episode. Since item 025 the cast is drawn fresh every episode
- * (`randomCast`, src/rules/cast.ts): a villain from the whole roster, a random
+ * (`castEpisode`, src/episode/draws.ts, drawing with `drawCast` in
+ * src/rules/cast.ts): a villain from the whole roster, a random
  * ally, the dads in random forms and roles. The fixed cast below is the
  * "default episode": what `randomCast: false` plays, and what `?cast=default`
  * (the tests' default) plays.

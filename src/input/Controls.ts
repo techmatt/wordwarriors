@@ -19,7 +19,8 @@
  *   skipped its title.
  *
  * Buttons are colours, never A/B: `pressed('green')`. Keyboard: arrows move,
- * Space/Enter green, Escape red, Tab yellow, 3 blue (the digit row or the
+ * Space/Enter green, Escape red, Tab yellow (its browser focus move is
+ * stopped once for the whole game, in src/main.ts), 3 blue (the digit row or the
  * numpad; 1 and 2 are Dad's, `dadButtons.ts`). Letters are left alone
  * entirely, because the spelling game owns A–Z (see TextEntry). Dev keys are
  * F-keys only. Backquote is dad lock (`dadLock.ts`): while it is on, only the
@@ -161,7 +162,6 @@ export class Controls {
           if (!e.repeat) this.devKeys.add(e.key);
           if (e.key !== 'F11' && e.key !== 'F12' && e.key !== 'F5') e.preventDefault();
         }
-        if (e.key === 'Tab') e.preventDefault();
       });
     }
     scene.input.on('pointerdown', unlockAudio);

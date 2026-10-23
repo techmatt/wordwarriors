@@ -13,6 +13,8 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { FREE_PLAY, REACH } from '../src/config';
+import type { Button } from '../src/input/Controls';
+import type { WWHooks } from '../src/testHooks';
 import { SLOW, SMOKE, boot, collectErrors, dadLock, expectNoErrors, press, stick, until, walkTo, state, type WWState } from './harness';
 
 type Play = WWState['play'];
@@ -21,8 +23,8 @@ const play = async (page: Page): Promise<Play> => (await state(page)).play;
 
 const input = (page: Page, fn: 'hold' | 'release', b?: string) =>
   page.evaluate(([f, btn]) => {
-    const i = (window as unknown as { __ww: { input: { hold(b: string): void; release(): void } } }).__ww.input;
-    if (f === 'hold') i.hold(btn!);
+    const i = (window as unknown as { __ww: WWHooks }).__ww.input;
+    if (f === 'hold') i.hold(btn as Button);
     else i.release();
   }, [fn, b] as const);
 

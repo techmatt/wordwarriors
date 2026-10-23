@@ -2,7 +2,7 @@
 
 import type { CharacterSpec } from '../types.js';
 import { ab, ult } from './abilities.js';
-import { MATT, JASON } from './dads.js';
+import { MATT, MATT_FACE, JASON } from './dads.js';
 
 export const FAMILY: CharacterSpec[] = [
   {
@@ -229,7 +229,7 @@ export const FAMILY: CharacterSpec[] = [
     description: 'A big-hearted builder dad with a giant hammer who builds walls and towers in a blink.',
     arena: 'castle',
     good: {
-      displayName: 'Dada Matt', trail: { tint: [MATT.bright, 0xc8d0dc], shape: 'square' }, look: 'a tall, beefy, broad-shouldered bodybuilder dad: fair skin, short light-brown hair thinning on top with a high hairline, a full short reddish-brown beard, blue eyes, no glasses, a big warm smile, in chunky deep-blue-and-steel builder armour (a rich royal-to-navy blue) with a tool belt, holding a huge friendly hammer. Bright, sturdy and friendly',
+      displayName: 'Dada Matt', trail: { tint: [MATT.bright, 0xc8d0dc], shape: 'square' }, look: `${MATT_FACE}, in chunky deep-blue-and-steel builder armour (a rich royal-to-navy blue) with a tool belt, holding a huge friendly hammer. Bright, sturdy and friendly`,
       palette: [MATT.deep, 0xc8d0dc], glyph: '🔨', style: 'twirl', speed: 200, size: 1.2, hp: 130,
       abilities: [
         ab('hammer_spin', 'Hammer Swing', 'spin', 5, MATT.bright, 2, { shout: true, words: ['pow', 'top'] }),

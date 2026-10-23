@@ -11,12 +11,12 @@ import { test } from 'node:test';
 import { MOVE_WORDS } from '../../content/battle/roster';
 import { BANK, BANK_BY_WORD } from '../../content/phonics/bank';
 import { FRAMES, NO_ARTICLE, NUMBER_WORDS } from '../../content/phonics/sentences';
-import { distractorsFor, withStems } from '../../src/rules/bank';
+import { BAG_WORDS, distractorsFor, drawKey, withStems } from '../../src/rules/bank';
 import { RUNE_BY_SOUND } from '../../content/phonics/runes';
 import { CHARGE_WORDS, GESTURE_WORDS, gestureWords, planCharge } from '../../src/rules/charge';
 import { MINIGAME_BY_ID, SENTENCE_GAMES } from '../../src/rules/minigames';
 import { drawGift, drawMove } from '../../src/rules/moves';
-import { BAG_WORDS, distractors, drawKey, episodePlans, saidEarly, type EpisodeInput } from '../../src/rules/sentences';
+import { distractors, episodePlans, saidEarly, type EpisodeInput } from '../../src/rules/sentences';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { memory, seededLcg as seeded, spread } from './seeds';
 

@@ -105,7 +105,7 @@ for (let e = 0; e < EPISODES; e++) {
     saw(e, 'cast', `form: ${dad}`, [form], formsOf(dad).map((f) => f.id));
   }
   saw(e, 'places', 'quest place', [episode.place], [HOME, ...PLACES.map((p) => p.id)]);
-  saw(e, 'places', 'side rooms', house.slice(0, 2).map((p) => p.room), episode.place === HOME ? null : null);
+  saw(e, 'places', 'side rooms', house.slice(0, 2).map((p) => p.room));
   if (episode.place === HOME) saw(e, 'places', 'house side rooms (home episodes)', house.slice(0, 2).map((p) => p.room), FETCH_ROOMS);
   saw(e, 'games', 'games (doors a, b)', house.slice(0, 2).map((p) => p.game), MINIGAMES.filter((g) => g.slots.includes('fetch')).map((g) => g.id));
   saw(e, 'games', 'counter game (attic)', [house[2]!.game], MINIGAMES.filter((g) => g.slots.includes('counter')).map((g) => g.id));

@@ -22,8 +22,6 @@
 
 import type { SpokenLine } from '../voice/ids.js';
 
-export type EndingLine = SpokenLine;
-
 export interface EndingProp {
   id: string;
   /** Art brief. */
@@ -53,11 +51,11 @@ export interface EndingSpec {
   props: EndingProp[];
   /** Where the cast stands: feet line, the span they spread across, their height, and a gap nobody stands in (the campfire). */
   stand: { y: number; left: number; right: number; h: number; gap?: [number, number] };
-  open: EndingLine;
-  cheer: EndingLine;
-  close: EndingLine;
+  open: SpokenLine;
+  cheer: SpokenLine;
+  close: SpokenLine;
   /** A dad's form (roster id) that fits the scene, and what he says when he is there in it. */
-  fit?: { form: string } & EndingLine;
+  fit?: { form: string } & SpokenLine;
   /**
    * Villains (roster ids, forms included) who suit the scene, by their reformed
    * lines (Smaug's marshmallows, Dada Matt's fort) or by who they are (the sea

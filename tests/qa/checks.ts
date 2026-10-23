@@ -6,7 +6,10 @@
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 
+// Type-only: the probe's own shapes, without loading Phaser in node.
+import type { QaLayout, QaSince, Rect } from '../../src/qa/probe';
 import type { WWState } from '../harness';
+import { wordLine } from '../../content/voice/ids';
 
 export interface Issue {
   kind: string;
@@ -18,22 +21,15 @@ export interface Issue {
   shot?: string;
 }
 
-export type Box = [number, number, number, number];
+export type Box = Rect;
 
-export interface Layout {
-  texts: { scene: string; text: string; b: Box; depth: number; group: number; size: number; panel?: number; ink?: Box }[];
-  images: { scene: string; key: string; b: Box; depth: number }[];
-  spots: { id: string; x: number; y: number }[];
-  /** What she must look at or choose (`qaTarget` in the game): pictures, doors, pads, recap cards. */
-  targets: { scene: string; id: string; b: Box; depth: number }[];
-  /** What may hang over the scene (`qaCover`): the dialogue box and face card, bubbles, the sentence banner. */
-  covers: { scene: string; kind: string; b: Box; depth: number }[];
-  /** Where words may sit on what they are printed on (`qaPanel`): the sentence banner's cream, the machine's plate. */
-  panels?: { scene: string; kind: string; b: Box }[];
-  /** Her figure (`qaHero`, hunt 9). */
-  heroes?: { scene: string; b: Box; depth: number }[];
-  hudDepth: number;
-}
+/**
+ * What the probe's `layout()` reports (src/qa/probe.ts, `QaLayout`): texts,
+ * images, spots, targets (`qaTarget`), covers (`qaCover`), panels (`qaPanel`)
+ * and her figure (`qaHero`, hunt 9). Panels and heroes are optional here so
+ * a hand-built layout may leave them out.
+ */
+export type Layout = Omit<QaLayout, 'panels' | 'heroes'> & Partial<Pick<QaLayout, 'panels' | 'heroes'>>;
 
 /**
  * Words she stands in front of (hunt 9: stepped up out of the Shape-Shifter's
@@ -87,16 +83,6 @@ export function panelIssues(l: Pick<Layout, 'texts' | 'panels'>, scene: string):
 }
 
 /**
- * Banners and dialogue over the things she must look at or choose (item 059,
- * Matt: "a banner or dialogue box must never cover a picture or target"):
- * every tagged cover, and any untagged lettered text at speech depth or
- * above (a new banner nobody tagged), boxed per container, against every
- * target's bounds. Only a cover drawn above the target counts (the victory's
- * recap cards stand over the dialogue box on purpose), and only a real
- * overlap, more than a few pixels each way. Words inside a target (its
- * label) or inside a tagged cover (the box's own words) are not covers.
- */
-/**
  * Overlaps already ruled on in docs/qa-findings.md, a look and not a bug
  * (item 092: every scenario of a sweep reported them): W12's bedroom door
  * under the face card and the magic circle's edge (up to 30 px) under the story's last line,
@@ -110,6 +96,16 @@ export function ruledCover(scene: string, target: string, cover: string, overlap
   return scene === 'Battle' && target.startsWith('pad_') && overlapH <= 15;
 }
 
+/**
+ * Banners and dialogue over the things she must look at or choose (item 059,
+ * Matt: "a banner or dialogue box must never cover a picture or target"):
+ * every tagged cover, and any untagged lettered text at speech depth or
+ * above (a new banner nobody tagged), boxed per container, against every
+ * target's bounds. Only a cover drawn above the target counts (the victory's
+ * recap cards stand over the dialogue box on purpose), and only a real
+ * overlap, more than a few pixels each way. Words inside a target (its
+ * label) or inside a tagged cover (the box's own words) are not covers.
+ */
 export function coverIssues(l: Pick<Layout, 'texts' | 'targets' | 'covers' | 'hudDepth'>, scene: string): Issue[] {
   const out: Issue[] = [];
   const centre = (b: Box) => [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2] as const;
@@ -142,18 +138,12 @@ export function coverIssues(l: Pick<Layout, 'texts' | 'targets' | 'covers' | 'hu
   return out;
 }
 
-export interface Since {
-  voice: { t: number; id: string; scene: string; priority: string; text: string; noLine: boolean; silent: boolean; why?: string }[];
-  locks: { scene: string; round: string; start: number; ms: number; silentMs: number }[];
-  spikes: { scene: string; t: number; ms: number; kind: string }[];
-  flashes: { scene: string; t: number }[];
-  console: { level: string; text: string; scene: string }[];
-  missingArt: string[];
-  /** Art drawn before it loaded, or a scene opened with its art still loading (item 065). */
-  lateArt?: { scene: string; id: string }[];
-  frames: Record<string, { n: number; over50: number; over100: number; max: number }>;
-  now: number;
-}
+/**
+ * What the probe's `since(t)` reports (src/qa/probe.ts, `QaSince`). `lateArt`
+ * (art drawn before it loaded, or a scene opened with its art still loading,
+ * item 065) is optional here so a hand-built log may leave it out.
+ */
+export type Since = Omit<QaSince, 'lateArt'> & Partial<Pick<QaSince, 'lateArt'>>;
 
 const W = 1280;
 const H = 720;
@@ -236,7 +226,7 @@ export function leakIssues(s: WWState, l: Layout, voiceSinceRound: Since['voice'
     const T = target.toUpperCase();
     for (const v of voiceSinceRound) {
       if (v.id.startsWith('letter_')) continue;
-      if (v.id === `word_${target}` || wordIn(v.text, target)) {
+      if (v.id === wordLine(target) || wordIn(v.text, target)) {
         out.push({ kind: 'says-target', severity: 'bug', scene: s.scene, detail: `${where}: "${v.id}" says ${T} before she answered`, key: `says:${where}:${v.id}` });
       }
     }

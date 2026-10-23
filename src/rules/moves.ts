@@ -28,7 +28,7 @@ import { CHARACTER_BY_ID, MOVE_WORDS, abilityWords } from '../../content/battle/
 import type { AbilitySpec } from '../../content/battle/types';
 import { CASTERS } from '../../content/house/scenes';
 import { BANK_BY_WORD } from '../../content/phonics/bank';
-import { EFFECT_BY_WORD } from '../../content/phonics/effects';
+import { wordEffect } from '../../content/phonics/effects';
 import type { ProgressStore } from '../state/ProgressStore';
 import { coverage, distractorsFor, drawFromBag, drawWords, isFirm, met } from './bank';
 import { pick, shuffle, type Rand } from './random';
@@ -60,9 +60,9 @@ export interface MovePlan {
 
 export const CHOICES_PER_PART = 2;
 
-/** The id of a word's own effect: `word_<word>` for an action (effects.ts). */
+/** The id of a word's own effect: `word_<word>` for an action (effects.ts `wordEffect`). */
 export function effectId(word: string): string {
-  return EFFECT_BY_WORD[word]?.ability.id ?? `word_${word}`;
+  return wordEffect(word).id;
 }
 
 /** Every move word her team's own abilities answer to, with every owner of each. */
@@ -167,6 +167,31 @@ export function padWeights(store: ProgressStore, pool: string[], need: number): 
   return (w) => (inBag.has(w) ? 1 : PAD_SHOWN_WEIGHT) * coverage(store, w, m);
 }
 
+/**
+ * One move choice around its right word (the brawl's and the story fight's):
+ * 2 or 3 pads, the wrong ones from `pool` by `distractorsFor`, words not yet
+ * `shown` this episode first, then any; the pads join `shown`. The seeded
+ * draws run in this order (plansGolden pins it): the pad count, the wrong
+ * pads, the shuffle, the owner.
+ */
+export function padChoice(
+  store: ProgressStore,
+  right: string,
+  pool: string[],
+  shown: Set<string>,
+  padWeight: (w: string) => number,
+  input: Pick<MoveInput, 'hero' | 'team' | 'helper' | 'gift'>,
+  rand: Rand,
+): MoveChoicePlan {
+  const n = rand() < 0.5 ? 2 : 3;
+  const firm = isFirm(store, right);
+  const wrong = distractorsFor(store, right, pool, n - 1, rand, shown, firm, padWeight);
+  if (wrong.length < n - 1) wrong.push(...distractorsFor(store, right, pool, n - 1 - wrong.length, rand, wrong, firm, padWeight));
+  const words = shuffle([right, ...wrong], rand);
+  for (const w of words) shown.add(w);
+  return { words, right, owner: ownerFor(right, input, rand) };
+}
+
 export interface MoveInput {
   hero: string;
   /** Her team in the battle: the hero and the ally. */
@@ -202,14 +227,7 @@ export function planMoves(store: ProgressStore, input: MoveInput, rand: Rand = M
       right = drawMove(store, eligible, rand, rights);
     }
     rights.push(right);
-    const n = rand() < 0.5 ? 2 : 3;
-    // Wrong pads: words not yet shown this episode first, then any.
-    const firm = isFirm(store, right);
-    const wrong = distractorsFor(store, right, wrongPool, n - 1, rand, shown, firm, padWeight);
-    if (wrong.length < n - 1) wrong.push(...distractorsFor(store, right, wrongPool, n - 1 - wrong.length, rand, wrong, firm, padWeight));
-    const words = shuffle([right, ...wrong], rand);
-    for (const w of words) shown.add(w);
-    return { words, right, owner: ownerFor(right, input, rand) };
+    return padChoice(store, right, wrongPool, shown, padWeight, input, rand);
   };
   const part = (): MoveChoicePlan[] =>
     Array.from({ length: CHOICES_PER_PART }, (_, i) => choice(i === 0)).filter((c): c is MoveChoicePlan => !!c && c.words.length >= 2);

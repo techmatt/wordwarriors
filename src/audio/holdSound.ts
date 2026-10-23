@@ -25,16 +25,10 @@
  * no schwa to find, and plays as it is: held whole, or once whole.
  */
 
-export type HoldMode = 'hold' | 'once';
+// `.js` suffix: tools/voice/import.ts builds this file under NodeNext (as src/rules/bankAudit.ts).
+import { BRIDGE } from '../config.js';
 
-/**
- * How long a held sound sounds by default, its fade-out included: one short
- * "mmm", then quiet. The game passes BRIDGE.stretchMs (src/config.ts, the
- * knob: item 085, 1.3 s before); this default is for tools/voice/import.ts,
- * which builds this file under NodeNext, where config.ts does not build.
- * tests/unit/holdSound.test.ts keeps the two equal.
- */
-export const HELD_MS = 600;
+export type HoldMode = 'hold' | 'once';
 
 /** What to play, in samples: `start`..`end` of the clip; a held clip's steady part is `steadyStart`..`end`. */
 export interface HoldPlan {
@@ -247,13 +241,13 @@ function stretch(x: Float32Array, lo: number, hi: number, n: number, half: numbe
  * The samples to play for a plan, played once. A once clip fades out over its
  * last FADE_OUT_S, and joins its tail. A held clip (item 058) is its attack,
  * then its steady part stretched smoothly (`stretch`) to `heldMs` in all
- * (BRIDGE.stretchMs in the game, HELD_MS by default), fading out: one short
+ * (BRIDGE.stretchMs, src/config.ts, by default), fading out: one short
  * "mmm". Nothing loops (item 090: 085 ended it on a silence VoiceBus looped
  * until she let go, and the release at `heldMs` came about when that loop
  * would start; 054 looped the steady part itself, and that is 70-300 ms on
  * every clip: M's 110 ms loop was a stutter of "m"s, nine a second).
  */
-export function holdSamples(x: Float32Array, plan: HoldPlan, rate: number, heldMs = HELD_MS): Float32Array<ArrayBuffer> {
+export function holdSamples(x: Float32Array, plan: HoldPlan, rate: number, heldMs = BRIDGE.stretchMs): Float32Array<ArrayBuffer> {
   if (plan.mode === 'hold' && plan.steadyStart !== undefined) return heldSamples(x, plan, rate, plan.steadyStart, heldMs);
   const parts: [number, number][] = [[plan.start, plan.end], ...(plan.tail ? [plan.tail] : [])];
   const len = parts.reduce((n, [a, b]) => n + Math.max(0, b - a), 0);

@@ -13,13 +13,14 @@ import { test } from 'node:test';
 import { BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
 import { SOUND_BY_UNIT, canHold } from '../../content/phonics/letters';
 import { lookalikesOf } from '../../content/phonics/sentences';
-import { GAP_BY_PLACE, PLACES, SIDE_ROOMS, gapFor } from '../../content/house/house';
+import { PLACES, SIDE_ROOMS, gapFor } from '../../content/house/house';
 import { narratorLine } from '../../content/voice/ids';
 import { NARRATOR_LINES } from '../../content/voice/script';
 import { CHARACTER_BY_ID, PERSONS } from '../../content/battle/roster';
 import { holdPlan, holdSamples } from '../../src/audio/holdSound';
 import { BRIDGE } from '../../src/config';
-import { BRIDGE_PICTURES, CROSS_WORDS, bridgeLevel, bridgePictures, bridgeEase, bridgeWords, nextBridgeLevel, planBridge, recordedBridgeLevel, sharedStart, whereDiffers } from '../../src/rules/bridge';
+import { stepLevel } from '../../src/rules/difficulty';
+import { BRIDGE_PICTURES, CROSS_WORDS, bridgeLevel, bridgePictures, bridgeEase, bridgeWords, planBridge, recordedBridgeLevel, sharedStart, whereDiffers } from '../../src/rules/bridge';
 import { BRIDGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/sentences';
 import { ProgressStore, STORE_KEY } from '../../src/state/ProgressStore';
@@ -250,10 +251,10 @@ test('help levels: start at 1, up one when right first time with no help, down o
   const storage = memory();
   const store = new ProgressStore(storage);
   assert.equal(bridgeLevel(store, 'map'), BRIDGE.startLevel);
-  assert.equal(nextBridgeLevel(1, true), 2);
-  assert.equal(nextBridgeLevel(3, true), 3);
-  assert.equal(nextBridgeLevel(2, false), 1);
-  assert.equal(nextBridgeLevel(1, false), 1);
+  assert.equal(stepLevel(1, true), 2);
+  assert.equal(stepLevel(3, true), 3);
+  assert.equal(stepLevel(2, false), 1);
+  assert.equal(stepLevel(1, false), 1);
   store.setBridgeLevel('map', 3);
   assert.equal(new ProgressStore(storage).bridgeLevel('map', 1), 3);
   // An old blob with no bridgeLevels reads fine.
@@ -303,7 +304,7 @@ test('episodePlans with the bridge: its words are the fetches, its last the key;
 });
 
 test('gaps: every place has one; the house is lava', () => {
-  for (const p of PLACES) assert.ok(GAP_BY_PLACE[p.id], p.id);
+  for (const p of PLACES) assert.ok(p.gap, p.id);
   for (const r of SIDE_ROOMS) assert.equal(gapFor(r.id), 'lava');
   assert.equal(gapFor(PLACES.find((p) => p.id === 'sea_grotto')!.rooms[0]!.id), 'river');
 });

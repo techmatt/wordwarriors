@@ -4,6 +4,24 @@
  * fight style and the victory scene, each made once per episode on first
  * need, and the words said before each that it keeps clear of; and the
  * journey map's stops. No Phaser and no import of Episode.ts (item 076).
+ *
+ * The draws are lazy and call each other, each first drawing what it keeps
+ * clear of, so whichever is asked for first runs the same chain:
+ *
+ *   fightStyle (castRand)
+ *   giftWord: saidBeforeBattle (fightWords: fightStyle), then the gift
+ *   movePlan: giftWord, saidBeforeBattle, fightStyle, then the pads
+ *   grabWord: giftWord, movePlan, saidBeforeBattle (the house plan's reading
+ *     words too, if it was made first: a dev jump), then the word
+ *   housePlan: giftWord, the rooms, planInput (movePlan, journeyStops,
+ *     hubScene, then grabWord), roomGames (framesClear: giftWord, movePlan,
+ *     grabWord), the plans, then rememberPlan
+ *   grabPlan: grabWord, housePlan, then the hall's other pictures
+ *
+ * So the order is gift, moves, warm-up word, house plan. Changing a call's
+ * place changes which avoid-lists exist when and how the seeded draws are
+ * consumed (tests/unit/plansGolden pins `episodePlans`' own draws given its
+ * input, not this chain).
  */
 
 import { CHARACTER_BY_ID, personOf } from '../../content/battle/roster';
@@ -186,7 +204,7 @@ function grabWord(): string {
     const avoid = withStems([gift, ...moveWords(), ...saidBeforeBattle(), ...(named ? [named] : []), ...(episode.house.plan ? readingWords() : [])]);
     // `level` is read when the hall opens, `misses` counted there: kept here so a trip to the parent page loses neither.
     // `?grab=king` (tests, item 085): that word, when the hall can ask for it.
-    const asked = typeof location === 'undefined' ? null : new URLSearchParams(location.search).get('grab');
+    const asked = urlQuery().get('grab');
     episode.grab = { word: asked && GRAB_WORDS.includes(asked) ? asked : pickGrab(progress, avoid), objects: [], level: null, misses: 0 };
   }
   return episode.grab.word;
@@ -396,7 +414,7 @@ export function counterArt(): string {
  */
 export function drawEnding(): string {
   if (!episode.ending) {
-    const forced = typeof location === 'undefined' ? null : new URLSearchParams(location.search).get('ending');
+    const forced = urlQuery().get('ending');
     episode.ending = forced && ENDING_BY_ID[forced] ? forced : pickEnding(episode, progress.recentOf('ending'));
   }
   return episode.ending;

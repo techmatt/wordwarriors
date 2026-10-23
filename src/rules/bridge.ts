@@ -36,7 +36,7 @@ import { BRIDGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { drawWords } from './bank';
 import { shuffle, type Rand } from './random';
-import { clampLevel, helpLevel, stepLevel, type HelpLevel } from './difficulty';
+import { clampLevel, helpLevel, type HelpLevel } from './difficulty';
 
 export type BridgeLevel = HelpLevel;
 export type BridgeEase = 1 | 2 | 3;
@@ -81,11 +81,6 @@ export function recordedBridgeLevel(store: ProgressStore, word: string): BridgeL
 /** The help level the room gives a word now: BRIDGE.startLevel at base, else her recorded level up to DIFFICULTY (item 067). */
 export function bridgeLevel(store: ProgressStore, word: string): BridgeLevel {
   return helpLevel(recordedBridgeLevel(store, word), BRIDGE.startLevel);
-}
-
-/** The ramp: right first time with no help is one level less help; any help or a wrong picture, one more. */
-export function nextBridgeLevel(level: BridgeLevel, unaided: boolean): BridgeLevel {
-  return stepLevel(level, unaided);
 }
 
 /** How many sound units two words share from the start, by sound (CAT and KIT share one). */

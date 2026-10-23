@@ -15,14 +15,15 @@ import type { Issue } from './checks';
 const [tag = 'now', ...flags] = process.argv.slice(2);
 const dir = `scratch/qa/${tag}`;
 
+/** A scenario's JSON; the `devkeys_<mode>.json` runs carry no seconds, cast, heap or frames. */
 interface Run {
   scenario: { name: string; query: string };
-  seconds: number;
+  seconds?: number;
   stalled: string | null;
   shots: number;
-  cast: { ally: string | null; villain: string; fight?: string; read: string[] } | null;
-  heapMB: number[];
-  frames: Record<string, { n: number; over50: number; over100: number; max: number }>;
+  cast?: { ally: string | null; villain: string; fight?: string; read: string[] } | null;
+  heapMB?: number[];
+  frames?: Record<string, { n: number; over50: number; over100: number; max: number }>;
   locks: { scene: string; round: string; ms: number; silentMs: number }[];
   issues: (Issue & { count: number })[];
 }
@@ -45,12 +46,12 @@ for (const r of runs) {
 
 const lines: string[] = [`# QA run \`${tag}\``, '', '| scenario | s | shots | cast | heap MB | stalled |', '| --- | --- | --- | --- | --- | --- |'];
 for (const r of runs) {
-  lines.push(`| ${r.scenario.name} | ${r.seconds} | ${r.shots} | ${r.cast ? `${r.cast.ally ?? '-'} vs ${r.cast.villain} (${r.cast.fight ?? '?'})` : '-'} | ${r.heapMB.join(' → ')} | ${r.stalled ?? ''} |`);
+  lines.push(`| ${r.scenario.name} | ${r.seconds ?? ''} | ${r.shots} | ${r.cast ? `${r.cast.ally ?? '-'} vs ${r.cast.villain} (${r.cast.fight ?? '?'})` : '-'} | ${(r.heapMB ?? []).join(' → ')} | ${r.stalled ?? ''} |`);
 }
 lines.push('', '## Frames (worst per scene, real ms)', '', '| scene | frames | >50 ms | >100 ms | max |', '| --- | --- | --- | --- | --- |');
 const frames = new Map<string, { n: number; over50: number; over100: number; max: number }>();
 for (const r of runs) {
-  for (const [s, f] of Object.entries(r.frames)) {
+  for (const [s, f] of Object.entries(r.frames ?? {})) {
     const a = frames.get(s) ?? { n: 0, over50: 0, over100: 0, max: 0 };
     frames.set(s, { n: a.n + f.n, over50: a.over50 + f.over50, over100: a.over100 + f.over100, max: Math.max(a.max, f.max) });
   }

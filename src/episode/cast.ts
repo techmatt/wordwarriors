@@ -11,9 +11,9 @@ import { outfitFor } from '../../content/battle/outfits';
 import { CHARACTER_BY_ID, ROSTER, personOf } from '../../content/battle/roster';
 import type { CharacterSpec, Taunt } from '../../content/battle/types';
 import { HOME, PLACE_BY_ID } from '../../content/house/house';
-import { questSetup, type Line } from '../../content/house/quests';
+import { questSetup } from '../../content/house/quests';
 import { hubStory, storyTexts, type HubStory, type HubStoryIds } from '../../content/house/scenes';
-import { wakeCastKey } from '../../content/voice/ids';
+import { wakeCastKey, type SpokenLine } from '../../content/voice/ids';
 import { wakeVariant } from '../../content/voice/script';
 import { helperOf, wakerOf } from '../rules/cast';
 import { adultHeight, isGrownUp, outfitTall } from '../rules/heights';
@@ -100,7 +100,7 @@ export function castFace(id: string, state: EpisodeState = episode): string {
 }
 
 /** The quest's setup line this episode (its id and words), said in the bedroom in the helper's voice: theirs, or the narrator's "right here at home". */
-function questSetupOf(state: EpisodeState = episode): { id: string; line: Line } {
+function questSetupOf(state: EpisodeState = episode): { id: string; line: SpokenLine } {
   return questSetup(helper(state), narrator(state), state.story.quest);
 }
 

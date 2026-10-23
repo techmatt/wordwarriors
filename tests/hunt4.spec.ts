@@ -6,9 +6,9 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
-import { boot, choose, collectErrors, debugTagShown, expectNoErrors, press, readToKeyWord, state, until } from './harness';
+import { boot, choose, collectErrors, debugTagShown, expectNoErrors, press, readToKeyWord, state, storedBlob as stored, until, type WWState } from './harness';
+import type { WWHooks } from '../src/testHooks';
 
-const stored = (page: Page) => page.evaluate(() => localStorage.getItem('wordwarriors.progress'));
 const music = async (page: Page) => (await state(page)).music;
 
 test('yellow in the sentence room says again the variant she heard, not the next', async ({ page }) => {
@@ -30,9 +30,9 @@ test('F9 as the recap fades out to THE END is ignored: THE END comes, not the re
   await boot(page, '?scene=victory&nojourney=1&read=bed,hat');
   await until(page, (s) => s.scene === 'Victory', 60_000, 'the recap');
   await expect.poll(() => page.evaluate(() => {
-    const ww = (window as unknown as { __ww: { hush(): void; state(): { recapDone: boolean } } }).__ww;
+    const ww = (window as unknown as { __ww: WWHooks }).__ww;
     ww.hush();
-    return ww.state().recapDone;
+    return (ww.state() as WWState).recapDone;
   }), { timeout: 60_000 }).toBe(true);
   await press(page, 'green');
   await page.keyboard.press('F9');

@@ -156,8 +156,17 @@ function endingSet(draw: boolean): string[] {
   return [endingArt(e.id), ...e.props.map((p) => endingPropArt(p.id)), ...endingPeople(episode).map((p) => castArt(p))];
 }
 
-/** The parked v0.1 games draw their rounds as they open, from every picture: they wait for the lot. */
+/**
+ * The parked v0.1 games' scenes, the one list (Pick is not one: it is live
+ * behind `pickScreens` and has its own art). They draw their rounds as they
+ * open, from every picture: they wait for the lot.
+ */
 const PARKED = new Set(['SoundToLetter', 'BlendPath', 'WordToPicture', 'Spelling', 'Alarm', 'Retreat']);
+
+/** A parked scene: its `artFor` is every picture, so nothing prefetches it (src/art/gate.ts). */
+export function isParkedScene(key: string): boolean {
+  return PARKED.has(key);
+}
 
 /**
  * The art scene `key` draws, for the episode as it is. `draw`: make the plans

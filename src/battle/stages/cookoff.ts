@@ -20,7 +20,7 @@ import { fightPropArt } from '../../../content/battle/fights';
 import type { AbilitySpec } from '../../../content/battle/types';
 import { sfxBoing, sfxBoom, sfxFanfare, sfxGrow, sfxHeal, sfxPoof, sfxStep, sfxWhoosh } from '../../audio/sfx';
 import { DEPTH, FONT_HEAVY } from '../../config';
-import { rgb } from '../../fx/colour';
+import { shade } from '../../fx/colour';
 import { burst, fitImage, floatText, fxQuality, popIn, shockwave } from '../../fx/juice';
 import { TEX } from '../../fx/textures';
 import type { Fighter } from '../Fighter';
@@ -76,12 +76,6 @@ const STAR_POINTS = Array.from({ length: 10 }, (_, i) => {
   const th = (i / 10) * Math.PI * 2 - Math.PI / 2;
   return new Phaser.Math.Vector2(278 + Math.cos(th) * r, 85 + Math.sin(th) * r);
 });
-
-/** A colour a quarter darker: each layer's underside. */
-function shade(c: number): number {
-  const [r, g, b] = rgb(c).map((v) => Math.round(v * 0.72));
-  return (r! << 16) | (g! << 8) | b!;
-}
 
 /** The cook-off's staging: stations, growing dishes, flying food, judges and a trophy. */
 export class CookoffStage extends BaseStage {

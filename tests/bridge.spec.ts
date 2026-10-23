@@ -12,7 +12,7 @@ import { test, expect, type Page } from '@playwright/test';
 
 import { BANK_BY_WORD } from '../content/phonics/bank';
 import { canHold } from '../content/phonics/letters';
-import { letterSoundLine } from '../content/voice/ids';
+import { letterSoundLine, wordLine } from '../content/voice/ids';
 import { BRIDGE_PICTURES, CROSS_WORDS, bridgeEase } from '../src/rules/bridge';
 import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom, press, seedProgress, slideAcross, state, stick, texts, toParentAndBack, until, type WWState } from './harness';
 
@@ -91,7 +91,7 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
   // (Adjacent repeats folded, in case a stone is stepped on twice.)
   const sounds = far.voice.history.filter((id) => id.startsWith('letter_')).filter((id, k, all) => id !== all[k - 1]);
   expect(sounds.slice(0, b0.units.length)).toEqual(soundLines(b0));
-  expect(far.voice.history).not.toContain(`word_${b0.word}`);
+  expect(far.voice.history).not.toContain(wordLine(b0.word));
   await shot(page, 'far_bank');
 
   // A wrong picture: its sounds one by one, where the bridge differs, and back to the start.
@@ -101,9 +101,9 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
   const since = again.voice.history.slice(again.voice.history.lastIndexOf(again.voice.history.find((id) => id.endsWith('_bridge_picked'))!));
   expect(since[0]).toMatch(/_bridge_picked$/);
   expect(since.some((id) => /_bridge_(start|middle|end)$/.test(id))).toBe(true);
-  expect(since).toContain(`letter_${wrong[0]}_sound`);
-  expect(again.voice.history).not.toContain(`word_${wrong}`);
-  expect(again.voice.history).not.toContain(`word_${b0.word}`);
+  expect(since).toContain(letterSoundLine(wrong[0]));
+  expect(again.voice.history).not.toContain(wordLine(wrong));
+  expect(again.voice.history).not.toContain(wordLine(b0.word));
   expect(again.room!.player.x).toBeLessThan(330);
 
   // Again, and the right one: the word said only now, fetched; the level stays 1 after a miss.
@@ -111,7 +111,7 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
   await until(page, (st) => bridge(st)?.phase === 'pick' && !st.room!.locked, 60_000, 'far bank again');
   await choose(page, b0.word);
   const s1 = await until(page, (st) => bridge(st)?.index === 1, 60_000, 'second bridge');
-  expect(s1.voice.history).toContain(`word_${b0.word}`);
+  expect(s1.voice.history).toContain(wordLine(b0.word));
   expect(s1.episode.fetched).toContain(b0.word);
   expect(levels(s1)[b0.word]).toBe(1);
   expect(s1.progress.words[b0.word]!.recent).toEqual([false]);
@@ -154,7 +154,7 @@ test('Stretchy Bridge, level 3: silent stones; the pictures only after Dad says 
   await page.keyboard.press('Digit2');
   const pick = await until(page, (st) => bridge(st)?.phase === 'pick' && !st.room!.locked, 60_000, 'pictures up');
   expect(pick.room!.spots.map((sp) => sp.id).sort()).toEqual([...b0.pictures].sort());
-  expect(pick.voice.history).not.toContain(`word_${b0.word}`);
+  expect(pick.voice.history).not.toContain(wordLine(b0.word));
   await choose(page, b0.word);
   const s1 = await until(page, (st) => bridge(st)?.index === 1, 60_000, 'second bridge');
   // A replay is help: one level more help next time.

@@ -10,6 +10,7 @@
 import { test, expect } from '@playwright/test';
 import { tokenWord } from '../content/phonics/sentences';
 import { boot, choose, collectErrors, expectNoErrors, press, seedSolidFrames, until } from './harness';
+import { wordLine } from '../content/voice/ids';
 
 test('sentence room: one green reads the sentence and sounds out the key word; the next green on a picture answers', async ({ page }) => {
   test.setTimeout(90_000);
@@ -33,9 +34,9 @@ test('sentence room: one green reads the sentence and sounds out the key word; t
   expect(find.room!.sentence!.readLit).toEqual(sent.tokens.map((_, i) => i));
   expect(find.room!.sentence!.index).toBe(keyIndex);
   // Every frame word's own line, in order, and never the key word.
-  const frameLines = sent.tokens.slice(0, -1).map((t) => `word_${tokenWord(t)}`);
+  const frameLines = sent.tokens.slice(0, -1).map((t) => wordLine(tokenWord(t)));
   expect(heard.filter((id) => id.startsWith('word_'))).toEqual(frameLines);
-  expect(heard).not.toContain(`word_${key}`);
+  expect(heard).not.toContain(wordLine(key));
   // Then the key word's sounds, after the last frame word: letter sounds only.
   const lastWord = heard.lastIndexOf(frameLines.at(-1)!);
   const sounds = heard.slice(lastWord + 1).filter((id) => /^letter_.*_sound$/.test(id));
@@ -58,13 +59,13 @@ test('sentence room: one green reads the sentence and sounds out the key word; t
   // The miss sounds the key word out again: the same units as the read's.
   expect(soundsSince(after.voice.history)).toEqual(sounds);
   expect(after.episode.fetched).not.toContain(key);
-  expect(after.voice.history).not.toContain(`word_${key}`);
+  expect(after.voice.history).not.toContain(wordLine(key));
 
   // The right one: the whole sentence back, and only now the key word.
   await choose(page);
-  const done = await until(page, (st) => st.voice.history.includes(`word_${key}`), 30_000, 'key word confirmation');
+  const done = await until(page, (st) => st.voice.history.includes(wordLine(key)), 30_000, 'key word confirmation');
   const tail = done.voice.history;
-  const at = tail.lastIndexOf(`word_${key}`);
+  const at = tail.lastIndexOf(wordLine(key));
   expect(tail.slice(0, at).some((id) => id.startsWith('sent_'))).toBe(true);
   expect(done.room?.sentence?.pass).toBe('done');
   expectNoErrors(errors);

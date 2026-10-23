@@ -155,6 +155,12 @@ without a new measurement.
   after two test fixes: Charge's rune-timing test on real voice (instant voice let the
   harness's polling swallow a line before the test's frame sampler saw it) and battle part
   2's ability count under `battle=short`.
+  Test counts, as the README had them: `test:browser` 24 tests (about 50 s) in item 079, 55
+  since hunt 9; `test:all` 136 browser tests in item 105 (about 6.3 minutes), 149 since item
+  116, 154 in item 132; `test:slow` 86 tests in item 105 (about 5 minutes), 97 since item 116
+  (the story fight, the new villains' episodes, solo mode), 99 in item 132 (counted after
+  one hub check moved from `cover.spec` into the browser lane's `layout.spec`). `npm test` was about 24 s
+  run one after the other before item 105 (21 s on three workers), 14 s on one worker since.
 - **Item 105 (2026-10-22), lane times before it**, three workers, the GPU: `npm test` 21 s (unit
   9 s, then the smoke three 12 s), `test:browser` 89 s (50 tests, 229 s summed), `test:slow`
   297 s (86 tests, 797 s summed, `episode.spec.ts` alone 183 s on one worker), `test:all`

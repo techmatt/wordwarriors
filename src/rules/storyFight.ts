@@ -10,17 +10,20 @@
  * (`drawMove`: shaky and fresh words first; with none of them left in the
  * bag, by the weighting alone, never refilling the bag mid-round), never a
  * word already right this episode; `gift` is the hub's gift word. Its wrong pads are any other move
- * words (`distractorsFor`), but never another of the beat's sensible answers,
+ * words (`padChoice`, as the brawl's), but never another of the beat's sensible answers,
  * so only one pad on the floor makes sense.
+ *
+ * Not the episode's story variants (the quest line and hub scene,
+ * `episode.story`): those are src/rules/story.ts.
  */
 
 import { MOVE_WORDS } from '../../content/battle/roster';
 import { padBeats } from '../../content/battle/stories/index';
 import type { StoryScript } from '../../content/battle/stories/types';
 import type { ProgressStore } from '../state/ProgressStore';
-import { distractorsFor, drawWords, isFirm } from './bank';
-import { drawMove, ownerFor, padWeights, type MoveChoicePlan, type MoveInput, type MovePlan } from './moves';
-import { shuffle, type Rand } from './random';
+import { drawWords } from './bank';
+import { drawMove, padChoice, padWeights, type MoveChoicePlan, type MoveInput, type MovePlan } from './moves';
+import type { Rand } from './random';
 
 export function planStoryMoves(store: ProgressStore, story: StoryScript, input: MoveInput, rand: Rand = Math.random): MovePlan {
   const gift = input.gift;
@@ -50,14 +53,8 @@ export function planStoryMoves(store: ProgressStore, story: StoryScript, input: 
       else right = drawWords(store, eligible, 1, rand)[0]!;
     }
     rights.push(right);
-    const n = rand() < 0.5 ? 2 : 3;
     const pool = all.filter((w) => w === right || !sensible.includes(w));
-    const firm = isFirm(store, right);
-    const wrong = distractorsFor(store, right, pool, n - 1, rand, shown, firm, padWeight);
-    if (wrong.length < n - 1) wrong.push(...distractorsFor(store, right, pool, n - 1 - wrong.length, rand, wrong, firm, padWeight));
-    const words = shuffle([right, ...wrong], rand);
-    for (const w of words) shown.add(w);
-    return { words, right, owner: ownerFor(right, input, rand) };
+    return padChoice(store, right, pool, shown, padWeight, input, rand);
   };
   const part = (p: 1 | 2): MoveChoicePlan[] =>
     padBeats(story, p)

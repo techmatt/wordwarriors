@@ -62,6 +62,9 @@ import { applyHouseMood, roomSeed } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
+/** How the read went (`helped`: his yes while she read it with the helper, hunt 7 M34: right, never first try). */
+type ReadAnswer = 'yes' | 'no' | 'modelled' | 'helped';
+
 /**
  * `explain`: the helper explains, no rune yet. `prompt`: a rune is lit and
  * the helper says it. `sayback`: her beat to say it back. `charging`: the
@@ -71,9 +74,6 @@ import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom'
  * read is asked or a solo read is not yet recorded, and from the last rune
  * (kept, acted on as the read is asked, M24); any press ends solo.
  */
-/** How the read went (`helped`: his yes while she read it with the helper, hunt 7 M34: right, never first try). */
-type ReadAnswer = 'yes' | 'no' | 'modelled' | 'helped';
-
 type Phase = 'explain' | 'prompt' | 'sayback' | 'charging' | 'read' | 'reading' | 'done';
 
 const ALTAR = { x: GAME_WIDTH / 2 + 60, y: 600, w: 340, h: 250 };
@@ -597,14 +597,14 @@ export class ChargeRoom extends HouseSideRoom {
     // Only now is the word said, and its picture shown.
     const n = this.barSlots.length;
     const px = this.slotPos(n - 1).x + BAR.slot / 2 + 30 + PICTURE / 2;
-    const pic = fitImage(this.add.image(px, BAR.y + 40, `pic_${word}`), PICTURE, PICTURE).setDepth(DEPTH.hud + 1);
+    const pic = fitImage(this.add.image(px, BAR.y + 40, this.wordArt(word)), PICTURE, PICTURE).setDepth(DEPTH.hud + 1);
     popIn(this, pic, pic.scale);
     burst(this, pic.x, pic.y, { count: 60, speed: 460 });
     shockwave(this, pic.x, pic.y, 0xffd23f, 160);
     await this.say(wordLine(word));
     if (f !== this.flow) return;
     pic.setVisible(false);
-    await Promise.all([this.guard(this.bag.receive(`pic_${word}`, pic.x, pic.y)), right ? this.say(narratorLine(narrator(), variant('right'))) : Promise.resolve(true)]);
+    await Promise.all([this.guard(this.bag.receive(this.wordArt(word), pic.x, pic.y)), right ? this.say(narratorLine(narrator(), variant('right'))) : Promise.resolve(true)]);
     pic.destroy();
     if (f !== this.flow) return;
     this.phase = 'done';

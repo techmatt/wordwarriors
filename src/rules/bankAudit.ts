@@ -13,7 +13,7 @@ import { COVERAGE, THINGS, VOWEL_LIST, type BankWord } from '../../content/phoni
 import { FAMILIES } from '../../content/phonics/families.js';
 import { DIGRAPH_SOUNDS, LETTERS, LONG_VOWEL_SOUNDS, isUntaught } from '../../content/phonics/letters.js';
 
-export interface CoverageRow {
+export interface AuditRow {
   /** What is counted: `first m`, `last ng`, `vowel a`, `family at`, `bridge m`, `long long_a`. */
   tag: string;
   /** The familiar pictured words counted, in bank order. */
@@ -50,8 +50,8 @@ export function trioGroups(words: BankWord[] = THINGS): Record<string, string[]>
 }
 
 /** Every row of the audit, with its target. */
-export function coverageRows(words: BankWord[] = THINGS): CoverageRow[] {
-  const rows: CoverageRow[] = [];
+export function coverageRows(words: BankWord[] = THINGS): AuditRow[] {
+  const rows: AuditRow[] = [];
   const row = (tag: string, ws: BankWord[], t: { target: number; why?: string }) =>
     rows.push({ tag, words: ws.map((w) => w.word), target: t.target, ...(t.why ? { why: t.why } : {}) });
   for (const s of SOUNDS) row(`first ${s}`, words.filter((w) => firstSound(w) === s), COVERAGE.first[s] ?? { target: COVERAGE.firstTarget });
@@ -72,6 +72,6 @@ export function coverageRows(words: BankWord[] = THINGS): CoverageRow[] {
 }
 
 /** The rows under their target. */
-export function coverageGaps(words: BankWord[] = THINGS): CoverageRow[] {
+export function coverageGaps(words: BankWord[] = THINGS): AuditRow[] {
   return coverageRows(words).filter((r) => r.words.length < r.target);
 }

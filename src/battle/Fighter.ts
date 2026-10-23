@@ -27,6 +27,12 @@ export type Team = 'hero' | 'villain';
 export const FLOOR_TOP = 430;
 export const FLOOR_BOTTOM = 670;
 
+/**
+ * Scene data key: while set, `afterimage` draws nothing. MoveChoice sets and clears it around the
+ * frozen fight; BattleScene.init clears it, as scene data survives a restart.
+ */
+export const NO_AFTERIMAGES = 'noAfterimages';
+
 /** A person-sized fighter is this tall on screen at size 1. */
 const BASE_HEIGHT = 150;
 
@@ -130,6 +136,10 @@ export class Fighter {
   power = 1;
   /** Per-style steering memory. */
   mem: Record<string, number> = {};
+  /** A lasting tint (Scar powered off), restored after flashes and statuses. */
+  baseTint: number | null = null;
+  /** The signature trail, following the fighter's middle. */
+  private trailFx: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
   readonly baseScale: number;
   readonly height: number;
   spin = 0;
@@ -172,6 +182,10 @@ export class Fighter {
   }
   get isMain(): boolean {
     return this.init.kind === 'main';
+  }
+  /** A giant (Evil Tiamat): size 2 or more, which several moves and stages handle apart. */
+  get giant(): boolean {
+    return this.init.size >= 2;
   }
   /** Where hits land and bubbles anchor: the middle of the body. */
   get cx(): number {
@@ -272,9 +286,8 @@ export class Fighter {
     // A giant (Evil Tiamat) only bobs up a little and stays in her half, so her
     // head stays on screen and she does not snap back when it pops.
     if (this.status?.kind === 'bubble') {
-      const giant = this.init.size >= 2;
-      this.float += ((giant ? 45 : 110) - this.float) * (1 - Math.pow(0.15, dt));
-      if (!giant) this.x += (this.team === 'villain' ? 1 : -1) * 45 * dt;
+      this.float += ((this.giant ? 45 : 110) - this.float) * (1 - Math.pow(0.15, dt));
+      if (!this.giant) this.x += (this.team === 'villain' ? 1 : -1) * 45 * dt;
     } else if (this.float > 0) {
       this.float = Math.max(0, this.float - 900 * dt);
     }
@@ -346,16 +359,10 @@ export class Fighter {
     }
   }
 
-  /** A lasting tint (Scar powered off), restored after flashes and statuses. */
-  baseTint: number | null = null;
-
   restoreTint(): void {
     if (this.baseTint !== null) this.sprite.setTint(this.baseTint);
     else this.sprite.clearTint();
   }
-
-  /** The signature trail, following the fighter's middle. */
-  private trailFx: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
 
   private addTrail(): void {
     const t = this.init.trail ?? { tint: [this.init.palette[0], this.init.palette[1]], shape: 'spark' as const };
@@ -408,7 +415,7 @@ export class Fighter {
   /** A fading copy of the sprite where it stands: dodgers, dashers, blinkers. */
   afterimage(color = this.init.palette[1]): void {
     // Not while a move choice holds the fight (moveChoice.ts): it would hang for seconds on the frozen clock.
-    if (this.scene.data?.get('noAfterimages')) return;
+    if (this.scene.data?.get(NO_AFTERIMAGES)) return;
     const ghost = this.scene.add
       .image(this.x, this.y - this.lift, this.init.art)
       .setOrigin(0.5, 1)

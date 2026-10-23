@@ -9,6 +9,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { SLOW, boot, choose, collectErrors, expectNoErrors, playWordMachine, press, state, toParentAndBack, until } from './harness';
+import { letterSoundLine, rimeLine, sillyLine, wordLine } from '../content/voice/ids';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/026_${name}.png` });
 
@@ -55,8 +56,8 @@ test('the word machine: tiles say their sounds, a silly tile giggles and pops ou
     for (const id of h) if (i < want.length && want[i]!(id)) i++;
     return i === want.length;
   };
-  expect(inOrder([(id) => id === `letter_${silly.letter}_sound`, (id) => id === `rime_${m.rime}`, (id) => id.endsWith('_machine_makes'), (id) => id === `silly_${silly.makes}`]), h.join(' ')).toBe(true);
-  expect(h).not.toContain(`word_${m.word}`);
+  expect(inOrder([(id) => id === letterSoundLine(silly.letter), (id) => id === rimeLine(m.rime), (id) => id.endsWith('_machine_makes'), (id) => id === sillyLine(silly.makes)]), h.join(' ')).toBe(true);
+  expect(h).not.toContain(wordLine(m.word));
   expect(giggled.room!.spots.map((s) => s.id)).toContain(`tile_${silly.letter}`);
   expect(giggled.episode.fetched).toEqual([]);
   await shot(page, 'silly');
@@ -64,15 +65,15 @@ test('the word machine: tiles say their sounds, a silly tile giggles and pops ou
   // Yellow: the word in parts, never blended.
   const before = (await state(page)).voice.history.length;
   await press(page, 'yellow');
-  const hinted = await until(page, (s) => s.voice.history.slice(before).includes(`rime_${m.rime}`) && !s.room!.locked, 30_000, 'hint said');
-  expect(hinted.voice.history.slice(before).slice(-2)).toEqual([`letter_${m.word[0]}_sound`, `rime_${m.rime}`]);
+  const hinted = await until(page, (s) => s.voice.history.slice(before).includes(rimeLine(m.rime)) && !s.room!.locked, 30_000, 'hint said');
+  expect(hinted.voice.history.slice(before).slice(-2)).toEqual([letterSoundLine(m.word[0]), rimeLine(m.rime)]);
 
   // The right tile, then the rest of the visit.
   const right = m.tiles.find((t) => t.makes === m.word)!;
   await choose(page, `tile_${right.letter}`);
-  const built = await until(page, (s) => s.episode.fetched.length === 1 && s.voice.history.includes(`word_${m.word}`), 60_000, 'first word built and said');
+  const built = await until(page, (s) => s.episode.fetched.length === 1 && s.voice.history.includes(wordLine(m.word)), 60_000, 'first word built and said');
   const bh = built.voice.history;
-  expect(bh.lastIndexOf(`word_${m.word}`)).toBeGreaterThan(bh.lastIndexOf(`rime_${m.rime}`));
+  expect(bh.lastIndexOf(wordLine(m.word))).toBeGreaterThan(bh.lastIndexOf(rimeLine(m.rime)));
   expect(built.episode.fetched).toEqual([m.word]);
   const round2 = await until(page, (s) => s.room?.machine?.index === 1 && s.room.machine.phase === 'pick', 60_000, 'round 2');
   // Hunt 9: stepped up out of the new tiles' reach, she is beside the machine, not in front of its plate's word.
@@ -83,7 +84,7 @@ test('the word machine: tiles say their sounds, a silly tile giggles and pops ou
   // Every later word: said only after it is built.
   for (let i = 1; i < m.rounds.length; i++) {
     const s = await until(page, (st) => st.room?.machine?.index === i && st.room.machine.phase === 'pick' && !st.room.locked, 60_000, `round ${i}`);
-    expect(s.voice.history).not.toContain(`word_${m.rounds[i]}`);
+    expect(s.voice.history).not.toContain(wordLine(m.rounds[i]));
     const tile = s.room!.machine!.tiles.find((t) => t.makes === m.rounds[i])!;
     await choose(page, `tile_${tile.letter}`);
     await until(page, (st) => st.episode.fetched.length === i + 1, 60_000, `${m.rounds[i]} built`);

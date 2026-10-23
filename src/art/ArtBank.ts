@@ -19,7 +19,7 @@
 import Phaser from 'phaser';
 
 import { ART_BY_ID } from '../../content/art/assets';
-import { walkObjects } from '../hookState';
+import { walkObjects } from '../displayList';
 import { realTimeout } from '../realTime';
 
 /**
@@ -323,6 +323,7 @@ export class ArtBank {
     this.failed.add(id);
     // Lost to the network, not a 404 or a broken file: a later scene asks again (M25).
     if (!(error instanceof NotThere) && (this.reasked.get(id) ?? 0) < REASKS) realTimeout(() => this.failed.has(id) && this.retry.add(id), REASK_AFTER_MS);
+    // The text is a contract: src/qa/probe.ts parses it (the checker's missing art).
     console.warn(`art: missing ${id}`, error instanceof Error ? error.message : '');
     const game = this.game;
     if (!game || this.exists(id)) return;
@@ -350,6 +351,8 @@ export class ArtBank {
     if (this.warned.has(`${key}@${scene}`)) return;
     this.warned.add(`${key}@${scene}`);
     this.late.push({ id: key, scene });
+    // The text is a contract: src/qa/probe.ts parses it (`art-late`) and tests/harness.ts
+    // collectErrors matches its start (art drawn before it loaded fails a test).
     console.warn(`art: not ready ${key} (${scene})`);
   }
 }

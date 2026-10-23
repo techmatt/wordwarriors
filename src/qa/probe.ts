@@ -23,7 +23,8 @@ import { dadLock } from '../input/dadLock';
 import { voiceBank } from '../voice/VoiceBank';
 import { artBank } from '../art/ArtBank';
 import { artFor } from '../art/needs';
-import { hookState, walkObjects } from '../hookState';
+import { walkObjects } from '../displayList';
+import { hookState } from '../hookState';
 import { worldInk } from '../ui/banner';
 
 export interface QaVoice {
@@ -59,7 +60,7 @@ export interface QaSpike {
   kind: 'frame' | 'longtask';
 }
 
-interface DrawnText {
+export interface DrawnText {
   scene: string;
   text: string;
   /** Left, top, right, bottom. */
@@ -73,20 +74,21 @@ interface DrawnText {
   ink?: [number, number, number, number];
 }
 
-interface DrawnImage {
+export interface DrawnImage {
   scene: string;
   key: string;
   b: [number, number, number, number];
   depth: number;
 }
 
-type Rect = [number, number, number, number];
+/** Left, top, right, bottom. */
+export type Rect = [number, number, number, number];
 
 /**
  * A thing she has to look at or choose (a room's spot, a battle pad): tagged
  * `qaTarget` (its id) by the scene that draws it, with its bounds now.
  */
-interface DrawnTarget {
+export interface DrawnTarget {
   scene: string;
   id: string;
   b: Rect;
@@ -99,7 +101,7 @@ interface DrawnTarget {
  * kind name, by whatever draws it. Its `qaCoverRects` (a function), when set,
  * gives the boxes actually drawn (a Graphics box has no bounds of its own).
  */
-interface DrawnCover {
+export interface DrawnCover {
   scene: string;
   kind: string;
   b: Rect;
@@ -112,14 +114,14 @@ interface DrawnCover {
  * coordinates now, by whatever draws it. Every text inside it is checked
  * against it, not against the art's whole box (trim, pole and tassels).
  */
-interface DrawnPanel {
+export interface DrawnPanel {
   scene: string;
   kind: string;
   b: Rect;
 }
 
 /** Her figure (`qaHero` on the player's sprite, hunt 9): words she stands in front of. */
-interface DrawnHero {
+export interface DrawnHero {
   scene: string;
   b: Rect;
   depth: number;
@@ -142,6 +144,20 @@ const log = {
   /** Full-screen camera flashes (game-clock ms), for the flashes-per-second check. */
   flashes: [] as { scene: string; t: number }[],
 };
+
+/** What `__wwqa.since(t)` reports (tests/qa/checks.ts reads it as `Since`). */
+export interface QaSince {
+  voice: QaVoice[];
+  locks: QaLock[];
+  spikes: QaSpike[];
+  flashes: (typeof log)['flashes'];
+  console: (typeof log)['console'];
+  missingArt: string[];
+  lateArt: (typeof log)['lateArt'];
+  frames: (typeof log)['frames'];
+  /** Game-clock ms. */
+  now: number;
+}
 
 const speed = (): number => (window as unknown as { __wwSpeed?: number }).__wwSpeed ?? 1;
 
@@ -169,6 +185,7 @@ export function installProbe(game: Phaser.Game): void {
     console[level] = (...args: unknown[]) => {
       const text = args.map((a) => (a instanceof Error ? a.message : typeof a === 'string' ? a : JSON.stringify(a))).join(' ');
       log.console.push({ level, text: text.slice(0, 300), scene: hookState.scene });
+      // ArtBank's two warnings (src/art/ArtBank.ts `fail` and `lateAsk`): their text is the contract.
       const m = /^art: missing (\S+)/.exec(text);
       if (m) log.missingArt.push(m[1]!);
       const late = /^art: not ready (\S+) \((\S+)\)/.exec(text);
@@ -241,7 +258,7 @@ export function installProbe(game: Phaser.Game): void {
   (window as unknown as { __wwqa: unknown }).__wwqa = {
     log: () => log,
     /** Everything since game-clock `t` (the checker drains it as it goes). */
-    since: (t: number) => ({
+    since: (t: number): QaSince => ({
       voice: log.voice.filter((v) => v.t > t),
       locks: log.locks.filter((l) => l.start + l.ms > t),
       spikes: log.spikes.filter((s) => s.t > t),
@@ -257,8 +274,8 @@ export function installProbe(game: Phaser.Game): void {
   };
 }
 
-/** What is drawn now: visible texts and images with world bounds, and the room's targets. */
-function layout(game: Phaser.Game): {
+/** What `__wwqa.layout()` reports (tests/qa/checks.ts reads it as `Layout`). */
+export interface QaLayout {
   texts: DrawnText[];
   images: DrawnImage[];
   spots: { id: string; x: number; y: number }[];
@@ -267,7 +284,10 @@ function layout(game: Phaser.Game): {
   panels: DrawnPanel[];
   heroes: DrawnHero[];
   hudDepth: number;
-} {
+}
+
+/** What is drawn now: visible texts and images with world bounds, and the room's targets. */
+function layout(game: Phaser.Game): QaLayout {
   const texts: DrawnText[] = [];
   const images: DrawnImage[] = [];
   const targets: DrawnTarget[] = [];
@@ -334,6 +354,6 @@ function counts(game: Phaser.Game): Record<string, number> {
     sceneListeners: listeners,
     gameListeners: game.events.eventNames().reduce((n, e) => n + game.events.listenerCount(e), 0),
     textures: game.textures.getTextureKeys().length,
-    busListeners: (voiceBus as unknown as { listeners: Set<unknown> }).listeners.size,
+    busListeners: voiceBus.listenerCount,
   };
 }

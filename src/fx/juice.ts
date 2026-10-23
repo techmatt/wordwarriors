@@ -13,6 +13,7 @@
 import Phaser from 'phaser';
 
 import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { hookState } from '../hookState';
 import { fitText } from '../ui/fitText';
 import { TEX } from './textures';
 
@@ -23,6 +24,29 @@ import { TEX } from './textures';
  * stuttering battle is worse than a slightly thinner one.
  */
 export const fxQuality = { level: 1 };
+
+/**
+ * The frame rate over half-second windows, into `hookState.fps`. Each scene owns
+ * its own, so a window never spans two scenes. `adapt` (the battle) also moves
+ * `fxQuality`: down when frames drop, back up when they recover.
+ */
+export class FpsMeter {
+  private acc = 0;
+  private frames = 0;
+
+  sample(deltaMs: number, adapt = false): void {
+    this.acc += deltaMs;
+    this.frames++;
+    if (this.acc <= 500) return;
+    hookState.fps = Math.round((this.frames * 1000) / this.acc);
+    if (adapt) {
+      if (hookState.fps < 40) fxQuality.level = Math.max(0.35, fxQuality.level - 0.15);
+      else if (hookState.fps > 55) fxQuality.level = Math.min(1, fxQuality.level + 0.05);
+    }
+    this.acc = 0;
+    this.frames = 0;
+  }
+}
 
 /** Effects fired since boot, by kind: the test hooks report it, and the QA probe logs each flash. */
 export const fxStats = { bursts: 0, shakes: 0, hitstops: 0, slowmos: 0, flashes: 0 };

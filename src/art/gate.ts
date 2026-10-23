@@ -17,14 +17,13 @@ import { currentStep, episode, planFor, sceneForStep, steps, type Slot, type Ste
 import { markLeaving } from '../fx/sceneGen';
 import { voiceBank } from '../voice/VoiceBank';
 import { artBank } from './ArtBank';
-import { artFor } from './needs';
+import { artFor, isParkedScene } from './needs';
 
-/** Parked steps prefetch nothing: a parked scene's `artFor` is every picture. */
-const PARKED: Step['kind'][] = ['alarm', 'prep', 'retreat', 'spell'];
-
-/** The scene a step opens on, or null for none to prefetch. */
+/** The scene a step opens on, or null for none to prefetch: a parked scene's `artFor` is every picture. */
 function sceneOf(step: Step | undefined): string | null {
-  return step && !PARKED.includes(step.kind) ? sceneForStep(step) : null;
+  if (!step) return null;
+  const scene = sceneForStep(step);
+  return isParkedScene(scene) ? null : scene;
 }
 
 /** The art of the scenes that may come after `key`, for the background queue. */

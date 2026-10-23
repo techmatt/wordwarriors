@@ -17,12 +17,12 @@ import Phaser from 'phaser';
 import type { StorySpot } from '../../../content/battle/stories/types';
 import { voiceBus } from '../../audio/VoiceBus';
 import { sfxSelect } from '../../audio/sfx';
-import { DEPTH, REACH, WALK_SPEED } from '../../config';
+import { DEPTH, REACH } from '../../config';
 import type { Controls } from '../../input/Controls';
 import { dadLock } from '../../input/dadLock';
 import { makeButtonDot } from '../../ui/ButtonDot';
 import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter } from '../Fighter';
-import { ARENA_LEFT, ARENA_RIGHT } from '../movement';
+import { ARENA_LEFT, ARENA_RIGHT, stickWalk } from '../movement';
 
 /** A dodge ends this long after she reaches the spot (s). */
 const REACHED_HOLD = 0.7;
@@ -105,13 +105,7 @@ export class StoryWalk {
     if (this.finished) return;
     const me = this.host.heroes[0]!;
     const c = this.host.controls;
-    const mv = c.move;
-    const walking = mv.lengthSq() > 0.04 && me.active;
-    if (walking) {
-      this.at.x = Phaser.Math.Clamp(this.at.x + mv.x * WALK_SPEED * realDt, ARENA_LEFT, ARENA_RIGHT);
-      this.at.y = Phaser.Math.Clamp(this.at.y + mv.y * WALK_SPEED * 0.8 * realDt, FLOOR_TOP, FLOOR_BOTTOM);
-      me.lean = Phaser.Math.Clamp(mv.x * 0.2, -0.25, 0.25);
-    } else me.lean = 0;
+    const walking = stickWalk(me, this.at, c.move, realDt);
     this.holdHero();
     const near = this.near;
     if (near && !this.reached && this.kind === 'dodge') sfxSelect();
@@ -161,11 +155,6 @@ export class StoryWalk {
     this.host.heroes[0]!.lean = 0;
     for (const o of this.objs) o.destroy();
     this.resolve({ reached });
-  }
-
-  /** The scene ended under it. */
-  destroy(): void {
-    if (!this.finished) this.finish(false);
   }
 
   info(): { kind: string; spot: { id: string; x: number; y: number }; reached: boolean } {

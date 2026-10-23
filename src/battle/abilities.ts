@@ -1,8 +1,9 @@
 /**
  * Every ability kind, as one function each, parameterised by AbilitySpec.
  *
- * This is what makes the roster data: a new ability is a line in roster.ts
- * using one of these kinds with its own colours, counts, glyphs and statuses.
+ * This is what makes the roster data: a new ability is an `ab(...)` (or
+ * `ult(...)`) entry in a group file under content/battle/roster/ (the helpers
+ * in content/battle/roster/abilities.ts) using one of these kinds with its own colours, counts, glyphs and statuses.
  * A new *kind* is one new function here.
  *
  * `mult` scales everything: 1 normal, ~1.3-1.8 for the fetched things and
@@ -34,7 +35,7 @@ import {
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { burst, dustPuff, flash, groundRing, shake, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
-import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter, type FighterInit, type Team } from './Fighter';
+import { FLOOR_BOTTOM, FLOOR_TOP, initFromMinion, type Fighter, type FighterInit, type Team } from './Fighter';
 import { ARENA_LEFT, ARENA_RIGHT } from './movement';
 
 export interface Projectile {
@@ -480,7 +481,7 @@ const summon: Cast = (w, f, ab, _target, mult) => {
     w.after(250 + i * 120, () => {
       const x = cx + (Math.random() - 0.5) * 200;
       const y = Phaser.Math.Clamp(f.y + (Math.random() - 0.5) * 160, FLOOR_TOP, FLOOR_BOTTOM);
-      const m = w.spawn({ id: spec.id, name: spec.name, art: `minion_${spec.id}`, team: f.team, style: spec.style, speed: spec.speed, size: spec.size, hp: spec.hp * mult, abilities: [spec.ability], ultimate: null, palette: spec.palette, kind: 'minion' }, x, y);
+      const m = w.spawn({ ...initFromMinion(spec, f.team), hp: spec.hp * mult }, x, y);
       m.root.setScale(0);
       s.tweens.add({ targets: m.root, scale: 1, duration: 300, ease: 'Back.easeOut' });
       burst(s, x, y - 40, { count: 24, speed: 260, colors: [ab.color, 0xffffff] });

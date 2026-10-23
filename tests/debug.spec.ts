@@ -7,10 +7,8 @@
  * progress store (in memory and in localStorage) is as it was before debug.
  */
 
-import { test, expect, type Page } from '@playwright/test';
-import { boot, choose, collectErrors, dadLock, debugTagShown, expectNoErrors, playSentenceRoom, press, state, texts, until, walkTo } from './harness';
-
-const stored = (page: Page) => page.evaluate(() => localStorage.getItem('wordwarriors.progress'));
+import { test, expect } from '@playwright/test';
+import { boot, choose, collectErrors, dadLock, debugTagShown, expectNoErrors, playSentenceRoom, press, state, storedBlob as stored, texts, until, walkTo } from './harness';
 
 test('debug mode: key 0 in the hub, a game from its pedestal checked off, out the open door, progress untouched', async ({ page }) => {
   test.setTimeout(90_000);

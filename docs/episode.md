@@ -108,7 +108,8 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    THE END in big letters, a fanfare, no voice. Only **Dad's 2** plays again there
    (item 082's wait, moved from the recap): her buttons, the stick, the keys and Dad's 1
    do nothing, so a new episode never starts without a grown-up; a small
-   `DAD: PRESS 2 TO PLAY AGAIN` cue lights in the bottom-right corner (dad lock or not).
+   `PRESS 2 TO PLAY AGAIN` cue lights in the bottom-right corner (dad lock or not; no
+   DAD on it, DAD being a bank word: hunt 9 fix 128).
 
 Key words never repeat until her **word bag** has gone round: every key word (both side
 rooms and the attic) is drawn without replacement from the word bank's pictured words
@@ -186,7 +187,7 @@ Any cast can be tried from the URL (and stays for every episode that session):
 
 | URL | Does |
 | --- | --- |
-| `?seed=7` | The draw is repeatable: the same seed (and the same progress) plays the same episodes |
+| `?seed=7` | Seeds the cast draw (`castRand`): the same seed (and the same progress) repeats the cast, the quest place, the story and line variants and the fight style. The rooms, games and words are still drawn unseeded (`Math.random`); the variety simulator seeds those by replacing `Math.random` |
 | `?cast=default` | The fixed default episode (`cast=random` draws even with `randomCast: false`) |
 | `?ally=dada_matt_lifter`, `?villain=dada_jason_warlock` | A role by roster id; a dad's id alone (`dada_jason`) is his own form (chef); `ally=none` |
 | `?form=cyber,warrior` | The dads' forms by name: `builder` `lifter` `cyber` `blade`; `chef` `warrior` `warlock` |
@@ -264,7 +265,7 @@ it on swaps the room for the **Debug** scene (`src/scenes/DebugRoom.ts`): the sa
 background with the room's own things gone, a DEBUG tag in the top-left corner, the
 room's door out open as if every minigame were done, and one pedestal per game in the
 pool (`src/rules/minigames.ts`: the sentence game, the word machine, Charge the Spell, the
-Stretchy Bridge; every sentence frame is one sentence pedestal, which draws a frame each
+Stretchy Bridge, the Shape-Shifter; every sentence frame is one sentence pedestal, which draws a frame each
 time, a counter frame in the attic and house part 2). Green at a pedestal plays that game
 on a plan drawn just for it; finishing it brings her back with a ✔ on its pedestal (0 or
 F2 in the game comes back too, without one). The open door leaves debug: from a side
@@ -283,10 +284,25 @@ moves the episode on.
 
 **Dad buttons** (item 053): keyboard **1** = no, **2** = yes. They are always live, dad
 lock included, and do nothing where no game is asking; a game that asks shows a small
-`DAD 1 ✗ 2 ✓` cue in the bottom-right corner (lit while a question is waiting).
+`1 ✗ 2 ✓` cue in the bottom-right corner (lit while a question is waiting; no DAD on
+it, DAD being a bank word: item 126, hunt 9 fix 128).
 `src/input/dadButtons.ts` (`openDadButtons`), for 054 and later games too. THE END
-after the victory recap opens them as well (items 082, 085), with its own cue (`DAD: PRESS 2 TO PLAY AGAIN`): 2 is the
+after the victory recap opens them as well (items 082, 085), with its own cue (`PRESS 2 TO PLAY AGAIN`): 2 is the
 only way on to the next episode, and 1 does nothing there.
+
+**Free play** (item 060, moved here from the README in item 132): wherever she is free to
+move and no answer is open (the rooms, the bedroom once she is awake, the hub, the battle's
+fight outside a move choice), her character has toys. Green jumps: a tap hops, a hold goes
+higher and floats down. Blue (the **3** key), red (Esc) and yellow (Tab) cast: blue bolts,
+red sparkle stars, yellow fun things (stars, hearts, snowballs; the chef throws donuts and
+cookies, the knight sword flashes and gold stars). A tap is one shot; a hold charges a big
+one. A button that means something there keeps its meaning (green on a door, sign or thing
+in reach; yellow says it again where there is something to say). It is pure play: it never
+changes an answer, a battle or what a scene does. Dad lock silences it. At most
+`FREE_PLAY.maxShots` shots fly at once (one more and the oldest just goes); the knobs are
+`FREE_PLAY` in `src/config.ts`. Blue is a number key, not Shift, because five Shift presses
+in a row open Windows' Sticky Keys dialog (amendment 1579); the game binds nothing to
+Shift. `src/fx/freePlay.ts` (`docs/systems.md`, *Free play*).
 
 **Charge the Spell** (item 053, `src/scenes/ChargeRoom.ts`; one short word a visit since
 item 058; no presses per rune since item 059): a side room where she says letter SOUNDS
@@ -387,7 +403,7 @@ and misses (`nameToSound`); Matt's recordings replace the lines like any other.
 
 **The Stretchy Bridge** (item 054, `src/scenes/BridgeRoom.ts`): a side room where she
 blends a whole word. A gap crosses the room (lava in the house, a river or a chasm at a
-quest place: `GAP_BY_PLACE` in `content/house/house.ts`), and the word's letters are
+quest place: `gap` on each place in `PLACES`, `content/house/house.ts`, read by `gapFor`), and the word's letters are
 stepping stones over it (SH is one stone). She pushes the stick to slide across, slower
 than she walks; while she is on a stone its sound is **held**, so a slow slide is
 "mmm-aaa-t". A vowel or a sound you can stretch (M S F L N R V Z NG SH TH) gets one short
@@ -420,8 +436,8 @@ first, stop-sound CVC words once those come along, then the bank's blends and di
 the vowel after it (the S of the "Suh" placeholder), a hum up to where the schwa comes in
 (the M of "Mmm-uh", the V of "Vuh"), a vowel's steady part, a stop's burst (T, K) or a
 voiced stop's first instant (B, D), and X's K and final S around its vowel. The held part
-is stretched by overlap-add into one smooth sound `BRIDGE.stretchMs` long (0.6 s; `HELD_MS` in
-`holdSound.ts` is the voice tools' copy of the default and a unit test keeps the two equal), then
+is stretched by overlap-add into one smooth sound `BRIDGE.stretchMs` long (0.6 s; `holdSound.ts` imports it from
+`src/config.ts` as its default, for the voice tools too), then
 quiet (item 058: looping the 70-300 ms steady part every clip has was a fast stutter of "m"s;
 item 085 dropped the re-sound after 2 s of standing). A recording put in place with `voice:import` or `voice:clip` is cut by its own
 shape the same way, so no code changes: record a sound you can hold as a steady sound of

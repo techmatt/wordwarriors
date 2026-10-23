@@ -15,8 +15,19 @@
 
 import { expect, type Page } from '@playwright/test';
 
+import { FRAMES } from '../content/phonics/sentences';
+
 // Type-only (item 122): the scenes' own shapes, without loading Phaser in node.
 import type { BattleInfo, EndingInfo, RecapCard, RoomInfo, TheEndInfo } from '../src/hookState';
+import type { EpisodeState } from '../src/episode/state';
+import type { Button } from '../src/input/Controls';
+import { STORE_KEY, type ProgressData } from '../src/state/ProgressStore';
+import type { TextInfo, WWHooks } from '../src/testHooks';
+
+export type { TextInfo };
+
+/** `window.__ww` as a type only: page.evaluate ships its callback into the page, so no node-side helper. */
+type WW = { __ww: WWHooks };
 
 /** A browser test over about 10 s: the slow lane (`--grep @slow` matches the tag). */
 export const SLOW = { tag: '@slow' };
@@ -33,32 +44,8 @@ export interface WWState {
   /** The music playing (src/audio/music.ts), or null. */
   music: string | null;
   step: { kind: string; part?: number; game?: string; what?: string };
-  episode: {
-    hero: string;
-    ally: string | null;
-    villain: string;
-    /** The dad who wakes her, in his form (null when both dads are busy), and the other dad in the bedroom, or null. */
-    primary: string | null;
-    secondary: string | null;
-    /** The quest place (content/house/house.ts PLACES id, or `home`). */
-    place: string;
-    made: Record<string, boolean>;
-    read: string[];
-    fetched: string[];
-    /** Charge the Spell (item 053): the sounds charged, and the battle part they fire in. */
-    charged: { sounds: string[]; part: number } | null;
-    /** Item 106: Dad isn't here, the helper joins in (Charge, the bridge's level 3). */
-    solo: boolean;
-    gift: string | null;
-    /** The home warm-up (item 033): the word grabbed in the entry hall and the hall's pictures. */
-    grab: { word: string; objects: string[] } | null;
-    house: {
-      plan: { slot: string; room: string; game: string; kind: 'sentence' | 'machine' | 'charge' | 'bridge' | 'shifter'; key: string; fetches: string[]; charge?: { runes: string[] }; bridge?: { rounds: { word: string; units: string[]; pictures: string[] }[] }; sentence?: { key: string; frame: string }; machine?: { mode: string; rounds: { word: string; rime: string }[] } }[] | null;
-      done: string[];
-      taught: boolean;
-    };
-    stepIndex: number;
-  };
+  /** The episode, JSON round-tripped (src/episode/state.ts). */
+  episode: EpisodeState;
   /** The victory recap's cards so far (item 018: every one has a picture). */
   recap: RecapCard[];
   /** The victory scene (item 027): which, who is in it (villain last), its lines, what has been said. */
@@ -74,24 +61,8 @@ export interface WWState {
   fx: Record<string, number>;
   /** Free play (item 060, src/fx/freePlay.ts `playStats`): jumps, shots fired, big shots, shots live now and the most live at once. */
   play: { jumps: number; shots: number; big: number; live: number; maxLive: number };
-  progress: {
-    sounds: Record<string, { seen: number; recent: boolean[]; modelled?: number }>;
-    words: Record<string, { seen: number; recent: boolean[]; modelled?: number }>;
-    frames?: Record<string, { seen: number; recent: boolean[] }>;
-    rimes?: Record<string, { seen: number; recent: boolean[] }>;
-    onsets?: Record<string, { seen: number; recent: boolean[] }>;
-    /** The entry hall's warm-up (item 033): first-try grabs per word, and each word's help level. */
-    grabs: Record<string, { seen: number; wrong: number; recent: boolean[] }>;
-    grabLevels: Record<string, number>;
-    /** The Stretchy Bridge's help level per word (item 054). */
-    bridgeLevels: Record<string, number>;
-    /** The Shape-Shifter's help level per word (item 096). */
-    shifterLevels?: Record<string, number>;
-    bag?: { left: string[]; round: number };
-    episodes: number;
-    /** Every rotation's recent picks, newest last (item 067; src/rules/recent.ts). */
-    recent: Record<string, string[]>;
-  };
+  /** The progress store's snapshot (src/state/ProgressStore.ts). */
+  progress: ProgressData;
 }
 
 /**
@@ -163,6 +134,7 @@ function warpClocks(k0: number): void {
   const setT = window.setTimeout.bind(window);
   const setI = window.setInterval.bind(window);
   // Network waits stay on the wall clock (`src/realTime.ts`, item 069).
+  // tests/unit/realTime.test.ts checks this line's text.
   (window as unknown as { __wwRealSetTimeout: unknown }).__wwRealSetTimeout = setT;
   (window as unknown as { setTimeout: unknown }).setTimeout = (fn: TimerHandler, ms = 0, ...a: unknown[]) => setT(fn, ms / k, ...a);
   (window as unknown as { setInterval: unknown }).setInterval = (fn: TimerHandler, ms = 0, ...a: unknown[]) => setI(fn, ms / k, ...a);
@@ -198,24 +170,16 @@ export async function boot(page: Page, query = '', speed = SPEED, opts: { voice?
 }
 
 export function state(page: Page): Promise<WWState> {
-  return page.evaluate(() => (window as unknown as { __ww: { state(): WWState } }).__ww.state());
-}
-
-/** A visible Text in a running scene, with its world bounds; `offscreen` when it leaves the 1280×720 frame. */
-export interface TextInfo {
-  scene: string;
-  text: string;
-  bounds: number[];
-  offscreen: boolean;
+  return page.evaluate(() => (window as unknown as WW).__ww.state() as WWState);
 }
 
 /** Every visible Text in the running scenes. */
 export function texts(page: Page): Promise<TextInfo[]> {
-  return page.evaluate(() => (window as unknown as { __ww: { texts(): TextInfo[] } }).__ww.texts());
+  return page.evaluate(() => (window as unknown as WW).__ww.texts());
 }
 
 export async function press(page: Page, button: string): Promise<void> {
-  await page.evaluate((b) => (window as unknown as { __ww: { input: { press(b: string): void } } }).__ww.input.press(b), button);
+  await page.evaluate((b) => (window as unknown as WW).__ww.input.press(b as Button), button);
 }
 
 /** A busy child: `button` pressed `n` times, `ms` apart. */
@@ -232,11 +196,11 @@ export function debugTagShown(page: Page): Promise<boolean> {
 }
 
 export async function stick(page: Page, x: number, y: number): Promise<void> {
-  await page.evaluate(([sx, sy]) => (window as unknown as { __ww: { input: { stick(x: number, y: number): void } } }).__ww.input.stick(sx!, sy!), [x, y]);
+  await page.evaluate(([sx, sy]) => (window as unknown as WW).__ww.input.stick(sx!, sy!), [x, y]);
 }
 
 export async function typeLetter(page: Page, letter: string): Promise<void> {
-  await page.evaluate((l) => (window as unknown as { __ww: { type(l: string): boolean } }).__ww.type(l), letter);
+  await page.evaluate((l) => (window as unknown as WW).__ww.type(l), letter);
 }
 
 /** Poll until `pred(state)` holds. */
@@ -315,7 +279,7 @@ export async function choose(page: Page, id?: string): Promise<string> {
  * real-time scene tests); tests about walking steer with `walkTo` and `stick`.
  */
 export async function place(page: Page, x: number, y: number): Promise<void> {
-  const ok = await page.evaluate(([px, py]) => (window as unknown as { __ww: { place(x: number, y: number): boolean } }).__ww.place(px!, py!), [x, y]);
+  const ok = await page.evaluate(([px, py]) => (window as unknown as WW).__ww.place(px!, py!), [x, y]);
   if (!ok) throw new Error(`nothing to place at ${x},${y}`);
   // A frame for the room to see her there (its nearest spot, the green dot).
   await page.waitForTimeout(60);
@@ -332,8 +296,9 @@ export const driver = { busy: 0, walk: false };
 /**
  * Play a battle part, answering each move choice; `wrongFirst` picks a wrong
  * pad the first time, which holds the choice open until the right one.
+ * `answered.picks` counts the choices it answered.
  */
-export async function playBattle(page: Page, part: number, wrongFirst = false): Promise<WWState> {
+export async function playBattle(page: Page, part: number, wrongFirst = false, answered = { picks: 0 }): Promise<WWState> {
   let first = true;
   for (;;) {
     const s = await until(page, (st) => st.scene !== 'Battle' || Boolean(st.battle?.choice), 180_000, `battle ${part} choice or end`);
@@ -348,6 +313,7 @@ export async function playBattle(page: Page, part: number, wrongFirst = false): 
     }
     first = false;
     await pickPad(page, c.right);
+    answered.picks++;
     await until(page, (st) => !st.battle?.choice, 30_000, 'choice closed');
   }
 }
@@ -378,7 +344,7 @@ async function pickPad(page: Page, word: string): Promise<void> {
     if (tries > 4) {
       // Where she stood against the pad (item 092: a sea tug's choice stalled here).
       const b = (await state(page)).battle;
-      const scenes = await page.evaluate(() => (window as unknown as { __ww: { scenes?(): string[] } }).__ww.scenes?.() ?? []);
+      const scenes = await page.evaluate(() => (window as unknown as WW).__ww.scenes?.() ?? []);
       throw new Error(`green on the pad never picked: ${word} at ${pad.x},${pad.y}; her hero at ${JSON.stringify(b?.me)}; pads ${JSON.stringify(b?.choice?.spots)}; open ${b?.choice?.open}; running ${scenes.join(', ')}`);
     }
     await page.waitForTimeout(200);
@@ -485,12 +451,12 @@ export async function playWordMachine(page: Page, wrongFirst = false): Promise<s
 
 /** Dad's buttons (item 053): `yes` is key 2, `no` key 1, through the hooks. */
 export async function dad(page: Page, a: 'yes' | 'no'): Promise<void> {
-  await page.evaluate((v) => (window as unknown as { __ww: { dad(a: string): boolean } }).__ww.dad(v), a);
+  await page.evaluate((v) => (window as unknown as WW).__ww.dad(v), a);
 }
 
 /** Dad lock (`__ww.dadLock`): set it on or off, or with no `on` just read it. Returns whether it is on. */
 export function dadLock(page: Page, on?: boolean): Promise<boolean> {
-  return page.evaluate((v) => (window as unknown as { __ww: { dadLock(on?: boolean): boolean } }).__ww.dadLock(v), on);
+  return page.evaluate((v) => (window as unknown as WW).__ww.dadLock(v), on);
 }
 
 /** F9 to the grown-ups page and red back out of it; the caller waits for where she lands. */
@@ -509,9 +475,9 @@ export async function toTheEnd(page: Page, { hush = false } = {}): Promise<WWSta
   await until(page, (s) => s.scene === 'Victory', 60_000, 'the recap');
   await expect
     .poll(() => page.evaluate((h) => {
-      const ww = (window as unknown as { __ww: { hush(): void; state(): { recapDone: boolean } } }).__ww;
+      const ww = (window as unknown as WW).__ww;
       if (h) ww.hush();
-      return ww.state().recapDone;
+      return (ww.state() as WWState).recapDone;
     }, hush), { timeout: 120_000 })
     .toBe(true);
   await press(page, 'green');
@@ -681,13 +647,18 @@ export async function hubGo(page: Page, id: string): Promise<void> {
 
 /** Seed localStorage progress before the page's scripts run (call before `boot`). */
 export async function seedProgress(page: Page, data: Record<string, unknown>): Promise<void> {
-  await page.addInitScript((d) => {
-    localStorage.setItem('wordwarriors.progress', JSON.stringify(d));
-  }, data);
+  await page.addInitScript(({ d, key }) => {
+    localStorage.setItem(key, JSON.stringify(d));
+  }, { d: data, key: STORE_KEY });
+}
+
+/** The progress store's raw localStorage blob (`STORE_KEY`), or null: compare two to show nothing was saved. */
+export function storedBlob(page: Page): Promise<string | null> {
+  return page.evaluate((key) => localStorage.getItem(key), STORE_KEY);
 }
 
 /** The fetch frames (`use: 'fetch'` in content/phonics/sentences.ts). */
-export const FETCH_FRAMES = ['we_can_use_the', 'helper_needs_a', 'go_get_the', 'we_need_a', 'hero_needs_the'];
+export const FETCH_FRAMES = FRAMES.filter((f) => f.use === 'fetch').map((f) => f.id);
 
 /**
  * Seed every fetch frame solid (six right of six), so from `difficulty=2` the
@@ -759,9 +730,12 @@ export async function playEpisode(
   await part('battle1');
   const b1 = await until(page, (s) => s.scene === 'Battle', 30_000, 'battle 1');
   expect(b1.battle?.part).toBe(1);
-  const afterB1 = await playBattle(page, 1);
+  const answered = { picks: 0 };
+  const afterB1 = await playBattle(page, 1, false, answered);
   expect(afterB1.battle?.ultimates).toBe(1);
-  expect(afterB1.battle?.movePicks).toBe(2);
+  // Two choices a part, except a story fight's: one per pad beat of its script
+  // (a drawn Evil Smaug plays his half the time since item 126; seed 1 does).
+  expect(afterB1.battle?.movePicks).toBe(afterB1.battle?.stage.story ? answered.picks : 2);
   expect(afterB1.battle?.itemsUsed).toBeGreaterThan(0);
   // The ultimate floors them, then the retreat stands them back up to run off:
   // the part ends on a retreat, never on a floored team.
@@ -790,9 +764,12 @@ export async function playEpisode(
 /**
  * A battle part takes about as long as the brawl's (~70-80 s of simulation
  * time), whatever the fight style (item 031). Read from the state after the
- * part, where the battle's last numbers stay.
+ * part, where the battle's last numbers stay. Not a story fight: its length is
+ * its script's (part 1 ran about 215 s at item 132; tests/storyFight.spec.ts
+ * plays it), so there is no bound to hold it to (Matt's default, item 132).
  */
 export function expectFightLength(after: WWState): void {
+  if (after.battle?.stage.story) return;
   expect(after.battle?.t ?? 0).toBeGreaterThan(45);
   expect(after.battle?.t ?? 0).toBeLessThan(120);
 }

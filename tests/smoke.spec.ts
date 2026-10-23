@@ -7,6 +7,7 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
+import { wordLine } from '../content/voice/ids';
 
 import {
   SLOW,
@@ -32,7 +33,7 @@ import {
   walkTo,
 } from './harness';
 
-/** The grown-ups page is on its page 2 (its "back to page 1" shows). */
+/** The grown-ups page is on its page 2 (its "stored words (page 3)" link shows). */
 const onPage2 = async (page: Page): Promise<boolean> => (await texts(page)).some((t) => t.text.includes('stored words (page 3)'));
 
 test('title boots, F9 opens the grown-ups page and returns, green starts the bedroom', SMOKE, async ({ page }) => {
@@ -144,7 +145,7 @@ test('sentence room: listen, read along, a wrong object costs nothing, the right
   // Pass 1, listening: then her turn, nothing lit yet.
   const read = await until(page, (s) => s.room?.sentence?.pass === 'read' && !s.room.locked, 90_000, 'read pass');
   expect(read.voice.history).toContain('nar_ellie_room_listen');
-  expect(read.voice.history).not.toContain(`word_${key}`);
+  expect(read.voice.history).not.toContain(wordLine(key));
   expect(read.room!.sentence!.index).toBe(-1);
   expect(read.room!.spots.length).toBe(0);
 
@@ -153,7 +154,7 @@ test('sentence room: listen, read along, a wrong object costs nothing, the right
   expect(find.room!.sentence!.index).toBe(sent.tokens.length - 1);
   const awake = await until(page, (s) => (s.room?.spots.length ?? 0) === 3, 10_000, 'three objects');
   expect(awake.room!.spots.filter((sp) => sp.correct === true).length).toBe(1);
-  expect(awake.voice.history).not.toContain(`word_${key}`);
+  expect(awake.voice.history).not.toContain(wordLine(key));
 
   // Wrong first: a funny line, same round, nothing fetched, the key word still unsaid.
   const wrong = awake.room!.spots.find((sp) => sp.correct === false)!;
@@ -164,11 +165,11 @@ test('sentence room: listen, read along, a wrong object costs nothing, the right
   expect(after.room?.round).toBe(first.room!.round);
   expect(after.room?.sentence?.pass).toBe('find');
   expect(after.episode.fetched).not.toContain(key);
-  expect(after.voice.history).not.toContain(`word_${key}`);
+  expect(after.voice.history).not.toContain(wordLine(key));
 
   // Right: the whole sentence back, the key word said, into the bag, back to the hub.
   await choose(page);
-  await until(page, (s) => s.voice.history.includes(`word_${key}`), 30_000, 'key word confirmation');
+  await until(page, (s) => s.voice.history.includes(wordLine(key)), 30_000, 'key word confirmation');
   const hub = await until(page, (s) => s.scene === 'Hub', 60_000, 'back in the hub');
   expect(hub.episode.fetched).toContain(key);
   expect(hub.episode.house.done).toContain('a');

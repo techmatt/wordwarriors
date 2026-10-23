@@ -98,8 +98,8 @@ export class TitleScene extends Phaser.Scene {
     // Its caption shows the narrator's face, and the cast was just drawn (item 065: wait for their art).
     // Its line is always Dada Matt's (`core_title`), whom a draw can leave out (hunt 7: `?seed=abc`
     // showed his face card before it loaded), so his face is waited for too.
-    const castArt = artBank.ensure([...castSet(), 'face_dada_matt']);
-    if (getAudioContext()?.state === 'running') this.time.delayedCall(700, () => void castArt.then(() => this.scene.isActive() && !this.leaving && voiceBus.say(coreLine('title'))));
+    const castReady = artBank.ensure([...castSet(), 'face_dada_matt']);
+    if (getAudioContext()?.state === 'running') this.time.delayedCall(700, () => void castReady.then(() => this.scene.isActive() && !this.leaving && voiceBus.say(coreLine('title'))));
     artBank.prefetch(castSet());
 
     // Whether a gamepad press counts as a user gesture for audio in Chrome is

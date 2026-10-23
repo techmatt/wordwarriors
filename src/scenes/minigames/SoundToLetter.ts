@@ -31,7 +31,7 @@ export class SoundToLetter extends SideRoom {
   }
 
   protected build(): void {
-    this.items = soundRound(progress, ITEMS) // always three stones, as designed;
+    this.items = soundRound(progress, ITEMS); // always three stones, as designed
     this.itemIndex = 0;
     this.makeMeter(ITEMS, 'prop_gem', '💎');
     void (async () => {

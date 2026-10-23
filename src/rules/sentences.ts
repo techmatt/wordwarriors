@@ -30,7 +30,7 @@
 import { CHARACTER_BY_ID, MINIONS, comboPart } from '../../content/battle/roster';
 import type { FighterSpec } from '../../content/battle/types';
 import { FETCH_ITEMS, FRAME_BY_ID, NO_ARTICLE, NOT_FETCHED, NUMBER_WORDS, lookalikesOf, sentence, tokenWord, type Fill, type Sentence } from '../../content/phonics/sentences';
-import { ACTIONS, THINGS } from '../../content/phonics/bank';
+import { ACTIONS } from '../../content/phonics/bank';
 import { MINIGAMES, drawGames, type Minigame, type MinigameKind } from './minigames';
 import { machineWords, planMachine, type MachinePlan } from './wordMachine';
 import { gestureWords, planCharge, type ChargePlan } from './charge';
@@ -38,7 +38,7 @@ import { bridgeShown, bridgeWords, planBridge, type BridgePlan } from './bridge'
 import { planShifter, shifterShown, shifterWords, type ShifterPlan } from './shifter';
 import { SENTENCE_SOLID } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
-import { distractorsFor, drawFromBag, withStems } from './bank';
+import { BAG_WORDS, distractorsFor, drawKey, withStems } from './bank';
 import { shuffle, type Rand } from './random';
 import { rampsAdvance } from './difficulty';
 
@@ -93,20 +93,6 @@ export interface ShifterRoomPlan extends PlanBase {
 }
 
 export type RoomPlan = SentencePlan | MachineRoomPlan | ChargeRoomPlan | BridgeRoomPlan | ShifterRoomPlan;
-
-/** Every word the bag holds: the bank's pictured words (item 037: CVC, blends and digraphs). */
-export const BAG_WORDS: string[] = THINGS.map((w) => w.word);
-
-/**
- * The bag words before item 035 added MUG RUG JUG: a progress blob saved then
- * knew these (`topUpBag`). Spelled out, since the catalogue has moved on; a
- * blob saved since remembers its own catalogue (`bagKnown`), so 037's words
- * join a round under way either way.
- */
-export const LEGACY_BAG_WORDS: string[] = [
-  'cat', 'dog', 'sun', 'fox', 'bug', 'pig', 'hat', 'bed', 'cup', 'map', 'fan', 'web', 'bus', 'hen', 'box',
-  'net', 'pen', 'van', 'bat', 'bag', 'can', 'nut', 'tub', 'cap', 'pin', 'jet', 'log', 'mop', 'pot', 'rat',
-];
 
 /** The bank's action words: kept out of the key words when the episode's own move pads are not given. */
 const ACTION_WORDS: string[] = ACTIONS.map((w) => w.word);
@@ -179,30 +165,6 @@ export function saidEarly(cast: { hero: string; ally: string | null; villain: st
   const partner = cast.ally ?? cast.helper;
   for (const [a, b] of [[cast.hero, partner], [partner, cast.hero]] as const) add(wordsOf(comboPart(a, b).name));
   return [...out];
-}
-
-/**
- * Draw one key word from the bag: an `eligible` word still in it, weighted
- * by `wordWeight` (shakiness x coverage x recency, src/rules/bank.ts)
- * times `boost`. When no eligible word is left, the bag
- * refills (a new round) with every bag word except `keepOut` (this episode's
- * words so far, so they do not open the new round too). It falls back to
- * any eligible word only if even a full bag has none.
- *
- * Drawing does not spend the word: it leaves the bag only when she reads it
- * right first time (the room's `recordRead`, src/world/SideRoom.ts, calls `takeFromBag`), so an episode she
- * abandons, or a dev `?scene=` jump, costs her bag nothing, and a word she
- * missed simply stays in.
- */
-export function drawKey(
-  store: ProgressStore,
-  eligible: string[],
-  rand: Rand = Math.random,
-  keepOut: string[] = [],
-  boost: (w: string) => number = () => 1,
-): string {
-  store.topUpBag(BAG_WORDS, LEGACY_BAG_WORDS);
-  return drawFromBag(store, 'keys', BAG_WORDS, eligible, rand, keepOut, boost);
 }
 
 export interface EpisodeInput {

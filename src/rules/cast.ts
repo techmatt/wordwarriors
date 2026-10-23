@@ -12,8 +12,8 @@
  *     one of her last few villains while another is left.
  *   - The ally: a person from the active cast's allies who is neither the
  *     hero nor the villain; a dad sometimes, in his episode form. Her last
- *     allies sit out, and each dad's last forms, while two are left to choose
- *     from (item 067, src/rules/recent.ts `fresh`).
+ *     allies sit out while two are left to choose from, and each dad's last
+ *     forms while one is (items 067 and 121, src/rules/recent.ts `fresh`).
  *   - The primary dad wakes her (and narrates when there is no ally): Dada
  *     Matt 60% of the time, Dada Jason 40%. In half the episodes the other dad
  *     comes into the bedroom too, as the secondary. A dad already playing the
@@ -24,13 +24,13 @@
  * `?primary=`, `?secondary=`, src/scenes/BootScene.ts); what is left is drawn.
  */
 
-import { PERSONS, formId, formsOf, personOf } from '../../content/battle/roster';
+import { DADS, PERSONS, formId, formsOf, personOf } from '../../content/battle/roster';
 import { ACTIVE_CAST, CAST_ODDS } from '../config';
 import { pick, type Rand } from './random';
 import { fresh } from './recent';
 
-/** The two dads: the only wakers (their wake-up lines are voiced). */
-export const DADS = ['dada_matt', 'dada_jason'] as const;
+/** The two dads (content/battle/roster/dads.ts): the only wakers (their wake-up lines are voiced). */
+export { DADS };
 
 
 export interface Cast {

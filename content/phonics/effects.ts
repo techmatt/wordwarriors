@@ -48,7 +48,6 @@ const THING_EFFECTS: WordEffect[] = [
   { word: 'jet', look: 'a toy jet that zooms through the villain', ability: use('jet', 'dash', 0xff5a3c, { power: 3 }) },
   { word: 'hen', look: 'a flock of brave hens that peck at the villain', ability: use('hen', 'summon', 0xffffff, { minion: 'hen', count: 3 }) },
   { word: 'dog', look: 'the family dog, who bounds in barking', ability: use('dog', 'summon', 0xc8884a, { minion: 'dog', count: 1 }) },
-  // Not CAN: it is a frame word (WE CAN USE THE), so the prefix line would say it.
   { word: 'pot', look: 'pots and pans clanging down one after another', ability: use('pot', 'rain', 0xc0c8d0, { count: 12 }) },
   { word: 'web', look: 'a sticky web laid on the ground: a trap', ability: use('web', 'trap', 0xe8e8ff, { glyph: '🕸️', count: 3 }) },
   { word: 'box', look: 'cardboard boxes raining down on the villain', ability: use('box', 'rain', 0xc8a070, { glyph: '📦', count: 14 }) },
@@ -276,3 +275,12 @@ const ACTION_EFFECTS: WordEffect[] = [
 export const EFFECTS: WordEffect[] = [...THING_EFFECTS, ...ACTION_EFFECTS];
 
 export const EFFECT_BY_WORD: Record<string, WordEffect> = Object.fromEntries(EFFECTS.map((e) => [e.word, e]));
+
+/**
+ * The ability a move word fires as its own effect. A word with no entry here
+ * still fires: a plain gold bolt with the action id `word_<word>`, so a choice
+ * never fizzles for want of data (BattleScene `ownerOf`; src/rules/moves.ts `effectId`).
+ */
+export function wordEffect(word: string): AbilitySpec {
+  return EFFECT_BY_WORD[word]?.ability ?? act(word, 'bolt', 0xffd23f, { count: 3, homing: true });
+}

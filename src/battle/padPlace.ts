@@ -17,7 +17,10 @@ export type Box = [number, number, number, number];
 
 /** How far a pad's word sign stands above its ring. */
 export const SIGN_RISE = 215;
-/** Least distance between two pads' columns: a sign is 230 wide, so signs never touch. */
+/** A word sign's plate (moveChoice.ts draws it), centred on the sign. */
+export const SIGN_W = 230;
+export const SIGN_H = 100;
+/** Least distance between two pads' columns: a sign is SIGN_W wide, so signs never touch. */
 const PAD_GAP = 270;
 /** The closest two columns may come when her side is narrow (item 071, M7): the plates still 10 px apart. */
 const NARROW_GAP = 240;
@@ -63,10 +66,10 @@ export interface PlaceInput {
   me?: { x: number; y: number; reach: number };
 }
 
-/** The sign's plate and its stake, with a margin. */
+/** The sign's plate and its stake, with a margin: 10 px round the plate, and below it the stake (to 75) and 15 more. */
 export function signBox(x: number, y: number): Box {
   const sy = y - SIGN_RISE;
-  return [x - 125, sy - 60, x + 125, sy + 90];
+  return [x - SIGN_W / 2 - 10, sy - SIGN_H / 2 - 10, x + SIGN_W / 2 + 10, sy + SIGN_H / 2 + 40];
 }
 
 export function bodyBox(b: PlaceBody): Box {

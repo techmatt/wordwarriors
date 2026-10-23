@@ -19,7 +19,7 @@
  *
  * Barks (taunts) go in follow-the-speaker bubbles; a bark with nobody on
  * screen to hang a bubble on (a taunt heard from afar) shows here instead.
- * Letter sounds and sentence prefix lines show no words (see show()).
+ * Letter sounds and sentence prefix lines show no words (see modeOf()).
  * Words show upper case, like every text she reads.
  */
 

@@ -110,11 +110,12 @@ export class WordMachine extends HouseSideRoom {
     this.picture = null;
     this.pendingTile = null;
     // Back from the parent page (F9) after a silly word: still a miss (item 039).
-    this.wrongTries = episode.house.misses?.[this.missKey] ?? 0;
+    this.wrongTries = this.keptMisses(this.missWord);
   }
 
-  private get missKey(): string {
-    return `${this.slot}:${this.plan.rounds[this.index]?.word ?? ''}`;
+  /** The word whose misses are kept on the episode (`keptMisses`). */
+  private get missWord(): string {
+    return this.plan.rounds[this.index]?.word ?? '';
   }
 
   /** Sounds, rimes, silly words and the built word: the machine shows them; the box shows only who says them. */
@@ -131,12 +132,10 @@ export class WordMachine extends HouseSideRoom {
     }
     // Every line keeps off the letters (item 039: "Walk on a letter..." hid
     // every tile it was talking about; item 059: no box ever covers a thing she chooses).
-    {
-      // Each tile's full footprint: they pop in from nothing as the line starts, so their bounds are still empty then.
-      for (const s of this.spots) {
-        if (!s.id.startsWith('tile_') || !s.obj.active) continue;
-        out.push({ x: s.x - 70, y: s.y - 130, w: 140, h: 140, weight: 40 });
-      }
+    // Each tile's full footprint: they pop in from nothing as the line starts, so their bounds are still empty then.
+    for (const s of this.spots) {
+      if (!s.id.startsWith('tile_') || !s.obj.active) continue;
+      out.push({ x: s.x - 70, y: s.y - 130, w: 140, h: 140, weight: 40 });
     }
     return out;
   }
@@ -227,7 +226,7 @@ export class WordMachine extends HouseSideRoom {
     this.round = `machine:${this.index}:${r.word}`;
     this.phase = 'intro';
     this.locked = true;
-    this.wrongTries = episode.house.misses?.[this.missKey] ?? 0;
+    this.wrongTries = this.keptMisses(this.missWord);
     this.pendingTile = null;
     this.slotted = null;
     this.clearSpots();
@@ -247,11 +246,7 @@ export class WordMachine extends HouseSideRoom {
     // reach, or a green mashed through the round's line slotted a tile she never walked to or
     // heard (item 092; the sentence room's fix 61, here). Stepped straight up, she stood in front of the
     // machine's plate, over the word's rime (hunt 9): in front of the machine she steps to its side too.
-    if (this.spots.some((sp) => Phaser.Math.Distance.Between(this.player.x, this.player.y, sp.x, sp.y) < REACH)) {
-      const clear = MACHINE_W / 2 + 10;
-      const x = Math.abs(this.player.x - MACHINE_X) < clear ? MACHINE_X + Math.sign(this.player.x - MACHINE_X || -1) * clear : this.player.x;
-      this.player.place(x, TILE_Y - REACH - 15);
-    }
+    this.stepClearOf(MACHINE_X, MACHINE_W / 2 + 10, TILE_Y - REACH - 15);
     const mode: MachineMode = this.plan.mode;
     // Only mode 1 is played today; `flip` and `real_or_silly` start here.
     if (mode !== 'make') throw new Error(`WordMachine: mode ${mode} is not built yet`);
@@ -365,7 +360,7 @@ export class WordMachine extends HouseSideRoom {
   /** A silly word: the machine giggles, the tile pops back onto the floor, try again. */
   private async silly(spot: Spot, tile: MachineTile): Promise<void> {
     this.wrongTries++;
-    (episode.house.misses ??= {})[this.missKey] = this.wrongTries;
+    this.keepMisses(this.missWord, this.wrongTries);
     this.giggle(this.panel, this.panel.x, this.panel.y - 70, this.wrongTries - 1, MACHINE_GIGGLES);
     // The whole silly word, lit, said: it is not the word she is making.
     this.onsetText.setColor(LIT);

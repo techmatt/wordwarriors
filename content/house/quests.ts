@@ -29,14 +29,11 @@
 import { homeQuestLine, questLine, type SpokenLine } from '../voice/ids.js';
 import { HOME } from './house.js';
 
-/** A voiced line: what the caption shows, and the spoken form when edge-tts needs help (same word count). */
-export type Line = SpokenLine;
-
 export interface Quest {
   /** PLACES id, or HOME. */
   place: string;
   /** The setup lines, in the owner's voice: one is said per episode. */
-  lines: Line[];
+  lines: SpokenLine[];
 }
 
 export const QUESTS: Record<string, Quest> = {
@@ -247,7 +244,7 @@ export const variantIndex = (n: number, count: number): number => (((Math.max(1,
  * The setup line the helper says, variant `n`: its id and its words. `narrator`
  * voices the home quest (the helper's person).
  */
-export function questSetup(helper: string, narrator: string, n: number): { id: string; line: Line } {
+export function questSetup(helper: string, narrator: string, n: number): { id: string; line: SpokenLine } {
   const q = QUESTS[helper];
   const lines = q ? q.lines : HOME_QUEST.lines;
   const i = variantIndex(n, lines.length);

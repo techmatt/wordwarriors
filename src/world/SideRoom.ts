@@ -21,7 +21,7 @@ import { narratorLine } from '../../content/voice/ids';
 import { variant } from '../episode/lineVariants';
 import { sfxRight, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { voiceBus } from '../audio/VoiceBus';
-import { DAD_AWAY_MS, DEPTH, GAME_WIDTH } from '../config';
+import { DAD_AWAY_MS, DEPTH, GAME_WIDTH, REACH } from '../config';
 import { backToHub, castFace, episode, narrator, planFor, type Slot, type Step } from '../episode/Episode';
 import { burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -33,7 +33,7 @@ import { progress } from '../state/progress';
 import type { ItemKind } from '../state/ProgressStore';
 import type { KeepOut } from '../ui/Caption';
 import type { Speaker } from '../ui/Portrait';
-import { RoomScene } from './RoomScene';
+import { RoomScene, type Spot } from './RoomScene';
 
 /** The side rooms' words (the sentence banner, the machine's panel): ink, and lit while said. */
 export const INK = '#1a1030';
@@ -216,21 +216,15 @@ export abstract class SideRoom extends RoomScene {
     if (!spot || spot.obj.getData('sparkling')) return;
     spot.obj.setData('sparkling', true);
     const b = spot.obj.getBounds();
-    const glow = this.add
-      .particles(spot.x, b.centerY, TEX.star, {
-        speed: { min: 20, max: 70 },
-        scale: { start: 0.7, end: 0 },
-        lifespan: 900,
-        frequency: 90,
-        emitZone: { type: 'random', source: new Phaser.Geom.Rectangle(-b.width / 2, -b.height / 2, b.width, b.height) } as never,
-        tint: [0xffd23f, 0xffffff],
-        blendMode: Phaser.BlendModes.ADD,
-      })
-      .setDepth(spot.obj.depth + 1);
-    spot.obj.once(Phaser.GameObjects.Events.DESTROY, () => glow.destroy());
-    // A room that hides the picked spot before clearing it stops this too (hunt 6: the Shape-Shifter's
-    // stars kept rising from the empty floor through the morph and the praise).
+    const glow = this.sparkleSpot(spot, b.centerY, b.width, b.height, spot.obj.depth + 1);
+    // A room that hides the picked spot before clearing it stops this too, `stopSparkle` (hunt 6: the
+    // Shape-Shifter's stars kept rising from the empty floor through the morph and the praise).
     spot.obj.setData('sparkle', glow);
+  }
+
+  /** The answer's sparkle stops now: for a room that hides the picked spot before clearing it. */
+  protected stopSparkle(spot: Spot): void {
+    (spot.obj.getData('sparkle') as Phaser.GameObjects.Particles.ParticleEmitter | undefined)?.destroy();
   }
 }
 
@@ -291,6 +285,45 @@ export abstract class HouseSideRoom extends SideRoom {
   protected wordArt(word: string): string {
     const w = WORD_BY_ID[word];
     return w ? pictureFor(w, castFace) : `pic_${word}`;
+  }
+
+  /**
+   * A round's misses, and whether Dad helped on it, kept on the episode by
+   * `<slot>:<word>` (episode.house.misses), so F9 and back neither turns a
+   * miss into a first try nor makes a helped word unaided (items 039, 069).
+   */
+  protected keptMisses(word: string): number {
+    return episode.house.misses?.[`${this.slot}:${word}`] ?? 0;
+  }
+
+  protected keepMisses(word: string, n: number): void {
+    (episode.house.misses ??= {})[`${this.slot}:${word}`] = n;
+  }
+
+  protected keptAided(word: string): boolean {
+    return Boolean(episode.house.misses?.[`${this.slot}:${word}:aided`]);
+  }
+
+  protected keepAided(word: string): void {
+    (episode.house.misses ??= {})[`${this.slot}:${word}:aided`] = 1;
+  }
+
+  /** The round is answered: its kept misses and help go. */
+  protected forgetMisses(word: string): void {
+    if (!episode.house.misses) return;
+    delete episode.house.misses[`${this.slot}:${word}`];
+    delete episode.house.misses[`${this.slot}:${word}:aided`];
+  }
+
+  /**
+   * New options landed in her reach (a round's tiles or stones where the last ones were): she steps up to
+   * `y`, out of it, or a green mashed through the instruction picked one she never walked to (item 092,
+   * hunt 6). Within `halfWidth` of `cx` (the thing she reads behind them) she steps to its side too (hunt 9).
+   */
+  protected stepClearOf(cx: number, halfWidth: number, y: number): void {
+    if (!this.spots.some((sp) => Phaser.Math.Distance.Between(this.player.x, this.player.y, sp.x, sp.y) < REACH)) return;
+    const x = Math.abs(this.player.x - cx) < halfWidth ? cx + Math.sign(this.player.x - cx || -1) * halfWidth : this.player.x;
+    this.player.place(x, y);
   }
 
   /** The visit is over: fade out, back to the hub. */

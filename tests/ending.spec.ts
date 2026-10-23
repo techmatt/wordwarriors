@@ -8,6 +8,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { SLOW, boot, collectErrors, expectNoErrors, press, seedProgress, state, stick, toTheEnd, until, type WWState } from './harness';
+import type { WWHooks } from '../src/testHooks';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/027_${name}.png` });
 
@@ -101,13 +102,13 @@ test('the recap\'s green goes on to THE END, and only Dad\'s 2 leaves it', async
   await page.waitForTimeout(1200);
   // Drawn: no missing art, and the words on screen, in full.
   const look = await page.evaluate(() => {
-    const ww = (window as unknown as { __ww: { art(): { missing: number }; texts(): { scene: string; text: string; offscreen: boolean }[] } }).__ww;
+    const ww = (window as unknown as { __ww: WWHooks }).__ww;
     return { missing: ww.art().missing, texts: ww.texts().filter((t) => t.scene === 'TheEnd') };
   });
   expect(look.missing).toBe(0);
   expect(look.texts.map((t) => t.text)).toEqual(['THE END']);
   expect(look.texts[0]!.offscreen).toBe(false);
-  await page.screenshot({ path: 'scratch/085/shots/the_end.png' });
+  await shot(page, 'the_end');
 
   // Everything she has: every pad button, the stick, the keys (and Dad's 1, his no).
   for (const b of ['green', 'red', 'blue', 'yellow', 'start', 'back', 'lb', 'rb']) await press(page, b);

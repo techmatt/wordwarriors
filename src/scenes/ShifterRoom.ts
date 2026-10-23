@@ -46,11 +46,12 @@ import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids
 import { variant } from '../episode/lineVariants';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
-import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH as GREEN_REACH, VARIETY } from '../config';
+import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH, VARIETY } from '../config';
 import { episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { burst, fitImage, floatText, popIn, shake, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
-import { nextShifterLevel, recordedShifterLevel, shifterLevel, soundAt, type Position, type ShifterLevel, type ShifterLink, type ShifterPlan } from '../rules/shifter';
+import { stepLevel } from '../rules/difficulty';
+import { recordedShifterLevel, shifterLevel, soundAt, type Position, type ShifterLevel, type ShifterLink, type ShifterPlan } from '../rules/shifter';
 import { nameToSound, soundOut } from '../rules/soundOut';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../hookState';
@@ -75,9 +76,6 @@ const PICTURE_SIZE = 116;
 const STONE = { w: 120, h: 96 };
 /** Where she walks in. */
 const ENTRY = { x: 130, y: 610 };
-/** How near a stone she must be for yellow to sound it: green's reach (it was 120, so yellow sounded, and counted
- * as help, a stone 100 px off that showed no green dot; hunt 6). */
-const REACH = GREEN_REACH;
 /** The spell's colours. */
 const MAGIC = [0xb04cff, 0xff4cd8, 0xffffff];
 /** The praise variant that says she read it all by herself (`right_5`): never after help. */
@@ -146,10 +144,6 @@ export class ShifterRoom extends HouseSideRoom {
     return this.plan.links[Math.min(this.index, this.plan.links.length - 1)]!;
   }
 
-  private get missKey(): string {
-    return `${this.slot}:${this.current.to}`;
-  }
-
   /** The creature, its label and the options are what she reads: the box keeps off them. */
   protected override keepOut(): KeepOut[] {
     const out = super.keepOut();
@@ -189,7 +183,7 @@ export class ShifterRoom extends HouseSideRoom {
   private makeCreature(): void {
     const halo = this.add.image(0, 0, TEX.glow).setScale(4.2).setAlpha(0.45).setTint(MAGIC[0]!).setBlendMode(Phaser.BlendModes.ADD);
     const shadow = this.add.ellipse(0, CREATURE.size / 2 + 6, CREATURE.size * 0.8, 26, 0x000000, 0.3);
-    this.creatureImg = this.add.image(0, 0, `pic_${this.plan.start}`);
+    this.creatureImg = this.add.image(0, 0, this.wordArt(this.plan.start));
     this.creature = this.add.container(CREATURE.x, CREATURE.y, [halo, shadow, this.creatureImg]).setDepth(LABEL.y - 20);
     this.tweens.add({ targets: halo, alpha: 0.2, duration: 1100, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     // It bobs, alive.
@@ -296,8 +290,8 @@ export class ShifterRoom extends HouseSideRoom {
     this.locked = true;
     this.level = shifterLevel(progress, l.to);
     this.lit = this.level <= 2;
-    this.aided = Boolean(episode.house.misses?.[`${this.missKey}:aided`]);
-    this.wrongTries = episode.house.misses?.[this.missKey] ?? 0;
+    this.aided = this.keptAided(l.to);
+    this.wrongTries = this.keptMisses(l.to);
     this.clearSpots();
     if (first) {
       await this.wait(ARRIVE_MS);
@@ -351,7 +345,7 @@ export class ShifterRoom extends HouseSideRoom {
       const [x, y] = OPTIONS[i] ?? OPTIONS[OPTIONS.length - 1]!;
       const shadow = this.add.ellipse(0, 0, 100, 22, 0x000000, 0.3);
       if (l.beat === 'read') {
-        const pic = fitImage(this.add.image(0, -PICTURE_SIZE / 2 - 4, `pic_${o}`), PICTURE_SIZE, PICTURE_SIZE);
+        const pic = fitImage(this.add.image(0, -PICTURE_SIZE / 2 - 4, this.wordArt(o)), PICTURE_SIZE, PICTURE_SIZE);
         const spot = this.addSpot(o, x, y, [shadow, pic], o === l.to);
         popIn(this, spot.obj, 1, i * 110);
       } else {
@@ -372,10 +366,7 @@ export class ShifterRoom extends HouseSideRoom {
     // up out of reach, or a green mashed through the instruction picked one she never walked to (hunt 6; the
     // word machine's fix 98, here). Stepped up, she stood in front of the label, over the letter that had just
     // changed (hunt 9): under the label she steps to its side too.
-    if (this.spots.some((sp) => Phaser.Math.Distance.Between(this.player.x, this.player.y, sp.x, sp.y) < REACH)) {
-      const x = Math.abs(this.player.x - LABEL.x) < LABEL_CLEAR ? LABEL.x + Math.sign(this.player.x - LABEL.x || -1) * LABEL_CLEAR : this.player.x;
-      this.player.place(x, Math.min(...OPTIONS.map(([, y]) => y)) - REACH - 15);
-    }
+    this.stepClearOf(LABEL.x, LABEL_CLEAR, Math.min(...OPTIONS.map(([, y]) => y)) - REACH - 15);
   }
 
   /**
@@ -433,22 +424,7 @@ export class ShifterRoom extends HouseSideRoom {
     const p = this.pendingStone;
     if (!p || this.phase !== 'pick' || this.locked || voiceBus.busy) return;
     this.pendingStone = null;
-    if (this.inReach()?.obj.getData('letter') === p) this.liftLetter(p);
-  }
-
-  /** The stone or picture nearest her, if in reach. */
-  private inReach(): Spot | undefined {
-    let best: Spot | undefined;
-    let d = REACH;
-    for (const s of this.spots) {
-      if (!s.enabled) continue;
-      const dd = Phaser.Math.Distance.Between(this.player.x, this.player.y, s.x, s.y);
-      if (dd < d) {
-        d = dd;
-        best = s;
-      }
-    }
-    return best;
+    if (this.nearestSpot()?.obj.getData('letter') === p) this.liftLetter(p);
   }
 
   // ---- Picking --------------------------------------------------------------
@@ -464,7 +440,7 @@ export class ShifterRoom extends HouseSideRoom {
 
   private noteMiss(spot: Spot): void {
     this.wrongTries++;
-    (episode.house.misses ??= {})[this.missKey] = this.wrongTries;
+    this.keepMisses(this.current.to, this.wrongTries);
     this.giggle(spot.obj, spot.x, spot.y - 150, this.wrongTries - 1);
   }
 
@@ -573,7 +549,7 @@ export class ShifterRoom extends HouseSideRoom {
       if (f !== this.flow) break;
       await this.say(id);
     }
-    spot.obj.setScale(this.inReach() === spot ? spot.baseScale * 1.1 : spot.baseScale);
+    spot.obj.setScale(this.nearestSpot() === spot ? spot.baseScale * 1.1 : spot.baseScale);
   }
 
   /** A stone's letter flies from it into the label's changed place; `bounce`, it pops back off and away. */
@@ -608,18 +584,16 @@ export class ShifterRoom extends HouseSideRoom {
     // recorded apart from reading (as Spell the Spell's are) and leaves her word bag alone.
     if (l.beat === 'read') this.recordRead(l.to, firstTry, this.wrongTries, { last });
     else this.recordFixed(l.to, firstTry, last);
-    progress.setShifterLevel(l.to, nextShifterLevel(recordedShifterLevel(progress, l.to), unaided));
-    if (episode.house.misses) {
-      delete episode.house.misses[this.missKey];
-      delete episode.house.misses[`${this.missKey}:aided`];
-    }
+    // The ramp: right first time with no help is one level less help; a hint or a miss, one more.
+    progress.setShifterLevel(l.to, stepLevel(recordedShifterLevel(progress, l.to), unaided));
+    this.forgetMisses(l.to);
     for (const s of this.spots) s.enabled = false;
     sfxRight();
     const top = { x: spot.x, y: spot.y - PICTURE_SIZE / 2 };
     burst(this, top.x, top.y, { count: 50, speed: 420 });
     floatText(this, top.x, top.y - 90, unaided ? 'WOW!' : 'YES!', '#ffd23f');
     spot.obj.setVisible(false);
-    (spot.obj.getData('sparkle') as Phaser.GameObjects.Particles.ParticleEmitter | undefined)?.destroy();
+    this.stopSparkle(spot);
     if (l.beat === 'read') await this.morph(l.to);
     else await this.flyLetter(spot, l.to[l.pos]!);
     if (f !== this.flow) return;
@@ -691,7 +665,9 @@ export class ShifterRoom extends HouseSideRoom {
     const l = this.current;
     const f = ++this.flow;
     voiceBus.hush();
-    const near = l.beat === 'fix' ? this.inReach() : undefined;
+    // The stone green would pick: yellow's reach is green's (it was 120, so yellow sounded, and counted as
+    // help, a stone 100 px off that showed no green dot; hunt 6).
+    const near = l.beat === 'fix' ? this.nearestSpot() : undefined;
     if (idle || (l.beat === 'fix' && !near)) {
       void this.narrateAgain(l.beat === 'read' ? 'shifter_read' : 'shifter_fix').then(() => {
         if (f === this.flow && this.phase === 'pick') this.locked = false;
@@ -699,7 +675,7 @@ export class ShifterRoom extends HouseSideRoom {
       return;
     }
     this.aided = true;
-    (episode.house.misses ??= {})[`${this.missKey}:aided`] = 1;
+    this.keepAided(l.to);
     this.hinting = true;
     this.locked = true;
     void (async () => {

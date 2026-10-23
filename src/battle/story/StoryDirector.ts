@@ -29,6 +29,7 @@ import { STORY_BY_ID } from '../../../content/battle/stories/index';
 import { storySplashArt, type StoryBeat, type StoryLine, type StoryScript, type StorySpot } from '../../../content/battle/stories/types';
 import { fightPropArt } from '../../../content/battle/fights';
 import { personOf } from '../../../content/battle/roster';
+import type { AbilitySpec } from '../../../content/battle/types';
 import { storyLine } from '../../../content/voice/ids';
 import { voiceBus } from '../../audio/VoiceBus';
 import { sfxBoom, sfxFire, sfxJump, sfxPoof, sfxShout, sfxStomp, sfxTwinkle, sfxUltimate, sfxWhoosh } from '../../audio/sfx';
@@ -37,23 +38,55 @@ import { advance, episode } from '../../episode/Episode';
 import { burst, fitImage, flash, floatText, hitstop, popIn, punch, shake, shockwave, slowmo, speedLines } from '../../fx/juice';
 import { TEX } from '../../fx/textures';
 import { cast } from '../abilities';
-import type { BattleScene } from '../BattleScene';
-import type { Fighter } from '../Fighter';
+import { FLOOR_TOP, type Fighter } from '../Fighter';
 import { ARENA_LEFT, restLift } from '../movement';
+import type { Phase, StageHost } from '../stages/stage';
 import { STORY_MARKS } from '../stages/story';
-import { StoryWalk } from './walk';
+import { StoryWalk, type WalkHost } from './walk';
 
 /** How long she has to reach a safe spot (real s), and to grab (before it goes on by itself). */
 const DODGE_SECONDS = 7;
 const GRAB_SECONDS = 30;
+
+/**
+ * What the battle lends the story fight's director (BattleScene): a stage's host, her stick for
+ * her walk (`StoryWalk`), and the battle's own staging. Scene work goes through `stage`.
+ */
+export interface StoryHost extends StageHost, Pick<WalkHost, 'controls'> {
+  /** The director sets it: `story` between beats, `end` after the last. */
+  phase: Phase;
+  readonly fighters: readonly Fighter[];
+  /** The dad in the fight and the ally, as fighters; either may be missing. */
+  readonly dad: Fighter | null;
+  readonly allyFighter: Fighter | null;
+  /** Her walk while one is open, which the battle runs every frame. */
+  storyWalk: StoryWalk | null;
+  /** Drop `p` if this run of the scene ends first (SceneGen). */
+  guard<T>(p: Promise<T>): Promise<T>;
+  /** A beat's wait in seconds, cut under `?battle=short`. */
+  beat(s: number): number;
+  storyIntro(): Promise<void>;
+  killFighter(f: Fighter): void;
+  useAllFetched(gap: number): Promise<void>;
+  useCharged(gap: number): Promise<void>;
+  useMade(order: ('helper' | 'gem' | 'ammo')[], gap: number): Promise<void>;
+  moveChoice(): Promise<void>;
+  ultimateWindUp(): Promise<{ v: Fighter; ult: AbilitySpec; giant: boolean; aura: Phaser.GameObjects.Particles.ParticleEmitter }>;
+  ultimateFloors(v: Fighter, ult: AbilitySpec, giant: boolean): Promise<void>;
+  ultimateCountered(v: Fighter, ult: AbilitySpec, giant: boolean, aura: Phaser.GameObjects.Particles.ParticleEmitter): Promise<void>;
+  finish(): Promise<void>;
+  retreat(): void;
+}
 
 export class StoryDirector {
   readonly story: StoryScript;
   /** The beat playing, for the tests. */
   beat: string | null = null;
   private readonly props = new Map<string, Phaser.GameObjects.Image>();
+  /** Ends Dad's spinning attack (`spinning`) once the grab is done. */
+  private spinStop = false;
 
-  constructor(private readonly b: BattleScene) {
+  constructor(private readonly b: StoryHost) {
     this.story = STORY_BY_ID[b.fight.story ?? '']!;
   }
 
@@ -61,7 +94,7 @@ export class StoryDirector {
   setup(): void {
     for (const s of this.story.spots) {
       const dy = s.propDy ?? 0;
-      const img = fitImage(this.b.add.image(s.x + (s.propDx ?? 0), s.y + dy, fightPropArt(s.prop)).setOrigin(0.5, 1), s.propW ?? 200, s.propH ?? 180);
+      const img = fitImage(this.b.stage.add.image(s.x + (s.propDx ?? 0), s.y + dy, fightPropArt(s.prop)).setOrigin(0.5, 1), s.propW ?? 200, s.propH ?? 180);
       // A ledge (its top is where she stands) sorts just behind her; anything else by its foot.
       img.setDepth(s.lift ? s.y - 2 : s.y + dy);
       this.props.set(s.id, img);
@@ -73,7 +106,7 @@ export class StoryDirector {
     const beats = b.part === 1 ? this.story.part1 : this.story.part2;
     await b.storyIntro();
     for (const beat of beats) {
-      if (!b.scene.isActive()) return;
+      if (!b.stage.scene.isActive()) return;
       this.beat = beat.id;
       b.phase = 'story';
       this.tidy();
@@ -185,7 +218,7 @@ export class StoryDirector {
       reached = (await walk.done).reached;
       b.storyWalk = null;
     } else await this.sayAll(rest);
-    b.tweens.killTweensOf(band);
+    b.stage.tweens.killTweensOf(band);
     band.destroy();
     if (beat.big) await this.bigMove(beat.big, v);
     if (beat.move === 'fire') await this.fireBreath(spot, reached);
@@ -209,7 +242,7 @@ export class StoryDirector {
     await this.sayAll(rest);
     const guards = this.minions();
     // Lined up across the floor between the sides, ready to charge.
-    guards.forEach((g, i) => b.tweens.add({ targets: g, x: 760 + i * 70, y: 560 + (i % 3) * 45, duration: 500 }));
+    guards.forEach((g, i) => b.stage.tweens.add({ targets: g, x: 760 + i * 70, y: 560 + (i % 3) * 45, duration: 500 }));
     await b.wait(0.6);
     await this.choice();
     // Over the guards she goes as they charge past and topple.
@@ -217,7 +250,7 @@ export class StoryDirector {
     if (me) this.hopOver(me, 260);
     for (const h of b.heroes.slice(1)) this.hopOver(h, 160);
     guards.forEach((g, i) => {
-      b.tweens.add({
+      b.stage.tweens.add({
         targets: g,
         x: ARENA_LEFT - 200,
         duration: 1200,
@@ -242,7 +275,7 @@ export class StoryDirector {
     const line = beat.lines?.[0];
     if (dad && beat.big) {
       // Dad spins in at him: a card-flip twirl (sprites never rotate), a whirl of sparks, hits landing.
-      b.tweens.add({ targets: dad, x: v.x - 120, y: v.y + 100, duration: 500, ease: 'Quad.easeOut' });
+      b.stage.tweens.add({ targets: dad, x: v.x - 120, y: v.y + 100, duration: 500, ease: 'Quad.easeOut' });
       await b.wait(0.3);
       await this.bigMove(beat.big, dad);
       this.spinning(dad, v);
@@ -256,8 +289,8 @@ export class StoryDirector {
       // Coins fly up out of the hoard to her.
       const me = b.heroes[0]!;
       sfxTwinkle();
-      burst(b, spot.x + (spot.propDx ?? 0), spot.y - 60, { count: 120, speed: 520, colors: [0xffd23f, 0xffcc33, 0xffffff], life: 1200, gravity: 500 });
-      floatText(b, me.x, me.y - me.height - 30, '+GOLD!', '#ffd23f', 52);
+      burst(b.stage, spot.x + (spot.propDx ?? 0), spot.y - 60, { count: 120, speed: 520, colors: [0xffd23f, 0xffcc33, 0xffffff], life: 1200, gravity: 500 });
+      floatText(b.stage, me.x, me.y - me.height - 30, '+GOLD!', '#ffd23f', 52);
       this.hopOver(me, 90);
     } else await this.sayAll(beat.lines);
     this.spinStop = true;
@@ -267,19 +300,17 @@ export class StoryDirector {
     await this.homeAgain();
   }
 
-  private spinStop = false;
-
   /** Dad's twirl: flips and sparks and little hits on the villain until the grab is done. */
   private spinning(dad: Fighter, v: Fighter): void {
     const b = this.b;
     this.spinStop = false;
     const tick = () => {
-      if (this.spinStop || !b.scene.isActive()) return;
+      if (this.spinStop || !b.stage.scene.isActive()) return;
       // Half a turn less a hair: a whole turn is already at rest (Fighter settles spin to the
       // nearest whole turn), so += 2π never flipped at all (hunt 7). From here he flips back round.
       dad.spin = Math.PI - 0.1;
-      burst(b, dad.cx, dad.cy, { count: 30, speed: 380, colors: [0x7ad9ff, 0xffffff, dad.init.palette[0]] });
-      shockwave(b, dad.cx, dad.cy, 0x7ad9ff, 140, 380);
+      burst(b.stage, dad.cx, dad.cy, { count: 30, speed: 380, colors: [0x7ad9ff, 0xffffff, dad.init.palette[0]] });
+      shockwave(b.stage, dad.cx, dad.cy, 0x7ad9ff, 140, 380);
       v.flashWhite();
       sfxWhoosh();
       b.after(450, tick);
@@ -301,9 +332,9 @@ export class StoryDirector {
     await b.wait(b.beat(1.2));
     b.retreat();
     await b.wait(b.beat(1.4));
-    b.cameras.main.fadeOut(500);
+    b.stage.cameras.main.fadeOut(500);
     await b.wait(0.6);
-    advance(b);
+    advance(b.stage);
   }
 
   /** Part 2's end: up and down again, the counter-item stops him, everyone's finisher, good again. */
@@ -316,9 +347,9 @@ export class StoryDirector {
     await b.finish();
     b.phase = 'end';
     await b.wait(b.beat(1.2));
-    b.cameras.main.fadeOut(500, 255, 255, 255);
+    b.stage.cameras.main.fadeOut(500, 255, 255, 255);
     await b.wait(0.6);
-    advance(b);
+    advance(b.stage);
   }
 
   // -- staging ------------------------------------------------------------------------
@@ -353,9 +384,9 @@ export class StoryDirector {
       const m = STORY_MARKS.heroes[i] ?? STORY_MARKS.heroes[0];
       h.hop = 0;
       // Down off the ledge with the walk home, not in one frame (hunt 7).
-      b.tweens.add({ targets: h, x: m.x, y: m.y, lift: restLift(h), duration: 600, ease: 'Quad.easeOut' });
+      b.stage.tweens.add({ targets: h, x: m.x, y: m.y, lift: restLift(h), duration: 600, ease: 'Quad.easeOut' });
     });
-    b.tweens.add({ targets: b.villain, x: STORY_MARKS.villain.x, y: STORY_MARKS.villain.y, duration: 600, ease: 'Quad.easeOut' });
+    b.stage.tweens.add({ targets: b.villain, x: STORY_MARKS.villain.x, y: STORY_MARKS.villain.y, duration: 600, ease: 'Quad.easeOut' });
     await b.wait(0.6);
   }
 
@@ -364,7 +395,7 @@ export class StoryDirector {
     const v = this.b.villain;
     v.squash(0.35);
     v.flashWhite();
-    burst(this.b, v.cx, v.cy, { count: 50, speed: 420, colors: [0xffffff, v.init.palette[1]] });
+    burst(this.b.stage, v.cx, v.cy, { count: 50, speed: 420, colors: [0xffffff, v.init.palette[1]] });
   }
 
   /** A hop over something low: her hop height, there and back. */
@@ -372,14 +403,14 @@ export class StoryDirector {
     const b = this.b;
     sfxJump();
     h.squash(0.3);
-    b.tweens.addCounter({ from: 0, to: 1, duration: 700, onUpdate: (tw) => (h.hop = Math.sin((tw.getValue() ?? 0) * Math.PI) * height), onComplete: () => (h.hop = 0) });
+    b.stage.tweens.addCounter({ from: 0, to: 1, duration: 700, onUpdate: (tw) => (h.hop = Math.sin((tw.getValue() ?? 0) * Math.PI) * height), onComplete: () => (h.hop = 0) });
   }
 
   /** The floor between the sides glows where the attack will land. */
   private dangerBand(color: number): Phaser.GameObjects.Rectangle {
     const b = this.b;
-    const band = b.add.rectangle((ARENA_LEFT + 900) / 2, 560, 900 - ARENA_LEFT, 260, color, 0.22).setDepth(430 - 4);
-    b.tweens.add({ targets: band, alpha: 0.45, duration: 280, yoyo: true, repeat: -1 });
+    const band = b.stage.add.rectangle((ARENA_LEFT + 900) / 2, 560, 900 - ARENA_LEFT, 260, color, 0.22).setDepth(FLOOR_TOP - 4);
+    b.stage.tweens.add({ targets: band, alpha: 0.45, duration: 280, yoyo: true, repeat: -1 });
     return band;
   }
 
@@ -389,19 +420,19 @@ export class StoryDirector {
    */
   private async bigMove(splash: string, f: Fighter): Promise<void> {
     const b = this.b;
-    const img = fitImage(b.add.image(f.cx, f.cy, storySplashArt(splash)), 640, 480).setDepth(f.y - 6).setAlpha(0.95);
+    const img = fitImage(b.stage.add.image(f.cx, f.cy, storySplashArt(splash)), 640, 480).setDepth(f.y - 6).setAlpha(0.95);
     const s = img.scale;
-    popIn(b, img, s, 0, 260);
+    popIn(b.stage, img, s, 0, 260);
     // The punch-in is the camera's one move here: a punch on top would undo it (BattleScene.focus).
     b.focus(f.cx, f.cy, 1.25, 700);
-    hitstop(b, 140);
-    slowmo(b, 0.35, 900);
-    speedLines(b, f.cx, f.cy, f.init.palette[1], 900);
-    shockwave(b, f.cx, f.cy, f.init.palette[1], 320, 700);
-    burst(b, f.cx, f.cy, { count: 160, speed: 760, colors: [f.init.palette[0], f.init.palette[1], 0xffffff], life: 1100 });
+    hitstop(b.stage, 140);
+    slowmo(b.stage, 0.35, 900);
+    speedLines(b.stage, f.cx, f.cy, f.init.palette[1], 900);
+    shockwave(b.stage, f.cx, f.cy, f.init.palette[1], 320, 700);
+    burst(b.stage, f.cx, f.cy, { count: 160, speed: 760, colors: [f.init.palette[0], f.init.palette[1], 0xffffff], life: 1100 });
     sfxUltimate();
     await b.wait(0.9);
-    b.tweens.add({ targets: img, alpha: 0, scale: s * 1.3, duration: 400, onComplete: () => img.destroy() });
+    b.stage.tweens.add({ targets: img, alpha: 0, scale: s * 1.3, duration: 400, onComplete: () => img.destroy() });
   }
 
   /** The stone's shelter: where his fire stops (a death zone for its particles). */
@@ -420,8 +451,8 @@ export class StoryDirector {
     const y = reached ? me.y - me.height * 0.5 : me.y - me.height - 70;
     const zone = reached ? this.shelter(spot) : null;
     sfxFire();
-    shake(b, 6, 1300);
-    const fire = b.add
+    shake(b.stage, 6, 1300);
+    const fire = b.stage.add
       .particles(v.x - v.height * 0.35, v.y - v.height * 0.7, TEX.smoke, {
         speedX: { min: -1500, max: -1000 },
         speedY: { min: (y - (v.y - v.height * 0.7)) * 1.1 - 120, max: (y - (v.y - v.height * 0.7)) * 1.1 + 120 },
@@ -437,8 +468,8 @@ export class StoryDirector {
     b.after(1300, () => fire.stop());
     b.after(2500, () => fire.destroy());
     await b.wait(1.4);
-    if (zone) burst(b, zone.centerX, zone.centerY, { count: 60, speed: 300, colors: [0xff7b00, 0xffd23f] });
-    floatText(b, me.x, me.y - me.height - 40, 'MISSED!', '#7ad9ff', 50);
+    if (zone) burst(b.stage, zone.centerX, zone.centerY, { count: 60, speed: 300, colors: [0xff7b00, 0xffd23f] });
+    floatText(b.stage, me.x, me.y - me.height - 40, 'MISSED!', '#7ad9ff', 50);
   }
 
   /** Fire falling from the sky over the whole floor; none falls where the stone shelters her. */
@@ -447,8 +478,8 @@ export class StoryDirector {
     const me = b.heroes[0]!;
     const zone = reached ? this.shelter(spot) : new Phaser.Geom.Rectangle(me.x - 90, me.y - me.height - 120, 180, me.height + 140);
     sfxFire();
-    shake(b, 4, 1600);
-    const rain = b.add
+    shake(b.stage, 4, 1600);
+    const rain = b.stage.add
       .particles(0, -20, TEX.spark, {
         x: { min: ARENA_LEFT, max: 940 },
         speedY: { min: 700, max: 1000 },
@@ -464,7 +495,7 @@ export class StoryDirector {
     b.after(1500, () => rain.stop());
     b.after(2600, () => rain.destroy());
     await b.wait(1.6);
-    floatText(b, me.x, me.y - me.height - 40, 'MISSED!', '#7ad9ff', 50);
+    floatText(b.stage, me.x, me.y - me.height - 40, 'MISSED!', '#7ad9ff', 50);
   }
 
   /** His tail smashes along the floor in a wave of dust. Up on the ledge she is over it; anywhere else she hops it at the last moment. */
@@ -473,17 +504,17 @@ export class StoryDirector {
     const v = b.villain;
     const me = b.heroes[0]!;
     sfxStomp();
-    shake(b, 10, 900);
-    const wave = b.add.rectangle(v.x - 120, 600, 60, 150, 0xc8b89a, 0.8).setDepth(DEPTH.fx);
-    b.tweens.add({ targets: wave, x: ARENA_LEFT - 60, scaleX: 3, alpha: 0.3, duration: 900, ease: 'Quad.easeIn', onComplete: () => wave.destroy() });
-    for (let i = 0; i < 6; i++) b.after(i * 140, () => burst(b, v.x - 140 - i * 150, 640, { count: 18, speed: 260, colors: [0xc8b89a, 0x8a7a5a], blend: false }));
+    shake(b.stage, 10, 900);
+    const wave = b.stage.add.rectangle(v.x - 120, 600, 60, 150, 0xc8b89a, 0.8).setDepth(DEPTH.fx);
+    b.stage.tweens.add({ targets: wave, x: ARENA_LEFT - 60, scaleX: 3, alpha: 0.3, duration: 900, ease: 'Quad.easeIn', onComplete: () => wave.destroy() });
+    for (let i = 0; i < 6; i++) b.after(i * 140, () => burst(b.stage, v.x - 140 - i * 150, 640, { count: 18, speed: 260, colors: [0xc8b89a, 0x8a7a5a], blend: false }));
     // Everyone not up high hops it as the wave passes.
     b.heroes.forEach((h, i) => {
       if (h === me && reached && spot?.lift) return;
       b.after(Math.max(0, (v.x - h.x) / 1.2) + i * 30, () => this.hopOver(h, 150));
     });
     await b.wait(1.2);
-    floatText(b, me.x, me.y - me.lift - me.height - 40, 'MISSED!', '#7ad9ff', 50);
+    floatText(b.stage, me.x, me.y - me.lift - me.height - 40, 'MISSED!', '#7ad9ff', 50);
   }
 
   /**
@@ -494,7 +525,7 @@ export class StoryDirector {
    */
   private async flyAndDive(v: Fighter, splash: string | undefined, toHeroes: boolean, aura: Phaser.GameObjects.Particles.ParticleEmitter): Promise<void> {
     const b = this.b;
-    const flyer = b.add.image(v.x, v.y - v.lift, v.init.art).setOrigin(0.5, 1).setDepth(DEPTH.fx + 6);
+    const flyer = b.stage.add.image(v.x, v.y - v.lift, v.init.art).setOrigin(0.5, 1).setDepth(DEPTH.fx + 6);
     fitImage(flyer, v.height * 1.1, v.height);
     const s = flyer.scale;
     v.root.setVisible(false);
@@ -502,30 +533,30 @@ export class StoryDirector {
     v.growUntil = 0;
     if (aura.active) aura.startFollow(flyer, 0, -v.height * 0.4);
     sfxWhoosh();
-    b.tweens.add({ targets: flyer, x: GAME_WIDTH * 0.62, y: 70, scale: s * 0.04, duration: 1400, ease: 'Quad.easeIn' });
-    burst(b, v.x, v.y, { count: 60, speed: 420, colors: [0xffd23f, 0xffffff] });
+    b.stage.tweens.add({ targets: flyer, x: GAME_WIDTH * 0.62, y: 70, scale: s * 0.04, duration: 1400, ease: 'Quad.easeIn' });
+    burst(b.stage, v.x, v.y, { count: 60, speed: 420, colors: [0xffd23f, 0xffffff] });
     await b.wait(1.5);
     // The dot hangs there, twinkling.
-    const twinkle = b.add.image(flyer.x, flyer.y, TEX.star).setTint(0xffd23f).setScale(0.6).setDepth(DEPTH.fx + 7).setBlendMode(Phaser.BlendModes.ADD);
-    b.tweens.add({ targets: twinkle, scale: 1.2, alpha: 0.4, duration: 200, yoyo: true, repeat: 3 });
+    const twinkle = b.stage.add.image(flyer.x, flyer.y, TEX.star).setTint(0xffd23f).setScale(0.6).setDepth(DEPTH.fx + 7).setBlendMode(Phaser.BlendModes.ADD);
+    b.stage.tweens.add({ targets: twinkle, scale: 1.2, alpha: 0.4, duration: 200, yoyo: true, repeat: 3 });
     sfxTwinkle();
     await b.wait(1.0);
     twinkle.destroy();
     const land = toHeroes ? { x: (b.heroes[0]?.x ?? 400) + 80, y: b.heroes[0]?.y ?? 600 } : { x: v.x, y: v.y };
     sfxWhoosh();
-    speedLines(b, land.x, land.y - 100, 0xffd23f, 700);
-    b.tweens.add({ targets: flyer, x: land.x, y: land.y, scale: s * (toHeroes ? 1.4 : 1), duration: 600, ease: 'Quad.easeIn' });
+    speedLines(b.stage, land.x, land.y - 100, 0xffd23f, 700);
+    b.stage.tweens.add({ targets: flyer, x: land.x, y: land.y, scale: s * (toHeroes ? 1.4 : 1), duration: 600, ease: 'Quad.easeIn' });
     await b.wait(0.6);
     sfxBoom(3);
-    flash(b, 0xffffff, 250);
-    shake(b, 12, 900);
-    punch(b, 0.12, 260);
-    shockwave(b, land.x, land.y, 0xffd23f, 500, 900);
-    burst(b, land.x, land.y - 60, { count: 220, speed: 900, life: 1400, colors: [0xffd23f, 0xffcc33, 0xff4a00, 0xffffff] });
+    flash(b.stage, 0xffffff, 250);
+    shake(b.stage, 12, 900);
+    punch(b.stage, 0.12, 260);
+    shockwave(b.stage, land.x, land.y, 0xffd23f, 500, 900);
+    burst(b.stage, land.x, land.y - 60, { count: 220, speed: 900, life: 1400, colors: [0xffd23f, 0xffcc33, 0xff4a00, 0xffffff] });
     if (splash) {
-      const img = fitImage(b.add.image(land.x, land.y - 120, storySplashArt(splash)), 720, 540).setDepth(DEPTH.fx + 5);
-      popIn(b, img, img.scale, 0, 200);
-      b.after(900, () => b.tweens.add({ targets: img, alpha: 0, duration: 400, onComplete: () => img.destroy() }));
+      const img = fitImage(b.stage.add.image(land.x, land.y - 120, storySplashArt(splash)), 720, 540).setDepth(DEPTH.fx + 5);
+      popIn(b.stage, img, img.scale, 0, 200);
+      b.after(900, () => b.stage.tweens.add({ targets: img, alpha: 0, duration: 400, onComplete: () => img.destroy() }));
     }
     // Back to his own mark, his own card again.
     if (aura.active) aura.startFollow(v.root, 0, -v.height * 0.6);

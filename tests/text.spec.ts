@@ -10,6 +10,7 @@ import { readFileSync } from 'node:fs';
 import { test, expect, type Page } from '@playwright/test';
 
 import { SMOKE, type TextInfo, boot, collectErrors, dadLock, expectNoErrors, texts, until } from './harness';
+import type { WWHooks } from '../src/testHooks';
 
 interface Line {
   id: string;
@@ -33,13 +34,13 @@ async function untilTexts(page: Page, pred: (t: TextInfo[]) => boolean, what: st
 
 /** Hush whatever is playing, then say `id`; a bark waits out the gap after a cut-off bark. */
 async function say(page: Page, id: string, priority: 'instruction' | 'bark', at?: { x: number; y: number }): Promise<void> {
-  await page.evaluate(() => (window as unknown as { __ww: { hush(): void } }).__ww.hush());
+  await page.evaluate(() => (window as unknown as { __ww: WWHooks }).__ww.hush());
   await page.waitForTimeout(400);
   await page.evaluate(
     ([i, p, a]) => {
-      const ww = (window as unknown as { __ww: { hush(): void; say(id: string, p: string, at?: unknown): Promise<boolean> } }).__ww;
+      const ww = (window as unknown as { __ww: WWHooks }).__ww;
       ww.hush();
-      void ww.say(i as string, p as string, a ?? undefined);
+      void ww.say(i, p, a ?? undefined);
     },
     [id, priority, at ?? null] as const,
   );

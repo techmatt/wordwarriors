@@ -10,7 +10,8 @@
  */
 
 import { getAudioContext, unlockAudio } from '../audio/context';
-import { HELD_MS, holdPlan, holdSamples, type HoldMode } from '../audio/holdSound';
+import { holdPlan, holdSamples, type HoldMode } from '../audio/holdSound';
+import { BRIDGE } from '../config';
 import { realTimeout } from '../realTime';
 
 export interface TimedWord {
@@ -43,8 +44,8 @@ interface VoiceManifestFile {
 const DECODE_SLOTS = 12;
 /** A clip's fetch is given up after this (item 057 saw one hang 60 s), freeing its slot. Wall-clock time (`realTimeout`). */
 const FETCH_TIMEOUT_MS = 15_000;
-/** A caption-only line's pace, a word every this many seconds (VoiceBus's estimate for a line with no clip). */
-const WORD_S = 0.35;
+/** A caption-only line's pace, a word every this many seconds (VoiceBus's estimate for a line with no clip uses it too). */
+export const WORD_S = 0.35;
 
 interface DecodeJob {
   id: string;
@@ -273,7 +274,7 @@ export class VoiceBank {
    * by its own shape. A held sound is `heldMs` long in all (the bridge
    * passes BRIDGE.stretchMs). Null until the line is decoded.
    */
-  held(id: string, mode: HoldMode, heldMs = HELD_MS): HeldClip | null {
+  held(id: string, mode: HoldMode, heldMs = BRIDGE.stretchMs): HeldClip | null {
     const ctx = getAudioContext();
     const buffer = this.buffers.get(id);
     if (!ctx || !buffer) return null;

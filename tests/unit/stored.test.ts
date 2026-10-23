@@ -17,7 +17,7 @@ import { moveKey, narratorLine, wordLine } from '../../content/voice/ids';
 import { BRIDGE_PICTURES, CROSS_WORDS } from '../../src/rules/bridge';
 import { CHARGE_WORDS } from '../../src/rules/charge';
 import { GRAB_WORDS } from '../../src/rules/grab';
-import { BAG_WORDS } from '../../src/rules/sentences';
+import { BAG_WORDS } from '../../src/rules/bank';
 import { SHIFT_WORDS } from '../../src/rules/shifter';
 import { composeLines } from '../../tools/voice/compose';
 

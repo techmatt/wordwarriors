@@ -22,7 +22,7 @@ import Phaser from 'phaser';
 import type { AbilitySpec } from '../../../content/battle/types';
 import { sfxBoom, sfxPoof, sfxShield, sfxSummon, sfxWhoosh, sfxZap } from '../../audio/sfx';
 import { DEPTH } from '../../config';
-import { hex, rgb } from '../../fx/colour';
+import { bright, colourGap, hex } from '../../fx/colour';
 import { burst, fitImage, floatText, fxQuality, shake, shockwave } from '../../fx/juice';
 import { TEX } from '../../fx/textures';
 import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter } from '../Fighter';
@@ -51,21 +51,6 @@ const VILLAIN_SPOT: Pt = { x: 975, y: 570 };
 const METER = { x: 400, y: 76, w: 480, h: 22 };
 const RAINBOW = [0xff4a6a, 0xff9a3c, 0xffd23f, 0x5aff8a, 0x7ad9ff, 0xb04aff];
 const GOLD = 0xffd23f;
-
-/** A dark palette colour lifted towards white, so a beam on a night sky still reads. */
-function bright(c: number): number {
-  const [r, g, b] = rgb(c);
-  if ((0.3 * r + 0.59 * g + 0.11 * b) / 255 >= 0.35) return c;
-  const up = (v: number) => Math.round(v + (255 - v) * 0.5);
-  return (up(r) << 16) | (up(g) << 8) | up(b);
-}
-
-/** How far apart two colours are, roughly as the eye sees it. */
-function colourGap(a: number, b: number): number {
-  const [ar, ag, ab] = rgb(a);
-  const [br, bg, bb] = rgb(b);
-  return Math.hypot(ar - br, ag - bg, ab - bb);
-}
 
 /** The spell-beam clash: two beams and the point where they meet. */
 export class ClashStage extends BaseStage {
@@ -162,7 +147,7 @@ export class ClashStage extends BaseStage {
   override home(f: Fighter, i: number): Pt | null {
     if (f === this.host.villain) {
       // A giant stands at the front, kept wholly on screen; everybody else mid-floor.
-      const giant = f.init.size >= 2;
+      const giant = f.giant;
       return { x: Math.min(VILLAIN_SPOT.x, ARENA_RIGHT - f.height * 0.45 - 10), y: giant ? FLOOR_BOTTOM - 30 : VILLAIN_SPOT.y };
     }
     const spot = HERO_SPOTS[Math.min(i, HERO_SPOTS.length - 1)]!;

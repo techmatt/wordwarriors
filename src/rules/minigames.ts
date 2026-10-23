@@ -14,7 +14,9 @@
  * 096, fetch rooms only), times how shaky the words its chains can use are.
  *
  * A new minigame is one entry here: its kind, its scene, a weight, the
- * slots it can fill. A new kind is also a `MinigameKind`, its lean here
+ * slots it can fill. Key 0's debug pedestal for it (`DEBUG_GAMES`) and
+ * debug mode in its scene (`DEBUG_ROOMS`, src/episode/debug.ts) follow from
+ * that entry by themselves. A new kind is also a `MinigameKind`, its lean here
  * (`LEAN`), its planner and its room plan (src/rules/sentences.ts `PLANNERS`
  * and `RoomPlan`; `PLAN_ORDER` if it plans words of its own). Whatever it
  * is, it must end in a key word she has read (the thing fetched, or the

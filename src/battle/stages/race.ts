@@ -154,7 +154,7 @@ export class RaceStage extends BaseStage {
   private addRacer(f: Fighter): void {
     const s = this.scene;
     const [c0, c1] = f.init.palette;
-    const walker = f.init.style !== 'fly' && f.init.size < 2;
+    const walker = f.init.style !== 'fly' && !f.giant;
     const cloud = walker
       ? s.add.particles(0, 0, TEX.smoke, {
           speedX: { min: -260, max: -120 },
@@ -184,21 +184,16 @@ export class RaceStage extends BaseStage {
 
   /** The cave sweeping past: far stalactites, lantern strings, near coin piles. */
   private makeLayers(): void {
-    const s = this.scene;
-    const span = GAME_WIDTH + 400;
-    if (this.space) return this.makeSpaceLayers(span);
-    for (let i = 0; i < 7; i++) {
-      const g = s.add.graphics().setDepth(DEPTH.floor).setPosition(-200 + (i * span) / 7, 0);
+    if (this.space) return this.makeSpaceLayers();
+    this.layer('far', (g) => {
       for (let k = 0; k < 3; k++) {
         const x = k * 46 - 46;
         const len = 60 + Math.random() * 110;
         g.fillStyle(0x24160c, 0.85).fillTriangle(x - 22, 0, x + 22, 0, x, len);
         g.fillStyle(0x6a4a2a, 0.5).fillTriangle(x - 6, 0, x + 2, 0, x - 2, len * 0.7);
       }
-      this.layers.push({ g, speed: 90 });
-    }
-    for (let i = 0; i < 4; i++) {
-      const g = s.add.graphics().setDepth(DEPTH.floor + 1).setPosition(-200 + (i * span) / 4, 150 + Math.random() * 90);
+    });
+    this.layer('mid', (g, i) => {
       const curve = new Phaser.Curves.QuadraticBezier(new Phaser.Math.Vector2(-150, 0), new Phaser.Math.Vector2(0, 60), new Phaser.Math.Vector2(150, 0));
       g.lineStyle(3, 0x3a2414, 0.9);
       curve.draw(g, 24);
@@ -208,24 +203,13 @@ export class RaceStage extends BaseStage {
         g.fillStyle(c, 0.25).fillCircle(p.x, p.y + 10, 16);
         g.fillStyle(c, 1).fillCircle(p.x, p.y + 10, 7);
       }
-      this.layers.push({ g, speed: 210 });
-    }
-    for (let i = 0; i < 6; i++) {
-      const g = s.add.graphics().setDepth(FLOOR_TOP - 6).setPosition(-200 + (i * span) / 6, GAME_HEIGHT + 6);
-      const w = 120 + Math.random() * 90;
-      const h = 34 + Math.random() * 24;
-      g.fillStyle(0xc8901a, 1).fillEllipse(0, 0, w + 10, h * 2 + 8);
-      g.fillStyle(0xffc23a, 1).fillEllipse(0, 0, w, h * 2);
-      for (let k = 0; k < 6; k++) g.fillStyle(k % 2 ? 0xffffff : 0xff5ab4, 0.9).fillCircle((Math.random() - 0.5) * w * 0.7, -Math.random() * h * 0.8, 3);
-      this.layers.push({ g, speed: 520 });
-    }
+    });
+    this.nearPiles(0xc8901a, 0xffc23a, 0xff5ab4);
   }
 
   /** Space sweeping past (item 115, the space race): far stars, ringed planets and comets, near ice floes. */
-  private makeSpaceLayers(span: number): void {
-    const s = this.scene;
-    for (let i = 0; i < 7; i++) {
-      const g = s.add.graphics().setDepth(DEPTH.floor).setPosition(-200 + (i * span) / 7, 0);
+  private makeSpaceLayers(): void {
+    this.layer('far', (g) => {
       for (let k = 0; k < 9; k++) {
         const x = (Math.random() - 0.5) * 180;
         const y = 20 + Math.random() * 200;
@@ -233,10 +217,8 @@ export class RaceStage extends BaseStage {
         g.fillStyle(0xffffff, 0.25).fillCircle(x, y, r * 2.4);
         g.fillStyle(k % 3 ? 0xffffff : 0xffe98a, 0.95).fillCircle(x, y, r);
       }
-      this.layers.push({ g, speed: 90 });
-    }
-    for (let i = 0; i < 4; i++) {
-      const g = s.add.graphics().setDepth(DEPTH.floor + 1).setPosition(-200 + (i * span) / 4, 150 + Math.random() * 90);
+    });
+    this.layer('mid', (g, i) => {
       if (i % 2 === 0) {
         // A little ringed planet.
         const c = RAINBOW[(i * 2 + 1) % RAINBOW.length]!;
@@ -249,17 +231,34 @@ export class RaceStage extends BaseStage {
         for (let k = 0; k < 6; k++) g.fillStyle(0xbfe8ff, 0.5 - k * 0.07).fillCircle(18 + k * 22, k * 3, 13 - k * 1.6);
         g.fillStyle(0xffffff, 1).fillCircle(0, 0, 13);
       }
-      this.layers.push({ g, speed: 210 });
+    });
+    this.nearPiles(0x7ab0d8, 0xe8f6ff, 0x9ad8ff);
+  }
+
+  /**
+   * One parallax layer, its pieces spread across the screen and a margin, each drawn by `draw`:
+   * `far` 7 along the top (slow), `mid` 4 at a random height, `near` 6 along the bottom edge (fast).
+   */
+  private layer(kind: 'far' | 'mid' | 'near', draw: (g: Phaser.GameObjects.Graphics, i: number) => void): void {
+    const span = GAME_WIDTH + 400;
+    const { n, depth, speed } = { far: { n: 7, depth: DEPTH.floor, speed: 90 }, mid: { n: 4, depth: DEPTH.floor + 1, speed: 210 }, near: { n: 6, depth: FLOOR_TOP - 6, speed: 520 } }[kind];
+    for (let i = 0; i < n; i++) {
+      const y = kind === 'far' ? 0 : kind === 'mid' ? 150 + Math.random() * 90 : GAME_HEIGHT + 6;
+      const g = this.scene.add.graphics().setDepth(depth).setPosition(-200 + (i * span) / n, y);
+      draw(g, i);
+      this.layers.push({ g, speed });
     }
-    for (let i = 0; i < 6; i++) {
-      const g = s.add.graphics().setDepth(FLOOR_TOP - 6).setPosition(-200 + (i * span) / 6, GAME_HEIGHT + 6);
+  }
+
+  /** The near layer: piles (coins, ice floes) along the bottom edge, a rim, a top and sparkles. */
+  private nearPiles(rim: number, top: number, sparkle: number): void {
+    this.layer('near', (g) => {
       const w = 120 + Math.random() * 90;
       const h = 34 + Math.random() * 24;
-      g.fillStyle(0x7ab0d8, 1).fillEllipse(0, 0, w + 10, h * 2 + 8);
-      g.fillStyle(0xe8f6ff, 1).fillEllipse(0, 0, w, h * 2);
-      for (let k = 0; k < 6; k++) g.fillStyle(k % 2 ? 0xffffff : 0x9ad8ff, 0.9).fillCircle((Math.random() - 0.5) * w * 0.7, -Math.random() * h * 0.8, 3);
-      this.layers.push({ g, speed: 520 });
-    }
+      g.fillStyle(rim, 1).fillEllipse(0, 0, w + 10, h * 2 + 8);
+      g.fillStyle(top, 1).fillEllipse(0, 0, w, h * 2);
+      for (let k = 0; k < 6; k++) g.fillStyle(k % 2 ? 0xffffff : sparkle, 0.9).fillCircle((Math.random() - 0.5) * w * 0.7, -Math.random() * h * 0.8, 3);
+    });
   }
 
   private racer(f: Fighter): Racer | undefined {
@@ -268,7 +267,7 @@ export class RaceStage extends BaseStage {
 
   /** The floor row each racer flies along. */
   private laneY(f: Fighter): number {
-    if (f === this.host.villain) return f.init.size >= 2 ? 655 : 570;
+    if (f === this.host.villain) return f.giant ? 655 : 570;
     if (f === this.host.helper) return 455;
     const i = this.host.heroes.indexOf(f);
     // Her lane in front: a grown-up ally behind her shows over her head, where
@@ -281,7 +280,7 @@ export class RaceStage extends BaseStage {
     const wave = Math.sin(this.t * 2.2 + f.uid) * 10;
     if (this.tumbleAt >= 0 && f.team === 'hero') return 12;
     const grown = f.growUntil > f.now;
-    if (f.init.size >= 2) return grown ? 0 : 16 + wave * 0.5;
+    if (f.giant) return grown ? 0 : 16 + wave * 0.5;
     // A big flyer grown for its ultimate sinks a little, or its head leaves the top (a grown-up by
     // how tall he is drawn, item 093: the chef's 1.65 reached the HUD band).
     if (grown && (f.init.tall ?? f.init.size) >= 1.4) return 30;
@@ -290,7 +289,7 @@ export class RaceStage extends BaseStage {
   }
 
   private maxX(f: Fighter): number {
-    return f.init.size >= 2 ? ARENA_RIGHT - f.height * 0.45 : ARENA_RIGHT - 60;
+    return f.giant ? ARENA_RIGHT - f.height * 0.45 : ARENA_RIGHT - 60;
   }
 
   /** The finish line, nearer the middle when a giant has to fit past it. */

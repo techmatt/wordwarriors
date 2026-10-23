@@ -20,7 +20,7 @@ import { STORIES } from '../battle/stories/index.js';
 import { storySplashArt } from '../battle/stories/types.js';
 import { ALL_SIDE_ROOMS, BEDROOMS, ENTRY_HALL, HUB, PLACES, hubArt } from '../house/house.js';
 import { RUNES, runeArt } from '../phonics/runes.js';
-import { FLAVOUR_PICTURES, MOVE_PICTURES, PICTURE_WORDS, SPECIAL_WORDS, WORD_BY_ID } from '../phonics/words.js';
+import { FLAVOUR_PICTURES, MOVE_PICTURES, PICTURE_WORDS, SPECIAL_WORDS } from '../phonics/words.js';
 
 export type AssetKind = 'character' | 'minion' | 'arena' | 'room' | 'picture' | 'item' | 'prop';
 
@@ -159,7 +159,7 @@ for (const b of BEDROOMS) {
   assets.push({ id: `room_bedroom_${b.id}`, kind: 'room', w: 1280, h: 720, content: `${b.look}. The bed on the left and a door on the right are drawn by the game. ${HOUSE_ROOM}.`, label: '', glyph: '⭐', palette: b.palette });
 }
 assets.push({ id: 'room_hub', kind: 'room', w: 1280, h: 720, content: `${HUB.look}. The doors and the magic circle are drawn by the game on top; keep the back wall plain where they stand. ${HOUSE_ROOM}.`, label: '', glyph: '🏠', palette: HUB.palette });
-// The entry hall (item 033): the home warm-up's nine labelled pictures stand on its floor.
+// The entry hall (item 033): the home warm-up's nine pictures (no words on them, item 059) stand on its floor.
 assets.push({ id: 'room_entry', kind: 'room', w: 1280, h: 720, content: `${ENTRY_HALL.look}. The front door on the right and the things on the floor are drawn by the game. ${HOUSE_ROOM}.`, label: '', glyph: '🧥', palette: ENTRY_HALL.palette });
 // Quest places (item 025): each hub is laid out like the house's, so the game
 // draws the doors, the magic circle and the way out on top of it.
@@ -188,14 +188,9 @@ for (const c of ROSTER) {
   }
 }
 
-// Word pictures: every CVC word, the special words (MICE), the move words
-// (item 018: the victory recap pictures them) and any counter sentence key
-// word not already among them (its picture is the item's glyph).
+// Word pictures: every pictured word, the special words (MICE), the move words
+// and the flavour pictures.
 const picWords = [...PICTURE_WORDS, ...SPECIAL_WORDS, ...MOVE_PICTURES, ...FLAVOUR_PICTURES];
-for (const c of ROSTER) {
-  const key = c.counter.word;
-  if (key && !picWords.some((w) => w.word === key)) picWords.push(WORD_BY_ID[key] ?? { word: key, glyph: c.counter.glyph, decodable: true });
-}
 for (const w of picWords) {
   assets.push({
     id: `pic_${w.word}`,

@@ -14,11 +14,13 @@
  *   ?fetched=net,fan                    (the battle items fetched; default: the house plan's)
  *   ?warmup=1                           (the entry hall's warm-up word fetched first too, as in an episode)
  *   ?charged=m,s,a                      (Charge the Spell's runes, fired in this battle part; default: the plan's charge room's, in part 1)
- *   ?room=charge                        (Charge the Spell behind door a: Episode.ts roomGames)
+ *   ?room=charge                        (Charge the Spell behind door a: src/episode/plans.ts roomGames)
  *   parked v0.1 games: ?scene=sound | blend | picture | spell | alarm | retreat
  *
  * Not the whole list (?difficulty=, ?prep=, ?read= and more): docs/episode.md,
- * *Dev keys and URLs*, has every one.
+ * *Dev keys and URLs*, has every one. The episode's own (?room= ?game= ?games=
+ * ?sentence= ?grab= ?ending= in src/episode/plans.ts, ?solo in state.ts,
+ * ?nojourney in Episode.ts) are read there, not here.
  *
  * Later steps get the episode they would have had by then: the gift word
  * learned in the hub, the earlier rooms done, the fetched items in the bag (the plan's
@@ -51,7 +53,10 @@ import { voiceBank } from '../voice/VoiceBank';
  * The cast from the URL (item 025), for this episode and every one after it
  * this session; whatever is not given is drawn (src/rules/cast.ts).
  *
- *   ?seed=7                      the draw is repeatable: same seed, same episodes
+ *   ?seed=7                      seeds the cast draw (castRand): same seed, same cast, quest place,
+ *                                story and line variants and fight style; the rooms, games and
+ *                                words are still drawn unseeded (Math.random; the variety
+ *                                simulator seeds them by replacing it)
  *   ?cast=default                the fixed default episode (EPISODE_DEFAULTS; the tests' default)
  *   ?hero= ?ally= ?villain=      roster ids; a dad's form by its id (ally=dada_matt_lifter); ally=none
  *   ?form=lifter,warlock         the dads' forms by name (builder lifter cyber blade; chef warrior warlock)

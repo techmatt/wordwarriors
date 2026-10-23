@@ -26,7 +26,7 @@
  *
  * Elsa, Anna and Jasmine are written as original archetypes (an ice
  * sorceress, her brave sister, a desert princess with a flying carpet), not as
- * lookalikes of anybody's films. The art prompts in docs/art.md say the same.
+ * lookalikes of anybody's films. The art prompts in content/art/prompts.ts say the same.
  *
  * Move words (an ability's `words`) are flavour (see MOVE_WORDS): a pad word one of
  * them answers to fires that ability, styled. Taunts are short, because a bubble over a moving fighter has to be
@@ -38,7 +38,7 @@
 // from here.
 export { MOVE_WORDS, abilityCallout, abilityWords } from './roster/abilities.js';
 export { MINIONS } from './roster/minions.js';
-export { DAD_COLOURS, OWN_COLOURS } from './roster/dads.js';
+export { DAD_COLOURS, DADS, OWN_COLOURS } from './roster/dads.js';
 export { ROSTER, CHARACTER_BY_ID, villainName, personOf, PERSONS, formsOf, formId } from './roster/index.js';
 export { COMBOS, DEFAULT_COMBO, comboFor, comboPart } from './roster/combos.js';
 export { ARENAS } from './roster/arenas.js';

@@ -9,7 +9,7 @@
  * server spent its first minutes scanning the tree (the voice and art junctions too),
  * every scenario of a sweep timed out at boot behind it, and voice fetches took 4 to 9 s
  * each after. A build is also what Julia plays. `QA_DEV_SERVER=1` serves the dev server
- * instead (`vite.qa.config.ts`: no watching, no hot reload). Either way edits during a
+ * instead (`tests/vite.nowatch.config.ts`: no watching, no hot reload). Either way edits during a
  * sweep wait for the next one. The build is the suite's (`tests/testBuild.ts`, item 122):
  * skipped when its stamp says nothing it is built from changed since the last sweep
  * (`WW_REBUILD=1` builds anyway), and node runs the tools directly, not `npx`.
@@ -42,7 +42,7 @@ export default defineConfig({
   projects: gpuProjects({ args: ['--enable-precise-memory-info'] }),
   webServer: {
     command: process.env.QA_DEV_SERVER
-      ? `node node_modules/vite/bin/vite.js --config tests/qa/vite.qa.config.ts --port ${PORT} --strictPort`
+      ? `node node_modules/vite/bin/vite.js --config tests/vite.nowatch.config.ts --port ${PORT} --strictPort`
       : `node --import tsx tests/testBuild.ts && node node_modules/vite/bin/vite.js preview -c tests/vite.test.config.ts --port ${PORT} --strictPort`,
     cwd: '../..',
     env: { WW_TEST_DIST: QA_DIST },

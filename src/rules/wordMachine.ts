@@ -31,9 +31,8 @@ import { BANK_BY_WORD, unitsOf } from '../../content/phonics/bank';
 import { FAMILIES, FAMILY_BY_RIME, onsetOf, rimeOf, sillyWord, type Family } from '../../content/phonics/families';
 import { WORD_MACHINE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
-import { met, recentWords, wordWeight as bankWeight } from './bank';
+import { BAG_WORDS, LEGACY_BAG_WORDS, met, recentWords, wordWeight as bankWeight } from './bank';
 import { pickWeighted, shuffle, type Rand } from './random';
-import { BAG_WORDS, LEGACY_BAG_WORDS } from './sentences';
 
 export type MachineMode = 'make' | 'flip' | 'real_or_silly';
 

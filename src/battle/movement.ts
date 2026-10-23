@@ -14,11 +14,29 @@ import Phaser from 'phaser';
 
 import type { MoveStyle } from '../../content/battle/types';
 import { sfxStomp, sfxWhoosh } from '../audio/sfx';
+import { WALK_SPEED } from '../config';
 import { burst, shake } from '../fx/juice';
 import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter } from './Fighter';
 
 export const ARENA_LEFT = 70;
 export const ARENA_RIGHT = 1210;
+
+/** A stick pushed less than this (squared length) is at rest. */
+export const STICK_DEADZONE = 0.04;
+
+/**
+ * Her hero walked by the stick on real time (the move choice, a story walk): moves `at` and
+ * leans her into it. False, and she stands up straight, when the stick rests or she cannot walk.
+ */
+export function stickWalk(me: Fighter, at: { x: number; y: number }, mv: Phaser.Math.Vector2, realDt: number): boolean {
+  const walking = mv.lengthSq() > STICK_DEADZONE && me.active;
+  if (walking) {
+    at.x = Phaser.Math.Clamp(at.x + mv.x * WALK_SPEED * realDt, ARENA_LEFT, ARENA_RIGHT);
+    at.y = Phaser.Math.Clamp(at.y + mv.y * WALK_SPEED * 0.8 * realDt, FLOOR_TOP, FLOOR_BOTTOM);
+    me.lean = Phaser.Math.Clamp(mv.x * 0.2, -0.25, 0.25);
+  } else me.lean = 0;
+  return walking;
+}
 
 /** How high a fighter floats standing still (a story mark, the move choice): a flyer up in the air, a hoverer a little off the floor. */
 export function restLift(f: Fighter): number {
@@ -102,7 +120,7 @@ const stomp: Steer = (f, s) => {
     let tx = t ? t.x + side(f) * 240 : f.x;
     // A real giant (Tiamat, size 2+) holds her own half and lets the fight
     // come to her: she fills it already, and walking over would bury the heroes.
-    if (f.init.size >= 2) tx = f.team === 'hero' ? Math.min(tx, 420) : Math.max(tx, 860);
+    if (f.giant) tx = f.team === 'hero' ? Math.min(tx, 420) : Math.max(tx, 860);
     const dx = Phaser.Math.Clamp(tx - f.x, -50, 50);
     m.stepTo = f.x + dx;
     m.stepFrom = f.x;
