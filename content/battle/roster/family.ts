@@ -25,7 +25,8 @@ export const FAMILY: CharacterSpec[] = [
         { key: 'wand', text: 'My wand is sparkly!' },
         { key: 'brave', text: 'I am super brave!' },
         { key: 'boop', text: 'Got you!' },
-        { key: 'giggle', text: "You can't catch me!" },
+        // Hunt 9, M40: was "You can't catch me!" (CAN is a reading word: her own taunt kept it out of every episode).
+        { key: 'giggle', text: "You'll never catch me!" },
         { key: 'team', text: 'We are a super team!' },
       ],
     },

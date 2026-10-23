@@ -45,7 +45,8 @@ export const ODDBALLS: CharacterSpec[] = [
       taunts: [
         { key: 'tiny', text: 'Tiny but terrible!' },
         { key: 'target', text: 'Target locked!' },
-        { key: 'resist', text: "You can't win!" },
+        // Hunt 9, M40: was "You can't win!" (CAN is a reading word).
+        { key: 'resist', text: 'You will never win!' },
         { key: 'core', text: 'My core is full of power!' },
         { key: 'stomp', text: 'Here come my rockets!' },
         { key: 'robot', text: 'Robots rule!' },

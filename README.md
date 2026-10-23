@@ -409,7 +409,9 @@ dimension (words per game, phonics, frames, voice variants, pictures, cast, plac
 fights, items), worst first: the pool, how many came up, the median gap before one comes
 back, the share back within 2 episodes, the most drawn against the mean, and what never
 came up. `--json=<file>` keeps the rows, each item's count among them (`counts`, item 126: to follow
-one word, BUG say, across runs); `--only=<name,…>` narrows them. `Math.random` is
+one word, BUG say, across runs); `--only=<name,…>` narrows them. Under the table (hunt 9,
+M39): the Shape-Shifter's visits, how many were short (under `SHIFTER.links`, by length) and
+how many changed all three places. `Math.random` is
 seeded, so a seed replays; a change to any draw or to the bank moves every later episode,
 so compare the same seeds before and after. Item 121's before and after runs are its report's.
 A before run needs no checkout: `git archive <commit> | tar -x -C scratch/<dir>`, then run

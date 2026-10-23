@@ -14,7 +14,10 @@ import { castEpisode, rememberCast, remembered, resetEpisode, setCastOptions } f
 import { episode } from '../../src/episode/state';
 import { seededRand } from '../../src/rules/random';
 import { progress } from '../../src/state/progress';
-import { housePlan } from '../../src/episode/plans';
+import { giftWord, grabPlan, housePlan, movePlan } from '../../src/episode/plans';
+import { FRAME_BY_ID } from '../../content/phonics/sentences';
+import { withStems } from '../../src/rules/bank';
+import { wordsOf } from '../../src/rules/sentences';
 
 test('the default cast remembers no ally, form or variant; its fixed villain is not met', () => {
   progress.reset();
@@ -87,6 +90,34 @@ test('door b (item 126): the Shape-Shifter about half the drawn episodes, else a
     assert.ok(shifters >= 8 && shifters <= 16, `${shifters} of 24: ${doorB.join(' ')}`);
     for (const g of doorB) assert.ok(g === 'shifter' || g === 'word_machine' || g.startsWith('sentence:'), g);
     assert.ok(doorB.some((g) => g.startsWith('sentence:')) && doorB.includes('word_machine'), doorB.join(' '));
+  } finally {
+    Math.random = random;
+    setCastOptions({ overrides: {}, fixed: !EPISODE_DEFAULTS.randomCast });
+  }
+});
+
+test('frames (hunt 9, M40 (b), M41 (b)): a drawn frame holds no pad, gift or warm-up word, RUN comes up on a pad, and no fetch frame asks for MOM or DAD', () => {
+  const random = Math.random;
+  Math.random = seededRand(130);
+  try {
+    progress.reset();
+    setCastOptions({ fixed: false, rand: Math.random, overrides: {} });
+    const pads = new Set<string>();
+    for (let e = 0; e < 60; e++) {
+      resetEpisode();
+      rememberCast();
+      const plan = housePlan();
+      const said = new Set(withStems([giftWord(), ...[...movePlan().part1, ...movePlan().part2].flatMap((c) => c.words), grabPlan().word]));
+      for (const c of [...movePlan().part1, ...movePlan().part2]) pads.add(c.right);
+      for (const p of plan) {
+        if (p.kind !== 'sentence') continue;
+        const own = withStems(wordsOf(FRAME_BY_ID[p.sentence.frame]!.text.replace(/\{\w+\}/g, ' ')));
+        assert.deepEqual(own.filter((w) => said.has(w)), [], `episode ${e + 1}: ${p.sentence.frame}`);
+        if (p.slot !== 'counter') assert.ok(p.key !== 'mom' && p.key !== 'dad', `episode ${e + 1}: ${p.sentence.frame} ${p.key}`);
+      }
+      progress.episodeDone();
+    }
+    assert.ok(pads.has('run'), 'RUN a pad in 60 episodes');
   } finally {
     Math.random = random;
     setCastOptions({ overrides: {}, fixed: !EPISODE_DEFAULTS.randomCast });

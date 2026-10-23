@@ -23,8 +23,8 @@ import { composeLines } from '../../tools/voice/compose';
 import { withDifficulty } from './difficulty';
 import { memory, seeded, spread } from './seeds';
 
-/** Seed 1's chain since item 126 (MOM, MOP's neighbour; M29: it changes the vowel). */
-const GOLDEN_SEED_1 = ['pan', 'man', 'map', 'cap', 'cup'];
+/** Seed 1's chain since hunt 9's M39 (two places are as good as three: it keeps the vowel). */
+const GOLDEN_SEED_1 = ['pan', 'man', 'map', 'cap', 'cat'];
 
 const sameSound = (a: string, b: string) => a === b || [a, b].sort().join('') === 'ck';
 
@@ -70,26 +70,30 @@ test('planShifter: one letter a link, first letter first, back in order once at 
   }
 });
 
-test('planShifter (hunt 6, M29): seeded draws change all three places, the vowel too, and read it at the last letter, never all fix it', () => {
+test('planShifter (hunt 6, M29; hunt 9, M39): seeded draws change two places at least, the vowel in many, and read it at the last letter, never all fix it', () => {
   let lastRead = 0;
+  let vowel = 0;
   for (let seed = 1; seed <= 40; seed++) {
     const p = planShifter(new ProgressStore(memory()), { avoid: [], taken: [] }, seeded(spread(seed)))!;
     const chain = [p.start, ...shifterWords(p)];
-    assert.equal(placesOf(chain), 3, `seed ${seed}: ${chain.join(' ')}`);
-    assert.ok(positionsOf(chain).includes(1), `seed ${seed}: ${chain.join(' ')} never changes the vowel`);
+    assert.ok(placesOf(chain) >= 2, `seed ${seed}: ${chain.join(' ')}`);
+    if (positionsOf(chain).includes(1)) vowel++;
     assert.ok(p.links.some((l) => l.beat === 'read'), `seed ${seed}: all fix it`);
     lastRead += p.links.filter((l) => l.beat === 'read' && l.pos === 2).length;
   }
   // Before M29 no read-it link could change the last letter (no word had two pictured siblings there).
   assert.ok(lastRead >= 5, `${lastRead} read-it links at the last letter in 40 draws`);
-  // Golden: seed 1's chain, its vowel changed (rewrite it when the draw changes on purpose).
+  // M39 (Matt's pick b): all three places is a lean (THREE_PLACES_WEIGHT), no longer a rule: 11 of 40 here
+  // from a fresh store, about half of `npm run variety`'s visits; before M29, 45 of 300 changed the vowel.
+  assert.ok(vowel >= 9, `${vowel} of 40 chains change the vowel`);
+  // Golden: seed 1's chain (rewrite it when the draw changes on purpose).
   const p = planShifter(new ProgressStore(memory()), { avoid: [], taken: [] }, seeded(spread(1)))!;
   assert.deepEqual([p.start, ...shifterWords(p)], GOLDEN_SEED_1);
 });
 
 test('wrongPictures (M29): at the vowel or the last letter one sibling and another picture, its first letter first; at the first letter siblings only', () => {
-  // BIG at the last letter: one pictured sibling, BIB (BIN is stored, item 127), and another picture with its first letter.
-  assert.deepEqual(wrongPictures('big', 2, 'bug', SHIFT_WORDS).sort(), ['bed', 'bib']);
+  // BIG at the last letter: one pictured sibling, BIB (BIN is stored, item 127), and another picture with its first letter (BED stored, hunt 9).
+  assert.deepEqual(wrongPictures('big', 2, 'bug', SHIFT_WORDS).sort(), ['bib', 'bus']);
   const like = wrongPictures('cap', 2, 'cat', ['can', 'cup', 'dog', 'cat']);
   assert.deepEqual(like, ['can', 'cup'], 'the sibling, then a picture with its first letter before one without');
   for (const w of SHIFT_WORDS) for (const o of wrongPictures(w, 0, '', SHIFT_WORDS)) assert.equal(changedAt(w, o), 0, `the first letter, siblings only: ${w} beside ${o}`);

@@ -48,7 +48,9 @@ test('planShifter (hunt 7, fix 125): her recent reads spread the chains across e
     }
   }
   // Item 127 stored ten of its words (49 to 38; Matt's default (a)): at most 35% before, 19 of 50 since.
-  assert.ok(shared / pairs <= 0.38, `${shared} of ${pairs} episodes shared a chain word with the one before`);
+  // Hunt 9, M39: four links where the pool allows (rotation no longer drops a visit to two links), so
+  // more chains share a word: 25 of 50. `npm run variety` over drawn episodes reads 101 distinct chains.
+  assert.ok(shared / pairs <= 0.54, `${shared} of ${pairs} episodes shared a chain word with the one before`);
   assert.equal(links, 10 * 6 * 4, 'every chain four links');
 });
 
@@ -70,8 +72,10 @@ test('planShifter (hunt 7, M36): a drawn run of ten episodes repeats no chain, a
       for (const w of shifterWords(p)) store.record('words', w, true, 0);
     }
   }
-  // Never, until item 127 stored ten of its words (49 to 38; Matt's default (a)): now rarely, 5 of 50.
-  assert.ok(sharedLinks <= 5, `${sharedLinks} of 50 chains shared a link with one of the six before`);
+  // Never, until item 127 stored ten of its words (49 to 38; Matt's default (a)): then rarely, 5 of 50,
+  // which it met by dropping to two-link chains. Hunt 9, M39: the length ranks above a fresh link, as M36
+  // set out, so the run's chains stay at four links and 19 of 50 share one (none is the same chain).
+  assert.ok(sharedLinks <= 22, `${sharedLinks} of 50 chains shared a link with one of the six before`);
 });
 
 test('planShifter (hunt 8, M37 (a); item 126, pick 2b): seldom a word the episode before had her read, or one of the last two chains', () => {
@@ -97,6 +101,7 @@ test('planShifter (hunt 8, M37 (a); item 126, pick 2b): seldom a word the episod
   // M36's no shared link ranks above it, so where only chains through MAT or BUG share no link one comes (19 of 35 without M37).
   assert.ok(reused <= 10, `${reused} of 35 chains held MAT or BUG, read the episode before`);
   // 25 of 40 before pick 2b; the few three-places chains share their words, so some still do.
-  // Item 127 stored ten of its words (49 to 38; Matt's default (a)): 22 of 40 since.
-  assert.ok(fromChains <= 22, `${fromChains} of 40 chains held a word of the last two`);
+  // Item 127 stored ten of its words (49 to 38; Matt's default (a)): 22 of 40 since. Hunt 9, M39: four
+  // links where the pool allows, through the one component of linked words (CAN MAN PAN MAP...): 34 of 40.
+  assert.ok(fromChains <= 36, `${fromChains} of 40 chains held a word of the last two`);
 });

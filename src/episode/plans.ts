@@ -243,7 +243,7 @@ export function grabPlan(): { word: string; objects: string[] } {
  */
 function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[] } {
   const q = urlQuery();
-  const only = q.get('games') === 'sentence' ? SENTENCE_GAMES : undefined;
+  const only = q.get('games') === 'sentence' ? framesClear(SENTENCE_GAMES) : undefined;
   const asked = MINIGAME_BY_ID[q.get('game') ?? ''];
   const room = ROOM_FORCE.get(q.get('room') ?? '');
   const phonics =
@@ -255,11 +255,12 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
   const shifter = room === SHIFTER_GAME || (drawn && (room !== undefined || Math.random() < shifterChance())) ? SHIFTER_GAME : undefined;
   // `?room=shifter` takes door a; else it follows the phonics game. Two doors: a third forced game waits its turn.
   const forced = (room === SHIFTER_GAME ? [shifter, asked, phonics] : [asked, phonics, shifter]).filter((g, i, all): g is Minigame => Boolean(g) && all.indexOf(g) === i).slice(0, 2);
-  if (!forced.length) return only ? { pool: only } : {};
+  if (!forced.length) return { pool: only ?? framesClear(MINIGAMES) };
   // Item 126: drawn, the other door is a sentence frame or the word machine (the phonics games and the Shape-Shifter are forced or not at all).
-  const pool = only ?? (drawn ? MINIGAMES.filter((g) => !PHONICS_GAMES.includes(g) && g !== SHIFTER_GAME) : MINIGAMES);
+  const pool = only ?? framesClear(drawn ? MINIGAMES.filter((g) => !PHONICS_GAMES.includes(g) && g !== SHIFTER_GAME) : MINIGAMES);
   const rest = drawGames(progress, Math.random, pool.filter((g) => !forced.includes(g)));
-  return { games: [forced[0]!, forced[1] ?? rest[1], rest[2]] };
+  // The pool too: a room that cannot plan its game plays a sentence frame from it (`episodePlans`).
+  return { games: [forced[0]!, forced[1] ?? rest[1], rest[2]], pool };
 }
 
 /** The chance of the Shape-Shifter behind door b this episode (SHIFTER_ROOM): after one that had it, or one that did not. */
@@ -275,15 +276,24 @@ function shifterChance(): number {
  * banners and lines clear of pad words as it goes (BattleScene `textGivesAway`).
  */
 function saidBeforeBattle(): string[] {
-  return withStems([...bedroomWords(), ...HALL_LINE_WORDS, ...ROOM_LINE_WORDS, ...storyWords(), ...fightWords(), ...FRAME_WORDS]);
+  return withStems([...bedroomWords(), ...HALL_LINE_WORDS, ...ROOM_LINE_WORDS, ...storyWords(), ...fightWords()]);
 }
 
+/** A sentence frame's own words, stemmed (RUNS is RUN). */
+const frameWords = (id: string): string[] => withStems(wordsOf((FRAMES.find((f) => f.id === id)?.text ?? '').replace(/\{\w+\}/g, ' ')));
+
 /**
- * Every sentence frame's own words: the rooms' frames are drawn after the
- * pads, and the attic's {villain} RUNS FROM THE showed and said RUNS before
- * a battle-2 RUN pad (item 069).
+ * The rooms' frames are drawn after the pads, the gift and the warm-up's word, so a frame holding one of
+ * them waits, where the pool allows: the attic's {villain} RUNS FROM THE showed and said RUNS before a
+ * battle-2 RUN pad (item 069). Hunt 9, M40 (b): only this episode's drawn frames; every frame's words
+ * kept off the pads before, so RUN and CAN (CAN NOT) were never read.
  */
-const FRAME_WORDS = FRAMES.flatMap((f) => wordsOf(f.text.replace(/\{\w+\}/g, ' ')));
+function framesClear(pool: Minigame[]): Minigame[] {
+  const said = new Set(withStems([giftWord(), ...moveWords(), grabWord()]));
+  const clear = pool.filter((g) => !g.frame || !frameWords(g.frame).some((w) => said.has(w)));
+  const fill = (slot: 'fetch' | 'counter') => clear.filter((g) => g.slots.includes(slot)).length;
+  return fill('fetch') >= 2 && fill('counter') >= 1 ? clear : pool;
+}
 
 /**
  * What the fight style says and shows around the pads (item 039: the

@@ -29,7 +29,7 @@
 
 import { CHARACTER_BY_ID, MINIONS, comboPart } from '../../content/battle/roster';
 import type { FighterSpec } from '../../content/battle/types';
-import { FETCH_ITEMS, FRAME_BY_ID, NO_ARTICLE, NUMBER_WORDS, lookalikesOf, sentence, tokenWord, type Fill, type Sentence } from '../../content/phonics/sentences';
+import { FETCH_ITEMS, FRAME_BY_ID, NO_ARTICLE, NOT_FETCHED, NUMBER_WORDS, lookalikesOf, sentence, tokenWord, type Fill, type Sentence } from '../../content/phonics/sentences';
 import { ACTIONS, THINGS } from '../../content/phonics/bank';
 import { MINIGAMES, drawGames, type Minigame, type MinigameKind } from './minigames';
 import { machineWords, planMachine, type MachinePlan } from './wordMachine';
@@ -432,8 +432,8 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
       keys.push(o.reads.at(-1) ?? '');
       continue;
     }
-    // Not the villain's named counter word either: the attic's to draw (item 092).
-    const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w) && !ctx.named.includes(w)).filter(fits(i));
+    // Not the villain's named counter word either: the attic's to draw (item 092). Nor MOM or DAD (hunt 9, M41).
+    const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !NOT_FETCHED.has(w) && !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w) && !ctx.named.includes(w)).filter(fits(i));
     keys.push(drawKey(store, eligible, rand, [...keys, ...taken]));
   }
   // The counter: not a word on battle 1's move pads, not a word fetched this

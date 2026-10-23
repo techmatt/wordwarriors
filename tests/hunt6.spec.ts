@@ -182,7 +182,15 @@ test('Shape-Shifter level 1: a stone she reaches while the instruction plays sou
   const since = s.voice.history.length;
   const letter = stone.id.slice('stone_'.length);
   await until(page, ready(sh(s)!.index), 60_000, 'the link open');
-  await until(page, (st) => st.voice.history.slice(since).includes(`letter_${letter}_sound`), 10_000, `the ${letter} stone sounding`);
+  const sounding = await until(page, (st) => st.voice.history.slice(since).includes(`letter_${letter}_sound`), 10_000, `the ${letter} stone sounding`);
+  // Hunt 9, M42 (a): standing at it hides its letter, so a copy rides beside her head while it speaks
+  // (the stone's own letter, under her, is lower).
+  const her = sounding.room!.player;
+  const byHead = (b: number[]) => Math.abs((b[0]! + b[2]!) / 2 - her.x) < 130 && b[3]! < her.y - 70;
+  const lifted = (await texts(page)).find((t) => t.scene === 'ShifterRoom' && t.text === letter.toUpperCase() && byHead(t.bounds));
+  expect(lifted, `the ${letter} lifted beside her head`).toBeTruthy();
+  await page.waitForTimeout(250);
+  await page.screenshot({ path: 'tests/screenshots/hunt9_m42_lifted_letter.png' });
   expectNoErrors(errors);
 });
 

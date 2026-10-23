@@ -28,7 +28,7 @@ import { ACTIONS, BANK_BY_WORD, LIVE, STORED_WHY, THINGS, VOWEL_LIST } from '../
 import { FAMILIES } from '../../content/phonics/families';
 import { FRAMES } from '../../content/phonics/sentences';
 import { RUNES } from '../../content/phonics/runes';
-import { ACTIVE_CAST } from '../../src/config';
+import { ACTIVE_CAST, SHIFTER } from '../../src/config';
 import { helper, waker } from '../../src/episode/cast';
 import { rememberCast, resetEpisode, setCastOptions } from '../../src/episode/draws';
 import * as plans from '../../src/episode/plans';
@@ -70,6 +70,10 @@ function saw(e: number, group: string, name: string, items: (string | null | und
 /** Item 127: every stored word that came up anywhere she reads or is shown a word or picture. Must stay empty. */
 const WORDISH = ['words', 'pictures', 'items'];
 const storedDrawn: string[] = [];
+/** Hunt 9, M39: the Shape-Shifter's visits by chain length (links); under SHIFTER.links is a short visit. */
+const shifterLinks = new Map<number, number>();
+/** And those changing all three places, the vowel too (hunt 6, M29). */
+let shifterVowel = 0;
 
 const bank = (w: string) => BANK_BY_WORD[w];
 const villains = ACTIVE_CAST.villains;
@@ -147,6 +151,8 @@ for (let e = 0; e < EPISODES; e++) {
     if (p.kind === 'bridge') saw(e, 'pictures', 'bridge far-bank pictures (not the word)', p.bridge.rounds.flatMap((r) => r.pictures.filter((w) => w !== r.word)));
     if (p.kind === 'shifter') {
       saw(e, 'phonics', 'shifter chains', [chainKey(p.shifter)]);
+      shifterLinks.set(p.shifter.links.length, (shifterLinks.get(p.shifter.links.length) ?? 0) + 1);
+      if (new Set(p.shifter.links.map((l) => l.pos)).size === 3) shifterVowel++;
       saw(e, 'words', 'shifter words (start and links)', [p.shifter.start, ...p.shifter.links.map((l) => l.to)], SHIFT_WORDS);
       saw(e, 'pictures', 'shifter wrong pictures', p.shifter.links.filter((l) => l.beat === 'read').flatMap((l) => l.options.filter((o) => o !== l.to)));
       for (const l of p.shifter.links) if (l.beat === 'fix') progress.record('spelling', l.to, true, 0);
@@ -250,7 +256,11 @@ for (const r of rows) {
   const never = r.never.length ? `${r.never.length}: ${r.never.slice(0, 8).join(' ')}${r.never.length > 8 ? ' …' : ''}` : '';
   console.log(`| ${r.group}: ${r.name} | ${r.pool ?? '—'} | ${r.distinct} | ${pct(r.reach)} | ${r.medianGap ?? '—'} | ${pct(r.soon)} | ${r.top} (${r.topRatio.toFixed(1)}) | ${never} |`);
 }
-if (JSON_OUT) writeFileSync(JSON_OUT, JSON.stringify({ episodes: EPISODES, seed: SEED, right: RIGHT, rows }, null, 1) + '\n');
+const visits = [...shifterLinks.values()].reduce((a, b) => a + b, 0);
+const short = [...shifterLinks].filter(([n]) => n < SHIFTER.links).reduce((a, [, k]) => a + k, 0);
+const lengths = [...shifterLinks].sort((a, b) => b[0] - a[0]).map(([n, k]) => `${n} links ${k}`).join(', ');
+console.log(`\nShape-Shifter visits: ${visits}; short (under ${SHIFTER.links} links): ${short} (${lengths || 'none'}); changing all three places: ${shifterVowel}.`);
+if (JSON_OUT) writeFileSync(JSON_OUT, JSON.stringify({ episodes: EPISODES, seed: SEED, right: RIGHT, rows, shifterLinks: Object.fromEntries(shifterLinks) }, null, 1) + '\n');
 // Item 127: a stored word is never drawn. Fails the run (exit 1) if one was.
 const storedCount = Object.keys(STORED_WHY).length;
 if (storedDrawn.length) {

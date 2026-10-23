@@ -42,6 +42,13 @@ export const NUMBER_WORDS: ReadonlySet<string> = new Set(['six', 'ten', 'three']
 export const NO_ARTICLE: ReadonlySet<string> = new Set(['cheese', 'milk', 'jam', 'grass', 'chips', 'gum']);
 
 /**
+ * Bank things never the key word of a fetch frame (hunt 9, M41 (b)): SCAR NEEDS A MOM reads as the
+ * character lacking one, and Julia's family is two dads. The counter frames keep them (TIAMAT IS SCARED
+ * OF THE DAD is a joke), and so do the games with words of their own.
+ */
+export const NOT_FETCHED: ReadonlySet<string> = new Set(['mom', 'dad']);
+
+/**
  * Few frames on purpose (item 015): the small words recur until they are
  * sight words while the key words keep changing. Only words a four-year-old
  * can sound out (CAN, NOT, GET) or learn by sight (THE, IS, OF, NEEDS).

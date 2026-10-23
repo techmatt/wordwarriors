@@ -179,7 +179,8 @@ export const ROYALS: CharacterSpec[] = [
       taunts: [
         { key: 'sand', text: "I'll put sand in your shoes!" },
         { key: 'storm', text: 'Here comes the storm!' },
-        { key: 'catch', text: "You can't catch me!" },
+        // Hunt 9, M40: was "You can't catch me!" (CAN is a reading word).
+        { key: 'catch', text: "You'll never catch me!" },
         { key: 'dust', text: 'Everything is dusty now!' },
         { key: 'swirl', text: 'Watch me swirl and twirl!' },
         { key: 'gone', text: 'The wind will blow you away!' },

@@ -84,6 +84,8 @@ const MAGIC = [0xb04cff, 0xff4cd8, 0xffffff];
 const BY_YOURSELF = 'right_5';
 /** How long a read word's label stays lit before the next spell strikes, ms (its letters light 70 ms apart). */
 const LABEL_LIT_MS = 450;
+/** The lifted letter's bubble (hunt 9, M42), px square. */
+const LIFT_SIZE = 84;
 
 export class ShifterRoom extends HouseSideRoom {
   private plan!: ShifterPlan;
@@ -111,6 +113,8 @@ export class ShifterRoom extends HouseSideRoom {
   private hinting = false;
   /** A level-1 stone she reached while the room could not speak: it sounds once the room is quiet. */
   private pendingStone: string | null = null;
+  /** The copy of a sounding stone's letter over her head (`liftLetter`), while it speaks. */
+  private lifted: Phaser.GameObjects.Container | null = null;
   /** The beats whose full instruction this run has said (hunt 6, M26): a later link of one gets its short cue. */
   private told = new Set<ShifterLink['beat']>();
 
@@ -131,6 +135,7 @@ export class ShifterRoom extends HouseSideRoom {
     this.flow++;
     this.popped = Promise.resolve();
     this.pendingStone = null;
+    this.lifted = null;
     this.told = new Set();
     this.letters = [];
     this.label = '';
@@ -385,15 +390,50 @@ export class ShifterRoom extends HouseSideRoom {
       return;
     }
     this.pendingStone = null;
-    void voiceBus.say(letterSoundLine(letter));
+    this.liftLetter(letter);
+  }
+
+  /**
+   * A level-1 stone sounds itself with a copy of its letter lifted over her head, in a bubble, while it
+   * speaks (hunt 9, M42 (a)): standing at it to choose, her figure covers its letter (the B under her in
+   * `wrong_seed102`), so she heard the sound with the letter hidden.
+   */
+  private liftLetter(letter: string): void {
+    this.lifted?.destroy();
+    // Beside her head, not over it: over it, it met the label's bottom and her green dot.
+    const side = this.player.x > GAME_WIDTH - 2 * LIFT_SIZE ? -1 : 1;
+    const h = LIFT_SIZE / 2;
+    const g = this.add.graphics();
+    g.fillStyle(0xffffff, 0.96).lineStyle(4, 0x2a2430, 0.8);
+    g.fillRoundedRect(-h, -h, LIFT_SIZE, LIFT_SIZE, 18).strokeRoundedRect(-h, -h, LIFT_SIZE, LIFT_SIZE, 18);
+    // Its tail points at her head.
+    g.fillTriangle(-side * (h - 4), h - 26, -side * (h - 4), h - 6, -side * (h + 18), h + 10);
+    const text = this.add.text(0, 0, letter.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '60px', color: INK }).setOrigin(0.5);
+    const lift = this.add.container(0, 0, [g, text]).setDepth(DEPTH.speech).setData('side', side);
+    this.lifted = lift;
+    this.followLift();
+    popIn(this, lift, 1);
+    void voiceBus.say(letterSoundLine(letter)).finally(() => {
+      if (this.lifted !== lift || !lift.scene) return;
+      this.lifted = null;
+      this.tweens.add({ targets: lift, alpha: 0, duration: 200, onComplete: () => lift.destroy() });
+    });
+  }
+
+  /** The lifted letter rides beside her head. */
+  private followLift(): void {
+    if (!this.lifted) return;
+    const side = this.lifted.getData('side') as number;
+    this.lifted.setPosition(this.player.x + side * (LIFT_SIZE / 2 + 34), this.player.y - this.player.height - 24);
   }
 
   override update(time: number, deltaMs: number): void {
     super.update(time, deltaMs);
+    this.followLift();
     const p = this.pendingStone;
     if (!p || this.phase !== 'pick' || this.locked || voiceBus.busy) return;
     this.pendingStone = null;
-    if (this.inReach()?.obj.getData('letter') === p) void voiceBus.say(letterSoundLine(p));
+    if (this.inReach()?.obj.getData('letter') === p) this.liftLetter(p);
   }
 
   /** The stone or picture nearest her, if in reach. */

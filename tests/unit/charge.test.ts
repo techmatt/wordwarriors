@@ -147,7 +147,8 @@ test('draw: a word with a shaky sound comes up more than one with only solid sou
   let m = 0;
   let s = 0;
   const rand = seeded(5);
-  for (let k = 0; k < 400; k++) {
+  // 1200 draws (hunt 9: storing DRUM and LAMP left seven M words, and 400 draws came out level at seed 5).
+  for (let k = 0; k < 1200; k++) {
     const { runes } = planCharge(store, { avoid: [] }, rand);
     if (runes.includes('m')) m++;
     if (runes.includes('s')) s++;

@@ -58,6 +58,10 @@ export class Player {
   get y(): number {
     return this.root.y;
   }
+  /** Her figure's height on screen now, from her feet (`y`) to the top of her head. */
+  get height(): number {
+    return this.sprite.displayHeight;
+  }
 
   /** The image she is drawn with (test hooks). */
   get art(): string {

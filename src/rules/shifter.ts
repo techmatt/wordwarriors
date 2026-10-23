@@ -150,6 +150,11 @@ function beatFor(i: number, from: string, to: string, pos: Position, pool: strin
 /** How many of the word's three places a chain changes (hunt 6, M29: most chains never changed the vowel). */
 export const placesOf = (chain: string[]): number => new Set(positionsOf(chain)).size;
 
+/** Hunt 9, M39: a chain changing this many places is as good as one changing all three (`planShifter`)... */
+const TWO_PLACES = 2;
+/** ...but one changing all three, the vowel too, is this much likelier in the draw. */
+export const THREE_PLACES_WEIGHT = 2;
+
 /** Fix it's stones for the letter `right` replacing `old`: `right` and n - 1 others of its kind (vowels with a vowel), no two the same sound, never `old`. */
 export function stonesFor(right: string, old: string, n: number, rand: Rand): string[] {
   const kind = VOWELS.includes(right) ? VOWELS : STONE_CONSONANTS;
@@ -205,7 +210,7 @@ export function planShifter(store: ProgressStore, input: ShifterInput, rand: Ran
   // The longest chains that fit, scored: first by how many of the three places they change (hunt 6, M29:
   // 255 of 300 never changed the vowel), then in order but for one step back at most (Matt's CAT BAT BAG BIG
   // PIG goes back to the first letter once), the first link changing the first letter; else the least out of order.
-  const score = (c: string[]) => (3 - placesOf(c)) * 10 + Math.max(0, orderBreaks(positionsOf(c)) - 1) * 2 + (positionsOf(c)[0] === 0 ? 0 : 1);
+  const score = (c: string[]) => Math.max(0, TWO_PLACES - placesOf(c)) * 10 + Math.max(0, orderBreaks(positionsOf(c)) - 1) * 2 + (positionsOf(c)[0] === 0 ? 0 : 1);
   const best = (cs: string[][]) => {
     const scores = cs.map(score);
     const low = Math.min(...scores);
@@ -225,9 +230,11 @@ export function planShifter(store: ProgressStore, input: ShifterInput, rand: Ran
     // Hunt 7, M36: a chain sharing a link with one of the last SHIFTER.recentChains waits (MUG BUG BUN BIN
     // came back whole every three episodes), and one the same as any kept (CHAINS_KEPT), where the pool
     // allows; under the length, above the rest. A drawn run of ten repeats none (tests/unit/shifterDraws.test.ts).
-    const notSame = all.filter((c) => !lately.chains.has(c.join(' ')));
+    // Hunt 9, M39: within the chains with a read-it link (below), not before it: rotated first, a length's
+    // every read-it chain could share a link and drop the visit to a shorter chain (39 short visits in 150).
+    const notSame = (cs: string[][]) => cs.filter((c) => !lately.chains.has(c.join(' ')));
     const noLink = (cs: string[][]) => cs.filter((c) => !linksOf(c).some((l) => lately.links.has(l)));
-    const chains = [noLink(notSame), noLink(all), notSame].find((cs) => cs.length) ?? all;
+    const rotated = (cs: string[][]) => [noLink(notSame(cs)), noLink(cs), notSame(cs)].find((r) => r.length) ?? cs;
     // Of those changing the most places (M29), chains holding at most one word she read lately, where
     // any do (hunt 7: the best-scored chains are few, so recency's weight hardly moved them and MAT MAN
     // PAN came back three episodes in four; 45 of 100 episodes shared a word with the one before, 25 now),
@@ -236,9 +243,12 @@ export function planShifter(store: ProgressStore, input: ShifterInput, rand: Ran
     // SHIFTER.wordChains chains either, and when no chain changing the most places is one, "the most
     // places" gives way to one changing fewer (the few all-three-places chains ran through BUG and MAT:
     // BUG was in one visit in three). Under the length, the read-it link; above the rest of the score.
+    // Hunt 9, M39 (Matt's pick b): "the most places" is two or three (`placesOf` at least TWO_PLACES), the
+    // vowel's change a lean in the draw (THREE_PLACES_WEIGHT): held to three, the chains ran through the few
+    // words that link all three (MAN in 77 of 150 visits, 56 distinct chains).
     const fresh = (cs: string[][]) => {
-      const most = Math.max(...cs.map(placesOf));
-      const top = cs.filter((c) => placesOf(c) === most);
+      const most = Math.min(TWO_PLACES, Math.max(...cs.map(placesOf)));
+      const top = cs.filter((c) => placesOf(c) >= most);
       const few = (c: string[]) => c.slice(1).filter((w) => recent.has(w)).length <= 1;
       const unread = (c: string[]) => !c.some((w) => before.has(w));
       const unchained = (c: string[]) => few(c) && unread(c) && !c.some((w) => lately.words.has(w));
@@ -247,14 +257,17 @@ export function planShifter(store: ProgressStore, input: ShifterInput, rand: Ran
       return tiers.find((t) => t.length) ?? cs;
     };
     // A shorter chain with a read-it link before an all-fix-it one (M29: one visit in twenty had none).
-    const mixed = chains.filter(beats);
-    if (mixed.length) pool = best(fresh(mixed));
-    else if (!allFix.length) allFix = best(fresh(chains));
+    const mixed = all.filter(beats);
+    if (mixed.length) pool = best(fresh(rotated(mixed)));
+    else if (!allFix.length) allFix = best(fresh(rotated(all)));
   }
   if (!pool.length) pool = allFix;
   if (!pool.length) return null;
   const each = new Map(free.map((w) => [w, wordWeight(store, w, m, recent)]));
-  const weight = (i: string) => pool[Number(i)]!.slice(1).reduce((s, w) => s + each.get(w)!, 0);
+  const weight = (i: string) => {
+    const c = pool[Number(i)]!;
+    return c.slice(1).reduce((s, w) => s + each.get(w)!, 0) * (placesOf(c) === 3 ? THREE_PLACES_WEIGHT : 1);
+  };
   const chain = pool[Number(pickWeighted(pool.map((_, i) => String(i)), weight, 1, rand)[0])]!;
   // A read-it link's other pictures keep clear of the episode's words, and of the chain's own words still to come.
   const pictures = free.filter((w) => !chain.includes(w));

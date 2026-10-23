@@ -327,6 +327,11 @@ export const STORED_WHY: Record<string, string> = {
   rat: 'the big-eared grey rodent reads as a mouse',
   nut: 'a lone hazelnut reads as an onion or an acorn',
   gate: 'the planks between posts read as a fence',
+  // Hunt 9, M40: the bedroom's own props, shown every episode before any room (fix 74), so never read.
+  bed: 'the bedroom shows her bed every episode, so it is never read',
+  drum: 'a bedroom toy, shown every episode, so it is never read',
+  lamp: 'the bedroom night-light, shown every episode, so it is never read',
+  duck: 'a bedroom toy, shown every episode, so it is never read',
   // Actions: a picture named another way, a sound or idea with no picture, or a rare word.
   swish: 'the farmer with a scythe reads as CUT (Matt)',
   dash: 'the running boy reads as RUN (Matt)',
