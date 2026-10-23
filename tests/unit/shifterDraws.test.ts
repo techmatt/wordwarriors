@@ -8,7 +8,7 @@ import { test } from 'node:test';
 
 import { NO_ARTICLE, NUMBER_WORDS, lookalikesOf } from '../../content/phonics/sentences';
 import { SHIFTER } from '../../src/config';
-import { CHAINS_KEPT, chainKey, planShifter, shifterWords } from '../../src/rules/shifter';
+import { CHAINS_KEPT, LAST_READ, chainKey, planShifter, shifterWords } from '../../src/rules/shifter';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { memory, seeded, spread } from './seeds';
 
@@ -70,4 +70,30 @@ test('planShifter (hunt 7, M36): a drawn run of ten episodes repeats no chain, a
     }
   }
   assert.equal(sharedLinks, 0, `${sharedLinks} of 50 chains shared a link with one of the six before`);
+});
+
+test('planShifter (hunt 8, M37 (a); item 126, pick 2b): seldom a word the episode before had her read, or one of the last two chains', () => {
+  // As rememberPlan does: the episode's read words (LAST_READ) and its chain, each episode.
+  let reused = 0;
+  let fromChains = 0;
+  for (let run = 1; run <= 5; run++) {
+    const store = new ProgressStore(memory());
+    const rand = seeded(spread(run));
+    const chains: string[][] = [];
+    for (let e = 0; e < 8; e++) {
+      // The episode before read MAT and BUG in another room, and its pads.
+      if (e > 0) store.remember(LAST_READ, ['mat', 'bug', ...chains.at(-1)!.slice(1)].join(' '), 1);
+      const p = planShifter(store, { avoid: [], taken: [] }, rand)!;
+      const chain = chainKey(p).split(' ');
+      if (e > 0 && chain.some((w) => ['mat', 'bug'].includes(w))) reused++;
+      if (chains.slice(-SHIFTER.wordChains).some((c) => c.some((w) => chain.includes(w)))) fromChains++;
+      chains.push(chain);
+      store.remember('chains', chain.join(' '), CHAINS_KEPT);
+      for (const w of shifterWords(p)) store.record('words', w, true, 0);
+    }
+  }
+  // M36's no shared link ranks above it, so where only chains through MAT or BUG share no link one comes (19 of 35 without M37).
+  assert.ok(reused <= 10, `${reused} of 35 chains held MAT or BUG, read the episode before`);
+  // 25 of 40 before pick 2b; the few three-places chains share their words, so some still do.
+  assert.ok(fromChains <= 18, `${fromChains} of 40 chains held a word of the last two`);
 });

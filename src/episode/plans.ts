@@ -6,14 +6,14 @@
  * journey map's stops. No Phaser and no import of Episode.ts (item 076).
  */
 
-import { CHARACTER_BY_ID } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, personOf } from '../../content/battle/roster';
 import type { CounterItem } from '../../content/battle/types';
 import { BEDROOMS, COUNTER_ROOM, FETCH_ROOMS, PLACE_BY_ID, SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { BANK } from '../../content/phonics/bank';
 import { FRAMES } from '../../content/phonics/sentences';
 import { NARRATOR_LINES, wakeTemplate, wakeVariant } from '../../content/voice/script';
-import { FORCE_PHONICS_ROOM, FORCE_SHIFTER_ROOM, VARIETY } from '../config';
-import { CHAINS_KEPT, chainKey } from '../rules/shifter';
+import { FORCE_PHONICS_ROOM, SHIFTER_ROOM, STORY_FIGHT, VARIETY } from '../config';
+import { CHAINS_KEPT, LAST_READ, chainKey } from '../rules/shifter';
 import { leastRecent } from '../rules/recent';
 import { fightSpec, pickFight } from '../rules/fights';
 import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
@@ -45,12 +45,19 @@ export function rememberPlan(): void {
   if (remembered.plan || !plan || !remembered.cast) return;
   remembered.plan = true;
   if (!away()) for (const p of plan.slice(0, 2)) progress.remember('rooms', p.room, FETCH_ROOMS.length + 1);
+  // Item 126: a villain's story fight, when he was drawn and could have played it.
+  const story = CHARACTER_BY_ID[episode.villain]?.storyFight;
+  if (story && episode.villainWasRandom && !fightOverride && episode.fight) progress.remember(storyKey(episode.villain), episode.fight === story ? 'yes' : 'no', 1);
+  // Hunt 8, M37: every word this episode has her read, which the next episode's chain keeps clear of.
+  progress.remember(LAST_READ, readingWords().join(' '), 1);
   if (urlPicksGames(urlQuery())) return;
   for (const p of plan) progress.remember('games', p.game, 3 * VARIETY.rotations);
   const phonics = plan.find((p) => PHONICS_GAMES.some((g) => g.id === p.game));
   if (phonics) progress.remember('phonics', phonics.game, 1);
   // Hunt 7, M36: the Shape-Shifter's chain, a rotation of its own.
   for (const p of plan) if (p.kind === 'shifter') progress.remember('chains', chainKey(p.shifter), CHAINS_KEPT);
+  // Item 126: whether door b had it (SHIFTER_ROOM leans the next episode's draw the other way).
+  progress.remember('shifter_door', plan.some((p) => p.game === SHIFTER_GAME.id) ? 'yes' : 'no', 1);
 }
 
 /** The games `?room=` forces whatever else is asked (items 054, 096; `roomGames`). */
@@ -77,9 +84,20 @@ export function urlPicksGames(q: URLSearchParams): boolean {
  * need, so both battles are the same contest; `?fight=<id>` fixes it.
  */
 export function fightStyle(): FightSpec {
-  if (!episode.fight) episode.fight = fightOverride && FIGHT_BY_ID[fightOverride] ? fightOverride : pickFight(episode, castRand);
+  if (!episode.fight) episode.fight = fightOverride && FIGHT_BY_ID[fightOverride] ? fightOverride : (storyFight() ?? pickFight(episode, castRand));
   return fightSpec(episode.fight);
 }
+
+/** The villain's story fight (`storyFight`, item 126), when this episode draws it: only for a villain drawn freely (STORY_FIGHT). */
+function storyFight(): string | undefined {
+  const id = CHARACTER_BY_ID[episode.villain]?.storyFight;
+  if (!id || !FIGHT_BY_ID[id] || !episode.villainWasRandom) return undefined;
+  const last = progress.recentOf(storyKey(episode.villain)).at(-1);
+  return castRand() < (last === 'yes' ? STORY_FIGHT.afterOne : STORY_FIGHT.afterNone) ? id : undefined;
+}
+
+/** The rotation a villain's story fight remembers: whether his last episode played it. */
+const storyKey = (villain: string) => `story_fight_${personOf(villain)}`;
 
 /**
  * The house plan: two fetch rooms, each a minigame from the pool or forced
@@ -197,9 +215,12 @@ export function grabPlan(): { word: string; objects: string[] } {
  * Bridge (item 054) whatever else is asked: behind door a, or door b when
  * `?game=` holds door a.
  *
- * The beta's Shape-Shifter (item 096): with FORCE_SHIFTER_ROOM on, it is
- * behind door b of every episode (door a when no phonics game is forced),
- * on the same terms; `?room=shifter` forces it whatever else is asked.
+ * The beta's Shape-Shifter (item 096; item 126): it is behind door b of
+ * about half the episodes (SHIFTER_ROOM, leaning away from last episode's
+ * pick; door a when no phonics game is forced), on the same terms; else
+ * door b is a fetch sentence frame or the word machine, never a second
+ * phonics game. `?room=shifter` forces it whatever else is asked; `?room=charge`
+ * and `?room=bridge` keep it behind door b.
  */
 function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[] } {
   const q = urlQuery();
@@ -210,12 +231,21 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
     room && room !== SHIFTER_GAME ? room
       : FORCE_PHONICS_ROOM && !only && !asked ? MINIGAME_BY_ID[pickWeighted(PHONICS_GAMES.map((g) => g.id), (id) => MINIGAME_BY_ID[id]!.weight * (progress.recentOf('phonics').includes(id) ? VARIETY.gameWeight : 1), 1)[0]!]
         : undefined;
-  const shifter = room === SHIFTER_GAME || (FORCE_SHIFTER_ROOM && !only && !asked) ? SHIFTER_GAME : undefined;
+  const drawn = !only && !asked;
+  // `?room=charge` / `?room=bridge` keep it behind door b, as before item 126 (tests/opening.spec.ts plays both).
+  const shifter = room === SHIFTER_GAME || (drawn && (room !== undefined || Math.random() < shifterChance())) ? SHIFTER_GAME : undefined;
   // `?room=shifter` takes door a; else it follows the phonics game. Two doors: a third forced game waits its turn.
   const forced = (room === SHIFTER_GAME ? [shifter, asked, phonics] : [asked, phonics, shifter]).filter((g, i, all): g is Minigame => Boolean(g) && all.indexOf(g) === i).slice(0, 2);
   if (!forced.length) return only ? { pool: only } : {};
-  const rest = drawGames(progress, Math.random, (only ?? MINIGAMES).filter((g) => !forced.includes(g)));
+  // Item 126: drawn, the other door is a sentence frame or the word machine (the phonics games and the Shape-Shifter are forced or not at all).
+  const pool = only ?? (drawn ? MINIGAMES.filter((g) => !PHONICS_GAMES.includes(g) && g !== SHIFTER_GAME) : MINIGAMES);
+  const rest = drawGames(progress, Math.random, pool.filter((g) => !forced.includes(g)));
   return { games: [forced[0]!, forced[1] ?? rest[1], rest[2]] };
+}
+
+/** The chance of the Shape-Shifter behind door b this episode (SHIFTER_ROOM): after one that had it, or one that did not. */
+function shifterChance(): number {
+  return progress.recentOf('shifter_door').at(-1) === 'yes' ? SHIFTER_ROOM.afterOne : SHIFTER_ROOM.afterNone;
 }
 
 /**
@@ -260,7 +290,7 @@ function bedroomWords(): string[] {
   return [...wake.flatMap((t) => [...wordsOf(t?.text), ...wordsOf(t?.say)]), ...wordsOf(v?.house.threat), ...wordsOf(v?.house.threatSay), ...wordsOf(taunt?.text), ...wordsOf(taunt?.say)];
 }
 
-/** The entry hall's own lines ("let's grab the..."): GRAB is a bank word, so it is never a pad or the gift. */
+/** The entry hall's own lines ("let's take the...", item 126: it said GRAB, which then never came up to read): kept clear of the pads and the gift. */
 const HALL_LINE_WORDS = NARRATOR_LINES.filter((t) => t.key.startsWith('grab_')).flatMap((t) => [...wordsOf(t.text), ...wordsOf(t.say)]);
 
 /**

@@ -77,6 +77,7 @@ export const DRAGONS: CharacterSpec[] = [
     description: 'A gold-hoarding dragon who breathes fire and buries enemies under avalanches of coins.',
     arena: 'cave',
     fight: 'sky_race',
+    storyFight: 'smaug_story',
     good: {
       displayName: 'Smaug', trail: { tint: [0xffcc33, 0xff7b00], shape: 'spark' }, look: 'a big red dragon with a gold tummy, sitting on coins, grinning and generous',
       palette: [0xd62828, 0xffcc33], glyph: '🐉', style: 'fly', speed: 160, size: 1.5, hp: 160,

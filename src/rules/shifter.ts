@@ -163,13 +163,23 @@ const linksOf = (chain: string[]): string[] => chain.slice(1).map((w, i) => [cha
 /** A visit's chain as the store remembers it (`recent.chains`, hunt 7, M36): its words in order. */
 export const chainKey = (p: ShifterPlan): string => [p.start, ...shifterWords(p)].join(' ');
 
+/**
+ * The words the episode before had her read (hunt 8, M37: MAT came up three
+ * episodes running): its rooms', pads' and gift's, kept as one entry by the
+ * house plan (src/episode/plans.ts `rememberPlan`), so the next chain keeps clear of them.
+ */
+export const LAST_READ = 'last_episode_words';
+
+/** The episode before's words (`LAST_READ`), as the store keeps them. */
+export const lastRead = (store: ProgressStore): Set<string> => new Set((store.recentOf(LAST_READ).at(-1) ?? '').split(' ').filter(Boolean));
+
 /** How many chains the store keeps: the last SHIFTER.recentChains by link, twice that whole. */
 export const CHAINS_KEPT = 2 * SHIFTER.recentChains;
 
-/** The chains the store keeps (newest last), whole; the last SHIFTER.recentChains of them by link too. */
-function recentChains(store: ProgressStore): { chains: Set<string>; links: Set<string> } {
+/** The chains the store keeps (newest last), whole; the last SHIFTER.recentChains of them by link, the last SHIFTER.wordChains by word. */
+function recentChains(store: ProgressStore): { chains: Set<string>; links: Set<string>; words: Set<string> } {
   const kept = store.recentOf('chains').slice(-CHAINS_KEPT);
-  return { chains: new Set(kept), links: new Set(kept.slice(-SHIFTER.recentChains).flatMap((k) => linksOf(k.split(' ')))) };
+  return { chains: new Set(kept), links: new Set(kept.slice(-SHIFTER.recentChains).flatMap((k) => linksOf(k.split(' ')))), words: new Set(kept.slice(-SHIFTER.wordChains).flatMap((k) => k.split(' '))) };
 }
 
 export interface ShifterInput {
@@ -204,6 +214,7 @@ export function planShifter(store: ProgressStore, input: ShifterInput, rand: Ran
   const m = met(store);
   const recent = recentWords(store);
   const lately = recentChains(store);
+  const before = lastRead(store);
   let pool: string[][] = [];
   let allFix: string[][] = [];
   for (let n = SHIFTER.links; n >= SHIFTER.minLinks && !pool.length; n--) {
@@ -219,13 +230,21 @@ export function planShifter(store: ProgressStore, input: ShifterInput, rand: Ran
     const chains = [noLink(notSame), noLink(all), notSame].find((cs) => cs.length) ?? all;
     // Of those changing the most places (M29), chains holding at most one word she read lately, where
     // any do (hunt 7: the best-scored chains are few, so recency's weight hardly moved them and MAT MAN
-    // PAN came back three episodes in four; 45 of 100 episodes shared a word with the one before, 25 now).
-    // Under the length, the read-it link and the places changed; above the rest of the score.
+    // PAN came back three episodes in four; 45 of 100 episodes shared a word with the one before, 25 now),
+    // and first those holding no word the episode before had her read (hunt 8, M37 (a): MAT three
+    // episodes running). Item 126 (Matt's pick 2b): first of all those holding no word of the last
+    // SHIFTER.wordChains chains either, and when no chain changing the most places is one, "the most
+    // places" gives way to one changing fewer (the few all-three-places chains ran through BUG and MAT:
+    // BUG was in one visit in three). Under the length, the read-it link; above the rest of the score.
     const fresh = (cs: string[][]) => {
       const most = Math.max(...cs.map(placesOf));
       const top = cs.filter((c) => placesOf(c) === most);
-      const f = top.filter((c) => c.slice(1).filter((w) => recent.has(w)).length <= 1);
-      return f.length ? f : cs;
+      const few = (c: string[]) => c.slice(1).filter((w) => recent.has(w)).length <= 1;
+      const unread = (c: string[]) => !c.some((w) => before.has(w));
+      const unchained = (c: string[]) => few(c) && unread(c) && !c.some((w) => lately.words.has(w));
+      const clear = (c: string[]) => few(c) && unread(c);
+      const tiers = [top.filter(unchained), cs.filter(unchained), top.filter(clear), top.filter(unread), cs.filter(unread), top.filter(few)];
+      return tiers.find((t) => t.length) ?? cs;
     };
     // A shorter chain with a read-it link before an all-fix-it one (M29: one visit in twenty had none).
     const mixed = chains.filter(beats);

@@ -68,7 +68,8 @@ const ART_111 = ['keeper', 'snow', 'explorer'].flatMap((o) => [`char_julia_${o}`
 const ART_114 = ['astronaut', 'puzzler', 'gorilla'].flatMap((o) => [`char_julia_${o}`, `face_julia_${o}`]).concat('minion_penguin', 'minion_penguin_trooper', 'minion_snow_bot', 'item_fish_bucket', 'char_ozymandias_good', 'char_ozymandias_evil', 'face_ozymandias', 'decal_ozymandias_penguin', 'decal_ozymandias_snowpile');
 // Item 121's words but the green ones (GATE, STUMP, SWISH and CHOMP's dragon have grass or leaves).
 const BANK_121 = ['ham', 'hay', 'sack', 'dress', 'block', 'bench', 'skunk', 'dash', 'smash', 'crash', 'splash'].map((w) => `pic_${w}`);
-const NO_GREEN = new Set([...ART_114, ...ART_111, ...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...BANK_121, ...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'face_rilla', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
+const BANK_126 = ['mom', 'dad', 'cow'].map((w) => `pic_${w}`);
+const NO_GREEN = new Set([...ART_114, ...ART_111, ...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...BANK_121, ...BANK_126, ...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'face_rilla', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
 
 /**
  * Sprites in dark green of their own (item 049): keying takes out only the
@@ -197,7 +198,7 @@ export const PICK_NOTES: Record<string, string> = {
   decal_tiamat_banner: '`current` is candidate 1, promoted by item 013 (2 lies crumpled on the floor and reads less clearly).',
   prop_silver_sword: "Ellie's one sword move (Spinny Swords, item 016): she spins them round herself, then flings them; it shows with any Ellie image. `current` is candidate 3, Matt's pick (item 016): an icy-blue crystal blade, pink gems and grip. 0 is item 014's first promotion (candidate 2, plain silver).",
   char_ellie_good: "`current` is candidate 0, the original bubble-wand Ellie, Matt's pick (item 016); she fights with bubbles and one sword move, and the game draws her swords round her when she uses it. 1 to 3 are item 009's bubble-wand candidates; 4 to 6 (item 014) summon silver swords.",
-  char_julia_chef: 'Julia in her chef form (content/battle/forms.ts): every scene after she wakes uses it when Dada Jason is the ally. `current` is candidate 3, promoted by item 012 (closest face and fringe to her other art, pink shoes like hers).',
+  char_julia_chef: 'Julia in her chef outfit (content/battle/outfits.ts): every scene after she wakes uses it when Dada Jason is the ally. `current` is candidate 3, promoted by item 012 (closest face and fringe to her other art, pink shoes like hers).',
   face_julia_chef: "New id (item 016): chef Julia's name-free face card, the picture for reading JULIA in a chef episode. `current` is candidate 2, promoted by item 016 (hat, fringe and smile closest to char_julia_chef); 1 and 3 are as good, with a taller hat. `0` is the painted placeholder.",
   face_anna: "Good Anna's face card redrawn to match her promoted copper-curls full body (item 113; drawn with it attached, `art:alts --ref=art-originals/char_anna_good.png`). `current` is candidate 1, Matt's pick (item 115); before it, item 009's dark-ponytail card; `0` the oldest original, from before item 009.",
   room_bedroom_julia: 'Redrawn with no loose toys of its own: the first one painted a teddy and a rocket that doubled the toys the game puts on the floor.',
@@ -605,7 +606,10 @@ const PICTURES: Record<string, string> = {
   swish: 'a swish: a farmer swinging a long curved scythe through tall grass in one wide arc, cut grass flying up and a curved swish line following the blade; the swing of the scythe is the point',
   smash: 'a smash: a big cartoon hammer smashing down onto a pile of rocks, pieces flying out and a burst of stars at the hit',
   crash: 'a crash: a tall wobbly stack of plates crashing to the floor, plates tumbling through the air and pieces bursting out with a big burst of dust; clearly falling and crashing',
-  splash: 'a splash: a cartoon kid in rain boots jumping into a big puddle, a huge splash of water spraying up all around; the splash is the point',
+  splash: 'a splash: a cartoon kid in rain boots jumping into a big puddle, a huge splash of water spraying up all around; the splash is the point',  // Item 126: a mom and a dad as a four-year-old knows them (with their little one), and a cow.
+  mom: "a mom: one friendly cartoon mom kneeling to give her little girl a big warm hug, both smiling, the mom in a red top and blue jeans with long brown hair, the girl small in a yellow dress; clearly a mommy and her child, not a teacher, a princess or two girls the same size; no green",
+  dad: "a dad: one friendly cartoon dad carrying his little boy up on his shoulders, both laughing, the dad in a blue shirt and jeans with short dark hair and a short beard, the boy small in an orange shirt, holding on to his dad's head; clearly a daddy and his child, not one man alone, not a king; no green",
+  cow: 'a cow: one cartoon dairy cow standing side-on, white with big black patches, a pink nose, two small horns, a swishing tail and a little bell on a collar, standing on plain ground; clearly a cow, not a goat, a dog or a horse; no grass',
 };
 
 const HAND: Record<string, string> = {

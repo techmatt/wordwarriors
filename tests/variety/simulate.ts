@@ -156,7 +156,7 @@ for (let e = 0; e < EPISODES; e++) {
   }
   saw(e, 'words', 'every word read (rooms, counter, pads, gift)', read, LIVE.map((w) => w.word));
   saw(e, 'words', 'every word read or shown (+ warm-up, pictures)', [...read, grab.word, ...grab.objects], LIVE.map((w) => w.word));
-  if (NEW_WORDS.length) saw(e, 'words', 'new words (item 121), read', read.filter((w) => NEW_WORDS.includes(w)), NEW_WORDS);
+  if (NEW_WORDS.length) saw(e, 'words', 'new words (items 121, 126), read', read.filter((w) => NEW_WORDS.includes(w)), NEW_WORDS);
   saw(e, 'phonics', 'first sounds read', read.map((w) => bank(w)?.onset || '(vowel)'), [...new Set(LIVE.map((w) => w.onset || '(vowel)'))]);
   saw(e, 'phonics', 'short vowels read', read.map((w) => bank(w)?.vowel ?? 'long'), [...VOWEL_LIST, 'long']);
   saw(e, 'phonics', 'levels read', read.map((w) => String(bank(w)?.level ?? '?')), ['1', '2', '3']);
@@ -190,6 +190,8 @@ interface Row {
   /** Share of returns within 2 episodes. */
   soon: number;
   top: string;
+  /** Each item's count (the JSON's, for comparing one item across runs: item 126). */
+  counts: Record<string, number>;
   /** The most drawn item's count over the mean count of drawn items. */
   topRatio: number;
   never: string[];
@@ -223,6 +225,7 @@ function rowOf(d: Dim): Row {
     medianGap: gaps.length ? gaps[Math.floor(gaps.length / 2)]! : null,
     soon: gaps.length ? gaps.filter((g) => g <= 2).length / gaps.length : 0,
     top: `${topItem} ×${topN}`,
+    counts: Object.fromEntries(counts),
     topRatio: mean ? topN / mean : 0,
     never: pool ? pool.filter((p) => !counts.has(p)) : [],
   };

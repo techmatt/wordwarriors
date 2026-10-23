@@ -87,8 +87,11 @@ export function setDadAsking(on: boolean): void {
   style();
 }
 
-/** The cue for a yes / no question; a game asking something else gives its own (THE END's "press 2"). */
-const JUDGE_CUE = '<span>DAD</span> <b>1</b> ✗ &nbsp; <b>2</b> ✓';
+/**
+ * The cue for a yes / no question; a game asking something else gives its own (THE END's "press 2").
+ * No DAD on it (item 126): DAD is a bank word, and the cue shows in rooms before she may read it.
+ */
+const JUDGE_CUE = '<b>1</b> ✗ &nbsp; <b>2</b> ✓';
 
 function showCue(label: string): void {
   cue.element.innerHTML = label;

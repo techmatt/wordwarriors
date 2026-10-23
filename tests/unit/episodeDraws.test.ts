@@ -14,6 +14,7 @@ import { castEpisode, rememberCast, remembered, resetEpisode, setCastOptions } f
 import { episode } from '../../src/episode/state';
 import { seededRand } from '../../src/rules/random';
 import { progress } from '../../src/state/progress';
+import { housePlan } from '../../src/episode/plans';
 
 test('the default cast remembers no ally, form or variant; its fixed villain is not met', () => {
   progress.reset();
@@ -66,4 +67,28 @@ test('solo lasts the session (hunt 7, M34): the next episode starts solo, until 
   episode.solo = false;
   resetEpisode();
   assert.equal(episode.solo, false);
+});
+
+test('door b (item 126): the Shape-Shifter about half the drawn episodes, else a sentence frame or the word machine', () => {
+  const random = Math.random;
+  Math.random = seededRand(126);
+  try {
+    progress.reset();
+    setCastOptions({ fixed: false, rand: Math.random, overrides: {} });
+    const doorB: string[] = [];
+    for (let e = 0; e < 24; e++) {
+      resetEpisode();
+      rememberCast();
+      const b = housePlan()[1]!;
+      doorB.push(b.game);
+      progress.episodeDone();
+    }
+    const shifters = doorB.filter((g) => g === 'shifter').length;
+    assert.ok(shifters >= 8 && shifters <= 16, `${shifters} of 24: ${doorB.join(' ')}`);
+    for (const g of doorB) assert.ok(g === 'shifter' || g === 'word_machine' || g.startsWith('sentence:'), g);
+    assert.ok(doorB.some((g) => g.startsWith('sentence:')) && doorB.includes('word_machine'), doorB.join(' '));
+  } finally {
+    Math.random = random;
+    setCastOptions({ overrides: {}, fixed: !EPISODE_DEFAULTS.randomCast });
+  }
 });

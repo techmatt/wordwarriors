@@ -23,8 +23,8 @@ import { composeLines } from '../../tools/voice/compose';
 import { withDifficulty } from './difficulty';
 import { memory, seeded, spread } from './seeds';
 
-/** Seed 1's chain since M29 (it changes the vowel last). */
-const GOLDEN_SEED_1 = ['pan', 'man', 'can', 'cap', 'cup'];
+/** Seed 1's chain since item 126 (MOM, MOP's neighbour; M29: it changes the vowel). */
+const GOLDEN_SEED_1 = ['pan', 'man', 'map', 'mop', 'mom'];
 
 const sameSound = (a: string, b: string) => a === b || [a, b].sort().join('') === 'ck';
 

@@ -218,6 +218,12 @@ export interface CharacterSpec {
    * villain is (chef Dada Jason makes a cook-off likely): `chance` of `fight`.
    */
   fightNudge?: { fight: string; chance: number };
+  /**
+   * A story fight written for this villain (item 126: Evil Smaug's): about
+   * half the episodes he is drawn as the villain play it in place of `fight`
+   * (STORY_FIGHT in src/config.ts). `?villain=` keeps `fight`; `?fight=` picks.
+   */
+  storyFight?: string;
   /** How the house looks and what the waking dad says when this one is the villain. */
   house: HouseMood;
 }

@@ -138,6 +138,9 @@ export const LOOKALIKES: string[][] = [
   ['king', 'queen'],
   ['thumb', 'hand'],
   ['wing', 'bat', 'duck', 'hen'],
+  // Item 126's: a dad beside the other grown-up men, a cow beside the other farm animals she could take it for.
+  ['dad', 'man', 'king'],
+  ['cow', 'goat', 'sheep', 'lamb'],
   ['jug', 'milk', 'mug', 'cup'],
   ['peg', 'pin'],
   ['lamp', 'sun'],

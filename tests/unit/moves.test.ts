@@ -116,8 +116,8 @@ test('planMoves: no pad shows a word the episode has said before the battle', ()
   }
 });
 
-test("the side rooms' lines are said before the pads: FIX (the Shape-Shifter's \"the letter that fixes it\") is never a pad or the gift (hunt 6)", () => {
-  assert.ok(withStems(ROOM_LINE_WORDS).includes('fix'));
+test("the side rooms' lines are said before the pads (hunt 6), and item 126 took FIX out of them (\"the letter that fixes it\"), so FIX can be read", () => {
+  assert.ok(!withStems(ROOM_LINE_WORDS).includes('fix'), 'a side room line says FIX');
 });
 
 test('drawGift: a bank action word, never one to avoid, leaning to the helper\'s own words, without spending the bag', () => {

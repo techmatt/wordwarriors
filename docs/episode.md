@@ -214,8 +214,9 @@ counter turns it), the same beats, timing and move choices; only the staging cha
 (`src/battle/stages/`), and its bars are the steered health shown as a race lead, a
 rope's knot, a clash point or the judges' scores.
 
-**The story fight** (item 107, reached only by `?fight=smaug_story`; no villain draws it
-yet) is a turn-based showdown told like a short story, its beats Evil Smaug's script in
+**The story fight** (item 107; since item 126 about half the episodes Evil Smaug is drawn as
+the villain, `storyFight` on him and `STORY_FIGHT` in `src/config.ts`; `?fight=smaug_story`
+forces it, `?villain=smaug` keeps his sky race) is a turn-based showdown told like a short story, its beats Evil Smaug's script in
 `content/battle/stories/smaug.ts`, staged by `src/battle/story/StoryDirector.ts`. Heroes
 on the left (her, the ally, and the dad who woke her, unless the ally is a dad), Smaug on
 the right, no health bars. The characters talk, not a narrator: Smaug all bluster ("This
@@ -249,7 +250,7 @@ Grown-ups page (progress per sound and word): **F9**, or hold **LB + RB** for tw
 seconds on the title screen. On that page, **F8** twice erases all progress.
 
 **Dad lock** (item 038): the **backquote / tilde** key (top-left, below Esc) toggles it,
-anywhere. While it is on, a 🔒 DAD LOCK badge sits in the bottom-left corner: Julia
+anywhere. While it is on, a 🔒 badge (dad lock; no words on it since item 126, DAD and LOCK being bank words) sits in the bottom-left corner: Julia
 can still walk, but no button or key does anything (no green, yellow, red or Start, no
 letters), and the rooms' and the battle's timed re-prompts hold off. Lines already
 playing finish; the battle's move choice keeps waiting. Press it again and play
@@ -334,8 +335,9 @@ his call; that press does not end solo (only a game that asks him does).
 
 **The Shape-Shifter** (item 096, `src/scenes/ShifterRoom.ts`): a side room where she
 reads every letter of a word, not just the first, alone: walking and green only, nothing
-for Dad's 1 / 2. For the beta `FORCE_SHIFTER_ROOM` (on) puts it behind door b of every
-episode (door a holds the forced phonics game). The villain's shape-shifting spell walks a
+for Dad's 1 / 2. For the beta `SHIFTER_ROOM` puts it behind door b of about half the
+episodes, leaning away from last episode's pick (item 126; door a holds the forced
+phonics game); the others have a fetch sentence frame or the word machine there. The villain's shape-shifting spell walks a
 creature down a chain of pictured CVC words, one letter changed a link (CAT, BAT, BAG,
 BUG, MUG): chains changing all three places first (hunt 6, M29: the vowel too), then the
 first letter first, then the last, the vowel last, going back once at most
@@ -446,7 +448,7 @@ done, items in the bag):
 | `?scene=room&slot=a&room=charge` | Charge the Spell (`room=charge` forces it behind door a, or door b when `game=` holds door a, in any URL) |
 | `?scene=room&slot=a&room=charge&solo=1` | Charge the Spell in solo mode (item 106: Dad isn't here; `solo` in any URL starts the episode solo) |
 | `?scene=room&slot=a&room=bridge` | The Stretchy Bridge (`room=bridge`, the same way) |
-| `?scene=room&slot=a&room=shifter` | The Shape-Shifter (`room=shifter` forces it behind door a; otherwise `FORCE_SHIFTER_ROOM` has it behind door b) |
+| `?scene=room&slot=a&room=shifter` | The Shape-Shifter (`room=shifter` forces it behind door a; otherwise `SHIFTER_ROOM` has it behind door b about half the time) |
 | `?scene=battle&part=1&charged=m,s,a` | A battle that fires those charged runes (default: the plan's charge room's, in part 1) |
 | `?scene=battle&part=1` (or `2`) | A battle |
 | `?scene=victory&read=cat,sun,julia` | The victory scene, then the victory recapping those words |

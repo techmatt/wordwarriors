@@ -63,8 +63,8 @@ export interface BankEntry {
   glyph?: string;
   draw?: DrawId;
   say?: string;
-  /** The item that added it: 037, 040, 054, 056, 058, 059 or 121 (unset for older words). Informational: nothing reads it. */
-  since?: '037' | '040' | '054' | '056' | '058' | '059' | '121';
+  /** The item that added it: 037, 040, 054, 056, 058, 059, 121 or 126 (unset for older words). `?words=new` and the grown-ups page's NEW read 121's and 126's. */
+  since?: '037' | '040' | '054' | '056' | '058' | '059' | '121' | '126';
   /** It sounds like a spell (ZAP, HEX, POP; not MUD or NAP): a caster's gift leans to it (item 038, `drawGift`). */
   spell?: true;
   /**
@@ -118,6 +118,8 @@ const NEW_054 = { since: '054' as const };
 const NEW_056 = { since: '056' as const };
 /** Item 121: familiar things from her life (Stardew Valley's farm, dragons, Dad's bedtime stories, home and school). */
 const NEW_121 = { since: '121' as const };
+/** Item 126 (Matt's): COW, and MOM and DAD (she says Mama and Dada at home, which is fine). */
+const NEW_126 = { since: '126' as const };
 /** Item 058: a familiar picture holding a sound she has not been taught (UNTAUGHT_SOUNDS): level 3, with the digraphs. */
 const UNTAUGHT_058 = { since: '058' as const, late: true as const };
 
@@ -146,6 +148,8 @@ const ENTRIES: BankEntry[] = [
   A('hum', '🎵', NEW), A('yum', '😋', NEW),
   // Item 121, level 1: more links for the Shape-Shifter (HAM-JAM-HAT).
   T('ham', '🍖', NEW_121),
+  // Item 126: a mom and a dad (MOM is a Shape-Shifter link, MOM-MOP).
+  T('mom', '👩', NEW_126), T('dad', '🧔', NEW_126),
   // Item 037, level 2: blends. Order (item 096): final s-blends (NEST, MASK) and initial l-blends (FLAG, CLAP) first, final nasal blends (JUMP, HAND) last.
   T('frog', '🐸', NEW), T('drum', '🥁', NEW), T('crab', '🦀', NEW), T('flag', '🚩', NEW), T('sled', '🛷', NEW_ODD),
   T('nest', '🥚', NEW), T('tent', '⛺', NEW), T('desk', '🗄️', NEW), T('belt', '🥋', NEW), T('vest', '🦺', NEW_ODD),
@@ -215,7 +219,7 @@ const ENTRIES: BankEntry[] = [
   T('tree', '🌳', { ...NEW_121, late: true, spelled: [['t', 't'], ['r', 'r'], ['ee', 'long_e']] }),
   // Item 058, under the untaught-sounds ruling (Matt's): a familiar picture may
   // hold a sound she has not been taught (UNTAUGHT_SOUNDS in letters.ts: long
-  // OO, the schwa, X said by its name), spelled by hand with each unit's sound.
+  // OO, the schwa, X said by its name, item 126's OW), spelled by hand with each unit's sound.
   // The first sounds the bank had none or one of: Z, A, I, O, U, X. Level 3
   // (`late`), on the long path (no short-vowel tag, no family, no bridge).
   T('zoo', '🎪', { ...UNTAUGHT_058, spelled: [['z', 'z'], ['oo', 'long_oo']] }),
@@ -228,6 +232,8 @@ const ENTRIES: BankEntry[] = [
   // X-RAY: no familiar picture starts with X's KS sound; X-RAY says the
   // letter's name (`x_name`), and the audit counts it as X's first sound.
   T('xray', '🦴', { ...UNTAUGHT_058, say: 'x-ray', spelled: [['x', 'x_name'], ['r', 'r'], ['ay', 'long_a']] }),
+  // Item 126: COW and its OW (`ow`, a new untaught sound, as 058 added long OO for ZOO).
+  T('cow', '🐄', { ...UNTAUGHT_058, since: '126', spelled: [['c', 'c'], ['ow', 'ow']] }),
 ];
 
 /** The digraphs that are one sound unit (item 056: NG, and QU, whose sound is Q's "kw"). */

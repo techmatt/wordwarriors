@@ -183,8 +183,8 @@ covers the room, the dad key, dad lock, the read's timeout, the round's length a
 runes in battle (items 053, 059). The forced room is Charge the Spell or the Stretchy Bridge at random, so
 `playRoom` and the bug-hunt checker play the bridge too (`playBridgeRoom`: slide across
 with the stick, Dad's yes where he is asked, the right picture); `tests/bridge.spec.ts`
-covers its three help levels and a wrong picture (item 054). `FORCE_SHIFTER_ROOM` follows
-the same rule for the Shape-Shifter behind door b (item 096): `playRoom` plays it
+covers its three help levels and a wrong picture (item 054). `SHIFTER_ROOM` follows
+the same rule for the Shape-Shifter behind door b (item 096; about half the drawn episodes since item 126): `playRoom` plays it
 (`playShifterRoom`: each link's right picture or stone, a wrong one first with
 `wrongFirst`), and `tests/shifter.spec.ts` plays one room through both beats at base level
 (untagged, ~8 s; its pacing test is slow lane). `tests/hunt6.spec.ts` (item 102) keeps the sixth hunt's Shape-Shifter
@@ -404,9 +404,15 @@ her as the scenes record it (`--right=0.85` right first time). It prints one row
 dimension (words per game, phonics, frames, voice variants, pictures, cast, places, games,
 fights, items), worst first: the pool, how many came up, the median gap before one comes
 back, the share back within 2 episodes, the most drawn against the mean, and what never
-came up. `--json=<file>` keeps the rows; `--only=<name,…>` narrows them. `Math.random` is
+came up. `--json=<file>` keeps the rows, each item's count among them (`counts`, item 126: to follow
+one word, BUG say, across runs); `--only=<name,…>` narrows them. `Math.random` is
 seeded, so a seed replays; a change to any draw or to the bank moves every later episode,
 so compare the same seeds before and after. Item 121's before and after runs are its report's.
+A before run needs no checkout: `git archive <commit> | tar -x -C scratch/<dir>`, then run
+`npx tsx tests/variety/simulate.ts` inside it (it finds the worktree's `node_modules` above
+`scratch/`; item 126). A simulated episode answers for her, so a draw's per-visit shares
+(BUG in about one Shape-Shifter visit in three) are steadier than its raw counts, which move
+with how often the game comes up.
 
 ### The bug-hunt checker
 
@@ -700,7 +706,8 @@ Untaught sounds (item 058, Matt's ruling): a familiar picture word may hold a so
 has not been taught. It is spelled by hand, each unit with its sound, and each such
 sound is its own placeholder line like a long vowel (`UNTAUGHT_SOUNDS` in
 `content/phonics/letters.ts`, the end of `LONG_VOWEL_SOUNDS`): `long_oo` "Oo" (ZOO,
-IGLOO), `schwa` "Uh" (ZEBRA's A, OCTOPUS's second O and U, UMBRELLA's A) and `x_name`
+IGLOO), `schwa` "Uh" (ZEBRA's A, OCTOPUS's second O and U, UMBRELLA's A), `ow` "Ow"
+(COW, item 126) and `x_name`
 "Ecks" (X-RAY, X said by its name; the audit counts it in the X row, since no familiar
 picture starts with KS). A word holding one takes the long path: level 3 (`late`), no
 short-vowel tag, never in a family or on the bridge. That is how Z (ZOO, ZEBRA), A

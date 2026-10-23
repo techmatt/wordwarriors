@@ -127,10 +127,16 @@ export function clippedIssues(voice: Since['voice']): Issue[] {
  */
 export const ROOM_BUDGET_MS: Record<string, number> = { ChargeRoom: 30_000, Entry: 45_000, SentenceRoom: 60_000, BridgeRoom: 75_000, ShifterRoom: 90_000, WordMachine: 75_000 };
 
-export function pacingIssues(visits: { scene: string; ms: number; wrong: boolean }[]): Issue[] {
+/**
+ * A Charge visit solo from its start (hunt 8, M38 (c), Matt's call): she says each sound along with
+ * the helper rather than waiting on Dad, so its budget is longer.
+ */
+export const SOLO_CHARGE_BUDGET_MS = 35_000;
+
+export function pacingIssues(visits: { scene: string; ms: number; wrong: boolean; solo?: boolean }[]): Issue[] {
   const out: Issue[] = [];
   for (const v of visits) {
-    const budget = ROOM_BUDGET_MS[v.scene];
+    const budget = v.scene === 'ChargeRoom' && v.solo ? SOLO_CHARGE_BUDGET_MS : ROOM_BUDGET_MS[v.scene];
     // A scenario answering wrong on purpose is slower by design.
     if (!budget || v.wrong || v.ms <= budget) continue;
     out.push({ kind: 'slow-room', severity: 'look', scene: v.scene, detail: `${(v.ms / 1000).toFixed(1)} s against a ${(budget / 1000).toFixed(0)} s budget`, key: `slow:${v.scene}` });

@@ -85,8 +85,8 @@ export const BRIDGE_GAME: Minigame = { id: 'bridge', kind: 'bridge', scene: 'Bri
  * a creature down a chain of words, one letter changed a link; she reads each
  * link, walking and green only (its plan: src/rules/shifter.ts). Every word
  * she reads there is a battle item, the last creature among them. For the
- * beta one is forced per episode (FORCE_SHIFTER_ROOM, src/episode/plans.ts
- * `roomGames`).
+ * beta it is behind door b of about half the episodes (SHIFTER_ROOM, item
+ * 126, src/episode/plans.ts `roomGames`).
  */
 export const SHIFTER_GAME: Minigame = { id: 'shifter', kind: 'shifter', scene: 'ShifterRoom', weight: SHIFTER.weight, slots: ['fetch'] };
 

@@ -48,6 +48,7 @@ Moved from CLAUDE.md (item 078). "The three commands" are `voice:lines`, `voice:
 | "a new gesture for X" / "X's rune should fire Y" | X's entry in `RUNES` (`content/phonics/runes.ts`: `gesture`, `move`), then `voice:lines`, `voice:build` |
 | "higher / floatier jumps" / "more or fewer shots" / "charge sooner" | `FREE_PLAY` in `src/config.ts` (`jump`, `maxShots`, `chargeMs`, `fullChargeMs`, `shotSpeed`, `shotLifeMs`) |
 | "stop forcing the phonics room" | `FORCE_PHONICS_ROOM` in `src/config.ts` (both stay weighted entries, `CHARGE.weight`, `BRIDGE.weight`) |
+| "the Shape-Shifter more / less often" | `SHIFTER_ROOM` in `src/config.ts` (`afterOne`, `afterNone`: its chance behind door b after an episode with / without it; 1 and 1 every episode) |
 | "more / fewer bridge words" / "slower slide" | `BRIDGE` in `src/config.ts` (`words`, `slide`, `maxUnits`, `replays`, `startLevel`) |
 | "the bridge needs pictures like X" | a familiar `BANK` thing starting like X (`docs/content.md`, "The Stretchy Bridge's pictures"), the three commands, `art:gen` |
 | "the warm-up is too hard / too easy" / "start new words at level N" | `GRAB.startLevel` (and `helpAfter`) in `src/config.ts`; past the start level only with `DIFFICULTY` 2+ |
@@ -436,7 +437,8 @@ its arena and props. Look at it with `?scene=battle&part=1&fight=<id>` (any vill
 
 Item 107: a turn-based showdown told like a short story, beside the free-simulation
 styles. A story fight is one more `FightSpec` with `kind: 'story'`, `story: '<id>'` and
-`villain: '<roster id>'` (the debug link `?fight=<id>` forces that villain), plus its
+`villain: '<roster id>'` (the debug link `?fight=<id>` forces that villain; `storyFight: '<id>'`
+on the villain's roster entry plays it in about half his drawn episodes, item 126), plus its
 script, a `StoryScript` in its own file under `content/battle/stories/` listed in
 `index.ts`. The staging (`src/battle/story/`) is shared, so a second villain's story is
 data only:
@@ -522,7 +524,7 @@ lights it and says nothing); a `spelled` word with one short vowel and nothing l
 silent (THUMB: TH U MB, MB saying M) is tagged like any word. Item 058 (Matt's ruling):
 a familiar picture may hold a sound she has not been taught; spell it by hand with that
 sound's key from `UNTAUGHT_SOUNDS` (`content/phonics/letters.ts`: `long_oo` for ZOO,
-`schwa` for ZEBRA's A, `x_name` for X-RAY's X), mark it `late`, and it takes the long
+`schwa` for ZEBRA's A, `x_name` for X-RAY's X, `ow` for COW), mark it `late`, and it takes the long
 path (no vowel tag, no family, no bridge). A new untaught sound goes in that list, which
 gives it its `letter_<key>_sound` line.
 

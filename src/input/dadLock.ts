@@ -28,7 +28,8 @@ const badge = new CornerTag(
     color: '#ffd23f',
     font: `bold 16px ${FONT_HEAVY}`,
   },
-  '🔒 DAD LOCK',
+  // The padlock alone (item 126): DAD and LOCK are bank words, and the badge shows before she reads them.
+  '🔒',
 );
 
 export function setDadLock(on: boolean): void {

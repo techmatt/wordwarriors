@@ -1,6 +1,6 @@
 /**
  * The entry hall: the home warm-up (item 033), between the bedroom and the
- * quest. "Before we head out, let's grab the ..."
+ * quest. "Before we head out, let's take the ..."
  *
  * Nine pictures stand on the floor, with no words on them (item 059: with
  * its word printed under each she matched letters instead of sounding out). The narrator asks for one and
@@ -83,7 +83,7 @@ export class EntryScene extends RoomScene {
 
   /**
    * The letter board is what she matches: the dialogue box keeps off it. Only
-   * once it is up: a hidden board kept the first line ("let's grab the...")
+   * once it is up: a hidden board kept the first line ("let's take the...")
    * off the empty top and down over the bottom row of pictures (item 039).
    */
   protected override keepOut(): KeepOut[] {

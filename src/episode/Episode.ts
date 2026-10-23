@@ -3,7 +3,7 @@
  * which step comes next.
  *
  *   title → (hero → ally → villain picks, off by default) → bedroom
- *   → the entry hall's warm-up ("before we head out, let's grab the ...")
+ *   → the entry hall's warm-up ("before we head out, let's take the ...")
  *   → house part 1 (hub: the gift word, two side-room doors, a minigame each
  *     from the pool, one a phonics game while FORCE_PHONICS_ROOM; out the
  *     front door) → map → battle part 1 (the villain's ultimate wins)
@@ -34,7 +34,6 @@
 
 import type Phaser from 'phaser';
 
-import { FIGHT_BY_ID } from '../../content/battle/fights';
 import { personOf } from '../../content/battle/roster';
 import { group } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
@@ -43,8 +42,8 @@ import { voiceBank } from '../voice/VoiceBank';
 import { startScene } from '../art/gate';
 import { narrator } from './cast';
 import { debugMode, endRun, stopDebug } from './debug';
-import { fightOverride, rememberCast, resetEpisode } from './draws';
-import { planFor, rememberPlan } from './plans';
+import { rememberCast, resetEpisode } from './draws';
+import { fightStyle, planFor, rememberPlan } from './plans';
 import { countEpisode, currentStep, episode, sceneForStep, steps, type EpisodeState, type Slot, type Step } from './state';
 
 export { currentStep, episode, isStepKind, sceneForStep, steps, type EpisodeState, type PrepGame, type Slot, type Step } from './state';
@@ -82,8 +81,8 @@ export function episodeGroups(): string[] {
   const g = [group.core, group.phonics, group.narrator(narrator())];
   g.push(group.fighter(episode.hero), group.fighter(`${episode.villain}_evil`));
   if (episode.ally) g.push(group.fighter(episode.ally));
-  // A story fight (item 107; only ever forced by `?fight=`, so no draw is made here): its lines, for who is in it.
-  const story = FIGHT_BY_ID[episode.fight ?? fightOverride ?? '']?.story;
+  // A story fight (item 107; drawn for its villain since item 126): its lines, for who is in it.
+  const story = fightStyle().story;
   if (story) {
     g.push(group.story(story));
     for (const id of [episode.ally, episode.primary]) if (id) g.push(group.story(story, personOf(id)));

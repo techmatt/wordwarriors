@@ -267,7 +267,7 @@ export const FORCE_PHONICS_ROOM = true;
 
 /**
  * The home warm-up (item 033, src/scenes/EntryScene.ts): "Before we head out,
- * let's grab the ..." in the entry hall. Each word has its own level on a
+ * let's take the ..." in the entry hall. Each word has its own level on a
  * ramp, a phonics clue that never says the word (amendment 1549): 1 = each
  * single letter's name, then its sound (a multi-letter unit, NG SH CK LL,
  * only its one sound: item 085); 2 = sounds only, the letters
@@ -352,7 +352,10 @@ export const ENDING_PAUSE = { intro: 3000, between: 1500, outro: 3000 };
  * `startLevel` is a word she has never met there (DIFFICULTY caps the ramp).
  * `weight` is its weight in the rooms' pool. `recentChains`: the chains it
  * remembers across episodes (hunt 7, M36), a rotation of their own: a chain
- * sharing a link with one of them waits, where the pool allows.
+ * sharing a link with one of them waits, where the pool allows. `wordChains`
+ * (item 126, Matt's pick 2b): a chain holding a word of the last few chains
+ * waits too, and to let one in "the most places changed" gives way (six was
+ * nearly every word, so nothing waited).
  */
 export const SHIFTER = {
   links: 4,
@@ -361,12 +364,26 @@ export const SHIFTER = {
   startLevel: 1 as 1 | 2 | 3,
   weight: 1,
   recentChains: 6,
+  wordChains: 2,
 };
 
 /**
- * Beta (item 096): every episode has a Shape-Shifter behind one of the two
- * side doors (door b, beside FORCE_PHONICS_ROOM's game behind door a). A test
- * URL that picks its own games (`?games=sentence`, `?game=`) is left alone;
- * `?room=shifter` forces it anyway.
+ * Beta (item 096; item 126, Matt's pick): about half the episodes have a
+ * Shape-Shifter behind door b (beside FORCE_PHONICS_ROOM's game behind door
+ * a); the others a fetch sentence frame or the word machine there. `afterOne`
+ * is the chance in an episode after one that had it, `afterNone` after one
+ * that did not: a half in the long run, seldom twice running nor long
+ * missing. 0 and 0 turn it off (door b from the pool); 1 and 1 force it
+ * every episode. A test URL that picks its own games (`?games=sentence`,
+ * `?game=`) is left alone; `?room=shifter` forces it anyway.
  */
-export const FORCE_SHIFTER_ROOM = true;
+export const SHIFTER_ROOM = { afterOne: 0.25, afterNone: 0.75 };
+
+/**
+ * A villain's story fight (item 126, Matt's pick: Evil Smaug's in half his
+ * episodes; `storyFight` on the roster entry): its chance in an episode he is
+ * drawn as the villain, after his last such episode played it (`afterOne`) or
+ * his own style (`afterNone`), a half in the long run. Before an ally's nudge
+ * (chef Dada Jason's cook-off), which it takes the place of.
+ */
+export const STORY_FIGHT = { afterOne: 0.25, afterNone: 0.75 };

@@ -129,7 +129,7 @@ const SCENARIOS: Scenario[] = [
   { name: 'charge_no_first', query: 'seed=115&room=charge', wrong: true, more: true },
   // The Stretchy Bridge (item 054): half the `games=all` scenarios meet it; this one with a wrong picture first.
   { name: 'bridge_wrong_first', query: 'seed=116&room=bridge', wrong: true, more: true },
-  // The Shape-Shifter (item 096): every `games=all` scenario meets it behind door b (FORCE_SHIFTER_ROOM); this one with a wrong pick first.
+  // The Shape-Shifter (item 096): about half the `games=all` scenarios meet it behind door b (SHIFTER_ROOM); this one with a wrong pick first.
   { name: 'shifter_wrong_first', query: 'seed=117&room=shifter', wrong: true, more: true },
   // The second hunt (item 069): free play under a busy child, the difficulty levels above base
   // (item 067), the phonics rooms answered right, and a real draw across episodes (rotations).
@@ -207,8 +207,8 @@ class Recorder {
   /** Free play's shots in the scene with the most (a mash scenario reports that its presses landed). */
   shotsFired = 0;
   /** Each scene's visits, real ms (item 059's pacing check); `wrong` when the scenario answers wrong on purpose. */
-  private visit = { scene: '', at: 0 };
-  visits: { scene: string; ms: number; wrong: boolean }[] = [];
+  private visit = { scene: '', at: 0, solo: false };
+  visits: { scene: string; ms: number; wrong: boolean; solo: boolean }[] = [];
   wrong = false;
   /** No voice manifest on purpose (`voiceless`, M19): every line is a caption with no clip, so `voice-silent ... (none)` is the point, not an issue. */
   voiceless = false;
@@ -261,8 +261,9 @@ class Recorder {
     this.add(logIssues({ ...q, console: [], missingArt: [], flashes: [] }, SPEED));
     this.add(clippedIssues(q.voice));
     if (s.scene !== this.visit.scene) {
-      if (this.visit.scene) this.visits.push({ scene: this.visit.scene, ms: (Date.now() - this.visit.at) * SPEED, wrong: this.wrong });
-      this.visit = { scene: s.scene, at: Date.now() };
+      if (this.visit.scene) this.visits.push({ scene: this.visit.scene, ms: (Date.now() - this.visit.at) * SPEED, wrong: this.wrong, solo: this.visit.solo });
+      // Solo from the start of a visit (M38): Charge's own budget.
+      this.visit = { scene: s.scene, at: Date.now(), solo: Boolean(s.episode?.solo) };
     }
     const sig = {
       scene: s.scene,

@@ -64,6 +64,7 @@ test('untaught sounds (item 058): a word holding one is a late long-path word; X
   assert.deepEqual(t('octopus'), [3, null, 'o c t schwa p schwa s']);
   assert.deepEqual(t('umbrella'), [3, null, 'u m b r e l schwa']);
   assert.deepEqual(t('xray'), [3, null, 'x_name r long_a']);
+  assert.deepEqual(t('cow'), [3, null, 'c ow']);
   for (const s of UNTAUGHT_SOUNDS) assert.ok(SOUND_BY_UNIT[s.letter] && LONG_VOWEL_SOUNDS.includes(s), `${s.letter} has its own line`);
   const row = (tag: string) => coverageRows().find((r) => r.tag === tag)!.words;
   assert.ok(row('first x').includes('xray'), 'X-RAY counts for X');

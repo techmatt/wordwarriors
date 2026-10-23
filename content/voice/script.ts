@@ -157,7 +157,7 @@ export const NARRATOR_LINES: Template[] = [
   // `grab_need` trail off into the clue (letter names and letter sounds, never
   // the word: amendment 1549; its word_ line confirms it once she has it); `grab_wrong` trails off into
   // the word she picked (word_cat): she has picked it, so it may be said.
-  { key: 'grab_ask', text: "Before we head out, let's grab the..." },
+  { key: 'grab_ask', text: "Before we head out, let's take the..." },
   { key: 'grab_wrong', text: "That's the..." },
   { key: 'grab_need', text: 'We need the...' },
   { key: 'grab_door', text: "You got it! Now let's go out the door!", say: "You got it, now let's go out the door!" },
@@ -216,8 +216,8 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'shifter_starts', text: 'It starts as a...' },
   { key: 'shifter_read', text: 'Look, a new word! Read it, then walk to its picture!', say: 'Look, a new word! Read it, then walk to its picture.' },
   { key: 'shifter_read_2', text: 'The spell wrote a new word! Which picture is it?', say: 'The spell wrote a new word! Which picture is it?' },
-  { key: 'shifter_fix', text: "It changed, but its word didn't! Find the letter that fixes it!", say: "It changed, but its word didn't! Find the letter that fixes it." },
-  { key: 'shifter_fix_2', text: 'Uh oh, the word is wrong now! Walk to the letter that fixes it!', say: 'Uh oh, the word is wrong now! Walk to the letter that fixes it.' },
+  { key: 'shifter_fix', text: "It changed, but its word didn't! Find the letter that makes them match!", say: "It changed, but its word didn't! Find the letter that makes them match." },
+  { key: 'shifter_fix_2', text: 'Uh oh, the word is wrong now! Walk to the letter that makes it right!', say: 'Uh oh, the word is wrong now! Walk to the letter that makes it right.' },
   { key: 'shifter_hint', text: 'Listen! The new letter says...' },
   { key: 'shifter_stone', text: 'This letter says...' },
   { key: 'shifter_picked', text: 'You picked...' },
@@ -228,11 +228,11 @@ export const NARRATOR_LINES: Template[] = [
   // A later link's spell strikes under the last word's praise, with no "Here comes the spell again!"
   // (`shifter_next`, gone: with it a link took 7 s with instant answers).
   { key: 'shifter_cue_read', text: 'Read it!' },
-  { key: 'shifter_cue_fix', text: 'Fix it!' },
+  { key: 'shifter_cue_fix', text: 'Make it match!' },
   // Hunt 6, M30: fix-it's own praise, never "by yourself" (a letter found for a sound, often after help).
-  { key: 'shifter_fixed', text: 'You fixed it!' },
-  { key: 'shifter_fixed_2', text: 'You fixed the spell!' },
-  { key: 'shifter_fixed_3', text: 'Nice fixing!' },
+  { key: 'shifter_fixed', text: 'You made it match!' },
+  { key: 'shifter_fixed_2', text: 'You mended the spell!' },
+  { key: 'shifter_fixed_3', text: 'Nice matching!' },
   { key: 'shifter_done', text: 'The spell is all used up! This one comes to the fight with us!', say: 'The spell is all used up! This one comes to the fight with us!' },
   // Each fight style's own beats (item 031, content/battle/fights.ts): `fight_<id>_<beat>`.
   ...FIGHTS.flatMap((f) => FIGHT_BEATS.flatMap((b) => (f.lines[b] ? [{ key: fightKey(f.id, b), ...f.lines[b] }] : []))),

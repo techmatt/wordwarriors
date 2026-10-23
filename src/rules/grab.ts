@@ -1,5 +1,5 @@
 /**
- * The home warm-up (item 033): "Before we head out, let's grab the ..." Pure:
+ * The home warm-up (item 033): "Before we head out, let's take the ..." Pure:
  * no Phaser, unit-tested.
  *
  * After the quest's setup line she walks into the entry hall, where nine

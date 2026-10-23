@@ -113,12 +113,14 @@ export const DIGRAPH_SOUNDS: LetterSound[] = [
  * - `schwa`: the lazy "uh" of ZEBRA's A, OCTOPUS's second O and U,
  *   UMBRELLA's A (the same placeholder as short U until recorded apart);
  * - `x_name`: X-RAY's X, which says the letter's name, "ecks": no familiar
- *   picture starts with X's own KS sound.
+ *   picture starts with X's own KS sound;
+ * - `ow`: the OW of COW (item 126), as in "ouch", not the long O of SNOW.
  */
 export const UNTAUGHT_SOUNDS: LetterSound[] = [
   { letter: 'long_oo', say: 'Oo', cls: 'vowel', example: 'zoo', note: 'long oo, the vowel of ZOO and the end of IGLOO' },
   { letter: 'schwa', say: 'Uh', cls: 'vowel', example: 'zebra', note: 'the schwa, the A of ZEBRA; the same placeholder as short u until Matt records the two apart' },
   { letter: 'x_name', say: 'Ecks', cls: 'fricative', example: 'xray', note: 'X said by its name, the X of X-RAY; not the KS sound at the end of FOX' },
+  { letter: 'ow', say: 'Ow', cls: 'vowel', example: 'cow', note: 'the OW of COW, as in "ouch"; not the long O of SNOW' },
 ];
 
 /**
@@ -142,7 +144,7 @@ export const LONG_VOWEL_SOUNDS: LetterSound[] = [
   ...UNTAUGHT_SOUNDS,
 ];
 
-/** Is this sound key one she has not been taught (item 058: `long_oo`, `schwa`, `x_name`)? */
+/** Is this sound key one she has not been taught (item 058: `long_oo`, `schwa`, `x_name`; item 126: `ow`)? */
 export const isUntaught = (sound: string): boolean => UNTAUGHT_SOUNDS.some((l) => l.letter === sound);
 
 /** Every sound unit's sound: a single letter's, a digraph's, a long vowel's or an untaught one's. */

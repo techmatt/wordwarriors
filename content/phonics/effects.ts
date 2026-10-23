@@ -190,6 +190,10 @@ const THING_EFFECTS: WordEffect[] = [
   { word: 'block', look: 'toy blocks raining down on the villain, clunk clunk', ability: use('block', 'rain', 0xe63946, { ...pic('block'), count: 8 }) },
   { word: 'bench', look: 'a big park bench that drops down on the villain, thump', ability: use('bench', 'slam', 0x8a5a3a, { power: 3 }) },
   { word: 'skunk', look: 'a skunk turns round and makes a big stinky cloud: the villain is dizzy, pee-yew', ability: use('skunk', 'cone', 0x9bd36a, { color2: 0x6a4a8a, status: 'stun', duration: 2 }) },
+  // Item 126: a mom, a dad and a cow.
+  { word: 'mom', look: 'a big mom hug for the whole team: everyone strong again', ability: use('mom', 'heal', 0xff8fb8, { color2: 0xffffff }) },
+  { word: 'dad', look: 'a big strong dad who stands in front of the team, arms wide: a shield', ability: use('dad', 'shield', 0x5aa0ff, { duration: 4 }) },
+  { word: 'cow', look: 'a big spotty cow that gallops straight through the villain, moo', ability: use('cow', 'dash', 0xffffff, { power: 3, color2: 0x333333 }) },
   // Item 058: the untaught-sounds words.
   { word: 'zoo', look: 'the whole zoo stampedes across the arena, a wave of animals', ability: use('zoo', 'wave', 0xffb347, { color2: 0x6ad66a }) },
   { word: 'zebra', look: 'a stripy zebra that gallops straight through the villain', ability: use('zebra', 'dash', 0xffffff, { power: 3 }) },

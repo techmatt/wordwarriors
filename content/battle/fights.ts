@@ -51,7 +51,7 @@ export interface FightSpec {
   scenery?: 'cave' | 'space';
   /** A story fight's script (content/battle/stories/ id). */
   story?: string;
-  /** The villain the style is written for: `?fight=<id>` forces him (a story fight). Never drawn at random unless it is a villain's own `fight`. */
+  /** The villain the style is written for: `?fight=<id>` forces him (a story fight). Never drawn at random unless it is a villain's own `fight` or `storyFight` (item 126). */
   villain?: string;
 }
 
@@ -197,7 +197,7 @@ export const FIGHTS: FightSpec[] = [
     ],
   },
   {
-    // Item 107: reached only by `?fight=smaug_story`, which forces Evil Smaug; no villain's own style.
+    // Item 107: `?fight=smaug_story` forces Evil Smaug. Item 126: about half the episodes he is drawn as the villain (`storyFight` on him).
     id: 'smaug_story',
     kind: 'story',
     name: 'Story fight against Evil Smaug (turn-based)',
