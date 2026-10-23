@@ -331,11 +331,12 @@ Each episode draws three games from the pool, one per room (two fetch games, the
 the counter game), weighted, never the same entry twice, apart from the quest; a game
 from her last episodes (the store's `recent.games`) weighs `VARIETY.gameWeight` (item
 067). An entry is `{ id, kind, scene, weight, slots: ['fetch'] | ['counter'] | both, frame? }`
-(`kind`: `sentence`, `machine`, `charge` or `bridge`): each sentence frame is one entry (`sentence:<frame>`,
+(`kind`: `sentence`, `machine`, `charge`, `bridge` or `shifter`): each sentence frame is one entry (`sentence:<frame>`,
 weight 1 times the frame's shakiness), and the word machine is one more
 (`word_machine`, fetch rooms only, weight `WORD_MACHINE.weight` in `src/config.ts` times
-how shaky her word families are: about every other episode); Charge the Spell and the
-Stretchy Bridge are one each (`charge`, `bridge`, fetch rooms only). A new game of a kind
+how shaky her word families are: about every other episode); Charge the Spell, the
+Stretchy Bridge and the Shape-Shifter are one each (`charge`, `bridge`, `shifter`, fetch
+rooms only). A new game of a kind
 already there is one entry and its scene. A new kind is one entry plus its planner: a
 `MinigameKind`, its weight's lean (`LEAN`, minigames.ts, by what she finds shaky), its
 `RoomPlan` variant and its planner in `PLANNERS` (`src/rules/sentences.ts`): a
@@ -345,7 +346,7 @@ says). The compiler asks for each but `PLAN_ORDER`, which `episodePlans` checks 
 runs. The room's `RoomPlan` carries `game` and `scene`, and `enterRoom` starts that scene. Whatever it plays, it must end in a word she read: `plan.key` (the
 prize on the hub door, or the counter) and `plan.fetches` (every word read there, each a
 battle item from a fetch room). Words a game uses are planned in `episodePlans`, kind by
-kind in `PLANNERS` order, so they stay out of the rooms planned after it, the keys and
+kind in `PLAN_ORDER`, so they stay out of the rooms planned after it, the keys and
 the counter; a game with its own words is a fetch room only. `tests/unit/plansGolden.*`
 pins the seeded draws: a change that should not alter them leaves that test green.
 
@@ -438,7 +439,9 @@ data only:
 - **Lines**: `{ who: 'villain' | 'dad' | 'ally', key, text, say? }`, before (`lines`)
   and after (`after`) the action. The villain's are in his evil voice
   (`story_<story>_<key>`); Dad's and the ally's are composed for every person
-  (`story_<story>_<key>_<person>`), all in the villain's fighter group. Dad is the ally
+  (`story_<story>_<key>_<person>`), in groups of their own (`group.story`: `story_<story>`,
+  and `story_<story>_<person>` per person), loaded only for a story fight and only for the
+  people in it. Dad is the ally
   when the ally is a dad, else the dad who woke her joins the fight; with only one of
   them, either says the other's lines. No line may say a bank word, stems included
   (`tests/unit/storyFight.test.ts`): "stone", not ROCK.
@@ -695,6 +698,13 @@ for it, shaped like a word effect (no `pic_` art). Then `voice:lines`, `voice:bu
 058 the room shows the gesture with only the sound, which the helper says and she says back). Tuning is `CHARGE`
 in `src/config.ts`. The room spells words: a new rune widens `CHARGE_WORDS`
 (`src/rules/charge.ts`), the familiar pictured words of 3-4 units that are all runes.
+
+Its picture letter (item 097): a `PICTURES` entry in `runes.ts` (`word`, a thing starting
+with its sound, and `look`, how that thing makes the letter's shape). The rune stone, a
+done Charge door and the battle's charged-move stone show it as `rune_<sound>` art, so
+run `art:placeholders` and an `art:alts` round for it (README, *Picture letters*). Every
+sound in `CHARGE_WORDS` needs one (`tests/unit/wordrules.test.ts`), and its word becomes a
+gesture word, kept out of an episode's reading where the rune is charged.
 
 ## The Stretchy Bridge's pictures (`src/rules/bridge.ts`)
 

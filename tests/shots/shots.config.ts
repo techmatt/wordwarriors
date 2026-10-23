@@ -2,7 +2,8 @@
  * Playwright config for `tests/shots/*.pw.ts` (screenshots and probes, not tests;
  * the `.pw.ts` name keeps it out of the suite). `npm run shots`.
  * The GPU draws, as in the suite (`WW_GPU=0` for software GL). Its server is the
- * checker's (no file watching, item 072): edits during a run wait for the next one.
+ * dev server without file watching (tests/qa/vite.qa.config.ts, item 072; the checker's
+ * before it served a build): edits during a run wait for the next one.
  * Port: `SHOTS_PORT`, else 5194, so it never meets the dev server or a test run.
  */
 

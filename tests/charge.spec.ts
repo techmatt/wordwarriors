@@ -40,9 +40,9 @@ test('Charge the Spell: the runes charge by themselves, each sound said; one pre
   expect(b0.room!.charge!.asking).toBe(false);
   // The word is at the top from the start, but never said.
   expect(b0.voice.history).not.toContain(`word_${c0.word}`);
-  // The rune is upper case on the altar; the sound is never captioned (no text shows its placeholder).
+  // The word's units are upper case in the bar at the top (the altar shows the rune's picture letter);
+  // the sound is never captioned (no text shows its placeholder).
   const shown = (await texts(page)).map((t) => t.text);
-  expect(shown).toContain(r0.toUpperCase());
   for (const r of c0.runes) expect(shown).toContain(r.toUpperCase());
   await shot(page, 'sayback');
   // Every rune charges by itself, each sound said, and only then is Dad asked.

@@ -25,7 +25,7 @@ import { sfxHit, sfxStomp } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { burst, fitImage, shake } from '../fx/juice';
 import { TEX } from '../fx/textures';
-import { seededRand } from '../rules/cast';
+import { seededRand } from '../rules/random';
 
 export interface HouseMoodOptions {
   /** Scatter seed: one per room, so each room has its own stable mess. */

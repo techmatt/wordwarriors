@@ -10,7 +10,8 @@
  * machine (item 026, fetch rooms only), times how shaky her word families are,
  * and Charge the Spell (item 053, fetch rooms only), times how shaky her
  * letter sounds are, and the Stretchy Bridge (item 054, fetch rooms only),
- * times how shaky the words it can give her are.
+ * times how shaky the words it can give her are, and the Shape-Shifter (item
+ * 096, fetch rooms only), times how shaky the words its chains can use are.
  *
  * A new minigame is one entry here: its kind, its scene, a weight, the
  * slots it can fill. A new kind is also a `MinigameKind`, its lean here

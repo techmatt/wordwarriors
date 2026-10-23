@@ -52,12 +52,11 @@ import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids
 import { variant } from '../episode/lineVariants';
 import { voiceBus, type HeldSound } from '../audio/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon } from '../audio/sfx';
-import { BRIDGE, DAD_AWAY_MS, DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { BRIDGE, DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { dadPress, setDadAsking, type DadAnswer } from '../input/dadButtons';
-import { dadLock } from '../input/dadLock';
 import { bridgeLevel, nextBridgeLevel, recordedBridgeLevel, whereDiffers, type BridgeLevel, type BridgePlan, type BridgeRound } from '../rules/bridge';
 import { soundOut } from '../rules/soundOut';
 import { progress } from '../state/progress';
@@ -136,8 +135,6 @@ export class BridgeRoom extends HouseSideRoom {
   private pendingSound = false;
   private held: HeldSound | null = null;
   private lit = -1;
-  private waitMs = 0;
-  private timeouts = 0;
   private bag!: Bag;
   private gapLook = GAP_LOOK.lava;
   /** The flow in charge: a chain stops at its next await once something newer has taken over. */
@@ -164,7 +161,6 @@ export class BridgeRoom extends HouseSideRoom {
     this.onStone = -1;
     this.held = null;
     this.lit = -1;
-    this.timeouts = 0;
   }
 
   private get current(): BridgeRound {
@@ -319,7 +315,7 @@ export class BridgeRoom extends HouseSideRoom {
     this.replays = 0;
     this.toldFind = false;
     this.hintAsked = false;
-    this.waitMs = 0;
+    this.resetDadWait();
     this.wrongTries = episode.house.misses?.[this.missKey] ?? 0;
     this.releaseHeld();
     this.clearStones();
@@ -419,16 +415,9 @@ export class BridgeRoom extends HouseSideRoom {
       this.hintAsked = false;
       this.answer('yes');
     }
-    if (this.phase === 'say' && !dadLock.locked && !voiceBus.busy) {
-      this.waitMs += deltaMs;
-      if (this.waitMs >= DAD_AWAY_MS) {
-        // Item 106: he isn't here. Solo from now on; the pictures come, and his absence is no help asked for.
-        this.waitMs = 0;
-        this.timeouts++;
-        episode.solo = true;
-        setDadAsking(false);
-        void this.toPictures();
-      }
+    if (this.phase === 'say' && this.dadAway(deltaMs)) {
+      // Item 106: he isn't here. Solo from now on; the pictures come, and his absence is no help asked for.
+      void this.toPictures();
     }
   }
 
@@ -507,25 +496,23 @@ export class BridgeRoom extends HouseSideRoom {
       return;
     }
     this.phase = 'say';
-    this.waitMs = 0;
+    this.resetDadWait();
     await this.narrate('bridge_say');
     if (f !== this.flow || this.phase !== 'say') return;
-    this.waitMs = 0;
     this.locked = false;
-    setDadAsking(true);
+    this.askDad();
   }
 
   // ---- Dad ----------------------------------------------------------------
 
   /**
-   * Dad's button (or the wait running out, or F4). Level 2: his 2 is a hint
+   * Dad's button (or F4, or a level-2 hint he asked for while the helper
+   * talked); any press has already ended solo (`openDad`). Level 2: his 2 is a hint
    * (the stones sound, for this word). Level 3, on the far bank: his 2 brings
    * the pictures; his 1 replays the slide with sounds, then asks again.
    */
   private answer(a: DadAnswer): void {
     this.noteActivity();
-    // Item 106: he is here after all.
-    episode.solo = false;
     if (this.level === 2) {
       if (a !== 'yes' || this.voiced) return;
       // Item 092: his 2 while the helper talks (the intro, a miss's feedback) was dropped, though
@@ -608,10 +595,7 @@ export class BridgeRoom extends HouseSideRoom {
     this.phase = this.resumePhase;
     this.onStone = -2;
     this.locked = false;
-    if (this.phase === 'say') {
-      this.waitMs = 0;
-      setDadAsking(true);
-    }
+    if (this.phase === 'say') this.askDad();
   }
 
   // ---- Picking ------------------------------------------------------------
@@ -827,7 +811,7 @@ export class BridgeRoom extends HouseSideRoom {
         aided: this.aided,
         picturesUp: this.picturesUp,
         replays: this.replays,
-        timeouts: this.timeouts,
+        timeouts: this.dadTimeouts,
         misses: this.wrongTries,
         asking: this.phase === 'say' && !this.locked,
         holding: this.held?.playing ? this.held.id : null,

@@ -56,7 +56,7 @@ import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { withStems } from '../rules/bank';
-import { DADS, outfitTall } from '../rules/cast';
+import { isDad, outfitTall } from '../rules/cast';
 import { fetchBeats } from '../rules/volleys';
 import type { MoveOwner } from '../rules/moves';
 import { progress } from '../state/progress';
@@ -67,11 +67,10 @@ import { Caption } from '../ui/Caption';
 import { fitText } from '../ui/fitText';
 import { cast, type Projectile, type Trap } from './abilities';
 import { Fighter, FLOOR_BOTTOM, FLOOR_TOP, initFromMinion, initFromSpec, type FighterInit } from './Fighter';
-import { ARENA_LEFT, ARENA_RIGHT, integrate, STEER } from './movement';
+import { ARENA_LEFT, ARENA_RIGHT, integrate, restLift, STEER } from './movement';
 import { BattleHud } from './hud';
 import { MoveChoice, type ChoiceHost } from './moveChoice';
 import { makeStage } from './stages';
-import { storyLift } from './stages/story';
 import { StoryDirector } from './story/StoryDirector';
 import type { StoryWalk } from './story/walk';
 import type { FightStage, Phase, StageHost } from './stages/stage';
@@ -268,7 +267,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
    * the villain's or the hero's person). Null with no dad to bring.
    */
   private storyDad(): Fighter | null {
-    if (this.allyFighter && (DADS as readonly string[]).includes(personOf(this.allyFighter.init.id))) return this.allyFighter;
+    if (this.allyFighter && isDad(personOf(this.allyFighter.init.id))) return this.allyFighter;
     const id = episode.primary;
     if (!id || !CHARACTER_BY_ID[id] || personOf(id) === personOf(episode.villain) || personOf(id) === personOf(episode.hero)) return null;
     const i = this.heroes.length;
@@ -283,7 +282,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     if (this.part === 1) await this.versus();
     this.heroes.forEach((h, i) => {
       const to = this.show.home(h, i)!;
-      this.tweens.add({ targets: h, x: to.x, y: to.y, lift: storyLift(h), duration: 900, ease: 'Quad.easeOut' });
+      this.tweens.add({ targets: h, x: to.x, y: to.y, lift: restLift(h), duration: 900, ease: 'Quad.easeOut' });
     });
     const vto = this.show.home(this.villain, 0)!;
     this.tweens.add({ targets: this.villain, x: vto.x, y: vto.y, duration: 1100, ease: 'Quad.easeOut' });
@@ -294,7 +293,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     this.phase = 'story';
   }
 
-  /** A story fight's minion done with (item 107). */
+  /** A story fight's minion or leftover helper, done with (item 107). */
   killFighter(f: Fighter): void {
     if (f.alive) this.kill(f);
   }
@@ -321,7 +320,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     return this.show.anchored;
   }
 
-  /** Tests (`__ww.place`, item 083): her hero onto (x, y) in a move choice; false outside one. */
+  /** Tests (`__ww.place`, item 083): her hero onto (x, y) in a move choice or a story walk; false outside both. */
   placeHero(x: number, y: number): boolean {
     if (this.choices.active) return this.choices.place(x, y);
     return this.storyWalk?.place(x, y) ?? false;
@@ -543,6 +542,11 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
       .setDepth(FLOOR_TOP - 4);
   }
 
+  /** Her own drawn height, the outfit's extra taken off (hunt 6, M32: an outfit's picture is drawn taller, by its hat). */
+  private heroHeight(): number {
+    return this.heroes[0] ? this.heroes[0].height / outfitTall(this.heroes[0].init.art) : 150;
+  }
+
   /** The fighting-game "VS" splash before Part 1. */
   private async versus(): Promise<void> {
     const ui = this.add.container(0, 0).setDepth(DEPTH.overlay + 5);
@@ -550,8 +554,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     const right = this.add.rectangle(GAME_WIDTH * 1.5, GAME_HEIGHT / 2, GAME_WIDTH / 2 + 60, GAME_HEIGHT, 0xc8102e, 0.92).setOrigin(0.5);
     ui.add([left, right]);
     // Each card as tall beside hers as the fighter stands beside her (item 034: a dad is grown-up height here too).
-    // Her own height (hunt 6, M32: an outfit's picture is drawn taller, by its hat).
-    const me = this.heroes[0] ? this.heroes[0].height / outfitTall(this.heroes[0].init.art) : 150;
+    const me = this.heroHeight();
     const heroCards = this.heroes.map((h, i) => {
       const ch = Math.min(CARD_MAX, (220 * h.height) / me);
       return fitImage(this.add.image(-300 + i * 30, 440 + i * 40, h.init.art).setOrigin(0.5, 1), ch * 0.95, ch);
@@ -695,7 +698,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
 
   /**
    * Charge the Spell's runes (item 053), if they were charged for this part:
-   * a quick volley, each rune stone popping up over her hero with its letter,
+   * a quick volley, each rune stone popping up over her hero with its picture letter (`runeArt`),
    * its sound said (never captioned), and her hero firing the rune's move
    * (content/phonics/runes.ts) at a little over normal power, so six of them
    * neither end the fight nor run it long (expectFightLength).
@@ -1026,7 +1029,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   /** The move-choice pause. */
   async moveChoice(): Promise<void> {
     // The words were planned with the episode (src/rules/moves.ts): the first
-    // of each part is the hub's gift word, the rest come from her move bag.
+    // of each part is the hub's gift word, the rest come from her move bag
+    // (a story fight's from src/rules/storyFight.ts: only part 1 opens on the gift).
     const planned = movePlan()[this.part === 1 ? 'part1' : 'part2'][this.choicesOpened];
     const me = this.heroes[0]!;
     const owner = planned && this.ownerOf(planned.owner, planned.right);
@@ -1049,7 +1053,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     me.lean = 0;
     me.vx = 0;
     me.vy = 0;
-    const at = { x: me.x, y: me.y, lift: me.init.style === 'fly' ? 110 : me.init.style === 'hover' ? 40 : 0 };
+    const at = { x: me.x, y: me.y, lift: restLift(me) };
     me.lift = at.lift;
     // The last big banner ("ROCKET FISTS!") is frozen with the clock: clear it from under PICK A MOVE.
     this.bannerText?.destroy();
@@ -1478,7 +1482,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     await this.wait(1.0);
     sfxPoof();
     // As tall beside her hero as the villain's good size says (Scar just under her).
-    const gh = (this.heroes[0] ? this.heroes[0].height / outfitTall(this.heroes[0].init.art) : 150) * castScale(episode.villain);
+    const gh = this.heroHeight() * castScale(episode.villain);
     const good = fitImage(this.add.image(v.x, v.y, castArt(episode.villain)).setOrigin(0.5, 1), gh * 0.95, gh).setDepth(v.y + 1);
     popIn(this, good, good.scale, 0, 500);
     burst(this, v.x, v.y - 90, { count: 60, speed: 400, colors: [0xff9ad5, 0xffffff] });

@@ -20,11 +20,6 @@ export const STORY_MARKS = {
   villain: { x: 1020, y: 560 },
 } as const;
 
-/** How high a fighter floats on its mark: a flyer up in the air, a hoverer a little off the floor. */
-export function storyLift(f: Fighter): number {
-  return f.init.style === 'fly' ? 110 : f.init.style === 'hover' ? 40 : 0;
-}
-
 export class StoryStage extends BaseStage {
   override readonly anchored = true;
 

@@ -8,8 +8,9 @@
  *
  * Patterns kept from Seraphina's harness: collect page errors and end every
  * test asserting none; wait for a state value `=== expected`, not just for one
- * being present; headless runs at 15–30 fps, so assert on state and counters,
- * never on displacement.
+ * being present; frame rates vary (the GPU holds about 56 fps in a battle,
+ * software GL, `WW_GPU=0`, 11-30), so assert on state and counters, never on
+ * displacement.
  */
 
 import { expect, type Page } from '@playwright/test';
@@ -26,6 +27,8 @@ export const SMOKE = { tag: '@smoke' };
 export interface WWState {
   scene: string;
   fps: number;
+  /** The music playing (src/audio/music.ts), or null. */
+  music: string | null;
   step: { kind: string; part?: number; game?: string; what?: string };
   episode: {
     hero: string;
@@ -293,6 +296,19 @@ export function texts(page: Page): Promise<TextInfo[]> {
 
 export async function press(page: Page, button: string): Promise<void> {
   await page.evaluate((b) => (window as unknown as { __ww: { input: { press(b: string): void } } }).__ww.input.press(b), button);
+}
+
+/** A busy child: `button` pressed `n` times, `ms` apart. */
+export async function mash(page: Page, button: string, ms: number, n: number): Promise<void> {
+  for (let i = 0; i < n; i++) {
+    await press(page, button);
+    await page.waitForTimeout(ms);
+  }
+}
+
+/** Whether minigame debug mode's DEBUG corner tag is up (src/input/debugKey.ts). */
+export function debugTagShown(page: Page): Promise<boolean> {
+  return page.evaluate(() => Boolean(document.getElementById('debug-tag')?.isConnected));
 }
 
 export async function stick(page: Page, x: number, y: number): Promise<void> {
@@ -673,8 +689,8 @@ export async function playShifterRoom(page: Page, wrongFirst = false): Promise<s
 
 /**
  * Play whichever game the room has: a sentence room (its key word), the word
- * machine (every word built), Charge the Spell (its one word),
- * or the Stretchy Bridge (every word read); `opts` as `RoomPlay` says.
+ * machine (every word built), Charge the Spell (its one word), the Stretchy
+ * Bridge or the Shape-Shifter (every word read); `opts` as `RoomPlay` says.
  */
 export async function playRoom(page: Page, opts: RoomPlay = {}): Promise<string[]> {
   const s = await until(

@@ -257,7 +257,7 @@ export function lineVariantKeys(base: string): string[] {
  * cue per rune is a few words; the gesture is shown, not told); they stay
  * composed for a longer teaching mode, should Matt want one back.
  */
-export const CHARGE_GESTURES: (Template & { sound: string })[] = RUNES.map((r) => ({ sound: r.sound, key: chargeKey('charge_gesture', r.sound), text: r.gesture.text, ...(r.gesture.say ? { say: r.gesture.say } : {}) }));
+export const CHARGE_GESTURES: (Template & { sound: string })[] = RUNES.map((r) => ({ sound: r.sound, key: chargeKey('charge_gesture', r.sound), text: r.gesture.text }));
 
 /** Composed per narrator × hero. */
 export const HERO_LINES: (Template & { key: HeroKind })[] = [{ key: 'alarm_hero', text: 'Bad news, {hero}!' }];

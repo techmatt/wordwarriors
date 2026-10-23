@@ -52,19 +52,19 @@ Playwright serves its own (README, *Ports and servers*). The sibling game
 | --- | --- |
 | `src/` | Game source. `main.ts` boots Phaser; `config.ts` sizes, depth bands, pad colours and every tuning knob named below; `hookState.ts` what scenes publish for the tests (and `walkObjects`), `testHooks.ts` installs `window.__ww`; `realTime.ts` wall-clock timeouts (network, decode) the tests' fast clocks do not stretch. |
 | `src/scenes/` | One scene per episode step: Boot, Title, Bedroom, Entry (the warm-up), Hub, the side rooms' games (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom, ShifterRoom), Journey, Ending (the victory scene), Victory (the recap), TheEnd, Parent, Wait (shown while a scene's art loads) and Debug (minigame debug mode's pedestals); parked: Pick, Alarm, Retreat and `minigames/` (the v0.1 games, Spell the Spell among them). "Minigame" means only a pool entry (`src/rules/minigames.ts`). |
-| `src/battle/` | The battle simulation: `BattleScene` (the director scripts `part1`/`part2`), `Fighter`, `abilities`, `movement`, `moveChoice` (`MoveChoice`: the frozen-fight word pick), `padPlace` (where its pads go), `hud` (`BattleHud`: names, bars, fetched things, runes); `stages/` stages each fight style. |
+| `src/battle/` | The battle simulation: `BattleScene` (the director scripts `part1`/`part2`), `Fighter`, `abilities`, `movement`, `moveChoice` (`MoveChoice`: the frozen-fight word pick), `padPlace` (where its pads go), `hud` (`BattleHud`: names, bars, fetched things, runes); `stages/` stages each fight style; `story/` the story fight (`StoryDirector` plays a script's beats, `StoryWalk` her dodge and grab walks). |
 | `src/episode/` | `Episode.ts` the episode's flow (scenes call `advance()`; nothing else decides flow), re-exporting `state.ts` (`episode`, the step list), `draws.ts` (the cast draw and what is remembered), `cast.ts` (who plays whom) and `plans.ts` (the episode's other draws); `debug.ts` minigame debug mode's sandboxed runs, `lineVariants.ts` narrator line variants said in turn and the taunts said. All but `Episode.ts` are Phaser-free. |
 | `src/input/` | `Controls` (pad + keys + virtual pad), `TextEntry` (A–Z, spelling only), `dadLock`, `dadButtons` (keys 1 / 2, Dad's no / yes), `debugKey` (key 0, minigame debug mode). |
 | `src/audio/` | `context`, `sfx` and `music` (synthesised), `VoiceBus` (the one voice arbiter), `holdSound` (letter sounds cut to hold or play once). |
 | `src/voice/VoiceBank.ts` | Reads `public/voice-gen/manifest.json` (lines.json only for mute captions when the manifest is missing), decodes by group. |
 | `src/art/` | Art on demand: `ArtBank` (load, the `art: not ready` safety net), `needs` (`artFor`: each scene's art), `gate` (`startScene`: every scene starts through it, behind the Wait scene when its art lags). |
 | `src/state/` | `ProgressStore` (localStorage, versioned, per sound and per word). |
-| `src/rules/` | Phaser-free, unit-tested: the cast, word bank, moves and gift word, warm-up, sentences, word machine, minigame pool, story and victory-scene draws; `difficulty` (the `DIFFICULTY` knob over every help ramp), `recent` (rotations across episodes) and `random` (seeded rand, shuffle, pick). |
+| `src/rules/` | Phaser-free, unit-tested: the cast (and grown-up and outfit heights), word bank, moves and gift word, warm-up, sentences, word machine, Charge, bridge and Shape-Shifter plans, minigame pool, story and victory-scene draws, fight styles and the story fight's pads (`storyFight`), the battle's volleys, the recap, `soundOut` (sounding out, the name's bridge); `difficulty` (the `DIFFICULTY` knob over every help ramp), `recent` (rotations across episodes) and `random` (seeded rand, shuffle, pick). |
 | `src/world/` | `RoomScene` (walk-to-answer rooms), `SideRoom` (the base class every side room's game extends, the parked v0.1 games too: no-fail `wrong()`; the piece meter and `right()` are the parked games' only) and `HouseSideRoom` (the five live rooms' base), `Player` (her character as the cursor), `houseMood`. |
 | `src/ui/`, `src/fx/` | Caption ribbon, follow-the-speaker bubbles, button dots, bag, `cornerTag` (the grown-ups' DOM corner tags: dad lock, Dad's 1 / 2 cue, DEBUG); particles and juice, `sceneGen` (`SceneGen`: stops a scene run's await chain at shutdown). |
 | `src/qa/` | The bug-hunt checker's in-page probe (`?qa=1`; README, *The bug-hunt checker*). |
 | `content/battle/roster.ts` | **Every character**, good and evil: style, abilities, taunts, ultimate, counter-item, the villain's house mood. Every roster character is also a villain. The dads' forms are roster characters with `person`. |
-| `content/battle/fights.ts`, `forms.ts` | Fight styles (race, rope pull, beam clash, cook-off, brawl); outfits (a character's images for a scenario). |
+| `content/battle/fights.ts`, `forms.ts`, `types.ts`, `stories/` | Fight styles (race, rope pull, beam clash, cook-off, brawl, story); outfits (a character's images for a scenario); the roster's types; the story fights' scripts (`smaug.ts`, listed in `index.ts`). |
 | `content/house/` | `house.ts` bedrooms, hub, side rooms, entry hall, quest places (`PLACES`); `quests.ts` each ally's quest; `scenes.ts` the hub's story scenes; `endings.ts` the victory scenes. |
 | `content/phonics/` | `bank.ts` **the word bank** (every word she reads: level, role `thing` / `action` / `both`); `effects.ts` each word's battle effect; `letters.ts` letter sounds; `sentences.ts` frames; `families.ts` the word machine's rimes; `runes.ts` Charge the Spell's runes; `words.ts`, `spelling.ts`. |
 | `content/voice/` | `script.ts` (narrator templates), `ids.ts` (every line id and narrator key comes from its builders, in game and composer alike: never spell `find_move_${w}` by hand), `voices.json`, `lines.json` (generated), `clips/` (recordings that override edge-tts). |
@@ -88,8 +88,8 @@ A fresh worktree has no `node_modules/`: run `npm ci` first (README, *Run it*).
 | `npm run typecheck` | `src`, `tests`, `content`, `tools` |
 | `npm test` | Fast lane, after every change (~14 s): the unit tests and the three `@smoke` browser tests at once (`tests/fastLane.ts`) |
 | `npm run test:unit` | The unit tests alone (~7 s) |
-| `npm run test:browser` | Before a commit (~90 s, 50 tests): every browser test not tagged `@slow`, plus the specs covering what changed (`npx playwright test <spec>`). A new browser test over ~10 s gets `SLOW` (README, *Tests*) |
-| `npm run test:slow` | The slow lane alone (~5 min, 86 tests; most of the full run: `@slow`: the real-time scene tests, the whole episodes, the soak) |
+| `npm run test:browser` | Before a commit (~95 s, 52 tests): every browser test not tagged `@slow`, plus the specs covering what changed (`npx playwright test <spec>`). A new browser test over ~10 s gets `SLOW` (README, *Tests*) |
+| `npm run test:slow` | The slow lane alone (~5 min at 86 tests, 97 now; most of the full run: `@slow`: the real-time scene tests, the whole episodes, the soak) |
 | `npm run test:all` | The full run (~6 min): unit tests and every browser test. **Not by default:** only for a change touching every scene |
 | `npm run voice:lines` | Regenerate `content/voice/lines.json` from roster + script + phonics |
 | `npm run voice:build` | Synthesise new/changed lines (`--force` all, `--prune` drop unused). Needs `uv` and network |
@@ -157,7 +157,7 @@ and promotion rides a later prompt.
 
 ## Standing design rules (law)
 
-- **No automatic difficulty.** Every help ramp (warm-up, bridge, a solid frame's skipped
+- **No automatic difficulty.** Every help ramp (warm-up, bridge, Shape-Shifter, a solid frame's skipped
   listening pass, sound-alike distractors; Charge the Spell has none) records her level
   but gives its most helpful start until Matt raises `DIFFICULTY`. Words are chosen per game
   by length in sound units, never by level: decoding games short, recognition roles any.

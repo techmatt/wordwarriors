@@ -18,7 +18,7 @@ export type Box = [number, number, number, number];
 /** How far a pad's word sign stands above its ring. */
 export const SIGN_RISE = 215;
 /** Least distance between two pads' columns: a sign is 230 wide, so signs never touch. */
-export const PAD_GAP = 270;
+const PAD_GAP = 270;
 /** The closest two columns may come when her side is narrow (item 071, M7): the plates still 10 px apart. */
 const NARROW_GAP = 240;
 /** Least distance between two staggered pads' columns, one on each row: the lower sign's plate clears the upper ring. */
@@ -57,7 +57,8 @@ export interface PlaceInput {
   /**
    * Her feet and her reach (hunt 7): no pad opens within it, or a green mashed through the
    * partner's "Use HOP!" picks the pad she was left standing at, unread (a crowded story
-   * fight put one there a quarter of the time). Kept unless no layout can keep it.
+   * fight put one there a quarter of the time). Kept only where it costs no older rule:
+   * the pads stay in as early a tier and cover nobody more than without it.
    */
   me?: { x: number; y: number; reach: number };
 }

@@ -87,8 +87,8 @@ item: `docs/engineering.md`, *Browser and tests*):
   behind each door; item 091) against `plansGolden.json`: a refactor leaves it green. A
   change meant to alter the draws rewrites the JSON on purpose, from the worktree root:
   `npx tsx -e "import('./tests/unit/plansGolden.ts').then((m) => require('node:fs').writeFileSync('tests/unit/plansGolden.json', JSON.stringify(m.goldenDraws(), null, 1) + '\n'))"`.
-- **Before a commit: `npm run test:browser`** (about 90 s, 50 tests, item 105; 24 tests and
-  50 s in item 079) plus the specs that cover
+- **Before a commit: `npm run test:browser`** (about 95 s, 52 tests, one of them the skipped
+  pairs placeholder, item 117; 24 tests and 50 s in item 079) plus the specs that cover
   what changed (`npx playwright test <spec>`, both lanes of it). `test:browser` is every
   browser test not tagged `@slow` (the smoke three among them): one of each newer room
   (the bridge at level 3, a Charge round, free play's shots and jump, the word machine
@@ -97,9 +97,10 @@ item: `docs/engineering.md`, *Browser and tests*):
   Spell the Spell, the cast and fight-style overrides, never last episode's victory scene,
   and the three text-fit checks. It stops itself at 6 minutes, so a hang fails inside
   Claude Code's 10-minute background cap instead of being killed by it.
-- **Everything: `npm run test:all`** (about 6.3 minutes, 136 browser tests, item 105): the unit
-  tests, then every browser test. The slow lane alone is `npm run test:slow` (about 5 minutes,
-  86 tests, item 105): every test tagged `@slow`. Its longest (item 105): the soak (67 s,
+- **Everything: `npm run test:all`** (about 6.3 minutes at item 105's 136 browser tests; 149
+  since item 116): the unit tests, then every browser test. The slow lane alone is
+  `npm run test:slow` (about 5 minutes at item 105's 86 tests; 97 since item 116: the story
+  fight, the new villains' episodes, solo mode): every test tagged `@slow`. Its longest (item 105): the soak (67 s,
   Charge the Spell's whole episodes too), real-time battle 1 (67 s), the real-time title,
   bedroom and warm-up (56 s), the default whole episode at speed (32 s), the real-time
   sentence room (28 s), the Shape-Shifter's yellow-and-green mash (19 s), the shared drawn episode (`tests/drawn.spec.ts`, the
@@ -185,14 +186,15 @@ with the stick, Dad's yes where he is asked, the right picture); `tests/bridge.s
 covers its three help levels and a wrong picture (item 054). `FORCE_SHIFTER_ROOM` follows
 the same rule for the Shape-Shifter behind door b (item 096): `playRoom` plays it
 (`playShifterRoom`: each link's right picture or stone, a wrong one first with
-`wrongFirst`), and `tests/shifter.spec.ts` (untagged, ~8 s) plays one room through both
-beats at base level. `tests/hunt6.spec.ts` (item 102) keeps the sixth hunt's Shape-Shifter
+`wrongFirst`), and `tests/shifter.spec.ts` plays one room through both beats at base level
+(untagged, ~8 s; its pacing test is slow lane). `tests/hunt6.spec.ts` (item 102) keeps the sixth hunt's Shape-Shifter
 fixes: the lit letter's pulse, the next link's options clear of her, yellow and green mashed
 through misses and morphs, the grown-ups page at each point of a link, dad lock and key 0,
 a level-1 stone reached while a line plays, Dad's 2 in the frame key 0 leaves a debug Charge
-read, and THE END's tallest grown-up under its title. `tests/hunt7.spec.ts` (item 116, slow
-lane) keeps the seventh's: her outfits for items 111 and 114's allies at her dress height, and
-yellow mashed at the story fight's gold grab.
+read, and THE END's tallest grown-up under its title. `tests/hunt7.spec.ts` (item 116) keeps the
+seventh's: her outfits for items 111 and 114's allies at her dress height and yellow mashed
+at the story fight's gold grab (slow lane), and Charge back from the grown-ups page asking no
+rune art the word lacks (fix 124, browser lane).
 `playRoom(page, opts)` and `playSentenceRoom(page, opts)` take a `RoomPlay`
 (`{ wrongFirst, idleMs, wrongPauseMs }`: a wrong answer first; in a sentence room a stand
 at the key word and a pause after the wrong object). Other shared steps in
@@ -1054,7 +1056,9 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   resolves its relative imports against the main checkout's code, not the worktree's
   (items 027 and 039: a fix looked "missing"). Put it in the worktree (the root, or
   `test-results/` when no `npm test` runs meanwhile, since that empties it) and delete it
-  after; or import by `file:///` URL.
+  after; or import by `file:///` URL; or keep the body in `scratch/` and run it from the
+  worktree root as `node --import tsx --input-type=module -e "$(cat scratch/<file>.mjs)"`
+  (its `./content/...` imports then resolve against the root).
 - The bubble pops in over 180 ms (scale 0.2 to 1): a screenshot taken just as a bark
   starts shows it tiny. Wait half a second after a line starts before a shot.
 - Placeholder art is painted in headless Chromium so emoji render; Windows 10's emoji
@@ -1068,15 +1072,13 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   minutes (*Tests*), so a 10-minute background timeout suffices (its history:
   `docs/engineering.md`, *Lane times, item by item*).
 - Every active ally × villain pair (item 030): `npm run test:pairs`
-  (about 1.8 minutes a pair, an hour for all 36, measured 2026-10-19 at the then clock
-  speed 3; it boots at the harness default now, 5; `WW_PAIRS=scar+ npm run
-  test:pairs` plays one ally's four). Off unless run by that script or with `WW_PAIRS` set:
+  (`WW_PAIRS=scar+ npm run test:pairs` plays one ally's seven). Off unless run by that script or with `WW_PAIRS` set:
   otherwise `pairs.spec.ts` shows one skipped test saying so (item 072). An npm script
   cannot set `WW_PAIRS` under Windows' cmd, so the spec reads npm's `npm_lifecycle_event`
   (`test:pairs`) as `WW_PAIRS=+`. Shots and voiced ids land in `tests/screenshots/pairs_*`.
-  Since item 114 the active cast is 16 ally forms × 4 villains, 64 pairs, about 35 s a
-  pair on three workers (2026-10-22); since item 115, 16 × 7 less the three where the ally
-  is the villain's own person (Elsa, Ozymandias, Moriarty), 109 pairs. `WW_PAIRS` is a
+  The active cast is 16 ally forms × 7 villains less the three where the ally is the
+  villain's own person (Elsa, Ozymandias, Moriarty): 109 pairs, about 35 s a pair on three
+  workers (2026-10-22). `WW_PAIRS` is a
   substring of `<ally>+<villain>`, so `WW_PAIRS=+elsa` plays Evil Elsa's pairs only.
   `--fully-parallel` spreads one run over the three workers: item 115's 45 pairs
   (`WW_PAIRS=+ npx playwright test tests/pairs.spec.ts -g "\+ (elsa|ozymandias|moriarty):"

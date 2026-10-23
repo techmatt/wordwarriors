@@ -21,9 +21,10 @@ export const SMAUG_STORY: StoryScript = {
   spots: [
     // Behind the stone: she stands on its far side from him.
     { id: 'stone', x: 680, y: 610, prop: 'stone', propDx: 95, propDy: 25 },
-    { id: 'ledge', x: 120, y: 610, lift: 130, prop: 'ledge' },
+    // A ledge's picture is its lift and a little more tall, standing a little below her feet.
+    { id: 'ledge', x: 120, y: 610, lift: 130, prop: 'ledge', propDy: 40, propW: 240, propH: 190 },
     // Up behind him, so she sneaks past to it; the pile stands behind her.
-    { id: 'hoard', x: 860, y: 470, prop: 'hoard', propDy: -20 },
+    { id: 'hoard', x: 860, y: 470, prop: 'hoard', propDy: -20, propW: 260, propH: 160 },
   ],
   splashes: [
     { id: 'fire', look: 'a huge comic-book burst of orange and yellow dragon fire with jagged edges', glyph: '🔥' },

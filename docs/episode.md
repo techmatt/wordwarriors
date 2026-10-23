@@ -67,8 +67,8 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    like AT on the machine, letter tiles on the floor that say their sounds, green slots
    one in and the machine says the two parts apart; the right one makes the picture's
    word, said only then, and into her bag it goes; a wrong one makes a silly word like ZAT;
-   several words of one family, then another; or Charge the Spell, item 053, or the
-   Stretchy Bridge, item 054, below). The sentence game is one sentence each, on a banner, key word last
+   several words of one family, then another; or Charge the Spell, item 053, the
+   Stretchy Bridge, item 054, or the Shape-Shifter, item 096, below). The sentence game is one sentence each, on a banner, key word last
    (`WE CAN USE THE NET`, `JULIA NEEDS THE CAT`). Pass 1 is read to her karaoke-style and stops at the key
    word, which pulses in silence (skipped once that frame is solid). Pass 2 is hers:
    her one green reads the whole sentence, each word lit as it is said, and stops at the
@@ -124,7 +124,9 @@ The battle's move words come round the same way (item 018): every action word in
 so fight after fight she meets new ones (`docs/content.md`, "Move words and the move
 bag"). A super shows a fan of its word's picture; the beaten villain, good again, says
 two lines of its own (`reformed` in the roster: the first as the battle ends, the second
-in the victory scene); the victory recap pictures every word.
+in the victory scene); the victory recap pictures her words (nine cards at most: the
+gift, the move words, the counter and each room's last word always stay; `recapWords`,
+`src/rules/recap.ts`).
 
 A journey map shows before each battle, the trip home after the retreat, and the
 victory. The default episode at the suite's speeds (instant voice, teleports, rooms at
@@ -289,7 +291,8 @@ item 058; no presses per rune since item 059): a side room where she says letter
 aloud after the helper, then reads the word they spell. The visit's word (3-4 sound units,
 every one a rune, so no Q, X or CK) shows at the top from the start, a slot per unit. She
 walks in and it starts by itself ("Say each sound after me!"): each rune lights on the
-altar in turn (an upper-case letter; its slot pulses), the helper shows the sound's
+altar in turn (its picture letter, `rune_<x>`: the letter drawn as a thing starting with
+its sound; its slot pulses), the helper shows the sound's
 gesture (Jolly Phonics style: a hissing snake 🐍 for S, a tummy rub for M;
 `content/phonics/runes.ts`) and says the sound, then a quiet beat (`CHARGE.sayBackMs`,
 1.2 s; the dad lock holds it) for her to say it back, and the rune fires up into its slot.
@@ -358,7 +361,8 @@ each stone sounds as she comes near it; level 2 lit, silent stones; level 3 noth
 Yellow sounds the new letter (read it) or the stone she stands at (fix it), with the
 name's bridge to the sound first where the name holds it (below). A wrong picture is
 sounded out over itself, then "But the spell says..." and the new letter; a wrong stone's
-letter flies at the label, bounces off, and its sound is said ("This letter says...").
+letter flies at the label, bounces off, and its sound is said ("This letter says..."; the
+name's bridge first where it holds it, as in the hint).
 No word is ever made of it: a random letter could spell a word she reads later, or a rude
 one. No penalty; after two misses the answer sparkles. Read it is recorded as reading;
 fix it (a letter for a sound) under spelling, apart from reading, and leaves her word bag alone. Every word read is a battle item, a copy of each
@@ -371,8 +375,9 @@ before it bridges from the name: "M's name is Em... squeeze off the front:" then
 never captioned; `NAME_HIDES` in `content/phonics/letters.ts`, `nameToSound` in
 `src/rules/soundOut.ts`). C G H W Y X and the vowels keep the plain sound: their names
 mislead. Used by the warm-up's level-1 clue (in place of the bare name; only the first time
-the clue is said, a miss or yellow then gives the plain name and sound: hunt 6, M27) and the
-Shape-Shifter's hints; Matt's recordings replace the lines like any other.
+the clue is said, a miss or yellow then gives the plain name and sound: hunt 6, M27; its own
+copy of the rule, `nameHolds`, as the clue swaps the name line) and the Shape-Shifter's hints
+and misses (`nameToSound`); Matt's recordings replace the lines like any other.
 
 **The Stretchy Bridge** (item 054, `src/scenes/BridgeRoom.ts`): a side room where she
 blends a whole word. A gap crosses the room (lava in the house, a river or a chasm at a
@@ -459,7 +464,8 @@ the hall can ask for; item 085), `prep=sound,blend` (the parked prep games: `sou
 ## Difficulty and variety
 
 Matt's ruling: **no automatic difficulty**. Every help ramp still records her level
-(the warm-up's `grabLevels`, the bridge's `bridgeLevels`, and frames' and words' first
+(the warm-up's `grabLevels`, the bridge's `bridgeLevels`, the Shape-Shifter's
+`shifterLevels`, and frames' and words' first
 tries; Charge the Spell has no ramp since item 078), and the grown-ups page shows the
 level reached, but the game gives at most **`DIFFICULTY`** (`src/config.ts`, shown in the
 grown-ups page's title line):
@@ -479,7 +485,7 @@ reach levels 2 and 3).
 This is the list: a new ramp that steps up with success goes through `helpLevel` or
 `rampsAdvance` (`src/rules/difficulty.ts`) and is added here. Tests: the knob in
 `tests/unit/variety.test.ts`; each ramp in its game's unit test (`grab`, `bridge`,
-`sentences`, `bank`, each with `withDifficulty` from `tests/unit/difficulty.ts`);
+`shifter`, `sentences`, `bank`, each with `withDifficulty` from `tests/unit/difficulty.ts`);
 in the browser `?difficulty=` in `bridge.spec.ts`, `entry.spec.ts`, `sentenceread.spec.ts`,
 `soundout.spec.ts` and `smoke.spec.ts`.
 
@@ -488,7 +494,8 @@ episode (no level gate; OCTOPUS and UMBRELLA included). The recognition roles (k
 words, the counter, move pads, the gift, fetches, the recap) take any word. The games
 where she sounds a word out unit by unit keep to short words, in sound units (SH is one):
 `GRAB.maxUnits` (the warm-up), `BRIDGE.maxUnits` (the bridge's words; its far-bank
-pictures may be longer), `WORD_MACHINE.maxUnits`, `CHARGE.units`.
+pictures may be longer), `WORD_MACHINE.maxUnits`, `CHARGE.units`, and the Shape-Shifter's
+CVC words (`SHIFT_WORDS`, one letter a sound).
 
 **Variety across episodes.** Each rotation keeps its recent picks in the progress store
 (`recent`, `src/rules/recent.ts`; how many: `VARIETY` in `src/config.ts`) and avoids

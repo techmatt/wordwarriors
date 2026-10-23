@@ -1,7 +1,10 @@
 /**
  * The fifth bug hunt's odd input on the newer screens (item 092; docs/qa-findings.md,
  * Hunt 5): key 0 mashed in and out of minigame debug mode, with dad lock and the
- * grown-ups page in between; THE END through a resize and a hidden tab.
+ * grown-ups page in between; THE END through a resize and a hidden tab; a returning
+ * player with everything maxed (the grown-ups page, an episode start); green mashed
+ * after each choice and through the word machine's next line; the move choice's
+ * caption and stick hint on the frozen fight's clock.
  */
 
 import { test, expect, type Page } from '@playwright/test';
@@ -10,11 +13,10 @@ import { FAMILIES } from '../content/phonics/families';
 import { FRAMES } from '../content/phonics/sentences';
 import { RUNE_SOUNDS } from '../src/rules/charge';
 import { SHIFT_WORDS } from '../src/rules/shifter';
-import { SLOW, boot, choose, collectErrors, expectNoErrors, press, seedProgress, state, texts, toTheEnd, until } from './harness';
+import { SLOW, boot, choose, collectErrors, debugTagShown, expectNoErrors, mash, press, seedProgress, state, texts, toTheEnd, until } from './harness';
 import { layoutIssues } from './qa/checks';
 import { qaLayout } from './qa/probe';
 
-const tagShown = (page: Page) => page.evaluate(() => Boolean(document.getElementById('debug-tag')?.isConnected));
 
 /** Debug mode, as the player sees it: the scene, the DEBUG tag and the room's debug hooks agree. */
 async function settled(page: Page, what: string): Promise<{ debug: boolean; scene: string }> {
@@ -28,7 +30,7 @@ async function settled(page: Page, what: string): Promise<{ debug: boolean; scen
   }
   const debug = now.scene === 'Debug';
   expect(Boolean(now.room?.debug), `${what}: the debug room's hooks`).toBe(debug);
-  expect(await tagShown(page), `${what}: the DEBUG tag`).toBe(debug);
+  expect(await debugTagShown(page), `${what}: the DEBUG tag`).toBe(debug);
   return { debug, scene: now.scene };
 }
 
@@ -151,12 +153,7 @@ test('a returning player with everything maxed: the grown-ups page fits both pag
 });
 
 /** A busy child's green, ten presses 60 ms apart, right after a choice. */
-async function mashGreen(page: Page): Promise<void> {
-  for (let i = 0; i < 10; i++) {
-    await press(page, 'green');
-    await page.waitForTimeout(60);
-  }
-}
+const mashGreen = (page: Page) => mash(page, 'green', 60, 10);
 
 test('green mashed after each choice: the bedroom door, the warm-up grab and its door, a hub door each count once', SLOW, async ({ page }) => {
   test.setTimeout(150_000);

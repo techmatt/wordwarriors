@@ -37,7 +37,8 @@ import { CHARACTER_BY_ID, formId } from '../../content/battle/roster';
 import { group } from '../../content/voice/ids';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { enterRoom, episode, episodeGroups, giftWord, grabPlan, isStepKind, jumpTo, planFor, setCastOptions, startStep, steps, type PrepGame, type Slot } from '../episode/Episode';
-import { DADS, seededRand, type CastOverrides } from '../rules/cast';
+import { DADS, isDad, type CastOverrides } from '../rules/cast';
+import { seededRand } from '../rules/random';
 import { setDifficulty } from '../rules/difficulty';
 import { artBank } from '../art/ArtBank';
 import { artFor } from '../art/needs';
@@ -79,7 +80,7 @@ function castOptions(q: URLSearchParams): Parameters<typeof setCastOptions>[0] {
   }
   const primary = q.get('primary');
   if (primary === 'none') overrides.primary = null;
-  else if (primary && (DADS as readonly string[]).includes(primary)) overrides.primary = primary;
+  else if (primary && isDad(primary)) overrides.primary = primary;
   const secondary = q.get('secondary');
   if (secondary !== null) overrides.secondary = secondary === '1' || secondary === 'true';
   const seed = q.get('seed');

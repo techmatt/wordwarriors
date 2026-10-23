@@ -1,6 +1,9 @@
 /**
- * Item 116, the seventh bug hunt: the new allies' outfits (items 111, 114) and the
- * new villains (item 115). Shots land in tests/screenshots/ (ignored).
+ * Item 116, the seventh bug hunt (docs/qa-findings.md, Hunt 7): her outfits for the new
+ * allies (items 111, 114) at her dress height; the story fight's gold grab under mashed
+ * yellow (fix 120); Charge back from the grown-ups page asking no rune art the word lacks
+ * (fix 124). The new villains are tests/villains.spec.ts's. Shots land in
+ * tests/screenshots/ (ignored).
  */
 
 import { test, expect } from '@playwright/test';
@@ -8,6 +11,7 @@ import { test, expect } from '@playwright/test';
 import { BATTLE_SPEED, SLOW, boot, collectErrors, expectNoErrors, place, press, state, toParentAndBack, until } from './harness';
 import { OUTFIT_FILL } from '../src/config';
 
+/** Her dress, then each wave 1-2 ally's outfit for her: by hand, so a new outfit in content/battle/forms.ts needs its line here. */
 const OUTFITS = [
   ['ellie', 'char_julia_good'],
   ['seraphina', 'char_julia_keeper'],

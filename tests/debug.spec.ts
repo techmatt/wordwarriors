@@ -8,9 +8,8 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
-import { boot, choose, collectErrors, dadLock, expectNoErrors, playSentenceRoom, press, state, texts, until, walkTo } from './harness';
+import { boot, choose, collectErrors, dadLock, debugTagShown, expectNoErrors, playSentenceRoom, press, state, texts, until, walkTo } from './harness';
 
-const tagShown = (page: Page) => page.evaluate(() => Boolean(document.getElementById('debug-tag')?.isConnected));
 const stored = (page: Page) => page.evaluate(() => localStorage.getItem('wordwarriors.progress'));
 
 test('debug mode: key 0 in the hub, a game from its pedestal checked off, out the open door, progress untouched', async ({ page }) => {
@@ -26,7 +25,7 @@ test('debug mode: key 0 in the hub, a game from its pedestal checked off, out th
   await page.keyboard.press('0');
   let s = await until(page, (st) => st.scene === 'Debug' && (st.room?.spots.length ?? 0) > 0, 30_000, 'debug room');
   await dadLock(page, false);
-  expect(await tagShown(page)).toBe(true);
+  expect(await debugTagShown(page)).toBe(true);
   const ids = s.room!.spots.map((sp) => sp.id).sort();
   expect(ids).toEqual(['debug:bridge', 'debug:charge', 'debug:door', 'debug:sentence', 'debug:shifter', 'debug:word_machine']);
   expect(s.room!.debug!.done).toEqual([]);
@@ -35,7 +34,7 @@ test('debug mode: key 0 in the hub, a game from its pedestal checked off, out th
   await page.keyboard.press('0');
   s = await until(page, (st) => st.scene === 'Hub' && Boolean(st.room?.player), 30_000, 'hub back');
   expect(s.room!.spots.some((sp) => sp.id.startsWith('debug:'))).toBe(false);
-  expect(await tagShown(page)).toBe(false);
+  expect(await debugTagShown(page)).toBe(false);
 
   // On again; play the sentence game from its pedestal.
   await page.keyboard.press('0');
@@ -46,7 +45,7 @@ test('debug mode: key 0 in the hub, a game from its pedestal checked off, out th
   s = await until(page, (st) => st.scene === 'Debug' && Boolean(st.room?.debug), 30_000, 'back in the debug room');
   expect(s.room!.debug!.done).toEqual(['sentence']);
   expect((await texts(page)).some((t) => t.scene === 'Debug' && t.text === '✔')).toBe(true);
-  expect(await tagShown(page)).toBe(true);
+  expect(await debugTagShown(page)).toBe(true);
   // Nothing of the game stayed with the episode.
   expect(s.episode.read).toEqual([]);
   expect(s.episode.fetched).toEqual([]);
@@ -57,7 +56,7 @@ test('debug mode: key 0 in the hub, a game from its pedestal checked off, out th
   await walkTo(page, door.x, door.y + 12);
   await press(page, 'green');
   s = await until(page, (st) => st.scene !== 'Debug' && st.step.kind === 'battle', 30_000, 'out the door');
-  expect(await tagShown(page)).toBe(false);
+  expect(await debugTagShown(page)).toBe(false);
 
   expect(s.progress).toEqual(before);
   expect(await stored(page)).toBe(blob);

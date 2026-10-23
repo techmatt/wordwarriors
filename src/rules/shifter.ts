@@ -5,10 +5,10 @@
  * unit-tested (tests/unit/shifter.test.ts).
  *
  * Today's games can be half-won from the first letter; here every position
- * changes in turn, so she has to read every letter. A chain changes the first
- * letter early, then the last, the vowel last (`ORDER`): the chain drawn
- * starts on the first letter and goes back in that order once at most
- * (CAT BAT BAG BIG PIG), or else breaks it least. Its words are the bank's familiar
+ * changes in turn, so she has to read every letter. Chains changing all three
+ * places come first (hunt 6, M29: the vowel too), then those keeping the order
+ * first letter, last, vowel (`ORDER`) but for one step back at most (CAT BAT
+ * BAG BIG PIG), the first link at the first letter. Its words are the bank's familiar
  * pictured CVC words, one letter a sound (`SHIFT_WORDS`): a link with no such
  * word is left out, so a chain may be shorter (SHIFTER.minLinks at least).
  *
@@ -60,7 +60,7 @@ export interface ShifterPlan {
 }
 
 /** The order a chain changes its letters in: the first, then the last, the vowel last. */
-export const ORDER: Position[] = [0, 2, 1];
+const ORDER: Position[] = [0, 2, 1];
 
 const VOWELS = 'aeiou';
 /** Consonants a fix-it stone can be: one letter, one plain sound (no Q X, no C beside K). */
@@ -143,7 +143,7 @@ export function wrongPictures(to: string, pos: Position, from: string, pool: str
  * A link's beat: read it on the even links (the first one too) where `pool`
  * has SHIFTER.options - 1 wrong pictures for it (`wrongPictures`), else fix it.
  */
-export function beatFor(i: number, from: string, to: string, pos: Position, pool: string[]): Beat {
+function beatFor(i: number, from: string, to: string, pos: Position, pool: string[]): Beat {
   return i % 2 === 0 && wrongPictures(to, pos, from, pool).length >= SHIFTER.options - 1 ? 'read' : 'fix';
 }
 
@@ -167,8 +167,9 @@ export interface ShifterInput {
 /**
  * A visit's chain: SHIFTER.links links (fewer where no chain that long fits,
  * SHIFTER.minLinks at least; null when not even that) through the words the
- * episode leaves free. Of the chains breaking ORDER least, one drawn by the
- * bank's weight of the words she reads; each link its beat and options.
+ * episode leaves free. Of the chains changing the most places and breaking
+ * ORDER least, those holding at most one recent read (hunt 7), one drawn by
+ * the bank's weight of the words she reads; each link its beat and options.
  */
 export function planShifter(store: ProgressStore, input: ShifterInput, rand: Rand = Math.random): ShifterPlan | null {
   const avoid = new Set([...input.avoid, ...input.taken]);

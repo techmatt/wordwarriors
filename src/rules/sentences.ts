@@ -122,10 +122,7 @@ const FETCHABLE = new Set(FETCH_ITEMS.map((i) => i.word));
  * level in play, 109 pictured words where 51 were open), so 3 became 6 to
  * keep the same share.
  */
-export const NAMED_COUNTER_BOOST = 6;
-
-/** Bank things that take no "A": content/phonics/sentences.ts (hunt 6: the Shape-Shifter's first creature needs it too). */
-export { NO_ARTICLE };
+const NAMED_COUNTER_BOOST = 6;
 
 /**
  * Two picture words for the room's other objects: not the key word, not a
@@ -193,7 +190,7 @@ export function saidEarly(cast: { hero: string; ally: string | null; villain: st
  * any eligible word only if even a full bag has none.
  *
  * Drawing does not spend the word: it leaves the bag only when she reads it
- * right first time (SentenceRoom calls `takeFromBag`), so an episode she
+ * right first time (the room's `recordRead`, src/world/SideRoom.ts, calls `takeFromBag`), so an episode she
  * abandons, or a dev `?scene=` jump, costs her bag nothing, and a word she
  * missed simply stays in.
  */
@@ -259,7 +256,7 @@ type RoomBase = Omit<PlanBase, 'fetches'>;
 
 /**
  * How a kind with words of its own plans its room (the word machine, the
- * bridge, Charge the Spell): before any key is drawn, kept clear of the rooms
+ * bridge, the Shape-Shifter, Charge the Spell): before any key is drawn, kept clear of the rooms
  * planned before it, its key the last word it reads, so a fetch room only.
  */
 interface OwnWordsPlanner<P> {

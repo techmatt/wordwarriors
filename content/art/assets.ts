@@ -81,12 +81,14 @@ for (const c of ROSTER) {
 // char_* images and drawn from the same photo reference (refFor). Her face and
 // hair come from her roster look; only the clothes and the prop change.
 const julia = ROSTER.find((c) => c.id === 'julia')!.good;
+/** Her face and hair, from her roster look (its clothes cut off). */
+const juliaFace = julia.look.split(', in a ')[0];
 assets.push({
   id: 'char_julia_chef',
   kind: 'character',
   w: 200,
   h: 250,
-  content: `Julia the little chef: ${julia.look.split(', in a ')[0]}, in a cheerful little chef's outfit: a white double-breasted chef's jacket with round buttons, a small red neckerchief, a white apron, a tall puffy white chef's hat, holding up a wooden spoon. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background.`,
+  content: `Julia the little chef: ${juliaFace}, in a cheerful little chef's outfit: a white double-breasted chef's jacket with round buttons, a small red neckerchief, a white apron, a tall puffy white chef's hat, holding up a wooden spoon. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background.`,
   label: 'CHEF',
   glyph: '🥄',
   palette: julia.palette,
@@ -98,7 +100,7 @@ assets.push({
   kind: 'character',
   w: 200,
   h: 200,
-  content: `Julia the little chef's face, a friendly head-and-shoulders portrait of ${julia.look.split(', in a ')[0]}, in a white double-breasted chef's jacket with a small red neckerchief and a tall puffy white chef's hat. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
+  content: `Julia the little chef's face, a friendly head-and-shoulders portrait of ${juliaFace}, in a white double-breasted chef's jacket with a small red neckerchief and a tall puffy white chef's hat. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
   label: '',
   glyph: '🥄',
   palette: julia.palette,
@@ -109,7 +111,7 @@ assets.push({
   kind: 'character',
   w: 200,
   h: 250,
-  content: `Julia the little knight: ${julia.look.split(', in a ')[0]}, in a little shining silver knight's armour over a pink tunic, a short red cape, a small round red shield with a golden star on it and a little wooden toy sword held up high. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background.`,
+  content: `Julia the little knight: ${juliaFace}, in a little shining silver knight's armour over a pink tunic, a short red cape, a small round red shield with a golden star on it and a little wooden toy sword held up high. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background.`,
   label: 'KNIGHT',
   glyph: '🛡️',
   palette: julia.palette,
@@ -119,14 +121,14 @@ assets.push({
   kind: 'character',
   w: 200,
   h: 200,
-  content: `Julia the little knight's face, a friendly head-and-shoulders portrait of ${julia.look.split(', in a ')[0]}, in a little shining silver knight's armour with a short red cape, no helmet. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
+  content: `Julia the little knight's face, a friendly head-and-shoulders portrait of ${juliaFace}, in a little shining silver knight's armour with a short red cape, no helmet. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
   label: '',
   glyph: '🛡️',
   palette: julia.palette,
 });
-// Item 111: her outfits beside the new allies (content/battle/forms.ts). Each
-// is a character sprite and its name-free face card, like the chef's.
-const OUTFITS_111: { word: string; who: string; label: string; glyph: string; body: string; face: string }[] = [
+// Items 111 and 114: her outfits beside the new allies (content/battle/forms.ts).
+// Each is a character sprite and its name-free face card, like the chef's.
+const OUTFITS: { word: string; who: string; label: string; glyph: string; body: string; face: string }[] = [
   {
     // Seraphina's secret dragon hatchery.
     word: 'keeper', who: 'dragon keeper', label: 'KEEPER', glyph: '🥚',
@@ -145,9 +147,7 @@ const OUTFITS_111: { word: string; who: string; label: string; glyph: string; bo
     body: 'in a little desert explorer outfit: a sunny-yellow tunic over loose coral-pink trousers, a wide straw sun hat with a pink ribbon, a light striped scarf, little sandals, holding up a small shiny brass compass',
     face: 'in a sunny-yellow tunic and a light striped scarf, a wide straw sun hat with a pink ribbon',
   },
-];
-// Item 114: beside the second wave of allies.
-const OUTFITS_114: typeof OUTFITS_111 = [
+  // Item 114: beside the second wave of allies.
   {
     // Ozymandias's iceberg launch pad.
     word: 'astronaut', who: 'polar astronaut', label: 'ASTRONAUT', glyph: '🚀',
@@ -167,13 +167,13 @@ const OUTFITS_114: typeof OUTFITS_111 = [
     face: 'in a cosy fluffy navy-blue gorilla onesie, the hood up over her hair with little round gorilla ears',
   },
 ];
-for (const o of [...OUTFITS_111, ...OUTFITS_114]) {
+for (const o of OUTFITS) {
   assets.push({
     id: `char_julia_${o.word}`,
     kind: 'character',
     w: 200,
     h: 250,
-    content: `Julia the little ${o.who}: ${julia.look.split(', in a ')[0]}, ${o.body}. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background.`,
+    content: `Julia the little ${o.who}: ${juliaFace}, ${o.body}. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background.`,
     label: o.label,
     glyph: o.glyph,
     palette: julia.palette,
@@ -183,7 +183,7 @@ for (const o of [...OUTFITS_111, ...OUTFITS_114]) {
     kind: 'character',
     w: 200,
     h: 200,
-    content: `Julia's face, a friendly head-and-shoulders portrait of ${julia.look.split(', in a ')[0]}, ${o.face}. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
+    content: `Julia's face, a friendly head-and-shoulders portrait of ${juliaFace}, ${o.face}. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
     label: '',
     glyph: o.glyph,
     palette: julia.palette,
@@ -329,7 +329,8 @@ const PROPS: [string, number, number, string, string, string?][] = [
   // and the rime on the machine's blank window and panel.
   ['word_machine', 460, 440, 'A big friendly cartoon word-making machine for a child, front view, standing on the floor: a rounded candy-coloured metal body (sky blue, orange and cream, no green anywhere) with brass rivets, a little chimney puffing a heart-shaped cloud, two springy antennae with bulbs, a row of coloured lights and a crank handle on one side. The upper half is a big round empty glass window (blank, for a picture shown by the game). The lower half is one wide flat empty cream panel, plain and blank (the game shows letters there). No text.', '🏭'],
   ['machine_tile', 130, 110, 'A chunky square toy letter block lying on the floor, seen from slightly above: bright yellow with rounded corners, a soft orange rim and a little shine, the top face completely blank and flat (the game paints a letter on it). No letter in the art.', ''],
-  // Charge the Spell (item 053): the game paints the rune's letter on the stone's blank face.
+  // Charge the Spell (item 053): the game lays the rune's picture letter (`rune_<x>`, item 103) on the
+  // stone's blank face; only the battle HUD's small chip paints the bare letter.
   // Item 074: the stone stands in the altar's top (its lower part behind the altar), she
   // stands at the altar's left and the helper further left; the stone is also the hub
   // door's 62 px sign and the battle HUD's 30 px chip, so it is one bold round shape.

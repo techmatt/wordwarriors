@@ -14,7 +14,7 @@ import { ARENAS, CHARACTER_BY_ID, ROSTER } from '../../content/battle/roster';
 import { BANK } from '../../content/phonics/bank';
 import { narratorLine } from '../../content/voice/ids';
 import { ACTIVE_CAST } from '../../src/config';
-import { seededRand } from '../../src/rules/cast';
+import { seededRand } from '../../src/rules/random';
 import { fightSpec, ownFight, pickFight } from '../../src/rules/fights';
 import { composeLines } from '../../tools/voice/compose';
 

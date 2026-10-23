@@ -10,7 +10,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { STORY_BY_ID } from '../content/battle/stories/index';
+import { STORY_BY_ID, padBeats } from '../content/battle/stories/index';
 import { BATTLE_SPEED, SLOW, boot, collectErrors, place, press, until, type WWState } from './harness';
 
 const SMAUG = STORY_BY_ID.smaug!;
@@ -108,7 +108,7 @@ for (const part of [1, 2] as const) {
     const shots = part === 1 ? [watch('sneak', 600), watch('dive', 900)] : [watch('finale', 900)];
     const seen = await playStory(page, part);
     await Promise.all(shots);
-    const beats = (part === 1 ? SMAUG.part1 : SMAUG.part2).filter((b) => b.input?.kind === 'pad' || b.input?.kind === 'dodgePads').map((b) => b.id);
+    const beats = padBeats(SMAUG, part).map((b) => b.id);
     expect(seen.picks.map((p) => p.beat)).toEqual(beats);
     for (const p of seen.picks) {
       const answers = answersOf(p.beat);

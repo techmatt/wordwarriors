@@ -22,8 +22,6 @@ import { fightKey, type SpokenLine } from '../voice/ids.js';
 /** `story` (item 107): a turn-based story fight, its beats a script in content/battle/stories/. */
 export type FightKind = 'brawl' | 'race' | 'tug' | 'clash' | 'cookoff' | 'story';
 
-export type FightLine = SpokenLine;
-
 /** A prop a style draws (art `prop_fight_<id>`). */
 export interface FightProp {
   id: string;
@@ -47,7 +45,7 @@ export interface FightSpec {
   /** The banner on the last hit of part 2. */
   win: string;
   /** Narrator lines; absent beats use the brawl's own (battle_start, battle2_start, retreat_1, finish). */
-  lines: Partial<Record<FightBeat, FightLine>>;
+  lines: Partial<Record<FightBeat, SpokenLine>>;
   props?: FightProp[];
   /** A race's scenery sweeping past (item 115): the treasure cave (absent), or space. */
   scenery?: 'cave' | 'space';
@@ -62,6 +60,10 @@ export const FIGHT_BEATS: FightBeat[] = ['start', 'start2', 'retreat', 'finish']
 
 /** The brawl's own lines for each beat (script.ts NARRATOR_LINES keys). */
 const BRAWL_LINE: Record<FightBeat, string> = { start: 'battle_start', start2: 'battle2_start', retreat: 'retreat_1', finish: 'finish' };
+
+/** Props more than one style draws: one art each (content/art/assets.ts keeps one per id), so one spec each. */
+const FINISH_FLAG: FightProp = { id: 'finish_flag', look: 'a big chequered black-and-white finish-line banner on two tall golden poles, with little gold coins and jewels on the tops of the poles', glyph: '🏁', w: 300, h: 420 };
+const TROPHY: FightProp = { id: 'trophy', look: 'a huge shiny golden trophy cup with two big handles, a red jewel on the front and sparkles', glyph: '🏆', w: 200, h: 220 };
 
 export const FIGHTS: FightSpec[] = [
   {
@@ -88,8 +90,8 @@ export const FIGHTS: FightSpec[] = [
       finish: { text: "There's the finish line! Let's all zoom together!", say: "There's the finish line, let's all zoom together!" },
     },
     props: [
-      { id: 'finish_flag', look: 'a big chequered black-and-white finish-line banner on two tall golden poles, with little gold coins and jewels on the tops of the poles', glyph: '🏁', w: 300, h: 420 },
-      { id: 'trophy', look: 'a huge shiny golden trophy cup with two big handles, a red jewel on the front and sparkles', glyph: '🏆', w: 200, h: 220 },
+      FINISH_FLAG,
+      TROPHY,
     ],
   },
   {
@@ -155,8 +157,8 @@ export const FIGHTS: FightSpec[] = [
       finish: { text: "There's the finish line! Let's all zoom together!", say: "There's the finish line, let's all zoom together!" },
     },
     props: [
-      { id: 'finish_flag', look: 'a big chequered black-and-white finish-line banner on two tall golden poles, with little gold coins and jewels on the tops of the poles', glyph: '🏁', w: 300, h: 420 },
-      { id: 'trophy', look: 'a huge shiny golden trophy cup with two big handles, a red jewel on the front and sparkles', glyph: '🏆', w: 200, h: 220 },
+      FINISH_FLAG,
+      TROPHY,
     ],
   },
   {
@@ -191,7 +193,7 @@ export const FIGHTS: FightSpec[] = [
     },
     props: [
       { id: 'cook_station', look: 'a chunky cartoon cooking station: a little red stove with a big shiny pot on top, a wooden counter with a chopping board, a whisk and a rolling pin, seen from the front', glyph: '🍳', w: 300, h: 260 },
-      { id: 'trophy', look: 'a huge shiny golden trophy cup with two big handles, a red jewel on the front and sparkles', glyph: '🏆', w: 200, h: 220 },
+      TROPHY,
     ],
   },
   {

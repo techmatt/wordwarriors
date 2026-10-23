@@ -20,11 +20,13 @@ import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { narratorLine } from '../../content/voice/ids';
 import { variant } from '../episode/lineVariants';
 import { sfxRight, sfxSummon, sfxWhoosh } from '../audio/sfx';
-import { DEPTH, GAME_WIDTH } from '../config';
+import { voiceBus } from '../audio/VoiceBus';
+import { DAD_AWAY_MS, DEPTH, GAME_WIDTH } from '../config';
 import { backToHub, castFace, episode, narrator, planFor, type Slot, type Step } from '../episode/Episode';
 import { burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
-import { openDadButtons, type DadAnswer } from '../input/dadButtons';
+import { openDadButtons, setDadAsking, type DadAnswer } from '../input/dadButtons';
+import { dadLock } from '../input/dadLock';
 import { isLeaving } from '../fx/sceneGen';
 import type { RoomPlan } from '../rules/sentences';
 import { progress } from '../state/progress';
@@ -246,10 +248,16 @@ export abstract class HouseSideRoom extends SideRoom {
   /** The side room it plays in (content/house/house.ts): its art, entry and gap. Each room sets it from its plan in init. */
   protected roomId = '';
   private dadCloser: (() => void) | null = null;
+  /** Time spent waiting for Dad's answer (scene clock, paused under dad lock and while a line plays). */
+  private dadWaitMs = 0;
+  /** Times this visit's wait for Dad ran out and the episode went solo (the hooks report it). */
+  protected dadTimeouts = 0;
 
   override init(data: { step?: Step; slot?: Slot }): void {
     super.init(data);
     this.slot = data.slot ?? 'a';
+    this.dadWaitMs = 0;
+    this.dadTimeouts = 0;
   }
 
   override create(): void {
@@ -310,7 +318,8 @@ export abstract class HouseSideRoom extends SideRoom {
     this.recordDone(word, { fetch, last });
   }
 
-  private recordDone(word: string, { fetch, last }: { fetch: boolean; last: boolean }): void {
+  /** The episode learns the word: read, fetched (unless `fetch` is false) and, on the visit's `last` word, this slot done. */
+  protected recordDone(word: string, { fetch, last }: { fetch: boolean; last: boolean }): void {
     if (!episode.read.includes(word)) episode.read.push(word);
     if (fetch && !episode.fetched.includes(word)) episode.fetched.push(word);
     if (last && !episode.house.done.includes(this.slot)) episode.house.done.push(this.slot);
@@ -324,8 +333,42 @@ export abstract class HouseSideRoom extends SideRoom {
   protected openDad(onPress: (a: DadAnswer) => void): void {
     this.closeDad();
     this.dadCloser = openDadButtons((a) => {
-      if (!isLeaving(this) && !this.fadingOut) onPress(a);
+      if (isLeaving(this) || this.fadingOut) return;
+      // Any press ends solo mode (item 106): he is here after all.
+      if (episode.solo) {
+        episode.solo = false;
+        this.noteActivity();
+      }
+      onPress(a);
     });
+  }
+
+  /** A question is put to Dad: his cue lights and the wait for him starts again. */
+  protected askDad(): void {
+    this.dadWaitMs = 0;
+    setDadAsking(true);
+  }
+
+  /** The wait for Dad starts again (a line is about to play over it). */
+  protected resetDadWait(): void {
+    this.dadWaitMs = 0;
+  }
+
+  /**
+   * Called each frame while Dad is asked: true once nothing has come from him
+   * for DAD_AWAY_MS (paused under dad lock and while a line plays). Then the
+   * episode goes solo (item 106) and his cue goes out; the room carries on
+   * without him.
+   */
+  protected dadAway(deltaMs: number): boolean {
+    if (dadLock.locked || voiceBus.busy) return false;
+    this.dadWaitMs += deltaMs;
+    if (this.dadWaitMs < DAD_AWAY_MS) return false;
+    this.dadWaitMs = 0;
+    this.dadTimeouts++;
+    episode.solo = true;
+    setDadAsking(false);
+    return true;
   }
 
   protected closeDad(): void {

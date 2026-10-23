@@ -26,14 +26,13 @@
 
 import { THINGS } from '../../content/phonics/bank';
 import { lookalikesOf } from '../../content/phonics/sentences';
-import { NAME_HIDES } from '../../content/phonics/letters';
 import { letterNameLine, nameHidesLine } from '../../content/voice/ids';
 import { GRAB } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { coverage, distractorsFor, isFirm, met } from './bank';
 import { pickWeighted, shuffle, type Rand } from './random';
 import { clampLevel, helpLevel, stepLevel, type HelpLevel } from './difficulty';
-import { soundOut } from './soundOut';
+import { nameHolds, soundOut } from './soundOut';
 
 export type GrabLevel = HelpLevel;
 
@@ -147,7 +146,7 @@ export function clue(word: string, level: GrabLevel, help = false, bridge = true
     // SH, CK, LL, EE...) is its one sound alone, both letters lit: KING is
     // "kay, kuh, eye, ih, ng", never "en, gee, ng".
     // Item 096: where the name holds the sound (M, "Em"), the name is the bridge to it ("M's name is Em... squeeze off the front:").
-    if (level === 1 && !help && s.span === 1) out.push({ id: bridge && NAME_HIDES[s.unit] && s.sound === s.unit ? nameHidesLine(s.unit) : letterNameLine(s.unit), kind: 'name', index: s.index, span: 1, show: true });
+    if (level === 1 && !help && s.span === 1) out.push({ id: bridge && nameHolds(s.unit, s.sound) ? nameHidesLine(s.unit) : letterNameLine(s.unit), kind: 'name', index: s.index, span: 1, show: true });
     const show = help || level <= 2;
     // A silent letter (KITE's E, item 056) lights in its turn and says nothing: no line id.
     if (s.id || s.sound === '') out.push({ id: s.id, kind: 'sound', index: s.index, span: s.span, show });

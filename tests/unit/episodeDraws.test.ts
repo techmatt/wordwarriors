@@ -12,7 +12,7 @@ import { personOf } from '../../content/battle/roster';
 import { EPISODE_DEFAULTS } from '../../src/config';
 import { castEpisode, rememberCast, remembered, resetEpisode, setCastOptions } from '../../src/episode/draws';
 import { episode } from '../../src/episode/state';
-import { seededRand } from '../../src/rules/cast';
+import { seededRand } from '../../src/rules/random';
 import { progress } from '../../src/state/progress';
 
 test('the default cast remembers no ally, form or variant; its fixed villain is not met', () => {

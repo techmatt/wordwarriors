@@ -50,7 +50,7 @@ import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH as GREEN_REACH, VARIETY } from '..
 import { episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { burst, fitImage, floatText, popIn, shake, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
-import { nextShifterLevel, recordedShifterLevel, shifterLevel, soundAt, type ShifterLevel, type ShifterLink, type ShifterPlan } from '../rules/shifter';
+import { nextShifterLevel, recordedShifterLevel, shifterLevel, soundAt, type Position, type ShifterLevel, type ShifterLink, type ShifterPlan } from '../rules/shifter';
 import { nameToSound, soundOut } from '../rules/soundOut';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../hookState';
@@ -218,8 +218,9 @@ export class ShifterRoom extends HouseSideRoom {
 
   /**
    * The polymorph: magic swirls in, the creature swells, squashes, shrinks to
-   * nothing, a poof of smoke and sparks, and it pops back as `word`. `hold`: it swells and wobbles until
-   * that is done too (the word it was, said), so it is never gone before its word is.
+   * nothing, a poof of smoke and sparks, and it pops back as `word`. `hold`: after its wobble it stays
+   * swollen, the swirl still turning, until that is done too (the word it was, said), so it is never
+   * gone before its word is.
    */
   private async morph(word: string, hold?: Promise<unknown>): Promise<void> {
     const f = this.flow;
@@ -441,7 +442,7 @@ export class ShifterRoom extends HouseSideRoom {
       const at = (spot.id[l.pos] !== l.to[l.pos] ? l.pos : ([0, 1, 2] as const).find((i) => spot.id[i] !== l.to[i])) ?? l.pos;
       await this.narrate('shifter_says');
       if (f !== this.flow) return;
-      await this.flashLetter(at, nameToSound(l.to[at]!, soundAt(l.to, at)));
+      await this.flashNewLetter(at);
       if (f !== this.flow) return;
       await this.narrate('shifter_again');
     } else {
@@ -452,12 +453,8 @@ export class ShifterRoom extends HouseSideRoom {
       if (f !== this.flow) return;
       await this.narrate('shifter_stone');
       if (f !== this.flow) return;
-      spot.obj.setScale(1.15);
-      for (const id of nameToSound(letter)) {
-        await this.say(id);
-        if (f !== this.flow) return;
-      }
-      spot.obj.setScale(1);
+      await this.soundStone(spot);
+      if (f !== this.flow) return;
       await this.narrate('shifter_nope');
     }
     if (f !== this.flow) return;
@@ -472,9 +469,7 @@ export class ShifterRoom extends HouseSideRoom {
     // Kept apart from her reading, but the word draws still lean away from it next episode, as from a word
     // read right (hunt 6: three links in four are fix it, so the same chains came back episode after episode).
     if (firstTry) progress.remember('words', word, VARIETY.words);
-    if (!episode.read.includes(word)) episode.read.push(word);
-    if (!episode.fetched.includes(word)) episode.fetched.push(word);
-    if (last && !episode.house.done.includes(this.slot)) episode.house.done.push(this.slot);
+    this.recordDone(word, { fetch: true, last });
   }
 
   /** A word's units over (x, y), each lit while its sound plays. */
@@ -513,6 +508,26 @@ export class ShifterRoom extends HouseSideRoom {
       if (f !== this.flow) return;
     }
     if (t && !(this.lit && pos === this.current.pos)) t.setColor(INK);
+  }
+
+  /** The new word's letter at `pos` flashes while its sound is said (the name first where it holds the sound). */
+  private flashNewLetter(pos: Position): Promise<void> {
+    const word = this.current.to;
+    return this.flashLetter(pos, nameToSound(word[pos]!, soundAt(word, pos)));
+  }
+
+  /**
+   * A stone swells while its letter is sounded (the name first where it holds the sound); it stops once a
+   * newer flow takes over. It settles back to the size it shows in reach, or at rest once she has walked off.
+   */
+  private async soundStone(spot: Spot): Promise<void> {
+    const f = this.flow;
+    spot.obj.setScale(spot.baseScale * 1.15);
+    for (const id of nameToSound(spot.obj.getData('letter') as string)) {
+      if (f !== this.flow) break;
+      await this.say(id);
+    }
+    spot.obj.setScale(this.inReach() === spot ? spot.baseScale * 1.1 : spot.baseScale);
   }
 
   /** A stone's letter flies from it into the label's changed place; `bounce`, it pops back off and away. */
@@ -630,15 +645,9 @@ export class ShifterRoom extends HouseSideRoom {
     const l = this.current;
     const f = ++this.flow;
     voiceBus.hush();
-    if (idle) {
-      void this.narrateAgain(l.beat === 'read' ? 'shifter_read' : 'shifter_fix').then(() => {
-        if (f === this.flow && this.phase === 'pick') this.locked = false;
-      });
-      return;
-    }
     const near = l.beat === 'fix' ? this.inReach() : undefined;
-    if (l.beat === 'fix' && !near) {
-      void this.narrateAgain('shifter_fix').then(() => {
+    if (idle || (l.beat === 'fix' && !near)) {
+      void this.narrateAgain(l.beat === 'read' ? 'shifter_read' : 'shifter_fix').then(() => {
         if (f === this.flow && this.phase === 'pick') this.locked = false;
       });
       return;
@@ -650,16 +659,10 @@ export class ShifterRoom extends HouseSideRoom {
     void (async () => {
       if (l.beat === 'read') {
         await this.narrate('shifter_hint');
-        if (f === this.flow) await this.flashLetter(l.pos, nameToSound(l.to[l.pos]!, soundAt(l.to, l.pos)));
+        if (f === this.flow) await this.flashNewLetter(l.pos);
       } else {
-        const letter = near!.obj.getData('letter') as string;
         await this.narrate('shifter_stone');
-        near!.obj.setScale(1.15);
-        for (const id of nameToSound(letter)) {
-          if (f !== this.flow) break;
-          await this.say(id);
-        }
-        near!.obj.setScale(1);
+        await this.soundStone(near!);
       }
       if (f !== this.flow) return;
       this.hinting = false;

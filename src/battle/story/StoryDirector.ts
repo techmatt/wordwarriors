@@ -35,13 +35,12 @@ import { sfxBoom, sfxFire, sfxJump, sfxPoof, sfxShout, sfxStomp, sfxTwinkle, sfx
 import { DEPTH, GAME_WIDTH } from '../../config';
 import { advance, episode } from '../../episode/Episode';
 import { burst, fitImage, flash, floatText, hitstop, popIn, punch, shake, shockwave, slowmo, speedLines } from '../../fx/juice';
-import { storyLift } from '../stages/story';
 import { TEX } from '../../fx/textures';
 import { cast } from '../abilities';
 import type { BattleScene } from '../BattleScene';
-import { ARENA_LEFT } from '../movement';
-import { STORY_MARKS } from '../stages/story';
 import type { Fighter } from '../Fighter';
+import { ARENA_LEFT, restLift } from '../movement';
+import { STORY_MARKS } from '../stages/story';
 import { StoryWalk } from './walk';
 
 /** How long she has to reach a safe spot (real s), and to grab (before it goes on by itself). */
@@ -61,16 +60,11 @@ export class StoryDirector {
   /** The story's places: the props stand in the arena from the start. */
   setup(): void {
     for (const s of this.story.spots) {
-      const key = fightPropArt(s.prop);
-      if (s.lift) {
-        // A ledge: its top is where she stands.
-        const img = fitImage(this.b.add.image(s.x, s.y + 40, key).setOrigin(0.5, 1), 240, s.lift + 60).setDepth(s.y - 2);
-        this.props.set(s.id, img);
-      } else {
-        const img = fitImage(this.b.add.image(s.x + (s.propDx ?? 0), s.y + (s.propDy ?? 0), key).setOrigin(0.5, 1), s.id === 'hoard' ? 260 : 200, s.id === 'hoard' ? 160 : 180);
-        img.setDepth(s.y + (s.propDy ?? 0));
-        this.props.set(s.id, img);
-      }
+      const dy = s.propDy ?? 0;
+      const img = fitImage(this.b.add.image(s.x + (s.propDx ?? 0), s.y + dy, fightPropArt(s.prop)).setOrigin(0.5, 1), s.propW ?? 200, s.propH ?? 180);
+      // A ledge (its top is where she stands) sorts just behind her; anything else by its foot.
+      img.setDepth(s.lift ? s.y - 2 : s.y + dy);
+      this.props.set(s.id, img);
     }
   }
 
@@ -184,7 +178,7 @@ export class StoryDirector {
     sfxShout();
     let reached = false;
     if (spot) {
-      // Yellow says Dad's "hide behind the stone!" again.
+      // Yellow says the call to safety (the lines after the threat) again.
       const walk = new StoryWalk(b, spot, 'dodge', DODGE_SECONDS, () => this.sayAll(rest));
       b.storyWalk = walk;
       void this.sayAll(rest);
@@ -359,7 +353,7 @@ export class StoryDirector {
       const m = STORY_MARKS.heroes[i] ?? STORY_MARKS.heroes[0];
       h.hop = 0;
       // Down off the ledge with the walk home, not in one frame (hunt 7).
-      b.tweens.add({ targets: h, x: m.x, y: m.y, lift: storyLift(h), duration: 600, ease: 'Quad.easeOut' });
+      b.tweens.add({ targets: h, x: m.x, y: m.y, lift: restLift(h), duration: 600, ease: 'Quad.easeOut' });
     });
     b.tweens.add({ targets: b.villain, x: STORY_MARKS.villain.x, y: STORY_MARKS.villain.y, duration: 600, ease: 'Quad.easeOut' });
     await b.wait(0.6);

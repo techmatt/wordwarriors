@@ -63,8 +63,9 @@ export function fightStyle(): FightSpec {
 }
 
 /**
- * The house plan: two fetch rooms with a sentence each, and the attic with
- * the villain's counter sentence. Made once per episode, on first need.
+ * The house plan: two fetch rooms, each a minigame from the pool or forced
+ * (`roomGames`, `episodePlans`), and the attic with the villain's counter
+ * sentence. Made once per episode, on first need.
  */
 export function housePlan(): RoomPlan[] {
   if (!episode.house.plan) {

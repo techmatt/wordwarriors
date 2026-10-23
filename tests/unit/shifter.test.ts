@@ -145,7 +145,6 @@ test('the pool: the Shape-Shifter is a fetch room, never the counter', () => {
 });
 
 test('episodePlans with the Shape-Shifter: its words are the fetches, its last the key; no other room reads one or shows one as its key', () => {
-  const sentence = MINIGAMES.find((g) => g.frame && g.slots.includes('fetch'))!;
   const counter = MINIGAMES.find((g) => g.frame && g.slots.includes('counter'))!;
   for (let seed = 1; seed <= 20; seed++) {
     const plans = episodePlans(
@@ -166,7 +165,6 @@ test('episodePlans with the Shape-Shifter: its words are the fetches, its last t
       for (const w of p.fetches) assert.ok(!shown.includes(w), `seed ${seed}: ${p.slot} reads ${w}, shown in the shifter room`);
     }
   }
-  void sentence;
 });
 
 test('the sound hidden in the name (ride-along): the bridge before the sound for B D F J K L M N P R S T V Z only; every line exists', () => {

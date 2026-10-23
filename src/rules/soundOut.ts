@@ -5,7 +5,8 @@
  * line, its letters lit together: it is never said as its letters ("N, G")
  * and never as its letters and then its sound. Pure, so every place that
  * sounds a word out (the entry hall's clue, the sentence room's key-word
- * hint, the bridge's wrong pick, Charge the Spell) says the same thing, and
+ * hint, the bridge's wrong pick, Charge the Spell, the Shape-Shifter's wrong
+ * picture) says the same thing, and
  * tests/unit/soundOut.test.ts checks it over the whole word bank.
  */
 
@@ -49,5 +50,10 @@ export function soundOut(word: string): SoundStep[] {
  */
 export function nameToSound(letter: string, sound: string = letter): string[] {
   const plain = SOUND_BY_UNIT[sound] ? [letterSoundLine(sound)] : [];
-  return NAME_HIDES[letter] && letter === sound ? [nameHidesLine(letter), ...plain] : plain;
+  return nameHolds(letter, sound) ? [nameHidesLine(letter), ...plain] : plain;
+}
+
+/** Whether `letter`'s name holds the sound it says here (`sound`, its own by default): the name can bridge to it. */
+export function nameHolds(letter: string, sound: string = letter): boolean {
+  return Boolean(NAME_HIDES[letter]) && letter === sound;
 }

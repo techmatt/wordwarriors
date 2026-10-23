@@ -45,7 +45,7 @@ import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids
 import { variant } from '../episode/lineVariants';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxZap } from '../audio/sfx';
-import { CHARGE, DAD_AWAY_MS, DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
+import { CHARGE, DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
 import { castFace, currentStep, episode, helper, narrator, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, floatText, popIn, punch, shake, shockwave, squash } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -66,7 +66,9 @@ import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom'
  * the helper says it. `sayback`: her beat to say it back. `charging`: the
  * payoff. `read`: every rune charged, she reads the word, waiting for Dad.
  * `reading`: the word's payoff (said, or sounded out and said). `done`: back
- * to the hub. Dad's buttons count only in `read`.
+ * to the hub. Dad's 1 / 2 are his answer in `read`, in `reading` while the
+ * read is asked or a solo read is not yet recorded, and from the last rune
+ * (kept, acted on as the read is asked, M24); any press ends solo.
  */
 type Phase = 'explain' | 'prompt' | 'sayback' | 'charging' | 'read' | 'reading' | 'done';
 
@@ -89,10 +91,6 @@ export class ChargeRoom extends HouseSideRoom {
   private plan!: ChargePlan;
   private index = 0;
   private phase: Phase = 'explain';
-  /** Time spent waiting for Dad on the read (scene clock, paused under dad lock and while a line plays). */
-  private waitMs = 0;
-  /** Times the read's wait ran out and the room went solo. */
-  private timeouts = 0;
   /** How the word's read went: Dad's yes, his no (sounded out), or read with the helper (solo). */
   private readAnswer: 'yes' | 'no' | 'modelled' | null = null;
   /** The solo read is recorded once it is sounded out; until then a Dad press is his answer. */
@@ -149,8 +147,6 @@ export class ChargeRoom extends HouseSideRoom {
     this.phase = 'explain';
     this.flow++;
     this.stopGesture = null;
-    this.waitMs = 0;
-    this.timeouts = 0;
     this.readAnswer = null;
     this.readRecorded = false;
     this.modelledSounds = new Set();
@@ -406,7 +402,7 @@ export class ChargeRoom extends HouseSideRoom {
     }
   }
 
-  /** The sound itself, the rune lit while it plays (never captioned). */
+  /** The sound itself, the rune's picture letter pulsing as it plays (never captioned). */
   private async saySound(sound: string): Promise<void> {
     this.tweens.add({ targets: this.runePic, scale: this.runeScale * 1.2, duration: 160, yoyo: true });
     await this.say(letterSoundLine(sound));
@@ -414,11 +410,6 @@ export class ChargeRoom extends HouseSideRoom {
 
   /** Dad's button (or F4): only the word's read asks him. A no sounds it out together first. Any press ends solo mode. */
   private answer(a: DadAnswer): void {
-    // Item 106: he is here after all; from the next rune (or the read) the room asks him again.
-    if (episode.solo) {
-      episode.solo = false;
-      this.noteActivity();
-    }
     // Item 093 (M24): his press once the last rune is lit was dropped, though his cue flashed as if
     // it landed; it is kept (his latest press) and acted on as the read is asked.
     // Charging, by the rune that flies (`index` is already the last one's in the beat after the one before it charges).
@@ -438,15 +429,6 @@ export class ChargeRoom extends HouseSideRoom {
     this.flow++;
     voiceBus.hush();
     void this.readWord(a === 'yes' ? 'yes' : 'no');
-  }
-
-  /** Nothing from Dad on the read (item 106): he isn't here, so the episode goes solo and the helper reads it with her. */
-  private goSolo(): void {
-    this.timeouts++;
-    episode.solo = true;
-    setDadAsking(false);
-    this.flow++;
-    void this.readWord('modelled');
   }
 
   /** The rune charges: it fires into its slot in the word with heavy particles, and the next lights. */
@@ -546,9 +528,8 @@ export class ChargeRoom extends HouseSideRoom {
     if (f !== this.flow) return;
     this.phase = 'read';
     this.readAt = this.time.now - this.startedAt;
-    this.waitMs = 0;
     this.locked = false;
-    setDadAsking(true);
+    this.askDad();
   }
 
   /**
@@ -636,12 +617,10 @@ export class ChargeRoom extends HouseSideRoom {
         done();
       }
     }
-    if (this.phase !== 'read') return;
-    if (dadLock.locked || voiceBus.busy) return;
-    this.waitMs += deltaMs;
-    if (this.waitMs >= DAD_AWAY_MS) {
-      this.waitMs = 0;
-      this.goSolo();
+    if (this.phase === 'read' && this.dadAway(deltaMs)) {
+      // Nothing from Dad on the read (item 106): he isn't here, so the helper reads it with her.
+      this.flow++;
+      void this.readWord('modelled');
     }
   }
 
@@ -674,9 +653,8 @@ export class ChargeRoom extends HouseSideRoom {
     await this.narrate('charge_read');
     if (f !== this.flow) return;
     this.phase = 'read';
-    this.waitMs = 0;
     this.locked = false;
-    setDadAsking(true);
+    this.askDad();
   }
 
   /** F4: with the word to read, Dad's yes; otherwise nothing (the runes move on by themselves). */
@@ -700,7 +678,7 @@ export class ChargeRoom extends HouseSideRoom {
         sound: this.rune,
         phase: this.phase,
         asking: this.phase === 'read',
-        timeouts: this.timeouts,
+        timeouts: this.dadTimeouts,
         read: this.readAnswer,
         solo: episode.solo,
         charged: [...(episode.charged?.sounds ?? [])],

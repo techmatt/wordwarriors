@@ -6,10 +6,10 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
-import { boot, choose, collectErrors, expectNoErrors, press, readToKeyWord, state, until } from './harness';
+import { boot, choose, collectErrors, debugTagShown, expectNoErrors, press, readToKeyWord, state, until } from './harness';
 
 const stored = (page: Page) => page.evaluate(() => localStorage.getItem('wordwarriors.progress'));
-const music = (page: Page) => page.evaluate(() => (window as unknown as { __ww: { state(): { music: string | null } } }).__ww.state().music);
+const music = async (page: Page) => (await state(page)).music;
 
 test('yellow in the sentence room says again the variant she heard, not the next', async ({ page }) => {
   const errors = collectErrors(page);
@@ -80,6 +80,6 @@ test("F9 as the debug room's door fades out is ignored: on to the next step, deb
   const s = await until(page, (st) => st.scene !== 'Debug' && st.scene !== 'Wait', 15_000, 'out the door');
   expect(s.scene).not.toBe('Parent');
   expect(s.step.kind).toBe('battle');
-  expect(await page.evaluate(() => Boolean(document.getElementById('debug-tag')?.isConnected))).toBe(false);
+  expect(await debugTagShown(page)).toBe(false);
   expectNoErrors(errors);
 });

@@ -11,10 +11,12 @@
  * never names) and never spells the sound ("sss" would be captioned, and
  * edge-tts reads it as "ess").
  *
- * Lines here are voiced before the battle, so they say no bank word at all,
- * stems included (tests/unit/charge.test.ts), and no glyph is a bank word's
- * picture or close to one (a 🥁 would show DRUM before she reads it; a mouse
- * reads as RAT, a hatching chick as CHICK, a plane as JET, a ladybird as BUG).
+ * The gesture texts say no bank word at all, stems included
+ * (tests/unit/charge.test.ts), and no glyph is a bank word's own picture (a 🥁
+ * would show DRUM before she reads it; a mouse reads as RAT, a plane as JET, a
+ * ladybird as BUG). A glyph close to one (M's cake slice, E's hatching chick)
+ * makes that word a gesture word (`GLYPH_LOOKS_LIKE`, src/rules/charge.ts), so
+ * an episode whose Charge uses the rune keeps it out of reading.
  *
  * `tier`: 1 the continuous sounds (she can hold them: M S F A L N R V Z and
  * the short vowels), 2 the quick ones (stops, H W Y J), 3 the digraphs, one
@@ -72,7 +74,7 @@ export interface RuneSound {
   /** The sound unit: a letter, or a digraph's two letters (`sh`). Its line is `letter_<sound>_sound`. */
   sound: string;
   tier: RuneTier;
-  gesture: { glyph: string; motion: GestureMotion; text: string; say?: string };
+  gesture: { glyph: string; motion: GestureMotion; text: string };
   move: AbilitySpec;
   picture?: RunePicture;
 }

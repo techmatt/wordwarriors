@@ -12,7 +12,8 @@ import { HOME_QUEST, QUESTS, questFor, questSetup } from '../../content/house/qu
 import { HUB_SCENES, hubStory } from '../../content/house/scenes';
 import { ART_BY_ID } from '../../content/art/assets';
 import { ACTIVE_CAST, CAST_ODDS } from '../../src/config';
-import { DADS, drawCast, phonicsFace, seededRand, wakerOf } from '../../src/rules/cast';
+import { DADS, drawCast, phonicsFace, wakerOf } from '../../src/rules/cast';
+import { seededRand } from '../../src/rules/random';
 import { drawStory } from '../../src/rules/story';
 import { MINIGAMES, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/sentences';

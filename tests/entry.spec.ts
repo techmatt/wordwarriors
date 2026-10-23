@@ -17,6 +17,7 @@ import { BANK_BY_WORD, THINGS } from '../content/phonics/bank';
 import { NAME_HIDES } from '../content/phonics/letters';
 import { DEPTH } from '../src/config';
 import { withStems } from '../src/rules/bank';
+import { inter } from './qa/checks';
 import { qaLayout } from './qa/probe';
 
 import { SLOW, boot, choose, collectErrors, expectNoErrors, leaveBedroom, playEntry, press, seedProgress, state, texts, until, type WWState } from './harness';
@@ -256,7 +257,7 @@ test('the letter board keeps clear of the dialogue on the miss lines (item 069)'
     const l = await qaLayout(page);
     const board = l.texts.filter((t) => t.scene === 'Entry' && t.depth === DEPTH.hud + 6 && t.text.trim());
     for (const c of l.covers.filter((c) => c.scene === 'Entry'))
-      for (const t of board) if (t.b[0] < c.b[2] && c.b[0] < t.b[2] && t.b[1] < c.b[3] && c.b[1] < t.b[3]) hits.add(`${t.text} under ${c.kind}`);
+      for (const t of board) if (inter(t.b, c.b) > 0) hits.add(`${t.text} under ${c.kind}`);
     await page.waitForTimeout(150);
   }
   expect([...hits]).toEqual([]);

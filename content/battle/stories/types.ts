@@ -49,7 +49,7 @@ export type StoryInput =
   | { kind: 'grab'; spot: string };
 
 /**
- * A staged move (src/battle/story/moves.ts): `fire` a breath sweeping the
+ * A staged move (`StoryDirector`, src/battle/story/): `fire` a breath sweeping the
  * floor, `rain` fire falling from above, `tail` a tail smash shaking the
  * floor, `guards` gold guards charging across, `spin` Dad's spinning attack.
  */
@@ -96,6 +96,9 @@ export interface StorySpot {
   prop: string;
   propDx?: number;
   propDy?: number;
+  /** The box the prop's picture is fitted into, px (200 x 180 when not given). */
+  propW?: number;
+  propH?: number;
 }
 
 /** A big move's splash picture: art `fx_story_<id>`. */
@@ -107,7 +110,7 @@ export interface StorySplash {
 
 export interface StoryScript {
   id: string;
-  /** The roster id the story is written for: the debug link forces him. */
+  /** The roster id whose evil voice says the villain's lines (tools/voice/compose.ts); must match its fight style's `villain`, which `?fight=` forces. */
   villain: string;
   spots: StorySpot[];
   splashes: StorySplash[];

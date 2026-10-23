@@ -38,8 +38,7 @@ export const RUNE_SOUNDS: string[] = RUNES.map((r) => r.sound);
 
 /**
  * Glyphs close to a bank word's picture, which show that word as surely as its own (hunt 6: the M rune's
- * cake slice is CAKE's birthday cake to her, the E rune's hatching chick CHICK's chick; runes.ts's header
- * names the chick as what a glyph must not be).
+ * cake slice is CAKE's birthday cake to her, the E rune's hatching chick CHICK's chick).
  */
 const GLYPH_LOOKS_LIKE: Record<string, string[]> = { m: ['cake'], e: ['chick'] };
 

@@ -92,12 +92,12 @@ export function installTestHooks(game: Phaser.Game): void {
       voiceBus.seen();
       return s;
     },
-    /**
-     * Teleport her (item 083): in a room, or her hero in an open move choice. Tests that are
-     * not about walking land on the spot instead of steering. False when nothing can be placed.
-     */
     /** The running scenes' keys (item 092: the harness names them when a teleport seems not to land). */
     scenes: () => game.scene.getScenes(true).map((s) => s.scene.key),
+    /**
+     * Teleport her (item 083): in a room, or her hero in an open move choice or a story walk. Tests that
+     * are not about walking land on the spot instead of steering. False when nothing can be placed.
+     */
     place: (x: number, y: number) => {
       for (const s of game.scene.getScenes(true)) {
         const p = (s as unknown as { placeHero?: (x: number, y: number) => boolean }).placeHero;

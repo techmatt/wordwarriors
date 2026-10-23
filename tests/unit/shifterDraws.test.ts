@@ -6,8 +6,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { NUMBER_WORDS, lookalikesOf } from '../../content/phonics/sentences';
-import { NO_ARTICLE } from '../../src/rules/sentences';
+import { NO_ARTICLE, NUMBER_WORDS, lookalikesOf } from '../../content/phonics/sentences';
 import { planShifter, shifterWords } from '../../src/rules/shifter';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { memory, seeded, spread } from './seeds';
@@ -24,7 +23,7 @@ test('planShifter (hunt 6): no link joins two look-alikes, no read-it picture is
   }
 });
 
-test('planShifter (hunt 7, M34): her recent reads spread the chains across episodes, at full length', () => {
+test('planShifter (hunt 7, fix 125): her recent reads spread the chains across episodes, at full length', () => {
   // Six episodes back to back, each chain's words read right first time: a later chain holds at
   // most one word read lately where four links allow it (45 of 100 shared a word with the
   // episode before, MAT MAN PAN three in four; 25 since).

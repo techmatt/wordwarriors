@@ -90,7 +90,7 @@ export class ArtBank {
   private readonly reasked = new Map<string, number>();
   /**
    * Pictures that came on a re-ask while something still showed the magenta
-   * square: its texture is replaced only once nothing does (`applyPending`, as
+   * square: its texture is replaced only once nothing does (`applyHeld`, as
    * a scene starts), never under a live image whose scale and tweens were
    * worked out for the square.
    */

@@ -72,6 +72,9 @@ test('story fights: beats are well formed, spots and splashes drawn, each part e
         }
         if (b.kind === 'counter') assert.equal(i?.kind, 'pad', `${b.id}: a counter waits on pads`);
         if (b.kind === 'attack') assert.ok(i?.kind === 'dodge' || i?.kind === 'dodgePads', `${b.id}: an attack waits on a dodge`);
+        // StoryDirector stages a dodge with pads only as the guards' charge (`guards`): any other would
+        // open no move choice while the plan holds one for it, and every later pick would take its words.
+        if (b.kind === 'attack') assert.equal(i?.kind === 'dodgePads', b.move === 'guards', `${b.id}: a dodge with pads is the guards' charge, and only it`);
         if (b.kind === 'support') assert.equal(i?.kind, 'grab', `${b.id}: the support move waits on her grab`);
       }
     }

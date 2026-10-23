@@ -641,7 +641,7 @@ function paintAll(list: ArtAsset[]): Record<string, string> {
           g.fill();
         }
       } else if (id === 'prop_rune_stone') {
-        // Item 053: a blank lilac face in a glowing gold rim; the game paints the letter.
+        // Item 053: a blank lilac face in a glowing gold rim; the game lays the rune's picture letter on it.
         g.beginPath();
         g.ellipse(W / 2, H / 2, W * 0.45, H * 0.45, 0, 0, Math.PI * 2);
         const gr = g.createRadialGradient(W * 0.42, H * 0.38, 4, W / 2, H / 2, W * 0.5);

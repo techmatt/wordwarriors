@@ -29,9 +29,6 @@ import { ACTIVE_CAST, ADULT_FILL, ADULT_HEIGHT, ADULT_HEIGHTS, CAST_ODDS, OUTFIT
 import { pick, type Rand } from './random';
 import { fresh } from './recent';
 
-/** Its home is ./random.ts (item 088); re-exported for the scenes that seed the cast. */
-export { seededRand } from './random';
-
 /** The two dads: the only wakers (their wake-up lines are voiced). */
 export const DADS = ['dada_matt', 'dada_jason'] as const;
 
@@ -71,7 +68,7 @@ export interface CastInput {
   overrides?: CastOverrides;
 }
 
-const isDad = (person: string) => (DADS as readonly string[]).includes(person);
+export const isDad = (person: string) => (DADS as readonly string[]).includes(person);
 
 /** Is `id` (a character, form or fighter id: `dada_jason_warlock_evil`) a grown-up, a dad in any form? */
 export function isGrownUp(id: string): boolean {

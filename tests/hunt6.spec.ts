@@ -7,7 +7,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { REACH } from '../src/config';
 import { qaLayout } from './qa/probe';
-import { SLOW, boot, choose, collectErrors, dadLock, expectNoErrors, place, press, state, texts, until, type WWState } from './harness';
+import { SLOW, boot, choose, collectErrors, dadLock, expectNoErrors, mash, place, press, state, texts, until, type WWState } from './harness';
 
 const sh = (s: WWState) => s.room?.shifter;
 const ready = (i: number) => (s: WWState) => s.scene === 'ShifterRoom' && sh(s)?.index === i && sh(s)!.phase === 'pick' && !s.room!.locked;
@@ -33,12 +33,6 @@ async function pickRight(page: Page, i: number): Promise<void> {
   throw new Error(`link ${i}: green on the right pick never taken`);
 }
 
-async function mash(page: Page, button: string, ms: number, n: number): Promise<void> {
-  for (let i = 0; i < n; i++) {
-    await press(page, button);
-    await page.waitForTimeout(ms);
-  }
-}
 
 test('Shape-Shifter: the lit letter on a read-it label pulses at full size, never blinking out', async ({ page }) => {
   test.setTimeout(90_000);

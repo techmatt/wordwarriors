@@ -51,7 +51,7 @@ export interface RoomInfo {
    * timeouts so far, and what is charged.
    */
   charge?: {
-    /** The word the runes spell (item 058), and how its read went (Dad's yes, no or a timeout; null before). */
+    /** The word the runes spell (item 058), and how its read went (Dad's yes or no, or `modelled` when it went solo, item 106; null before). */
     word: string;
     read: 'yes' | 'no' | 'modelled' | null;
     /** Solo mode (item 106): the helper says each sound with her and they read the word together. */
@@ -74,29 +74,6 @@ export interface RoomInfo {
    * sound now, any help so far, whether the pictures are up, Dad's replays and
    * timeouts, wrong picks, whether Dad is being asked, and the sound held now.
    */
-  /**
-   * The Shape-Shifter (item 096): the chain's first creature and the words
-   * read, the link now (`index`; `from` the creature before, `word` the new
-   * one, `pos` the letter changed), its beat, what stands in the room
-   * (pictures or letter stones), the label on the creature, the help level,
-   * the phase, wrong picks and any help, and the stone or picture in reach.
-   */
-  shifter?: {
-    start: string;
-    words: string[];
-    index: number;
-    from: string;
-    word: string;
-    pos: number;
-    beat: 'read' | 'fix';
-    options: string[];
-    label: string;
-    level: number;
-    lit: boolean;
-    phase: 'intro' | 'pick' | 'check' | 'done';
-    misses: number;
-    aided: boolean;
-  };
   bridge?: {
     words: string[];
     index: number;
@@ -114,6 +91,29 @@ export interface RoomInfo {
     misses: number;
     asking: boolean;
     holding: string | null;
+  };
+  /**
+   * The Shape-Shifter (item 096): the chain's first creature and the words
+   * read, the link now (`index`; `from` the creature before, `word` the new
+   * one, `pos` the letter changed), its beat, what stands in the room
+   * (pictures or letter stones), the label on the creature, the help level
+   * and whether the changed letter is lit, the phase, wrong picks and any help.
+   */
+  shifter?: {
+    start: string;
+    words: string[];
+    index: number;
+    from: string;
+    word: string;
+    pos: number;
+    beat: 'read' | 'fix';
+    options: string[];
+    label: string;
+    level: number;
+    lit: boolean;
+    phase: 'intro' | 'pick' | 'check' | 'done';
+    misses: number;
+    aided: boolean;
   };
 }
 

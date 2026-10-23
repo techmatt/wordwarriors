@@ -20,6 +20,11 @@ import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter } from './Fighter';
 export const ARENA_LEFT = 70;
 export const ARENA_RIGHT = 1210;
 
+/** How high a fighter floats standing still (a story mark, the move choice): a flyer up in the air, a hoverer a little off the floor. */
+export function restLift(f: Fighter): number {
+  return f.init.style === 'fly' ? 110 : f.init.style === 'hover' ? 40 : 0;
+}
+
 export interface Steering {
   scene: Phaser.Scene;
   /** Simulation clock, ms. */
