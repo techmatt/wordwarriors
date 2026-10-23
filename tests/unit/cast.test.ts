@@ -5,7 +5,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { FORMS } from '../../content/battle/forms';
+import { OUTFITS } from '../../content/battle/outfits';
 import { CHARACTER_BY_ID, DEFAULT_COMBO, PERSONS, ROSTER, comboFor, formsOf, personOf } from '../../content/battle/roster';
 import { HOME, PLACES, PLACE_BY_ID, SIDE_ROOM_BY_ID, hubArt } from '../../content/house/house';
 import { HOME_QUEST, QUESTS, questFor, questSetup } from '../../content/house/quests';
@@ -177,7 +177,7 @@ test('forms: every dad form has its good, evil and face art, and its outfits are
   for (const c of ROSTER.filter((x) => x.person)) {
     for (const id of [`char_${c.id}_good`, `char_${c.id}_evil`, `face_${c.id}`, `item_${c.counter.id}`]) assert.ok(ART_BY_ID[id], id);
   }
-  for (const list of Object.values(FORMS)) for (const f of list) assert.ok(ART_BY_ID[f.art] && (!f.face || ART_BY_ID[f.face]), f.id);
+  for (const list of Object.values(OUTFITS)) for (const o of list) assert.ok(ART_BY_ID[o.art] && ART_BY_ID[o.face], o.id);
 });
 
 test('quests: every possible ally has one; places and their rooms exist with art', () => {
@@ -263,15 +263,14 @@ test('active allies (item 111): each has what an ally in the draw uses', () => {
     // A combo written with her, not the default team blast.
     assert.notEqual(comboFor('julia', person), DEFAULT_COMBO, `${person}: a combo with Julia`);
   }
-  for (const id of ['seraphina', 'elsa', 'anna', 'jasmine']) assert.ok(ACTIVE_CAST.allies.includes(id), `${id} is in the draw`);
   // Seraphina (amendment, Matt): her secret dragon hatchery and her pink pet dragon in the fight.
   assert.equal(QUESTS.seraphina!.place, 'dragon_hatchery');
   assert.ok(CHARACTER_BY_ID.seraphina!.good.abilities.some((a) => a.minion === 'pink_dragon'));
   // Item 114: the second wave, each in a place of their own, Ozymandias from Antarctica with his penguin crew.
-  for (const id of ['ozymandias', 'moriarty', 'rilla']) assert.ok(ACTIVE_CAST.allies.includes(id), `${id} is in the draw`);
   assert.deepEqual(['ozymandias', 'moriarty', 'rilla'].map((id) => QUESTS[id]!.place), ['iceberg_launchpad', 'puzzle_library', 'jungle_treetops']);
   const shared = new Map<string, string[]>();
-  for (const person of ACTIVE_CAST.allies) for (const f of formsOf(person)) shared.set(QUESTS[f.id]!.place, [...(shared.get(QUESTS[f.id]!.place) ?? []), f.id]);
+  // Item 122: whether each is switched on is ACTIVE_CAST's business (a config change), not the test's.
+  for (const person of new Set([...ACTIVE_CAST.allies, 'ozymandias', 'moriarty', 'rilla'])) for (const f of formsOf(person)) shared.set(QUESTS[f.id]!.place, [...(shared.get(QUESTS[f.id]!.place) ?? []), f.id]);
   for (const id of ['ozymandias', 'moriarty', 'rilla']) assert.deepEqual(shared.get(QUESTS[id]!.place), [id], `${id}: a place of their own`);
   const ozy = CHARACTER_BY_ID.ozymandias!;
   assert.equal(ozy.arena, 'iceberg');

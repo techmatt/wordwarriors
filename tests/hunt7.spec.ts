@@ -9,9 +9,9 @@
 import { test, expect } from '@playwright/test';
 
 import { BATTLE_SPEED, SLOW, boot, collectErrors, expectNoErrors, place, press, state, toParentAndBack, until } from './harness';
-import { OUTFIT_FILL } from '../src/config';
+import { outfitFill } from '../src/rules/heights';
 
-/** Her dress, then each wave 1-2 ally's outfit for her: by hand, so a new outfit in content/battle/forms.ts needs its line here. */
+/** Her dress, then each wave 1-2 ally's outfit for her: by hand, so a new outfit in content/battle/outfits.ts needs its line here. */
 const OUTFITS = [
   ['ellie', 'char_julia_good'],
   ['seraphina', 'char_julia_keeper'],
@@ -33,7 +33,7 @@ test('her new outfits stand her own height, head to soles, within 4% of her dres
     const s = await until(page, (st) => Boolean(st.battle?.choice?.open), 60_000, 'the move choice');
     const drawn = s.battle!.heroes.find((f) => f.art === art)?.drawn ?? 0;
     expect(drawn, `${ally}: ${art}`).toBeGreaterThan(0);
-    tall[ally] = drawn * OUTFIT_FILL[art]!;
+    tall[ally] = drawn * outfitFill(art)!;
     await page.screenshot({ path: `tests/screenshots/116_outfit_${ally}.png` });
     expectNoErrors(errors);
     await page.context().close();

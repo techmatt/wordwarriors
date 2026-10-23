@@ -45,7 +45,7 @@ import { startMusic, stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxHit, sfxPoof, sfxRight, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { formFor } from '../../content/battle/forms';
+import { outfitFor } from '../../content/battle/outfits';
 import { advance, castArt, castScale, counterArt, counterWord, episode, fightStyle, helper, housePlan, movePlan, namedCounter, narrator, reformedOf, villainSpec, type Step } from '../episode/Episode';
 import { pickTaunt, unsayTaunt, variant } from '../episode/lineVariants';
 import { fightLineKey, type FightSpec } from '../../content/battle/fights';
@@ -56,7 +56,8 @@ import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { withStems } from '../rules/bank';
-import { isDad, outfitTall } from '../rules/cast';
+import { isDad } from '../rules/cast';
+import { outfitTall } from '../rules/heights';
 import { fetchBeats } from '../rules/volleys';
 import type { MoveOwner } from '../rules/moves';
 import { progress } from '../state/progress';
@@ -219,7 +220,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, `arena_${this.arenaKey}`).setDisplaySize(GAME_WIDTH, GAME_HEIGHT).setDepth(DEPTH.ground);
     this.darkRect = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0a0018, 0).setDepth(FLOOR_TOP - 5);
     this.controls = new Controls(this);
-    this.play = new FreePlay(this, formFor(episode.hero, episode)?.id ?? null);
+    this.play = new FreePlay(this, outfitFor(episode.hero, episode)?.id ?? null);
     this.playHop = false;
     // Lighter in battle: a small box and face at the bottom, so the fight stays in view.
     // The move choice's prompts say the word to find; the box prints "USE …!"
@@ -991,7 +992,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
   /** A fighter's taunts that give no move choice away. */
   private safeTaunts(f: Fighter): string[] {
     // Nor one that does not fit today's outfit (a knight has no wand).
-    const skip = f.team === 'hero' ? formFor(f.init.id, episode)?.skipTaunts ?? [] : [];
+    const skip = f.team === 'hero' ? outfitFor(f.init.id, episode)?.skipTaunts ?? [] : [];
     return (f.init.taunts ?? []).filter((k) => !skip.includes(k) && !this.lineGivesAway(tauntLine(f.init.id, k)));
   }
 

@@ -53,7 +53,7 @@ export const DEPTH = {
  * which then choose those roles; the dads' forms are still drawn.
  * `randomVillain: true` (with `randomCast: false`) draws only the villain.
  *
- * The cast also picks the scenario (content/battle/forms.ts): with `ally:
+ * The cast also picks the scenario (content/battle/outfits.ts): with `ally:
  * 'dada_jason'` it is the chef episode, Julia as chef Julia from the moment
  * she wakes up.
  */
@@ -129,34 +129,6 @@ export const ADULT_FILL: Readonly<Record<string, number>> = {
   char_dada_matt_cyber_evil: 0.96,
   char_dada_matt_blade_good: 0.973,
   char_dada_matt_blade_evil: 0.939,
-};
-
-/**
- * How much of her pictures' height is her, head to soles, as `ADULT_FILL` is
- * the dads' (hunt 6, M32: the chef's hat and the knight's raised sword
- * counted in her height, so beside chef or warrior Dada Jason she stood about
- * 11% shorter than in her dress). The mean of three measurements (hunt 6's,
- * crops on a 1% grid scaled by the glasses' width, pixel rows where the head
- * shows); `tests/unit/heights.test.ts` checks each against the art's alpha.
- * Her dress (`char_<person>_good`) is the picture the rest are drawn to: an
- * outfit's picture is drawn `fill(dress) / fill(outfit)` times as tall
- * (`outfitTall`), so she is the same height in every outfit.
- */
-export const OUTFIT_FILL: Readonly<Record<string, number>> = {
-  char_julia_good: 0.957,
-  char_julia_chef: 0.843,
-  char_julia_knight: 0.868,
-  // Item 111: eyes to soles against her dress picture's (she is drawn at one
-  // scale in all three, the glasses 97 px wide in each), so the goggles, the
-  // sun hat and the bobble hat are not her height.
-  char_julia_keeper: 0.945,
-  char_julia_explorer: 0.95,
-  char_julia_snow: 0.9,
-  // Item 114: her hair's top to soles, less the dress picture's 0.017 gap
-  // between the two; the top hat and the gorilla hood's ears are not her height.
-  char_julia_astronaut: 0.945,
-  char_julia_puzzler: 0.93,
-  char_julia_gorilla: 0.89,
 };
 
 /** The cast draw's odds (Matt, item 025). */

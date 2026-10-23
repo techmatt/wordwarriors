@@ -108,7 +108,7 @@ export class BedroomScene extends RoomScene {
     return `room_bedroom_${this.room.id}`;
   }
 
-  /** Asleep in bed she is in her default images; wakeUp() puts her form on. */
+  /** Asleep in bed she is in her default images; wakeUp() puts her outfit on. */
   protected override playerArt(): string {
     return charArt(episode.hero, false);
   }

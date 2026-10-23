@@ -15,6 +15,7 @@
 import { ARENAS, MINIONS, ROSTER } from '../battle/roster.js';
 import { ENDINGS, endingArt, endingPropArt } from '../house/endings.js';
 import { FIGHTS, fightPropArt } from '../battle/fights.js';
+import { OUTFITS } from '../battle/outfits.js';
 import { STORIES } from '../battle/stories/index.js';
 import { storySplashArt } from '../battle/stories/types.js';
 import { ALL_SIDE_ROOMS, BEDROOMS, ENTRY_HALL, HUB, PLACES, hubArt } from '../house/house.js';
@@ -77,113 +78,31 @@ for (const c of ROSTER) {
   });
 }
 
-// Outfits: a roster character dressed for a future scenario, sized like the
-// char_* images and drawn from the same photo reference (refFor). Her face and
+// Outfits (content/battle/outfits.ts): a roster character dressed for a
+// scenario, sized like the char_* images and drawn from the same photo
+// reference (refFor). Each is a character sprite and its name-free face card
+// (item 016: the picture for reading JULIA in a chef episode). Her face and
 // hair come from her roster look; only the clothes and the prop change.
 const julia = ROSTER.find((c) => c.id === 'julia')!.good;
 /** Her face and hair, from her roster look (its clothes cut off). */
 const juliaFace = julia.look.split(', in a ')[0];
-assets.push({
-  id: 'char_julia_chef',
-  kind: 'character',
-  w: 200,
-  h: 250,
-  content: `Julia the little chef: ${juliaFace}, in a cheerful little chef's outfit: a white double-breasted chef's jacket with round buttons, a small red neckerchief, a white apron, a tall puffy white chef's hat, holding up a wooden spoon. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background.`,
-  label: 'CHEF',
-  glyph: '🥄',
-  palette: julia.palette,
-});
-// Her name-free face card in that form (item 016): the picture for reading
-// JULIA in a chef episode (content/battle/forms.ts).
-assets.push({
-  id: 'face_julia_chef',
-  kind: 'character',
-  w: 200,
-  h: 200,
-  content: `Julia the little chef's face, a friendly head-and-shoulders portrait of ${juliaFace}, in a white double-breasted chef's jacket with a small red neckerchief and a tall puffy white chef's hat. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
-  label: '',
-  glyph: '🥄',
-  palette: julia.palette,
-});
-// Julia the little knight, beside warrior Dada Jason (item 025).
-assets.push({
-  id: 'char_julia_knight',
-  kind: 'character',
-  w: 200,
-  h: 250,
-  content: `Julia the little knight: ${juliaFace}, in a little shining silver knight's armour over a pink tunic, a short red cape, a small round red shield with a golden star on it and a little wooden toy sword held up high. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background.`,
-  label: 'KNIGHT',
-  glyph: '🛡️',
-  palette: julia.palette,
-});
-assets.push({
-  id: 'face_julia_knight',
-  kind: 'character',
-  w: 200,
-  h: 200,
-  content: `Julia the little knight's face, a friendly head-and-shoulders portrait of ${juliaFace}, in a little shining silver knight's armour with a short red cape, no helmet. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
-  label: '',
-  glyph: '🛡️',
-  palette: julia.palette,
-});
-// Items 111 and 114: her outfits beside the new allies (content/battle/forms.ts).
-// Each is a character sprite and its name-free face card, like the chef's.
-const OUTFITS: { word: string; who: string; label: string; glyph: string; body: string; face: string }[] = [
-  {
-    // Seraphina's secret dragon hatchery.
-    word: 'keeper', who: 'dragon keeper', label: 'KEEPER', glyph: '🥚',
-    body: "in a little dragon keeper's outfit: a warm orange padded vest over a purple long-sleeved top, a brown satchel of dragon snacks on a strap, brown boots, round brass goggles pushed up on her head, hugging a big speckled pastel-pink dragon egg in both arms",
-    face: "in a warm orange padded vest over a purple top, round brass goggles pushed up on her head",
-  },
-  {
-    // Elsa's and Anna's ice castle.
-    word: 'snow', who: 'snow adventurer', label: 'SNOW', glyph: '❄️',
-    body: 'in a cosy puffy pink-and-purple snowsuit with fluffy white trim at the hood, a knitted purple bobble hat with a big white pompom, striped mittens and little white snow boots, holding up her golden star wand',
-    face: 'in a cosy puffy pink-and-purple snowsuit with fluffy white trim, a knitted purple bobble hat with a big white pompom',
-  },
-  {
-    // Jasmine's desert oasis.
-    word: 'explorer', who: 'desert explorer', label: 'EXPLORER', glyph: '🧭',
-    body: 'in a little desert explorer outfit: a sunny-yellow tunic over loose coral-pink trousers, a wide straw sun hat with a pink ribbon, a light striped scarf, little sandals, holding up a small shiny brass compass',
-    face: 'in a sunny-yellow tunic and a light striped scarf, a wide straw sun hat with a pink ribbon',
-  },
-  // Item 114: beside the second wave of allies.
-  {
-    // Ozymandias's iceberg launch pad.
-    word: 'astronaut', who: 'polar astronaut', label: 'ASTRONAUT', glyph: '🚀',
-    body: 'in a little puffy white-and-pink space suit with a fluffy white fur-trimmed hood down on her back, chunky silver moon boots and pink mittens, a round space helmet with a clear visor held under one arm',
-    face: 'in a little puffy white-and-pink space suit with a fluffy white fur-trimmed collar',
-  },
-  {
-    // Moriarty's puzzle library.
-    word: 'puzzler', who: 'puzzle master', label: 'PUZZLER', glyph: '🧩',
-    body: 'in a little puzzle-master outfit: a small purple top hat with a golden band, a plum-purple waistcoat with shiny buttons over a white shirt, a big yellow bow tie, little black shoes, holding up a big round brass magnifying glass',
-    face: 'in a plum-purple waistcoat and a big yellow bow tie, a small purple top hat with a golden band',
-  },
-  {
-    // Bluerilla's jungle treetops: dressed as her plush gorilla.
-    word: 'gorilla', who: 'gorilla buddy', label: 'GORILLA', glyph: '🦍',
-    body: 'in a cosy fluffy navy-blue gorilla onesie with a big round pale-blue tummy patch, the hood up over her hair with little round gorilla ears and a pale-blue face patch around her face, little navy feet, both arms up in a happy cheer',
-    face: 'in a cosy fluffy navy-blue gorilla onesie, the hood up over her hair with little round gorilla ears',
-  },
-];
-for (const o of OUTFITS) {
+for (const o of OUTFITS.julia ?? []) {
   assets.push({
-    id: `char_julia_${o.word}`,
+    id: o.art,
     kind: 'character',
     w: 200,
     h: 250,
     content: `Julia the little ${o.who}: ${juliaFace}, ${o.body}. Full body, facing the viewer, cheerful cartoon style for a 4-year-old. Transparent background.`,
-    label: o.label,
+    label: o.id.toUpperCase(),
     glyph: o.glyph,
     palette: julia.palette,
   });
   assets.push({
-    id: `face_julia_${o.word}`,
+    id: o.face,
     kind: 'character',
     w: 200,
     h: 200,
-    content: `Julia's face, a friendly head-and-shoulders portrait of ${juliaFace}, ${o.face}. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
+    content: `${o.namedFace ? `Julia the little ${o.who}'s face` : "Julia's face"}, a friendly head-and-shoulders portrait of ${juliaFace}, ${o.faceLook}. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
     label: '',
     glyph: o.glyph,
     palette: julia.palette,

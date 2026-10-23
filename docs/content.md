@@ -35,11 +35,12 @@ Moved from CLAUDE.md (item 078). "The three commands" are `voice:lines`, `voice:
 | "Matt should wake her more / less often" | `CAST_ODDS` in `src/config.ts` |
 | "switch X on / off" (in the random cast) | `ACTIVE_CAST` in `src/config.ts` (allies, villains; persons, a dad in all his forms) |
 | "add a dad form" / "add a quest" / "add a minigame" | `docs/content.md`: a roster entry with `person`; `QUESTS` + `PLACES`; `MINIGAMES` |
+| "give her an outfit for X" / "she should wear X with Y" | a record in `OUTFITS` (`content/battle/outfits.ts`, `docs/content.md`, "An outfit"), `art:placeholders`, then `art:alts`; its `fill` once the art is picked |
 | "add a word family / silly word" / "more or fewer machine words" | `RIMES` in `content/phonics/families.ts` (then `voice:lines`, `voice:build`); `WORD_MACHINE` in `src/config.ts` |
 | "add a victory scene" / "change what they say at the end" | `ENDINGS` in `content/house/endings.ts` (`docs/content.md`, "A victory scene"), the three commands, then `art:alts` |
 | "give X a story fight" | a `StoryScript` in `content/battle/stories/` and a `kind: 'story'` style in `FIGHTS` (`docs/content.md`, "A story fight"), then the three commands |
 | "make X a race / a cook-off" / "chef Jason should cook more" | `fight` on X in the roster; `fightNudge.chance` on `dada_jason` (`docs/content.md`, "A fight style") |
-| "make it the chef episode" | `?ally=dada_jason` (Julia's chef form follows; outfits are `content/battle/forms.ts`) |
+| "make it the chef episode" | `?ally=dada_jason` (Julia's chef outfit follows; outfits are `content/battle/outfits.ts`) |
 | "here is real art for X" | copy it to `public/art/<id>.png` (ids in `docs/art.md`) |
 | "here are my letter sound recordings" / "here is a recorder zip" | `npm run voice:import -- <zip>`, then `voice:build`; report each card installed or refused and why (`docs/recording.md`) |
 | "longer / shorter charge words" / "a longer / shorter beat to say each sound back" / "a longer / shorter beat when the helper says it with her" | `CHARGE` in `src/config.ts` (`units`, `sayBackMs`, `soloBeatMs`) |
@@ -231,28 +232,34 @@ A team combo is a `ComboSpec` in `COMBOS` (`pair` of character ids + an ability,
 optionally `second`, what the second of the pair fires instead: Julia's stars and
 Ellie's bubble ring in Star Bubble Spin); any other pair uses `DEFAULT_COMBO`.
 
-## A form: a character's outfit for a scenario (`content/battle/forms.ts`)
+## An outfit: what a character wears for a scenario (`content/battle/outfits.ts`)
 
-A character normally appears as its roster images (`char_<id>_good`, `face_<id>`). A
-form swaps them when the episode's cast matches: `FORMS.julia` has
-`{ id: 'chef', art: 'char_julia_chef', face: 'face_julia_chef', when: { ally: 'dada_jason' } }`,
-so with Dada Jason the chef as ally Julia is chef Julia from the moment she gets out of
-bed: walking in every room, in battle, on the journey map and at the victory, and her
-face card when JULIA is a word to read. Asleep in bed, the title and the pick screens
-keep her default images. To add one: an outfit entry in `content/art/assets.ts` (like
-`char_julia_chef`, and a `face_<id>_<outfit>` card), `art:alts` / `art:pick` for its
-images, then a line in `FORMS` with a `when` on the ally, the villain or both. The
-first match wins. The `when` names a roster id, so a dad's form counts: Julia is a little
-knight (`char_julia_knight`) beside warrior Dada Jason (`dada_jason_warrior`, item 025).
-Item 111 added a dragon keeper (Seraphina), snow gear (Elsa and Anna: one outfit, two
-`FORMS` lines) and a desert explorer (Jasmine); item 114 a polar astronaut
-(Ozymandias), a puzzle master (Moriarty) and a gorilla onesie (Bluerilla).
-`skipTaunts` lists taunt keys that do not fit the outfit (chef and knight Julia never
-say "My wand is sparkly!"). **New outfit art needs its `OUTFIT_FILL`** (`src/config.ts`,
-hunt 6, M32): how much of the picture is her, head to soles, measured as `ADULT_FILL` is
-(below), so a hat or a raised sword is not her height; `tests/unit/heights.test.ts` holds
-it to the art. (An outfit only swaps images; a dad's form is a whole character: next section.) The game asks `castArt(id)` / `castFace(id)` in
-`src/episode/Episode.ts`, never `charArt` directly, for anything shown after she wakes.
+A character normally appears as its roster images (`char_<id>_good`, `face_<id>`). An
+outfit swaps them when the episode's cast matches: `OUTFITS.julia` has the chef,
+`{ id: 'chef', when: { ally: ['dada_jason'] }, ... }`, drawn as `char_julia_chef` with the
+face card `face_julia_chef`, so with Dada Jason the chef as ally Julia is chef Julia from
+the moment she gets out of bed: walking in every room, in battle, on the journey map and
+at the victory, and her face card when JULIA is a word to read (`outfitFor`). Asleep in
+bed, the title and the pick screens keep her default images.
+
+Each outfit is **one record** (item 122): when it is worn (`when`: allies, villains or
+both, any one of a list), `skipTaunts`, its art prompts' parts (`who`, `body`,
+`faceLook`, `glyph`; `content/art/assets.ts` makes `char_<owner>_<id>` and
+`face_<owner>_<id>` from them) and its `fill`. To add one: a record in `OUTFITS`,
+`art:placeholders`, then `art:alts` / `art:pick` for its images. The first match wins.
+The `when` names roster ids, so a dad's form counts: Julia is a little knight
+(`char_julia_knight`) beside warrior Dada Jason (`dada_jason_warrior`, item 025). Item
+111 added a dragon keeper (Seraphina), snow gear (Elsa and Anna: one outfit, two allies)
+and a desert explorer (Jasmine); item 114 a polar astronaut (Ozymandias), a puzzle master
+(Moriarty) and a gorilla onesie (Bluerilla). `skipTaunts` lists taunt keys that do not
+fit the outfit (chef and knight Julia never say "My wand is sparkly!"). **New outfit art
+needs its `fill`** (hunt 6, M32): how much of the picture is her, head to soles,
+measured as `ADULT_FILL` is (below), so a hat or a raised sword is not her height;
+`src/rules/heights.ts` `outfitTall` draws the picture so she is as tall as in her dress
+(`DRESS_FILL`), and `tests/unit/heights.test.ts` holds the fill to the art. (An outfit
+only swaps images; a dad's form is a whole character: next section.) The game asks
+`castArt(id)` / `castFace(id)` in `src/episode/Episode.ts`, never `charArt` directly, for
+anything shown after she wakes.
 
 ## A dad's form: another whole character (`person` in the roster)
 

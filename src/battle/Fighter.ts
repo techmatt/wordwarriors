@@ -19,7 +19,7 @@ import type { AbilitySpec, FighterSpec, MinionSpec, MoveStyle, Status } from '..
 import { sfxPoof } from '../audio/sfx';
 import { TEX } from '../fx/textures';
 import { GAME_WIDTH } from '../config';
-import { adultHeight, isGrownUp, outfitTall } from '../rules/cast';
+import { adultHeight, isGrownUp, outfitTall } from '../rules/heights';
 import { burst, fitImage } from '../fx/juice';
 
 export type Team = 'hero' | 'villain';

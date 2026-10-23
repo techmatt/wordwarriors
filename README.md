@@ -278,7 +278,7 @@ lines, the recap's pictures) play the whole episode at the suite's speeds (about
   picture's height standing still. Not `qaLayout` bounds: moving squashes a card up to 7%
   and the villain is always moving, so a 5-10% check on bounds failed 2 runs in 3 (item 093).
   A dad's head-to-soles height is `drawn × ADULT_FILL[art]` (`src/config.ts`), hers
-  `drawn × OUTFIT_FILL[art]` (hunt 6, M32; `tests/heights.spec.ts` checks chef Julia against
+  `drawn × outfitFill(art)` (`src/rules/heights.ts`, hunt 6, M32; `tests/heights.spec.ts` checks chef Julia against
   her dress).
 - **Timing a room or a battle opening at real speed**: boot with `{ voice: 'real' }` at the
   usual `SPEED` and read game time, not wall time: `performance.now()` in the page is warped
@@ -556,7 +556,9 @@ code, not the worktree's (hunt 7 lost a round to it); keep such scripts in the w
   QA_LOOK_GREEN=0` records that URL for 30 s into `scratch/qa/<tag>/look/`.
 - Its server (port 5195, `QA_PORT` to move it) serves a production build made as the
   sweep starts (`node_modules/.ww-qa-dist`, as the suite does; item 092), so editing
-  `src/` during a sweep neither reloads it nor mixes code. The dev server it used before
+  `src/` during a sweep neither reloads it nor mixes code. Since item 122 it is the
+  suite's `tests/testBuild.ts`: a sweep with nothing changed since the last reuses its
+  build (`WW_REBUILD=1` builds anyway). The dev server it used before
   (`QA_DEV_SERVER=1` brings it back) spent its first minutes scanning the tree, voice and
   art junctions included: every scenario of a sweep timed out at boot behind it ("timed
   out waiting for title", an empty shot), and once up it took 4 to 9 s a voice fetch
@@ -942,18 +944,19 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   only when Matt has chosen for that id: a later round on it numbers from 1 again, and
   an old sheet's numbers no longer exist. Then delete the round's `scratch/` sheet,
   manifest, preview folder and briefs once every id in it is decided. `alts/` holds
-  only rounds still waiting (`ls art-originals/alts/`): on 2026-10-22, item 120's story
-  props (`prop_fight_stone`, `_ledge`, `_hoard`, 3 each, `scratch/art_alts_120_story_props.*`)
-  and item 124's story splashes (`fx_story_fire`, `_tail`, `_spin`, `_dive`, 3 each,
-  `scratch/art_alts_124_story_fx.*`);
+  only rounds still waiting (`ls art-originals/alts/`): on 2026-10-22, item 124's story
+  splashes (`fx_story_fire`, `_tail`, `_spin`, `_dive`, 3 each,
+  `scratch/art_alts_124_story_fx.*`). Item 122 promoted item 120's story props
+  (`prop_fight_stone` 1, `prop_fight_ledge` 2, `prop_fight_hoard` 1);
   item 115 promoted item 113's face cards (`face_anna` 1, `face_rilla` 2, drawn with `--ref` on
   each promoted full body). Items 110's and 112's rounds are gone too (promoted by item
   113: Bluerilla 5, good Anna 1), as are items 109's, 009's and 040's.
 - Corrections for an id (what an earlier image got wrong: a likeness, a prop that
   crowds a face) are `NOTES` in `content/art/prompts.ts`; they end the prompt for both
   `art:gen` and `art:alts`.
-- An outfit of a family member (`char_julia_chef`, item 012) is a hand-added entry in
-  `content/art/assets.ts`, not a roster character: `refFor` gives any
+- An outfit of a family member (`char_julia_chef`, item 012) is a record in
+  `content/battle/outfits.ts` (its prompt parts; `content/art/assets.ts` makes the entries),
+  not a roster character: `refFor` gives any
   `char_<person>_<word>` id that person's photo reference, and the brief reuses their
   roster look up to the clothes. An outfit's face card is `face_<person>_<word>`
   (`face_julia_chef`, item 016), which `refFor` also matches.

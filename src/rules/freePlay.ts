@@ -23,7 +23,7 @@ export function mixColor(a: number, b: number, t: number): number {
 
 /**
  * Each cast button's shots in its own pad colour (item 085, Matt: blue, red
- * and yellow must look clearly different). Every shape, a form's own too
+ * and yellow must look clearly different). Every shape, an outfit's own too
  * (the chef's donuts), takes these tints: the pad colour, a lighter and a
  * deeper shade of it, never another button's colour and never plain white.
  */

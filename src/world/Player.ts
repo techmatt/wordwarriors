@@ -11,7 +11,7 @@ import Phaser from 'phaser';
 
 import { FLIP_TO_FACE, WALK_SPEED } from '../config';
 import { fitImage } from '../fx/juice';
-import { outfitTall } from '../rules/cast';
+import { outfitTall } from '../rules/heights';
 
 const MAX_STEP = 6;
 
@@ -40,7 +40,7 @@ export class Player {
     this.root = scene.add.container(x, y, [this.shadow, this.sprite]);
   }
 
-  /** Change what she looks like (her form, as she gets out of bed). */
+  /** Change what she looks like (her outfit, as she gets out of bed). */
   setArt(art: string): void {
     this.scene.tweens.killTweensOf(this.sprite);
     this.sprite.setTexture(art);

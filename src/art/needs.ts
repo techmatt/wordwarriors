@@ -88,17 +88,26 @@ function artIn(value: unknown, depth = 0, out: string[] = []): string[] {
   return out;
 }
 
-/** Charge the Spell's picture letters (item 103): its plan's runes, and the runes charged for a battle. */
-function runeSet(plan: readonly RoomPlan[] | null): string[] {
-  const sounds = [...(plan ?? []).flatMap((p) => (p.kind === 'charge' ? p.charge.runes : [])), ...(episode.charged?.sounds ?? [])];
-  return sounds.map(runeArt);
+/**
+ * Charge the Spell's picture letters (item 103): its room's runes, for the
+ * house (the room, and the hub's door badge). Split from the battle's in item
+ * 122: the house asked for the charged runes too, but they are always the
+ * plan's (or a `?charged=` jump straight to the battle, `chargedRunes`).
+ */
+function planRunes(plan: readonly RoomPlan[]): string[] {
+  return plan.flatMap((p) => (p.kind === 'charge' ? p.charge.runes : [])).map(runeArt);
+}
+
+/** The runes charged for the battle, which fire there. */
+function chargedRunes(): string[] {
+  return (episode.charged?.sounds ?? []).map(runeArt);
 }
 
 /** The house steps' art: the hub, its place, every side room's plan, the gift word's move. */
 function houseSet(draw: boolean): string[] {
   const out = [hubArt(episode.place)];
   const plan = draw ? housePlan() : episode.house.plan;
-  if (plan) out.push(...artIn(plan), ...runeSet(plan), counterArt(), `pic_${counterWord()}`);
+  if (plan) out.push(...artIn(plan), ...planRunes(plan), counterArt(), `pic_${counterWord()}`);
   const gift = draw ? giftWord() : episode.gift;
   if (gift) {
     out.push(...artIn(gift));
@@ -135,7 +144,7 @@ function battleSet(draw: boolean): string[] {
     if (e) out.push(...artIn(e));
   }
   if (episode.house.plan) out.push(counterArt(), `pic_${counterWord()}`);
-  out.push(...runeSet(null));
+  out.push(...chargedRunes());
   return out;
 }
 

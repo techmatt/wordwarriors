@@ -45,7 +45,7 @@ export function rememberPlan(): void {
   if (remembered.plan || !plan || !remembered.cast) return;
   remembered.plan = true;
   if (!away()) for (const p of plan.slice(0, 2)) progress.remember('rooms', p.room, FETCH_ROOMS.length + 1);
-  if (urlGames) return;
+  if (urlPicksGames(urlQuery())) return;
   for (const p of plan) progress.remember('games', p.game, 3 * VARIETY.rotations);
   const phonics = plan.find((p) => PHONICS_GAMES.some((g) => g.id === p.game));
   if (phonics) progress.remember('phonics', phonics.game, 1);
@@ -53,8 +53,24 @@ export function rememberPlan(): void {
   for (const p of plan) if (p.kind === 'shifter') progress.remember('chains', chainKey(p.shifter), CHAINS_KEPT);
 }
 
-/** Whether the URL picks the rooms' games (`?room=`, `?game=`, `?games=`; `roomGames`): then they are not her rotation. */
-let urlGames = false;
+/** The games `?room=` forces whatever else is asked (items 054, 096; `roomGames`). */
+const ROOM_FORCE: ReadonlyMap<string, Minigame> = new Map([
+  ['charge', CHARGE_GAME],
+  ['bridge', BRIDGE_GAME],
+  ['shifter', SHIFTER_GAME],
+]);
+
+const urlQuery = () => new URLSearchParams(typeof location === 'undefined' ? '' : location.search);
+
+/**
+ * Whether the URL picks the rooms' games (`?room=`, `?game=`,
+ * `?games=sentence`; `roomGames`): then they are not her rotation.
+ * `?games=all` is the real draw (and the drawn-episode tests'): only a
+ * narrowed or forced pick is the URL's.
+ */
+export function urlPicksGames(q: URLSearchParams): boolean {
+  return q.get('games') === 'sentence' || Boolean(MINIGAME_BY_ID[q.get('game') ?? '']) || ROOM_FORCE.has(q.get('room') ?? '');
+}
 
 /**
  * The showdown's fight style (item 031, src/rules/fights.ts): drawn on first
@@ -186,19 +202,17 @@ export function grabPlan(): { word: string; objects: string[] } {
  * on the same terms; `?room=shifter` forces it whatever else is asked.
  */
 function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[] } {
-  const q = new URLSearchParams(typeof location === 'undefined' ? '' : location.search);
+  const q = urlQuery();
   const only = q.get('games') === 'sentence' ? SENTENCE_GAMES : undefined;
   const asked = MINIGAME_BY_ID[q.get('game') ?? ''];
-  // `?games=all` is the real draw (and the drawn-episode tests'): only a narrowed or forced pick is the URL's.
-  urlGames = Boolean(only || asked || q.get('room') === 'charge' || q.get('room') === 'bridge' || q.get('room') === 'shifter');
+  const room = ROOM_FORCE.get(q.get('room') ?? '');
   const phonics =
-    q.get('room') === 'charge' ? CHARGE_GAME
-      : q.get('room') === 'bridge' ? BRIDGE_GAME
+    room && room !== SHIFTER_GAME ? room
       : FORCE_PHONICS_ROOM && !only && !asked ? MINIGAME_BY_ID[pickWeighted(PHONICS_GAMES.map((g) => g.id), (id) => MINIGAME_BY_ID[id]!.weight * (progress.recentOf('phonics').includes(id) ? VARIETY.gameWeight : 1), 1)[0]!]
         : undefined;
-  const shifter = q.get('room') === 'shifter' || (FORCE_SHIFTER_ROOM && !only && !asked) ? SHIFTER_GAME : undefined;
+  const shifter = room === SHIFTER_GAME || (FORCE_SHIFTER_ROOM && !only && !asked) ? SHIFTER_GAME : undefined;
   // `?room=shifter` takes door a; else it follows the phonics game. Two doors: a third forced game waits its turn.
-  const forced = (q.get('room') === 'shifter' ? [shifter, asked, phonics] : [asked, phonics, shifter]).filter((g, i, all): g is Minigame => Boolean(g) && all.indexOf(g) === i).slice(0, 2);
+  const forced = (room === SHIFTER_GAME ? [shifter, asked, phonics] : [asked, phonics, shifter]).filter((g, i, all): g is Minigame => Boolean(g) && all.indexOf(g) === i).slice(0, 2);
   if (!forced.length) return only ? { pool: only } : {};
   const rest = drawGames(progress, Math.random, (only ?? MINIGAMES).filter((g) => !forced.includes(g)));
   return { games: [forced[0]!, forced[1] ?? rest[1], rest[2]] };

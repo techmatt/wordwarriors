@@ -21,7 +21,7 @@ import { startMusic } from '../audio/music';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { sfxWrong } from '../audio/sfx';
 import { advance, castArt, castScale, episode, narrator, type Slot, type Step } from '../episode/Episode';
-import { formFor } from '../../content/battle/forms';
+import { outfitFor } from '../../content/battle/outfits';
 import { FreePlay } from '../fx/freePlay';
 import { fitImage, floatText, wiggle } from '../fx/juice';
 import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
@@ -139,7 +139,7 @@ export abstract class RoomScene extends Phaser.Scene {
     bg.setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
     this.controls = new Controls(this);
     this.player = new Player(this, this.floor.centerX, this.floor.bottom - 10, this.playerArt(), this.floor);
-    this.play = new FreePlay(this, formFor(this.playerCharacter(), episode)?.id ?? null);
+    this.play = new FreePlay(this, outfitFor(this.playerCharacter(), episode)?.id ?? null);
     this.dot = makeButtonDot(this, 0, 0, 'green', 18).setDepth(DEPTH.prompt).setVisible(false);
     // Yellow is always "say it again": a yellow dot with an ear, top right.
     // Item 085 (Matt): the ear sits on the dot, in front of it, whole. The

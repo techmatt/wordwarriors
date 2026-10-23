@@ -85,7 +85,7 @@ export const WORD_BY_ID: Record<string, Word> = Object.fromEntries(WORDS.map((w)
 /**
  * The picture asset id for a word: its own card, or the character's. `face`
  * picks a character's card: the game passes `castFace`, so in a chef episode
- * JULIA shows chef Julia's face (content/battle/forms.ts).
+ * JULIA shows chef Julia's face (content/battle/outfits.ts).
  */
 export function pictureFor(word: Word, face: (character: string) => string = (c) => `face_${c}`): string {
   // A character's picture is its name-free face card: the normal card prints

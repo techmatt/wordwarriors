@@ -6,11 +6,11 @@
  *
  * - **blue**: zig-zag bolts with a crackling trail;
  * - **red**: spinning sparkle stars;
- * - **yellow**: lobbed fun things, stars, hearts and snowballs (her form adds
+ * - **yellow**: lobbed fun things, stars, hearts and snowballs (her outfit adds
  *   its own: donuts and cookies for the chef, stars for the knight).
  *
  * Each button's shots, trails and bursts are all in its own pad colour
- * (`castPalette`, item 085), so the three look clearly different; a form's
+ * (`castPalette`, item 085), so the three look clearly different; an outfit's
  * shapes keep their shapes and take the colour.
  *
  * Pure play: a shot hits nothing, a jump moves nothing; the scene only reads
@@ -58,8 +58,8 @@ const SHAPES: Record<CastColor, Look[]> = {
   ],
 };
 
-/** Her form's own extra shapes (cheap: existing textures, her button's tints). */
-const FORM_SHAPES: Record<string, Partial<Record<CastColor, Look[]>>> = {
+/** Her outfit's own extra shapes (cheap: existing textures, her button's tints). */
+const OUTFIT_SHAPES: Record<string, Partial<Record<CastColor, Look[]>>> = {
   chef: {
     // A donut and a cookie; sprinkles.
     yellow: [
@@ -125,10 +125,10 @@ export class FreePlay {
   private frame = 0;
   private aimed = false;
 
-  /** `form`: her form this episode (`chef`, `knight`), for its extra shots. */
+  /** `outfit`: her outfit this episode (`chef`, `knight`), for its extra shots. */
   constructor(
     private readonly scene: Phaser.Scene,
-    private readonly form: string | null = null,
+    private readonly outfit: string | null = null,
   ) {
     playStats.jumps = 0;
     playStats.shots = 0;
@@ -251,7 +251,7 @@ export class FreePlay {
   }
 
   private look(c: CastColor): Look {
-    const extra = (this.form && FORM_SHAPES[this.form]?.[c]) || [];
+    const extra = (this.outfit && OUTFIT_SHAPES[this.outfit]?.[c]) || [];
     const all = [...SHAPES[c], ...extra, ...extra];
     return all[this.turn[c]++ % all.length]!;
   }

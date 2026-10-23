@@ -13,10 +13,10 @@ import { test } from 'node:test';
 
 import sharp from 'sharp';
 
-import { FORMS } from '../../content/battle/forms';
+import { OUTFITS } from '../../content/battle/outfits';
 import { formsOf } from '../../content/battle/roster';
-import { ADULT_FILL, ADULT_HEIGHTS, OUTFIT_FILL } from '../../src/config';
-import { adultHeight, isGrownUp, outfitTall } from '../../src/rules/cast';
+import { ADULT_FILL, ADULT_HEIGHTS } from '../../src/config';
+import { adultHeight, isGrownUp, outfitFill, outfitTall } from '../../src/rules/heights';
 
 /** The figure's alpha box height as a share of its picture's, and the picture's aspect (width / height). */
 async function figure(art: string): Promise<{ fill: number; aspect: number }> {
@@ -73,16 +73,16 @@ test('a grown-up\'s height is his whatever the id\'s form: a fighter id, a form 
 });
 
 test('her outfits (hunt 6, M32): each picture drawn so she, head to soles, is as tall as in her dress; each fill held to the art', async () => {
-  const outfits = FORMS.julia!.map((f) => f.art);
+  const outfits = OUTFITS.julia!.map((o) => o.art);
   assert.ok(outfits.includes('char_julia_chef') && outfits.includes('char_julia_knight'), outfits.join(' '));
   for (const art of ['char_julia_good', ...outfits]) {
-    const fill = OUTFIT_FILL[art];
-    assert.ok(fill, `${art} has its head-to-soles share in OUTFIT_FILL`);
+    const fill = outfitFill(art);
+    assert.ok(fill, `${art} has its head-to-soles share (outfits.ts fill)`);
     const f = await figure(art);
     // Her head is inside the alpha box, and no more than a hat's or a raised sword's worth shorter than it.
-    assert.ok(fill <= f.fill + 0.005 && fill >= f.fill - 0.15, `${art}: OUTFIT_FILL ${fill}, alpha box ${f.fill.toFixed(3)}`);
+    assert.ok(fill <= f.fill + 0.005 && fill >= f.fill - 0.15, `${art}: fill ${fill}, alpha box ${f.fill.toFixed(3)}`);
     // Drawn `outfitTall` times her usual height: head to soles, she is her dress's height.
-    assert.ok(Math.abs(outfitTall(art) * fill - OUTFIT_FILL.char_julia_good!) < 1e-9, art);
+    assert.ok(Math.abs(outfitTall(art) * fill - outfitFill('char_julia_good')!) < 1e-9, art);
   }
   assert.equal(outfitTall('char_julia_good'), 1);
   assert.equal(outfitTall('char_dada_jason_good'), 1, 'a dad is sized by ADULT_FILL');

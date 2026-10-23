@@ -15,6 +15,9 @@
 
 import { expect, type Page } from '@playwright/test';
 
+// Type-only (item 122): the scenes' own shapes, without loading Phaser in node.
+import type { BattleInfo, EndingInfo, RecapCard, RoomInfo, TheEndInfo } from '../src/hookState';
+
 /** A browser test over about 10 s: the slow lane (`--grep @slow` matches the tag). */
 export const SLOW = { tag: '@slow' };
 
@@ -57,99 +60,16 @@ export interface WWState {
     stepIndex: number;
   };
   /** The victory recap's cards so far (item 018: every one has a picture). */
-  recap: { word: string; picture: string | null }[];
+  recap: RecapCard[];
   /** The victory scene (item 027): which, who is in it (villain last), its lines, what has been said. */
-  ending: { id: string; people: string[]; art: string[]; lines: string[]; said: string[]; done: boolean } | null;
+  ending: EndingInfo | null;
   /** The recap is said and its green is live, on to THE END (item 085). */
   recapDone: boolean;
   /** THE END (item 085): its background, the heroes on it, its words, whether Dad's 2 is waiting. */
-  theEnd: { art: string; heroes: string[]; text: string; dad: boolean } | null;
-  room: {
-    scene: string;
-    round: string;
-    locked: boolean;
-    player: { x: number; y: number; art: string };
-    spots: { id: string; x: number; y: number; correct: boolean | null }[];
-    shown: string[];
-    /** Minigame debug mode's room (item 086): its games, and those finished from it. */
-    debug?: { done: string[]; games: string[] };
-    spelling?: { word: string; filled: number };
-    grab?: { word: string; level: number; misses: number; objects: string[]; phase: string };
-    /** The Shape-Shifter (item 096, src/hookState.ts `shifter`). */
-    shifter?: { start: string; words: string[]; index: number; from: string; word: string; pos: number; beat: 'read' | 'fix'; options: string[]; label: string; level: number; lit: boolean; phase: 'intro' | 'pick' | 'check' | 'done'; misses: number; aided: boolean };
-    sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean; readLit: number[] };
-    machine?: {
-      mode: string;
-      index: number;
-      rounds: string[];
-      word: string;
-      rime: string;
-      family: string[];
-      tiles: { letter: string; makes: string; real: boolean }[];
-      phase: 'intro' | 'pick' | 'check' | 'done';
-      slotted: string | null;
-      misses: number;
-    };
-    /** Charge the Spell (item 053). */
-    charge?: {
-      /** Item 058: the word the runes spell, and how its read went. */
-      word: string;
-      read: 'yes' | 'no' | 'modelled' | 'helped' | null;
-      solo: boolean;
-      runes: string[];
-      index: number;
-      sound: string;
-      phase: 'explain' | 'prompt' | 'sayback' | 'charging' | 'read' | 'reading' | 'done';
-      asking: boolean;
-      timeouts: number;
-      charged: string[];
-      elapsedMs: number;
-      readAtMs: number;
-    };
-    /** The Stretchy Bridge (item 054). */
-    bridge?: {
-      words: string[];
-      index: number;
-      word: string;
-      units: string[];
-      pictures: string[];
-      level: number;
-      phase: 'intro' | 'slide' | 'say' | 'replay' | 'pick' | 'check' | 'done';
-      stone: number;
-      voiced: boolean;
-      aided: boolean;
-      picturesUp: boolean;
-      replays: number;
-      timeouts: number;
-      misses: number;
-      asking: boolean;
-      holding: string | null;
-    };
-  } | null;
-  battle: {
-    part: number;
-    /** The showdown's fight style (item 031) and its staging's own numbers. */
-    fight: string;
-    stage: Record<string, unknown>;
-    phase: string;
-    t: number;
-    abilitiesFired: number;
-    ultimates: number;
-    combos: number;
-    movePicks: number;
-    minions: number;
-    heroes: { id: string; hp: number; status: string | null; art: string; drawn: number }[];
-    villains: { id: string; hp: number; status: string | null; art: string; drawn: number }[];
-    /** The move words stand in the arena as pads (`spots`); she walks her hero onto one. */
-    choice: { words: string[]; right: string; open: boolean; misses: number; from: { x: number; y: number }; spots: { word: string; x: number; y: number }[]; stickHint: boolean; stickNub: number | null; signs: number[][]; team: { id: string; box: number[] }[]; villain: number[] | null } | null;
-    /** Her hero's position. */
-    me: { x: number; y: number } | null;
-    itemsUsed: number;
-    /** Charge the Spell's runes fired this part (item 053). */
-    runesFired: number;
-    /** A story fight (item 107): the beat playing, and her walk while one is open. */
-    story: { beat: string | null; walk: { kind: string; spot: { id: string; x: number; y: number }; reached: boolean } | null } | null;
-  } | null;
+  theEnd: TheEndInfo | null;
+  /** The room in play and the battle (src/hookState.ts, the scenes' own types: item 122). */
+  room: RoomInfo | null;
+  battle: BattleInfo | null;
   voice: { speaking: string | null; busy: boolean; history: string[] };
   fx: Record<string, number>;
   /** Free play (item 060, src/fx/freePlay.ts `playStats`): jumps, shots fired, big shots, shots live now and the most live at once. */

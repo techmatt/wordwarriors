@@ -7,7 +7,7 @@
  */
 
 import { charArt } from '../../content/art/assets';
-import { formFor } from '../../content/battle/forms';
+import { outfitFor } from '../../content/battle/outfits';
 import { CHARACTER_BY_ID, ROSTER, personOf } from '../../content/battle/roster';
 import type { CharacterSpec, Taunt } from '../../content/battle/types';
 import { HOME, PLACE_BY_ID } from '../../content/house/house';
@@ -15,7 +15,8 @@ import { questSetup, type Line } from '../../content/house/quests';
 import { hubStory, storyTexts, type HubStory, type HubStoryIds } from '../../content/house/scenes';
 import { wakeCastKey } from '../../content/voice/ids';
 import { wakeVariant } from '../../content/voice/script';
-import { adultHeight, helperOf, isGrownUp, outfitTall, wakerOf } from '../rules/cast';
+import { helperOf, wakerOf } from '../rules/cast';
+import { adultHeight, isGrownUp, outfitTall } from '../rules/heights';
 import { pick } from '../rules/random';
 import { wordsOf } from '../rules/sentences';
 import { BEDROOM_TAUNTS } from '../rules/story';
@@ -65,14 +66,14 @@ export function castId(id: string, state: EpisodeState = episode): string {
 
 /**
  * The image `id` appears as in this episode, once she is awake: its outfit
- * (content/battle/forms.ts: Julia the chef when Dada Jason is the ally), else
+ * (content/battle/outfits.ts: Julia the chef when Dada Jason is the ally), else
  * the roster image of the form it plays (`castId`). The title, the pick
  * screens and Julia asleep in bed use `charArt` directly: the default images.
  */
 export function castArt(id: string, evil = false, state: EpisodeState = episode): string {
   const c = castId(id, state);
   if (evil) return charArt(c, true);
-  return formFor(c, state)?.art ?? charArt(c, false);
+  return outfitFor(c, state)?.art ?? charArt(c, false);
 }
 
 /**
@@ -95,7 +96,7 @@ export function castScale(id: string, state: EpisodeState = episode): number {
 /** The name-free face card for `id` in this episode (names as sight words): its outfit's, else its form's `face_<id>`. */
 export function castFace(id: string, state: EpisodeState = episode): string {
   const c = castId(id, state);
-  return formFor(c, state)?.face ?? `face_${c}`;
+  return outfitFor(c, state)?.face ?? `face_${c}`;
 }
 
 /** The quest's setup line this episode (its id and words), said in the bedroom in the helper's voice: theirs, or the narrator's "right here at home". */

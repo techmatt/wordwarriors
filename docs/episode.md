@@ -179,8 +179,8 @@ item 025); with Seraphina a little dragon keeper hugging an egg (`char_julia_kee
 with Elsa or Anna in snow gear (`char_julia_snow`), with Jasmine a desert explorer
 (`char_julia_explorer`, item 111); with Ozymandias a little polar astronaut
 (`char_julia_astronaut`), with Moriarty a puzzle master in a top hat
-(`char_julia_puzzler`), with Bluerilla in a gorilla onesie (`char_julia_gorilla`, item 114). Which outfit goes with which cast is `FORMS` in `content/battle/forms.ts`
-(data; see `docs/content.md`, "A form"). `?ally=dada_jason` tries the chef episode.
+(`char_julia_puzzler`), with Bluerilla in a gorilla onesie (`char_julia_gorilla`, item 114). Which outfit goes with which cast is `OUTFITS` in `content/battle/outfits.ts`
+(data; see `docs/content.md`, "An outfit"). `?ally=dada_jason` tries the chef episode.
 
 Any cast can be tried from the URL (and stays for every episode that session):
 
