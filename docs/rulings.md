@@ -1,0 +1,57 @@
+# Rulings (Matt)
+
+Matt's standing calls that no other doc holds, one line each. The design law is in
+`CLAUDE.md` (*Standing design rules*); calls made during a bug hunt are in
+`docs/qa-findings.md` (*Matt's calls*); how to apply a tuning request is in
+`docs/content.md` (*Matt says X → run Y*). A call already recorded there is not repeated
+here.
+
+## Words
+
+- **Phonics first.** Word choices serve her phonics, erring toward phonetic diversity; a
+  word may use sounds the game does not teach yet (`UNTAUGHT_SOUNDS`,
+  `content/phonics/letters.ts`).
+- **The bank has enough variety.** No new words unless Matt asks; a rare or ambiguous
+  word is stored (`STORED_WHY`), not deleted.
+- **XRAY stays X's first word**, stored now (she has no idea of an x-ray).
+- **MAT stays a bridge word**, though it sounds like "Matt".
+- **Plural key words** may come later, as a special case.
+
+## Play
+
+- **No keyboard answers.** Selection stays walking and green; A–Z stays spelling's.
+- **No game needs Dad beside her, and no step waits on Dad forever:** with his presses
+  missing, "say it with me" solo mode turns on, and solo reads count as modelled.
+- **Fight style is fixed per villain** (`fight` in the roster), not drawn.
+- **The word machine:** blend and digraph families wait until she reads blends. Later
+  modes Matt wants: flip it, and real or silly.
+- **Charge the Spell's gesture texts stay** (`text` in `RUNES`, shown with the sound only
+  since item 058) while a teaching mode is still wanted.
+- **Story-fight staging** is generalised only when a second story fight is written.
+- **The read praise before a Shape-Shifter fix-it link stays.**
+- **The named-counter boost stays** at 6× (`NAMED_COUNTER_BOOST`).
+
+## Cast
+
+- **Allies are drawn equal per person** (a dad with many forms is one person in the draw).
+- **Ellie's sword word stays ZIP.**
+- **Seraphina's pink dragon stays a Dragon Call summon** (`dragon_call`), not art on her.
+- **"Bough to your queen!" stays** (Evil Tiamat's `say` respelling of "Bow").
+
+## Tunables Matt may want
+
+- `DAD_AWAY_MS` (`src/config.ts`): how long a room waits for Dad before going solo.
+- Solo Charge's "Say it with me!" on every rune (now) or the first rune only (hunt 8,
+  M38's option b).
+
+## Disk
+
+- Keep `public/voice/` in git history: no history rewrite (`docs/engineering.md`).
+- Keep all of `art-originals/`, `restore/` included.
+- Leave the machine-wide npm and Playwright caches and the run logs alone.
+
+## Known leftovers
+
+- Nine `say` fields are redundant; they come out with the next voice build (removing one
+  changes the line's text, so re-synthesises it).
+- Debug runs still count taunts.

@@ -47,7 +47,7 @@ read-only reference.
 | `public/voice-gen/`, `art-originals/` | Untracked junctions to the Drive folder (README, *Storage*). Do not hand-edit |
 | `tools/` | `voice/`, `art/`, `shared.ts`, `phonics/audit.ts`; `recorder/phonics-recorder.html` (its hosted copy is synced by the planner, never edited here) |
 | `tests/` | Playwright specs, `harness.ts`; `unit/` node:test; `shots/`, `perf/`, `qa/` (README, *Not tests*) |
-| `docs/` | `systems.md`, `episode.md`, `engineering.md` (measured facts), `content.md` (adding content), `recording.md`, `art.md` (generated), `qa-findings.md` (known issues and Matt's calls) |
+| `docs/` | `systems.md`, `episode.md`, `engineering.md` (measured facts), `content.md` (adding content), `recording.md`, `art.md` (generated), `qa-findings.md` (known issues and Matt's calls), `rulings.md` (Matt's standing calls no other doc holds) |
 
 ## Commands
 
