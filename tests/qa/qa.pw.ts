@@ -22,7 +22,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { test, type Page } from '@playwright/test';
 
 import { BANK } from '../../content/phonics/bank';
-import { FREE_PLAY, REACH } from '../../src/config';
+import { FREE_PLAY, REACH, SHIFTER } from '../../src/config';
 import { SPEED, boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBattle, playAgain, playEntry, playRoom, playSentenceRoom, press, seedProgress, state, toTheEnd, until, type RoomPlay, type WWState, VOICE } from '../harness';
 
 // Item 083: real voice and real walking: the checker looks and listens as she would.
@@ -86,6 +86,10 @@ interface Scenario {
   voiceless?: boolean;
   /** Only with `QA_SET=cast` (or `all`): the seventh hunt's (item 116): the new allies and villains, the story fight. */
   cast?: boolean;
+  /** Only with `QA_SET=hunt8` (or `all`): the eighth hunt's (item 125): items 119-123's changes. */
+  hunt8?: boolean;
+  /** Hunt 8: Dad never presses in Charge the Spell, so it goes solo and stays solo for the session (M34). */
+  dadAway?: boolean;
 }
 
 /** Where in an episode the item-080 probes act (`episode` calls `at` at each). */
@@ -163,6 +167,13 @@ const SCENARIOS: Scenario[] = [
   { name: 'moriarty_jorm', query: 'seed=606&ally=moriarty&villain=jormungandr&games=all', cast: true },
   { name: 'rilla_story_wrong', query: 'seed=607&ally=rilla&fight=smaug_story&games=all', wrong: true, mash: true, cast: true },
   { name: 'drawn_cast3', query: 'cast=random&games=all', episodes: 3, cast: true },
+  // Hunt 8 (item 125): item 121's new words leaned to, Charge solo across the session and the
+  // Shape-Shifter's chain rotation (item 119), the story fight with a dad's outfit and a tall ally.
+  { name: 'newwords3', query: 'cast=random&games=all&words=new', episodes: 3, hunt8: true },
+  { name: 'charge_solo3', query: 'seed=701&room=charge', episodes: 3, dadAway: true, hunt8: true },
+  { name: 'shifter5', query: 'cast=random&room=shifter', episodes: 5, hunt8: true },
+  { name: 'warrior_story', query: 'seed=702&ally=dada_jason_warrior&fight=smaug_story&games=all', hunt8: true },
+  { name: 'moriarty_story_wrong', query: 'seed=703&ally=moriarty&fight=smaug_story&games=all', wrong: true, hunt8: true },
 ];
 
 /** How often a busy child presses something (real ms). */
@@ -285,8 +296,15 @@ class Recorder {
     }
     // A picked picture pops up as its word is said (hunt 7, W33): the answer is made, so its brush
     // with the banner or a box is not a covered target.
-    const said = s.voice.speaking?.startsWith('word_') ? s.voice.speaking.slice(5) : null;
-    this.add(layoutIssues(l, s.scene, PLACEHOLDERS).filter((i) => !(said && i.kind === 'target-covered' && i.detail.startsWith(`${said} `))), shot);
+    // The shot's own label too (hunt 8): a moment in, the bus can be between the line's queue and its start.
+    const said = s.voice.speaking?.startsWith('word_') ? s.voice.speaking.slice(5) : label.startsWith('v_word_') ? label.slice(7) : null;
+    // The hub's circle under the story's own lines (hunt 8, W35: item 121's three-row lines) is W12's
+    // ruling; the line sending her there keeps off it (`cover.spec`), so that one stays a bug.
+    const story = s.scene === 'Hub' && /^hub_\w+_line\d$/.test(s.voice.speaking ?? '');
+    const layout = layoutIssues(l, s.scene, PLACEHOLDERS)
+      .filter((i) => !(said && i.kind === 'target-covered' && i.detail.startsWith(`${said} `)))
+      .map((i) => (story && i.kind === 'target-covered' && i.detail.startsWith('circle ') ? { ...i, kind: 'target-covered-ruled', severity: 'look' as const } : i));
+    this.add(layout, shot);
     this.add(leakIssues(s, l, q.voice.filter((v) => v.t >= this.roundStart)), shot);
     this.add(spellingIssues(l, q.voice, s.scene), shot);
     // Words she has read, the warm-up's (said once she has grabbed it), and the gift word (item 092: told
@@ -311,7 +329,7 @@ class Recorder {
 }
 
 /** How a scenario plays a room (`playRoom`): wrong first when asked, a beat after a wrong object, standing still at the key word when idle. */
-const roomPlay = (sc: Scenario, idle = Boolean(sc.idle)): RoomPlay => ({ wrongFirst: Boolean(sc.wrong), wrongPauseMs: 400, idleMs: idle ? IDLE_MS : 0 });
+const roomPlay = (sc: Scenario, idle = Boolean(sc.idle)): RoomPlay => ({ wrongFirst: Boolean(sc.wrong), wrongPauseMs: 400, idleMs: idle ? IDLE_MS : 0, dadAway: Boolean(sc.dadAway) });
 
 /** An idle child: wait for the choice to be up, then stand still. */
 async function standStill(page: Page, sc: Scenario, ready: (s: WWState) => boolean, what: string): Promise<void> {
@@ -352,6 +370,32 @@ interface Drawn {
   games: string[];
   rooms: string[];
   words: string[];
+}
+
+/**
+ * The Shape-Shifter's chains across a run (hunt 8; M36, item 119): `kept[i]` is the
+ * store's `recent.chains` after episode i. An episode's new chain sharing a link
+ * with the six kept before it, or the same as any kept, is `chain-repeat` (a look:
+ * the rule gives way where the pool allows nothing else).
+ */
+function chainIssues(kept: string[][]): Issue[] {
+  const out: Issue[] = [];
+  const links = (c: string) => { const w = c.split(' '); return w.slice(1).map((x, i) => [w[i]!, x].sort().join('-')); };
+  kept.forEach((now, i) => {
+    const before = i ? kept[i - 1]! : [];
+    if (now.join('|') === before.join('|')) return;
+    const c = now.at(-1)!;
+    const near = new Set(before.slice(-SHIFTER.recentChains).flatMap(links));
+    const shared = links(c).filter((l) => near.has(l));
+    if (before.includes(c)) out.push({ kind: 'chain-repeat', severity: 'look', scene: 'ShifterRoom', detail: `episode ${i + 1}'s chain ${c} is one the store kept`, key: `chain-repeat:${i}` });
+    else if (shared.length) out.push({ kind: 'chain-repeat', severity: 'look', scene: 'ShifterRoom', detail: `episode ${i + 1}'s chain ${c} shares ${shared.join(', ')} with the last ${SHIFTER.recentChains}`, key: `chain-repeat:${i}` });
+  });
+  return out;
+}
+
+/** Charge solo lasts the session until Dad presses (M34, item 119): with Dad away, every episode ends solo (hunt 8). */
+function soloIssues(solos: boolean[]): Issue[] {
+  return solos.flatMap((on, i) => (on ? [] : [{ kind: 'solo-lost', severity: 'bug' as const, scene: '', detail: `episode ${i + 1} ended not solo, with no press from Dad all run`, key: `solo-lost:${i}` }]));
 }
 
 /**
@@ -721,7 +765,7 @@ if (LOOK) {
 }
 
 const set = process.env.QA_SET;
-const inSet = (x: Scenario) => (set === 'quick' ? Boolean(x.quick) : set === 'more' ? Boolean(x.more) : set === 'new' ? Boolean(x.added) : set === 'lenses' ? Boolean(x.lens) : set === 'recent' ? Boolean(x.recent) : set === 'cast' ? Boolean(x.cast) : set === 'all' ? true : !x.more && !x.added && !x.lens && !x.recent && !x.cast);
+const inSet = (x: Scenario) => (set === 'quick' ? Boolean(x.quick) : set === 'more' ? Boolean(x.more) : set === 'new' ? Boolean(x.added) : set === 'lenses' ? Boolean(x.lens) : set === 'recent' ? Boolean(x.recent) : set === 'cast' ? Boolean(x.cast) : set === 'hunt8' ? Boolean(x.hunt8) : set === 'all' ? true : !x.more && !x.added && !x.lens && !x.recent && !x.cast && !x.hunt8);
 for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
   test(`qa ${sc.name}`, async ({ page }) => {
     const errors = collectErrors(page);
@@ -739,6 +783,9 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     const heap: number[] = [];
     let stalled: string | null = null;
     const drawn: Drawn[] = [];
+    // Hunt 8: solo at each episode's end, the store's kept chains after each.
+    const solos: boolean[] = [];
+    const chains: string[][] = [];
     const masher = sc.mash ? mash(page) : null;
     const hiding = sc.hide ? hider(page) : null;
     const resizing = sc.resize ? resizer(page) : null;
@@ -763,6 +810,8 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
         const ep = (await state(page)).episode;
         const plan = ep.house.plan ?? [];
         drawn.push({ ally: ep.ally, villain: ep.villain, fight: rec.fight, ending: rec.endingId, games: plan.map((p) => p.game), rooms: plan.filter((p) => p.slot !== 'counter').map((p) => p.room).sort(), words: [...ep.read] });
+        solos.push(ep.solo);
+        chains.push(await page.evaluate(() => (JSON.parse(localStorage.getItem('wordwarriors.progress') ?? '{}') as { recent?: Record<string, string[]> }).recent?.chains ?? []));
         counts.push(await page.evaluate(() => (window as unknown as { __wwqa: { counts(): Record<string, number> } }).__wwqa.counts()));
         heap.push(await page.evaluate(() => (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0));
         cuts.push((await qaSince(page, 0)).voice.length);
@@ -780,6 +829,8 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     await rec.stop();
     // Rotations only where the URL forces nothing they rotate.
     if (!/(^|&)(seed|ally|villain|place|fight|game|room)=|cast=default/.test(sc.query)) rec.add(varietyIssues(drawn));
+    rec.add(chainIssues(chains));
+    if (sc.dadAway) rec.add(soloIssues(solos));
     if (sc.mash && rec.shotsFired === 0) rec.add([{ kind: 'mash-dead', severity: 'bug', scene: '', detail: 'a busy child pressed blue, red and yellow all episode and free play never fired a shot', key: 'mash-dead' }]);
     const q = await qaSince(page, 0);
     // The whole run's flashes at once: a burst can straddle two polls.
@@ -851,6 +902,8 @@ const FLAGS = [
   'fight=smaug_story', 'scene=battle&fight=smaug_story', 'scene=battle&part=2&fight=smaug_story', 'scene=battle&fight=smaug_story&villain=tiamat', 'scene=battle&fight=smaug_story&ally=none',
   'solo=1', 'scene=room&room=charge&solo=1', 'scene=room&room=bridge&solo=1&difficulty=3',
   'scene=battle&fight=frost_clash', 'scene=battle&fight=space_race&villain=smaug', 'scene=battle&fight=magic_show', 'villain=elsa&ally=elsa', 'ally=moriarty&villain=moriarty', 'scene=house&ally=rilla&villain=ozymandias',
+  // Hunt 8 (item 125): item 121's favoured words, odd values and beside the room switches.
+  'words=new', 'words=', 'words=bogus,zzz', 'words=TREE,Bee', 'scene=room&room=shifter&words=new', 'scene=grab&words=new', 'scene=parent&words=new',
 ];
 const flagSet = set === 'lenses' || set === 'all';
 for (const flag of flagSet && !LOOK ? FLAGS : []) {

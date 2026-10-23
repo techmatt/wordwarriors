@@ -443,7 +443,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     if (this.choices.active && target === this.heroes[0]) return;
     if (target.invulnerable || target.shieldUntil > this.now) {
       burst(this, target.cx, target.cy, { count: 12, speed: 200, colors: [0xffffff, color] });
-      if (target.isMain && Math.random() < 0.3) floatText(this, target.cx, target.top, 'BLOCK!', '#7ad9ff', 30, HIT_FLOAT);
+      // CLANG, not BLOCK: BLOCK is a bank word since item 121, the attic's counter word after battle 1 (hunt 8).
+      if (target.isMain && Math.random() < 0.3) floatText(this, target.cx, target.top, 'CLANG!', '#7ad9ff', 30, HIT_FLOAT);
       return;
     }
     // Clones pop on any hit.
@@ -1324,7 +1325,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost {
     const pour = giant ? this.giantSweep(v, ult, false, how === 'swallow' ? 3000 : 1600) : null;
     if (how !== 'swallow') {
       await this.wait(1.8);
-      floatText(this, h.x + 60, h.y - 280, 'BLOCKED!', '#7ad9ff', 70);
+      // Not BLOCKED: BLOCK is a bank word (hunt 8, `tests/unit/shouts.test.ts`).
+      floatText(this, h.x + 60, h.y - 280, 'SHIELDED!', '#7ad9ff', 70);
     } else {
       // The item (the Magic Hat, drawn brim up) flies up between them while
       // the storm is still falling and sucks it all inside like a magic trick;

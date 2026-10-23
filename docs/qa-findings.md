@@ -807,3 +807,57 @@ pads inside her reach had hidden. `qa devkeys skip` reads the scene again before
 - **Matt's calls first:** M33 (the story props' art). M34, M35 and M36 are done (item 119).
 - **Real speed:** run `variants6` at `WW_SPEED=1` again now M36 is in (its shots now run
   400 an episode, not 400 in all).
+
+## Hunt 8 (2026-10-22)
+
+Cut short: the hunt ran 6:12 to 6:25pm and 6:41pm to midnight's close-out, with a play
+pause at Matt's word between (its resume reached the session only at 11:59pm). What landed
+since hunt 7 first: item 121's words, pictures, lines and variety changes, item 122's outfit
+rename, rune-loading split and story props, item 123's roster split, Charge solo for the
+session and the Shape-Shifter's chain rotation (item 119). The new `QA_SET=hunt8` swept
+once (five scenarios, eleven episodes, every shot's contact sheet read); the roster's
+eighteen exports compared before and after the split (identical); the outfit fills before
+and after the rename (identical); a code read of items 119 and 122 (the rune split against
+debug mode, F9, reloads and the `scene=` / `charged=` URLs; solo across `resetEpisode`,
+the debug sandbox and Dad's presses; `recent.chains` in an older store), each claim checked
+before it counted: clean; the sixteen new pictures looked at as she would name them; item
+121's new lines read against the speech rule; `npm run variety` read. Not run: `variants6`
+at real speed and the lenses (both stopped by the pause, then by the close-out).
+
+### Fixed
+
+| # | Where | What | Kept fixed by |
+| --- | --- | --- | --- |
+| 127 | Battle | A shielded hit floated BLOCK! (three hits in ten on a main fighter), and item 121 made BLOCK a bank word, a thing, so the attic's counter word after battle 1 could be a word battle 1 had just printed (item 121 had turned SPLASH! into SPLOOSH! for the same reason). It floats CLANG!; the counter item's shield SHIELDED!. | `tests/unit/shouts.test.ts` (no floating shout is a bank word, the filtered hit words aside) |
+
+Checked and clean: Charge stays solo from one episode to the next with no press from Dad
+(three in a row, "Say it with me!" from the first rune of the second); five drawn
+Shape-Shifter chains in a row share no link; the story fight's new stone, ledge and hoard
+and its splashes; the counter word already keeps clear of every cast word, ability names
+inside longer words too (HAMMER, PANCAKE, DUMBBELL).
+
+The checker itself: `QA_SET=hunt8`, `chain-repeat`, `solo-lost`, the `words=` flags (README);
+a word confirmation's shot label counts as said for W33 (the nut popping into the banner
+was flagged while the bus was between queue and start).
+
+### Matt's calls
+
+| # | Where | What | Options | Ruling |
+| --- | --- | --- | --- | --- |
+| M37 | Shape-Shifter, word variety | The chain rotation (M36) holds, but its words skew: in `npm run variety` (300 episodes) MAT is read in 115 and BUG in 103, while 16 of its 47 words (DOG FOX BED BOX CAN NUT TUB LOG...) never come up; `shifter5` read MAT three episodes running. The all-three-places chains (M29) are few and share their words. | **(a) a chain holds no word read in the episode before, where the pool allows (fix 125 allows one)**; (b) let a chain changing two places in when its words are all fresh; (c) keep | |
+| M38 | Charge the Spell, solo pacing | Solo from the start of a visit (the session's second Charge on) runs 32 to 33 s against the room's 30 s budget (`slow-room`), locked the whole time: four runes each with "Say it with me!", then the read together. | (a) a shorter `CHARGE.soloBeatMs`; (b) "Say it with me!" on the first rune only, the rest the sound alone; **(c) keep, and the budget 35 s for a solo visit: she is saying the sounds along with the helper, not waiting** | |
+
+### Won't fix
+
+| # | Where | What | Why |
+| --- | --- | --- | --- |
+| W35 | Hub | Item 121's longer story lines run to three rows, and the box covers most of the glowing circle (79 of 95 px) on the story's last line. | W12's kind: green waits while the story plays, and the line sending her to the circle keeps off it (`tests/cover.spec.ts`). A box at the top would cover the gift's card, which that line is about. The checker rules it under story lines only. |
+
+### Where the next hunt resumes
+
+- **Not yet run:** `variants6` at `WW_SPEED=1` (hunt 7's ask, twice stopped here), the lenses
+  (`QA_SET=lenses`) and `parent_all` / `debug_rooms` with item 121's words in, and the new
+  `words=` flags.
+- **Look again:** the action pictures for recognition (SWISH is a farmer with a scythe, DASH a
+  running boy: she may say CUT and RUN), and the grown-ups page's word grid now that NEW
+  widens each name.

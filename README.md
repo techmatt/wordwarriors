@@ -419,7 +419,8 @@ forms, an idle child who stands still at every choice, more seeds; `QA_SET=new` 
 third, item 069's: a busy child pressing blue, red and yellow all episode (free play),
 `DIFFICULTY` 2 and 3 with seeded progress, Charge and the bridge answered right, and four
 real draws back to back; `QA_SET=lenses` the fourth, item 080's, below; `QA_SET=recent` the
-fifth, item 089's, below; `QA_SET=cast` the seventh hunt's, below; `QA_SET=all` every batch).
+fifth, item 089's, below; `QA_SET=cast` the seventh hunt's, below; `QA_SET=hunt8` the eighth's, below;
+`QA_SET=all` every batch).
 About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it records.
 In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`. The suite (`playwright.config.ts`)
 serves on `CONDUCTOR_PORT` too, so a test run beside a sweep needs another
@@ -492,6 +493,17 @@ code, not the worktree's (hunt 7 lost a round to it); keep such scripts in the w
   since the last poll count, so the driver's teleport onto a spot never does), and the
   Shape-Shifter's first creature wearing its word on its label is not a giveaway (it is said
   and shown, not read).
+- **The eighth hunt's batch** (`QA_SET=hunt8`, item 125, about 8 minutes on three workers):
+  `newwords3` (three drawn episodes leaning to item 121's words, `words=new`), `charge_solo3`
+  (Charge forced, Dad never presses: solo must last the session, M34; `solo-lost`, a bug, when an
+  episode ends not solo), `shifter5` (five drawn episodes with the Shape-Shifter:
+  `chain-repeat`, a look, when an episode's chain shares a link with the six the store kept
+  before it, or is one of them; M36), `warrior_story` and `moriarty_story_wrong` (the story
+  fight with a dad's outfit, and with Moriarty at 1.3 and wrong picks). `qa flags` gained
+  `words=` odd values. A word confirmation's shot is read as said even before the bus
+  reports it speaking (W33), and the hub's circle under the story's own lines is ruled
+  (W35); under the line sending her there it stays a bug. `playChargeRoom(page, 'away')`
+  (harness) leaves Dad out, and `RoomPlay.dadAway` passes it through `playRoom`.
 - **A busy machine slows the sweep's own server:** with many agents or a typecheck
   running beside it, voice fetches from the checker's Vite server passed their 15 s
   timeout (`voice: could not decode ... AbortError` in the log) and lines played silent.

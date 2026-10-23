@@ -439,6 +439,8 @@ export interface RoomPlay {
   wrongFirst?: boolean;
   idleMs?: number;
   wrongPauseMs?: number;
+  /** Hunt 8: Dad is away, so Charge the Spell gets no press and goes solo. */
+  dadAway?: boolean;
 }
 
 /**
@@ -524,12 +526,13 @@ export async function playAgain(page: Page, opts: { hush?: boolean } = {}): Prom
 }
 
 /** Play Charge the Spell (item 053; no presses per rune since item 059): wait for the read, then Dad's `read`. Returns the sounds charged. */
-export async function playChargeRoom(page: Page, read: 'yes' | 'no' = 'yes'): Promise<string[]> {
+export async function playChargeRoom(page: Page, read: 'yes' | 'no' | 'away' = 'yes'): Promise<string[]> {
   const first = await until(page, (s) => s.scene === 'ChargeRoom' && Boolean(s.room?.charge), 30_000, 'charge room');
   const runes = first.room!.charge!.runes;
   // Item 059: the runes charge by themselves (the helper says each, she says it back); the word they spell is read aloud and Dad says `read` (yes by default).
   const at = await until(page, (st) => st.scene !== 'ChargeRoom' || st.room?.charge?.phase === 'read' || st.room?.charge?.phase === 'done', 90_000, 'the word to read');
-  if (at.room?.charge?.phase === 'read') await dad(page, read);
+  // `away` (hunt 8): Dad never presses, so the room goes solo and reads with the helper.
+  if (at.room?.charge?.phase === 'read' && read !== 'away') await dad(page, read);
   await until(page, (st) => st.scene !== 'ChargeRoom', 60_000, 'out of the charge room');
   return runes;
 }
@@ -627,7 +630,7 @@ export async function playRoom(page: Page, opts: RoomPlay = {}): Promise<string[
   if (s.scene === 'ChargeRoom') {
     // Its word is a battle item (item 058), fetched like any room's.
     const word = s.room!.charge!.word;
-    await playChargeRoom(page, opts.wrongFirst ? 'no' : 'yes');
+    await playChargeRoom(page, opts.dadAway ? 'away' : opts.wrongFirst ? 'no' : 'yes');
     return [word];
   }
   if (s.scene === 'BridgeRoom') return playBridgeRoom(page, opts.wrongFirst);
