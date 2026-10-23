@@ -62,7 +62,9 @@ export interface EpisodeState {
   /**
    * Dad isn't here (item 106): a game that asks Dad got nothing from him for
    * DAD_AWAY_MS, so the helper joins in where he would judge, for the rest of
-   * the episode. Any Dad 1 / 2 turns it off. `?solo` starts an episode solo.
+   * the session (hunt 7, M34: the episodes after it too, not kept in the
+   * store, so a reload asks him again). Any Dad 1 / 2 turns it off. `?solo`
+   * starts the session solo.
    */
   solo: boolean;
   /** The battles' move choices (item 018), planned with the house: battle 1's words never become the counter word. */
@@ -112,15 +114,14 @@ function choosePrep(): PrepGame[] {
   return all[episodeCount % all.length]!;
 }
 
-/** Everything an episode starts afresh, the cast aside (`castEpisode` draws that): the start state and `resetEpisode`'s. */
-export function freshProgress(): Omit<EpisodeState, 'hero' | 'ally' | 'villain' | 'villainWasRandom' | 'primary' | 'secondary' | 'place' | 'story' | 'lines'> {
+/** Everything an episode starts afresh, the cast (`castEpisode` draws that) and solo (the session's) aside: the start state and `resetEpisode`'s. */
+export function freshProgress(): Omit<EpisodeState, 'hero' | 'ally' | 'villain' | 'villainWasRandom' | 'primary' | 'secondary' | 'place' | 'story' | 'lines' | 'solo'> {
   return {
     prep: choosePrep(),
     made: { gem: false, ammo: false, helper: false, item: false },
     read: [],
     fetched: [],
     charged: null,
-    solo: typeof location !== 'undefined' && new URLSearchParams(location.search).has('solo'),
     gift: null,
     moves: null,
     house: { plan: null, done: [], taught: false },
@@ -142,6 +143,8 @@ export const episode: EpisodeState = {
   place: HOME,
   story: { ...DEFAULT_STORY },
   lines: { ...DEFAULT_LINES },
+  // The session's, not the episode's (M34): `resetEpisode` keeps it.
+  solo: typeof location !== 'undefined' && new URLSearchParams(location.search).has('solo'),
   ...freshProgress(),
 };
 

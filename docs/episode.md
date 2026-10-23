@@ -315,7 +315,9 @@ puts it or the Stretchy Bridge behind door a of every episode.
 **Solo mode: Dad isn't here** (item 106). Dad is often beside her, not always. If a game
 that asks him (Charge's read, the Stretchy Bridge's level 3) gets no 1 / 2 for
 `DAD_AWAY_MS` (8 s in `src/config.ts`, from her turn; paused under dad lock and while a line
-plays), the episode goes solo (`episode.solo`) for the rest of the episode, Bluey-style: the
+plays), the game goes solo (`episode.solo`) for the rest of the session, Bluey-style (hunt 7,
+M34: the episodes after it too, so the next Charge reads together at once with no 8 s wait;
+not kept in the store, so a reload asks him again): the
 helper simply joins in, and no line mentions Dad. In Charge the read is done together
 ("Let's read the whole spell together!", sounded out, then said); on later runes the helper
 says "Say it with me!" (or "With me!", "Together!") before each sound, with a shorter beat
@@ -324,9 +326,10 @@ says "Say it with me!" (or "With me!", "Together!") before each sound, with a sh
 page), never as her reads: seen, recent, shakiness and the word bag do not move. On the
 bridge, the pictures come at once with no help counted, and level 3 skips its say-to-Dad
 step while solo. Any Dad 1 / 2 in a room that has his buttons open switches back at once
-(in Charge from the next rune; during the solo read before it is recorded, it is his
-answer). `?solo` starts an episode solo. THE END still waits for his 2: the episode is
-over, and starting the next is his call.
+(in Charge from the next rune; during the solo read before it is recorded, his yes records
+a **helped** read, right but never her first try, M34; his no a miss). `?solo` starts the
+session solo. THE END still waits for his 2: the episode is over, and starting the next is
+his call; that press does not end solo (only a game that asks him does).
 
 **The Shape-Shifter** (item 096, `src/scenes/ShifterRoom.ts`): a side room where she
 reads every letter of a word, not just the first, alone: walking and green only, nothing

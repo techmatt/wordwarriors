@@ -157,6 +157,21 @@ export function stonesFor(right: string, old: string, n: number, rand: Rand): st
   return shuffle([right, ...shuffle(others, rand).slice(0, n - 1)], rand);
 }
 
+/** A chain's links as words joined either way round (BAT-CAT is CAT-BAT). */
+const linksOf = (chain: string[]): string[] => chain.slice(1).map((w, i) => [chain[i]!, w].sort().join('-'));
+
+/** A visit's chain as the store remembers it (`recent.chains`, hunt 7, M36): its words in order. */
+export const chainKey = (p: ShifterPlan): string => [p.start, ...shifterWords(p)].join(' ');
+
+/** How many chains the store keeps: the last SHIFTER.recentChains by link, twice that whole. */
+export const CHAINS_KEPT = 2 * SHIFTER.recentChains;
+
+/** The chains the store keeps (newest last), whole; the last SHIFTER.recentChains of them by link too. */
+function recentChains(store: ProgressStore): { chains: Set<string>; links: Set<string> } {
+  const kept = store.recentOf('chains').slice(-CHAINS_KEPT);
+  return { chains: new Set(kept), links: new Set(kept.slice(-SHIFTER.recentChains).flatMap((k) => linksOf(k.split(' ')))) };
+}
+
 export interface ShifterInput {
   /** Words the episode says or shows first, its move pads and its gift: never a chain word or picture. */
   avoid: string[];
@@ -167,7 +182,8 @@ export interface ShifterInput {
 /**
  * A visit's chain: SHIFTER.links links (fewer where no chain that long fits,
  * SHIFTER.minLinks at least; null when not even that) through the words the
- * episode leaves free. Of the chains changing the most places and breaking
+ * episode leaves free. Of those sharing no link with the last few chains
+ * (`recent.chains`, M36), the chains changing the most places and breaking
  * ORDER least, those holding at most one recent read (hunt 7), one drawn by
  * the bank's weight of the words she reads; each link its beat and options.
  */
@@ -187,13 +203,20 @@ export function planShifter(store: ProgressStore, input: ShifterInput, rand: Ran
   };
   const m = met(store);
   const recent = recentWords(store);
+  const lately = recentChains(store);
   let pool: string[][] = [];
   let allFix: string[][] = [];
   for (let n = SHIFTER.links; n >= SHIFTER.minLinks && !pool.length; n--) {
     // The first creature is said after "It starts as a...": never a number or a word that takes no A (hunt 6:
     // "It starts as a... ten!", M23's case; JAM, fix 92's).
-    const chains = chainsOf(n, free).filter((c) => !NUMBER_WORDS.has(c[0]!) && !NO_ARTICLE.has(c[0]!));
-    if (!chains.length) continue;
+    const all = chainsOf(n, free).filter((c) => !NUMBER_WORDS.has(c[0]!) && !NO_ARTICLE.has(c[0]!));
+    if (!all.length) continue;
+    // Hunt 7, M36: a chain sharing a link with one of the last SHIFTER.recentChains waits (MUG BUG BUN BIN
+    // came back whole every three episodes), and one the same as any kept (CHAINS_KEPT), where the pool
+    // allows; under the length, above the rest. A drawn run of ten repeats none (tests/unit/shifterDraws.test.ts).
+    const notSame = all.filter((c) => !lately.chains.has(c.join(' ')));
+    const noLink = (cs: string[][]) => cs.filter((c) => !linksOf(c).some((l) => lately.links.has(l)));
+    const chains = [noLink(notSame), noLink(all), notSame].find((cs) => cs.length) ?? all;
     // Of those changing the most places (M29), chains holding at most one word she read lately, where
     // any do (hunt 7: the best-scored chains are few, so recency's weight hardly moved them and MAT MAN
     // PAN came back three episodes in four; 45 of 100 episodes shared a word with the one before, 25 now).

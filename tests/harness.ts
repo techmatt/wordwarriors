@@ -94,7 +94,7 @@ export interface WWState {
     charge?: {
       /** Item 058: the word the runes spell, and how its read went. */
       word: string;
-      read: 'yes' | 'no' | 'modelled' | null;
+      read: 'yes' | 'no' | 'modelled' | 'helped' | null;
       solo: boolean;
       runes: string[];
       index: number;

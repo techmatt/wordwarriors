@@ -58,3 +58,12 @@ test('an overridden ally is not her rotation', () => {
   assert.equal(progress.recentOf('villain').length, 1);
   setCastOptions({ overrides: {}, fixed: !EPISODE_DEFAULTS.randomCast });
 });
+
+test('solo lasts the session (hunt 7, M34): the next episode starts solo, until Dad presses', () => {
+  episode.solo = true;
+  resetEpisode();
+  assert.equal(episode.solo, true, 'the next episode starts solo');
+  episode.solo = false;
+  resetEpisode();
+  assert.equal(episode.solo, false);
+});

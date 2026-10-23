@@ -219,9 +219,10 @@ export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2, maxU
 /**
  * Dad isn't here (item 106): a game that asks Dad (Charge the Spell's read,
  * the Stretchy Bridge's level 3) waits this long from her turn (scene time,
- * paused under dad lock and while a line plays), then the episode goes solo:
+ * paused under dad lock and while a line plays), then the game goes solo:
  * the helper joins in where Dad would have judged, and stays that way for
- * the rest of the episode (`episode.solo`). Any Dad 1 / 2 switches back.
+ * the rest of the session (`episode.solo`; hunt 7, M34: the episodes after
+ * it too). Any Dad 1 / 2 in a game that asks him switches back.
  */
 export const DAD_AWAY_MS = 8000;
 
@@ -231,7 +232,7 @@ export const DAD_AWAY_MS = 8000;
  * rune's letter sound and she says it back in `sayBackMs` of quiet, with no
  * presses (item 059); then she reads the whole word aloud and Dad presses 2
  * (right) or 1 (they sound it out together); nothing from him for
- * DAD_AWAY_MS turns on the episode's solo mode (item 106). In solo mode the
+ * DAD_AWAY_MS turns on the session's solo mode (item 106, M34). In solo mode the
  * helper says each sound with her ("Say it with me!") and charges the rune
  * after `soloBeatMs`, then they read the word together; those are recorded as
  * modelled, not as her reads. It has no help ramp (item 053's went in item 078: the
@@ -377,7 +378,9 @@ export const ENDING_PAUSE = { intro: 3000, between: 1500, outro: 3000 };
  * comes near it; 2 = lit, silent stones; 3 = nothing lit. Yellow sounds the
  * changed letter (read it) or the stone in reach (fix it) at any level.
  * `startLevel` is a word she has never met there (DIFFICULTY caps the ramp).
- * `weight` is its weight in the rooms' pool.
+ * `weight` is its weight in the rooms' pool. `recentChains`: the chains it
+ * remembers across episodes (hunt 7, M36), a rotation of their own: a chain
+ * sharing a link with one of them waits, where the pool allows.
  */
 export const SHIFTER = {
   links: 4,
@@ -385,6 +388,7 @@ export const SHIFTER = {
   options: 3,
   startLevel: 1 as 1 | 2 | 3,
   weight: 1,
+  recentChains: 6,
 };
 
 /**

@@ -7,7 +7,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { NO_ARTICLE, NUMBER_WORDS, lookalikesOf } from '../../content/phonics/sentences';
-import { planShifter, shifterWords } from '../../src/rules/shifter';
+import { SHIFTER } from '../../src/config';
+import { CHAINS_KEPT, chainKey, planShifter, shifterWords } from '../../src/rules/shifter';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { memory, seeded, spread } from './seeds';
 
@@ -48,4 +49,25 @@ test('planShifter (hunt 7, fix 125): her recent reads spread the chains across e
   }
   assert.ok(shared / pairs <= 0.35, `${shared} of ${pairs} episodes shared a chain word with the one before`);
   assert.equal(links, 10 * 6 * 4, 'every chain four links');
+});
+
+test('planShifter (hunt 7, M36): a drawn run of ten episodes repeats no chain, and the last six share no link', () => {
+  // As rememberPlan does: each chain remembered (`chains`), its words read right first time.
+  const linksOf = (c: string[]) => c.slice(1).map((w, i) => [c[i]!, w].sort().join('-'));
+  let sharedLinks = 0;
+  for (let run = 1; run <= 5; run++) {
+    const store = new ProgressStore(memory());
+    const rand = seeded(spread(run));
+    const seen: string[][] = [];
+    for (let e = 0; e < 10; e++) {
+      const p = planShifter(store, { avoid: [], taken: [] }, rand)!;
+      const chain = chainKey(p);
+      assert.ok(!seen.some((c) => c.join(' ') === chain), `run ${run}, episode ${e + 1}: ${chain} again`);
+      if (seen.slice(-SHIFTER.recentChains).some((c) => linksOf(c).some((l) => linksOf(chain.split(' ')).includes(l)))) sharedLinks++;
+      seen.push(chain.split(' '));
+      store.remember('chains', chain, CHAINS_KEPT);
+      for (const w of shifterWords(p)) store.record('words', w, true, 0);
+    }
+  }
+  assert.equal(sharedLinks, 0, `${sharedLinks} of 50 chains shared a link with one of the six before`);
 });

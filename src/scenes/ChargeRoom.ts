@@ -24,11 +24,12 @@
  *
  * Solo mode (item 106, `episode.solo`): nothing from Dad for DAD_AWAY_MS on
  * the read means he isn't there, so the helper joins in instead, for the rest
- * of the episode: "Say it with me!" before each rune's sound, a shorter beat
+ * of the session (hunt 7, M34: the next episode's Charge reads together at
+ * once, no wait): "Say it with me!" before each rune's sound, a shorter beat
  * (CHARGE.soloBeatMs), and the read done together ("Let's read the whole
  * spell together!", sounded out, then said). Those runes and that word are
  * recorded as modelled (`progress.model`), never as her reads. His 1 / 2 at
- * any time switches back (and during the solo read, it is his answer).
+ * any time switches back (during the solo read, his yes is a helped read, M34).
  *
  * Each charged rune becomes a move her hero fires in the next battle
  * (`episode.charged`, BattleScene `useCharged`).
@@ -70,6 +71,9 @@ import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom'
  * read is asked or a solo read is not yet recorded, and from the last rune
  * (kept, acted on as the read is asked, M24); any press ends solo.
  */
+/** How the read went (`helped`: his yes while she read it with the helper, hunt 7 M34: right, never first try). */
+type ReadAnswer = 'yes' | 'no' | 'modelled' | 'helped';
+
 type Phase = 'explain' | 'prompt' | 'sayback' | 'charging' | 'read' | 'reading' | 'done';
 
 const ALTAR = { x: GAME_WIDTH / 2 + 60, y: 600, w: 340, h: 250 };
@@ -91,9 +95,9 @@ export class ChargeRoom extends HouseSideRoom {
   private plan!: ChargePlan;
   private index = 0;
   private phase: Phase = 'explain';
-  /** How the word's read went: Dad's yes, his no (sounded out), or read with the helper (solo). */
-  private readAnswer: 'yes' | 'no' | 'modelled' | null = null;
-  /** The solo read is recorded once it is sounded out; until then a Dad press is his answer. */
+  /** How the word's read went: Dad's yes, his no (sounded out), read with the helper (solo), or his yes during that (`helped`, M34). */
+  private readAnswer: ReadAnswer | null = null;
+  /** The solo read is recorded once it is sounded out; until then a Dad press records a helped read (M34). */
   private readRecorded = false;
   /** Sounds this visit already recorded as modelled (a solo rune), so the solo read does not count them twice. */
   private modelledSounds = new Set<string>();
@@ -422,13 +426,15 @@ export class ChargeRoom extends HouseSideRoom {
     }
     // From the moment the word lights: Dad may answer while "Now read the whole spell!" still plays,
     // or while a solo read is sounded out together, until it is recorded.
-    const open = this.readAnswer === null || (this.readAnswer === 'modelled' && !this.readRecorded);
+    const helping = this.readAnswer === 'modelled' && !this.readRecorded;
+    const open = this.readAnswer === null || helping;
     if (this.phase !== 'read' && !(this.phase === 'reading' && open && this.allCharged)) return;
     this.noteActivity();
     setDadAsking(false);
     this.flow++;
     voiceBus.hush();
-    void this.readWord(a === 'yes' ? 'yes' : 'no');
+    // Hunt 7, M34: a yes while the helper reads it with her is a helped read, never her unaided first try.
+    void this.readWord(a === 'no' ? 'no' : helping ? 'helped' : 'yes');
   }
 
   /** The rune charges: it fires into its slot in the word with heavy particles, and the next lights. */
@@ -539,10 +545,12 @@ export class ChargeRoom extends HouseSideRoom {
    * and back to the hub. His answer is recorded first; a solo read once it is
    * sounded out (a Dad press until then is his answer).
    */
-  private async readWord(answer: 'yes' | 'no' | 'modelled'): Promise<void> {
+  private async readWord(answer: ReadAnswer): Promise<void> {
     const word = this.plan.word;
     const f = this.flow;
-    const right = answer === 'yes';
+    const right = answer === 'yes' || answer === 'helped';
+    // Right first time only with Dad's yes to her own read; helped, right with no miss.
+    const firstTry = answer === 'yes';
     const modelled = answer === 'modelled';
     this.readAnswer = answer;
     this.readRecorded = false;
@@ -550,10 +558,10 @@ export class ChargeRoom extends HouseSideRoom {
     this.locked = true;
     setDadAsking(false);
     if (!modelled) {
-      // Dad's yes is a first-try read; his no one miss.
-      this.recordRead(word, right, right ? 0 : 1);
+      // Dad's yes is a first-try read; his no one miss; his yes during the solo read a helped one (M34).
+      this.recordRead(word, firstTry, right ? 0 : 1);
       // Its sounds with it: a word read right is its sounds said right (the draws lean to shaky sounds).
-      for (const s of new Set(this.plan.runes)) progress.record('sounds', s, right, right ? 0 : 1);
+      for (const s of new Set(this.plan.runes)) progress.record('sounds', s, firstTry, right ? 0 : 1);
       this.readRecorded = true;
     }
     this.tweens.killTweensOf(this.bar);

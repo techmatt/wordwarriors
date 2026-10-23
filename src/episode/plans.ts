@@ -13,6 +13,7 @@ import { BANK } from '../../content/phonics/bank';
 import { FRAMES } from '../../content/phonics/sentences';
 import { NARRATOR_LINES, wakeTemplate, wakeVariant } from '../../content/voice/script';
 import { FORCE_PHONICS_ROOM, FORCE_SHIFTER_ROOM, VARIETY } from '../config';
+import { CHAINS_KEPT, chainKey } from '../rules/shifter';
 import { leastRecent } from '../rules/recent';
 import { fightSpec, pickFight } from '../rules/fights';
 import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
@@ -48,6 +49,8 @@ export function rememberPlan(): void {
   for (const p of plan) progress.remember('games', p.game, 3 * VARIETY.rotations);
   const phonics = plan.find((p) => PHONICS_GAMES.some((g) => g.id === p.game));
   if (phonics) progress.remember('phonics', phonics.game, 1);
+  // Hunt 7, M36: the Shape-Shifter's chain, a rotation of its own.
+  for (const p of plan) if (p.kind === 'shifter') progress.remember('chains', chainKey(p.shifter), CHAINS_KEPT);
 }
 
 /** Whether the URL picks the rooms' games (`?room=`, `?game=`, `?games=`; `roomGames`): then they are not her rotation. */

@@ -25,7 +25,7 @@
  *      presses 2, and only then do the pictures appear. Dad's 1 replays the
  *      slide with sounds; after BRIDGE.replays the pictures come anyway.
  *      Nothing from him for DAD_AWAY_MS (item 106): he isn't here, the
- *      episode goes solo (`episode.solo`) and the pictures come, no help
+ *      session goes solo (`episode.solo`, M34) and the pictures come, no help
  *      counted; while solo, level 3 skips the say step. His 1 / 2 ends solo.
  * Right first time with no help moves the word up a level; a hint, a replay
  * or a wrong picture moves it down one. The level is recorded every crossing

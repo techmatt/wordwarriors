@@ -1129,7 +1129,8 @@ export const ROSTER: CharacterSpec[] = [
     fight: 'magic_show',
     good: {
       displayName: 'Moriarty', trail: { tint: [0xf4a261, 0x95d5b2], shape: 'square' }, look: 'a lanky magician in a green suit and top hat, shuffling glowing cards, winking',
-      palette: [0x2d6a4f, 0xf4a261], glyph: '🎩', style: 'blink', speed: 200, size: 1, hp: 100,
+      // Hunt 7, M35 (Matt): 1.3, as Ozymandias: a grown-up magician beside Dad, not her height.
+      palette: [0x2d6a4f, 0xf4a261], glyph: '🎩', style: 'blink', speed: 200, size: 1.3, hp: 100,
       abilities: [
         ab('card_throw', 'Card Throw', 'bolt', 2.0, 0xf4a261, 1, { count: 4, glyph: '🃏', words: ['zip', 'top'] }),
         ab('decoys', 'Copycats', 'clones', 10, 0x2d6a4f, 2, { count: 3, words: ['pop', 'fog'] }),

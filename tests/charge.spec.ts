@@ -285,3 +285,23 @@ test('Charge the Spell: the beta forces it behind a door of a drawn episode; F4 
   expect(hub.progress.words[r.room!.charge!.word]!.recent).toEqual([true]);
   expectNoErrors(errors);
 });
+
+test('Charge the Spell (hunt 7, M34): solo, the read is together at once; Dad\'s yes during it is a helped read, never her first try', SLOW, async ({ page }) => {
+  test.setTimeout(90_000);
+  const errors = collectErrors(page);
+  // Real voice: the read together lasts long enough to press during it.
+  await boot(page, '?scene=room&slot=a&room=charge&solo=1', undefined, { voice: 'real' });
+  const s = await until(page, (st) => st.room?.charge?.read === 'modelled', 60_000, 'the read together');
+  const { word } = s.room!.charge!;
+  // Nobody was asked and nothing timed out: solo from the start reads together at once (no DAD_AWAY_MS wait).
+  expect(s.room!.charge!.timeouts).toBe(0);
+  expect(s.voice.history.some((id) => id.endsWith('_charge_read'))).toBe(false);
+  await dad(page, 'yes');
+  const helped = await until(page, (st) => st.room?.charge?.read === 'helped', 5_000, 'his yes, a helped read');
+  expect(helped.episode.solo).toBe(false);
+  const hub = await until(page, (st) => st.scene === 'Hub', 60_000, 'back in the hub');
+  // Read right, not first try; not modelled either.
+  expect(hub.progress.words[word]).toMatchObject({ seen: 1, recent: [false], wrong: 0 });
+  expect(hub.progress.words[word]!.modelled).toBeUndefined();
+  expectNoErrors(errors);
+});

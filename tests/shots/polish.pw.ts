@@ -38,6 +38,8 @@ const CASTS: { name: string; query: string }[] = [
   { name: 'space_ozymandias_anna', query: 'villain=ozymandias&ally=anna&fight=space_race' },
   { name: 'magic_moriarty_rilla', query: 'villain=moriarty&ally=rilla&fight=magic_show' },
   { name: 'story_smaug_jasmine', query: 'ally=jasmine&fight=smaug_story' },
+  // Hunt 7, M35: Moriarty as ally, 1.3 tall beside her and Dad.
+  { name: 'ally_moriarty_tiamat', query: 'villain=tiamat&ally=moriarty' },
 ];
 
 /** Shoot every `every` ms and at each new phase until stopped. */

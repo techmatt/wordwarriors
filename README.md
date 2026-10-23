@@ -377,7 +377,9 @@ bedroom, the hub and a side room, and the victory for four casts (and a battle u
 first move choice), shooting every line shortly after it starts into
 `scratch/ui_shots/<tag>/` (about 5 minutes; `-g bedroom` for one scene). Without a file
 name `npm run shots` plays the battle shots below as well. It serves its own vite on
-`SHOTS_PORT`, else 5194 (in a conductor item: `SHOTS_PORT=$CONDUCTOR_PORT`). Since item 072
+`SHOTS_PORT`, else 5194 (in a conductor item: `SHOTS_PORT=$CONDUCTOR_PORT`; the suite serves
+there too, so a test run started while shots run stops at "port already used": run them one
+after the other, or give one another free port). Since item 072
 it draws on the GPU, as the suite does, so shots from before then (software GL) differ
 from later ones in more than the change being judged. `npx tsx tests/shots/sheet.ts <beforeTag> <afterTag> <out.png>` puts
 two runs side by side.
