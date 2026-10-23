@@ -462,7 +462,9 @@ Extras: the cast (above: `seed=`, `cast=default`, `hero=`, `ally=`, `villain=`,
 battle items; that is the default), `warmup=1` (the warm-up's word fetched first too, as in
 an episode; hunt 6, M28), `nojourney` (skip the map), `difficulty=2` (the
 difficulty knob for this session; below), `grab=king` (the warm-up's word, if it is one
-the hall can ask for; item 085), `prep=sound,blend` (the parked prep games: `sound`
+the hall can ask for; item 085), `sentence=no_match_for_the:octopus` (that frame and key
+word on its banner: the attic's for a counter frame, door a's for a fetch frame, with
+`game=sentence:<frame>`; item 128), `prep=sound,blend` (the parked prep games: `sound`
 `blend` `picture`). The test-only ones (`voice=instant`, `battle=short`, `hooks=1`,
 `qa=1`) are in the README: *Speed, GPU and workers*, *The bug-hunt checker* and, for
 `hooks=1`, *Operational facts*.

@@ -10,7 +10,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
 
-import { logIssues, onlyLineVariants, padReachIssues, ruledCover, spawnIssues, storeChanges, voiceBuildIssues } from '../qa/checks';
+import { logIssues, onlyLineVariants, padReachIssues, panelIssues, ruledCover, spawnIssues, storeChanges, voiceBuildIssues, type Box } from '../qa/checks';
 import { britishIn, clippedIn, giveawayIssues, tauntIssues, variantIssues } from '../qa/wording';
 import type { WWState } from '../harness';
 
@@ -142,4 +142,15 @@ test('pad-in-reach (hunt 7): a move pad opening within her reach is flagged once
   assert.deepEqual(padReachIssues(seen, at(560), 95).map((i) => i.detail), ['LIFT opened 70 px from her (smaug_story)']);
   assert.deepEqual(padReachIssues(seen, at(560), 95), [], 'once a choice');
   assert.deepEqual(padReachIssues(new Set(), at(300), 95), []);
+});
+
+test('text off its panel (item 128): the old attic banner\'s key word over the red trim is a bug; a word on the cream is not', () => {
+  // Measured from the old layout: JORMUNGANDR CAN NOT GET PAST THE UMBRELLA, the cream band 44 px tall.
+  const panels = [{ scene: 'SentenceRoom', kind: 'banner', b: [243, 100, 1037, 144] as Box }];
+  const text = (t: string, b: Box, ink?: Box) => ({ scene: 'SentenceRoom', text: t, b, depth: 10, group: 3, size: 56, panel: 0, ...(ink ? { ink } : {}) });
+  const issues = panelIssues({ panels, texts: [text('L', [893, 120, 920, 200], [893, 132, 920, 193]), text('JORMUNGANDR', [270, 90, 700, 150], [272, 104, 698, 140])] }, 'SentenceRoom');
+  assert.deepEqual(issues.map((i) => [i.kind, i.severity, i.detail]), [['text-off-panel', 'bug', '"L" [893,132,920,193] crosses the banner\'s edge [243,100,1037,144] by 49 px']]);
+  // No ink measured: the box is the test. No panel: no check.
+  assert.equal(panelIssues({ panels, texts: [text('THE', [300, 98, 400, 140])] }, 'SentenceRoom').length, 1);
+  assert.deepEqual(panelIssues({ panels, texts: [{ ...text('THE', [0, 0, 10, 10]), panel: undefined }] }, 'SentenceRoom'), []);
 });

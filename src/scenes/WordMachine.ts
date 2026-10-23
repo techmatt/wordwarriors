@@ -41,6 +41,7 @@ import type { MachineMode, MachinePlan, MachineRound, MachineTile } from '../rul
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
+import { tagPanel } from '../ui/banner';
 import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { fontPx } from '../ui/fitText';
 import { voiceBank } from '../voice/VoiceBank';
@@ -199,6 +200,8 @@ export class WordMachine extends HouseSideRoom {
     this.onsetText = this.add.text(-w * 0.2, 0, '', style).setOrigin(0.5);
     this.rimeText = this.add.text(w * 0.14, 0, '', style).setOrigin(0.5);
     this.panel = this.add.container(x, y, [plate, this.slotBox, this.onsetText, this.rimeText]).setDepth(MACHINE_Y + 1);
+    // Its letters stay on the plate (the bug-hunt checker's panel check, item 128).
+    tagPanel(this.panel, 'machine plate', [-w / 2, -h / 2, w / 2, h / 2]);
     this.drawSlot(false);
   }
 

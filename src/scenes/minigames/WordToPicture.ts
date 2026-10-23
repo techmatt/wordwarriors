@@ -19,8 +19,18 @@ import { castFace, episode } from '../../episode/Episode';
 import { bob, popIn } from '../../fx/juice';
 import { pictureRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
+import { bannerArt, bannerPanelWidth, inkOf, tagPanel } from '../../ui/banner';
 import type { Spot } from '../../world/RoomScene';
 import { SideRoom } from '../../world/SideRoom';
+
+const BANNER_W = 560;
+/** Under the meter's slots, and a slim trim, so it ends above the pictures' tops (about y 270). */
+const BANNER_TOP = 92;
+const BANNER_TRIM = 0.3;
+/** Clear air between the letters (their ink, popped to GROW) and the cream band's edges. */
+const PANEL_MARGIN = 14;
+/** How big a letter pops as the hint sounds it. */
+const GROW = 1.3;
 
 const ITEMS = 4;
 
@@ -56,20 +66,33 @@ export class WordToPicture extends SideRoom {
     this.wrongTries = 0;
 
     // The banner, with the word as separate letters so the hint can light each.
-    const bg = this.add.image(0, 0, 'prop_banner').setDisplaySize(560, 130);
+    // Item 128: on the art's cream band (src/ui/banner.ts), which grows to hold
+    // the letters; each letter's hint pop (GROW, about its middle) stays on it too.
     this.letters = [];
-    const size = item.target.length > 6 ? 70 : 92;
-    const style = { fontFamily: FONT_COMIC, fontSize: `${size}px`, color: '#1a1030' };
-    const widths = [...item.target].map((ch) => this.add.text(0, 0, ch.toUpperCase(), style).setVisible(false));
-    const total = widths.reduce((n, t) => n + t.width, 0);
-    let x = -total / 2;
-    for (const [i, t] of widths.entries()) {
-      t.setVisible(true).setOrigin(0, 0.5).setPosition(x, 0);
-      x += t.width;
-      this.letters.push(t);
-      void i;
+    let size = item.target.length > 6 ? 64 : 76;
+    const room = bannerPanelWidth(BANNER_W) - 2 * PANEL_MARGIN;
+    for (;;) {
+      for (const t of this.letters) t.destroy();
+      const style = { fontFamily: FONT_COMIC, fontSize: `${size}px`, color: '#1a1030' };
+      this.letters = [...item.target].map((ch) => this.add.text(0, 0, ch.toUpperCase(), style).setOrigin(0.5));
+      const ends = ((GROW - 1) * (this.letters[0]!.width + this.letters.at(-1)!.width)) / 2;
+      if (this.letters.reduce((n, t) => n + t.width, 0) + ends <= room || size <= 30) break;
+      size -= 4;
     }
-    this.banner = this.add.container(GAME_WIDTH / 2, 160, [bg, ...this.letters]).setDepth(DEPTH.hud - 1);
+    const total = this.letters.reduce((n, t) => n + t.width, 0);
+    const ink = this.letters.map(inkOf);
+    const inkTop = Math.min(...ink.map((r) => r[1]));
+    const inkBottom = Math.max(...ink.map((r) => r[3]));
+    const art = bannerArt(this, BANNER_W, 2 * PANEL_MARGIN + (inkBottom - inkTop) * GROW, BANNER_TRIM);
+    const y = art.panel[1] + PANEL_MARGIN - inkTop * GROW;
+    let x = -total / 2;
+    for (const t of this.letters) {
+      t.setPosition(x + t.width / 2, y);
+      x += t.width;
+    }
+    this.banner = this.add.container(GAME_WIDTH / 2, BANNER_TOP + art.height / 2, [...art.parts, ...this.letters]).setDepth(DEPTH.hud - 1);
+    this.banner.setData('qaCover', 'banner');
+    tagPanel(this.banner, 'banner', art.panel);
     popIn(this, this.banner, 1);
 
     const xs = item.choices.length === 2 ? [GAME_WIDTH / 2 - 240, GAME_WIDTH / 2 + 240] : [GAME_WIDTH / 2 - 360, GAME_WIDTH / 2, GAME_WIDTH / 2 + 360];
@@ -95,7 +118,7 @@ export class WordToPicture extends SideRoom {
         const t = this.letters[i];
         if (t) {
           t.setColor('#ff3d7a');
-          this.tweens.add({ targets: t, scale: 1.3, duration: 140, yoyo: true });
+          this.tweens.add({ targets: t, scale: GROW, duration: 140, yoyo: true });
         }
         if (LETTER_BY_CHAR[ch]) await this.say(letterSoundLine(ch));
         await this.wait(200);

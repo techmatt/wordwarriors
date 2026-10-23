@@ -24,6 +24,7 @@ import { voiceBank } from '../voice/VoiceBank';
 import { artBank } from '../art/ArtBank';
 import { artFor } from '../art/needs';
 import { hookState, walkObjects } from '../hookState';
+import { worldInk } from '../ui/banner';
 
 export interface QaVoice {
   /** Game-clock ms (the page's warped `performance.now`). */
@@ -67,6 +68,9 @@ interface DrawnText {
   /** Which container it sits in (0: none): words in one container are laid out together. */
   group: number;
   size: number;
+  /** The panel it is printed on (an index into `panels`), if any, and its ink there (its letters, not its line-high box). */
+  panel?: number;
+  ink?: [number, number, number, number];
 }
 
 interface DrawnImage {
@@ -100,6 +104,18 @@ interface DrawnCover {
   kind: string;
   b: Rect;
   depth: number;
+}
+
+/**
+ * Where words may sit on a panel they are printed on (the sentence banner's
+ * cream, item 128): tagged `qaPanel`, a function giving that area in world
+ * coordinates now, by whatever draws it. Every text inside it is checked
+ * against it, not against the art's whole box (trim, pole and tassels).
+ */
+interface DrawnPanel {
+  scene: string;
+  kind: string;
+  b: Rect;
 }
 
 /** A game object's own data value, without creating a data manager on every object the probe walks. */
@@ -241,18 +257,20 @@ function layout(game: Phaser.Game): {
   spots: { id: string; x: number; y: number }[];
   targets: DrawnTarget[];
   covers: DrawnCover[];
+  panels: DrawnPanel[];
   hudDepth: number;
 } {
   const texts: DrawnText[] = [];
   const images: DrawnImage[] = [];
   const targets: DrawnTarget[] = [];
   const covers: DrawnCover[] = [];
+  const panels: DrawnPanel[] = [];
   let groupId = 0;
   const box = (o: { getBounds(): Phaser.Geom.Rectangle }): [number, number, number, number] => {
     const b = o.getBounds();
     return [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)];
   };
-  const walk = (scene: Phaser.Scene, objs: Phaser.GameObjects.GameObject[], shown: boolean, depth: number, group: number, alpha: number) => {
+  const walk = (scene: Phaser.Scene, objs: Phaser.GameObjects.GameObject[], shown: boolean, depth: number, group: number, alpha: number, panel?: number) => {
     for (const o of objs) {
       const a = alpha * ((o as unknown as { alpha?: number }).alpha ?? 1);
       const vis = shown && (o as unknown as { visible?: boolean }).visible !== false && a > 0.05;
@@ -267,9 +285,15 @@ function layout(game: Phaser.Game): {
         const list: Rect[] = typeof rects === 'function' ? (rects as () => Rect[])() : 'getBounds' in o ? [box(o as unknown as { getBounds(): Phaser.Geom.Rectangle })] : [];
         for (const r of list) covers.push({ scene: scene.scene.key, kind: cover, b: r.map(Math.round) as Rect, depth: own });
       }
-      if (o instanceof Phaser.GameObjects.Container) walk(scene, o.list, vis, own, ++groupId, a);
+      let inPanel = panel;
+      const area = tag(o, 'qaPanel');
+      if (typeof area === 'function') {
+        const [kind, r] = (area as () => [string, Rect])();
+        inPanel = panels.push({ scene: scene.scene.key, kind, b: r.map(Math.round) as Rect }) - 1;
+      }
+      if (o instanceof Phaser.GameObjects.Container) walk(scene, o.list, vis, own, ++groupId, a, inPanel);
       else if (o instanceof Phaser.GameObjects.Text && o.text.trim()) {
-        texts.push({ scene: scene.scene.key, text: o.text, b: box(o), depth: own, group, size: Number.parseFloat(String(o.style.fontSize)) * Math.abs(o.scaleY) });
+        texts.push({ scene: scene.scene.key, text: o.text, b: box(o), depth: own, group, size: Number.parseFloat(String(o.style.fontSize)) * Math.abs(o.scaleY), ...(inPanel === undefined ? {} : { panel: inPanel, ink: worldInk(o).map(Math.round) as Rect }) });
       } else if (o instanceof Phaser.GameObjects.Image && o.texture?.key && !o.texture.key.startsWith('__') && a > 0.3) {
         const b = box(o);
         if (b[2] > 0 && b[0] < GAME_WIDTH && b[3] > 0 && b[1] < GAME_HEIGHT && b[2] - b[0] > 8) images.push({ scene: scene.scene.key, key: o.texture.key, b, depth: own });
@@ -278,7 +302,7 @@ function layout(game: Phaser.Game): {
   };
   for (const scene of game.scene.getScenes(true)) walk(scene, scene.children.list, true, 0, 0, 1);
   const spots = hookState.room?.spots.map((s) => ({ id: s.id, x: s.x, y: s.y })) ?? hookState.battle?.choice?.spots.map((s) => ({ id: s.word, x: s.x, y: s.y })) ?? [];
-  return { texts, images, spots, targets, covers, hudDepth: DEPTH.speech };
+  return { texts, images, spots, targets, covers, panels, hudDepth: DEPTH.speech };
 }
 
 /** Objects, tweens and timers alive, for growth from one episode to the next. */

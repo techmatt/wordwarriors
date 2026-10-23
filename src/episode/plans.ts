@@ -10,7 +10,7 @@ import { CHARACTER_BY_ID, personOf } from '../../content/battle/roster';
 import type { CounterItem } from '../../content/battle/types';
 import { BEDROOMS, COUNTER_ROOM, FETCH_ROOMS, PLACE_BY_ID, SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { BANK } from '../../content/phonics/bank';
-import { FRAMES } from '../../content/phonics/sentences';
+import { FRAMES, sentence } from '../../content/phonics/sentences';
 import { NARRATOR_LINES, wakeTemplate, wakeVariant } from '../../content/voice/script';
 import { FORCE_PHONICS_ROOM, SHIFTER_ROOM, STORY_FIGHT, VARIETY } from '../config';
 import { CHAINS_KEPT, LAST_READ, chainKey } from '../rules/shifter';
@@ -118,10 +118,29 @@ export function housePlan(): RoomPlan[] {
     const counterRoom = place ? place.secret.id : COUNTER_ROOM;
     const input = planInput(gift, rooms, counterRoom);
     const games = roomGames();
-    episode.house.plan = episodePlans(progress, { ...input, ...games });
+    episode.house.plan = forcedSentence(episodePlans(progress, { ...input, ...games }), input.fill);
     rememberPlan();
   }
   return episode.house.plan;
+}
+
+/**
+ * `?sentence=no_match_for_the:octopus` (tests, item 128: the longest
+ * sentence on each banner): that frame and key word in the sentence room
+ * drawn for it, the attic's for a counter frame, door a's for a fetch frame
+ * (with `?game=sentence:<frame>`). The key word takes the drawn key's place
+ * among the pictures.
+ */
+function forcedSentence(plan: RoomPlan[], fill: EpisodeInput['fill']): RoomPlan[] {
+  const [frameId, key] = (urlQuery().get('sentence') ?? '').split(':');
+  const frame = FRAMES.find((f) => f.id === frameId);
+  if (!frame || !key || !BANK.some((w) => w.word === key)) return plan;
+  const slot: Slot = frame.use === 'counter' ? 'counter' : 'a';
+  return plan.map((p) => {
+    if (p.slot !== slot || p.kind !== 'sentence') return p;
+    const objects = p.objects.filter((o) => o !== key).map((o) => (o === p.key ? key : o));
+    return { ...p, key, fetches: [key], sentence: sentence(frame.id, fill, key), objects };
+  });
 }
 
 /**

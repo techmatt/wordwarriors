@@ -21,14 +21,38 @@ export interface Issue {
 export type Box = [number, number, number, number];
 
 export interface Layout {
-  texts: { scene: string; text: string; b: Box; depth: number; group: number; size: number }[];
+  texts: { scene: string; text: string; b: Box; depth: number; group: number; size: number; panel?: number; ink?: Box }[];
   images: { scene: string; key: string; b: Box; depth: number }[];
   spots: { id: string; x: number; y: number }[];
   /** What she must look at or choose (`qaTarget` in the game): pictures, doors, pads, recap cards. */
   targets: { scene: string; id: string; b: Box; depth: number }[];
   /** What may hang over the scene (`qaCover`): the dialogue box and face card, bubbles, the sentence banner. */
   covers: { scene: string; kind: string; b: Box; depth: number }[];
+  /** Where words may sit on what they are printed on (`qaPanel`): the sentence banner's cream, the machine's plate. */
+  panels?: { scene: string; kind: string; b: Box }[];
   hudDepth: number;
+}
+
+/**
+ * A word crossing the edge of the panel it is printed on (item 128, Matt: the
+ * attic's key word, lit red, sat over the banner's red trim): every lettered
+ * text inside a `qaPanel` must lie wholly within its area, a pixel's slack.
+ * The art's whole box (the cover) is not the test: its trim, pole and tassels
+ * are no place for a word.
+ */
+export function panelIssues(l: Pick<Layout, 'texts' | 'panels'>, scene: string): Issue[] {
+  const out: Issue[] = [];
+  for (const t of l.texts) {
+    const p = t.panel === undefined ? undefined : l.panels?.[t.panel];
+    if (!p || !/[A-Za-z]/.test(t.text)) continue;
+    // Its letters' ink where the probe measured it: a text's box carries the font's whole line height.
+    const b = t.ink ?? t.b;
+    const over = Math.max(p.b[0] - b[0], p.b[1] - b[1], b[2] - p.b[2], b[3] - p.b[3]);
+    if (over <= 1) continue;
+    const name = t.text.replace(/\s+/g, ' ').slice(0, 40);
+    out.push({ kind: 'text-off-panel', severity: 'bug', scene, detail: `"${name}" [${b.join(',')}] crosses the ${p.kind}'s edge [${p.b.join(',')}] by ${over} px`, key: `offpanel:${scene}:${p.kind}:${name}` });
+  }
+  return out;
 }
 
 /**
@@ -158,6 +182,8 @@ export function layoutIssues(l: Layout, scene: string, placeholders: Set<string>
   }
   // A target under a banner, the dialogue box or a bubble (item 059: real boxes, a bug).
   out.push(...coverIssues(l, scene));
+  // A word over the edge of its banner or plate (item 128).
+  out.push(...panelIssues(l, scene));
   for (const im of l.images) {
     if (placeholders.has(im.key)) out.push({ kind: 'placeholder-art', severity: 'look', scene, detail: im.key, key: `placeholder:${im.key}` });
   }

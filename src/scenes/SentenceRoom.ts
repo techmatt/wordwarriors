@@ -43,6 +43,7 @@ import { soundOut } from '../rules/soundOut';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
+import { bannerArt, bannerPanelWidth, inkOf, tagPanel } from '../ui/banner';
 import { makeButtonDot } from '../ui/ButtonDot';
 import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
@@ -52,13 +53,16 @@ import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom'
 
 type Pass = 'listen' | 'read' | 'find' | 'done';
 
-const BANNER_W = 1040;
+/** Item 128: wider than the 1040 it was, so long sentences keep their size on the cream band. */
+const BANNER_W = 1160;
 /** The banner's word size once a sentence takes two rows (item 043, M4): two rows at this before one smaller row. */
 const TWO_ROWS_PX = 56;
-const BANNER_Y = 120;
-/** A banner of two or more rows: its top edge, and how much of its height the rows fill. */
-const TALL_BANNER_TOP = 6;
-const MULTI_ROW_FILL = 0.56;
+/** The banner's top edge: it hangs from the top of the screen (its pole is all that is up there). */
+const BANNER_TOP = 6;
+/** Clear air between the words (their ink, grown to their biggest) and the cream band's edges (item 128). */
+const PANEL_MARGIN = 14;
+/** The space between two rows of words, as a share of the word size. */
+const ROW_GAP = 0.22;
 /** The picture on its pedestal: how high above the spot its top is (pedestal 100 + picture 150), and its bob. */
 const PIC_TOP = 250;
 const PIC_BOB = 5;
@@ -70,6 +74,8 @@ const BANNER_GAP = 10;
 const KEY_BEAT_MS = 1200;
 /** How big the lit word grows (the layout leaves room for it). */
 const LIT_SCALE = 1.08;
+/** The biggest the key word grows: its pulse in the listening pass, its pop as her read reaches it, a lit letter (room left for it, item 128). */
+const KEY_GROW = 1.3;
 /** The pause after each letter sound, so the sounds never run together. */
 const LETTER_GAP_MS = 450;
 /** Her green's read: the breath between one word's line and the next. */
@@ -218,7 +224,9 @@ export class SentenceRoom extends HouseSideRoom {
    */
   private makeBanner(): void {
     const tokens = this.plan.sentence.tokens;
-    const room = BANNER_W * 0.82;
+    const room = bannerPanelWidth(BANNER_W) - 2 * PANEL_MARGIN;
+    /** The biggest a token grows: lit, or the key word's pulse. */
+    const grow = (i: number) => (i === this.keyIndex ? KEY_GROW : LIT_SCALE);
     let size = 76;
     let style = { fontFamily: FONT_COMIC, fontSize: `${size}px`, color: INK };
     let widths: number[] = [];
@@ -251,27 +259,23 @@ export class SentenceRoom extends HouseSideRoom {
         this.tokenBoxes.push(this.add.container(0, 0, texts));
       });
     };
-    // Each gap leaves room for either neighbour to grow when lit, so words never touch.
-    const gapBetween = (i: number, j: number) => size * 0.4 + (LIT_SCALE - 1) * Math.max(widths[i]!, widths[j]!);
+    // Each gap leaves room for either neighbour to grow (about its middle, one lit at a time), so words never touch.
+    const gapBetween = (i: number, j: number) => size * 0.4 + Math.max((grow(i) - 1) * widths[i]!, (grow(j) - 1) * widths[j]!) / 2;
+    const rowWidth = (row: number[]) => row.reduce((n, i, k) => n + widths[i]! + (k ? gapBetween(row[k - 1]!, i) : 0), 0);
+    /** What a row's end words reach past it as they grow (each grows about its middle). */
+    const overhang = (row: number[]): [number, number] => [((grow(row[0]!) - 1) * widths[row[0]!]!) / 2, ((grow(row.at(-1)!) - 1) * widths[row.at(-1)!]!) / 2];
+    /** A row's whole reach, its end words grown: what must fit within `room`. */
+    const span = (row: number[]) => rowWidth(row) + overhang(row)[0] + overhang(row)[1];
     /** Token indices per row, greedy, every row within `room` if it can be. */
     const rowsOf = (): number[][] => {
       const rows: number[][] = [[]];
-      let x = 0;
-      widths.forEach((w, i) => {
+      widths.forEach((_, i) => {
         const row = rows[rows.length - 1]!;
-        const prev = row[row.length - 1];
-        const add = prev === undefined ? w : gapBetween(prev, i) + w;
-        if (prev !== undefined && (x + add) * 1.1 > room) {
-          rows.push([i]);
-          x = w;
-        } else {
-          row.push(i);
-          x += add;
-        }
+        if (row.length && span([...row, i]) > room) rows.push([i]);
+        else row.push(i);
       });
       return rows;
     };
-    const rowWidth = (row: number[]) => row.reduce((n, i, k) => n + widths[i]! + (k ? gapBetween(row[k - 1]!, i) : 0), 0);
     /**
      * Two rows split where they come out most even, not greedily (item 039:
      * greedy left the key word alone on the second row, SMAUG IS NO MATCH FOR
@@ -281,11 +285,11 @@ export class SentenceRoom extends HouseSideRoom {
       if (greedy.length !== 2) return greedy;
       const all = widths.map((_, i) => i);
       let best = greedy;
-      let bestW = Math.max(...greedy.map(rowWidth));
+      let bestW = Math.max(...greedy.map(span));
       for (let k = 1; k < all.length; k++) {
         const split = [all.slice(0, k), all.slice(k)];
-        const w = Math.max(...split.map(rowWidth));
-        if (w * 1.1 <= room && w < bestW) {
+        const w = Math.max(...split.map(span));
+        if (w <= room && w < bestW) {
           best = split;
           bestW = w;
         }
@@ -296,37 +300,39 @@ export class SentenceRoom extends HouseSideRoom {
     for (;;) {
       build();
       rows = balanced(rowsOf());
-      const fits = rows.every((r) => rowWidth(r) * 1.1 <= room);
+      const fits = rows.every((r) => span(r) <= room);
       // One row while it fits at 60 px or more; then two rows at 56 px before
       // one smaller row (item 043, M4: the long counter sentences read at about
       // half size on one row); past 40 px, more rows are better than smaller words.
       if ((rows.length === 1 && fits) || (size <= TWO_ROWS_PX && fits && rows.length <= 2) || (size <= 40 && fits && rows.length <= 3) || size <= 20) break;
       size -= 4;
     }
-    const lineH = size * 1.2;
-    // The panel (cream and its red edges) is about the middle half of the
-    // banner art, a little below its centre (the pole and cords are above): a
-    // wrapped sentence gets a taller banner, with its rows centred on the
-    // panel. No taller than that (item 059: at 0.44 a two-row banner was 305
-    // px and hung over the tops of the pictures she chooses between).
-    this.bannerH = rows.length > 1 ? Math.max(140, (rows.length * lineH) / MULTI_ROW_FILL) : 140;
-    // The cream panel's middle sits about 0.077 of the height below the art's (item 059 review: at 0.03 the rows ran off it).
-    const panelY = rows.length > 1 ? this.bannerH * 0.077 : 0;
+    // Item 128: the rows stand on the art's cream band, which grows to hold
+    // them; the trim, pole and tassels keep their size. Laid out by the words'
+    // ink (an upper-case word fills under three quarters of its text's box),
+    // each row's words grown to their biggest, with clear air all round.
+    const ink = this.tokenTexts.flat().map(inkOf);
+    const inkTop = Math.min(...ink.map((r) => r[1]));
+    const inkBottom = Math.max(...ink.map((r) => r[3]));
+    const pitch = inkBottom - inkTop + size * ROW_GAP;
+    const panelH = 2 * PANEL_MARGIN + (rows.length - 1) * pitch + (inkBottom - inkTop) * KEY_GROW;
+    const art = bannerArt(this, BANNER_W, panelH);
+    this.bannerH = art.height;
     rows.forEach((row, r) => {
-      let x = -rowWidth(row) / 2;
-      const y = panelY + (r - (rows.length - 1) / 2) * lineH;
+      const [left, right] = overhang(row);
+      let x = -rowWidth(row) / 2 + (left - right) / 2;
+      // A grown word grows about its box's middle, so its ink reaches KEY_GROW times as far above and below.
+      const y = art.panel[1] + PANEL_MARGIN - inkTop * KEY_GROW + r * pitch;
       row.forEach((i, k) => {
         if (k) x += gapBetween(row[k - 1]!, i);
         this.tokenBoxes[i]!.setPosition(x + widths[i]! / 2, y);
         x += widths[i]!;
       });
     });
-    const bg = this.add.image(0, 0, 'prop_banner').setDisplaySize(BANNER_W, this.bannerH);
-    // One row hangs at BANNER_Y; a taller banner goes up to the top of the screen (its pole is all that is up there).
-    const y = rows.length > 1 ? TALL_BANNER_TOP + this.bannerH / 2 : BANNER_Y;
-    this.banner = this.add.container(GAME_WIDTH / 2, y, [bg, ...this.tokenBoxes]).setDepth(DEPTH.hud - 1);
-    // A cover for the bug-hunt checker's probe: it must never hang over a picture (item 059).
+    this.banner = this.add.container(GAME_WIDTH / 2, BANNER_TOP + this.bannerH / 2, [...art.parts, ...this.tokenBoxes]).setDepth(DEPTH.hud - 1);
+    // A cover for the bug-hunt checker's probe: it must never hang over a picture (item 059); its words stay on the cream (item 128).
     this.banner.setData('qaCover', 'banner');
+    tagPanel(this.banner, 'banner', art.panel);
     popIn(this, this.banner, 1);
   }
 
@@ -402,7 +408,7 @@ export class SentenceRoom extends HouseSideRoom {
       this.light(this.keyIndex);
       const box = this.tokenBoxes[this.keyIndex]!;
       this.tweens.killTweensOf(box);
-      this.tweens.add({ targets: box, scale: 1.3, duration: 200, yoyo: true, repeat: 2, ease: 'Sine.easeInOut' });
+      this.tweens.add({ targets: box, scale: KEY_GROW, duration: 200, yoyo: true, repeat: 2, ease: 'Sine.easeInOut' });
       await this.wait(KEY_BEAT_MS);
       if (this.pass !== 'listen') return;
     }
@@ -529,7 +535,8 @@ export class SentenceRoom extends HouseSideRoom {
       const lit = letters.slice(step.index, step.index + step.span);
       for (const other of letters) other.setColor(INK);
       for (const t of lit) t.setColor(LIT);
-      this.tweens.add({ targets: lit, scale: 1.35, duration: 140, yoyo: true });
+      // On the lit word (LIT_SCALE), so the letter peaks at KEY_GROW, the room the banner leaves it (item 128: 1.35 on top ran it off the cream).
+      this.tweens.add({ targets: lit, scale: KEY_GROW / LIT_SCALE, duration: 140, yoyo: true });
       if (step.id) await this.say(step.id);
       // A beat on each letter, still lit, so the sounds stay apart.
       await this.wait(LETTER_GAP_MS);

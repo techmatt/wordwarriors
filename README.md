@@ -87,15 +87,16 @@ item: `docs/engineering.md`, *Browser and tests*):
   behind each door; item 091) against `plansGolden.json`: a refactor leaves it green. A
   change meant to alter the draws rewrites the JSON on purpose, from the worktree root:
   `npx tsx -e "import('./tests/unit/plansGolden.ts').then((m) => require('node:fs').writeFileSync('tests/unit/plansGolden.json', JSON.stringify(m.goldenDraws(), null, 1) + '\n'))"`.
-- **Before a commit: `npm run test:browser`** (about 95 s, 52 tests, one of them the skipped
-  pairs placeholder, item 117; 24 tests and 50 s in item 079) plus the specs that cover
+- **Before a commit: `npm run test:browser`** (about 95 s, 54 tests since item 128, one of them the skipped
+  pairs placeholder; 24 tests and 50 s in item 079) plus the specs that cover
   what changed (`npx playwright test <spec>`, both lanes of it). `test:browser` is every
   browser test not tagged `@slow` (the smoke three among them): one of each newer room
   (the bridge at level 3, a Charge round, free play's shots and jump, the word machine
   opening), the cover check on Smaug's counter banner, the two layout checks, title and
   the grown-ups page, a solid sentence frame, dad lock, a key held through a scene change,
   Spell the Spell, the cast and fight-style overrides, never last episode's victory scene,
-  and the three text-fit checks. It stops itself at 6 minutes, so a hang fails inside
+  the three text-fit checks, and the word machine's plate and Word → Picture's banner
+  holding their words (`tests/banner.spec.ts`; its widest-sentence checks are `@slow`). It stops itself at 6 minutes, so a hang fails inside
   Claude Code's 10-minute background cap instead of being killed by it.
 - **Everything: `npm run test:all`** (about 6.3 minutes at item 105's 136 browser tests; 149
   since item 116): the unit tests, then every browser test. The slow lane alone is
@@ -441,6 +442,15 @@ output folder is per tag (`test-results/qa-<tag>`), since a run empties its fold
 junction): a probe script kept there that imports `../../src/…` runs the main checkout's
 code, not the worktree's (hunt 7 lost a round to it); keep such scripts in the worktree.
 
+- **Item 128's check, `text-off-panel`:** a word crossing the edge of the panel it is
+  printed on (the sentence banner's cream band, the parked Word → Picture's banner, the
+  word machine's plate). Whatever draws one tags its container `qaPanel` (`tagPanel` in
+  `src/ui/banner.ts`); the probe gives each text inside it its letters' ink
+  (`worldInk`: a text's box carries the font's whole line height, about 1.4× its size) and
+  `panelIssues` (`tests/qa/checks.ts`) wants it wholly inside. The art's whole box is not the
+  test: `prop_banner`'s cream is a band about a fifth of its height, and the old layout's words
+  sat on its red trim (`tests/banner.spec.ts`: the widest fetch and counter sentences,
+  forced with `?sentence=<frame>:<key>`).
 - **Item 069's checks:** free play never over its cap of live shots (`shots-over-cap`), a
   busy child whose casts never fired (`mash-dead`), and in a scenario whose URL forces no
   cast or room, the rotations across episodes (`repeat`: the villain or victory scene of
