@@ -393,6 +393,12 @@ base commit's code; the server no longer reloads under edits), run it from a sec
 junctions (`cmd /c rmdir <path>`) before `git worktree remove --force`, so nothing is
 deleted through them.
 
+**Ambience picker** (item 134): `npm run shots -- ambience.pw` plays a Part 1 brawl in each
+`AMBIENCE_TRIALS` candidate's arena, and the arena's ambience now, at real time, and records
+about 3 s of each as a looping WebP (sharp joins the frames) into `scratch/arena_ambience_134/`,
+with the picker manifest `scratch/arena_ambience_134.json`. Conductor's picker page shows an
+animated WebP playing, so a moving thing can be picked like a picture.
+
 **Variety across many episodes** (item 121): `npm run variety -- --episodes=300 --seed=1`
 (about 1 s per hundred episodes; no browser) plays drawn episodes in a row on one progress
 store, through the episode's own draws (`src/episode/draws.ts`, `plans.ts`), answering for

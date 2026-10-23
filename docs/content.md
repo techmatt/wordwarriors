@@ -123,7 +123,10 @@ One `CharacterSpec` in `ROSTER`:
 - The parked Spell the Spell's words (two warm-ups and a magic word, all CVC) are not
   on the roster: add the character's triple to `SPELL_WORDS` in
   `content/phonics/spelling.ts` (item 020).
-- `arena`: a key of `ARENAS`.
+- `arena`: a key of `ARENAS`. A new arena names its battle ambience there (`ambience`,
+  the `Ambience` type in `arenas.ts`: a tinted particle falling or rising behind the
+  fight; item 134). Candidates for Matt go in `AMBIENCE_TRIALS` beside it, played by
+  `?ambience=<arena>_<n>` and shown to him by a shots spec like `tests/shots/ambience.pw.ts`.
 - `house`: its mood as a villain (see "A villain's house mood" below).
 
 Every new character is automatically a hero, an ally (and so a narrator: about 680

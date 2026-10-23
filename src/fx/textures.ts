@@ -22,6 +22,11 @@ export const TEX = {
   /** Free play's fun shots (item 060): white, so a tint colours them. */
   heart: 'fx_heart',
   snowball: 'fx_snowball',
+  /** Arena ambience candidates (item 134, AMBIENCE_TRIALS): white, so a tint colours them. */
+  block: 'fx_block',
+  leaf: 'fx_leaf',
+  fluff: 'fx_fluff',
+  butterfly: 'fx_butterfly',
 } as const;
 
 export function makeTextures(scene: Phaser.Scene): void {
@@ -116,5 +121,54 @@ export function makeTextures(scene: Phaser.Scene): void {
     g.fillCircle(19, 19, 7);
     g.fillStyle(0xffffff, 1);
     g.fillCircle(11, 10, 4);
+  });
+
+  // A toy block: lit top and left, shaded bottom and right, a raised dot in the middle.
+  make(TEX.block, 28, 28, (g) => {
+    g.fillStyle(0xd8d8d8, 1);
+    g.fillRect(0, 0, 28, 28);
+    g.fillStyle(0xffffff, 1);
+    g.fillRect(0, 0, 28, 5);
+    g.fillRect(0, 0, 5, 28);
+    g.fillStyle(0x8a8a8a, 1);
+    g.fillRect(0, 23, 28, 5);
+    g.fillRect(23, 0, 5, 28);
+    g.fillStyle(0xf0f0f0, 1);
+    g.fillCircle(14, 14, 6);
+  });
+
+  // A leaf: a pointed oval with a paler midrib.
+  make(TEX.leaf, 32, 20, (g) => {
+    g.fillStyle(0xffffff, 1);
+    g.fillEllipse(15, 10, 26, 14);
+    g.fillTriangle(24, 6, 24, 14, 31, 10);
+    g.lineStyle(2, 0xffffff, 0.45);
+    g.lineBetween(1, 10, 28, 10);
+    g.fillStyle(0x000000, 0.18);
+    g.fillEllipse(15, 13, 20, 5);
+  });
+
+  // A dandelion seed: a tiny body under a fan of fine white hairs.
+  make(TEX.fluff, 32, 32, (g) => {
+    g.lineStyle(1.5, 0xffffff, 0.9);
+    for (let i = 0; i < 9; i++) {
+      const t = Math.PI + (i / 8) * Math.PI;
+      g.lineBetween(16, 14, 16 + Math.cos(t) * 13, 14 + Math.sin(t) * 13);
+    }
+    g.lineStyle(1.5, 0xffffff, 1);
+    g.lineBetween(16, 14, 16, 27);
+    g.fillStyle(0xffffff, 1);
+    g.fillEllipse(16, 28, 4, 6);
+  });
+
+  // A butterfly from the front: two wings a side round a dark body.
+  make(TEX.butterfly, 32, 28, (g) => {
+    g.fillStyle(0xffffff, 1);
+    g.fillEllipse(9, 9, 15, 14);
+    g.fillEllipse(23, 9, 15, 14);
+    g.fillEllipse(10, 20, 11, 10);
+    g.fillEllipse(22, 20, 11, 10);
+    g.fillStyle(0x3a2a4a, 1);
+    g.fillEllipse(16, 14, 4, 20);
   });
 }

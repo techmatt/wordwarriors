@@ -41,4 +41,4 @@ export { MINIONS } from './roster/minions.js';
 export { DAD_COLOURS, DADS, OWN_COLOURS } from './roster/dads.js';
 export { ROSTER, CHARACTER_BY_ID, villainName, personOf, PERSONS, formsOf, formId } from './roster/index.js';
 export { COMBOS, DEFAULT_COMBO, comboFor, comboPart } from './roster/combos.js';
-export { ARENAS } from './roster/arenas.js';
+export { AMBIENCE_TRIALS, ARENAS, type Ambience } from './roster/arenas.js';

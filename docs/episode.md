@@ -196,6 +196,7 @@ Any cast can be tried from the URL (and stays for every episode that session):
 | `?words=new`, `?words=tree,ham` | Item 121: every word draw (key words, pads, the gift, the warm-up, the phonics rooms) leans to item 121's new words, or to those named, this session (`favourWords`, `src/rules/bank.ts`); each still leaves the bag once read. The grown-ups page's word list (page 2) marks the new words NEW |
 | `?fight=sky_race` | The showdown's fight style, whoever the villain is: `brawl` `sky_race` `space_race` `sea_tug` `spell_clash` `frost_clash` `magic_show` `cook_off` |
 | `?fight=smaug_story` | The **story fight** against Evil Smaug (item 107): forces him as the villain, whatever the cast. `?scene=battle&part=1&fight=smaug_story` (or `part=2`) goes straight to a half |
+| `?ambience=nursery_2` | Item 134: the battle plays that ambience candidate (`AMBIENCE_TRIALS`, `content/battle/roster/arenas.ts`) in its own arena, whoever the villain is |
 
 Not every showdown is a brawl (item 031). Each villain has a **fight style**
 (`fight` in the roster; `content/battle/fights.ts`): Evil Smaug races the heroes

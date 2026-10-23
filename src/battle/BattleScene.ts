@@ -35,7 +35,7 @@
 
 import Phaser from 'phaser';
 
-import { CHARACTER_BY_ID, abilityCallout, comboFor, comboPart, personOf } from '../../content/battle/roster';
+import { AMBIENCE_TRIALS, ARENAS, CHARACTER_BY_ID, abilityCallout, comboFor, comboPart, personOf } from '../../content/battle/roster';
 import type { AbilitySpec, CounterItem, Status } from '../../content/battle/types';
 import { wordEffect } from '../../content/phonics/effects';
 import { RUNE_BY_SOUND, runeArt } from '../../content/phonics/runes';
@@ -152,6 +152,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
   private simRate = 1;
   /** `?battle=short` (item 083): the director's waits cut (`beat`). */
   private readonly short = new URLSearchParams(location.search).get('battle') === 'short';
+  /** `?ambience=<id>` (item 134): an AMBIENCE_TRIALS candidate, played in its own arena. */
+  private readonly trial = AMBIENCE_TRIALS[new URLSearchParams(location.search).get('ambience') ?? ''];
   /**
    * The director is a chain of awaits; once this run of the scene is over
    * (F2, the advance to the next step) nothing in the chain may resume.
@@ -224,7 +226,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     hookState.room = null;
     const v = villainSpec();
     this.fight = fightStyle();
-    this.arenaKey = this.fight.arena ?? v.arena;
+    this.arenaKey = this.trial?.arena ?? this.fight.arena ?? v.arena;
     this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, `arena_${this.arenaKey}`).setDisplaySize(GAME_WIDTH, GAME_HEIGHT).setDepth(DEPTH.ground);
     this.darkRect = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0a0018, 0).setDepth(FLOOR_TOP - 5);
     this.controls = new Controls(this);
@@ -498,38 +500,40 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     return this.runs.guard(p);
   }
 
-  /** Falling/rising ambience per arena: embers, snow, sand, bubbles, sparks. */
+  /** The arena's falling/rising ambience (`ambience` on ARENAS; the meadow's for a key without one). */
   private ambience(): void {
-    const arena = this.arenaKey;
-    const cfg: Record<string, { tint: number[]; up: boolean; tex: string }> = {
-      meadow: { tint: [0xffffff, 0xffd23f, 0xff9ad5], up: false, tex: TEX.spark },
-      volcano: { tint: [0xff7b00, 0xffd23f, 0xff3d00], up: true, tex: TEX.spark },
-      kitchen: { tint: [0xffffff, 0xfff1d6], up: true, tex: TEX.smoke },
-      castle: { tint: [0xffd23f, 0xff9a3c], up: true, tex: TEX.spark },
-      ice: { tint: [0xffffff, 0xdff4ff], up: false, tex: TEX.spark },
-      // Item 114: Ozymandias's iceberg, snow falling.
-      iceberg: { tint: [0xffffff, 0xdff4ff, 0xbfe8ff], up: false, tex: TEX.spark },
-      desert: { tint: [0xe8c890, 0xffe8b0], up: false, tex: TEX.pixel },
-      sea: { tint: [0x9ad8ff, 0xffffff], up: true, tex: TEX.ring },
-      cave: { tint: [0xffd23f, 0xff7b00], up: true, tex: TEX.spark },
-      factory: { tint: [0x00f5d4, 0xffcc33], up: false, tex: TEX.pixel },
-      city: { tint: [0xa0b0c0, 0xffffff], up: false, tex: TEX.smoke },
-      sky_race: { tint: [0xffd23f, 0xff7b00, 0xffffff], up: true, tex: TEX.spark },
-      spell_tower: { tint: [0xb04aff, 0x80ffdb, 0xffffff], up: true, tex: TEX.spark },
-      cook_show: { tint: [0xffffff, 0xff9ad5, 0xffd23f], up: false, tex: TEX.spark },
+    const c = this.trial?.ambience ?? ARENAS[this.arenaKey]?.ambience ?? ARENAS.meadow!.ambience;
+    const [sxMin, sxMax] = c.speedX ?? [-25, 25];
+    const [syMin, syMax] = c.speedY ?? (c.up ? [30, 90] : [40, 120]);
+    const lifespan = c.lifespan ?? 9000;
+    const scale = c.scale ?? (c.tex === 'ring' ? { start: 0.12, end: 0.2 } : c.tex === 'smoke' ? { start: 0.4, end: 1.2 } : { start: 0.7, end: 0.1 });
+    // A flapping one keeps one size, its width beating as it flies (about 5 beats a second).
+    const fixed = 'min' in scale ? scale : null;
+    type Particle = Phaser.GameObjects.Particles.Particle;
+    const size = new WeakMap<Particle, number>();
+    const sizeOf = (p: Particle) => size.get(p) ?? 1;
+    // Phaser fires scaleX's onEmit before scaleY's: the size is drawn there.
+    const draw = (p: Particle) => {
+      size.set(p, Phaser.Math.FloatBetween(fixed?.min ?? 1, fixed?.max ?? 1));
+      return sizeOf(p);
     };
-    const c = cfg[arena] ?? cfg.meadow!;
     this.add
-      .particles(0, c.up ? GAME_HEIGHT + 10 : -10, c.tex, {
-        x: { min: 0, max: GAME_WIDTH },
-        speedY: c.up ? { min: -90, max: -30 } : { min: 40, max: 120 },
-        speedX: arena === 'desert' ? { min: 120, max: 260 } : { min: -25, max: 25 },
-        scale: c.tex === TEX.ring ? { start: 0.12, end: 0.2 } : c.tex === TEX.smoke ? { start: 0.4, end: 1.2 } : { start: 0.7, end: 0.1 },
-        alpha: { start: 0.8, end: 0 },
-        lifespan: 9000,
-        frequency: arena === 'desert' ? 40 : 140,
+      .particles(c.fromLeft ? -30 : 0, c.fromLeft ? 0 : c.up ? GAME_HEIGHT + 10 : -10, TEX[c.tex], {
+        ...(c.fromLeft ? { y: { min: 40, max: GAME_HEIGHT - 20 } } : { x: { min: 0, max: GAME_WIDTH } }),
+        speedY: c.up ? { min: -syMax, max: -syMin } : { min: syMin, max: syMax },
+        speedX: { min: sxMin, max: sxMax },
+        ...(c.flap && fixed
+          ? {
+              scaleX: { onEmit: (p?: Particle) => draw(p!), onUpdate: (p: Particle, _k: string, t: number) => sizeOf(p) * (0.25 + 0.75 * Math.abs(Math.sin((t * lifespan) / 100))) },
+              scaleY: { onEmit: (p?: Particle) => sizeOf(p!), onUpdate: (p: Particle) => sizeOf(p) },
+            }
+          : { scale }),
+        ...(c.spin ? { rotate: { onEmit: () => Phaser.Math.Between(0, 359), onUpdate: (_p: Particle, _k: string, _t: number, v: number) => v + c.spin! } } : {}),
+        alpha: c.alpha ?? { start: 0.8, end: 0 },
+        lifespan,
+        frequency: c.frequency ?? 140,
         tint: c.tint,
-        blendMode: Phaser.BlendModes.ADD,
+        blendMode: c.paint ? Phaser.BlendModes.NORMAL : Phaser.BlendModes.ADD,
       })
       .setDepth(FLOOR_TOP - 4);
   }
