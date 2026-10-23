@@ -10,15 +10,18 @@
  * from, restarted with the data it was given (`{ back, data }`), so a side
  * room comes back as the same room. With no back, or back 'Title', it goes to the title.
  *
- * Two pages (item 037; the word bank outgrew one): green / Space flips
- * between them. Page 1 has the sounds, the warm-up, the frames, the bag and
+ * Three pages (item 037; the word bank outgrew one): green / Space steps
+ * through them. Page 1 has the sounds, the warm-up, the frames, the bag and
  * the bank's coverage (by level, vowel and first sound: words · read · solid);
- * page 2 has every word, one row each. A word she has crossed on the
+ * page 2 has every word in play, one row each. A word she has crossed on the
  * Stretchy Bridge (item 054) carries its bridge level in its dot, on page 2.
+ * Page 3 (item 127) lists the stored words apart, each with its reason, and
+ * the `odd` things out of play since item 040.
  */
 
 import Phaser from 'phaser';
 
+import { DROPPED, STORED } from '../../content/phonics/bank';
 import { FAMILIES } from '../../content/phonics/families';
 import { DIGRAPH_SOUNDS, LETTERS } from '../../content/phonics/letters';
 import { FRAMES } from '../../content/phonics/sentences';
@@ -40,6 +43,9 @@ import type { ItemKind } from '../state/ProgressStore';
 import { hookState } from '../hookState';
 
 const LEVEL_NAMES = ['CVC (CAT)', 'blends (FROG)', 'digraphs (SHIP)'];
+
+/** What green / Space turns to, from each page. */
+const PAGE_NEXT = ['every word (page 2)', 'stored words (page 3)', 'back to page 1'];
 
 /** First-try right over her recent tries, as a percentage; '–' with none. */
 const recentPct = (s: { recent: boolean[] }): string =>
@@ -76,15 +82,19 @@ export class ParentScene extends Phaser.Scene {
     const snap = progress.snapshot();
     // Every text here wraps or shrinks to its column (item 020): nothing runs off the page.
     fitText(this.add.text(30, 18, `Grown-ups: Julia's progress  ·  episodes finished: ${snap.episodes}  ·  difficulty ${difficulty()}${difficulty() === 1 ? ' (base: help stays at its start)' : ''}`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '26px', color: '#222' }), GAME_WIDTH - 60, 34);
-    fitText(this.add.text(30, 54, `tries · first-try right (recent) · since the page opened; +n: said with the helper, Dad not there (not counted as reads).  Red = shaky (comes up more often), green = solid. Green / Space: ${this.page ? 'back to page 1' : 'every word (page 2)'}. Red button / Esc / F9: back. F8 twice: erase. \` / ~ (below Esc), anywhere: dad lock.`, {
+    fitText(this.add.text(30, 54, `tries · first-try right (recent) · since the page opened; +n: said with the helper, Dad not there (not counted as reads).  Red = shaky (comes up more often), green = solid. Green / Space: ${PAGE_NEXT[this.page]}. Red button / Esc / F9: back. F8 twice: erase. \` / ~ (below Esc), anywhere: dad lock.`, {
       fontFamily: 'Segoe UI, sans-serif',
       fontSize: '15px',
       color: '#555',
     }), GAME_WIDTH - 60, 34);
 
+    if (this.page === 2) {
+      this.stored();
+      return;
+    }
     if (this.page) {
-      // Every word in the content, plus any other word she has met (spelling, move words).
-      const words = [...new Set([...WORDS.map((w) => w.word), ...Object.keys(snap.words)])];
+      // Every word in the content, plus any other word she has met (spelling, move words); not a stored word (page 3).
+      const words = [...new Set([...WORDS.map((w) => w.word), ...Object.keys(snap.words)])].filter((w) => !STORED.some((s) => s.word === w));
       const perCol = 22;
       // The number in a word's dot is its Stretchy Bridge help level (item 054), once she has crossed it.
       const bridged = (id: string) => (snap.bridgeLevels?.[id] !== undefined ? String(recordedBridgeLevel(progress, id)) : null);
@@ -206,6 +216,27 @@ export class ParentScene extends Phaser.Scene {
   }
 
   /** A column grid of items; `badge` puts a short mark (a help level) in an item's dot, `tag` a word after its name. */
+  /**
+   * Page 3 (item 127): the stored words, out of play at every difficulty and
+   * kept with their pictures and voice, each with its reason and her tries
+   * from before; then the `odd` things out of play since item 040.
+   */
+  private stored(): void {
+    const font = { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#222' };
+    this.add.text(30, 90, `Stored words (${STORED.length})`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '20px', color: '#333', fontStyle: 'bold' });
+    fitText(this.add.text(250, 94, 'Never drawn, at any difficulty; kept with their pictures and voice. To bring one back, ask for it by name (its line in STORED_WHY, content/phonics/bank.ts, goes).', { ...font, fontSize: '14px', color: '#555' }), GAME_WIDTH - 250 - 30, 22);
+    const perCol = Math.ceil(STORED.length / 2);
+    const colW = (GAME_WIDTH - 60) / 2;
+    STORED.forEach((w, i) => {
+      const x = 30 + Math.floor(i / perCol) * colW;
+      const y = 122 + (i % perCol) * 22;
+      const s = progress.stat('words', w.word);
+      fitText(this.add.text(x, y, `${w.word.toUpperCase()}${s.seen ? ` (${s.seen} tries)` : ''}: ${w.stored}`, font), colW - 16, 21);
+    });
+    const y = 122 + perCol * 22 + 10;
+    fitText(this.add.text(30, y, `Out of play since item 040 (odd: a picture she would not know): ${DROPPED.map((w) => w.word.toUpperCase()).join(' ')}`, { ...font, color: '#555' }), GAME_WIDTH - 60, Math.max(22, GAME_HEIGHT - y - 10));
+  }
+
   private grid(title: string, kind: ItemKind, ids: string[], x0: number, y0: number, perCol: number, colW: number, rowH = 30, badge?: (id: string) => string | null, tag?: (id: string) => string): void {
     this.add.text(x0, y0, title, { fontFamily: 'Segoe UI, sans-serif', fontSize: '20px', color: '#333', fontStyle: 'bold' });
     ids.forEach((id, i) => {
@@ -247,7 +278,7 @@ export class ParentScene extends Phaser.Scene {
       this.add.text(30, 690, 'Press F8 again to erase all progress.', { fontFamily: 'Segoe UI, sans-serif', fontSize: '18px', color: '#c0392b' });
     }
     if (this.controls.pressed('green')) {
-      this.scene.restart({ back: this.back, data: this.backData, page: this.page ? 0 : 1 });
+      this.scene.restart({ back: this.back, data: this.backData, page: (this.page + 1) % PAGE_NEXT.length });
       return;
     }
     if (this.controls.pressed('red') || this.controls.dev('F9')) {

@@ -14,14 +14,14 @@
 
 import { writeFile } from 'node:fs/promises';
 
-import { CHARACTER_BY_ID, MOVE_WORDS, PERSONS, ROSTER, abilityCallout, personOf, villainName } from '../../content/battle/roster.js';
+import { CHARACTER_BY_ID, PERSONS, ROSTER, abilityCallout, personOf, villainName } from '../../content/battle/roster.js';
 import { STORIES, storyLines } from '../../content/battle/stories/index.js';
 import { ENDINGS } from '../../content/house/endings.js';
 import { HOME_QUEST, QUESTS } from '../../content/house/quests.js';
 import { ANY_SCENES, HUB_SCENES, hubStoryIds, type HubStory } from '../../content/house/scenes.js';
 import type { FighterSpec } from '../../content/battle/types.js';
-import { FAMILIES, sillyWord } from '../../content/phonics/families.js';
-import { BANK_BY_WORD, BANK } from '../../content/phonics/bank.js';
+import { ALL_FAMILIES, sillyWord } from '../../content/phonics/families.js';
+import { ALL_ACTIONS, BANK_BY_WORD, BANK } from '../../content/phonics/bank.js';
 import { DIGRAPH_SOUNDS, LETTERS, LETTER_NAMES, LONG_VOWEL_SOUNDS, NAME_HIDES } from '../../content/phonics/letters.js';
 import { FETCH_ITEMS, allFrameTokens, allPrefixes, tokenWord } from '../../content/phonics/sentences.js';
 import { SPELL_WORDS } from '../../content/phonics/spelling.js';
@@ -209,7 +209,8 @@ export function composeLines(): LineSpec[] {
   }
   // The word machine (item 026): each rime alone, said after the onset's own
   // sound and never blended with it, and each silly word a wrong tile makes.
-  for (const f of FAMILIES) {
+  // Stored words' families too (item 127): bringing a word back needs no synthesis.
+  for (const f of ALL_FAMILIES) {
     lines.push({ id: rimeLine(f.rime), speaker: PHONICS_SPEAKER, group: group.phonics, text: `${f.say}.`, note: `placeholder for the rime -${f.rime} said alone; replace with a recorded clip` });
     for (const s of f.silly) {
       lines.push({ id: sillyLine(sillyWord(s.letter, f.rime)), speaker: PHONICS_SPEAKER, group: group.phonics, text: `${s.say}!` });
@@ -301,7 +302,8 @@ export function composeLines(): LineSpec[] {
         });
       }
     }
-    for (const word of MOVE_WORDS) {
+    // Stored actions too (item 127): bringing one back needs no synthesis.
+    for (const word of ALL_ACTIONS.map((w) => w.word)) {
       for (const t of MOVE_LINES) lines.push({ id: narratorLine(n, moveKey(t.key, word)), speaker: n, group: g, ...fill(t, { word }) });
     }
     // Charge the Spell's gestures (item 053): the narrator performs them.

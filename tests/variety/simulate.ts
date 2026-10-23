@@ -24,7 +24,7 @@ import { ENDINGS } from '../../content/house/endings';
 import { FETCH_ROOMS, PLACES, HOME } from '../../content/house/house';
 import { QUESTS } from '../../content/house/quests';
 import { scenesFor } from '../../content/house/scenes';
-import { ACTIONS, BANK_BY_WORD, LIVE, THINGS, VOWEL_LIST } from '../../content/phonics/bank';
+import { ACTIONS, BANK_BY_WORD, LIVE, STORED_WHY, THINGS, VOWEL_LIST } from '../../content/phonics/bank';
 import { FAMILIES } from '../../content/phonics/families';
 import { FRAMES } from '../../content/phonics/sentences';
 import { RUNES } from '../../content/phonics/runes';
@@ -63,8 +63,13 @@ function dim(group: string, name: string, pool: readonly string[] | null = null)
 /** Episode `e` showed `items` in dimension `name`. */
 function saw(e: number, group: string, name: string, items: (string | null | undefined)[], pool: readonly string[] | null = null): void {
   const d = dim(group, name, pool);
-  (d.eps[e] ??= []).push(...items.filter((x): x is string => Boolean(x)));
+  const got = items.filter((x): x is string => Boolean(x));
+  (d.eps[e] ??= []).push(...got);
+  if (WORDISH.includes(group)) for (const w of got) if (STORED_WHY[w]) storedDrawn.push(`${w} (${name}, episode ${e + 1})`);
 }
+/** Item 127: every stored word that came up anywhere she reads or is shown a word or picture. Must stay empty. */
+const WORDISH = ['words', 'pictures', 'items'];
+const storedDrawn: string[] = [];
 
 const bank = (w: string) => BANK_BY_WORD[w];
 const villains = ACTIVE_CAST.villains;
@@ -127,6 +132,7 @@ for (let e = 0; e < EPISODES; e++) {
       progress.record('frames', p.sentence.frame, right(), 0);
     }
     if (p.kind === 'machine') {
+      saw(e, 'pictures', 'machine pictures', p.machine.rounds.map((r) => r.word));
       saw(e, 'phonics', 'machine families', p.machine.rounds.map((r) => r.rime), FAMILIES.map((f) => f.rime));
       for (const r of p.machine.rounds) {
         const ok = right();
@@ -245,3 +251,11 @@ for (const r of rows) {
   console.log(`| ${r.group}: ${r.name} | ${r.pool ?? '—'} | ${r.distinct} | ${pct(r.reach)} | ${r.medianGap ?? '—'} | ${pct(r.soon)} | ${r.top} (${r.topRatio.toFixed(1)}) | ${never} |`);
 }
 if (JSON_OUT) writeFileSync(JSON_OUT, JSON.stringify({ episodes: EPISODES, seed: SEED, right: RIGHT, rows }, null, 1) + '\n');
+// Item 127: a stored word is never drawn. Fails the run (exit 1) if one was.
+const storedCount = Object.keys(STORED_WHY).length;
+if (storedDrawn.length) {
+  console.log(`
+STORED WORDS DRAWN: ${storedDrawn.length}: ${storedDrawn.slice(0, 20).join(', ')}`);
+  process.exitCode = 1;
+} else console.log(`
+Stored words drawn: none of the ${storedCount}.`);

@@ -12,7 +12,7 @@ import { test } from 'node:test';
 import { ART_BY_ID } from '../../content/art/assets';
 import { CHARACTER_BY_ID, MOVE_WORDS, ROSTER, abilityWords, personOf } from '../../content/battle/roster';
 import { CASTERS, HUB_SCENES, storyTexts } from '../../content/house/scenes';
-import { ACTIONS, BANK_BY_WORD } from '../../content/phonics/bank';
+import { ACTIONS, ALL_ACTIONS, BANK_BY_WORD } from '../../content/phonics/bank';
 import { PICTURE_WORDS, SPECIAL_WORDS } from '../../content/phonics/words';
 import { reformedLine, wordLine } from '../../content/voice/ids';
 import { EPISODE_DEFAULTS } from '../../src/config';
@@ -42,9 +42,9 @@ function playRight(store: ProgressStore, p: MovePlan): void {
   }
 }
 
-test('MOVE_WORDS are the bank\'s action words; roster move words are bank action words or flavour (POW, ICE)', () => {
+test('MOVE_WORDS are the bank\'s action words; roster move words are bank action words (a stored one too, item 127: flavour that never comes up) or flavour (POW, ICE)', () => {
   assert.deepEqual([...MOVE_WORDS].sort(), ACTIONS.map((w) => w.word).sort());
-  const moves = new Set<string>(MOVE_WORDS);
+  const moves = new Set<string>(ALL_ACTIONS.map((w) => w.word));
   for (const c of ROSTER) {
     for (const f of [c.good, c.evil]) for (const ab of f.abilities) for (const w of abilityWords(ab)) assert.ok(moves.has(w) || ['pow', 'ice'].includes(w), `${c.id}.${ab.id}: ${w}`);
   }

@@ -24,7 +24,7 @@ import { withDifficulty } from './difficulty';
 import { memory, seeded, spread } from './seeds';
 
 /** Seed 1's chain since item 126 (MOM, MOP's neighbour; M29: it changes the vowel). */
-const GOLDEN_SEED_1 = ['pan', 'man', 'map', 'mop', 'mom'];
+const GOLDEN_SEED_1 = ['pan', 'man', 'map', 'cap', 'cup'];
 
 const sameSound = (a: string, b: string) => a === b || [a, b].sort().join('') === 'ck';
 
@@ -88,8 +88,8 @@ test('planShifter (hunt 6, M29): seeded draws change all three places, the vowel
 });
 
 test('wrongPictures (M29): at the vowel or the last letter one sibling and another picture, its first letter first; at the first letter siblings only', () => {
-  // BIG at the last letter: two pictured siblings, BIB and BIN.
-  assert.deepEqual(wrongPictures('big', 2, 'bug', SHIFT_WORDS).sort(), ['bib', 'bin']);
+  // BIG at the last letter: one pictured sibling, BIB (BIN is stored, item 127), and another picture with its first letter.
+  assert.deepEqual(wrongPictures('big', 2, 'bug', SHIFT_WORDS).sort(), ['bed', 'bib']);
   const like = wrongPictures('cap', 2, 'cat', ['can', 'cup', 'dog', 'cat']);
   assert.deepEqual(like, ['can', 'cup'], 'the sibling, then a picture with its first letter before one without');
   for (const w of SHIFT_WORDS) for (const o of wrongPictures(w, 0, '', SHIFT_WORDS)) assert.equal(changedAt(w, o), 0, `the first letter, siblings only: ${w} beside ${o}`);
@@ -119,11 +119,11 @@ test('planShifter: keeps clear of what it is told; a shorter chain where it must
   const avoid = SHIFT_WORDS.filter((w) => w.endsWith('at') || w.endsWith('an'));
   const p = planShifter(new ProgressStore(memory()), { avoid, taken: ['bug'] }, seeded(3))!;
   for (const w of shifterShown(p)) assert.ok(!avoid.includes(w) && w !== 'bug', w);
-  // Only HEN PEN TEN left: two links at most (HEN, PEN, TEN), no chain of four.
-  const only = new Set(['hen', 'pen', 'ten']);
+  // Only PAN PEN TEN left: two links at most (PAN, PEN, TEN), no chain of four.
+  const only = new Set(['pan', 'pen', 'ten']);
   const short = planShifter(new ProgressStore(memory()), { avoid: SHIFT_WORDS.filter((w) => !only.has(w)), taken: [] }, seeded(5))!;
   assert.equal(short.links.length, 2);
-  assert.equal(planShifter(new ProgressStore(memory()), { avoid: SHIFT_WORDS.filter((w) => w !== 'hen' && w !== 'pen'), taken: [] }, seeded(5)), null);
+  assert.equal(planShifter(new ProgressStore(memory()), { avoid: SHIFT_WORDS.filter((w) => w !== 'ten' && w !== 'pen'), taken: [] }, seeded(5)), null);
 });
 
 test('help ramp: level 1 at base whatever she has done; recorded steps up unaided, down with help', () => {

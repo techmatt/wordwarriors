@@ -8,7 +8,7 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
-import { BANK } from '../content/phonics/bank';
+import { BANK, STORED } from '../content/phonics/bank';
 import { FAMILIES } from '../content/phonics/families';
 import { FRAMES } from '../content/phonics/sentences';
 import { RUNE_SOUNDS } from '../src/rules/charge';
@@ -110,7 +110,7 @@ test('THE END through window resizes and a hidden tab: still THE END, its cue pl
   expectNoErrors(errors);
 });
 
-test('a returning player with everything maxed: the grown-ups page fits both pages, and an episode starts', async ({ page }) => {
+test('a returning player with everything maxed: the grown-ups page fits all three pages, and an episode starts', async ({ page }) => {
   test.setTimeout(90_000);
   const errors = collectErrors(page);
   const stat = { seen: 9999, right: 7777, wrong: 2222, recent: [true, false, true, false, true, false, true, false], last: Date.now() };
@@ -136,11 +136,14 @@ test('a returning player with everything maxed: the grown-ups page fits both pag
     recent: { words: words.slice(0, 24) },
   });
   await boot(page, '?scene=parent&qa=1');
-  for (const p of [1, 2]) {
+  for (const p of [1, 2, 3]) {
     await until(page, (s) => s.scene === 'Parent', 30_000, `the grown-ups page ${p}`);
     await page.waitForTimeout(600);
     // Item 103: page 1 lists the Shape-Shifter's words by help level.
     if (p === 1) expect((await texts(page)).some((t) => t.text.includes('Shape-Shifter levels') && t.text.includes(`2: ${SHIFT_WORDS.filter((_, i) => i % 3 === 1).sort()[0]}`))).toBe(true);
+    // Item 127: the stored words are listed apart, on page 3 with their reasons, never in page 2's grid.
+    if (p === 2) expect((await texts(page)).filter((t) => STORED.some((w) => new RegExp(`^${w.word}( NEW)?  `).test(t.text))).map((t) => t.text)).toEqual([]);
+    if (p === 3) for (const w of STORED) expect((await texts(page)).some((t) => t.text.startsWith(`${w.word.toUpperCase()} (`) && t.text.endsWith(w.stored!)), w.word).toBe(true);
     const bad = layoutIssues(await qaLayout(page), 'Parent', new Set()).filter((i) => i.kind === 'text-offscreen' || i.kind === 'text-overlap');
     expect(bad.map((i) => i.detail), `page ${p}`).toEqual([]);
     await press(page, 'green');

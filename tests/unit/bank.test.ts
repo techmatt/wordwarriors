@@ -44,9 +44,9 @@ test('the bank: unique words, every vowel and level present, things and actions 
   for (const v of ['a', 'e', 'i', 'o', 'u']) assert.ok(THINGS.some((w) => w.vowel === v), `a pictured short ${v}`);
   for (const l of [1, 2, 3]) assert.ok(THINGS.some((w) => w.level === l), `a pictured level ${l} word`);
   for (const w of BANK) {
-    // Item 040: an `odd` word (YAK) is no picture to match.
-    assert.equal(THINGS.includes(w), w.role !== 'action' && !w.odd, w.word);
-    assert.equal(ACTIONS.includes(w), w.role !== 'thing', w.word);
+    // Item 040: an `odd` word (YAK) is no picture to match. Item 127: a stored word is in no pool.
+    assert.equal(THINGS.includes(w), w.role !== 'action' && !w.odd && !w.stored, w.word);
+    assert.equal(ACTIONS.includes(w), w.role !== 'thing' && !w.stored, w.word);
     // Item 056: a silent letter (the E of KITE) has no sound, ``.
     for (const u of w.sounds) assert.ok(u === '' || SOUND_BY_UNIT[u], `${w.word}: no sound for ${u}`);
   }

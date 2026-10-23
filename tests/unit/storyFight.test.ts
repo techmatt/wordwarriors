@@ -13,7 +13,7 @@ import { FIGHTS, FIGHT_BY_ID, fightPropArt } from '../../content/battle/fights';
 import { CHARACTER_BY_ID, MOVE_WORDS, PERSONS } from '../../content/battle/roster';
 import { STORIES, STORY_BY_ID, padBeats, storyLines } from '../../content/battle/stories/index';
 import { storySplashArt } from '../../content/battle/stories/types';
-import { BANK } from '../../content/phonics/bank';
+import { ALL_ACTIONS, BANK } from '../../content/phonics/bank';
 import { fighterId, group, storyLine } from '../../content/voice/ids';
 import { EPISODE_DEFAULTS } from '../../src/config';
 import { withStems } from '../../src/rules/bank';
@@ -68,7 +68,9 @@ test('story fights: beats are well formed, spots and splashes drawn, each part e
         if (i && (i.kind === 'dodge' || i.kind === 'grab')) assert.ok(spots.has(i.spot), `${b.id}: spot ${i.spot}`);
         if (i && (i.kind === 'pad' || i.kind === 'dodgePads') && i.answers !== 'gift') {
           assert.ok(i.answers.length >= 2, `${b.id}: a small set of sensible answers`);
-          for (const w of i.answers) assert.ok(MOVE_WORDS.includes(w), `${b.id}: ${w} is a move word`);
+          // A stored word (item 127: WET, SKIP, TWIST) stays an answer: the draw skips it until it comes back; one answer at least is live.
+          for (const w of i.answers) assert.ok(MOVE_WORDS.includes(w) || ALL_ACTIONS.some((x) => x.word === w), `${b.id}: ${w} is a move word`);
+          assert.ok(i.answers.some((w) => MOVE_WORDS.includes(w)), `${b.id}: a live answer`);
         }
         if (b.kind === 'counter') assert.equal(i?.kind, 'pad', `${b.id}: a counter waits on pads`);
         if (b.kind === 'attack') assert.ok(i?.kind === 'dodge' || i?.kind === 'dodgePads', `${b.id}: an attack waits on a dodge`);

@@ -35,7 +35,7 @@ test('families: every bank rime in RIMES with two or more one-letter-onset words
   // familiar pictures, so -AM -EG -IG -IN -OD -OP -UB -UT left (WIG, PEG, ROD... are odd).
   // Item 043: PIN is familiar again, so -IN (PIN BIN) is back; -IG still has only PIG.
   // Item 056: -ING -OCK (KING RING WING, ROCK SOCK LOCK).
-  assert.deepEqual(FAMILIES.map((f) => f.rime).sort(), ['am', 'an', 'ap', 'at', 'en', 'et', 'in', 'ing', 'ock', 'og', 'ox', 'ug', 'un']);
+  assert.deepEqual(FAMILIES.map((f) => f.rime).sort(), ['am', 'an', 'ap', 'at', 'en', 'et', 'ing', 'ock', 'og', 'ox', 'ug', 'un']);
   for (const f of FAMILIES) {
     assert.ok(f.all.length >= 2, `${f.rime} has ${f.all.join(', ')}`);
     assert.ok(f.words.length >= 2, `${f.rime} has two pictures to build: ${f.words.join(', ')}`);
@@ -49,9 +49,9 @@ test('families: every bank rime in RIMES with two or more one-letter-onset words
       assert.ok(FETCH_BY_WORD[w], `${w} is a battle item`);
     }
   }
-  // Item 054's MAT joins -AT by itself.
-  assert.deepEqual(FAMILY_BY_RIME.at!.words.sort(), ['bat', 'cat', 'hat', 'mat', 'rat']);
-  assert.deepEqual(FAMILY_BY_RIME.ug!.words.sort(), ['bug', 'jug', 'mug', 'rug']);
+  // Item 054's MAT joined -AT by itself; item 127 stored MAT and RAT, and JUG and MUG.
+  assert.deepEqual(FAMILY_BY_RIME.at!.words.sort(), ['bat', 'cat', 'hat']);
+  assert.deepEqual(FAMILY_BY_RIME.ug!.words.sort(), ['bug', 'rug']);
   assert.deepEqual(FAMILY_BY_RIME.ug!.all.sort(), ['bug', 'hug', 'jug', 'mug', 'rug', 'tug']);
   // A blend or digraph onset is not one tile: SLUG and PLUG are not -UG's, CHOP not -OP's.
   assert.ok(!FAMILY_BY_RIME.ug!.all.includes('slug'));

@@ -11,7 +11,7 @@ import { ART_ASSETS } from '../../content/art/assets';
 import { CHARACTER_BY_ID, DAD_COLOURS, MINIONS, MOVE_WORDS, OWN_COLOURS, PERSONS, ROSTER, abilityWords, formId, formsOf } from '../../content/battle/roster';
 import { HOME_QUEST, QUESTS } from '../../content/house/quests';
 import { ANY_SCENES, HUB_SCENES, hubStoryIds, storyTexts } from '../../content/house/scenes';
-import { BANK, THINGS } from '../../content/phonics/bank';
+import { ALL_ACTIONS, BANK, BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
 import { FAMILIES, sillyWord } from '../../content/phonics/families';
 import { DIGRAPH_SOUNDS, LETTERS, LONG_VOWEL_SOUNDS } from '../../content/phonics/letters';
 import { FETCH_ITEMS, FRAMES, allFrameTokens, allPrefixes, sentence, tokenWord } from '../../content/phonics/sentences';
@@ -110,8 +110,8 @@ test('roster: every character is complete, good and evil', () => {
       assert.ok(f.ultimate, `${f.displayName} has an ultimate`);
       for (const ab of [...f.abilities, f.ultimate]) {
         if (ab.minion) assert.ok(MINIONS[ab.minion], `${ab.id} summons a known minion`);
-        // Flavour since item 037: a bank word, or POW / ICE, which she no longer reads.
-        for (const w of abilityWords(ab)) assert.ok([...MOVE_WORDS, 'pow', 'ice'].includes(w), `${ab.id} word ${w} is a move word or flavour`);
+        // Flavour since item 037: a bank action word (stored ones too, item 127: they never come up), or POW / ICE, which she no longer reads.
+        for (const w of abilityWords(ab)) assert.ok([...ALL_ACTIONS.map((a) => a.word), 'pow', 'ice'].includes(w), `${ab.id} word ${w} is a move word or flavour`);
       }
     }
     assert.ok(c.good.abilities.filter((a) => abilityWords(a).length).length >= 2, `${c.id} has at least two abilities with words`);
@@ -152,7 +152,8 @@ test('roster: named counter words are pictured, and never in any name, ability, 
   const frameTokens = new Set(allFrameTokens());
   for (const c of ROSTER) {
     const w = c.counter.word;
-    assert.ok(pictured.has(w), `${c.id}: counter word ${w} has a picture`);
+    // Item 127: a stored counter word (BAG, TUB, NUT) keeps its picture but is never drawn, so its named item waits.
+    assert.ok(pictured.has(w) || Boolean(BANK_BY_WORD[w]?.stored), `${c.id}: counter word ${w} has a picture`);
     assert.ok(!(MOVE_WORDS as readonly string[]).includes(w), `${c.id}: counter word ${w} is a move word`);
     assert.ok(!frameTokens.has(w), `${c.id}: counter word ${w} is a sentence word`);
     for (const s of said) assert.ok(!words(s).includes(w), `${c.id}: counter word ${w} is said in "${s}"`);

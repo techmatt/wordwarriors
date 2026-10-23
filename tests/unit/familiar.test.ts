@@ -7,7 +7,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { ACTIONS, BANK, BANK_BY_WORD, DROPPED, LIVE, THINGS } from '../../content/phonics/bank';
+import { ACTIONS, BANK, BANK_BY_WORD, DROPPED, LIVE, STORED, THINGS } from '../../content/phonics/bank';
 import { ROSTER } from '../../content/battle/roster';
 import { FAMILY_WORDS } from '../../content/phonics/families';
 import { FETCH_ITEMS } from '../../content/phonics/sentences';
@@ -34,13 +34,15 @@ test('familiar words: no odd word is a picture to match', () => {
   for (const c of ROSTER) assert.ok(!odd(c.counter.word), `${c.id}'s counter ${c.counter.word} is odd`);
 });
 
-test('familiar words: an odd word keeps its action role, or drops out of play', () => {
-  for (const w of BANK.filter((b) => b.odd)) {
+test('familiar words: an odd word keeps its action role, or drops out of play; a stored word is out of play', () => {
+  for (const w of BANK.filter((b) => b.odd && !b.stored)) {
     if (w.role === 'thing') assert.ok(DROPPED.includes(w) && !LIVE.includes(w), w.word);
     else assert.ok(ACTIONS.includes(w) && LIVE.includes(w), w.word);
   }
   for (const w of ['yak', 'vat', 'cog']) assert.ok(odd(w), w);
-  for (const w of ['ram', 'jet']) assert.ok(ACTIONS.some((a) => a.word === w), w);
+  // Item 127: RAM and JET, odd things, are stored as actions too.
+  for (const w of ['ram', 'jet']) assert.ok(!ACTIONS.some((a) => a.word === w) && STORED.some((s) => s.word === w), w);
+  for (const w of STORED) assert.ok(!LIVE.includes(w) && !DROPPED.includes(w), w.word);
 });
 
 test('line variants: the default cast says variant 1 of each; a drawn episode any of three', () => {

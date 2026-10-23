@@ -148,7 +148,9 @@ test('bridge words: pictured things with a short vowel; tiers are hold-sound CVC
   assert.equal(bridgeEase('frog'), 3);
   assert.equal(bridgeEase('ship'), 3);
   // Item 054's words are in.
-  for (const w of ['mat', 'man', 'lid', 'lock']) assert.ok(BRIDGE_PICTURES.includes(w), w);
+  // MAT is stored (item 127: the foam squares read as a puzzle).
+  for (const w of ['man', 'lid', 'lock']) assert.ok(BRIDGE_PICTURES.includes(w), w);
+  assert.ok(!BRIDGE_PICTURES.includes('mat'));
 });
 
 test('bridge draw (item 067): a fresh store crosses any short word, every tier, never one over BRIDGE.maxUnits; the easier tier first', () => {

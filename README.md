@@ -676,24 +676,44 @@ louder, so the bridge keeps 0.06 s. L and V now hold. Card 10's KEY replaces car
 ### The word bank's coverage rule
 
 The bank covers phonics by rule, not by luck. Counting only familiar pictured words
-(`THINGS`: not `odd`, not actions), `COVERAGE` in `content/phonics/bank.ts` asks for:
+(`THINGS`: not `odd`, not stored, not actions), `COVERAGE` in `content/phonics/bank.ts` asks for:
 
 - **3 per first sound**, every letter sound and digraph (QU counts as Q), unless an
-  entry there gives a lower target and why: I, O, U and X have 1 and A and Z 2, through
-  words with sounds she has not been taught (item 058, below); E, Q, W, Y and TH have
-  1 or 2; voiced TH none;
+  entry there gives a lower target and why: I, O and U have 1 and A and Z 2, through
+  words with sounds she has not been taught (item 058, below); E, J, N, V, W, Y and TH have
+  1 or 2; Q, X (their only pictures stored, item 127) and voiced TH none;
 - **a last sound** for the sounds words end on: 3 each for B D G K L M N P S T X CK NG
   SH, fewer for F Z CH TH, with reasons;
 - **8 per short vowel**; **2 pictures per word-machine family**, and the families listed
-  must stay families (-ING and -OCK joined in 056);
+  must stay families (-ING and -OCK joined in 056; -IN left in 127, BIN stored);
 - **the Stretchy Bridge**: 3 early words (levels 1–2, a short vowel) per first sound in
-  `COVERAGE.bridgeStarts` (R, V and J have 2, with reasons), so the far bank can show two that start like the word and differ later;
+  `COVERAGE.bridgeStarts` (N, T, G and V have 2, R and J 1, with reasons), so the far bank can show two that start like the word and differ later;
 - **long vowels**: long E 3, long O, A and I 2 each, long U none yet.
 
 `npm run bank:audit` prints the table (`-- --gaps` only the shortfalls) and the
 two-sound trios (MAT MAP MAN). `tests/unit/coverage.test.ts` fails when a row drops
-under its target, so removing a word, marking one `odd` or retiring a family that
+under its target, so removing a word, marking one `odd` or storing one, or retiring a family that
 leaves a letter short goes red. Lower a target only with its reason.
+
+### Stored words
+
+Item 127 audited every word she reads or is shown, pictures included, and **stored** the
+risky ones: a picture she would name another way (SWISH's farmer with a scythe reads as
+CUT, DASH's running boy as RUN), a word too rare for her, a sound or idea with no
+picture, or one word too many for one picture (TUB beside BATH). `STORED_WHY` in
+`content/phonics/bank.ts` lists each with its reason. A stored word is in no pool
+(`THINGS`, `ACTIONS`, `LIVE` leave it out), so nothing draws it at any difficulty, and a
+saved bag holding one drops it. It keeps its entry, picture, `word_<x>` line, effect and
+move lines: the voice composer writes those from `ALL_ACTIONS` and `ALL_FAMILIES`, so
+storing or bringing back a word changes nothing in `lines.json`. **To bring one back,
+delete its line in `STORED_WHY`**, then `npm run bank:audit` (a coverage target lowered
+for it can go back up), `npm test` and `npm run variety`. The grown-ups page lists the
+stored words on page 3, with their reasons; `npm run variety` ends with "Stored words
+drawn: none of the N" and exits 1 if one came up. A stored word stays in a roster
+ability's `words` and in a story beat's `answers`: both are filtered to live move words
+when drawn. Three villains' named counters wait while their word is stored (Gold Bag:
+BAG, Bubble Tub: TUB, Golden Nut: NUT). `odd` (item 040) is older and narrower: an odd
+thing is out of play, but an odd `both` word keeps its move pad.
 
 Sound units (056): QU and NG are units like SH (QU sounds as Q's "Kwuh"), and doubled
 letters (EGG, BELL: FF LL SS ZZ GG) are one unit sounding as the letter, without

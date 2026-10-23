@@ -31,15 +31,15 @@
  * rule"). Counting familiar pictured words only (THINGS), the bank keeps:
  *
  * - 3 per first sound, every letter sound and digraph (QU as Q), or the lower
- *   target COVERAGE.first gives with its reason: I O U X have 1 and A Z 2,
+ *   target COVERAGE.first gives with its reason: I O U have 1 and A Z 2,
  *   through words with sounds she has not been taught (item 058: IGLOO,
- *   OCTOPUS, UMBRELLA, X-RAY, APPLE, ZOO, ZEBRA); E Q W Y TH have 1-2; voiced
- *   TH none;
+ *   OCTOPUS, UMBRELLA, APPLE, ZOO, ZEBRA); E J N V W Y TH have 1-2; Q X
+ *   (QUEEN, X-RAY stored, item 127) and voiced TH none;
  * - a last sound: 3 for B D G K L M N P S T X CK NG SH, fewer for F Z CH TH;
  * - 8 per short vowel; 2 pictures per word-machine family, the listed
  *   families staying families;
  * - the Stretchy Bridge: 3 early words (levels 1-2, short vowel) per first
- *   sound it lists (COVERAGE.bridgeStarts; R V J have 2), so its far bank can show two that start alike and differ later;
+ *   sound it lists (COVERAGE.bridgeStarts; N T G V have 2, R J 1), so its far bank can show two that start alike and differ later;
  * - long vowels: E 3, O A I 2 each, U none yet.
  *
  * tests/unit/coverage.test.ts fails on any row under target; `npm run
@@ -103,6 +103,8 @@ export interface BankWord extends BankEntry {
   vowel: Vowel | null;
   onset: string;
   rime: string;
+  /** Stored (item 127): why it is out of play (STORED_WHY). */
+  stored?: string;
 }
 
 const T = (word: string, glyph?: string, extra: Partial<BankEntry> = {}): BankEntry => ({ word, role: 'thing', ...(glyph ? { glyph } : {}), ...extra });
@@ -296,17 +298,80 @@ export function tag(e: BankEntry): BankWord {
   return { ...e, units, sounds: units.map(soundOf), level: levelOf(units, vi), vowel: units[vi] as Vowel, onset: onset.join(''), rime: units.slice(vi).join('') };
 }
 
-export const BANK: BankWord[] = ENTRIES.map(tag);
+/**
+ * The stored tier (item 127, Matt's): words that frustrated her or would, each
+ * with its reason. A stored word keeps its entry, picture, `word_<x>` line,
+ * effect and (an action) its move lines, but is in no pool: never read, never
+ * shown, never a pad, a gift, a picture or a fetched item, at any difficulty.
+ * To bring one back, delete its line here (docs/content.md, *Matt says X*).
+ * The grown-ups page lists them apart, with these reasons.
+ */
+export const STORED_WHY: Record<string, string> = {
+  // Things: a picture she would name another way, or one word too many for one picture.
+  tub: 'the bathtub picture is BATH, also a bank word',
+  jug: 'a pitcher of milk: she says MILK (a bank word) or pitcher',
+  mug: 'a mug of cocoa is a CUP to her (CUP is kept)',
+  glass: 'a glass of water is a CUP or WATER to her',
+  sack: 'a sack is a BAG to her',
+  bag: 'the pink handbag is a purse',
+  lamb: 'the same picture as SHEEP (kept)',
+  tap: 'a US child says faucet; the picture also reads as SINK or DRIP',
+  bin: 'a US child says trash can, which points at CAN',
+  mat: 'the foam squares read as a puzzle, or as RUG',
+  desk: 'drawn as a little table: she says table',
+  jeep: 'she says car (or TRUCK)',
+  queen: 'the young queen in a gown reads as a princess',
+  vase: 'the flowers fill the picture: she says flowers',
+  xray: 'she says bones or hand; an x-ray is no idea she has',
+  hen: 'a 4-year-old says chicken',
+  rat: 'the big-eared grey rodent reads as a mouse',
+  nut: 'a lone hazelnut reads as an onion or an acorn',
+  gate: 'the planks between posts read as a fence',
+  // Actions: a picture named another way, a sound or idea with no picture, or a rare word.
+  swish: 'the farmer with a scythe reads as CUT (Matt)',
+  dash: 'the running boy reads as RUN (Matt)',
+  jog: 'a running boy again: RUN',
+  rush: 'the picture is wind blowing leaves; RUSH is an idea, close to RUN',
+  zip: 'ZIP is a zipper to her; the comet reads as a fireball',
+  bam: 'a sound word drawn as a hammer (SMASH keeps the hammer)',
+  bop: 'a sound word drawn as a toy hammer, a third hammer',
+  slam: 'the fist on the ground reads as a punch',
+  jab: 'the boxing glove is a punch; JAB is rare for her',
+  hum: 'a sound she cannot see: the picture reads as singing',
+  hex: 'a word she does not know; the swirl reads as magic or SPIN',
+  jig: 'a word she does not know; the picture reads as dance',
+  fix: 'an idea, drawn as a wrench and a band-aid',
+  fog: 'fog drawn alone is a cloud',
+  wet: 'the picture is a splash, as SPLASH',
+  plop: 'a drop into a puddle: DRIP and SPLASH again',
+  flop: 'a walrus landing in a splash: walrus or SPLASH',
+  skip: 'a US child says jump rope, and it reads as JUMP',
+  twist: 'the tornado reads as a tornado, or SPIN',
+  lift: 'the crane is the picture: she says crane',
+  snap: 'a still crocodile: she says crocodile; CHOMP keeps the jaws',
+  quest: 'an idea and a rare word; the picture reads as walking',
+  // Odd things whose action side was still live: the picture is named another way there too.
+  jet: 'the airliner is an airplane to her (odd as a thing since 040)',
+  ram: 'the horned sheep is a SHEEP (odd as a thing since 040)',
+  top: 'spinning tops are rare now (odd as a thing since 040)',
+  fin: 'every child says shark (odd as a thing since 040)',
+};
+
+export const BANK: BankWord[] = ENTRIES.map(tag).map((w) => (STORED_WHY[w.word] ? { ...w, stored: STORED_WHY[w.word] } : w));
 export const BANK_BY_WORD: Record<string, BankWord> = Object.fromEntries(BANK.map((w) => [w.word, w]));
 
-/** Pictured words she knows on sight (not `odd`): rooms, key words, the counter, the warm-up, the word machine, fetched items. */
-export const THINGS: BankWord[] = BANK.filter((w) => w.role !== 'action' && !w.odd);
-/** Words with a battle effect of their own: move pads and the ally's gift. An `odd` `both` word stays one. */
-export const ACTIONS: BankWord[] = BANK.filter((w) => w.role !== 'thing');
-/** Every word she can be given to read: a thing or an action. Not an `odd` thing (YAK), which is out of play. */
+/** Pictured words she knows on sight (not `odd`, not stored): rooms, key words, the counter, the warm-up, the word machine, fetched items. */
+export const THINGS: BankWord[] = BANK.filter((w) => w.role !== 'action' && !w.odd && !w.stored);
+/** Words with a battle effect of their own: move pads and the ally's gift. An `odd` `both` word stays one; a stored one does not. */
+export const ACTIONS: BankWord[] = BANK.filter((w) => w.role !== 'thing' && !w.stored);
+/** Every word she can be given to read: a thing or an action. Not an `odd` thing (YAK) or a stored word, which are out of play. */
 export const LIVE: BankWord[] = BANK.filter((w) => THINGS.includes(w) || ACTIONS.includes(w));
-/** The `odd` things out of play (item 040): kept with their pictures and lines, in case Matt overrules one. */
-export const DROPPED: BankWord[] = BANK.filter((w) => !LIVE.includes(w));
+/** The `odd` things out of play (item 040): kept with their pictures and lines, in case Matt overrules one. Not the stored words (STORED). */
+export const DROPPED: BankWord[] = BANK.filter((w) => !LIVE.includes(w) && !w.stored);
+/** The stored words (item 127, STORED_WHY): out of play, kept to bring back. */
+export const STORED: BankWord[] = BANK.filter((w) => w.stored);
+/** Every action word, stored ones too: the voice composer still writes their move lines, so bringing one back needs no synthesis. */
+export const ALL_ACTIONS: BankWord[] = BANK.filter((w) => w.role !== 'thing');
 
 export interface CoverageTarget {
   target: number;
@@ -319,13 +384,16 @@ export const COVERAGE = {
   /** Familiar pictures per first sound, every letter sound and digraph, unless `first` says less and why. */
   firstTarget: 3,
   first: {
+    j: { target: 1, why: 'JAM; JUG and JEEP are stored (item 127: she says milk, car), JET odd and stored' },
+    n: { target: 2, why: 'NET, NEST; NUT is stored (item 127: a lone hazelnut reads as an onion)' },
+    v: { target: 2, why: 'VAN, VET; VASE is stored (item 127: she says flowers), VEST odd' },
     a: { target: 2, why: 'ANT, APPLE; ALLIGATOR and ASTRONAUT she would not read for years' },
     e: { target: 2, why: 'EGG, ELF; ELK and EDGE are no picture she knows' },
     i: { target: 1, why: 'IGLOO (untaught OO); INSECT she would call a bug, INK and INCH no clear picture' },
     o: { target: 1, why: 'OCTOPUS (untaught schwas); OTTER she would not know, an OX she would call a cow' },
     u: { target: 1, why: 'UMBRELLA (an untaught schwa); UP is an idea, UNDER a place, not a picture' },
-    q: { target: 1, why: 'QUEEN; QUILT she would call a blanket (odd); QUEST is an action word' },
-    x: { target: 1, why: 'X-RAY, its X said by name (x_name); no word starts with the KS sound' },
+    q: { target: 0, why: 'QUEEN is stored (item 127: the picture reads as a princess; an older queen would bring her back); QUILT she would call a blanket (odd); QUEST is stored' },
+    x: { target: 0, why: 'X-RAY is stored (item 127: she says bones); no word starts with the KS sound' },
     w: { target: 2, why: 'WEB, WING; WIG is odd, WELL and WITCH are said in hub scenes (WELL DONE, a good witch)' },
     y: { target: 1, why: 'YOYO; YAK is odd; YAWN, YARN and YOLK need sounds the bank has not got' },
     z: { target: 2, why: 'ZOO, ZEBRA (untaught OO, schwa); ZAP and ZIP are move words, ZIGZAG and ZERO no picture she knows' },
@@ -348,14 +416,18 @@ export const COVERAGE = {
   vowelTarget: 8,
   /** Familiar pictures per word-machine family (it needs two to build), and the families that must stay families. */
   familyTarget: 2,
-  families: ['at', 'an', 'ap', 'en', 'et', 'og', 'ug', 'in', 'ox', 'un', 'ing', 'ock'],
+  // Item 127: -IN left (PIN alone: BIN is stored, a trash can to her, FIN odd); a second familiar -IN picture brings it back.
+  families: ['at', 'an', 'ap', 'en', 'et', 'og', 'ug', 'ox', 'un', 'ing', 'ock'],
   /** The Stretchy Bridge (item 054): early words (levels 1-2, short vowel) per first sound, so its far bank shows two that start alike and differ later. */
   bridgeTarget: 3,
   bridgeStarts: ['m', 's', 'f', 'l', 'n', 'r', 'v', 'b', 'c', 'd', 'h', 'p', 't', 'g', 'j'],
   bridge: {
-    r: { target: 2, why: 'RAT, RUG; ROCK and RING are level 3, RAFT and RAM odd' },
+    r: { target: 1, why: 'RUG; RAT is stored (item 127: it reads as a mouse), ROCK and RING are level 3, RAFT and RAM odd' },
+    n: { target: 2, why: 'NET, NEST; NUT is stored (item 127)' },
+    t: { target: 2, why: 'TENT, TEN; TAP and TUB are stored (item 127: faucet, bath)' },
+    g: { target: 2, why: 'GIFT, GRASS; GLASS is stored (item 127: a cup to her)' },
     v: { target: 2, why: 'VAN, VET; VEST is odd, VASE level 3' },
-    j: { target: 2, why: 'JUG, JAM; JET is odd, JEEP level 3' },
+    j: { target: 1, why: 'JAM; JUG is stored (item 127: milk), JET odd and stored, JEEP level 3 and stored' },
   } as Record<string, CoverageTarget>,
   /** Familiar pictures per long vowel (each its own sound line). */
   long: {

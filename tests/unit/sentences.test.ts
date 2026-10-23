@@ -259,9 +259,10 @@ test('new words (MUG RUG JUG, then 037\'s) join a round under way; a fresh bag a
   // Every word since the 30 of before item 035: MUG RUG JUG, and item 037's bank words.
   const NEW = BAG_WORDS.filter((w) => !LEGACY_BAG_WORDS.includes(w));
   assert.equal(LEGACY_BAG_WORDS.length, 30);
-  assert.ok(['mug', 'rug', 'jug', 'frog', 'ship'].every((w) => NEW.includes(w)));
-  // Item 040: only an `odd` word left it (PIN did, until item 043).
-  assert.ok(LEGACY_BAG_WORDS.every((w) => BAG_WORDS.includes(w) || BANK_BY_WORD[w]?.odd), 'no pre-035 word left the bag but the odd ones');
+  // MUG and JUG are stored (item 127).
+  assert.ok(['rug', 'frog', 'ship'].every((w) => NEW.includes(w)));
+  // Item 040: only an `odd` word left it (PIN did, until item 043); item 127: or a stored one.
+  assert.ok(LEGACY_BAG_WORDS.every((w) => BAG_WORDS.includes(w) || BANK_BY_WORD[w]?.odd || BANK_BY_WORD[w]?.stored), 'no pre-035 word left the bag but the odd and stored ones');
   // Saved before item 035, mid-round, none of them ever in it.
   const old = memory();
   const left = LEGACY_BAG_WORDS.slice(0, 5);
@@ -279,10 +280,10 @@ test('new words (MUG RUG JUG, then 037\'s) join a round under way; a fresh bag a
   // 037's words join, the 035 words she has spent stay out, a word the game dropped leaves.
   const CAT035 = [...LEGACY_BAG_WORDS, 'mug', 'rug', 'jug'];
   const mid = memory();
-  mid.setItem(STORE_KEY, JSON.stringify({ ...new ProgressStore(memory()).snapshot(), bag: { left: ['cat', 'mug', 'gone'], round: 4 }, bagKnown: [...CAT035, 'gone'] }));
+  mid.setItem(STORE_KEY, JSON.stringify({ ...new ProgressStore(memory()).snapshot(), bag: { left: ['cat', 'rug', 'gone'], round: 4 }, bagKnown: [...CAT035, 'gone'] }));
   const c = new ProgressStore(mid);
   drawKey(c, BAG_WORDS, seeded(4));
-  assert.deepEqual(c.bag().left.sort(), ['cat', 'mug', ...BAG_WORDS.filter((w) => !CAT035.includes(w))].sort());
+  assert.deepEqual(c.bag().left.sort(), ['cat', 'rug', ...BAG_WORDS.filter((w) => !CAT035.includes(w))].sort());
   assert.equal(c.bag().round, 4);
   // A store from today never tops up: its first draw fills the bag, with every word.
   const b = new ProgressStore(memory());

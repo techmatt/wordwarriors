@@ -28,7 +28,7 @@
  * Pure data: no Phaser, so the voice composer and the unit tests read it.
  */
 
-import { BANK, BANK_BY_WORD, THINGS } from './bank.js';
+import { BANK, BANK_BY_WORD, THINGS, type BankWord } from './bank.js';
 
 export interface Family {
   /** Lower case: `at`. */
@@ -123,14 +123,20 @@ export const rimeOf = (word: string): string => BANK_BY_WORD[word]?.rime ?? word
 /** The bank's words with a one-letter onset (not a blend, not a digraph): the ones a family's tile can make. A long-vowel word (KEY, YOYO) is in none. */
 const SINGLE = BANK.filter((w) => w.onset.length === 1 && w.vowel);
 
+/** The families `pictured` words make, in rime order: two pictures to build at least (item 040: an `odd` word like WIG is no picture). */
+const familiesOf = (pictured: (w: BankWord) => boolean): Family[] =>
+  Object.entries(RIMES)
+    .map(([rime, r]) => {
+      const ws = SINGLE.filter((w) => w.rime === rime);
+      return { rime, say: r.say, words: ws.filter(pictured).map((w) => w.word), all: ws.map((w) => w.word), silly: r.silly };
+    })
+    .filter((f) => f.words.length >= 2);
+
 /** Every family the bank makes, in rime order. */
-export const FAMILIES: Family[] = Object.entries(RIMES)
-  .map(([rime, r]) => {
-    const ws = SINGLE.filter((w) => w.rime === rime);
-    return { rime, say: r.say, words: ws.filter((w) => THINGS.includes(w)).map((w) => w.word), all: ws.map((w) => w.word), silly: r.silly };
-  })
-  // Two pictures to build at least (item 040: an `odd` word like WIG is no picture).
-  .filter((f) => f.words.length >= 2);
+export const FAMILIES: Family[] = familiesOf((w) => THINGS.includes(w));
+
+/** Every family with the stored words back (item 127): the voice composer keeps their rime and silly lines, so bringing a word back needs no synthesis. */
+export const ALL_FAMILIES: Family[] = familiesOf((w) => THINGS.includes(w) || (Boolean(w.stored) && w.role !== 'action' && !w.odd));
 
 export const FAMILY_BY_RIME: Record<string, Family> = Object.fromEntries(FAMILIES.map((f) => [f.rime, f]));
 

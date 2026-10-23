@@ -33,7 +33,7 @@ import {
 } from './harness';
 
 /** The grown-ups page is on its page 2 (its "back to page 1" shows). */
-const onPage2 = async (page: Page): Promise<boolean> => (await texts(page)).some((t) => t.text.includes('back to page 1'));
+const onPage2 = async (page: Page): Promise<boolean> => (await texts(page)).some((t) => t.text.includes('stored words (page 3)'));
 
 test('title boots, F9 opens the grown-ups page and returns, green starts the bedroom', SMOKE, async ({ page }) => {
   const errors = collectErrors(page);
