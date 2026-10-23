@@ -1,9 +1,15 @@
 /**
- * Item 116, the seventh bug hunt (docs/qa-findings.md, Hunt 7): her outfits for the new
- * allies (items 111, 114) at her dress height; the story fight's gold grab under mashed
- * yellow (fix 120); Charge back from the grown-ups page asking no rune art the word lacks
- * (fix 124). The new villains are tests/villains.spec.ts's. Shots land in
- * tests/screenshots/ (ignored).
+ * Item 116, the seventh bug hunt (docs/qa-findings.md, Hunt 7), a test each:
+ *
+ * - her outfits for the new allies (items 111, 114) stand within 4% of her dress
+ *   height, head to soles (hunt 7's "checked and clean"; slow lane);
+ * - the story fight's gold grab: yellow mashed says Dad's line again at most once
+ *   more, not once a press, and green on the hoard is taken (fix 120; slow lane);
+ * - Charge the Spell back from the grown-ups page with every rune charged asks no
+ *   rune art the word lacks (fix 124).
+ *
+ * The new villains are tests/villains.spec.ts's. Shots land in tests/screenshots/
+ * (ignored).
  */
 
 import { test, expect } from '@playwright/test';

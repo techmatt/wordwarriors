@@ -43,11 +43,8 @@ export class BattleHud {
 
     // What she fetched in the house (and the counter-item, once made), in a
     // row beside the heroes' bars, so the link from reading to the fight
-    // stays on screen the whole battle. The parked games' things too, if set.
+    // stays on screen the whole battle.
     const made: string[] = episode.fetched.filter((w) => FETCH_BY_WORD[w]).map((w) => `pic_${w}`);
-    if (episode.made.gem) made.push('prop_gem');
-    if (episode.made.ammo) made.push('prop_ammo');
-    if (episode.made.helper) made.push('minion_helper');
     if (episode.made.item) made.push(counterArt());
     // Packed tighter as the row grows, so it keeps left of the villain's bar (from x 827): a bridge and a
     // Shape-Shifter fetch seven, and the counter-item made the ninth sit on it (hunt 6).

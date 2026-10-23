@@ -62,9 +62,6 @@ export const moveKey = (kind: MoveKind, word: string) => `${kind}_${word}`;
 export function moveKeyWord(id: string, kinds: readonly MoveKind[]): string | undefined {
   return new RegExp(`_(?:${kinds.join('|')})_([a-z]+)$`).exec(id)?.[1];
 }
-/** Charge the Spell (item 053): a rune's gesture line, which trails off into `letter_<sound>_sound` (content/phonics/runes.ts). */
-export type ChargeKind = 'charge_gesture';
-export const chargeKey = (kind: ChargeKind, sound: string) => `${kind}_${sound}`;
 /** A fight style's own beat line (item 031, content/battle/fights.ts): `fight_race_start`. */
 export const fightKey = (fight: string, beat: string) => `fight_${fight}_${beat}`;
 /**

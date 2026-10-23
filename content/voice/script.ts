@@ -20,8 +20,7 @@
  */
 
 import { FIGHTS, FIGHT_BEATS } from '../battle/fights.js';
-import { RUNES } from '../phonics/runes.js';
-import { chargeKey, fightKey, type HeroKind, type MoveKind, type SpokenLine, type VillainKind } from './ids.js';
+import { fightKey, type HeroKind, type MoveKind, type SpokenLine, type VillainKind } from './ids.js';
 
 export interface Template extends SpokenLine {
   key: string;
@@ -81,9 +80,6 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'move_great_4', text: 'Your word powered it up! Way to go!', say: 'Your word powered it up, way to go!' },
   { key: 'move_great_5', text: 'Did you see that? Your reading did that!', say: 'Did you see that? Your reading did that!' },
   { key: 'move_great_6', text: 'Reading makes us stronger! Keep it up!', say: 'Reading makes us stronger, keep it up!' },
-  { key: 'use_gem', text: "Let's make the power gem shine!" },
-  { key: 'use_ammo', text: 'Fire the star ammo!' },
-  { key: 'use_helper', text: "It's your turn, helper friend, go!" },
   { key: 'use_item', text: "Now's our chance! Let's use it!", say: "Now's our chance, let's use it!" },
   { key: 'retreat_1', text: "They're too strong for us! Let's go home and get ready!", say: "They're too strong for us, let's go home and get ready!" },
   { key: 'retreat_2', text: 'That was close! We need a plan!', say: 'That was close, we need a plan!' },
@@ -162,8 +158,8 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'grab_need', text: 'We need the...' },
   { key: 'grab_door', text: "You got it! Now let's go out the door!", say: "You got it, now let's go out the door!" },
   // Charge the Spell (item 053, src/scenes/ChargeRoom.ts). No line names a
-  // letter or spells a sound: each sound is its own letter_ line, and the
-  // gestures (`CHARGE_GESTURES`) trail off into it. `use_runes` is the battle's.
+  // letter or spells a sound: each sound is its own letter_ line, said with
+  // the rune's gesture shown (content/phonics/runes.ts). `use_runes` is the battle's.
   // Item 059: the helper says each rune's sound and she says it back, no presses;
   // then she reads the word and Dad's one press judges it.
   { key: 'charge_explain', text: 'Say each sound after me!' },
@@ -248,16 +244,6 @@ export function lineVariantKeys(base: string): string[] {
     .filter((k) => k === base || (k.startsWith(`${base}_`) && /^\d+$/.test(k.slice(base.length + 1))))
     .sort((a, b) => n(a) - n(b));
 }
-
-/**
- * Charge the Spell's gestures (item 053), composed per narrator × rune
- * (`chargeKey('charge_gesture', sound)`): the rune's action, trailing off
- * into its sound's own line. The texts live with the runes
- * (content/phonics/runes.ts). Since item 058 the room says none of them (a
- * cue per rune is a few words; the gesture is shown, not told); they stay
- * composed for a longer teaching mode, should Matt want one back.
- */
-export const CHARGE_GESTURES: (Template & { sound: string })[] = RUNES.map((r) => ({ sound: r.sound, key: chargeKey('charge_gesture', r.sound), text: r.gesture.text }));
 
 /** Composed per narrator × hero. */
 export const HERO_LINES: (Template & { key: HeroKind })[] = [{ key: 'alarm_hero', text: 'Bad news, {hero}!' }];

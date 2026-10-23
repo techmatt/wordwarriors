@@ -641,7 +641,7 @@ const rain: Cast = (w, f, ab, _target, mult) => {
 const shield: Cast = (w, f, ab, _target, mult) => {
   w.busy(f, 300);
   sfxShield();
-  for (const a of [f, ...w.alliesOf(f).filter((x) => x.isMain || x.init.kind === 'helper')]) {
+  for (const a of [f, ...w.alliesOf(f).filter((x) => x.isMain)]) {
     a.setShield((ab.duration ?? 4) * Math.min(1.5, mult), ab.color, w.now);
     burst(w.stage, a.cx, a.cy, { count: 20, speed: 200, colors: [ab.color, 0xffffff] });
   }

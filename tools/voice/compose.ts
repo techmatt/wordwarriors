@@ -56,7 +56,7 @@ import {
   wordLine,
   type SpokenLine,
 } from '../../content/voice/ids.js';
-import { CHARGE_GESTURES, CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE_VARIANTS, wakeTemplate, wakeVariant, type Template } from '../../content/voice/script.js';
+import { CORE_LINES, HERO_LINES, MOVE_LINES, NARRATOR_LINES, VILLAIN_LINES, WAKE_VARIANTS, wakeTemplate, wakeVariant, type Template } from '../../content/voice/script.js';
 import { isMain, LINES_FILE } from '../shared.js';
 import type { LineSpec } from './types.js';
 
@@ -306,8 +306,6 @@ export function composeLines(): LineSpec[] {
     for (const word of ALL_ACTIONS.map((w) => w.word)) {
       for (const t of MOVE_LINES) lines.push({ id: narratorLine(n, moveKey(t.key, word)), speaker: n, group: g, ...fill(t, { word }) });
     }
-    // Charge the Spell's gestures (item 053): the narrator performs them.
-    for (const t of CHARGE_GESTURES) lines.push({ id: narratorLine(n, t.key), speaker: n, group: g, ...fill(t, {}) });
     // For a helper with no quest place or no hub scene of their own: the
     // home quest's lines and the fallback scene, in every narrator's voice.
     HOME_QUEST.lines.forEach((l, i) => lines.push({ id: homeQuestLine(n, i + 1), speaker: n, group: g, ...spoken(l) }));

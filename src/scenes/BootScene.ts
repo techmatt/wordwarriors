@@ -38,9 +38,8 @@ import Phaser from 'phaser';
 import { CHARACTER_BY_ID, formId } from '../../content/battle/roster';
 import { group } from '../../content/voice/ids';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { enterRoom, episode, episodeGroups, giftWord, grabPlan, isStepKind, jumpTo, planFor, setCastOptions, startStep, steps, type PrepGame, type Slot } from '../episode/Episode';
+import { enterRoom, episode, episodeGroups, giftWord, grabPlan, isStepKind, jumpTo, planFor, seedRands, setCastOptions, startStep, steps, type PrepGame, type Slot } from '../episode/Episode';
 import { DADS, isDad, type CastOverrides } from '../rules/cast';
-import { seededRand } from '../rules/random';
 import { setDifficulty } from '../rules/difficulty';
 import { NEW_WORDS, favourWords } from '../rules/bank';
 import { artBank } from '../art/ArtBank';
@@ -53,10 +52,9 @@ import { voiceBank } from '../voice/VoiceBank';
  * The cast from the URL (item 025), for this episode and every one after it
  * this session; whatever is not given is drawn (src/rules/cast.ts).
  *
- *   ?seed=7                      seeds the cast draw (castRand): same seed, same cast, quest place,
- *                                story and line variants and fight style; the rooms, games and
- *                                words are still drawn unseeded (Math.random; the variety
- *                                simulator seeds them by replacing it)
+ *   ?seed=7                      seeds the episode's draws (castRand, planRand): same seed and
+ *                                progress, same cast, quest place, story and line variants, fight
+ *                                style, rooms, games and words
  *   ?cast=default                the fixed default episode (EPISODE_DEFAULTS; the tests' default)
  *   ?hero= ?ally= ?villain=      roster ids; a dad's form by its id (ally=dada_matt_lifter); ally=none
  *   ?form=lifter,warlock         the dads' forms by name (builder lifter cyber blade; chef warrior warlock)
@@ -92,7 +90,7 @@ function castOptions(q: URLSearchParams): Parameters<typeof setCastOptions>[0] {
   const seed = q.get('seed');
   return {
     overrides,
-    ...(seed !== null && Number.isFinite(Number(seed)) ? { rand: seededRand(Number(seed)) } : {}),
+    ...(seed !== null && Number.isFinite(Number(seed)) ? seedRands(Number(seed)) : {}),
     ...(q.get('cast') === 'default' ? { fixed: true } : q.get('cast') === 'random' ? { fixed: false } : {}),
     ...(q.get('place') ? { place: q.get('place') } : {}),
     ...(q.get('fight') ? { fight: q.get('fight') } : {}),

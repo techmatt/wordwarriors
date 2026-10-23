@@ -13,7 +13,7 @@ import { HOME, PLACE_BY_ID } from '../../content/house/house';
 import { questFor } from '../../content/house/quests';
 import { EPISODE_DEFAULTS } from '../config';
 import { DADS, drawCast, type CastOverrides } from '../rules/cast';
-import type { Rand } from '../rules/random';
+import { seededRand, type Rand } from '../rules/random';
 import { drawLines, drawStory, variantKeys, type LineVariants } from '../rules/story';
 import { progress } from '../state/progress';
 import { helper } from './cast';
@@ -23,6 +23,13 @@ import { episode, freshProgress } from './state';
 let castOverrides: CastOverrides = {};
 /** The cast's draws (`?seed=`); the fight style draws with it too (`./plans.ts`). */
 export let castRand: Rand = Math.random;
+/**
+ * The house's draws (`?seed=`, its own stream so the cast's stays as it was):
+ * rooms, games, words, the warm-up, the pads and the victory scene
+ * (`./plans.ts`). Unseeded it calls Math.random late, so the variety
+ * simulator's replaced Math.random still reaches it.
+ */
+export let planRand: Rand = () => Math.random();
 let castDefault = !EPISODE_DEFAULTS.randomCast;
 let placeOverride: string | null = null;
 /** `?fight=<id>`, read by the fight style's draw (`./plans.ts`). */
@@ -31,15 +38,23 @@ export let fightOverride: string | null = null;
 /**
  * Fix parts of every episode's cast this session (`?ally=`, `?villain=`,
  * `?form=`, `?primary=`, `?secondary=`, `?seed=`, `?cast=default`,
- * `?place=`: BootScene), then recast the current episode.
+ * `?place=`: BootScene), then recast the current episode. `?seed=` sets
+ * both `rand` (the cast's) and `planRand` (the house's: `seedRands`).
+ * Neither is ever put back to unseeded: a seed lasts the session.
  */
-export function setCastOptions(o: { overrides?: CastOverrides; rand?: Rand; fixed?: boolean; place?: string | null; fight?: string | null }): void {
+export function setCastOptions(o: { overrides?: CastOverrides; rand?: Rand; planRand?: Rand; fixed?: boolean; place?: string | null; fight?: string | null }): void {
   if (o.overrides) castOverrides = o.overrides;
   if (o.fight !== undefined) fightOverride = o.fight;
   if (o.rand) castRand = o.rand;
+  if (o.planRand) planRand = o.planRand;
   if (o.fixed !== undefined) castDefault = o.fixed;
   if (o.place !== undefined) placeOverride = o.place;
   castEpisode();
+}
+
+/** `?seed=N`'s two streams: the cast's as before, the house's from a seed of its own. */
+export function seedRands(seed: number): { rand: Rand; planRand: Rand } {
+  return { rand: seededRand(seed), planRand: seededRand((seed ^ 0x5eed5eed) >>> 0) };
 }
 
 /**

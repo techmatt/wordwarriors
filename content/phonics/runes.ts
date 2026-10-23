@@ -6,10 +6,11 @@
  * hissing snake, M rubbing a tummy). The narrator performs it: their sprite
  * bobs and squashes in its `motion` while `glyph` (an emoji prop) does the
  * action beside them, and they say only the sound's own `letter_<x>_sound`
- * line. `text` is still composed (CHARGE_GESTURES in content/voice/script.ts)
- * but not voiced since item 058; it never names the letter (letter SOUNDS,
- * never names) and never spells the sound ("sss" would be captioned, and
- * edge-tts reads it as "ess").
+ * line. `text`, the gesture told in words, is neither voiced (since item 058)
+ * nor composed into lines.json: it is kept for a teaching mode, should Matt
+ * want one (docs/rulings.md). It never names the letter (letter SOUNDS, never
+ * names) and never spells the sound ("sss" would be captioned, and edge-tts
+ * reads it as "ess").
  *
  * The gesture texts say no bank word at all, stems included
  * (tests/unit/charge.test.ts), and no glyph is a bank word's own picture (a 🥁

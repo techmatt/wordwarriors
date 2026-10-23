@@ -143,8 +143,7 @@ export class TugStage extends BaseStage {
   private placeOf(f: Fighter): number | null {
     if (f === this.host.villain) return 0;
     const i = this.host.heroes.indexOf(f);
-    if (i >= 0) return i;
-    return f === this.host.helper ? this.host.heroes.length : null;
+    return i >= 0 ? i : null;
   }
 
   override home(f: Fighter, i: number): Pt {

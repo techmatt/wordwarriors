@@ -1,7 +1,8 @@
 /**
  * Sound → letter. Three letter stones; the voice says a SOUND (never a letter
  * name); she walks to the stone that makes it and presses green. Each right
- * stone gives a gem shard; four shards make the power gem the battle uses.
+ * stone gives a gem shard; four shards make the power gem (a prize only: the
+ * battle no longer uses it).
  *
  * Yellow repeats the sound. The confirmation after a right answer is the
  * sound again, so the letter and its sound arrive together.
@@ -9,7 +10,7 @@
 
 import { letterSoundLine } from '../../../content/voice/ids';
 import { DEPTH, FONT_COMIC, GAME_WIDTH } from '../../config';
-import { episode } from '../../episode/Episode';
+import { planRand } from '../../episode/Episode';
 import { bob, popIn, shockwave } from '../../fx/juice';
 import { soundRound, type SoundItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
@@ -31,7 +32,7 @@ export class SoundToLetter extends SideRoom {
   }
 
   protected build(): void {
-    this.items = soundRound(progress, ITEMS); // always three stones, as designed
+    this.items = soundRound(progress, ITEMS, planRand); // always three stones, as designed
     this.itemIndex = 0;
     this.makeMeter(ITEMS, 'prop_gem', '💎');
     void (async () => {
@@ -96,7 +97,6 @@ export class SoundToLetter extends SideRoom {
         } else {
           this.clearSpots();
           await this.completePrize('prop_gem', 'made_gem');
-          episode.made.gem = true;
           this.done();
         }
       })();

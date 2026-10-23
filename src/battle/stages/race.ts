@@ -268,7 +268,6 @@ export class RaceStage extends BaseStage {
   /** The floor row each racer flies along. */
   private laneY(f: Fighter): number {
     if (f === this.host.villain) return f.giant ? 655 : 570;
-    if (f === this.host.helper) return 455;
     const i = this.host.heroes.indexOf(f);
     // Her lane in front: a grown-up ally behind her shows over her head, where
     // in front he hid her (item 034).
@@ -341,8 +340,6 @@ export class RaceStage extends BaseStage {
         f.lift += (lift - f.lift) * ease(10, dt);
         k = 10;
       }
-    } else if (f === this.host.helper) {
-      tx = HERO_X - 160 + L * LEAD_PX + wave - r.wobble;
     } else {
       const i = this.host.heroes.indexOf(f);
       tx = HERO_X + L * LEAD_PX - i * 80 + wave + boost - r.wobble;
@@ -373,7 +370,6 @@ export class RaceStage extends BaseStage {
   override update(dt: number): void {
     this.t += dt;
     const h = this.host;
-    if (h.helper?.active && !this.racer(h.helper)) this.addRacer(h.helper);
 
     // The lead: the steered health, or the beat's own.
     this.surge *= Math.exp(-0.6 * dt);

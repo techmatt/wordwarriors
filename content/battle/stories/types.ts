@@ -60,7 +60,7 @@ export type StoryMove = 'fire' | 'rain' | 'tail' | 'guards' | 'spin';
  *
  * - `talk`: lines only.
  * - `fetched`: the things she fetched in the house get their turn (`all`:
- *   every fetched thing; otherwise only the charged runes and made things).
+ *   every fetched thing; otherwise only the charged runes).
  * - `counter`: her word pick (`input` a `pad`), fired at the villain.
  * - `attack`: the villain's `move`, waiting on a dodge (`dodge` or `dodgePads`).
  * - `support`: Dad's `move` while she grabs (`grab`).
@@ -80,7 +80,7 @@ export interface StoryBeat {
   /** A big move gets the stage: its splash (`fx_story_<splash>`), a camera punch-in, a held frame. */
   big?: string;
   input?: StoryInput;
-  /** `fetched`: every fetched thing, not only the runes and made things. */
+  /** `fetched`: every fetched thing, not only the runes. */
   all?: boolean;
 }
 

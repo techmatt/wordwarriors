@@ -13,9 +13,8 @@ import { BANK, BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
 import { SOUND_BY_UNIT } from '../../content/phonics/letters';
 import { RUNES, RUNE_BY_SOUND } from '../../content/phonics/runes';
 import { ABILITY_KINDS } from '../../content/battle/types';
-import { chargeKey, letterSoundLine, narratorLine } from '../../content/voice/ids';
-import { CHARGE_GESTURES, NARRATOR_LINES } from '../../content/voice/script';
-import { PERSONS } from '../../content/battle/roster';
+import { letterSoundLine } from '../../content/voice/ids';
+import { NARRATOR_LINES } from '../../content/voice/script';
 import { CHARGE } from '../../src/config';
 import { CHARGE_WORDS, GESTURE_WORDS, RUNE_SOUNDS, planCharge } from '../../src/rules/charge';
 import { CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, drawGames } from '../../src/rules/minigames';
@@ -45,7 +44,7 @@ test('runes: every rune is a sound with its own line, a gesture and a battle mov
   assert.deepEqual(RUNES.filter((r) => r.tier === 1).map((r) => r.sound).sort(), [...'mesfalnrvziou'].sort());
 });
 
-test('runes: no gesture shows a bank word\'s picture or says a bank word (they are voiced before the battle)', () => {
+test('runes: no gesture shows a bank word\'s picture or says a bank word (kept for a teaching mode that may voice them)', () => {
   const glyphs = new Map(BANK.filter((w) => w.glyph).map((w) => [w.glyph!, w.word]));
   // Except Matt's /e/ gesture (item 071, M11: "Tap the egg, crack it open"), whose words count as
   // said only in an episode whose Charge word has /e/, from when it plays (item 074: `gestureWords`,
@@ -56,7 +55,8 @@ test('runes: no gesture shows a bank word\'s picture or says a bank word (they a
   const words = (s: string) => s.toLowerCase().split(/[^a-z]+/).filter(Boolean);
   for (const r of RUNES) assert.ok(!glyphs.has(r.gesture.glyph), `${r.sound}'s ${r.gesture.glyph} is ${glyphs.get(r.gesture.glyph)}'s picture`);
   const charge = NARRATOR_LINES.filter((t) => t.key.startsWith('charge_') || t.key === 'use_runes');
-  for (const t of [...charge, ...CHARGE_GESTURES]) {
+  // The gesture texts too: no longer voiced or composed, but kept for a teaching mode (docs/rulings.md).
+  for (const t of [...charge, ...RUNES.map((r) => ({ text: r.gesture.text, say: undefined }))]) {
     for (const s of [t.text, t.say ?? '']) {
       for (const w of withStems(words(s))) assert.ok(!bank.has(w), `"${s}" says the bank word "${w}"`);
       // Never a letter name or a spelled-out sound: "Sss" is captioned, and edge-tts says "ess".
@@ -68,9 +68,8 @@ test('runes: no gesture shows a bank word\'s picture or says a bank word (they a
   }
 });
 
-test('voice: every narrator says every gesture, and every rune has its sound line', () => {
+test('voice: every rune has its sound line', () => {
   const ids = new Set(composeLines().map((l) => l.id));
-  for (const p of PERSONS) for (const r of RUNES) assert.ok(ids.has(narratorLine(p.id, chargeKey('charge_gesture', r.sound))), `${p.id} ${r.sound}`);
   for (const r of RUNES) assert.ok(ids.has(letterSoundLine(r.sound)), r.sound);
 });
 

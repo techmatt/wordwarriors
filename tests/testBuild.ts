@@ -1,7 +1,9 @@
 /**
  * The suite's build, skipped when nothing it is built from changed (item 105). Playwright's
- * server runs this, then `vite preview` (`playwright.config.ts`; the bug-hunt checker too,
- * into its own folder, item 122: `tests/qa/qa.config.ts`). The build's inputs (`src/`, `content/`, the page, the vite configs, the lockfile) are hashed by content into a stamp
+ * server runs this, then `vite preview` (`playwright.config.ts`; the bug-hunt checker and
+ * the boot timings too, each into its own folder: `tests/qa/qa.config.ts`, item 122, and
+ * `tests/perf/perf.config.ts`, item 133). The build's inputs (`src/`, `content/`, the page,
+ * the vite configs, the lockfile) are hashed by content into a stamp
  * beside the build; the same hash next run serves the build already there, saving the 4-5 s
  * `vite build` takes (about 0.3 s to check). `WW_REBUILD=1` builds anyway.
  */

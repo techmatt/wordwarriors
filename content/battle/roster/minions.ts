@@ -95,7 +95,7 @@ export const MINIONS: Record<string, MinionSpec> = {
     palette: [0xc8884a, 0x5a3a1a], style: 'march', speed: 150, size: 0.6, hp: 35,
     ability: ab('bark', 'Bark', 'bolt', 2.0, 0xffd6a5, 1, { glyph: '🔊' }),
   },
-  /** The helper Word to Picture summons for the heroes. Its look is set by the hero. */
+  /** The prize the parked Word to Picture awards (its art, `minion_helper`); since item 133 it no longer joins the battle. */
   helper: {
     id: 'helper', name: 'Helper', glyph: '🦄', look: 'a sparkly unicorn helper with a rainbow mane',
     palette: [0xffffff, 0xff7ad9], style: 'fly', speed: 170, size: 0.7, hp: 60,

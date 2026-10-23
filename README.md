@@ -348,18 +348,21 @@ their own, behind an npm script (item 072). (`npm run test:pairs` is not one of 
 normal suite spec on the main config, off unless asked for; *Operational facts*.)
 Arguments for Playwright go after `--` (`npm run qa -- -g "qa seed101$"`). All three
 configs draw on the GPU (`gpuProjects`, `tests/gpu.ts`; `WW_GPU=0` for software GL), on one
-worker. Perf and shots serve the dev server from `tests/vite.nowatch.config.ts` (started as
+worker. Shots serve the dev server from `tests/vite.nowatch.config.ts` (started as
 `node node_modules/vite/bin/vite.js`, not `npx vite`; item 132 moved the config from
 `tests/qa/`): no file watching, so edits made during a run wait for the next one instead
-of reloading the page. The bug-hunt checker serves a build like the suite (since item
-092; `QA_DEV_SERVER=1` for that dev server instead: *The bug-hunt checker*, below).
+of reloading the page. The bug-hunt checker (since item 092) and perf (since item 133)
+serve a build like the suite, each into its own folder (`node_modules/.ww-qa-dist`,
+`.ww-perf-dist`; skipped when unchanged, `tests/testBuild.ts`); `QA_DEV_SERVER=1` /
+`PERF_DEV_SERVER=1` serve that dev server instead (*The bug-hunt checker*, below).
 
-**Boot timings:** `npm run perf` (about 1.5
-minutes; not a test, it prints) times page load to the title and to a quiet hub
+**Boot timings:** `npm run perf` (about 30 s on the build, item 133; 1.8 minutes with
+`PERF_DEV_SERVER=1`; not a test, it prints) times page load to the title and to a quiet hub
 (`?scene=house`: input free, nobody talking, still so 0.6 s later), each from a fresh
 browser context, median of `PERF_RUNS` (5), and the art each fetched. Its server takes
-`PERF_PORT`, else `CONDUCTOR_PORT`, else 5196. Item 065's before and after are in
-`docs/engineering.md`.
+`PERF_PORT`, else `CONDUCTOR_PORT`, else 5196; `PERF_DIST=<dir>` builds into another
+folder. Item 065's before and after (the dev server) and item 133's baseline on the build
+are in `docs/engineering.md`.
 
 **Screenshots for judging the UI by eye** (not tests; item 024):
 `SHOTS_TAG=<tag> npm run shots -- shots.pw` plays the

@@ -4,8 +4,8 @@
  *
  * `glyph` is what the placeholder picture card draws (an emoji, rendered by
  * Chromium's system font) until real art lands under the same asset id,
- * `pic_<word>`. `draw` names a hand-drawn fallback for words Windows 10's emoji
- * font does not have. A picture card never shows the word itself: the word is
+ * `pic_<word>`; a word Windows 10's emoji font has no glyph for gets a generic
+ * stand-in. A picture card never shows the word itself: the word is
  * the thing she must read, so the picture must not give it away.
  *
  * `decodable` is false for sight words. Blend Path only uses decodable words,
@@ -13,13 +13,11 @@
  * "Jasmine" does not blend.
  */
 
-import { BANK, THINGS, type BankWord, type DrawId } from './bank.js';
+import { BANK, THINGS, type BankWord } from './bank.js';
 
 export interface Word {
   word: string;
   glyph?: string;
-  /** A canvas drawing in tools/art/placeholders.ts, when there is no emoji. */
-  draw?: DrawId;
   decodable: boolean;
   /** For sight words: the character whose card is the picture. */
   character?: string;
@@ -35,7 +33,7 @@ export interface Word {
 export const PICTURE_WORDS: Word[] = THINGS.map(asWord);
 
 function asWord(w: BankWord): Word {
-  return { word: w.word, decodable: true, ...(w.glyph ? { glyph: w.glyph } : {}), ...(w.draw ? { draw: w.draw } : {}) };
+  return { word: w.word, decodable: true, ...(w.glyph ? { glyph: w.glyph } : {}) };
 }
 
 /** Character names as sight words. The picture is the character's own card. */

@@ -2,7 +2,7 @@
  * Blend Path. A path of letter tiles, left to right; each says its SOUND as
  * she steps on it. The path ends at 2–3 picture doors; she walks to the door
  * whose picture is the word and presses green. Each right door adds a crate of
- * star ammo for the battle.
+ * star ammo (a prize only: the battle no longer uses it).
  *
  * The doors only open once every tile has been stepped on, so the sounds are
  * always heard in order before she chooses. The word itself is spoken only
@@ -16,7 +16,7 @@ import { letterSoundLine, wordLine } from '../../../content/voice/ids';
 import { voiceBus } from '../../audio/VoiceBus';
 import { sfxStep } from '../../audio/sfx';
 import { DEPTH, FONT_COMIC } from '../../config';
-import { episode } from '../../episode/Episode';
+import { planRand } from '../../episode/Episode';
 import { burst, popIn } from '../../fx/juice';
 import { blendRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
@@ -43,7 +43,7 @@ export class BlendPath extends SideRoom {
   }
 
   protected build(): void {
-    this.items = blendRound(progress, ITEMS);
+    this.items = blendRound(progress, ITEMS, planRand);
     this.itemIndex = 0;
     this.makeMeter(ITEMS, 'prop_ammo', '⭐');
     void (async () => {
@@ -196,7 +196,6 @@ export class BlendPath extends SideRoom {
         for (const l of this.lifted) l.destroy();
         this.lifted = [];
         await this.completePrize('prop_ammo', 'made_ammo');
-        episode.made.ammo = true;
         this.done();
       }
     })();

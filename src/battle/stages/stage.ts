@@ -35,8 +35,6 @@ export interface StageHost extends BattleWorld {
   readonly phase: Phase;
   readonly heroes: readonly Fighter[];
   readonly villain: Fighter;
-  /** The parked games' helper friend, when made (never in v0.2 episodes). */
-  readonly helper: Fighter | null;
   readonly fight: FightSpec;
   /** Her stick, each axis -1..1. */
   readonly stick: Phaser.Math.Vector2;
@@ -44,7 +42,7 @@ export interface StageHost extends BattleWorld {
   readonly choosing: boolean;
   /** Resolve after `s` seconds of simulation time (dropped if the scene ends first). */
   wait(s: number): Promise<void>;
-  /** The heroes' side: heroes and the helper, active ones. */
+  /** The heroes' side: the active heroes. */
   team(): Fighter[];
   /** Health left as a fraction, for steering a meter: the heroes' (mean of the mains) and the villain's. */
   heroFrac(): number;
@@ -55,8 +53,8 @@ export interface StageHost extends BattleWorld {
 
 export interface FightStage {
   /**
-   * Main fighters (and the helper) are placed by the stage, not by their
-   * movement styles: the ultimate's walk to each side is skipped too.
+   * Main fighters are placed by the stage, not by their movement styles:
+   * the ultimate's walk to each side is skipped too.
    */
   readonly anchored: boolean;
   /** Does the contest hold `f` to a place of its own (a lane, a rope end, a spot, a station)? */

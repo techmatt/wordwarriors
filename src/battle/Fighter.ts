@@ -48,7 +48,7 @@ export interface FighterInit {
   abilities: AbilitySpec[];
   ultimate: AbilitySpec | null;
   palette: [number, number];
-  kind: 'main' | 'minion' | 'clone' | 'helper';
+  kind: 'main' | 'minion' | 'clone';
   mount?: string;
   trail?: FighterSpec['trail'];
   taunts?: string[];
@@ -79,7 +79,7 @@ export function initFromSpec(spec: FighterSpec, id: string, art: string, team: T
   };
 }
 
-export function initFromMinion(m: MinionSpec, team: Team, kind: 'minion' | 'helper' = 'minion'): FighterInit {
+export function initFromMinion(m: MinionSpec, team: Team): FighterInit {
   return {
     id: m.id,
     name: m.name,
@@ -92,7 +92,7 @@ export function initFromMinion(m: MinionSpec, team: Team, kind: 'minion' | 'help
     abilities: [m.ability],
     ultimate: null,
     palette: m.palette,
-    kind,
+    kind: 'minion',
   };
 }
 
@@ -132,7 +132,7 @@ export class Fighter {
   growUntil = 0;
   /** Takes no damage (counter-item moments, cutscenes). */
   invulnerable = false;
-  /** Damage multiplier from prep items (the power gem). */
+  /** Damage multiplier (Part 2's heroes hit harder). */
   power = 1;
   /** Per-style steering memory. */
   mem: Record<string, number> = {};

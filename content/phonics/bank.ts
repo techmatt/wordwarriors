@@ -23,8 +23,8 @@
  * Every word has a picture, `pic_<word>` (content/art/assets.ts; the prompt is
  * PICTURES in content/art/prompts.ts), a `word_<word>` line, and a battle
  * effect (content/phonics/effects.ts). An action also has its "Use X!" line per
- * narrator. `glyph` is the placeholder card's emoji until real art lands;
- * `draw` a canvas drawing where Windows 10's emoji font has none. `say` is a
+ * narrator. `glyph` is the placeholder card's emoji until real art lands (none
+ * where Windows 10's emoji font lacks one: a generic stand-in). `say` is a
  * respelling for edge-tts where it misreads the word.
  *
  * Coverage (item 056, `COVERAGE` below; README, "The word bank's coverage
@@ -54,14 +54,10 @@ export type Role = 'thing' | 'action' | 'both';
 export type Level = 1 | 2 | 3;
 export type Vowel = 'a' | 'e' | 'i' | 'o' | 'u';
 
-/** A canvas drawing in tools/art/placeholders.ts, for a picture with no emoji. */
-export type DrawId = 'fan' | 'log' | 'mop' | 'pot' | 'mug' | 'rug';
-
 export interface BankEntry {
   word: string;
   role: Role;
   glyph?: string;
-  draw?: DrawId;
   say?: string;
   /** The item that added it: 037, 040, 054, 056, 058, 059, 121 or 126 (unset for older words). `?words=new` and the grown-ups page's NEW read 121's and 126's. */
   since?: '037' | '040' | '054' | '056' | '058' | '059' | '121' | '126';
@@ -130,11 +126,10 @@ const ENTRIES: BankEntry[] = [
   T('cat', '🐱'), T('dog', '🐶'), T('fox', '🦊'), T('bug', '🐛'), T('hat', '🎩'), T('bed', '🛏️'),
   T('cup', '☕'), T('map', '🗺️'), T('bus', '🚌'), T('hen', '🐔'), T('box', '📦'), T('pen', '🖊️'),
   T('van', '🚐'), T('bat', '🦇'), T('bag', '👜'), T('can', '🥫'), T('nut', '🥜'), T('tub', '🛁'),
-  T('cap', '🧢'), T('pin', '📌'), T('log', undefined, { draw: 'log' }), T('mop', undefined, { draw: 'mop' }),
-  T('pot', undefined, { draw: 'pot' }), T('rat', '🐀'), T('mug', undefined, { draw: 'mug' }),
-  T('rug', undefined, { draw: 'rug' }), T('jug', '🏺'),
+  T('cap', '🧢'), T('pin', '📌'), T('log'), T('mop'), T('pot'), T('rat', '🐀'), T('mug'),
+  T('rug'), T('jug', '🏺'),
   // Pictured words that were move words too.
-  B('sun', '☀️'), B('fan', undefined, { draw: 'fan' }), B('web', '🕸️'), B('net', '🥅'), B('jet', '✈️', ODD),
+  B('sun', '☀️'), B('fan'), B('web', '🕸️'), B('net', '🥅'), B('jet', '✈️', ODD),
   B('pig', '🐷'), B('pan', '🍳'), B('ram', '🐏', ODD), B('top', '🌀', ODD),
   // The move words from before 037.
   A('zap', '⚡', SPELL), A('bam', '🔨'), A('zip', '☄️', SPELL), A('hop', '🐇'), A('pop', '🎈', SPELL), A('hug', '🧸'),

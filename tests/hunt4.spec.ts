@@ -1,8 +1,14 @@
 /**
- * The fourth bug hunt's fixes (item 089; docs/qa-findings.md, Hunt 4): yellow
- * says again the line variant she heard; F9 on the way out of the recap or a
- * room is ignored; key 0 out of a debug game mid-line saves nothing; THE END
- * has its music back after the grown-ups page.
+ * The fourth bug hunt's fixes (item 089; docs/qa-findings.md, Hunt 4), a test each:
+ *
+ * - yellow in the sentence room says again the instruction variant she heard, not
+ *   the next (fix 84);
+ * - F9 in the recap's fade to THE END is ignored: THE END comes, not the recap again
+ *   (fix 87); THE END back from the grown-ups page has its music again (fix 88);
+ * - key 0 out of a debug game as its word is said saves nothing to the real store,
+ *   not even the narrator's next "got it" variant (fix 85);
+ * - F9 in the debug room's door fade is ignored: on to the next step, debug off
+ *   (fix 86).
  */
 
 import { test, expect, type Page } from '@playwright/test';

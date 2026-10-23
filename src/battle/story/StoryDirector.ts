@@ -69,7 +69,6 @@ export interface StoryHost extends StageHost, Pick<WalkHost, 'controls'> {
   killFighter(f: Fighter): void;
   useAllFetched(gap: number): Promise<void>;
   useCharged(gap: number): Promise<void>;
-  useMade(order: ('helper' | 'gem' | 'ammo')[], gap: number): Promise<void>;
   moveChoice(): Promise<void>;
   ultimateWindUp(): Promise<{ v: Fighter; ult: AbilitySpec; giant: boolean; aura: Phaser.GameObjects.Particles.ParticleEmitter }>;
   ultimateFloors(v: Fighter, ult: AbilitySpec, giant: boolean): Promise<void>;
@@ -173,7 +172,6 @@ export class StoryDirector {
     if (beat.all && any) await this.sayAll(beat.lines);
     if (beat.all) await b.useAllFetched(b.beat(1.4));
     await b.useCharged(b.beat(1.1));
-    await b.useMade(['helper', 'gem', 'ammo'], b.beat(1.5));
     if (beat.all && any) await this.sayAll(beat.after);
     b.phase = 'story';
   }

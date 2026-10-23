@@ -20,7 +20,7 @@
 import { MINIGAMES, SENTENCE_GAMES, type Minigame } from '../rules/minigames';
 import { pick } from '../rules/random';
 import { progress } from '../state/progress';
-import { remembered } from './draws';
+import { planRand, remembered } from './draws';
 import { debugPlan } from './plans';
 import { currentStep, episode, type Slot } from './state';
 
@@ -100,7 +100,7 @@ function counterRoom(): boolean {
  * the slot it plays in. The sentence game draws a frame (a counter frame in
  * the attic); the rest play behind door a.
  */
-export function beginRun(id: string, rand: () => number = Math.random): { scene: string; slot: Slot } {
+export function beginRun(id: string, rand: () => number = planRand): { scene: string; slot: Slot } {
   if (debugMode.run) endRun(false);
   let game: Minigame;
   if (id === 'sentence') {

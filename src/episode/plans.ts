@@ -18,6 +18,9 @@
  *     grabWord), the plans, then rememberPlan
  *   grabPlan: grabWord, housePlan, then the hall's other pictures
  *
+ * The fight style draws with the cast's `castRand`; every other draw here
+ * with `planRand` (`./draws.ts`), so `?seed=` replays them too.
+ *
  * So the order is gift, moves, warm-up word, house plan. Changing a call's
  * place changes which avoid-lists exist when and how the seeded draws are
  * consumed (tests/unit/plansGolden pins `episodePlans`' own draws given its
@@ -47,7 +50,7 @@ import { GRAB_WORDS, hallObjects, pickGrab } from '../rules/grab';
 import { progress } from '../state/progress';
 import { pickWeighted } from '../rules/random';
 import { away, bedroomTaunt, helper, hubScene, storyWords, villainSpec } from './cast';
-import { castRand, fightOverride, remembered } from './draws';
+import { castRand, fightOverride, planRand, remembered } from './draws';
 import { episode, steps, type Slot, type Step } from './state';
 
 /**
@@ -132,11 +135,11 @@ export function housePlan(): RoomPlan[] {
     const rooms = place
       ? ([place.rooms[0]!.id, place.rooms[1]!.id] as [string, string])
       : // The rooms she has gone longest without (item 067: the one left out last episode comes back).
-        (leastRecent(FETCH_ROOMS, progress.recentOf('rooms'), 2, Math.random) as [string, string]);
+        (leastRecent(FETCH_ROOMS, progress.recentOf('rooms'), 2, planRand) as [string, string]);
     const counterRoom = place ? place.secret.id : COUNTER_ROOM;
     const input = planInput(gift, rooms, counterRoom);
     const games = roomGames();
-    episode.house.plan = forcedSentence(episodePlans(progress, { ...input, ...games }), input.fill);
+    episode.house.plan = forcedSentence(episodePlans(progress, { ...input, ...games }, planRand), input.fill);
     rememberPlan();
   }
   return episode.house.plan;
@@ -205,7 +208,7 @@ function grabWord(): string {
     // `level` is read when the hall opens, `misses` counted there: kept here so a trip to the parent page loses neither.
     // `?grab=king` (tests, item 085): that word, when the hall can ask for it.
     const asked = urlQuery().get('grab');
-    episode.grab = { word: asked && GRAB_WORDS.includes(asked) ? asked : pickGrab(progress, avoid), objects: [], level: null, misses: 0 };
+    episode.grab = { word: asked && GRAB_WORDS.includes(asked) ? asked : pickGrab(progress, avoid, planRand), objects: [], level: null, misses: 0 };
   }
   return episode.grab.word;
 }
@@ -232,7 +235,7 @@ export function grabPlan(): { word: string; objects: string[] } {
   const grab = episode.grab!;
   if (!grab.objects.length) {
     housePlan();
-    grab.objects = hallObjects(progress, word, readingWords().filter((w) => w !== word));
+    grab.objects = hallObjects(progress, word, readingWords().filter((w) => w !== word), planRand);
   }
   return { word, objects: grab.objects };
 }
@@ -266,17 +269,17 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
   const room = ROOM_FORCE.get(q.get('room') ?? '');
   const phonics =
     room && room !== SHIFTER_GAME ? room
-      : FORCE_PHONICS_ROOM && !only && !asked ? MINIGAME_BY_ID[pickWeighted(PHONICS_GAMES.map((g) => g.id), (id) => MINIGAME_BY_ID[id]!.weight * (progress.recentOf('phonics').includes(id) ? VARIETY.gameWeight : 1), 1)[0]!]
+      : FORCE_PHONICS_ROOM && !only && !asked ? MINIGAME_BY_ID[pickWeighted(PHONICS_GAMES.map((g) => g.id), (id) => MINIGAME_BY_ID[id]!.weight * (progress.recentOf('phonics').includes(id) ? VARIETY.gameWeight : 1), 1, planRand)[0]!]
         : undefined;
   const drawn = !only && !asked;
   // `?room=charge` / `?room=bridge` keep it behind door b, as before item 126 (tests/opening.spec.ts plays both).
-  const shifter = room === SHIFTER_GAME || (drawn && (room !== undefined || Math.random() < shifterChance())) ? SHIFTER_GAME : undefined;
+  const shifter = room === SHIFTER_GAME || (drawn && (room !== undefined || planRand() < shifterChance())) ? SHIFTER_GAME : undefined;
   // `?room=shifter` takes door a; else it follows the phonics game. Two doors: a third forced game waits its turn.
   const forced = (room === SHIFTER_GAME ? [shifter, asked, phonics] : [asked, phonics, shifter]).filter((g, i, all): g is Minigame => Boolean(g) && all.indexOf(g) === i).slice(0, 2);
   if (!forced.length) return { pool: only ?? framesClear(MINIGAMES) };
   // Item 126: drawn, the other door is a sentence frame or the word machine (the phonics games and the Shape-Shifter are forced or not at all).
   const pool = only ?? framesClear(drawn ? MINIGAMES.filter((g) => !PHONICS_GAMES.includes(g) && g !== SHIFTER_GAME) : MINIGAMES);
-  const rest = drawGames(progress, Math.random, pool.filter((g) => !forced.includes(g)));
+  const rest = drawGames(progress, planRand, pool.filter((g) => !forced.includes(g)));
   // The pool too: a room that cannot plan its game plays a sentence frame from it (`episodePlans`).
   return { games: [forced[0]!, forced[1] ?? rest[1], rest[2]], pool };
 }
@@ -351,7 +354,7 @@ export const ROOM_LINE_WORDS = NARRATOR_LINES.filter((t) => /^(shifter|bridge|ch
  * first need (the hub, the move plan, the house plan, whichever asks first).
  */
 export function giftWord(): string {
-  episode.gift ??= drawGift(progress, { helper: helper(), avoid: saidBeforeBattle() });
+  episode.gift ??= drawGift(progress, { helper: helper(), avoid: saidBeforeBattle() }, planRand);
   return episode.gift;
 }
 
@@ -363,7 +366,7 @@ export function movePlan(): MovePlan {
     const input = { hero: episode.hero, team, helper: helper(), gift, avoid: saidBeforeBattle() };
     // A story fight (item 107) plans its own choices, one per pad beat, in the same shape.
     const story = STORY_BY_ID[fightStyle().story ?? ''];
-    episode.moves = story ? planStoryMoves(progress, story, input) : planMoves(progress, input);
+    episode.moves = story ? planStoryMoves(progress, story, input, planRand) : planMoves(progress, input, planRand);
   }
   return episode.moves;
 }
@@ -384,7 +387,7 @@ export function debugPlan(game: Minigame, slot: Slot): RoomPlan {
   const games = plan.map((p) => MINIGAME_BY_ID[p.game]!) as [Minigame, Minigame, Minigame];
   games[i] = game;
   const input = planInput(giftWord(), [plan[0]!.room, plan[1]!.room], plan[2]!.room);
-  return episodePlans(progress, { ...input, games })[i]!;
+  return episodePlans(progress, { ...input, games }, planRand)[i]!;
 }
 
 /** The word the attic's counter sentence ends in: whatever beats the villain this episode. */
@@ -415,7 +418,7 @@ export function counterArt(): string {
 export function drawEnding(): string {
   if (!episode.ending) {
     const forced = urlQuery().get('ending');
-    episode.ending = forced && ENDING_BY_ID[forced] ? forced : pickEnding(episode, progress.recentOf('ending'));
+    episode.ending = forced && ENDING_BY_ID[forced] ? forced : pickEnding(episode, progress.recentOf('ending'), planRand);
   }
   return episode.ending;
 }

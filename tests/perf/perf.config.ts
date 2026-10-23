@@ -1,8 +1,14 @@
 /**
  * Playwright config for the boot timings (item 065, `tests/perf/*.pw.ts`; the
  * `.pw.ts` name keeps it out of the suite). One worker, so nothing shares the
- * machine with what is being timed. Its server is the dev server without file
- * watching (tests/vite.nowatch.config.ts, the checker's before it served a build). Port: `PERF_PORT`, else `CONDUCTOR_PORT`, else 5196.
+ * machine with what is being timed. Port: `PERF_PORT`, else `CONDUCTOR_PORT`, else 5196.
+ *
+ * It times the production build, as the suite and the bug-hunt checker serve (item 133;
+ * `tests/testBuild.ts`, skipped when nothing it is built from changed, into its own folder
+ * so a test run or a sweep beside it keeps its own): a build is what Julia plays, and the
+ * dev server's first boots timed its module transforms, not the game.
+ * `PERF_DEV_SERVER=1` times the dev server instead (`tests/vite.nowatch.config.ts`);
+ * `PERF_DIST=<dir>` builds into another folder (default `node_modules/.ww-perf-dist`).
  *
  *   npm run perf
  */
@@ -24,10 +30,13 @@ export default defineConfig({
   use: { baseURL: `http://localhost:${PORT}` },
   projects: gpuProjects(),
   webServer: {
-    command: `node node_modules/vite/bin/vite.js --config tests/vite.nowatch.config.ts --port ${PORT} --strictPort`,
+    command: process.env.PERF_DEV_SERVER
+      ? `node node_modules/vite/bin/vite.js --config tests/vite.nowatch.config.ts --port ${PORT} --strictPort`
+      : `node --import tsx tests/testBuild.ts && node node_modules/vite/bin/vite.js preview -c tests/vite.test.config.ts --port ${PORT} --strictPort`,
     cwd: '../..',
+    env: { WW_TEST_DIST: process.env.PERF_DIST ?? 'node_modules/.ww-perf-dist' },
     url: `http://localhost:${PORT}`,
     reuseExistingServer: false,
-    timeout: 60_000,
+    timeout: 120_000,
   },
 });

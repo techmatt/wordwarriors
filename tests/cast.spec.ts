@@ -1,5 +1,6 @@
 /**
- * Item 025: drawn casts. A seed draws the same cast every time; URL overrides
+ * Item 025: drawn casts. A seed draws the same cast every time (since item 133 the
+ * same house plan too: rooms, games, words); URL overrides
  * fix one. Drawn casts are played elsewhere (item 036 folded them into walks
  * that were already there): through the bedroom and the warm-up to the quest
  * place in tests/entry.spec.ts, whole episodes in tests/soak.spec.ts (two)
@@ -18,16 +19,20 @@ async function episodeOf(page: Page): Promise<WWState['episode']> {
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/025_${name}.png` });
 
-test('the same seed casts the same episode (from the same progress)', SLOW, async ({ browser }) => {
-  const cast = async () => {
+test('the same seed casts and plans the same episode (from the same progress)', SLOW, async ({ browser }) => {
+  // Item 133: the seed reaches the house's draws too (`planRand`): rooms, games and words, the gift and the moves.
+  const draw = async () => {
     const context = await browser.newContext();
     const page = await context.newPage();
-    await boot(page, '?scene=bedroom&seed=5&nojourney=1');
-    const { hero, ally, villain, primary, secondary, place } = await episodeOf(page);
+    await boot(page, '?scene=house&seed=5&games=all&nojourney=1');
+    const s = await until(page, (x) => Boolean(x.episode.house.plan), 30_000, 'the house plan');
+    const { hero, ally, villain, primary, secondary, place, gift, moves, fight } = s.episode;
     await context.close();
-    return { hero, ally, villain, primary, secondary, place };
+    return { hero, ally, villain, primary, secondary, place, gift, moves, fight, plan: s.episode.house.plan };
   };
-  expect(await cast()).toEqual(await cast());
+  const first = await draw();
+  expect(first.plan!.length, 'a plan drawn').toBeGreaterThan(0);
+  expect(await draw()).toEqual(first);
 });
 
 test('URL overrides fix the cast: a dad form as ally, his quest place, the other dad in a chosen form', async ({ page }) => {

@@ -35,7 +35,7 @@
 
 import Phaser from 'phaser';
 
-import { CHARACTER_BY_ID, MINIONS, abilityCallout, comboFor, comboPart, personOf } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, abilityCallout, comboFor, comboPart, personOf } from '../../content/battle/roster';
 import type { AbilitySpec, CounterItem, Status } from '../../content/battle/types';
 import { wordEffect } from '../../content/phonics/effects';
 import { RUNE_BY_SOUND, runeArt } from '../../content/phonics/runes';
@@ -67,7 +67,7 @@ import { Bubbles } from '../ui/Bubbles';
 import { Caption } from '../ui/Caption';
 import { fitText } from '../ui/fitText';
 import { cast, type Projectile, type Trap } from './abilities';
-import { Fighter, FLOOR_BOTTOM, FLOOR_TOP, initFromMinion, initFromSpec, NO_AFTERIMAGES, type FighterInit } from './Fighter';
+import { Fighter, FLOOR_BOTTOM, FLOOR_TOP, initFromSpec, NO_AFTERIMAGES, type FighterInit } from './Fighter';
 import { ARENA_LEFT, ARENA_RIGHT, integrate, restLift, STEER, STICK_DEADZONE } from './movement';
 import { BattleHud } from './hud';
 import { MoveChoice, type ChoiceHost } from './moveChoice';
@@ -98,13 +98,13 @@ const CHOICE_PROMPT: readonly MoveKind[] = ['use_move', 'find_move', 'not_move']
  * stays framed heroes-left, villain-right: the i-th hero's at `heroX - i * heroDx` (each
  * their own, item 034), pulled at `heroPull` a second, the villain's at `villainX` at
  * `villainPull`. `ult`: the sides for the ultimate, the i-th hero at (`x + i * dx`,
- * `y + i * dy`), the helper behind, the villain on the right (a giant further out, on the
- * front edge of the floor).
+ * `y + i * dy`), the villain on the right (a giant further out, on the front edge of the
+ * floor).
  */
 const BRAWL = {
   intro: { x: 260, dx: 140, villainX: 960 },
   fight: { heroX: 430, heroDx: 160, heroPull: 0.8, villainX: 900, villainPull: 1.2 },
-  ult: { x: 260, dx: 150, y: 500, dy: 70, helper: { x: 150, y: 600 }, villain: { x: 900, y: 560 }, giantX: 960 },
+  ult: { x: 260, dx: 150, y: 500, dy: 70, villain: { x: 900, y: 560 }, giantX: 960 },
 } as const;
 /** `?battle=short`: the director's waits at this share of their length (item 083). */
 const SHORT_BEATS = 0.2;
@@ -135,7 +135,6 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
   phase: Phase = 'intro';
   heroes: Fighter[] = [];
   villain!: Fighter;
-  helper: Fighter | null = null;
   /** The showdown's style (item 031) and its staging (src/battle/stages/). */
   fight!: FightSpec;
   private show!: FightStage;
@@ -201,7 +200,6 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     this.waits = [];
     this.phase = 'intro';
     this.heroes = [];
-    this.helper = null;
     this.simRate = 1;
     this.teamNextCast = { hero: 0, villain: 0 };
     this.nextTaunt = 4000;
@@ -343,7 +341,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
   }
 
   team(): Fighter[] {
-    return [...this.heroes, ...(this.helper ? [this.helper] : [])].filter((f) => f.active);
+    return this.heroes.filter((f) => f.active);
   }
 
   heroFrac(): number {
@@ -609,7 +607,6 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     await this.wait(this.beat(1.5));
     await this.useAllFetched(this.beat(3.5));
     await this.useCharged(this.beat(1.1));
-    await this.useMade(['helper', 'gem', 'ammo'], this.beat(3));
     await this.wait(this.beat(2.5));
     await this.moveChoice();
     await this.wait(this.beat(7));
@@ -633,7 +630,6 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     await this.wait(this.beat(1));
     await this.useAllFetched(this.beat(3));
     await this.useCharged(this.beat(1.1));
-    await this.useMade(['helper', 'ammo', 'gem'], this.beat(2.5));
     await this.wait(this.beat(2));
     await this.moveChoice();
     await this.wait(this.beat(6));
@@ -847,63 +843,11 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     });
   }
 
-  /** The parked v0.1 made things, only if their flags are set (they are not, in v0.2 episodes). */
-  async useMade(order: ('helper' | 'gem' | 'ammo')[], gap: number): Promise<void> {
-    for (const what of order) {
-      if (!episode.made[what]) continue;
-      if (what === 'helper') await this.useHelper();
-      else if (what === 'gem') await this.useGem();
-      else await this.useAmmo();
-      await this.wait(gap);
-    }
-  }
-
-  /** The helper friend from Word to Picture joins the heroes. */
-  private async useHelper(): Promise<void> {
-    if (!episode.made.helper || this.helper) return;
-    const h = this.heroes[0]!;
-    sfxSummon();
-    shockwave(this, h.x + 120, h.y, 0xff7ad9, 200);
-    burst(this, h.x + 120, h.y - 60, { count: 60, speed: 400, colors: [0xff7ad9, 0x7ad9ff, 0xffffff] });
-    this.helper = this.spawn(initFromMinion(MINIONS.helper!, 'hero', 'helper'), h.x + 120, h.y);
-    this.helper.hp = this.helper.maxHp = 9999;
-    this.banner('HELPER FRIEND!', 0xff7ad9);
-    void this.say('use_helper');
-  }
-
-  /** The power gem from Sound to Letter: a rainbow beam, and the hero glows stronger. */
-  private async useGem(): Promise<void> {
-    if (!episode.made.gem) return;
-    const h = this.heroes[0]!;
-    h.power = Math.max(h.power, 1.35);
-    void this.say('use_gem');
-    const gem = fitImage(this.add.image(h.cx, h.top - 50, 'prop_gem'), 90, 90).setDepth(DEPTH.fx);
-    popIn(this, gem, 90 / Math.max(gem.width, gem.height), 0, 300);
-    await this.wait(0.6);
-    const rainbow: AbilitySpec = { id: 'gem_beam', name: 'Power Gem', kind: 'beam', cooldown: 0, color: 0xff5ab4, color2: 0x7ad9ff, power: 3 };
-    this.banner('POWER GEM!', 0xff5ab4, true);
-    slowmo(this, 0.4, 600);
-    cast(this, h, rainbow, this.villain, 1.6);
-    this.stats.abilitiesFired++;
-    this.tweens.add({ targets: gem, alpha: 0, scale: 0, delay: 900, duration: 300, onComplete: () => gem.destroy() });
-  }
-
-  /** The star ammo from Blend Path: a barrage of stars from the heroes' side. */
-  private async useAmmo(): Promise<void> {
-    if (!episode.made.ammo) return;
-    const h = this.heroes[0]!;
-    void this.say('use_ammo');
-    this.banner('STAR AMMO!', 0xffd23f, true);
-    const stars: AbilitySpec = { id: 'star_ammo', name: 'Star Ammo', kind: 'bolt', cooldown: 0, color: 0xffd23f, power: 1, count: 10, glyph: '⭐', homing: true };
-    cast(this, h, stars, this.villain, 1.4);
-    this.stats.abilitiesFired++;
-  }
-
-  /** Two heroes (or the hero and the helper) fire a combo together. */
+  /** Two heroes fire a combo together. */
   private async combo(): Promise<void> {
     const a = this.heroes[0]!;
-    let b = this.heroes[1] ?? this.helper;
-    // With no ally and no helper, the narrator swoops in for the combo and
+    let b = this.heroes[1];
+    // With no ally, the narrator swoops in for the combo and
     // leaves again: nobody fights alone at the big moment.
     let cameo: Fighter | null = null;
     if (!b || !b.active) {
@@ -1167,7 +1111,6 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
       h.clearOverlay();
       if (!this.show.anchored) this.tweens.add({ targets: h, x: BRAWL.ult.x + i * BRAWL.ult.dx, y: BRAWL.ult.y + i * BRAWL.ult.dy, duration: 600, ease: 'Quad.easeOut' });
     });
-    if (this.helper?.active && !this.show.anchored) this.tweens.add({ targets: this.helper, x: BRAWL.ult.helper.x, y: BRAWL.ult.helper.y, duration: 600 });
     await this.wait(0.6);
     sfxUltimate();
     this.darken(0.55, 800);
@@ -1459,7 +1402,6 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
       });
     }
     await this.wait(team.length * 0.7 + 0.5);
-    if (episode.made.ammo) await this.useAmmo();
     await this.wait(1.6);
     await this.show.finish(v);
     // The last hit.
@@ -1511,7 +1453,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     if (!enemies.length) return null;
     let t: Fighter;
     if (f.isMain && Math.random() < 0.65) {
-      const mains = enemies.filter((e) => e.isMain || e.init.kind === 'helper');
+      const mains = enemies.filter((e) => e.isMain);
       t = mains.length ? mains[Math.floor(Math.random() * mains.length)]! : enemies[0]!;
     } else {
       t = enemies.reduce((a, b) => (Phaser.Math.Distance.Between(f.x, f.y, a.x, a.y) < Phaser.Math.Distance.Between(f.x, f.y, b.x, b.y) ? a : b));
@@ -1547,7 +1489,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     } else if (moving) STEER[f.init.style](f, { scene: this, now: this.now, dt, target });
     // Each side drifts back towards its own ground, so the fight stays framed
     // heroes-left, villain-right instead of wandering off one edge.
-    if (moving && !steered && !placed && (f.isMain || f.init.kind === 'helper')) {
+    if (moving && !steered && !placed && f.isMain) {
       // Each hero has a ground of their own, so she and her ally never share one spot (item 034).
       const g = BRAWL.fight;
       const home = f.team === 'hero' ? g.heroX - Math.max(0, this.heroes.indexOf(f)) * g.heroDx : g.villainX;
@@ -1564,7 +1506,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
       if (!f.ready(ab, this.now)) continue;
       if (ab.kind === 'heal' && this.alliesOf(f).every((a) => a.hp > a.maxHp * 0.7) && f.hp > f.maxHp * 0.7) continue;
       f.use(ab, this.now);
-      cast(this, f, ab, target, f.init.kind === 'helper' ? 1.4 : 1, f.isMain && ab.power >= 2 && !this.textGivesAway(abilityCallout(ab)));
+      cast(this, f, ab, target, 1, f.isMain && ab.power >= 2 && !this.textGivesAway(abilityCallout(ab)));
       // Big moves are called out by name, if nobody else is talking.
       // A move whose name says a word on a pad still to come is never called
       // out: hearing it then would give the choice away (so are taunts).
@@ -1585,16 +1527,15 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
    */
   private separate(dt: number): void {
     const live = this.fighters.filter((f) => f.active && !f.floored);
-    const body = (f: Fighter) => f.isMain || f.init.kind === 'helper';
     for (let i = 0; i < live.length; i++) {
       for (let j = i + 1; j < live.length; j++) {
         const a = live[i]!;
         const b = live[j]!;
-        // The heroes, the helper and the villain never stand in one another
+        // The heroes and the villain never stand in one another
         // (item 034): at about the same depth, their bodies are kept apart
         // across, at once, the bigger one giving less. Not while one is in
         // the air (a leap passes over), and her hero in a move choice is hers.
-        if (body(a) && body(b)) {
+        if (a.isMain && b.isMain) {
           // Her hero in a move choice is the cursor: she walks past anyone,
           // and never shoves her ally ahead of her across the arena. A
           // contest's own places are the stage's: once crossed, a push would

@@ -226,7 +226,7 @@ export class MoveChoice {
     // Minions too (item 039: a pad under a crowd of skeletons or dragon babies did not read as a place to stand).
     const avoid = [me, v, ...this.host.fighters.filter((f) => f.active)].filter((f, i, a) => f?.active && a.indexOf(f) === i);
     // The team steps back off the signs in a fight (M6), but holds its stations in a contest (M17).
-    const team = this.host.anchored ? this.host.fighters.filter((f) => f !== me && f.active && (this.host.heroes.includes(f) || f.init.kind === 'helper')) : [];
+    const team = this.host.anchored ? this.host.fighters.filter((f) => f !== me && f.active && this.host.heroes.includes(f)) : [];
     return placePads({
       n,
       avoid: avoid.map(body),

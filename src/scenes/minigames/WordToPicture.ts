@@ -2,7 +2,7 @@
  * Word → picture. The word hangs on a banner; three pictures stand on
  * pedestals; she walks to the picture of the word and presses green. Each
  * right picture is a spark of summoning; four of them call the helper friend
- * who fights alongside the heroes.
+ * (a prize only: it no longer joins the battle).
  *
  * The word is never spoken before she answers. Yellow sounds out its letters
  * one at a time, lighting each on the banner, and never blends them. Character
@@ -15,7 +15,7 @@ import { LETTER_BY_CHAR } from '../../../content/phonics/letters';
 import { WORD_BY_ID, pictureFor } from '../../../content/phonics/words';
 import { letterSoundLine, wordLine } from '../../../content/voice/ids';
 import { DEPTH, FONT_COMIC, GAME_WIDTH } from '../../config';
-import { castFace, episode } from '../../episode/Episode';
+import { castFace, planRand } from '../../episode/Episode';
 import { bob, popIn } from '../../fx/juice';
 import { pictureRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
@@ -24,13 +24,22 @@ import type { Spot } from '../../world/RoomScene';
 import { SideRoom } from '../../world/SideRoom';
 
 const BANNER_W = 560;
-/** Under the meter's slots, and a slim trim, so it ends above the pictures' tops (about y 270). */
+/** Under the meter's slots, and a slim trim: it ends at about y 262 (a long word's smaller letters) to 275. */
 const BANNER_TOP = 92;
 const BANNER_TRIM = 0.3;
 /** Clear air between the letters (their ink, popped to GROW) and the cream band's edges. */
 const PANEL_MARGIN = 14;
 /** How big a letter pops as the hint sounds it. */
 const GROW = 1.3;
+/**
+ * The pictures' feet (each on its pedestal: 250 px tall, bobbing 5 up). Item 133 (W39): at
+ * 520 a settled middle picture's top sat 3 to 10 px under the banner's foot, and its pop-in
+ * (`popIn`, Back.easeOut, about 1.1 at the peak, grown from the feet) reached 25 px higher;
+ * at 560 the peak stops at 285, clear of the deepest banner.
+ */
+const PICTURE_FEET = 560;
+/** Where a new round steps her back to: out of every picture's reach (REACH 95), as before item 133 moved them. */
+const STEP_BACK = PICTURE_FEET + 120;
 
 const ITEMS = 4;
 
@@ -48,10 +57,10 @@ export class WordToPicture extends SideRoom {
   }
 
   protected build(): void {
-    this.items = pictureRound(progress, ITEMS);
+    this.items = pictureRound(progress, ITEMS, planRand);
     this.itemIndex = 0;
     this.makeMeter(ITEMS, 'minion_helper', '✨');
-    this.floor.setTo(80, 420, GAME_WIDTH - 160, 230);
+    this.floor.setTo(80, 420, GAME_WIDTH - 160, STEP_BACK + 10 - 420);
     void (async () => {
       await this.narrate('prep_helper', 'inst_picture');
       this.showItem();
@@ -100,11 +109,11 @@ export class WordToPicture extends SideRoom {
       const w = WORD_BY_ID[word]!;
       const pedestal = this.art('prop_pedestal', 170, 100);
       const pic = this.art(pictureFor(w, castFace), 150, 150, 0, -100);
-      const spot = this.addSpot(word, xs[i]!, 520, [pedestal, pic], word === item.target);
+      const spot = this.addSpot(word, xs[i]!, PICTURE_FEET, [pedestal, pic], word === item.target);
       bob(this, pic, 5, 900 + i * 120);
       popIn(this, spot.obj, 1, 200 + i * 120);
     });
-    if (this.player.y < 600) this.player.place(this.player.x, 640);
+    if (this.player.y < STEP_BACK - 40) this.player.place(this.player.x, STEP_BACK);
   }
 
   protected override hint(): void {
@@ -144,7 +153,6 @@ export class WordToPicture extends SideRoom {
         this.clearSpots();
         this.banner?.destroy();
         await this.completePrize('minion_helper', 'made_helper');
-        episode.made.helper = true;
         this.done();
       }
     })();

@@ -22,11 +22,20 @@ here.
 - **No keyboard answers.** Selection stays walking and green; A–Z stays spelling's.
 - **No game needs Dad beside her, and no step waits on Dad forever:** with his presses
   missing, "say it with me" solo mode turns on, and solo reads count as modelled.
-- **Fight style is fixed per villain** (`fight` in the roster), not drawn.
+- **Fight style is the villain's own, with two exceptions** (`fightStyle` in
+  `src/episode/plans.ts`, `pickFight` in `src/rules/fights.ts`), never drawn from the pool
+  of styles. Each villain's own is `fight` on his roster entry, `brawl` with none (of the
+  live villains Evil Tiamat brawls; the others each have one). Exceptions, in this order:
+  Evil Smaug, when drawn freely (not fixed by `?villain=` or a pick), plays his story
+  fight (`storyFight`) about half his episodes (`STORY_FIGHT`: 0.75 after an episode
+  without it, 0.25 after one with it); otherwise, with chef Dada Jason as the ally
+  (`fightNudge`; not his warrior or warlock form), a cook-off 70% of the time, whoever the
+  villain. `?fight=<id>` fixes it (a story fight forces its villain).
 - **The word machine:** blend and digraph families wait until she reads blends. Later
   modes Matt wants: flip it, and real or silly.
-- **Charge the Spell's gesture texts stay** (`text` in `RUNES`, shown with the sound only
-  since item 058) while a teaching mode is still wanted.
+- **Charge the Spell's gesture texts stay** (`text` in `RUNES`; the gesture is shown with
+  the sound only since item 058) while a teaching mode is still wanted. They are no longer
+  composed into `lines.json` (item 133): a teaching mode would compose and voice them again.
 - **Story-fight staging** is generalised only when a second story fight is written.
 - **The read praise before a Shape-Shifter fix-it link stays.**
 - **The named-counter boost stays** at 6× (`NAMED_COUNTER_BOOST`).

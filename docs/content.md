@@ -46,7 +46,7 @@ Moved from CLAUDE.md (item 078). "The three commands" are `voice:lines`, `voice:
 | "here are my letter sound recordings" / "here is a recorder zip" | `npm run voice:import -- <zip>`, then `voice:build`; report each card installed or refused and why (`docs/recording.md`) |
 | "longer / shorter charge words" / "a longer / shorter beat to say each sound back" / "a longer / shorter beat when the helper says it with her" | `CHARGE` in `src/config.ts` (`units`, `sayBackMs`, `soloBeatMs`) |
 | "Dad should wait longer" / "go solo sooner when Dad isn't there" (Charge's read, the bridge's level 3) | `DAD_AWAY_MS` in `src/config.ts` (item 106) |
-| "a new gesture for X" / "X's rune should fire Y" | X's entry in `RUNES` (`content/phonics/runes.ts`: `gesture`, `move`), then `voice:lines`, `voice:build` |
+| "a new gesture for X" / "X's rune should fire Y" | X's entry in `RUNES` (`content/phonics/runes.ts`: `gesture`, `move`); no voice commands (the gesture's `text` is not voiced) |
 | "higher / floatier jumps" / "more or fewer shots" / "charge sooner" | `FREE_PLAY` in `src/config.ts` (`jump`, `maxShots`, `chargeMs`, `fullChargeMs`, `shotSpeed`, `shotLifeMs`) |
 | "stop forcing the phonics room" | `FORCE_PHONICS_ROOM` in `src/config.ts` (both stay weighted entries, `CHARGE.weight`, `BRIDGE.weight`) |
 | "Smaug's story fight more / less often" | `STORY_FIGHT` in `src/config.ts` (`afterOne`, `afterNone`: its chance after an episode of his with / without it, for a villain drawn freely; 0 and 0 never) |
@@ -457,7 +457,7 @@ data only:
   `props` (art `prop_fight_<prop>`).
 - **Splashes**: a big move's comic burst behind the actor (art `fx_story_<id>`).
 - **Beats** (`part1`, `part2`): `talk`, `fetched` (`all`: every fetched thing, else only
-  the charged runes and made things), `counter` (a `pad` input: the right word is drawn
+  the charged runes), `counter` (a `pad` input: the right word is drawn
   from `answers`, the words that make sense against what he just did, by the bank's
   weighting; `'gift'` is the gift word, part 1's first pick), `attack` (`move`: `fire`,
   `rain`, `tail` or `guards`; a `dodge` to a spot, or `dodgePads`, HOP or JUMP from
@@ -512,8 +512,8 @@ Every word she reads is one entry in the word bank (item 037). An entry is
 `T(word, glyph?, extra?)` for a `thing` (a clear picture: a room's object, a key word,
 the counter, a warm-up picture, a fetched battle item), `A(...)` for an `action` (a
 clear battle effect: a move pad, the gift word) or `B(...)` for `both` (NET, flung or
-fetched). `glyph` is the placeholder card's emoji (avoid Emoji 13+); `draw` a canvas
-drawing where Windows 10 has none; `say` a respelling where edge-tts misreads it.
+fetched). `glyph` is the placeholder card's emoji (avoid Emoji 13+; leave it out where Windows 10
+has none, for a generic stand-in); `say` a respelling where edge-tts misreads it.
 
 Its tags are derived from the spelling, never typed: `units` (SH CH TH CK NG QU kept
 together, QU sounding as Q; a doubled letter, EGG's GG, one unit with the letter's sound
@@ -722,12 +722,13 @@ motion, text, kind, color, extra)`. `tier` 1 is a continuous sound, 2 a quick on
 digraph: a label only (the unit tests read it), since item 067 put every sound in play
 from the start. The gesture is the narrator's: their
 sprite bobs in time while `glyph` (an emoji, never a bank word's picture) does `motion`
-beside them, and they say `text`, which trails off into `letter_<sound>_sound`, so it
-must never name the letter or spell the sound, and says no bank word at all
+beside them, and they say only `letter_<sound>_sound`, which she says back (item 058).
+`text` is the gesture told in words, trailing off into the sound: neither voiced nor
+composed into `lines.json`, kept for a teaching mode (`docs/rulings.md`); it still must
+never name the letter or spell the sound, and says no bank word at all
 (`tests/unit/charge.test.ts` checks both). The rest is the battle move her hero fires
-for it, shaped like a word effect (no `pic_` art). Then `voice:lines`, `voice:build`
-(each narrator has each gesture line, `nar_<n>_charge_gesture_<sound>`, though since item
-058 the room shows the gesture with only the sound, which the helper says and she says back). Tuning is `CHARGE`
+for it, shaped like a word effect (no `pic_` art). A rune adds no voice line of its own
+(its sound's line is the letter's). Tuning is `CHARGE`
 in `src/config.ts`. The room spells words: a new rune widens `CHARGE_WORDS`
 (`src/rules/charge.ts`), the familiar pictured words of 3-4 units that are all runes.
 

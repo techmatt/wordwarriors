@@ -102,6 +102,16 @@ without a new measurement.
   hub's opening lines at speed 5. Before, five hub boots in a row ran slower each (7.8 →
   11.8 s): every boot pulled 45 MB through vite; after, the five were within 0.1 s. The
   first run of a server's life is slower (vite transforms the modules) and is not counted.
+- **Perf times the build (item 133, 2026-10-23, 3:55pm)**, as the suite and the checker serve
+  it; the new baseline, beside the dev server on the same tree minutes later
+  (`PERF_DEV_SERVER=1`). Same spec, one worker, GPU, median of 5:
+  | | build (`npm run perf`) | dev server |
+  | --- | --- | --- |
+  | page load → title | 1.07 s (37 files, 2.5 MB) | 1.27 s |
+  | `?scene=house` → hub shown | 1.25 s (117 files, 7.2 MB) | 1.48 s |
+  | `?scene=house` → quiet hub | 2.12 s | 2.35 s |
+  The whole run: 26 s against 1.8 minutes (the dev server's first transforms). Item 065's
+  quiet hub (5.09 s) predates item 083's shorter hub opening, so it no longer compares.
 - **The suite serves a build (item 079, 2026-10-21)**, `vite build` (about 5 s, `public/`
   not copied: copying its 190 MB cost 14 s) then `vite preview` serving `public/` beside it
   (`tests/vite.test.config.ts`). Same machine, GPU, two workers, warm dev server for the

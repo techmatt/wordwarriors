@@ -47,7 +47,7 @@ import { fightStyle, planFor, rememberPlan } from './plans';
 import { countEpisode, currentStep, episode, sceneForStep, steps, type EpisodeState, type Slot, type Step } from './state';
 
 export { currentStep, episode, isStepKind, sceneForStep, steps, type EpisodeState, type PrepGame, type Slot, type Step } from './state';
-export { castEpisode, remembered, resetEpisode, setCastOptions } from './draws';
+export { castEpisode, planRand, remembered, resetEpisode, seedRands, setCastOptions } from './draws';
 
 export {
   away,

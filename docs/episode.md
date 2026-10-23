@@ -187,7 +187,7 @@ Any cast can be tried from the URL (and stays for every episode that session):
 
 | URL | Does |
 | --- | --- |
-| `?seed=7` | Seeds the cast draw (`castRand`): the same seed (and the same progress) repeats the cast, the quest place, the story and line variants and the fight style. The rooms, games and words are still drawn unseeded (`Math.random`); the variety simulator seeds those by replacing `Math.random` |
+| `?seed=7` | Seeds the episode's draws (`seedRands`, src/episode/draws.ts): the same seed (and the same progress) repeats the cast, the quest place, the story and line variants and the fight style (`castRand`), and the side rooms, their games, every word (key words, gift, pads, the warm-up and its pictures) and the victory scene (`planRand`, a stream of its own, so a seed's cast is as before). Only the first episode of a load replays exactly: the streams run on through the session. In-scene randomness (the battle's AI and effects, taunt picks, sfx) stays unseeded. Without `seed=` every draw is `Math.random`; the variety simulator seeds them all by replacing it |
 | `?cast=default` | The fixed default episode (`cast=random` draws even with `randomCast: false`) |
 | `?ally=dada_matt_lifter`, `?villain=dada_jason_warlock` | A role by roster id; a dad's id alone (`dada_jason`) is his own form (chef); `ally=none` |
 | `?form=cyber,warrior` | The dads' forms by name: `builder` `lifter` `cyber` `blade`; `chef` `warrior` `warlock` |

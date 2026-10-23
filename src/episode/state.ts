@@ -42,8 +42,8 @@ export interface EpisodeState {
   /** The quest place (content/house/house.ts PLACES id, or `home`): where the helper takes her to train. */
   place: string;
   prep: PrepGame[];
-  /** v0.1's made things (parked games); `item` is still the counter-item. */
-  made: { gem: boolean; ammo: boolean; helper: boolean; item: boolean };
+  /** `item`: the counter-item is made. */
+  made: { item: boolean };
   /** Words she read (or spelled) right this episode, in order, for the victory recap. */
   read: string[];
   /** Things fetched, in order (the entry hall's warm-up, then each side room's word): each is a battle item. */
@@ -118,7 +118,7 @@ function choosePrep(): PrepGame[] {
 export function freshProgress(): Omit<EpisodeState, 'hero' | 'ally' | 'villain' | 'villainWasRandom' | 'primary' | 'secondary' | 'place' | 'story' | 'lines' | 'solo'> {
   return {
     prep: choosePrep(),
-    made: { gem: false, ammo: false, helper: false, item: false },
+    made: { item: false },
     read: [],
     fetched: [],
     charged: null,

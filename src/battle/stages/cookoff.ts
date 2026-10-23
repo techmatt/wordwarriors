@@ -147,7 +147,6 @@ export class CookoffStage extends BaseStage {
       const big = Phaser.Math.Clamp((f.init.tall ?? f.init.size) - 1, 0, 1.4);
       return { x: 1020 + big * 15, y: 505 + big * 80 };
     }
-    if (f.init.kind === 'helper') return { x: 150, y: 600 };
     if (this.host.heroes.length < 2) return { x: 260, y: 500 };
     // Her in front, left of the dish; her ally a step back and to her left,
     // so a grown-up shows over her shoulder and neither hides the other or
@@ -161,7 +160,7 @@ export class CookoffStage extends BaseStage {
 
   override holds(f: Fighter): boolean {
     const h = this.host;
-    return f === h.villain || h.heroes.includes(f) || (f === h.helper && f.active);
+    return f === h.villain || h.heroes.includes(f);
   }
 
   override steer(f: Fighter, dt: number): boolean {
@@ -339,7 +338,7 @@ export class CookoffStage extends BaseStage {
 
   override onHit(target: Fighter, power: number, _from: Fighter | null): void {
     const h = this.host;
-    const s = target === h.villain ? this.villainSide : target.team === 'hero' && (target.isMain || target.init.kind === 'helper') ? this.hero : null;
+    const s = target === h.villain ? this.villainSide : target.team === 'hero' && target.isMain ? this.hero : null;
     if (!s) return;
     s.wob = Math.min(1.2, s.wob + 0.2 + power * 0.1);
     // A splat of sauce, at most a few a second: a whole team hits every frame.

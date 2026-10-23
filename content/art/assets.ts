@@ -37,7 +37,6 @@ export interface ArtAsset {
   glyph?: string;
   palette?: [number, number];
   evil?: boolean;
-  draw?: string;
   /** Arena floor colour. */
   ground?: number;
 }
@@ -145,7 +144,6 @@ const ROOMS: [string, string, string, [number, number]][] = [
   ['forge', 'A cosy wizard workshop with an anvil, bubbling potions and a glowing forge', '⚒️', [0x5a2a1a, 0xff9a3a]],
   ['camp', 'A hidden campfire camp in a forest at dusk, a tent, logs to sit on', '🏕️', [0x1a2a3a, 0xff8a3a]],
   ['victory', 'A victory celebration: fireworks over a castle, confetti, a podium', '🎆', [0x3a1a6a, 0xffd23f]],
-  ['parent', 'A calm plain grown-ups page background, soft paper texture', '📋', [0xf0ece0, 0xffffff]],
 ];
 for (const [id, content, glyph, palette] of ROOMS) {
   assets.push({ id: `room_${id}`, kind: 'room', w: 1280, h: 720, content: `${content}. No text.`, label: '', glyph, palette });
@@ -199,7 +197,6 @@ for (const w of picWords) {
     h: 200,
     content: `A single clear picture of a ${w.word}, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question.`,
     ...(w.glyph ? { glyph: w.glyph } : {}),
-    ...(w.draw ? { draw: w.draw } : {}),
   });
 }
 

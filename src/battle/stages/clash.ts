@@ -41,7 +41,6 @@ const HERO_SPOTS: Pt[] = [
   { x: 330, y: 585 },
   { x: 215, y: 495 },
 ];
-const HELPER_SPOT: Pt = { x: 130, y: 630 };
 const VILLAIN_SPOT: Pt = { x: 975, y: 570 };
 /**
  * The power meter in the free band under the names and the fetched things,
@@ -158,8 +157,7 @@ export class ClashStage extends BaseStage {
   private spot(f: Fighter): Pt | null {
     if (f === this.host.villain) return this.home(f, 0);
     const i = this.host.heroes.indexOf(f);
-    if (i >= 0) return this.home(f, i);
-    return f === this.host.helper ? HELPER_SPOT : null;
+    return i >= 0 ? this.home(f, i) : null;
   }
 
   override holds(f: Fighter): boolean {
@@ -199,10 +197,9 @@ export class ClashStage extends BaseStage {
     return true;
   }
 
-  /** The hero side's casters: the heroes, the helper and, in a combo, its cameo partner. */
+  /** The hero side's casters: the heroes and, in a combo, its cameo partner. */
   private heroSide(): Fighter[] {
     const list = [...this.host.heroes];
-    if (this.host.helper) list.push(this.host.helper);
     if (this.t < this.rainbowUntil) for (const f of this.pair) if (f.team === 'hero' && !list.includes(f)) list.push(f);
     return list;
   }

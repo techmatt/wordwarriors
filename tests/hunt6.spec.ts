@@ -1,7 +1,22 @@
 /**
  * The sixth bug hunt (item 102; docs/qa-findings.md, Hunt 6): the Shape-Shifter
- * under odd input. Yellow and green mashed through its morphs and misses, the
- * grown-ups page at each point of a link, key 0 in and out, dad lock.
+ * under odd input, and two fixes beside it, a test each:
+ *
+ * - the lit letter on a read-it label pulses at full size, never blinking out
+ *   (fix 103); the next link's options open out of her reach (fix 104) and she
+ *   stands beside the label, not in front of it (hunt 9, fix 129);
+ * - yellow and green mashed through every link, its misses and its morphs: it never
+ *   stalls and every word is fetched (slow lane);
+ * - the grown-ups page at a pick, a miss and a morph brings her back to the same
+ *   link, the room consistent; away in the last morph, the room ends (slow lane);
+ * - under dad lock green and yellow do nothing; key 0 in and out restarts the room
+ *   as it was, its levels untouched (slow lane);
+ * - level 1: a stone she reaches while the instruction plays sounds once the room is
+ *   quiet (fix 108), its letter lifted beside her head (hunt 9, M42; slow lane);
+ * - minigame debug mode: Dad's 2 in the same frame as key 0 out of a debug Charge
+ *   read records nothing in the real store (fix 116; slow lane);
+ * - THE END with chef Dada Jason, the tallest grown-up: no figure bobs up into the
+ *   title (fix 117; slow lane).
  */
 
 import { test, expect, type Page } from '@playwright/test';

@@ -49,7 +49,9 @@ const ONLY = arg('only', '');
 const WORDS = arg('words', '');
 if (WORDS) favourWords(WORDS === 'new' ? NEW_WORDS : WORDS.split(','));
 
-// Every draw that uses Math.random (rooms, games, words) replays from the seed.
+// Every draw replays from the seed: the cast's (passed below), the house's (unseeded
+// `planRand` calls Math.random) and the simulated answers. Not `seedRands`: one stream
+// here keeps each seed's past reports, and the answers would need a seed of their own.
 let s = (SEED * 104729) % 2147483647 || 1;
 Math.random = () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
 

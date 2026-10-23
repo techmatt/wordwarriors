@@ -1,10 +1,22 @@
 /**
  * The fifth bug hunt's odd input on the newer screens (item 092; docs/qa-findings.md,
- * Hunt 5): key 0 mashed in and out of minigame debug mode, with dad lock and the
- * grown-ups page in between; THE END through a resize and a hidden tab; a returning
- * player with everything maxed (the grown-ups page, an episode start); green mashed
- * after each choice and through the word machine's next line; the move choice's
- * caption and stick hint on the frozen fight's clock.
+ * Hunt 5), a test each:
+ *
+ * - key 0 mashed in the hub at four rhythms: debug mode, the DEBUG tag and the scene
+ *   always agree, and one press more flips it (slow lane);
+ * - key 0 under dad lock and across the grown-ups page: debug comes back as it was
+ *   left, and key 0 on the page does nothing (slow lane);
+ * - THE END through window resizes and a hidden tab: still THE END, Dad's cue inside
+ *   the canvas's corner, Dad's 2 starts the title (slow lane);
+ * - a returning player with everything maxed: the grown-ups page's three pages fit
+ *   (with item 103's Shape-Shifter levels and item 127's stored words), and an
+ *   episode starts;
+ * - green mashed after each choice (the bedroom door, the warm-up grab and its door,
+ *   the bubble circle, a hub door): each counts once (slow lane);
+ * - the move choice's caption clears as its line ends (fix 94) and the stick hint's
+ *   nub sways (fix 93), both off the frozen fight's clock;
+ * - the word machine: green mashed through the next round's line slots no tile laid
+ *   under her (fix 98; slow lane).
  */
 
 import { test, expect, type Page } from '@playwright/test';
