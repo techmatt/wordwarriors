@@ -3,7 +3,7 @@
  *
  * lines.json is generated, never hand-edited: the narrator templates
  * (content/voice/script.ts), the roster's names, taunts and ultimates
- * (content/battle/roster.ts, including each villain's house threat for the
+ * (content/battle/roster/, including each villain's house threat for the
  * wake-up) and the phonics tables (content/phonics/, including the sentence
  * frames' prefix lines and token words) are the source. Composing per narrator is what lets the ally really be the voice of
  * the instructions without anybody writing 12 copies of every line.

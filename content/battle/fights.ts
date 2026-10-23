@@ -14,7 +14,7 @@
  *
  * Lines are said by the narrator (composed per narrator as
  * `nar_<narrator>_fight_<id>_<beat>`): no move words, no CVC reading words.
- * New arenas are ARENAS keys in roster.ts (art `arena_<key>`).
+ * New arenas are ARENAS keys in roster/arenas.ts (art `arena_<key>`).
  */
 
 import { fightKey, type SpokenLine } from '../voice/ids.js';

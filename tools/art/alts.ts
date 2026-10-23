@@ -355,7 +355,7 @@ export async function pick(argv: string[]): Promise<void> {
   if (b) {
     // The game's prompt must match its art, so art:gen and later rounds draw the same look (item 041).
     console.log(`\nart:pick: ${id}-${k} was drawn from brief ${b.name} (${b.file}), not the game's prompt. Write the brief into the game in the same commit:`);
-    console.log('  a character: its `look` in content/battle/roster.ts (its prompt is derived from that, and docs/art.md follows);');
+    console.log('  a character: its `look` in content/battle/roster/ (its prompt is derived from that, and docs/art.md follows);');
     console.log(`  anything else: a HAND entry for ${id} in content/art/prompts.ts.`);
     console.log(`\n${b.text}\n`);
   }

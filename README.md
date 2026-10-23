@@ -902,7 +902,7 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   filtered on the id, and delete what it drew before a clean rerun.
 - **Promoting a brief's candidate:** `art:pick` prints the brief after cutting the image.
   Write it into the game in the same commit: a character's `look` in
-  `content/battle/roster.ts` (its prompt is derived from that, so `docs/art.md` follows;
+  its `content/battle/roster/` group file (its prompt is derived from that, so `docs/art.md` follows;
   rerun `art:placeholders`), anything else a `HAND` entry in `content/art/prompts.ts`.
   Otherwise `art:gen --force` and later rounds would draw the old look.
 - **A brand-new id** (a new word's `pic_<word>`): run `art:placeholders` before
@@ -944,9 +944,9 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   only when Matt has chosen for that id: a later round on it numbers from 1 again, and
   an old sheet's numbers no longer exist. Then delete the round's `scratch/` sheet,
   manifest, preview folder and briefs once every id in it is decided. `alts/` holds
-  only rounds still waiting (`ls art-originals/alts/`): on 2026-10-22, item 124's story
-  splashes (`fx_story_fire`, `_tail`, `_spin`, `_dive`, 3 each,
-  `scratch/art_alts_124_story_fx.*`). Item 122 promoted item 120's story props
+  only rounds still waiting (`ls art-originals/alts/`): on 2026-10-22, none. Item 123
+  promoted item 124's story splashes (`fx_story_fire` 1, `fx_story_tail` 1,
+  `fx_story_spin` 2, `fx_story_dive` 3). Item 122 promoted item 120's story props
   (`prop_fight_stone` 1, `prop_fight_ledge` 2, `prop_fight_hoard` 1);
   item 115 promoted item 113's face cards (`face_anna` 1, `face_rilla` 2, drawn with `--ref` on
   each promoted full body). Items 110's and 112's rounds are gone too (promoted by item

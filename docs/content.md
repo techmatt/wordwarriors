@@ -19,7 +19,7 @@ Moved from CLAUDE.md (item 078). "The three commands" are `voice:lines`, `voice:
 
 | Matt says | Run |
 | --- | --- |
-| "add a character / ability / taunt" | `content/battle/roster.ts`, the three commands |
+| "add a character / ability / taunt" | a group file in `content/battle/roster/`, the three commands |
 | "add words" / "add a move word" | a `BANK` entry in `content/phonics/bank.ts` (role `thing`, `action` or `both`), its picture brief in `PICTURES` (`content/art/prompts.ts`), its battle effect in `content/phonics/effects.ts` (`docs/content.md`, "A word"), the three commands |
 | "show me the new words" / "is X in the game?" | `?words=new` (item 121's words) or `?words=x,y` leans every draw to them; the grown-ups page's page 2 marks the newest NEW. Whether everything comes round: `npm run variety` (README, *Not tests*) |
 | "Julia knows X" / "she doesn't know what X is" | remove / add `odd` on X's `BANK` entry (an odd word is never a picture to match) |
@@ -54,7 +54,16 @@ Moved from CLAUDE.md (item 078). "The three commands" are `voice:lines`, `voice:
 | "for X I pick n" (from an `art_alts_*` sheet) | `npm run art:pick -- X n`, commit `public/art/X.png`; if it prints a brief, write it into X's roster `look` (or `HAND`) in the same commit |
 | "try a new look for X" / "draw X as …" | a brief file in `scratch/`, then `npm run art:alts -- X --n=2 --brief=scratch/<name>.txt --sheet=scratch/art_alts_<item>_<name>.png` (readonly; Matt picks) |
 
-## A character (`content/battle/roster.ts`)
+## A character (`content/battle/roster/`)
+
+Since item 123 the roster is files in `content/battle/roster/`, still imported as
+`content/battle/roster.ts` (which only re-exports). The characters are in group files
+(`family.ts`, `royals.ts`, `dragons.ts`, `oddballs.ts`, `dadForms.ts`), joined into
+`ROSTER` in `index.ts` in a fixed order: seeded draws read it, so a reorder changes every
+episode's draws. A new character goes at the end of its group (a new dad form at the end
+of `dadForms.ts`), or of `dadForms.ts` if it fits none, and then moves the plansGolden
+draws like any new character does. Minions are `minions.ts`, combos `combos.ts`, arenas
+`arenas.ts`, the dads' faces and colours `dads.ts`, `ab`/`ult` `abilities.ts`.
 
 A new character is defined but not drawn into random
 episodes until its id is added to `ACTIVE_CAST` in `src/config.ts` (`allies`,
@@ -277,7 +286,7 @@ own entry carries the default form's name (`form: 'builder'`). What follows from
   ("Dada Matt", "Evil Dada Matt"), so sentences read the same.
 - **Art**: `char_<form id>_good`, `char_<form id>_evil`, `face_<form id>`, drawn from
   the person's photo (`refFor` matches `char_dada_matt_<anything>`). The look starts
-  from the person's face (`MATT_FACE`, `JASON_FACE` in roster.ts); only clothes and props change.
+  from the person's face (`MATT_FACE`, `JASON_FACE` in `roster/dads.ts`); only clothes and props change.
 - **Casting**: `drawCast` gives each dad one form per episode, and he is that form in
   every role (the waker, the ally, the villain). `castId('dada_matt')` is the form he
   plays now; `castArt`/`castFace` use it, so the caption portrait shows the lifter.
@@ -627,7 +636,7 @@ word needs nothing more.
 
 ## Move words and the move bag (`src/rules/moves.ts`, ProgressStore `moveBag`)
 
-`MOVE_WORDS` (`content/battle/roster.ts`) is the pool: every bank action word (role
+`MOVE_WORDS` (`content/battle/roster/abilities.ts`) is the pool: every bank action word (role
 `action` or `both`, item 037). Reading a pad casts its word (word magic): when a
 teammate's ability answers to it (its `words`), that teammate fires the styled move;
 otherwise her hero fires the word's own effect (`content/phonics/effects.ts`). POW and

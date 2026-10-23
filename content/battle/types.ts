@@ -2,7 +2,7 @@
  * The shapes the roster is written in. Pure data: no Phaser, no DOM, so the
  * voice composer (Node) and the game (browser) read the same file.
  *
- * A new character is one `CharacterSpec` in roster.ts, then
+ * A new character is one `CharacterSpec` in a roster/ group file, then
  * `npm run voice:lines && npm run voice:build && npm run art:placeholders`.
  * No engine change is needed unless it wants an ability `kind` that does not
  * exist yet, and the list of kinds below is the menu.

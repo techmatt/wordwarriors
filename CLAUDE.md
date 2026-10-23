@@ -38,7 +38,7 @@ read-only reference.
 | `src/rules/` | Phaser-free, unit-tested game rules and draws; `difficulty`, `recent` (rotations across episodes), `random` (seeded) |
 | `src/world/` | `RoomScene` (walk-to-answer rooms), `SideRoom.ts` (`SideRoom`, every side room's base, and `HouseSideRoom`, the live rooms' base), `Player`, `houseMood` |
 | `src/ui/`, `src/fx/`, `src/qa/` | Captions, bubbles, button dots, `cornerTag`; particles, `sceneGen`; the bug-hunt checker's probe (`?qa=1`) |
-| `content/battle/` | `roster.ts` **every character** (every one is also a villain; the dads' forms have `person`); `fights.ts` fight styles; `outfits.ts` her outfits (a dad's form is a roster character); `stories/` story-fight scripts |
+| `content/battle/` | `roster.ts` **every character**, re-exporting `roster/` (characters in group files, `ROSTER`'s order fixed in `roster/index.ts`; every one is also a villain; the dads' forms have `person`); `fights.ts` fight styles; `outfits.ts` her outfits (a dad's form is a roster character); `stories/` story-fight scripts |
 | `content/house/` | `house.ts` rooms and quest places; `quests.ts`; `scenes.ts` hub story scenes; `endings.ts` victory scenes |
 | `content/phonics/` | `bank.ts` **the word bank**; `effects.ts` battle effects; `letters.ts`; `sentences.ts`; `families.ts`; `runes.ts`; `words.ts`, `spelling.ts` |
 | `content/voice/` | `script.ts` narrator templates; `ids.ts` (build every line id with its builders, never by hand like `find_move_${w}`); `lines.json` (generated); `clips/` Matt's recordings |
