@@ -97,6 +97,8 @@ export class SentenceRoom extends HouseSideRoom {
   private tokenBoxes: Phaser.GameObjects.Container[] = [];
   /** The banner's height: 140 for one row, taller when the sentence wraps. */
   private bannerH = 140;
+  /** The cream band's bottom edge, around the banner's middle (item 128): the read dot sits just under it. */
+  private panelBottom = 70;
   /** Each token's Text objects: one for a frame word, one per letter for the key word. */
   private tokenTexts: Phaser.GameObjects.Text[][] = [];
   /** While a line plays, the banner follows it: line id and how many tokens it covers. */
@@ -318,6 +320,7 @@ export class SentenceRoom extends HouseSideRoom {
     const panelH = 2 * PANEL_MARGIN + (rows.length - 1) * pitch + (inkBottom - inkTop) * KEY_GROW;
     const art = bannerArt(this, BANNER_W, panelH);
     this.bannerH = art.height;
+    this.panelBottom = art.panel[3];
     rows.forEach((row, r) => {
       const [left, right] = overhang(row);
       let x = -rowWidth(row) / 2 + (left - right) / 2;
@@ -348,12 +351,16 @@ export class SentenceRoom extends HouseSideRoom {
     });
   }
 
-  /** The green dot sits under the lit word while she reads (the first word before any is lit), bobbing; hidden otherwise. */
+  /**
+   * The green dot sits under the lit word while she reads (the first word before any is lit), bobbing; hidden otherwise.
+   * On the banner's bottom trim, just under the cream band (hunt 9: under the whole banner, item 128's taller art hung
+   * it 115 px below the word, over the top of the left picture, where a green dot means "take this").
+   */
   private placeReadDot(time: number): void {
     const box = this.tokenBoxes[Math.max(0, this.index)];
     const show = this.pass === 'read' && !this.locked && !!box;
     this.readDot.setVisible(show);
-    if (show) this.readDot.setPosition(this.banner.x + box.x, this.banner.y + this.bannerH / 2 + 12 + Math.sin(time / 180) * 4);
+    if (show) this.readDot.setPosition(this.banner.x + box.x, this.banner.y + this.panelBottom + 14 + Math.sin(time / 180) * 4);
   }
 
   /** Say a line with the banner following it, word by word, over the first `n` tokens. */
@@ -642,6 +649,6 @@ export class SentenceRoom extends HouseSideRoom {
 
   protected override extraHooks(): Partial<RoomInfo> {
     const s = this.plan.sentence;
-    return { sentence: { tokens: [...s.tokens], key: s.key, frame: s.frame, pass: this.pass, index: this.index, skipped: this.skipped, readLit: [...this.readLit] } };
+    return { sentence: { tokens: [...s.tokens], key: s.key, frame: s.frame, pass: this.pass, index: this.index, skipped: this.skipped, readLit: [...this.readLit], readDot: this.readDot.visible ? { x: this.readDot.x, y: this.readDot.y } : null, bannerBottom: this.banner ? this.banner.y + this.bannerH / 2 : 0 } };
   }
 }

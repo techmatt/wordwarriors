@@ -30,7 +30,38 @@ export interface Layout {
   covers: { scene: string; kind: string; b: Box; depth: number }[];
   /** Where words may sit on what they are printed on (`qaPanel`): the sentence banner's cream, the machine's plate. */
   panels?: { scene: string; kind: string; b: Box }[];
+  /** Her figure (`qaHero`, hunt 9). */
+  heroes?: { scene: string; b: Box; depth: number }[];
   hudDepth: number;
+}
+
+/**
+ * Words she stands in front of (hunt 9: stepped up out of the Shape-Shifter's
+ * options' reach, she stood over its label's changed letter): a word of reading
+ * size (40 px or more) under her figure, drawn above it, by more than a fifth of
+ * its box. Her picture's box carries air either side, so its middle half is hers.
+ * A look: she can walk away, but nothing should put her there.
+ */
+export function heroIssues(l: Pick<Layout, 'texts' | 'heroes'> & Partial<Pick<Layout, 'targets'>>, scene: string): Issue[] {
+  const out: Issue[] = [];
+  // A word on a thing she walks to (a stone, a pad) is under her when she stands at it to choose: that is
+  // selection by walking, not this check's case (M42 asks about the stone sounding itself under her).
+  const onTarget = (b: Box) => (l.targets ?? []).some((g) => g.scene === scene && inside((b[0] + b[2]) / 2, (b[1] + b[3]) / 2, g.b));
+  for (const h of l.heroes ?? []) {
+    const w = h.b[2] - h.b[0];
+    const body: Box = [h.b[0] + w / 4, h.b[1], h.b[2] - w / 4, h.b[3]];
+    for (const t of l.texts) {
+      if (t.scene !== h.scene || t.size < 40 || t.depth >= h.depth || !/[A-Za-z]/.test(t.text) || onTarget(t.b)) continue;
+      const b = t.ink ?? t.b;
+      const ix = Math.min(b[2], body[2]) - Math.max(b[0], body[0]);
+      const iy = Math.min(b[3], body[3]) - Math.max(b[1], body[1]);
+      const area = (b[2] - b[0]) * (b[3] - b[1]);
+      if (ix <= 0 || iy <= 0 || area <= 0 || (ix * iy) / area < 0.2) continue;
+      const name = t.text.replace(/\s+/g, ' ').slice(0, 30);
+      out.push({ kind: 'text-under-hero', severity: 'look', scene, detail: `she stands over "${name}" (${Math.round((100 * ix * iy) / area)}% of it)`, key: `underhero:${scene}:${name}` });
+    }
+  }
+  return out;
 }
 
 /**
@@ -184,6 +215,8 @@ export function layoutIssues(l: Layout, scene: string, placeholders: Set<string>
   out.push(...coverIssues(l, scene));
   // A word over the edge of its banner or plate (item 128).
   out.push(...panelIssues(l, scene));
+  // A word she stands in front of (hunt 9).
+  out.push(...heroIssues(l, scene));
   for (const im of l.images) {
     if (placeholders.has(im.key)) out.push({ kind: 'placeholder-art', severity: 'look', scene, detail: im.key, key: `placeholder:${im.key}` });
   }
@@ -207,7 +240,8 @@ export function leakIssues(s: WWState, l: Layout, voiceSinceRound: Since['voice'
         out.push({ kind: 'says-target', severity: 'bug', scene: s.scene, detail: `${where}: "${v.id}" says ${T} before she answered`, key: `says:${where}:${v.id}` });
       }
     }
-    const shown = l.texts.filter((t) => t.text.trim().toUpperCase() === T || wordIn(t.text, target)).length;
+    // Not the grown-ups page's words (hunt 9: its "none = ANT" flagged a bridge on ANT): Dad's page, opened over a room.
+    const shown = l.texts.filter((t) => t.scene !== 'Parent' && (t.text.trim().toUpperCase() === T || wordIn(t.text, target))).length;
     if (shown > banner) out.push({ kind: 'shows-target', severity: 'bug', scene: s.scene, detail: `${where}: ${T} on screen ${shown}x`, key: `shows:${where}:${T}` });
   };
   const sent = s.room?.sentence;
@@ -238,8 +272,11 @@ export function spawnIssues(was: ReadonlySet<string>, s: WWState, reach: number)
   if (!r?.player) return [];
   if (r.spots.filter((sp) => sp.correct !== null).length < 2) return [];
   return r.spots
-    .filter((sp) => sp.correct !== null && !was.has(sp.id) && Math.hypot(sp.x - r.player.x, sp.y - r.player.y) < reach)
-    .map((sp) => ({ kind: 'spawn-in-reach', severity: 'bug', scene: s.scene, detail: `${sp.id} appeared ${Math.round(Math.hypot(sp.x - r.player.x, sp.y - r.player.y))} px from her (${r.round})`, key: `spawn:${s.scene}:${r.round}` }));
+    // Measured from where she stood as it first showed (hunt 9: polls are sparse while shots are taken, and the
+    // driver had walked her 70 px toward the answer before the next poll saw the new stones).
+    .map((sp) => ({ sp, d: Math.hypot(sp.x - (sp.from ?? r.player).x, sp.y - (sp.from ?? r.player).y) }))
+    .filter(({ sp, d }) => sp.correct !== null && !was.has(sp.id) && d < reach)
+    .map(({ sp, d }) => ({ kind: 'spawn-in-reach', severity: 'bug', scene: s.scene, detail: `${sp.id} appeared ${Math.round(d)} px from her (${r.round})`, key: `spawn:${s.scene}:${r.round}` }));
 }
 
 /**

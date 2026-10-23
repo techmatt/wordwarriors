@@ -74,7 +74,10 @@ test('the word machine: tiles say their sounds, a silly tile giggles and pops ou
   const bh = built.voice.history;
   expect(bh.lastIndexOf(`word_${m.word}`)).toBeGreaterThan(bh.lastIndexOf(`rime_${m.rime}`));
   expect(built.episode.fetched).toEqual([m.word]);
-  await until(page, (s) => s.room?.machine?.index === 1 && s.room.machine.phase === 'pick', 60_000, 'round 2');
+  const round2 = await until(page, (s) => s.room?.machine?.index === 1 && s.room.machine.phase === 'pick', 60_000, 'round 2');
+  // Hunt 9: stepped up out of the new tiles' reach, she is beside the machine, not in front of its plate's word.
+  const me = round2.room!.player;
+  expect(Math.abs(me.x - 640) > 200 || me.y > 560, `beside the machine or down at the tiles: (${me.x}, ${me.y})`).toBe(true);
   await shot(page, 'round2');
 
   // Every later word: said only after it is built.

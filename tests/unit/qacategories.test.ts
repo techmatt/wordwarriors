@@ -10,7 +10,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
 
-import { logIssues, onlyLineVariants, padReachIssues, panelIssues, ruledCover, spawnIssues, storeChanges, voiceBuildIssues, type Box } from '../qa/checks';
+import { heroIssues, logIssues, onlyLineVariants, padReachIssues, panelIssues, ruledCover, spawnIssues, storeChanges, voiceBuildIssues, type Box } from '../qa/checks';
 import { britishIn, clippedIn, giveawayIssues, tauntIssues, variantIssues } from '../qa/wording';
 import type { WWState } from '../harness';
 
@@ -133,6 +133,9 @@ test('spawn-in-reach (hunt 6): a choice that appears within reach of her is a bu
   assert.deepEqual(spawnIssues(new Set(['stone_b', 'stone_d', 'door']), s, 95), []);
   // Hunt 7: a lone answer (the bed she wakes in, the hub's secret door) is nothing to read.
   assert.deepEqual(spawnIssues(new Set(), room([{ id: 'bed', x: 640, y: 640, correct: true }, { id: 'door', x: 650, y: 650, correct: null }]), 95), []);
+  // Hunt 9: measured from where she stood as it first showed, not where the driver has walked her since.
+  const walked = room([{ id: 'stone_p', x: 640, y: 655, correct: true, from: { x: 640, y: 530 } } as never, { id: 'stone_j', x: 400, y: 640, correct: false }]);
+  assert.deepEqual(spawnIssues(new Set(), walked, 95), []);
 });
 
 test('pad-in-reach (hunt 7): a move pad opening within her reach is flagged once a choice', () => {
@@ -153,4 +156,16 @@ test('text off its panel (item 128): the old attic banner\'s key word over the r
   // No ink measured: the box is the test. No panel: no check.
   assert.equal(panelIssues({ panels, texts: [text('THE', [300, 98, 400, 140])] }, 'SentenceRoom').length, 1);
   assert.deepEqual(panelIssues({ panels, texts: [{ ...text('THE', [0, 0, 10, 10]), panel: undefined }] }, 'SentenceRoom'), []);
+});
+
+test('text under her (hunt 9): stepped straight up, she stood over the Shape-Shifter label\'s B; beside it, or a small word, is not flagged', () => {
+  // Measured from the sweep's shot: her figure's box and the label's letters (78 px, depth 381; her container at her feet, 530).
+  const hero = (x: number) => ({ scene: 'ShifterRoom', b: [x - 45, 385, x + 45, 530] as Box, depth: 530 });
+  const letter = (t: string, x: number, size = 78) => ({ scene: 'ShifterRoom', text: t, b: [x - 30, 350, x + 30, 450] as Box, depth: 381, group: 4, size });
+  const texts = [letter('B', 556), letter('U', 640), letter('G', 724)];
+  assert.deepEqual(heroIssues({ texts, heroes: [hero(570)] }, 'ShifterRoom').map((i) => i.kind + ':' + i.detail.split(' (')[0]), ['text-under-hero:she stands over "B"']);
+  assert.deepEqual(heroIssues({ texts, heroes: [hero(444)] }, 'ShifterRoom'), []);
+  assert.deepEqual(heroIssues({ texts: [letter('B', 556, 20)], heroes: [hero(570)] }, 'ShifterRoom'), []);
+  // A stone's letter under her as she stands at it to choose: selection by walking (M42), not flagged.
+  assert.deepEqual(heroIssues({ texts, heroes: [hero(570)], targets: [{ scene: 'ShifterRoom', id: 'stone_b', b: [500, 330, 600, 470], depth: 381 }] }, 'ShifterRoom'), []);
 });

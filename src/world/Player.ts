@@ -37,6 +37,8 @@ export class Player {
     this.shadow = scene.add.ellipse(0, 0, PLAYER_HEIGHT * 0.6, PLAYER_HEIGHT * 0.16, 0x000000, 0.3);
     this.sprite = fitImage(scene.add.image(0, 0, art).setOrigin(0.5, 1), PLAYER_HEIGHT * 0.8, PLAYER_HEIGHT * outfitTall(art));
     this.baseScale = this.sprite.scale;
+    // The bug-hunt checker's probe: her figure, for words she stands in front of (`text-under-hero`, hunt 9).
+    this.sprite.setData('qaHero', true);
     this.root = scene.add.container(x, y, [this.shadow, this.sprite]);
   }
 

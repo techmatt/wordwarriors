@@ -861,3 +861,73 @@ was flagged while the bus was between queue and start).
 - **Look again:** the action pictures for recognition (SWISH is a farmer with a scythe, DASH a
   running boy: she may say CUT and RUN), and the grown-ups page's word grid now that NEW
   widens each name.
+
+## Hunt 9 (2026-10-23)
+
+Overnight, 1:27 to 6:26am. What landed since hunt 8 first: item 126 (door b's Shape-Shifter
+about half the time, Evil Smaug's story fight drawn, COW MOM DAD, the GRAB and FIX lines,
+`LAST_READ`), item 127 (stored words) and item 128 (the banner's cream band). Then hunt 8's
+leftovers: `variants6` at `WW_SPEED=1` (six drawn episodes in 42 minutes, 958 shots, every
+contact sheet read: no silent line, no stall, nothing new beyond fix 129), the lenses
+(`QA_SET=lenses`, the URL flags and dev keys with item 126's words and `sentence=`), and
+`parent_all` / `debug_rooms` / `end_mash` / `voiceless`. The new `QA_SET=hunt9` swept, then
+grew: ten drawn episodes back to back (`drawn10`), the story fight under F9, dad lock, reloads,
+a hidden tab and resizes, and Dad erasing all progress mid-episode (`erase_mid`). Every other
+batch (the first, second and third, `cast`, `hunt8`) swept again on the last build with the new
+checks; one more drawn episode at real speed with the fixes in; `npm run shots`. A second
+reader went through items 126 to 128 (the story fight remembered and drawn for every cast
+shape, stored words on every path to the screen, the banner's strips across a texture swap,
+the debug sandbox and F9 with the new rotations): nothing a player would see. `npm run
+variety` read against a run of item 126's tree (before item 127). The grown-ups page's word
+grid with NEW and its new page 3 (hunt 8's look): clean.
+
+### Fixed
+
+| # | Where | What | Kept fixed by |
+| --- | --- | --- | --- |
+| 128 | THE END | Dad's cue read DAD: PRESS 2 TO PLAY AGAIN after every episode, and item 126 made DAD a bank word (it took DAD off the yes / no cue and the dad-lock badge for that reason). It reads PRESS 2 TO PLAY AGAIN. | `tests/unit/shouts.test.ts`: no fixed upper-case text the game prints holds a bank word (the grown-ups page and the probe aside) |
+| 129 | Shape-Shifter | Stepped up out of the next link's reach (fix 104) from the middle option, she stood in front of the label, her head over its bottom row: the letter that had just changed (the B of BUG, the F of FAN, twice in `variants6`). Under the label she steps to its side too. | `tests/hunt6.spec.ts` (the lit-letter test); checker `text-under-hero` |
+| 130 | `npm run variety`, `?words=new` | `NEW_WORDS` held item 127's stored words, so the variety table listed SACK DASH SWISH GATE as new words that never came up. It leaves them out. | `tests/unit/variety.test.ts` |
+| 131 | Word machine | The same as fix 129 at the machine (its step-up is fix 98's): from the middle tile she stood in front of the plate, over the word's rime ("Change the first sound to make a new word!" with her over AM, `machine_solid`, found by `text-under-hero`). In front of the machine she steps to its side too. | `tests/machine.spec.ts` (round 2) |
+| 132 | Sentence room, read pass | The green dot under the word she reads was placed under the whole banner, and item 128's taller banner (pole, trim, tassels) hung it 115 px below the word, over the top of the left picture: a green dot there means "take this" (`npm run shots`, `default_room_read`). It sits on the banner's bottom trim, just under the cream band. | `tests/banner.spec.ts` (the read pass's green dot) |
+
+The checker itself: `QA_SET=hunt9` (README); `text-under-hero` (look: a reading-size word under
+her figure, drawn above it; the probe lists her figure, `qaHero`); `door-b-streak` (look: the
+Shape-Shifter in or missing from three episodes running; a word on a stone or pad she stands at
+is left out, M42); `eraseAt` (Dad erases all progress mid-episode, `erase-return`); the story
+fight under F9, dad lock, reloads and a hidden tab (forced: a seed's draw does not survive F9 at
+the title or a reload); `spawn-in-reach` measures from where she stood as the spot first showed
+(`SpotInfo.from`: a driver walk between sparse polls was flagged in `drawn10`); W30's stones under
+the praise box and W33's hall pictures under its last line are coded as rulings, no longer bugs;
+a wedged page is a bounded stall (M44); `shows-target` leaves out the grown-ups page's own words (its "none = ANT" over a bridge on ANT); a scenario outside the first batch needs its `QA_SET`
+even with `-g` (README).
+
+### Matt's calls
+
+| # | Where | What | Options | Ruling |
+| --- | --- | --- | --- | --- |
+| M39 | Shape-Shifter, word variety after item 127 | Item 127 stored eight of the room's CVC words (MAT RAT BAG MUG NUT TUB BIN HEN), and the chains narrowed onto MAN: in `npm run variety` (300 episodes, about 150 visits) MAN is read in 77 visits and MAP in 67 (MAT, the top word before item 127, was 50 of 144); distinct chains fell from 94 to 56, words used from 31 to 23, and a two- or three-link chain (a short visit) from 10 visits to 39. Every hunt-9 sweep read MAN two episodes in three of the Shifter's (PEN PAN VAN MAN MAP; PAN MAN MAP MOP MOM). `SHIFTER.wordChains` 3 or 4 changed nothing in the simulator: the pool itself is the limit. | **(a) a content item: about eight new pictured CVC things that link to each other away from MAN, MAP and PAN (a `bank:audit` of `SHIFT_WORDS` first), then `npm run variety`**; (b) let a chain changing two places in when every all-three-places chain shares a word with the last two chains (M37's option b); (c) keep | |
+| M40 | Word bank | Six bank words can never be read: BED, DRUM, LAMP and DUCK are the bedroom's own props, shown every episode (fix 74); CAN is in the counter frames' CAN NOT; RUN is in RUNS FROM THE, and every frame's words stay off the pads (fix 66), so RUN, an action only, is never a pad or a gift. `npm run variety` lists them under "never" in every run (RUN is never even shown). | (a) store the six with the reason "shown or said every episode", so the bank audit and the grown-ups page say so; **(b) for RUN and CAN: keep a frame's words off the pads only for the frames this episode draws (frames are drawn after the pads, so a frame holding a pad word waits), and store BED DRUM LAMP DUCK as (a)**; (c) keep | |
+| M41 | MOM and DAD in sentences | Item 126's MOM and DAD are things, so any frame can hold them: SCAR NEEDS A MOM (`variants6`, its pictures a mom and a dad side by side), and the draws allow DADA MATT NEEDS A DAD, GO GET THE DAD, EVIL TIAMAT IS SCARED OF THE MOM. Fetched, each flies into the bag as an item. Julia's family is two dads. | (a) keep; **(b) MOM and DAD out of the fetch frames only (NEEDS A MOM reads as the character lacking one); the counter frames read as a joke (TIAMAT IS SCARED OF THE DAD, `qa flags`) and stay**; (c) out of every frame (read in the warm-up, the bridge, the machine and the Shape-Shifter); (d) store MOM | |
+| M42 | Shape-Shifter, level 1 stones | At level 1 a stone sounds itself when she reaches it ("This letter says..."), and standing at it to choose, her figure covers its letter (the B under her in `wrong_seed102`, 60% of it): she hears the sound while the letter is hidden (the word machine's tiles were never flagged). | **(a) a stone sounding itself lifts a copy of its letter over her head (a bubble) while it speaks**; (b) she stands just below a stone, not on it (her head still reaches its letter); (c) keep: she read it walking up | |
+| M43 | Quest place rotation | Elsa and Anna both train at the ice castle, so with Elsa then Anna as allies (`drawn10`, episodes 4 and 5) she plays the same place, hub and side rooms (skating pond, snow garden) twice running; the ally rotation knows nothing of places. `npm run variety`: the quest place is back within two episodes in 5% of episodes. | (a) the ally draw leans away from an ally whose place was last episode's (a draw change: golden draws rewritten); **(b) keep: rare, and the hub story, cast and words differ** | |
+| M44 | The checker, a reload at hub part 2 | Hunt 7's one-off came back: `story_reload` (the story fight forced, seed 976) reloaded at hub part 2 at 3:16:54am and the page never came back; the stall's own `page.evaluate` then waited on it for the rest of the 30-minute timeout (Playwright's trace: the reload path threw, then `Recorder.capture('stall')` hung in `state()`). The renderer sat idle (0.9 s of CPU in 5 s), not spinning; eight reloads at hub part 2 in isolation each came back in under a second. Both times it was a reload at hub part 2, about three minutes into a sweep with a second worker running. The checker now bounds the stall's shot, its recorder and its last probe read (20 s each), so a hang is a stall with its JSON. | **(a) keep watching: with the bounds a recurrence costs a minute, not 30, and names the point; chase it only if it comes back outside the checker (a real reload by Dad)**; (b) a trace-on run of `story_reload` and `reload_points` (Playwright `--trace on`) until it recurs, to see whether the navigation's request or the page stalled; (c) a timeout on every `page.evaluate` in the harness | |
+
+### Won't fix
+
+| # | Where | What | Why |
+| --- | --- | --- | --- |
+| W36 | Hub part 2, after F2 | With every step skipped to the secret door (`qa devkeys skip`), "Look, a secret door! Let's go through it!" sits at the top and covers the top 18 px of the door's sign. | The door itself is clear and the box moves off where she stands; only the dev keys bring it there. |
+| W37 | Sentence room | Item 128's banner hangs from the top, so the bag's row (eight or nine fetched things by the attic) sits on its top trim, a few pixels above the first row's words. | It never reached a word in any sweep (the cream band starts below the row); worth a look only if the bag grows past nine. |
+| W38 | Charge the Spell, Dad away | The session's first Charge with Dad away runs 32.9 s against the room's 30 s (`charge_solo3`, `slow-room`): it waits its 8 s for Dad's press, then goes solo. | M34's design: solo starts once he has not answered, and every later visit that session is solo from its start (M38's 35 s budget). |
+| W39 | `tests/banner.spec.ts`, Word → Picture (parked) | Run beside a second browser run, its check flagged a picture 5 to 6 px under the banner (KING, ELSA) twice; alone it passed three times in three and in `test:browser`. | A parked game; the second run starves the GPU (README). Worth a look only if it fails alone. |
+| W40 | Victory | `text-offscreen` (bug) once at real speed: VICTORY!'s box reached 4 px above the screen at its elastic pop-in's overshoot (`drawn_cast3`, shot 327). | The box carries the font's line height and stroke; the letters' ink stayed 50 px inside the top. |
+
+### Where the next hunt resumes
+
+- **Matt's calls first:** M39 (the Shape-Shifter's pool after item 127) and M41 (MOM and DAD
+  in frames) change what she reads most; M40, M42, M43 and M44 after.
+- **Not run this hunt:** `npm run perf`; `QA_SET=lenses` again with M44's bounds in (a hung
+  reload now shows as a stall naming its point: if one recurs, run it with `--trace on`).
+- **Look again once M39 lands:** `npm run variety`'s Shifter rows against this hunt's (MAN in
+  77 of about 150 visits, 56 distinct chains, 39 short visits).

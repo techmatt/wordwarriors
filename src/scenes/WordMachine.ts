@@ -245,8 +245,13 @@ export class WordMachine extends HouseSideRoom {
     this.layTiles(r.tiles);
     // A family keeps its tile row, so a new tile can land where she stands: she steps up out of
     // reach, or a green mashed through the round's line slotted a tile she never walked to or
-    // heard (item 092; the sentence room's fix 61, here).
-    if (this.spots.some((sp) => Phaser.Math.Distance.Between(this.player.x, this.player.y, sp.x, sp.y) < REACH)) this.player.place(this.player.x, TILE_Y - REACH - 15);
+    // heard (item 092; the sentence room's fix 61, here). Stepped straight up, she stood in front of the
+    // machine's plate, over the word's rime (hunt 9): in front of the machine she steps to its side too.
+    if (this.spots.some((sp) => Phaser.Math.Distance.Between(this.player.x, this.player.y, sp.x, sp.y) < REACH)) {
+      const clear = MACHINE_W / 2 + 10;
+      const x = Math.abs(this.player.x - MACHINE_X) < clear ? MACHINE_X + Math.sign(this.player.x - MACHINE_X || -1) * clear : this.player.x;
+      this.player.place(x, TILE_Y - REACH - 15);
+    }
     const mode: MachineMode = this.plan.mode;
     // Only mode 1 is played today; `flip` and `real_or_silly` start here.
     if (mode !== 'make') throw new Error(`WordMachine: mode ${mode} is not built yet`);

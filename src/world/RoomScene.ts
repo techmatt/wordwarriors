@@ -54,6 +54,8 @@ export interface Spot {
   /** Called when she walks into reach (e.g. say a name, sound a tile). */
   onNear?: () => void;
   baseScale: number;
+  /** Where she stood the first frame this spot was published (`SpotInfo.from`, hunt 9). */
+  from?: { x: number; y: number };
 }
 
 export abstract class RoomScene extends Phaser.Scene {
@@ -477,7 +479,12 @@ export abstract class RoomScene extends Phaser.Scene {
       this.fpsAcc = 0;
       this.fpsFrames = 0;
     }
-    const spots: SpotInfo[] = this.spots.filter((s) => s.enabled).map((s) => ({ id: s.id, x: s.x, y: s.y, correct: s.correct }));
+    // A spot switched off and on again (a round's tiles) shows afresh: where she stands then.
+    for (const s of this.spots) if (!s.enabled) s.from = undefined;
+    const spots: SpotInfo[] = this.spots.filter((s) => s.enabled).map((s) => {
+      s.from ??= { x: this.player.x, y: this.player.y };
+      return { id: s.id, x: s.x, y: s.y, correct: s.correct, from: s.from };
+    });
     hookState.room = {
       scene: this.scene.key,
       round: this.round,

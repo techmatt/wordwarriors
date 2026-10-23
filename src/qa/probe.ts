@@ -118,6 +118,13 @@ interface DrawnPanel {
   b: Rect;
 }
 
+/** Her figure (`qaHero` on the player's sprite, hunt 9): words she stands in front of. */
+interface DrawnHero {
+  scene: string;
+  b: Rect;
+  depth: number;
+}
+
 /** A game object's own data value, without creating a data manager on every object the probe walks. */
 function tag(o: Phaser.GameObjects.GameObject, key: string): unknown {
   return (o as unknown as { data?: Phaser.Data.DataManager | null }).data?.get(key);
@@ -258,6 +265,7 @@ function layout(game: Phaser.Game): {
   targets: DrawnTarget[];
   covers: DrawnCover[];
   panels: DrawnPanel[];
+  heroes: DrawnHero[];
   hudDepth: number;
 } {
   const texts: DrawnText[] = [];
@@ -265,6 +273,7 @@ function layout(game: Phaser.Game): {
   const targets: DrawnTarget[] = [];
   const covers: DrawnCover[] = [];
   const panels: DrawnPanel[] = [];
+  const heroes: DrawnHero[] = [];
   let groupId = 0;
   const box = (o: { getBounds(): Phaser.Geom.Rectangle }): [number, number, number, number] => {
     const b = o.getBounds();
@@ -296,13 +305,14 @@ function layout(game: Phaser.Game): {
         texts.push({ scene: scene.scene.key, text: o.text, b: box(o), depth: own, group, size: Number.parseFloat(String(o.style.fontSize)) * Math.abs(o.scaleY), ...(inPanel === undefined ? {} : { panel: inPanel, ink: worldInk(o).map(Math.round) as Rect }) });
       } else if (o instanceof Phaser.GameObjects.Image && o.texture?.key && !o.texture.key.startsWith('__') && a > 0.3) {
         const b = box(o);
+        if (tag(o, 'qaHero') === true) heroes.push({ scene: scene.scene.key, b, depth: own });
         if (b[2] > 0 && b[0] < GAME_WIDTH && b[3] > 0 && b[1] < GAME_HEIGHT && b[2] - b[0] > 8) images.push({ scene: scene.scene.key, key: o.texture.key, b, depth: own });
       }
     }
   };
   for (const scene of game.scene.getScenes(true)) walk(scene, scene.children.list, true, 0, 0, 1);
   const spots = hookState.room?.spots.map((s) => ({ id: s.id, x: s.x, y: s.y })) ?? hookState.battle?.choice?.spots.map((s) => ({ id: s.word, x: s.x, y: s.y })) ?? [];
-  return { texts, images, spots, targets, covers, panels, hudDepth: DEPTH.speech };
+  return { texts, images, spots, targets, covers, panels, heroes, hudDepth: DEPTH.speech };
 }
 
 /** Objects, tweens and timers alive, for growth from one episode to the next. */

@@ -135,3 +135,15 @@ for (const [name, query, scene] of [
     expectNoErrors(errors);
   });
 }
+
+test('the read pass\'s green dot sits on the banner under its word, not down over the pictures (hunt 9)', async ({ page }) => {
+  // Item 128's taller banner (pole, trim, tassels) hung the dot, placed under the whole banner, 115 px below
+  // the word and over the top of the left picture, where a green dot means "take this".
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=a');
+  const s = await until(page, (st) => st.room?.sentence?.pass === 'read' && !st.room.locked && Boolean(st.room.sentence.readDot), 60_000, 'the read pass, dot up');
+  const dot = s.room!.sentence!.readDot!;
+  await page.screenshot({ path: test.info().outputPath('read-dot.png') });
+  expect(dot.y, `dot at ${dot.y}, banner's bottom at ${s.room!.sentence!.bannerBottom}`).toBeLessThan(s.room!.sentence!.bannerBottom!);
+  expectNoErrors(errors);
+});

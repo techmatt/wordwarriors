@@ -214,7 +214,9 @@ test('line variants: every line said several times an episode has at least three
 // ---- Item 121: the new words in play ------------------------------------------
 
 test('?words=new: the new words weigh FAVOURED_WEIGHT in every draw, for this session only', () => {
-  for (const w of ['tree', 'ham', 'hay', 'gate', 'stump', 'chomp', 'splash']) assert.ok(NEW_WORDS.includes(w), w);
+  for (const w of ['tree', 'ham', 'hay', 'stump', 'chomp', 'splash', 'cow', 'mom', 'dad']) assert.ok(NEW_WORDS.includes(w), w);
+  // Hunt 9: not a stored one (GATE, DASH, item 127): it is never drawn, so `npm run variety` listed it as a new word that never came up.
+  for (const w of ['gate', 'dash', 'swish', 'sack']) assert.ok(!NEW_WORDS.includes(w), w);
   const store = new ProgressStore(memory());
   const plain = wordWeight(store, 'ham');
   const cat = wordWeight(store, 'cat');

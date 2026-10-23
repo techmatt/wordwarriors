@@ -28,7 +28,7 @@ import { SPEED, boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBa
 // Item 083: real voice and real walking: the checker looks and listens as she would.
 VOICE.mode = 'real';
 driver.walk = true;
-import { layoutIssues, leakIssues, logIssues, onlyLineVariants, padReachIssues, placeholderArt, spawnIssues, storeChanges, voiceBuildIssues, type Issue } from './checks';
+import { layoutIssues, leakIssues, logIssues, onlyLineVariants, padReachIssues, placeholderArt, spawnIssues, storeChanges, voiceBuildIssues, type Issue, type Since } from './checks';
 import { qaLayout, qaSince } from './probe';
 import { clippedIssues, giveawayIssues, pacingIssues, repeatedLines, spellingIssues, tauntIssues, variantIssues } from './wording';
 import { NARRATOR_LINES, lineVariantKeys } from '../../content/voice/script';
@@ -88,6 +88,10 @@ interface Scenario {
   cast?: boolean;
   /** Only with `QA_SET=hunt8` (or `all`): the eighth hunt's (item 125): items 119-123's changes. */
   hunt8?: boolean;
+  /** Only with `QA_SET=hunt9` (or `all`): the ninth hunt's (item 129): items 126-128's changes. */
+  hunt9?: boolean;
+  /** Hunt 9: at each of these points, Dad erases all progress on the grown-ups page (F8 twice) and comes back. */
+  eraseAt?: Point[];
   /** Hunt 8: Dad never presses in Charge the Spell, so it goes solo and stays solo for the session (M34). */
   dadAway?: boolean;
 }
@@ -174,6 +178,25 @@ const SCENARIOS: Scenario[] = [
   { name: 'shifter5', query: 'cast=random&room=shifter', episodes: 5, hunt8: true },
   { name: 'warrior_story', query: 'seed=702&ally=dada_jason_warrior&fight=smaug_story&games=all', hunt8: true },
   { name: 'moriarty_story_wrong', query: 'seed=703&ally=moriarty&fight=smaug_story&games=all', wrong: true, hunt8: true },
+  // Hunt 9 (item 129): items 126-128's changes. Door b drawn (the Shape-Shifter about half the episodes,
+  // a sentence frame or the word machine otherwise); Smaug's story fight drawn, not forced (seeds 976
+  // and 965 draw him with it from the title: warlock Dada Jason and cyber Dada Matt are the dads in it);
+  // item 126's COW, MOM and DAD leaned to; item 128's banners on the widest sentences.
+  { name: 'doorb5', query: 'cast=random&games=all', episodes: 5, hunt9: true },
+  { name: 'story_drawn_scar', query: 'seed=976&games=all', hunt9: true },
+  { name: 'story_drawn_elsa_wrong', query: 'seed=965&games=all', wrong: true, hunt9: true },
+  { name: 'newwords3_126', query: 'cast=random&games=all&words=cow,mom,dad', episodes: 3, hunt9: true },
+  { name: 'widest_counter', query: 'seed=951&games=all&sentence=no_match_for_the:octopus', hunt9: true },
+  // A long run (about 15 minutes): ten drawn episodes back to back, for growth, repeats and the door-b rotation.
+  { name: 'drawn10', query: 'cast=random&games=all', episodes: 10, hunt9: true },
+  // Odd input on the story fight: the grown-ups page, dad lock and reloads at every point. Forced: a seed's
+  // draw does not survive them (back from F9 at the title, or reloaded, the title draws the cast again).
+  { name: 'story_parent', query: 'seed=976&fight=smaug_story&games=all', parentAll: true, hunt9: true },
+  { name: 'story_lock', query: 'seed=976&fight=smaug_story&games=all', lockAll: true, hunt9: true },
+  { name: 'story_reload', query: 'seed=976&fight=smaug_story&games=all', reloadAt: ['choice1', 'hub2', 'choice2'], hunt9: true },
+  { name: 'story_hidden', query: 'seed=977&fight=smaug_story&games=all', hide: true, resize: true, hunt9: true },
+  // Dad erases all progress mid-episode (a side room, battle 1's choice, the attic), then a second episode on the empty store.
+  { name: 'erase_mid', query: 'cast=random&games=all', eraseAt: ['room_b', 'choice1', 'attic'], episodes: 2, hunt9: true },
 ];
 
 /** How often a busy child presses something (real ms). */
@@ -292,7 +315,8 @@ class Recorder {
     if (this.shots < this.max) {
       this.shots++;
       shot = `${this.dir}/${String(this.shots).padStart(3, '0')}_${s.scene}_${label}.png`;
-      await this.page.screenshot({ path: shot }).catch(() => undefined);
+      // Bounded (hunt 9): the config sets no action timeout, so a screenshot that never got its frame waited forever.
+      await this.page.screenshot({ path: shot, timeout: 20_000 }).catch(() => undefined);
       this.lastShot = shot;
     }
     // A picked picture pops up as its word is said (hunt 7, W33): the answer is made, so its brush
@@ -302,9 +326,17 @@ class Recorder {
     // The hub's circle under the story's own lines (hunt 8, W35: item 121's three-row lines) is W12's
     // ruling; the line sending her there keeps off it (`cover.spec`), so that one stays a bug.
     const story = s.scene === 'Hub' && /^hub_\w+_line\d$/.test(s.voice.speaking ?? '');
+    // The entry hall once her pick is made (W33: "You got it! Now let's go out the door!" over the bottom row):
+    // ruled, not a bug (hunt 9: every sweep flagged it again).
+    const hallDone = s.scene === 'Entry' && (s.room?.round === 'entry-door' || /_grab_door$/.test(s.voice.speaking ?? '') || /grab_door$|entry-door$/.test(label));
+    // The Shape-Shifter's next stones popping in under the praise box (W30): ruled too (hunt 9: flagged in every sweep).
+    const praise = /_(right_\d+|shifter_fixed(_\d+)?)$/;
+    const shifterPraise = s.scene === 'ShifterRoom' && (praise.test(s.voice.speaking ?? '') || praise.test(label));
     const layout = layoutIssues(l, s.scene, PLACEHOLDERS)
       .filter((i) => !(said && i.kind === 'target-covered' && i.detail.startsWith(`${said} `)))
-      .map((i) => (story && i.kind === 'target-covered' && i.detail.startsWith('circle ') ? { ...i, kind: 'target-covered-ruled', severity: 'look' as const } : i));
+      .map((i) => (story && i.kind === 'target-covered' && i.detail.startsWith('circle ') ? { ...i, kind: 'target-covered-ruled', severity: 'look' as const } : i))
+      .map((i) => (hallDone && i.kind === 'target-covered' && i.detail.startsWith('grab_') ? { ...i, kind: 'target-covered-ruled', severity: 'look' as const } : i))
+      .map((i) => (shifterPraise && i.kind === 'target-covered' && i.detail.startsWith('stone_') ? { ...i, kind: 'target-covered-ruled', severity: 'look' as const } : i));
     this.add(layout, shot);
     this.add(leakIssues(s, l, q.voice.filter((v) => v.t >= this.roundStart)), shot);
     this.add(spellingIssues(l, q.voice, s.scene), shot);
@@ -418,6 +450,11 @@ function varietyIssues(eps: Drawn[]): Issue[] {
     const again = b.words.filter((w) => eps.slice(0, i).some((e) => e.words.includes(w)));
     if (again.length) add('repeat-word', 'look', `${again.join(', ')} read again in episode ${i + 1}`);
   }
+  // Item 126 (SHIFTER_ROOM): the Shape-Shifter behind door b about half the time, seldom three running either way.
+  for (let i = 2; i < eps.length; i++) {
+    const had = eps.slice(i - 2, i + 1).map((e) => e.games.includes('shifter'));
+    if (had.every((h) => h === had[0])) add('door-b-streak', 'look', `the Shape-Shifter ${had[0] ? 'in' : 'missing from'} episodes ${i - 1} to ${i + 1}`);
+  }
   return out;
 }
 
@@ -442,7 +479,7 @@ async function dadLockProbe(page: Page, rec: Recorder): Promise<void> {
 }
 
 /** Whether the episode stops at every point for a probe (items 080, 089). */
-const probing = (sc: Scenario) => Boolean(sc.lockAll || sc.parentAll || sc.reloadAt || sc.debugAt);
+const probing = (sc: Scenario) => Boolean(sc.lockAll || sc.parentAll || sc.reloadAt || sc.debugAt || sc.eraseAt);
 
 /** The games debug mode offers (item 086), taken in turn by the debug probe. */
 const DEBUG_GAMES = ['sentence', 'word_machine', 'charge', 'bridge', 'shifter'] as const;
@@ -611,6 +648,21 @@ function where(s: WWState): string {
 const store = (page: Page) => page.evaluate(() => Object.fromEntries(Object.keys(localStorage).map((k) => [k, localStorage.getItem(k)])));
 
 
+/**
+ * The stall's shot, bounded (hunt 9: a reload at hub part 2 never came back, and the stall's own
+ * `page.evaluate` then waited on the wedged page for the rest of the 30-minute timeout, so the
+ * scenario never wrote its JSON). Past 20 s the stall is reported without its shot.
+ */
+async function stallShot(rec: Recorder): Promise<boolean> {
+  return Promise.race([rec.capture('stall').then(() => true, () => true), new Promise<boolean>((done) => setTimeout(() => done(false), 20_000))]);
+}
+
+/** `p`, or `fallback` after `ms`: what the scenario still reads from a page that may be wedged (hunt 9). */
+const bounded = <T,>(p: Promise<T>, ms: number, fallback: T): Promise<T> => Promise.race([p.catch(() => fallback), new Promise<T>((done) => setTimeout(() => done(fallback), ms))]);
+
+/** The probe's log when the page no longer answers. */
+const NO_SINCE: Since = { voice: [], locks: [], spikes: [], flashes: [], console: [], missingArt: [], frames: {}, now: 0 };
+
 /** Thrown by the reload probe: the episode in play is gone, the next starts at the title. */
 class Reloaded extends Error {}
 
@@ -643,6 +695,23 @@ function probes(page: Page, sc: Scenario, rec: Recorder, reloadAt: Point | null,
       if (where(after) !== where(before)) rec.add([{ kind: flows ? 'dadlock-flow' : 'dadlock-leak', severity: flows ? 'look' : 'bug', scene: before.scene, detail: `${p}: ${where(before)} -> ${where(after)}`, key: `dadlock:${p}` }], rec.lastShot);
       if (!badge) rec.add([{ kind: 'dadlock-badge', severity: 'bug', scene: before.scene, detail: `${p}: no DAD LOCK badge while locked`, key: `dadbadge:${p}` }], rec.lastShot);
       await page.keyboard.press('Backquote');
+    }
+    if (sc.eraseAt?.includes(p)) {
+      // Hunt 9: Dad erases all progress mid-episode (F9, F8 twice, back): the episode in play must go on.
+      const before = await state(page);
+      await page.keyboard.press('F9');
+      await until(page, (s) => s.scene === 'Parent', 20_000, `the grown-ups page from ${p}`);
+      await page.waitForTimeout(500);
+      await page.keyboard.press('F8');
+      await page.waitForTimeout(300);
+      await page.keyboard.press('F8');
+      await page.waitForTimeout(700);
+      await rec.capture(`erase_${p}`);
+      const erased = await state(page);
+      await page.keyboard.press('F9');
+      const back = await until(page, (s) => s.scene !== 'Parent' && s.scene !== 'Wait', 30_000, `back from erasing at ${p}`);
+      log.push({ point: p, erased: true, scene: before.scene, back: back.scene, episodes: [before.progress.episodes, erased.progress.episodes] });
+      if (back.scene !== before.scene) rec.add([{ kind: 'erase-return', severity: 'bug', scene: before.scene, detail: `${p}: erasing came back to ${back.scene}`, key: `eraseback:${p}` }], rec.lastShot);
     }
     if (sc.parentAll) {
       const before = await state(page);
@@ -766,7 +835,7 @@ if (LOOK) {
 }
 
 const set = process.env.QA_SET;
-const inSet = (x: Scenario) => (set === 'quick' ? Boolean(x.quick) : set === 'more' ? Boolean(x.more) : set === 'new' ? Boolean(x.added) : set === 'lenses' ? Boolean(x.lens) : set === 'recent' ? Boolean(x.recent) : set === 'cast' ? Boolean(x.cast) : set === 'hunt8' ? Boolean(x.hunt8) : set === 'all' ? true : !x.more && !x.added && !x.lens && !x.recent && !x.cast && !x.hunt8);
+const inSet = (x: Scenario) => (set === 'quick' ? Boolean(x.quick) : set === 'more' ? Boolean(x.more) : set === 'new' ? Boolean(x.added) : set === 'lenses' ? Boolean(x.lens) : set === 'recent' ? Boolean(x.recent) : set === 'cast' ? Boolean(x.cast) : set === 'hunt8' ? Boolean(x.hunt8) : set === 'hunt9' ? Boolean(x.hunt9) : set === 'all' ? true : !x.more && !x.added && !x.lens && !x.recent && !x.cast && !x.hunt8 && !x.hunt9);
 for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
   test(`qa ${sc.name}`, async ({ page }) => {
     const errors = collectErrors(page);
@@ -821,19 +890,19 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
       }
     } catch (err) {
       stalled = String(err).split('\n')[0]!;
-      await rec.capture('stall');
+      if (!(await stallShot(rec))) stalled += ' (the page stopped answering)';
       rec.add([{ kind: 'stall', severity: 'bug', scene: rec.last?.scene ?? '', detail: stalled, key: `stall:${sc.name}` }], rec.lastShot);
     }
     await masher?.stop();
     await hiding?.stop();
     await resizing?.stop();
-    await rec.stop();
+    await bounded(rec.stop(), 20_000, undefined);
     // Rotations only where the URL forces nothing they rotate.
     if (!/(^|&)(seed|ally|villain|place|fight|game|room)=|cast=default/.test(sc.query)) rec.add(varietyIssues(drawn));
     rec.add(chainIssues(chains));
     if (sc.dadAway) rec.add(soloIssues(solos));
     if (sc.mash && rec.shotsFired === 0) rec.add([{ kind: 'mash-dead', severity: 'bug', scene: '', detail: 'a busy child pressed blue, red and yellow all episode and free play never fired a shot', key: 'mash-dead' }]);
-    const q = await qaSince(page, 0);
+    const q = await bounded(qaSince(page, 0), 20_000, NO_SINCE);
     // The whole run's flashes at once: a burst can straddle two polls.
     rec.add(logIssues({ ...q, voice: [], locks: [], spikes: [] }, SPEED));
     rec.add(VOICE_BUILD);
@@ -905,6 +974,10 @@ const FLAGS = [
   'scene=battle&fight=frost_clash', 'scene=battle&fight=space_race&villain=smaug', 'scene=battle&fight=magic_show', 'villain=elsa&ally=elsa', 'ally=moriarty&villain=moriarty', 'scene=house&ally=rilla&villain=ozymandias',
   // Hunt 8 (item 125): item 121's favoured words, odd values and beside the room switches.
   'words=new', 'words=', 'words=bogus,zzz', 'words=TREE,Bee', 'scene=room&room=shifter&words=new', 'scene=grab&words=new', 'scene=parent&words=new',
+  // Hunt 9 (item 129): item 126's words where she meets them, the story fight drawn, item 128's widest banners.
+  'scene=grab&grab=cow', 'scene=grab&grab=dad', 'scene=room&slot=a&sentence=we_need_a:mom', 'scene=room&slot=counter&sentence=scared_of_the:dad',
+  'scene=battle&fetched=cow,mom,dad', 'scene=battle&part=2&fetched=dad', 'scene=victory&read=cow,mom,dad', 'seed=976&scene=battle', 'sentence=bogus', 'sentence=we_need_a:zzz',
+  'scene=room&slot=a&sentence=no_match_for_the:octopus', 'scene=room&game=word_machine&words=cow',
 ];
 const flagSet = set === 'lenses' || set === 'all';
 for (const flag of flagSet && !LOOK ? FLAGS : []) {
@@ -979,7 +1052,7 @@ for (const mode of flagSet && !LOOK ? (['skip', 'auto'] as const) : []) {
       }
     } catch (err) {
       stalled = String(err).split('\n')[0]!;
-      await rec.capture('stall');
+      await stallShot(rec);
       rec.add([{ kind: 'stall', severity: 'bug', scene: rec.last?.scene ?? '', detail: stalled, key: `stall:${sc.name}` }], rec.lastShot);
     }
     await rec.stop();

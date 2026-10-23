@@ -12,6 +12,8 @@ export interface SpotInfo {
   y: number;
   /** Whether choosing it answers the current item correctly (null = not a question). */
   correct: boolean | null;
+  /** Where she stood the first frame it was published (the bug-hunt checker's `spawn-in-reach`, hunt 9). */
+  from?: { x: number; y: number };
 }
 
 export interface RoomInfo {
@@ -29,7 +31,7 @@ export interface RoomInfo {
   /** Ghost boxes in Spelling: the word and how many letters are in. */
   spelling?: { word: string; filled: number };
   /** The sentence game: its tokens (upper case), key word, frame, which pass, the token in play, and every token her green's read lit, in order. */
-  sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean; readLit: number[] };
+  sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean; readLit: number[]; readDot?: { x: number; y: number } | null; bannerBottom?: number };
   /** The home warm-up (item 033): the word to grab, its level on the ramp (1 easiest), misses so far, the hall's pictures. */
   grab?: { word: string; level: number; misses: number; objects: string[]; phase: string };
   /** The word machine (item 026): the round in play (`index` of `rounds`), its tiles, and what is in the slot. */

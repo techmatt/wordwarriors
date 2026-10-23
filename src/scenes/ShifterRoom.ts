@@ -67,6 +67,8 @@ type Phase = 'intro' | 'pick' | 'check' | 'done';
 /** The creature at the back of the room, and its label under it. */
 const CREATURE = { x: GAME_WIDTH / 2, y: 255, size: 200 };
 const LABEL = { x: GAME_WIDTH / 2, y: 400, gap: 84 };
+/** How far from the label's middle she stands when she steps up out of the options' reach: its plate's half width and hers, clear of it (hunt 9). */
+const LABEL_CLEAR = (LABEL.gap * 3 + 40) / 2 + 50;
 /** The pictures or stones standing in the room (feet positions), left to right. */
 const OPTIONS: [number, number][] = [[400, 640], [640, 655], [880, 640]];
 const PICTURE_SIZE = 116;
@@ -363,8 +365,12 @@ export class ShifterRoom extends HouseSideRoom {
     for (const [x, y] of OPTIONS) burst(this, x, y - 50, { count: 16, speed: 200, colors: MAGIC });
     // Every link stands its options where the last link's were, so one can land where she stands: she steps
     // up out of reach, or a green mashed through the instruction picked one she never walked to (hunt 6; the
-    // word machine's fix 98, here).
-    if (this.spots.some((sp) => Phaser.Math.Distance.Between(this.player.x, this.player.y, sp.x, sp.y) < REACH)) this.player.place(this.player.x, Math.min(...OPTIONS.map(([, y]) => y)) - REACH - 15);
+    // word machine's fix 98, here). Stepped up, she stood in front of the label, over the letter that had just
+    // changed (hunt 9): under the label she steps to its side too.
+    if (this.spots.some((sp) => Phaser.Math.Distance.Between(this.player.x, this.player.y, sp.x, sp.y) < REACH)) {
+      const x = Math.abs(this.player.x - LABEL.x) < LABEL_CLEAR ? LABEL.x + Math.sign(this.player.x - LABEL.x || -1) * LABEL_CLEAR : this.player.x;
+      this.player.place(x, Math.min(...OPTIONS.map(([, y]) => y)) - REACH - 15);
+    }
   }
 
   /**

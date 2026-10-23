@@ -104,7 +104,8 @@ export class TheEndScene extends Phaser.Scene {
       if (hookState.theEnd) hookState.theEnd.dad = false;
       sfxSelect();
       advance(this);
-    }, '<span>DAD:</span> PRESS <b>2</b> TO PLAY AGAIN');
+      // No DAD on it (hunt 9): DAD is a bank word since item 126, and THE END showed it every episode (item 126 took it off the yes / no cue and the lock badge).
+    }, 'PRESS <b>2</b> TO PLAY AGAIN');
     setDadAsking(true);
   }
 

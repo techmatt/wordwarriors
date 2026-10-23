@@ -87,7 +87,7 @@ item: `docs/engineering.md`, *Browser and tests*):
   behind each door; item 091) against `plansGolden.json`: a refactor leaves it green. A
   change meant to alter the draws rewrites the JSON on purpose, from the worktree root:
   `npx tsx -e "import('./tests/unit/plansGolden.ts').then((m) => require('node:fs').writeFileSync('tests/unit/plansGolden.json', JSON.stringify(m.goldenDraws(), null, 1) + '\n'))"`.
-- **Before a commit: `npm run test:browser`** (about 95 s, 54 tests since item 128, one of them the skipped
+- **Before a commit: `npm run test:browser`** (about 95 s, 55 tests since hunt 9, one of them the skipped
   pairs placeholder; 24 tests and 50 s in item 079) plus the specs that cover
   what changed (`npx playwright test <spec>`, both lanes of it). `test:browser` is every
   browser test not tagged `@slow` (the smoke three among them): one of each newer room
@@ -96,7 +96,7 @@ item: `docs/engineering.md`, *Browser and tests*):
   the grown-ups page, a solid sentence frame, dad lock, a key held through a scene change,
   Spell the Spell, the cast and fight-style overrides, never last episode's victory scene,
   the three text-fit checks, and the word machine's plate and Word → Picture's banner
-  holding their words (`tests/banner.spec.ts`; its widest-sentence checks are `@slow`). It stops itself at 6 minutes, so a hang fails inside
+  holding their words and the read pass's green dot on its banner (`tests/banner.spec.ts`; its widest-sentence checks are `@slow`). It stops itself at 6 minutes, so a hang fails inside
   Claude Code's 10-minute background cap instead of being killed by it.
 - **Everything: `npm run test:all`** (about 6.3 minutes at item 105's 136 browser tests; 149
   since item 116): the unit tests, then every browser test. The slow lane alone is
@@ -380,7 +380,10 @@ first move choice), shooting every line shortly after it starts into
 name `npm run shots` plays the battle shots below as well. It serves its own vite on
 `SHOTS_PORT`, else 5194 (in a conductor item: `SHOTS_PORT=$CONDUCTOR_PORT`; the suite serves
 there too, so a test run started while shots run stops at "port already used": run them one
-after the other, or give one another free port). Since item 072
+after the other, or give one another free port). Stopping a shots run by killing its
+Playwright process leaves that vite running on the port (hunt 9): the next run stops at "port
+already used" until it is stopped too. Without a file name the run is long: 37 tests at
+about a minute each in hunt 9, the battle shots most of it. Since item 072
 it draws on the GPU, as the suite does, so shots from before then (software GL) differ
 from later ones in more than the change being judged. `npx tsx tests/shots/sheet.ts <beforeTag> <afterTag> <out.png>` puts
 two runs side by side.
@@ -426,7 +429,7 @@ forms, an idle child who stands still at every choice, more seeds; `QA_SET=new` 
 third, item 069's: a busy child pressing blue, red and yellow all episode (free play),
 `DIFFICULTY` 2 and 3 with seeded progress, Charge and the bridge answered right, and four
 real draws back to back; `QA_SET=lenses` the fourth, item 080's, below; `QA_SET=recent` the
-fifth, item 089's, below; `QA_SET=cast` the seventh hunt's, below; `QA_SET=hunt8` the eighth's, below;
+fifth, item 089's, below; `QA_SET=cast` the seventh hunt's, below; `QA_SET=hunt8` the eighth's, below; `QA_SET=hunt9` the ninth's, below;
 `QA_SET=all` every batch).
 About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it records.
 In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`. The suite (`playwright.config.ts`)
@@ -520,6 +523,27 @@ code, not the worktree's (hunt 7 lost a round to it); keep such scripts in the w
   reports it speaking (W33), and the hub's circle under the story's own lines is ruled
   (W35); under the line sending her there it stays a bug. `playChargeRoom(page, 'away')`
   (harness) leaves Dad out, and `RoomPlay.dadAway` passes it through `playRoom`.
+- **The ninth hunt's batch** (`QA_SET=hunt9`, item 129): `doorb5` (five drawn episodes: door b
+  holds the Shape-Shifter about half the time since item 126, a sentence frame or the word
+  machine otherwise; `door-b-streak`, a look, when it is in or missing three episodes
+  running), `story_drawn_scar` and `story_drawn_elsa_wrong` (seeds 976 and 965 draw Evil Smaug and
+  his story fight from the title with no `fight=`; the second with wrong picks. A seed's cast is
+  what the title draws, not `seed=N&scene=battle`'s: the title draws again), `newwords3_126` (`words=cow,mom,dad`) and `widest_counter` (item 128's widest
+  counter sentence, `sentence=no_match_for_the:octopus`) and `drawn10` (ten drawn episodes back to
+  back, about 15 minutes: growth, repeats, the door-b rotation); `story_parent`, `story_lock` and
+  `story_reload` put the story fight through the grown-ups page, dad lock and reloads at each
+  point, as `parent_all`, `lock_all` and `reload_points` do; forced with `fight=`, since a seed's
+  draw does not survive them (back from F9 at the title, or reloaded, the title draws again);
+  `story_hidden` switches the tab away and resizes the window through it; `erase_mid` has Dad erase all progress (F9, F8 twice, back) in a side room, at battle 1's choice
+  and in the attic, then plays a second episode on the empty store (`eraseAt`, `erase-return`). `qa flags` gained item 126's words
+  where she meets them and odd `sentence=` values.
+- **A wedged page is a stall, not a 30-minute wait** (hunt 9, M44 in `docs/qa-findings.md`): a reload
+  at hub part 2 twice never came back (hunts 7 and 9), and the stall's own `page.evaluate` then
+  waited on the page until the scenario's timeout. The stall's shot, the recorder and the last
+  probe read are bounded at 20 s each, screenshots at 20 s; such a stall reads "(the page stopped
+  answering)", and that page's last probe log is empty.
+- **A scenario outside the first batch needs its set** even with `-g`: `-g "qa variants6$"`
+  alone finds no test ("No tests found"); `QA_SET=recent` (its batch) or `QA_SET=all` with it.
 - **A busy machine slows the sweep's own server:** with many agents or a typecheck
   running beside it, voice fetches from the checker's Vite server passed their 15 s
   timeout (`voice: could not decode ... AbortError` in the log) and lines played silent.
@@ -532,8 +556,8 @@ code, not the worktree's (hunt 7 lost a round to it); keep such scripts in the w
   episode at real speed had none. Check one at real speed before calling it a bug:
   `WW_SPEED=1 QA_TAG=<tag> npm run qa -- -g "qa seed101$"`
   (about 7 minutes). A scenario of several episodes at real speed outlasts the config's
-  30-minute test timeout: pass Playwright's own (`-- -g "qa variants6$" --timeout=6600000`
-  for six episodes, item 102). `failed`, `none` and `suspended` stay bugs at any speed.
+  30-minute test timeout: pass Playwright's own (`QA_SET=recent ... -- -g "qa variants6$" --timeout=6600000`
+  for six episodes, item 102; about 6 minutes an episode in hunt 9). `failed`, `none` and `suspended` stay bugs at any speed.
 - **A game controller plugged in can play along** (item 092, M20): the GPU test browser
   reads a real pad once it reports input, and a stick drifting past the 0.25 deadzone walks
   her off a move pad the driver put her on. Twice a sweep stopped "green on the pad never

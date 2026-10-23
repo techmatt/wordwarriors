@@ -57,6 +57,8 @@ test('Shape-Shifter: the lit letter on a read-it label pulses at full size, neve
   const next = await until(page, (st) => (sh(st)?.index ?? 0) > l.index && st.room?.spots.length === 3, 60_000, 'the next link\'s options');
   const p = next.room!.player;
   for (const sp of next.room!.spots) expect(Math.hypot(sp.x - p.x, sp.y - p.y), `out of reach of ${sp.id}`).toBeGreaterThan(REACH);
+  // Hunt 9: and not in front of the label (stepped straight up, she stood over its changed letter).
+  expect(Math.abs(p.x - 640), 'beside the label, not in front of it').toBeGreaterThan(146 + 30);
   expectNoErrors(errors);
 });
 
