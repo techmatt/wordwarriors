@@ -943,7 +943,9 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   an old sheet's numbers no longer exist. Then delete the round's `scratch/` sheet,
   manifest, preview folder and briefs once every id in it is decided. `alts/` holds
   only rounds still waiting (`ls art-originals/alts/`): on 2026-10-22, item 120's story
-  props (`prop_fight_stone`, `_ledge`, `_hoard`, 3 each, `scratch/art_alts_120_story_props.*`);
+  props (`prop_fight_stone`, `_ledge`, `_hoard`, 3 each, `scratch/art_alts_120_story_props.*`)
+  and item 124's story splashes (`fx_story_fire`, `_tail`, `_spin`, `_dive`, 3 each,
+  `scratch/art_alts_124_story_fx.*`);
   item 115 promoted item 113's face cards (`face_anna` 1, `face_rilla` 2, drawn with `--ref` on
   each promoted full body). Items 110's and 112's rounds are gone too (promoted by item
   113: Bluerilla 5, good Anna 1), as are items 109's, 009's and 040's.
