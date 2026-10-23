@@ -78,12 +78,26 @@ export function recentWords(store: ProgressStore): Set<string> {
   return new Set(store.recentOf('words'));
 }
 
+/**
+ * Words a grown-up asked to see in play this session (item 121: `?words=new`
+ * is the words item 121 added, `?words=tree,bee` those): each weighs
+ * FAVOURED_WEIGHT times as much in every draw, so the next episodes show them
+ * wherever a game can use them (the bag still spends a word once read).
+ */
+let favoured = new Set<string>();
+/** The words item 121 added (familiar things she knows: the farm, dragons, Dad's bedtime stories, home and school): `?words=new`, and NEW on the grown-ups page. */
+export const NEW_WORDS: string[] = BANK.filter((w) => w.since === '121').map((w) => w.word);
+export const FAVOURED_WEIGHT = 40;
+export function favourWords(words: Iterable<string>): void {
+  favoured = new Set(words);
+}
+
 /** A word's weight in any draw: shakiness × coverage × recency. Words outside the bank (names) weigh shakiness only. */
 export function wordWeight(store: ProgressStore, word: string, m: Met = met(store), recent: Set<string> = recentWords(store)): number {
   const w = BANK_BY_WORD[word];
   const shaky = store.shakiness('words', word);
   if (!w) return shaky;
-  return shaky * coverage(store, word, m) * (recent.has(word) ? VARIETY.wordWeight : 1);
+  return shaky * coverage(store, word, m) * (recent.has(word) ? VARIETY.wordWeight : 1) * (favoured.has(word) ? FAVOURED_WEIGHT : 1);
 }
 
 /**
@@ -127,7 +141,8 @@ export function withStems(said: Iterable<string>): string[] {
 
 /** Second halves of compounds the game says, beyond bank words (CUP-CAKES, SUN-SHINE, PIG-LETS). */
 // Item 056: DOM, so KINGDOM says KING.
-const COMPOUND_HALVES = new Set(['cake', 'shine', 'let', 'ball', 'fish', 'man', 'box', 'dom', 'back']);
+// HOUSE (item 121): TREE-HOUSE, Dada Matt's workshop, says TREE.
+const COMPOUND_HALVES = new Set(['cake', 'shine', 'let', 'ball', 'fish', 'man', 'box', 'dom', 'back', 'house']);
 
 /**
  * First halves of compounds the game says whose second half is a bank word

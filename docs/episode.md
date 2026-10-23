@@ -192,6 +192,7 @@ Any cast can be tried from the URL (and stays for every episode that session):
 | `?form=cyber,warrior` | The dads' forms by name: `builder` `lifter` `cyber` `blade`; `chef` `warrior` `warlock` |
 | `?primary=dada_jason` / `none`, `?secondary=1` / `0` | Who wakes her; whether the other dad comes in |
 | `?place=forest_gym` / `home` | The quest place, whoever the helper is (to look at one) |
+| `?words=new`, `?words=tree,ham` | Item 121: every word draw (key words, pads, the gift, the warm-up, the phonics rooms) leans to item 121's new words, or to those named, this session (`favourWords`, `src/rules/bank.ts`); each still leaves the bag once read. The grown-ups page's word list (page 2) marks the new words NEW |
 | `?fight=sky_race` | The showdown's fight style, whoever the villain is: `brawl` `sky_race` `space_race` `sea_tug` `spell_clash` `frost_clash` `magic_show` `cook_off` |
 | `?fight=smaug_story` | The **story fight** against Evil Smaug (item 107): forces him as the villain, whatever the cast. `?scene=battle&part=1&fight=smaug_story` (or `part=2`) goes straight to a half |
 
@@ -502,10 +503,12 @@ CVC words (`SHIFT_WORDS`, one letter a sound).
 
 **Variety across episodes.** Each rotation keeps its recent picks in the progress store
 (`recent`, `src/rules/recent.ts`; how many: `VARIETY` in `src/config.ts`) and avoids
-them while two choices are left: the ally and each dad's form (`src/rules/cast.ts`), the
+them while two choices are left: the ally and each dad's form (`src/rules/cast.ts`; item 121:
+a dad's last two forms sit out while one is left, so Dada Jason's three go round), the
 villain (`recent.villain`, the last 4 kept; the draw avoids as many
 as still leave two, so the last 4 with seven active), the quest line, hub scene and each line variant
-(`src/rules/story.ts`), the victory scene, the side rooms (the one left out last episode
+(`src/rules/story.ts`; item 121: these avoid their last two while one is left, so a line of three
+goes round all three before one comes back), the victory scene, the side rooms (the one left out last episode
 comes back), the games (last episodes' weigh `VARIETY.gameWeight`) and the phonics door
 (Charge vs Bridge), and the warm-up's last 3 words. Her latest right-first-time reads
 (`VARIETY.words`) weigh `VARIETY.wordWeight` in every word draw, so last episode's words

@@ -14,6 +14,7 @@ import { ENDINGS } from '../../content/house/endings';
 import { FETCH_ROOMS } from '../../content/house/house';
 import { DIFFICULTY, VARIETY } from '../../src/config';
 import { drawCast } from '../../src/rules/cast';
+import { FAVOURED_WEIGHT, NEW_WORDS, favourWords, wordWeight } from '../../src/rules/bank';
 import { seededRand } from '../../src/rules/random';
 import { difficulty, helpLevel, rampsAdvance, setDifficulty } from '../../src/rules/difficulty';
 import { pickEnding } from '../../src/rules/endings';
@@ -129,6 +130,14 @@ test('cast: her recent allies and each dad\'s recent forms sit out across episod
       store.remember('form_dada_matt', form);
     }
   }
+  // Item 121: Dada Jason's three forms go round: his last two sit out.
+  const jason = formsOf('dada_jason').map((f) => f.id);
+  assert.equal(jason.length, 3);
+  for (let s = 1; s <= 30; s++) {
+    const c = drawCast({ hero: 'julia', recentAllies: [], recentForms: { dada_jason: [jason[0]!, jason[1]!] } }, seededRand(s * 104729));
+    const form = [c.primary, c.secondary, c.ally, c.villain].find((id) => id && personOf(id) === 'dada_jason');
+    if (form) assert.equal(form, jason[2], `seed ${s}`);
+  }
   assert.ok(new Set(allies).size >= 3, `allies: ${[...new Set(allies)]}`);
   assert.ok(new Set(matt).size >= 3, `forms: ${[...new Set(matt)]}`);
 });
@@ -138,6 +147,13 @@ test('story and line variants: her last one sits out (two-variant lines alternat
   for (let s = 1; s <= 30; s++) {
     assert.notEqual(pickVariant(2, seededRand(s), false, [1]), 1);
     assert.notEqual(pickVariant(3, seededRand(s), false, [2]), 2);
+  }
+  // Item 121: a line of three goes round all three before one comes back (the wake-up said one again two episodes on half the time).
+  for (let s = 1; s <= 30; s++) {
+    const rand = seededRand(s * 104729);
+    const said: number[] = [];
+    for (let e = 0; e < 9; e++) said.push(pickVariant(3, rand, false, said.slice(-2)));
+    for (let e = 2; e < said.length; e++) assert.equal(new Set(said.slice(e - 2, e + 1)).size, 3, `seed ${s}: ${said}`);
   }
   // Through drawStory / drawLines, keyed by the store's names.
   const recent = (k: string) => (k === 'line_up' ? [1] : k.startsWith('scene_') ? [1] : []);
@@ -193,4 +209,21 @@ test('line variants: every line said several times an episode has at least three
   for (const k of ['right', 'wrong', 'move_great', 'room_listen', 'room_your_turn', 'room_find', 'got_item', 'house_doors', 'house_more', 'use_bag', 'machine_silly', 'machine_change', 'bridge_find', 'bridge_say', 'bridge_slide']) {
     assert.ok(lineVariantKeys(k).length >= 3, `${k}: ${lineVariantKeys(k).length}`);
   }
+});
+
+// ---- Item 121: the new words in play ------------------------------------------
+
+test('?words=new: the new words weigh FAVOURED_WEIGHT in every draw, for this session only', () => {
+  for (const w of ['tree', 'ham', 'hay', 'gate', 'stump', 'chomp', 'splash']) assert.ok(NEW_WORDS.includes(w), w);
+  const store = new ProgressStore(memory());
+  const plain = wordWeight(store, 'ham');
+  const cat = wordWeight(store, 'cat');
+  favourWords(NEW_WORDS);
+  try {
+    assert.equal(wordWeight(store, 'ham'), plain * FAVOURED_WEIGHT);
+    assert.equal(wordWeight(store, 'cat'), cat);
+  } finally {
+    favourWords([]);
+  }
+  assert.equal(wordWeight(store, 'ham'), plain);
 });

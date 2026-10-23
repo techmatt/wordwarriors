@@ -507,7 +507,7 @@ export class TugStage extends BaseStage {
     for (const f of team) this.splash(f.x, f.y, 0.6);
     this.host.focus(sx, sy - 60, 1.25, 100);
     sfxBoom(3);
-    floatText(this.scene, sx, sy - 220, 'SPLASH!', '#7ad9ff', 70);
+    floatText(this.scene, sx, sy - 220, 'SPLOOSH!', '#7ad9ff', 70);
     await this.host.wait(0.9);
     this.fling = null;
     this.surgeTo = 1.2;
@@ -554,7 +554,7 @@ export class TugStage extends BaseStage {
     if (v.active) {
       v.lift = 0;
       this.splash(v.x, v.y, 2);
-      floatText(this.scene, v.x, v.top - 40, 'SPLASH!', '#7ad9ff', 84);
+      floatText(this.scene, v.x, v.top - 40, 'SPLOOSH!', '#7ad9ff', 84);
     }
     sfxBoom(3);
     await this.host.wait(0.35);

@@ -72,6 +72,12 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'It is the size of a banana, and it makes a mighty noise.',
       'Switch it on, and it goes...',
     ], SPOT('to power it up'), 'Careful, it is very strong, let\'s look around!'),
+    // Item 121: Dad's sneaky orc-castle story.
+    S('🏰', [
+      'You know my story about the orc castle, where we sneaked in for the stolen treasure!',
+      'So I built you a sneaky gadget, it tiptoes past the orcs without one squeak.',
+      'When the orcs are snoring, it whispers...',
+    ], SPOT('to switch it on'), 'Now you are a sneaky hero too, let\'s look around!'),
   ],
   // Lifter Dada Matt: a workout move from the forest gym.
   dada_matt_lifter: [
@@ -82,9 +88,15 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
     ], SPOT('to power up'), 'Look at those muscles, let\'s look around!'),
     S('💪', [
       'Every champion has a secret move, and today you get mine!',
-      'I practiced it on a tree, and the tree said wow.',
+      'I practiced it on an old oak, and the oak said wow.',
       'Take a deep breath, and shout...',
     ], SPOT('to get strong'), 'You are a champion now, let\'s look around!'),
+    // Item 121: farm work, the Stardew way.
+    S('🪓', [
+      'Farmers get strong from hard work, so here is your very own axe!',
+      'We split the wood, we cut the meadow down with a scythe, and carry it all to the barn.',
+      'Then flex your muscles, and shout...',
+    ], SPOT('to get strong'), 'What a strong farmer you are, let\'s look around!'),
   ],
   // Cyber Dada Matt: a program for her powers (item 071: not her armour, she wears none).
   dada_matt_cyber: [
@@ -129,6 +141,12 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'It bubbles and it sizzles, and it smells like winning.',
       'One spoonful, and the soup says...',
     ], SPOT('to have a spoonful'), 'That was yummy, and now you are mighty, let\'s look around!'),
+    // Item 121: cooking the farm's crops, the Stardew way.
+    S('🥕', [
+      'I picked the best crops on the whole farm this morning, carrots, pumpkins and corn!',
+      'I stirred them into a farm stew, and it smells like summer.',
+      'One taste of farm stew, and it goes...',
+    ], SPOT('to taste it'), 'Fresh from the farm, and full of power, let\'s look around!'),
   ],
   // Warrior Dada Jason: a knight's battle trick.
   dada_jason_warrior: [
@@ -142,6 +160,12 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'Mine is so loud, it scares the crows off the castle.',
       'Here is yours, take a breath, and shout...',
     ], SPOT('to learn the battle cry'), 'What a mighty knight you are, let\'s look around!'),
+    // Item 121: the orc castle, the stolen treasure and the chase.
+    S('💰', [
+      'Last night the orcs took the magic treasure, and hid it in their castle!',
+      'We sneaked in, we got it back, and then the orcs chased us all the way home.',
+      'Now the treasure is yours, and when you hold it, it says...',
+    ], SPOT('to take the treasure'), 'We got away, brave knight, let\'s look around!'),
   ],
   // Warlock Dada Jason: a spooky spell, or a potion.
   dada_jason_warlock: [
@@ -173,6 +197,12 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'It floats, it bounces, and it whispers.',
       'Listen, the balloon whispers...',
     ], CIRCLE('to catch the balloon'), 'Now the balloon is yours, let\'s look around!'),
+    // Item 121: school.
+    S('✏️', [
+      'Today at school, my teacher showed us a magic word, and I saved it for you!',
+      'I wrote it down in my best writing, with a sparkly pencil.',
+      'Open my folder, and the paper says...',
+    ], CIRCLE('to take the paper'), 'Now we both know it, let\'s look around!'),
   ],
   // Scar: an upgrade from the robot workshop.
   scar: [
@@ -191,6 +221,12 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       "Don't tell the bad guys, it is super secret.",
       'Say it out loud, the code is...',
     ], 'Stand on the charging spot, and press green, to load the code!', 'The code is loaded, let\'s look around!'),
+    // Item 121: a dragon, robot style.
+    S('🐉', [
+      'I built a little robot dragon, with copper scales and a glowing tummy!',
+      'It flaps around my workshop, and it breathes sparks instead of fire.',
+      'Pat its nose, and it roars...',
+    ], 'Stand on the charging spot, and press green, to meet the dragon!', 'The robot dragon likes you, let\'s look around!'),
   ],
   // Seraphina (item 111, Matt): the secret hatchery of Seraphina's Secret,
   // baby dragons fed and hidden from the grown-ups, her little pink dragon.
@@ -276,7 +312,7 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'Whisper it to the wind, it is...',
     ], CIRCLE('to catch the word'), 'The wind will help you now, let\'s look around!'),
     S('💎', [
-      'At the oasis, I found a treasure under the palm tree.',
+      'At the oasis, I found a treasure under a tall palm.',
       'It is a magic jewel, and it glows when you are brave.',
       'Rub it, and it says...',
     ], CIRCLE('to take the jewel'), 'It is glowing for you, let\'s look around!'),

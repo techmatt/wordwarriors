@@ -21,6 +21,7 @@ Moved from CLAUDE.md (item 078). "The three commands" are `voice:lines`, `voice:
 | --- | --- |
 | "add a character / ability / taunt" | `content/battle/roster.ts`, the three commands |
 | "add words" / "add a move word" | a `BANK` entry in `content/phonics/bank.ts` (role `thing`, `action` or `both`), its picture brief in `PICTURES` (`content/art/prompts.ts`), its battle effect in `content/phonics/effects.ts` (`docs/content.md`, "A word"), the three commands |
+| "show me the new words" / "is X in the game?" | `?words=new` (item 121's words) or `?words=x,y` leans every draw to them; the grown-ups page's page 2 marks the newest NEW. Whether everything comes round: `npm run variety` (README, *Not tests*) |
 | "Julia knows X" / "she doesn't know what X is" | remove / add `odd` on X's `BANK` entry (an odd word is never a picture to match) |
 | "more wake-up lines" / "another sorry for X" | `WAKE_LINES` in `content/voice/script.ts` (`up_<n>`, `good_<n>`, `door_<n>`, `WAKE_VARIANTS`); `reformed.sorry` / `.ending` on X in the roster; then `voice:lines`, `voice:build` |
 | "add a sentence / frame" / "what X does in battle" | `FRAMES` in `content/phonics/sentences.ts`; X's effect in `content/phonics/effects.ts`; the three commands |
@@ -568,7 +569,8 @@ One `Frame` in `FRAMES`: `{ id, text, use }`.
   `hero_needs_the`; counter `scared_of_the`, `villain_hates_the` (a fetch frame until
   item 015, so it kept its id and progress), `runs_from_the`, `no_match_for_the`
   (CAN NOT STAND THE until item 020), and since item 040 `cannot_beat_the`,
-  `hides_from_the`, `does_not_like_the`, `says_yuck_to_the`.
+  `hides_from_the`, `does_not_like_the`, `says_yuck_to_the`, and since item 121
+  `ran_away_from_the`, `cannot_get_past_the`.
 - The composer makes one prefix line per frame (`sent_<id>`), or per frame × roster
   character when it has a name slot (`sent_<id>_<character>`), plus a `word_<token>`
   line for any new token. A name-slot frame costs one line per character.

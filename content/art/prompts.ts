@@ -66,7 +66,9 @@ const BANK_056 = ['egg', 'bell', 'doll', 'tap', 'glass', 'sink', 'king', 'ring',
 const ART_111 = ['keeper', 'snow', 'explorer'].flatMap((o) => [`char_julia_${o}`, `face_julia_${o}`]).concat('minion_pink_dragon');
 // Item 114: Julia's next three outfits, Ozymandias's penguins and snow bot, his fish bucket, no green of their own.
 const ART_114 = ['astronaut', 'puzzler', 'gorilla'].flatMap((o) => [`char_julia_${o}`, `face_julia_${o}`]).concat('minion_penguin', 'minion_penguin_trooper', 'minion_snow_bot', 'item_fish_bucket', 'char_ozymandias_good', 'char_ozymandias_evil', 'face_ozymandias', 'decal_ozymandias_penguin', 'decal_ozymandias_snowpile');
-const NO_GREEN = new Set([...ART_114, ...ART_111, ...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'face_rilla', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
+// Item 121's words but the green ones (GATE, STUMP, SWISH and CHOMP's dragon have grass or leaves).
+const BANK_121 = ['ham', 'hay', 'sack', 'dress', 'block', 'bench', 'skunk', 'dash', 'smash', 'crash', 'splash'].map((w) => `pic_${w}`);
+const NO_GREEN = new Set([...ART_114, ...ART_111, ...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...BANK_121, ...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'face_rilla', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
 
 /**
  * Sprites in dark green of their own (item 049): keying takes out only the
@@ -583,6 +585,23 @@ const PICTURES: Record<string, string> = {
   octopus: 'an octopus: one cute cartoon purple octopus with a big round head, big friendly eyes, a smile and eight wavy curling arms with suckers spread out around it, seen from the front; clearly an octopus, not a squid or a jellyfish, no water around it',
   umbrella: 'an umbrella: one open bright red umbrella seen from the side a little below, its canopy wide with pointed scalloped edges and a tip on top, a long straight shaft and a curved J-shaped handle at the bottom, a few raindrops bouncing off the top; clearly an umbrella, not a tent or a mushroom',
   xray: "an x-ray: a doctor's x-ray of a hand, a black rectangular film with the white bones of a whole hand and its five fingers glowing on it, clipped to a bright lit-up light box on legs; clearly a picture of bones you see at the doctor's, not a skeleton, a glove or a hand itself; no writing",
+  // Item 121: familiar things from her life (Stardew Valley's farm, dragons, Dad's bedtime stories, home and school).
+  ham: 'a ham: one whole cooked glazed ham, shiny pink-and-brown with a criss-cross pattern on top and a white bone sticking out of one end, on a wooden board; cooked food, not a pig, not a leg',
+  hay: 'hay: one big rectangular bale of golden yellow hay tied with two strings, a few loose straws poking out, sitting on the ground; a bale of hay, not loose grass, not a lawn',
+  tree: 'a tree: one whole leafy green tree with a thick brown trunk and a round green crown, standing alone on a little patch of grass, roots just showing; a tree, not a bush, not a potted plant, not a stump',
+  gate: 'a gate: one wooden farm gate with five horizontal brown planks and a diagonal brace, standing closed between two short fence posts, a little grass at its foot; a farm gate, not a door, not a fence alone',
+  stump: 'a stump: one short cut tree stump, flat top showing pale rings, brown bark sides and a few roots spreading into the ground, standing upright; a stump left in the ground, not a log lying down, not a whole tree',
+  sack: 'a sack: one plump brown cloth sack made of rough woven burlap, tied shut at the top with a rope, sitting upright; a cloth sack, not a handbag or a paper bag, no writing on it',
+  dress: "a dress: one girl's bright pink party dress with short puffy sleeves and a wide twirly skirt, on its own, no person wearing it; clearly a dress, not a shirt or a skirt alone",
+  block: 'a block: one big wooden toy building block, a bright red cube with a little star painted on each side, sitting on the floor; a toy block, not a box or a present, no letters or numbers on it',
+  bench: 'a bench: one long wooden park bench with a backrest and black iron legs, side-on a little from the front, nobody on it; a bench, not a desk, a table or a chair',
+  skunk: 'a skunk: one cute cartoon skunk, black with a bold white stripe down its back and a big fluffy black-and-white tail raised, standing side-on; clearly a skunk, not a cat or a squirrel',
+  chomp: "a chomp: a cartoon green dragon's head side-on, its big jaws snapping shut on a big crunchy apple, crumbs flying and little action lines; the biting is the point",
+  dash: 'a dash: a cartoon kid running super fast side-on, leaning forward, speed lines and dust clouds streaming out behind; clearly running very fast',
+  swish: 'a swish: a farmer swinging a long curved scythe through tall grass in one wide arc, cut grass flying up and a curved swish line following the blade; the swing of the scythe is the point',
+  smash: 'a smash: a big cartoon hammer smashing down onto a pile of rocks, pieces flying out and a burst of stars at the hit',
+  crash: 'a crash: a tall wobbly stack of plates crashing to the floor, plates tumbling through the air and pieces bursting out with a big burst of dust; clearly falling and crashing',
+  splash: 'a splash: a cartoon kid in rain boots jumping into a big puddle, a huge splash of water spraying up all around; the splash is the point',
 };
 
 const HAND: Record<string, string> = {

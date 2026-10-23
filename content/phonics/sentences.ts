@@ -63,6 +63,9 @@ export const FRAMES: Frame[] = [
   { id: 'hides_from_the', text: '{villain} HIDES FROM THE {x}', use: 'counter' },
   { id: 'does_not_like_the', text: '{villain} DOES NOT LIKE THE {x}', use: 'counter' },
   { id: 'says_yuck_to_the', text: '{villain} SAYS YUCK TO THE {x}', use: 'counter' },
+  // Item 121: two more, from Dad's bedtime chases.
+  { id: 'ran_away_from_the', text: '{villain} RAN AWAY FROM THE {x}', use: 'counter' },
+  { id: 'cannot_get_past_the', text: '{villain} CAN NOT GET PAST THE {x}', use: 'counter' },
 ];
 
 export const FRAME_BY_ID: Record<string, Frame> = Object.fromEntries(FRAMES.map((f) => [f.id, f]));
@@ -155,6 +158,17 @@ export const LOOKALIKES: string[][] = [
   ['yoyo', 'top'],
   // Item 092's: LEG's picture is a leg in a striped sock and a shoe.
   ['leg', 'sock'],
+  // Item 121's: a sack is a cloth bag, a stump a cut log, hay dried grass; a bee is a bug.
+  ['sack', 'bag', 'kit'],
+  ['stump', 'log', 'stick', 'twig'],
+  ['hay', 'grass', 'bush'],
+  ['tree', 'bush', 'plant', 'twig', 'stump'],
+  ['bench', 'desk', 'bed'],
+  ['block', 'box', 'gift', 'chest'],
+  ['dress', 'vest'],
+  ['skunk', 'cat', 'rat', 'fox'],
+  // A ham is a cooked leg of pig.
+  ['ham', 'pig', 'leg'],
 ];
 
 /** The words whose pictures look like `word`'s (not including `word`). */

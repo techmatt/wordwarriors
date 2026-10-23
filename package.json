@@ -19,6 +19,7 @@
     "voice:status": "tsx tools/voice/status.ts",
     "test:unit": "tsx --test tests/unit/*.test.ts",
     "bank:audit": "tsx tools/phonics/audit.ts",
+    "variety": "tsx tests/variety/simulate.ts",
     "test": "node --import tsx tests/fastLane.ts",
     "test:browser": "playwright test --grep-invert @slow --global-timeout=360000",
     "test:slow": "playwright test --grep @slow",

@@ -27,7 +27,7 @@ import { startScene } from '../art/gate';
 import { stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { BANK_DRAW, GAME_HEIGHT, GAME_WIDTH, GRAB, SENTENCE_SOLID } from '../config';
-import { coverageTable, type CoverageRow } from '../rules/bank';
+import { NEW_WORDS, coverageTable, type CoverageRow } from '../rules/bank';
 import { GRAB_WORDS, recordedGrabLevel } from '../rules/grab';
 import { recordedBridgeLevel } from '../rules/bridge';
 import { recordedShifterLevel } from '../rules/shifter';
@@ -88,8 +88,9 @@ export class ParentScene extends Phaser.Scene {
       const perCol = 22;
       // The number in a word's dot is its Stretchy Bridge help level (item 054), once she has crossed it.
       const bridged = (id: string) => (snap.bridgeLevels?.[id] !== undefined ? String(recordedBridgeLevel(progress, id)) : null);
-      this.grid('Words', 'words', words, 30, 90, perCol, (GAME_WIDTH - 60) / Math.max(5, Math.ceil(words.length / perCol)), 26, bridged);
-      fitText(this.add.text(200, 94, `number in the dot: Stretchy Bridge level reached (1 stones sound + pictures shown, 2 silent stones, 3 says it to Dad first)${difficulty() === 1 ? '; at difficulty 1 every word gets 1' : `; the room gives up to ${difficulty()}`}`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#555' }), GAME_WIDTH - 200 - 30, 22);
+      // Item 121: the newest words carry NEW (`?words=new` puts them in play).
+      this.grid('Words', 'words', words, 30, 90, perCol, (GAME_WIDTH - 60) / Math.max(5, Math.ceil(words.length / perCol)), 26, bridged, (id) => (NEW_WORDS.includes(id) ? ' NEW' : ''));
+      fitText(this.add.text(200, 94, `NEW: just added (?words=new shows them in play). Number in the dot: Stretchy Bridge level reached (1 stones sound + pictures shown, 2 silent stones, 3 says it to Dad first)${difficulty() === 1 ? '; at difficulty 1 every word gets 1' : `; the room gives up to ${difficulty()}`}`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#555' }), GAME_WIDTH - 200 - 30, 22);
       return;
     }
 
@@ -204,8 +205,8 @@ export class ParentScene extends Phaser.Scene {
     fitText(this.add.text(x, vy + 24 + 5 * 24 + 6, `Solid: shakiness ≤ ${BANK_DRAW.solid}. Gray: not read yet; green: half or more solid.`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '13px', color: '#555' }), 250, 40);
   }
 
-  /** A column grid of items; `badge` puts a short mark (a help level) in an item's dot. */
-  private grid(title: string, kind: ItemKind, ids: string[], x0: number, y0: number, perCol: number, colW: number, rowH = 30, badge?: (id: string) => string | null): void {
+  /** A column grid of items; `badge` puts a short mark (a help level) in an item's dot, `tag` a word after its name. */
+  private grid(title: string, kind: ItemKind, ids: string[], x0: number, y0: number, perCol: number, colW: number, rowH = 30, badge?: (id: string) => string | null, tag?: (id: string) => string): void {
     this.add.text(x0, y0, title, { fontFamily: 'Segoe UI, sans-serif', fontSize: '20px', color: '#333', fontStyle: 'bold' });
     ids.forEach((id, i) => {
       const col = Math.floor(i / perCol);
@@ -227,7 +228,7 @@ export class ParentScene extends Phaser.Scene {
       this.add.circle(x + 8, y + 11, mark ? 9 : 7, c);
       if (mark) this.add.text(x + 8, y + 11, mark, { fontFamily: 'Segoe UI, sans-serif', fontSize: '12px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
       // One row each, shrunk to fit (item 080): with the row's height, two wrapped rows fitted and a frame's last count fell under it.
-      fitText(this.add.text(x + 22, y, `${id}  ${s.seen} · ${recent} · ${today.seen}${s.modelled ? ` +${s.modelled}` : ''}`, { fontFamily: 'Consolas, monospace', fontSize: '16px', color: '#222' }), colW - 30, Math.min(rowH - 2, 22));
+      fitText(this.add.text(x + 22, y, `${id}${tag?.(id) ?? ''}  ${s.seen} · ${recent} · ${today.seen}${s.modelled ? ` +${s.modelled}` : ''}`, { fontFamily: 'Consolas, monospace', fontSize: '16px', color: '#222' }), colW - 30, Math.min(rowH - 2, 22));
     });
   }
 

@@ -71,7 +71,7 @@ test('frames: a few of each, and every fetch and counter frame ends in the key w
   const fetch = FRAMES.filter((f) => f.use === 'fetch');
   const counter = FRAMES.filter((f) => f.use === 'counter');
   assert.ok(fetch.length >= 3 && fetch.length <= 5, `${fetch.length} fetch frames`);
-  assert.ok(counter.length >= 3 && counter.length <= 8, `${counter.length} counter frames`);
+  assert.ok(counter.length >= 3 && counter.length <= 10, `${counter.length} counter frames`);
   for (const f of FRAMES) assert.ok(f.text.endsWith(' {x}'), f.id);
   // A counter frame names the villain: it is the villain's weakness.
   for (const f of counter) assert.equal(slotOf(f), 'villain', f.id);

@@ -63,8 +63,8 @@ export interface BankEntry {
   glyph?: string;
   draw?: DrawId;
   say?: string;
-  /** The item that added it: 037, 040, 054, 056, 058 or 059 (unset for older words). Informational: nothing reads it. */
-  since?: '037' | '040' | '054' | '056' | '058' | '059';
+  /** The item that added it: 037, 040, 054, 056, 058, 059 or 121 (unset for older words). Informational: nothing reads it. */
+  since?: '037' | '040' | '054' | '056' | '058' | '059' | '121';
   /** It sounds like a spell (ZAP, HEX, POP; not MUD or NAP): a caster's gift leans to it (item 038, `drawGift`). */
   spell?: true;
   /**
@@ -116,6 +116,8 @@ const NEW_ODD = { ...NEW, ...ODD };
 const NEW_040 = { since: '040' as const };
 const NEW_054 = { since: '054' as const };
 const NEW_056 = { since: '056' as const };
+/** Item 121: familiar things from her life (Stardew Valley's farm, dragons, Dad's bedtime stories, home and school). */
+const NEW_121 = { since: '121' as const };
 /** Item 058: a familiar picture holding a sound she has not been taught (UNTAUGHT_SOUNDS): level 3, with the digraphs. */
 const UNTAUGHT_058 = { since: '058' as const, late: true as const };
 
@@ -142,6 +144,8 @@ const ENTRIES: BankEntry[] = [
   A('nap', '😴', NEW), A('wag', '🐕', NEW), A('jab', '🥊', NEW), A('red', '🔴', NEW), A('hex', '🔮', NEW_SPELL),
   A('jig', '💃', NEW), A('mix', '🥣', NEW_SPELL), A('jog', '🏃', NEW), A('bop', '🔨', NEW), A('dot', '⚫', NEW),
   A('hum', '🎵', NEW), A('yum', '😋', NEW),
+  // Item 121, level 1: more links for the Shape-Shifter (HAM-JAM-HAT).
+  T('ham', '🍖', NEW_121),
   // Item 037, level 2: blends. Order (item 096): final s-blends (NEST, MASK) and initial l-blends (FLAG, CLAP) first, final nasal blends (JUMP, HAND) last.
   T('frog', '🐸', NEW), T('drum', '🥁', NEW), T('crab', '🦀', NEW), T('flag', '🚩', NEW), T('sled', '🛷', NEW_ODD),
   T('nest', '🥚', NEW), T('tent', '⛺', NEW), T('desk', '🗄️', NEW), T('belt', '🥋', NEW), T('vest', '🦺', NEW_ODD),
@@ -152,10 +156,16 @@ const ENTRIES: BankEntry[] = [
   A('slam', '💥', NEW), A('grab', '🦾', NEW), A('clap', '👏', NEW), A('bump', '🚗', NEW), A('snap', '🐊', NEW_SPELL),
   A('skip', '🎗️', NEW), A('twist', '🌪️', NEW_SPELL), A('melt', '🍦', NEW_SPELL), A('lift', '🏗️', NEW), A('plop', '💧', NEW),
   A('flop', '🤽', NEW), A('trap', '🧀', NEW), A('blast', '🚀', NEW_SPELL), A('drip', '🚰', NEW),
+  // Item 121, level 2: an initial r-blend, then the final nasal blends last.
+  T('dress', '👗', NEW_121), T('stump', '🌲', NEW_121), T('skunk', '🦡', NEW_121),
   // Item 037, level 3: digraphs, a small start.
   T('ship', '🚢', NEW), T('fish', '🐟', NEW), T('duck', '🦆', NEW), T('sock', '🧦', NEW), T('moth', '🦋', NEW_ODD),
   T('shed', '🏚️', NEW_ODD), T('chick', '🐤', NEW),
   A('chop', '🪓', NEW), A('kick', '🦶', NEW), A('rush', '💨', NEW),
+  // Item 121, level 3: the farm, home and school, and the chase.
+  T('sack', '💰', NEW_121), T('block', '🟦', NEW_121), T('bench', '🪑', NEW_121),
+  A('chomp', '😬', NEW_121), A('dash', '🐆', NEW_121), A('swish', '🗡️', NEW_121), A('smash', '🔨', NEW_121),
+  A('crash', '💥', NEW_121), A('splash', '🌊', NEW_121),
   // Item 040: familiar pictured words where the odd ones left short e, i and o,
   // first sounds V and R, the blends and the digraphs thin.
   T('vet', '🩺', NEW_040), T('chest', '🧰', NEW_040), T('bin', '🗑️', NEW_040), T('rock', '🪨', NEW_040), T('clock', '🕰️', NEW_040),
@@ -198,6 +208,11 @@ const ENTRIES: BankEntry[] = [
   T('bike', '🚲', { ...NEW_056, late: true, spelled: [['b', 'b'], ['i', 'long_i'], ['k', 'k'], ['e', '']] }),
   T('vase', '💐', { ...NEW_056, late: true, spelled: [['v', 'v'], ['a', 'long_a'], ['s', 's'], ['e', '']] }),
   T('cake', '🎂', { ...NEW_056, late: true, spelled: [['c', 'c'], ['a', 'long_a'], ['k', 'k'], ['e', '']] }),
+  // Item 121: the farm's long vowels, AY as in X-RAY, a silent E as in CAKE.
+  T('hay', '🌾', { ...NEW_121, late: true, spelled: [['h', 'h'], ['ay', 'long_a']] }),
+  T('gate', '🚧', { ...NEW_121, late: true, spelled: [['g', 'g'], ['a', 'long_a'], ['t', 't'], ['e', '']] }),
+  // EE as in SHEEP: the tree she chops on the farm.
+  T('tree', '🌳', { ...NEW_121, late: true, spelled: [['t', 't'], ['r', 'r'], ['ee', 'long_e']] }),
   // Item 058, under the untaught-sounds ruling (Matt's): a familiar picture may
   // hold a sound she has not been taught (UNTAUGHT_SOUNDS in letters.ts: long
   // OO, the schwa, X said by its name), spelled by hand with each unit's sound.

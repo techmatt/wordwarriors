@@ -25,12 +25,13 @@ export const DEFAULT_STORY: Story = { quest: 1, scene: 1 };
 
 /**
  * One of `count` variants, from 1; always 1 when `fixed`. Her `recent`
- * variants of it (newest last) sit out while two are left (item 067,
- * src/rules/recent.ts `fresh`); with none recent the draw is as before.
+ * variants of it (newest last) sit out while one is left (item 067,
+ * src/rules/recent.ts `fresh`; item 121: while two were left, a line of three
+ * came back two episodes later half the time); with none recent the draw is as before.
  */
 export function pickVariant(count: number, rand: Rand, fixed: boolean, recent: readonly number[] = []): number {
   if (fixed || count <= 1) return 1;
-  const from = fresh(Array.from({ length: count }, (_, i) => i + 1), recent);
+  const from = fresh(Array.from({ length: count }, (_, i) => i + 1), recent, 1);
   return from[Math.min(from.length - 1, Math.floor(rand() * from.length))]!;
 }
 

@@ -116,7 +116,8 @@ export function drawCast(input: CastInput, rand: Rand = Math.random, active: { a
   for (const dad of DADS) {
     const fixed = o.forms?.[dad];
     const byRole = [o.ally, o.villain].find((id) => id && personOf(id) === dad);
-    forms[dad] = byRole ?? (fixed ? formId(dad, fixed) : undefined) ?? pick(fresh(formsOf(dad).map((f) => f.id), input.recentForms?.[dad] ?? []), rand);
+    // Item 121: his last two forms sit out while one is left (Dada Jason's three went round; one came back two episodes on in three).
+    forms[dad] = byRole ?? (fixed ? formId(dad, fixed) : undefined) ?? pick(fresh(formsOf(dad).map((f) => f.id), input.recentForms?.[dad] ?? [], 1), rand);
   }
   const inForm = (person: string) => (isDad(person) ? forms[person]! : person);
 

@@ -188,9 +188,9 @@ test('quests: every possible ally has one; places and their rooms exist with art
   for (const id of Object.keys(QUESTS)) assert.ok(CHARACTER_BY_ID[id], `quest owner ${id} is in the roster`);
   // Every dad form and Ellie have a quest of their own (Matt, item 025).
   for (const id of [...ROSTER.filter((c) => DADS.includes(personOf(c.id) as never)).map((c) => c.id), 'ellie']) assert.ok(QUESTS[id], id);
-  // Item 037: everybody has their own, with two or three setup lines to draw from.
+  // Item 037: everybody has their own, with two to four setup lines to draw from (item 121 gave six a fourth).
   for (const c of ROSTER) assert.ok(QUESTS[c.id], `${c.id} has a quest`);
-  for (const [id, q] of [...Object.entries(QUESTS), ['home', HOME_QUEST] as const]) assert.ok(q.lines.length >= 2 && q.lines.length <= 3, `${id}: ${q.lines.length} setup lines`);
+  for (const [id, q] of [...Object.entries(QUESTS), ['home', HOME_QUEST] as const]) assert.ok(q.lines.length >= 2 && q.lines.length <= 4, `${id}: ${q.lines.length} setup lines`);
   for (const p of PLACES) {
     assert.ok(ART_BY_ID[hubArt(p.id)], hubArt(p.id));
     assert.equal(p.rooms.length, 2, p.id);
@@ -206,7 +206,7 @@ test('hub scenes: every possible helper has two or three, each trailing off into
   // Item 037. Julia is the hero, so never the helper.
   for (const c of ROSTER.filter((x) => x.id !== 'julia')) {
     const scenes = HUB_SCENES[c.id];
-    assert.ok(scenes && scenes.length >= 2 && scenes.length <= 3, `${c.id} has 2-3 hub scenes`);
+    assert.ok(scenes && scenes.length >= 2 && scenes.length <= 4, `${c.id} has 2-4 hub scenes`);
     for (const s of scenes) {
       assert.ok(s.lines.length >= 2 && s.lines.length <= 4, `${c.id}: 2-4 lines`);
       assert.ok(s.lines[s.lines.length - 1]!.text.endsWith('...'), `${c.id}: "${s.lines.at(-1)!.text}" trails off into the word`);
@@ -255,8 +255,8 @@ test('active allies (item 111): each has what an ally in the draw uses', () => {
   for (const person of ACTIVE_CAST.allies) {
     for (const f of formsOf(person)) {
       const id = f.id;
-      // A place of their own, not the home quest, with three setup lines.
-      assert.ok(QUESTS[id] && QUESTS[id]!.place !== HOME && QUESTS[id]!.lines.length === 3, `${id}: own quest place, three lines`);
+      // A place of their own, not the home quest, with three setup lines or more.
+      assert.ok(QUESTS[id] && QUESTS[id]!.place !== HOME && QUESTS[id]!.lines.length >= 3, `${id}: own quest place, three lines or more`);
       // Three hub scenes, as Ellie and Scar have (a dad's other forms two or more).
       assert.ok(HUB_SCENES[id]!.length >= (f.person ? 2 : 3), `${id}: hub scenes`);
     }

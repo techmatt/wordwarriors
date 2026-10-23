@@ -40,6 +40,7 @@ import { enterRoom, episode, episodeGroups, giftWord, grabPlan, isStepKind, jump
 import { DADS, isDad, type CastOverrides } from '../rules/cast';
 import { seededRand } from '../rules/random';
 import { setDifficulty } from '../rules/difficulty';
+import { NEW_WORDS, favourWords } from '../rules/bank';
 import { artBank } from '../art/ArtBank';
 import { artFor } from '../art/needs';
 import { startScene } from '../art/gate';
@@ -122,6 +123,9 @@ export class BootScene extends Phaser.Scene {
 
     // The difficulty knob for this session (item 067; DIFFICULTY in config otherwise): before any plan is drawn.
     if (q.get('difficulty')) setDifficulty(Number(q.get('difficulty')));
+    // Item 121: `?words=new` (the newest words) or `?words=tree,bee` lean every word draw to those words this session.
+    const favoured = q.get('words');
+    if (favoured) favourWords(favoured === 'new' ? NEW_WORDS : favoured.toLowerCase().split(','));
     setCastOptions(castOptions(q));
     const read = q.get('read');
     if (read) episode.read = read.split(',');

@@ -179,6 +179,17 @@ const THING_EFFECTS: WordEffect[] = [
   { word: 'bike', look: 'a bike that rides straight through the villain, ring ring', ability: use('bike', 'dash', 0xe63946, { power: 3 }) },
   { word: 'vase', look: 'vases of flowers dropping on the villain, crash', ability: use('vase', 'rain', 0x9b5de5, { ...pic('vase'), count: 6 }) },
   { word: 'cake', look: 'a big cake for the whole team: strong again, yum', ability: use('cake', 'heal', 0xff9ad5, { color2: 0xffffff }) },
+  // Item 121: familiar things from the farm, home and school.
+  { word: 'ham', look: 'a big juicy ham for the whole team: strong again, yum', ability: use('ham', 'heal', 0xff9a8a, { color2: 0xffd23f }) },
+  { word: 'hay', look: 'bales of hay that tumble down on the villain, flump', ability: use('hay', 'rain', 0xe8c860, { ...pic('hay'), count: 6 }) },
+  { word: 'tree', look: 'two leafy trees that topple down onto the villain, timber', ability: use('tree', 'rain', 0x3cb44b, { ...pic('tree'), count: 2 }) },
+  { word: 'gate', look: 'a wooden farm gate that swings shut in front of the team: a shield', ability: use('gate', 'shield', 0xc8a070, { duration: 4 }) },
+  { word: 'stump', look: 'a tree stump that pops up under the villain: trip, bonk', ability: use('stump', 'slam', 0x8a5a3a, { power: 3, status: 'stun', duration: 1.5 }) },
+  { word: 'sack', look: 'a big cloth sack that drops over the villain: it cannot see!', ability: use('sack', 'slam', 0xd8c090, { power: 2, status: 'stun', duration: 2 }) },
+  { word: 'dress', look: 'a sparkly twirl dress: she twirls, and the sparkles make the whole team strong again', ability: use('dress', 'heal', 0xff9ad5, { color2: 0xffd23f }) },
+  { word: 'block', look: 'toy blocks raining down on the villain, clunk clunk', ability: use('block', 'rain', 0xe63946, { ...pic('block'), count: 8 }) },
+  { word: 'bench', look: 'a big park bench that drops down on the villain, thump', ability: use('bench', 'slam', 0x8a5a3a, { power: 3 }) },
+  { word: 'skunk', look: 'a skunk turns round and makes a big stinky cloud: the villain is dizzy, pee-yew', ability: use('skunk', 'cone', 0x9bd36a, { color2: 0x6a4a8a, status: 'stun', duration: 2 }) },
   // Item 058: the untaught-sounds words.
   { word: 'zoo', look: 'the whole zoo stampedes across the arena, a wave of animals', ability: use('zoo', 'wave', 0xffb347, { color2: 0x6ad66a }) },
   { word: 'zebra', look: 'a stripy zebra that gallops straight through the villain', ability: use('zebra', 'dash', 0xffffff, { power: 3 }) },
@@ -247,6 +258,13 @@ const ACTION_EFFECTS: WordEffect[] = [
   { word: 'chop', look: 'she pops up beside the villain: karate chop!', ability: act('chop', 'teleport', 0xffd6a5, { power: 3, shout: true }) },
   { word: 'kick', look: 'balls kicked at the villain, goal!', ability: act('kick', 'bolt', 0xffffff, { glyph: '⚽', count: 3, homing: true, shout: true }) },
   { word: 'rush', look: 'a rush of wind that blows the villain back', ability: act('rush', 'cone', 0xbaf2ff, { color2: 0xffffff }) },
+  // Item 121: the farm and the chase.
+  { word: 'chomp', look: "a giant dragon's jaws that chomp down on the villain, CHOMP", ability: act('chomp', 'slam', 0xd62828, { power: 3, shout: true, color2: 0xffffff }) },
+  { word: 'dash', look: 'she dashes straight through the villain, zoom', ability: act('dash', 'dash', 0x3ae0ff, { power: 3, color2: 0xffffff }) },
+  { word: 'swish', look: 'a swish of a farm scythe sends a wave of cut grass flying at the villain', ability: act('swish', 'cone', 0x6ad66a, { color2: 0xffffff }) },
+  { word: 'smash', look: 'a mighty hammer smash that cracks the ground under the villain', ability: act('smash', 'slam', 0xb04aff, { power: 3, shout: true }) },
+  { word: 'crash', look: 'thunder crashes down from the sky on the villain, CRASH', ability: act('crash', 'lightning', 0xffd23f, { count: 3, color2: 0xbfefff }) },
+  { word: 'splash', look: 'a big splash of water that soaks the villain: it shakes itself dry, dizzy', ability: act('splash', 'wave', 0x3a86ff, { color2: 0xffffff, status: 'stun', duration: 1.5 }) },
   // Item 056: Q's move word.
   { word: 'quest', look: 'a quest! a glowing map path leads her straight through the villain', ability: act('quest', 'dash', 0xffd23f, { power: 3, color2: 0xffffff }) },
 ];

@@ -397,6 +397,17 @@ base commit's code; the server no longer reloads under edits), run it from a sec
 junctions (`cmd /c rmdir <path>`) before `git worktree remove --force`, so nothing is
 deleted through them.
 
+**Variety across many episodes** (item 121): `npm run variety -- --episodes=300 --seed=1`
+(about 1 s per hundred episodes; no browser) plays drawn episodes in a row on one progress
+store, through the episode's own draws (`src/episode/draws.ts`, `plans.ts`), answering for
+her as the scenes record it (`--right=0.85` right first time). It prints one row per
+dimension (words per game, phonics, frames, voice variants, pictures, cast, places, games,
+fights, items), worst first: the pool, how many came up, the median gap before one comes
+back, the share back within 2 episodes, the most drawn against the mean, and what never
+came up. `--json=<file>` keeps the rows; `--only=<name,…>` narrows them. `Math.random` is
+seeded, so a seed replays; a change to any draw or to the bank moves every later episode,
+so compare the same seeds before and after. Item 121's before and after runs are its report's.
+
 ### The bug-hunt checker
 
 `QA_TAG=<tag> npm run qa` plays whole episodes at

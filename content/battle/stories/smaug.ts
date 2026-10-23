@@ -105,7 +105,7 @@ export const SMAUG_STORY: StoryScript = {
       big: 'tail',
       input: { kind: 'dodge', spot: 'ledge' },
       lines: [
-        { who: 'villain', key: 'tail', text: 'Give that back! Tail smash!', say: 'Give that back, tail smash!' },
+        { who: 'villain', key: 'tail', text: 'Give that back! Tail whack!', say: 'Give that back, tail whack!' },
         { who: 'ally', key: 'tail_ally', text: 'Up on the ledge, Julia, quick!', say: 'Up on the ledge, Julia, quick!' },
       ],
       after: [{ who: 'villain', key: 'tail_after', text: 'Oh no! My tail is stuck!', say: 'Oh no, my tail is stuck!' }],

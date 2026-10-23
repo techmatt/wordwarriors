@@ -47,6 +47,7 @@ export const QUESTS: Record<string, Quest> = {
       { text: 'To build a plan strong enough to beat them, we have to train in my secret treehouse workshop!' },
       { text: 'To get ready, we are going up to my treehouse workshop, watch out for the wobbly ladder!' },
       { text: 'My treehouse workshop has a hammer for everybody, even a tiny one for you, so up we go!' },
+      { text: 'Like the heroes in my story about the orc castle, we have to sneak up to my treehouse workshop, very quietly!' },
     ],
   },
   dada_matt_lifter: {
@@ -54,7 +55,8 @@ export const QUESTS: Record<string, Quest> = {
     lines: [
       { text: 'To get strong enough to fight them, we have to train in my secret gym in the forest!' },
       { text: 'It is time to get strong, and my secret forest gym has boulders for weights and squirrels for coaches!' },
-      { text: 'To beat them we need muscles, so off to my gym in the forest, where even the trees do push ups!' },
+      { text: 'To beat them we need muscles, so off to my gym in the forest, where even the oaks do push ups!' },
+      { text: 'Farmers get strong cutting wood all day, so off we go to my gym in the forest, bring your axe!' },
     ],
   },
   dada_matt_cyber: {
@@ -79,6 +81,7 @@ export const QUESTS: Record<string, Quest> = {
       { text: 'To cook up a plan, we have to train in my secret kitchen under the city!' },
       { text: 'Every hero needs a good breakfast, so we are going to my secret kitchen under the city!' },
       { text: 'To get ready we have to cook, so down we go to my secret kitchen, under the whole city!' },
+      { text: 'The farm sent me baskets of carrots and pumpkins, so we are off to my secret kitchen, to cook up a feast!' },
     ],
   },
   dada_jason_warrior: {
@@ -87,6 +90,7 @@ export const QUESTS: Record<string, Quest> = {
       { text: "To be brave enough to fight them, we have to train at my knights' camp by the castle!", say: 'To be brave enough to fight them, we have to train at my knights camp by the castle!' },
       { text: 'To fight like a knight, we have to practice at the camp where the knights train, by the castle!' },
       { text: 'Polish your shield, little knight, we are off to train at the camp by the castle!' },
+      { text: 'The orcs stole our treasure, so we train at the camp by the castle, and then we sneak in and get it back!' },
     ],
   },
   dada_jason_warlock: {
@@ -104,6 +108,7 @@ export const QUESTS: Record<string, Quest> = {
       { text: 'To get ready, we have to play in my bubble castle up in the clouds!' },
       { text: 'Come and play with me, my bubble castle is up in the clouds, and it bounces!' },
       { text: 'To get ready, we go to my bubble castle in the sky, the floor is made of bubbles!' },
+      { text: 'After school, we always play in my bubble castle up in the clouds, come on!' },
     ],
   },
   // Item 111 (Matt): from Seraphina's Secret, where she raises baby dragons
@@ -180,6 +185,7 @@ export const QUESTS: Record<string, Quest> = {
       { text: 'To power up my core, we have to train in my robot workshop!' },
       { text: 'To get ready, we have to train in my robot workshop, it is full of shiny bolts!' },
       { text: 'My robot workshop has buttons and lights everywhere, so that is where we train!' },
+      { text: 'My robot workshop has a little dragon made of copper, and it wants to meet you, so that is where we train!' },
     ],
   },
   // Guests in somebody else's place: no art budget was left for places of their own.
