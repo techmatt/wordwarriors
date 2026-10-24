@@ -16,7 +16,8 @@ import { RUNE_BY_SOUND } from '../../content/phonics/runes';
 import { CHARGE_WORDS, GESTURE_WORDS, chargeRunes, drawChargeWord, gestureWords } from '../../src/rules/charge';
 import { MINIGAME_BY_ID, SENTENCE_GAMES } from '../../src/rules/minigames';
 import { drawGift, drawMove } from '../../src/rules/moves';
-import { distractors, episodePlans, saidEarly, type EpisodeInput } from '../../src/rules/sentences';
+import { episodePlans, type EpisodeInput } from '../../src/rules/rooms';
+import { distractors, saidEarly } from '../../src/rules/sentences';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { memory, seededLcg as seeded, spread } from './seeds';
 

@@ -14,7 +14,7 @@ import { narratorLine } from '../../content/voice/ids';
 import { RHYME } from '../../src/config';
 import { MINIGAMES, MINIGAME_BY_ID, RHYME_GAME, drawGames } from '../../src/rules/minigames';
 import { RHYME_FAMILIES, RHYME_WORDS, firstSound, planRhyme, rhymeLevel, rhymeShown, rhymeSays, rhymeWords, rhymes, shownFor, wrongPictures } from '../../src/rules/rhyme';
-import { episodePlans } from '../../src/rules/sentences';
+import { episodePlans } from '../../src/rules/rooms';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
 import { withDifficulty } from './difficulty';

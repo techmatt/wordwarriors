@@ -10,7 +10,7 @@
 import { createHash } from 'node:crypto';
 import { FAMILIES } from '../../content/phonics/families';
 import { MINIGAMES, MINIGAME_BY_ID, SENTENCE_GAMES, drawGames, type Minigame } from '../../src/rules/minigames';
-import { episodePlans, type EpisodeInput, type RoomPlan } from '../../src/rules/sentences';
+import { episodePlans, type EpisodeInput, type RoomPlan } from '../../src/rules/rooms';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { memory, seeded, spread } from './seeds';
 

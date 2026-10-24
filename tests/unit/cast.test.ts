@@ -16,7 +16,7 @@ import { DADS, drawCast, phonicsFace, wakerOf } from '../../src/rules/cast';
 import { seededRand } from '../../src/rules/random';
 import { drawStory } from '../../src/rules/story';
 import { MINIGAMES, drawGames } from '../../src/rules/minigames';
-import { episodePlans } from '../../src/rules/sentences';
+import { episodePlans } from '../../src/rules/rooms';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { castId, podiumCheer, podiumSecond } from '../../src/episode/cast';
 import type { EpisodeState } from '../../src/episode/state';

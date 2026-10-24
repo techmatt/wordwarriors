@@ -15,7 +15,7 @@ import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids
 import { GRAB } from '../../src/config';
 import { stepLevel } from '../../src/rules/difficulty';
 import { GRAB_WORDS, RECENT_GRABS, clue, grabLevel, grabSays, hallObjects, pickGrab, recordedGrabLevel } from '../../src/rules/grab';
-import { episodePlans, type EpisodeInput } from '../../src/rules/sentences';
+import { episodePlans, type EpisodeInput } from '../../src/rules/rooms';
 import { machineWords } from '../../src/rules/wordMachine';
 import { MINIGAME_BY_ID } from '../../src/rules/minigames';
 import { ProgressStore } from '../../src/state/ProgressStore';

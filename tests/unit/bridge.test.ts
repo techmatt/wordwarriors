@@ -22,7 +22,7 @@ import { BRIDGE } from '../../src/config';
 import { stepLevel } from '../../src/rules/difficulty';
 import { BRIDGE_PICTURES, CROSS_WORDS, bridgeLevel, bridgePictures, bridgeEase, bridgeWords, planBridge, recordedBridgeLevel, sharedStart, whereDiffers } from '../../src/rules/bridge';
 import { BRIDGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, drawGames } from '../../src/rules/minigames';
-import { episodePlans } from '../../src/rules/sentences';
+import { episodePlans } from '../../src/rules/rooms';
 import { ProgressStore, STORE_KEY } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
 import { withDifficulty } from './difficulty';

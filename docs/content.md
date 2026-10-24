@@ -383,7 +383,7 @@ three words or more, a thing among them); a new familiar thing in a rime of two 
 BUN SUN) makes or widens one, with no change here. A new game of a kind
 already there is one entry and its scene. A new kind is one entry plus its planner: a
 `MinigameKind`, its weight's lean (`LEAN`, minigames.ts, by what she finds shaky), its
-`RoomPlan` variant and its planner in `PLANNERS` (`src/rules/sentences.ts`): a
+`RoomPlan` variant and its planner in `PLANNERS` (`src/rules/rooms.ts`): a
 `KeyPlanner` (the words it shows, a key drawn from the bag) or an `OwnWordsPlanner` (its
 own words planned before any key, in `PLAN_ORDER`; what it reads, shows as pictures and
 says). The compiler asks for each but `PLAN_ORDER`, which `episodePlans` checks as it
@@ -650,7 +650,7 @@ ability kind works; a `summon` needs a `MinionSpec` in `MINIONS` (`hen`, `dog` f
 her side). `...pic(word)` makes a `bolt` or `rain` fling or drop the word's own picture,
 the right way up.
 
-## Key words and the word bag (`src/rules/sentences.ts`, `src/rules/bank.ts`, ProgressStore `bag`)
+## Key words and the word bag (`src/rules/rooms.ts`, `src/rules/bank.ts`, ProgressStore `bag`)
 
 Every key word (both side rooms and the attic) comes out of her word bag (`drawKey`):
 every pictured bank word (`BAG_WORDS`, the bank's things; both in `src/rules/bank.ts`), drawn without replacement and kept

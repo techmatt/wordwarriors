@@ -7,7 +7,7 @@
 
 import { HOME } from '../../content/house/house';
 import { EPISODE_DEFAULTS } from '../config';
-import type { RoomPlan } from '../rules/sentences';
+import type { RoomPlan } from '../rules/rooms';
 import type { MovePlan } from '../rules/moves';
 import { DEFAULT_LINES, DEFAULT_STORY, type LineVariants, type Story } from '../rules/story';
 

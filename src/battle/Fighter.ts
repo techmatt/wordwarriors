@@ -3,7 +3,7 @@
  *
  * Holds its own sprite (card art, shadow, status overlays), cosmetic hit
  * points, ability cooldowns and status effects. It does not decide anything:
- * `movement.ts` steers it and `BattleScene` chooses when it casts. Motion on
+ * `movement.ts` steers it and `BattleSim` (sim.ts) chooses when it casts. Motion on
  * the sprite is only bob and squash/stretch (a spin is a card flip in scaleX),
  * per the house rule;
  * no animation frames exist yet, and real art will drop in under the same ids.

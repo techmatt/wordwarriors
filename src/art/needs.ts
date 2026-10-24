@@ -27,7 +27,7 @@ import { debugMode } from '../episode/debug';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import { runeArt } from '../../content/phonics/runes';
 import { chargeRunes } from '../rules/charge';
-import type { RoomPlan } from '../rules/sentences';
+import type { RoomPlan } from '../rules/rooms';
 import {
   castArt,
   castFace,

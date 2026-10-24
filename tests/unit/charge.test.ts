@@ -19,7 +19,7 @@ import { CHARGE } from '../../src/config';
 import { CHARGE_WORDS, GESTURE_WORDS, RUNE_SOUNDS, chargeRunes, chargeWords, drawChargeWord, gestureWords, planCharge } from '../../src/rules/charge';
 import { CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, drawGames } from '../../src/rules/minigames';
 import { withStems } from '../../src/rules/bank';
-import { episodePlans } from '../../src/rules/sentences';
+import { episodePlans } from '../../src/rules/rooms';
 import { ProgressStore, STORE_KEY } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
 import { memory, seeded } from './seeds';

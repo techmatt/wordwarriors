@@ -19,7 +19,7 @@
  * slots it can fill. Key 0's debug pedestal for it (`DEBUG_GAMES`) and
  * debug mode in its scene (`DEBUG_ROOMS`, src/episode/debug.ts) follow from
  * that entry by themselves. A new kind is also a `MinigameKind`, its lean here
- * (`LEAN`), its planner and its room plan (src/rules/sentences.ts `PLANNERS`
+ * (`LEAN`), its planner and its room plan (src/rules/rooms.ts `PLANNERS`
  * and `RoomPlan`; `PLAN_ORDER` if it plans words of its own). Whatever it
  * is, it must end in a key word she has read (the thing fetched, or the
  * counter), which the room's plan carries as `key` (and every word read
@@ -50,7 +50,7 @@ export type MinigameKind = 'sentence' | 'machine' | 'charge' | 'bridge' | 'shift
 export interface Minigame {
   /** Unique: `sentence:<frame>` for the sentence game in a frame. */
   id: string;
-  /** What it is: each kind has its lean here and its planner (src/rules/sentences.ts `PLANNERS`). */
+  /** What it is: each kind has its lean here and its planner (src/rules/rooms.ts `PLANNERS`). */
   kind: MinigameKind;
   /** The Phaser scene that plays it. */
   scene: string;

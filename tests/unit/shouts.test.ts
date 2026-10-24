@@ -3,7 +3,7 @@
  * word she reads later (item 121 made BLOCK a bank word while a shielded hit
  * still floated BLOCK! in battle 1, before the attic's counter word; it had
  * already turned SPLASH! into SPLOOSH!). The hit words BAM and ZAP are bank
- * words on purpose: BattleScene filters them through `textGivesAway`.
+ * words on purpose: the battle's `hit` (src/battle/sim.ts) filters them through `textGivesAway`.
  */
 
 import assert from 'node:assert/strict';
@@ -19,7 +19,7 @@ function sources(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? sources(path.join(dir, e.name)) : e.name.endsWith('.ts') ? [path.join(dir, e.name)] : []));
 }
 
-/** The hit words BattleScene shows only where `textGivesAway` lets it. */
+/** The hit words the battle (`BattleSim.hit`) shows only where `textGivesAway` lets it. */
 const FILTERED = new Set(['pow', 'bam', 'zap', 'boom', 'wham']);
 
 test('no floating shout is a bank word (hunt 8: BLOCK! before BLOCK was read)', () => {

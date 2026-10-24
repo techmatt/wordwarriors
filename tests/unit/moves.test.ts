@@ -19,7 +19,7 @@ import { EPISODE_DEFAULTS } from '../../src/config';
 import { ROOM_LINE_WORDS } from '../../src/episode/plans';
 import { withStems } from '../../src/rules/bank';
 import { CHOICES_PER_PART, battle1Words, drawGift, effectId, planMoves, teamMoveWords, type MoveInput, type MovePlan } from '../../src/rules/moves';
-import { episodePlans, type EpisodeInput } from '../../src/rules/sentences';
+import { episodePlans, type EpisodeInput } from '../../src/rules/rooms';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
 import { memory, seeded, spread } from './seeds';

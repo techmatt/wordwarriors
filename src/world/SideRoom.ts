@@ -29,7 +29,7 @@ import { TEX } from '../fx/textures';
 import { openDadButtons, setDadAsking, type DadAnswer } from '../input/dadButtons';
 import { dadLock } from '../input/dadLock';
 import { isLeaving } from '../fx/sceneGen';
-import type { RoomPlan } from '../rules/sentences';
+import type { RoomPlan } from '../rules/rooms';
 import { progress } from '../state/progress';
 import type { ItemKind } from '../state/ProgressStore';
 import type { KeepOut } from '../ui/Caption';

@@ -15,7 +15,7 @@ import { letterSoundLine, narratorLine } from '../../content/voice/ids';
 import { SHIFTER } from '../../src/config';
 import { stepLevel } from '../../src/rules/difficulty';
 import { MINIGAMES, MINIGAME_BY_ID, SHIFTER_GAME, drawGames } from '../../src/rules/minigames';
-import { episodePlans } from '../../src/rules/sentences';
+import { episodePlans } from '../../src/rules/rooms';
 import { SHIFT_WORDS, chainsOf, changedAt, pictureSiblings, placesOf, wrongPictures, stonesFor, orderBreaks, planShifter, positionsOf, shifterLevel, shifterShown, shifterWords } from '../../src/rules/shifter';
 import { soundLines } from '../../src/rules/soundOut';
 import { ProgressStore } from '../../src/state/ProgressStore';

@@ -21,8 +21,10 @@ here.
   gift), never a picture in a choice nor what a picture choice asks for: she cannot get a
   word like DRIP from its picture. Every picture pool is drawn from `THINGS` (no pure
   action word); `tests/unit/bank.test.ts` and the variety simulator check it, and
-  `?sentence=` takes only a pictured key. Its picture may still show where nothing is
-  picked (the battle's super, the cook-off's dish, the recap card).
+  `?sentence=` takes only a pictured key.
+- **An action word's picture stays where nothing is picked** (Matt, 2026-10-23): the
+  cook-off's dish, the battle super's fan (`wordFx`), the recap card. Only picture
+  choices exclude action words.
 - **No letter names in clues or hints** (item 137): phonics only. Hearing a letter's name
   beside its sound confused her, so no clue, hint or teaching line says one, at any level:
   the warm-up's clue is the sounds alone, the Shape-Shifter's hints and misses the plain

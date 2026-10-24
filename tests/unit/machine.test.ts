@@ -15,7 +15,7 @@ import { narratorLine, rimeLine, sillyLine } from '../../content/voice/ids';
 import { NARRATOR_LINES } from '../../content/voice/script';
 import { WORD_MACHINE } from '../../src/config';
 import { MINIGAMES, MINIGAME_BY_ID, SENTENCE_GAMES, WORD_MACHINE_GAME, drawGames } from '../../src/rules/minigames';
-import { episodePlans, type EpisodeInput } from '../../src/rules/sentences';
+import { episodePlans, type EpisodeInput } from '../../src/rules/rooms';
 import { machineWords, planMachine } from '../../src/rules/wordMachine';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';

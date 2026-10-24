@@ -120,6 +120,12 @@ Item 079 measured the old dev-server lanes from a cold worktree too: the first r
 lane to its 6-minute cap with three tests failing at "waiting for booted; scene=". The
 build has no cold start of that kind.
 
+Two `@slow` layout tests fail now and then on a timing and pass on the retry (item 141,
+2026-10-24; also on the code before it): `cover.spec` "the attic's find line" (its
+narrow box over a pedestal, 0.56 against 0.1) about one run in four alone, and
+`banner.spec` "the widest fetch / counter sentence" (the dialogue box 20 px over Dad) about one
+in six. `test:slow` reports them as flaky, not failed.
+
 ### Writing a browser test
 
 A new browser test that takes more than about 10 s gets `SLOW` (`{ tag: '@slow' }`, from

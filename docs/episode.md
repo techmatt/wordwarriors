@@ -346,7 +346,7 @@ tiers are gone), 3-4 sound units (`CHARGE.units`), `CHARGE.words` of them (`src/
 `CHARGE` in `src/config.ts`): the second never the first, nor a word the first's gestures
 say, and sharing none of its sounds where the bank allows (it always does today). Every
 charged rune, both words', each sound once, is still a move her hero fires in the next
-battle, at 1.3× power (`episode.charged`, BattleScene `useCharged`): six to eight runes now,
+battle, at 1.3× power (`episode.charged`, `useCharged` in `src/battle/volleys.ts`): six to eight runes now,
 where one word gave three or four. For the beta, `FORCE_PHONICS_ROOM` (on)
 puts it or the Stretchy Bridge behind door a of every episode.
 

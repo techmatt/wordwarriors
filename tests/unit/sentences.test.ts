@@ -15,7 +15,8 @@ import { FETCH_ITEMS, FRAMES, FRAME_BY_ID, allFrameTokens, allPrefixes, lookalik
 import { PICTURE_WORDS } from '../../content/phonics/words';
 import { wordLine } from '../../content/voice/ids';
 import { BAG_WORDS, LEGACY_BAG_WORDS, drawKey } from '../../src/rules/bank';
-import { distractors, frameIsSolid, saidEarly, skipsListening, type EpisodeInput, type SentencePlan } from '../../src/rules/sentences';
+import type { EpisodeInput, SentencePlan } from '../../src/rules/rooms';
+import { distractors, frameIsSolid, saidEarly, skipsListening } from '../../src/rules/sentences';
 import { sentencePlans } from './plans';
 import { withDifficulty } from './difficulty';
 import { memory, seeded, spread } from './seeds';

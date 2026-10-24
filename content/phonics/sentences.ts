@@ -6,7 +6,7 @@
  * with the episode's villain and a key word. The key word is always last.
  * Sentences come from a few repeating frames so the little words (IS, THE, A,
  * OF) recur until they are sight words; progress is kept per frame. Key words
- * come from her word bag (ProgressStore `bag`, src/rules/sentences.ts), so
+ * come from her word bag (ProgressStore `bag`, src/rules/rooms.ts), so
  * they keep changing; the counter word is drawn too, not fixed per villain.
  *
  * Voice: each frame × name fill has one "prefix" line (the sentence up to the

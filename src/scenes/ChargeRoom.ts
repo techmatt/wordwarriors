@@ -36,7 +36,7 @@
  * any time switches back (during the solo read, his yes is a helped read, M34).
  *
  * Each charged rune becomes a move her hero fires in the next battle
- * (`episode.charged`, BattleScene `useCharged`).
+ * (`episode.charged`, `useCharged` in src/battle/volleys.ts).
  *
  * Speech rule: letter SOUNDS only, each its own `letter_<x>_sound` line, never
  * captioned (the rune lights instead); the word itself only after Dad's answer.
