@@ -12,6 +12,7 @@ import { WordMachine } from './scenes/WordMachine';
 import { ChargeRoom } from './scenes/ChargeRoom';
 import { BridgeRoom } from './scenes/BridgeRoom';
 import { ShifterRoom } from './scenes/ShifterRoom';
+import { RhymeRoom } from './scenes/RhymeRoom';
 import { DebugRoom, toggleDebug } from './scenes/DebugRoom';
 import { BlendPath } from './scenes/minigames/BlendPath';
 import { SoundToLetter } from './scenes/minigames/SoundToLetter';
@@ -86,6 +87,7 @@ const game = new Phaser.Game({
     ChargeRoom,
     BridgeRoom,
     ShifterRoom,
+    RhymeRoom,
     DebugRoom,
     BattleScene,
     EndingScene,

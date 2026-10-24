@@ -230,6 +230,20 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'shifter_fixed', text: 'You made it match!' },
   { key: 'shifter_fixed_2', text: 'You got the right letter!' },
   { key: 'shifter_done', text: 'The spell is all used up! This one comes to the fight with us!', say: 'The spell is all used up! This one comes to the fight with us!' },
+  // The rhyme room (item 139, src/scenes/RhymeRoom.ts). No line names a word
+  // she reads: the rhyming words and her pick are word_ lines, the printed word
+  // is said (word_) once she has it, or in a miss's "Listen: bug, hug, rug!"
+  // (`rhyme_listen`, Matt's design), and its sounds are letter_ lines.
+  { key: 'rhyme_intro', text: 'Rhyme time! These words sound the same at the end!', say: 'Rhyme time! These words sound the same at the end!' },
+  { key: 'rhyme_more', text: "This word rhymes with them too! Let's sound it out!", say: "This word rhymes with them too! Let's sound it out." },
+  { key: 'rhyme_read', text: 'This word rhymes with them too! Read it, then walk to its picture!', say: 'This word rhymes with them too! Read it, then walk to its picture.' },
+  { key: 'rhyme_cue', text: 'Another rhyme! Read it!', say: 'Another rhyme! Read it!' },
+  { key: 'rhyme_cue_sound', text: "Another rhyme! Let's sound it out!", say: "Another rhyme! Let's sound it out." },
+  { key: 'rhyme_which', text: 'Which thing is it? Walk to it!', say: 'Which thing is it? Walk to it.' },
+  { key: 'rhyme_which_2', text: 'Where is its picture? Walk to it!', say: 'Where is its picture? Walk to it.' },
+  { key: 'rhyme_listen', text: 'Listen!' },
+  { key: 'rhyme_done', text: 'We found every rhyme! These come to the fight with us!', say: 'We found every rhyme! These come to the fight with us!' },
+  { key: 'rhyme_done_2', text: 'What a lot of rhymes! Off to the fight!', say: 'What a lot of rhymes! Off to the fight!' },
   // Each fight style's own beats (item 031, content/battle/fights.ts): `fight_<id>_<beat>`.
   ...FIGHTS.flatMap((f) => FIGHT_BEATS.flatMap((b) => (f.lines[b] ? [{ key: fightKey(f.id, b), ...f.lines[b] }] : []))),
 ];

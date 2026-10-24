@@ -117,6 +117,25 @@ export interface RoomInfo {
     misses: number;
     aided: boolean;
   };
+  /**
+   * The rhyme room (item 139): every round's printed word (`words`), the
+   * round now (`index`; its family, its two shown words, the printed `word`,
+   * the pictures standing in the room), the help level, whether the printed
+   * word was sounded out unasked, the phase, wrong picks and any help.
+   */
+  rhyme?: {
+    words: string[];
+    index: number;
+    rime: string;
+    shown: string[];
+    word: string;
+    options: string[];
+    level: number;
+    sounded: boolean;
+    phase: 'intro' | 'pick' | 'check' | 'done';
+    misses: number;
+    aided: boolean;
+  };
 }
 
 export interface BattleInfo {

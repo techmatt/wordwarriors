@@ -29,6 +29,7 @@ const LOOK: Record<string, { glyph: string; name: string }> = {
   charge: { glyph: '✨', name: 'CHARGE' },
   bridge: { glyph: '🌉', name: 'BRIDGE' },
   shifter: { glyph: '🪄', name: 'SHIFTER' },
+  rhyme: { glyph: '🎶', name: 'RHYME' },
 };
 
 export class DebugRoom extends RoomScene {

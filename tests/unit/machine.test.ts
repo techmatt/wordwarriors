@@ -158,8 +158,8 @@ test('the pool: the machine is a fetch game, drawn about every other episode, ne
     if (games.slice(0, 2).some((g) => g.kind === 'machine')) n++;
   }
   assert.ok(n > 120 && n < 300, `machine drawn in ${n}/400 episodes`);
-  // The word machine, Charge the Spell (item 053), the Stretchy Bridge (item 054) and the Shape-Shifter (item 096).
-  assert.equal(MINIGAMES.length, SENTENCE_GAMES.length + 4);
+  // The word machine, Charge the Spell (item 053), the Stretchy Bridge (item 054), the Shape-Shifter (item 096) and the rhyme room (item 139).
+  assert.equal(MINIGAMES.length, SENTENCE_GAMES.length + 5);
 });
 
 test('episodePlans with the machine: its words are the room\'s fetches, kept out of every other room and the counter', () => {

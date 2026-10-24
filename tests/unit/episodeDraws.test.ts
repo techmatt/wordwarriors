@@ -72,7 +72,7 @@ test('solo lasts the session (hunt 7, M34): the next episode starts solo, until 
   assert.equal(episode.solo, false);
 });
 
-test('door b (items 126, 137): the Shape-Shifter in about 3 drawn episodes of 7, never two running, else a sentence frame or the word machine', () => {
+test('door b (items 126, 137): the Shape-Shifter in about 3 drawn episodes of 7, never two running, else a sentence frame, the word machine or (item 139) the rhyme room', () => {
   const random = Math.random;
   // A seed's luck: 126 drew no word machine in 24 once MOM and DAD left the warm-up's words (hunt 10, M45);
   // over seeds 120 to 135 every other seed draws it 1 to 5 times.
@@ -91,8 +91,10 @@ test('door b (items 126, 137): the Shape-Shifter in about 3 drawn episodes of 7,
     const shifters = doorB.filter((g) => g === 'shifter').length;
     assert.ok(shifters >= 8 && shifters <= 12, `${shifters} of 24: ${doorB.join(' ')}`);
     doorB.forEach((g, i) => assert.ok(!(g === 'shifter' && doorB[i - 1] === 'shifter'), `twice running at ${i + 1}: ${doorB.join(' ')}`));
-    for (const g of doorB) assert.ok(g === 'shifter' || g === 'word_machine' || g.startsWith('sentence:'), g);
-    assert.ok(doorB.some((g) => g.startsWith('sentence:')) && doorB.includes('word_machine'), doorB.join(' '));
+    for (const g of doorB) assert.ok(g === 'shifter' || g === 'word_machine' || g === 'rhyme' || g.startsWith('sentence:'), g);
+    assert.ok(doorB.some((g) => g.startsWith('sentence:')) && (doorB.includes('word_machine') || doorB.includes('rhyme')), doorB.join(' '));
+    // Item 139: drawn episodes put the rhyme room behind door b too.
+    assert.ok(doorB.includes('rhyme'), doorB.join(' '));
   } finally {
     Math.random = random;
     setCastOptions({ overrides: {}, fixed: !EPISODE_DEFAULTS.randomCast });

@@ -93,6 +93,12 @@ export function goldenDraws(): Record<string, string> {
     fixedTrios().forEach((games, i) => {
       for (let seed = 1; seed <= 6; seed++) out[`${name}/fixed${i}:${games.map((g) => g.id).join('+')}/${seed}`] = draw(fresh(), { ...input, games }, spread(seed));
     });
+    // Item 139: the rhyme room behind each door, and beside each of the others (after the cases above, so they keep their names).
+    const rhyme = game('rhyme');
+    const rhymeTrios: [Minigame, Minigame, Minigame][] = [[rhyme, FETCH, COUNTER], [FETCH2, rhyme, COUNTER], ...PHONICS.flatMap((p): [Minigame, Minigame, Minigame][] => [[game(p), rhyme, COUNTER], [rhyme, game(p), COUNTER]])];
+    for (const games of rhymeTrios) {
+      for (let seed = 1; seed <= 6; seed++) out[`${name}/rhyme:${games.map((g) => g.id).join('+')}/${seed}`] = draw(fresh(), { ...input, games }, spread(seed));
+    }
     // A word machine with no family it can use (every family word said before): its room plays a spare sentence game.
     for (let seed = 1; seed <= 6; seed++) {
       const saidBefore = [...(input.saidBefore ?? []), ...FAMILIES.flatMap((f) => f.words)];

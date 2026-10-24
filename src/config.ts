@@ -382,6 +382,20 @@ export const SHIFTER = {
 export const SHIFTER_ROOM = { afterOne: 0, afterNone: 0.75 };
 
 /**
+ * The rhyme room (item 139, src/scenes/RhymeRoom.ts): `rounds` a visit, each
+ * from a different word family (fewer where the episode leaves too few free;
+ * `minRounds` at least, else the room plays a sentence game). Each round shows
+ * two rhyming words, said, and prints a third, unsaid; three pictures stand in
+ * the room, the printed word's and its two wrong ones (`wrongPictures`). Each word has its own help level:
+ * 1 = the helper sounds the printed word out, then asks; 2 and 3 = sounded out
+ * only on yellow (yellow sounds it out at any level). `startLevel` is a word she
+ * has never met there (DIFFICULTY caps the ramp). `weight` is its weight in the
+ * rooms' pool: drawn, it is behind door b in the episodes without the Shape-Shifter,
+ * beside the fetch sentence frames and the word machine.
+ */
+export const RHYME = { rounds: 3, minRounds: 2, startLevel: 1 as 1 | 2 | 3, weight: 2 };
+
+/**
  * A villain's story fight (item 126, Matt's pick: Evil Smaug's in half his
  * episodes; `storyFight` on the roster entry): its chance in an episode he is
  * drawn as the villain, after his last such episode played it (`afterOne`) or

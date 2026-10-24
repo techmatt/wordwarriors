@@ -51,6 +51,8 @@ Moved from CLAUDE.md (item 078). "The three commands" are `voice:lines`, `voice:
 | "stop forcing the phonics room" | `FORCE_PHONICS_ROOM` in `src/config.ts` (both stay weighted entries, `CHARGE.weight`, `BRIDGE.weight`) |
 | "Smaug's story fight more / less often" | `STORY_FIGHT` in `src/config.ts` (`afterOne`, `afterNone`: its chance after an episode of his with / without it, for a villain drawn freely; 0 and 0 never) |
 | "the Shape-Shifter more / less often" | `SHIFTER_ROOM` in `src/config.ts` (`afterOne`, `afterNone`: its chance behind door b after an episode with / without it; 1 and 1 every episode) |
+| "the rhyme room more / less often" / "more / fewer rhymes" | `RHYME` in `src/config.ts` (`weight`: its weight among door b's games, beside the fetch sentence frames and the word machine; `rounds`, `minRounds`) |
+| "rhyme room: sound it out less" | `RHYME.startLevel` (2: only on yellow); past the start level only with `DIFFICULTY` 2+ |
 | "more / fewer bridge words" / "slower slide" | `BRIDGE` in `src/config.ts` (`words`, `slide`, `maxUnits`, `replays`, `startLevel`) |
 | "the bridge needs pictures like X" | a familiar `BANK` thing starting like X (`docs/content.md`, "The Stretchy Bridge's pictures"), the three commands, `art:gen` |
 | "the warm-up is too hard / too easy" / "start new words at level N" | `GRAB.startLevel` (and `helpAfter`) in `src/config.ts`; past the start level only with `DIFFICULTY` 2+ |
@@ -369,12 +371,16 @@ Each episode draws three games from the pool, one per room (two fetch games, the
 the counter game), weighted, never the same entry twice, apart from the quest; a game
 from her last episodes (the store's `recent.games`) weighs `VARIETY.gameWeight` (item
 067). An entry is `{ id, kind, scene, weight, slots: ['fetch'] | ['counter'] | both, frame? }`
-(`kind`: `sentence`, `machine`, `charge`, `bridge` or `shifter`): each sentence frame is one entry (`sentence:<frame>`,
+(`kind`: `sentence`, `machine`, `charge`, `bridge`, `shifter` or `rhyme`): each sentence frame is one entry (`sentence:<frame>`,
 weight 1 times the frame's shakiness), and the word machine is one more
 (`word_machine`, fetch rooms only, weight `WORD_MACHINE.weight` in `src/config.ts` times
 how shaky her word families are: about every other episode); Charge the Spell, the
-Stretchy Bridge and the Shape-Shifter are one each (`charge`, `bridge`, `shifter`, fetch
-rooms only). A new game of a kind
+Stretchy Bridge, the Shape-Shifter and the rhyme room (item 139, `RHYME.weight` times how
+shaky its families are, `rimes`) are one each (`charge`, `bridge`, `shifter`, `rhyme`, fetch
+rooms only). The rhyme room's families follow the bank by themselves
+(`RHYME_FAMILIES`, `src/rules/rhyme.ts`: a rime of three-unit words with a one-letter onset,
+three words or more, a thing among them); a new familiar thing in a rime of two (DOG LOG,
+BUN SUN) makes or widens one, with no change here. A new game of a kind
 already there is one entry and its scene. A new kind is one entry plus its planner: a
 `MinigameKind`, its weight's lean (`LEAN`, minigames.ts, by what she finds shaky), its
 `RoomPlan` variant and its planner in `PLANNERS` (`src/rules/sentences.ts`): a

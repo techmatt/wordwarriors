@@ -35,6 +35,7 @@ import { BAG_WORDS, NEW_WORDS, coverageTable, type CoverageRow } from '../rules/
 import { GRAB_WORDS, recordedGrabLevel } from '../rules/grab';
 import { recordedBridgeLevel } from '../rules/bridge';
 import { recordedShifterLevel } from '../rules/shifter';
+import { recordedRhymeLevel } from '../rules/rhyme';
 import { difficulty } from '../rules/difficulty';
 import { fitText } from '../ui/fitText';
 import { Controls } from '../input/Controls';
@@ -170,6 +171,7 @@ export class ParentScene extends Phaser.Scene {
         return `-${f.rime} ${s.seen}·${recentPct(s)}`;
       }).join('  ')}`,
       ...this.shifterLines(),
+      ...this.rhymeLines(),
     ], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - x - 20, GAME_HEIGHT - y - 10);
   }
 
@@ -185,6 +187,18 @@ export class ParentScene extends Phaser.Scene {
       return `${l}: ${ws.slice(0, 10).join(' ') || '–'}${more}`;
     });
     return [`Shape-Shifter levels (1 letter lit + stones sound, 2 lit, 3 nothing lit${difficulty() === 1 ? '; difficulty 1 gives 1' : ''}):  ${rows.join('   ')}`];
+  }
+
+  /** The rhyme room's help level per word she has met there (item 139, ProgressStore `rhymeLevels`), as the Shape-Shifter's. */
+  private rhymeLines(): string[] {
+    const met = Object.keys(progress.snapshot().rhymeLevels ?? {}).sort();
+    if (!met.length) return [];
+    const rows = ([1, 2, 3] as const).map((l) => {
+      const ws = met.filter((w) => recordedRhymeLevel(progress, w) === l);
+      const more = ws.length > 10 ? ` +${ws.length - 10} more` : '';
+      return `${l}: ${ws.slice(0, 10).join(' ') || '–'}${more}`;
+    });
+    return [`Rhyme room levels (1 sounded out for her, 2-3 on yellow${difficulty() === 1 ? '; difficulty 1 gives 1' : ''}):  ${rows.join('   ')}`];
   }
 
   /**

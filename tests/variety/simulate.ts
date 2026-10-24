@@ -36,6 +36,7 @@ import { episode } from '../../src/episode/state';
 import { favourWords, NEW_WORDS } from '../../src/rules/bank';
 import { MINIGAMES } from '../../src/rules/minigames';
 import { SHIFT_WORDS, chainKey } from '../../src/rules/shifter';
+import { RHYME_FAMILIES, RHYME_WORDS, rhymeWords } from '../../src/rules/rhyme';
 import { variantKeys } from '../../src/rules/story';
 import { progress } from '../../src/state/progress';
 
@@ -79,6 +80,8 @@ function pictureChoice(e: number, where: string, words: readonly string[]): void
 }
 /** Hunt 9, M39: the Shape-Shifter's visits by chain length (links); under SHIFTER.links is a short visit. */
 const shifterLinks = new Map<number, number>();
+/** Item 139: the rhyme room's visits by rounds (under RHYME.rounds is a short visit). */
+const rhymeVisits = new Map<number, number>();
 /** And those changing all three places, the vowel too (hunt 6, M29). */
 let shifterVowel = 0;
 /** Item 137: episodes whose door a, door b or attic game came straight back (doors: any side room's last game, by kind). Must stay 0. */
@@ -175,6 +178,14 @@ for (let e = 0; e < EPISODES; e++) {
       saw(e, 'pictures', 'shifter wrong pictures', p.shifter.links.filter((l) => l.beat === 'read').flatMap((l) => l.options.filter((o) => o !== l.to)));
       pictureChoice(e, 'shifter', [p.shifter.start, ...p.shifter.links.flatMap((l) => [l.to, ...(l.beat === 'read' ? l.options : [])])]);
       for (const l of p.shifter.links) if (l.beat === 'fix') progress.record('spelling', l.to, true, 0);
+    }
+    if (p.kind === 'rhyme') {
+      rhymeVisits.set(p.rhyme.rounds.length, (rhymeVisits.get(p.rhyme.rounds.length) ?? 0) + 1);
+      saw(e, 'phonics', 'rhyme families', p.rhyme.rounds.map((r) => r.rime), RHYME_FAMILIES.map((f) => f.rime));
+      saw(e, 'words', 'rhyme printed words', rhymeWords(p.rhyme), RHYME_WORDS);
+      saw(e, 'pictures', 'rhyme wrong pictures', p.rhyme.rounds.flatMap((r) => r.options.filter((o) => o !== r.word)));
+      pictureChoice(e, 'rhyme', p.rhyme.rounds.flatMap((r) => r.options));
+      for (const r of p.rhyme.rounds) progress.record('rimes', r.rime, true, 0);
     }
     // Every word read in a room: as SideRoom's recordRead (the Shape-Shifter's read beats only).
     const reads = p.kind === 'shifter' ? p.shifter.links.filter((l) => l.beat === 'read').map((l) => l.to) : p.fetches;
@@ -279,6 +290,8 @@ const visits = [...shifterLinks.values()].reduce((a, b) => a + b, 0);
 const short = [...shifterLinks].filter(([n]) => n < SHIFTER.links).reduce((a, [, k]) => a + k, 0);
 const lengths = [...shifterLinks].sort((a, b) => b[0] - a[0]).map(([n, k]) => `${n} links ${k}`).join(', ');
 console.log(`\nShape-Shifter visits: ${visits}; short (under ${SHIFTER.links} links): ${short} (${lengths || 'none'}); changing all three places: ${shifterVowel}.`);
+const rhymeN = [...rhymeVisits.values()].reduce((a, b) => a + b, 0);
+console.log(`Rhyme room visits (item 139): ${rhymeN} in ${EPISODES} episodes (${[...rhymeVisits].sort((a, b) => b[0] - a[0]).map(([n, k]) => `${n} rounds ${k}`).join(', ') || 'none'}).`);
 console.log(`Games back from the episode before (item 137): door a ${gameRepeats[0]}, door b ${gameRepeats[1]}, attic ${gameRepeats[2]}.`);
 if (gameRepeats.some((n) => n > 0)) process.exitCode = 1;
 if (JSON_OUT) writeFileSync(JSON_OUT, JSON.stringify({ episodes: EPISODES, seed: SEED, right: RIGHT, rows, shifterLinks: Object.fromEntries(shifterLinks) }, null, 1) + '\n');

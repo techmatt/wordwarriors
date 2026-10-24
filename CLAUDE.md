@@ -28,7 +28,7 @@ read-only reference.
 | Path | What |
 | --- | --- |
 | `src/` | `main.ts` boots Phaser; `config.ts` sizes, depth bands and every tuning knob; `hookState.ts` / `testHooks.ts` the tests' `window.__ww`; `realTime.ts` wall-clock timeouts the tests' fast clocks do not stretch; `displayList.ts` `walkObjects`, the display-list walk ArtBank, the hooks and the QA probe share |
-| `src/scenes/` | One scene per episode step, the live side rooms (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom, ShifterRoom), Wait (art loading), Debug (minigame debug mode), Parent; parked: Pick, Alarm, Retreat, `minigames/`. "Minigame" means only a pool entry (`src/rules/minigames.ts`) |
+| `src/scenes/` | One scene per episode step, the live side rooms (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom, ShifterRoom, RhymeRoom), Wait (art loading), Debug (minigame debug mode), Parent; parked: Pick, Alarm, Retreat, `minigames/`. "Minigame" means only a pool entry (`src/rules/minigames.ts`) |
 | `src/battle/` | `BattleScene` (the director, `part1`/`part2`), `Fighter`, `moveChoice` (the frozen-fight word pick), `hud`, `abilities` (every ability kind, `CASTS`), `movement` (`STEER`), `padPlace` (Phaser-free pad placement); `stages/` each fight style; `story/` the story fight |
 | `src/episode/` | `Episode.ts` the flow (scenes call `advance()`; nothing else decides flow); Phaser-free `state.ts`, `draws.ts`, `cast.ts`, `plans.ts`, `debug.ts`, `lineVariants.ts` |
 | `src/input/` | `Controls` (pad, keys, virtual pad), `TextEntry` (A–Z), `dadLock`, `dadButtons`, `debugKey` |
@@ -111,7 +111,7 @@ a **readonly** item; a new look is a `--brief` file in `scratch/`, not an edit t
 
 ## Standing design rules (law)
 
-- **No automatic difficulty.** Every help ramp (warm-up, bridge, Shape-Shifter, a solid
+- **No automatic difficulty.** Every help ramp (warm-up, bridge, Shape-Shifter, rhyme room, a solid
   frame's skipped listening pass, sound-alike distractors; Charge the Spell has none)
   records her level but starts at its most helpful until Matt raises `DIFFICULTY`. Each
   game picks words by length in sound units, never by level: decoding games short,
@@ -127,9 +127,11 @@ a **readonly** item; a new look is a `--brief` file in `scratch/`, not an edit t
   captioned (the placeholder spelling is not text to read). A hint sounds out letters one
   by one (a digraph, SH CH TH CK, as one sound) and never blends them. No clue, hint or
   teaching line says a letter's name, not even as a bridge to its sound (item 137,
-  `docs/rulings.md`). Two deliberate exceptions: Spell the Spell says its word first
-  (it is writing, not reading; the ghost boxes show every letter), and in the battle's
-  move choice the partner says which word to pick (she hears it and finds it written).
+  `docs/rulings.md`). Three deliberate exceptions: Spell the Spell says its word first
+  (it is writing, not reading; the ghost boxes show every letter); in the battle's
+  move choice the partner says which word to pick (she hears it and finds it written);
+  and the rhyme room's miss says the rhyme whole ("Bug, tug... thumb? Listen: bug, tug,
+  rug!", item 139, Matt's design).
   Choice-word moves are never called out during the fight.
 - **Move choice holds until she is right.** A wrong pad fires nothing: the fight stays
   frozen, the pad wiggles with the fizzle-and-giggle SFX, and the partner says what she

@@ -204,6 +204,7 @@ export function artFor(key: string, draw: boolean): string[] {
     case 'ChargeRoom':
     case 'BridgeRoom':
     case 'ShifterRoom':
+    case 'RhymeRoom':
       out.push(...houseSet(draw));
       break;
     case 'Debug':

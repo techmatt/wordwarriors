@@ -42,7 +42,7 @@ import { pickEnding } from '../rules/endings';
 import { ENDING_BY_ID } from '../../content/house/endings';
 import { withStems } from '../rules/bank';
 import { episodePlans, wordsOf, type EpisodeInput, type RoomPlan } from '../rules/sentences';
-import { BRIDGE_GAME, CHARGE_GAME, LAST_GAMES, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SENTENCE_GAMES, SHIFTER_GAME, drawGames, lastGames, repeatsLast, type Minigame } from '../rules/minigames';
+import { BRIDGE_GAME, CHARGE_GAME, LAST_GAMES, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, RHYME_GAME, SENTENCE_GAMES, SHIFTER_GAME, drawGames, lastGames, repeatsLast, type Minigame } from '../rules/minigames';
 import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
 import { planStoryMoves } from '../rules/storyFight';
 import { STORY_BY_ID, storyLines } from '../../content/battle/stories/index';
@@ -83,11 +83,12 @@ export function rememberPlan(): void {
   progress.remember('shifter_door', plan.some((p) => p.game === SHIFTER_GAME.id) ? 'yes' : 'no', 1);
 }
 
-/** The games `?room=` forces whatever else is asked (items 054, 096; `roomGames`). */
+/** The games `?room=` forces whatever else is asked (items 054, 096, 139; `roomGames`). */
 const ROOM_FORCE: ReadonlyMap<string, Minigame> = new Map([
   ['charge', CHARGE_GAME],
   ['bridge', BRIDGE_GAME],
   ['shifter', SHIFTER_GAME],
+  ['rhyme', RHYME_GAME],
 ]);
 
 const urlQuery = () => new URLSearchParams(typeof location === 'undefined' ? '' : location.search);
@@ -264,7 +265,9 @@ export function grabPlan(): { word: string; objects: string[] } {
  * no phonics game is forced), on the same terms; else
  * door b is a fetch sentence frame or the word machine, never a second
  * phonics game. `?room=shifter` forces it whatever else is asked; `?room=charge`
- * and `?room=bridge` keep it behind door b.
+ * and `?room=bridge` keep it behind door b. `?room=rhyme` (item 139) puts the
+ * rhyme room behind door a as `?room=charge` does Charge; drawn, the rhyme room
+ * is one of door b's games beside the sentence frames and the word machine.
  */
 function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[] } {
   const q = urlQuery();
@@ -281,7 +284,7 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
   // `?room=shifter` takes door a; else it follows the phonics game. Two doors: a third forced game waits its turn.
   const forced = (room === SHIFTER_GAME ? [shifter, asked, phonics] : [asked, phonics, shifter]).filter((g, i, all): g is Minigame => Boolean(g) && all.indexOf(g) === i).slice(0, 2);
   if (!forced.length) return { pool: only ?? framesClear(MINIGAMES) };
-  // Item 126: drawn, the other door is a sentence frame or the word machine (the phonics games and the Shape-Shifter are forced or not at all).
+  // Item 126: drawn, the other door is a sentence frame, the word machine or (item 139) the rhyme room (the phonics games and the Shape-Shifter are forced or not at all).
   const pool = only ?? framesClear(drawn ? MINIGAMES.filter((g) => !PHONICS_GAMES.includes(g) && g !== SHIFTER_GAME) : MINIGAMES);
   const rest = drawGames(progress, planRand, pool.filter((g) => !forced.includes(g)));
   // Item 137: door b takes the drawn game that is not last episode's when only one is (drawGames puts it first).
@@ -363,7 +366,7 @@ const HALL_LINE_WORDS = NARRATOR_LINES.filter((t) => t.key.startsWith('grab_')).
  * The side rooms' own lines, said before battle 1 (rooms a and b) and battle 2 (the attic): the
  * Shape-Shifter's "Find the letter that FIXES it!" came before a FIX pad (hunt 6; item 039's case).
  */
-export const ROOM_LINE_WORDS = NARRATOR_LINES.filter((t) => /^(shifter|bridge|charge|machine|room|got)_/.test(t.key)).flatMap((t) => [...wordsOf(t.text), ...wordsOf(t.say)]);
+export const ROOM_LINE_WORDS = NARRATOR_LINES.filter((t) => /^(shifter|rhyme|bridge|charge|machine|room|got)_/.test(t.key)).flatMap((t) => [...wordsOf(t.text), ...wordsOf(t.say)]);
 
 /**
  * The hub's gift word (item 037): an action word from the bank, drawn on

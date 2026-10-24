@@ -25,7 +25,7 @@ test('debug mode: key 0 in the hub, a game from its pedestal checked off, out th
   await dadLock(page, false);
   expect(await debugTagShown(page)).toBe(true);
   const ids = s.room!.spots.map((sp) => sp.id).sort();
-  expect(ids).toEqual(['debug:bridge', 'debug:charge', 'debug:door', 'debug:sentence', 'debug:shifter', 'debug:word_machine']);
+  expect(ids).toEqual(['debug:bridge', 'debug:charge', 'debug:door', 'debug:rhyme', 'debug:sentence', 'debug:shifter', 'debug:word_machine']);
   expect(s.room!.debug!.done).toEqual([]);
 
   // Key 0 again: the hub as it was, no debug, no tag.

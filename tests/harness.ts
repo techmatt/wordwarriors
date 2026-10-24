@@ -577,9 +577,33 @@ export async function playShifterRoom(page: Page, wrongFirst = false): Promise<s
 }
 
 /**
+ * Play the rhyme room (item 139): each round's right picture; with
+ * `wrongFirst`, a wrong one first on the first round (the rhyme said again,
+ * then she picks again). Returns the words read (each a battle item).
+ */
+export async function playRhymeRoom(page: Page, wrongFirst = false): Promise<string[]> {
+  const first = await until(page, (s) => s.scene === 'RhymeRoom' && Boolean(s.room?.rhyme), 30_000, 'rhyme room');
+  const words = first.room!.rhyme!.words;
+  let wrong = wrongFirst;
+  for (let i = first.room!.rhyme!.index; i < words.length; i++) {
+    const s = await until(page, (st) => st.scene !== 'RhymeRoom' || (st.room?.rhyme?.index === i && st.room.rhyme.phase === 'pick' && !st.room.locked), 90_000, `round ${i} (${words[i]}) ready`);
+    if (s.scene !== 'RhymeRoom') return words;
+    if (wrong) {
+      wrong = false;
+      await choose(page, s.room!.spots.find((sp) => sp.correct === false)!.id);
+      await until(page, (st) => st.room?.rhyme?.phase === 'pick' && !st.room.locked && st.room.rhyme.misses > 0, 60_000, 'miss rhymed again');
+    }
+    await choose(page);
+    await until(page, (st) => st.scene !== 'RhymeRoom' || (st.room?.rhyme?.index ?? 0) > i || st.room?.rhyme?.phase === 'done', 60_000, `${words[i]} read`);
+  }
+  await until(page, (st) => st.scene !== 'RhymeRoom', 60_000, 'out of the rhyme room');
+  return words;
+}
+
+/**
  * Play whichever game the room has: a sentence room (its key word), the word
  * machine (every word built), Charge the Spell (its one word), the Stretchy
- * Bridge or the Shape-Shifter (every word read); `opts` as `RoomPlay` says.
+ * Bridge, the Shape-Shifter or the rhyme room (every word read); `opts` as `RoomPlay` says.
  */
 export async function playRoom(page: Page, opts: RoomPlay = {}): Promise<string[]> {
   const s = await until(
@@ -589,7 +613,8 @@ export async function playRoom(page: Page, opts: RoomPlay = {}): Promise<string[
       (st.scene === 'WordMachine' && Boolean(st.room?.machine)) ||
       (st.scene === 'ChargeRoom' && Boolean(st.room?.charge)) ||
       (st.scene === 'BridgeRoom' && Boolean(st.room?.bridge)) ||
-      (st.scene === 'ShifterRoom' && Boolean(st.room?.shifter)),
+      (st.scene === 'ShifterRoom' && Boolean(st.room?.shifter)) ||
+      (st.scene === 'RhymeRoom' && Boolean(st.room?.rhyme)),
     30_000,
     'a side room',
   );
@@ -601,6 +626,7 @@ export async function playRoom(page: Page, opts: RoomPlay = {}): Promise<string[
   }
   if (s.scene === 'BridgeRoom') return playBridgeRoom(page, opts.wrongFirst);
   if (s.scene === 'ShifterRoom') return playShifterRoom(page, opts.wrongFirst);
+  if (s.scene === 'RhymeRoom') return playRhymeRoom(page, opts.wrongFirst);
   return s.scene === 'WordMachine' ? playWordMachine(page, opts.wrongFirst) : [await playSentenceRoom(page, opts)];
 }
 

@@ -134,6 +134,8 @@ const SCENARIOS: Scenario[] = [
   { name: 'bridge_wrong_first', query: 'seed=116&room=bridge', wrong: true, batch: 'more' },
   // The Shape-Shifter (item 096): about half the `games=all` scenarios meet it behind door b (SHIFTER_ROOM); this one with a wrong pick first.
   { name: 'shifter_wrong_first', query: 'seed=117&room=shifter', wrong: true, batch: 'more' },
+  // The rhyme room (item 139): behind door b in some drawn episodes; this one with a wrong picture first.
+  { name: 'rhyme_wrong_first', query: 'seed=118&room=rhyme', wrong: true, batch: 'more' },
   // The second hunt (item 069): free play under a busy child, the difficulty levels above base
   // (item 067), the phonics rooms answered right, and a real draw across episodes (rotations).
   { name: 'mash_default', query: 'cast=default&games=all', mash: true, batch: 'new' },
@@ -359,9 +361,10 @@ class Recorder {
     this.add(spellingIssues(l, q.voice, s.scene), shot);
     // Words she has read, the warm-up's (said once she has grabbed it), and the gift word (item 092: told
     // and shown in the hub's story, its effect beside its card: FIN's fins): their pictures may wear them.
-    // The Shape-Shifter's first creature (item 096) is said and labelled: shown, not read (hunt 6).
+    // The Shape-Shifter's first creature (item 096) is said and labelled: shown, not read (hunt 6). The rhyme
+    // room's two rhyming words (item 139) too: said, each on its card.
     // In a battle her fetched things too: read in the house, or put there by a `fetched=` boot (hunt 7: "THE BUN!").
-    const done = [...s.episode.read, ...(s.scene === 'Battle' ? (s.episode.fetched ?? []) : []), ...(s.episode.grab && (s.scene !== 'Entry' || !['intro', 'find'].includes(s.room?.grab?.phase ?? 'intro')) ? [s.episode.grab.word] : []), ...(s.episode.gift ? [s.episode.gift] : []), ...(s.room?.shifter ? [s.room.shifter.start] : [])];
+    const done = [...s.episode.read, ...(s.scene === 'Battle' ? (s.episode.fetched ?? []) : []), ...(s.episode.grab && (s.scene !== 'Entry' || !['intro', 'find'].includes(s.room?.grab?.phase ?? 'intro')) ? [s.episode.grab.word] : []), ...(s.episode.gift ? [s.episode.gift] : []), ...(s.room?.shifter ? [s.room.shifter.start] : []), ...(s.room?.rhyme?.shown ?? [])];
     this.add(giveawayIssues(l, s.scene, done), shot);
   }
 
@@ -499,7 +502,7 @@ async function dadLockProbe(page: Page, rec: Recorder): Promise<void> {
 const probing = (sc: Scenario) => Boolean(sc.lockAll || sc.parentAll || sc.reloadAt || sc.debugAt || sc.eraseAt);
 
 /** The games debug mode offers (item 086), taken in turn by the debug probe. */
-const DEBUG_GAMES = ['sentence', 'word_machine', 'charge', 'bridge', 'shifter'] as const;
+const DEBUG_GAMES = ['sentence', 'word_machine', 'charge', 'bridge', 'shifter', 'rhyme'] as const;
 
 /**
  * Item 089: minigame debug mode at a point. Key 0, a game from its pedestal
@@ -658,7 +661,7 @@ async function episode(page: Page, sc: Scenario, rec: Recorder, at: (p: Point) =
 /** Where the episode stands, as far as a press could move it (item 080's dad lock probe). */
 function where(s: WWState): string {
   const r = s.room;
-  return JSON.stringify([s.scene, s.episode.stepIndex, r?.round, r?.sentence?.pass, r?.sentence?.index, r?.machine?.index, r?.machine?.phase, r?.grab?.phase, r?.grab?.misses, r?.charge?.read, r?.bridge?.index, r?.bridge?.misses, r?.shifter?.index, r?.shifter?.misses, s.battle?.choice?.misses, s.battle?.movePicks, s.episode.read.length]);
+  return JSON.stringify([s.scene, s.episode.stepIndex, r?.round, r?.sentence?.pass, r?.sentence?.index, r?.machine?.index, r?.machine?.phase, r?.grab?.phase, r?.grab?.misses, r?.charge?.read, r?.bridge?.index, r?.bridge?.misses, r?.shifter?.index, r?.shifter?.misses, r?.rhyme?.index, r?.rhyme?.misses, s.battle?.choice?.misses, s.battle?.movePicks, s.episode.read.length]);
 }
 
 /** Everything in the store, raw (item 080's reload probe compares it across a reload). */

@@ -64,6 +64,12 @@ export interface ProgressData {
    * 3 nothing lit); absent = SHIFTER.startLevel. Her reads are under `words`.
    */
   shifterLevels?: Record<string, number>;
+  /**
+   * The rhyme room (item 139): per word, its help level (1 the helper sounds
+   * the printed word out unasked, 2 and 3 only on yellow); absent =
+   * RHYME.startLevel. Her reads are under `words`, the family under `rimes`.
+   */
+  rhymeLevels?: Record<string, number>;
   /** Her word bag: the sentence key words drawn without replacement (item 015). */
   bag: WordBag;
   /** The bag words the game had when `bag` was last topped up (`topUpBag`); `'legacy'` for a blob from before item 035. */
@@ -314,6 +320,16 @@ export class ProgressStore {
 
   setShifterLevel(word: string, level: number): void {
     (this.data.shifterLevels ??= {})[word] = level;
+    this.save();
+  }
+
+  /** A word's rhyme-room help level (item 139), or `fallback` (RHYME.startLevel) if she has never met it there. */
+  rhymeLevel(word: string, fallback: number): number {
+    return this.data.rhymeLevels?.[word] ?? fallback;
+  }
+
+  setRhymeLevel(word: string, level: number): void {
+    (this.data.rhymeLevels ??= {})[word] = level;
     this.save();
   }
 

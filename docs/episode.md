@@ -73,7 +73,7 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    one in and the machine says the two parts apart; the right one makes the picture's
    word, said only then, and into her bag it goes; a wrong one makes a silly word like ZAT;
    several words of one family, then another; or Charge the Spell, item 053, the
-   Stretchy Bridge, item 054, or the Shape-Shifter, item 096, below). The sentence game is one sentence each, on a banner, key word last
+   Stretchy Bridge, item 054, the Shape-Shifter, item 096, or the rhyme room, item 139, below). The sentence game is one sentence each, on a banner, key word last
    (`WE CAN USE THE NET`, `JULIA NEEDS THE CAT`). Pass 1 is read to her karaoke-style and stops at the key
    word, which pulses in silence (skipped once that frame is solid). Pass 2 is hers:
    her one green reads the whole sentence, each word lit as it is said, and stops at the
@@ -273,7 +273,7 @@ it on swaps the room for the **Debug** scene (`src/scenes/DebugRoom.ts`): the sa
 background with the room's own things gone, a DEBUG tag in the top-left corner, the
 room's door out open as if every minigame were done, and one pedestal per game in the
 pool (`src/rules/minigames.ts`: the sentence game, the word machine, Charge the Spell, the
-Stretchy Bridge, the Shape-Shifter; every sentence frame is one sentence pedestal, which draws a frame each
+Stretchy Bridge, the Shape-Shifter, the rhyme room; every sentence frame is one sentence pedestal, which draws a frame each
 time, a counter frame in the attic and house part 2). Green at a pedestal plays that game
 on a plan drawn just for it; finishing it brings her back with a ✔ on its pedestal (0 or
 F2 in the game comes back too, without one). The open door leaves debug: from a side
@@ -399,6 +399,38 @@ creature flying into her bag; the last creature itself flies in and goes to the 
 (`NO_BAG_COPY` in `content/phonics/sentences.ts`; hunt 10, M45): read as any word, but no copy, and as the
 last creature it waves (three squash hops) and stays, with no "comes to the fight" line; neither is ever fired. `?scene=room&slot=a&room=shifter` opens it.
 
+**The rhyme room** (item 139, designed with Matt; `src/scenes/RhymeRoom.ts`, `src/rules/rhyme.ts`):
+a side room where a rhyme helps her read, alone: walking and green only, nothing for Dad's
+1 / 2. Drawn, it is one of door b's games in the episodes without the Shape-Shifter, beside
+the fetch sentence frames and the word machine (`RHYME.weight`; in a 150-episode `variety`
+run, 24 visits). A visit is three rounds (`RHYME.rounds`; two at least, `minRounds`, else a
+sentence frame plays), each from a different word family. A round: two rhyming words stand
+at the back as cards, each its picture and its printed word, each lit as it is said (BUG,
+TUG); a third place waits with a question mark, and the family's third word is printed on
+a plate at the top, never said (RUG). Three unlabeled pictures stand in the room: the
+printed word's, one sharing its first sound (RING), one its vowel and not its first sound
+(THUMB), neither rhyming with it, so only the end of the word, or the rhyme, gets it. The
+printed word and the pictures are things (`THINGS`: an action word is never a picture she
+picks, item 137); the two cards are the family's things first, then pictured action words
+(HUG, TUG, RUN, HOP: shown and said, never picked; Matt's default, item 139). The bank
+makes ten families: -AT -AN -OCK -ING with things only; -UG -UN -OP -IG -OT -AP with an
+action card. -OG (DOG LOG) and -ED (BED stored) have too few words; `RHYME_FAMILIES`
+follows the bank, so a new word or a word brought back adds its family by itself. Help
+fades per word (`rhymeLevels`, on the grown-ups page once met; at base difficulty every word
+gets level 1): level 1 the helper sounds the printed word out unasked, each unit lit on the
+plate (a digraph one sound, never blended), then asks "Which thing is it?"; levels 2 and 3
+it is sounded out only on yellow. Yellow sounds it out at any level, and is help (the
+word's ramp steps down). A miss: the fizzle-and-giggle, then the rhyme with her pick in it
+and again with the right word, "Bug, tug... thumb? Listen: bug, tug, rug!" (Matt's design:
+the miss line says the printed word, a deliberate exception to the speech rule); after two
+misses the answer sparkles; no penalty. Right: its picture flies up into the row's third
+place, the plate lights, the word is said, and a copy flies into her bag (every printed word
+is a battle item; not MOM or DAD). Recorded as a read (`words`, her word bag) and its family
+under `rimes` (the word machine's record, and the room's lean in the pool). The printed
+words are drawn by the bank's weight, one still in her bag twice as likely, first from those
+the episode before did not have her read (`LAST_READ`); its cards and pictures keep out of
+the other rooms' words (planned after the Shape-Shifter, before Charge). `?scene=room&slot=a&room=rhyme` opens it.
+
 **No letter names** (item 137, Matt): no clue or hint says a letter's name. The warm-up's
 clue is the sounds at every level, and the Shape-Shifter's hints and misses say the plain
 sound (`soundLines` in `src/rules/soundOut.ts`). Item 096's bridge from a name to its sound
@@ -472,6 +504,7 @@ done, items in the bag):
 | `?scene=room&slot=a&room=charge&solo=1` | Charge the Spell in solo mode (item 106: Dad isn't here; `solo` in any URL starts the episode solo) |
 | `?scene=room&slot=a&room=bridge` | The Stretchy Bridge (`room=bridge`, the same way) |
 | `?scene=room&slot=a&room=shifter` | The Shape-Shifter (`room=shifter` forces it behind door a; otherwise `SHIFTER_ROOM` has it behind door b in 3 episodes of 7, never twice running) |
+| `?scene=room&slot=a&room=rhyme` | The rhyme room (`room=rhyme` forces it behind door a, as `room=charge` does; drawn, it is one of door b's games) |
 | `?scene=battle&part=1&charged=m,s,a` | A battle that fires those charged runes (default: the plan's charge room's, in part 1) |
 | `?scene=battle&part=1` (or `2`) | A battle |
 | `?scene=victory&read=cat,sun,julia` | The victory scene, then the victory recapping those words |
@@ -496,7 +529,7 @@ word on its banner: the attic's for a counter frame, door a's for a fetch frame,
 
 Matt's ruling: **no automatic difficulty**. Every help ramp still records her level
 (the warm-up's `grabLevels`, the bridge's `bridgeLevels`, the Shape-Shifter's
-`shifterLevels`, and frames' and words' first
+`shifterLevels`, the rhyme room's `rhymeLevels`, and frames' and words' first
 tries; Charge the Spell has no ramp since item 078), and the grown-ups page shows the
 level reached, but the game gives at most **`DIFFICULTY`** (`src/config.ts`, shown in the
 grown-ups page's title line):
@@ -516,7 +549,7 @@ reach levels 2 and 3).
 This is the list: a new ramp that steps up with success goes through `helpLevel` or
 `rampsAdvance` (`src/rules/difficulty.ts`) and is added here. Tests: the knob in
 `tests/unit/variety.test.ts`; each ramp in its game's unit test (`grab`, `bridge`,
-`shifter`, `sentences`, `bank`, each with `withDifficulty` from `tests/unit/difficulty.ts`);
+`shifter`, `rhyme`, `sentences`, `bank`, each with `withDifficulty` from `tests/unit/difficulty.ts`);
 in the browser `?difficulty=` in `bridge.spec.ts`, `entry.spec.ts`, `sentenceread.spec.ts`,
 `soundout.spec.ts` and `smoke.spec.ts`.
 
@@ -526,7 +559,7 @@ words, the counter, move pads, the gift, fetches, the recap) take any word. The 
 where she sounds a word out unit by unit keep to short words, in sound units (SH is one):
 `GRAB.maxUnits` (the warm-up), `BRIDGE.maxUnits` (the bridge's words; its far-bank
 pictures may be longer), `WORD_MACHINE.maxUnits`, `CHARGE.units`, and the Shape-Shifter's
-CVC words (`SHIFT_WORDS`, one letter a sound).
+CVC words (`SHIFT_WORDS`, one letter a sound), and the rhyme room's family words (three sound units).
 
 **Variety across episodes.** Each rotation keeps its recent picks in the progress store
 (`recent`, `src/rules/recent.ts`; how many: `VARIETY` in `src/config.ts`) and avoids
@@ -541,7 +574,7 @@ no side room plays a game either side room played last episode while another fit
 fetch frame counts as the one sentence game), and the attic never plays last episode's frame
 (`repeatsLast` in `src/rules/minigames.ts`, `recent.last_games`); so door a's phonics game
 alternates Charge and the Bridge, the Shape-Shifter is never behind door b twice running
-(`SHIFTER_ROOM.afterOne` 0), and door b's sentence game or word machine changes with it.
+(`SHIFTER_ROOM.afterOne` 0), and door b's sentence game, word machine or rhyme room changes with it.
 Beyond that a game of her last two episodes weighs `VARIETY.gameWeight`. Her latest right-first-time reads
 (`VARIETY.words`) weigh `VARIETY.wordWeight` in every word draw, so last episode's words
 rarely come straight back; a missed word keeps its full weight. The bags (key words,

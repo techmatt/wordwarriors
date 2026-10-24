@@ -43,7 +43,7 @@ Playwright browsers are per machine, so a worktree does not need them again.
 
 Title → bedroom (a dad wakes her: the helper, the villain) → the entry hall's warm-up →
 the quest place (the hub: the gift word, two side-room doors, one of them Charge the Spell
-or the Stretchy Bridge, door b the Shape-Shifter in 3 episodes of 7, never twice running) → battle part 1 (too strong, retreat) → the hub again (the attic's
+or the Stretchy Bridge, door b the Shape-Shifter in 3 episodes of 7, never twice running, else a sentence frame, the word machine or the rhyme room) → battle part 1 (too strong, retreat) → the hub again (the attic's
 counter word) → battle part 2 → the victory scene → the recap → THE END (Dad's 2 plays
 again). Selection is walking everywhere; yellow (Tab) says it again or hints.
 
@@ -175,7 +175,10 @@ covers its three help levels and a wrong picture (item 054). `SHIFTER_ROOM` foll
 the same rule for the Shape-Shifter behind door b (item 096; 3 drawn episodes in 7, never twice running, since item 137): `playRoom` plays it
 (`playShifterRoom`: each link's right picture or stone, a wrong one first with
 `wrongFirst`), and `tests/shifter.spec.ts` plays one room through both beats at base level
-(untagged, ~8 s; its pacing test is slow lane). `tests/hunt6.spec.ts` (item 102) keeps the sixth hunt's Shape-Shifter
+(untagged, ~8 s; its pacing test is slow lane). The rhyme room (item 139) is one of door b's drawn
+games in the other episodes: `playRoom` plays it (`playRhymeRoom`: each round's right picture, a wrong
+one first with `wrongFirst`), and `tests/rhyme.spec.ts` plays one room's three rounds through
+`?scene=room&slot=a&room=rhyme` at base level with a miss (untagged, ~8 s). `tests/hunt6.spec.ts` (item 102) keeps the sixth hunt's Shape-Shifter
 fixes: the lit letter's pulse, the next link's options clear of her, yellow and green mashed
 through misses and morphs, the grown-ups page at each point of a link, dad lock and key 0,
 a level-1 stone reached while a line plays, Dad's 2 in the frame key 0 leaves a debug Charge

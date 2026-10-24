@@ -11,7 +11,9 @@
  * and Charge the Spell (item 053, fetch rooms only), times how shaky her
  * letter sounds are, and the Stretchy Bridge (item 054, fetch rooms only),
  * times how shaky the words it can give her are, and the Shape-Shifter (item
- * 096, fetch rooms only), times how shaky the words its chains can use are.
+ * 096, fetch rooms only), times how shaky the words its chains can use are,
+ * and the rhyme room (item 139, fetch rooms only), times how shaky her rhyme
+ * families are.
  *
  * A new minigame is one entry here: its kind, its scene, a weight, the
  * slots it can fill. Key 0's debug pedestal for it (`DEBUG_GAMES`) and
@@ -27,11 +29,12 @@
 
 import { FAMILIES } from '../../content/phonics/families';
 import { FRAMES } from '../../content/phonics/sentences';
-import { BRIDGE, CHARGE, SHIFTER, VARIETY, WORD_MACHINE } from '../config';
+import { BRIDGE, CHARGE, RHYME, SHIFTER, VARIETY, WORD_MACHINE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { pickWeighted, type Rand } from './random';
 import { bridgeShakiness } from './bridge';
 import { soundShakiness } from './charge';
+import { rhymeShakiness } from './rhyme';
 import { shifterShakiness } from './shifter';
 
 export type GameSlot = 'fetch' | 'counter';
@@ -39,10 +42,10 @@ export type GameSlot = 'fetch' | 'counter';
 /**
  * What a minigame is: the sentence game (in one of its frames), the word
  * machine (item 026), Charge the Spell (item 053) or the Stretchy Bridge
- * (item 054) or the Shape-Shifter (item 096). The room's plan carries the
+ * (item 054) or the Shape-Shifter (item 096) or the rhyme room (item 139). The room's plan carries the
  * same kind (`RoomPlan`).
  */
-export type MinigameKind = 'sentence' | 'machine' | 'charge' | 'bridge' | 'shifter';
+export type MinigameKind = 'sentence' | 'machine' | 'charge' | 'bridge' | 'shifter' | 'rhyme';
 
 export interface Minigame {
   /** Unique: `sentence:<frame>` for the sentence game in a frame. */
@@ -92,11 +95,19 @@ export const BRIDGE_GAME: Minigame = { id: 'bridge', kind: 'bridge', scene: 'Bri
  */
 export const SHIFTER_GAME: Minigame = { id: 'shifter', kind: 'shifter', scene: 'ShifterRoom', weight: SHIFTER.weight, slots: ['fetch'] };
 
+/**
+ * The rhyme room (item 139): a fetch room only. Two rhyming words shown and
+ * said, a third printed, and she walks to its picture (its plan:
+ * src/rules/rhyme.ts); every printed word is a battle item. Drawn like the
+ * word machine: behind door b in the episodes without the Shape-Shifter.
+ */
+export const RHYME_GAME: Minigame = { id: 'rhyme', kind: 'rhyme', scene: 'RhymeRoom', weight: RHYME.weight, slots: ['fetch'] };
+
 /** The phonics games FORCE_PHONICS_ROOM puts in every episode, one of them, by weight. */
 export const PHONICS_GAMES: Minigame[] = [CHARGE_GAME, BRIDGE_GAME];
 
 /** The pool. */
-export const MINIGAMES: Minigame[] = [...SENTENCE_GAMES, WORD_MACHINE_GAME, CHARGE_GAME, BRIDGE_GAME, SHIFTER_GAME];
+export const MINIGAMES: Minigame[] = [...SENTENCE_GAMES, WORD_MACHINE_GAME, CHARGE_GAME, BRIDGE_GAME, SHIFTER_GAME, RHYME_GAME];
 
 export const MINIGAME_BY_ID: Record<string, Minigame> = Object.fromEntries(MINIGAMES.map((g) => [g.id, g]));
 
@@ -109,7 +120,7 @@ function familyShakiness(store: ProgressStore): number {
  * How much a game's kind leans its weight toward what she finds shaky: a
  * sentence game by its frame, the word machine by her word families, Charge
  * the Spell by her letter sounds, the Stretchy Bridge by its words, the
- * Shape-Shifter by the words its chains can use.
+ * Shape-Shifter by the words its chains can use, the rhyme room by its families.
  */
 const LEAN: Record<MinigameKind, (store: ProgressStore, g: Minigame) => number> = {
   sentence: (store, g) => store.shakiness('frames', g.frame!),
@@ -117,6 +128,7 @@ const LEAN: Record<MinigameKind, (store: ProgressStore, g: Minigame) => number> 
   charge: soundShakiness,
   bridge: bridgeShakiness,
   shifter: shifterShakiness,
+  rhyme: rhymeShakiness,
 };
 
 /** The rotation holding last episode's games, door a, b and the attic, one string (item 137; `rememberPlan`, src/episode/plans.ts). */

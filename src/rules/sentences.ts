@@ -36,6 +36,7 @@ import { machineWords, planMachine, type MachinePlan } from './wordMachine';
 import { gestureWords, planCharge, type ChargePlan } from './charge';
 import { bridgeShown, bridgeWords, planBridge, type BridgePlan } from './bridge';
 import { planShifter, shifterShown, shifterWords, type ShifterPlan } from './shifter';
+import { planRhyme, rhymeSays, rhymeShown, rhymeWords, type RhymePlan } from './rhyme';
 import { SENTENCE_SOLID } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { BAG_WORDS, distractorsFor, drawKey, withStems } from './bank';
@@ -92,7 +93,13 @@ export interface ShifterRoomPlan extends PlanBase {
   shifter: ShifterPlan;
 }
 
-export type RoomPlan = SentencePlan | MachineRoomPlan | ChargeRoomPlan | BridgeRoomPlan | ShifterRoomPlan;
+/** The rhyme room (item 139): its rounds, the words read, `fetches`, each round's printed word. */
+export interface RhymeRoomPlan extends PlanBase {
+  kind: 'rhyme';
+  rhyme: RhymePlan;
+}
+
+export type RoomPlan = SentencePlan | MachineRoomPlan | ChargeRoomPlan | BridgeRoomPlan | ShifterRoomPlan | RhymeRoomPlan;
 
 /** The bank's action words: kept out of the key words when the episode's own move pads are not given. */
 const ACTION_WORDS: string[] = ACTIONS.map((w) => w.word);
@@ -276,6 +283,17 @@ const SHIFTER_PLANNER: OwnWordsPlanner<ShifterPlan> = {
   room: (base, p) => ({ ...base, kind: 'shifter', shifter: p, fetches: shifterWords(p) }),
 };
 
+// The rhyme room (item 139) reads a word a round; its pictures are shown and its
+// rhyming pairs said before she reads, so no key word drawn after it is one of
+// them. Nor the villain's named counter word.
+const RHYME_PLANNER: OwnWordsPlanner<RhymePlan> = {
+  plan: (ctx) => planRhyme(ctx.store, { avoid: [...ctx.avoid, ...ctx.moves, ...ctx.named, ...ctx.pictured], taken: ctx.taken }, ctx.rand),
+  reads: rhymeWords,
+  pictures: rhymeShown,
+  says: rhymeSays,
+  room: (base, p) => ({ ...base, kind: 'rhyme', rhyme: p, fetches: rhymeWords(p) }),
+};
+
 // Charge the Spell (item 058) spells one word, a battle item. Its runes'
 // gestures speak (item 074: "Tap the egg"), so it is no word whose gestures
 // say a word she reads after it, and the keys keep clear of what they say.
@@ -301,14 +319,14 @@ const SENTENCE: KeyPlanner = {
 };
 
 /** Each kind's planner: a new kind is a minigame entry plus its planner here. */
-const PLANNERS: Record<MinigameKind, KindPlanner> = { machine: MACHINE, bridge: BRIDGE, shifter: SHIFTER_PLANNER, charge: CHARGE, sentence: SENTENCE };
+const PLANNERS: Record<MinigameKind, KindPlanner> = { machine: MACHINE, bridge: BRIDGE, shifter: SHIFTER_PLANNER, rhyme: RHYME_PLANNER, charge: CHARGE, sentence: SENTENCE };
 
 /**
  * The order the kinds with words of their own plan them: each keeps clear of
  * those planned before it (the bridge of the machine's words; the
- * Shape-Shifter of both and the bridge's pictures; Charge of all of them). A new such kind takes its place here.
+ * Shape-Shifter of both and the bridge's pictures; the rhyme room of those three; Charge of all of them). A new such kind takes its place here.
  */
-const PLAN_ORDER: MinigameKind[] = ['machine', 'bridge', 'shifter', 'charge'];
+const PLAN_ORDER: MinigameKind[] = ['machine', 'bridge', 'shifter', 'rhyme', 'charge'];
 
 const plannerOf = (g: Minigame): KindPlanner => {
   const p = PLANNERS[g.kind] as KindPlanner | undefined;
@@ -365,7 +383,11 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
       own[i] = planOwn(planner, ctx, g);
       if (own[i]) return;
       // It cannot this episode: that room plays a sentence game instead.
-      const spare = (input.pool ?? MINIGAMES).find((s) => s.kind === 'sentence' && s.slots.includes('fetch') && !games.includes(s))!;
+      // A frame whose words no room planned before it reads or shows (item 139's review: WE CAN USE THE after a
+      // machine built CAN), where the pool has one.
+      const spares = (input.pool ?? MINIGAMES).filter((s) => s.kind === 'sentence' && s.slots.includes('fetch') && !games.includes(s));
+      const clear = spares.find((s) => !SENTENCE.shows(s, fill).some((w) => ctx.taken.includes(w) || ctx.pictured.includes(w)));
+      const spare = clear ?? spares[0]!;
       games[i] = spare;
       for (const w of SENTENCE.shows(spare, fill)) avoid.add(w);
     });

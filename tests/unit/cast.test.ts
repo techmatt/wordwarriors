@@ -314,7 +314,7 @@ test('minigames: three different games a episode, fetch twice then the counter, 
   // The plans carry the drawn game and its scene, in the place's rooms.
   const plans = episodePlans(store, { fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', gift: 'pop', rooms: ['bubble_baths', 'toy_cloud'], counterRoom: 'rainbow_room' }, rand);
   assert.deepEqual(plans.map((p) => p.room), ['bubble_baths', 'toy_cloud', 'rainbow_room']);
-  for (const p of plans) assert.equal(p.scene, p.kind === 'machine' ? 'WordMachine' : p.kind === 'charge' ? 'ChargeRoom' : p.kind === 'bridge' ? 'BridgeRoom' : p.kind === 'shifter' ? 'ShifterRoom' : 'SentenceRoom');
+  for (const p of plans) assert.equal(p.scene, p.kind === 'machine' ? 'WordMachine' : p.kind === 'charge' ? 'ChargeRoom' : p.kind === 'bridge' ? 'BridgeRoom' : p.kind === 'shifter' ? 'ShifterRoom' : p.kind === 'rhyme' ? 'RhymeRoom' : 'SentenceRoom');
 });
 
 test('podium (hunt 10, M50): with an ally the dad who woke her cheers beside it, never twice and never the villain', () => {

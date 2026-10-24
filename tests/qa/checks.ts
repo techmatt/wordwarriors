@@ -258,6 +258,10 @@ export function leakIssues(s: WWState, l: Layout, voiceSinceRound: Since['voice'
   // a text, so never one whole text either way), fix it shows only its picture.
   const sh = s.room?.shifter;
   if (sh && (sh.phase === 'intro' || sh.phase === 'pick')) check(sh.word, `shifter ${sh.index}`, 0);
+  // The rhyme room's printed word (item 139): its plate is a text a sound unit, never the word whole, and it is
+  // never said before she has it but in a miss's "Listen: bug, hug, rug!" (Matt's design), so only before a miss.
+  const rh = s.room?.rhyme;
+  if (rh && (rh.phase === 'intro' || rh.phase === 'pick') && rh.misses === 0) check(rh.word, `rhyme ${rh.index}`, 0);
   return out;
 }
 
