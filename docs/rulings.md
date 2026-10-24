@@ -16,9 +16,24 @@ here.
 - **XRAY stays X's first word**, stored now (she has no idea of an x-ray).
 - **MAT stays a bridge word**, though it sounds like "Matt".
 - **Plural key words** may come later, as a special case.
+- **An action word is never a picture she picks** (item 137, amendment 4095). DRIP, BLAST
+  and the other move and spell words (`role: 'action'`) are words and powers (pads, the
+  gift), never a picture in a choice nor what a picture choice asks for: she cannot get a
+  word like DRIP from its picture. Every picture pool is drawn from `THINGS` (no pure
+  action word); `tests/unit/bank.test.ts` and the variety simulator check it, and
+  `?sentence=` takes only a pictured key. Its picture may still show where nothing is
+  picked (the battle's super, the cook-off's dish, the recap card).
+- **No letter names in clues or hints** (item 137): phonics only. Hearing a letter's name
+  beside its sound confused her, so no clue, hint or teaching line says one, at any level:
+  the warm-up's clue is the sounds alone, the Shape-Shifter's hints and misses the plain
+  sound, and the bridge from a name to its sound ("R's name is Ar... squeeze off the
+  front") is gone with the name lines (`docs/episode.md`, *No letter names*).
 
 ## Play
 
+- **Games rotate strictly** (item 137). No side room plays a game either side room played
+  last episode while another fits (every fetch frame is the one sentence game), and the
+  attic never plays last episode's frame (`docs/episode.md`, *Variety across episodes*).
 - **No keyboard answers.** Selection stays walking and green; A–Z stays spelling's.
 - **No game needs Dad beside her, and no step waits on Dad forever:** with his presses
   missing, "say it with me" solo mode turns on, and solo reads count as modelled.

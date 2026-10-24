@@ -87,8 +87,8 @@ export const BRIDGE_GAME: Minigame = { id: 'bridge', kind: 'bridge', scene: 'Bri
  * a creature down a chain of words, one letter changed a link; she reads each
  * link, walking and green only (its plan: src/rules/shifter.ts). Every word
  * she reads there is a battle item, the last creature among them. For the
- * beta it is behind door b of about half the episodes (SHIFTER_ROOM, item
- * 126, src/episode/plans.ts `roomGames`).
+ * beta it is behind door b of 3 episodes in 7, never two running (SHIFTER_ROOM,
+ * items 126 and 137, src/episode/plans.ts `roomGames`).
  */
 export const SHIFTER_GAME: Minigame = { id: 'shifter', kind: 'shifter', scene: 'ShifterRoom', weight: SHIFTER.weight, slots: ['fetch'] };
 
@@ -119,21 +119,49 @@ const LEAN: Record<MinigameKind, (store: ProgressStore, g: Minigame) => number> 
   shifter: shifterShakiness,
 };
 
+/** The rotation holding last episode's games, door a, b and the attic, one string (item 137; `rememberPlan`, src/episode/plans.ts). */
+export const LAST_GAMES = 'last_games';
+
+/** Last episode's games: door a, door b, the attic (none before her first remembered episode). */
+export function lastGames(store: ProgressStore): string[] {
+  return store.recentOf(LAST_GAMES).at(-1)?.split(' ') ?? [];
+}
+
+/** A game as the strict rotation counts it (item 137): in a side room the sentence game is one game whatever its frame; anything else, its id. */
+export const sideGame = (id: string): string => (MINIGAME_BY_ID[id]?.kind === 'sentence' ? 'sentence' : id);
+
+/**
+ * Whether a game in `slot` would repeat last episode's (item 137): a fetch
+ * game that either side room played (by `sideGame`), the attic's own frame.
+ */
+export function repeatsLast(last: readonly string[], slot: GameSlot, id: string): boolean {
+  return slot === 'fetch' ? last.slice(0, 2).some((g) => sideGame(g) === sideGame(id)) : last[2] === id;
+}
+
 /**
  * The episode's three games: two different fetch games (doors a and b), then
  * the counter game. A game's weight is scaled by its kind's lean (`LEAN`).
  * A game she played in her last episodes (the store's `games`) weighs
- * VARIETY.gameWeight as much (item 067), so the rooms rotate.
+ * VARIETY.gameWeight as much (item 067). And strictly (item 137): no game of
+ * last episode's comes back in its kind of room while another fits
+ * (`repeatsLast`); the fresh ones come first, so door a has one before door b.
  */
 export function drawGames(store: ProgressStore, rand: Rand = Math.random, pool: Minigame[] = MINIGAMES): [Minigame, Minigame, Minigame] {
   const recent = new Set(store.recentOf('games'));
+  const last = lastGames(store);
   const weight = (id: string) => {
     const g = pool.find((m) => m.id === id)!;
     return g.weight * LEAN[g.kind](store, g) * (recent.has(id) ? VARIETY.gameWeight : 1);
   };
   const fits = (slot: GameSlot) => pool.filter((g) => g.slots.includes(slot)).map((g) => g.id);
-  const fetch = pickWeighted(fits('fetch'), weight, 2, rand);
-  const counter = pickWeighted(fits('counter').filter((id) => !fetch.includes(id)), weight, 1, rand);
+  // `n` of `ids`, last episode's left for when too few others fit (with none remembered, the draw as before item 137).
+  const draw = (slot: GameSlot, ids: string[], n: number) => {
+    const fresh = ids.filter((id) => !repeatsLast(last, slot, id));
+    if (fresh.length >= n) return pickWeighted(fresh, weight, n, rand);
+    return [...pickWeighted(fresh, weight, fresh.length, rand), ...pickWeighted(ids.filter((id) => !fresh.includes(id)), weight, n - fresh.length, rand)];
+  };
+  const fetch = draw('fetch', fits('fetch'), 2);
+  const counter = draw('counter', fits('counter').filter((id) => !fetch.includes(id)), 1);
   const byId = (id: string) => pool.find((g) => g.id === id)!;
   if (fetch.length < 2 || counter.length < 1) throw new Error('minigames: the pool cannot fill the rooms');
   return [byId(fetch[0]!), byId(fetch[1]!), byId(counter[0]!)];

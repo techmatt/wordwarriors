@@ -22,7 +22,7 @@ import { ANY_SCENES, HUB_SCENES, hubStoryIds, type HubStory } from '../../conten
 import type { FighterSpec } from '../../content/battle/types.js';
 import { ALL_FAMILIES, sillyWord } from '../../content/phonics/families.js';
 import { ALL_ACTIONS, BANK_BY_WORD, BANK } from '../../content/phonics/bank.js';
-import { DIGRAPH_SOUNDS, LETTERS, LETTER_NAMES, LONG_VOWEL_SOUNDS, NAME_HIDES } from '../../content/phonics/letters.js';
+import { DIGRAPH_SOUNDS, LETTERS, LONG_VOWEL_SOUNDS } from '../../content/phonics/letters.js';
 import { FETCH_ITEMS, allFrameTokens, allPrefixes, tokenWord } from '../../content/phonics/sentences.js';
 import { SPELL_WORDS } from '../../content/phonics/spelling.js';
 import { WORDS, spokenWord } from '../../content/phonics/words.js';
@@ -36,8 +36,6 @@ import {
   group,
   heroKey,
   homeQuestLine,
-  letterNameLine,
-  nameHidesLine,
   letterSoundLine,
   moveKey,
   moveLine,
@@ -195,17 +193,6 @@ export function composeLines(): LineSpec[] {
       ...(l.carrier ? { say: `${l.carrier.say}.`, cut: { keepDb: l.carrier.keepDb } } : {}),
       note: `placeholder for the /${l.letter}/ sound (${l.cls}); replace with a recorded clip`,
     });
-  }
-  // Letter names (item 033): the home warm-up spells its word with them.
-  // Shown as the bare capital; edge-tts is given the name spelled out.
-  for (const [letter, say] of Object.entries(LETTER_NAMES)) {
-    lines.push({ id: letterNameLine(letter), speaker: PHONICS_SPEAKER, group: group.phonics, text: `${letter.toUpperCase()}.`, say: `${say}.` });
-  }
-  // The sound hidden in the name (item 096): the bridge from a letter's name to its sound, said before the sound line.
-  for (const [letter, where] of Object.entries(NAME_HIDES)) {
-    const name = LETTER_NAMES[letter]!;
-    const how = where === 'start' ? 'Keep just the start:' : 'Squeeze off the front:';
-    lines.push({ id: nameHidesLine(letter), speaker: PHONICS_SPEAKER, group: group.phonics, text: `${letter.toUpperCase()}'s name is ${name}... ${how}`, say: `${letter.toUpperCase()}'s name is ${name}... ${how.replace(':', '...')}` });
   }
   // The word machine (item 026): each rime alone, said after the onset's own
   // sound and never blended with it, and each silly word a wrong tile makes.

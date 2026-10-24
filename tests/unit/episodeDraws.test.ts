@@ -72,7 +72,7 @@ test('solo lasts the session (hunt 7, M34): the next episode starts solo, until 
   assert.equal(episode.solo, false);
 });
 
-test('door b (item 126): the Shape-Shifter about half the drawn episodes, else a sentence frame or the word machine', () => {
+test('door b (items 126, 137): the Shape-Shifter in about 3 drawn episodes of 7, never two running, else a sentence frame or the word machine', () => {
   const random = Math.random;
   // A seed's luck: 126 drew no word machine in 24 once MOM and DAD left the warm-up's words (hunt 10, M45);
   // over seeds 120 to 135 every other seed draws it 1 to 5 times.
@@ -89,9 +89,35 @@ test('door b (item 126): the Shape-Shifter about half the drawn episodes, else a
       progress.episodeDone();
     }
     const shifters = doorB.filter((g) => g === 'shifter').length;
-    assert.ok(shifters >= 8 && shifters <= 16, `${shifters} of 24: ${doorB.join(' ')}`);
+    assert.ok(shifters >= 8 && shifters <= 12, `${shifters} of 24: ${doorB.join(' ')}`);
+    doorB.forEach((g, i) => assert.ok(!(g === 'shifter' && doorB[i - 1] === 'shifter'), `twice running at ${i + 1}: ${doorB.join(' ')}`));
     for (const g of doorB) assert.ok(g === 'shifter' || g === 'word_machine' || g.startsWith('sentence:'), g);
     assert.ok(doorB.some((g) => g.startsWith('sentence:')) && doorB.includes('word_machine'), doorB.join(' '));
+  } finally {
+    Math.random = random;
+    setCastOptions({ overrides: {}, fixed: !EPISODE_DEFAULTS.randomCast });
+  }
+});
+
+test('games rotate strictly (item 137): no side room plays a game either side room played last episode (every fetch frame the one sentence game), nor the attic its last frame', () => {
+  const random = Math.random;
+  Math.random = seededRand(137);
+  try {
+    progress.reset();
+    setCastOptions({ fixed: false, rand: Math.random, overrides: {} });
+    const side = (g: string) => (g.startsWith('sentence:') ? 'sentence' : g);
+    let last: string[] | null = null;
+    for (let e = 0; e < 40; e++) {
+      resetEpisode();
+      rememberCast();
+      const games = housePlan().map((p) => p.game);
+      if (last) {
+        for (const g of games.slice(0, 2)) assert.ok(!last.slice(0, 2).map(side).includes(side(g)), `episode ${e + 1}: ${games.join(' ')} after ${last.join(' ')}`);
+        assert.notEqual(games[2], last[2], `episode ${e + 1}: the attic's ${games[2]} again`);
+      }
+      last = games;
+      progress.episodeDone();
+    }
   } finally {
     Math.random = random;
     setCastOptions({ overrides: {}, fixed: !EPISODE_DEFAULTS.randomCast });

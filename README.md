@@ -43,7 +43,7 @@ Playwright browsers are per machine, so a worktree does not need them again.
 
 Title → bedroom (a dad wakes her: the helper, the villain) → the entry hall's warm-up →
 the quest place (the hub: the gift word, two side-room doors, one of them Charge the Spell
-or the Stretchy Bridge, door b the Shape-Shifter about half the time) → battle part 1 (too strong, retreat) → the hub again (the attic's
+or the Stretchy Bridge, door b the Shape-Shifter in 3 episodes of 7, never twice running) → battle part 1 (too strong, retreat) → the hub again (the attic's
 counter word) → battle part 2 → the victory scene → the recap → THE END (Dad's 2 plays
 again). Selection is walking everywhere; yellow (Tab) says it again or hints.
 
@@ -172,7 +172,7 @@ runes in battle (items 053, 059). The forced room is Charge the Spell or the Str
 `playRoom` and the bug-hunt checker play the bridge too (`playBridgeRoom`: slide across
 with the stick, Dad's yes where he is asked, the right picture); `tests/bridge.spec.ts`
 covers its three help levels and a wrong picture (item 054). `SHIFTER_ROOM` follows
-the same rule for the Shape-Shifter behind door b (item 096; about half the drawn episodes since item 126): `playRoom` plays it
+the same rule for the Shape-Shifter behind door b (item 096; 3 drawn episodes in 7, never twice running, since item 137): `playRoom` plays it
 (`playShifterRoom`: each link's right picture or stone, a wrong one first with
 `wrongFirst`), and `tests/shifter.spec.ts` plays one room through both beats at base level
 (untagged, ~8 s; its pacing test is slow lane). `tests/hunt6.spec.ts` (item 102) keeps the sixth hunt's Shape-Shifter
@@ -414,7 +414,10 @@ back, the share back within 2 episodes, the most drawn against the mean, and wha
 came up. `--json=<file>` keeps the rows, each item's count among them (`counts`, item 126: to follow
 one word, BUG say, across runs); `--only=<name,…>` narrows them. Under the table (hunt 9,
 M39): the Shape-Shifter's visits, how many were short (under `SHIFTER.links`, by length) and
-how many changed all three places. `Math.random` is
+how many changed all three places. Then (item 137) how many episodes' door a, door b or attic
+game came straight back (doors: either side room's last game, the sentence game by kind) and
+every action word that came up as a picture she picks from; either above 0 fails the run
+(exit 1), as a stored word drawn does. `Math.random` is
 seeded, so a seed replays; a change to any draw or to the bank moves every later episode,
 so compare the same seeds before and after. Item 121's before and after runs are its report's.
 A before run needs no checkout: `git archive <commit> | tar -x -C scratch/<dir>`, then run
@@ -529,7 +532,7 @@ keep such scripts in the worktree.
   (W35); under the line sending her there it stays a bug. `playChargeRoom(page, 'away')`
   (harness) leaves Dad out, and `RoomPlay.dadAway` passes it through `playRoom`.
 - **The ninth hunt's batch** (`QA_SET=hunt9`, item 129): `doorb5` (five drawn episodes: door b
-  holds the Shape-Shifter about half the time since item 126, a sentence frame or the word
+  holds the Shape-Shifter in 3 episodes of 7, never two running (item 137; about half before), a sentence frame or the word
   machine otherwise; `door-b-streak`, a look, when it is in or missing three episodes
   running), `story_drawn_scar` and `story_drawn_elsa_wrong` (seeds 976 and 965 draw Evil Smaug and
   his story fight from the title with no `fight=`; the second with wrong picks. A seed's cast is
@@ -1153,11 +1156,11 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
 - `voice:build` made item 037's 3,708 new lines (every action word's five narrator
   lines for all 16 narrators, the hub scenes, the quest variants, 81 word lines) in 13.5
   minutes on 4 workers, about 4.6 lines a second (2026-10-19).
-- Letter names (`letter_<x>_name`, item 033) are one-word lines spelled for edge-tts
-  ("Vee", "Aitch"): "Double you" for W is timed as two words and fails `voice:build`'s
-  word count, so it is "Dubbelyou". Measured 2026-10-19: 0.6–0.9 s each, F 1.35 s, R 1.08 s.
-  At real speed the warm-up walked straight (the harness's path) takes about 18 s from the
-  hall opening to out of its door.
+- Letter names (`letter_<x>_name`, item 033) were one-word lines spelled for edge-tts
+  ("Vee", "Aitch"; "Double you" failed `voice:build`'s word count, so W was "Dubbelyou").
+  Item 137 retired them with item 096's `letter_<x>_hides` bridges: no line says a letter's
+  name. With them, at real speed, the warm-up walked straight took about 18 s from the hall
+  opening to out of its door; it is shorter now (not measured).
 - The build cuts each clip's edge-tts silence after the last word + 0.2 s
   (`tools/voice/mp3.ts`); generated voice lives in `public/voice-gen/` (*Storage*). Sizes
   and their history: `docs/engineering.md`, *Voice*.

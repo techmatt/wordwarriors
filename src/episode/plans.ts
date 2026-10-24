@@ -30,19 +30,19 @@
 import { CHARACTER_BY_ID, personOf } from '../../content/battle/roster';
 import type { CounterItem } from '../../content/battle/types';
 import { BEDROOMS, COUNTER_ROOM, FETCH_ROOMS, PLACE_BY_ID, SIDE_ROOM_BY_ID } from '../../content/house/house';
-import { BANK } from '../../content/phonics/bank';
+import { BANK, THINGS } from '../../content/phonics/bank';
 import { FRAMES, sentence } from '../../content/phonics/sentences';
 import { NARRATOR_LINES, wakeTemplate, wakeVariant } from '../../content/voice/script';
 import { FORCE_PHONICS_ROOM, SHIFTER_ROOM, STORY_FIGHT, VARIETY } from '../config';
 import { CHAINS_KEPT, LAST_READ, chainKey } from '../rules/shifter';
-import { leastRecent } from '../rules/recent';
+import { fresh, leastRecent } from '../rules/recent';
 import { fightSpec, pickFight } from '../rules/fights';
 import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
 import { pickEnding } from '../rules/endings';
 import { ENDING_BY_ID } from '../../content/house/endings';
 import { withStems } from '../rules/bank';
 import { episodePlans, wordsOf, type EpisodeInput, type RoomPlan } from '../rules/sentences';
-import { BRIDGE_GAME, CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SENTENCE_GAMES, SHIFTER_GAME, drawGames, type Minigame } from '../rules/minigames';
+import { BRIDGE_GAME, CHARGE_GAME, LAST_GAMES, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SENTENCE_GAMES, SHIFTER_GAME, drawGames, lastGames, repeatsLast, type Minigame } from '../rules/minigames';
 import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
 import { planStoryMoves } from '../rules/storyFight';
 import { STORY_BY_ID, storyLines } from '../../content/battle/stories/index';
@@ -73,6 +73,8 @@ export function rememberPlan(): void {
   progress.remember(LAST_READ, readingWords().join(' '), 1);
   if (urlPicksGames(urlQuery())) return;
   for (const p of plan) progress.remember('games', p.game, 3 * VARIETY.rotations);
+  // Item 137: door a's, door b's and the attic's, which the next episode's draw keeps clear of while another fits.
+  progress.remember(LAST_GAMES, plan.map((p) => p.game).join(' '), 1);
   const phonics = plan.find((p) => PHONICS_GAMES.some((g) => g.id === p.game));
   if (phonics) progress.remember('phonics', phonics.game, 1);
   // Hunt 7, M36: the Shape-Shifter's chain, a rotation of its own.
@@ -150,12 +152,13 @@ export function housePlan(): RoomPlan[] {
  * sentence on each banner): that frame and key word in the sentence room
  * drawn for it, the attic's for a counter frame, door a's for a fetch frame
  * (with `?game=sentence:<frame>`). The key word takes the drawn key's place
- * among the pictures.
+ * among the pictures: a pictured word only (item 137: an action word, DRIP,
+ * is never a picture she picks).
  */
 function forcedSentence(plan: RoomPlan[], fill: EpisodeInput['fill']): RoomPlan[] {
   const [frameId, key] = (urlQuery().get('sentence') ?? '').split(':');
   const frame = FRAMES.find((f) => f.id === frameId);
-  if (!frame || !key || !BANK.some((w) => w.word === key)) return plan;
+  if (!frame || !key || !THINGS.some((w) => w.word === key)) return plan;
   const slot: Slot = frame.use === 'counter' ? 'counter' : 'a';
   return plan.map((p) => {
     if (p.slot !== slot || p.kind !== 'sentence') return p;
@@ -257,8 +260,8 @@ export function grabPlan(): { word: string; objects: string[] } {
  * `?game=` holds door a.
  *
  * The beta's Shape-Shifter (item 096; item 126): it is behind door b of
- * about half the episodes (SHIFTER_ROOM, leaning away from last episode's
- * pick; door a when no phonics game is forced), on the same terms; else
+ * 3 episodes in 7, never two running (SHIFTER_ROOM, item 137; door a when
+ * no phonics game is forced), on the same terms; else
  * door b is a fetch sentence frame or the word machine, never a second
  * phonics game. `?room=shifter` forces it whatever else is asked; `?room=charge`
  * and `?room=bridge` keep it behind door b.
@@ -270,7 +273,7 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
   const room = ROOM_FORCE.get(q.get('room') ?? '');
   const phonics =
     room && room !== SHIFTER_GAME ? room
-      : FORCE_PHONICS_ROOM && !only && !asked ? MINIGAME_BY_ID[pickWeighted(PHONICS_GAMES.map((g) => g.id), (id) => MINIGAME_BY_ID[id]!.weight * (progress.recentOf('phonics').includes(id) ? VARIETY.gameWeight : 1), 1, planRand)[0]!]
+      : FORCE_PHONICS_ROOM && !only && !asked ? MINIGAME_BY_ID[pickWeighted(fresh(PHONICS_GAMES.map((g) => g.id), progress.recentOf('phonics'), 1), (id) => MINIGAME_BY_ID[id]!.weight, 1, planRand)[0]!]
         : undefined;
   const drawn = !only && !asked;
   // `?room=charge` / `?room=bridge` keep it behind door b, as before item 126 (tests/opening.spec.ts plays both).
@@ -281,8 +284,11 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
   // Item 126: drawn, the other door is a sentence frame or the word machine (the phonics games and the Shape-Shifter are forced or not at all).
   const pool = only ?? framesClear(drawn ? MINIGAMES.filter((g) => !PHONICS_GAMES.includes(g) && g !== SHIFTER_GAME) : MINIGAMES);
   const rest = drawGames(progress, planRand, pool.filter((g) => !forced.includes(g)));
+  // Item 137: door b takes the drawn game that is not last episode's when only one is (drawGames puts it first).
+  const last = lastGames(progress);
+  const b = repeatsLast(last, 'fetch', rest[1].id) && !repeatsLast(last, 'fetch', rest[0].id) ? rest[0] : rest[1];
   // The pool too: a room that cannot plan its game plays a sentence frame from it (`episodePlans`).
-  return { games: [forced[0]!, forced[1] ?? rest[1], rest[2]], pool };
+  return { games: [forced[0]!, forced[1] ?? b, rest[2]], pool };
 }
 
 /** The chance of the Shape-Shifter behind door b this episode (SHIFTER_ROOM): after one that had it, or one that did not. */

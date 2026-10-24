@@ -239,7 +239,7 @@ everybody!" with no verb (M18); `tests/unit/qacategories.test.ts`.
 
 | # | Where | What | Why |
 | --- | --- | --- | --- |
-| W16 | Dad lock | Under the lock the bedroom's wake-up story, the warm-up's intro (its letter names and sounds) and the victory scene's lines into the recap run on by themselves. | W10's kind: no press moves them, they are the flow; W10 names the places if Matt wants the lock to pause it. |
+| W16 | Dad lock | Under the lock the bedroom's wake-up story, the warm-up's intro (its letter names and sounds; no names since item 137) and the victory scene's lines into the recap run on by themselves. | W10's kind: no press moves them, they are the flow; W10 names the places if Matt wants the lock to pause it. |
 | W17 | Network | With one fetch in seven failing, two lines in an episode played silent (their clip's fetch failed again when asked). | Every art id and nearly every clip retried in; the game needs no network (README, *Operational facts*). |
 | W18 | Reload | The rotations remember an episode's cast and rooms from the bedroom on, so an episode reloaded early still counts as seen for the next draws. | By design (`src/episode/draws.ts`): an episode she has begun has shown its villain and rooms. |
 

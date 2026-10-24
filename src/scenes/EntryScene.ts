@@ -5,11 +5,11 @@
  * Nine pictures stand on the floor, with no words on them (item 059: with
  * its word printed under each she matched letters instead of sounding out). The narrator asks for one and
  * gives the clue at the word's level on the ramp (src/rules/grab.ts), a
- * phonics task that never says the word (amendment 1549): level 1 each
- * single letter's name then its sound (a multi-letter unit, NG SH CK LL,
- * only its one sound: item 085), level 2 the sounds with the
- * letters, level 3 the sounds over blank boxes. A board over the hall shows
- * the letters as they are named or sounded and lights each in turn (a
+ * phonics task that never says the word (amendment 1549) nor a letter's name
+ * (item 137): levels 1 and 2 the sounds with the letters (a multi-letter
+ * unit, NG SH CK LL, one sound: item 085), level 3 the sounds over blank
+ * boxes. A board over the hall shows
+ * the letters as they are sounded and lights each in turn (a
  * digraph's two letters together, one sound: SH of SHIP).
  *
  * She walks to a picture and presses green. Right: a burst, the word (the
@@ -47,8 +47,7 @@ const PIC = 108;
 const BOARD_Y = 205;
 const TILE = 76;
 const TILE_GAP = 14;
-/** A beat after each letter, so the names and sounds stay apart (the sentence room's is 450). */
-const NAME_GAP_MS = 220;
+/** A beat after each sound, so the sounds stay apart (the sentence room's is 450). */
 const SOUND_GAP_MS = 400;
 /** The help's sound-out goes slower: each sound stands on its own, never run together. */
 const HELP_GAP_MS = 700;
@@ -225,7 +224,7 @@ export class EntryScene extends RoomScene {
 
   /**
    * The clue at the word's level, never the word itself (amendment 1549):
-   * names and shown sounds write their letters into the board's boxes, every
+   * shown sounds write their letters into the board's boxes, every
    * step lights its own. From GRAB.helpAfter misses: the slow sound-out, the
    * letters shown.
    */
@@ -236,21 +235,17 @@ export class EntryScene extends RoomScene {
       popIn(this, this.board);
     }
     const help = this.misses >= GRAB.helpAfter;
-    // The names' bridges the first time only (hunt 6, M27); kept on the episode, so an F9 trip does not say them again.
-    const g = episode.grab;
-    const bridge = !g?.clued;
-    if (g) g.clued = true;
-    for (const step of clue(this.word, this.level, help, bridge)) {
+    for (const step of clue(this.word, this.level, help)) {
       // A digraph's sound (SH) lights both its boxes at once.
       const lit = this.tiles.slice(step.index, step.index + step.span);
       for (const o of this.tiles) o.box.setFillStyle(0xfff8e6, 1);
       lit.forEach((t, j) => {
-        t.box.setFillStyle(step.kind === 'name' ? 0xffe066 : 0x9be7ff, 1);
+        t.box.setFillStyle(0x9be7ff, 1);
         if (step.show) t.letter.setText(this.word[step.index + j]!.toUpperCase());
       });
       this.tweens.add({ targets: lit.flatMap((t) => [t.box, t.letter]), scale: 1.18, duration: 130, yoyo: true });
       if (step.id) await this.say(step.id);
-      await this.wait(step.kind === 'name' ? NAME_GAP_MS : help ? HELP_GAP_MS : SOUND_GAP_MS);
+      await this.wait(help ? HELP_GAP_MS : SOUND_GAP_MS);
     }
     for (const o of this.tiles) o.box.setFillStyle(0xfff8e6, 1);
     if (this.phase === 'intro' || this.phase === 'find') this.locked = false;

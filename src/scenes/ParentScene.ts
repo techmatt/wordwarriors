@@ -149,7 +149,7 @@ export class ParentScene extends Phaser.Scene {
         return `${word} ${s.seen}·${recentPct(s)}`;
       });
       const more = ws.length > shown.length ? `  +${ws.length - shown.length} more` : '';
-      return `${l} ${['names + sounds', 'sounds, letters shown', 'sounds only'][l - 1]}: ${list.join('  ') || '–'}${more}`;
+      return `${l} ${['sounds, letters shown', 'sounds, letters shown', 'sounds only'][l - 1]}: ${list.join('  ') || '–'}${more}`;
     });
     this.add.text(x, y, 'Warm-up levels', { fontFamily: 'Segoe UI, sans-serif', fontSize: '17px', color: '#333', fontStyle: 'bold' });
     fitText(this.add.text(x, y + 24, [...rows, `Reached: new words start at ${GRAB.startLevel}; right first time: up one, a first-try miss: down one. ${difficulty() === 1 ? `Difficulty 1: the hall gives every word ${GRAB.startLevel}.` : `The hall gives up to ${difficulty()}.`}`], { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#444' }), w, h - 24);

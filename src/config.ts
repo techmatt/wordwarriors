@@ -167,7 +167,8 @@ export const DIFFICULTY: 1 | 2 | 3 = 1;
  * `words`: how many of her latest right-first-time reads weigh `wordWeight`
  * in the bank's draws (src/rules/bank.ts `drawWords`), so last episode's
  * words rarely come straight back; a word she missed keeps its full weight.
- * `gameWeight`: a game played last episode weighs this much in the pool.
+ * `gameWeight`: a game of her last episodes weighs this much in the pool
+ * (last episode's own sit out while another fits: item 137, `repeatsLast`).
  */
 export const VARIETY = { rotations: 2, words: 24, wordWeight: 0.25, gameWeight: 0.35 };
 
@@ -269,10 +270,9 @@ export const FORCE_PHONICS_ROOM = true;
 /**
  * The home warm-up (item 033, src/scenes/EntryScene.ts): "Before we head out,
  * let's take the ..." in the entry hall. Each word has its own level on a
- * ramp, a phonics clue that never says the word (amendment 1549): 1 = each
- * single letter's name, then its sound (a multi-letter unit, NG SH CK LL,
- * only its one sound: item 085); 2 = sounds only, the letters
- * shown; 3 = sounds only, blank boxes. `startLevel` is where a word she has
+ * ramp, a phonics clue that never says the word (amendment 1549) nor a
+ * letter's name (item 137): 1 and 2 = the sounds, unit by unit (NG SH CK LL
+ * one sound each: item 085), the letters shown; 3 = the sounds, blank boxes. `startLevel` is where a word she has
  * never grabbed starts; right first time moves a word up a level, a miss on
  * its first try moves it down (recorded always; DIFFICULTY caps the level the
  * hall gives). From `helpAfter` misses the clue is the slow sound-out, letters
@@ -369,16 +369,17 @@ export const SHIFTER = {
 };
 
 /**
- * Beta (item 096; item 126, Matt's pick): about half the episodes have a
- * Shape-Shifter behind door b (beside FORCE_PHONICS_ROOM's game behind door
+ * Beta (item 096; item 126, Matt's pick; item 137): 3 episodes in 7 have a
+ * Shape-Shifter behind door b, never two running (beside FORCE_PHONICS_ROOM's game behind door
  * a); the others a fetch sentence frame or the word machine there. `afterOne`
  * is the chance in an episode after one that had it, `afterNone` after one
- * that did not: a half in the long run, seldom twice running nor long
- * missing. 0 and 0 turn it off (door b from the pool); 1 and 1 force it
+ * that did not. Item 137 (games rotate strictly): never twice running, so
+ * `afterOne` is 0 and it is in 3 episodes of 7 in the long run (it was 0.25:
+ * a half). 0 and 0 turn it off (door b from the pool); 1 and 1 force it
  * every episode. A test URL that picks its own games (`?games=sentence`,
  * `?game=`) is left alone; `?room=shifter` forces it anyway.
  */
-export const SHIFTER_ROOM = { afterOne: 0.25, afterNone: 0.75 };
+export const SHIFTER_ROOM = { afterOne: 0, afterNone: 0.75 };
 
 /**
  * A villain's story fight (item 126, Matt's pick: Evil Smaug's in half his

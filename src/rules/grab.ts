@@ -7,9 +7,10 @@
  * asks for one and gives a phonics clue, never the word itself (amendment
  * 1549), at the word's own level on a ramp (GRAB in src/config.ts; `clue`):
  *
- *   1. letter names and sounds, unit by unit (a multi-letter unit its sound only);
- *   2. sounds only, the letters shown;
- *   3. sounds only, blank boxes.
+ *   1, 2. the sounds, unit by unit, the letters shown;
+ *   3. the sounds, blank boxes.
+ *
+ * Never a letter's name (item 137, Matt: names and sounds together confused her).
  *
  * Right first time moves the word up a level, a miss on its first try moves
  * it down: recorded always, but the hall gives `helpLevel` of it (item 067:
@@ -27,13 +28,12 @@
 
 import { BANK, BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
 import { NO_BAG_COPY, lookalikesOf } from '../../content/phonics/sentences';
-import { letterNameLine, nameHidesLine } from '../../content/voice/ids';
 import { GRAB } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { coverage, distractorsFor, isFirm, met } from './bank';
 import { pickWeighted, shuffle, type Rand } from './random';
 import { clampLevel, helpLevel, type HelpLevel } from './difficulty';
-import { nameHolds, soundOut } from './soundOut';
+import { soundOut } from './soundOut';
 
 export type GrabLevel = HelpLevel;
 
@@ -124,13 +124,12 @@ export function hallObjects(store: ProgressStore, word: string, avoid: Iterable<
 /**
  * One part of a clue: a line, and which letters of the word it lights: from
  * `index`, `span` letters (2 for a digraph's sound). `show`: the step writes
- * its letters into the board's boxes (a name always; a sound at levels 1-2
- * and in the help, never at level 3, where the boxes stay blank).
+ * its letters into the board's boxes (at levels 1-2 and in the help, never at
+ * level 3, where the boxes stay blank).
  */
 export interface ClueStep {
   /** The line to say; `` for a silent letter (item 056), which only lights. */
   id: string;
-  kind: 'name' | 'sound';
   index: number;
   span: number;
   show: boolean;
@@ -141,34 +140,20 @@ export interface ClueStep {
  * one, so no step ever says the word; its `word_` line is the confirmation
  * after she has it). Sound by sound unit (SH, I, P: the bank's `units` and
  * `spelled` sounds), one at a time and never blended, so a digraph is one
- * sound lighting both its letters:
+ * sound lighting both its letters. Only sounds, never a letter's name (item
+ * 137: the names, and item 096's bridges from them, are gone):
  *
- *   1. a single letter's name, then its sound (I, "i"; P, "p"); where the
- *      name holds the sound, the bridge from it instead (item 096: "P's name
- *      is Pee... keep just the start:", then "p"; NAME_HIDES); a
- *      multi-letter unit only its sound, both letters lit ("sh", item 085);
- *   2. the sounds alone, each unit's letters appearing on the board with it;
- *   3. the sounds alone over blank boxes.
+ *   1, 2. each unit's letters appearing on the board with its sound;
+ *   3. the sounds over blank boxes.
  *
- * `help` (after GRAB.helpAfter misses, any level) is the sound-out alone,
- * the letters on the board, which the scene gives a longer beat per sound.
- * `bridge`: the name's bridge to its sound is the first saying's only (hunt
- * 6, M27: LAMP's clue ran 21 s, every bridge again on each miss); after it,
- * the plain name then the sound.
+ * `help` (after GRAB.helpAfter misses, any level) is the sound-out with the
+ * letters on the board, which the scene gives a longer beat per sound.
  */
-export function clue(word: string, level: GrabLevel, help = false, bridge = true): ClueStep[] {
+export function clue(word: string, level: GrabLevel, help = false): ClueStep[] {
   const out: ClueStep[] = [];
+  const show = help || level <= 2;
   // By sound unit (src/rules/soundOut.ts): a long-vowel word spells its sounds out (KEY is K, then long E on EY).
-  for (const s of soundOut(word)) {
-    // Item 085: only a single letter is named first. A multi-letter unit (NG,
-    // SH, CK, LL, EE...) is its one sound alone, both letters lit: KING is
-    // "kay, kuh, eye, ih, ng", never "en, gee, ng".
-    // Item 096: where the name holds the sound (M, "Em"), the name is the bridge to it ("M's name is Em... squeeze off the front:").
-    // Not a silent letter (hunt 10): KITE's E named "Ee" sounded like a long E, K-I-T-EE.
-    if (level === 1 && !help && s.span === 1 && s.sound !== '') out.push({ id: bridge && nameHolds(s.unit, s.sound) ? nameHidesLine(s.unit) : letterNameLine(s.unit), kind: 'name', index: s.index, span: 1, show: true });
-    const show = help || level <= 2;
-    // A silent letter (KITE's E, item 056) lights in its turn and says nothing: no line id.
-    if (s.id || s.sound === '') out.push({ id: s.id, kind: 'sound', index: s.index, span: s.span, show });
-  }
+  // A silent letter (KITE's E, item 056) lights in its turn and says nothing: no line id.
+  for (const s of soundOut(word)) if (s.id || s.sound === '') out.push({ id: s.id, index: s.index, span: s.span, show });
   return out;
 }

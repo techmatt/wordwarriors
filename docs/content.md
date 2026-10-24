@@ -728,10 +728,8 @@ room she pokes for fun. Art: `obj_<id>`, so object ids are unique across bedroom
 The digraphs SH CH TH CK are one sound unit each (`DIGRAPH_SOUNDS`, item 037:
 `letter_sh_sound`); every hint sounds a digraph as one sound and lights both letters.
 
-Letter **names** (item 033, the home warm-up spells with them) are `LETTER_NAMES` in the
-same file: `letter_<x>_name`, shown as the bare capital, `say` the name spelled out for
-edge-tts ("Vee", "Dubbelyou": "Double you" is timed as two words and fails the build). A
-recording replaces one the same way: `npm run voice:clip -- letter_<x>_name <file.mp3>`.
+No line says a letter's **name** (item 137, `docs/rulings.md`): item 033's `letter_<x>_name`
+and item 096's `letter_<x>_hides` lines are retired.
 
 ## A rune (Charge the Spell, `content/phonics/runes.ts`)
 
@@ -776,7 +774,7 @@ Any short pictured bank word (`GRAB.maxUnits` sound units) can be asked for, by 
 grabs' shakiness times the bank's coverage, never one of her last 3 grabs; adding a word
 adds it. `GRAB.startLevel` is where a word she has never grabbed starts, and at base
 `DIFFICULTY` where every word stays
-(1 each letter's name then its sound, 2 sounds with the letters shown, 3 sounds only; no
+(1 and 2 sounds with the letters shown, 3 sounds only; never a letter's name, item 137; no
 level says the word, amendment 1549), `GRAB.helpAfter` how many misses before the clue
 is the slow sound-out with the letters shown, `GRAB.objects` how many pictures stand in the hall
 (`ENTRY_HALL.spots` in `content/house/house.ts` has a place for each).

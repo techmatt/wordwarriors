@@ -56,7 +56,7 @@ test('Shape-Shifter at base level: read it and fix it, a wrong pick on each soun
         expect(since.some((id) => id.endsWith('_shifter_says'))).toBe(true);
         expect(since).not.toContain(wordLine(wrong));
       } else {
-        // Her letter's sound (a name's bridge first where it holds it), never a word made of it.
+        // Her letter's sound alone (never its name: item 137), never a word made of it.
         expect(since.some((id) => id.endsWith('_shifter_stone'))).toBe(true);
         expect(since).toContain(letterSoundLine(wrong.slice('stone_'.length)));
         expect(since.filter((id) => id.startsWith('word_'))).toEqual([]);

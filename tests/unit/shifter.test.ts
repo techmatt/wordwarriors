@@ -1,7 +1,7 @@
 /**
  * Item 096: the Shape-Shifter's rules (src/rules/shifter.ts): its chains,
  * beats and options, its help ramp, its place in the pool and the house
- * plan; and the sound hidden in a letter's name (`nameToSound`).
+ * plan; and a letter's sound as its hints give it (`soundLines`, never its name: item 137).
  */
 
 import assert from 'node:assert/strict';
@@ -10,15 +10,14 @@ import { test } from 'node:test';
 
 import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { lookalikesOf } from '../../content/phonics/sentences';
-import { NAME_HIDES } from '../../content/phonics/letters';
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
-import { letterSoundLine, nameHidesLine, narratorLine } from '../../content/voice/ids';
+import { letterSoundLine, narratorLine } from '../../content/voice/ids';
 import { SHIFTER } from '../../src/config';
 import { stepLevel } from '../../src/rules/difficulty';
 import { MINIGAMES, MINIGAME_BY_ID, SHIFTER_GAME, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/sentences';
 import { SHIFT_WORDS, chainsOf, changedAt, pictureSiblings, placesOf, wrongPictures, stonesFor, orderBreaks, planShifter, positionsOf, shifterLevel, shifterShown, shifterWords } from '../../src/rules/shifter';
-import { nameToSound } from '../../src/rules/soundOut';
+import { soundLines } from '../../src/rules/soundOut';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
 import { withDifficulty } from './difficulty';
@@ -172,16 +171,12 @@ test('episodePlans with the Shape-Shifter: its words are the fetches, its last t
   }
 });
 
-test('the sound hidden in the name (ride-along): the bridge before the sound for B D F J K L M N P R S T V Z only; every line exists', () => {
+test('a letter is its sound alone, never its name (item 137 retired item 096: no bridge from the name); every line exists', () => {
   const ids = new Set(composeLines().map((l) => l.id));
-  for (const l of 'bdfjklmnprstvz') {
-    assert.deepEqual(nameToSound(l), [nameHidesLine(l), letterSoundLine(l)], l);
-    assert.ok(NAME_HIDES[l] && ids.has(nameHidesLine(l)), l);
-  }
-  for (const l of 'cghwyxaeiou') assert.deepEqual(nameToSound(l), [letterSoundLine(l)], l);
-  // A letter not saying its own sound (CAT's C) is plain; so is a digraph.
-  assert.deepEqual(nameToSound('c', 'k'), [letterSoundLine('k')]);
-  assert.deepEqual(nameToSound('sh'), [letterSoundLine('sh')]);
+  for (const l of 'bcdfghjklmnprstvwxyzaeiou') assert.deepEqual(soundLines(l), [letterSoundLine(l)], l);
+  assert.deepEqual(soundLines('sh'), [letterSoundLine('sh')]);
+  // A silent letter says nothing.
+  assert.deepEqual(soundLines(''), []);
   // The room's own lines, for every narrator voice.
   for (const k of ['shifter_intro', 'shifter_starts', 'shifter_read', 'shifter_fix', 'shifter_hint', 'shifter_stone', 'shifter_picked', 'shifter_says', 'shifter_nope', 'shifter_again', 'shifter_cue_read', 'shifter_cue_fix', 'shifter_fixed', 'shifter_done']) assert.ok(ids.has(narratorLine('dada_matt', k)), k);
 });

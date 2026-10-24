@@ -150,7 +150,7 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'away_front', text: "The way out is open! Let's go!", say: "The way out is open, let's go!" },
   { key: 'away_ready', text: "We're ready! Let's go to the fight!", say: "We're ready, let's go to the fight!" },
   // The home warm-up (item 033, src/scenes/EntryScene.ts). `grab_ask` and
-  // `grab_need` trail off into the clue (letter names and letter sounds, never
+  // `grab_need` trail off into the clue (letter sounds, never a letter's name: item 137; never
   // the word: amendment 1549; its word_ line confirms it once she has it); `grab_wrong` trails off into
   // the word she picked (word_cat): she has picked it, so it may be said.
   { key: 'grab_ask', text: "Before we head out, let's take the..." },
@@ -203,8 +203,8 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'bridge_done', text: "We crossed every bridge! We're ready to fight!", say: "We crossed every bridge, we're ready to fight!" },
   { key: 'bridge_done_2', text: 'That was every bridge! Great job!', say: 'That was every bridge, great job!' },
   // The Shape-Shifter (item 096, src/scenes/ShifterRoom.ts). No line names a
-  // letter, a sound or a word she reads: the sounds are letter_ lines (a
-  // name's bridge to its sound first, `letter_<x>_hides`), and a new word is
+  // letter, a sound or a word she reads: the sounds are letter_ lines (never a
+  // letter's name: item 137), and a new word is
   // said (word_) only once she has it. `shifter_starts` trails off into the
   // first creature's word, said (it is not read); `shifter_picked`,
   // `shifter_says` and `shifter_stone` into a sound.

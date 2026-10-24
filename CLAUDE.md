@@ -125,10 +125,9 @@ a **readonly** item; a new look is a `--brief` file in `scratch/`, not an edit t
 - **Speech rule:** voice everything except the word she must read; that word is spoken
   only after she answers, as confirmation. Letter SOUNDS, never letter names, and never
   captioned (the placeholder spelling is not text to read). A hint sounds out letters one
-  by one (a digraph, SH CH TH CK, as one sound) and never blends them. Where a letter's
-  name holds its sound (B D F J K L M N P R S T V Z) a hint or teaching line may say the
-  name as a bridge to it ("M's name is Em... squeeze off the front: mmm",
-  `letter_<x>_hides`). Two deliberate exceptions: Spell the Spell says its word first
+  by one (a digraph, SH CH TH CK, as one sound) and never blends them. No clue, hint or
+  teaching line says a letter's name, not even as a bridge to its sound (item 137,
+  `docs/rulings.md`). Two deliberate exceptions: Spell the Spell says its word first
   (it is writing, not reading; the ghost boxes show every letter), and in the battle's
   move choice the partner says which word to pick (she hears it and finds it written).
   Choice-word moves are never called out during the fight.

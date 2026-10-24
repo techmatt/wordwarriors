@@ -20,8 +20,8 @@
  * Help fades per word (`shifterLevel`, ProgressStore `shifterLevels`): 1 the
  * changed letter lit and each stone sounding as she comes near it; 2 lit,
  * silent stones; 3 nothing lit. Yellow sounds the new letter (read it) or
- * the stone in reach (fix it), a letter whose name holds its sound with the
- * bridge from its name first (`nameToSound`). Right first time with no help
+ * the stone in reach (fix it): its sound alone, never the letter's name (item
+ * 137; `soundLines`). Right first time with no help
  * moves the word up a level; a hint or a miss, down one (recorded always;
  * DIFFICULTY caps what the room gives, so at base every word plays level 1).
  *
@@ -53,7 +53,7 @@ import { burst, fitImage, fitPicture, floatText, pictureSize, popIn, shake, shoc
 import { TEX } from '../fx/textures';
 import { stepLevel } from '../rules/difficulty';
 import { recordedShifterLevel, shifterLevel, soundAt, type Position, type ShifterLevel, type ShifterLink, type ShifterPlan } from '../rules/shifter';
-import { nameToSound, soundOut } from '../rules/soundOut';
+import { soundLines, soundOut } from '../rules/soundOut';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
@@ -558,14 +558,14 @@ export class ShifterRoom extends HouseSideRoom {
     if (t && !(this.lit && pos === this.current.pos)) t.setColor(INK);
   }
 
-  /** The new word's letter at `pos` flashes while its sound is said (the name first where it holds the sound). */
+  /** The new word's letter at `pos` flashes while its sound is said. */
   private flashNewLetter(pos: Position): Promise<void> {
     const word = this.current.to;
-    return this.flashLetter(pos, nameToSound(word[pos]!, soundAt(word, pos)));
+    return this.flashLetter(pos, soundLines(soundAt(word, pos)));
   }
 
   /**
-   * A stone swells while its letter is sounded (the name first where it holds the sound); it stops once a
+   * A stone swells while its letter is sounded; it stops once a
    * newer flow takes over. It settles back to the size it shows in reach, or at rest once she has walked off.
    * Its letter is lifted beside her while it sounds, as at level 1 (hunt 10: a miss or a hint sounds the stone
    * she stands at, her figure over its letter; M42's case).
@@ -575,7 +575,7 @@ export class ShifterRoom extends HouseSideRoom {
     const letter = spot.obj.getData('letter') as string;
     spot.obj.setScale(spot.baseScale * 1.15);
     const lift = this.showLift(letter);
-    for (const id of nameToSound(letter)) {
+    for (const id of soundLines(letter)) {
       if (f !== this.flow) break;
       await this.say(id);
     }

@@ -81,10 +81,9 @@ export interface EpisodeState {
   /**
    * The home warm-up (item 033, src/rules/grab.ts): the word she grabs in the
    * entry hall and the hall's pictures. Drawn before the house plan, which
-   * keeps the word out of its reading. `clued`: the clue has been said once,
-   * so again (a miss, yellow) it gives the plain name, no bridge (hunt 6, M27).
+   * keeps the word out of its reading.
    */
-  grab: { word: string; objects: string[]; level: number | null; misses: number; clued?: boolean } | null;
+  grab: { word: string; objects: string[]; level: number | null; misses: number } | null;
   /** The victory scene (content/house/endings.ts id), drawn when it starts (item 027). */
   ending: string | null;
   /** The victory scene has been counted (progress `remember('ending')`, `episodeDone`): it may be drawn earlier than it opens. */

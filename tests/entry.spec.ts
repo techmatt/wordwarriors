@@ -1,7 +1,7 @@
 /**
  * Item 033: the home warm-up in the entry hall, "Before we head out, let's
- * grab the ...". All slow lane (each over 10 s): a new player's clue (each
- * letter name then its sound, never the word: amendment 1549), the right
+ * grab the ...". All slow lane (each over 10 s): a new player's clue (the
+ * sounds, never a letter's name (item 137) and never the word: amendment 1549), the right
  * pick, the level up, and out to the hub; levels 2 and 3's clues; three
  * misses (the slow sound-out as help, the level down);
  * F9 out and back; and a sweep of drawn casts from the bedroom, checking the
@@ -14,30 +14,24 @@
 import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { BANK_BY_WORD, THINGS } from '../content/phonics/bank';
-import { NAME_HIDES } from '../content/phonics/letters';
 import { DEPTH } from '../src/config';
 import { withStems } from '../src/rules/bank';
 import { inter } from './qa/checks';
 import { qaLayout } from './qa/probe';
 
 import { SLOW, boot, choose, collectErrors, expectNoErrors, leaveBedroom, playEntry, press, seedProgress, state, texts, until, type WWState } from './harness';
-import { letterNameLine, letterSoundLine, nameHidesLine, wordLine } from '../content/voice/ids';
+import { letterSoundLine, wordLine } from '../content/voice/ids';
 
 const LINE_BY_ID = new Map((JSON.parse(readFileSync('content/voice/lines.json', 'utf8')) as { id: string; text: string; say?: string }[]).map((l) => [l.id, l]));
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/033_${name}.png` });
 
-/** The warm-up's own lines, in order: its narrator lines, letter names and sounds, word lines. */
+/** The warm-up's own lines, in order: its narrator lines, letter sounds, word lines. */
 const clueLines = (s: WWState) => s.voice.history.filter((id) => /^letter_|^word_|_grab_/.test(id));
 
 // By sound unit: a long-vowel word spells its own (KEY is K, long E: item 048); a silent letter says nothing.
 const unitSounds = (w: string) => BANK_BY_WORD[w]!.units.map((u, i) => [u, BANK_BY_WORD[w]!.sounds[i] ?? u] as const);
 const sounds = (w: string) => unitSounds(w).flatMap(([, s]) => (s ? [letterSoundLine(s)] : []));
-// Level 1 (amendment 1549): a single letter's name, then its sound; a multi-letter unit (NG, SH, LL) only its sound (item 085).
-// A letter whose name holds its sound (item 096, NAME_HIDES) gets the bridge from its name instead of the bare name,
-// the first time the clue is said only (hunt 6, M27: a miss or yellow, the plain name).
-const nameOf = (u: string, s: string, bridge = true) => (bridge && NAME_HIDES[u] && u === s ? nameHidesLine(u) : letterNameLine(u));
-const namesAndSounds = (w: string, bridge = true) => unitSounds(w).flatMap(([u, s]) => [...(u.length === 1 ? [nameOf(u, s, bridge)] : []), ...(s ? [letterSoundLine(s)] : [])]);
 // Every word the hall can ask for (the bank's things), each at one ramp level. Read from the
 // bank, not listed: a hand list missed VET and BIN, so a draw of either started at 2 (item 047).
 const allAt = (level: number) => Object.fromEntries(THINGS.map((w) => [w.word, level]));
@@ -47,7 +41,7 @@ async function clued(page: Page): Promise<WWState> {
   return until(page, (st) => st.scene === 'Entry' && st.room?.round === 'entry:find' && !st.room.locked, 60_000, 'clue given');
 }
 
-test('warm-up, a new player: each letter name then its sound and never the word, nine pictures with no words; right first time moves the word up to 2; out to the hub', SLOW, async ({ page }) => {
+test('warm-up, a new player: the sounds, never a letter name (item 137) nor the word, nine pictures with no words; right first time moves the word up to 2; out to the hub', SLOW, async ({ page }) => {
   const errors = collectErrors(page);
   await boot(page, '?scene=grab&nojourney=1');
   const s = await clued(page);
@@ -63,7 +57,7 @@ test('warm-up, a new player: each letter name then its sound and never the word,
   // The door is not there until she has the thing.
   expect(s.room!.shown).not.toContain('door');
   // A phonics task, never a listening one (amendment 1549): the word is not said before she has it.
-  expect(clueLines(s)).toEqual([`nar_ellie_grab_ask`, ...namesAndSounds(g.word)]);
+  expect(clueLines(s)).toEqual([`nar_ellie_grab_ask`, ...sounds(g.word)]);
   expect(s.voice.history).not.toContain(wordLine(g.word));
   await shot(page, 'clue');
 
@@ -120,7 +114,7 @@ test('warm-up levels (at ?difficulty=3): 2 gives the sounds with the letters sho
   const one = await clued(base);
   const w1 = one.room!.grab!.word;
   expect(one.room!.grab!.level).toBe(1);
-  expect(clueLines(one)).toEqual([`nar_ellie_grab_ask`, ...namesAndSounds(w1)]);
+  expect(clueLines(one)).toEqual([`nar_ellie_grab_ask`, ...sounds(w1)]);
   await choose(base, `grab_${w1}`);
   const held = await until(base, (st) => st.room?.round === 'entry:door', 60_000, 'grabbed at base');
   // Right first time: her recorded level stays at the top (3), the hall gave 1.
@@ -145,10 +139,10 @@ test('warm-up misses: "that\'s the CAT, we need the ...", the clue again at the 
   const after = await state(page);
   const lines = clueLines(after);
   const miss = (i: number) => lines.slice(marks[i], marks[i + 1] ?? lines.length);
-  // The first clue: the names' bridges (item 096).
-  expect(lines.slice(0, marks[0]).slice(-namesAndSounds(g.word).length)).toEqual(namesAndSounds(g.word));
-  // Misses 1 and 2: the picked word is said, never the right one; names and sounds again (level 1), plain names now (M27).
-  for (const i of [0, 1]) expect(miss(i)).toEqual(['nar_ellie_grab_wrong', wordLine(others[i]), 'nar_ellie_grab_need', ...namesAndSounds(g.word, false)]);
+  // The first clue: the sounds.
+  expect(lines.slice(0, marks[0]).slice(-sounds(g.word).length)).toEqual(sounds(g.word));
+  // Misses 1 and 2: the picked word is said, never the right one; the sounds again (level 1).
+  for (const i of [0, 1]) expect(miss(i)).toEqual(['nar_ellie_grab_wrong', wordLine(others[i]), 'nar_ellie_grab_need', ...sounds(g.word)]);
   // Miss 3: the help sounds it out unit by unit, never the whole word (amendment 1549).
   expect(miss(2)).toEqual(['nar_ellie_grab_wrong', wordLine(others[2]), 'nar_ellie_grab_need', ...sounds(g.word)]);
   expect(lines).not.toContain(wordLine(g.word));

@@ -43,7 +43,7 @@ test('KEY and YOYO (item 048): level 1, no short vowel, never in a family, every
     assert.equal(WORD_BY_ID[w]?.decodable, true, `${w} sounds out (SentenceRoom sounds every unit)`);
     assert.ok(!FAMILY_WORDS.includes(w), w);
     for (const level of [1, 2, 3] as const) {
-      const sounds = clue(w, level).filter((s) => s.kind === 'sound');
+      const sounds = clue(w, level);
       assert.deepEqual(sounds.map((s) => s.id), x.sounds.map(letterSoundLine), `${w} level ${level}`);
       assert.deepEqual(sounds.map((s) => s.index), x.index, `${w} level ${level}: which letters each sound lights`);
     }

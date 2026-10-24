@@ -14,7 +14,7 @@ export async function voiceStatus(): Promise<void> {
   const by = { fresh: [] as string[], stale: [] as string[], missing: [] as string[] };
   for (const l of lines) by[clipStateFor(l, index).state].push(l.id);
 
-  // The sounds only: the letter names (item 033, `letter_<x>_name`) are ordinary lines.
+  // The sounds only.
   const letters = lines.filter((l) => l.id.startsWith('letter_') && l.id.endsWith('_sound'));
   // The sound key, whole: `letter_long_a_sound` is long_a, not l.
   const lettersLeft = letters.filter((l) => clipStateFor(l, index).state !== 'fresh').map((l) => l.id.slice('letter_'.length, -'_sound'.length));

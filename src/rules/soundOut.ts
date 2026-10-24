@@ -11,8 +11,8 @@
  */
 
 import { BANK_BY_WORD, soundOf, unitsOf } from '../../content/phonics/bank';
-import { NAME_HIDES, SOUND_BY_UNIT } from '../../content/phonics/letters';
-import { letterSoundLine, nameHidesLine } from '../../content/voice/ids';
+import { SOUND_BY_UNIT } from '../../content/phonics/letters';
+import { letterSoundLine } from '../../content/voice/ids';
 
 export interface SoundStep {
   /** The unit's letters (`ng`, `ee`, `ll`, `k`). */
@@ -41,19 +41,11 @@ export function soundOut(word: string): SoundStep[] {
 }
 
 /**
- * A letter's sound as a hint or teaching line gives it (item 096): where the
- * letter's name holds its sound (NAME_HIDES: B D F J K L M N P R S T V Z),
- * the bridge from the name first ("M's name is Em... squeeze off the front:"),
- * then the sound; any other letter (C G H W Y X, the vowels) or a
- * multi-letter unit, the plain sound. `letter` is the unit as written, `sound`
- * its sound key: a letter not saying its own sound gets no bridge.
+ * A letter's sound as a hint or teaching line gives it: the sound alone,
+ * never the letter's name (item 137 retired item 096's bridge from the name,
+ * "M's name is Em... squeeze off the front:"). `sound` is its sound key; a
+ * silent letter's is none.
  */
-export function nameToSound(letter: string, sound: string = letter): string[] {
-  const plain = SOUND_BY_UNIT[sound] ? [letterSoundLine(sound)] : [];
-  return nameHolds(letter, sound) ? [nameHidesLine(letter), ...plain] : plain;
-}
-
-/** Whether `letter`'s name holds the sound it says here (`sound`, its own by default): the name can bridge to it. */
-export function nameHolds(letter: string, sound: string = letter): boolean {
-  return Boolean(NAME_HIDES[letter]) && letter === sound;
+export function soundLines(sound: string): string[] {
+  return SOUND_BY_UNIT[sound] ? [letterSoundLine(sound)] : [];
 }

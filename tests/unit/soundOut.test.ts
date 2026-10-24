@@ -89,10 +89,10 @@ test('the entry hall clue, every word, every level: a multi-letter unit is one s
           const inside = steps.filter((s) => s.index < u.index + u.span && s.index + s.span > u.index);
           const where = `${w.word} level ${level}${help ? ' help' : ''}: ${u.unit}`;
           assert.equal(inside.length, 1, `${where}: ${inside.map((s) => s.id).join(', ')}`);
-          assert.deepEqual([inside[0]!.kind, inside[0]!.index, inside[0]!.span, inside[0]!.id], ['sound', u.index, u.span, u.id], where);
+          assert.deepEqual([inside[0]!.index, inside[0]!.span, inside[0]!.id], [u.index, u.span, u.id], where);
         }
         // Every sound step is a unit's own line, in order.
-        assert.deepEqual(steps.filter((s) => s.kind === 'sound').map((s) => s.id), soundOut(w.word).filter((s) => s.id || s.sound === '').map((s) => s.id), `${w.word} level ${level}`);
+        assert.deepEqual(steps.map((s) => s.id), soundOut(w.word).filter((s) => s.id || s.sound === '').map((s) => s.id), `${w.word} level ${level}`);
       }
     }
   }

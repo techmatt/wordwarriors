@@ -49,7 +49,7 @@ export interface ProgressData {
    * not a read: it never touches `words` or the word bag.
    */
   grabs: Record<string, Stat>;
-  /** The warm-up's ramp level per word (1 names + sounds, 2 sounds with the letters, 3 sounds; amendment 1549); absent = GRAB.startLevel. */
+  /** The warm-up's ramp level per word (1 and 2 sounds with the letters, 3 sounds; amendment 1549; no names since item 137); absent = GRAB.startLevel. */
   grabLevels: Record<string, number>;
   /**
    * The Stretchy Bridge (item 054): per word, its help level (1 the stones

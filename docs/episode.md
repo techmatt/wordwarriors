@@ -28,10 +28,10 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    words on them (item 059: with CAT and VAN printed she matched letters instead of
    sounding the word out). The helper asks "Before we head out, let's grab the..."
    and gives a phonics clue by the word's **level** on a ramp, never saying the word
-   (amendment 1549: a phonics task, not a listening one): 1 each letter's name, then
-   its sound ("Vee, vvv; Ay, a; En, nnn"; a digraph's two names, then its one sound);
-   2 the sounds alone, by sound unit; 3 the sounds over blank boxes. A board over the
-   hall fills in each letter as it is named or sounded (levels 1–2) and lights each in
+   (amendment 1549: a phonics task, not a listening one): 1 and 2 the sounds alone, by
+   sound unit ("vvv, a, nnn"; a digraph one sound), never a letter's name (item 137:
+   names and sounds together confused her); 3 the sounds over blank boxes. A board over the
+   hall fills in each letter as it is sounded (levels 1–2) and lights each in
    turn. She walks to the thing and presses green: right, a burst, the word (its first
    saying, the confirmation), and into her bag as a battle item (her first), then the
    front door appears. Wrong: "That's the... CAT! We need the..." and the clue again at
@@ -357,8 +357,8 @@ his call; that press does not end solo (only a game that asks him does).
 
 **The Shape-Shifter** (item 096, `src/scenes/ShifterRoom.ts`): a side room where she
 reads every letter of a word, not just the first, alone: walking and green only, nothing
-for Dad's 1 / 2. For the beta `SHIFTER_ROOM` puts it behind door b of about half the
-episodes, leaning away from last episode's pick (item 126; door a holds the forced
+for Dad's 1 / 2. For the beta `SHIFTER_ROOM` puts it behind door b of 3 episodes in 7,
+never twice running (items 126, 137; door a holds the forced
 phonics game); the others have a fetch sentence frame or the word machine there. The villain's shape-shifting spell walks a
 creature down a chain of pictured CVC words, one letter changed a link (CAT, BAT, BAG,
 BUG, MUG): chains changing all three places first (hunt 6, M29: the vowel too), then the
@@ -386,11 +386,10 @@ that link is 5.4 to 6.2 s at the tests' clock (was 6.6 to 7), 5 to 5.4 s at real
 praise ("You fixed it!", M30), and no "by yourself" after help. Help fades per word (`shifterLevels`, listed by level on page 1 of the
 grown-ups page; at base difficulty every word gets level 1): level 1 the changed letter is lit on the label and
 each stone sounds as she comes near it; level 2 lit, silent stones; level 3 nothing lit.
-Yellow sounds the new letter (read it) or the stone she stands at (fix it), with the
-name's bridge to the sound first where the name holds it (below). A wrong picture is
+Yellow sounds the new letter (read it) or the stone she stands at (fix it): its sound
+alone, never its name (item 137). A wrong picture is
 sounded out over itself, then "But the spell says..." and the new letter; a wrong stone's
-letter flies at the label, bounces off, and its sound is said ("This letter says..."; the
-name's bridge first where it holds it, as in the hint).
+letter flies at the label, bounces off, and its sound is said ("This letter says...").
 No word is ever made of it: a random letter could spell a word she reads later, or a rude
 one. No penalty; after two misses the answer sparkles. Read it is recorded as reading;
 fix it (a letter for a sound) under spelling, apart from reading, and leaves her word bag alone. Every word read is a battle item, a copy of each
@@ -398,16 +397,13 @@ creature flying into her bag; the last creature itself flies in and goes to the 
 (`NO_BAG_COPY` in `content/phonics/sentences.ts`; hunt 10, M45): read as any word, but no copy, and as the
 last creature it waves (three squash hops) and stays, with no "comes to the fight" line; neither is ever fired. `?scene=room&slot=a&room=shifter` opens it.
 
-**The sound hidden in the name** (item 096): where a hint or teaching line gives a
-letter's sound and the letter's name holds it (B D F J K L M N P R S T V Z), the line
-before it bridges from the name: "M's name is Em... squeeze off the front:" then "mmm";
-"B's name is Bee... keep just the start:" then "b" (`letter_<x>_hides`, phonics voice,
-never captioned; `NAME_HIDES` in `content/phonics/letters.ts`, `nameToSound` in
-`src/rules/soundOut.ts`). C G H W Y X and the vowels keep the plain sound: their names
-mislead. Used by the warm-up's level-1 clue (in place of the bare name; only the first time
-the clue is said, a miss or yellow then gives the plain name and sound: hunt 6, M27; its own
-copy of the rule, `nameHolds`, as the clue swaps the name line) and the Shape-Shifter's hints
-and misses (`nameToSound`); Matt's recordings replace the lines like any other.
+**No letter names** (item 137, Matt): no clue or hint says a letter's name. The warm-up's
+clue is the sounds at every level, and the Shape-Shifter's hints and misses say the plain
+sound (`soundLines` in `src/rules/soundOut.ts`). Item 096's bridge from a name to its sound
+("R's name is Ar... squeeze off the front:", `letter_<x>_hides`) and item 033's letter names
+(`letter_<x>_name`) are retired: Matt heard THREE's first clue as "TH, R's name is Ar,
+squeeze off the front, EE". A long vowel's own sound ("ee", `letter_long_e_sound`) and
+X-RAY's `x_name` ("ecks") are sounds, not names, and stay.
 
 **The Stretchy Bridge** (item 054, `src/scenes/BridgeRoom.ts`): a side room where she
 blends a whole word. A gap crosses the room (lava in the house, a river or a chasm at a
@@ -473,7 +469,7 @@ done, items in the bag):
 | `?scene=room&slot=a&room=charge` | Charge the Spell (`room=charge` forces it behind door a, or door b when `game=` holds door a, in any URL) |
 | `?scene=room&slot=a&room=charge&solo=1` | Charge the Spell in solo mode (item 106: Dad isn't here; `solo` in any URL starts the episode solo) |
 | `?scene=room&slot=a&room=bridge` | The Stretchy Bridge (`room=bridge`, the same way) |
-| `?scene=room&slot=a&room=shifter` | The Shape-Shifter (`room=shifter` forces it behind door a; otherwise `SHIFTER_ROOM` has it behind door b about half the time) |
+| `?scene=room&slot=a&room=shifter` | The Shape-Shifter (`room=shifter` forces it behind door a; otherwise `SHIFTER_ROOM` has it behind door b in 3 episodes of 7, never twice running) |
 | `?scene=battle&part=1&charged=m,s,a` | A battle that fires those charged runes (default: the plan's charge room's, in part 1) |
 | `?scene=battle&part=1` (or `2`) | A battle |
 | `?scene=victory&read=cat,sun,julia` | The victory scene, then the victory recapping those words |
@@ -538,8 +534,13 @@ villain (`recent.villain`, the last 4 kept; the draw avoids as many
 as still leave two, so the last 4 with seven active), the quest line, hub scene and each line variant
 (`src/rules/story.ts`; item 121: these avoid their last two while one is left, so a line of three
 goes round all three before one comes back), the victory scene, the side rooms (the one left out last episode
-comes back), the games (last episodes' weigh `VARIETY.gameWeight`) and the phonics door
-(Charge vs Bridge), and the warm-up's last 3 words. Her latest right-first-time reads
+comes back), the games, and the warm-up's last 3 words. The games rotate strictly (item 137):
+no side room plays a game either side room played last episode while another fits (every
+fetch frame counts as the one sentence game), and the attic never plays last episode's frame
+(`repeatsLast` in `src/rules/minigames.ts`, `recent.last_games`); so door a's phonics game
+alternates Charge and the Bridge, the Shape-Shifter is never behind door b twice running
+(`SHIFTER_ROOM.afterOne` 0), and door b's sentence game or word machine changes with it.
+Beyond that a game of her last two episodes weighs `VARIETY.gameWeight`. Her latest right-first-time reads
 (`VARIETY.words`) weigh `VARIETY.wordWeight` in every word draw, so last episode's words
 rarely come straight back; a missed word keeps its full weight. The bags (key words,
 moves, pads) still draw without replacement. Coverage weighting (vowels, first sounds)

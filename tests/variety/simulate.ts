@@ -72,10 +72,18 @@ function saw(e: number, group: string, name: string, items: (string | null | und
 /** Item 127: every stored word that came up anywhere she reads or is shown a word or picture. Must stay empty. */
 const WORDISH = ['words', 'pictures', 'items'];
 const storedDrawn: string[] = [];
+/** Item 137 (amendment 4095): an action word (DRIP, BLAST) is never a picture she picks from, nor what a picture choice asks for. Must stay empty. */
+const actionPictures: string[] = [];
+function pictureChoice(e: number, where: string, words: readonly string[]): void {
+  for (const w of words) if (bank(w)?.role === 'action') actionPictures.push(`${w} (${where}, episode ${e + 1})`);
+}
 /** Hunt 9, M39: the Shape-Shifter's visits by chain length (links); under SHIFTER.links is a short visit. */
 const shifterLinks = new Map<number, number>();
 /** And those changing all three places, the vowel too (hunt 6, M29). */
 let shifterVowel = 0;
+/** Item 137: episodes whose door a, door b or attic game came straight back (doors: any side room's last game, by kind). Must stay 0. */
+const gameRepeats = [0, 0, 0];
+let lastGames: string[] | null = null;
 
 const bank = (w: string) => BANK_BY_WORD[w];
 const villains = ACTIVE_CAST.villains;
@@ -112,6 +120,10 @@ for (let e = 0; e < EPISODES; e++) {
   saw(e, 'games', 'games (doors a, b)', house.slice(0, 2).map((p) => p.game), MINIGAMES.filter((g) => g.slots.includes('fetch')).map((g) => g.id));
   saw(e, 'games', 'counter game (attic)', [house[2]!.game], MINIGAMES.filter((g) => g.slots.includes('counter')).map((g) => g.id));
   saw(e, 'games', 'fight style', [fight.id], FIGHTS.map((f) => f.id));
+  // Item 137: a door's game, or any side room's, back from the episode before (a side room's by kind: every fetch frame is the one sentence game).
+  const games = [house[0]!.kind, house[1]!.kind, house[2]!.game];
+  if (lastGames) games.forEach((g, i) => i < 2 ? lastGames!.slice(0, 2).includes(g) && gameRepeats[i]++ : g === lastGames![2] && gameRepeats[2]++);
+  lastGames = games;
   const k = variantKeys(helper(), episode.villain);
   saw(e, 'voice', 'quest line', [`${helper()}#${episode.story.quest}`], questPool);
   saw(e, 'voice', 'hub scene', [`${helper()}#${episode.story.scene}`], scenePool);
@@ -121,6 +133,7 @@ for (let e = 0; e < EPISODES; e++) {
   saw(e, 'words', 'gift word', [gift], ACTIONS.map((w) => w.word));
   saw(e, 'words', 'warm-up word', [grab.word]);
   saw(e, 'pictures', 'warm-up hall pictures', grab.objects.filter((w) => w !== grab.word));
+  pictureChoice(e, 'warm-up', grab.objects);
   const choices = [...moves.part1, ...moves.part2];
   saw(e, 'words', 'move pads (right)', choices.map((c) => c.right), ACTIONS.map((w) => w.word));
   saw(e, 'words', 'move pads (wrong)', choices.flatMap((c) => c.words.filter((w) => w !== c.right)), ACTIONS.map((w) => w.word));
@@ -135,6 +148,7 @@ for (let e = 0; e < EPISODES; e++) {
     if (p.kind === 'sentence') {
       saw(e, 'sentences', `frames (${p.slot === 'counter' ? 'counter' : 'fetch'})`, [p.sentence.frame], FRAMES.filter((f) => f.use === (p.slot === 'counter' ? 'counter' : 'fetch')).map((f) => f.id));
       saw(e, 'pictures', 'sentence room pictures (not the key)', p.objects.filter((w) => w !== p.key));
+      pictureChoice(e, `sentence ${p.slot}`, p.objects);
       progress.record('frames', p.sentence.frame, right(), 0);
     }
     if (p.kind === 'machine') {
@@ -151,12 +165,15 @@ for (let e = 0; e < EPISODES; e++) {
       for (const r of new Set(p.charge.runes)) progress.record('sounds', r, true, 0);
     }
     if (p.kind === 'bridge') saw(e, 'pictures', 'bridge far-bank pictures (not the word)', p.bridge.rounds.flatMap((r) => r.pictures.filter((w) => w !== r.word)));
+    if (p.kind === 'bridge') pictureChoice(e, 'bridge', p.bridge.rounds.flatMap((r) => r.pictures));
+    if (p.kind === 'machine') pictureChoice(e, 'machine', p.machine.rounds.map((r) => r.word));
     if (p.kind === 'shifter') {
       saw(e, 'phonics', 'shifter chains', [chainKey(p.shifter)]);
       shifterLinks.set(p.shifter.links.length, (shifterLinks.get(p.shifter.links.length) ?? 0) + 1);
       if (new Set(p.shifter.links.map((l) => l.pos)).size === 3) shifterVowel++;
       saw(e, 'words', 'shifter words (start and links)', [p.shifter.start, ...p.shifter.links.map((l) => l.to)], SHIFT_WORDS);
       saw(e, 'pictures', 'shifter wrong pictures', p.shifter.links.filter((l) => l.beat === 'read').flatMap((l) => l.options.filter((o) => o !== l.to)));
+      pictureChoice(e, 'shifter', [p.shifter.start, ...p.shifter.links.flatMap((l) => [l.to, ...(l.beat === 'read' ? l.options : [])])]);
       for (const l of p.shifter.links) if (l.beat === 'fix') progress.record('spelling', l.to, true, 0);
     }
     // Every word read in a room: as SideRoom's recordRead (the Shape-Shifter's read beats only).
@@ -262,7 +279,15 @@ const visits = [...shifterLinks.values()].reduce((a, b) => a + b, 0);
 const short = [...shifterLinks].filter(([n]) => n < SHIFTER.links).reduce((a, [, k]) => a + k, 0);
 const lengths = [...shifterLinks].sort((a, b) => b[0] - a[0]).map(([n, k]) => `${n} links ${k}`).join(', ');
 console.log(`\nShape-Shifter visits: ${visits}; short (under ${SHIFTER.links} links): ${short} (${lengths || 'none'}); changing all three places: ${shifterVowel}.`);
+console.log(`Games back from the episode before (item 137): door a ${gameRepeats[0]}, door b ${gameRepeats[1]}, attic ${gameRepeats[2]}.`);
+if (gameRepeats.some((n) => n > 0)) process.exitCode = 1;
 if (JSON_OUT) writeFileSync(JSON_OUT, JSON.stringify({ episodes: EPISODES, seed: SEED, right: RIGHT, rows, shifterLinks: Object.fromEntries(shifterLinks) }, null, 1) + '\n');
+if (actionPictures.length) {
+  console.log(`
+ACTION WORDS AS PICTURES TO PICK: ${actionPictures.length}: ${actionPictures.slice(0, 20).join(', ')}`);
+  process.exitCode = 1;
+} else console.log(`
+Action words as pictures to pick: none.`);
 // Item 127: a stored word is never drawn. Fails the run (exit 1) if one was.
 const storedCount = Object.keys(STORED_WHY).length;
 if (storedDrawn.length) {

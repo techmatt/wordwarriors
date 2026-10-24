@@ -128,7 +128,7 @@ export const UNTAUGHT_SOUNDS: LetterSound[] = [
  * (on its EY), YOYO is Y, long O, twice. `letter` is the sound's key, not
  * letters (`letterSoundLine('long_e')` is `letter_long_e_sound`), each its own
  * line, a placeholder until Matt records them. A long vowel says its letter's
- * name, so edge-tts gets the name's spelling, as in LETTER_NAMES.
+ * name, so edge-tts gets the name's spelling.
  *
  * Item 058: the list ends with UNTAUGHT_SOUNDS, so every hand-spelled sound
  * gets its `letter_<key>_sound` line from one list (the voice composer and
@@ -162,30 +162,3 @@ export function canHold(sound: string): boolean {
   const s = SOUND_BY_UNIT[sound];
   return Boolean(s) && (s!.cls === 'vowel' || s!.cls === 'continuant' || ['f', 's', 'sh', 'th', 'th_voiced'].includes(sound));
 }
-
-/**
- * The sound hidden in the name (item 096): a letter whose name holds its
- * sound, and where. `start`: the name starts with it (BEE, then "b"), so keep
- * just the start; `end`: it ends with it (EM, then "mmm"), so squeeze off the
- * front. A hint or teaching line that sounds one of these letters may say
- * the bridge first (`nameHidesLine`, `nameToSound` in src/rules/soundOut.ts).
- * C G H W Y X and the vowels are left out: their names mislead (SEE is not
- * "k", AITCH has no "h"), so they keep the plain sound.
- */
-export const NAME_HIDES: Record<string, 'start' | 'end'> = {
-  b: 'start', d: 'start', j: 'start', k: 'start', p: 'start', t: 'start', v: 'start', z: 'start',
-  f: 'end', l: 'end', m: 'end', n: 'end', r: 'end', s: 'end',
-};
-
-/**
- * Letter NAMES (item 033): the home warm-up spells its word with them before
- * it gives the sounds, because names are what she already knows. Each is its
- * own line (`letterNameLine`), in the phonics voice like the sounds, so a
- * recording can replace one the same way. `say` is what edge-tts is asked to
- * say: a bare "A." or "W." is read as a word ("uh") or mumbled.
- */
-export const LETTER_NAMES: Record<string, string> = {
-  a: 'Ay', b: 'Bee', c: 'See', d: 'Dee', e: 'Ee', f: 'Eff', g: 'Jee', h: 'Aitch', i: 'Eye',
-  j: 'Jay', k: 'Kay', l: 'Ell', m: 'Em', n: 'En', o: 'Oh', p: 'Pee', q: 'Cue', r: 'Ar',
-  s: 'Ess', t: 'Tee', u: 'You', v: 'Vee', w: 'Dubbelyou', x: 'Ex', y: 'Why', z: 'Zee',
-};

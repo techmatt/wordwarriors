@@ -11,7 +11,12 @@ import { test } from 'node:test';
 import { ACTIONS, BANK, BANK_BY_WORD, LIVE, THINGS, tag, unitsOf } from '../../content/phonics/bank';
 import { SOUND_BY_UNIT } from '../../content/phonics/letters';
 import { VARIETY } from '../../src/config';
-import { coverage, coverageTable, distractorsFor, drawWords, isFirm, recentWords, sharesSound, wordWeight } from '../../src/rules/bank';
+import { PICTURE_WORDS } from '../../content/phonics/words';
+import { BAG_WORDS, coverage, coverageTable, distractorsFor, drawWords, isFirm, recentWords, sharesSound, wordWeight } from '../../src/rules/bank';
+import { BRIDGE_PICTURES, CROSS_WORDS } from '../../src/rules/bridge';
+import { CHARGE_WORDS } from '../../src/rules/charge';
+import { GRAB_WORDS } from '../../src/rules/grab';
+import { SHIFT_WORDS } from '../../src/rules/shifter';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { withDifficulty } from './difficulty';
 import { memory, seededLcg as seeded } from './seeds';
@@ -50,6 +55,20 @@ test('the bank: unique words, every vowel and level present, things and actions 
     // Item 056: a silent letter (the E of KITE) has no sound, ``.
     for (const u of w.sounds) assert.ok(u === '' || SOUND_BY_UNIT[u], `${w.word}: no sound for ${u}`);
   }
+});
+
+test('an action word is never a picture she picks (item 137, amendment 4095): no picture pool holds one; DRIP stays a power', () => {
+  const pools: Record<string, readonly string[]> = {
+    'warm-up (GRAB_WORDS)': GRAB_WORDS,
+    'bags, key words, pedestals, the machine (BAG_WORDS)': BAG_WORDS,
+    'bridge pictures': BRIDGE_PICTURES,
+    'bridge words': CROSS_WORDS,
+    'Charge words': CHARGE_WORDS,
+    'Shape-Shifter words': SHIFT_WORDS,
+    'parked picture games (PICTURE_WORDS)': PICTURE_WORDS.map((w) => w.word),
+  };
+  for (const [name, words] of Object.entries(pools)) assert.deepEqual(words.filter((w) => BANK_BY_WORD[w]?.role === 'action'), [], name);
+  assert.ok(ACTIONS.some((w) => w.word === 'drip') && !THINGS.some((w) => w.word === 'drip'));
 });
 
 test('drawWords (item 067): every level is in play from a fresh store, long words like OCTOPUS included', () => {
