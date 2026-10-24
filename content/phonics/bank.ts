@@ -327,6 +327,8 @@ export const STORED_WHY: Record<string, string> = {
   drum: 'a bedroom toy, shown every episode, so it is never read',
   lamp: 'the bedroom night-light, shown every episode, so it is never read',
   duck: 'a bedroom toy, shown every episode, so it is never read',
+  // Hunt 10, M40's kind: the bedroom's tower of blocks (🧱, not BLOCK's 🟦, so the glyph match missed it).
+  block: 'the bedroom\'s tower of toy blocks, shown every episode, so it is never read',
   // Actions: a picture named another way, a sound or idea with no picture, or a rare word.
   swish: 'the farmer with a scythe reads as CUT (Matt)',
   dash: 'the running boy reads as RUN (Matt)',

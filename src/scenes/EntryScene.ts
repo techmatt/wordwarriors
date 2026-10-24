@@ -119,6 +119,10 @@ export class EntryScene extends RoomScene {
     this.setPhase('intro');
 
     const things = ENTRY_HALL.spots.map((p) => new Phaser.Geom.Rectangle(p.x - 70, p.y - 140, 140, 150));
+    // And the gaps between them (hunt 10): a bone pile between HAND and TRUCK read as a fourth thing in the row.
+    const xs = ENTRY_HALL.spots.map((p) => p.x);
+    const ys = ENTRY_HALL.spots.map((p) => p.y);
+    things.push(new Phaser.Geom.Rectangle(Math.min(...xs) - 70, Math.min(...ys) - 140, Math.max(...xs) - Math.min(...xs) + 140, Math.max(...ys) - Math.min(...ys) + 150));
     const grownUps = [ENTRY_HALL.helper, ENTRY_HALL.waker, ENTRY_HALL.door].map((p) => new Phaser.Geom.Rectangle(p.x - 80, p.y - 200, 160, 220));
     applyHouseMood(this, episode.villain, { seed: 33, floor: this.floor, avoid: [...things, ...grownUps] });
     this.bag = new Bag(this);

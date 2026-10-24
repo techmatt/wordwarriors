@@ -153,7 +153,7 @@ export class ChargeRoom extends HouseSideRoom {
     this.stopGesture = null;
     this.readAnswer = null;
     this.readRecorded = false;
-    this.modelledSounds = new Set();
+    this.modelledSounds = new Set(episode.charged?.modelled ?? []);
     this.earlyAnswer = null;
     this.chargingIndex = -1;
     this.beat = null;
@@ -358,7 +358,9 @@ export class ChargeRoom extends HouseSideRoom {
     if (!r) return;
     // One gesture at a time, from the helper's rest scale.
     this.stopGesture?.();
-    const at = { x: this.friend.x + 95, y: this.friend.y - this.friend.displayHeight * 0.6 };
+    // On the helper's far side from her (hunt 10: on the near side it sat on her face as the sound played);
+    // 150 px keeps even the widest action ('fly', 160 px each way) off her, and on screen.
+    const at = { x: this.friend.x - 150, y: this.friend.y - this.friend.displayHeight * 0.6 };
     const prop = this.add.text(at.x, at.y, r.gesture.glyph, { fontSize: '84px', padding: { top: 14, bottom: 6 } }).setOrigin(0.5).setDepth(DEPTH.sparkles);
     popIn(this, prop, 1);
     const moves = this.motion(prop, r.gesture.motion, at);
@@ -449,6 +451,8 @@ export class ChargeRoom extends HouseSideRoom {
     const step = currentStep();
     const charged = (episode.charged ??= { sounds: [], part: step.kind === 'house' ? step.part : 1 });
     if (!charged.sounds.includes(sound)) charged.sounds.push(sound);
+    // Kept with the episode, so the solo read after F9 and back does not model it again (hunt 10).
+    if (this.modelledSounds.has(sound) && !(charged.modelled ??= []).includes(sound)) charged.modelled.push(sound);
 
     const color = RUNE_BY_SOUND[sound]?.move.color ?? 0xffd23f;
     sfxRight();

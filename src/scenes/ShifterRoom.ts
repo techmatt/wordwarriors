@@ -43,7 +43,7 @@
 import Phaser from 'phaser';
 
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
-import { variant } from '../episode/lineVariants';
+import { readPraise, variant } from '../episode/lineVariants';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH, VARIETY } from '../config';
@@ -68,6 +68,7 @@ type Phase = 'intro' | 'pick' | 'check' | 'done';
 /** The creature at the back of the room, and its label under it. */
 const CREATURE = { x: GAME_WIDTH / 2, y: 255, size: 200 };
 const LABEL = { x: GAME_WIDTH / 2, y: 400, gap: 84 };
+const LABEL_PLATE_H = 100;
 /** How far from the label's middle she stands when she steps up out of the options' reach: its plate's half width and hers, clear of it (hunt 9). */
 const LABEL_CLEAR = (LABEL.gap * 3 + 40) / 2 + 50;
 /** The pictures or stones standing in the room (feet positions), left to right. */
@@ -78,8 +79,6 @@ const STONE = { w: 120, h: 96 };
 const ENTRY = { x: 130, y: 610 };
 /** The spell's colours. */
 const MAGIC = [0xb04cff, 0xff4cd8, 0xffffff];
-/** The praise variant that says she read it all by herself (`right_5`): never after help. */
-const BY_YOURSELF = 'right_5';
 /** How long a read word's label stays lit before the next spell strikes, ms (its letters light 70 ms apart). */
 const LABEL_LIT_MS = 450;
 /** The lifted letter's bubble (hunt 9, M42), px square. */
@@ -188,7 +187,7 @@ export class ShifterRoom extends HouseSideRoom {
     this.tweens.add({ targets: halo, alpha: 0.2, duration: 1100, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     // It bobs, alive.
     this.tweens.add({ targets: this.creatureImg, y: -8, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-    const plate = this.add.rectangle(0, 0, LABEL.gap * 3 + 40, 100, 0xfff6dc, 0.96).setStrokeStyle(5, 0x1a1030, 0.85);
+    const plate = this.add.rectangle(0, 0, LABEL.gap * 3 + 40, LABEL_PLATE_H, 0xfff6dc, 0.96).setStrokeStyle(5, 0x1a1030, 0.85);
     this.labelBox = this.add.container(LABEL.x, LABEL.y, [plate]).setDepth(LABEL.y - 19);
     for (let i = 0; i < 3; i++) {
       const t = this.add.text((i - 1) * LABEL.gap, 0, '', { fontFamily: FONT_COMIC, fontSize: '78px', color: INK, stroke: '#ffffff', strokeThickness: 8 }).setOrigin(0.5);
@@ -390,6 +389,12 @@ export class ShifterRoom extends HouseSideRoom {
    * `wrong_seed102`), so she heard the sound with the letter hidden.
    */
   private liftLetter(letter: string): void {
+    const lift = this.showLift(letter);
+    void voiceBus.say(letterSoundLine(letter)).finally(() => this.dropLift(lift));
+  }
+
+  /** The lifted letter's bubble, up until `dropLift`; a newer one replaces it. */
+  private showLift(letter: string): Phaser.GameObjects.Container {
     this.lifted?.destroy();
     // Beside her head, not over it: over it, it met the label's bottom and her green dot.
     const side = this.player.x > GAME_WIDTH - 2 * LIFT_SIZE ? -1 : 1;
@@ -404,18 +409,34 @@ export class ShifterRoom extends HouseSideRoom {
     this.lifted = lift;
     this.followLift();
     popIn(this, lift, 1);
-    void voiceBus.say(letterSoundLine(letter)).finally(() => {
-      if (this.lifted !== lift || !lift.scene) return;
-      this.lifted = null;
-      this.tweens.add({ targets: lift, alpha: 0, duration: 200, onComplete: () => lift.destroy() });
-    });
+    return lift;
   }
 
-  /** The lifted letter rides beside her head. */
+  private dropLift(lift: Phaser.GameObjects.Container): void {
+    if (this.lifted !== lift || !lift.scene) return;
+    this.lifted = null;
+    this.tweens.add({ targets: lift, alpha: 0, duration: 200, onComplete: () => lift.destroy() });
+  }
+
+  /**
+   * The lifted letter rides beside her head, never higher than just under the label's plate: come at the
+   * middle stone from above (where the step-up leaves her) and beside her head was on the label, over its
+   * middle or last letter (hunt 10). Held down there it can meet the green dot over the stone, so it
+   * keeps to the dot's far side.
+   */
   private followLift(): void {
     if (!this.lifted) return;
     const side = this.lifted.getData('side') as number;
-    this.lifted.setPosition(this.player.x + side * (LIFT_SIZE / 2 + 34), this.player.y - this.player.height - 24);
+    const h = LIFT_SIZE / 2;
+    const y = Math.max(this.player.y - this.player.height - 24, LABEL.y + LABEL_PLATE_H / 2 + h + 8);
+    let x = this.player.x + side * (h + 34);
+    const near = this.nearestSpot();
+    if (near) {
+      // Where RoomScene draws the green dot (radius 18), and a little room.
+      const dot = { x: near.x, y: near.obj.getBounds().top - 26, r: 18 + 6 };
+      if (Math.abs(y - dot.y) < h + dot.r && Math.abs(x - dot.x) < h + dot.r) x = dot.x + side * (h + dot.r);
+    }
+    this.lifted.setPosition(x, y);
   }
 
   override update(time: number, deltaMs: number): void {
@@ -541,14 +562,19 @@ export class ShifterRoom extends HouseSideRoom {
   /**
    * A stone swells while its letter is sounded (the name first where it holds the sound); it stops once a
    * newer flow takes over. It settles back to the size it shows in reach, or at rest once she has walked off.
+   * Its letter is lifted beside her while it sounds, as at level 1 (hunt 10: a miss or a hint sounds the stone
+   * she stands at, her figure over its letter; M42's case).
    */
   private async soundStone(spot: Spot): Promise<void> {
     const f = this.flow;
+    const letter = spot.obj.getData('letter') as string;
     spot.obj.setScale(spot.baseScale * 1.15);
-    for (const id of nameToSound(spot.obj.getData('letter') as string)) {
+    const lift = this.showLift(letter);
+    for (const id of nameToSound(letter)) {
       if (f !== this.flow) break;
       await this.say(id);
     }
+    this.dropLift(lift);
     spot.obj.setScale(this.nearestSpot() === spot ? spot.baseScale * 1.1 : spot.baseScale);
   }
 
@@ -624,11 +650,13 @@ export class ShifterRoom extends HouseSideRoom {
     if (f !== this.flow) return;
     sfxSelect();
     this.clearSpots();
-    // The last creature goes to the fight.
+    // The last creature goes to the fight: "This one comes to the fight with us!" while it still stands
+    // there, then it flies into her bag (hunt 10: it was in the bag first, and the line pointed at nothing).
     this.phase = 'done';
+    await this.say(narratorLine(narrator(), variant('shifter_done')));
+    if (f !== this.flow) return;
     this.creature.setVisible(false);
     await this.guard(this.bag.receive(this.wordArt(l.to), CREATURE.x, CREATURE.y));
-    await this.say(narratorLine(narrator(), variant('shifter_done')));
     await this.wait(400);
     this.fadeToHub();
   }
@@ -639,8 +667,7 @@ export class ShifterRoom extends HouseSideRoom {
    */
   private praise(beat: ShifterLink['beat'], unaided: boolean): string {
     if (beat === 'fix') return variant('shifter_fixed');
-    const v = variant('right');
-    return !unaided && v === BY_YOURSELF ? variant('right') : v;
+    return readPraise(unaided);
   }
 
   // ---- Help -----------------------------------------------------------------

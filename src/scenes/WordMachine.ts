@@ -31,7 +31,7 @@ import { FAMILY_BY_RIME } from '../../content/phonics/families';
 import { LETTER_BY_CHAR } from '../../content/phonics/letters';
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, rimeLine, sillyLine, wordLine } from '../../content/voice/ids';
-import { variant } from '../episode/lineVariants';
+import { readPraise, variant } from '../episode/lineVariants';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { sfxBoing, sfxPoof, sfxRight, sfxSelect, sfxSummon } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH } from '../config';
@@ -391,6 +391,8 @@ export class WordMachine extends HouseSideRoom {
     progress.record('rimes', r.rime, firstTry, this.wrongTries);
     progress.record('onsets', r.onset, firstTry, this.wrongTries);
     for (const s of this.spots) s.enabled = false;
+    // Hunt 10: the answer's sparkle (after two silly tiles) stops once it is in, as the bridge's and the Shifter's do.
+    this.stopSparkle(spot);
     this.phase = last ? 'done' : 'check';
 
     // The payoff: the machine bounces and puffs, the window bursts.
@@ -417,7 +419,7 @@ export class WordMachine extends HouseSideRoom {
     const pic = this.picture;
     this.picture = null;
     pic?.destroy();
-    await Promise.all([this.guard(this.bag.receive(this.wordArt(r.word), win.x, win.y)), this.say(narratorLine(narrator(), variant('right')))]);
+    await Promise.all([this.guard(this.bag.receive(this.wordArt(r.word), win.x, win.y)), this.say(narratorLine(narrator(), readPraise(firstTry)))]);
     spot.obj.setAlpha(1);
     if (!last) {
       this.index++;

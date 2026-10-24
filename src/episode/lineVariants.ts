@@ -18,6 +18,18 @@ export function variant(key: string): string {
   return pick;
 }
 
+/** The praise variant that says she read it all by herself (`right_5`). */
+export const BY_YOURSELF = 'right_5';
+
+/**
+ * The next praise for a word read (`right`), never "by yourself" after help or a miss (hunt 6, M30: the
+ * Shape-Shifter's; hunt 10: the bridge and the word machine said it after Dad's hint or the sparkle).
+ */
+export function readPraise(unaided: boolean): string {
+  const v = variant('right');
+  return !unaided && v === BY_YOURSELF ? variant('right') : v;
+}
+
 /** Whether line id `id` is `base` or one of its variants (`nar_ellie_room_find_2` of `nar_ellie_room_find`). */
 export const isVariant = (id: string, base: string): boolean => id === base || (id.startsWith(`${base}_`) && /^\d+$/.test(id.slice(base.length + 1)));
 

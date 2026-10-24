@@ -20,7 +20,7 @@ import { startMusic } from '../audio/music';
 import { sfxHit, sfxSelect } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { advance, resetEpisode } from '../episode/Episode';
-import { bob, burst, fitImage } from '../fx/juice';
+import { backdrop, bob, burst, fitImage } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { dadLock } from '../input/dadLock';
@@ -46,7 +46,7 @@ export class TitleScene extends Phaser.Scene {
     resetEpisode();
     startMusic('title');
     this.controls = new Controls(this);
-    this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'room_title').setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
+    backdrop(this, 'room_title', 0);
 
     // Sparkle rain behind the logo.
     this.add.particles(0, -10, TEX.star, {

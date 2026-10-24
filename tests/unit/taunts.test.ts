@@ -29,3 +29,13 @@ test('an unsaid taunt drops only its last record', () => {
   assert.deepEqual(tauntsSaid.get('elsa'), ['a', 'b']);
   assert.equal(tauntsSaid.has('nobody'), false);
 });
+
+test('praise (hunt 10, M30 everywhere): after help or a miss, never "You read that all by yourself!"; read unaided, it still comes round', async () => {
+  const { BY_YOURSELF, readPraise } = await import('../../src/episode/lineVariants');
+  const { progress } = await import('../../src/state/progress');
+  progress.reset();
+  const helped = Array.from({ length: 24 }, () => readPraise(false));
+  assert.ok(!helped.includes(BY_YOURSELF), helped.join(' '));
+  const alone = Array.from({ length: 24 }, () => readPraise(true));
+  assert.ok(alone.includes(BY_YOURSELF), alone.join(' '));
+});

@@ -319,7 +319,7 @@ export async function playBattle(page: Page, part: number, wrongFirst = false, a
 }
 
 /** In a move choice: onto a word's pad (teleported, or walked when `driver.walk`) and press green until the pick is taken. */
-async function pickPad(page: Page, word: string): Promise<void> {
+export async function pickPad(page: Page, word: string): Promise<void> {
   const pad = (await state(page)).battle!.choice!.spots.find((sp) => sp.word === word)!;
   if (driver.walk) await walkHeroTo(page, pad.x, pad.y);
   else await place(page, pad.x, pad.y);

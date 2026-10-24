@@ -56,6 +56,18 @@ export function heroIssues(l: Pick<Layout, 'texts' | 'heroes'> & Partial<Pick<La
       const name = t.text.replace(/\s+/g, ' ').slice(0, 30);
       out.push({ kind: 'text-under-hero', severity: 'look', scene, detail: `she stands over "${name}" (${Math.round((100 * ix * iy) / area)}% of it)`, key: `underhero:${scene}:${name}` });
     }
+    // Hunt 10: a big picture glyph (no letters: Charge's gesture, a prop) drawn over her head and shoulders,
+    // by more than a quarter of it (the cake slice sat on her face as the M sound played).
+    const head: Box = [body[0], h.b[1], body[2], h.b[1] + (h.b[3] - h.b[1]) * 0.45];
+    for (const t of l.texts) {
+      if (t.scene !== h.scene || t.size < 60 || t.depth <= h.depth || /[A-Za-z0-9]/.test(t.text) || !t.text.trim()) continue;
+      const b = t.b;
+      const ix = Math.min(b[2], head[2]) - Math.max(b[0], head[0]);
+      const iy = Math.min(b[3], head[3]) - Math.max(b[1], head[1]);
+      const area = (b[2] - b[0]) * (b[3] - b[1]);
+      if (ix <= 0 || iy <= 0 || area <= 0 || (ix * iy) / area < 0.25) continue;
+      out.push({ kind: 'glyph-on-hero', severity: 'look', scene, detail: `${t.text.trim()} over her head (${Math.round((100 * ix * iy) / area)}% of it)`, key: `glyphhero:${scene}:${t.text.trim()}` });
+    }
   }
   return out;
 }

@@ -177,6 +177,17 @@ export function dustPuff(scene: Phaser.Scene, x: number, y: number, radius = 120
   scene.time.delayedCall(800, () => e.destroy());
 }
 
+/**
+ * A full-screen backdrop for a scene that shakes: a shake moves the camera up to 3% of the screen (`shake`),
+ * and the edge it uncovered showed black bands down the side and along the top (hunt 10). A larger copy
+ * behind fills it; the backdrop itself is where it always was.
+ */
+export function backdrop(scene: Phaser.Scene, key: string, depth: number): Phaser.GameObjects.Image {
+  const { width: w, height: h } = scene.scale;
+  scene.add.image(w / 2, h / 2, key).setDisplaySize(w * 1.1, h * 1.1).setDepth(depth - 1);
+  return scene.add.image(w / 2, h / 2, key).setDisplaySize(w, h).setDepth(depth);
+}
+
 export function shake(scene: Phaser.Scene, strength: number, ms = 220): void {
   fxStats.shakes++;
   scene.cameras.main.shake(ms, Math.min(0.03, strength * 0.004));

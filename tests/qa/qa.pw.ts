@@ -64,7 +64,7 @@ interface Scenario {
    * `lenses` the fourth, by the third hunt (item 080); `recent` the fifth, by the fourth hunt
    * (item 089); `cast` the seventh hunt's (item 116): the new allies and villains, the story fight;
    * `hunt8` the eighth hunt's (item 125): items 119-123's changes; `hunt9` the ninth hunt's
-   * (item 129): items 126-128's changes.
+   * (item 129): items 126-128's changes; `hunt10` the tenth's (item 135): items 130-134's.
    */
   batch?: Batch;
   /** Item 080: reload the page at each of these points, one per episode started from the title. */
@@ -92,7 +92,7 @@ interface Scenario {
 }
 
 /** A scenario batch past the first, named as `QA_SET` names it. */
-const BATCHES = ['more', 'new', 'lenses', 'recent', 'cast', 'hunt8', 'hunt9'] as const;
+const BATCHES = ['more', 'new', 'lenses', 'recent', 'cast', 'hunt8', 'hunt9', 'hunt10'] as const;
 type Batch = (typeof BATCHES)[number];
 
 /** Where in an episode the item-080 probes act (`episode` calls `at` at each). */
@@ -196,6 +196,19 @@ const SCENARIOS: Scenario[] = [
   { name: 'story_hidden', query: 'seed=977&fight=smaug_story&games=all', hide: true, resize: true, batch: 'hunt9' },
   // Dad erases all progress mid-episode (a side room, battle 1's choice, the attic), then a second episode on the empty store.
   { name: 'erase_mid', query: 'cast=random&games=all', eraseAt: ['room_b', 'choice1', 'attic'], episodes: 2, batch: 'hunt9' },
+  // Hunt 10 (item 135): items 130-134's changes. Drawn episodes after item 132's cleanup and item 133's
+  // seeded house draws; the Shape-Shifter's relaxed chains and level-1 lifted letter (M39, M42) with wrong
+  // picks; RUN and CAN readable (M40); MOM and DAD off the fetch frames (M41); every fight style item 132
+  // tidied (race, tug, cook-off, clash, the story fight), with wrong picks or a busy child.
+  { name: 'drawn5_h10', query: 'cast=random&games=all', episodes: 5, batch: 'hunt10' },
+  { name: 'shifter_wrong3', query: 'cast=random&room=shifter', wrong: true, episodes: 3, batch: 'hunt10' },
+  { name: 'runcan2', query: 'cast=random&games=all&words=run,can', episodes: 2, batch: 'hunt10' },
+  { name: 'momdad2', query: 'cast=random&games=all&words=mom,dad', episodes: 2, batch: 'hunt10' },
+  { name: 'race_wrong', query: 'seed=1001&fight=space_race&games=all', wrong: true, batch: 'hunt10' },
+  { name: 'tug_mash', query: 'seed=1002&fight=sea_tug&games=all', mash: true, batch: 'hunt10' },
+  { name: 'cookoff_wrong', query: 'seed=1003&fight=cook_off&games=all', wrong: true, batch: 'hunt10' },
+  { name: 'clash_idle', query: 'seed=1004&fight=frost_clash&games=all', idle: true, batch: 'hunt10' },
+  { name: 'story_mash_wrong', query: 'seed=1005&fight=smaug_story&games=all', wrong: true, mash: true, batch: 'hunt10' },
 ];
 
 /** How often a busy child presses something (real ms). */
@@ -220,6 +233,7 @@ class Recorder {
   private padsSeen = new Set<string>();
   /** The room's spots at the last poll (`spawnIssues`). */
   private spotIds = new Set<string>();
+  private spotRound = '';
   private qaT = 0;
   last: WWState | null = null;
   lastShot = '';
@@ -276,10 +290,14 @@ class Recorder {
     }
     const q = await qaSince(this.page, this.qaT);
     this.qaT = q.now;
-    const ids = new Set(s.room?.spots.map((sp) => sp.id) ?? []);
+    // Every spot seen this round: one coming back (the word machine's wrong tile, back in the slot she
+    // took it from, under her) is not new (hunt 10, `story_mash_wrong`).
+    const round = `${s.scene}:${s.room?.round ?? ''}`;
+    if (round !== this.spotRound) this.spotIds = new Set();
+    this.spotRound = round;
     this.add(spawnIssues(this.spotIds, s, REACH), this.lastShot);
     this.add(padReachIssues(this.padsSeen, s, REACH), this.lastShot);
-    this.spotIds = ids;
+    for (const sp of s.room?.spots ?? []) this.spotIds.add(sp.id);
     this.add(logIssues({ ...q, console: [], missingArt: [], flashes: [] }, SPEED));
     this.add(clippedIssues(q.voice));
     if (s.scene !== this.visit.scene) {
@@ -690,7 +708,9 @@ function probes(page: Page, sc: Scenario, rec: Recorder, reloadAt: Point | null,
       const badge = await page.evaluate(() => Boolean(document.getElementById('dad-lock')?.isConnected));
       log.push({ point: p, scene: before.scene, moved: where(after) !== where(before), before: where(before), after: where(after), said, badge });
       // The bedroom's wake-up, the warm-up's intro and the victory scene run on by themselves (W10): a look there.
-      const flows = p === 'bedroom' || p === 'entry' || p === 'ending';
+      // So does the fight up to its frozen move choice (hunt 10): the choice opening, nothing picked, is not a press.
+      const opened = Boolean(before.battle && !before.battle.choice && after.battle?.choice?.misses === 0 && after.battle.movePicks === before.battle.movePicks);
+      const flows = p === 'bedroom' || p === 'entry' || p === 'ending' || opened;
       if (where(after) !== where(before)) rec.add([{ kind: flows ? 'dadlock-flow' : 'dadlock-leak', severity: flows ? 'look' : 'bug', scene: before.scene, detail: `${p}: ${where(before)} -> ${where(after)}`, key: `dadlock:${p}` }], rec.lastShot);
       if (!badge) rec.add([{ kind: 'dadlock-badge', severity: 'bug', scene: before.scene, detail: `${p}: no DAD LOCK badge while locked`, key: `dadbadge:${p}` }], rec.lastShot);
       await page.keyboard.press('Backquote');
@@ -979,6 +999,10 @@ const FLAGS = [
   'scene=grab&grab=cow', 'scene=grab&grab=dad', 'scene=room&slot=a&sentence=we_need_a:mom', 'scene=room&slot=counter&sentence=scared_of_the:dad',
   'scene=battle&fetched=cow,mom,dad', 'scene=battle&part=2&fetched=dad', 'scene=victory&read=cow,mom,dad', 'seed=976&scene=battle', 'sentence=bogus', 'sentence=we_need_a:zzz',
   'scene=room&slot=a&sentence=no_match_for_the:octopus', 'scene=room&game=word_machine&words=cow',
+  // Hunt 10 (item 135): item 134's ambience candidates, odd values; item 130's RUN and CAN; the grown-ups page without its art.
+  'scene=battle&ambience=nursery_1', 'scene=battle&ambience=nursery_2', 'scene=battle&ambience=nursery_3', 'scene=battle&ambience=street_1',
+  'scene=battle&ambience=street_2', 'scene=battle&ambience=street_3', 'ambience=bogus', 'scene=battle&part=2&ambience=street_3&fight=smaug_story',
+  'scene=room&room=shifter&words=run,can', 'scene=room&slot=counter&words=can', 'scene=parent&ally=none',
 ];
 const flagSet = set === 'lenses' || set === 'all';
 for (const flag of flagSet && !LOOK ? FLAGS : []) {

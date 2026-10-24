@@ -30,6 +30,7 @@ import { startScene } from '../art/gate';
 import { stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { BANK_DRAW, GAME_HEIGHT, GAME_WIDTH, GRAB, SENTENCE_SOLID } from '../config';
+import { debugMode } from '../episode/debug';
 import { BAG_WORDS, NEW_WORDS, coverageTable, type CoverageRow } from '../rules/bank';
 import { GRAB_WORDS, recordedGrabLevel } from '../rules/grab';
 import { recordedBridgeLevel } from '../rules/bridge';
@@ -80,7 +81,9 @@ export class ParentScene extends Phaser.Scene {
     this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xf6f2e8);
     const snap = progress.snapshot();
     // Every text here wraps or shrinks to its column (item 020): nothing runs off the page.
-    fitText(this.add.text(30, 18, `Grown-ups: Julia's progress  ·  episodes finished: ${snap.episodes}  ·  difficulty ${difficulty()}${difficulty() === 1 ? ' (base: help stays at its start)' : ''}`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '26px', color: '#222' }), GAME_WIDTH - 60, 34);
+    // Clear of the DEBUG corner tag while debug mode is on (hunt 10: it covered the title's first word).
+    const titleX = debugMode.on ? 110 : 30;
+    fitText(this.add.text(titleX, 18, `Grown-ups: Julia's progress  ·  episodes finished: ${snap.episodes}  ·  difficulty ${difficulty()}${difficulty() === 1 ? ' (base: help stays at its start)' : ''}`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '26px', color: '#222' }), GAME_WIDTH - 30 - titleX, 34);
     fitText(this.add.text(30, 54, `tries · first-try right (recent) · since the page opened; +n: said with the helper, Dad not there (not counted as reads).  Red = shaky (comes up more often), green = solid. Green / Space: ${PAGE_NEXT[this.page]}. Red button / Esc / F9: back. F8 twice: erase. \` / ~ (below Esc), anywhere: dad lock.`, {
       fontFamily: 'Segoe UI, sans-serif',
       fontSize: '15px',
@@ -225,14 +228,16 @@ export class ParentScene extends Phaser.Scene {
     fitText(this.add.text(250, 94, 'Never drawn, at any difficulty; kept with their pictures and voice. To bring one back, ask for it by name (its line in STORED_WHY, content/phonics/bank.ts, goes).', { ...font, fontSize: '14px', color: '#555' }), GAME_WIDTH - 250 - 30, 22);
     const perCol = Math.ceil(STORED.length / 2);
     const colW = (GAME_WIDTH - 60) / 2;
+    const ROW = 21;
     STORED.forEach((w, i) => {
       const x = 30 + Math.floor(i / perCol) * colW;
-      const y = 122 + (i % perCol) * 22;
+      const y = 122 + (i % perCol) * ROW;
       const s = progress.stat('words', w.word);
-      fitText(this.add.text(x, y, `${w.word.toUpperCase()}${s.seen ? ` (${s.seen} tries)` : ''}: ${w.stored}`, font), colW - 16, 21);
+      fitText(this.add.text(x, y, `${w.word.toUpperCase()}${s.seen ? ` (${s.seen} tries)` : ''}: ${w.stored}`, font), colW - 16, ROW - 1);
     });
-    const y = 122 + perCol * 22 + 10;
-    fitText(this.add.text(30, y, `Out of play since item 040 (odd: a picture she would not know): ${DROPPED.map((w) => w.word.toUpperCase()).join(' ')}`, { ...font, color: '#555' }), GAME_WIDTH - 60, Math.max(22, GAME_HEIGHT - y - 10));
+    const y = 122 + perCol * ROW + 10;
+    // Ends above y 690, where F8's warning prints (hunt 10).
+    fitText(this.add.text(30, y, `Out of play since item 040 (odd: a picture she would not know): ${DROPPED.map((w) => w.word.toUpperCase()).join(' ')}`, { ...font, color: '#555' }), GAME_WIDTH - 60, Math.max(22, 690 - y - 4));
   }
 
   /** A column grid of items; `badge` puts a short mark (a help level) in an item's dot, `tag` a word after its name. */
@@ -258,7 +263,9 @@ export class ParentScene extends Phaser.Scene {
       this.add.circle(x + 8, y + 11, mark ? 9 : 7, c);
       if (mark) this.add.text(x + 8, y + 11, mark, { fontFamily: 'Segoe UI, sans-serif', fontSize: '12px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
       // One row each, shrunk to fit (item 080): with the row's height, two wrapped rows fitted and a frame's last count fell under it.
-      fitText(this.add.text(x + 22, y, `${id}${tag?.(id) ?? ''}  ${s.seen} · ${recent} · ${today.seen}${s.modelled ? ` +${s.modelled}` : ''}`, { fontFamily: 'Consolas, monospace', fontSize: '16px', color: '#222' }), colW - 30, Math.min(rowH - 2, 22));
+      // At most 20 px tall, down to 8 px (hunt 10): 22 px held two 10 px lines, and item 121's CANNOT_GET_PAST_THE
+      // wrapped its last count onto a second.
+      fitText(this.add.text(x + 22, y, `${id}${tag?.(id) ?? ''}  ${s.seen} · ${recent} · ${today.seen}${s.modelled ? ` +${s.modelled}` : ''}`, { fontFamily: 'Consolas, monospace', fontSize: '16px', color: '#222' }), colW - 30, Math.min(rowH - 2, 20), 8);
     });
   }
 
@@ -274,7 +281,8 @@ export class ParentScene extends Phaser.Scene {
         return;
       }
       this.resetArmed = true;
-      this.add.text(30, 690, 'Press F8 again to erase all progress.', { fontFamily: 'Segoe UI, sans-serif', fontSize: '18px', color: '#c0392b' });
+      // On a band of its own (hunt 10: page 3's stored words reach y 690 since item 130, and it printed over them).
+      this.add.text(30, 690, 'Press F8 again to erase all progress.', { fontFamily: 'Segoe UI, sans-serif', fontSize: '18px', color: '#c0392b', backgroundColor: '#fff4f0', padding: { x: 8, y: 3 } }).setDepth(10);
     }
     if (this.controls.pressed('green')) {
       this.scene.restart({ back: this.back, data: this.backData, page: (this.page + 1) % PAGE_NEXT.length });

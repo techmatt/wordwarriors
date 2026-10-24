@@ -169,3 +169,12 @@ test('text under her (hunt 9): stepped straight up, she stood over the Shape-Shi
   // A stone's letter under her as she stands at it to choose: selection by walking (M42), not flagged.
   assert.deepEqual(heroIssues({ texts, heroes: [hero(570)], targets: [{ scene: 'ShifterRoom', id: 'stone_b', b: [500, 330, 600, 470], depth: 381 }] }, 'ShifterRoom'), []);
 });
+
+test("a glyph on her (hunt 10): Charge's cake slice over her head and shoulders is a look; beside her, or small, is not", () => {
+  // Measured from the sweep: her figure in Charge (depth 620) and the 84 px gesture glyph (sparkles depth).
+  const her = { scene: 'ChargeRoom', b: [431, 447, 529, 577] as Box, depth: 620 };
+  const glyph = (x: number, size = 84) => ({ scene: 'ChargeRoom', text: '🍰', b: [x - 46, 450, x + 46, 541] as Box, depth: 9000, group: 0, size });
+  assert.deepEqual(heroIssues({ texts: [glyph(465)], heroes: [her] }, 'ChargeRoom').map((i) => i.kind), ['glyph-on-hero']);
+  assert.deepEqual(heroIssues({ texts: [glyph(220)], heroes: [her] }, 'ChargeRoom'), []);
+  assert.deepEqual(heroIssues({ texts: [glyph(465, 30)], heroes: [her] }, 'ChargeRoom'), []);
+});

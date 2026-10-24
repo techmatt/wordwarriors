@@ -98,6 +98,8 @@ test('voice: every clue line, and the warm-up narrator lines, exist; letter name
   // A silent letter's step (KITE's E, item 056) has no line: it only lights.
   for (const w of GRAB_WORDS) for (const l of [1, 2, 3] as const) for (const s of [...clue(w, l), ...clue(w, l, true)]) assert.ok(s.id === '' || byId.has(s.id), s.id);
   assert.deepEqual(clue('kite', 3).map((s) => [s.index, s.id === '']), [[0, false], [1, false], [2, false], [3, true]]);
+  // Hunt 10: at level 1 a silent letter is not named either (KITE's E named "Ee" sounded like a long E).
+  assert.deepEqual(clue('kite', 1).filter((s) => s.index === 3).map((s) => [s.kind, s.id]), [['sound', '']]);
   for (const k of ['grab_ask', 'grab_wrong', 'grab_need', 'grab_door']) assert.ok(byId.has(narratorLine('dada_matt', k)), k);
   const v = byId.get(letterNameLine('v'))!;
   assert.equal(v.text, 'V.');

@@ -123,3 +123,24 @@ test('frames (hunt 9, M40 (b), M41 (b)): a drawn frame holds no pad, gift or war
     setCastOptions({ overrides: {}, fixed: !EPISODE_DEFAULTS.randomCast });
   }
 });
+
+test("pads (hunt 10): no pad is a word of the villain's named counter item (the attic's \"We found the Sunshine Bus!\" said SUN before a SUN pad)", () => {
+  const random = Math.random;
+  Math.random = seededRand(135);
+  try {
+    progress.reset();
+    setCastOptions({ fixed: false, rand: Math.random, overrides: { villain: 'dada_jason_warlock' } });
+    const named = new Set(withStems(['sunshine', 'bus']));
+    assert.ok(named.has('sun'));
+    for (let e = 0; e < 40; e++) {
+      resetEpisode();
+      rememberCast();
+      const words = [...movePlan().part1, ...movePlan().part2].flatMap((c) => c.words);
+      assert.deepEqual(words.filter((w) => named.has(w)), [], `episode ${e + 1}`);
+      progress.episodeDone();
+    }
+  } finally {
+    Math.random = random;
+    setCastOptions({ overrides: {}, fixed: !EPISODE_DEFAULTS.randomCast });
+  }
+});

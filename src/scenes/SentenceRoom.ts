@@ -128,8 +128,13 @@ export class SentenceRoom extends HouseSideRoom {
 
   /** The attic's find line takes the narrow box (item 071, M13): its two-row banner holds the top, and the full-width box at the bottom covered her. */
   protected override narrowLine(u: Utterance): boolean {
-    return this.slot === 'counter' && isVariant(u.id, narratorLine(narrator(), 'room_find'));
+    // Under a banner tall enough to push the pictures down, the attic's or a long fetch sentence's (hunt 10:
+    // DADA MATT NEEDS A PLANT took two rows, and the wide box hid her from the waist down), M13's case.
+    return (this.slot === 'counter' || this.tallBanner) && isVariant(u.id, narratorLine(narrator(), 'room_find'));
   }
+
+  /** The banner pushed the pictures down the floor (`build`): the find line's box goes narrow, as the attic's. */
+  private tallBanner = false;
 
   /**
    * The banner is the highlighter here: the words it lights (the prefix line,
@@ -180,6 +185,7 @@ export class SentenceRoom extends HouseSideRoom {
     const highest = Math.min(...room.spots.slice(0, this.plan.objects.length).map(([, y]) => y));
     // The thing she is next to grows by NEAR_SCALE from its feet (RoomScene), so its top rises too.
     const drop = Math.max(0, Math.ceil(bannerBottom + BANNER_GAP - (highest - PIC_TOP * NEAR_SCALE - PIC_BOB)));
+    this.tallBanner = drop > 0;
     // She comes in below them, out of reach, so she is not standing on one when they wake (item 069:
     // under a two-row banner she came in 70 px under the middle one and a mashed green chose it).
     const spots = room.spots.slice(0, this.plan.objects.length).map(([x, y]) => ({ x, y: y + drop }));

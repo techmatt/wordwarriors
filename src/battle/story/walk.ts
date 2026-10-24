@@ -140,7 +140,8 @@ export class StoryWalk {
       this.idle = 0;
       this.sayAgain();
     }
-    if (this.clock >= this.seconds) this.finish(false);
+    // Not while a line or its re-prompt plays (hunt 10: the third "sneak" re-prompt was cut off at 30 s).
+    if (this.clock >= this.seconds && !voiceBus.busy && !this.saying) this.finish(false);
   }
 
   private sayAgain(): void {

@@ -49,7 +49,7 @@ import Phaser from 'phaser';
 import { canHold } from '../../content/phonics/letters';
 import { SIDE_ROOM_BY_ID, gapFor, type BridgeGap } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
-import { variant } from '../episode/lineVariants';
+import { readPraise, variant } from '../episode/lineVariants';
 import { voiceBus, type HeldSound } from '../audio/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon } from '../audio/sfx';
 import { BRIDGE, DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
@@ -717,7 +717,7 @@ export class BridgeRoom extends HouseSideRoom {
     if (f !== this.flow) return;
     spot.obj.setVisible(false);
     this.stopSparkle(spot);
-    await Promise.all([this.guard(this.bag.receive(this.wordArt(r.word), top.x, top.y)), this.say(narratorLine(narrator(), variant('right')))]);
+    await Promise.all([this.guard(this.bag.receive(this.wordArt(r.word), top.x, top.y)), this.say(narratorLine(narrator(), readPraise(unaided)))]);
     if (f !== this.flow) return;
     sfxSelect();
     if (!last) {

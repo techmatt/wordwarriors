@@ -56,7 +56,7 @@ export const BEDROOMS: BedroomSpec[] = [
       { id: 'rocket', glyph: '🚀', look: 'a toy rocket on a launch pad', x: 700, y: 440, w: 90, h: 110, reaction: 'pop', sound: 'whoosh' },
       { id: 'lamp', glyph: '💡', look: 'a night-light shaped like a bulb', x: 330, y: 650, w: 70, h: 80, reaction: 'glow', sound: 'zap' },
       { id: 'duck', glyph: '🦆', look: 'a rubber duck', x: 840, y: 620, w: 70, h: 70, reaction: 'squeak', sound: 'oink' },
-      { id: 'robot', glyph: '🤖', look: 'a wind-up toy robot', x: 900, y: 460, w: 90, h: 100, reaction: 'alive', sound: 'pew' },
+      { id: 'robot', glyph: '🤖', look: 'a wind-up toy robot', x: 770, y: 540, w: 90, h: 100, reaction: 'alive', sound: 'pew' },
       { id: 'ball', glyph: '⚽', look: 'a bouncy ball', x: 650, y: 680, w: 60, h: 60, reaction: 'bounce', sound: 'boing' },
       { id: 'unicorn', glyph: '🦄', look: 'a plush unicorn', x: 480, y: 690, w: 80, h: 80, reaction: 'wiggle', sound: 'summon' },
       { id: 'blocks', glyph: '🧱', look: 'a tower of toy blocks', x: 1010, y: 650, w: 80, h: 90, reaction: 'pop', sound: 'poof' },

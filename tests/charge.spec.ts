@@ -19,6 +19,7 @@ import { qaLayout } from './qa/probe';
 import { CHARGE_WORDS } from '../src/rules/charge';
 import type { WWHooks } from '../src/testHooks';
 import { letterSoundLine, wordLine } from '../content/voice/ids';
+import { RUNE_BY_SOUND } from '../content/phonics/runes';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/053_${name}.png` });
 
@@ -141,6 +142,19 @@ test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on t
   const l = await qaLayout(page);
   const altar = l.images.find((im) => im.key === 'prop_rune_altar')!;
   expect(s0.room!.player.x).toBeLessThan(altar.b[0]);
+  // Hunt 10: each rune's gesture glyph plays beside the helper, never on her (it sat on her face, M's cake slice).
+  const glyphs = new Set(runes.map((r) => RUNE_BY_SOUND[r]?.gesture.glyph));
+  let seen = 0;
+  for (let i = 0; i < 40 && (await state(page)).room?.charge?.phase !== 'read'; i++) {
+    const { texts: ts, heroes } = await qaLayout(page);
+    const her = heroes?.find((h) => h.scene === 'ChargeRoom')?.b;
+    for (const t of ts.filter((x) => glyphs.has(x.text))) {
+      seen++;
+      if (her) expect(t.b[2] <= her[0] || t.b[0] >= her[2] || t.b[3] <= her[1] || t.b[1] >= her[3], `${t.text} at ${t.b.join(',')} on her ${her.join(',')}`).toBe(true);
+    }
+    await page.waitForTimeout(150);
+  }
+  expect(seen, 'a gesture glyph seen').toBeGreaterThan(0);
   const read = await until(page, (st) => st.room?.charge?.phase === 'read', 60_000, 'the read');
   const toRead = read.room!.charge!.readAtMs;
   // Nothing was pressed and nothing asked before the read.

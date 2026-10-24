@@ -124,6 +124,18 @@ test("withStems (item 069): a pet form inside a compound (PIGGYBACK: PIG) and a 
   assert.ok(withStems(saidEarly({ hero: 'julia', ally: null, villain: 'tiamat', helper: 'dada_jason' })).includes('pig'));
 });
 
+test('withStems (hunt 10): CANNOT says CAN, so Evil Bavmorda\'s cackle keeps CAN off the attic once M40 made it readable', () => {
+  assert.ok(withStems(['cannot']).includes('can'));
+  assert.ok(withStems(saidEarly({ hero: 'julia', ally: 'ellie', villain: 'bavmorda', helper: 'dada_matt' })).includes('can'));
+});
+
+test("withStems (hunt 10): Moriarty's CLOCKWORK, COPYCATS and TRAPDOORS say CLOCK, CAT and TRAP", () => {
+  const said = withStems(['clockwork', 'copycats', 'trapdoors']);
+  for (const w of ['clock', 'cat', 'trap']) if (BANK_BY_WORD[w]) assert.ok(said.includes(w), w);
+  const early = withStems(saidEarly({ hero: 'julia', ally: 'moriarty', villain: 'tiamat', helper: 'dada_matt' }));
+  for (const w of ['clock', 'cat']) if (BANK_BY_WORD[w]) assert.ok(early.includes(w), w);
+});
+
 test('withStems (item 071, M16): a LOLLIPOP says POP', () => {
   if (BANK_BY_WORD.pop) assert.ok(withStems(['lollipop']).includes('pop'));
 });

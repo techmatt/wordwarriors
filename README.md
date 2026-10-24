@@ -182,7 +182,12 @@ a level-1 stone reached while a line plays, Dad's 2 in the frame key 0 leaves a 
 read, and THE END's tallest grown-up under its title. `tests/hunt7.spec.ts` (item 116) keeps the
 seventh's: her outfits for items 111 and 114's allies at her dress height and yellow mashed
 at the story fight's gold grab (slow lane), and Charge back from the grown-ups page asking no
-rune art the word lacks (fix 124, browser lane).
+rune art the word lacks (fix 124, browser lane). `tests/hunt10.spec.ts` (item 135, browser lane) keeps the
+tenth's that no older spec covers: `?ambience=` in another villain's battle, the clash's rings and F9 in
+the closing fade, the backdrop past every edge a shake can uncover, the grown-ups page (its grid rows, F8's
+warning, the DEBUG tag), the entry hall's decals, the gift word on its card, the story fight's fetched beat
+and Charge's modelled runes after F9; its Shape-Shifter fixes (the lifted letter under the label, on a
+miss, the closing line) are in `tests/hunt6.spec.ts` (slow lane).
 `playRoom(page, opts)` and `playSentenceRoom(page, opts)` take a `RoomPlay`
 (`{ wrongFirst, idleMs, wrongPauseMs }`: a wrong answer first; in a sentence room a stand
 at the key word and a pause after the wrong object). Other shared steps in
@@ -429,7 +434,7 @@ forms, an idle child who stands still at every choice, more seeds; `QA_SET=new` 
 third, item 069's: a busy child pressing blue, red and yellow all episode (free play),
 `DIFFICULTY` 2 and 3 with seeded progress, Charge and the bridge answered right, and four
 real draws back to back; `QA_SET=lenses` the fourth, item 080's, below; `QA_SET=recent` the
-fifth, item 089's, below; `QA_SET=cast` the seventh hunt's, below; `QA_SET=hunt8` the eighth's, below; `QA_SET=hunt9` the ninth's, below;
+fifth, item 089's, below; `QA_SET=cast` the seventh hunt's, below; `QA_SET=hunt8` the eighth's, below; `QA_SET=hunt9` the ninth's, below; `QA_SET=hunt10` the tenth's, below;
 `QA_SET=all` every batch).
 About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it records.
 In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`. The suite (`playwright.config.ts`)
@@ -537,6 +542,20 @@ keep such scripts in the worktree.
   `story_hidden` switches the tab away and resizes the window through it; `erase_mid` has Dad erase all progress (F9, F8 twice, back) in a side room, at battle 1's choice
   and in the attic, then plays a second episode on the empty store (`eraseAt`, `erase-return`). `qa flags` gained item 126's words
   where she meets them and odd `sentence=` values.
+- **The tenth hunt's batch** (`QA_SET=hunt10`, item 135, items 130-134's changes; about 10 minutes on
+  three workers, `drawn5_h10` the longest at 8): `drawn5_h10` (five drawn episodes after item 132's
+  cleanup), `shifter_wrong3` (the Shape-Shifter with wrong picks, three episodes: M39's chains, M42's
+  lifted letter), `runcan2` and `momdad2` (`words=run,can`, `words=mom,dad`: M40, M41), and each fight
+  style item 132 tidied once with wrong picks, a busy child or an idle one (`race_wrong`, `tug_mash`,
+  `cookoff_wrong`, `clash_idle`, `story_mash_wrong`). `qa flags` gained item 134's `ambience=` candidates
+  (in a battle whose villain fights elsewhere), `words=run,can` and the grown-ups page with no ally.
+  New check: `glyph-on-hero` (look), a picture glyph of 60 px or more (no letters) drawn over her head and
+  shoulders (Charge's gesture glyph sat on her face, fix 137). `spawn-in-reach` counts a spot back in its
+  slot the same round as seen (the word machine's wrong tile, back under her after "That's a silly word!",
+  is not new), and `lock_all` reads a move choice opening under the lock, nothing picked, as the fight's
+  own flow (`dadlock-flow`), not a press through it.
+- **A sweep's contact sheets take minutes:** `npx tsx tests/qa/report.ts <tag>` for `QA_SET=hunt10`
+  (nine scenarios, about 2,600 shots) ran past a minute; run it in the background.
 - **A wedged page is a stall, not a 30-minute wait** (hunt 9, M44 in `docs/qa-findings.md`): a reload
   at hub part 2 twice never came back (hunts 7 and 9), and the stall's own `page.evaluate` then
   waited on the page until the scenario's timeout. The stall's shot, the recorder and the last

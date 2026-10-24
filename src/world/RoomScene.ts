@@ -23,7 +23,7 @@ import { sfxWrong } from '../audio/sfx';
 import { advance, castArt, castScale, episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { outfitFor } from '../../content/battle/outfits';
 import { FreePlay } from '../fx/freePlay';
-import { fitImage, floatText, FpsMeter, wiggle } from '../fx/juice';
+import { backdrop, fitImage, floatText, FpsMeter, wiggle } from '../fx/juice';
 import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import type { DebugOrigin } from '../episode/debug';
@@ -136,8 +136,7 @@ export abstract class RoomScene extends Phaser.Scene {
   create(): void {
     this.runs.begin(() => voiceBus.hush());
     hookState.scene = this.scene.key;
-    const bg = this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, this.background()).setDepth(DEPTH.ground);
-    bg.setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
+    backdrop(this, this.background(), DEPTH.ground);
     this.controls = new Controls(this);
     this.player = new Player(this, this.floor.centerX, this.floor.bottom - 10, this.playerArt(), this.floor);
     this.play = new FreePlay(this, outfitFor(this.playerCharacter(), episode)?.id ?? null);

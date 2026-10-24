@@ -377,7 +377,9 @@ export class ClashStage extends BaseStage {
       this.sparkQ = q;
       this.sparks.setQuantity(q);
     }
-    if (live && this.t >= this.nextRing) {
+    // Not while a move choice is open (hunt 10): the emitters stop then, and a ring made during it, at full
+    // strength, was never dimmed and pulsed over the pads (fix 25's kind).
+    if (live && !this.host.choosing && this.t >= this.nextRing) {
       this.nextRing = this.t + 0.3 / fxQuality.level;
       shockwave(this.scene, x, y, Math.floor(this.t / 0.3) % 2 ? this.heroCol : this.villainCol, 60 + 30 * big, 380);
     }

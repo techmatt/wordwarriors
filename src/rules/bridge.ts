@@ -140,21 +140,35 @@ export interface BridgeInput {
  */
 export function planBridge(store: ProgressStore, input: BridgeInput, rand: Rand = Math.random, n = BRIDGE.words): BridgePlan {
   const avoid = new Set([...input.avoid, ...input.taken]);
+  // Hunt 10: only a word with a far-bank picture sharing its first sound, where the pool allows, so the first
+  // sound is never enough (THUMB stood beside a thumbs-up, a dad and a pen: TH alone picked it).
+  // The visit's other words stand on no bank of its own, so each is checked against those drawn before it.
   const eligible = CROSS_WORDS.filter((w) => !avoid.has(w));
+  const sibling = (w: string, also: string[]) => bridgePictures(w, BRIDGE.pictures - 1, () => 0, [...avoid, ...also]).some((p) => sharedStart(w, p) >= 1);
   const inBag = new Set(store.bag().left);
   const boost = (w: string) => (inBag.has(w) ? 2 : 1);
   const words: string[] = [];
   for (let k = 0; k < n; k++) {
-    const pool = eligible.filter((w) => !words.includes(w));
+    const open = eligible.filter((w) => !words.includes(w));
+    const fits = open.filter((w) => sibling(w, words) && words.every((x) => sibling(x, [...words, w])));
+    const pool = fits.length ? fits : open;
     if (!pool.length) break;
     words.push(drawWords(store, pool, 1, rand, boost)[0]!);
   }
   const ordered = words.map((w, i) => ({ w, i })).sort((a, b) => bridgeEase(a.w) - bridgeEase(b.w) || a.i - b.i).map((x) => x.w);
+  // Hunt 10: nor a wrong picture an earlier crossing showed (SIX stood on all three of one visit), unless that
+  // leaves none sharing the word's first sound.
+  const shown: string[] = [];
   return {
     rounds: ordered.map((word) => {
       const b = BANK_BY_WORD[word]!;
       // The other pictures keep clear of the episode's words and of this visit's other words.
-      const others = bridgePictures(word, BRIDGE.pictures - 1, rand, [...avoid, ...ordered]);
+      let others = bridgePictures(word, BRIDGE.pictures - 1, rand, [...avoid, ...ordered, ...shown]);
+      if (!others.some((p) => sharedStart(word, p) >= 1)) {
+        const again = bridgePictures(word, BRIDGE.pictures - 1, rand, [...avoid, ...ordered]);
+        if (again.some((p) => sharedStart(word, p) >= 1)) others = again;
+      }
+      shown.push(...others);
       return { word, units: [...b.units], sounds: [...b.sounds], pictures: shuffle([word, ...others], rand) };
     }),
   };

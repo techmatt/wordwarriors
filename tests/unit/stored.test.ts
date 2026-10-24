@@ -53,3 +53,20 @@ test('stored words keep their picture, word line, effect and move lines', () => 
     if (w.role !== 'thing') assert.ok(lines.has(narratorLine('dada_matt', moveKey('use_move', w.word))), `${w.word}'s move line`);
   }
 });
+
+test("stored words (hunt 10, M40): every bedroom prop that is a bank word is stored, whatever its glyph (the block tower is 🧱, BLOCK 🟦)", async () => {
+  const { BEDROOMS } = await import('../../content/house/house');
+  const { withStems } = await import('../../src/rules/bank');
+  const props = withStems(BEDROOMS.flatMap((b) => b.objects.map((o) => o.id))).filter((w) => BANK_BY_WORD[w]);
+  assert.ok(props.includes('block'), props.join(' '));
+  for (const w of props) assert.ok(STORED_WHY[w], `${w}: a bedroom prop, shown every episode, but in play`);
+});
+
+test('bedroom (hunt 10): no toy stands where a grown-up does (the robot stood behind the ally, a hat on Ellie, every episode)', async () => {
+  const { BEDROOMS } = await import('../../content/house/house');
+  for (const b of BEDROOMS) {
+    // BedroomScene: the ally beside the waker, 140 px towards her.
+    const people = [b.waker, { x: b.waker.x - 140, y: b.waker.y + 20 }];
+    for (const o of b.objects) for (const p of people) assert.ok(Math.hypot(o.x - p.x, o.y - p.y) > 90, `${b.id}: the ${o.id} at ${o.x},${o.y} on a grown-up at ${p.x},${p.y}`);
+  }
+});

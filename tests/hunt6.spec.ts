@@ -210,6 +210,81 @@ test('Shape-Shifter level 1: a stone she reaches while the instruction plays sou
   expectNoErrors(errors);
 });
 
+test('Shape-Shifter level 1: come at the middle stone from above, its lifted letter stays under the label, off its letters (hunt 10)', SLOW, async ({ page }) => {
+  test.setTimeout(90_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=a&room=shifter&seed=604');
+  const opening = (st: WWState) => sh(st)?.beat === 'fix' && sh(st)!.phase === 'intro' && st.room!.spots.length === 3;
+  let s = await until(page, (st) => opening(st) || ready(0)(st), 60_000, 'a fix-it link opening, or the first link');
+  for (let i = 0; !opening(s); i++) {
+    await pickRight(page, i);
+    s = await until(page, (st) => opening(st) || ready(i + 1)(st), 60_000, 'a fix-it link opening');
+  }
+  await until(page, ready(sh(s)!.index), 60_000, 'the link open');
+  s = await state(page);
+  const middle = s.room!.spots.reduce((a, b) => (Math.abs(b.x - 640) < Math.abs(a.x - 640) ? b : a));
+  const letter = middle.id.slice('stone_'.length);
+  const since = s.voice.history.length;
+  // Above and a little left of it, in its reach: where she arrives walking down from the step-up beside the label.
+  await place(page, middle.x - 30, middle.y - 85);
+  const sounding = await until(page, (st) => st.voice.history.slice(since).includes(letterSoundLine(letter)), 10_000, `the ${letter} stone sounding`);
+  const her = sounding.room!.player;
+  // Beside her, above her feet (the stone's own letter) and the lowest such: the label's may hold the letter too, at y 400.
+  const cy = (t: { bounds: number[] }) => (t.bounds[1]! + t.bounds[3]!) / 2;
+  const lifted = (await texts(page))
+    .filter((t) => t.scene === 'ShifterRoom' && t.text === letter.toUpperCase() && Math.abs((t.bounds[0]! + t.bounds[2]!) / 2 - her.x) < 160 && cy(t) < her.y - 20)
+    .sort((a, b) => cy(b) - cy(a))[0];
+  expect(lifted, `the ${letter} lifted beside her`).toBeTruthy();
+  // The label's plate ends at y 450 (LABEL 400, 100 high).
+  expect(lifted!.bounds[1]!, 'the lifted letter under the label').toBeGreaterThanOrEqual(450);
+  await page.screenshot({ path: 'tests/screenshots/hunt10_lifted_under_label.png' });
+  expectNoErrors(errors);
+});
+
+test('Shape-Shifter: "This one comes to the fight with us!" plays with the last creature still standing there (hunt 10)', SLOW, async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=a&room=shifter&seed=603&qa=1');
+  let s = await until(page, ready(0), 60_000, 'the first link');
+  const links = sh(s)!.words.length;
+  for (let i = 0; i < links; i++) {
+    if (i > 0) s = await until(page, ready(i), 60_000, `link ${i}`);
+    await pickRight(page, i);
+  }
+  await until(page, (st) => st.voice.speaking?.endsWith('_shifter_done') ?? false, 60_000, 'the closing line');
+  // The creature stands over the label, at (640, 255).
+  const creature = (await qaLayout(page)).images.find((im) => im.scene === 'ShifterRoom' && Math.abs((im.b[0] + im.b[2]) / 2 - 640) < 30 && Math.abs((im.b[1] + im.b[3]) / 2 - 255) < 40);
+  expect(creature, 'the last creature, as the line plays').toBeTruthy();
+  expectNoErrors(errors);
+});
+
+test('Shape-Shifter: a wrong stone sounds with its letter lifted beside her, at any level (hunt 10, M42\'s case on a miss)', SLOW, async ({ page }) => {
+  test.setTimeout(90_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=a&room=shifter&seed=604');
+  const opening = (st: WWState) => sh(st)?.beat === 'fix' && sh(st)!.phase === 'intro' && st.room!.spots.length === 3;
+  let s = await until(page, (st) => opening(st) || ready(0)(st), 60_000, 'a fix-it link opening, or the first link');
+  for (let i = 0; !opening(s); i++) {
+    await pickRight(page, i);
+    s = await until(page, (st) => opening(st) || ready(i + 1)(st), 60_000, 'a fix-it link opening');
+  }
+  await until(page, ready(sh(s)!.index), 60_000, 'the link open');
+  s = await state(page);
+  const wrong = s.room!.spots.find((sp) => sp.correct === false)!;
+  const letter = wrong.id.slice('stone_'.length);
+  await place(page, wrong.x, wrong.y + 12);
+  // Level 1: reaching it sounds it first (M42); the miss's own sounding comes after "This letter says...".
+  await until(page, (st) => st.voice.history.includes(letterSoundLine(letter)) && !st.voice.speaking, 20_000, `the ${letter} stone sounding on reach`);
+  await press(page, 'green');
+  await until(page, (st) => st.voice.speaking?.endsWith('_shifter_stone') ?? false, 20_000, '"This letter says..."');
+  const sounding = await until(page, (st) => st.voice.speaking === letterSoundLine(letter), 20_000, `the ${letter} stone sounding on the miss`);
+  const her = sounding.room!.player;
+  const byHead = (b: number[]) => Math.abs((b[0]! + b[2]!) / 2 - her.x) < 160 && b[3]! < her.y - 20;
+  const lifted = (await texts(page)).find((t) => t.scene === 'ShifterRoom' && t.text === letter.toUpperCase() && byHead(t.bounds));
+  expect(lifted, `the ${letter} lifted beside her on the miss`).toBeTruthy();
+  expectNoErrors(errors);
+});
+
 test("minigame debug mode: Dad's 2 in the same frame as key 0 out of a debug Charge read records nothing in the real store", SLOW, async ({ page }) => {
   test.setTimeout(90_000);
   const errors = collectErrors(page);

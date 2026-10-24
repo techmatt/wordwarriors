@@ -123,6 +123,8 @@ export interface BattleInfo {
   fight: string;
   stage: Record<string, unknown>;
   phase: string;
+  /** The closing fade has started (hunt 10: F9 waits it out). */
+  fading?: boolean;
   t: number;
   /** `art`: the image each fights as (an outfit's, for a hero in one); `drawn`: its picture's height on screen standing still (no squash, bob or grow). */
   heroes: { id: string; hp: number; status: string | null; art: string; drawn: number }[];

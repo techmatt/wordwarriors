@@ -40,6 +40,7 @@ import { away, enterRoom, episode, giftWord, helper, hubScene, narrator, planFor
 import { isVariant, variant } from '../episode/lineVariants';
 import { helperAbilityFor } from '../rules/moves';
 import { bob, burst, flash, popIn, shockwave, squash } from '../fx/juice';
+import { fitText } from '../ui/fitText';
 import { TEX } from '../fx/textures';
 import { Bag } from '../ui/Bag';
 import type { KeepOut } from '../ui/Caption';
@@ -311,9 +312,13 @@ export class HubScene extends RoomScene {
     // wall between doors a and b, so it covers neither door nor its sign.
     const sx = HUB.helper.x;
     const sy = SCROLL_Y;
-    const word = this.add
-      .text(0, 0, gift.toUpperCase(),{ fontFamily: FONT_ROUNDED, fontSize: '54px', color: '#3a1a5a', stroke: '#ffffff', strokeThickness: 6 })
-      .setOrigin(0.5);
+    // Fitted to the card with room for its 1.12 pulse (hunt 10: SPLASH, CHOMP, SMASH ran past its edge), as
+    // the move pads' words are (fix 43).
+    const word = fitText(
+      this.add.text(0, 0, gift.toUpperCase(), { fontFamily: FONT_ROUNDED, fontSize: '54px', color: '#3a1a5a', stroke: '#ffffff', strokeThickness: 6 }).setOrigin(0.5),
+      180,
+      80,
+    );
     this.scroll = this.add.container(sx, sy, [...this.propBehind(story.prop), word]).setDepth(DEPTH.fx);
     this.scroll.setData('word', word);
     popIn(this, this.scroll);

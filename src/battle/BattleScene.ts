@@ -50,7 +50,7 @@ import { advance, castArt, castScale, counterArt, counterWord, episode, fightSty
 import { pickTaunt, unsayTaunt, variant } from '../episode/lineVariants';
 import { fightLineKey, type FightSpec } from '../../content/battle/fights';
 import { hex } from '../fx/colour';
-import { burst, fitImage, flash, floatText, FpsMeter, fxQuality, hitstop, popIn, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
+import { backdrop, burst, fitImage, flash, floatText, FpsMeter, fxQuality, hitstop, popIn, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { FreePlay } from '../fx/freePlay';
 import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
@@ -227,7 +227,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     const v = villainSpec();
     this.fight = fightStyle();
     this.arenaKey = this.trial?.arena ?? this.fight.arena ?? v.arena;
-    this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, `arena_${this.arenaKey}`).setDisplaySize(GAME_WIDTH, GAME_HEIGHT).setDepth(DEPTH.ground);
+    backdrop(this, `arena_${this.arenaKey}`, DEPTH.ground);
     this.darkRect = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0a0018, 0).setDepth(FLOOR_TOP - 5);
     this.controls = new Controls(this);
     this.play = new FreePlay(this, outfitFor(episode.hero, episode)?.id ?? null);
@@ -792,7 +792,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     const bs = bag.scale;
     popIn(this, bag, bs, 0, 260);
     sfxWhoosh();
-    if (!this.bagSaid) {
+    // Not in the story fight (hunt 10): its own beat has just said it ("Julia, show him what we found in the house!").
+    if (!this.bagSaid && !this.story) {
       this.bagSaid = true;
       void this.say('use_bag');
     }
@@ -1136,7 +1137,14 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     aura.startFollow(v.root, 0, -v.height * 0.6);
     this.after(3200, () => aura.stop());
     this.after(4200, () => aura.destroy());
-    const vignette = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT).setStrokeStyle(80, ult.color, 0.5).setDepth(DEPTH.hud - 1).setAlpha(0);
+    // A soft edge, fading inward, from past the screen's edge (hunt 10: one 80 px stroke drew a hard frame 40 px
+    // in from every side, and the shake slid it about).
+    const bands = Array.from({ length: 10 }, (_, i) => {
+      const inset = -40 + i * 12;
+      const a = inset <= 0 ? 0.5 : 0.5 * Math.max(0, 1 - inset / 80) ** 1.5;
+      return this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH - 2 * inset, GAME_HEIGHT - 2 * inset).setStrokeStyle(12, ult.color, a);
+    });
+    const vignette = this.add.container(0, 0, bands).setDepth(DEPTH.hud - 1).setAlpha(0);
     this.tweens.add({ targets: vignette, alpha: 1, duration: 300, yoyo: true, repeat: 4, onComplete: () => vignette.destroy() });
     burst(this, v.cx, v.cy, { count: 120, speed: 700, colors: [v.init.palette[0], v.init.palette[1], ult.color], life: 1200 });
     shockwave(this, v.x, v.y, ult.color, 400, 900);
@@ -1188,7 +1196,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     const counter = { name: named?.name ?? `The ${word}`, how: named?.how ?? 'scare' };
     for (const f of this.team()) f.invulnerable = true;
     const h = this.heroes[0]!;
-    void this.say('use_item');
+    if (!this.story) void this.say('use_item');
     const at = this.revealSpot(h, 190, 190, 0);
     const item = fitImage(this.add.image(at.x, at.y - 95, counterArt()), 130, 130).setDepth(DEPTH.fx + 5);
     const s = item.scale;
@@ -1742,7 +1750,9 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     this.hud.draw(this.heroes, this.villain, this.show);
 
     if (this.controls.dev('F2') && !isLeaving(this)) advance(this);
-    else if (this.controls.dev('F9') && !isLeaving(this)) {
+    // Not once the closing fade has started (hunt 10): the fight was over, and coming back played it all again,
+    // as the rooms, the ending and the victory scene already guard.
+    else if (this.controls.dev('F9') && !isLeaving(this) && !this.cameras.main.fadeEffect.isRunning && !this.cameras.main.fadeEffect.isComplete) {
       // The grown-ups' page; it comes back to this battle (restarted) when closed. Marked
       // leaving (item 092): the director's last wait resolving this frame started the next step too.
       markLeaving(this);
@@ -1762,6 +1772,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
       fight: this.fight.id,
       stage: this.show.info(),
       phase: this.phase,
+      fading: this.cameras.main.fadeEffect.isRunning || this.cameras.main.fadeEffect.isComplete,
       t: Math.round(this.now) / 1000,
       heroes: this.heroes.map(info),
       villains: [info(this.villain)],

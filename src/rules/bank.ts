@@ -144,15 +144,17 @@ export function withStems(said: Iterable<string>): string[] {
 /** Second halves of compounds the game says, beyond bank words (CUP-CAKES, SUN-SHINE, PIG-LETS). */
 // Item 056: DOM, so KINGDOM says KING.
 // HOUSE (item 121): TREE-HOUSE, Dada Matt's workshop, says TREE.
-const COMPOUND_HALVES = new Set(['cake', 'shine', 'let', 'ball', 'fish', 'man', 'box', 'dom', 'back', 'house']);
+// NOT (hunt 10): Evil Bavmorda's "You cannot stop my magic" says CAN, readable since M40. WORK and DOOR
+// (hunt 10): Moriarty's CLOCKWORK gadgets and TRAPDOORS say CLOCK and TRAP.
+const COMPOUND_HALVES = new Set(['cake', 'shine', 'let', 'ball', 'fish', 'man', 'box', 'dom', 'back', 'house', 'not', 'work', 'door']);
 
 /**
  * First halves of compounds the game says whose second half is a bank word
  * (item 069): DUMB-BELL says BELL, BROOM-STICK STICK, BATH-TUB TUB. Listed,
  * not any ending: HERSELF, LISTEN and KITCHEN do not say ELF, TEN or HEN.
  */
-// LOLLI (item 071, M16): a LOLLIPOP says POP.
-const COMPOUND_HEADS = ['bath', 'broom', 'dumb', 'kettle', 'ear', 'hand', 'hazel', 'snow', 'war', 'lolli'];
+// LOLLI (item 071, M16): a LOLLIPOP says POP. COPY (hunt 10): Moriarty's COPYCATS says CAT.
+const COMPOUND_HEADS = ['bath', 'broom', 'dumb', 'kettle', 'ear', 'hand', 'hazel', 'snow', 'war', 'lolli', 'copy'];
 
 /** Every word the key-word bag holds: the bank's pictured words (item 037: CVC, blends and digraphs). */
 export const BAG_WORDS: string[] = THINGS.map((w) => w.word);

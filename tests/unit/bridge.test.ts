@@ -183,6 +183,20 @@ test('bridge help (item 067): held at level 1 at base whatever she has reached; 
   withDifficulty(3, () => assert.equal(bridgeLevel(store, 'map'), 3));
 });
 
+test('bridge draw (hunt 10): every crossing has a far-bank picture sharing its first sound (THUMB had none), and no wrong picture stands on two crossings of a visit (SIX stood on three)', () => {
+  for (let seed = 1; seed <= 80; seed++) {
+    const plan = planBridge(new ProgressStore(memory()), { avoid: [], taken: [] }, seeded(spread(seed)));
+    const wrong = new Set<string>();
+    for (const r of plan.rounds) {
+      const others = r.pictures.filter((p) => p !== r.word);
+      assert.ok(others.some((p) => sharedStart(r.word, p) >= 1), `seed ${seed}: ${r.word} beside ${others.join(' ')}`);
+      // Again only as the first-sound picture it needs (CHIPS beside CHICK and CHIN).
+      for (const p of others) assert.ok(!wrong.has(p) || sharedStart(r.word, p) >= 1, `seed ${seed}: ${p} again beside ${r.word}`);
+      for (const p of others) wrong.add(p);
+    }
+  }
+});
+
 test('bridge draw: never a word the episode says, shows or has planned elsewhere', () => {
   const avoid = ['map', 'mop', 'mug', 'sun', 'six', 'fan', 'fox'];
   for (let seed = 1; seed <= 30; seed++) {

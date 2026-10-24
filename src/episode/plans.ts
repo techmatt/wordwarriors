@@ -297,7 +297,16 @@ function shifterChance(): number {
  * banners and lines clear of pad words as it goes (BattleScene `textGivesAway`).
  */
 function saidBeforeBattle(): string[] {
-  return withStems([...bedroomWords(), ...HALL_LINE_WORDS, ...ROOM_LINE_WORDS, ...storyWords(), ...fightWords()]);
+  return withStems([...bedroomWords(), ...HALL_LINE_WORDS, ...ROOM_LINE_WORDS, ...storyWords(), ...fightWords(), ...counterWords()]);
+}
+
+/**
+ * The villain's named counter item (hunt 10): read as the attic's word, "We found the Sunshine Bus!" says
+ * SUN before a battle-2 SUN pad. Drawn after the pads, so kept clear whether or not the attic names it.
+ */
+function counterWords(): string[] {
+  const c = CHARACTER_BY_ID[episode.villain]?.counter;
+  return [...wordsOf(c?.name), ...wordsOf(c?.sayName)];
 }
 
 /** A sentence frame's own words, stemmed (RUNS is RUN). */

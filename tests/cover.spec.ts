@@ -102,6 +102,8 @@ test('the shape-shifter: the fix-it instruction keeps off the letter stones', SL
 for (const [name, query, scene, line] of [
   ['the hub\'s door line', '?scene=house&nojourney=1', 'Hub', /_house_doors$/],
   ['the attic\'s find line (two-row banner)', '?scene=room&slot=counter&villain=jormungandr&nojourney=1', 'SentenceRoom', /_room_find$/],
+  // Hunt 10: a fetch sentence that wraps (DADA MATT NEEDS A PLANT) is M13's case too.
+  ['a fetch room\'s find line (two-row banner)', '?scene=room&slot=a&ally=none&primary=dada_matt&sentence=helper_needs_a:plant&nojourney=1', 'SentenceRoom', /_room_find$/],
 ] as const) {
   test(`${name}: the dialogue box keeps off her`, SLOW, async ({ page }) => {
     const errors = collectErrors(page);
