@@ -441,12 +441,12 @@ fades per word (`rhymeLevels`, on the grown-ups page once met; at base difficult
 gets level 1): level 1 the helper sounds the printed word out unasked, each unit lit on the
 plate (a digraph one sound, never blended), then asks "Which thing is it?"; levels 2 and 3
 it is sounded out only on yellow. A round's cards, slot, plate and pictures arrive together;
-only the first round has the long instructions ("Rhyme time!..." after the two cards,
-"Which thing is it?" after the sound-out); later rounds say the two cards and sound the
+only the first round has the long instruction ("Which thing is it?" after the sound-out;
+"Rhyme time!..." went in item 146); later rounds say the two cards and sound the
 plate out (level 1) or say "Another rhyme! Read it!" (2 and 3), and she picks. She can walk
 from the moment the pictures are up; only green waits for the round's last line (item 144,
 hunt 11 M64, real voice, right first time: a visit about 40 s from the room's open to the
-hub, the first card said 1.2 s in; green opens about 14.5 s into the first round, 7 s into
+hub, the first card said 1.2 s in; green opens about 9.8 s into the first round (item 146), 7 s into
 a later one, counting the last word's praise). Yellow sounds it out at any level, and is help (the
 word's ramp steps down). A miss: the fizzle-and-giggle, then the rhyme with her pick in it
 and again with the right word, "Bug, tug... thumb? Listen: bug, tug, rug!" (Matt's design:

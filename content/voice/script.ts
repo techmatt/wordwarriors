@@ -236,7 +236,6 @@ export const NARRATOR_LINES: Template[] = [
   // she reads: the rhyming words and her pick are word_ lines, the printed word
   // is said (word_) once she has it, or in a miss's "Listen: bug, hug, rug!"
   // (`rhyme_listen`, Matt's design), and its sounds are letter_ lines.
-  { key: 'rhyme_intro', text: 'Rhyme time! These words sound the same at the end!', say: 'Rhyme time! These words sound the same at the end!' },
   { key: 'rhyme_read', text: 'This word rhymes with them too! Read it, then walk to its picture!', say: 'This word rhymes with them too! Read it, then walk to its picture.' },
   { key: 'rhyme_cue', text: 'Another rhyme! Read it!', say: 'Another rhyme! Read it!' },
   { key: 'rhyme_which', text: 'Which thing is it? Walk to it!', say: 'Which thing is it? Walk to it.' },

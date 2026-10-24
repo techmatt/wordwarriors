@@ -128,21 +128,23 @@ export const RUNES: RuneSound[] = [
 /**
  * Each taught rune's picture letter. The rune's own gesture is the thing where it
  * draws well (S's snake, F's fire, D's dinosaur, J's jelly as a jellyfish); short
- * vowels take a short-vowel word (Alligator, not Apron). A bank word here (IGLOO,
- * OCTOPUS, UMBRELLA, VASE) is kept out of reading as a gesture word is.
+ * vowels take a short-vowel word (Ant, not Apron). A bank word here (ANT, NEST,
+ * IGLOO, OCTOPUS, UMBRELLA, VASE) is kept out of reading as a gesture word is.
+ * Item 146 (hunt 11's art calls, M67): N a NEST, not a NOODLE (noodles on a fork
+ * read as SPAGHETTI), A one ANT, not an ALLIGATOR (often a CROCODILE).
  */
 const PICTURES: Record<string, RunePicture> = {
   m: { word: 'mountains', look: 'two snowy-topped mountains side by side make the M: the two peaks are its points and the valley between them its middle dip, a little sun peeking over' },
   s: { word: 'snake', look: 'a friendly smiling snake curls into the S: its body is the S curve, head with a little forked tongue at the top end, tail tip at the bottom end, yellow belly stripe and diamond pattern' },
   f: { word: 'fire', look: 'the F is a campfire log standing upright with two shorter logs sticking out to the right as its two arms, bright orange and yellow flames dancing along the top of the upright and each arm' },
-  a: { word: 'alligator', look: 'a cartoon alligator stands on its tail with its long jaws wide open pointing down, the two jaws are the two slanted legs of the A, its tongue across the open mouth is the crossbar, a friendly eye at the top point' },
+  a: { word: 'ant', look: 'one big friendly red cartoon ant stands tall facing us and makes the A: its two long legs spread wide as the two slanted strokes meeting at its head and feelers at the top point, its two arms joined across its middle as the crossbar, six legs in all' },
   l: { word: 'lizard', look: 'an orange lizard makes the L: its body runs straight up as the tall upright, head at the top, and its long tail bends at the bottom and runs out flat to the right as the foot' },
-  n: { word: 'noodle', look: 'one long thick yellow noodle bends into the N: up, diagonally down, and up again, with a fork twirled into the top of the last stroke and a little steam' },
+  n: { word: 'nest', look: 'three straight brown twigs make the N: two standing upright and one running diagonally from the top of the left one down to the bottom of the right one, a round cosy bird\'s nest of woven straw sitting on top of the right twig with three little blue eggs in it' },
   r: { word: 'robot', look: 'a boxy friendly robot makes the R: its straight metal body and leg the upright, its round head with glowing eyes the bowl at the top, and one leg kicking out diagonally as the slanted leg' },
   e: { word: 'elephant', look: 'a grey elephant seen from the side makes the E: its back is the upright, and its trunk, a front leg and a back leg stick out to the right as the three arms, a big ear at the top' },
   i: { word: 'igloo', look: 'the I is a tall pillar built of white snow bricks with the brick lines drawn, a wide snow-brick cap at the top and a wide base at the bottom, a little round igloo doorway in its foot' },
   o: { word: 'octopus', look: 'a purple octopus curls its arms all the way round into a perfect ring for the O, its round friendly face with big eyes at the top of the ring, suckers along the arms' },
-  u: { word: 'umbrella', look: 'an open red umbrella hangs upside down so its curved canopy is the U, the two pointed tips its two arms reaching up, a few raindrops falling into it' },
+  u: { word: 'umbrella', look: 'an open red umbrella turned upside down: its round canopy with ribs and pointed scalloped tips curves into the U, the two tips at the top its two arms, and its long straight shaft with the curved J handle sticks straight up out of the middle of the bowl, so it is plainly an umbrella and not a bowl or a horseshoe; a few raindrops falling into it' },
   t: { word: 'table', look: 'a small round wooden table seen from the side makes the T: its flat top the crossbar, its single central leg the upright, a little cup on top' },
   p: { word: 'popsicle', look: 'a round pink popsicle on a wooden stick makes the P: the stick runs down from its left side as the upright and the round ice pop is the bowl at the top right, a drip on its side' },
   b: { word: 'butterfly', look: 'a butterfly seen side-on clings to the B: its straight body is the upright and its two round colourful wings, one above the other, are the two bumps, little antennae at the top' },

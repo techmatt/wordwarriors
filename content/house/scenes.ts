@@ -116,7 +116,8 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
   ],
   // Lifter Dada Matt: a workout move from the forest gym.
   dada_matt_lifter: [
-    S('🏋️', [
+    // M68 (hunt 11, item 146): a champion medal, not a weightlifter flying into her.
+    S('prop_medal', [
       'It is time to warm up, so stretch up high, and touch your toes!',
       'Now I will show you my best workout move, it makes the squirrels cheer.',
       'Get ready, get set, and shout...',
@@ -278,7 +279,8 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'Keep it warm, and keep it secret, nobody else knows it is here.',
       'Crack, crack, and the baby dragon\'s very first word is...',
     ], NEST('to meet the baby'), 'You are a secret dragon keeper now, let\'s look around!'),
-    S('🐉', [
+    // M68 (hunt 11, item 146): one of its scales, not her own pet flying into her.
+    S('prop_dragon_scale', [
       'My little pink dragon goes everywhere with me, even to sleep!',
       'It learned a brand new trick, just for you.',
       'Watch it flutter, and it squeaks...',

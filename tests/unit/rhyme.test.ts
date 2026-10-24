@@ -151,7 +151,7 @@ test('episodePlans with the rhyme room: its words are the fetches, its last the 
 
 test('every rhyme line exists, for every narrator voice', () => {
   const ids = new Set(composeLines().map((l) => l.id));
-  for (const k of ['rhyme_intro','rhyme_read', 'rhyme_cue', 'rhyme_which', 'rhyme_which_2', 'rhyme_listen', 'rhyme_done', 'rhyme_done_2']) assert.ok(ids.has(narratorLine('dada_matt', k)), k);
+  for (const k of ['rhyme_read', 'rhyme_cue', 'rhyme_which', 'rhyme_which_2', 'rhyme_listen', 'rhyme_done', 'rhyme_done_2']) assert.ok(ids.has(narratorLine('dada_matt', k)), k);
 });
 
 test('planRhyme (hunt 11): a visit keeps clear of the last visit\'s families (LAST_RHYMES) while others fit', () => {

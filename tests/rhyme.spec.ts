@@ -33,11 +33,6 @@ test('rhyme room at base level: three rounds, each a family, the rhyme said, the
     // Level 1: the two rhyming words said, the printed one sounded out for her, never said.
     expect(r.sounded).toBe(true);
     for (const w of r.shown) expect(s.voice.history).toContain(wordLine(w));
-    // Hunt 11: "These words sound the same at the end!" once the two cards are up and said, not to an empty wall.
-    if (i === 0) {
-      const intro = s.voice.history.findIndex((id) => id.endsWith('_rhyme_intro'));
-      expect(intro, 'the intro after both cards').toBeGreaterThan(s.voice.history.indexOf(wordLine(r.shown[1]!)));
-    }
     for (const step of soundOut(r.word)) if (step.id) expect(s.voice.history).toContain(step.id);
     expect(s.voice.history).not.toContain(wordLine(r.word));
     expect(s.room!.spots.map((sp) => sp.id).sort()).toEqual([...r.options].sort());
@@ -69,8 +64,9 @@ test('rhyme room at base level: three rounds, each a family, the rhyme said, the
   expect(rimes.size).toBe(3);
   const hub = await until(page, (st) => st.scene === 'Hub', 60_000, 'back in the hub');
   expect(hub.episode.house.done).toContain('a');
-  // Item 144 (hunt 11, M64): the long instructions on the first round only.
-  for (const k of ['_rhyme_intro', '_rhyme_which']) expect(hub.voice.history.filter((id) => id.endsWith(k)), k).toHaveLength(1);
+  // Item 144 (hunt 11, M64): the long instruction on the first round only; item 146: no "Rhyme time!" at all.
+  expect(hub.voice.history.filter((id) => id.endsWith('_rhyme_which'))).toHaveLength(1);
+  expect(hub.voice.history.filter((id) => id.endsWith('_rhyme_intro'))).toEqual([]);
   // "This word rhymes with them too! Let's sound it out!" went: the sound-out follows the rhyme straight on.
   expect(hub.voice.history.filter((id) => id.endsWith('_rhyme_more'))).toEqual([]);
   for (const w of bagged(words)) expect(hub.episode.fetched).toContain(w);

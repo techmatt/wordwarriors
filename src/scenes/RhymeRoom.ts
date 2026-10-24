@@ -161,7 +161,7 @@ export class RhymeRoom extends HouseSideRoom {
     // more of silence before several of them). An ensure goes to the front of the queue: the line needed
     // last is asked for first, so the cards' words, asked for last, come first.
     for (const r of this.plan.rounds) for (const s of soundOut(r.word)) if (s.id) void voiceBank.ensure(s.id);
-    for (const k of ['rhyme_listen', 'rhyme_which_2', 'rhyme_which', 'rhyme_intro']) void voiceBank.ensure(narratorLine(narrator(), k));
+    for (const k of ['rhyme_listen', 'rhyme_which_2', 'rhyme_which']) void voiceBank.ensure(narratorLine(narrator(), k));
     for (const r of this.plan.rounds) for (const w of [...r.shown, r.word]) void voiceBank.ensure(wordLine(w));
     if (this.finished) {
       this.locked = true;
@@ -209,13 +209,8 @@ export class RhymeRoom extends HouseSideRoom {
       await this.sayCard(i);
       if (f !== this.flow) return;
     }
-    // The first round's long instructions; later rounds go straight on to the plate (M64).
-    // "Rhyme time! These words sound the same at the end!": once there are words to point at (hunt 11: it
-    // played to an empty wall, the cards coming after).
-    if (!this.told) {
-      await this.narrate('rhyme_intro');
-      if (f !== this.flow) return;
-    }
+    // No "Rhyme time! These words sound the same at the end!" (item 146, the planner's call on 144: its 4.7 s
+    // held the first green to 14.5 s; the cards rhyming aloud say it).
     if (this.level === 1) {
       // Level 1: the helper sounds it out for her, straight after the rhyme (M64: "This word rhymes with them
       // too! Let's sound it out!" before it held her 4.6 s for what the sound-out itself shows); the first
