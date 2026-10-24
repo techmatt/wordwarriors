@@ -56,6 +56,11 @@ export interface Spot {
   baseScale: number;
   /** Where she stood the first frame this spot was published (`SpotInfo.from`, hunt 9). */
   from?: { x: number; y: number };
+  /**
+   * The green dot's height over the spot's feet, when its bounds move (hunt 11: the gift plate's rising
+   * steam lifted the dot and dropped it back every half second); unset, it sits over the spot's top.
+   */
+  dotAbove?: number;
 }
 
 export abstract class RoomScene extends Phaser.Scene {
@@ -126,6 +131,11 @@ export abstract class RoomScene extends Phaser.Scene {
    */
   protected playOpen(): boolean {
     return this.walking;
+  }
+
+  /** How high her free-play jump may lift her here (the rhyme room's cards draw over her, hunt 11). */
+  protected liftCap(): number {
+    return Infinity;
   }
 
   /** Does yellow have something to say again now? Then yellow keeps that meaning and does not cast. */
@@ -376,8 +386,8 @@ export abstract class RoomScene extends Phaser.Scene {
       this.lastNear = best;
     }
     if (best) {
-      const bounds = best.obj.getBounds();
-      this.dot.setPosition(best.x, bounds.top - 26).setVisible(!this.locked);
+      const top = best.dotAbove === undefined ? best.obj.getBounds().top : best.y - best.dotAbove * best.obj.scale;
+      this.dot.setPosition(best.x, top - 26).setVisible(!this.locked);
     } else this.dot.setVisible(false);
 
     // Free play: green jumps only when it means nothing else here, yellow casts
@@ -407,7 +417,7 @@ export abstract class RoomScene extends Phaser.Scene {
       green: greenFree,
       cast: yellowHints ? ['blue', 'red'] : ['blue', 'red', 'yellow'],
     });
-    this.player.lift = this.play.height;
+    this.player.lift = Math.min(this.play.height, this.liftCap());
     this.idleHelp(deltaMs);
 
     // Not while the room fades out to leave (item 089): F2 skipped a second step, F9 came back to a room already left.
@@ -455,7 +465,12 @@ export abstract class RoomScene extends Phaser.Scene {
       }
       return;
     }
-    if (this.locked) return;
+    // Idle time counts from the last instruction's end (hunt 11: time idled before the bedroom's "Find the door!"
+    // carried over, and it was said again 3 s after).
+    if (this.locked) {
+      this.idleMs = 0;
+      return;
+    }
     // Dad lock: no re-prompt nags while a grown-up is talking with her.
     if (dadLock.locked) {
       this.idleMs = 0;

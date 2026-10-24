@@ -239,7 +239,11 @@ export class BedroomScene extends RoomScene {
       shake(this, 2, 300);
       const id = fighterId(episode.villain, true);
       tauntsSaid.set(id, [taunt.key]);
+      // Heard, not answered (hunt 11): every other line here locks presses, and the drum's shout or the lamp's
+      // flash went off over the taunt.
+      this.locked = true;
       await this.guard(voiceBus.say(tauntLine(id, taunt.key), 'bark'));
+      this.locked = false;
     }
 
     // The quest (item 025): the helper says where they will train.

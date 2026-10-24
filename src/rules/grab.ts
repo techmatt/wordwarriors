@@ -110,13 +110,19 @@ export function pickGrab(store: ProgressStore, avoid: Iterable<string> = [], ran
  * reading (`distractorsFor`): while the grab word is new none starts with its
  * first letter; once her grabs of it are firm, one shares its first sound or
  * rime (HAT among CAT's neighbours), so she reads past the first letter. If
- * that leaves too few, the look-alike rule gives way, then `avoid`.
+ * that leaves too few, the look-alike rule gives way, then `avoid`. A picture
+ * whose word holds a word of `avoid` plus a sound is avoided too (hunt 11, M57's
+ * rule: a miss on the CLOCK says "CLOCK", and LOCK is read later).
  */
 export function hallObjects(store: ProgressStore, word: string, avoid: Iterable<string> = [], rand: Rand = Math.random, n = GRAB.objects): string[] {
-  const out = [...avoid];
+  const said = new Set(avoid);
+  const out = [...said, ...HALL_WORDS.filter((w) => !said.has(w) && grabSays(w).some((s) => said.has(s)))];
+  // Never the grab word plus a sound (hunt 11: TENT by TEN, CLOCK by LOCK: a miss there says the word she is
+  // finding, and the clue's sounds fit both), at every tier.
+  const plus = HALL_WORDS.filter((w) => w !== word && grabSays(w).includes(word));
   const like = lookalikesOf(word);
   const others = HALL_WORDS.filter((w) => w !== word);
-  const tiers = [[...out, ...like], out, []];
+  const tiers = [[...out, ...plus, ...like], [...out, ...plus], plus];
   const banned = tiers.find((t) => others.filter((w) => !t.includes(w)).length >= n - 1) ?? [];
   return shuffle([word, ...distractorsFor(store, word, others, n - 1, rand, banned, isFirm(store, word, 'grabs'))], rand);
 }

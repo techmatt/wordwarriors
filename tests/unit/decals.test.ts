@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { ROSTER } from '../../content/battle/roster';
+import { OUTDOOR_ROOMS, PLACES } from '../../content/house/house';
 import { scatterDecals, type Box } from '../../src/rules/decals';
 import { seededRand } from '../../src/rules/random';
 
@@ -36,4 +37,14 @@ test('decals: with no clear spot a decal is skipped, not dropped onto a kept-cle
   assert.deepEqual(placed.map((p) => p.key), ['decal_crack', 'decal_crack']);
   // Nothing kept clear: all of them.
   assert.equal(scatterDecals(decals, { floor: FLOOR, rand: seededRand(1) }).length, 5);
+});
+
+test('decals (hunt 11): an open-air side room is a real room of a place, and its decals all lie on the floor', () => {
+  for (const id of OUTDOOR_ROOMS) assert.ok(PLACES.some((p) => [...p.rooms, p.secret].some((r) => r.id === id)), `${id} is a room of a place`);
+  for (const v of ROSTER) {
+    const decals = v.house?.decals;
+    if (!decals?.length) continue;
+    const placed = scatterDecals(decals, { floor: FLOOR, floorOnly: true, rand: seededRand(7) });
+    assert.ok(placed.every((p) => p.onFloor), `${v.id}: nothing hangs in mid-air`);
+  }
 });

@@ -30,7 +30,7 @@ import Phaser from 'phaser';
 
 import { FAMILY_BY_RIME } from '../../content/phonics/families';
 import { LETTER_BY_CHAR } from '../../content/phonics/letters';
-import { SIDE_ROOM_BY_ID } from '../../content/house/house';
+import { OUTDOOR_ROOMS, SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, rimeLine, sillyLine, wordLine } from '../../content/voice/ids';
 import { readPraise, variant } from '../episode/lineVariants';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
@@ -48,7 +48,7 @@ import { fontPx } from '../ui/fitText';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood, roomSeed } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
-import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
+import { ARRIVE_MS, GIGGLE_BEAT_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
 type Phase = 'intro' | 'pick' | 'check' | 'done';
 
@@ -149,7 +149,9 @@ export class WordMachine extends HouseSideRoom {
 
   protected build(): void {
     this.floor.setTo(80, 420, GAME_WIDTH - 160, 260);
-    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true });
+    // Off the tiles' row and 150 px either side (hunt 11: Elsa's icicles stood between the tiles, fix 150's kind).
+    const avoid = [new Phaser.Geom.Rectangle(MACHINE_X - TILE_GAP - 150, TILE_Y - 140, 2 * TILE_GAP + 300, 220)];
+    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true, floorOnly: OUTDOOR_ROOMS.has(this.roomId), avoid });
     this.bag = new Bag(this);
     const room = SIDE_ROOM_BY_ID[this.roomId];
     // In from the side, clear of the tiles (a tile in reach would speak at once).
@@ -388,6 +390,8 @@ export class WordMachine extends HouseSideRoom {
     // The whole silly word, lit, said: it is not the word she is making.
     this.onsetText.setColor(LIT);
     this.rimeText.setColor(LIT);
+    // A beat for the giggle before the line (hunt 11).
+    await this.wait(GIGGLE_BEAT_MS);
     await this.speak(narratorLine(narrator(), 'machine_makes'), sillyLine(tile.makes), narratorLine(narrator(), variant('machine_silly')));
     // Out it pops, back to its place on the floor.
     this.onsetText.setText('').setColor(INK);

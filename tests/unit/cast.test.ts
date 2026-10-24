@@ -271,6 +271,12 @@ test('gift spots (item 138): a spell keeps the magic circle, a dish or a gadget 
   for (const s of HUB_SCENES.dada_jason!) assert.equal(s.spot, 'plate');
   for (const s of HUB_SCENES.dada_matt!) assert.equal(s.spot, 'tools');
   for (const s of HUB_SCENES.scar!) assert.equal(s.spot, 'charger');
+  // Hunt 11: steam rises off a hot dish only (soup, stew), never a cupcake or strawberries; the paper she is
+  // told to take is a paper.
+  const all = [...Object.values(HUB_SCENES).flat(), ...ANY_SCENES];
+  assert.deepEqual(all.filter((s) => s.hot).map((s) => s.prop).sort(), ['🍲', '🥕', '🥣'].sort());
+  for (const s of all.filter((x) => x.hot)) assert.equal(s.spot, 'plate');
+  for (const s of all.filter((x) => /the paper/.test(x.circle.text))) assert.equal(s.prop, '📝');
 });
 
 test('active allies (item 111): each has what an ally in the draw uses', () => {

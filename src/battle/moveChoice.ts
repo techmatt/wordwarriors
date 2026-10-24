@@ -27,7 +27,7 @@ import { fitText } from '../ui/fitText';
 import { makeStickHint, placeStickHint } from '../ui/stickHint';
 import { FLOOR_BOTTOM, FLOOR_TOP, NO_AFTERIMAGES, type Fighter } from './Fighter';
 import { ARENA_LEFT, ARENA_RIGHT, stickWalk } from './movement';
-import { SIGN_H, SIGN_RISE, SIGN_W, clearSpot, placePads, type Box, type PlaceBody } from './padPlace';
+import { SIGN_H, SIGN_RISE, SIGN_W, clearSpot, dotBeside, dotSide, placePads, type Box, type PlaceBody } from './padPlace';
 
 /** The move pads' glow. One colour for all: the word on the sign is the choice, never a colour. */
 const PAD_GLOW = 0x7ad9ff;
@@ -61,6 +61,8 @@ export interface ChoiceHost {
   guard<T>(p: Promise<T>): Promise<T>;
   /** No free-play charge, jump or shot carries into the choice. */
   stopPlay(): void;
+  /** A fighter done with: it poofs away. */
+  killFighter(f: Fighter): void;
 }
 
 /** A move word standing in the arena as a place she walks to. */
@@ -87,6 +89,8 @@ interface Choice {
   objs: Phaser.GameObjects.GameObject[];
   /** The fight's effects faded back while it is frozen, and their alpha before. */
   veiled: { o: Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.AlphaSingle; alpha: number }[];
+  /** The veiled objects' tweens, paused while it is open (hunt 11: a trap card's alpha pulse undid its veil). */
+  paused: Phaser.Tweens.Tween[];
   pads: MovePad[];
   /** The pad she is standing at (within REACH), or null. */
   near: MovePad | null;
@@ -121,6 +125,8 @@ interface Choice {
   stepAt: number;
   /** Where the villain was last seen moving, and when (wall-clock ms): his step back waits until he settles. */
   villainSeen?: { x: number; y: number; lift: number; at: number };
+  /** In a contest, where her team and the villain stood as the pads went down: held there (hunt 11). */
+  pinned: { f: Fighter; x: number; y: number }[];
   resolve: () => void;
 }
 
@@ -145,6 +151,13 @@ export class MoveChoice {
    */
   open(words: string[], right: string, key: string, me: Fighter, at: { x: number; y: number; lift: number }): Promise<number> {
     const scene = this.host.stage;
+    // Her team's clones (MASK's "three of her pop up") poof as the pads go down: copies of her stood on the
+    // pads' rings and under the signs, and beside her, a choice of which one is her (hunt 11, the story fight).
+    // At once: the pop-out squash runs on the frozen clock, seconds of real time.
+    for (const f of this.host.fighters.filter((x) => x.init.kind === 'clone' && x.team === me.team)) {
+      this.host.killFighter(f);
+      f.root.setVisible(false);
+    }
     const objs: Phaser.GameObjects.GameObject[] = [];
     // A light dim behind the fighters (not over them), so the pads and signs read.
     objs.push(scene.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0a0018, 0.3).setDepth(FLOOR_TOP - 3.5));
@@ -164,6 +177,7 @@ export class MoveChoice {
     // The fight's effects fade back while it is frozen (item 039: Jörmungandr's
     // coil, timed on the scene clock, circled over the pads for the whole choice).
     const veiled: Choice['veiled'] = [];
+    const paused: Phaser.Tweens.Tween[] = [];
     // A dash's white afterimage fades in 350 ms of the frozen clock, about nine
     // real seconds: it stood over her ally as a white silhouette (item 039).
     for (const o of [...scene.children.list]) if (o.getData('afterimage')) o.destroy();
@@ -174,12 +188,16 @@ export class MoveChoice {
       const a = o as unknown as Phaser.GameObjects.Components.AlphaSingle;
       if (d >= DEPTH.fx && d < DEPTH.prompt - 10 && typeof a.alpha === 'number' && !objs.includes(o) && o !== me.root) {
         veiled.push({ o: o as never, alpha: a.alpha });
+        for (const t of scene.tweens.getTweensOf(o)) if (t.isPlaying()) {
+          t.pause();
+          paused.push(t);
+        }
         a.setAlpha(a.alpha * 0.2);
       }
     }
 
     return new Promise<number>((resolve) => {
-      const c: Choice = { words, right, key, objs, veiled, pads, near: null, dot, here, open: false, idle: 0, at, from: { x: Math.round(at.x), y: Math.round(at.y) }, misses: episode.house.misses?.[key] ?? 0, still: 0, stickHint: null, stepBack: this.teamStepBack(me, pads), stepAt: performance.now(), resolve: () => resolve(c.misses) };
+      const c: Choice = { words, right, key, objs, veiled, paused, pads, near: null, dot, here, open: false, idle: 0, at, from: { x: Math.round(at.x), y: Math.round(at.y) }, misses: episode.house.misses?.[key] ?? 0, still: 0, stickHint: null, stepBack: this.teamStepBack(me, pads), stepAt: performance.now(), pinned: this.pinContest(me), resolve: () => resolve(c.misses) };
       this.current = c;
       // No charge, jump or shot in flight carries into the choice (holdHero zeroes the hop).
       this.host.stopPlay();
@@ -199,6 +217,10 @@ export class MoveChoice {
     for (const o of c.objs) o.destroy();
     // Back as they were, unless something has set their alpha since (a fade-out finishing).
     for (const v of c.veiled) if (v.o.active && Math.abs(v.o.alpha - v.alpha * 0.2) < 0.01) v.o.setAlpha(v.alpha);
+    for (const t of c.paused) if (t.isPaused()) t.resume();
+    // The race's ally drawn over the villain for the choice (fix 227) goes back to his lane's depth now: a busy or
+    // frozen ally is not steered, and kept it through the payoff, over her hero.
+    for (const f of this.host.heroes) f.depthOver = null;
     this.current = null;
   }
 
@@ -235,6 +257,10 @@ export class MoveChoice {
     const team = this.host.anchored ? this.host.fighters.filter((f) => f !== me && f.active && this.host.heroes.includes(f)) : [];
     // A story fight (M54): its stage is always crowded, so a mashed green would pick a pad she never walked to.
     const props = this.host.storyProps();
+    // A contest's held team keep their stations, so a ring keeps off them where it can, as off a story prop
+    // (hunt 11: in the sea tug the leftmost ring stood round the ally at her rope, every choice).
+    const held = team.map((f): [number, number, number, number] => [f.x - f.bodyHalf, f.top, f.x + f.bodyHalf, f.y + 20]);
+    const keepOff = [...(props ?? []), ...held];
     return placePads({
       n,
       avoid: avoid.map(body),
@@ -246,7 +272,7 @@ export class MoveChoice {
       right: ARENA_RIGHT,
       // A margin past her reach: she may still be settling when the pads go down.
       me: { x: me.x, y: me.y, reach: REACH + 25, first: props !== null },
-      keepOff: props ?? undefined,
+      keepOff: keepOff.length ? keepOff : undefined,
     });
   }
 
@@ -303,6 +329,16 @@ export class MoveChoice {
   }
 
   /**
+   * A contest's team and villain, held where they stood as the pads went down (hunt 11): the pads keep off
+   * them there (padSpots), but on the slowed clock the stage kept easing them to their places and a late
+   * bolt's knockback, a bubble's drift or a shove moved them on: the sea tug's serpent slid under PIG's sign.
+   */
+  private pinContest(me: Fighter): Choice['pinned'] {
+    if (!this.host.anchored) return [];
+    return [...this.host.heroes, this.host.villain].filter((f): f is Fighter => Boolean(f?.active) && f !== me).map((f) => ({ f, x: f.x, y: f.y }));
+  }
+
+  /**
    * The villain steps back off the pads too (item 071, M8), once he has
    * settled: one mid-leap when the choice opened lands on the frozen clock,
    * after the pads were placed, and came down on a ring (QUEST under Evil
@@ -354,6 +390,10 @@ export class MoveChoice {
     const pad = c.pads.find((p) => p.word === word);
     if (pad) pad.wiggleAt = performance.now();
     const n = narrator();
+    // A beat for the giggle before the partner's line, on the page's clock (the fight's is frozen; hunt 11: under
+    // the voice the giggle was ducked to under half).
+    await this.host.guard(new Promise<void>((r) => setTimeout(r, 350)));
+    if (this.current !== c) return;
     await this.host.guard(voiceBus.sequence([narratorLine(n, moveKey('not_move', c.right)), narratorLine(n, moveKey('was_move', word)), narratorLine(n, moveKey('find_move', c.right))]));
     if (this.current !== c) return;
     this.reopen(c);
@@ -415,6 +455,7 @@ export class MoveChoice {
     const controls = this.host.controls;
     const walking = stickWalk(me, c.at, controls.move, realDt);
     this.holdHero();
+    for (const p of c.pinned) if (p.f.active) [p.f.x, p.f.y] = [p.x, p.y];
     // Her team steps off the pad row (item 043, M6), the villain once he settles (M8), and they stay there while the fight is frozen.
     this.villainStepBack(c, me);
     this.holdStepBack(c);
@@ -446,7 +487,13 @@ export class MoveChoice {
       p.sign.setX(p.x + (w < 1 ? Math.sin(w * Math.PI * 8) * 14 * (1 - w) : 0));
     }
     c.dot.setVisible(Boolean(near && c.open));
-    if (near) c.dot.setPosition(near.x, near.sign.y - 90).setScale(pulse);
+    if (near) {
+      // Over its sign; beside it for a staggered lower pad, whose "over" is the upper signs' band (hunt 11:
+      // the dot for MUD sat at SWIM's edge; GRAB's between RED and DRIP, beside the other words).
+      const under = dotBeside(near, c.pads);
+      if (under) c.dot.setPosition(near.x + dotSide(near, c.pads, GAME_WIDTH) * (SIGN_W / 2 + 40), near.sign.y).setScale(pulse);
+      else c.dot.setPosition(near.x, near.sign.y - 90).setScale(pulse);
+    }
 
     // Green with no pad lit does nothing: no hop in the choice.
     if (controls.pressed('green') && near && c.open) this.pick(near.word);

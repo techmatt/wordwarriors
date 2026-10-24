@@ -240,3 +240,17 @@ without a new measurement.
   hit-stop × slow-mo × the move-choice freeze; anything that must run in wall-clock time
   under a freeze (the hit flash) uses `window.setTimeout`.
 - Windows 10's Segoe UI Emoji lacks Emoji 13+; placeholder glyphs avoid 🪙 🪭 🪞 🪲 🥸 🪨.
+
+## Phaser facts that bit
+
+- **A camera's `fadeEffect.isComplete` stays true after a `fadeIn`** (hunt 11): Phaser's Fade sets it
+  when any fade ends, in either direction, and clears it only when the next fade starts. Fix 145's
+  guard ("no F9 in the closing fade") read it, so from the battle's 300 ms opening fade-in on, F9 did
+  nothing in every battle. A closing fade needs its own flag (`BattleScene.closeFade`).
+- **A tween started over another on the same property keeps the value it started from** (hunt 11):
+  the rhyme room's "said" bounce (scale 1.08, yoyo) began 200 ms into its card's pop-in, while
+  Back.easeOut overshot to about 1.09, and yoyoed back to 1.09, so the card stayed 9% bigger. End
+  such a bounce on its settled value (`onComplete`).
+- **Tweens run on in a paused fight unless paused**: the move choice fades the fight back by setting
+  alpha, and a looping alpha tween (a trap card's pulse) undoes it at once; the choice pauses the
+  veiled things' tweens (hunt 11, fix 195).

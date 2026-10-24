@@ -76,6 +76,8 @@ test('rounds: 3–5 items, the target among the choices, choices distinct', () =
   }
   // Word to Picture: no two choices share a first letter.
   for (const item of pictureRound(p, 4, r)) assert.equal(new Set(item.choices.map((w) => w[0])).size, item.choices.length);
+  // Hunt 11: the parked games' words are CVC, three letters a sound each (UMBRELLA ran Blend Path's tiles off the screen).
+  for (let i = 0; i < 20; i++) for (const item of [...blendRound(p, 3, r), ...pictureRound(p, 4, r)]) for (const w of item.choices) assert.ok(/^[a-z]{3}$/.test(w) || /^[A-Z]/.test(w) || !BANK_BY_WORD[w], w);
   // Sound to Letter never offers b and d together.
   for (let i = 0; i < 50; i++) {
     for (const item of soundRound(p, 4, r)) {
@@ -331,4 +333,13 @@ test('trimMp3 cuts whole frames after the given time', () => {
   assert.equal(cut.length % 144, 0);
   assert.ok(Math.abs(cut.length / 144 - Math.ceil(0.5 / 0.024)) <= 1);
   assert.equal(trimMp3(new Uint8Array([1, 2, 3, 4]), 0.1).length, 4, 'unparseable input is returned unchanged');
+});
+
+test('ProgressStore (hunt 11): blocked site storage plays on without saving (it threw, and the game never booted)', () => {
+  const blocked = { getItem: () => { throw new Error('SecurityError'); }, setItem: () => { throw new Error('SecurityError'); } };
+  const store = new ProgressStore(blocked);
+  store.record('words', 'cat', true, 0);
+  assert.equal(store.stat('words', 'cat').seen, 1);
+  const garbled = { getItem: () => '{not json', setItem: () => { throw new Error('QuotaExceededError'); } };
+  assert.doesNotThrow(() => new ProgressStore(garbled));
 });

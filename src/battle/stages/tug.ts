@@ -161,6 +161,13 @@ export class TugStage extends BaseStage {
     if (this.host.choosing && f === this.host.heroes[0]) return false;
     // The intro's run-in tweens them there; the floored lie where they fell.
     if (f.floored || this.host.phase === 'intro') return true;
+    // The rest hold where the choice found them: the pads were placed off them there, and on the slowed clock an
+    // end still easing to its place slid on under a sign (hunt 11: the serpent's coils under PIG).
+    if (this.host.choosing) {
+      f.vx = 0;
+      f.vy = 0;
+      return true;
+    }
     const home = this.slot(f, i);
     const villain = f.team === 'villain';
     // Each side rocks back on its own beat: the heroes on the heave, the villain on the off-beat.
@@ -290,7 +297,9 @@ export class TugStage extends BaseStage {
     const g = this.ropeG;
     g.clear();
     if (this.ropeOn <= 0) return;
-    let alpha = this.ropeOn;
+    // Faded back while a move choice is open, as the other contests' gear (hunt 11: the rope and its knot ran
+    // fully lit across the pads' upper row).
+    let alpha = this.ropeOn * (this.host.choosing ? 0.35 : 1);
     let pts: Pt[];
     if (this.slackAt >= 0) {
       // Let go: the rope drops to the floor in a heap, a splash where it hits the pool, then fades.

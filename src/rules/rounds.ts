@@ -9,6 +9,7 @@
  */
 
 import { LETTERS } from '../../content/phonics/letters';
+import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { PICTURE_WORDS, SIGHT_WORDS } from '../../content/phonics/words';
 import type { ProgressStore } from '../state/ProgressStore';
 import { pickWeighted, shuffle, type Rand } from './random';
@@ -55,9 +56,19 @@ export function soundRound(store: ProgressStore, n: number, rand: Rand = Math.ra
   });
 }
 
+/**
+ * The parked games' CVC words (hunt 11): three letters, a sound each. They drew every pictured thing, so
+ * Blend Path laid UMBRELLA's eight tiles off the screen's edge and split SH, and Word to Picture's
+ * letter-by-letter hint sounded SHIP's S then H.
+ */
+const CVC = PICTURE_WORDS.map((w) => w.word).filter((w) => {
+  const b = BANK_BY_WORD[w];
+  return w.length === 3 && b !== undefined && b.units.length === 3 && b.units.every((u) => u.length === 1);
+});
+
 /** Blend Path: decodable CVC words only, doors show pictures. */
 export function blendRound(store: ProgressStore, n: number, rand: Rand = Math.random, choices = 3): WordItem[] {
-  const words = PICTURE_WORDS.map((w) => w.word);
+  const words = CVC;
   const targets = pickWeighted(words, (id) => store.shakiness('words', id), n, rand);
   return targets.map((target) => wordItem(target, words, choices, rand));
 }
@@ -67,7 +78,7 @@ export function blendRound(store: ProgressStore, n: number, rand: Rand = Math.ra
  * sight word per round, so the round stays mostly decoding.
  */
 export function pictureRound(store: ProgressStore, n: number, rand: Rand = Math.random, choices = 3): WordItem[] {
-  const cvc = PICTURE_WORDS.map((w) => w.word);
+  const cvc = CVC;
   const sight = SIGHT_WORDS.map((w) => w.word);
   const targets = pickWeighted(cvc, (id) => store.shakiness('words', id), n - 1, rand);
   const s = pickWeighted(sight, (id) => store.shakiness('words', id), 1, rand)[0];

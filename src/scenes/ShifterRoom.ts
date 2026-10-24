@@ -43,6 +43,7 @@
 
 import Phaser from 'phaser';
 
+import { OUTDOOR_ROOMS } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { readPraise, variant } from '../episode/lineVariants';
 import { voiceBus } from '../audio/VoiceBus';
@@ -157,8 +158,13 @@ export class ShifterRoom extends HouseSideRoom {
 
   protected build(): void {
     this.floor.setTo(70, 450, 1140, 250);
-    const avoid = [new Phaser.Geom.Rectangle(CREATURE.x - 200, 0, 400, LABEL.y + 60), new Phaser.Geom.Rectangle(OPTIONS[0]![0] - 90, OPTIONS[0]![1] - 150, OPTIONS[2]![0] - OPTIONS[0]![0] + 180, 200)];
-    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true, avoid });
+    // The stones' row 250 px clear either side and her way in too (hunt 11, the rhyme room's fixes 187 and 220).
+    const avoid = [
+      new Phaser.Geom.Rectangle(CREATURE.x - 200, 0, 400, LABEL.y + 60),
+      new Phaser.Geom.Rectangle(OPTIONS[0]![0] - 250, OPTIONS[0]![1] - 150, OPTIONS[2]![0] - OPTIONS[0]![0] + 500, 200),
+      new Phaser.Geom.Rectangle(ENTRY.x - 90, ENTRY.y - 170, 180, 200),
+    ];
+    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true, floorOnly: OUTDOOR_ROOMS.has(this.roomId), avoid });
     this.bag = new Bag(this);
     this.makeCreature();
     this.enter(ENTRY.x, ENTRY.y);
@@ -356,7 +362,7 @@ export class ShifterRoom extends HouseSideRoom {
         const body = this.add.ellipse(0, -STONE.h / 2 + 6, STONE.w, STONE.h * 0.86, 0x7a7088).setStrokeStyle(4, 0x2a2430, 0.8);
         const top = this.add.ellipse(0, -STONE.h / 2 - 2, STONE.w * 0.86, STONE.h * 0.62, 0xb0a6c0);
         const text = this.add.text(0, -STONE.h / 2 - 4, o.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '70px', color: INK, stroke: '#ffffff', strokeThickness: 8 }).setOrigin(0.5);
-        // Level 1: a stone sounds as she comes near it (its plain sound: the bridge from its name is yellow's).
+        // Level 1: a stone sounds as she comes near it (its sound alone, never its name: item 137).
         const near = this.level === 1 ? () => this.soundNear(o) : undefined;
         const spot = this.addSpot(`stone_${o}`, x, y, [shadow, body, top, text], o === l.to[l.pos], near);
         spot.obj.setData('letter', o);
@@ -721,14 +727,16 @@ export class ShifterRoom extends HouseSideRoom {
 
   /**
    * Yellow: read it, the new letter's sound; fix it, the stone in reach's
-   * (else the instruction again). A letter whose name holds its sound gets
-   * the bridge from its name first. Help, so this word's ramp steps down.
+   * (else the instruction again): the sound alone, never the letter's name
+   * (item 137). Help, so this word's ramp steps down.
    * An idle re-prompt is the instruction again.
    */
   protected override hint(idle = false): void {
     if (this.phase !== 'pick' || this.hinting) return;
     const l = this.current;
     const f = ++this.flow;
+    // A stone reached while a sound played would sound again straight after the hint (hunt 11), as choose() drops it.
+    this.pendingStone = null;
     voiceBus.hush();
     // The stone green would pick: yellow's reach is green's (it was 120, so yellow sounded, and counted as
     // help, a stone 100 px off that showed no green dot; hunt 6).
@@ -739,8 +747,12 @@ export class ShifterRoom extends HouseSideRoom {
       });
       return;
     }
-    this.aided = true;
-    this.keepAided(l.to);
+    // Help, but not a level-1 fix-it stone's yellow (hunt 11): its sound played as she reached the stone, so since
+    // item 137 took the name-to-sound bridge away, yellow there only says it again.
+    if (!(l.beat === 'fix' && this.level === 1)) {
+      this.aided = true;
+      this.keepAided(l.to);
+    }
     this.hinting = true;
     this.locked = true;
     void (async () => {

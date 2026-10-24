@@ -441,6 +441,8 @@ export class ClashStage extends BaseStage {
   }
 
   override onHit(target: Fighter, power: number, _from: Fighter | null): void {
+    // A shot landing on the frozen clock: no flourish to hang over the faded fight while she picks (hunt 11).
+    if (this.host.choosing) return;
     if (!target.isMain || this.mode !== 'clash') return;
     // The clash point flickers towards whoever was hit.
     this.flick = Phaser.Math.Clamp(this.flick + (target.team === 'villain' ? 1 : -1) * Math.min(0.12, 0.03 * power), -0.25, 0.25);

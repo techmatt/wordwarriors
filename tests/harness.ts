@@ -263,7 +263,15 @@ export async function choose(page: Page, id?: string): Promise<string> {
   try {
     if (driver.walk) await walkTo(page, spot.x, spot.y + 12);
     else await place(page, spot.x, spot.y + 12);
-    await until(page, (st) => Boolean(st.room && !st.room.locked), 30_000, 'room unlocked');
+    let ready = await until(page, (st) => Boolean(st.room && !st.room.locked), 30_000, 'room unlocked');
+    // Walking, she may have drifted off it meanwhile (hunt 11: five hub doors stalled with her 110-170 px off, a
+    // pad's drift the likeliest cause, README "A game controller plugged in can play along"): back on.
+    for (let k = 0; k < 3 && driver.walk; k++) {
+      const p = ready.room?.player;
+      if (!p || Math.hypot(p.x - spot.x, p.y - spot.y) < 80) break;
+      await walkTo(page, spot.x, spot.y + 12);
+      ready = await until(page, (st) => Boolean(st.room && !st.room.locked), 30_000, 'room unlocked');
+    }
     await press(page, 'green');
     // One frame for the press to land before a busy child's yellow may lock the room again.
     await page.waitForTimeout(150);
@@ -677,8 +685,17 @@ export async function playEntry(page: Page, wrong = 0): Promise<string> {
 /** In the hub: wait for a spot (a door, the circle) to be offered, then go to it (`choose`) and press green. */
 export async function hubGo(page: Page, id: string): Promise<void> {
   await until(page, (s) => s.scene === 'Hub', 30_000, 'hub');
-  await choose(page, id);
-  await until(page, (s) => s.scene !== 'Hub' || !s.room?.spots.some((sp) => sp.id === id), 30_000, `${id} taken`);
+  // Green may land as a re-prompt locks the room, or she may drift off the door (choose): again, as a child would.
+  const retries = id.startsWith('door') ? 2 : 0;
+  for (let k = 0; ; k++) {
+    await choose(page, id);
+    const last = k >= retries;
+    const taken = await until(page, (s) => s.scene !== 'Hub' || !s.room?.spots.some((sp) => sp.id === id) || s.room?.round?.endsWith(':leaving') === true, last ? 30_000 : 8_000, `${id} taken`).catch((e) => (last ? Promise.reject(e) : null));
+    if (taken) {
+      await until(page, (s) => s.scene !== 'Hub' || !s.room?.spots.some((sp) => sp.id === id), 30_000, `${id} taken`);
+      return;
+    }
+  }
 }
 
 /** Seed localStorage progress before the page's scripts run (call before `boot`). */

@@ -95,6 +95,8 @@ const TAUNT_MAX = 2;
 export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, StoryHost {
   part: 1 | 2 = 1;
   now = 0;
+  /** The closing fade has started (`closeFade`). */
+  private closing = false;
   /** The simulation (sim.ts), the volleys from her bag (volleys.ts) and the big beats (beats.ts): new each run (`init`). */
   sim!: BattleSim;
   private volleys!: BattleVolleys;
@@ -151,6 +153,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
 
   init(data: { step?: Step }): void {
     this.step = data.step;
+    this.closing = false;
     this.part = data.step?.kind === 'battle' ? data.step.part : 1;
     // Scene data outlives a restart: F9 out of an open choice must not leave afterimages off (moveChoice.ts).
     this.data.set(NO_AFTERIMAGES, false);
@@ -524,7 +527,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     await this.say(fightLineKey(this.fight, 'retreat'));
     this.retreat();
     await this.wait(this.beat(1.4));
-    this.cameras.main.fadeOut(500);
+    this.closeFade();
     await this.wait(0.6);
     advance(this);
   }
@@ -545,9 +548,20 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     await this.finish();
     this.phase = 'end';
     await this.wait(this.beat(1.2));
-    this.cameras.main.fadeOut(500, 255, 255, 255);
+    this.closeFade(true);
     await this.wait(0.6);
     advance(this);
+  }
+
+  /**
+   * The fight's closing fade (black on the retreat, white on the victory). From here F9 waits (hunt 10, fix
+   * 145). A flag, not the camera's fade state: the opening fade-in leaves `isComplete` set, so that check shut
+   * F9 out of every battle from its first 300 ms (hunt 11).
+   */
+  closeFade(white = false): void {
+    this.closing = true;
+    if (white) this.cameras.main.fadeOut(500, 255, 255, 255);
+    else this.cameras.main.fadeOut(500);
   }
 
   /**
@@ -683,6 +697,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     // The pads, until she walks onto the right one (moveChoice.ts).
     const misses = await this.choices.open(words, right, choiceKey, me, at);
     this.choices.close();
+    this.sim.defuseNear(me);
     me.lean = 0;
     this.simRate = 1;
     this.stats.movePicks++;
@@ -816,7 +831,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     if (this.controls.dev('F2') && !isLeaving(this)) advance(this);
     // Not once the closing fade has started (hunt 10): the fight was over, and coming back played it all again,
     // as the rooms, the ending and the victory scene already guard.
-    else if (this.controls.dev('F9') && !isLeaving(this) && !this.cameras.main.fadeEffect.isRunning && !this.cameras.main.fadeEffect.isComplete) {
+    else if (this.controls.dev('F9') && !isLeaving(this) && !this.closing) {
       // The grown-ups' page; it comes back to this battle (restarted) when closed. Marked
       // leaving (item 092): the director's last wait resolving this frame started the next step too.
       markLeaving(this);
@@ -836,11 +851,12 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
       fight: this.fight.id,
       stage: this.show.info(),
       phase: this.phase,
-      fading: this.cameras.main.fadeEffect.isRunning || this.cameras.main.fadeEffect.isComplete,
+      fading: this.closing,
       t: Math.round(this.now) / 1000,
       heroes: this.heroes.map(info),
       villains: [info(this.villain)],
       minions: this.fighters.filter((f) => f.active && !f.isMain).length,
+      heroClones: this.fighters.filter((f) => f.active && f.init.kind === 'clone' && f.team === 'hero').length,
       ...this.stats,
       me: this.heroes[0] ? { x: Math.round(this.heroes[0].x), y: Math.round(this.heroes[0].y) } : null,
       choice: this.choices.info(),

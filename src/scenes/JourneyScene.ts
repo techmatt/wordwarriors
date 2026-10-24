@@ -102,7 +102,8 @@ export class JourneyScene extends Phaser.Scene {
 
   override update(): void {
     this.controls.update();
-    if (this.controls.pressed('green') || this.controls.dev('F2')) {
+    // Once: mashed green chimed on every press through the fade (hunt 11).
+    if ((this.controls.pressed('green') || this.controls.dev('F2')) && !this.leaving) {
       sfxSelect();
       this.go();
     }

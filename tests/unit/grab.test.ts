@@ -171,6 +171,17 @@ test('hallObjects: nine distinct pictures, the word among them, none avoided, no
   }
 });
 
+test('hallObjects (hunt 11): no picture holds a word read later plus a sound (a miss on the CLOCK says CLOCK, then LOCK is read)', () => {
+  const store = new ProgressStore(memory());
+  const avoid = ['lock', 'ten', 'bell', 'egg', 'rush'];
+  for (let seed = 1; seed <= 60; seed++) {
+    const word = GRAB_WORDS[seed % GRAB_WORDS.length]!;
+    if (grabSays(word).some((s) => avoid.includes(s))) continue;
+    const objs = hallObjects(store, word, avoid, seeded(spread(seed)));
+    for (const w of objs.filter((x) => x !== word)) assert.ok(!grabSays(w).some((s) => avoid.includes(s)), `${w} says one of ${avoid.join(' ')}`);
+  }
+});
+
 test('hallObjects: once her grabs of the word are firm (from difficulty 2, item 067), one picture shares its first sound or rime', () => {
   const store = new ProgressStore(memory());
   for (let i = 0; i < 4; i++) store.record('grabs', 'cat', true, 0);
@@ -216,6 +227,16 @@ test('said early: the grab word, passed as saidBefore, is never a room key, the 
       assert.notEqual(p.key, word, `seed ${seed}: ${p.slot} key`);
       assert.ok(!p.fetches.includes(word), `seed ${seed}: ${p.slot} fetches`);
       if (p.kind === 'machine') assert.ok(!machineWords(p.machine).includes(word));
+    }
+  }
+});
+
+test("hallObjects (hunt 11): never the grab word plus a sound beside it (TENT by TEN, CLOCK by LOCK)", () => {
+  const store = new ProgressStore(memory());
+  for (const word of GRAB_WORDS) {
+    for (let seed = 1; seed <= 15; seed++) {
+      const objs = hallObjects(store, word, [], seeded(spread(seed)));
+      for (const w of objs.filter((x) => x !== word)) assert.ok(!grabSays(w).includes(word), `${w} holds ${word}`);
     }
   }
 });

@@ -337,6 +337,8 @@ export class CookoffStage extends BaseStage {
   }
 
   override onHit(target: Fighter, power: number, _from: Fighter | null): void {
+    // A shot landing on the frozen clock: no flourish to hang over the faded fight while she picks (hunt 11).
+    if (this.host.choosing) return;
     const h = this.host;
     const s = target === h.villain ? this.villainSide : target.team === 'hero' && target.isMain ? this.hero : null;
     if (!s) return;

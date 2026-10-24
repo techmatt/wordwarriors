@@ -326,6 +326,18 @@ export const ALL_SIDE_ROOMS: SideRoomSpec[] = [...new Map([...SIDE_ROOMS, ...PLA
 
 export const SIDE_ROOM_BY_ID: Record<string, SideRoomSpec> = Object.fromEntries(ALL_SIDE_ROOMS.map((r) => [r.id, r]));
 
+/**
+ * Side rooms in the open air (hunt 11): a yard, a cliff, a clearing, the sky, an observatory's open dome,
+ * an indoor place's garden. A place's `outdoor` covers only its hub; in these rooms the villain's wall decals hung in mid-air (a potion over the forest's
+ * boulder yard, behind Charge the Spell's rune bar), so their mess, like an outdoor hub's, all lies on
+ * the floor (`floorOnly`, src/world/houseMood.ts). Tents, caves, the cockpit and the library have walls.
+ */
+export const OUTDOOR_ROOMS: ReadonlySet<string> = new Set([
+  'treetop_lookout', 'boulder_yard', 'climb_rocks', 'sword_yard', 'practice_ring', 'toy_cloud', 'rainbow_room',
+  'flight_cliff', 'sand_dunes', 'coral_garden', 'penguin_slide', 'banana_grove', 'stomping_clearing',
+  'snow_garden', 'skating_pond', 'star_observatory',
+]);
+
 /** A side room's gap: its place's (a shared secret room takes the first place that has it), else the house's lava. */
 export function gapFor(roomId: string): BridgeGap {
   const place = PLACES.find((p) => p.rooms.some((r) => r.id === roomId) || p.secret.id === roomId);

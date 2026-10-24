@@ -203,14 +203,16 @@ export class Controls {
     for (const b of this.carriedPad) now.add(b);
     const queued = virtualPad.queued.shift();
 
-    // D-pad and arrows steer when the stick is idle.
-    if (sx === 0 && sy === 0) {
-      sx = (now.has('right') ? 1 : 0) - (now.has('left') ? 1 : 0);
-      sy = (now.has('down') ? 1 : 0) - (now.has('up') ? 1 : 0);
-      if (virtualPad.stickX || virtualPad.stickY) {
-        sx = virtualPad.stickX;
-        sy = virtualPad.stickY;
-      }
+    // The D-pad and the arrows win over the stick (hunt 11: they steered only while the stick read exactly 0, so
+    // a stick resting past its deadzone turned them off), and the virtual stick over both.
+    const dx = (now.has('right') ? 1 : 0) - (now.has('left') ? 1 : 0);
+    const dy = (now.has('down') ? 1 : 0) - (now.has('up') ? 1 : 0);
+    if (virtualPad.stickX || virtualPad.stickY) {
+      sx = virtualPad.stickX;
+      sy = virtualPad.stickY;
+    } else if (dx || dy) {
+      sx = dx;
+      sy = dy;
     }
     this.move.set(sx, sy);
     if (this.move.length() > 1) this.move.normalize();
@@ -259,9 +261,15 @@ export class Controls {
   private pad(): Phaser.Input.Gamepad.Gamepad | null {
     const gp = this.scene.input.gamepad;
     if (!gp || gp.total === 0) return null;
+    // Alive as the browser sees it now (hunt 11): Phaser's pad keeps the snapshot it was made from, connected
+    // for good, so an unplugged pad (or a flat battery) kept its last stick and buttons, and she walked on.
+    const live = (p: Phaser.Input.Gamepad.Gamepad) => {
+      const pads = typeof navigator !== 'undefined' && navigator.getGamepads ? navigator.getGamepads() : null;
+      return pads ? Boolean(pads[p.index]?.connected) : p.connected;
+    };
     const current = this.padIndex >= 0 ? gp.getPad(this.padIndex) : undefined;
-    if (current?.connected) return current;
-    const first = gp.getAll().find((p) => p.connected);
+    if (current && live(current)) return current;
+    const first = gp.getAll().find((p) => live(p));
     this.padIndex = first ? first.index : -1;
     return first ?? null;
   }

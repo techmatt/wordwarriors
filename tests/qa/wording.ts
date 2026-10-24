@@ -119,19 +119,40 @@ export function clippedIssues(voice: Since['voice']): Issue[] {
   return out;
 }
 
+/** A letter's name as a whole word ("Bee", "Em", "Aitch"), as item 137's removed `LETTER_NAMES` spelled them. */
+const LETTER_NAME_RE = /\b(the letter [a-z]\b|[a-z]'s name|(?:called|named|its name is) (?:ay|bee|see|dee|ee|eff|jee|gee|aitch|eye|jay|kay|ell|em|en|oh|pee|cue|ar|ess|tee|vee|dubbelyou|double-?you|ex|zee)\b)/i;
+
+/**
+ * No letter names (item 137, `docs/rulings.md`): no clue, hint or teaching line says a letter's name, not
+ * even as a bridge to its sound. A `letter_<x>_name` or `_hides` line (item 137 removed both kinds), or a
+ * narrator line naming a letter ("the letter B", "M's name"), is a bug.
+ */
+export const namesLetter = (id: string, text: string): boolean =>
+  /^letter_[a-z_]+_(name|hides)$/.test(id) || (!/^(taunt|move|ult|story)_/.test(id) && LETTER_NAME_RE.test(text));
+
+export function letterNameIssues(voice: Since['voice']): Issue[] {
+  const out: Issue[] = [];
+  for (const v of voice) {
+    if (namesLetter(v.id, v.text)) out.push({ kind: 'letter-name', severity: 'bug', scene: v.scene, detail: `${v.id}: "${v.text.slice(0, 60)}"`, key: `letter-name:${v.id}` });
+  }
+  return out;
+}
+
 /**
  * Pacing (item 059: Charge the Spell frustrated her): a side room or the
  * warm-up that runs past its budget, in game time (the checker's real time
  * times its speed-up). The budgets are what an impatient four-year-old sits
- * through with Dad answering at once: Charge the Spell about 20 s.
+ * through with Dad answering at once: Charge the Spell about 20 s a word, and since item 140 two words a
+ * visit, so item 140's own limit for the visit (`tests/charge.spec.ts`, LIMIT_VISIT; hunt 11: at 30 s every
+ * visit was flagged).
  */
-export const ROOM_BUDGET_MS: Record<string, number> = { ChargeRoom: 30_000, Entry: 45_000, SentenceRoom: 60_000, BridgeRoom: 75_000, ShifterRoom: 90_000, WordMachine: 75_000 };
+export const ROOM_BUDGET_MS: Record<string, number> = { ChargeRoom: 66_000, Entry: 45_000, SentenceRoom: 60_000, BridgeRoom: 75_000, ShifterRoom: 90_000, WordMachine: 75_000, RhymeRoom: 60_000 };
 
 /**
  * A Charge visit solo from its start (hunt 8, M38 (c), Matt's call): she says each sound along with
  * the helper rather than waiting on Dad, so its budget is longer.
  */
-export const SOLO_CHARGE_BUDGET_MS = 35_000;
+export const SOLO_CHARGE_BUDGET_MS = 75_000;
 
 export function pacingIssues(visits: { scene: string; ms: number; wrong: boolean; solo?: boolean }[]): Issue[] {
   const out: Issue[] = [];

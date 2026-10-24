@@ -14,7 +14,7 @@ const drawn = (aspect: number, box: { w: number; h: number }) => {
 };
 
 test('pictures: the ruled ones are shaped, the rest keep the square', () => {
-  assert.deepEqual([...SHAPED_PICTURES].sort(), ['pic_dad', 'pic_man', 'pic_mom', 'pic_tug', 'pic_vet']);
+  assert.deepEqual([...SHAPED_PICTURES].sort(), ['pic_bus', 'pic_dad', 'pic_key', 'pic_kick', 'pic_man', 'pic_mom', 'pic_sled', 'pic_stick', 'pic_tug', 'pic_vet']);
   assert.deepEqual(pictureBox('pic_cat', 330 / 400, 108, 108), { w: 108, h: 108 });
   assert.deepEqual(pictureBox('pic_hat', 2, 150, 150), { w: 150, h: 150 });
 });
@@ -44,4 +44,13 @@ test('pictures: a max box tighter than the square never shrinks one below its sq
   assert.ok(Math.abs(tight.h - square.h) < 1e-9 && Math.abs(tight.w - square.w) < 1e-9, JSON.stringify(tight));
   // No aspect known (a missing texture): the slot.
   assert.deepEqual(pictureBox('pic_dad', Number.NaN, 62, 62), { w: 62, h: 62 });
+});
+
+test('pictureBox (hunt 11): every word picture more than twice as wide as tall, or 2.2 times as tall as wide, is shaped', async () => {
+  const { readdirSync, readFileSync } = await import('node:fs');
+  for (const f of readdirSync('public/art').filter((n) => /^pic_.*\.png$/.test(n))) {
+    const b = readFileSync(`public/art/${f}`);
+    const r = b.readUInt32BE(16) / b.readUInt32BE(20);
+    if (r > 2 || r < 0.45) assert.ok(SHAPED_PICTURES.has(f.slice(0, -4)), `${f} is ${r.toFixed(2)} wide to tall`);
+  }
 });

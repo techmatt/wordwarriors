@@ -35,6 +35,7 @@ import { FRAMES, sentence } from '../../content/phonics/sentences';
 import { NARRATOR_LINES, wakeTemplate, wakeVariant } from '../../content/voice/script';
 import { FORCE_PHONICS_ROOM, SHIFTER_ROOM, STORY_FIGHT, VARIETY } from '../config';
 import { CHAINS_KEPT, LAST_READ, chainKey } from '../rules/shifter';
+import { LAST_RHYMES } from '../rules/rhyme';
 import { fresh, leastRecent } from '../rules/recent';
 import { fightSpec, pickFight } from '../rules/fights';
 import { FIGHT_BY_ID, type FightSpec } from '../../content/battle/fights';
@@ -72,6 +73,9 @@ export function rememberPlan(): void {
   if (story && episode.villainWasRandom && !fightOverride && episode.fight) progress.remember(storyKey(episode.villain), episode.fight === story ? 'yes' : 'no', 1);
   // Hunt 8, M37: every word this episode has her read, which the next episode's chain keeps clear of.
   progress.remember(LAST_READ, readingWords().join(' '), 1);
+  // Hunt 11: the rhyme room's families, which its next visit keeps clear of while others fit.
+  const rhyme = plan.find((p) => p.kind === 'rhyme');
+  if (rhyme?.kind === 'rhyme') progress.remember(LAST_RHYMES, rhyme.rhyme.rounds.map((r) => r.rime).join(' '), 1);
   if (urlPicksGames(urlQuery())) return;
   for (const p of plan) progress.remember('games', p.game, 3 * VARIETY.rotations);
   // Item 137: door a's, door b's and the attic's, which the next episode's draw keeps clear of while another fits.

@@ -77,7 +77,8 @@ export class StoryWalk {
     // The place to go: a glowing ring on the floor, pulsing.
     // Over the props (the hoard, the ledge), so the place she is told to go always shows.
     this.ring = scene.add.ellipse(spot.x, spot.y, 170, 60).setStrokeStyle(8, 0xfff3a0, 1).setFillStyle(0xfff3a0, 0.18).setDepth(DEPTH.prompt - 14);
-    if (spot.lift) this.ring.setY(spot.y - spot.lift);
+    // On the floor at the ledge's foot, where she steps up (hunt 11: drawn 130 px up on the ledge's top, it was
+    // a ring that never counted, and she stood on it unlifted until the wave came).
     this.dot = makeButtonDot(scene, spot.x, spot.y - (spot.lift ?? 0) - 200, 'green', 22, false).setDepth(DEPTH.prompt).setVisible(false);
     this.objs.push(this.ring, this.dot);
     this.done = new Promise((r) => (this.resolve = r));

@@ -59,6 +59,8 @@ export interface HubStory {
   circle: SpokenLine;
   /** Once the word has flown into her. */
   done: SpokenLine;
+  /** A hot dish: steam rises off its plate (hunt 11: only these; a cupcake does not steam). */
+  hot?: boolean;
 }
 
 /** The line sending her to a spot, and that spot. A bare string is a magic circle's line. */
@@ -71,6 +73,8 @@ const S = (prop: string, lines: string[], go: Go | string, done: string): HubSto
   const { spot, text } = typeof go === 'string' ? { spot: 'magic' as const, text: go } : go;
   return { prop, lines: lines.map((text) => ({ text })), spot, circle: { text }, done: { text: done } };
 };
+/** A hot dish's story (`HubStory.hot`). */
+const HOT = (story: HubStory): HubStory => ({ ...story, hot: true });
 
 // Each spot's line names the thing she can see (no bank word: MAT, RUG, NEST, BENCH and CHEST are).
 const go = (spot: GiftSpot, where: string) => (what: string): Go => ({ spot, text: `${where}, and press green, ${what}!` });
@@ -157,27 +161,27 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
   ],
   // Chef Dada Jason: something cooked up in the secret kitchen.
   dada_jason: [
-    S('🍲', [
+    HOT(S('🍲', [
       'A hero needs a good snack, so I am cooking up something special!',
       'I add a pinch of this, a sprinkle of that, and give it a good stir.',
       'Take one bite, and it goes...',
-    ], PLATE('to taste it'), 'That was delicious, and now you are full of power, let\'s look around!'),
+    ], PLATE('to taste it'), 'That was delicious, and now you are full of power, let\'s look around!')),
     S('🧁', [
       'In my secret kitchen, I bake magic cupcakes.',
       'This one has rainbow sprinkles, and a surprise inside.',
       'One nibble, and you will shout...',
     ], PLATE('to eat it up'), 'Every crumb is gone, let\'s look around!'),
-    S('🥣', [
+    HOT(S('🥣', [
       'My grandma taught me a magic soup, and now I will teach you!',
       'It bubbles and it sizzles, and it smells like winning.',
       'One spoonful, and the soup says...',
-    ], PLATE('to have a spoonful'), 'That was yummy, and now you are mighty, let\'s look around!'),
+    ], PLATE('to have a spoonful'), 'That was yummy, and now you are mighty, let\'s look around!')),
     // Item 121: cooking the farm's crops, the Stardew way.
-    S('🥕', [
+    HOT(S('🥕', [
       'I picked the best crops on the whole farm this morning, carrots, pumpkins and corn!',
       'I stirred them into a farm stew, and it smells like summer.',
       'One taste of farm stew, and it goes...',
-    ], PLATE('to taste it'), 'Fresh from the farm, and full of power, let\'s look around!'),
+    ], PLATE('to taste it'), 'Fresh from the farm, and full of power, let\'s look around!')),
   ],
   // Warrior Dada Jason: a knight's battle trick.
   dada_jason_warrior: [
@@ -230,7 +234,8 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'Listen, the balloon whispers...',
     ], BLANKET('to catch the balloon'), 'Now the balloon is yours, let\'s look around!'),
     // Item 121: school.
-    S('✏️', [
+    // Hunt 11: the paper she is told to take (the pencil alone was a ✏️).
+    S('📝', [
       'Today at school, my teacher showed us a magic word, and I saved it for you!',
       'I wrote it down in my best writing, with a sparkly pencil.',
       'Open my folder, and the paper says...',
@@ -353,7 +358,7 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'I found a magic jar by the oasis pool, and it is humming a tune.',
       'Give it a little shake, but not too hard, it is very ticklish.',
       'Shake, shake, and out puffs a word...',
-    ], TREASURE('to catch the puff'), 'The jar is giggling, let\'s look around!'),
+    ], CIRCLE('to catch the puff'), 'The jar is giggling, let\'s look around!'),
   ],
   // Item 114 (Matt): from Antarctica, with a rocket ship, a penguin crew and a crown of ice.
   ozymandias: [
@@ -362,16 +367,17 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'Today, you are my co-captain, so I will tell you.',
       'Count down with me, and the rocket roars...',
     ], LAUNCH('to launch the rocket'), 'Now you are a real space explorer, let\'s look around!'),
+    // Hunt 11: the ice's word and the ice crown's crystal take the glowing circle, not a heap of gold.
     S('🐧', [
       'My penguin crew found something frozen in the ice this morning.',
       'They pecked and pecked, and out came a word.',
       'The littlest penguin squawks...',
-    ], TREASURE('to take the word'), 'The penguins are cheering for you, let\'s look around!'),
+    ], CIRCLE('to take the word'), 'The penguins are cheering for you, let\'s look around!'),
     S('👑', [
       'My crown is made of ice, and every crystal holds a word.',
       'This one sparkles the brightest, so it is yours.',
       'Hold it up to the stars, and it says...',
-    ], TREASURE('to take the crystal'), 'Now you shine like an ice crown, let\'s look around!'),
+    ], CIRCLE('to take the crystal'), 'Now you shine like an ice crown, let\'s look around!'),
   ],
   jormungandr: [
     // Item 056: a sea horn, since SHELL is a bank word now (and its picture no prop).
@@ -428,12 +434,13 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'I am giving it to you, with a soft fluffy cuddle, because you are my friend.',
       'Put your fists up, and shout...',
     ], TRAINING('to get the trick'), 'Now you are strong like Bluerilla, let\'s look around!'),
-    // Item 114: a gentle giant's shoulder ride.
-    S('🦍', [
+    // Item 114: a gentle giant's shoulder ride. Hunt 11: the ride's star, not a little gorilla flying into her,
+    // and the thump, not a climb up onto a mat.
+    S('🌟', [
       'Climb up on my furry shoulders, and hold on tight!',
       'From way up here, we see the whole jungle.',
       'Now give a happy thump with me, and shout...',
-    ], TRAINING('to climb up'), 'That was the best shoulder ride ever, let\'s look around!'),
+    ], TRAINING('to do the happy thump'), 'That was the best shoulder ride ever, let\'s look around!'),
   ],
 };
 

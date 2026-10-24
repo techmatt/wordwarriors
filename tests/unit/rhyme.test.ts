@@ -13,7 +13,7 @@ import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import { narratorLine } from '../../content/voice/ids';
 import { RHYME } from '../../src/config';
 import { MINIGAMES, MINIGAME_BY_ID, RHYME_GAME, drawGames } from '../../src/rules/minigames';
-import { RHYME_FAMILIES, RHYME_WORDS, firstSound, planRhyme, rhymeLevel, rhymeShown, rhymeSays, rhymeWords, rhymes, shownFor, wrongPictures } from '../../src/rules/rhyme';
+import { LAST_RHYMES, RHYME_FAMILIES, RHYME_WORDS, firstSound, nearRhyme, planRhyme, rhymeLevel, rhymeShown, rhymeSays, rhymeWords, rhymes, shownFor, wrongPictures } from '../../src/rules/rhyme';
 import { episodePlans } from '../../src/rules/rooms';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
@@ -84,6 +84,11 @@ test('planRhyme: three rounds, each a different family; no word or picture twice
       for (const o of r.options) assert.ok(things.has(o), `${o}: an action word is never a picture she picks`);
       for (const s of r.shown) assert.ok(rhymes(s, r.word), `${s} ${r.word}`);
       assert.equal(r.options.filter((o) => rhymes(o, r.word)).length, 1, `seed ${seed}: ${r.options}`);
+      // Hunt 11: no wrong picture nearly rhymes (VAN... HAM, SUN... THUMB) or looks like a card (DAD by MAN).
+      for (const o of r.options.filter((x) => x !== r.word)) {
+        assert.ok(!nearRhyme(o, r.word), `seed ${seed}: ${o} nearly rhymes with ${r.word}`);
+        for (const s of r.shown) assert.ok(!lookalikesOf(s).includes(o), `seed ${seed}: ${o} looks like the ${s} card`);
+      }
     }
     // Plain CVC words before digraph-ended ones.
     const levels = p.rounds.map((r) => BANK_BY_WORD[r.word]!.level);
@@ -147,4 +152,22 @@ test('episodePlans with the rhyme room: its words are the fetches, its last the 
 test('every rhyme line exists, for every narrator voice', () => {
   const ids = new Set(composeLines().map((l) => l.id));
   for (const k of ['rhyme_intro', 'rhyme_more', 'rhyme_read', 'rhyme_cue', 'rhyme_cue_sound', 'rhyme_which', 'rhyme_which_2', 'rhyme_listen', 'rhyme_done', 'rhyme_done_2']) assert.ok(ids.has(narratorLine('dada_matt', k)), k);
+});
+
+test('planRhyme (hunt 11): a visit keeps clear of the last visit\'s families (LAST_RHYMES) while others fit', () => {
+  for (let seed = 1; seed <= 40; seed++) {
+    const store = new ProgressStore(memory());
+    const first = planRhyme(store, { avoid: [], taken: [] }, seeded(spread(seed)))!;
+    store.remember(LAST_RHYMES, first.rounds.map((r) => r.rime).join(' '), 1);
+    const next = planRhyme(store, { avoid: [], taken: [] }, seeded(spread(seed + 100)))!;
+    const was = new Set(first.rounds.map((r) => r.rime));
+    assert.deepEqual(next.rounds.filter((r) => was.has(r.rime)).map((r) => r.rime), [], `seed ${seed}`);
+  }
+});
+
+test('nearRhyme (hunt 11): by sound, not spelling', () => {
+  assert.ok(nearRhyme('box', 'sock'), 'BOX and SOCK');
+  assert.ok(nearRhyme('ham', 'van'), 'HAM and VAN');
+  assert.ok(!nearRhyme('cup', 'bug'), 'CUP and BUG');
+  assert.ok(!nearRhyme('map', 'cat'), 'MAP and CAT');
 });

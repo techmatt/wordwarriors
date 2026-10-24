@@ -140,19 +140,37 @@ export interface StorageLike {
   setItem(key: string, value: string): void;
 }
 
+/**
+ * The page's localStorage, or null where there is none or the browser blocks it (hunt 11: a blocked site's
+ * `localStorage` getter throws a SecurityError, and the game never booted: a blank page).
+ */
+function defaultStorage(): StorageLike | null {
+  try {
+    return typeof localStorage === 'undefined' ? null : localStorage;
+  } catch {
+    return null;
+  }
+}
+
 export class ProgressStore {
   private data: ProgressData;
   private session: ProgressData = empty();
 
   constructor(
-    private readonly storage: StorageLike | null = typeof localStorage === 'undefined' ? null : localStorage,
+    private readonly storage: StorageLike | null = defaultStorage(),
     private readonly now: () => number = Date.now,
   ) {
     this.data = this.read();
   }
 
   private read(): ProgressData {
-    const raw = this.storage?.getItem(STORE_KEY);
+    let raw: string | null | undefined;
+    try {
+      raw = this.storage?.getItem(STORE_KEY);
+    } catch {
+      // Blocked site storage (hunt 11): the game plays without saving.
+      return empty();
+    }
     if (!raw) return empty();
     try {
       const parsed = JSON.parse(raw) as ProgressData & LegacyData;
@@ -188,7 +206,11 @@ export class ProgressStore {
       parsed.bagKnown ??= 'legacy';
       return parsed;
     } catch {
-      this.storage?.setItem(`${STORE_KEY}.unreadable.${this.now()}`, raw);
+      try {
+        this.storage?.setItem(`${STORE_KEY}.unreadable.${this.now()}`, raw);
+      } catch {
+        // Storage full or blocked: the old blob is not kept.
+      }
       return empty();
     }
   }

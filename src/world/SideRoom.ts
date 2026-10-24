@@ -41,6 +41,8 @@ export const INK = '#1a1030';
 export const LIT = '#ff3d7a';
 /** A moment to look round a side room she has just walked into, before anyone talks. */
 export const ARRIVE_MS = 800;
+/** The beat between a miss's fizzle-and-giggle and its line, so the giggle is heard (hunt 11). */
+export const GIGGLE_BEAT_MS = 350;
 
 /** A side room's plan for `slot`, which must be a `kind` game: `scene` names the room in the error. */
 export function sidePlan<K extends RoomPlan['kind']>(scene: string, slot: Slot, kind: K): Extract<RoomPlan, { kind: K }> {
@@ -202,6 +204,9 @@ export abstract class SideRoom extends RoomScene {
       });
     }
     this.wrongN++;
+    // A beat for the giggle before the line (hunt 11: the voice ducks the sfx to under half, and the giggle's
+    // notes played under it; the bridge, the Shape-Shifter and the rhyme room already wait).
+    await this.wait(GIGGLE_BEAT_MS);
     await this.say(narratorLine(narrator(), variant('wrong')));
     this.locked = false;
     if (this.wrongTries >= 2) this.sparkleAnswer();

@@ -118,6 +118,19 @@ export class BattleSim {
   }
 
   /**
+   * An enemy's traps under `f` go with a puff (hunt 11): she walked onto one to reach the right pad, and as
+   * the choice closed it went off on her, a BOOM and a stun the moment she got it right.
+   */
+  defuseNear(f: Fighter): void {
+    for (const t of this.traps) {
+      if (!t.obj.active || t.team === f.team || Math.abs(f.x - t.x) >= 55 || Math.abs(f.y - t.y) >= 40) continue;
+      this.b.stage.tweens.killTweensOf(t.obj);
+      burst(this.b.stage, t.x, t.y - 10, { count: 12, speed: 160, colors: [0xffffff, t.color] });
+      t.obj.destroy();
+    }
+  }
+
+  /**
    * Every hit goes through here: shields, invulnerability, the director's
    * health floors, hit flash, knockback, numbers-free feedback, statuses.
    */
@@ -151,7 +164,9 @@ export class BattleSim {
     target.hp = Math.min(target.hp, Math.max(floor, target.hp - dmg));
     target.flashWhite();
     target.squash(Math.min(0.4, 0.12 + power * 0.06));
-    if (from) target.x = Phaser.Math.Clamp(target.x + Math.sign(target.x - from.x || 1) * Math.min(40, power * 10), ARENA_LEFT, ARENA_RIGHT);
+    // No knockback while she picks: the pads were placed off everyone where they stood, and a slowed bolt landing
+    // shoved the sea tug's serpent 30 px at a time under a sign (hunt 11).
+    if (from && !b.choosing) target.x = Phaser.Math.Clamp(target.x + Math.sign(target.x - from.x || 1) * Math.min(40, power * 10), ARENA_LEFT, ARENA_RIGHT);
     sfxHit(power);
     burst(scene, target.cx, target.cy, { count: Math.min(40, 8 + power * 6), speed: 200 + power * 60, colors: [color, 0xffffff] });
     if (power >= 3) {
@@ -389,7 +404,9 @@ export class BattleSim {
         t.obj.destroy();
         continue;
       }
-      if (now < t.armedAt || !t.obj.active) continue;
+      // Not while a move choice is open (hunt 11): her walk to a pad sprang a villain's trap, a BOOM and a burst that
+      // hung on the frozen clock (fix 29 kept only the hit off her).
+      if (now < t.armedAt || !t.obj.active || this.b.choosing) continue;
       const victim = this.fighters.find((e) => e.active && e.team !== t.team && !e.floored && Math.abs(e.x - t.x) < 55 && Math.abs(e.y - t.y) < 40);
       if (victim) {
         burst(scene, t.x, t.y - 20, { count: 50, speed: 420, colors: [t.color, 0xffffff, 0xd02040] });

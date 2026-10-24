@@ -19,8 +19,12 @@ test('a spell clash adds no rings at the clash point while a move choice is open
   // The rings from before it fade in under 2 s at the test clock; after it, one came every 7.5 s of real time.
   await page.waitForTimeout(2000);
   const counts: number[] = [];
+  // At the clash point, not anywhere (hunt 11: the fight runs on at its slow clock through a choice, and a move's
+  // ring at a fighter's feet, her ally's or the villain's, made this fail about one run in three).
+  const clash = Number((await until(page, (s) => typeof s.battle?.stage.clash === 'number', 5_000, 'the clash point')).battle!.stage.clash);
   for (let i = 0; i < 12; i++) {
-    counts.push((await qaLayout(page)).images.filter((im) => im.scene === 'Battle' && im.key === 'fx_ring').length);
+    const rings = (await qaLayout(page)).images.filter((im) => im.scene === 'Battle' && im.key === 'fx_ring');
+    counts.push(rings.filter((im) => Math.abs((im.b[0] + im.b[2]) / 2 - clash) < 120 && (im.b[1] + im.b[3]) / 2 < 560).length);
     await page.waitForTimeout(400);
   }
   expect((await until(page, () => true, 5_000, 'state')).battle?.choice, 'still choosing').toBeTruthy();
@@ -84,6 +88,18 @@ test("the grown-ups page: F8's erase warning on page 3 sits clear of the stored 
   }
   await until(page, (s) => s.scene === 'Parent', 30_000, 'page 3');
   await page.waitForTimeout(400);
+  // Hunt 11: page 1's too (over the rhyme room's levels row there): F8 once, then green on to page 3.
+  await press(page, 'green');
+  await until(page, (s) => s.scene === 'Parent', 30_000, 'page 1');
+  await page.waitForTimeout(400);
+  await page.keyboard.press('F8');
+  await page.waitForTimeout(300);
+  expect(layoutIssues(await qaLayout(page), 'Parent', new Set()).filter((i) => i.kind === 'text-overlap' || i.kind === 'text-offscreen').map((i) => i.detail), 'page 1').toEqual([]);
+  for (const p of [2, 3]) {
+    await press(page, 'green');
+    await until(page, (s) => s.scene === 'Parent', 30_000, `page ${p}`);
+    await page.waitForTimeout(400);
+  }
   await page.keyboard.press('F8');
   await page.waitForTimeout(300);
   const bad = layoutIssues(await qaLayout(page), 'Parent', new Set()).filter((i) => i.kind === 'text-overlap' || i.kind === 'text-offscreen');
@@ -111,14 +127,20 @@ test('the grown-ups page in minigame debug mode: its title starts clear of the D
 test("the entry hall: the villain's floor decals keep out of the warm-up pictures' rows, gaps included (a bone pile read as a fourth thing)", async ({ page }) => {
   test.setTimeout(60_000);
   const errors = collectErrors(page);
-  // Pictures at x 250-880, y 420-680 (ENTRY_HALL.spots), each 140 x 150 from its feet.
-  const grid = [180, 280, 950, 690];
+  // Pictures at x 250-880, y 420-680 (ENTRY_HALL.spots), each 140 x 150 from its feet; hunt 11, 250 px past the
+  // rows' right end too (a penguin trooper stood past KING).
+  const grid = [180, 280, 1130, 690];
+  let onFloor = 0;
   for (const seed of [104, 105, 106]) {
     await boot(page, `?scene=grab&seed=${seed}&qa=1`);
     await until(page, (s) => s.scene === 'Entry' && Boolean(s.room?.player), 30_000, 'the entry hall');
-    const inside = (await qaLayout(page)).images.filter((im) => im.key.startsWith('decal_') && im.b[2] > grid[0]! && im.b[0] < grid[2]! && im.b[3] > grid[1]! + 140 && im.b[1] < grid[3]!);
+    const decals = (await qaLayout(page)).images.filter((im) => im.key.startsWith('decal_'));
+    const inside = decals.filter((im) => im.b[2] > grid[0]! && im.b[0] < grid[2]! && im.b[3] > grid[1]! + 140 && im.b[1] < grid[3]!);
     expect(inside.map((im) => `${im.key} ${im.b.join(',')}`), `seed ${seed}`).toEqual([]);
+    onFloor += decals.filter((im) => im.b[1] > 380).length;
   }
+  // Not by drawing none: keeping too much clear left no floor spot at all (a review of hunt 11's first cut).
+  expect(onFloor, 'some floor mess drawn').toBeGreaterThan(0);
   expectNoErrors(errors);
 });
 

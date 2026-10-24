@@ -76,6 +76,8 @@ export interface BattleWorld {
   addProjectile(p: Projectile): void;
   addTrap(t: Trap): void;
   spawn(init: FighterInit, x: number, y: number): Fighter;
+  /** A move choice is open (the fight frozen): a cast's later steps that bring a fighter in, or move one, wait it out (hunt 11). */
+  readonly choosing: boolean;
   banner(text: string, color: number, big?: boolean): void;
   /** Hold the caster in place while an animation plays. */
   busy(f: Fighter, ms: number): void;
@@ -326,7 +328,10 @@ const slam: Cast = (w, f, ab, target, mult) => {
       p += 1 / 30;
       f.x = Phaser.Math.Linear(fromX, toX, p);
       f.y = Phaser.Math.Linear(fromY, toY, p);
-      f.lift = Math.sin(p * Math.PI) * (leap ? 220 : 90);
+      // A leap the choice caught goes on along the floor: Anna hung in the sky over the villain the whole choice
+      // (the slowed clock stretches the leap to seconds), her face card asking for a word (hunt 11). Held still, it
+      // jumped or landed short after (two reviews).
+      f.lift = w.choosing ? 0 : Math.sin(p * Math.PI) * (leap ? 220 : 90);
     },
   });
   w.after(520, () => {
@@ -479,6 +484,8 @@ const summon: Cast = (w, f, ab, _target, mult) => {
   s.tweens.add({ targets: circle, alpha: 0, delay: 300 + n * 120, duration: 400, onComplete: () => circle.destroy() });
   for (let i = 0; i < n; i++) {
     w.after(250 + i * 120, () => {
+      // Not into an open choice (hunt 11: a minion cast just before it popped in on a pad's ring seconds later).
+      if (w.choosing) return;
       const x = cx + (Math.random() - 0.5) * 200;
       const y = Phaser.Math.Clamp(f.y + (Math.random() - 0.5) * 160, FLOOR_TOP, FLOOR_BOTTOM);
       const m = w.spawn({ ...initFromMinion(spec, f.team), hp: spec.hp * mult }, x, y);
@@ -530,7 +537,8 @@ const teleport: Cast = (w, f, ab, target, mult) => {
   // Held in a contest, it pops out and back in on its own spot.
   const held = w.held(f);
   w.after(160, () => {
-    if (!target.active) return;
+    // Not into an open choice (hunt 11: Evil Moriarty's Vanish put him beside her as she walked to a pad).
+    if (!target.active || w.choosing) return;
     if (!held) {
       f.x = besideX(f, target, 100, Math.random() < 0.5 ? -1 : 1);
       f.y = target.y;
@@ -539,7 +547,7 @@ const teleport: Cast = (w, f, ab, target, mult) => {
     f.squash(0.35);
   });
   w.after(300, () => {
-    if (!target.active) return;
+    if (!target.active || w.choosing) return;
     shockwave(s, target.cx, target.cy, ab.color, 120);
     w.hit(target, ab.power * mult * f.power, ab.color, f);
   });
@@ -555,6 +563,8 @@ const clones: Cast = (w, f, ab, _target, mult) => {
   sfxPoof();
   for (let i = 0; i < n; i++) {
     w.after(i * 90, () => {
+      // Not into an open choice (hunt 11: copies cast just before it stood up on the pads seconds later).
+      if (w.choosing) return;
       const a = (i / n) * Math.PI * 2;
       const x = Phaser.Math.Clamp(f.x + Math.cos(a) * 180, ARENA_LEFT, ARENA_RIGHT);
       const y = Phaser.Math.Clamp(f.y + Math.sin(a) * 90, FLOOR_TOP, FLOOR_BOTTOM);
@@ -743,7 +753,15 @@ const wave: Cast = (w, f, ab, _target, mult) => {
   sfxBoom(2);
   const dir = f.team === 'hero' ? 1 : -1;
   const startX = dir > 0 ? -150 : GAME_WIDTH + 150;
-  const wall = s.add.rectangle(startX, (FLOOR_TOP + GAME_HEIGHT) / 2 - 60, 160 * Math.sqrt(mult), GAME_HEIGHT * 0.7, ab.color, 0.55).setDepth(DEPTH.fx).setBlendMode(Phaser.BlendModes.ADD);
+  // A soft glow, stretched tall (hunt 11, M69: a flat rectangle at 0.55 read as a hard-edged box over the
+  // fighters, every giant's ultimate and the P, G and W runes; fix 152's kind).
+  const wall = s.add
+    .image(startX, (FLOOR_TOP + GAME_HEIGHT) / 2 - 60, TEX.glow)
+    .setDisplaySize(260 * Math.sqrt(mult), GAME_HEIGHT * 0.95)
+    .setTint(ab.color)
+    .setAlpha(0.85)
+    .setDepth(DEPTH.fx)
+    .setBlendMode(Phaser.BlendModes.ADD);
   const em = s.add
     .particles(0, 0, TEX.smoke, {
       speed: { min: 50, max: 250 },

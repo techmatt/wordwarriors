@@ -148,6 +148,8 @@ export class Fighter {
   castFrom: { x: number; y: number } | null = null;
   /** Clone of which fighter, for Moriarty's tricks. */
   cloneOf: Fighter | null = null;
+  /** A depth to draw at instead of its floor y, while a stage wants it in front (the race's ally over the villain in a choice). */
+  depthOver: number | null = null;
   private lastFlash = 0;
   /** The battle's simulation clock (ms), which slow-mo and hit-stop scale. */
   now = 0;
@@ -302,11 +304,12 @@ export class Fighter {
       this.x = Math.min(Math.max(this.x, half), GAME_WIDTH - half);
     }
     this.root.setPosition(this.x, this.y);
-    this.root.setDepth(this.y);
+    const depth = this.depthOver ?? this.y;
+    this.root.setDepth(depth);
     if (this.trailFx) {
       this.trailFx.setPosition(this.x, this.y - this.lift - this.height * 0.5);
       // Just above its own card: an aura, not hidden behind the art.
-      this.trailFx.setDepth(this.y + 1);
+      this.trailFx.setDepth(depth + 1);
       this.trailFx.emitting = !this.floored && this.alive;
     }
     this.bobPhase += dt * (this.floored ? 1.5 : 5);

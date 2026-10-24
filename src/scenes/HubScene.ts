@@ -187,6 +187,11 @@ export class HubScene extends RoomScene {
         if (this.from) this.placeAtDoor(this.from);
         else this.player.place(HUB.doors.front.x - 90, HUB.doors.front.y + 110);
         void this.ready();
+      } else if (this.from === 'counter') {
+        // Out of debug mode by the debug room's door, the attic not read yet (hunt 11): back at its door, standing
+        // there already, not part 2's whole arrival again ("That was close! We need a plan!", the door popping in).
+        this.placeAtDoor('counter');
+        this.secretDoorStanding();
       } else {
         this.player.place(HUB.doors.front.x - 90, HUB.doors.front.y + 110);
         void this.secretDoor();
@@ -204,8 +209,9 @@ export class HubScene extends RoomScene {
   private buildCircle(): void {
     const { x, y } = HUB.circle;
     const { story } = hubScene();
-    this.look = giftSpotLook(this, story.spot, () => this.art('prop_magic_circle', 200, 90, 0, 20), () => this.pickup(story.prop));
+    this.look = giftSpotLook(this, story.spot, () => this.art('prop_magic_circle', 200, 90, 0, 20), () => this.pickup(story.prop), Boolean(story.hot));
     this.circle = this.addSpot('circle', x, y, this.look.children, null);
+    if (this.look.dotAbove !== null) this.circle.dotAbove = this.look.dotAbove;
     this.circle.obj.setDepth(DEPTH.floor + 2);
     this.circle.enabled = false;
     // Once its word is caught the circle is spent: it is not there to draw her
@@ -599,6 +605,17 @@ export class HubScene extends RoomScene {
     door.enabled = true;
     door.correct = true;
     this.setPhase('secret', this.nar(this.line('secret_door')));
+  }
+
+  /** The secret door already there, open to her, with nothing said (back at it without reading the attic). */
+  private secretDoorStanding(): void {
+    const door = this.doors.door_counter!;
+    door.obj.setVisible(true);
+    this.sparkle(door);
+    door.enabled = true;
+    door.correct = true;
+    this.setPhase('secret', this.nar(this.line('secret_door')));
+    this.locked = false;
   }
 
   /** Part 2, back from the attic: out the front door. */

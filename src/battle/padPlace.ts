@@ -82,6 +82,33 @@ export function signBox(x: number, y: number): Box {
   return [x - SIGN_W / 2 - 10, sy - SIGN_H / 2 - 10, x + SIGN_W / 2 + 10, sy + SIGN_H / 2 + 40];
 }
 
+/**
+ * Whether the lit pad at `near` (a pad's floor spot) puts its green dot beside its sign, not 90 px over it:
+ * when a higher pad's sign has that band, straight above (fix 190: MUD under SWIM) or to one side (hunt 11:
+ * GRAB between RED and DRIP, its dot in the gap between their signs, at their height).
+ */
+export function dotBeside(near: { x: number; y: number }, pads: readonly { x: number; y: number }[]): boolean {
+  const over = near.y - SIGN_RISE - 90;
+  return pads.some((p) => p !== near && p.y < near.y && Math.abs(p.x - near.x) < SIGN_W + 80 && Math.abs(p.y - SIGN_RISE - over) < SIGN_H / 2 + 40);
+}
+
+/**
+ * Which side of its sign a beside dot goes (`dotBeside`): the right, unless that is off the screen or on another
+ * pad's sign (a branch review: two lower pads 240 apart put it on the next word's first letter), then the left.
+ */
+export function dotSide(near: { x: number; y: number }, pads: readonly { x: number; y: number }[], width: number): 1 | -1 {
+  const r = 22;
+  const off = SIGN_W / 2 + 40;
+  const on = (x: number) => x - r < 0 || x + r > width || pads.some((p) => p !== near && Math.abs(p.x - x) < SIGN_W / 2 + r && Math.abs(p.y - near.y) < SIGN_H / 2 + r);
+  // Under a higher sign it reads as that word's dot (the sheet read: TUG's under DOT's sign).
+  const under = (x: number) => pads.some((p) => p !== near && p.y < near.y && Math.abs(p.x - x) < SIGN_W / 2 + r);
+  for (const ok of [(x: number) => !on(x) && !under(x), (x: number) => !on(x)]) {
+    if (ok(near.x + off)) return 1;
+    if (ok(near.x - off)) return -1;
+  }
+  return near.x + off < width - 30 ? 1 : -1;
+}
+
 /** A pad's floor ring (moveChoice.ts draws its disc 190 by 70), centred on the pad. */
 export function ringBox(x: number, y: number): Box {
   return [x - 95, y - 35, x + 95, y + 35];
@@ -152,10 +179,11 @@ function layout(inp: PlaceInput): { spots: { x: number; y: number }[]; tier: num
   const STAGGERED = [[480, 590]];
 
   /** The best set of n spots a way allows, and how much it covers. */
-  const lay = ({ xs, gap, rows }: Way): { spots: Spot[]; cover: number } => {
+  const lay = ({ xs, gap, rows }: Way): { spots: Spot[]; cover: number; on: number } => {
     let best: Spot[] = [];
     let bestScore = -Infinity;
     let bestCover = Infinity;
+    let bestOn = Infinity;
     for (const ys of rows) {
       // Each spot's clearance and cover once (a share sums over the signs, so a set's cover is its spots' sum).
       const cands = xs
@@ -185,6 +213,7 @@ function layout(inp: PlaceInput): { spots: { x: number; y: number }[]; tier: num
           if (score > bestScore) {
             bestScore = score;
             bestCover = cov;
+            bestOn = on;
             best = picked.map((p) => ({ x: p.x, y: p.y }));
           }
           return;
@@ -197,7 +226,7 @@ function layout(inp: PlaceInput): { spots: { x: number; y: number }[]; tier: num
       };
       walk(0, []);
     }
-    return { spots: best, cover: bestCover };
+    return { spots: best, cover: bestCover, on: bestOn };
   };
 
   // The ways to lay the pads, in tiers: the first tier where they fit at all
@@ -228,14 +257,22 @@ function layout(inp: PlaceInput): { spots: { x: number; y: number }[]; tier: num
   ]);
   for (const [tier, ways] of tiers.entries()) {
     let fallback: { spots: Spot[]; cover: number } | null = null;
+    // Covering nobody, but a ring on something to keep off (a story prop, a contest's held teammate): the
+    // tier's later ways may fit clear of it (hunt 11: the sea tug's first way kept a ring on the ally).
+    let clearOfNone: { spots: Spot[]; on: number } | null = null;
     for (const way of ways) {
       const laid = lay(way);
       if (!laid.spots.length) continue;
       // Nobody covered at all: a sliver counts (item 083: 0.26% of the serpent passed a 0.5% bar).
-      if (laid.cover === 0) return { spots: laid.spots, tier, cover: 0 };
+      if (laid.cover === 0) {
+        if (laid.on <= 1e-9) return { spots: laid.spots, tier, cover: 0 };
+        if (!clearOfNone || laid.on < clearOfNone.on - 1e-9) clearOfNone = laid;
+        continue;
+      }
       // Every way so far covers someone: keep the least covering, the earlier on a tie.
       if (!fallback || laid.cover < fallback.cover - 1e-9) fallback = laid;
     }
+    if (clearOfNone) return { spots: clearOfNone.spots, tier, cover: 0 };
     if (fallback) return { spots: fallback.spots, tier, cover: fallback.cover };
   }
   return { spots: [], tier: Infinity, cover: Infinity };
@@ -256,7 +293,10 @@ export function clearSpot(
   const signs = pads.map((p) => signBox(p.x, p.y));
   const covered = (x: number, y: number): number => {
     const share = coveredShare([x - f.half, y - f.h, x + f.half, y], signs);
-    const ring = pads.some((p) => Math.abs(x - p.x) < 95 + f.half * 0.5 && Math.abs(y - p.y) < 60);
+    // On a ring by the feet, or over one with the body (the sheet read: Ozymandias's feet 120 px under SMASH's
+    // ring, his torso and cape over a third of it).
+    const body: Box = [x - f.half, y - f.h, x + f.half, y];
+    const ring = pads.some((p) => (Math.abs(x - p.x) < 95 + f.half * 0.5 && Math.abs(y - p.y) < 60) || coveredShare(ringBox(p.x, p.y), [body]) > 0.25);
     const crowd = taken.some((t) => Math.abs(x - t.x) < 110 && Math.abs(y - t.y) < 50);
     return share + (ring || crowd ? 1 : 0);
   };

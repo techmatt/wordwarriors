@@ -33,6 +33,11 @@ test('rhyme room at base level: three rounds, each a family, the rhyme said, the
     // Level 1: the two rhyming words said, the printed one sounded out for her, never said.
     expect(r.sounded).toBe(true);
     for (const w of r.shown) expect(s.voice.history).toContain(wordLine(w));
+    // Hunt 11: "These words sound the same at the end!" once the two cards are up and said, not to an empty wall.
+    if (i === 0) {
+      const intro = s.voice.history.findIndex((id) => id.endsWith('_rhyme_intro'));
+      expect(intro, 'the intro after both cards').toBeGreaterThan(s.voice.history.indexOf(wordLine(r.shown[1]!)));
+    }
     for (const step of soundOut(r.word)) if (step.id) expect(s.voice.history).toContain(step.id);
     expect(s.voice.history).not.toContain(wordLine(r.word));
     expect(s.room!.spots.map((sp) => sp.id).sort()).toEqual([...r.options].sort());
@@ -52,7 +57,9 @@ test('rhyme room at base level: three rounds, each a family, the rhyme said, the
     await choose(page);
     if (i === words.length - 1) {
       // The last row stays up, its third picture in place, as the visit ends.
-      await until(page, (st) => rhyme(st)?.phase === 'done', 60_000, 'the last row');
+      const done = await until(page, (st) => rhyme(st)?.phase === 'done', 60_000, 'the last row');
+      // Hunt 11: the landed picture's place is a card like the other two, not the faint question frame.
+      expect(rhyme(done)!.thirdCard).toBeGreaterThan(0.9);
       await shot(page, 'done');
     }
     const after = await until(page, (st) => st.scene !== 'RhymeRoom' || (rhyme(st)?.index ?? 0) > i || rhyme(st)?.phase === 'done', 60_000, `${r.word} read`);

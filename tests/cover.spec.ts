@@ -27,7 +27,8 @@ async function sample(page: Page, ms: number, scene: string): Promise<{ issues: 
   while (Date.now() < end) {
     const l = await layout(page);
     targets = Math.max(targets, l.targets.filter((t) => t.scene === scene).length);
-    for (const i of coverIssues(l, scene)) if (!seen.has(i.key)) seen.set(i.key, i);
+    // A ruled cover (`ruledCover`: Matt's calls and W44's foot of a picture) is a look, not a failure.
+    for (const i of coverIssues(l, scene)) if (i.kind === 'target-covered' && !seen.has(i.key)) seen.set(i.key, i);
     await page.waitForTimeout(200);
   }
   return { issues: [...seen.values()], targets };
@@ -161,5 +162,22 @@ test('the victory recap: nothing covers the word cards', SLOW, async ({ page }) 
   const { issues, targets } = await sample(page, 6000, 'Victory');
   expect(targets, 'recap cards').toBeGreaterThan(0);
   expect(issues).toEqual([]);
+  expectNoErrors(errors);
+});
+
+// Hunt 11: the rhyme room's printed word sat on a plate at the top, under the caption box through every
+// instruction ("Which thing is it? Walk to it!"), and stepping up out of the pictures' reach put her behind
+// the middle card. The plate is on the row's third card; she stands between the pictures.
+test('the rhyme room: the caption keeps off the printed word, and the cards never hide her', SLOW, async ({ page }) => {
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=a&room=rhyme&qa=1');
+  await until(page, (st) => st.scene === 'RhymeRoom' && Boolean(st.room?.rhyme?.word) && /_rhyme_(more|which|read)$/.test(st.voice.speaking ?? ''), 60_000, 'the first instruction');
+  const { issues, targets } = await sample(page, 2500, 'RhymeRoom');
+  expect(targets, 'the plate and the three pictures').toBe(4);
+  expect(issues).toEqual([]);
+  const s = await until(page, (st) => st.room?.rhyme?.phase === 'pick', 60_000, 'the pick');
+  const p = s.room!.player;
+  // Her figure is about 150 px tall; the cards end at y 410.
+  expect(p.y - 150, 'her head below the cards').toBeGreaterThanOrEqual(405);
   expectNoErrors(errors);
 });

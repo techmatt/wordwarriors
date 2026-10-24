@@ -132,6 +132,10 @@ export interface RoomInfo {
     index: number;
     rime: string;
     shown: string[];
+    /** The words on the cards now (hunt 11): the last round's, under its praise, until the next round's are set out. */
+    onCards: string[];
+    /** The third place's card back, how solid (hunt 11): faint (0.45) under its question mark, a card like the others once a right pick lands. */
+    thirdCard: number;
     word: string;
     options: string[];
     level: number;
@@ -155,6 +159,8 @@ export interface BattleInfo {
   heroes: { id: string; hp: number; status: string | null; art: string; drawn: number }[];
   villains: { id: string; hp: number; status: string | null; art: string; drawn: number }[];
   minions: number;
+  /** Her team's clones standing (MASK's "three of her pop up"): none while a move choice is open (hunt 11). */
+  heroClones: number;
   abilitiesFired: number;
   ultimates: number;
   combos: number;

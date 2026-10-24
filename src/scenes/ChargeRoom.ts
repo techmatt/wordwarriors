@@ -45,9 +45,9 @@
 import Phaser from 'phaser';
 
 import { RUNE_BY_SOUND, runeArt, type GestureMotion } from '../../content/phonics/runes';
-import { SIDE_ROOM_BY_ID } from '../../content/house/house';
+import { OUTDOOR_ROOMS, SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
-import { variant } from '../episode/lineVariants';
+import { readPraise, variant } from '../episode/lineVariants';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxZap } from '../audio/sfx';
 import { CHARGE, DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
@@ -88,9 +88,20 @@ const RUNE = { x: ALTAR.x, y: 330, size: 200 };
 const LETTER = 150;
 /** The helper stands at the altar's left and performs the gestures there. */
 const HELPER = { x: ALTAR.x - 330, y: 620 };
-/** The word at the top: her face, then a slot per sound unit; its picture shows at the right once read. */
-const BAR = { x: GAME_WIDTH / 2, y: 78, slot: 104, gap: 14 };
+/**
+ * The word at the top: her face, then a slot per sound unit; its picture shows at the right once read.
+ * Below the bag's row of fetched things (hunt 11): at y 78 the bar sat over the row from its sixth thing
+ * (the warm-up's and four of the word machine's, then the first word's here), hiding them under the plate.
+ */
+const BAR = { x: GAME_WIDTH / 2, y: 160, slot: 104, gap: 14 };
 const PICTURE = 120;
+
+/** The word's bar at its full size, for a word of `n` sound units: its plate, her face card on it (makeBar). */
+function barBox(n: number): Phaser.Geom.Rectangle {
+  const w = n * BAR.slot + (n - 1) * BAR.gap + 150;
+  const h = BAR.slot + 24;
+  return new Phaser.Geom.Rectangle(BAR.x + 20 - w / 2, BAR.y - h / 2, w, h);
+}
 /** The beat between the sounds when they are sounded out together (the entry hall's is 400, the sentence room's 450). */
 const SOUND_GAP_MS = 400;
 
@@ -192,18 +203,35 @@ export class ChargeRoom extends HouseSideRoom {
   /** The rune and the word are what she watches: the box keeps off both. */
   protected override keepOut(): KeepOut[] {
     const out = super.keepOut();
-    for (const o of [this.stone, this.bar, this.friend]) {
+    for (const o of [this.stone, this.friend]) {
       if (!o?.active) continue;
       const b = o.getBounds();
       out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: o === this.friend ? 4 : 8 });
+    }
+    // The bar at its full size: a new round's pops in from nothing as "Here comes another spell!" starts, and its
+    // bounds then were nothing, so the box took the top over the new word (hunt 11).
+    if (this.bar?.active) {
+      const b = barBox(this.cur.units.length);
+      out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: 8 });
     }
     return out;
   }
 
   protected build(): void {
     this.floor.setTo(80, 420, GAME_WIDTH - 160, 260);
-    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true });
     const room = SIDE_ROOM_BY_ID[this.roomId];
+    // The villain's mess keeps off the word's bar and the picture beside it (hunt 11: a wall decal showed through
+    // its see-through cells, behind the letter she was sounding), the altar, the helper and her; and its floor
+    // pieces keep to the upper floor (in the boulder yard the bottom of the floor is the stream).
+    const widest = Math.max(...this.plan.rounds.map((r) => r.units.length));
+    const bar = barBox(widest);
+    const avoid = [
+      new Phaser.Geom.Rectangle(bar.x, bar.y, bar.width + PICTURE + 60, bar.height),
+      new Phaser.Geom.Rectangle(ALTAR.x - ALTAR.w / 2, RUNE.y - RUNE.size / 2, ALTAR.w, ALTAR.y + ALTAR.h / 2 - (RUNE.y - RUNE.size / 2)),
+      new Phaser.Geom.Rectangle(HELPER.x - 80, HELPER.y - 170, 160, 190),
+      new Phaser.Geom.Rectangle(ALTAR.x - ALTAR.w / 2 - 130, ALTAR.y - 150, 160, 190),
+    ];
+    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: new Phaser.Geom.Rectangle(80, 420, GAME_WIDTH - 160, 160), calm: true, floorOnly: OUTDOOR_ROOMS.has(this.roomId), avoid });
     // She stands beside the altar from the start: nothing to walk to or press. Clear of its
     // footprint (item 069: 20 px inside it, the altar was drawn over her arm and dress all round).
     this.enter(ALTAR.x - ALTAR.w / 2 - 50, Math.min(room?.entry.y ?? ALTAR.y + 40, this.floor.bottom - 10));
@@ -542,7 +570,8 @@ export class ChargeRoom extends HouseSideRoom {
     shockwave(this, RUNE.x, RUNE.y, color, 260);
     burst(this, RUNE.x, RUNE.y, { count: 90, speed: 620, scale: 2.2, texture: TEX.star, gravity: 900, life: 1000, colors: [color, 0xffd23f, 0xffffff] });
     burst(this, RUNE.x, RUNE.y, { count: 40, speed: 300, scale: 2.6, texture: TEX.glow, gravity: 0, life: 700, colors: [color, 0xffffff] });
-    floatText(this, RUNE.x, RUNE.y - 140, 'YES!', '#ffd23f');
+    // Over the word bar, which fix 165 brought down into its rise: under it, YES! showed dimly through the plate.
+    floatText(this, RUNE.x, RUNE.y - 140, 'YES!', '#ffd23f', 40, DEPTH.hud + 2);
 
     // The rune flies up into its slot in the word, trailing sparks.
     const to = this.slotPos(i);
@@ -677,6 +706,9 @@ export class ChargeRoom extends HouseSideRoom {
         if (this.modelledSounds.has(s)) continue;
         this.modelledSounds.add(s);
         progress.model('sounds', s);
+        // Kept with the episode too, as a charged rune's (hunt 10): else F9 and back in the second word modelled a
+        // sound the two words share a second time (a code read, hunt 11).
+        if (episode.charged && !(episode.charged.modelled ??= []).includes(s)) episode.charged.modelled.push(s);
       }
       this.readRecorded = true;
     }
@@ -691,7 +723,7 @@ export class ChargeRoom extends HouseSideRoom {
     await this.say(wordLine(word));
     if (f !== this.flow) return;
     pic.setVisible(false);
-    await Promise.all([this.guard(this.bag.receive(this.wordArt(word), pic.x, pic.y)), right ? this.say(narratorLine(narrator(), variant('right'))) : Promise.resolve(true)]);
+    await Promise.all([this.guard(this.bag.receive(this.wordArt(word), pic.x, pic.y)), right ? this.say(narratorLine(narrator(), readPraise(firstTry))) : Promise.resolve(true)]);
     pic.destroy();
     if (f !== this.flow) return;
     if (!this.lastRound) {

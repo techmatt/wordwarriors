@@ -28,6 +28,8 @@ export interface GiftSpotLook {
   color: number;
   /** Its bursts' colours. */
   colors: number[];
+  /** How far its steady top stands over where she stands (the pickup's halo; the steam and the bob left out), for the green dot. Null: the circle's own bounds. */
+  dotAbove: number | null;
 }
 
 /** Each spot's colours: the glow first. The magic circle's are the violet it always had. */
@@ -48,19 +50,21 @@ const MID = -25;
 /**
  * The spot's look. `circleArt` draws the magic circle's art (the scene's
  * `art`); `pickup` is the scene's prop as a pickup, made by the caller (an
- * emoji, or a prop's art), standing at its feet at (0, 0).
+ * emoji, or a prop's art), standing at its feet at (0, 0). `hot`: a plate's
+ * dish steams (hunt 11: a cupcake, strawberries and a banana steamed too).
  */
 export function giftSpotLook(
   scene: Phaser.Scene,
   kind: GiftSpot,
   circleArt: () => Phaser.GameObjects.Image,
   pickup: () => Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.Transform,
+  hot = false,
 ): GiftSpotLook {
   const colors = COLORS[kind];
   const color = colors[0]!;
   const glow = scene.add.image(0, -20, TEX.glow).setTint(color).setBlendMode(Phaser.BlendModes.ADD).setScale(1.6, 0.7).setAlpha(0.5);
   scene.tweens.add({ targets: glow, alpha: 0.9, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-  if (kind === 'magic') return { children: [glow, circleArt()], pickup: null, color, colors };
+  if (kind === 'magic') return { children: [glow, circleArt()], pickup: null, color, colors, dotAbove: null };
 
   const g = scene.add.graphics();
   // Where the pickup stands: on the table top, or on the floor piece.
@@ -73,7 +77,7 @@ export function giftSpotLook(
       g.fillStyle(0xdedede, 1).fillEllipse(0, MID + 4, 132, 44);
       g.fillStyle(0xffffff, 1).fillEllipse(0, MID, 128, 40);
       g.lineStyle(4, 0xffc070, 1).strokeEllipse(0, MID, 104, 30);
-      for (let i = 0; i < 3; i++) extra.push(steam(scene, -24 + i * 24, MID - 70, i * 500));
+      if (hot) for (let i = 0; i < 3; i++) extra.push(steam(scene, -24 + i * 24, MID - 70, i * 500));
       break;
     }
     case 'tools': {
@@ -158,7 +162,9 @@ export function giftSpotLook(
   thing.setPosition(0, top);
   const halo = scene.add.image(0, top - 36, TEX.glow).setTint(color).setBlendMode(Phaser.BlendModes.ADD).setScale(0.9).setAlpha(0.7);
   bob(scene, thing, 7, 800);
-  return { children: [glow, g, ...extra, halo, thing], pickup: thing, color, colors };
+  // The halo's top (the glow texture is 128 px, at 0.9).
+  const dotAbove = -(top - 36) + (128 * 0.9) / 2;
+  return { children: [glow, g, ...extra, halo, thing], pickup: thing, color, colors, dotAbove };
 }
 
 /** A picnic cloth of checks, seen flat on the floor. */

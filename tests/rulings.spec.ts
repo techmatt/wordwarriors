@@ -16,9 +16,14 @@ test('M1, M5, M6: the move choice hides its word in the caption, shows the stick
   const s = await until(page, (st) => Boolean(st.battle?.choice?.open), 90_000, 'choice open');
   const c = s.battle!.choice!;
   // M1: the prompt has been captioned by now; the box never printed the right word.
-  const all = await texts(page);
-  const battleTexts = all.filter((t) => t.scene === 'Battle').map((t) => t.text);
-  expect(battleTexts.some((t) => t.includes('…')), 'USE …! is in the caption').toBe(true);
+  // Polled: on a loaded machine (the slow lane beside a sweep) the pads could be up a frame before the caption.
+  let battleTexts: string[] = [];
+  await expect
+    .poll(async () => {
+      battleTexts = (await texts(page)).filter((t) => t.scene === 'Battle').map((t) => t.text);
+      return battleTexts.some((t) => t.includes('…'));
+    }, { message: 'USE …! is in the caption', timeout: 5_000 })
+    .toBe(true);
   // The word stands on its pad's sign, once; nowhere else.
   expect(battleTexts.filter((t) => t === c.right.toUpperCase()).length).toBe(1);
   // M6: no teammate hidden behind the signs: clear of them where the floor allows,

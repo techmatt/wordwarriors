@@ -57,8 +57,15 @@ export class BattleHud {
     // Charge the Spell's runes (item 053), for the part they fire in: a row under the
     // heroes' bars, left of x 300, where no fight style's meter or PICK A MOVE! goes.
     const runes = episode.charged?.part === part ? episode.charged.sounds.filter((s) => RUNE_BY_SOUND[s]) : [];
+    // A gap where the next word's runes start (item 140's two words; hunt 11: CRIB and TEN read as one CRIBTEN).
+    const charge = episode.house.plan?.find((p) => p.kind === 'charge');
+    const wordOf = (s: string) => (charge?.kind === 'charge' ? charge.charge.rounds.findIndex((r) => r.runes.includes(s)) : 0);
+    const breaks = runes.filter((s, i) => i > 0 && wordOf(s) !== wordOf(runes[i - 1]!)).length;
+    // 34 px apart, 32 with a gap, so eight chips still end left of x 300.
+    const runeStep = breaks ? 32 : 34;
+    let x = 46 - runeStep;
     runes.forEach((sound, i) => {
-      const x = 46 + i * 34;
+      x += runeStep + (i > 0 && wordOf(sound) !== wordOf(runes[i - 1]!) ? 14 : 0);
       const y = BARS.y + heroes.length * BARS.rowH - 8;
       const chip = fitImage(scene.add.image(x, y, 'prop_rune_stone'), 30, 30).setDepth(DEPTH.hud + 1);
       const t = scene.add.text(x, y + 1, sound.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: sound.length > 1 ? '13px' : '18px', color: '#1a1030' }).setOrigin(0.5).setDepth(DEPTH.hud + 2);

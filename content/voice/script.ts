@@ -174,8 +174,9 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'charge_with_me_2', text: 'With me!' },
   { key: 'charge_with_me_3', text: 'Together!' },
   { key: 'charge_read_together', text: "Let's read the whole spell together!" },
-  { key: 'charge_done', text: 'Our spell is all charged up!' },
-  { key: 'charge_done_2', text: "The spell is ready! Let's take it to the fight!", say: "The spell is ready, let's take it to the fight!" },
+  // Two spells a visit since item 140 (hunt 11: "Our spell..." after "Here comes another spell!").
+  { key: 'charge_done', text: 'Our spells are all charged up!' },
+  { key: 'charge_done_2', text: "The spells are ready! Let's take them to the fight!", say: "The spells are ready, let's take them to the fight!" },
   { key: 'use_runes', text: "Now let's cast our spell!" },
   // The Stretchy Bridge (item 054, src/scenes/BridgeRoom.ts). No line names a
   // letter, a sound or a word: the stones' sounds are letter_ lines, and the

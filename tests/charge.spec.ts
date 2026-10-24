@@ -394,3 +394,35 @@ test('Charge the Spell (hunt 7, M34): solo, the read is together at once; Dad\'s
   expect(hub.progress.words[word]!.modelled).toBeUndefined();
   expectNoErrors(errors);
 });
+
+// Hunt 11: with the bag's row long (the warm-up's thing and the word machine's four before Charge), the word's
+// bar at the top sat over its sixth thing on, her face card and the plate over the pictures of what she read.
+test("the word's bar stays below the bag's row of fetched things", async ({ page }) => {
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=a&room=charge&fetched=cup,hat,map,pen,bed,net,sun&qa=1');
+  const s = await until(page, (st) => st.scene === 'ChargeRoom' && Boolean(st.room?.charge?.runes.length), 60_000, 'charge room');
+  await page.waitForTimeout(600);
+  const l = await qaLayout(page);
+  const units = new Set(s.room!.charge!.runes.map((r) => r.toUpperCase()));
+  const bar = l.texts.filter((t) => t.scene === 'ChargeRoom' && units.has(t.text) && t.size >= 50);
+  expect(bar.length, 'the bar shows each unit').toBeGreaterThan(0);
+  // The bag row's things are centred at y 62, 50 px tall; the bar's plate reaches 64 px above its letters' centre.
+  const top = Math.min(...bar.map((t) => (t.b[1] + t.b[3]) / 2 - 64));
+  expect(top, "the bar's plate under the bag row").toBeGreaterThan(90);
+  expectNoErrors(errors);
+});
+
+// Hunt 11: the battle's rune row ran the visit's two words together (C R I B T E N, one CRIBTEN under the bars).
+test("the battle's rune row parts the two words, and ends left of x 300", async ({ page }) => {
+  const errors = collectErrors(page);
+  await boot(page, '?scene=battle&part=1&room=charge&battle=short&nojourney=1&qa=1');
+  await until(page, (st) => st.scene === 'Battle', 60_000, 'battle');
+  await page.waitForTimeout(1500);
+  const l = await qaLayout(page);
+  const chips = l.images.filter((im) => im.scene === 'Battle' && im.key === 'prop_rune_stone' && im.b[1] < 300).sort((a, b) => a.b[0] - b.b[0]);
+  expect(chips.length, 'rune chips').toBeGreaterThan(3);
+  const gaps = chips.slice(1).map((c, i) => c.b[0] - chips[i]!.b[0]);
+  expect(Math.max(...gaps) - Math.min(...gaps), 'one wider gap where the second word starts').toBeGreaterThanOrEqual(10);
+  expect(chips.at(-1)!.b[2]).toBeLessThanOrEqual(300);
+  expectNoErrors(errors);
+});

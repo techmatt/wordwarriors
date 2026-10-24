@@ -24,6 +24,7 @@ import { BANK, STORED } from '../content/phonics/bank';
 import { FAMILIES } from '../content/phonics/families';
 import { FRAMES } from '../content/phonics/sentences';
 import { RUNE_SOUNDS } from '../src/rules/charge';
+import { RHYME_WORDS } from '../src/rules/rhyme';
 import { SHIFT_WORDS } from '../src/rules/shifter';
 import { SLOW, boot, choose, collectErrors, debugTagShown, expectNoErrors, mash, press, seedProgress, state, texts, toTheEnd, until } from './harness';
 import { layoutIssues } from './qa/checks';
@@ -141,6 +142,8 @@ test('a returning player with everything maxed: the grown-ups page fits all thre
     bridgeLevels: Object.fromEntries(words.map((w) => [w, 3])),
     // Item 103: the Shape-Shifter's levels, every level filled.
     shifterLevels: Object.fromEntries(SHIFT_WORDS.map((w, i) => [w, (i % 3) + 1])),
+    // Hunt 11: the rhyme room's too (item 139's row ran off the bottom of page 1).
+    rhymeLevels: Object.fromEntries(RHYME_WORDS.map((w, i) => [w, (i % 3) + 1])),
     bag: { left: [], round: 999 },
     moveBag: { left: [], round: 999 },
     padBag: { left: [], round: 999 },
@@ -153,6 +156,8 @@ test('a returning player with everything maxed: the grown-ups page fits all thre
     await page.waitForTimeout(600);
     // Item 103: page 1 lists the Shape-Shifter's words by help level.
     if (p === 1) expect((await texts(page)).some((t) => t.text.includes('Shape-Shifter levels') && t.text.includes(`2: ${SHIFT_WORDS.filter((_, i) => i % 3 === 1).sort()[0]}`))).toBe(true);
+    if (p === 1) expect((await texts(page)).some((t) => t.text.includes('Rhyme room levels'))).toBe(true);
+    if (p === 1) await page.screenshot({ path: 'tests/screenshots/142_parent_maxed.png' });
     // Item 127: the stored words are listed apart, on page 3 with their reasons, never in page 2's grid.
     if (p === 2) expect((await texts(page)).filter((t) => STORED.some((w) => new RegExp(`^${w.word}( NEW)?  `).test(t.text))).map((t) => t.text)).toEqual([]);
     if (p === 3) for (const w of STORED) expect((await texts(page)).some((t) => t.text.startsWith(`${w.word.toUpperCase()} (`) && t.text.endsWith(w.stored!)), w.word).toBe(true);

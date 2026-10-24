@@ -196,7 +196,10 @@ tenth's that no older spec covers: the clash's rings and F9 in
 the closing fade, the backdrop past every edge a shake can uncover, the grown-ups page (its grid rows, F8's
 warning, the DEBUG tag), the entry hall's decals, the gift word on its card, the story fight's fetched beat
 and Charge's modelled runes after F9; its Shape-Shifter fixes (the lifted letter under the label, on a
-miss, the closing line) are in `tests/hunt6.spec.ts` (slow lane).
+miss, the closing line) are in `tests/hunt6.spec.ts` (slow lane). `tests/hunt11.spec.ts` (item 142,
+browser lane) keeps the eleventh's: F9 from a fight, her clones poofing as a choice opens, out of debug
+mode from the attic, the browser's own keys and Tab as yellow, every contest holding still through a
+choice; `tests/charge.spec.ts` the bar under the bag row and the rune row parting the two words.
 `playRoom(page, opts)` and `playSentenceRoom(page, opts)` take a `RoomPlay`
 (`{ wrongFirst, idleMs, wrongPauseMs }`: a wrong answer first; in a sentence room a stand
 at the key word and a pause after the wrong object). Other shared steps in
@@ -447,7 +450,7 @@ forms, an idle child who stands still at every choice, more seeds; `QA_SET=new` 
 third, item 069's: a busy child pressing blue, red and yellow all episode (free play),
 `DIFFICULTY` 2 and 3 with seeded progress, Charge and the bridge answered right, and four
 real draws back to back; `QA_SET=lenses` the fourth, item 080's, below; `QA_SET=recent` the
-fifth, item 089's, below; `QA_SET=cast` the seventh hunt's, below; `QA_SET=hunt8` the eighth's, below; `QA_SET=hunt9` the ninth's, below; `QA_SET=hunt10` the tenth's, below;
+fifth, item 089's, below; `QA_SET=cast` the seventh hunt's, below; `QA_SET=hunt8` the eighth's, below; `QA_SET=hunt9` the ninth's, below; `QA_SET=hunt10` the tenth's, below; `QA_SET=hunt11` the eleventh's, below;
 `QA_SET=all` every batch).
 About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it records.
 In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`. The suite (`playwright.config.ts`)
@@ -491,7 +494,7 @@ keep such scripts in the worktree.
   lines that started while locked; `parent_all` opens the grown-ups page at each point
   and checks F9 comes back to the same scene (`parent-return`) and the store did not
   change (`parent-store`); `parent_none` is the same seed with no visits, to compare.
-  Also `qa flags <url>`, 58 URLs and odd values each watched 9 s (`flag-stuck` when one
+  Also `qa flags <url>`, about 120 URLs and odd values each watched 9 s (`flag-stuck` when one
   never leaves Boot or Wait; JSON and shots in `flags/`), and `qa devkeys skip` (F2 at
   every step, then an episode played through) and `qa devkeys auto` (F4 and green to the
   recap).
@@ -568,6 +571,31 @@ keep such scripts in the worktree.
   slot the same round as seen (the word machine's wrong tile, back under her after "That's a silly word!",
   is not new), and `lock_all` reads a move choice opening under the lock, nothing picked, as the fight's
   own flow (`dadlock-flow`), not a press through it.
+- **The eleventh hunt's batch** (`QA_SET=hunt11`, item 142, items 137-141's changes; 17 scenarios, about
+  14 minutes on three workers): `drawn5_h11` (five drawn episodes: item 137's strict rotation, item 138's gift spots),
+  the rhyme room wrong over three episodes, idle, mashed, under dad lock at every point and through the
+  grown-ups page (`rhyme_wrong3`, `rhyme_idle`, `rhyme_mash`, `rhyme_lock`, `rhyme_parent`), Charge's
+  two-word visit with Dad, with Dad's no, and solo (`charge2_yes`, `charge2_no`, `charge2_solo`), the word
+  machine with wrong tiles (`machine_wrong`), Bluerilla as ally and as villain (`rilla_ally`,
+  `rilla_villain`), the story fight after item 141's battle split (`story_wrong_h11`), and the rhyme room
+  and Charge through reloads, debug mode and the grown-ups page (`rhyme_reload`, `rhyme_debug`,
+  `charge_parent`, `charge_reload`). The probing scenarios wait for any of the six side rooms now: they
+  knew five, and `rhyme_lock` and `rhyme_parent` stalled at the rhyme room's door.
+  New check: `letter-name` (bug), a line that names a letter (item 137: a `letter_<x>_name` or `_hides`
+  line, or "the letter B", "M's name"); `tests/unit/qacategories.test.ts` holds every line in
+  `lines.json` to it. `slow-room` gained the rhyme room's budget (60 s), and Charge's is item 140's
+  own limit (66 s, solo 75 s). `decal-by-target` (look): a villain's decal within 30 px of a picture she
+  picks from (the rhyme row's question mark; not the bedroom, the hub, the battle, the grown-ups page or a door,
+  where the mess goes on purpose, nor a decal hanging over it from above, as Elsa's icicles over HAT).
+  `ruledCover` takes W44's find line on a picture's foot in a sentence room (22 px at most), and
+  `tests/cover.spec.ts` fails only on an unruled cover (`target-covered`), so a ruled overlap drops out of
+  it. The hooks gained `room.rhyme.onCards` (the cards' words now: the last round's stay up under its
+  praise while `shown` already names the next, so the giveaway check's `done` list takes both),
+  `room.rhyme.thirdCard` and `battle.heroClones`. `qa flags` gained the rhyme room's and Charge's URLs.
+- **Phaser drops a key event already `defaultPrevented`:** a capture-phase `preventDefault` kills that
+  key for the game (Tab, the keyboard's yellow, did nothing anywhere from item 069 to hunt 11). `src/main.ts`
+  prevents only the browser's own keys (F1 F3 F6 F7 F10, ContextMenu, `/`, `'`) in the capture phase, and
+  Tab in a bubble listener added once the game is READY; the dev keys and the buttons are Controls'.
 - **A sweep's contact sheets take minutes:** `npx tsx tests/qa/report.ts <tag>` for `QA_SET=hunt10`
   (nine scenarios, about 2,600 shots) ran past a minute; run it in the background.
 - **A wedged page is a stall, not a 30-minute wait** (hunt 9, M44 in `docs/qa-findings.md`): a reload
@@ -598,7 +626,12 @@ keep such scripts in the worktree.
   reads a real pad once it reports input, and a stick drifting past the 0.25 deadzone walks
   her off a move pad the driver put her on. Twice a sweep stopped "green on the pad never
   picked" with her hero off the pad; the driver now puts her back before each retry. Sweep
-  with the pad unplugged to rule it out.
+  with the pad unplugged to rule it out. Hunt 11's five hub-door stalls ("door_b taken", in about 50
+  scenario runs; none in 20 runs of the same steps alone) had her 110 to 170 px off the door she had walked
+  to, the narrator's re-prompt said again and again: unexplained, a pad's drift the likeliest cause. `choose`
+  now walks her back on before green (up to three times, when she is 80 px or more off the spot), and
+  `hubGo` presses a door again (twice, door spots only, 8 s a try and 30 s the last; a round ending in
+  `:leaving` counts as taken).
 - **A busy child and the driver:** the mash scenarios' yellow waits while the driver answers
   (`driver.busy` in the harness), or a replay it starts locks the room as green lands and
   the driver waits for an answer that never comes.
@@ -611,7 +644,8 @@ keep such scripts in the worktree.
   sentence key word or the machine's word said or shown before she answers; lines with
   no manifest entry (`voice-no-line`) or played with no clip (`voice-silent`, with why:
   its decode `queued` or `decoding`, `failed`, `none` asked for, or the audio context
-  `suspended`); console warnings; input locked over 20 s or silent over
+  `suspended`); console warnings; input locked over 20 s (Charge the Spell 66 s: Dad answers, and her
+  two-word visit can be one lock) or silent over
   2.5 s; frames over 250 ms; objects, tweens, timers and listeners growing from one
   episode to the next; and a stall (any wait timing out) with its last shot.
 - **Matt's categories** (item 059; the list heads `docs/qa-findings.md`, and a hunt

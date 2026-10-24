@@ -131,8 +131,12 @@ export function endRun(finished: boolean): void {
   debugMode.run = null;
   const saved = JSON.parse(run.episode) as Record<string, unknown>;
   const ep = episode as unknown as Record<string, unknown>;
+  // Whether Dad is there is the session's, not the game's (hunt 11: his 2 in a debug Charge set it, and the restore
+  // put "away" back, so the real Charge then went solo with him sitting there).
+  const solo = episode.solo;
   for (const k of Object.keys(ep)) if (!(k in saved)) delete ep[k];
   Object.assign(ep, saved);
+  episode.solo = solo;
   Object.assign(remembered, JSON.parse(run.remembered));
   progress.release();
   if (finished && !debugMode.done.includes(run.game)) debugMode.done.push(run.game);

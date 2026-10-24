@@ -99,18 +99,36 @@ export const rimeOfWord = (word: string): string => BY_WORD[word]?.rime ?? word.
 export const rhymes = (a: string, b: string): boolean => rimeOfWord(a) === rimeOfWord(b);
 
 /**
- * The wrong pictures for `word`: one thing sharing its first sound, one
- * sharing its vowel and not its first sound; neither rhyming with it, neither
- * a look-alike of it, neither in `avoid`. The vowel picture is a short word
- * where it can be (a three-unit word, as the target is). Null when the bank
- * has no such pair.
+ * Do two words nearly rhyme to her ear (hunt 11): the same vowel, and endings alike once M, N, NG and MB
+ * count as one nasal, or one ending the other plus a sound. VAN, CAN... HAM (or ANT); SUN, RUN... THUMB;
+ * KING, RING... PIN. A rhyme room's wrong picture is neither.
  */
-export function wrongPictures(word: string, avoid: Iterable<string>, rand?: Rand): [string, string] | null {
-  const skip = new Set([word, ...avoid, ...lookalikesOf(word)]);
+export function nearRhyme(a: string, b: string): boolean {
+  const ra = rimeOfWord(a);
+  const rb = rimeOfWord(b);
+  if (ra[0] !== rb[0]) return false;
+  // By sound, not spelling: CK, C and K are one sound, X is K and S (SOCK, ROCK... BOX).
+  const coda = (r: string) => r.replace(/^[aeiou]+/, '').replace(/ck|c|k/g, 'k').replace(/x/g, 'ks').replace(/^(ng|mb|n|m)/, 'N');
+  const ca = coda(ra);
+  const cb = coda(rb);
+  return ca === cb || (ca.length > 0 && cb.length > 0 && (ca.startsWith(cb) || cb.startsWith(ca)));
+}
+
+/**
+ * The wrong pictures for `word`: one thing sharing its first sound, one
+ * sharing its vowel and not its first sound; neither rhyming or nearly rhyming
+ * with it, neither a look-alike of it or of the round's two cards (`shown`,
+ * hunt 11: DAD beside the MAN card, a leg in a striped sock beside SOCK, read
+ * as rhymes), neither in `avoid`. The vowel picture is a short word where it
+ * can be (a three-unit word, as the target is). Null when the bank has no such
+ * pair.
+ */
+export function wrongPictures(word: string, avoid: Iterable<string>, rand?: Rand, shown: readonly string[] = []): [string, string] | null {
+  const skip = new Set([word, ...avoid, ...lookalikesOf(word), ...shown.flatMap((s) => lookalikesOf(s))]);
   const w = BY_WORD[word];
   if (!w?.vowel) return null;
   const pick = (ws: BankWord[]) => (rand ? shuffle(ws, rand) : ws);
-  const free = THINGS.filter((t) => !skip.has(t.word) && !rhymes(t.word, word));
+  const free = THINGS.filter((t) => !skip.has(t.word) && !rhymes(t.word, word) && !nearRhyme(t.word, word));
   // Short words first: a long one stands out from the three-unit target by its length alone.
   const short = (ws: BankWord[]) => [...pick(ws.filter((t) => t.units.length <= 3)), ...pick(ws.filter((t) => t.units.length > 3))];
   const onset = short(free.filter((t) => firstSound(t.word) === firstSound(word)));
@@ -138,6 +156,10 @@ export interface RhymeInput {
   taken: string[];
 }
 
+/** The rhyme room's last visit's families, as the store keeps them (hunt 11: a rotation of its own). */
+export const LAST_RHYMES = 'last_rhyme_rimes';
+const lastRhymes = (store: ProgressStore): Set<string> => new Set((store.recentOf(LAST_RHYMES).at(-1) ?? '').split(' ').filter(Boolean));
+
 /** A word's ease in the visit's order: a plain CVC word (CAT) before a digraph-ended one (SOCK, KING). */
 const ease = (word: string): number => BY_WORD[word]?.level ?? 1;
 
@@ -152,6 +174,7 @@ const ease = (word: string): number => BY_WORD[word]?.level ?? 1;
 export function planRhyme(store: ProgressStore, input: RhymeInput, rand: Rand = Math.random, n = RHYME.rounds): RhymePlan | null {
   const avoid = new Set([...input.avoid, ...input.taken]);
   const before = lastRead(store);
+  const lastFamilies = lastRhymes(store);
   const inBag = new Set(store.bag().left);
   const boost = (w: string) => (inBag.has(w) ? 2 : 1);
   const rounds: RhymeRound[] = [];
@@ -160,13 +183,26 @@ export function planRhyme(store: ProgressStore, input: RhymeInput, rand: Rand = 
     const busy = new Set([...avoid, ...used()]);
     const families = new Set(rounds.map((r) => r.rime));
     // A word whose round can be made now: its family new to the visit, two shown words and two wrong pictures free.
-    const open = RHYME_WORDS.filter((w) => !busy.has(w) && !families.has(rimeOfWord(w)) && shownFor(w, busy) && wrongPictures(w, [...busy, ...(shownFor(w, busy) ?? [])]));
-    const fresh = open.filter((w) => !before.has(w));
-    const pool = fresh.length ? fresh : open;
+    const open = RHYME_WORDS.filter((w) => {
+      if (busy.has(w) || families.has(rimeOfWord(w))) return false;
+      const s = shownFor(w, busy);
+      return Boolean(s && wrongPictures(w, [...busy, ...s], undefined, s));
+    });
+    // First from the families the last visit did not show (hunt 11: VAN CAN [FAN] came back as CAN FAN [VAN] the
+    // next episode, last time's answer now a card), and from words the episode before did not have her read.
+    const newFamily = open.filter((w) => !lastFamilies.has(rimeOfWord(w)));
+    const wide = newFamily.length ? newFamily : open;
+    const fresh = wide.filter((w) => !before.has(w));
+    const pool = fresh.length ? fresh : wide;
     if (!pool.length) break;
     const word = drawWords(store, pool, 1, rand, boost)[0]!;
-    const shown = shownFor(word, busy, rand)!;
-    const wrong = wrongPictures(word, [...busy, ...shown], rand)!;
+    // The drawn pair of cards, or (if their look-alikes leave no wrong pictures) the pair `open` checked.
+    let shown = shownFor(word, busy, rand)!;
+    let wrong = wrongPictures(word, [...busy, ...shown], rand, shown);
+    if (!wrong) {
+      shown = shownFor(word, busy)!;
+      wrong = wrongPictures(word, [...busy, ...shown], rand, shown)!;
+    }
     rounds.push({ rime: rimeOfWord(word), shown, word, options: shuffle([word, ...wrong], rand) });
   }
   if (rounds.length < Math.min(n, RHYME.minRounds)) return null;

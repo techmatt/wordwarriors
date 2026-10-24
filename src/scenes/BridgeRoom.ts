@@ -48,7 +48,7 @@
 import Phaser from 'phaser';
 
 import { canHold } from '../../content/phonics/letters';
-import { SIDE_ROOM_BY_ID, gapFor, type BridgeGap } from '../../content/house/house';
+import { gapFor, OUTDOOR_ROOMS, SIDE_ROOM_BY_ID, type BridgeGap } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { readPraise, variant } from '../episode/lineVariants';
 import { voiceBus, type HeldSound } from '../audio/VoiceBus';
@@ -136,6 +136,8 @@ export class BridgeRoom extends HouseSideRoom {
   private toldFind = false;
   /** Level 2: Dad asked for the hint while the helper was still talking (the intro, a miss's feedback); it comes once she may slide (item 092). */
   private hintAsked = false;
+  /** Level 3: Dad's 2 as she slid, blending it out loud (hunt 11): kept for the far bank, as level 2's hint is (item 092). */
+  private earlyYes = false;
   private stones: Stone[] = [];
   private onStone = -1;
   /** She stepped on a stone that has not sounded yet (a line was playing): it sounds when the room is quiet. */
@@ -195,9 +197,14 @@ export class BridgeRoom extends HouseSideRoom {
 
   protected build(): void {
     this.floor.setTo(70, 430, 1140, 270);
-    // The villain's mess keeps out of the gap and off the far bank's pictures.
-    const avoid = [new Phaser.Geom.Rectangle(GAP.left - 30, GAP.top - 20, GAP.right - GAP.left + 60, GAME_HEIGHT), new Phaser.Geom.Rectangle(FAR_X, PICTURES[0]![1] - PICTURE_SIZE - 30, GAME_WIDTH - FAR_X, GAME_HEIGHT)];
-    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true, avoid });
+    // The villain's mess keeps out of the gap, off the far bank's pictures, and off her start on the near bank
+    // (M58's rule; hunt 11: Bavmorda's bones lay at her feet and shoulder there).
+    const avoid = [
+      new Phaser.Geom.Rectangle(GAP.left - 30, GAP.top - 20, GAP.right - GAP.left + 60, GAME_HEIGHT),
+      new Phaser.Geom.Rectangle(FAR_X, PICTURES[0]![1] - PICTURE_SIZE - 30, GAME_WIDTH - FAR_X, GAME_HEIGHT),
+      new Phaser.Geom.Rectangle(NEAR.x - 85, NEAR.y - 170, 170, 200),
+    ];
+    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true, floorOnly: OUTDOOR_ROOMS.has(this.roomId), avoid });
     this.bag = new Bag(this);
     const gap = gapFor(this.roomId);
     this.gapLook = GAP_LOOK[gap];
@@ -252,12 +259,13 @@ export class BridgeRoom extends HouseSideRoom {
     if (room !== null) {
       // A soft top edge: the floor's own colour over the chasm's top, thinning
       // to nothing as it goes down, slice by slice (a gradient that follows the
-      // banks' wobble, which a gradient-filled rectangle cannot).
-      const slices = 14;
+      // banks' wobble, which a gradient-filled rectangle cannot). Slices meet edge to edge: overlapping by a
+      // pixel, each seam took both slices' alpha and the fade read as stripes (hunt 11).
+      const slices = 30;
       const step = CHASM_FADE_PX / slices;
       for (let i = 0; i < slices; i++) {
         const a = 0.9 * Math.pow(1 - i / slices, 1.6);
-        band(-14, room, a, GAP.top + i * step, GAP.top + (i + 1) * step + 1, fade);
+        band(-14, room, a, GAP.top + i * step, GAP.top + (i + 1) * step, fade);
       }
     } else {
       // The far end of the gap fades into the room's back wall.
@@ -361,6 +369,7 @@ export class BridgeRoom extends HouseSideRoom {
     this.aided = this.keptAided(r.word);
     this.replays = 0;
     this.toldFind = false;
+    this.earlyYes = false;
     this.hintAsked = false;
     this.resetDadWait();
     this.wrongTries = this.keptMisses(r.word);
@@ -544,6 +553,12 @@ export class BridgeRoom extends HouseSideRoom {
       if (f === this.flow && this.phase === 'pick') this.locked = false;
       return;
     }
+    // His 2 came as she slid and blended it (hunt 11: his cue flashed green, and then he was asked again).
+    if (this.earlyYes) {
+      this.earlyYes = false;
+      await this.toPictures();
+      return;
+    }
     this.phase = 'say';
     this.resetDadWait();
     await this.narrate('bridge_say');
@@ -579,6 +594,10 @@ export class BridgeRoom extends HouseSideRoom {
     }
     // His yes counts during a replay he asked for too (item 069: it was dropped while the cue flashed green, then the wait ran out as a no).
     const asked = this.phase === 'say' || (this.phase === 'replay' && this.resumePhase === 'say' && a === 'yes');
+    if (this.level === 3 && this.phase === 'slide' && a === 'yes' && !this.picturesUp) {
+      this.earlyYes = true;
+      return;
+    }
     if (this.level !== 3 || !asked) return;
     setDadAsking(false);
     voiceBus.hush();

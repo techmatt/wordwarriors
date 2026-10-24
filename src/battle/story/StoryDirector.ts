@@ -76,6 +76,8 @@ export interface StoryHost extends StageHost, Pick<WalkHost, 'controls'> {
   ultimateCountered(v: Fighter, ult: AbilitySpec, giant: boolean, aura: Phaser.GameObjects.Particles.ParticleEmitter): Promise<void>;
   finish(): Promise<void>;
   retreat(): void;
+  /** The fight's closing fade, black or (`white`) the victory's. */
+  closeFade(white?: boolean): void;
 }
 
 export class StoryDirector {
@@ -245,8 +247,9 @@ export class StoryDirector {
     await b.wait(b.beat(1.0));
     await this.sayAll(rest);
     const guards = this.minions();
-    // Lined up across the floor between the sides, ready to charge.
-    guards.forEach((g, i) => b.stage.tweens.add({ targets: g, x: 760 + i * 70, y: 560 + (i % 3) * 45, duration: 500 }));
+    // Lined up across the floor between the sides, ready to charge, in front of the hiding stone's foot (hunt 11:
+    // behind it, two of the three were hidden as "Gold guards! Get them!" played).
+    guards.forEach((g, i) => b.stage.tweens.add({ targets: g, x: 700 + i * 85, y: 645 + (i % 2) * 15, duration: 500 }));
     await b.wait(0.6);
     await this.choice();
     // Over the guards she goes as they charge past and topple.
@@ -336,7 +339,7 @@ export class StoryDirector {
     await b.wait(b.beat(1.2));
     b.retreat();
     await b.wait(b.beat(1.4));
-    b.stage.cameras.main.fadeOut(500);
+    b.closeFade();
     await b.wait(0.6);
     advance(b.stage);
   }
@@ -351,7 +354,7 @@ export class StoryDirector {
     await b.finish();
     b.phase = 'end';
     await b.wait(b.beat(1.2));
-    b.stage.cameras.main.fadeOut(500, 255, 255, 255);
+    b.closeFade(true);
     await b.wait(0.6);
     advance(b.stage);
   }

@@ -6,7 +6,8 @@
  * A round (src/rules/rhyme.ts): two rhyming words of one family stand at the
  * back of the room as cards, each its picture and its printed word, and each
  * is said as it lights (BUG, HUG). The family's third word is printed on a
- * plate at the top, never said (RUG). Three unlabeled pictures stand in the
+ * plate on the row's third card, under its question mark, never said (RUG).
+ * Three unlabeled pictures stand in the
  * room: the printed word's, one sharing its first sound (ROCK), one its vowel
  * (SUN). She walks to the one the plate names and presses green: by reading
  * it, or by hearing the rhyme.
@@ -34,11 +35,12 @@
 
 import Phaser from 'phaser';
 
+import { OUTDOOR_ROOMS } from '../../content/house/house';
 import { narratorLine, wordLine } from '../../content/voice/ids';
 import { readPraise, variant } from '../episode/lineVariants';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxRight, sfxSelect, sfxSummon } from '../audio/sfx';
-import { DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH } from '../config';
 import { episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { burst, fitImage, floatText, pictureSize, popIn, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -52,19 +54,30 @@ import type { KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
 import { applyHouseMood, roomSeed } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
+import { PLAYER_HEIGHT } from '../world/Player';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
 /** `intro`: a round is being set out and said, she waits. `pick`: the pictures are up. `check`: a pick plays out. `done`: back to the hub. */
 type Phase = 'intro' | 'pick' | 'check' | 'done';
 
-/** The printed word's plate, at the top. */
-const PLATE = { x: GAME_WIDTH / 2, y: 120, gap: 78, h: 104 };
-/** The two rhyme cards and the third place the right picture flies to, left to right (picture centres). */
+/**
+ * The printed word's plate: on the row's third card, where the other two print theirs (hunt 11). At the top
+ * of the room the caption box sat on it through every instruction ("Read it, then walk to its picture!").
+ * `dy` from the card's centre, `gap` between its sound units, `h` its height.
+ */
+const PLATE = { dy: 72, gap: 8, h: 78 };
+/** The two rhyme cards and the third place the right picture flies to, left to right (card centres). */
 const CARDS: [number, number][] = [[360, 300], [640, 300], [920, 300]];
 const CARD = { w: 190, h: 220, pic: 120 };
+/** A card's picture centre, above its word. */
+const CARD_PIC_DY = -30;
+/** Where she stands while a round's pictures come up, if one would come up within her reach: between them and below the cards, so they never hide her. */
+const CLEAR_SPOTS: [number, number][] = [[520, 560], [760, 560]];
 /** The pictures standing in the room (feet positions), left to right. */
 const OPTIONS: [number, number][] = [[400, 640], [640, 655], [880, 640]];
 const PICTURE_SIZE = 116;
+/** The beat after each sound as the plate is sounded out (hunt 11: 160 ms ran the sounds together; the entry hall's and Charge's are 400). */
+const SOUND_GAP_MS = 400;
 /** Where she walks in. */
 const ENTRY = { x: 130, y: 610 };
 /** The room's colours: a music-box sparkle. */
@@ -126,16 +139,20 @@ export class RhymeRoom extends HouseSideRoom {
   /** The plate, the cards and the pictures are what she reads and picks: the box keeps off them. */
   protected override keepOut(): KeepOut[] {
     const out = super.keepOut();
-    out.push({ x: PLATE.x - 200, y: PLATE.y - PLATE.h / 2 - 10, w: 400, h: PLATE.h + 20, weight: 12 });
-    for (const [x, y] of CARDS) out.push({ x: x - CARD.w / 2, y: y - CARD.h / 2, w: CARD.w, h: CARD.h, weight: 8 });
+    CARDS.forEach(([x, y], i) => out.push({ x: x - CARD.w / 2, y: y - CARD.h / 2, w: CARD.w, h: CARD.h, weight: i === 2 ? 30 : 8 }));
     for (const s of this.spots) if (s.obj.active) out.push({ x: s.x - 70, y: s.y - PICTURE_SIZE - 30, w: 140, h: PICTURE_SIZE + 40, weight: 40 });
     return out;
   }
 
   protected build(): void {
-    this.floor.setTo(70, 450, 1140, 250);
-    const avoid = [new Phaser.Geom.Rectangle(CARDS[0]![0] - CARD.w / 2 - 20, 0, CARDS[2]![0] - CARDS[0]![0] + CARD.w + 40, CARDS[0]![1] + CARD.h / 2 + 20), new Phaser.Geom.Rectangle(OPTIONS[0]![0] - 90, OPTIONS[0]![1] - 150, OPTIONS[2]![0] - OPTIONS[0]![0] + 180, 200)];
-    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true, avoid });
+    // Her feet no higher than 545: her head (130 px up) then stays under the cards, which end at 410 and draw
+    // over her (hunt 11: she walked up behind them).
+    this.floor.setTo(70, 545, 1140, 155);
+    const avoid = [new Phaser.Geom.Rectangle(CARDS[0]![0] - CARD.w / 2 - 20, 0, CARDS[2]![0] - CARDS[0]![0] + CARD.w + 40, CARDS[0]![1] + CARD.h / 2 + 20), new Phaser.Geom.Rectangle(OPTIONS[0]![0] - 250, OPTIONS[0]![1] - 150, OPTIONS[2]![0] - OPTIONS[0]![0] + 500, 200), new Phaser.Geom.Rectangle(ENTRY.x - 90, ENTRY.y - 170, 180, 200)];
+    // The pictures' row keeps 250 px clear each side (hunt 11: Moriarty's ❓ lay in line with them, under the
+    // third card's question mark, a fourth thing to walk to), and her way in (M58's rule: Bavmorda's bones
+    // lay at her feet there).
+    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true, floorOnly: OUTDOOR_ROOMS.has(this.roomId), avoid });
     this.bag = new Bag(this);
     this.enter(ENTRY.x, ENTRY.y);
     for (const r of this.plan.rounds) for (const w of [...r.shown, r.word]) void voiceBank.ensure(wordLine(w));
@@ -169,8 +186,6 @@ export class RhymeRoom extends HouseSideRoom {
     if (first) {
       await this.wait(ARRIVE_MS);
       if (f !== this.flow) return;
-      await this.narrate('rhyme_intro');
-      if (f !== this.flow) return;
     }
     // The two rhyming words, each lit as it is said.
     for (let i = 0; i < 2; i++) {
@@ -178,6 +193,12 @@ export class RhymeRoom extends HouseSideRoom {
       await this.wait(200);
       if (f !== this.flow) return;
       await this.sayCard(i);
+      if (f !== this.flow) return;
+    }
+    // "Rhyme time! These words sound the same at the end!": once there are words to point at (hunt 11: it
+    // played to an empty wall, the cards coming after).
+    if (first) {
+      await this.narrate('rhyme_intro');
       if (f !== this.flow) return;
     }
     // The third place in the row, waiting for its picture; and the third word, printed, never said.
@@ -219,8 +240,8 @@ export class RhymeRoom extends HouseSideRoom {
     const [x, y] = CARDS[i]!;
     const back = this.add.rectangle(0, 0, CARD.w, CARD.h, 0xfff6dc, 0.96).setStrokeStyle(5, 0x1a1030, 0.85);
     const box = pictureSize(this, this.wordArt(word), CARD.pic, CARD.pic);
-    const pic = fitImage(this.add.image(0, -30, this.wordArt(word)), box.w, box.h);
-    const text = this.add.text(0, 72, word.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '54px', color: INK, stroke: '#ffffff', strokeThickness: 6 }).setOrigin(0.5);
+    const pic = fitImage(this.add.image(0, CARD_PIC_DY, this.wordArt(word)), box.w, box.h);
+    const text = this.add.text(0, PLATE.dy, word.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '54px', color: INK, stroke: '#ffffff', strokeThickness: 6 }).setOrigin(0.5);
     const card = this.add.container(x, y, [back, pic, text]).setDepth(DEPTH.sparkles - 20);
     this.cards[i] = card;
     this.cardWords[i] = text;
@@ -229,11 +250,11 @@ export class RhymeRoom extends HouseSideRoom {
     burst(this, x, y, { count: 18, speed: 220, colors: TUNE });
   }
 
-  /** The row's third place: a faint card with a question mark, where the right picture flies on a right pick. */
+  /** The row's third place: a faint card with a question mark where the right picture flies on a right pick, over the printed word's plate. */
   private makeSlot(): void {
     const [x, y] = CARDS[2]!;
     const back = this.add.rectangle(0, 0, CARD.w, CARD.h, 0xfff6dc, 0.45).setStrokeStyle(5, 0x1a1030, 0.5);
-    const mark = this.add.text(0, -10, '?', { fontFamily: FONT_COMIC, fontSize: '110px', color: INK, stroke: '#ffffff', strokeThickness: 8 }).setOrigin(0.5).setAlpha(0.6);
+    const mark = this.add.text(0, CARD_PIC_DY, '?', { fontFamily: FONT_COMIC, fontSize: '96px', color: INK, stroke: '#ffffff', strokeThickness: 8 }).setOrigin(0.5).setAlpha(0.6);
     const slot = this.add.container(x, y, [back, mark]).setDepth(DEPTH.sparkles - 21);
     this.cards[2] = slot;
     popIn(this, slot, 1);
@@ -245,22 +266,32 @@ export class RhymeRoom extends HouseSideRoom {
     const t = this.cardWords[i];
     const card = this.cards[i];
     t?.setColor(LIT);
-    if (card) this.tweens.add({ targets: card, scale: 1.08, duration: 160, yoyo: true });
+    // Back to its own size after: started over the pop-in's overshoot, the yoyo came back to about 1.09, and the
+    // two cards stood bigger than the third all round (hunt 11).
+    if (card) this.tweens.add({ targets: card, scale: 1.08, duration: 160, yoyo: true, onComplete: () => card.setScale(1) });
     await this.say(id);
     t?.setColor(INK);
   }
 
-  /** The printed word's plate at the top: its sound units, each its own text so it lights as it is sounded. */
+  /** The printed word's plate, on the third card under its question mark: its sound units, each its own text so it lights as it is sounded. */
   private makePlate(word: string): void {
     const steps = soundOut(word);
-    const w = steps.length * PLATE.gap + 70;
-    const back = this.add.rectangle(0, 0, w, PLATE.h, 0xffffff, 0.97).setStrokeStyle(6, 0x1a1030, 0.9);
-    const glow = this.add.image(0, 0, TEX.glow).setScale(3.4, 1.6).setAlpha(0.35).setTint(TUNE[1]!).setBlendMode(Phaser.BlendModes.ADD);
-    this.units = steps.map((s, i) => this.add.text((i - (steps.length - 1) / 2) * PLATE.gap, 0, s.unit.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: s.unit.length > 1 ? '64px' : '80px', color: INK, stroke: '#ffffff', strokeThickness: 8 }).setOrigin(0.5));
-    this.plate = this.add.container(PLATE.x, PLATE.y, [glow, back, ...this.units]).setDepth(DEPTH.sparkles - 19);
+    this.units = steps.map((s) => this.add.text(0, 0, s.unit.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '58px', color: INK, stroke: '#ffffff', strokeThickness: 6 }).setOrigin(0.5));
+    const inkW = this.units.reduce((a, t) => a + t.width, 0) + PLATE.gap * (this.units.length - 1);
+    let left = -inkW / 2;
+    for (const t of this.units) {
+      t.setX(left + t.width / 2);
+      left += t.width + PLATE.gap;
+    }
+    const w = Math.max(CARD.w - 24, inkW + 28);
+    // A target (`qaTarget`): what she reads, so nothing may cover it (`tests/cover.spec.ts`'s check).
+    const back = this.add.rectangle(0, 0, w, PLATE.h, 0xffffff, 0.97).setStrokeStyle(5, 0x1a1030, 0.9).setData('qaTarget', 'plate');
+    const glow = this.add.image(0, 0, TEX.glow).setScale(w / 90, 1.2).setAlpha(0.35).setTint(TUNE[1]!).setBlendMode(Phaser.BlendModes.ADD);
+    const [x, y] = CARDS[2]!;
+    this.plate = this.add.container(x, y + PLATE.dy, [glow, back, ...this.units]).setDepth(DEPTH.sparkles - 19);
     this.tweens.add({ targets: glow, alpha: 0.15, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     popIn(this, this.plate, 1);
-    burst(this, PLATE.x, PLATE.y, { count: 30, speed: 280, colors: TUNE });
+    burst(this, x, y + PLATE.dy, { count: 30, speed: 280, colors: TUNE });
   }
 
   /** The printed word sounded out, unit by unit, each lit on the plate as it plays; never blended. */
@@ -274,7 +305,7 @@ export class RhymeRoom extends HouseSideRoom {
       if (steps[i]!.id) await this.say(steps[i]!.id);
       t?.setColor(INK);
       if (f !== this.flow) return;
-      await this.wait(160);
+      await this.wait(SOUND_GAP_MS);
       if (f !== this.flow) return;
     }
   }
@@ -292,7 +323,11 @@ export class RhymeRoom extends HouseSideRoom {
     for (const [x, y] of OPTIONS) burst(this, x, y - 50, { count: 14, speed: 180, colors: TUNE });
     // A round's pictures stand where the last round's were: she steps up out of their reach, or a
     // green mashed through the instruction would pick one she never walked to (the Shape-Shifter's hunt 6).
-    this.stepClearOf(CARDS[1]![0], 0, Math.min(...OPTIONS.map(([, y]) => y)) - 150);
+    // Stepping up behind the cards hid her behind the middle one (hunt 11): she stands between the pictures.
+    if (this.spots.some((sp) => Phaser.Math.Distance.Between(this.player.x, this.player.y, sp.x, sp.y) < REACH)) {
+      const [x, y] = this.player.x < GAME_WIDTH / 2 ? CLEAR_SPOTS[0]! : CLEAR_SPOTS[1]!;
+      this.player.place(x, y);
+    }
   }
 
   // ---- Picking --------------------------------------------------------------
@@ -365,15 +400,25 @@ export class RhymeRoom extends HouseSideRoom {
     sfxRight();
     const top = { x: spot.x, y: spot.y - PICTURE_SIZE / 2 };
     burst(this, top.x, top.y, { count: 50, speed: 420 });
-    floatText(this, top.x, top.y - 90, unaided ? 'WOW!' : 'YES!', '#ffd23f');
+    // "By yourself" not after the helper sounded it out for her (level 1: every word at base; hunt 11).
+    const own = unaided && !this.sounded;
+    floatText(this, top.x, top.y - 90, own ? 'WOW!' : 'YES!', '#ffd23f');
     // Its picture flies up into the third place of the row, over the cards, and the question mark goes: three
     // that rhyme. The other two pictures go too.
     const [cx, cy] = CARDS[2]!;
     for (const s of this.spots) if (s !== spot) this.tweens.add({ targets: s.obj, alpha: 0, duration: 260, onComplete: () => s.obj.setVisible(false) });
     spot.obj.setDepth(DEPTH.sparkles - 18);
     const slot = this.cards[2];
-    if (slot) this.tweens.add({ targets: slot.list.at(-1), alpha: 0, duration: 300 });
-    this.tweens.add({ targets: spot.obj, x: cx, y: cy + PICTURE_SIZE / 2 + 10, scale: 1.05, duration: 520, ease: 'Cubic.easeOut' });
+    if (slot) {
+      this.tweens.add({ targets: slot.list.at(-1), alpha: 0, duration: 300 });
+      // The faint place turns a card like the other two, so the landed picture does not float over the room.
+      const back = slot.list[0] as Phaser.GameObjects.Rectangle;
+      this.tweens.add({ targets: back, fillAlpha: 0.96, strokeAlpha: 0.85, duration: 300 });
+    }
+    // Feet so its picture's centre lands where the cards' pictures stand, over the plate; its floor shadow goes.
+    const shadow = spot.obj.list[0];
+    if (shadow) this.tweens.add({ targets: shadow, alpha: 0, duration: 200 });
+    this.tweens.add({ targets: spot.obj, x: cx, y: cy + CARD_PIC_DY + PICTURE_SIZE / 2 + 4, scale: 1, duration: 520, ease: 'Cubic.easeOut' });
     await this.wait(520);
     if (f !== this.flow) return;
     shockwave(this, cx, cy, 0xffd23f, 180);
@@ -382,7 +427,7 @@ export class RhymeRoom extends HouseSideRoom {
     await this.sayPlate();
     if (f !== this.flow) return;
     const copy = this.bagCopy(r.word) ? this.guard(this.bag.receive(this.wordArt(r.word), cx, cy)) : Promise.resolve();
-    const praise = Promise.all([copy, this.say(narratorLine(narrator(), readPraise(unaided)))]);
+    const praise = Promise.all([copy, this.say(narratorLine(narrator(), readPraise(own)))]);
     if (!last) {
       sfxSelect();
       this.index++;
@@ -400,6 +445,11 @@ export class RhymeRoom extends HouseSideRoom {
   }
 
   // ---- Help -----------------------------------------------------------------
+
+  /** Her head never rises behind the cards, which draw over her (hunt 11: a held jump took her up behind them). */
+  protected override liftCap(): number {
+    return Math.max(0, this.player.y - PLAYER_HEIGHT - (CARDS[0]![1] + CARD.h / 2));
+  }
 
   /** Free play (item 060): only once the last word is in her bag. */
   protected override playOpen(): boolean {
@@ -451,6 +501,8 @@ export class RhymeRoom extends HouseSideRoom {
         index: this.index,
         rime: r.rime,
         shown: [...r.shown],
+        onCards: this.cardWords.filter((t) => t?.active).map((t) => t.text.toLowerCase()),
+        thirdCard: ((this.cards[2]?.list[0] as Phaser.GameObjects.Rectangle | undefined)?.fillAlpha ?? 0),
         word: r.word,
         options: [...r.options],
         level: this.level,

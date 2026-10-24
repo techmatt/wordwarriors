@@ -309,9 +309,22 @@ export class RaceStage extends BaseStage {
     const r = this.racer(f);
     // Minions, clones and the combo's cameo dad roam as in the brawl.
     if (!r) return false;
+    if (f === this.host.heroes[1]) {
+      // A choice holds the race nearly still: an ally level with the villain, his lane behind the villain's, stayed
+      // hidden behind him the whole choice (hunt 11: Elsa behind frozen Evil Ozymandias's ice). He draws in front.
+      const v = this.host.villain;
+      const hid = this.host.choosing && v.active && Math.abs(f.x - v.x) < v.bodyHalf + f.bodyHalf * 0.5;
+      f.depthOver = hid ? v.y + 2 : null;
+    }
     if (f.floored) return true;
     const her = f === this.host.heroes[0];
     if (her && this.host.choosing) return false;
+    // The rest hold where the choice found them, as in the tug: the pads were placed off them there.
+    if (this.host.choosing) {
+      f.vx = 0;
+      f.vy = 0;
+      return true;
+    }
     const villain = f === this.host.villain;
     // The villain's fright leap at the counter is the battle's own lift.
     // The victory loop sets its own lift below.
@@ -397,14 +410,16 @@ export class RaceStage extends BaseStage {
       const live = f.active && !f.floored;
       r.wobble *= Math.exp(-2.5 * dt);
       const body = f.y - f.lift - f.height * 0.5;
+      // His ride goes with him when a choice draws him over the villain (fix 227).
+      const d = f.depthOver ?? f.y;
       if (r.cloud) {
-        r.cloud.setPosition(f.x, f.y - f.lift).setDepth(f.y + 0.5);
+        r.cloud.setPosition(f.x, f.y - f.lift).setDepth(d + 0.5);
         r.cloud.emitting = live && f.lift > 20;
       }
-      r.jet.setPosition(f.x - f.height * 0.3, body).setDepth(f.y - 1);
+      r.jet.setPosition(f.x - f.height * 0.3, body).setDepth(d - 1);
       r.jet.emitting = live && f.onStage;
       if (r.flame) {
-        r.flame.setPosition(f.x - f.height * 0.25, body).setDepth(f.y - 0.5);
+        r.flame.setPosition(f.x - f.height * 0.25, body).setDepth(d - 0.5);
         if (this.t > r.flameUntil || !f.active) {
           const fx = r.flame;
           fx.stop();
@@ -464,6 +479,8 @@ export class RaceStage extends BaseStage {
   }
 
   override onHit(target: Fighter, power: number, _from: Fighter | null): void {
+    // A shot landing on the frozen clock: no flourish to hang over the faded fight while she picks (hunt 11).
+    if (this.host.choosing) return;
     const r = this.racer(target);
     if (!r) return;
     // The battle's hit() has squashed it already; this only knocks it back in the race.
@@ -539,7 +556,8 @@ export class RaceStage extends BaseStage {
 
   override async counter2(_v: Fighter): Promise<void> {
     this.beat = 'counter';
-    this.override = 0.3;
+    // TURBO! keeps the heroes ahead (hunt 11: 0.3 dropped their lead, and the villain caught up after it).
+    this.override = Math.max(0.6, this.lead);
     this.speedUp(2.4, 1.4);
     for (const f of this.host.team()) {
       const r = this.racer(f);

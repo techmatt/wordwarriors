@@ -132,6 +132,8 @@ export const LOOKALIKES: string[][] = [
   ['fig', 'plum'],
   ['bug', 'slug', 'ant', 'moth'],
   ['moth', 'bat'],
+  // Hunt 11: NAP's picture is the orange tabby of CAT's, asleep in a nightcap.
+  ['nap', 'cat'],
   ['yak', 'ram'],
   ['duck', 'hen', 'chick'],
   // Item 054's words: a mat is a small rug, a lid sits on a pot or a pan, a lock takes a key.

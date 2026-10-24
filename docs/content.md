@@ -325,7 +325,8 @@ and the narrator's "we have to train right here at home" (`nar_<narrator>_quest_
 
 A place is `{ id, name, glyph, look, palette, rooms: [two side rooms], secret }`, and
 optionally `outdoor: true` (open sky behind: the villain's decals all lie on the floor,
-none hang in the air) and `moodFloor: [x, y, w, h]` (where floor decals lie when the
+none hang in the air; that is the hub only: a side room in the open air, whatever its place,
+goes in `OUTDOOR_ROOMS` in `content/house/house.ts`, hunt 11) and `moodFloor: [x, y, w, h]` (where floor decals lie when the
 art's floor is not the house hub's, like the treehouse deck); its
 art is `room_place_<id>` (the hub, laid out like the house's: the game draws the
 helper, the magic circle, the doors and a `prop_portal` way out on top) and
@@ -571,7 +572,8 @@ coverage rule (README, "The word bank's coverage rule"; `npm run bank:audit`). T
    it could be mistaken ("a plum, not a fig"). Art is `pic_<word>`. A picture far from
    square (a standing person, like DAD; a wide one, like TUG) is fitted to a square and
    comes out small: add its id to `SHAPED_PICTURES` (`src/art/pictureBox.ts`, M48) and it
-   fits a box of its own shape instead, about the square's area.
+   fits a box of its own shape instead, about the square's area (`tests/unit/pictureBox.test.ts`
+   fails on a picture more than twice as wide as tall, or tall as wide, left out).
 3. Its battle effect in `content/phonics/effects.ts`: a thing or `both` with
    `use(word, kind, color, extra)` in `THING_EFFECTS` (id `item_<word>`, `...pic(word)`
    to fling or drop its own picture), an action with `act(...)` in `ACTION_EFFECTS` (id

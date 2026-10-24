@@ -105,6 +105,8 @@ export function ruledCover(scene: string, target: string, cover: string, overlap
   if (cover !== 'dialogue') return false;
   if ((scene === 'Bedroom' || scene === 'Entry') && target === 'door') return true;
   if (scene === 'Hub' && target === 'circle') return overlapH <= 30;
+  // W44: under a two-row banner the find line's box can sit on a picture's foot (17 to 21 px), and goes as she walks.
+  if (scene === 'SentenceRoom') return overlapH <= 22;
   return scene === 'Battle' && target.startsWith('pad_') && overlapH <= 15;
 }
 
@@ -177,6 +179,26 @@ export function placeholderArt(dir = 'public/art'): Set<string> {
 }
 
 /** Text off screen, text over text, lower case, tiny text; targets under the dialogue; placeholder art. */
+/**
+ * The villain's decals (`decal_<id>`, src/world/houseMood.ts) beside a picture she picks from (hunt 11: a
+ * question mark in line with the rhyme room's pictures; fix 150's bone pile between the hall's pictures read
+ * as a fourth thing to pick). A look. Not the bedroom or the hub, where the mess comes in by the doors and
+ * the toys on purpose, nor a door (the wall strip over the doors is the decals' place).
+ */
+export function decalIssues(l: Pick<Layout, 'images' | 'targets'>, scene: string): Issue[] {
+  if (['Battle', 'Parent', 'Bedroom', 'Hub'].includes(scene)) return [];
+  const out: Issue[] = [];
+  const grow = (b: readonly number[], d: number): Box => [b[0]! - d, b[1]! - d, b[2]! + d, b[3]! + d];
+  for (const im of l.images.filter((i) => i.scene === scene && i.key.startsWith('decal_'))) {
+    // Not one hanging over it from the room's top (Elsa's icicles over the sentence room's HAT): wall mess, not a
+    // thing on her floor to walk to.
+    const over = (t: { b: readonly number[] }) => (im.b[1]! + im.b[3]!) / 2 < t.b[1]!;
+    const near = l.targets.find((t) => t.scene === scene && !t.id.startsWith('door') && inter(grow(t.b, 30), im.b) > 0 && !over(t));
+    if (near) out.push({ kind: 'decal-by-target', severity: 'look', scene, detail: `${im.key} at ${im.b.join(',')} by ${near.id}`, key: `decal:${scene}:${im.key}:${near.id}` });
+  }
+  return out;
+}
+
 export function layoutIssues(l: Layout, scene: string, placeholders: Set<string>): Issue[] {
   const out: Issue[] = [];
   const grown = scene === 'Parent';
@@ -219,6 +241,8 @@ export function layoutIssues(l: Layout, scene: string, placeholders: Set<string>
   out.push(...panelIssues(l, scene));
   // A word she stands in front of (hunt 9).
   out.push(...heroIssues(l, scene));
+  // The villain's mess beside what she picks or on her (hunt 11).
+  out.push(...decalIssues(l, scene));
   for (const im of l.images) {
     if (placeholders.has(im.key)) out.push({ kind: 'placeholder-art', severity: 'look', scene, detail: im.key, key: `placeholder:${im.key}` });
   }
@@ -361,7 +385,8 @@ export function logIssues(q: Since, speed = 1): Issue[] {
   for (const k of q.locks) {
     // Charge the Spell's quiet beats are hers: she says each rune's sound back, then reads (hunt 7).
     if (k.silentMs > 2500 && k.scene !== 'ChargeRoom') out.push({ kind: 'locked-silent', severity: 'look', scene: k.scene, detail: `${k.round}: input locked ${(k.ms / 1000).toFixed(1)} s, ${(k.silentMs / 1000).toFixed(1)} s of it silent`, key: `lsilent:${k.scene}:${k.round.replace(/:\w+$/, '')}` });
-    else if (k.ms > 20_000) out.push({ kind: 'locked-long', severity: 'look', scene: k.scene, detail: `${k.round}: input locked ${(k.ms / 1000).toFixed(1)} s (talking)`, key: `llong:${k.scene}:${k.round.replace(/:\w+$/, '')}` });
+    // Charge has nothing for her to press (Dad answers): its whole two-word visit can be one lock (item 140).
+    else if (k.ms > (k.scene === 'ChargeRoom' ? 66_000 : 20_000)) out.push({ kind: 'locked-long', severity: 'look', scene: k.scene, detail: `${k.round}: input locked ${(k.ms / 1000).toFixed(1)} s (talking)`, key: `llong:${k.scene}:${k.round.replace(/:\w+$/, '')}` });
   }
   // Full-screen flashes: more than three in any second is the photosensitivity line (WCAG 2.3.1).
   const fl = q.flashes;

@@ -30,7 +30,7 @@ VOICE.mode = 'real';
 driver.walk = true;
 import { layoutIssues, leakIssues, logIssues, onlyLineVariants, padReachIssues, placeholderArt, spawnIssues, storeChanges, voiceBuildIssues, type Issue, type Since } from './checks';
 import { qaLayout, qaSince } from './probe';
-import { clippedIssues, giveawayIssues, pacingIssues, repeatedLines, spellingIssues, tauntIssues, variantIssues } from './wording';
+import { clippedIssues, giveawayIssues, letterNameIssues, pacingIssues, repeatedLines, spellingIssues, tauntIssues, variantIssues } from './wording';
 import { NARRATOR_LINES, lineVariantKeys } from '../../content/voice/script';
 
 /** Each narrator key with variants (item 087) and its variant keys, for `variantIssues`. */
@@ -64,7 +64,8 @@ interface Scenario {
    * `lenses` the fourth, by the third hunt (item 080); `recent` the fifth, by the fourth hunt
    * (item 089); `cast` the seventh hunt's (item 116): the new allies and villains, the story fight;
    * `hunt8` the eighth hunt's (item 125): items 119-123's changes; `hunt9` the ninth hunt's
-   * (item 129): items 126-128's changes; `hunt10` the tenth's (item 135): items 130-134's.
+   * (item 129): items 126-128's changes; `hunt10` the tenth's (item 135): items 130-134's;
+   * `hunt11` the eleventh's (item 142): items 137-141's.
    */
   batch?: Batch;
   /** Item 080: reload the page at each of these points, one per episode started from the title. */
@@ -92,7 +93,7 @@ interface Scenario {
 }
 
 /** A scenario batch past the first, named as `QA_SET` names it. */
-const BATCHES = ['more', 'new', 'lenses', 'recent', 'cast', 'hunt8', 'hunt9', 'hunt10'] as const;
+const BATCHES = ['more', 'new', 'lenses', 'recent', 'cast', 'hunt8', 'hunt9', 'hunt10', 'hunt11'] as const;
 type Batch = (typeof BATCHES)[number];
 
 /** Where in an episode the item-080 probes act (`episode` calls `at` at each). */
@@ -211,6 +212,32 @@ const SCENARIOS: Scenario[] = [
   { name: 'cookoff_wrong', query: 'seed=1003&fight=cook_off&games=all', wrong: true, batch: 'hunt10' },
   { name: 'clash_idle', query: 'seed=1004&fight=frost_clash&games=all', idle: true, batch: 'hunt10' },
   { name: 'story_mash_wrong', query: 'seed=1005&fight=smaug_story&games=all', wrong: true, mash: true, batch: 'hunt10' },
+  // Hunt 11 (item 142): items 137-141's changes. Strict game rotation and sounds-only clues (137) over
+  // drawn episodes; the per-story gift spots and the word machine's slot (138); the rhyme room (139) right,
+  // wrong, idle and mashed; Charge's sounds up front and two words (140), with Dad and without; Bluerilla
+  // as ally and as villain; and the battle after item 141's split in a brawl and the story fight.
+  { name: 'drawn5_h11', query: 'cast=random&games=all', episodes: 5, batch: 'hunt11' },
+  { name: 'rhyme_wrong3', query: 'cast=random&room=rhyme', wrong: true, episodes: 3, batch: 'hunt11' },
+  { name: 'rhyme_idle', query: 'seed=1101&room=rhyme', idle: true, batch: 'hunt11' },
+  { name: 'rhyme_mash', query: 'seed=1102&room=rhyme', mash: true, batch: 'hunt11' },
+  { name: 'charge2_yes', query: 'seed=1103&room=charge', episodes: 2, batch: 'hunt11' },
+  { name: 'charge2_no', query: 'seed=1104&room=charge', wrong: true, batch: 'hunt11' },
+  { name: 'charge2_solo', query: 'seed=1105&room=charge', episodes: 2, dadAway: true, batch: 'hunt11' },
+  { name: 'machine_wrong', query: 'seed=1106&game=word_machine', wrong: true, batch: 'hunt11' },
+  { name: 'rilla_ally', query: 'seed=1107&ally=rilla&games=all', wrong: true, batch: 'hunt11' },
+  { name: 'rilla_villain', query: 'seed=1108&villain=rilla&fight=brawl&games=all', mash: true, batch: 'hunt11' },
+  { name: 'story_wrong_h11', query: 'seed=1109&fight=smaug_story&games=all', wrong: true, batch: 'hunt11' },
+  { name: 'rhyme_lock', query: 'seed=1110&room=rhyme', lockAll: true, batch: 'hunt11' },
+  { name: 'rhyme_parent', query: 'seed=1111&room=rhyme', parentAll: true, batch: 'hunt11' },
+  { name: 'rhyme_reload', query: 'seed=1112&room=rhyme', reloadAt: ['room_a', 'hub2'], batch: 'hunt11' },
+  { name: 'rhyme_debug', query: 'seed=1113&room=rhyme', debugAt: ['room_a', 'hub1'], batch: 'hunt11' },
+  { name: 'charge_parent', query: 'seed=1114&room=charge', parentAll: true, batch: 'hunt11' },
+  { name: 'charge_reload', query: 'seed=1115&room=charge', reloadAt: ['room_a'], batch: 'hunt11' },
+  // The end of hunt 11's completeness read: the new rooms under the lenses no scenario forced them into.
+  { name: 'rhyme_voiceless', query: 'seed=1116&room=rhyme', voiceless: true, batch: 'hunt11' },
+  { name: 'charge_slow_net', query: 'seed=1117&room=charge', net: 'slow', batch: 'hunt11' },
+  { name: 'rhyme_flaky_net', query: 'seed=1118&room=rhyme', net: 'flaky', hide: true, resize: true, batch: 'hunt11' },
+  { name: 'charge_debug', query: 'seed=1119&room=charge', debugAt: ['room_a', 'hub1'], batch: 'hunt11' },
 ];
 
 /** How often a busy child presses something (real ms). */
@@ -302,6 +329,7 @@ class Recorder {
     for (const sp of s.room?.spots ?? []) this.spotIds.add(sp.id);
     this.add(logIssues({ ...q, console: [], missingArt: [], flashes: [] }, SPEED));
     this.add(clippedIssues(q.voice));
+    this.add(letterNameIssues(q.voice));
     if (s.scene !== this.visit.scene) {
       if (this.visit.scene) this.visits.push({ scene: this.visit.scene, ms: (Date.now() - this.visit.at) * SPEED, wrong: this.wrong, solo: this.visit.solo });
       // Solo from the start of a visit (M38): Charge's own budget.
@@ -362,9 +390,10 @@ class Recorder {
     // Words she has read, the warm-up's (said once she has grabbed it), and the gift word (item 092: told
     // and shown in the hub's story, its effect beside its card: FIN's fins): their pictures may wear them.
     // The Shape-Shifter's first creature (item 096) is said and labelled: shown, not read (hunt 6). The rhyme
-    // room's two rhyming words (item 139) too: said, each on its card.
+    // room's two rhyming words (item 139) too: said, each on its card (`onCards`: the last round's stay up
+    // under its praise while the hooks already name the next round's, hunt 11).
     // In a battle her fetched things too: read in the house, or put there by a `fetched=` boot (hunt 7: "THE BUN!").
-    const done = [...s.episode.read, ...(s.scene === 'Battle' ? (s.episode.fetched ?? []) : []), ...(s.episode.grab && (s.scene !== 'Entry' || !['intro', 'find'].includes(s.room?.grab?.phase ?? 'intro')) ? [s.episode.grab.word] : []), ...(s.episode.gift ? [s.episode.gift] : []), ...(s.room?.shifter ? [s.room.shifter.start] : []), ...(s.room?.rhyme?.shown ?? [])];
+    const done = [...s.episode.read, ...(s.scene === 'Battle' ? (s.episode.fetched ?? []) : []), ...(s.episode.grab && (s.scene !== 'Entry' || !['intro', 'find'].includes(s.room?.grab?.phase ?? 'intro')) ? [s.episode.grab.word] : []), ...(s.episode.gift ? [s.episode.gift] : []), ...(s.room?.shifter ? [s.room.shifter.start] : []), ...(s.room?.rhyme?.shown ?? []), ...(s.room?.rhyme?.onCards ?? [])];
     this.add(giveawayIssues(l, s.scene, done), shot);
   }
 
@@ -607,7 +636,7 @@ async function episode(page: Page, sc: Scenario, rec: Recorder, at: (p: Point) =
     await standStill(page, sc, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:doors' && !s.room.locked, 'doors open');
     await hubGo(page, door);
     if ((sc.dadLock && door === 'door_a') || probing(sc)) {
-      const s = await until(page, (st) => st.scene === 'SentenceRoom' || st.scene === 'WordMachine' || st.scene === 'ChargeRoom' || st.scene === 'BridgeRoom' || st.scene === 'ShifterRoom', 30_000, 'side room');
+      const s = await until(page, (st) => st.scene === 'SentenceRoom' || st.scene === 'WordMachine' || st.scene === 'ChargeRoom' || st.scene === 'BridgeRoom' || st.scene === 'ShifterRoom' || st.scene === 'RhymeRoom', 30_000, 'side room');
       if (s.scene === 'SentenceRoom') await until(page, (st) => st.room?.sentence?.pass === 'read' && !st.room.locked, 90_000, 'read pass');
       else await until(page, (st) => Boolean(st.room && !st.room.locked), 60_000, 'room listening');
       if (sc.dadLock && door === 'door_a') await dadLockProbe(page, rec);
@@ -1006,6 +1035,10 @@ const FLAGS = [
   // `fight=brawl`: an ally's fightNudge (a cook-off) would move the fight to the cook show's arena.
   'scene=battle&villain=ellie&fight=brawl', 'scene=battle&villain=rilla&fight=brawl',
   'scene=room&room=shifter&words=run,can', 'scene=room&slot=counter&words=can', 'scene=parent&ally=none',
+  // Hunt 11 (item 142): the rhyme room and Charge's two words beside the room switches; the battle with Charge's runes.
+  'scene=room&room=rhyme', 'scene=room&slot=b&room=rhyme', 'scene=room&room=rhyme&difficulty=3', 'room=rhyme&games=sentence', 'room=rhyme&game=word_machine',
+  'scene=room&room=rhyme&words=new', 'scene=room&room=charge&difficulty=3', 'scene=battle&room=charge', 'scene=battle&part=2&room=charge', 'scene=battle&room=charge&fight=smaug_story',
+  'scene=battle&charged=b,a,t,d,o,g', 'scene=house&ally=rilla', 'scene=house&ally=ozymandias', 'scene=house&ally=jasmine',
 ];
 const flagSet = set === 'lenses' || set === 'all';
 for (const flag of flagSet && !LOOK ? FLAGS : []) {

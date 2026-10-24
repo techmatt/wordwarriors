@@ -10,8 +10,8 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
 
-import { heroIssues, logIssues, onlyLineVariants, padReachIssues, panelIssues, ruledCover, spawnIssues, storeChanges, voiceBuildIssues, type Box } from '../qa/checks';
-import { britishIn, clippedIn, giveawayIssues, tauntIssues, variantIssues } from '../qa/wording';
+import { decalIssues, heroIssues, logIssues, onlyLineVariants, padReachIssues, panelIssues, ruledCover, spawnIssues, storeChanges, voiceBuildIssues, type Box } from '../qa/checks';
+import { britishIn, clippedIn, giveawayIssues, namesLetter, tauntIssues, variantIssues } from '../qa/wording';
 import type { WWState } from '../harness';
 
 const LINES: { id: string; text: string; say?: string }[] = JSON.parse(readFileSync('content/voice/lines.json', 'utf8'));
@@ -20,6 +20,14 @@ test('spelling: no line says or shows a British spelling (item 059: PRACTISE)', 
   assert.deepEqual(britishIn('Time to PRACTISE your favourite colour!'), ['PRACTISE → practice', 'favourite → favorite', 'colour → color']);
   const bad = LINES.flatMap((l) => britishIn(`${l.text} ${l.say ?? ''}`).map((b) => `${l.id}: ${b}`));
   assert.deepEqual(bad, []);
+});
+
+test('letter names (item 137): no line names a letter, and the checker knows one when it hears it', () => {
+  assert.ok(namesLetter('letter_m_hides', "M's name is Em..."));
+  assert.ok(namesLetter('shifter_hint', 'This is the letter B!'));
+  assert.ok(namesLetter('entry_clue', "It's called Bee!"));
+  assert.equal(namesLetter('entry_clue', 'Listen to the first sound!'), false);
+  assert.deepEqual(LINES.filter((l) => namesLetter(l.id, `${l.text} ${l.say ?? ''}`)).map((l) => `${l.id}: ${l.text}`), []);
 });
 
 test('clipped lines: TOO STRONG, LET GO is clipped; whole sentences and everyday exclamations are not', () => {
@@ -116,6 +124,8 @@ test('ruled covers (item 092): W12 and W5 are a look, anything past them still a
   assert.ok(ruledCover('Battle', 'pad_zip', 'dialogue', 14));
   assert.ok(!ruledCover('Battle', 'pad_zip', 'dialogue', 40));
   assert.ok(!ruledCover('SentenceRoom', 'leg', 'banner', 16));
+  assert.ok(ruledCover('SentenceRoom', 'cat', 'dialogue', 18), "W44: the find line on a picture's foot");
+  assert.ok(!ruledCover('SentenceRoom', 'cat', 'dialogue', 40));
 });
 
 test('variant check (item 092): an idle child\'s re-prompts, the same variant again, count once only when asked', () => {
@@ -177,4 +187,14 @@ test("a glyph on her (hunt 10): Charge's cake slice over her head and shoulders 
   assert.deepEqual(heroIssues({ texts: [glyph(465)], heroes: [her] }, 'ChargeRoom').map((i) => i.kind), ['glyph-on-hero']);
   assert.deepEqual(heroIssues({ texts: [glyph(220)], heroes: [her] }, 'ChargeRoom'), []);
   assert.deepEqual(heroIssues({ texts: [glyph(465, 30)], heroes: [her] }, 'ChargeRoom'), []);
+});
+
+test("decals (hunt 11): the checker flags a villain's decal by a picture she picks, not one in a corner or by the bedroom's toys", () => {
+  const targets = [{ scene: 'RhymeRoom', id: 'rug', b: [400, 520, 520, 640] as Box, depth: 600 }];
+  const at = (b: Box) => [{ scene: 'RhymeRoom', key: 'decal_moriarty_question', b, depth: 10 }];
+  assert.equal(decalIssues({ images: at([540, 560, 600, 620]), targets }, 'RhymeRoom')[0]?.kind, 'decal-by-target');
+  assert.deepEqual(decalIssues({ images: at([20, 600, 80, 660]), targets }, 'RhymeRoom'), []);
+  // An icicle hanging over it from the top is not by it.
+  assert.deepEqual(decalIssues({ images: at([420, 440, 500, 530]), targets }, 'RhymeRoom'), []);
+  assert.deepEqual(decalIssues({ images: [{ ...at([540, 560, 600, 620])[0]!, scene: 'Bedroom' }], targets: [{ ...targets[0]!, scene: 'Bedroom' }] }, 'Bedroom'), []);
 });

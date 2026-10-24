@@ -332,7 +332,7 @@ together!", the word sounded out once and then said; either way its picture show
 into her bag as a battle item. Dad may press as soon as the word lights. The read records
 the word and its sounds (right with his 2). Then "Here comes another spell!" (`charge_next`)
 and the second word takes the bar, its own round the same way; after the last word, "Our
-spell is all charged up!" and back to the hub. A visit with Dad answering at once is
+spells are all charged up!" and back to the hub. A visit with Dad answering at once is
 about 50-60 s of game time (measured on the scene clock, item 140, two 3-rune words): about
 22 s to the first read (her arrival, the sounds up front, the explanation, 3.2 s a rune),
 17 s to the second ("Here comes another spell!", its sounds, its runes), then about 5 s a
@@ -419,7 +419,8 @@ run, 24 visits). A visit is three rounds (`RHYME.rounds`; two at least, `minRoun
 sentence frame plays), each from a different word family. A round: two rhyming words stand
 at the back as cards, each its picture and its printed word, each lit as it is said (BUG,
 TUG); a third place waits with a question mark, and the family's third word is printed on
-a plate at the top, never said (RUG). Three unlabeled pictures stand in the room: the
+a plate under it, where the other two cards print theirs, never said (RUG; at the top of
+the room the caption box covered it, hunt 11). Three unlabeled pictures stand in the room: the
 printed word's, one sharing its first sound (RING), one its vowel and not its first sound
 (THUMB), neither rhyming with it, so only the end of the word, or the rhyme, gets it. The
 printed word and the pictures are things (`THINGS`: an action word is never a picture she

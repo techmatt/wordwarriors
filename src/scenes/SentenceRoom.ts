@@ -30,7 +30,7 @@ import Phaser from 'phaser';
 
 import { tokenWord } from '../../content/phonics/sentences';
 import { WORD_BY_ID } from '../../content/phonics/words';
-import { SIDE_ROOM_BY_ID } from '../../content/house/house';
+import { OUTDOOR_ROOMS, SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { narratorLine, villainKey, wordLine } from '../../content/voice/ids';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { sfxRight, sfxStep, sfxSummon } from '../audio/sfx';
@@ -166,8 +166,20 @@ export class SentenceRoom extends HouseSideRoom {
     const s = this.plan.sentence;
     this.round = `sentence:${this.slot}:${s.key}`;
     this.floor.setTo(80, 420, GAME_WIDTH - 160, 240);
-    // Each room its own stable mess; calm, because she is reading in here.
-    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true });
+    // Each room its own stable mess; calm, because she is reading in here. Off the pictures' row and 250 px
+    // either side (hunt 11, fix 150's kind: a bone pile by the MOM pedestal read as a thing to pick; at 150 the
+    // attic's question mark and penguins still stood just past its end).
+    const roomSpots = SIDE_ROOM_BY_ID[this.plan.room]!.spots;
+    const xs = roomSpots.map(([x]) => x);
+    const top = Math.min(...roomSpots.map(([, y]) => y)) - 230;
+    // 250 only at the pictures' height: down to the floor's foot it left no floor spot at all, and an outdoor room
+    // or a floor-only villain drew no mess (a review).
+    const foot = Math.max(...roomSpots.map(([, y]) => y)) + 20;
+    const avoid = [
+      new Phaser.Geom.Rectangle(Math.min(...xs) - 150, top, Math.max(...xs) - Math.min(...xs) + 300, 400),
+      new Phaser.Geom.Rectangle(Math.min(...xs) - 250, top, Math.max(...xs) - Math.min(...xs) + 500, foot - top),
+    ];
+    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true, floorOnly: OUTDOOR_ROOMS.has(this.roomId), avoid });
     this.bag = new Bag(this);
     this.readDot = makeButtonDot(this, 0, 0, 'green', 16).setDepth(DEPTH.hud).setVisible(false);
     // Back from the parent page (F9) after she found it, mid-celebration: the

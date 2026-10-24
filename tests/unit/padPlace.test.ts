@@ -9,7 +9,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { bodyBox, clearSpot, coveredShare, placePads, ringBox, signBox, type PlaceBody } from '../../src/battle/padPlace';
+import { bodyBox, clearSpot, coveredShare, dotBeside, dotSide, placePads, ringBox, signBox, type PlaceBody } from '../../src/battle/padPlace';
 import { seeded, spread } from './seeds';
 
 /** A fighter standing at (x, y), `w` wide and `h` tall. */
@@ -202,4 +202,61 @@ test('clearSpot: a fighter under a sign steps clear of it and its ring; one clea
   assert.equal(coveredShare([to.x - 80, to.y - 300, to.x + 80, to.y], signs(pads)), 0);
   assert.ok(pads.every((p) => Math.abs(to.x - p.x) >= 95 + 40 || Math.abs(to.y - p.y) >= 60), 'off the rings');
   assert.deepEqual(clearSpot({ x: 1100, y: 600, half: 60, h: 150 }, pads, [], fl), { x: 1100, y: 600 });
+});
+
+test("padPlace (hunt 11): a contest's rings keep off a held teammate (`keepOff`) where her side has room", () => {
+  for (let seed = 1; seed <= 30; seed++) {
+    const me = body(400, 548, 120, 220);
+    const mate = body(260, 590, 90, 170);
+    // Far enough off that three rings fit on her side past her reach (in the sea tug they do not: M65).
+    const villain = body(1180, 560, 200, 300);
+    const keepOff = [[mate.x - mate.half, mate.top, mate.x + mate.half, mate.y + 20] as [number, number, number, number]];
+    const spots = placePads({ n: 3, avoid: [me, mate, villain], cover: [villain, mate], contest: { meX: me.x, villain }, ...floor, me: { x: me.x, y: me.y, reach: 120 }, keepOff, rand: seeded(spread(seed)) });
+    assert.equal(spots.length, 3);
+    for (const p of spots) assert.equal(coveredShare(ringBox(p.x, p.y), keepOff), 0, `seed ${seed}: ${JSON.stringify(spots)}`);
+  }
+});
+
+test("padPlace: a staggered lower pad's dot goes beside its sign, whether an upper pad is straight above or to one side (fix 190, hunt 11)", () => {
+  // The staggered rows (M7): 480 and 590.
+  const upperL = { x: 450, y: 480 };
+  const upperR = { x: 730, y: 480 };
+  const lower = { x: 590, y: 590 };
+  const pads = [upperL, upperR, lower];
+  // GRAB between RED and DRIP: neither straight above, but its dot over the sign fell in the gap between theirs.
+  assert.equal(dotBeside(lower, pads), true);
+  assert.equal(dotBeside({ x: 450, y: 590 }, [upperL, { x: 450, y: 590 }]), true);
+  // Upper pads, a single row, and a lower pad far off to the side keep the dot over the sign.
+  assert.equal(dotBeside(upperL, pads), false);
+  assert.equal(dotBeside(upperR, pads), false);
+  const row = [{ x: 300, y: 560 }, { x: 600, y: 560 }, { x: 900, y: 560 }];
+  for (const p of row) assert.equal(dotBeside(p, row), false);
+  const far = { x: 1100, y: 590 };
+  assert.equal(dotBeside(far, [upperL, far]), false);
+});
+
+test("padPlace: a beside dot goes the side clear of every other sign (branch review: on the next lower pad's word)", () => {
+  // One upper pad, two lower ones 240 apart: right of the left lower sign is the next sign's first letter.
+  const pads = [{ x: 100, y: 480 }, { x: 280, y: 590 }, { x: 520, y: 590 }];
+  assert.equal(dotBeside(pads[1]!, pads), true);
+  assert.equal(dotSide(pads[1]!, pads, 1280), -1);
+  const right = [{ x: 680, y: 480 }, { x: 920, y: 590 }, { x: 1180, y: 590 }];
+  assert.equal(dotSide(right[1]!, right, 1280), -1);
+  // Clear to the right: the right, as before.
+  assert.equal(dotSide({ x: 590, y: 590 }, [{ x: 450, y: 480 }, { x: 730, y: 480 }, { x: 590, y: 590 }], 1280), 1);
+  // Not under a higher sign when the other side is free (TUG's dot under DOT's sign).
+  assert.equal(dotSide({ x: 500, y: 590 }, [{ x: 640, y: 480 }, { x: 500, y: 590 }], 1280), -1);
+  // Off the screen's right edge: the left.
+  assert.equal(dotSide({ x: 1150, y: 590 }, [{ x: 1000, y: 480 }, { x: 1150, y: 590 }], 1280), -1);
+});
+
+test('padPlace: a teammate whose body stands over a ring steps clear, not only one with his feet on it (hunt 11)', () => {
+  const floor = { left: 70, right: 1210, top: 430, bottom: 670 };
+  const pads = [{ x: 630, y: 480 }];
+  // Feet 120 px below the ring, a tall body over a third of it.
+  const to = clearSpot({ x: 590, y: 600, half: 60, h: 240 }, pads, [], floor);
+  assert.notDeepEqual(to, { x: 590, y: 600 });
+  assert.ok(coveredShare(ringBox(630, 480), [[to.x - 60, to.y - 240, to.x + 60, to.y]]) <= 0.25);
+  // Well clear of it: stays.
+  assert.deepEqual(clearSpot({ x: 300, y: 600, half: 60, h: 240 }, pads, [], floor), { x: 300, y: 600 });
 });

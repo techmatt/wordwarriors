@@ -118,15 +118,18 @@ export class EntryScene extends RoomScene {
     this.setPhase('intro');
 
     const things = ENTRY_HALL.spots.map((p) => new Phaser.Geom.Rectangle(p.x - 70, p.y - 140, 140, 150));
-    // And the gaps between them (hunt 10): a bone pile between HAND and TRUCK read as a fourth thing in the row.
+    // And the gaps between them (hunt 10): a bone pile between HAND and TRUCK read as a fourth thing in the row;
+    // and 250 px past the rows' right end (hunt 11: a penguin trooper stood past KING, where a fourth picture would
+    // go; past both ends no floor spot was left, a review).
     const xs = ENTRY_HALL.spots.map((p) => p.x);
     const ys = ENTRY_HALL.spots.map((p) => p.y);
-    things.push(new Phaser.Geom.Rectangle(Math.min(...xs) - 70, Math.min(...ys) - 140, Math.max(...xs) - Math.min(...xs) + 140, Math.max(...ys) - Math.min(...ys) + 150));
+    things.push(new Phaser.Geom.Rectangle(Math.min(...xs) - 70, Math.min(...ys) - 140, Math.max(...xs) - Math.min(...xs) + 320, Math.max(...ys) - Math.min(...ys) + 150));
     const grownUps = [ENTRY_HALL.helper, ENTRY_HALL.waker, ENTRY_HALL.door].map((p) => new Phaser.Geom.Rectangle(p.x - 80, p.y - 200, 160, 220));
     // And her start spot (hunt 10, M58: Moriarty's playing card drew over her head as the hall opened);
     // a decal with nowhere clear left is not drawn.
     const start = new Phaser.Geom.Rectangle(ENTRY_HALL.start.x - 70, ENTRY_HALL.start.y - 190, 140, 200);
-    applyHouseMood(this, episode.villain, { seed: 33, floor: this.floor, avoid: [...things, ...grownUps, start] });
+    // Calm (hunt 11): a quake villain's stomp-and-shake landed between the clue's sounds and jolted the board.
+    applyHouseMood(this, episode.villain, { seed: 33, floor: this.floor, calm: true, avoid: [...things, ...grownUps, start] });
     this.bag = new Bag(this);
 
     this.player.place(ENTRY_HALL.start.x, ENTRY_HALL.start.y);
@@ -298,6 +301,8 @@ export class EntryScene extends RoomScene {
     if (episode.grab) episode.grab.misses = this.misses;
     const picked = spot.obj.getData('word') as string;
     this.giggle(spot.obj, spot.x, spot.y - 150, this.misses - 1);
+    // A beat for the giggle before the line (hunt 11: under the voice it was ducked to under half).
+    await this.wait(350);
     await this.narrate('grab_wrong');
     this.locked = true;
     await this.say(wordLine(picked));

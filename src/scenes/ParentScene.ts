@@ -34,8 +34,9 @@ import { debugMode } from '../episode/debug';
 import { BAG_WORDS, NEW_WORDS, coverageTable, type CoverageRow } from '../rules/bank';
 import { GRAB_WORDS, recordedGrabLevel } from '../rules/grab';
 import { recordedBridgeLevel } from '../rules/bridge';
-import { recordedShifterLevel } from '../rules/shifter';
-import { recordedRhymeLevel } from '../rules/rhyme';
+import { SHIFT_WORDS, recordedShifterLevel } from '../rules/shifter';
+import { RHYME_FAMILIES, recordedRhymeLevel } from '../rules/rhyme';
+import { RUNE_BY_SOUND } from '../../content/phonics/runes';
 import { difficulty } from '../rules/difficulty';
 import { fitText } from '../ui/fitText';
 import { Controls } from '../input/Controls';
@@ -85,7 +86,7 @@ export class ParentScene extends Phaser.Scene {
     // Clear of the DEBUG corner tag while debug mode is on (hunt 10: it covered the title's first word).
     const titleX = debugMode.on ? 110 : 30;
     fitText(this.add.text(titleX, 18, `Grown-ups: Julia's progress  ·  episodes finished: ${snap.episodes}  ·  difficulty ${difficulty()}${difficulty() === 1 ? ' (base: help stays at its start)' : ''}`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '26px', color: '#222' }), GAME_WIDTH - 30 - titleX, 34);
-    fitText(this.add.text(30, 54, `tries · first-try right (recent) · since the page opened; +n: said with the helper, Dad not there (not counted as reads).  Red = shaky (comes up more often), green = solid. Green / Space: ${PAGE_NEXT[this.page]}. Red button / Esc / F9: back. F8 twice: erase. \` / ~ (below Esc), anywhere: dad lock.`, {
+    this.help = fitText(this.add.text(30, 54, `tries · first-try right (recent) · since the page opened; +n: said with the helper, Dad not there (not counted as reads).  Red = shaky (comes up more often), green = solid. Green / Space: ${PAGE_NEXT[this.page]}. Red button / Esc / F9: back. F8 twice: erase. \` / ~ (below Esc), anywhere: dad lock.`, {
       fontFamily: 'Segoe UI, sans-serif',
       fontSize: '15px',
       color: '#555',
@@ -96,8 +97,9 @@ export class ParentScene extends Phaser.Scene {
       return;
     }
     if (this.page) {
-      // Every word in the content, plus any other word she has met (spelling, move words); not a stored word (page 3).
-      const words = [...new Set([...WORDS.map((w) => w.word), ...Object.keys(snap.words)])].filter((w) => !STORED.some((s) => s.word === w));
+      // Every word in the content, plus any other word she has met (spelling, move words); not a stored or dropped
+      // word (page 3; hunt 11: an old read of YAK showed here as a word that comes up again).
+      const words = [...new Set([...WORDS.map((w) => w.word), ...Object.keys(snap.words)])].filter((w) => ![...STORED, ...DROPPED].some((s) => s.word === w));
       const perCol = 22;
       // The number in a word's dot is its Stretchy Bridge help level (item 054), once she has crossed it.
       const bridged = (id: string) => (snap.bridgeLevels?.[id] !== undefined ? String(recordedBridgeLevel(progress, id)) : null);
@@ -111,7 +113,8 @@ export class ParentScene extends Phaser.Scene {
     // Five full columns, narrow enough to stay left of the warm-up's levels.
     // Item 056's NG and voiced TH are left out: no rune drills them alone, and a sixth column would run into the warm-up's levels.
     const drilled = DIGRAPH_SOUNDS.filter((l) => l.letter !== 'ng' && l.letter !== 'th_voiced');
-    this.grid('Letter sounds', 'sounds', [...LETTERS, ...drilled].map((l) => l.letter), 30, 90, 6, 162, 30);
+    // Only the sounds a rune drills (hunt 11: Q, X and CK, which none does, sat grey as "never tried" for good).
+    this.grid('Letter sounds', 'sounds', [...LETTERS, ...drilled].map((l) => l.letter).filter((s) => RUNE_BY_SOUND[s]), 30, 90, 6, 162, 30);
     // Since item 096 the Shape-Shifter's fix-it links fill this (a letter found for a sound), Spell the Spell
     // being parked: the latest first, and how many more (hunt 6: it showed the first three ever, as typing).
     const spelled = Object.entries(snap.spelling ?? {})
@@ -121,6 +124,10 @@ export class ParentScene extends Phaser.Scene {
     fitText(this.add.text(1040, 90, ['Letters found for sounds', '(kept apart from reading):', ...spelled.slice(0, 3), ...more], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - 1040 - 20, 85);
     this.grabView(840, 182, GAME_WIDTH - 840 - 20, 112);
     this.coverageView(30, 300);
+    // The rhyme room's levels under the first-sound grid (hunt 11: in the bag's box at the bottom right, a full
+    // store pushed it off the page).
+    const rhyme = this.rhymeLines();
+    if (rhyme.length) fitText(this.add.text(300, 672, rhyme, { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#444' }), 540, 44);
     // The sentence game keeps progress per frame ("WE CAN USE THE ..."), so
     // the little words recur until they are sight words.
     // Two columns: thirteen frames in one ran off the page (item 040's counter frames).
@@ -166,12 +173,13 @@ export class ParentScene extends Phaser.Scene {
       `Word bag, round ${bag.round}: ${bag.round ? BAG_WORDS.length - left.length : 0} seen, ${bag.round ? left.length : BAG_WORDS.length} left`,
       `Shaky: ${shaky.slice(0, 8).join(' ') || 'none yet'}`,
       // The word machine (item 026): per family, tries and first-try right (recent).
-      `Word families: ${FAMILIES.map((f) => {
-        const s = progress.stat('rimes', f.rime);
-        return `-${f.rime} ${s.seen}·${recentPct(s)}`;
+      // The word machine's families and the rhyme room's, which share the record (hunt 11: -IG, -OP and -OT, the
+      // rhyme room's own, never showed).
+      `Word families: ${[...new Set([...FAMILIES.map((f) => f.rime), ...RHYME_FAMILIES.map((f) => f.rime)])].map((rime) => {
+        const s = progress.stat('rimes', rime);
+        return `-${rime} ${s.seen}·${recentPct(s)}`;
       }).join('  ')}`,
       ...this.shifterLines(),
-      ...this.rhymeLines(),
     ], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - x - 20, GAME_HEIGHT - y - 10);
   }
 
@@ -180,7 +188,8 @@ export class ParentScene extends Phaser.Scene {
    * `shifterLevels`), by level: alphabetical (the store keeps no order), ten a level and a count.
    */
   private shifterLines(): string[] {
-    const met = Object.keys(progress.snapshot().shifterLevels ?? {}).sort();
+    // Live Shifter words only (hunt 11: an old store listed stored words, levels that can never change).
+    const met = Object.keys(progress.snapshot().shifterLevels ?? {}).filter((w) => SHIFT_WORDS.includes(w)).sort();
     const rows = ([1, 2, 3] as const).map((l) => {
       const ws = met.filter((w) => recordedShifterLevel(progress, w) === l);
       const more = ws.length > 10 ? ` +${ws.length - 10} more` : '';
@@ -284,6 +293,8 @@ export class ParentScene extends Phaser.Scene {
   }
 
   private resetArmed = false;
+  /** The help line under the title, which F8's warning stands in for while armed. */
+  private help: Phaser.GameObjects.Text | null = null;
 
   override update(): void {
     this.controls.update();
@@ -295,8 +306,10 @@ export class ParentScene extends Phaser.Scene {
         return;
       }
       this.resetArmed = true;
-      // On a band of its own (hunt 10: page 3's stored words reach y 690 since item 130, and it printed over them).
-      this.add.text(30, 690, 'Press F8 again to erase all progress.', { fontFamily: 'Segoe UI, sans-serif', fontSize: '18px', color: '#c0392b', backgroundColor: '#fff4f0', padding: { x: 8, y: 3 } }).setDepth(10);
+      // Over the help line, which it stands for while armed (hunt 10: at the bottom it printed over page 3's stored
+      // words; hunt 11: over page 1's rhyme levels, and under the dad-lock badge in the bottom corner).
+      this.help?.setVisible(false);
+      this.add.text(debugMode.on ? 110 : 30, 54, 'Press F8 again to erase all progress.', { fontFamily: 'Segoe UI, sans-serif', fontSize: '18px', color: '#c0392b', backgroundColor: '#fff4f0', padding: { x: 8, y: 3 } }).setDepth(10);
     }
     if (this.controls.pressed('green')) {
       this.scene.restart({ back: this.back, data: this.backData, page: (this.page + 1) % PAGE_NEXT.length });
