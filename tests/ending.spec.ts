@@ -7,11 +7,10 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, expectNoErrors, press, seedProgress, state, stick, toTheEnd, until, type WWState } from './harness';
-import type { WWHooks } from '../src/testHooks';
+import { SLOW, boot, collectErrors, expectNoErrors, press, seedProgress, shotIn, state, stick, toTheEnd, until, type WW, type WWState } from './harness';
 import { qaLayout } from './qa/probe';
 
-const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/027_${name}.png` });
+const shot = shotIn('027');
 
 /** Play the scene through to the recap; returns the scene's state at its end and the first Victory state. */
 async function playEnding(page: Page, name: string): Promise<{ ending: NonNullable<WWState['ending']>; end: WWState }> {
@@ -68,7 +67,7 @@ test('a fitting dad says his own line: chef Dada Jason baked the cake', SLOW, as
 test('never last episode\'s scene', async ({ page }) => {
   const errors = collectErrors(page);
   // An old blob's `ending` (item 027) loads as `recent.ending` (items 067, 076).
-  await seedProgress(page, { version: 1, ending: 'picnic' });
+  await seedProgress(page, { ending: 'picnic' });
   await boot(page, '?scene=victory&seed=2&nojourney=1&read=bed');
   const s = await until(page, (st) => st.scene === 'Ending' && Boolean(st.ending), 30_000, 'the victory scene');
   expect(s.ending!.id).not.toBe('picnic');
@@ -103,7 +102,7 @@ test('the recap\'s green goes on to THE END, and only Dad\'s 2 leaves it', async
   await page.waitForTimeout(1200);
   // Drawn: no missing art, and the words on screen, in full.
   const look = await page.evaluate(() => {
-    const ww = (window as unknown as { __ww: WWHooks }).__ww;
+    const ww = (window as unknown as WW).__ww;
     return { missing: ww.art().missing, texts: ww.texts().filter((t) => t.scene === 'TheEnd') };
   });
   expect(look.missing).toBe(0);

@@ -29,7 +29,7 @@ function normalize(token: string): string {
     .replace(/[^\p{L}\p{N}']/gu, '');
 }
 
-export class AlignmentError extends Error {}
+class AlignmentError extends Error {}
 
 /**
  * @param text   what is displayed

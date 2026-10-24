@@ -57,8 +57,8 @@ test('line variants: the default cast says variant 1 of each; a drawn episode an
 });
 
 test('line variants: every wake variant, taunt, sorry and victory line exists and is voiced', () => {
-  const lines = JSON.parse(readFileSync('content/voice/lines.json', 'utf8')) as { id: string }[] | { lines: { id: string }[] };
-  const ids = new Set((Array.isArray(lines) ? lines : lines.lines).map((l) => l.id));
+  const lines = JSON.parse(readFileSync('content/voice/lines.json', 'utf8')) as { id: string }[];
+  const ids = new Set(lines.map((l) => l.id));
   for (const key of ['up', 'good', 'door']) {
     for (let n = 1; n <= WAKE_VARIANTS; n++) assert.ok(WAKE_LINES.some((t) => t.key === wakeVariant(key, n)), `${key} ${n}`);
   }

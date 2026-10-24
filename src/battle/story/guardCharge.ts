@@ -1,11 +1,12 @@
 /**
  * The gold guards' charge (hunt 11, M74), Phaser-free: when each guard
  * reaches a hero, so the hero's hop over them is timed to what is seen, not
- * fired as the charge starts from far off.
+ * fired as the charge starts from far off. Not Charge the Spell
+ * (`src/rules/charge.ts`).
  */
 
 /** One guard's run along the floor: from `from` to `to` (x), `ms` long after `delay`, eased Quad.easeIn. */
-export interface Charge {
+export interface GuardCharge {
   from: number;
   to: number;
   delay: number;
@@ -13,7 +14,7 @@ export interface Charge {
 }
 
 /** When (ms after the charge is set off) a charge eased Quad.easeIn reaches `x`; null if it never passes it. */
-export function chargeArrival(c: Charge, x: number): number | null {
+export function chargeArrival(c: GuardCharge, x: number): number | null {
   const run = c.from - c.to;
   if (run === 0) return null;
   const p = (c.from - x) / run;
@@ -31,7 +32,7 @@ const HOP_LEAD = 150;
  * start (ms after the charge is set off) and length, its peak midway between
  * the first guard's arrival and the last's. Null when no guard passes her.
  */
-export function hopOverCharge(charges: readonly Charge[], x: number): { delay: number; ms: number } | null {
+export function hopOverCharge(charges: readonly GuardCharge[], x: number): { delay: number; ms: number } | null {
   const at = charges.map((c) => chargeArrival(c, x)).filter((t): t is number => t !== null);
   if (!at.length) return null;
   const first = Math.min(...at);

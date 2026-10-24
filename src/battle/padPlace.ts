@@ -22,6 +22,9 @@ export const SIGN_RISE = 215;
 /** A word sign's plate (moveChoice.ts draws it), centred on the sign. */
 export const SIGN_W = 230;
 export const SIGN_H = 100;
+/** A pad's floor ring, the disc moveChoice.ts draws, centred on the pad. */
+export const RING_W = 190;
+export const RING_H = 70;
 /** Least distance between two pads' columns: a sign is SIGN_W wide, so signs never touch. */
 const PAD_GAP = 270;
 /** The closest two columns may come when her side is narrow (item 071, M7): the plates still 10 px apart. */
@@ -109,9 +112,9 @@ export function dotSide(near: { x: number; y: number }, pads: readonly { x: numb
   return near.x + off < width - 30 ? 1 : -1;
 }
 
-/** A pad's floor ring (moveChoice.ts draws its disc 190 by 70), centred on the pad. */
+/** A pad's floor ring (moveChoice.ts draws its disc `RING_W` by `RING_H`), centred on the pad. */
 export function ringBox(x: number, y: number): Box {
-  return [x - 95, y - 35, x + 95, y + 35];
+  return [x - RING_W / 2, y - RING_H / 2, x + RING_W / 2, y + RING_H / 2];
 }
 
 export function bodyBox(b: PlaceBody): Box {
@@ -341,7 +344,7 @@ export function clearSpot(
     // On a ring by the feet, or over one with the body (the sheet read: Ozymandias's feet 120 px under SMASH's
     // ring, his torso and cape over a third of it).
     const body: Box = [x - f.half, y - f.h, x + f.half, y];
-    const ring = pads.some((p) => (Math.abs(x - p.x) < 95 + f.half * 0.5 && Math.abs(y - p.y) < 60) || coveredShare(ringBox(p.x, p.y), [body]) > 0.25);
+    const ring = pads.some((p) => (Math.abs(x - p.x) < RING_W / 2 + f.half * 0.5 && Math.abs(y - p.y) < 60) || coveredShare(ringBox(p.x, p.y), [body]) > 0.25);
     const crowd = taken.some((t) => Math.abs(x - t.x) < 110 && Math.abs(y - t.y) < 50);
     return share + (ring || crowd ? 1 : 0);
   };

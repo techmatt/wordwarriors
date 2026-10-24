@@ -446,7 +446,7 @@ export class ClashStage extends BaseStage {
     return true;
   }
 
-  override onHit(target: Fighter, power: number, _from: Fighter | null): void {
+  override onHit(target: Fighter, power: number): void {
     // A shot landing on the frozen clock: no flourish to hang over the faded fight while she picks (hunt 11).
     if (this.host.choosing) return;
     if (!target.isMain || this.mode !== 'clash') return;
@@ -516,7 +516,7 @@ export class ClashStage extends BaseStage {
     await this.host.wait(0.95);
   }
 
-  override async counter2(_v: Fighter): Promise<void> {
+  override async counter2(): Promise<void> {
     // The beams flip: the heroes' beams swell and drive the clash point back.
     this.mode = 'counter';
     this.kick = 0;

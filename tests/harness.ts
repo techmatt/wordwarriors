@@ -17,17 +17,16 @@ import { expect, type Page } from '@playwright/test';
 
 import { FRAMES, NO_BAG_COPY } from '../content/phonics/sentences';
 
-// Type-only (item 122): the scenes' own shapes, without loading Phaser in node.
-import type { BattleInfo, EndingInfo, RecapCard, RoomInfo, TheEndInfo } from '../src/hookState';
-import type { EpisodeState } from '../src/episode/state';
 import type { Button } from '../src/input/Controls';
-import { STORE_KEY, type ProgressData } from '../src/state/ProgressStore';
-import type { TextInfo, WWHooks } from '../src/testHooks';
+import { STORE_KEY, STORE_VERSION, type ProgressData } from '../src/state/ProgressStore';
+// Type-only (item 122): the scenes' own shapes, without loading Phaser in node. `WWState` is
+// `snapshot()`'s declared return type (src/testHooks.ts), so the specs' shape cannot drift from it.
+import type { TextInfo, WWHooks, WWState } from '../src/testHooks';
 
-export type { TextInfo };
+export type { TextInfo, WWState };
 
 /** `window.__ww` as a type only: page.evaluate ships its callback into the page, so no node-side helper. */
-type WW = { __ww: WWHooks };
+export type WW = { __ww: WWHooks };
 
 /** A browser test over about 10 s: the slow lane (`--grep @slow` matches the tag). */
 export const SLOW = { tag: '@slow' };
@@ -38,32 +37,11 @@ export const SLOW = { tag: '@slow' };
  */
 export const SMOKE = { tag: '@smoke' };
 
-export interface WWState {
-  scene: string;
-  fps: number;
-  /** The music playing (src/audio/music.ts), or null. */
-  music: string | null;
-  step: { kind: string; part?: number; game?: string; what?: string };
-  /** The episode, JSON round-tripped (src/episode/state.ts). */
-  episode: EpisodeState;
-  /** The victory recap's cards so far (item 018: every one has a picture). */
-  recap: RecapCard[];
-  /** The victory scene (item 027): which, who is in it (villain last), its lines, what has been said. */
-  ending: EndingInfo | null;
-  /** The recap is said and its green is live, on to THE END (item 085). */
-  recapDone: boolean;
-  /** THE END (item 085): its background, the heroes on it, its words, whether Dad's 2 is waiting. */
-  theEnd: TheEndInfo | null;
-  /** The room in play and the battle (src/hookState.ts, the scenes' own types: item 122). */
-  room: RoomInfo | null;
-  battle: BattleInfo | null;
-  voice: { speaking: string | null; busy: boolean; history: string[] };
-  fx: Record<string, number>;
-  /** Free play (item 060, src/fx/freePlay.ts `playStats`): jumps, shots fired, big shots, shots live now and the most live at once. */
-  play: { jumps: number; shots: number; big: number; live: number; maxLive: number };
-  /** The progress store's snapshot (src/state/ProgressStore.ts). */
-  progress: ProgressData;
-}
+/**
+ * A spec's screenshot helper: `shotIn('054')(page, 'clue')` writes tests/screenshots/054_clue.png
+ * (the folder is ignored; README names its pairs_*, fights_* and story_* shots).
+ */
+export const shotIn = (prefix: string) => (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/${prefix}_${name}.png` });
 
 /**
  * Page errors, and the console warnings that count as errors: `art` (on by default) art drawn
@@ -170,7 +148,7 @@ export async function boot(page: Page, query = '', speed = SPEED, opts: { voice?
 }
 
 export function state(page: Page): Promise<WWState> {
-  return page.evaluate(() => (window as unknown as WW).__ww.state() as WWState);
+  return page.evaluate(() => (window as unknown as WW).__ww.state());
 }
 
 /** Every visible Text in the running scenes. */
@@ -485,7 +463,7 @@ export async function toTheEnd(page: Page, { hush = false } = {}): Promise<WWSta
     .poll(() => page.evaluate((h) => {
       const ww = (window as unknown as WW).__ww;
       if (h) ww.hush();
-      return (ww.state() as WWState).recapDone;
+      return ww.state().recapDone;
     }, hush), { timeout: 120_000 })
     .toBe(true);
   await press(page, 'green');
@@ -698,11 +676,15 @@ export async function hubGo(page: Page, id: string): Promise<void> {
   }
 }
 
-/** Seed localStorage progress before the page's scripts run (call before `boot`). */
-export async function seedProgress(page: Page, data: Record<string, unknown>): Promise<void> {
+/**
+ * Seed localStorage progress before the page's scripts run (call before `boot`). The blob carries
+ * the store's own `STORE_VERSION`, so a version bump cannot quietly start a seeded test empty.
+ * Fields outside `ProgressData` are let through for an old blob's (ending.spec's `ending`).
+ */
+export async function seedProgress(page: Page, data: Partial<ProgressData> & Record<string, unknown>): Promise<void> {
   await page.addInitScript(({ d, key }) => {
     localStorage.setItem(key, JSON.stringify(d));
-  }, { d: data, key: STORE_KEY });
+  }, { d: { version: STORE_VERSION, ...data }, key: STORE_KEY });
 }
 
 /** The progress store's raw localStorage blob (`STORE_KEY`), or null: compare two to show nothing was saved. */
@@ -714,7 +696,7 @@ export function storedBlob(page: Page): Promise<string | null> {
 export const bagged = (words: string[]): string[] => words.filter((w) => !NO_BAG_COPY.has(w));
 
 /** The fetch frames (`use: 'fetch'` in content/phonics/sentences.ts). */
-export const FETCH_FRAMES = FRAMES.filter((f) => f.use === 'fetch').map((f) => f.id);
+const FETCH_FRAMES = FRAMES.filter((f) => f.use === 'fetch').map((f) => f.id);
 
 /**
  * Seed every fetch frame solid (six right of six), so from `difficulty=2` the
@@ -723,7 +705,7 @@ export const FETCH_FRAMES = FRAMES.filter((f) => f.use === 'fetch').map((f) => f
  */
 export async function seedSolidFrames(page: Page, extra: Record<string, unknown> = {}): Promise<void> {
   const stat = { seen: 6, right: 6, wrong: 0, recent: [true, true, true, true, true, true], last: Date.now() };
-  await seedProgress(page, { version: 1, sounds: {}, words: {}, spelling: {}, frames: Object.fromEntries(FETCH_FRAMES.map((f) => [f, stat])), episodes: 0, ...extra });
+  await seedProgress(page, { sounds: {}, words: {}, spelling: {}, frames: Object.fromEntries(FETCH_FRAMES.map((f) => [f, stat])), episodes: 0, ...extra });
 }
 
 /** The parts of an episode `playEpisode` can run at a clock speed of their own (item 081). */

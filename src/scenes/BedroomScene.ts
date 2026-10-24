@@ -39,7 +39,7 @@ import {
   sfxWhoosh,
   sfxZap,
 } from '../audio/sfx';
-import { DEPTH, DOOR_SPARKLE_MS, GAME_WIDTH } from '../config';
+import { DEPTH, DOOR_SPARKLE_MS, GAME_WIDTH, WAKE_WAIT_MS } from '../config';
 import { bedroomTaunt, castArt, episode, helper, questSetupLine, wakeKey, waker as wakerId, type Step } from '../episode/Episode';
 import { tauntsSaid } from '../episode/lineVariants';
 import { bob, burst, flash, popIn, shake, squash, wiggle } from '../fx/juice';
@@ -61,9 +61,6 @@ const SOUND: Record<ReactionSound, () => void> = {
 
 /** Where the other dad stands: at the foot of her bed, clear of the toys and the door. */
 const SECOND_SPOT = { x: 140, y: 690 };
-
-/** How long "Wake up!" waits for her green before she pops out by herself. */
-const WAKE_WAIT_MS = 6000;
 
 export class BedroomScene extends RoomScene {
   private asleep = true;

@@ -41,9 +41,9 @@ import { NOTES, PICK_NOTES, refFor } from '../../content/art/prompts.js';
 import { ART_DIR, exists, fromDataUrl, pngDataUrl, runMain } from '../shared.js';
 import { ORIGINALS, codexPrompt, cut, describeUsage, gamePng, isBackground, openPage, refCrop, runCodex } from './generate.js';
 
-const ALTS =path.join(ORIGINALS, 'alts');
+const ALTS = path.join(ORIGINALS, 'alts');
 /** What the game had before an id's first pick, for `art:pick -- <id> 0`. */
-const RESTORE =path.join(ORIGINALS, 'restore');
+const RESTORE = path.join(ORIGINALS, 'restore');
 
 const altFile = (id: string, k: number) => path.join(ALTS, `${id}-${k}.png`);
 const sidecarFile = (id: string, k: number) => path.join(ALTS, `${id}-${k}.json`);
@@ -51,7 +51,7 @@ const restoreFile = (id: string) => path.join(RESTORE, `${id}.png`);
 const restoreGame = (id: string) => path.join(RESTORE, `${id}.game.png`);
 
 /** A brief (`--brief=<file>`): its name is the file's base name, its text the whole file, whitespace collapsed. */
-export interface Brief {
+interface Brief {
   name: string;
   file: string;
   text: string;
@@ -66,7 +66,7 @@ export async function readBrief(file: string): Promise<Brief> {
 }
 
 /** What a candidate drawn from a brief was drawn from, beside its image. */
-export interface Sidecar extends Brief {
+interface Sidecar extends Brief {
   id: string;
   k: number;
   at: string;
@@ -82,7 +82,7 @@ async function sidecar(id: string, k: number): Promise<Sidecar | undefined> {
 }
 
 /** The candidate numbers kept for an id, ascending. */
-export async function candidates(id: string): Promise<number[]> {
+async function candidates(id: string): Promise<number[]> {
   const files = await readdir(ALTS).catch(() => [] as string[]);
   const re = new RegExp(`^${id}-(\\d+)\\.png$`);
   return files
@@ -361,6 +361,15 @@ export async function pick(argv: string[]): Promise<void> {
   }
 }
 
-// package.json runs this file with `alts` or `pick` first.
-const isPick = process.argv[2] === 'pick';
-runMain(import.meta.url, () => (isPick ? pick(process.argv.slice(3)) : alts(process.argv.slice(3))), `art:${isPick ? 'pick' : 'alts'} failed: `);
+// package.json runs this file with `alts` or `pick` first. Anything else is refused,
+// rather than taking the first id as the command and silently skipping it.
+const command = process.argv[2];
+const isPick = command === 'pick';
+runMain(
+  import.meta.url,
+  async () => {
+    if (command !== 'alts' && command !== 'pick') throw new Error('usage: alts.ts alts|pick <ids…> [options]');
+    await (isPick ? pick(process.argv.slice(3)) : alts(process.argv.slice(3)));
+  },
+  `art:${isPick ? 'pick' : 'alts'} failed: `,
+);

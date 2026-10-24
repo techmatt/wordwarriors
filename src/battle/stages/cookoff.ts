@@ -336,7 +336,7 @@ export class CookoffStage extends BaseStage {
     return true;
   }
 
-  override onHit(target: Fighter, power: number, _from: Fighter | null): void {
+  override onHit(target: Fighter, power: number): void {
     // A shot landing on the frozen clock: no flourish to hang over the faded fight while she picks (hunt 11).
     if (this.host.choosing) return;
     const h = this.host;
@@ -461,7 +461,7 @@ export class CookoffStage extends BaseStage {
     await this.host.wait(2.2);
   }
 
-  override async counter2(_v: Fighter): Promise<void> {
+  override async counter2(): Promise<void> {
     const hs = this.hero;
     const vs = this.villainSide;
     this.countered = true;

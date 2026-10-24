@@ -18,7 +18,7 @@ async function setHidden(page: Page, hide: boolean): Promise<void> {
 
 test('a held F8 on the grown-ups page is one press: the record is not erased', async ({ page }) => {
   const errors = collectErrors(page);
-  await seedProgress(page, { version: 1, words: { cat: { seen: 3, right: 3, wrong: 0, recent: [true, true, true], last: 1 } }, episodes: 2 });
+  await seedProgress(page, { words: { cat: { seen: 3, right: 3, wrong: 0, recent: [true, true, true], last: 1 } }, episodes: 2 });
   await boot(page, '?scene=parent');
   await until(page, (s) => s.scene === 'Parent', 30_000, 'parent page');
   // Held: the second keydown is the key's auto-repeat (Playwright marks it `repeat`).

@@ -18,6 +18,7 @@
 import { defineConfig } from '@playwright/test';
 
 import { gpuProjects } from '../gpu';
+import { buildServerCommand, devServerCommand } from '../servers';
 
 // QA_PORT: a second run beside a sweep (a `QA_LOOK` at one scene) needs its own.
 const PORT = Number(process.env.QA_PORT ?? 5195);
@@ -41,9 +42,7 @@ export default defineConfig({
   use: { baseURL: `http://localhost:${PORT}` },
   projects: gpuProjects({ args: ['--enable-precise-memory-info'] }),
   webServer: {
-    command: process.env.QA_DEV_SERVER
-      ? `node node_modules/vite/bin/vite.js --config tests/vite.nowatch.config.ts --port ${PORT} --strictPort`
-      : `node --import tsx tests/testBuild.ts && node node_modules/vite/bin/vite.js preview -c tests/vite.test.config.ts --port ${PORT} --strictPort`,
+    command: process.env.QA_DEV_SERVER ? devServerCommand(PORT) : buildServerCommand(PORT),
     cwd: '../..',
     env: { WW_TEST_DIST: QA_DIST },
     url: `http://localhost:${PORT}`,

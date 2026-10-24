@@ -370,7 +370,8 @@ The same rules as a quest line: no bank word, no interjection, commas not a mid-
 ## A minigame (`MINIGAMES`, `src/rules/minigames.ts`)
 
 Each episode draws three games from the pool, one per room (two fetch games, then
-the counter game), weighted, never the same entry twice, apart from the quest; a game
+the counter game), weighted, never the same entry twice, and drawn apart from the quest (any game plays in any
+place); a game
 from her last episodes (the store's `recent.games`) weighs `VARIETY.gameWeight` (item
 067). An entry is `{ id, kind, scene, weight, slots: ['fetch'] | ['counter'] | both, frame? }`
 (`kind`: `sentence`, `machine`, `charge`, `bridge`, `shifter` or `rhyme`): each sentence frame is one entry (`sentence:<frame>`,
@@ -397,6 +398,9 @@ the counter; a game with its own words is a fetch room only. `tests/unit/plansGo
 pins the seeded draws: a change that should not alter them leaves that test green.
 A new entry's scene gets key 0 and its own pedestal in minigame debug mode by itself
 (`DEBUG_ROOMS` and `DEBUG_GAMES` in `src/episode/debug.ts` are built from `MINIGAMES`).
+A new kind's scene extends `HouseSideRoom` (`src/world/SideRoom.ts`), is listed in
+`scene: [...]` in `src/main.ts`, and publishes `room.<kind>` in `src/hookState.ts` for the
+tests.
 
 Look at one game: `?game=word_machine` puts it behind door a; `?games=sentence` draws
 from the sentence game alone (the tests' default).

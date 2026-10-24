@@ -385,9 +385,3 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
     return (plannerOf(game) as KeyPlanner).room(base, { ...ctx, keys, game });
   }) as [RoomPlan, RoomPlan, RoomPlan];
 }
-
-/** A sentence room's plan, for code that only runs in one (the sentence room, its tests). */
-export function asSentence(plan: RoomPlan): SentencePlan {
-  if (plan.kind !== 'sentence') throw new Error(`room ${plan.slot} plays ${plan.game}, not the sentence game`);
-  return plan;
-}

@@ -18,12 +18,13 @@ import { dadLock, setDadLock } from './input/dadLock';
 import { typeLetter } from './input/TextEntry';
 import { artBank } from './art/ArtBank';
 import { voiceBus } from './audio/VoiceBus';
-import { episode, currentStep } from './episode/Episode';
+import { episode, currentStep, type EpisodeState } from './episode/Episode';
 import { progress } from './state/progress';
+import type { ProgressData } from './state/ProgressStore';
 import { GAME_HEIGHT, GAME_WIDTH } from './config';
 import { installProbe } from './qa/probe';
 import { walkObjects } from './displayList';
-import { hookState } from './hookState';
+import { hookState, type BattleInfo, type EndingInfo, type RecapCard, type RoomInfo, type TheEndInfo } from './hookState';
 
 function hooksEnabled(): boolean {
   return import.meta.env.DEV || new URLSearchParams(location.search).has('hooks');
@@ -60,13 +61,44 @@ function visibleText(game: Phaser.Game): TextInfo[] {
   return out;
 }
 
+/**
+ * What `__ww.state()` reports: `snapshot()`'s declared return type, so the
+ * snapshot and the shape the specs read (tests/harness.ts re-exports it) cannot drift.
+ */
+export interface WWState {
+  scene: string;
+  fps: number;
+  /** The music playing (src/audio/music.ts), or null. */
+  music: string | null;
+  step: { kind: string; part?: number; game?: string; what?: string };
+  /** The episode, JSON round-tripped (src/episode/state.ts). */
+  episode: EpisodeState;
+  /** The victory recap's cards so far (item 018: every one has a picture). */
+  recap: RecapCard[];
+  /** The victory scene (item 027): which, who is in it (villain last), its lines, what has been said. */
+  ending: EndingInfo | null;
+  /** The recap is said and its green is live, on to THE END (item 085). */
+  recapDone: boolean;
+  /** THE END (item 085): its background, the heroes on it, its words, whether Dad's 2 is waiting. */
+  theEnd: TheEndInfo | null;
+  /** The room in play and the battle (src/hookState.ts, the scenes' own types: item 122). */
+  room: RoomInfo | null;
+  battle: BattleInfo | null;
+  voice: { speaking: string | null; busy: boolean; history: string[] };
+  fx: Record<string, number>;
+  /** Free play (item 060, src/fx/freePlay.ts `playStats`): jumps, shots fired, big shots, shots live now and the most live at once. */
+  play: { jumps: number; shots: number; big: number; live: number; maxLive: number };
+  /** The progress store's snapshot (src/state/ProgressStore.ts). */
+  progress: ProgressData;
+}
+
 /** What `__ww.state()` reports. */
-function snapshot(): unknown {
+function snapshot(): WWState {
   return {
     scene: hookState.scene,
     fps: hookState.fps,
     step: currentStep(),
-    episode: JSON.parse(JSON.stringify(episode)) as unknown,
+    episode: JSON.parse(JSON.stringify(episode)) as EpisodeState,
     room: hookState.room,
     battle: hookState.battle,
     recap: hookState.recap,
@@ -95,7 +127,7 @@ export type WWHooks = ReturnType<typeof makeHooks>;
 
 function makeHooks(game: Phaser.Game) {
   return {
-    state: () => {
+    state: (): WWState => {
       const s = snapshot();
       voiceBus.seen();
       return s;

@@ -92,8 +92,8 @@ export class BattleVolleys {
    * Charge the Spell's runes (item 053), if they were charged for this part:
    * a quick volley, each rune stone popping up over her hero with its picture letter (`runeArt`),
    * its sound said (never captioned), and her hero firing the rune's move
-   * (content/phonics/runes.ts) at a little over normal power, so six of them
-   * neither end the fight nor run it long (expectFightLength).
+   * (content/phonics/runes.ts) at a little over normal power, so eight of them (two
+   * words of up to four sounds) neither end the fight nor run it long (expectFightLength).
    */
   async useCharged(gap: number): Promise<void> {
     const b = this.b;

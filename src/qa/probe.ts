@@ -25,7 +25,7 @@ import { artBank } from '../art/ArtBank';
 import { artFor } from '../art/needs';
 import { walkObjects } from '../displayList';
 import { hookState } from '../hookState';
-import { worldInk } from '../ui/banner';
+import { worldInk, type Rect } from '../ui/banner';
 
 export interface QaVoice {
   /** Game-clock ms (the page's warped `performance.now`). */
@@ -63,26 +63,25 @@ export interface QaSpike {
 export interface DrawnText {
   scene: string;
   text: string;
-  /** Left, top, right, bottom. */
-  b: [number, number, number, number];
+  b: Rect;
   depth: number;
   /** Which container it sits in (0: none): words in one container are laid out together. */
   group: number;
   size: number;
   /** The panel it is printed on (an index into `panels`), if any, and its ink there (its letters, not its line-high box). */
   panel?: number;
-  ink?: [number, number, number, number];
+  ink?: Rect;
 }
 
 export interface DrawnImage {
   scene: string;
   key: string;
-  b: [number, number, number, number];
+  b: Rect;
   depth: number;
 }
 
-/** Left, top, right, bottom. */
-export type Rect = [number, number, number, number];
+/** Left, top, right, bottom: banner.ts's, re-exported for the checks (tests/qa/checks.ts). */
+export type { Rect };
 
 /**
  * A thing she has to look at or choose (a room's spot, a battle pad): tagged
@@ -283,6 +282,7 @@ export interface QaLayout {
   covers: DrawnCover[];
   panels: DrawnPanel[];
   heroes: DrawnHero[];
+  /** The lowest overlay depth: DEPTH.speech (bubbles, then the HUD and the caption above it); texts at or over it are overlay text for the checks. */
   hudDepth: number;
 }
 

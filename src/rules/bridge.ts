@@ -37,7 +37,7 @@ import { BRIDGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { drawWords } from './bank';
 import { shuffle, type Rand } from './random';
-import { unreadFirst } from './shifter';
+import { unreadFirst } from './recent';
 import { clampLevel, helpLevel, type HelpLevel } from './difficulty';
 
 export type BridgeLevel = HelpLevel;

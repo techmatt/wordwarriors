@@ -32,7 +32,7 @@ import sharp from 'sharp';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
 import { ART_PROMPTS, BACKGROUND_STYLE, keyMode, NOTES, REFS, refFor, spriteStyle, type KeyMode } from '../../content/art/prompts.js';
-import { ART_DIR, blankPage, exists, fromDataUrl, pngDataUrl, runMain } from '../shared.js';
+import { ART_DIR, blankPage, exists, fromDataUrl, isBackgroundKind, pngDataUrl, runMain, SPRITE_SCALE } from '../shared.js';
 import { keyGreen } from './chroma.js';
 import { isPlaceholder } from './placeholders.js';
 
@@ -40,8 +40,6 @@ export const ORIGINALS = 'art-originals';
 const SHEET = path.join('scratch', 'art_contact.png');
 const CODEX_HOME = process.env.CODEX_HOME ?? path.join(os.homedir(), '.codex');
 const TIMEOUT_MS = 6 * 60_000;
-/** Committed art is this many times the display box, so it stays crisp when squashed bigger. */
-const SPRITE_SCALE = 2;
 
 /**
  * Committed PNGs are palette-quantized (Matt, 2026-10-18: the batch must stay
@@ -50,7 +48,7 @@ const SPRITE_SCALE = 2;
  */
 export const shrinkPng = (png: Buffer): Promise<Buffer> => sharp(png).png({ palette: true, quality: 90, effort: 10, dither: 1 }).toBuffer();
 
-export const isBackground = (id: string) => ['room', 'arena'].includes(ART_BY_ID[id]!.kind);
+export const isBackground = (id: string) => isBackgroundKind(ART_BY_ID[id]!.kind);
 
 /**
  * What the attached image is under `art:alts --ref` (item 112): the same
@@ -188,7 +186,7 @@ export async function openPage(): Promise<{ page: Page; close: () => Promise<voi
   return { page, close: () => browser.close() };
 }
 
-export interface Processed {
+interface Processed {
   url: string;
   w: number;
   h: number;
@@ -197,7 +195,7 @@ export interface Processed {
   fringe: number;
 }
 
-export async function processImage(page: Page, png: Buffer, opts: { sprite: boolean; boxW: number; boxH: number; mode: KeyMode }): Promise<Processed> {
+async function processImage(page: Page, png: Buffer, opts: { sprite: boolean; boxW: number; boxH: number; mode: KeyMode }): Promise<Processed> {
   return page.evaluate(
     async ({ src, sprite, boxW, boxH, mode }) => {
       const img = new Image();

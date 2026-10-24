@@ -179,7 +179,7 @@ export class ArtBank {
     }
   }
 
-  /** Queued or loading, for the transition's progress and the probe. */
+  /** Queued or loading: the test hooks' __ww.art().pending. */
   pending(): number {
     return this.jobs.size;
   }

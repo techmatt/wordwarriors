@@ -4,6 +4,8 @@
  * Said by the ally, or by Dada Matt with no ally (`narrator()`). The heroes
  * stand on the left; the villain crashes in on the right with a dark flash, a
  * shake and a taunt, then the narrator finishes the line. No input needed.
+ *
+ * Parked (CLAUDE.md): out of the episode, kept on purpose; reach it with ?scene=alarm (BootScene).
  */
 
 import Phaser from 'phaser';

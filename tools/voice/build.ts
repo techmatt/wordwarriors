@@ -19,8 +19,10 @@
  *   the *loud* fallback for one edited since it was. A line with `cut` (item
  *   085) is a carrier word edge-tts says, cut to its vowel (carrier.ts).
  *
- * Incremental: a line whose fingerprint (source, speaker, voice, text, say, cut) is
- * unchanged and whose mp3 is on disk is skipped. The speaker is in the
+ * Incremental: a line whose fingerprint is unchanged and whose mp3 is on disk is
+ * skipped. The fingerprint is the source, speaker, text and group, plus the
+ * voice, `say` and `cut` for edge-tts or the clip file and its spoken-text hash
+ * for a recording. The speaker is in the
  * fingerprint because two speakers can share a voice config and still need
  * separate audio once one of them is re-tuned. `--force` rebuilds everything;
  * `--no-clips` ignores the clip store for a pure edge-tts build; `--prune`
@@ -72,19 +74,11 @@ function parseArgs(argv: string[]): Options {
     noClips: false,
     prune: false,
   };
-  for (let i = 0; i < argv.length; i++) {
-    const arg = argv[i]!;
-    const value = () => {
-      const next = argv[++i];
-      if (next === undefined) throw new Error(`${arg} needs a value`);
-      return next;
-    };
+  // The paths are fixed: `base` (the manifest's audio prefix) is tied to `out`.
+  for (const arg of argv) {
     if (arg === '--force') opts.force = true;
     else if (arg === '--no-clips') opts.noClips = true;
     else if (arg === '--prune') opts.prune = true;
-    else if (arg === '--lines') opts.lines = value();
-    else if (arg === '--voices') opts.voices = value();
-    else if (arg === '--out') opts.out = value();
     else throw new Error(`unknown argument ${arg}`);
   }
   return opts;
@@ -119,7 +113,16 @@ async function pooled<T>(items: T[], n: number, fn: (item: T) => Promise<void>):
   );
 }
 
-export async function buildVoice(argv: string[]): Promise<void> {
+/** The banner round a loud warning. */
+const RULE = '='.repeat(72);
+
+/** Print the first 20 of a list, then how many more. */
+function listSome(xs: string[]): void {
+  for (const x of xs.slice(0, 20)) console.log(`  ${x}`);
+  if (xs.length > 20) console.log(`  … and ${xs.length - 20} more`);
+}
+
+async function buildVoice(argv: string[]): Promise<void> {
   const opts = parseArgs(argv);
   const lines = await readJson<LineSpec[]>(opts.lines);
   const book = await readJson<VoiceBook>(opts.voices);
@@ -166,7 +169,7 @@ export async function buildVoice(argv: string[]): Promise<void> {
     const state = clipStateFor(line, clipIndex);
     if (state.state === 'stale') stale.push({ line, clip: state.clip });
     const clip = state.state === 'fresh' ? state.clip : null;
-    if (clip && clip.provider !== 'simulated') recorded++;
+    if (clip) recorded++;
     const voice = resolveVoice(line, book);
     const hash = clip
       ? fingerprint({ source: clip.provider, clip: clip.audio, spoken: clip.spokenHash, speaker: line.speaker, text: line.text, group: line.group })
@@ -218,19 +221,16 @@ export async function buildVoice(argv: string[]): Promise<void> {
   if (orphans.length && opts.prune) {
     for (const orphan of orphans) await unlink(path.join(opts.out, orphan));
     console.log(`\nPRUNED: ${orphans.length} mp3(s) of lines not in this checkout's lines.json, ${mb} MB.`);
-    for (const orphan of orphans.slice(0, 20)) console.log(`  ${orphan}`);
-    if (orphans.length > 20) console.log(`  … and ${orphans.length - 20} more`);
+    listSome(orphans);
   } else if (orphans.length) {
     console.log(`\n${orphans.length} orphaned mp3(s), ${mb} MB, kept (shared folder; from main, voice:build -- --prune deletes them):`);
-    for (const orphan of orphans.slice(0, 20)) console.log(`  ${orphan}`);
-    if (orphans.length > 20) console.log(`  … and ${orphans.length - 20} more`);
+    listSome(orphans);
   } else if (opts.prune) {
     console.log('  prune: no orphaned mp3s');
   }
 
   if (stale.length) {
-    const rule = '='.repeat(72);
-    console.log(`\n${rule}\nSTALE: ${stale.length} recorded line(s) no longer match their text; using edge-tts.\n${rule}`);
+    console.log(`\n${RULE}\nSTALE: ${stale.length} recorded line(s) no longer match their text; using edge-tts.\n${RULE}`);
     for (const { line, clip } of stale) console.log(`  ${line.id}\n    recorded: ${clip.spoken}\n    now:      ${spokenFor(line)}`);
   }
   // Item 062: the manifest is shared, so a build from a checkout without some
@@ -239,10 +239,8 @@ export async function buildVoice(argv: string[]): Promise<void> {
   // loudly; the fix is a voice:build in the checkout that plays.
   const dropped = (previous?.lines ?? []).filter((e) => !ids.has(e.id)).map((e) => e.id);
   if (dropped.length) {
-    const rule = '='.repeat(72);
-    console.log(`\n${rule}\nDROPPED: ${dropped.length} line(s) the shared manifest had are not in this checkout's lines.json.\nIf another checkout (main) still speaks them, run npm run voice:build there.\n${rule}`);
-    for (const id of dropped.slice(0, 20)) console.log(`  ${id}`);
-    if (dropped.length > 20) console.log(`  … and ${dropped.length - 20} more`);
+    console.log(`\n${RULE}\nDROPPED: ${dropped.length} line(s) the shared manifest had are not in this checkout's lines.json.\nIf another checkout (main) still speaks them, run npm run voice:build there.\n${RULE}`);
+    listSome(dropped);
   }
   if (failed.length) {
     console.log(`\nFAILED: ${failed.length} line(s) could not be built and are missing from the manifest (the game shows their text silently):`);

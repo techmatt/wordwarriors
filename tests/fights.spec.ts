@@ -6,10 +6,10 @@
  * land in tests/screenshots/ (ignored) for a look.
  */
 
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 import { FIGHTS } from '../content/battle/fights';
-import { BATTLE_SPEED, SLOW, boot, collectErrors, expectFightLength, playBattle, state, until } from './harness';
+import { BATTLE_SPEED, SLOW, boot, collectErrors, expectFightLength, playBattle, shotIn, state, until } from './harness';
 
 /** Each style against a villain it was not written for, so nothing leans on one villain. */
 const AGAINST: Record<string, string> = { brawl: 'tiamat', sky_race: 'smaug', sea_tug: 'jormungandr', spell_clash: 'bavmorda', cook_off: 'tiamat', frost_clash: 'elsa', space_race: 'ozymandias' };
@@ -22,7 +22,7 @@ const AGAINST: Record<string, string> = { brawl: 'tiamat', sky_race: 'smaug', se
  */
 const PART: Record<string, 1 | 2> = { sky_race: 2, sea_tug: 1, spell_clash: 2, cook_off: 1, frost_clash: 1, space_race: 1 };
 
-const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/fights_${name}.png` });
+const shot = shotIn('fights');
 
 test('the cast draw picks the villain\'s own style; ?fight= fixes another', async ({ page }) => {
   // The style and its staging are made with the scene, so the versus intro need not play out.

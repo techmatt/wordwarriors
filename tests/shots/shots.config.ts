@@ -10,6 +10,7 @@
 import { defineConfig } from '@playwright/test';
 
 import { gpuProjects } from '../gpu';
+import { devServerCommand } from '../servers';
 
 const PORT = Number(process.env.SHOTS_PORT ?? 5194);
 
@@ -24,7 +25,7 @@ export default defineConfig({
   use: { baseURL: `http://localhost:${PORT}` },
   projects: gpuProjects(),
   webServer: {
-    command: `node node_modules/vite/bin/vite.js --config tests/vite.nowatch.config.ts --port ${PORT} --strictPort`,
+    command: devServerCommand(PORT),
     cwd: '../..',
     url: `http://localhost:${PORT}`,
     reuseExistingServer: false,

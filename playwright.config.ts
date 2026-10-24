@@ -2,6 +2,7 @@ import { defineConfig } from '@playwright/test';
 
 import { TEST_PORT } from './src/port';
 import { gpuProjects } from './tests/gpu';
+import { buildServerCommand } from './tests/servers';
 
 /** The specs that play whole episodes, run first (`projects`, below). */
 const LONG_SPECS = ['**/episode.spec.ts', '**/soak.spec.ts', '**/drawn.spec.ts'];
@@ -11,7 +12,7 @@ const LONG_SPECS = ['**/episode.spec.ts', '**/soak.spec.ts', '**/drawn.spec.ts']
 // Otherwise the suite starts its own server, never reusing one (whatever already
 // answers there may be another checkout's code): on CONDUCTOR_PORT when set (a
 // conductor item's port, item 047), else TEST_PORT, never the dev port.
-const SERVE_PORT =Number(process.env.CONDUCTOR_PORT) || TEST_PORT;
+const SERVE_PORT = Number(process.env.CONDUCTOR_PORT) || TEST_PORT;
 const BASE_URL = process.env.WW_BASE_URL ?? `http://localhost:${SERVE_PORT}`;
 
 export default defineConfig({
@@ -66,7 +67,7 @@ export default defineConfig({
         // strictPort (vite.config.ts) makes a busy port fail loudly.
         command: process.env.WW_DEV_SERVER
           ? `node node_modules/vite/bin/vite.js --port ${SERVE_PORT}`
-          : `node --import tsx tests/testBuild.ts && node node_modules/vite/bin/vite.js preview -c tests/vite.test.config.ts --port ${SERVE_PORT}`,
+          : buildServerCommand(SERVE_PORT),
         url: BASE_URL,
         reuseExistingServer: false,
         timeout: 120_000,

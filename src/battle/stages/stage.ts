@@ -75,7 +75,7 @@ export interface FightStage {
   /** Draw the bars into the cleared HUD graphics; true when it drew its own (the health bars are then not drawn). */
   drawHud(g: Phaser.GameObjects.Graphics): boolean;
   /** A hit has landed (after damage). */
-  onHit(target: Fighter, power: number, from: Fighter | null): void;
+  onHit(target: Fighter, power: number): void;
   /** Her right pick fired `ab` from `f`: the style's own flourish on the super. */
   superMove(f: Fighter, ab: AbilitySpec, word: string): void;
   /** The team combo fired. */
@@ -86,7 +86,7 @@ export interface FightStage {
    */
   ultimate1(v: Fighter, ult: AbilitySpec): Promise<void>;
   /** Part 2: the counter has undone the ultimate. Turn the contest the heroes' way; about 1.5 s at most. */
-  counter2(v: Fighter): Promise<void>;
+  counter2(): Promise<void>;
   /** Part 2: the narrator's finish line starts ("There's the finish line!"): show what it names now (item 069). */
   finishLine(): void;
   /** Part 2: everyone's finisher has fired; stage the heroes winning, just before the last hit. About 1.5 s at most. */
@@ -153,13 +153,13 @@ export class BaseStage implements FightStage {
   drawHud(_g: Phaser.GameObjects.Graphics): boolean {
     return false;
   }
-  onHit(_target: Fighter, _power: number, _from: Fighter | null): void {}
+  onHit(_target: Fighter, _power: number): void {}
   superMove(_f: Fighter, _ab: AbilitySpec, _word: string): void {}
   combo(_a: Fighter, _b: Fighter): void {}
   async ultimate1(_v: Fighter, _ult: AbilitySpec): Promise<void> {
     await this.host.wait(2.2);
   }
-  async counter2(_v: Fighter): Promise<void> {}
+  async counter2(): Promise<void> {}
   finishLine(): void {}
   async finish(_v: Fighter): Promise<void> {}
   retreat(): void {}

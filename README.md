@@ -57,8 +57,9 @@ variety (`DIFFICULTY`, `VARIETY`).
 Three commands (times on this machine, the GPU, three workers; how each got there, item by
 item: `docs/engineering.md`, *Browser and tests*):
 
-- **Fast lane, after every change: `npm test`** (about 14 s on one worker, item 105): the unit
-  tests (about 7 s alone) and, at the same time, the three browser tests tagged `@smoke`
+- **Fast lane, after every change: `npm test`** (about 34 s, item 147; 14 s in item 105): the unit
+  tests (about 33 s alone, the long pole: `grab.test` "hallObjects (hunt 11): never the grab
+  word plus a sound" 18 s, `plansGolden.test` 13 s) and, at the same time, the three browser tests tagged `@smoke`
   (`SMOKE` in `tests/harness.ts`): the title and the grown-ups page, the hub's free play, and
   a sentence room's banner. `tests/fastLane.ts` runs both, streams the browser side and
   prints the unit tests' output whole when they end; it fails if either fails, and passes its
@@ -70,7 +71,7 @@ item: `docs/engineering.md`, *Browser and tests*):
   behind each door; item 091) against `plansGolden.json`: a refactor leaves it green. A
   change meant to alter the draws rewrites the JSON on purpose, from the worktree root:
   `npx tsx -e "import('./tests/unit/plansGolden.ts').then((m) => require('node:fs').writeFileSync('tests/unit/plansGolden.json', JSON.stringify(m.goldenDraws(), null, 1) + '\n'))"`.
-- **Before a commit: `npm run test:browser`** (about 95 s, 55 tests, one of them the skipped
+- **Before a commit: `npm run test:browser`** (about 170 s, item 147; 86 tests as listed 2026-10-24, one of them the skipped
   pairs placeholder) plus the specs that cover
   what changed (`npx playwright test <spec>`, both lanes of it). `test:browser` is every
   browser test not tagged `@slow` (the smoke three among them): one of each newer room
@@ -82,9 +83,9 @@ item: `docs/engineering.md`, *Browser and tests*):
   the three text-fit checks, and the word machine's plate and Word → Picture's banner
   holding their words and the read pass's green dot on its banner (`tests/banner.spec.ts`; its widest-sentence checks are `@slow`). It stops itself at 6 minutes, so a hang fails inside
   Claude Code's 10-minute background cap instead of being killed by it.
-- **Everything: `npm run test:all`** (about 6.3 minutes when last timed, item 105; 154
-  browser tests): the unit tests, then every browser test. The slow lane alone is
-  `npm run test:slow` (about 5 minutes when last timed, item 105; 99 tests): every test
+- **Everything: `npm run test:all`** (about 6.3 minutes when last timed, item 105; 193
+  browser tests as listed 2026-10-24): the unit tests, then every browser test. The slow lane alone is
+  `npm run test:slow` (about 5 minutes when last timed, item 105; 107 tests as listed 2026-10-24): every test
   tagged `@slow`. Counts are from `npx playwright test --list` (`--grep @slow` for the slow
   lane, `--grep-invert @slow` for `test:browser`); their history is in `docs/engineering.md`,
   *Lane times, item by item*. Its longest (item 105): the soak (67 s,
@@ -124,7 +125,10 @@ Two `@slow` layout tests fail now and then on a timing and pass on the retry (it
 2026-10-24; also on the code before it): `cover.spec` "the attic's find line" (its
 narrow box over a pedestal, 0.56 against 0.1) about one run in four alone, and
 `banner.spec` "the widest fetch / counter sentence" (the dialogue box 20 px over Dad) about one
-in six. `test:slow` reports them as flaky, not failed.
+in six. `test:slow` reports them as flaky, not failed. In the browser lane, `hunt11.spec`
+"cook_off: everyone but her holds still through a move choice" fails about two runs in ten
+alone (the villain's box drifts 20-78 px; item 147, the same on item 146's code) and passes
+on the retry.
 
 ### Writing a browser test
 
@@ -201,8 +205,8 @@ browser lane) keeps the eleventh's: F9 from a fight, her clones poofing as a cho
 mode from the attic, the browser's own keys and Tab as yellow, every contest holding still through a
 choice; `tests/charge.spec.ts` the bar under the bag row and the rune row parting the two words.
 `playRoom(page, opts)` and `playSentenceRoom(page, opts)` take a `RoomPlay`
-(`{ wrongFirst, idleMs, wrongPauseMs }`: a wrong answer first; in a sentence room a stand
-at the key word and a pause after the wrong object). Other shared steps in
+(`{ wrongFirst, idleMs, wrongPauseMs, dadAway }`: a wrong answer first; in a sentence room a stand
+at the key word and a pause after the wrong object; Dad away: Charge the Spell goes solo). Other shared steps in
 `tests/harness.ts`: `chooseWrong(page)` (a wrong object in the find pass, then the retry
 open), `toParentAndBack(page)` (F9 out, red back), `dadLock(page, on?)` (set or read the
 lock) and `seedSolidFrames(page, extra)` (every fetch frame solid, before `boot`).
@@ -448,7 +452,7 @@ with how often the game comes up.
 ### The bug-hunt checker
 
 `QA_TAG=<tag> npm run qa` plays whole episodes at
-clock speed 5 across casts, dads' forms, places, all five fight styles, the word machine,
+clock speed 5 across casts, dads' forms, places, every fight style (the story fight included), the word machine,
 wrong answers everywhere, dad lock, seeded progress (blends and digraphs open) and three
 episodes back to back (`SCENARIOS` in `tests/qa/qa.pw.ts`; `-g <name>` for one,
 `QA_SET=quick` for three, `QA_SET=more` for the second batch: the other places and dads'
@@ -599,8 +603,8 @@ keep such scripts in the worktree.
   praise while `shown` already names the next, so the giveaway check's `done` list takes both),
   `room.rhyme.thirdCard` and `battle.heroClones`. `qa flags` gained the rhyme room's and Charge's URLs.
 - **Phaser drops a key event already `defaultPrevented`:** a capture-phase `preventDefault` kills that
-  key for the game (Tab, the keyboard's yellow, did nothing anywhere from item 069 to hunt 11). `src/main.ts`
-  prevents only the browser's own keys (F1 F3 F6 F7 F10, ContextMenu, `/`, `'`) in the capture phase, and
+  key for the game (Tab, the keyboard's yellow, did nothing anywhere from item 069 to hunt 11). `installBrowserKeys`
+  (`src/input/browserKeys.ts`, from `src/main.ts`) prevents only the browser's own keys (F1 F3 F6 F7 F10, ContextMenu, `/`, `'`) in the capture phase, and
   Tab in a bubble listener added once the game is READY; the dev keys and the buttons are Controls'.
 - **A sweep's contact sheets take minutes:** `npx tsx tests/qa/report.ts <tag>` for `QA_SET=hunt10`
   (nine scenarios, about 2,600 shots) ran past a minute; run it in the background.
@@ -1069,9 +1073,9 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   game would cut it and all drawn at one scale. `--sheet-only` rebuilds the sheet
   without drawing.
 - Several `art:alts` runs side by side on disjoint ids draw fine (item 040: four runs,
-  33 images in about 12 minutes). Run directly, the tool wants its subcommand first
-  (`npx tsx tools/art/alts.ts alts <ids…>`); without it the first id is taken as the
-  command and skipped. A run whose id list names a picture deleted meanwhile still
+  33 images in about 12 minutes). Run directly, the tool needs its subcommand first
+  (`npx tsx tools/art/alts.ts alts <ids…>`, or `pick`); without one it stops with a usage
+  error (item 147). A run whose id list names a picture deleted meanwhile still
   draws its candidates and fails only at the sheet: rebuild it with `--sheet-only`.
   Without `--sheet` a run names its sheet by the minute it started
   (`scratch/art_alts_<date>_<hhmm>.*`), so two runs started together overwrite one
@@ -1186,9 +1190,11 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   breaks again, bump the pin in `tools/voice/providers/edgeTts.ts`.
 - **A carrier line (`cut` in `lines.json`, item 085: the short A, cut from "Add") is
   decoded by `uv run --no-project --with miniaudio python tools/voice/decode_mp3.py`.**
-  The first such build fetches `miniaudio`, so it needs network like the rest. The cut's
-  thresholds (`tools/voice/carrier.ts`) are not in the line's fingerprint: after changing
-  them, `voice:build -- --force` (or delete `letter_a_sound.mp3`) to re-cut.
+  The first such build fetches `miniaudio`, so it needs network like the rest. A carrier's
+  `keepDb` (`content/phonics/letters.ts`) is in the line's fingerprint, so changing it
+  re-cuts by itself; `ONSET_DB` (`tools/voice/carrier.ts`) and `FINISH`
+  (`tools/voice/split.ts`) are not: after changing either, `voice:build -- --force` (or
+  delete `letter_a_sound.mp3`, the one carrier line so far) to re-cut.
 - `en-AU-WilliamMultilingualNeural` returned "No audio was received" for most lines
   (2026-10-18); Jormungandr uses `en-NZ-MitchellNeural` instead.
 - edge-tts sometimes times a two-word name as one boundary ("Dragon Parade");

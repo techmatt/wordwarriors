@@ -45,6 +45,20 @@ type Listener = (u: Utterance | null) => void;
 const BARK_GAP_MS = 900;
 /** The bus remembers this many started lines (`history`). */
 const HISTORY_MAX = 200;
+/** While a line plays the effects duck to this share of their level, the music to this. */
+const SFX_DUCK = 0.45;
+const MUSIC_DUCK = 0.35;
+
+/** A held letter sound (`voiceBus.hold`). */
+export interface HeldSound {
+  id: string;
+  /** Stop it (a short fade); safe to call again. */
+  release(): void;
+  readonly playing: boolean;
+}
+
+/** A held sound fades out over this when she steps off its stone. */
+const HOLD_FADE_S = 0.04;
 
 /**
  * How long a line waits for its voice group to decode (item 058: item 057 saw
@@ -319,8 +333,8 @@ class Bus {
   private begin(u: Utterance): void {
     this.history.push(u.id);
     if (this.history.length > HISTORY_MAX) this.history.shift();
-    setSfxLevel(0.45);
-    setMusicDuck(0.35);
+    setSfxLevel(SFX_DUCK);
+    setMusicDuck(MUSIC_DUCK);
     for (const fn of this.listeners) fn(u);
   }
 
@@ -337,16 +351,5 @@ class Bus {
     if (next) next();
   }
 }
-
-/** A held letter sound (`voiceBus.hold`). */
-export interface HeldSound {
-  id: string;
-  /** Stop it (a short fade); safe to call again. */
-  release(): void;
-  readonly playing: boolean;
-}
-
-/** A held sound fades out over this when she steps off its stone. */
-const HOLD_FADE_S = 0.04;
 
 export const voiceBus = new Bus();

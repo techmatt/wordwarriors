@@ -29,7 +29,7 @@ import { CHARGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { drawWords, withStems } from './bank';
 import type { Rand } from './random';
-import { unreadFirst } from './shifter';
+import { unreadFirst } from './recent';
 
 /** A round: the word it spells, its units (as shown), and their runes (sounds) in order. */
 export interface ChargeWord {

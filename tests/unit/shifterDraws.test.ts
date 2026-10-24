@@ -8,7 +8,8 @@ import { test } from 'node:test';
 
 import { NO_ARTICLE, NUMBER_WORDS, lookalikesOf } from '../../content/phonics/sentences';
 import { SHIFTER } from '../../src/config';
-import { CHAINS_KEPT, LAST_READ, chainKey, planShifter, shifterWords } from '../../src/rules/shifter';
+import { CHAINS_KEPT, chainKey, planShifter, shifterWords } from '../../src/rules/shifter';
+import { LAST_READ } from '../../src/rules/recent';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { memory, seeded, spread } from './seeds';
 

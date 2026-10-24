@@ -12,11 +12,11 @@
 
 import { writeFile } from 'node:fs/promises';
 
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 import { formsOf, personOf } from '../content/battle/roster';
 import { ACTIVE_CAST } from '../src/config';
-import { SLOW, boot, collectErrors, leaveBedroom, playBattle, until } from './harness';
+import { SLOW, boot, collectErrors, leaveBedroom, playBattle, shotIn, until } from './harness';
 
 const ALLIES = ACTIVE_CAST.allies.flatMap((p) => formsOf(p).map((f) => f.id));
 // `npm run test:pairs` means all of them (an npm script cannot set WW_PAIRS itself under Windows' cmd).
@@ -30,7 +30,7 @@ if (PAIRS.length === 0) {
   });
 }
 
-const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/pairs_${name}.png` });
+const shot = shotIn('pairs');
 
 PAIRS.forEach(([ally, villain], i) => {
   test(`${ally} + ${villain}: bedroom, quest place, both battles and the victory scene`, SLOW, async ({ page }) => {

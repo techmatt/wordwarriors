@@ -36,6 +36,7 @@ import type { ProgressStore } from '../state/ProgressStore';
 import { met, recentWords, wordWeight } from './bank';
 import { clampLevel, helpLevel, type HelpLevel } from './difficulty';
 import { pickWeighted, shuffle, type Rand } from './random';
+import { lastRead } from './recent';
 
 export type ShifterLevel = HelpLevel;
 export type Beat = 'read' | 'fix';
@@ -167,27 +168,6 @@ const linksOf = (chain: string[]): string[] => chain.slice(1).map((w, i) => [cha
 
 /** A visit's chain as the store remembers it (`recent.chains`, hunt 7, M36): its words in order. */
 export const chainKey = (p: ShifterPlan): string => [p.start, ...shifterWords(p)].join(' ');
-
-/**
- * The words the episode before had her read (hunt 8, M37: MAT came up three
- * episodes running): its rooms', pads' and gift's, kept as one entry by the
- * house plan (src/episode/plans.ts `rememberPlan`), so the next chain keeps clear of them.
- */
-export const LAST_READ = 'last_episode_words';
-
-/** The episode before's words (`LAST_READ`), as the store keeps them. */
-export const lastRead = (store: ProgressStore): Set<string> => new Set((store.recentOf(LAST_READ).at(-1) ?? '').split(' ').filter(Boolean));
-
-/**
- * The words of `pool` the episode before did not have her read, or the whole pool when none is (hunt 11, M77:
- * DOG built in one episode's word machine was the next one's Charge word). Charge, the word machine and the
- * bridge draw through it, as the chain and the rhyme room keep clear of `lastRead`: a lean, where the pool allows.
- */
-export function unreadFirst(store: ProgressStore, pool: string[], ok: (fresh: string[]) => boolean = (f) => f.length > 0): string[] {
-  const before = lastRead(store);
-  const fresh = pool.filter((w) => !before.has(w));
-  return ok(fresh) ? fresh : pool;
-}
 
 /** How many chains the store keeps: the last SHIFTER.recentChains by link, twice that whole. */
 export const CHAINS_KEPT = 2 * SHIFTER.recentChains;

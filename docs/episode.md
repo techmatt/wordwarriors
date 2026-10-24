@@ -12,7 +12,7 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    cast is drawn fresh, below, "Who is in an episode".)
 2. **Bedroom.** She is asleep in bed; a dad comes in (Dada Matt 60% of the time, Dada
    Jason 40%, each in one of his forms): "Wake up, wake up!" and she
-   presses green to jump out of bed (after 6 seconds she wakes anyway). Half the time
+   presses green to jump out of bed (after 6 seconds she wakes anyway, `WAKE_WAIT_MS`). Half the time
    the other dad comes in too. Then: "Good
    news, Julia! Ellie is here to play! Bad news, Evil Tiamat is coming, and she wants to
    be the queen of the whole house!" The room darkens under the villain's mood (purple
@@ -320,7 +320,7 @@ says letter SOUNDS aloud after the helper, then reads the word they spell. Each 
 own round. The round's word (3-4 sound units, every one a rune, so no Q, X or CK) shows at
 the top from its start, a slot per unit. She walks in and it starts by itself: first the
 helper says all the word's sounds straight away, in order, each slot lighting as its sound
-plays, a beat (400 ms) between them, never blended and never the word (item 140); then, on
+plays, a beat (400 ms, `SOUND_GAP_MS`) between them, never blended and never the word (item 140); then, on
 the first word only, "Say each sound after me!". Each rune lights on the
 altar in turn (its picture letter, `rune_<x>`: the letter drawn as a thing starting with
 its sound; its slot pulses), the helper shows the sound's
@@ -456,7 +456,7 @@ place, the plate lights, the word is said, and a copy flies into her bag (every 
 is a battle item; not MOM or DAD). Recorded as a read (`words`, her word bag) and its family
 under `rimes` (the word machine's record, and the room's lean in the pool). The printed
 words are drawn by the bank's weight, one still in her bag twice as likely, first from those
-the episode before did not have her read (`LAST_READ`); its cards and pictures keep out of
+the episode before did not have her read (`LAST_READ`, `src/rules/recent.ts`); its cards and pictures keep out of
 the other rooms' words (planned after the Shape-Shifter, before Charge). `?scene=room&slot=a&room=rhyme` opens it.
 
 **No letter names** (item 137, Matt): no clue or hint says a letter's name. The warm-up's
@@ -549,7 +549,9 @@ difficulty knob for this session; below), `grab=king` (the warm-up's word, if it
 the hall can ask for; item 085), `sentence=no_match_for_the:octopus` (that frame and key
 word on its banner: the attic's for a counter frame, door a's for a fetch frame, with
 `game=sentence:<frame>`; item 128), `prep=sound,blend` (the parked prep games: `sound`
-`blend` `picture`). The test-only ones (`voice=instant`, `battle=short`, `hooks=1`,
+`blend` `picture`), `games=sentence` / `games=all` (the rooms' pool: sentence games only, or
+the real draw; the tests' default is `sentence`), `words=new` / `words=x,y` (every draw
+leans to those words; above). The test-only ones (`voice=instant`, `battle=short`, `hooks=1`,
 `qa=1`) are in the README: *Speed, GPU and workers*, *The bug-hunt checker* and, for
 `hooks=1`, *Operational facts*.
 

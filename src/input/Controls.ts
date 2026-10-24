@@ -20,7 +20,7 @@
  *
  * Buttons are colours, never A/B: `pressed('green')`. Keyboard: arrows move,
  * Space/Enter green, Escape red, Tab yellow (its browser focus move is
- * stopped once for the whole game, in src/main.ts), 3 blue (the digit row or the
+ * stopped once for the whole game, in src/input/browserKeys.ts), 3 blue (the digit row or the
  * numpad; 1 and 2 are Dad's, `dadButtons.ts`). Letters are left alone
  * entirely, because the spelling game owns A–Z (see TextEntry). Dev keys are
  * F-keys only. Backquote is dad lock (`dadLock.ts`): while it is on, only the
@@ -61,16 +61,18 @@ if (typeof window !== 'undefined') {
 /** Buttons held on any connected pad, read straight from the browser (not Phaser's copy, a frame behind on a scene's first visit). */
 function nativePadHeld(): Set<Button> {
   const out = new Set<Button>();
-  const pads = typeof navigator !== 'undefined' && navigator.getGamepads ? navigator.getGamepads() : [];
-  for (const p of pads) {
+  for (const p of browserPads() ?? []) {
     if (!p?.connected) continue;
-    for (const b of BUTTONS) {
-      const btn = p.buttons[PAD_INDEX[b]];
-      if (btn && (btn.pressed || btn.value > 0.5)) out.add(b);
-    }
+    for (const b of BUTTONS) if (isDown(p.buttons[PAD_INDEX[b]])) out.add(b);
   }
   return out;
 }
+
+/** The browser's own pads, or null where it has none to ask. */
+const browserPads = () => (typeof navigator !== 'undefined' && navigator.getGamepads ? navigator.getGamepads() : null);
+
+/** A pad button held: pressed, or an analogue trigger half-pulled. */
+const isDown = (btn?: { pressed: boolean; value: number }) => Boolean(btn && (btn.pressed || btn.value > 0.5));
 
 /** Standard-mapping indices (Xbox 360 pad in Chrome). */
 const PAD_INDEX: Record<Button, number> = {
@@ -187,9 +189,8 @@ export class Controls {
 
     if (pad) {
       for (const b of BUTTONS) {
-        const btn = pad.buttons[PAD_INDEX[b]];
         // Triggers are analogue; count half-pulled as held.
-        if (btn && (btn.pressed || btn.value > 0.5)) now.add(b);
+        if (isDown(pad.buttons[PAD_INDEX[b]])) now.add(b);
       }
       const s = applyDeadzone(pad.leftStick.x, pad.leftStick.y);
       sx = s.x;
@@ -264,7 +265,7 @@ export class Controls {
     // Alive as the browser sees it now (hunt 11): Phaser's pad keeps the snapshot it was made from, connected
     // for good, so an unplugged pad (or a flat battery) kept its last stick and buttons, and she walked on.
     const live = (p: Phaser.Input.Gamepad.Gamepad) => {
-      const pads = typeof navigator !== 'undefined' && navigator.getGamepads ? navigator.getGamepads() : null;
+      const pads = browserPads();
       return pads ? Boolean(pads[p.index]?.connected) : p.connected;
     };
     const current = this.padIndex >= 0 ? gp.getPad(this.padIndex) : undefined;

@@ -17,7 +17,7 @@ import Phaser from 'phaser';
 import type { StorySpot } from '../../../content/battle/stories/types';
 import { voiceBus } from '../../audio/VoiceBus';
 import { sfxSelect } from '../../audio/sfx';
-import { DEPTH, REACH } from '../../config';
+import { DEPTH, GRAB_REPROMPT, REACH } from '../../config';
 import type { Controls } from '../../input/Controls';
 import { dadLock } from '../../input/dadLock';
 import { makeButtonDot } from '../../ui/ButtonDot';
@@ -26,8 +26,6 @@ import { ARENA_LEFT, ARENA_RIGHT, stickWalk } from '../movement';
 
 /** A dodge ends this long after she reaches the spot (s). */
 const REACHED_HOLD = 0.7;
-/** Quiet seconds before a grab's line is said again. */
-const GRAB_REPROMPT = 10;
 /**
  * How quickly she steps up onto a ledge and down off it (s, the time constant of an eased
  * approach): set in one frame, she jumped 130 px as she came within reach (hunt 10, M56).

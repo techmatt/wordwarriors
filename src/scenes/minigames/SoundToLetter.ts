@@ -6,6 +6,8 @@
  *
  * Yellow repeats the sound. The confirmation after a right answer is the
  * sound again, so the letter and its sound arrive together.
+ *
+ * Parked (CLAUDE.md): out of the episode, kept on purpose; reach it with ?scene=sound (BootScene).
  */
 
 import { letterSoundLine } from '../../../content/voice/ids';
@@ -15,12 +17,12 @@ import { bob, popIn, shockwave } from '../../fx/juice';
 import { soundRound, type SoundItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
 import type { Spot } from '../../world/RoomScene';
-import { SideRoom } from '../../world/SideRoom';
+import { ParkedGame } from './ParkedGame';
 
 const ITEMS = 4;
 const STONE_COLORS = [0xff7ad9, 0x7ad9ff, 0xffd23f, 0x8aff8a];
 
-export class SoundToLetter extends SideRoom {
+export class SoundToLetter extends ParkedGame {
   private items: SoundItem[] = [];
 
   constructor() {

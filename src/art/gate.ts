@@ -67,9 +67,6 @@ function upcoming(key: string): string[] {
     case 'TheEnd':
       add('Title');
       break;
-    case 'Pick':
-      add(sceneOf(next));
-      break;
     default:
       if (key.endsWith('Room') || key === 'WordMachine') add('Hub');
       else add(sceneOf(next));

@@ -30,7 +30,7 @@ import Phaser from 'phaser';
 
 import { FAMILY_BY_RIME } from '../../content/phonics/families';
 import { LETTER_BY_CHAR } from '../../content/phonics/letters';
-import { OUTDOOR_ROOMS, SIDE_ROOM_BY_ID } from '../../content/house/house';
+import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, rimeLine, sillyLine, wordLine } from '../../content/voice/ids';
 import { readPraise, variant } from '../episode/lineVariants';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
@@ -46,9 +46,8 @@ import { tagPanel } from '../ui/banner';
 import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { fontPx } from '../ui/fitText';
 import { voiceBank } from '../voice/VoiceBank';
-import { applyHouseMood, roomSeed } from '../world/houseMood';
-import type { Spot } from '../world/RoomScene';
-import { ARRIVE_MS, GIGGLE_BEAT_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
+import { GIGGLE_BEAT_MS, type Spot } from '../world/RoomScene';
+import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
 type Phase = 'intro' | 'pick' | 'check' | 'done';
 
@@ -151,8 +150,7 @@ export class WordMachine extends HouseSideRoom {
     this.floor.setTo(80, 420, GAME_WIDTH - 160, 260);
     // Off the tiles' row and 150 px either side (hunt 11: Elsa's icicles stood between the tiles, fix 150's kind).
     const avoid = [new Phaser.Geom.Rectangle(MACHINE_X - TILE_GAP - 150, TILE_Y - 140, 2 * TILE_GAP + 300, 220)];
-    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true, floorOnly: OUTDOOR_ROOMS.has(this.roomId), avoid });
-    this.bag = new Bag(this);
+    this.bag = this.moodAndBag(avoid);
     const room = SIDE_ROOM_BY_ID[this.roomId];
     // In from the side, clear of the tiles (a tile in reach would speak at once).
     this.enter(170, Math.min(room?.entry.y ?? 600, this.floor.bottom - 10));

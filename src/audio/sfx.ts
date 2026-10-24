@@ -22,12 +22,14 @@ interface Note {
   to?: number;
 }
 
+/** The effects' master level, before any duck. */
+const SFX_MASTER = 0.8;
 let master: GainNode | null = null;
 
 function out(c: AudioContext): AudioNode {
   if (!master) {
     master = c.createGain();
-    master.gain.value = 0.8;
+    master.gain.value = SFX_MASTER;
     master.connect(c.destination);
   }
   return master;
@@ -38,7 +40,7 @@ export function setSfxLevel(level: number): void {
   const c = getAudioContext();
   if (!c) return;
   const node = out(c) as GainNode;
-  node.gain.setTargetAtTime(0.8 * level, c.currentTime, 0.05);
+  node.gain.setTargetAtTime(SFX_MASTER * level, c.currentTime, 0.05);
 }
 
 /** Effects fired in the same frame stack into mush; cap how many may start per 50 ms. */

@@ -49,12 +49,12 @@
 import Phaser from 'phaser';
 
 import { RUNE_BY_SOUND, runeArt, type GestureMotion } from '../../content/phonics/runes';
-import { OUTDOOR_ROOMS, SIDE_ROOM_BY_ID } from '../../content/house/house';
+import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { readPraise, variant } from '../episode/lineVariants';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxZap } from '../audio/sfx';
-import { CHARGE, DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
+import { CHARGE, DEPTH, FONT_COMIC, GAME_WIDTH, SOUND_GAP_MS } from '../config';
 import { castFace, currentStep, episode, helper, narrator, type Slot, type Step } from '../episode/Episode';
 import { bob, burst, fitImage, fitPicture, floatText, popIn, punch, shake, shockwave, squash } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -66,7 +66,6 @@ import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
 import type { KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
-import { applyHouseMood, roomSeed } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
@@ -106,8 +105,6 @@ function barBox(n: number): Phaser.Geom.Rectangle {
   const h = BAR.slot + 24;
   return new Phaser.Geom.Rectangle(BAR.x + 20 - w / 2, BAR.y - h / 2, w, h);
 }
-/** The beat between the sounds when they are sounded out together (the entry hall's is 400, the sentence room's 450). */
-const SOUND_GAP_MS = 400;
 /**
  * The quiet around each rune, in ms (hunt 11, M61, item 144: trimmed so a two-word visit with Dad
  * answering at once is about 40 s; the sounds and the say-back beat are not here). `lit`: after the
@@ -243,7 +240,7 @@ export class ChargeRoom extends HouseSideRoom {
       new Phaser.Geom.Rectangle(HELPER.x - 80, HELPER.y - 170, 160, 190),
       new Phaser.Geom.Rectangle(ALTAR.x - ALTAR.w / 2 - 130, ALTAR.y - 150, 160, 190),
     ];
-    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: new Phaser.Geom.Rectangle(80, 420, GAME_WIDTH - 160, 160), calm: true, floorOnly: OUTDOOR_ROOMS.has(this.roomId), avoid });
+    this.houseMood(avoid, new Phaser.Geom.Rectangle(80, 420, GAME_WIDTH - 160, 160));
     // She stands beside the altar from the start: nothing to walk to or press. Clear of its
     // footprint (item 069: 20 px inside it, the altar was drawn over her arm and dress all round).
     this.enter(ALTAR.x - ALTAR.w / 2 - 50, Math.min(room?.entry.y ?? ALTAR.y + 40, this.floor.bottom - 10));

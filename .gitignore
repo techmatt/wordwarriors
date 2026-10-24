@@ -35,6 +35,8 @@ dist/
 .idea/
 .DS_Store
 Thumbs.db
+# Git Bash's tools leave one where they crash (item 147: grep.exe.stackdump at the root).
+*.stackdump
 
 # Env
 .env

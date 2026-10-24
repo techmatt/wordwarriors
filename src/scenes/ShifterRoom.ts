@@ -43,7 +43,6 @@
 
 import Phaser from 'phaser';
 
-import { OUTDOOR_ROOMS } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { readPraise, variant } from '../episode/lineVariants';
 import { voiceBus } from '../audio/VoiceBus';
@@ -60,8 +59,7 @@ import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
 import type { KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
-import { applyHouseMood, roomSeed } from '../world/houseMood';
-import type { Spot } from '../world/RoomScene';
+import { GIGGLE_BEAT_MS, type Spot } from '../world/RoomScene';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
 /** `intro`: the spell is at work, she waits. `pick`: the pictures or stones are up. `check`: a pick plays out. `done`: back to the hub. */
@@ -164,8 +162,7 @@ export class ShifterRoom extends HouseSideRoom {
       new Phaser.Geom.Rectangle(OPTIONS[0]![0] - 250, OPTIONS[0]![1] - 150, OPTIONS[2]![0] - OPTIONS[0]![0] + 500, 200),
       new Phaser.Geom.Rectangle(ENTRY.x - 90, ENTRY.y - 170, 180, 200),
     ];
-    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true, floorOnly: OUTDOOR_ROOMS.has(this.roomId), avoid });
-    this.bag = new Bag(this);
+    this.bag = this.moodAndBag(avoid);
     this.makeCreature();
     this.enter(ENTRY.x, ENTRY.y);
     for (const l of this.plan.links) void voiceBank.ensure(wordLine(l.to));
@@ -483,7 +480,7 @@ export class ShifterRoom extends HouseSideRoom {
     this.phase = 'check';
     this.locked = true;
     this.noteMiss(spot);
-    await this.wait(350);
+    await this.wait(GIGGLE_BEAT_MS);
     if (f !== this.flow) return;
     if (l.beat === 'read') {
       // Her picture's word sounded out over it, unit by unit, never blended.

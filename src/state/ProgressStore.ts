@@ -15,7 +15,7 @@
 import { VARIETY } from '../config';
 
 export const STORE_KEY = 'wordwarriors.progress';
-const STORE_VERSION = 1;
+export const STORE_VERSION = 1;
 
 export interface Stat {
   seen: number;
@@ -90,8 +90,11 @@ export interface ProgressData {
    * bank's draws lean away from. `rememberPlan` (src/episode/plans.ts) also
    * keeps `chains` (the Shape-Shifter's chains, CHAINS_KEPT), `shifter_door`
    * (whether door b had the Shape-Shifter), `story_fight_<person>` (whether a
-   * drawn villain played their story fight, `storyKey`) and `last_episode_words`
-   * (`LAST_READ`, src/rules/shifter.ts: every word the episode had her read).
+   * drawn villain played their story fight, `storyKey`), `last_episode_words`
+   * (`LAST_READ`, src/rules/recent.ts: every word the episode had her read),
+   * `last_games` (`LAST_GAMES`, src/rules/minigames.ts: last episode's three
+   * games, one string) and `last_rhyme_rimes` (`LAST_RHYMES`, src/rules/rhyme.ts:
+   * the rhyme room's families).
    */
   recent: Record<string, string[]>;
 }
@@ -155,6 +158,14 @@ function defaultStorage(): StorageLike | null {
 export class ProgressStore {
   private data: ProgressData;
   private session: ProgressData = empty();
+  /**
+   * Minigame debug mode (item 086, src/episode/debug.ts): between `hold()` and
+   * `release()` the store records as usual (the game under test reads it) but
+   * saves nothing, and `release()` puts lifetime and session back as they were.
+   */
+  private held: { data: ProgressData; session: ProgressData } | null = null;
+  /** Set once another tab wrote a blob this build cannot read (`reload`): this tab stops writing over it. */
+  private readOnly = false;
 
   constructor(
     private readonly storage: StorageLike | null = defaultStorage(),
@@ -215,9 +226,6 @@ export class ProgressStore {
     }
   }
 
-  /** Set once another tab wrote a blob this build cannot read (`reload`): this tab stops writing over it. */
-  private readOnly = false;
-
   /** A stored blob, brought up to date, or null when it is not this version's or not JSON. */
   private parse(raw: string): ProgressData | null {
     try {
@@ -257,13 +265,6 @@ export class ProgressStore {
       return null;
     }
   }
-
-  /**
-   * Minigame debug mode (item 086, src/episode/debug.ts): between `hold()` and
-   * `release()` the store records as usual (the game under test reads it) but
-   * saves nothing, and `release()` puts lifetime and session back as they were.
-   */
-  private held: { data: ProgressData; session: ProgressData } | null = null;
 
   hold(): void {
     if (this.held) return;
@@ -477,7 +478,7 @@ export class ProgressStore {
     return JSON.parse(JSON.stringify(this.session)) as ProgressData;
   }
 
-  /** Dev/tests only. */
+  /** Erase all progress: the grown-ups page's F8-twice (ParentScene) and the tests. */
   reset(): void {
     this.data = empty();
     // Today's column too: an erase that left it showed counts for words with none (item 039).

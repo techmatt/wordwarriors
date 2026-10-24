@@ -12,7 +12,7 @@ import { test, expect, type Page } from '@playwright/test';
 
 import { STORY_BY_ID, padBeats } from '../content/battle/stories/index';
 import { REACH } from '../src/config';
-import { BATTLE_SPEED, SLOW, boot, collectErrors, place, press, until, type WWState } from './harness';
+import { BATTLE_SPEED, SLOW, boot, collectErrors, place, press, shotIn, until, type WWState } from './harness';
 
 const SMAUG = STORY_BY_ID.smaug!;
 const answersOf = (beat: string | null | undefined): string[] | 'gift' | null => {
@@ -22,7 +22,7 @@ const answersOf = (beat: string | null | undefined): string[] | 'gift' | null =>
 };
 
 /** Screenshots of the beats, for a look (tests/screenshots/ is ignored). */
-const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/story_${name}.png` });
+const shot = shotIn('story');
 
 interface Seen {
   picks: { beat: string | null; right: string; words: string[]; nearest: number }[];

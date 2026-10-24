@@ -18,7 +18,7 @@ import { fighterId, group, storyLine } from '../../content/voice/ids';
 import { EPISODE_DEFAULTS } from '../../src/config';
 import { withStems } from '../../src/rules/bank';
 import { ownFight, pickFight } from '../../src/rules/fights';
-import { chargeArrival, hopOverCharge, type Charge } from '../../src/battle/story/charge';
+import { chargeArrival, hopOverCharge, type GuardCharge } from '../../src/battle/story/guardCharge';
 import type { MoveInput } from '../../src/rules/moves';
 import { planStoryMoves } from '../../src/rules/storyFight';
 import { ProgressStore } from '../../src/state/ProgressStore';
@@ -152,7 +152,7 @@ test('story fights: the plan keeps clear of words said before the battle', () =>
 
 test('story fights: each hop over the gold guards peaks as they reach her, not as they set off (hunt 11, M74)', () => {
   // The director's charge (StoryDirector.guards): three guards from about x 700-870 to just past the heroes' marks.
-  const charges: Charge[] = [700, 785, 870].map((from, i) => ({ from, to: 110 + i * 50, delay: i * 120, ms: 1200 }));
+  const charges: GuardCharge[] = [700, 785, 870].map((from, i) => ({ from, to: 110 + i * 50, delay: i * 120, ms: 1200 }));
   // Quad.easeIn: halfway in time is a quarter of the way along.
   assert.equal(chargeArrival({ from: 400, to: 0, delay: 100, ms: 1000 }, 300), 600);
   assert.equal(chargeArrival(charges[0]!, 900), null, 'a guard never reaches a hero behind where it starts');

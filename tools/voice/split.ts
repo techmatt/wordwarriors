@@ -36,8 +36,8 @@ export const SPLIT = {
   dropDb: 30,
 } as const;
 
-/** How each clip is finished. */
-const FINISH = {
+/** How each clip is finished. Exported for import.ts's review page, which states these numbers. */
+export const FINISH = {
   /** Each cut widens to where the envelope falls to the floor plus this (SH's soft onset, CHOP's P). */
   edgeDb: 6,
   fadeInS: 0.005,
@@ -151,7 +151,7 @@ function percentile(xs: Float32Array, p: number): number {
   return s[lo]! + (s[Math.min(s.length - 1, lo + 1)]! - s[lo]!) * (at - lo);
 }
 
-const expectedCount =(entries: Entry[]) => entries.reduce((n, e) => n + 1 + e.repeats, 0);
+const expectedCount = (entries: Entry[]) => entries.reduce((n, e) => n + 1 + e.repeats, 0);
 
 /** Find the utterances in a take (already high-passed). */
 export function splitTake(x: Float32Array, rate: number, entries: Entry[]): TakeSplit {

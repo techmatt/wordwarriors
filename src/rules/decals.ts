@@ -30,7 +30,7 @@ export interface PlacedDecal {
 }
 
 /** The strip of back wall above the doors, clear of the HUD corners. */
-export const WALL: Box = { x: 210, y: 70, width: 880, height: 130 };
+const WALL: Box = { x: 210, y: 70, width: 880, height: 130 };
 /** Decal ids that read as lying on the floor; anything else may go on the wall. */
 const FLOOR_LIKE = /foot|print|step|track|puddle|crumb|peel|banana|scorch|rubble|pile|mud|slime|bone|coin|sand|leaf|leaves|feather|dust|penguin/;
 /** Decal ids that only make sense on a wall. */

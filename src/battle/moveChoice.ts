@@ -16,7 +16,7 @@ import Phaser from 'phaser';
 import { moveKey, narratorLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxSelect, sfxWrong } from '../audio/sfx';
-import { DEPTH, FONT_COMIC, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH, REACH, STICK_HINT_MS } from '../config';
+import { CHOICE_REPROMPT, DEPTH, FONT_COMIC, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH, REACH, STICK_HINT_MS } from '../config';
 import { episode, narrator } from '../episode/Episode';
 import { TEX } from '../fx/textures';
 import type { BattleInfo } from '../hookState';
@@ -27,7 +27,7 @@ import { fitText } from '../ui/fitText';
 import { makeStickHint, placeStickHint } from '../ui/stickHint';
 import { FLOOR_BOTTOM, FLOOR_TOP, NO_AFTERIMAGES, type Fighter } from './Fighter';
 import { ARENA_LEFT, ARENA_RIGHT, stickWalk } from './movement';
-import { SIGN_H, SIGN_RISE, SIGN_W, clearSpot, dotBeside, dotSide, placeContestPads, placePads, standingWords, stepOutX, type Box, type PlaceBody, type PlaceInput } from './padPlace';
+import { RING_H, RING_W, SIGN_H, SIGN_RISE, SIGN_W, clearSpot, dotBeside, dotSide, placeContestPads, placePads, standingWords, stepOutX, type Box, type PlaceBody, type PlaceInput } from './padPlace';
 
 /** A fighter as pad placement sees it. */
 const placeBody = (f: Fighter): PlaceBody => ({ x: f.x, y: f.y, cx: f.cx, cy: f.cy, half: f.bodyHalf, top: f.top });
@@ -40,8 +40,6 @@ const FLOOR = { left: ARENA_LEFT, right: ARENA_RIGHT, top: FLOOR_TOP, bottom: FL
 const STEP_BACK_MS = 450;
 /** How far a contest's held fighter may rock either way while the choice is open (the rope pull's rock is up to 26 px, item 083). */
 const CONTEST_SWAY = 40;
-/** Quiet seconds before the partner says which word to find again. */
-const CHOICE_REPROMPT = 10;
 
 /** What the battle lends the move choice. */
 export interface ChoiceHost {
@@ -303,7 +301,7 @@ export class MoveChoice {
   private makePad(word: string, x: number, y: number, bornAt: number): MovePad {
     const add = this.host.stage.add;
     const glow = add.image(0, 0, TEX.glow).setTint(PAD_GLOW).setScale(3.2, 1.3).setAlpha(0.8).setBlendMode(Phaser.BlendModes.ADD);
-    const disc = add.ellipse(0, 0, 190, 70, PAD_GLOW, 0.3).setStrokeStyle(6, 0xffffff, 0.9);
+    const disc = add.ellipse(0, 0, RING_W, RING_H, PAD_GLOW, 0.3).setStrokeStyle(6, 0xffffff, 0.9);
     const inner = add.ellipse(0, 0, 140, 46).setStrokeStyle(3, PAD_GLOW, 1);
     const runes = [0, 1, 2, 3, 4, 5].map((i) => {
       const a = (i / 6) * Math.PI * 2;

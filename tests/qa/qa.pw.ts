@@ -23,15 +23,16 @@ import { test, type Page } from '@playwright/test';
 
 import { BANK } from '../../content/phonics/bank';
 import { FREE_PLAY, REACH, SHIFTER } from '../../src/config';
+import type { ProgressData } from '../../src/state/ProgressStore';
 import { SPEED, boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBattle, playAgain, playEntry, playRoom, playSentenceRoom, press, seedProgress, state, storedBlob, toTheEnd, until, type RoomPlay, type WWState, VOICE } from '../harness';
-
-// Item 083: real voice and real walking: the checker looks and listens as she would.
-VOICE.mode = 'real';
-driver.walk = true;
 import { layoutIssues, leakIssues, logIssues, onlyLineVariants, padReachIssues, placeholderArt, spawnIssues, storeChanges, voiceBuildIssues, type Issue, type Since } from './checks';
 import { qaLayout, qaSince } from './probe';
 import { clippedIssues, giveawayIssues, letterNameIssues, pacingIssues, repeatedLines, spellingIssues, tauntIssues, variantIssues } from './wording';
 import { NARRATOR_LINES, lineVariantKeys } from '../../content/voice/script';
+
+// Item 083: real voice and real walking: the checker looks and listens as she would.
+VOICE.mode = 'real';
+driver.walk = true;
 
 /** Each narrator key with variants (item 087) and its variant keys, for `variantIssues`. */
 const VARIANT_BASES = Object.fromEntries(NARRATOR_LINES.map((t) => t.key).filter((k) => !/_\d+$/.test(k)).map((k) => [k, lineVariantKeys(k)] as const).filter(([, v]) => v.length > 1));
@@ -244,10 +245,10 @@ const SCENARIOS: Scenario[] = [
 const MASH_MS = 650;
 
 /** Every level-1 word solid (`firm`), or every word (`all`): six right first tries each. */
-function seededProgress(kind: 'firm' | 'all'): Record<string, unknown> {
+function seededProgress(kind: 'firm' | 'all'): Partial<ProgressData> {
   const stat = { seen: 6, right: 6, wrong: 0, recent: [true, true, true, true, true, true], last: 1 };
   const words = Object.fromEntries(BANK.filter((w) => kind === 'all' || w.level === 1).map((w) => [w.word, stat]));
-  return { version: 1, words, episodes: 6 };
+  return { words, episodes: 6 };
 }
 
 /** The recorder: polls state beside the driver, shoots at meaningful moments, runs the checks. */

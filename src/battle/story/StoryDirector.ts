@@ -29,12 +29,12 @@ import { STORY_BY_ID } from '../../../content/battle/stories/index';
 import { storySplashArt, type StoryBeat, type StoryLine, type StoryScript, type StorySpot } from '../../../content/battle/stories/types';
 import { fightPropArt } from '../../../content/battle/fights';
 import { personOf } from '../../../content/battle/roster';
-import type { AbilitySpec } from '../../../content/battle/types';
 import { storyLine } from '../../../content/voice/ids';
 import { voiceBus } from '../../audio/VoiceBus';
 import { sfxBoom, sfxFire, sfxJump, sfxPoof, sfxShout, sfxStomp, sfxTwinkle, sfxUltimate, sfxWhoosh } from '../../audio/sfx';
 import { DEPTH, GAME_WIDTH, RUNE_GAP } from '../../config';
-import { advance, episode } from '../../episode/Episode';
+import type { WindUp } from '../beats';
+import { episode } from '../../episode/Episode';
 import { burst, fitImage, flash, floatText, hitstop, popIn, punch, shake, shockwave, slowmo, speedLines } from '../../fx/juice';
 import { TEX } from '../../fx/textures';
 import { cast } from '../abilities';
@@ -43,7 +43,7 @@ import { ARENA_LEFT, restLift } from '../movement';
 import type { Box } from '../padPlace';
 import type { Phase, StageHost } from '../stages/stage';
 import { STORY_MARKS } from '../stages/story';
-import { HOP_MS, hopOverCharge, type Charge } from './charge';
+import { HOP_MS, hopOverCharge, type GuardCharge } from './guardCharge';
 import { StoryWalk, type WalkHost } from './walk';
 
 /** How long she has to reach a safe spot (real s), and to grab (before it goes on by itself). */
@@ -72,19 +72,19 @@ export interface StoryHost extends StageHost, Pick<WalkHost, 'controls'> {
   useAllFetched(gap: number): Promise<void>;
   useCharged(gap: number): Promise<void>;
   moveChoice(): Promise<void>;
-  ultimateWindUp(): Promise<{ v: Fighter; ult: AbilitySpec; giant: boolean; aura: Phaser.GameObjects.Particles.ParticleEmitter }>;
-  ultimateFloors(v: Fighter, ult: AbilitySpec, giant: boolean): Promise<void>;
-  ultimateCountered(v: Fighter, ult: AbilitySpec, giant: boolean, aura: Phaser.GameObjects.Particles.ParticleEmitter): Promise<void>;
+  ultimateWindUp(): Promise<WindUp>;
+  ultimateFloors(w: WindUp): Promise<void>;
+  ultimateCountered(w: WindUp): Promise<void>;
   finish(): Promise<void>;
   retreat(): void;
-  /** The fight's closing fade, black or (`white`) the victory's. */
-  closeFade(white?: boolean): void;
+  /** The fight's closing fade, black or (`white`) the victory's, then on to the next step. */
+  closeAndAdvance(white?: boolean): Promise<void>;
 }
 
 export class StoryDirector {
   readonly story: StoryScript;
-  /** The beat playing, for the tests. */
-  beat: string | null = null;
+  /** The beat playing, for the tests (`info().beat`). */
+  beatId: string | null = null;
   private readonly props = new Map<string, Phaser.GameObjects.Image>();
   /** Ends Dad's spinning attack (`spinning`) once the grab is done. */
   private spinStop = false;
@@ -115,13 +115,13 @@ export class StoryDirector {
     await b.storyIntro();
     for (const beat of beats) {
       if (!b.stage.scene.isActive()) return;
-      this.beat = beat.id;
+      this.beatId = beat.id;
       b.phase = 'story';
       this.tidy();
       await this.play(beat);
       await b.wait(b.beat(0.8));
     }
-    this.beat = null;
+    this.beatId = null;
   }
 
   // -- who says what ------------------------------------------------------------------
@@ -259,7 +259,7 @@ export class StoryDirector {
     const marks = b.heroes.map((_h, i) => STORY_MARKS.heroes[i] ?? STORY_MARKS.heroes[0]);
     b.heroes.forEach((h, i) => b.stage.tweens.add({ targets: h, x: marks[i]!.x, y: marks[i]!.y, duration: 450, ease: 'Quad.easeOut' }));
     const past = Math.min(...marks.map((m) => m.x));
-    const charges: Charge[] = guards.map((g, i) => ({ from: g.x, to: Math.max(ARENA_LEFT + 40, past - 140 + i * 50), delay: i * 120, ms: 1200 }));
+    const charges: GuardCharge[] = guards.map((g, i) => ({ from: g.x, to: Math.max(ARENA_LEFT + 40, past - 140 + i * 50), delay: i * 120, ms: 1200 }));
     b.heroes.forEach((h, i) => {
       const hop = hopOverCharge(charges, marks[i]!.x);
       if (hop) this.hopOver(h, i === 0 ? 260 : 160, hop.ms, hop.delay);
@@ -342,9 +342,9 @@ export class StoryDirector {
   private async ultimate(beat: StoryBeat): Promise<void> {
     const b = this.b;
     await this.sayAll(beat.lines);
-    const { v, ult, giant, aura } = await b.ultimateWindUp();
-    await this.flyAndDive(v, beat.big, true, aura);
-    await b.ultimateFloors(v, ult, giant);
+    const w = await b.ultimateWindUp();
+    await this.flyAndDive(w.v, beat.big, true, w.aura);
+    await b.ultimateFloors(w);
     b.phase = 'end';
     await this.sayAll(beat.after);
     b.banner('TO BE CONTINUED!', 0xffd23f, true);
@@ -352,24 +352,20 @@ export class StoryDirector {
     await b.wait(b.beat(1.2));
     b.retreat();
     await b.wait(b.beat(1.4));
-    b.closeFade();
-    await b.wait(0.6);
-    advance(b.stage);
+    await b.closeAndAdvance();
   }
 
   /** Part 2's end: up and down again, the counter-item stops him, everyone's finisher, good again. */
   private async finale(beat: StoryBeat): Promise<void> {
     const b = this.b;
     await this.sayAll(beat.lines);
-    const { v, ult, giant, aura } = await b.ultimateWindUp();
-    await this.flyAndDive(v, beat.big, false, aura);
-    await b.ultimateCountered(v, ult, giant, aura);
+    const w = await b.ultimateWindUp();
+    await this.flyAndDive(w.v, beat.big, false, w.aura);
+    await b.ultimateCountered(w);
     await b.finish();
     b.phase = 'end';
     await b.wait(b.beat(1.2));
-    b.closeFade(true);
-    await b.wait(0.6);
-    advance(b.stage);
+    await b.closeAndAdvance(true);
   }
 
   // -- staging ------------------------------------------------------------------------
@@ -602,6 +598,6 @@ export class StoryDirector {
 
   /** For the tests (`hookState.battle.story`). */
   info(): { beat: string | null; walk: ReturnType<StoryWalk['info']> | null } {
-    return { beat: this.beat, walk: this.b.storyWalk?.info() ?? null };
+    return { beat: this.beatId, walk: this.b.storyWalk?.info() ?? null };
   }
 }

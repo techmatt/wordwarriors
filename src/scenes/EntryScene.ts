@@ -28,7 +28,7 @@ import { personOf } from '../../content/battle/roster';
 import { ENTRY_HALL } from '../../content/house/house';
 import { wordLine } from '../../content/voice/ids';
 import { sfxRight, sfxSelect, sfxSummon, sfxWhoosh } from '../audio/sfx';
-import { DEPTH, FONT_ROUNDED, GAME_WIDTH, GRAB } from '../config';
+import { DEPTH, FONT_ROUNDED, GAME_WIDTH, GRAB, SOUND_GAP_MS } from '../config';
 import { episode, grabPlan, helper, waker, type Step } from '../episode/Episode';
 import { bob, burst, fitPicture, floatText, popIn, shockwave, squash } from '../fx/juice';
 import { stepLevel } from '../rules/difficulty';
@@ -37,7 +37,7 @@ import { progress } from '../state/progress';
 import { Bag } from '../ui/Bag';
 import type { KeepOut } from '../ui/Caption';
 import { applyHouseMood } from '../world/houseMood';
-import { RoomScene, type Spot } from '../world/RoomScene';
+import { GIGGLE_BEAT_MS, RoomScene, type Spot } from '../world/RoomScene';
 
 type Phase = 'intro' | 'find' | 'got' | 'door';
 
@@ -47,8 +47,6 @@ const PIC = 108;
 const BOARD_Y = 205;
 const TILE = 76;
 const TILE_GAP = 14;
-/** A beat after each sound, so the sounds stay apart (the sentence room's is 450). */
-const SOUND_GAP_MS = 400;
 /** The help's sound-out goes slower: each sound stands on its own, never run together. */
 const HELP_GAP_MS = 700;
 
@@ -302,7 +300,7 @@ export class EntryScene extends RoomScene {
     const picked = spot.obj.getData('word') as string;
     this.giggle(spot.obj, spot.x, spot.y - 150, this.misses - 1);
     // A beat for the giggle before the line (hunt 11: under the voice it was ducked to under half).
-    await this.wait(350);
+    await this.wait(GIGGLE_BEAT_MS);
     await this.narrate('grab_wrong');
     this.locked = true;
     await this.say(wordLine(picked));

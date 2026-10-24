@@ -6,15 +6,15 @@
  * fetched.
  */
 
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
-import { bagged, boot, choose, collectErrors, expectNoErrors, until, type WWState } from './harness';
+import { bagged, boot, choose, collectErrors, expectNoErrors, shotIn, until, type WWState } from './harness';
 import { wordLine } from '../content/voice/ids';
 import { soundOut } from '../src/rules/soundOut';
 
 const rhyme = (s: WWState) => s.room?.rhyme;
 /** Screenshots land in tests/screenshots/ (ignored). */
-const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/139_${name}.png` });
+const shot = shotIn('139');
 
 test('rhyme room at base level: three rounds, each a family, the rhyme said, the word sounded out, a miss rhymed again', async ({ page }) => {
   test.setTimeout(150_000);

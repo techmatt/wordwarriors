@@ -18,7 +18,7 @@ import { getAudioContext, unlockAudio } from '../audio/context';
 import { voiceBus } from '../audio/VoiceBus';
 import { startMusic } from '../audio/music';
 import { sfxHit, sfxSelect } from '../audio/sfx';
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { advance, resetEpisode } from '../episode/Episode';
 import { backdrop, bob, burst, fitImage } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -71,7 +71,7 @@ export class TitleScene extends Phaser.Scene {
 
     const logo = this.add
       .text(GAME_WIDTH / 2, 200, 'WORD WARRIORS', {
-        fontFamily: '"Arial Black", sans-serif',
+        fontFamily: FONT_HEAVY,
         fontSize: '112px',
         color: '#ffd23f',
         stroke: '#2a0a4a',

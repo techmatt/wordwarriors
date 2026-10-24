@@ -18,14 +18,14 @@ import type { Status } from '../../content/battle/types';
 import { moveLine, tauntLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxHit, sfxPoof } from '../audio/sfx';
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH, PART1_VILLAIN_FLOOR } from '../config';
+import { DEPTH, GAME_HEIGHT, GAME_WIDTH, HEALTH_FLOORS, PART1_VILLAIN_FLOOR } from '../config';
 import { unsayTaunt } from '../episode/lineVariants';
 import { hex } from '../fx/colour';
 import { burst, floatText, hitstop, shake, shockwave } from '../fx/juice';
 import type { Controls } from '../input/Controls';
 import { cast, type BattleWorld, type Projectile, type Trap } from './abilities';
 import { Fighter, FLOOR_BOTTOM, FLOOR_TOP, type FighterInit } from './Fighter';
-import { ARENA_LEFT, ARENA_RIGHT, integrate, STEER, STICK_DEADZONE } from './movement';
+import { ARENA_LEFT, ARENA_RIGHT, integrate, STEER, STICK_AT_REST_SQ } from './movement';
 import type { FightStage, Phase } from './stages/stage';
 
 /** Cosmetic damage per point of ability power. Tuned so bars drift, not drop. */
@@ -34,6 +34,16 @@ const DAMAGE_PER_POWER = 2.6;
 const SAME_DEPTH = 70;
 /** Hit words (BAM!, BLOCK!) float under the move pads' signs: a sign's word is never covered (item 034). */
 const HIT_FLOAT = DEPTH.prompt - 20;
+/**
+ * A trap goes off on a fighter within this box of it (px either way), and `defuseNear` clears the
+ * same box (hunt 11): she must never stand on a trap the defuse misses.
+ */
+const TRAP_REACH = { x: 55, y: 40 };
+
+/** Is `f` standing on `t`? */
+function onTrap(t: Trap, f: Fighter): boolean {
+  return Math.abs(f.x - t.x) < TRAP_REACH.x && Math.abs(f.y - t.y) < TRAP_REACH.y;
+}
 
 /**
  * Where the brawl puts everybody (a contest's stage has its own places: `show.home`,
@@ -59,6 +69,11 @@ export interface BattleStats {
   movePicks: number;
   itemsUsed: number;
   runesFired: number;
+}
+
+/** A battle's stats before anything has happened. */
+export function noStats(): BattleStats {
+  return { abilitiesFired: 0, ultimates: 0, combos: 0, movePicks: 0, itemsUsed: 0, runesFired: 0 };
 }
 
 /** What the simulation uses from the battle (BattleScene): the world abilities cast into, and the director's state. */
@@ -92,7 +107,7 @@ export class BattleSim {
   floors: { heroMain: number; villainMain: number };
 
   constructor(private readonly b: SimHost) {
-    this.floors = { heroMain: 0.3, villainMain: b.part === 1 ? PART1_VILLAIN_FLOOR.start : 0.3 };
+    this.floors = { heroMain: HEALTH_FLOORS.main, villainMain: b.part === 1 ? PART1_VILLAIN_FLOOR.start : HEALTH_FLOORS.main };
   }
 
   /**
@@ -133,7 +148,7 @@ export class BattleSim {
    */
   defuseNear(f: Fighter): void {
     for (const t of this.traps) {
-      if (!t.obj.active || t.team === f.team || Math.abs(f.x - t.x) >= 55 || Math.abs(f.y - t.y) >= 40) continue;
+      if (!t.obj.active || t.team === f.team || !onTrap(t, f)) continue;
       this.b.stage.tweens.killTweensOf(t.obj);
       burst(this.b.stage, t.x, t.y - 10, { count: 12, speed: 160, colors: [0xffffff, t.color] });
       t.obj.destroy();
@@ -189,7 +204,7 @@ export class BattleSim {
       floatText(scene, target.cx, target.top, words[Math.floor(Math.random() * words.length)]!, hex(color), 34, HIT_FLOAT);
     }
     if (status && !(target.isMain && target.team === 'villain' && b.part === 1 && Math.random() < 0.5)) target.setStatus(status.kind, status.duration, b.now);
-    b.show.onHit(target, power, from);
+    b.show.onHit(target, power);
     if (!target.isMain && target.hp <= 0) this.kill(target);
   }
 
@@ -254,7 +269,7 @@ export class BattleSim {
     // A contest places its fighters itself (lanes, the rope's ends, stations).
     const placed = b.show.steer(f, dt);
     // Her own hero runs where she pushes the stick; everything else stays automatic.
-    const steered = !placed && f === b.heroes[0] && fighting && b.controls.move.lengthSq() > STICK_DEADZONE;
+    const steered = !placed && f === b.heroes[0] && fighting && b.controls.move.lengthSq() > STICK_AT_REST_SQ;
     if (placed) {
       // The stage has placed it.
     } else if (steered) {
@@ -417,7 +432,7 @@ export class BattleSim {
       // Not while a move choice is open (hunt 11): her walk to a pad sprang a villain's trap, a BOOM and a burst that
       // hung on the frozen clock (fix 29 kept only the hit off her).
       if (now < t.armedAt || !t.obj.active || this.b.choosing) continue;
-      const victim = this.fighters.find((e) => e.active && e.team !== t.team && !e.floored && Math.abs(e.x - t.x) < 55 && Math.abs(e.y - t.y) < 40);
+      const victim = this.fighters.find((e) => e.active && e.team !== t.team && !e.floored && onTrap(t, e));
       if (victim) {
         burst(scene, t.x, t.y - 20, { count: 50, speed: 420, colors: [t.color, 0xffffff, 0xd02040] });
         shockwave(scene, t.x, t.y, t.color, 120);

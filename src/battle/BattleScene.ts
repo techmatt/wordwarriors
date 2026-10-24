@@ -57,6 +57,7 @@ import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { withStems } from '../rules/bank';
+import { wordsOf } from '../rules/sentences';
 import { isDad } from '../rules/cast';
 import { outfitTall } from '../rules/heights';
 import type { MoveOwner } from '../rules/moves';
@@ -67,13 +68,13 @@ import { Bubbles } from '../ui/Bubbles';
 import { Caption } from '../ui/Caption';
 import { fitText } from '../ui/fitText';
 import { cast, type Projectile, type Trap } from './abilities';
-import { BattleBeats } from './beats';
+import { BattleBeats, type WindUp } from './beats';
 import { type Fighter, FLOOR_TOP, initFromSpec, NO_AFTERIMAGES, type FighterInit } from './Fighter';
 import { restLift } from './movement';
 import { BattleHud } from './hud';
 import { MoveChoice, type ChoiceHost } from './moveChoice';
 import type { Box } from './padPlace';
-import { BattleSim, BRAWL, type BattleStats } from './sim';
+import { BattleSim, BRAWL, noStats, type BattleStats } from './sim';
 import { makeStage } from './stages';
 import { StoryDirector, type StoryHost } from './story/StoryDirector';
 import type { StoryWalk } from './story/walk';
@@ -134,7 +135,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
   /** Her hero's `hop` is the free-play jump's (so landing zeroes only that one). */
   private playHop = false;
   /** Counts for the tests (hookState.battle, `BattleStats`), this part. */
-  stats: BattleStats = { abilitiesFired: 0, ultimates: 0, combos: 0, movePicks: 0, itemsUsed: 0, runesFired: 0 };
+  stats: BattleStats = noStats();
   /** Move choices opened this part: the first one is the hub's gift word. */
   private choicesOpened = 0;
   /** Big moves called out this part: each once (item 087: the same call three times in a fight was too many). */
@@ -167,7 +168,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     this.heroes = [];
     this.simRate = 1;
     this.choices.reset();
-    this.stats = { abilitiesFired: 0, ultimates: 0, combos: 0, movePicks: 0, itemsUsed: 0, runesFired: 0 };
+    this.stats = noStats();
     this.choicesOpened = 0;
     this.calledOut = new Set();
     this.bannerText = null;
@@ -533,9 +534,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     await this.say(fightLineKey(this.fight, 'retreat'));
     this.retreat();
     await this.wait(this.beat(1.4));
-    this.closeFade();
-    await this.wait(0.6);
-    advance(this);
+    await this.closeAndAdvance();
   }
 
   private async part2(): Promise<void> {
@@ -554,7 +553,15 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     await this.finish();
     this.phase = 'end';
     await this.wait(this.beat(1.2));
-    this.closeFade(true);
+    await this.closeAndAdvance(true);
+  }
+
+  /**
+   * Every ending of the fight, the brawl's and the story director's: the closing fade, then on to the next
+   * step. One place, so no ending can skip `closing` (the F9 guard, `closeFade`).
+   */
+  async closeAndAdvance(white = false): Promise<void> {
+    this.closeFade(white);
     await this.wait(0.6);
     advance(this);
   }
@@ -564,7 +571,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
    * 145). A flag, not the camera's fade state: the opening fade-in leaves `isComplete` set, so that check shut
    * F9 out of every battle from its first 300 ms (hunt 11).
    */
-  closeFade(white = false): void {
+  private closeFade(white = false): void {
     this.closing = true;
     if (white) this.cameras.main.fadeOut(500, 255, 255, 255);
     else this.cameras.main.fadeOut(500);
@@ -657,7 +664,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
   textGivesAway(text: string): boolean {
     const upcoming = this.upcomingPads();
     // A pad word inside a longer one counts too: SPINNY before SPIN, HUGS before HUG (item 039).
-    return withStems(text.toLowerCase().split(/[^a-z]+/).filter(Boolean)).some((w) => upcoming.has(w));
+    return withStems(wordsOf(text)).some((w) => upcoming.has(w));
   }
 
   /** A fighter's taunts that give no move choice away. */
@@ -757,16 +764,16 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
 
   // The story fight's director runs the ultimate and the finish beat by beat (beats.ts).
 
-  ultimateWindUp(): Promise<{ v: Fighter; ult: AbilitySpec; giant: boolean; aura: Phaser.GameObjects.Particles.ParticleEmitter }> {
+  ultimateWindUp(): Promise<WindUp> {
     return this.beats.ultimateWindUp();
   }
 
-  ultimateFloors(v: Fighter, ult: AbilitySpec, giant: boolean): Promise<void> {
-    return this.beats.ultimateFloors(v, ult, giant);
+  ultimateFloors(w: WindUp): Promise<void> {
+    return this.beats.ultimateFloors(w);
   }
 
-  ultimateCountered(v: Fighter, ult: AbilitySpec, giant: boolean, aura: Phaser.GameObjects.Particles.ParticleEmitter): Promise<void> {
-    return this.beats.ultimateCountered(v, ult, giant, aura);
+  ultimateCountered(w: WindUp): Promise<void> {
+    return this.beats.ultimateCountered(w);
   }
 
   finish(): Promise<void> {

@@ -5,6 +5,9 @@
  * with a bubble over the card), so she can browse by ear. Green picks it.
  * Ally adds a "nobody" card; villain adds a "surprise" card that picks at
  * random. Instructions here are always Dada Matt: no ally exists yet.
+ *
+ * Parked (CLAUDE.md): out of the episode, kept on purpose; reach it with ?scene=pick (BootScene)
+ * or EPISODE_DEFAULTS.pickScreens.
  */
 
 import Phaser from 'phaser';
@@ -14,7 +17,7 @@ import { PERSONS } from '../../content/battle/roster';
 import { coreLine, fighterId, nameLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxSelect, sfxSummon } from '../audio/sfx';
-import { GAME_WIDTH } from '../config';
+import { FONT_HEAVY, GAME_WIDTH } from '../config';
 import { castEpisode, episode, randomVillain, type Step } from '../episode/Episode';
 import { bob, burst, flash, shockwave } from '../fx/juice';
 import { RoomScene, type Spot } from '../world/RoomScene';
@@ -86,7 +89,7 @@ export class PickScene extends RoomScene {
 
     const title = { hero: 'PICK YOUR HERO', ally: 'PICK A FRIEND', villain: 'PICK THE BAD GUY' }[this.what];
     this.add
-      .text(GAME_WIDTH / 2, 50, title, { fontFamily: '"Arial Black", sans-serif', fontSize: '52px', color: evil ? '#ff5a6a' : '#ffd23f', stroke: '#000000', strokeThickness: 10 })
+      .text(GAME_WIDTH / 2, 50, title, { fontFamily: FONT_HEAVY, fontSize: '52px', color: evil ? '#ff5a6a' : '#ffd23f', stroke: '#000000', strokeThickness: 10 })
       .setOrigin(0.5);
     void this.speak(coreLine(`pick_${this.what}`));
   }

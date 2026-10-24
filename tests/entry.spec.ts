@@ -19,12 +19,12 @@ import { withStems } from '../src/rules/bank';
 import { inter } from './qa/checks';
 import { qaLayout } from './qa/probe';
 
-import { SLOW, boot, choose, collectErrors, expectNoErrors, leaveBedroom, playEntry, press, seedProgress, state, texts, until, type WWState } from './harness';
+import { SLOW, boot, choose, collectErrors, expectNoErrors, leaveBedroom, playEntry, press, seedProgress, shotIn, state, texts, until, type WWState } from './harness';
 import { letterSoundLine, wordLine } from '../content/voice/ids';
 
 const LINE_BY_ID = new Map((JSON.parse(readFileSync('content/voice/lines.json', 'utf8')) as { id: string; text: string; say?: string }[]).map((l) => [l.id, l]));
 
-const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/033_${name}.png` });
+const shot = shotIn('033');
 
 /** The warm-up's own lines, in order: its narrator lines, letter sounds, word lines. */
 const clueLines = (s: WWState) => s.voice.history.filter((id) => /^letter_|^word_|_grab_/.test(id));
@@ -81,7 +81,7 @@ test('warm-up, a new player: the sounds, never a letter name (item 137) nor the 
 test('warm-up levels (at ?difficulty=3): 2 gives the sounds with the letters shown, 3 the sounds only; never the word; a first-time right at 2 moves up to 3; at base a word recorded at 3 still gets level 1', SLOW, async ({ page }) => {
   test.setTimeout(150_000);
   const errors = collectErrors(page);
-  await seedProgress(page, { version: 1, grabLevels: allAt(2) });
+  await seedProgress(page, { grabLevels: allAt(2) });
   await boot(page, '?scene=grab&nojourney=1&difficulty=3');
   const two = await clued(page);
   const w2 = two.room!.grab!.word;
@@ -98,7 +98,7 @@ test('warm-up levels (at ?difficulty=3): 2 gives the sounds with the letters sho
   const page3 = await page.context().newPage();
   // A tab behind another gets no animation frames on the GPU channel, so the game never boots in it.
   await page3.bringToFront();
-  await seedProgress(page3, { version: 1, grabLevels: allAt(3) });
+  await seedProgress(page3, { grabLevels: allAt(3) });
   await boot(page3, '?scene=grab&nojourney=1&difficulty=3');
   const three = await clued(page3);
   const w3 = three.room!.grab!.word;
@@ -109,7 +109,7 @@ test('warm-up levels (at ?difficulty=3): 2 gives the sounds with the letters sho
   // Base difficulty (item 067): the ramp is recorded but held at its start.
   const base = await page.context().newPage();
   await base.bringToFront();
-  await seedProgress(base, { version: 1, grabLevels: allAt(3) });
+  await seedProgress(base, { grabLevels: allAt(3) });
   await boot(base, '?scene=grab&nojourney=1');
   const one = await clued(base);
   const w1 = one.room!.grab!.word;

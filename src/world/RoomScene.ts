@@ -15,7 +15,7 @@
 
 import Phaser from 'phaser';
 
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH, REACH, STICK_HINT_MS } from '../config';
+import { DEPTH, GAME_HEIGHT, GAME_WIDTH, IDLE_REPROMPT_MS, REACH, STICK_HINT_MS } from '../config';
 import { narratorLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
@@ -38,10 +38,10 @@ import type { Speaker } from '../ui/Portrait';
 import { makeStickHint, placeStickHint } from '../ui/stickHint';
 import { PLAYER_HEIGHT, Player } from './Player';
 
-/** Nothing happening for this long offers the prompt again. */
-const IDLE_REPROMPT_MS = 15_000;
 /** The giggle's words on a miss, in turn (`giggle`). */
 const GIGGLES = ['OOPS!', 'HEE HEE!', 'SILLY!', 'BOING!'];
+/** The beat between a miss's fizzle-and-giggle (`giggle`) and its line, so the giggle is heard (hunt 11). */
+export const GIGGLE_BEAT_MS = 350;
 
 export interface Spot {
   id: string;
@@ -186,7 +186,6 @@ export abstract class RoomScene extends Phaser.Scene {
     return spot;
   }
 
-  /** An art image sized into a box, origin at its feet. */
   /** An image standing at (x, y) by its feet, fitted to `w` x `h`; a word picture by its own shape (`fitPicture`, M48). */
   protected art(key: string, w: number, h: number, x = 0, y = 0, max?: { w: number; h: number }): Phaser.GameObjects.Image {
     return fitPicture(this.add.image(x, y, key).setOrigin(0.5, 1), w, h, max);
@@ -220,7 +219,10 @@ export abstract class RoomScene extends Phaser.Scene {
    * Scene generation (`SceneGen`): a room's flow is a chain of awaits that
    * must stop when the scene shuts down rather than carry on building stones
    * in the next run. Every await in a room goes through `guard`, which never
-   * resolves once the generation it started in is over.
+   * resolves once the generation it started in is over. That stops a chain at
+   * scene end only: a room whose yellow or green can interrupt its own chain
+   * within one run also keeps a `flow` token, bumped by each new chain and
+   * checked after its awaits (`if (f !== this.flow) return;`; see ShifterRoom).
    */
   private runs = new SceneGen(this);
 

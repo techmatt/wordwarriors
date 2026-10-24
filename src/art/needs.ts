@@ -17,7 +17,7 @@
  */
 
 import { ART_ASSETS, ART_BY_ID, charArt } from '../../content/art/assets';
-import { CHARACTER_BY_ID, MINIONS, ROSTER, personOf } from '../../content/battle/roster';
+import { CHARACTER_BY_ID, ROSTER, personOf } from '../../content/battle/roster';
 import { fightPropArt } from '../../content/battle/fights';
 import { STORY_BY_ID } from '../../content/battle/stories/index';
 import { storySplashArt } from '../../content/battle/stories/types';
@@ -134,7 +134,7 @@ function battleSet(draw: boolean): string[] {
     const story = STORY_BY_ID[fight.story ?? ''];
     if (story) out.push(...story.splashes.map((sp) => storySplashArt(sp.id)), ...fighterArt(episode.primary));
   } else out.push(`arena_${villainSpec().arena}`);
-  out.push(...family('minion_'), ...Object.values(MINIONS).map((m) => `minion_${m.id}`));
+  out.push(...family('minion_'));
   for (const id of [episode.hero, episode.ally, episode.villain, helper()]) out.push(...fighterArt(id));
   const moves = draw ? movePlan() : episode.moves;
   const moveArt = moves ? artIn(moves) : [];

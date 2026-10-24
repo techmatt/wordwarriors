@@ -48,7 +48,7 @@
 import Phaser from 'phaser';
 
 import { canHold } from '../../content/phonics/letters';
-import { gapFor, OUTDOOR_ROOMS, SIDE_ROOM_BY_ID, type BridgeGap } from '../../content/house/house';
+import { gapFor, SIDE_ROOM_BY_ID, type BridgeGap } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { readPraise, variant } from '../episode/lineVariants';
 import { voiceBus, type HeldSound } from '../audio/VoiceBus';
@@ -67,8 +67,7 @@ import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
 import type { KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
-import { applyHouseMood, roomSeed } from '../world/houseMood';
-import type { Spot } from '../world/RoomScene';
+import { GIGGLE_BEAT_MS, type Spot } from '../world/RoomScene';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
 /**
@@ -204,8 +203,7 @@ export class BridgeRoom extends HouseSideRoom {
       new Phaser.Geom.Rectangle(FAR_X, PICTURES[0]![1] - PICTURE_SIZE - 30, GAME_WIDTH - FAR_X, GAME_HEIGHT),
       new Phaser.Geom.Rectangle(NEAR.x - 85, NEAR.y - 170, 170, 200),
     ];
-    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true, floorOnly: OUTDOOR_ROOMS.has(this.roomId), avoid });
-    this.bag = new Bag(this);
+    this.bag = this.moodAndBag(avoid);
     const gap = gapFor(this.roomId);
     this.gapLook = GAP_LOOK[gap];
     this.drawGap(gap);
@@ -691,7 +689,7 @@ export class BridgeRoom extends HouseSideRoom {
     this.wrongTries++;
     this.keepMisses(r.word, this.wrongTries);
     this.giggle(spot.obj, spot.x, spot.y - PICTURE_SIZE - 40, this.wrongTries - 1);
-    await this.wait(350);
+    await this.wait(GIGGLE_BEAT_MS);
     if (f !== this.flow) return;
     await this.narrate('bridge_picked');
     if (f !== this.flow) return;

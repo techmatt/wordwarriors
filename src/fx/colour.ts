@@ -6,7 +6,7 @@ export function hex(c: number): string {
 }
 
 /** A colour's red, green and blue, each 0..255. */
-export function rgb(c: number): [number, number, number] {
+function rgb(c: number): [number, number, number] {
   return [(c >> 16) & 255, (c >> 8) & 255, c & 255];
 }
 

@@ -21,15 +21,22 @@ import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter } from './Fighter';
 export const ARENA_LEFT = 70;
 export const ARENA_RIGHT = 1210;
 
-/** A stick pushed less than this (squared length) is at rest. */
-export const STICK_DEADZONE = 0.04;
+/**
+ * A stick vector shorter than 0.2 is at rest; squared. Not the pad's own radial deadzone
+ * (`STICK_DEADZONE` in src/input/Controls.ts), which the vector has already been through.
+ */
+export const STICK_AT_REST_SQ = 0.04;
+
+/** The heights a flyer and a hoverer bob around (`fly`, `hover`) and stand at (`restLift`). */
+const FLY_LIFT = 110;
+const HOVER_LIFT = 40;
 
 /**
  * Her hero walked by the stick on real time (the move choice, a story walk): moves `at` and
  * leans her into it. False, and she stands up straight, when the stick rests or she cannot walk.
  */
 export function stickWalk(me: Fighter, at: { x: number; y: number }, mv: Phaser.Math.Vector2, realDt: number): boolean {
-  const walking = mv.lengthSq() > STICK_DEADZONE && me.active;
+  const walking = mv.lengthSq() > STICK_AT_REST_SQ && me.active;
   if (walking) {
     at.x = Phaser.Math.Clamp(at.x + mv.x * WALK_SPEED * realDt, ARENA_LEFT, ARENA_RIGHT);
     at.y = Phaser.Math.Clamp(at.y + mv.y * WALK_SPEED * 0.8 * realDt, FLOOR_TOP, FLOOR_BOTTOM);
@@ -40,7 +47,7 @@ export function stickWalk(me: Fighter, at: { x: number; y: number }, mv: Phaser.
 
 /** How high a fighter floats standing still (a story mark, the move choice): a flyer up in the air, a hoverer a little off the floor. */
 export function restLift(f: Fighter): number {
-  return f.init.style === 'fly' ? 110 : f.init.style === 'hover' ? 40 : 0;
+  return f.init.style === 'fly' ? FLY_LIFT : f.init.style === 'hover' ? HOVER_LIFT : 0;
 }
 
 export interface Steering {
@@ -82,7 +89,7 @@ const hover: Steer = (f, s) => {
   const tx = t ? t.x + side(f) * range : f.x;
   const ty = (t ? t.y : f.y) + Math.sin(s.now / 900 + f.uid) * 70;
   approach(f, tx, ty, f.init.speed * 0.8, s.dt, 3);
-  f.lift = 40 + Math.sin(s.now / 400 + f.uid) * 14;
+  f.lift = HOVER_LIFT + Math.sin(s.now / 400 + f.uid) * 14;
   integrate(f, s.dt);
 };
 
@@ -196,7 +203,7 @@ const fly: Steer = (f, s) => {
   const tx = cx + Math.cos(tt * 0.9) * 220;
   const ty = (t ? t.y : 550) + Math.sin(tt * 1.8) * 70;
   approach(f, tx, ty, f.init.speed * 1.4, s.dt, 3);
-  f.lift = 110 + Math.sin(tt * 1.8) * 60;
+  f.lift = FLY_LIFT + Math.sin(tt * 1.8) * 60;
   integrate(f, s.dt);
   f.lean = Phaser.Math.Clamp(f.vx / 500, -0.4, 0.4);
 };

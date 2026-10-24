@@ -30,7 +30,7 @@ import Phaser from 'phaser';
 
 import { tokenWord } from '../../content/phonics/sentences';
 import { WORD_BY_ID } from '../../content/phonics/words';
-import { OUTDOOR_ROOMS, SIDE_ROOM_BY_ID } from '../../content/house/house';
+import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { narratorLine, villainKey, wordLine } from '../../content/voice/ids';
 import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { sfxRight, sfxStep, sfxSummon } from '../audio/sfx';
@@ -48,7 +48,6 @@ import { bannerArt, bannerPanelWidth, inkOf, tagPanel } from '../ui/banner';
 import { makeButtonDot } from '../ui/ButtonDot';
 import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
-import { applyHouseMood, roomSeed } from '../world/houseMood';
 import type { Spot } from '../world/RoomScene';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
@@ -179,8 +178,7 @@ export class SentenceRoom extends HouseSideRoom {
       new Phaser.Geom.Rectangle(Math.min(...xs) - 150, top, Math.max(...xs) - Math.min(...xs) + 300, 400),
       new Phaser.Geom.Rectangle(Math.min(...xs) - 250, top, Math.max(...xs) - Math.min(...xs) + 500, foot - top),
     ];
-    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true, floorOnly: OUTDOOR_ROOMS.has(this.roomId), avoid });
-    this.bag = new Bag(this);
+    this.bag = this.moodAndBag(avoid);
     this.readDot = makeButtonDot(this, 0, 0, 'green', 16).setDepth(DEPTH.hud).setVisible(false);
     // Back from the parent page (F9) after she found it, mid-celebration: the
     // room is done, so straight back to the hub (item 039: it replayed, and a

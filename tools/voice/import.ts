@@ -27,7 +27,7 @@ import { holdPlan, holdSamples } from '../../src/audio/holdSound.js';
 import { readLines, runMain } from '../shared.js';
 import { mp3Bytes, readWav, wavBytes } from './audio.js';
 import { CLIP_DIR, CLIP_INDEX, clipRecord, dropUnused, installClip, readClipIndex, type ClipIndex } from './clips.js';
-import { MIN_STEADY_S, countReason, finish, highpass, rankRepeats, splitTake, type Cut, type Entry, type TakeSplit } from './split.js';
+import { FINISH, MIN_STEADY_S, SPLIT, countReason, finish, highpass, rankRepeats, splitTake, type Cut, type Entry, type TakeSplit } from './split.js';
 import type { LineSpec } from './types.js';
 
 const FORMATS = ['phonics-recorder/1', 'phonics-recorder/2'];
@@ -222,7 +222,7 @@ function waveform(t: TakeResult): string {
   const secs = t.split.seconds;
   const xOf = (s: number) => (s / secs) * W;
   const yOf = (d: number) => H - ((Math.max(lo, Math.min(hi, d)) - lo) / (hi - lo)) * (H - 20);
-  const pts = Array.from(env, (v, i) => `${xOf(i * 0.01).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
+  const pts = Array.from(env, (v, i) => `${xOf(i * SPLIT.hopS).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
   const p = [`<svg width="${W}" height="${H + 18}" style="background:#111;border-radius:6px">`];
   const labels = t.entries.length
     ? t.entries.flatMap((e, i) => [[e.entry.word.toUpperCase(), COLOURS[i % 3]!], ...e.repeats.map((r) => [r.label, COLOURS[i % 3]!])])
@@ -263,7 +263,8 @@ async function writeReview(zip: string, manifest: Manifest, recorder: string, re
     '<style>body{font:14px system-ui;background:#1b1b1f;color:#ddd;margin:24px;max-width:1150px}h2{margin-top:36px}table{border-collapse:collapse;margin:8px 0}td,th{padding:4px 10px;border-bottom:1px solid #333;text-align:left;vertical-align:middle}code{color:#93c5fd}.pick{background:#14532d55}.bad{color:#f87171}.ok{color:#4ade80}.note{color:#999;font-size:12px}audio{height:30px}</style>',
     `<h1>Voice import review: ${esc(path.basename(zip))}</h1>`,
     `<p>Recorded by ${esc(recorder)}. ${dry ? '<b>Dry run</b>: nothing was installed.' : 'Clips marked with a target id were installed into <code>content/voice/clips/</code>.'}</p>`,
-    '<p class=note>Each card: its envelope (20 ms RMS in dB, after an 80 Hz high-pass) with each cut shaded, the detection threshold and the floor. Then each entry: the word clip and the three sound repeats, each with what the Stretchy Bridge makes of it (src/audio/holdSound.ts) and a <b>bridge</b> preview: the cut as the bridge plays it, once. The picked repeat is green. Clips are trimmed, faded, normalised to -17 dBFS RMS (peak at most -1 dBFS) and padded with 30 ms of silence.</p>',
+    // The numbers are split.ts's, so tuning it keeps this page true.
+    `<p class=note>Each card: its envelope (${Math.round(SPLIT.winS * 1000)} ms RMS in dB, after an ${SPLIT.highpassHz} Hz high-pass) with each cut shaded, the detection threshold and the floor. Then each entry: the word clip and the three sound repeats, each with what the Stretchy Bridge makes of it (src/audio/holdSound.ts) and a <b>bridge</b> preview: the cut as the bridge plays it, once. The picked repeat is green. Clips are trimmed, faded, normalised to ${FINISH.targetRmsDb} dBFS RMS (peak at most ${FINISH.peakCeilDb} dBFS) and padded with ${Math.round(FINISH.padS * 1000)} ms of silence.</p>`,
     `<p class=note>Cards missing from this zip: ${esc((manifest.missing ?? []).join(', ') || 'none')}.</p>`,
   ];
   for (const t of results) {

@@ -46,7 +46,7 @@ export function spokenHash(line: LineSpec): string {
 }
 
 export interface ClipRecord {
-  /** Who made it: `matt`, `firefly`, `simulated`. Coverage counts only real ones. */
+  /** Who recorded it: `matt` from `voice:clip`, or the recorder's name slug from `voice:import`. */
   provider: string;
   speaker: string;
   /** What was recorded, verbatim, and its hash. */
@@ -62,7 +62,7 @@ export interface ClipRecord {
 }
 
 /** A recording `voice:import` made for a line the game doesn't have yet. */
-export interface WaitingClip {
+interface WaitingClip {
   provider: string;
   /** What was asked for: the recorder's word and sound. */
   recorded: string;
@@ -88,7 +88,7 @@ export async function readClipIndex(file = CLIP_INDEX): Promise<ClipIndex> {
   }
 }
 
-export type ClipState =
+type ClipState =
   | { state: 'fresh'; clip: ClipRecord }
   | { state: 'stale'; clip: ClipRecord }
   | { state: 'missing' };

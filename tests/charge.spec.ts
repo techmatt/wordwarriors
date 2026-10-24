@@ -14,12 +14,11 @@
  * both. Screenshots land in tests/screenshots/ (ignored) for a look.
  */
 
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, dad, dadLock, expectNoErrors, state, texts, until, type WWState } from './harness';
+import { SLOW, boot, collectErrors, dad, dadLock, expectNoErrors, shotIn, state, texts, until, type WW, type WWState } from './harness';
 import { qaLayout } from './qa/probe';
 import { CHARGE_WORDS } from '../src/rules/charge';
-import type { WWHooks } from '../src/testHooks';
 import { letterSoundLine, wordLine } from '../content/voice/ids';
 import { RUNE_BY_SOUND } from '../content/phonics/runes';
 import { BANK_BY_WORD } from '../content/phonics/bank';
@@ -47,7 +46,7 @@ function opensWithSounds(h: string[], from: number, runes: string[]): void {
   expect(h.slice(at, at + runes.length)).toEqual(runes.map((r) => letterSoundLine(r)));
 }
 
-const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/053_${name}.png` });
+const shot = shotIn('053');
 
 test('Charge the Spell: the runes charge by themselves, each sound said; one press, Dad\'s key 2, on the read', SLOW, async ({ page }) => {
   test.setTimeout(150_000);
@@ -190,7 +189,7 @@ test('Charge the Spell (items 059, 140): a snappy visit spells its two words, ea
   const runes1 = runesOf(words[1]!);
   // Every frame from here: when each letter sound starts and stops (game clock), for the gaps below.
   await page.evaluate(() => {
-    const w = window as unknown as { __ww: WWHooks; __sounds: { id: string; from: number; to: number }[] };
+    const w = window as unknown as WW & { __sounds: { id: string; from: number; to: number }[] };
     w.__sounds = [];
     let cur: { id: string; from: number; to: number } | null = null;
     const tick = () => {
@@ -339,7 +338,7 @@ test('Charge the Spell: the charged runes fire as her hero\'s moves in the next 
   await boot(page, '?scene=battle&part=1&battle=short&charged=m,s,a&nojourney=1', undefined, { voice: 'real' });
   // Every frame: which rune had popped up when each letter sound began (item 069: each sound came a rune late).
   await page.evaluate(() => {
-    const w = window as unknown as { __ww: WWHooks; __runeAt: Record<string, number> };
+    const w = window as unknown as WW & { __runeAt: Record<string, number> };
     w.__runeAt = {};
     const tick = () => {
       const st = w.__ww.state() as WWState;

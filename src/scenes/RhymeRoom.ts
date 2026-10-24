@@ -35,12 +35,11 @@
 
 import Phaser from 'phaser';
 
-import { OUTDOOR_ROOMS } from '../../content/house/house';
 import { narratorLine, wordLine } from '../../content/voice/ids';
 import { readPraise, variant } from '../episode/lineVariants';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxRight, sfxSelect, sfxSummon } from '../audio/sfx';
-import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH } from '../config';
+import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH, SOUND_GAP_MS } from '../config';
 import { episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { burst, fitImage, floatText, pictureSize, popIn, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -52,8 +51,7 @@ import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
 import type { KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
-import { applyHouseMood, roomSeed } from '../world/houseMood';
-import type { Spot } from '../world/RoomScene';
+import { GIGGLE_BEAT_MS, type Spot } from '../world/RoomScene';
 import { PLAYER_HEIGHT } from '../world/Player';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
@@ -76,8 +74,6 @@ const CLEAR_SPOTS: [number, number][] = [[520, 560], [760, 560]];
 /** The pictures standing in the room (feet positions), left to right. */
 const OPTIONS: [number, number][] = [[400, 640], [640, 655], [880, 640]];
 const PICTURE_SIZE = 116;
-/** The beat after each sound as the plate is sounded out (hunt 11: 160 ms ran the sounds together; the entry hall's and Charge's are 400). */
-const SOUND_GAP_MS = 400;
 /** A round's things pop in together; its first card is said once they have (`popIn`'s 380 ms). */
 const POP_MS = 400;
 /** Where she walks in. */
@@ -154,8 +150,7 @@ export class RhymeRoom extends HouseSideRoom {
     // The pictures' row keeps 250 px clear each side (hunt 11: Moriarty's ❓ lay in line with them, under the
     // third card's question mark, a fourth thing to walk to), and her way in (M58's rule: Bavmorda's bones
     // lay at her feet there).
-    applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true, floorOnly: OUTDOOR_ROOMS.has(this.roomId), avoid });
-    this.bag = new Bag(this);
+    this.bag = this.moodAndBag(avoid);
     this.enter(ENTRY.x, ENTRY.y);
     // Every plate's sounds and the first round's instructions too (M64: fetched as each came up, a second or
     // more of silence before several of them). An ensure goes to the front of the queue: the line needed
@@ -355,7 +350,7 @@ export class RhymeRoom extends HouseSideRoom {
     this.wrongTries++;
     this.keepMisses(r.word, this.wrongTries);
     this.giggle(spot.obj, spot.x, spot.y - 150, this.wrongTries - 1);
-    await this.wait(350);
+    await this.wait(GIGGLE_BEAT_MS);
     if (f !== this.flow) return;
     await this.sayCard(0);
     if (f !== this.flow) return;

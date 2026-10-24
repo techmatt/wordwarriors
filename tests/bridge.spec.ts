@@ -14,9 +14,9 @@ import { BANK_BY_WORD } from '../content/phonics/bank';
 import { canHold } from '../content/phonics/letters';
 import { letterSoundLine, wordLine } from '../content/voice/ids';
 import { BRIDGE_PICTURES, CROSS_WORDS, bridgeEase } from '../src/rules/bridge';
-import { SLOW, bagged, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom, press, seedProgress, slideAcross, state, stick, texts, toParentAndBack, until, type WWState } from './harness';
+import { SLOW, bagged, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom, press, seedProgress, shotIn, slideAcross, state, stick, texts, toParentAndBack, until, type WWState } from './harness';
 
-const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/054_${name}.png` });
+const shot = shotIn('054');
 
 const bridge = (s: WWState) => s.room?.bridge;
 /** Each stone's sound, as the bank spells the word (EGG's GG is G's sound, THUMB's MB is M's: item 072). */
@@ -27,7 +27,7 @@ const levels = (s: WWState) => s.progress.bridgeLevels;
 
 /** Every bridge picture at help level `n` (a superset of the words she can cross). */
 async function seedLevels(page: Page, n: number): Promise<void> {
-  await seedProgress(page, { version: 1, bridgeLevels: Object.fromEntries(BRIDGE_PICTURES.map((w) => [w, n])) });
+  await seedProgress(page, { bridgeLevels: Object.fromEntries(BRIDGE_PICTURES.map((w) => [w, n])) });
 }
 
 /** Slide onto stone `i` and stop there. */

@@ -96,11 +96,9 @@ export const FRAME_BY_ID: Record<string, Frame> = Object.fromEntries(FRAMES.map(
  * out of her bag first. Since item 037 every pictured bank word is one, and
  * its effect lives with every other word's in content/phonics/effects.ts.
  */
-export type FetchItem = WordEffect;
+export const FETCH_ITEMS: WordEffect[] = THINGS.map((w) => EFFECT_BY_WORD[w.word]!).filter(Boolean);
 
-export const FETCH_ITEMS: FetchItem[] = THINGS.map((w) => EFFECT_BY_WORD[w.word]!).filter(Boolean);
-
-export const FETCH_BY_WORD: Record<string, FetchItem> = Object.fromEntries(FETCH_ITEMS.map((f) => [f.word, f]));
+export const FETCH_BY_WORD: Record<string, WordEffect> = Object.fromEntries(FETCH_ITEMS.map((f) => [f.word, f]));
 
 /**
  * Pictures a four-year-old could take for each other. A room never shows a

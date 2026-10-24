@@ -446,7 +446,7 @@ export class TugStage extends BaseStage {
     return true;
   }
 
-  override onHit(target: Fighter, power: number, _from: Fighter | null): void {
+  override onHit(target: Fighter, power: number): void {
     if (this.placeOf(target) === null || this.lock !== null) return;
     // A hit puller stumbles a little towards the line, and the knot gives a touch.
     const dir = target.team === 'villain' ? -1 : 1;
@@ -521,7 +521,7 @@ export class TugStage extends BaseStage {
     this.surgeTo = 1.2;
   }
 
-  override async counter2(_v: Fighter): Promise<void> {
+  override async counter2(): Promise<void> {
     // The heroes dig in their heels...
     this.lock = Math.max(this.lead, 0);
     this.leadRate = 3;

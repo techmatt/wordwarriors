@@ -18,7 +18,7 @@ import Phaser from 'phaser';
 import { hubArt } from '../../content/house/house';
 import { startMusic } from '../audio/music';
 import { sfxFanfare, sfxSelect } from '../audio/sfx';
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { advance, castArt, castScale, episode, podiumSecond } from '../episode/Episode';
 import { burst, fitImage } from '../fx/juice';
 import { Controls } from '../input/Controls';
@@ -84,7 +84,7 @@ export class TheEndScene extends Phaser.Scene {
     });
 
     const title = this.add
-      .text(GAME_WIDTH / 2, 170, THE_END_TEXT, { fontFamily: '"Arial Black", sans-serif', fontSize: '150px', color: '#ffd23f', stroke: '#5a1a7a', strokeThickness: 20 })
+      .text(GAME_WIDTH / 2, 170, THE_END_TEXT, { fontFamily: FONT_HEAVY, fontSize: '150px', color: '#ffd23f', stroke: '#5a1a7a', strokeThickness: 20 })
       .setOrigin(0.5)
       .setDepth(DEPTH.hud)
       .setScale(0);

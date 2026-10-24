@@ -3,9 +3,9 @@
  *
  * edge-tts pads every clip with about a second and a half of silence after the
  * last word (measured 2026-10-18: 1,473 clips, 23.7 MB, of which 2,976 s was
- * speech and the rest tail). With a narrator line per possible ally the voice
- * folder is the biggest thing in the repo, so the build cuts each clip at the
- * last word's end plus a short tail. MP3 frames are self-delimiting, so cutting
+ * speech and the rest tail). With a narrator line per possible ally that adds
+ * up, so to keep the shared voice-gen folder and the game's downloads small the
+ * build cuts each clip at the last word's end plus a short tail. MP3 frames are self-delimiting, so cutting
  * at a frame boundary is safe; the bit reservoir only ever borrows backwards,
  * so dropping trailing frames cannot break the ones kept.
  */

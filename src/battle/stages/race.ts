@@ -478,7 +478,7 @@ export class RaceStage extends BaseStage {
     return true;
   }
 
-  override onHit(target: Fighter, power: number, _from: Fighter | null): void {
+  override onHit(target: Fighter, power: number): void {
     // A shot landing on the frozen clock: no flourish to hang over the faded fight while she picks (hunt 11).
     if (this.host.choosing) return;
     const r = this.racer(target);
@@ -554,7 +554,7 @@ export class RaceStage extends BaseStage {
     await h.wait(1.2);
   }
 
-  override async counter2(_v: Fighter): Promise<void> {
+  override async counter2(): Promise<void> {
     this.beat = 'counter';
     // TURBO! keeps the heroes ahead (hunt 11: 0.3 dropped their lead, and the villain caught up after it).
     this.override = Math.max(0.6, this.lead);

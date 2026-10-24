@@ -6,12 +6,12 @@
  * Stretchy Bridge (item 081). Screenshots land in tests/screenshots/ (ignored) for a look.
  */
 
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
-import { SLOW, bagged, boot, choose, collectErrors, expectNoErrors, playWordMachine, press, state, toParentAndBack, until } from './harness';
+import { SLOW, bagged, boot, choose, collectErrors, expectNoErrors, playWordMachine, press, shotIn, state, toParentAndBack, until } from './harness';
 import { letterSoundLine, rimeLine, sillyLine, wordLine } from '../content/voice/ids';
 
-const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/026_${name}.png` });
+const shot = shotIn('026');
 
 test('the word machine opens: a picture, a rime, a tile per onset, and no word said', async ({ page }) => {
   const errors = collectErrors(page);

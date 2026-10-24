@@ -13,7 +13,7 @@ import type { Issue, Layout, Since } from './checks';
  * British spellings (and British words) the game must not show or say: Matt
  * found PRACTISE (item 059). Whole words, any case; each with its American form.
  */
-export const BRITISH: Record<string, string> = {
+const BRITISH: Record<string, string> = {
   practise: 'practice', practised: 'practiced', practising: 'practicing',
   colour: 'color', colours: 'colors', coloured: 'colored', colourful: 'colorful',
   favourite: 'favorite', favourites: 'favorites', honour: 'honor', neighbour: 'neighbor',
@@ -51,7 +51,7 @@ export function spellingIssues(l: Layout, voice: Since['voice'], scene: string):
  * VAN): she matches the letters instead of reading or sounding it out. A
  * `pic_<word>` image and a text reading WORD within GIVEAWAY_PX of it.
  */
-export const GIVEAWAY_PX = 140;
+const GIVEAWAY_PX = 140;
 
 export function giveawayIssues(l: Layout, scene: string, read: readonly string[] = []): Issue[] {
   const out: Issue[] = [];

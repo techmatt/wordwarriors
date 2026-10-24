@@ -18,7 +18,7 @@ import { BATTLE_SPEED, SLOW, boot, collectErrors, expectNoErrors, place, press, 
 import { outfitFill } from '../src/rules/heights';
 
 /** Her dress, then each wave 1-2 ally's outfit for her: by hand, so a new outfit in content/battle/outfits.ts needs its line here. */
-const OUTFITS = [
+const ALLY_OUTFITS = [
   ['ellie', 'char_julia_good'],
   ['seraphina', 'char_julia_keeper'],
   ['elsa', 'char_julia_snow'],
@@ -32,7 +32,7 @@ const OUTFITS = [
 test('her new outfits stand her own height, head to soles, within 4% of her dress (items 111, 114)', SLOW, async ({ browser }) => {
   test.setTimeout(240_000);
   const tall: Record<string, number> = {};
-  for (const [ally, art] of OUTFITS) {
+  for (const [ally, art] of ALLY_OUTFITS) {
     const page = await (await browser.newContext()).newPage();
     const errors = collectErrors(page);
     await boot(page, `?scene=battle&part=1&battle=short&nojourney=1&villain=tiamat&fight=brawl&ally=${ally}`);
@@ -45,7 +45,7 @@ test('her new outfits stand her own height, head to soles, within 4% of her dres
     await page.context().close();
   }
   console.log(Object.entries(tall).map(([a, t]) => `${a} ${t.toFixed(1)}`).join(', '));
-  for (const [ally] of OUTFITS) expect(Math.abs(tall[ally]! / tall.ellie! - 1), ally).toBeLessThan(0.04);
+  for (const [ally] of ALLY_OUTFITS) expect(Math.abs(tall[ally]! / tall.ellie! - 1), ally).toBeLessThan(0.04);
 });
 
 test('story fight: yellow mashed at the gold grab says Dad\'s line again, not once a press, and green on the hoard is taken (hunt 7)', SLOW, async ({ page }) => {

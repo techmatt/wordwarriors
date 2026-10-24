@@ -7,6 +7,8 @@
  * The word is never spoken before she answers. Yellow sounds out its letters
  * one at a time, lighting each on the banner, and never blends them. Character
  * names appear as sight words, with the character's card as the picture.
+ *
+ * Parked (CLAUDE.md): out of the episode, kept on purpose; reach it with ?scene=picture (BootScene).
  */
 
 import Phaser from 'phaser';
@@ -21,7 +23,7 @@ import { pictureRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
 import { bannerArt, bannerPanelWidth, inkOf, tagPanel } from '../../ui/banner';
 import type { Spot } from '../../world/RoomScene';
-import { SideRoom } from '../../world/SideRoom';
+import { ParkedGame } from './ParkedGame';
 
 const BANNER_W = 560;
 /** Under the meter's slots, and a slim trim: it ends at about y 262 (a long word's smaller letters) to 275. */
@@ -43,7 +45,7 @@ const STEP_BACK = PICTURE_FEET + 120;
 
 const ITEMS = 4;
 
-export class WordToPicture extends SideRoom {
+export class WordToPicture extends ParkedGame {
   private items: WordItem[] = [];
   private banner: Phaser.GameObjects.Container | null = null;
   private letters: Phaser.GameObjects.Text[] = [];

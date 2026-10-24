@@ -12,8 +12,7 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
-import { boot, choose, collectErrors, debugTagShown, expectNoErrors, press, readToKeyWord, state, storedBlob as stored, until, type WWState } from './harness';
-import type { WWHooks } from '../src/testHooks';
+import { boot, choose, collectErrors, debugTagShown, expectNoErrors, press, readToKeyWord, state, storedBlob as stored, until, type WW, type WWState } from './harness';
 
 const music = async (page: Page) => (await state(page)).music;
 
@@ -36,7 +35,7 @@ test('F9 as the recap fades out to THE END is ignored: THE END comes, not the re
   await boot(page, '?scene=victory&nojourney=1&read=bed,hat');
   await until(page, (s) => s.scene === 'Victory', 60_000, 'the recap');
   await expect.poll(() => page.evaluate(() => {
-    const ww = (window as unknown as { __ww: WWHooks }).__ww;
+    const ww = (window as unknown as WW).__ww;
     ww.hush();
     return (ww.state() as WWState).recapDone;
   }), { timeout: 60_000 }).toBe(true);

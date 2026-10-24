@@ -78,6 +78,6 @@ here.
 
 ## Known leftovers
 
-- Nine `say` fields are redundant; they come out with the next voice build (removing one
+- The `say` fields identical to their `text` (`content/voice/script.ts`) are redundant; they come out with the next voice build (removing one
   changes the line's text, so re-synthesises it).
 - Debug runs still count taunts.

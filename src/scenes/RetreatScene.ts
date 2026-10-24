@@ -5,6 +5,8 @@
  *
  * She walks to the anvil-sparkle and presses green to go and make it, so the
  * transition into Spell the Spell is her choice.
+ *
+ * Parked (CLAUDE.md): out of the episode, kept on purpose; reach it with ?scene=retreat (BootScene).
  */
 
 import Phaser from 'phaser';

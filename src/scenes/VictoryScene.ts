@@ -14,7 +14,7 @@ import { narratorLine, wordLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
-import { DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_COMIC, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { castArt, castFace, castScale, counterWord, episode, narrator, podiumCheer, podiumCheerRight, podiumSecond, villainSpec } from '../episode/Episode';
 import { variant } from '../episode/lineVariants';
 import { burst, fitImage, fitPicture, shockwave } from '../fx/juice';
@@ -154,7 +154,7 @@ export class VictoryScene extends Phaser.Scene {
     }
 
     title = this.add
-      .text(GAME_WIDTH / 2, 105, 'VICTORY!', { fontFamily: '"Arial Black", sans-serif', fontSize: '104px', color: '#ffd23f', stroke: '#5a1a7a', strokeThickness: 16 })
+      .text(GAME_WIDTH / 2, 105, 'VICTORY!', { fontFamily: FONT_HEAVY, fontSize: '104px', color: '#ffd23f', stroke: '#5a1a7a', strokeThickness: 16 })
       .setOrigin(0.5)
       .setDepth(DEPTH.hud);
     title.setScale(0);

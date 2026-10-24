@@ -34,7 +34,7 @@ import { WORD_MACHINE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { BAG_WORDS, LEGACY_BAG_WORDS, met, recentWords, wordWeight as bankWeight } from './bank';
 import { pickWeighted, shuffle, type Rand } from './random';
-import { unreadFirst } from './shifter';
+import { unreadFirst } from './recent';
 
 export type MachineMode = 'make' | 'flip' | 'real_or_silly';
 

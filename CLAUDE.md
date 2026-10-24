@@ -28,16 +28,16 @@ read-only reference.
 | Path | What |
 | --- | --- |
 | `src/` | `main.ts` boots Phaser; `config.ts` sizes, depth bands and every tuning knob; `hookState.ts` / `testHooks.ts` the tests' `window.__ww`; `realTime.ts` wall-clock timeouts the tests' fast clocks do not stretch; `displayList.ts` `walkObjects`, the display-list walk ArtBank, the hooks and the QA probe share |
-| `src/scenes/` | One scene per episode step, the live side rooms (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom, ShifterRoom, RhymeRoom), Wait (art loading), Debug (minigame debug mode), Parent; parked: Pick, Alarm, Retreat, `minigames/`. "Minigame" means only a pool entry (`src/rules/minigames.ts`) |
+| `src/scenes/` | One scene per episode step, the live side rooms (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom, ShifterRoom, RhymeRoom), Wait (art loading), Debug (minigame debug mode), Parent; parked: Pick, Alarm, Retreat, `minigames/` (their base `ParkedGame`). "Minigame" means only a pool entry (`src/rules/minigames.ts`) |
 | `src/battle/` | `BattleScene` (the orchestrator: the director, `part1`/`part2`), `sim` (the simulation: AI, `hit`, shots), `volleys` (her bag's fetched things, the runes), `beats` (combo, ultimate, counter, finish), `Fighter`, `moveChoice` (the frozen-fight word pick), `hud`, `abilities` (every ability kind, `CASTS`), `movement` (`STEER`), `padPlace` (Phaser-free pad placement); `stages/` each fight style; `story/` the story fight |
 | `src/episode/` | `Episode.ts` the flow (scenes call `advance()`; nothing else decides flow); Phaser-free `state.ts`, `draws.ts`, `cast.ts`, `plans.ts`, `debug.ts`, `lineVariants.ts` |
-| `src/input/` | `Controls` (pad, keys, virtual pad), `TextEntry` (A–Z), `dadLock`, `dadButtons`, `debugKey` |
+| `src/input/` | `Controls` (pad, keys, virtual pad), `TextEntry` (A–Z), `dadLock`, `dadButtons`, `debugKey`, `browserKeys` (the browser's own keys and Tab's focus move, prevented) |
 | `src/audio/`, `src/voice/` | Synthesised sfx and music, `VoiceBus` (the one voice arbiter), `holdSound`; `VoiceBank` (reads `public/voice-gen/manifest.json`) |
-| `src/art/` | `ArtBank`, `needs` (`artFor`), `gate` (`startScene`: every scene starts through it) |
-| `src/state/` | `ProgressStore` (localStorage, versioned) |
+| `src/art/` | `ArtBank`, `needs` (`artFor`), `gate` (`startScene`: every scene starts through it), `pictureBox` (word pictures' fit, Phaser-free) |
+| `src/state/` | `ProgressStore` (localStorage, versioned); `progress.ts` the one instance, re-read when another tab writes it (item 144) |
 | `src/rules/` | Phaser-free, unit-tested game rules and draws; `rooms` (the episode's room plans, `episodePlans`), `sentences` (the sentence game's word rules), `difficulty`, `recent` (rotations across episodes), `random` (seeded) |
 | `src/world/` | `RoomScene` (walk-to-answer rooms), `SideRoom.ts` (`SideRoom`, every side room's base, and `HouseSideRoom`, the live rooms' base), `Player`, `houseMood` |
-| `src/ui/`, `src/fx/`, `src/qa/` | Captions, bubbles, button dots, `cornerTag`; particles, `sceneGen`; the bug-hunt checker's probe (`?qa=1`) |
+| `src/ui/`, `src/fx/`, `src/qa/` | Captions, bubbles, button dots, `cornerTag`, `banner` (the sentence banner, `inkOf`), `glyphMetrics`; particles, `sceneGen`; the bug-hunt checker's probe (`?qa=1`) |
 | `content/battle/` | `roster.ts` **every character**, re-exporting `roster/` (characters in group files, `ROSTER`'s order fixed in `roster/index.ts`; every one is also a villain; the dads' forms have `person`); `fights.ts` fight styles; `outfits.ts` her outfits (a dad's form is a roster character); `stories/` story-fight scripts |
 | `content/house/` | `house.ts` rooms and quest places; `quests.ts`; `scenes.ts` hub story scenes; `endings.ts` victory scenes |
 | `content/phonics/` | `bank.ts` **the word bank**; `effects.ts` battle effects; `letters.ts`; `sentences.ts`; `families.ts`; `runes.ts`; `words.ts`, `spelling.ts` |
@@ -46,7 +46,7 @@ read-only reference.
 | `public/art/` | Generated, committed. Do not hand-edit |
 | `public/voice-gen/`, `art-originals/` | Untracked junctions to the Drive folder (README, *Storage*). Do not hand-edit |
 | `tools/` | `voice/`, `art/`, `shared.ts`, `phonics/audit.ts`; `recorder/phonics-recorder.html` (its hosted copy is synced by the planner, never edited here) |
-| `tests/` | Playwright specs, `harness.ts`; `unit/` node:test; `shots/`, `perf/`, `qa/`, `variety/` (README, *Not tests*); `fixtures/` (the voice-import test's WAV) |
+| `tests/` | Playwright specs, `harness.ts`; `unit/` node:test; `shots/`, `perf/`, `qa/`, `variety/` (README, *Not tests*); `fixtures/` (the voice-import test's WAV); root plumbing: `fastLane.ts` (`npm test`), `testBuild.ts` / `testDist.ts` + `vite.test.config.ts` (the suite's build), `vite.nowatch.config.ts`, `servers.ts` (`buildServerCommand` / `devServerCommand`, the configs' web servers), `gpu.ts` (every config's project), `sheets.ts` |
 | `docs/` | `systems.md`, `episode.md`, `engineering.md` (measured facts), `content.md` (adding content), `recording.md`, `art.md` (generated), `qa-findings.md` (known issues and Matt's calls), `rulings.md` (Matt's standing calls no other doc holds), `language-pass.md` (item 087's old-to-new line table, historical) |
 
 ## Commands
@@ -59,9 +59,9 @@ times and test counts: README, *Tests*.
 | `npm run dev` | Serve at http://localhost:5174 |
 | `npm run build` / `npm run preview` | Typecheck, then static `dist/` / serve it |
 | `npm run typecheck` | `src`, `tests`, `content`, `tools` (~2 s; the test runs do not typecheck) |
-| `npm test` | Fast lane, after every change (~14 s): unit tests and the `@smoke` browser tests |
+| `npm test` | Fast lane, after every change (~35 s): unit tests and the `@smoke` browser tests |
 | `npm run test:unit` | Unit tests alone |
-| `npm run test:browser` | Before a commit (~95 s): every browser test not tagged `@slow`, plus the specs covering what changed (`npx playwright test <spec>`) |
+| `npm run test:browser` | Before a commit (~3 min): every browser test not tagged `@slow`, plus the specs covering what changed (`npx playwright test <spec>`) |
 | `npm run test:slow` / `npm run test:all` | The `@slow` lane (~5 min) / everything (~6 min). **Not by default:** only for a change touching every scene |
 | `npm run test:pairs` | Every ally × villain pair (~1 h) |
 | `npm run voice:lines` / `voice:build` / `voice:status` | Compose `lines.json`; synthesise changed lines (needs `uv` and network); what is recorded |

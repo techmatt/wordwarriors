@@ -10,14 +10,14 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, expectNoErrors, until, type WWState } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, shotIn, until, type WWState } from './harness';
 
 /** The episode's cast, once Boot has drawn it (the hooks are up before Boot is done). */
 async function episodeOf(page: Page): Promise<WWState['episode']> {
   return (await until(page, (s) => s.scene !== '' && s.scene !== 'Boot', 30_000, 'booted')).episode;
 }
 
-const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/025_${name}.png` });
+const shot = shotIn('025');
 
 test('the same seed casts and plans the same episode (from the same progress)', SLOW, async ({ browser }) => {
   // Item 133: the seed reaches the house's draws too (`planRand`): rooms, games and words, the gift and the moves.

@@ -11,6 +11,8 @@
  *
  * The keyboard is A–Z only while this scene is open (TextEntry). Walking is
  * not needed here; her character stands by the anvil and hops on each letter.
+ *
+ * Parked (CLAUDE.md): out of the episode, kept on purpose; reach it with ?scene=spell (BootScene).
  */
 
 import Phaser from 'phaser';
@@ -21,12 +23,12 @@ import { spellWordsFor } from '../../../content/phonics/spelling';
 import { letterSoundLine, narratorLine, villainKey, wordLine } from '../../../content/voice/ids';
 import { voiceBus } from '../../audio/VoiceBus';
 import { sfxBoing, sfxKey } from '../../audio/sfx';
-import { DEPTH, FONT_COMIC, GAME_WIDTH } from '../../config';
+import { DEPTH, FONT_COMIC, FONT_HEAVY, GAME_WIDTH } from '../../config';
 import { castFace, episode, narrator, villainSpec } from '../../episode/Episode';
 import { burst, fitImage, popIn, shake, wiggle } from '../../fx/juice';
 import { openTextEntry } from '../../input/TextEntry';
 import type { Spot } from '../../world/RoomScene';
-import { SideRoom } from '../../world/SideRoom';
+import { ParkedGame } from './ParkedGame';
 
 interface Box {
   letter: string;
@@ -35,7 +37,7 @@ interface Box {
   filled: Phaser.GameObjects.Text | null;
 }
 
-export class Spelling extends SideRoom {
+export class Spelling extends ParkedGame {
   private words: string[] = [];
   private boxes: Box[] = [];
   private cursor = 0;
@@ -147,7 +149,7 @@ export class Spelling extends SideRoom {
       [...row].forEach((ch, i) => {
         const bg = this.add.rectangle(0, 0, size, size, 0xfaf6ee).setStrokeStyle(3, 0x5a4a8a);
         // Capital, as printed on the real keycap and as every text in the game.
-        const cap = this.add.text(-2, 1, ch.toUpperCase(), { fontFamily: '"Arial Black", sans-serif', fontSize: '24px', color: '#3a2a5a' }).setOrigin(0.5);
+        const cap = this.add.text(-2, 1, ch.toUpperCase(), { fontFamily: FONT_HEAVY, fontSize: '24px', color: '#3a2a5a' }).setOrigin(0.5);
         const key = this.add.container(x0 + i * (size + gap), 480 + r * (size + gap), [bg, cap]).setDepth(DEPTH.hud - 3);
         this.keys.set(ch, key);
       });

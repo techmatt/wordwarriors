@@ -8,6 +8,8 @@
  * always heard in order before she chooses. The word itself is spoken only
  * after the right door, as confirmation. Yellow replays the sounds one by one
  * (never blended).
+ *
+ * Parked (CLAUDE.md): out of the episode, kept on purpose; reach it with ?scene=blend (BootScene).
  */
 
 import Phaser from 'phaser';
@@ -21,13 +23,13 @@ import { burst, popIn } from '../../fx/juice';
 import { blendRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
 import type { Spot } from '../../world/RoomScene';
-import { SideRoom } from '../../world/SideRoom';
+import { ParkedGame } from './ParkedGame';
 
 const ITEMS = 3;
 const TILE_Y = 470;
 const TILE_COLORS = [0xff7ad9, 0xffd23f, 0x7ad9ff, 0x8aff8a];
 
-export class BlendPath extends SideRoom {
+export class BlendPath extends ParkedGame {
   private items: WordItem[] = [];
   private tiles: { letter: string; x: number; img: Phaser.GameObjects.Container; stepped: boolean }[] = [];
   private onTile = -1;

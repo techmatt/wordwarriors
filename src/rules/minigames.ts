@@ -140,7 +140,7 @@ export function lastGames(store: ProgressStore): string[] {
 }
 
 /** A game as the strict rotation counts it (item 137): in a side room the sentence game is one game whatever its frame; anything else, its id. */
-export const sideGame = (id: string): string => (MINIGAME_BY_ID[id]?.kind === 'sentence' ? 'sentence' : id);
+const sideGame = (id: string): string => (MINIGAME_BY_ID[id]?.kind === 'sentence' ? 'sentence' : id);
 
 /**
  * Whether a game in `slot` would repeat last episode's (item 137): a fetch

@@ -5,14 +5,14 @@
  * fetched and the last creature with them.
  */
 
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
-import { SLOW, SPEED, bagged, boot, choose, collectErrors, expectNoErrors, until, type WWState } from './harness';
+import { SLOW, SPEED, bagged, boot, choose, collectErrors, expectNoErrors, shotIn, until, type WWState } from './harness';
 import { letterSoundLine, wordLine } from '../content/voice/ids';
 
 const shifter = (s: WWState) => s.room?.shifter;
 /** Screenshots land in tests/screenshots/ (ignored). */
-const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/096_${name}.png` });
+const shot = shotIn('096');
 
 test('Shape-Shifter at base level: read it and fix it, a wrong pick on each sounded out, each word said only once she has it', async ({ page }) => {
   test.setTimeout(150_000);

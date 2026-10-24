@@ -16,6 +16,7 @@
 import { defineConfig } from '@playwright/test';
 
 import { gpuProjects } from '../gpu';
+import { buildServerCommand, devServerCommand } from '../servers';
 
 const PORT = Number(process.env.PERF_PORT ?? process.env.CONDUCTOR_PORT ?? 5196);
 
@@ -30,9 +31,7 @@ export default defineConfig({
   use: { baseURL: `http://localhost:${PORT}` },
   projects: gpuProjects(),
   webServer: {
-    command: process.env.PERF_DEV_SERVER
-      ? `node node_modules/vite/bin/vite.js --config tests/vite.nowatch.config.ts --port ${PORT} --strictPort`
-      : `node --import tsx tests/testBuild.ts && node node_modules/vite/bin/vite.js preview -c tests/vite.test.config.ts --port ${PORT} --strictPort`,
+    command: process.env.PERF_DEV_SERVER ? devServerCommand(PORT) : buildServerCommand(PORT),
     cwd: '../..',
     env: { WW_TEST_DIST: process.env.PERF_DIST ?? 'node_modules/.ww-perf-dist' },
     url: `http://localhost:${PORT}`,

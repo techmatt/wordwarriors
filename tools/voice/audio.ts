@@ -7,7 +7,7 @@
 
 import { Mp3Encoder } from '@breezystack/lamejs';
 
-export const MP3_KBPS = 96;
+const MP3_KBPS = 96;
 
 /** A float sample in [-1, 1] (clamped) as a 16-bit integer. */
 const toInt16 = (v: number) => Math.round(Math.max(-1, Math.min(1, v)) * 32767);

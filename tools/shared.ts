@@ -32,6 +32,12 @@ export function runMain(url: string, run: () => Promise<void>, prefix = ''): voi
 /** The game's committed art, `public/art/<id>.png`. */
 export const ART_DIR = path.join('public', 'art');
 
+/** Committed sprite art is this many times the display box, so it stays crisp when squashed bigger. */
+export const SPRITE_SCALE = 2;
+
+/** Rooms and arenas are full-frame backgrounds, at display size; every other kind is a sprite. */
+export const isBackgroundKind = (kind: string): boolean => kind === 'room' || kind === 'arena';
+
 /** A PNG as a data URL, for a Playwright page to draw. */
 export const pngDataUrl = (png: Buffer): string => `data:image/png;base64,${png.toString('base64')}`;
 

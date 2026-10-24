@@ -130,7 +130,6 @@ test('a returning player with everything maxed: the grown-ups page fits all thre
   const each = (ids: readonly string[]) => Object.fromEntries(ids.map((id) => [id, stat]));
   const words = BANK.map((w) => w.word);
   await seedProgress(page, {
-    version: 1,
     sounds: each(RUNE_SOUNDS),
     words: each(words),
     spelling: each(words),

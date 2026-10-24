@@ -100,8 +100,9 @@ export interface AbilitySpec {
   /**
    * The move words this move answers to (["zap", "zip"]), flavour since item
    * 037: a pad or gift word it answers to fires this move, styled
-   * (`abilityWords`). Each is one of MOVE_WORDS, or POW / ICE, which are never
-   * on a pad. Every character's good side has at least two moves with words
+   * (`abilityWords`). Each is a bank action word (ALL_ACTIONS: a stored one is
+   * flavour that never comes up, item 127), or POW / ICE, which are never on a
+   * pad. Every character's good side has at least two moves with words
    * (rules.test.ts). One list since item 047 (it was `word` plus `words`).
    */
   words?: string[];

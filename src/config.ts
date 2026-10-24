@@ -316,6 +316,23 @@ export type PadColorName = keyof typeof PAD_COLOR;
 /** Standing still this long brings the stick hint beside her (the rooms before she first moves; the battle's move choice, item 043). */
 export const STICK_HINT_MS = 4000;
 
+/** Nothing happening in a walking room for this long offers the prompt again (ms, `RoomScene`). */
+export const IDLE_REPROMPT_MS = 15_000;
+/** Quiet seconds before the battle's partner says which word to find again (`src/battle/moveChoice.ts`). */
+export const CHOICE_REPROMPT = 10;
+/** Quiet seconds before a story fight's grab line is said again (`src/battle/story/walk.ts`). */
+export const GRAB_REPROMPT = 10;
+/** How long the bedroom's "Wake up!" waits for her green before she pops out by herself (ms). */
+export const WAKE_WAIT_MS = 6000;
+
+/**
+ * The beat after each sound when a word is sounded out unit by unit (ms): the entry
+ * hall's clue, Charge the Spell's sounds, the rhyme room's plate (hunt 11: 160 ms ran
+ * the sounds together). The sentence room's key-word sound-out keeps its own 450
+ * (`LETTER_GAP_MS`), the entry hall's help 700 (`HELP_GAP_MS`).
+ */
+export const SOUND_GAP_MS = 400;
+
 /**
  * Free play (item 060): green jumps, blue / red / yellow cast, wherever she is
  * free to move and no answer is open (`src/fx/freePlay.ts`). Pure play: it
@@ -350,9 +367,18 @@ export const ENDING_PAUSE = { intro: 3000, between: 1500, outro: 3000 };
  * knock the villain, as a fraction of max. It starts at `start`, so the opening's
  * volleys and runes cannot use it all up; each super and the combo lower it by
  * `step` before they land (so each takes a visible bite), never below `end`,
- * where it sits for the ultimate. Part 2's floor stays 0.3.
+ * where it sits for the ultimate. Part 2's floor is `HEALTH_FLOORS.main`.
  */
 export const PART1_VILLAIN_FLOOR = { start: 0.75, step: 0.12, end: 0.45 };
+
+/**
+ * The battle's other health floors, as fractions of max (`src/battle/sim.ts`,
+ * `src/battle/beats.ts`): `main`, the least the simulation leaves the hero always
+ * and the villain in part 2; `heroFloored`, the heroes' floor once part 1's
+ * ultimate lands, which knocks them down to `heroFlooredHp`; `villainFinish`, the
+ * villain's through part 2's finish, until the last hit takes it to 0.
+ */
+export const HEALTH_FLOORS = { main: 0.3, heroFloored: 0.06, heroFlooredHp: 0.08, villainFinish: 0.06 };
 
 /**
  * The least time between two of Charge the Spell's runes in the battle, s (hunt

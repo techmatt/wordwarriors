@@ -16,7 +16,7 @@ import { nameLine, reformedLine, ultimateLine } from '../../content/voice/ids';
 import { stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxPoof, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh } from '../audio/sfx';
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH, PART1_VILLAIN_FLOOR } from '../config';
+import { DEPTH, GAME_HEIGHT, GAME_WIDTH, HEALTH_FLOORS, PART1_VILLAIN_FLOOR } from '../config';
 import { castArt, castScale, counterArt, counterWord, episode, helper, namedCounter, reformedOf, villainSpec } from '../episode/Episode';
 import { burst, fitImage, fitPicture, flash, floatText, fxQuality, hitstop, popIn, punch, shake, shockwave, slowmo, speedLines } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -26,6 +26,17 @@ import type { BattleHud } from './hud';
 import { BRAWL, type BattleSim, type BattleStats } from './sim';
 import type { FightStage, Phase } from './stages/stage';
 import { revealSpot } from './volleys';
+
+/**
+ * The villain's ultimate wound up (`ultimateWindUp`), handed whole to Part 1's `ultimateFloors` or
+ * Part 2's `ultimateCountered`: the villain, its ultimate, whether it is a giant, and its roaring aura.
+ */
+export interface WindUp {
+  v: Fighter;
+  ult: AbilitySpec;
+  giant: boolean;
+  aura: Phaser.GameObjects.Particles.ParticleEmitter;
+}
 
 /** What Part 2's counter stagings share (`ultimateCountered`): her hero `h`, and the counter-item's picture, its glow and its scale before the pop-in. */
 interface CounterBeat {
@@ -182,13 +193,13 @@ export class BattleBeats {
 
   /** The villain's ultimate. Part 1: the heroes are floored. Part 2: the counter-item answers it. */
   async ultimate(): Promise<void> {
-    const { v, ult, giant, aura } = await this.ultimateWindUp();
-    if (this.b.part === 1) await this.ultimateFloors(v, ult, giant);
-    else await this.ultimateCountered(v, ult, giant, aura);
+    const w = await this.ultimateWindUp();
+    if (this.b.part === 1) await this.ultimateFloors(w);
+    else await this.ultimateCountered(w);
   }
 
   /** Both parts: everyone to their own side, then the villain grows and roars its ultimate. */
-  async ultimateWindUp(): Promise<{ v: Fighter; ult: AbilitySpec; giant: boolean; aura: Phaser.GameObjects.Particles.ParticleEmitter }> {
+  async ultimateWindUp(): Promise<WindUp> {
     const b = this.b;
     const scene = b.stage;
     b.phase = 'ultimate';
@@ -252,10 +263,10 @@ export class BattleBeats {
   }
 
   /** Part 1, too strong: the heroes are floored, dizzy and fine. */
-  async ultimateFloors(v: Fighter, ult: AbilitySpec, giant: boolean): Promise<void> {
+  async ultimateFloors({ v, ult, giant }: WindUp): Promise<void> {
     const b = this.b;
     const scene = b.stage;
-    b.sim.floors.heroMain = 0.06;
+    b.sim.floors.heroMain = HEALTH_FLOORS.heroFloored;
     // Part 1's villain floor at its last step for the ultimate, whatever the beats before it (hunt 11, M63).
     b.sim.floors.villainMain = PART1_VILLAIN_FLOOR.end;
     cast(b, v, ult, b.heroes[0] ?? null, 2.6);
@@ -268,7 +279,7 @@ export class BattleBeats {
     punch(scene, 0.1, 220);
     sfxBoom(3);
     for (const h of b.team()) {
-      h.hp = Math.min(h.hp, h.maxHp * 0.08);
+      h.hp = Math.min(h.hp, h.maxHp * HEALTH_FLOORS.heroFlooredHp);
       h.floored = true;
       h.lift = 0;
       h.setStatus('stun', 99, b.now);
@@ -285,7 +296,7 @@ export class BattleBeats {
    * draw lands on its word, with its own staging; otherwise the thing in the
    * picture, which scares the villain silly whatever it is (item 015).
    */
-  async ultimateCountered(v: Fighter, ult: AbilitySpec, giant: boolean, aura: Phaser.GameObjects.Particles.ParticleEmitter): Promise<void> {
+  async ultimateCountered({ v, ult, giant, aura }: WindUp): Promise<void> {
     const b = this.b;
     const scene = b.stage;
     b.phase = 'counter';
@@ -317,7 +328,7 @@ export class BattleBeats {
     scene.tweens.add({ targets: item, alpha: 0, scale: 0, duration: 400, onComplete: () => item.destroy() });
     b.darken(0, 600);
     // The contest turns the heroes' way.
-    await b.show.counter2(v);
+    await b.show.counter2();
     v.growUntil = 0;
     v.setStatus('stun', 99, b.now);
     floatText(scene, v.cx, v.top - 20, 'DIZZY!', '#ffd23f', 56);
@@ -512,7 +523,7 @@ export class BattleBeats {
     b.show.finishLine();
     await b.say(fightLineKey(b.fight, 'finish'));
     // Low, but not zero: the last hit below is the one that wins.
-    b.sim.floors.villainMain = 0.06;
+    b.sim.floors.villainMain = HEALTH_FLOORS.villainFinish;
     const team = b.team();
     for (const [i, h] of team.entries()) {
       b.after(i * 700, () => {

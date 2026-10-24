@@ -4,7 +4,7 @@
  *
  * - A pictured word (`thing`) is a fetched battle item: her bag pops, the
  *   picture flies out, and the hero fires `ability` with a THE NET! banner
- *   (BattleScene `useFetched`).
+ *   (`BattleVolleys.useFetched`, src/battle/volleys.ts).
  * - An action word is a move pad: reading it casts it. Her hero fires the
  *   word's own `ability`, supercharged, with a SUPER JUMP! banner. When the
  *   word is also one of a teammate's own abilities (`words` in the

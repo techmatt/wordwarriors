@@ -13,7 +13,9 @@
  * `face_<owner>_<id>` from them) and her height in the picture. Adding one is a
  * record here, then `art:alts` / `art:pick` for its art and a measured `fill`.
  * The first outfit whose `when` matches the cast wins, so put the narrower
- * ones first. A villain's or ally's costume works the same way.
+ * ones first. Only Julia's outfits are drawn today: content/art/assets.ts
+ * builds their art and prompts from OUTFITS.julia and her roster look, and
+ * DRESS_FILL measures only her; another owner's costume needs both extended.
  */
 
 export interface Outfit {
