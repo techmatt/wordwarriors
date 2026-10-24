@@ -155,9 +155,10 @@ test("Ellie's gift scene shows her drawn bubble, the gift word inside it through
   let seen = 0;
   for (let i = 0; i < 300 && seen < 8; i++) {
     const l = await qaLayout(page);
-    const bubble = l.images.find((im) => im.scene === 'Hub' && im.key === 'prop_bubble');
+    // The big one over Ellie, not the little one on her blanket (the gift's spot, item 138).
+    const bubble = l.images.find((im) => im.scene === 'Hub' && im.key === 'prop_bubble' && im.b[2] - im.b[0] >= 140);
     const word = l.texts.find((x) => x.scene === 'Hub' && x.text === gift);
-    if (bubble && word && bubble.b[2] - bubble.b[0] >= 140) {
+    if (bubble && word) {
       seen++;
       expect(word.b[0], `${gift} left of the bubble`).toBeGreaterThanOrEqual(bubble.b[0]);
       expect(word.b[2], `${gift} right of the bubble`).toBeLessThanOrEqual(bubble.b[2]);

@@ -233,7 +233,8 @@ export const ODDBALLS: CharacterSpec[] = [
     description: 'Bluerilla, Julia\'s big blue plush gorilla come to life: as a friend all bananas and big furry hugs. As a villain he is EvilRilla, a gorilla robot all rocket fists and an appetite for cars.',
     arena: 'street',
     good: {
-      displayName: 'Bluerilla', trail: { tint: [0xffe14a, 0x2a4aa8], shape: 'square' }, look: 'a big, gentle cartoon gorilla modelled on a plush toy, a kind, huggable giant: shaggy deep navy-blue fur all over, a large pale-blue face with a big friendly rounded muzzle and a happy smile, small dark kind eyes, a big round pale-blue chest and belly patch, very long navy arms with big pale-blue hands, and pale-blue feet, round and chunky like the toy, all soft curves, NOT a robot: no armour, no metal, no glowing eyes, waving hello with one big hand',
+      // Item 138 (Matt): said "blue-rilla" (edge-tts read it wrong), in every line that says it (compose.ts `respell`).
+      displayName: 'Bluerilla', sayName: 'Blue-rilla', trail: { tint: [0xffe14a, 0x2a4aa8], shape: 'square' }, look: 'a big, gentle cartoon gorilla modelled on a plush toy, a kind, huggable giant: shaggy deep navy-blue fur all over, a large pale-blue face with a big friendly rounded muzzle and a happy smile, small dark kind eyes, a big round pale-blue chest and belly patch, very long navy arms with big pale-blue hands, and pale-blue feet, round and chunky like the toy, all soft curves, NOT a robot: no armour, no metal, no glowing eyes, waving hello with one big hand',
       palette: [0x1f3a8a, 0xa8d0ff], glyph: '🦍', style: 'stomp', speed: 110, size: 1.4, hp: 160,
       abilities: [
         ab('banana_toss', 'Banana Toss', 'bolt', 2.4, 0xffe14a, 1, { count: 3, glyph: '🍌', words: ['pop', 'top'] }),

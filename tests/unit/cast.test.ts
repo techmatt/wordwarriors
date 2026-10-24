@@ -9,7 +9,7 @@ import { OUTFITS } from '../../content/battle/outfits';
 import { CHARACTER_BY_ID, DEFAULT_COMBO, PERSONS, ROSTER, comboFor, formsOf, personOf } from '../../content/battle/roster';
 import { HOME, PLACES, PLACE_BY_ID, SIDE_ROOM_BY_ID, hubArt } from '../../content/house/house';
 import { HOME_QUEST, QUESTS, questFor, questSetup } from '../../content/house/quests';
-import { HUB_SCENES, hubStory } from '../../content/house/scenes';
+import { ANY_SCENES, CASTERS, HUB_SCENES, hubStory, type GiftSpot } from '../../content/house/scenes';
 import { ART_BY_ID } from '../../content/art/assets';
 import { ACTIVE_CAST, CAST_ODDS } from '../../src/config';
 import { DADS, drawCast, phonicsFace, wakerOf } from '../../src/rules/cast';
@@ -251,6 +251,26 @@ test('story: the quest line and hub scene are drawn with the cast, the same for 
   assert.equal(hubStory('nobody', 'dada_jason', 1).ids.done, 'nar_dada_jason_hub_any_1_done');
   // A variant drawn for one helper still names a line for another (wrapped).
   assert.equal(hubStory('jormungandr', 'jormungandr', 3).ids.done, 'hub_jormungandr_1_done');
+});
+
+test('gift spots (item 138): a spell keeps the magic circle, a dish or a gadget gets its own spot, and the line names it', () => {
+  const NAMED: Record<GiftSpot, RegExp> = {
+    magic: /circle/,
+    plate: /the plate/,
+    tools: /the tool table/,
+    charger: /the (charging spot|upload pad|launch pad)/,
+    training: /the training spot/,
+    blanket: /the blanket/,
+    nest: /the straw/,
+    treasure: /the treasure,/,
+  };
+  for (const s of [...Object.values(HUB_SCENES).flat(), ...ANY_SCENES]) assert.match(s.circle.text, NAMED[s.spot], `"${s.circle.text}" names its ${s.spot} spot`);
+  // Every scene a caster or a spell-giving form plays is a spell: the circle.
+  for (const id of CASTERS) for (const s of HUB_SCENES[id]!) assert.equal(s.spot, 'magic', `${id}: ${s.circle.text}`);
+  // The chef's dishes and the builder's gadgets are not.
+  for (const s of HUB_SCENES.dada_jason!) assert.equal(s.spot, 'plate');
+  for (const s of HUB_SCENES.dada_matt!) assert.equal(s.spot, 'tools');
+  for (const s of HUB_SCENES.scar!) assert.equal(s.spot, 'charger');
 });
 
 test('active allies (item 111): each has what an ally in the draw uses', () => {

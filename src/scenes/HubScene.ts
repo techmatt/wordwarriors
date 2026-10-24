@@ -4,7 +4,8 @@
  * Part 1 (before the first battle): the helper's story scene gives her the
  * gift word (item 037, content/house/scenes.ts: a spell, a dish, a gadget, a
  * toy; its prop pops up with the word written on it, the last line trails off
- * into the word itself, "stand on the glowing spot and press green", the word
+ * into the word itself, "stand by the plate and press green" (its spot fits the
+ * story, item 138: src/world/giftSpot.ts), the word
  * flies into her), then two side-room doors pop out of the wall, each onto a
  * minigame from the pool (src/rules/minigames.ts). Each room she finishes
  * hangs its prize's picture on its door (Charge the Spell's, a rune stone);
@@ -38,12 +39,14 @@ import { voiceBus, type Utterance } from '../audio/VoiceBus';
 import { DEPTH, FONT_ROUNDED, GAME_WIDTH } from '../config';
 import { away, enterRoom, episode, giftWord, helper, hubScene, narrator, planFor, type Slot, type Step } from '../episode/Episode';
 import { isVariant, variant } from '../episode/lineVariants';
+import type { RoomInfo } from '../hookState';
 import { helperAbilityFor } from '../rules/moves';
 import { bob, burst, flash, popIn, shockwave, squash } from '../fx/juice';
 import { fitText } from '../ui/fitText';
 import { TEX } from '../fx/textures';
 import { Bag } from '../ui/Bag';
 import type { KeepOut } from '../ui/Caption';
+import { giftSpotLook, type GiftSpotLook } from '../world/giftSpot';
 import { applyHouseMood } from '../world/houseMood';
 import { RoomScene, type Spot } from '../world/RoomScene';
 
@@ -67,6 +70,8 @@ export class HubScene extends RoomScene {
   private hintIds: string[] = [];
   private doors: Partial<Record<'door_a' | 'door_b' | 'door_counter' | 'door_front', Spot>> = {};
   private circle: Spot | null = null;
+  /** How the gift's spot looks (item 138): its pickup and colours. */
+  private look: GiftSpotLook | null = null;
   /** The gift's prop with the word written on it (a scroll, a card). */
   private scroll: Phaser.GameObjects.Container | null = null;
   /** The hub scene's line that sends her to the circle (the box keeps off the circle for it). */
@@ -86,6 +91,7 @@ export class HubScene extends RoomScene {
     this.hintIds = [];
     this.doors = {};
     this.circle = null;
+    this.look = null;
     this.scroll = null;
     this.circleLine = null;
     this.ring = [];
@@ -190,17 +196,31 @@ export class HubScene extends RoomScene {
 
   // -- building ---------------------------------------------------------------
 
+  /**
+   * The spot she stands at to take the gift (item 138): the magic circle for
+   * a spell, else the scene's own pickup (src/world/giftSpot.ts). Still the
+   * spot `circle` to the tests and the flow, whatever it looks like.
+   */
   private buildCircle(): void {
     const { x, y } = HUB.circle;
-    const glow = this.add.image(0, -20, TEX.glow).setTint(0x9a7aff).setBlendMode(Phaser.BlendModes.ADD).setScale(1.6, 0.7).setAlpha(0.5);
-    this.tweens.add({ targets: glow, alpha: 0.9, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-    const img = this.art('prop_magic_circle', 200, 90, 0, 20);
-    this.circle = this.addSpot('circle', x, y, [glow, img], null);
+    const { story } = hubScene();
+    this.look = giftSpotLook(this, story.spot, () => this.art('prop_magic_circle', 200, 90, 0, 20), () => this.pickup(story.prop));
+    this.circle = this.addSpot('circle', x, y, this.look.children, null);
     this.circle.obj.setDepth(DEPTH.floor + 2);
     this.circle.enabled = false;
     // Once its word is caught the circle is spent: it is not there to draw her
     // away from the doors (item 039: it glowed on through part 2).
     if (episode.house.taught) this.circle.obj.setVisible(false);
+  }
+
+  protected override extraHooks(): Partial<RoomInfo> {
+    return { giftSpot: this.circle?.obj.visible ? hubScene().story.spot : null };
+  }
+
+  /** The scene's prop as a pickup on its spot: a prop's art, or its emoji standing on its own. */
+  private pickup(prop: string): Phaser.GameObjects.Image | Phaser.GameObjects.Text {
+    if (prop.startsWith('prop_') && this.textures.exists(prop)) return this.art(prop, 90, 70);
+    return this.add.text(0, 0, prop.startsWith('prop_') ? '✨' : prop, { fontSize: '64px', padding: { top: 14, bottom: 6 } }).setOrigin(0.5, 0.9);
   }
 
   private buildDoors(): void {
@@ -334,7 +354,7 @@ export class HubScene extends RoomScene {
     if (this.circle) {
       this.circle.enabled = true;
       this.circle.correct = true;
-      burst(this, this.circle.x, this.circle.y - 20, { count: 30, colors: [0x9a7aff, 0xffffff] });
+      burst(this, this.circle.x, this.circle.y - 20, { count: 30, colors: [this.look?.color ?? 0x9a7aff, 0xffffff] });
     }
     this.setPhase('circle', ids.circle);
   }
@@ -409,18 +429,25 @@ export class HubScene extends RoomScene {
     burst(this, cx, cy, { count: 24, colors: [ab.color, 0xffffff, ab.color2 ?? 0xcfd8e6] });
   }
 
-  /** Green in the magic circle: the word flies into her. */
+  /** Green on the gift's spot: the word flies into her, and the spot's pickup with it. */
   private async learn(): Promise<void> {
     this.setPhase('intro');
     this.locked = true;
     const circle = this.circle!;
+    const look = this.look!;
     circle.enabled = false;
     circle.correct = null;
     this.tweens.add({ targets: circle.obj, alpha: 0, duration: 900, delay: 700, onComplete: () => circle.obj.setVisible(false) });
     sfxSummon();
-    flash(this, 0xd8c8ff, 250);
-    shockwave(this, circle.x, circle.y - 20, 0x9a7aff, 260, 600);
-    burst(this, circle.x, circle.y - 40, { count: 90, colors: [0x9a7aff, 0xffd23f, 0xffffff, 0xff9ad5], speed: 520 });
+    flash(this, Phaser.Display.Color.ValueToColor(look.color).lighten(25).color, 250);
+    shockwave(this, circle.x, circle.y - 20, look.color, 260, 600);
+    burst(this, circle.x, circle.y - 40, { count: 90, colors: look.colors, speed: 520 });
+    const thing = look.pickup as (Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.Transform) | null;
+    if (thing) {
+      // The pickup leaves its spot and goes into her, as a power-up does.
+      this.tweens.killTweensOf(thing);
+      this.tweens.add({ targets: thing, x: this.player.x - circle.x, y: this.player.y - circle.y - 70, scale: 0, duration: 650, ease: 'Cubic.easeIn' });
+    }
 
     const scroll = this.scroll;
     const word = scroll?.getData('word') as Phaser.GameObjects.Text | undefined;
@@ -478,7 +505,7 @@ export class HubScene extends RoomScene {
       this.tweens.add({ targets: scroll, scale: 0, alpha: 0, duration: 300, ease: 'Back.easeIn', onComplete: () => scroll.destroy() });
       this.scroll = null;
     }
-    burst(this, this.player.x, this.player.y - 70, { count: 60, colors: [0xffd23f, 0xffffff, 0x9a7aff], speed: 380 });
+    burst(this, this.player.x, this.player.y - 70, { count: 60, colors: [0xffd23f, 0xffffff, look.color], speed: 380 });
     this.player.hop();
     sfxFanfare();
     episode.house.taught = true;

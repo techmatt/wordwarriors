@@ -206,10 +206,29 @@ export class WordMachine extends HouseSideRoom {
     this.drawSlot(false);
   }
 
+  /** The slot's side: a box round one capital, with a little room. */
+  private slotSize(): number {
+    return fontPx(this.onsetText) * 1.05;
+  }
+
+  /**
+   * The slot, a gap, then the rime, centred on the plate as one row (item 138,
+   * Matt): the slot sits clear before the rime's first letter, the I of ING
+   * as well as the A of AT, and the letter she picks lands there. A digraph
+   * onset wider than the box pushes the rime along rather than over it.
+   */
+  private layoutPanel(): void {
+    const s = this.slotSize();
+    const gap = s * 0.15;
+    const on = Math.max(s, this.onsetText.width);
+    const start = -(on + gap + this.rimeText.width) / 2;
+    this.onsetText.x = start + on / 2;
+    this.rimeText.x = start + on + gap + this.rimeText.width / 2;
+  }
+
   /** The onset's slot: an empty box (lit while the hint says its sound), or nothing behind a letter. */
   private drawSlot(filled: boolean, lit = false): void {
-    const h = fontPx(this.onsetText);
-    const s = h * 1.05;
+    const s = this.slotSize();
     this.slotBox.clear();
     if (filled) return;
     this.slotBox.fillStyle(lit ? 0xffd6e5 : 0xffffff, 1).fillRoundedRect(this.onsetText.x - s / 2, -s / 2, s, s, 10);
@@ -233,8 +252,9 @@ export class WordMachine extends HouseSideRoom {
     this.slotted = null;
     this.clearSpots();
     this.onsetText.setText('');
-    this.drawSlot(false);
     this.rimeText.setText(r.rime.toUpperCase()).setColor(INK);
+    this.layoutPanel();
+    this.drawSlot(false);
     if (!prev || prev.rime !== r.rime) {
       popIn(this, this.rimeText, 1);
       if (prev) {
@@ -327,6 +347,7 @@ export class WordMachine extends HouseSideRoom {
     flyer.destroy();
     this.drawSlot(true);
     this.onsetText.setText(tile.letter.toUpperCase());
+    this.layoutPanel();
     popIn(this, this.onsetText, 1);
     squash(this, this.machine, this.machine.scaleX, this.machine.scaleY, 0.08);
     sfxBoing();
@@ -371,6 +392,7 @@ export class WordMachine extends HouseSideRoom {
     // Out it pops, back to its place on the floor.
     this.onsetText.setText('').setColor(INK);
     this.rimeText.setColor(INK);
+    this.layoutPanel();
     this.drawSlot(false);
     sfxPoof();
     burst(this, this.slotPos().x, this.slotPos().y, { count: 16, speed: 200 });

@@ -53,13 +53,15 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
 4. **The quest place (the hub).** The door leads to the helper's quest place (the
    forest gym, the bubble castle; every character has one, and the house itself is the
    fallback for a character added without one, or `?place=home`) laid
-   out like the house: the helper by a magic circle, two side doors, later a secret
+   out like the house: the helper by the gift's spot, two side doors, later a secret
    door, and a way out (the house's front door, a glowing portal anywhere else).
    The helper (the ally, or the dad who woke her) plays a short story scene that gives
    her a **gift word** (item 037, `content/house/scenes.ts`, one of 2–3 per helper: a
    spell, a dish chef Dada Jason cooks up, a gadget builder Dada Matt builds, a toy).
    Its prop pops up with the word on it, the last line trails off into the word, she
-   stands on the glowing spot, presses green, and the word flies into her. That word
+   stands at the scene's spot (item 138: the magic circle for a spell; else a pickup
+   that fits the story, the dish on a plate, the gadget on the tool table, Scar's
+   charging pad, the toy on a blanket), presses green, and the word flies into her. That word
    is her first battle move. Then two side doors pop out of the wall. **A door she
    cannot use yet is not there at all** (her first play: told to find the two doors,
    she walked to the shut front door), so every door and exit appears, with a little

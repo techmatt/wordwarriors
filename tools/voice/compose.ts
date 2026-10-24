@@ -127,6 +127,21 @@ function tokenForms(): Map<string, { show: string; say?: string }> {
   return forms;
 }
 
+/**
+ * A name edge-tts says wrong is said by its sayName word in every line, the
+ * hand-written ones too (item 138: Bluerilla, in a hub scene, a wake line, a
+ * sentence prefix), not only where a template's `{hero}` fills it in. Whole
+ * words only, as written in the name; a line that already respells it is left.
+ */
+function respell(lines: LineSpec[], forms: Map<string, { show: string; say?: string }>): void {
+  const swaps = [...forms.values()].filter((f): f is { show: string; say: string } => Boolean(f.say));
+  for (const l of lines) {
+    let said = l.say ?? l.text;
+    for (const f of swaps) said = said.replace(new RegExp(`\\b${f.show.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g'), f.say);
+    if (said !== (l.say ?? l.text)) l.say = said;
+  }
+}
+
 export function composeLines(): LineSpec[] {
   const lines: LineSpec[] = [];
 
@@ -325,6 +340,8 @@ export function composeLines(): LineSpec[] {
     const dad = personOf(e.fit.form);
     lines.push({ id: endingLine(dad, e.id, 'fit'), speaker: dad, group: group.ending(dad), ...spoken(e.fit) });
   }
+
+  respell(lines, forms);
 
   // Two lines under one id would silently shadow each other in the manifest.
   const seen = new Set<string>();

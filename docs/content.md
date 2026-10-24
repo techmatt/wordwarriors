@@ -86,7 +86,8 @@ One `CharacterSpec` in `ROSTER`:
 - `description`: one sentence, an original archetype.
 - `good` and `evil`: each a `FighterSpec`:
   - `displayName` (`"Evil Smaug"`), optional `sayName` when edge-tts mispronounces
-    (same number of words). On `evil` only, optional `bareName`: the villain's bare
+    (same number of words). `voice:lines` respells the name in every line that says
+    it, hand-written ones too (item 138: Bluerilla is "Blue-rilla"). On `evil` only, optional `bareName`: the villain's bare
     name in sentences and the narrator's villain lines ("Rilla is scared of the..."),
     where it is not the good side's name (item 113: EvilRilla is Rilla, his good side
     Bluerilla). Without it the bare name is the good side's `displayName`.
@@ -347,8 +348,14 @@ scene is `S(prop, lines, circle, done)`:
 - `lines`: two to four, in the helper's person's voice. The word is drawn from the bank
   (any action word), so no line may name it or hint at which: the last trails off ("When
   you press the button, it goes...") into the narrator's `gift_word_<word>` clip.
-- `circle`: sends her to the glowing spot (`SPOT(...)` / `CIRCLE(...)`); yellow says it
-  again. `done`: once the word has flown into her ("..., let's look around!"; item 059: complete, natural sentences, "let's", not "let us").
+- `circle`: sends her to the scene's spot, and picks it (item 138): a plain string or
+  `CIRCLE(...)` is the magic circle (a spell, a potion, a royal word: every `CASTERS`
+  scene); `PLATE`, `TOOLS`, `CHARGER` / `UPLOAD` / `LAUNCH`, `TRAINING`, `BLANKET`,
+  `NEST`, `TREASURE` are pickups that fit the story (a dish on a plate, a gadget on the
+  tool table, a charging pad...), the scene's prop bobbing on a code-drawn floor piece
+  (`src/world/giftSpot.ts`), and the line names it ("Stand by the plate, and press
+  green, ..."). A new kind is a `GiftSpot` member, its builder and its `case` there.
+  Yellow says it again. `done`: once the word has flown into her ("..., let's look around!"; item 059: complete, natural sentences, "let's", not "let us").
 
 The same rules as a quest line: no bank word, no interjection, commas not a mid-line
 "!" or "." (rules.test.ts). Voiced as `hub_<owner>_<n>_<key>` (`line1`…, `circle`,

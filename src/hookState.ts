@@ -32,6 +32,8 @@ export interface RoomInfo {
   sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean; readLit: number[]; readDot?: { x: number; y: number } | null; bannerBottom?: number };
   /** The home warm-up (item 033): the word to grab, its level on the ramp (1 easiest), misses so far, the hall's pictures. */
   grab?: { word: string; level: number; misses: number; objects: string[]; phase: string };
+  /** The hub (item 138): how the gift's spot is drawn (`GiftSpot`: `magic`, `plate`, `tools`...), null once it is spent. */
+  giftSpot?: string | null;
   /** The word machine (item 026): the round in play (`index` of `rounds`), its tiles, and what is in the slot. */
   machine?: {
     mode: string;
