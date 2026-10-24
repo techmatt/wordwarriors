@@ -37,7 +37,8 @@
  * ("You picked... M, A, P"), then where the bridge differs ("But the bridge
  * ends with... T", that stone flashing), and she slides again. A right pick:
  * the word is said for the first time, its picture flies into her bag (every
- * word read here is a battle item), and the next bridge comes.
+ * word read here is a battle item, but MOM and DAD: NO_BAG_COPY, hunt 10,
+ * M45, their picture stays put), and the next bridge comes.
  *
  * Speech rule: the word is never said before she has picked it; the stones
  * and the sound-out are letter sounds, each its own `letter_<x>_sound` line,
@@ -54,11 +55,12 @@ import { voiceBus, type HeldSound } from '../audio/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon } from '../audio/sfx';
 import { BRIDGE, DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { episode, narrator, type Slot, type Step } from '../episode/Episode';
-import { burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
+import { burst, fitImage, floatText, pictureSize, popIn, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { dadPress, setDadAsking, type DadAnswer } from '../input/dadButtons';
 import { bridgeLevel, recordedBridgeLevel, whereDiffers, type BridgeLevel, type BridgePlan, type BridgeRound } from '../rules/bridge';
 import { stepLevel } from '../rules/difficulty';
+import { mixColor } from '../rules/freePlay';
 import { soundOut } from '../rules/soundOut';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../hookState';
@@ -95,6 +97,10 @@ const PICTURE_SIZE = 112;
 const FAR_X = GAP.right + 30;
 /** A stop sound's turn in a replay; a held sound's is BRIDGE.replayMs. */
 const REPLAY_ONCE_MS = 420;
+/** How far the chasm's colours lift toward the room's floor (M52). */
+const CHASM_LIFT = 0.3;
+/** The chasm's soft top edge: how far down the floor's colour fades out (px). */
+const CHASM_FADE_PX = 150;
 
 /** Each gap's colours: its rim (the bank's edge), its body, its glow. */
 const GAP_LOOK: Record<BridgeGap, { rim: number; deep: number; mid: number; glow: number; stone: number; stoneTop: number }> = {
@@ -153,7 +159,8 @@ export class BridgeRoom extends HouseSideRoom {
     this.plan = p.bridge;
     this.roomId = p.room;
     // Back from the parent page (F9) mid-visit: on from the first word not yet read.
-    const crossed = this.plan.rounds.findIndex((r) => !episode.fetched.includes(r.word));
+    // `read` too: MOM and DAD are read but never fetched (NO_BAG_COPY, hunt 10, M45).
+    const crossed = this.plan.rounds.findIndex((r) => !episode.fetched.includes(r.word) && !episode.read.includes(r.word));
     this.index = crossed < 0 ? this.plan.rounds.length : crossed;
     this.finished = crossed < 0;
     this.phase = 'intro';
@@ -214,28 +221,50 @@ export class BridgeRoom extends HouseSideRoom {
 
   /** The gap across the floor, drawn by the game: its wavy banks, its body, and what moves in it. */
   private drawGap(kind: BridgeGap): void {
-    const c = this.gapLook;
+    let c = this.gapLook;
+    // The chasm was a near-black box with a straight top edge across the floor
+    // before its stones came (hunt 10, M52): its colours lift toward the room's
+    // floor, and its top fades in from the floor below.
+    const room = kind === 'chasm' ? this.floorColour() : null;
+    if (room !== null) {
+      c = { ...c, rim: mixColor(c.rim, room, 0.45), deep: mixColor(c.deep, room, CHASM_LIFT), mid: mixColor(c.mid, room, CHASM_LIFT) };
+      this.gapLook = c;
+    }
     const g = this.add.graphics().setDepth(DEPTH.floor + 1);
-    const edge = (x: number, side: number, wobble: number) => {
+    const xAt = (x: number, side: number, wobble: number, y: number) => x + side * (Math.sin(y / 37 + x) * wobble + (y - GAP.top) * 0.05);
+    const edge = (x: number, side: number, wobble: number, from = GAP.top, to = GAP_HEIGHT_END) => {
       const pts: Phaser.Math.Vector2[] = [];
-      for (let y = GAP.top; y <= GAP_HEIGHT_END; y += 20) pts.push(new Phaser.Math.Vector2(x + side * (Math.sin(y / 37 + x) * wobble + (y - GAP.top) * 0.05), y));
+      for (let y = from; y < to; y += 20) pts.push(new Phaser.Math.Vector2(xAt(x, side, wobble, y), y));
+      pts.push(new Phaser.Math.Vector2(xAt(x, side, wobble, to), to));
       return pts;
     };
-    const band = (inset: number, color: number, alpha = 1) => {
-      const left = edge(GAP.left + inset, -1, 9);
-      const right = edge(GAP.right - inset, 1, 9).reverse();
-      g.fillStyle(color, alpha);
-      g.fillPoints([...left, ...right], true);
+    const band = (inset: number, color: number, alpha = 1, from = GAP.top, to = GAP_HEIGHT_END, target = g) => {
+      const left = edge(GAP.left + inset, -1, 9, from, to);
+      const right = edge(GAP.right - inset, 1, 9, from, to).reverse();
+      target.fillStyle(color, alpha);
+      target.fillPoints([...left, ...right], true);
     };
     band(-14, c.rim);
     band(0, c.deep);
     band(34, c.mid);
     band(110, kind === 'chasm' ? c.deep : c.mid, kind === 'chasm' ? 1 : 0.6);
-    // The far end of the gap fades into the room's back wall.
     const fade = this.add.graphics().setDepth(DEPTH.floor + 2);
-    for (let i = 0; i < 6; i++) {
-      fade.fillStyle(c.rim, 0.12);
-      fade.fillRect(GAP.left - 20, GAP.top - 4, GAP.right - GAP.left + 40, 10 + i * 6);
+    if (room !== null) {
+      // A soft top edge: the floor's own colour over the chasm's top, thinning
+      // to nothing as it goes down, slice by slice (a gradient that follows the
+      // banks' wobble, which a gradient-filled rectangle cannot).
+      const slices = 14;
+      const step = CHASM_FADE_PX / slices;
+      for (let i = 0; i < slices; i++) {
+        const a = 0.9 * Math.pow(1 - i / slices, 1.6);
+        band(-14, room, a, GAP.top + i * step, GAP.top + (i + 1) * step + 1, fade);
+      }
+    } else {
+      // The far end of the gap fades into the room's back wall.
+      for (let i = 0; i < 6; i++) {
+        fade.fillStyle(c.rim, 0.12);
+        fade.fillRect(GAP.left - 20, GAP.top - 4, GAP.right - GAP.left + 40, 10 + i * 6);
+      }
     }
 
     if (kind === 'lava') {
@@ -291,6 +320,27 @@ export class BridgeRoom extends HouseSideRoom {
         })
         .setDepth(DEPTH.floor + 3);
     }
+  }
+
+  /** The room's floor colour beside the gap, read off the backdrop (null if it cannot be read). */
+  private floorColour(): number | null {
+    const key = this.background();
+    if (!this.textures.exists(key)) return null;
+    const src = this.textures.get(key).getSourceImage() as { width: number; height: number };
+    let r = 0;
+    let gr = 0;
+    let b = 0;
+    let n = 0;
+    for (const [x, y] of [[250, GAP.top + 40], [260, GAP.top + 120], [980, GAP.top + 40], [990, GAP.top + 120]] as const) {
+      const px = this.textures.getPixel(Math.floor((x / GAME_WIDTH) * src.width), Math.floor((y / GAME_HEIGHT) * src.height), key);
+      if (!px) continue;
+      r += px.red;
+      gr += px.green;
+      b += px.blue;
+      n++;
+    }
+    if (!n) return null;
+    return (Math.round(r / n) << 16) | (Math.round(gr / n) << 8) | Math.round(b / n);
   }
 
   private onBridge(): boolean {
@@ -368,7 +418,9 @@ export class BridgeRoom extends HouseSideRoom {
     r.pictures.forEach((word, i) => {
       const [x, y] = PICTURES[i] ?? PICTURES[PICTURES.length - 1]!;
       const shadow = this.add.ellipse(0, 0, PICTURE_SIZE * 0.8, 22, 0x000000, 0.3);
-      const pic = fitImage(this.add.image(0, -PICTURE_SIZE / 2 - 4, this.wordArt(word)), PICTURE_SIZE, PICTURE_SIZE);
+      // Its own shape for a standing person or a wide picture (M48), standing on its shadow.
+      const box = pictureSize(this, this.wordArt(word), PICTURE_SIZE, PICTURE_SIZE);
+      const pic = fitImage(this.add.image(0, -box.h / 2 - 4, this.wordArt(word)), box.w, box.h);
       const spot = this.addSpot(word, x, y, [shadow, pic], word === r.word);
       spot.obj.setDepth(y);
       spot.obj.setVisible(false);
@@ -715,9 +767,11 @@ export class BridgeRoom extends HouseSideRoom {
     // Only now is the word said.
     await this.say(wordLine(r.word));
     if (f !== this.flow) return;
-    spot.obj.setVisible(false);
+    // Not MOM or DAD (hunt 10, M45): read, but never a battle item, so the picture stays where it stood.
+    const copy = this.bagCopy(r.word);
+    if (copy) spot.obj.setVisible(false);
     this.stopSparkle(spot);
-    await Promise.all([this.guard(this.bag.receive(this.wordArt(r.word), top.x, top.y)), this.say(narratorLine(narrator(), readPraise(unaided)))]);
+    await Promise.all([copy ? this.guard(this.bag.receive(this.wordArt(r.word), top.x, top.y)) : Promise.resolve(), this.say(narratorLine(narrator(), readPraise(unaided)))]);
     if (f !== this.flow) return;
     sfxSelect();
     if (!last) {

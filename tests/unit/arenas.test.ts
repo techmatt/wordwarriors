@@ -1,13 +1,13 @@
 /**
  * Item 134: every arena a battle can use names its own ambience (the type
- * requires one; the fallback is only for a key outside ARENAS), and the
- * ambience candidates each play in a real arena.
+ * requires one; the fallback is only for a key outside ARENAS); item 136: the
+ * nursery and the street play Matt's picks, not the meadow's sparkles.
  */
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { FIGHTS } from '../../content/battle/fights';
-import { AMBIENCE_TRIALS, ARENAS, ROSTER } from '../../content/battle/roster';
+import { ARENAS, ROSTER } from '../../content/battle/roster';
 
 test('arenas: every arena a battle uses is an ARENAS key with an ambience', () => {
   const used = new Set([...ROSTER.map((c) => c.arena), ...FIGHTS.flatMap((f) => (f.arena ? [f.arena] : []))]);
@@ -17,12 +17,8 @@ test('arenas: every arena a battle uses is an ARENAS key with an ambience', () =
   }
 });
 
-test('arenas: ambience candidates play in an ARENAS arena, two or three each', () => {
-  const per = new Map<string, number>();
-  for (const [id, t] of Object.entries(AMBIENCE_TRIALS)) {
-    assert.ok(ARENAS[t.arena], `${id}: arena ${t.arena} is an ARENAS key`);
-    assert.match(id, new RegExp(`^${t.arena}_\\d+$`), `${id}: named <arena>_<n>`);
-    per.set(t.arena, (per.get(t.arena) ?? 0) + 1);
-  }
-  for (const [a, n] of per) assert.ok(n >= 2 && n <= 3, `${a}: ${n} candidates`);
+test("arenas: the nursery's toy blocks and the street's leaves (Matt's picks from item 134's round)", () => {
+  assert.equal(ARENAS.nursery!.ambience.tex, 'block');
+  assert.equal(ARENAS.street!.ambience.tex, 'leaf');
+  assert.ok(ARENAS.street!.ambience.fromLeft, 'the leaves blow in on a breeze');
 });

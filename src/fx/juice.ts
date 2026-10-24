@@ -12,6 +12,7 @@
 
 import Phaser from 'phaser';
 
+import { pictureBox } from '../art/pictureBox';
 import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { hookState } from '../hookState';
 import { fitText } from '../ui/fitText';
@@ -229,11 +230,20 @@ export function flash(scene: Phaser.Scene, color = 0xffffff, ms = 140): void {
   lastFlash = now;
   fxStats.flashes++;
   const c = Phaser.Display.Color.IntegerToRGB(color);
-  scene.cameras.main.flash(ms, c.r, c.g, c.b);
+  // Phaser's flash starts fully opaque: its first frame was one flat colour edge
+  // to edge, caption and HUD gone (hunt 10, M60). It fades from its `alpha`, so
+  // it starts at half strength instead. Not while one still runs (a 500 ms
+  // flash outlasts the gap): that would brighten it for a frame, and Phaser
+  // keeps that one going anyway.
+  const cam = scene.cameras.main;
+  if (!cam.flashEffect.isRunning) cam.flashEffect.alpha = FLASH_ALPHA;
+  cam.flash(ms, c.r, c.g, c.b);
 }
 
 /** The least time between two full-screen flashes (ms). */
 const FLASH_GAP_MS = 450;
+/** A flash's opening strength, fading to nothing over its length (M60). */
+export const FLASH_ALPHA = 0.5;
 let lastFlash = -Infinity;
 
 /** Time scale shared by a scene's simulation, tweens and particles. */
@@ -295,4 +305,21 @@ export function fitImage(img: Phaser.GameObjects.Image, w: number, h: number): P
   const s = Math.min(w / img.width, h / img.height);
   img.setScale(s);
   return img;
+}
+
+/**
+ * The box word picture `key` is fitted to for a `w` x `h` slot (`pictureBox`,
+ * src/art/pictureBox.ts, M48): the slot, or for a standing person or a wide
+ * picture a box of its own aspect and the slot's area, within `max`.
+ */
+export function pictureSize(scene: Phaser.Scene, key: string, w: number, h: number, max?: { w: number; h: number }): { w: number; h: number } {
+  if (!scene.textures.exists(key)) return { w, h };
+  const f = scene.textures.getFrame(key);
+  return pictureBox(key, f.width / f.height, w, h, max);
+}
+
+/** Fit a word picture into a `w` x `h` slot (`pictureSize`): a square for most, its own shape for DAD, MOM, TUG... (M48). */
+export function fitPicture(img: Phaser.GameObjects.Image, w: number, h: number, max?: { w: number; h: number }): Phaser.GameObjects.Image {
+  const b = pictureBox(img.texture.key, img.width / img.height, w, h, max);
+  return fitImage(img, b.w, b.h);
 }

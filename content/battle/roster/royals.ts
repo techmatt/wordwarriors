@@ -268,7 +268,8 @@ export const ROYALS: CharacterSpec[] = [
       ending: [
         { key: 'visit', text: 'Please come and ride in my rocket!' },
         { key: 'mighty', text: 'This party is out of this world!' },
-        { key: 'loves', text: 'Even my penguins love a party!' },
+        // Hunt 10, M49: was "Even my penguins love a party!" (said on the mountain: no party, no penguins).
+        { key: 'view', text: 'Explorers love the view from way up high!' },
       ],
     },
     // His penguin crew waddle off to eat, so nobody is left to launch the comet.

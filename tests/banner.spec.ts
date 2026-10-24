@@ -34,10 +34,10 @@ async function widths(page: Page, words: string[]): Promise<Record<string, numbe
   );
 }
 
-/** The key words a frame can take (`episodePlans`: no number word outside a numbers frame, no A before a vowel or a some-word). */
+/** The key words a frame can take (`episodePlans`: no number word outside a numbers frame, none the frame rules out, no A before a vowel or a some-word). */
 function keysFor(f: Frame): string[] {
   const article = / A \{x\}$/.test(f.text);
-  return THINGS.map((w) => w.word).filter((w) => (f.numbers || !NUMBER_WORDS.has(w)) && !(article && (/^[aeiou]/.test(w) || NO_ARTICLE.has(w))));
+  return THINGS.map((w) => w.word).filter((w) => (f.numbers || !NUMBER_WORDS.has(w)) && !f.not?.includes(w) && !(article && (/^[aeiou]/.test(w) || NO_ARTICLE.has(w))));
 }
 
 /** Each name slot: the URL key that casts it, and every character's name as that slot shows it. */

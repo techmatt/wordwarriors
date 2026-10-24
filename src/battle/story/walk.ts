@@ -28,6 +28,12 @@ import { ARENA_LEFT, ARENA_RIGHT, stickWalk } from '../movement';
 const REACHED_HOLD = 0.7;
 /** Quiet seconds before a grab's line is said again. */
 const GRAB_REPROMPT = 10;
+/**
+ * How quickly she steps up onto a ledge and down off it (s, the time constant of an eased
+ * approach): set in one frame, she jumped 130 px as she came within reach (hunt 10, M56).
+ * About a fifth of a second up or down.
+ */
+const LIFT_EASE = 0.06;
 
 export interface WalkHost {
   readonly stage: Phaser.Scene;
@@ -89,11 +95,23 @@ export class StoryWalk {
     return Phaser.Math.Distance.Between(this.at.x, this.at.y, this.spot.x, this.spot.y) < REACH;
   }
 
-  /** Pin her hero where she walked; on a ledge, stood up on it. */
+  /** Her lift where she stands: on a ledge in reach, stood up on it. */
+  private get liftTarget(): number {
+    return this.spot.lift && this.near ? this.spot.lift + this.baseLift : this.baseLift;
+  }
+
+  /** Her lift a frame nearer its target (M56: eased, not set), on real time. */
+  private easeLift(realDt: number): void {
+    const to = this.liftTarget;
+    const k = 1 - Math.exp(-Math.max(0, realDt) / LIFT_EASE);
+    this.at.lift += (to - this.at.lift) * k;
+    if (Math.abs(to - this.at.lift) < 0.5) this.at.lift = to;
+  }
+
+  /** Pin her hero where she walked, at her eased lift (`easeLift`). */
   holdHero(): void {
     const me = this.host.heroes[0];
     if (!me?.active) return;
-    this.at.lift = this.spot.lift && this.near ? this.spot.lift + this.baseLift : this.baseLift;
     me.x = this.at.x;
     me.y = this.at.y;
     me.lift = this.at.lift;
@@ -106,6 +124,7 @@ export class StoryWalk {
     const me = this.host.heroes[0]!;
     const c = this.host.controls;
     const walking = stickWalk(me, this.at, c.move, realDt);
+    this.easeLift(realDt);
     this.holdHero();
     const near = this.near;
     if (near && !this.reached && this.kind === 'dodge') sfxSelect();
@@ -153,6 +172,9 @@ export class StoryWalk {
   private finish(reached: boolean): void {
     if (this.finished) return;
     this.finished = true;
+    // Where the walk leaves her: up on the ledge if she ends in reach of it (the tail smash keeps her there).
+    this.at.lift = this.liftTarget;
+    this.holdHero();
     this.host.heroes[0]!.lean = 0;
     for (const o of this.objs) o.destroy();
     this.resolve({ reached });

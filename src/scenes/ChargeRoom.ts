@@ -48,7 +48,7 @@ import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxZap } from '../audio/sfx';
 import { CHARGE, DEPTH, FONT_COMIC, GAME_WIDTH } from '../config';
 import { castFace, currentStep, episode, helper, narrator, type Slot, type Step } from '../episode/Episode';
-import { bob, burst, fitImage, floatText, popIn, punch, shake, shockwave, squash } from '../fx/juice';
+import { bob, burst, fitImage, fitPicture, floatText, popIn, punch, shake, shockwave, squash } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { dadPress, setDadAsking, type DadAnswer } from '../input/dadButtons';
 import { dadLock } from '../input/dadLock';
@@ -601,7 +601,8 @@ export class ChargeRoom extends HouseSideRoom {
     // Only now is the word said, and its picture shown.
     const n = this.barSlots.length;
     const px = this.slotPos(n - 1).x + BAR.slot / 2 + 30 + PICTURE / 2;
-    const pic = fitImage(this.add.image(px, BAR.y + 40, this.wordArt(word)), PICTURE, PICTURE).setDepth(DEPTH.hud + 1);
+    // Its own shape for a standing person or a wide picture (M48), kept clear of the screen's top.
+    const pic = fitPicture(this.add.image(px, BAR.y + 40, this.wordArt(word)), PICTURE, PICTURE, { w: PICTURE * 1.45, h: (BAR.y + 40 - 8) * 2 }).setDepth(DEPTH.hud + 1);
     popIn(this, pic, pic.scale);
     burst(this, pic.x, pic.y, { count: 60, speed: 460 });
     shockwave(this, pic.x, pic.y, 0xffd23f, 160);

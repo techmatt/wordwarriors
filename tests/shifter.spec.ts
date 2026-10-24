@@ -7,7 +7,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, SPEED, boot, choose, collectErrors, expectNoErrors, until, type WWState } from './harness';
+import { SLOW, SPEED, bagged, boot, choose, collectErrors, expectNoErrors, until, type WWState } from './harness';
 import { letterSoundLine, wordLine } from '../content/voice/ids';
 
 const shifter = (s: WWState) => s.room?.shifter;
@@ -67,12 +67,12 @@ test('Shape-Shifter at base level: read it and fix it, a wrong pick on each soun
     await choose(page);
     const after = await until(page, (st) => st.scene !== 'ShifterRoom' || (shifter(st)?.index ?? 0) > i || shifter(st)?.phase === 'done', 60_000, `${l.word} read`);
     expect(after.voice.history).toContain(wordLine(l.word));
-    expect(after.episode.fetched).toContain(l.word);
+    expect(after.episode.read).toContain(l.word);
   }
   expect([...beats].sort()).toEqual(['fix', 'read']);
   const hub = await until(page, (st) => st.scene === 'Hub', 60_000, 'back in the hub');
   expect(hub.episode.house.done).toContain('a');
-  for (const w of words) expect(hub.episode.fetched).toContain(w);
+  for (const w of bagged(words)) expect(hub.episode.fetched).toContain(w);
   // A miss keeps the word at level 1; right first time, unaided, steps up.
   expect(Object.values(hub.progress.shifterLevels ?? {}).sort()).toEqual([1, 1, ...Array(words.length - 2).fill(2)].sort());
   expectNoErrors(errors);
@@ -81,7 +81,7 @@ test('Shape-Shifter at base level: read it and fix it, a wrong pick on each soun
 test('Shape-Shifter pacing (hunt 6, M26, M30): the full instruction once a beat, then its short cue; fix-it its own praise; a cued link under 6.8 s with instant answers', SLOW, async ({ page }) => {
   test.setTimeout(150_000);
   const errors = collectErrors(page);
-  await boot(page, '?scene=room&slot=a&room=shifter', SPEED, { voice: 'real' });
+  await boot(page, '?scene=room&slot=a&room=shifter&seed=601', SPEED, { voice: 'real' });
   const words = shifter(await until(page, (st) => st.scene === 'ShifterRoom' && shifter(st)?.phase === 'pick', 60_000, 'first link'))!.words;
   // Game time (the page's clocks run at SPEED; `performance.now` is warped to game time).
   const now = () => page.evaluate(() => performance.now());

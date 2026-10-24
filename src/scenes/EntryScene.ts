@@ -30,7 +30,7 @@ import { wordLine } from '../../content/voice/ids';
 import { sfxRight, sfxSelect, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, FONT_ROUNDED, GAME_WIDTH, GRAB } from '../config';
 import { episode, grabPlan, helper, waker, type Step } from '../episode/Episode';
-import { bob, burst, fitImage, floatText, popIn, shockwave, squash } from '../fx/juice';
+import { bob, burst, fitPicture, floatText, popIn, shockwave, squash } from '../fx/juice';
 import { stepLevel } from '../rules/difficulty';
 import { clue, grabLevel, recordedGrabLevel, type GrabLevel } from '../rules/grab';
 import { progress } from '../state/progress';
@@ -124,7 +124,10 @@ export class EntryScene extends RoomScene {
     const ys = ENTRY_HALL.spots.map((p) => p.y);
     things.push(new Phaser.Geom.Rectangle(Math.min(...xs) - 70, Math.min(...ys) - 140, Math.max(...xs) - Math.min(...xs) + 140, Math.max(...ys) - Math.min(...ys) + 150));
     const grownUps = [ENTRY_HALL.helper, ENTRY_HALL.waker, ENTRY_HALL.door].map((p) => new Phaser.Geom.Rectangle(p.x - 80, p.y - 200, 160, 220));
-    applyHouseMood(this, episode.villain, { seed: 33, floor: this.floor, avoid: [...things, ...grownUps] });
+    // And her start spot (hunt 10, M58: Moriarty's playing card drew over her head as the hall opened);
+    // a decal with nowhere clear left is not drawn.
+    const start = new Phaser.Geom.Rectangle(ENTRY_HALL.start.x - 70, ENTRY_HALL.start.y - 190, 140, 200);
+    applyHouseMood(this, episode.villain, { seed: 33, floor: this.floor, avoid: [...things, ...grownUps, start] });
     this.bag = new Bag(this);
 
     this.player.place(ENTRY_HALL.start.x, ENTRY_HALL.start.y);
@@ -145,7 +148,8 @@ export class EntryScene extends RoomScene {
     // she matched letters instead of sounding it out.
     plan.objects.forEach((word, i) => {
       const p = ENTRY_HALL.spots[i]!;
-      const pic = fitImage(this.add.image(0, -4, `pic_${word}`).setOrigin(0.5, 1), PIC, PIC);
+      // DAD, MOM, a standing person by their own shape, not shrunk to a square (M48).
+      const pic = fitPicture(this.add.image(0, -4, `pic_${word}`).setOrigin(0.5, 1), PIC, PIC);
       const spot = this.addSpot(`grab_${word}`, p.x, p.y, [pic], word === this.word);
       spot.obj.setData('word', word);
       if (got) {

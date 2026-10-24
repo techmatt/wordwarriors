@@ -46,6 +46,19 @@ export function podiumSecond(state: EpisodeState = episode): string | null {
 }
 
 /**
+ * Who cheers beside the victory podium, on the floor (hunt 10, M50): with an
+ * ally, the dad who woke her, in his form, unless he is already up there (the
+ * ally or the villain is his person); else nobody (with no ally he has the
+ * podium's left block, `podiumSecond`).
+ */
+export function podiumCheer(state: EpisodeState = episode): string | null {
+  if (!state.ally) return null;
+  const dad = personOf(waker(state));
+  if (dad === personOf(state.ally) || dad === personOf(state.villain)) return null;
+  return castId(waker(state), state);
+}
+
+/**
  * Who gives instructions: the helper's person (narrator lines are voiced per
  * person: lifter Dada Matt narrates as `dada_matt`).
  */

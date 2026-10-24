@@ -182,7 +182,8 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
   ],
   // Ellie: a toy she shares.
   ellie: [
-    S('🔵', [
+    // M55 (hunt 10): a drawn bubble, not 🔵 (DOT's own glyph; 🫧 does not draw on Windows 10).
+    S('prop_bubble', [
       'I want to share my favorite bubble with you!',
       'It is the biggest, shiniest bubble in the whole castle.',
       'Blow on it, and it goes...',
@@ -301,7 +302,8 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
     ], SPOT('to have a bite'), 'Now you are brave and full, let\'s look around!'),
     S('🎀', [
       'This is my lucky ribbon, I wear it on every adventure!',
-      'I tripped over a snowman this morning, and it still stayed on.',
+      // Hunt 10, M49: "and it still stayed on" (IT was the ribbon, two lines back).
+      'I tripped over a snowman this morning, and my lucky ribbon stayed on.',
       'Tie it on, stand up tall, and give a brave shout...',
     ], SPOT('to tie it on'), 'Now we are adventure buddies, let\'s look around!'),
   ],

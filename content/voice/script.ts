@@ -226,9 +226,9 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'shifter_cue_read', text: 'Read it!' },
   { key: 'shifter_cue_fix', text: 'Make it match!' },
   // Hunt 6, M30: fix-it's own praise, never "by yourself" (a letter found for a sound, often after help).
+  // Hunt 10, M46: these two only; a fix-it link before another never takes the first (the next cue is "Make it match!").
   { key: 'shifter_fixed', text: 'You made it match!' },
-  { key: 'shifter_fixed_2', text: 'You mended the spell!' },
-  { key: 'shifter_fixed_3', text: 'Nice matching!' },
+  { key: 'shifter_fixed_2', text: 'You got the right letter!' },
   { key: 'shifter_done', text: 'The spell is all used up! This one comes to the fight with us!', say: 'The spell is all used up! This one comes to the fight with us!' },
   // Each fight style's own beats (item 031, content/battle/fights.ts): `fight_<id>_<beat>`.
   ...FIGHTS.flatMap((f) => FIGHT_BEATS.flatMap((b) => (f.lines[b] ? [{ key: fightKey(f.id, b), ...f.lines[b] }] : []))),

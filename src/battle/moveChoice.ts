@@ -27,7 +27,7 @@ import { fitText } from '../ui/fitText';
 import { makeStickHint, placeStickHint } from '../ui/stickHint';
 import { FLOOR_BOTTOM, FLOOR_TOP, NO_AFTERIMAGES, type Fighter } from './Fighter';
 import { ARENA_LEFT, ARENA_RIGHT, stickWalk } from './movement';
-import { SIGN_H, SIGN_RISE, SIGN_W, clearSpot, placePads, type PlaceBody } from './padPlace';
+import { SIGN_H, SIGN_RISE, SIGN_W, clearSpot, placePads, type Box, type PlaceBody } from './padPlace';
 
 /** The move pads' glow. One colour for all: the word on the sign is the choice, never a colour. */
 const PAD_GLOW = 0x7ad9ff;
@@ -49,6 +49,12 @@ export interface ChoiceHost {
   readonly controls: Controls;
   /** The fight style holds everyone in place (a contest's stage): pads stay on her side, nobody steps back. */
   readonly anchored: boolean;
+  /**
+   * A story fight's props (the stone, the ledge, the hoard) as floor boxes, null outside one
+   * (hunt 10, M54): there her reach outranks every other placement rule, and the rings keep
+   * off the props where they can.
+   */
+  storyProps(): Box[] | null;
   /** Say a narrator line, guarded by the scene's run. */
   say(key: string): Promise<boolean>;
   /** Drop `p` if this run of the scene ends first (SceneGen). */
@@ -227,6 +233,8 @@ export class MoveChoice {
     const avoid = [me, v, ...this.host.fighters.filter((f) => f.active)].filter((f, i, a) => f?.active && a.indexOf(f) === i);
     // The team steps back off the signs in a fight (M6), but holds its stations in a contest (M17).
     const team = this.host.anchored ? this.host.fighters.filter((f) => f !== me && f.active && this.host.heroes.includes(f)) : [];
+    // A story fight (M54): its stage is always crowded, so a mashed green would pick a pad she never walked to.
+    const props = this.host.storyProps();
     return placePads({
       n,
       avoid: avoid.map(body),
@@ -237,7 +245,8 @@ export class MoveChoice {
       left: ARENA_LEFT,
       right: ARENA_RIGHT,
       // A margin past her reach: she may still be settling when the pads go down.
-      me: { x: me.x, y: me.y, reach: REACH + 25 },
+      me: { x: me.x, y: me.y, reach: REACH + 25, first: props !== null },
+      keepOff: props ?? undefined,
     });
   }
 

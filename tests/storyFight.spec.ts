@@ -11,6 +11,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 import { STORY_BY_ID, padBeats } from '../content/battle/stories/index';
+import { REACH } from '../src/config';
 import { BATTLE_SPEED, SLOW, boot, collectErrors, place, press, until, type WWState } from './harness';
 
 const SMAUG = STORY_BY_ID.smaug!;
@@ -24,7 +25,7 @@ const answersOf = (beat: string | null | undefined): string[] | 'gift' | null =>
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/story_${name}.png` });
 
 interface Seen {
-  picks: { beat: string | null; right: string; words: string[] }[];
+  picks: { beat: string | null; right: string; words: string[]; nearest: number }[];
   walks: { kind: string; spot: string; reached: boolean }[];
   last: WWState | null;
   misses: number;
@@ -59,7 +60,9 @@ async function playStory(page: Page, part: number): Promise<Seen> {
     }
     const c = b.choice!;
     await shot(page, `${part}_pick_${b.story?.beat ?? 'none'}`);
-    seen.picks.push({ beat: b.story?.beat ?? null, right: c.right, words: c.words });
+    // Hunt 10, M54: no pad opens within her reach, so a mashed green picks nothing she has not walked to.
+    const nearest = Math.min(...c.spots.map((sp) => Math.hypot(sp.x - c.from.x, sp.y - c.from.y)));
+    seen.picks.push({ beat: b.story?.beat ?? null, right: c.right, words: c.words, nearest });
     const pick = async (word: string) => {
       const pad = c.spots.find((sp) => sp.word === word)!;
       for (let tries = 0; tries < 10; tries++) {
@@ -111,6 +114,7 @@ for (const part of [1, 2] as const) {
     const beats = padBeats(SMAUG, part).map((b) => b.id);
     expect(seen.picks.map((p) => p.beat)).toEqual(beats);
     for (const p of seen.picks) {
+      expect(p.nearest, `${p.beat}: the nearest pad opened out of her reach (M54)`).toBeGreaterThanOrEqual(REACH);
       const answers = answersOf(p.beat);
       if (answers && answers !== 'gift') {
         expect(answers, `${p.beat}: ${p.right} answers what he did`).toContain(p.right);

@@ -18,6 +18,8 @@ import { drawStory } from '../../src/rules/story';
 import { MINIGAMES, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/sentences';
 import { ProgressStore } from '../../src/state/ProgressStore';
+import { castId, podiumCheer, podiumSecond } from '../../src/episode/cast';
+import type { EpisodeState } from '../../src/episode/state';
 import { memory } from './seeds';
 
 const N = 4000;
@@ -293,6 +295,31 @@ test('minigames: three different games a episode, fetch twice then the counter, 
   const plans = episodePlans(store, { fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', gift: 'pop', rooms: ['bubble_baths', 'toy_cloud'], counterRoom: 'rainbow_room' }, rand);
   assert.deepEqual(plans.map((p) => p.room), ['bubble_baths', 'toy_cloud', 'rainbow_room']);
   for (const p of plans) assert.equal(p.scene, p.kind === 'machine' ? 'WordMachine' : p.kind === 'charge' ? 'ChargeRoom' : p.kind === 'bridge' ? 'BridgeRoom' : p.kind === 'shifter' ? 'ShifterRoom' : 'SentenceRoom');
+});
+
+test('podium (hunt 10, M50): with an ally the dad who woke her cheers beside it, never twice and never the villain', () => {
+  const rand = seededRand(11);
+  let cheered = 0;
+  for (let i = 0; i < N; i++) {
+    const c = drawCast({ hero: 'julia' }, rand);
+    const state = { ...c, villainWasRandom: true } as unknown as EpisodeState;
+    const cheer = podiumCheer(state);
+    const second = podiumSecond(state);
+    if (!c.ally) {
+      assert.equal(cheer, null, 'with no ally he has the left block');
+      continue;
+    }
+    assert.equal(second, c.ally);
+    const dad = personOf(wakerOf(c));
+    if (dad === personOf(c.ally) || dad === personOf(c.villain)) assert.equal(cheer, null, JSON.stringify(c));
+    else {
+      cheered++;
+      assert.equal(personOf(cheer!), dad, JSON.stringify(c));
+      // In his form today.
+      assert.equal(cheer, castId(wakerOf(c), state));
+    }
+  }
+  assert.ok(cheered > 0, 'some podiums have him cheering');
 });
 
 test("minigames: a game's weight leans the draw", () => {

@@ -18,14 +18,15 @@
  *
  * The word is spoken once she has it (the confirmation), so it is kept out of the episode's
  * reading key words, the counter and the word machine (015's "said early"
- * rule: src/episode/plans.ts `housePlan` passes it into `saidBefore`). The other eight pictures are
+ * rule: src/episode/plans.ts `housePlan` passes it into `saidBefore`), with the bank words heard inside
+ * it as it plus a sound (`grabSays`, hunt 10, M57: CLOCK says LOCK). The other eight pictures are
  * drawn after the house plan and keep clear of every word she will read, so
  * the hall never shows one of them first. A grab is exposure, not a read:
  * ProgressStore `grabs`, never `words` or the word bag.
  */
 
-import { THINGS } from '../../content/phonics/bank';
-import { lookalikesOf } from '../../content/phonics/sentences';
+import { BANK, BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
+import { NO_BAG_COPY, lookalikesOf } from '../../content/phonics/sentences';
 import { letterNameLine, nameHidesLine } from '../../content/voice/ids';
 import { GRAB } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
@@ -36,11 +37,32 @@ import { nameHolds, soundOut } from './soundOut';
 
 export type GrabLevel = HelpLevel;
 
-/** Words the hall can ask for: the bank's short pictured words (each has a battle item), GRAB.maxUnits sound units at most (item 067). */
-export const GRAB_WORDS: string[] = THINGS.filter((w) => w.units.length <= GRAB.maxUnits).map((w) => w.word);
+/**
+ * Words the hall can ask for: the bank's short pictured words (each has a battle item), GRAB.maxUnits sound
+ * units at most (item 067). Not MOM or DAD (NO_BAG_COPY, hunt 10, M45): the grab goes into her bag and is
+ * fired in battle, and neither is ever a battle item.
+ */
+export const GRAB_WORDS: string[] = THINGS.filter((w) => w.units.length <= GRAB.maxUnits && !NO_BAG_COPY.has(w.word)).map((w) => w.word);
 
 /** Every picture the hall can show, the asked-for word included: any pictured word (she does not read the others). */
 const HALL_WORDS: string[] = THINGS.map((w) => w.word);
+
+/**
+ * What the hall says when it says `word` (hunt 10, M57 (a)): the word, and every bank word heard whole
+ * inside it as the word plus one sound unit, before or after (CLOCK: LOCK; BRUSH: RUSH; TENT: TEN; BELT:
+ * BELL; LEG: EGG; BLOCK: LOCK). The warm-up's word is spoken, so these count as said for the episode:
+ * CLOCK in the hall, then LOCK on the bridge, gave LOCK away. A rule on sounds, not a list or letters:
+ * KITE (K, long I, T, a silent E) holds no KIT, and a doubled letter is its single sound (BELL is B E L).
+ */
+export function grabSays(word: string): string[] {
+  // C, K and CK are one sound (the bank keeps them apart as spellings).
+  const heard = (w: string) => (BANK_BY_WORD[w]?.sounds ?? []).filter(Boolean).map((s) => (s === 'c' || s === 'ck' ? 'k' : s));
+  const sounds = (w: string) => heard(w).join(' ');
+  const own = heard(word);
+  if (own.length < 3) return [word];
+  const less = new Set([own.slice(1).join(' '), own.slice(0, -1).join(' ')]);
+  return [word, ...BANK.filter((b) => b.word !== word && less.has(sounds(b.word))).map((b) => b.word)];
+}
 
 /** The level her grabs of a word have reached (the ramp, recorded for the grown-ups page). */
 export function recordedGrabLevel(store: ProgressStore, word: string): GrabLevel {
@@ -62,11 +84,12 @@ export const RECENT_GRABS = 3;
  * least), never one in `avoid`, and none of her last RECENT_GRABS grabs while
  * another will do (across episodes: by when each was grabbed). Its shakiness
  * is her grabs', not her reads': a grab is exposure. Every level is in play
- * (item 067).
+ * (item 067). Nor one that says a word in `avoid` (`grabSays`, hunt 10, M57:
+ * no CLOCK when LOCK is on a move pad, drawn first).
  */
 export function pickGrab(store: ProgressStore, avoid: Iterable<string> = [], rand: Rand = Math.random): string {
   const out = new Set(avoid);
-  const pool = GRAB_WORDS.filter((w) => !out.has(w));
+  const pool = GRAB_WORDS.filter((w) => !grabSays(w).some((s) => out.has(s)));
   const all = pool.length ? pool : GRAB_WORDS;
   const recent = new Set(
     GRAB_WORDS.filter((w) => store.stat('grabs', w).last > 0)

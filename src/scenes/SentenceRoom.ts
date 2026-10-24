@@ -37,7 +37,7 @@ import { sfxRight, sfxStep, sfxSummon } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH } from '../config';
 import { counterArt, episode, namedCounter, narrator, villainSpec, type Slot, type Step } from '../episode/Episode';
 import { isVariant, variant } from '../episode/lineVariants';
-import { bob, burst, fitImage, floatText, popIn, shockwave } from '../fx/juice';
+import { bob, burst, fitPicture, floatText, pictureSize, popIn, shockwave } from '../fx/juice';
 import { skipsListening, type SentencePlan } from '../rules/sentences';
 import { soundOut } from '../rules/soundOut';
 import { progress } from '../state/progress';
@@ -66,6 +66,8 @@ const ROW_GAP = 0.22;
 /** The picture on its pedestal: how high above the spot its top is (pedestal 100 + picture 150), and its bob. */
 const PIC_TOP = 250;
 const PIC_BOB = 5;
+/** The picture's square slot (a standing person's or a wide picture's box is its own shape, M48). */
+const PIC_H = 150;
 /** How much the thing she stands next to grows (RoomScene's near tween). */
 const NEAR_SCALE = 1.1;
 /** Clear air between the banner's bottom edge and the tallest picture's top. */
@@ -183,8 +185,10 @@ export class SentenceRoom extends HouseSideRoom {
     // sentence on two or three rows) moves them down the floor, never over them.
     const bannerBottom = this.banner.y + this.bannerH / 2;
     const highest = Math.min(...room.spots.slice(0, this.plan.objects.length).map(([, y]) => y));
+    // A standing person's picture is taller than the square (M48, `pictureSize`): the tallest one counts.
+    const picTop = PIC_TOP - PIC_H + Math.max(PIC_H, ...this.plan.objects.map((w) => pictureSize(this, this.wordArt(w), PIC_H, PIC_H).h));
     // The thing she is next to grows by NEAR_SCALE from its feet (RoomScene), so its top rises too.
-    const drop = Math.max(0, Math.ceil(bannerBottom + BANNER_GAP - (highest - PIC_TOP * NEAR_SCALE - PIC_BOB)));
+    const drop = Math.max(0, Math.ceil(bannerBottom + BANNER_GAP - (highest - picTop * NEAR_SCALE - PIC_BOB)));
     this.tallBanner = drop > 0;
     // She comes in below them, out of reach, so she is not standing on one when they wake (item 069:
     // under a two-row banner she came in 70 px under the middle one and a mashed green chose it).
@@ -206,7 +210,7 @@ export class SentenceRoom extends HouseSideRoom {
       const [x, y0] = room.spots[i]!;
       const y = y0 + drop;
       const pedestal = this.art('prop_pedestal', 170, 100);
-      const pic = this.art(this.wordArt(word), 150, 150, 0, -100);
+      const pic = this.art(this.wordArt(word), PIC_H, PIC_H, 0, -100);
       const spot = this.addSpot(word, x, y, [pedestal, pic], word === s.key);
       spot.obj.setData('pic', pic);
       // What must stay in view is the picture; the pedestal's foot may sit behind the dialogue box.
@@ -630,7 +634,7 @@ export class SentenceRoom extends HouseSideRoom {
         this.tweens.killTweensOf(pic);
         this.tweens.add({ targets: pic, scale: pic.scale * 1.5, alpha: 0, duration: 380, ease: 'Quad.easeOut' });
       }
-      const big = fitImage(this.add.image(spot.x, picY, art), 200, 200).setDepth(DEPTH.sparkles);
+      const big = fitPicture(this.add.image(spot.x, picY, art), 200, 200).setDepth(DEPTH.sparkles);
       popIn(this, big, big.scale);
       shockwave(this, spot.x, picY, 0xffd23f, 220);
       burst(this, spot.x, picY, { count: 80, speed: 600, life: 1000 });

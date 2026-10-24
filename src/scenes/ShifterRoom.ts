@@ -35,7 +35,8 @@
  * letter for a sound, under `spelling`, apart from reading.
  *
  * Every word read is a battle item, a copy flying into her bag; the last creature flies in itself and
- * goes to the fight. Speech rule: a new word is never said before she has
+ * goes to the fight. MOM and DAD (NO_BAG_COPY, hunt 10, M45) are read but never battle items: no
+ * copy, and as the last creature it waves and stays. Speech rule: a new word is never said before she has
  * it; the first creature is said (it is shown, not read), and sounds are
  * letter_ lines, never captioned.
  */
@@ -48,7 +49,7 @@ import { voiceBus } from '../audio/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH, VARIETY } from '../config';
 import { episode, narrator, type Slot, type Step } from '../episode/Episode';
-import { burst, fitImage, floatText, popIn, shake, shockwave } from '../fx/juice';
+import { burst, fitImage, fitPicture, floatText, pictureSize, popIn, shake, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { stepLevel } from '../rules/difficulty';
 import { recordedShifterLevel, shifterLevel, soundAt, type Position, type ShifterLevel, type ShifterLink, type ShifterPlan } from '../rules/shifter';
@@ -125,7 +126,8 @@ export class ShifterRoom extends HouseSideRoom {
     this.plan = p.shifter;
     this.roomId = p.room;
     // Back from the parent page (F9) mid-visit: on from the first link not yet read.
-    const read = this.plan.links.findIndex((l) => !episode.fetched.includes(l.to));
+    // `read` too: MOM and DAD are read but never fetched (NO_BAG_COPY, hunt 10, M45).
+    const read = this.plan.links.findIndex((l) => !episode.fetched.includes(l.to) && !episode.read.includes(l.to));
     this.index = read < 0 ? this.plan.links.length : read;
     this.finished = read < 0;
     this.phase = 'intro';
@@ -199,7 +201,8 @@ export class ShifterRoom extends HouseSideRoom {
   /** The creature's picture, fitted (no fanfare: `morph` is the spectacle). */
   private setCreature(word: string): void {
     this.creatureImg.setTexture(this.wordArt(word));
-    fitImage(this.creatureImg, CREATURE.size, CREATURE.size);
+    // A wide picture by its own shape (M48); no taller than the square, so it keeps to its shadow.
+    fitPicture(this.creatureImg, CREATURE.size, CREATURE.size, { w: CREATURE.size * 2, h: CREATURE.size });
   }
 
   /** The label's word; `litPos` lit (the changed letter), -1 none. */
@@ -344,7 +347,9 @@ export class ShifterRoom extends HouseSideRoom {
       const [x, y] = OPTIONS[i] ?? OPTIONS[OPTIONS.length - 1]!;
       const shadow = this.add.ellipse(0, 0, 100, 22, 0x000000, 0.3);
       if (l.beat === 'read') {
-        const pic = fitImage(this.add.image(0, -PICTURE_SIZE / 2 - 4, this.wordArt(o)), PICTURE_SIZE, PICTURE_SIZE);
+        // Its own shape for a standing person or a wide picture (M48), standing on its shadow.
+        const box = pictureSize(this, this.wordArt(o), PICTURE_SIZE, PICTURE_SIZE);
+        const pic = fitImage(this.add.image(0, -box.h / 2 - 4, this.wordArt(o)), box.w, box.h);
         const spot = this.addSpot(o, x, y, [shadow, pic], o === l.to);
         popIn(this, spot.obj, 1, i * 110);
       } else {
@@ -631,7 +636,10 @@ export class ShifterRoom extends HouseSideRoom {
     // Every word read is a battle item, so a copy of the creature goes into her bag with the praise, as the
     // other rooms' do (hunt 6: the row stood still here and three things turned up in it back in the hub).
     // The last one: the creature itself goes, below.
-    const praise = () => Promise.all([last ? Promise.resolve() : this.guard(this.bag.receive(this.wordArt(l.to), CREATURE.x, CREATURE.y)), this.say(narratorLine(narrator(), this.praise(l.beat, unaided)))]);
+    // Read now: by the time the praise plays, `index` is the next link's.
+    const nextBeat = this.plan.links[this.index + 1]?.beat;
+    // MOM and DAD never go (NO_BAG_COPY, hunt 10, M45): read, but never a battle item.
+    const praise = () => Promise.all([last || !this.bagCopy(l.to) ? Promise.resolve() : this.guard(this.bag.receive(this.wordArt(l.to), CREATURE.x, CREATURE.y)), this.say(narratorLine(narrator(), this.praise(l.beat, unaided, nextBeat)))]);
     if (!last) {
       // The next spell strikes under the praise (hunt 6, M26: a link locked her out 12 to 15 s), and a
       // fix-it strike's swirl and swell start under the word (item 108: after a read-it link that was two
@@ -653,6 +661,15 @@ export class ShifterRoom extends HouseSideRoom {
     // The last creature goes to the fight: "This one comes to the fight with us!" while it still stands
     // there, then it flies into her bag (hunt 10: it was in the bag first, and the line pointed at nothing).
     this.phase = 'done';
+    if (!this.bagCopy(l.to)) {
+      // MOM or DAD (hunt 10, M45): never a battle item, so it does not come to the fight. It waves (a few
+      // squash hops: sprites move only by bob and squash) and stays; no "comes to the fight" line.
+      await this.wave();
+      if (f !== this.flow) return;
+      await this.wait(400);
+      this.fadeToHub();
+      return;
+    }
     await this.say(narratorLine(narrator(), variant('shifter_done')));
     if (f !== this.flow) return;
     this.creature.setVisible(false);
@@ -662,12 +679,33 @@ export class ShifterRoom extends HouseSideRoom {
   }
 
   /**
-   * The praise for a link (hunt 6, M30): fix-it has its own ("You fixed it!"), and none says "by
-   * yourself" after help, so a read-it link she had help or a miss on takes the next one in turn.
+   * The praise for a link (hunt 6, M30): fix-it has its own ("You made it match!", "You got the right
+   * letter!"), and none says "by yourself" after help, so a read-it link she had help or a miss on takes
+   * the next one in turn. Hunt 10, M46: a fix-it link followed by another (whose short cue is "Make it
+   * match!", the fix beat already told) never takes "You made it match!".
    */
-  private praise(beat: ShifterLink['beat'], unaided: boolean): string {
-    if (beat === 'fix') return variant('shifter_fixed');
+  private praise(beat: ShifterLink['beat'], unaided: boolean, next?: ShifterLink['beat']): string {
+    if (beat === 'fix') {
+      const v = variant('shifter_fixed');
+      // The next in turn, through `variant` so the round remembers it (a bare 'shifter_fixed_2' left the
+      // round on it, and the next fix-it praise said it again).
+      return v === 'shifter_fixed' && next === 'fix' ? variant('shifter_fixed') : v;
+    }
     return readPraise(unaided);
+  }
+
+  /** The last creature waves goodbye and stays (hunt 10, M45: MOM or DAD, never a battle item): three squash hops. */
+  private async wave(): Promise<void> {
+    const y = CREATURE.y;
+    // One chain and one wait (a fast test clock runs waits in a row long, as `morph` notes).
+    this.tweens.chain({
+      targets: this.creature,
+      tweens: [
+        { y: y - 30, scaleX: 0.92, scaleY: 1.1, duration: 160, ease: 'Sine.easeOut', yoyo: true, repeat: 2 },
+        { y, scaleX: 1, scaleY: 1, duration: 80 },
+      ],
+    });
+    await this.wait(1100);
   }
 
   // ---- Help -----------------------------------------------------------------

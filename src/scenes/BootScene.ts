@@ -36,6 +36,7 @@
 import Phaser from 'phaser';
 
 import { CHARACTER_BY_ID, formId } from '../../content/battle/roster';
+import { NO_BAG_COPY } from '../../content/phonics/sentences';
 import { group } from '../../content/voice/ids';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { enterRoom, episode, episodeGroups, giftWord, grabPlan, isStepKind, jumpTo, planFor, seedRands, setCastOptions, startStep, steps, type PrepGame, type Slot } from '../episode/Episode';
@@ -149,7 +150,8 @@ export class BootScene extends Phaser.Scene {
     };
     const charged = q.get('charged');
     const fetchedAll = (): void => {
-      episode.fetched = fetched ? fetched.split(',') : (['a', 'b'] as Slot[]).flatMap((s) => planFor(s).fetches);
+      // A plan's words, as fetched by playing it: MOM and DAD never (NO_BAG_COPY, hunt 10, M45).
+      episode.fetched = fetched ? fetched.split(',') : (['a', 'b'] as Slot[]).flatMap((s) => planFor(s).fetches).filter((w) => !NO_BAG_COPY.has(w));
       // The warm-up's word, first as in an episode (hunt 6, M28: the battle's opening with all eight things).
       if (q.get('warmup') === '1' && !fetched) episode.fetched.unshift(grabPlan().word);
       episode.house.done = ['a', 'b'];
@@ -175,7 +177,7 @@ export class BootScene extends Phaser.Scene {
       if (slot === 'counter') fetchedAll();
       else if (slot === 'b') {
         episode.house.done = ['a'];
-        episode.fetched = fetched ? fetched.split(',') : planFor('a').fetches;
+        episode.fetched = fetched ? fetched.split(',') : planFor('a').fetches.filter((w) => !NO_BAG_COPY.has(w));
         const a = planFor('a');
         if (a.kind === 'charge') episode.charged = { sounds: [...a.charge.runes], part: 1 };
       }

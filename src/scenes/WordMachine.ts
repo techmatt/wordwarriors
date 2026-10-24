@@ -8,7 +8,8 @@
  * SOUND; green puts it in the slot, and the machine says the onset's sound,
  * then the rime, apart, never blended. When the word is the picture's, the
  * machine plays its payoff, the word is said for the first time, and the
- * picture flies into her bag (each word built is a battle item). A wrong tile
+ * picture flies into her bag (each word built is a battle item; not MOM or
+ * DAD, NO_BAG_COPY, hunt 10, M45). A wrong tile
  * makes a silly word ("That makes... ZAT! A silly word!"): it pops back out
  * onto the floor and she tries again, no penalty. The visit is several rounds
  * through one family (the old tile pops out, a new picture: change the first
@@ -102,7 +103,8 @@ export class WordMachine extends HouseSideRoom {
     this.plan = p.machine;
     this.roomId = p.room;
     // Back from the parent page (F9) mid-visit: on from the first word not yet built.
-    const built = this.plan.rounds.findIndex((r) => !episode.fetched.includes(r.word));
+    // `read` too: MOM and DAD are read but never fetched (NO_BAG_COPY, hunt 10, M45).
+    const built = this.plan.rounds.findIndex((r) => !episode.fetched.includes(r.word) && !episode.read.includes(r.word));
     this.index = built < 0 ? this.plan.rounds.length - 1 : built;
     this.finished = built < 0;
     this.phase = 'intro';
@@ -415,11 +417,11 @@ export class WordMachine extends HouseSideRoom {
     this.onsetText.setColor(INK);
     this.rimeText.setColor(INK);
 
-    // Into the bag: each word she makes is a battle item.
+    // Into the bag: each word she makes is a battle item (not MOM or DAD, hunt 10, M45: the picture just goes).
     const pic = this.picture;
     this.picture = null;
     pic?.destroy();
-    await Promise.all([this.guard(this.bag.receive(this.wordArt(r.word), win.x, win.y)), this.say(narratorLine(narrator(), readPraise(firstTry)))]);
+    await Promise.all([this.bagCopy(r.word) ? this.guard(this.bag.receive(this.wordArt(r.word), win.x, win.y)) : Promise.resolve(), this.say(narratorLine(narrator(), readPraise(firstTry)))]);
     spot.obj.setAlpha(1);
     if (!last) {
       this.index++;

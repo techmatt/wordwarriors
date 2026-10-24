@@ -66,7 +66,7 @@ export const SMAUG_STORY: StoryScript = {
         { who: 'villain', key: 'fire', text: 'Nobody touches my gold! Feel my dragon fire!', say: 'Nobody touches my gold, feel my dragon fire!' },
         { who: 'dad', key: 'fire_dad', text: 'Quick, Julia! Hide behind the stone!', say: 'Quick, Julia, hide behind the stone!' },
       ],
-      after: [{ who: 'dad', key: 'fire_after', text: 'He missed us! Good hiding, Julia!', say: 'He missed us! Good hiding, Julia!' }],
+      after: [{ who: 'dad', key: 'fire_after', text: 'He missed us! Phew!', say: 'He missed us! Phew!' }],
     },
     {
       id: 'fire_answer',

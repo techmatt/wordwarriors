@@ -16,6 +16,7 @@
 
 import Phaser from 'phaser';
 
+import { NO_BAG_COPY } from '../../content/phonics/sentences';
 import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { narratorLine } from '../../content/voice/ids';
 import { variant } from '../episode/lineVariants';
@@ -281,6 +282,11 @@ export abstract class HouseSideRoom extends SideRoom {
     this.time.delayedCall(600, () => backToHub(this, this.slot));
   }
 
+  /** Does a copy of this word's picture fly into her bag once read? Not MOM or DAD (NO_BAG_COPY, hunt 10, M45): never a battle item. */
+  protected bagCopy(word: string): boolean {
+    return !NO_BAG_COPY.has(word);
+  }
+
   /** A word's picture: a character's word shows that character's face in this episode's form (`castFace`). */
   protected wordArt(word: string): string {
     const w = WORD_BY_ID[word];
@@ -351,10 +357,13 @@ export abstract class HouseSideRoom extends SideRoom {
     this.recordDone(word, { fetch, last });
   }
 
-  /** The episode learns the word: read, fetched (unless `fetch` is false) and, on the visit's `last` word, this slot done. */
+  /**
+   * The episode learns the word: read, fetched (unless `fetch` is false, or it is a NO_BAG_COPY word, MOM
+   * or DAD: hunt 10, M45) and, on the visit's `last` word, this slot done. A room's resume reads `read`.
+   */
   protected recordDone(word: string, { fetch, last }: { fetch: boolean; last: boolean }): void {
     if (!episode.read.includes(word)) episode.read.push(word);
-    if (fetch && !episode.fetched.includes(word)) episode.fetched.push(word);
+    if (fetch && !NO_BAG_COPY.has(word) && !episode.fetched.includes(word)) episode.fetched.push(word);
     if (last && !episode.house.done.includes(this.slot)) episode.house.done.push(this.slot);
   }
 

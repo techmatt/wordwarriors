@@ -40,6 +40,7 @@ import { TEX } from '../../fx/textures';
 import { cast } from '../abilities';
 import { FLOOR_TOP, type Fighter } from '../Fighter';
 import { ARENA_LEFT, restLift } from '../movement';
+import type { Box } from '../padPlace';
 import type { Phase, StageHost } from '../stages/stage';
 import { STORY_MARKS } from '../stages/story';
 import { StoryWalk, type WalkHost } from './walk';
@@ -98,6 +99,11 @@ export class StoryDirector {
       img.setDepth(s.lift ? s.y - 2 : s.y + dy);
       this.props.set(s.id, img);
     }
+  }
+
+  /** The props' pictures as screen boxes, for the move choice's rings to keep off (hunt 10, M54). */
+  propBoxes(): Box[] {
+    return [...this.props.values()].map((p): Box => [p.x - p.displayWidth / 2, p.y - p.displayHeight, p.x + p.displayWidth / 2, p.y]);
   }
 
   async run(): Promise<void> {

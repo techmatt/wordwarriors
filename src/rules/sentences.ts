@@ -383,8 +383,9 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
     // A number word only where it reads right (item 093, M23: no WE NEED A THREE, no TIAMAT HIDES FROM THE THREE).
     const numbers = !f || FRAME_BY_ID[f]?.numbers === true;
     // X-RAY starts on a vowel sound too (item 058: no WE NEED A XRAY); nor a word that takes
-    // no "A" (item 069: SCAR NEEDS A CHEESE).
-    return (w: string) => (numbers || !NUMBER_WORDS.has(w)) && (article !== 'a' || (!/^[aeiou]|^x/.test(w) && !NO_ARTICLE.has(w)));
+    // no "A" (item 069: SCAR NEEDS A CHEESE); nor one the frame itself rules out (hunt 10, M49: RAN AWAY FROM THE ZOO).
+    const not = (f && FRAME_BY_ID[f]?.not) || [];
+    return (w: string) => (numbers || !NUMBER_WORDS.has(w)) && !not.includes(w) && (article !== 'a' || (!/^[aeiou]|^x/.test(w) && !NO_ARTICLE.has(w)));
   };
   const keys: string[] = [];
   for (let i = 0; i < 2; i++) {

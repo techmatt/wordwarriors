@@ -7,7 +7,7 @@
  */
 export interface Ambience {
   /** The particle, a TEX key (src/fx/textures.ts). */
-  tex: 'spark' | 'smoke' | 'ring' | 'pixel' | 'star' | 'square' | 'bubble' | 'block' | 'leaf' | 'fluff' | 'butterfly';
+  tex: 'spark' | 'smoke' | 'ring' | 'pixel' | 'star' | 'square' | 'bubble' | 'block' | 'leaf';
   tint: number[];
   /** Rises from below the screen; else falls from above it. */
   up: boolean;
@@ -27,8 +27,6 @@ export interface Ambience {
   paint?: boolean;
   /** Turns as it goes, degrees a frame, from a random angle. */
   spin?: number;
-  /** Flaps: its width beats like wings (a butterfly). */
-  flap?: boolean;
 }
 
 /** Sunny meadow sparkles: the fallback for an arena key with no entry. */
@@ -51,50 +49,11 @@ export const ARENAS: Record<string, { name: string; sky: [number, number]; groun
   cave: { name: 'Treasure Cave', sky: [0x1a1a2a, 0x5a4a2a], ground: 0x8a6a2a, glyph: '💰', look: 'a cave piled high with gold coins and jewels, lit by lava cracks', ambience: { tex: 'spark', tint: [0xffd23f, 0xff7b00], up: true } },
   factory: { name: 'Robot Factory', sky: [0x2a2d42, 0x6a7a9a], ground: 0x4a4a5a, glyph: '⚙️', look: 'a neon robot factory with conveyor belts and sparks', ambience: { tex: 'pixel', tint: [0x00f5d4, 0xffcc33], up: false } },
   city: { name: 'Foggy City', sky: [0x3a4a5a, 0xa0b0c0], ground: 0x5a5a6a, glyph: '🎡', look: 'a foggy old city street at night with lamp posts and a fairground', ambience: { tex: 'smoke', tint: [0xa0b0c0, 0xffffff], up: false } },
-  // Item 134: nursery and street had the meadow's sparkles by fallback; they name them
-  // until Matt picks from AMBIENCE_TRIALS below.
-  nursery: { name: 'Giant Playroom', sky: [0xffe0f0, 0xfff8e0], ground: 0xc8a07a, glyph: '🧸', look: "a toddler's playroom seen from a toy's height: towering stacks of building blocks, a huge crib, giant soft toys and a squashy play mat", ambience: SPARKLES },
-  street: { name: 'Sunny Street', sky: [0x8ad7ff, 0xf0f8ff], ground: 0x8a8a92, glyph: '🚗', look: 'a sunny suburban street outside the house, Dada Jason\'s car parked at the kerb', ambience: SPARKLES },
+  // Matt's picks from item 134's candidates (item 136): the nursery's toy blocks tumbling down, the street's leaves on a breeze.
+  nursery: { name: 'Giant Playroom', sky: [0xffe0f0, 0xfff8e0], ground: 0xc8a07a, glyph: '🧸', look: "a toddler's playroom seen from a toy's height: towering stacks of building blocks, a huge crib, giant soft toys and a squashy play mat", ambience: { tex: 'block', tint: [0xff4a4a, 0xffd23f, 0x3a8aff, 0x3ac46a, 0xff9a3c], up: false, speedY: [60, 120], frequency: 320, scale: { min: 0.9, max: 1.4 }, alpha: { start: 1, end: 0.5 }, paint: true, spin: 2 } },
+  street: { name: 'Sunny Street', sky: [0x8ad7ff, 0xf0f8ff], ground: 0x8a8a92, glyph: '🚗', look: 'a sunny suburban street outside the house, Dada Jason\'s car parked at the kerb', ambience: { tex: 'leaf', tint: [0x6ac46a, 0x3a9a4a, 0xffb13a, 0xe8742a, 0xffd23f], up: false, fromLeft: true, speedX: [90, 200], speedY: [10, 50], frequency: 220, lifespan: 14000, scale: { min: 1.1, max: 1.7 }, alpha: { start: 1, end: 0.6 }, paint: true, spin: 3 } },
   // Fight styles' own places (item 031, content/battle/fights.ts).
   sky_race: { name: 'Treasure Cave Sky Race', sky: [0x1a1a2a, 0x8a6a2a], ground: 0x6a4a1a, glyph: '🏁', look: 'a huge treasure cave seen side-on as a sky-race course: a wide open flying space in the middle, glittering gold coin piles and jewels along the floor, stalactites hanging from the top, glowing lava cracks, coloured lanterns strung across', ambience: { tex: 'spark', tint: [0xffd23f, 0xff7b00, 0xffffff], up: true } },
   spell_tower: { name: 'Moonlit Spell Tower', sky: [0x1a0a3a, 0x5a3a8a], ground: 0x4a3a5a, glyph: '🌙', look: "the flat round top of a witch's stone tower at night: a big full moon, purple clouds, swirling stars, glowing rune stones around the edge of a wide flat stone floor", ambience: { tex: 'spark', tint: [0xb04aff, 0x80ffdb, 0xffffff], up: true } },
   cook_show: { name: 'Cook-Off Studio', sky: [0xfff1d6, 0xff9ad5], ground: 0xd8b088, glyph: '🍳', look: "a bright cartoon TV cooking-contest studio: coloured spotlights, bunting, a big shiny kitchen wall with shelves of pots, fruit and spices behind a wide wooden floor, an empty judges' table at the back", ambience: { tex: 'spark', tint: [0xffffff, 0xff9ad5, 0xffd23f], up: false } },
-};
-
-/**
- * Item 134's ambience candidates for Matt's picker (`tests/shots/ambience.pw.ts`):
- * `?ambience=<id>` plays one in its arena. Promoting one copies it into its
- * arena's `ambience` above; the rest go.
- */
-export const AMBIENCE_TRIALS: Record<string, { arena: string; label: string; ambience: Ambience }> = {
-  nursery_1: {
-    arena: 'nursery',
-    label: "Ellie's soap bubbles drifting up",
-    ambience: { tex: 'bubble', tint: [0xff9ad5, 0x9ad8ff, 0xc8a8ff, 0xffffff], up: true, speedX: [-20, 20], speedY: [35, 75], frequency: 300, lifespan: 16000, scale: { min: 0.3, max: 0.65 }, alpha: { start: 1, end: 0.3 }, paint: true },
-  },
-  nursery_2: {
-    arena: 'nursery',
-    label: 'little toy blocks tumbling down',
-    ambience: { tex: 'block', tint: [0xff4a4a, 0xffd23f, 0x3a8aff, 0x3ac46a, 0xff9a3c], up: false, speedY: [60, 120], frequency: 320, scale: { min: 0.9, max: 1.4 }, alpha: { start: 1, end: 0.5 }, paint: true, spin: 2 },
-  },
-  nursery_3: {
-    arena: 'nursery',
-    label: "nightlight stars floating down, like a cot's mobile",
-    ambience: { tex: 'star', tint: [0xffc83f, 0xff7ab8, 0x6ab8ff, 0xb08aff], up: false, speedY: [35, 70], frequency: 260, lifespan: 16000, scale: { min: 0.9, max: 1.5 }, alpha: { start: 1, end: 0.3 }, paint: true, spin: 1 },
-  },
-  street_1: {
-    arena: 'street',
-    label: 'leaves blowing along on a breeze',
-    ambience: { tex: 'leaf', tint: [0x6ac46a, 0x3a9a4a, 0xffb13a, 0xe8742a, 0xffd23f], up: false, fromLeft: true, speedX: [90, 200], speedY: [10, 50], frequency: 220, lifespan: 14000, scale: { min: 1.1, max: 1.7 }, alpha: { start: 1, end: 0.6 }, paint: true, spin: 3 },
-  },
-  street_2: {
-    arena: 'street',
-    label: 'dandelion fluff floating across',
-    ambience: { tex: 'fluff', tint: [0xffffff, 0xfff8e0], up: true, fromLeft: true, speedX: [40, 100], speedY: [5, 25], frequency: 200, lifespan: 20000, scale: { min: 0.9, max: 1.4 }, alpha: { start: 1, end: 0.5 }, paint: true, spin: 0.5 },
-  },
-  street_3: {
-    arena: 'street',
-    label: 'butterflies fluttering by',
-    ambience: { tex: 'butterfly', tint: [0xffd23f, 0xff9ad5, 0x6ab8ff, 0xff9a3c], up: true, fromLeft: true, speedX: [50, 110], speedY: [0, 25], frequency: 700, lifespan: 20000, scale: { min: 1.1, max: 1.6 }, alpha: { start: 1, end: 0.8 }, paint: true, flap: true },
-  },
 };

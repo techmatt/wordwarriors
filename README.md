@@ -183,7 +183,7 @@ read, and THE END's tallest grown-up under its title. `tests/hunt7.spec.ts` (ite
 seventh's: her outfits for items 111 and 114's allies at her dress height and yellow mashed
 at the story fight's gold grab (slow lane), and Charge back from the grown-ups page asking no
 rune art the word lacks (fix 124, browser lane). `tests/hunt10.spec.ts` (item 135, browser lane) keeps the
-tenth's that no older spec covers: `?ambience=` in another villain's battle, the clash's rings and F9 in
+tenth's that no older spec covers: the clash's rings and F9 in
 the closing fade, the backdrop past every edge a shake can uncover, the grown-ups page (its grid rows, F8's
 warning, the DEBUG tag), the entry hall's decals, the gift word on its card, the story fight's fetched beat
 and Charge's modelled runes after F9; its Shape-Shifter fixes (the lifted letter under the label, on a
@@ -398,11 +398,11 @@ base commit's code; the server no longer reloads under edits), run it from a sec
 junctions (`cmd /c rmdir <path>`) before `git worktree remove --force`, so nothing is
 deleted through them.
 
-**Ambience picker** (item 134): `npm run shots -- ambience.pw` plays a Part 1 brawl in each
-`AMBIENCE_TRIALS` candidate's arena, and the arena's ambience now, at real time, and records
-about 3 s of each as a looping WebP (sharp joins the frames) into `scratch/arena_ambience_134/`,
-with the picker manifest `scratch/arena_ambience_134.json`. Conductor's picker page shows an
-animated WebP playing, so a moving thing can be picked like a picture.
+**Moving candidates** (item 134): a round of moving things (item 134's arena ambience) was shown
+to Matt as looping WebPs: a shots spec played each candidate at real time and recorded about 3 s
+of it, sharp joining the frames. Conductor's picker page plays an animated WebP, so a moving
+thing can be picked like a picture. That spec (`tests/shots/ambience.pw.ts`) went once Matt had
+picked (item 136); git history keeps it as a model.
 
 **Variety across many episodes** (item 121): `npm run variety -- --episodes=300 --seed=1`
 (about 1 s per hundred episodes; no browser) plays drawn episodes in a row on one progress
@@ -547,8 +547,9 @@ keep such scripts in the worktree.
   cleanup), `shifter_wrong3` (the Shape-Shifter with wrong picks, three episodes: M39's chains, M42's
   lifted letter), `runcan2` and `momdad2` (`words=run,can`, `words=mom,dad`: M40, M41), and each fight
   style item 132 tidied once with wrong picks, a busy child or an idle one (`race_wrong`, `tug_mash`,
-  `cookoff_wrong`, `clash_idle`, `story_mash_wrong`). `qa flags` gained item 134's `ambience=` candidates
-  (in a battle whose villain fights elsewhere), `words=run,can` and the grown-ups page with no ally.
+  `cookoff_wrong`, `clash_idle`, `story_mash_wrong`). `qa flags` gained a battle in each of the two arenas
+  item 134 gave an ambience (`villain=ellie`, `villain=rilla`, each with `fight=brawl` so no ally's cook-off nudge moves it; its `ambience=` candidates went in item
+  136), `words=run,can` and the grown-ups page with no ally.
   New check: `glyph-on-hero` (look), a picture glyph of 60 px or more (no letters) drawn over her head and
   shoulders (Charge's gesture glyph sat on her face, fix 137). `spawn-in-reach` counts a spot back in its
   slot the same round as seen (the word machine's wrong tile, back under her after "That's a silly word!",

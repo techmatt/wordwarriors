@@ -42,9 +42,12 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    time moves that word up a level, a miss on its first try moves it down. The levels
    are recorded, but at base difficulty the hall gives every word level 1 (item 067,
    *Difficulty and variety* below). The levels reached and grabs are on the grown-ups
-   page ("Warm-up levels"). Only short words are asked for (`GRAB.maxUnits`, 4 sound units). The word is said, so it never
+   page ("Warm-up levels"). Only short words are asked for (`GRAB.maxUnits`, 4 sound units), never MOM or DAD
+   (hunt 10, M45: the grab goes to her bag, and neither is ever a battle item). The word is said, so it never
    becomes a room's key word, the counter, a word machine word or a move pad that
-   episode, and the hall's other eight pictures are none of the words she will read. A
+   episode, nor does a bank word heard whole in it as it plus one sound (`grabSays`, hunt 10,
+   M57: CLOCK says LOCK, BRUSH RUSH, TENT TEN; by sound, so KITE says no KIT), and the hall's
+   other eight pictures are none of the words she will read. A
    grab is exposure, not a read (ProgressStore `grabs`, never `words` or the word bag).
    About 20–30 seconds; no journey stop of its own.
 4. **The quest place (the hub).** The door leads to the helper's quest place (the
@@ -101,7 +104,10 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    a picnic, the top of a mountain, a pillow fort, a boat ride, stargazing, a campfire or
    a snow day, drawn at random and never last episode's. Four voiced lines in bubbles,
    about 20 seconds: the host opens, the villain says its own line, Julia cheers, a dad
-   closes (chef Dada Jason baked the cake). Then the victory replays the words she read.
+   closes (chef Dada Jason baked the cake). Then the victory replays the words she read,
+   on a podium: she has the top block, her ally (or with no ally the dad who woke her) the
+   left, the villain the right; with an ally, the dad who woke her cheers on the grass
+   beside it (M50, `podiumCheer`).
    Once the recap is said a green dot shows; her green fades it out to **THE END**
    (item 085, `src/scenes/TheEndScene.ts`): this episode's hub (home or the quest place)
    full screen, her heroes (her, and her ally or the dad who woke her) bouncing on it,
@@ -196,7 +202,6 @@ Any cast can be tried from the URL (and stays for every episode that session):
 | `?words=new`, `?words=tree,ham` | Item 121: every word draw (key words, pads, the gift, the warm-up, the phonics rooms) leans to item 121's new words, or to those named, this session (`favourWords`, `src/rules/bank.ts`); each still leaves the bag once read. The grown-ups page's word list (page 2) marks the new words NEW |
 | `?fight=sky_race` | The showdown's fight style, whoever the villain is: `brawl` `sky_race` `space_race` `sea_tug` `spell_clash` `frost_clash` `magic_show` `cook_off` |
 | `?fight=smaug_story` | The **story fight** against Evil Smaug (item 107): forces him as the villain, whatever the cast. `?scene=battle&part=1&fight=smaug_story` (or `part=2`) goes straight to a half |
-| `?ambience=nursery_2` | Item 134: the battle plays that ambience candidate (`AMBIENCE_TRIALS`, `content/battle/roster/arenas.ts`) in its own arena, whoever the villain is |
 
 Not every showdown is a brawl (item 031). Each villain has a **fight style**
 (`fight` in the roster; `content/battle/fights.ts`): Evil Smaug races the heroes
@@ -389,7 +394,9 @@ name's bridge first where it holds it, as in the hint).
 No word is ever made of it: a random letter could spell a word she reads later, or a rude
 one. No penalty; after two misses the answer sparkles. Read it is recorded as reading;
 fix it (a letter for a sound) under spelling, apart from reading, and leaves her word bag alone. Every word read is a battle item, a copy of each
-creature flying into her bag; the last creature itself flies in and goes to the fight. `?scene=room&slot=a&room=shifter` opens it.
+creature flying into her bag; the last creature itself flies in and goes to the fight. Not MOM or DAD
+(`NO_BAG_COPY` in `content/phonics/sentences.ts`; hunt 10, M45): read as any word, but no copy, and as the
+last creature it waves (three squash hops) and stays, with no "comes to the fight" line; neither is ever fired. `?scene=room&slot=a&room=shifter` opens it.
 
 **The sound hidden in the name** (item 096): where a hint or teaching line gives a
 letter's sound and the letter's name holds it (B D F J K L M N P R S T V Z), the line
@@ -404,7 +411,8 @@ and misses (`nameToSound`); Matt's recordings replace the lines like any other.
 
 **The Stretchy Bridge** (item 054, `src/scenes/BridgeRoom.ts`): a side room where she
 blends a whole word. A gap crosses the room (lava in the house, a river or a chasm at a
-quest place: `gap` on each place in `PLACES`, `content/house/house.ts`, read by `gapFor`), and the word's letters are
+quest place: `gap` on each place in `PLACES`, `content/house/house.ts`, read by `gapFor`; a chasm's colours lift toward
+the room's floor, read off the backdrop, and its top edge fades in from the floor, M52), and the word's letters are
 stepping stones over it (SH is one stone). She pushes the stick to slide across, slower
 than she walks; while she is on a stone its sound is **held**, so a slow slide is
 "mmm-aaa-t". A vowel or a sound you can stretch (M S F L N R V Z NG SH TH) gets one short
@@ -416,7 +424,7 @@ The room fetches its stones' sounds and words as it opens, so the first slide is
 pictures that share the word's start and differ later (MAP, MAT, MAN; else MAP, MOP, MUG;
 only where the bank has nothing better, the same rime). She walks to the one she read and
 presses green; only then is the word said, and its picture goes into her bag (every word
-read there is a battle item). Its words are any short pictured word (`BRIDGE.maxUnits`,
+read there is a battle item; not MOM or DAD, whose picture stays put: `NO_BAG_COPY`, hunt 10, M45). Its words are any short pictured word (`BRIDGE.maxUnits`,
 4 sound units; item 067), the easier first in a visit. Help can fade per word
 (`bridgeLevels` in the progress, the level reached is the number in a word's dot on page 2
 of the grown-ups page; at base difficulty every word gets level 1): level 1 the stones sound

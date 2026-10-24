@@ -23,7 +23,7 @@ import { sfxWrong } from '../audio/sfx';
 import { advance, castArt, castScale, episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { outfitFor } from '../../content/battle/outfits';
 import { FreePlay } from '../fx/freePlay';
-import { backdrop, fitImage, floatText, FpsMeter, wiggle } from '../fx/juice';
+import { backdrop, fitPicture, floatText, FpsMeter, wiggle } from '../fx/juice';
 import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import type { DebugOrigin } from '../episode/debug';
@@ -177,8 +177,9 @@ export abstract class RoomScene extends Phaser.Scene {
   }
 
   /** An art image sized into a box, origin at its feet. */
-  protected art(key: string, w: number, h: number, x = 0, y = 0): Phaser.GameObjects.Image {
-    return fitImage(this.add.image(x, y, key).setOrigin(0.5, 1), w, h);
+  /** An image standing at (x, y) by its feet, fitted to `w` x `h`; a word picture by its own shape (`fitPicture`, M48). */
+  protected art(key: string, w: number, h: number, x = 0, y = 0, max?: { w: number; h: number }): Phaser.GameObjects.Image {
+    return fitPicture(this.add.image(x, y, key).setOrigin(0.5, 1), w, h, max);
   }
 
   /** A cast member standing in the room, as tall beside her as their size says (item 028: Scar just under her; a dad grown-up height, item 034). */

@@ -33,6 +33,8 @@ export interface Frame {
   use: 'fetch' | 'counter';
   /** A number word (THREE) reads right as this frame's key word: GO GET THE TEN, not WE NEED A THREE or TIAMAT HIDES FROM THE THREE (item 093, M23). */
   numbers?: true;
+  /** Key words that read wrong in this frame (hunt 10, M49: SMAUG RAN AWAY FROM THE ZOO reads as an escaped animal). */
+  not?: readonly string[];
 }
 
 /** The bank's number words: key words only in frames marked `numbers` (item 093, M23); the warm-up and the bridge keep them. */
@@ -46,8 +48,18 @@ export const NO_ARTICLE: ReadonlySet<string> = new Set(['cheese', 'milk', 'jam',
  * Bank things never the key word of a fetch frame (hunt 9, M41 (b)): SCAR NEEDS A MOM reads as the
  * character lacking one, and Julia's family is two dads. The counter frames keep them (TIAMAT IS SCARED
  * OF THE DAD is a joke), and so do the games with words of their own.
+ * ZOO and HAND (hunt 10, M53 (a)): ELSA NEEDS A ZOO (a place, then flying into the bag as an item) and
+ * SERAPHINA NEEDS A HAND (the idiom). They stay in the counter frames and the other games.
  */
-export const NOT_FETCHED: ReadonlySet<string> = new Set(['mom', 'dad']);
+export const NOT_FETCHED: ReadonlySet<string> = new Set(['mom', 'dad', 'zoo', 'hand']);
+
+/**
+ * Bank things read as any word but never a battle item (hunt 10, M45 (b)): no copy goes to her bag
+ * (the Shape-Shifter's last creature, if one, waves and stays), so none is ever fired in battle (THE MOM!
+ * hurled at Evil Tiamat). Read, recorded and done for the episode all the same (`SideRoom.recordDone`).
+ * Every one is in NOT_FETCHED too, so no fetch frame asks for one.
+ */
+export const NO_BAG_COPY: ReadonlySet<string> = new Set(['mom', 'dad']);
 
 /**
  * Few frames on purpose (item 015): the small words recur until they are
@@ -72,7 +84,7 @@ export const FRAMES: Frame[] = [
   { id: 'does_not_like_the', text: '{villain} DOES NOT LIKE THE {x}', use: 'counter' },
   { id: 'says_yuck_to_the', text: '{villain} SAYS YUCK TO THE {x}', use: 'counter' },
   // Item 121: two more, from Dad's bedtime chases.
-  { id: 'ran_away_from_the', text: '{villain} RAN AWAY FROM THE {x}', use: 'counter' },
+  { id: 'ran_away_from_the', text: '{villain} RAN AWAY FROM THE {x}', use: 'counter', not: ['zoo'] },
   { id: 'cannot_get_past_the', text: '{villain} CAN NOT GET PAST THE {x}', use: 'counter' },
 ];
 

@@ -69,7 +69,7 @@ const ART_114 = ['astronaut', 'puzzler', 'gorilla'].flatMap((o) => [`char_julia_
 // Item 121's words but the green ones (GATE, STUMP, SWISH and CHOMP's dragon have grass or leaves).
 const BANK_121 = ['ham', 'hay', 'sack', 'dress', 'block', 'bench', 'skunk', 'dash', 'smash', 'crash', 'splash'].map((w) => `pic_${w}`);
 const BANK_126 = ['mom', 'dad', 'cow'].map((w) => `pic_${w}`);
-const NO_GREEN = new Set([...ART_114, ...ART_111, ...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...BANK_121, ...BANK_126, ...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'face_rilla', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
+const NO_GREEN = new Set([...ART_114, ...ART_111, ...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...BANK_121, ...BANK_126, ...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'face_rilla', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_bubble', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
 
 /**
  * Sprites in dark green of their own (item 049): keying takes out only the

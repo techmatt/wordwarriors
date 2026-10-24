@@ -59,6 +59,7 @@ export {
   helper,
   hubScene,
   narrator,
+  podiumCheer,
   podiumSecond,
   questSetupLine,
   randomVillain,

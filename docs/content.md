@@ -125,8 +125,8 @@ One `CharacterSpec` in `ROSTER`:
   `content/phonics/spelling.ts` (item 020).
 - `arena`: a key of `ARENAS`. A new arena names its battle ambience there (`ambience`,
   the `Ambience` type in `arenas.ts`: a tinted particle falling or rising behind the
-  fight; item 134). Candidates for Matt go in `AMBIENCE_TRIALS` beside it, played by
-  `?ambience=<arena>_<n>` and shown to him by a shots spec like `tests/shots/ambience.pw.ts`.
+  fight; item 134; the nursery's toy blocks and the street's leaves were Matt's picks from
+  that round, item 136).
 - `house`: its mood as a villain (see "A villain's house mood" below).
 
 Every new character is automatically a hero, an ally (and so a narrator: about 680
@@ -340,7 +340,10 @@ own); each episode draws one (`src/rules/story.ts`, variant 1 with `?cast=defaul
 scene is `S(prop, lines, circle, done)`:
 
 - `prop`: what pops up over the helper with the word written on it: an art id
-  (`prop_scroll`) or an emoji drawn on a white card.
+  (`prop_scroll`) or an emoji drawn on a white card. A wide prop is drawn in a 210×120 box;
+  a square one (Ellie's `prop_bubble`, M55) in a 150 px square, the word fitted inside it.
+  A new prop is a `PROPS` row in `content/art/assets.ts`, then `art:placeholders` and
+  `art:gen -- <id>`. Prefer a drawn prop to an emoji that is a bank word's glyph (🔵 was DOT's).
 - `lines`: two to four, in the helper's person's voice. The word is drawn from the bank
   (any action word), so no line may name it or hint at which: the last trails off ("When
   you press the button, it goes...") into the narrator's `gift_word_<word>` clip.
@@ -487,7 +490,8 @@ picture in its window, a rime on its panel (AT), letter tiles on the floor; step
 a tile says its sound, green slots it in, and the machine says the sound and the rime
 apart, never blended. A wrong tile makes a silly word ("That makes... ZAT! A silly
 word!"). A visit is `WORD_MACHINE.rounds` words, up to `perFamily` from one family, then
-another family; every word built is a battle item.
+another family; every word built is a battle item (not MOM or DAD: `NO_BAG_COPY` in
+`content/phonics/sentences.ts`, hunt 10, M45; the same in the bridge and the Shape-Shifter).
 
 - **Families come from the word bank.** Any rime with an entry in `RIMES` and two or
   more bank words whose onset is a single letter (any role: CAT and VAT are things, ZAP
@@ -551,7 +555,10 @@ coverage rule (README, "The word bank's coverage rule"; `npm run bank:audit`). T
 1. The entry, in its level's block of `ENTRIES`.
 2. Its picture brief in `PICTURES` (`content/art/prompts.ts`): "a frog: a bright green
    frog ...", one clear thing a 4-year-old knows, no writing; say what it is not where
-   it could be mistaken ("a plum, not a fig"). Art is `pic_<word>`.
+   it could be mistaken ("a plum, not a fig"). Art is `pic_<word>`. A picture far from
+   square (a standing person, like DAD; a wide one, like TUG) is fitted to a square and
+   comes out small: add its id to `SHAPED_PICTURES` (`src/art/pictureBox.ts`, M48) and it
+   fits a box of its own shape instead, about the square's area.
 3. Its battle effect in `content/phonics/effects.ts`: a thing or `both` with
    `use(word, kind, color, extra)` in `THING_EFFECTS` (id `item_<word>`, `...pic(word)`
    to fling or drop its own picture), an action with `act(...)` in `ACTION_EFFECTS` (id
@@ -587,7 +594,11 @@ story (MICE); `FLAVOUR_PICTURES` keep POW and ICE's art for the roster.
 
 ## A sentence frame (`content/phonics/sentences.ts`)
 
-One `Frame` in `FRAMES`: `{ id, text, use }`.
+One `Frame` in `FRAMES`: `{ id, text, use, numbers?, not? }`.
+
+- `numbers`: a number word (THREE) reads right as its key word (item 093, M23); `not`:
+  key words that read wrong in it, never drawn there (hunt 10, M49: `ran_away_from_the`
+  takes no ZOO, which read as an escaped animal).
 
 - `text` is upper case; slots are `{villain}`, `{helper}`, `{hero}` and `{x}`; at most
   one name slot; `{x}` (the key word) is always last.
@@ -604,6 +615,10 @@ One `Frame` in `FRAMES`: `{ id, text, use }`.
   (CAN NOT STAND THE until item 020), and since item 040 `cannot_beat_the`,
   `hides_from_the`, `does_not_like_the`, `says_yuck_to_the`, and since item 121
   `ran_away_from_the`, `cannot_get_past_the`.
+- Bank things that read wrong as a fetch key (SCAR NEEDS A MOM, ELSA NEEDS A ZOO, SERAPHINA
+  NEEDS A HAND) are `NOT_FETCHED` (`content/phonics/sentences.ts`: MOM, DAD, ZOO, HAND; hunt 9
+  M41, hunt 10 M53); the counter frames and the other games keep them. `NO_BAG_COPY` (MOM, DAD;
+  hunt 10 M45) are never battle items at all: read in any game, but no copy goes to her bag.
 - The composer makes one prefix line per frame (`sent_<id>`), or per frame × roster
   character when it has a name slot (`sent_<id>_<character>`), plus a `word_<token>`
   line for any new token. A name-slot frame costs one line per character.

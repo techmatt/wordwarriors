@@ -999,9 +999,9 @@ const FLAGS = [
   'scene=grab&grab=cow', 'scene=grab&grab=dad', 'scene=room&slot=a&sentence=we_need_a:mom', 'scene=room&slot=counter&sentence=scared_of_the:dad',
   'scene=battle&fetched=cow,mom,dad', 'scene=battle&part=2&fetched=dad', 'scene=victory&read=cow,mom,dad', 'seed=976&scene=battle', 'sentence=bogus', 'sentence=we_need_a:zzz',
   'scene=room&slot=a&sentence=no_match_for_the:octopus', 'scene=room&game=word_machine&words=cow',
-  // Hunt 10 (item 135): item 134's ambience candidates, odd values; item 130's RUN and CAN; the grown-ups page without its art.
-  'scene=battle&ambience=nursery_1', 'scene=battle&ambience=nursery_2', 'scene=battle&ambience=nursery_3', 'scene=battle&ambience=street_1',
-  'scene=battle&ambience=street_2', 'scene=battle&ambience=street_3', 'ambience=bogus', 'scene=battle&part=2&ambience=street_3&fight=smaug_story',
+  // Hunt 10 (item 135): item 134's ambience in its two arenas (Matt's picks, item 136); item 130's RUN and CAN; the grown-ups page without its art.
+  // `fight=brawl`: an ally's fightNudge (a cook-off) would move the fight to the cook show's arena.
+  'scene=battle&villain=ellie&fight=brawl', 'scene=battle&villain=rilla&fight=brawl',
   'scene=room&room=shifter&words=run,can', 'scene=room&slot=counter&words=can', 'scene=parent&ally=none',
 ];
 const flagSet = set === 'lenses' || set === 'all';

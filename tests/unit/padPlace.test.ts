@@ -9,7 +9,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { bodyBox, clearSpot, coveredShare, placePads, signBox, type PlaceBody } from '../../src/battle/padPlace';
+import { bodyBox, clearSpot, coveredShare, placePads, ringBox, signBox, type PlaceBody } from '../../src/battle/padPlace';
 import { seeded, spread } from './seeds';
 
 /** A fighter standing at (x, y), `w` wide and `h` tall. */
@@ -123,6 +123,69 @@ test('padPlace: her reach gives way to a contest\'s rules: pads on her side, nob
     const sway = (b: PlaceBody): [number, number, number, number] => { const [l, t, r, btm] = bodyBox(b); return [l - 30, t, r + 30, btm]; };
     assert.ok(coveredShare(sway(villain), signs(spots)) <= coveredShare(sway(villain), signs(plain)) + 1e-9, `seed ${seed}: covers the villain more`);
   }
+});
+
+/**
+ * The story fight's stage as its move choices open (src/battle/stages/story.ts STORY_MARKS,
+ * content/battle/stories/smaug.ts, StoryDirector.guards): an anchored stage, so a contest's
+ * rules and its held team, with her anywhere a walk can leave her, gold guards in the middle
+ * and the props (stone, ledge, hoard) as their pictures stand.
+ */
+const STORY_PROPS: [number, number, number, number][] = [
+  [675, 455, 875, 635], // the stone, drawn at its spot's x + 95
+  [0, 460, 240, 650], // the ledge
+  [730, 290, 990, 450], // the hoard
+];
+function storyStage(seed: number, guards: boolean) {
+  const rand = seeded(spread(seed));
+  const me = body(150 + rand() * 750, 470 + rand() * 180, 90, 170);
+  const dad = body(250 + ((seed % 3) - 1) * 20, 470, 120, 240);
+  const ally = body(370 + ((seed % 5) - 2) * 15, 655, 110, 170);
+  const villain = body(1020 + ((seed % 3) - 1) * 10, 560, 300 + (seed % 3) * 30, 320);
+  const minions = guards ? [0, 1, 2].map((i) => body(760 + i * 70, 560 + (i % 3) * 45, 70, 90)) : [];
+  return {
+    me,
+    input: {
+      n: seed % 4 === 0 ? 2 : 3,
+      avoid: [me, villain, dad, ally, ...minions],
+      cover: [villain, dad, ally],
+      contest: { meX: me.x, villain },
+      sway: 40,
+      ...floor,
+      rand,
+      me: { x: me.x, y: me.y, reach: 120, first: true },
+      keepOff: STORY_PROPS,
+    },
+  };
+}
+
+test('padPlace: the story fight never opens a pad within her reach, however crowded (hunt 10, M54)', () => {
+  // Before M54 her reach gave way to the contest's rules here, and every choice of drawn10's story
+  // fight opened one at 90 px: a green mashed after "Use RED!" took a pad she never walked to.
+  for (let seed = 1; seed <= 150; seed++) {
+    const { me, input } = storyStage(seed, seed % 2 === 0);
+    const spots = placePads(input);
+    assert.equal(spots.length, input.n, `seed ${seed}`);
+    for (const p of spots) assert.ok(Math.hypot(p.x - me.x, p.y - me.y) >= 120, `seed ${seed}: a pad ${Math.round(Math.hypot(p.x - me.x, p.y - me.y))} px from her`);
+  }
+});
+
+test('padPlace: the story fight\'s rings stand on its props as little as her reach allows (M54)', () => {
+  // Her side between the ledge and the stone holds one ring, so the rest may sit on the faded
+  // stone or ledge (Matt's call): as little of them as fits, never at her reach's cost.
+  const on = (spots: { x: number; y: number }[]) => spots.reduce((s, p) => s + coveredShare(ringBox(p.x, p.y), STORY_PROPS), 0);
+  let kept = 0;
+  let plain = 0;
+  for (let seed = 1; seed <= 60; seed++) {
+    const { input } = storyStage(seed, seed % 2 === 0);
+    const spots = placePads({ ...input, rand: seeded(seed) });
+    const without = placePads({ ...input, keepOff: undefined, rand: seeded(seed) });
+    kept += on(spots);
+    plain += on(without);
+    assert.ok(on(spots) <= on(without) + 1e-9, `seed ${seed}: more on the props (${on(spots).toFixed(2)} against ${on(without).toFixed(2)})`);
+  }
+  // The stage leaves little room (her side ends at about 755, the stone's picture starts at 675), so the gain is small.
+  assert.ok(kept < plain, `rings on the props: ${kept.toFixed(2)} kept off, ${plain.toFixed(2)} without`);
 });
 
 test('padPlace: when nobody can be kept clear, the pads still go up, covering as little as they can', () => {

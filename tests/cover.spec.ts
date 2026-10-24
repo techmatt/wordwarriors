@@ -126,6 +126,22 @@ for (const [name, query, scene, line] of [
   });
 }
 
+// Hunt 10, M59: the attic's narrow find box kept off her by standing over the answer's whole
+// pedestal (JAM), the spot she is told to walk to. It keeps off the pedestals as well.
+test("the attic's find line: the narrow box keeps off the pedestals as well as her", SLOW, async ({ page }) => {
+  const errors = collectErrors(page);
+  await boot(page, '?scene=room&slot=counter&villain=jormungandr&nojourney=1&qa=1');
+  await readToKeyWord(page);
+  await until(page, (st) => st.scene === 'SentenceRoom' && /_room_find$/.test(st.voice.speaking ?? ''), 60_000, 'the find line');
+  await page.waitForTimeout(150);
+  const l = await layout(page);
+  const pedestals = l.images.filter((i) => i.scene === 'SentenceRoom' && i.key === 'prop_pedestal');
+  expect(pedestals.length, 'three pedestals').toBe(3);
+  const boxes = l.covers.filter((c) => c.scene === 'SentenceRoom' && c.kind === 'dialogue');
+  for (const p of pedestals) expect(boxes.reduce((n, c) => n + inter(c.b, p.b), 0) / area(p.b), 'share of a pedestal under the box').toBeLessThanOrEqual(0.1);
+  expectNoErrors(errors);
+});
+
 // The hub's circle line against the gift's card (item 089): tests/layout.spec.ts.
 
 test('the battle move choice: the dialogue and bubbles keep off the pads and their signs', SLOW, async ({ page }) => {

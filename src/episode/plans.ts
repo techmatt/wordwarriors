@@ -46,7 +46,7 @@ import { BRIDGE_GAME, CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, SEN
 import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
 import { planStoryMoves } from '../rules/storyFight';
 import { STORY_BY_ID, storyLines } from '../../content/battle/stories/index';
-import { GRAB_WORDS, hallObjects, pickGrab } from '../rules/grab';
+import { GRAB_WORDS, grabSays, hallObjects, pickGrab } from '../rules/grab';
 import { progress } from '../state/progress';
 import { pickWeighted } from '../rules/random';
 import { away, bedroomTaunt, helper, hubScene, storyWords, villainSpec } from './cast';
@@ -175,7 +175,8 @@ function planInput(gift: string, rooms: [string, string], counterRoom: string): 
   // clear of battle 1's move pads, and none is a word of the helper's quest
   // line or hub scene (item 037), both said before any room.
   const battle1Moves = battle1Words(movePlan());
-  // The warm-up's word is said in the entry hall (item 033): drawn first, kept out too.
+  // The warm-up's word is said in the entry hall (item 033): drawn first, kept out too, with the bank
+  // words heard inside it as it plus a sound (`grabSays`, hunt 10, M57: CLOCK says LOCK).
   // The doors' signs show their rooms' glyphs: a bank word drawn the same way is
   // shown before she reads it (item 039: the 🛁 door led to GO GET THE TUB).
   // The journey map's stops too (🛏️ 🏠, the place's glyph): it shows before the attic.
@@ -187,7 +188,7 @@ function planInput(gift: string, rooms: [string, string], counterRoom: string): 
   const prop = hubScene().story.prop;
   if (!prop.startsWith('prop_')) signs.add(prop);
   const signWords = BANK.filter((w) => w.glyph && signs.has(w.glyph)).map((w) => w.word);
-  const saidBefore = [...storyWords(), ...bedroomWords(), ...signWords, ...(episode.grab ? [episode.grab.word] : [grabWord()])];
+  const saidBefore = [...storyWords(), ...bedroomWords(), ...signWords, ...grabSays(episode.grab ? episode.grab.word : grabWord())];
   return { fill, ally: episode.ally, gift, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore };
 }
 
@@ -319,7 +320,7 @@ const frameWords = (id: string): string[] => withStems(wordsOf((FRAMES.find((f) 
  * kept off the pads before, so RUN and CAN (CAN NOT) were never read.
  */
 function framesClear(pool: Minigame[]): Minigame[] {
-  const said = new Set(withStems([giftWord(), ...moveWords(), grabWord()]));
+  const said = new Set(withStems([giftWord(), ...moveWords(), ...grabSays(grabWord())]));
   const clear = pool.filter((g) => !g.frame || !frameWords(g.frame).some((w) => said.has(w)));
   const fill = (slot: 'fetch' | 'counter') => clear.filter((g) => g.slots.includes(slot)).length;
   return fill('fetch') >= 2 && fill('counter') >= 1 ? clear : pool;

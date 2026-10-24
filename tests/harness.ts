@@ -15,7 +15,7 @@
 
 import { expect, type Page } from '@playwright/test';
 
-import { FRAMES } from '../content/phonics/sentences';
+import { FRAMES, NO_BAG_COPY } from '../content/phonics/sentences';
 
 // Type-only (item 122): the scenes' own shapes, without loading Phaser in node.
 import type { BattleInfo, EndingInfo, RecapCard, RoomInfo, TheEndInfo } from '../src/hookState';
@@ -656,6 +656,9 @@ export async function seedProgress(page: Page, data: Record<string, unknown>): P
 export function storedBlob(page: Page): Promise<string | null> {
   return page.evaluate((key) => localStorage.getItem(key), STORE_KEY);
 }
+
+/** The words of `words` that go to her bag once read: all but MOM and DAD (`NO_BAG_COPY`, hunt 10, M45). */
+export const bagged = (words: string[]): string[] => words.filter((w) => !NO_BAG_COPY.has(w));
 
 /** The fetch frames (`use: 'fetch'` in content/phonics/sentences.ts). */
 export const FETCH_FRAMES = FRAMES.filter((f) => f.use === 'fetch').map((f) => f.id);

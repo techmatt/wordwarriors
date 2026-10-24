@@ -9,12 +9,12 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { BANK_BY_WORD } from '../../content/phonics/bank';
-import { lookalikesOf } from '../../content/phonics/sentences';
+import { NO_BAG_COPY, lookalikesOf } from '../../content/phonics/sentences';
 import { PICTURE_WORDS } from '../../content/phonics/words';
 import { letterNameLine, letterSoundLine, nameHidesLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { GRAB } from '../../src/config';
 import { stepLevel } from '../../src/rules/difficulty';
-import { GRAB_WORDS, RECENT_GRABS, clue, grabLevel, hallObjects, pickGrab, recordedGrabLevel } from '../../src/rules/grab';
+import { GRAB_WORDS, RECENT_GRABS, clue, grabLevel, grabSays, hallObjects, pickGrab, recordedGrabLevel } from '../../src/rules/grab';
 import { episodePlans, type EpisodeInput } from '../../src/rules/sentences';
 import { machineWords } from '../../src/rules/wordMachine';
 import { MINIGAME_BY_ID } from '../../src/rules/minigames';
@@ -120,6 +120,43 @@ test('pickGrab: avoids what it is told to, and last episode’s word while anoth
   const pool = ['cat', 'dog'];
   const avoidAll = GRAB_WORDS.filter((w) => !pool.includes(w));
   for (let i = 0; i < 20; i++) assert.equal(pickGrab(clocked, avoidAll, seeded(spread(i + 1))), 'dog');
+});
+
+test('grabSays (hunt 10, M57): the grab word says the bank words heard whole inside it as it plus a sound; KITE no KIT, CAT nothing more', () => {
+  assert.deepEqual(grabSays('clock'), ['clock', 'lock']);
+  assert.deepEqual(grabSays('block'), ['block', 'lock']);
+  assert.ok(grabSays('brush').includes('rush'));
+  assert.ok(grabSays('tent').includes('ten'));
+  assert.ok(grabSays('belt').includes('bell'));
+  assert.deepEqual(grabSays('kite'), ['kite']);
+  assert.deepEqual(grabSays('cat'), ['cat']);
+});
+
+test('GRAB_WORDS (hunt 10, M45): no MOM or DAD, since the grab goes into her bag and is fired in battle', () => {
+  for (const w of NO_BAG_COPY) assert.ok(!GRAB_WORDS.includes(w), w);
+});
+
+test('pickGrab (hunt 10, M57): never a word that says one it must avoid (no CLOCK when LOCK is on a pad)', () => {
+  const store = new ProgressStore(memory());
+  const avoid = [...GRAB_WORDS.filter((w) => w !== 'clock' && w !== 'dog'), 'lock'];
+  for (let i = 0; i < 20; i++) assert.equal(pickGrab(store, avoid, seeded(spread(i + 1))), 'dog');
+});
+
+test('said early (hunt 10, M57): CLOCK in the hall keeps LOCK off the bridge and every room', () => {
+  const bridge = MINIGAME_BY_ID['bridge']!;
+  let crossed = 0;
+  for (let seed = 1; seed <= 40; seed++) {
+    for (const said of [['clock'], grabSays('clock')]) {
+      const store = new ProgressStore(memory());
+      store.refillBag(['lock', 'cat', 'pig', 'hen', 'cup', 'map', 'sun', 'bus']);
+      const games = [bridge, MINIGAME_BY_ID['sentence:we_can_use_the']!, MINIGAME_BY_ID['sentence:scared_of_the']!] as EpisodeInput['games'];
+      const input: EpisodeInput = { fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic', saidBefore: said, games };
+      const words = episodePlans(store, input, seeded(spread(seed))).flatMap((p) => [p.key, ...p.fetches]);
+      if (said.length > 1) assert.ok(!words.includes('lock'), `seed ${seed}: ${words.join(' ')}`);
+      else if (words.includes('lock')) crossed++;
+    }
+  }
+  assert.ok(crossed > 0, 'the test bites: with CLOCK alone kept out, LOCK is drawn');
 });
 
 test('hallObjects: nine distinct pictures, the word among them, none avoided, no look-alike of it; while new, none starts like it', () => {

@@ -25,6 +25,7 @@ import { sfxHit, sfxStomp } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { burst, fitImage, shake } from '../fx/juice';
 import { TEX } from '../fx/textures';
+import { scatterDecals } from '../rules/decals';
 import { seededRand } from '../rules/random';
 
 export interface HouseMoodOptions {
@@ -55,10 +56,6 @@ export interface HouseMoodHandle {
 }
 
 const TINT_ALPHA = 0.16;
-/** The strip of back wall above the doors, clear of the HUD corners. */
-const WALL = new Phaser.Geom.Rectangle(210, 70, 880, 130);
-/** Decal ids that read as lying on the floor; anything else may go on the wall. */
-const FLOOR_LIKE = /foot|print|step|track|puddle|crumb|peel|banana|scorch|rubble|pile|mud|slime|bone|coin|sand|leaf|leaves|feather|dust|penguin/;
 
 /**
  * A side room's scatter seed (FNV-1a of its id), so each room has its own
@@ -97,41 +94,9 @@ export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: Hou
     });
   }
 
-  // Where each decal goes: the wall strip, or a floor margin.
-  const placed: { x: number; y: number; onFloor: boolean; key: string; size: number }[] = [];
-  const floorPoint = (): { x: number; y: number } => {
-    const side = rand();
-    if (side < 0.35) return { x: floor.left + rand() * 130, y: floor.top + 20 + rand() * (floor.height - 20) };
-    if (side < 0.7) return { x: floor.right - rand() * 130, y: floor.top + 20 + rand() * (floor.height - 20) };
-    return { x: floor.left + 140 + rand() * (floor.width - 280), y: floor.bottom - rand() * 40 };
-  };
-  const wallPoint = (): { x: number; y: number } => ({ x: WALL.left + rand() * WALL.width, y: WALL.top + rand() * WALL.height });
-  let n = 0;
-  for (const d of mood.decals) {
-    for (let i = 0; i < d.count; i++) {
-      const onFloor = !!opts.floorOnly || FLOOR_LIKE.test(d.id) || (!/crack|web|scratch|claw|frost|ice|icicle|hole|smudge|soot/.test(d.id) && n % 2 === 0);
-      // Best of a few candidates: the one farthest from what is already down,
-      // and out of everything `avoid` keeps clear while any candidate is.
-      const size = onFloor ? 64 + rand() * 16 : 84 + rand() * 20;
-      const clear = (p: { x: number; y: number }) => !(opts.avoid ?? []).some((r) => Phaser.Geom.Rectangle.Overlaps(r, new Phaser.Geom.Rectangle(p.x - size / 2, p.y - size / 2, size, size)));
-      let best = onFloor ? floorPoint() : wallPoint();
-      let bestD = -1;
-      let bestClear = clear(best);
-      for (let k = 0; k < 16; k++) {
-        const p = onFloor ? floorPoint() : wallPoint();
-        const ok = clear(p);
-        if (bestClear && !ok) continue;
-        const d2 = placed.reduce((m, q) => Math.min(m, (q.x - p.x) ** 2 + (q.y - p.y) ** 2), Number.MAX_VALUE);
-        if (d2 > bestD || (ok && !bestClear)) {
-          bestClear = ok;
-          bestD = d2;
-          best = p;
-        }
-      }
-      placed.push({ ...best, onFloor, key: `decal_${d.id}`, size });
-      n++;
-    }
-  }
+  // Where each decal goes: the wall strip, or a floor margin, clear of `avoid`;
+  // one with no clear spot is not drawn (M58, src/rules/decals.ts).
+  const placed = scatterDecals(mood.decals, { floor, ...(opts.avoid ? { avoid: opts.avoid } : {}), ...(opts.floorOnly ? { floorOnly: true } : {}), rand });
   // Footprints walk in from one side: lay floor decals left to right.
   const order = [...placed].sort((p, q) => p.x - q.x);
 

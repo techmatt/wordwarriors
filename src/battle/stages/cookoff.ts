@@ -21,7 +21,7 @@ import type { AbilitySpec } from '../../../content/battle/types';
 import { sfxBoing, sfxBoom, sfxFanfare, sfxGrow, sfxHeal, sfxPoof, sfxStep, sfxWhoosh } from '../../audio/sfx';
 import { DEPTH, FONT_HEAVY } from '../../config';
 import { shade } from '../../fx/colour';
-import { burst, fitImage, floatText, fxQuality, popIn, shockwave } from '../../fx/juice';
+import { burst, fitImage, fitPicture, floatText, fxQuality, popIn, shockwave } from '../../fx/juice';
 import { TEX } from '../../fx/textures';
 import type { Fighter } from '../Fighter';
 import { BaseStage } from './stage';
@@ -357,7 +357,7 @@ export class CookoffStage extends BaseStage {
     const pic = `pic_${word}`;
     const s = this.scene;
     const item = s.textures.exists(pic)
-      ? fitImage(s.add.image(f.x, f.cy, pic), 110, 110).setDepth(DEPTH.fx + 5)
+      ? fitPicture(s.add.image(f.x, f.cy, pic), 110, 110).setDepth(DEPTH.fx + 5)
       : s.add.text(f.x, f.cy, ab.glyph ?? '⭐', { fontSize: '80px' }).setOrigin(0.5).setDepth(DEPTH.fx + 5);
     sfxWhoosh();
     const side = this.hero;

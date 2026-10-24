@@ -9,6 +9,7 @@ import { test, expect, type Page } from '@playwright/test';
 
 import { SLOW, boot, collectErrors, expectNoErrors, press, seedProgress, state, stick, toTheEnd, until, type WWState } from './harness';
 import type { WWHooks } from '../src/testHooks';
+import { qaLayout } from './qa/probe';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/027_${name}.png` });
 
@@ -140,3 +141,22 @@ test('?scene=theend opens THE END, Dad\'s 2 waiting', async ({ page }) => {
   expect(s.step.kind).toBe('victory');
   expectNoErrors(errors);
 });
+
+// Hunt 10, M50: with an ally the dad who woke her was left off the podium; he cheers beside it
+// (left of its blocks, x 285 on), on no block. With no ally he has the left block, as before.
+for (const [name, query, people, beside] of [
+  ['with an ally (Ellie), Dada Matt cheers beside the podium', '', 4, true],
+  ['with no ally, Dada Matt has the left block and nobody stands beside it', '&ally=none', 3, false],
+] as const) {
+  test(`the victory podium: ${name}`, async ({ page }) => {
+    const errors = collectErrors(page);
+    await boot(page, `?scene=victory&nojourney=1&read=bed,hat,zap${query}&qa=1`);
+    await until(page, (st) => st.scene === 'Victory', 30_000, 'victory');
+    await page.waitForTimeout(400);
+    const chars = (await qaLayout(page)).images.filter((i) => i.scene === 'Victory' && i.key.startsWith('char_'));
+    expect(chars.map((c) => c.key).length, chars.map((c) => c.key).join(' ')).toBe(people);
+    const left = chars.filter((c) => c.b[2] < 285);
+    expect(left.map((c) => c.key)).toEqual(beside ? [expect.stringMatching(/^char_dada_matt/)] : []);
+    expectNoErrors(errors);
+  });
+}

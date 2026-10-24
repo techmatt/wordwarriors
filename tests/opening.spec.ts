@@ -12,9 +12,12 @@ import { SLOW, SPEED, boot, collectErrors, expectNoErrors, until } from './harne
 
 test('battle 1 with eight fetched things: every one used, PICK A MOVE! well under 34 s', SLOW, async ({ page }) => {
   test.setTimeout(120_000);
-  // A bridge and a Shape-Shifter, and the warm-up's word first (`warmup=1`): eight things.
+  // A bridge and a Shape-Shifter, and the warm-up's word first (`warmup=1`): eight things. The warm-up
+  // word is KING: drawn, a fresh store's is MAN since MOM and DAD left the hall (hunt 10, M45), and the
+  // Shifter's chains, most through MAN, then fall short of four links; and seeded (`seed=1`), as about one
+  // visit in seven draws a two- or three-link chain.
   const errors = collectErrors(page);
-  await boot(page, '?scene=battle&part=1&room=bridge&games=all&warmup=1&nojourney=1', SPEED, { voice: 'real' });
+  await boot(page, '?scene=battle&part=1&room=bridge&games=all&warmup=1&grab=king&seed=1&nojourney=1', SPEED, { voice: 'real' });
   const s0 = await until(page, (st) => st.scene === 'Battle' && st.episode.fetched.length > 0, 60_000, 'the battle');
   const plan = s0.episode.house.plan!;
   expect(plan.map((p) => p.kind).slice(0, 2).sort()).toEqual(['bridge', 'shifter']);

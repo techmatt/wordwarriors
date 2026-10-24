@@ -18,7 +18,7 @@ import Phaser from 'phaser';
 import { sfxSelect, sfxWhoosh } from '../audio/sfx';
 import { DEPTH } from '../config';
 import { counterArt, episode } from '../episode/Episode';
-import { burst, fitImage } from '../fx/juice';
+import { burst, fitImage, fitPicture } from '../fx/juice';
 import { TEX } from '../fx/textures';
 
 const BAG_X = 62;
@@ -81,7 +81,7 @@ export class Bag {
   receive(art: string, x: number, y: number): Promise<void> {
     const scene = this.scene;
     sfxWhoosh();
-    const img = fitImage(scene.add.image(x, y, art), 120, 120).setDepth(DEPTH.sparkles);
+    const img = fitPicture(scene.add.image(x, y, art), 120, 120).setDepth(DEPTH.sparkles);
     const end = Math.min(ITEM_SIZE / img.width, ITEM_SIZE / img.height);
     const trail = scene.add
       .particles(0, 0, TEX.star, {

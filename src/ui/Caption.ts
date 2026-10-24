@@ -40,6 +40,8 @@ const MAX_ROWS = 3;
 /** A narrow box's text width and rows (CaptionOptions.narrow). */
 const NARROW_TEXT_W = 320;
 const NARROW_ROWS = 4;
+/** A narrow box that still covers something tries these wider text widths, in order (M59). */
+const NARROW_WIDER = [440, 560];
 
 /** Something the box should not cover, in screen coordinates; heavier counts more. */
 export interface KeepOut {
@@ -311,69 +313,92 @@ export class Caption {
   /** Words in rows (wrapped between words, up to three, shrinking until they fit), then the box, the face and the tail. */
   private layout(sideHint: { side: 'left' | 'right'; fixed: boolean }): void {
     const L = this.L;
-    const textMax = this.narrow ? NARROW_TEXT_W : L.textW;
-    const rowsMax = this.narrow ? NARROW_ROWS : MAX_ROWS;
-    let size = L.fontSize;
-    let rows: Phaser.GameObjects.Text[][] = [];
-    for (;;) {
-      for (const t of this.words) t.setFontSize(size);
-      const gap = size * 0.4;
-      rows = [[]];
-      let x = 0;
-      for (const t of this.words) {
-        const row = rows[rows.length - 1]!;
-        if (row.length && x + gap + t.width > textMax) {
-          rows.push([t]);
-          x = t.width;
-        } else {
-          x += (row.length ? gap : 0) + t.width;
-          row.push(t);
-        }
-      }
-      const fits = this.words.every((t) => t.width <= textMax) && rows.length <= rowsMax;
-      if (fits || size <= 14) break;
-      size -= 2;
-    }
-    const gap = size * 0.4;
-    const lineH = size * 1.3;
-    this.slabH = lineH;
-    const rowW = (row: Phaser.GameObjects.Text[]) => row.reduce((n, t) => n + t.width, 0) + gap * Math.max(0, row.length - 1);
-    const textW = this.words.length ? Math.max(...rows.map(rowW)) : 0;
-    const textH = this.words.length ? rows.length * lineH : 0;
-    const hasBox = this.words.length > 0;
-    const boxW = hasBox ? Math.max(L.minBoxW, textW + L.padX * 2) : 0;
-    const boxH = hasBox ? Math.max(size * 1.3 + L.padY * 2, textH + L.padY * 2) : 0;
-
     const p = this.portrait;
     const pw = p?.width ?? 0;
     const ph = p?.height ?? 0;
-    const groupW = pw + (p && hasBox ? L.gap : 0) + boxW;
-    const groupH = Math.max(ph, boxH);
+    const hasBox = this.words.length > 0;
+
+    // The words in rows no wider than `textMax` (shrinking until they fit), and the box and group they make.
+    const measure = (textMax: number, rowsMax: number) => {
+      let size = L.fontSize;
+      let rows: Phaser.GameObjects.Text[][] = [];
+      for (;;) {
+        for (const t of this.words) t.setFontSize(size);
+        const gap = size * 0.4;
+        rows = [[]];
+        let x = 0;
+        for (const t of this.words) {
+          const row = rows[rows.length - 1]!;
+          if (row.length && x + gap + t.width > textMax) {
+            rows.push([t]);
+            x = t.width;
+          } else {
+            x += (row.length ? gap : 0) + t.width;
+            row.push(t);
+          }
+        }
+        const fits = this.words.every((t) => t.width <= textMax) && rows.length <= rowsMax;
+        if (fits || size <= 14) break;
+        size -= 2;
+      }
+      const gap = size * 0.4;
+      const lineH = size * 1.3;
+      const rowW = (row: Phaser.GameObjects.Text[]) => row.reduce((n, t) => n + t.width, 0) + gap * Math.max(0, row.length - 1);
+      const textW = this.words.length ? Math.max(...rows.map(rowW)) : 0;
+      const textH = this.words.length ? rows.length * lineH : 0;
+      const boxW = hasBox ? Math.max(L.minBoxW, textW + L.padX * 2) : 0;
+      const boxH = hasBox ? Math.max(size * 1.3 + L.padY * 2, textH + L.padY * 2) : 0;
+      const groupW = pw + (p && hasBox ? L.gap : 0) + boxW;
+      const groupH = Math.max(ph, boxH);
+      return { textMax, rowsMax, size, rows, gap, lineH, rowW, textH, boxW, boxH, groupW, groupH };
+    };
+    type Measure = ReturnType<typeof measure>;
 
     // Positions (the root's origin is the screen origin) for a band and side.
     // A box shorter than the face card hugs the screen edge, so it reaches no
     // further into the scene than it must; the tail climbs to the card.
-    const place = (band: 'top' | 'bottom', side: 'left' | 'right') => {
+    const place = (m: Measure, band: 'top' | 'bottom', side: 'left' | 'right') => {
       const inset = band === 'top' ? TOP_INSET : L.margin;
-      const left = this.opts.compact ? (GAME_WIDTH - groupW) / 2 : side === 'left' ? inset : GAME_WIDTH - inset - groupW;
-      const top = band === 'top' ? L.margin : GAME_HEIGHT - L.margin - groupH;
-      const cy = top + groupH / 2;
-      const faceX = side === 'left' ? left + pw / 2 : left + groupW - pw / 2;
-      const boxX = side === 'left' ? left + pw + (p ? L.gap : 0) + boxW / 2 : left + boxW / 2;
-      const boxY = band === 'top' ? top + boxH / 2 : top + groupH - boxH / 2;
+      const left = this.opts.compact ? (GAME_WIDTH - m.groupW) / 2 : side === 'left' ? inset : GAME_WIDTH - inset - m.groupW;
+      const top = band === 'top' ? L.margin : GAME_HEIGHT - L.margin - m.groupH;
+      const cy = top + m.groupH / 2;
+      const faceX = side === 'left' ? left + pw / 2 : left + m.groupW - pw / 2;
+      const boxX = side === 'left' ? left + pw + (p ? L.gap : 0) + m.boxW / 2 : left + m.boxW / 2;
+      const boxY = band === 'top' ? top + m.boxH / 2 : top + m.groupH - m.boxH / 2;
       return { cy, faceX, boxX, boxY };
     };
-    // Where it covers least of what must stay clear: top or bottom, and (for a
-    // speaker who is not in the scene) left or right.
-    const { band, side } = this.pickPlace(sideHint, (b, s) => {
-      const q = place(b, s);
+    const rectsOf = (m: Measure) => (b: 'top' | 'bottom', s: 'left' | 'right') => {
+      const q = place(m, b, s);
       return [
         ...(p ? [{ x: q.faceX - pw / 2, y: q.cy - ph / 2, w: pw, h: ph }] : []),
-        ...(hasBox ? [{ x: q.boxX - boxW / 2, y: q.boxY - boxH / 2, w: boxW, h: boxH }] : []),
+        ...(hasBox ? [{ x: q.boxX - m.boxW / 2, y: q.boxY - m.boxH / 2, w: m.boxW, h: m.boxH }] : []),
       ];
-    });
+    };
+    // Where it covers least of what must stay clear: top or bottom, and (for a
+    // speaker who is not in the scene) left or right. A narrow box also tries
+    // fewer, wider rows (hunt 10, M59): four rows on the attic's find line
+    // stood over the answer's pedestal, the side away from her, where two
+    // rows sit below the pedestals, clear of them and of her.
+    let m = measure(this.narrow ? NARROW_TEXT_W : L.textW, this.narrow ? NARROW_ROWS : MAX_ROWS);
+    let pick = this.pickPlace(sideHint, rectsOf(m));
+    if (this.narrow && hasBox) {
+      for (const w of NARROW_WIDER) {
+        if (pick.cost <= 0) break;
+        const wider = measure(w, NARROW_ROWS);
+        const next = this.pickPlace(sideHint, rectsOf(wider));
+        if (next.cost < pick.cost) {
+          m = wider;
+          pick = next;
+        }
+      }
+      // Measuring set the font sizes: back to the one chosen.
+      for (const t of this.words) t.setFontSize(m.size);
+    }
+    const { band, side } = pick;
+    const { rows, gap, lineH, rowW, textH, boxW, boxH } = m;
+    this.slabH = lineH;
     this.band = band;
-    const { cy, faceX, boxX, boxY } = place(band, side);
+    const { cy, faceX, boxX, boxY } = place(m, band, side);
     const cardMid = p ? cy + p.cardY : cy;
     this.coverRects = [
       ...(p ? [[faceX - pw / 2, cy - ph / 2, faceX + pw / 2, cy + ph / 2] as [number, number, number, number]] : []),
@@ -425,8 +450,8 @@ export class Caption {
   private pickPlace(
     hint: { side: 'left' | 'right'; fixed: boolean },
     rects: (band: 'top' | 'bottom', side: 'left' | 'right') => KeepOut[],
-  ): { band: 'top' | 'bottom'; side: 'left' | 'right' } {
-    if (this.opts.compact || !this.opts.avoid) return { band: 'bottom', side: hint.side };
+  ): { band: 'top' | 'bottom'; side: 'left' | 'right'; cost: number } {
+    if (this.opts.compact || !this.opts.avoid) return { band: 'bottom', side: hint.side, cost: 0 };
     const keep = this.opts.avoid();
     const cost = (band: 'top' | 'bottom', side: 'left' | 'right') => {
       let c = 0;
@@ -448,7 +473,7 @@ export class Caption {
         const c = cost(band, side);
         if (c < best.c) best = { band, side, c };
       }
-      return { band: best.band, side: best.side };
+      return { band: best.band, side: best.side, cost: best.c };
     }
     const sides: ('left' | 'right')[] = hint.fixed ? [hint.side] : [hint.side, other];
     const stay = this.band;
@@ -462,7 +487,7 @@ export class Caption {
         if (best.c === Infinity || c < best.c * 0.75 - 2000) best = { band, side, c };
       }
     }
-    return { band: best.band, side: best.side };
+    return { band: best.band, side: best.side, cost: best.c };
   }
 
   private tick(): void {

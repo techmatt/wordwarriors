@@ -15,9 +15,9 @@ import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { castArt, castFace, castScale, counterWord, episode, narrator, podiumSecond, villainSpec } from '../episode/Episode';
+import { castArt, castFace, castScale, counterWord, episode, narrator, podiumCheer, podiumSecond, villainSpec } from '../episode/Episode';
 import { variant } from '../episode/lineVariants';
-import { burst, fitImage, shockwave } from '../fx/juice';
+import { burst, fitImage, fitPicture, shockwave } from '../fx/juice';
 import { SceneGen } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
@@ -32,6 +32,10 @@ import { recapWords } from '../rules/recap';
 /** The recap's row of cards: along the bottom, a little smaller than full size. */
 const CARD_Y = 628;
 const CARD_SCALE = 0.82;
+/** A recap card's picture room (the card is 130 x 170, its word under the picture). */
+const CARD_PIC_MAX = { w: 120, h: 112 };
+/** Where the dad who woke her cheers with an ally on the podium (M50): his feet, on the grass left of it, clear of the cards' row. */
+const CHEER_SPOT = { x: 168, y: 546 };
 
 export class VictoryScene extends Phaser.Scene {
   private controls!: Controls;
@@ -129,6 +133,19 @@ export class VictoryScene extends Phaser.Scene {
       this.tweens.add({ targets: img, y: at.y - 30, duration: 300 + i * 40, yoyo: true, repeat: -1, ease: 'Quad.easeOut' });
       this.tweens.add({ targets: img, scaleY: img.scaleY * 0.9, scaleX: img.scaleX * 1.08, duration: 300 + i * 40, yoyo: true, repeat: -1, delay: 300 + i * 40 });
     });
+    // With an ally, the dad who woke her stands on the grass beside the podium,
+    // cheering (hunt 10, M50): he was in the ending scene a moment before. No
+    // block: quick little hops and squashes, a beat faster than the podium's.
+    const cheer = podiumCheer();
+    if (cheer) {
+      const at = CHEER_SPOT;
+      const h = 150 * castScale(cheer);
+      const img = fitImage(this.add.image(at.x, at.y, castArt(cheer)).setOrigin(0.5, 1), h * 0.95, h).setDepth(at.y);
+      podium.push(img);
+      caption.track(cheer, () => (img.active ? { x: img.x, y: at.y } : null));
+      this.tweens.add({ targets: img, y: at.y - 18, duration: 220, yoyo: true, repeat: -1, ease: 'Quad.easeOut' });
+      this.tweens.add({ targets: img, scaleY: img.scaleY * 0.92, scaleX: img.scaleX * 1.06, duration: 220, yoyo: true, repeat: -1, delay: 220 });
+    }
 
     title = this.add
       .text(GAME_WIDTH / 2, 105, 'VICTORY!', { fontFamily: '"Arial Black", sans-serif', fontSize: '104px', color: '#ffd23f', stroke: '#5a1a7a', strokeThickness: 16 })
@@ -193,7 +210,8 @@ export class VictoryScene extends Phaser.Scene {
       const pic = this.pictureOf(w);
       hookState.recap.push({ word: w, picture: pic });
       const parts: Phaser.GameObjects.GameObject[] = [card];
-      if (pic) parts.push(fitImage(this.add.image(0, -22, pic), 100, 100));
+      // A standing person or a wide picture by its own shape (M48: TUG was a thin band), inside the card above its word.
+      if (pic) parts.push(fitPicture(this.add.image(0, -22, pic), 100, 100, CARD_PIC_MAX));
       // Shrunk to the card if the word is long (a name); never cut off.
       parts.push(fitText(this.add.text(0, 58, w.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '38px', color: '#1a1030' }).setOrigin(0.5), 120, 50));
       // Along the bottom, in front of the podium's feet: in the middle of the

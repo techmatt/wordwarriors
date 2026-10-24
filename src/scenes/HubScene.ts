@@ -258,7 +258,9 @@ export class HubScene extends RoomScene {
     const plan = planFor(slot);
     const ring = this.add.circle(0, -DOOR_H * 0.55, 40, 0xffd23f, 0.35).setStrokeStyle(5, 0xffd23f, 1);
     // Charge the Spell (item 053) fetches its word as a battle item (item 058), but its door wears a charged rune stone for its runes.
-    const pic = this.art(plan.kind === 'charge' ? 'prop_rune_stone' : `pic_${plan.key}`, 62, 62, 0, -DOOR_H * 0.55 + 31);
+    // A standing person or a wide picture by its own shape (M48), inside the ring and centred on it.
+    const pic = this.art(plan.kind === 'charge' ? 'prop_rune_stone' : `pic_${plan.key}`, 62, 62, 0, 0, { w: 76, h: 76 });
+    pic.y = -DOOR_H * 0.55 + pic.displayHeight / 2;
     spot.obj.add([ring, pic]);
     // On the stone, the word's first rune as its picture letter (item 103).
     const first = plan.kind === 'charge' ? plan.charge.runes[0] : undefined;
@@ -313,11 +315,12 @@ export class HubScene extends RoomScene {
     const sx = HUB.helper.x;
     const sy = SCROLL_Y;
     // Fitted to the card with room for its 1.12 pulse (hunt 10: SPLASH, CHOMP, SMASH ran past its edge), as
-    // the move pads' words are (fix 43).
+    // the move pads' words are (fix 43). A round prop (Ellie's bubble, M55) takes it narrower.
+    const round = this.roundProp(story.prop);
     const word = fitText(
       this.add.text(0, 0, gift.toUpperCase(), { fontFamily: FONT_ROUNDED, fontSize: '54px', color: '#3a1a5a', stroke: '#ffffff', strokeThickness: 6 }).setOrigin(0.5),
-      180,
-      80,
+      round ? 130 : 180,
+      round ? 64 : 80,
     );
     this.scroll = this.add.container(sx, sy, [...this.propBehind(story.prop), word]).setDepth(DEPTH.fx);
     this.scroll.setData('word', word);
@@ -343,6 +346,9 @@ export class HubScene extends RoomScene {
   private propBehind(prop: string): Phaser.GameObjects.GameObject[] {
     if (prop.startsWith('prop_') && this.textures.exists(prop)) {
       // The scroll is wide and flat; anything else gets the same box, the word across its middle.
+      // A round prop (Ellie's bubble, M55) would shrink to the box's 120 px height: it gets a
+      // 150 px square instead, inside the 240×150 the house mood keeps clear (`build`).
+      if (this.roundProp(prop)) return [this.art(prop, 150, 150, 0, 75)];
       return [this.art(prop, 210, 120, 0, 60)];
     }
     const card = this.add.graphics();
@@ -352,6 +358,13 @@ export class HubScene extends RoomScene {
     // glyphMetrics measures it whole; the padding stays only so the glyph stands where it did on the card.
     const glyph = this.add.text(0, -CARD_H / 2 - 4, prop.startsWith('prop_') ? '✨' : prop, { fontSize: '60px', padding: { top: 14, bottom: 6 } }).setOrigin(0.5, 0.8);
     return [card, glyph];
+  }
+
+  /** A drawn prop about as tall as it is wide (Ellie's bubble): drawn in a square, the word fitted inside it. */
+  private roundProp(prop: string): boolean {
+    if (!prop.startsWith('prop_') || !this.textures.exists(prop)) return false;
+    const src = this.textures.get(prop).getSourceImage();
+    return Math.abs(src.width / src.height - 1) < 0.2;
   }
 
   /**

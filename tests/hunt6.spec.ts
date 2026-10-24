@@ -24,6 +24,7 @@ import { REACH } from '../src/config';
 import { qaLayout } from './qa/probe';
 import { SLOW, boot, choose, collectErrors, dadLock, expectNoErrors, mash, place, press, state, storedBlob, texts, until, type WWState } from './harness';
 import { letterSoundLine } from '../content/voice/ids';
+import { NO_BAG_COPY } from '../content/phonics/sentences';
 
 const sh = (s: WWState) => s.room?.shifter;
 const ready = (i: number) => (s: WWState) => s.scene === 'ShifterRoom' && sh(s)?.index === i && sh(s)!.phase === 'pick' && !s.room!.locked;
@@ -106,7 +107,11 @@ test('Shape-Shifter: yellow and green mashed through every link, its misses and 
     await until(page, (st) => st.scene !== 'ShifterRoom' || (sh(st)?.index ?? 0) > i || sh(st)?.phase === 'done', 60_000, `${words[i]} read`);
   }
   const hub = await until(page, (st) => st.scene === 'Hub', 60_000, 'back in the hub');
-  for (const w of words) expect(hub.episode.fetched).toContain(w);
+  // MOM and DAD are read but never go to the bag (hunt 10, M45).
+  for (const w of words) {
+    if (NO_BAG_COPY.has(w)) expect(hub.episode.fetched, `${w} not fetched`).not.toContain(w);
+    else expect(hub.episode.fetched).toContain(w);
+  }
   expectNoErrors(errors);
 });
 
@@ -149,7 +154,7 @@ test('Shape-Shifter: the grown-ups page at each point of a link brings her back 
   await page.waitForTimeout(300);
   s = await away('during the last morph');
   const hub = await until(page, (st) => st.scene === 'Hub', 60_000, 'hub');
-  for (const w of words) expect(hub.episode.fetched).toContain(w);
+  for (const w of words.filter((w) => !NO_BAG_COPY.has(w))) expect(hub.episode.fetched).toContain(w);
   expect(hub.episode.house.done).toContain('a');
   expectNoErrors(errors);
 });

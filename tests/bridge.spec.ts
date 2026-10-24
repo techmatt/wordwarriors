@@ -14,7 +14,7 @@ import { BANK_BY_WORD } from '../content/phonics/bank';
 import { canHold } from '../content/phonics/letters';
 import { letterSoundLine, wordLine } from '../content/voice/ids';
 import { BRIDGE_PICTURES, CROSS_WORDS, bridgeEase } from '../src/rules/bridge';
-import { SLOW, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom, press, seedProgress, slideAcross, state, stick, texts, toParentAndBack, until, type WWState } from './harness';
+import { SLOW, bagged, boot, choose, collectErrors, dad, expectNoErrors, playBridgeRoom, press, seedProgress, slideAcross, state, stick, texts, toParentAndBack, until, type WWState } from './harness';
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/054_${name}.png` });
 
@@ -112,7 +112,8 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
   await choose(page, b0.word);
   const s1 = await until(page, (st) => bridge(st)?.index === 1, 60_000, 'second bridge');
   expect(s1.voice.history).toContain(wordLine(b0.word));
-  expect(s1.episode.fetched).toContain(b0.word);
+  expect(s1.episode.read).toContain(b0.word);
+  expect(s1.episode.fetched).toEqual(bagged([b0.word]));
   expect(levels(s1)[b0.word]).toBe(1);
   expect(s1.progress.words[b0.word]!.recent).toEqual([false]);
 
@@ -120,7 +121,7 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
   await playBridgeRoom(page);
   const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'back in the hub');
   expect(hub.episode.house.done).toContain('a');
-  for (const w of b0.words) expect(hub.episode.fetched).toContain(w);
+  for (const w of bagged(b0.words)) expect(hub.episode.fetched).toContain(w);
   expect(levels(hub)[b0.words[1]!]).toBe(2);
   expectNoErrors(errors);
 });

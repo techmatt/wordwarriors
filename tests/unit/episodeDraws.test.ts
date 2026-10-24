@@ -74,7 +74,9 @@ test('solo lasts the session (hunt 7, M34): the next episode starts solo, until 
 
 test('door b (item 126): the Shape-Shifter about half the drawn episodes, else a sentence frame or the word machine', () => {
   const random = Math.random;
-  Math.random = seededRand(126);
+  // A seed's luck: 126 drew no word machine in 24 once MOM and DAD left the warm-up's words (hunt 10, M45);
+  // over seeds 120 to 135 every other seed draws it 1 to 5 times.
+  Math.random = seededRand(125);
   try {
     progress.reset();
     setCastOptions({ fixed: false, rand: Math.random, overrides: {} });

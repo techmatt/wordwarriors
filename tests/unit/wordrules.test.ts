@@ -10,7 +10,7 @@ import { test } from 'node:test';
 
 import { MOVE_WORDS } from '../../content/battle/roster';
 import { BANK, BANK_BY_WORD } from '../../content/phonics/bank';
-import { FRAMES, NO_ARTICLE, NUMBER_WORDS } from '../../content/phonics/sentences';
+import { FRAMES, NO_ARTICLE, NO_BAG_COPY, NOT_FETCHED, NUMBER_WORDS } from '../../content/phonics/sentences';
 import { BAG_WORDS, distractorsFor, drawKey, withStems } from '../../src/rules/bank';
 import { RUNE_BY_SOUND } from '../../content/phonics/runes';
 import { CHARGE_WORDS, GESTURE_WORDS, gestureWords, planCharge } from '../../src/rules/charge';
@@ -99,6 +99,45 @@ test('no number word in an "A" frame (WE NEED A THREE) nor in a frame where it r
   }
   // The test bites: the frames that take numbers do draw them from this bag.
   assert.ok(seen.numbersFrame > 20, `${seen.numbersFrame} number keys in the frames that take them`);
+});
+
+test("a frame's own ruled-out key words (hunt 10, M49): never SMAUG RAN AWAY FROM THE ZOO, while another counter frame still draws ZOO", () => {
+  const g = (id: string) => MINIGAME_BY_ID[`sentence:${id}`]!;
+  const drawn = { ran: 0, other: 0 };
+  for (let seed = 1; seed <= 60; seed++) {
+    const store = new ProgressStore(memory());
+    store.refillBag(['zoo', 'cat', 'pig', 'hen', 'cup', 'map']);
+    for (const counter of ['ran_away_from_the', 'hides_from_the']) {
+      const games = [g('we_can_use_the'), g('go_get_the'), g(counter)] as EpisodeInput['games'];
+      const input: EpisodeInput = { fill: { villain: 'smaug', helper: 'ellie', hero: 'julia' }, ally: 'ellie', gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic', games };
+      const p = episodePlans(store, input, seeded(spread(seed)))[2];
+      if (p.key !== 'zoo') continue;
+      if (counter === 'ran_away_from_the') drawn.ran++;
+      else drawn.other++;
+    }
+  }
+  assert.equal(drawn.ran, 0, 'RAN AWAY FROM THE ZOO');
+  assert.ok(drawn.other > 0, 'the test bites: HIDES FROM THE draws ZOO from this bag');
+});
+
+test('NOT_FETCHED (hunt 10, M53): ZOO and HAND are never a fetch key word, but a counter frame still draws them; every NO_BAG_COPY word is in NOT_FETCHED (M45)', () => {
+  assert.deepEqual([...NOT_FETCHED].sort(), ['dad', 'hand', 'mom', 'zoo']);
+  assert.deepEqual([...NO_BAG_COPY].sort(), ['dad', 'mom']);
+  for (const w of NO_BAG_COPY) assert.ok(NOT_FETCHED.has(w), w);
+  const g = (id: string) => MINIGAME_BY_ID[`sentence:${id}`]!;
+  const counter = new Set<string>();
+  for (let seed = 1; seed <= 200; seed++) {
+    const store = new ProgressStore(memory());
+    const bag = ['zoo', 'hand', 'cup', 'map', 'sun', 'bus', 'log', 'pot'];
+    store.refillBag(bag);
+    const games = [g('we_can_use_the'), g('helper_needs_a'), g('scared_of_the')] as EpisodeInput['games'];
+    const input: EpisodeInput = { fill: { villain: 'tiamat', helper: 'seraphina', hero: 'julia' }, ally: 'seraphina', gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic', games };
+    const plans = episodePlans(store, input, seeded(spread(seed)));
+    // The test bites: the fetch keys come out of this bag, so ZOO and HAND were in reach.
+    for (const p of plans.slice(0, 2)) assert.ok(bag.slice(2).includes(p.key), `seed ${seed}: ${p.slot} ${p.key}`);
+    counter.add(plans[2]!.key);
+  }
+  assert.ok(counter.has('zoo') || counter.has('hand'), `the counter still draws them (${[...counter].join(' ')})`);
 });
 
 test('a new word\'s other pictures start with another sound: no KIT beside CAT, no CAT beside KIT', () => {

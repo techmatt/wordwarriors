@@ -35,7 +35,7 @@
 
 import Phaser from 'phaser';
 
-import { AMBIENCE_TRIALS, ARENAS, CHARACTER_BY_ID, abilityCallout, comboFor, comboPart, personOf } from '../../content/battle/roster';
+import { ARENAS, CHARACTER_BY_ID, abilityCallout, comboFor, comboPart, personOf } from '../../content/battle/roster';
 import type { AbilitySpec, CounterItem, Status } from '../../content/battle/types';
 import { wordEffect } from '../../content/phonics/effects';
 import { RUNE_BY_SOUND, runeArt } from '../../content/phonics/runes';
@@ -50,7 +50,7 @@ import { advance, castArt, castScale, counterArt, counterWord, episode, fightSty
 import { pickTaunt, unsayTaunt, variant } from '../episode/lineVariants';
 import { fightLineKey, type FightSpec } from '../../content/battle/fights';
 import { hex } from '../fx/colour';
-import { backdrop, burst, fitImage, flash, floatText, FpsMeter, fxQuality, hitstop, popIn, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
+import { backdrop, burst, fitImage, fitPicture, flash, floatText, FpsMeter, fxQuality, hitstop, popIn, punch, shake, shockwave, slowmo, speedLines, timeScale } from '../fx/juice';
 import { FreePlay } from '../fx/freePlay';
 import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
@@ -71,6 +71,7 @@ import { Fighter, FLOOR_BOTTOM, FLOOR_TOP, initFromSpec, NO_AFTERIMAGES, type Fi
 import { ARENA_LEFT, ARENA_RIGHT, integrate, restLift, STEER, STICK_DEADZONE } from './movement';
 import { BattleHud } from './hud';
 import { MoveChoice, type ChoiceHost } from './moveChoice';
+import type { Box } from './padPlace';
 import { makeStage } from './stages';
 import { StoryDirector, type StoryHost } from './story/StoryDirector';
 import type { StoryWalk } from './story/walk';
@@ -152,8 +153,6 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
   private simRate = 1;
   /** `?battle=short` (item 083): the director's waits cut (`beat`). */
   private readonly short = new URLSearchParams(location.search).get('battle') === 'short';
-  /** `?ambience=<id>` (item 134): an AMBIENCE_TRIALS candidate, played in its own arena. */
-  private readonly trial = AMBIENCE_TRIALS[new URLSearchParams(location.search).get('ambience') ?? ''];
   /**
    * The director is a chain of awaits; once this run of the scene is over
    * (F2, the advance to the next step) nothing in the chain may resume.
@@ -226,7 +225,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     hookState.room = null;
     const v = villainSpec();
     this.fight = fightStyle();
-    this.arenaKey = this.trial?.arena ?? this.fight.arena ?? v.arena;
+    this.arenaKey = this.fight.arena ?? v.arena;
     backdrop(this, `arena_${this.arenaKey}`, DEPTH.ground);
     this.darkRect = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0a0018, 0).setDepth(FLOOR_TOP - 5);
     this.controls = new Controls(this);
@@ -320,6 +319,11 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
 
   get anchored(): boolean {
     return this.show.anchored;
+  }
+
+  /** A story fight's props as floor boxes (hunt 10, M54); null outside a story fight. */
+  storyProps(): Box[] | null {
+    return this.story?.propBoxes() ?? null;
   }
 
   /** Tests (`__ww.place`, item 083): her hero onto (x, y) in a move choice or a story walk; false outside both. */
@@ -502,32 +506,18 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
 
   /** The arena's falling/rising ambience (`ambience` on ARENAS; the meadow's for a key without one). */
   private ambience(): void {
-    const c = this.trial?.ambience ?? ARENAS[this.arenaKey]?.ambience ?? ARENAS.meadow!.ambience;
+    const c = ARENAS[this.arenaKey]?.ambience ?? ARENAS.meadow!.ambience;
     const [sxMin, sxMax] = c.speedX ?? [-25, 25];
     const [syMin, syMax] = c.speedY ?? (c.up ? [30, 90] : [40, 120]);
     const lifespan = c.lifespan ?? 9000;
     const scale = c.scale ?? (c.tex === 'ring' ? { start: 0.12, end: 0.2 } : c.tex === 'smoke' ? { start: 0.4, end: 1.2 } : { start: 0.7, end: 0.1 });
-    // A flapping one keeps one size, its width beating as it flies (about 5 beats a second).
-    const fixed = 'min' in scale ? scale : null;
     type Particle = Phaser.GameObjects.Particles.Particle;
-    const size = new WeakMap<Particle, number>();
-    const sizeOf = (p: Particle) => size.get(p) ?? 1;
-    // Phaser fires scaleX's onEmit before scaleY's: the size is drawn there.
-    const draw = (p: Particle) => {
-      size.set(p, Phaser.Math.FloatBetween(fixed?.min ?? 1, fixed?.max ?? 1));
-      return sizeOf(p);
-    };
     this.add
       .particles(c.fromLeft ? -30 : 0, c.fromLeft ? 0 : c.up ? GAME_HEIGHT + 10 : -10, TEX[c.tex], {
         ...(c.fromLeft ? { y: { min: 40, max: GAME_HEIGHT - 20 } } : { x: { min: 0, max: GAME_WIDTH } }),
         speedY: c.up ? { min: -syMax, max: -syMin } : { min: syMin, max: syMax },
         speedX: { min: sxMin, max: sxMax },
-        ...(c.flap && fixed
-          ? {
-              scaleX: { onEmit: (p?: Particle) => draw(p!), onUpdate: (p: Particle, _k: string, t: number) => sizeOf(p) * (0.25 + 0.75 * Math.abs(Math.sin((t * lifespan) / 100))) },
-              scaleY: { onEmit: (p?: Particle) => sizeOf(p!), onUpdate: (p: Particle) => sizeOf(p) },
-            }
-          : { scale }),
+        scale,
         ...(c.spin ? { rotate: { onEmit: () => Phaser.Math.Between(0, 359), onUpdate: (_p: Particle, _k: string, _t: number, v: number) => v + c.spin! } } : {}),
         alpha: c.alpha ?? { start: 0.8, end: 0 },
         lifespan,
@@ -815,7 +805,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     const y = bag.y - 110;
     // The picture jumps out of the bag, a squash on the bag as it goes.
     this.tweens.add({ targets: bag, scaleX: bs * 1.3, scaleY: bs * 0.7, duration: 90, yoyo: true });
-    const pic = fitImage(this.add.image(bag.x, bag.y, `pic_${word}`), 120, 120).setDepth(DEPTH.fx + 6);
+    const pic = fitPicture(this.add.image(bag.x, bag.y, `pic_${word}`), 120, 120).setDepth(DEPTH.fx + 6);
     const ps = pic.scale;
     pic.setScale(0.2 * ps);
     this.tweens.add({ targets: pic, x, y, scale: ps * 1.2, duration: 380, ease: 'Back.easeOut' });
@@ -1198,7 +1188,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     const h = this.heroes[0]!;
     if (!this.story) void this.say('use_item');
     const at = this.revealSpot(h, 190, 190, 0);
-    const item = fitImage(this.add.image(at.x, at.y - 95, counterArt()), 130, 130).setDepth(DEPTH.fx + 5);
+    // A standing person or a wide picture by its own shape (M48).
+    const item = fitPicture(this.add.image(at.x, at.y - 95, counterArt()), 130, 130).setDepth(DEPTH.fx + 5);
     const s = item.scale;
     popIn(this, item, s * 1.4, 0, 400);
     const halo = this.add.image(item.x, item.y, TEX.glow).setTint(0xfff3a0).setScale(3).setBlendMode(Phaser.BlendModes.ADD).setDepth(FLOOR_TOP - 4);

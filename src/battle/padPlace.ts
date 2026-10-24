@@ -9,7 +9,9 @@
  * fighter, so she never walks into a fighter's card to choose; and no sign may
  * stand over a body in `cover` (item 071: the villain always, and in a contest
  * the team at its held stations, which do not step back: Dada Jason behind the
- * cook-off's signs, a dad behind his sign in a race, M17).
+ * cook-off's signs, a dad behind his sign in a race, M17). No pad opens within
+ * her reach where that costs no older rule, and in the story fight whatever it
+ * costs (hunt 10, M54), its rings then keeping off the story's props.
  */
 
 /** A screen rectangle: [left, top, right, bottom]. */
@@ -61,15 +63,28 @@ export interface PlaceInput {
    * Her feet and her reach (hunt 7): no pad opens within it, or a green mashed through the
    * partner's "Use HOP!" picks the pad she was left standing at, unread (a crowded story
    * fight put one there a quarter of the time). Kept only where it costs no older rule:
-   * the pads stay in as early a tier and cover nobody more than without it.
+   * the pads stay in as early a tier and cover nobody more than without it. With `first`
+   * (the story fight, hunt 10 M54: its stage is always crowded, so the trade-off gave her
+   * reach up every time) it outranks every other rule.
    */
-  me?: { x: number; y: number; reach: number };
+  me?: { x: number; y: number; reach: number; first?: boolean };
+  /**
+   * Floor props a ring keeps off where it can (hunt 10, M54: the story fight's stone, ledge
+   * and hoard, faded while the choice is open). After her reach and nobody covered, before
+   * the rest; a ring may still sit on one when nothing else fits.
+   */
+  keepOff?: Box[];
 }
 
 /** The sign's plate and its stake, with a margin: 10 px round the plate, and below it the stake (to 75) and 15 more. */
 export function signBox(x: number, y: number): Box {
   const sy = y - SIGN_RISE;
   return [x - SIGN_W / 2 - 10, sy - SIGN_H / 2 - 10, x + SIGN_W / 2 + 10, sy + SIGN_H / 2 + 40];
+}
+
+/** A pad's floor ring (moveChoice.ts draws its disc 190 by 70), centred on the pad. */
+export function ringBox(x: number, y: number): Box {
+  return [x - 95, y - 35, x + 95, y + 35];
 }
 
 export function bodyBox(b: PlaceBody): Box {
@@ -96,6 +111,8 @@ export function placePads(inp: PlaceInput): { x: number; y: number }[] {
   // Her reach gives way to every older rule (hunt 7's review): kept only where the pads stay in as
   // early a tier (a contest's on her side, item 034) and cover nobody more than they would without it.
   const kept = layout(inp);
+  // The story fight (M54): her reach first, whatever it costs (a later tier, a sign over someone).
+  if (inp.me.first && kept.spots.length) return kept.spots;
   return kept.spots.length && kept.tier <= was.tier && kept.cover <= was.cover + 1e-9 ? kept.spots : was.spots;
 }
 
@@ -114,6 +131,7 @@ function layout(inp: PlaceInput): { spots: { x: number; y: number }[]; tier: num
   };
   // Every covered body's share under the signs, summed: 0 is the rule, more only when nothing else fits.
   const sway = inp.sway ?? 0;
+  const keepOff = inp.keepOff ?? [];
   const coverBoxes = cover.map((b): Box => {
     const [l, t, r, btm] = bodyBox(b);
     return [l - sway, t, r + sway, btm];
@@ -144,7 +162,8 @@ function layout(inp: PlaceInput): { spots: { x: number; y: number }[]; tier: num
         .flatMap((x) =>
           ys.map((y) => {
             const sign = [signBox(x, y)];
-            return { x, y, clear: clearance(x, y), cov: coverBoxes.reduce((s, b) => s + coveredShare(b, sign), 0) };
+            const ring = ringBox(x, y);
+            return { x, y, clear: clearance(x, y), cov: coverBoxes.reduce((s, b) => s + coveredShare(b, sign), 0), on: coveredShare(ring, keepOff) };
           }),
         )
         .filter((q) => !me || Math.hypot(q.x - me.x, q.y - me.y) >= me.reach);
@@ -160,7 +179,9 @@ function layout(inp: PlaceInput): { spots: { x: number; y: number }[]; tier: num
           // Covering nobody first (any cover at all outweighs the rest, item 083); then clear enough counts the same however
           // far; then one row over a staggered pair, spread out, a little luck.
           const rowsUsed = new Set(picked.map((p) => p.y)).size;
-          const score = -cov * 1e9 + Math.min(clear, 240) * 3 - (rowsUsed - 1) * 200 + Math.min(spread, 420) * 0.25 + rand() * 25;
+          // Then how much of the rings stands on a floor prop (M54), above every nicety after it.
+          const on = picked.reduce((s, p) => s + p.on, 0);
+          const score = -cov * 1e9 - on * 1e4 + Math.min(clear, 240) * 3 - (rowsUsed - 1) * 200 + Math.min(spread, 420) * 0.25 + rand() * 25;
           if (score > bestScore) {
             bestScore = score;
             bestCover = cov;
