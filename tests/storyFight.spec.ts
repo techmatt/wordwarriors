@@ -109,8 +109,23 @@ for (const part of [1, 2] as const) {
         })
         .catch(() => undefined);
     const shots = part === 1 ? [watch('sneak', 600), watch('dive', 900)] : [watch('finale', 900)];
+    // Hunt 11, M74: the gold guards charge through and topple past her, still lying there (not gone off the
+    // edge) once the last of them is in, for "My guards! They all fell over!".
+    const guardsDown =
+      part === 1
+        ? until(page, (s) => s.scene !== 'Battle' || (s.battle?.story?.beat === 'guards' && !s.battle.choice && s.battle.minions > 0), 240_000, 'the guards charge')
+            .then(async (s) => {
+              if (s.scene !== 'Battle') return null;
+              const t0 = s.battle!.t;
+              const later = await until(page, (st) => st.scene !== 'Battle' || st.battle?.story?.beat !== 'guards' || st.battle.t >= t0 + 1.6, 30_000, 'the guards in');
+              return later.battle?.story?.beat === 'guards' ? later.battle.minions - s.battle!.minions : -1;
+            })
+            .catch(() => -2)
+        : Promise.resolve(null);
     const seen = await playStory(page, part);
     await Promise.all(shots);
+    const down = await guardsDown;
+    if (part === 1) expect(down, 'the gold guards lie past her as Smaug says they fell over (M74)').toBe(0);
     const beats = padBeats(SMAUG, part).map((b) => b.id);
     expect(seen.picks.map((p) => p.beat)).toEqual(beats);
     for (const p of seen.picks) {

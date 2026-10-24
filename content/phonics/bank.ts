@@ -35,7 +35,7 @@
  *   through words with sounds she has not been taught (item 058: IGLOO,
  *   OCTOPUS, UMBRELLA, APPLE, ZOO, ZEBRA); E J N V W Y TH have 1-2; Q X
  *   (QUEEN, X-RAY stored, item 127) and voiced TH none;
- * - a last sound: 3 for B D G K L M N P S T X CK NG SH, fewer for F Z CH TH;
+ * - a last sound: 3 for B D G K L M N P S T X CK NG, fewer for SH F Z CH TH;
  * - 8 per short vowel; 2 pictures per word-machine family, the listed
  *   families staying families;
  * - the Stretchy Bridge: 3 early words (levels 1-2, short vowel) per first
@@ -322,6 +322,8 @@ export const STORED_WHY: Record<string, string> = {
   rat: 'the big-eared grey rodent reads as a mouse',
   nut: 'a lone hazelnut reads as an onion or an acorn',
   gate: 'the planks between posts read as a fence',
+  // Hunt 11, M66: a sound-out would teach the wrong vowel.
+  bush: 'its U is the U of PUT, not of SUN: a wrong short-U word in every sound-out',
   // Hunt 9, M40: the bedroom's own props, shown every episode before any room (fix 74), so never read.
   bed: 'the bedroom shows her bed every episode, so it is never read',
   drum: 'a bedroom toy, shown every episode, so it is never read',
@@ -408,7 +410,8 @@ export const COVERAGE = {
   last: {
     b: { target: 3 }, d: { target: 3 }, g: { target: 3 }, k: { target: 3 }, l: { target: 3 }, m: { target: 3 },
     n: { target: 3 }, p: { target: 3 }, s: { target: 3 }, t: { target: 3 }, x: { target: 3 },
-    ck: { target: 3 }, ng: { target: 3 }, sh: { target: 3 },
+    ck: { target: 3 }, ng: { target: 3 },
+    sh: { target: 2, why: 'FISH, BRUSH; BUSH is stored (hunt 11, M66: its U is not SUN\'s), DISH and CASH no picture yet' },
     f: { target: 1, why: 'ELF; CLIFF and LEAF are no clear picture or need a long vowel' },
     z: { target: 1, why: 'CHEESE; QUIZ and FIZZ are no picture' },
     ch: { target: 0, why: 'WITCH is said in a hub scene; PEACH and BENCH want sounds to come' },

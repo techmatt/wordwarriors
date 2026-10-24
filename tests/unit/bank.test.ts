@@ -12,7 +12,7 @@ import { ACTIONS, BANK, BANK_BY_WORD, LIVE, THINGS, tag, unitsOf } from '../../c
 import { SOUND_BY_UNIT } from '../../content/phonics/letters';
 import { VARIETY } from '../../src/config';
 import { PICTURE_WORDS } from '../../content/phonics/words';
-import { BAG_WORDS, coverage, coverageTable, distractorsFor, drawWords, isFirm, recentWords, sharesSound, wordWeight } from '../../src/rules/bank';
+import { BAG_WORDS, VOWEL_ONSET, coverage, coverageTable, distractorsFor, drawWords, isFirm, recentWords, sharesSound, wordWeight } from '../../src/rules/bank';
 import { BRIDGE_PICTURES, CROSS_WORDS } from '../../src/rules/bridge';
 import { CHARGE_WORDS } from '../../src/rules/charge';
 import { GRAB_WORDS } from '../../src/rules/grab';
@@ -171,4 +171,12 @@ test('coverageTable: per level, vowel and first sound, words · read · solid ad
   assert.equal(t.level[1]!.readWords, 1);
   assert.equal(t.level[1]!.solid, 0, 'a missed FROG is read, not solid');
   assert.equal(t.vowel.find((r) => r.tag === 'a')!.solid, 1);
+});
+
+test('coverageTable: one first-sound row for every word starting with a vowel, ANT and APPLE alike (item 144)', () => {
+  const t = coverageTable(new ProgressStore(memory()));
+  assert.equal(t.onset[0]!.tag, VOWEL_ONSET);
+  assert.equal(t.onset[0]!.words, LIVE.filter((w) => /^[aeiou]/.test(w.word)).length);
+  assert.ok(t.onset[0]!.words >= 2);
+  for (const tag of ['', 'a', 'e', 'i', 'o', 'u']) assert.equal(t.onset.some((r) => r.tag === tag), false, `no '${tag}' row`);
 });

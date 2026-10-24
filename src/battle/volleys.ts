@@ -61,6 +61,9 @@ export function revealSpot(b: { readonly fighters: readonly Fighter[]; readonly 
   return { x: h.cx, y };
 }
 
+/** The last fetched beat's gap as a share of the others' (hunt 11, M62: 3.5 s to 1.4 s in battle 1). */
+const LAST_VOLLEY_SHARE = 0.4;
+
 export class BattleVolleys {
   /** "Look what we found!" is said once per part, at the first item out of the bag. */
   private bagSaid = false;
@@ -69,15 +72,19 @@ export class BattleVolleys {
 
   /**
    * Every key word she fetched in the house, `gap` seconds apart: a room's earlier words fly out of the
-   * bag as one volley, each room's last word its own beat (hunt 6, M28: eight things took 34 s).
+   * bag as one volley, each room's last word its own beat (hunt 6, M28: eight things took 34 s); Charge's
+   * words all one volley (hunt 11, M62).
    */
   async useAllFetched(gap: number): Promise<void> {
-    const rooms = housePlan().map((p) => p.fetches);
-    for (const beat of fetchBeats(episode.fetched, rooms)) {
-      const words = beat.filter((w) => FETCH_BY_WORD[w]);
-      if (!words.length) continue;
+    // Charge the Spell's words fly as one volley (hunt 11, M62).
+    const rooms = housePlan().map((p) => (p.kind === 'charge' ? { words: p.fetches, whole: true as const } : p.fetches));
+    const beats = fetchBeats(episode.fetched, rooms)
+      .map((beat) => beat.filter((w) => FETCH_BY_WORD[w]))
+      .filter((words) => words.length);
+    for (const [i, words] of beats.entries()) {
       await this.useFetched(words);
-      await this.b.wait(gap);
+      // The last beat's gap is short: the runes (or the move choice's own pause) come next (hunt 11, M62).
+      await this.b.wait(i === beats.length - 1 ? gap * LAST_VOLLEY_SHARE : gap);
     }
   }
 
@@ -115,12 +122,15 @@ export class BattleVolleys {
       sfxSummon();
       burst(scene, at.x, at.y, { count: 40, speed: 340, texture: TEX.star, colors: [color, 0xffffff, 0xffd23f] });
       const heard = b.guard(voiceBus.say(letterSoundLine(sound)));
+      // The gap runs from the stone's sound, so back to back is `gap` apart, not the 0.3 s below as well.
+      const gapDone = b.wait(gap);
       await b.wait(0.3);
       b.banner(`${sound.toUpperCase()}!`, color === 0xffffff ? 0x7ad9ff : color, true);
       speedLines(scene, at.x, at.y, color, 400);
       h.castFrom = at;
       cast(b, h, rune.move, b.villain, 1.3);
-      b.after(700, () => (h.castFrom = null));
+      // Back to back, the next rune may already cast from its own stone: clear only this one's (item 144).
+      b.after(700, () => h.castFrom === at && (h.castFrom = null));
       b.stats.abilitiesFired++;
       b.stats.runesFired++;
       scene.tweens.add({
@@ -135,8 +145,8 @@ export class BattleVolleys {
           letter.destroy();
         },
       });
-      // The next stone waits for this one's sound as well as the gap.
-      await Promise.all([heard, b.wait(gap)]);
+      // The next stone waits for this one's sound as well as the gap (back to back, RUNE_GAP: hunt 11, M62).
+      await Promise.all([heard, gapDone]);
     }
   }
 

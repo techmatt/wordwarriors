@@ -109,7 +109,8 @@ on-screen text is upper case. Yellow (Tab) says the last instruction again, or h
    closes (chef Dada Jason baked the cake). Then the victory replays the words she read,
    on a podium: she has the top block, her ally (or with no ally the dad who woke her) the
    left, the villain the right; with an ally, the dad who woke her cheers on the grass
-   beside it (M50, `podiumCheer`).
+   left of it (M50, `podiumCheer`), and the other dad, when he came in too, on the grass
+   right of it (M70, `podiumCheerRight`).
    Once the recap is said a green dot shows; her green fades it out to **THE END**
    (item 085, `src/scenes/TheEndScene.ts`): this episode's hub (home or the quest place)
    full screen, her heroes (her, and her ally or the dad who woke her) bouncing on it,
@@ -234,7 +235,8 @@ fetched things; her gift move from pads; his fire breath, telegraphed by a glowi
 floor, while she walks behind the stone (if she stays put it roars over her head: no
 fail); her answer to the fire from pads (WET, DRIP, MUD or FAN, by her phonics; the
 other pads are any move words, never a second sensible one); his gold guards charging,
-a dodge with pads (HOP, JUMP, SKIP, FLIP); Dad's spinning attack while she sneaks to the
+a dodge with pads (HOP, JUMP, SKIP, FLIP), each hero hopping as the guards reach her and
+the guards toppling just past them; Dad's spinning attack while she sneaks to the
 hoard and presses green; his tail smash while she climbs the ledge; her answer to the
 stuck tail (TUG, GRAB, TWIST, TRAP); then he flies up until he is a dot, dives, floors
 them, and they retreat ("TO BE CONTINUED!"). Part 2 is shorter: fire from the sky
@@ -324,22 +326,28 @@ altar in turn (its picture letter, `rune_<x>`: the letter drawn as a thing start
 its sound; its slot pulses), the helper shows the sound's
 gesture (Jolly Phonics style: a hissing snake 🐍 for S, a tummy rub for M;
 `content/phonics/runes.ts`) and says the sound, then a quiet beat (`CHARGE.sayBackMs`,
-1.2 s; the dad lock holds it) for her to say it back, and the rune fires up into its slot.
+1 s; the dad lock holds it) for her to say it back, and the rune fires up into its slot.
 Nothing is pressed per rune: Matt watched the per-rune presses frustrate her (item 059).
 With every rune charged the word lights up and she reads it aloud ("Now read the whole
-spell!"), the round's one press, Dad's: **2** says it; **1** is "Let's sound it out
+spell!" on the first word only since item 144; the second's was a repeat, and yellow still
+says it), the round's one press, Dad's: **2** says it; **1** is "Let's sound it out
 together!", the word sounded out once and then said; either way its picture shows and goes
 into her bag as a battle item. Dad may press as soon as the word lights. The read records
-the word and its sounds (right with his 2). Then "Here comes another spell!" (`charge_next`)
-and the second word takes the bar, its own round the same way; after the last word, "Our
-spells are all charged up!" and back to the hub. A visit with Dad answering at once is
-about 50-60 s of game time (measured on the scene clock, item 140, two 3-rune words): about
-22 s to the first read (her arrival, the sounds up front, the explanation, 3.2 s a rune),
-17 s to the second ("Here comes another spell!", its sounds, its runes), then about 5 s a
-word for the word, its picture and the bag; a 4-rune word adds about 4.5 s to its round.
-One word a visit (items 058-139) was 20-25 s. `room.charge.readAtMs` (from the round's
+the word and its sounds (right with his 2). Then the second word takes the bar and its
+sounds start at once (item 144 cut "Here comes another spell!"), its own round the same way;
+the last word's picture flies into the bag to "Our spells are all charged up!" (in place of
+its praise since item 144: two cheers back to back) and back to the hub. A visit with Dad
+answering at once is 33-39 s of game time in an episode, 38-42 s straight off a cold
+`?scene=room` boot, whose voice decodes hold the first sounds about 3 s (item 144, hunt 11
+M61, Matt's ruling: at most 40 s; item 140's was 46-55 s): about 15 s to the first read (her
+arrival, the sounds up front, the explanation, the runes), 10.5-11.5 s to a 3-rune second,
+15.5 s to a 4-rune one, then about 3-4 s a word for the word, its picture and the bag. Solo, with the 8 s wait for Dad
+and "Say it with me!" a rune, 53-61 s. The quiet around each rune is `RUNE_BEATS`
+(`src/scenes/ChargeRoom.ts`); the letter sounds and the say-back beat (`CHARGE.sayBackMs`,
+1 s) are not trimmed. One word a visit (items 058-139) was 20-25 s. `room.charge.readAtMs` (from the round's
 start) and `elapsedMs` (the visit's) are in the hooks; `tests/charge.spec.ts` holds each
-round under 29 s to its read and the visit under 66 s with his 1 on the first word.
+round under 25 s to its read and the visit under 52 s with his 1 on the first word (43 s
+measured); the bug-hunt checker flags a visit with his yes over 42 s.
 The words are drawn like any room's (`drawWords`, from the familiar pictured words),
 leaning to shaky sounds, every sound in play from the start (item 067: the old sound
 tiers are gone), 3-4 sound units (`CHARGE.units`), `CHARGE.words` of them (`src/rules/charge.ts`,
@@ -432,7 +440,14 @@ follows the bank, so a new word or a word brought back adds its family by itself
 fades per word (`rhymeLevels`, on the grown-ups page once met; at base difficulty every word
 gets level 1): level 1 the helper sounds the printed word out unasked, each unit lit on the
 plate (a digraph one sound, never blended), then asks "Which thing is it?"; levels 2 and 3
-it is sounded out only on yellow. Yellow sounds it out at any level, and is help (the
+it is sounded out only on yellow. A round's cards, slot, plate and pictures arrive together;
+only the first round has the long instructions ("Rhyme time!..." after the two cards,
+"Which thing is it?" after the sound-out); later rounds say the two cards and sound the
+plate out (level 1) or say "Another rhyme! Read it!" (2 and 3), and she picks. She can walk
+from the moment the pictures are up; only green waits for the round's last line (item 144,
+hunt 11 M64, real voice, right first time: a visit about 40 s from the room's open to the
+hub, the first card said 1.2 s in; green opens about 14.5 s into the first round, 7 s into
+a later one, counting the last word's praise). Yellow sounds it out at any level, and is help (the
 word's ramp steps down). A miss: the fizzle-and-giggle, then the rhyme with her pick in it
 and again with the right word, "Bug, tug... thumb? Listen: bug, tug, rug!" (Matt's design:
 the miss line says the printed word, a deliberate exception to the speech rule); after two

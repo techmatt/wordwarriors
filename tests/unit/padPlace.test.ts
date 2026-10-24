@@ -9,7 +9,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { bodyBox, clearSpot, coveredShare, dotBeside, dotSide, placePads, ringBox, signBox, type PlaceBody } from '../../src/battle/padPlace';
+import { bodyBox, clearSpot, coveredShare, dotBeside, dotSide, placeContestPads, placePads, ringBox, ringsOn, signBox, standingWords, stepOutX, type Box, type PlaceBody } from '../../src/battle/padPlace';
 import { seeded, spread } from './seeds';
 
 /** A fighter standing at (x, y), `w` wide and `h` tall. */
@@ -259,4 +259,62 @@ test('padPlace: a teammate whose body stands over a ring steps clear, not only o
   assert.ok(coveredShare(ringBox(630, 480), [[to.x - 60, to.y - 240, to.x + 60, to.y]]) <= 0.25);
   // Well clear of it: stays.
   assert.deepEqual(clearSpot({ x: 300, y: 600, half: 60, h: 240 }, pads, [], floor), { x: 300, y: 600 });
+});
+
+test("padPlace (hunt 11, M65): the sea tug's pads drop to two where three cannot keep off the held ally, and stand on her less", () => {
+  let two = 0;
+  for (let seed = 1; seed <= 30; seed++) {
+    const rand = seeded(spread(seed));
+    const lead = (rand() - 0.5) * 80;
+    const me = body(430 - lead, 548, 110, 200);
+    const ally = body(295 - lead, 590, 110, 180);
+    const villain = body(895 - lead, 565, 320, 260);
+    const held: Box[] = [[ally.x - ally.half, ally.top, ally.x + ally.half, ally.y + 20]];
+    const inp = { n: 3, avoid: [me, ally, villain], cover: [villain, ally], contest: { meX: me.x, villain }, sway: 40, ...floor, me: { x: me.x, y: me.y, reach: 120 }, keepOff: held };
+    const three = placePads({ ...inp, rand: seeded(seed) });
+    const spots = placeContestPads({ ...inp, rand: seeded(seed) }, held);
+    assert.ok(spots.length === 2 || spots.length === 3, `seed ${seed}`);
+    if (spots.length === 2) {
+      two++;
+      assert.ok(ringsOn(spots, held) < ringsOn(three, held), `seed ${seed}: two pads stand on the ally less`);
+    } else assert.equal(ringsOn(spots, held), ringsOn(three, held));
+  }
+  assert.ok(two > 0, 'the sea tug drops to two pads');
+  // Outside a contest, and with no held team, always the asked-for three.
+  const me = body(400, 548, 120, 220);
+  const villain = body(900, 560, 200, 300);
+  assert.equal(placeContestPads({ n: 3, avoid: [me, villain], cover: [villain], ...floor, me: { x: me.x, y: me.y, reach: 120 }, rand: seeded(1) }, []).length, 3);
+});
+
+test('standingWords (M65): two of three keep the right word, the others in order', () => {
+  assert.deepEqual(standingWords(['HUG', 'ICE', 'KICK'], 'KICK', 2), ['HUG', 'KICK']);
+  assert.deepEqual(standingWords(['HUG', 'ICE', 'KICK'], 'HUG', 2), ['HUG', 'ICE']);
+  assert.deepEqual(standingWords(['HUG', 'ICE', 'KICK'], 'ICE', 3), ['HUG', 'ICE', 'KICK']);
+});
+
+test("stepOutX (hunt 11, M75): behind the villain at the arena's end she steps out past him; with room, she stays", () => {
+  // ozy_tiamat: her at 1170, Evil Tiamat 900 to 1140.
+  const tiamat = body(1020, 560, 240, 300);
+  const to = stepOutX({ x: 1170, half: 55 }, tiamat, floor.left, floor.right);
+  assert.ok(to !== null && to + 55 <= tiamat.x - tiamat.half, `out on his far side: ${to}`);
+  // Mirrored at the left wall.
+  const left = stepOutX({ x: 100, half: 55 }, body(260, 560, 240, 300), floor.left, floor.right);
+  assert.ok(left !== null && left - 55 >= 260 + 120);
+  // Before him, or behind him with room for a ring: no step.
+  assert.equal(stepOutX({ x: 400, half: 55 }, tiamat, floor.left, floor.right), null);
+  assert.equal(stepOutX({ x: 700, half: 55 }, body(400, 560, 200, 300), floor.left, floor.right), null);
+});
+
+test("padPlace (hunt 11, M76): rings keep off the clash point's flare box", () => {
+  for (let seed = 1; seed <= 20; seed++) {
+    // The clash stage's spots (clash.ts HERO_SPOTS, VILLAIN_SPOT) and the clash point at hand height mid-beam.
+    const me = body(330, 585, 110, 200);
+    const ally = body(215, 495, 110, 180);
+    const villain = body(975, 570, 240, 300);
+    const flare: Box[] = [[640 - 100, 470 - 75, 640 + 100, 470 + 75]];
+    const inp = { n: 3, avoid: [me, ally, villain], cover: [villain], ...floor, me: { x: me.x, y: me.y, reach: 145 } };
+    const spots = placePads({ ...inp, keepOff: flare, rand: seeded(spread(seed)) });
+    assert.equal(spots.length, 3);
+    assert.equal(ringsOn(spots, flare), 0, `seed ${seed}: ${JSON.stringify(spots)}`);
+  }
 });

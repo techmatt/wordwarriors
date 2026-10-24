@@ -13,7 +13,9 @@
  * every unit is a rune (`CHARGE_WORDS`: CHARGE.units long, no Q, X, CK, long
  * vowel, doubled letter or repeated sound), leaning to shaky sounds. Every
  * sound is in play from the start (item 067: no sound tiers). A later word
- * shares no sound with the ones before it where the bank allows. Each word is
+ * shares no sound with the ones before it where the bank allows, and none is a
+ * word the episode before had her read (`unreadFirst`, hunt 11, M77) where the
+ * pool allows. Each word is
  * a battle item like any room's fetched word.
  *
  * The room says every sound for her and judges only the word (item 059), so
@@ -27,6 +29,7 @@ import { CHARGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { drawWords, withStems } from './bank';
 import type { Rand } from './random';
+import { unreadFirst } from './shifter';
 
 /** A round: the word it spells, its units (as shown), and their runes (sounds) in order. */
 export interface ChargeWord {
@@ -135,6 +138,8 @@ export function drawChargeWord(store: ProgressStore, input: ChargeInput = { avoi
     const least = Math.min(...pool.map(shared));
     pool = pool.filter((w) => shared(w) === least);
   }
+  // Hunt 11, M77: not a word the episode before had her read, where the pool allows.
+  pool = unreadFirst(store, pool);
   const shaky = (w: string) => {
     const s = BANK_BY_WORD[w]!.sounds;
     return 0.5 + s.reduce((n, x) => n + store.shakiness('sounds', x), 0) / s.length;

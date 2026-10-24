@@ -18,7 +18,7 @@ import type { Status } from '../../content/battle/types';
 import { moveLine, tauntLine } from '../../content/voice/ids';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxHit, sfxPoof } from '../audio/sfx';
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { DEPTH, GAME_HEIGHT, GAME_WIDTH, PART1_VILLAIN_FLOOR } from '../config';
 import { unsayTaunt } from '../episode/lineVariants';
 import { hex } from '../fx/colour';
 import { burst, floatText, hitstop, shake, shockwave } from '../fx/juice';
@@ -92,7 +92,17 @@ export class BattleSim {
   floors: { heroMain: number; villainMain: number };
 
   constructor(private readonly b: SimHost) {
-    this.floors = { heroMain: 0.3, villainMain: b.part === 1 ? 0.45 : 0.3 };
+    this.floors = { heroMain: 0.3, villainMain: b.part === 1 ? PART1_VILLAIN_FLOOR.start : 0.3 };
+  }
+
+  /**
+   * Part 1's villain floor one step down (hunt 11, M63), before a super or the combo lands, so each
+   * takes a visible bite; never below `PART1_VILLAIN_FLOOR.end`. Part 2's floor does not step.
+   */
+  stepVillainFloor(): void {
+    if (this.b.part !== 1) return;
+    const { step, end } = PART1_VILLAIN_FLOOR;
+    this.floors.villainMain = Math.max(end, Math.round((this.floors.villainMain - step) * 100) / 100);
   }
 
   enemiesOf(f: Fighter): Fighter[] {

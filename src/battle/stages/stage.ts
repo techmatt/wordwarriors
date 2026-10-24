@@ -25,6 +25,7 @@ import type { FightSpec } from '../../../content/battle/fights';
 import type { AbilitySpec } from '../../../content/battle/types';
 import type { BattleWorld } from '../abilities';
 import type { Fighter } from '../Fighter';
+import type { Box } from '../padPlace';
 
 /** `story`: a story fight's beat (item 107): nobody fights by themselves. */
 export type Phase = 'intro' | 'fight' | 'choice' | 'combo' | 'ultimate' | 'counter' | 'finish' | 'end' | 'story';
@@ -94,6 +95,8 @@ export interface FightStage {
   retreat(): void;
   /** For the tests (`hookState.battle.stage`). */
   info(): Record<string, unknown>;
+  /** Floor boxes a move choice's rings keep off where they can (hunt 11, M76: the clash point's flare). */
+  choiceKeepOff?(): Box[];
 }
 
 export interface Pt {

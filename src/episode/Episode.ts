@@ -60,6 +60,7 @@ export {
   hubScene,
   narrator,
   podiumCheer,
+  podiumCheerRight,
   podiumSecond,
   questSetupLine,
   randomVillain,

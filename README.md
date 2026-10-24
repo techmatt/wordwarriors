@@ -260,6 +260,11 @@ and the warm-up (about 55 s); a sentence room from `?scene=room&slot=a` (23 s); 
 workers. The default episode's end-to-end checks (three fetched, the villain's two reformed
 lines, the recap's pictures) play the whole episode at the suite's speeds (about 36 s).
 `WW_SPEED=1 npm run test:browser` runs the browser lane at real time.
+**Timing a room visit with real voice** (item 144): a cold `?scene=room` boot still loads its
+voice clips as the room opens, so Charge's first sound comes about 3 s late and a visit
+measures 3 to 4 s longer than in an episode (seed 1103: 42.3 s cold, 38.5 s warm). Warm it
+first (F9 to the grown-ups page for 2 s and back), or time it inside an episode, and compare
+the same seeds before and after.
 
 **Test-only shortcuts** (item 083; tests assert on state and line ids, not on audio or walking):
 
@@ -310,7 +315,8 @@ snappy round in `charge.spec.ts`) asserts them only on one worker (item 072): in
 two-worker lanes it logs its time (and a `timing` annotation) and goes on. The timing run:
 `npx playwright test tests/charge.spec.ts -g snappy --workers=1` (about 15 s of test; item
 140's two-word visit, two 3-rune words: 21.5-23 s and 17 s to the reads and 51-55 s in all
-against 29 s a read and 66 s, 2026-10-24; the one-word round was 17.7 s and 28.7 s). `WW_GPU=0` runs on one worker,
+against 29 s a read and 66 s; item 144 trimmed it to 19.3 s, 12.1 s and 45.8 s against 25 s and 56 s,
+2026-10-24; the one-word round was 17.7 s and 28.7 s). `WW_GPU=0` runs on one worker,
 so it asserts there too.
 
 The browser draws with the GPU (Playwright's full `chromium` channel, `--use-angle=d3d11`;
@@ -583,8 +589,8 @@ keep such scripts in the worktree.
   knew five, and `rhyme_lock` and `rhyme_parent` stalled at the rhyme room's door.
   New check: `letter-name` (bug), a line that names a letter (item 137: a `letter_<x>_name` or `_hides`
   line, or "the letter B", "M's name"); `tests/unit/qacategories.test.ts` holds every line in
-  `lines.json` to it. `slow-room` gained the rhyme room's budget (60 s), and Charge's is item 140's
-  own limit (66 s, solo 75 s). `decal-by-target` (look): a villain's decal within 30 px of a picture she
+  `lines.json` to it. `slow-room` gained the rhyme room's budget (60 s; item 144: 55 s), and Charge's is item 140's
+  own limit (66 s, solo 75 s; item 144: 52 s, solo 68 s). `decal-by-target` (look): a villain's decal within 30 px of a picture she
   picks from (the rhyme row's question mark; not the bedroom, the hub, the battle, the grown-ups page or a door,
   where the mess goes on purpose, nor a decal hanging over it from above, as Elsa's icicles over HAT).
   `ruledCover` takes W44's find line on a picture's foot in a sentence room (22 px at most), and
@@ -644,7 +650,7 @@ keep such scripts in the worktree.
   sentence key word or the machine's word said or shown before she answers; lines with
   no manifest entry (`voice-no-line`) or played with no clip (`voice-silent`, with why:
   its decode `queued` or `decoding`, `failed`, `none` asked for, or the audio context
-  `suspended`); console warnings; input locked over 20 s (Charge the Spell 66 s: Dad answers, and her
+  `suspended`); console warnings; input locked over 20 s (Charge the Spell 68 s, its solo budget: Dad answers, and her
   two-word visit can be one lock) or silent over
   2.5 s; frames over 250 ms; objects, tweens, timers and listeners growing from one
   episode to the next; and a stall (any wait timing out) with its last shot.
@@ -786,8 +792,8 @@ The bank covers phonics by rule, not by luck. Counting only familiar pictured wo
   entry there gives a lower target and why: I, O and U have 1 and A and Z 2, through
   words with sounds she has not been taught (item 058, below); E, J, N, V, W, Y and TH have
   1 or 2; Q, X (their only pictures stored, item 127) and voiced TH none;
-- **a last sound** for the sounds words end on: 3 each for B D G K L M N P S T X CK NG
-  SH, fewer for F Z CH TH, with reasons;
+- **a last sound** for the sounds words end on: 3 each for B D G K L M N P S T X CK NG,
+  fewer for SH (BUSH stored, hunt 11) and F Z CH TH, with reasons;
 - **8 per short vowel**; **2 pictures per word-machine family**, and the families listed
   must stay families (-ING and -OCK joined in 056; -IN left in 127, BIN stored);
 - **the Stretchy Bridge**: 3 early words (levels 1–2, a short vowel) per first sound in

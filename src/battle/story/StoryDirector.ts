@@ -33,7 +33,7 @@ import type { AbilitySpec } from '../../../content/battle/types';
 import { storyLine } from '../../../content/voice/ids';
 import { voiceBus } from '../../audio/VoiceBus';
 import { sfxBoom, sfxFire, sfxJump, sfxPoof, sfxShout, sfxStomp, sfxTwinkle, sfxUltimate, sfxWhoosh } from '../../audio/sfx';
-import { DEPTH, GAME_WIDTH } from '../../config';
+import { DEPTH, GAME_WIDTH, RUNE_GAP } from '../../config';
 import { advance, episode } from '../../episode/Episode';
 import { burst, fitImage, flash, floatText, hitstop, popIn, punch, shake, shockwave, slowmo, speedLines } from '../../fx/juice';
 import { TEX } from '../../fx/textures';
@@ -43,6 +43,7 @@ import { ARENA_LEFT, restLift } from '../movement';
 import type { Box } from '../padPlace';
 import type { Phase, StageHost } from '../stages/stage';
 import { STORY_MARKS } from '../stages/story';
+import { HOP_MS, hopOverCharge, type Charge } from './charge';
 import { StoryWalk, type WalkHost } from './walk';
 
 /** How long she has to reach a safe spot (real s), and to grab (before it goes on by itself). */
@@ -179,7 +180,7 @@ export class StoryDirector {
     const any = episode.fetched.length > 0 || (episode.charged?.part === b.part && episode.charged.sounds.length > 0);
     if (beat.all && any) await this.sayAll(beat.lines);
     if (beat.all) await b.useAllFetched(b.beat(1.4));
-    await b.useCharged(b.beat(1.1));
+    await b.useCharged(b.beat(RUNE_GAP));
     if (beat.all && any) await this.sayAll(beat.after);
     b.phase = 'story';
   }
@@ -252,25 +253,37 @@ export class StoryDirector {
     guards.forEach((g, i) => b.stage.tweens.add({ targets: g, x: 700 + i * 85, y: 645 + (i % 2) * 15, duration: 500 }));
     await b.wait(0.6);
     await this.choice();
-    // Over the guards she goes as they charge past and topple.
-    const me = b.heroes[0];
-    if (me) this.hopOver(me, 260);
-    for (const h of b.heroes.slice(1)) this.hopOver(h, 160);
-    guards.forEach((g, i) => {
-      b.stage.tweens.add({
-        targets: g,
-        x: ARENA_LEFT - 200,
-        duration: 1200,
-        delay: i * 120,
-        ease: 'Quad.easeIn',
-        onComplete: () => b.killFighter(g),
-      });
+    // The guards charge through the heroes, each hero hopping as they reach her (not all at once as the
+    // charge sets off from far off), and topple just past the last of them (hunt 11, M74). The heroes
+    // step back onto their marks as the charge comes, so the hops are timed to the marks.
+    const marks = b.heroes.map((_h, i) => STORY_MARKS.heroes[i] ?? STORY_MARKS.heroes[0]);
+    b.heroes.forEach((h, i) => b.stage.tweens.add({ targets: h, x: marks[i]!.x, y: marks[i]!.y, duration: 450, ease: 'Quad.easeOut' }));
+    const past = Math.min(...marks.map((m) => m.x));
+    const charges: Charge[] = guards.map((g, i) => ({ from: g.x, to: Math.max(ARENA_LEFT + 40, past - 140 + i * 50), delay: i * 120, ms: 1200 }));
+    b.heroes.forEach((h, i) => {
+      const hop = hopOverCharge(charges, marks[i]!.x);
+      if (hop) this.hopOver(h, i === 0 ? 260 : 160, hop.ms, hop.delay);
     });
-    await b.wait(b.beat(1.6));
-    for (const g of this.minions()) b.killFighter(g);
-    sfxPoof();
+    guards.forEach((g, i) => {
+      const c = charges[i]!;
+      b.stage.tweens.add({ targets: g, x: c.to, duration: c.ms, delay: c.delay, ease: 'Quad.easeIn', onComplete: () => this.topple(g) });
+    });
+    const lastIn = Math.max(...charges.map((c) => c.delay + c.ms), 0);
+    await b.wait(lastIn / 1000 + b.beat(0.5));
+    // "My guards! They all fell over!" while they sit there dizzy, then they poof.
     await this.sayAll(beat.after);
+    for (const g of this.minions()) b.killFighter(g);
     await this.homeAgain();
+  }
+
+  /** A guard trips at full tilt: down on the floor, dizzy (`floored`), in a puff of dust. */
+  private topple(g: Fighter): void {
+    if (!g.alive) return;
+    g.floored = true;
+    g.squash(0.4);
+    sfxStomp();
+    burst(this.b.stage, g.x, g.y - 10, { count: 26, speed: 280, colors: [0xc8b89a, 0xffd23f], blend: false });
+    floatText(this.b.stage, g.x, g.y - g.height - 20, 'BONK!', '#ffd23f', 40);
   }
 
   /** Dad keeps him busy with a spinning attack while she sneaks to the hoard and grabs. */
@@ -406,11 +419,23 @@ export class StoryDirector {
   }
 
   /** A hop over something low: her hop height, there and back. */
-  private hopOver(h: Fighter, height: number): void {
+  private hopOver(h: Fighter, height: number, ms = HOP_MS, delay = 0): void {
     const b = this.b;
-    sfxJump();
-    h.squash(0.3);
-    b.stage.tweens.addCounter({ from: 0, to: 1, duration: 700, onUpdate: (tw) => (h.hop = Math.sin((tw.getValue() ?? 0) * Math.PI) * height), onComplete: () => (h.hop = 0) });
+    // The delay rides the tween's own clock, the one the guards' charge runs on (slow-mo and all).
+    const start = () => {
+      sfxJump();
+      h.squash(0.3);
+    };
+    if (delay <= 0) start();
+    b.stage.tweens.addCounter({
+      from: 0,
+      to: 1,
+      duration: ms,
+      delay,
+      ...(delay > 0 ? { onStart: start } : {}),
+      onUpdate: (tw) => (h.hop = Math.sin((tw.getValue() ?? 0) * Math.PI) * height),
+      onComplete: () => (h.hop = 0),
+    });
   }
 
   /** The floor between the sides glows where the attack will land. */

@@ -18,7 +18,7 @@ import { drawStory } from '../../src/rules/story';
 import { MINIGAMES, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/rooms';
 import { ProgressStore } from '../../src/state/ProgressStore';
-import { castId, podiumCheer, podiumSecond } from '../../src/episode/cast';
+import { CAST_SCALE_MAX, castId, castScale, podiumCheer, podiumCheerRight, podiumSecond } from '../../src/episode/cast';
 import type { EpisodeState } from '../../src/episode/state';
 import { memory } from './seeds';
 
@@ -356,4 +356,33 @@ test("minigames: a game's weight leans the draw", () => {
   let hits = 0;
   for (let i = 0; i < 300; i++) if (drawGames(store, rand, pool).slice(0, 2).some((g) => g.id === heavy.id)) hits++;
   assert.ok(hits > 270, `heavy game drawn ${hits}/300`);
+});
+
+test('podium (hunt 11, M70): the other dad, when he came in, cheers right of it, in his form, never twice', () => {
+  const rand = seededRand(12);
+  let right = 0;
+  for (let i = 0; i < N; i++) {
+    const c = drawCast({ hero: 'julia' }, rand);
+    const state = { ...c, villainWasRandom: true } as unknown as EpisodeState;
+    const cheer = podiumCheerRight(state);
+    if (!c.secondary) {
+      assert.equal(cheer, null, JSON.stringify(c));
+      continue;
+    }
+    right++;
+    assert.equal(cheer, castId(c.secondary, state), JSON.stringify(c));
+    const others = [c.hero, c.villain, podiumSecond(state), podiumCheer(state)].filter((x): x is string => Boolean(x));
+    assert.ok(!others.some((o) => personOf(o) === personOf(cheer!)), JSON.stringify(c));
+  }
+  assert.ok(right > 0, 'some podiums have the other dad cheering');
+});
+
+test('castScale (hunt 11, M73): a giant stands up to 1.7 of her, over the old 1.3 cap', () => {
+  const state = { hero: 'julia', ally: 'ellie', villain: 'tiamat', primary: null, secondary: null, villainWasRandom: false } as unknown as EpisodeState;
+  const at = (villain: string) => castScale(villain, { ...state, villain } as EpisodeState);
+  assert.equal(CAST_SCALE_MAX, 1.7);
+  assert.ok(Math.abs(at('tiamat') - 1.7) < 1e-9, String(at('tiamat')));
+  assert.ok(Math.abs(at('smaug') - 1.5) < 1e-9, String(at('smaug')));
+  assert.ok(Math.abs(at('jormungandr') - 1.4) < 1e-9, String(at('jormungandr')));
+  assert.ok(Math.abs(castScale('rilla', state) - 1.4) < 1e-9, String(castScale('rilla', state)));
 });

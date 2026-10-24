@@ -115,13 +115,31 @@ export function nearRhyme(a: string, b: string): boolean {
 }
 
 /**
+ * A near rhyme by a nasal before the ending (hunt 11, M71): the same vowel, and one word's ending is the
+ * other's with an M or N before it. CAT, HAT... ANT (or PLANT); CUP... STUMP; DUCK... SKUNK. The rhyme
+ * room's vowel picture leans off these (`wrongPictures`), a lean and not a rule: ruled out, fewer families
+ * could be planned and the room came up less (38 visits in 300 episodes fell to 26).
+ */
+export function nasalNear(a: string, b: string): boolean {
+  const ra = rimeOfWord(a);
+  const rb = rimeOfWord(b);
+  if (ra[0] !== rb[0]) return false;
+  const coda = (r: string) => r.replace(/^[aeiou]+/, '').replace(/ck|c|k/g, 'k').replace(/x/g, 'ks');
+  const ca = coda(ra);
+  const cb = coda(rb);
+  const plus = (x: string, y: string) => y.length > 0 && /^[mn]/.test(x) && x.slice(1) === y;
+  return plus(ca, cb) || plus(cb, ca);
+}
+
+/**
  * The wrong pictures for `word`: one thing sharing its first sound, one
  * sharing its vowel and not its first sound; neither rhyming or nearly rhyming
  * with it, neither a look-alike of it or of the round's two cards (`shown`,
  * hunt 11: DAD beside the MAN card, a leg in a striped sock beside SOCK, read
  * as rhymes), neither in `avoid`. The vowel picture is a short word where it
- * can be (a three-unit word, as the target is). Null when the bank has no such
- * pair.
+ * can be (a three-unit word, as the target is), and no nasal near rhyme
+ * (`nasalNear`: ANT for CAT) where another is free. Null when the bank has no
+ * such pair.
  */
 export function wrongPictures(word: string, avoid: Iterable<string>, rand?: Rand, shown: readonly string[] = []): [string, string] | null {
   const skip = new Set([word, ...avoid, ...lookalikesOf(word), ...shown.flatMap((s) => lookalikesOf(s))]);
@@ -132,10 +150,15 @@ export function wrongPictures(word: string, avoid: Iterable<string>, rand?: Rand
   // Short words first: a long one stands out from the three-unit target by its length alone.
   const short = (ws: BankWord[]) => [...pick(ws.filter((t) => t.units.length <= 3)), ...pick(ws.filter((t) => t.units.length > 3))];
   const onset = short(free.filter((t) => firstSound(t.word) === firstSound(word)));
-  for (const a of onset) {
-    const vowel = short(free.filter((t) => t.vowel === w.vowel && firstSound(t.word) !== firstSound(word) && t.word !== a.word && !lookalikesOf(a.word).includes(t.word)));
-    if (vowel.length) return [a.word, vowel[0]!.word];
+  const vowelFor = (a: BankWord) => short(free.filter((t) => t.vowel === w.vowel && firstSound(t.word) !== firstSound(word) && t.word !== a.word && !lookalikesOf(a.word).includes(t.word)));
+  const pairs = onset.map((a) => [a, vowelFor(a)] as const);
+  // Hunt 11, M71 (c): the vowel picture no nasal near rhyme (CAT, HAT... ANT, PLANT) where another is free;
+  // a lean, not a rule, so no round is lost to it.
+  for (const [a, vowel] of pairs) {
+    const clear = vowel.find((t) => !nasalNear(t.word, word));
+    if (clear) return [a.word, clear.word];
   }
+  for (const [a, vowel] of pairs) if (vowel.length) return [a.word, vowel[0]!.word];
   return null;
 }
 

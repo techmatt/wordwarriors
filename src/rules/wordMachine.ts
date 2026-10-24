@@ -16,7 +16,8 @@
  * before: the gift word, frame words, the cast's words). It is planned before
  * the other rooms, which keep clear of its words. When no family has two words left in the bag, the machine uses
  * every eligible word instead (the bag, shared with the sentence rooms, refills
- * only when it is empty). Building a word right first time spends it
+ * only when it is empty). A word the episode before had her read waits while a
+ * family of two is left without it (`unreadFirst`, hunt 11, M77). Building a word right first time spends it
  * (`takeFromBag`), a miss puts it back.
  *
  * Modes. Only `make` (make the picture) is played today: a picture and a
@@ -33,6 +34,7 @@ import { WORD_MACHINE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { BAG_WORDS, LEGACY_BAG_WORDS, met, recentWords, wordWeight as bankWeight } from './bank';
 import { pickWeighted, shuffle, type Rand } from './random';
+import { unreadFirst } from './shifter';
 
 export type MachineMode = 'make' | 'flip' | 'real_or_silly';
 
@@ -110,6 +112,8 @@ export function planMachine(store: ProgressStore, input: MachineInput, rand: Ran
     pool = store.bag().left.filter((w) => eligible.includes(w));
   }
   if (!usable(pool).length) pool = [...eligible];
+  // Hunt 11, M77: not a word the episode before had her read, where a family of two is left without them.
+  pool = unreadFirst(store, pool, (fresh) => usable(fresh).length > 0);
 
   const m = met(store);
   const recent = recentWords(store);
@@ -125,7 +129,8 @@ export function planMachine(store: ProgressStore, input: MachineInput, rand: Ran
     const left = rules.rounds - words.length;
     if (left > 0) {
       const others = (p: string[]) => FAMILIES.filter((f) => f.rime !== rime && inFamily(f, p).length > 0);
-      const from = others(pool).length ? pool : eligible.filter((w) => !words.includes(w));
+      const rest = eligible.filter((w) => !words.includes(w));
+      const from = others(pool).length ? pool : unreadFirst(store, rest, (fresh) => others(fresh).length > 0);
       const next = others(from);
       if (next.length) {
         // A family with enough words for the rest comes first.

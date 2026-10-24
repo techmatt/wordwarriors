@@ -28,15 +28,19 @@ import { BANK_BY_WORD } from '../content/phonics/bank';
  * The timed visit's limits (game time, one worker): a round to its read, and the whole two-word
  * visit. Measured in item 140 for two 3-rune words: 21.5-23 s to the first read (her arrival, the
  * sounds up front, the explanation, the runes), 17 s to the second (another spell, its sounds, the
- * runes), 51-55 s in all with Dad's 1 on the first; a 4-rune word adds about 4.5 s a round.
+ * runes), 51-55 s in all with Dad's 1 on the first; a 4-rune word adds about 4.5 s a round. Item 144
+ * (hunt 11, M61) cut "Here comes another spell!", the second word's "Now read the whole spell!", the
+ * last word's praise (its "all charged up!" plays as it flies to the bag) and the quiet around the
+ * runes: from this cold boot 19.9 s and 10.8 s to the reads, 43 s in all with his 1 (with his 2 at
+ * once 38-42 s; a 4-rune word 15.5 s to its read).
  */
-const LIMIT_READ = 29_000;
-const LIMIT_VISIT = 66_000;
+const LIMIT_READ = 25_000;
+const LIMIT_VISIT = 52_000;
 
 /** A word's runes (its sounds: every unit of a charge word is one). */
 const runesOf = (w: string): string[] => [...BANK_BY_WORD[w]!.sounds];
 
-/** Item 140: the round opens with all its sounds, in order, the first thing after `from` (the visit's start, or `charge_next`) that is a letter sound. */
+/** Item 140: the round opens with all its sounds, in order, the first thing after `from` (the visit's start, or the word before it said) that is a letter sound. */
 function opensWithSounds(h: string[], from: number, runes: string[]): void {
   const at = h.findIndex((id, k) => k > from && id.startsWith('letter_'));
   expect(at, 'a sound opens the round').toBeGreaterThan(from);
@@ -87,9 +91,9 @@ test('Charge the Spell: the runes charge by themselves, each sound said; one pre
   const read1 = await until(page, (st) => st.room?.charge?.round === 1 && st.room.charge.phase === 'read', 60_000, 'the second read');
   expect(read1.room!.charge!.word).toBe(w1);
   expect(read1.episode.house.done).not.toContain('a');
-  const next = read1.voice.history.lastIndexOf(narratorLineEnd(read1.voice.history, '_charge_next'));
-  expect(next).toBeGreaterThan(read1.voice.history.indexOf(wordLine(c0.word)));
-  opensWithSounds(read1.voice.history, next, runesOf(w1));
+  // Item 144 (hunt 11, M61): no "Here comes another spell!" first; the first word said, then the sounds.
+  expect(read1.voice.history.join(' ')).not.toContain('charge_next');
+  opensWithSounds(read1.voice.history, read1.voice.history.indexOf(wordLine(c0.word)), runesOf(w1));
   expect(read1.voice.history).not.toContain(wordLine(w1));
   await page.keyboard.press('Digit2');
   const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'back in the hub');
@@ -237,10 +241,8 @@ test('Charge the Spell (items 059, 140): a snappy visit spells its two words, ea
   expect(at).toBeGreaterThan(-1);
   expect(h.slice(at + 1, at + 1 + runes.length)).toEqual(runes.map((r) => letterSoundLine(r)));
   expect(h.indexOf(wordLine(word))).toBeGreaterThan(at);
-  // Then the second word's round opens with all its sounds, after "Here comes another spell!".
-  const next = h.lastIndexOf(narratorLineEnd(h, '_charge_next'));
-  expect(next).toBeGreaterThan(h.indexOf(wordLine(word)));
-  opensWithSounds(h, next, runes1);
+  // Then the second word's round opens with all its sounds, straight after the first word (item 144).
+  opensWithSounds(h, h.indexOf(wordLine(word)), runes1);
   // A beat between the sounds, never back to back (item 069: they ran toward a blend): the first word's
   // sounding out together, and the second word's sounds up front. Counted from the end: the second
   // round's sounds up front, then one per rune.
@@ -283,6 +285,14 @@ test('Charge the Spell (M24): Dad\'s 2 pressed during the last rune is kept, and
   // Dad lock holds the beat (his keys stay live): under a busy lane the 1.2 s beat (0.24 s at SPEED) ran out
   // during the layout check below, and the 2 landed after the read was asked (item 106).
   await dadLock(page, true);
+  // The stone's picture pops in over 0.5 s; since item 144's shorter beats (M61) instant test voice reaches
+  // the say-back before it lands (a real sound covers it), so let it settle under the lock (polled: a fixed
+  // 300 ms still caught it at 90 px on a busy lane).
+  const picHeight = async () => {
+    const im = (await qaLayout(page)).images.find((i) => i.key === `rune_${runes[last]}`);
+    return im ? im.b[3] - im.b[1] : 0;
+  };
+  await expect.poll(picHeight, { timeout: 3_000, intervals: [100] }).toBeGreaterThanOrEqual(120);
   // Item 103: the stone shows the rune's picture letter, big on its face, no painted letter.
   const room = await qaLayout(page);
   const stone = room.images.find((im) => im.key === 'prop_rune_stone')!;

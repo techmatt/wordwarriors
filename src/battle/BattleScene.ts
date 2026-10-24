@@ -45,7 +45,7 @@ import { fighterId, moveKeyWord, moveLine, narratorLine, tauntLine, type MoveKin
 import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxRight, sfxWhoosh } from '../audio/sfx';
-import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH, RUNE_GAP } from '../config';
 import { outfitFor } from '../../content/battle/outfits';
 import { advance, castArt, episode, fightStyle, movePlan, narrator, villainSpec, type Step } from '../episode/Episode';
 import { pickTaunt, variant } from '../episode/lineVariants';
@@ -294,6 +294,11 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     return this.story?.propBoxes() ?? null;
   }
 
+  /** The fight style's floor boxes a choice's rings keep off (hunt 11, M76: the clash point's flare). */
+  choiceKeepOff(): Box[] {
+    return this.show.choiceKeepOff?.() ?? [];
+  }
+
   /** Tests (`__ww.place`, item 083): her hero onto (x, y) in a move choice or a story walk; false outside both. */
   placeHero(x: number, y: number): boolean {
     if (this.choices.active) return this.choices.place(x, y);
@@ -513,8 +518,9 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     await this.intro();
     await this.wait(this.beat(1.5));
     await this.useAllFetched(this.beat(3.5));
-    await this.useCharged(this.beat(1.1));
-    await this.wait(this.beat(2.5));
+    await this.useCharged(this.beat(RUNE_GAP));
+    // 2.5 s to 1.5 (hunt 11, M62): with Charge's runes, PICK A MOVE! under 26 s after the bag opens.
+    await this.wait(this.beat(1.5));
     await this.moveChoice();
     await this.wait(this.beat(7));
     await this.beats.combo();
@@ -536,7 +542,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     await this.intro();
     await this.wait(this.beat(1));
     await this.useAllFetched(this.beat(3));
-    await this.useCharged(this.beat(1.1));
+    await this.useCharged(this.beat(RUNE_GAP));
     await this.wait(this.beat(2));
     await this.moveChoice();
     await this.wait(this.beat(6));
@@ -695,7 +701,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     this.bannerText = null;
     this.bannerBig = 0;
     // The pads, until she walks onto the right one (moveChoice.ts).
-    const misses = await this.choices.open(words, right, choiceKey, me, at);
+    // Two of a planned three when three rings cannot keep off a contest's held team (hunt 11, M65): `shown`.
+    const { misses, shown } = await this.choices.open(words, right, choiceKey, me, at);
     this.choices.close();
     this.sim.defuseNear(me);
     me.lean = 0;
@@ -712,7 +719,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
       if (misses === 0) progress.takeFromBag(right, 'moves');
       else progress.returnToBag(right, 'moves');
       // The wrong pads have had their turn: others come up next time (item 038).
-      for (const w of words) if (w !== right) progress.takeFromBag(w, 'pads');
+      for (const w of shown) if (w !== right) progress.takeFromBag(w, 'pads');
     }
     // The victory recap reads episode.read: a battle word she picked right is one she read.
     if (!episode.read.includes(right)) episode.read.push(right);
@@ -728,6 +735,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     shockwave(this, f.cx, f.cy, ab.color, 300);
     burst(this, f.cx, f.cy, { count: 80, speed: 600, colors: [ab.color, 0xffd23f, 0xffffff] });
     f.setShield(1, 0xffd23f, this.now);
+    // Part 1's villain floor a step down first, so the super takes a visible bite (hunt 11, M63).
+    this.sim.stepVillainFloor();
     cast(this, f, ab, this.villain, 2.4, true);
     this.show.superMove(f, ab, right);
     // The word's own effect: a fan of its pictures. Its name on the banner: she has read it.

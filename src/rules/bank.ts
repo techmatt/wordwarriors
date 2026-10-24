@@ -296,6 +296,18 @@ export interface CoverageRow {
   reads: number;
 }
 
+/** The coverage table's one row for every word starting with a vowel. */
+export const VOWEL_ONSET = 'vowel';
+
+/**
+ * A word's first-sound row on the grown-ups page (item 144, M69): its onset, or `vowel` for a word starting with
+ * a vowel, a short-vowel word's empty onset (ANT) and a long-path word's first vowel (APPLE, IGLOO) alike; Dad read
+ * A 1·1·0 as one short-A first word. The draws' coverage still weighs by `onset`.
+ */
+export function firstSoundTag(w: BankWord): string {
+  return /^[aeiou]*$/.test(w.onset) ? VOWEL_ONSET : w.onset;
+}
+
 export function coverageTable(store: ProgressStore): { vowel: CoverageRow[]; onset: CoverageRow[]; level: CoverageRow[] } {
   const rows = (tags: string[], key: (w: BankWord) => string): CoverageRow[] =>
     tags.map((tag) => {
@@ -311,7 +323,10 @@ export function coverageTable(store: ProgressStore): { vowel: CoverageRow[]; ons
     });
   return {
     vowel: rows(VOWEL_LIST, (w) => w.vowel ?? ''),
-    onset: rows([...ONSETS].sort((a, b) => a.length - b.length || a.localeCompare(b)), (w) => w.onset),
+    onset: rows(
+      [...new Set(LIVE.map(firstSoundTag))].sort((a, b) => Number(b === VOWEL_ONSET) - Number(a === VOWEL_ONSET) || a.length - b.length || a.localeCompare(b)),
+      firstSoundTag,
+    ),
     level: rows(LEVELS.map(String), (w) => String(w.level)),
   };
 }

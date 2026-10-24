@@ -144,15 +144,19 @@ export function letterNameIssues(voice: Since['voice']): Issue[] {
  * times its speed-up). The budgets are what an impatient four-year-old sits
  * through with Dad answering at once: Charge the Spell about 20 s a word, and since item 140 two words a
  * visit, so item 140's own limit for the visit (`tests/charge.spec.ts`, LIMIT_VISIT; hunt 11: at 30 s every
- * visit was flagged).
+ * visit was flagged). Item 144 (hunt 11, M61, Matt's ruling: at most 40 s with Dad's yes at once) trimmed
+ * the visit to 33-39 s in an episode (38-42 s off a cold `?scene=room` boot): 42 s, a little over the ruling. The rhyme room's three rounds trimmed in item 144 (hunt 11, M64) to about 40 s from its open to the
+ * hub with real voice, right first time and no walking (66 s before): 50 s with her walk to each picture,
+ * 60 s before.
  */
-export const ROOM_BUDGET_MS: Record<string, number> = { ChargeRoom: 66_000, Entry: 45_000, SentenceRoom: 60_000, BridgeRoom: 75_000, ShifterRoom: 90_000, WordMachine: 75_000, RhymeRoom: 60_000 };
+export const ROOM_BUDGET_MS: Record<string, number> = { ChargeRoom: 42_000, Entry: 45_000, SentenceRoom: 60_000, BridgeRoom: 75_000, ShifterRoom: 90_000, WordMachine: 75_000, RhymeRoom: 50_000 };
 
 /**
  * A Charge visit solo from its start (hunt 8, M38 (c), Matt's call): she says each sound along with
- * the helper rather than waiting on Dad, so its budget is longer.
+ * the helper rather than waiting on Dad, so its budget is longer: since item 144 (hunt 11, M61) 68 s,
+ * over its measured 53.5-61.3 s (the 8 s wait for Dad, "Say it with me!" a rune); 75 s before.
  */
-export const SOLO_CHARGE_BUDGET_MS = 75_000;
+export const SOLO_CHARGE_BUDGET_MS = 68_000;
 
 export function pacingIssues(visits: { scene: string; ms: number; wrong: boolean; solo?: boolean }[]): Issue[] {
   const out: Issue[] = [];

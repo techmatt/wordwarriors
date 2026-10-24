@@ -36,8 +36,8 @@ import { episode } from '../../src/episode/state';
 import { favourWords, NEW_WORDS } from '../../src/rules/bank';
 import { chargeRunes } from '../../src/rules/charge';
 import { MINIGAMES } from '../../src/rules/minigames';
-import { SHIFT_WORDS, chainKey } from '../../src/rules/shifter';
-import { RHYME_FAMILIES, RHYME_WORDS, rhymeWords } from '../../src/rules/rhyme';
+import { SHIFT_WORDS, chainKey, lastRead } from '../../src/rules/shifter';
+import { RHYME_FAMILIES, RHYME_WORDS, nasalNear, rhymeWords } from '../../src/rules/rhyme';
 import { variantKeys } from '../../src/rules/story';
 import { progress } from '../../src/state/progress';
 
@@ -88,6 +88,10 @@ let shifterVowel = 0;
 /** Item 137: episodes whose door a, door b or attic game came straight back (doors: any side room's last game, by kind). Must stay 0. */
 const gameRepeats = [0, 0, 0];
 let lastGames: string[] | null = null;
+/** Hunt 11, M77: words a room read that the episode before had her read (`LAST_READ`), of its words read, by kind. */
+const readAgain = new Map<string, [number, number]>();
+/** Hunt 11, M71: rhyme rounds whose vowel picture nearly rhymes by a nasal (CAT... ANT), of rounds. */
+const nasalVowel = [0, 0];
 
 const bank = (w: string) => BANK_BY_WORD[w];
 const villains = ACTIVE_CAST.villains;
@@ -104,6 +108,7 @@ setCastOptions({ fixed: false, rand: Math.random, overrides: {} });
 for (let e = 0; e < EPISODES; e++) {
   resetEpisode();
   rememberCast();
+  const before = lastRead(progress);
   const grab = plans.grabPlan();
   const house = plans.housePlan();
   const moves = plans.movePlan();
@@ -149,6 +154,10 @@ for (let e = 0; e < EPISODES; e++) {
   for (const p of house) {
     read.push(...p.fetches);
     saw(e, 'words', `words read: ${p.kind}`, p.fetches);
+    if (p.slot !== 'counter') {
+      const again = readAgain.get(p.kind) ?? [0, 0];
+      readAgain.set(p.kind, [again[0] + p.fetches.filter((w) => before.has(w)).length, again[1] + p.fetches.length]);
+    }
     if (p.kind === 'sentence') {
       saw(e, 'sentences', `frames (${p.slot === 'counter' ? 'counter' : 'fetch'})`, [p.sentence.frame], FRAMES.filter((f) => f.use === (p.slot === 'counter' ? 'counter' : 'fetch')).map((f) => f.id));
       saw(e, 'pictures', 'sentence room pictures (not the key)', p.objects.filter((w) => w !== p.key));
@@ -187,6 +196,10 @@ for (let e = 0; e < EPISODES; e++) {
       saw(e, 'pictures', 'rhyme wrong pictures', p.rhyme.rounds.flatMap((r) => r.options.filter((o) => o !== r.word)));
       pictureChoice(e, 'rhyme', p.rhyme.rounds.flatMap((r) => r.options));
       for (const r of p.rhyme.rounds) progress.record('rimes', r.rime, true, 0);
+      for (const r of p.rhyme.rounds) {
+        nasalVowel[1]++;
+        if (r.options.some((o) => o !== r.word && nasalNear(r.word, o))) nasalVowel[0]++;
+      }
     }
     // Every word read in a room: as SideRoom's recordRead (the Shape-Shifter's read beats only).
     const reads = p.kind === 'shifter' ? p.shifter.links.filter((l) => l.beat === 'read').map((l) => l.to) : p.fetches;
@@ -293,6 +306,8 @@ const lengths = [...shifterLinks].sort((a, b) => b[0] - a[0]).map(([n, k]) => `$
 console.log(`\nShape-Shifter visits: ${visits}; short (under ${SHIFTER.links} links): ${short} (${lengths || 'none'}); changing all three places: ${shifterVowel}.`);
 const rhymeN = [...rhymeVisits.values()].reduce((a, b) => a + b, 0);
 console.log(`Rhyme room visits (item 139): ${rhymeN} in ${EPISODES} episodes (${[...rhymeVisits].sort((a, b) => b[0] - a[0]).map(([n, k]) => `${n} rounds ${k}`).join(', ') || 'none'}).`);
+console.log(`Rhyme rounds with a nasal near rhyme for a picture (hunt 11, M71: CAT... ANT): ${nasalVowel[0]} of ${nasalVowel[1]}.`);
+console.log(`Words read again from the episode before (hunt 11, M77), by room kind (doors a, b): ${[...readAgain].sort().map(([k, [n, of]]) => `${k} ${n} of ${of}`).join(', ')}.`);
 console.log(`Games back from the episode before (item 137): door a ${gameRepeats[0]}, door b ${gameRepeats[1]}, attic ${gameRepeats[2]}.`);
 if (gameRepeats.some((n) => n > 0)) process.exitCode = 1;
 if (JSON_OUT) writeFileSync(JSON_OUT, JSON.stringify({ episodes: EPISODES, seed: SEED, right: RIGHT, rows, shifterLinks: Object.fromEntries(shifterLinks) }, null, 1) + '\n');

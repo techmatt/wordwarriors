@@ -214,12 +214,14 @@ export const DAD_AWAY_MS = 8000;
  * modelled, not as her reads. It has no help ramp (item 053's went in item 078: the
  * room says every sound since item 059). `units` is the game's word length limit;
  * every sound is in play from the start (item 067: no tiers). `weight` is its
- * weight in the rooms' pool (a frame is 1).
+ * weight in the rooms' pool (a frame is 1). Hunt 11, M61 (item 144): `sayBackMs`
+ * 1200 to 1000 with the room's other gaps (`RUNE_BEATS`, src/scenes/ChargeRoom.ts),
+ * so a two-word visit with Dad answering at once is about 40 s, not 46.
  */
 export const CHARGE = {
   words: 2,
   units: [3, 4] as [number, number],
-  sayBackMs: 1200,
+  sayBackMs: 1000,
   soloBeatMs: 600,
   weight: 1,
 };
@@ -342,6 +344,21 @@ export const FREE_PLAY = {
  * (asserted over drawn casts, tests/unit/endings.test.ts).
  */
 export const ENDING_PAUSE = { intro: 3000, between: 1500, outro: 3000 };
+
+/**
+ * Battle 1's villain health floor (hunt 11, M63): the lowest the simulation may
+ * knock the villain, as a fraction of max. It starts at `start`, so the opening's
+ * volleys and runes cannot use it all up; each super and the combo lower it by
+ * `step` before they land (so each takes a visible bite), never below `end`,
+ * where it sits for the ultimate. Part 2's floor stays 0.3.
+ */
+export const PART1_VILLAIN_FLOOR = { start: 0.75, step: 0.12, end: 0.45 };
+
+/**
+ * The least time between two of Charge the Spell's runes in the battle, s (hunt
+ * 11, M62): back to back, each still waiting for its own sound.
+ */
+export const RUNE_GAP = 0.5;
 
 /**
  * The Shape-Shifter (item 096, src/scenes/ShifterRoom.ts): the villain's

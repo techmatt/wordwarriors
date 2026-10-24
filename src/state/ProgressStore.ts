@@ -172,6 +172,54 @@ export class ProgressStore {
       return empty();
     }
     if (!raw) return empty();
+    const parsed = this.parse(raw);
+    if (parsed) return parsed;
+    try {
+      this.storage?.setItem(`${STORE_KEY}.unreadable.${this.now()}`, raw);
+    } catch {
+      // Storage full or blocked: the old blob is not kept.
+    }
+    return empty();
+  }
+
+  /**
+   * Another tab wrote the store (item 144, M72: the `storage` listener in src/state/progress.ts). Lifetime is
+   * re-read, so this tab's next write builds on the other's episodes instead of writing back over them; the
+   * session column (this page load's) stays. Everything the store hands out is a copy or read at once, so a
+   * running scene keeps its plan and its later records land on the fresh data. A blob this build cannot read
+   * (a newer version) is left alone: this tab keeps what it has and writes no more, so it never writes over a
+   * newer build's store. An erased one (no blob, or fewer episodes than this tab had: only an erase lowers the
+   * count) starts empty, today's column too, as `reset()` does. During a debug game (`hold`) it is what
+   * `release()` comes back to, the game under test keeping its sandbox.
+   */
+  reload(): void {
+    let raw: string | null | undefined;
+    try {
+      raw = this.storage?.getItem(STORE_KEY);
+    } catch {
+      return;
+    }
+    const fresh = raw ? this.parse(raw) : empty();
+    if (!fresh) {
+      this.readOnly = true;
+      return;
+    }
+    this.readOnly = false;
+    const erased = !raw || fresh.episodes < (this.held?.data ?? this.data).episodes;
+    if (this.held) {
+      this.held.data = fresh;
+      if (erased) this.held.session = empty();
+    } else {
+      this.data = fresh;
+      if (erased) this.session = empty();
+    }
+  }
+
+  /** Set once another tab wrote a blob this build cannot read (`reload`): this tab stops writing over it. */
+  private readOnly = false;
+
+  /** A stored blob, brought up to date, or null when it is not this version's or not JSON. */
+  private parse(raw: string): ProgressData | null {
     try {
       const parsed = JSON.parse(raw) as ProgressData & LegacyData;
       if (parsed.version !== STORE_VERSION) throw new Error(`version ${parsed.version}`);
@@ -206,12 +254,7 @@ export class ProgressStore {
       parsed.bagKnown ??= 'legacy';
       return parsed;
     } catch {
-      try {
-        this.storage?.setItem(`${STORE_KEY}.unreadable.${this.now()}`, raw);
-      } catch {
-        // Storage full or blocked: the old blob is not kept.
-      }
-      return empty();
+      return null;
     }
   }
 
@@ -254,6 +297,7 @@ export class ProgressStore {
   }
 
   private write(): void {
+    if (this.readOnly) return;
     try {
       this.storage?.setItem(STORE_KEY, JSON.stringify(this.data));
     } catch {
@@ -440,6 +484,8 @@ export class ProgressStore {
     this.session = empty();
     // Erased during a debug game (item 086): erased for good, not put back on release.
     if (this.held) this.held = { data: empty(), session: empty() };
+    // An erase is meant: it writes even over a blob another tab's newer build left (item 144).
+    this.readOnly = false;
     this.write();
   }
 }

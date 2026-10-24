@@ -27,7 +27,10 @@ import { fitText } from '../ui/fitText';
 import { makeStickHint, placeStickHint } from '../ui/stickHint';
 import { FLOOR_BOTTOM, FLOOR_TOP, NO_AFTERIMAGES, type Fighter } from './Fighter';
 import { ARENA_LEFT, ARENA_RIGHT, stickWalk } from './movement';
-import { SIGN_H, SIGN_RISE, SIGN_W, clearSpot, dotBeside, dotSide, placePads, type Box, type PlaceBody } from './padPlace';
+import { SIGN_H, SIGN_RISE, SIGN_W, clearSpot, dotBeside, dotSide, placeContestPads, placePads, standingWords, stepOutX, type Box, type PlaceBody, type PlaceInput } from './padPlace';
+
+/** A fighter as pad placement sees it. */
+const placeBody = (f: Fighter): PlaceBody => ({ x: f.x, y: f.y, cx: f.cx, cy: f.cy, half: f.bodyHalf, top: f.top });
 
 /** The move pads' glow. One colour for all: the word on the sign is the choice, never a colour. */
 const PAD_GLOW = 0x7ad9ff;
@@ -55,6 +58,8 @@ export interface ChoiceHost {
    * off the props where they can.
    */
   storyProps(): Box[] | null;
+  /** The fight style's own floor boxes the rings keep off where they can (hunt 11, M76: the clash point's flare). */
+  choiceKeepOff(): Box[];
   /** Say a narrator line, guarded by the scene's run. */
   say(key: string): Promise<boolean>;
   /** Drop `p` if this run of the scene ends first (SceneGen). */
@@ -114,6 +119,8 @@ interface Choice {
   at: { x: number; y: number; lift: number };
   /** Where she stood as the pads went down (the bug-hunt checker's `pad-in-reach`, hunt 7). */
   from: { x: number; y: number };
+  /** Her step out from behind the villain (M75): her x eases from `from` to `to` over STEP_BACK_MS from `at`, the stick ignored. */
+  heroStep: { from: number; to: number; at: number } | null;
   /** Wrong pads she has picked so far in this choice. */
   misses: number;
   /** Seconds she has stood still while the pads are open (not reset by the re-prompt): the stick hint's clock (item 043, M5). */
@@ -147,9 +154,11 @@ export class MoveChoice {
 
   /**
    * Put the pads up for `words` and wait for `right`: resolves with her misses
-   * once she picks it. The fight is already frozen and `me` freed and placed at `at`.
+   * once she picks it, and the words that stood (`shown`: two of three in a contest
+   * whose held team three rings cannot keep off, M65). The fight is already frozen
+   * and `me` freed and placed at `at`.
    */
-  open(words: string[], right: string, key: string, me: Fighter, at: { x: number; y: number; lift: number }): Promise<number> {
+  open(words: string[], right: string, key: string, me: Fighter, at: { x: number; y: number; lift: number }): Promise<{ misses: number; shown: string[] }> {
     const scene = this.host.stage;
     // Her team's clones (MASK's "three of her pop up") poof as the pads go down: copies of her stood on the
     // pads' rings and under the signs, and beside her, a choice of which one is her (hunt 11, the story fight).
@@ -167,7 +176,16 @@ export class MoveChoice {
         .setOrigin(0.5)
         .setDepth(DEPTH.overlay),
     );
-    const pads = this.padSpots(words.length, me).map((p, i) => this.makePad(words[i]!, p.x, p.y, performance.now() + 120 + i * 140));
+    // Behind the villain at the arena's end in a brawl, she steps out past him first (M75): the pads are placed
+    // round where she will stand, and pop in once she is there.
+    const v = this.host.villain;
+    const outX = !this.host.anchored && v?.active ? stepOutX({ x: at.x, half: me.bodyHalf }, placeBody(v), ARENA_LEFT, ARENA_RIGHT) : null;
+    const heroStep = outX === null ? null : { from: at.x, to: outX, at: performance.now() };
+    const stand = { x: outX ?? at.x, y: at.y };
+    const spots = this.padSpots(words.length, me, stand);
+    const shown = standingWords(words, right, spots.length);
+    const popAt = performance.now() + 120 + (heroStep ? STEP_BACK_MS : 0);
+    const pads = spots.map((p, i) => this.makePad(shown[i]!, p.x, p.y, popAt + i * 140));
     for (const p of pads) objs.push(p.ring, p.sign);
     const dot = makeButtonDot(scene, 0, 0, 'green', 22, false).setDepth(DEPTH.prompt).setVisible(false);
     objs.push(dot);
@@ -196,8 +214,8 @@ export class MoveChoice {
       }
     }
 
-    return new Promise<number>((resolve) => {
-      const c: Choice = { words, right, key, objs, veiled, paused, pads, near: null, dot, here, open: false, idle: 0, at, from: { x: Math.round(at.x), y: Math.round(at.y) }, misses: episode.house.misses?.[key] ?? 0, still: 0, stickHint: null, stepBack: this.teamStepBack(me, pads), stepAt: performance.now(), pinned: this.pinContest(me), resolve: () => resolve(c.misses) };
+    return new Promise<{ misses: number; shown: string[] }>((resolve) => {
+      const c: Choice = { words: shown, right, key, objs, veiled, paused, pads, near: null, dot, here, open: false, idle: 0, at, from: { x: Math.round(stand.x), y: Math.round(stand.y) }, heroStep, misses: episode.house.misses?.[key] ?? 0, still: 0, stickHint: null, stepBack: this.teamStepBack(stand, pads), stepAt: performance.now(), pinned: this.pinContest(me), resolve: () => resolve({ misses: c.misses, shown }) };
       this.current = c;
       // No charge, jump or shot in flight carries into the choice (holdHero zeroes the hop).
       this.host.stopPlay();
@@ -248,8 +266,9 @@ export class MoveChoice {
   }
 
   /** Where the pads go (padPlace.ts): clear of every fighter, no sign over the villain or a contest's held team. */
-  private padSpots(n: number, me: Fighter): { x: number; y: number }[] {
-    const body = (f: Fighter): PlaceBody => ({ x: f.x, y: f.y, cx: f.cx, cy: f.cy, half: f.bodyHalf, top: f.top });
+  private padSpots(n: number, me: Fighter, stand: { x: number; y: number }): { x: number; y: number }[] {
+    // Her body where she will stand (M75: stepped out from behind the villain).
+    const body = (f: Fighter): PlaceBody => (f === me ? { ...placeBody(f), x: stand.x, cx: f.cx + stand.x - f.x } : placeBody(f));
     const v = this.host.villain;
     // Minions too (item 039: a pad under a crowd of skeletons or dragon babies did not read as a place to stand).
     const avoid = [me, v, ...this.host.fighters.filter((f) => f.active)].filter((f, i, a) => f?.active && a.indexOf(f) === i);
@@ -260,20 +279,24 @@ export class MoveChoice {
     // A contest's held team keep their stations, so a ring keeps off them where it can, as off a story prop
     // (hunt 11: in the sea tug the leftmost ring stood round the ally at her rope, every choice).
     const held = team.map((f): [number, number, number, number] => [f.x - f.bodyHalf, f.top, f.x + f.bodyHalf, f.y + 20]);
-    const keepOff = [...(props ?? []), ...held];
-    return placePads({
+    // ...and off the fight style's own (M76: the clash point's flare).
+    const keepOff = [...(props ?? []), ...held, ...this.host.choiceKeepOff()];
+    const input: PlaceInput = {
       n,
       avoid: avoid.map(body),
       cover: [...(v?.active ? [v] : []), ...team].map(body),
-      contest: this.host.anchored && v?.active ? { meX: me.x, villain: body(v) } : undefined,
+      contest: this.host.anchored && v?.active ? { meX: stand.x, villain: body(v) } : undefined,
       // A contest's held bodies keep rocking at the freeze's slow clock (item 083, the rope pull's serpent).
       sway: this.host.anchored ? CONTEST_SWAY : 0,
       left: ARENA_LEFT,
       right: ARENA_RIGHT,
       // A margin past her reach: she may still be settling when the pads go down.
-      me: { x: me.x, y: me.y, reach: REACH + 25, first: props !== null },
+      me: { x: stand.x, y: stand.y, reach: REACH + 25, first: props !== null },
       keepOff: keepOff.length ? keepOff : undefined,
-    });
+    };
+    // Two pads in a contest when three cannot keep off the held team (M65); not the story fight, whose plan
+    // has one sensible word per beat and whose her-reach-first rule already crowds it.
+    return props === null ? placeContestPads(input, held) : placePads(input);
   }
 
   /** One move word as a place: a glowing rune ring on the floor and its word on a sign above. */
@@ -315,9 +338,10 @@ export class MoveChoice {
    * staging holds everyone in place (a rope, a race lane); the pads keep off
    * them there instead (padSpots).
    */
-  private teamStepBack(me: Fighter, pads: MovePad[]): Choice['stepBack'] {
+  private teamStepBack(stand: { x: number; y: number }, pads: MovePad[]): Choice['stepBack'] {
     if (this.host.anchored) return [];
-    const taken: { x: number; y: number }[] = [{ x: me.x, y: me.y }];
+    const me = this.host.heroes[0];
+    const taken: { x: number; y: number }[] = [{ x: stand.x, y: stand.y }];
     const out: Choice['stepBack'] = [];
     for (const f of this.host.heroes) {
       if (f === me || !f.active) continue;
@@ -420,6 +444,7 @@ export class MoveChoice {
   place(x: number, y: number): boolean {
     const c = this.current;
     if (!c) return false;
+    c.heroStep = null;
     c.at.x = Phaser.Math.Clamp(x, ARENA_LEFT, ARENA_RIGHT);
     c.at.y = Phaser.Math.Clamp(y, FLOOR_TOP, FLOOR_BOTTOM);
     this.holdHero();
@@ -453,7 +478,12 @@ export class MoveChoice {
     const c = this.current!;
     const me = this.host.heroes[0]!;
     const controls = this.host.controls;
-    const walking = stickWalk(me, c.at, controls.move, realDt);
+    // Stepping out from behind the villain (M75): the stick waits until she is out.
+    const step = c.heroStep;
+    const stepping = step !== null && performance.now() - step.at < STEP_BACK_MS;
+    if (step) c.at.x = Phaser.Math.Linear(step.from, step.to, Phaser.Math.Easing.Sine.Out(Math.min(1, (performance.now() - step.at) / STEP_BACK_MS)));
+    if (step && !stepping) c.heroStep = null;
+    const walking = !stepping && stickWalk(me, c.at, controls.move, realDt);
     this.holdHero();
     for (const p of c.pinned) if (p.f.active) [p.f.x, p.f.y] = [p.x, p.y];
     // Her team steps off the pad row (item 043, M6), the villain once he settles (M8), and they stay there while the fight is frozen.

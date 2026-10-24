@@ -15,7 +15,7 @@ import { startMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { castArt, castFace, castScale, counterWord, episode, narrator, podiumCheer, podiumSecond, villainSpec } from '../episode/Episode';
+import { castArt, castFace, castScale, counterWord, episode, narrator, podiumCheer, podiumCheerRight, podiumSecond, villainSpec } from '../episode/Episode';
 import { variant } from '../episode/lineVariants';
 import { burst, fitImage, fitPicture, shockwave } from '../fx/juice';
 import { SceneGen } from '../fx/sceneGen';
@@ -36,6 +36,8 @@ const CARD_SCALE = 0.82;
 const CARD_PIC_MAX = { w: 120, h: 112 };
 /** Where the dad who woke her cheers with an ally on the podium (M50): his feet, on the grass left of it, clear of the cards' row. */
 const CHEER_SPOT = { x: 168, y: 546 };
+/** Where the other dad cheers when he came in too (hunt 11, M70): on the grass right of the podium, the left spot's mirror. */
+const CHEER_SPOT_RIGHT = { x: GAME_WIDTH - CHEER_SPOT.x, y: CHEER_SPOT.y };
 
 export class VictoryScene extends Phaser.Scene {
   private controls!: Controls;
@@ -136,9 +138,13 @@ export class VictoryScene extends Phaser.Scene {
     // With an ally, the dad who woke her stands on the grass beside the podium,
     // cheering (hunt 10, M50): he was in the ending scene a moment before. No
     // block: quick little hops and squashes, a beat faster than the podium's.
-    const cheer = podiumCheer();
-    if (cheer) {
-      const at = CHEER_SPOT;
+    // The other dad, when he came in too, cheers on the right (hunt 11, M70).
+    const cheers = [
+      { id: podiumCheer(), at: CHEER_SPOT },
+      { id: podiumCheerRight(), at: CHEER_SPOT_RIGHT },
+    ];
+    for (const { id: cheer, at } of cheers) {
+      if (!cheer) continue;
       const h = 150 * castScale(cheer);
       const img = fitImage(this.add.image(at.x, at.y, castArt(cheer)).setOrigin(0.5, 1), h * 0.95, h).setDepth(at.y);
       podium.push(img);

@@ -27,6 +27,7 @@ import { burst, fitImage, floatText, fxQuality, shake, shockwave } from '../../f
 import { TEX } from '../../fx/textures';
 import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter } from '../Fighter';
 import { ARENA_RIGHT } from '../movement';
+import type { Box } from '../padPlace';
 import { BaseStage, ease, lerpPt, type Pt } from './stage';
 
 type Mode = 'off' | 'clash' | 'ultimate' | 'counter' | 'finish' | 'done';
@@ -50,6 +51,11 @@ const VILLAIN_SPOT: Pt = { x: 975, y: 570 };
 const METER = { x: 400, y: 76, w: 480, h: 22 };
 const RAINBOW = [0xff4a6a, 0xff9a3c, 0xffd23f, 0x5aff8a, 0x7ad9ff, 0xb04aff];
 const GOLD = 0xffd23f;
+/**
+ * Half the box round the clash point a move choice's rings keep off (M76): the core's glow (64 px at
+ * scale 1.4) and its 10 px bob tall; wider for the point's drift along the beam on the frozen clock.
+ */
+const FLARE_KEEP_OFF = { w: 100, h: 75 };
 
 /** The spell-beam clash: two beams and the point where they meet. */
 export class ClashStage extends BaseStage {
@@ -566,6 +572,17 @@ export class ClashStage extends BaseStage {
       }
     }
     this.mode = 'done';
+  }
+
+  /**
+   * The clash point's flare (hunt 11, M76, Matt's call (a)): it stays at a third through a choice, near white
+   * on ice with its ADD blending, and stood on a ring on the beam's line (KICK's in `seraphina_frost`). Its
+   * bright core and halo, with room for the clash point's slow sway on the frozen clock.
+   */
+  choiceKeepOff(): Box[] {
+    if (!this.core.visible) return [];
+    const { x, y } = this.clash;
+    return [[x - FLARE_KEEP_OFF.w, y - FLARE_KEEP_OFF.h, x + FLARE_KEEP_OFF.w, y + FLARE_KEEP_OFF.h]];
   }
 
   override info(): Record<string, unknown> {

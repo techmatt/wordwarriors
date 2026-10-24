@@ -143,6 +143,51 @@ export function placePads(inp: PlaceInput): { x: number; y: number }[] {
   return kept.spots.length && kept.tier <= was.tier && kept.cover <= was.cover + 1e-9 ? kept.spots : was.spots;
 }
 
+/** How much of the rings at `spots` stands on `boxes`, each ring's share summed. */
+export function ringsOn(spots: readonly { x: number; y: number }[], boxes: Box[]): number {
+  return spots.reduce((s, p) => s + coveredShare(ringBox(p.x, p.y), boxes), 0);
+}
+
+/**
+ * A contest's pads (hunt 11, M65, Matt's call (b)): three where their rings keep off the held team
+ * (`held`, also in `keepOff`), else two where two stand on it less (the sea tug: between her reach and
+ * the serpent three rings fit only with one on Elsa at her rope). Outside a contest, as `placePads`.
+ */
+export function placeContestPads(inp: PlaceInput, held: Box[]): { x: number; y: number }[] {
+  const three = placePads(inp);
+  if (inp.n < 3 || !inp.contest || !held.length) return three;
+  const on = ringsOn(three, held);
+  if (on <= 1e-9) return three;
+  const two = placePads({ ...inp, n: 2 });
+  return two.length === 2 && ringsOn(two, held) < on - 1e-9 ? two : three;
+}
+
+/** The words that stand when there are fewer pads than words (M65): the right one and the first others, in order. */
+export function standingWords(words: readonly string[], right: string, n: number): string[] {
+  if (words.length <= n) return [...words];
+  let others = n - 1;
+  return words.filter((w) => w === right || others-- > 0);
+}
+
+/** Floor past the villain, on her side, too narrow for a pad (a ring, its sign and a gap to him and the wall). */
+const BEHIND_ROOM = 300;
+
+/**
+ * Where her hero steps to as a brawl's choice opens (hunt 11, M75, Matt's call (a)): behind the villain at
+ * the arena's end (`ozy_tiamat`: her at x 1170, Evil Tiamat 900 to 1140) there is no room for a ring
+ * between him and the wall, so every pad opened on his far side and she walked 500 px through the dragon.
+ * She steps out past him, as her team steps off the pads; null where she is not behind him like that.
+ */
+export function stepOutX(me: { x: number; half: number }, v: PlaceBody, left: number, right: number): number | null {
+  const s = me.x >= v.x ? 1 : -1;
+  // Floor past his body on her side, and on the other.
+  const behind = s > 0 ? right - (v.x + v.half) : v.x - v.half - left;
+  const before = s > 0 ? v.x - v.half - left : right - (v.x + v.half);
+  if (behind >= BEHIND_ROOM || before <= behind) return null;
+  const to = v.x - s * (v.half + me.half + 40);
+  return Math.min(right, Math.max(left, to));
+}
+
 /** The pads' spots, with the tier they settled in and how much they cover. */
 function layout(inp: PlaceInput): { spots: { x: number; y: number }[]; tier: number; cover: number } {
   const { n, avoid, cover, me } = inp;

@@ -16,7 +16,7 @@ import { nameLine, reformedLine, ultimateLine } from '../../content/voice/ids';
 import { stopMusic } from '../audio/music';
 import { voiceBus } from '../audio/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxPoof, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh } from '../audio/sfx';
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { DEPTH, GAME_HEIGHT, GAME_WIDTH, PART1_VILLAIN_FLOOR } from '../config';
 import { castArt, castScale, counterArt, counterWord, episode, helper, namedCounter, reformedOf, villainSpec } from '../episode/Episode';
 import { burst, fitImage, fitPicture, flash, floatText, fxQuality, hitstop, popIn, punch, shake, shockwave, slowmo, speedLines } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -101,6 +101,8 @@ export class BattleBeats {
     speedLines(scene, (a.cx + b.cx) / 2, (a.cy + b.cy) / 2, ab.color, 800);
     await host.wait(0.4);
     punch(scene, 0.06, 180);
+    // Part 1's villain floor a step down first, so the combo takes a visible bite (hunt 11, M63).
+    host.sim.stepVillainFloor();
     cast(host, a, comboPart(a.init.id, b.init.id), host.villain, 2.2);
     cast(host, b, comboPart(b.init.id, a.init.id), host.villain, 1.4);
     host.show.combo(a, b);
@@ -254,6 +256,8 @@ export class BattleBeats {
     const b = this.b;
     const scene = b.stage;
     b.sim.floors.heroMain = 0.06;
+    // Part 1's villain floor at its last step for the ultimate, whatever the beats before it (hunt 11, M63).
+    b.sim.floors.villainMain = PART1_VILLAIN_FLOOR.end;
     cast(b, v, ult, b.heroes[0] ?? null, 2.6);
     if (giant) this.giantSweep(v, ult);
     // The style stages the villain winning the round (the brawl just lets it land).

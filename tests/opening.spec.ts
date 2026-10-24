@@ -4,11 +4,42 @@
  * about 34 s before battle 1's first PICK A MOVE!; a room's earlier words now
  * fly out as one volley, each room's last word its own beat
  * (src/rules/volleys.ts). Real voice, full battle beats: slow (~15 s).
+ *
+ * Hunt 11, M62 and M63: with Charge the Spell (two words, item 140) its words
+ * fly as one volley and its runes fire back to back (`RUNE_GAP`); part 1's
+ * villain floor starts high and steps down with each super and the combo
+ * (`PART1_VILLAIN_FLOOR`), so her first super takes a visible bite.
  */
 
 import { test, expect } from '@playwright/test';
 
-import { SLOW, SPEED, boot, collectErrors, expectNoErrors, until } from './harness';
+import { PART1_VILLAIN_FLOOR } from '../src/config';
+import { SLOW, SPEED, boot, collectErrors, expectNoErrors, pickPad, until } from './harness';
+
+for (const seed of [1, 2]) {
+  test(`battle 1 with Charge (seed ${seed}): PICK A MOVE! under 26 s, and her first super bites`, SLOW, async ({ page }) => {
+    test.setTimeout(120_000);
+    const errors = collectErrors(page);
+    await boot(page, `?scene=battle&part=1&room=charge&games=all&warmup=1&seed=${seed}&nojourney=1`, SPEED, { voice: 'real' });
+    const s0 = await until(page, (st) => st.scene === 'Battle' && st.episode.fetched.length > 0, 60_000, 'the battle');
+    expect(s0.episode.house.plan!.map((p) => p.kind)).toContain('charge');
+    const first = await until(page, (st) => (st.battle?.itemsUsed ?? 0) > 0, 90_000, 'the first thing out of the bag');
+    const open = await until(page, (st) => Boolean(st.battle?.choice?.open), 90_000, 'the first move choice');
+    const b = open.battle!;
+    const took = b.t - first.battle!.t;
+    console.log(`seed ${seed}: ${b.itemsUsed} things, ${b.runesFired} runes; PICK A MOVE! ${took.toFixed(1)} s after the first thing out of the bag; villain ${b.villains[0]!.hp}%`);
+    expect(b.itemsUsed).toBe(s0.episode.fetched.length);
+    expect(took).toBeLessThan(26);
+    // The opening rests on the start floor, never lower.
+    expect(b.villains[0]!.hp).toBeGreaterThanOrEqual(Math.floor(PART1_VILLAIN_FLOOR.start * 100));
+    await pickPad(page, b.choice!.right);
+    const picked = await until(page, (st) => !st.battle?.choice, 30_000, 'choice closed');
+    const after = await until(page, (st) => (st.battle?.t ?? 0) >= picked.battle!.t + 3, 30_000, 'three seconds on');
+    console.log(`seed ${seed}: villain ${after.battle!.villains[0]!.hp}% three seconds after her super`);
+    expect(after.battle!.villains[0]!.hp).toBeLessThan(b.villains[0]!.hp);
+    expectNoErrors(errors);
+  });
+}
 
 test('battle 1 with eight fetched things: every one used, PICK A MOVE! well under 34 s', SLOW, async ({ page }) => {
   test.setTimeout(120_000);

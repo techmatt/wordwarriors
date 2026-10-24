@@ -78,6 +78,8 @@ const OPTIONS: [number, number][] = [[400, 640], [640, 655], [880, 640]];
 const PICTURE_SIZE = 116;
 /** The beat after each sound as the plate is sounded out (hunt 11: 160 ms ran the sounds together; the entry hall's and Charge's are 400). */
 const SOUND_GAP_MS = 400;
+/** A round's things pop in together; its first card is said once they have (`popIn`'s 380 ms). */
+const POP_MS = 400;
 /** Where she walks in. */
 const ENTRY = { x: 130, y: 610 };
 /** The room's colours: a music-box sparkle. */
@@ -155,6 +157,11 @@ export class RhymeRoom extends HouseSideRoom {
     applyHouseMood(this, episode.villain, { seed: roomSeed(this.roomId), floor: this.floor, calm: true, floorOnly: OUTDOOR_ROOMS.has(this.roomId), avoid });
     this.bag = new Bag(this);
     this.enter(ENTRY.x, ENTRY.y);
+    // Every plate's sounds and the first round's instructions too (M64: fetched as each came up, a second or
+    // more of silence before several of them). An ensure goes to the front of the queue: the line needed
+    // last is asked for first, so the cards' words, asked for last, come first.
+    for (const r of this.plan.rounds) for (const s of soundOut(r.word)) if (s.id) void voiceBank.ensure(s.id);
+    for (const k of ['rhyme_listen', 'rhyme_which_2', 'rhyme_which', 'rhyme_intro']) void voiceBank.ensure(narratorLine(narrator(), k));
     for (const r of this.plan.rounds) for (const w of [...r.shown, r.word]) void voiceBank.ensure(wordLine(w));
     if (this.finished) {
       this.locked = true;
@@ -187,34 +194,36 @@ export class RhymeRoom extends HouseSideRoom {
       await this.wait(ARRIVE_MS);
       if (f !== this.flow) return;
     }
-    // The two rhyming words, each lit as it is said.
-    for (let i = 0; i < 2; i++) {
-      this.makeCard(i, r.shown[i]!);
-      await this.wait(200);
-      if (f !== this.flow) return;
-      await this.sayCard(i);
-      if (f !== this.flow) return;
-    }
-    // "Rhyme time! These words sound the same at the end!": once there are words to point at (hunt 11: it
-    // played to an empty wall, the cards coming after).
-    if (first) {
-      await this.narrate('rhyme_intro');
-      if (f !== this.flow) return;
-    }
-    // The third place in the row, waiting for its picture; and the third word, printed, never said.
+    // Everything at once (item 144, M64: set out one after another, with an instruction before the sound-out
+    // and a question after it, she first could move about 16 s into a round, 66 s a visit): the two cards,
+    // the third place waiting for its picture, the third word printed (never said) and the pictures.
+    this.makeCard(0, r.shown[0]!);
+    this.makeCard(1, r.shown[1]!);
     this.makeSlot();
     this.makePlate(r.word);
     this.makeOptions(r);
-    await this.wait(300);
+    await this.wait(POP_MS);
     if (f !== this.flow) return;
-    if (this.level === 1) {
-      // Level 1: the helper sounds it out for her, then asks which thing it is.
-      await this.narrate(this.told ? 'rhyme_cue_sound' : 'rhyme_more');
+    // The two rhyming words, each lit as it is said.
+    for (let i = 0; i < 2; i++) {
+      await this.sayCard(i);
       if (f !== this.flow) return;
+    }
+    // The first round's long instructions; later rounds go straight on to the plate (M64).
+    // "Rhyme time! These words sound the same at the end!": once there are words to point at (hunt 11: it
+    // played to an empty wall, the cards coming after).
+    if (!this.told) {
+      await this.narrate('rhyme_intro');
+      if (f !== this.flow) return;
+    }
+    if (this.level === 1) {
+      // Level 1: the helper sounds it out for her, straight after the rhyme (M64: "This word rhymes with them
+      // too! Let's sound it out!" before it held her 4.6 s for what the sound-out itself shows); the first
+      // round asks which thing it is. She can walk all the while: only green waits for the question's end.
       await this.soundOutPlate();
       if (f !== this.flow) return;
       this.sounded = true;
-      await this.narrate('rhyme_which');
+      if (!this.told) await this.narrate('rhyme_which');
     } else {
       await this.narrate(this.told ? 'rhyme_cue' : 'rhyme_read');
     }
@@ -305,6 +314,8 @@ export class RhymeRoom extends HouseSideRoom {
       if (steps[i]!.id) await this.say(steps[i]!.id);
       t?.setColor(INK);
       if (f !== this.flow) return;
+      // A beat between sounds, not after the last (M64: it only held her back).
+      if (i === steps.length - 1) break;
       await this.wait(SOUND_GAP_MS);
       if (f !== this.flow) return;
     }
@@ -427,18 +438,17 @@ export class RhymeRoom extends HouseSideRoom {
     await this.sayPlate();
     if (f !== this.flow) return;
     const copy = this.bagCopy(r.word) ? this.guard(this.bag.receive(this.wordArt(r.word), cx, cy)) : Promise.resolve();
-    const praise = Promise.all([copy, this.say(narratorLine(narrator(), readPraise(own)))]);
     if (!last) {
+      const praise = Promise.all([copy, this.say(narratorLine(narrator(), readPraise(own)))]);
       sfxSelect();
       this.index++;
       await this.startRound(false, praise);
       return;
     }
-    await praise;
-    if (f !== this.flow) return;
-    // The last row stays up, its third picture in place, while the visit ends.
+    // The last row stays up, its third picture in place, while the visit ends. Its praise is the visit's
+    // ("We found every rhyme!"), not a word's praise and then that (M64).
     this.phase = 'done';
-    await this.say(narratorLine(narrator(), variant('rhyme_done')));
+    await Promise.all([copy, this.say(narratorLine(narrator(), variant('rhyme_done')))]);
     if (f !== this.flow) return;
     await this.wait(400);
     this.fadeToHub();

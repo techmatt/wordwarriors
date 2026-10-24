@@ -144,9 +144,11 @@ test('?scene=theend opens THE END, Dad\'s 2 waiting', async ({ page }) => {
 
 // Hunt 10, M50: with an ally the dad who woke her was left off the podium; he cheers beside it
 // (left of its blocks, x 285 on), on no block. With no ally he has the left block, as before.
-for (const [name, query, people, beside] of [
-  ['with an ally (Ellie), Dada Matt cheers beside the podium', '', 4, true],
-  ['with no ally, Dada Matt has the left block and nobody stands beside it', '&ally=none', 3, false],
+// Hunt 11, M70: the other dad, when he came in too, cheers right of it (past x 995).
+for (const [name, query, people, beside, right] of [
+  ['with an ally (Ellie), Dada Matt cheers beside the podium', '', 4, true, false],
+  ['with no ally, Dada Matt has the left block and nobody stands beside it', '&ally=none', 3, false, false],
+  ['with the other dad in too, Dada Jason cheers right of it', '&secondary=1', 5, true, true],
 ] as const) {
   test(`the victory podium: ${name}`, async ({ page }) => {
     const errors = collectErrors(page);
@@ -157,6 +159,8 @@ for (const [name, query, people, beside] of [
     expect(chars.map((c) => c.key).length, chars.map((c) => c.key).join(' ')).toBe(people);
     const left = chars.filter((c) => c.b[2] < 285);
     expect(left.map((c) => c.key)).toEqual(beside ? [expect.stringMatching(/^char_dada_matt/)] : []);
+    const far = chars.filter((c) => c.b[0] > 995);
+    expect(far.map((c) => c.key)).toEqual(right ? [expect.stringMatching(/^char_dada_jason/)] : []);
     expectNoErrors(errors);
   });
 }

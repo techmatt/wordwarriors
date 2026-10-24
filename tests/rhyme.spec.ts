@@ -69,6 +69,10 @@ test('rhyme room at base level: three rounds, each a family, the rhyme said, the
   expect(rimes.size).toBe(3);
   const hub = await until(page, (st) => st.scene === 'Hub', 60_000, 'back in the hub');
   expect(hub.episode.house.done).toContain('a');
+  // Item 144 (hunt 11, M64): the long instructions on the first round only.
+  for (const k of ['_rhyme_intro', '_rhyme_which']) expect(hub.voice.history.filter((id) => id.endsWith(k)), k).toHaveLength(1);
+  // "This word rhymes with them too! Let's sound it out!" went: the sound-out follows the rhyme straight on.
+  expect(hub.voice.history.filter((id) => id.endsWith('_rhyme_more'))).toEqual([]);
   for (const w of bagged(words)) expect(hub.episode.fetched).toContain(w);
   // A miss keeps the word at level 1; right first time, unaided, steps up.
   expect(Object.values(hub.progress.rhymeLevels ?? {}).sort()).toEqual([1, 2, 2]);

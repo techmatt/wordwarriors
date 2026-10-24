@@ -165,8 +165,6 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'charge_explain', text: 'Say each sound after me!' },
   { key: 'charge_read', text: 'Now read the whole spell!' },
   { key: 'charge_together', text: "Let's sound it out together!" },
-  // Item 140: two words a visit; the second's round opens with this.
-  { key: 'charge_next', text: 'Here comes another spell!' },
   // Item 106, solo mode (no Dad to judge): the helper says each sound with her
   // and they read the word together. Nothing here mentions Dad.
   { key: 'charge_explain_solo', text: "Let's say each sound together!" },
@@ -174,7 +172,8 @@ export const NARRATOR_LINES: Template[] = [
   { key: 'charge_with_me_2', text: 'With me!' },
   { key: 'charge_with_me_3', text: 'Together!' },
   { key: 'charge_read_together', text: "Let's read the whole spell together!" },
-  // Two spells a visit since item 140 (hunt 11: "Our spell..." after "Here comes another spell!").
+  // Two spells a visit since item 140 (hunt 11: "Our spell..." after the second; item 144 cut the
+  // second round's "Here comes another spell!", hunt 11 M61).
   { key: 'charge_done', text: 'Our spells are all charged up!' },
   { key: 'charge_done_2', text: "The spells are ready! Let's take them to the fight!", say: "The spells are ready, let's take them to the fight!" },
   { key: 'use_runes', text: "Now let's cast our spell!" },
@@ -238,10 +237,8 @@ export const NARRATOR_LINES: Template[] = [
   // is said (word_) once she has it, or in a miss's "Listen: bug, hug, rug!"
   // (`rhyme_listen`, Matt's design), and its sounds are letter_ lines.
   { key: 'rhyme_intro', text: 'Rhyme time! These words sound the same at the end!', say: 'Rhyme time! These words sound the same at the end!' },
-  { key: 'rhyme_more', text: "This word rhymes with them too! Let's sound it out!", say: "This word rhymes with them too! Let's sound it out." },
   { key: 'rhyme_read', text: 'This word rhymes with them too! Read it, then walk to its picture!', say: 'This word rhymes with them too! Read it, then walk to its picture.' },
   { key: 'rhyme_cue', text: 'Another rhyme! Read it!', say: 'Another rhyme! Read it!' },
-  { key: 'rhyme_cue_sound', text: "Another rhyme! Let's sound it out!", say: "Another rhyme! Let's sound it out." },
   { key: 'rhyme_which', text: 'Which thing is it? Walk to it!', say: 'Which thing is it? Walk to it.' },
   { key: 'rhyme_which_2', text: 'Where is its picture? Walk to it!', say: 'Where is its picture? Walk to it.' },
   { key: 'rhyme_listen', text: 'Listen!' },

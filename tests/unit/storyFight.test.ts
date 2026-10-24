@@ -18,6 +18,7 @@ import { fighterId, group, storyLine } from '../../content/voice/ids';
 import { EPISODE_DEFAULTS } from '../../src/config';
 import { withStems } from '../../src/rules/bank';
 import { ownFight, pickFight } from '../../src/rules/fights';
+import { chargeArrival, hopOverCharge, type Charge } from '../../src/battle/story/charge';
 import type { MoveInput } from '../../src/rules/moves';
 import { planStoryMoves } from '../../src/rules/storyFight';
 import { ProgressStore } from '../../src/state/ProgressStore';
@@ -147,4 +148,23 @@ test('story fights: the plan keeps clear of words said before the battle', () =>
   const s = STORIES[0]!;
   const plan = planStoryMoves(new ProgressStore(memory()), s, { ...input('zap'), avoid: ['wet', 'drip', 'hop'] }, seeded(5));
   for (const c of [...plan.part1, ...plan.part2]) for (const w of c.words) assert.ok(!['wet', 'drip', 'hop'].includes(w), `${w} was said before the battle`);
+});
+
+test('story fights: each hop over the gold guards peaks as they reach her, not as they set off (hunt 11, M74)', () => {
+  // The director's charge (StoryDirector.guards): three guards from about x 700-870 to just past the heroes' marks.
+  const charges: Charge[] = [700, 785, 870].map((from, i) => ({ from, to: 110 + i * 50, delay: i * 120, ms: 1200 }));
+  // Quad.easeIn: halfway in time is a quarter of the way along.
+  assert.equal(chargeArrival({ from: 400, to: 0, delay: 100, ms: 1000 }, 300), 600);
+  assert.equal(chargeArrival(charges[0]!, 900), null, 'a guard never reaches a hero behind where it starts');
+  for (const x of [520, 370, 250]) {
+    const hop = hopOverCharge(charges, x)!;
+    const at = charges.map((c) => chargeArrival(c, x)!);
+    for (const t of at) {
+      // Up off the floor (past the first sixth of the hop, before the last) as each guard passes under.
+      const u = (t - hop.delay) / hop.ms;
+      assert.ok(u > 0.15 && u < 0.85, `x ${x}: a guard at ${Math.round(t)} ms passes under a hop of ${Math.round(hop.delay)}+${Math.round(hop.ms)} ms`);
+    }
+    assert.ok(hop.delay > 300, `x ${x}: the hop waits for the guards (${Math.round(hop.delay)} ms)`);
+  }
+  assert.equal(hopOverCharge(charges, 950), null, 'no guard passes her, no hop');
 });

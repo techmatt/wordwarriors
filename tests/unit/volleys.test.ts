@@ -12,8 +12,15 @@ test('fetchBeats: a room\'s earlier words one volley, its last its own beat; the
   const fetched = ['lamp', 'sun', 'map', 'fish', 'bat', 'bag', 'bug', 'mug'];
   const rooms = [['sun', 'map', 'fish'], ['bat', 'bag', 'bug', 'mug']];
   assert.deepEqual(fetchBeats(fetched, rooms), [['lamp'], ['sun', 'map'], ['fish'], ['bat', 'bag', 'bug'], ['mug']]);
-  // A one-word room (the sentence game, Charge the Spell) is its own beat.
+  // A one-word room (the sentence game) is its own beat.
   assert.deepEqual(fetchBeats(['lamp', 'net', 'cat'], [['net'], ['cat']]), [['lamp'], ['net'], ['cat']]);
+  // A room fired whole (Charge the Spell's two words, hunt 11, M62) is one volley, its last word in it.
+  assert.deepEqual(fetchBeats(['lamp', 'sun', 'map', 'fish', 'hat', 'pig'], [['sun', 'map', 'fish'], { words: ['hat', 'pig'], whole: true }]), [
+    ['lamp'],
+    ['sun', 'map'],
+    ['fish'],
+    ['hat', 'pig'],
+  ]);
   // Words the plans do not know (a `?fetched=` URL) each keep their beat, as before.
   assert.deepEqual(fetchBeats(['hat', 'pig'], []), [['hat'], ['pig']]);
   // Every fetched word fires once, in order.

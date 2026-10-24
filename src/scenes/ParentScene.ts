@@ -21,7 +21,7 @@
 
 import Phaser from 'phaser';
 
-import { DROPPED, STORED } from '../../content/phonics/bank';
+import { ACTIONS, DROPPED, STORED } from '../../content/phonics/bank';
 import { FAMILIES } from '../../content/phonics/families';
 import { DIGRAPH_SOUNDS, LETTERS } from '../../content/phonics/letters';
 import { FRAMES } from '../../content/phonics/sentences';
@@ -97,14 +97,16 @@ export class ParentScene extends Phaser.Scene {
       return;
     }
     if (this.page) {
-      // Every word in the content, plus any other word she has met (spelling, move words); not a stored or dropped
-      // word (page 3; hunt 11: an old read of YAK showed here as a word that comes up again).
-      const words = [...new Set([...WORDS.map((w) => w.word), ...Object.keys(snap.words)])].filter((w) => ![...STORED, ...DROPPED].some((s) => s.word === w));
-      const perCol = 22;
+      // Every word in the content, the action (move and spell) words too, grey until met (item 144, M69: only those
+      // she had read showed, so the grid grew across the week), plus any other word she has met; not a stored or
+      // dropped word (page 3; hunt 11: an old read of YAK showed here as a word that comes up again).
+      const words = [...new Set([...WORDS.map((w) => w.word), ...ACTIONS.map((w) => w.word), ...Object.keys(snap.words)])].filter((w) => ![...STORED, ...DROPPED].some((s) => s.word === w));
+      // 24 rows of 24 px (item 144): with the action words, 22 rows made seven narrow columns.
+      const perCol = 24;
       // The number in a word's dot is its Stretchy Bridge help level (item 054), once she has crossed it.
       const bridged = (id: string) => (snap.bridgeLevels?.[id] !== undefined ? String(recordedBridgeLevel(progress, id)) : null);
       // Item 121: the newest words carry NEW (`?words=new` puts them in play).
-      this.grid('Words', 'words', words, 30, 90, perCol, (GAME_WIDTH - 60) / Math.max(5, Math.ceil(words.length / perCol)), 26, bridged, (id) => (NEW_WORDS.includes(id) ? ' NEW' : ''));
+      this.grid('Words', 'words', words, 30, 90, perCol, (GAME_WIDTH - 60) / Math.max(5, Math.ceil(words.length / perCol)), 24, bridged, (id) => (NEW_WORDS.includes(id) ? ' NEW' : ''));
       fitText(this.add.text(200, 94, `NEW: just added (?words=new shows them in play). Number in the dot: Stretchy Bridge level reached (1 stones sound + pictures shown, 2 silent stones, 3 says it to Dad first)${difficulty() === 1 ? '; at difficulty 1 every word gets 1' : `; the room gives up to ${difficulty()}`}`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '14px', color: '#555' }), GAME_WIDTH - 200 - 30, 22);
       return;
     }
@@ -233,10 +235,11 @@ export class ParentScene extends Phaser.Scene {
     table.vowel.forEach((r, i) => row(r, `short ${r.tag.toUpperCase()}`, x, vy + 24 + i * 24, 250));
     // First sounds: a grid right of the levels and vowels, blends and digraphs after the single letters.
     const ox = x + 270;
-    this.add.text(ox, top, 'By first sound (none = ANT)', head);
+    // One row for every word starting with a vowel, ANT and APPLE alike (item 144, M69: ANT sat under '–' and APPLE under A).
+    this.add.text(ox, top, 'By first sound (VOWEL: ANT, APPLE)', head);
     const perCol = 13;
     const colW = (850 - ox) / Math.max(1, Math.ceil(table.onset.length / perCol));
-    table.onset.forEach((r, i) => row(r, (r.tag || '–').toUpperCase().padEnd(3), ox + Math.floor(i / perCol) * colW, top + 24 + (i % perCol) * 24, colW - 6));
+    table.onset.forEach((r, i) => row(r, r.tag.toUpperCase().padEnd(3), ox + Math.floor(i / perCol) * colW, top + 24 + (i % perCol) * 24, colW - 6));
     fitText(this.add.text(x, vy + 24 + 5 * 24 + 6, `Solid: shakiness ≤ ${BANK_DRAW.solid}. Gray: not read yet; green: half or more solid.`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '13px', color: '#555' }), 250, 40);
   }
 

@@ -14,7 +14,8 @@
  * coverage, last episode's words leaning back) over every short word
  * (BRIDGE.maxUnits sound units at most; item 067: no tier or level gate, so
  * every one is in play from the start). Words still in her word bag lean
- * ahead, and a visit plays its easier words first (`bridgeEase`):
+ * ahead, a word the episode before had her read is drawn only when no other
+ * fits (`unreadFirst`, hunt 11, M77), and a visit plays its easier words first (`bridgeEase`):
  *   1. CVC words starting with a sound you can hold (M S F L N R V Z);
  *   2. CVC words starting with a stop sound;
  *   3. blends and digraphs.
@@ -36,6 +37,7 @@ import { BRIDGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { drawWords } from './bank';
 import { shuffle, type Rand } from './random';
+import { unreadFirst } from './shifter';
 import { clampLevel, helpLevel, type HelpLevel } from './difficulty';
 
 export type BridgeLevel = HelpLevel;
@@ -151,7 +153,8 @@ export function planBridge(store: ProgressStore, input: BridgeInput, rand: Rand 
   for (let k = 0; k < n; k++) {
     const open = eligible.filter((w) => !words.includes(w));
     const fits = open.filter((w) => sibling(w, words) && words.every((x) => sibling(x, [...words, w])));
-    const pool = fits.length ? fits : open;
+    // Hunt 11, M77: not a word the episode before had her read, where the pool allows.
+    const pool = unreadFirst(store, fits.length ? fits : open);
     if (!pool.length) break;
     words.push(drawWords(store, pool, 1, rand, boost)[0]!);
   }

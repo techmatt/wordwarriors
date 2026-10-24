@@ -10,6 +10,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import type { QaLayout, QaSince, Rect } from '../../src/qa/probe';
 import type { WWState } from '../harness';
 import { wordLine } from '../../content/voice/ids';
+import { SOLO_CHARGE_BUDGET_MS } from './wording';
 
 export interface Issue {
   kind: string;
@@ -385,8 +386,8 @@ export function logIssues(q: Since, speed = 1): Issue[] {
   for (const k of q.locks) {
     // Charge the Spell's quiet beats are hers: she says each rune's sound back, then reads (hunt 7).
     if (k.silentMs > 2500 && k.scene !== 'ChargeRoom') out.push({ kind: 'locked-silent', severity: 'look', scene: k.scene, detail: `${k.round}: input locked ${(k.ms / 1000).toFixed(1)} s, ${(k.silentMs / 1000).toFixed(1)} s of it silent`, key: `lsilent:${k.scene}:${k.round.replace(/:\w+$/, '')}` });
-    // Charge has nothing for her to press (Dad answers): its whole two-word visit can be one lock (item 140).
-    else if (k.ms > (k.scene === 'ChargeRoom' ? 66_000 : 20_000)) out.push({ kind: 'locked-long', severity: 'look', scene: k.scene, detail: `${k.round}: input locked ${(k.ms / 1000).toFixed(1)} s (talking)`, key: `llong:${k.scene}:${k.round.replace(/:\w+$/, '')}` });
+    // Charge has nothing for her to press (Dad answers): its whole two-word visit can be one lock (item 140), solo the longest (item 144: its budget).
+    else if (k.ms > (k.scene === 'ChargeRoom' ? SOLO_CHARGE_BUDGET_MS : 20_000)) out.push({ kind: 'locked-long', severity: 'look', scene: k.scene, detail: `${k.round}: input locked ${(k.ms / 1000).toFixed(1)} s (talking)`, key: `llong:${k.scene}:${k.round.replace(/:\w+$/, '')}` });
   }
   // Full-screen flashes: more than three in any second is the photosensitivity line (WCAG 2.3.1).
   const fl = q.flashes;

@@ -73,7 +73,8 @@ draws like any new character does. Minions are `minions.ts`, combos `combos.ts`,
 A new character is defined but not drawn into random
 episodes until its id is added to `ACTIVE_CAST` in `src/config.ts` (`allies`,
 `villains`, or both); `?ally=<id>` / `?villain=<id>` play it either way. Its `size`
-also sets how tall it stands beside her in rooms and the victory scene (`castScale`),
+also sets how tall it stands beside her in rooms and the victory scene (`castScale`,
+between 0.7 and 1.7 of her, `CAST_SCALE_MAX`),
 except a dad in any form: he stands his own height, head to soles, in battle too,
 whatever his `size` (item 034; `size` still drives the fight). Since item 093 that is
 `ADULT_HEIGHTS` in `src/config.ts` (Dada Jason 1.44, Dada Matt 1.33: Matt 7.5% shorter),
@@ -672,8 +673,9 @@ the word machine's words. A room's other pictures are chosen for reading
 firm (`BANK_DRAW.firm`, and only from `DIFFICULTY` 2) one shares its first sound or rime
 (CAT beside HAT), so she reads past the first letter. No key word repeats within an
 episode, and none is on that episode's move pads. The grown-ups page (F9) shows the
-round, words seen and left, the bank's coverage by level, vowel and first sound; green
-flips to page 2, every word. Erasing progress (F8 twice) empties the bag too.
+round, words seen and left, the bank's coverage by level, vowel and first sound (one row
+for every word starting with a vowel); green flips to page 2, every word, the move words
+too (grey until met). Erasing progress (F8 twice) empties the bag too.
 
 A word new to the game joins a round already under way (item 035, `topUpBag`): the
 store remembers the bag words it last saw (`bagKnown`), and any word since goes into the
