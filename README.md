@@ -166,9 +166,9 @@ The same way, every browser test's rooms play the sentence game (the harness add
 (`games=all`). `FORCE_PHONICS_ROOM` follows the same rule: the harness's `games=sentence`
 and any `game=` keep the test's own rooms, while `games=all` (the real draw) and the
 game itself get Charge the Spell behind door a, so `playRoom` and the bug-hunt checker
-play it (`playChargeRoom`: wait for the read, then Dad's answer); `tests/charge.spec.ts`
-covers the room, the dad key, dad lock, the read's timeout, the round's length and the
-runes in battle (items 053, 059). The forced room is Charge the Spell or the Stretchy Bridge at random, so
+play it (`playChargeRoom`: for each of its two words, wait for the read, then Dad's answer);
+`tests/charge.spec.ts` covers the room, the sounds up front, the dad key, dad lock, the
+read's timeout, the visit's length and the runes in battle (items 053, 059, 140). The forced room is Charge the Spell or the Stretchy Bridge at random, so
 `playRoom` and the bug-hunt checker play the bridge too (`playBridgeRoom`: slide across
 with the stick, Dad's yes where he is asked, the right picture); `tests/bridge.spec.ts`
 covers its three help levels and a wrong picture (item 054). `SHIFTER_ROOM` follows
@@ -299,8 +299,9 @@ the harness keeps the real `setTimeout` as `__wwRealSetTimeout`). Load still str
 a Charge round's game time past its limits beside a second worker, so the timed round (the
 snappy round in `charge.spec.ts`) asserts them only on one worker (item 072): in the
 two-worker lanes it logs its time (and a `timing` annotation) and goes on. The timing run:
-`npx playwright test tests/charge.spec.ts -g snappy --workers=1` (about 30 s; 17.7 s to the
-read and 28.7 s in all against 22 s and 32 s, 2026-10-21). `WW_GPU=0` runs on one worker,
+`npx playwright test tests/charge.spec.ts -g snappy --workers=1` (about 15 s of test; item
+140's two-word visit, two 3-rune words: 21.5-23 s and 17 s to the reads and 51-55 s in all
+against 29 s a read and 66 s, 2026-10-24; the one-word round was 17.7 s and 28.7 s). `WW_GPU=0` runs on one worker,
 so it asserts there too.
 
 The browser draws with the GPU (Playwright's full `chromium` channel, `--use-angle=d3d11`;

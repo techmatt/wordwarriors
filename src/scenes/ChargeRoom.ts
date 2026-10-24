@@ -1,12 +1,15 @@
 /**
- * Charge the Spell (item 053; one word a visit since item 058; no presses per
- * rune since item 059): a side room where she says letter SOUNDS aloud after
- * the helper, then reads the word they spell for Dad. Her real gap is sounds
- * (she knows the names).
+ * Charge the Spell (item 053; two words a visit since item 140, one in items
+ * 058-139; no presses per rune since item 059): a side room where she says
+ * letter SOUNDS aloud after the helper, then reads the word they spell for
+ * Dad. Her real gap is sounds (she knows the names).
  *
- * The visit's word (src/rules/charge.ts: 3-4 sound units, every one a rune)
- * is shown at the top from the start, one slot per unit. She walks in and it
- * starts by itself ("I say each sound, and then you say it back to me"). Each
+ * A visit is CHARGE.words rounds, a word each (src/rules/charge.ts: 3-4
+ * sound units, every one a rune). The round's word is shown at the top from
+ * its start, one slot per unit. She walks in and it starts by itself: the
+ * helper says all the word's sounds straight away, in order, each slot lit
+ * as its sound plays (item 140; a beat between them, never blended, never
+ * the word), then "Say each sound after me!" (the first round only). Each
  * rune lights on the altar in turn (its slot at the top pulses); the helper
  * shows its gesture (Jolly Phonics style, content/phonics/runes.ts) and says
  * its sound, then a beat (CHARGE.sayBackMs) of quiet for her to say it back,
@@ -19,8 +22,9 @@
  * sound it out together!", the word sounded out once, unit by unit (never
  * blended), then said, and the picture goes into the bag all the same. The
  * read is recorded under `words`, and its runes' sounds under `sounds` (right
- * with his 2); the word is a battle item (`episode.fetched`). A round runs
- * about 20 s.
+ * with his 2); the word is a battle item (`episode.fetched`). Then the next
+ * round's word takes the bar ("Here comes another spell!"); after the last,
+ * back to the hub. A round runs about 25 s.
  *
  * Solo mode (item 106, `episode.solo`): nothing from Dad for DAD_AWAY_MS on
  * the read means he isn't there, so the helper joins in instead, for the rest
@@ -52,7 +56,7 @@ import { bob, burst, fitImage, fitPicture, floatText, popIn, punch, shake, shock
 import { TEX } from '../fx/textures';
 import { dadPress, setDadAsking, type DadAnswer } from '../input/dadButtons';
 import { dadLock } from '../input/dadLock';
-import type { ChargePlan } from '../rules/charge';
+import type { ChargePlan, ChargeWord } from '../rules/charge';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
@@ -66,6 +70,7 @@ import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom'
 type ReadAnswer = 'yes' | 'no' | 'modelled' | 'helped';
 
 /**
+ * `sounds`: the helper says all the round's sounds first (item 140).
  * `explain`: the helper explains, no rune yet. `prompt`: a rune is lit and
  * the helper says it. `sayback`: her beat to say it back. `charging`: the
  * payoff. `read`: every rune charged, she reads the word, waiting for Dad.
@@ -74,7 +79,7 @@ type ReadAnswer = 'yes' | 'no' | 'modelled' | 'helped';
  * read is asked or a solo read is not yet recorded, and from the last rune
  * (kept, acted on as the read is asked, M24); any press ends solo.
  */
-type Phase = 'explain' | 'prompt' | 'sayback' | 'charging' | 'read' | 'reading' | 'done';
+type Phase = 'sounds' | 'explain' | 'prompt' | 'sayback' | 'charging' | 'read' | 'reading' | 'done';
 
 const ALTAR = { x: GAME_WIDTH / 2 + 60, y: 600, w: 340, h: 250 };
 /** The rune stands on the altar's top. */
@@ -93,6 +98,8 @@ export class ChargeRoom extends HouseSideRoom {
   /** Nothing to walk to here: no stick hint (item 059 review). */
   protected override walking = false;
   private plan!: ChargePlan;
+  /** The round on now (item 140: a word each; `round` is the hooks' label); `index` the rune lit in it. */
+  private wordIndex = 0;
   private index = 0;
   private phase: Phase = 'explain';
   /** How the word's read went: Dad's yes, his no (sounded out), read with the helper (solo), or his yes during that (`helped`, M34). */
@@ -106,8 +113,9 @@ export class ChargeRoom extends HouseSideRoom {
   /** The rune charging now (phase `charging`). */
   private chargingIndex = -1;
   private finished = false;
-  /** Scene time at the start of the visit and when the read was asked (the round's length in game time, for the tests). */
+  /** Scene time at the start of the visit and of the round, and when the read was asked from the round's start (its length in game time, for the tests). */
   private startedAt = 0;
+  private roundAt = 0;
   private readAt = 0;
   /** The say-back beat running now: its time left (it stands still under dad lock). */
   private beat: { left: number; done: () => void } | null = null;
@@ -144,10 +152,12 @@ export class ChargeRoom extends HouseSideRoom {
     const p = sidePlan('ChargeRoom', this.slot, 'charge');
     this.plan = p.charge;
     this.roomId = p.room;
-    // Back from the parent page (F9) mid-visit: on from the first rune not yet charged, or the read.
-    const charged = episode.charged?.sounds ?? [];
-    this.index = Math.min(charged.length, this.plan.runes.length);
-    this.finished = episode.fetched.includes(this.plan.word) || episode.house.done.includes(this.slot);
+    // Back from the parent page (F9) mid-visit: on from the first word not yet read, its first rune not yet charged, or its read.
+    const left = this.plan.rounds.findIndex((r) => !episode.read.includes(r.word));
+    this.finished = left < 0 || episode.house.done.includes(this.slot);
+    this.wordIndex = left < 0 ? this.plan.rounds.length - 1 : left;
+    const at = episode.charged?.at;
+    this.index = at?.word === this.cur.word ? Math.min(at.index, this.cur.runes.length) : 0;
     this.phase = 'explain';
     this.flow++;
     this.stopGesture = null;
@@ -162,12 +172,21 @@ export class ChargeRoom extends HouseSideRoom {
     this.slotPulse = null;
   }
 
+  /** This round's word, its units and runes. */
+  private get cur(): ChargeWord {
+    return this.plan.rounds[this.wordIndex]!;
+  }
+
+  private get lastRound(): boolean {
+    return this.wordIndex >= this.plan.rounds.length - 1;
+  }
+
   private get rune(): string {
-    return this.plan.runes[this.index] ?? '';
+    return this.cur.runes[this.index] ?? '';
   }
 
   private get allCharged(): boolean {
-    return this.index >= this.plan.runes.length;
+    return this.index >= this.cur.runes.length;
   }
 
   /** The rune and the word are what she watches: the box keeps off both. */
@@ -201,10 +220,10 @@ export class ChargeRoom extends HouseSideRoom {
     this.stone = fitImage(this.add.image(RUNE.x, RUNE.y, 'prop_rune_stone'), RUNE.size, RUNE.size).setDepth(ALTAR.y - 1).setVisible(false);
     // Back from the grown-ups page with every rune charged there is no rune at the index: the
     // word's first stands in (hunt 7: 'm' did, not loaded for a word with no M, so "art: not ready").
-    this.runePic = this.add.image(RUNE.x, RUNE.y, runeArt(this.rune || this.plan.runes[0]!)).setDepth(ALTAR.y).setVisible(false);
+    this.runePic = this.add.image(RUNE.x, RUNE.y, runeArt(this.rune || this.cur.runes[0]!)).setDepth(ALTAR.y).setVisible(false);
     this.makeBar();
     this.bag = new Bag(this);
-    void voiceBank.ensure(wordLine(this.plan.word));
+    for (const r of this.plan.rounds) void voiceBank.ensure(wordLine(r.word));
 
     this.openDad((a) => this.answer(a));
 
@@ -220,23 +239,84 @@ export class ChargeRoom extends HouseSideRoom {
     void (async () => {
       await this.wait(ARRIVE_MS);
       if (f !== this.flow) return;
-      // Back mid-visit (the parent page), she knows the game: straight on.
-      if (this.index === 0) {
-        sfxSummon();
-        squash(this, this.altar, this.altar.scaleX, this.altar.scaleY, 0.12);
-        burst(this, ALTAR.x, ALTAR.y - ALTAR.h * 0.8, { count: 50, speed: 360, texture: TEX.star, colors: [0xb28dff, 0xffd23f, 0xffffff] });
-        shockwave(this, ALTAR.x, ALTAR.y - ALTAR.h * 0.6, 0xb28dff, 220);
-        await this.narrate(episode.solo ? 'charge_explain_solo' : 'charge_explain');
-        if (f !== this.flow) return;
-      }
-      if (this.allCharged) await this.askRead();
-      else await this.lightRune();
+      await this.startRound(false);
     })();
   }
 
-  /** Her face, then the word, a slot per sound unit (its letters dim until charged); slots charged this visit are lit. */
+  /**
+   * A round starts: its word at the top (`fresh`: the round before it is
+   * done, so its word takes the bar, "Here comes another spell!"), all its
+   * sounds said first (item 140), the game explained on the visit's first,
+   * then its runes one by one. Back mid-round (the parent page), she knows the
+   * game: straight on from the rune she was on, or the read.
+   */
+  private async startRound(fresh: boolean): Promise<void> {
+    const f = ++this.flow;
+    // The visit's first round counts from her arrival, as the round did before item 140.
+    this.roundAt = fresh ? this.time.now : this.startedAt;
+    this.readAt = 0;
+    this.phase = 'sounds';
+    this.readAnswer = null;
+    this.readRecorded = false;
+    this.earlyAnswer = null;
+    this.chargingIndex = -1;
+    if (fresh) {
+      this.slotPulse?.stop();
+      this.slotPulse = null;
+      this.tweens.killTweensOf(this.bar);
+      this.bar.destroy();
+      this.barSlots = [];
+      this.barTexts = [];
+      this.makeBar();
+      popIn(this, this.bar, 1);
+    }
+    if (this.index === 0) {
+      sfxSummon();
+      squash(this, this.altar, this.altar.scaleX, this.altar.scaleY, 0.12);
+      burst(this, ALTAR.x, ALTAR.y - ALTAR.h * 0.8, { count: 50, speed: 360, texture: TEX.star, colors: [0xb28dff, 0xffd23f, 0xffffff] });
+      shockwave(this, ALTAR.x, ALTAR.y - ALTAR.h * 0.6, 0xb28dff, 220);
+      if (fresh) await this.narrate('charge_next');
+      if (f !== this.flow) return;
+      await this.sayAllSounds(f);
+      if (f !== this.flow) return;
+      if (this.wordIndex === 0) {
+        this.phase = 'explain';
+        await this.narrate(episode.solo ? 'charge_explain_solo' : 'charge_explain');
+      }
+      if (f !== this.flow) return;
+    }
+    if (this.allCharged) await this.askRead();
+    else await this.lightRune();
+  }
+
+  /**
+   * Item 140: the word's sounds, all of them in order, straight away: each
+   * slot lights as its sound plays, a beat between them (never blended, never
+   * the word itself), then the slots go dim again for the runes.
+   */
+  private async sayAllSounds(f: number): Promise<void> {
+    this.phase = 'sounds';
+    this.locked = true;
+    this.round = `charge:sounds:${this.cur.word}`;
+    const runes = this.cur.runes;
+    for (let k = 0; k < runes.length; k++) {
+      if (f !== this.flow) return;
+      const r = this.barSlots[k]!;
+      const t = this.barTexts[k]!;
+      r.setStrokeStyle(6, 0xffd23f, 1);
+      t.setAlpha(1);
+      this.tweens.add({ targets: [r, t], scale: 1.2, duration: 180, yoyo: true });
+      await this.say(letterSoundLine(runes[k]!));
+      r.setStrokeStyle(3, 0xffffff, 0.7);
+      t.setAlpha(0.55);
+      if (k < runes.length - 1) await this.wait(SOUND_GAP_MS);
+    }
+    await this.wait(300);
+  }
+
+  /** Her face, then the round's word, a slot per sound unit (its letters dim until charged); slots charged this round are lit. */
   private makeBar(): void {
-    const n = this.plan.units.length;
+    const n = this.cur.units.length;
     const w = n * BAR.slot + (n - 1) * BAR.gap;
     const x0 = -w / 2 + BAR.slot / 2 + 40;
     const parts: Phaser.GameObjects.GameObject[] = [];
@@ -247,7 +327,7 @@ export class ChargeRoom extends HouseSideRoom {
     for (let i = 0; i < n; i++) {
       const x = x0 + i * (BAR.slot + BAR.gap);
       const r = this.add.rectangle(x, 0, BAR.slot, BAR.slot, 0x000000, 0.45).setStrokeStyle(3, 0xffffff, 0.7);
-      const unit = this.plan.units[i]!;
+      const unit = this.cur.units[i]!;
       const t = this.add
         .text(x, 0, unit.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: unit.length > 1 ? '54px' : '72px', color: '#ffffff', stroke: '#1a1030', strokeThickness: 6 })
         .setOrigin(0.5)
@@ -257,7 +337,7 @@ export class ChargeRoom extends HouseSideRoom {
       parts.push(r, t);
     }
     this.bar = this.add.container(BAR.x, BAR.y, parts).setDepth(DEPTH.hud);
-    (episode.charged?.sounds ?? []).slice(0, n).forEach((_, i) => this.fillSlot(i, false));
+    for (let i = 0; i < Math.min(this.index, n); i++) this.fillSlot(i, false);
   }
 
   private slotPos(i: number): { x: number; y: number } {
@@ -289,7 +369,7 @@ export class ChargeRoom extends HouseSideRoom {
       this.slotPulse = null;
       r.setScale(1);
     }
-    const color = RUNE_BY_SOUND[this.plan.runes[i] ?? '']?.move.color ?? 0xffd23f;
+    const color = RUNE_BY_SOUND[this.cur.runes[i] ?? '']?.move.color ?? 0xffd23f;
     r.setFillStyle(color, 1).setStrokeStyle(4, 0xffffff, 1);
     t.setColor(INK).setStroke('#ffffff', 6).setAlpha(1);
     if (fresh) {
@@ -419,7 +499,7 @@ export class ChargeRoom extends HouseSideRoom {
     // Item 093 (M24): his press once the last rune is lit was dropped, though his cue flashed as if
     // it landed; it is kept (his latest press) and acted on as the read is asked.
     // Charging, by the rune that flies (`index` is already the last one's in the beat after the one before it charges).
-    const last = this.plan.runes.length - 1;
+    const last = this.cur.runes.length - 1;
     const lastRune = this.phase === 'charging' ? this.chargingIndex === last : this.index === last && (this.phase === 'prompt' || this.phase === 'sayback');
     if (lastRune) {
       this.noteActivity();
@@ -492,6 +572,8 @@ export class ChargeRoom extends HouseSideRoom {
     this.glow.setAlpha(0);
     this.stone.setVisible(false);
     this.index++;
+    // Where the round is, for F9 and back (item 140: two words may share a sound, so `sounds` cannot say).
+    charged.at = { word: this.cur.word, index: this.index };
     await this.wait(150);
     if (f !== this.flow) return;
     if (!this.allCharged) {
@@ -504,7 +586,7 @@ export class ChargeRoom extends HouseSideRoom {
   /** Every rune charged: the whole word lights at the top and she reads it aloud for Dad. */
   private async askRead(): Promise<void> {
     const f = ++this.flow;
-    this.round = `charge:read:${this.plan.word}`;
+    this.round = `charge:read:${this.cur.word}`;
     this.phase = 'reading';
     this.locked = true;
     this.slotPulse?.stop();
@@ -537,7 +619,7 @@ export class ChargeRoom extends HouseSideRoom {
     await this.narrate('charge_read');
     if (f !== this.flow) return;
     this.phase = 'read';
-    this.readAt = this.time.now - this.startedAt;
+    this.readAt = this.time.now - this.roundAt;
     this.locked = false;
     this.askDad();
   }
@@ -546,11 +628,11 @@ export class ChargeRoom extends HouseSideRoom {
    * The word's payoff: Dad's yes says it; his no sounds it out together
    * once, unit by unit, then says it; solo, they read it together the same
    * way. Either way its picture shows and flies into her bag (a battle item),
-   * and back to the hub. His answer is recorded first; a solo read once it is
+   * then the next round (item 140), or after the last back to the hub. His answer is recorded first; a solo read once it is
    * sounded out (a Dad press until then is his answer).
    */
   private async readWord(answer: ReadAnswer): Promise<void> {
-    const word = this.plan.word;
+    const word = this.cur.word;
     const f = this.flow;
     const right = answer === 'yes' || answer === 'helped';
     // Right first time only with Dad's yes to her own read; helped, right with no miss.
@@ -563,9 +645,9 @@ export class ChargeRoom extends HouseSideRoom {
     setDadAsking(false);
     if (!modelled) {
       // Dad's yes is a first-try read; his no one miss; his yes during the solo read a helped one (M34).
-      this.recordRead(word, firstTry, right ? 0 : 1);
+      this.recordRead(word, firstTry, right ? 0 : 1, { last: this.lastRound });
       // Its sounds with it: a word read right is its sounds said right (the draws lean to shaky sounds).
-      for (const s of new Set(this.plan.runes)) progress.record('sounds', s, firstTry, right ? 0 : 1);
+      for (const s of new Set(this.cur.runes)) progress.record('sounds', s, firstTry, right ? 0 : 1);
       this.readRecorded = true;
     }
     this.tweens.killTweensOf(this.bar);
@@ -574,13 +656,13 @@ export class ChargeRoom extends HouseSideRoom {
     if (!right) {
       // Sounded out together once, each unit lit as it is said; never blended.
       await this.narrate(modelled ? 'charge_read_together' : 'charge_together');
-      for (let k = 0; k < this.plan.runes.length; k++) {
+      for (let k = 0; k < this.cur.runes.length; k++) {
         if (f !== this.flow) return;
         const t = this.barTexts[k];
         this.tweens.add({ targets: [t, this.barSlots[k]], scale: 1.3, duration: 160, yoyo: true });
-        await this.say(letterSoundLine(this.plan.runes[k]!));
+        await this.say(letterSoundLine(this.cur.runes[k]!));
         // A beat between sounds, as every other sound-out has (item 069: back to back they ran toward a blend).
-        if (k < this.plan.runes.length - 1) await this.wait(SOUND_GAP_MS);
+        if (k < this.cur.runes.length - 1) await this.wait(SOUND_GAP_MS);
       }
       await this.wait(200);
     } else {
@@ -590,8 +672,8 @@ export class ChargeRoom extends HouseSideRoom {
     if (f !== this.flow) return;
     if (modelled) {
       // Read with the helper: modelled, never her read (item 106); its sounds too, unless a solo rune already counted them.
-      this.recordModelled(word);
-      for (const s of new Set(this.plan.runes)) {
+      this.recordModelled(word, { last: this.lastRound });
+      for (const s of new Set(this.cur.runes)) {
         if (this.modelledSounds.has(s)) continue;
         this.modelledSounds.add(s);
         progress.model('sounds', s);
@@ -612,6 +694,13 @@ export class ChargeRoom extends HouseSideRoom {
     await Promise.all([this.guard(this.bag.receive(this.wordArt(word), pic.x, pic.y)), right ? this.say(narratorLine(narrator(), variant('right'))) : Promise.resolve(true)]);
     pic.destroy();
     if (f !== this.flow) return;
+    if (!this.lastRound) {
+      // The next word (item 140): its own round, all its sounds first.
+      this.wordIndex++;
+      this.index = 0;
+      await this.startRound(true);
+      return;
+    }
     this.phase = 'done';
     sfxSelect();
     await this.say(narratorLine(narrator(), variant('charge_done')));
@@ -685,8 +774,10 @@ export class ChargeRoom extends HouseSideRoom {
   protected override extraHooks(): Partial<RoomInfo> {
     return {
       charge: {
-        word: this.plan.word,
-        runes: [...this.plan.runes],
+        words: this.plan.rounds.map((r) => r.word),
+        round: this.wordIndex,
+        word: this.cur.word,
+        runes: [...this.cur.runes],
         index: this.index,
         sound: this.rune,
         phase: this.phase,

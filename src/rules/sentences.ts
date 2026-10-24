@@ -33,7 +33,7 @@ import { FETCH_ITEMS, FRAME_BY_ID, NO_ARTICLE, NOT_FETCHED, NUMBER_WORDS, lookal
 import { ACTIONS } from '../../content/phonics/bank';
 import { MINIGAMES, drawGames, type Minigame, type MinigameKind } from './minigames';
 import { machineWords, planMachine, type MachinePlan } from './wordMachine';
-import { gestureWords, planCharge, type ChargePlan } from './charge';
+import { chargeRunes, chargeWords, gestureWords, planCharge, type ChargePlan } from './charge';
 import { bridgeShown, bridgeWords, planBridge, type BridgePlan } from './bridge';
 import { planShifter, shifterShown, shifterWords, type ShifterPlan } from './shifter';
 import { planRhyme, rhymeSays, rhymeShown, rhymeWords, type RhymePlan } from './rhyme';
@@ -72,9 +72,9 @@ export interface MachineRoomPlan extends PlanBase {
 }
 
 /**
- * Charge the Spell's room (item 053): the visit's word and its runes (item
- * 058). `key` and `fetches` are the word, a battle item; the runes go to the
- * battle as `episode.charged`.
+ * Charge the Spell's room (item 053): the visit's words and their runes, a
+ * round each (item 140). `fetches` are the words, each a battle item, `key`
+ * the last; the runes go to the battle as `episode.charged`.
  */
 export interface ChargeRoomPlan extends PlanBase {
   kind: 'charge';
@@ -294,7 +294,7 @@ const RHYME_PLANNER: OwnWordsPlanner<RhymePlan> = {
   room: (base, p) => ({ ...base, kind: 'rhyme', rhyme: p, fetches: rhymeWords(p) }),
 };
 
-// Charge the Spell (item 058) spells one word, a battle item. Its runes'
+// Charge the Spell (item 058) spells its words (two since item 140), each a battle item. Its runes'
 // gestures speak (item 074: "Tap the egg"), so it is no word whose gestures
 // say a word she reads after it, and the keys keep clear of what they say.
 const CHARGE: OwnWordsPlanner<ChargePlan> = {
@@ -302,9 +302,9 @@ const CHARGE: OwnWordsPlanner<ChargePlan> = {
     const later = [ctx.gift, ...ctx.moves, ...ctx.taken, ...ctx.pictured, ...ctx.named];
     return planCharge(ctx.store, { avoid: [...ctx.avoid, ...ctx.moves, ...ctx.taken, ...ctx.pictured, ...ctx.named], later }, ctx.rand);
   },
-  reads: (c) => [c.word],
-  says: (c) => gestureWords(c.runes),
-  room: (base, c) => ({ ...base, kind: 'charge', charge: c, fetches: [c.word] }),
+  reads: chargeWords,
+  says: (c) => gestureWords(chargeRunes(c)),
+  room: (base, c) => ({ ...base, kind: 'charge', charge: c, fetches: chargeWords(c) }),
 };
 
 // The sentence game shows its frame's words in every room; its key word is drawn from the bag.

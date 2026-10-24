@@ -282,8 +282,8 @@ export class HubScene extends RoomScene {
     const pic = this.art(plan.kind === 'charge' ? 'prop_rune_stone' : `pic_${plan.key}`, 62, 62, 0, 0, { w: 76, h: 76 });
     pic.y = -DOOR_H * 0.55 + pic.displayHeight / 2;
     spot.obj.add([ring, pic]);
-    // On the stone, the word's first rune as its picture letter (item 103).
-    const first = plan.kind === 'charge' ? plan.charge.runes[0] : undefined;
+    // On the stone, the first word's first rune as its picture letter (item 103).
+    const first = plan.kind === 'charge' ? plan.charge.rounds[0]?.runes[0] : undefined;
     if (first) {
       const letter = this.art(runeArt(first), 54, 54, 0, -DOOR_H * 0.55 + 27);
       spot.obj.add(letter);

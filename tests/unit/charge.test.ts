@@ -16,7 +16,7 @@ import { ABILITY_KINDS } from '../../content/battle/types';
 import { letterSoundLine } from '../../content/voice/ids';
 import { NARRATOR_LINES } from '../../content/voice/script';
 import { CHARGE } from '../../src/config';
-import { CHARGE_WORDS, GESTURE_WORDS, RUNE_SOUNDS, planCharge } from '../../src/rules/charge';
+import { CHARGE_WORDS, GESTURE_WORDS, RUNE_SOUNDS, chargeRunes, chargeWords, drawChargeWord, gestureWords, planCharge } from '../../src/rules/charge';
 import { CHARGE_GAME, MINIGAMES, MINIGAME_BY_ID, drawGames } from '../../src/rules/minigames';
 import { withStems } from '../../src/rules/bank';
 import { episodePlans } from '../../src/rules/sentences';
@@ -120,7 +120,7 @@ test('draw (item 067): a fresh store spells any charge word, quick sounds and di
   const rand = seeded(3);
   let quick = 0;
   for (let seed = 1; seed <= 60; seed++) {
-    const { word, units, runes } = planCharge(new ProgressStore(memory()), { avoid: [] }, rand);
+    const { word, units, runes } = drawChargeWord(new ProgressStore(memory()), { avoid: [] }, rand);
     assert.ok(CHARGE_WORDS.includes(word), word);
     assert.deepEqual(units, BANK_BY_WORD[word]!.units);
     assert.deepEqual(runes, BANK_BY_WORD[word]!.sounds);
@@ -133,8 +133,7 @@ test('draw: avoided words never come up', () => {
   const store = new ProgressStore(memory());
   const rand = seeded(9);
   for (let k = 0; k < 60; k++) {
-    const { word } = planCharge(store, { avoid: ['cat', 'dog'] }, rand);
-    assert.ok(word !== 'cat' && word !== 'dog');
+    for (const word of chargeWords(planCharge(store, { avoid: ['cat', 'dog'] }, rand))) assert.ok(word !== 'cat' && word !== 'dog');
   }
 });
 
@@ -148,11 +147,28 @@ test('draw: a word with a shaky sound comes up more than one with only solid sou
   const rand = seeded(5);
   // 1200 draws (hunt 9: storing DRUM and LAMP left seven M words, and 400 draws came out level at seed 5).
   for (let k = 0; k < 1200; k++) {
-    const { runes } = planCharge(store, { avoid: [] }, rand);
+    const { runes } = drawChargeWord(store, { avoid: [] }, rand);
     if (runes.includes('m')) m++;
     if (runes.includes('s')) s++;
   }
   assert.ok(m / per('m') > s / per('s'), `M (missed) ${m} draws over ${per('m')} words, S (solid) ${s} over ${per('s')}`);
+});
+
+test('draw (item 140): a visit spells two different words, sharing no sound where the bank allows, the second never said by the first\'s gestures', () => {
+  const rand = seeded(11);
+  for (let k = 0; k < 120; k++) {
+    const store = new ProgressStore(memory());
+    const avoid = k % 2 ? ['cat', 'dog'] : [];
+    const p = planCharge(store, { avoid }, rand);
+    assert.equal(p.rounds.length, CHARGE.words);
+    const [a, b] = p.rounds as [(typeof p.rounds)[0], (typeof p.rounds)[0]];
+    assert.notEqual(a.word, b.word);
+    // The bank has plenty of charge words with no sound of the first: the second always is one.
+    assert.ok(!b.runes.some((s) => a.runes.includes(s)), `${a.word} and ${b.word} share a sound`);
+    assert.ok(!gestureWords(a.runes).includes(b.word), `${a.word}'s gestures say ${b.word}`);
+    for (const w of chargeWords(p)) assert.ok(!avoid.includes(w));
+    assert.deepEqual(chargeRunes(p), [...new Set([...a.runes, ...b.runes])]);
+  }
 });
 
 test('pool: Charge the Spell is a fetch room only; its plan spells a word', () => {
@@ -165,11 +181,13 @@ test('pool: Charge the Spell is a fetch room only; its plan spells a word', () =
   const a = plans[0];
   assert.equal(a.kind, 'charge');
   assert.equal(a.scene, 'ChargeRoom');
-  // Item 058: it spells a word, a battle item, kept off the other rooms.
-  assert.ok(a.kind === 'charge' && CHARGE_WORDS.includes(a.key));
-  assert.deepEqual(a.fetches, [a.key]);
-  if (a.kind === 'charge') assert.equal(a.charge.word, a.key);
+  // Item 058: it spells words (item 140: two, a round each), each a battle item, kept off the other rooms; the last is its key.
+  if (a.kind !== 'charge') throw new Error('door a is Charge');
+  assert.equal(a.charge.rounds.length, CHARGE.words);
+  assert.deepEqual(a.fetches, chargeWords(a.charge));
+  assert.equal(a.fetches.at(-1), a.key);
+  for (const w of a.fetches) assert.ok(CHARGE_WORDS.includes(w), w);
   assert.ok(plans[1].key && plans[2].key, 'door b and the attic still read their words');
-  assert.ok(!plans[1].fetches.includes(a.key) && plans[2].key !== a.key);
+  for (const w of a.fetches) assert.ok(!plans[1].fetches.includes(w) && plans[2].key !== w, w);
   assert.throws(() => episodePlans(store, { fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic', games: [b, b, CHARGE_GAME] }, seeded(4)));
 });

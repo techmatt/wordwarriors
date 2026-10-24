@@ -48,12 +48,16 @@ export interface RoomInfo {
     misses: number;
   };
   /**
-   * Charge the Spell (item 053): the visit's runes, the one lit (`index`,
-   * `sound`), the phase, whether Dad is being asked now, its
-   * timeouts so far, and what is charged.
+   * Charge the Spell (item 053): the visit's words (item 140), the round on
+   * now (`round`, its `word` and `runes`), the rune lit (`index`, `sound`),
+   * the phase, whether Dad is being asked now, its timeouts so far, and what
+   * is charged.
    */
   charge?: {
-    /** The word the runes spell (item 058), and how its read went (Dad's yes or no, `modelled` when it went solo, item 106, or `helped`, his yes during that, M34; null before). */
+    /** Every word the visit spells, a round each (item 140), and the round on now. */
+    words: string[];
+    round: number;
+    /** The word this round's runes spell (item 058), and how its read went (Dad's yes or no, `modelled` when it went solo, item 106, or `helped`, his yes during that, M34; null before). */
     word: string;
     read: 'yes' | 'no' | 'modelled' | 'helped' | null;
     /** Solo mode (item 106): the helper says each sound with her and they read the word together. */
@@ -61,11 +65,11 @@ export interface RoomInfo {
     runes: string[];
     index: number;
     sound: string;
-    phase: 'explain' | 'prompt' | 'sayback' | 'charging' | 'read' | 'reading' | 'done';
+    phase: 'sounds' | 'explain' | 'prompt' | 'sayback' | 'charging' | 'read' | 'reading' | 'done';
     asking: boolean;
     timeouts: number;
     charged: string[];
-    /** Game time (scene clock) since the visit began, and when the read was first asked (0 before): the round's length (item 059). */
+    /** Game time (scene clock) since the visit began, and since this round began when its read was first asked (0 before): the round's length (items 059, 140). */
     elapsedMs: number;
     readAtMs: number;
   };

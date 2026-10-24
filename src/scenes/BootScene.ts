@@ -43,6 +43,7 @@ import { enterRoom, episode, episodeGroups, giftWord, grabPlan, isStepKind, jump
 import { DADS, isDad, type CastOverrides } from '../rules/cast';
 import { setDifficulty } from '../rules/difficulty';
 import { NEW_WORDS, favourWords } from '../rules/bank';
+import { chargeRunes } from '../rules/charge';
 import { artBank } from '../art/ArtBank';
 import { artFor } from '../art/needs';
 import { startScene } from '../art/gate';
@@ -158,7 +159,7 @@ export class BootScene extends Phaser.Scene {
       // Charge the Spell's runes (item 053): the ones asked for, or all of the plan's charge room's.
       const room = (['a', 'b'] as Slot[]).map((s) => planFor(s)).find((p) => p.kind === 'charge');
       if (charged) episode.charged = { sounds: charged.split(','), part };
-      else if (room?.kind === 'charge') episode.charged = { sounds: [...room.charge.runes], part: 1 };
+      else if (room?.kind === 'charge') episode.charged = { sounds: chargeRunes(room.charge), part: 1 };
     };
 
     if (target === 'parent') {
@@ -179,7 +180,7 @@ export class BootScene extends Phaser.Scene {
         episode.house.done = ['a'];
         episode.fetched = fetched ? fetched.split(',') : planFor('a').fetches.filter((w) => !NO_BAG_COPY.has(w));
         const a = planFor('a');
-        if (a.kind === 'charge') episode.charged = { sounds: [...a.charge.runes], part: 1 };
+        if (a.kind === 'charge') episode.charged = { sounds: chargeRunes(a.charge), part: 1 };
       }
       // The house step of the right part, then straight through its door.
       episode.stepIndex = steps().findIndex((s) => s.kind === 'house' && s.part === part);

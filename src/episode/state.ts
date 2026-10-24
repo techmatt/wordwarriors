@@ -59,7 +59,8 @@ export interface EpisodeState {
    * `read` and `fetched`; the word itself is read and fetched (item 058).
    */
   /** `modelled`: the solo runes already recorded as said with the helper (hunt 10: F9 and back counted them twice). */
-  charged: { sounds: string[]; part: 1 | 2; modelled?: string[] } | null;
+  /** `at`: the round charging now and how many of its runes are charged (item 140: two words may share a sound), for F9 and back. */
+  charged: { sounds: string[]; part: 1 | 2; modelled?: string[]; at?: { word: string; index: number } } | null;
   /**
    * Dad isn't here (item 106): a game that asks Dad got nothing from him for
    * DAD_AWAY_MS, so the helper joins in where he would judge, for the rest of

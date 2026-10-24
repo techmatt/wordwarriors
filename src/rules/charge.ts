@@ -1,18 +1,20 @@
 /**
- * Charge the Spell (item 053; one word a visit since item 058): which word a
- * visit spells and its runes. Pure: no Phaser,
- * unit-tested (tests/unit/charge.test.ts).
+ * Charge the Spell (item 053; CHARGE.words words a visit since item 140, one
+ * in items 058-139): which words a visit spells and their runes. Pure: no
+ * Phaser, unit-tested (tests/unit/charge.test.ts).
  *
- * A visit is one word of CHARGE.units sound units, shown at the top; its
+ * A visit is CHARGE.words rounds, each one word of CHARGE.units sound units,
+ * shown at the top; the helper says all its sounds first (item 140), then its
  * runes charge in order, the helper saying each letter sound and she saying
  * it back (no presses, item 059), then she reads the whole word aloud for
- * Dad. The
+ * Dad. Each
  * word is drawn through the bank's path (`drawWords`: shakiness × coverage,
  * last episode's words leaning back) from the familiar pictured words whose
  * every unit is a rune (`CHARGE_WORDS`: CHARGE.units long, no Q, X, CK, long
  * vowel, doubled letter or repeated sound), leaning to shaky sounds. Every
- * sound is in play from the start (item 067: no sound tiers). The word is a
- * battle item like any room's fetched word.
+ * sound is in play from the start (item 067: no sound tiers). A later word
+ * shares no sound with the ones before it where the bank allows. Each word is
+ * a battle item like any room's fetched word.
  *
  * The room says every sound for her and judges only the word (item 059), so
  * it has no help ramp: item 053's per-sound levels went in item 078.
@@ -26,11 +28,26 @@ import type { ProgressStore } from '../state/ProgressStore';
 import { drawWords, withStems } from './bank';
 import type { Rand } from './random';
 
-/** A visit's plan: the word it spells, its units (as shown), and their runes (sounds) in order. */
-export interface ChargePlan {
+/** A round: the word it spells, its units (as shown), and their runes (sounds) in order. */
+export interface ChargeWord {
   word: string;
   units: string[];
   runes: string[];
+}
+
+/** A visit's plan: its rounds, a word each (item 140: CHARGE.words of them). */
+export interface ChargePlan {
+  rounds: ChargeWord[];
+}
+
+/** The words a visit reads, in order. */
+export function chargeWords(p: ChargePlan): string[] {
+  return p.rounds.map((r) => r.word);
+}
+
+/** Every rune a visit charges, in order, each once (a sound two words share charges once: `episode.charged`). */
+export function chargeRunes(p: ChargePlan): string[] {
+  return [...new Set(p.rounds.flatMap((r) => r.runes))];
 }
 
 /** Every sound a rune can carry. */
@@ -100,18 +117,24 @@ export interface ChargeInput {
 }
 
 /**
- * A visit's word: drawn by the bank's weight × how shaky its sounds are (½
+ * One round's word: drawn by the bank's weight × how shaky its sounds are (½
  * to 1½), never a word in `avoid`, nor one whose runes' gestures say itself
  * or a word in `later` (the /e/ rune's "Tap the egg" would read EGG for her);
  * with every word avoided, the avoid list gives way, then the gestures' rule
- * (a visit always has a word).
+ * (a visit always has a word). `apart`: sounds the rounds before it had, which
+ * it shares as few of as the pool allows (item 140: none, where the bank can).
  */
-export function planCharge(store: ProgressStore, input: ChargeInput = { avoid: [] }, rand: Rand = Math.random): ChargePlan {
+export function drawChargeWord(store: ProgressStore, input: ChargeInput = { avoid: [] }, rand: Rand = Math.random, apart: string[] = []): ChargeWord {
   const avoid = new Set(input.avoid);
   const later = new Set(input.later ?? []);
   const quiet = CHARGE_WORDS.filter((w) => !gestureWords(BANK_BY_WORD[w]!.sounds).some((g) => g === w || later.has(g)));
   let pool = quiet.filter((w) => !avoid.has(w));
   if (!pool.length) pool = quiet.length ? quiet : [...CHARGE_WORDS];
+  if (apart.length) {
+    const shared = (w: string) => BANK_BY_WORD[w]!.sounds.filter((s) => apart.includes(s)).length;
+    const least = Math.min(...pool.map(shared));
+    pool = pool.filter((w) => shared(w) === least);
+  }
   const shaky = (w: string) => {
     const s = BANK_BY_WORD[w]!.sounds;
     return 0.5 + s.reduce((n, x) => n + store.shakiness('sounds', x), 0) / s.length;
@@ -119,6 +142,21 @@ export function planCharge(store: ProgressStore, input: ChargeInput = { avoid: [
   const word = drawWords(store, pool, 1, rand, shaky)[0]!;
   const b = BANK_BY_WORD[word]!;
   return { word, units: [...b.units], runes: [...b.sounds] };
+}
+
+/**
+ * A visit's words (item 140: CHARGE.words rounds), each drawn as
+ * `drawChargeWord` draws one. A later round is never an earlier one, nor a
+ * word an earlier round's gestures said (it is read after them), and shares
+ * as few of their sounds as the bank allows.
+ */
+export function planCharge(store: ProgressStore, input: ChargeInput = { avoid: [] }, rand: Rand = Math.random): ChargePlan {
+  const rounds: ChargeWord[] = [];
+  for (let i = 0; i < CHARGE.words; i++) {
+    const before = rounds.flatMap((r) => [r.word, ...gestureWords(r.runes)]);
+    rounds.push(drawChargeWord(store, { avoid: [...input.avoid, ...before], later: input.later }, rand, rounds.flatMap((r) => r.runes)));
+  }
+  return { rounds };
 }
 
 /** How shaky her letter sounds are, on average over every rune: the room's lean in the minigame pool. */

@@ -312,11 +312,14 @@ changes an answer, a battle or what a scene does. Dad lock silences it. At most
 in a row open Windows' Sticky Keys dialog (amendment 1579); the game binds nothing to
 Shift. `src/fx/freePlay.ts` (`docs/systems.md`, *Free play*).
 
-**Charge the Spell** (item 053, `src/scenes/ChargeRoom.ts`; one short word a visit since
-item 058; no presses per rune since item 059): a side room where she says letter SOUNDS
-aloud after the helper, then reads the word they spell. The visit's word (3-4 sound units,
-every one a rune, so no Q, X or CK) shows at the top from the start, a slot per unit. She
-walks in and it starts by itself ("Say each sound after me!"): each rune lights on the
+**Charge the Spell** (item 053, `src/scenes/ChargeRoom.ts`; two short words a visit since
+item 140, one in items 058-139; no presses per rune since item 059): a side room where she
+says letter SOUNDS aloud after the helper, then reads the word they spell. Each word is its
+own round. The round's word (3-4 sound units, every one a rune, so no Q, X or CK) shows at
+the top from its start, a slot per unit. She walks in and it starts by itself: first the
+helper says all the word's sounds straight away, in order, each slot lighting as its sound
+plays, a beat (400 ms) between them, never blended and never the word (item 140); then, on
+the first word only, "Say each sound after me!". Each rune lights on the
 altar in turn (its picture letter, `rune_<x>`: the letter drawn as a thing starting with
 its sound; its slot pulses), the helper shows the sound's
 gesture (Jolly Phonics style: a hissing snake 🐍 for S, a tummy rub for M;
@@ -324,18 +327,27 @@ gesture (Jolly Phonics style: a hissing snake 🐍 for S, a tummy rub for M;
 1.2 s; the dad lock holds it) for her to say it back, and the rune fires up into its slot.
 Nothing is pressed per rune: Matt watched the per-rune presses frustrate her (item 059).
 With every rune charged the word lights up and she reads it aloud ("Now read the whole
-spell!"), the room's one press, Dad's: **2** says it; **1** is "Let's sound it out
+spell!"), the round's one press, Dad's: **2** says it; **1** is "Let's sound it out
 together!", the word sounded out once and then said; either way its picture shows and goes
 into her bag as a battle item. Dad may press as soon as the word lights. The read records
-the word and its sounds (right with his 2). A round with Dad answering at once is 20-25 s of
-game time: about 3.2 s a rune, 17 s to the read for three runes, 21 s for four, then about
-5 s for the word, its picture and the bag (measured on the scene clock, item 059;
-`room.charge.readAtMs` and `elapsedMs` in the hooks; `tests/charge.spec.ts` holds it
-under 22 s to the read, 32 s in all with his 1). The word is drawn like any room's (`drawWords`, from the familiar pictured words),
+the word and its sounds (right with his 2). Then "Here comes another spell!" (`charge_next`)
+and the second word takes the bar, its own round the same way; after the last word, "Our
+spell is all charged up!" and back to the hub. A visit with Dad answering at once is
+about 50-60 s of game time (measured on the scene clock, item 140, two 3-rune words): about
+22 s to the first read (her arrival, the sounds up front, the explanation, 3.2 s a rune),
+17 s to the second ("Here comes another spell!", its sounds, its runes), then about 5 s a
+word for the word, its picture and the bag; a 4-rune word adds about 4.5 s to its round.
+One word a visit (items 058-139) was 20-25 s. `room.charge.readAtMs` (from the round's
+start) and `elapsedMs` (the visit's) are in the hooks; `tests/charge.spec.ts` holds each
+round under 29 s to its read and the visit under 66 s with his 1 on the first word.
+The words are drawn like any room's (`drawWords`, from the familiar pictured words),
 leaning to shaky sounds, every sound in play from the start (item 067: the old sound
-tiers are gone), 3-4 sound units (`CHARGE.units`; `src/rules/charge.ts`, `CHARGE` in
-`src/config.ts`). Each charged rune is still a move her hero fires in the next battle, at 1.3× power
-(`episode.charged`, BattleScene `useCharged`). For the beta, `FORCE_PHONICS_ROOM` (on)
+tiers are gone), 3-4 sound units (`CHARGE.units`), `CHARGE.words` of them (`src/rules/charge.ts`,
+`CHARGE` in `src/config.ts`): the second never the first, nor a word the first's gestures
+say, and sharing none of its sounds where the bank allows (it always does today). Every
+charged rune, both words', each sound once, is still a move her hero fires in the next
+battle, at 1.3× power (`episode.charged`, BattleScene `useCharged`): six to eight runes now,
+where one word gave three or four. For the beta, `FORCE_PHONICS_ROOM` (on)
 puts it or the Stretchy Bridge behind door a of every episode.
 
 **Solo mode: Dad isn't here** (item 106). Dad is often beside her, not always. If a game

@@ -9,21 +9,23 @@
  * whole random episodes item 025 asks for (the third is tests/drawn.spec.ts's).
  * Item 081: they are also Charge the Spell's whole episodes (`room=charge` pins
  * the beta's phonics room behind door a; door b stays the harness's sentence
- * room), checked in each: the runes spell its word, fetched, fired in part 1.
+ * room), checked in each: the runes spell its words (two since item 140),
+ * fetched, fired in part 1.
  */
 
 import { test, expect } from '@playwright/test';
 
 import { SLOW, boot, collectErrors, expectNoErrors, playAgain, playEpisode, press, state, until, type WWState } from './harness';
 
-/** Charge the Spell behind door a, its word a battle item, its runes fired in battle 1. */
+/** Charge the Spell behind door a, its words battle items, their runes fired in battle 1. */
 function expectCharged(end: WWState): void {
   const plan = end.episode.house.plan ?? [];
   const a = plan.find((p) => p.slot === 'a')!;
   expect(a.kind).toBe('charge');
-  // Every unit of a charge word is its own rune, so the runes spell it.
-  expect(end.episode.charged?.sounds.join('')).toBe(a.key);
-  expect(end.episode.fetched).toContain(a.key);
+  expect(a.fetches).toHaveLength(2);
+  // Every unit of a charge word is its own rune and the two share none here (item 140), so the runes spell them.
+  expect(end.episode.charged?.sounds.join('')).toBe(a.fetches.join(''));
+  for (const w of a.fetches) expect(end.episode.fetched).toContain(w);
   expect(end.episode.charged?.part).toBe(1);
 }
 
@@ -35,7 +37,8 @@ test('two episodes back to back', SLOW, async ({ page }) => {
   await page.waitForTimeout(500);
   await press(page, 'green');
   const first = await playEpisode(page);
-  expect(first.end.episode.fetched.length).toBe(3);
+  // Charge's two words, door b's and the attic's.
+  expect(first.end.episode.fetched.length).toBe(4);
   expect(first.end.battle?.villains[0]?.hp).toBe(0);
   expectCharged(first.end);
   await page.screenshot({ path: `tests/screenshots/025_seed1_victory_${first.end.episode.villain}.png` });
@@ -51,7 +54,7 @@ test('two episodes back to back', SLOW, async ({ page }) => {
   await page.waitForTimeout(800);
   await press(page, 'green');
   const second = await playEpisode(page);
-  expect(second.end.episode.fetched.length).toBe(3);
+  expect(second.end.episode.fetched.length).toBe(4);
   expect(second.end.battle?.villains[0]?.hp).toBe(0);
   expectCharged(second.end);
   await page.screenshot({ path: `tests/screenshots/025_seed1_second_victory_${second.end.episode.villain}.png` });

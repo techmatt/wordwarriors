@@ -13,7 +13,7 @@ import { BANK, BANK_BY_WORD } from '../../content/phonics/bank';
 import { FRAMES, NO_ARTICLE, NO_BAG_COPY, NOT_FETCHED, NUMBER_WORDS } from '../../content/phonics/sentences';
 import { BAG_WORDS, distractorsFor, drawKey, withStems } from '../../src/rules/bank';
 import { RUNE_BY_SOUND } from '../../content/phonics/runes';
-import { CHARGE_WORDS, GESTURE_WORDS, gestureWords, planCharge } from '../../src/rules/charge';
+import { CHARGE_WORDS, GESTURE_WORDS, chargeRunes, drawChargeWord, gestureWords } from '../../src/rules/charge';
 import { MINIGAME_BY_ID, SENTENCE_GAMES } from '../../src/rules/minigames';
 import { drawGift, drawMove } from '../../src/rules/moves';
 import { distractors, episodePlans, saidEarly, type EpisodeInput } from '../../src/rules/sentences';
@@ -191,11 +191,11 @@ test("the runes' gestures (items 071, 074): what they say counts as said only on
   // Spread seeds: this LCG's first draw barely moves over seeds 1 to 200.
   const seen = new Set<string>();
   for (let seed = 1; seed <= 200; seed++) {
-    const free = planCharge(store, { avoid: [] }, seeded(spread(seed)));
+    const free = drawChargeWord(store, { avoid: [] }, seeded(spread(seed)));
     assert.ok(!gestureWords(free.runes).includes(free.word), `${free.word}'s own gesture says it`);
     seen.add(free.runes.includes('e') ? 'e' : '-');
     // TAP read later (a pad, a key): no /e/ word, whose gesture would say TAP first.
-    const c = planCharge(store, { avoid: [], later: ['tap'] }, seeded(spread(seed)));
+    const c = drawChargeWord(store, { avoid: [], later: ['tap'] }, seeded(spread(seed)));
     assert.ok(!gestureWords(c.runes).includes('tap'), `${c.word} says TAP before it is read`);
   }
   assert.ok(seen.has('e'), 'with nothing read later, an /e/ word is still drawn');
@@ -222,7 +222,7 @@ test('the runes\' gestures (item 074): TAP and EGG are words like any other, but
     const plans = episodePlans(store, input([MINIGAME_BY_ID.charge!, sentence, counter]), seeded(spread(seed)));
     const charge = plans[0];
     if (charge.kind !== 'charge') throw new Error('door a is Charge');
-    const said = gestureWords(charge.charge.runes);
+    const said = gestureWords(chargeRunes(charge.charge));
     if (said.length) eWords++;
     for (const p of plans.slice(1)) for (const w of [p.key, ...p.fetches]) assert.ok(!said.includes(w), `${w} after ${charge.key}'s gestures`);
   }

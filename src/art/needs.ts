@@ -26,6 +26,7 @@ import { BEDROOMS, hubArt } from '../../content/house/house';
 import { debugMode } from '../episode/debug';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import { runeArt } from '../../content/phonics/runes';
+import { chargeRunes } from '../rules/charge';
 import type { RoomPlan } from '../rules/sentences';
 import {
   castArt,
@@ -95,7 +96,7 @@ function artIn(value: unknown, depth = 0, out: string[] = []): string[] {
  * plan's (or a `?charged=` jump straight to the battle, `chargedRunes`).
  */
 function planRunes(plan: readonly RoomPlan[]): string[] {
-  return plan.flatMap((p) => (p.kind === 'charge' ? p.charge.runes : [])).map(runeArt);
+  return plan.flatMap((p) => (p.kind === 'charge' ? chargeRunes(p.charge) : [])).map(runeArt);
 }
 
 /** The runes charged for the battle, which fire there. */

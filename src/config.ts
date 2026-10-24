@@ -201,8 +201,10 @@ export const WORD_MACHINE = { rounds: 4, perFamily: 3, tiles: 3, weight: 2, maxU
 export const DAD_AWAY_MS = 8000;
 
 /**
- * Charge the Spell (item 053, src/scenes/ChargeRoom.ts): a visit spells one
- * word of `units` (fewest, most) sound units (item 058). The helper says each
+ * Charge the Spell (item 053, src/scenes/ChargeRoom.ts): a visit spells
+ * `words` words (item 140; one in items 058-139), each a round of `units`
+ * (fewest, most) sound units. Each round opens with the helper saying all its
+ * sounds, a slot lit per sound (item 140); then the helper says each
  * rune's letter sound and she says it back in `sayBackMs` of quiet, with no
  * presses (item 059); then she reads the whole word aloud and Dad presses 2
  * (right) or 1 (they sound it out together); nothing from him for
@@ -215,6 +217,7 @@ export const DAD_AWAY_MS = 8000;
  * weight in the rooms' pool (a frame is 1).
  */
 export const CHARGE = {
+  words: 2,
   units: [3, 4] as [number, number],
   sayBackMs: 1200,
   soloBeatMs: 600,

@@ -9,7 +9,9 @@
  * beat waits, the keys stay live) and the read's timeout, which goes solo
  * (item 106: read with the helper, modelled). Untagged too: solo from the
  * start, Dad's 2 mid-room switching back. Its whole drawn
- * episodes are the soak's (tests/soak.spec.ts, item 081). Screenshots land in tests/screenshots/ (ignored) for a look.
+ * episodes are the soak's (tests/soak.spec.ts, item 081). Item 140: two
+ * words a visit, each a round opening with all its sounds; every test plays
+ * both. Screenshots land in tests/screenshots/ (ignored) for a look.
  */
 
 import { test, expect, type Page } from '@playwright/test';
@@ -20,6 +22,26 @@ import { CHARGE_WORDS } from '../src/rules/charge';
 import type { WWHooks } from '../src/testHooks';
 import { letterSoundLine, wordLine } from '../content/voice/ids';
 import { RUNE_BY_SOUND } from '../content/phonics/runes';
+import { BANK_BY_WORD } from '../content/phonics/bank';
+
+/**
+ * The timed visit's limits (game time, one worker): a round to its read, and the whole two-word
+ * visit. Measured in item 140 for two 3-rune words: 21.5-23 s to the first read (her arrival, the
+ * sounds up front, the explanation, the runes), 17 s to the second (another spell, its sounds, the
+ * runes), 51-55 s in all with Dad's 1 on the first; a 4-rune word adds about 4.5 s a round.
+ */
+const LIMIT_READ = 29_000;
+const LIMIT_VISIT = 66_000;
+
+/** A word's runes (its sounds: every unit of a charge word is one). */
+const runesOf = (w: string): string[] => [...BANK_BY_WORD[w]!.sounds];
+
+/** Item 140: the round opens with all its sounds, in order, the first thing after `from` (the visit's start, or `charge_next`) that is a letter sound. */
+function opensWithSounds(h: string[], from: number, runes: string[]): void {
+  const at = h.findIndex((id, k) => k > from && id.startsWith('letter_'));
+  expect(at, 'a sound opens the round').toBeGreaterThan(from);
+  expect(h.slice(at, at + runes.length)).toEqual(runes.map((r) => letterSoundLine(r)));
+}
 
 const shot = (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/053_${name}.png` });
 
@@ -29,17 +51,22 @@ test('Charge the Spell: the runes charge by themselves, each sound said; one pre
   await boot(page, '?scene=room&slot=a&room=charge');
   const s0 = await until(page, (st) => st.scene === 'ChargeRoom' && Boolean(st.room?.charge), 60_000, 'charge room');
   const c0 = s0.room!.charge!;
-  // Item 058: one word of 3-4 sound units, its runes its sounds in order.
+  // Item 140: two words, a round each; item 058: each of 3-4 sound units, its runes its sounds in order.
+  expect(c0.words).toHaveLength(2);
+  expect(c0.round).toBe(0);
+  expect(c0.word).toBe(c0.words[0]);
   expect(c0.runes.length).toBeGreaterThanOrEqual(3);
   expect(c0.runes.length).toBeLessThanOrEqual(4);
   // A fresh store: any charge word (item 067: every sound in play, no tiers).
-  expect(CHARGE_WORDS).toContain(c0.word);
+  for (const w of c0.words) expect(CHARGE_WORDS).toContain(w);
   expect(s0.episode.house.plan!.find((p) => p.slot === 'a')!.kind).toBe('charge');
-  expect(s0.episode.house.plan!.find((p) => p.slot === 'a')!.fetches).toEqual([c0.word]);
-  // Rune 0 is said, then her beat to say it back; Dad is not asked and green is not needed.
+  expect(s0.episode.house.plan!.find((p) => p.slot === 'a')!.fetches).toEqual(c0.words);
+  // All the word's sounds first (item 140), then rune 0 is said, then her beat to say it back; Dad is not asked and green is not needed.
   const r0 = c0.runes[0]!;
   const b0 = await until(page, (st) => st.room?.charge?.index === 0 && st.room.charge.phase === 'sayback', 60_000, 'rune 0 said back');
-  expect(b0.voice.history).toContain(letterSoundLine(r0));
+  opensWithSounds(b0.voice.history, -1, c0.runes);
+  const sounds = b0.voice.history.filter((id) => id.startsWith('letter_'));
+  expect(sounds).toEqual([...c0.runes, r0].map((r) => letterSoundLine(r)));
   expect(b0.room!.charge!.asking).toBe(false);
   // The word is at the top from the start, but never said.
   expect(b0.voice.history).not.toContain(wordLine(c0.word));
@@ -55,13 +82,24 @@ test('Charge the Spell: the runes charge by themselves, each sound said; one pre
   expect(read.room!.charge!.asking).toBe(true);
   await expect(page.locator('#dad-buttons')).toBeVisible();
   await page.keyboard.press('Digit2');
+  // Item 140: the second word's round, its own sounds first, then its read; the slot is not done before it.
+  const w1 = c0.words[1]!;
+  const read1 = await until(page, (st) => st.room?.charge?.round === 1 && st.room.charge.phase === 'read', 60_000, 'the second read');
+  expect(read1.room!.charge!.word).toBe(w1);
+  expect(read1.episode.house.done).not.toContain('a');
+  const next = read1.voice.history.lastIndexOf(narratorLineEnd(read1.voice.history, '_charge_next'));
+  expect(next).toBeGreaterThan(read1.voice.history.indexOf(wordLine(c0.word)));
+  opensWithSounds(read1.voice.history, next, runesOf(w1));
+  expect(read1.voice.history).not.toContain(wordLine(w1));
+  await page.keyboard.press('Digit2');
   const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'back in the hub');
   expect(hub.episode.house.done).toContain('a');
-  expect(hub.episode.charged).toEqual({ sounds: c0.runes, part: 1 });
-  // The word is a battle item, and read right; its sounds with it.
-  expect(hub.episode.fetched).toEqual([c0.word]);
-  expect(hub.episode.read).toEqual([c0.word]);
-  expect(hub.progress.words[c0.word]!.recent).toEqual([true]);
+  expect(hub.episode.charged?.sounds).toEqual([...new Set([...c0.runes, ...runesOf(w1)])]);
+  expect(hub.episode.charged?.part).toBe(1);
+  // The words are battle items, and read right; their sounds with them.
+  expect(hub.episode.fetched).toEqual(c0.words);
+  expect(hub.episode.read).toEqual(c0.words);
+  for (const w of c0.words) expect(hub.progress.words[w]!.recent).toEqual([true]);
   expect(hub.progress.sounds[r0]!.recent).toEqual([true]);
   await expect(page.locator('#dad-buttons')).toHaveCount(0);
   expectNoErrors(errors);
@@ -72,7 +110,7 @@ test('Charge the Spell: dad lock holds the say-back beat; no 1 / 2 at all (item 
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&room=charge');
   const s0 = await until(page, (st) => st.room?.charge?.index === 0 && st.room.charge.phase === 'sayback', 60_000, 'rune 0 said back');
-  const { word, runes } = s0.room!.charge!;
+  const { words } = s0.room!.charge!;
   expect(s0.room!.charge!.solo).toBe(false);
   await dadLock(page, true);
   await page.waitForTimeout(3000);
@@ -87,18 +125,21 @@ test('Charge the Spell: dad lock holds the say-back beat; no 1 / 2 at all (item 
   expect(solo.room!.charge!.timeouts).toBe(1);
   const hub = await until(page, (st) => st.scene === 'Hub', 60_000, 'read together, back in the hub');
   const h = hub.voice.history;
+  // Both words read together (the second solo from the start: no second wait for Dad).
+  expect(solo.room!.charge!.round).toBe(0);
+  expect(h.filter((id) => id.endsWith('_charge_read_together'))).toHaveLength(2);
   const at = h.lastIndexOf(narratorLineEnd(h, '_charge_read_together'));
-  expect(at).toBeGreaterThan(-1);
+  const runes = runesOf(words[1]!);
   expect(h.slice(at + 1, at + 1 + runes.length)).toEqual(runes.map((r) => letterSoundLine(r)));
-  expect(h.indexOf(wordLine(word))).toBeGreaterThan(at);
+  expect(h.indexOf(wordLine(words[1]!))).toBeGreaterThan(at);
   // Nothing about Dad, no "sound it out together" miss.
   expect(h.some((id) => id.endsWith('_charge_together'))).toBe(false);
   // Fetched and done all the same; in the store modelled, never her read: no seen, no recent, so no shakiness moves.
-  expect(hub.episode.fetched).toEqual([word]);
+  expect(hub.episode.fetched).toEqual(words);
   expect(hub.episode.house.done).toContain('a');
   expect(hub.episode.solo).toBe(true);
-  expect(hub.progress.words[word]).toMatchObject({ seen: 0, recent: [], modelled: 1 });
-  for (const r of runes) expect(hub.progress.sounds[r], r).toMatchObject({ seen: 0, recent: [], modelled: 1 });
+  for (const w of words) expect(hub.progress.words[w], w).toMatchObject({ seen: 0, recent: [], modelled: 1 });
+  for (const r of hub.episode.charged!.sounds) expect(hub.progress.sounds[r], r).toMatchObject({ seen: 0, recent: [], modelled: 1 });
   expectNoErrors(errors);
 });
 
@@ -123,42 +164,26 @@ test('Charge the Spell (item 106): solo, the helper says each sound with her; Da
   expect(read.voice.history.filter(withMe)).toHaveLength(said);
   expect(read.room!.charge!.asking).toBe(true);
   await dad(page, 'yes');
+  // The second word: not solo, so the read asks him too, no "with me".
+  const read1 = await until(page, (st) => st.room?.charge?.round === 1 && st.room.charge.phase === 'read', 60_000, 'the second read, Dad asked');
+  expect(read1.voice.history.filter(withMe)).toHaveLength(said);
+  await dad(page, 'yes');
   const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'back in the hub');
   // His yes is her read; the rune said with the helper is modelled as well.
-  expect(hub.progress.words[word]!.recent).toEqual([true]);
+  for (const w of s0.room!.charge!.words) expect(hub.progress.words[w]!.recent).toEqual([true]);
   expect(hub.progress.words[word]!.modelled).toBeUndefined();
   expect(hub.progress.sounds[runes[0]!]).toMatchObject({ recent: [true], modelled: 1 });
   expect(hub.progress.sounds[runes[runes.length - 1]!]!.modelled).toBeUndefined();
   expectNoErrors(errors);
 });
 
-test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on the read sounds it out together and it is a battle item all the same', async ({ page }) => {
-  test.setTimeout(120_000);
+test('Charge the Spell (items 059, 140): a snappy visit spells its two words, each opening with its sounds; Dad\'s 1 on the first read sounds it out together and it is a battle item all the same', async ({ page }) => {
+  test.setTimeout(150_000);
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&room=charge&qa=1');
   const s0 = await until(page, (st) => st.scene === 'ChargeRoom' && Boolean(st.room?.charge), 60_000, 'charge room');
-  const { word, runes } = s0.room!.charge!;
-  // She stands beside the altar, not inside it (item 069: the altar was drawn over her arm and dress all round).
-  const l = await qaLayout(page);
-  const altar = l.images.find((im) => im.key === 'prop_rune_altar')!;
-  expect(s0.room!.player.x).toBeLessThan(altar.b[0]);
-  // Hunt 10: each rune's gesture glyph plays beside the helper, never on her (it sat on her face, M's cake slice).
-  const glyphs = new Set(runes.map((r) => RUNE_BY_SOUND[r]?.gesture.glyph));
-  let seen = 0;
-  for (let i = 0; i < 40 && (await state(page)).room?.charge?.phase !== 'read'; i++) {
-    const { texts: ts, heroes } = await qaLayout(page);
-    const her = heroes?.find((h) => h.scene === 'ChargeRoom')?.b;
-    for (const t of ts.filter((x) => glyphs.has(x.text))) {
-      seen++;
-      if (her) expect(t.b[2] <= her[0] || t.b[0] >= her[2] || t.b[3] <= her[1] || t.b[1] >= her[3], `${t.text} at ${t.b.join(',')} on her ${her.join(',')}`).toBe(true);
-    }
-    await page.waitForTimeout(150);
-  }
-  expect(seen, 'a gesture glyph seen').toBeGreaterThan(0);
-  const read = await until(page, (st) => st.room?.charge?.phase === 'read', 60_000, 'the read');
-  const toRead = read.room!.charge!.readAtMs;
-  // Nothing was pressed and nothing asked before the read.
-  expect(read.room!.charge!.charged).toEqual(runes);
+  const { word, runes, words } = s0.room!.charge!;
+  const runes1 = runesOf(words[1]!);
   // Every frame from here: when each letter sound starts and stops (game clock), for the gaps below.
   await page.evaluate(() => {
     const w = window as unknown as { __ww: WWHooks; __sounds: { id: string; from: number; to: number }[] };
@@ -174,7 +199,33 @@ test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on t
     };
     tick();
   });
+  // She stands beside the altar, not inside it (item 069: the altar was drawn over her arm and dress all round).
+  const l = await qaLayout(page);
+  const altar = l.images.find((im) => im.key === 'prop_rune_altar')!;
+  expect(s0.room!.player.x).toBeLessThan(altar.b[0]);
+  // Hunt 10: each rune's gesture glyph plays beside the helper, never on her (it sat on her face, M's cake slice).
+  const glyphs = new Set(runes.map((r) => RUNE_BY_SOUND[r]?.gesture.glyph));
+  let seen = 0;
+  for (let i = 0; i < 60 && (await state(page)).room?.charge?.phase !== 'read'; i++) {
+    const { texts: ts, heroes } = await qaLayout(page);
+    const her = heroes?.find((h) => h.scene === 'ChargeRoom')?.b;
+    for (const t of ts.filter((x) => glyphs.has(x.text))) {
+      seen++;
+      if (her) expect(t.b[2] <= her[0] || t.b[0] >= her[2] || t.b[3] <= her[1] || t.b[1] >= her[3], `${t.text} at ${t.b.join(',')} on her ${her.join(',')}`).toBe(true);
+    }
+    await page.waitForTimeout(150);
+  }
+  expect(seen, 'a gesture glyph seen').toBeGreaterThan(0);
+  const read = await until(page, (st) => st.room?.charge?.phase === 'read', 60_000, 'the read');
+  const toRead = read.room!.charge!.readAtMs;
+  // Nothing was pressed and nothing asked before the read.
+  expect(read.room!.charge!.charged).toEqual(runes);
+  opensWithSounds(read.voice.history, -1, runes);
   await dad(page, 'no');
+  // Item 140: the second word, its own round.
+  const read1 = await until(page, (st) => st.room?.charge?.round === 1 && st.room.charge.phase === 'read', 60_000, 'the second read');
+  const toRead1 = read1.room!.charge!.readAtMs;
+  await dad(page, 'yes');
   let ms = 0;
   const hub = await until(page, (st) => {
     if (st.room?.charge) ms = st.room.charge.elapsedMs;
@@ -186,24 +237,35 @@ test('Charge the Spell (item 059): a snappy round spells its word; Dad\'s 1 on t
   expect(at).toBeGreaterThan(-1);
   expect(h.slice(at + 1, at + 1 + runes.length)).toEqual(runes.map((r) => letterSoundLine(r)));
   expect(h.indexOf(wordLine(word))).toBeGreaterThan(at);
-  // A beat between the sounds, never back to back (item 069: they ran toward a blend).
+  // Then the second word's round opens with all its sounds, after "Here comes another spell!".
+  const next = h.lastIndexOf(narratorLineEnd(h, '_charge_next'));
+  expect(next).toBeGreaterThan(h.indexOf(wordLine(word)));
+  opensWithSounds(h, next, runes1);
+  // A beat between the sounds, never back to back (item 069: they ran toward a blend): the first word's
+  // sounding out together, and the second word's sounds up front. Counted from the end: the second
+  // round's sounds up front, then one per rune.
   const sounds = await page.evaluate(() => (window as unknown as { __sounds: { id: string; from: number; to: number }[] }).__sounds);
-  const together = sounds.slice(-runes.length);
+  const n1 = runes1.length;
+  const together = sounds.slice(-(2 * n1 + runes.length), -2 * n1);
+  const upFront = sounds.slice(-2 * n1, -n1);
   expect(together.map((x) => x.id)).toEqual(runes.map((r) => letterSoundLine(r)));
-  for (let i = 1; i < together.length; i++) expect(together[i]!.from - together[i - 1]!.to, `gap before ${together[i]!.id}`).toBeGreaterThan(250);
-  expect(hub.episode.fetched).toEqual([word]);
-  expect(hub.episode.charged?.sounds).toEqual(runes);
+  expect(upFront.map((x) => x.id)).toEqual(runes1.map((r) => letterSoundLine(r)));
+  for (const run of [together, upFront]) for (let i = 1; i < run.length; i++) expect(run[i]!.from - run[i - 1]!.to, `gap before ${run[i]!.id}`).toBeGreaterThan(250);
+  expect(hub.episode.fetched).toEqual(words);
+  expect(hub.episode.charged?.sounds).toEqual([...new Set([...runes, ...runes1])]);
   expect(hub.progress.words[word]!.recent).toEqual([false]);
-  // About 20 s a round (item 059), in game time (the scene's clock; the test's own runs SPEED times
-  // fast): to the read under 22 s (about 17 s for 3 runes, 21 s for 4), the whole round with
-  // Dad's 1 and the sounding out together under 32 s.
+  expect(hub.progress.words[words[1]!]!.recent).toEqual([true]);
+  // In game time (the scene's clock; the test's own runs SPEED times fast), item 140's measured
+  // lengths with margin: each round to its read under LIMIT_READ (the first from her arrival), and the
+  // whole visit, Dad's 1 and the sounding out together on the first word, under LIMIT_VISIT.
   // Asserted only by a one-worker timing run (`--workers=1`, item 072): beside other workers the
   // load stretches the game time past the limits, so the multi-worker lanes log it and go on.
-  const timing = `charge round: ${word} (${runes.length} runes), ${toRead / 1000} s to the read, ${ms / 1000} s in all (game time)`;
+  const timing = `charge visit: ${word} (${runes.length} runes) ${toRead / 1000} s to its read, ${words[1]} (${n1} runes) ${toRead1 / 1000} s to its read, ${ms / 1000} s in all (game time)`;
   console.log(timing);
   if (test.info().config.workers === 1) {
-    expect(toRead).toBeLessThan(22_000);
-    expect(ms).toBeLessThan(32_000);
+    expect(toRead).toBeLessThan(LIMIT_READ);
+    expect(toRead1).toBeLessThan(LIMIT_READ);
+    expect(ms).toBeLessThan(LIMIT_VISIT);
   } else {
     test.info().annotations.push({ type: 'timing', description: `${timing}; limits asserted only with --workers=1` });
   }
@@ -215,7 +277,7 @@ test('Charge the Spell (M24): Dad\'s 2 pressed during the last rune is kept, and
   const errors = collectErrors(page);
   await boot(page, '?scene=room&slot=a&room=charge&qa=1');
   const s0 = await until(page, (st) => st.scene === 'ChargeRoom' && Boolean(st.room?.charge), 60_000, 'charge room');
-  const { word, runes } = s0.room!.charge!;
+  const { runes, words } = s0.room!.charge!;
   const last = runes.length - 1;
   await until(page, (st) => st.room?.charge?.index === last && st.room.charge.phase === 'sayback', 60_000, 'the last rune said back');
   // Dad lock holds the beat (his keys stay live): under a busy lane the 1.2 s beat (0.24 s at SPEED) ran out
@@ -233,18 +295,24 @@ test('Charge the Spell (M24): Dad\'s 2 pressed during the last rune is kept, and
   await shot(page, 'picture_rune');
   await page.keyboard.press('Digit2');
   await dadLock(page, false);
+  // Item 140: the second word the same way, his 2 during its last rune.
+  const last1 = runesOf(words[1]!).length - 1;
+  await until(page, (st) => st.room?.charge?.round === 1 && st.room.charge.index === last1 && st.room.charge.phase === 'sayback', 60_000, 'the second word\'s last rune said back');
+  await dadLock(page, true);
+  await page.keyboard.press('Digit2');
+  await dadLock(page, false);
   const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'back in the hub');
   // Its door wears the stone with the word's first rune as a picture letter.
   await page.waitForTimeout(600);
   expect((await qaLayout(page)).images.some((im) => im.scene === 'Hub' && im.key === `rune_${runes[0]}`)).toBe(true);
   await shot(page, 'picture_rune_door');
-  // Read right on his early 2: never asked again, never timed out, never sounded out together.
-  expect(hub.progress.words[word]!.recent).toEqual([true]);
-  expect(hub.episode.read).toEqual([word]);
+  // Read right on his early 2s: never asked, never timed out, never sounded out together.
+  for (const w of words) expect(hub.progress.words[w]!.recent).toEqual([true]);
+  expect(hub.episode.read).toEqual(words);
   const h = hub.voice.history;
   expect(h.some((id) => id.endsWith('_charge_read'))).toBe(false);
   expect(h.some((id) => id.endsWith('_charge_together'))).toBe(false);
-  expect(h).toContain(wordLine(word));
+  for (const w of words) expect(h).toContain(wordLine(w));
   expectNoErrors(errors);
 });
 
@@ -297,8 +365,10 @@ test('Charge the Spell: the beta forces it behind a door of a drawn episode; F4 
   const r = await until(page, (st) => st.room?.charge?.phase === 'read', 60_000, 'the read');
   expect(r.room!.charge!.read).toBeNull();
   await page.keyboard.press('F4');
-  const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'F4 read it');
-  expect(hub.progress.words[r.room!.charge!.word]!.recent).toEqual([true]);
+  await until(page, (st) => st.room?.charge?.round === 1 && st.room.charge.phase === 'read', 60_000, 'the second read');
+  await page.keyboard.press('F4');
+  const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'F4 read them');
+  for (const w of r.room!.charge!.words) expect(hub.progress.words[w]!.recent).toEqual([true]);
   expectNoErrors(errors);
 });
 
@@ -315,6 +385,9 @@ test('Charge the Spell (hunt 7, M34): solo, the read is together at once; Dad\'s
   await dad(page, 'yes');
   const helped = await until(page, (st) => st.room?.charge?.read === 'helped', 5_000, 'his yes, a helped read');
   expect(helped.episode.solo).toBe(false);
+  // Not solo now: the second word's read asks him.
+  await until(page, (st) => st.room?.charge?.round === 1 && st.room.charge.phase === 'read', 60_000, 'the second read, Dad asked');
+  await dad(page, 'yes');
   const hub = await until(page, (st) => st.scene === 'Hub', 60_000, 'back in the hub');
   // Read right, not first try; not modelled either.
   expect(hub.progress.words[word]).toMatchObject({ seen: 1, recent: [false], wrong: 0 });

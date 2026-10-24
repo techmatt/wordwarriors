@@ -34,6 +34,7 @@ import { rememberCast, resetEpisode, setCastOptions } from '../../src/episode/dr
 import * as plans from '../../src/episode/plans';
 import { episode } from '../../src/episode/state';
 import { favourWords, NEW_WORDS } from '../../src/rules/bank';
+import { chargeRunes } from '../../src/rules/charge';
 import { MINIGAMES } from '../../src/rules/minigames';
 import { SHIFT_WORDS, chainKey } from '../../src/rules/shifter';
 import { RHYME_FAMILIES, RHYME_WORDS, rhymeWords } from '../../src/rules/rhyme';
@@ -164,8 +165,8 @@ for (let e = 0; e < EPISODES; e++) {
       }
     }
     if (p.kind === 'charge') {
-      saw(e, 'phonics', 'charge runes', p.charge.runes, RUNES.map((r) => r.sound));
-      for (const r of new Set(p.charge.runes)) progress.record('sounds', r, true, 0);
+      saw(e, 'phonics', 'charge runes', chargeRunes(p.charge), RUNES.map((r) => r.sound));
+      for (const r of chargeRunes(p.charge)) progress.record('sounds', r, true, 0);
     }
     if (p.kind === 'bridge') saw(e, 'pictures', 'bridge far-bank pictures (not the word)', p.bridge.rounds.flatMap((r) => r.pictures.filter((w) => w !== r.word)));
     if (p.kind === 'bridge') pictureChoice(e, 'bridge', p.bridge.rounds.flatMap((r) => r.pictures));
