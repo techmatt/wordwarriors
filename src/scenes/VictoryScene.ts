@@ -12,7 +12,7 @@ import Phaser from 'phaser';
 import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { narratorLine, wordLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxVictory } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { castArt, castFace, castScale, counterWord, episode, narrator, podiumCheer, podiumCheerRight, podiumSecond, villainSpec } from '../episode/Episode';

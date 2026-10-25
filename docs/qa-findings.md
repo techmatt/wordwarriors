@@ -846,7 +846,7 @@ the clash point's.
 | M70 | Victory podium, the other dad | With a second dad in the episode (half of them: he walks into the bedroom) the ending scene stands him with everyone, and then the podium leaves him out: M50 seats the waker as a cheering figure, never the secondary; and when the secondary is Dada Matt his face card says every recap word (`phonicsFace`) with him nowhere on screen. | **(a) he cheers too, on the grass right of the podium, as M50's waker on the left**; (b) only his face card goes (the recap's words in the narrator's face); (c) keep | (a), done in item 144: `podiumCheerRight` (`src/episode/cast.ts`): the secondary dad hops and cheers in his form at `CHEER_SPOT_RIGHT`, right of the podium (`VictoryScene`), nobody when he is already on it; `tests/ending.spec.ts` covers `&secondary=1` |
 | M71 | Rhyme room, near rhymes | Fix 182 keeps a wrong picture off near rhymes (VAN... HAM, SUN... THUMB, SOCK... BOX), but not a nasal before the ending: CAT, HAT... ANT (or PLANT). Ruling that out too (tried) left fewer families plannable: in a 300-episode `variety` run the rhyme room fell from 38 visits to 26, the rest a sentence frame instead. | (a) keep: ANT is the A-sound picture, and the cards say the rhyme; (b) rule it out, with the room less often; **(c) rule it out only for the vowel picture when another is free (a lean, not a rule)** | (c), done in item 144: `nasalNear` (`src/rules/rhyme.ts`) spots a same-vowel ending with an M or N added (CAT... ANT, CUP... STUMP, DUCK... SKUNK); `wrongPictures` prefers a vowel picture without one and falls back only when nothing else is free. `variety` 300 episodes seed 1: the rhyme room 39 visits (38 before), a nasal near rhyme in 0 of 117 rounds |
 | M72 | Two tabs open | The store is read once, as the page opens, and each change writes the whole of it: with the game open in two tabs, the stale one writes back over every episode played in the other (her bag, the rotations, the grown-ups page's counts). | **(a) a `storage` listener re-reads the store when another tab writes it**; (b) keep: one tab is how it is played | (a), done in item 144: a `storage` listener (`src/state/progress.ts`) calls `ProgressStore.reload()` when another tab writes the store: it re-reads the blob, keeps this page's session column unless the store was erased, stops writing when another tab left a blob this build cannot read (a newer build's), and under a debug game's `hold` replaces what `release()` restores (`tests/unit/storeTabs.test.ts`, `tests/parentTabs.spec.ts`) |
-| M73 | Victory scene and podium, giant villains | `castScale` caps a non-grown-up at 1.3 of her height, under chef Dada Jason's 1.65: the dragon queen who filled the arena stands a head shorter than the dads at the table and on the podium. | **(a) raise the cap to 1.7 (Tiamat 1.7, Smaug 1.5, Jormungandr and Bluerilla 1.4; every scene already makes room for 1.65)**; (b) keep: the victory is hers | (a), done in item 144: `CAST_SCALE_MAX` 1.7 (`src/episode/cast.ts`): Tiamat 1.7, Smaug 1.5, Jormungandr and Bluerilla 1.4 (all 1.3 before) |
+| M73 | Victory scene and podium, giant villains | `castScale` caps a non-grown-up at 1.3 of her height, under chef Dada Jason's 1.65: the dragon queen who filled the arena stands a head shorter than the dads at the table and on the podium. | **(a) raise the cap to 1.7 (Tiamat 1.7, Smaug 1.5, Jormungandr and Bluerilla 1.4; every scene already makes room for 1.65)**; (b) keep: the victory is hers | (a), done in item 144: `CAST_SCALE_MAX` 1.7 (`src/config.ts` since item 153; `src/episode/cast.ts` before): Tiamat 1.7, Smaug 1.5, Jormungandr and Bluerilla 1.4 (all 1.3 before) |
 | M74 | Story fight, over the gold guards | Everyone hops at once as the guards start their charge from far off; the guards then slide through them and off the edge, and Smaug says "My guards! They all fell over!" though nobody went over them. | **(a) time each hop to its guard's arrival (the charge's easing known), and topple the guards past her**; (b) keep: a beat of under two seconds | (a), done in item 144: the guards charge to just past the leftmost hero and stop; each hero hops as they reach her (`hopOverCharge` / `chargeArrival`, `src/battle/story/charge.ts`, from the charge's Quad.easeIn), from her `STORY_MARKS` spot; `StoryDirector.topple` floors each guard with dust and a BONK!, and they lie there through "My guards! They all fell over!" before they poof |
 | M75 | Battle, a brawl's move choice | When the choice opens with her behind the villain at the arena's end (`ozy_tiamat` 116: her at x 1170, Evil Tiamat 900 to 1140), both pads open on the far side and she walks 500 to 950 px across the dragon to reach one. Item 034's her-side rule runs only in contests; between the villain and the wall there is no room for a ring. | **(a) her hero steps out from behind him (as the team's step-back) before the pads go down**; (b) the her-side rule in brawls too, the pads past him only when her side has no room; (c) keep: she walks through fighters | (a), done in item 144: in a brawl, when she is behind the villain with under 300 px past him, `stepOutX` (`padPlace.ts`) gives the spot past him on the open side; her hero eases there over `STEP_BACK_MS` (stick ignored) and the pads are placed round where she will stand (`ozy_tiamat` 116: she steps out to x 805) |
 | M76 | Frost and spell clash, a move choice | The clash point's flare stays at 0.35 alpha through a choice (fix 197 stopped its flourishes), and with ADD blending on ice it is still near white: it lands on a ring on the beam's line (KICK's in both `seraphina_frost` choices), the brightest thing on the floor on one of the words. | **(a) the pads keep off the clash point (a `keepOff` box, as a held teammate's)**; (b) fade the flare to 0.1 in a choice; (c) keep | (a), done in item 144: `ClashStage.choiceKeepOff()` keeps the pads off a box round the clash point (100 px either side, 75 px up and down) while its core shows, through the `keepOff` a held teammate uses; 20 seeds at three clash points, 0 rings on it (4.5 to 5.6 before) |
@@ -891,3 +891,227 @@ the clash point's.
 - **Matt's calls M61 to M77** are ruled and done in item 144, M67 and M68's new art in item 145; the
   next hunt re-measures the new pacing (Charge, the rhyme room, battle 1's opening with Charge) in a
   real episode, and watches a two-pad sea tug and M75's step-out live (unit-tested only).
+
+## Bug-hunt checker log, batch by batch
+
+Moved from the README's *The bug-hunt checker* in item 153: what each later `QA_SET` batch
+plays and the checks each item or hunt added to the checker, in the order they came. How to
+run it (commands, `QA_SET` names, ports, output, pruning) stays in the README; a new hunt's
+batch gets an entry here.
+
+- **Item 128's check, `text-off-panel`:** a word crossing the edge of the panel it is
+  printed on (the sentence banner's cream band, the parked Word → Picture's banner, the
+  word machine's plate). Whatever draws one tags its container `qaPanel` (`tagPanel` in
+  `src/ui/banner.ts`); the probe gives each text inside it its letters' ink
+  (`worldInk`: a text's box carries the font's whole line height, about 1.4× its size) and
+  `panelIssues` (`tests/qa/checks.ts`) wants it wholly inside. The art's whole box is not the
+  test: `prop_banner`'s cream is a band about a fifth of its height, and the old layout's words
+  sat on its red trim (`tests/banner.spec.ts`: the widest fetch and counter sentences,
+  forced with `?sentence=<frame>:<key>`).
+- **Item 069's checks:** free play never over its cap of live shots (`shots-over-cap`), a
+  busy child whose casts never fired (`mash-dead`), and in a scenario whose URL forces no
+  cast or room, the rotations across episodes (`repeat`: the villain or victory scene of
+  the episode before is a bug, the same ally or side rooms a look; `repeat-word`: a word
+  read in an earlier episode of the run). Each scenario's JSON lists what each episode
+  drew (`drawn`).
+- **Item 080's lenses** (`QA_SET=lenses`, about 25 minutes): `reload_points` reloads the
+  page at five points (bedroom, a side room, battle 1's choice, hub part 2, the victory
+  scene), one episode each, and lists what the store held either side (`probes` in its
+  JSON; `reload-store` when a reload itself changed it); `hidden_tab` switches the tab
+  away for 2.5 s every 9 s (Phaser's visibility and blur events; a real hidden tab also
+  stops animation frames, which this does not, so its frame spikes are expected);
+  `resize` cycles six window sizes; `slow_net` slows every voice and art fetch by 0.3 to
+  1.5 s, `flaky_net` fails one in seven (never the manifest; `netFailed` lists them);
+  `lock_all` turns dad lock on at thirteen points of an episode, presses every button and
+  checks nothing moved (`dadlock-leak`) and the badge shows (`dadlock-badge`), listing the
+  lines that started while locked; `parent_all` opens the grown-ups page at each point
+  and checks F9 comes back to the same scene (`parent-return`) and the store did not
+  change (`parent-store`); `parent_none` is the same seed with no visits, to compare.
+  Also `qa flags <url>`, about 120 URLs and odd values each watched 9 s (`flag-stuck` when one
+  never leaves Boot or Wait; JSON and shots in `flags/`), and `qa devkeys skip` (F2 at
+  every step, then an episode played through) and `qa devkeys auto` (F4 and green to the
+  recap).
+- **Item 089's batch** (`QA_SET=recent`, items 081-088's changes; first swept in item 092, about 17 minutes):
+  `debug_rooms` turns minigame debug mode on at six points (the warm-up, the hub in both
+  parts, both side rooms, the attic), plays a game from its pedestal at each (the four in
+  turn) and turns it off: the store, the episode and the room must be as they were
+  (`debug-leak`, `debug-return`), the pedestal checked (`debug-check`) and the DEBUG tag
+  only while on (`debug-tag`); `end_mash` presses her buttons, Dad's 1, key 0 and dad lock
+  at the recap and THE END and goes to the grown-ups page and back: only Dad's 2 may
+  leave (`end-leak`) and nothing may be stored (`end-store`); `variants6` plays six drawn
+  episodes; `voiceless` plays one with the voice manifest missing (captions only).
+- **The seventh hunt's batch** (`QA_SET=cast`, item 116, about 6 minutes on three workers):
+  each ally from items 111 and 114 once, against the new villains of item 115 and their own
+  fights (frost clash, space race, magic show) and older ones, Evil Smaug's story fight twice
+  (`jasmine_story`; `rilla_story_wrong` with wrong picks and a busy child), and three drawn
+  episodes back to back (`drawn_cast3`). `spawn-in-reach` leaves out a lone answer (the bed
+  she wakes in, the hub's secret door); `locked-silent` leaves out Charge the Spell (its
+  quiet beats are hers to say the sounds back); `clipped-line` leaves out a story fight's
+  back-and-forth (`story_` lines), as it does battle shouts. New check: `pad-in-reach` (look),
+  a move pad opening within her reach (fix 119), once a choice.
+  Every scenario also checks the transcript: a narrator line's variants said in turn
+  across the run (`variant-repeat`, a look: a variant picked while the voice bus dropped
+  it shows as a gap; not with debug games in the run, whose sandbox puts the rounds back)
+  and no taunt over twice an episode (`taunt-over-cap`).
+- **Item 092's additions:** a store change names its fields (`wordwarriors.progress
+  words.box`; a room started again after key 0 or F9 says its opening line's next
+  variant, `debug-restart-line`, a look); the overlaps already ruled on (W5, W12, W21) are
+  `target-covered-ruled`, a look; `voiceless` really runs with no manifest (its 404 goes in
+  before boot) and its silent lines are the point; ten more URL flags (`scene=theend`,
+  `grab=`, `battle=`, `cast=`, `games=`). A move choice whose pad never takes green stops
+  the run naming her position, the pads and the running scenes (M20, above).
+- **Item 102's additions:** a choice that appears within reach of her is a bug
+  (`spawn-in-reach`: green mashed through the round's line picks it unwalked; only spots new
+  since the last poll count, so the driver's teleport onto a spot never does), and the
+  Shape-Shifter's first creature wearing its word on its label is not a giveaway (it is said
+  and shown, not read).
+- **The eighth hunt's batch** (`QA_SET=hunt8`, item 125, about 8 minutes on three workers):
+  `newwords3` (three drawn episodes leaning to item 121's words, `words=new`), `charge_solo3`
+  (Charge forced, Dad never presses: solo must last the session, M34; `solo-lost`, a bug, when an
+  episode ends not solo), `shifter5` (five drawn episodes with the Shape-Shifter:
+  `chain-repeat`, a look, when an episode's chain shares a link with the six the store kept
+  before it, or is one of them; M36), `warrior_story` and `moriarty_story_wrong` (the story
+  fight with a dad's outfit, and with Moriarty at 1.3 and wrong picks). `qa flags` gained
+  `words=` odd values. A word confirmation's shot is read as said even before the bus
+  reports it speaking (W33), and the hub's circle under the story's own lines is ruled
+  (W35); under the line sending her there it stays a bug. `playChargeRoom(page, 'away')`
+  (harness) leaves Dad out, and `RoomPlay.dadAway` passes it through `playRoom`.
+- **The ninth hunt's batch** (`QA_SET=hunt9`, item 129): `doorb5` (five drawn episodes: door b
+  holds the Shape-Shifter in 3 episodes of 7, never two running (item 137; about half before), a sentence frame or the word
+  machine otherwise; `door-b-streak`, a look, when it is in or missing three episodes
+  running), `story_drawn_scar` and `story_drawn_elsa_wrong` (seeds 976 and 965 draw Evil Smaug and
+  his story fight from the title with no `fight=`; the second with wrong picks. A seed's cast is
+  what the title draws, not `seed=N&scene=battle`'s: the title draws again), `newwords3_126` (`words=cow,mom,dad`) and `widest_counter` (item 128's widest
+  counter sentence, `sentence=no_match_for_the:octopus`) and `drawn10` (ten drawn episodes back to
+  back, about 15 minutes: growth, repeats, the door-b rotation); `story_parent`, `story_lock` and
+  `story_reload` put the story fight through the grown-ups page, dad lock and reloads at each
+  point, as `parent_all`, `lock_all` and `reload_points` do; forced with `fight=`, since a seed's
+  draw does not survive them (back from F9 at the title, or reloaded, the title draws again);
+  `story_hidden` switches the tab away and resizes the window through it; `erase_mid` has Dad erase all progress (F9, F8 twice, back) in a side room, at battle 1's choice
+  and in the attic, then plays a second episode on the empty store (`eraseAt`, `erase-return`). `qa flags` gained item 126's words
+  where she meets them and odd `sentence=` values.
+- **The tenth hunt's batch** (`QA_SET=hunt10`, item 135, items 130-134's changes; about 10 minutes on
+  three workers, `drawn5_h10` the longest at 8): `drawn5_h10` (five drawn episodes after item 132's
+  cleanup), `shifter_wrong3` (the Shape-Shifter with wrong picks, three episodes: M39's chains, M42's
+  lifted letter), `runcan2` and `momdad2` (`words=run,can`, `words=mom,dad`: M40, M41), and each fight
+  style item 132 tidied once with wrong picks, a busy child or an idle one (`race_wrong`, `tug_mash`,
+  `cookoff_wrong`, `clash_idle`, `story_mash_wrong`). `qa flags` gained a battle in each of the two arenas
+  item 134 gave an ambience (`villain=ellie`, `villain=rilla`, each with `fight=brawl` so no ally's cook-off nudge moves it; its `ambience=` candidates went in item
+  136), `words=run,can` and the grown-ups page with no ally.
+  New check: `glyph-on-hero` (look), a picture glyph of 60 px or more (no letters) drawn over her head and
+  shoulders (Charge's gesture glyph sat on her face, fix 137). `spawn-in-reach` counts a spot back in its
+  slot the same round as seen (the word machine's wrong tile, back under her after "That's a silly word!",
+  is not new), and `lock_all` reads a move choice opening under the lock, nothing picked, as the fight's
+  own flow (`dadlock-flow`), not a press through it.
+- **The eleventh hunt's batch** (`QA_SET=hunt11`, item 142, items 137-141's changes; 17 scenarios, about
+  14 minutes on three workers): `drawn5_h11` (five drawn episodes: item 137's strict rotation, item 138's gift spots),
+  the rhyme room wrong over three episodes, idle, mashed, under dad lock at every point and through the
+  grown-ups page (`rhyme_wrong3`, `rhyme_idle`, `rhyme_mash`, `rhyme_lock`, `rhyme_parent`), Charge's
+  two-word visit with Dad, with Dad's no, and solo (`charge2_yes`, `charge2_no`, `charge2_solo`), the word
+  machine with wrong tiles (`machine_wrong`), Bluerilla as ally and as villain (`rilla_ally`,
+  `rilla_villain`), the story fight after item 141's battle split (`story_wrong_h11`), and the rhyme room
+  and Charge through reloads, debug mode and the grown-ups page (`rhyme_reload`, `rhyme_debug`,
+  `charge_parent`, `charge_reload`). The probing scenarios wait for any of the six side rooms now: they
+  knew five, and `rhyme_lock` and `rhyme_parent` stalled at the rhyme room's door.
+  New check: `letter-name` (bug), a line that names a letter (item 137: a `letter_<x>_name` or `_hides`
+  line, or "the letter B", "M's name"); `tests/unit/qacategories.test.ts` holds every line in
+  `lines.json` to it. `slow-room` gained the rhyme room's budget (60 s; item 144: 55 s), and Charge's is item 140's
+  own limit (66 s, solo 75 s; item 144: 52 s, solo 68 s). `decal-by-target` (look): a villain's decal within 30 px of a picture she
+  picks from (the rhyme row's question mark; not the bedroom, the hub, the battle, the grown-ups page or a door,
+  where the mess goes on purpose, nor a decal hanging over it from above, as Elsa's icicles over HAT).
+  `ruledCover` takes W44's find line on a picture's foot in a sentence room (22 px at most), and
+  `tests/cover.spec.ts` fails only on an unruled cover (`target-covered`), so a ruled overlap drops out of
+  it. The hooks gained `room.rhyme.onCards` (the cards' words now: the last round's stay up under its
+  praise while `shown` already names the next, so the giveaway check's `done` list takes both),
+  `room.rhyme.thirdCard` and `battle.heroClones`. `qa flags` gained the rhyme room's and Charge's URLs.
+
+## Systems history
+
+Moved from `docs/systems.md` in item 153, which cut its longest rows to the entry points,
+owners and key names a reader needs to find the code. Each row below is the system's Notes
+cell as it stood before the cut, whole: the items and hunts that shaped it, the reasons, and
+the detail the short row leaves out. Where the code has moved on since, the code wins.
+
+### Art on demand
+
+`src/art/ArtBank.ts`, `src/art/needs.ts`, `src/art/gate.ts`, `src/scenes/WaitScene.ts`.
+
+Item 065. `artBank.ensure(ids)` / `prefetch(ids)`: each `public/art/<id>.png` fetched once by `fetch` (not an `<img>` request, which Chromium ranks below the voice bank's fetches and starved), at high priority for a scene about to show (4 at a time, leaving two of HTTP/1.1's six connections to voice; one already in flight for the background is aborted and asked again at high) and the default for the background (2 at a time, so the voice keeps the connections; `low` is held back by Chromium for as long as higher requests keep coming, which starved it), decoded with `Image.decode`, added to Phaser's texture manager; a fetch out 2 minutes is aborted and asked again (3 tries, 0.5 s then 2 s apart since item 093), and a file that is not there, or a fetch lost to the network, gets the magenta square. One lost to the network (M25) is asked again in the background by the next scene to start 3 s or more later that needs it (`retryFailed`, from `startScene` and every `prefetch`), at most twice, one 15 s try each; when it comes, the square's texture is replaced only once nothing shows it (else it is held, `applyHeld`, until a scene starts: never under a live image, whose scale and tweens were worked out for the square). `__ww.art()` also reports the magenta ids (`failed`) and images showing them (`magenta`). The bedroom draws the warm-up's pictures early to prefetch them. `artFor(sceneKey, draw)` lists a scene's art from the episode (the cast in every form, all `prop_*`, the villain's decals, the bag, then the scene's own: plans are walked for words with pictures, `artIn`); `draw: true` makes the plans the scene would have made (grab, house, moves, fight, `drawEnding()`), a prefetch (`false`) uses only those already made. Every scene starts through `startScene(from, key, data)` (Episode's `startStep` / `enterRoom` / `backToHub` / `advance` / `jumpTo`, Ending → Victory): at once when its art is in, else behind the Wait scene (stars round her face, fades in after 150 ms), with the voice queue starting no new background decodes meanwhile (`voiceBank.pauseWhile`: the clips queued behind the pictures past their fetch timeout). On each scene's CREATE the scenes that can follow are prefetched (title → bedroom and every form for the title duel; hub → its rooms, the battle; battle 2 → the victory scene, drawn early). Safety net: `textures.get` / `exists` on an art id not loaded warns `art: not ready <id> (<scene>)` and loads it first; `collectErrors` (tests) and the bug-hunt checker (`art-late`) count that as a bug. `__ww.art()`: missing textures on screen, late asks, loads in flight.
+
+### Episode flow
+
+`src/episode/Episode.ts`, `state.ts`, `draws.ts`, `cast.ts`, `plans.ts`.
+
+The step list (bedroom → entry hall warm-up → house 1 → battle 1 → house 2 → battle 2 → victory); `advance(scene)` starts the next step's scene. Inside a house step the hub and its rooms hand over with `enterRoom(scene, slot)` / `backToHub(scene, from)`. `castEpisode()` draws the cast (`src/rules/cast.ts`) and the quest place at each episode's start; `waker()` is the dad who wakes her, `helper()` (the ally, or the waker) gives the gift word, fills `{helper}` and leads the quest, `narrator()` is the helper's person (whose voice the instructions are in); `castId(id)` / `castArt(id)` / `castFace(id)` turn a person into the form they play this episode; `podiumSecond()` is who stands beside her on the victory podium and at THE END; `podiumCheer()` (M50) is the dad who woke her, cheering on the grass beside the podium when an ally has its left block (null when he is the ally's or the villain's person), `podiumCheerRight()` (M70) the other dad, when he came in too, cheering right of it. `episode.story` (`drawStory`, `src/rules/story.ts`, drawn with the cast) picks the helper's quest line (`questSetupLine()`) and hub scene (`hubScene()`); `storyWords()` is every word they say, kept out of every draw. `giftWord()` draws the gift word on first need (`drawGift`, kept in `episode.gift`). `movePlan()`, `housePlan()` (the episode's three `RoomPlan`s) and `grabPlan()` are each made once, in that order of dependence. `episode.fetched` (key words, in order) and `episode.gift` feed the battle. Cast options from the URL: `setCastOptions` (BootScene `castOptions`); the fixed default episode is `EPISODE_DEFAULTS` (`src/config.ts`). Parked v0.1 kinds (`alarm`, `prep`, `retreat`, `spell`) are reachable only by `jumpTo`. `Episode.ts` holds the flow; the state (`episode`, `steps()`) and the step-to-scene table (`sceneForStep`, `isStepKind`) are `state.ts`, the cast draw and its remembering (`setCastOptions`, `castEpisode`, `rememberCast`, `resetEpisode`) `draws.ts`, the cast lookups (`waker` … `villainSpec`) `cast.ts`, the other draws (`housePlan` … `fightStyle`, `journeyStops`) `plans.ts`, all re-exported by `Episode.ts`, so scenes import from it alone. None imports `Episode.ts` or Phaser (item 076), so the draws run in node (`tests/unit/episodeDraws.test.ts`).
+
+### Dialogue box
+
+`src/ui/Caption.ts`.
+
+Instruction lines (and barks with no anchor, e.g. a taunt heard from afar), spoken word highlighted, beside the speaker's framed face and name on their side with a tail. Top or bottom, whichever covers less of the scene's `avoid()` keep-outs (rooms: `RoomScene.keepOut()`, spots, her, the banner, the scroll); `track(id, where)` puts a face on the side the speaker stands and a glow at their feet; `mode(u)` per line: `show`, `portrait` (face only: the sentence banner and recap cards light their own words) or `hide` (always for the ids `uncaptioned()` in `content/voice/ids.ts` names: `letter_*` and `sent_*`). `compact` in battle: small and always at the bottom. `narrow(u)` (the lines that send her walking, M13): a 320 px box of up to four rows on whichever side and band covers least; while it still covers something it also tries wider, shorter boxes (`NARROW_WIDER`, M59: the attic's four-row find box stood over the answer's pedestal, two rows sit below the pedestals).
+
+### Hub
+
+`src/scenes/HubScene.ts`.
+
+Phases `intro → circle → doors → secret → front → leaving`. Part 1: the helper's story scene (`hubScene()`, `teach()`): its lines, then its `prop` (an art id or an emoji card) pops up with the gift word on it, the last line trails off into `nar_<narrator>_gift_word_<w>`, the scene's `circle` line sends her to its spot (yellow repeats it; the spot is still `circle` to the flow and the tests, drawn by `src/world/giftSpot.ts` as the scene's `spot`: the magic circle for a spell, else a pickup fitting the story, `room.giftSpot` in the hooks), the word flies into her, the scene's `done` line; then doors `a` and `b`. Part 2: the secret `counter` door (the attic). A door is invisible until it is usable: the side doors pop in after the gift, the front door when the part's rooms are done, the counter door in part 2. Restarted on each return, so all state is read back from `episode`. Its backdrop is `hubArt(episode.place)` (the house's `room_hub` or a quest place's `room_place_<id>`); away from home the way out is `prop_portal` and the lines are the `away_*` ones.
+
+### Charge the Spell
+
+`src/scenes/ChargeRoom.ts`, `src/rules/charge.ts`, `content/phonics/runes.ts`.
+
+Item 053; two words a visit since 140 (one in 058-139), a round each; no presses per rune since 059. A `HouseSideRoom` (`CHARGE_GAME`, fetch rooms only) whose plan is `kind: 'charge'` (`charge.rounds`, a `ChargeWord` each; `fetches` the words, each a battle item, `key` the last; `chargeWords`, `chargeRunes`). `planCharge(store, { avoid }, rand)`: `CHARGE.words` rounds, each `drawChargeWord` (a later one never an earlier one nor a word its gestures say, and sharing as few of their sounds as the pool allows): one word of `CHARGE.units` units from `CHARGE_WORDS` (familiar pictured words whose every unit is a rune, no sound twice) through `drawWords` × its sounds' shakiness (item 067: every sound in play, no tiers); `episodePlans` keeps it off every other room's words; item 074: never a word whose runes' gestures (`gestureWords`, the /e/ rune's TAP and EGG) say a word read after it (`later`: the gift, pads, other rooms, the attic), and the keys drawn after it keep clear of what they say. Its runes are the word's sounds, in order. A round opens with all its sounds, each `letter_<x>_sound` with its slot lit, `SOUND_GAP_MS` apart (item 140; `sayAllSounds`), then on the first round `charge_explain`; a later round goes straight to its sounds (item 144 cut `charge_next`, hunt 11 M61), and its read skips `charge_read` (yellow still says it); the last word's picture flies to the bag under `charge_done`, in place of its praise. The quiet around each rune is `RUNE_BEATS` (item 144: a visit with Dad answering at once at most 40 s, Matt's ruling). Per rune (item 059, no presses): it lights (its picture letter `runeArt(x)` on the stone since item 103, as on a done Charge door and the battle's charged-move stone), the helper's gesture and `letter_<x>_sound`, a `CHARGE.sayBackMs` beat for her to say it back (held under dad lock), and it charges. Then the read, the room's one press: Dad's yes (key 2, live from the moment the word lights) says `word_<w>`; a no (key 1) sounds it out together once first; either way `words` and the word's `sounds` are recorded (right with his yes), the bag taken from or returned to, and the word goes to `read` and `fetched`; the slot is done on the last round's (`recordRead`'s `last`). The rooms resume from `read`; `episode.charged.at` holds the round and rune charging, for F9 and back (two words may share a sound). Item 106, solo mode (`episode.solo`, `?solo`): no press for `DAD_AWAY_MS` (`HouseSideRoom.dadAway`) and the read is done together (`charge_read_together`), later runes get `charge_with_me` before the sound and a `CHARGE.soloBeatMs` beat; those runes and the word are `progress.model`led (`HouseSideRoom.recordModelled`: a `modelled` count, no read, no bag move), and any Dad press turns solo off; solo lasts the session, `resetEpisode` keeps it (hunt 7, M34), so the next visit's read is together at once; a Dad yes during the solo read records a `helped` read (right, not first try). No help ramp: item 053's (`chargeLevels`, unused since 059) went in item 078, and an old save's are dropped on load. Charged sounds go to `episode.charged` (`{ sounds, part }`); `useCharged` (`src/battle/volleys.ts`) fires each rune's `move` after the fetched items, with a rune chip row in the HUD. Forced into door a by `FORCE_PHONICS_ROOM` / `?room=charge` (`roomGames` in `src/episode/plans.ts`). Hooks: `room.charge` (`words`, `round`, the round's `word` and `runes`; `readAtMs` from the round's start), `battle.runesFired`.
+
+### Stretchy Bridge
+
+`src/scenes/BridgeRoom.ts`, `src/rules/bridge.ts`, `src/audio/holdSound.ts`.
+
+Item 054. A `HouseSideRoom` (`BRIDGE_GAME`, fetch rooms only) whose plan is `kind: 'bridge'` (`fetches` its words, `key` the last). `planBridge(store, { avoid, taken }, rand)`: `BRIDGE.words` from `CROSS_WORDS` (familiar short-vowel things of `BRIDGE.maxUnits` sound units at most; item 067: no tier gate) by `drawWords` × 2 in her word bag (`bridgeEase`: 1 hold-sound CVC, 2 stop CVC, 3 blends and digraphs, orders a visit), easier tiers first; `bridgePictures`: the far bank's others, sharing two sounds from the start, then one, then the rime (`sharedStart`). Per word: the help level (`bridgeLevel`: the recorded `recordedBridgeLevel`, ProgressStore `bridgeLevels`, capped by `DIFFICULTY`, so level 1 at base); stones by sound unit over the gap (`gapFor`), the stick slowed on them (`RoomScene.moveScale`), each stone's `letter_<x>_sound` held by `voiceBus.hold(id, 'hold' | 'once', heldMs)` while she stands on it (VoiceBank `held` cuts the decoded clip, cached per buffer). Dad's buttons open at levels 2–3: a level-2 yes is a hint (`replay`), level 3 asks on the far bank (`say`), a no replays; `DAD_AWAY_MS` with no press goes solo (item 106: the pictures come, no aid marked; solo skips the say step). A wrong picture: `bridge_picked`, its units' sounds, `bridge_<where>` (`whereDiffers`) and the stone's sound, back to the near bank. Right: `words` recorded, the level moved once, bag spend, `word_<w>`, into the `Bag`, `episode.read`/`fetched`. Hooks: `room.bridge`.
+
+### Shape-Shifter
+
+`src/scenes/ShifterRoom.ts`, `src/rules/shifter.ts`.
+
+Item 096. A `HouseSideRoom` (`SHIFTER_GAME`, fetch rooms only; `SHIFTER_ROOM` puts it behind door b of 3 episodes in 7, never twice running, items 126 and 137, a sentence frame or the word machine there otherwise, `?room=shifter` behind door a) whose plan is `kind: 'shifter'` (`fetches` the words read, `key` the last creature). `planShifter(store, { avoid, taken }, rand)`: a chain of `SHIFTER.links` links (hunt 7, M36: none sharing a link with the last `SHIFTER.recentChains` chains, nor the same as any of `CHAINS_KEPT`, where the pool allows; `rememberPlan` keeps them in `recent.chains`) (fewer down to `SHIFTER.minLinks`, else null and a sentence game plays; under that, item 126: first a chain holding no word of the last `SHIFTER.wordChains` chains and none the episode before had her read (hunt 8 M37, `LAST_READ`, kept by `rememberPlan`), the most places giving way to let one in (pick 2b)) through `SHIFT_WORDS` (familiar pictured CVC words, a letter a sound), one letter changed a link (`changedAt`), the chains changing the most of the three places first (`placesOf`, hunt 6 M29), starting on the first letter and going back in `ORDER` (first, last, vowel) once at most (`orderBreaks`), a chain with both beats preferred (a shorter one before an all-fix-it one), drawn by `wordWeight`. `beatFor`: even links read it where the bank has `SHIFTER.options - 1` wrong pictures (`wrongPictures`: siblings differing only there; at the vowel or the last letter one sibling and another picture, its first letter first), else fix it with `stonesFor` (same kind of letter, no two the same sound, never the old letter). Planned after the bridge, before Charge (`PLAN_ORDER`); its shown pictures and its first creature (said, `says`) keep out of later keys. Per word: `shifterLevel` (ProgressStore `shifterLevels`, capped by `DIFFICULTY`: level 1 at base: the changed letter lit, stones sound on reach; 2 lit; 3 nothing). Yellow and a miss: `soundLines` of the new letter (read it) or the stone in reach (fix it). A miss: picture sounded out (`shifter_picked`, `shifter_says` + the letter), or the stone's letter bounced off the label and its sound said (`shifter_stone`, `shifter_nope`; never a word made of it). The full instruction once a beat a visit, then `shifter_cue_read` / `shifter_cue_fix`, the next link's strike under the praise (M26); fix it's praise `shifter_fixed` (M30), never "You made it match!" before another fix-it link's "Make it match!" (hunt 10, M46). Right: `morph` (swell, squash, shrink, poof, pop), `word_<w>`, recorded (read it under `words` via `recordRead`; fix it under `spelling`, `recordFixed`, the word bag untouched); a copy of each creature into the `Bag` with the praise, the last creature itself. Walking and green only, no Dad buttons. Hooks: `room.shifter`.
+
+### Rhyme room
+
+`src/scenes/RhymeRoom.ts`, `src/rules/rhyme.ts`.
+
+Item 139. A `HouseSideRoom` (`RHYME_GAME`, fetch rooms only; drawn, one of door b's games beside the fetch sentence frames and the word machine, `RHYME.weight`; `?room=rhyme` behind door a) whose plan is `kind: 'rhyme'` (`fetches` the printed words, `key` the last). `RHYME_FAMILIES`: rimes of three-unit words with a one-letter onset (CAT, SOCK, KING), three words or more, a thing among them; `things` can be printed, `actions` only shown. `planRhyme(store, { avoid, taken }, rand)`: `RHYME.rounds` rounds (fewer down to `RHYME.minRounds`, else null and a sentence game plays), each a family new to the visit, no word or picture twice; the printed word drawn by `drawWords` (a bag word twice as likely), first from those not in `LAST_READ`; `shownFor` two family words, things first; `wrongPictures` two things, one sharing its first sound (`firstSound`, C and K one), one its vowel and not its first sound, neither rhyming (`rhymes`) nor a look-alike, short words first, the vowel picture no nasal near rhyme (`nasalNear`: ANT for CAT) where another is free (hunt 11, M71, a lean); rounds ordered CVC before digraph-ended. Planned after the Shape-Shifter, before Charge (`PLAN_ORDER`); `rhymeShown` pictures and `rhymeSays` (the cards, said) keep out of later keys. Per word: `rhymeLevel` (ProgressStore `rhymeLevels`, capped by `DIFFICULTY`: 1 sounded out unasked on the plate straight after the two cards, then `rhyme_which` on the first round only (item 146 cut `rhyme_intro`), later rounds' sound-out alone (item 144, M64); 2 and 3 `rhyme_read`, sounded out on yellow only). Yellow: `rhyme_listen` and the sound-out, help (`aided`). A miss: the cards' `word_` lines, her pick's, `rhyme_listen`, the cards again and the printed word's `word_` line (Matt's design); two misses sparkle. Right: the picture flies to the row's third place, `word_<w>`, `readPraise`, a copy into the `Bag`; `recordRead` and `rimes`. Walking and green only, no Dad buttons. Hooks: `room.rhyme`.
+
+### Entry hall (warm-up)
+
+`src/scenes/EntryScene.ts`, `src/rules/grab.ts`.
+
+Item 033, step `grab` between the bedroom and house part 1. `grabPlan()` (`src/episode/plans.ts`) draws the word first (`pickGrab`: a bank `thing` of `GRAB.maxUnits` sound units at most, not MOM or DAD (`GRAB_WORDS` leaves out `NO_BAG_COPY`: the grab goes to her bag and is fired; hunt 10, M45), her grabs' shakiness × the bank's coverage, none of her last `RECENT_GRABS` (3), not the gift word, a move pad word, the villain's named counter word or anything said before the battle, stemmed: `saidBeforeBattle`; nor a word that says one of those, `grabSays`), then the house plan (the word goes into `saidBefore`, so no room key, counter or machine word, with `grabSays(word)`: the bank words heard whole in it as it plus one sound unit before or after, compared by sound, CLOCK: LOCK, TENT: TEN, not KITE: KIT; hunt 10, M57), then the hall's other pictures (`hallObjects`, `distractorsFor` judged by her grabs, clear of every word read later). The clue is `clue(word, level, help)`, never the word's own `word_<w>` (amendment 1549; that line is the confirmation once she has it): the sounds by sound unit always (`letter_sh_sound` lights both letters, `span` 2), never a letter's name (item 137); `show` writes the letters into the board (all but level 3's sounds); from `GRAB.helpAfter` misses the sounds alone, letters shown, a longer beat each (`HELP_GAP_MS`). Right: ProgressStore `record('grabs', ...)` and `setGrabLevel` (`stepLevel`, `src/rules/difficulty.ts`), the word onto `episode.fetched`. Layout is `ENTRY_HALL` in `content/house/house.ts`.
+
+### Side rooms
+
+`src/world/SideRoom.ts`.
+
+`SideRoom`, the base class of every side room's game (the live ones and the parked v0.1 games; item 072, was `Minigame`): `wrongTries`, the no-fail `wrong()`, `sparkleAnswer` (and `stopSparkle(spot)`, for a room that hides the picked spot before clearing it), `ARRIVE_MS`, `INK` / `LIT`, and `sidePlan(scene, slot, kind)` (a room's plan). `ParkedGame` (`src/scenes/minigames/ParkedGame.ts`, item 147), the parked games' base: the piece meter, `right()` and `completePrize()`. `HouseSideRoom` (item 088), the six live rooms' base: `slot` / `roomId`, `sceneData`, `background`, `enter(x, y)`, `backToHubSoon` / `fadeToHub`, `recordRead` / `recordModelled` (onto `episode.read` and, but for a `NO_BAG_COPY` word, MOM and DAD, `episode.fetched`: hunt 10, M45; the rooms resume from `read`), `bagCopy(word)` (does its picture fly into her bag), `wordArt`, a round's kept misses and Dad's help across F9 and back (`keptMisses` / `keepMisses`, `keptAided` / `keepAided`, `forgetMisses`: `episode.house.misses` by `<slot>:<word>`, never keyed by hand), `stepClearOf(cx, halfWidth, y)` (new options landed in her reach: she steps out of it), `openDad` / `closeDad` (any Dad press ends solo mode), and the wait for Dad (`askDad`, `resetDadWait`, `dadAway(deltaMs)`: true once `DAD_AWAY_MS` passes with no press, paused under dad lock and while a line plays; it turns `episode.solo` on, for the session; `dadTimeouts` for the hooks), shared by Charge the Spell and the Stretchy Bridge.
+
+### Variety
+
+`src/rules/recent.ts`, ProgressStore `recent` / `recentOf` / `remember`.
+
+Item 067. `fresh(pool, recent)` (recent picks sit out while two are left), `leastRecent` (the side rooms). `rememberCast` (`src/episode/draws.ts`, as `advance` enters the bedroom: villain, ally, forms, story and line variants, only what was drawn freely) and `rememberPlan` (`plans.ts`, only after `rememberCast`: rooms, the story fight's yes or no (`story_fight_<person>`), the words she read (`last_episode_words`, `LAST_READ`, read back by `lastRead`; both, and `unreadFirst`, in `recent.ts` since item 147: the Shape-Shifter and the rhyme room keep clear of them, and Charge, the word machine and the bridge draw through `unreadFirst`, where the pool allows, hunt 11 M77), and, never for URL-forced games, games, the phonics door, the Shape-Shifter's chains (`chains`, `CHAINS_KEPT`) and whether door b had it (`shifter_door`)). `record('words')` keeps her latest right-first-time reads for the bank's recency lean.
+
+### Battle
+
+`src/battle/BattleScene.ts`, `src/battle/sim.ts`, `src/battle/volleys.ts`, `src/battle/beats.ts`, `src/battle/moveChoice.ts`, `src/battle/hud.ts`.
+
+Split in item 141. `BattleScene` is the orchestrator: `part1()` / `part2()` are the director scripts, it owns the clock (`now`), the phase, the banner, the move choice and the give-away checks (`textGivesAway`), builds the three below in `init()`, and implements every host (`BattleWorld`, `StageHost`, `ChoiceHost`, `StoryHost`) by handing on. `BattleSim` (`sim.ts`, its `SimHost`) is the simulation: `think()` is the per-fighter AI; `hit()` is the one damage path (health floors, `floors` from `HEALTH_FLOORS` in config, live here; part 1's villain floor starts at `PART1_VILLAIN_FLOOR.start` and `stepVillainFloor()` lowers it a step before each super and the combo, to `.end` for the ultimate, hunt 11 M63); projectiles, traps and taunts; `separate()` keeps the heroes and the villain from standing in one another (not while one is in the air); `BRAWL`, where the brawl puts everybody. A landing picks a spot clear of every other body; a call-out is said at most once a part (`calledOut`, item 087), and bubbles keep clear of the bars and the banner. `BattleVolleys` (`volleys.ts`): `useAllFetched()` fires her fetched things out of her bag in beats (`fetchBeats`, `src/rules/volleys.ts`: a room's earlier words as one volley, each room's last word its own beat; Charge the Spell's words all one volley, hunt 11 M62), `useCharged()` the runes (back to back: `RUNE_GAP` apart at least, each waiting for its own sound); `revealSpot`. `BattleBeats` (`beats.ts`): the combo, a super's `wordFx`, the ultimate (`ultimateWindUp`, `ultimateFloors`, `ultimateCountered` and its counter stagings) and `finish`. The move choice (`MoveChoice`, `moveChoice.ts`, the scene its `ChoiceHost`) lays word pads on the floor (`padSpots`, `makePad`; where they go is Phaser-free in `src/battle/padPlace.ts`, item 071: no sign over the villain or a contest's held team, a contest's pads on her side; the team, and the villain once settled, step clear in a fight; hunt 11: two pads, the right word and the first other, where three rings cannot keep off a contest's held team (`placeContestPads`, `standingWords`, M65); in a brawl, behind the villain at the arena's end, her hero steps out past him before the pads pop in (`stepOutX`, M75); the rings keep off a stage's `choiceKeepOff` boxes, the clash point's flare in a spell clash, M76); she walks her hero onto one and presses green; the first choice of each part is the gift word. `ownerOf(owner, word)` turns a planned `MoveOwner` into a fighter and ability (with `from: null`, the word's `EFFECT_BY_WORD` ability). `ambience()` plays the arena's `ambience` (`ARENAS`, item 134).
+
+### Story fight
+
+`src/battle/story/StoryDirector.ts`, `src/battle/story/walk.ts`, `src/battle/stages/story.ts`, `content/battle/stories/`, `src/rules/storyFight.ts`.
+
+Item 107. A style with `kind: 'story'` runs `StoryDirector.run()` in place of `part1()` / `part2()` (the director takes a `StoryHost`, exported from `StoryDirector.ts` and implemented by `BattleScene`: everything it uses from the battle; scene work goes through `stage`): its script's beats in order, each lines (`storyLine` ids; the speaker is the villain, the dad in the fight `BattleScene.dad`, or the ally `allyFighter`) then one thing. `StoryStage` holds everyone on their marks (`STORY_MARKS`) and draws no bars; the `story` phase casts nothing and taunts nothing. Pads are `BattleScene.moveChoice()` as ever, on the plan `planStoryMoves` makes (one choice per pad beat, the right word from the beat's `answers`, no other sensible word on the floor), handed out by `movePlan()`; here (`ChoiceHost.storyProps()`, hunt 10 M54) no pad opens within her reach whatever that costs (`placePads`' `me.first`: elsewhere her reach gives way to the older rules, and the story stage is always crowded), and the rings keep off the props (`StoryDirector.propBoxes()`, `keepOff`) as far as that allows, so a ring may sit on the faded stone. Walks (`StoryWalk`: a dodge to a safe spot, the grab at the hoard) run on real time, end by themselves, and are placed by `__ww.place`; at the ledge her lift eases up and down over about a fifth of a second (`LIFT_EASE`, M56), set where the walk ends. The dive and the finale reuse `ultimateWindUp`, `ultimateFloors`, `ultimateCountered`, `finish` (`beats.ts`, through the scene) and `retreat`. `?fight=<id>` forces the style's `villain` (`castEpisode`). Browser test: `tests/storyFight.spec.ts`.
+
+### Free play
+
+`src/fx/freePlay.ts`, `src/rules/freePlay.ts`.
+
+Item 060. `FreePlay` (one per scene) is her character's toys: `update(controls, dt, body, open, { green, cast })` jumps on green (tap hop, hold floats; `startJump` / `stepJump`) and casts on blue / red / yellow (a tap one shot, a hold charges a big one, `castPower`), the look by colour and her outfit (`OUTFIT_SHAPES`: chef, knight). The scene says when play is `open` and which buttons are free; `height` lifts her sprite (`Player.lift`); `reset()` drops it all. Shots hit nothing; live shots are capped (`overCap`, `FREE_PLAY.maxShots`, the oldest just goes; a choice opening clears them all). Dad lock drops a charge or float. `RoomScene` wires it for every walking room: `playOpen()` (default `walking`; a scene closes it while an answer is open) and `hasHint()` (default true; yellow casts only when it is false or the scene is locked); green jumps only with no spot in reach. `BattleScene` opens it during the fight outside a move choice; her hero runs the arena alongside the script and nothing she does reaches `hit()`. Knobs `FREE_PLAY` in config; tests read `__ww.state().play` (`playStats`).

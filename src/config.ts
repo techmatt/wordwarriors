@@ -300,6 +300,44 @@ export const BANK_DRAW = {
   firm: 0.35,
 };
 
+/**
+ * How shaky an item is (ProgressStore `shakiness`, 0 solid .. 1 often missed):
+ * an unseen item counts as `unseen`, fairly shaky, so new things get
+ * introduced; fewer than `solidAfter` recent tries is not enough to call it
+ * solid (the misses' share is blended toward 0.5 below it); and nothing seen
+ * is ever under `floor`, so a solid word still comes up now and then.
+ */
+export const SHAKINESS = { unseen: 0.7, floor: 0.05, solidAfter: 3 };
+
+/**
+ * How much more likely the villain's own named counter word is than any
+ * other, when it is in the bag (src/rules/rooms.ts): the named items (Evil
+ * Tiamat's Magic Hat swallowing her storm) are the best-staged defeats, so
+ * they come up a bit more often, without breaking the bag. Item 067 doubled
+ * the pool (every level in play, 109 pictured words where 51 were open), so 3
+ * became 6 to keep the same share. Matt kept it at 6 (docs/rulings.md).
+ */
+export const NAMED_COUNTER_BOOST = 6;
+
+/** How much more a spell-sounding word weighs as a caster's gift (item 038, src/rules/moves.ts `drawGift`). */
+export const CASTER_SPELL_BOOST = 25;
+
+/** How much a wrong pad that has had its turn this round weighs against one still in the pad bag (src/rules/moves.ts `padWeights`). */
+export const PAD_SHOWN_WEIGHT = 0.05;
+
+/** How many of her latest grabs the entry hall's next pick keeps clear of, while another word will do (item 067; was 1; src/rules/grab.ts `pickGrab`). */
+export const RECENT_GRABS = 3;
+
+/** How much likelier a victory scene that fits the cast is (src/rules/endings.ts `pickEnding`). */
+export const FIT_WEIGHT = 3;
+
+/**
+ * The tallest a non-grown-up stands beside her outside battles, in her
+ * heights (src/episode/cast.ts `castScale`; hunt 11, M73; it was 1.3). Every
+ * scene makes room for chef Dada Jason's 1.65.
+ */
+export const CAST_SCALE_MAX = 1.7;
+
 /** How long in the bedroom (ms, after the news) before the door starts to sparkle. */
 export const DOOR_SPARKLE_MS = 12_000;
 

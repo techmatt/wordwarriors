@@ -14,7 +14,7 @@ import type { AbilitySpec, CounterItem } from '../../content/battle/types';
 import { fightLineKey, type FightSpec } from '../../content/battle/fights';
 import { nameLine, reformedLine, ultimateLine } from '../../content/voice/ids';
 import { stopMusic } from '../audio/music';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxPoof, sfxShield, sfxShout, sfxSummon, sfxUltimate, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, HEALTH_FLOORS, PART1_VILLAIN_FLOOR } from '../config';
 import { castArt, castScale, counterArt, counterWord, episode, helper, namedCounter, reformedOf, villainSpec } from '../episode/Episode';

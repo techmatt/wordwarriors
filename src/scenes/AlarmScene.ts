@@ -13,7 +13,7 @@ import Phaser from 'phaser';
 import { personOf } from '../../content/battle/roster';
 import { fighterId, heroKey, narratorLine, tauntLine, villainKey } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { sfxBoom, sfxSiren, sfxUltimate } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { advance, castArt, episode, narrator, villainSpec } from '../episode/Episode';

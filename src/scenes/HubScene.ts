@@ -35,7 +35,7 @@ import { runeArt } from '../../content/phonics/runes';
 import type { AbilitySpec } from '../../content/battle/types';
 import { moveKey, narratorLine, villainKey } from '../../content/voice/ids';
 import { sfxFanfare, sfxSelect, sfxSummon, sfxWhoosh } from '../audio/sfx';
-import { voiceBus, type Utterance } from '../audio/VoiceBus';
+import { voiceBus, type Utterance } from '../voice/VoiceBus';
 import { DEPTH, FONT_ROUNDED, GAME_WIDTH } from '../config';
 import { away, enterRoom, episode, giftWord, helper, hubScene, narrator, planFor, type Slot, type Step } from '../episode/Episode';
 import { isVariant, variant } from '../episode/lineVariants';
@@ -61,6 +61,12 @@ const SCROLL_Y = 150;
 /** A prop drawn as an emoji on a card (scenes.ts `prop` that is not an art id): the card's size. */
 const CARD_W = 220;
 const CARD_H = 96;
+/**
+ * How far down (px) the gift's word sits on a prop whose face is not at its picture's middle
+ * (item 153): the medal's ribbon is above its disc, and CLAP sat about 10 px high on it (the
+ * pale face's middle is 30 of the art's 440 px below its centre, drawn 150 high).
+ */
+const PROP_WORD_DY: Record<string, number> = { prop_medal: 10 };
 
 export class HubScene extends RoomScene {
   private part: 1 | 2 = 1;
@@ -348,7 +354,7 @@ export class HubScene extends RoomScene {
       round ? 130 : 180,
       round ? 64 : 80,
     );
-    this.scroll = this.add.container(sx, sy, [...this.propBehind(story.prop), word]).setDepth(DEPTH.fx);
+    this.scroll = this.add.container(sx, sy, [...this.propBehind(story.prop, word), word]).setDepth(DEPTH.fx);
     this.scroll.setData('word', word);
     popIn(this, this.scroll);
     sfxWhoosh();
@@ -367,10 +373,13 @@ export class HubScene extends RoomScene {
 
   /**
    * What the gift's word is written on: a prop's art (the scroll, the sword),
-   * or a white card with the scene's emoji standing on top of it.
+   * or a white card with the scene's emoji standing on top of it. The word
+   * moves down by its prop's `PROP_WORD_DY`, where the prop's face is not
+   * at its middle.
    */
-  private propBehind(prop: string): Phaser.GameObjects.GameObject[] {
+  private propBehind(prop: string, word: Phaser.GameObjects.Text): Phaser.GameObjects.GameObject[] {
     if (prop.startsWith('prop_') && this.textures.exists(prop)) {
+      word.y = PROP_WORD_DY[prop] ?? 0;
       // The scroll is wide and flat; anything else gets the same box, the word across its middle.
       // A round prop (Ellie's bubble, M55) would shrink to the box's 120 px height: it gets a
       // 150 px square instead, inside the 240×150 the house mood keeps clear (`build`).

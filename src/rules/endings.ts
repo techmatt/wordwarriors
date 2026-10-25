@@ -17,11 +17,9 @@ import { CHARACTER_BY_ID, personOf } from '../../content/battle/roster';
 import { ENDINGS, ENDING_BY_ID, type EndingSpec } from '../../content/house/endings';
 import { endingLine, reformedLine } from '../../content/voice/ids';
 import { helperOf, type Cast } from './cast';
+import { FIT_WEIGHT } from '../config';
 import { pickWeighted, type Rand } from './random';
 import { fresh } from './recent';
-
-/** How much likelier a scene that fits the cast is. */
-export const FIT_WEIGHT = 3;
 
 export type EndingCast = Pick<Cast, 'hero' | 'ally' | 'villain' | 'primary' | 'secondary'>;
 

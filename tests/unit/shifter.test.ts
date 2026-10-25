@@ -92,8 +92,8 @@ test('planShifter (hunt 6, M29; hunt 9, M39): seeded draws change two places at 
 });
 
 test('wrongPictures (M29): at the vowel or the last letter one sibling and another picture, its first letter first; at the first letter siblings only', () => {
-  // BIG at the last letter: one pictured sibling, BIB (BIN is stored, item 127), and another picture with its first letter (BED stored, hunt 9).
-  assert.deepEqual(wrongPictures('big', 2, 'bug', SHIFT_WORDS).sort(), ['bib', 'bus']);
+  // BIG at the last letter: one pictured sibling, BIB (BIN is stored, item 127), and another picture with its first letter (BED, live again in item 153).
+  assert.deepEqual(wrongPictures('big', 2, 'bug', SHIFT_WORDS).sort(), ['bed', 'bib']);
   const like = wrongPictures('cap', 2, 'cat', ['can', 'cup', 'dog', 'cat']);
   assert.deepEqual(like, ['can', 'cup'], 'the sibling, then a picture with its first letter before one without');
   for (const w of SHIFT_WORDS) for (const o of wrongPictures(w, 0, '', SHIFT_WORDS)) assert.equal(changedAt(w, o), 0, `the first letter, siblings only: ${w} beside ${o}`);

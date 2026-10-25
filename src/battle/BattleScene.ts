@@ -43,7 +43,7 @@ import type { AbilitySpec, Status } from '../../content/battle/types';
 import { wordEffect } from '../../content/phonics/effects';
 import { fighterId, moveKeyWord, moveLine, narratorLine, tauntLine, type MoveKind } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { sfxBoom, sfxFanfare, sfxRight, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH, RUNE_GAP } from '../config';
 import { outfitFor } from '../../content/battle/outfits';

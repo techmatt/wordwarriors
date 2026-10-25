@@ -33,7 +33,7 @@ import { LETTER_BY_CHAR } from '../../content/phonics/letters';
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, rimeLine, sillyLine, wordLine } from '../../content/voice/ids';
 import { readPraise, variant } from '../episode/lineVariants';
-import { voiceBus, type Utterance } from '../audio/VoiceBus';
+import { voiceBus, type Utterance } from '../voice/VoiceBus';
 import { sfxBoing, sfxPoof, sfxRight, sfxSelect, sfxSummon } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH } from '../config';
 import { episode, narrator, type Slot, type Step } from '../episode/Episode';

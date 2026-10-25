@@ -29,7 +29,7 @@ test('realTimeout: the wall clock the harness kept, else plain setTimeout', asyn
 });
 
 test('the voice fetch, the art fetch and the decode wait all time out on realTimeout', () => {
-  for (const f of ['src/voice/VoiceBank.ts', 'src/art/ArtBank.ts', 'src/audio/VoiceBus.ts']) {
+  for (const f of ['src/voice/VoiceBank.ts', 'src/art/ArtBank.ts', 'src/voice/VoiceBus.ts']) {
     const src = readFileSync(f, 'utf8');
     assert.match(src, /realTimeout\(\(\) => (abort\.abort\(\)|resolve\('late'\))/, f);
   }

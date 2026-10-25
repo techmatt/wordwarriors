@@ -52,7 +52,7 @@ import { RUNE_BY_SOUND, runeArt, type GestureMotion } from '../../content/phonic
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { readPraise, variant } from '../episode/lineVariants';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxZap } from '../audio/sfx';
 import { CHARGE, DEPTH, FONT_COMIC, GAME_WIDTH, SOUND_GAP_MS } from '../config';
 import { castFace, currentStep, episode, helper, narrator, type Slot, type Step } from '../episode/Episode';

@@ -28,7 +28,7 @@ import { FRAMES } from '../../content/phonics/sentences';
 import { WORDS } from '../../content/phonics/words';
 import { startScene } from '../art/gate';
 import { stopMusic } from '../audio/music';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { BANK_DRAW, GAME_HEIGHT, GAME_WIDTH, GRAB, SENTENCE_SOLID } from '../config';
 import { debugMode } from '../episode/debug';
 import { BAG_WORDS, NEW_WORDS, coverageTable, type CoverageRow } from '../rules/bank';

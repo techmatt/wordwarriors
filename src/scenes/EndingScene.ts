@@ -12,7 +12,7 @@
 import Phaser from 'phaser';
 
 import { ENDING_BY_ID, endingArt, endingPropArt } from '../../content/house/endings';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { startMusic } from '../audio/music';
 import { ENDING_PAUSE, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { startScene } from '../art/gate';

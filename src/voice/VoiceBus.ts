@@ -17,12 +17,12 @@
  * shows and flow-control awaits still resolve.
  */
 
-import { audioHeld, getAudioContext, unlockAudio, whenAudible } from './context';
-import type { HoldMode } from './holdSound';
-import { setMusicDuck } from './music';
-import { setSfxLevel } from './sfx';
+import { audioHeld, getAudioContext, unlockAudio, whenAudible } from '../audio/context';
+import type { HoldMode } from '../audio/holdSound';
+import { setMusicDuck } from '../audio/music';
+import { setSfxLevel } from '../audio/sfx';
 import { realNow, realTimeout } from '../realTime';
-import { voiceBank, WORD_S, type VoiceLine, type VoicePlayback } from '../voice/VoiceBank';
+import { voiceBank, WORD_S, type VoiceLine, type VoicePlayback } from './VoiceBank';
 
 export type Priority = 'instruction' | 'bark';
 

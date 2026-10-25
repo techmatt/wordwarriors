@@ -31,6 +31,7 @@
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import { FETCH_ITEMS, FRAME_BY_ID, NO_ARTICLE, NOT_FETCHED, NUMBER_WORDS, sentence, tokenWord, type Fill, type Sentence } from '../../content/phonics/sentences';
 import { ACTIONS } from '../../content/phonics/bank';
+import { NAMED_COUNTER_BOOST } from '../config';
 import { MINIGAMES, drawGames, type Minigame, type MinigameKind } from './minigames';
 import { machineWords, planMachine, type MachinePlan } from './wordMachine';
 import { chargeRunes, chargeWords, gestureWords, planCharge, type ChargePlan } from './charge';
@@ -105,16 +106,6 @@ const ACTION_WORDS: string[] = ACTIONS.map((w) => w.word);
 
 /** Words a side room can fetch (each has a battle item). */
 const FETCHABLE = new Set(FETCH_ITEMS.map((i) => i.word));
-
-/**
- * How much more likely the villain's own named counter word is than any
- * other, when it is in the bag: the named items (Evil Tiamat's Magic Hat
- * swallowing her storm) are the best-staged defeats, so they come up a bit
- * more often, without breaking the bag. Item 067 doubled the pool (every
- * level in play, 109 pictured words where 51 were open), so 3 became 6 to
- * keep the same share.
- */
-const NAMED_COUNTER_BOOST = 6;
 
 function objectsFor(store: ProgressStore, s: Sentence, rand: Rand, avoid: string[]): string[] {
   const key = s.key;

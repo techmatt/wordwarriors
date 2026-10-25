@@ -9,10 +9,11 @@
 
 import { defineConfig } from '@playwright/test';
 
+import { SHOTS_PORT } from '../../src/port';
 import { gpuProjects } from '../gpu';
 import { devServerCommand } from '../servers';
 
-const PORT = Number(process.env.SHOTS_PORT ?? 5194);
+const PORT = Number(process.env.SHOTS_PORT ?? SHOTS_PORT);
 
 export default defineConfig({
   testDir: '.',

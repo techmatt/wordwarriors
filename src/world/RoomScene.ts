@@ -18,7 +18,7 @@ import Phaser from 'phaser';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, IDLE_REPROMPT_MS, REACH, STICK_HINT_MS } from '../config';
 import { narratorLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
-import { voiceBus, type Utterance } from '../audio/VoiceBus';
+import { voiceBus, type Utterance } from '../voice/VoiceBus';
 import { sfxWrong } from '../audio/sfx';
 import { advance, castArt, castScale, episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { outfitFor } from '../../content/battle/outfits';

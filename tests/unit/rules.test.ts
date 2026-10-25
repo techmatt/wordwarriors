@@ -154,7 +154,8 @@ test('roster: named counter words are pictured, and never in any name, ability, 
   const frameTokens = new Set(allFrameTokens());
   for (const c of ROSTER) {
     const w = c.counter.word;
-    // Item 127: a stored counter word (BAG, TUB, NUT) keeps its picture but is never drawn, so its named item waits.
+    // Item 127: a stored counter word keeps its picture but is never drawn, so its named item waits
+    // (none since item 153 made BAG, TUB and NUT live; which never come up: namedCounters.test.ts).
     assert.ok(pictured.has(w) || Boolean(BANK_BY_WORD[w]?.stored), `${c.id}: counter word ${w} has a picture`);
     assert.ok(!(MOVE_WORDS as readonly string[]).includes(w), `${c.id}: counter word ${w} is a move word`);
     assert.ok(!frameTokens.has(w), `${c.id}: counter word ${w} is a sentence word`);

@@ -54,6 +54,9 @@ export interface Minigame {
   kind: MinigameKind;
   /** The Phaser scene that plays it. */
   scene: string;
+  /** Its debug-mode pedestal (src/scenes/DebugRoom.ts): a glyph and its name, upper case like all game text. */
+  glyph: string;
+  name: string;
   /** Relative weight in the draw (1 is ordinary). */
   weight: number;
   /** Which rooms it can be: a fetch room, the secret counter room, or both. */
@@ -63,10 +66,10 @@ export interface Minigame {
 }
 
 /** The sentence game in each of its frames: the pool before item 026, and the tests' default (`?games=sentence`). */
-export const SENTENCE_GAMES: Minigame[] = FRAMES.map((f): Minigame => ({ id: `sentence:${f.id}`, kind: 'sentence', scene: 'SentenceRoom', weight: 1, slots: [f.use], frame: f.id }));
+export const SENTENCE_GAMES: Minigame[] = FRAMES.map((f): Minigame => ({ id: `sentence:${f.id}`, kind: 'sentence', scene: 'SentenceRoom', glyph: '📜', name: 'SENTENCE', weight: 1, slots: [f.use], frame: f.id }));
 
 /** The word machine: a fetch room only (the counter belongs to the villain's sentence); its plan is the visit's words (src/rules/wordMachine.ts). */
-export const WORD_MACHINE_GAME: Minigame = { id: 'word_machine', kind: 'machine', scene: 'WordMachine', weight: WORD_MACHINE.weight, slots: ['fetch'] };
+export const WORD_MACHINE_GAME: Minigame = { id: 'word_machine', kind: 'machine', scene: 'WordMachine', glyph: '⚙️', name: 'MACHINE', weight: WORD_MACHINE.weight, slots: ['fetch'] };
 
 /**
  * Charge the Spell (item 053): a fetch room only. One word a visit, each
@@ -75,7 +78,7 @@ export const WORD_MACHINE_GAME: Minigame = { id: 'word_machine', kind: 'machine'
  * (fetched, item 058) and its runes fire in the next battle. For the beta it is one of the phonics games, one of which is
  * forced per episode (FORCE_PHONICS_ROOM, src/episode/plans.ts `roomGames`).
  */
-export const CHARGE_GAME: Minigame = { id: 'charge', kind: 'charge', scene: 'ChargeRoom', weight: CHARGE.weight, slots: ['fetch'] };
+export const CHARGE_GAME: Minigame = { id: 'charge', kind: 'charge', scene: 'ChargeRoom', glyph: '✨', name: 'CHARGE', weight: CHARGE.weight, slots: ['fetch'] };
 
 /**
  * The Stretchy Bridge (item 054): a fetch room only. Words blended across
@@ -83,7 +86,7 @@ export const CHARGE_GAME: Minigame = { id: 'charge', kind: 'charge', scene: 'Cha
  * across it is a battle item, like the machine's. For the beta it is one of
  * the phonics games, one of which is forced per episode (FORCE_PHONICS_ROOM).
  */
-export const BRIDGE_GAME: Minigame = { id: 'bridge', kind: 'bridge', scene: 'BridgeRoom', weight: BRIDGE.weight, slots: ['fetch'] };
+export const BRIDGE_GAME: Minigame = { id: 'bridge', kind: 'bridge', scene: 'BridgeRoom', glyph: '🌉', name: 'BRIDGE', weight: BRIDGE.weight, slots: ['fetch'] };
 
 /**
  * The Shape-Shifter (item 096): a fetch room only. The villain's spell walks
@@ -93,7 +96,7 @@ export const BRIDGE_GAME: Minigame = { id: 'bridge', kind: 'bridge', scene: 'Bri
  * beta it is behind door b of 3 episodes in 7, never two running (SHIFTER_ROOM,
  * items 126 and 137, src/episode/plans.ts `roomGames`).
  */
-export const SHIFTER_GAME: Minigame = { id: 'shifter', kind: 'shifter', scene: 'ShifterRoom', weight: SHIFTER.weight, slots: ['fetch'] };
+export const SHIFTER_GAME: Minigame = { id: 'shifter', kind: 'shifter', scene: 'ShifterRoom', glyph: '🪄', name: 'SHIFTER', weight: SHIFTER.weight, slots: ['fetch'] };
 
 /**
  * The rhyme room (item 139): a fetch room only. Two rhyming words shown and
@@ -101,7 +104,7 @@ export const SHIFTER_GAME: Minigame = { id: 'shifter', kind: 'shifter', scene: '
  * src/rules/rhyme.ts); every printed word is a battle item. Drawn like the
  * word machine: behind door b in the episodes without the Shape-Shifter.
  */
-export const RHYME_GAME: Minigame = { id: 'rhyme', kind: 'rhyme', scene: 'RhymeRoom', weight: RHYME.weight, slots: ['fetch'] };
+export const RHYME_GAME: Minigame = { id: 'rhyme', kind: 'rhyme', scene: 'RhymeRoom', glyph: '🎶', name: 'RHYME', weight: RHYME.weight, slots: ['fetch'] };
 
 /** The phonics games FORCE_PHONICS_ROOM puts in every episode, one of them, by weight. */
 export const PHONICS_GAMES: Minigame[] = [CHARGE_GAME, BRIDGE_GAME];

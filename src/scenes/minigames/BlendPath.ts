@@ -15,7 +15,7 @@
 import Phaser from 'phaser';
 
 import { letterSoundLine, wordLine } from '../../../content/voice/ids';
-import { voiceBus } from '../../audio/VoiceBus';
+import { voiceBus } from '../../voice/VoiceBus';
 import { sfxStep } from '../../audio/sfx';
 import { DEPTH, FONT_COMIC } from '../../config';
 import { planRand } from '../../episode/Episode';

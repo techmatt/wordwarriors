@@ -1,7 +1,8 @@
 /**
  * Playwright config for the boot timings (item 065, `tests/perf/*.pw.ts`; the
  * `.pw.ts` name keeps it out of the suite). One worker, so nothing shares the
- * machine with what is being timed. Port: `PERF_PORT`, else `CONDUCTOR_PORT`, else 5196.
+ * machine with what is being timed. Port: `PERF_PORT`, else 5196 (src/port.ts; never
+ * `CONDUCTOR_PORT`, the suite's in a conductor item, item 153).
  *
  * It times the production build, as the suite and the bug-hunt checker serve (item 133;
  * `tests/testBuild.ts`, skipped when nothing it is built from changed, into its own folder
@@ -15,10 +16,11 @@
 
 import { defineConfig } from '@playwright/test';
 
+import { PERF_PORT } from '../../src/port';
 import { gpuProjects } from '../gpu';
 import { buildServerCommand, devServerCommand } from '../servers';
 
-const PORT = Number(process.env.PERF_PORT ?? process.env.CONDUCTOR_PORT ?? 5196);
+const PORT = Number(process.env.PERF_PORT ?? PERF_PORT);
 
 export default defineConfig({
   testDir: '.',

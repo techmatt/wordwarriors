@@ -45,7 +45,7 @@ import Phaser from 'phaser';
 
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { readPraise, variant } from '../episode/lineVariants';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH, VARIETY } from '../config';
 import { episode, narrator, type Slot, type Step } from '../episode/Episode';
@@ -59,6 +59,7 @@ import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
 import type { KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
+import { OPTIONS, PICTURE_SIZE, entryOf, rowKeepClear } from '../world/optionRow';
 import { GIGGLE_BEAT_MS, type Spot } from '../world/RoomScene';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
 
@@ -71,12 +72,7 @@ const LABEL = { x: GAME_WIDTH / 2, y: 400, gap: 84 };
 const LABEL_PLATE_H = 100;
 /** How far from the label's middle she stands when she steps up out of the options' reach: its plate's half width and hers, clear of it (hunt 9). */
 const LABEL_CLEAR = (LABEL.gap * 3 + 40) / 2 + 50;
-/** The pictures or stones standing in the room (feet positions), left to right. */
-const OPTIONS: [number, number][] = [[400, 640], [640, 655], [880, 640]];
-const PICTURE_SIZE = 116;
 const STONE = { w: 120, h: 96 };
-/** Where she walks in. */
-const ENTRY = { x: 130, y: 610 };
 /** The spell's colours. */
 const MAGIC = [0xb04cff, 0xff4cd8, 0xffffff];
 /** How long a read word's label stays lit before the next spell strikes, ms (its letters light 70 ms apart). */
@@ -156,15 +152,12 @@ export class ShifterRoom extends HouseSideRoom {
 
   protected build(): void {
     this.floor.setTo(70, 450, 1140, 250);
+    const entry = entryOf(this.roomId, this.floor);
     // The stones' row 250 px clear either side and her way in too (hunt 11, the rhyme room's fixes 187 and 220).
-    const avoid = [
-      new Phaser.Geom.Rectangle(CREATURE.x - 200, 0, 400, LABEL.y + 60),
-      new Phaser.Geom.Rectangle(OPTIONS[0]![0] - 250, OPTIONS[0]![1] - 150, OPTIONS[2]![0] - OPTIONS[0]![0] + 500, 200),
-      new Phaser.Geom.Rectangle(ENTRY.x - 90, ENTRY.y - 170, 180, 200),
-    ];
+    const avoid = [new Phaser.Geom.Rectangle(CREATURE.x - 200, 0, 400, LABEL.y + 60), ...rowKeepClear(entry)];
     this.bag = this.moodAndBag(avoid);
     this.makeCreature();
-    this.enter(ENTRY.x, ENTRY.y);
+    this.enter(entry.x, entry.y);
     for (const l of this.plan.links) void voiceBank.ensure(wordLine(l.to));
     void voiceBank.ensure(wordLine(this.plan.start));
     if (this.finished) {

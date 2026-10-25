@@ -303,12 +303,10 @@ export function tag(e: BankEntry): BankWord {
  */
 export const STORED_WHY: Record<string, string> = {
   // Things: a picture she would name another way, or one word too many for one picture.
-  tub: 'the bathtub picture is BATH, also a bank word',
   jug: 'a pitcher of milk: she says MILK (a bank word) or pitcher',
   mug: 'a mug of cocoa is a CUP to her (CUP is kept)',
   glass: 'a glass of water is a CUP or WATER to her',
   sack: 'a sack is a BAG to her',
-  bag: 'the pink handbag is a purse',
   lamb: 'the same picture as SHEEP (kept)',
   tap: 'a US child says faucet; the picture also reads as SINK or DRIP',
   bin: 'a US child says trash can, which points at CAN',
@@ -320,12 +318,12 @@ export const STORED_WHY: Record<string, string> = {
   xray: 'she says bones or hand; an x-ray is no idea she has',
   hen: 'a 4-year-old says chicken',
   rat: 'the big-eared grey rodent reads as a mouse',
-  nut: 'a lone hazelnut reads as an onion or an acorn',
   gate: 'the planks between posts read as a fence',
   // Hunt 11, M66: a sound-out would teach the wrong vowel.
   bush: 'its U is the U of PUT, not of SUN: a wrong short-U word in every sound-out',
   // Hunt 9, M40: the bedroom's own props, shown every episode before any room (fix 74), so never read.
-  bed: 'the bedroom shows her bed every episode, so it is never read',
+  // (BED, TUB, NUT and BAG are live again, item 153, Matt: "all okay words". BED is still never a key
+  // word: its 🛏️ is the journey map's bedroom stop, a sign shown before any room, plans.ts `planInput`.)
   drum: 'a bedroom toy, shown every episode, so it is never read',
   lamp: 'the bedroom night-light, shown every episode, so it is never read',
   duck: 'a bedroom toy, shown every episode, so it is never read',
@@ -389,7 +387,6 @@ export const COVERAGE = {
   firstTarget: 3,
   first: {
     j: { target: 1, why: 'JAM; JUG and JEEP are stored (item 127: she says milk, car), JET odd and stored' },
-    n: { target: 2, why: 'NET, NEST; NUT is stored (item 127: a lone hazelnut reads as an onion)' },
     v: { target: 2, why: 'VAN, VET; VASE is stored (item 127: she says flowers), VEST odd' },
     a: { target: 2, why: 'ANT, APPLE; ALLIGATOR and ASTRONAUT she would not read for years' },
     e: { target: 2, why: 'EGG, ELF; ELK and EDGE are no picture she knows' },
@@ -428,8 +425,6 @@ export const COVERAGE = {
   bridgeStarts: ['m', 's', 'f', 'l', 'n', 'r', 'v', 'b', 'c', 'd', 'h', 'p', 't', 'g', 'j'],
   bridge: {
     r: { target: 1, why: 'RUG; RAT is stored (item 127: it reads as a mouse), ROCK and RING are level 3, RAFT and RAM odd' },
-    n: { target: 2, why: 'NET, NEST; NUT is stored (item 127)' },
-    t: { target: 2, why: 'TENT, TEN; TAP and TUB are stored (item 127: faucet, bath)' },
     g: { target: 2, why: 'GIFT, GRASS; GLASS is stored (item 127: a cup to her)' },
     v: { target: 2, why: 'VAN, VET; VEST is odd, VASE level 3' },
     j: { target: 1, why: 'JAM; JUG is stored (item 127: milk), JET odd and stored, JEEP level 3 and stored' },

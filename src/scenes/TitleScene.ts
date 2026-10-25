@@ -15,7 +15,7 @@ import { castSet } from '../art/needs';
 import { PERSONS, ROSTER } from '../../content/battle/roster';
 import { coreLine } from '../../content/voice/ids';
 import { getAudioContext, unlockAudio } from '../audio/context';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { startMusic } from '../audio/music';
 import { sfxHit, sfxSelect } from '../audio/sfx';
 import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';

@@ -32,7 +32,7 @@ read-only reference.
 | `src/battle/` | `BattleScene` (the orchestrator: the director, `part1`/`part2`), `sim` (the simulation: AI, `hit`, shots), `volleys` (her bag's fetched things, the runes), `beats` (combo, ultimate, counter, finish), `Fighter`, `moveChoice` (the frozen-fight word pick), `hud`, `abilities` (every ability kind, `CASTS`), `movement` (`STEER`), `padPlace` (Phaser-free pad placement); `stages/` each fight style; `story/` the story fight |
 | `src/episode/` | `Episode.ts` the flow (scenes call `advance()`; nothing else decides flow); Phaser-free `state.ts`, `draws.ts`, `cast.ts`, `plans.ts`, `debug.ts`, `lineVariants.ts` |
 | `src/input/` | `Controls` (pad, keys, virtual pad), `TextEntry` (A–Z), `dadLock`, `dadButtons`, `debugKey`, `browserKeys` (the browser's own keys and Tab's focus move, prevented) |
-| `src/audio/`, `src/voice/` | Synthesised sfx and music, `VoiceBus` (the one voice arbiter), `holdSound`; `VoiceBank` (reads `public/voice-gen/manifest.json`) |
+| `src/audio/`, `src/voice/` | Synthesised sfx and music, `holdSound`; `VoiceBus` (the one voice arbiter), `VoiceBank` (reads `public/voice-gen/manifest.json`) |
 | `src/art/` | `ArtBank`, `needs` (`artFor`), `gate` (`startScene`: every scene starts through it), `pictureBox` (word pictures' fit, Phaser-free) |
 | `src/state/` | `ProgressStore` (localStorage, versioned); `progress.ts` the one instance, re-read when another tab writes it (item 144) |
 | `src/rules/` | Phaser-free, unit-tested game rules and draws; `rooms` (the episode's room plans, `episodePlans`), `sentences` (the sentence game's word rules), `difficulty`, `recent` (rotations across episodes), `random` (seeded) |
@@ -103,6 +103,10 @@ header, and promotion (`art:pick`) rides a later, normal item.
   (the `npx tsx …` / `playwright` process itself), never on a launcher wrapper.
 - **LF line endings** (`.gitattributes` `* text=auto eol=lf`).
 - **Operational facts learned while working go into the README**, never only into a report.
+- **Specs are named by subject, not by bug hunt** (item 153, Matt). The hunt-named specs
+  (`hunt4`–`hunt7`, `hunt10`, `hunt11`, `lenses`, `rulings`) move their tests into specs named by what they
+  cover gradually: when an item next touches a test in one, it moves that test (and its
+  neighbours on the same subject) to the subject's spec. No sweep.
 
 ## House rules
 

@@ -11,14 +11,14 @@ import { HOME, PLACES, PLACE_BY_ID, SIDE_ROOM_BY_ID, hubArt } from '../../conten
 import { HOME_QUEST, QUESTS, questFor, questSetup } from '../../content/house/quests';
 import { ANY_SCENES, CASTERS, HUB_SCENES, hubStory, type GiftSpot } from '../../content/house/scenes';
 import { ART_BY_ID } from '../../content/art/assets';
-import { ACTIVE_CAST, CAST_ODDS } from '../../src/config';
+import { ACTIVE_CAST, CAST_ODDS, CAST_SCALE_MAX } from '../../src/config';
 import { DADS, drawCast, phonicsFace, wakerOf } from '../../src/rules/cast';
 import { seededRand } from '../../src/rules/random';
 import { drawStory } from '../../src/rules/story';
 import { MINIGAMES, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/rooms';
 import { ProgressStore } from '../../src/state/ProgressStore';
-import { CAST_SCALE_MAX, castId, castScale, podiumCheer, podiumCheerRight, podiumSecond } from '../../src/episode/cast';
+import { castId, castScale, podiumCheer, podiumCheerRight, podiumSecond } from '../../src/episode/cast';
 import type { EpisodeState } from '../../src/episode/state';
 import { memory } from './seeds';
 

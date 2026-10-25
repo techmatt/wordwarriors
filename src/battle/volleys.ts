@@ -12,7 +12,7 @@ import Phaser from 'phaser';
 import { RUNE_BY_SOUND, runeArt } from '../../content/phonics/runes';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { letterSoundLine } from '../../content/voice/ids';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { sfxSummon, sfxWhoosh } from '../audio/sfx';
 import { DEPTH, GAME_WIDTH } from '../config';
 import { episode, housePlan } from '../episode/Episode';

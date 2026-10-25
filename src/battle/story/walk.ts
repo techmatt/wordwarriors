@@ -15,7 +15,7 @@
 import Phaser from 'phaser';
 
 import type { StorySpot } from '../../../content/battle/stories/types';
-import { voiceBus } from '../../audio/VoiceBus';
+import { voiceBus } from '../../voice/VoiceBus';
 import { sfxSelect } from '../../audio/sfx';
 import { DEPTH, GRAB_REPROMPT, REACH } from '../../config';
 import type { Controls } from '../../input/Controls';

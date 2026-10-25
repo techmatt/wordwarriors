@@ -51,7 +51,7 @@ import { canHold } from '../../content/phonics/letters';
 import { gapFor, SIDE_ROOM_BY_ID, type BridgeGap } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { readPraise, variant } from '../episode/lineVariants';
-import { voiceBus, type HeldSound } from '../audio/VoiceBus';
+import { voiceBus, type HeldSound } from '../voice/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon } from '../audio/sfx';
 import { BRIDGE, DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { episode, narrator, type Slot, type Step } from '../episode/Episode';

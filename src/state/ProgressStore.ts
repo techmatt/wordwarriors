@@ -12,7 +12,7 @@
  * it under Node with a fake storage.
  */
 
-import { VARIETY } from '../config';
+import { SHAKINESS, VARIETY } from '../config';
 
 export const STORE_KEY = 'wordwarriors.progress';
 export const STORE_VERSION = 1;
@@ -459,15 +459,15 @@ export class ProgressStore {
 
   /**
    * How shaky an item is, 0 (solid) .. 1 (unknown or often missed). Unseen
-   * items count as fairly shaky so new things get introduced.
+   * items count as fairly shaky so new things get introduced (`SHAKINESS` in config).
    */
   shakiness(kind: ItemKind, id: string): number {
     const s = this.stat(kind, id);
-    if (s.recent.length === 0) return 0.7;
+    if (s.recent.length === 0) return SHAKINESS.unseen;
     const misses = s.recent.filter((r) => !r).length / s.recent.length;
-    // Fewer than three tries is not enough to call it solid.
-    const confidence = Math.min(1, s.recent.length / 3);
-    return Math.max(0.05, misses * confidence + 0.5 * (1 - confidence));
+    // Fewer than `solidAfter` (three) tries is not enough to call it solid.
+    const confidence = Math.min(1, s.recent.length / SHAKINESS.solidAfter);
+    return Math.max(SHAKINESS.floor, misses * confidence + 0.5 * (1 - confidence));
   }
 
   snapshot(): ProgressData {

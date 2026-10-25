@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "npm run typecheck && vite build",
     "preview": "vite preview",
+    "play": "node --import tsx tests/testBuild.ts && vite preview -c tests/vite.test.config.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.tools.json",
     "art:placeholders": "tsx tools/art/placeholders.ts",
     "art:gen": "tsx tools/art/generate.ts",

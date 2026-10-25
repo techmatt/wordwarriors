@@ -68,6 +68,12 @@ export interface Trap {
 }
 
 export interface BattleWorld {
+  /**
+   * The battle's scene. Named `stage`, not `scene`, on purpose (item 153, Matt's call):
+   * BattleScene is a Phaser.Scene and implements every host itself, and a Phaser.Scene's
+   * own `scene` is its ScenePlugin, so a host field `scene: Phaser.Scene` cannot be met
+   * without a host adapter object. Not to be confused with `FightStage` (a fight style).
+   */
   stage: Phaser.Scene;
   now: number;
   enemiesOf(f: Fighter): Fighter[];

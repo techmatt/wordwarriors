@@ -16,7 +16,7 @@ import Phaser from 'phaser';
 import { abilityCallout } from '../../content/battle/roster';
 import type { Status } from '../../content/battle/types';
 import { moveLine, tauntLine } from '../../content/voice/ids';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { sfxBoom, sfxHit, sfxPoof } from '../audio/sfx';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH, HEALTH_FLOORS, PART1_VILLAIN_FLOOR } from '../config';
 import { unsayTaunt } from '../episode/lineVariants';

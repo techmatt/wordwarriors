@@ -12,7 +12,7 @@
 import Phaser from 'phaser';
 
 import { fighterId, narratorLine, tauntLine, villainKey } from '../../content/voice/ids';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { sfxSelect } from '../audio/sfx';
 import { GAME_WIDTH } from '../config';
 import { castArt, episode, narrator, villainSpec } from '../episode/Episode';

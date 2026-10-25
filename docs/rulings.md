@@ -67,6 +67,8 @@ here.
 ## Tunables Matt may want
 
 - `DAD_AWAY_MS` (`src/config.ts`): how long a room waits for Dad before going solo.
+- The draw weights item 153 gathered into `src/config.ts`: `SHAKINESS`, `NAMED_COUNTER_BOOST`,
+  `CASTER_SPELL_BOOST`, `PAD_SHOWN_WEIGHT`, `RECENT_GRABS`, `FIT_WEIGHT`, `CAST_SCALE_MAX`.
 - Solo Charge's "Say it with me!" on every rune (now) or the first rune only (hunt 8,
   M38's option b).
 
@@ -81,3 +83,9 @@ here.
 - The `say` fields identical to their `text` (`content/voice/script.ts`) are redundant; they come out with the next voice build (removing one
   changes the line's text, so re-synthesises it).
 - Debug runs still count taunts.
+
+## Code
+
+- **The battle hosts' scene stays `stage`** (`BattleWorld.stage`, item 153): `scene` would
+  clash with Phaser.Scene's own `scene` (its ScenePlugin), and BattleScene implements every
+  host itself; a host adapter is not worth the risk for a name.

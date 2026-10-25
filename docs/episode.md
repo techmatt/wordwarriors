@@ -435,7 +435,7 @@ printed word and the pictures are things (`THINGS`: an action word is never a pi
 picks, item 137); the two cards are the family's things first, then pictured action words
 (HUG, TUG, RUN, HOP: shown and said, never picked; Matt's default, item 139). The bank
 makes ten families: -AT -AN -OCK -ING with things only; -UG -UN -OP -IG -OT -AP with an
-action card. -OG (DOG LOG) and -ED (BED stored) have too few words; `RHYME_FAMILIES`
+action card. -OG (DOG LOG) and -ED (BED alone) have too few words; `RHYME_FAMILIES`
 follows the bank, so a new word or a word brought back adds its family by itself. Help
 fades per word (`rhymeLevels`, on the grown-ups page once met; at base difficulty every word
 gets level 1): level 1 the helper sounds the printed word out unasked, each unit lit on the

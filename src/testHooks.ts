@@ -17,7 +17,7 @@ import { dadButtonsOpen, dadPress, type DadAnswer } from './input/dadButtons';
 import { dadLock, setDadLock } from './input/dadLock';
 import { typeLetter } from './input/TextEntry';
 import { artBank } from './art/ArtBank';
-import { voiceBus, type VoiceWait } from './audio/VoiceBus';
+import { voiceBus, type VoiceWait } from './voice/VoiceBus';
 import { episode, currentStep, type EpisodeState } from './episode/Episode';
 import { progress } from './state/progress';
 import type { ProgressData } from './state/ProgressStore';

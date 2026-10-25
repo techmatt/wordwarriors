@@ -41,9 +41,14 @@ export interface DebugOrigin {
 export interface DebugGame {
   id: string;
   scene: string;
+  /** Its pedestal's glyph and name (the `MINIGAMES` entry's). */
+  glyph: string;
+  name: string;
 }
 
-export const DEBUG_GAMES: DebugGame[] = [...new Map(MINIGAMES.map((g) => [g.scene, { id: g.kind === 'sentence' ? 'sentence' : g.id, scene: g.scene }])).values()];
+export const DEBUG_GAMES: DebugGame[] = [
+  ...new Map(MINIGAMES.map((g) => [g.scene, { id: g.kind === 'sentence' ? 'sentence' : g.id, scene: g.scene, glyph: g.glyph, name: g.name }])).values(),
+];
 
 /** The rooms key 0 works in: the hub, the entry hall and every minigame's scene, so a new minigame gets it too. */
 export const DEBUG_ROOMS = ['Hub', 'Entry', ...new Set(MINIGAMES.map((g) => g.scene))];

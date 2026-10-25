@@ -15,6 +15,7 @@ import { questSetup } from '../../content/house/quests';
 import { hubStory, storyTexts, type HubStory, type HubStoryIds } from '../../content/house/scenes';
 import { wakeCastKey, type SpokenLine } from '../../content/voice/ids';
 import { wakeVariant } from '../../content/voice/script';
+import { CAST_SCALE_MAX } from '../config';
 import { helperOf, wakerOf } from '../rules/cast';
 import { adultHeight, isGrownUp, outfitTall } from '../rules/heights';
 import { pick } from '../rules/random';
@@ -101,9 +102,6 @@ export function castArt(id: string, evil = false, state: EpisodeState = episode)
   if (evil) return charArt(c, true);
   return outfitFor(c, state)?.art ?? charArt(c, false);
 }
-
-/** The tallest a non-grown-up stands beside her outside battles, in her heights (hunt 11, M73; it was 1.3). Every scene makes room for chef Dada Jason's 1.65. */
-export const CAST_SCALE_MAX = 1.7;
 
 /**
  * How tall `id` stands beside the hero outside battles (item 028): the size

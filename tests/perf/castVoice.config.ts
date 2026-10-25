@@ -6,6 +6,7 @@
 
 import { defineConfig } from '@playwright/test';
 
+import { PERF_PORT } from '../../src/port';
 import { gpuProjects } from '../gpu';
 
 export default defineConfig({
@@ -17,6 +18,6 @@ export default defineConfig({
   fullyParallel: true,
   reporter: [['list']],
   timeout: 900_000,
-  use: { baseURL: process.env.PROBE_URL ?? `http://localhost:${process.env.CONDUCTOR_PORT ?? 5196}` },
+  use: { baseURL: process.env.PROBE_URL ?? `http://localhost:${process.env.CONDUCTOR_PORT ?? PERF_PORT}` },
   projects: gpuProjects(),
 });

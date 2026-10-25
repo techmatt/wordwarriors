@@ -36,7 +36,7 @@ import type Phaser from 'phaser';
 
 import { personOf } from '../../content/battle/roster';
 import { group } from '../../content/voice/ids';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { endingPeople } from '../rules/endings';
 import { voiceBank } from '../voice/VoiceBank';
 import { startScene } from '../art/gate';

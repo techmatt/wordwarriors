@@ -23,7 +23,7 @@ import { WORD_BY_ID, pictureFor } from '../../content/phonics/words';
 import { narratorLine } from '../../content/voice/ids';
 import { variant } from '../episode/lineVariants';
 import { sfxWhoosh } from '../audio/sfx';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { DAD_AWAY_MS, DEPTH, REACH } from '../config';
 import { backToHub, castFace, episode, narrator, planFor, type Slot, type Step } from '../episode/Episode';
 import { burst } from '../fx/juice';

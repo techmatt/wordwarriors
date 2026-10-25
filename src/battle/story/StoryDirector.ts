@@ -30,7 +30,7 @@ import { storySplashArt, type StoryBeat, type StoryLine, type StoryScript, type 
 import { fightPropArt } from '../../../content/battle/fights';
 import { personOf } from '../../../content/battle/roster';
 import { storyLine } from '../../../content/voice/ids';
-import { voiceBus } from '../../audio/VoiceBus';
+import { voiceBus } from '../../voice/VoiceBus';
 import { sfxBoom, sfxFire, sfxJump, sfxPoof, sfxShout, sfxStomp, sfxTwinkle, sfxUltimate, sfxWhoosh } from '../../audio/sfx';
 import { DEPTH, GAME_WIDTH, RUNE_GAP } from '../../config';
 import type { WindUp } from '../beats';

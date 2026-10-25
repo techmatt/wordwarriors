@@ -21,7 +21,7 @@ import { WORD_BY_ID, pictureFor } from '../../../content/phonics/words';
 import { LETTER_BY_CHAR } from '../../../content/phonics/letters';
 import { spellWordsFor } from '../../../content/phonics/spelling';
 import { letterSoundLine, narratorLine, villainKey, wordLine } from '../../../content/voice/ids';
-import { voiceBus } from '../../audio/VoiceBus';
+import { voiceBus } from '../../voice/VoiceBus';
 import { sfxBoing, sfxKey } from '../../audio/sfx';
 import { DEPTH, FONT_COMIC, FONT_HEAVY, GAME_WIDTH } from '../../config';
 import { castFace, episode, narrator, villainSpec } from '../../episode/Episode';

@@ -28,7 +28,7 @@ import Phaser from 'phaser';
 import { personOf } from '../../content/battle/roster';
 import { uncaptioned } from '../../content/voice/ids';
 import { DEPTH, FONT_ROUNDED, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { voiceBus, type Utterance } from '../audio/VoiceBus';
+import { voiceBus, type Utterance } from '../voice/VoiceBus';
 import { TEX } from '../fx/textures';
 import { makePortrait, sameSpeaker, speakerOf, type Portrait, type Speaker } from './Portrait';
 

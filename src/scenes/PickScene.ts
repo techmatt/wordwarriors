@@ -15,7 +15,7 @@ import Phaser from 'phaser';
 import { charArt } from '../../content/art/assets';
 import { PERSONS } from '../../content/battle/roster';
 import { coreLine, fighterId, nameLine } from '../../content/voice/ids';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { sfxSelect, sfxSummon } from '../audio/sfx';
 import { FONT_HEAVY, GAME_WIDTH } from '../config';
 import { castEpisode, episode, randomVillain, type Step } from '../episode/Episode';

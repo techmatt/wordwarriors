@@ -11,7 +11,7 @@
 import Phaser from 'phaser';
 
 import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { voiceBus, type Utterance } from '../audio/VoiceBus';
+import { voiceBus, type Utterance } from '../voice/VoiceBus';
 import { fitText } from './fitText';
 import { makePortrait, speakerOf } from './Portrait';
 

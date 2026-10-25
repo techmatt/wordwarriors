@@ -14,7 +14,7 @@
 import Phaser from 'phaser';
 
 import { moveKey, narratorLine } from '../../content/voice/ids';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { sfxSelect, sfxWrong } from '../audio/sfx';
 import { CHOICE_REPROMPT, DEPTH, FONT_COMIC, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH, REACH, STICK_HINT_MS } from '../config';
 import { episode, narrator } from '../episode/Episode';

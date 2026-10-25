@@ -10,6 +10,11 @@ npm ci
 npm run dev
 ```
 
+`npm run play` plays a production build instead: the suite's build (`tests/testBuild.ts`,
+skipped when nothing changed) served by `vite preview -c tests/vite.test.config.ts` on 5174
+(`npm run play -- --port <n>` for another), with `public/` served in place, not copied.
+It builds into the suite's folder, so not while a test run in the same checkout serves it.
+
 `npm ci` installs exactly what `package-lock.json` pins (about a minute). A fresh checkout
 or conductor worktree has no `node_modules/` and needs it first: without it `npx tsc` lands
 on npm's "this is not the tsc command you are looking for" stub and `npx tsx` cannot find
@@ -92,8 +97,8 @@ Three commands (times on this machine, the GPU, three workers; how each got ther
 item: `docs/engineering.md`, *Browser and tests*):
 
 - **Fast lane, after every change: `npm test`** (about 34 s, item 147; 14 s in item 105): the unit
-  tests (about 33 s alone, the long pole: `grab.test` "hallObjects (hunt 11): never the grab
-  word plus a sound" 18 s, `plansGolden.test` 13 s) and, at the same time, the three browser tests tagged `@smoke`
+  tests (about 27 s alone, item 153; the long pole: `plansGolden.test` 13 s, then `grab.test`
+  "hallObjects (hunt 11): never the grab word plus a sound" 7 s, 18 s before item 153 cut its seeds to 5) and, at the same time, the three browser tests tagged `@smoke`
   (`SMOKE` in `tests/harness.ts`): the title and the grown-ups page, the hub's free play, and
   a sentence room's banner. `tests/fastLane.ts` runs both, streams the browser side and
   prints the unit tests' output whole when they end; it fails if either fails, and passes its
@@ -108,14 +113,8 @@ item: `docs/engineering.md`, *Browser and tests*):
 - **Before a commit: `npm run test:browser`** (about 170 s, item 147; 86 tests as listed 2026-10-24, one of them the skipped
   pairs placeholder) plus the specs that cover
   what changed (`npx playwright test <spec>`, both lanes of it). `test:browser` is every
-  browser test not tagged `@slow` (the smoke three among them): one of each newer room
-  (the bridge at level 3, a Charge round, free play's shots and jump, the word machine
-  opening), the cover check on Smaug's counter banner, the two layout checks (the hub's
-  circle line clear of the circle and the gift card, merged in from `cover.spec` in item
-  132; the word machine's go line), title and the grown-ups page, a solid sentence frame, dad lock, a key held through a scene change,
-  Spell the Spell, the cast and fight-style overrides, never last episode's victory scene,
-  the three text-fit checks, and the word machine's plate and Word → Picture's banner
-  holding their words and the read pass's green dot on its banner (`tests/banner.spec.ts`; its widest-sentence checks are `@slow`). It stops itself at 6 minutes, so a hang fails inside
+  browser test not tagged `@slow` (the smoke three among them); `npx playwright test --list
+  --grep-invert @slow` lists them. It stops itself at 6 minutes, so a hang fails inside
   Claude Code's 10-minute background cap instead of being killed by it.
 - **Everything: `npm run test:all`** (about 6.3 minutes when last timed, item 105; 195
   browser tests as listed 2026-10-25): the unit tests, then every browser test. The slow lane alone is
@@ -271,7 +270,7 @@ its sound, never its letters; `tests/sentenceread.spec.ts` plays the sentence ro
 single-green read, then a wrong and a right picture; `tests/ending.spec.ts` the recap →
 THE END → only Dad's 2. Tests reach THE END with `toTheEnd(page)` and leave it with
 `playAgain(page)` (`tests/harness.ts`). `voice.history` keeps only the last 200 line ids
-(`src/audio/VoiceBus.ts`), so a test slicing it from a saved length saves that length late.
+(`src/voice/VoiceBus.ts`), so a test slicing it from a saved length saves that length late.
 
 `tests/lenses.spec.ts` (item 080) keeps the third bug hunt's fixes: a held F8, the
 grown-ups page under dad lock, the lock badge after a resize, a hidden tab holding the
@@ -384,6 +383,10 @@ its background `timeout` (10 minutes by default), mid-suite, and every later tes
 starts lives exactly as long as the run. `WW_BASE_URL` stays for a server you keep
 running yourself (a `vite preview` of a build).
 
+The side tools' ports are in `src/port.ts` too: screenshots 5194 (`SHOTS_PORT`), the
+bug-hunt checker 5195 (`QA_PORT`), boot timings 5196 (`PERF_PORT`); each environment
+variable overrides its own, and none falls back to `CONDUCTOR_PORT`.
+
 **Two runs in one worktree at once** (item 085, parallel helpers): each needs its own port,
 build folder and output folder, or the second build overwrites the first one's served files
 and the second run empties the first one's `test-results/`:
@@ -422,7 +425,8 @@ serve a build like the suite, each into its own folder (`node_modules/.ww-qa-dis
 `PERF_DEV_SERVER=1`; not a test, it prints) times page load to the title and to a quiet hub
 (`?scene=house`: input free, nobody talking, still so 0.6 s later), each from a fresh
 browser context, median of `PERF_RUNS` (5), and the art each fetched. Its server takes
-`PERF_PORT`, else `CONDUCTOR_PORT`, else 5196; `PERF_DIST=<dir>` builds into another
+`PERF_PORT`, else 5196 (never `CONDUCTOR_PORT` since item 153: in a conductor item the
+suite serves there, so pass `PERF_PORT=$CONDUCTOR_PORT` when no test runs beside it); `PERF_DIST=<dir>` builds into another
 folder. Item 065's before and after (the dev server) and item 133's baseline on the build
 are in `docs/engineering.md`.
 
@@ -493,9 +497,11 @@ episodes back to back (`SCENARIOS` in `tests/qa/qa.pw.ts`; `-g <name>` for one,
 forms, an idle child who stands still at every choice, more seeds; `QA_SET=new` for the
 third, item 069's: a busy child pressing blue, red and yellow all episode (free play),
 `DIFFICULTY` 2 and 3 with seeded progress, Charge and the bridge answered right, and four
-real draws back to back; `QA_SET=lenses` the fourth, item 080's, below; `QA_SET=recent` the
-fifth, item 089's, below; `QA_SET=cast` the seventh hunt's, below; `QA_SET=hunt8` the eighth's, below; `QA_SET=hunt9` the ninth's, below; `QA_SET=hunt10` the tenth's, below; `QA_SET=hunt11` the eleventh's, below;
-`QA_SET=all` every batch).
+real draws back to back; `QA_SET=lenses` the fourth, item 080's; `QA_SET=recent` the
+fifth, item 089's; `QA_SET=cast` the seventh hunt's; `QA_SET=hunt8`, `hunt9`, `hunt10` and
+`hunt11` the eighth to eleventh hunts'; `QA_SET=all` every batch). What each later batch
+plays and each check it added, hunt by hunt: `docs/qa-findings.md`, *Bug-hunt checker log,
+batch by batch*.
 About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it records.
 In a conductor item pass its port: `QA_PORT=$CONDUCTOR_PORT`. The suite (`playwright.config.ts`)
 serves on `CONDUCTOR_PORT` too, so a test run beside a sweep needs another
@@ -510,132 +516,9 @@ output folder is per tag (`test-results/qa-<tag>`), since a run empties its fold
 neither the worktree's code nor `node_modules` (*Operational facts*): keep such scripts in
 the worktree.
 
-- **Item 128's check, `text-off-panel`:** a word crossing the edge of the panel it is
-  printed on (the sentence banner's cream band, the parked Word → Picture's banner, the
-  word machine's plate). Whatever draws one tags its container `qaPanel` (`tagPanel` in
-  `src/ui/banner.ts`); the probe gives each text inside it its letters' ink
-  (`worldInk`: a text's box carries the font's whole line height, about 1.4× its size) and
-  `panelIssues` (`tests/qa/checks.ts`) wants it wholly inside. The art's whole box is not the
-  test: `prop_banner`'s cream is a band about a fifth of its height, and the old layout's words
-  sat on its red trim (`tests/banner.spec.ts`: the widest fetch and counter sentences,
-  forced with `?sentence=<frame>:<key>`).
-- **Item 069's checks:** free play never over its cap of live shots (`shots-over-cap`), a
-  busy child whose casts never fired (`mash-dead`), and in a scenario whose URL forces no
-  cast or room, the rotations across episodes (`repeat`: the villain or victory scene of
-  the episode before is a bug, the same ally or side rooms a look; `repeat-word`: a word
-  read in an earlier episode of the run). Each scenario's JSON lists what each episode
-  drew (`drawn`).
-- **Item 080's lenses** (`QA_SET=lenses`, about 25 minutes): `reload_points` reloads the
-  page at five points (bedroom, a side room, battle 1's choice, hub part 2, the victory
-  scene), one episode each, and lists what the store held either side (`probes` in its
-  JSON; `reload-store` when a reload itself changed it); `hidden_tab` switches the tab
-  away for 2.5 s every 9 s (Phaser's visibility and blur events; a real hidden tab also
-  stops animation frames, which this does not, so its frame spikes are expected);
-  `resize` cycles six window sizes; `slow_net` slows every voice and art fetch by 0.3 to
-  1.5 s, `flaky_net` fails one in seven (never the manifest; `netFailed` lists them);
-  `lock_all` turns dad lock on at thirteen points of an episode, presses every button and
-  checks nothing moved (`dadlock-leak`) and the badge shows (`dadlock-badge`), listing the
-  lines that started while locked; `parent_all` opens the grown-ups page at each point
-  and checks F9 comes back to the same scene (`parent-return`) and the store did not
-  change (`parent-store`); `parent_none` is the same seed with no visits, to compare.
-  Also `qa flags <url>`, about 120 URLs and odd values each watched 9 s (`flag-stuck` when one
-  never leaves Boot or Wait; JSON and shots in `flags/`), and `qa devkeys skip` (F2 at
-  every step, then an episode played through) and `qa devkeys auto` (F4 and green to the
-  recap).
-- **Item 089's batch** (`QA_SET=recent`, items 081-088's changes; first swept in item 092, about 17 minutes):
-  `debug_rooms` turns minigame debug mode on at six points (the warm-up, the hub in both
-  parts, both side rooms, the attic), plays a game from its pedestal at each (the four in
-  turn) and turns it off: the store, the episode and the room must be as they were
-  (`debug-leak`, `debug-return`), the pedestal checked (`debug-check`) and the DEBUG tag
-  only while on (`debug-tag`); `end_mash` presses her buttons, Dad's 1, key 0 and dad lock
-  at the recap and THE END and goes to the grown-ups page and back: only Dad's 2 may
-  leave (`end-leak`) and nothing may be stored (`end-store`); `variants6` plays six drawn
-  episodes; `voiceless` plays one with the voice manifest missing (captions only).
-- **The seventh hunt's batch** (`QA_SET=cast`, item 116, about 6 minutes on three workers):
-  each ally from items 111 and 114 once, against the new villains of item 115 and their own
-  fights (frost clash, space race, magic show) and older ones, Evil Smaug's story fight twice
-  (`jasmine_story`; `rilla_story_wrong` with wrong picks and a busy child), and three drawn
-  episodes back to back (`drawn_cast3`). `spawn-in-reach` leaves out a lone answer (the bed
-  she wakes in, the hub's secret door); `locked-silent` leaves out Charge the Spell (its
-  quiet beats are hers to say the sounds back); `clipped-line` leaves out a story fight's
-  back-and-forth (`story_` lines), as it does battle shouts. New check: `pad-in-reach` (look),
-  a move pad opening within her reach (fix 119), once a choice.
-  Every scenario also checks the transcript: a narrator line's variants said in turn
-  across the run (`variant-repeat`, a look: a variant picked while the voice bus dropped
-  it shows as a gap; not with debug games in the run, whose sandbox puts the rounds back)
-  and no taunt over twice an episode (`taunt-over-cap`).
-- **Item 092's additions:** a store change names its fields (`wordwarriors.progress
-  words.box`; a room started again after key 0 or F9 says its opening line's next
-  variant, `debug-restart-line`, a look); the overlaps already ruled on (W5, W12, W21) are
-  `target-covered-ruled`, a look; `voiceless` really runs with no manifest (its 404 goes in
-  before boot) and its silent lines are the point; ten more URL flags (`scene=theend`,
-  `grab=`, `battle=`, `cast=`, `games=`). A move choice whose pad never takes green stops
-  the run naming her position, the pads and the running scenes (M20 in
-  `docs/qa-findings.md`).
-- **Item 102's additions:** a choice that appears within reach of her is a bug
-  (`spawn-in-reach`: green mashed through the round's line picks it unwalked; only spots new
-  since the last poll count, so the driver's teleport onto a spot never does), and the
-  Shape-Shifter's first creature wearing its word on its label is not a giveaway (it is said
-  and shown, not read).
-- **The eighth hunt's batch** (`QA_SET=hunt8`, item 125, about 8 minutes on three workers):
-  `newwords3` (three drawn episodes leaning to item 121's words, `words=new`), `charge_solo3`
-  (Charge forced, Dad never presses: solo must last the session, M34; `solo-lost`, a bug, when an
-  episode ends not solo), `shifter5` (five drawn episodes with the Shape-Shifter:
-  `chain-repeat`, a look, when an episode's chain shares a link with the six the store kept
-  before it, or is one of them; M36), `warrior_story` and `moriarty_story_wrong` (the story
-  fight with a dad's outfit, and with Moriarty at 1.3 and wrong picks). `qa flags` gained
-  `words=` odd values. A word confirmation's shot is read as said even before the bus
-  reports it speaking (W33), and the hub's circle under the story's own lines is ruled
-  (W35); under the line sending her there it stays a bug. `playChargeRoom(page, 'away')`
-  (harness) leaves Dad out, and `RoomPlay.dadAway` passes it through `playRoom`.
-- **The ninth hunt's batch** (`QA_SET=hunt9`, item 129): `doorb5` (five drawn episodes: door b
-  holds the Shape-Shifter in 3 episodes of 7, never two running (item 137; about half before), a sentence frame or the word
-  machine otherwise; `door-b-streak`, a look, when it is in or missing three episodes
-  running), `story_drawn_scar` and `story_drawn_elsa_wrong` (seeds 976 and 965 draw Evil Smaug and
-  his story fight from the title with no `fight=`; the second with wrong picks. A seed's cast is
-  what the title draws, not `seed=N&scene=battle`'s: the title draws again), `newwords3_126` (`words=cow,mom,dad`) and `widest_counter` (item 128's widest
-  counter sentence, `sentence=no_match_for_the:octopus`) and `drawn10` (ten drawn episodes back to
-  back, about 15 minutes: growth, repeats, the door-b rotation); `story_parent`, `story_lock` and
-  `story_reload` put the story fight through the grown-ups page, dad lock and reloads at each
-  point, as `parent_all`, `lock_all` and `reload_points` do; forced with `fight=`, since a seed's
-  draw does not survive them (back from F9 at the title, or reloaded, the title draws again);
-  `story_hidden` switches the tab away and resizes the window through it; `erase_mid` has Dad erase all progress (F9, F8 twice, back) in a side room, at battle 1's choice
-  and in the attic, then plays a second episode on the empty store (`eraseAt`, `erase-return`). `qa flags` gained item 126's words
-  where she meets them and odd `sentence=` values.
-- **The tenth hunt's batch** (`QA_SET=hunt10`, item 135, items 130-134's changes; about 10 minutes on
-  three workers, `drawn5_h10` the longest at 8): `drawn5_h10` (five drawn episodes after item 132's
-  cleanup), `shifter_wrong3` (the Shape-Shifter with wrong picks, three episodes: M39's chains, M42's
-  lifted letter), `runcan2` and `momdad2` (`words=run,can`, `words=mom,dad`: M40, M41), and each fight
-  style item 132 tidied once with wrong picks, a busy child or an idle one (`race_wrong`, `tug_mash`,
-  `cookoff_wrong`, `clash_idle`, `story_mash_wrong`). `qa flags` gained a battle in each of the two arenas
-  item 134 gave an ambience (`villain=ellie`, `villain=rilla`, each with `fight=brawl` so no ally's cook-off nudge moves it; its `ambience=` candidates went in item
-  136), `words=run,can` and the grown-ups page with no ally.
-  New check: `glyph-on-hero` (look), a picture glyph of 60 px or more (no letters) drawn over her head and
-  shoulders (Charge's gesture glyph sat on her face, fix 137). `spawn-in-reach` counts a spot back in its
-  slot the same round as seen (the word machine's wrong tile, back under her after "That's a silly word!",
-  is not new), and `lock_all` reads a move choice opening under the lock, nothing picked, as the fight's
-  own flow (`dadlock-flow`), not a press through it.
-- **The eleventh hunt's batch** (`QA_SET=hunt11`, item 142, items 137-141's changes; 17 scenarios, about
-  14 minutes on three workers): `drawn5_h11` (five drawn episodes: item 137's strict rotation, item 138's gift spots),
-  the rhyme room wrong over three episodes, idle, mashed, under dad lock at every point and through the
-  grown-ups page (`rhyme_wrong3`, `rhyme_idle`, `rhyme_mash`, `rhyme_lock`, `rhyme_parent`), Charge's
-  two-word visit with Dad, with Dad's no, and solo (`charge2_yes`, `charge2_no`, `charge2_solo`), the word
-  machine with wrong tiles (`machine_wrong`), Bluerilla as ally and as villain (`rilla_ally`,
-  `rilla_villain`), the story fight after item 141's battle split (`story_wrong_h11`), and the rhyme room
-  and Charge through reloads, debug mode and the grown-ups page (`rhyme_reload`, `rhyme_debug`,
-  `charge_parent`, `charge_reload`). The probing scenarios wait for any of the six side rooms now: they
-  knew five, and `rhyme_lock` and `rhyme_parent` stalled at the rhyme room's door.
-  New check: `letter-name` (bug), a line that names a letter (item 137: a `letter_<x>_name` or `_hides`
-  line, or "the letter B", "M's name"); `tests/unit/qacategories.test.ts` holds every line in
-  `lines.json` to it. `slow-room` gained the rhyme room's budget (60 s; item 144: 55 s), and Charge's is item 140's
-  own limit (66 s, solo 75 s; item 144: 52 s, solo 68 s). `decal-by-target` (look): a villain's decal within 30 px of a picture she
-  picks from (the rhyme row's question mark; not the bedroom, the hub, the battle, the grown-ups page or a door,
-  where the mess goes on purpose, nor a decal hanging over it from above, as Elsa's icicles over HAT).
-  `ruledCover` takes W44's find line on a picture's foot in a sentence room (22 px at most), and
-  `tests/cover.spec.ts` fails only on an unruled cover (`target-covered`), so a ruled overlap drops out of
-  it. The hooks gained `room.rhyme.onCards` (the cards' words now: the last round's stay up under its
-  praise while `shown` already names the next, so the giveaway check's `done` list takes both),
-  `room.rhyme.thirdCard` and `battle.heroClones`. `qa flags` gained the rhyme room's and Charge's URLs.
+- **Each batch's scenarios and the checks each hunt added** (`text-off-panel`, `repeat`,
+  `dadlock-leak`, `debug-leak`, `pad-in-reach`, `chain-repeat`, `glyph-on-hero`, `letter-name`
+  and the rest): `docs/qa-findings.md`, *Bug-hunt checker log, batch by batch*.
 - **Phaser drops a key event already `defaultPrevented`:** a capture-phase `preventDefault` kills that
   key for the game (Tab, the keyboard's yellow, did nothing anywhere from item 069 to hunt 11). `installBrowserKeys`
   (`src/input/browserKeys.ts`, from `src/main.ts`) prevents only the browser's own keys (F1 F3 F6 F7 F10, ContextMenu, `/`, `'`) in the capture phase, and
@@ -651,7 +534,8 @@ the worktree.
   alone finds no test ("No tests found"); `QA_SET=recent` (its batch) or `QA_SET=all` with it.
   A scenario's batch is its `batch` field in `SCENARIOS` (a `QA_SET` name; none is the
   first batch, `quick: true` puts it in the quick three as well): a new hunt's batch is a new
-  name in `BATCHES` there and a line in the list above.
+  name in `BATCHES` there, a line in the list above and an entry in `docs/qa-findings.md`'s
+  checker log.
 - **A busy machine slows the sweep's own server:** with many agents or a typecheck
   running beside it, voice fetches from the checker's Vite server passed their 15 s
   timeout (`voice: could not decode ... AbortError` in the log) and lines played silent.
@@ -848,14 +732,14 @@ The bank covers phonics by rule, not by luck. Counting only familiar pictured wo
 
 - **3 per first sound**, every letter sound and digraph (QU counts as Q), unless an
   entry there gives a lower target and why: I, O and U have 1 and A and Z 2, through
-  words with sounds she has not been taught (item 058, below); E, J, N, V, W, Y and TH have
+  words with sounds she has not been taught (item 058, below); E, J, V, W, Y and TH have
   1 or 2; Q, X (their only pictures stored, item 127) and voiced TH none;
 - **a last sound** for the sounds words end on: 3 each for B D G K L M N P S T X CK NG,
   fewer for SH (BUSH stored, hunt 11) and F Z CH TH, with reasons;
 - **8 per short vowel**; **2 pictures per word-machine family**, and the families listed
   must stay families (-ING and -OCK joined in 056; -IN left in 127, BIN stored);
 - **the Stretchy Bridge**: 3 early words (levels 1–2, a short vowel) per first sound in
-  `COVERAGE.bridgeStarts` (N, T, G and V have 2, R and J 1, with reasons), so the far bank can show two that start like the word and differ later;
+  `COVERAGE.bridgeStarts` (G and V have 2, R and J 1, with reasons; N and T back to 3 since NUT and TUB came back, item 153), so the far bank can show two that start like the word and differ later;
 - **long vowels**: long E 3, long O, A and I 2 each, long U none yet.
 
 `npm run bank:audit` prints the table (`-- --gaps` only the shortfalls) and the
@@ -868,7 +752,7 @@ leaves a letter short goes red. Lower a target only with its reason.
 Item 127 audited every word she reads or is shown, pictures included, and **stored** the
 risky ones: a picture she would name another way (SWISH's farmer with a scythe reads as
 CUT, DASH's running boy as RUN), a word too rare for her, a sound or idea with no
-picture, or one word too many for one picture (TUB beside BATH). `STORED_WHY` in
+picture, or one word too many for one picture (LAMB beside SHEEP). `STORED_WHY` in
 `content/phonics/bank.ts` lists each with its reason. A stored word is in no pool
 (`THINGS`, `ACTIONS`, `LIVE` leave it out), so nothing draws it at any difficulty, and a
 saved bag holding one drops it. It keeps its entry, picture, `word_<x>` line, effect and
@@ -879,8 +763,9 @@ for it can go back up), `npm test` and `npm run variety`. The grown-ups page lis
 stored words on page 3, with their reasons; `npm run variety` ends with "Stored words
 drawn: none of the N" and exits 1 if one came up. A stored word stays in a roster
 ability's `words` and in a story beat's `answers`: both are filtered to live move words
-when drawn. Four villains' named counters wait while their word is stored (Cozy Bed:
-BED, stored in item 130; Gold Bag: BAG, Bubble Tub: TUB, Golden Nut: NUT). `odd` (item 040) is older and narrower: an odd
+when drawn. A villain's named counter waits while its word is stored; none is since item
+153 brought BED, BAG, TUB and NUT back (`tests/unit/namedCounters.test.ts` lists the named
+counters that can never come up, and why: Rilla's MICE and Julia's BED). `odd` (item 040) is older and narrower: an odd
 thing is out of play, but an odd `both` word keeps its move pad.
 
 Sound units (056): QU and NG are units like SH (QU sounds as Q's "Kwuh"), and doubled

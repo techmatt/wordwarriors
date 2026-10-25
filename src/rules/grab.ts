@@ -28,7 +28,7 @@
 
 import { BANK, BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
 import { NO_BAG_COPY, lookalikesOf } from '../../content/phonics/sentences';
-import { GRAB } from '../config';
+import { GRAB, RECENT_GRABS } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { coverage, distractorsFor, isFirm, met } from './bank';
 import { pickWeighted, shuffle, type Rand } from './random';
@@ -73,9 +73,6 @@ export function recordedGrabLevel(store: ProgressStore, word: string): GrabLevel
 export function grabLevel(store: ProgressStore, word: string): GrabLevel {
   return helpLevel(recordedGrabLevel(store, word), GRAB.startLevel);
 }
-
-/** How many of her latest grabs the next pick keeps clear of, while another word will do (item 067; was 1). */
-export const RECENT_GRABS = 3;
 
 /**
  * The word to grab this episode: a short word (GRAB_WORDS), weighted toward

@@ -29,6 +29,7 @@ import type { AbilitySpec } from '../../content/battle/types';
 import { CASTERS } from '../../content/house/scenes';
 import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { wordEffect } from '../../content/phonics/effects';
+import { CASTER_SPELL_BOOST, PAD_SHOWN_WEIGHT } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
 import { coverage, distractorsFor, drawFromBag, drawWords, isFirm, met } from './bank';
 import { pick, shuffle, type Rand } from './random';
@@ -125,9 +126,6 @@ export function drawMove(store: ProgressStore, eligible: string[], rand: Rand = 
   return drawFromBag(store, 'moves', MOVE_WORDS, eligible, rand, keepOut);
 }
 
-/** How much more a spell-sounding word weighs as a caster's gift (item 038). */
-export const CASTER_SPELL_BOOST = 25;
-
 /**
  * The hub's gift word (item 037): an action word from the move bag by the
  * bank's weighting, without spending it (it leaves the bag like any pad word,
@@ -149,9 +147,6 @@ export function drawGift(store: ProgressStore, input: { helper: string; avoid?: 
   const caster = CASTERS.has(input.helper);
   return drawWords(store, pool, 1, rand, (w) => (helperWords.has(w) ? 2 : 1) * (caster && BANK_BY_WORD[w]?.spell ? CASTER_SPELL_BOOST : 1))[0]!;
 }
-
-/** How much a wrong pad that has had its turn this round weighs against one still in the pad bag. */
-export const PAD_SHOWN_WEIGHT = 0.05;
 
 /**
  * The weight of a word as a wrong pad: still in the pad bag (refilled with

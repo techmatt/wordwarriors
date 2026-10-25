@@ -25,7 +25,7 @@ import { charArt } from '../../content/art/assets';
 import { BEDROOMS, type BedroomObject, type ReactionSound } from '../../content/house/house';
 import { personOf } from '../../content/battle/roster';
 import { fighterId, tauntLine, wakeCastKey, wakeLine } from '../../content/voice/ids';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import {
   sfxBoing,
   sfxBoom,

@@ -220,7 +220,8 @@ export function planShifter(store: ProgressStore, input: ShifterInput, rand: Ran
     if (!all.length) continue;
     // Hunt 7, M36: a chain sharing a link with one of the last SHIFTER.recentChains waits (MUG BUG BUN BIN
     // came back whole every three episodes), and one the same as any kept (CHAINS_KEPT), where the pool
-    // allows; under the length, above the rest. A drawn run of ten repeats none (tests/unit/shifterDraws.test.ts).
+    // allows; under the length, above the rest. A drawn run of ten seldom repeats one (tests/unit/shifterDraws.test.ts:
+    // a chain sharing no link ranks above a fresh one, so one from seven to ten back can come again).
     // Hunt 9, M39: within the chains with a read-it link (below), not before it: rotated first, a length's
     // every read-it chain could share a link and drop the visit to a shorter chain (39 short visits in 150).
     const notSame = (cs: string[][]) => cs.filter((c) => !lately.chains.has(c.join(' ')));

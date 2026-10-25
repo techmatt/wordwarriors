@@ -37,7 +37,7 @@ import Phaser from 'phaser';
 
 import { narratorLine, wordLine } from '../../content/voice/ids';
 import { readPraise, variant } from '../episode/lineVariants';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { sfxRight, sfxSelect, sfxSummon } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH, SOUND_GAP_MS } from '../config';
 import { episode, narrator, type Slot, type Step } from '../episode/Episode';
@@ -51,6 +51,7 @@ import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
 import type { KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
+import { OPTIONS, PICTURE_SIZE, entryOf, rowKeepClear } from '../world/optionRow';
 import { GIGGLE_BEAT_MS, type Spot } from '../world/RoomScene';
 import { PLAYER_HEIGHT } from '../world/Player';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
@@ -71,13 +72,8 @@ const CARD = { w: 190, h: 220, pic: 120 };
 const CARD_PIC_DY = -30;
 /** Where she stands while a round's pictures come up, if one would come up within her reach: between them and below the cards, so they never hide her. */
 const CLEAR_SPOTS: [number, number][] = [[520, 560], [760, 560]];
-/** The pictures standing in the room (feet positions), left to right. */
-const OPTIONS: [number, number][] = [[400, 640], [640, 655], [880, 640]];
-const PICTURE_SIZE = 116;
 /** A round's things pop in together; its first card is said once they have (`popIn`'s 380 ms). */
 const POP_MS = 400;
-/** Where she walks in. */
-const ENTRY = { x: 130, y: 610 };
 /** The room's colours: a music-box sparkle. */
 const TUNE = [0x4cc9ff, 0xffd23f, 0xffffff];
 
@@ -146,12 +142,11 @@ export class RhymeRoom extends HouseSideRoom {
     // Her feet no higher than 545: her head (130 px up) then stays under the cards, which end at 410 and draw
     // over her (hunt 11: she walked up behind them).
     this.floor.setTo(70, 545, 1140, 155);
-    const avoid = [new Phaser.Geom.Rectangle(CARDS[0]![0] - CARD.w / 2 - 20, 0, CARDS[2]![0] - CARDS[0]![0] + CARD.w + 40, CARDS[0]![1] + CARD.h / 2 + 20), new Phaser.Geom.Rectangle(OPTIONS[0]![0] - 250, OPTIONS[0]![1] - 150, OPTIONS[2]![0] - OPTIONS[0]![0] + 500, 200), new Phaser.Geom.Rectangle(ENTRY.x - 90, ENTRY.y - 170, 180, 200)];
-    // The pictures' row keeps 250 px clear each side (hunt 11: Moriarty's ❓ lay in line with them, under the
-    // third card's question mark, a fourth thing to walk to), and her way in (M58's rule: Bavmorda's bones
-    // lay at her feet there).
+    const entry = entryOf(this.roomId, this.floor);
+    // The cards, then the pictures' row and her way in (`rowKeepClear`).
+    const avoid = [new Phaser.Geom.Rectangle(CARDS[0]![0] - CARD.w / 2 - 20, 0, CARDS[2]![0] - CARDS[0]![0] + CARD.w + 40, CARDS[0]![1] + CARD.h / 2 + 20), ...rowKeepClear(entry)];
     this.bag = this.moodAndBag(avoid);
-    this.enter(ENTRY.x, ENTRY.y);
+    this.enter(entry.x, entry.y);
     // Every plate's sounds and the first round's instructions too (M64: fetched as each came up, a second or
     // more of silence before several of them). An ensure goes to the front of the queue: the line needed
     // last is asked for first, so the cards' words, asked for last, come first.

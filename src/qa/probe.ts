@@ -16,7 +16,7 @@
 import Phaser from 'phaser';
 
 import { getAudioContext } from '../audio/context';
-import { voiceBus } from '../audio/VoiceBus';
+import { voiceBus } from '../voice/VoiceBus';
 import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { fxStats } from '../fx/juice';
 import { dadLock } from '../input/dadLock';

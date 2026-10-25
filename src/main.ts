@@ -13,7 +13,7 @@ import { ChargeRoom } from './scenes/ChargeRoom';
 import { BridgeRoom } from './scenes/BridgeRoom';
 import { ShifterRoom } from './scenes/ShifterRoom';
 import { RhymeRoom } from './scenes/RhymeRoom';
-import { DebugRoom, toggleDebug } from './scenes/DebugRoom';
+import { DebugRoom } from './scenes/DebugRoom';
 import { BlendPath } from './scenes/minigames/BlendPath';
 import { SoundToLetter } from './scenes/minigames/SoundToLetter';
 import { Spelling } from './scenes/minigames/Spelling';
@@ -32,7 +32,7 @@ import { installTestHooks } from './testHooks';
 import { installBrowserKeys } from './input/browserKeys';
 import { installDadButtons } from './input/dadButtons';
 import { installDadLock } from './input/dadLock';
-import { installDebugKey } from './input/debugKey';
+import { installDebugKey, toggleDebug } from './input/debugKey';
 import { installGlyphMetrics } from './ui/glyphMetrics';
 import { holdAudio, releaseAudio } from './audio/context';
 

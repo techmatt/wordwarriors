@@ -17,11 +17,12 @@
 
 import { defineConfig } from '@playwright/test';
 
+import { QA_PORT } from '../../src/port';
 import { gpuProjects } from '../gpu';
 import { buildServerCommand, devServerCommand } from '../servers';
 
 // QA_PORT: a second run beside a sweep (a `QA_LOOK` at one scene) needs its own.
-const PORT = Number(process.env.QA_PORT ?? 5195);
+const PORT = Number(process.env.QA_PORT ?? QA_PORT);
 /**
  * The checker's build, apart from the suite's (`WW_TEST_DIST`, tests/vite.test.config.ts).
  * `QA_DIST=<dir>` with its own `QA_PORT` runs a second sweep beside a long one (hunt 7: a

@@ -12,7 +12,7 @@
 import Phaser from 'phaser';
 
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
-import type { Utterance } from '../audio/VoiceBus';
+import type { Utterance } from '../voice/VoiceBus';
 import { FONT_ROUNDED as NAME_FONT } from '../config';
 import { castArt, castFace, castId, episode } from '../episode/Episode';
 import { phonicsFace } from '../rules/cast';

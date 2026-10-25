@@ -12,9 +12,9 @@ import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { NO_BAG_COPY, lookalikesOf } from '../../content/phonics/sentences';
 import { PICTURE_WORDS } from '../../content/phonics/words';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
-import { GRAB } from '../../src/config';
+import { GRAB, RECENT_GRABS } from '../../src/config';
 import { stepLevel } from '../../src/rules/difficulty';
-import { GRAB_WORDS, RECENT_GRABS, clue, grabLevel, grabSays, hallObjects, pickGrab, recordedGrabLevel } from '../../src/rules/grab';
+import { GRAB_WORDS, clue, grabLevel, grabSays, hallObjects, pickGrab, recordedGrabLevel } from '../../src/rules/grab';
 import { episodePlans, type EpisodeInput } from '../../src/rules/rooms';
 import { machineWords } from '../../src/rules/wordMachine';
 import { MINIGAME_BY_ID } from '../../src/rules/minigames';
@@ -234,7 +234,8 @@ test('said early: the grab word, passed as saidBefore, is never a room key, the 
 test("hallObjects (hunt 11): never the grab word plus a sound beside it (TENT by TEN, CLOCK by LOCK)", () => {
   const store = new ProgressStore(memory());
   for (const word of GRAB_WORDS) {
-    for (let seed = 1; seed <= 15; seed++) {
+    // Five seeds a word (15 until item 153: the unit lane's longest sweep, and no seed past 5 ever failed).
+    for (let seed = 1; seed <= 5; seed++) {
       const objs = hallObjects(store, word, [], seeded(spread(seed)));
       for (const w of objs.filter((x) => x !== word)) assert.ok(!grabSays(w).includes(word), `${w} holds ${word}`);
     }
