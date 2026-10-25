@@ -226,6 +226,9 @@ export class BattleSim {
     // Kept apart before they are drawn, so the screen never shows them inside one another (item 034).
     this.separate(dt);
     for (const f of this.fighters) {
+      // A giant's wings would hang off the edge of the screen: keep all of her in. Busy too (item 155): a knockback
+      // mid-cast left Evil Tiamat past it, and the clamp's snap back once she could act came in a move choice.
+      if (f.active && f.giant) f.x = Phaser.Math.Clamp(f.x, ARENA_LEFT + f.height * 0.45, ARENA_RIGHT - f.height * 0.45);
       if (f.active) f.updateVisual(this.b.now, dt);
     }
   }
@@ -288,8 +291,6 @@ export class BattleSim {
       const home = f.team === 'hero' ? g.heroX - Math.max(0, b.heroes.indexOf(f)) * g.heroDx : g.villainX;
       f.x += (home - f.x) * Math.min(1, (f.team === 'villain' ? g.villainPull : g.heroPull) * dt);
     }
-    // A giant's wings would hang off the edge of the screen: keep all of her in.
-    if (f.giant) f.x = Phaser.Math.Clamp(f.x, ARENA_LEFT + f.height * 0.45, ARENA_RIGHT - f.height * 0.45);
     if (!fighting || !target) return;
 
     // Casting: one team member at a time, so moves read instead of blurring.

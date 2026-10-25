@@ -5,7 +5,8 @@
  * slides, a held sound while she stands still, a wrong picture sounded out,
  * then the right one; levels saved, the words fetched); level 2 (Dad's 2 is a
  * hint); the drawn episodes' door a. The bridge's whole drawn episode (behind door
- * b) is tests/drawn.spec.ts's, shared with the word machine (item 081). Screenshots land in tests/screenshots/ (ignored).
+ * b) is tests/drawn.spec.ts's, shared with the word machine (item 081). Untagged too: MOM and DAD read but never
+ * fetched (`?bridge=mom,dad`, hunt 10's M45). Screenshots land in tests/screenshots/ (ignored).
  */
 
 import { test, expect, type Page } from '@playwright/test';
@@ -310,3 +311,25 @@ test("Stretchy Bridge, level 2 (item 092): Dad's 2 during the intro is kept for 
   expect(h.slice(hint).some((id) => /_bridge_find(_\d+)?$/.test(id)), 'the find line after the hint').toBe(true);
   expectNoErrors(errors);
 });
+
+// Hunt 10, M45 (moved from hunt10.spec, item 155): MOM and DAD are read on the bridge, never fetched.
+test('the Stretchy Bridge reads MOM and DAD, but no copy goes to her bag (M45: THE MOM! was hurled at Evil Tiamat)', async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors = collectErrors(page);
+  // `bridge=mom,dad` puts them on the bridge (item 155: `words=mom,dad` only leaned the draw, and some visits drew neither).
+  await boot(page, '?scene=room&slot=a&room=bridge&bridge=mom,dad');
+  const first = await until(page, (st) => st.scene === 'BridgeRoom' && Boolean(st.room?.bridge), 30_000, 'bridge room');
+  const words = first.room!.bridge!.words;
+  const family: string[] = words.filter((w) => w === 'mom' || w === 'dad');
+  expect(family.sort(), `the test bites: ${words.join(' ')}`).toEqual(['dad', 'mom']);
+  await playBridgeRoom(page);
+  const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'back in the hub');
+  expect(hub.episode.house.done).toContain('a');
+  for (const w of words) {
+    expect(hub.episode.read, `${w} read`).toContain(w);
+    if (family.includes(w)) expect(hub.episode.fetched, `${w} not fetched`).not.toContain(w);
+    else expect(hub.episode.fetched, `${w} fetched`).toContain(w);
+  }
+  expectNoErrors(errors);
+});
+

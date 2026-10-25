@@ -43,6 +43,7 @@ import { pickEnding } from '../rules/endings';
 import { ENDING_BY_ID } from '../../content/house/endings';
 import { withStems } from '../rules/bank';
 import { episodePlans, type EpisodeInput, type RoomPlan } from '../rules/rooms';
+import { CROSS_WORDS, bridgeWords, planBridge } from '../rules/bridge';
 import { wordsOf } from '../rules/sentences';
 import { BRIDGE_GAME, CHARGE_GAME, LAST_GAMES, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, RHYME_GAME, SENTENCE_GAMES, SHIFTER_GAME, drawGames, lastGames, repeatsLast, type Minigame } from '../rules/minigames';
 import { battle1Words, drawGift, planMoves, type MovePlan } from '../rules/moves';
@@ -147,7 +148,7 @@ export function housePlan(): RoomPlan[] {
     const counterRoom = place ? place.secret.id : COUNTER_ROOM;
     const input = planInput(gift, rooms, counterRoom);
     const games = roomGames();
-    episode.house.plan = forcedSentence(episodePlans(progress, { ...input, ...games }, planRand), input.fill);
+    episode.house.plan = forcedBridge(forcedSentence(episodePlans(progress, { ...input, ...games }, planRand), input.fill));
     rememberPlan();
   }
   return episode.house.plan;
@@ -170,6 +171,22 @@ function forcedSentence(plan: RoomPlan[], fill: EpisodeInput['fill']): RoomPlan[
     if (p.slot !== slot || p.kind !== 'sentence') return p;
     const objects = p.objects.filter((o) => o !== key).map((o) => (o === p.key ? key : o));
     return { ...p, key, fetches: [key], sentence: sentence(frame.id, fill, key), objects };
+  });
+}
+
+/**
+ * `?bridge=mom,dad` (tests, item 155: `?words=` only leans the draw, and some
+ * visits drew neither): those words on the Stretchy Bridge behind door a,
+ * its other words and every picture drawn as ever.
+ */
+function forcedBridge(plan: RoomPlan[]): RoomPlan[] {
+  const words = (urlQuery().get('bridge') ?? '').toLowerCase().split(',').filter((w) => CROSS_WORDS.includes(w));
+  if (!words.length) return plan;
+  return plan.map((p) => {
+    if (p.slot !== 'a' || p.kind !== 'bridge') return p;
+    const others = plan.filter((o) => o !== p).flatMap((o) => o.fetches);
+    const bridge = planBridge(progress, { avoid: [], taken: others, words }, planRand);
+    return { ...p, bridge, fetches: bridgeWords(bridge) };
   });
 }
 

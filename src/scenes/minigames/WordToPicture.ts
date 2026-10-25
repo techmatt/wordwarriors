@@ -18,6 +18,7 @@ import { WORD_BY_ID, pictureFor } from '../../../content/phonics/words';
 import { letterSoundLine, wordLine } from '../../../content/voice/ids';
 import { DEPTH, FONT_COMIC, GAME_WIDTH } from '../../config';
 import { castFace, planRand } from '../../episode/Episode';
+import { PICTURE_STRETCH } from '../../art/pictureBox';
 import { bob, popIn } from '../../fx/juice';
 import { pictureRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
@@ -40,6 +41,12 @@ const GROW = 1.3;
  * at 560 the peak stops at 285, clear of the deepest banner.
  */
 const PICTURE_FEET = 560;
+/**
+ * A picture's slot, and its most height: a standing person's shaped fit (M48, `pictureBox`) grew VET 217 px
+ * tall, its top 26 px under the banner settled and 56 at the pop-in's peak (item 155). Wide ones still widen.
+ */
+const PICTURE = 150;
+const PICTURE_MAX = { w: PICTURE * PICTURE_STRETCH, h: PICTURE };
 /** Where a new round steps her back to: out of every picture's reach (REACH 95), as before item 133 moved them. */
 const STEP_BACK = PICTURE_FEET + 120;
 
@@ -110,7 +117,7 @@ export class WordToPicture extends ParkedGame {
     item.choices.forEach((word, i) => {
       const w = WORD_BY_ID[word]!;
       const pedestal = this.art('prop_pedestal', 170, 100);
-      const pic = this.art(pictureFor(w, castFace), 150, 150, 0, -100);
+      const pic = this.art(pictureFor(w, castFace), PICTURE, PICTURE, 0, -100, PICTURE_MAX);
       const spot = this.addSpot(word, xs[i]!, PICTURE_FEET, [pedestal, pic], word === item.target);
       bob(this, pic, 5, 900 + i * 120);
       popIn(this, spot.obj, 1, 200 + i * 120);

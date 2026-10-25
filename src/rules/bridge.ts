@@ -133,6 +133,8 @@ export interface BridgeInput {
   avoid: string[];
   /** Words other rooms have planned already. */
   taken: string[];
+  /** The visit's words, in place of the draw (`?bridge=mom,dad`, tests, item 155): its pictures are drawn as ever. */
+  words?: string[];
 }
 
 /**
@@ -149,8 +151,8 @@ export function planBridge(store: ProgressStore, input: BridgeInput, rand: Rand 
   const sibling = (w: string, also: string[]) => bridgePictures(w, BRIDGE.pictures - 1, () => 0, [...avoid, ...also]).some((p) => sharedStart(w, p) >= 1);
   const inBag = new Set(store.bag().left);
   const boost = (w: string) => (inBag.has(w) ? 2 : 1);
-  const words: string[] = [];
-  for (let k = 0; k < n; k++) {
+  const words: string[] = input.words ? [...input.words] : [];
+  for (let k = words.length; k < n; k++) {
     const open = eligible.filter((w) => !words.includes(w));
     const fits = open.filter((w) => sibling(w, words) && words.every((x) => sibling(x, [...words, w])));
     // Hunt 11, M77: not a word the episode before had her read, where the pool allows.

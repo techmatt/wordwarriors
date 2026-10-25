@@ -106,6 +106,22 @@ test('planRhyme: keeps clear of what it is told; fewer rounds where it must; non
   assert.equal(planRhyme(new ProgressStore(memory()), { avoid: allBut, taken: [] }, seeded(1)), null);
 });
 
+// Item 155: one greedy draw left no family free for a third round in about one visit in eleven where three
+// fitted (rhyme.spec drew two rounds); a short draw is drawn again (RHYME.redraws).
+test('planRhyme: three rounds where three fit, though one draw would leave no family for the last', () => {
+  const avoid = ['dog', 'fox', 'bed', 'map', 'pen', 'can', 'mug', 'fan', 'web', 'jet', 'pig', 'bam', 'hop', 'hot', 'mud', 'tug', 'fix', 'vat', 'six', 'fin', 'nap', 'bop', 'hum', 'mom', 'frog', 'drum', 'flag', 'desk', 'belt', 'slug', 'jump', 'swim', 'stomp', 'slam', 'stump', 'skunk', 'shed', 'chop', 'bench', 'bin', 'yoyo', 'man', 'lid', 'lock', 'egg', 'bell', 'doll', 'grass', 'glass', 'king', 'ring', 'bush', 'thumb', 'cheese', 'kite', 'cake', 'gate', 'zebra', 'igloo', 'octopus', 'umbrella', 'cow'];
+  const draw = (seed: number) => planRhyme(new ProgressStore(memory()), { avoid, taken: [] }, seeded(spread(seed)));
+  const keep = RHYME.redraws;
+  try {
+    (RHYME as { redraws: number }).redraws = 0;
+    const short = [...Array(30).keys()].filter((i) => draw(i + 1)?.rounds.length !== RHYME.rounds);
+    assert.ok(short.length > 0, 'the test bites: one draw comes out short on some seed (the bank changed? find another avoid list)');
+  } finally {
+    (RHYME as { redraws: number }).redraws = keep;
+  }
+  for (let seed = 1; seed <= 30; seed++) assert.equal(draw(seed)?.rounds.length, RHYME.rounds, `seed ${seed}`);
+});
+
 test('help ramp: level 1 at base whatever she has done; above it her recorded level', () => {
   const store = new ProgressStore(memory());
   store.setRhymeLevel('cat', 3);

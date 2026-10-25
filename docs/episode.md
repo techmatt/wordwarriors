@@ -548,7 +548,8 @@ an episode; hunt 6, M28), `nojourney` (skip the map), `difficulty=2` (the
 difficulty knob for this session; below), `grab=king` (the warm-up's word, if it is one
 the hall can ask for; item 085), `sentence=no_match_for_the:octopus` (that frame and key
 word on its banner: the attic's for a counter frame, door a's for a fetch frame, with
-`game=sentence:<frame>`; item 128), `prep=sound,blend` (the parked prep games: `sound`
+`game=sentence:<frame>`; item 128), `bridge=mom,dad` (those words on door a's Stretchy Bridge, with
+`room=bridge`, its other words and pictures drawn; item 155), `prep=sound,blend` (the parked prep games: `sound`
 `blend` `picture`), `games=sentence` / `games=all` (the rooms' pool: sentence games only, or
 the real draw; the tests' default is `sentence`), `words=new` / `words=x,y` (every draw
 leans to those words; above). The test-only ones (`voice=instant`, `battle=short`, `hooks=1`,

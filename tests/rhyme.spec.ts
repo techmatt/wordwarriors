@@ -10,6 +10,7 @@ import { test, expect } from '@playwright/test';
 
 import { bagged, boot, choose, collectErrors, expectNoErrors, shotIn, until, type WWState } from './harness';
 import { wordLine } from '../content/voice/ids';
+import { RHYME } from '../src/config';
 import { soundOut } from '../src/rules/soundOut';
 
 const rhyme = (s: WWState) => s.room?.rhyme;
@@ -23,7 +24,10 @@ test('rhyme room at base level: three rounds, each a family, the rhyme said, the
   const s0 = await until(page, (st) => st.scene === 'RhymeRoom' && rhyme(st)?.phase === 'pick' && !st.room!.locked, 60_000, 'first round');
   expect(s0.episode.house.plan!.find((p) => p.slot === 'a')!.kind).toBe('rhyme');
   const words = rhyme(s0)!.words;
-  expect(words.length).toBe(3);
+  // Three rounds, or two where the episode leaves no third family free (about one visit in fifty with a drawn cast,
+  // item 155; never two where three fit: tests/unit/rhyme.test.ts).
+  expect(words.length).toBeGreaterThanOrEqual(RHYME.minRounds);
+  expect(words.length).toBeLessThanOrEqual(RHYME.rounds);
   const rimes = new Set<string>();
   for (let i = 0; i < words.length; i++) {
     const s = await until(page, (st) => rhyme(st)?.index === i && rhyme(st)!.phase === 'pick' && !st.room!.locked, 60_000, `round ${i}`);
@@ -61,7 +65,7 @@ test('rhyme room at base level: three rounds, each a family, the rhyme said, the
     expect(after.voice.history).toContain(wordLine(r.word));
     expect(after.episode.read).toContain(r.word);
   }
-  expect(rimes.size).toBe(3);
+  expect(rimes.size).toBe(words.length);
   const hub = await until(page, (st) => st.scene === 'Hub', 60_000, 'back in the hub');
   expect(hub.episode.house.done).toContain('a');
   // Item 144 (hunt 11, M64): the long instruction on the first round only; item 146: no "Rhyme time!" at all.
@@ -71,6 +75,6 @@ test('rhyme room at base level: three rounds, each a family, the rhyme said, the
   expect(hub.voice.history.filter((id) => id.endsWith('_rhyme_more'))).toEqual([]);
   for (const w of bagged(words)) expect(hub.episode.fetched).toContain(w);
   // A miss keeps the word at level 1; right first time, unaided, steps up.
-  expect(Object.values(hub.progress.rhymeLevels ?? {}).sort()).toEqual([1, 2, 2]);
+  expect(Object.values(hub.progress.rhymeLevels ?? {}).sort()).toEqual([1, ...words.slice(1).map(() => 2)]);
   expectNoErrors(errors);
 });

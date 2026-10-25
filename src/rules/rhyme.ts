@@ -188,9 +188,22 @@ const ease = (word: string): number => BANK_BY_WORD[word]?.level ?? 1;
  * from a different family. No word or picture twice in a visit, and none of
  * the episode's (`avoid`, `taken`). The printed words are drawn by the bank's
  * weight, a word still in her bag twice as likely (as the bridge's), first
- * from those the episode before did not have her read.
+ * from those the episode before did not have her read. A draw that leaves no
+ * family free for its last round is drawn again (item 155: about one visit in
+ * eleven had two rounds where three fitted), up to RHYME.redraws times.
  */
 export function planRhyme(store: ProgressStore, input: RhymeInput, rand: Rand = Math.random, n = RHYME.rounds): RhymePlan | null {
+  let best: RhymeRound[] = [];
+  for (let t = 0; t <= RHYME.redraws && best.length < n; t++) {
+    const rounds = drawRhymeRounds(store, input, rand, n);
+    if (rounds.length > best.length) best = rounds;
+  }
+  if (best.length < Math.min(n, RHYME.minRounds)) return null;
+  return { rounds: best.map((r, i) => ({ r, i })).sort((a, b) => ease(a.r.word) - ease(b.r.word) || a.i - b.i).map((x) => x.r) };
+}
+
+/** One greedy draw of up to `n` rounds (planRhyme's), each from a family new to the visit. */
+function drawRhymeRounds(store: ProgressStore, input: RhymeInput, rand: Rand, n: number): RhymeRound[] {
   const avoid = new Set([...input.avoid, ...input.taken]);
   const before = lastRead(store);
   const lastFamilies = lastRhymes(store);
@@ -224,8 +237,7 @@ export function planRhyme(store: ProgressStore, input: RhymeInput, rand: Rand = 
     }
     rounds.push({ rime: rimeOf(word), shown, word, options: shuffle([word, ...wrong], rand) });
   }
-  if (rounds.length < Math.min(n, RHYME.minRounds)) return null;
-  return { rounds: rounds.map((r, i) => ({ r, i })).sort((a, b) => ease(a.r.word) - ease(b.r.word) || a.i - b.i).map((x) => x.r) };
+  return rounds;
 }
 
 /** Every word a visit reads, in order: its battle items, the last its key. */

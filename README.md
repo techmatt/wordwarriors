@@ -158,10 +158,7 @@ Two `@slow` layout tests fail now and then on a timing and pass on the retry (it
 2026-10-24; also on the code before it): `cover.spec` "the attic's find line" (its
 narrow box over a pedestal, 0.56 against 0.1) about one run in four alone, and
 `banner.spec` "the widest fetch / counter sentence" (the dialogue box 20 px over Dad) about one
-in six. `test:slow` reports them as flaky, not failed. In the browser lane, `hunt11.spec`
-"cook_off: everyone but her holds still through a move choice" fails about two runs in ten
-alone (the villain's box drifts 20-78 px; item 147, the same on item 146's code) and passes
-on the retry.
+in six. `test:slow` reports them as flaky, not failed.
 
 ### Writing a browser test
 
@@ -175,7 +172,14 @@ test. A test that fails only on some draws is not flaky: the bridge's
 level-1 test failed whenever it drew EGG (it expected `letter_gg_sound`; a doubled letter
 sounds as its single letter, `soundOf`) and passed on the retry's other draw; the level-3
 test the same way on THUMB and LAMB (MB sounds as M; item 072: the spec now takes each
-stone's sound from the bank's `sounds`, as the room does). Before adding
+stone's sound from the bank's `sounds`, as the room does). Item 155's four "flakes" were
+all draws or states, each caught by a 20-30-run `--repeat-each` with `--retries=0`: the
+rhyme room's two-round plans (about one visit in eleven; counted in plain node by calling
+`housePlan` under `globalThis.location = { search: '?room=rhyme…' }`, as
+`tests/variety/simulate.ts` drives the episode), MOM and DAD not drawn (`?words=` only
+leans a draw; `?bridge=` forces), VET's tall picture under Word → Picture's banner, and a
+knocked-back giant snapping in a move choice (found by logging the villain's x around
+`stepFighters` per frame into `window`). Before adding
 a slow test, look for a walk that already goes there: item 036 took the full run from 45
 minutes back down by folding new checks into walks that were already played (a drawn
 cast's bedroom checks into the warm-up's seed sweep, the random-cast episodes into the

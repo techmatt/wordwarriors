@@ -41,8 +41,7 @@ for (const [fight, villain] of [['sea_tug', 'jormungandr'], ['sky_race', 'smaug'
     const later = await until(page, (st) => Boolean(st.battle?.choice?.open), 5_000, 'still choosing');
     // Each body's middle (a squash on the beat may change its width).
     const mid = (b: number[]) => Math.round((b[0]! + b[2]!) / 2);
-    const [a, b] = [mid(open.battle!.choice!.villain!), mid(later.battle!.choice!.villain!)];
-    expect(Math.abs(a - b), `the villain from ${a} to ${b}`).toBeLessThan(4);
+    const [a, b] = [mid(open.battle!.choice!.villain!), mid(later.battle!.choice!.villain!)];    expect(Math.abs(a - b), `the villain from ${a} to ${b}`).toBeLessThan(4);
     for (const m of open.battle!.choice!.team) {
       const n = later.battle!.choice!.team.find((t) => t.id === m.id);
       if (n) expect(Math.abs(mid(m.box) - mid(n.box)), `${m.id} from ${mid(m.box)} to ${mid(n.box)}`).toBeLessThan(4);

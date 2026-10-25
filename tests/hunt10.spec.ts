@@ -2,12 +2,12 @@
  * Hunt 10 (item 135): what the tenth bug hunt fixed that no older spec covers (fixes 138 to 159 in
  * docs/qa-findings.md): the clash's rings and F9 in the battle's closing fade; the backdrop past
  * every edge a shake uncovers; the grown-ups page's grid rows, F8 warning and DEBUG tag; the entry
- * hall's decals; the gift word's card and Ellie's bubble (M55); the story fight's fetched beat; Charge's modelled runes after F9; the bridge's MOM and DAD, read but never in the bag (M45).
+ * hall's decals; the gift word's card and Ellie's bubble (M55); the story fight's fetched beat; Charge's modelled runes after F9.
  */
 
 import { test, expect } from '@playwright/test';
 
-import { boot, collectErrors, expectNoErrors, pickPad, playBridgeRoom, press, until } from './harness';
+import { boot, collectErrors, expectNoErrors, pickPad, press, until } from './harness';
 import { layoutIssues } from './qa/checks';
 import { qaLayout } from './qa/probe';
 
@@ -217,25 +217,5 @@ test('Charge the Spell, solo: the grown-ups page and back mid-visit models each 
   await until(page, (st) => st.scene === 'ChargeRoom', 30_000, 'back in Charge');
   const hub = await until(page, (st) => st.scene === 'Hub', 90_000, 'the read together, back in the hub');
   expect(hub.progress.sounds[first]!.modelled, first).toBe(1);
-  expectNoErrors(errors);
-});
-
-test('the Stretchy Bridge reads MOM and DAD, but no copy goes to her bag (M45: THE MOM! was hurled at Evil Tiamat)', async ({ page }) => {
-  test.setTimeout(120_000);
-  const errors = collectErrors(page);
-  // `words=mom,dad` leans the draw to them (item 121), so the bridge crosses one or both.
-  await boot(page, '?scene=room&slot=a&room=bridge&words=mom,dad');
-  const first = await until(page, (st) => st.scene === 'BridgeRoom' && Boolean(st.room?.bridge), 30_000, 'bridge room');
-  const words = first.room!.bridge!.words;
-  const family: string[] = words.filter((w) => w === 'mom' || w === 'dad');
-  expect(family.length, `the test bites: ${words.join(' ')}`).toBeGreaterThan(0);
-  await playBridgeRoom(page);
-  const hub = await until(page, (st) => st.scene === 'Hub', 30_000, 'back in the hub');
-  expect(hub.episode.house.done).toContain('a');
-  for (const w of words) {
-    expect(hub.episode.read, `${w} read`).toContain(w);
-    if (family.includes(w)) expect(hub.episode.fetched, `${w} not fetched`).not.toContain(w);
-    else expect(hub.episode.fetched, `${w} fetched`).toContain(w);
-  }
   expectNoErrors(errors);
 });

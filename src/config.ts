@@ -475,9 +475,10 @@ export const SHIFTER_ROOM = { afterOne: 0, afterNone: 0.75 };
  * only on yellow (yellow sounds it out at any level). `startLevel` is a word she
  * has never met there (DIFFICULTY caps the ramp). `weight` is its weight in the
  * rooms' pool: drawn, it is behind door b in the episodes without the Shape-Shifter,
- * beside the fetch sentence frames and the word machine.
+ * beside the fetch sentence frames and the word machine. `redraws`: how many
+ * times a visit's draw is made again when it comes out short (item 155).
  */
-export const RHYME = { rounds: 3, minRounds: 2, startLevel: 1 as 1 | 2 | 3, weight: 2 };
+export const RHYME = { rounds: 3, minRounds: 2, startLevel: 1 as 1 | 2 | 3, weight: 2, redraws: 8 };
 
 /**
  * A villain's story fight (item 126, Matt's pick: Evil Smaug's in half his
