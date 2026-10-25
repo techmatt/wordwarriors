@@ -781,6 +781,16 @@ const wave: Cast = (w, f, ab, _target, mult) => {
     })
     .setDepth(DEPTH.fx);
   em.startFollow(wall);
+  // A glyph rides the wall's front, a few high and low (item 156: Comet Crash's comets), facing its way.
+  const riders = ab.glyph
+    ? [-0.3, 0, 0.28].map((dy) =>
+        s.add
+          .text(startX, wall.y + dy * GAME_HEIGHT, ab.glyph!, { fontSize: `${Math.round(64 * Math.sqrt(mult))}px`, padding: { top: 12, bottom: 4 } })
+          .setOrigin(0.5)
+          .setScale(-dir, 1)
+          .setDepth(DEPTH.fx + 1),
+      )
+    : [];
   const hitDone = new Set<number>();
   s.tweens.add({
     targets: wall,
@@ -788,6 +798,7 @@ const wave: Cast = (w, f, ab, _target, mult) => {
     duration: 1300,
     ease: 'Sine.easeIn',
     onUpdate: () => {
+      riders.forEach((r, i) => r.setX(wall.x + dir * (60 + 30 * i)));
       for (const e of w.enemiesOf(f)) {
         if (!hitDone.has(e.uid) && Math.abs(e.x - wall.x) < 90) {
           hitDone.add(e.uid);
@@ -799,6 +810,7 @@ const wave: Cast = (w, f, ab, _target, mult) => {
     onComplete: () => {
       em.stop();
       wall.destroy();
+      for (const r of riders) r.destroy();
       s.time.delayedCall(800, () => em.destroy());
     },
   });

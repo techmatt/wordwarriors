@@ -180,24 +180,23 @@ test('withStems (item 071, M16): a LOLLIPOP says POP', () => {
   if (BANK_BY_WORD.pop) assert.ok(withStems(['lollipop']).includes('pop'));
 });
 
-test("the runes' gestures (items 071, 074): what they say counts as said only once played, so Charge never spells a word its gestures say before a word she reads later", () => {
-  // The /e/ rune's "Tap the egg, crack it open".
-  for (const w of ['tap', 'egg']) if (BANK_BY_WORD[w]) assert.ok(gestureWords(['e']).includes(w), w);
+test("the runes' gestures (items 071, 074, 156): what they show counts as shown only once played, so Charge never spells a word its gestures show before a word she reads later", () => {
+  // Item 156 (Matt): the /e/ rune's "Tap the egg, crack it open" is not voiced (item 058), so TAP and EGG are read.
+  for (const w of ['tap', 'egg']) assert.ok(!GESTURE_WORDS.includes(w), w);
   // Hunt 6: a glyph close to a bank word's picture shows it (/m/'s cake slice, /e/'s hatching chick).
   assert.ok(gestureWords(['m']).includes('cake'));
   assert.ok(gestureWords(['e']).includes('chick'));
-  // No gesture says LIPS, LICK or POP any more (the /l/ rune sings la, la, la).
   for (const w of ['lips', 'lick', 'pop']) assert.ok(!GESTURE_WORDS.includes(w), w);
   const store = new ProgressStore(memory());
   // Spread seeds: this LCG's first draw barely moves over seeds 1 to 200.
   const seen = new Set<string>();
   for (let seed = 1; seed <= 200; seed++) {
     const free = drawChargeWord(store, { avoid: [] }, seeded(spread(seed)));
-    assert.ok(!gestureWords(free.runes).includes(free.word), `${free.word}'s own gesture says it`);
+    assert.ok(!gestureWords(free.runes).includes(free.word), `${free.word}'s own gesture shows it`);
     seen.add(free.runes.includes('e') ? 'e' : '-');
-    // TAP read later (a pad, a key): no /e/ word, whose gesture would say TAP first.
-    const c = drawChargeWord(store, { avoid: [], later: ['tap'] }, seeded(spread(seed)));
-    assert.ok(!gestureWords(c.runes).includes('tap'), `${c.word} says TAP before it is read`);
+    // CHICK read later (a pad, a key): no /e/ word, whose gesture would show CHICK first.
+    const c = drawChargeWord(store, { avoid: [], later: ['chick'] }, seeded(spread(seed)));
+    assert.ok(!gestureWords(c.runes).includes('chick'), `${c.word} shows CHICK before it is read`);
   }
   assert.ok(seen.has('e'), 'with nothing read later, an /e/ word is still drawn');
 });
@@ -213,21 +212,21 @@ test("the runes' picture letters (item 097): every rune Charge teaches has one, 
   assert.ok(!gestureWords(['m']).includes('vase'));
 });
 
-test('the runes\' gestures (item 074): TAP and EGG are words like any other, but no key drawn after an /e/ Charge word is one', () => {
+test('the runes\' gestures (item 074): what they show is a word like any other, but no key drawn after a Charge word whose gestures show it is one', () => {
   const store = new ProgressStore(memory());
   const input = (games: EpisodeInput['games']): EpisodeInput => ({ fill: { villain: 'tiamat', helper: 'ellie', hero: 'julia' }, ally: 'ellie', gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic', games });
   const sentence = SENTENCE_GAMES.find((g) => g.slots.includes('fetch'))!;
   const counter = SENTENCE_GAMES.find((g) => g.slots.includes('counter'))!;
-  let eWords = 0;
+  let showing = 0;
   for (let seed = 1; seed <= 150; seed++) {
     const plans = episodePlans(store, input([MINIGAME_BY_ID.charge!, sentence, counter]), seeded(spread(seed)));
     const charge = plans[0];
     if (charge.kind !== 'charge') throw new Error('door a is Charge');
     const said = gestureWords(chargeRunes(charge.charge));
-    if (said.length) eWords++;
+    if (said.length) showing++;
     for (const p of plans.slice(1)) for (const w of [p.key, ...p.fetches]) assert.ok(!said.includes(w), `${w} after ${charge.key}'s gestures`);
   }
-  assert.ok(eWords > 0, 'some seeds spell an /e/ word');
+  assert.ok(showing > 0, 'some seeds spell a word whose gestures show one');
 });
 
 test("the fight styles' floating words are never bank words (the cook-off's YUM! and FLIP! were pads to come)", () => {

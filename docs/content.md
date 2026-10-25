@@ -764,7 +764,8 @@ sprite bobs in time while `glyph` (an emoji, never a bank word's picture) does `
 beside them, and they say only `letter_<sound>_sound`, which she says back (item 058).
 `text` is the gesture told in words, trailing off into the sound: neither voiced nor
 composed into `lines.json`, kept for a teaching mode (`docs/rulings.md`); it still must
-never name the letter or spell the sound, and says no bank word at all
+never name the letter or spell the sound, and says no bank word at all but the /e/
+rune's TAP and EGG (which, unvoiced, are read like any word since item 156)
 (`tests/unit/charge.test.ts` checks both). The rest is the battle move her hero fires
 for it, shaped like a word effect (no `pic_` art). A rune adds no voice line of its own
 (its sound's line is the letter's). Tuning is `CHARGE`

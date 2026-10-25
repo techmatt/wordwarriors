@@ -145,8 +145,9 @@ export const QUESTS: Record<string, Quest> = {
   anna: {
     place: 'ice_castle',
     lines: [
-      { text: "To be brave enough, we have to train at my sister's ice castle!", say: 'To be brave enough, we have to train at my sisters ice castle!' },
-      { text: 'My sister has an ice castle with the best slides, so we have to train there!' },
+      // Item 156 (Matt): no longer "my sister's ice castle", which reads wrong with Evil Elsa the villain.
+      { text: 'To be brave enough, we have to train at the ice castle, and I know a secret way in!' },
+      { text: 'The ice castle has the best slides, and I know every one, so we have to train there!' },
       { text: 'To be brave and quick, we are off to the ice castle, race you there!' },
     ],
   },

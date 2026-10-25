@@ -53,6 +53,9 @@ here.
 - **Charge the Spell's gesture texts stay** (`text` in `RUNES`; the gesture is shown with
   the sound only since item 058) while a teaching mode is still wanted. They are no longer
   composed into `lines.json` (item 133): a teaching mode would compose and voice them again.
+  Unvoiced, their words do not count as said (item 156): the /e/ rune's TAP and EGG are
+  read like any word, and a teaching mode voicing the texts would have to count them again
+  (`gestureWords`, `src/rules/charge.ts`). What a gesture shows still counts.
 - **Story-fight staging** is generalised only when a second story fight is written.
 - **The read praise before a Shape-Shifter fix-it link stays.**
 - **The named-counter boost stays** at 6× (`NAMED_COUNTER_BOOST`).

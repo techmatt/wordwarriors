@@ -36,6 +36,8 @@ export const ROYALS: CharacterSpec[] = [
         ab('icicle_rain', 'Icicle Rain', 'rain', 6, 0x5ad8ff, 2, { count: 14, glyph: '🧊' }),
         ab('flash_freeze', 'Flash Freeze', 'freeze', 7, 0x5ad8ff, 2, { status: 'freeze', duration: 3 }),
         ab('frost_beam', 'Frost Beam', 'beam', 5, 0x9aeaff, 2),
+        // Item 156 (Matt): a summon like every villain's, her snow helpers as good Elsa's are.
+        ab('grumpy_snowmen', 'Grumpy Snowmen', 'summon', 11, 0x5ad8ff, 2, { minion: 'snow_golem', count: 3 }),
       ],
       ultimate: ult('eternal_winter', 'Forever Winter', 'wave',0xbff0ff, 3, { color2: 0x1a2a5a, status: 'freeze' }),
       taunts: [
@@ -249,7 +251,9 @@ export const ROYALS: CharacterSpec[] = [
         ab('meteor_hail', 'Meteor Hail', 'lightning', 7, 0x7ad8ff, 2, { count: 5, color2: 0xff8a3a }),
         ab('ice_quake', 'Ice Quake', 'slam', 6, 0x7ad8ff, 3),
       ],
-      ultimate: ult('comet_crash', 'Comet Crash', 'wave', 0x7ad8ff, 3, { color2: 0x1a1a3a }),
+      // Item 156 (Matt): a comet's fire, not icy blue (Evil Elsa's Forever Winter is the icy wave);
+      // fireballs ride it (☄️ is ZIP's picture, a move word; 🌠 draws a blue tail).
+      ultimate: ult('comet_crash', 'Comet Crash', 'wave', 0xff7a2a, 3, { color2: 0xffd84a, glyph: '🔥' }),
       taunts: [
         { key: 'tremble', text: 'Look at me and tremble!' },
         { key: 'kneel', text: 'Bow to the space emperor!', say: 'Bough to the space emperor!' },

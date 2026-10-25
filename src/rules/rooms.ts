@@ -234,8 +234,9 @@ const RHYME_PLANNER: OwnWordsPlanner<RhymePlan> = {
 };
 
 // Charge the Spell (item 058) spells its words (two since item 140), each a battle item. Its runes'
-// gestures speak (item 074: "Tap the egg"), so it is no word whose gestures
-// say a word she reads after it, and the keys keep clear of what they say.
+// gestures show things (the /e/ rune's chick, item 074; since item 156 what their texts say no
+// longer counts), so it is no word whose gestures show a word she reads after it, and the keys
+// keep clear of what they show.
 const CHARGE: OwnWordsPlanner<ChargePlan> = {
   plan: (ctx) => {
     const later = [ctx.gift, ...ctx.moves, ...ctx.taken, ...ctx.pictured, ...ctx.named];

@@ -46,11 +46,10 @@ test('runes: every rune is a sound with its own line, a gesture and a battle mov
 
 test('runes: no gesture shows a bank word\'s picture or says a bank word (kept for a teaching mode that may voice them)', () => {
   const glyphs = new Map(BANK.filter((w) => w.glyph).map((w) => [w.glyph!, w.word]));
-  // Except Matt's /e/ gesture (item 071, M11: "Tap the egg, crack it open"), whose words count as
-  // said only in an episode whose Charge word has /e/, from when it plays (item 074: `gestureWords`,
-  // wordrules.test.ts), so no word she reads after it is one of them.
+  // Except Matt's /e/ gesture (item 071, M11: "Tap the egg, crack it open"). Unvoiced since item 058,
+  // its words no longer count as said (item 156, Matt): a teaching mode voicing it would need them to again.
   const allowed = new Set(['tap', 'egg']);
-  for (const w of allowed) assert.ok(GESTURE_WORDS.includes(w), `${w} counts as said`);
+  for (const w of allowed) assert.ok(!GESTURE_WORDS.includes(w), `${w} counts as said`);
   const bank = new Set(BANK.map((w) => w.word).filter((w) => !allowed.has(w)));
   const words = (s: string) => s.toLowerCase().split(/[^a-z]+/).filter(Boolean);
   for (const r of RUNES) assert.ok(!glyphs.has(r.gesture.glyph), `${r.sound}'s ${r.gesture.glyph} is ${glyphs.get(r.gesture.glyph)}'s picture`);

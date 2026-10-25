@@ -27,7 +27,7 @@ import { RUNES, RUNE_BY_SOUND } from '../../content/phonics/runes';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { CHARGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
-import { drawWords, withStems } from './bank';
+import { drawWords } from './bank';
 import type { Rand } from './random';
 import { unreadFirst } from './recent';
 
@@ -62,13 +62,17 @@ export const RUNE_SOUNDS: string[] = RUNES.map((r) => r.sound);
  */
 const GLYPH_LOOKS_LIKE: Record<string, string[]> = { m: ['cake'], e: ['chick'] };
 
-/** Each rune's gesture's bank words: what its line says (stemmed), a word whose picture is its glyph or close to it, and its picture letter's word (item 097: VASE for V). */
+/**
+ * Each rune's gesture's bank words: what it shows, a word whose picture is its
+ * glyph or close to it, and its picture letter's word (item 097: VASE for V).
+ * Not what its `text` says (item 156, Matt): nothing has voiced it since item
+ * 058, so the /e/ rune's TAP and EGG are read like any word.
+ */
 const RUNE_WORDS: Record<string, string[]> = Object.fromEntries(
   RUNES.map((r) => [
     r.sound,
     [
       ...new Set([
-        ...withStems(r.gesture.text.toLowerCase().replace(/[^a-z ]/g, ' ').split(/\s+/).filter(Boolean)).filter((w) => BANK_BY_WORD[w]),
         ...BANK.filter((w) => w.glyph && w.glyph === r.gesture.glyph).map((w) => w.word),
         ...(GLYPH_LOOKS_LIKE[r.sound] ?? []).filter((w) => BANK_BY_WORD[w]),
         ...(r.picture && BANK_BY_WORD[r.picture.word] ? [r.picture.word] : []),
@@ -78,13 +82,12 @@ const RUNE_WORDS: Record<string, string[]> = Object.fromEntries(
 );
 
 /**
- * The bank words these runes' gestures say or show: the /e/ rune's "Tap the
- * egg" says TAP and EGG (item 071). Since item 074 they count as said only in
- * an episode whose Charge word has that rune, and only from when it plays:
- * the Charge word is never one whose gestures say a word she reads later
- * (`later` in `planCharge`), and `episodePlans` keeps the keys drawn after it
- * clear of them. Elsewhere TAP and EGG are words like any other. A rune's
- * picture letter's word counts the same way (item 097: VASE for V).
+ * The bank words these runes' gestures show: the /e/ rune's hatching chick
+ * shows CHICK, the V rune's picture letter VASE (item 097). Since item 074
+ * they count as shown only in an episode whose Charge word has that rune, and
+ * only from when it plays: the Charge word is never one whose gestures show a
+ * word she reads later (`later` in `planCharge`), and `episodePlans` keeps the
+ * keys drawn after it clear of them. Elsewhere they are words like any other.
  */
 export function gestureWords(sounds: Iterable<string>): string[] {
   return [...new Set([...sounds].flatMap((s) => RUNE_WORDS[s] ?? []))];
