@@ -252,6 +252,11 @@ export class EntryScene extends RoomScene {
     if (this.phase === 'intro' || this.phase === 'find') this.locked = false;
   }
 
+  /** Before and while she looks, an instruction leads into the clue (or a miss's next line): giveClue() unlocks. */
+  protected override stayLocked(): boolean {
+    return this.phase === 'intro' || this.phase === 'find';
+  }
+
   protected override hint(): void {
     if (this.phase === 'find' && !this.locked) {
       this.locked = true;
@@ -302,7 +307,6 @@ export class EntryScene extends RoomScene {
     // A beat for the giggle before the line (hunt 11: under the voice it was ducked to under half).
     await this.wait(GIGGLE_BEAT_MS);
     await this.narrate('grab_wrong');
-    this.locked = true;
     await this.say(wordLine(picked));
     await this.wait(200);
     await this.narrate('grab_need');

@@ -97,11 +97,8 @@ export class ShifterRoom extends HouseSideRoom {
   private label = '';
   /** Is the changed letter lit on the label (levels 1 and 2)? */
   private lit = false;
-  /** The flow in charge: a chain stops at its next await once something newer has taken over. */
-  private flow = 0;
   /** The last morph's pop back, which plays on after `morph` returns. */
   private popped: Promise<void> = Promise.resolve();
-  private narrations = 0;
   /** Yellow's hint is playing: input stays locked until it is done (its lines are one help). */
   private hinting = false;
   /** A level-1 stone she reached while the room could not speak: it sounds once the room is quiet. */
@@ -760,11 +757,8 @@ export class ShifterRoom extends HouseSideRoom {
   }
 
   /** An instruction unlocks input when it ends, unless the room has moved on meanwhile. */
-  protected override async narrate(...keys: string[]): Promise<void> {
-    const n = ++this.narrations;
-    const f = this.flow;
-    await super.narrate(...keys);
-    if (n !== this.narrations || f !== this.flow || this.phase !== 'pick' || this.hinting) this.locked = true;
+  protected override stayLocked(superseded: boolean): boolean {
+    return superseded || this.phase !== 'pick' || this.hinting;
   }
 
   protected override extraHooks(): Partial<RoomInfo> {

@@ -94,9 +94,6 @@ export class RhymeRoom extends HouseSideRoom {
   private plate: Phaser.GameObjects.Container | null = null;
   /** The plate's units, lit as they are sounded. */
   private units: Phaser.GameObjects.Text[] = [];
-  /** The flow in charge: a chain stops at its next await once something newer has taken over. */
-  private flow = 0;
-  private narrations = 0;
   /** Yellow's hint is playing: input stays locked until it is done. */
   private hinting = false;
   /** Whether this visit's full instruction has been said: a later round gets the short one. */
@@ -481,11 +478,8 @@ export class RhymeRoom extends HouseSideRoom {
   }
 
   /** An instruction unlocks input when it ends, unless the room has moved on meanwhile. */
-  protected override async narrate(...keys: string[]): Promise<void> {
-    const n = ++this.narrations;
-    const f = this.flow;
-    await super.narrate(...keys);
-    if (n !== this.narrations || f !== this.flow || this.phase !== 'pick' || this.hinting) this.locked = true;
+  protected override stayLocked(superseded: boolean): boolean {
+    return superseded || this.phase !== 'pick' || this.hinting;
   }
 
   protected override extraHooks(): Partial<RoomInfo> {

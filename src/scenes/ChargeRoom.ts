@@ -152,12 +152,8 @@ export class ChargeRoom extends HouseSideRoom {
   private barTexts: Phaser.GameObjects.Text[] = [];
   /** The pulse on the slot of the rune lit now. */
   private slotPulse: Phaser.Tweens.Tween | null = null;
-  /**
-   * The flow in charge: every chain takes the number when it starts and
-   * stops at its next await once Dad's answer has moved it on, so a press
-   * mid-line never leaves two chains talking.
-   */
-  private flow = 0;
+  // `flow` (RoomScene): every chain takes the number when it starts and stops at its next
+  // await once Dad's answer has moved it on, so a press mid-line never leaves two chains talking.
   /** The gesture playing now, to stop it at once when the room moves on. */
   private stopGesture: (() => void) | null = null;
   /** The helper's scale at rest: every gesture's squash starts and ends there. */
@@ -819,10 +815,9 @@ export class ChargeRoom extends HouseSideRoom {
     return true;
   }
 
-  /** An instruction unlocks input when it ends; the room stays locked except while Dad is asked. */
-  protected override async narrate(...keys: string[]): Promise<void> {
-    await super.narrate(...keys);
-    if (this.phase !== 'read') this.locked = true;
+  /** The room stays locked after an instruction except while Dad is asked. */
+  protected override stayLocked(): boolean {
+    return this.phase !== 'read';
   }
 
   protected override extraHooks(): Partial<RoomInfo> {

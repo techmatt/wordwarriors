@@ -233,7 +233,7 @@ export class SentenceRoom extends HouseSideRoom {
       popIn(this, spot.obj, 1, 200 + i * 120);
     });
 
-    void this.flow();
+    void this.sentenceFlow();
   }
 
   /**
@@ -415,7 +415,7 @@ export class SentenceRoom extends HouseSideRoom {
     this.light(i);
   }
 
-  private async flow(): Promise<void> {
+  private async sentenceFlow(): Promise<void> {
     const s = this.plan.sentence;
     this.skipped = skipsListening(progress, s.frame);
     // She has just walked in: let her see the room before the first instruction.
@@ -575,14 +575,8 @@ export class SentenceRoom extends HouseSideRoom {
    * the room stays locked: on the F4 path the hushed narrate()/speak() ends
    * after found() has begun and would otherwise unlock mid-celebration.
    */
-  protected override async narrate(...keys: string[]): Promise<void> {
-    await super.narrate(...keys);
-    if (this.pass === 'done') this.locked = true;
-  }
-
-  protected override async speak(...ids: string[]): Promise<void> {
-    await super.speak(...ids);
-    if (this.pass === 'done') this.locked = true;
+  protected override stayLocked(): boolean {
+    return this.pass === 'done';
   }
 
   /** Dev F4: jump straight to `find` (no lines) and hand back the right object. */

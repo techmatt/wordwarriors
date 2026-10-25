@@ -145,8 +145,6 @@ export class BridgeRoom extends HouseSideRoom {
   private lit = -1;
   private bag!: Bag;
   private gapLook = GAP_LOOK.lava;
-  /** The flow in charge: a chain stops at its next await once something newer has taken over. */
-  private flow = 0;
   /** Where to go back to after a replay: the phase it interrupted. */
   private resumePhase: Phase = 'slide';
 
@@ -852,14 +850,9 @@ export class BridgeRoom extends HouseSideRoom {
    * meanwhile (a newer line or flow took over: that one unlocks when it is
    * done), or a pick or a replay is playing out.
    */
-  protected override async narrate(...keys: string[]): Promise<void> {
-    const n = ++this.narrations;
-    const f = this.flow;
-    await super.narrate(...keys);
-    if (n !== this.narrations || f !== this.flow || this.phase === 'intro' || this.phase === 'check' || this.phase === 'replay' || this.phase === 'done') this.locked = true;
+  protected override stayLocked(superseded: boolean): boolean {
+    return superseded || this.phase === 'intro' || this.phase === 'check' || this.phase === 'replay' || this.phase === 'done';
   }
-
-  private narrations = 0;
 
   protected override extraHooks(): Partial<RoomInfo> {
     const r = this.current;

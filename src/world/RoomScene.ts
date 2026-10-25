@@ -221,10 +221,13 @@ export abstract class RoomScene extends Phaser.Scene {
    * in the next run. Every await in a room goes through `guard`, which never
    * resolves once the generation it started in is over. That stops a chain at
    * scene end only: a room whose yellow or green can interrupt its own chain
-   * within one run also keeps a `flow` token, bumped by each new chain and
-   * checked after its awaits (`if (f !== this.flow) return;`; see ShifterRoom).
+   * within one run also bumps `flow` with each new chain and checks it after
+   * its awaits (`if (f !== this.flow) return;`; see ShifterRoom).
    */
   private runs = new SceneGen(this);
+
+  /** The room's chain token (see `runs`): a room that interrupts its own chain bumps it per chain. */
+  protected flow = 0;
 
   protected guard<T>(p: Promise<T>): Promise<T> {
     return this.runs.guard(p);
@@ -237,7 +240,6 @@ export abstract class RoomScene extends Phaser.Scene {
 
   /** Say narrator line(s) as instructions, locking input until done; a key with variants says its next (item 087). */
   protected async narrate(...keys: string[]): Promise<void> {
-    this.locked = true;
     // Resolved before the first await, so a subclass's narrate() wrapping this one keeps `again`.
     const ids = keys.map((k) => {
       const v = (this.again && this.heard.get(k)) || variant(k);
@@ -245,8 +247,7 @@ export abstract class RoomScene extends Phaser.Scene {
       return narratorLine(narrator(), v);
     });
     this.again = false;
-    await this.guard(voiceBus.sequence(ids));
-    this.locked = false;
+    return this.instruct(ids);
   }
 
   /** The variant of each narrator key last said in this run (item 089), for `narrateAgain`. */
@@ -263,10 +264,28 @@ export abstract class RoomScene extends Phaser.Scene {
   }
 
   /** Say arbitrary line ids as instructions, locking input until done. */
-  protected async speak(...ids: string[]): Promise<void> {
+  protected speak(...ids: string[]): Promise<void> {
+    return this.instruct(ids);
+  }
+
+  /** `narrate` and `speak`: input locked while the lines play, then as `stayLocked` says. */
+  private async instruct(ids: string[]): Promise<void> {
     this.locked = true;
+    const n = ++this.instructions;
+    const f = this.flow;
     await this.guard(voiceBus.sequence(ids));
-    this.locked = false;
+    this.locked = this.stayLocked(n !== this.instructions || f !== this.flow);
+  }
+
+  private instructions = 0;
+
+  /**
+   * Whether input stays locked when an instruction (`narrate`, `speak`) ends:
+   * the room's flow has more to do before she may answer. `superseded`: a
+   * later instruction or a new `flow` chain started while this one played.
+   */
+  protected stayLocked(_superseded: boolean): boolean {
+    return false;
   }
 
   /**

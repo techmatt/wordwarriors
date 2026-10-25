@@ -489,14 +489,9 @@ export class WordMachine extends HouseSideRoom {
    * An instruction unlocks input when it ends, but once the last word is
    * built the room stays locked (the F4 path's hushed lines end late).
    */
-  protected override async narrate(...keys: string[]): Promise<void> {
-    await super.narrate(...keys);
-    if (this.phase === 'done' || this.phase === 'check') this.locked = true;
-  }
-
-  protected override async speak(...ids: string[]): Promise<void> {
-    await super.speak(...ids);
-    if (this.phase === 'done') this.locked = true;
+  protected override stayLocked(): boolean {
+    // The silly word's speak() plays in `check` too: silly() unlocks itself once the tile is back.
+    return this.phase === 'done' || this.phase === 'check';
   }
 
   protected override extraHooks(): Partial<RoomInfo> {
