@@ -961,6 +961,16 @@ Every file has exactly one home (Matt, 2026-10-18):
   edge-tts mp3s committed under `public/voice/` before the voice moved to Drive).
   Measure with a walk that never follows a link (`os.scandir`, skipping
   `is_junction()` / `is_symlink()`), so Drive is counted once, at its real home.
+- **Where the disk goes** (item 151, 2026-10-25): the scratch home's `qa/` is nearly all
+  of it (hunts 9 to 11 kept whole by *Retention*: 87.8 GB, 100k files); then Drive's
+  `art-originals/` (944 MB, the full-res originals: keep), `node_modules/` (272 MB in the
+  main checkout, the same again in each worktree), `.git` (140 MB after `git gc`; 43 MB of
+  history is the old `public/voice/` mp3s, 27 MB superseded `public/art/` PNGs) and
+  `voice-gen/` (143 MB). Outside the project but used by it: Playwright's browsers
+  (`%LOCALAPPDATA%\ms-playwright`, 718 MB, one version) and npm's cache (586 MB, shared by
+  every project). Item 151 deleted the written-up `ui_shots/` and `polish_034/` runs of
+  hunts 9 to 11 (497 MB) and pruned 121 orphaned mp3s; the archive's
+  `wordwarriors-scratch\` holds the scratch home's hand-made scripts it kept.
 
 The main checkout holds the junctions; conductor links each worktree's to the same Drive
 folders, so a worktree shares one copy and never needs a full voice rebuild. Because the
