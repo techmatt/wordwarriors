@@ -39,9 +39,19 @@ interface VoiceManifestFile {
 /**
  * Clips fetched and decoded at once: what one group used to run (item 062).
  * Six (HTTP/1.1's connections a host) left the connections idle while clips
- * decoded, and boot, which waits for core's ~290 clips, took twice as long.
+ * decoded, and boot, which then waited for core's ~290 clips, took twice as long.
  */
 const DECODE_SLOTS = 12;
+/**
+ * Of those, the most a group's background clips take (item 150). Twelve
+ * background fetches, at Chromium's default `high` priority for a fetch, held
+ * all six of a host's connections: on a slow server (Matt's day-old dev
+ * server) a scene's art queued behind them (the Wait screen) and so did the
+ * line being said (late). Background clips now ask at `low` and leave two
+ * connections free; a line about to be said asks at `high` and may take any
+ * of the twelve.
+ */
+const BACKGROUND_SLOTS = 4;
 /** A clip's fetch is given up after this (item 057 saw one hang 60 s), freeing its slot. Wall-clock time (`realTimeout`). */
 const FETCH_TIMEOUT_MS = 15_000;
 /** A caption-only line's pace, a word every this many seconds (VoiceBus's estimate for a line with no clip uses it too). */
@@ -142,7 +152,10 @@ export class VoiceBank {
     if (known) {
       const i = this.waiting.indexOf(known);
       if (urgent && i > 0) this.waiting.unshift(...this.waiting.splice(i, 1));
+      // One already under way keeps the priority it was fetched at (`low` for a group's clip): a fetch's cannot change.
       known.urgent ||= urgent;
+      // Background clips wait for their own slots; asked for, it may take any free one now.
+      if (urgent && i >= 0) this.pump();
       return known.done;
     }
     let settle = () => undefined as void;
@@ -161,7 +174,10 @@ export class VoiceBank {
         const abort = new AbortController();
         const timer = realTimeout(() => abort.abort(), FETCH_TIMEOUT_MS);
         try {
-          const bytes = await (await fetch(`${base}${line.audio}`, { signal: abort.signal })).arrayBuffer();
+          // A line about to be said ahead of everything; a group's clips behind art and other lines.
+          const response = await fetch(`${base}${line.audio}`, { signal: abort.signal, priority: job.urgent ? 'high' : 'low' } as RequestInit);
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const bytes = await response.arrayBuffer();
           const buffer = await ctx.decodeAudioData(bytes);
           // A group retain() let go while this was under way stays let go, unless a line asked for it.
           if (job.urgent || this.groups.has(line.group)) this.buffers.set(line.id, buffer);
@@ -206,15 +222,22 @@ export class VoiceBank {
 
   private pump(): void {
     while (this.active < DECODE_SLOTS && this.waiting.length) {
-      if (this.paused && !this.waiting[0]!.urgent) return;
+      // Urgent jobs are at the front: past them, background clips wait for the art (pauseWhile) and their share of the slots.
+      const urgent = this.waiting[0]!.urgent;
+      if (!urgent && (this.paused || this.background >= BACKGROUND_SLOTS)) return;
       const job = this.waiting.shift()!;
       this.active++;
+      if (!urgent) this.background++;
       void job.run().finally(() => {
         this.active--;
+        if (!urgent) this.background--;
         this.pump();
       });
     }
   }
+
+  /** Background (not urgent) jobs under way: at most BACKGROUND_SLOTS. */
+  private background = 0;
 
   /** Where a line's audio stands, for the bug-hunt checker's silent-line reason. */
   state(id: string): 'ready' | 'queued' | 'decoding' | 'failed' | 'none' {
@@ -237,8 +260,10 @@ export class VoiceBank {
       if (k.has(name)) continue;
       this.groups.delete(name);
       for (const line of this.lines.values()) if (line.group === name) this.buffers.delete(line.id);
-      // Not yet started: drop them, or they would decode a group just let go.
-      for (const job of this.waiting.filter((j) => j.group === name)) {
+      // Not yet started: drop them, or they would decode a group just let go. Not one a line
+      // asked for (`ensure`, urgent): cancelled, its ensure settled with nothing decoded and the
+      // line played silent with no warning (item 150). It decodes and is kept, as in flight.
+      for (const job of this.waiting.filter((j) => j.group === name && !j.urgent)) {
         this.waiting.splice(this.waiting.indexOf(job), 1);
         job.cancel();
       }

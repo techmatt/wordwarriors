@@ -114,6 +114,7 @@ function warpClocks(k0: number): void {
   // Network waits stay on the wall clock (`src/realTime.ts`, item 069).
   // tests/unit/realTime.test.ts checks this line's text.
   (window as unknown as { __wwRealSetTimeout: unknown }).__wwRealSetTimeout = setT;
+  (window as unknown as { __wwRealNow: unknown }).__wwRealNow = pNow;
   (window as unknown as { setTimeout: unknown }).setTimeout = (fn: TimerHandler, ms = 0, ...a: unknown[]) => setT(fn, ms / k, ...a);
   (window as unknown as { setInterval: unknown }).setInterval = (fn: TimerHandler, ms = 0, ...a: unknown[]) => setI(fn, ms / k, ...a);
   const raf = window.requestAnimationFrame.bind(window);
@@ -217,7 +218,8 @@ async function steer(page: Page, x: number, y: number, close: number, at: (s: WW
     if (d < close) break;
     // Pressed against the edge of the floor and near enough: that is arrival.
     if (edge) {
-      if (Math.hypot(p.x - last.x, p.y - last.y) > 1) last = { x: p.x, y: p.y, at: Date.now() };
+      // The first reading starts the clock (item 150: NaN never compared, so any walk 0.8 s old "arrived" within 70 px of its spot).
+      if (Number.isNaN(last.x) || Math.hypot(p.x - last.x, p.y - last.y) > 1) last = { x: p.x, y: p.y, at: Date.now() };
       else if (Date.now() - last.at > 800 && d < 70) break;
     }
     if (Date.now() - start > 20_000) throw new Error(`${who}could not reach ${x},${y} from ${p.x},${p.y}`);

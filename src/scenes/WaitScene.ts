@@ -14,6 +14,7 @@ import { TEX } from '../fx/textures';
 import { bob, fitImage } from '../fx/juice';
 import { SceneGen } from '../fx/sceneGen';
 import { hookState } from '../hookState';
+import { realNow } from '../realTime';
 
 /** How long the wait stays invisible: a load that lands within it shows nothing at all. */
 const SHOW_AFTER_MS = 150;
@@ -60,7 +61,12 @@ export class WaitScene extends Phaser.Scene {
       this.tweens.add({ targets: star, scale: 1.2, duration: 400 + i * 50, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     }
     this.tweens.add({ targets: layer, alpha: 1, duration: 300, delay: SHOW_AFTER_MS });
+    // Item 150: the tests and the checker count these.
+    const shown = { key: w.key, ids: [...w.ids], ms: -1 };
+    hookState.waits.push(shown);
+    const at = realNow();
     void artBank.ensure(w.ids).then(() => {
+      shown.ms = Math.round(realNow() - at);
       if (!gone()) this.scene.start(w.key, w.data);
     });
   }

@@ -17,14 +17,14 @@ import { dadButtonsOpen, dadPress, type DadAnswer } from './input/dadButtons';
 import { dadLock, setDadLock } from './input/dadLock';
 import { typeLetter } from './input/TextEntry';
 import { artBank } from './art/ArtBank';
-import { voiceBus } from './audio/VoiceBus';
+import { voiceBus, type VoiceWait } from './audio/VoiceBus';
 import { episode, currentStep, type EpisodeState } from './episode/Episode';
 import { progress } from './state/progress';
 import type { ProgressData } from './state/ProgressStore';
 import { GAME_HEIGHT, GAME_WIDTH } from './config';
 import { installProbe } from './qa/probe';
 import { walkObjects } from './displayList';
-import { hookState, type BattleInfo, type EndingInfo, type RecapCard, type RoomInfo, type TheEndInfo } from './hookState';
+import { hookState, type BattleInfo, type EndingInfo, type RecapCard, type RoomInfo, type TheEndInfo, type WaitShown } from './hookState';
 
 function hooksEnabled(): boolean {
   return import.meta.env.DEV || new URLSearchParams(location.search).has('hooks');
@@ -84,7 +84,10 @@ export interface WWState {
   /** The room in play and the battle (src/hookState.ts, the scenes' own types: item 122). */
   room: RoomInfo | null;
   battle: BattleInfo | null;
-  voice: { speaking: string | null; busy: boolean; history: string[] };
+  /** `waits`: lines that came up before their clip was decoded (item 150, VoiceBus `VoiceWait`). */
+  voice: { speaking: string | null; busy: boolean; history: string[]; waits: VoiceWait[] };
+  /** Every Wait screen so far (item 150, src/scenes/WaitScene.ts): the scene it held, the art it waited for, how long (wall clock). */
+  waits: WaitShown[];
   fx: Record<string, number>;
   /** Free play (item 060, src/fx/freePlay.ts `playStats`): jumps, shots fired, big shots, shots live now and the most live at once. */
   play: { jumps: number; shots: number; big: number; live: number; maxLive: number };
@@ -105,7 +108,8 @@ function snapshot(): WWState {
     recapDone: hookState.recapDone,
     ending: hookState.ending,
     theEnd: hookState.theEnd,
-    voice: { speaking: voiceBus.speaking?.id ?? null, busy: voiceBus.busy, history: [...voiceBus.history] },
+    voice: { speaking: voiceBus.speaking?.id ?? null, busy: voiceBus.busy, history: [...voiceBus.history], waits: [...voiceBus.waits] },
+    waits: [...hookState.waits],
     fx: { ...fxStats },
     play: { ...playStats },
     music: musicPlaying(),

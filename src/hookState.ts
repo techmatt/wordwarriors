@@ -218,6 +218,13 @@ export interface TheEndInfo {
   dad: boolean;
 }
 
+/** A Wait screen (item 150): the scene it held, the art it waited for, and how long it stood (wall clock; -1 while it stands). */
+export interface WaitShown {
+  key: string;
+  ids: string[];
+  ms: number;
+}
+
 export const hookState: {
   room: RoomInfo | null;
   battle: BattleInfo | null;
@@ -228,6 +235,8 @@ export const hookState: {
   theEnd: TheEndInfo | null;
   scene: string;
   fps: number;
+  /** Every Wait screen so far (item 150). */
+  waits: WaitShown[];
 } = {
   room: null,
   battle: null,
@@ -237,4 +246,5 @@ export const hookState: {
   theEnd: null,
   scene: '',
   fps: 0,
+  waits: [],
 };

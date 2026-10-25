@@ -21,7 +21,7 @@ import { audioHeld, getAudioContext, unlockAudio, whenAudible } from './context'
 import type { HoldMode } from './holdSound';
 import { setMusicDuck } from './music';
 import { setSfxLevel } from './sfx';
-import { realTimeout } from '../realTime';
+import { realNow, realTimeout } from '../realTime';
 import { voiceBank, WORD_S, type VoiceLine, type VoicePlayback } from '../voice/VoiceBank';
 
 export type Priority = 'instruction' | 'bark';
@@ -83,6 +83,20 @@ function decodeWithin(p: Promise<void>, ms: number): Promise<'done' | 'failed' |
   return Promise.race([settled, late]).finally(() => clearTimeout(timer));
 }
 
+/**
+ * A line that was not decoded when it came up (item 150): how long it waited, wall clock, and
+ * how it went: `ready` (it played, `ms` late), `late` (past ENSURE_TIMEOUT_MS, no audio) or
+ * `silent` (its decode settled with nothing to play: failed, or let go meanwhile).
+ */
+export interface VoiceWait {
+  id: string;
+  ms: number;
+  outcome: 'ready' | 'late' | 'silent';
+}
+
+/** Lines kept in `waits`, the newest. */
+const WAITS_MAX = 200;
+
 class Bus {
   private current: { u: Utterance; playback: Pick<VoicePlayback, 'stop'> | null; done: () => void } | null = null;
   private queue: ((() => void) & { drop?: () => void })[] = [];
@@ -91,6 +105,8 @@ class Bus {
   private lastBarkEnd = 0;
   /** Lines started, by id, in order: the tests' view of what was said. */
   readonly history: string[] = [];
+  /** Lines that waited for their decode (item 150), for the tests and the bug-hunt checker. */
+  readonly waits: VoiceWait[] = [];
   /**
    * Test-only (`?voice=instant` with the hooks, item 083): no audio, and a line ends as soon
    * as the tests' `__ww.state()` has reported it (`seen()`), its estimated length the backstop.
@@ -249,18 +265,27 @@ class Bus {
     // Claim the voice before any await, so nothing else starts meanwhile.
     const claim = { u: { id, priority } as Utterance, playback: null, done: () => undefined };
     this.current = claim;
+    let waited: VoiceWait | null = null;
     // Instant (tests, item 083) plays no audio, so it waits for no decode.
-    if (!this.instant && voiceBank.has(id) && !voiceBank.ready(id)) {
+    // A caption-only line (no manifest, M19) or no audio at all has nothing to wait for.
+    if (!this.instant && voiceBank.get(id)?.audio && getAudioContext() && !voiceBank.ready(id)) {
       // A decode that hangs or fails leaves the line without audio (below), never stuck.
+      // ensure() settles on a failed fetch or decode too (VoiceBank warns "could not decode"): `silent`.
+      const asked = realNow();
       const decoded = await decodeWithin(voiceBank.ensure(id), ENSURE_TIMEOUT_MS);
       if (decoded === 'late') console.warn(`voice: ${id} not decoded after ${ENSURE_TIMEOUT_MS} ms; it plays without audio`);
-      if (decoded === 'failed') console.warn(`voice: ${id} failed to decode; it plays without audio`);
+      waited = { id, ms: Math.round(realNow() - asked), outcome: decoded === 'late' ? 'late' : voiceBank.ready(id) ? 'ready' : 'silent' };
     }
     // A tab hidden as the line comes up (item 080): it starts once she is back.
     if (audioHeld()) await whenAudible();
     // hush() or a newer line may have taken the voice while this one decoded;
     // then this line is dropped rather than talking over (and orphaning) it.
     if (this.current !== claim) return false;
+    // Only a line said is recorded as waiting: a dropped one was never heard late.
+    if (waited) {
+      this.waits.push(waited);
+      if (this.waits.length > WAITS_MAX) this.waits.shift();
+    }
     this.current = null;
     const line = voiceBank.get(id);
     if (!line) console.warn(`voice: no line ${id}`);

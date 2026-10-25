@@ -10,3 +10,9 @@ export function realTimeout(fn: () => void, ms: number): ReturnType<typeof setTi
   const real = (globalThis as unknown as { __wwRealSetTimeout?: (fn: () => void, ms: number) => ReturnType<typeof setTimeout> }).__wwRealSetTimeout;
   return real ? real(fn, ms) : setTimeout(fn, ms);
 }
+
+/** The wall clock in ms (the harness keeps the real `performance.now` as `__wwRealNow`): how long real work took (item 150). */
+export function realNow(): number {
+  const real = (globalThis as unknown as { __wwRealNow?: () => number }).__wwRealNow;
+  return real ? real() : performance.now();
+}

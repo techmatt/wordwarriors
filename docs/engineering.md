@@ -36,6 +36,20 @@ without a new measurement.
 - **Build cache** stores fingerprints only; entries are read back from the previous
   manifest, so manifest data is stored once (saved ~0.6 MB). Reused entries are re-based
   onto the current output folder, so moving the folder needs no rebuild.
+- **A slow server, measured** (item 150, 2026-10-24; a whole episode at the suite's speeds
+  with real voice, the build behind a proxy adding 300 ms to every clip and picture;
+  `tests/perf/castVoice.pw.ts`). Before: the title at 17.6 s (boot awaited core's 293
+  clips), 3 Wait screens (bedroom 4.5 s, entry 0.9 s, hub 0.7 s), 31-37 lines starting
+  0.6-0.9 s late, every fetch about 930 ms (three answers' time: twelve voice fetches at
+  `fetch`'s default high priority queued for six connections, the art and the line being
+  said among them). After (background voice at four slots and `low`, a line asked for at
+  `high`, boot awaiting only the manifest): the title at 3.3-3.7 s, one Wait screen (the
+  bedroom's 56 pictures, 4.5 s, the title left after 0.1 s), each line asked for 310-580 ms
+  late (one answer), fetches p95 about 340 ms. More lines wait at all (79), as the
+  background now decodes about 13 clips a second there, less than the suite's fast clock
+  asks for. Jasmine and the default cast were alike before and after. On the healthy
+  servers (fresh and warm `npm run dev`, Matt's day-old one, the build) no cast showed a
+  Wait screen or a line that waited.
 - The edge-tts quirks met while building (a voice that returns no audio, merged and split
   word boundaries, hyphens, rime and letter-name spellings) are in README, *Operational
   facts*, with the workaround for each.

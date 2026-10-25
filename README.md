@@ -32,6 +32,24 @@ writes there. A dev server
 also holds its watched folders open: a folder under it cannot be renamed or moved while
 it runs (item 149 met this on the main checkout's server).
 
+**A slow server shows as the Wait screen and late lines** (item 150): her face with
+coloured stars between scenes, lines starting half a second or more late, and lines
+silent past 4 s (`ENSURE_TIMEOUT_MS`). Whichever cast is playing gets the blame, but no
+cast's data was at fault: with a server about 300 ms a file every cast did it alike.
+Chrome opens six connections a host over HTTP/1.1 (both `vite` and `vite preview`), and the
+voice bank used to keep twelve group clips in flight at `fetch`'s default high priority,
+so the art and the line being said queued behind them (every fetch took about three
+answers' time). Background clips now take four slots at `low` priority (`BACKGROUND_SLOTS`,
+`src/voice/VoiceBank.ts`), so a line or a scene's art always finds a free connection. To
+see how a server is doing for a cast, play a whole episode against it with real voice:
+`PROBE_URL=http://localhost:5174 PROBE_CAST='?ally=jasmine ?villain=jasmine' npx playwright test -c tests/perf/castVoice.config.ts`
+(default `http://localhost:$CONDUCTOR_PORT`; it starts no server, so it reads Matt's own,
+a fresh `npm run dev` or a `vite preview` alike; `PROBE_WORKERS=2` for a long list). Each
+cast prints a `PROBE {…}` line: the Wait screens, every line that waited for its decode
+(`lateLines`: over 250 ms or with no audio) and the fetch timings. On a healthy server a
+whole episode shows none of either (about a minute an episode). `__ww.state()` carries the
+same: `waits` and `voice.waits`.
+
 Then open **http://localhost:5174** in Chrome or Edge and press F11 for fullscreen. Plug
 the Xbox 360 pad in first; press green (A) on the title screen. The keyboard works too:
 arrows to walk, Space/Enter for green, Tab for yellow (say it again / hint), Esc for red, 3 for blue, and the
@@ -99,9 +117,9 @@ item: `docs/engineering.md`, *Browser and tests*):
   the three text-fit checks, and the word machine's plate and Word → Picture's banner
   holding their words and the read pass's green dot on its banner (`tests/banner.spec.ts`; its widest-sentence checks are `@slow`). It stops itself at 6 minutes, so a hang fails inside
   Claude Code's 10-minute background cap instead of being killed by it.
-- **Everything: `npm run test:all`** (about 6.3 minutes when last timed, item 105; 193
-  browser tests as listed 2026-10-24): the unit tests, then every browser test. The slow lane alone is
-  `npm run test:slow` (about 5 minutes when last timed, item 105; 107 tests as listed 2026-10-24): every test
+- **Everything: `npm run test:all`** (about 6.3 minutes when last timed, item 105; 195
+  browser tests as listed 2026-10-25): the unit tests, then every browser test. The slow lane alone is
+  `npm run test:slow` (about 5 minutes when last timed, item 105; 109 tests as listed 2026-10-25): every test
   tagged `@slow`. Counts are from `npx playwright test --list` (`--grep @slow` for the slow
   lane, `--grep-invert @slow` for `test:browser`); their history is in `docs/engineering.md`,
   *Lane times, item by item*. Its longest (item 105): the soak (67 s,

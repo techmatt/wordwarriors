@@ -121,10 +121,10 @@ export class BootScene extends Phaser.Scene {
     const title = plain ? artBank.missing(artFor('Title', true)) : [];
     let got = 0;
     const tick = () => (this.bar.width = 4 + 596 * (title.length ? got / title.length : 1));
-    await Promise.all([
-      ...title.map((id) => artBank.ensure([id]).then(() => (got++, tick()))),
-      voiceBank.load().then(() => voiceBank.loadGroups([group.core])),
-    ]);
+    // The manifest only, not core's ~290 clips (item 150, 148's fix 2): the title says one line,
+    // which VoiceBus asks for ahead of the rest. Awaited, a slow server held the bar for 18 s.
+    await Promise.all([...title.map((id) => artBank.ensure([id]).then(() => (got++, tick()))), voiceBank.load()]);
+    void voiceBank.loadGroups([group.core]);
 
     // The difficulty knob for this session (item 067; DIFFICULTY in config otherwise): before any plan is drawn.
     if (q.get('difficulty')) setDifficulty(Number(q.get('difficulty')));
