@@ -7,7 +7,8 @@
  *
  *   QA_TAG=<tag> npm run qa [-- -g <scenario>]
  *
- * and read `scratch/qa/<tag>/`: one folder of shots per scenario, its
+ * and read `qa/<tag>/` in the scratch home (`tools/scratch.ts`, item 149;
+ * `qa.config.ts` prunes older hunts there as a sweep starts): one folder of shots per scenario, its
  * `<scenario>.json` (issues, counts, lock and frame stats), then
  * `npx tsx tests/qa/report.ts <tag>` for `summary.md` and contact sheets.
  * `QA_SET=quick` plays three scenarios, `QA_SET=<batch>` one later batch (each
@@ -29,6 +30,7 @@ import { layoutIssues, leakIssues, logIssues, onlyLineVariants, padReachIssues, 
 import { qaLayout, qaSince } from './probe';
 import { clippedIssues, giveawayIssues, letterNameIssues, pacingIssues, repeatedLines, spellingIssues, tauntIssues, variantIssues } from './wording';
 import { NARRATOR_LINES, lineVariantKeys } from '../../content/voice/script';
+import { scratchPath } from '../../tools/scratch';
 
 // Item 083: real voice and real walking: the checker looks and listens as she would.
 VOICE.mode = 'real';
@@ -38,7 +40,7 @@ driver.walk = true;
 const VARIANT_BASES = Object.fromEntries(NARRATOR_LINES.map((t) => t.key).filter((k) => !/_\d+$/.test(k)).map((k) => [k, lineVariantKeys(k)] as const).filter(([, v]) => v.length > 1));
 
 const TAG = process.env.QA_TAG ?? 'now';
-const OUT = `scratch/qa/${TAG}`;
+const OUT = scratchPath('qa', TAG);
 const PLACEHOLDERS = placeholderArt();
 // Lines with no clip, or a clip for old text: the same for every scenario, so read once (item 062).
 const VOICE_BUILD = voiceBuildIssues();
@@ -867,7 +869,7 @@ async function network(page: Page, kind: 'slow' | 'flaky', log: { failed: string
 /**
  * A look at one moment instead of a sweep: `QA_LOOK='scene=house&cast=default'`
  * boots that URL and records `QA_LOOK_S` seconds (default 30) of shots and
- * checks, pressing green every few seconds, into `scratch/qa/<tag>/look/`.
+ * checks, pressing green every few seconds, into `qa/<tag>/look/` in the scratch home.
  */
 const LOOK = process.env.QA_LOOK;
 if (LOOK) {

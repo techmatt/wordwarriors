@@ -12,7 +12,7 @@
  * rebuild a re-record. A take that is empty or doesn't count out writes
  * nothing and says which card to re-record.
  *
- * Every run writes `scratch/voice-import/review.html`: each take's envelope
+ * Every run writes `voice-import/review.html` in the scratch home (`tools/scratch.ts`): each take's envelope
  * with its cuts, every clip with a player and its target id, and the bridge's
  * cut of each repeat. `--dry` writes only that. Then run `npm run voice:build`.
  */
@@ -24,6 +24,7 @@ import { inflateRawSync } from 'node:zlib';
 import { canHold } from '../../content/phonics/letters.js';
 import { letterSoundLine, wordLine } from '../../content/voice/ids.js';
 import { holdPlan, holdSamples } from '../../src/audio/holdSound.js';
+import { scratchArg, scratchPath } from '../scratch.js';
 import { readLines, runMain } from '../shared.js';
 import { mp3Bytes, readWav, wavBytes } from './audio.js';
 import { CLIP_DIR, CLIP_INDEX, clipRecord, dropUnused, installClip, readClipIndex, type ClipIndex } from './clips.js';
@@ -35,7 +36,7 @@ const FORMATS = ['phonics-recorder/1', 'phonics-recorder/2'];
 const DEFAULT_RECORDER = 'Matt';
 /** Sounds recorded once that the game has more lines for: the K card is the C-K sound too. */
 const ALSO = { k: ['ck'] } as Record<string, string[]>;
-const REVIEW_DIR = path.join('scratch', 'voice-import');
+const REVIEW_DIR = scratchPath('voice-import');
 const REVIEW = path.join(REVIEW_DIR, 'review.html');
 const REVIEW_AUDIO = path.join(REVIEW_DIR, 'review');
 
@@ -311,7 +312,7 @@ export async function voiceImport(argv: string[]): Promise<void> {
       only = argv[++i];
       if (!only || only.startsWith('--')) throw new Error('voice:import: --take needs a card, e.g. --take g04 (or 4)');
     }
-    else if (!a.startsWith('--') && !zip) zip = a;
+    else if (!a.startsWith('--') && !zip) zip = scratchArg(a);
     else throw new Error(`voice:import: what is "${a}"?`);
   }
   if (!zip) throw new Error('usage: npm run voice:import -- <zip> [--take gNN] [--dry]');

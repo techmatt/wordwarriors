@@ -45,6 +45,7 @@ read-only reference.
 | `content/art/` | `assets.ts` art ids and sizes; `prompts.ts` real-art prompts |
 | `public/art/` | Generated, committed. Do not hand-edit |
 | `public/voice-gen/`, `art-originals/` | Untracked junctions to the Drive folder (README, *Storage*). Do not hand-edit |
+| `C:\Code\wordwarriors-scratch` | **The scratch home**, outside the repo (item 149; `tools/scratch.ts` finds it, from a worktree too): logs, briefs, throwaway scripts' output, shot runs (`qa/<tag>/`, `ui_shots/`, `polish_034/`). Never make a `scratch/` folder in a checkout: its files belong here (Vite ignores `scratch/` only as a backstop). A `scratch/…` argument to `art:alts --brief`, `art:gen --sheet-out`, `voice:import` or `tests/shots/sheet.ts` means this folder. The checker keeps the last three hunts' runs (`tests/qa/prune.ts`) |
 | `tools/` | `voice/`, `art/`, `shared.ts`, `phonics/audit.ts`; `recorder/phonics-recorder.html` (its hosted copy is synced by the planner, never edited here) |
 | `tests/` | Playwright specs, `harness.ts`; `unit/` node:test; `shots/`, `perf/`, `qa/`, `variety/` (README, *Not tests*); `fixtures/` (the voice-import test's WAV); root plumbing: `fastLane.ts` (`npm test`), `testBuild.ts` / `testDist.ts` + `vite.test.config.ts` (the suite's build), `vite.nowatch.config.ts`, `servers.ts` (`buildServerCommand` / `devServerCommand`, the configs' web servers), `gpu.ts` (every config's project), `sheets.ts` |
 | `docs/` | `systems.md`, `episode.md`, `engineering.md` (measured facts), `content.md` (adding content), `recording.md`, `art.md` (generated), `qa-findings.md` (known issues and Matt's calls), `rulings.md` (Matt's standing calls no other doc holds), `language-pass.md` (item 087's old-to-new line table, historical) |
@@ -85,9 +86,11 @@ art:placeholders`. When Matt asks for a content or tuning change ("add a charact
 "make it harder", "for X I pick n"): `docs/content.md`, *Matt says X → run Y*.
 
 **Art rounds:** a candidate round (`art:alts`) changes nothing tracked, so it may run as
-a **readonly** item; a new look is a `--brief` file in `scratch/`, not an edit to
-`content/art/prompts.ts`. It never asks Matt which candidate to promote: it finishes with
-`pick:` in the report's header, and promotion (`art:pick`) rides a later, normal item.
+a **readonly** item; a new look is a `--brief` file in the scratch home, not an edit to
+`content/art/prompts.ts`. Its sheet, picker manifest and preview cuts go to
+`art-originals/picks/` (inside the repo through the junction, so `pick:` can name it). It
+never asks Matt which candidate to promote: it finishes with `pick:` in the report's
+header, and promotion (`art:pick`) rides a later, normal item.
 
 ## Standing contract
 

@@ -5,7 +5,8 @@
  * draws `n` new candidates per id with the same prompt and photo reference as
  * `art:gen`, and keeps each full-resolution image as
  * `art-originals/alts/<id>-<k>.png` (k counts on from the last one there).
- * `--brief=<file>` (one id only; a text file in `scratch/`, item 041) draws from
+ * `--brief=<file>` (one id only; a text file in the scratch home, item 041;
+ * `scratch/<name>.txt` means the scratch home's, `tools/scratch.ts`) draws from
  * that file's text instead of the tracked prompt, with the same style block,
  * photo reference and NOTES, so trying a new look edits nothing tracked. Each
  * such candidate gets a sidecar `<id>-<k>.json` (the brief's name, its file and
@@ -15,8 +16,9 @@
  * Evil Anna's art keeps one face, hair and build.
  * `public/art/` is not touched. Every run then cuts each candidate of the named
  * ids exactly as `art:pick` would into previews (`<sheet>/<id>-<k>.png`) and
- * writes, beside them, a contact sheet (`--sheet=<file>`, default
- * `scratch/art_alts_<date>_<time>.png`: one row per id, the game's current image
+ * writes, beside them, a contact sheet (`--sheet=<name>` or `--sheet=<file>`, default
+ * `art_alts_<date>_<time>`; a bare name, or a `scratch/…` path, goes in `PICKS`,
+ * `art-originals/picks/`, item 149: one row per id, the game's current image
  * first, labelled `current`, then every candidate labelled with its `k`, drawn at
  * one scale) and a picker manifest for conductor's picker page (`<sheet>.json`,
  * named after the sheet). `--sheet-only` skips the drawing; `--manifest-only`
@@ -38,10 +40,17 @@ import type { Page } from '@playwright/test';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
 import { NOTES, PICK_NOTES, refFor } from '../../content/art/prompts.js';
+import { scratchArg } from '../scratch.js';
 import { ART_DIR, exists, fromDataUrl, pngDataUrl, runMain } from '../shared.js';
 import { ORIGINALS, codexPrompt, cut, describeUsage, gamePng, isBackground, openPage, refCrop, runCodex } from './generate.js';
 
 const ALTS = path.join(ORIGINALS, 'alts');
+/**
+ * A round's sheet, picker manifest and preview cuts (item 149): inside every checkout
+ * through the Drive junction, so a `pick:` path in a report is the repo's, and shared,
+ * so it survives the merge. Not in the scratch home, which is outside the repo.
+ */
+export const PICKS = path.join(ORIGINALS, 'picks');
 /** What the game had before an id's first pick, for `art:pick -- <id> 0`. */
 const RESTORE = path.join(ORIGINALS, 'restore');
 
@@ -106,7 +115,7 @@ async function draw(argv: string[]): Promise<void> {
   const noRef = argv.includes('--no-ref');
   const ids = argv.filter((a) => !a.startsWith('--'));
   const briefArg = argv.find((a) => a.startsWith('--brief='))?.slice('--brief='.length);
-  const brief = briefArg ? await readBrief(briefArg) : undefined;
+  const brief = briefArg ? await readBrief(scratchArg(briefArg)) : undefined;
   if (brief && ids.length !== 1) throw new Error('--brief draws one id: one run per brief');
   const design = argv.find((a) => a.startsWith('--ref='))?.slice('--ref='.length);
   if (design && !(await exists(design))) throw new Error(`--ref: ${design} not found`);
@@ -291,7 +300,7 @@ export async function alts(argv: string[]): Promise<void> {
   const ids = argv.filter((a) => !a.startsWith('--'));
   if (!ids.length) throw new Error('usage: npm run art:alts -- <ids…> [--n=3] [--sheet=<file>] [--sheet-only] [--manifest-only] [--no-ref] [--brief=<file>] [--ref=<image>]');
   for (const id of ids) if (!ART_BY_ID[id]) throw new Error(`${id} is not an asset id (content/art/assets.ts)`);
-  const sheet = argv.find((a) => a.startsWith('--sheet='))?.slice('--sheet='.length) ?? defaultSheet();
+  const sheet = sheetFile(argv.find((a) => a.startsWith('--sheet='))?.slice('--sheet='.length) ?? defaultSheet());
   const base = sheet.replace(/\.png$/i, '');
   const name = path.basename(base);
   // The name is the picker's URL part and choices file name.
@@ -308,11 +317,17 @@ export async function alts(argv: string[]): Promise<void> {
   }
 }
 
-/** `scratch/art_alts_<yyyymmdd>_<hhmm>.png`, local time, when no `--sheet` is given. */
+/** `art_alts_<yyyymmdd>_<hhmm>`, local time, when no `--sheet` is given. */
 function defaultSheet(): string {
   const d = new Date();
   const p = (n: number) => String(n).padStart(2, '0');
-  return path.join('scratch', `art_alts_${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}.png`);
+  return `art_alts_${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}`;
+}
+
+/** `--sheet`'s file: a bare name, or a `scratch/…` path (before item 149 the sheets lived there), goes in `PICKS`. */
+export function sheetFile(arg: string): string {
+  const file = /\.png$/i.test(arg) ? arg : `${arg}.png`;
+  return !/[\\/]/.test(file) || /^scratch[\\/]/.test(file) ? path.join(PICKS, path.basename(file)) : file;
 }
 
 const pruned = (n: number) => (n ? `; deleted its ${n} candidate${n === 1 ? '' : 's'} in ${ALTS}/` : '');

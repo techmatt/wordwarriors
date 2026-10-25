@@ -60,7 +60,7 @@ without a new measurement.
   item 054); recordings fix it.
 - **Short A is cut from a carrier word** (item 085: Matt heard CAP's A as "I"). Measured
   with LPC formants (median over the vowel's middle, GuyNeural at -20%;
-  `scratch/085/formants.py`, `envelope.py`): edge-tts "Aah", "Ah" and "Ahh" are the same
+  `085/formants.py`, `envelope.py` in the scratch home, `C:\Code\wordwarriors-scratch`): edge-tts "Aah", "Ah" and "Ahh" are the same
   vowel, F1 806 / F2 1217 Hz, the O of HOT, not the A of CAT (F2 about 1,700). "Aa" is
   F1 464 / F2 2210 (an EH or AY), "Am", "Ap" and "Ant" glide or are read as letters. Inside a
   word the vowel is right: "Add" 797 / 1705, "At" 785 / 1706, "Cap" 800 / 1707, "Cat" 832 /

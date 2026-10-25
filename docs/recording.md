@@ -22,7 +22,7 @@ long "llll", so make it longer than feels needed. The page counts the
 2. Press **Download zip**. It saves `phonics-<name>.zip`.
 3. `npm run voice:import -- <the zip>` (`--dry` to look first, `--take g04` for one card),
    then `npm run voice:build`.
-4. Listen on `scratch/voice-import/review.html`, which shows each card's envelope with
+4. Listen on `voice-import/review.html` in the scratch home (`C:\Code\wordwarriors-scratch`), which shows each card's envelope with
    its cuts, every clip with its target id, and what the Stretchy Bridge makes of each
    sound.
 

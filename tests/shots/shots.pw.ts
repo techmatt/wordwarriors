@@ -2,7 +2,7 @@
  * Screenshots of every non-battle scene where words are on screen (item 024),
  * for judging the dialogue UI by eye. Not a test: run it with its own config,
  *   SHOTS_TAG=<tag> npm run shots -- shots.pw
- * and it writes `scratch/ui_shots/<SHOTS_TAG>/<cast>_<scene>_<n>_<line>.png`
+ * and it writes `ui_shots/<SHOTS_TAG>/<cast>_<scene>_<n>_<line>.png` in the scratch home (`tools/scratch.ts`)
  * (`-g bedroom` and the like for one scene).
  * A recorder polls the voice bus beside the walking helpers and shoots each
  * new line shortly after it starts, so the karaoke and the speaker are live.
@@ -13,13 +13,14 @@ import { mkdirSync } from 'node:fs';
 import { test, type Page } from '@playwright/test';
 
 import { ENDINGS } from '../../content/house/endings';
+import { scratchPath } from '../../tools/scratch';
 import { boot, choose, hubGo, press, readToKeyWord, state, until, VOICE } from '../harness';
 
 // Item 083: real voice, so a shot catches the line and its caption.
 VOICE.mode = 'real';
 
 const TAG = process.env.SHOTS_TAG ?? 'now';
-const OUT = `scratch/ui_shots/${TAG}`;
+const OUT = scratchPath('ui_shots', TAG);
 mkdirSync(OUT, { recursive: true });
 
 const CASTS: { name: string; query: string }[] = [

@@ -57,7 +57,7 @@ Moved from CLAUDE.md (item 078). "The three commands" are `voice:lines`, `voice:
 | "the bridge needs pictures like X" | a familiar `BANK` thing starting like X (`docs/content.md`, "The Stretchy Bridge's pictures"), the three commands, `art:gen` |
 | "the warm-up is too hard / too easy" / "start new words at level N" | `GRAB.startLevel` (and `helpAfter`) in `src/config.ts`; past the start level only with `DIFFICULTY` 2+ |
 | "for X I pick n" (from an `art_alts_*` sheet) | `npm run art:pick -- X n`, commit `public/art/X.png`; if it prints a brief, write it into X's roster `look` (or `HAND`) in the same commit |
-| "try a new look for X" / "draw X as …" | a brief file in `scratch/`, then `npm run art:alts -- X --n=2 --brief=scratch/<name>.txt --sheet=scratch/art_alts_<item>_<name>.png` (readonly; Matt picks) |
+| "try a new look for X" / "draw X as …" | a brief file in the scratch home (`C:\Code\wordwarriors-scratch`), then `npm run art:alts -- X --n=2 --brief=scratch/<name>.txt --sheet=art_alts_<item>_<name>` (`scratch/` means the scratch home; the sheet and picker manifest go to `art-originals/picks/`; readonly; Matt picks) |
 
 ## A character (`content/battle/roster/`)
 

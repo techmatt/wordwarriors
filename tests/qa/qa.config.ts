@@ -34,6 +34,8 @@ export default defineConfig({
   testMatch: '*.pw.ts',
   // Per tag: a second sweep's start empties its output folder, which took a running sweep's trace with it (hunt 7).
   outputDir: `../../test-results/qa${process.env.QA_TAG ? `-${process.env.QA_TAG}` : ''}`,
+  // Keeps the last three hunts' runs in the scratch home and deletes the rest (item 149, `prune.ts`; `QA_PRUNE=0` skips it).
+  globalSetup: './prune.ts',
   workers: 1,
   retries: 0,
   reporter: [['list']],

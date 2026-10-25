@@ -1,6 +1,6 @@
 /**
  * Splitting a phonics-recorder take into clips (item 057; ported from item 055's
- * prototype, `scratch/voice-import/split.py`, whose report measured every number
+ * prototype, `voice-import/split.py` in the scratch home (`tools/scratch.ts`), whose report measured every number
  * here on a real recording). Pure: samples in, cuts and clips out.
  *
  * A take is one card: for each of its entries, the WORD, then its SOUND

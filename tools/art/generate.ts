@@ -11,7 +11,7 @@
  *
  * No ids = every id in ART_PROMPTS. Ids that already have real art (a file
  * without the placeholder mark) are skipped unless `--force`. Stops at the
- * first usage-limit message. Ends by writing scratch/art_contact.png: every
+ * first usage-limit message. Ends by writing art_contact.png in the scratch home: every
  * prompted id that has real art, not only this run's.
  * `--sheet` only rebuilds the contact sheet; `--reprocess` re-cuts the game
  * PNGs from `art-originals/` without asking Codex (for tuning the keying).
@@ -32,12 +32,13 @@ import sharp from 'sharp';
 
 import { ART_BY_ID } from '../../content/art/assets.js';
 import { ART_PROMPTS, BACKGROUND_STYLE, keyMode, NOTES, REFS, refFor, spriteStyle, type KeyMode } from '../../content/art/prompts.js';
+import { scratchArg, scratchPath } from '../scratch.js';
 import { ART_DIR, blankPage, exists, fromDataUrl, isBackgroundKind, pngDataUrl, runMain, SPRITE_SCALE } from '../shared.js';
 import { keyGreen } from './chroma.js';
 import { isPlaceholder } from './placeholders.js';
 
 export const ORIGINALS = 'art-originals';
-const SHEET = path.join('scratch', 'art_contact.png');
+const SHEET = scratchPath('art_contact.png');
 const CODEX_HOME = process.env.CODEX_HOME ?? path.join(os.homedir(), '.codex');
 const TIMEOUT_MS = 6 * 60_000;
 
@@ -97,7 +98,7 @@ interface CodexRun {
 }
 
 export async function runCodex(prompt: string, image?: string): Promise<CodexRun> {
-  const workdir = path.resolve('scratch', 'codex');
+  const workdir = scratchPath('codex');
   await mkdir(workdir, { recursive: true });
   const started = Date.now();
   // codex is an npm .cmd shim on Windows, which Node only spawns through a shell.
@@ -334,7 +335,8 @@ export async function generate(argv: string[]): Promise<void> {
   const sheetOnly = argv.includes('--sheet');
   const reprocess = argv.includes('--reprocess');
   const shrink = argv.includes('--shrink');
-  const sheetOut = argv.find((a) => a.startsWith('--sheet-out='))?.slice('--sheet-out='.length);
+  const sheetOutArg = argv.find((a) => a.startsWith('--sheet-out='))?.slice('--sheet-out='.length);
+  const sheetOut = sheetOutArg && scratchArg(sheetOutArg);
   const noRef = argv.includes('--no-ref');
   const named = argv.filter((a) => !a.startsWith('--'));
   const ids = named.length ? named : Object.keys(ART_PROMPTS);

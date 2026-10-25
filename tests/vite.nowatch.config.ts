@@ -11,9 +11,9 @@ import { defineConfig, mergeConfig } from 'vite';
 
 import base from '../vite.config';
 
-export default mergeConfig(
-  base,
-  defineConfig({
-    server: { watch: null, hmr: false },
-  }),
-);
+const config = mergeConfig(base, defineConfig({ server: { hmr: false } }));
+// Set after the merge: `mergeConfig` skips a null, so `watch: null` passed to it never
+// reached the server, which watched all along (found in item 149).
+config.server!.watch = null;
+
+export default config;

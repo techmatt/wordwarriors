@@ -1,19 +1,20 @@
 /**
  * The bug-hunt checker's summary (item 039):
  *   npx tsx tests/qa/report.ts <tag> [--no-sheets]
- * reads `scratch/qa/<tag>/<scenario>.json` and writes `scratch/qa/<tag>/summary.md`
+ * reads `qa/<tag>/<scenario>.json` in the scratch home (`tools/scratch.ts`) and writes `qa/<tag>/summary.md`
  * (issues merged across scenarios, most frequent first, each with a shot),
- * and a contact sheet per scenario, `scratch/qa/<tag>/sheets/<scenario>_<n>.png`
+ * and a contact sheet per scenario, `qa/<tag>/sheets/<scenario>_<n>.png`
  * (six shots a row at a quarter size, 48 a sheet, each labelled by its file name).
  */
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 
+import { scratchPath } from '../../tools/scratch';
 import { contactSheet } from '../sheets';
 import type { Issue } from './checks';
 
 const [tag = 'now', ...flags] = process.argv.slice(2);
-const dir = `scratch/qa/${tag}`;
+const dir = scratchPath('qa', tag);
 
 /** A scenario's JSON; the `devkeys_<mode>.json` runs carry no seconds, cast, heap or frames. */
 interface Run {

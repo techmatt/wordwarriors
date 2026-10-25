@@ -15,8 +15,11 @@ dist/
 # not in history; an image may be committed only where a test reads it back.
 /tests/screenshots/
 
-# Scratch space for one session's working files.
-/scratch/
+# Scratch lives outside the repo since item 149, beside the main checkout
+# (C:\Code\wordwarriors-scratch, tools/scratch.ts). Still ignored: conductor links a
+# `scratch` junction into each worktree, and a stray one must not be committed. No
+# trailing slash, as for the junctions below.
+/scratch
 
 # Junctions into the Drive-synced folder (README, "Storage"). No trailing slash:
 # git may see a junction as a link, not a directory.

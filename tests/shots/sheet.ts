@@ -10,8 +10,11 @@ import { readdirSync } from 'node:fs';
 
 import sharp, { type OverlayOptions } from 'sharp';
 
-const [beforeTag = 'before', afterTag = 'after', out = 'scratch/ui_024_before_after.png'] = process.argv.slice(2);
-const dir = (tag: string) => `scratch/ui_shots/${tag}`;
+import { scratchArg, scratchPath } from '../../tools/scratch';
+
+const [beforeTag = 'before', afterTag = 'after', outArg = 'scratch/ui_024_before_after.png'] = process.argv.slice(2);
+const out = scratchArg(outArg);
+const dir = (tag: string) => scratchPath('ui_shots', tag);
 
 /** [label, file prefix (cast_scene), line id or fixed shot suffix]. */
 const ROWS: [string, string, string][] = [

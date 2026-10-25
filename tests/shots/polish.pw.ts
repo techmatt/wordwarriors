@@ -4,7 +4,7 @@
  * overlaps, banners over bubbles and the bag reveal can be judged by eye.
  * Not a test: run it with its own config,
  *   SHOTS_TAG=<tag> npm run shots -- polish.pw
- * and it writes `scratch/polish_034/<SHOTS_TAG>/<cast>_p<part>_<n>_<what>.png`
+ * and it writes `polish_034/<SHOTS_TAG>/<cast>_p<part>_<n>_<what>.png` in the scratch home (`tools/scratch.ts`)
  * and each battle's voice history (`<cast>_p<part>_voice.json`), where a line
  * said twice in a row shows up as `twice`. `-g <cast>` for one cast; WW_SPEED
  * sets the clock (default 2).
@@ -14,13 +14,14 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 
 import { test, type Page } from '@playwright/test';
 
+import { scratchPath } from '../../tools/scratch';
 import { boot, leaveBedroom, playBattle, state, until, VOICE } from '../harness';
 
 // Item 083: real voice, so a shot catches the line and its caption.
 VOICE.mode = 'real';
 
 const TAG = process.env.SHOTS_TAG ?? 'now';
-const OUT = `scratch/polish_034/${TAG}`;
+const OUT = scratchPath('polish_034', TAG);
 const SPEED = Number(process.env.WW_SPEED ?? 2);
 mkdirSync(OUT, { recursive: true });
 

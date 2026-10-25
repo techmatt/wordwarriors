@@ -16,6 +16,22 @@ on npm's "this is not the tsc command you are looking for" stub and `npx tsx` ca
 `@playwright/test`. `npm install <pkg>` only when adding or bumping a dependency,
 committing the lock file.
 
+**Start-up:** a fresh `npm run dev` should reach the title in about 2 s: Vite says
+"ready" in 0.3 s and the page comes up a second or two later (item 149: 3.4 s from
+starting the server to the title, a browser launch included). If it takes a minute or
+more, Vite's file watcher is walking something big: its first page waits until the walk
+is done. Item 148 measured 133 s, the watcher walking `scratch/` (138k files) and the Drive
+junctions; ignoring them (`server.watch.ignored` in `vite.config.ts`) alone took it to
+3.6 s, while `optimizeDeps.entries` alone changed nothing. Check for a big folder that
+crept into the checkout (`ls`; a `scratch/` folder is one: it belongs in the scratch
+home, *Storage*) and that `vite.config.ts` still ignores `scratch`, `art-originals` and
+`public/voice-gen`. Ignoring the voice junction does not stop new clips being served: with
+a junction under `public/`, Vite keeps no list of public files and serves the folder live
+(checked in Vite 8's `initPublicFiles`); a page still reloads on nothing `voice:build`
+writes there. A dev server
+also holds its watched folders open: a folder under it cannot be renamed or moved while
+it runs (item 149 met this on the main checkout's server).
+
 Then open **http://localhost:5174** in Chrome or Edge and press F11 for fullscreen. Plug
 the Xbox 360 pad in first; press green (A) on the title screen. The keyboard works too:
 arrows to walk, Space/Enter for green, Tab for yellow (say it again / hint), Esc for red, 3 for blue, and the
@@ -354,7 +370,7 @@ running yourself (a `vite preview` of a build).
 build folder and output folder, or the second build overwrites the first one's served files
 and the second run empties the first one's `test-results/`:
 `CONDUCTOR_PORT=<free port> WW_TEST_DIST=node_modules/.ww-test-dist-<tag> npx playwright test <spec> --output=test-results-<tag>`.
-A spec or config under `scratch/` does not work (it loads the main checkout's
+A spec or config in the scratch home does not work (outside the repo, it finds no
 `node_modules`: *Operational facts*); throwaway specs live under `tests/`.
 
 A test that times out "waiting for title" (or "parent page", "hub quiet") with `scene=`
@@ -396,7 +412,7 @@ are in `docs/engineering.md`.
 `SHOTS_TAG=<tag> npm run shots -- shots.pw` plays the
 bedroom, the hub and a side room, and the victory for four casts (and a battle up to its
 first move choice), shooting every line shortly after it starts into
-`scratch/ui_shots/<tag>/` (about 5 minutes; `-g bedroom` for one scene). Without a file
+`ui_shots/<tag>/` in the scratch home (*Storage*; about 5 minutes; `-g bedroom` for one scene). Without a file
 name `npm run shots` plays the battle shots below as well. It serves its own vite on
 `SHOTS_PORT`, else 5194 (in a conductor item: `SHOTS_PORT=$CONDUCTOR_PORT`; the suite serves
 there too, so a test run started while shots run stops at "port already used": run them one
@@ -410,14 +426,14 @@ two runs side by side.
 
 **Battle shots** (item 034): `SHOTS_TAG=<tag> npm run shots -- polish.pw` plays both battles for thirteen casts across every
 fight style, the story fight included (`CASTS` in `tests/shots/polish.pw.ts`), shooting every 1.5 s and at each new
-phase into `scratch/polish_034/<tag>/`, with each battle's voice history and any line said
+phase into `polish_034/<tag>/` in the scratch home, with each battle's voice history and any line said
 twice in a row (`*_voice.json`); also the dads' heights in the bedroom, entry hall, hub and
 victory scene, and Pig Curse's callout. About 16 minutes at `WW_SPEED=2` (the default
 there) for item 034's eight casts; not retimed at thirteen. Name the spec file (`polish.pw`), not `polish`: every path in a worktree called
 `…_polish` matches the bare word. `npx tsx tests/shots/contact.ts <tag>` makes one
-contact sheet per battle in `scratch/polish_034/<tag>_sheets/`. To shoot "before" (the
+contact sheet per battle in `polish_034/<tag>_sheets/` there. To shoot "before" (the
 base commit's code; the server no longer reloads under edits), run it from a second worktree at the base commit
-(junction its `node_modules`, `public/voice-gen` and `scratch` to this one's). Unlink those
+(junction its `node_modules` and `public/voice-gen` to this one's; it finds the same scratch home). Unlink those
 junctions (`cmd /c rmdir <path>`) before `git worktree remove --force`, so nothing is
 deleted through them.
 
@@ -443,9 +459,9 @@ every action word that came up as a picture she picks from; either above 0 fails
 (exit 1), as a stored word drawn does. `Math.random` is
 seeded, so a seed replays; a change to any draw or to the bank moves every later episode,
 so compare the same seeds before and after. Item 121's before and after runs are its report's.
-A before run needs no checkout: `git archive <commit> | tar -x -C scratch/<dir>`, then run
+A before run needs no checkout: `mkdir -p node_modules/.ww-before && git archive <commit> | tar -x -C node_modules/.ww-before`, then run
 `npx tsx tests/variety/simulate.ts` inside it (it finds the worktree's `node_modules` above
-`scratch/`; item 126). A simulated episode answers for her, so a draw's per-visit shares
+it; item 126 used `scratch/<dir>`, which since item 149 is outside the repo and finds none). A simulated episode answers for her, so a draw's per-visit shares
 (BUG in about one Shape-Shifter visit in three) are steadier than its raw counts, which move
 with how often the game comes up.
 
@@ -472,9 +488,9 @@ long one (the real-speed `variants6`) needs its own build and port:
 `QA_DIST=node_modules/.ww-qa-dist2 QA_PORT=<free port>`; sharing the build folder would
 rebuild it under the first sweep's pages. A scenario shoots at most 400 shots an episode (`Recorder`'s `max`); past it the run goes on
 unshot, which looks like a hang (hunt 7). Give each its own `QA_TAG` as well: Playwright's
-output folder is per tag (`test-results/qa-<tag>`), since a run empties its folder as it starts. A probe script kept in `scratch/` runs the
-main checkout's code, not the worktree's (hunt 7 lost a round to it; *Operational facts*):
-keep such scripts in the worktree.
+output folder is per tag (`test-results/qa-<tag>`), since a run empties its folder as it starts. A probe script kept in the scratch home finds
+neither the worktree's code nor `node_modules` (*Operational facts*): keep such scripts in
+the worktree.
 
 - **Item 128's check, `text-off-panel`:** a word crossing the edge of the panel it is
   printed on (the sentence banner's cream band, the parked Word → Picture's banner, the
@@ -648,7 +664,18 @@ keep such scripts in the worktree.
 
 - **Shots only at moments:** each scene change, each line (a moment in, so the box and
   karaoke are up), each new round, move choice and battle phase, each victory-scene line,
-  the recap. About 150 an episode in `scratch/qa/<tag>/<scenario>/`.
+  the recap. About 150 an episode in `qa/<tag>/<scenario>/` in the scratch home: every
+  such moment, not only the failing ones (a run is 1 to 4 GB).
+- **Retention** (item 149): each sweep starts by pruning `qa/` (`tests/qa/prune.ts`, the
+  config's `globalSetup`; `QA_PRUNE=0` skips it, `npx tsx tests/qa/prune.ts --dry` lists
+  what would go). It keeps every run of the last three hunts, the sweep now starting
+  counted; the run starting; any run a kept hunt cites (`qa/<tag>/`, `QA_TAG=<tag>` or
+  `` `<tag>` `` in a kept `summary.md` or in those hunts' sections of
+  `docs/qa-findings.md`); and runs outside a hunt no older than the oldest kept hunt's
+  first run. The rest is deleted. **So name a hunt's tags `h<N>…`** (`h12a`, `h12lenses`):
+  the number is how a run is tied to its hunt. Nothing reads an older run back
+  (`report.ts` reads only its own tag); a look you want to keep past three hunts belongs
+  in a report or `docs/`.
 - **Checks at each shot** (`tests/qa/checks.ts`): words off the screen, lower-case
   text, tiny text, text over text, a target under the dialogue box, placeholder art; the
   sentence key word or the machine's word said or shown before she answers; lines with
@@ -682,10 +709,10 @@ keep such scripts in the worktree.
   the test hooks): the voice log, frame times and long tasks per scene, lock stretches,
   missing art, console capture, `layout()` and `counts()` on `window.__wwqa`.
 - `npx tsx tests/qa/report.ts <tag>` merges the issues across scenarios into
-  `scratch/qa/<tag>/summary.md` (bugs first, each with a shot) with frame and heap tables,
-  and contact sheets in `scratch/qa/<tag>/sheets/`.
+  `qa/<tag>/summary.md` (bugs first, each with a shot) with frame and heap tables,
+  and contact sheets in `qa/<tag>/sheets/`.
 - **One moment instead of a sweep:** `QA_LOOK='scene=house&cast=default' QA_LOOK_S=30
-  QA_LOOK_GREEN=0` records that URL for 30 s into `scratch/qa/<tag>/look/`.
+  QA_LOOK_GREEN=0` records that URL for 30 s into `qa/<tag>/look/`.
 - Its server (port 5195, `QA_PORT` to move it) serves a production build made as the
   sweep starts (`node_modules/.ww-qa-dist`, as the suite does; item 092), so editing
   `src/` during a sweep neither reloads it nor mixes code. Since item 122 it is the
@@ -699,7 +726,7 @@ keep such scripts in the worktree.
   starves the first, and scenarios time out at boot with an empty scene (seen in item 039).
 - Known issues and Matt's calls are in `docs/qa-findings.md`; a hunt reads it first and
   does not re-report them.
-- A throwaway script that imports game code does not go in `scratch/` (*Operational
+- A throwaway script that imports game code does not go in the scratch home (*Operational
   facts*).
 
 ## Content work
@@ -727,7 +754,7 @@ over HTTPS. Don't edit it there: after each change to the repo's copy the planne
 it over, and Matt commits it. Nothing leaves their computer until they press
 **Download zip**, which saves `phonics-<name>.zip` (stored, no compression, about 16 MB
 for all 12 cards). That zip comes back by email or a shared folder; put it in
-`scratch/voice-import/`.
+`voice-import/` in the scratch home.
 
 **`?missing`** (item 108) opens the page with only the sounds still to record, each its
 own card of one word and its sound three times: today F (FAN) and A (CAT), the `MISSING`
@@ -764,7 +791,7 @@ splitter `tools/voice/split.ts`, ported from item 055's prototype):
   `provider` the recorder's name. A file it replaces is deleted. The hash in the name
   makes `voice:build` rebuild a re-record. A sound the game has no line for yet waits in
   `index.json`'s `waiting` map and is moved in by the next import once the line exists;
-- every run writes `scratch/voice-import/review.html` (with its audio in `review/`):
+- every run writes `voice-import/review.html` in the scratch home (with its audio in `review/`):
   each card's envelope, cuts, threshold and floor, then every clip with a player, its
   target id and the bridge's cut of each repeat, played once as the bridge plays it. `--dry` writes only that.
 
@@ -865,24 +892,44 @@ Every file has exactly one home (Matt, 2026-10-18):
   path is a directory junction (`mklink /J`) to them, git-ignored.
   - `art-originals/` → `…\wordwarriors\art-originals`: full-res art (`<id>.png`, what
     `art:gen --reprocess` cuts), `log.jsonl`, the originals `art:pick -- <id> 0` puts
-    back (`restore/`), candidates still waiting on Matt (`alts/`), and Matt's family
-    photos in `refs/` (private: never copy them into the tracked tree).
+    back (`restore/`), candidates still waiting on Matt (`alts/`), a candidate round's
+    sheet, picker manifest and preview cuts (`picks/`, item 149: inside the repo, so a
+    report's `pick:` line can name them), and Matt's family photos in `refs/` (private:
+    never copy them into the tracked tree).
   - `public/voice-gen/` → `…\wordwarriors\voice-gen`: the edge-tts mp3s, `manifest.json`
     and `.build-cache.json`. Recordings are copied in from `content/voice/clips/` by
     `voice:build`, which overrides edge-tts with them as before.
 - **Nowhere:** anything a command rebuilds cheaply: contact sheets, `refs/crops/`,
   `dist/`, test output, `node_modules/`.
+- **The scratch home** (item 149): `C:\Code\wordwarriors-scratch`, beside the main
+  checkout and outside every checkout: logs, briefs, review pages, shot runs, a session's
+  working files. `tools/scratch.ts` finds it from git's common dir, so the main checkout
+  and every worktree (`C:\Code\wordwarriors-worktrees\…`) land in the one folder;
+  `WW_SCRATCH=<dir>` moves it. Before item 149 it was `scratch/` in the main checkout,
+  junctioned into each worktree, and Vite's dev server walked its 138k files (a fresh
+  `npm run dev` took 133 s to the title, item 148). **Never make a `scratch/` folder in a
+  checkout.** Conductor still links a `scratch` junction into each new worktree, to the
+  main checkout's `scratch/`, which no longer exists: the link dangles, is git-ignored
+  and Vite ignores it; write nothing through it. A `scratch/…` argument
+  (`art:alts --brief=scratch/<x>.txt`, `art:gen --sheet-out`, `voice:import`'s zip,
+  `tests/shots/sheet.ts`'s output) means the scratch home; `art:alts --sheet` is the
+  exception, its picker output goes to `art-originals/picks/`.
 - **Shot runs fill the disk.** Every shot is a ~1 MB PNG: a bug-hunt sweep is 1.6–4.3 GB
-  in `scratch/qa/<tag>/`, a battle-shots run ~0.5 GB in `scratch/polish_034/<tag>/`.
-  Once a run's findings are written up (`docs/qa-findings.md`, a report), delete its
-  PNGs and keep its `summary.md`, `*.json` and the shots the summary cites. Item 051 did
+  in `qa/<tag>/` in the scratch home, a battle-shots run ~0.5 GB in `polish_034/<tag>/`.
+  The checker keeps the last three hunts' runs and prunes the rest as each sweep starts
+  (*The bug-hunt checker*, *Retention*); item 149 applied that once, keeping hunts 9 to
+  11 (95 GB, 100k files, nearly all `qa/`) and deleting the rest of the old `scratch/`
+  (33 GB, 37k files, `126_base` among them). Shot runs
+  outside `qa/` are not pruned: delete them once written up. Before item 149: once a run's findings were written up (`docs/qa-findings.md`, a report), its
+  PNGs went and its `summary.md`, `*.json` and the shots the summary cites stayed. Item 051 did
   this for every run to date: 16.6 GB of `scratch/` became 1.3 GB. Item 052 then deleted
   item 039's cited shots and contact sheets too (`scratch/qa/` keeps only each run's
   `summary.md` and JSON, so a summary's shot links are dead).
 - **Nothing old is kept forever** (item 052). Once Matt's picks from a candidate round
   are promoted, the candidates he did not pick are disposable (redrawing one costs ~1%
   of a 5-hour Codex window): `art:pick` deletes the id's candidates itself, and the
-  round's sheet, manifest, preview folder and briefs in `scratch/` go too. A finished
+  round's sheet, manifest and preview folder (`art-originals/picks/`) and its briefs
+  (the scratch home) go too. A finished
   item's leftover worktree goes with `git worktree remove --force <path>` from the main
   checkout (junctions unlinked first, *Battle shots*), then `git worktree prune`; its
   `conductor/*` branch stays. Item 052 did this for everything to date: `alts/` 1.3 GB
@@ -948,7 +995,7 @@ a time.
   "execution context was destroyed"); the default suite serves a build, but it serves
   `public/` live, so art written mid-run can still reach a test. Test after generating.
 
-- **What it runs:** `codex exec --json --skip-git-repo-check -s read-only -C scratch/codex -`,
+- **What it runs:** `codex exec --json --skip-git-repo-check -s read-only -C <scratch home>/codex -`,
   with the prompt on stdin. Codex never writes into the repo. Its built-in `image_gen` tool
   saves every image to `~/.codex/generated_images/<thread id>/exec-<item id>.png` whatever
   the sandbox is, and the script collects it from there, using the `thread.started`
@@ -958,10 +1005,10 @@ a time.
   `public/art/<id>.png`; that is the only file committed. Sprites are generated on #00FF00,
   keyed to transparency (`tools/art/chroma.ts`), trimmed, and fitted to twice their
   display box. Rooms and arenas are cropped to fill 1280×720. The contact sheet is
-  `scratch/art_contact.png`.
+  `art_contact.png` in the scratch home.
 - **Keeping the originals:** `art-originals/` is a junction into the Drive folder (see
-  *Storage*), so what `art:gen` writes there is kept whichever checkout ran it. `scratch/`
-  is git-ignored and shared with the main checkout; the contact sheet is rebuilt by
+  *Storage*), so what `art:gen` writes there is kept whichever checkout ran it. The scratch
+  home is outside every checkout and shared by them; the contact sheet is rebuilt by
   `--sheet` and kept nowhere.
 - **Family likeness (2026-10-18, item 007):** Julia, Ellie, Dada Matt and Dada Jason are
   drawn from Matt's photos in `art-originals/refs/` (private, git-ignored, shared with the
@@ -1023,16 +1070,21 @@ When an image is weak but Matt should see the options before it changes, draw
 candidates instead of overwriting it:
 
 ```
-npm run art:alts -- <ids…> [--n=3] [--sheet=scratch/<name>.png] [--sheet-only] [--manifest-only] [--no-ref] [--brief=scratch/<brief>.txt] [--ref=<image>]
+npm run art:alts -- <ids…> [--n=3] [--sheet=<name>] [--sheet-only] [--manifest-only] [--no-ref] [--brief=scratch/<brief>.txt] [--ref=<image>]
 npm run art:pick -- <id> <n>
 ```
 
 **A candidate round changes nothing tracked** (item 041): drawing, the contact sheet and
-the picker manifest all go to `art-originals/alts/` and `scratch/`, shared and
-git-ignored, so a round may run as a **readonly** item beside other work. Promotion
+the picker manifest all go to `art-originals/alts/` and `art-originals/picks/`, shared and
+git-ignored, so a round may run as a **readonly** item beside other work. `--sheet=<name>`
+(a bare slug) names the round in `art-originals/picks/`: `<name>.png`, `<name>.json` and
+the preview folder `<name>/`; a `scratch/<name>.png` path, as rounds before item 149 gave,
+lands there too, and any other path is used as given. The picker needs the manifest
+inside the repo, which the scratch home is not (item 149, Matt's call). Promotion
 (`art:pick`) is a normal item: it changes `public/art/` and, for a brief, the game's prompt.
 
-- **Trying a new look: `--brief=<file>`.** The file (in `scratch/`, any extension) holds
+- **Trying a new look: `--brief=<file>`.** The file (in the scratch home, any extension;
+  `--brief=scratch/<name>.txt` reads it from there) holds
   the asset prompt to use instead of the tracked one in `content/art/prompts.ts`: the
   same style block, photo reference and `NOTES` correction go round it. Its name is the
   file's base name (a lower-case slug). One id per run, so one run per brief; run briefs
@@ -1063,7 +1115,7 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   `public/art/<id>.png` and the run fails at the sheet with ENOENT (item 043); then
   `art:alts -- <ids…> --sheet=<same> --sheet-only` finishes it without redrawing.
 
-`art:alts` writes a picker manifest for conductor's picker page by itself, `scratch/<name>.json` beside the sheet, with each candidate cut as the game shows it into `scratch/<name>/` (row notes: `PICK_NOTES` in `content/art/prompts.ts`); `--manifest-only` rewrites it without drawing.
+`art:alts` writes a picker manifest for conductor's picker page by itself, `art-originals/picks/<name>.json` beside the sheet (the report's `pick:` line), with each candidate cut as the game shows it into `art-originals/picks/<name>/` (row notes: `PICK_NOTES` in `content/art/prompts.ts`); `--manifest-only` rewrites it without drawing.
 
 - `art:alts` draws `n` (default 3) new images per id with the same prompt and photo
   reference as `art:gen` and keeps them as `art-originals/alts/<id>-<n>.png`, numbered on
@@ -1078,7 +1130,7 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   error (item 147). A run whose id list names a picture deleted meanwhile still
   draws its candidates and fails only at the sheet: rebuild it with `--sheet-only`.
   Without `--sheet` a run names its sheet by the minute it started
-  (`scratch/art_alts_<date>_<hhmm>.*`), so two runs started together overwrite one
+  (`art-originals/picks/art_alts_<date>_<hhmm>.*`), so two runs started together overwrite one
   sheet and manifest (item 046): give each its own `--sheet`, or build the combined one
   with `--sheet-only` afterwards and delete the timestamped one.
 - `art:pick -- <id> <n>` makes candidate `n` the game's art: it becomes
@@ -1095,8 +1147,9 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   and brief sidecar goes once the pick is copied to `art-originals/<id>.png` (which
   `--reprocess` reads) and cut, and on `art:pick -- <id> 0` too. So pick from a round
   only when Matt has chosen for that id: a later round on it numbers from 1 again, and
-  an old sheet's numbers no longer exist. Then delete the round's `scratch/` sheet,
-  manifest, preview folder and briefs once every id in it is decided. `alts/` holds
+  an old sheet's numbers no longer exist. Then delete the round's sheet, manifest and
+  preview folder in `art-originals/picks/` and its briefs in the scratch home once every
+  id in it is decided. `alts/` holds
   only rounds still waiting (`ls art-originals/alts/`): on 2026-10-22, none. Item 123
   promoted item 124's story splashes (`fx_story_fire` 1, `fx_story_tail` 1,
   `fx_story_spin` 2, `fx_story_dive` 3). Item 122 promoted item 120's story props
@@ -1114,9 +1167,9 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   roster look up to the clothes. An outfit's face card is `face_<person>_<word>`
   (`face_julia_chef`, item 016), which `refFor` also matches.
 - **Where each round is:** a round's sheet and picker manifest are
-  `scratch/art_alts_<item>_<name>.png` / `.json` (`ls scratch/art_alts_*`; only the
-  rounds still waiting are there, item 052), and a brief round's briefs are
-  `scratch/<item>_<name>_<look>.txt`. Runs side by side each write their own sheet and
+  `art-originals/picks/art_alts_<item>_<name>.png` / `.json` (`ls art-originals/picks/`;
+  only the rounds still waiting are there, item 052), and a brief round's briefs are
+  `<item>_<name>_<look>.txt` in the scratch home. Runs side by side each write their own sheet and
   manifest; one `--sheet-only` run over all the ids afterwards makes the combined one.
 - **Measured costs:** a word picture takes 30 to 50 s and about 0.25 to 0.3% of Codex's
   5-hour window; with a photo reference 35 to 75 s and up to 0.5% (items 032, 035,
@@ -1150,10 +1203,10 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
   under 120) stays solid. `art:gen`, `--reprocess`, `art:alts` and `art:pick` all take
   the mode from `keyMode`. A family form that wears dark green goes in `LIGHT_GREEN`,
   not `NO_GREEN`.
-- A script in `scratch/` that imports `../tools/…` or `../content/…` gets the **main
-  checkout's** copy, not the worktree's (*Operational facts*).
+- A script in the scratch home cannot import `../tools/…` or `../content/…` at all: it is
+  outside the repo (*Operational facts*).
 - `npm test` empties `test-results/` as it starts (Playwright's output folder): a
-  script or log kept there by a run beside it is deleted. Keep logs in `scratch/`.
+  script or log kept there by a run beside it is deleted. Keep logs in the scratch home.
 - A new `prop_word_machine` means refitting `WINDOW` / `PANEL` in
   `src/scenes/WordMachine.ts`: fractions of the cut `public/art` PNG (centre and radius
   of the glass, centre and size of the blank panel), checked with machine.spec's
@@ -1220,18 +1273,16 @@ git-ignored, so a round may run as a **readonly** item beside other work. Promot
 - The build cuts each clip's edge-tts silence after the last word + 0.2 s
   (`tools/voice/mp3.ts`); generated voice lives in `public/voice-gen/` (*Storage*). Sizes
   and their history: `docs/engineering.md`, *Voice*.
-- **A throwaway script that imports game code does not go in `scratch/`.** `scratch/` is
-  a junction into the main checkout and Node resolves the real path, so a `.ts` file run
-  from there with `npx tsx` resolves its relative imports (`../src/…`, `../content/…`,
-  `../tools/…`) against the main checkout's code, not the worktree's (items 027, 039, 049
-  and 074, hunt 7: a fix looked "missing"), and a spec or config there loads the main
-  checkout's `node_modules` ("two different versions of @playwright/test"; throwaway specs
-  live under `tests/`). Put it in the worktree (the root, or
+- **A throwaway script that imports game code does not go in the scratch home.** It is
+  outside every checkout, so a `.ts` file run from there finds neither the game's code
+  nor `node_modules`. (When scratch was a junction into the main checkout, such a script
+  silently got the main checkout's code, not the worktree's: items 027, 039, 049 and 074,
+  hunt 7.) Throwaway specs live under `tests/`. Put it in the worktree (the root, or
   `test-results/` when no `npm test` runs meanwhile, since that empties it) and delete it
   after; or import by `file:///` URL (`pathToFileURL(path.resolve('content/…'))` from the
-  worktree root); or keep the body in `scratch/` and run it from the
-  worktree root as `node --import tsx --input-type=module -e "$(cat scratch/<file>.mjs)"`
-  (its `./content/...` imports then resolve against the root).
+  worktree root); or keep the body in the scratch home and run it from the worktree root
+  as `node --import tsx --input-type=module -e "$(cat <scratch home>/<file>.mjs)"` (its
+  `./content/...` imports then resolve against the root).
 - The bubble pops in over 180 ms (scale 0.2 to 1): a screenshot taken just as a bark
   starts shows it tiny. Wait half a second after a line starts before a shot.
 - Placeholder art is painted in headless Chromium so emoji render; Windows 10's emoji
