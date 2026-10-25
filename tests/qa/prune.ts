@@ -12,6 +12,11 @@
  * the kept hunts' sections of `docs/qa-findings.md`); and a run with no hunt in its
  * tag (`087`, `look1`) no older than the oldest kept hunt's first run. Nothing else
  * reads an older run back: `report.ts` reads only its own tag. README, "The bug-hunt checker".
+ *
+ * Thinned (item 152): a kept hunt whose rulings have landed (`landed`: its section in
+ * `docs/qa-findings.md` written and every row of its Matt's calls ruled) keeps each run's
+ * `summary.md`, JSON and every shot that text cites (`citesShot`); its other shots go.
+ * The newest hunt stays whole until Matt has ruled on it.
  */
 
 import { existsSync, readFileSync, readdirSync, rmSync, statSync } from 'node:fs';
@@ -55,10 +60,52 @@ export function huntSections(findings: string, hunts: ReadonlySet<number>): stri
 }
 
 /**
- * Which runs to keep and which to prune. `current` is the tag of the sweep starting
- * now, if any; `citing(kept)` returns the text the kept hunts cite runs in.
+ * Have hunt `hunt`'s rulings landed? Its `## Hunt <n>` section is written and every row
+ * of its `### Matt's calls` table has its Ruling filled (a section with no calls table
+ * has nothing to rule). No section yet: the hunt is still going, or not written up.
  */
-export function plan(runs: Run[], current: string | undefined, citing: (hunts: ReadonlySet<number>, keep: string[]) => string, keepHunts = KEEP_HUNTS): { keep: string[]; prune: string[] } {
+export function landed(findings: string, hunt: number): boolean {
+  const section = huntSections(findings, new Set([hunt]));
+  if (!section) return false;
+  const calls = /^### Matt's calls\s*$([\s\S]*?)(?=^### |(?![\s\S]))/m.exec(section);
+  if (!calls) return true;
+  const cells = (line: string) => line.trim().replace(/^\||\|$/g, '').split(/(?<!\\)\|/).map((c) => c.trim());
+  const rows = calls[1].split('\n').filter((l) => l.trim().startsWith('|'));
+  const header = rows.shift();
+  if (!header) return true;
+  const names = cells(header);
+  const col = names.findIndex((c) => /^ruling$/i.test(c));
+  if (col < 0) return false;
+  // A row with a stray empty cell (`||`) is wider than the header: its Ruling, the last column, is its last cell.
+  const ruling = (c: string[]) => (col === names.length - 1 ? c[c.length - 1] : c[col]) ?? '';
+  return rows.filter((l) => !/^\|[\s|:-]+$/.test(l.trim())).every((l) => ruling(cells(l)) !== '');
+}
+
+/**
+ * Does `text` cite shot `rel` (`<scenario>/<n>_….png`, or any PNG path inside the run) of
+ * run `tag`: its path (`qa/<tag>/<rel>`), or, for a scenario's shot, `` `<scenario>` <n> ``
+ * as `docs/qa-findings.md` writes it (`` `drawn4` 296 ``, `` `soak3` 986, 990 ``)?
+ */
+export function citesShot(text: string, tag: string, rel: string): boolean {
+  const r = rel.replace(/\\/g, '/');
+  const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  if (new RegExp(`qa[\\\\/]${esc(tag)}[\\\\/]${esc(r).replace(/\//g, '[\\\\/]')}`).test(text)) return true;
+  const m = /^([^/]+)\/(\d+)_[^/]*\.png$/i.exec(r);
+  if (!m) return false;
+  const list = new RegExp(`\`${esc(m[1])}\`((?:[ ,]+(?:and |to )?\\d{3,4}\\b)+)`, 'g');
+  for (const hit of text.matchAll(list)) {
+    if (hit[1].match(/\d+/g)?.includes(m[2])) return true;
+  }
+  return false;
+}
+
+/**
+ * Which runs to keep, which to thin and which to prune. `current` is the tag of the sweep
+ * starting now, if any; `citing(kept)` returns the text the kept hunts cite runs in;
+ * `isLanded(hunt)` says whether a hunt's rulings have landed, and a kept run of such a
+ * hunt (the run starting aside) is thinned: its shots go but for the ones cited.
+ */
+export function plan(runs: Run[], current: string | undefined, citing: (hunts: ReadonlySet<number>, keep: string[]) => string, keepHunts = KEEP_HUNTS, isLanded: (hunt: number) => boolean = () => false): { keep: string[]; thin: string[]; prune: string[] } {
   const numbers = new Set<number>();
   for (const r of runs) {
     const h = huntOf(r.tag);
@@ -81,23 +128,69 @@ export function plan(runs: Run[], current: string | undefined, citing: (hunts: R
     if (cites(text, r.tag)) keep.push(r.tag);
     else prune.push(r.tag);
   }
-  return { keep, prune };
+  const thin = runs.filter((r) => r.tag !== current && hunts.has(huntOf(r.tag) ?? -1) && isLanded(huntOf(r.tag)!)).map((r) => r.tag);
+  return { keep, thin, prune };
 }
 
-/** Prune `qa/` in the scratch home; returns what went. */
+/**
+ * Thin run directory `runDir` (tag `tag`): delete every PNG `text` does not cite, then
+ * the folders left empty. Returns the shots deleted (or that would be) and their bytes.
+ */
+export function thinRun(runDir: string, tag: string, text: string, dry: boolean): { shots: number; bytes: number } {
+  let shots = 0;
+  let bytes = 0;
+  const walk = (rel: string): boolean => {
+    const abs = path.join(runDir, rel);
+    let empty = true;
+    for (const e of readdirSync(abs, { withFileTypes: true })) {
+      const r = rel ? `${rel}/${e.name}` : e.name;
+      if (e.isDirectory()) {
+        if (walk(r) && !dry) rmSync(path.join(runDir, r), { recursive: true, force: true });
+        else empty = false;
+      } else if (/\.png$/i.test(e.name) && !citesShot(text, tag, r)) {
+        shots++;
+        bytes += statSync(path.join(runDir, r)).size;
+        if (!dry) rmSync(path.join(runDir, r), { force: true });
+      } else empty = false;
+    }
+    return empty;
+  };
+  walk('');
+  return { shots, bytes };
+}
+
+/** Prune `qa/` in the scratch home, and thin the runs of hunts whose rulings have landed; returns what went whole. */
 export function prune(dry = false, current = process.env.QA_TAG ?? 'now'): string[] {
   const dir = scratchPath('qa');
   if (!existsSync(dir)) return [];
   const runs: Run[] = readdirSync(dir).map((tag) => ({ tag, mtimeMs: statSync(path.join(dir, tag)).mtimeMs }));
   const file = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'docs', 'qa-findings.md');
   const findings = existsSync(file) ? readFileSync(file, 'utf8') : '';
+  let text = '';
   const citing = (hunts: ReadonlySet<number>, keep: string[]) =>
-    [huntSections(findings, hunts), ...keep.map((t) => path.join(dir, t, 'summary.md')).filter(existsSync).map((f) => readFileSync(f, 'utf8'))].join('\n');
-  const { prune: gone } = plan(runs, current, citing);
+    (text = [huntSections(findings, hunts), ...keep.map((t) => path.join(dir, t, 'summary.md')).filter(existsSync).map((f) => readFileSync(f, 'utf8'))].join('\n'));
+  const { prune: gone, thin } = plan(runs, current, citing, KEEP_HUNTS, (h) => landed(findings, h));
   for (const tag of gone) {
     if (!dry) rmSync(path.join(dir, tag), { recursive: true, force: true });
   }
   if (gone.length) console.log(`qa prune: ${dry ? 'would delete' : 'deleted'} ${gone.length} older run${gone.length === 1 ? '' : 's'} in ${dir}: ${gone.join(' ')}`);
+  const thinned: string[] = [];
+  let bytes = 0;
+  for (const tag of thin) {
+    if (!statSync(path.join(dir, tag)).isDirectory()) continue;
+    const t = thinRun(path.join(dir, tag), tag, text, dry);
+    bytes += t.bytes;
+    if (t.shots) thinned.push(`${tag} (${t.shots})`);
+  }
+  if (thinned.length) {
+    const hunts = [...new Set(thinned.map((t) => huntOf(t)))].sort((a, b) => a! - b!).join(', ');
+    console.log(`qa prune: ${dry ? 'would thin' : 'thinned'} ${thinned.length} run${thinned.length === 1 ? '' : 's'} of hunt${hunts.includes(',') ? 's' : ''} ${hunts} (rulings landed), ${(bytes / 1e9).toFixed(1)} GB of uncited shots: ${thinned.join(' ')}`);
+  }
+  if (dry) {
+    const ruled = [...new Set(thin.map((t) => huntOf(t)!))].sort((a, b) => a - b);
+    const whole = [...new Set(runs.map((r) => huntOf(r.tag)).filter((h): h is number => h !== null && !ruled.includes(h) && !gone.some((g) => huntOf(g) === h)))].sort((a, b) => a - b);
+    console.log(`qa prune: thinned once ruled: ${ruled.length ? `hunt ${ruled.join(', ')}` : 'none'}; kept whole (rulings not landed): ${whole.length ? `hunt ${whole.join(', ')}` : 'none'}`);
+  }
   return gone;
 }
 

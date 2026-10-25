@@ -5,7 +5,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { cites, huntOf, huntSections, plan } from '../qa/prune';
+import { cites, citesShot, huntOf, huntSections, landed, plan } from '../qa/prune';
 import { scratchArg, scratchPath, SCRATCH } from '../../tools/scratch';
 import { sheetFile } from '../../tools/art/alts';
 
@@ -55,6 +55,31 @@ test('qa prune: citations and sections', () => {
   assert.ok(!cites('item 087 fixed it', '087'));
   const doc = '# QA\n\n## Hunt 8 (x)\nsaw `h7def`\n## Hunt 9 (y)\nsaw `087`\n## Language pass\n`h8a`\n';
   assert.equal(huntSections(doc, new Set([9])), '## Hunt 9 (y)\nsaw `087`\n');
+});
+
+test('qa prune: a hunt whose rulings have landed is thinned, the newest kept whole till then', () => {
+  const doc = [
+    '## Hunt 10 (x)\n### Matt\'s calls\n\n| # | What | Ruling |\n| --- | --- | --- |\n| M1 | a \\| b | (a), done |\n\n### Won\'t fix\n| # | Why |\n| --- | --- |\n| W1 | |\n',
+    '## Hunt 11 (y)\n### Matt\'s calls\n\n| # | What | Ruling |\n| --- | --- | --- |\n| M2 | c | (b) |\n| M3 | d | |\n',
+    '## Hunt 9 (z)\n### Fixed\nno calls\n',
+  ].join('');
+  assert.ok(landed(doc, 10) && landed(doc, 9));
+  assert.ok(!landed(doc, 11), 'a call without a ruling');
+  assert.ok(!landed(doc, 12), 'no section yet');
+  const { thin, prune } = plan(runs, undefined, () => '', 3, (h) => landed(doc, h));
+  assert.deepEqual(new Set(thin), new Set(['h9a', 'h10a']));
+  assert.ok(prune.includes('h8a') && !thin.includes('h8a'), 'off the cap: deleted whole');
+  assert.ok(!plan(runs, 'h10a', () => '', 3, () => true).thin.includes('h10a'), 'the run starting stays whole');
+});
+
+test('qa prune: the shots a thinned run keeps', () => {
+  const text = 'see `scratch/qa/h10n/drawn4/491_Battle_x.png` and (`new` `diff3_solid` 064, `soak3` 986, 990)';
+  assert.ok(citesShot(text, 'h10n', 'drawn4/491_Battle_x.png'));
+  assert.ok(!citesShot(text, 'h10a', 'drawn4/491_Battle_x.png'));
+  assert.ok(citesShot(text, 'h10a', 'diff3_solid/064_Battle_y.png'));
+  assert.ok(citesShot(text, 'h10a', 'soak3/990_Hub_z.png'));
+  assert.ok(!citesShot(text, 'h10a', 'soak3/987_Hub_z.png'));
+  assert.ok(!citesShot(text, 'h10a', 'sheets/soak3_1.png'));
 });
 
 test('scratch home: beside the main checkout, and `scratch/` arguments land in it', () => {

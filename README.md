@@ -690,7 +690,16 @@ the worktree.
   counted; the run starting; any run a kept hunt cites (`qa/<tag>/`, `QA_TAG=<tag>` or
   `` `<tag>` `` in a kept `summary.md` or in those hunts' sections of
   `docs/qa-findings.md`); and runs outside a hunt no older than the oldest kept hunt's
-  first run. The rest is deleted. **So name a hunt's tags `h<N>…`** (`h12a`, `h12lenses`):
+  first run. The rest is deleted. **Thinned once ruled** (item 152): a kept hunt whose
+  rulings have landed, meaning its `## Hunt <N>` section in `docs/qa-findings.md` is
+  written and every row of its *Matt's calls* table has its Ruling filled (no calls table:
+  nothing to rule), keeps each run's `summary.md`, JSON and the shots cited (a
+  `qa/<tag>/<scenario>/<shot>.png` path in a kept summary or those sections, or
+  `` `<scenario>` <n> `` in a section); its other PNGs, contact sheets included, go. A
+  hunt with no section yet, or a call still open, stays whole, and so does the run
+  starting. A hunt off the three-hunt cap is deleted whole. **So write a ruling into
+  every row** when Matt rules: an empty Ruling cell keeps the hunt's 45 GB whole.
+  **Name a hunt's tags `h<N>…`** (`h12a`, `h12lenses`):
   the number is how a run is tied to its hunt. Nothing reads an older run back
   (`report.ts` reads only its own tag); a look you want to keep past three hunts belongs
   in a report or `docs/`.
@@ -934,10 +943,12 @@ Every file has exactly one home (Matt, 2026-10-18):
   exception, its picker output goes to `art-originals/picks/`.
 - **Shot runs fill the disk.** Every shot is a ~1 MB PNG: a bug-hunt sweep is 1.6–4.3 GB
   in `qa/<tag>/` in the scratch home, a battle-shots run ~0.5 GB in `polish_034/<tag>/`.
-  The checker keeps the last three hunts' runs and prunes the rest as each sweep starts
+  The checker keeps the last three hunts' runs, thins a hunt's once its rulings land,
+  and prunes the rest as each sweep starts
   (*The bug-hunt checker*, *Retention*); item 149 applied that once, keeping hunts 9 to
   11 (95 GB, 100k files, nearly all `qa/`) and deleting the rest of the old `scratch/`
-  (33 GB, 37k files, `126_base` among them). Shot runs
+  (33 GB, 37k files, `126_base` among them). Item 152 thinned hunts 9 to 11 (all
+  ruled): the scratch home went from 89 GB to 1.3 GB (99k PNGs to 1.4k; hunts 9 and 10 46 GB, hunt 11 47 GB). Shot runs
   outside `qa/` are not pruned: delete them once written up. Before item 149: once a run's findings were written up (`docs/qa-findings.md`, a report), its
   PNGs went and its `summary.md`, `*.json` and the shots the summary cites stayed. Item 051 did
   this for every run to date: 16.6 GB of `scratch/` became 1.3 GB. Item 052 then deleted
@@ -971,6 +982,12 @@ Every file has exactly one home (Matt, 2026-10-18):
   every project). Item 151 deleted the written-up `ui_shots/` and `polish_034/` runs of
   hunts 9 to 11 (497 MB) and pruned 121 orphaned mp3s; the archive's
   `wordwarriors-scratch\` holds the scratch home's hand-made scripts it kept.
+- **Not to clear** (Matt's standing rulings, item 151): no git-history rewrite to drop the
+  old `public/voice/` mp3s or superseded `public/art/` PNGs from `.git` (70 MB is not
+  worth a rewritten history across every worktree and branch); npm's cache and
+  Playwright's browsers are machine-wide, shared with other projects, and not this
+  project's to clear; `art-originals/restore/` stays, because it is the undo for
+  promotions (`art:pick -- <id> 0`).
 
 The main checkout holds the junctions; conductor links each worktree's to the same Drive
 folders, so a worktree shares one copy and never needs a full voice rebuild. Because the
