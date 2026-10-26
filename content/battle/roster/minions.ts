@@ -21,6 +21,14 @@ export const MINIONS: Record<string, MinionSpec> = {
     palette: [0xe8f6ff, 0x7cc7ff], style: 'march', speed: 70, size: 0.6, hp: 40,
     ability: ab('snowball', 'Snowball', 'bolt', 2.0, 0xdff4ff, 1, { glyph: '❄️' }),
   },
+  // Evil Elsa's own (item 167, Hunt 12's M80): her Grumpy Snowmen had the smiling
+  // Snow Buddy's art. Its art is item 166's candidate 4, drawn to match her grumpy
+  // house decal (`--ref=art-originals/decal_anna_snowman.png`).
+  snow_grump: {
+    id: 'snow_grump', name: 'Grumpy Snowman', glyph: '⛄', look: 'a grumpy little snowman: a round chubby snowman of three snowballs with twig stick arms, a carrot nose, coal-dot eyes under low angry frosty-blue eyebrows in a cross scowl, a coal-dot mouth curved down in a big pouty frown, puffed cheeks, a little dark-blue knitted hat with an icicle bobble and a frosty dark-blue scarf, stomping forward with its stick arms raised in a huff; clearly grumpy and cross, not smiling at all, but cute and silly, never scary, for a small child; full body, facing the viewer',
+    palette: [0xe8f6ff, 0x2a4a8a], style: 'march', speed: 70, size: 0.6, hp: 40,
+    ability: ab('snowball', 'Snowball', 'bolt', 2.0, 0xdff4ff, 1, { glyph: '❄️' }),
+  },
   skeleton: {
     id: 'skeleton', name: 'Skeleton', glyph: '💀', look: 'a goofy cartoon skeleton with a wobbly jaw, more silly than scary',
     palette: [0xf2f0e6, 0x5a4a6a], style: 'march', speed: 85, size: 0.5, hp: 18,

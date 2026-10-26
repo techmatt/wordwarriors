@@ -1164,7 +1164,11 @@ inside the repo, which the scratch home is not (item 149, Matt's call). Promotio
   an old sheet's numbers no longer exist. Then delete the round's sheet, manifest and
   preview folder in `art-originals/picks/` and its briefs in the scratch home once every
   id in it is decided. `alts/` holds
-  only rounds still waiting (`ls art-originals/alts/`): on 2026-10-25, none. Item 160
+  only rounds still waiting (`ls art-originals/alts/`): on 2026-10-26, none. Item 167
+  promoted item 166's (`pic_cot` 5, `pic_dot` 6, each a brief's, now its prompt; and
+  `minion_snow_golem` 4 made the original of a new id, `minion_snow_grump`, by copying it to
+  `art-originals/<new id>.png` and `art:gen -- <new id> --reprocess`, not `art:pick`, so
+  the Snow Buddy kept its art). Item 160
   promoted item 157's Shape-Shifter words (`pic_pup` 1, `pic_cub` 3, `pic_cot` 3,
   `pic_kid` 2, `pic_dot` 2, a brief's, now DOT's prompt). Item 123
   promoted item 124's story splashes (`fx_story_fire` 1, `fx_story_tail` 1,

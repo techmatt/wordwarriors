@@ -37,7 +37,7 @@ export const ROYALS: CharacterSpec[] = [
         ab('flash_freeze', 'Flash Freeze', 'freeze', 7, 0x5ad8ff, 2, { status: 'freeze', duration: 3 }),
         ab('frost_beam', 'Frost Beam', 'beam', 5, 0x9aeaff, 2),
         // Item 156 (Matt): a summon like every villain's, her snow helpers as good Elsa's are.
-        ab('grumpy_snowmen', 'Grumpy Snowmen', 'summon', 11, 0x5ad8ff, 2, { minion: 'snow_golem', count: 3 }),
+        ab('grumpy_snowmen', 'Grumpy Snowmen', 'summon', 11, 0x5ad8ff, 2, { minion: 'snow_grump', count: 3 }),
       ],
       ultimate: ult('eternal_winter', 'Forever Winter', 'wave',0xbff0ff, 3, { color2: 0x1a2a5a, status: 'freeze' }),
       taunts: [

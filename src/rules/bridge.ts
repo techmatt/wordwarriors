@@ -16,7 +16,8 @@
  * every one is in play from the start). Words still in her word bag lean
  * ahead, a word the episode before had her read is drawn only when no other
  * fits (`unreadFirst`, hunt 11, M77), and a visit plays its easier words first (`bridgeEase`):
- *   1. CVC words starting with a sound you can hold (M S F L N R V Z);
+ *   1. CVC words starting with a sound you can hold (M S L N R V Z; F is said
+ *      whole since item 162, so an F word joins group 2);
  *   2. CVC words starting with a stop sound;
  *   3. blends and digraphs.
  *
