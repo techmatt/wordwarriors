@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Word Warriors: listen through the sounds</title>
+    <style>
+      body { margin: 0; padding: 16px 24px; background: #0e0b1a; color: #eee; font: 16px system-ui, sans-serif; }
+      h1 { font-size: 22px; margin: 0 0 4px; }
+      p { margin: 4px 0 12px; color: #bbb; max-width: 60em; }
+      button { font: inherit; cursor: pointer; border-radius: 6px; border: 1px solid #556; background: #2a2540; color: #eee; padding: 4px 10px; }
+      button:hover { background: #3a3360; }
+      #all { font-size: 18px; padding: 6px 16px; background: #3b6d2e; }
+      table { border-collapse: collapse; margin-top: 12px; }
+      td { padding: 6px 10px; border-bottom: 1px solid #2a2540; vertical-align: middle; }
+      tr.on { background: #262046; }
+      .glyph { font-size: 26px; }
+      .word { font-size: 24px; letter-spacing: 2px; font-weight: 600; min-width: 8em; }
+      .word span.lit { color: #ffd23f; text-decoration: underline; }
+      .sound { display: inline-block; margin: 2px; padding: 2px 6px; border-radius: 4px; background: #1d1932; font-size: 13px; }
+      .sound.lit { background: #ffd23f; color: #000; }
+      .sound .who { font-size: 11px; opacity: 0.7; margin-left: 4px; }
+      .sound.matt { border: 1px solid #6fbf5a; }
+      .sound.tts { border: 1px dashed #888; }
+      .new { color: #ffd23f; font-size: 11px; font-weight: 700; margin-left: 3px; }
+      h2 { font-size: 18px; margin: 24px 0 0; }
+    </style>
+  </head>
+  <body>
+    <h1>Listen through the sounds</h1>
+    <p>
+      Every sound the game's words sound out, in a short set of words: each word is sounded out a sound at a time,
+      as the game does it, then said whole. Green edge: Matt's recording; dashed: the edge-tts placeholder;
+      <span class="new">NEW</span>: from the latest recording. Click a word, a sound, or play all (Esc stops).
+    </p>
+    <button id="all">▶ Play all</button> <button id="stop">■ Stop</button>
+    <table id="words"></table>
+    <h2>Sounds in no live word</h2>
+    <table id="lone"></table>
+    <script type="module" src="/src/listen/main.ts"></script>
+  </body>
+</html>

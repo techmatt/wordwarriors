@@ -233,7 +233,7 @@ read, and THE END's tallest grown-up under its title. `tests/hunt7.spec.ts` (ite
 seventh's: her outfits for items 111 and 114's allies at her dress height and yellow mashed
 at the story fight's gold grab (slow lane), and Charge back from the grown-ups page asking no
 rune art the word lacks (fix 124, browser lane). `tests/hunt10.spec.ts` (item 135, browser lane) keeps the
-tenth's that no older spec covers: the clash's rings and F9 in
+tenth's that no older spec covers: F9 in
 the closing fade, the backdrop past every edge a shake can uncover, the grown-ups page (its grid rows, F8's
 warning, the DEBUG tag), the entry hall's decals, the gift word on its card, the story fight's fetched beat
 and Charge's modelled runes after F9; its Shape-Shifter fixes (the lifted letter under the label, on a
@@ -708,7 +708,7 @@ the tip from the sound's `record` in `content/phonics/letters.ts`. Both are the 
 use it. `voice:lines` (a word added) and `voice:import` (a sound recorded) run it, and
 `tests/unit/recorder.test.ts` fails while the block is out of date. When the block
 changes, the planner syncs the hosted copy. On 2026-10-25 `?missing` was A (stale since
-item 085's carrier), F, long OO, the schwa and OW.
+item 085's carrier), F, long OO, the schwa and OW; item 161 imported all five, and it is now empty.
 
 The zip holds `manifest.json` (format `phonics-recorder/2`: `recorder`, the speaker's
 name, now required; each take's card `group` `g01`…`g12`, or a targeted page's `g02f`, `entries` of sound, word,
@@ -716,7 +716,7 @@ name, now required; each take's card `group` `g01`…`g12`, or a targeted page's
 mono WAV per card at the browser's rate (48 kHz here). The importer reads format 1 too;
 a format-1 zip has no name and is taken as Matt's.
 
-**`npm run voice:import -- <zip> [--take gNN] [--dry]`** (`tools/voice/import.ts`, the
+**`npm run voice:import -- <zip> [--take gNN] [--allow-short] [--dry]`** (`tools/voice/import.ts`, the
 splitter `tools/voice/split.ts`, ported from item 055's prototype):
 
 - each card is high-passed at 80 Hz, cut by its loudness envelope, and must hold
@@ -733,7 +733,8 @@ splitter `tools/voice/split.ts`, ported from item 055's prototype):
 - for each sound it takes the most typical of the three repeats (the medoid, by band
   spectrum and length) that passes the bridge's hold check (`holdPlan`; a held sound
   must loop 0.1 s or more), falling back to the next closest. If none passes, the word
-  goes in and the sound doesn't;
+  goes in and the sound doesn't, unless `--allow-short` (item 161, Matt's call): then the
+  repeat with the longest steady part the bridge holds at all goes in, with a note;
 - clips install as `content/voice/clips/<id>.<hash8>.mp3` for `letter_<x>_sound` (the K
   card fills `letter_ck_sound` too) and `word_<word>` where the game has that word, with
   `provider` the recorder's name. A file it replaces is deleted. The hash in the name
@@ -761,6 +762,27 @@ each repeat is about 0.2 s of hiss at -47 dB and then half a second of voiced "u
 louder, so the bridge keeps 0.06 s. L and V now hold. Card 10's KEY replaces card 7's
 (the later card wins); THIS, ACORN, ICE and UNICORN are not game words, so card 11 and
 12 install their sounds only.
+
+Matt's recording 4 (`phonics-matt-missing.zip`, 2026-10-25, the `?missing` page's five
+cards, item 161): CAT's A, FAN's F, ZOO's long OO, ZEBRA's schwa and COW's OW, with
+their words. F again held only 0.09 s against the 0.1 s bar; Matt had it go in anyway
+(`--take g02f --allow-short`), to judge by ear on the listen-through page.
+
+### Listening through the sounds: `listen.html`
+
+**http://localhost:5174/listen.html** (dev server; `npm run preview` serves it too), item
+161: a plain page, no Phaser, for Matt to check every phonic sound by ear. A short set
+of live words (`src/listen/words.ts`) that together sound out every sound a live word
+sounds out: the newest takes' words first (CAT FAN ZOO ZEBRA COW), then a greedy cover,
+then more words for the hard sounds (`HARD`: the five new takes, TH, NG, X) until each
+is heard twice where the bank allows (OW is in COW alone). Each word plays as the game
+sounds it out, a sound a unit with its letters lit and `SOUND_GAP_MS` between, then the
+whole word; **Play all** runs the lot, a word's ▶ or a sound's chip plays one, Esc stops.
+Each chip says who recorded it (the clip index's `provider`, dashed for edge-tts) and
+NEW for the latest import's clips. Sounds with a line but in no live word (Q, voiced
+TH, long U, X's name) are listed alone below. It plays the built clips
+(`public/voice-gen/`), so run `voice:build` after an import before listening.
+`tests/unit/listen.test.ts` checks the cover.
 
 ### The word bank's coverage rule
 

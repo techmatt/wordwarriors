@@ -1,5 +1,5 @@
 /**
- * `npm run voice:import -- <zip> [--take gNN] [--dry]`: put a phonics-recorder
+ * `npm run voice:import -- <zip> [--take gNN] [--allow-short] [--dry]`: put a phonics-recorder
  * zip (tools/recorder/phonics-recorder.html) into the game.
  *
  * Each take (a card: three words, each followed by its sound three times) is
@@ -15,6 +15,11 @@
  * Every run writes `voice-import/review.html` in the scratch home (`tools/scratch.ts`): each take's envelope
  * with its cuts, every clip with a player and its target id, and the bridge's
  * cut of each repeat. `--dry` writes only that. Then run `npm run voice:build`.
+ *
+ * `--allow-short` (item 161, Matt's call): a held sound none of whose repeats
+ * passes the hold check still goes in, as the repeat with the longest steady
+ * part that the bridge does hold, rather than being skipped (Matt's F, 0.09 s
+ * against MIN_STEADY_S's 0.1 s). He judges it by ear on `?scene=listen`.
  */
 
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
@@ -129,7 +134,7 @@ function preview(x: Float32Array, rate: number, mode: 'hold' | 'once'): Float32A
   return holdSamples(x, holdPlan(x, rate, mode), rate);
 }
 
-export function processTake(group: string, raw: Float32Array, rate: number, entries: Entry[], lineIds: Set<string>): TakeResult {
+export function processTake(group: string, raw: Float32Array, rate: number, entries: Entry[], lineIds: Set<string>, allowShort = false): TakeResult {
   const card = cardOf(group);
   const name = entries.map((e) => e.word.toUpperCase()).join(' · ');
   const x = highpass(raw, rate);
@@ -162,7 +167,16 @@ export function processTake(group: string, raw: Float32Array, rate: number, entr
     });
     const { order, distance } = rankRepeats(cuts.slice(1).map((c) => ({ seg: x.subarray(c.start, c.end), coreS: c.core[1] - c.core[0] })));
     repeats.forEach((r, n) => (r.distance = distance[n]));
-    const pick = order.find((n) => repeats[n]!.hold!.ok);
+    let pick = order.find((n) => repeats[n]!.hold!.ok);
+    let short = false;
+    if (pick === undefined && allowShort && asked === 'hold') {
+      // The longest steady part among the repeats the bridge holds at all.
+      const held = order.filter((n) => repeats[n]!.hold!.mode === 'hold');
+      if (held.length) {
+        pick = held.reduce((a, b) => ((repeats[b]!.hold!.steadyS ?? 0) > (repeats[a]!.hold!.steadyS ?? 0) ? b : a));
+        short = true;
+      }
+    }
     const failed = repeats.filter((r) => !r.hold!.ok).map((r) => r.label.split(' ')[1]);
     const targets: string[] = [];
     if (lineIds.has(wordLine(e.word))) {
@@ -179,7 +193,8 @@ export function processTake(group: string, raw: Float32Array, rate: number, entr
       r.picked = true;
       r.id = letterSoundLine(e.sound);
       targets.push(r.id, ...(ALSO[e.sound] ?? []).map(letterSoundLine));
-      if (failed.length) res.notes.push(`card ${card}: ${e.sound.toUpperCase()} ${failed.join(', ')} fail the hold check; ${r.label.split(' ')[1]} is used${pick === order[0] ? '' : ' (not the closest repeat)'}`);
+      if (short) res.notes.push(`card ${card}: ${e.sound.toUpperCase()} holds only ${r.hold!.steadyS!.toFixed(2)} s (under ${MIN_STEADY_S} s); ${r.label.split(' ')[1]} is used anyway (--allow-short)`);
+      else if (failed.length) res.notes.push(`card ${card}: ${e.sound.toUpperCase()} ${failed.join(', ')} fail the hold check; ${r.label.split(' ')[1]} is used${pick === order[0] ? '' : ' (not the closest repeat)'}`);
     }
     res.entries.push({ entry: e, word, repeats, targets });
   }
@@ -306,9 +321,11 @@ export async function voiceImport(argv: string[]): Promise<void> {
   let zip: string | undefined;
   let only: string | undefined;
   let dry = false;
+  let allowShort = false;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
     if (a === '--dry') dry = true;
+    else if (a === '--allow-short') allowShort = true;
     else if (a === '--take') {
       only = argv[++i];
       if (!only || only.startsWith('--')) throw new Error('voice:import: --take needs a card, e.g. --take g04 (or 4)');
@@ -316,7 +333,7 @@ export async function voiceImport(argv: string[]): Promise<void> {
     else if (!a.startsWith('--') && !zip) zip = scratchArg(a);
     else throw new Error(`voice:import: what is "${a}"?`);
   }
-  if (!zip) throw new Error('usage: npm run voice:import -- <zip> [--take gNN] [--dry]');
+  if (!zip) throw new Error('usage: npm run voice:import -- <zip> [--take gNN] [--allow-short] [--dry]');
   if (only && /^\d+$/.test(only)) only = `g${only.padStart(2, '0')}`;
   const files = unzip(await readFile(zip));
   const mf = files.get('manifest.json');
@@ -338,7 +355,7 @@ export async function voiceImport(argv: string[]): Promise<void> {
     const wav = files.get(t.file);
     if (!wav) throw new Error(`${zip} lists ${t.file} but doesn't have it`);
     const { x, rate } = readWav(wav);
-    results.push(processTake(t.group, x, rate, t.entries, ids));
+    results.push(processTake(t.group, x, rate, t.entries, ids, allowShort));
   }
   await writeReview(zip, manifest, recorder, results, dry);
 

@@ -1,6 +1,6 @@
 /**
  * Hunt 10 (item 135): what the tenth bug hunt fixed that no older spec covers (fixes 138 to 159 in
- * docs/qa-findings.md): the clash's rings and F9 in the battle's closing fade; the backdrop past
+ * docs/qa-findings.md): F9 in the battle's closing fade (the clash's rings moved to fights.spec.ts, item 161); the backdrop past
  * every edge a shake uncovers; the grown-ups page's grid rows, F8 warning and DEBUG tag; the entry
  * hall's decals; the gift word's card and Ellie's bubble (M55); the story fight's fetched beat; Charge's modelled runes after F9.
  */
@@ -10,27 +10,6 @@ import { test, expect } from '@playwright/test';
 import { boot, collectErrors, expectNoErrors, pickPad, press, until } from './harness';
 import { layoutIssues } from './qa/checks';
 import { qaLayout } from './qa/probe';
-
-test('a spell clash adds no rings at the clash point while a move choice is open (they pulsed over the pads)', async ({ page }) => {
-  test.setTimeout(90_000);
-  const errors = collectErrors(page);
-  await boot(page, '?scene=battle&part=1&cast=default&fight=spell_clash&qa=1');
-  await until(page, (s) => s.scene === 'Battle' && Boolean(s.battle?.choice), 60_000, 'the first move choice');
-  // The rings from before it fade in under 2 s at the test clock; after it, one came every 7.5 s of real time.
-  await page.waitForTimeout(2000);
-  const counts: number[] = [];
-  // At the clash point, not anywhere (hunt 11: the fight runs on at its slow clock through a choice, and a move's
-  // ring at a fighter's feet, her ally's or the villain's, made this fail about one run in three).
-  const clash = Number((await until(page, (s) => typeof s.battle?.stage.clash === 'number', 5_000, 'the clash point')).battle!.stage.clash);
-  for (let i = 0; i < 12; i++) {
-    const rings = (await qaLayout(page)).images.filter((im) => im.scene === 'Battle' && im.key === 'fx_ring');
-    counts.push(rings.filter((im) => Math.abs((im.b[0] + im.b[2]) / 2 - clash) < 120 && (im.b[1] + im.b[3]) / 2 < 560).length);
-    await page.waitForTimeout(400);
-  }
-  expect((await until(page, () => true, 5_000, 'state')).battle?.choice, 'still choosing').toBeTruthy();
-  expect(counts.filter((n) => n > 0), counts.join(' ')).toEqual([]);
-  expectNoErrors(errors);
-});
 
 test("F9 in the battle's closing fade does not play the finished fight again (the rooms and scenes already guard it)", async ({ page }) => {
   test.setTimeout(120_000);

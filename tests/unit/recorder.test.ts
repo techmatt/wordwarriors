@@ -32,13 +32,17 @@ test('recorder: ?only=f,a is two cards, F as FAN and A as CAT, the takes item 10
 });
 
 test('recorder: ?missing is ?only= with MISSING, under its own zip name; the bare page is the full set', () => {
-  const m = /const MISSING = (\[.*\]);/.exec(html)!;
-  const missing = JSON.parse(m[1]!) as string[];
-  const c = cards('?missing');
-  assert.ok(missing.length > 0);
-  assert.deepEqual(c.groups, cards(`?only=${missing.join(',')}`).groups);
-  assert.deepEqual(c.ids, cards(`?only=${missing.join(',')}`).ids);
+  // A page with three sounds missing (item 161 recorded the last ones, so the real list is empty).
+  const missing = ['f', 'a', 'ow'];
+  const page = withMissingBlock(html, missingBlock(html, missing.map((sound) => ({ sound, state: 'edge-tts' as const, words: [] }))));
+  const pageCardsOf = (search: string) => pageCards(page, search).cards;
+  const c = pageCardsOf('?missing');
+  assert.deepEqual(c.groups, pageCardsOf(`?only=${missing.join(',')}`).groups);
+  assert.deepEqual(c.ids, pageCardsOf(`?only=${missing.join(',')}`).ids);
   assert.equal(c.tag, '-missing');
+  // Nothing missing: the full page.
+  const none = withMissingBlock(html, missingBlock(html, []));
+  assert.equal(pageCards(none, '?missing').cards.groups.length, 12);
   const full = cards('');
   assert.equal(full.groups.length, 12);
   assert.deepEqual(full.ids, Array.from({ length: 12 }, (_, i) => `g${String(i + 1).padStart(2, '0')}`));

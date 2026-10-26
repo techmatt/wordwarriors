@@ -3,13 +3,14 @@
  * shape kept: the part 1 ultimate still wins the round (heroes floored, then
  * they retreat), part 2's counter and finish still win, the move choices
  * still fire, and a contest takes about as long as the brawl. Screenshots
- * land in tests/screenshots/ (ignored) for a look.
+ * land in tests/screenshots/ (ignored) for a look. Hunt 10's clash rings in a move choice (item 161 moved it here).
  */
 
 import { test, expect } from '@playwright/test';
 
 import { FIGHTS } from '../content/battle/fights';
-import { BATTLE_SPEED, SLOW, boot, collectErrors, expectFightLength, playBattle, shotIn, state, until } from './harness';
+import { BATTLE_SPEED, SLOW, boot, collectErrors, expectFightLength, expectNoErrors, playBattle, shotIn, state, until } from './harness';
+import { qaLayout } from './qa/probe';
 
 /** Each style against a villain it was not written for, so nothing leans on one villain. */
 const AGAINST: Record<string, string> = { brawl: 'tiamat', sky_race: 'smaug', sea_tug: 'jormungandr', spell_clash: 'bavmorda', cook_off: 'tiamat', frost_clash: 'elsa', space_race: 'ozymandias' };
@@ -86,3 +87,28 @@ for (const f of FIGHTS.filter((x) => x.kind !== 'brawl' && x.kind !== 'story')) 
     expect(problems).toEqual([]);
   });
 }
+
+// Moved from hunt10.spec.ts (item 161; hunt 10, fix 146).
+test('a spell clash adds no rings at the clash point while a move choice is open (they pulsed over the pads)', async ({ page }) => {
+  test.setTimeout(90_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=battle&part=1&cast=default&fight=spell_clash&qa=1');
+  await until(page, (s) => s.scene === 'Battle' && Boolean(s.battle?.choice), 60_000, 'the first move choice');
+  // At the clash point, not anywhere (hunt 11: the fight runs on at its slow clock through a choice, and a move's
+  // ring at a fighter's feet, her ally's or the villain's, made this fail about one run in three).
+  const clash = Number((await until(page, (s) => typeof s.battle?.stage.clash === 'number', 5_000, 'the clash point')).battle!.stage.clash);
+  const atClash = async () =>
+    (await qaLayout(page)).images.filter((im) => im.scene === 'Battle' && im.key === 'fx_ring' && Math.abs((im.b[0] + im.b[2]) / 2 - clash) < 120 && (im.b[1] + im.b[3]) / 2 < 560).length;
+  // The rings from before it fade in under 2 s at the test clock, but on a busy lane one was still there
+  // (item 161: "1 1 0 0 ..." in item 160's run): wait for them to go, then watch for new ones. After the
+  // Before hunt 10's fix one came every 7.5 s of real time, so a fresh ring still shows in the samples.
+  await expect.poll(atClash, { timeout: 10_000, intervals: [250] }).toBe(0);
+  const counts: number[] = [];
+  for (let i = 0; i < 12; i++) {
+    counts.push(await atClash());
+    await page.waitForTimeout(400);
+  }
+  expect((await until(page, () => true, 5_000, 'state')).battle?.choice, 'still choosing').toBeTruthy();
+  expect(counts.filter((n) => n > 0), counts.join(' ')).toEqual([]);
+  expectNoErrors(errors);
+});

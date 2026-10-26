@@ -13,9 +13,11 @@ export default defineConfig({
     watch: { ignored: ['**/scratch/**', '**/art-originals/**', '**/public/voice-gen/**'] },
   },
   preview: { port: PORT, strictPort: true },
-  // Only the game's page: with no entries the dependency scan globs every *.html in the tree.
-  optimizeDeps: { entries: ['index.html'] },
+  // Only the game's pages: with no entries the dependency scan globs every *.html in the tree.
+  // listen.html is the listen-through page (item 161, README "Listening through the sounds").
+  optimizeDeps: { entries: ['index.html', 'listen.html'] },
   build: {
+    rollupOptions: { input: { main: 'index.html', listen: 'listen.html' } },
     // Phaser is one big chunk; no point warning about it every build.
     chunkSizeWarningLimit: 2000,
   },

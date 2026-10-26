@@ -297,7 +297,8 @@ test('Charge the Spell (M24): Dad\'s 2 pressed during the last rune is kept, and
   const stone = room.images.find((im) => im.key === 'prop_rune_stone')!;
   const pic = room.images.find((im) => im.key === `rune_${runes[last]}`);
   expect(pic, 'the picture letter on the stone').toBeTruthy();
-  expect(pic!.b[3] - pic!.b[1]).toBeGreaterThanOrEqual(120);
+  // Its height is checked once, by the poll above: the picture pulses (to 1.15x and back) for as long as
+  // the stone shows it, so a second read could land lower than the poll's and fail (item 161).
   expect(pic!.b[0]).toBeGreaterThanOrEqual(stone.b[0] - 10);
   expect(pic!.b[2]).toBeLessThanOrEqual(stone.b[2] + 10);
   expect(room.texts.some((t) => t.text === runes[last]!.toUpperCase() && t.size > 100)).toBe(false);

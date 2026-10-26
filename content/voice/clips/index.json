@@ -6,15 +6,15 @@
       "speaker": "phonics",
       "spoken": "fan!",
       "spokenHash": "6cf1aa47716e5e43",
-      "audio": "word_fan.4a159b0a.mp3",
+      "audio": "word_fan.57ef78d4.mp3",
       "words": [
         {
           "word": "fan",
           "start": 0,
-          "end": 0.93
+          "end": 1.03
         }
       ],
-      "ingested": "2026-10-21"
+      "ingested": "2026-10-26"
     },
     "word_bed": {
       "provider": "matt",
@@ -441,15 +441,15 @@
       "speaker": "phonics",
       "spoken": "cat!",
       "spokenHash": "f04eec203ab9b1ff",
-      "audio": "word_cat.744760a3.mp3",
+      "audio": "word_cat.94a56702.mp3",
       "words": [
         {
           "word": "cat",
           "start": 0,
-          "end": 0.59
+          "end": 0.7200208333333333
         }
       ],
-      "ingested": "2026-10-21"
+      "ingested": "2026-10-26"
     },
     "letter_c_sound": {
       "provider": "matt",
@@ -799,17 +799,17 @@
     "letter_a_sound": {
       "provider": "matt",
       "speaker": "phonics",
-      "spoken": "Aah.",
-      "spokenHash": "2267cb493cfdae11",
-      "audio": "letter_a_sound.f15bd9e0.mp3",
+      "spoken": "Add.",
+      "spokenHash": "bf1a0584368cb0fb",
+      "audio": "letter_a_sound.da52d75c.mp3",
       "words": [
         {
           "word": "Aah",
           "start": 0,
-          "end": 0.83
+          "end": 0.92
         }
       ],
-      "ingested": "2026-10-21"
+      "ingested": "2026-10-26"
     },
     "word_bath": {
       "provider": "matt",
@@ -1005,6 +1005,111 @@
         }
       ],
       "ingested": "2026-10-21"
+    },
+    "word_zoo": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "zoo!",
+      "spokenHash": "f1afce4044d5e52d",
+      "audio": "word_zoo.45f57d52.mp3",
+      "words": [
+        {
+          "word": "zoo",
+          "start": 0,
+          "end": 0.93
+        }
+      ],
+      "ingested": "2026-10-26"
+    },
+    "letter_long_oo_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Oo.",
+      "spokenHash": "c8a6302e95de0172",
+      "audio": "letter_long_oo_sound.3e44346b.mp3",
+      "words": [
+        {
+          "word": "Oo",
+          "start": 0,
+          "end": 1.2
+        }
+      ],
+      "ingested": "2026-10-26"
+    },
+    "word_zebra": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "zebra!",
+      "spokenHash": "c5b629b4188126fb",
+      "audio": "word_zebra.e3255f6c.mp3",
+      "words": [
+        {
+          "word": "zebra",
+          "start": 0,
+          "end": 0.92
+        }
+      ],
+      "ingested": "2026-10-26"
+    },
+    "letter_schwa_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Uh.",
+      "spokenHash": "fcd9a90045822c4b",
+      "audio": "letter_schwa_sound.06acc16b.mp3",
+      "words": [
+        {
+          "word": "Uh",
+          "start": 0,
+          "end": 0.86
+        }
+      ],
+      "ingested": "2026-10-26"
+    },
+    "word_cow": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "cow!",
+      "spokenHash": "6715d1992262a5ff",
+      "audio": "word_cow.fcedeec4.mp3",
+      "words": [
+        {
+          "word": "cow",
+          "start": 0,
+          "end": 0.94
+        }
+      ],
+      "ingested": "2026-10-26"
+    },
+    "letter_ow_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Ow.",
+      "spokenHash": "d6552c4fd4c11df2",
+      "audio": "letter_ow_sound.f7eb30e6.mp3",
+      "words": [
+        {
+          "word": "Ow",
+          "start": 0,
+          "end": 0.75
+        }
+      ],
+      "ingested": "2026-10-26"
+    },
+    "letter_f_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Fuh.",
+      "spokenHash": "197bcde2f2091a5b",
+      "audio": "letter_f_sound.4bd815d5.mp3",
+      "words": [
+        {
+          "word": "Fuh",
+          "start": 0,
+          "end": 1.5300208333333334
+        }
+      ],
+      "ingested": "2026-10-26"
     }
   }
 }

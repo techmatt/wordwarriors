@@ -33,6 +33,7 @@ read-only reference.
 | `src/episode/` | `Episode.ts` the flow (scenes call `advance()`; nothing else decides flow); Phaser-free `state.ts`, `draws.ts`, `cast.ts`, `plans.ts`, `debug.ts`, `lineVariants.ts` |
 | `src/input/` | `Controls` (pad, keys, virtual pad), `TextEntry` (A–Z), `dadLock`, `dadButtons`, `debugKey`, `browserKeys` (the browser's own keys and Tab's focus move, prevented) |
 | `src/audio/`, `src/voice/` | Synthesised sfx and music, `holdSound`; `VoiceBus` (the one voice arbiter), `VoiceBank` (reads `public/voice-gen/manifest.json`) |
+| `src/listen/` | `listen.html`, the listen-through page (item 161: every phonic sound in a short set of words; README, *Listening through the sounds*) |
 | `src/art/` | `ArtBank`, `needs` (`artFor`), `gate` (`startScene`: every scene starts through it), `pictureBox` (word pictures' fit, Phaser-free) |
 | `src/state/` | `ProgressStore` (localStorage, versioned); `progress.ts` the one instance, re-read when another tab writes it (item 144) |
 | `src/rules/` | Phaser-free, unit-tested game rules and draws; `rooms` (the episode's room plans, `episodePlans`), `sentences` (the sentence game's word rules), `difficulty`, `recent` (rotations across episodes), `random` (seeded) |
