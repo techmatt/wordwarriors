@@ -1117,7 +1117,9 @@ inside the repo, which the scratch home is not (item 149, Matt's call). Promotio
   an old sheet's numbers no longer exist. Then delete the round's sheet, manifest and
   preview folder in `art-originals/picks/` and its briefs in the scratch home once every
   id in it is decided. `alts/` holds
-  only rounds still waiting (`ls art-originals/alts/`): on 2026-10-22, none. Item 123
+  only rounds still waiting (`ls art-originals/alts/`): on 2026-10-25, none. Item 160
+  promoted item 157's Shape-Shifter words (`pic_pup` 1, `pic_cub` 3, `pic_cot` 3,
+  `pic_kid` 2, `pic_dot` 2, a brief's, now DOT's prompt). Item 123
   promoted item 124's story splashes (`fx_story_fire` 1, `fx_story_tail` 1,
   `fx_story_spin` 2, `fx_story_dive` 3). Item 122 promoted item 120's story props
   (`prop_fight_stone` 1, `prop_fight_ledge` 2, `prop_fight_hoard` 1);
