@@ -128,12 +128,15 @@ export const positionsOf = (chain: string[]): Position[] => chain.slice(1).map((
  * read-it link changed the first letter and she could pick from the first
  * sound alone) one sibling may stand with any other pictured word, one with
  * `to`'s first letter first; never `from`, a look-alike of `to`, or `to`.
+ * Item 157 (Matt's call): at the first letter too (POT beside DOT and PEN: the
+ * first sound alone does not pick it, nor the rest alone). Only the -AN family
+ * had two siblings there, so nearly every chain opened in CAN MAN PAN VAN FAN.
  */
 export function wrongPictures(to: string, pos: Position, from: string, pool: string[], rand?: Rand): string[] {
   const n = SHIFTER.options - 1;
   const sibs = pictureSiblings(to, pos, from, pool);
   const pick = (ws: string[]) => (rand ? shuffle(ws, rand) : ws);
-  if (sibs.length >= n || pos === 0 || !sibs.length) return pick(sibs).slice(0, n);
+  if (sibs.length >= n || !sibs.length) return pick(sibs).slice(0, n);
   const like = lookalikesOf(to);
   const others = pool.filter((w) => w !== to && w !== from && !sibs.includes(w) && !like.includes(w));
   const front = (ws: string[]) => [...pick(ws.filter((w) => w[0] === to[0])), ...pick(ws.filter((w) => w[0] !== to[0]))];
@@ -172,10 +175,10 @@ export const chainKey = (p: ShifterPlan): string => [p.start, ...shifterWords(p)
 /** How many chains the store keeps: the last SHIFTER.recentChains by link, twice that whole. */
 export const CHAINS_KEPT = 2 * SHIFTER.recentChains;
 
-/** The chains the store keeps (newest last), whole; the last SHIFTER.recentChains of them by link, the last SHIFTER.wordChains by word. */
-function recentChains(store: ProgressStore): { chains: Set<string>; links: Set<string>; words: Set<string> } {
+/** The chains the store keeps (newest last), in order and whole; the last SHIFTER.recentChains of them by link, the last SHIFTER.wordChains by word. */
+function recentChains(store: ProgressStore): { kept: string[]; chains: Set<string>; links: Set<string>; words: Set<string> } {
   const kept = store.recentOf('chains').slice(-CHAINS_KEPT);
-  return { chains: new Set(kept), links: new Set(kept.slice(-SHIFTER.recentChains).flatMap((k) => linksOf(k.split(' ')))), words: new Set(kept.slice(-SHIFTER.wordChains).flatMap((k) => k.split(' '))) };
+  return { kept, chains: new Set(kept), links: new Set(kept.slice(-SHIFTER.recentChains).flatMap((k) => linksOf(k.split(' ')))), words: new Set(kept.slice(-SHIFTER.wordChains).flatMap((k) => k.split(' '))) };
 }
 
 export interface ShifterInput {
@@ -188,7 +191,8 @@ export interface ShifterInput {
 /**
  * A visit's chain: SHIFTER.links links (fewer where no chain that long fits,
  * SHIFTER.minLinks at least; null when not even that) through the words the
- * episode leaves free. Of those sharing no link with the last few chains
+ * episode leaves free, none from the last SHIFTER.wordsOut chains where a
+ * chain fits without them (item 157). Of those sharing no link with the last few chains
  * (`recent.chains`, M36), the chains changing the most places and breaking
  * ORDER least, those holding at most one recent read (hunt 7), one drawn by
  * the bank's weight of the words she reads; each link its beat and options.
@@ -213,45 +217,59 @@ export function planShifter(store: ProgressStore, input: ShifterInput, rand: Ran
   const before = lastRead(store);
   let pool: string[][] = [];
   let allFix: string[][] = [];
-  for (let n = SHIFTER.links; n >= SHIFTER.minLinks && !pool.length; n--) {
-    // The first creature is said after "It starts as a...": never a number or a word that takes no A (hunt 6:
-    // "It starts as a... ten!", M23's case; JAM, fix 92's).
-    const all = chainsOf(n, free).filter((c) => !NUMBER_WORDS.has(c[0]!) && !NO_ARTICLE.has(c[0]!));
-    if (!all.length) continue;
-    // Hunt 7, M36: a chain sharing a link with one of the last SHIFTER.recentChains waits (MUG BUG BUN BIN
-    // came back whole every three episodes), and one the same as any kept (CHAINS_KEPT), where the pool
-    // allows; under the length, above the rest. A drawn run of ten seldom repeats one (tests/unit/shifterDraws.test.ts:
-    // a chain sharing no link ranks above a fresh one, so one from seven to ten back can come again).
-    // Hunt 9, M39: within the chains with a read-it link (below), not before it: rotated first, a length's
-    // every read-it chain could share a link and drop the visit to a shorter chain (39 short visits in 150).
-    const notSame = (cs: string[][]) => cs.filter((c) => !lately.chains.has(c.join(' ')));
-    const noLink = (cs: string[][]) => cs.filter((c) => !linksOf(c).some((l) => lately.links.has(l)));
-    const rotated = (cs: string[][]) => [noLink(notSame(cs)), noLink(cs), notSame(cs)].find((r) => r.length) ?? cs;
-    // Of those changing the most places (M29), chains holding at most one word she read lately, where
-    // any do (hunt 7: the best-scored chains are few, so recency's weight hardly moved them and MAT MAN
-    // PAN came back three episodes in four; 45 of 100 episodes shared a word with the one before, 25 now),
-    // and first those holding no word the episode before had her read (hunt 8, M37 (a): MAT three
-    // episodes running). Item 126 (Matt's pick 2b): first of all those holding no word of the last
-    // SHIFTER.wordChains chains either, and when no chain changing the most places is one, "the most
-    // places" gives way to one changing fewer (the few all-three-places chains ran through BUG and MAT:
-    // BUG was in one visit in three). Under the length, the read-it link; above the rest of the score.
-    // Hunt 9, M39 (Matt's pick b): "the most places" is two or three (`placesOf` at least TWO_PLACES), the
-    // vowel's change a lean in the draw (THREE_PLACES_WEIGHT): held to three, the chains ran through the few
-    // words that link all three (MAN in 77 of 150 visits, 56 distinct chains).
-    const fresh = (cs: string[][]) => {
-      const most = Math.min(TWO_PLACES, Math.max(...cs.map(placesOf)));
-      const top = cs.filter((c) => placesOf(c) >= most);
-      const few = (c: string[]) => c.slice(1).filter((w) => recent.has(w)).length <= 1;
-      const unread = (c: string[]) => !c.some((w) => before.has(w));
-      const unchained = (c: string[]) => few(c) && unread(c) && !c.some((w) => lately.words.has(w));
-      const clear = (c: string[]) => few(c) && unread(c);
-      const tiers = [top.filter(unchained), cs.filter(unchained), top.filter(clear), top.filter(unread), cs.filter(unread), top.filter(few)];
-      return tiers.find((t) => t.length) ?? cs;
-    };
-    // A shorter chain with a read-it link before an all-fix-it one (M29: one visit in twenty had none).
-    const mixed = all.filter(beats);
-    if (mixed.length) pool = best(fresh(rotated(mixed)));
-    else if (!allFix.length) allFix = best(fresh(rotated(all)));
+  // Item 157 (Matt's call): no word of the last SHIFTER.wordsOut chains at all, a shorter chain before one
+  // holding such a word (MAN was in 40% of visits; the tiers below only leaned away from them). Only where
+  // no chain of SHIFTER.minLinks with a read-it link fits without them does the draw take the whole free
+  // pool, as before (an all-fix-it chain without them waits behind a read-it one from it: 5 visits in 800).
+  const out = new Set(lately.kept.slice(-SHIFTER.wordsOut).flatMap((k) => k.split(' ')));
+  for (const words of [free.filter((w) => !out.has(w)), free]) {
+    // A read-it chain from the whole pool still comes before an all-fix-it one from the first pass (M29).
+    if (pool.length) break;
+    for (let n = SHIFTER.links; n >= SHIFTER.minLinks && !pool.length; n--) {
+      // The first creature is said after "It starts as a...": never a number or a word that takes no A (hunt 6:
+      // "It starts as a... ten!", M23's case; JAM, fix 92's).
+      // In the first pass (item 157) no chain the store keeps either: the pool is narrow there, and a whole
+      // chain from seven to twelve back would come again before a shorter one.
+      const all = chainsOf(n, words).filter((c) => !NUMBER_WORDS.has(c[0]!) && !NO_ARTICLE.has(c[0]!) && (words === free || !lately.chains.has(c.join(' '))));
+      if (!all.length) continue;
+      // Hunt 7, M36: a chain sharing a link with one of the last SHIFTER.recentChains waits (MUG BUG BUN BIN
+      // came back whole every three episodes), and one the same as any kept (CHAINS_KEPT), where the pool
+      // allows; under the length, above the rest. A drawn run of ten seldom repeats one (tests/unit/shifterDraws.test.ts;
+      // item 157: a chain unlike every kept one ranks above one sharing no link, so a whole chain waits first).
+      // Hunt 9, M39: within the chains with a read-it link (below), not before it: rotated first, a length's
+      // every read-it chain could share a link and drop the visit to a shorter chain (39 short visits in 150).
+      const notSame = (cs: string[][]) => cs.filter((c) => !lately.chains.has(c.join(' ')));
+      const noLink = (cs: string[][]) => cs.filter((c) => !linksOf(c).some((l) => lately.links.has(l)));
+      // Item 157 (planner's call on 153's report): not the same chain ranks above no shared link (with BAG
+      // live, a whole chain came back within ten episodes in 9 runs of 40, BAT BAG BUG BUN SUN 5.4x the mean;
+      // with 157's words, none in 40).
+      const rotated = (cs: string[][]) => [noLink(notSame(cs)), notSame(cs), noLink(cs)].find((r) => r.length) ?? cs;
+      // Of those changing the most places (M29), chains holding at most one word she read lately, where
+      // any do (hunt 7: the best-scored chains are few, so recency's weight hardly moved them and MAT MAN
+      // PAN came back three episodes in four; 45 of 100 episodes shared a word with the one before, 25 now),
+      // and first those holding no word the episode before had her read (hunt 8, M37 (a): MAT three
+      // episodes running). Item 126 (Matt's pick 2b): first of all those holding no word of the last
+      // SHIFTER.wordChains chains either, and when no chain changing the most places is one, "the most
+      // places" gives way to one changing fewer (the few all-three-places chains ran through BUG and MAT:
+      // BUG was in one visit in three). Under the length, the read-it link; above the rest of the score.
+      // Hunt 9, M39 (Matt's pick b): "the most places" is two or three (`placesOf` at least TWO_PLACES), the
+      // vowel's change a lean in the draw (THREE_PLACES_WEIGHT): held to three, the chains ran through the few
+      // words that link all three (MAN in 77 of 150 visits, 56 distinct chains).
+      const fresh = (cs: string[][]) => {
+        const most = Math.min(TWO_PLACES, Math.max(...cs.map(placesOf)));
+        const top = cs.filter((c) => placesOf(c) >= most);
+        const few = (c: string[]) => c.slice(1).filter((w) => recent.has(w)).length <= 1;
+        const unread = (c: string[]) => !c.some((w) => before.has(w));
+        const unchained = (c: string[]) => few(c) && unread(c) && !c.some((w) => lately.words.has(w));
+        const clear = (c: string[]) => few(c) && unread(c);
+        const tiers = [top.filter(unchained), cs.filter(unchained), top.filter(clear), top.filter(unread), cs.filter(unread), top.filter(few)];
+        return tiers.find((t) => t.length) ?? cs;
+      };
+      // A shorter chain with a read-it link before an all-fix-it one (M29: one visit in twenty had none).
+      const mixed = all.filter(beats);
+      if (mixed.length) pool = best(fresh(rotated(mixed)));
+      else if (!allFix.length) allFix = best(fresh(rotated(all)));
+    }
   }
   if (!pool.length) pool = allFix;
   if (!pool.length) return null;

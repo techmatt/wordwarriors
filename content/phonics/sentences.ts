@@ -192,6 +192,12 @@ export const LOOKALIKES: string[][] = [
   ['skunk', 'cat', 'rat', 'fox'],
   // A ham is a cooked leg of pig.
   ['ham', 'pig', 'leg'],
+  // Item 157's: a pup is a little dog, a cot a little bed, a kid a little person like the doll or the elf.
+  ['pup', 'dog', 'fox'],
+  ['pup', 'vet'], // VET's picture holds a puppy.
+  ['cot', 'bed', 'crib', 'bench', 'quilt'],
+  ['kid', 'doll', 'elf'],
+  ['kid', 'man', 'dad', 'mom'], // a standing waving man; DAD and MOM hold a little boy and a little girl.
 ];
 
 /** The words whose pictures look like `word`'s (not including `word`). */

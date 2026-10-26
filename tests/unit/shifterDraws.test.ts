@@ -80,8 +80,11 @@ test('planShifter (hunt 7, M36): a drawn run of ten episodes seldom repeats a ch
   // Item 153 made BAG, NUT, TUB and BED live: a wider pool, so 10 of 50 share one now, but a chain with no
   // shared link ranks above a fresh one (`rotated`), and a whole chain from seven to ten back can come
   // again: 1 of these 50 (BAT BAG BUG BUN SUN); over 40 runs, 9 runs of 10 repeat one (4 before 153).
-  assert.ok(sharedLinks <= 22, `${sharedLinks} of 50 chains shared a link with one of the six before`);
-  assert.ok(repeats <= 2, `${repeats} of 50 chains came again within ten episodes`);
+  // Item 157: PUP CUB COT KID DOT HUT join the word islands, a chain unlike every kept one ranks above one
+  // sharing no link, and no chain holds a word of the last SHIFTER.wordsOut (3) chains where one fits: the
+  // pool is narrower, so 11 of 50 share a link (over 40 runs 105 of 400; 30 without wordsOut), none comes again.
+  assert.ok(sharedLinks <= 11, `${sharedLinks} of 50 chains shared a link with one of the six before`);
+  assert.equal(repeats, 0, `${repeats} of 50 chains came again within ten episodes`);
 });
 
 test('planShifter (hunt 8, M37 (a); item 126, pick 2b): seldom a word the episode before had her read, or one of the last two chains', () => {
@@ -106,10 +109,12 @@ test('planShifter (hunt 8, M37 (a); item 126, pick 2b): seldom a word the episod
   }
   // M36's no shared link ranks above it, so where only chains through MAT or BUG share no link one comes (19 of 35 without M37).
   // Item 153 made BAG, NUT, TUB and BED live: BUG links to more words (BAG), so 16 of 35 (over 40 runs,
-  // 14 in 35 where it was 10).
-  assert.ok(reused <= 17, `${reused} of 35 chains held MAN or BUG, read the episode before`);
+  // 14 in 35 where it was 10). Item 157: 10 of 35 (over 40 runs, 73 of 280: 9.1 in 35).
+  assert.ok(reused <= 11, `${reused} of 35 chains held MAN or BUG, read the episode before`);
   // 25 of 40 before pick 2b; the few three-places chains share their words, so some still do.
   // Item 127 stored ten of its words (49 to 38; Matt's default (a)): 22 of 40 since. Hunt 9, M39: four
   // links where the pool allows, through the one component of linked words (CAN MAN PAN MAP...): 34 of 40.
-  assert.ok(fromChains <= 36, `${fromChains} of 40 chains held a word of the last two`);
+  // Item 157: none (SHIFTER.wordsOut: no word of the last three chains where a chain fits without; 29 of 40
+  // with only the new words, 230 of 320 over 40 runs).
+  assert.equal(fromChains, 0, `${fromChains} of 40 chains held a word of the last two`);
 });

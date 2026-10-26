@@ -34,8 +34,8 @@ test('families: every bank rime in RIMES with two or more one-letter-onset words
   // Item 037: the bank's new rimes joined 035's seven. Item 040: a family needs two
   // familiar pictures, so -AM -EG -IG -IN -OD -OP -UB -UT left (WIG, PEG, ROD... are odd).
   // Item 043: PIN is familiar again, so -IN (PIN BIN) is back; -IG still has only PIG.
-  // Item 056: -ING -OCK (KING RING WING, ROCK SOCK LOCK).
-  assert.deepEqual(FAMILIES.map((f) => f.rime).sort(), ['am', 'an', 'ap', 'at', 'en', 'et', 'ing', 'ock', 'og', 'ox', 'ug', 'un']);
+  // Item 056: -ING -OCK (KING RING WING, ROCK SOCK LOCK). Item 157: -UB (TUB CUB) and -UT (NUT HUT) are back.
+  assert.deepEqual(FAMILIES.map((f) => f.rime).sort(), ['am', 'an', 'ap', 'at', 'en', 'et', 'ing', 'ock', 'og', 'ox', 'ub', 'ug', 'un', 'ut']);
   for (const f of FAMILIES) {
     assert.ok(f.all.length >= 2, `${f.rime} has ${f.all.join(', ')}`);
     assert.ok(f.words.length >= 2, `${f.rime} has two pictures to build: ${f.words.join(', ')}`);

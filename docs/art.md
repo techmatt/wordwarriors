@@ -268,9 +268,15 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `pic_six` | 200×200 | A single clear picture of a six, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_lip` | 200×200 | A single clear picture of a lip, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_bun` | 200×200 | A single clear picture of a bun, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
+| `pic_hut` | 200×200 | A single clear picture of a hut, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
+| `pic_dot` | 200×200 | A single clear picture of a dot, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_ham` | 200×200 | A single clear picture of a ham, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_mom` | 200×200 | A single clear picture of a mom, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_dad` | 200×200 | A single clear picture of a dad, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
+| `pic_pup` | 200×200 | A single clear picture of a pup, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
+| `pic_cub` | 200×200 | A single clear picture of a cub, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
+| `pic_cot` | 200×200 | A single clear picture of a cot, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
+| `pic_kid` | 200×200 | A single clear picture of a kid, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_frog` | 200×200 | A single clear picture of a frog, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_crab` | 200×200 | A single clear picture of a crab, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_flag` | 200×200 | A single clear picture of a flag, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
@@ -368,7 +374,6 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `pic_rod` | 200×200 | A single clear picture of a rod, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_pod` | 200×200 | A single clear picture of a pod, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_gum` | 200×200 | A single clear picture of a gum, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
-| `pic_hut` | 200×200 | A single clear picture of a hut, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_sub` | 200×200 | A single clear picture of a sub, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_nap` | 200×200 | A single clear picture of a nap, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_wag` | 200×200 | A single clear picture of a wag, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
@@ -379,7 +384,6 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `pic_mix` | 200×200 | A single clear picture of a mix, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_jog` | 200×200 | A single clear picture of a jog, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_bop` | 200×200 | A single clear picture of a bop, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
-| `pic_dot` | 200×200 | A single clear picture of a dot, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_hum` | 200×200 | A single clear picture of a hum, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_yum` | 200×200 | A single clear picture of a yum, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_drum` | 200×200 | A single clear picture of a drum, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |

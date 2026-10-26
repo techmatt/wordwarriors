@@ -115,7 +115,8 @@ export const RUNES: RuneSound[] = [
   rune('c', 2, '📷', 'blink', 'The camera clicks, it goes...', 'lightning', 0xe0e8ff),
   rune('k', 2, '🚪', 'shake', 'Knock on the door, it goes...', 'rain', 0xa0703a, { count: 10 }),
   rune('g', 2, '🚿', 'weave', 'Water gurgles down the drain, it goes...', 'wave', 0x3d9bff, { color2: 0xbfefff }),
-  rune('h', 2, '😮', 'pulse', 'Pant like a puppy, it goes...', 'cone', 0xffffff, { color2: 0xbfefff }),
+  // Item 157: it panted like a puppy, which says PUP, a bank word now.
+  rune('h', 2, '😮', 'pulse', 'Pant after a race, it goes...', 'cone', 0xffffff, { color2: 0xbfefff }),
   rune('j', 2, '🍮', 'pulse', 'The Jell-O wobbles on a plate, it goes...', 'orbit', 0xffb347, { count: 3 }),
   rune('w', 2, '🌬️', 'puff', 'Blow like the wind, it goes...', 'wave', 0xd8f0ff, { color2: 0xffffff }),
   rune('y', 2, '🥄', 'pulse', 'A spoon of yogurt, so good, it goes...', 'rain', 0xfff4e0, { count: 10 }),

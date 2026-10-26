@@ -59,8 +59,8 @@ export interface BankEntry {
   role: Role;
   glyph?: string;
   say?: string;
-  /** The item that added it: 037, 040, 054, 056, 058, 059, 121 or 126 (unset for older words). `?words=new` and the grown-ups page's NEW read 121's and 126's. */
-  since?: '037' | '040' | '054' | '056' | '058' | '059' | '121' | '126';
+  /** The item that added it: 037, 040, 054, 056, 058, 059, 121, 126 or 157 (unset for older words). `?words=new` and the grown-ups page's NEW read 121's, 126's and 157's. */
+  since?: '037' | '040' | '054' | '056' | '058' | '059' | '121' | '126' | '157';
   /** It sounds like a spell (ZAP, HEX, POP; not MUD or NAP): a caster's gift leans to it (item 038, `drawGift`). */
   spell?: true;
   /**
@@ -118,6 +118,8 @@ const NEW_056 = { since: '056' as const };
 const NEW_121 = { since: '121' as const };
 /** Item 126 (Matt's): COW, and MOM and DAD (she says Mama and Dada at home, which is fine). */
 const NEW_126 = { since: '126' as const };
+/** Item 157 (Matt's): links that join the Shape-Shifter's word islands (TUB-CUB-CUP, CAT-COT-POT-DOT-DOG, LIP-LID-KID). */
+const NEW_157 = { since: '157' as const };
 /** Item 058: a familiar picture holding a sound she has not been taught (UNTAUGHT_SOUNDS): level 3, with the digraphs. */
 const UNTAUGHT_058 = { since: '058' as const, late: true as const };
 
@@ -139,14 +141,18 @@ const ENTRIES: BankEntry[] = [
   T('jam', '🍓', NEW), T('yak', '🐂', NEW_ODD), T('vat', '🍯', NEW_ODD), T('leg', '🦵', NEW), T('peg', '📎', NEW_ODD),
   T('wig', '💇', NEW_ODD), T('bib', '👶', NEW), T('fig', '🟣', NEW_ODD), T('six', '6️⃣', NEW), B('fin', '🦈', NEW_ODD),
   T('kit', '🧰', NEW_ODD), T('lip', '👄', NEW), T('cog', '⚙️', NEW_ODD), T('rod', '🎣', NEW_ODD), T('pod', '🌱', NEW_ODD),
-  T('gum', '🍬', NEW_ODD), T('bun', '🍞', NEW), T('hut', '🏠', NEW_ODD), T('sub', '🐳', NEW_ODD),
+  T('gum', '🍬', NEW_ODD), T('bun', '🍞', NEW), T('hut', undefined, NEW), T('sub', '🐳', NEW_ODD),
   A('nap', '😴', NEW), A('wag', '🐕', NEW), A('jab', '🥊', NEW), A('red', '🔴', NEW), A('hex', '🔮', NEW_SPELL),
-  A('jig', '💃', NEW), A('mix', '🥣', NEW_SPELL), A('jog', '🏃', NEW), A('bop', '🔨', NEW), A('dot', '⚫', NEW),
+  A('jig', '💃', NEW), A('mix', '🥣', NEW_SPELL), A('jog', '🏃', NEW), A('bop', '🔨', NEW), B('dot', '⚫', NEW),
   A('hum', '🎵', NEW), A('yum', '😋', NEW),
   // Item 121, level 1: more links for the Shape-Shifter (HAM-JAM-HAT).
   T('ham', '🍖', NEW_121),
   // Item 126: a mom and a dad (MOM is a Shape-Shifter link, MOM-MOP).
   T('mom', '👩', NEW_126), T('dad', '🧔', NEW_126),
+  // Item 157 (Matt's): the Shape-Shifter's words came in islands (DOG-LOG-LEG, NUT-NET-VET, LIP-LID) and
+  // MAN was in nearly half its visits. PUP and CUB join TUB to CUP, COT joins POT to CAT, KID makes
+  // LIP-LID-KID; DOT (a thing too now) joins DOG to POT, and HUT (no longer odd) NUT to HAT.
+  T('pup', '🐾', NEW_157), T('cub', '🐻', NEW_157), T('cot', undefined, NEW_157), T('kid', '🧒', NEW_157),
   // Item 037, level 2: blends. Order (item 096): final s-blends (NEST, MASK) and initial l-blends (FLAG, CLAP) first, final nasal blends (JUMP, HAND) last.
   T('frog', '🐸', NEW), T('drum', '🥁', NEW), T('crab', '🦀', NEW), T('flag', '🚩', NEW), T('sled', '🛷', NEW_ODD),
   T('nest', '🥚', NEW), T('tent', '⛺', NEW), T('desk', '🗄️', NEW), T('belt', '🥋', NEW), T('vest', '🦺', NEW_ODD),
@@ -322,8 +328,9 @@ export const STORED_WHY: Record<string, string> = {
   // Hunt 11, M66: a sound-out would teach the wrong vowel.
   bush: 'its U is the U of PUT, not of SUN: a wrong short-U word in every sound-out',
   // Hunt 9, M40: the bedroom's own props, shown every episode before any room (fix 74), so never read.
-  // (BED, TUB, NUT and BAG are live again, item 153, Matt: "all okay words". BED is still never a key
-  // word: its 🛏️ is the journey map's bedroom stop, a sign shown before any room, plans.ts `planInput`.)
+  // (BED, TUB, NUT and BAG are live again, item 153, Matt: "all okay words". Item 157: the journey map's
+  // bedroom stop is 🌅 now, not BED's 🛏️, so BED can be a key word; HUT, live again, has no glyph, as 🏠 is
+  // the map's home stop: a bank word whose glyph is a shown sign is never read, plans.ts `planInput`.)
   drum: 'a bedroom toy, shown every episode, so it is never read',
   lamp: 'the bedroom night-light, shown every episode, so it is never read',
   duck: 'a bedroom toy, shown every episode, so it is never read',

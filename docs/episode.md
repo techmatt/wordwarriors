@@ -388,12 +388,14 @@ first letter first, then the last, the vowel last, going back once at most
 (`src/rules/shifter.ts`; four links, `SHIFTER` in `src/config.ts`; a link with no familiar
 pictured word is left out, so a chain can be shorter, and a shorter chain with a read-it
 link is taken before an all-fix-it one; of chains that long changing the most places, those
-holding at most one word she read lately first, hunt 7). The first creature is said ("It
+holding at most one word she read lately first, hunt 7; item 157, Matt's call: no word of the
+last `SHIFTER.wordsOut` (3) chains at all, a shorter chain first, the whole pool only where
+none fits: MAN was in about 40% of visits, now about 23%, with about a fifth of visits 2-3 links). The first creature is said ("It
 starts as a... CAT"); every later word is read, in one of two beats, mixed through the chain:
 **read it**, the new word appears on the creature's label, not voiced, and three pictures
-stand in the room differing only at the changed letter (BAT, HAT, RAT; at the vowel or the
-last letter, where the bank rarely has two such pictures, one of them may be another picture,
-one with the word's first letter first: CAP beside CAN and CUP): she walks to the one
+stand in the room differing only at the changed letter (BAT, HAT, RAT; where the bank has
+only one such picture, one of them may be another picture, one with the word's first letter
+first: CAP beside CAN and CUP, and since item 157 at the first letter too: POT beside DOT and PEN): she walks to the one
 she read and presses green, the creature morphs into it (it swells, squashes, shrinks, a
 poof of smoke and sparks, and pops back) and the word is said; **fix it**, the creature
 morphs into a picture but its label keeps the old word (a bat labelled CAT), and three

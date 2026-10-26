@@ -205,7 +205,7 @@ function planInput(gift: string, rooms: [string, string], counterRoom: string): 
   // words heard inside it as it plus a sound (`grabSays`, hunt 10, M57: CLOCK says LOCK).
   // The doors' signs show their rooms' glyphs: a bank word drawn the same way is
   // shown before she reads it (item 039: the 🛁 door led to GO GET THE TUB).
-  // The journey map's stops too (🛏️ 🏠, the place's glyph): it shows before the attic.
+  // The journey map's stops too (🌅 🏠, the place's glyph): it shows before the attic.
   const signs = new Set([...rooms, counterRoom].map((r) => SIDE_ROOM_BY_ID[r]?.glyph).filter(Boolean));
   for (const s of journeyStops()) signs.add(s.icon);
   // The bedroom's toys (a drum, a duck, a night-light: DRUM, DUCK, LAMP) and the hub story's
@@ -467,7 +467,8 @@ export function drawEnding(): string {
 /** The journey stops: every step from the bedroom to victory, with an icon each (and its step's kind). */
 export function journeyStops(): { icon: string; index: number; kind: Step['kind'] }[] {
   const icon = (s: Step): string => {
-    if (s.kind === 'bedroom') return '🛏️';
+    // Item 157: a sunrise, the wake-up, not 🛏️, which is BED's own glyph (the stop kept BED out of every key word).
+    if (s.kind === 'bedroom') return '🌅';
     if (s.kind === 'house') return away() ? PLACE_BY_ID[episode.place]!.glyph : '🏠';
     if (s.kind === 'battle') return '⚔️';
     if (s.kind === 'victory') return '🏆';

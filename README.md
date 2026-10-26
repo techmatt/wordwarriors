@@ -491,6 +491,17 @@ it; item 126 used `scratch/<dir>`, which since item 149 is outside the repo and 
 (BUG in about one Shape-Shifter visit in three) are steadier than its raw counts, which move
 with how often the game comes up.
 
+**The Shape-Shifter's words** (item 157): a word's share of visits follows the shape of the
+word graph (`SHIFT_WORDS`, a link a one-letter change between two non-look-alikes), not the
+draw's weights. Before adding words for it, measure the graph: its components and each one's
+longest chain, and which words the best-scored four-link chains hold (item 157's scratch
+scripts `157_shifter_probe.ts` and `157_pool_share.ts` in the scratch home do both, and the
+M36/M37 numbers over 40 runs). A dense grid (CAN CAP CAT MAN MAP PAN) holds most chains, so a
+new word joining it raises its share. To read `variety`'s per-word shares, pass `--json=` and
+divide a word's `counts` in "shifter words (start and links)" by the visits (`shifterLinks`).
+A new bank word's `glyph` must not be a journey-map stop's (🌅 ⚔️ 🏆, 🏠 at home): `planInput`
+counts it as shown before any room, so it is never a key word (BED until item 157, HUT has none).
+
 ### The bug-hunt checker
 
 `QA_TAG=<tag> npm run qa` plays whole episodes at

@@ -28,10 +28,10 @@ function neverDrawn(word: string): string | null {
   return null;
 }
 
-test('named counter items (item 153): only Rilla\'s MICE (not decodable) and Julia\'s BED (the journey map\'s 🛏️) never come up', () => {
+test('named counter items (item 153; item 157: the map\'s bedroom stop is 🌅, not BED\'s 🛏️): only Rilla\'s MICE (not decodable) never comes up', () => {
   const never = ROSTER.flatMap((c) => {
     const why = neverDrawn(c.counter.word);
     return why ? [`${c.id}: ${c.counter.word.toUpperCase()} (${why})`] : [];
   });
-  assert.deepEqual(never, ['julia: BED (its 🛏️ is a journey-map stop, shown before any room)', 'rilla: MICE (not decodable)']);
+  assert.deepEqual(never, ['rilla: MICE (not decodable)']);
 });

@@ -194,11 +194,12 @@ Hat!"). That word is drawn `NAMED_COUNTER_BOOST` (6) times as often as any other
 it is in the bag. A named word is a whole word of the item's `name` and stays out of
 every name, ability, ultimate, taunt and threat in the roster (unit test "named counter
 words are pictured, and never in any name, ability, taunt or threat"). MICE is not
-decodable, so EvilRilla's Wind-up Mice never come up in the episode now, and BED's 🛏️ is
-the journey map's bedroom stop, shown before any room every episode, so Evil Julia's Cozy
-Bed never comes up either. TUB, NUT and BAG were stored words (items 127 and 130) until
-item 153 (Matt: "all okay words"), so Evil Ellie's Bubble Tub, Evil Seraphina's Golden Nut
-and Evil Smaug's Gold Bag come up now; BED is live too, for every other draw. Unit test
+decodable, so EvilRilla's Wind-up Mice never come up in the episode now. TUB, NUT, BAG and
+BED were stored words (items 127 and 130) until item 153 (Matt: "all okay words"), so Evil
+Ellie's Bubble Tub, Evil Seraphina's Golden Nut and Evil Smaug's Gold Bag come up now, and
+since item 157 Evil Julia's Cozy Bed too: the journey map's bedroom stop was BED's own 🛏️,
+a sign shown before any room every episode, and is a sunrise 🌅 now. A bank word's `glyph`
+must not be a journey-map stop's (🌅 ⚔️ 🏆, 🏠 at home; HUT has none for that). Unit test
 `tests/unit/namedCounters.test.ts` lists the named items that can never come up, and why. Changing an
 item's `id` needs new `item_<id>` art (`npm run art:gen -- item_<id>`). With `how:
 'scare'` the swarm is the item's `glyph`.

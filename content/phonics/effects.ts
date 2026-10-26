@@ -193,6 +193,12 @@ const THING_EFFECTS: WordEffect[] = [
   { word: 'mom', look: 'a big mom hug for the whole team: everyone strong again', ability: use('mom', 'heal', 0xff8fb8, { color2: 0xffffff }) },
   { word: 'dad', look: 'a big strong dad who stands in front of the team, arms wide: a shield', ability: use('dad', 'shield', 0x5aa0ff, { duration: 4 }) },
   { word: 'cow', look: 'a big spotty cow that gallops straight through the villain, moo', ability: use('cow', 'dash', 0xffffff, { power: 3, color2: 0x333333 }) },
+  // Item 157: the Shape-Shifter's links (DOT, a move word, is a thing too now: its effect moved here).
+  { word: 'pup', look: 'a bouncy puppy that bounds at the villain and licks its face: giggly and dizzy', ability: use('pup', 'bolt', 0xc8905a, { ...pic('pup'), count: 2, homing: true, status: 'stun', duration: 1.5 }) },
+  { word: 'cub', look: 'a roly-poly bear cub that tumbles straight through the villain, oof', ability: use('cub', 'dash', 0x8a5a3a, { power: 3 }) },
+  { word: 'cot', look: 'a camp bed that pops open under the villain: it lies down for a nap', ability: use('cot', 'slam', 0x5a8a3a, { power: 2, status: 'stun', duration: 2 }) },
+  { word: 'kid', look: 'a gang of kids who run rings round her, then pile on the villain', ability: use('kid', 'orbit', 0xffb347, { ...pic('kid'), count: 4, duration: 1.6 }) },
+  { word: 'dot', look: 'polka dots pelting the villain, dot dot dot', ability: use('dot', 'bolt', 0x3a86ff, { glyph: '🔵', count: 7 }) },
   // Item 058: the untaught-sounds words.
   { word: 'zoo', look: 'the whole zoo stampedes across the arena, a wave of animals', ability: use('zoo', 'wave', 0xffb347, { color2: 0x6ad66a }) },
   { word: 'zebra', look: 'a stripy zebra that gallops straight through the villain', ability: use('zebra', 'dash', 0xffffff, { power: 3 }) },
@@ -234,7 +240,6 @@ const ACTION_EFFECTS: WordEffect[] = [
   { word: 'mix', look: 'eggs and spoons tumbling down: a big mix-up', ability: act('mix', 'rain', 0xfff1d6, { glyph: '🥚', count: 12 }) },
   { word: 'jog', look: 'she jogs in circles round the baddies, bumping each one', ability: act('jog', 'spin', 0x2a9d8f, { count: 3 }) },
   { word: 'bop', look: 'a squeaky toy hammer bops the villain on the head: seeing stars', ability: act('bop', 'bolt', 0xff8c42, { glyph: '🔨', count: 1, power: 3, status: 'stun', duration: 1.5, homing: true }) },
-  { word: 'dot', look: 'polka dots pelting the villain, dot dot dot', ability: act('dot', 'bolt', 0x3a86ff, { glyph: '🔵', count: 7 }) },
   { word: 'hum', look: 'music notes hummed at the villain, it sways', ability: act('hum', 'bolt', 0xb15cff, { glyph: '🎵', count: 4, homing: true }) },
   { word: 'yum', look: 'a yummy snack for the team: everyone feels better', ability: act('yum', 'heal', 0xffb3c6, { color2: 0xffd23f }) },
   // Item 037, level 2.

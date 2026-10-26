@@ -440,7 +440,9 @@ export const RUNE_GAP = 0.5;
  * sharing a link with one of them waits, where the pool allows. `wordChains`
  * (item 126, Matt's pick 2b): a chain holding a word of the last few chains
  * waits too, and to let one in "the most places changed" gives way (six was
- * nearly every word, so nothing waited).
+ * nearly every word, so nothing waited). `wordsOut` (item 157, Matt's call): no
+ * word of the last few chains at all, a shorter chain first (only where none
+ * fits does the whole pool come back): MAN fell from 40% of visits to about 23%.
  */
 export const SHIFTER = {
   links: 4,
@@ -450,6 +452,7 @@ export const SHIFTER = {
   weight: 1,
   recentChains: 6,
   wordChains: 2,
+  wordsOut: 3,
 };
 
 /**

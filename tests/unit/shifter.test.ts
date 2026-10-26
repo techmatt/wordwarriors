@@ -23,8 +23,8 @@ import { composeLines } from '../../tools/voice/compose';
 import { withDifficulty } from './difficulty';
 import { memory, seeded, spread } from './seeds';
 
-/** Seed 1's chain since hunt 9's M39 (two places are as good as three: it keeps the vowel). */
-const GOLDEN_SEED_1 = ['pan', 'man', 'map', 'cap', 'cat'];
+/** Seed 1's chain since hunt 9's M39 (two places are as good as three: it keeps the vowel); item 157's words and its read it at the first letter moved it. */
+const GOLDEN_SEED_1 = ['dot', 'cot', 'cat', 'hat', 'ham'];
 
 const sameSound = (a: string, b: string) => a === b || [a, b].sort().join('') === 'ck';
 
@@ -38,7 +38,7 @@ test('chain words: familiar pictured CVC words, one letter a sound', () => {
   }
 });
 
-test('planShifter: one letter a link, first letter first, back in order once at most; both beats; read-it pictures a sibling at least (at the first letter all siblings); fix-it stones of different sounds', () => {
+test('planShifter: one letter a link, first letter first, back in order once at most; both beats; read-it pictures a sibling at least (item 157: at the first letter too); fix-it stones of different sounds', () => {
   for (let seed = 1; seed <= 40; seed++) {
     const p = planShifter(new ProgressStore(memory()), { avoid: [], taken: [] }, seeded(spread(seed)))!;
     const chain = [p.start, ...shifterWords(p)];
@@ -54,10 +54,9 @@ test('planShifter: one letter a link, first letter first, back in order once at 
       assert.equal(l.options.length, SHIFTER.options);
       if (l.beat === 'read') {
         assert.ok(l.options.includes(l.to) && !l.options.includes(l.from), `${l.to}: ${l.options}`);
-        // At the first letter every other picture differs only there; at the vowel or the last, one sibling at least (M29).
+        // One sibling at least (M29 at the vowel or the last letter; item 157 at the first letter too).
         const sibs = l.options.filter((o) => o !== l.to && changedAt(l.to, o) === l.pos);
-        if (l.pos === 0) assert.equal(sibs.length, SHIFTER.options - 1, `${l.to}: ${l.options}`);
-        else assert.ok(sibs.length >= 1, `${l.to}: ${l.options}`);
+        assert.ok(sibs.length >= 1, `${l.to}: ${l.options}`);
         assert.equal(new Set(l.options).size, SHIFTER.options, `${l.to}: ${l.options}`);
       } else {
         const right = l.to[l.pos]!;
@@ -91,12 +90,19 @@ test('planShifter (hunt 6, M29; hunt 9, M39): seeded draws change two places at 
   assert.deepEqual([p.start, ...shifterWords(p)], GOLDEN_SEED_1);
 });
 
-test('wrongPictures (M29): at the vowel or the last letter one sibling and another picture, its first letter first; at the first letter siblings only', () => {
+test('wrongPictures (M29; item 157): one sibling and another picture, its first letter first, at any letter; siblings alone where there are two', () => {
   // BIG at the last letter: one pictured sibling, BIB (BIN is stored, item 127), and another picture with its first letter (BED, live again in item 153).
   assert.deepEqual(wrongPictures('big', 2, 'bug', SHIFT_WORDS).sort(), ['bed', 'bib']);
   const like = wrongPictures('cap', 2, 'cat', ['can', 'cup', 'dog', 'cat']);
   assert.deepEqual(like, ['can', 'cup'], 'the sibling, then a picture with its first letter before one without');
-  for (const w of SHIFT_WORDS) for (const o of wrongPictures(w, 0, '', SHIFT_WORDS)) assert.equal(changedAt(w, o), 0, `the first letter, siblings only: ${w} beside ${o}`);
+  // Item 157: POT at the first letter has one pictured sibling beside COT (DOT); the other picture shares its first letter.
+  const pot = wrongPictures('pot', 0, 'cot', SHIFT_WORDS);
+  assert.equal(pot[0], 'dot');
+  assert.equal(pot[1]![0], 'p', `${pot}`);
+  for (const w of SHIFT_WORDS) {
+    const ws = wrongPictures(w, 0, '', SHIFT_WORDS);
+    if (ws.filter((o) => changedAt(w, o) === 0).length >= 2) assert.ok(ws.every((o) => changedAt(w, o) === 0), `two siblings, siblings only: ${w} beside ${ws}`);
+  }
 });
 
 // The 200 seeded draws against look-alikes and "starts as a": tests/unit/shifterDraws.test.ts (item 105: its own file, so it runs beside these).

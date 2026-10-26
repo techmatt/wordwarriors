@@ -14,7 +14,7 @@ const drawn = (aspect: number, box: { w: number; h: number }) => {
 };
 
 test('pictures: the ruled ones are shaped, the rest keep the square', () => {
-  assert.deepEqual([...SHAPED_PICTURES].sort(), ['pic_bus', 'pic_dad', 'pic_key', 'pic_kick', 'pic_man', 'pic_mom', 'pic_sled', 'pic_stick', 'pic_tug', 'pic_vet']);
+  assert.deepEqual([...SHAPED_PICTURES].sort(), ['pic_bus', 'pic_dad', 'pic_key', 'pic_kick', 'pic_kid', 'pic_man', 'pic_mom', 'pic_sled', 'pic_stick', 'pic_tug', 'pic_vet']);
   assert.deepEqual(pictureBox('pic_cat', 330 / 400, 108, 108), { w: 108, h: 108 });
   assert.deepEqual(pictureBox('pic_hat', 2, 150, 150), { w: 150, h: 150 });
 });
