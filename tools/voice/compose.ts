@@ -25,6 +25,7 @@ import { ALL_ACTIONS, BANK_BY_WORD, BANK } from '../../content/phonics/bank.js';
 import { DIGRAPH_SOUNDS, LETTERS, LONG_VOWEL_SOUNDS } from '../../content/phonics/letters.js';
 import { FETCH_ITEMS, allFrameTokens, allPrefixes, tokenWord } from '../../content/phonics/sentences.js';
 import { SPELL_WORDS } from '../../content/phonics/spelling.js';
+import { describeMissing, writeMissing } from '../recorder/missing.js';
 import { WORDS, spokenWord } from '../../content/phonics/words.js';
 import {
   DEFAULT_NARRATOR,
@@ -359,4 +360,7 @@ if (isMain(import.meta.url)) {
   const groups = new Map<string, number>();
   for (const l of lines) groups.set(l.group, (groups.get(l.group) ?? 0) + 1);
   console.log(`voice:lines: ${lines.length} lines in ${groups.size} groups -> ${file}`);
+  // A word added may sound out a sound with no recording: the recorder's ?missing follows (item 158).
+  const { missing, changed } = await writeMissing(lines);
+  if (changed) for (const l of describeMissing(missing)) console.log(l);
 }

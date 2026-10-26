@@ -33,13 +33,19 @@ the most typical of the three repeats that the bridge can hold. If no repeat hol
 short, or an "uh" after it), it keeps the word and skips the sound, so that card is
 re-recorded.
 
-**Just the missing sounds** (item 108): open the page with `?missing` on the end
-(`tools/recorder/phonics-recorder.html?missing`, from the repo; the hosted copy works the
-same once synced). It shows only the sounds still to record, each its own card of one
-word and its sound three times (4 sounds): **F** (FAN, "ffff" with no "uh") and **A**
-(CAT, the steady vowel in its middle, not sliding toward I; the old A was retired in
-item 085). Its zip is `phonics-<name>-missing.zip`, takes `g02f` and `g07a`, and imports
-the same way (`--take g07a` for one). The list is `MISSING` in the page.
+**Just some sounds** (item 158): put `?only=` and the sounds on the end of the page's
+address, commas between: `tools/recorder/phonics-recorder.html?only=f,a` (from the repo;
+the hosted link takes the same tail). It shows only those sounds, each its own card of
+one word and its sound three times (4 sounds); the page lists the sounds' names under
+*How to record*. Its zip is `phonics-<name>-only-f-a.zip`, takes `g02f` and `g07a`, and
+imports the same way (`--take g07a` for one).
+
+**Just the missing sounds** (item 108): `?missing` on the end is `?only=` with every sound
+the game sounds out that has no good recording yet, worked out from the word bank and
+the recordings (`npm run recorder:missing`, README, *Matt's recordings*), and adding a card
+for a sound the 12 cards lack (OW in COW, the lazy A at the end of ZEBRA). Its zip is
+`phonics-<name>-missing.zip`. **F** is "ffff" with no "uh"; **A** is CAT's steady vowel
+(card 7 says CAT since item 158, not ANT), not sliding toward I.
 
 ## Any other line: `voice:clip`
 

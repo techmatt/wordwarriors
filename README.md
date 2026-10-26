@@ -682,14 +682,34 @@ it over, and Matt commits it. Nothing leaves their computer until they press
 for all 12 cards). That zip comes back by email or a shared folder; put it in
 `voice-import/` in the scratch home.
 
-**`?missing`** (item 108) opens the page with only the sounds still to record, each its
-own card of one word and its sound three times: today F (FAN) and A (CAT), the `MISSING`
-list in the page. Its takes are `g02f` and `g07a` (the full card's number and the sound), so
-they never mix with the full page's in the browser's storage, and its zip,
-`phonics-<name>-missing.zip`, imports like any other.
+**Asking for some sounds: `?only=`** (item 158). Put `?only=` and the sounds' ids, commas
+between, on the end of the page's address (`phonics-recorder.html?only=f,a`, or the
+hosted link with the same tail). The page shows just those sounds, one card each of one
+word and its sound three times, in the order asked: the full set's entry for each sound,
+or for a sound the full set has no card for, an extra card (`EXTRA`, below). The ids are the
+game's sound keys (`m`, `sh`, `long_e`, `th_voiced`, `ow`…; any case; `ck` is the K
+card); the page lists them all under *How to record*, and an id it doesn't know is
+named in its header note (with none it knows, it shows the full page). A card's take is
+`g` + the full card's number + the sound (`g02f`, `g07a`; an extra card's number runs on
+from 13), so a targeted page's takes never mix with the full page's in the browser's
+storage, and `?only=f` shares `g02f` with `?only=f,a`. Its zip is
+`phonics-<name>-only-f-a.zip` and imports like any other (`--take g07a` for one card).
+
+**`?missing`** (item 108; derived since item 158) is `?only=` with the page's `MISSING`
+list, its zip `phonics-<name>-missing.zip`. `MISSING` is every sound a live bank word
+sounds out (`LIVE`'s `sounds`) whose `letter_<x>_sound` has no good recording: no clip,
+or a stale one (`clipStateFor`). `EXTRA` is a card for each live sound the full set lacks:
+the sound's `example` word if live (else the first live word with it), its letters lit,
+the tip from the sound's `record` in `content/phonics/letters.ts`. Both are the page's
+`missing:begin` / `missing:end` block, written by **`npm run recorder:missing`**
+(`tools/recorder/missing.ts`), which also prints each missing sound with the words that
+use it. `voice:lines` (a word added) and `voice:import` (a sound recorded) run it, and
+`tests/unit/recorder.test.ts` fails while the block is out of date. When the block
+changes, the planner syncs the hosted copy. On 2026-10-25 `?missing` was A (stale since
+item 085's carrier), F, long OO, the schwa and OW.
 
 The zip holds `manifest.json` (format `phonics-recorder/2`: `recorder`, the speaker's
-name, now required; each take's card `group` `g01`…`g12`, `entries` of sound, word,
+name, now required; each take's card `group` `g01`…`g12`, or a targeted page's `g02f`, `entries` of sound, word,
 `kind`, `repeats`, and `counted`, the sounds the page heard) and `takes/gNN.wav`, one
 mono WAV per card at the browser's rate (48 kHz here). The importer reads format 1 too;
 a format-1 zip has no name and is taken as Matt's.

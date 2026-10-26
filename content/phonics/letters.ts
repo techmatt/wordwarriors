@@ -41,6 +41,11 @@ export interface LetterSound {
    * (tools/voice/carrier.ts). The line's text stays the placeholder spelling.
    */
   carrier?: { say: string; keepDb: number };
+  /**
+   * Item 158: how the phonics recorder's own card for a sound its full set has
+   * no card for asks for it (tools/recorder/missing.ts), after "the OW of COW, held: ".
+   */
+  record?: string;
 }
 
 export const LETTERS: LetterSound[] = [
@@ -117,10 +122,10 @@ export const DIGRAPH_SOUNDS: LetterSound[] = [
  * - `ow`: the OW of COW (item 126), as in "ouch", not the long O of SNOW.
  */
 export const UNTAUGHT_SOUNDS: LetterSound[] = [
-  { letter: 'long_oo', say: 'Oo', cls: 'vowel', example: 'zoo', note: 'long oo, the vowel of ZOO and the end of IGLOO' },
-  { letter: 'schwa', say: 'Uh', cls: 'vowel', example: 'zebra', note: 'the schwa, the A of ZEBRA; the same placeholder as short u until Matt records the two apart' },
-  { letter: 'x_name', say: 'Ecks', cls: 'fricative', example: 'xray', note: 'X said by its name, the X of X-RAY; not the KS sound at the end of FOX' },
-  { letter: 'ow', say: 'Ow', cls: 'vowel', example: 'cow', note: 'the OW of COW, as in "ouch"; not the long O of SNOW' },
+  { letter: 'long_oo', say: 'Oo', cls: 'vowel', example: 'zoo', note: 'long oo, the vowel of ZOO and the end of IGLOO', record: 'ooooo, lips round, as in "moo"' },
+  { letter: 'schwa', say: 'Uh', cls: 'vowel', example: 'zebra', note: 'the schwa, the A of ZEBRA; the same placeholder as short u until Matt records the two apart', record: 'uhhh, the lazy sound at its end, as softly as in the word' },
+  { letter: 'x_name', say: 'Ecks', cls: 'fricative', example: 'xray', note: 'X said by its name, the X of X-RAY; not the KS sound at the end of FOX', record: 'X says its name: ecks' },
+  { letter: 'ow', say: 'Ow', cls: 'vowel', example: 'cow', note: 'the OW of COW, as in "ouch"; not the long O of SNOW', record: 'ow, as in "ouch!", not the OH of SNOW' },
 ];
 
 /**

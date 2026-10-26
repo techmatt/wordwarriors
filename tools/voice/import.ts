@@ -24,6 +24,7 @@ import { inflateRawSync } from 'node:zlib';
 import { canHold } from '../../content/phonics/letters.js';
 import { letterSoundLine, wordLine } from '../../content/voice/ids.js';
 import { holdPlan, holdSamples } from '../../src/audio/holdSound.js';
+import { describeMissing, writeMissing } from '../recorder/missing.js';
 import { scratchArg, scratchPath } from '../scratch.js';
 import { readLines, runMain } from '../shared.js';
 import { mp3Bytes, readWav, wavBytes } from './audio.js';
@@ -371,6 +372,11 @@ export async function voiceImport(argv: string[]): Promise<void> {
   console.log(`review: ${REVIEW}`);
   const refused = results.filter((t) => t.refused).length;
   if (refused) console.log(`${refused} card${refused > 1 ? 's' : ''} to re-record (above); the rest are in.`);
+  // A sound recorded leaves the recorder's ?missing (item 158).
+  if (!dry) {
+    const { missing, changed } = await writeMissing();
+    if (changed) for (const l of describeMissing(missing)) console.log(l);
+  }
   if (!dry && results.some((t) => !t.refused)) console.log('Now run npm run voice:build.');
 }
 

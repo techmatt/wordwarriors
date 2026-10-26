@@ -29,7 +29,8 @@
     "perf": "playwright test --config tests/perf/perf.config.ts",
     "shots": "playwright test --config tests/shots/shots.config.ts",
     "qa": "playwright test --config tests/qa/qa.config.ts",
-    "voice:import": "tsx tools/voice/import.ts"
+    "voice:import": "tsx tools/voice/import.ts",
+    "recorder:missing": "tsx tools/recorder/missing.ts"
   },
   "devDependencies": {
     "@breezystack/lamejs": "^1.2.7",
