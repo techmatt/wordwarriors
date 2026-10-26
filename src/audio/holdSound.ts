@@ -9,7 +9,7 @@
  * "Luh", "Buh"; content/phonics/letters.ts says why), so the clip is cut up
  * by 10 ms frames of loudness and zero-crossing rate:
  *
- * - a **held** sound (`hold`: the vowels and the sounds you can stretch, M S F
+ * - a **held** sound (`hold`: the vowels and the sounds you can stretch, M S
  *   L N R V Z SH TH) keeps its steady part: a hiss up to the vowel after it
  *   (S of "Suh": noise, many crossings, then the quieter-crossing vowel), a hum
  *   up to where the crossings rise into the schwa (M N L), or a vowel's loud
@@ -19,7 +19,9 @@
  * - a **once** sound (the stops, H, W, Y, X) plays once and never with an
  *   "uh": a burst or hiss up to the vowel (T, K, CH), the final hiss after it
  *   too (X is "Kuhs": K then S), or a voiced stop's first instant (B D G),
- *   faded out before the vowel can be heard.
+ *   faded out before the vowel can be heard;
+ * - a **whole** sound (F since item 162: Matt's "fuh") plays its clip once,
+ *   uncut ("uh" and all: its hiss alone is 35 dB under the vowel).
  *
  * A recording that is already a bare sound (a clean "mmmm", a crisp "t") has
  * no schwa to find, and plays as it is: held whole, or once whole.
@@ -28,7 +30,8 @@
 // `.js` suffix: tools/voice/import.ts builds this file under NodeNext (as src/rules/bankAudit.ts).
 import { BRIDGE } from '../config.js';
 
-export type HoldMode = 'hold' | 'once';
+/** `whole` (item 162): the clip as it is, "uh" and all (F's "fuh"), faded like a once sound. */
+export type HoldMode = 'hold' | 'once' | 'whole';
 
 /** What to play, in samples: `start`..`end` of the clip; a held clip's steady part is `steadyStart`..`end`. */
 export interface HoldPlan {
@@ -105,6 +108,7 @@ function firstRun(f: Frame[], from: number, to: number, run: number, test: (fr: 
 export function holdPlan(x: Float32Array, rate: number, mode: HoldMode): HoldPlan {
   const { hop, f } = frames(x, rate);
   const whole = { mode, start: 0, end: x.length } as HoldPlan;
+  if (mode === 'whole') return whole;
   if (!f.length) return whole;
   const peak = Math.max(...f.map((fr) => fr.db));
   // Nothing to cut in a silent clip.
@@ -258,7 +262,7 @@ export function holdSamples(x: Float32Array, plan: HoldPlan, rate: number, heldM
     // Each part fades in and out, so the jump over the vowel makes no click.
     const fi = Math.min(Math.round(FADE_IN_S * rate), Math.floor((b - a) / 2));
     for (let i = 0; i < fi; i++) data[o + i]! *= i / fi;
-    if (plan.mode === 'once' || a !== plan.start) {
+    if (plan.mode !== 'hold' || a !== plan.start) {
       const fo = Math.min(Math.round(FADE_OUT_S * rate), Math.floor((b - a) / 2));
       for (let i = 0; i < fo; i++) data[o + b - a - 1 - i]! *= i / fo;
     }

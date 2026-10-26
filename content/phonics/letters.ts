@@ -46,6 +46,18 @@ export interface LetterSound {
    * no card for asks for it (tools/recorder/missing.ts), after "the OW of COW, held: ".
    */
   record?: string;
+  /**
+   * Item 162: the recording is the sound with its "uh" (Matt's F, "fuh": a
+   * held "ffff" never sounded good). It is never held, and the bridge plays
+   * the clip whole (`bridgeMode`), not cut before the vowel as a stop is.
+   */
+  whole?: true;
+  /**
+   * Item 162: Matt's recording `clip` (its file in content/voice/clips/) is to
+   * be done again, so the recorder's `?missing` asks for it (tools/recorder/missing.ts)
+   * until a new take replaces that file. `why` is printed with it.
+   */
+  rerecord?: { clip: string; why: string };
 }
 
 export const LETTERS: LetterSound[] = [
@@ -58,7 +70,7 @@ export const LETTERS: LetterSound[] = [
   { letter: 'c', say: 'Kuh', cls: 'stop', example: 'cat', note: 'hard c, same sound as k' },
   { letter: 'd', say: 'Duh', cls: 'stop', example: 'dog' },
   { letter: 'e', say: 'Eh', cls: 'vowel', example: 'bed' },
-  { letter: 'f', say: 'Fuh', cls: 'fricative', example: 'fox' },
+  { letter: 'f', say: 'Fuh', cls: 'fricative', example: 'fox', whole: true },
   { letter: 'g', say: 'Ghuh', cls: 'stop', example: 'gum', note: '"Guh" spans 1.23 s, i.e. read as letters; "Ghuh" 0.55 s' },
   { letter: 'h', say: 'Huh', cls: 'fricative', example: 'hat' },
   { letter: 'i', say: 'Ihh', cls: 'vowel', example: 'pig', note: '"Ih" spans 0.95 s (letters?); "Ihh" 0.52 s' },
@@ -71,7 +83,9 @@ export const LETTERS: LetterSound[] = [
   { letter: 'p', say: 'Puh', cls: 'stop', example: 'pig' },
   { letter: 'q', say: 'Kwuh', cls: 'stop', example: 'queen' },
   { letter: 'r', say: 'Err', cls: 'continuant', example: 'rat', note: 'doubled "Rrr" spans 1.26 s: read as letter names; "Err" 0.70 s' },
-  { letter: 's', say: 'Suh', cls: 'fricative', example: 'sun', note: 'Seraphina spike: best stand-in for /s/ was "Suh"; "Sss" came back as "ess"' },
+  { letter: 's', say: 'Suh', cls: 'fricative', example: 'sun', note: 'Seraphina spike: best stand-in for /s/ was "Suh"; "Sss" came back as "ess"',
+    rerecord: { clip: 'letter_s_sound.e1512d98.mp3', why: 'Matt, item 162: sounds wrong in CHIPS on the listen-through page' },
+  },
   { letter: 't', say: 'Tuh', cls: 'stop', example: 'ten' },
   { letter: 'u', say: 'Uh', cls: 'vowel', example: 'cup' },
   { letter: 'v', say: 'Vuh', cls: 'continuant', example: 'van', note: 'doubled "Vvv" spans 1.26 s: read as letter names' },
@@ -169,11 +183,17 @@ export const heardAs = (unit: string): string => (unit === 'c' || unit === 'ck' 
 
 /**
  * The sounds you can hold (item 054, the Stretchy Bridge): the vowels, the
- * hums (M N L R V Z) and the hisses (F S SH TH). The bridge holds them while
- * she stands on their stone and plays every other sound (the stops, H W Y X)
- * once, never with an "uh" (src/audio/holdSound.ts).
+ * hums (M N L R V Z) and the hisses (S SH TH; not F since item 162, Matt's
+ * "fuh": `whole`). The bridge holds them while she stands on their stone and
+ * plays every other sound (the stops, H W Y X) once, never with an "uh"
+ * (src/audio/holdSound.ts), except a `whole` sound, played as its clip.
  */
 export function canHold(sound: string): boolean {
   const s = SOUND_BY_UNIT[sound];
-  return Boolean(s) && (s!.cls === 'vowel' || s!.cls === 'continuant' || ['f', 's', 'sh', 'th', 'th_voiced'].includes(sound));
+  return Boolean(s) && !s!.whole && (s!.cls === 'vowel' || s!.cls === 'continuant' || ['s', 'sh', 'th', 'th_voiced'].includes(sound));
+}
+
+/** How the bridge plays a sound's clip (src/audio/holdSound.ts's HoldMode): held, once (its burst, no "uh"), or whole. */
+export function bridgeMode(sound: string): 'hold' | 'once' | 'whole' {
+  return SOUND_BY_UNIT[sound]?.whole ? 'whole' : canHold(sound) ? 'hold' : 'once';
 }

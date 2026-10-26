@@ -26,9 +26,9 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { inflateRawSync } from 'node:zlib';
 
-import { canHold } from '../../content/phonics/letters.js';
+import { bridgeMode } from '../../content/phonics/letters.js';
 import { letterSoundLine, wordLine } from '../../content/voice/ids.js';
-import { holdPlan, holdSamples } from '../../src/audio/holdSound.js';
+import { holdPlan, holdSamples, type HoldMode } from '../../src/audio/holdSound.js';
 import { describeMissing, writeMissing } from '../recorder/missing.js';
 import { scratchArg, scratchPath } from '../scratch.js';
 import { readLines, runMain } from '../shared.js';
@@ -85,18 +85,18 @@ export function unzip(buf: Buffer): Map<string, Buffer> {
 // ---- One take --------------------------------------------------------------
 
 export interface HoldCheck {
-  mode: 'hold' | 'once';
-  asked: 'hold' | 'once';
+  mode: HoldMode;
+  asked: HoldMode;
   playedS: number;
   steadyS?: number;
   ok: boolean;
 }
 
-/** What the bridge makes of a clip: a held sound needs a steady part of MIN_STEADY_S or more. */
-export function holdCheck(x: Float32Array, rate: number, asked: 'hold' | 'once'): HoldCheck {
+/** What the bridge makes of a clip: a held sound needs a steady part of MIN_STEADY_S or more; a whole one (F, item 162) is taken as it is. */
+export function holdCheck(x: Float32Array, rate: number, asked: HoldMode): HoldCheck {
   const p = holdPlan(x, rate, asked);
   const steadyS = p.steadyStart === undefined ? undefined : (p.end - p.steadyStart) / rate;
-  const ok = asked === 'once' ? p.mode === 'once' : p.mode === 'hold' && (steadyS ?? 0) >= MIN_STEADY_S;
+  const ok = asked !== 'hold' ? p.mode === asked : p.mode === 'hold' && (steadyS ?? 0) >= MIN_STEADY_S;
   return { mode: p.mode, asked, playedS: (p.end - p.start) / rate, ...(steadyS === undefined ? {} : { steadyS }), ok };
 }
 
@@ -130,7 +130,7 @@ interface TakeResult {
 const cardOf = (group: string) => Number(group.replace(/\D/g, '')) || 0;
 
 /** The bridge's cut, as the bridge plays it: once (item 090: nothing loops). */
-function preview(x: Float32Array, rate: number, mode: 'hold' | 'once'): Float32Array {
+function preview(x: Float32Array, rate: number, mode: HoldMode): Float32Array {
   return holdSamples(x, holdPlan(x, rate, mode), rate);
 }
 
@@ -157,7 +157,7 @@ export function processTake(group: string, raw: Float32Array, rate: number, entr
     const cuts = split.cuts.slice(k, k + 1 + e.repeats);
     k += 1 + e.repeats;
     const word = clip(cuts[0]!, e.word.toUpperCase());
-    const asked = canHold(e.sound) ? 'hold' : 'once';
+    const asked = bridgeMode(e.sound);
     if ((e.kind === 'hold') !== (asked === 'hold')) res.notes.push(`card ${card}: the recorder asked for ${e.sound} as ${e.kind}, the game plays it ${asked}`);
     const repeats = cuts.slice(1).map((c, n) => {
       const r = clip(c, `${e.sound} r${n + 1}`);

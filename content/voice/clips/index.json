@@ -6,12 +6,12 @@
       "speaker": "phonics",
       "spoken": "fan!",
       "spokenHash": "6cf1aa47716e5e43",
-      "audio": "word_fan.57ef78d4.mp3",
+      "audio": "word_fan.46b4d02e.mp3",
       "words": [
         {
           "word": "fan",
           "start": 0,
-          "end": 1.03
+          "end": 0.91
         }
       ],
       "ingested": "2026-10-26"
@@ -1101,12 +1101,12 @@
       "speaker": "phonics",
       "spoken": "Fuh.",
       "spokenHash": "197bcde2f2091a5b",
-      "audio": "letter_f_sound.4bd815d5.mp3",
+      "audio": "letter_f_sound.c2bb157b.mp3",
       "words": [
         {
           "word": "Fuh",
           "start": 0,
-          "end": 1.5300208333333334
+          "end": 0.56
         }
       ],
       "ingested": "2026-10-26"

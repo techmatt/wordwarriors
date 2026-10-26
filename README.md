@@ -700,7 +700,10 @@ storage, and `?only=f` shares `g02f` with `?only=f,a`. Its zip is
 **`?missing`** (item 108; derived since item 158) is `?only=` with the page's `MISSING`
 list, its zip `phonics-<name>-missing.zip`. `MISSING` is every sound a live bank word
 sounds out (`LIVE`'s `sounds`) whose `letter_<x>_sound` has no good recording: no clip,
-or a stale one (`clipStateFor`). `EXTRA` is a card for each live sound the full set lacks:
+or a stale one (`clipStateFor`), or one Matt wants done again: the sound's `rerecord`
+in `content/phonics/letters.ts` names the clip file, and the sound is asked for (as
+`rerecord`, with its `why`) until an import replaces that file (item 162: S, heard
+wrong in CHIPS). `EXTRA` is a card for each live sound the full set lacks:
 the sound's `example` word if live (else the first live word with it), its letters lit,
 the tip from the sound's `record` in `content/phonics/letters.ts`. Both are the page's
 `missing:begin` / `missing:end` block, written by **`npm run recorder:missing`**
@@ -708,7 +711,9 @@ the tip from the sound's `record` in `content/phonics/letters.ts`. Both are the 
 use it. `voice:lines` (a word added) and `voice:import` (a sound recorded) run it, and
 `tests/unit/recorder.test.ts` fails while the block is out of date. When the block
 changes, the planner syncs the hosted copy. On 2026-10-25 `?missing` was A (stale since
-item 085's carrier), F, long OO, the schwa and OW; item 161 imported all five, and it is now empty.
+item 085's carrier), F, long OO, the schwa and OW; item 161 imported all five. Since item
+162 it is S, a re-record (**`phonics-recorder.html?missing`**, the hosted copy once the
+planner syncs it).
 
 The zip holds `manifest.json` (format `phonics-recorder/2`: `recorder`, the speaker's
 name, now required; each take's card `group` `g01`…`g12`, or a targeted page's `g02f`, `entries` of sound, word,
@@ -767,6 +772,14 @@ Matt's recording 4 (`phonics-matt-missing.zip`, 2026-10-25, the `?missing` page'
 cards, item 161): CAT's A, FAN's F, ZOO's long OO, ZEBRA's schwa and COW's OW, with
 their words. F again held only 0.09 s against the 0.1 s bar; Matt had it go in anyway
 (`--take g02f --allow-short`), to judge by ear on the listen-through page.
+
+Matt's recording 5 (`phonics-matt-missing_fan.zip`, 2026-10-25, item 162): only FAN's
+card (`--take g02f`) went in, F said "fuh". Matt: "the held fff doesn't sound good no
+matter how it is done ... go with a fuh version". F is no longer a held sound
+(`canHold`); it is `whole` in `content/phonics/letters.ts`, so the bridge plays its clip
+uncut (`bridgeMode`, `holdPlan`'s `whole` mode) instead of a stop's cut before the vowel,
+the importer takes any repeat (no hold check), and the recorder's F card asks for
+"fuh" as a short sound.
 
 ### Listening through the sounds: `listen.html`
 

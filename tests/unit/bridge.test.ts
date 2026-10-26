@@ -11,7 +11,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
-import { SOUND_BY_UNIT, canHold, heardAs } from '../../content/phonics/letters';
+import { SOUND_BY_UNIT, bridgeMode, canHold, heardAs } from '../../content/phonics/letters';
 import { lookalikesOf } from '../../content/phonics/sentences';
 import { PLACES, SIDE_ROOMS, gapFor } from '../../content/house/house';
 import { narratorLine } from '../../content/voice/ids';
@@ -129,10 +129,14 @@ test('held sounds: the cut is the same at 48 kHz as at 24 kHz (the browser decod
   }
 });
 
-test('held sounds: the vowels, hums and hisses hold; stops, H, W, Y and X play once', () => {
-  for (const s of [...'aeioumnlrvzsf', 'sh', 'th', 'long_e', 'long_o']) assert.ok(canHold(s), s);
-  for (const s of [...'bcdgkptjhwyxq', 'ch', 'ck']) assert.ok(!canHold(s), s);
+test('held sounds: the vowels, hums and hisses hold; stops, H, W, Y and X play once; F (a "fuh") plays whole', () => {
+  for (const s of [...'aeioumnlrvzs', 'sh', 'th', 'long_e', 'long_o']) assert.ok(canHold(s), s);
+  for (const s of [...'bcdgkptjhwyxqf', 'ch', 'ck']) assert.ok(!canHold(s), s);
   for (const s of Object.keys(SOUND_BY_UNIT)) assert.equal(typeof canHold(s), 'boolean');
+  assert.deepEqual(['m', 't', 'f'].map(bridgeMode), ['hold', 'once', 'whole']);
+  const x = clip(['quiet', 0.1], ['noise', 0.2, 0.01], ['tone', 0.4, 0.3, 120], ['quiet', 0.1]);
+  assert.deepEqual(holdPlan(x, RATE, 'whole'), { mode: 'whole', start: 0, end: x.length });
+  assert.equal(holdSamples(x, holdPlan(x, RATE, 'whole'), RATE).length, x.length);
 });
 
 // ---- The word draw --------------------------------------------------------

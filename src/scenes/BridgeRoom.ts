@@ -47,7 +47,7 @@
 
 import Phaser from 'phaser';
 
-import { canHold } from '../../content/phonics/letters';
+import { bridgeMode } from '../../content/phonics/letters';
 import { gapFor, SIDE_ROOM_BY_ID, type BridgeGap } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
 import { readPraise, variant } from '../episode/lineVariants';
@@ -503,7 +503,7 @@ export class BridgeRoom extends HouseSideRoom {
     const s = this.stones[i];
     this.pendingSound = false;
     if (!s) return;
-    const held = voiceBus.hold(letterSoundLine(s.sound), canHold(s.sound) ? 'hold' : 'once', BRIDGE.stretchMs);
+    const held = voiceBus.hold(letterSoundLine(s.sound), bridgeMode(s.sound), BRIDGE.stretchMs);
     if (held) this.held = held;
     else this.pendingSound = true;
   }
@@ -644,8 +644,8 @@ export class BridgeRoom extends HouseSideRoom {
       const s = this.stones[i]!;
       this.tweens.add({ targets: orb, x: s.x, duration: 160, ease: 'Sine.easeInOut' });
       this.light(i);
-      const held = voiceBus.hold(letterSoundLine(s.sound), canHold(s.sound) ? 'hold' : 'once', BRIDGE.stretchMs);
-      await this.wait(canHold(s.sound) ? BRIDGE.replayMs : REPLAY_ONCE_MS);
+      const held = voiceBus.hold(letterSoundLine(s.sound), bridgeMode(s.sound), BRIDGE.stretchMs);
+      await this.wait(bridgeMode(s.sound) !== 'once' ? BRIDGE.replayMs : REPLAY_ONCE_MS);
       held?.release();
       if (f !== this.flow) {
         orb.destroy();

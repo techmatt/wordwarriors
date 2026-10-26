@@ -232,12 +232,13 @@ export const CHARGE = {
  * is held, so how slowly she slides is how slowly she stretches the word.
  * `words` per visit, `pictures` on the far bank (the word's included).
  * `slide`: her speed on the stones, a share of her walking speed. A held
- * sound (a vowel, M N L R V Z, F S SH TH: `canHold`) is one short natural
+ * sound (a vowel, M N L R V Z, S SH TH: `canHold`) is one short natural
  * stretch, `stretchMs` long in all, its 0.2 s fade-out included
  * (src/audio/holdSound.ts), then quiet for as long as she stays on its stone:
  * no repeat (item 085, Matt's call, to revisit once the phonics clips are
  * final; it was 1.3 s and sounded again every 2 s). A stop sound (P T K B D
- * G, and H W Y X CH) plays once, its burst only, each time she steps on.
+ * G, and H W Y X CH) plays once, its burst only, each time she steps on;
+ * F (Matt's "fuh", item 162) plays its whole clip.
  * Each word has its own help level: 1 = the
  * stones sound themselves and the pictures show from the start; 2 = silent
  * stones, Dad's 2 is a hint (they sound); 3 = she says the word aloud first,

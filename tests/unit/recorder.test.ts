@@ -11,6 +11,7 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { tag } from '../../content/phonics/bank';
+import { SOUND_BY_UNIT } from '../../content/phonics/letters';
 import { readClipIndex, spokenHash, type ClipIndex } from '../../tools/voice/clips';
 import { processTake } from '../../tools/voice/import';
 import { missingBlock, missingSounds, pageCards, RECORDER_PAGE, withMissingBlock } from '../../tools/recorder/missing';
@@ -76,6 +77,18 @@ test('recorder: a sound is missing with no clip or a stale one; one the full set
   assert.deepEqual(c.ids, ['g07a', 'g13ow']);
   assert.equal(c.groups[1]![0]!.word, 'C[OW]');
   assert.equal(c.groups[1]![0]!.kind, 'hold');
+});
+
+test('recorder: a sound marked rerecord is asked for until a new take replaces its clip (item 162: S)', () => {
+  const live = [tag({ word: 'sun', role: 'thing' })];
+  const l: LineSpec = { id: 'letter_s_sound', speaker: 'phonics', group: 'letters', text: 'Suh.' };
+  const redo = SOUND_BY_UNIT.s!.rerecord!;
+  const index = (audio: string): ClipIndex => ({ version: 1, clips: { letter_s_sound: { provider: 'matt', speaker: 'phonics', spoken: l.text, spokenHash: spokenHash(l), audio, words: [], ingested: '2026-10-25' } } });
+  // Only S has a line here, so U and N read as missing too: look at S alone.
+  const s = (audio: string) => missingSounds([l], index(audio), live).filter((m) => m.sound === 's');
+  assert.deepEqual(s(redo.clip).map((m) => m.state), ['rerecord']);
+  assert.deepEqual(s('letter_s_sound.00000000.mp3'), []);
+  assert.deepEqual(pageCards(withMissingBlock(html, missingBlock(html, s(redo.clip), live)), '?missing').cards.ids, ['g01s']);
 });
 
 // ---- A targeted take imports ------------------------------------------------

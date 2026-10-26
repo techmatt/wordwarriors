@@ -12,10 +12,10 @@ Firefly / recording-folder loop from Seraphina's Secret (`voice:tasks`,
    cards. Each card is three words, and each word is followed by its sound three times:
    "VAN … vvvv … vvvv … vvvv …… PIG … p … p … p ……". Leave at least half a second
    between sounds and a second before the next word. Stretch held sounds (half a
-   second or so is enough, with no "uh": "ffff", not "fuh"), and keep short sounds
-   crisp. A hiss (S, SH, F, TH) can be much quieter than the word; that's fine. For F,
-let the breath stop after "ffff" with no "uh" at all, even a quiet one (the importer
-measures the hiss against the voiced "uh" and keeps too little); L passes only with a
+   second or so is enough, with no "uh": "ssss", not "suh"), and keep short sounds
+   crisp. A hiss (S, SH, TH) can be much quieter than the word; that's fine. F is said
+"fuh", with its "uh" (item 162, Matt: a held "ffff" never sounded good), and plays
+whole; L passes only with a
 long "llll", so make it longer than feels needed. The page counts the
    sounds in each take as soon as it stops, and saves a take automatically only when
    all 12 are there.
@@ -43,8 +43,9 @@ imports the same way (`--take g07a` for one).
 **Just the missing sounds** (item 108): `?missing` on the end is `?only=` with every sound
 the game sounds out that has no good recording yet, worked out from the word bank and
 the recordings (`npm run recorder:missing`, README, *Matt's recordings*), and adding a card
-for a sound the 12 cards lack (OW in COW, the lazy A at the end of ZEBRA). Its zip is
-`phonics-<name>-missing.zip`. **F** is "ffff" with no "uh"; **A** is CAT's steady vowel
+for a sound the 12 cards lack (OW in COW, the lazy A at the end of ZEBRA). A sound Matt
+wants done again is on it too (its `rerecord` in `content/phonics/letters.ts`; S since
+item 162). Its zip is `phonics-<name>-missing.zip`. **F** is "fuh" (item 162); **A** is CAT's steady vowel
 (card 7 says CAT since item 158, not ANT), not sliding toward I.
 
 ## Any other line: `voice:clip`

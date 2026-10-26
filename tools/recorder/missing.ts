@@ -2,7 +2,9 @@
  * `npm run recorder:missing` (item 158): the phonics recorder's `?missing`,
  * derived. Every sound a live bank word sounds out (`LIVE`'s `sounds`) whose
  * `letter_<x>_sound` line has no good recording (no clip, or a stale one:
- * `clipStateFor`) goes into the page's `MISSING`, and every such sound the
+ * `clipStateFor`; or, item 162, a recording Matt wants done again: the sound's
+ * `rerecord` in content/phonics/letters.ts, until a new take replaces that
+ * clip) goes into the page's `MISSING`, and every such sound the
  * page's full set has no card for gets one of its own in `EXTRA` (the word
  * from the bank, the sound's `record` tip from content/phonics/letters.ts).
  * It rewrites the page's `missing:begin` / `missing:end` block and prints
@@ -38,9 +40,10 @@ export interface RecorderEntry {
 }
 export interface MissingSound {
   sound: string;
-  /** `edge-tts`: no clip; `stale`: a clip of a line that has changed since. */
-  state: 'edge-tts' | 'stale';
+  /** `edge-tts`: no clip; `stale`: a clip of a line that has changed since; `rerecord`: a clip to be done again (`why`). */
+  state: 'edge-tts' | 'stale' | 'rerecord';
   words: string[];
+  why?: string;
 }
 
 /** The page's cards block, run: its full set and its card lookup. */
@@ -64,7 +67,9 @@ export function missingSounds(lines: LineSpec[], index: ClipIndex, words: BankWo
   for (const [sound, ws] of liveSounds(words)) {
     const line = byId.get(letterSoundLine(sound));
     const state = line ? clipStateFor(line, index).state : 'missing';
+    const redo = SOUND_BY_UNIT[sound]?.rerecord;
     if (state !== 'fresh') out.push({ sound, state: state === 'stale' ? 'stale' : 'edge-tts', words: ws });
+    else if (redo && index.clips[line!.id]?.audio === redo.clip) out.push({ sound, state: 'rerecord', words: ws, why: redo.why });
   }
   return out;
 }
@@ -109,7 +114,7 @@ export function describeMissing(missing: MissingSound[]): string[] {
   if (!missing.length) return ['recorder ?missing: nothing (every sound live words sound out is recorded)'];
   return [
     `recorder ?missing: ${missing.map((m) => m.sound).join(' ')}`,
-    ...missing.map((m) => `  ${m.sound.padEnd(8)} ${m.state.padEnd(8)} ${m.words.join(' ').toUpperCase()}`),
+    ...missing.map((m) => `  ${m.sound.padEnd(8)} ${m.state.padEnd(8)} ${m.words.join(' ').toUpperCase()}${m.why ? ` (${m.why})` : ''}`),
   ];
 }
 
