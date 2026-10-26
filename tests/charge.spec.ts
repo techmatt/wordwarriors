@@ -8,7 +8,8 @@
  * Dad's real key 2, nothing asked before the read; dad lock (the say-back
  * beat waits, the keys stay live) and the read's timeout, which goes solo
  * (item 106: read with the helper, modelled). Untagged too: solo from the
- * start, Dad's 2 mid-room switching back. Its whole drawn
+ * start, Dad's 2 mid-room switching back; the battle runes' 250 ms beat
+ * between sounds (hunt 12, M83, ~5 s). Its whole drawn
  * episodes are the soak's (tests/soak.spec.ts, item 081). Item 140: two
  * words a visit, each a round opening with all its sounds; every test plays
  * both. Screenshots land in tests/screenshots/ (ignored) for a look.
@@ -17,7 +18,9 @@
 import { test, expect } from '@playwright/test';
 
 import { SLOW, boot, collectErrors, dad, dadLock, expectNoErrors, shotIn, state, texts, until, type WW, type WWState } from './harness';
-import { qaLayout } from './qa/probe';
+import { qaLayout, qaSince } from './qa/probe';
+import { soundGapIssues } from './qa/checks';
+import { RUNE_SOUND_BEAT_MS } from '../src/config';
 import { CHARGE_WORDS } from '../src/rules/charge';
 import { letterSoundLine, wordLine } from '../content/voice/ids';
 import { RUNE_BY_SOUND } from '../content/phonics/runes';
@@ -357,6 +360,26 @@ test('Charge the Spell: the charged runes fire as her hero\'s moves in the next 
   const at = await page.evaluate(() => (window as unknown as { __runeAt: Record<string, number> }).__runeAt);
   expect(at).toEqual({ letter_m_sound: 0, letter_s_sound: 1, letter_a_sound: 2 });
   await shot(page, 'battle');
+  expectNoErrors(errors);
+});
+
+test('M83: the battle\'s runes leave a 250 ms beat between one sound ending and the next starting', async ({ page }) => {
+  test.setTimeout(90_000);
+  const errors = collectErrors(page);
+  // Real voice and the checker's probe (`?qa=1`): its voice log has each line's start (game clock) and clip length.
+  // Hunt 12 measured F-R-O-G at -20 to 15 ms clip end to next start (M62's back to back).
+  await boot(page, '?scene=battle&part=1&battle=short&charged=f,r,o,g&nojourney=1&qa=1', undefined, { voice: 'real' });
+  const ids = ['f', 'r', 'o', 'g'].map(letterSoundLine);
+  await until(page, (st) => st.scene === 'Battle' && ids.every((id) => st.voice.history.includes(id)), 60_000, 'the four runes said');
+  const q = await qaSince(page, 0);
+  const said = q.voice.filter((v) => v.scene === 'Battle' && ids.includes(v.id));
+  expect(said.map((v) => v.id)).toEqual(ids);
+  expect(said.every((v) => !v.silent && v.dur !== undefined)).toBe(true);
+  const gaps = said.slice(1).map((v, i) => v.t - said[i]!.t - said[i]!.dur! * 1000);
+  console.log(`M83: rune sound gaps ${gaps.map((g) => Math.round(g)).join(', ')} ms (game time)`);
+  for (const g of gaps) expect(g).toBeGreaterThanOrEqual(RUNE_SOUND_BEAT_MS - 10);
+  // The checker's `sound-gap` takes the battle's volley in (M83 (b)).
+  expect(soundGapIssues(q.voice, q.locks)).toEqual([]);
   expectNoErrors(errors);
 });
 

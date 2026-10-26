@@ -702,41 +702,145 @@ const grow: Cast = (w, f, ab, _target, mult) => {
   w.after(400, () => shake(s, 5, 400));
 };
 
+/**
+ * The coil's depth (hunt 12, M81): on the floor under every fighter (a fighter's depth is its feet's y, from
+ * FLOOR_TOP down; its afterimage is at y - 1), over the stages' floor marks and the fight's darkening.
+ */
+export const COIL_DEPTH = FLOOR_TOP - 1.5;
+
+/**
+ * A serpent's body coiled on the floor (hunt 12, M81, Matt's call (a)): one tapered body, drawn, that winds a turn
+ * and a bit round (0, 0), thick at the head end and thin to the tail, its back patterned, plus its head with eyes
+ * and a forked tongue in a second Graphics, both in the same local space so one scale moves them together. `rx`
+ * and `ry` are the ring's radii (flat: it lies on the floor); `w` the body's width at the head end.
+ */
+function drawSerpent(body: Phaser.GameObjects.Graphics, head: Phaser.GameObjects.Graphics | null, rx: number, ry: number, w: number, skin: number, mark: number, eye: number): void {
+  const N = 72;
+  const TURN = 1.15;
+  // The head ends at the front (the bottom of the ring), a little right of middle.
+  const end = Math.PI * 0.5 - 0.45;
+  const start = end - TURN * Math.PI * 2;
+  const at = (u: number) => {
+    const a = start + (end - start) * u;
+    // The tail end lies a little inside the ring, so the head end's lap passes over it.
+    const k = 1 - 0.14 * (1 - u);
+    return { x: Math.cos(a) * rx * k, y: Math.sin(a) * ry * k };
+  };
+  const width = (u: number) => w * (0.12 + 0.88 * Math.pow(u, 0.55));
+  const pts = Array.from({ length: N + 1 }, (_, i) => at(i / N));
+  const normal = (i: number) => {
+    const a = pts[Math.max(0, i - 1)]!;
+    const b = pts[Math.min(N, i + 1)]!;
+    const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+    return { x: -(b.y - a.y) / len, y: (b.x - a.x) / len };
+  };
+  const side = pts.map((p, i) => {
+    const n = normal(i);
+    const h = width(i / N) / 2;
+    return { l: { x: p.x + n.x * h, y: p.y + n.y * h }, r: { x: p.x - n.x * h, y: p.y - n.y * h } };
+  });
+  body.clear();
+  // Tail to head, a quad a step, each with its own edges: the head end's lap covers the tail's.
+  for (let i = 0; i < N; i++) {
+    const a = side[i]!;
+    const b = side[i + 1]!;
+    body.fillStyle(skin, 1).fillPoints([a.l, b.l, b.r, a.r], true);
+    body.lineStyle(3, mark, 0.6).lineBetween(a.l.x, a.l.y, b.l.x, b.l.y).lineBetween(a.r.x, a.r.y, b.r.x, b.r.y);
+    // The back's diamonds, every few steps, as wide as the body there.
+    if (i % 4 === 2) {
+      const p = pts[i]!;
+      const n = normal(i);
+      const t = { x: n.y, y: -n.x };
+      const h = width(i / N) * 0.26;
+      body.fillStyle(mark, 0.85).fillPoints([
+        { x: p.x + t.x * h * 1.6, y: p.y + t.y * h * 1.6 },
+        { x: p.x + n.x * h, y: p.y + n.y * h },
+        { x: p.x - t.x * h * 1.6, y: p.y - t.y * h * 1.6 },
+        { x: p.x - n.x * h, y: p.y - n.y * h },
+      ], true);
+    }
+  }
+  if (!head) return;
+  head.clear();
+  const p = pts[N]!;
+  const n = normal(N);
+  const t = { x: n.y, y: -n.x };
+  // Facing on along the lap it is coiling (t points back down the body: forward is -t).
+  const fwd = { x: -t.x, y: -t.y };
+  const c = { x: p.x + fwd.x * w * 0.45, y: p.y + fwd.y * w * 0.45 - w * 0.25 };
+  const ring = Array.from({ length: 24 }, (_, i) => {
+    const a = (i / 24) * Math.PI * 2;
+    const along = Math.cos(a) * w * (Math.cos(a) > 0 ? 0.95 : 0.7);
+    const across = Math.sin(a) * w * 0.62;
+    return { x: c.x + fwd.x * along + n.x * across, y: c.y + fwd.y * along + n.y * across };
+  });
+  head.fillStyle(skin, 1).fillPoints(ring, true);
+  head.lineStyle(3, mark, 0.75).strokePoints(ring, true);
+  // A forked tongue from the snout.
+  const tip = { x: c.x + fwd.x * w * 0.95, y: c.y + fwd.y * w * 0.95 };
+  const fork = { x: tip.x + fwd.x * w * 0.45, y: tip.y + fwd.y * w * 0.45 };
+  head.lineStyle(Math.max(2, w * 0.07), 0xff3a6a, 1).lineBetween(tip.x, tip.y, fork.x, fork.y);
+  for (const sgn of [1, -1]) head.lineBetween(fork.x, fork.y, fork.x + fwd.x * w * 0.2 + n.x * sgn * w * 0.14, fork.y + fwd.y * w * 0.2 + n.y * sgn * w * 0.14);
+  // Two eyes on top of the head, glowing in the eye colour, with slit pupils.
+  for (const sgn of [1, -1]) {
+    const e = { x: c.x + fwd.x * w * 0.3 + n.x * sgn * w * 0.3, y: c.y + fwd.y * w * 0.3 + n.y * sgn * w * 0.3 - w * 0.08 };
+    head.fillStyle(eye, 0.35).fillCircle(e.x, e.y, w * 0.24);
+    head.fillStyle(eye, 1).fillCircle(e.x, e.y, w * 0.16);
+    head.fillStyle(0x000000, 1).fillEllipse(e.x, e.y, w * 0.07, w * 0.24);
+  }
+}
+
 const coil: Cast = (w, f, ab, _target, mult) => {
   const s = w.stage;
   const enemies = w.enemiesOf(f);
   if (!enemies.length) return;
   w.busy(f, 1500);
-  const cx = enemies.reduce((n, e) => n + e.x, 0) / enemies.length;
-  const cy = enemies.reduce((n, e) => n + e.cy, 0) / enemies.length;
-  const segs: Phaser.GameObjects.Arc[] = [];
-  const N = 26;
-  // `choiceClear` (hunt 12): its discs lay across a ring, veiled, through a choice.
-  for (let i = 0; i < N; i++) segs.push(s.add.circle(cx, cy, 26 * Math.sqrt(mult), i % 2 ? f.init.palette[0] : f.init.palette[1]).setStrokeStyle(3, 0x000000, 0.4).setDepth(DEPTH.fx).setData('choiceClear', true));
-  let r = 420;
+  // Round their feet, on the floor (hunt 12, M81: round their middles, at effect depth, its discs covered their faces
+  // and speech bubbles).
+  const xs = enemies.map((e) => e.x);
+  const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+  const cy = enemies.reduce((n, e) => n + e.y, 0) / enemies.length - 6;
+  const rx = Math.max(190, (Math.max(...xs) - Math.min(...xs)) / 2 + 110);
+  const ry = Math.min(80, rx * 0.36);
+  // A serpent's own (Crushing Coil, Snake Snuggle): its colours and a head. A word's (TUG's rope, TWIST's
+  // tornado): the ability's colours and no head.
+  const serpent = !ab.id.startsWith('word_');
+  const skin = serpent ? f.init.palette[0] : ab.color;
+  const mark = serpent ? f.init.palette[1] : (ab.color2 ?? 0xffffff);
+  const eye = f.team === 'villain' ? 0xff3a3a : 0xffd23f;
+  // `choiceClear` (hunt 12): a move choice hides it.
+  const body = s.add.graphics({ x: cx, y: cy }).setDepth(COIL_DEPTH).setName('coil_body').setData('choiceClear', true);
+  const head = serpent ? s.add.graphics({ x: cx, y: cy }).setDepth(COIL_DEPTH + 0.1).setName('coil_head').setData('choiceClear', true) : null;
+  drawSerpent(body, head, rx, ry, 40 * Math.sqrt(mult), skin, mark, eye);
+  const parts = head ? [body, head] : [body];
+  // It stays round their feet as they move (cast as they ran in, it was left lying off the screen's edge).
+  const follow = () => {
+    const now = w.enemiesOf(f);
+    if (!now.length || !body.active) return;
+    const nx = now.map((e) => e.x);
+    const x = (Math.min(...nx) + Math.max(...nx)) / 2;
+    const y = now.reduce((n, e) => n + e.y, 0) / now.length - 6;
+    for (const o of parts) o.setPosition(x, y);
+  };
+  s.events.on(Phaser.Scenes.Events.UPDATE, follow);
+  body.once(Phaser.GameObjects.Events.DESTROY, () => s.events.off(Phaser.Scenes.Events.UPDATE, follow));
+  // Sprites move by bob and squash/scale only: it tightens by scale, from wide round the arena in to their feet.
   const dur = (ab.duration ?? 3) * 1000;
-  let t = 0;
-  const ev = s.time.addEvent({
-    delay: 16,
-    loop: true,
-    callback: () => {
-      t += 16;
-      r = Phaser.Math.Linear(420, 140, Math.min(1, t / (dur * 0.6)));
-      segs.forEach((seg, i) => {
-        const a = (i / N) * Math.PI * 2 + t / 300;
-        seg.setPosition(cx + Math.cos(a) * r * 1.3, cy + Math.sin(a) * r * 0.55);
-      });
-    },
-  });
+  for (const o of parts) o.setScale(2.2).setAlpha(0);
+  s.tweens.add({ targets: parts, alpha: 1, duration: 250 });
+  s.tweens.add({ targets: parts, scale: 1, duration: dur * 0.45, ease: 'Quad.easeOut' });
   for (let k = 1; k <= 4; k++) {
     w.after((dur / 4) * k, () => {
       shake(s, 2, 100);
+      // Each squeeze once it is tight: a squash in, and out again.
+      if (body.active && k > 1 && k < 4) s.tweens.add({ targets: parts, scaleX: 0.9, scaleY: 1.06, duration: 110, yoyo: true });
       for (const e of w.enemiesOf(f)) w.hit(e, ab.power * mult * f.power * 0.3, ab.color, f);
     });
   }
   w.after(dur, () => {
-    ev.remove();
-    for (const seg of segs) s.tweens.add({ targets: seg, alpha: 0, scale: 2, duration: 300, onComplete: () => seg.destroy() });
+    if (!body.active) return;
+    s.tweens.killTweensOf(parts);
+    s.tweens.add({ targets: parts, alpha: 0, scale: 1.4, duration: 300, onComplete: () => parts.forEach((o) => o.destroy()) });
   });
 };
 

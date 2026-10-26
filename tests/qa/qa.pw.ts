@@ -249,11 +249,13 @@ const SCENARIOS: Scenario[] = [
   // and Comet Crash (156); the giants' edge clamp under knockback (155); voice priority and boot on a slow net (150).
   { name: 'drawn5_h12', query: 'cast=random&games=all', episodes: 5, batch: 'hunt12' },
   { name: 'bridge_f', query: 'seed=1201&room=bridge&bridge=fan,fox', episodes: 2, batch: 'hunt12' },
-  { name: 'bridge_f_wrong', query: 'seed=1202&room=bridge&bridge=frog,flag', wrong: true, batch: 'hunt12' },
+  // Hunt 12, M78: FROG FLAG GIFT ELF are off the bridge while F is whole (`?bridge=` warns and drops them), so
+  // these scenarios force the F words left, FAN FOX FISH; the flags below still try FROG as an odd value.
+  { name: 'bridge_f_wrong', query: 'seed=1202&room=bridge&bridge=fish,fan', wrong: true, batch: 'hunt12' },
   { name: 'bridge_f_d2', query: 'seed=1203&room=bridge&bridge=fox,fish&difficulty=2', progress: 'firm', batch: 'hunt12' },
-  { name: 'bridge_f_debug', query: 'seed=1204&room=bridge&bridge=fan,gift', debugAt: ['room_a', 'hub1'], batch: 'hunt12' },
+  { name: 'bridge_f_debug', query: 'seed=1204&room=bridge&bridge=fan,fish', debugAt: ['room_a', 'hub1'], batch: 'hunt12' },
   { name: 'bridge_f_parent', query: 'seed=1205&room=bridge&bridge=fox,fan', parentAll: true, batch: 'hunt12' },
-  { name: 'bridge_f_flaky', query: 'seed=1206&room=bridge&bridge=elf,frog', net: 'flaky', mash: true, batch: 'hunt12' },
+  { name: 'bridge_f_flaky', query: 'seed=1206&room=bridge&bridge=fish,fox', net: 'flaky', mash: true, batch: 'hunt12' },
   { name: 'shifter5_h12', query: 'cast=random&room=shifter', episodes: 5, batch: 'hunt12' },
   { name: 'shifter_wrong_h12', query: 'seed=1207&room=shifter', wrong: true, episodes: 2, batch: 'hunt12' },
   { name: 'shifter_lock', query: 'seed=1208&room=shifter', lockAll: true, batch: 'hunt12' },
@@ -271,11 +273,11 @@ const SCENARIOS: Scenario[] = [
   { name: 'charge_real', query: 'seed=1218&room=charge', batch: 'hunt12' },
   { name: 'rhyme_real', query: 'seed=1219&room=rhyme', batch: 'hunt12' },
   // Hunt 12's later rounds: odd input on the F bridge and the Shape-Shifter, and a long run.
-  { name: 'bridge_f_hidden', query: 'seed=1220&room=bridge&bridge=fox,frog', hide: true, resize: true, batch: 'hunt12' },
-  { name: 'bridge_f_reload', query: 'seed=1221&room=bridge&bridge=fan,flag', reloadAt: ['room_a', 'hub2'], batch: 'hunt12' },
-  { name: 'bridge_f_lock', query: 'seed=1222&room=bridge&bridge=fish,elf', lockAll: true, batch: 'hunt12' },
+  { name: 'bridge_f_hidden', query: 'seed=1220&room=bridge&bridge=fox,fish', hide: true, resize: true, batch: 'hunt12' },
+  { name: 'bridge_f_reload', query: 'seed=1221&room=bridge&bridge=fan,fish', reloadAt: ['room_a', 'hub2'], batch: 'hunt12' },
+  { name: 'bridge_f_lock', query: 'seed=1222&room=bridge&bridge=fish,fox', lockAll: true, batch: 'hunt12' },
   { name: 'bridge_f_voiceless', query: 'seed=1223&room=bridge&bridge=fan,fox', voiceless: true, batch: 'hunt12' },
-  { name: 'bridge_f_d3', query: 'seed=1224&room=bridge&bridge=frog,gift&difficulty=3', progress: 'firm', wrong: true, batch: 'hunt12' },
+  { name: 'bridge_f_d3', query: 'seed=1224&room=bridge&bridge=fox,fan&difficulty=3', progress: 'firm', wrong: true, batch: 'hunt12' },
   { name: 'shifter_hidden', query: 'seed=1225&room=shifter', hide: true, resize: true, mash: true, batch: 'hunt12' },
   { name: 'drawn8_h12', query: 'cast=random&games=all', episodes: 8, batch: 'hunt12' },
   // Hunt 12's completeness read: this hunt's choice fixes on the other stages, the giants on the heroes' side and on

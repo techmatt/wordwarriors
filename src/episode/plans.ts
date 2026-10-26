@@ -183,7 +183,8 @@ function forcedSentence(plan: RoomPlan[], fill: EpisodeInput['fill']): RoomPlan[
 function forcedBridge(plan: RoomPlan[]): RoomPlan[] {
   const asked = (urlQuery().get('bridge') ?? '').toLowerCase().split(',').filter(Boolean);
   const words = asked.filter((w) => CROSS_WORDS.includes(w));
-  // Said, not silently dropped (hunt 12: `bridge=fig,fin` crossed WEB, BOX and DRESS): only the bridge's own words.
+  // Said, not silently dropped (hunt 12: `bridge=fig,fin` crossed WEB, BOX and DRESS): only the bridge's own words
+  // (hunt 12, M78: so not FROG, FLAG, GIFT or ELF while F is played whole).
   if (words.length < asked.length) console.warn(`?bridge=: not a bridge word: ${asked.filter((w) => !words.includes(w)).join(', ')}`);
   if (!words.length) return plan;
   return plan.map((p) => {
@@ -224,7 +225,10 @@ function planInput(gift: string, rooms: [string, string], counterRoom: string): 
   // put BED back in play, and she reads it in the other games.
   const bed = ART_BY_ID.prop_bed?.glyph;
   const notKeys = BANK.filter((w) => bed && w.glyph === bed).map((w) => w.word);
-  return { fill, ally: episode.ally, gift, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore, notKeys };
+  // The things the counter room's backdrop paints (hunt 12, M85: the hideout's treasure chest behind
+  // ...DOES NOT LIKE THE CHEST): on screen while she reads the counter there, so never that word.
+  const notCounter = SIDE_ROOM_BY_ID[counterRoom]?.pictures ?? [];
+  return { fill, ally: episode.ally, gift, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore, notKeys, notCounter };
 }
 
 /**

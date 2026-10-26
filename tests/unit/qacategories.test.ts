@@ -11,6 +11,7 @@ import path from 'node:path';
 import { test } from 'node:test';
 
 import { decalIssues, fighterIssues, heroIssues, logIssues, onlyLineVariants, padReachIssues, panelIssues, ruledCover, soundGapIssues, spawnIssues, storeChanges, voiceBuildIssues, type Box } from '../qa/checks';
+import { RUNE_SOUND_BEAT_MS } from '../../src/config';
 import { britishIn, clippedIn, giveawayIssues, namesLetter, tauntIssues, variantIssues } from '../qa/wording';
 import type { WWState } from '../harness';
 
@@ -191,6 +192,15 @@ test('sound gaps (hunt 12): a sound-out whose letter sounds run together is a bu
   assert.deepEqual(soundGapIssues([v('letter_r_sound', 0), v('letter_i_sound', 700)], locks).map((i) => i.detail), ['letter_r_sound then letter_i_sound 100 ms apart (game time)']);
   // Her own: the bridge's slide, the Shape-Shifter's stones as she walks past them (unlocked).
   assert.deepEqual(soundGapIssues([v('letter_f_sound', 0, 'BridgeRoom'), v('letter_a_sound', 100, 'BridgeRoom')], locks), []);
+});
+
+test('sound gaps, M83 (hunt 12): the battle rune volley is checked with no lock; back to back is a bug, the 250 ms beat is not', () => {
+  const v = (id: string, t: number, dur = 0.5) => ({ t, id, scene: 'Battle', priority: 'instruction', text: '', noLine: false, silent: false, dur });
+  // M62's back to back: F-R-O-G 0 ms clip end to next start (h12c measured -20 to 15 ms).
+  const runes = (beat: number) => ['f', 'r', 'o', 'g'].map((s, i) => v(`letter_${s}_sound`, i * (500 + beat)));
+  assert.equal(soundGapIssues(runes(0), []).length, 3);
+  assert.deepEqual(soundGapIssues(runes(RUNE_SOUND_BEAT_MS), []), []);
+  assert.ok(RUNE_SOUND_BEAT_MS >= 250, 'M83 (b): a 250 ms beat');
 });
 
 test('text off its panel (item 128): the old attic banner\'s key word over the red trim is a bug; a word on the cream is not', () => {

@@ -154,13 +154,13 @@ Item 079 measured the old dev-server lanes from a cold worktree too: the first r
 lane to its 6-minute cap with three tests failing at "waiting for booted; scene=". The
 build has no cold start of that kind.
 
-Two `@slow` layout tests fail now and then and pass on the retry (item 141,
-2026-10-24; also on the code before it): `cover.spec` "the attic's find line" (its
-narrow box over a pedestal, 0.56 against 0.1) about one run in four alone: not a timing but a
-draw (hunt 12, twelve runs logged): a standing person among the pictures (KID, MAN, VET, M48's
-taller pictures) drops the row and her entry to y 650, and the box has no clear place (M82); and
-`banner.spec` "the widest fetch / counter sentence" (the dialogue box 20 px over Dad) about one
-in six. `test:slow` reports them as flaky, not failed.
+One `@slow` layout test fails now and then and passes on the retry (item 141,
+2026-10-24; also on the code before it): `banner.spec` "the widest fetch / counter sentence"
+(the dialogue box 20 px over Dad) about one in six. `test:slow` reports it as flaky, not failed.
+`cover.spec` "the attic's find line" (its narrow box over a pedestal) failed about one run in
+four until hunt 12's M82: not a timing but a draw, a standing person among the pictures (KID,
+MAN, VET) dropping the row and her entry to y 650. Under a two-row banner such a picture now
+stands the square's height, and the "M82" tests beside it force each of the three.
 
 ### Writing a browser test
 

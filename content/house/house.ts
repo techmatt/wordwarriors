@@ -74,12 +74,19 @@ export interface SideRoomSpec {
   spots: [number, number][];
   /** Where she comes in: above the dialogue box along the bottom (item 024), so it never hides her. */
   entry: { x: number; y: number };
+  /**
+   * Bank words its backdrop art plainly paints (hunt 12, M85: the hideout's treasure chest behind
+   * JORMUNGANDR DOES NOT LIKE THE CHEST). As the doors' signs: never the attic's counter word when this
+   * is the counter room (`planInput`'s `notCounter`), since the picture is on screen while she reads it.
+   * Listed for the counter rooms (the attic and every place's secret room) from their art.
+   */
+  pictures?: string[];
 }
 
 const SPOTS: [number, number][] = [[300, 470], [640, 470], [980, 470]];
 const ENTRY = { x: 640, y: 580 };
-function room(id: string, name: string, glyph: string, palette: [number, number], look: string): SideRoomSpec {
-  return { id, name, look, glyph, palette, spots: SPOTS, entry: ENTRY };
+function room(id: string, name: string, glyph: string, palette: [number, number], look: string, pictures?: string[]): SideRoomSpec {
+  return { id, name, look, glyph, palette, spots: SPOTS, entry: ENTRY, ...(pictures ? { pictures } : {}) };
 }
 
 /** Side rooms off the hub. Two are picked per episode for the fetch games; `attic` is the counter room. */
@@ -87,7 +94,7 @@ export const SIDE_ROOMS: SideRoomSpec[] = [
   room('kitchen', 'Kitchen', '🍳', [0xffe0b0, 0xc89a6a], 'A cartoon family kitchen: counters, a fridge with drawings, pots on hooks, a tiled floor'),
   room('playroom', 'Playroom', '🧸', [0xb0e0ff, 0xff9ad5], 'A bright playroom: toy boxes, a slide, beanbags, a carpet with a road map'),
   room('garage', 'Garage', '🔧', [0x9aa6b8, 0x5a6a7a], "A tidy garage: a workbench, bikes on the wall, Dada Jason's car under a sheet"),
-  { id: 'attic', name: 'Attic', look: 'A secret attic: sloped roof beams, old trunks, a round window with moonlight, cobwebs, a treasure-hunt feeling', glyph: '🧭', palette: [0x5a3a2a, 0xffc87a], spots: [[300, 480], [640, 480], [980, 480]], entry: { x: 640, y: 580 } },
+  { id: 'attic', name: 'Attic', look: 'A secret attic: sloped roof beams, old trunks, a round window with moonlight, cobwebs, a treasure-hunt feeling', glyph: '🧭', palette: [0x5a3a2a, 0xffc87a], spots: [[300, 480], [640, 480], [980, 480]], entry: { x: 640, y: 580 }, pictures: ['chest', 'web', 'rug'] },
 ];
 
 /** The home's fetch rooms (everything in the house but the counter room). */
@@ -139,7 +146,7 @@ export type BridgeGap = 'lava' | 'river' | 'chasm';
  * Secret rooms shared by the places drawn after the first eight (art budget,
  * item 025): any place may use it as its secret room.
  */
-const HIDEOUT = room('secret_hideout', 'Secret Hideout', '💎', [0x2a2a4a, 0x9ad8ff], 'A secret hideout: a cosy hidden cave with glowing blue and pink crystals, a little lantern, an old treasure chest, a treasure-hunt feeling');
+const HIDEOUT = room('secret_hideout', 'Secret Hideout', '💎', [0x2a2a4a, 0x9ad8ff], 'A secret hideout: a cosy hidden cave with glowing blue and pink crystals, a little lantern, an old treasure chest, a treasure-hunt feeling', ['chest', 'rock']);
 
 export const PLACES: PlaceSpec[] = [
   {
@@ -151,7 +158,7 @@ export const PLACES: PlaceSpec[] = [
       room('lumber_loft', 'Lumber Loft', '🌲', [0xc89a6a, 0x6a4a2a], 'The lumber loft in the treehouse: stacks of planks, a big saw bench, a pulley crane with a rope, sawdust on the floorboards, leaves at the windows'),
       room('tool_hut', 'Tool Hut', '🔧', [0xa0683a, 0xffd8a0], 'The tool hut up in the branches: pegboards of hammers and spanners, a long workbench, jars of nails and screws, a round window full of leaves'),
     ],
-    secret: room('treetop_lookout', 'Treetop Lookout', '🔭', [0x2a3a6a, 0xffd23f], 'The secret treetop lookout above the leaves at night: a round wooden platform, a brass telescope, a little flag, the moon and stars, a treasure-hunt feeling'),
+    secret: room('treetop_lookout', 'Treetop Lookout', '🔭', [0x2a3a6a, 0xffd23f], 'The secret treetop lookout above the leaves at night: a round wooden platform, a brass telescope, a little flag, the moon and stars, a treasure-hunt feeling', ['flag']),
   },
   {
     id: 'forest_gym', name: 'Forest Gym', glyph: '🏋️', palette: [0x6ac46a, 0xc89a6a], gap: 'river',
@@ -161,7 +168,7 @@ export const PLACES: PlaceSpec[] = [
       room('boulder_yard', 'Boulder Yard', '⛰️', [0x8a8a7a, 0x6ac46a], 'The boulder yard in the forest: round rocks of every size to lift, a stack of log barbells, a little stream with stepping stones, ferns'),
       room('climb_rocks', 'Climbing Rocks', '🧗', [0x9a7a5a, 0x6ac46a], 'The climbing rocks in the forest: a friendly mossy cliff with bright coloured climbing holds, ropes and a squashy crash mat, ferns and flowers all round'),
     ],
-    secret: room('waterfall_cave', 'Waterfall Cave', '💧', [0x2a5a7a, 0x9ad8ff], 'A secret cave behind a waterfall: a sparkling curtain of falling water, glowing crystals in the rock, a golden trophy on a stone, a treasure-hunt feeling'),
+    secret: room('waterfall_cave', 'Waterfall Cave', '💧', [0x2a5a7a, 0x9ad8ff], 'A secret cave behind a waterfall: a sparkling curtain of falling water, glowing crystals in the rock, a golden trophy on a stone, a treasure-hunt feeling', ['rock']),
   },
   {
     id: 'hacker_den', name: 'Hacker Den', glyph: '💻', palette: [0x1a1a3a, 0x3ae0ff], gap: 'chasm',
@@ -182,16 +189,17 @@ export const PLACES: PlaceSpec[] = [
       room('sword_yard', 'Sword Yard', '🎯', [0xe8c890, 0x2a4aa0], 'The sword yard of the mountain dojo: straw training dummies, wooden practice swords on racks, a sand circle, blue banners with rune shapes, peaks behind'),
       room('spell_library', 'Spell Library', '📚', [0x3a2a6a, 0x7ab8ff], 'The spell library of the mountain dojo: tall shelves of spell books, floating candles, a big crystal ball on a stand, a ceiling painted with stars'),
     ],
-    secret: room('crystal_vault', 'Crystal Vault', '💎', [0x1a2a5a, 0x7ab8ff], 'The secret crystal vault deep in the mountain: glowing blue crystals, a stone pedestal, a round rune door, a treasure-hunt feeling'),
+    secret: room('crystal_vault', 'Crystal Vault', '💎', [0x1a2a5a, 0x7ab8ff], 'The secret crystal vault deep in the mountain: glowing blue crystals, a stone pedestal, a round rune door, a treasure-hunt feeling', ['rock']),
   },
   {
     id: 'secret_kitchen', name: 'Secret Kitchen', glyph: '👨‍🍳', palette: [0xfff1d6, 0xe63946], gap: 'lava',
     look: "Dada Jason's secret kitchen hidden under the city, seen side-on: a huge cheerful restaurant kitchen with shiny copper pots, a giant pizza oven, hanging herbs, a checkered floor across the lower half, steam and twinkly lights",
     rooms: [
       room('pantry', 'Pantry', '🧀', [0xffd8a0, 0xc89a6a], 'The giant pantry of the secret kitchen: towering shelves of jars, flour sacks, cheese wheels, strings of garlic, a rolling ladder'),
-      room('bakery', 'Bakery', '🥐', [0xffe0b0, 0xff8c42], 'The bakery corner of the secret kitchen: ovens glowing warm, racks of bread and cakes, a giant mixer, flour dust in the air'),
+      // 🧁, not 🥐 (hunt 12, M84: the croissant on its disc read as a big letter C) nor 🎂 / 🍞 (CAKE's and BUN's pictures).
+      room('bakery', 'Bakery', '🧁', [0xffe0b0, 0xff8c42], 'The bakery corner of the secret kitchen: ovens glowing warm, racks of bread and cakes, a giant mixer, flour dust in the air'),
     ],
-    secret: room('sweet_cellar', 'Sweet Cellar', '🍫', [0x5a3a2a, 0xff9ad5], 'The secret dessert cellar: a chocolate fountain, ice-cream barrels, giant candy jars, fairy lights, a treasure-hunt feeling'),
+    secret: room('sweet_cellar', 'Sweet Cellar', '🍫', [0x5a3a2a, 0xff9ad5], 'The secret dessert cellar: a chocolate fountain, ice-cream barrels, giant candy jars, fairy lights, a treasure-hunt feeling', ['cake']),
   },
   {
     id: 'knight_camp', name: "Knights' Camp", glyph: '🏰', palette: [0x6ac46a, 0xe63946], gap: 'river',
@@ -201,7 +209,7 @@ export const PLACES: PlaceSpec[] = [
       room('armoury', 'Armoury', '🛡️', [0x8a8a9a, 0xe63946], 'The armoury tent of the knights camp: shiny suits of armour on stands, round shields on the walls, a forge glowing in the corner, a straw floor'),
       room('practice_ring', 'Practice Ring', '🎯', [0xc8a07a, 0xffd23f], 'The practice ring of the knights camp: a wooden fence ring, round straw targets, a wooden horse on wheels, flags flapping'),
     ],
-    secret: room('tower_room', 'Tower Room', '🧭', [0x4a4a5a, 0xffc87a], 'The secret room at the top of the castle tower: a round stone room, a great round window, an old chest, a sword stuck in a stone, torches, a treasure-hunt feeling'),
+    secret: room('tower_room', 'Tower Room', '🧭', [0x4a4a5a, 0xffc87a], 'The secret room at the top of the castle tower: a round stone room, a great round window, an old chest, a sword stuck in a stone, torches, a treasure-hunt feeling', ['chest', 'rock']),
   },
   {
     id: 'moon_tower', name: 'Purple Moon Tower', glyph: '🌙', palette: [0x3a1a5a, 0xb04aff], gap: 'chasm',
@@ -210,7 +218,7 @@ export const PLACES: PlaceSpec[] = [
       room('potion_room', 'Potion Room', '🧪', [0x2a1a4a, 0xff9ad5], 'The potion room of the purple-moon tower: shelves of glowing bottles, a bubbling cauldron, drying herbs, a big mushroom stool; cosy, not scary'),
       room('imp_nursery', 'Imp Nursery', '😈', [0x4a2a6a, 0xffd23f], 'The imp playroom of the purple-moon tower: tiny hammocks, little toy broomsticks, a heap of cushions, purple bunting, a rocking chair; cosy, not scary'),
     ],
-    secret: room('star_observatory', 'Star Observatory', '🔭', [0x0a0a2a, 0xb04aff], 'The secret observatory at the very top of the tower: a big brass telescope, a domed roof open to the stars, star charts, a treasure-hunt feeling'),
+    secret: room('star_observatory', 'Star Observatory', '🔭', [0x0a0a2a, 0xb04aff], 'The secret observatory at the very top of the tower: a big brass telescope, a domed roof open to the stars, star charts, a treasure-hunt feeling', ['chest']),
   },
   {
     id: 'bubble_castle', name: 'Bubble Castle', glyph: '💭', palette: [0xd8f0ff, 0xff9ad5], gap: 'river',
@@ -220,7 +228,7 @@ export const PLACES: PlaceSpec[] = [
       room('bubble_baths', 'Bubble Baths', '🛁', [0xbfefff, 0xff9ad5], 'The bubble baths of the cloud castle: big shell-shaped bathtubs overflowing with rainbow bubbles, yellow rubber ducks, a bubble slide'),
       room('toy_cloud', 'Toy Cloud', '🧸', [0xfff0f8, 0x9ad8ff], 'The toy cloud of the cloud castle: soft clouds piled with giant soft toys, a cloud trampoline, kites in a pastel sky'),
     ],
-    secret: room('rainbow_room', 'Rainbow Room', '🌈', [0x9ad8ff, 0xffd23f], 'The secret rainbow room of the cloud castle: a rainbow arching across, glittering stars, a crystal treasure chest, a treasure-hunt feeling'),
+    secret: room('rainbow_room', 'Rainbow Room', '🌈', [0x9ad8ff, 0xffd23f], 'The secret rainbow room of the cloud castle: a rainbow arching across, glittering stars, a crystal treasure chest, a treasure-hunt feeling', ['chest']),
   },
   {
     id: 'dragon_mountain', name: 'Dragon Mountain', glyph: '🐉', palette: [0xffb15a, 0x6a4a3a], gap: 'lava',

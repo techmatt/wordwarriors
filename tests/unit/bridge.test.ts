@@ -160,6 +160,27 @@ test('bridge words: pictured things with a short vowel; tiers are hold-sound CVC
   assert.ok(!BRIDGE_PICTURES.includes('mat'));
 });
 
+test("M78: no bridge word plays a whole sound (F's \"fuh\") anywhere but before a vowel; FAN FOX FISH cross, FROG FLAG GIFT ELF do not", () => {
+  const whole = Object.keys(SOUND_BY_UNIT).filter((s) => SOUND_BY_UNIT[s]!.whole);
+  assert.ok(whole.includes('f'), 'F is whole (item 162)');
+  const fits = (w: string) => {
+    const s = BANK_BY_WORD[w]!.sounds;
+    return s.every((x, i) => !whole.includes(x) || SOUND_BY_UNIT[s[i + 1] ?? '']?.cls === 'vowel');
+  };
+  for (const w of CROSS_WORDS) assert.ok(fits(w), `${w}: a whole sound off a vowel`);
+  for (const w of ['fan', 'fox', 'fish']) assert.ok(CROSS_WORDS.includes(w), `${w} crosses`);
+  for (const w of ['frog', 'flag', 'gift', 'elf']) {
+    assert.ok(THINGS.some((t) => t.word === w), `${w} is a bank thing`);
+    assert.ok(!CROSS_WORDS.includes(w), `${w} is off the bridge`);
+    assert.ok(BRIDGE_PICTURES.includes(w), `${w} still a far-bank picture`);
+  }
+  // Every draw, too.
+  for (let seed = 1; seed <= 40; seed++) {
+    const plan = planBridge(new ProgressStore(memory()), { avoid: [], taken: [] }, seeded(spread(seed)));
+    for (const w of bridgeWords(plan)) assert.ok(fits(w), `seed ${seed}: ${w}`);
+  }
+});
+
 test('bridge draw (item 067): a fresh store crosses any short word, every tier, never one over BRIDGE.maxUnits; the easier tier first', () => {
   for (const w of CROSS_WORDS) assert.ok(BANK_BY_WORD[w]!.units.length <= BRIDGE.maxUnits, w);
   assert.ok(CROSS_WORDS.length > 50);

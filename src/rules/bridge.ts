@@ -31,7 +31,7 @@
  */
 
 import { BANK_BY_WORD, THINGS, type BankWord } from '../../content/phonics/bank';
-import { canHold, heardAs } from '../../content/phonics/letters';
+import { SOUND_BY_UNIT, canHold, heardAs } from '../../content/phonics/letters';
 import { lookalikesOf } from '../../content/phonics/sentences';
 import { BRIDGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
@@ -62,8 +62,20 @@ const bridgeable = (w: BankWord) => w.vowel !== null;
 /** Every picture the bridge can show: the bank's familiar things with a short vowel (the words she crosses, CROSS_WORDS, are the short ones). */
 export const BRIDGE_PICTURES: string[] = THINGS.filter(bridgeable).map((w) => w.word);
 
-/** Every word she can cross: the short ones, BRIDGE.maxUnits sound units at most (item 067). */
-export const CROSS_WORDS: string[] = THINGS.filter((w) => bridgeable(w) && w.units.length <= BRIDGE.maxUnits).map((w) => w.word);
+/**
+ * Hunt 12, M78 (Matt's option c): a word whose `whole` sound (letters.ts, item
+ * 162's "fuh") stands anywhere but directly before a vowel is not crossed while
+ * that sound is played whole: its "uh" would land inside a blend or past the
+ * word's end (FROG "fuh-rrr-o-g", GIFT, ELF). FAN, FOX and FISH keep Matt's
+ * "fuh". Follows the flag, not a word list: a sound made `whole` (or no longer)
+ * moves its words off (or back on) by itself.
+ */
+export function wholeFits(sounds: readonly string[]): boolean {
+  return sounds.every((s, i) => !SOUND_BY_UNIT[s]?.whole || SOUND_BY_UNIT[sounds[i + 1] ?? '']?.cls === 'vowel');
+}
+
+/** Every word she can cross: the short ones, BRIDGE.maxUnits sound units at most (item 067), each `whole` sound before a vowel (hunt 12, M78). */
+export const CROSS_WORDS: string[] = THINGS.filter((w) => bridgeable(w) && w.units.length <= BRIDGE.maxUnits && wholeFits(w.sounds)).map((w) => w.word);
 
 /** How easy a word is to stretch, which orders a visit (not a gate, item 067): 1 a CVC word starting with a sound you can hold, 2 a CVC word starting with a stop, 3 a blend or digraph. */
 export function bridgeEase(word: string): BridgeEase {

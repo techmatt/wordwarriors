@@ -426,6 +426,16 @@ export const HEALTH_FLOORS = { main: 0.3, heroFloored: 0.06, heroFlooredHp: 0.08
 export const RUNE_GAP = 0.5;
 
 /**
+ * The beat between one battle rune's sound ending and the next rune's sound
+ * starting, ms (hunt 12, M83: back to back, F-R-O-G played -20 to 15 ms clip to
+ * clip, the word nearly blended; about 1 s on a four-rune word). On the battle's
+ * clock, as the clips' own length is at test speed (the harness plays them that
+ * many times faster), so it is 250 ms at real speed and the checker's `sound-gap`
+ * measures it; not cut by `?battle=short`.
+ */
+export const RUNE_SOUND_BEAT_MS = 250;
+
+/**
  * The Shape-Shifter (item 096, src/scenes/ShifterRoom.ts): the villain's
  * polymorph spell walks a creature down a chain of pictured CVC words, one
  * letter changed a link (CAT, BAT, BAG, BUG, MUG). `links` per visit (a

@@ -31,7 +31,24 @@ here.
   sound, and the bridge from a name to its sound ("R's name is Ar... squeeze off the
   front") is gone with the name lines (`docs/episode.md`, *No letter names*).
 
+- **A sound played whole stays off the bridge's blends** (hunt 12, M78, item 165): a word
+  crosses the Stretchy Bridge only when each sound flagged `whole` (`content/phonics/letters.ts`;
+  now F's "fuh") comes straight before a vowel (FAN FOX FISH, not FROG FLAG GIFT ELF). It
+  follows the flag: a sound made whole later is kept out the same way.
+- **What a room's backdrop paints is never its counter word** (hunt 12, M85, item 165): a
+  room's `pictures` (`content/house/house.ts`) are kept out of the attic's counter there,
+  as the doors' signs are kept out of words. A new counter room's art lists them.
+- **A door sign is no letter shape and no bank word's picture** (hunt 12, M84, item 165):
+  the bakery's 🥐 read as a C; it is 🧁.
+
 ## Play
+
+- **A beat between the battle's runes** (hunt 12, M83, item 165): 250 ms
+  (`RUNE_SOUND_BEAT_MS`) from one rune's sound ending to the next starting, so a word's
+  sounds never run together.
+- **A standing person never drops the sentence room's row** (hunt 12, M82, item 165): under
+  a banner of two rows or more, the pictures stand at the square's height, so the find box
+  has a clear place.
 
 - **Games rotate strictly** (item 137). No side room plays a game either side room played
   last episode while another fits (every fetch frame is the one sentence game), and the
@@ -65,6 +82,9 @@ here.
 - **Allies are drawn equal per person** (a dad with many forms is one person in the draw).
 - **Ellie's sword word stays ZIP.**
 - **Seraphina's pink dragon stays a Dragon Call summon** (`dragon_call`), not art on her.
+- **The Crushing Coil is a snake under the fighters** (hunt 12, M81, item 165): a drawn,
+  tapered body with a head on the floor round the heroes' feet, below every fighter, never
+  discs over their faces.
 - **"Bough to your queen!" stays** (Evil Tiamat's `say` respelling of "Bow").
 
 ## Tunables Matt may want

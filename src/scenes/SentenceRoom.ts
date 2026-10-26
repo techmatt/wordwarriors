@@ -100,6 +100,10 @@ export class SentenceRoom extends HouseSideRoom {
   private tokenBoxes: Phaser.GameObjects.Container[] = [];
   /** The banner's height: 140 for one row, taller when the sentence wraps. */
   private bannerH = 140;
+  /** The banner's rows of words (`makeBanner`). */
+  private bannerRows = 1;
+  /** A cap on a picture's box (hunt 12, M82: a standing person no taller than the square under a two-row banner), or none. */
+  private picMax: { w: number; h: number } | undefined;
   /** The cream band's bottom edge, around the banner's middle (item 128): the read dot sits just under it. */
   private panelBottom = 70;
   /** Each token's Text objects: one for a frame word, one per letter for the key word. */
@@ -197,8 +201,12 @@ export class SentenceRoom extends HouseSideRoom {
     // sentence on two or three rows) moves them down the floor, never over them.
     const bannerBottom = this.banner.y + this.bannerH / 2;
     const highest = Math.min(...room.spots.slice(0, this.plan.objects.length).map(([, y]) => y));
+    // Hunt 12, M82 (Matt's call b): under a banner of two rows or more, a standing person (KID, MAN, VET, M48's
+    // taller pictures) stands the square's height, so the row need not drop. Dropped, her entry went to y 650 and
+    // with the banner over the top the find line's narrow box had no clear place: it sat on the pedestals.
+    this.picMax = this.bannerRows > 1 ? { w: Infinity, h: PIC_H } : undefined;
     // A standing person's picture is taller than the square (M48, `pictureSize`): the tallest one counts.
-    const picTop = PIC_TOP - PIC_H + Math.max(PIC_H, ...this.plan.objects.map((w) => pictureSize(this, this.wordArt(w), PIC_H, PIC_H).h));
+    const picTop = PIC_TOP - PIC_H + Math.max(PIC_H, ...this.plan.objects.map((w) => pictureSize(this, this.wordArt(w), PIC_H, PIC_H, this.picMax).h));
     // The thing she is next to grows by NEAR_SCALE from its feet (RoomScene), so its top rises too.
     const drop = Math.max(0, Math.ceil(bannerBottom + BANNER_GAP - (highest - picTop * NEAR_SCALE - PIC_BOB)));
     this.tallBanner = drop > 0;
@@ -222,7 +230,7 @@ export class SentenceRoom extends HouseSideRoom {
       const [x, y0] = room.spots[i]!;
       const y = y0 + drop;
       const pedestal = this.art('prop_pedestal', 170, 100);
-      const pic = this.art(this.wordArt(word), PIC_H, PIC_H, 0, -100);
+      const pic = this.art(this.wordArt(word), PIC_H, PIC_H, 0, -100, this.picMax);
       const spot = this.addSpot(word, x, y, [pedestal, pic], word === s.key);
       spot.obj.setData('pic', pic);
       // What must stay in view is the picture; the pedestal's foot may sit behind the dialogue box.
@@ -338,6 +346,7 @@ export class SentenceRoom extends HouseSideRoom {
     const panelH = 2 * PANEL_MARGIN + (rows.length - 1) * pitch + (inkBottom - inkTop) * KEY_GROW;
     const art = bannerArt(this, BANNER_W, panelH);
     this.bannerH = art.height;
+    this.bannerRows = rows.length;
     this.panelBottom = art.panel[3];
     rows.forEach((row, r) => {
       const [left, right] = overhang(row);

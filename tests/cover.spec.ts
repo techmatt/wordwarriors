@@ -18,6 +18,7 @@ import { REACH } from '../src/config';
 import { SLOW, boot, choose, collectErrors, expectNoErrors, hubGo, readToKeyWord, until, type WWState } from './harness';
 import { area, coverIssues, inter, type Issue } from './qa/checks';
 import { qaLayout as layout } from './qa/probe';
+import type { Rect } from '../src/qa/probe';
 
 /** Sample the layout every 200 ms for `ms` (our clock); every distinct cover issue seen. */
 async function sample(page: Page, ms: number, scene: string): Promise<{ issues: Issue[]; targets: number }> {
@@ -142,6 +143,42 @@ test("the attic's find line: the narrow box keeps off the pedestals as well as h
   for (const p of pedestals) expect(boxes.reduce((n, c) => n + inter(c.b, p.b), 0) / area(p.b), 'share of a pedestal under the box').toBeLessThanOrEqual(0.1);
   expectNoErrors(errors);
 });
+
+// Hunt 12, M82: the test above failed about one run in four, a draw: a standing person among the pictures (KID,
+// MAN, VET) dropped the row and her entry to y 650, and the box had no clear place. Matt's call (b): under a
+// two-row banner such a picture stands the square's height, so the row need not drop. Each forced as the key word.
+for (const word of ['vet', 'kid', 'man'] as const) {
+  test(`M82: the attic's find line with ${word.toUpperCase()} under a two-row banner: the row stays up and the box keeps off the pictures, the pedestals and her`, SLOW, async ({ page }) => {
+    const errors = collectErrors(page);
+    await boot(page, `?scene=room&slot=counter&villain=jormungandr&sentence=cannot_beat_the:${word}&nojourney=1&qa=1`);
+    const awake = await readToKeyWord(page);
+    expect(awake.room!.sentence!.key).toBe(word);
+    const s = await until(page, (st) => st.scene === 'SentenceRoom' && /_room_find$/.test(st.voice.speaking ?? ''), 60_000, 'the find line');
+    // Not dropped: she came in above the floor's foot (the drop put her at y 650).
+    expect(s.room!.player.y, 'her entry').toBeLessThan(640);
+    await page.waitForTimeout(150);
+    const l = await layout(page);
+    const mine = (key: string) => l.images.filter((i) => i.scene === 'SentenceRoom' && i.key === key);
+    const pedestals = mine('prop_pedestal');
+    expect(pedestals.length, 'three pedestals').toBe(3);
+    // The standing person is no taller than the square (150, and 1.1 times that grown beside her).
+    const person = mine(`pic_${word}`)[0];
+    expect(person, `the ${word} picture`).toBeTruthy();
+    expect(person!.b[3] - person!.b[1], 'the standing person\'s height').toBeLessThanOrEqual(150 * 1.1 + 2);
+    const me = mine(s.room!.player.art).sort((a, b) => b.b[3] - a.b[3])[0];
+    expect(me, 'her sprite').toBeTruthy();
+    const boxes = l.covers.filter((c) => c.scene === 'SentenceRoom' && c.kind === 'dialogue');
+    expect(boxes.length, 'the find line\'s box').toBeGreaterThan(0);
+    const share = (b: Rect) => boxes.reduce((n, c) => n + inter(c.b, b), 0) / area(b);
+    for (const p of pedestals) expect(share(p.b), 'share of a pedestal under the box').toBeLessThanOrEqual(0.1);
+    expect(share(me!.b), 'share of her under the box').toBeLessThanOrEqual(0.1);
+    // Strict, not W44's ruled foot: no picture under the box at all.
+    const pics = l.targets.filter((t) => t.scene === 'SentenceRoom');
+    expect(pics.length, 'three pictures').toBe(3);
+    for (const t of pics) expect(share(t.b), `share of ${t.id} under the box`).toBe(0);
+    expectNoErrors(errors);
+  });
+}
 
 // The hub's circle line against the gift's card (item 089): tests/layout.spec.ts.
 

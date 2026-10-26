@@ -14,7 +14,7 @@ import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { letterSoundLine } from '../../content/voice/ids';
 import { voiceBus } from '../voice/VoiceBus';
 import { sfxSummon, sfxWhoosh } from '../audio/sfx';
-import { DEPTH, GAME_WIDTH } from '../config';
+import { DEPTH, GAME_WIDTH, RUNE_SOUND_BEAT_MS } from '../config';
 import { episode, housePlan } from '../episode/Episode';
 import { burst, fitImage, fitPicture, popIn, slowmo, speedLines } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -145,8 +145,10 @@ export class BattleVolleys {
           letter.destroy();
         },
       });
-      // The next stone waits for this one's sound as well as the gap (back to back, RUNE_GAP: hunt 11, M62).
-      await Promise.all([heard, gapDone]);
+      // The next stone waits for this one's sound and a beat after it (hunt 12, M83: back to back the word's
+      // sounds ran together), as well as the gap (RUNE_GAP: hunt 11, M62).
+      const beatDone = heard.then(() => b.wait(RUNE_SOUND_BEAT_MS / 1000));
+      await Promise.all([beatDone, gapDone]);
     }
   }
 

@@ -411,12 +411,13 @@ function clipSize(file: string): number {
  * clips that many times faster (`playbackRate`), so a clip lasts its own length on the page's
  * clock at any speed. Only while the room holds her input (`locks`): a sound-out is said to her,
  * locked, while sounds she makes herself, unlocked, may follow one another as fast as she walks
- * (the bridge's slide, the Shape-Shifter's stones as she passes them). The battle's runes are no
- * room's (M83). Not a silent line (its length is a guess). A bug.
+ * (the bridge's slide, the Shape-Shifter's stones as she passes them). The battle's rune volley
+ * too, which holds no input but is said to her (hunt 12, M83 (b): `RUNE_SOUND_BEAT_MS`, 250 ms;
+ * its only letter sounds). Not a silent line (its length is a guess). A bug.
  */
 export function soundGapIssues(voice: Since['voice'], locks: Since['locks'], minGapMs = 200): Issue[] {
   const out: Issue[] = [];
-  const locked = (scene: string, t: number) => locks.some((l) => l.scene === scene && t >= l.start && t <= l.start + l.ms);
+  const locked = (scene: string, t: number) => scene === 'Battle' || locks.some((l) => l.scene === scene && t >= l.start && t <= l.start + l.ms);
   for (let i = 1; i < voice.length; i++) {
     const a = voice[i - 1]!;
     const b = voice[i]!;

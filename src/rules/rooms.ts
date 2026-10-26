@@ -147,6 +147,11 @@ export interface EpisodeInput {
    * in the other games as any word (item 157 put BED back in play).
    */
   notKeys?: string[];
+  /**
+   * Words the counter room's backdrop paints (`SideRoomSpec.pictures`, hunt 12, M85: the hideout's treasure
+   * chest behind ...DOES NOT LIKE THE CHEST): never the attic's counter word there, as the doors' signs.
+   */
+  notCounter?: string[];
 }
 
 /** What the planners share while an episode's rooms are planned (`episodePlans`). */
@@ -372,7 +377,9 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   // The counter: not a word on battle 1's move pads, not a word fetched this
   // episode (battle 1 shouts THE NET!). Every bag word is decodable (item 009;
   // the long-vowel KEY and YOYO too since item 048, and may be the counter: item 090).
-  const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !notKeys.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w)).filter(fits(2));
+  // Nor a thing its room's backdrop paints (hunt 12, M85).
+  const backdrop = new Set(withStems(input.notCounter ?? []));
+  const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !notKeys.has(w) && !backdrop.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w)).filter(fits(2));
   keys.push(drawKey(store, eligible, rand, [...keys, ...taken], (w) => (w === named ? NAMED_COUNTER_BOOST : 1)));
 
   const slots = ['a', 'b', 'counter'] as const;

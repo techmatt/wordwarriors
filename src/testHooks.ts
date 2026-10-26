@@ -24,6 +24,8 @@ import type { ProgressData } from './state/ProgressStore';
 import { GAME_HEIGHT, GAME_WIDTH } from './config';
 import { installProbe } from './qa/probe';
 import { walkObjects } from './displayList';
+import { cast as castAbility, type BattleWorld } from './battle/abilities';
+import type { Fighter } from './battle/Fighter';
 import { keyOf, type SceneKey } from './scenes/keys';
 import { hookState, type BattleInfo, type EndingInfo, type RecapCard, type RoomInfo, type TheEndInfo, type WaitShown } from './hookState';
 
@@ -164,6 +166,31 @@ function makeHooks(game: Phaser.Game) {
         });
       }
       return { missing, late: artBank.late.map((l) => `${l.id} (${l.scene})`), pending: artBank.pending(), failed, magenta };
+    },
+    /**
+     * Fire a standing fighter's ability now, by its id (hunt 12, M81: the Crushing Coil's look is tested without
+     * waiting on the AI's draw). The fighters' depths, or null when no running scene has a fighter holding it.
+     */
+    cast: (id: string): number[] | null => {
+      for (const s of game.scene.getScenes(true)) {
+        const fighters = (s as unknown as { fighters?: Fighter[] }).fighters;
+        const f = fighters?.find((x) => x.alive && x.init.abilities.some((a) => a.id === id));
+        if (!fighters || !f) continue;
+        castAbility(s as unknown as BattleWorld, f, f.init.abilities.find((a) => a.id === id)!, null);
+        return fighters.map((x) => x.root.depth);
+      }
+      return null;
+    },
+    /** The running scenes' objects with this name (hunt 12, M81): each one's type, depth, place and whether it shows. */
+    named: (name: string) => {
+      const out: { type: string; depth: number; x: number; y: number; visible: boolean }[] = [];
+      for (const s of game.scene.getScenes(true)) {
+        walkObjects(s.children.list, (o) => {
+          const v = o as unknown as { depth: number; x: number; y: number; visible: boolean };
+          if (o.name === name) out.push({ type: o.type, depth: v.depth, x: Math.round(v.x), y: Math.round(v.y), visible: v.visible });
+        });
+      }
+      return out;
     },
     input: {
       press: (b: Button) => virtualPad.press(b),
