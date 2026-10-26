@@ -38,6 +38,7 @@ import { Bag } from '../ui/Bag';
 import type { KeepOut } from '../ui/Caption';
 import { applyHouseMood } from '../world/houseMood';
 import { GIGGLE_BEAT_MS, RoomScene, type Spot } from '../world/RoomScene';
+import type { SceneKey } from './keys';
 
 type Phase = 'intro' | 'find' | 'got' | 'door';
 
@@ -61,7 +62,7 @@ export class EntryScene extends RoomScene {
   private tiles: { box: Phaser.GameObjects.Rectangle; letter: Phaser.GameObjects.Text }[] = [];
 
   constructor() {
-    super('Entry');
+    super('Entry' satisfies SceneKey);
   }
 
   override init(data: { step?: Step }): void {

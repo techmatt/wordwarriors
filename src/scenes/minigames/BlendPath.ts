@@ -24,6 +24,7 @@ import { blendRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
 import type { Spot } from '../../world/RoomScene';
 import { ParkedGame } from './ParkedGame';
+import type { SceneKey } from '../keys';
 
 const ITEMS = 3;
 const TILE_Y = 470;
@@ -37,7 +38,7 @@ export class BlendPath extends ParkedGame {
   private lifted: Phaser.GameObjects.Text[] = [];
 
   constructor() {
-    super('BlendPath');
+    super('BlendPath' satisfies SceneKey);
   }
 
   protected background(): string {

@@ -20,10 +20,11 @@ import { advance, backToHub, currentStep } from '../episode/Episode';
 import { popIn } from '../fx/juice';
 import type { RoomInfo } from '../hookState';
 import { RoomScene, type Spot } from '../world/RoomScene';
+import type { SceneKey } from './keys';
 
 export class DebugRoom extends RoomScene {
   constructor() {
-    super('Debug');
+    super('Debug' satisfies SceneKey);
   }
 
   protected background(): string {

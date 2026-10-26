@@ -28,6 +28,8 @@ import { Bubbles } from '../ui/Bubbles';
 import { Caption, type KeepOut } from '../ui/Caption';
 import { fitText } from '../ui/fitText';
 import { recapWords } from '../rules/recap';
+import type { SceneKey } from './keys';
+import { openParent } from './ParentScene';
 
 /** The recap's row of cards: along the bottom, a little smaller than full size. */
 const CARD_Y = 628;
@@ -53,7 +55,7 @@ export class VictoryScene extends Phaser.Scene {
   private cards: Phaser.GameObjects.Container[] = [];
 
   constructor() {
-    super('Victory');
+    super('Victory' satisfies SceneKey);
   }
 
   create(): void {
@@ -259,7 +261,7 @@ export class VictoryScene extends Phaser.Scene {
     // Green is ignored until the recap is said; F2 (skip) goes on at any time.
     if ((this.ready && this.controls.pressed('green')) || this.controls.dev('F2')) this.toTheEnd();
     // Not on the way out to THE END (item 089: back from the page, the whole recap played again).
-    if (this.controls.dev('F9') && !this.leaving) this.scene.start('Parent', { back: 'Victory' });
+    if (this.controls.dev('F9') && !this.leaving) openParent(this, { back: 'Victory' });
     this.controls.endFrame();
   }
 }

@@ -62,6 +62,7 @@ import { voiceBank } from '../voice/VoiceBank';
 import { OPTIONS, PICTURE_SIZE, entryOf, rowKeepClear } from '../world/optionRow';
 import { GIGGLE_BEAT_MS, type Spot } from '../world/RoomScene';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
+import type { SceneKey } from './keys';
 
 /** `intro`: the spell is at work, she waits. `pick`: the pictures or stones are up. `check`: a pick plays out. `done`: back to the hub. */
 type Phase = 'intro' | 'pick' | 'check' | 'done';
@@ -109,7 +110,7 @@ export class ShifterRoom extends HouseSideRoom {
   private told = new Set<ShifterLink['beat']>();
 
   constructor() {
-    super('ShifterRoom');
+    super('ShifterRoom' satisfies SceneKey);
   }
 
   override init(data: { step?: Step; slot?: Slot }): void {

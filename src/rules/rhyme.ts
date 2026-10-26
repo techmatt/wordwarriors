@@ -32,6 +32,7 @@
 
 import { BANK, BANK_BY_WORD, LIVE, THINGS, type BankWord } from '../../content/phonics/bank';
 import { rimeOf } from '../../content/phonics/families';
+import { heardAs } from '../../content/phonics/letters';
 import { lookalikesOf } from '../../content/phonics/sentences';
 import { RHYME } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
@@ -87,8 +88,7 @@ export const RHYME_WORDS: string[] = RHYME_FAMILIES.flatMap((f) => f.things);
 
 /** A word's first sound, C and K as one (CAT and KING start alike). */
 export function firstSound(word: string): string {
-  const s = BANK_BY_WORD[word]?.sounds[0] ?? word[0]!;
-  return s === 'c' ? 'k' : s;
+  return heardAs(BANK_BY_WORD[word]?.sounds[0] ?? word[0]!);
 }
 
 /** Do two words rhyme (the same rime: `rimeOf`, the bank's, so FROG's OG rhymes with DOG)? */

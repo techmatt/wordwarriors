@@ -3,10 +3,14 @@
  *
  * The split that matters: everything below `VoiceProvider` is provider-specific
  * and stays inside `tools/voice/providers/`. Everything in `VoiceManifest` is
- * what the game sees, and it must never carry a provider's fingerprints. The
- * game re-declares the manifest types in `src/voice/VoiceBank.ts` rather than
- * importing from tools/.
+ * what the game sees, and it must never carry a provider's fingerprints. Its
+ * schema lives in the game, `src/voice/manifest.ts`, the one copy both read
+ * (item 159), and is re-exported here.
  */
+
+import type { TimedWord } from '../../src/voice/manifest.js';
+
+export type { ManifestLine, TimedWord, VoiceManifest } from '../../src/voice/manifest.js';
 
 /** One authored line of dialog. `content/voice/lines.json` is an array of these. */
 export interface LineSpec {
@@ -58,12 +62,6 @@ export interface VoiceBook {
   speakers: Record<string, VoiceConfig>;
 }
 
-export interface TimedWord {
-  word: string;
-  start: number;
-  end: number;
-}
-
 export interface Synthesis {
   audio: Uint8Array;
   extension: string;
@@ -75,20 +73,4 @@ export interface VoiceProvider {
   synthesize(text: string, voice: VoiceConfig): Promise<Synthesis>;
   /** Release any worker process. */
   close?(): void;
-}
-
-export interface ManifestLine {
-  id: string;
-  speaker: string;
-  group: string;
-  text: string;
-  audio: string;
-  words: TimedWord[];
-  duration: number;
-}
-
-export interface VoiceManifest {
-  version: number;
-  provider: string;
-  lines: ManifestLine[];
 }

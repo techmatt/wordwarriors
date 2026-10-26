@@ -158,6 +158,16 @@ export const SOUND_BY_UNIT: Record<string, LetterSound> = Object.fromEntries(
 );
 
 /**
+ * The sound a spelling is heard as, the one hard-C/K rule (item 159): a hard C
+ * and CK are K (CAT and KIT start alike, DUCK ends as KICK starts). Nothing else
+ * folds: CH stays CH, and a unit is compared as given, so BELT's L T never meets
+ * BELL's one L (the bank already sounds a doubled letter once). Give it a sound
+ * unit (a bank word's `sounds`) or a single letter; the bank keeps C, K and CK
+ * apart as spellings, so a rule comparing sounds passes each through this.
+ */
+export const heardAs = (unit: string): string => (unit === 'c' || unit === 'ck' ? 'k' : unit);
+
+/**
  * The sounds you can hold (item 054, the Stretchy Bridge): the vowels, the
  * hums (M N L R V Z) and the hisses (F S SH TH). The bridge holds them while
  * she stands on their stone and plays every other sound (the stops, H W Y X)

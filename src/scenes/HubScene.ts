@@ -49,6 +49,7 @@ import type { KeepOut } from '../ui/Caption';
 import { giftSpotLook, type GiftSpotLook } from '../world/giftSpot';
 import { applyHouseMood } from '../world/houseMood';
 import { RoomScene, type Spot } from '../world/RoomScene';
+import type { SceneKey } from './keys';
 
 type Phase = 'intro' | 'circle' | 'doors' | 'secret' | 'front' | 'leaving';
 
@@ -86,7 +87,7 @@ export class HubScene extends RoomScene {
   private ring: Phaser.GameObjects.Image[] = [];
 
   constructor() {
-    super('Hub');
+    super('Hub' satisfies SceneKey);
   }
 
   override init(data: { step?: Step; from?: Slot }): void {

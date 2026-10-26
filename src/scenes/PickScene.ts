@@ -21,6 +21,7 @@ import { FONT_HEAVY, GAME_WIDTH } from '../config';
 import { castEpisode, episode, randomVillain, type Step } from '../episode/Episode';
 import { bob, burst, flash, shockwave } from '../fx/juice';
 import { RoomScene, type Spot } from '../world/RoomScene';
+import type { SceneKey } from './keys';
 
 const CARD_W = 100;
 const CARD_H = 125;
@@ -30,7 +31,7 @@ export class PickScene extends RoomScene {
   private picked = false;
 
   constructor() {
-    super('Pick');
+    super('Pick' satisfies SceneKey);
   }
 
   override init(data: { step?: Step }): void {

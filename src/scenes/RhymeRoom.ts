@@ -55,6 +55,7 @@ import { OPTIONS, PICTURE_SIZE, entryOf, rowKeepClear } from '../world/optionRow
 import { GIGGLE_BEAT_MS, type Spot } from '../world/RoomScene';
 import { PLAYER_HEIGHT } from '../world/Player';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
+import type { SceneKey } from './keys';
 
 /** `intro`: a round is being set out and said, she waits. `pick`: the pictures are up. `check`: a pick plays out. `done`: back to the hub. */
 type Phase = 'intro' | 'pick' | 'check' | 'done';
@@ -100,7 +101,7 @@ export class RhymeRoom extends HouseSideRoom {
   private told = false;
 
   constructor() {
-    super('RhymeRoom');
+    super('RhymeRoom' satisfies SceneKey);
   }
 
   override init(data: { step?: Step; slot?: Slot }): void {

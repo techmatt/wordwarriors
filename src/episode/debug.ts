@@ -19,6 +19,7 @@
 
 import { MINIGAMES, SENTENCE_GAMES, type Minigame } from '../rules/minigames';
 import { pick } from '../rules/random';
+import type { SceneKey } from '../scenes/keys';
 import { progress } from '../state/progress';
 import { planRand, remembered } from './draws';
 import { debugPlan } from './plans';
@@ -27,7 +28,7 @@ import { currentStep, episode, type Slot } from './state';
 /** Where debug was turned on: the room to bring back, how it looks, and its door out. */
 export interface DebugOrigin {
   /** The room's scene, and the start data that recreates it. */
-  key: string;
+  key: SceneKey;
   data: object;
   /** Its background, her art, and its floor (x, y, w, h). */
   bg: string;
@@ -40,7 +41,7 @@ export interface DebugOrigin {
 /** One object per minigame in the pool: the sentence game's frames are one game (`sentence`). */
 export interface DebugGame {
   id: string;
-  scene: string;
+  scene: SceneKey;
   /** Its pedestal's glyph and name (the `MINIGAMES` entry's). */
   glyph: string;
   name: string;
@@ -51,7 +52,7 @@ export const DEBUG_GAMES: DebugGame[] = [
 ];
 
 /** The rooms key 0 works in: the hub, the entry hall and every minigame's scene, so a new minigame gets it too. */
-export const DEBUG_ROOMS = ['Hub', 'Entry', ...new Set(MINIGAMES.map((g) => g.scene))];
+export const DEBUG_ROOMS: SceneKey[] = ['Hub', 'Entry', ...new Set(MINIGAMES.map((g) => g.scene))];
 
 interface DebugRun {
   game: string;
@@ -105,7 +106,7 @@ function counterRoom(): boolean {
  * the slot it plays in. The sentence game draws a frame (a counter frame in
  * the attic); the rest play behind door a.
  */
-export function beginRun(id: string, rand: () => number = planRand): { scene: string; slot: Slot } {
+export function beginRun(id: string, rand: () => number = planRand): { scene: SceneKey; slot: Slot } {
   if (debugMode.run) endRun(false);
   let game: Minigame;
   if (id === 'sentence') {

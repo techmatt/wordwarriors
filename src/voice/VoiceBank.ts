@@ -13,28 +13,10 @@ import { getAudioContext, unlockAudio } from '../audio/context';
 import { holdPlan, holdSamples, type HoldMode } from '../audio/holdSound';
 import { BRIDGE } from '../config';
 import { realTimeout } from '../realTime';
+import type { ManifestLine, VoiceManifest } from './manifest';
 
-export interface TimedWord {
-  word: string;
-  start: number;
-  end: number;
-}
-
-export interface VoiceLine {
-  id: string;
-  speaker: string;
-  group: string;
-  text: string;
-  audio: string;
-  words: TimedWord[];
-  duration: number;
-}
-
-interface VoiceManifestFile {
-  version: number;
-  provider: string;
-  lines: VoiceLine[];
-}
+/** A built line, as the manifest gives it (`src/voice/manifest.ts`, the schema `voice:build` writes too). */
+export type VoiceLine = ManifestLine;
 
 /**
  * Clips fetched and decoded at once: what one group used to run (item 062).
@@ -85,7 +67,7 @@ export class VoiceBank {
       try {
         const response = await fetch(`${base}voice-gen/manifest.json`);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const manifest = (await response.json()) as VoiceManifestFile;
+        const manifest = (await response.json()) as VoiceManifest;
         for (const line of manifest.lines) this.lines.set(line.id, line);
         return true;
       } catch (error) {

@@ -21,6 +21,7 @@ import { withStems } from '../../src/rules/bank';
 import { CHOICES_PER_PART, battle1Words, drawGift, effectId, planMoves, teamMoveWords, type MoveInput, type MovePlan } from '../../src/rules/moves';
 import { episodePlans, type EpisodeInput } from '../../src/rules/rooms';
 import { ProgressStore } from '../../src/state/ProgressStore';
+import type { VoiceManifest } from '../../src/voice/manifest';
 import { composeLines } from '../../tools/voice/compose';
 import { memory, seeded, spread } from './seeds';
 
@@ -264,7 +265,7 @@ test('a seeded episode can draw KEY or YOYO as its counter word (item 090: speci
 
 test('reformed: every character has two or more short lines, each voiced in its good voice', () => {
   const lines = new Map(composeLines().map((l) => [l.id, l]));
-  const manifest = JSON.parse(readFileSync('public/voice-gen/manifest.json', 'utf8')) as { lines: { id: string }[] };
+  const manifest = JSON.parse(readFileSync('public/voice-gen/manifest.json', 'utf8')) as VoiceManifest;
   const built = new Set(manifest.lines.map((l) => l.id));
   for (const c of ROSTER) {
     assert.equal(c.reformed.sorry.length, 3, c.id);

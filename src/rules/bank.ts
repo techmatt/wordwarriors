@@ -29,6 +29,7 @@
 
 import { BANK, BANK_BY_WORD, LEVELS, LIVE, THINGS, VOWEL_LIST, type BankWord } from '../../content/phonics/bank';
 import { onsetOf, rimeOf } from '../../content/phonics/families';
+import { heardAs } from '../../content/phonics/letters';
 import { BANK_DRAW, VARIETY } from '../config';
 import type { BagKind, ProgressStore } from '../state/ProgressStore';
 import { rampsAdvance } from './difficulty';
@@ -242,7 +243,7 @@ export function isFirm(store: ProgressStore, word: string, kind: 'words' | 'grab
 }
 
 /** A word's first sound, as far as two letters can share one: a hard C and K are one (CH is its own). */
-const firstSound = (w: string) => (w.startsWith('ch') ? 'ch' : w.charAt(0) === 'c' ? 'k' : w.charAt(0));
+const firstSound = (w: string) => (w.startsWith('ch') ? 'ch' : heardAs(w.charAt(0)));
 
 /** Does `other` share `target`'s first sound (a non-empty onset) or its rime? */
 export function sharesSound(target: string, other: string): boolean {

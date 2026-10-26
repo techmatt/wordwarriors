@@ -2,12 +2,14 @@
  * Item 027: the victory scene. Several random endings played through from
  * the victory step (random casts by seed), each saying all its lines in
  * bubbles before the recap; a fitting dad's own line; never last episode's
- * scene. Screenshots land in tests/screenshots/ (ignored) for a look.
+ * scene. Screenshots land in tests/screenshots/ (ignored) for a look. THE END:
+ * the recap's green on to it, only Dad's 2 leaving it, `?scene=theend`, and
+ * resizes and a hidden tab (hunt 5, slow lane).
  */
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, expectNoErrors, press, seedProgress, shotIn, state, stick, toTheEnd, until, type WW, type WWState } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, press, seedProgress, setHidden, shotIn, state, stick, toTheEnd, until, type WW, type WWState } from './harness';
 import { qaLayout } from './qa/probe';
 
 const shot = shotIn('027');
@@ -138,6 +140,33 @@ test('?scene=theend opens THE END, Dad\'s 2 waiting', async ({ page }) => {
   // With no ally, the dad who woke her stands with her (as on the podium).
   expect(s.theEnd!.heroes[0]).toBe(s.episode.hero);
   expect(s.step.kind).toBe('victory');
+  expectNoErrors(errors);
+});
+
+// Hunt 5 (item 092; moved from tests/hunt5.spec.ts in item 159).
+test('THE END through window resizes and a hidden tab: still THE END, its cue placed, and Dad\'s 2 starts the title', SLOW, async ({ page }) => {
+  test.setTimeout(90_000);
+  const errors = collectErrors(page);
+  await boot(page, '?scene=victory&nojourney=1&read=bed,hat');
+  await toTheEnd(page, { hush: true });
+  await until(page, (s) => s.scene === 'TheEnd' && Boolean(s.theEnd?.dad), 30_000, "THE END's Dad cue");
+  for (const [w, h] of [[900, 600], [1600, 900], [700, 900], [1280, 720]] as const) {
+    await page.setViewportSize({ width: w, height: h });
+    await page.waitForTimeout(500);
+    const placed = await page.evaluate(() => {
+      const cue = document.getElementById('dad-buttons')?.getBoundingClientRect();
+      const canvas = document.querySelector('canvas')!.getBoundingClientRect();
+      return cue ? { inside: cue.right <= canvas.right + 1 && cue.bottom <= canvas.bottom + 1 && cue.left >= canvas.left - 1 && cue.top >= canvas.top - 1, near: canvas.right - cue.right < 60 && canvas.bottom - cue.bottom < 60 } : null;
+    });
+    expect(placed, `the Dad cue at ${w}x${h}`).toEqual({ inside: true, near: true });
+  }
+  await setHidden(page, true);
+  await page.waitForTimeout(1500);
+  await setHidden(page, false);
+  await page.waitForTimeout(500);
+  expect((await state(page)).scene).toBe('TheEnd');
+  await page.keyboard.press('Digit2');
+  await until(page, (s) => s.scene === 'Title', 20_000, 'the title');
   expectNoErrors(errors);
 });
 

@@ -37,6 +37,8 @@ import { Caption, type CaptionMode, type KeepOut } from '../ui/Caption';
 import type { Speaker } from '../ui/Portrait';
 import { makeStickHint, placeStickHint } from '../ui/stickHint';
 import { PLAYER_HEIGHT, Player } from './Player';
+import { openParent } from '../scenes/ParentScene';
+import { keyOf } from '../scenes/keys';
 
 /** The giggle's words on a miss, in turn (`giggle`). */
 const GIGGLES = ['OOPS!', 'HEE HEE!', 'SILLY!', 'BOING!'];
@@ -145,7 +147,7 @@ export abstract class RoomScene extends Phaser.Scene {
 
   create(): void {
     this.runs.begin(() => voiceBus.hush());
-    hookState.scene = this.scene.key;
+    hookState.scene = keyOf(this);
     backdrop(this, this.background(), DEPTH.ground);
     this.controls = new Controls(this);
     this.player = new Player(this, this.floor.centerX, this.floor.bottom - 10, this.playerArt(), this.floor);
@@ -451,7 +453,7 @@ export abstract class RoomScene extends Phaser.Scene {
       // Marked leaving as startScene marks it (item 092): a line ending, Dad's 1 / 2 or key 0
       // before Phaser stops the room ran one more step of it, or a second scene change.
       markLeaving(this);
-      this.scene.start('Parent', { back: this.scene.key, data: this.sceneData() });
+      openParent(this, { back: keyOf(this), data: this.sceneData() });
     }
     this.controls.endFrame();
 
@@ -462,7 +464,7 @@ export abstract class RoomScene extends Phaser.Scene {
   debugOrigin(): DebugOrigin {
     const data = this.sceneData();
     const f = this.floor;
-    return { key: this.scene.key, data, bg: this.background(), art: this.player.art, floor: [f.x, f.y, f.width, f.height], slot: (data as { slot?: Slot }).slot ?? null };
+    return { key: keyOf(this), data, bg: this.background(), art: this.player.art, floor: [f.x, f.y, f.width, f.height], slot: (data as { slot?: Slot }).slot ?? null };
   }
 
   /** The start data that recreates this scene (the parent page comes back with it). */
@@ -520,7 +522,7 @@ export abstract class RoomScene extends Phaser.Scene {
       return { id: s.id, x: s.x, y: s.y, correct: s.correct, from: s.from };
     });
     hookState.room = {
-      scene: this.scene.key,
+      scene: keyOf(this),
       round: this.round,
       locked: this.locked,
       player: { x: this.player.x, y: this.player.y, art: this.player.art },

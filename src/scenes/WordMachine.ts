@@ -48,6 +48,7 @@ import { fontPx } from '../ui/fitText';
 import { voiceBank } from '../voice/VoiceBank';
 import { GIGGLE_BEAT_MS, type Spot } from '../world/RoomScene';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
+import type { SceneKey } from './keys';
 
 type Phase = 'intro' | 'pick' | 'check' | 'done';
 
@@ -93,7 +94,7 @@ export class WordMachine extends HouseSideRoom {
   private pendingTile: Spot | null = null;
 
   constructor() {
-    super('WordMachine');
+    super('WordMachine' satisfies SceneKey);
   }
 
   override init(data: { step?: Step; slot?: Slot }): void {

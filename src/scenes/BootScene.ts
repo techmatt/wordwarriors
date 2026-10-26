@@ -49,6 +49,8 @@ import { artFor } from '../art/needs';
 import { startScene } from '../art/gate';
 import { makeTextures } from '../fx/textures';
 import { voiceBank } from '../voice/VoiceBank';
+import type { SceneKey } from './keys';
+import { openParent } from './ParentScene';
 
 /**
  * The cast from the URL (item 025), for this episode and every one after it
@@ -103,7 +105,7 @@ export class BootScene extends Phaser.Scene {
   private bar!: Phaser.GameObjects.Rectangle;
 
   constructor() {
-    super('Boot');
+    super('Boot' satisfies SceneKey);
   }
 
   preload(): void {
@@ -163,7 +165,7 @@ export class BootScene extends Phaser.Scene {
     };
 
     if (target === 'parent') {
-      this.scene.start('Parent', { back: 'Title' });
+      openParent(this, { back: 'Title' });
       return;
     }
     if (target === 'sound' || target === 'blend' || target === 'picture') {

@@ -18,6 +18,7 @@ import { soundRound, type SoundItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
 import type { Spot } from '../../world/RoomScene';
 import { ParkedGame } from './ParkedGame';
+import type { SceneKey } from '../keys';
 
 const ITEMS = 4;
 const STONE_COLORS = [0xff7ad9, 0x7ad9ff, 0xffd23f, 0x8aff8a];
@@ -26,7 +27,7 @@ export class SoundToLetter extends ParkedGame {
   private items: SoundItem[] = [];
 
   constructor() {
-    super('SoundToLetter');
+    super('SoundToLetter' satisfies SceneKey);
   }
 
   protected background(): string {

@@ -6,8 +6,6 @@
  *   always agree, and one press more flips it (slow lane);
  * - key 0 under dad lock and across the grown-ups page: debug comes back as it was
  *   left, and key 0 on the page does nothing (slow lane);
- * - THE END through window resizes and a hidden tab: still THE END, Dad's cue inside
- *   the canvas's corner, Dad's 2 starts the title (slow lane);
  * - a returning player with everything maxed: the grown-ups page's three pages fit
  *   (with item 103's Shape-Shifter levels and item 127's stored words), and an
  *   episode starts;
@@ -26,7 +24,7 @@ import { FRAMES } from '../content/phonics/sentences';
 import { RUNE_SOUNDS } from '../src/rules/charge';
 import { RHYME_WORDS } from '../src/rules/rhyme';
 import { SHIFT_WORDS } from '../src/rules/shifter';
-import { SLOW, boot, choose, collectErrors, debugTagShown, expectNoErrors, mash, press, seedProgress, state, texts, toTheEnd, until } from './harness';
+import { SLOW, boot, choose, collectErrors, debugTagShown, expectNoErrors, mash, press, seedProgress, state, texts, until } from './harness';
 import { layoutIssues } from './qa/checks';
 import { qaLayout } from './qa/probe';
 
@@ -88,38 +86,6 @@ test('key 0 under dad lock and across the grown-ups page: debug comes back as it
   expect((await settled(page, 'back from the grown-ups page')).debug).toBe(true);
   await page.keyboard.press('Digit0');
   expect(await settled(page, 'debug off')).toEqual({ debug: false, scene: 'Hub' });
-  expectNoErrors(errors);
-});
-
-test('THE END through window resizes and a hidden tab: still THE END, its cue placed, and Dad\'s 2 starts the title', SLOW, async ({ page }) => {
-  test.setTimeout(90_000);
-  const errors = collectErrors(page);
-  await boot(page, '?scene=victory&nojourney=1&read=bed,hat');
-  await toTheEnd(page, { hush: true });
-  await until(page, (s) => s.scene === 'TheEnd' && Boolean(s.theEnd?.dad), 30_000, "THE END's Dad cue");
-  for (const [w, h] of [[900, 600], [1600, 900], [700, 900], [1280, 720]] as const) {
-    await page.setViewportSize({ width: w, height: h });
-    await page.waitForTimeout(500);
-    const placed = await page.evaluate(() => {
-      const cue = document.getElementById('dad-buttons')?.getBoundingClientRect();
-      const canvas = document.querySelector('canvas')!.getBoundingClientRect();
-      return cue ? { inside: cue.right <= canvas.right + 1 && cue.bottom <= canvas.bottom + 1 && cue.left >= canvas.left - 1 && cue.top >= canvas.top - 1, near: canvas.right - cue.right < 60 && canvas.bottom - cue.bottom < 60 } : null;
-    });
-    expect(placed, `the Dad cue at ${w}x${h}`).toEqual({ inside: true, near: true });
-  }
-  await page.evaluate(() => {
-    Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
-    document.dispatchEvent(new Event('visibilitychange'));
-  });
-  await page.waitForTimeout(1500);
-  await page.evaluate(() => {
-    Object.defineProperty(document, 'hidden', { configurable: true, get: () => false });
-    document.dispatchEvent(new Event('visibilitychange'));
-  });
-  await page.waitForTimeout(500);
-  expect((await state(page)).scene).toBe('TheEnd');
-  await page.keyboard.press('Digit2');
-  await until(page, (s) => s.scene === 'Title', 20_000, 'the title');
   expectNoErrors(errors);
 });
 

@@ -25,6 +25,7 @@ import { artBank } from '../art/ArtBank';
 import { artFor } from '../art/needs';
 import { walkObjects } from '../displayList';
 import { hookState } from '../hookState';
+import { keyOf } from '../scenes/keys';
 import { worldInk, type Rect } from '../ui/banner';
 
 export interface QaVoice {
@@ -208,7 +209,7 @@ export function installProbe(game: Phaser.Game): void {
   const watchScenes = () => {
     for (const scene of game.scene.getScenes(false)) {
       scene.events.on(Phaser.Scenes.Events.CREATE, () => {
-        const key = scene.scene.key;
+        const key = keyOf(scene);
         for (const id of artBank.missing(artFor(key, false))) log.lateArt.push({ id, scene: key });
       });
     }

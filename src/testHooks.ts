@@ -24,6 +24,7 @@ import type { ProgressData } from './state/ProgressStore';
 import { GAME_HEIGHT, GAME_WIDTH } from './config';
 import { installProbe } from './qa/probe';
 import { walkObjects } from './displayList';
+import { keyOf, type SceneKey } from './scenes/keys';
 import { hookState, type BattleInfo, type EndingInfo, type RecapCard, type RoomInfo, type TheEndInfo, type WaitShown } from './hookState';
 
 function hooksEnabled(): boolean {
@@ -32,7 +33,7 @@ function hooksEnabled(): boolean {
 
 /** A visible Text in a running scene, with its world bounds; `offscreen` when it leaves the 1280×720 frame. */
 export interface TextInfo {
-  scene: string;
+  scene: SceneKey;
   text: string;
   bounds: [number, number, number, number];
   offscreen: boolean;
@@ -53,7 +54,7 @@ function visibleText(game: Phaser.Game): TextInfo[] {
         const b = o.getBounds();
         const slack = 2;
         const offscreen = b.left < -slack || b.top < -slack || b.right > GAME_WIDTH + slack || b.bottom > GAME_HEIGHT + slack;
-        out.push({ scene: scene.scene.key, text: o.text, bounds: [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)], offscreen });
+        out.push({ scene: keyOf(scene), text: o.text, bounds: [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)], offscreen });
       }
     }
   };
@@ -66,7 +67,8 @@ function visibleText(game: Phaser.Game): TextInfo[] {
  * snapshot and the shape the specs read (tests/harness.ts re-exports it) cannot drift.
  */
 export interface WWState {
-  scene: string;
+  /** The scene last opened (a `SceneKey`, so a spec's `s.scene === 'Hubb'` fails typecheck); '' before the first. */
+  scene: SceneKey | '';
   fps: number;
   /** The music playing (src/audio/music.ts), or null. */
   music: string | null;

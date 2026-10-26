@@ -36,6 +36,7 @@ import Phaser from 'phaser';
 import { unlockAudio } from '../audio/context';
 import { dadLock } from './dadLock';
 import type { PadColorName } from '../config';
+import { keyOf } from '../scenes/keys';
 
 export type Button = PadColorName | 'lb' | 'rb' | 'lt' | 'rt' | 'start' | 'back' | 'up' | 'down' | 'left' | 'right';
 
@@ -226,7 +227,7 @@ export class Controls {
     // Dad lock: she can walk, but no press does anything. Held buttons still
     // seed `prev`, so one held through the unlock does not fire either.
     // The grown-ups page is Dad's own (item 080): its green, red and Esc work under the lock.
-    if (dadLock.locked && this.scene.scene.key !== 'Parent') for (const b of this.edges) if (!DIRECTIONS.has(b)) this.edges.delete(b);
+    if (dadLock.locked && keyOf(this.scene) !== 'Parent') for (const b of this.edges) if (!DIRECTIONS.has(b)) this.edges.delete(b);
     this.seeded = true;
     this.prev = now;
     this.down = now;

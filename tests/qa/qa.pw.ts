@@ -25,7 +25,7 @@ import { test, type Page } from '@playwright/test';
 import { BANK } from '../../content/phonics/bank';
 import { FREE_PLAY, REACH, SHIFTER } from '../../src/config';
 import type { ProgressData } from '../../src/state/ProgressStore';
-import { SPEED, boot, choose, collectErrors, driver, hubGo, leaveBedroom, playBattle, playAgain, playEntry, playRoom, playSentenceRoom, press, seedProgress, state, storedBlob, toTheEnd, until, type RoomPlay, type WWState, VOICE } from '../harness';
+import { SPEED, boot, choose, collectErrors, debugTagShown, driver, hubGo, leaveBedroom, playBattle, playAgain, playEntry, playRoom, playSentenceRoom, press, seedProgress, setHidden, state, storedBlob, toTheEnd, until, type RoomPlay, type WWState, VOICE } from '../harness';
 import { layoutIssues, leakIssues, logIssues, onlyLineVariants, padReachIssues, placeholderArt, spawnIssues, storeChanges, voiceBuildIssues, type Issue, type Since } from './checks';
 import { qaLayout, qaSince } from './probe';
 import { clippedIssues, giveawayIssues, letterNameIssues, pacingIssues, repeatedLines, spellingIssues, tauntIssues, variantIssues } from './wording';
@@ -545,7 +545,7 @@ async function debugProbe(page: Page, rec: Recorder, p: Point, game: (typeof DEB
   const before = await state(page);
   const was = await store(page);
   const ep = (s: WWState) => JSON.stringify([s.episode.read, s.episode.fetched, s.episode.house.done, s.episode.stepIndex]);
-  const tag = () => page.evaluate(() => Boolean(document.getElementById('debug-tag')?.isConnected));
+  const tag = () => debugTagShown(page);
   const bug = (kind: string, detail: string) => rec.add([{ kind, severity: 'bug', scene: before.scene, detail: `${p}: ${detail}`, key: `${kind}:${p}` }], rec.lastShot);
   await page.keyboard.press('Digit0');
   await until(page, (s) => s.scene === 'Debug' && (s.room?.spots.length ?? 0) > 0 && !s.room!.locked, 30_000, `the debug room from ${p}`);
@@ -806,23 +806,14 @@ function probes(page: Page, sc: Scenario, rec: Recorder, reloadAt: Point | null,
 
 /**
  * Item 080: the tab switched away and back every `HIDE_EVERY_MS` for `HIDE_MS`
- * (Phaser's visibility and blur handlers, as a real tab switch fires them; a
- * real hidden tab also stops animation frames, which this does not).
+ * (`setHidden`, the harness's: as a real tab switch tells the page).
  */
 const HIDE_EVERY_MS = 9000;
 const HIDE_MS = 2500;
 function hider(page: Page): { stop(): Promise<void>; count: () => number } {
   let on = true;
   let n = 0;
-  const set = (h: boolean) =>
-    page
-      .evaluate((hide) => {
-        Object.defineProperty(document, 'hidden', { configurable: true, get: () => hide });
-        Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => (hide ? 'hidden' : 'visible') });
-        document.dispatchEvent(new Event('visibilitychange'));
-        window.dispatchEvent(new Event(hide ? 'blur' : 'focus'));
-      }, h)
-      .catch(() => undefined);
+  const set = (h: boolean) => setHidden(page, h).catch(() => undefined);
   const loop = (async () => {
     while (on) {
       await page.waitForTimeout(HIDE_EVERY_MS).catch(() => undefined);

@@ -9,6 +9,7 @@ import { HOME } from '../../content/house/house';
 import { EPISODE_DEFAULTS } from '../config';
 import type { RoomPlan } from '../rules/rooms';
 import type { MovePlan } from '../rules/moves';
+import type { SceneKey } from '../scenes/keys';
 import { DEFAULT_LINES, DEFAULT_STORY, type LineVariants, type Story } from '../rules/story';
 
 export type PrepGame = 'sound' | 'blend' | 'picture';
@@ -176,7 +177,8 @@ export function currentStep(): Step {
   return steps()[episode.stepIndex] ?? { kind: 'title' };
 }
 
-const SCENE_FOR: Record<Step['kind'], string> = {
+// A prep step has no scene of its own: it opens its game's (`sceneForStep`).
+const SCENE_FOR: Record<Exclude<Step['kind'], 'prep'>, SceneKey> = {
   title: 'Title',
   pick: 'Pick',
   bedroom: 'Bedroom',
@@ -186,19 +188,17 @@ const SCENE_FOR: Record<Step['kind'], string> = {
   // The victory step opens on its scene (item 027), which goes on to the recap.
   victory: 'Ending',
   alarm: 'Alarm',
-  // No scene has this key: a prep step opens its game's scene (`sceneForStep`).
-  prep: 'Prep',
   retreat: 'Retreat',
   spell: 'Spelling',
 };
 
 /** The scene a step opens on: a parked prep step opens its game's scene. */
-export function sceneForStep(step: Step): string {
+export function sceneForStep(step: Step): SceneKey {
   if (step.kind !== 'prep') return SCENE_FOR[step.kind];
   return step.game === 'sound' ? 'SoundToLetter' : step.game === 'blend' ? 'BlendPath' : 'WordToPicture';
 }
 
 /** True for a step kind that has a scene (a `?scene=` value jumpTo can take). */
 export function isStepKind(kind: string): kind is Step['kind'] {
-  return Object.prototype.hasOwnProperty.call(SCENE_FOR, kind);
+  return kind === 'prep' || Object.prototype.hasOwnProperty.call(SCENE_FOR, kind);
 }

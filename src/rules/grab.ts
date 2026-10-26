@@ -27,6 +27,7 @@
  */
 
 import { BANK, BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
+import { heardAs } from '../../content/phonics/letters';
 import { NO_BAG_COPY, lookalikesOf } from '../../content/phonics/sentences';
 import { GRAB, RECENT_GRABS } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
@@ -56,7 +57,7 @@ const HALL_WORDS: string[] = THINGS.map((w) => w.word);
  */
 export function grabSays(word: string): string[] {
   // C, K and CK are one sound (the bank keeps them apart as spellings).
-  const heard = (w: string) => (BANK_BY_WORD[w]?.sounds ?? []).filter(Boolean).map((s) => (s === 'c' || s === 'ck' ? 'k' : s));
+  const heard = (w: string) => (BANK_BY_WORD[w]?.sounds ?? []).filter(Boolean).map(heardAs);
   const sounds = (w: string) => heard(w).join(' ');
   const own = heard(word);
   if (own.length < 3) return [word];

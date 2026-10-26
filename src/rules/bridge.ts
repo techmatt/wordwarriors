@@ -31,7 +31,7 @@
  */
 
 import { BANK_BY_WORD, THINGS, type BankWord } from '../../content/phonics/bank';
-import { canHold } from '../../content/phonics/letters';
+import { canHold, heardAs } from '../../content/phonics/letters';
 import { lookalikesOf } from '../../content/phonics/sentences';
 import { BRIDGE } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
@@ -55,9 +55,6 @@ export interface BridgeRound {
 export interface BridgePlan {
   rounds: BridgeRound[];
 }
-
-/** A word's first sound as two words can share it: a hard C, K and CK are one. */
-const sameSound = (s: string) => (s === 'c' || s === 'ck' ? 'k' : s);
 
 /** A word the bridge can cross: a pictured thing with a short vowel (KEY and YOYO have none). */
 const bridgeable = (w: BankWord) => w.vowel !== null;
@@ -90,7 +87,7 @@ export function sharedStart(a: string, b: string): number {
   const x = BANK_BY_WORD[a]?.sounds ?? [...a];
   const y = BANK_BY_WORD[b]?.sounds ?? [...b];
   let n = 0;
-  while (n < x.length && n < y.length && sameSound(x[n]!) === sameSound(y[n]!)) n++;
+  while (n < x.length && n < y.length && heardAs(x[n]!) === heardAs(y[n]!)) n++;
   return n;
 }
 

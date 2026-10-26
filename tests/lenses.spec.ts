@@ -1,20 +1,12 @@
 /**
  * The third bug hunt's fixes (item 080; docs/qa-findings.md, Hunt 3): held
  * F-keys, the grown-ups page and the move choice's stick hint under dad lock,
- * the lock badge after a resize, and a hidden tab holding the voice.
+ * and the lock badge after a resize. A hidden tab holding the voice moved to
+ * `tests/hiddenTab.spec.ts` (item 159).
  */
 
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { SLOW, boot, collectErrors, expectNoErrors, press, seedProgress, state, until } from './harness';
-
-/** A tab switched away or back, as Phaser's visibility handler hears it. */
-async function setHidden(page: Page, hide: boolean): Promise<void> {
-  await page.evaluate((h) => {
-    Object.defineProperty(document, 'hidden', { configurable: true, get: () => h });
-    Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => (h ? 'hidden' : 'visible') });
-    document.dispatchEvent(new Event('visibilitychange'));
-  }, hide);
-}
 
 test('a held F8 on the grown-ups page is one press: the record is not erased', async ({ page }) => {
   const errors = collectErrors(page);
@@ -67,21 +59,6 @@ test('the dad lock badge stays in the canvas corner after a resize', async ({ pa
     expect(canvas[3]! - badge[3]!, `${width}x${height}: badge at the canvas's bottom`).toBeLessThan(20);
   }
   await page.keyboard.press('Backquote');
-  expectNoErrors(errors);
-});
-
-test('a hidden tab holds the voice: the line playing does not end until the tab is back', async ({ page }) => {
-  const errors = collectErrors(page);
-  // Real voice (item 083): the test is about a playing line's audio.
-  await boot(page, '?scene=bedroom', undefined, { voice: 'real' });
-  const s = await until(page, (st) => st.scene === 'Bedroom' && Boolean(st.voice.speaking), 30_000, 'a bedroom line');
-  const id = s.voice.speaking;
-  await setHidden(page, true);
-  // Longer than any bedroom line at test speed, backstop and all.
-  await page.waitForTimeout(3000);
-  expect((await state(page)).voice.speaking, 'the line waits while hidden').toBe(id);
-  await setHidden(page, false);
-  await until(page, (st) => st.voice.speaking !== id, 20_000, 'the line ends once the tab is back');
   expectNoErrors(errors);
 });
 

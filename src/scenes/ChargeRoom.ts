@@ -68,6 +68,7 @@ import type { KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
 import type { Spot } from '../world/RoomScene';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
+import type { SceneKey } from './keys';
 
 /** How the read went (`helped`: his yes while she read it with the helper, hunt 7 M34: right, never first try). */
 type ReadAnswer = 'yes' | 'no' | 'modelled' | 'helped';
@@ -160,7 +161,7 @@ export class ChargeRoom extends HouseSideRoom {
   private friendScale = { x: 1, y: 1 };
 
   constructor() {
-    super('ChargeRoom');
+    super('ChargeRoom' satisfies SceneKey);
   }
 
   override init(data: { step?: Step; slot?: Slot }): void {

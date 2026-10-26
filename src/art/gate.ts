@@ -15,22 +15,24 @@ import { ROSTER } from '../../content/battle/roster';
 import { charArt } from '../../content/art/assets';
 import { currentStep, episode, planFor, sceneForStep, steps, type Slot, type Step } from '../episode/Episode';
 import { markLeaving } from '../fx/sceneGen';
+import type { SceneKey } from '../scenes/keys';
+import type { WaitData } from '../scenes/WaitScene';
 import { voiceBank } from '../voice/VoiceBank';
 import { artBank } from './ArtBank';
 import { artFor, isParkedScene } from './needs';
 
 /** The scene a step opens on, or null for none to prefetch: a parked scene's `artFor` is every picture. */
-function sceneOf(step: Step | undefined): string | null {
+function sceneOf(step: Step | undefined): SceneKey | null {
   if (!step) return null;
   const scene = sceneForStep(step);
   return isParkedScene(scene) ? null : scene;
 }
 
 /** The art of the scenes that may come after `key`, for the background queue. */
-function upcoming(key: string): string[] {
+function upcoming(key: SceneKey): string[] {
   const next = steps()[episode.stepIndex + 1];
   const out: string[] = [];
-  const add = (scene: string | null, draw = false) => {
+  const add = (scene: SceneKey | null, draw = false) => {
     if (scene) out.push(...artFor(scene, draw));
   };
   switch (key) {
@@ -75,7 +77,7 @@ function upcoming(key: string): string[] {
 }
 
 /** Start scene `key` from `from` once its art is loaded; meanwhile the Wait scene shows. */
-export function startScene(from: Phaser.Scene, key: string, data?: object): void {
+export function startScene(from: Phaser.Scene, key: SceneKey, data?: object): void {
   const need = artFor(key, true);
   // Art lost to a passing network error is asked again, in the background (M25).
   artBank.retryFailed(need);
@@ -92,5 +94,5 @@ export function startScene(from: Phaser.Scene, key: string, data?: object): void
   }
   // Nothing is said while it waits: the art goes first, the voice queue after (VoiceBank.pauseWhile).
   voiceBank.pauseWhile(artBank.ensure(missing));
-  from.scene.start('Wait', { key, data, ids: missing });
+  from.scene.start('Wait' satisfies SceneKey, { key, data, ids: missing } satisfies WaitData);
 }

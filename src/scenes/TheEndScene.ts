@@ -24,6 +24,8 @@ import { burst, fitImage } from '../fx/juice';
 import { Controls } from '../input/Controls';
 import { dadPress, openDadButtons, setDadAsking } from '../input/dadButtons';
 import { hookState } from '../hookState';
+import type { SceneKey } from './keys';
+import { openParent } from './ParentScene';
 
 const THE_END_TEXT = 'THE END';
 
@@ -45,7 +47,7 @@ export class TheEndScene extends Phaser.Scene {
   private closeDad: (() => void) | null = null;
 
   constructor() {
-    super('TheEnd');
+    super('TheEnd' satisfies SceneKey);
   }
 
   create(): void {
@@ -119,7 +121,7 @@ export class TheEndScene extends Phaser.Scene {
     }
     // F4 auto-answers: Dad's yes where he is asked.
     if (this.controls.dev('F4')) dadPress('yes');
-    if (this.controls.dev('F9')) this.scene.start('Parent', { back: 'TheEnd' });
+    if (this.controls.dev('F9')) openParent(this, { back: 'TheEnd' });
     this.controls.endFrame();
   }
 }

@@ -13,12 +13,13 @@ import { test } from 'node:test';
 
 import { PERSONS, ROSTER, personOf } from '../../content/battle/roster';
 import { group } from '../../content/voice/ids';
+import type { VoiceManifest } from '../../src/voice/manifest';
 import { composeLines } from '../../tools/voice/compose';
 
 const MANIFEST = 'public/voice-gen/manifest.json';
 
 test('every cast member: their voice groups are built, every line in them has its clip', { skip: !existsSync(MANIFEST) && 'no voice manifest' }, () => {
-  const built = (JSON.parse(readFileSync(MANIFEST, 'utf8')) as { lines: { id: string; group: string; audio: string }[] }).lines;
+  const built = (JSON.parse(readFileSync(MANIFEST, 'utf8')) as VoiceManifest).lines;
   const byId = new Map(built.map((l) => [l.id, l]));
   const composed = composeLines();
   const groups = new Set<string>([group.core, group.phonics]);

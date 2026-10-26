@@ -174,6 +174,21 @@ export function debugTagShown(page: Page): Promise<boolean> {
   return page.evaluate(() => Boolean(document.getElementById('debug-tag')?.isConnected));
 }
 
+/**
+ * The tab switched away (`hide`) or back, as a real switch tells the page (item 159, the one copy):
+ * `document.hidden` and `visibilityState`, a `visibilitychange` (Phaser's HIDDEN / VISIBLE, which hold
+ * and release the audio, src/main.ts) and the window's `blur` / `focus` (Phaser's loop, Controls' held
+ * keys). A real hidden tab also stops animation frames; this does not.
+ */
+export async function setHidden(page: Page, hide: boolean): Promise<void> {
+  await page.evaluate((h) => {
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => h });
+    Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => (h ? 'hidden' : 'visible') });
+    document.dispatchEvent(new Event('visibilitychange'));
+    window.dispatchEvent(new Event(h ? 'blur' : 'focus'));
+  }, hide);
+}
+
 export async function stick(page: Page, x: number, y: number): Promise<void> {
   await page.evaluate(([sx, sy]) => (window as unknown as WW).__ww.input.stick(sx!, sy!), [x, y]);
 }

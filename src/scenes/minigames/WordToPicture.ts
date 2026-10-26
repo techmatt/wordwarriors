@@ -25,6 +25,7 @@ import { progress } from '../../state/progress';
 import { bannerArt, bannerPanelWidth, inkOf, tagPanel } from '../../ui/banner';
 import type { Spot } from '../../world/RoomScene';
 import { ParkedGame } from './ParkedGame';
+import type { SceneKey } from '../keys';
 
 const BANNER_W = 560;
 /** Under the meter's slots, and a slim trim: it ends at about y 262 (a long word's smaller letters) to 275. */
@@ -58,7 +59,7 @@ export class WordToPicture extends ParkedGame {
   private letters: Phaser.GameObjects.Text[] = [];
 
   constructor() {
-    super('WordToPicture');
+    super('WordToPicture' satisfies SceneKey);
   }
 
   protected background(): string {

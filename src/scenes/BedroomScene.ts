@@ -46,6 +46,7 @@ import { bob, burst, flash, popIn, shake, squash, wiggle } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { applyHouseMood } from '../world/houseMood';
 import { RoomScene, type Spot } from '../world/RoomScene';
+import type { SceneKey } from './keys';
 
 const SOUND: Record<ReactionSound, () => void> = {
   boing: sfxBoing,
@@ -76,7 +77,7 @@ export class BedroomScene extends RoomScene {
   private puffAt = 0;
 
   constructor() {
-    super('Bedroom');
+    super('Bedroom' satisfies SceneKey);
   }
 
   override init(data: { step?: Step }): void {

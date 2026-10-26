@@ -277,10 +277,12 @@ THE END → only Dad's 2. Tests reach THE END with `toTheEnd(page)` and leave it
 (`src/voice/VoiceBus.ts`), so a test slicing it from a saved length saves that length late.
 
 `tests/lenses.spec.ts` (item 080) keeps the third bug hunt's fixes: a held F8, the
-grown-ups page under dad lock, the lock badge after a resize, a hidden tab holding the
-voice (it fakes the tab switch: `document.hidden` and a `visibilitychange`, which is what
-Phaser and the game listen for), and the move choice's stick hint under dad lock (slow
-lane). Press a button through the virtual pad (`press`), not `page.keyboard.press`: a
+grown-ups page under dad lock, the lock badge after a resize and the move choice's stick
+hint under dad lock (slow lane). A hidden tab is faked one way, `setHidden(page, hide)`
+(`tests/harness.ts`, item 159): `document.hidden` and `visibilityState`, a
+`visibilitychange` (what Phaser and the game listen for) and the window's `blur` / `focus`;
+`tests/hiddenTab.spec.ts` (the voice holds), `tests/ending.spec.ts` (THE END) and the
+checker's `hide` runs (`hidden_tab`, `story_hidden`, `rhyme_flaky_net`) use it. Press a button through the virtual pad (`press`), not `page.keyboard.press`: a
 key's down and up can land between two frames, and Phaser's polled keys miss it.
 
 ### Speed, GPU and workers
@@ -1208,11 +1210,13 @@ inside the repo, which the scratch home is not (item 149, Matt's call). Promotio
   breaks again, bump the pin in `tools/voice/providers/edgeTts.ts`.
 - **A carrier line (`cut` in `lines.json`, item 085: the short A, cut from "Add") is
   decoded by `uv run --no-project --with miniaudio python tools/voice/decode_mp3.py`.**
-  The first such build fetches `miniaudio`, so it needs network like the rest. A carrier's
-  `keepDb` (`content/phonics/letters.ts`) is in the line's fingerprint, so changing it
-  re-cuts by itself; `ONSET_DB` (`tools/voice/carrier.ts`) and `FINISH`
-  (`tools/voice/split.ts`) are not: after changing either, `voice:build -- --force` (or
-  delete `letter_a_sound.mp3`, the one carrier line so far) to re-cut.
+  The first such build fetches `miniaudio`, so it needs network like the rest. How a
+  carrier is cut is in its line's fingerprint, so changing it re-cuts by itself, no
+  `--force` (item 159): its `keepDb` (`content/phonics/letters.ts`) and `CARRIER_CUT`
+  (`tools/voice/carrier.ts`: `ONSET_DB`, `SPLIT` and `FINISH` from `tools/voice/split.ts`
+  by value, and `CUT_VERSION`). A change to the cut's code, not its numbers, bumps
+  `CUT_VERSION`. A recorded clip is split once, at `voice:import`, and kept cut: re-tuning
+  `SPLIT` or `FINISH` changes no installed clip; re-import the zip to re-split it.
 - `en-AU-WilliamMultilingualNeural` returned "No audio was received" for most lines
   (2026-10-18); Jormungandr uses `en-NZ-MitchellNeural` instead.
 - edge-tts sometimes times a two-word name as one boundary ("Dragon Parade");

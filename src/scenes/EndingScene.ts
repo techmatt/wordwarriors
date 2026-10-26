@@ -24,6 +24,8 @@ import { endingPeople, endingScript, standXs } from '../rules/endings';
 import { progress } from '../state/progress';
 import { hookState } from '../hookState';
 import { Bubbles, type BubbleAnchor } from '../ui/Bubbles';
+import type { SceneKey } from './keys';
+import { openParent } from './ParentScene';
 
 export class EndingScene extends Phaser.Scene {
   private controls!: Controls;
@@ -32,7 +34,7 @@ export class EndingScene extends Phaser.Scene {
   private leaving = false;
 
   constructor() {
-    super('Ending');
+    super('Ending' satisfies SceneKey);
   }
 
   create(data: { step?: Step }): void {
@@ -147,7 +149,7 @@ export class EndingScene extends Phaser.Scene {
     this.controls.update();
     if (this.controls.dev('F2')) this.onward();
     // Not while fading out to the recap: coming back would play the whole scene again.
-    if (this.controls.dev('F9') && !this.leaving) this.scene.start('Parent', { back: 'Ending', data: { step: this.step } });
+    if (this.controls.dev('F9') && !this.leaving) openParent(this, { back: 'Ending', data: { step: this.step } });
     this.controls.endFrame();
   }
 }

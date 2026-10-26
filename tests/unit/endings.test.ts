@@ -14,6 +14,7 @@ import { drawCast, type Cast } from '../../src/rules/cast';
 import { seededRand } from '../../src/rules/random';
 import { endingFits, endingPeople, endingScript, pickEnding, standXs } from '../../src/rules/endings';
 import { ProgressStore } from '../../src/state/ProgressStore';
+import type { VoiceManifest } from '../../src/voice/manifest';
 import { composeLines } from '../../tools/voice/compose';
 import { memory } from './seeds';
 
@@ -46,7 +47,7 @@ test('endings: every scene has its art, and its fits name real roster ids', () =
 test('endings: every scene works for every cast: four lines, all voiced, by people who are there', () => {
   const lines = new Map(composeLines().map((l) => [l.id, l]));
   const manifestFile = 'public/voice-gen/manifest.json';
-  const built = existsSync(manifestFile) ? new Map((JSON.parse(readFileSync(manifestFile, 'utf8')) as { lines: { id: string; duration?: number }[] }).lines.map((l) => [l.id, l.duration ?? 0])) : null;
+  const built = existsSync(manifestFile) ? new Map((JSON.parse(readFileSync(manifestFile, 'utf8')) as VoiceManifest).lines.map((l) => [l.id, l.duration])) : null;
   let longest = 0;
   let shortest = Infinity;
   for (const c of casts()) {

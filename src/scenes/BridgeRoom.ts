@@ -69,6 +69,7 @@ import type { KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
 import { GIGGLE_BEAT_MS, type Spot } from '../world/RoomScene';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
+import type { SceneKey } from './keys';
 
 /**
  * `intro`: a new bridge appears and the helper talks; she waits on the near
@@ -149,7 +150,7 @@ export class BridgeRoom extends HouseSideRoom {
   private resumePhase: Phase = 'slide';
 
   constructor() {
-    super('BridgeRoom');
+    super('BridgeRoom' satisfies SceneKey);
   }
 
   override init(data: { step?: Step; slot?: Slot }): void {

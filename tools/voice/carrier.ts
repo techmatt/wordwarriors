@@ -20,10 +20,23 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { readWav } from './audio.js';
-import { envelope } from './split.js';
+import { envelope, FINISH, SPLIT } from './split.js';
 
 /** From the peak back to the onset: frames down to this far under the peak are the vowel's attack. */
 const ONSET_DB = 30;
+
+/**
+ * Bump when the cut's code changes (`vowelSpan`, split.ts's `envelope` or `finish`,
+ * decode_mp3.py); a change to its numbers needs no bump, they are in `CARRIER_CUT` by value.
+ */
+const CUT_VERSION = 1;
+
+/**
+ * Everything a carrier line's cut depends on, in that line's fingerprint
+ * (build.ts, item 159): changing any of it re-cuts the carrier lines by
+ * themselves, with no `--force`.
+ */
+export const CARRIER_CUT = { version: CUT_VERSION, onsetDb: ONSET_DB, split: SPLIT, finish: FINISH } as const;
 
 const DECODER = path.join(path.dirname(fileURLToPath(import.meta.url)), 'decode_mp3.py');
 

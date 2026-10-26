@@ -15,12 +15,13 @@ import { bob, fitImage } from '../fx/juice';
 import { SceneGen } from '../fx/sceneGen';
 import { hookState } from '../hookState';
 import { realNow } from '../realTime';
+import type { SceneKey } from './keys';
 
 /** How long the wait stays invisible: a load that lands within it shows nothing at all. */
 const SHOW_AFTER_MS = 150;
 
 export interface WaitData {
-  key: string;
+  key: SceneKey;
   data?: object;
   ids: string[];
 }
@@ -29,7 +30,7 @@ export class WaitScene extends Phaser.Scene {
   private runs = new SceneGen(this);
 
   constructor() {
-    super('Wait');
+    super('Wait' satisfies SceneKey);
   }
 
   create(w: WaitData): void {

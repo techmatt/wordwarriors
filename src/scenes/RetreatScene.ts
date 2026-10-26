@@ -19,10 +19,11 @@ import { castArt, episode, narrator, villainSpec } from '../episode/Episode';
 import { bob, burst } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { RoomScene, type Spot } from '../world/RoomScene';
+import type { SceneKey } from './keys';
 
 export class RetreatScene extends RoomScene {
   constructor() {
-    super('Retreat');
+    super('Retreat' satisfies SceneKey);
   }
 
   protected background(): string {

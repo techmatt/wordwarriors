@@ -50,6 +50,7 @@ import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
 import type { Spot } from '../world/RoomScene';
 import { ARRIVE_MS, HouseSideRoom, INK, LIT, sidePlan } from '../world/SideRoom';
+import type { SceneKey } from './keys';
 
 type Pass = 'listen' | 'read' | 'find' | 'done';
 
@@ -111,7 +112,7 @@ export class SentenceRoom extends HouseSideRoom {
   private readDot!: Phaser.GameObjects.Container;
 
   constructor() {
-    super('SentenceRoom');
+    super('SentenceRoom' satisfies SceneKey);
   }
 
   override init(data: { step?: Step; slot?: Slot }): void {

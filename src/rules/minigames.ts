@@ -30,6 +30,7 @@
 import { FAMILIES } from '../../content/phonics/families';
 import { FRAMES } from '../../content/phonics/sentences';
 import { BRIDGE, CHARGE, RHYME, SHIFTER, VARIETY, WORD_MACHINE } from '../config';
+import type { SceneKey } from '../scenes/keys';
 import type { ProgressStore } from '../state/ProgressStore';
 import { pickWeighted, type Rand } from './random';
 import { bridgeShakiness } from './bridge';
@@ -53,7 +54,7 @@ export interface Minigame {
   /** What it is: each kind has its lean here and its planner (src/rules/rooms.ts `PLANNERS`). */
   kind: MinigameKind;
   /** The Phaser scene that plays it. */
-  scene: string;
+  scene: SceneKey;
   /** Its debug-mode pedestal (src/scenes/DebugRoom.ts): a glyph and its name, upper case like all game text. */
   glyph: string;
   name: string;

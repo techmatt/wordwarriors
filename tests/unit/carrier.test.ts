@@ -9,7 +9,9 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { LETTER_BY_CHAR } from '../../content/phonics/letters';
-import { vowelSpan } from '../../tools/voice/carrier';
+import { CARRIER_CUT, vowelSpan } from '../../tools/voice/carrier';
+import { fingerprintSource } from '../../tools/voice/build';
+import { FINISH, SPLIT } from '../../tools/voice/split';
 import { spokenFor } from '../../tools/voice/clips';
 import { composeLines } from '../../tools/voice/compose';
 
@@ -46,4 +48,18 @@ test('the short A line asks edge-tts for its carrier and keeps its placeholder t
   assert.deepEqual(line.cut, { keepDb: LETTER_BY_CHAR.a!.carrier!.keepDb });
   const o = lines.find((l) => l.id === 'letter_o_sound')!;
   assert.equal(o.cut, undefined, 'short o needs no carrier: "Ah" is the O of HOT already');
+});
+
+test("a carrier line's fingerprint holds how it is cut; a plain line's is as it was (item 159)", () => {
+  const lines = composeLines();
+  const voice = { voice: 'en-US-GuyNeural' };
+  const a = fingerprintSource(lines.find((l) => l.id === 'letter_a_sound')!, 'edge-tts', voice, null) as { cutBy?: typeof CARRIER_CUT };
+  // By value: re-tuning any of these numbers changes the hash, so the next voice:build re-cuts.
+  assert.deepEqual(a.cutBy, CARRIER_CUT);
+  assert.deepEqual(CARRIER_CUT.split, SPLIT);
+  assert.deepEqual(CARRIER_CUT.finish, FINISH);
+  assert.equal(typeof CARRIER_CUT.onsetDb, 'number');
+  // A line with no cut keeps its pre-159 fingerprint keys, in order, so no plain line rebuilds.
+  const o = lines.find((l) => l.id === 'letter_o_sound')!;
+  assert.deepEqual(Object.keys(fingerprintSource(o, 'edge-tts', voice, null)), ['source', 'speaker', 'voice', 'text', 'say', 'group']);
 });

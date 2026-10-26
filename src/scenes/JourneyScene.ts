@@ -17,6 +17,8 @@ import { castArt, episode, journeyStops, startStep, villainSpec } from '../episo
 import { burst, fitImage, popIn } from '../fx/juice';
 import { Controls } from '../input/Controls';
 import { hookState } from '../hookState';
+import type { SceneKey } from './keys';
+import { openParent } from './ParentScene';
 
 const HOLD_MS = 2200;
 
@@ -25,7 +27,7 @@ export class JourneyScene extends Phaser.Scene {
   private leaving = false;
 
   constructor() {
-    super('Journey');
+    super('Journey' satisfies SceneKey);
   }
 
   create(): void {
@@ -107,7 +109,7 @@ export class JourneyScene extends Phaser.Scene {
       sfxSelect();
       this.go();
     }
-    if (this.controls.dev('F9') && !this.leaving) this.scene.start('Parent', { back: 'Journey' });
+    if (this.controls.dev('F9') && !this.leaving) openParent(this, { back: 'Journey' });
     this.controls.endFrame();
   }
 }

@@ -29,6 +29,7 @@ import { burst, fitImage, popIn, shake, wiggle } from '../../fx/juice';
 import { openTextEntry } from '../../input/TextEntry';
 import type { Spot } from '../../world/RoomScene';
 import { ParkedGame } from './ParkedGame';
+import type { SceneKey } from '../keys';
 
 interface Box {
   letter: string;
@@ -47,7 +48,7 @@ export class Spelling extends ParkedGame {
   private accepting = false;
 
   constructor() {
-    super('Spelling');
+    super('Spelling' satisfies SceneKey);
   }
 
   protected background(): string {

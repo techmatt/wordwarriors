@@ -23,6 +23,7 @@ import { ProgressStore, STORE_KEY } from '../../src/state/ProgressStore';
 import { pickWeighted } from '../../src/rules/random';
 import { blendRound, pictureRound, soundRound } from '../../src/rules/rounds';
 import { BAG_WORDS } from '../../src/rules/bank';
+import type { VoiceManifest } from '../../src/voice/manifest';
 import { sentencePlans } from './plans';
 import { align } from '../../tools/voice/align';
 import { composeLines } from '../../tools/voice/compose';
@@ -166,7 +167,7 @@ test('roster: named counter words are pictured, and never in any name, ability, 
 test('voice: every line id the game derives exists in lines.json and the manifest', () => {
   const lines = composeLines();
   const ids = new Set(lines.map((l) => l.id));
-  const manifest = JSON.parse(readFileSync('public/voice-gen/manifest.json', 'utf8')) as { lines: { id: string }[] };
+  const manifest = JSON.parse(readFileSync('public/voice-gen/manifest.json', 'utf8')) as VoiceManifest;
   const built = new Set(manifest.lines.map((l) => l.id));
   const want: string[] = [];
   for (const l of LETTERS) want.push(letterSoundLine(l.letter));
@@ -240,7 +241,7 @@ test('voice: every line id the game derives exists in lines.json and the manifes
   const inFile = new Map(file.map((l) => [l.id, JSON.stringify(l)]));
   const drift = [...lines.filter((l) => inFile.get(l.id) !== JSON.stringify(l)).map((l) => l.id), ...file.filter((l) => !ids.has(l.id)).map((l) => l.id)];
   assert.deepEqual(drift.slice(0, 20), [], 'lines.json is what compose makes (run npm run voice:lines)');
-  const texts = new Map(manifest.lines.map((l) => [l.id, (l as { text?: string }).text]));
+  const texts = new Map(manifest.lines.map((l) => [l.id, l.text]));
   const stale = lines.filter((l) => built.has(l.id) && texts.get(l.id) !== l.text).map((l) => l.id);
   assert.deepEqual(stale, [], 'every clip says its line as written now (run npm run voice:build)');
   assert.deepEqual(lines.filter((l) => !built.has(l.id)).map((l) => l.id), [], 'every line in lines.json is built');

@@ -23,6 +23,7 @@ import { Controls } from '../input/Controls';
 import { hookState } from '../hookState';
 import { Bubbles } from '../ui/Bubbles';
 import { Caption } from '../ui/Caption';
+import type { SceneKey } from './keys';
 
 export class AlarmScene extends Phaser.Scene {
   private controls!: Controls;
@@ -30,7 +31,7 @@ export class AlarmScene extends Phaser.Scene {
   private heroImgs: Phaser.GameObjects.Image[] = [];
 
   constructor() {
-    super('Alarm');
+    super('Alarm' satisfies SceneKey);
   }
 
   create(): void {

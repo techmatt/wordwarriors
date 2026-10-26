@@ -28,6 +28,7 @@ import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import { runeArt } from '../../content/phonics/runes';
 import { chargeRunes } from '../rules/charge';
 import type { RoomPlan } from '../rules/rooms';
+import type { SceneKey } from '../scenes/keys';
 import {
   castArt,
   castFace,
@@ -162,10 +163,10 @@ function endingSet(draw: boolean): string[] {
  * behind `pickScreens` and has its own art). They draw their rounds as they
  * open, from every picture: they wait for the lot.
  */
-const PARKED = new Set(['SoundToLetter', 'BlendPath', 'WordToPicture', 'Spelling', 'Alarm', 'Retreat']);
+const PARKED = new Set<SceneKey>(['SoundToLetter', 'BlendPath', 'WordToPicture', 'Spelling', 'Alarm', 'Retreat']);
 
 /** A parked scene: its `artFor` is every picture, so nothing prefetches it (src/art/gate.ts). */
-export function isParkedScene(key: string): boolean {
+export function isParkedScene(key: SceneKey): boolean {
   return PARKED.has(key);
 }
 
@@ -173,7 +174,7 @@ export function isParkedScene(key: string): boolean {
  * The art scene `key` draws, for the episode as it is. `draw`: make the plans
  * it needs (the gate) or use only those already made (a prefetch).
  */
-export function artFor(key: string, draw: boolean): string[] {
+export function artFor(key: SceneKey, draw: boolean): string[] {
   const out: string[] = [];
   switch (key) {
     case 'Boot':

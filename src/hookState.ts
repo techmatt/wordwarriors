@@ -4,6 +4,8 @@
  * (src/qa/probe.ts). Its own module so neither imports the other for it.
  */
 
+import type { SceneKey } from './scenes/keys';
+
 export interface SpotInfo {
   id: string;
   x: number;
@@ -15,7 +17,7 @@ export interface SpotInfo {
 }
 
 export interface RoomInfo {
-  scene: string;
+  scene: SceneKey;
   /** Changes every item: `<game>:<index>:<target>`. Wait for `=== expected`. */
   round: string;
   locked: boolean;
@@ -220,7 +222,7 @@ export interface TheEndInfo {
 
 /** A Wait screen (item 150): the scene it held, the art it waited for, and how long it stood (wall clock; -1 while it stands). */
 export interface WaitShown {
-  key: string;
+  key: SceneKey;
   ids: string[];
   ms: number;
 }
@@ -233,7 +235,8 @@ export const hookState: {
   recapDone: boolean;
   ending: EndingInfo | null;
   theEnd: TheEndInfo | null;
-  scene: string;
+  /** The scene last opened; '' before the first. */
+  scene: SceneKey | '';
   fps: number;
   /** Every Wait screen so far (item 150). */
   waits: WaitShown[];

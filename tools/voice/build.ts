@@ -22,7 +22,9 @@
  * Incremental: a line whose fingerprint is unchanged and whose mp3 is on disk is
  * skipped. The fingerprint is the source, speaker, text and group, plus the
  * voice, `say` and `cut` for edge-tts or the clip file and its spoken-text hash
- * for a recording. The speaker is in the
+ * for a recording (`fingerprintSource`). A carrier line's also holds how it is
+ * cut (`CARRIER_CUT`, carrier.ts: the cut's numbers and code version, item
+ * 159), so re-tuning the cut re-cuts it by itself. The speaker is in the
  * fingerprint because two speakers can share a voice config and still need
  * separate audio once one of them is re-tuned. `--force` rebuilds everything;
  * `--no-clips` ignores the clip store for a pure edge-tts build; `--prune`
@@ -35,15 +37,14 @@ import path from 'node:path';
 
 import { exists, LINES_FILE, runMain } from '../shared.js';
 import { align, isSpeakable } from './align.js';
-import { decodeMp3, vowelSpan } from './carrier.js';
+import { CARRIER_CUT, decodeMp3, vowelSpan } from './carrier.js';
 import { mp3Bytes } from './audio.js';
 import { finish } from './split.js';
 import { CLIP_DIR, clipStateFor, forgetMissingAudio, readClipIndex, spokenFor, type ClipIndex, type ClipRecord } from './clips.js';
 import { trimMp3 } from './mp3.js';
 import { EdgeTtsProvider } from './providers/edgeTts.js';
+import { MANIFEST_VERSION } from '../../src/voice/manifest.js';
 import type { LineSpec, ManifestLine, VoiceBook, VoiceConfig, VoiceManifest, VoiceProvider } from './types.js';
-
-const MANIFEST_VERSION = 2;
 
 /** Audio kept after the last word ends. See mp3.ts for why the tail is cut. */
 const TAIL_SECONDS = 0.2;
@@ -90,6 +91,12 @@ async function readJson<T>(file: string): Promise<T> {
 
 function fingerprint(source: unknown): string {
   return createHash('sha256').update(JSON.stringify(source)).digest('hex').slice(0, 16);
+}
+
+/** What a line's audio is made from: its fingerprint hashes this (the header's *Incremental*). */
+export function fingerprintSource(line: LineSpec, provider: string, voice: VoiceConfig, clip: ClipRecord | null): object {
+  if (clip) return { source: clip.provider, clip: clip.audio, spoken: clip.spokenHash, speaker: line.speaker, text: line.text, group: line.group };
+  return { source: provider, speaker: line.speaker, voice, text: line.text, say: line.say ?? null, group: line.group, ...(line.cut ? { cut: line.cut, cutBy: CARRIER_CUT } : {}) };
 }
 
 function resolveVoice(line: LineSpec, book: VoiceBook): VoiceConfig {
@@ -171,9 +178,7 @@ async function buildVoice(argv: string[]): Promise<void> {
     const clip = state.state === 'fresh' ? state.clip : null;
     if (clip) recorded++;
     const voice = resolveVoice(line, book);
-    const hash = clip
-      ? fingerprint({ source: clip.provider, clip: clip.audio, spoken: clip.spokenHash, speaker: line.speaker, text: line.text, group: line.group })
-      : fingerprint({ source: book.provider, speaker: line.speaker, voice, text: line.text, say: line.say ?? null, group: line.group, ...(line.cut ? { cut: line.cut } : {}) });
+    const hash = fingerprint(fingerprintSource(line, book.provider, voice, clip));
     const cached = cache[line.id];
     if (cached?.hash === hash && (await exists(path.join(opts.out, path.basename(cached.entry.audio))))) {
       // Re-based, so moving the folder (voice/ became voice-gen/) needs no rebuild.

@@ -43,6 +43,7 @@ import { Controls } from '../input/Controls';
 import { progress } from '../state/progress';
 import type { ItemKind } from '../state/ProgressStore';
 import { hookState } from '../hookState';
+import type { SceneKey } from './keys';
 
 const LEVEL_NAMES = ['CVC (CAT)', 'blends (FROG)', 'digraphs (SHIP)'];
 
@@ -53,17 +54,29 @@ const PAGE_NEXT = ['every word (page 2)', 'stored words (page 3)', 'back to page
 const recentPct = (s: { recent: boolean[] }): string =>
   s.recent.length ? `${Math.round((100 * s.recent.filter(Boolean).length) / s.recent.length)}%` : '–';
 
+/** The grown-ups page's start data: the scene to go back to and its own start data. */
+export interface ParentData {
+  back?: SceneKey;
+  data?: object;
+  page?: number;
+}
+
+/** Open the grown-ups page from `from` (F9, the title's held shoulders): straight, no art gate, it draws none. */
+export function openParent(from: Phaser.Scene, data: ParentData): void {
+  from.scene.start('Parent' satisfies SceneKey, data);
+}
+
 export class ParentScene extends Phaser.Scene {
   private controls!: Controls;
-  private back = 'Title';
+  private back: SceneKey = 'Title';
   private backData: object = {};
   private page = 0;
 
   constructor() {
-    super('Parent');
+    super('Parent' satisfies SceneKey);
   }
 
-  init(data: { back?: string; data?: object; page?: number }): void {
+  init(data: ParentData): void {
     this.back = data.back ?? 'Title';
     this.backData = data.data ?? {};
     this.page = data.page ?? 0;

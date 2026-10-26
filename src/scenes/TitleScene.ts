@@ -27,6 +27,8 @@ import { dadLock } from '../input/dadLock';
 import { hookState } from '../hookState';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { Caption } from '../ui/Caption';
+import type { SceneKey } from './keys';
+import { openParent } from './ParentScene';
 
 export class TitleScene extends Phaser.Scene {
   private controls!: Controls;
@@ -34,7 +36,7 @@ export class TitleScene extends Phaser.Scene {
   private leaving = false;
 
   constructor() {
-    super('Title');
+    super('Title' satisfies SceneKey);
   }
 
   create(): void {
@@ -157,11 +159,11 @@ export class TitleScene extends Phaser.Scene {
     // Dad lock opens nothing, the grown-ups page included (item 039).
     if (!dadLock.locked && this.controls.held('lb') && this.controls.held('rb')) {
       this.shoulderHeld += delta;
-      if (this.shoulderHeld > 2000) this.scene.start('Parent', { back: 'Title' });
+      if (this.shoulderHeld > 2000) openParent(this, { back: 'Title' });
     } else this.shoulderHeld = 0;
 
     if (this.controls.dev('F9')) {
-      this.scene.start('Parent', { back: 'Title' });
+      openParent(this, { back: 'Title' });
       return;
     }
     if (this.controls.pressed('green') || this.controls.pressed('start')) {

@@ -8,6 +8,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 
 // Type-only: the probe's own shapes, without loading Phaser in node.
 import type { QaLayout, QaSince, Rect } from '../../src/qa/probe';
+import type { VoiceManifest } from '../../src/voice/manifest';
 import type { WWState } from '../harness';
 import { wordLine } from '../../content/voice/ids';
 import { SOLO_CHARGE_BUDGET_MS } from './wording';
@@ -338,7 +339,7 @@ export function padReachIssues(seen: Set<string>, s: WWState, reach: number): Is
  */
 export function voiceBuildIssues(linesFile = 'content/voice/lines.json', out = 'public'): Issue[] {
   const lines = JSON.parse(readFileSync(linesFile, 'utf8')) as { id: string; text: string }[];
-  let manifest: { lines: { id: string; text: string; audio: string }[] };
+  let manifest: VoiceManifest;
   try {
     manifest = JSON.parse(readFileSync(`${out}/voice-gen/manifest.json`, 'utf8'));
   } catch {

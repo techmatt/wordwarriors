@@ -18,6 +18,7 @@ import { FONT_HEAVY } from '../config';
 import { DEBUG_ROOMS, debugMode, onDebugChange, startDebug, stopDebug } from '../episode/debug';
 import { debugBack } from '../episode/Episode';
 import { isLeaving } from '../fx/sceneGen';
+import { keyOf, type SceneKey } from '../scenes/keys';
 import { CornerTag } from '../ui/cornerTag';
 import { voiceBus } from '../voice/VoiceBus';
 import { RoomScene } from '../world/RoomScene';
@@ -44,13 +45,13 @@ const tag = new CornerTag(
 export function toggleDebug(game: Phaser.Game): boolean {
   // A press while the last one's scene change is still landing (the old room still runs for a frame) is ignored.
   if (switching) return true;
-  const scene = game.scene.getScenes(true).find((s) => s instanceof RoomScene && (s.scene.key === 'Debug' || DEBUG_ROOMS.includes(s.scene.key))) as RoomScene | undefined;
+  const scene = game.scene.getScenes(true).find((s) => s instanceof RoomScene && (keyOf(s) === 'Debug' || DEBUG_ROOMS.includes(keyOf(s)))) as RoomScene | undefined;
   if (!scene) return false;
   // A room already on its way out (its fade, or a change queued for Phaser's next step) is left be,
   // as F2 and F9 leave it (item 092): acting on it ran two scene changes, or took the wrong room as the origin.
   if (scene.fadingOut || isLeaving(scene)) return true;
   voiceBus.hush();
-  const go = (key: string, run: () => void) => {
+  const go = (key: SceneKey, run: () => void) => {
     switching = true;
     game.scene.getScene(key)?.events.once(Phaser.Scenes.Events.CREATE, () => (switching = false));
     // Never stuck: a change held behind the Wait scene still frees the key in a while.
@@ -61,7 +62,7 @@ export function toggleDebug(game: Phaser.Game): boolean {
     go('Debug', () => debugBack(scene, false));
     return true;
   }
-  if (scene.scene.key === 'Debug') {
+  if (keyOf(scene) === 'Debug') {
     const origin = stopDebug();
     if (origin) go(origin.key, () => startScene(scene, origin.key, origin.data));
     return true;

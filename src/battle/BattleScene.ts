@@ -80,6 +80,8 @@ import { StoryDirector, type StoryHost } from './story/StoryDirector';
 import type { StoryWalk } from './story/walk';
 import type { FightStage, Phase, StageHost } from './stages/stage';
 import { BattleVolleys } from './volleys';
+import { keyOf, type SceneKey } from '../scenes/keys';
+import { openParent } from '../scenes/ParentScene';
 
 /** The top band where the health bars and a contest's meter (the race's track) are drawn: bubbles keep below it. */
 const HUD_BAND = new Phaser.Geom.Rectangle(0, 0, GAME_WIDTH, 128);
@@ -149,7 +151,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
   storyWalk: StoryWalk | null = null;
 
   constructor() {
-    super('Battle');
+    super('Battle' satisfies SceneKey);
   }
 
   init(data: { step?: Step }): void {
@@ -851,7 +853,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
       // The grown-ups' page; it comes back to this battle (restarted) when closed. Marked
       // leaving (item 092): the director's last wait resolving this frame started the next step too.
       markLeaving(this);
-      this.scene.start('Parent', { back: this.scene.key, data: { step: this.step } });
+      openParent(this, { back: keyOf(this), data: { step: this.step } });
       return;
     }
     this.controls.endFrame();

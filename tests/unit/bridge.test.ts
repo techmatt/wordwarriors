@@ -11,7 +11,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
-import { SOUND_BY_UNIT, canHold } from '../../content/phonics/letters';
+import { SOUND_BY_UNIT, canHold, heardAs } from '../../content/phonics/letters';
 import { lookalikesOf } from '../../content/phonics/sentences';
 import { PLACES, SIDE_ROOMS, gapFor } from '../../content/house/house';
 import { narratorLine } from '../../content/voice/ids';
@@ -21,6 +21,8 @@ import { holdPlan, holdSamples } from '../../src/audio/holdSound';
 import { BRIDGE } from '../../src/config';
 import { stepLevel } from '../../src/rules/difficulty';
 import { BRIDGE_PICTURES, CROSS_WORDS, bridgeLevel, bridgePictures, bridgeEase, bridgeWords, planBridge, recordedBridgeLevel, sharedStart, whereDiffers } from '../../src/rules/bridge';
+import { grabSays } from '../../src/rules/grab';
+import { firstSound } from '../../src/rules/rhyme';
 import { BRIDGE_GAME, MINIGAMES, MINIGAME_BY_ID, PHONICS_GAMES, drawGames } from '../../src/rules/minigames';
 import { episodePlans } from '../../src/rules/rooms';
 import { ProgressStore, STORE_KEY } from '../../src/state/ProgressStore';
@@ -206,6 +208,23 @@ test('bridge draw: never a word the episode says, shows or has planned elsewhere
       for (const p of r.pictures) assert.ok(!avoid.includes(p) && !['log', 'leg'].includes(p), `${r.word}'s picture ${p}`);
     }
   }
+});
+
+test('the one hard-C/K rule (heardAs, item 159): C and CK are K, nothing else folds, BELT and BELL stay apart', () => {
+  assert.deepEqual(['c', 'ck', 'k', 'ch', 'l', 'll', 'q', 'qu'].map(heardAs), ['k', 'k', 'k', 'ch', 'l', 'll', 'q', 'qu']);
+  const heard = (w: string) => BANK_BY_WORD[w]!.sounds.filter(Boolean).map(heardAs).join(' ');
+  assert.equal(heard('belt'), 'b e l t');
+  assert.equal(heard('bell'), 'b e l');
+  assert.notEqual(heard('belt'), heard('bell'));
+  // Every site keeps them apart: the bridge shares three sounds, short of the whole of BELT...
+  assert.equal(sharedStart('belt', 'bell'), 3);
+  assert.ok(!bridgePictures('bell', 3, seeded(1), [], ['belt', 'bed', 'bug', 'ten', 'map']).includes('belt'), 'BELL: BELT is the word plus a sound (fix 59)');
+  // ...the hall hears BELL inside BELT, not BELT inside BELL...
+  assert.ok(grabSays('belt').includes('bell'));
+  assert.ok(!grabSays('bell').includes('belt'));
+  // ...and CAT, KING and DUCK's CK fold where they should.
+  assert.equal(firstSound('cat'), firstSound('king'));
+  assert.equal(sharedStart('cat', 'kit'), 1);
 });
 
 // ---- The far bank -----------------------------------------------------------

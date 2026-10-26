@@ -9,6 +9,7 @@ import { existsSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { BANK_BY_WORD } from '../../content/phonics/bank';
+import { heardAs } from '../../content/phonics/letters';
 import { lookalikesOf } from '../../content/phonics/sentences';
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import { letterSoundLine, narratorLine } from '../../content/voice/ids';
@@ -26,7 +27,7 @@ import { memory, seeded, spread } from './seeds';
 /** Seed 1's chain since hunt 9's M39 (two places are as good as three: it keeps the vowel); item 157's words and its read it at the first letter moved it. */
 const GOLDEN_SEED_1 = ['dot', 'cot', 'cat', 'hat', 'ham'];
 
-const sameSound = (a: string, b: string) => a === b || [a, b].sort().join('') === 'ck';
+const sameSound = (a: string, b: string) => heardAs(a) === heardAs(b);
 
 test('chain words: familiar pictured CVC words, one letter a sound', () => {
   assert.ok(SHIFT_WORDS.length >= 30, `${SHIFT_WORDS.length}`);

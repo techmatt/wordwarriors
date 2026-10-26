@@ -30,6 +30,7 @@
  */
 
 import { BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
+import { heardAs } from '../../content/phonics/letters';
 import { NO_ARTICLE, NUMBER_WORDS, lookalikesOf } from '../../content/phonics/sentences';
 import { SHIFTER } from '../config';
 import type { ProgressStore } from '../state/ProgressStore';
@@ -67,7 +68,7 @@ const VOWELS = 'aeiou';
 /** Consonants a fix-it stone can be: one letter, one plain sound (no Q X, no C beside K). */
 const STONE_CONSONANTS = 'bdfghjklmnprstvwz';
 /** Letters two stones must not both be: the same sound. */
-const sameSound = (a: string, b: string) => a === b || (a === 'c' && b === 'k') || (a === 'k' && b === 'c');
+const sameSound = (a: string, b: string) => heardAs(a) === heardAs(b);
 
 /** Every word a chain can use: a familiar pictured CVC word, one letter a sound (CAT; not DUCK, BELL or SHIP). */
 export const SHIFT_WORDS: string[] = THINGS.filter((w) => w.level === 1 && !w.odd && w.units.length === 3 && w.units.every((u) => u.length === 1) && w.vowel !== null).map((w) => w.word);

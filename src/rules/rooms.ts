@@ -38,6 +38,7 @@ import { chargeRunes, chargeWords, gestureWords, planCharge, type ChargePlan } f
 import { bridgeShown, bridgeWords, planBridge, type BridgePlan } from './bridge';
 import { planShifter, shifterShown, shifterWords, type ShifterPlan } from './shifter';
 import { planRhyme, rhymeSays, rhymeShown, rhymeWords, type RhymePlan } from './rhyme';
+import type { SceneKey } from '../scenes/keys';
 import type { ProgressStore } from '../state/ProgressStore';
 import { BAG_WORDS, drawKey, withStems } from './bank';
 import { shuffle, type Rand } from './random';
@@ -50,7 +51,7 @@ interface PlanBase {
   room: string;
   /** The minigame played there (src/rules/minigames.ts) and its scene. */
   game: string;
-  scene: string;
+  scene: SceneKey;
   /** The word the room ends in: its prize (the picture on the hub door), the counter in the attic. */
   key: string;
   /** Every word she reads there, in order, `key` last: from a fetch room, each is a battle item. */
