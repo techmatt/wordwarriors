@@ -23,8 +23,11 @@ import { soundOut, type SoundStep } from '../rules/soundOut';
  */
 export const HARD = ['a', 'f', 'long_oo', 'schwa', 'ow', 'th', 'ng', 'x'];
 export const HARD_TIMES = 2;
-/** Item 161's recorder cards' words, heard first: the newest takes, each word and its sound. */
-export const FIRST = ['cat', 'fan', 'zoo', 'zebra', 'cow'];
+/**
+ * The newest takes' words, heard first: item 163's S re-record (SUN, its card,
+ * and CHIPS, where item 162 heard the old S wrong), then item 161's cards.
+ */
+export const FIRST = ['sun', 'chips', 'cat', 'fan', 'zoo', 'zebra', 'cow'];
 
 export interface ListenWord {
   word: string;

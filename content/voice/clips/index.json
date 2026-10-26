@@ -471,30 +471,30 @@
       "speaker": "phonics",
       "spoken": "sun!",
       "spokenHash": "f4bb926ec0a55bb6",
-      "audio": "word_sun.47f035a2.mp3",
+      "audio": "word_sun.45c522e3.mp3",
       "words": [
         {
           "word": "sun",
           "start": 0,
-          "end": 0.67
+          "end": 0.98
         }
       ],
-      "ingested": "2026-10-21"
+      "ingested": "2026-10-26"
     },
     "letter_s_sound": {
       "provider": "matt",
       "speaker": "phonics",
       "spoken": "Suh.",
       "spokenHash": "64532a82cf958f84",
-      "audio": "letter_s_sound.e1512d98.mp3",
+      "audio": "letter_s_sound.e7fff4dc.mp3",
       "words": [
         {
           "word": "Suh",
           "start": 0,
-          "end": 0.6100208333333333
+          "end": 0.75
         }
       ],
-      "ingested": "2026-10-21"
+      "ingested": "2026-10-26"
     },
     "letter_l_sound": {
       "provider": "matt",

@@ -711,9 +711,10 @@ the tip from the sound's `record` in `content/phonics/letters.ts`. Both are the 
 use it. `voice:lines` (a word added) and `voice:import` (a sound recorded) run it, and
 `tests/unit/recorder.test.ts` fails while the block is out of date. When the block
 changes, the planner syncs the hosted copy. On 2026-10-25 `?missing` was A (stale since
-item 085's carrier), F, long OO, the schwa and OW; item 161 imported all five. Since item
-162 it is S, a re-record (**`phonics-recorder.html?missing`**, the hosted copy once the
-planner syncs it).
+item 085's carrier), F, long OO, the schwa and OW; item 161 imported all five. Item
+162 asked for S again (a re-record); item 163 imported Matt's SUN card, and `?missing`
+is empty. S's `rerecord` stays in `letters.ts`, dormant: its clip file is gone, and
+`tests/unit/recorder.test.ts` uses it.
 
 The zip holds `manifest.json` (format `phonics-recorder/2`: `recorder`, the speaker's
 name, now required; each take's card `group` `g01`…`g12`, or a targeted page's `g02f`, `entries` of sound, word,
@@ -786,7 +787,7 @@ the importer takes any repeat (no hold check), and the recorder's F card asks fo
 **http://localhost:5174/listen.html** (dev server; `npm run preview` serves it too), item
 161: a plain page, no Phaser, for Matt to check every phonic sound by ear. A short set
 of live words (`src/listen/words.ts`) that together sound out every sound a live word
-sounds out: the newest takes' words first (CAT FAN ZOO ZEBRA COW), then a greedy cover,
+sounds out: the newest takes' words first (SUN CHIPS, item 163's S; CAT FAN ZOO ZEBRA COW, item 161's), then a greedy cover,
 then more words for the hard sounds (`HARD`: the five new takes, TH, NG, X) until each
 is heard twice where the bank allows (OW is in COW alone). Each word plays as the game
 sounds it out, a sound a unit with its letters lit and `SOUND_GAP_MS` between, then the
