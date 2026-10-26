@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { BANK, BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
-import { SOUND_BY_UNIT } from '../../content/phonics/letters';
+import { SOUND_BY_UNIT, heardAs } from '../../content/phonics/letters';
 import { RUNES, RUNE_BY_SOUND } from '../../content/phonics/runes';
 import { ABILITY_KINDS } from '../../content/battle/types';
 import { letterSoundLine } from '../../content/voice/ids';
@@ -153,9 +153,9 @@ test('draw: a word with a shaky sound comes up more than one with only solid sou
   assert.ok(m / per('m') > s / per('s'), `M (missed) ${m} draws over ${per('m')} words, S (solid) ${s} over ${per('s')}`);
 });
 
-test('draw (item 140): a visit spells two different words, sharing no sound where the bank allows, the second never said by the first\'s gestures', () => {
+test('draw (item 140): a visit spells two different words, sharing no sound where the bank allows (C and K one sound, hunt 12), the second never said by the first\'s gestures', () => {
   const rand = seeded(11);
-  for (let k = 0; k < 120; k++) {
+  for (let k = 0; k < 300; k++) {
     const store = new ProgressStore(memory());
     const avoid = k % 2 ? ['cat', 'dog'] : [];
     const p = planCharge(store, { avoid }, rand);
@@ -163,7 +163,8 @@ test('draw (item 140): a visit spells two different words, sharing no sound wher
     const [a, b] = p.rounds as [(typeof p.rounds)[0], (typeof p.rounds)[0]];
     assert.notEqual(a.word, b.word);
     // The bank has plenty of charge words with no sound of the first: the second always is one.
-    assert.ok(!b.runes.some((s) => a.runes.includes(s)), `${a.word} and ${b.word} share a sound`);
+    // As heard (hunt 12): CAT then KID is "Kuh" twice, a C rune and a K rune.
+    assert.ok(!b.runes.some((s) => a.runes.map(heardAs).includes(heardAs(s))), `${a.word} and ${b.word} share a sound`);
     assert.ok(!gestureWords(a.runes).includes(b.word), `${a.word}'s gestures say ${b.word}`);
     for (const w of chargeWords(p)) assert.ok(!avoid.includes(w));
     assert.deepEqual(chargeRunes(p), [...new Set([...a.runes, ...b.runes])]);

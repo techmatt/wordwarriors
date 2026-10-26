@@ -318,3 +318,22 @@ test("padPlace (hunt 11, M76): rings keep off the clash point's flare box", () =
     assert.equal(ringsOn(spots, flare), 0, `seed ${seed}: ${JSON.stringify(spots)}`);
   }
 });
+
+test("padPlace (hunt 12): the sea tug's rings keep off its pool of water where they can (two pads put the lower one in it)", () => {
+  const pool: Box[] = [[520, 400, 760, 720]];
+  let before = 0;
+  let after = 0;
+  for (let seed = 1; seed <= 30; seed++) {
+    const rand = seeded(spread(seed));
+    const lead = (rand() - 0.5) * 80;
+    const me = body(430 - lead, 548, 110, 200);
+    const ally = body(295 - lead, 590, 110, 180);
+    const villain = body(895 - lead, 565, 320, 260);
+    const held: Box[] = [[ally.x - ally.half, ally.top, ally.x + ally.half, ally.y + 20]];
+    const inp = { n: 3, avoid: [me, ally, villain], cover: [villain, ally], contest: { meX: me.x, villain }, sway: 40, ...floor, me: { x: me.x, y: me.y, reach: 120 } };
+    before += ringsOn(placeContestPads({ ...inp, keepOff: held, rand: seeded(seed) }, held), pool);
+    after += ringsOn(placeContestPads({ ...inp, keepOff: [...held, ...pool], rand: seeded(seed) }, held), pool);
+  }
+  console.log(`rings in the pool, 30 layouts: ${before} before, ${after} after`);
+  assert.ok(after < before, `${after} against ${before}`);
+});

@@ -141,6 +141,12 @@ export interface EpisodeInput {
   pool?: Minigame[];
   /** Words said before any room besides the cast's own (the quest's setup line): never key words. */
   saidBefore?: string[];
+  /**
+   * Words whose picture every episode shows before any room, unsaid (hunt 12: the bed she wakes in and presses
+   * green on, BED): never a key word or the attic's counter, which the episode must not show first, but read
+   * in the other games as any word (item 157 put BED back in play).
+   */
+  notKeys?: string[];
 }
 
 /** What the planners share while an episode's rooms are planned (`episodePlans`). */
@@ -313,6 +319,7 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   const moves = new Set<string>([...(input.moveWords ?? ACTION_WORDS), ...(input.battle1Moves ?? [])]);
   const named = CHARACTER_BY_ID[fill.villain]?.counter.word;
   const ctx: PlanContext = { store, rand, fill, gift, avoid, moves, named: named ? [named] : [], taken: [], pictured: [] };
+  const notKeys = new Set(withStems(input.notKeys ?? []));
 
   // The games with words of their own plan them first, kind by kind, so the
   // sentence rooms and the counter keep clear of all of them.
@@ -359,13 +366,13 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
       continue;
     }
     // Not the villain's named counter word either: the attic's to draw (item 092). Nor MOM or DAD (hunt 9, M41).
-    const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !NOT_FETCHED.has(w) && !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w) && !ctx.named.includes(w)).filter(fits(i));
+    const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !NOT_FETCHED.has(w) && !avoid.has(w) && !notKeys.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w) && !ctx.named.includes(w)).filter(fits(i));
     keys.push(drawKey(store, eligible, rand, [...keys, ...taken]));
   }
   // The counter: not a word on battle 1's move pads, not a word fetched this
   // episode (battle 1 shouts THE NET!). Every bag word is decodable (item 009;
   // the long-vowel KEY and YOYO too since item 048, and may be the counter: item 090).
-  const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w)).filter(fits(2));
+  const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !notKeys.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w)).filter(fits(2));
   keys.push(drawKey(store, eligible, rand, [...keys, ...taken], (w) => (w === named ? NAMED_COUNTER_BOOST : 1)));
 
   const slots = ['a', 'b', 'counter'] as const;

@@ -10,7 +10,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
 
-import { decalIssues, heroIssues, logIssues, onlyLineVariants, padReachIssues, panelIssues, ruledCover, spawnIssues, storeChanges, voiceBuildIssues, type Box } from '../qa/checks';
+import { decalIssues, fighterIssues, heroIssues, logIssues, onlyLineVariants, padReachIssues, panelIssues, ruledCover, soundGapIssues, spawnIssues, storeChanges, voiceBuildIssues, type Box } from '../qa/checks';
 import { britishIn, clippedIn, giveawayIssues, namesLetter, tauntIssues, variantIssues } from '../qa/wording';
 import type { WWState } from '../harness';
 
@@ -155,6 +155,42 @@ test('pad-in-reach (hunt 7): a move pad opening within her reach is flagged once
   assert.deepEqual(padReachIssues(seen, at(560), 95).map((i) => i.detail), ['LIFT opened 70 px from her (smaug_story)']);
   assert.deepEqual(padReachIssues(seen, at(560), 95), [], 'once a choice');
   assert.deepEqual(padReachIssues(new Set(), at(300), 95), []);
+});
+
+test('fighters (hunt 12): Evil Tiamat standing at the edge is not off the screen; past it by more than a third is; a ring under her in a choice is flagged once', () => {
+  const fighter = (id: string, box: number[], status: string | null = null) => ({ id, hp: 100, status, art: id, drawn: 300, box, onStage: true });
+  const at = (villain: number[], open = false) =>
+    ({
+      scene: 'Battle',
+      battle: { part: 1, fight: 'brawl', phase: 'fight', heroes: [fighter('julia', [500, 400, 580, 600])], villains: [fighter('tiamat_evil', villain)], choice: open ? { open, words: ['hop', 'lift'], spots: [{ word: 'hop', x: 1000, y: 560 }, { word: 'lift', x: 700, y: 560 }] } : null },
+    }) as unknown as WWState;
+  const seen = new Set<string>();
+  assert.deepEqual(fighterIssues(seen, at([928, 300, 1168, 620]), 1280), []);
+  assert.deepEqual(fighterIssues(seen, at([1320, 300, 1560, 620]), 1280).map((i) => i.kind + ':' + i.detail.split(' (')[0]), ['fighter-offscreen:tiamat_evil 100% off the screen']);
+  assert.deepEqual(fighterIssues(seen, at([1320, 300, 1560, 620]), 1280), [], 'once a fighter');
+  // Floored (knocked flat, or the retreat's run off the edge): not checked.
+  const down = at([1320, 300, 1560, 620]);
+  down.battle!.villains[0]!.status = 'floored';
+  assert.deepEqual(fighterIssues(new Set(), down, 1280), []);
+  // Running in from past the edge (the intro): not on the stage yet.
+  const coming = at([1320, 300, 1560, 620]);
+  coming.battle!.villains[0]!.onStage = false;
+  assert.deepEqual(fighterIssues(new Set(), coming, 1280), []);
+  const choice = new Set<string>();
+  assert.deepEqual(fighterIssues(choice, at([900, 300, 1100, 620], true), 1280).map((i) => i.kind + ':' + i.detail.split(' (')[0]), ["pad-under-fighter:HOP's ring under tiamat_evil"]);
+  assert.deepEqual(fighterIssues(choice, at([900, 300, 1100, 620], true), 1280), [], 'once a pad');
+});
+
+test('sound gaps (hunt 12): a sound-out whose letter sounds run together is a bug, in game time; the bridge slides them on purpose', () => {
+  const v = (id: string, t: number, scene = 'RhymeRoom', dur = 0.6) => ({ t, id, scene, priority: 'instruction', text: '', noLine: false, silent: false, dur });
+  // A 0.6 s clip is 600 ms of game time at any speed (the harness speeds its playback up too): 400 ms after
+  // it ends (SOUND_GAP_MS) is fine, 100 ms is not, while the room holds her input.
+  const lock = (scene: string, start: number, ms: number) => ({ scene, round: '', start, ms, silentMs: 0 });
+  const locks = [lock('RhymeRoom', 0, 5000)];
+  assert.deepEqual(soundGapIssues([v('letter_r_sound', 0), v('letter_i_sound', 1000), v('nar_x', 2000), v('letter_ng_sound', 3000)], locks), []);
+  assert.deepEqual(soundGapIssues([v('letter_r_sound', 0), v('letter_i_sound', 700)], locks).map((i) => i.detail), ['letter_r_sound then letter_i_sound 100 ms apart (game time)']);
+  // Her own: the bridge's slide, the Shape-Shifter's stones as she walks past them (unlocked).
+  assert.deepEqual(soundGapIssues([v('letter_f_sound', 0, 'BridgeRoom'), v('letter_a_sound', 100, 'BridgeRoom')], locks), []);
 });
 
 test('text off its panel (item 128): the old attic banner\'s key word over the red trim is a bug; a word on the cream is not', () => {

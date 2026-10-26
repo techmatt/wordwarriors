@@ -14,7 +14,7 @@ import { ANY_SCENES, HUB_SCENES, hubStoryIds, storyTexts } from '../../content/h
 import { ALL_ACTIONS, BANK, BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
 import { FAMILIES, sillyWord } from '../../content/phonics/families';
 import { DIGRAPH_SOUNDS, LETTERS, LONG_VOWEL_SOUNDS } from '../../content/phonics/letters';
-import { FETCH_ITEMS, FRAMES, allFrameTokens, allPrefixes, sentence, tokenWord } from '../../content/phonics/sentences';
+import { FETCH_ITEMS, FRAMES, allFrameTokens, allPrefixes, lookalikesOf, sentence, tokenWord } from '../../content/phonics/sentences';
 import { SPELL_WORDS, spellWordsFor } from '../../content/phonics/spelling';
 import { PICTURE_WORDS, SPECIAL_WORDS, WORDS } from '../../content/phonics/words';
 import { WAKERS, coreLine, heroKey, homeQuestLine, letterSoundLine, moveKey, moveLine, narratorLine, nameLine, questLine, rimeLine, sillyLine, tauntLine, ultimateLine, villainKey, wakeCastKey, wakeLine, wordLine } from '../../content/voice/ids';
@@ -344,4 +344,29 @@ test('ProgressStore (hunt 11): blocked site storage plays on without saving (it 
   assert.equal(store.stat('words', 'cat').seen, 1);
   const garbled = { getItem: () => '{not json', setItem: () => { throw new Error('QuotaExceededError'); } };
   assert.doesNotThrow(() => new ProgressStore(garbled));
+});
+
+test('BED (hunt 12): her bed in the bedroom shows it first (`notKeys`), so it is never a key word or the counter', () => {
+  const fill = { villain: 'smaug', helper: 'ellie', hero: 'julia' };
+  const keysOf = (notKeys?: string[]) => {
+    const keys: string[] = [];
+    for (let seed = 1; seed <= 400; seed++) {
+      const plans = sentencePlans(new ProgressStore(memory()), { fill, ally: 'ellie', gift: 'zap', rooms: ['kitchen', 'garage'], counterRoom: 'attic', ...(notKeys ? { notKeys } : {}) }, seeded(spread(seed)));
+      keys.push(...plans.map((p) => p.sentence.key));
+    }
+    return keys;
+  };
+  assert.ok(keysOf().includes('bed'), 'without it, BED comes up as a key word');
+  assert.ok(!keysOf(['bed']).includes('bed'));
+});
+
+test('parked games (hunt 12): no round shows two look-alikes (the live rooms\' list), and every Spell the Spell word is CVC', () => {
+  const p = new ProgressStore(memory());
+  const r = seeded(12);
+  for (let i = 0; i < 200; i++) {
+    for (const item of [...blendRound(p, 3, r), ...pictureRound(p, 4, r)]) {
+      for (const a of item.choices) for (const b of item.choices) assert.ok(a === b || !lookalikesOf(a).includes(b), `${a} beside ${b}`);
+    }
+  }
+  for (const [who, words] of Object.entries(SPELL_WORDS)) for (const w of words) assert.ok(/^[^aeiou][aeiou][^aeiou]$/.test(w), `${who}: ${w}`);
 });

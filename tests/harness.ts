@@ -778,7 +778,8 @@ export async function playEpisode(
     keys.push(...(await playRoom(page)));
   }
   const front1 = await until(page, (s) => s.scene === 'Hub' && s.room?.round === 'hub:1:front', 90_000, 'front door open');
-  expect(front1.episode.fetched).toEqual([grab, ...keys]);
+  // MOM and DAD are read but never bagged (hunt 10, M45): a drawn bridge can cross DAD (hunt 12, `drawn.spec`'s seed 19).
+  expect(front1.episode.fetched).toEqual(bagged([grab, ...keys]));
   await hubGo(page, 'door_front');
 
   // Battle 1: the fetched things are used, the ultimate still wins.
@@ -825,7 +826,10 @@ export async function playEpisode(
  */
 export function expectFightLength(after: WWState): void {
   if (after.battle?.stage.story) return;
-  expect(after.battle?.t ?? 0).toBeGreaterThan(45);
+  // 40, not 45 (hunt 12): item 144's M62 cut battle 1's opening (one volley for Charge, runes back to back, a
+  // shorter last beat), and the contests booted straight into a part ran 43.6 to 44.7 s on the code before this
+  // hunt too; a broken fight still ends far sooner.
+  expect(after.battle?.t ?? 0).toBeGreaterThan(40);
   expect(after.battle?.t ?? 0).toBeLessThan(120);
 }
 

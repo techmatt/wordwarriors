@@ -23,6 +23,7 @@
  */
 
 import { BANK, BANK_BY_WORD, THINGS, type BankWord } from '../../content/phonics/bank';
+import { heardAs } from '../../content/phonics/letters';
 import { RUNES, RUNE_BY_SOUND } from '../../content/phonics/runes';
 import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { CHARGE } from '../config';
@@ -115,6 +116,9 @@ function chargeable(w: BankWord): boolean {
 /** Every word Charge the Spell can spell. */
 export const CHARGE_WORDS: string[] = THINGS.filter(chargeable).map((w) => w.word);
 
+/** Every sound some charge word drills (hunt 12: no word has a Z or a Y, so the grown-ups page's cells for them sat grey for good). */
+export const CHARGE_SOUNDS: ReadonlySet<string> = new Set(CHARGE_WORDS.flatMap((w) => BANK_BY_WORD[w]!.sounds));
+
 export interface ChargeInput {
   /** Words the episode says or shows first, its move pads and gift, and other rooms' words: never the charge word. */
   avoid: string[];
@@ -137,7 +141,9 @@ export function drawChargeWord(store: ProgressStore, input: ChargeInput = { avoi
   let pool = quiet.filter((w) => !avoid.has(w));
   if (!pool.length) pool = quiet.length ? quiet : [...CHARGE_WORDS];
   if (apart.length) {
-    const shared = (w: string) => BANK_BY_WORD[w]!.sounds.filter((s) => apart.includes(s)).length;
+    // As heard (hunt 12): a C rune then a K rune is the same "Kuh" twice (CAT then KID), item 159's one rule.
+    const heard = new Set(apart.map(heardAs));
+    const shared = (w: string) => BANK_BY_WORD[w]!.sounds.filter((s) => heard.has(heardAs(s))).length;
     const least = Math.min(...pool.map(shared));
     pool = pool.filter((w) => shared(w) === least);
   }

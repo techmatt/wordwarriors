@@ -21,6 +21,8 @@ export type Box = [number, number, number, number];
 export const SIGN_RISE = 215;
 /** A word sign's plate (moveChoice.ts draws it), centred on the sign. */
 export const SIGN_W = 230;
+/** The screen's width (src/config.ts GAME_WIDTH; this file stays free of the game's modules). */
+const SCREEN_W = 1280;
 export const SIGN_H = 100;
 /** A pad's floor ring, the disc moveChoice.ts draws, centred on the pad. */
 export const RING_W = 190;
@@ -211,9 +213,12 @@ function layout(inp: PlaceInput): { spots: { x: number; y: number }[]; tier: num
     const [l, t, r, btm] = bodyBox(b);
     return [l - sway, t, r + sway, btm];
   });
+  // A lit sign is drawn 12% larger (moveChoice): at x 1150 its plate ran off the screen's right edge (hunt 12, the
+  // sky race's NET). Its whole lit plate stays on the screen (the arena's left edge already leaves it room).
+  const litHalf = (SIGN_W * 1.12) / 2 + 6;
   const columns = (edge: number): number[] => {
     const out: number[] = [];
-    for (let x = inp.left + edge; x <= inp.right - edge; x += 20) out.push(x);
+    for (let x = inp.left + edge; x <= Math.min(inp.right - edge, SCREEN_W - litHalf); x += 20) out.push(x);
     return out;
   };
 

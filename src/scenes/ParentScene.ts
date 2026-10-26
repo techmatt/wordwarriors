@@ -37,6 +37,7 @@ import { recordedBridgeLevel } from '../rules/bridge';
 import { SHIFT_WORDS, recordedShifterLevel } from '../rules/shifter';
 import { RHYME_FAMILIES, recordedRhymeLevel } from '../rules/rhyme';
 import { RUNE_BY_SOUND } from '../../content/phonics/runes';
+import { CHARGE_SOUNDS } from '../rules/charge';
 import { difficulty } from '../rules/difficulty';
 import { fitText } from '../ui/fitText';
 import { Controls } from '../input/Controls';
@@ -128,8 +129,9 @@ export class ParentScene extends Phaser.Scene {
     // Five full columns, narrow enough to stay left of the warm-up's levels.
     // Item 056's NG and voiced TH are left out: no rune drills them alone, and a sixth column would run into the warm-up's levels.
     const drilled = DIGRAPH_SOUNDS.filter((l) => l.letter !== 'ng' && l.letter !== 'th_voiced');
-    // Only the sounds a rune drills (hunt 11: Q, X and CK, which none does, sat grey as "never tried" for good).
-    this.grid('Letter sounds', 'sounds', [...LETTERS, ...drilled].map((l) => l.letter).filter((s) => RUNE_BY_SOUND[s]), 30, 90, 6, 162, 30);
+    // Only the sounds a rune drills (hunt 11: Q, X and CK, which none does, sat grey as "never tried" for good),
+    // in a word Charge the Spell can draw (hunt 12: Z and Y have runes, but no charge word has either).
+    this.grid('Letter sounds', 'sounds', [...LETTERS, ...drilled].map((l) => l.letter).filter((s) => RUNE_BY_SOUND[s] && CHARGE_SOUNDS.has(s)), 30, 90, 6, 162, 30);
     // Since item 096 the Shape-Shifter's fix-it links fill this (a letter found for a sound), Spell the Spell
     // being parked: the latest first, and how many more (hunt 6: it showed the first three ever, as typing).
     const spelled = Object.entries(snap.spelling ?? {})

@@ -80,6 +80,12 @@ export interface AbilitySpec {
   /** An emoji drawn as the projectile or falling thing ("🪙", "❄️"). */
   glyph?: string;
   /**
+   * A `wave`'s glyph rides its front, three of them (item 156: Comet Crash's fireballs). Only
+   * where asked: a rune's wave carries its gesture glyph too (S's snake, P's candle), and with
+   * riders keyed on the glyph alone they flew across sideways (hunt 12).
+   */
+  riders?: boolean;
+  /**
    * An art id drawn as the projectile, falling or orbiting thing instead of a
    * glyph (`prop_silver_sword`). Drawn point up; it falls point first. Built-in
    * fx textures count too: `fx_bubble` is a see-through bubble tinted `color`.

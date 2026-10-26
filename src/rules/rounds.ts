@@ -11,6 +11,7 @@
 import { LETTERS } from '../../content/phonics/letters';
 import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { PICTURE_WORDS, SIGHT_WORDS } from '../../content/phonics/words';
+import { lookalikesOf } from '../../content/phonics/sentences';
 import type { ProgressStore } from '../state/ProgressStore';
 import { pickWeighted, shuffle, type Rand } from './random';
 
@@ -30,11 +31,9 @@ const SOUND_SKIP = new Set(['q', 'x']);
 // "Kuh"; a "Aah" and o "Ah"), never share a round.
 const MIRROR_SETS = [new Set(['b', 'd', 'p', 'q']), new Set(['m', 'n']), new Set(['u', 'n']), new Set(['c', 'k', 'q']), new Set(['a', 'o', 'u']), new Set(['e', 'i']), new Set(['v', 'w', 'y']), new Set(['m', 'w']), new Set(['i', 'l', 'j'])];
 
-/** Words whose pictures could be mistaken for each other never share a round. */
-const LOOKALIKES = [['bus', 'van', 'jet'], ['hat', 'cap'], ['cat', 'rat', 'bat'], ['cup', 'can', 'pot'], ['pen', 'pin']];
-
+/** Words whose pictures could be mistaken for each other never share a round: the live rooms' list (hunt 12: this file's own five groups put DOG beside PUP, KID beside MOM). */
 function lookalike(a: string, b: string): boolean {
-  return LOOKALIKES.some((g) => g.includes(a) && g.includes(b));
+  return lookalikesOf(a).includes(b);
 }
 
 function confusable(a: string, b: string): boolean {

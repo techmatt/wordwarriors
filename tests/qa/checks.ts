@@ -331,6 +331,45 @@ export function padReachIssues(seen: Set<string>, s: WWState, reach: number): Is
 }
 
 /**
+ * Hunt 12 (item 155's giant edge clamp, fix 228's contest hold): a main fighter whose picture
+ * stands more than a third of its width off the screen's side (`fighter-offscreen`), and, in an
+ * open move choice, a fighter whose picture has come over a pad's ring after the pads went down
+ * round it (`pad-under-fighter`: the ring's middle inside the body's middle half). Both looks.
+ * `seen` keeps one issue a fighter, or a choice's pad, per scenario.
+ */
+export function fighterIssues(seen: Set<string>, s: WWState, width: number): Issue[] {
+  const b = s.battle;
+  if (!b) return [];
+  const out: Issue[] = [];
+  for (const f of [...b.heroes, ...b.villains]) {
+    const [l, , r] = f.box ?? [];
+    // Not running in or off (the intro, the retreat), nor knocked flat.
+    if (l === undefined || r === undefined || r <= l || f.status === 'floored' || f.onStage === false) continue;
+    const off = r - l - Math.max(0, Math.min(r, width) - Math.max(l, 0));
+    const key = `offscreen:${b.fight}:${f.id}`;
+    if (off > (r - l) / 3 && !seen.has(key)) {
+      seen.add(key);
+      out.push({ kind: 'fighter-offscreen', severity: 'look', scene: s.scene, detail: `${f.id} ${Math.round((100 * off) / (r - l))}% off the screen (x ${l} to ${r}; ${b.fight}, ${b.phase})`, key });
+    }
+  }
+  const c = b.choice;
+  if (c?.open) {
+    for (const f of [...b.heroes.slice(1), ...b.villains]) {
+      const [l, t, r, bot] = f.box ?? [];
+      if (l === undefined || t === undefined || r === undefined || bot === undefined) continue;
+      const q = (r - l) / 4;
+      for (const p of c.spots) {
+        const key = `padunder:${b.part}:${c.words.join(',')}:${p.word}:${f.id}`;
+        if (seen.has(key) || p.x < l + q || p.x > r - q || p.y < t || p.y > bot) continue;
+        seen.add(key);
+        out.push({ kind: 'pad-under-fighter', severity: 'look', scene: s.scene, detail: `${p.word.toUpperCase()}'s ring under ${f.id} (${b.fight}, ring at ${Math.round(p.x)},${Math.round(p.y)}, body x ${l} to ${r})`, key });
+      }
+    }
+  }
+  return out;
+}
+
+/**
  * Every line in `lines.json` with no clip: no manifest entry (`voice-unbuilt`),
  * a manifest entry for other text (`voice-stale`: the clip says an old line),
  * or a missing or empty mp3 (`voice-no-clip`). Item 062: Matt heard captions
@@ -362,6 +401,31 @@ function clipSize(file: string): number {
   } catch {
     return 0;
   }
+}
+
+/**
+ * A sound-out's sounds run together (hunt 12, the speech rule: a hint sounds out letters one by
+ * one and never blends them; fix 176's 160 ms gap ran R-I-NG nearly together): two letter
+ * sounds back to back in one scene with less than `minGapMs` of game time between the first's
+ * clip ending and the second starting. Game time throughout: at test speed the harness plays
+ * clips that many times faster (`playbackRate`), so a clip lasts its own length on the page's
+ * clock at any speed. Only while the room holds her input (`locks`): a sound-out is said to her,
+ * locked, while sounds she makes herself, unlocked, may follow one another as fast as she walks
+ * (the bridge's slide, the Shape-Shifter's stones as she passes them). The battle's runes are no
+ * room's (M83). Not a silent line (its length is a guess). A bug.
+ */
+export function soundGapIssues(voice: Since['voice'], locks: Since['locks'], minGapMs = 200): Issue[] {
+  const out: Issue[] = [];
+  const locked = (scene: string, t: number) => locks.some((l) => l.scene === scene && t >= l.start && t <= l.start + l.ms);
+  for (let i = 1; i < voice.length; i++) {
+    const a = voice[i - 1]!;
+    const b = voice[i]!;
+    if (a.scene !== b.scene || a.silent || b.silent || a.dur === undefined || !locked(a.scene, a.t) || !locked(b.scene, b.t)) continue;
+    if (!/^letter_\w+_sound$/.test(a.id) || !/^letter_\w+_sound$/.test(b.id)) continue;
+    const gap = b.t - a.t - a.dur * 1000;
+    if (gap < minGapMs) out.push({ kind: 'sound-gap', severity: 'bug', scene: a.scene, detail: `${a.id} then ${b.id} ${Math.round(gap)} ms apart (game time)`, key: `soundgap:${a.scene}:${a.id}:${b.id}` });
+  }
+  return out;
 }
 
 /** Voice with no line or no audio; console warnings; long locked or silent stretches; frame spikes. */

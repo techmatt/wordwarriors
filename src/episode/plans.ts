@@ -27,6 +27,7 @@
  * input, not this chain).
  */
 
+import { ART_BY_ID } from '../../content/art/assets';
 import { CHARACTER_BY_ID, personOf } from '../../content/battle/roster';
 import type { CounterItem } from '../../content/battle/types';
 import { BEDROOMS, COUNTER_ROOM, FETCH_ROOMS, PLACE_BY_ID, SIDE_ROOM_BY_ID } from '../../content/house/house';
@@ -180,7 +181,10 @@ function forcedSentence(plan: RoomPlan[], fill: EpisodeInput['fill']): RoomPlan[
  * its other words and every picture drawn as ever.
  */
 function forcedBridge(plan: RoomPlan[]): RoomPlan[] {
-  const words = (urlQuery().get('bridge') ?? '').toLowerCase().split(',').filter((w) => CROSS_WORDS.includes(w));
+  const asked = (urlQuery().get('bridge') ?? '').toLowerCase().split(',').filter(Boolean);
+  const words = asked.filter((w) => CROSS_WORDS.includes(w));
+  // Said, not silently dropped (hunt 12: `bridge=fig,fin` crossed WEB, BOX and DRESS): only the bridge's own words.
+  if (words.length < asked.length) console.warn(`?bridge=: not a bridge word: ${asked.filter((w) => !words.includes(w)).join(', ')}`);
   if (!words.length) return plan;
   return plan.map((p) => {
     if (p.slot !== 'a' || p.kind !== 'bridge') return p;
@@ -215,7 +219,12 @@ function planInput(gift: string, rooms: [string, string], counterRoom: string): 
   if (!prop.startsWith('prop_')) signs.add(prop);
   const signWords = BANK.filter((w) => w.glyph && signs.has(w.glyph)).map((w) => w.word);
   const saidBefore = [...storyWords(), ...bedroomWords(), ...signWords, ...grabSays(episode.grab ? episode.grab.word : grabWord())];
-  return { fill, ally: episode.ally, gift, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore };
+  // And the bed she wakes in and presses green on (hunt 12): with the map's bedroom stop a sunrise since item 157,
+  // nothing kept BED out of the key words and the attic's counter (Evil Julia's Cozy Bed). Only those: item 157
+  // put BED back in play, and she reads it in the other games.
+  const bed = ART_BY_ID.prop_bed?.glyph;
+  const notKeys = BANK.filter((w) => bed && w.glyph === bed).map((w) => w.word);
+  return { fill, ally: episode.ally, gift, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore, notKeys };
 }
 
 /**

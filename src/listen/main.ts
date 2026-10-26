@@ -105,9 +105,18 @@ function wordRow(w: ListenWord): HTMLTableRowElement {
 }
 
 async function main(): Promise<void> {
-  const res = await fetch(`${import.meta.env.BASE_URL}voice-gen/manifest.json`);
-  const manifest = (await res.json()) as VoiceManifest;
-  audioFor = new Map(manifest.lines.filter((l) => l.audio).map((l) => [l.id, l.audio]));
+  // No manifest (a fresh checkout, the junction missing, before voice:build): say so, and still list the words
+  // and sounds (hunt 12: the page stayed blank, its buttons dead, the error only in the console).
+  const manifest = await fetch(`${import.meta.env.BASE_URL}voice-gen/manifest.json`)
+    .then((r) => (r.ok ? (r.json() as Promise<VoiceManifest>) : null))
+    .catch(() => null);
+  audioFor = new Map((manifest?.lines ?? []).filter((l) => l.audio).map((l) => [l.id, l.audio]));
+  if (!manifest) {
+    const note = document.createElement('p');
+    note.textContent = 'No voice manifest (public/voice-gen/manifest.json): nothing can play. Is the voice-gen junction there? Run npm run voice:build (README, Storage).';
+    note.style.cssText = 'color:#b00;font-weight:bold';
+    document.body.prepend(note);
+  }
 
   const words = listenWords();
   const table = document.getElementById('words')!;

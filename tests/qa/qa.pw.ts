@@ -23,10 +23,10 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { test, type Page } from '@playwright/test';
 
 import { BANK } from '../../content/phonics/bank';
-import { FREE_PLAY, REACH, SHIFTER } from '../../src/config';
+import { FREE_PLAY, GAME_WIDTH, REACH, SHIFTER } from '../../src/config';
 import type { ProgressData } from '../../src/state/ProgressStore';
 import { SPEED, boot, choose, collectErrors, debugTagShown, driver, hubGo, leaveBedroom, playBattle, playAgain, playEntry, playRoom, playSentenceRoom, press, seedProgress, setHidden, state, storedBlob, toTheEnd, until, type RoomPlay, type WWState, VOICE } from '../harness';
-import { layoutIssues, leakIssues, logIssues, onlyLineVariants, padReachIssues, placeholderArt, spawnIssues, storeChanges, voiceBuildIssues, type Issue, type Since } from './checks';
+import { fighterIssues, layoutIssues, leakIssues, logIssues, onlyLineVariants, padReachIssues, placeholderArt, soundGapIssues, spawnIssues, storeChanges, voiceBuildIssues, type Issue, type Since } from './checks';
 import { qaLayout, qaSince } from './probe';
 import { clippedIssues, giveawayIssues, letterNameIssues, pacingIssues, repeatedLines, spellingIssues, tauntIssues, variantIssues } from './wording';
 import { NARRATOR_LINES, lineVariantKeys } from '../../content/voice/script';
@@ -37,7 +37,9 @@ VOICE.mode = 'real';
 driver.walk = true;
 
 /** Each narrator key with variants (item 087) and its variant keys, for `variantIssues`. */
-const VARIANT_BASES = Object.fromEntries(NARRATOR_LINES.map((t) => t.key).filter((k) => !/_\d+$/.test(k)).map((k) => [k, lineVariantKeys(k)] as const).filter(([, v]) => v.length > 1));
+// Not the Shape-Shifter's fix-it praise (hunt 12): M46 skips "You made it match!" before another fix-it link, so
+// "You got the right letter!" twice running is the rule, and every Shifter scenario flagged it.
+const VARIANT_BASES = Object.fromEntries(NARRATOR_LINES.map((t) => t.key).filter((k) => !/_\d+$/.test(k) && k !== 'shifter_fixed').map((k) => [k, lineVariantKeys(k)] as const).filter(([, v]) => v.length > 1));
 
 const TAG = process.env.QA_TAG ?? 'now';
 const OUT = scratchPath('qa', TAG);
@@ -68,7 +70,7 @@ interface Scenario {
    * (item 089); `cast` the seventh hunt's (item 116): the new allies and villains, the story fight;
    * `hunt8` the eighth hunt's (item 125): items 119-123's changes; `hunt9` the ninth hunt's
    * (item 129): items 126-128's changes; `hunt10` the tenth's (item 135): items 130-134's;
-   * `hunt11` the eleventh's (item 142): items 137-141's.
+   * `hunt11` the eleventh's (item 142): items 137-141's; `hunt12` the twelfth's (item 164): items 147-163's.
    */
   batch?: Batch;
   /** Item 080: reload the page at each of these points, one per episode started from the title. */
@@ -96,7 +98,7 @@ interface Scenario {
 }
 
 /** A scenario batch past the first, named as `QA_SET` names it. */
-const BATCHES = ['more', 'new', 'lenses', 'recent', 'cast', 'hunt8', 'hunt9', 'hunt10', 'hunt11'] as const;
+const BATCHES = ['more', 'new', 'lenses', 'recent', 'cast', 'hunt8', 'hunt9', 'hunt10', 'hunt11', 'hunt12'] as const;
 type Batch = (typeof BATCHES)[number];
 
 /** Where in an episode the item-080 probes act (`episode` calls `at` at each). */
@@ -241,6 +243,62 @@ const SCENARIOS: Scenario[] = [
   { name: 'charge_slow_net', query: 'seed=1117&room=charge', net: 'slow', batch: 'hunt11' },
   { name: 'rhyme_flaky_net', query: 'seed=1118&room=rhyme', net: 'flaky', hide: true, resize: true, batch: 'hunt11' },
   { name: 'charge_debug', query: 'seed=1119&room=charge', debugAt: ['room_a', 'hub1'], batch: 'hunt11' },
+  // Hunt 12 (item 164): items 147-163's changes. F's whole "fuh" on the Stretchy Bridge (162) right, wrong, at
+  // difficulty 2, through debug mode, the grown-ups page and a flaky net; the Shape-Shifter's new draw and words
+  // (157) and the rhyme room's redraws over drawn episodes; TAP and EGG read in Charge (156); Evil Elsa's summon
+  // and Comet Crash (156); the giants' edge clamp under knockback (155); voice priority and boot on a slow net (150).
+  { name: 'drawn5_h12', query: 'cast=random&games=all', episodes: 5, batch: 'hunt12' },
+  { name: 'bridge_f', query: 'seed=1201&room=bridge&bridge=fan,fox', episodes: 2, batch: 'hunt12' },
+  { name: 'bridge_f_wrong', query: 'seed=1202&room=bridge&bridge=frog,flag', wrong: true, batch: 'hunt12' },
+  { name: 'bridge_f_d2', query: 'seed=1203&room=bridge&bridge=fox,fish&difficulty=2', progress: 'firm', batch: 'hunt12' },
+  { name: 'bridge_f_debug', query: 'seed=1204&room=bridge&bridge=fan,gift', debugAt: ['room_a', 'hub1'], batch: 'hunt12' },
+  { name: 'bridge_f_parent', query: 'seed=1205&room=bridge&bridge=fox,fan', parentAll: true, batch: 'hunt12' },
+  { name: 'bridge_f_flaky', query: 'seed=1206&room=bridge&bridge=elf,frog', net: 'flaky', mash: true, batch: 'hunt12' },
+  { name: 'shifter5_h12', query: 'cast=random&room=shifter', episodes: 5, batch: 'hunt12' },
+  { name: 'shifter_wrong_h12', query: 'seed=1207&room=shifter', wrong: true, episodes: 2, batch: 'hunt12' },
+  { name: 'shifter_lock', query: 'seed=1208&room=shifter', lockAll: true, batch: 'hunt12' },
+  { name: 'rhyme3_h12', query: 'cast=random&room=rhyme', episodes: 3, batch: 'hunt12' },
+  { name: 'tap_egg', query: 'seed=1209&room=charge&words=tap,egg', episodes: 2, batch: 'hunt12' },
+  { name: 'elsa_summon', query: 'seed=1210&villain=elsa&games=all', mash: true, batch: 'hunt12' },
+  { name: 'elsa_summon_wrong', query: 'seed=1211&villain=elsa&fight=brawl&games=all', wrong: true, batch: 'hunt12' },
+  { name: 'ozy_comet', query: 'seed=1212&villain=ozymandias&games=all', batch: 'hunt12' },
+  { name: 'ozy_comet_brawl', query: 'seed=1213&villain=ozymandias&fight=brawl&games=all', mash: true, batch: 'hunt12' },
+  { name: 'tiamat_edge', query: 'seed=1214&villain=tiamat&fight=brawl&games=all', mash: true, batch: 'hunt12' },
+  { name: 'jorm_edge', query: 'seed=1215&villain=jormungandr&fight=brawl&games=all', wrong: true, batch: 'hunt12' },
+  { name: 'jasmine_slow', query: 'seed=1216&ally=jasmine&games=all', net: 'slow', batch: 'hunt12' },
+  // One episode each for a real-speed run (WW_SPEED=1): item 144's pacing (Charge, the rhyme room, M65's two-pad sea tug).
+  { name: 'tug_two_pads', query: 'seed=1217&fight=sea_tug&games=all', batch: 'hunt12' },
+  { name: 'charge_real', query: 'seed=1218&room=charge', batch: 'hunt12' },
+  { name: 'rhyme_real', query: 'seed=1219&room=rhyme', batch: 'hunt12' },
+  // Hunt 12's later rounds: odd input on the F bridge and the Shape-Shifter, and a long run.
+  { name: 'bridge_f_hidden', query: 'seed=1220&room=bridge&bridge=fox,frog', hide: true, resize: true, batch: 'hunt12' },
+  { name: 'bridge_f_reload', query: 'seed=1221&room=bridge&bridge=fan,flag', reloadAt: ['room_a', 'hub2'], batch: 'hunt12' },
+  { name: 'bridge_f_lock', query: 'seed=1222&room=bridge&bridge=fish,elf', lockAll: true, batch: 'hunt12' },
+  { name: 'bridge_f_voiceless', query: 'seed=1223&room=bridge&bridge=fan,fox', voiceless: true, batch: 'hunt12' },
+  { name: 'bridge_f_d3', query: 'seed=1224&room=bridge&bridge=frog,gift&difficulty=3', progress: 'firm', wrong: true, batch: 'hunt12' },
+  { name: 'shifter_hidden', query: 'seed=1225&room=shifter', hide: true, resize: true, mash: true, batch: 'hunt12' },
+  { name: 'drawn8_h12', query: 'cast=random&games=all', episodes: 8, batch: 'hunt12' },
+  // Hunt 12's completeness read: this hunt's choice fixes on the other stages, the giants on the heroes' side and on
+  // moving stages, the Shape-Shifter and the rhyme room under the lenses they had not had, the end screens, TAP and EGG.
+  { name: 'elsa_cookoff', query: 'seed=1240&villain=elsa&fight=cook_off&games=all', mash: true, batch: 'hunt12' },
+  { name: 'elsa_skyrace_wrong', query: 'seed=1241&villain=elsa&fight=sky_race&games=all', wrong: true, batch: 'hunt12' },
+  { name: 'warlock_magic', query: 'seed=1242&villain=dada_jason_warlock&fight=magic_show&games=all', mash: true, batch: 'hunt12' },
+  { name: 'story_h12', query: 'seed=1243&fight=smaug_story&games=all', wrong: true, mash: true, batch: 'hunt12' },
+  { name: 'tiamat_ally', query: 'seed=1244&ally=tiamat&villain=bavmorda&games=all', batch: 'hunt12' },
+  { name: 'tiamat_ally_tug', query: 'seed=1245&ally=tiamat&fight=sea_tug&games=all', mash: true, batch: 'hunt12' },
+  { name: 'tiamat_race', query: 'seed=1246&villain=tiamat&fight=space_race&games=all', resize: true, batch: 'hunt12' },
+  { name: 'tiamat_cook', query: 'seed=1247&villain=tiamat&fight=cook_off&games=all', batch: 'hunt12' },
+  { name: 'shifter_reload', query: 'seed=1250&room=shifter', reloadAt: ['room_a', 'hub2'], batch: 'hunt12' },
+  { name: 'shifter_parent', query: 'seed=1251&room=shifter', parentAll: true, batch: 'hunt12' },
+  { name: 'shifter_debug', query: 'seed=1252&room=shifter', debugAt: ['room_a', 'hub1'], batch: 'hunt12' },
+  { name: 'shifter_idle', query: 'seed=1253&room=shifter', idle: true, batch: 'hunt12' },
+  { name: 'shifter_d3', query: 'seed=1254&room=shifter&difficulty=3', progress: 'firm', wrong: true, batch: 'hunt12' },
+  { name: 'shifter_voiceless', query: 'seed=1255&room=shifter', voiceless: true, batch: 'hunt12' },
+  { name: 'rhyme_wrong_h12', query: 'cast=random&room=rhyme', wrong: true, episodes: 2, batch: 'hunt12' },
+  { name: 'rhyme_d2', query: 'seed=1256&room=rhyme&difficulty=2', progress: 'firm', batch: 'hunt12' },
+  { name: 'end_mash_h12', query: 'seed=1257&games=all', episodes: 2, endMash: true, batch: 'hunt12' },
+  { name: 'tap_egg_all', query: 'cast=random&games=all&words=tap,egg', episodes: 3, batch: 'hunt12' },
+  { name: 'charge_solo_h12', query: 'seed=1259&room=charge&words=tap,egg', episodes: 2, dadAway: true, batch: 'hunt12' },
 ];
 
 /** How often a busy child presses something (real ms). */
@@ -263,6 +321,7 @@ class Recorder {
   private roundStart = 0;
   /** The move choices already checked for a pad in her reach (`padReachIssues`). */
   private padsSeen = new Set<string>();
+  private fightersSeen = new Set<string>();
   /** The room's spots at the last poll (`spawnIssues`). */
   private spotIds = new Set<string>();
   private spotRound = '';
@@ -329,6 +388,12 @@ class Recorder {
     this.spotRound = round;
     this.add(spawnIssues(this.spotIds, s, REACH), this.lastShot);
     this.add(padReachIssues(this.padsSeen, s, REACH), this.lastShot);
+    // Hunt 12: a fighter off the screen, or come over a pad in a choice: shot as it is seen.
+    const fighters = fighterIssues(this.fightersSeen, s, GAME_WIDTH);
+    if (fighters.length) {
+      await this.capture(`fighter_${fighters[0]!.kind}`);
+      this.add(fighters, this.lastShot);
+    }
     for (const sp of s.room?.spots ?? []) this.spotIds.add(sp.id);
     this.add(logIssues({ ...q, console: [], missingArt: [], flashes: [] }, SPEED));
     this.add(clippedIssues(q.voice));
@@ -366,7 +431,7 @@ class Recorder {
       this.shots++;
       shot = `${this.dir}/${String(this.shots).padStart(3, '0')}_${s.scene}_${label}.png`;
       // Bounded (hunt 9): the config sets no action timeout, so a screenshot that never got its frame waited forever.
-      await this.page.screenshot({ path: shot, timeout: 20_000 }).catch(() => undefined);
+      await serial(this.page, () => this.page.screenshot({ path: shot, timeout: 20_000 })).catch(() => undefined);
       this.lastShot = shot;
     }
     // A picked picture pops up as its word is said (hunt 7, W33): the answer is made, so its brush
@@ -386,7 +451,9 @@ class Recorder {
       .filter((i) => !(said && i.kind === 'target-covered' && i.detail.startsWith(`${said} `)))
       .map((i) => (story && i.kind === 'target-covered' && i.detail.startsWith('circle ') ? { ...i, kind: 'target-covered-ruled', severity: 'look' as const } : i))
       .map((i) => (hallDone && i.kind === 'target-covered' && i.detail.startsWith('grab_') ? { ...i, kind: 'target-covered-ruled', severity: 'look' as const } : i))
-      .map((i) => (shifterPraise && i.kind === 'target-covered' && i.detail.startsWith('stone_') ? { ...i, kind: 'target-covered-ruled', severity: 'look' as const } : i));
+      .map((i) => (shifterPraise && i.kind === 'target-covered' && i.detail.startsWith('stone_') ? { ...i, kind: 'target-covered-ruled', severity: 'look' as const } : i))
+      // W57 (hunt 12): the creature's word said as the next link's pictures pop in under its box, about a second.
+      .map((i) => (s.scene === 'ShifterRoom' && i.kind === 'target-covered' && (said !== null) ? { ...i, kind: 'target-covered-ruled', severity: 'look' as const } : i));
     this.add(layout, shot);
     this.add(leakIssues(s, l, q.voice.filter((v) => v.t >= this.roundStart)), shot);
     this.add(spellingIssues(l, q.voice, s.scene), shot);
@@ -830,13 +897,25 @@ function hider(page: Page): { stop(): Promise<void>; count: () => number } {
 /** Item 080: the window resized every `RESIZE_EVERY_MS` through these sizes. */
 const RESIZE_EVERY_MS = 7000;
 const SIZES = [[800, 600], [1920, 1080], [640, 900], [1024, 768], [1366, 640], [1280, 720]] as const;
+/**
+ * One at a time per page (hunt 12, W61): a viewport change landing while a screenshot was in flight left the page
+ * at the old size's metrics while Playwright shot at the new one, and a whole move choice came out at the last
+ * window's fit. Screenshots and resizes queue here; a resize gives the game a beat to refit before the next shot.
+ */
+const pageQueues = new WeakMap<Page, Promise<unknown>>();
+function serial<T>(page: Page, fn: () => Promise<T>): Promise<T> {
+  const next = (pageQueues.get(page) ?? Promise.resolve()).then(fn, fn);
+  pageQueues.set(page, next.catch(() => undefined));
+  return next;
+}
+
 function resizer(page: Page): { stop(): Promise<void> } {
   let on = true;
   const loop = (async () => {
     for (let i = 0; on; i++) {
       await page.waitForTimeout(RESIZE_EVERY_MS).catch(() => undefined);
       const [width, height] = SIZES[i % SIZES.length]!;
-      if (on) await page.setViewportSize({ width, height }).catch(() => undefined);
+      if (on) await serial(page, async () => (await page.setViewportSize({ width, height }), await page.waitForTimeout(150))).catch(() => undefined);
     }
   })();
   return { stop: async () => ((on = false), await loop, await page.setViewportSize({ width: 1280, height: 720 }).catch(() => undefined)) };
@@ -952,6 +1031,8 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     const q = await bounded(qaSince(page, 0), 20_000, NO_SINCE);
     // The whole run's flashes at once: a burst can straddle two polls.
     rec.add(logIssues({ ...q, voice: [], locks: [], spikes: [] }, SPEED));
+    // Hunt 12: a sound-out's letter sounds never run together (the whole log: a pair can straddle two polls).
+    rec.add(soundGapIssues(q.voice, q.locks));
     rec.add(VOICE_BUILD);
     // Item 089: line variants in turn over the run, taunts at most twice an episode (item 087).
     const ids = q.voice.map((v) => v.id);
@@ -1033,6 +1114,11 @@ const FLAGS = [
   'scene=room&room=rhyme', 'scene=room&slot=b&room=rhyme', 'scene=room&room=rhyme&difficulty=3', 'room=rhyme&games=sentence', 'room=rhyme&game=word_machine',
   'scene=room&room=rhyme&words=new', 'scene=room&room=charge&difficulty=3', 'scene=battle&room=charge', 'scene=battle&part=2&room=charge', 'scene=battle&room=charge&fight=smaug_story',
   'scene=battle&charged=b,a,t,d,o,g', 'scene=house&ally=rilla', 'scene=house&ally=ozymandias', 'scene=house&ally=jasmine',
+  // Hunt 12 (item 164): the F bridge (item 162) and item 155's ?bridge= with odd values; item 157's words; item 156's
+  // summon and Comet Crash; Evil Tiamat's run-in at each part.
+  'scene=room&room=bridge&bridge=frog,flag', 'scene=room&room=bridge&bridge=gift,elf&difficulty=3', 'scene=room&room=bridge&bridge=fig,bogus', 'scene=room&room=bridge&bridge=',
+  'scene=room&room=bridge&bridge=fan,fox,fish,frog', 'scene=room&slot=b&room=bridge&bridge=fan', 'scene=room&room=shifter&words=pup,cub,cot,kid,dot',
+  'scene=battle&villain=elsa&fight=brawl', 'scene=battle&villain=ozymandias&fight=brawl', 'scene=battle&part=2&villain=tiamat&fight=brawl', 'scene=battle&ally=tiamat&villain=smaug',
 ];
 const flagSet = set === 'lenses' || set === 'all';
 for (const flag of flagSet && !LOOK ? FLAGS : []) {
@@ -1114,6 +1200,8 @@ for (const mode of flagSet && !LOOK ? (['skip', 'auto'] as const) : []) {
     for (const e of errors) rec.add([{ kind: 'page-error', severity: 'bug', scene: '', detail: e, key: `pageerror:${e.slice(0, 80)}` }]);
     const q = await qaSince(page, 0);
     rec.add(logIssues({ ...q, voice: [], locks: [], spikes: [] }, SPEED));
+    // Hunt 12: a sound-out's letter sounds never run together (the whole log: a pair can straddle two polls).
+    rec.add(soundGapIssues(q.voice, q.locks));
     const last = await state(page);
     writeFileSync(`${OUT}/${sc.name}.json`, JSON.stringify({ scenario: sc, stalled, path, progress: last.progress, read: last.episode.read, shots: rec.shots, issues: [...rec.issues.values()] }, null, 1));
   });

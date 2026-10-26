@@ -44,14 +44,16 @@ let held: { done: Promise<void>; release: () => void } | null = null;
  */
 export function holdAudio(): void {
   const c = getAudioContext();
-  // Not yet unlocked (suspended, nothing held): nothing plays to hold.
-  if (!c || (c.state !== 'running' && !held)) return;
+  if (!c) return;
   holds++;
   if (!held) {
     let release = () => undefined as void;
     held = { done: new Promise<void>((r) => (release = r)), release: () => release() };
   }
-  void c.suspend().catch(() => undefined);
+  // Not yet unlocked (started from the pad alone: Chrome counts no pad press as a gesture), nothing
+  // plays, but the lines are captions on their own clocks: held all the same (hunt 12), or the
+  // hub's story ran on through its captions while she was away.
+  if (c.state === 'running') void c.suspend().catch(() => undefined);
 }
 
 /** Bumped by each hold, so a resume that ends after the tab hid again keeps the hold. */

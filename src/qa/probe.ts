@@ -41,6 +41,8 @@ export interface QaVoice {
   silent: boolean;
   /** Why a silent line had no clip (item 062): its decode still queued or under way, failed, never asked for, or the context not running. */
   why?: 'queued' | 'decoding' | 'failed' | 'none' | 'suspended';
+  /** Its clip's length, real seconds (hunt 12: `sound-gap`); a silent line's is an estimate. */
+  dur?: number;
 }
 
 export interface QaLock {
@@ -175,6 +177,7 @@ export function installProbe(game: Phaser.Game): void {
       text: u.text,
       noLine: !u.line,
       silent,
+      dur: u.duration,
       ...(silent ? { why: !ctx || state === 'ready' ? ('suspended' as const) : state } : {}),
     });
     if (log.voice.length > 4000) log.voice.splice(0, 1000);

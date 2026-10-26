@@ -229,8 +229,21 @@ export abstract class HouseSideRoom extends SideRoom {
     this.player.place(x, y);
   }
 
+  /**
+   * The closing line's variant, never one off to the fight while the other side room is still to do (hunt 12: "We
+   * crossed every bridge! We're ready to fight!" with the teddy door still open): `fight` is that variant's key.
+   */
+  protected doneVariant(base: string, fight: string): string {
+    const v = variant(base);
+    const otherDone = episode.house.done.includes(this.slot === 'a' ? 'b' : 'a');
+    return v === fight && !otherDone ? variant(base) : v;
+  }
+
   /** The visit is over: fade out, back to the hub. */
   protected fadeToHub(): void {
+    // His buttons close with the visit (hunt 12: Dad's 1 ✗ / 2 ✓ cue stayed lit in its corner over Charge's black
+    // fade out; a press then already did nothing).
+    this.closeDad();
     this.fadeOutThen(() => backToHub(this, this.slot));
   }
 

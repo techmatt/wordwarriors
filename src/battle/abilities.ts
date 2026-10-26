@@ -231,7 +231,8 @@ const beam: Cast = (w, f, ab, target, mult) => {
   const s = w.stage;
   w.busy(f, 800);
   sfxLaser();
-  const g = s.add.graphics().setDepth(DEPTH.fx).setBlendMode(Phaser.BlendModes.ADD);
+  // `choiceClear` (hunt 12): Evil Elsa's frost beam stayed drawn on frozen Ellie through a whole choice.
+  const g = s.add.graphics().setDepth(DEPTH.fx).setBlendMode(Phaser.BlendModes.ADD).setData('choiceClear', true);
   const width = 18 * mult;
   let t = 0;
   const ev = s.time.addEvent({
@@ -485,7 +486,9 @@ const summon: Cast = (w, f, ab, _target, mult) => {
   // Drawn at its full size and scaled up from small, so its rim stays a thin
   // line in the move's colour (scaling a 10×4 ellipse up 26× made the white
   // rim a thick, flat white disc).
-  const circle = s.add.ellipse(cx, f.y, 260, 72, ab.color, 0.35).setStrokeStyle(4, ab.color2 ?? ab.color, 0.9).setDepth(f.y - 1).setScale(0.04);
+  // `choiceClear` (hunt 12): drawn at the floor's depth, under the fight's veil, so a move choice hides it as it opens
+  // (Evil Jormungandr's green circle and Evil Elsa's snowmen's stood on a pad's ring, fading on the frozen clock).
+  const circle = s.add.ellipse(cx, f.y, 260, 72, ab.color, 0.35).setStrokeStyle(4, ab.color2 ?? ab.color, 0.9).setDepth(f.y - 1).setScale(0.04).setData('choiceClear', true);
   s.tweens.add({ targets: circle, scale: 1, duration: 300, ease: 'Back.easeOut' });
   s.tweens.add({ targets: circle, alpha: 0, delay: 300 + n * 120, duration: 400, onComplete: () => circle.destroy() });
   for (let i = 0; i < n; i++) {
@@ -610,6 +613,9 @@ const rain: Cast = (w, f, ab, _target, mult) => {
   const maxX = xs.length ? Math.min(ARENA_RIGHT, Math.max(...xs) + 200) : ARENA_RIGHT;
   for (let i = 0; i < n; i++) {
     w.after(i * (1200 / n) + Math.random() * 80, () => {
+      // Not into an open choice (hunt 12, fix 213's kind: a rain cast just before it dropped Evil Elsa's icicles
+      // seconds in, at full strength, over the bag row and her HP bar).
+      if (w.choosing) return;
       // Aim a third of them straight at somebody, the rest anywhere near.
       const aimed = i % 3 === 0 ? enemies[Math.floor(Math.random() * enemies.length)] : null;
       const x = aimed ? aimed.x + (Math.random() - 0.5) * 40 : Phaser.Math.Between(minX, maxX);
@@ -705,7 +711,8 @@ const coil: Cast = (w, f, ab, _target, mult) => {
   const cy = enemies.reduce((n, e) => n + e.cy, 0) / enemies.length;
   const segs: Phaser.GameObjects.Arc[] = [];
   const N = 26;
-  for (let i = 0; i < N; i++) segs.push(s.add.circle(cx, cy, 26 * Math.sqrt(mult), i % 2 ? f.init.palette[0] : f.init.palette[1]).setStrokeStyle(3, 0x000000, 0.4).setDepth(DEPTH.fx));
+  // `choiceClear` (hunt 12): its discs lay across a ring, veiled, through a choice.
+  for (let i = 0; i < N; i++) segs.push(s.add.circle(cx, cy, 26 * Math.sqrt(mult), i % 2 ? f.init.palette[0] : f.init.palette[1]).setStrokeStyle(3, 0x000000, 0.4).setDepth(DEPTH.fx).setData('choiceClear', true));
   let r = 420;
   const dur = (ab.duration ?? 3) * 1000;
   let t = 0;
@@ -781,8 +788,8 @@ const wave: Cast = (w, f, ab, _target, mult) => {
     })
     .setDepth(DEPTH.fx);
   em.startFollow(wall);
-  // A glyph rides the wall's front, a few high and low (item 156: Comet Crash's comets), facing its way.
-  const riders = ab.glyph
+  // A glyph rides the wall's front, a few high and low (item 156: Comet Crash's comets), facing its way; only with `riders`.
+  const riders = ab.riders && ab.glyph
     ? [-0.3, 0, 0.28].map((dy) =>
         s.add
           .text(startX, wall.y + dy * GAME_HEIGHT, ab.glyph!, { fontSize: `${Math.round(64 * Math.sqrt(mult))}px`, padding: { top: 12, bottom: 4 } })
@@ -820,7 +827,8 @@ const wave: Cast = (w, f, ab, _target, mult) => {
 const grid: Cast = (w, f, ab, _target, mult) => {
   const s = w.stage;
   w.busy(f, 1600);
-  const g = s.add.graphics().setDepth(DEPTH.fx).setBlendMode(Phaser.BlendModes.ADD);
+  // `choiceClear` (hunt 12): a move choice hides it (moveChoice).
+  const g = s.add.graphics().setDepth(DEPTH.fx).setBlendMode(Phaser.BlendModes.ADD).setData('choiceClear', true);
   const lines: [number, number, number, number][] = [];
   for (let x = 120; x < GAME_WIDTH; x += 150) lines.push([x, FLOOR_TOP - 250, x + (Math.random() - 0.5) * 100, GAME_HEIGHT]);
   for (let y = FLOOR_TOP - 120; y < GAME_HEIGHT; y += 70) lines.push([0, y, GAME_WIDTH, y + (Math.random() - 0.5) * 40]);
@@ -872,9 +880,11 @@ const orbit: Cast = (w, f, ab, target, mult) => {
   f.squash(0.2);
   sfxSummon();
   if (ab.shout) sfxShout();
-  const swords = Array.from({ length: n }, () => artObj(w, ab, f.cx, f.cy, swordH) ?? projectileObj(w, ab, f.cx, f.cy, mult));
+  // `choiceClear` (hunt 12): a choice hides them; on its slowed clock Ellie's Spinny Swords hung round her for its
+  // whole length, and their timer still ends them.
+  const swords = Array.from({ length: n }, () => (artObj(w, ab, f.cx, f.cy, swordH) ?? projectileObj(w, ab, f.cx, f.cy, mult)).setData('choiceClear', true));
   const glints = swords.map((sw) => {
-    const g = trail(w, ab.color, mult * 0.7);
+    const g = trail(w, ab.color, mult * 0.7).setData('choiceClear', true);
     g.startFollow(sw);
     return g;
   });

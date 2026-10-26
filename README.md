@@ -154,9 +154,11 @@ Item 079 measured the old dev-server lanes from a cold worktree too: the first r
 lane to its 6-minute cap with three tests failing at "waiting for booted; scene=". The
 build has no cold start of that kind.
 
-Two `@slow` layout tests fail now and then on a timing and pass on the retry (item 141,
+Two `@slow` layout tests fail now and then and pass on the retry (item 141,
 2026-10-24; also on the code before it): `cover.spec` "the attic's find line" (its
-narrow box over a pedestal, 0.56 against 0.1) about one run in four alone, and
+narrow box over a pedestal, 0.56 against 0.1) about one run in four alone: not a timing but a
+draw (hunt 12, twelve runs logged): a standing person among the pictures (KID, MAN, VET, M48's
+taller pictures) drops the row and her entry to y 650, and the box has no clear place (M82); and
 `banner.spec` "the widest fetch / counter sentence" (the dialogue box 20 px over Dad) about one
 in six. `test:slow` reports them as flaky, not failed.
 
@@ -260,7 +262,7 @@ warm-up (item 033) unless given `{ grab: false }`, so a test that walks out of t
 lands in the hub as before; `tests/entry.spec.ts` (slow lane) plays the warm-up itself:
 each level's clue, three misses, F9 out and back, and two drawn casts from the bedroom.
 
-`playEpisode` checks each battle part's length (45-120 s of simulation time) for whatever
+`playEpisode` checks each battle part's length (40-120 s of simulation time; 45 until hunt 12, when item 144's quicker openings left the contests booted straight in at 43.6-44.7 s) for whatever
 fight style the cast drew; `tests/fights.spec.ts` sweeps the contests, one battle part
 each (item 083, alternating: the race and the beam clash part 2, the race for its finish
 line; the rope pull and the cook-off part 1; both parts until then; item 115's frost clash
@@ -503,6 +505,7 @@ new word joining it raises its share. To read `variety`'s per-word shares, pass 
 divide a word's `counts` in "shifter words (start and links)" by the visits (`shifterLinks`).
 A new bank word's `glyph` must not be a journey-map stop's (🌅 ⚔️ 🏆, 🏠 at home): `planInput`
 counts it as shown before any room, so it is never a key word (BED until item 157, HUT has none).
+BED is still never a key word or the counter (hunt 12: her bed in the bedroom, `notKeys`), but the other games read it.
 
 ### The bug-hunt checker
 
@@ -515,8 +518,8 @@ forms, an idle child who stands still at every choice, more seeds; `QA_SET=new` 
 third, item 069's: a busy child pressing blue, red and yellow all episode (free play),
 `DIFFICULTY` 2 and 3 with seeded progress, Charge and the bridge answered right, and four
 real draws back to back; `QA_SET=lenses` the fourth, item 080's; `QA_SET=recent` the
-fifth, item 089's; `QA_SET=cast` the seventh hunt's; `QA_SET=hunt8`, `hunt9`, `hunt10` and
-`hunt11` the eighth to eleventh hunts'; `QA_SET=all` every batch). What each later batch
+fifth, item 089's; `QA_SET=cast` the seventh hunt's; `QA_SET=hunt8`, `hunt9`, `hunt10`,
+`hunt11` and `hunt12` the eighth to twelfth hunts'; `QA_SET=all` every batch). What each later batch
 plays and each check it added, hunt by hunt: `docs/qa-findings.md`, *Bug-hunt checker log,
 batch by batch*.
 About 1.5 minutes an episode, 26 minutes the first batch. It is not a test: it records.
@@ -534,14 +537,19 @@ neither the worktree's code nor `node_modules` (*Operational facts*): keep such 
 the worktree.
 
 - **Each batch's scenarios and the checks each hunt added** (`text-off-panel`, `repeat`,
-  `dadlock-leak`, `debug-leak`, `pad-in-reach`, `chain-repeat`, `glyph-on-hero`, `letter-name`
-  and the rest): `docs/qa-findings.md`, *Bug-hunt checker log, batch by batch*.
+  `dadlock-leak`, `debug-leak`, `pad-in-reach`, `chain-repeat`, `glyph-on-hero`, `letter-name`,
+  hunt 12's `fighter-offscreen`, `pad-under-fighter` and `sound-gap`, and the rest): `docs/qa-findings.md`, *Bug-hunt checker log, batch by batch*.
 - **Phaser drops a key event already `defaultPrevented`:** a capture-phase `preventDefault` kills that
   key for the game (Tab, the keyboard's yellow, did nothing anywhere from item 069 to hunt 11). `installBrowserKeys`
   (`src/input/browserKeys.ts`, from `src/main.ts`) prevents only the browser's own keys (F1 F3 F6 F7 F10, ContextMenu, `/`, `'`) in the capture phase, and
   Tab in a bubble listener added once the game is READY; the dev keys and the buttons are Controls'.
 - **A sweep's contact sheets take minutes:** `npx tsx tests/qa/report.ts <tag>` for `QA_SET=hunt10`
   (nine scenarios, about 2,600 shots) ran past a minute; run it in the background.
+- **Stopping a sweep part way** (hunt 12): killing the shell that ran `npm run qa` (a background task's stop) leaves
+  its Playwright workers, their browsers and the `vite preview` server on `QA_PORT` running, so the next sweep stops
+  at "http://localhost:<port> is already used". Find the server with `Get-NetTCPConnection -LocalPort <port>
+  -State Listen` and the workers by their command line (`node_modules\playwright\lib\worker\workerProcess` under
+  this worktree), and stop those process trees (`taskkill /PID <pid> /T /F`); other items' browsers are not yours.
 - **A wedged page is a stall, not a 30-minute wait** (hunt 9, M44 in `docs/qa-findings.md`): a reload
   at hub part 2 twice never came back (hunts 7 and 9), and the stall's own `page.evaluate` then
   waited on the page until the scenario's timeout. The stall's shot, the recorder and the last
@@ -599,7 +607,9 @@ the worktree.
   `` `<scenario>` <n> `` in a section); its other PNGs, contact sheets included, go. A
   hunt with no section yet, or a call still open, stays whole, and so does the run
   starting. A hunt off the three-hunt cap is deleted whole. **So write a ruling into
-  every row** when Matt rules: an empty Ruling cell keeps the hunt's 45 GB whole.
+  every row** when Matt rules: an empty Ruling cell keeps the hunt's 45 GB whole. And the
+  other way (hunt 12): a hunt's section committed while it runs, its calls table still empty,
+  counts as ruled and the next sweep thins its runs; write the calls rows (Ruling empty) first.
   **Name a hunt's tags `h<N>…`** (`h12a`, `h12lenses`):
   the number is how a run is tied to its hunt. Nothing reads an older run back
   (`report.ts` reads only its own tag); a look you want to keep past three hunts belongs
@@ -795,7 +805,8 @@ whole word; **Play all** runs the lot, a word's ▶ or a sound's chip plays one,
 Each chip says who recorded it (the clip index's `provider`, dashed for edge-tts) and
 NEW for the latest import's clips. Sounds with a line but in no live word (Q, voiced
 TH, long U, X's name) are listed alone below. It plays the built clips
-(`public/voice-gen/`), so run `voice:build` after an import before listening.
+(`public/voice-gen/`), so run `voice:build` after an import before listening; under `npm run preview` it plays
+the copies `npm run build` made of them, so build again too (hunt 12), or use the dev server.
 `tests/unit/listen.test.ts` checks the cover.
 
 ### The word bank's coverage rule

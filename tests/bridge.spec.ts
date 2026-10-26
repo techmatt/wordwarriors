@@ -102,7 +102,8 @@ test('Stretchy Bridge, level 1: the stones sound as she slides, held while she s
   const since = again.voice.history.slice(again.voice.history.lastIndexOf(again.voice.history.find((id) => id.endsWith('_bridge_picked'))!));
   expect(since[0]).toMatch(/_bridge_picked$/);
   expect(since.some((id) => /_bridge_(start|middle|end)$/.test(id))).toBe(true);
-  expect(since).toContain(letterSoundLine(wrong[0]));
+  // Its first sound, not its first letter (hunt 12: SHELL starts with SH, one sound; the test failed on that draw).
+  expect(since).toContain(letterSoundLine(soundsOf({ word: wrong })[0]!));
   expect(again.voice.history).not.toContain(wordLine(wrong));
   expect(again.voice.history).not.toContain(wordLine(b0.word));
   expect(again.room!.player.x).toBeLessThan(330);

@@ -36,7 +36,7 @@
 import Phaser from 'phaser';
 
 import { narratorLine, wordLine } from '../../content/voice/ids';
-import { readPraise, variant } from '../episode/lineVariants';
+import { readPraise } from '../episode/lineVariants';
 import { voiceBus } from '../voice/VoiceBus';
 import { sfxRight, sfxSelect, sfxSummon } from '../audio/sfx';
 import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH, SOUND_GAP_MS } from '../config';
@@ -431,7 +431,7 @@ export class RhymeRoom extends HouseSideRoom {
     // The last row stays up, its third picture in place, while the visit ends. Its praise is the visit's
     // ("We found every rhyme!"), not a word's praise and then that (M64).
     this.phase = 'done';
-    await Promise.all([copy, this.say(narratorLine(narrator(), variant('rhyme_done')))]);
+    await Promise.all([copy, this.say(narratorLine(narrator(), this.doneVariant('rhyme_done', 'rhyme_done_2')))]);
     if (f !== this.flow) return;
     await this.wait(400);
     this.fadeToHub();

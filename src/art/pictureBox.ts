@@ -16,9 +16,10 @@
  * The pictures fitted to their own aspect (M48): add one here to give it the same fit. Hunt 11: every
  * picture more than twice as wide as tall (STICK, 400 x 134, was a 110 x 25 px twig on the bridge's far
  * bank), and the standing people (item 157's KID too); MOP (0.46) stays square: shaped, it stood under the parked Word to
- * Picture's banner.
+ * Picture's banner. Hunt 12: 1.9 times as wide, not 2 (item 157's COT, 400 x 201, a 116 x 58 cot among square
+ * pictures in the Shape-Shifter's read-it choices; FOG and TRUCK with it).
  */
-export const SHAPED_PICTURES: ReadonlySet<string> = new Set(['pic_dad', 'pic_vet', 'pic_mom', 'pic_man', 'pic_tug', 'pic_stick', 'pic_bus', 'pic_key', 'pic_kick', 'pic_sled', 'pic_kid']);
+export const SHAPED_PICTURES: ReadonlySet<string> = new Set(['pic_dad', 'pic_vet', 'pic_mom', 'pic_man', 'pic_tug', 'pic_stick', 'pic_bus', 'pic_key', 'pic_kick', 'pic_sled', 'pic_kid', 'pic_cot', 'pic_fog', 'pic_truck']);
 
 /** How much longer than the square's side a shaped picture's long side may grow. */
 export const PICTURE_STRETCH = 1.45;

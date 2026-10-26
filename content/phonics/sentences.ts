@@ -198,6 +198,9 @@ export const LOOKALIKES: string[][] = [
   ['cot', 'bed', 'crib', 'bench', 'quilt'],
   ['kid', 'doll', 'elf'],
   ['kid', 'man', 'dad', 'mom'], // a standing waving man; DAD and MOM hold a little boy and a little girl.
+  // Hunt 12: DOT's blue dot beside BIB's blue polka dots; CUB's brown bear beside HUG's brown bear.
+  ['dot', 'bib'],
+  ['cub', 'hug'],
 ];
 
 /** The words whose pictures look like `word`'s (not including `word`). */

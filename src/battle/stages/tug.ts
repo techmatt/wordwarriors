@@ -27,6 +27,7 @@ import { burst, floatText, fxQuality, shake } from '../../fx/juice';
 import { TEX } from '../../fx/textures';
 import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter } from '../Fighter';
 import { ARENA_LEFT, ARENA_RIGHT } from '../movement';
+import type { Box } from '../padPlace';
 import { BaseStage, ease, type Pt } from './stage';
 
 /** The centre line, and the pool of sea water either side of it. */
@@ -638,6 +639,14 @@ export class TugStage extends BaseStage {
       drops.destroy();
       bubbles.destroy();
     });
+  }
+
+  /**
+   * The pool of sea water between the teams (hunt 12): with two pads (M65) the lower ring landed in the water every
+   * time (`h12c` `tug_two_pads` 085, 124, 131), her walk to it a walk into the sea. The rings keep off it where they can.
+   */
+  choiceKeepOff(): Box[] {
+    return [[MID - POOL_HALF, FLOOR_TOP, MID + POOL_HALF, FLOOR_BOTTOM]];
   }
 
   override info(): Record<string, unknown> {

@@ -50,10 +50,10 @@ import Phaser from 'phaser';
 import { bridgeMode } from '../../content/phonics/letters';
 import { gapFor, SIDE_ROOM_BY_ID, type BridgeGap } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
-import { readPraise, variant } from '../episode/lineVariants';
+import { readPraise } from '../episode/lineVariants';
 import { voiceBus, type HeldSound } from '../voice/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon } from '../audio/sfx';
-import { BRIDGE, DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { BRIDGE, DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH, SOUND_GAP_MS } from '../config';
 import { episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { burst, fitImage, floatText, pictureSize, popIn, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -715,7 +715,8 @@ export class BridgeRoom extends HouseSideRoom {
         row.destroy();
         return;
       }
-      await this.wait(160);
+      // SOUND_GAP_MS, as every sound-out (hunt 12: at 160 ms the picked picture's W-I-NG ran nearly together).
+      if (i < units.length - 1) await this.wait(SOUND_GAP_MS);
     }
     // Where the bridge differs: that stone flashes while its sound plays.
     const d = whereDiffers(r.word, picked);
@@ -800,7 +801,7 @@ export class BridgeRoom extends HouseSideRoom {
     }
     this.phase = 'done';
     this.closeDad();
-    await this.say(narratorLine(narrator(), variant('bridge_done')));
+    await this.say(narratorLine(narrator(), this.doneVariant('bridge_done', 'bridge_done')));
     await this.wait(400);
     this.fadeToHub();
   }

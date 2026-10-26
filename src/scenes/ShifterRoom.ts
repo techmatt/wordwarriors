@@ -47,7 +47,7 @@ import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids
 import { readPraise, variant } from '../episode/lineVariants';
 import { voiceBus } from '../voice/VoiceBus';
 import { sfxPoof, sfxRight, sfxSelect, sfxStep, sfxSummon, sfxWhoosh } from '../audio/sfx';
-import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH, VARIETY } from '../config';
+import { DEPTH, FONT_COMIC, GAME_WIDTH, REACH, SOUND_GAP_MS, VARIETY } from '../config';
 import { episode, narrator, type Slot, type Step } from '../episode/Episode';
 import { burst, fitImage, fitPicture, floatText, pictureSize, popIn, shake, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -353,6 +353,9 @@ export class ShifterRoom extends HouseSideRoom {
         // Level 1: a stone sounds as she comes near it (its sound alone, never its name: item 137).
         const near = this.level === 1 ? () => this.soundNear(o) : undefined;
         const spot = this.addSpot(`stone_${o}`, x, y, [shadow, body, top, text], o === l.to[l.pos], near);
+        // Sorted by its top edge, not its foot (hunt 12): a low stone she steps onto, and coming down onto it
+        // from above she was drawn behind it, her head alone showing over the U (`shifter5_h12` 455).
+        spot.obj.setDepth(y - STONE.h);
         spot.obj.setData('letter', o);
         popIn(this, spot.obj, 1, i * 110);
         this.time.delayedCall(i * 110, () => sfxStep(i));
@@ -493,9 +496,7 @@ export class ShifterRoom extends HouseSideRoom {
       const letter = spot.obj.getData('letter') as string;
       await this.flyLetter(spot, letter, true);
       if (f !== this.flow) return;
-      await this.narrate('shifter_stone');
-      if (f !== this.flow) return;
-      await this.soundStone(spot);
+      await this.soundStone(spot, 'shifter_stone');
       if (f !== this.flow) return;
       await this.narrate('shifter_nope');
     }
@@ -519,6 +520,13 @@ export class ShifterRoom extends HouseSideRoom {
     const f = this.flow;
     const steps = soundOut(word);
     const rowW = steps.length * 62 + 30;
+    // Clear of the label's plate (hunt 12: over the left picture, PAN's row sat on the corner of CAN's plate):
+    // beside it where the row is level with it, on the picture's side; over the middle picture, just under it.
+    const plate = { l: LABEL.x - (LABEL.gap * 3 + 40) / 2 - 10, r: LABEL.x + (LABEL.gap * 3 + 40) / 2 + 10, t: LABEL.y - LABEL_PLATE_H / 2, b: LABEL.y + LABEL_PLATE_H / 2 };
+    if (y - 39 < plate.b && y + 39 > plate.t && x + rowW / 2 > plate.l && x - rowW / 2 < plate.r) {
+      if (Math.abs(x - LABEL.x) < rowW / 2) y = plate.b + 39 + 4;
+      else x = x < LABEL.x ? plate.l - rowW / 2 : plate.r + rowW / 2;
+    }
     const row = this.add.container(Phaser.Math.Clamp(x, rowW / 2 + 12, GAME_WIDTH - rowW / 2 - 12), y).setDepth(DEPTH.sparkles);
     row.add(this.add.rectangle(0, 0, rowW, 78, 0xffffff, 0.9).setStrokeStyle(4, 0x1a1030, 0.8));
     const texts = steps.map((s, i) => {
@@ -532,7 +540,9 @@ export class ShifterRoom extends HouseSideRoom {
       if (steps[i]!.id) await this.say(steps[i]!.id);
       texts[i]!.setColor(INK);
       if (f !== this.flow) break;
-      await this.wait(160);
+      // The hall's, Charge's and the rhyme room's gap (hunt 12, fix 176's kind: at 160 ms her picture's word ran
+      // together, P-A-N 120 to 195 ms clip to clip, the checker's `sound-gap`).
+      if (i < steps.length - 1) await this.wait(SOUND_GAP_MS);
     }
     this.tweens.add({ targets: row, alpha: 0, duration: 300, onComplete: () => row.destroy() });
   }
@@ -564,11 +574,14 @@ export class ShifterRoom extends HouseSideRoom {
    * Its letter is lifted beside her while it sounds, as at level 1 (hunt 10: a miss or a hint sounds the stone
    * she stands at, her figure over its letter; M42's case).
    */
-  private async soundStone(spot: Spot): Promise<void> {
+  private async soundStone(spot: Spot, prefix?: string): Promise<void> {
     const f = this.flow;
     const letter = spot.obj.getData('letter') as string;
     spot.obj.setScale(spot.baseScale * 1.15);
+    // Lifted before its line too (hunt 12): standing on the stone her figure covers its letter, and "This letter
+    // says..." played with nothing on screen showing which letter it meant.
     const lift = this.showLift(letter);
+    if (prefix && f === this.flow) await this.narrate(prefix);
     for (const id of soundLines(letter)) {
       if (f !== this.flow) break;
       await this.say(id);
@@ -748,8 +761,7 @@ export class ShifterRoom extends HouseSideRoom {
         await this.narrate('shifter_hint');
         if (f === this.flow) await this.flashNewLetter(l.pos);
       } else {
-        await this.narrate('shifter_stone');
-        await this.soundStone(near!);
+        await this.soundStone(near!, 'shifter_stone');
       }
       if (f !== this.flow) return;
       this.hinting = false;

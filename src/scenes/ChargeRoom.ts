@@ -51,7 +51,7 @@ import Phaser from 'phaser';
 import { RUNE_BY_SOUND, runeArt, type GestureMotion } from '../../content/phonics/runes';
 import { SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { letterSoundLine, narratorLine, wordLine } from '../../content/voice/ids';
-import { readPraise, variant } from '../episode/lineVariants';
+import { readPraise } from '../episode/lineVariants';
 import { voiceBus } from '../voice/VoiceBus';
 import { sfxBoom, sfxRight, sfxSelect, sfxSummon, sfxWhoosh, sfxZap } from '../audio/sfx';
 import { CHARGE, DEPTH, FONT_COMIC, GAME_WIDTH, SOUND_GAP_MS } from '../config';
@@ -744,7 +744,7 @@ export class ChargeRoom extends HouseSideRoom {
       this.phase = 'done';
       sfxSelect();
     }
-    const cheer = last ? narratorLine(narrator(), variant('charge_done')) : right ? narratorLine(narrator(), readPraise(firstTry)) : null;
+    const cheer = last ? narratorLine(narrator(), this.doneVariant('charge_done', 'charge_done_2')) : right ? narratorLine(narrator(), readPraise(firstTry)) : null;
     await Promise.all([this.guard(this.bag.receive(this.wordArt(word), pic.x, pic.y)), cheer ? this.say(cheer) : Promise.resolve(true)]);
     pic.destroy();
     if (f !== this.flow) return;

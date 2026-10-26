@@ -15,7 +15,7 @@ import { join } from 'node:path';
 import { TEST_DIST } from './testDist';
 
 const TREES = ['src', 'content'];
-const FILES = ['index.html', 'vite.config.ts', 'tests/vite.test.config.ts', 'package-lock.json', 'tsconfig.json'];
+const FILES = ['index.html', 'listen.html', 'vite.config.ts', 'tests/vite.test.config.ts', 'package-lock.json', 'tsconfig.json'];
 const STAMP = join(TEST_DIST, '.inputs');
 
 function filesUnder(dir: string): string[] {

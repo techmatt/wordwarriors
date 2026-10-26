@@ -148,6 +148,18 @@ export interface RoomInfo {
   };
 }
 
+/** A main fighter in the hooks: `box` is its picture's bounds now, [left, top, right, bottom] (hunt 12: the checker's `fighter-offscreen`, `pad-under-fighter`). */
+export interface BattleFighter {
+  id: string;
+  hp: number;
+  status: string | null;
+  art: string;
+  drawn: number;
+  box: number[];
+  /** On the stage (false running in, and in the retreat's run off the edge). */
+  onStage: boolean;
+}
+
 export interface BattleInfo {
   part: number;
   /** The showdown's fight style (item 031) and what its staging reports (a race lead, the rope's knot...). */
@@ -158,8 +170,8 @@ export interface BattleInfo {
   fading?: boolean;
   t: number;
   /** `art`: the image each fights as (an outfit's, for a hero in one); `drawn`: its picture's height on screen standing still (no squash, bob or grow). */
-  heroes: { id: string; hp: number; status: string | null; art: string; drawn: number }[];
-  villains: { id: string; hp: number; status: string | null; art: string; drawn: number }[];
+  heroes: BattleFighter[];
+  villains: BattleFighter[];
   minions: number;
   /** Her team's clones standing (MASK's "three of her pop up"): none while a move choice is open (hunt 11). */
   heroClones: number;

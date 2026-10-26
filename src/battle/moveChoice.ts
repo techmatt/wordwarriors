@@ -28,6 +28,7 @@ import { makeStickHint, placeStickHint } from '../ui/stickHint';
 import { FLOOR_BOTTOM, FLOOR_TOP, NO_AFTERIMAGES, type Fighter } from './Fighter';
 import { ARENA_LEFT, ARENA_RIGHT, stickWalk } from './movement';
 import { RING_H, RING_W, SIGN_H, SIGN_RISE, SIGN_W, clearSpot, dotBeside, dotSide, placeContestPads, placePads, standingWords, stepOutX, type Box, type PlaceBody, type PlaceInput } from './padPlace';
+import { HIT_FLOAT } from './sim';
 
 /** A fighter as pad placement sees it. */
 const placeBody = (f: Fighter): PlaceBody => ({ x: f.x, y: f.y, cx: f.cx, cy: f.cy, half: f.bodyHalf, top: f.top });
@@ -65,7 +66,8 @@ export interface ChoiceHost {
   /** No free-play charge, jump or shot carries into the choice. */
   stopPlay(): void;
   /** A fighter done with: it poofs away. */
-  killFighter(f: Fighter): void;
+  /** `quiet`: gone at once, no burst (its sparks hung on the frozen clock over a pad, hunt 12). */
+  killFighter(f: Fighter, quiet?: boolean): void;
 }
 
 /** A move word standing in the arena as a place she walks to. */
@@ -162,8 +164,7 @@ export class MoveChoice {
     // pads' rings and under the signs, and beside her, a choice of which one is her (hunt 11, the story fight).
     // At once: the pop-out squash runs on the frozen clock, seconds of real time.
     for (const f of this.host.fighters.filter((x) => x.init.kind === 'clone' && x.team === me.team)) {
-      this.host.killFighter(f);
-      f.root.setVisible(false);
+      this.host.killFighter(f, true);
     }
     const objs: Phaser.GameObjects.GameObject[] = [];
     // A light dim behind the fighters (not over them), so the pads and signs read.
@@ -185,6 +186,16 @@ export class MoveChoice {
     const popAt = performance.now() + 120 + (heroStep ? STEP_BACK_MS : 0);
     const pads = spots.map((p, i) => this.makePad(shown[i]!, p.x, p.y, popAt + i * 140));
     for (const p of pads) objs.push(p.ring, p.sign);
+    // A minion still standing on a ring poofs, as her clones do (hunt 12: the rings keep off minions only where
+    // they can, and in the frost clash two of Evil Elsa's snowmen and a teddy stood on TUG's ring all choice).
+    // Not in a story fight: its minions are the script's (Evil Smaug's gold guards must lie there after).
+    const story = this.host.storyProps() !== null;
+    for (const f of this.host.fighters.filter((x) => !story && x.active && x.init.kind === 'minion')) {
+      // Its body, not its feet (hunt 12: a snow bot over the right third of SUN's ring, its feet just outside; a
+      // snowman over POP's ring's lower half, its feet below it): any of its body over the ring.
+      if (!spots.some((p) => Math.abs(f.x - p.x) < RING_W / 2 + f.bodyHalf && f.top < p.y + RING_H / 2 && f.y > p.y - RING_H / 2)) continue;
+      this.host.killFighter(f, true);
+    }
     const dot = makeButtonDot(scene, 0, 0, 'green', 22, false).setDepth(DEPTH.prompt).setVisible(false);
     objs.push(dot);
     // "I am here": a white ring at her hero's feet, so she finds herself among the signs.
@@ -197,12 +208,19 @@ export class MoveChoice {
     // A dash's white afterimage fades in 350 ms of the frozen clock, about nine
     // real seconds: it stood over her ally as a white silhouette (item 039).
     for (const o of [...scene.children.list]) if (o.getData('afterimage')) o.destroy();
+    // Hunt 12: a summon's circle (at floor depth, under the veil, it stood on a pad's ring) and Dada Matt's
+    // hologram grid (full screen, ADD-blended: veiled, it still crossed both signs and her ring for four shots)
+    // go out of sight; their own timers still end them.
+    for (const o of scene.children.list) if (o.getData('choiceClear')) (o as unknown as Phaser.GameObjects.Components.Visible).setVisible(false);
+    // A hit word already rising as it opens too (fix 259 stops new ones): its fade runs on the frozen clock.
+    for (const o of scene.children.list) if (o instanceof Phaser.GameObjects.Text && o.depth === HIT_FLOAT) o.setVisible(false);
     // ...and none made after: a dash's or slam's afterimage timer runs on the frozen clock too (item 069).
     scene.data.set(NO_AFTERIMAGES, true);
     for (const o of scene.children.list) {
       const d = (o as unknown as { depth: number }).depth;
       const a = o as unknown as Phaser.GameObjects.Components.AlphaSingle;
-      if (d >= DEPTH.fx && d < DEPTH.prompt - 10 && typeof a.alpha === 'number' && !objs.includes(o) && o !== me.root) {
+      // From just under the effects (hunt 12: a shot's trail, at DEPTH.fx - 1, streaked Moriarty's cards across both pads).
+      if (d >= DEPTH.fx - 1 && d < DEPTH.prompt - 10 && typeof a.alpha === 'number' && !objs.includes(o) && o !== me.root) {
         veiled.push({ o: o as never, alpha: a.alpha });
         for (const t of scene.tweens.getTweensOf(o)) if (t.isPlaying()) {
           t.pause();
@@ -282,7 +300,9 @@ export class MoveChoice {
     const input: PlaceInput = {
       n,
       avoid: avoid.map(body),
-      cover: [...(v?.active ? [v] : []), ...team].map(body),
+      // Her too (hunt 12: at her cook-off stove TRAP's and PIG's signs stood over her head and body; in a brawl
+      // TRAP's hid all of her but her pompom and boots as the choice opened).
+      cover: [...(v?.active ? [v] : []), ...team, me].map(body),
       contest: this.host.anchored && v?.active ? { meX: stand.x, villain: body(v) } : undefined,
       // A contest's held bodies keep rocking at the freeze's slow clock (item 083, the rope pull's serpent).
       sway: this.host.anchored ? CONTEST_SWAY : 0,
@@ -454,6 +474,10 @@ export class MoveChoice {
     const c = this.current;
     const me = this.host.heroes[0];
     if (c) this.holdStepBack(c);
+    // A spin is a card flip settling on the fight's clock (Fighter.updateVisual), all but stopped in a
+    // choice: a teammate caught mid Sword Twirl stood edge on, a 2 px sliver, the whole choice (hunt 12,
+    // `jorm_edge` 085). Every card faces front while she picks.
+    if (c) for (const f of this.host.fighters) f.spin = 0;
     if (!c || !me?.active) return;
     me.x = c.at.x;
     me.y = c.at.y;

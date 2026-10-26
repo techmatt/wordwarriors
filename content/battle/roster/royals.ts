@@ -253,7 +253,7 @@ export const ROYALS: CharacterSpec[] = [
       ],
       // Item 156 (Matt): a comet's fire, not icy blue (Evil Elsa's Forever Winter is the icy wave);
       // fireballs ride it (☄️ is ZIP's picture, a move word; 🌠 draws a blue tail).
-      ultimate: ult('comet_crash', 'Comet Crash', 'wave', 0xff7a2a, 3, { color2: 0xffd84a, glyph: '🔥' }),
+      ultimate: ult('comet_crash', 'Comet Crash', 'wave', 0xff7a2a, 3, { color2: 0xffd84a, glyph: '🔥', riders: true }),
       taunts: [
         { key: 'tremble', text: 'Look at me and tremble!' },
         { key: 'kneel', text: 'Bow to the space emperor!', say: 'Bough to the space emperor!' },

@@ -892,6 +892,128 @@ the clash point's.
   next hunt re-measures the new pacing (Charge, the rhyme room, battle 1's opening with Charge) in a
   real episode, and watches a two-pad sea tug and M75's step-out live (unit-tested only).
 
+## Hunt 12 (2026-10-25 to 26)
+
+11:24pm to 2:10am. What landed since hunt 11 first: items 147-163 (the Shape-Shifter's words and draw, rhyme
+redraws, the giants' edge clamp, TAP and EGG read, Evil Elsa's summon, Comet Crash, voice priority and boot, Matt's
+recordings and F's `whole` bridge mode). The new `QA_SET=hunt12` (48 scenarios, grown round by round) swept four times as the fixes went in (`h12a` 19
+scenarios, `h12c` 29, `h12d` the completeness read's 19, `h12g` 18 of them on the last build, no issue left but the voiceless run's own warning; `h12e` stopped part way for
+newer fixes), `QA_SET=hunt11` once on the last build as a regression round (`h12h`), five of its scenarios at
+real speed (`h12b`), and `qa flags` with this hunt's URLs (`h12f`); `npm run perf`; a 300-episode `variety` run (twice:
+it caught this hunt's own first BED fix keeping BED out of every game); three rounds of code reads by item and by
+lens (17 readers, each claim checked by a second reader trying to refute it), a review of the hunt's own diff, and a
+completeness read whose gaps became `h12d`; four contact-sheet reads (`h12a`, `h12c`, `h12d`, `h12g`; each finding checked
+on its full shot); a content sweep (new art, new lines, the docs Dad follows); the browser, slow and fast lanes.
+
+Re-measured at real speed (`h12b`, Dad answering at once): Charge's two-word visit about 28 s (M61: 33 to 38 s);
+the rhyme room's visit 31 s (M64: 39.6 s); battle 1 with Charge, its scene start to PICK A MOVE! 30 s, the
+versus cards included (M62); boot to the title 0.67 s and to a quiet hub 1.77 s (item 133: 0.95 s and 2.05 s).
+F's whole "fuh" on the bridge (item 162): the clip is 0.6 s, the replay gives it 0.7 s, and sliding off its stone
+fades it in 40 ms, so nothing overlaps or doubles (FAN FOX FISH FROG FLAG GIFT ELF driven, right, wrong, at
+difficulty 2 and 3, through debug mode, the grown-ups page, dad lock, reloads, a hidden tab and a flaky net).
+
+### Fixed
+
+| # | Where | What | Kept fixed by |
+| --- | --- | --- | --- |
+| 237 | Battle, rune waves | Item 156 gave a `wave` with a glyph three riders on its front (Comet Crash's fireballs), and a rune's move carries its gesture glyph: the S, P, G and W runes' waves flew three big snakes, candles, shower heads or wind faces across the arena, mirrored. Riders only where asked (`riders`, Comet Crash's). | `tests/unit/moves.test.ts` |
+| 238 | Battle, the giants | Item 155's edge clamp held a giant whether she was on the stage or not: Evil Tiamat stood at the screen's edge from the first frame of every battle (through the versus cards) instead of running in, and a giant ally's retreat stopped at the edge and faded there. On the stage only. | `tests/giants.spec.ts` |
+| 239 | Key words, BED | Item 157 made the map's bedroom stop a sunrise "so BED can be read", but the bed she wakes in and presses green on is BED's picture every episode: BED could be a sentence key word or the attic's counter (`plansGolden` held four). Her bed counts as a sign shown first (the bedroom toys' rule, item 069); Evil Julia's Cozy Bed no longer comes up. Matt was asked; nobody answered in 10 minutes and the default (this) was taken. | `tests/unit/namedCounters.test.ts`, `plansGolden.json` regenerated |
+| 240 | Charge the Spell | "The second word shares no sound with the first" compared spellings: CAT then KID (or CUP then KID, MILK, SINK) charged "Kuh" twice, about one visit in nine. Compared as heard (`heardAs`, item 159's one rule). | `tests/unit/charge.test.ts` |
+| 241 | Battle, a move choice | A spin is a card flip that settles on the fight's clock, all but stopped in a choice: Anna caught mid Sword Twirl stood edge on, a 2 px red sliver, through the whole ZAP choice (`h12a` `jorm_edge` 085). Only her own hero's spin was reset; every card faces front while she picks. | A look (code: `holdHero`) |
+| 242 | Battle, a move choice | A summon's magic circle is drawn at floor depth, under the choice's veil, and fades on the frozen clock: Evil Jormungandr's green circle stood over STOMP's ring for the whole choice (`jorm_edge` 129), and Evil Elsa's new Grumpy Snowmen circle is the pads' own light blue. Dada Matt's hologram grid (full screen, ADD-blended) crossed both signs and her ring for four shots (`shifter_lock` 069-072). Both go out of sight as a choice opens (`choiceClear`). | A look (code: `choiceClear`) |
+| 243 | Battle, a move choice | The rings keep off minions only where they can: two of Evil Elsa's snowmen and a teddy stood on TUG's ring all choice (`bridge_f_parent` 096-098). A minion still on a ring poofs as the pads go down, as her clones do (fix 189), and both poof at once with no burst (a review of this hunt's diff: the burst's sparks hung on the frozen clock over the ring, fix 194's kind). Not in a story fight, whose minions are the script's (the slow lane caught the first cut poofing one of Evil Smaug's gold guards, M74's topple then one short). | A look (code: `open`, `kill`'s `quiet`) |
+| 244 | Battle, an ultimate | The darkening layer was exactly screen-sized, so the ultimate's shake slid it off a side: a hard-edged bright strip at the top or right, the HUD jumping with it (`elsa_summon_wrong` 098, `jasmine_slow` 091). It reaches past every edge (fix 141's kind). | A look |
+| 245 | Battle, a villain's ultimate | The edge vignette was ten 12 px bands about 0.07 alpha apart: on a saturated colour (Evil Bavmorda's green) seven hard steps, nested rectangles (`bridge_f_d2` 074, measured off the pixels). Thirty 4 px bands, edge to edge (fix 180's kind). | A look |
+| 246 | Battle, the counter | NOT THE NEST! rises into the top band, and the space race's track drew over its middle (`ozy_comet` 116; W8 is the HP bar touching it). Drawn over the HUD. | A look |
+| 247 | Shape-Shifter, a wrong read-it pick | The picked picture's sound-out row over the left picture sat on the corner of the label's plate (PAN over CAN, `jorm_edge` 052); over the middle picture it covered the plate's foot. Beside the plate on the picture's side, or just under it in the middle. | A look (code: `soundOutOver`) |
+| 248 | Pictures | Item 157's COT (400 x 201) was just under the shaped rule's "twice as wide" and drew a 116 x 58 cot among square pictures (`shifter5_h12` 292). The rule is 1.9 times: COT, FOG and TRUCK are shaped. | `tests/unit/pictureBox.test.ts` |
+| 249 | Grown-ups page 1 | Z and Y have runes, but no charge word has either, so their cells sat grey as "never tried" for good (fix 201's kind). The grid lists the sounds a charge word drills. | A look (code: `CHARGE_SOUNDS`) |
+| 250 | Listen page (item 161) | With no voice manifest (a fresh checkout, the junction missing) the page stayed blank but for its heading and dead buttons, the error only in the console. It says why and still lists the words and sounds. | A look |
+| 251 | A hidden tab before audio unlocks | Started from the pad alone (Chrome counts no pad press as a gesture), audio never unlocks, and a hidden tab did not hold the lines (fix 81 held only a running context): the hub's story ran on through its captions while she was away. Held all the same. | A look (code: `holdAudio`) |
+| 252 | Look-alikes (item 157's words) | DOT's plain blue dot could stand beside BIB, a bib covered in the same blue dots, and CUB's brown bear beside HUG's card of two hugging bears (in the rhyme room's -UG rounds the cards' look-alikes are kept out, and CUB was in no group): a fair pick, told wrong, or a picture matched to a card. DOT and BIB, CUB and HUG are look-alikes. | `plansGolden.json` regenerated (`LOOKALIKES`) |
+| 253 | Listen page, NEW | `voice:import` stamped a clip with the day only, so NEW marked item 161's five sounds with item 163's S (all one day). A run's clips share one stamp to the second (`INGESTED`); NEW marks the latest import only, from the next import on. | A look (code: `tools/voice/clips.ts`) |
+| 254 | Docs and the suite's build | CLAUDE.md placed `listen.html` in `src/listen/` (it is at the repo root); the suite's build hash left `listen.html` out, so a change to it alone reused a stale build; `docs/episode.md` said `?words=new` leans to item 121's words (126's and 157's too); the README did not say `npm run preview` plays the clips the last build copied. And `?bridge=` dropped a word that is not a bridge word without a sign (this hunt's own first sweep crossed WEB BOX DRESS for `fig,fin`): it warns. | A look |
+| 255 | Parked games (`?scene=blend`, `?scene=picture`) | Blend Path and Word to Picture kept their own five look-alike groups, not the live rooms' list: about one item in 27 put a look-alike beside the word (DOG and PUP, FOX and DOG, LEG and PIG, POT and TUB, KID and DAD), a fair pick told wrong. They use the live list. | `tests/unit/rules.test.ts` |
+| 256 | Parked Spell the Spell | Evil Scar's magic word was OFF: no CVC word, and the letter-by-letter hint said its one sound twice. CUB (a lion's cub). | `tests/unit/rules.test.ts` (every spell word CVC) |
+| 257 | Shape-Shifter, the letter stones | A stone sorted by its foot like a standing thing, so coming down onto it from above (where the step-up leaves her) she was drawn behind it, her head alone over the U (`h12c` `shifter5_h12` 455). Sorted by its top edge: she is over a stone she stands on. | A look (code: `makeOptions`) |
+| 258 | Shape-Shifter and Stretchy Bridge, a wrong pick's sound-out | The picked picture's word sounded out over it waited 160 ms between sounds (fix 176's gap, the rhyme room's until hunt 11): P-A-N 120 to 195 ms clip to clip (`h12c`, the new `sound-gap`), W-I-NG on the bridge the same, nearly the blend the speech rule rules out. `SOUND_GAP_MS` (400), as the hall, Charge and the rhyme room. | The checker's `sound-gap` (`tests/unit/qacategories.test.ts`) |
+| 259 | Battle, a move choice | A hit landing on the slowed clock still floated its word: a CLANG! under BUMP's sign and a POW! over the villain at full strength for the whole choice (`h12c` `bridge_f_voiceless` 070-072, `elsa_summon` 065; fix 197's kind). No CLANG!, POOF! or hit word while she picks. | A look (code: `Sim.hit`) |
+| 260 | Battle, a move choice | A rain cast just before a choice dropped its later drops seconds into it, at full strength: Evil Elsa's icicles over the bag row and her HP bar (`elsa_summon_wrong` 092; fix 213's kind). Drops wait the choice out. | A look (code: `rain`) |
+| 261 | Battle, a move choice | Ellie's Spinny Swords ring, on the slowed clock, hung round her through the whole BUMP / WEB choice (`tug_two_pads` 075-078; fix 232's kind). A choice hides the swords and their glints (`choiceClear`). | A look (code: `orbit`) |
+| 262 | Battle, a move choice | Fix 243 tested a minion's feet against a ring: a snow bot over the right third of SUN's ring, its feet just outside, stood there all choice (`bridge_f_voiceless` 067, 070). Its body counts. | A look (code: `open`) |
+| 263 | Charge the Spell, a shake | The villain's mood tint over a room was exactly screen-sized: the runes' shake slid it off, a hard bright strip down the left and top edges (`elsa_summon` 032; fix 244's kind in the rooms). Past every edge. | A look (code: `applyHouseMood`) |
+| 264 | Battle, the sea tug's two pads | M65's second pad landed in the pool of water between the teams every time (`tug_two_pads` 085, 124, 131): the stage gives its pool as a keep-off box (`choiceKeepOff`). Where she has no dry floor left it still can (in a model of 30 layouts the rings' area in the water fell by a sixth). | `tests/unit/padPlace.test.ts` |
+| 265 | Battle, a lit move sign | Pads were placed for a resting sign, but the one she stands on is drawn 12% larger: in the right-most column the lit plate ran off the screen's right edge (`h12d` `elsa_skyrace_wrong` 085). Its whole lit plate stays on the screen. | `tests/unit/padPlace.test.ts` (unchanged layouts) |
+| 266 | Battle, the cook-off's move choice | In a contest she starts at her station, and nothing kept a sign off her: TRAP's and PIG's signs stood over her head and body at her stove as each three-pad choice opened, her boots alone showing (`tiamat_cook` 071-073, 128). In a contest her body is one a sign keeps off, as the held team's. | A look (code: `padSpots`) |
+| 267 | Battle, the sky race's ultimate | Its lane flash was a flat rectangle the screen's width, ADD-blended: three hard-edged bands across the cave, their ends showing under the shake (`elsa_skyrace_wrong` 100; fix 192's kind). A soft glow stretched along the lane, past both edges. | A look (code: `laneFlash`) |
+| 268 | Battle, a move choice | A shot's trail sits just under the effects layer, and the choice's veil began at it: Moriarty's Card Throw streaked across both pads through the POP / SPLASH choice (`tap_egg_all` 368-369). The veil starts a step lower. | A look (code: `open` veil) |
+| 269 | Side rooms, the way out | Dad's 1 ✗ / 2 ✓ cue stayed lit in its corner over Charge's black fade out of the room (`end_mash_h12` 045; a press then already did nothing). His buttons close as the room fades. | A look (code: `fadeToHub`) |
+| 270 | Battle, a move choice (the last build's read) | Leftovers of fixes 242, 259, 262 and 266's kinds on the last build (`h12g`): a snowman over POP's ring's lower half with its feet below it (the poof now takes any of a minion's body over a ring); a hit word already rising as the choice opened, faint under the veil all choice (hidden as it opens); the Crushing Coil's discs and Evil Elsa's frost beam drawn through the frozen choice (`choiceClear`); TRAP's sign over all of Julia but her pompom and boots as a brawl's choice opened (her body is one no sign may cover in every fight, not only a contest). | A look (code: `open`, `padSpots`) |
+| 271 | Stretchy Bridge, rhyme room and Charge, the closing line | "We crossed every bridge! We're ready to fight!", "What a lot of rhymes! Off to the fight!" and "The spells are ready! Let's take them to the fight!" came up in turn whether or not the other side room was done: off to the fight with the teddy door still open (`h12g` `drawn5_h12` 177, 179). Before the last side room the other variant (`doneVariant`). | A look (code: `SideRoom.doneVariant`) |
+| 272 | Shape-Shifter, a wrong stone | "This letter says..." played while her figure covered the stone's letter, its lifted copy coming only with the sound after (`h12g` `shifter_wrong_h12` 037; with fix 257 she is over a stone from above too). The copy lifts before the line. | A look (code: `soundStone`'s `prefix`) |
+
+The checker itself: `QA_SET=hunt12` (README; the checker log below); `fighter-offscreen` and `pad-under-fighter`
+(looks; the hooks' fighters carry their `box` and `onStage`); `sound-gap` (bug: a sound-out's letter sounds
+running together outside the bridge); the variant check leaves M46's fix-it praise alone (every Shifter scenario
+flagged "You got the right letter!" twice running, which M46 makes the rule); `qa flags` gained hunt 12's URLs.
+The tests: `playEpisode` wanted every word read in the bag, but MOM and DAD never go there (M45), and `drawn.spec`'s
+seed now crosses DAD on the bridge; `fights.spec` failed every contest at 43.6 to 44.7 s against the 45 s floor on
+the code before this hunt too (item 144's quicker openings), so the floor is 40 s; `cover.spec`'s attic find-line
+"flake" is a draw (M82); `bridge.spec`'s level-1 test wanted a wrong picture's first letter's sound, and failed on
+SHELL (SH, one sound): it takes the first sound. `hunt10.spec`'s F9-in-the-closing-fade test failed once beside a
+sweep and passed on its retry: an F9 landing as the fade ends goes to the next scene, which opens the page, rightly.
+The checker's resizes and screenshots queue one at a time per page (`serial`): in `bridge_f_hidden` and
+`shifter_hidden` a resize landing mid-shot left the shots at the old window's fit for a whole resize step (the game
+refit to every size the page reported).
+
+### Matt's calls
+
+| # | Where | What | Options | Ruling |
+| --- | --- | --- | --- | --- |
+| M78 | Stretchy Bridge, F | Item 162's whole "fuh" is played wherever an F stone is, so its "uh" lands inside a blend or after the word's end: FROG "fuh-rrr-o-g", FLAG, GIFT "g-ih-fuh-t", ELF "eh-lll-fuh" (every other stone is cut before its "uh", to keep the slide a blend). A code read, not heard: the sweeps cannot listen. | (a) keep: it is Matt's take, and the other games say "Fuh" whole too; (b) whole only before a vowel, the old cut "f" (a burst, 35 dB under the vowel, so boosted) elsewhere; **(c) keep F-blend and F-final words (FROG FLAG GIFT ELF) off the bridge while F is whole: four words, and FAN FOX FISH keep Matt's "fuh"** | |
+| M79 | Pictures, item 157's words | Looked at as she would (each Matt's pick in item 160, some with a Watch note): COT is a folding camp cot she will call BED (and was drawn tiny until fix 248); DOT's blue disc with a shine and a floor shadow reads as a BALL (`shifter5_h12` 161); PUP is nearly DOG's puppy with a collar (they are look-alikes, so never side by side, but she reads PUP and says DOG); CUB as BEAR or TEDDY (Matt's own Watch). | **(a) an `art:alts` round for `pic_cot` (a cot with rails, or keep COT out of the Shifter's read-it links) and `pic_dot` (a flat printed dot on paper, no shine)**; (b) all four; (c) keep | |
+| M80 | Battle, Evil Elsa's Grumpy Snowmen (item 156) | The summon brings good Elsa's Snow Buddies, smiling, coal-mouthed: the move's name says GRUMPY (`rhyme3_h12` 059). | **(a) a grumpy snowman minion of her own (`art:gen`, a frowning snowman with an icy scowl)**; (b) rename the move (a line and its voice); (c) keep | |
+| M81 | Battle, Evil Jormungandr's Crushing Coil | Twenty-six flat discs in lime and black ring the heroes, drawn at effect depth over their faces and speech bubbles, for 3 s (`bridge_f` 243, 246): it reads as placeholder dots, not a snake. | **(a) under the fighters, as a tapered body with a head (drawn, not discs)**; (b) only under the fighters; (c) keep | |
+| M82 | Sentence room, the find line under a two-row banner | W44's ruled cover (17 to 21 px of a picture's foot) reached 96 x 72 px once: the four-row "WHERE IS IT? WALK TO IT, AND PRESS GREEN!" covered the VET's legs under ELSA CAN NOT / BEAT THE TRUCK (`bridge_f` 090; the checker's `target-covered`). The cause, from `cover.spec`'s attic find-line test logged over twelve runs (README's "one run in four" flake, a draw, not a timing): a standing person among the pictures (KID, MAN, VET) drops the row and her entry to y 650, and with the banner's two rows over the top no place is clear: the box sat on 56% of two pedestals (KID) or all of one (MAN, VET), any find line; under a one-row banner too, the box over her (`h12c` `drawn8_h12` 749, a VET drawn). | (a) under a two-row banner the find line takes only its short variants; **(b) under a two-row banner with a standing person, the pictures stand a little smaller (the square's height) so the row need not drop**; (c) keep (W44) | |
+| M83 | Battle, Charge's runes | M62 (a) fires the runes back to back, each waiting for its own sound: a word's sounds then play with about 0 ms between them (F-R-O-G, SH-I-P, C-R-A-B: -20 to 15 ms clip end to next start, 92 pairs in `h12c`), which is the word nearly blended, in the battle's voice. | (a) keep (M62's pace); **(b) a 250 ms beat between one rune's sound and the next (about 1 s on a four-rune word)**; (c) the runes of a word in a shuffled order, so they never spell it out | |
+| M84 | Hub doors, the bakery's sign | The bakery door's 🥐 sign, a 56 px croissant on a 68 px disc, reads as a big letter C (`h12c` `bridge_f_voiceless` 024): a door sign that looks like a letter, in a game about letters. | **(a) another bakery glyph that is no letter and no bank word (🧁 or 🎂; checked against the bank before the swap)**; (b) the glyph smaller on its disc; (c) keep | |
+| M85 | Attic, the hideout's backdrop | Nine places' secret room is the shared hideout, whose art has a treasure chest: behind JORMUNGANDR DOES NOT LIKE THE CHEST the backdrop paints the answer (`drawn8_h12` 782). M51 kept battle pictures that show a later word; this one is on screen while she reads it. | **(a) the hideout's pictured things (CHEST) never the attic's counter there (as the doors' signs, `planInput`)**; (b) new hideout art without a chest; (c) keep (M51) | |
+
+### Won't fix
+
+| # | Where | What | Why |
+| --- | --- | --- | --- |
+| W54 | `?bridge=` (a test flag) | Its forced words keep clear of the other rooms' words but not of the episode's avoid list (the warm-up's word, the move pads), so a test could cross a word the episode said first. | A test flag (item 155): the forced words are the point, and the bridge's third word comes from the normal draw. It warns now for a word it cannot take (fix 254). |
+| W55 | The checker's retention | A hunt's section committed while the hunt runs, with an empty *Matt's calls* table, counts as ruled, so the next sweep would thin that hunt's runs (this hunt's own draft did it for a few minutes, caught before a sweep started). | `landed()` reads "no calls" as "nothing to rule", which is right once a hunt is written up. The README says to write the calls rows (Ruling empty) before committing a section mid-hunt. |
+| W56 | Charge the Spell, the rune's YES! | Fix 231 draws the YES! over the word bar; it holds 450 ms and fades as it rises, so it is still over the letter just charged, half-faded, as the next lights (`tap_egg` 033). | It is gone within the next rune's first half second, and it marks the one just done; above the bar it would sit on the bag's row. |
+| W57 | Shape-Shifter, a link's word said | As the creature's word is said ("CAN!"), the next link's pictures pop in, and the word's box at the bottom sat on the FAN picture's stand for that second (`h12c` `tug_two_pads` 051, `h12f` VAN over MAP; the checker's `target-covered`). | W30's kind (the next stones under the praise box): the word's line is about a second long, and the box goes before she can walk. The checker rules it (`target-covered-ruled`). |
+| W58 | Battle, a status in a choice | Ellie's Bubble Cage holds a snowman in its pink bubble at full strength through the WEB choice (`tug_two_pads` 121-124). | A status is the fighter's own (it drifts with it), not a leftover effect; it pops on the fight's clock as every status does. |
+| W59 | Hub, the gift card | As the gift word flies to her the card stays up empty for about a second, then shrinks away (`bridge_f_voiceless` 023). | The word's flight is the moment; the card goes with its last frame. |
+| W60 | Battle, a crowded brawl choice | With many minions out, her team, the villain and the minions can stand in one heap at the bottom middle, Ellie hidden (`elsa_summon_wrong` 090). | Fix 262 clears the rings; the step-back clears the signs and rings (M6); a heap off the pads is the fight as it stands. |
+| W61 | Parked pick screen (`?scene=pick`) | The dialogue box at the top sits on the top 9 to 10 px of the six character cards (`h12f` flags). | Parked, reachable by a dev URL only; the cards' faces stay clear. |
+| W62 | Entry hall, the picked thing | Its flight to the bag starts where it lay, and she stands on it: a big HAT or KING over her head and face for the flight's start (`rhyme_wrong_h12` 175, `rhyme_d2` 014). | W45's kind: the pick is where she stands, and the thing is on its way to the bag within a second. |
+| W63 | Battle, a villain's ultimate | Fix 245's thirty stroked rectangles leave a faint dotted diagonal at each corner where their strokes join (`h12g` `story_h12` 124, cropped 4x). | Seen only zoomed; the old hard bands were the problem. A gradient texture would remove it, a polish item. |
+| W64 | Hub part 2, the secret door | "Look, a secret door! Let's go through it!" on two rows sits on the top 19 px of the door's target, its sign bubble above the door; the door itself is clear (`h12i` `devkeys_skip` 024). | W12's kind (the hub's box over the top of what the line points at); the line names the door, and the box goes with it. |
+
+### Where the next hunt resumes
+
+- **Matt's calls M78 to M85** wait for rulings: F's whole "fuh" in blends on the bridge, item 157's pictures, the
+  grumpy snowmen, the Crushing Coil, the sentence room's find box under a standing person, the battle's runes back
+  to back, the bakery sign, the hideout's chest. `sound-gap` leaves the battle's runes out (no room holds her input
+  there) until M83 is ruled; with M83 (b) it can take the battle's rune volley in.
+- **Never driven this hunt** (the completeness read's leftovers): keyboard hunt-and-peck (A-Z, digits, Shift) mashed
+  in the Shape-Shifter, the bridge and the rhyme room; F2 and F4 in those rooms (`qa devkeys` runs fixed seeds that
+  seldom draw them: an env query for it is the cheap way); two tabs open with a Shape-Shifter visit finishing in
+  the other (item 144's storage listener); a start from the pad alone with a hidden tab (fix 251, read and unit
+  reasoning only: the harness unlocks audio by key or click).
+- **The sea tug's two pads** (fix 264) keep off the pool of water where they can; with no dry floor between her
+  reach and the serpent the lower ring can still stand in it. Watch it live; a third pad position over the
+  serpent's side was not tried.
+- **Item 144's quicker openings** put the contests booted straight in at 43.6 to 44.7 s of battle time, under the
+  old 45 s floor (`fights.spec` red on the code before this hunt): the floor is 40 s now. A whole episode's parts run
+  longer; if the floor bites again, measure an episode's parts, not a boot.
+
 ## Bug-hunt checker log, batch by batch
 
 Moved from the README's *The bug-hunt checker* in item 153: what each later `QA_SET` batch
@@ -1024,6 +1146,23 @@ batch gets an entry here.
   it. The hooks gained `room.rhyme.onCards` (the cards' words now: the last round's stay up under its
   praise while `shown` already names the next, so the giveaway check's `done` list takes both),
   `room.rhyme.thirdCard` and `battle.heroClones`. `qa flags` gained the rhyme room's and Charge's URLs.
+- **The twelfth hunt's batch** (`QA_SET=hunt12`, item 164, items 147-163's changes; 29 scenarios, about
+  35 minutes on three workers, `drawn8_h12` the longest): `drawn5_h12` and `drawn8_h12` (drawn episodes, the long
+  run); the F bridge (item 162) with `?bridge=` forcing F words (`bridge_f`, `_wrong`, `_d2`, `_d3`, `_debug`,
+  `_parent`, `_flaky`, `_hidden`, `_reload`, `_lock`, `_voiceless`: FAN FOX FISH FROG FLAG GIFT ELF right, wrong, at
+  difficulty 2 and 3, through debug mode, the grown-ups page, a flaky net, a hidden tab and resizes, reloads, dad
+  lock and no voice manifest); the Shape-Shifter's item-157 draw (`shifter5_h12`, `shifter_wrong_h12`,
+  `shifter_lock`, `shifter_hidden`); the rhyme room's redraws (`rhyme3_h12`); TAP and EGG (`tap_egg`); Evil Elsa's
+  summon and Comet Crash (`elsa_summon`, `elsa_summon_wrong`, `ozy_comet`, `ozy_comet_brawl`); the giants at the edge
+  (`tiamat_edge`, `jorm_edge`); voice on a slow net (`jasmine_slow`); and one episode each for a real-speed run
+  (`tug_two_pads`, `charge_real`, `rhyme_real`: `WW_SPEED=1 QA_SET=all ... -g "qa (tug_two_pads|charge_real|rhyme_real)$"`).
+  `?bridge=` takes only the bridge's own words (`CROSS_WORDS`: FIG, FIN, FOG and FIX are not; it warns now).
+  New checks: `fighter-offscreen` (look: a main fighter on the stage more than a third off the screen's side) and
+  `pad-under-fighter` (look: a fighter's body over a pad's ring in an open choice), from the hooks' fighters' `box`
+  and `onStage`; `sound-gap` (bug: two letter sounds outside the bridge under 200 ms apart, clip end to start, in
+  game time: the harness speeds clips up with the clock, so a clip lasts its own length on the page's clock); the
+  variant check leaves `shifter_fixed` alone (M46). `qa flags` gained the F bridge's and `?bridge=`'s odd values,
+  item 157's words, Evil Elsa, Comet Crash and the giants.
 
 ## Systems history
 

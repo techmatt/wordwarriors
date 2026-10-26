@@ -80,7 +80,8 @@ export function applyHouseMood(scene: Phaser.Scene, villainId: string, opts: Hou
   // The tint sits just above the background, under everything that stands.
   const alpha = mood.tintAlpha ?? TINT_ALPHA;
   const tint = scene.add
-    .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, mood.tint, opts.reveal ? 0 : alpha)
+    // Past every edge (hunt 12, fix 244's kind): screen-sized, a room's shake (Charge's runes) slid it off a side.
+    .rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH * 1.25, GAME_HEIGHT * 1.25, mood.tint, opts.reveal ? 0 : alpha)
     .setDepth(DEPTH.ground + 1);
   // Reveal: darken past the resting tint, hold, then settle back to it (never
   // through clear, which a yoyo back to the start would do).

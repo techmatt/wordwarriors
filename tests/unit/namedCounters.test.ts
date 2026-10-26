@@ -9,14 +9,15 @@
 
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { ART_BY_ID } from '../../content/art/assets';
 import { ROSTER } from '../../content/battle/roster';
 import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { SPECIAL_WORDS } from '../../content/phonics/words';
 import { journeyStops } from '../../src/episode/plans';
 import { BAG_WORDS } from '../../src/rules/bank';
 
-/** The journey map's stops every episode has (its house stop is the place's glyph away from home). */
-const ALWAYS_SHOWN = new Set(journeyStops().filter((s) => s.kind !== 'house').map((s) => s.icon));
+/** The journey map's stops every episode has (its house stop is the place's glyph away from home), and the bedroom's bed (hunt 12). */
+const ALWAYS_SHOWN = new Set([...journeyStops().filter((s) => s.kind !== 'house').map((s) => s.icon), ART_BY_ID.prop_bed!.glyph!]);
 
 function neverDrawn(word: string): string | null {
   if (SPECIAL_WORDS.some((w) => w.word === word && !w.decodable)) return 'not decodable';
@@ -24,14 +25,14 @@ function neverDrawn(word: string): string | null {
   if (!b) return 'not a bank word';
   if (b.stored) return `stored: ${b.stored}`;
   if (!BAG_WORDS.includes(word)) return 'not in her word bag';
-  if (b.glyph && ALWAYS_SHOWN.has(b.glyph)) return `its ${b.glyph} is a journey-map stop, shown before any room`;
+  if (b.glyph && ALWAYS_SHOWN.has(b.glyph)) return `its ${b.glyph} is shown before any room (a journey-map stop, or her bed)`;
   return null;
 }
 
-test('named counter items (item 153; item 157: the map\'s bedroom stop is 🌅, not BED\'s 🛏️): only Rilla\'s MICE (not decodable) never comes up', () => {
+test('named counter items (item 153; item 157: the map\'s bedroom stop is 🌅; hunt 12: her bed in the bedroom shows BED): Rilla\'s MICE (not decodable) and Evil Julia\'s Cozy Bed never come up', () => {
   const never = ROSTER.flatMap((c) => {
     const why = neverDrawn(c.counter.word);
     return why ? [`${c.id}: ${c.counter.word.toUpperCase()} (${why})`] : [];
   });
-  assert.deepEqual(never, ['rilla: MICE (not decodable)']);
+  assert.deepEqual(never, ['julia: BED (its 🛏️ is shown before any room (a journey-map stop, or her bed))', 'rilla: MICE (not decodable)']);
 });

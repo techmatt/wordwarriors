@@ -20,7 +20,8 @@ export const SPELL_WORDS: Record<string, [string, string, string]> = {
   jormungandr: ['sun', 'pot', 'lit'],
   smaug: ['cup', 'net', 'fog'],
   tiamat: ['top', 'tip', 'hat'],
-  scar: ['box', 'pen', 'off'],
+  // Not OFF (hunt 12): F F is no CVC word, and the letter-by-letter hint said its one sound twice.
+  scar: ['box', 'pen', 'cub'],
   moriarty: ['map', 'pen', 'nab'],
   bavmorda: ['sun', 'pin', 'zap'],
   rilla: ['rat', 'bug', 'hen'],

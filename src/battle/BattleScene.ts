@@ -189,7 +189,9 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     this.fight = fightStyle();
     this.arenaKey = this.fight.arena ?? v.arena;
     backdrop(this, `arena_${this.arenaKey}`, DEPTH.ground);
-    this.darkRect = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0a0018, 0).setDepth(FLOOR_TOP - 5);
+    // Past every edge (hunt 12, fix 141's kind): screen-sized, the ultimate's shake slid it off a side and left a
+    // hard-edged bright strip there, the HUD jumping with it.
+    this.darkRect = this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH * 1.25, GAME_HEIGHT * 1.25, 0x0a0018, 0).setDepth(FLOOR_TOP - 5);
     this.controls = new Controls(this);
     this.play = new FreePlay(this, outfitFor(episode.hero, episode)?.id ?? null);
     this.playHop = false;
@@ -256,9 +258,9 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     this.phase = 'story';
   }
 
-  /** A story fight's minion or leftover helper, done with (item 107). */
-  killFighter(f: Fighter): void {
-    if (f.alive) this.sim.kill(f);
+  /** A story fight's minion or leftover helper, done with (item 107); `quiet`: at once, no burst (a move choice's floor). */
+  killFighter(f: Fighter, quiet = false): void {
+    if (f.alive) this.sim.kill(f, quiet);
   }
 
   // -- BattleWorld (abilities.ts: what a cast may use; the fighters and hits are the sim's) --
@@ -863,7 +865,10 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
   private publish(): void {
     // Thin the particles when frames drop; restore them when they recover.
     this.fps.sample(this.game.loop.delta, true);
-    const info = (f: Fighter) => ({ id: f.init.id, hp: Math.round((100 * f.hp) / f.maxHp), status: f.floored ? 'floored' : (f.status?.kind ?? null), art: f.init.art, drawn: Math.round(f.sprite.height * f.baseScale) });
+    const info = (f: Fighter) => {
+      const b = f.sprite.getBounds();
+      return { id: f.init.id, hp: Math.round((100 * f.hp) / f.maxHp), status: f.floored ? 'floored' : (f.status?.kind ?? null), art: f.init.art, drawn: Math.round(f.sprite.height * f.baseScale), box: [b.left, b.top, b.right, b.bottom].map(Math.round), onStage: f.onStage };
+    };
     hookState.battle = {
       part: this.part,
       fight: this.fight.id,

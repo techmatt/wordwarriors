@@ -654,8 +654,9 @@ export class RaceStage extends BaseStage {
 
   /** A streak of the ultimate's colour along a hero's lane. */
   private laneFlash(f: Fighter, color: number): void {
-    const band = this.scene.add.rectangle(GAME_WIDTH / 2, f.cy, GAME_WIDTH, f.height * 0.7, color, 0).setDepth(FLOOR_TOP - 2).setBlendMode(Phaser.BlendModes.ADD);
-    this.scene.tweens.add({ targets: band, fillAlpha: 0.5, duration: 160, yoyo: true, repeat: 2, onComplete: () => band.destroy() });
+    // A soft glow stretched along the lane (hunt 12, fix 192's kind: a flat rectangle drew a hard-edged band across the screen).
+    const band = this.scene.add.image(GAME_WIDTH / 2, f.cy, TEX.glow).setDisplaySize(GAME_WIDTH * 1.4, f.height * 1.1).setTint(color).setAlpha(0).setDepth(FLOOR_TOP - 2).setBlendMode(Phaser.BlendModes.ADD);
+    this.scene.tweens.add({ targets: band, alpha: 0.6, duration: 160, yoyo: true, repeat: 2, onComplete: () => band.destroy() });
   }
 
   /** A prop's art, or its glyph if the art has not loaded. */

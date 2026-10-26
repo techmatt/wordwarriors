@@ -40,7 +40,7 @@ test('the cast draw picks the villain\'s own style; ?fight= fixes another', asyn
 // default whole episode and smoke's Battle part 2 already play it with these checks,
 // the length too (`expectFightLength` in playEpisode): only the contests are swept here.
 // So is a brawl with its own id (item 115, Evil Moriarty's magic show): tests/villains.spec.ts
-// plays his whole episode (booted straight into part 2, a brawl ran 44.5 s, under the 45 s floor).
+// plays his whole episode (booted straight into part 2, a brawl ran 44.5 s, under the 45 s floor then; the floor is 40 s since hunt 12).
 // A story fight (item 107) is not a contest: tests/storyFight.spec.ts plays it.
 for (const f of FIGHTS.filter((x) => x.kind !== 'brawl' && x.kind !== 'story')) {
   test(`${f.id}: battle ${PART[f.id] ?? 1} keeps the episode's shape`, SLOW, async ({ page }) => {

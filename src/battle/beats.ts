@@ -242,10 +242,12 @@ export class BattleBeats {
     b.after(4200, () => aura.destroy());
     // A soft edge, fading inward, from past the screen's edge (hunt 10: one 80 px stroke drew a hard frame 40 px
     // in from every side, and the shake slid it about).
-    const bands = Array.from({ length: 10 }, (_, i) => {
-      const inset = -40 + i * 12;
+    // Thin bands edge to edge (hunt 12, fix 180's kind): ten 12 px bands stepped by 0.07 alpha each, and on a
+    // saturated colour (Evil Bavmorda's green) every step read as a hard line, nested rectangles.
+    const bands = Array.from({ length: 30 }, (_, i) => {
+      const inset = -40 + i * 4;
       const a = inset <= 0 ? 0.5 : 0.5 * Math.max(0, 1 - inset / 80) ** 1.5;
-      return scene.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH - 2 * inset, GAME_HEIGHT - 2 * inset).setStrokeStyle(12, ult.color, a);
+      return scene.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH - 2 * inset, GAME_HEIGHT - 2 * inset).setStrokeStyle(4, ult.color, a);
     });
     const vignette = scene.add.container(0, 0, bands).setDepth(DEPTH.hud - 1).setAlpha(0);
     scene.tweens.add({ targets: vignette, alpha: 1, duration: 300, yoyo: true, repeat: 4, onComplete: () => vignette.destroy() });
@@ -352,7 +354,8 @@ export class BattleBeats {
     sfxShout(1.6);
     floatText(scene, v.cx, v.top - 40, 'EEK!', '#ff9ad5', 84);
     // Not the mop! She has read the word by now, so the villain may wail it.
-    if (!named) b.after(350, () => floatText(scene, v.cx - 40, v.top - 130, `NOT THE ${word.toUpperCase()}!`, '#ffd23f', 56));
+    // Over the HUD (hunt 12): rising to the top band, the space race's track drew over its middle (NOT ... NEST!).
+    if (!named) b.after(350, () => floatText(scene, v.cx - 40, v.top - 130, `NOT THE ${word.toUpperCase()}!`, '#ffd23f', 56, DEPTH.hud + 2));
     shake(scene, 3, 300);
     // A giant (Evil Tiamat, standing at the front) only hops and stretches a
     // little, so her head stays on screen (she now takes this branch whenever

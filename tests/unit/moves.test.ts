@@ -11,6 +11,7 @@ import { test } from 'node:test';
 
 import { ART_BY_ID } from '../../content/art/assets';
 import { CHARACTER_BY_ID, MOVE_WORDS, ROSTER, abilityWords, personOf } from '../../content/battle/roster';
+import { RUNES } from '../../content/phonics/runes';
 import { CASTERS, HUB_SCENES, storyTexts } from '../../content/house/scenes';
 import { ACTIONS, ALL_ACTIONS, BANK_BY_WORD } from '../../content/phonics/bank';
 import { PICTURE_WORDS, SPECIAL_WORDS } from '../../content/phonics/words';
@@ -281,4 +282,12 @@ test('reformed: every character has two or more short lines, each voiced in its 
       assert.ok(r.text.split(/\s+/).length <= 10, `${id} is short`);
     }
   }
+});
+
+test("a wave's glyph rides its front only where asked (hunt 12): Comet Crash's fireballs, never a rune's gesture glyph (S's snake, P's candle)", () => {
+  const all = ROSTER.flatMap((c) => [c.good, c.evil]).flatMap((f) => [...f.abilities, f.ultimate]);
+  const riders = all.filter((a) => a.riders);
+  assert.ok(riders.some((a) => a.id === 'comet_crash'));
+  for (const a of riders) assert.ok(a.kind === 'wave' && a.glyph, a.id);
+  for (const r of RUNES) assert.ok(!r.move.riders, r.sound);
 });

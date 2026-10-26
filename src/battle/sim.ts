@@ -33,7 +33,7 @@ const DAMAGE_PER_POWER = 2.6;
 /** Two fighters closer than this in depth (px of floor) stand side by side, and their bodies must not overlap (item 034). */
 const SAME_DEPTH = 70;
 /** Hit words (BAM!, BLOCK!) float under the move pads' signs: a sign's word is never covered (item 034). */
-const HIT_FLOAT = DEPTH.prompt - 20;
+export const HIT_FLOAT = DEPTH.prompt - 20;
 /**
  * A trap goes off on a fighter within this box of it (px either way), and `defuseNear` clears the
  * same box (hunt 11): she must never stand on a trap the defuse misses.
@@ -172,14 +172,15 @@ export class BattleSim {
     if (target.invulnerable || target.shieldUntil > b.now) {
       burst(scene, target.cx, target.cy, { count: 12, speed: 200, colors: [0xffffff, color] });
       // CLANG, not BLOCK: BLOCK is a bank word since item 121, the attic's counter word after battle 1 (hunt 8).
-      if (target.isMain && Math.random() < 0.3) floatText(scene, target.cx, target.top, 'CLANG!', '#7ad9ff', 30, HIT_FLOAT);
+      // No floating words while she picks (hunt 12: a CLANG! under BUMP's sign, a POW! over the villain, all choice).
+      if (target.isMain && !b.choosing && Math.random() < 0.3) floatText(scene, target.cx, target.top, 'CLANG!', '#7ad9ff', 30, HIT_FLOAT);
       return;
     }
     // Clones pop on any hit.
     if (target.init.kind === 'clone') {
       sfxPoof();
       burst(scene, target.cx, target.cy, { count: 30, speed: 300, colors: [target.init.palette[1], 0xffffff] });
-      floatText(scene, target.cx, target.top, 'POOF!', '#ffffff', 30, HIT_FLOAT);
+      if (!b.choosing) floatText(scene, target.cx, target.top, 'POOF!', '#ffffff', 30, HIT_FLOAT);
       this.kill(target);
       return;
     }
@@ -198,7 +199,7 @@ export class BattleSim {
       hitstop(scene, 60);
       shake(scene, power, 160);
     }
-    if (power >= 2 && Math.random() < 0.35) {
+    if (power >= 2 && !b.choosing && Math.random() < 0.35) {
       // Not a word on a move pad still to come (POW, BAM and ZAP are move words).
       const words = ['POW!', 'BAM!', 'ZAP!', 'BOOM!', 'WHAM!'].filter((w) => !b.textGivesAway(w));
       floatText(scene, target.cx, target.top, words[Math.floor(Math.random() * words.length)]!, hex(color), 34, HIT_FLOAT);
@@ -208,10 +209,15 @@ export class BattleSim {
     if (!target.isMain && target.hp <= 0) this.kill(target);
   }
 
-  kill(f: Fighter): void {
+  /** `quiet` (hunt 12: a move choice clearing the floor): gone at once, no burst to hang on the frozen clock. */
+  kill(f: Fighter, quiet = false): void {
     if (!f.alive) return;
     f.alive = false;
     sfxPoof();
+    if (quiet) {
+      f.destroy();
+      return;
+    }
     burst(this.b.stage, f.cx, f.cy, { count: 30, speed: 300, colors: [f.init.palette[0], f.init.palette[1], 0xffffff] });
     // Pop out with a squash, never a spin: sprites only bob and squash.
     this.b.stage.tweens.add({ targets: f.root, scaleX: 1.4, scaleY: 0, duration: 250, ease: 'Back.easeIn', onComplete: () => f.destroy() });
@@ -228,7 +234,9 @@ export class BattleSim {
     for (const f of this.fighters) {
       // A giant's wings would hang off the edge of the screen: keep all of her in. Busy too (item 155): a knockback
       // mid-cast left Evil Tiamat past it, and the clamp's snap back once she could act came in a move choice.
-      if (f.active && f.giant) f.x = Phaser.Math.Clamp(f.x, ARENA_LEFT + f.height * 0.45, ARENA_RIGHT - f.height * 0.45);
+      // Only on stage (hunt 12): running in, Evil Tiamat stood at the edge from the first frame instead of
+      // coming on from off the screen, and a giant ally's retreat stopped at the edge and faded there.
+      if (f.active && f.giant && f.onStage) f.x = Phaser.Math.Clamp(f.x, ARENA_LEFT + f.height * 0.45, ARENA_RIGHT - f.height * 0.45);
       if (f.active) f.updateVisual(this.b.now, dt);
     }
   }

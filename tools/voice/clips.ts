@@ -28,6 +28,14 @@ import path from 'node:path';
 import { exists } from '../shared.js';
 import type { LineSpec, TimedWord } from './types.js';
 
+
+/**
+ * One stamp for the whole run (hunt 12): a date alone could not tell two imports on one day apart, so the
+ * listen page's NEW (`src/listen/main.ts`, the newest stamp) marked item 161's five sounds with item 163's S.
+ * A run's clips share it, so NEW marks the whole of the latest import; older date-only stamps sort before it.
+ */
+export const INGESTED = `${new Date().toISOString().slice(0, 19)}Z`;
+
 export const CLIP_DIR = path.join('content', 'voice', 'clips');
 export const CLIP_INDEX = path.join(CLIP_DIR, 'index.json');
 
@@ -58,6 +66,7 @@ export interface ClipRecord {
    * Word spans. A single-phoneme clip needs no aligner: one word, the whole clip.
    */
   words: TimedWord[];
+  /** When it came in: this run's UTC time to the second (`INGESTED`); a date alone before hunt 12. */
   ingested: string;
 }
 
@@ -114,7 +123,7 @@ export function clipRecord(line: LineSpec, audio: string, seconds: number, provi
     spokenHash: spokenHash(line),
     audio,
     words: tokens.map((w, i) => ({ word: w.replace(/[^\p{L}\p{N}'-]/gu, ''), start: (seconds * i) / tokens.length, end: (seconds * (i + 1)) / tokens.length })),
-    ingested: new Date().toISOString().slice(0, 10),
+    ingested: INGESTED,
   };
 }
 
@@ -134,7 +143,7 @@ export async function installClip(index: ClipIndex, id: string, mp3: Uint8Array,
   if (line) {
     index.clips[id] = clipRecord(line, audio, seconds, provider);
     if (index.waiting) delete index.waiting[id];
-  } else (index.waiting ??= {})[id] = { provider, recorded, audio, seconds, ingested: new Date().toISOString().slice(0, 10) };
+  } else (index.waiting ??= {})[id] = { provider, recorded, audio, seconds, ingested: INGESTED };
   await dropUnused(index, before);
   return line ? 'installed' : 'kept (no line yet)';
 }

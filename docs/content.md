@@ -196,9 +196,10 @@ every name, ability, ultimate, taunt and threat in the roster (unit test "named 
 words are pictured, and never in any name, ability, taunt or threat"). MICE is not
 decodable, so EvilRilla's Wind-up Mice never come up in the episode now. TUB, NUT, BAG and
 BED were stored words (items 127 and 130) until item 153 (Matt: "all okay words"), so Evil
-Ellie's Bubble Tub, Evil Seraphina's Golden Nut and Evil Smaug's Gold Bag come up now, and
-since item 157 Evil Julia's Cozy Bed too: the journey map's bedroom stop was BED's own 🛏️,
-a sign shown before any room every episode, and is a sunrise 🌅 now. A bank word's `glyph`
+Ellie's Bubble Tub, Evil Seraphina's Golden Nut and Evil Smaug's Gold Bag come up now. Evil
+Julia's Cozy Bed does not: item 157 made the journey map's bedroom stop a sunrise 🌅 (it was
+BED's own 🛏️), but her bed in the bedroom shows BED before any room, so BED is never a key word
+or the counter (hunt 12, `notKeys`); the other games read it. A bank word's `glyph`
 must not be a journey-map stop's (🌅 ⚔️ 🏆, 🏠 at home; HUT has none for that). Unit test
 `tests/unit/namedCounters.test.ts` lists the named items that can never come up, and why. Changing an
 item's `id` needs new `item_<id>` art (`npm run art:gen -- item_<id>`). With `how:
