@@ -1274,6 +1274,16 @@ files, and moving those out would break the earlier picker. To keep people off p
 picture, say where they are as well as where they are not ("nobody on the glass... all the
 life is on the ground, at the entrance, far away"): 3 of 3 came back clean first time.
 
+A row's optional `current: {key, image, label?}` puts an existing image first in the picker,
+as its default (say, the pick being compared against, copied into the folder); `more`, a list
+of the same, puts existing images after the candidates (an earlier batch). Copies go in a
+subfolder (`keep/`, `figments/bright`) so they do not count as candidates. "Brighter" prompts
+overshoot: asking for bright, saturated light and gardens turned the ruins into a resort
+(2026-11-01). Saying "serious, weathered, naturalistic, sun-faded; not a resort, festival or
+postcard; no HDR gloss" and giving small counts ("one line of laundry", "one small garden
+plot") landed on "slightly". A dry floor needs "no water, no trickle, no puddles, no wet
+reflections", even in a spec that only says dry.
+
 ## Operational facts
 
 - **Phaser sizes a Text by a fixed sample string (`|MÃ‰qgy`), not its own glyphs**

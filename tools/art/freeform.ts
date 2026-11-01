@@ -31,6 +31,16 @@ export interface FreeformRow {
   /** Width and height of the cut, e.g. [3, 4]. */
   aspect: [number, number];
   prompt: string;
+  /** An image that already exists, the row's first option and default (`image` relative to the spec). */
+  current?: FreeformOption;
+  /** Images that already exist, after the row's candidates: an earlier batch shown beside them. */
+  more?: FreeformOption[];
+}
+
+interface FreeformOption {
+  key: string;
+  image: string;
+  label?: string;
 }
 
 export interface FreeformSpec {
@@ -119,11 +129,11 @@ async function sheets(spec: FreeformSpec, dir: string): Promise<void> {
 
 async function manifest(spec: FreeformSpec, dir: string): Promise<void> {
   const rows = await Promise.all(
-    spec.rows.map(async ({ id, label, note }) => ({
+    spec.rows.map(async ({ id, label, note, current, more }) => ({
       id,
       label,
       ...(note ? { note } : {}),
-      options: (await candidates(dir, id)).map((k) => ({ key: String(k), image: `${id}-${k}.png` })),
+      options: [...(current ? [current] : []), ...(await candidates(dir, id)).map((k) => ({ key: String(k), image: `${id}-${k}.png` })), ...(more ?? [])],
     })),
   );
   const file = path.join(dir, `${spec.name}.json`);
