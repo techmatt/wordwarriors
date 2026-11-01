@@ -1267,6 +1267,13 @@ stops at a usage limit, and a second run finishes the rest. The model drifts tow
 sunset skylines and wet reflective floors unless a prompt rules them out, and reads
 "pipe" as a smoking pipe. 64 images took 18% of the 5-hour window and 3% of the week.
 
+A later round of a picker gets its own spec in a subfolder (`<folder>/r2/spec.json`, name
+`<name>_r2`, 2026-11-01, `figments/r2`): the tool lists every `<id>-<k>.png` beside the
+spec as a candidate, so a second spec in the same folder would take in the earlier round's
+files, and moving those out would break the earlier picker. To keep people off part of a
+picture, say where they are as well as where they are not ("nobody on the glass... all the
+life is on the ground, at the entrance, far away"): 3 of 3 came back clean first time.
+
 ## Operational facts
 
 - **Phaser sizes a Text by a fixed sample string (`|MÃ‰qgy`), not its own glyphs**
