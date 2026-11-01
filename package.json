@@ -14,6 +14,7 @@
     "art:gen": "tsx tools/art/generate.ts",
     "art:alts": "tsx tools/art/alts.ts alts",
     "art:pick": "tsx tools/art/alts.ts pick",
+    "art:freeform": "tsx tools/art/freeform.ts",
     "voice:lines": "tsx tools/voice/compose.ts",
     "voice:build": "tsx tools/voice/build.ts",
     "voice:clip": "tsx tools/voice/addClip.ts",

@@ -1244,6 +1244,29 @@ inside the repo, which the scratch home is not (item 149, Matt's call). Promotio
   and goes on (2026-10-18), so an id can end up with fewer than `n`. Top it up with
   `art:alts -- <id> --n=1`; it numbers on from the last candidate.
 
+### Images outside the game (`art:freeform`)
+
+For a picker of images that are not game art (nothing goes near `public/` or `content/`):
+
+```
+npm run art:freeform -- art-originals/<folder>/spec.json [--n=3] [--jobs=4] [--manifest-only]
+```
+
+The spec is `{name, title, intro?, style, rows: [{id, label, note?, shape, aspect, prompt}]}`:
+`shape` is the words the image tool takes its shape from, `aspect` the exact cut (`[3, 4]`),
+`style` goes before every prompt. Keep the folder under `art-originals/`, so the prompts
+stay out of git. An exact 3:4 or 4:3 is a centred crop of what is drawn, so the prompt
+should keep the subject away from the edges that go; a drawing more than a quarter off the
+aspect is dropped. `portrait` draws 1024×1536. `wide landscape` draws about 1916×821
+(2.3:1, 2026-10-31, Codex 0.163), useless for 4:3; `standard landscape, 4:3 aspect ratio
+(1536x1024), not ultra-wide, not panoramic` drew 1536×1024 every time. `<id>-<k>.png` is
+the cut, `originals/` holds what was drawn, `sheets/<id>.png` shows a row side by side,
+`<name>.json` is the picker manifest (its `pick:` path). A run draws only what is missing:
+to redraw a candidate, move its `<id>-<k>.png` out of the folder and run again. It also
+stops at a usage limit, and a second run finishes the rest. The model drifts towards
+sunset skylines and wet reflective floors unless a prompt rules them out, and reads
+"pipe" as a smoking pipe. 64 images took 18% of the 5-hour window and 3% of the week.
+
 ## Operational facts
 
 - **Phaser sizes a Text by a fixed sample string (`|MÃ‰qgy`), not its own glyphs**

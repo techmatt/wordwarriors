@@ -57,6 +57,13 @@ export const isBackground = (id: string) => isBackgroundKind(ART_BY_ID[id]!.kind
  */
 export const DESIGN_REF = "The attached picture is a design reference: this same character's other version, from this game. Draw the same person: keep the face shape, eyes, hair (colour, cut and style), any freckles and the build exactly as in the picture, in the same art style, so the two read as one character. Change only what the description below gives differently (skin tone, clothes, colours, props, expression); do not copy the picture's pose. Draw it on the flat pure #00FF00 green background the style below asks for, like the picture's.";
 
+/** The lines that open every prompt: the image tool picks its shape from these words, not from pixel sizes. */
+export const askOnce = (shape: string): string[] => [
+  'Use your built-in image_gen tool ($imagegen) exactly once to generate the image below.',
+  'Do not read any files, run any commands, or try to save the image anywhere: just generate it, then stop.',
+  `Image shape: ${shape}.`,
+];
+
 /**
  * `prompt` replaces the tracked asset prompt (`art:alts --brief`); the style block, photo wording and NOTES stay.
  * `design` attaches an image of the character's other version instead of a photo (`art:alts --ref`).
@@ -68,9 +75,7 @@ export function codexPrompt(id: string, withRef = false, prompt = ART_PROMPTS[id
   // A wide prop (item 027's table, boat, fort) is asked for wide too, so it is not drawn small in a square.
   const shape = isBackground(id) || a.w > a.h * 1.6 ? 'wide landscape' : a.h > a.w * 1.1 ? 'portrait' : 'square';
   return [
-    'Use your built-in image_gen tool ($imagegen) exactly once to generate the image below.',
-    'Do not read any files, run any commands, or try to save the image anywhere: just generate it, then stop.',
-    `Image shape: ${shape}.`,
+    ...askOnce(shape),
     ...(withRef && design ? ['', DESIGN_REF] : []),
     ...(withRef && !design
       ? [
