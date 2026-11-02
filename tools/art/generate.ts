@@ -299,6 +299,12 @@ async function contactSheet(page: Page, ids: string[], sheet = SHEET): Promise<v
   console.log(`art: contact sheet ${sheet} (${ids.length} tiles)`);
 }
 
+/** A screen-drawn image cut as a sprite is, for an image with no asset id (`art:freeform`'s keyed specs). */
+export async function spriteCut(page: Page, original: Buffer, box: { w: number; h: number }, mode: KeyMode): Promise<{ png: Buffer; w: number; h: number; fringe: number }> {
+  const p = await processImage(page, original, { sprite: true, boxW: box.w, boxH: box.h, mode });
+  return { png: fromDataUrl(p.url), w: p.w, h: p.h, fringe: p.fringe };
+}
+
 /** The game-sized PNG for an id from a full-resolution original: keyed, trimmed, fitted and shrunk. */
 export async function gamePng(page: Page, id: string, original: Buffer): Promise<{ png: Buffer; p: Processed }> {
   const a = ART_BY_ID[id]!;

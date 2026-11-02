@@ -1284,6 +1284,23 @@ postcard; no HDR gloss" and giving small counts ("one line of laundry", "one sma
 plot") landed on "slightly". A dry floor needs "no water, no trickle, no puddles, no wet
 reflections", even in a spec that only says dry.
 
+**Character candidates that are not in the roster yet (item 171):** `art:alts` needs an asset
+id, so a new character's first look is a freeform spec with `key: {mode, box}` (each candidate
+keyed, trimmed and fitted like a sprite; the cast's box is `{w: 400, h: 500}`, drawn `portrait`,
+`aspect` `[2, 3]`). A row's `looks: [{label, prompt}]` draws a different brief per candidate
+(`--n` times each) and labels it in the picker; `kind: 'many'` makes it a keep-or-drop row.
+`--recut` cuts again from `originals/` without drawing. Keep the spec in
+`art-originals/picks/<name>/`.
+
+**A green subject goes on a magenta screen.** Green robes on the cast's #00FF00 came back with
+grey see-through patches even in deep forest green under `lightGreen`, on 2 of 2 (Ember Lark,
+item 171). The same prompt on `#FF00FF` with mode `keep` kept bright emerald solid; `keyGreen`
+takes its key from the border, so it needs no change. Ask for "nothing in the subject is pink or
+magenta". A soft glow drawn over the screen still picks up a pink edge: give a glow a solid
+outlined shape and say no halo. Promoting such a candidate means copying its original to
+`art-originals/<id>.png` and `art:gen -- <id> --reprocess` (as item 167 did), with `keyMode`
+`keep`; `art:alts` and `art:gen` would draw it on green again.
+
 ## Operational facts
 
 - **Phaser sizes a Text by a fixed sample string (`|MÃ‰qgy`), not its own glyphs**

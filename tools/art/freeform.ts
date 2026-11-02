@@ -12,6 +12,10 @@
  *
  * A run draws only the candidates that are missing, so moving a bad one out of the
  * folder and running again redraws that one under the same key.
+ *
+ * A spec with `key` draws on a key-colour screen and cuts each candidate as a game sprite
+ * is cut (keyed, trimmed, fitted); a row with `looks` draws a different brief per
+ * candidate (README, *Images outside the game*). `--recut` cuts again from `originals/`.
  */
 
 import { appendFile, copyFile, mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
@@ -20,7 +24,8 @@ import path from 'node:path';
 import sharp from 'sharp';
 
 import { exists, runMain } from '../shared.js';
-import { askOnce, describeUsage, runCodex } from './generate.js';
+import type { KeyMode } from '../../content/art/prompts.js';
+import { askOnce, describeUsage, openPage, runCodex, spriteCut } from './generate.js';
 
 export interface FreeformRow {
   id: string;
@@ -35,6 +40,16 @@ export interface FreeformRow {
   current?: FreeformOption;
   /** Images that already exist, after the row's candidates: an earlier batch shown beside them. */
   more?: FreeformOption[];
+  /** One brief per candidate, added after `prompt`; each is drawn `--n` times and labelled in the picker. */
+  looks?: FreeformLook[];
+  /** The picker's keep-or-drop row; `default` is the keys kept to start with. */
+  kind?: 'many';
+  default?: string[];
+}
+
+interface FreeformLook {
+  label: string;
+  prompt: string;
 }
 
 interface FreeformOption {
@@ -50,7 +65,15 @@ export interface FreeformSpec {
   /** Put before every row's prompt. */
   style: string;
   rows: FreeformRow[];
+  /** Cut as sprites: `mode` as in `keyGreen`, `box` the fit in pixels (twice the game's display box). */
+  key?: { mode: KeyMode; box: { w: number; h: number } };
 }
+
+/** What a run does with an original: a keyed spec's cut, or the row's centred crop. */
+type Cutter = (row: FreeformRow, tag: string) => Promise<void>;
+
+/** The look candidate `k` (from 1) of a row is drawn from. */
+export const lookOf = (row: FreeformRow, k: number): FreeformLook | undefined => (row.looks?.length ? row.looks[(k - 1) % row.looks.length] : undefined);
 
 /** The centred box of a `w`×`h` image at `aspect`. */
 export function centreCrop(w: number, h: number, [aw, ah]: [number, number]): { left: number; top: number; width: number; height: number } {
@@ -71,18 +94,34 @@ async function candidates(dir: string, id: string): Promise<number[]> {
   return hits.map(Number).sort((a, b) => a - b);
 }
 
-async function draw(spec: FreeformSpec, dir: string, n: number, jobs: number): Promise<void> {
+function cutter(spec: FreeformSpec, dir: string, page: Awaited<ReturnType<typeof openPage>>['page'] | undefined): Cutter {
+  return async (row, tag) => {
+    const original = path.join(dir, 'originals', `${tag}.png`);
+    const out = path.join(dir, `${tag}.png`);
+    if (spec.key && page) {
+      const { png, w, h, fringe } = await spriteCut(page, await readFile(original), spec.key.box, spec.key.mode);
+      await writeFile(out, png);
+      console.log(`art:freeform: ${tag}: cut ${w}×${h}, fringe px ${fringe}`);
+      return;
+    }
+    const { width: w = 0, height: h = 0 } = await sharp(original).metadata();
+    await sharp(original).extract(centreCrop(w, h, row.aspect)).png().toFile(out);
+  };
+}
+
+async function draw(spec: FreeformSpec, dir: string, n: number, jobs: number, cut: Cutter): Promise<void> {
   const todo: { row: FreeformRow; k: number }[] = [];
   for (const row of spec.rows) {
     const have = await candidates(dir, row.id);
-    for (let k = 1; k <= n; k++) if (!have.includes(k)) todo.push({ row, k });
+    const count = n * (row.looks?.length || 1);
+    for (let k = 1; k <= count; k++) if (!have.includes(k)) todo.push({ row, k });
   }
   console.log(`art:freeform: ${todo.length} to draw`);
   let stopped = false;
   const one = async ({ row, k }: (typeof todo)[number]): Promise<void> => {
     const tag = `${row.id}-${k}`;
     for (let attempt = 1; attempt <= 2 && !stopped; attempt++) {
-      const run = await runCodex([...askOnce(row.shape), '', `${spec.style} ${row.prompt}`].join('\n'));
+      const run = await runCodex([...askOnce(row.shape), '', [spec.style, row.prompt, lookOf(row, k)?.prompt].filter(Boolean).join(' ')].join('\n'));
       await appendFile(path.join(dir, 'log.jsonl'), `${JSON.stringify({ tag, at: new Date().toISOString(), seconds: run.seconds, thread: run.thread, limit: run.limit, usage: run.usage, message: run.lastMessage })}\n`);
       if (run.limit) stopped = true;
       if (!run.image) {
@@ -96,7 +135,7 @@ async function draw(spec: FreeformSpec, dir: string, n: number, jobs: number): P
       }
       const original = path.join(dir, 'originals', `${tag}.png`);
       await copyFile(run.image, original);
-      await sharp(original).extract(centreCrop(w, h, row.aspect)).png().toFile(path.join(dir, `${tag}.png`));
+      await cut(row, tag);
       console.log(`art:freeform: ${tag}: ${w}×${h}, ${run.seconds}s, ${describeUsage(run.usage)}`);
       return;
     }
@@ -118,7 +157,8 @@ async function sheets(spec: FreeformSpec, dir: string): Promise<void> {
     const width = Math.round((height * aw) / ah);
     const ks = await candidates(dir, row.id);
     if (!ks.length) continue;
-    const tiles = await Promise.all(ks.map((k) => sharp(path.join(dir, `${row.id}-${k}.png`)).resize(width, height).toBuffer()));
+    const tile = (k: number) => sharp(path.join(dir, `${row.id}-${k}.png`)).resize(width, height, { fit: 'contain', background: '#cfd8dc' }).flatten({ background: '#cfd8dc' }).png().toBuffer();
+    const tiles = await Promise.all(ks.map(tile));
     const canvas = { width: ks.length * (width + 8), height, channels: 3 as const, background: '#fff' };
     await sharp({ create: canvas })
       .composite(tiles.map((input, i) => ({ input, left: i * (width + 8), top: 0 })))
@@ -129,12 +169,20 @@ async function sheets(spec: FreeformSpec, dir: string): Promise<void> {
 
 async function manifest(spec: FreeformSpec, dir: string): Promise<void> {
   const rows = await Promise.all(
-    spec.rows.map(async ({ id, label, note, current, more }) => ({
-      id,
-      label,
-      ...(note ? { note } : {}),
-      options: [...(current ? [current] : []), ...(await candidates(dir, id)).map((k) => ({ key: String(k), image: `${id}-${k}.png` })), ...(more ?? [])],
-    })),
+    spec.rows.map(async (row) => {
+      const { id, label, note, current, more, kind } = row;
+      const option = (k: number) => {
+        const look = lookOf(row, k);
+        return { key: String(k), image: `${id}-${k}.png`, ...(look ? { label: look.label } : {}) };
+      };
+      return {
+        id,
+        label,
+        ...(note ? { note } : {}),
+        ...(kind ? { kind, default: row.default ?? [] } : {}),
+        options: [...(current ? [current] : []), ...(await candidates(dir, id)).map(option), ...(more ?? [])],
+      };
+    }),
   );
   const file = path.join(dir, `${spec.name}.json`);
   await writeFile(file, `${JSON.stringify({ name: spec.name, title: spec.title, ...(spec.intro ? { intro: spec.intro } : {}), rows }, null, 2)}\n`);
@@ -143,13 +191,20 @@ async function manifest(spec: FreeformSpec, dir: string): Promise<void> {
 
 export async function freeform(argv: string[]): Promise<void> {
   const file = argv.find((a) => !a.startsWith('--'));
-  if (!file || !(await exists(file)) || !(await stat(file)).isFile()) throw new Error('usage: npm run art:freeform -- <spec.json> [--n=3] [--jobs=4] [--manifest-only]');
+  if (!file || !(await exists(file)) || !(await stat(file)).isFile()) throw new Error('usage: npm run art:freeform -- <spec.json> [--n=3] [--jobs=4] [--manifest-only] [--recut]');
   const flag = (name: string, fallback: number) => Number(argv.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback);
   const spec = JSON.parse(await readFile(file, 'utf8')) as FreeformSpec;
   if (!/^[a-z0-9][a-z0-9_-]{0,63}$/.test(spec.name ?? '')) throw new Error('the spec needs a lower-case slug `name`, since it names the picker manifest');
   const dir = path.dirname(file);
   await mkdir(path.join(dir, 'originals'), { recursive: true });
-  if (!argv.includes('--manifest-only')) await draw(spec, dir, flag('n', 3), flag('jobs', 4));
+  const opened = spec.key && !argv.includes('--manifest-only') ? await openPage() : undefined;
+  try {
+    const cut = cutter(spec, dir, opened?.page);
+    if (argv.includes('--recut')) for (const row of spec.rows) for (const k of await candidates(path.join(dir, 'originals'), row.id)) await cut(row, `${row.id}-${k}`);
+    else if (!argv.includes('--manifest-only')) await draw(spec, dir, flag('n', 3), flag('jobs', 4), cut);
+  } finally {
+    await opened?.close();
+  }
   await sheets(spec, dir);
   await manifest(spec, dir);
 }
