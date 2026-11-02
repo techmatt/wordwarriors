@@ -6,7 +6,7 @@
  * no Phaser and no import of Episode.ts (item 076).
  */
 
-import { charArt } from '../../content/art/assets';
+import { cardArt, charArt } from '../../content/art/assets';
 import { outfitFor } from '../../content/battle/outfits';
 import { CHARACTER_BY_ID, ROSTER, personOf } from '../../content/battle/roster';
 import type { CharacterSpec, Taunt } from '../../content/battle/types';
@@ -103,6 +103,12 @@ export function castArt(id: string, evil = false, state: EpisodeState = episode)
   return outfitFor(c, state)?.art ?? charArt(c, false);
 }
 
+/** The image `id` walks a room as: a rider's on-foot art (item 172: the fox does not fit her walking height), else `castArt`. */
+export function walkArt(id: string, state: EpisodeState = episode): string {
+  const c = castId(id, state);
+  return CHARACTER_BY_ID[c]?.onFoot ? cardArt(c) : castArt(id, false, state);
+}
+
 /**
  * How tall `id` stands beside the hero outside battles (item 028): the size
  * of the form it plays over hers, kept between 0.7 and `CAST_SCALE_MAX` (1.7,
@@ -119,7 +125,9 @@ export function castScale(id: string, state: EpisodeState = episode): number {
   // His own height, head to soles (item 093: Dada Matt a little shorter than Dada Jason), beside her or beside the other dad.
   const tall = (who: string) => adultHeight(castId(who, state), castArt(who, false, state));
   if (isGrownUp(c.id)) return isGrownUp(hero.id) ? tall(id) / tall(state.hero) : tall(id);
-  return Math.min(CAST_SCALE_MAX, Math.max(0.7, c.good.size / hero.good.size)) * outfitTall(castArt(id, false, state));
+  // A rider as the hero walks on foot (`walkArt`), a person's height: her mount's size is no reason to shrink her friends.
+  const heroSize = hero.onFoot ? 1 : hero.good.size;
+  return Math.min(CAST_SCALE_MAX, Math.max(0.7, c.good.size / heroSize)) * outfitTall(castArt(id, false, state));
 }
 
 /** The name-free face card for `id` in this episode (names as sight words): its outfit's, else its form's `face_<id>`. */

@@ -21,7 +21,7 @@
 
 import Phaser from 'phaser';
 
-import { charArt } from '../../content/art/assets';
+import { cardArt } from '../../content/art/assets';
 import { BEDROOMS, type BedroomObject, type ReactionSound } from '../../content/house/house';
 import { personOf } from '../../content/battle/roster';
 import { fighterId, tauntLine, wakeCastKey, wakeLine } from '../../content/voice/ids';
@@ -40,7 +40,7 @@ import {
   sfxZap,
 } from '../audio/sfx';
 import { DEPTH, DOOR_SPARKLE_MS, GAME_WIDTH, WAKE_WAIT_MS } from '../config';
-import { bedroomTaunt, castArt, episode, helper, questSetupLine, wakeKey, waker as wakerId, type Step } from '../episode/Episode';
+import { bedroomTaunt, episode, helper, questSetupLine, wakeKey, walkArt, waker as wakerId, type Step } from '../episode/Episode';
 import { tauntsSaid } from '../episode/lineVariants';
 import { bob, burst, flash, popIn, shake, squash, wiggle } from '../fx/juice';
 import { TEX } from '../fx/textures';
@@ -108,7 +108,7 @@ export class BedroomScene extends RoomScene {
 
   /** Asleep in bed she is in her default images; wakeUp() puts her outfit on. */
   protected override playerArt(): string {
-    return charArt(episode.hero, false);
+    return cardArt(episode.hero);
   }
 
   protected build(): void {
@@ -315,7 +315,7 @@ export class BedroomScene extends RoomScene {
     this.player.place(x + 170, y + 50);
     // Out of bed in her form for this episode (chef Julia when Dada Jason is
     // the ally), dressed in the burst: asleep she is in her default images.
-    this.player.setArt(castArt(episode.hero));
+    this.player.setArt(walkArt(episode.hero));
     this.player.root.setScale(1, 0.3);
     this.tweens.add({ targets: this.player.root, scaleY: 1, duration: 260, ease: 'Back.easeOut' });
     this.player.hop();

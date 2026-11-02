@@ -178,7 +178,7 @@ export class RaceStage extends BaseStage {
       blendMode: Phaser.BlendModes.ADD,
       emitZone: { type: 'random', source: new Phaser.Geom.Rectangle(-10, -f.height * 0.25, 10, f.height * 0.5) } as never,
     });
-    const icon = fitImage(s.add.image(TRACK.x0, TRACK.y, f.init.art), 30, 30).setDepth(DEPTH.hud + 2);
+    const icon = fitImage(s.add.image(TRACK.x0, TRACK.y, f.init.card ?? f.init.art), 30, 30).setDepth(DEPTH.hud + 2);
     this.racers.push({ f, cloud, jet, flame: null, flameUntil: 0, icon, prog: 0.05, boostUntil: 0, wobble: 0 });
   }
 

@@ -100,6 +100,13 @@ One `CharacterSpec` in `ROSTER`:
   - optional `mount` (`'carpet'` is drawn; any emoji works, e.g. `'🧹'`) and `trail`
     (`{ tint: [colours], shape: 'spark' | 'star' | 'smoke' | 'square' }`, its aura).
   - `speed` (px/s), `size` (1 person, 1.4 big, 1.8 giant), `hp` (cosmetic).
+  - A rider drawn with its mount, as Ember Lark on her fox (item 172): optional `box` (`{ w, h }`,
+    its art's display box; the PNG is cut to twice it) and `muzzle` (`{ x, y }`, where bolts
+    leave the picture, from its bottom middle as shares of its width and height). Its
+    `size` is what makes it fit, not its box: at the cast's size the rider is a third of a
+    normal sprite, so hers is 1.7, the top of `castScale`. `onFoot` beside `good` is the
+    on-foot art's brief (`char_<id>_foot`): the pick cards, the title, the little meter
+    icons and a hero's walk use it (`cardArt`, `walkArt`), and `face_<id>` is cut from it.
   - `abilities`: three or more `AbilitySpec`. The `words` that suit one are
     flavour (item 037): bank action words (`MOVE_WORDS`), or POW and ICE, which are
     never on a pad. When a pad's word is one a teammate's ability answers to, that
@@ -242,7 +249,11 @@ scales damage, particles and shake. `shout: true` plays the "Ha!" SFX. `art` is 
 id drawn instead of a glyph for bolts, rain and orbits (Ellie's `prop_silver_sword`,
 drawn point up), or a built-in fx texture: `fx_bubble` is a see-through bubble tinted
 the ability's `color`/`color2` (Ellie's bubbles); `upright: true` keeps it from
-spinning or tilting. `orbit` rings the caster with `count` of them for `duration` seconds,
+spinning or tilting. `pointed: true` (item 172) is an arrow, drawn point up: a bolt flies
+point first, long, with a ribbon trail of `color` and `color2`. `letters: true` on a
+bolt spells a word over the caster's head as it fires, a tile per sound unit and an arrow
+per tile: real text, a word she has read this episode and no pad still to come
+(`src/rules/arrowLetters.ts`), silent, so the art never holds a letter. `orbit` rings the caster with `count` of them for `duration` seconds,
 then flings them. Statuses: `freeze pig
 stun burn bubble`; `bubble` (Ellie's Bubble Trap) floats the target up and away in a
 giant bubble for `duration` seconds, then pops it.

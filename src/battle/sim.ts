@@ -408,7 +408,8 @@ export class BattleSim {
       p.x += p.vx * dt;
       p.y += p.vy * dt;
       p.obj.setPosition(p.x, p.y);
-      p.obj.rotation += p.spinRate * dt;
+      if (p.pointed) p.obj.rotation = Math.atan2(p.vy, p.vx) + Math.PI / 2;
+      else p.obj.rotation += p.spinRate * dt;
       // Collide with the first enemy whose body it is inside.
       for (const e of this.fighters) {
         if (!e.active || e.team === p.team || e.floored) continue;

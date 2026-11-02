@@ -20,7 +20,7 @@ import { narratorLine } from '../../content/voice/ids';
 import { startMusic } from '../audio/music';
 import { voiceBus, type Utterance } from '../voice/VoiceBus';
 import { sfxWrong } from '../audio/sfx';
-import { advance, castArt, castScale, episode, narrator, type Slot, type Step } from '../episode/Episode';
+import { advance, castArt, castScale, episode, narrator, walkArt, type Slot, type Step } from '../episode/Episode';
 import { outfitFor } from '../../content/battle/outfits';
 import { FreePlay } from '../fx/freePlay';
 import { backdrop, fitPicture, floatText, FpsMeter, wiggle } from '../fx/juice';
@@ -176,7 +176,7 @@ export abstract class RoomScene extends Phaser.Scene {
 
   /** What she looks like walking: her form in this episode (Julia the chef with Dada Jason). */
   protected playerArt(): string {
-    return castArt(this.playerCharacter());
+    return walkArt(this.playerCharacter());
   }
 
   /** Add a choosable thing standing in the room. */

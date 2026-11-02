@@ -12,7 +12,7 @@
  * is generated from this list too, as the brief for AI image prompts.
  */
 
-import { ARENAS, MINIONS, ROSTER } from '../battle/roster.js';
+import { ARENAS, CHARACTER_BY_ID, MINIONS, ROSTER } from '../battle/roster.js';
 import { ENDINGS, endingArt, endingPropArt } from '../house/endings.js';
 import { FIGHTS, fightPropArt } from '../battle/fights.js';
 import { OUTFITS } from '../battle/outfits.js';
@@ -46,19 +46,39 @@ const assets: ArtAsset[] = [];
 /** A character's default image, good or evil. */
 export const charArt = (character: string, evil: boolean) => `char_${character}_${evil ? 'evil' : 'good'}`;
 
+/**
+ * A character's picture for a small card (pick screens, the title, little icons): a rider's
+ * on-foot art (item 172), where the whole mount would leave the rider tiny, else `charArt`.
+ */
+export function cardArt(character: string, evil = false): string {
+  return !evil && CHARACTER_BY_ID[character]?.onFoot ? `char_${character}_foot` : charArt(character, evil);
+}
+
 for (const c of ROSTER) {
   for (const evil of [false, true]) {
     const f = evil ? c.evil : c.good;
     assets.push({
       id: charArt(c.id, evil),
       kind: 'character',
-      w: 200,
-      h: 250,
+      w: f.box?.w ?? 200,
+      h: f.box?.h ?? 250,
       content: `${f.displayName}: ${f.look}. Full body, facing the viewer, cheerful cartoon style for a 4-year-old${evil ? ', villain version: darker palette, mischievous rather than frightening' : ''}. Transparent background.`,
       label: f.displayName.replace(/^Evil /, '').toUpperCase(),
       glyph: f.glyph,
       palette: f.palette,
       evil,
+    });
+  }
+  if (c.onFoot) {
+    assets.push({
+      id: cardArt(c.id),
+      kind: 'character',
+      w: 200,
+      h: 250,
+      content: `${c.onFoot}. Full body, cheerful cartoon style for a 4-year-old. Transparent background.`,
+      label: c.good.displayName.toUpperCase(),
+      glyph: c.good.glyph,
+      palette: c.good.palette,
     });
   }
 }
@@ -70,7 +90,7 @@ for (const c of ROSTER) {
     kind: 'character',
     w: 200,
     h: 200,
-    content: `${c.good.displayName}'s face, a friendly head-and-shoulders portrait of ${c.good.look}. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
+    content: `${c.good.displayName}'s face, a friendly head-and-shoulders portrait of ${c.onFoot ?? c.good.look}. NO TEXT OR NAME anywhere: it is the picture for reading the name.`,
     label: '',
     glyph: c.good.glyph,
     palette: c.good.palette,
@@ -256,6 +276,11 @@ const PROPS: [string, number, number, string, string, string?][] = [
   ['medal', 220, 220, 'One big shiny gold champion medal seen straight on, a perfect round disc filling most of the picture, hanging from a short purple ribbon folded into a V at the top: a thick raised gold rim with a bold dark outline, the face inside very pale gold, smooth, flat and plain across its middle (the game writes a word there), a big white shine at the top left, three or four tiny sparkles round it. Just the medal, no person, no hand. No text, no numbers.', '🏅'],
   ['dragon_scale', 220, 220, 'One big shiny pink dragon scale on its own, seen straight on, filling the picture: a rounded shield shape like a fat teardrop with its point at the bottom, a thick rim of deeper pink and magenta with a bold dark outline, the face inside very pale pink and pearly, smooth, flat and plain across its middle (the game writes a word there), a soft rainbow shimmer at its edges, a big white shine at the top left, three or four tiny pink sparkles round it. Just the scale, no dragon. No text.', '🐉'],
   ['scroll', 520, 160, 'A wide unrolled magic scroll, rolled ends with wooden knobs, glowing edges, blank parchment in the middle for a word painted by the game. NO TEXT.', '📜'],
+  // Ember Lark's magic arrows (item 172): the game flies them point first, so each is drawn alone,
+  // perfectly upright, point at the top. No letters in the art: the game writes those.
+  ['arrow_flame', 60, 240, 'A single magic arrow standing perfectly upright, point straight up at the top and the feathers at the bottom, seen flat side-on, long and slim: a bright flame-red and gold glowing crystal arrowhead with a thick dark outline, a straight golden shaft, three flame-orange feather fletchings. Friendly and magical like a storybook, flat cel shading, one solid outlined shape with no soft halo. Just the arrow, nothing else. No text, no letters.', '🏹'],
+  ['arrow_sky', 60, 240, 'A single magic arrow standing perfectly upright, point straight up at the top and the feathers at the bottom, seen flat side-on, long and slim: a bright turquoise and white glowing crystal arrowhead with a thick dark outline, a straight wooden shaft with a thin turquoise vine wrapped round it, three sky-blue feather fletchings. Friendly and magical like a storybook, flat cel shading, one solid outlined shape with no soft halo. Just the arrow, nothing else. No text, no letters.', '🏹'],
+  ['arrow_gold', 60, 240, 'A single magic arrow standing perfectly upright, point straight up at the top and the feathers at the bottom, seen flat side-on, long and slim: a shining white-gold star-shaped arrowhead with a thick dark outline, a straight golden shaft, three violet feather fletchings. Friendly and magical like a storybook, flat cel shading, one solid outlined shape with no soft halo. Just the arrow, nothing else. No text, no letters.', '🏹'],
 ];
 for (const [id, w, h, content, glyph] of PROPS) {
   assets.push({ id: `prop_${id}`, kind: 'prop', w, h, content, label: '', glyph });

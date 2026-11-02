@@ -362,6 +362,24 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'Shake, shake, and out puffs a word...',
     ], CIRCLE('to catch the puff'), 'The jar is giggling, let\'s look around!'),
   ],
+  // Item 172: her arrows and her golden friend.
+  ember_lark: [
+    S('🏹', [
+      'I have one very special arrow in my quiver, and it glows.',
+      'When it flies, it leaves a word shining in the air.',
+      'Watch the sky, it says...',
+    ], TRAINING('to catch the arrow'), 'Now that word is yours, let\'s look around!'),
+    S('🪶', [
+      'My golden friend found a shiny feather this morning.',
+      'It tickled her nose, and then it whispered something.',
+      'Hold it up to your ear, it says...',
+    ], BLANKET('to hold the feather'), 'She likes you already, let\'s look around!'),
+    S('✨', [
+      'Every morning, I shoot one arrow up at the morning star.',
+      'Today it came back with a word tied on.',
+      'Untie the little ribbon, and it says...',
+    ], TREASURE('to take the arrow'), 'A star sent you that, let\'s look around!'),
+  ],
   // Item 114 (Matt): from Antarctica, with a rocket ship, a penguin crew and a crown of ice.
   ozymandias: [
     S('🚀', [

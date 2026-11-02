@@ -12,7 +12,7 @@
 import Phaser from 'phaser';
 
 import { ROSTER } from '../../content/battle/roster';
-import { charArt } from '../../content/art/assets';
+import { cardArt, charArt } from '../../content/art/assets';
 import { currentStep, episode, planFor, sceneForStep, steps, type Slot, type Step } from '../episode/Episode';
 import { markLeaving } from '../fx/sceneGen';
 import type { SceneKey } from '../scenes/keys';
@@ -40,7 +40,7 @@ function upcoming(key: SceneKey): string[] {
       add(sceneOf(next));
       add('Bedroom');
       // The duel under the logo picks from what has loaded (TitleScene): every form, in the background.
-      out.push(...ROSTER.flatMap((c) => [charArt(c.id, false), charArt(c.id, true)]));
+      out.push(...ROSTER.flatMap((c) => [cardArt(c.id), charArt(c.id, false), charArt(c.id, true)]));
       break;
     case 'Bedroom':
       // The warm-up's word and pictures are drawn here, early: the bedroom has no

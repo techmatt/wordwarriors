@@ -195,6 +195,15 @@ export const QUESTS: Record<string, Quest> = {
       { text: 'Let\'s go to the treehouse workshop, where Dada lets me use the little hammer!' },
     ],
   },
+  // Item 172: an archer trains at the practice ring and its straw targets.
+  ember_lark: {
+    place: 'knight_camp',
+    lines: [
+      { text: 'To get ready to fight them, we have to train at the archery field by the knights camp!' },
+      { text: 'Climb up behind me, my golden friend knows the quick way to the knights camp!' },
+      { text: 'My arrows want more practice, so off we go to the straw targets at the knights camp!' },
+    ],
+  },
   // Item 114: a playful puzzle-loving gentleman, in a library full of trapdoors.
   moriarty: {
     place: 'puzzle_library',

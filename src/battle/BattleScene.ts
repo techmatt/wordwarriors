@@ -56,6 +56,7 @@ import { FreePlay } from '../fx/freePlay';
 import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
+import { arrowLetters } from '../rules/arrowLetters';
 import { withStems } from '../rules/bank';
 import { wordsOf } from '../rules/sentences';
 import { isDad } from '../rules/cast';
@@ -140,6 +141,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
   stats: BattleStats = noStats();
   /** Move choices opened this part: the first one is the hub's gift word. */
   private choicesOpened = 0;
+  /** Letter-arrow volleys fired this part (item 172): which word comes next. */
+  private arrowVolleys = 0;
   /** Big moves called out this part: each once (item 087: the same call three times in a fight was too many). */
   calledOut = new Set<string>();
   /** The step this battle was started with, so the parent page can come back to it. */
@@ -172,6 +175,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     this.choices.reset();
     this.stats = noStats();
     this.choicesOpened = 0;
+    this.arrowVolleys = 0;
     this.calledOut = new Set();
     this.bannerText = null;
     this.bannerBig = 0;
@@ -669,6 +673,11 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     const upcoming = this.upcomingPads();
     // A pad word inside a longer one counts too: SPINNY before SPIN, HUGS before HUG (item 039).
     return withStems(wordsOf(text)).some((w) => upcoming.has(w));
+  }
+
+  /** The next word her letter arrows spell over her head: one she has read, on no pad still to come (item 172). */
+  arrowLetters(): string[] {
+    return arrowLetters(episode.fetched, this.arrowVolleys++, (w) => this.textGivesAway(w));
   }
 
   /** A fighter's taunts that give no move choice away. */

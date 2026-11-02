@@ -16,7 +16,7 @@
  * `ArtBank` reports (`art: not ready`).
  */
 
-import { ART_ASSETS, ART_BY_ID, charArt } from '../../content/art/assets';
+import { ART_ASSETS, ART_BY_ID, cardArt, charArt } from '../../content/art/assets';
 import { CHARACTER_BY_ID, ROSTER, personOf } from '../../content/battle/roster';
 import { fightPropArt } from '../../content/battle/fights';
 import { STORY_BY_ID } from '../../content/battle/stories/index';
@@ -57,7 +57,7 @@ export function castSet(): string[] {
   const out: string[] = [];
   for (const id of ids) {
     if (!id) continue;
-    out.push(castArt(id), castArt(id, true), castFace(id), charArt(id, false), charArt(id, true), `face_${id}`, `face_${personOf(id)}`);
+    out.push(castArt(id), castArt(id, true), castFace(id), charArt(id, false), charArt(id, true), cardArt(id), `face_${id}`, `face_${personOf(id)}`);
   }
   return out;
 }
@@ -183,10 +183,10 @@ export function artFor(key: SceneKey, draw: boolean): string[] {
       return [];
     case 'Title':
       // The parade is every person, good and evil by turns; the duel picks from what has loaded (TitleScene).
-      return ['room_title', ...ROSTER.filter((c) => !c.person).flatMap((c) => [charArt(c.id, false), charArt(c.id, true)])];
+      return ['room_title', ...ROSTER.filter((c) => !c.person).flatMap((c) => [cardArt(c.id), charArt(c.id, false), charArt(c.id, true)])];
     case 'Pick':
       // Every person's card, good or evil, and the surprise villain (any form).
-      out.push('room_pick', ...ROSTER.flatMap((c) => [charArt(c.id, false), charArt(c.id, true)]));
+      out.push('room_pick', ...ROSTER.flatMap((c) => [cardArt(c.id), charArt(c.id, false), charArt(c.id, true)]));
       break;
     case 'Journey':
       out.push('room_title');

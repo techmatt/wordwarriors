@@ -98,8 +98,8 @@ test('rounds offer three choices even while she is struggling (item 090: no auto
 
 test('roster: every character is complete, good and evil', () => {
   // 16 persons, and the dads' five other forms (item 025).
-  assert.equal(PERSONS.length, 16);
-  assert.equal(ROSTER.length, 21);
+  assert.equal(PERSONS.length, 17);
+  assert.equal(ROSTER.length, 22);
   for (const c of ROSTER.filter((c) => c.person)) {
     assert.ok(CHARACTER_BY_ID[c.person!] && !CHARACTER_BY_ID[c.person!]!.person, `${c.id} is a form of a person`);
     assert.ok(c.form && formId(c.person!, c.form) === c.id, `${c.id} has a unique form name`);

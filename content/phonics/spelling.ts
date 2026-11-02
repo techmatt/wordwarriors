@@ -25,6 +25,7 @@ export const SPELL_WORDS: Record<string, [string, string, string]> = {
   moriarty: ['map', 'pen', 'nab'],
   bavmorda: ['sun', 'pin', 'zap'],
   rilla: ['rat', 'bug', 'hen'],
+  ember_lark: ['fox', 'zip', 'hit'],
   dada_matt_lifter: ['big', 'lug', 'box'],
   dada_matt_cyber: ['zip', 'bit', 'pen'],
   dada_matt_blade: ['zap', 'hit', 'pot'],

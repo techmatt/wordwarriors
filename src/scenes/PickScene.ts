@@ -12,7 +12,7 @@
 
 import Phaser from 'phaser';
 
-import { charArt } from '../../content/art/assets';
+import { cardArt, charArt } from '../../content/art/assets';
 import { PERSONS } from '../../content/battle/roster';
 import { coreLine, fighterId, nameLine } from '../../content/voice/ids';
 import { voiceBus } from '../voice/VoiceBus';
@@ -55,7 +55,7 @@ export class PickScene extends RoomScene {
 
   /** The picks come before she wakes: her default images, never a form. */
   protected override playerArt(): string {
-    return charArt(this.playerCharacter(), false);
+    return cardArt(this.playerCharacter());
   }
 
   protected build(): void {
@@ -78,7 +78,7 @@ export class PickScene extends RoomScene {
         const glyph = this.add.text(0, -CARD_H / 2, id === 'nobody' ? '🚫' : '❓', { fontSize: '56px' }).setOrigin(0.5);
         children.push(box, glyph);
       } else {
-        children.push(this.art(charArt(id, evil), CARD_W, CARD_H));
+        children.push(this.art(cardArt(id, evil), CARD_W, CARD_H));
       }
       const spot = this.addSpot(id, x, y, children, null, () => {
         if (id === 'nobody' || id === 'surprise') return;

@@ -9,7 +9,7 @@
 
 import Phaser from 'phaser';
 
-import { charArt } from '../../content/art/assets';
+import { cardArt, charArt } from '../../content/art/assets';
 import { artBank } from '../art/ArtBank';
 import { castSet } from '../art/needs';
 import { PERSONS, ROSTER } from '../../content/battle/roster';
@@ -67,7 +67,7 @@ export class TitleScene extends Phaser.Scene {
     // person: the dads' other forms turn up in the duel below).
     PERSONS.forEach((c, i) => {
       const x = 60 + i * ((GAME_WIDTH - 120) / (PERSONS.length - 1));
-      const img = fitImage(this.add.image(x, GAME_HEIGHT - 20, charArt(c.id, i % 2 === 1)).setOrigin(0.5, 1), 100, 125);
+      const img = fitImage(this.add.image(x, GAME_HEIGHT - 20, cardArt(c.id, i % 2 === 1)).setOrigin(0.5, 1), 100, 125);
       bob(this, img, 8, 600 + i * 40);
     });
 
@@ -131,7 +131,7 @@ export class TitleScene extends Phaser.Scene {
     const good = goods[Math.floor(Math.random() * goods.length)]!;
     const bad = bads[Math.floor(Math.random() * bads.length)]!;
     const y = 545;
-    const a = fitImage(this.add.image(-120, y, charArt(good.id, false)).setOrigin(0.5, 1), 110, 140).setDepth(5);
+    const a = fitImage(this.add.image(-120, y, cardArt(good.id)).setOrigin(0.5, 1), 110, 140).setDepth(5);
     const b = fitImage(this.add.image(GAME_WIDTH + 120, y, charArt(bad.id, true)).setOrigin(0.5, 1), 110, 140).setDepth(5);
     const meet = GAME_WIDTH / 2;
     this.tweens.add({ targets: a, x: meet - 60, duration: 420, ease: 'Quad.easeIn' });

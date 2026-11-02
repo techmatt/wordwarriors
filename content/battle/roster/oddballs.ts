@@ -1,4 +1,4 @@
-/** Roster characters, in ROSTER order (./index.ts): Scar the tiny robot, Moriarty, Bavmorda and Bluerilla. */
+/** Roster characters, in ROSTER order (./index.ts): Scar the tiny robot, Moriarty, Bavmorda, Bluerilla and Ember Lark. */
 
 import type { CharacterSpec } from '../types.js';
 import { ab, ult } from './abilities.js';
@@ -297,6 +297,88 @@ export const ODDBALLS: CharacterSpec[] = [
         { id: 'rilla_banana', glyph: '🍌', look: 'banana peels', count: 3 },
       ],
       fx: 'quake',
+    },
+  },
+  {
+    // Item 172 (Matt's picks from item 171's `ember_lark` round): rides her giant
+    // golden fox everywhere she fights, so her picture is the rider and the
+    // mount together, drawn big (`box`, size 1.7) so she is not a third of a
+    // normal sprite. Her on-foot pick (`onFoot`) stands in where a rider will not
+    // fit: pick cards, the title's parade, the little meter icons, her face card.
+    // No line says FOX: it is a bank word and Evil Jormungandr's named counter.
+    id: 'ember_lark',
+    description: 'A brave young archer who rides a giant golden fox, firing glowing magic arrows that spell letters over her head.',
+    arena: 'meadow',
+    onFoot: 'Ember Lark, a brave young archer heroine: short coral-orange hair in one big round puff on top of her head, a layered mint and emerald robe with a short cape and white-gold stars along the hem, a curved bow of green living wood drawn, aiming to the right, a quiver of arrows with tips of many colors',
+    good: {
+      displayName: 'Ember Lark',
+      trail: { tint: [0xff5a1f, 0xffd23f, 0x3ae0d0], shape: 'star' },
+      look: 'a brave young archer heroine of about ten with coral-orange hair in one big round puff, in a knee-length emerald ranger robe with glowing turquoise vine trim and a gold belt, a quiver of many-coloured arrows on her back, riding a giant friendly golden fox as big as a horse that runs towards the right, twisting in the saddle with her bow drawn',
+      palette: [0x1f8a4c, 0xffb703], glyph: '🏹', style: 'dodge', speed: 230, size: 1.7, hp: 120,
+      box: { w: 300, h: 375 },
+      // The arrow's tip in her picture: from the picture's bottom middle, as shares of its width and height.
+      muzzle: { x: 0.47, y: 0.8 },
+      abilities: [
+        ab('ember_arrows', 'Ember Arrows', 'bolt', 2.6, 0xff5a1f, 1, { count: 3, art: 'prop_arrow_flame', pointed: true, letters: true, color2: 0xffd23f, shout: true, words: ['zap', 'pop', 'blast'] }),
+        ab('sky_arrows', 'Sky Arrows', 'bolt', 4.5, 0x3ae0d0, 2, { count: 2, art: 'prop_arrow_sky', pointed: true, letters: true, homing: true, color2: 0xffffff, words: ['dot', 'flip'] }),
+        ab('golden_leap', 'Golden Leap', 'dash', 6, 0xffb703, 2, { color2: 0xff7b00, words: ['run', 'jump', 'hop'] }),
+        ab('arrow_shower', 'Arrow Shower', 'rain', 11, 0xffd23f, 2, { count: 14, art: 'prop_arrow_gold', pointed: true, color2: 0xff5a1f, words: ['drip', 'kick'] }),
+      ],
+      ultimate: ult('rainbow_arrow_storm', 'Rainbow Arrow Storm', 'rain', 0xff5a1f, 3, { count: 30, art: 'prop_arrow_flame', pointed: true, color2: 0x3ae0d0 }),
+      taunts: [
+        { key: 'hold', text: 'Hold on tight, here we go!' },
+        { key: 'aim', text: 'Ready, aim, whoosh!' },
+        { key: 'faster', text: 'Faster, faster, my golden friend!' },
+        { key: 'glow', text: 'Follow the glowing arrows!' },
+        { key: 'write', text: 'Look up, my arrows write in the sky!' },
+        { key: 'brave', text: 'Brave hearts and bright arrows!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Ember Lark',
+      trail: { tint: [0xff3a1a, 0x7a2bbf], shape: 'smoke' },
+      look: 'the same young archer gone bad: her hair in one big round ash-grey puff with glowing red tips, a charcoal-black ranger robe with glowing ember-red vine trim, a black bow, riding a giant sly smoke-black fox with ember-red eyes and a smouldering tail that runs towards the left, twisting in the saddle with her bow drawn; cross and mischievous, not frightening',
+      palette: [0x2a1a2e, 0xff3a1a], glyph: '🏹', style: 'dodge', speed: 210, size: 1.7, hp: 170,
+      box: { w: 300, h: 375 },
+      abilities: [
+        ab('soot_arrows', 'Soot Arrows', 'bolt', 2.6, 0xff3a1a, 1, { count: 3, art: 'prop_arrow_flame', pointed: true }),
+        ab('smoke_leap', 'Smoke Leap', 'dash', 6, 0x7a2bbf, 2),
+        ab('sooty_shower', 'Sooty Shower', 'rain', 10, 0xff3a1a, 2, { count: 14, art: 'prop_arrow_flame', pointed: true }),
+      ],
+      ultimate: ult('ember_storm', 'Ember Storm', 'wave', 0xff3a1a, 3, { color2: 0x7a2bbf }),
+      taunts: [
+        { key: 'soot', text: 'Soot on everything!' },
+        { key: 'miss', text: 'I never miss, I only tease!' },
+        { key: 'quick', text: 'Too quick for you!' },
+        { key: 'smoke', text: 'Here comes the smoke!' },
+        { key: 'arrows', text: 'Dodge my sooty arrows!' },
+        { key: 'cross', text: 'I am cross, and I am very fast!' },
+      ],
+    },
+    reformed: {
+      sorry: [
+        { key: 'soot', text: 'Sorry about all the soot!' },
+        { key: 'friend', text: 'Sorry, my golden friend is good again too.' },
+        { key: 'cross', text: 'Sorry I was so cross!' },
+      ],
+      ending: [
+        { key: 'ride', text: 'Who wants a ride on my golden friend?' },
+        { key: 'sky', text: "Let's write happy things in the sky!" },
+        { key: 'arrows', text: 'My arrows are all party sparkles now!' },
+      ],
+    },
+    counter: {
+      id: 'calm_bell', name: 'Calm Bell', glyph: '🔔', look: 'a round shiny gold bell with a soft ring that makes everybody feel calm and sleepy',
+      how: 'calm', word: 'bell',
+    },
+    house: {
+      threat: 'she wants to cover the whole house in soot',
+      tint: 0xff5a1f,
+      decals: [
+        { id: 'ember_lark_arrow', glyph: '🏹', look: 'a sooty arrow stuck in a cushion, a silly one with a rubber sucker tip', count: 3 },
+        { id: 'ember_lark_soot', glyph: '💨', look: 'a smudgy black soot pawprint', count: 3 },
+      ],
+      fx: 'embers',
     },
   },
 ];

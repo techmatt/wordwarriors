@@ -33,6 +33,8 @@
     "bavmorda": { "voice": "en-US-MichelleNeural", "rate": "-8%", "pitch": "+5Hz" },
     "bavmorda_evil": { "voice": "en-US-MichelleNeural", "rate": "-15%", "pitch": "-35Hz" },
     "rilla": { "voice": "en-US-RogerNeural", "rate": "-8%", "pitch": "-5Hz" },
-    "rilla_evil": { "voice": "en-US-RogerNeural", "rate": "-15%", "pitch": "-40Hz" }
+    "rilla_evil": { "voice": "en-US-RogerNeural", "rate": "-15%", "pitch": "-40Hz" },
+    "ember_lark": { "voice": "en-US-EmmaNeural", "rate": "-4%", "pitch": "+12Hz" },
+    "ember_lark_evil": { "voice": "en-US-EmmaNeural", "rate": "-10%", "pitch": "-22Hz" }
   }
 }

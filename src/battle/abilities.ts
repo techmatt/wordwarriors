@@ -32,7 +32,7 @@ import {
   sfxWhoosh,
   sfxZap,
 } from '../audio/sfx';
-import { DEPTH, GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { DEPTH, FONT_COMIC, GAME_HEIGHT, GAME_WIDTH } from '../config';
 import { burst, dustPuff, flash, groundRing, shake, shockwave } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { FLOOR_BOTTOM, FLOOR_TOP, initFromMinion, type Fighter, type FighterInit, type Team } from './Fighter';
@@ -54,6 +54,8 @@ export interface Projectile {
   from: Fighter;
   trail?: Phaser.GameObjects.Particles.ParticleEmitter;
   spinRate: number;
+  /** An arrow: turned along its flight, drawn point up (item 172). */
+  pointed?: boolean;
 }
 
 export interface Trap {
@@ -97,9 +99,19 @@ export interface BattleWorld {
    * of carrying it over to the villain.
    */
   held(f: Fighter): boolean;
+  /** The next word her letter arrows spell, as sound units (item 172: `src/rules/arrowLetters.ts`). */
+  arrowLetters?(): string[];
 }
 
 const MINION_CAP = 7;
+
+/** How long an arrow is drawn in flight, px, at normal power (item 172). */
+const ARROW_LENGTH = 110;
+/** A letter arrow's gap after the one before, ms, so each letter reads as its own shot; how long the row stays after the last. */
+const LETTER_GAP = 170;
+const LETTER_HOLD = 1100;
+/** The letter tiles over her head: as a move pad's word, dark ink on pale. */
+const LETTER = { box: 56, step: 62, tile: 0xfff8e0, rim: 0xff5a1f, ink: '#1a1030' };
 
 /**
  * How far from `t`'s centre `f` lands beside it, at least `min`: their bodies
@@ -156,8 +168,8 @@ function artObj(w: BattleWorld, ab: AbilitySpec, x: number, y: number, h: number
 /** A projectile object: the ability's art, else an emoji glyph, else a glowing orb. */
 function projectileObj(w: BattleWorld, ab: AbilitySpec, x: number, y: number, mult: number) {
   const s = w.stage;
-  // Bubbles are giant ones.
-  const art = artObj(w, ab, x, y, (ab.art === 'fx_bubble' ? 88 : 64) * Math.sqrt(mult));
+  // Bubbles are giant ones; an arrow is long and thin, so it needs the length to read.
+  const art = artObj(w, ab, x, y, (ab.art === 'fx_bubble' ? 88 : ab.pointed ? ARROW_LENGTH : 64) * Math.sqrt(mult));
   if (art) return art;
   if (ab.glyph) {
     return s.add
@@ -183,15 +195,33 @@ function trail(w: BattleWorld, color: number, mult: number) {
     .setDepth(DEPTH.fx - 1);
 }
 
-function fireBolt(w: BattleWorld, f: Fighter, ab: AbilitySpec, target: Fighter, mult: number, spread: number, delay: number): void {
+/** An arrow's trail (item 172): a thick glowing ribbon of its two colours behind it, longer-lived than a bolt's sparks. */
+function arrowTrail(w: BattleWorld, ab: AbilitySpec, mult: number) {
+  return w.stage.add
+    .particles(0, 0, TEX.spark, {
+      speed: { min: 0, max: 24 },
+      scale: { start: 1.5 * Math.sqrt(mult), end: 0.1 },
+      alpha: { start: 1, end: 0 },
+      lifespan: 520,
+      frequency: 8,
+      tint: [ab.color, ab.color2 ?? 0xffffff, 0xffffff],
+      blendMode: Phaser.BlendModes.ADD,
+    })
+    .setDepth(DEPTH.fx - 1);
+}
+
+function fireBolt(w: BattleWorld, f: Fighter, ab: AbilitySpec, target: Fighter, mult: number, spread: number, delay: number, onFire?: () => void): void {
   w.after(delay, () => {
-    if (!f.active) return;
-    const from = f.castFrom ?? { x: f.cx, y: f.cy };
+    // A letter volley's slower arrows stop at an open choice: on its slowed clock they would crawl over the pads, spelling nothing.
+    if (!f.active || (onFire && w.choosing)) return;
+    onFire?.();
+    const from = f.castFrom ?? f.muzzle ?? { x: f.cx, y: f.cy };
     const angle = Phaser.Math.Angle.Between(from.x, from.y, target.cx, target.cy) + spread;
     const speed = 620 + Math.random() * 120;
     const obj = projectileObj(w, ab, from.x, from.y, mult);
-    const t = trail(w, ab.color, mult);
+    const t = ab.pointed ? arrowTrail(w, ab, mult) : trail(w, ab.color, mult);
     t.startFollow(obj);
+    if (ab.pointed) obj.setRotation(angle + Math.PI / 2);
     sfxPew();
     w.addProjectile({
       obj,
@@ -208,7 +238,8 @@ function fireBolt(w: BattleWorld, f: Fighter, ab: AbilitySpec, target: Fighter, 
       life: 2.2,
       from: f,
       trail: t,
-      spinRate: ab.upright ? 0 : ab.art ? 16 : ab.glyph ? 8 : 0,
+      spinRate: ab.upright || ab.pointed ? 0 : ab.art ? 16 : ab.glyph ? 8 : 0,
+      ...(ab.pointed ? { pointed: true } : {}),
     });
   });
 }
@@ -218,14 +249,57 @@ function fireBolt(w: BattleWorld, f: Fighter, ab: AbilitySpec, target: Fighter, 
 type Cast = (w: BattleWorld, f: Fighter, ab: AbilitySpec, target: Fighter, mult: number) => void;
 
 const bolt: Cast = (w, f, ab, target, mult) => {
-  const n = Math.round((ab.count ?? 1) * (mult > 1.5 ? 2 : 1));
+  // A word still over her head stays: her next volley flies plain, so no row is cut off half-spelt.
+  const letters = ab.letters && !w.choosing && !f.overhead?.active ? arrowWord(w) : [];
+  // A word's letters each take an arrow, however long the word, and a big volley keeps its arrows.
+  const n = Math.max(letters.length, Math.round((ab.count ?? 1) * (mult > 1.5 ? 2 : 1)));
+  const row = letters.length ? letterRow(w, f, letters) : null;
+  const gap = row ? LETTER_GAP : 70;
   w.busy(f, 250);
   f.squash(0.2);
   for (let i = 0; i < n; i++) {
-    const spread = n === 1 ? 0 : (i / (n - 1) - 0.5) * 0.7;
-    fireBolt(w, f, ab, pickTargets(w, f, target, 1)[0] ?? target, mult, spread, i * 70);
+    // Arrows fly nearly side by side: a wide fan reads as a spray, not as shots from a bow.
+    const spread = n === 1 ? 0 : (i / (n - 1) - 0.5) * (ab.pointed ? 0.24 : 0.7);
+    fireBolt(w, f, ab, pickTargets(w, f, target, 1)[0] ?? target, mult, spread, i * gap, row ? () => row(i) : undefined);
   }
 };
+
+/** The next word for her arrows, its sound units upper-cased, one a letter box (`arrowLetters`); empty in a host with none. */
+function arrowWord(w: BattleWorld): string[] {
+  return w.arrowLetters?.() ?? [];
+}
+
+/**
+ * The letters over `f`'s head for one volley (item 172): real text, as the game's letters always are,
+ * dark ink on a pale tile like a move pad's word. Each pops in with its arrow; the row stays a beat so she
+ * can look at it, then fades. Hung on the fighter so it follows her. A choice hides it (`choiceClear`).
+ */
+function letterRow(w: BattleWorld, f: Fighter, letters: readonly string[]): (i: number) => void {
+  const s = w.stage;
+  const left = -((letters.length - 1) * LETTER.step) / 2;
+  const row = s.add.container(0, 0).setDepth(DEPTH.fx + 2).setData('choiceClear', true).setName('arrow_letters');
+  f.overhead = row;
+  // Off the screen's top bar and edges however tall she stands or how near the edge she rides.
+  row.setData('halfWidth', ((letters.length - 1) * LETTER.step + LETTER.box) / 2);
+  const tiles = letters.map((letter, i) => {
+    const x = left + i * LETTER.step;
+    const tile = s.add.graphics().fillStyle(LETTER.tile, 1).fillRoundedRect(-LETTER.box / 2, -LETTER.box / 2, LETTER.box, LETTER.box, 12).lineStyle(4, LETTER.rim, 1).strokeRoundedRect(-LETTER.box / 2, -LETTER.box / 2, LETTER.box, LETTER.box, 12);
+    const text = s.add.text(0, 0, letter, { fontFamily: FONT_COMIC, fontSize: `${letter.length > 1 ? 30 : 40}px`, color: LETTER.ink }).setOrigin(0.5);
+    const box = s.add.container(x, 0, [tile, text]).setScale(0);
+    row.add(box);
+    return box;
+  });
+  const hold = LETTER_GAP * letters.length + LETTER_HOLD;
+  w.after(hold, () => {
+    if (!row.active) return;
+    s.tweens.add({ targets: row, alpha: 0, duration: 240, onComplete: () => row.destroy() });
+  });
+  return (i) => {
+    const box = tiles[i];
+    if (!box?.active) return;
+    s.tweens.add({ targets: box, scale: 1, duration: 170, ease: 'Back.easeOut' });
+  };
+}
 
 const beam: Cast = (w, f, ab, target, mult) => {
   const s = w.stage;
@@ -623,7 +697,7 @@ const rain: Cast = (w, f, ab, _target, mult) => {
       const size = Math.round((ab.glyph ? 40 : 30) * Math.sqrt(mult) * (0.8 + Math.random() * 0.5));
       // Art (a sword) falls point first, tilted along its path, instead of tumbling;
       // a picture (an upright cat) just drops, the right way up.
-      const art = artObj(w, ab, x - 120, -60, size * 2.2);
+      const art = artObj(w, ab, x - 120, -60, size * (ab.pointed ? 3 : 2.2));
       const artAngle = ab.upright ? 0 : 180 - 13;
       const obj = art
         ? art.setAngle(artAngle)

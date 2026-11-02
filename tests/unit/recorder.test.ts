@@ -7,19 +7,34 @@
  */
 
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import { test } from 'node:test';
 
 import { tag } from '../../content/phonics/bank';
 import { SOUND_BY_UNIT } from '../../content/phonics/letters';
 import { readClipIndex, spokenHash, type ClipIndex } from '../../tools/voice/clips';
 import { processTake } from '../../tools/voice/import';
-import { missingBlock, missingSounds, pageCards, RECORDER_PAGE, withMissingBlock } from '../../tools/recorder/missing';
+import { missingBlock, missingSounds, pageCards, RECORDER_PAGE, syncHosted, withMissingBlock } from '../../tools/recorder/missing';
 import { readLines } from '../../tools/shared';
 import type { LineSpec } from '../../tools/voice/types';
 
 const html = readFileSync(RECORDER_PAGE, 'utf8');
-const cards = (search: string) => pageCards(html, search).cards;
+
+test('recorder (item 172): the hosted copy follows a rewrite, and a machine without the folder skips it', async () => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'hosted-'));
+  try {
+    const to = await syncHosted(RECORDER_PAGE, dir);
+    assert.equal(to, path.join(dir, 'phonics-recorder.html'));
+    assert.equal(readFileSync(to!, 'utf8'), html);
+    assert.equal(await syncHosted(RECORDER_PAGE, path.join(dir, 'no such folder')), null);
+  } finally {
+    rmSync(dir, { recursive: true });
+  }
+});
+
+const cards =(search: string) => pageCards(html, search).cards;
 const words = (search: string) => cards(search).groups.map((g) => g.map((e) => e.word));
 
 test('recorder: ?only=f,a is two cards, F as FAN and A as CAT, the takes item 108\'s ?missing had', () => {

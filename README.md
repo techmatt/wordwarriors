@@ -688,8 +688,9 @@ send it to someone, either **email the file** (they open it in Chrome, Edge or F
 straight from their downloads; the browser asks for the microphone, which works from a
 `file://` page), or **send the hosted link**. The hosted copy is
 `C:\Code\techmatt.github.io\phonics-recorder.html`, Matt's GitHub Pages repo, served
-over HTTPS. Don't edit it there: after each change to the repo's copy the planner copies
-it over, and Matt commits it. Nothing leaves their computer until they press
+over HTTPS. Don't edit it there: whatever rewrites the repo's copy (`recorder:missing`,
+`voice:lines`, `voice:import`) copies it over when that folder exists (item 172), and Matt
+commits it. A hand edit of the page's other parts is copied by the planner. Nothing leaves their computer until they press
 **Download zip**, which saves `phonics-<name>.zip` (stored, no compression, about 16 MB
 for all 12 cards). That zip comes back by email or a shared folder; put it in
 `voice-import/` in the scratch home.
@@ -1300,6 +1301,15 @@ magenta". A soft glow drawn over the screen still picks up a pink edge: give a g
 outlined shape and say no halo. Promoting such a candidate means copying its original to
 `art-originals/<id>.png` and `art:gen -- <id> --reprocess` (as item 167 did), with `keyMode`
 `keep`; `art:alts` and `art:gen` would draw it on green again.
+
+**A rider's art (item 172, Ember Lark):** a tall 2:3 picture of rider and mount is limited by
+height, so a wider box alone changes nothing: it is `size` (1.7) that lets the rider stand as
+tall as Julia, and `box` (300×375, a 508×750 PNG) that keeps it crisp. A face card can be a
+square crop of a pick's original, written as `art-originals/face_<id>.png` and re-cut with
+`--reprocess`. Her villain's picture was `art:alts -- char_ember_lark_evil --n=2
+--ref=<her original>`: with a riding pose as `--ref`, the black fox came back in the same
+layout on green, and "runs towards the left" in the `look` faced her the right way on 1 of 2.
+Her picks' `picks/ember_lark/` folder is kept (`originals/` are Matt's other candidates).
 
 ## Operational facts
 

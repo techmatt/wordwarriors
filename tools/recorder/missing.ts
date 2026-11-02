@@ -12,10 +12,11 @@
  *
  * `voice:lines` (a word added) and `voice:import` (a sound recorded) run it
  * too, and `tests/unit/recorder.test.ts` fails while the block is out of date.
- * The hosted copy of the page is synced by the planner after a change.
+ * Whenever the page is rewritten, the hosted copy follows (`syncHosted`), left
+ * uncommitted in Matt's GitHub Pages repo for him to commit.
  */
 
-import { readFile, writeFile } from 'node:fs/promises';
+import { copyFile, readFile, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { LIVE, type BankWord } from '../../content/phonics/bank.js';
@@ -26,6 +27,8 @@ import { clipStateFor, readClipIndex, type ClipIndex } from '../voice/clips.js';
 import type { LineSpec } from '../voice/types.js';
 
 export const RECORDER_PAGE = path.join('tools', 'recorder', 'phonics-recorder.html');
+/** Matt's GitHub Pages repo, which serves the hosted copy of the page. */
+export const HOSTED_DIR = 'C:\\Code\\techmatt.github.io';
 const BLOCK = /(\/\/ missing:begin[^\n]*\n)[\s\S]*?(\/\/ missing:end)/;
 const CARDS = /\/\/ cards:begin\n([\s\S]*?)\/\/ cards:end/;
 /** The recorder's card for a sound fills another's line too (voice:import's ALSO: the K card is CK). */
@@ -106,8 +109,20 @@ export async function writeMissing(lines?: LineSpec[]): Promise<{ missing: Missi
   const missing = missingSounds(lines ?? (await readLines()), await readClipIndex());
   const html = await readFile(RECORDER_PAGE, 'utf8');
   const next = withMissingBlock(html, missingBlock(html, missing));
-  if (next !== html) await writeFile(RECORDER_PAGE, next);
-  return { missing, changed: next !== html };
+  const changed = next !== html;
+  if (changed) {
+    await writeFile(RECORDER_PAGE, next);
+    await syncHosted();
+  }
+  return { missing, changed };
+}
+
+/** Copy the page to the hosted folder, if this machine has it. Returns the path written, or null. */
+export async function syncHosted(page = RECORDER_PAGE, dir = HOSTED_DIR): Promise<string | null> {
+  if (!(await stat(dir).catch(() => null))?.isDirectory()) return null;
+  const to = path.join(dir, path.basename(page));
+  await copyFile(page, to);
+  return to;
 }
 
 export function describeMissing(missing: MissingSound[]): string[] {
@@ -121,5 +136,5 @@ export function describeMissing(missing: MissingSound[]): string[] {
 runMain(import.meta.url, async () => {
   const { missing, changed } = await writeMissing();
   for (const l of describeMissing(missing)) console.log(l);
-  console.log(changed ? `${RECORDER_PAGE}: rewritten (sync the hosted copy)` : `${RECORDER_PAGE}: already up to date`);
+  console.log(changed ? `${RECORDER_PAGE}: rewritten (hosted copy follows, if ${HOSTED_DIR} exists; Matt commits it)` : `${RECORDER_PAGE}: already up to date`);
 });

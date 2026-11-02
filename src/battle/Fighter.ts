@@ -15,6 +15,7 @@
 
 import Phaser from 'phaser';
 
+import { cardArt, charArt } from '../../content/art/assets';
 import type { AbilitySpec, FighterSpec, MinionSpec, MoveStyle, Status } from '../../content/battle/types';
 import { sfxPoof } from '../audio/sfx';
 import { TEX } from '../fx/textures';
@@ -36,6 +37,10 @@ export const NO_AFTERIMAGES = 'noAfterimages';
 /** A person-sized fighter is this tall on screen at size 1. */
 const BASE_HEIGHT = 150;
 
+/** What it holds over its head: this far above its top, the centre never above this y (under the HUD's bars). */
+const OVERHEAD_GAP = 44;
+const OVERHEAD_TOP = 124;
+
 export interface FighterInit {
   id: string;
   name: string;
@@ -54,6 +59,10 @@ export interface FighterInit {
   taunts?: string[];
   /** How tall it is drawn, when not its `size` (a grown-up, item 034; her in an outfit, hunt 6 M32); `size` still drives the fight. */
   tall?: number;
+  /** Where its bolts leave the sprite (FighterSpec.muzzle). */
+  muzzle?: FighterSpec['muzzle'];
+  /** Its picture for a little icon, when not `art` (a rider's on-foot art, item 172). */
+  card?: string;
 }
 
 export function initFromSpec(spec: FighterSpec, id: string, art: string, team: Team): FighterInit {
@@ -76,6 +85,8 @@ export function initFromSpec(spec: FighterSpec, id: string, art: string, team: T
     taunts: spec.taunts.map((t) => t.key),
     ...(spec.mount ? { mount: spec.mount } : {}),
     ...(spec.trail ? { trail: spec.trail } : {}),
+    ...(spec.muzzle ? { muzzle: spec.muzzle } : {}),
+    ...(team === 'hero' && cardArt(id) !== charArt(id, false) ? { card: cardArt(id) } : {}),
   };
 }
 
@@ -146,6 +157,8 @@ export class Fighter {
   lean = 0;
   /** Where its bolts leave from, when not its middle: a fetched thing's picture over her head (item 034). */
   castFrom: { x: number; y: number } | null = null;
+  /** What it holds over its head now: her letter arrows' row (item 172); kept over her, on screen, in `updateVisual`. */
+  overhead: Phaser.GameObjects.Container | null = null;
   /** Clone of which fighter, for Moriarty's tricks. */
   cloneOf: Fighter | null = null;
   /** A depth to draw at instead of its floor y, while a stage wants it in front (the race's ally over the villain in a choice). */
@@ -198,6 +211,14 @@ export class Fighter {
   }
   get top(): number {
     return this.y - this.lift - this.float - this.height * this.scaleMul;
+  }
+  /** Where its bolts leave its sprite (item 172), or null to leave from its middle. */
+  get muzzle(): { x: number; y: number } | null {
+    const m = this.init.muzzle;
+    if (!m) return null;
+    const w = this.sprite.width * this.baseScale * this.scaleMul;
+    const h = this.sprite.height * this.baseScale * this.scaleMul;
+    return { x: this.x + m.x * w, y: this.y - this.lift - this.float - m.y * h };
   }
   /** Half the drawn art's width: how far the body reaches either side of `x` (item 034). */
   get bodyHalf(): number {
@@ -304,6 +325,10 @@ export class Fighter {
       this.x = Math.min(Math.max(this.x, half), GAME_WIDTH - half);
     }
     this.root.setPosition(this.x, this.y);
+    if (this.overhead?.active) {
+      const half = (this.overhead.getData('halfWidth') as number) + 8;
+      this.overhead.setPosition(Math.min(Math.max(this.x, half), GAME_WIDTH - half), Math.max(OVERHEAD_TOP, this.top - OVERHEAD_GAP));
+    }
     const depth = this.depthOver ?? this.y;
     this.root.setDepth(depth);
     if (this.trailFx) {

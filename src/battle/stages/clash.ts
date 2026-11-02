@@ -145,8 +145,8 @@ export class ClashStage extends BaseStage {
     );
     // Little portraits at the meter's ends: whose side is whose.
     const my = METER.y + METER.h / 2;
-    if (h) this.heads.push(fitImage(s.add.image(METER.x - 34, my, h.init.art), 46, 46).setDepth(DEPTH.hud + 1));
-    this.heads.push(fitImage(s.add.image(METER.x + METER.w + 34, my, v.init.art), 46, 46).setDepth(DEPTH.hud + 1));
+    if (h) this.heads.push(fitImage(s.add.image(METER.x - 34, my, h.init.card ?? h.init.art), 46, 46).setDepth(DEPTH.hud + 1));
+    this.heads.push(fitImage(s.add.image(METER.x + METER.w + 34, my, v.init.card ?? v.init.art), 46, 46).setDepth(DEPTH.hud + 1));
   }
 
   override home(f: Fighter, i: number): Pt | null {

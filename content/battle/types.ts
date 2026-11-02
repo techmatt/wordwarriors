@@ -96,6 +96,16 @@ export interface AbilitySpec {
    * neither spinning as a bolt nor falling point first.
    */
   upright?: boolean;
+  /**
+   * The art is an arrow (`prop_arrow_flame`, drawn point up): a bolt flies point first along
+   * its path, drawn long, trailing a bright ribbon of `color` and `color2`, not spinning.
+   */
+  pointed?: boolean;
+  /**
+   * A bolt: each arrow spells a letter over the caster's head (item 172, real text, never art):
+   * one volley is one word she has read this episode, a letter (or digraph) an arrow.
+   */
+  letters?: boolean;
   status?: Status;
   /** For `summon`: which minion (MINIONS key). */
   minion?: string;
@@ -159,6 +169,16 @@ export interface FighterSpec {
   speed: number;
   /** Sprite scale: 1 a person, 1.4 big, 1.8 a giant. */
   size: number;
+  /**
+   * Its art's display box, when not the cast's 200×250 (item 172: Ember Lark and her fox). The PNG
+   * is cut to twice this, so a sprite drawn big stays crisp.
+   */
+  box?: { w: number; h: number };
+  /**
+   * Where its bolts leave the sprite, when not its middle (item 172: her arrow's tip): `x` from the
+   * picture's bottom middle as a share of its width, `y` up from there as a share of its height.
+   */
+  muzzle?: { x: number; y: number };
   /** Cosmetic hit points; the battle director steers them anyway. */
   hp: number;
   abilities: AbilitySpec[];
@@ -200,6 +220,11 @@ export interface CharacterSpec {
   form?: string;
   /** Archetype, in one sentence. Original characters, not lookalikes. */
   description: string;
+  /**
+   * A rider's on-foot art brief (item 172): `char_<id>_foot`, shown where the mounted picture will
+   * not fit (`cardArt`: pick cards, the title, little icons). Absent: `char_<id>_good` everywhere.
+   */
+  onFoot?: string;
   /** edge-tts speaker ids are `<id>` and `<id>_evil`. */
   good: FighterSpec;
   evil: FighterSpec;
