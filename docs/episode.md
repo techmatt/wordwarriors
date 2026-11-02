@@ -9,7 +9,8 @@ Selection is walking everywhere: her hero walks to a thing and green picks it. A
 on-screen text is upper case. Yellow (Tab) says the last instruction again, or hints.
 
 1. Title: press green. (The hero / friend / bad-guy picks are off; every episode's
-   cast is drawn fresh, below, "Who is in an episode".)
+   cast is drawn fresh, below, "Who is in an episode". A grown-up's **3 / blue** here is
+   *Choice mode*, below.)
 2. **Bedroom.** She is asleep in bed; a dad comes in (Dada Matt 60% of the time, Dada
    Jason 40%, each in one of his forms): "Wake up, wake up!" and she
    presses green to jump out of bed (after 6 seconds she wakes anyway, `WAKE_WAIT_MS`). Half the time
@@ -146,6 +147,26 @@ child's pace has not been timed.
 The four v0.1 prep games (Sound to Letter, Blend Path, Word to Picture, Spell the
 Spell), the alarm and the retreat camp are **parked**: no episode includes them, but
 `?scene=` still opens each one.
+
+**Choice mode** (item 174): a special Julia-centered episode a grown-up turns on when the
+day calls for it (and how Matt tries out a character); the game never offers it and it is
+never a reward. **3 / blue on the title** starts it, with a small `3: CHOOSE!` in the
+top-right corner. In the bedroom blue is hers (a 💤 puff, then a cast), so there it is a Dad
+key: **Dad's 2**, any time until she leaves the room, with a dim `PRESS 2 TO CHOOSE` cue in
+the corner, live under dad lock; that episode is dropped and its cast and plan go back out of
+her rotations (`forgetCast`, `src/episode/draws.ts`). Two steps come after the title
+(`steps()`, `episode.choice`), on the pick screen (`src/scenes/PickScene.ts`): big framed cards
+of every active ally, then every active villain (`choiceAllies`, `choiceVillains`,
+`src/rules/cast.ts`, from `ACTIVE_CAST`, so a new character needs no change), minus the ally
+she just chose, nobody being her own villain. Walking is the cursor as everywhere: the card
+in reach lights and its name is said in the character's own voice (a name she passed while a
+line played, once it ends); green chooses, red goes back a step, from the first pick to the
+title; yellow says the instruction again. A dad's card is the person: his form is drawn and
+remembered as any draw's (a form fixed by `?form=` or `?cast=default` holds). Then the episode runs as normal with exactly those two, everything else drawn
+as usual, the fight style too (a chosen Evil Smaug can play his story fight). Her play counts
+in her save. Her picks stay out of `recent.ally` and `recent.villain`, so the next normal
+episode draws as if she had not chosen; what the episode drew itself (the dads' forms, line
+variants, rooms, games, words) is remembered as ever.
 
 **Who is in an episode** (item 025) is drawn fresh each time (`src/rules/cast.ts`):
 
@@ -540,7 +561,7 @@ done, items in the bag):
 | `?scene=victory&read=cat,sun,julia` | The victory scene, then the victory recapping those words |
 | `?scene=victory&ending=boat` | That victory scene (`content/house/endings.ts` ids); F2 skips to the recap |
 | `?scene=theend` | THE END, the victory step's last screen (the recap's green opens it); only Dad's 2 starts a new episode |
-| `?scene=pick`, `?scene=parent` | A pick screen; the grown-ups page |
+| `?scene=pick`, `?scene=parent` | The parked hero pick (choice mode's own cards start from the title's 3); the grown-ups page |
 | `?scene=sound` / `blend` / `picture` / `spell` / `alarm` / `retreat` | Parked v0.1 steps |
 
 Extras: the cast (above: `seed=`, `cast=default`, `hero=`, `ally=`, `villain=`,

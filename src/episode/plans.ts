@@ -72,7 +72,7 @@ export function rememberPlan(): void {
   if (!away()) for (const p of plan.slice(0, 2)) progress.remember('rooms', p.room, FETCH_ROOMS.length + 1);
   // Item 126: a villain's story fight, when he was drawn and could have played it.
   const story = CHARACTER_BY_ID[episode.villain]?.storyFight;
-  if (story && episode.villainWasRandom && !fightOverride && episode.fight) progress.remember(storyKey(episode.villain), episode.fight === story ? 'yes' : 'no', 1);
+  if (story && (episode.villainWasRandom || episode.choice) && !fightOverride && episode.fight) progress.remember(storyKey(episode.villain), episode.fight === story ? 'yes' : 'no', 1);
   // Hunt 8, M37: every word this episode has her read, which the next episode's chain keeps clear of.
   progress.remember(LAST_READ, readingWords().join(' '), 1);
   // Hunt 11: the rhyme room's families, which its next visit keeps clear of while others fit.
@@ -119,10 +119,10 @@ export function fightStyle(): FightSpec {
   return fightSpec(episode.fight);
 }
 
-/** The villain's story fight (`storyFight`, item 126), when this episode draws it: only for a villain drawn freely (STORY_FIGHT). */
+/** The villain's story fight (`storyFight`, item 126), when this episode draws it: only for a villain drawn freely (STORY_FIGHT) or chosen in choice mode (item 174: the fight style is drawn as usual). */
 function storyFight(): string | undefined {
   const id = CHARACTER_BY_ID[episode.villain]?.storyFight;
-  if (!id || !FIGHT_BY_ID[id] || !episode.villainWasRandom) return undefined;
+  if (!id || !FIGHT_BY_ID[id] || !(episode.villainWasRandom || episode.choice)) return undefined;
   const last = progress.recentOf(storyKey(episode.villain)).at(-1);
   return castRand() < (last === 'yes' ? STORY_FIGHT.afterOne : STORY_FIGHT.afterNone) ? id : undefined;
 }

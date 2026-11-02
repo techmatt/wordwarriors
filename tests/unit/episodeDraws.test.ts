@@ -9,12 +9,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { personOf } from '../../content/battle/roster';
-import { EPISODE_DEFAULTS } from '../../src/config';
-import { castEpisode, rememberCast, remembered, resetEpisode, setCastOptions } from '../../src/episode/draws';
+import { ACTIVE_CAST, EPISODE_DEFAULTS } from '../../src/config';
+import { castEpisode, chooseAlly, chooseVillain, forgetCast, rememberCast, remembered, resetEpisode, setCastOptions } from '../../src/episode/draws';
+import { choiceAllies, choiceVillains } from '../../src/rules/cast';
 import { episode } from '../../src/episode/state';
 import { seededRand } from '../../src/rules/random';
 import { progress } from '../../src/state/progress';
-import { giftWord, grabPlan, housePlan, movePlan } from '../../src/episode/plans';
+import { fightStyle, giftWord, grabPlan, housePlan, movePlan } from '../../src/episode/plans';
 import { FRAME_BY_ID } from '../../content/phonics/sentences';
 import { withStems } from '../../src/rules/bank';
 import { wordsOf } from '../../src/rules/sentences';
@@ -61,6 +62,120 @@ test('an overridden ally is not her rotation', () => {
   assert.deepEqual(progress.recentOf('ally'), []);
   assert.equal(progress.recentOf('villain').length, 1);
   setCastOptions({ overrides: {}, fixed: !EPISODE_DEFAULTS.randomCast });
+});
+
+test('choice mode (item 174): her picks stay out of her rotations; the rest of the cast is drawn round them', () => {
+  progress.reset();
+  setCastOptions({ fixed: false, rand: seededRand(9) });
+  resetEpisode();
+  episode.choice = true;
+  episode.stepIndex = 1;
+  chooseAlly('ember_lark');
+  assert.equal(episode.choice, true);
+  assert.equal(episode.stepIndex, 1);
+  assert.equal(episode.ally, 'ember_lark');
+  chooseVillain('smaug');
+  assert.equal(episode.ally, 'ember_lark');
+  assert.equal(episode.villain, 'smaug');
+  rememberCast();
+  assert.deepEqual(progress.recentOf('villain'), []);
+  assert.deepEqual(progress.recentOf('ally'), []);
+  // Over: the next episode is a normal draw.
+  resetEpisode();
+  assert.equal(episode.choice, false);
+});
+
+test('choice mode (item 174): a dad she picks is the person, his form drawn from his rotation', () => {
+  progress.reset();
+  setCastOptions({ fixed: false, rand: seededRand(2) });
+  const forms = new Set<string>();
+  for (let i = 0; i < 40; i++) {
+    resetEpisode();
+    episode.choice = true;
+    chooseAlly('dada_matt');
+    forms.add(episode.ally!);
+    assert.equal(personOf(episode.primary!), 'dada_jason', 'the other dad wakes her');
+  }
+  assert.equal(forms.size, 4, [...forms].join(' '));
+});
+
+test("choice mode (item 174): the form drawn for a dad she picks moves his rotation; the session's fixed form holds", () => {
+  progress.reset();
+  setCastOptions({ fixed: false, rand: seededRand(8) });
+  resetEpisode();
+  episode.choice = true;
+  chooseAlly('dada_jason');
+  chooseVillain('smaug');
+  rememberCast();
+  assert.deepEqual(progress.recentOf('form_dada_jason'), [episode.ally]);
+  assert.deepEqual(progress.recentOf('ally'), []);
+  setCastOptions({ overrides: { forms: { dada_jason: 'warlock' } } });
+  resetEpisode();
+  episode.choice = true;
+  chooseAlly('dada_jason');
+  assert.equal(episode.ally, 'dada_jason_warlock');
+  setCastOptions({ overrides: {}, fixed: !EPISODE_DEFAULTS.randomCast });
+});
+
+test('choice mode (item 174): a style written for one villain still forces him over her pick (a dev URL)', () => {
+  setCastOptions({ fixed: false, rand: seededRand(8), fight: 'smaug_story' });
+  resetEpisode();
+  episode.choice = true;
+  chooseAlly('ellie');
+  chooseVillain('tiamat');
+  assert.equal(episode.ally, 'ellie');
+  assert.equal(episode.villain, 'smaug');
+  setCastOptions({ fight: null, fixed: !EPISODE_DEFAULTS.randomCast });
+});
+
+test('choice mode (item 174): a chosen villain may play his story fight, as a drawn one does', () => {
+  progress.reset();
+  setCastOptions({ fixed: false, rand: seededRand(11) });
+  const fights = new Set<string>();
+  for (let i = 0; i < 30; i++) {
+    resetEpisode();
+    episode.choice = true;
+    chooseAlly('ellie');
+    chooseVillain('smaug');
+    fights.add(fightStyle().id);
+  }
+  assert.ok(fights.has('smaug_story'), [...fights].join(' '));
+  assert.ok(fights.size > 1, [...fights].join(' '));
+});
+
+test('the cards (item 174): every active character, from the cast list; nobody her own villain', () => {
+  const active = { allies: ['ellie', 'elsa', 'julia'], villains: ['elsa', 'smaug'] };
+  assert.deepEqual(choiceAllies('julia', active).sort(), ['ellie', 'elsa']);
+  assert.deepEqual(choiceVillains('julia', 'elsa', active), ['smaug']);
+  assert.ok(choiceAllies('julia').includes('ember_lark'));
+  assert.equal(choiceAllies('julia').length, ACTIVE_CAST.allies.length);
+  assert.equal(choiceVillains('julia', null).length, ACTIVE_CAST.villains.length);
+  assert.ok(choiceVillains('julia', 'dada_matt_lifter').length === ACTIVE_CAST.villains.length);
+});
+
+test("Dad's 2 in the bedroom (item 174): the dropped episode's cast and plan go back out of her rotations", () => {
+  progress.reset();
+  setCastOptions({ fixed: false, rand: seededRand(6) });
+  resetEpisode();
+  progress.remember('words', 'cat');
+  const recent = () => progress.snapshot().recent;
+  const before = structuredClone(recent());
+  rememberCast();
+  housePlan();
+  assert.notDeepEqual(recent(), before);
+  forgetCast();
+  assert.deepEqual(recent(), before);
+  // Nothing was remembered: nothing to put back.
+  resetEpisode();
+  progress.remember('words', 'dog');
+  const later = structuredClone(recent());
+  forgetCast();
+  assert.deepEqual(recent(), later);
+  // An erase since (F9, F8 twice, in the bedroom) stays erased.
+  rememberCast();
+  progress.reset();
+  forgetCast();
+  assert.deepEqual(recent(), {});
 });
 
 test('solo lasts the session (hunt 7, M34): the next episode starts solo, until Dad presses', () => {

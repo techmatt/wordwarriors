@@ -98,6 +98,8 @@ export interface EpisodeState {
   story: Story;
   /** Which wake-up, bedroom taunt, sorry and victory lines this episode says (item 040, `drawLines`), drawn with the cast. */
   lines: LineVariants;
+  /** Choice mode (item 174): a grown-up turned it on, and she picks the ally and the villain (`steps`, `startChoice`). */
+  choice: boolean;
   stepIndex: number;
 }
 
@@ -133,6 +135,7 @@ export function freshProgress(): Omit<EpisodeState, 'hero' | 'ally' | 'villain' 
     ending: null,
     endingCounted: false,
     fight: null,
+    choice: false,
     stepIndex: 0,
   };
 }
@@ -153,13 +156,19 @@ export const episode: EpisodeState = {
 };
 
 export function steps(): Step[] {
-  const picks: Step[] = EPISODE_DEFAULTS.pickScreens
+  // Choice mode (item 174) comes first: she is the hero, so it never picks one.
+  const picks: Step[] = episode.choice
     ? [
-        { kind: 'pick', what: 'hero' },
         { kind: 'pick', what: 'ally' },
         { kind: 'pick', what: 'villain' },
       ]
-    : [];
+    : EPISODE_DEFAULTS.pickScreens
+      ? [
+          { kind: 'pick', what: 'hero' },
+          { kind: 'pick', what: 'ally' },
+          { kind: 'pick', what: 'villain' },
+        ]
+      : [];
   return [
     { kind: 'title' },
     ...picks,

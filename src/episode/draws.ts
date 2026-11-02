@@ -74,16 +74,18 @@ export function castEpisode(picked: CastOverrides = {}): void {
     : {};
   // A style written for one villain (a story fight, item 107) forces him: `?fight=smaug_story` is Evil Smaug.
   const forced = fightOverride ? FIGHT_BY_ID[fightOverride]?.villain : undefined;
-  const overrides = { ...fixed, ...castOverrides, ...(forced ? { villain: forced } : {}), ...picked };
+  const overrides: CastOverrides = { ...fixed, ...castOverrides, ...(forced ? { villain: forced } : {}), ...picked };
+  // In choice mode too: her villain cards do not outrank a style written for one villain (a dev URL's).
+  if (forced && overrides.chosen) overrides.chosen = { ally: overrides.chosen.ally };
   // Item 067: her recent allies and each dad's recent forms sit out, as her villains do.
   const recentForms = Object.fromEntries(DADS.map((d) => [d, progress.recentOf(`form_${d}`)]));
   const c = drawCast({ hero: EPISODE_DEFAULTS.hero, recent: progress.recentOf('villain'), recentAllies: progress.recentOf('ally'), recentForms, overrides }, castRand);
   const byRole = (d: string) => [overrides.ally, overrides.villain, overrides.hero].some((id) => id && personOf(id) === d);
-  drawnFreely = { ally: overrides.ally === undefined, forms: DADS.filter((d) => !overrides.forms?.[d] && !byRole(d)), variants: !castDefault };
+  drawnFreely = { ally: overrides.ally === undefined && !overrides.chosen?.ally, forms: DADS.filter((d) => !overrides.forms?.[d] && !byRole(d)), variants: !castDefault };
   episode.hero = c.hero;
   episode.ally = c.ally;
   episode.villain = c.villain;
-  episode.villainWasRandom = !overrides.villain;
+  episode.villainWasRandom = !overrides.villain && !overrides.chosen?.villain;
   episode.primary = c.primary;
   episode.secondary = c.secondary;
   // The hero cannot also be the ally (she would give herself the gift word).
@@ -97,6 +99,29 @@ export function castEpisode(picked: CastOverrides = {}): void {
   episode.story = drawStory(helper(), castRand, castDefault, recentVariants);
   // The wake-up and the villain's lines (item 040): after the story, so a seed's story is unchanged.
   episode.lines = drawLines(episode.villain, castRand, castDefault, recentVariants);
+}
+
+/**
+ * Choice mode (item 174): she chose the ally (a person). Everything else is
+ * drawn around her pick, the villain too until she chooses one, so the episode
+ * is whole at every step (F2 can leave here). `rememberCast` leaves her picks
+ * out of her rotations, so the next normal episode draws as if she had not
+ * chosen; a dad's form is the draw's, not hers, and is remembered as ever.
+ */
+export function chooseAlly(person: string): void {
+  recastChoice({ ally: person });
+}
+
+/** Choice mode (item 174): she chose the villain (a person), the last pick. */
+export function chooseVillain(person: string): void {
+  recastChoice({ ...(episode.ally ? { ally: personOf(episode.ally) } : {}), villain: person });
+}
+
+/** Cast her picks, and start the episode's draws afresh for that cast, still in choice mode at this step. */
+function recastChoice(chosen: NonNullable<CastOverrides['chosen']>): void {
+  const { stepIndex } = episode;
+  castEpisode({ chosen });
+  Object.assign(episode, freshProgress(), { choice: true, stepIndex });
 }
 
 /** What the last cast draw chose freely (item 067), so only that is remembered: an override or the default cast is not her rotation. */
@@ -115,6 +140,7 @@ export const remembered = { cast: false, plan: false };
 export function rememberCast(): void {
   if (remembered.cast) return;
   remembered.cast = true;
+  beforeCast = progress.recentCopy();
   if (episode.villainWasRandom) progress.villainMet(personOf(episode.villain));
   if (drawnFreely.ally && episode.ally) progress.remember('ally', personOf(episode.ally));
   const roles = [episode.primary, episode.secondary, episode.ally, episode.villain];
@@ -127,6 +153,18 @@ export function rememberCast(): void {
   progress.remember(k.quest, String(episode.story.quest));
   progress.remember(k.scene, String(episode.story.scene));
   for (const key of Object.keys(episode.lines) as (keyof LineVariants)[]) progress.remember(k[key], String(episode.lines[key]));
+}
+
+/** Her rotations as `rememberCast` found them, for `forgetCast`. */
+let beforeCast: ReturnType<typeof progress.recentCopy> | null = null;
+
+/**
+ * The episode she walked into is not played after all (item 174: Dad's 2 in the
+ * bedroom turns choice mode on): its cast and its plan, drawn early there, go
+ * back out of her rotations.
+ */
+export function forgetCast(): void {
+  if (remembered.cast && beforeCast) progress.restoreRecent(beforeCast);
 }
 
 /** A new episode: a fresh cast and start state, nothing remembered yet. */

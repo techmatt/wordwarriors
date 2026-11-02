@@ -158,6 +158,8 @@ function defaultStorage(): StorageLike | null {
 export class ProgressStore {
   private data: ProgressData;
   private session: ProgressData = empty();
+  /** `reset`s so far: a `recentCopy` from before one is never put back. */
+  private erases = 0;
   /**
    * Minigame debug mode (item 086, src/episode/debug.ts): between `hold()` and
    * `release()` the store records as usual (the game under test reads it) but
@@ -342,6 +344,18 @@ export class ProgressStore {
     return [...(this.data.recent[kind] ?? [])];
   }
 
+  /** Every rotation as it stands, for `restoreRecent`. */
+  recentCopy(): { recent: Record<string, string[]>; erases: number } {
+    return { recent: structuredClone(this.data.recent), erases: this.erases };
+  }
+
+  /** Put every rotation back as `recentCopy` found it (item 174: an episode dropped in the bedroom), unless the store was erased since. */
+  restoreRecent(copy: { recent: Record<string, string[]>; erases: number }): void {
+    if (copy.erases !== this.erases) return;
+    this.data.recent = structuredClone(copy.recent);
+    this.save();
+  }
+
   /** An episode used `id` for rotation `kind`: kept (the latest `keep`) so the next episodes differ. */
   remember(kind: string, id: string, keep: number = VARIETY.rotations): void {
     const was = (this.data.recent[kind] ?? []).filter((x) => x !== id);
@@ -480,6 +494,7 @@ export class ProgressStore {
 
   /** Erase all progress: the grown-ups page's F8-twice (ParentScene) and the tests. */
   reset(): void {
+    this.erases++;
     this.data = empty();
     // Today's column too: an erase that left it showed counts for words with none (item 039).
     this.session = empty();

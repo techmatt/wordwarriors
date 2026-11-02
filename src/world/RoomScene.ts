@@ -1,6 +1,6 @@
 /**
  * The base of every walking room: bedroom, entry hall, hub, every side room's
- * game (SideRoom), the debug room, and the parked Pick and Retreat scenes.
+ * game (SideRoom), the debug room, the Pick scene (choice mode) and the parked Retreat.
  *
  * Navigation is by walking (Matt, 2026-10-18): her character is the cursor,
  * Stardew-style. Answers are *spots*: things standing in the room. The nearest

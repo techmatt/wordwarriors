@@ -5,6 +5,8 @@
 {"id":"core_pick_villain","speaker":"dada_matt","group":"core","text":"Who is the bad guy? Pick one, or the surprise!","say":"Who is the bad guy? Pick one, or the surprise."},
 {"id":"core_surprise","speaker":"dada_matt","group":"core","text":"It's a surprise villain!"},
 {"id":"core_nobody","speaker":"dada_matt","group":"core","text":"If nobody helps, I'll help you!"},
+{"id":"core_choose_ally","speaker":"dada_matt","group":"core","text":"Who will help you? Walk to a friend and press green!","say":"Who will help you? Walk to a friend, and press green!"},
+{"id":"core_choose_villain","speaker":"dada_matt","group":"core","text":"Who is the bad guy? Walk to one and press green!","say":"Who is the bad guy? Walk to one, and press green!"},
 {"id":"name_julia","speaker":"julia","group":"core","text":"Julia!"},
 {"id":"taunt_julia_here","speaker":"julia","group":"fighter_julia","text":"Here I come!"},
 {"id":"taunt_julia_wand","speaker":"julia","group":"fighter_julia","text":"My wand is sparkly!"},

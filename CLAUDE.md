@@ -13,7 +13,7 @@ sentence → battle part 2 (victory) → victory scene and recap → THE END. St
 `src/episode/state.ts`; each step, the cast draw, the phonics rooms, dev keys and
 `?scene=` URLs: `docs/episode.md`. The tests play the fixed default episode
 (`EPISODE_DEFAULTS`, `?cast=default`: Julia, helper Ellie, villain Evil Tiamat).
-**Parked** games (code kept, out of the episode, reachable by `?scene=`): Sound → Letter,
+**Choice mode** (item 174, a grown-up's 3 / blue at the title, Dad's 2 in the bedroom): she picks the ally and the villain (`docs/episode.md`). **Parked** games (code kept, out of the episode, reachable by `?scene=`): Sound → Letter,
 Blend Path, Word → Picture, Spell the Spell, the alarm and the camp retreat.
 
 **Stack:** TypeScript + Phaser ^3.90 (not 4) + Vite, npm. Playwright for browser tests,
@@ -28,7 +28,7 @@ read-only reference.
 | Path | What |
 | --- | --- |
 | `src/` | `main.ts` boots Phaser; `config.ts` sizes, depth bands and every tuning knob; `hookState.ts` / `testHooks.ts` the tests' `window.__ww`; `realTime.ts` wall-clock timeouts the tests' fast clocks do not stretch; `displayList.ts` `walkObjects`, the display-list walk ArtBank, the hooks and the QA probe share |
-| `src/scenes/` | One scene per episode step, the live side rooms (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom, ShifterRoom, RhymeRoom), Wait (art loading), Debug (minigame debug mode), Parent; parked: Pick, Alarm, Retreat, `minigames/` (their base `ParkedGame`). "Minigame" means only a pool entry (`src/rules/minigames.ts`) |
+| `src/scenes/` | One scene per episode step, the live side rooms (SentenceRoom, WordMachine, ChargeRoom, BridgeRoom, ShifterRoom, RhymeRoom), Wait (art loading), Debug (minigame debug mode), Parent, Pick (choice mode's cards, item 174); parked: Alarm, Retreat, `minigames/` (their base `ParkedGame`). "Minigame" means only a pool entry (`src/rules/minigames.ts`) |
 | `src/battle/` | `BattleScene` (the orchestrator: the director, `part1`/`part2`), `sim` (the simulation: AI, `hit`, shots), `volleys` (her bag's fetched things, the runes), `beats` (combo, ultimate, counter, finish), `Fighter`, `moveChoice` (the frozen-fight word pick), `hud`, `abilities` (every ability kind, `CASTS`), `movement` (`STEER`), `padPlace` (Phaser-free pad placement); `stages/` each fight style; `story/` the story fight |
 | `src/episode/` | `Episode.ts` the flow (scenes call `advance()`; nothing else decides flow); Phaser-free `state.ts`, `draws.ts`, `cast.ts`, `plans.ts`, `debug.ts`, `lineVariants.ts` |
 | `src/input/` | `Controls` (pad, keys, virtual pad), `TextEntry` (A–Z), `dadLock`, `dadButtons`, `debugKey`, `browserKeys` (the browser's own keys and Tab's focus move, prevented) |

@@ -17,6 +17,10 @@
  * Every toy is a spot that does something silly on green (Stardew's "poke
  * everything" pleasure), and the door is the one way on. If she has not found
  * it a while after the news, it sparkles too. Yellow says the door line again.
+ *
+ * Dad's 2 starts choice mode instead (item 174), any time until she leaves: a
+ * Dad key, because blue is hers here (a 💤 puff, then a cast) and a button she
+ * can mash must not end the episode. The game never offers it to her.
  */
 
 import Phaser from 'phaser';
@@ -40,10 +44,12 @@ import {
   sfxZap,
 } from '../audio/sfx';
 import { DEPTH, DOOR_SPARKLE_MS, GAME_WIDTH, WAKE_WAIT_MS } from '../config';
-import { bedroomTaunt, episode, helper, questSetupLine, wakeKey, walkArt, waker as wakerId, type Step } from '../episode/Episode';
+import { bedroomTaunt, episode, helper, questSetupLine, startChoice, wakeKey, walkArt, waker as wakerId, type Step } from '../episode/Episode';
 import { tauntsSaid } from '../episode/lineVariants';
 import { bob, burst, flash, popIn, shake, squash, wiggle } from '../fx/juice';
+import { isLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
+import { openDadButtons, type DadAnswer } from '../input/dadButtons';
 import { applyHouseMood } from '../world/houseMood';
 import { RoomScene, type Spot } from '../world/RoomScene';
 import type { SceneKey } from './keys';
@@ -62,6 +68,9 @@ const SOUND: Record<ReactionSound, () => void> = {
 
 /** Where the other dad stands: at the foot of her bed, clear of the toys and the door. */
 const SECOND_SPOT = { x: 140, y: 690 };
+
+/** The corner cue for Dad's 2 (item 174), as THE END's. */
+const CHOOSE_CUE = 'PRESS <b>2</b> TO CHOOSE';
 
 export class BedroomScene extends RoomScene {
   private asleep = true;
@@ -143,7 +152,18 @@ export class BedroomScene extends RoomScene {
     this.doorSpot.enabled = false;
     this.doorSpot.obj.setVisible(false);
 
+    // Her own choices are already in this episode: nothing to offer.
+    if (!episode.choice) this.events.once(Phaser.Scenes.Events.SHUTDOWN, openDadButtons((a) => this.dadChoice(a), CHOOSE_CUE));
+
     void this.run();
+  }
+
+  /** Dad's 2 (item 174): this episode gives way to choice mode. His 1 does nothing. */
+  private dadChoice(a: DadAnswer): void {
+    if (a !== 'yes' || this.leaving || this.fadingOut || isLeaving(this)) return;
+    this.leaving = true;
+    sfxSelect();
+    this.fadeOutThen(() => startChoice(this));
   }
 
   private async run(): Promise<void> {

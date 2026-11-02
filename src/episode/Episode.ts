@@ -2,7 +2,8 @@
  * One episode, start to finish: who is fighting, what has been fetched, and
  * which step comes next.
  *
- *   title → (hero → ally → villain picks, off by default) → bedroom
+ *   title → (hero → ally → villain picks, off by default; ally → villain in
+ *   choice mode, item 174) → bedroom
  *   → the entry hall's warm-up ("before we head out, let's take the ...")
  *   → house part 1 (hub: the gift word, two side-room doors, a minigame each
  *     from the pool, one a phonics game while FORCE_PHONICS_ROOM; out the
@@ -42,12 +43,12 @@ import { voiceBank } from '../voice/VoiceBank';
 import { startScene } from '../art/gate';
 import { narrator } from './cast';
 import { debugMode, endRun, stopDebug } from './debug';
-import { rememberCast, resetEpisode } from './draws';
+import { forgetCast, rememberCast, resetEpisode } from './draws';
 import { fightStyle, planFor, rememberPlan } from './plans';
 import { countEpisode, currentStep, episode, sceneForStep, steps, type EpisodeState, type Slot, type Step } from './state';
 
 export { currentStep, episode, isStepKind, sceneForStep, steps, type EpisodeState, type PrepGame, type Slot, type Step } from './state';
-export { castEpisode, planRand, remembered, resetEpisode, seedRands, setCastOptions } from './draws';
+export { castEpisode, chooseAlly, chooseVillain, planRand, remembered, resetEpisode, seedRands, setCastOptions } from './draws';
 
 export {
   away,
@@ -102,7 +103,8 @@ export function startStep(scene: Phaser.Scene): void {
   const key = sceneForStep(step);
   // Not for the title: it draws a fresh cast as it opens, and its one line is
   // core (item 039: it decoded the old cast's narrator, ~500 clips, for nothing).
-  if (step.kind !== 'title') {
+  // Nor choice mode's picks (item 174), core lines too, with the cast still to come.
+  if (step.kind !== 'title' && !(step.kind === 'pick' && episode.choice)) {
     // A new episode: let the last one's voices go first.
     if (step.kind === 'bedroom') voiceBank.retain(episodeGroups());
     void voiceBank.loadGroups(episodeGroups());
@@ -162,6 +164,25 @@ export function advance(scene: Phaser.Scene): void {
     startScene(scene, 'Journey');
     return;
   }
+  startStep(scene);
+}
+
+/**
+ * Choice mode (item 174): a grown-up asked for it, at the title or in the
+ * bedroom (where the drawn episode, already remembered, is dropped). A new
+ * episode whose first steps are her picks, in place of the cast draw.
+ */
+export function startChoice(scene: Phaser.Scene): void {
+  forgetCast();
+  resetEpisode();
+  episode.choice = true;
+  episode.stepIndex = 1;
+  startStep(scene);
+}
+
+/** Red on a choice mode pick: back a step, from the first pick to the title (which ends choice mode: it resets the episode). */
+export function pickBack(scene: Phaser.Scene): void {
+  episode.stepIndex--;
   startStep(scene);
 }
 

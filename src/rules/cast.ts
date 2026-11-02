@@ -55,6 +55,11 @@ export interface CastOverrides {
   primary?: string | null;
   /** Whether the other dad comes in. */
   secondary?: boolean;
+  /**
+   * Choice mode (item 174): the persons she picked, over `ally` and `villain`.
+   * A person, not a form: a dad's form is his draw as ever (`forms`, his rotation).
+   */
+  chosen?: { ally?: string | undefined; villain?: string | undefined };
 }
 
 export interface CastInput {
@@ -77,6 +82,16 @@ function activePersons(active: readonly string[]): string[] {
   return on.length ? on : all;
 }
 
+/** Choice mode's ally cards (item 174): the active allies, as persons, future ones too; never the hero. */
+export function choiceAllies(hero: string, active: { allies: readonly string[] } = ACTIVE_CAST): string[] {
+  return activePersons(active.allies).filter((p) => p !== personOf(hero));
+}
+
+/** Choice mode's villain cards (item 174): the active villains, as persons; nobody is ever her own villain, so never the ally she just chose. */
+export function choiceVillains(hero: string, ally: string | null, active: { villains: readonly string[] } = ACTIVE_CAST): string[] {
+  return activePersons(active.villains).filter((p) => p !== personOf(hero) && (!ally || p !== personOf(ally)));
+}
+
 /** Draw an episode's cast. */
 export function drawCast(input: CastInput, rand: Rand = Math.random, active: { allies: readonly string[]; villains: readonly string[] } = ACTIVE_CAST): Cast {
   const o = input.overrides ?? {};
@@ -94,13 +109,15 @@ export function drawCast(input: CastInput, rand: Rand = Math.random, active: { a
     forms[dad] = byRole ?? (fixed ? formId(dad, fixed) : undefined) ?? pick(fresh(formsOf(dad).map((f) => f.id), input.recentForms?.[dad] ?? [], 1), rand);
   }
   const inForm = (person: string) => (isDad(person) ? forms[person]! : person);
+  const fixedAlly = o.chosen?.ally ? inForm(o.chosen.ally) : o.ally;
+  const fixedVillain = o.chosen?.villain ? inForm(o.chosen.villain) : o.villain;
 
   // The villain. A dad may only be the villain while the other dad (or the
   // ally dad) can still wake her, so a random draw never leaves nobody to.
   let villain: string;
-  if (o.villain) villain = o.villain;
+  if (fixedVillain) villain = fixedVillain;
   else {
-    const allyPerson = o.ally ? personOf(o.ally) : null;
+    const allyPerson = fixedAlly ? personOf(fixedAlly) : null;
     // When no active villain can play (a fixed ally or hero who is the only
     // one, or a dad villain who would leave nobody to wake her), the whole
     // roster is drawn from instead.
@@ -117,7 +134,7 @@ export function drawCast(input: CastInput, rand: Rand = Math.random, active: { a
 
   // The ally.
   let ally: string | null;
-  if (o.ally !== undefined) ally = o.ally;
+  if (fixedAlly !== undefined) ally = fixedAlly;
   else {
     const pool = activePersons(active.allies).filter((p) => p !== heroPerson && p !== villainPerson);
     // Her last allies sit out like her villains (item 067), leaving two to choose from.

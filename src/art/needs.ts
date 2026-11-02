@@ -18,6 +18,7 @@
 
 import { ART_ASSETS, ART_BY_ID, cardArt, charArt } from '../../content/art/assets';
 import { CHARACTER_BY_ID, ROSTER, personOf } from '../../content/battle/roster';
+import { ACTIVE_CAST } from '../config';
 import { fightPropArt } from '../../content/battle/fights';
 import { STORY_BY_ID } from '../../content/battle/stories/index';
 import { storySplashArt } from '../../content/battle/stories/types';
@@ -185,8 +186,11 @@ export function artFor(key: SceneKey, draw: boolean): string[] {
       // The parade is every person, good and evil by turns; the duel picks from what has loaded (TitleScene).
       return ['room_title', ...ROSTER.filter((c) => !c.person).flatMap((c) => [cardArt(c.id), charArt(c.id, false), charArt(c.id, true)])];
     case 'Pick':
+      // Choice mode (item 174): the active cast's cards (the title has loaded them), the faces its caption shows as her
+      // pick is said back, and Dada Matt's for the instruction; no surprise villain.
+      if (episode.choice) out.push('room_pick', 'face_dada_matt', ...ACTIVE_CAST.allies.flatMap((p) => [cardArt(p), `face_${p}`]), ...ACTIVE_CAST.villains.flatMap((p) => [cardArt(p, true), `face_${p}`]));
       // Every person's card, good or evil, and the surprise villain (any form).
-      out.push('room_pick', ...ROSTER.flatMap((c) => [cardArt(c.id), charArt(c.id, false), charArt(c.id, true)]));
+      else out.push('room_pick', ...ROSTER.flatMap((c) => [cardArt(c.id), charArt(c.id, false), charArt(c.id, true)]));
       break;
     case 'Journey':
       out.push('room_title');

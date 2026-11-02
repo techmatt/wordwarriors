@@ -34,6 +34,9 @@ export const CORE_LINES: Template[] = [
   { key: 'pick_villain', text: 'Who is the bad guy? Pick one, or the surprise!', say: 'Who is the bad guy? Pick one, or the surprise.' },
   { key: 'surprise', text: "It's a surprise villain!" },
   { key: 'nobody', text: "If nobody helps, I'll help you!" },
+  // Choice mode (item 174): her pick screens, with no "nobody" or "surprise" card.
+  { key: 'choose_ally', text: 'Who will help you? Walk to a friend and press green!', say: 'Who will help you? Walk to a friend, and press green!' },
+  { key: 'choose_villain', text: 'Who is the bad guy? Walk to one and press green!', say: 'Who is the bad guy? Walk to one, and press green!' },
 ];
 
 /** Composed per narrator. */

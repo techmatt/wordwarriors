@@ -4,7 +4,8 @@
  * One press of green (or Start, or Space/Enter) unlocks audio and starts the
  * episode, as in Seraphina: the button that wakes the pad also starts the game.
  * The grown-ups page is behind F9 or holding both shoulder buttons for two
- * seconds, which a four-year-old will not do by accident.
+ * seconds, which a four-year-old will not do by accident. Blue (the 3 key)
+ * starts choice mode instead (item 174): she picks the good guy and the bad guy.
  */
 
 import Phaser from 'phaser';
@@ -19,7 +20,7 @@ import { voiceBus } from '../voice/VoiceBus';
 import { startMusic } from '../audio/music';
 import { sfxHit, sfxSelect } from '../audio/sfx';
 import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { advance, resetEpisode } from '../episode/Episode';
+import { advance, resetEpisode, startChoice } from '../episode/Episode';
 import { backdrop, bob, burst, fitImage } from '../fx/juice';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
@@ -119,6 +120,9 @@ export class TitleScene extends Phaser.Scene {
       .text(GAME_WIDTH - 10, 10, 'GROWN-UPS: HOLD LB + RB, OR F9', { fontFamily: 'sans-serif', fontSize: '14px', color: '#ffffff' })
       .setOrigin(1, 0)
       .setAlpha(0.35);
+    // Choice mode (item 174), for the grown-up who turns it on: blue's dot, and the key.
+    const choose = this.add.text(GAME_WIDTH - 10, 32, '3: CHOOSE!', { fontFamily: 'sans-serif', fontSize: '16px', color: '#ffffff' }).setOrigin(1, 0).setAlpha(0.6);
+    makeButtonDot(this, choose.x - choose.width - 16, choose.y + choose.height / 2, 'blue', 9, false).setAlpha(0.6);
   }
 
   private clash(): void {
@@ -166,14 +170,17 @@ export class TitleScene extends Phaser.Scene {
       openParent(this, { back: 'Title' });
       return;
     }
-    if (this.controls.pressed('green') || this.controls.pressed('start')) {
-      this.leaving = true;
-      unlockAudio();
-      sfxSelect();
-      burst(this, GAME_WIDTH / 2, 380, { count: 60, speed: 500 });
-      this.cameras.main.fadeOut(400, 255, 255, 255);
-      this.time.delayedCall(420, () => advance(this));
-    }
+    if (this.controls.pressed('green') || this.controls.pressed('start')) this.leave(() => advance(this));
+    else if (this.controls.pressed('blue')) this.leave(() => startChoice(this));
     this.controls.endFrame();
+  }
+
+  private leave(go: () => void): void {
+    this.leaving = true;
+    unlockAudio();
+    sfxSelect();
+    burst(this, GAME_WIDTH / 2, 380, { count: 60, speed: 500 });
+    this.cameras.main.fadeOut(400, 255, 255, 255);
+    this.time.delayedCall(420, go);
   }
 }

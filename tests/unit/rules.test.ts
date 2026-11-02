@@ -185,7 +185,7 @@ test('voice: every line id the game derives exists in lines.json and the manifes
       want.push(...f.abilities.filter((a) => a.power >= 2).map((a) => moveLine(id, a.id)));
     }
   }
-  for (const k of ['title', 'pick_hero', 'pick_ally', 'pick_villain', 'nobody', 'surprise']) want.push(coreLine(k));
+  for (const k of ['title', 'pick_hero', 'pick_ally', 'pick_villain', 'nobody', 'surprise', 'choose_ally', 'choose_villain']) want.push(coreLine(k));
   // Narrators are persons (a dad narrates in his own voice in every form);
   // villain lines are per roster id (each villain form has its own counter).
   for (const c of PERSONS) {

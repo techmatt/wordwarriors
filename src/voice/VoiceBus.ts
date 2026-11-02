@@ -148,6 +148,17 @@ class Bus {
     });
   }
 
+  /**
+   * A bark that takes over from a playing bark at once, whatever the gap: a
+   * name as she walks along the cards (item 174). Under an instruction it is
+   * dropped, as any bark is.
+   */
+  barkOver(id: string, anchor?: unknown): Promise<boolean> {
+    if (this.current?.u.priority === 'instruction' || this.queue.length) return Promise.resolve(false);
+    this.cut();
+    return this.start(id, 'bark', anchor);
+  }
+
   /** Say several instruction lines back to back. */
   async sequence(ids: string[], anchor?: unknown): Promise<void> {
     // A hush (scene change) ends the whole sequence, not just its current line.
