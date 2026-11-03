@@ -36,9 +36,9 @@ export const COMBOS: ComboSpec[] = [
   { pair: ['julia', 'anna'], ability: ab('brave_buddy_charge', 'Brave Buddy Charge', 'dash', 16, 0xffb703, 3, { shout: true, color2: 0xe63946 }) },
   // Julia hops on the flying carpet: a sweep of wind full of stars and jewels.
   { pair: ['julia', 'jasmine'], ability: ab('carpet_star_sweep', 'Carpet Star Sweep', 'wave', 16, 0xffc857, 3, { color2: 0xff5ab4 }) },
-  // Item 172: Julia climbs up behind Ember Lark and they charge on her golden friend, in a storm of stars and arrows.
+  // Item 172: Julia climbs up behind Meryl and they charge on her golden friend, in a storm of stars and arrows.
   {
-    pair: ['julia', 'ember_lark'],
+    pair: ['julia', 'meryl'],
     ability: ab('golden_gallop', 'Golden Gallop', 'dash', 16, 0xffb703, 3, { shout: true, color2: 0xff5a1f }),
     second: ab('golden_gallop_rain', 'Golden Gallop', 'rain', 16, 0xffd23f, 3, { count: 24, art: 'prop_arrow_gold', pointed: true, color2: 0x3ae0d0 }),
   },

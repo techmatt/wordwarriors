@@ -100,7 +100,7 @@ One `CharacterSpec` in `ROSTER`:
   - optional `mount` (`'carpet'` is drawn; any emoji works, e.g. `'🧹'`) and `trail`
     (`{ tint: [colours], shape: 'spark' | 'star' | 'smoke' | 'square' }`, its aura).
   - `speed` (px/s), `size` (1 person, 1.4 big, 1.8 giant), `hp` (cosmetic).
-  - A rider drawn with its mount, as Ember Lark on her fox (item 172): optional `box` (`{ w, h }`,
+  - A rider drawn with its mount, as Meryl on her fox (item 172): optional `box` (`{ w, h }`,
     its art's display box; the PNG is cut to twice it) and `muzzle` (`{ x, y }`, where bolts
     leave the picture, from its bottom middle as shares of its width and height). Its
     `size` is what makes it fit, not its box: at the cast's size the rider is a third of a

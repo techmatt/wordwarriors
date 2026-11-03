@@ -36,7 +36,7 @@ read-only reference.
 | `src/listen/` | The listen-through page's code (`listen.html` itself is at the repo root; item 161: every phonic sound in a short set of words; README, *Listening through the sounds*) |
 | `src/art/` | `ArtBank`, `needs` (`artFor`), `gate` (`startScene`: every scene starts through it), `pictureBox` (word pictures' fit, Phaser-free) |
 | `src/state/` | `ProgressStore` (localStorage, versioned); `progress.ts` the one instance, re-read when another tab writes it (item 144) |
-| `src/rules/` | Phaser-free, unit-tested game rules and draws; `rooms` (the episode's room plans, `episodePlans`), `sentences` (the sentence game's word rules), `difficulty`, `recent` (rotations across episodes), `arrowLetters` (what Ember Lark's arrows spell), `random` (seeded) |
+| `src/rules/` | Phaser-free, unit-tested game rules and draws; `rooms` (the episode's room plans, `episodePlans`), `sentences` (the sentence game's word rules), `difficulty`, `recent` (rotations across episodes), `arrowLetters` (what Meryl's arrows spell), `random` (seeded) |
 | `src/world/` | `RoomScene` (walk-to-answer rooms), `SideRoom.ts` (`SideRoom`, every side room's base, and `HouseSideRoom`, the live rooms' base), `Player`, `houseMood` |
 | `src/ui/`, `src/fx/`, `src/qa/` | Captions, bubbles, button dots, `cornerTag`, `banner` (the sentence banner, `inkOf`), `glyphMetrics`; particles, `sceneGen`; the bug-hunt checker's probe (`?qa=1`) |
 | `content/battle/` | `roster.ts` **every character**, re-exporting `roster/` (characters in group files, `ROSTER`'s order fixed in `roster/index.ts`; every one is also a villain; the dads' forms have `person`); `fights.ts` fight styles; `outfits.ts` her outfits (a dad's form is a roster character); `stories/` story-fight scripts |

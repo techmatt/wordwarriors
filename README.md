@@ -1294,7 +1294,7 @@ keyed, trimmed and fitted like a sprite; the cast's box is `{w: 400, h: 500}`, d
 `art-originals/picks/<name>/`.
 
 **A green subject goes on a magenta screen.** Green robes on the cast's #00FF00 came back with
-grey see-through patches even in deep forest green under `lightGreen`, on 2 of 2 (Ember Lark,
+grey see-through patches even in deep forest green under `lightGreen`, on 2 of 2 (Meryl,
 item 171). The same prompt on `#FF00FF` with mode `keep` kept bright emerald solid; `keyGreen`
 takes its key from the border, so it needs no change. Ask for "nothing in the subject is pink or
 magenta". A soft glow drawn over the screen still picks up a pink edge: give a glow a solid
@@ -1302,14 +1302,24 @@ outlined shape and say no halo. Promoting such a candidate means copying its ori
 `art-originals/<id>.png` and `art:gen -- <id> --reprocess` (as item 167 did), with `keyMode`
 `keep`; `art:alts` and `art:gen` would draw it on green again.
 
-**A rider's art (item 172, Ember Lark):** a tall 2:3 picture of rider and mount is limited by
+**A rider's art (item 172, Meryl):** a tall 2:3 picture of rider and mount is limited by
 height, so a wider box alone changes nothing: it is `size` (1.7) that lets the rider stand as
 tall as Julia, and `box` (300×375, a 508×750 PNG) that keeps it crisp. A face card can be a
 square crop of a pick's original, written as `art-originals/face_<id>.png` and re-cut with
-`--reprocess`. Her villain's picture was `art:alts -- char_ember_lark_evil --n=2
+`--reprocess`. Her villain's picture was `art:alts -- char_meryl_evil --n=2
 --ref=<her original>`: with a riding pose as `--ref`, the black fox came back in the same
 layout on green, and "runs towards the left" in the `look` faced her the right way on 1 of 2.
-Her picks' `picks/ember_lark/` folder is kept (`originals/` are Matt's other candidates).
+Her picks' `picks/ember_lark/` folder is kept under her first name (`originals/` are Matt's
+other candidates).
+
+**Renaming a character (item 175, Ember Lark to Meryl):** the id can go too, in one pass:
+`content/`, tests and `voices.json`, a `git mv` of its PNGs in `public/art/`, copies of its
+originals (and any `restore/` file) in `art-originals/` under the new ids, then the three
+commands. `voice:build` re-synthesises every line with the id in it (853 here), not only
+those that say the name, since the line ids and speaker change. It writes the shared manifest
+without the old ids, so main speaks none of that character's lines until the item lands; the
+old mp3s and art originals stay as orphans (`voice:build -- --prune` from main clears the
+mp3s). `ProgressStore.parse` carries the old id over in a save.
 
 ## Operational facts
 

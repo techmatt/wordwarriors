@@ -97,6 +97,12 @@ test('the store remembers rotations across page loads; an old blob loads with it
   const met = new ProgressStore(villains);
   assert.deepEqual(met.recentOf('villain'), ['tiamat', 'bavmorda', 'jormungandr', 'moriarty']);
   assert.deepEqual(met.recentOf('ally'), ['ellie']);
+  // Item 175: a blob from when Meryl was `ember_lark` keeps her rotations, keys and values alike.
+  const renamed = memory();
+  renamed.setItem(STORE_KEY, JSON.stringify({ version: 1, recent: { ally: ['scar', 'ember_lark'], quest_ember_lark: ['1'] } }));
+  const hers = new ProgressStore(renamed);
+  assert.deepEqual(hers.recentOf('ally'), ['scar', 'meryl']);
+  assert.deepEqual(hers.recentOf('quest_meryl'), ['1']);
   assert.equal('villains' in met.snapshot(), false);
   met.villainMet('smaug');
   met.villainMet('tiamat');

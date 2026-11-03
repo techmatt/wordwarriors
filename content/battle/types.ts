@@ -170,7 +170,7 @@ export interface FighterSpec {
   /** Sprite scale: 1 a person, 1.4 big, 1.8 a giant. */
   size: number;
   /**
-   * Its art's display box, when not the cast's 200×250 (item 172: Ember Lark and her fox). The PNG
+   * Its art's display box, when not the cast's 200×250 (item 172: Meryl and her fox). The PNG
    * is cut to twice this, so a sprite drawn big stays crisp.
    */
   box?: { w: number; h: number };

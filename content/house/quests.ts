@@ -196,7 +196,7 @@ export const QUESTS: Record<string, Quest> = {
     ],
   },
   // Item 172: an archer trains at the practice ring and its straw targets.
-  ember_lark: {
+  meryl: {
     place: 'knight_camp',
     lines: [
       { text: 'To get ready to fight them, we have to train at the archery field by the knights camp!' },

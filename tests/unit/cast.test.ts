@@ -85,7 +85,7 @@ test('cast: the active cast (item 028) draws only its allies and villains, every
     pairs.add(`${c.ally}+${c.villain}`);
   }
   const allyForms = ACTIVE_CAST.allies.flatMap((p) => formsOf(p).map((f) => f.id));
-  assert.equal(allyForms.length, 17, 'four Dada Matts, three Dada Jasons, Scar, Ellie, Seraphina, Elsa, Anna, Jasmine, Ozymandias, Moriarty, Bluerilla and Ember Lark');
+  assert.equal(allyForms.length, 17, 'four Dada Matts, three Dada Jasons, Scar, Ellie, Seraphina, Elsa, Anna, Jasmine, Ozymandias, Moriarty, Bluerilla and Meryl');
   // Item 115: Elsa, Ozymandias and Moriarty are both, and nobody is her own villain.
   for (const a of allyForms) for (const v of ACTIVE_CAST.villains) if (personOf(a) !== v) assert.ok(pairs.has(`${a}+${v}`), `${a} + ${v}`);
   for (const p of pairs) {

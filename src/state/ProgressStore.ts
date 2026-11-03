@@ -231,7 +231,9 @@ export class ProgressStore {
   /** A stored blob, brought up to date, or null when it is not this version's or not JSON. */
   private parse(raw: string): ProgressData | null {
     try {
-      const parsed = JSON.parse(raw) as ProgressData & LegacyData;
+      // Item 175: Ember Lark became Meryl. Her old id only ever meant her, wherever a blob holds it
+      // (the `ally` and `villain` rotations, `quest_<helper>`, `scene_<helper>`, `story_fight_<person>`).
+      const parsed = JSON.parse(raw.replaceAll('ember_lark', 'meryl')) as ProgressData & LegacyData;
       if (parsed.version !== STORE_VERSION) throw new Error(`version ${parsed.version}`);
       parsed.sounds ??= {};
       parsed.words ??= {};

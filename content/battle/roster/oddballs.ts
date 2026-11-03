@@ -1,4 +1,4 @@
-/** Roster characters, in ROSTER order (./index.ts): Scar the tiny robot, Moriarty, Bavmorda, Bluerilla and Ember Lark. */
+/** Roster characters, in ROSTER order (./index.ts): Scar the tiny robot, Moriarty, Bavmorda, Bluerilla and Meryl. */
 
 import type { CharacterSpec } from '../types.js';
 import { ab, ult } from './abilities.js';
@@ -300,18 +300,19 @@ export const ODDBALLS: CharacterSpec[] = [
     },
   },
   {
-    // Item 172 (Matt's picks from item 171's `ember_lark` round): rides her giant
+    // Item 172 (Matt's picks from item 171's `ember_lark` round; Ember Lark until
+    // item 175, which is why her `picks/` folder has that name): rides her giant
     // golden fox everywhere she fights, so her picture is the rider and the
     // mount together, drawn big (`box`, size 1.7) so she is not a third of a
     // normal sprite. Her on-foot pick (`onFoot`) stands in where a rider will not
     // fit: pick cards, the title's parade, the little meter icons, her face card.
     // No line says FOX: it is a bank word and Evil Jormungandr's named counter.
-    id: 'ember_lark',
+    id: 'meryl',
     description: 'A brave young archer who rides a giant golden fox, firing glowing magic arrows that spell letters over her head.',
     arena: 'meadow',
-    onFoot: 'Ember Lark, a brave young archer heroine: short coral-orange hair in one big round puff on top of her head, a layered mint and emerald robe with a short cape and white-gold stars along the hem, a curved bow of green living wood drawn, aiming to the right, a quiver of arrows with tips of many colors',
+    onFoot: 'Meryl, a brave young archer heroine: short coral-orange hair in one big round puff on top of her head, a layered mint and emerald robe with a short cape and white-gold stars along the hem, a curved bow of green living wood drawn, aiming to the right, a quiver of arrows with tips of many colors',
     good: {
-      displayName: 'Ember Lark',
+      displayName: 'Meryl',
       trail: { tint: [0xff5a1f, 0xffd23f, 0x3ae0d0], shape: 'star' },
       look: 'a brave young archer heroine of about ten with coral-orange hair in one big round puff, in a knee-length emerald ranger robe with glowing turquoise vine trim and a gold belt, a quiver of many-coloured arrows on her back, riding a giant friendly golden fox as big as a horse that runs towards the right, twisting in the saddle with her bow drawn',
       palette: [0x1f8a4c, 0xffb703], glyph: '🏹', style: 'dodge', speed: 230, size: 1.7, hp: 120,
@@ -335,7 +336,7 @@ export const ODDBALLS: CharacterSpec[] = [
       ],
     },
     evil: {
-      displayName: 'Evil Ember Lark',
+      displayName: 'Evil Meryl',
       trail: { tint: [0xff3a1a, 0x7a2bbf], shape: 'smoke' },
       look: 'the same young archer gone bad: her hair in one big round ash-grey puff with glowing red tips, a charcoal-black ranger robe with glowing ember-red vine trim, a black bow, riding a giant sly smoke-black fox with ember-red eyes and a smouldering tail that runs towards the left, twisting in the saddle with her bow drawn; cross and mischievous, not frightening',
       palette: [0x2a1a2e, 0xff3a1a], glyph: '🏹', style: 'dodge', speed: 210, size: 1.7, hp: 170,
@@ -375,8 +376,8 @@ export const ODDBALLS: CharacterSpec[] = [
       threat: 'she wants to cover the whole house in soot',
       tint: 0xff5a1f,
       decals: [
-        { id: 'ember_lark_arrow', glyph: '🏹', look: 'a sooty arrow stuck in a cushion, a silly one with a rubber sucker tip', count: 3 },
-        { id: 'ember_lark_soot', glyph: '💨', look: 'a smudgy black soot pawprint', count: 3 },
+        { id: 'meryl_arrow', glyph: '🏹', look: 'a sooty arrow stuck in a cushion, a silly one with a rubber sucker tip', count: 3 },
+        { id: 'meryl_soot', glyph: '💨', look: 'a smudgy black soot pawprint', count: 3 },
       ],
       fx: 'embers',
     },

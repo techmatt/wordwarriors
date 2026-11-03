@@ -173,7 +173,7 @@ variants, rooms, games, words) is remembered as ever.
 - **The active cast** (item 028/030): `ACTIVE_CAST` in `src/config.ts` lists who the
   draw picks from, as persons: allies Dada Matt, Dada Jason, Scar, Ellie, Seraphina, Elsa,
   Anna and Jasmine (those four since item 111), Ozymandias, Moriarty and Bluerilla (`rilla`,
-  those three since item 114); villains Jörmungandr, Smaug, Bavmorda and Tiamat, and Evil Elsa, Evil Ozymandias and Evil
+  those three since item 114) and Meryl (item 172); villains Jörmungandr, Smaug, Bavmorda and Tiamat, and Evil Elsa, Evil Ozymandias and Evil
   Moriarty (since item 115). A dad listed comes in all his forms. Elsa, Ozymandias and
   Moriarty are on both lists, and nobody is ever her own villain: with one as the ally the
   villain is somebody else.

@@ -363,7 +363,7 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
     ], CIRCLE('to catch the puff'), 'The jar is giggling, let\'s look around!'),
   ],
   // Item 172: her arrows and her golden friend.
-  ember_lark: [
+  meryl: [
     S('🏹', [
       'I have one very special arrow in my quiver, and it glows.',
       'When it flies, it leaves a word shining in the air.',

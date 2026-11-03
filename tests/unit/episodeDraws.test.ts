@@ -70,12 +70,12 @@ test('choice mode (item 174): her picks stay out of her rotations; the rest of t
   resetEpisode();
   episode.choice = true;
   episode.stepIndex = 1;
-  chooseAlly('ember_lark');
+  chooseAlly('meryl');
   assert.equal(episode.choice, true);
   assert.equal(episode.stepIndex, 1);
-  assert.equal(episode.ally, 'ember_lark');
+  assert.equal(episode.ally, 'meryl');
   chooseVillain('smaug');
-  assert.equal(episode.ally, 'ember_lark');
+  assert.equal(episode.ally, 'meryl');
   assert.equal(episode.villain, 'smaug');
   rememberCast();
   assert.deepEqual(progress.recentOf('villain'), []);
@@ -147,7 +147,7 @@ test('the cards (item 174): every active character, from the cast list; nobody h
   const active = { allies: ['ellie', 'elsa', 'julia'], villains: ['elsa', 'smaug'] };
   assert.deepEqual(choiceAllies('julia', active).sort(), ['ellie', 'elsa']);
   assert.deepEqual(choiceVillains('julia', 'elsa', active), ['smaug']);
-  assert.ok(choiceAllies('julia').includes('ember_lark'));
+  assert.ok(choiceAllies('julia').includes('meryl'));
   assert.equal(choiceAllies('julia').length, ACTIVE_CAST.allies.length);
   assert.equal(choiceVillains('julia', null).length, ACTIVE_CAST.villains.length);
   assert.ok(choiceVillains('julia', 'dada_matt_lifter').length === ACTIVE_CAST.villains.length);
