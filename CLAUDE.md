@@ -33,7 +33,7 @@ Spell, the alarm and the camp retreat.
 | `src/input/` | `Controls` (pad, keys, virtual pad), `TextEntry` (A–Z), dad lock, Dad's buttons, debug key |
 | `src/audio/`, `src/voice/`, `src/listen/` | Synthesised sfx and music; `VoiceBus` (the one voice arbiter), `VoiceBank` (reads `public/voice-gen/manifest.json`); `listen.html`'s code |
 | `src/art/` | `ArtBank`, `needs` (`artFor`), `gate` (`startScene`: every scene starts through it), `pictureBox` |
-| `src/state/` | `ProgressStore` (localStorage, versioned); `progress.ts` the one instance |
+| `src/state/` | `ProgressStore` (localStorage, versioned); `progress.ts` the one instance; its save file (`saveFile*.ts`, `mirror.ts`; `docs/storage.md`) |
 | `src/rules/` | Phaser-free, unit-tested rules and draws: `rooms` (`episodePlans`), `recent` (rotations across episodes), `random` (seeded) |
 | `src/world/` | `RoomScene` (walk-to-answer rooms), `SideRoom.ts` (every side room's base), `Player`, `houseMood` |
 | `src/ui/`, `src/fx/`, `src/qa/` | Captions, bubbles, the sentence `banner`; particles, `sceneGen`; the bug-hunt checker's probe (`?qa=1`) |

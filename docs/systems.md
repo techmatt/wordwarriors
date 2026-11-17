@@ -98,7 +98,7 @@ knobs, hooks): `docs/systems-detail.md`, under the same name.
 | House data | `content/house/house.ts` | `BEDROOMS`, `SIDE_ROOMS`, `PLACES`, `HUB`, `ENTRY_HALL`. Art ids derive from it. |
 | Quests | `content/house/quests.ts` | `QUESTS`, `questFor(id)` (else `HOME_QUEST`). |
 | Word effects | `content/phonics/effects.ts` | One `WordEffect` per bank word; `EFFECT_BY_WORD`. |
-| Progress | `src/state/ProgressStore.ts`, `src/state/progress.ts` | localStorage `wordwarriors.progress`, version 1; the one instance. |
+| Progress | `src/state/ProgressStore.ts`, `src/state/progress.ts` | localStorage `wordwarriors.progress`, version 1; the one instance. Mirrored to the save file by the main checkout's dev server (`src/state/saveFileServer.ts`, `mirror.ts`, `saveFile.ts`; `docs/storage.md`, *Her save file*). |
 
 ## Battle
 

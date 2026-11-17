@@ -65,7 +65,9 @@ const fresh = (): ProgressStore => new ProgressStore(memory(), () => 0);
 
 /** Each room's game and words, readable, then a hash of the whole: the plans and the store as stable JSON. */
 function digest(plans: RoomPlan[], store: ProgressStore): string {
-  const hash = createHash('sha256').update(stable({ plans, store: store.snapshot() })).digest('hex').slice(0, 16);
+  // Item 186's write stamp is not a draw: left out, so the pinned hashes stand.
+  const { savedAt: _stamp, ...data } = store.snapshot();
+  const hash = createHash('sha256').update(stable({ plans, store: data })).digest('hex').slice(0, 16);
   return `${plans.map((p) => `${p.slot}:${p.game}:${p.fetches.join(',')}`).join(' ')} #${hash}`;
 }
 

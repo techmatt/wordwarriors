@@ -97,6 +97,11 @@ export interface ProgressData {
    * the rhyme room's families).
    */
   recent: Record<string, string[]>;
+  /**
+   * When this blob was last written (ms, item 186): which of two copies is newer, the browser's or the save
+   * file the dev server mirrors (src/state/mirror.ts). Absent in a blob from before item 186.
+   */
+  savedAt?: number;
 }
 
 /**
@@ -309,11 +314,41 @@ export class ProgressStore {
 
   private write(): void {
     if (this.readOnly) return;
+    this.data.savedAt = this.now();
+    const raw = JSON.stringify(this.data);
     try {
-      this.storage?.setItem(STORE_KEY, JSON.stringify(this.data));
+      this.storage?.setItem(STORE_KEY, raw);
     } catch {
       // Storage full or blocked: progress is a nicety, never a crash.
     }
+    try {
+      this.onWrite?.(raw);
+    } catch {
+      // The mirror is a backup: it never stops the game.
+    }
+  }
+
+  /** Told every blob the store writes (item 186: the dev server's save file, src/state/mirror.ts). Not during a debug game. */
+  onWrite: ((raw: string) => void) | null = null;
+
+  /**
+   * Take `raw` as the whole store (item 186: the save file, newer than this browser's copy, at boot). Saved
+   * here at once; today's column starts empty. False, and nothing changed, when this build cannot read it.
+   */
+  replace(raw: string): boolean {
+    const fresh = this.parse(raw);
+    if (!fresh) return false;
+    this.erases++;
+    this.data = fresh;
+    this.session = empty();
+    this.held = null;
+    this.readOnly = false;
+    try {
+      this.storage?.setItem(STORE_KEY, JSON.stringify(this.data));
+    } catch {
+      // Blocked storage: the game still plays from the replaced data.
+    }
+    return true;
   }
 
   /**

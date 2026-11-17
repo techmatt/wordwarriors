@@ -1,8 +1,11 @@
 import { defineConfig } from 'vite';
 
 import { PORT } from './src/port';
+import { progressMirror } from './src/state/saveFileServer';
 
 export default defineConfig({
+  // Item 186: the dev server mirrors her progress to a save file (main checkout only; README, *Operational facts*).
+  plugins: [progressMirror()],
   server: {
     port: PORT,
     strictPort: true,

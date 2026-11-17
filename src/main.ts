@@ -35,6 +35,7 @@ import { installDadLock } from './input/dadLock';
 import { installDebugKey, toggleDebug } from './input/debugKey';
 import { installGlyphMetrics } from './ui/glyphMetrics';
 import { holdAudio, releaseAudio } from './audio/context';
+import { syncSaveFile } from './state/mirror';
 
 
 /**
@@ -63,61 +64,69 @@ Phaser.Game.prototype.step = function guardedStep(this: Phaser.Game, time: numbe
 // Emoji drawn as Text measured on themselves, so none is cut flat (item 085, src/ui/glyphMetrics.ts).
 installGlyphMetrics(Phaser.GameObjects.Text);
 
-const game = new Phaser.Game({
-  type: Phaser.AUTO,
-  parent: 'game',
-  width: GAME_WIDTH,
-  height: GAME_HEIGHT,
-  backgroundColor: '#0e0b1a',
-  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-  input: { gamepad: true },
-  // Only Boot starts on its own; Episode.ts starts everything else. The
-  // parked v0.1 scenes (the one list: PARKED in src/art/needs.ts) stay
-  // registered so `?scene=` can still open them; Pick runs in choice mode
-  // (and behind `pickScreens`).
-  scene: [
-    BootScene,
-    JourneyScene,
-    TitleScene,
-    PickScene,
-    BedroomScene,
-    EntryScene,
-    HubScene,
-    SentenceRoom,
-    WordMachine,
-    ChargeRoom,
-    BridgeRoom,
-    ShifterRoom,
-    RhymeRoom,
-    DebugRoom,
-    BattleScene,
-    EndingScene,
-    VictoryScene,
-    TheEndScene,
-    ParentScene,
-    AlarmScene,
-    SoundToLetter,
-    BlendPath,
-    WordToPicture,
-    RetreatScene,
-    Spelling,
-    WaitScene,
-  ],
-});
+/** The game itself, started once the save file (if any) has been read (item 186). */
+function startGame(): void {
+  const game = new Phaser.Game({
+    type: Phaser.AUTO,
+    parent: 'game',
+    width: GAME_WIDTH,
+    height: GAME_HEIGHT,
+    backgroundColor: '#0e0b1a',
+    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    input: { gamepad: true },
+    // Only Boot starts on its own; Episode.ts starts everything else. The
+    // parked v0.1 scenes (the one list: PARKED in src/art/needs.ts) stay
+    // registered so `?scene=` can still open them; Pick runs in choice mode
+    // (and behind `pickScreens`).
+    scene: [
+      BootScene,
+      JourneyScene,
+      TitleScene,
+      PickScene,
+      BedroomScene,
+      EntryScene,
+      HubScene,
+      SentenceRoom,
+      WordMachine,
+      ChargeRoom,
+      BridgeRoom,
+      ShifterRoom,
+      RhymeRoom,
+      DebugRoom,
+      BattleScene,
+      EndingScene,
+      VictoryScene,
+      TheEndScene,
+      ParentScene,
+      AlarmScene,
+      SoundToLetter,
+      BlendPath,
+      WordToPicture,
+      RetreatScene,
+      Spelling,
+      WaitScene,
+    ],
+  });
 
-// Art loads on demand (item 065, src/art/): before any scene asks for a texture.
-artBank.install(game);
+  // Art loads on demand (item 065, src/art/): before any scene asks for a texture.
+  artBank.install(game);
 
-installDadLock();
-installDadButtons();
-// Key 0: minigame debug mode (item 086), in real play too.
-installDebugKey(() => toggleDebug(game));
-// A hidden tab (item 080): Phaser sleeps its loop, so the voice, chimes and music
-// sleep with it; a story told by lines alone no longer plays on unseen.
-game.events.on(Phaser.Core.Events.HIDDEN, holdAudio);
-game.events.on(Phaser.Core.Events.VISIBLE, releaseAudio);
-// The browser's own keys (F1, F3, Tab...), kept from the page: src/input/browserKeys.ts.
-installBrowserKeys(game);
+  installDadLock();
+  installDadButtons();
+  // Key 0: minigame debug mode (item 086), in real play too.
+  installDebugKey(() => toggleDebug(game));
+  // A hidden tab (item 080): Phaser sleeps its loop, so the voice, chimes and music
+  // sleep with it; a story told by lines alone no longer plays on unseen.
+  game.events.on(Phaser.Core.Events.HIDDEN, holdAudio);
+  game.events.on(Phaser.Core.Events.VISIBLE, releaseAudio);
+  // The browser's own keys (F1, F3, Tab...), kept from the page: src/input/browserKeys.ts.
+  installBrowserKeys(game);
 
-// After the game exists: the hooks read its scenes (texts).
-installTestHooks(game);
+  // After the game exists: the hooks read its scenes (texts).
+  installTestHooks(game);
+}
+
+// Item 186: under a dev server that keeps her save file, boot reads it first (src/state/mirror.ts);
+// everywhere else (the build, every test server) the game starts at once, as it always did.
+if (import.meta.env.DEV && window.__wwSaveFile) void syncSaveFile().finally(startGame);
+else startGame();

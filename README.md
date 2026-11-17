@@ -229,6 +229,12 @@ letter does not read at that size.
 **New operational facts go here**, or into the docs file of their subject (`docs/testing.md`,
 `docs/tools.md`, `docs/voice-art-pipeline.md`, `docs/storage.md`), never only into a report.
 
+- **Julia's progress is in `C:\Code\gdrive-sync\wordwarriors\progress\progress.json`** (item
+  186): the store's JSON, mirrored by the main checkout's dev server on every write, with a
+  dated daily backup beside it. Read her progress there, not from a browser. A fresh origin (a
+  new port, browser or cleared storage) restores from it at boot. Worktrees and test servers
+  never touch it. Details: `docs/storage.md`, *Her save file*.
+
 - **A throwaway script that imports game code does not go in the scratch home:** outside
   every checkout, a `.ts` file run from there finds neither the game's code nor
   `node_modules`. Put it in the worktree and delete it after; or import by `file:///` URL

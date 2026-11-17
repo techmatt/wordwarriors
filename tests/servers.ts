@@ -5,6 +5,10 @@
  * whose `strictPort` makes a busy port fail loudly, so no command repeats `--strictPort`.
  */
 
+// Item 186: no server a test or tool starts touches her save file, even from the main checkout
+// (src/state/saveFileServer.ts). The servers inherit this; `WW_PROGRESS_MIRROR=1` set by hand still wins.
+process.env.WW_PROGRESS_MIRROR ??= '0';
+
 /**
  * A production build served by `vite preview` (item 079, tests/vite.test.config.ts): the
  * build is skipped when its inputs are unchanged (tests/testBuild.ts, item 105).

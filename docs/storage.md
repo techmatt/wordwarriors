@@ -5,7 +5,7 @@ Every file has exactly one home (Matt):
 | Home | What |
 | --- | --- |
 | **git** | Source, data, Matt's voice recordings (`content/voice/clips/`), the game-sized art (`public/art/`) |
-| **Drive** (`C:\Code\gdrive-sync\wordwarriors\`, a Google Drive sync folder) | Expensive, irreplaceable or private files. The repo path is a git-ignored directory junction (`mklink /J`) to them |
+| **Drive** (`C:\Code\gdrive-sync\wordwarriors\`, a Google Drive sync folder) | Expensive, irreplaceable or private files: the art originals and voice (behind git-ignored directory junctions, `mklink /J`), and Julia's save file (`progress\`) |
 | **The scratch home** (`C:\Code\wordwarriors-scratch`) | Logs, briefs, review pages, shot runs, a session's working files |
 | **Nowhere** | Anything rebuilt cheaply: contact sheets, `refs/crops/`, `dist/`, test output, `node_modules/` |
 
@@ -25,6 +25,39 @@ Never commit 20 MB or more of tree bytes without Matt's prior confirmation (CLAU
   to day, at its old relative path: Matt's raw phonics-recorder zips and takes
   (`archive\scratch\voice-import\`), already cut into `content/voice/clips/`, and the scratch
   home's kept hand-made scripts.
+- `C:\Code\gdrive-sync\wordwarriors\progress\` (no junction; item 186): **Julia's save file**,
+  below.
+
+## Her save file (`progress\`, item 186)
+
+Her progress (`ProgressStore`, key `wordwarriors.progress`) lives in the browser's
+localStorage, per origin, so a port move (5174 → 5240 on Nov 14) left her 67 episodes behind.
+The main checkout's **dev server** (`npm run dev`, conductor's `game` target) now mirrors it:
+`src/state/saveFileServer.ts` (server), `src/state/mirror.ts` (page), `src/state/saveFile.ts`
+(rules).
+
+- `progress.json`: the store's JSON as the page last wrote it (`savedAt` = its write time, ms).
+  The planner reads her progress here. Written on every write the store makes (not during a
+  debug game), atomically.
+- `progress-YYYY-MM-DD.json`: the file as each day found it, copied before the day's first
+  write. All kept (about 35 KB each).
+- `aside-<origin>-<date>-<time>.json`: a browser's own copy that the file replaced at boot (also
+  kept in that browser as `wordwarriors.progress.replaced.<ms>`). Nothing is dropped unseen.
+- `merged-from-*.json`: item 186's one-time merge inputs (:5174's 67 episodes, :5240's 3,
+  read from Chrome on Nov 16), merged by `tests/progress/merge.ts`.
+
+**At boot** the page asks for the file before the game starts and keeps the newer copy: an
+empty browser restores the file (a new port, a new browser, cleared site data); two stamped
+copies, the later write wins (so the grown-ups page's erase sticks); a copy from before item 186
+(no stamp) loses to one with more episodes. A newer browser copy goes to the file. A save older
+than the file's is refused (409), so a stale tab on an old port cannot write over newer play.
+
+**Where it is on:** only the main checkout's dev server (`.git` a folder). A worktree's dev server,
+`vite build` / `preview` and every server a test or tool starts (`tests/servers.ts` sets
+`WW_PROGRESS_MIRROR=0`) never read or write it, and their page never asks.
+`WW_PROGRESS_MIRROR=1` forces it on, `=0` off; `WW_DATA_DIR` moves the folder (a test against a
+copy: both set, a spare port). The folder is the `art-originals` junction's Drive folder +
+`progress`, so it syncs off the machine with the rest of Drive.
 
 The main checkout holds the junctions; conductor links each worktree's to the same Drive
 folders, so a worktree shares one copy and never needs a full voice rebuild. To link one by
