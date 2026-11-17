@@ -23,8 +23,11 @@ Never commit 20 MB or more of tree bytes without Matt's prior confirmation (CLAU
   they override edge-tts.
 - `C:\Code\gdrive-sync\wordwarriors\archive\` holds what is irreplaceable but not needed day
   to day, at its old relative path: Matt's raw phonics-recorder zips and takes
-  (`archive\scratch\voice-import\`), already cut into `content/voice/clips/`, and the scratch
-  home's kept hand-made scripts.
+  (`archive\scratch\voice-import\`), already cut into `content/voice/clips/`, the scratch
+  home's kept hand-made scripts and briefs (`archive\wordwarriors-scratch\`), and promoted
+  candidate rounds' sheets, manifests and preview cuts (`archive\art-originals\picks\`:
+  `art_alts_178*` and `art_alts_183*`, item 187). An archived manifest's `current` tiles
+  point at `public/art/` by a relative path, so they no longer resolve there.
 - `C:\Code\gdrive-sync\wordwarriors\progress\` (no junction; item 186): **Julia's save file**,
   below.
 
@@ -107,13 +110,15 @@ A script there cannot import game code or find `node_modules` (README, *Operatio
   runs outside `qa/` are not pruned: delete them once written up.
 - **Nothing old is kept forever.** Once Matt's picks from a candidate round are promoted,
   the rest are disposable: `art:pick` deletes the id's candidates, and the round's sheet,
-  manifest and preview folder (`art-originals/picks/`) and its briefs go too. A finished
+  manifest and preview folder (`art-originals/picks/<round>*`) move to
+  `archive\art-originals\picks\`, its briefs to `archive\wordwarriors-scratch\` (items 185,
+  187; a move inside Drive frees nothing locally, it only tidies `picks/`). A finished
   item's leftover worktree goes with `git worktree remove --force <path>` from the main
   checkout (junctions unlinked first, `cmd /c rmdir <path>`), then `git worktree prune`; its
   `conductor/*` branch stays.
 - **Where it goes** (item 185, decimal MB): the scratch home's `qa/` (1.6 GB as JPEG, hunt 13
-  most of it; it was 10.3 GB as PNG); `art-originals/` (2.4 GB, keep: 1 GB of it `figments/`,
-  `art:freeform`'s), `node_modules/` (~270 MB per checkout), `.git` (~140 MB; ~77 MB of it
+  most of it; it was 10.3 GB as PNG); `art-originals/` (2.4 GB; 1 GB of it was `figments/`,
+  `art:freeform`'s from items 168 to 170, deleted by item 187 at Matt's word), `node_modules/` (~270 MB per checkout), `.git` (~140 MB; ~77 MB of it
   blobs main no longer has: old `public/voice/` mp3s 45 MB, superseded `public/art/` PNGs
   29 MB), `voice-gen/` (~160 MB).
   Measure with a walk that never follows a link (`os.scandir`, skipping `is_junction()` /

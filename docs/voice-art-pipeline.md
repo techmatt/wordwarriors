@@ -180,11 +180,13 @@ backgrounded loop leaves the running `tsx` to finish its candidate: check
   `public/art/` (commit the PNG). The first pick saves the original in
   `art-originals/restore/` (`<id>.png`, `<id>.game.png`; a placeholder only the latter; later
   picks leave it), so `art:pick -- <id> 0` restores it. A pick deletes the id's other
-  candidates (the next round numbers from 1), so pick only once Matt has chosen; then delete the
-  round's picks files and briefs. A brief's candidate: `art:pick` prints the brief; write it
-  into the game in the same commit (a character's `look` in its roster group file, then
-  `art:placeholders`; anything else a `HAND` entry), or later runs draw the old look. A face
-  card's brief goes into `HAND`.
+  candidates (the next round numbers from 1), so pick only once Matt has chosen; then move the
+  round's picks files and briefs into Drive's `archive\` (`docs/storage.md`, *Disk*). A brief's
+  candidate: `art:pick` prints the brief; write it into the game in the same commit (a
+  character's `look` in its roster group file, then `art:placeholders`; a word picture its
+  `PICTURES` line, the brief's middle without its "A single clear picture of" and closing
+  boilerplate, which `derived` adds back; anything else a `HAND` entry), or later runs draw
+  the old look. A face card's brief goes into `HAND`.
 
 ## Images outside the game: `art:freeform`
 

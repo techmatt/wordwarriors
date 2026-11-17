@@ -394,6 +394,7 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `pic_pond` | 200×200 | A single clear picture of a pond, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_sand` | 200×200 | A single clear picture of a sand, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_fang` | 200×200 | A single clear picture of a fang, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
+| `pic_helmet` | 200×200 | A single clear picture of a helmet, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_goblin` | 200×200 | A single clear picture of a goblin, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_cape` | 200×200 | A single clear picture of a cape, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_cave` | 200×200 | A single clear picture of a cave, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
@@ -465,7 +466,6 @@ Word pictures must contain no text or letters: the word is the reading answer.
 | `pic_splash` | 200×200 | A single clear picture of a splash, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_bush` | 200×200 | A single clear picture of a bush, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_quest` | 200×200 | A single clear picture of a quest, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
-| `pic_helmet` | 200×200 | A single clear picture of a helmet, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 | `pic_pow` | 200×200 | A single clear picture of a pow, centred, simple bold cartoon, instantly recognisable to a 4-year-old. NO TEXT OR LETTERS anywhere: it is the answer to a reading question. |
 
 ## Counter items

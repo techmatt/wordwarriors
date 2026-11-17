@@ -196,7 +196,8 @@ Shots kept with the runs (a scenario and its numbers on one line, as `citesShot`
 
 - **Matt's calls M86 to M92.** Item 182 promoted item 178's picks, so the six words hunt 13 stored on the shared
   stand-in picture (CAPE CAVE FLAME POND SMOKE SWORD) are live on their own art; `stored.test` still fails if two
-  live words share a picture file. HELMET, with no pick, is stored until item 183's round gives it one.
+  live words share a picture file. HELMET is live too: item 187 promoted Matt's pick from item 183's round, with
+  new pictures for FOG TAP MUG RUSH JAB.
 - **`sound-gap` in battle at speed 5** (160 to 200 ms between rune sounds, most sweeps): at `WW_SPEED=1` a Charge
   episode's runes (`h13r` `words178_charge`) had none under 200 ms. Likely the warped clock (the voice backstops run
   on it), so a look at speed 5; `charge.spec`'s M83 flake (docs/testing.md) may be the same.

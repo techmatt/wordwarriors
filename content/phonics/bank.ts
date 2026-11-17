@@ -356,13 +356,13 @@ export function tag(e: BankEntry): BankWord {
  * JIG FIX FOG WET PLOP FLOP SKIP TWIST LIFT SNAP QUEST; JET RAM TOP FIN) are live
  * on their current pictures; item 178's picker (`art_alts_178`) offers a redraw
  * for each whose reason was the picture (briefs `178_<word>_redraw`); item 182
- * promoted Matt's picks. X-RAY is live too (item 182, Matt 2026-11-16): the one
+ * promoted Matt's picks, and item 187 the picks from item 183's second round
+ * (`art_alts_183`). X-RAY is live too (item 182, Matt 2026-11-16): the one
  * exception to the no-letter-name law, as the only X word (docs/rulings.md).
  */
 export const STORED_WHY: Record<string, string> = {
-  // Item 182: Matt kept HELMET's painted stand-in in item 178's picker, noting a kid's bicycle
-  // helmet may read better than a knight's helm; item 183's round draws that look.
-  helmet: 'no picture picked yet (item 178\'s round); a kid\'s bicycle helmet is being drawn',
+  // (Item 182 stored HELMET while it had no picture; item 187 promoted Matt's pick from item 183's
+  // round, a kid's bicycle helmet, so it is live.)
   // Hunt 11, M66: a sound-out would teach the wrong vowel.
   bush: 'its U is the U of PUT, not of SUN: a wrong short-U word in every sound-out',
   // (Hunt 9 and 10, M40, stored the bedroom's props DRUM LAMP DUCK BLOCK; item 184, Matt 2026-11-16: a toy

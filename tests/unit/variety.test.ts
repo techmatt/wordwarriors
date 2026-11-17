@@ -10,6 +10,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { formsOf, personOf } from '../../content/battle/roster';
+import { STORED } from '../../content/phonics/bank';
 import { ENDINGS } from '../../content/house/endings';
 import { FETCH_ROOMS } from '../../content/house/house';
 import { DIFFICULTY, VARIETY } from '../../src/config';
@@ -221,11 +222,11 @@ test('line variants: every line said several times an episode has at least three
 
 test('?words=new: the new words weigh FAVOURED_WEIGHT in every draw, for this session only', () => {
   for (const w of ['tree', 'ham', 'hay', 'stump', 'chomp', 'splash', 'cow', 'mom', 'dad']) assert.ok(NEW_WORDS.includes(w), w);
-  // Hunt 9: not a stored one (HELMET waits for its picture): it is never drawn, so `npm run variety` would list it as a
-  // new word that never came up. GATE, DASH, SWISH and SACK, stored by item 127, are live again since item 178;
-  // BLOCK, the bedroom's toy, since item 184, which added ROBOT.
-  for (const w of ['helmet']) assert.ok(!NEW_WORDS.includes(w), w);
-  for (const w of ['gate', 'dash', 'swish', 'sack', 'frost', 'dragon', 'wizard', 'block', 'robot']) assert.ok(NEW_WORDS.includes(w), w);
+  // Hunt 9: not a stored one: it is never drawn, so `npm run variety` would list it as a new word that never came up.
+  // GATE, DASH, SWISH and SACK, stored by item 127, are live again since item 178; BLOCK, the bedroom's toy, since
+  // item 184, which added ROBOT; HELMET since item 187 promoted its picture.
+  for (const w of STORED) assert.ok(!NEW_WORDS.includes(w.word), w.word);
+  for (const w of ['gate', 'dash', 'swish', 'sack', 'frost', 'dragon', 'wizard', 'block', 'robot', 'helmet']) assert.ok(NEW_WORDS.includes(w), w);
   const store = new ProgressStore(memory());
   const plain = wordWeight(store, 'ham');
   const cat = wordWeight(store, 'cat');
