@@ -48,6 +48,7 @@
  * Pure data: no Phaser, so the voice composer and the unit tests read it.
  */
 
+import { WAITING_FOR_ART } from '../art/waiting.js';
 import { isUntaught } from './letters.js';
 
 export type Role = 'thing' | 'action' | 'both';
@@ -147,7 +148,8 @@ const ENTRIES: BankEntry[] = [
   T('jam', '🍓', NEW), T('yak', '🐂', NEW), T('vat', '🍯', NEW), T('leg', '🦵', NEW), T('peg', '📎', NEW),
   T('wig', '💇', NEW), T('bib', '👶', NEW), T('fig', '🟣', NEW), T('six', '6️⃣', NEW), B('fin', '🦈', NEW),
   T('kit', '🧰', NEW), T('lip', '👄', NEW), T('cog', '⚙️', NEW), T('rod', '🎣', NEW), T('pod', '🌱', NEW),
-  // HUT has no glyph: 🏠 is the journey map's home stop, a sign shown before she reads (plans.ts `planInput`).
+  // HUT has no glyph: 🏠 is the journey map's home stop, which kept it out of play until item 191 (a sign's
+  // glyph keeps nothing out now); a placeholder card's glyph only, so it stays without.
   T('gum', '🍬', NEW), T('bun', '🍞', NEW), T('hut', undefined, NEW), T('sub', '🐳', NEW),
   A('nap', '😴', NEW), A('wag', '🐕', NEW), A('jab', '🥊', NEW), A('red', '🔴', NEW), A('hex', '🔮', NEW_SPELL),
   A('jig', '💃', NEW), A('mix', '🥣', NEW_SPELL), A('jog', '🏃', NEW), A('bop', '🔨', NEW), B('dot', '⚫', NEW),
@@ -372,20 +374,30 @@ export function tag(e: BankEntry): BankWord {
  * promoted Matt's picks, and item 187 the picks from item 183's second round
  * (`art_alts_183`). X-RAY is live too (item 182, Matt 2026-11-16): the one
  * exception to the no-letter-name law, as the only X word (docs/rulings.md).
+ *
+ * Only real reasons live here (item 191). A word waiting for its picture is
+ * not written anywhere: WAITING_FOR_ART (content/art/waiting.ts, generated from
+ * public/art/) lists every word whose `pic_<word>` is missing, still the painted
+ * placeholder, or one stand-in shared with another word, and such a word is
+ * stored with WAITING_WHY until `art:pick` promotes its picture.
  */
 export const STORED_WHY: Record<string, string> = {
-  // (Item 182 stored HELMET while it had no picture; item 187 promoted Matt's pick from item 183's
-  // round, a kid's bicycle helmet, so it is live.)
   // Hunt 11, M66: a sound-out would teach the wrong vowel.
   bush: 'its U is the U of PUT, not of SUN: a wrong short-U word in every sound-out',
-  // (Item 188 held ROCKET TEDDY BALL UNICORN for art; item 189 promoted Matt's picks for three of
-  // them, item 190 BALL's redraw. All four are live.)
   // (Hunt 9 and 10, M40, stored the bedroom's props DRUM LAMP DUCK BLOCK; item 184, Matt 2026-11-16: a toy
   // shown in the bedroom never keeps its word out of play, docs/rulings.md. They are live again.)
-  // (Hunt 13 stored CAPE CAVE FLAME POND SMOKE SWORD on one shared stand-in picture; item 182 promoted their art.)
 };
 
-export const BANK: BankWord[] = ENTRIES.map(tag).map((w) => (STORED_WHY[w.word] ? { ...w, stored: STORED_WHY[w.word] } : w));
+/** The reason a word waiting for its own picture (WAITING_FOR_ART) is stored. */
+export const WAITING_WHY = 'waiting for its own picture (still the painted placeholder): `art:pick` brings it back';
+
+const WAITING = new Set(WAITING_FOR_ART);
+const storedWhy = (w: string): string | undefined => STORED_WHY[w] ?? (WAITING.has(w) ? WAITING_WHY : undefined);
+
+export const BANK: BankWord[] = ENTRIES.map(tag).map((w) => {
+  const why = storedWhy(w.word);
+  return why ? { ...w, stored: why } : w;
+});
 export const BANK_BY_WORD: Record<string, BankWord> = Object.fromEntries(BANK.map((w) => [w.word, w]));
 
 /** Pictured words she knows on sight (not `odd`, not stored): rooms, key words, the counter, the warm-up, the word machine, fetched items. */
@@ -396,7 +408,7 @@ export const ACTIONS: BankWord[] = BANK.filter((w) => w.role !== 'thing' && !w.s
 export const LIVE: BankWord[] = BANK.filter((w) => THINGS.includes(w) || ACTIONS.includes(w));
 /** The `odd` things out of play (item 040): kept with their pictures and lines, in case Matt overrules one. Not the stored words (STORED). */
 export const DROPPED: BankWord[] = BANK.filter((w) => !LIVE.includes(w) && !w.stored);
-/** The stored words (item 127, STORED_WHY): out of play, kept to bring back. */
+/** The stored words (item 127, STORED_WHY; item 191, WAITING_FOR_ART): out of play, kept to bring back. */
 export const STORED: BankWord[] = BANK.filter((w) => w.stored);
 /** Every action word, stored ones too: the voice composer still writes their move lines, so bringing one back needs no synthesis. */
 export const ALL_ACTIONS: BankWord[] = BANK.filter((w) => w.role !== 'thing');

@@ -273,7 +273,7 @@ export class ParentScene extends Phaser.Scene {
   private stored(): void {
     const font = { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#222' };
     this.add.text(30, 90, `Stored words (${STORED.length})`, { fontFamily: 'Segoe UI, sans-serif', fontSize: '20px', color: '#333', fontStyle: 'bold' });
-    fitText(this.add.text(250, 94, 'Never drawn, at any difficulty; kept with their pictures and voice. To bring one back, ask for it by name (its line in STORED_WHY, content/phonics/bank.ts, goes).', { ...font, fontSize: '14px', color: '#555' }), GAME_WIDTH - 250 - 30, 22);
+    fitText(this.add.text(250, 94, 'Never drawn, at any difficulty; kept with their pictures and voice. To bring one back, ask for it by name (its STORED_WHY line goes); one waiting for its picture comes back when art:pick promotes it.', { ...font, fontSize: '14px', color: '#555' }), GAME_WIDTH - 250 - 30, 22);
     const perCol = Math.ceil(STORED.length / 2);
     const colW = (GAME_WIDTH - 60) / 2;
     const ROW = 21;

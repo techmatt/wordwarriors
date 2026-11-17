@@ -57,7 +57,7 @@ npm run test:unit          # every derived voice id exists, roster completeness
 | "more / fewer bridge words" / "slower slide" | `BRIDGE` in `src/config.ts` (`words`, `slide`, `maxUnits`, `replays`, `startLevel`) |
 | "the bridge needs pictures like X" | a familiar `BANK` thing starting like X (words, "The Stretchy Bridge's pictures"), the three commands, `art:gen` |
 | "the warm-up is too hard / too easy" / "start new words at level N" | `GRAB.startLevel` (and `helpAfter`) in `src/config.ts`; past the start level only with `DIFFICULTY` 2+ |
-| "for X I pick n" (from an `art_alts_*` sheet) | `npm run art:pick -- X n`, commit `public/art/X.png`; if it prints a brief, write it into X's roster `look` (or `HAND`) in the same commit |
+| "for X I pick n" / "keep Y" (from an `art_alts_*` sheet) | `npm run art:pick -- X n Y keep` (every pair in one run), commit what it lists: the PNG, a word picture's `PICTURES` line and pick note, `waiting.ts`, the golden; a word goes live with nothing else edited (item 191). Only a character's or `HAND` brief it prints is written by hand |
 | "try a new look for X" / "draw X as …" | a brief file in the scratch home (`C:\Code\wordwarriors-scratch`), then `npm run art:alts -- X --n=2 --brief=scratch/<name>.txt --sheet=art_alts_<item>_<name>` (`scratch/` means the scratch home; sheet and picker manifest go to `art-originals/picks/`; readonly; Matt picks) |
 
 ## A character (`content/battle/roster/`)

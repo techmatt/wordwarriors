@@ -24,7 +24,7 @@ import { ENDINGS } from '../../content/house/endings';
 import { FETCH_ROOMS, PLACES, HOME } from '../../content/house/house';
 import { QUESTS } from '../../content/house/quests';
 import { scenesFor } from '../../content/house/scenes';
-import { ACTIONS, BANK_BY_WORD, LIVE, STORED_WHY, THINGS, VOWEL_LIST } from '../../content/phonics/bank';
+import { ACTIONS, BANK_BY_WORD, LIVE, STORED, THINGS, VOWEL_LIST } from '../../content/phonics/bank';
 import { FAMILIES } from '../../content/phonics/families';
 import { FRAMES } from '../../content/phonics/sentences';
 import { RUNES } from '../../content/phonics/runes';
@@ -70,7 +70,7 @@ function saw(e: number, group: string, name: string, items: (string | null | und
   const d = dim(group, name, pool);
   const got = items.filter((x): x is string => Boolean(x));
   (d.eps[e] ??= []).push(...got);
-  if (WORDISH.includes(group)) for (const w of got) if (STORED_WHY[w]) storedDrawn.push(`${w} (${name}, episode ${e + 1})`);
+  if (WORDISH.includes(group)) for (const w of got) if (BANK_BY_WORD[w]?.stored) storedDrawn.push(`${w} (${name}, episode ${e + 1})`);
 }
 /** Item 127: every stored word that came up anywhere she reads or is shown a word or picture. Must stay empty. */
 const WORDISH = ['words', 'pictures', 'items'];
@@ -319,7 +319,7 @@ ACTION WORDS AS PICTURES TO PICK: ${actionPictures.length}: ${actionPictures.sli
 } else console.log(`
 Action words as pictures to pick: none.`);
 // Item 127: a stored word is never drawn. Fails the run (exit 1) if one was.
-const storedCount = Object.keys(STORED_WHY).length;
+const storedCount = STORED.length;
 if (storedDrawn.length) {
   console.log(`
 STORED WORDS DRAWN: ${storedDrawn.length}: ${storedDrawn.slice(0, 20).join(', ')}`);

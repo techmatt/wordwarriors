@@ -13,8 +13,8 @@
  *   movePlan: giftWord, saidBeforeBattle, fightStyle, then the pads
  *   grabWord: giftWord, movePlan, saidBeforeBattle (the house plan's reading
  *     words too, if it was made first: a dev jump), then the word
- *   housePlan: giftWord, the rooms, planInput (movePlan, journeyStops,
- *     hubScene, then grabWord), roomGames (framesClear: giftWord, movePlan,
+ *   housePlan: giftWord, the rooms, planInput (movePlan, then grabWord),
+ *     roomGames (framesClear: giftWord, movePlan,
  *     grabWord), the plans, then rememberPlan
  *   grabPlan: grabWord, housePlan, then the hall's other pictures
  *
@@ -53,7 +53,7 @@ import { STORY_BY_ID, storyLines } from '../../content/battle/stories/index';
 import { GRAB_WORDS, grabSays, hallObjects, pickGrab } from '../rules/grab';
 import { progress } from '../state/progress';
 import { pickWeighted } from '../rules/random';
-import { away, bedroomTaunt, helper, hubScene, storyWords, villainSpec } from './cast';
+import { away, bedroomTaunt, helper, storyWords, villainSpec } from './cast';
 import { castRand, fightOverride, planRand, remembered } from './draws';
 import { episode, steps, type Slot, type Step } from './state';
 
@@ -222,19 +222,13 @@ function planInput(gift: string, rooms: [string, string], counterRoom: string): 
   const battle1Moves = battle1Words(movePlan());
   // The warm-up's word is said in the entry hall (item 033): drawn first, kept out too, with the bank
   // words heard inside it as it plus a sound (`grabSays`, hunt 10, M57: CLOCK says LOCK).
-  // The doors' signs show their rooms' glyphs: a bank word drawn the same way is
-  // shown before she reads it (item 039: the 🛁 door led to GO GET THE TUB).
-  // The journey map's stops too (🌅 🏠, the place's glyph): it shows before the attic.
-  const signs = new Set([...rooms, counterRoom].map((r) => SIDE_ROOM_BY_ID[r]?.glyph).filter(Boolean));
-  for (const s of journeyStops()) signs.add(s.icon);
-  // The hub story's prop drawn as an emoji (Chef Jason's 🍲, LID's picture) shows before any room too (item 069).
-  // Not the bedroom's toys (item 184, Matt): a toy shown there never keeps its word (DRUM, ROBOT) out of play.
-  const prop = hubScene().story.prop;
-  if (!prop.startsWith('prop_')) signs.add(prop);
-  const signWords = BANK.filter((w) => w.glyph && signs.has(w.glyph)).map((w) => w.word);
+  // Item 191 (Matt, 2026-11-17): a glyph shown on screen never keeps its word out of play, not even as a
+  // soft weight, like the bedroom's toys (item 184) and the cast's lines (item 178). The doors' signs, the
+  // journey map's stops and the hub story's emoji prop (items 039, 069: the 🛁 door before GO GET THE TUB)
+  // no longer reach the draws: ROBOT at the Robot Workshop, ROCKET at the Rocket Pad, TEDDY in the Playroom.
   // Item 178 (Matt): the cast's own lines (quest line, hub scene, threat, taunt, wake-up) are only a soft
-  // preference (`softSaid`); what the screen shows (signs) and the warm-up's word stay out.
-  const saidBefore = [...signWords, ...grabSays(episode.grab ? episode.grab.word : grabWord())];
+  // preference (`softSaid`); the warm-up's word, said in the hall, stays out.
+  const saidBefore = [...grabSays(episode.grab ? episode.grab.word : grabWord())];
   const softSaid = [...storyWords(), ...bedroomWords()];
   // And the bed she wakes in and presses green on (hunt 12): with the map's bedroom stop a sunrise since item 157,
   // nothing kept BED out of the key words and the attic's counter (Evil Julia's Cozy Bed). Only those: item 157

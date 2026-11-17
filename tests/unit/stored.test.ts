@@ -1,7 +1,8 @@
 /**
  * The stored tier (item 127): a stored word is in no pool she is drawn from,
  * at any difficulty, and keeps its picture, word line, effect and (an action)
- * its move lines, so bringing it back is deleting its STORED_WHY line.
+ * its move lines, so bringing it back is deleting its STORED_WHY line (or, for
+ * a word waiting for art, `art:pick` promoting its picture: item 191).
  */
 
 import assert from 'node:assert/strict';
@@ -9,7 +10,8 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { MOVE_WORDS } from '../../content/battle/roster';
-import { ACTIONS, BANK_BY_WORD, LIVE, STORED, STORED_WHY, THINGS } from '../../content/phonics/bank';
+import { WAITING_FOR_ART } from '../../content/art/waiting';
+import { ACTIONS, BANK_BY_WORD, LIVE, STORED, STORED_WHY, THINGS, WAITING_WHY } from '../../content/phonics/bank';
 import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import { FAMILIES } from '../../content/phonics/families';
 import { FETCH_ITEMS } from '../../content/phonics/sentences';
@@ -22,10 +24,10 @@ import { BAG_WORDS } from '../../src/rules/bank';
 import { SHIFT_WORDS } from '../../src/rules/shifter';
 import { composeLines } from '../../tools/voice/compose';
 
-test('stored words: every one is a bank word with its reason, and in no pool', () => {
-  assert.ok(STORED.length > 0);
-  assert.deepEqual(STORED.map((w) => w.word).sort(), Object.keys(STORED_WHY).sort());
+test('stored words: every one is a bank word with its reason (STORED_WHY, or waiting for art), and in no pool', () => {
+  assert.deepEqual(STORED.map((w) => w.word).sort(), [...new Set([...Object.keys(STORED_WHY), ...WAITING_FOR_ART])].sort());
   for (const w of Object.keys(STORED_WHY)) assert.ok(BANK_BY_WORD[w], `${w} is a bank word`);
+  for (const w of STORED) assert.ok(w.stored, `${w.word} has its reason`);
   const pools: Record<string, readonly string[]> = {
     THINGS: THINGS.map((w) => w.word),
     ACTIONS: ACTIONS.map((w) => w.word),
@@ -55,13 +57,15 @@ test('stored words keep their picture, word line, effect and move lines', () => 
   }
 });
 
-test("bedroom toys (item 184, Matt; reverses hunt 10's M40): every bedroom prop that is a bank word is live, or held only for its picture (item 188)", async () => {
+test("bedroom toys (item 184, Matt; reverses hunt 10's M40): every bedroom prop that is a bank word is live, or waits only for its picture (item 191)", async () => {
   const { BEDROOMS } = await import('../../content/house/house');
   const { withStems } = await import('../../src/rules/bank');
   const props = withStems(BEDROOMS.flatMap((b) => b.objects.map((o) => o.id))).filter((w) => BANK_BY_WORD[w]);
-  assert.deepEqual([...props].sort(), ['ball', 'block', 'drum', 'duck', 'lamp', 'robot', 'rocket', 'teddy', 'unicorn']);
-  const heldForArt = (w: string) => /^no picture picked yet/.test(STORED_WHY[w] ?? '');
-  for (const w of props) assert.ok(heldForArt(w) || (!STORED_WHY[w] && LIVE.some((l) => l.word === w)), `${w}: a bedroom prop, kept out of play`);
+  assert.ok(props.length > 0, 'the bedrooms show bank words');
+  for (const w of props) {
+    const why = BANK_BY_WORD[w]!.stored;
+    assert.ok(why === WAITING_WHY || (!why && LIVE.some((l) => l.word === w)), `${w}: a bedroom prop, kept out of play (${why})`);
+  }
 });
 
 test('bedroom (hunt 10): no toy stands where a grown-up does (the robot stood behind the ally, a hat on Ellie, every episode)', async () => {

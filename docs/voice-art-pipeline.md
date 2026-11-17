@@ -144,12 +144,12 @@ PNGs. Run it backgrounded; several runs on disjoint ids run side by side fine.
 
 ```
 npm run art:alts -- <ids…> [--n=3] [--sheet=<name>] [--sheet-only] [--manifest-only] [--no-ref] [--brief=scratch/<brief>.txt] [--ref=<image>]
-npm run art:pick -- <id> <n>
+npm run art:pick -- <id> <n|keep|0> [<id> <n|keep|0>…] [--round=<name>]
 ```
 
 A round changes nothing tracked (candidates in `art-originals/alts/<id>-<n>.png`, numbered on;
 sheet, picker manifest `<name>.json` and preview cuts in `art-originals/picks/`), so it may run
-as a readonly item; promotion is a normal item. `--sheet=<name>` names the round
+as a readonly item; promotion is one `art:pick` (below), a request or a parked edit. `--sheet=<name>` names the round
 (`picks/<name>.png`, `.json`, `<name>/`; `scratch/<name>.png` lands there too); without it,
 by the minute it started, so two runs started together collide: name each. The sheet shows
 the current image, then each candidate cut as the game cuts it; `--sheet-only` and
@@ -171,24 +171,46 @@ backgrounded loop leaves the running `tsx` to finish its candidate: check
   in `content/art/assets.ts`. Item 183 drew `pic_robot` with an uncommitted
   `assets.push({ id: 'pic_robot', kind: 'picture', w: 200, h: 200, … })` and a stand-in
   `public/art/pic_robot.png`, reverted both after `--manifest-only`; the candidates waited in
-  `alts/` until item 184 added ROBOT to the bank and ran `art:pick`. Simpler (item 188): add
-  the word to the bank stored (`STORED_WHY`, "no picture picked yet"); a stored word keeps its
-  `pic_<word>` asset, so `art:placeholders` then `art:alts` work with no stand-in.
+  `alts/` until item 184 added ROBOT to the bank and ran `art:pick`. Simpler (items 188, 191):
+  add the word to the bank and run `art:placeholders`; its placeholder keeps it waiting for
+  art (stored, by derivation) with its `pic_<word>` asset, so `art:alts` works with no stand-in.
 - **`--ref=<image>`** attaches another version of the same character in place of the photo
   (`DESIGN_REF`, `tools/art/generate.ts`): keep face, hair, build; ask for the green
   background like the picture's.
 - **Corrections** for an id are `NOTES` in `content/art/prompts.ts`; they end the prompt.
-- **`art:pick -- <id> <n>`** copies candidate `n` to `art-originals/<id>.png` and cuts it into
-  `public/art/` (commit the PNG). The first pick saves the original in
-  `art-originals/restore/` (`<id>.png`, `<id>.game.png`; a placeholder only the latter; later
-  picks leave it), so `art:pick -- <id> 0` restores it. A pick deletes the id's other
-  candidates (the next round numbers from 1), so pick only once Matt has chosen; then move the
-  round's picks files and briefs into Drive's `archive\` (`docs/storage.md`, *Disk*). A brief's
-  candidate: `art:pick` prints the brief; write it into the game in the same commit (a
-  character's `look` in its roster group file, then `art:placeholders`; a word picture its
-  `PICTURES` line, the brief's middle without its "A single clear picture of" and closing
-  boilerplate, which `derived` adds back; anything else a `HAND` entry), or later runs draw
-  the old look. A face card's brief goes into `HAND`.
+- **`art:pick -- <id> <n> [<id> <n|keep>…] [--round=<name>]` is the whole promotion** (item
+  191): one command, then commit what it lists; no other file needs a hand edit for the word
+  to go live. So a promotion needs no item of its own: a planner request or a parked edit
+  ("art:pick pic_x 2 pic_y keep") is enough. Per pair it:
+  - copies candidate `n` to `art-originals/<id>.png` and cuts it into `public/art/`. The first
+    pick saves the original in `art-originals/restore/` (`<id>.png`, `<id>.game.png`; a
+    placeholder only the latter; later picks leave it), so `art:pick -- <id> 0` restores the
+    art (its `PICTURES` line and note stay: `git checkout` them). The id's other candidates
+    are deleted (the next round numbers from 1), so pick only once Matt has chosen;
+  - a candidate drawn from a brief: a word picture's brief is written into its `PICTURES`
+    line, without the "A single clear picture of" and closing boilerplate `derived` adds back
+    (`tools/art/promote.ts`, `pictureFromBrief`). Any other id still prints the brief to write
+    by hand (a character's `look` in its roster group file, then `art:placeholders`; a face
+    card or anything else a `HAND` entry), or later runs draw the old look;
+  - sets the id's `PICK_NOTES` row's "`current` is candidate n of <round> …" sentence;
+  - records the decision in its round, the newest `picks/*.json` manifest with a row for the
+    id (`--round=` to choose), in `picks/<round>.decided.json`. `<id> keep` records a row Matt
+    kept as it is. Once every row is decided, the round is archived in Drive (`archive\`,
+    `docs/storage.md`, *Disk*): sheet, manifest, decisions and previews to
+    `art-originals\picks\`, the kept rows' candidates to `art-originals\alts_<round>_passed\`,
+    and the briefs to `wordwarriors-scratch\` (their folder kept, an emptied one removed).
+  Then it rewrites `content/art/waiting.ts` (`tools/art/waiting.ts`); when that changes (a
+  word went live), the golden draws (`tests/unit/plansGolden.json`), the recorder's
+  `?missing` and `docs/art.md` follow, and it prints `git status` to commit. It checks every
+  pair (and `--round`) before changing anything, and rewrites the derived files even if a pair
+  fails later; if one of them fails to rewrite, `npx tsx tools/art/waiting.ts --follow` reruns
+  them. A round's archive takes only its own candidates (its manifest's numbers), so a later
+  round's for the same id stay in `alts/`.
+- **A word waiting for its picture is out of play by itself** (item 191): a new word's
+  painted placeholder (`art:placeholders`) puts it on `content/art/waiting.ts`, so the bank
+  stores it with no line in `STORED_WHY`; `art:pick` taking its picture live takes it off.
+  The tests check rules (no live word without a picture of its own, no stored word drawn),
+  so they list no word to edit. Dry run: `experiments/results/191_one_step_promotion/`.
 
 ## Images outside the game: `art:freeform`
 

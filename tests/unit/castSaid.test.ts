@@ -3,29 +3,29 @@
  * Matt's SWORD, Jasmine's SAND). Matt (MESSAGE #5631): "hearing a word in a character line before
  * reading it is not a problem for Julia"; the planner's exclusion stays only as a soft preference
  * and never keeps a word out of play. The quest line, hub scene, threat and taunt reach the key draws
- * as `softSaid` (src/episode/plans.ts `planInput`), weighed SOFT_SAID_WEIGHT; what the screen shows
- * first (`saidBefore`: signs, the warm-up's word) stays out.
+ * as `softSaid` (src/episode/plans.ts `planInput`), weighed SOFT_SAID_WEIGHT; the warm-up's word
+ * (`saidBefore`) stays out. A sign's glyph keeps nothing out (item 191).
  */
 
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { STORED_WHY } from '../../content/phonics/bank';
+import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { MINIGAME_BY_ID } from '../../src/rules/minigames';
 import { BAG_WORDS, favourWords } from '../../src/rules/bank';
 import { episodePlans, type EpisodeInput } from '../../src/rules/rooms';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { memory, seeded, spread } from './seeds';
 
-// Not a word stored for its picture (hunt 13: SWORD waits for its art).
-const CAST_SAID = ['ice', 'castle', 'dragon', 'sword', 'shield', 'crown', 'sand'].filter((w) => !STORED_WHY[w]);
+// Not a stored word (hunt 13: SWORD waited for its art; item 191: such a word is stored by derivation).
+const CAST_SAID = ['ice', 'castle', 'dragon', 'sword', 'shield', 'crown', 'sand'].filter((w) => !BANK_BY_WORD[w]?.stored);
 
-// Only the fixed signs: a door's, a place's or a hub prop's glyph keeps its word out of that episode alone (`planInput`).
-test("no live word's glyph is a fixed journey-map stop or the bed (item 178: SWORD's ⚔️ was the map's battle stop, QUILT's 🛏️ the bed)", async () => {
+// A sign's glyph keeps nothing out (item 191, Matt 2026-11-17); the bed she wakes in still keeps its glyph's
+// word out of the key words (`planInput`'s `notKeys`), so no other live word may share it.
+test("no live word but BED has the bed's glyph (item 178: QUILT's 🛏️ was the bed)", async () => {
   const { THINGS } = await import('../../content/phonics/bank');
   const { ART_BY_ID } = await import('../../content/art/assets');
-  // src/episode/plans.ts `journeyStops`: the fixed stops (a place's own glyph shows only in its episodes).
-  const shown = new Set(['🌅', '🏠', '⚔️', '🏆', ART_BY_ID.prop_bed?.glyph]);
-  for (const w of THINGS) if (w.word !== 'bed' && w.word !== 'hut') assert.ok(!w.glyph || !shown.has(w.glyph), `${w.word}'s ${w.glyph} is shown every episode`);
+  const bed = ART_BY_ID.prop_bed?.glyph;
+  for (const w of THINGS) if (w.word !== 'bed') assert.ok(!w.glyph || w.glyph !== bed, `${w.word}'s ${w.glyph} is the bed's`);
 });
 
 test('cast-said words (item 178, Matt): live, weighed down where the cast said them first, never kept out', () => {

@@ -7,7 +7,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { ACTIONS, BANK_BY_WORD, THINGS } from '../../content/phonics/bank';
+import { ACTIONS, BANK_BY_WORD, LIVE, THINGS } from '../../content/phonics/bank';
 import { lookalikesOf } from '../../content/phonics/sentences';
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import { narratorLine } from '../../content/voice/ids';
@@ -109,15 +109,12 @@ test('planRhyme: keeps clear of what it is told; fewer rounds where it must; non
 // Item 155: one greedy draw left no family free for a third round in about one visit in eleven where three
 // fitted (rhyme.spec drew two rounds); a short draw is drawn again (RHYME.redraws).
 test('planRhyme: three rounds where three fit, though one draw would leave no family for the last', () => {
-  const avoid = ['dog', 'fox', 'bed', 'map', 'pen', 'can', 'mug', 'fan', 'web', 'jet', 'pig', 'bam', 'hop', 'hot', 'mud', 'tug', 'fix', 'vat', 'six', 'fin', 'nap', 'bop', 'hum', 'mom', 'frog', 'drum', 'flag', 'desk', 'belt', 'slug', 'jump', 'swim', 'stomp', 'slam', 'stump', 'skunk', 'shed', 'chop', 'bench', 'bin', 'yoyo', 'man', 'lid', 'lock', 'egg', 'bell', 'doll', 'grass', 'glass', 'king', 'ring', 'bush', 'thumb', 'cheese', 'kite', 'cake', 'gate', 'zebra', 'igloo', 'octopus', 'umbrella', 'cow',
-    // Item 178: the words it made live, kept out so the draw stays as tight as it was.
-    'ram', 'tap', 'rat', 'mat', 'hen', 'wig', 'fig', 'jig', 'cog', 'jog', 'top', 'sub', 'jug', 'wet', 'gum',
-    // Item 184: the bedroom toys it made live, the same way.
-    'duck', 'lamp', 'block',
-    // Item 189: the toy words it made live, the same way.
-    'teddy', 'rocket', 'unicorn',
-    // Item 190: BALL, the same way.
-    'ball'];
+  // Item 191: the avoid list is built from the bank, every live word but the few the draw may use, so a
+  // word that goes live (a new word, a promoted picture) is avoided too and the draw stays as tight as it was.
+  // These are the family words items 155 to 190 left out of their hand-kept avoid list.
+  const free = new Set(['jam', 'ham', 'van', 'pan', 'cap', 'zap', 'cat', 'hat', 'bat', 'ten', 'net', 'vet', 'big', 'dig', 'pin', 'wing', 'mix',
+    'sock', 'rock', 'log', 'fog', 'mop', 'pop', 'pot', 'dot', 'cot', 'tub', 'cub', 'bug', 'rug', 'hug', 'yum', 'sun', 'bun', 'run']);
+  const avoid = LIVE.map((w) => w.word).filter((w) => !free.has(w));
   const draw = (seed: number) => planRhyme(new ProgressStore(memory()), { avoid, taken: [] }, seeded(spread(seed)));
   const keep = RHYME.redraws;
   try {

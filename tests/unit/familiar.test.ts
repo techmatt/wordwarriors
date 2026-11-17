@@ -7,7 +7,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { ACTIONS, BANK, BANK_BY_WORD, DROPPED, LIVE, STORED, THINGS } from '../../content/phonics/bank';
+import { WAITING_FOR_ART } from '../../content/art/waiting';
+import { ACTIONS, BANK, BANK_BY_WORD, DROPPED, LIVE, STORED, STORED_WHY, THINGS } from '../../content/phonics/bank';
 import { ROSTER } from '../../content/battle/roster';
 import { FAMILY_WORDS } from '../../content/phonics/families';
 import { FETCH_ITEMS } from '../../content/phonics/sentences';
@@ -42,16 +43,13 @@ test('familiar words: an odd word keeps its action role, or drops out of play; a
   for (const w of STORED) assert.ok(!LIVE.includes(w) && !DROPPED.includes(w), w.word);
 });
 
-test('the ready pool (item 178, Matt): every odd and stored word is live but BUSH (HELMET too since item 187 promoted its picture); the bedroom props too since item 184', () => {
-  for (const w of ['yak', 'vat', 'cog', 'quilt', 'moth', 'jug', 'queen', 'hen', 'rat', 'gate', 'swish', 'dash', 'zip', 'quest']) {
-    assert.ok(LIVE.some((l) => l.word === w), `${w} is live`);
+// Item 191: a rule, not a list. A word waiting for its picture is out by derivation (content/art/waiting.ts),
+// so promoting one (`art:pick`) edits nothing here.
+test('the ready pool (item 178, Matt): every bank word is live but those stored for a reason (STORED_WHY) or waiting for their picture', () => {
+  for (const w of BANK) {
+    const out = Boolean(STORED_WHY[w.word]) || WAITING_FOR_ART.includes(w.word);
+    assert.equal(LIVE.includes(w), !out, `${w.word}: ${out ? 'stored, yet live' : 'neither stored nor waiting for art, yet out of play'}`);
   }
-  for (const w of ['ram', 'jet', 'fin', 'top']) assert.ok(ACTIONS.some((a) => a.word === w) && THINGS.some((t) => t.word === w), `${w} is a pad and a picture`);
-  // Item 182: X-RAY live (Matt: the one letter-name exception). Item 187: HELMET live on its promoted picture.
-  for (const w of ['xray', 'helmet']) assert.ok(LIVE.some((l) => l.word === w), `${w} is live`);
-  // Item 188 held UNICORN TEDDY ROCKET BALL for their pictures; item 189 promoted three, item 190 BALL's redraw.
-  for (const w of ['unicorn', 'teddy', 'rocket', 'ball']) assert.ok(LIVE.some((l) => l.word === w), `${w} is live`);
-  assert.deepEqual(STORED.map((w) => w.word).sort(), ['bush']);
   assert.deepEqual(DROPPED, [], 'no odd word is out of play');
 });
 

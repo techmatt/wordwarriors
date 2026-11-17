@@ -65,12 +65,14 @@ family needs two familiar pictures. No word is `odd` at present.
 `SPECIAL_WORDS` (non-bank key words kept for the story, MICE), `FLAVOUR_PICTURES` (POW's
 art for the roster).
 
-**A glyph no screen shows first**: a thing's glyph must not be a sign every episode shows
-before she reads (the journey map's 🌅 ⚔️ 🏆 🏠, the bed's 🛏️), or the planner keeps
-the word out for good (`planInput`; `tests/unit/castSaid.test.ts`). The bedroom's toys are
-no such sign (item 184, Matt): DRUM, LAMP, DUCK, BLOCK and ROBOT are read like any word,
-and a new word may be a bedroom prop. A place's glyph, a hub story's emoji prop or a Charge
-rune's picture still keeps its word out of that episode alone (ROBOT's 🤖). A word a cast's quest line, hub scene, threat or fight
+**A glyph shown on screen keeps nothing out** (Matt, item 191): a door's sign, a journey-map
+stop (🌅 ⚔️ 🏆 🏠) or a hub story's emoji prop no longer reaches the draws (`planInput`), so
+ROBOT may be read in the Robot Workshop's episode. Of the planner's draws, only the bed's 🛏️ still
+keeps its word out of the key words (`notKeys`), so no other thing may share it
+(`tests/unit/castSaid.test.ts`); inside a Charge visit, a rune's gesture still keeps its own glyph's
+word from that visit's later reads (`RUNE_WORDS`, `src/rules/charge.ts`: the game's own rule). The
+bedroom's toys are read like any word (item 184, Matt), and a new word may be a bedroom prop.
+A word a cast's quest line, hub scene, threat or fight
 line says is fine (Matt: hearing it in a character line first is no problem): key draws
 only weigh it down that episode (`softSaid`, `SOFT_SAID_WEIGHT`). Those lines still say
 no action word.

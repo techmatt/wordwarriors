@@ -17,13 +17,20 @@ is a ruling too: do not "fix" it.
   never keeps its word out of play. ROBOT, DRUM, WIZARD, LAMP, DUCK and BLOCK are live,
   and UNICORN or any other prop may be a word. This reverses hunt 9 and 10's M40 storing;
   the bedroom itself is unchanged, and the toys carry no soft weight either (item 184's
-  call: the prompt allowed one). A sign shown elsewhere still keeps its word out of that
-  episode alone (ROBOT's 🤖 in the Robot Workshop or Dada Matt's robot hub story).
+  call: the prompt allowed one).
   Item 188 added the other toys, UNICORN, TEDDY, ROCKET and BALL, each on a picture card
-  unlike the bedroom's toy, stored until that card is promoted (ROCKET's 🚀 keeps it out of an
-  episode with the Rocket Pad, TEDDY's 🧸 of one with the Playroom or Ellie's teddy story).
-  Item 189 promoted Matt's picks for UNICORN, TEDDY and ROCKET (live); he passed on BALL's
-  three, so BALL is redrawn as a plain black-and-white soccer ball, like its ⚽ (`art_alts_189`).
+  unlike the bedroom's toy, stored until that card is promoted. Item 189 promoted Matt's picks
+  for UNICORN, TEDDY and ROCKET, item 190 BALL's black-and-white soccer ball: all four live.
+- **A glyph shown on screen never keeps its word out of play** (Matt, 2026-11-17, item 191),
+  like the bedroom toys and the cast's own lines (item 178): a door's sign, a journey-map stop
+  or the hub story's emoji prop (ROBOT at the Robot Workshop, ROCKET at the Rocket Pad, TEDDY
+  in the Playroom, HUG and BLAST likewise) carries no exclusion and no soft weight
+  (`planInput`, `src/episode/plans.ts`). Only the bed she wakes in and presses green on still
+  keeps BED out of the key words and the attic's counter (hunt 12, `notKeys`).
+- **A word waits for its picture by itself** (item 191): a word whose `pic_<word>` is still
+  the painted placeholder, missing, or a stand-in shared with another word is stored
+  (`content/art/waiting.ts`, derived from `public/art/`) until `art:pick` promotes its own
+  picture; `STORED_WHY` holds only real reasons (BUSH's vowel).
 - **An action word is never a picture she picks** (`role: 'action'`: DRIP, BLAST, the move
   and spell words). Every picture pool draws from `THINGS`; `?sentence=` takes only a
   pictured key. Its picture stays where nothing is picked: the cook-off's dish, the

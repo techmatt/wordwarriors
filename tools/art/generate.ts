@@ -36,6 +36,7 @@ import { scratchArg, scratchPath } from '../scratch.js';
 import { ART_DIR, blankPage, exists, fromDataUrl, isBackgroundKind, pngDataUrl, runMain, SPRITE_SCALE } from '../shared.js';
 import { keyGreen } from './chroma.js';
 import { isPlaceholder } from './placeholders.js';
+import { writeWaiting } from './waiting.js';
 
 export const ORIGINALS = 'art-originals';
 const SHEET = scratchPath('art_contact.png');
@@ -413,6 +414,8 @@ export async function generate(argv: string[]): Promise<void> {
   } finally {
     await close();
   }
+  // Item 191: a word picture drawn here takes its word off the waiting list.
+  if (!sheetOnly) await writeWaiting();
 }
 
 runMain(import.meta.url, () => generate(process.argv.slice(2)), 'art:gen failed: ');

@@ -139,7 +139,7 @@ export interface EpisodeInput {
   games?: [Minigame, Minigame, Minigame];
   /** The pool `games` is drawn from when not given (default: every minigame). */
   pool?: Minigame[];
-  /** Words shown or said before any room that are no character's line (a door's or the map's sign, the warm-up's word): never key words. */
+  /** Words said before any room that are no character's line (the warm-up's word, as it sounds): never key words. A sign's glyph is not one (item 191). */
   saidBefore?: string[];
   /**
    * Words the cast's own lines say first (the quest line, the hub scene, the threat and taunt; with

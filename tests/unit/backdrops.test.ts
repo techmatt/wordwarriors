@@ -8,7 +8,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { ALL_SIDE_ROOMS, COUNTER_ROOM, PLACES, SIDE_ROOM_BY_ID } from '../../content/house/house';
-import { STORED_WHY } from '../../content/phonics/bank';
+import { BANK_BY_WORD } from '../../content/phonics/bank';
 import { EPISODE_DEFAULTS } from '../../src/config';
 import { rememberCast, resetEpisode, setCastOptions } from '../../src/episode/draws';
 import { housePlan } from '../../src/episode/plans';
@@ -25,7 +25,7 @@ const COUNTER_ROOMS = [COUNTER_ROOM, ...PLACES.map((p) => p.secret.id)];
 test('M85: the hideout\'s backdrop pictures its treasure chest; every pictured thing is a bag word; every counter room is listed', () => {
   assert.ok(SIDE_ROOM_BY_ID.secret_hideout!.pictures?.includes('chest'));
   // A stored word may be listed (hunt 13: CAVE, POND, FLAME, SWORD wait for their art): it keeps its word out once live.
-  for (const r of ALL_SIDE_ROOMS) for (const w of r.pictures ?? []) assert.ok(BAG_WORDS.includes(w) || STORED_WHY[w], `${r.id}: ${w} is no bag word, so it keeps nothing out`);
+  for (const r of ALL_SIDE_ROOMS) for (const w of r.pictures ?? []) assert.ok(BAG_WORDS.includes(w) || BANK_BY_WORD[w]?.stored,`${r.id}: ${w} is no bag word, so it keeps nothing out`);
   // The ones whose art paints a bank word (from the art, M85): a new secret room's list is a choice, not a miss.
   for (const id of ['attic', 'secret_hideout', 'tower_room', 'rainbow_room', 'star_observatory', 'treetop_lookout', 'waterfall_cave', 'crystal_vault', 'sweet_cellar']) {
     assert.ok(COUNTER_ROOMS.includes(id) && SIDE_ROOM_BY_ID[id]!.pictures?.length, id);

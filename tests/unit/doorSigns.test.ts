@@ -13,5 +13,6 @@ test('M84: the bakery door\'s sign is a cupcake, not the croissant that read as 
   assert.equal(glyph, '🧁');
   assert.notEqual(glyph, '🥐');
   const pictured = BANK.filter((w) => w.glyph === glyph).map((w) => w.word);
-  assert.deepEqual(pictured, [], 'a bank word drawn as the sign would be shown before she reads it');
+  // A sign keeps no word out of play (item 191), but one drawn as a bank word's glyph would show its picture on the door.
+  assert.deepEqual(pictured, [], 'a bank word drawn as the sign shows its picture on the door');
 });

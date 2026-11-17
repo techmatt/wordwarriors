@@ -22,6 +22,7 @@ import { chromium } from '@playwright/test';
 
 import { ART_ASSETS, type ArtAsset } from '../../content/art/assets.js';
 import { ART_DIR, blankPage, exists, fromDataUrl, isBackgroundKind, runMain, SPRITE_SCALE } from '../shared.js';
+import { writeWaiting } from './waiting.js';
 
 const MARK_KEY = 'WordWarriors';
 const MARK_VALUE = 'placeholder';
@@ -307,6 +308,13 @@ function artDoc(): string {
 // -- main ----------------------------------------------------------------------
 
 async function paintPlaceholders(argv: string[]): Promise<void> {
+  // `--doc-only` (item 191): docs/art.md alone, whose word pictures are ordered by the live words,
+  // for `writeWaiting` to run in a fresh process once a word goes live or out.
+  if (argv.includes('--doc-only')) {
+    await writeFile(path.join('docs', 'art.md'), `${artDoc()}\n`);
+    console.log('art: docs/art.md written');
+    return;
+  }
   const onlyMissing = argv.includes('--missing');
   await mkdir(ART_DIR, { recursive: true });
 
@@ -355,6 +363,8 @@ async function paintPlaceholders(argv: string[]): Promise<void> {
   await writeFile(path.join('docs', 'art.md'), `${artDoc()}\n`);
   // The count only: every committed PNG is real art, so a list of ids would bury the lines above.
   console.log(`art: ${todo.length} placeholders painted, ${kept.length} real files left alone; docs/art.md written`);
+  // Item 191: a new word's painted placeholder keeps it out of play until its picture is promoted.
+  await writeWaiting();
 }
 
 runMain(import.meta.url, () => paintPlaceholders(process.argv.slice(2)), 'art failed: ');

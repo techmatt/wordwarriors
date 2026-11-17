@@ -31,8 +31,13 @@
  * `<id>.game.png` (the committed PNG), so `art:pick -- <id> 0` puts the
  * original art back. A pick then deletes every candidate of that id in
  * `alts/` (item 052): what the game and `--reprocess` need lives outside it.
+ * Item 191: the pick is the whole promotion. It takes several `<id> <k>` pairs
+ * (and `<id> keep`), writes a word picture's brief into `PICTURES` and the pick
+ * note, records each decision in its round and archives a decided round, then
+ * rewrites the derived files (tools/art/promote.ts, tools/art/waiting.ts).
  */
 
+import { execFileSync } from 'node:child_process';
 import { appendFile, copyFile, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -43,6 +48,8 @@ import { NOTES, PICK_NOTES, refFor } from '../../content/art/prompts.js';
 import { scratchArg } from '../scratch.js';
 import { ART_DIR, candidateNumbers, exists, fromDataUrl, pngDataUrl, runMain } from '../shared.js';
 import { ORIGINALS, codexPrompt, cut, describeUsage, gamePng, isBackground, openPage, refCrop, runCodex } from './generate.js';
+import { PROMPTS_FILE, archiveRoot, archiveRound, decide, getEntry, noteWithCurrent, pictureFromBrief, readDecided, readManifest, roundsFor, setEntry } from './promote.js';
+import { writeWaiting } from './waiting.js';
 
 const ALTS = path.join(ORIGINALS, 'alts');
 /**
@@ -326,23 +333,94 @@ export function sheetFile(arg: string): string {
 
 const pruned = (n: number) => (n ? `; deleted its ${n} candidate${n === 1 ? '' : 's'} in ${ALTS}/` : '');
 
+const PICK_USAGE =
+  'usage: npm run art:pick -- <id> <n|keep|0> [<id> <n|keep|0>…] [--round=<name>]   (n from the contact sheet; keep = Matt kept `current`; 0 puts the original back)';
+
+/** The round a decision belongs to: `--round`, else the newest manifest in picks/ with a row for the id. */
+async function roundOf(id: string, roundArg: string | undefined): Promise<string | undefined> {
+  const rounds = await roundsFor(PICKS, id);
+  if (roundArg) {
+    if (!rounds.includes(roundArg)) throw new Error(`--round=${roundArg}: no manifest ${path.join(PICKS, `${roundArg}.json`)} with a row for ${id}`);
+    return roundArg;
+  }
+  if (rounds.length > 1) console.log(`art:pick: ${id} is a row of ${rounds.join(', ')}; recorded in the newest, ${rounds[0]} (--round=<name> to choose)`);
+  return rounds[0];
+}
+
+/**
+ * Promote picks (item 191: one command, nothing else to hand-edit). Each `<id> <n>` pair copies
+ * and cuts the candidate, writes its brief into the game (a word picture's `PICTURES` line), sets
+ * the id's pick note, and records the decision in its round; `<id> keep` records that Matt kept the
+ * art as it is. A round with every row decided is archived in Drive. Then the derived files follow:
+ * content/art/waiting.ts and, if a word went live or out, the golden draws and the recorder's list.
+ */
 export async function pick(argv: string[]): Promise<void> {
-  const [id, kArg] = argv.filter((a) => !a.startsWith('--'));
-  if (!id || kArg === undefined || !/^\d+$/.test(kArg)) throw new Error('usage: npm run art:pick -- <id> <n>   (n from the contact sheet; 0 puts the original back)');
-  if (!ART_BY_ID[id]) throw new Error(`${id} is not an asset id (content/art/assets.ts)`);
-  const k = Number(kArg);
+  const args = argv.filter((a) => !a.startsWith('--'));
+  const roundArg = argv.find((a) => a.startsWith('--round='))?.slice('--round='.length);
+  if (!args.length || args.length % 2) throw new Error(PICK_USAGE);
+  const pairs: [string, string][] = [];
+  for (let i = 0; i < args.length; i += 2) pairs.push([args[i]!, args[i + 1]!]);
+  // Check every pair before changing anything.
+  for (const [id, key] of pairs) {
+    if (!ART_BY_ID[id]) throw new Error(`${id} is not an asset id (content/art/assets.ts)`);
+    if (key !== 'keep' && !/^\d+$/.test(key)) throw new Error(PICK_USAGE);
+    if (/^\d+$/.test(key) && Number(key) > 0 && !(await exists(altFile(id, Number(key))))) {
+      throw new Error(`no candidate ${altFile(id, Number(key))}; have ${(await candidates(id)).join(', ') || 'none'}`);
+    }
+    if (key === '0' && !(await exists(restoreGame(id)))) throw new Error(`${id} has no saved original (${restoreGame(id)}): it was never picked`);
+  }
+  // And every pair's round (`--round` must have a row for each), so no pair fails half way.
+  const roundBy = new Map<string, string | undefined>();
+  for (const [id, key] of pairs) roundBy.set(id, key === '0' ? undefined : await roundOf(id, roundArg));
+  const needPage = pairs.some(([, key]) => /^\d+$/.test(key) && key !== '0');
+  const rounds = new Set<string>();
+  try {
+    const opened = needPage ? await openPage() : undefined;
+    try {
+      for (const [id, key] of pairs) {
+        const round = roundBy.get(id);
+        const brief = await pickOne(id, key, round, opened?.page);
+        if (round) {
+          const left = await decide(PICKS, round, id, { key, at: new Date().toISOString(), ...(brief ? { brief: { name: brief.name, file: brief.file } } : {}) });
+          rounds.add(round);
+          console.log(`art:pick: ${round}: ${id} decided (${key})${left.length ? `; still open: ${left.join(', ')}` : '; every row decided'}`);
+        }
+      }
+    } finally {
+      await opened?.close();
+    }
+    for (const round of rounds) {
+      const m = await readManifest(PICKS, round);
+      const decided = await readDecided(PICKS, round);
+      if (m.rows.some((r) => !decided.decisions[r.id])) continue;
+      const briefs = Object.values(decided.decisions).flatMap((d) => (d.brief ? [d.brief.file] : []));
+      const moved = await archiveRound({ picks: PICKS, alts: ALTS, archive: await archiveRoot(ORIGINALS), round, briefs });
+      console.log(`art:pick: ${round} is decided, archived in Drive (${moved.length} moved):\n  ${moved.join('\n  ')}`);
+    }
+  } finally {
+    // Whatever was cut before a failure is in public/art/: the derived files follow it all the same.
+    await regenerate();
+  }
+}
+
+/** One pair's art and prompt; returns the brief the candidate was drawn from, if any. */
+async function pickOne(id: string, key: string, round: string | undefined, page: Page | undefined): Promise<Sidecar | undefined> {
   const game = path.join(ART_DIR, `${id}.png`);
   const orig = path.join(ORIGINALS, `${id}.png`);
+  if (key === 'keep') {
+    console.log(`art:pick: ${id}: kept as it is`);
+    return undefined;
+  }
+  const k = Number(key);
   if (k === 0) {
-    if (!(await exists(restoreGame(id)))) throw new Error(`${id} has no saved original (${restoreGame(id)}): it was never picked`);
     // The original's committed PNG, byte for byte (a placeholder has no full-res original).
+    // Its PICTURES line and pick note are left as the pick wrote them: `git checkout` them if they should go too.
     await copyFile(restoreGame(id), game);
     if (await exists(restoreFile(id))) await copyFile(restoreFile(id), orig);
     console.log(`art:pick: ${id}: the original is back${pruned(await prune(id))}`);
-    return;
+    return undefined;
   }
   const src = altFile(id, k);
-  if (!(await exists(src))) throw new Error(`no candidate ${src}; have ${(await candidates(id)).join(', ') || 'none'}`);
   // The first pick keeps what was there, outside alts/, so it can come back.
   // A placeholder has no full-res original, only its committed PNG.
   if (!(await exists(restoreGame(id)))) {
@@ -353,21 +431,34 @@ export async function pick(argv: string[]): Promise<void> {
   }
   // The full-res pick goes where --reprocess reads it before alts/ is pruned.
   await copyFile(src, orig);
-  const { page, close } = await openPage();
-  try {
-    await cut(page, id, await readFile(src), `candidate ${k}`);
-  } finally {
-    await close();
-  }
+  await cut(page!, id, await readFile(src), `candidate ${k}`);
   const b = await sidecar(id, k);
   console.log(`art:pick: ${id}${pruned(await prune(id))}`);
-  if (b) {
+  let prompts = await readFile(PROMPTS_FILE, 'utf8');
+  if (b && id.startsWith('pic_')) {
     // The game's prompt must match its art, so art:gen and later rounds draw the same look (item 041).
+    prompts = setEntry(prompts, 'PICTURES', id.slice(4), pictureFromBrief(b.text));
+    console.log(`art:pick: ${id}-${k} was drawn from brief ${b.name}: written into PICTURES (${PROMPTS_FILE})`);
+  } else if (b) {
     console.log(`\nart:pick: ${id}-${k} was drawn from brief ${b.name} (${b.file}), not the game's prompt. Write the brief into the game in the same commit:`);
     console.log('  a character: its `look` in content/battle/roster/ (its prompt is derived from that, and docs/art.md follows);');
     console.log(`  anything else: a HAND entry for ${id} in content/art/prompts.ts.`);
     console.log(`\n${b.text}\n`);
   }
+  const day = new Date().toISOString().slice(0, 10);
+  const current = `\`current\` is candidate ${k}${round ? ` of ${round}` : ''}${b ? ` (brief ${b.name})` : ''}, promoted by art:pick on ${day}.`;
+  // A note built by a spread (`...pickedBy025()`) has no line of its own: start from its value, so the new
+  // line (which overrides it, after the spread) keeps the rest of it.
+  prompts = setEntry(prompts, 'PICK_NOTES', id, noteWithCurrent(getEntry(prompts, 'PICK_NOTES', id) ?? PICK_NOTES[id], current));
+  await writeFile(PROMPTS_FILE, prompts);
+  return b;
+}
+
+/** The derived files a promotion moves (item 191: waiting.ts, and with it the golden and the recorder's list), then what to commit. */
+async function regenerate(): Promise<void> {
+  await writeWaiting();
+  const status = execFileSync('git', ['status', '--short'], { encoding: 'utf8' }).trimEnd();
+  console.log(`\nart:pick: commit these (nothing else needs editing for the pick to go live):\n${status || '  (no tracked change)'}`);
 }
 
 // package.json runs this file with `alts` or `pick` first. Anything else is refused,
