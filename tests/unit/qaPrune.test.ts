@@ -66,6 +66,7 @@ test('qa prune: a hunt whose rulings have landed is thinned, the newest kept who
   assert.ok(landed(doc, 10) && landed(doc, 9));
   assert.ok(!landed(doc, 11), 'a call without a ruling');
   assert.ok(!landed(doc, 12), 'no section yet');
+  assert.ok(landed(doc, 8), 'its section dropped under a later hunt (item 185: hunt 11 after item 179)');
   const { thin, prune } = plan(runs, undefined, () => '', 3, (h) => landed(doc, h));
   assert.deepEqual(new Set(thin), new Set(['h9a', 'h10a']));
   assert.ok(prune.includes('h8a') && !thin.includes('h8a'), 'off the cap: deleted whole');
@@ -80,6 +81,11 @@ test('qa prune: the shots a thinned run keeps', () => {
   assert.ok(citesShot(text, 'h10a', 'soak3/990_Hub_z.png'));
   assert.ok(!citesShot(text, 'h10a', 'soak3/987_Hub_z.png'));
   assert.ok(!citesShot(text, 'h10a', 'sheets/soak3_1.png'));
+  // Item 185: shots are JPEG now, and older runs' PNGs were re-encoded; a cite of either finds either.
+  assert.ok(citesShot(text, 'h10n', 'drawn4/491_Battle_x.jpg'));
+  assert.ok(citesShot(text, 'h10a', 'soak3/990_Hub_z.jpg'));
+  assert.ok(citesShot('`qa/h13a/a/001_T.jpg`', 'h13a', 'a/001_T.jpg'));
+  assert.ok(!citesShot('`qa/h13a/a/001_T.jpg`', 'h13a', 'a/001_T2.jpg'));
 });
 
 test('scratch home: beside the main checkout, and `scratch/` arguments land in it', () => {

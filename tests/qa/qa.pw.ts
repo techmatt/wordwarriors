@@ -43,6 +43,8 @@ const VARIANT_BASES = Object.fromEntries(NARRATOR_LINES.map((t) => t.key).filter
 
 const TAG = process.env.QA_TAG ?? 'now';
 const OUT = scratchPath('qa', TAG);
+/** A shot's JPEG quality (item 185): a sweep's 5,000 shots were ~5 GB as PNG, ~0.8 GB at this. */
+const SHOT_QUALITY = 75;
 const PLACEHOLDERS = placeholderArt();
 // Lines with no clip, or a clip for old text: the same for every scenario, so read once (item 062).
 const VOICE_BUILD = voiceBuildIssues();
@@ -481,9 +483,10 @@ class Recorder {
     let shot: string | undefined;
     if (this.shots < this.max) {
       this.shots++;
-      shot = `${this.dir}/${String(this.shots).padStart(3, '0')}_${s.scene}_${label}.png`;
+      // JPEG at 75 (item 185): ~150 KB a shot against PNG's ~1 MB, captions and pad words as legible.
+      shot = `${this.dir}/${String(this.shots).padStart(3, '0')}_${s.scene}_${label}.jpg`;
       // Bounded (hunt 9): the config sets no action timeout, so a screenshot that never got its frame waited forever.
-      await serial(this.page, () => this.page.screenshot({ path: shot, timeout: 20_000 })).catch(() => undefined);
+      await serial(this.page, () => this.page.screenshot({ path: shot, type: 'jpeg', quality: SHOT_QUALITY, timeout: 20_000 })).catch(() => undefined);
       this.lastShot = shot;
     }
     // A picked picture pops up as its word is said (hunt 7, W33): the answer is made, so its brush

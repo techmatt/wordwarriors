@@ -28,6 +28,9 @@ import { scratchPath } from '../../tools/scratch';
 /** Hunts kept. */
 const KEEP_HUNTS = 3;
 
+/** A shot or sheet: PNG before item 185, JPEG from it. */
+const SHOT = /\.(?:png|jpe?g)$/i;
+
 /** The hunt a tag belongs to, or null for a run outside any hunt. */
 export const huntOf = (tag: string): number | null => {
   const m = /^h(\d+)/.exec(tag);
@@ -62,11 +65,13 @@ export function huntSections(findings: string, hunts: ReadonlySet<number>): stri
 /**
  * Have hunt `hunt`'s rulings landed? Its `## Hunt <n>` section is written and every row
  * of its `### Matt's calls` table has its Ruling filled (a section with no calls table
- * has nothing to rule). No section yet: the hunt is still going, or not written up.
+ * has nothing to rule). No section yet: the hunt is still going, or not written up; but a
+ * hunt with no section under a later hunt's section was written up and since dropped
+ * (item 179 cut hunt 11's when it trimmed the doc to current-only): landed.
  */
 export function landed(findings: string, hunt: number): boolean {
   const section = huntSections(findings, new Set([hunt]));
-  if (!section) return false;
+  if (!section) return [...findings.matchAll(/^## Hunt (\d+)\b/gm)].some((m) => Number(m[1]) > hunt);
   const calls = /^### Matt's calls\s*$([\s\S]*?)(?=^### |(?![\s\S]))/m.exec(section);
   if (!calls) return true;
   const cells = (line: string) => line.trim().replace(/^\||\|$/g, '').split(/(?<!\\)\|/).map((c) => c.trim());
@@ -89,8 +94,10 @@ export function landed(findings: string, hunt: number): boolean {
 export function citesShot(text: string, tag: string, rel: string): boolean {
   const r = rel.replace(/\\/g, '/');
   const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  if (new RegExp(`qa[\\\\/]${esc(tag)}[\\\\/]${esc(r).replace(/\//g, '[\\\\/]')}`).test(text)) return true;
-  const m = /^([^/]+)\/(\d+)_[^/]*\.png$/i.exec(r);
+  // Either extension (item 185 re-encoded PNG shots as JPEG): a path cited as `.png` keeps its `.jpg`.
+  const stem = r.replace(SHOT, '');
+  if (new RegExp(`qa[\\\\/]${esc(tag)}[\\\\/]${esc(stem).replace(/\//g, '[\\\\/]')}\\.(?:png|jpe?g)\\b`, 'i').test(text)) return true;
+  const m = /^([^/]+)\/(\d+)_[^/]*\.(?:png|jpe?g)$/i.exec(r);
   if (!m) return false;
   const list = new RegExp(`\`${esc(m[1])}\`((?:[ ,]+(?:and |to )?\\d{3,4}\\b)+)`, 'g');
   for (const hit of text.matchAll(list)) {
@@ -147,7 +154,7 @@ function thinRun(runDir: string, tag: string, text: string, dry: boolean): { sho
       if (e.isDirectory()) {
         if (walk(r) && !dry) rmSync(path.join(runDir, r), { recursive: true, force: true });
         else empty = false;
-      } else if (/\.png$/i.test(e.name) && !citesShot(text, tag, r)) {
+      } else if (SHOT.test(e.name) && !citesShot(text, tag, r)) {
         shots++;
         bytes += statSync(path.join(runDir, r)).size;
         if (!dry) rmSync(path.join(runDir, r), { force: true });

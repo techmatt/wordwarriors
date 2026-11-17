@@ -29,8 +29,7 @@ export async function contactSheet(files: string[], dir: string, out: string, la
     tiles.push({ input: Buffer.from(`<svg width="${W}" height="${STRIP}"><text x="${style.x}" y="${style.y}" font-family="Arial" font-size="${style.size}">${text}</text></svg>`), left: x, top: y });
   }
   const rows = Math.ceil(files.length / COLS);
-  await sharp({ create: { width: COLS * W, height: rows * (H + STRIP), channels: 3, background: '#ffffff' } })
-    .composite(tiles)
-    .png()
-    .toFile(out);
+  const sheet = sharp({ create: { width: COLS * W, height: rows * (H + STRIP), channels: 3, background: '#ffffff' } }).composite(tiles);
+  // A `.jpg` sheet (the checker's, item 185) is ~6x smaller than the PNG; the labels stay legible at 85.
+  await (/\.jpe?g$/i.test(out) ? sheet.jpeg({ quality: 85, mozjpeg: true }) : sheet.png()).toFile(out);
 }

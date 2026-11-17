@@ -169,7 +169,9 @@ lock stretches, missing art, console capture and `layout()` / `counts()` on `win
 `` `<tag>` `` in a kept `summary.md` or those hunts' sections of `docs/qa-findings.md`), and
 runs outside a hunt no older than the oldest kept hunt's first run. A kept hunt whose
 rulings have landed (its `## Hunt <N>` section written, every *Matt's calls* row's Ruling
-filled) keeps only each run's `summary.md`, JSON and cited shots. **Write a ruling into every
+filled; or its section dropped under a later hunt's) keeps only each run's `summary.md`,
+JSON and cited shots (a shot cited as `.png` or `.jpg` matches either: shots are JPEG from
+item 185). **Write a ruling into every
 row** (an empty cell keeps the hunt's tens of GB), and write the calls rows before committing
 a hunt's section mid-run (a section with no calls table counts as ruled). **Name a hunt's
 tags `h<N>…`** (`h12a`): the number ties a run to its hunt. A look worth keeping past three

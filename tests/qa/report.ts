@@ -3,7 +3,7 @@
  *   npx tsx tests/qa/report.ts <tag> [--no-sheets]
  * reads `qa/<tag>/<scenario>.json` in the scratch home (`tools/scratch.ts`) and writes `qa/<tag>/summary.md`
  * (issues merged across scenarios, most frequent first, each with a shot),
- * and a contact sheet per scenario, `qa/<tag>/sheets/<scenario>_<n>.png`
+ * and a contact sheet per scenario, `qa/<tag>/sheets/<scenario>_<n>.jpg`
  * (six shots a row at a quarter size, 48 a sheet, each labelled by its file name).
  */
 
@@ -72,10 +72,11 @@ if (!flags.includes('--no-sheets')) {
   for (const r of runs) {
     const sd = `${dir}/${r.scenario.name}`;
     if (!existsSync(sd)) continue;
-    const files = readdirSync(sd).filter((f) => f.endsWith('.png')).sort();
+    // Shots are `.jpg` from item 185 (`.png` before); sheets are JPEG too.
+    const files = readdirSync(sd).filter((f) => /\.(png|jpg)$/.test(f)).sort();
     for (let p = 0; p * PER < files.length; p++) {
       const list = files.slice(p * PER, (p + 1) * PER);
-      await contactSheet(list, sd, `${dir}/sheets/${r.scenario.name}_${p + 1}.png`, (f) => f.slice(0, -4).slice(0, 44), { x: 3, y: 13, size: 11 });
+      await contactSheet(list, sd, `${dir}/sheets/${r.scenario.name}_${p + 1}.jpg`, (f) => f.slice(0, -4).slice(0, 44), { x: 3, y: 13, size: 11 });
     }
   }
   console.log(`sheets in ${dir}/sheets/`);

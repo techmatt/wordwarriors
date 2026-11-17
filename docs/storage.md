@@ -64,19 +64,25 @@ A script there cannot import game code or find `node_modules` (README, *Operatio
 
 ## Disk
 
-- **Shot runs fill the disk.** Every shot is a ~1 MB PNG: a bug-hunt sweep is 1.6–4.3 GB in
-  `qa/<tag>/`, a battle-shots run ~0.5 GB in `polish_034/<tag>/`. The checker prunes `qa/`
-  as each sweep starts (`docs/tools.md`, *Retention*). Shot runs outside `qa/` are not
-  pruned: delete them once written up.
+- **Shot runs fill the disk.** A sweep is ~30 scenarios of up to 400 shots an episode, so
+  ~5,000 frames at 1280×720. As PNG (~1 MB each, till item 185) a sweep was 1–5 GB and hunt
+  13's four runs 8.2 GB; the checker now shoots JPEG at quality 75 (~150 KB, `SHOT_QUALITY`
+  in `tests/qa/qa.pw.ts`) and writes JPEG contact sheets, about 6x smaller, and item 185
+  re-encoded hunts 11 to 13's PNGs the same way. A battle-shots run is still PNG, ~0.5 GB in
+  `polish_034/<tag>/`. The checker prunes `qa/` as each sweep starts (`docs/tools.md`,
+  *Retention*): an unruled hunt stays whole, so ruling a hunt is what frees its shots. Shot
+  runs outside `qa/` are not pruned: delete them once written up.
 - **Nothing old is kept forever.** Once Matt's picks from a candidate round are promoted,
   the rest are disposable: `art:pick` deletes the id's candidates, and the round's sheet,
   manifest and preview folder (`art-originals/picks/`) and its briefs go too. A finished
   item's leftover worktree goes with `git worktree remove --force <path>` from the main
   checkout (junctions unlinked first, `cmd /c rmdir <path>`), then `git worktree prune`; its
   `conductor/*` branch stays.
-- **Where it goes:** the scratch home's `qa/` dwarfs the rest; then `art-originals/`
-  (~1 GB, keep), `node_modules/` (~280 MB per checkout), `.git` (~140 MB; about 70 MB is
-  old `public/voice/` mp3s and superseded `public/art/` PNGs), `voice-gen/` (~140 MB).
+- **Where it goes** (item 185, decimal MB): the scratch home's `qa/` (1.6 GB as JPEG, hunt 13
+  most of it; it was 10.3 GB as PNG); `art-originals/` (2.4 GB, keep: 1 GB of it `figments/`,
+  `art:freeform`'s), `node_modules/` (~270 MB per checkout), `.git` (~140 MB; ~77 MB of it
+  blobs main no longer has: old `public/voice/` mp3s 45 MB, superseded `public/art/` PNGs
+  29 MB), `voice-gen/` (~160 MB).
   Measure with a walk that never follows a link (`os.scandir`, skipping `is_junction()` /
   `is_symlink()`), so Drive is counted once.
 - **Not to clear** (Matt): no git-history rewrite to drop old mp3s or PNGs from `.git`;
