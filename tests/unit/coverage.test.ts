@@ -69,6 +69,8 @@ test('untaught sounds (item 058): a word holding one is a late long-path word; X
   assert.deepEqual(t('sword'), [3, null, 's  or d']);
   assert.deepEqual(t('wizard'), [3, null, 'w i z er d']);
   assert.deepEqual(t('bow'), [3, null, 'b long_o']);
+  // Item 184: ROBOT's first O long, its second short, so the long path.
+  assert.deepEqual(t('robot'), [3, null, 'r long_o b o t']);
   assert.deepEqual(t('helmet'), [2, 'e', 'h e l m e t']);
   for (const s of UNTAUGHT_SOUNDS) assert.ok(SOUND_BY_UNIT[s.letter] && LONG_VOWEL_SOUNDS.includes(s), `${s.letter} has its own line`);
   const row = (tag: string) => coverageRows().find((r) => r.tag === tag)!.words;

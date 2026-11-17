@@ -181,7 +181,7 @@ the bank until that line is reworded (the unit tests name it).
 A **stored** word is out of every pool (`THINGS`, `ACTIONS`, `LIVE`), so nothing draws it at
 any difficulty and a saved bag drops it. `STORED_WHY` in `content/phonics/bank.ts` lists each
 with its reason; the grown-ups page lists them on page 3. Today that is BUSH (a wrong short
-U), the bedroom's props DRUM, LAMP, DUCK and BLOCK, and HELMET (no picture picked yet).
+U) and HELMET (no picture picked yet).
 Every other word, `odd` ones included, is live (Matt). A stored word keeps its entry,
 picture, `word_<x>` line, effect and move lines (the composer writes them from `ALL_ACTIONS`
 and `ALL_FAMILIES`), so storing or restoring one changes nothing in `lines.json`. **To bring

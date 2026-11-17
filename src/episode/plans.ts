@@ -30,7 +30,7 @@
 import { ART_BY_ID } from '../../content/art/assets';
 import { CHARACTER_BY_ID, personOf } from '../../content/battle/roster';
 import type { CounterItem } from '../../content/battle/types';
-import { BEDROOMS, COUNTER_ROOM, FETCH_ROOMS, PLACE_BY_ID, SIDE_ROOM_BY_ID } from '../../content/house/house';
+import { COUNTER_ROOM, FETCH_ROOMS, PLACE_BY_ID, SIDE_ROOM_BY_ID } from '../../content/house/house';
 import { BANK, THINGS } from '../../content/phonics/bank';
 import { FRAMES, sentence } from '../../content/phonics/sentences';
 import { NARRATOR_LINES, wakeTemplate, wakeVariant } from '../../content/voice/script';
@@ -227,9 +227,8 @@ function planInput(gift: string, rooms: [string, string], counterRoom: string): 
   // The journey map's stops too (🌅 🏠, the place's glyph): it shows before the attic.
   const signs = new Set([...rooms, counterRoom].map((r) => SIDE_ROOM_BY_ID[r]?.glyph).filter(Boolean));
   for (const s of journeyStops()) signs.add(s.icon);
-  // The bedroom's toys (a drum, a duck, a night-light: DRUM, DUCK, LAMP) and the hub story's
-  // prop drawn as an emoji (Chef Jason's 🍲, LID's picture) show before any room too (item 069).
-  for (const b of BEDROOMS) for (const o of b.objects) signs.add(o.glyph);
+  // The hub story's prop drawn as an emoji (Chef Jason's 🍲, LID's picture) shows before any room too (item 069).
+  // Not the bedroom's toys (item 184, Matt): a toy shown there never keeps its word (DRUM, ROBOT) out of play.
   const prop = hubScene().story.prop;
   if (!prop.startsWith('prop_')) signs.add(prop);
   const signWords = BANK.filter((w) => w.glyph && signs.has(w.glyph)).map((w) => w.word);

@@ -13,6 +13,12 @@ is a ruling too: do not "fix" it.
 - **The bank has enough variety.** No new words unless Matt asks; a rare or ambiguous word
   is stored (`STORED_WHY`), not deleted. XRAY stays X's first word, live (item 182). MAT stays a
   bridge word, though it sounds like "Matt". Plural key words may come later.
+- **A bedroom toy is a live word** (Matt, 2026-11-16, item 184): a toy shown in the bedroom
+  never keeps its word out of play. ROBOT, DRUM, WIZARD, LAMP, DUCK and BLOCK are live,
+  and UNICORN or any other prop may be a word. This reverses hunt 9 and 10's M40 storing;
+  the bedroom itself is unchanged, and the toys carry no soft weight either (item 184's
+  call: the prompt allowed one). A sign shown elsewhere still keeps its word out of that
+  episode alone (ROBOT's 🤖 in the Robot Workshop or Dada Matt's robot hub story).
 - **An action word is never a picture she picks** (`role: 'action'`: DRIP, BLAST, the move
   and spell words). Every picture pool draws from `THINGS`; `?sentence=` takes only a
   pictured key. Its picture stays where nothing is picked: the cook-off's dish, the

@@ -59,8 +59,8 @@ export interface BankEntry {
   role: Role;
   glyph?: string;
   say?: string;
-  /** The item that added it: 037, 040, 054, 056, 058, 059, 121, 126, 157 or 178 (unset for older words). `?words=new` and the grown-ups page's NEW read 121's, 126's, 157's and 178's. */
-  since?: '037' | '040' | '054' | '056' | '058' | '059' | '121' | '126' | '157' | '178';
+  /** The item that added it: 037, 040, 054, 056, 058, 059, 121, 126, 157, 178 or 184 (unset for older words). `?words=new` and the grown-ups page's NEW read 121's, 126's, 157's, 178's and 184's. */
+  since?: '037' | '040' | '054' | '056' | '058' | '059' | '121' | '126' | '157' | '178' | '184';
   /** It sounds like a spell (ZAP, HEX, POP; not MUD or NAP): a caster's gift leans to it (item 038, `drawGift`). */
   spell?: true;
   /**
@@ -122,6 +122,8 @@ const NEW_126 = { since: '126' as const };
 const NEW_157 = { since: '157' as const };
 /** Item 178 (Matt's): FROST POND FANG SAND HELMET GOBLIN, CAPE CAVE FLAME SMOKE ICE, SWORD SHIELD BOW DRAGON CROWN CASTLE WIZARD (for ROBOT, a bedroom toy). */
 const NEW_178 = { since: '178' as const };
+/** Item 184 (Matt's ruling): ROBOT, back once a bedroom toy no longer kept its word out. */
+const NEW_184 = { since: '184' as const };
 /** Item 058: a familiar picture holding a sound she has not been taught (UNTAUGHT_SOUNDS): level 3, with the digraphs. */
 const UNTAUGHT_058 = { since: '058' as const, late: true as const };
 
@@ -143,6 +145,7 @@ const ENTRIES: BankEntry[] = [
   T('jam', '🍓', NEW), T('yak', '🐂', NEW), T('vat', '🍯', NEW), T('leg', '🦵', NEW), T('peg', '📎', NEW),
   T('wig', '💇', NEW), T('bib', '👶', NEW), T('fig', '🟣', NEW), T('six', '6️⃣', NEW), B('fin', '🦈', NEW),
   T('kit', '🧰', NEW), T('lip', '👄', NEW), T('cog', '⚙️', NEW), T('rod', '🎣', NEW), T('pod', '🌱', NEW),
+  // HUT has no glyph: 🏠 is the journey map's home stop, a sign shown before she reads (plans.ts `planInput`).
   T('gum', '🍬', NEW), T('bun', '🍞', NEW), T('hut', undefined, NEW), T('sub', '🐳', NEW),
   A('nap', '😴', NEW), A('wag', '🐕', NEW), A('jab', '🥊', NEW), A('red', '🔴', NEW), A('hex', '🔮', NEW_SPELL),
   A('jig', '💃', NEW), A('mix', '🥣', NEW_SPELL), A('jog', '🏃', NEW), A('bop', '🔨', NEW), B('dot', '⚫', NEW),
@@ -264,9 +267,13 @@ const ENTRIES: BankEntry[] = [
   T('dragon', '🐉', { ...NEW_178, late: true, spelled: [['d', 'd'], ['r', 'r'], ['a', 'a'], ['g', 'g'], ['o', 'schwa'], ['n', 'n']] }),
   T('crown', '👑', { ...NEW_178, late: true, spelled: [['c', 'c'], ['r', 'r'], ['ow', 'ow'], ['n', 'n']] }),
   T('castle', '🏰', { ...NEW_178, late: true, spelled: [['c', 'c'], ['a', 'a'], ['st', 's'], ['l', 'l'], ['e', '']] }),
-  // WIZARD in ROBOT's place (Matt's list allows a swap): the bedroom's wind-up robot is shown every
-  // episode, so ROBOT could never be read (as DRUM). Its AR is the unstressed ER, a new untaught sound (`er`).
+  // WIZARD took ROBOT's place in item 178 (then the bedroom's toys were kept out of play); its AR is
+  // the unstressed ER, a new untaught sound (`er`).
   T('wizard', '🧙', { ...NEW_178, late: true, spelled: [['w', 'w'], ['i', 'i'], ['z', 'z'], ['ar', 'er'], ['d', 'd']] }),
+  // Item 184 (Matt, 2026-11-16): a bedroom toy never keeps its word out of play, so ROBOT joins too,
+  // `late` like WIZARD: its first O is long, its second short (BOT). Its picture (item 183's round,
+  // Matt's pick 3) is a white-and-orange robot, not the bedroom's blue wind-up toy.
+  T('robot', '🤖', { ...NEW_184, late: true, spelled: [['r', 'r'], ['o', 'long_o'], ['b', 'b'], ['o', 'o'], ['t', 't']] }),
 ];
 
 /** The digraphs that are one sound unit (item 056: NG, and QU, whose sound is Q's "kw"). */
@@ -358,15 +365,8 @@ export const STORED_WHY: Record<string, string> = {
   helmet: 'no picture picked yet (item 178\'s round); a kid\'s bicycle helmet is being drawn',
   // Hunt 11, M66: a sound-out would teach the wrong vowel.
   bush: 'its U is the U of PUT, not of SUN: a wrong short-U word in every sound-out',
-  // Hunt 9, M40: the bedroom's own props, shown every episode before any room (fix 74), so never read.
-  // (BED, TUB, NUT and BAG are live again, item 153, Matt: "all okay words". Item 157: the journey map's
-  // bedroom stop is 🌅 now, not BED's 🛏️, so BED can be a key word; HUT, live again, has no glyph, as 🏠 is
-  // the map's home stop: a bank word whose glyph is a shown sign is never read, plans.ts `planInput`.)
-  drum: 'a bedroom toy, shown every episode, so it is never read',
-  lamp: 'the bedroom night-light, shown every episode, so it is never read',
-  duck: 'a bedroom toy, shown every episode, so it is never read',
-  // Hunt 10, M40's kind: the bedroom's tower of blocks (🧱, not BLOCK's 🟦, so the glyph match missed it).
-  block: 'the bedroom\'s tower of toy blocks, shown every episode, so it is never read',
+  // (Hunt 9 and 10, M40, stored the bedroom's props DRUM LAMP DUCK BLOCK; item 184, Matt 2026-11-16: a toy
+  // shown in the bedroom never keeps its word out of play, docs/rulings.md. They are live again.)
   // (Hunt 13 stored CAPE CAVE FLAME POND SMOKE SWORD on one shared stand-in picture; item 182 promoted their art.)
 };
 

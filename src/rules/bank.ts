@@ -87,9 +87,9 @@ export function recentWords(store: ProgressStore): Set<string> {
  * wherever a game can use them (the bag still spends a word once read).
  */
 let favoured = new Set<string>();
-/** The words items 121, 126 and 157 added (familiar things she knows: the farm, dragons, Dad's bedtime stories, home and school; COW, MOM, DAD; the Shape-Shifter's PUP CUB COT KID): `?words=new`, and NEW on the grown-ups page. */
+/** The words items 121, 126, 157, 178 and 184 added (familiar things she knows: the farm, dragons, Dad's bedtime stories, home and school; COW, MOM, DAD; the Shape-Shifter's PUP CUB COT KID; 178's FROST to WIZARD; ROBOT): `?words=new`, and NEW on the grown-ups page. */
 // Not a stored one (hunt 9: `npm run variety` listed SACK DASH SWISH GATE as new words that never came up).
-export const NEW_WORDS: string[] = BANK.filter((w) => (w.since === '121' || w.since === '126' || w.since === '157' || w.since === '178') && !w.stored).map((w) => w.word);
+export const NEW_WORDS: string[] = BANK.filter((w) => (w.since === '121' || w.since === '126' || w.since === '157' || w.since === '178' || w.since === '184') && !w.stored).map((w) => w.word);
 export const FAVOURED_WEIGHT = 40;
 export function favourWords(words: Iterable<string>): void {
   favoured = new Set(words);

@@ -213,7 +213,7 @@ for (let e = 0; e < EPISODES; e++) {
   }
   saw(e, 'words', 'every word read (rooms, counter, pads, gift)', read, LIVE.map((w) => w.word));
   saw(e, 'words', 'every word read or shown (+ warm-up, pictures)', [...read, grab.word, ...grab.objects], LIVE.map((w) => w.word));
-  if (NEW_WORDS.length) saw(e, 'words', 'new words (items 121, 126, 157, 178), read', read.filter((w) => NEW_WORDS.includes(w)), NEW_WORDS);
+  if (NEW_WORDS.length) saw(e, 'words', 'new words (items 121, 126, 157, 178, 184), read', read.filter((w) => NEW_WORDS.includes(w)), NEW_WORDS);
   saw(e, 'phonics', 'first sounds read', read.map((w) => bank(w)?.onset || '(vowel)'), [...new Set(LIVE.map((w) => w.onset || '(vowel)'))]);
   saw(e, 'phonics', 'short vowels read', read.map((w) => bank(w)?.vowel ?? 'long'), [...VOWEL_LIST, 'long']);
   saw(e, 'phonics', 'levels read', read.map((w) => String(bank(w)?.level ?? '?')), ['1', '2', '3']);

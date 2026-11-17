@@ -55,12 +55,12 @@ test('stored words keep their picture, word line, effect and move lines', () => 
   }
 });
 
-test("stored words (hunt 10, M40): every bedroom prop that is a bank word is stored, whatever its glyph (the block tower is 🧱, BLOCK 🟦)", async () => {
+test("bedroom toys (item 184, Matt; reverses hunt 10's M40): every bedroom prop that is a bank word is live", async () => {
   const { BEDROOMS } = await import('../../content/house/house');
   const { withStems } = await import('../../src/rules/bank');
   const props = withStems(BEDROOMS.flatMap((b) => b.objects.map((o) => o.id))).filter((w) => BANK_BY_WORD[w]);
-  assert.ok(props.includes('block'), props.join(' '));
-  for (const w of props) assert.ok(STORED_WHY[w], `${w}: a bedroom prop, shown every episode, but in play`);
+  assert.deepEqual([...props].sort(), ['block', 'drum', 'duck', 'lamp', 'robot']);
+  for (const w of props) assert.ok(!STORED_WHY[w] && LIVE.some((l) => l.word === w), `${w}: a bedroom prop, kept out of play`);
 });
 
 test('bedroom (hunt 10): no toy stands where a grown-up does (the robot stood behind the ally, a hat on Ellie, every episode)', async () => {

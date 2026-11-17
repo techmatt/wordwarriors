@@ -60,7 +60,7 @@ const NO_GREEN_PICTURES = [
   'ham', 'hay', 'sack', 'dress', 'block', 'bench', 'skunk', 'dash', 'smash', 'crash', 'splash',
   'mom', 'dad', 'cow',
   'pup', 'cub', 'cot', 'kid',
-  'frost', 'sand', 'fang', 'helmet', 'cape', 'flame', 'smoke', 'sword', 'shield', 'bow', 'crown', 'wizard',
+  'frost', 'sand', 'fang', 'helmet', 'cape', 'flame', 'smoke', 'sword', 'shield', 'bow', 'crown', 'wizard', 'robot',
 ].map((w) => `pic_${w}`);
 // Julia's outfits beside the allies, Seraphina's pink dragon, and Ozymandias's
 // penguins, snow bot, fish bucket and cards: no green of their own.
@@ -165,7 +165,8 @@ export const PICK_NOTES: Record<string, string> = {
   pic_dragon: "New word DRAGON (item 178, untaught: its O a schwa). `current` is candidate 1, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: should not look like Smaug or Tiamat, or she says their name.",
   pic_crown: "New word CROWN (item 178, untaught: COW's OW). `current` is candidate 2, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say king or princess.",
   pic_castle: "New word CASTLE (item 178, untaught: a silent T, the L carrying \"ul\"). `current` is candidate 3, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say house or palace.",
-  pic_wizard: "New word WIZARD (item 178, in ROBOT's place: the bedroom's robot toy is shown every episode; untaught: AR says ER). `current` is candidate 3, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say witch or Santa.",
+  pic_wizard: "New word WIZARD (item 178, in ROBOT's place while the bedroom's toys were kept out of play, until item 184; untaught: AR says ER). `current` is candidate 3, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say witch or Santa.",
+  pic_robot: "New word ROBOT (item 184, Matt: a toy shown in the bedroom never keeps its word out of play; long O, then BOT's short O). `current` is candidate 3, Matt's pick in art_alts_183 (brief 183_robot_friendly, now its PICTURES prompt): a white-and-orange robot waving, not the bedroom's blue wind-up toy (obj_robot). Watch: she may say toy.",
   // Item 167 promoted item 166's round (Hunt 12's M80) onto a minion of Evil Elsa's own, so the Snow Buddy keeps its art.
   minion_snow_golem: "The Snow Buddy, the minion good Elsa's Snow Buddies summon: it smiles. Evil Elsa's Grumpy Snowmen were this minion too until item 167 gave them their own, `minion_snow_grump` (M80); a grumpy look belongs there, not here.",
   minion_snow_grump: "The Grumpy Snowman, the minion Evil Elsa's Grumpy Snowmen summon (item 167). `current` is item 166's candidate 4 (brief 166_snowman_decal, now its `look`), Matt's pick: drawn with `--ref=art-originals/decal_anna_snowman.png` to match her grumpy house decal, so a redraw wants the same `--ref`.",
@@ -691,6 +692,8 @@ const PICTURES: Record<string, string> = {
   crown: "a crown: one shiny golden crown on its own, five points with a red jewel on each point and a row of blue jewels round the band; clearly a king's or queen's crown, not a tiara, not a cake, not a party hat; nobody wearing it",
   castle: 'a castle: one fairy-tale castle on a little hill, grey stone walls with battlements, two round towers with pointed blue roofs and little flags, a big arched wooden door with a drawbridge; clearly a castle, not a house, not a church, not a sandcastle',
   wizard: "a wizard: one kind old cartoon wizard standing, full body, a very long white beard, a tall pointy blue hat with yellow stars and moons, a long blue robe with stars, holding a wooden staff with a glowing crystal on top, a few magic sparkles round it; clearly a wizard, not a witch, not a king, not Santa",
+  // Item 184: Matt's pick 3 from item 183's round (brief 183_robot_friendly).
+  robot: 'a robot: one friendly toy robot standing facing the viewer and waving one hand: a rounded white and bright orange body, a round dome head with a little antenna and a glowing light on top, a dark screen face with two big round happy eyes and a smile, chunky arms with claw hands, little wheels or chunky boots; no wind-up key, not blue, not boxy (the bedroom already shows a blue boxy wind-up robot); plainly a robot',
 };
 
 const HAND: Record<string, string> = {

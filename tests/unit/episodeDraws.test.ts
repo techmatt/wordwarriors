@@ -17,7 +17,7 @@ import { seededRand } from '../../src/rules/random';
 import { progress } from '../../src/state/progress';
 import { fightStyle, giftWord, grabPlan, housePlan, movePlan } from '../../src/episode/plans';
 import { FRAME_BY_ID } from '../../content/phonics/sentences';
-import { withStems } from '../../src/rules/bank';
+import { favourWords, withStems } from '../../src/rules/bank';
 import { wordsOf } from '../../src/rules/sentences';
 
 test('the default cast remembers no ally, form or variant; its fixed villain is not met', () => {
@@ -213,6 +213,30 @@ test('door b (items 126, 137): the Shape-Shifter in about 3 drawn episodes of 7,
     // Item 139: drawn episodes put the rhyme room behind door b too.
     assert.ok(doorB.includes('rhyme'), doorB.join(' '));
   } finally {
+    Math.random = random;
+    setCastOptions({ overrides: {}, fixed: !EPISODE_DEFAULTS.randomCast });
+  }
+});
+
+test("bedroom toys (item 184, Matt): a toy shown in the bedroom never keeps its word out of the rooms' reading", () => {
+  // Hunt 9 kept DRUM, LAMP and DUCK out by their glyphs (the toys' 🥁 💡 🦆), ROBOT by its 🤖. Favoured, each comes up.
+  const toys = ['drum', 'lamp', 'duck', 'robot'];
+  const random = Math.random;
+  Math.random = seededRand(184);
+  favourWords(toys);
+  try {
+    progress.reset();
+    setCastOptions({ fixed: false, rand: Math.random, overrides: {} });
+    const read = new Set<string>();
+    for (let e = 0; e < 12; e++) {
+      resetEpisode();
+      rememberCast();
+      for (const p of housePlan()) for (const w of [p.key, ...p.fetches]) read.add(w);
+      progress.episodeDone();
+    }
+    for (const w of toys) assert.ok(read.has(w), `${w} never read: ${[...read].join(' ')}`);
+  } finally {
+    favourWords([]);
     Math.random = random;
     setCastOptions({ overrides: {}, fixed: !EPISODE_DEFAULTS.randomCast });
   }

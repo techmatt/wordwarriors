@@ -66,8 +66,10 @@ art for the roster).
 
 **A glyph no screen shows first**: a thing's glyph must not be a sign every episode shows
 before she reads (the journey map's 🌅 ⚔️ 🏆 🏠, the bed's 🛏️), or the planner keeps
-the word out for good (`planInput`; `tests/unit/castSaid.test.ts`); nor may the word be a
-bedroom prop (ROBOT, UNICORN). A word a cast's quest line, hub scene, threat or fight
+the word out for good (`planInput`; `tests/unit/castSaid.test.ts`). The bedroom's toys are
+no such sign (item 184, Matt): DRUM, LAMP, DUCK, BLOCK and ROBOT are read like any word,
+and a new word may be a bedroom prop. A place's glyph, a hub story's emoji prop or a Charge
+rune's picture still keeps its word out of that episode alone (ROBOT's 🤖). A word a cast's quest line, hub scene, threat or fight
 line says is fine (Matt: hearing it in a character line first is no problem): key draws
 only weigh it down that episode (`softSaid`, `SOFT_SAID_WEIGHT`). Those lines still say
 no action word.

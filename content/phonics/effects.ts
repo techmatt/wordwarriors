@@ -226,6 +226,8 @@ const THING_EFFECTS: WordEffect[] = [
   { word: 'crown', look: 'a golden crown on her head: the royal sparkle makes the whole team strong again', ability: use('crown', 'heal', 0xffd23f, { color2: 0xffffff }) },
   { word: 'castle', look: 'a whole toy castle that drops down on the villain, thump', ability: use('castle', 'slam', 0xb0a090, { power: 3 }) },
   { word: 'wizard', look: 'a kind old wizard who waves his staff: a shower of magic stars on the villain', ability: use('wizard', 'rain', 0x9b5de5, { glyph: '⭐', count: 10 }) },
+  // Item 184.
+  { word: 'robot', look: 'a friendly robot that beeps and fires a grid of laser beams across the arena', ability: use('robot', 'grid', 0xff8c1a) },
 ];
 
 /**

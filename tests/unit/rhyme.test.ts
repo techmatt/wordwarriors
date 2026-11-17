@@ -111,7 +111,9 @@ test('planRhyme: keeps clear of what it is told; fewer rounds where it must; non
 test('planRhyme: three rounds where three fit, though one draw would leave no family for the last', () => {
   const avoid = ['dog', 'fox', 'bed', 'map', 'pen', 'can', 'mug', 'fan', 'web', 'jet', 'pig', 'bam', 'hop', 'hot', 'mud', 'tug', 'fix', 'vat', 'six', 'fin', 'nap', 'bop', 'hum', 'mom', 'frog', 'drum', 'flag', 'desk', 'belt', 'slug', 'jump', 'swim', 'stomp', 'slam', 'stump', 'skunk', 'shed', 'chop', 'bench', 'bin', 'yoyo', 'man', 'lid', 'lock', 'egg', 'bell', 'doll', 'grass', 'glass', 'king', 'ring', 'bush', 'thumb', 'cheese', 'kite', 'cake', 'gate', 'zebra', 'igloo', 'octopus', 'umbrella', 'cow',
     // Item 178: the words it made live, kept out so the draw stays as tight as it was.
-    'ram', 'tap', 'rat', 'mat', 'hen', 'wig', 'fig', 'jig', 'cog', 'jog', 'top', 'sub', 'jug', 'wet', 'gum'];
+    'ram', 'tap', 'rat', 'mat', 'hen', 'wig', 'fig', 'jig', 'cog', 'jog', 'top', 'sub', 'jug', 'wet', 'gum',
+    // Item 184: the bedroom toys it made live, the same way.
+    'duck', 'lamp', 'block'];
   const draw = (seed: number) => planRhyme(new ProgressStore(memory()), { avoid, taken: [] }, seeded(spread(seed)));
   const keep = RHYME.redraws;
   try {
