@@ -24,8 +24,8 @@ import { composeLines } from '../../tools/voice/compose';
 import { withDifficulty } from './difficulty';
 import { memory, seeded, spread } from './seeds';
 
-/** Seed 1's chain since hunt 9's M39 (two places are as good as three: it keeps the vowel); item 157's words and its read it at the first letter moved it. */
-const GOLDEN_SEED_1 = ['dot', 'cot', 'cat', 'hat', 'ham'];
+/** Seed 1's chain since hunt 9's M39 (two places are as good as three: it keeps the vowel); item 157's words and its read it at the first letter moved it, and item 178's live pool (BIN, PEG) again. */
+const GOLDEN_SEED_1 = ['bin', 'pin', 'pig', 'peg', 'pen'];
 
 const sameSound = (a: string, b: string) => heardAs(a) === heardAs(b);
 
@@ -92,8 +92,8 @@ test('planShifter (hunt 6, M29; hunt 9, M39): seeded draws change two places at 
 });
 
 test('wrongPictures (M29; item 157): one sibling and another picture, its first letter first, at any letter; siblings alone where there are two', () => {
-  // BIG at the last letter: one pictured sibling, BIB (BIN is stored, item 127), and another picture with its first letter (BED, live again in item 153).
-  assert.deepEqual(wrongPictures('big', 2, 'bug', SHIFT_WORDS).sort(), ['bed', 'bib']);
+  // BIG at the last letter: two pictured siblings since item 178 made BIN live again, BIB and BIN, so siblings alone.
+  assert.deepEqual(wrongPictures('big', 2, 'bug', SHIFT_WORDS).sort(), ['bib', 'bin']);
   const like = wrongPictures('cap', 2, 'cat', ['can', 'cup', 'dog', 'cat']);
   assert.deepEqual(like, ['can', 'cup'], 'the sibling, then a picture with its first letter before one without');
   // Item 157: POT at the first letter has one pictured sibling beside COT (DOT); the other picture shares its first letter.

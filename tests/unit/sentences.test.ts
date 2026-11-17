@@ -126,14 +126,14 @@ test('the counter is random: any pictured, decodable word, under the 009 exclusi
         assert.ok(decodable.has(key), `${v.id}: ${key} is a pictured, decodable word`);
         assert.ok(!ACTIONS.some((w) => w.word === key), `${v.id}: ${key} is an action word (a move pad)`);
         assert.ok(!fetched.includes(key), `${v.id}: ${key} was fetched this episode`);
-        assert.ok(!taunts.has(key), `${v.id}: ${key} is in a taunt`);
-        assert.ok(!early.has(key), `${v.id}/${helper}: ${key} is said before the attic`);
+        // Item 178 (Matt): a word the characters say first (taunts, `saidEarly`) is only weighed down, so no check here.
+        void taunts;
+        void early;
         assert.ok(!shown.includes(key), `${v.id}: ${key} is shown in a sentence`);
         assert.notEqual(key, 'pop');
         assert.ok(counter.objects.includes(key), `${v.id}: the attic offers ${counter.objects.join(', ')}, not ${key}`);
         // The fetch words keep the same rules, bar the move words and each other.
         for (const f of fetched) {
-          assert.ok(!early.has(f), `${v.id}/${helper}: fetch word ${f} is said early`);
           assert.ok(!shown.includes(f), `${v.id}: fetch word ${f} is shown in a sentence`);
           assert.notEqual(f, 'pop');
         }
@@ -296,7 +296,8 @@ test("the villain's named counter word still comes up, and is boosted", () => {
   const named = CHARACTER_BY_ID[VILLAIN]!.counter.word;
   let n = 0;
   for (let seed = 1; seed <= 200; seed++) if (sentencePlans(new ProgressStore(memory()), input(), seeded(spread(seed)))[2].sentence.key === named) n++;
-  assert.ok(n >= 10, `${named} came up ${n} times in 200`);
+  // Chance is about one in 200 per picture (item 178's live pool is near two hundred things): 6 is well over it.
+  assert.ok(n >= 6, `${named} came up ${n} times in 200`);
 });
 
 test('frameIsSolid: new is not solid; 6 tries with the last 5 right is; one miss in the last 5 is not', () => {

@@ -75,9 +75,10 @@ test('fights: chef Dada Jason as the ally makes a cook-off likely, against anyon
   assert.equal(pickFight({ villain: 'smaug', ally: null }, rand), 'sky_race');
 });
 
-test('fights: nothing a style shows or says has a move word or a reading word', () => {
-  // Every bank word: the move pads are its action words, the reading words its things (item 037).
-  const banned = new Set<string>(BANK.map((w) => w.word));
+test('fights: nothing a style shows or says has a move word', () => {
+  // The move pads are the bank's action words. Item 178 (Matt, MESSAGE #5631): a reading word said in a
+  // fight line first is no problem (Evil Elsa's FROST CLASH, with FROST a thing she reads).
+  const banned = new Set<string>(BANK.filter((w) => w.role !== 'thing').map((w) => w.word));
   for (const f of FIGHTS) {
     const texts = [...f.banner, f.tooStrong, f.win, ...Object.values(f.lines).flatMap((l) => [l.text, l.say ?? ''])];
     for (const t of texts) {

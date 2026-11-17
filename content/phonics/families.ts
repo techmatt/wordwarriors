@@ -80,7 +80,8 @@ const RIMES: Record<string, { say: string; silly: SillyOnset[] }> = {
   in: { say: 'Inn', silly: [{ letter: 'h', say: 'Hin' }] },
   // LEG PEG. Out: BEG KEG (words), MEG GREG (names), REG VEG (slang), NEG (slang), FEG
   // (too near a slur), DEG (an abbreviation), GEG (Scouse slang).
-  eg: { say: 'Egg', silly: [{ letter: 'z', say: 'Zeg' }, { letter: 'h', say: 'Heg' }] },
+  // Item 178: "Ehg", not "Egg": with -EG a live family again, EGG (a bank word) must not be said before she reads it.
+  eg: { say: 'Ehg', silly: [{ letter: 'z', say: 'Zeg' }, { letter: 'h', say: 'Heg' }] },
   // JAM RAM. Out: BAM (a move word), CAM DAM HAM LAM TAM YAM (words), PAM SAM (names),
   // GAM FAM (slang), NAM (slang), KAM (sounds like CAM).
   am: { say: 'Amm', silly: [{ letter: 'v', say: 'Vam' }, { letter: 'z', say: 'Zam' }] },

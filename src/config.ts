@@ -320,6 +320,14 @@ export const SHAKINESS = { unseen: 0.7, floor: 0.05, solidAfter: 3 };
  */
 export const NAMED_COUNTER_BOOST = 6;
 
+/**
+ * A word the episode's cast says in its own lines before she reads (the quest line, the hub scene, the
+ * threat and taunt, the fighters' names) weighs this much in the key draws (item 178, Matt: "hearing a
+ * word in a character line before reading it is not a problem"; the exclusion stays only as a soft
+ * preference and never keeps a word out of play). 1 would drop the preference.
+ */
+export const SOFT_SAID_WEIGHT = 0.25;
+
 /** How much more a spell-sounding word weighs as a caster's gift (item 038, src/rules/moves.ts `drawGift`). */
 export const CASTER_SPELL_BOOST = 25;
 

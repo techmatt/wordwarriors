@@ -147,7 +147,7 @@ test('bridge words: pictured things with a short vowel; tiers are hold-sound CVC
     const b = BANK_BY_WORD[w]!;
     assert.ok(THINGS.includes(b) && b.vowel, `${w} is a familiar short-vowel thing`);
   }
-  assert.ok(!BRIDGE_PICTURES.includes('key') && !BRIDGE_PICTURES.includes('yak'));
+  assert.ok(!BRIDGE_PICTURES.includes('key'));
   assert.equal(bridgeEase('map'), 1);
   assert.equal(bridgeEase('sun'), 1);
   assert.equal(bridgeEase('cat'), 2);
@@ -155,9 +155,8 @@ test('bridge words: pictured things with a short vowel; tiers are hold-sound CVC
   assert.equal(bridgeEase('frog'), 3);
   assert.equal(bridgeEase('ship'), 3);
   // Item 054's words are in.
-  // MAT is stored (item 127: the foam squares read as a puzzle).
-  for (const w of ['man', 'lid', 'lock']) assert.ok(BRIDGE_PICTURES.includes(w), w);
-  assert.ok(!BRIDGE_PICTURES.includes('mat'));
+  // MAT, stored by item 127 (the foam squares read as a puzzle), is live again (item 178).
+  for (const w of ['man', 'lid', 'lock', 'mat']) assert.ok(BRIDGE_PICTURES.includes(w), w);
 });
 
 test("M78: no bridge word plays a whole sound (F's \"fuh\") anywhere but before a vowel; FAN FOX FISH cross, FROG FLAG GIFT ELF do not", () => {

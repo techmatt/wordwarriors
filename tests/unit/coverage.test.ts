@@ -28,8 +28,8 @@ test('coverage: every letter sound and digraph has a first-sound row; a target u
 });
 
 test('coverage: a word dropping out shows as a gap (the check bites)', () => {
-  const without = THINGS.filter((w) => w.word !== 'king' && w.word !== 'kite');
-  assert.ok(coverageGaps(without).some((r) => r.tag === 'first k'), 'K without KING and KITE');
+  const without = THINGS.filter((w) => !['king', 'kite', 'kit'].includes(w.word));
+  assert.ok(coverageGaps(without).some((r) => r.tag === 'first k'), 'K without KING, KITE and KIT');
 });
 
 test('units (item 056): QU and NG are units, doubled letters one sound, silent E none', () => {
@@ -52,7 +52,7 @@ test('units (item 056): QU and NG are units, doubled letters one sound, silent E
   for (const s of ['q', 'ng', 'th_voiced', 'long_a', 'long_i', 'long_u']) assert.ok(SOUND_BY_UNIT[s], s);
 });
 
-test('untaught sounds (item 058): a word holding one is a late long-path word; X-RAY (stored, item 127) would count for X', () => {
+test('untaught sounds (item 058): a word holding one is a late long-path word; X-RAY (stored, items 127 and 178) would count for X', () => {
   const t = (w: string) => {
     const b = BANK_BY_WORD[w]!;
     return [b.level, b.vowel, b.sounds.join(' ')];
@@ -65,9 +65,14 @@ test('untaught sounds (item 058): a word holding one is a late long-path word; X
   assert.deepEqual(t('umbrella'), [3, null, 'u m b r e l schwa']);
   assert.deepEqual(t('xray'), [3, null, 'x_name r long_a']);
   assert.deepEqual(t('cow'), [3, null, 'c ow']);
+  // Item 178: SWORD's OR, WIZARD's ER; BOW's OW is long O, not COW's.
+  assert.deepEqual(t('sword'), [3, null, 's  or d']);
+  assert.deepEqual(t('wizard'), [3, null, 'w i z er d']);
+  assert.deepEqual(t('bow'), [3, null, 'b long_o']);
+  assert.deepEqual(t('helmet'), [2, 'e', 'h e l m e t']);
   for (const s of UNTAUGHT_SOUNDS) assert.ok(SOUND_BY_UNIT[s.letter] && LONG_VOWEL_SOUNDS.includes(s), `${s.letter} has its own line`);
   const row = (tag: string) => coverageRows().find((r) => r.tag === tag)!.words;
   assert.ok(coverageRows(BANK.filter((w) => THINGS.includes(w) || w.word === 'xray')).find((r) => r.tag === 'first x')!.words.includes('xray'), 'X-RAY counts for X');
-  assert.ok(!row('first x').includes('xray'), 'X-RAY is stored');
+  assert.ok(!row('first x').includes('xray'), 'X-RAY is stored (its X is the letter name, item 137)');
   assert.ok(!coverageRows().some((r) => r.tag.startsWith('long ') && UNTAUGHT_SOUNDS.some((s) => r.tag === `long ${s.letter}`)), 'no long row for an untaught sound');
 });

@@ -397,8 +397,8 @@ export class BattleBeats {
     const pour = giant ? this.giantSweep(v, ult, false, how === 'swallow' ? 3000 : 1600) : null;
     if (how !== 'swallow') {
       await b.wait(1.8);
-      // Not BLOCKED: BLOCK is a bank word (hunt 8, `tests/unit/shouts.test.ts`).
-      floatText(scene, h.x + 60, h.y - 280, 'SHIELDED!', '#7ad9ff', 70);
+      // Not BLOCKED: BLOCK is a bank word (hunt 8, `tests/unit/shouts.test.ts`); nor SHIELDED since item 178 made SHIELD one.
+      floatText(scene, h.x + 60, h.y - 280, 'SAFE!', '#7ad9ff', 70);
     } else {
       // The item (the Magic Hat, drawn brim up) flies up between them while
       // the storm is still falling and sucks it all inside like a magic trick;

@@ -59,9 +59,10 @@ export const RUNE_SOUNDS: string[] = RUNES.map((r) => r.sound);
 
 /**
  * Glyphs close to a bank word's picture, which show that word as surely as its own (hunt 6: the M rune's
- * cake slice is CAKE's birthday cake to her, the E rune's hatching chick CHICK's chick).
+ * cake slice is CAKE's birthday cake to her, the E rune's hatching chick CHICK's chick; item 178: the F rune's
+ * 🔥 is FLAME's flame).
  */
-const GLYPH_LOOKS_LIKE: Record<string, string[]> = { m: ['cake'], e: ['chick'] };
+const GLYPH_LOOKS_LIKE: Record<string, string[]> = { m: ['cake'], e: ['chick'], f: ['flame'] };
 
 /**
  * Each rune's gesture's bank words: what it shows, a word whose picture is its
@@ -100,7 +101,8 @@ export const GESTURE_WORDS: string[] = gestureWords(RUNE_SOUNDS);
 /**
  * A word the room can spell: a familiar pictured thing (with a battle item)
  * of CHARGE.units sound units, each unit a rune shown as itself (no doubled
- * BELL, no THUMB's MB) and no sound twice (each rune charges once).
+ * BELL, no THUMB's MB) and no sound twice (each rune charges once). Item 178:
+ * each rune with its picture letter too (YAK, live again, would bring in Y, which has none).
  */
 function chargeable(w: BankWord): boolean {
   const [lo, hi] = CHARGE.units;
@@ -108,7 +110,7 @@ function chargeable(w: BankWord): boolean {
     w.units.length >= lo &&
     w.units.length <= hi &&
     Boolean(FETCH_BY_WORD[w.word]) &&
-    w.units.every((u, i) => u === w.sounds[i] && Boolean(RUNE_BY_SOUND[u])) &&
+    w.units.every((u, i) => u === w.sounds[i] && Boolean(RUNE_BY_SOUND[u]?.picture)) &&
     new Set(w.sounds).size === w.sounds.length
   );
 }

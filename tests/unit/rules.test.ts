@@ -257,27 +257,26 @@ test('speech rule: no narrator line contains a reading word', () => {
   // need_item ("Only the {item} CAN stop...") belongs to the parked Spell the
   // Spell flow, where CAN is never a target; rewording it would re-synthesise 169 lines.
   const parked = new Set(['need_item']);
-  const templates = [...CORE_LINES, ...NARRATOR_LINES, ...HERO_LINES, ...VILLAIN_LINES, ...MOVE_LINES, ...WAKE_LINES].filter((t) => !parked.has(t.key));
+  // Item 178 (Matt): a fight style's own lines (`fight_<style>_...`, Evil Elsa's "That frost is too strong")
+  // may say a reading word; tests/unit/fights.test.ts keeps them off the move words.
+  const templates = [...CORE_LINES, ...NARRATOR_LINES, ...HERO_LINES, ...VILLAIN_LINES, ...MOVE_LINES, ...WAKE_LINES].filter((t) => !parked.has(t.key) && !t.key.startsWith('fight_'));
   for (const t of templates) {
     for (const s of [t.text, t.say ?? '']) for (const token of words(s)) assert.ok(!readable.has(token), `"${s}" says the reading word "${token}"`);
   }
-  for (const c of ROSTER) {
-    for (const s of [c.house.threat, c.house.threatSay ?? '']) {
-      for (const token of words(s)) assert.ok(!readable.has(token), `${c.id}'s threat "${s}" says the reading word "${token}"`);
-    }
-  }
-  // The quests' setup lines (item 025, every variant) and the hub scenes
-  // (item 037) are said before any room. They say no bank word at all: not a
-  // thing she may read, and not an action, which could be this episode's gift
-  // word or a pad (the gift is said only by its own clip, after the reveal).
-  const bank = new Set(BANK.map((w) => w.word));
+  // Item 178 (Matt, MESSAGE #5631): "hearing a word in a character line before reading it is not a
+  // problem for Julia". The threats, quest lines and hub scenes may say a reading word (Elsa's ICE castle,
+  // Smaug's DRAGON mountain); the planner only weighs such a word down that episode (`softSaid`). They
+  // still say no action word, which could be this episode's gift word or a pad (the gift is said only by
+  // its own clip, after the reveal).
+  const actions = new Set(ALL_ACTIONS.map((w) => w.word));
   const told: [string, string][] = [];
+  for (const c of ROSTER) told.push([`${c.id}'s threat`, c.house.threat], [`${c.id}'s threat`, c.house.threatSay ?? '']);
   for (const [owner, q] of Object.entries(QUESTS)) for (const l of q.lines) told.push([`${owner}'s quest`, l.text], [`${owner}'s quest`, l.say ?? '']);
   for (const l of HOME_QUEST.lines) told.push(['the home quest', l.text], ['the home quest', l.say ?? '']);
   for (const [owner, scenes] of Object.entries(HUB_SCENES)) for (const s of scenes) for (const t of storyTexts(s)) told.push([`${owner}'s hub scene`, t]);
   for (const s of ANY_SCENES) for (const t of storyTexts(s)) told.push(['the fallback hub scene', t]);
   for (const [who, s] of told) {
-    for (const token of words(s)) assert.ok(!bank.has(token) && !readable.has(token), `${who} "${s}" says the bank word "${token}"`);
+    for (const token of words(s)) assert.ok(!actions.has(token), `${who} "${s}" says the action word "${token}"`);
   }
   // No interjections, and commas rather than a mid-line "!" or "." (edge-tts
   // leaves dead air after one) in what is spoken.

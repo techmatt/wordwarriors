@@ -39,10 +39,16 @@ test('familiar words: an odd word keeps its action role, or drops out of play; a
     if (w.role === 'thing') assert.ok(DROPPED.includes(w) && !LIVE.includes(w), w.word);
     else assert.ok(ACTIONS.includes(w) && LIVE.includes(w), w.word);
   }
-  for (const w of ['yak', 'vat', 'cog']) assert.ok(odd(w), w);
-  // Item 127: RAM and JET, odd things, are stored as actions too.
-  for (const w of ['ram', 'jet']) assert.ok(!ACTIONS.some((a) => a.word === w) && STORED.some((s) => s.word === w), w);
   for (const w of STORED) assert.ok(!LIVE.includes(w) && !DROPPED.includes(w), w.word);
+});
+
+test('the ready pool (item 178, Matt): every odd and stored word is live but BUSH, the bedroom props and X-RAY (item 137: its X is the letter name)', () => {
+  for (const w of ['yak', 'vat', 'cog', 'quilt', 'moth', 'jug', 'queen', 'hen', 'rat', 'gate', 'swish', 'dash', 'zip', 'quest']) {
+    assert.ok(LIVE.some((l) => l.word === w), `${w} is live`);
+  }
+  for (const w of ['ram', 'jet', 'fin', 'top']) assert.ok(ACTIONS.some((a) => a.word === w) && THINGS.some((t) => t.word === w), `${w} is a pad and a picture`);
+  assert.deepEqual(STORED.map((w) => w.word).sort(), ['block', 'bush', 'drum', 'duck', 'lamp', 'xray']);
+  assert.deepEqual(DROPPED, [], 'no odd word is out of play');
 });
 
 test('line variants: the default cast says variant 1 of each; a drawn episode any of three', () => {

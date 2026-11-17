@@ -70,7 +70,9 @@ const ART_114 = ['astronaut', 'puzzler', 'gorilla'].flatMap((o) => [`char_julia_
 const BANK_121 = ['ham', 'hay', 'sack', 'dress', 'block', 'bench', 'skunk', 'dash', 'smash', 'crash', 'splash'].map((w) => `pic_${w}`);
 const BANK_126 = ['mom', 'dad', 'cow'].map((w) => `pic_${w}`);
 const BANK_157 = ['pup', 'cub', 'cot', 'kid'].map((w) => `pic_${w}`);
-const NO_GREEN = new Set(['item_calm_bell', ...ART_114, ...ART_111, ...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...BANK_121, ...BANK_126, ...BANK_157,...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'face_rilla', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_bubble', 'prop_medal', 'prop_dragon_scale', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
+// Item 178's words but the green ones (POND's lily pads, GOBLIN, CAVE's path, CASTLE's hill) and DRAGON.
+const BANK_178 = ['frost', 'sand', 'fang', 'helmet', 'cape', 'flame', 'smoke', 'sword', 'shield', 'bow', 'crown', 'wizard'].map((w) => `pic_${w}`);
+const NO_GREEN = new Set(['item_calm_bell', ...ART_114, ...ART_111, ...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...BANK_121, ...BANK_126, ...BANK_157, ...BANK_178, ...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'face_rilla', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_bubble', 'prop_medal', 'prop_dragon_scale', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
 
 /**
  * Sprites in dark green of their own (item 049): keying takes out only the
@@ -145,6 +147,24 @@ export const NOTES: Record<string, string> = {
  * which the row quotes by itself).
  */
 export const PICK_NOTES: Record<string, string> = {
+  // Item 178's new words: `current` is the painted placeholder; pick one candidate each (or none, to redraw).
+  pic_frost: 'New word FROST (item 178, level 2, short O, a final blend). Watch: she may say ice, snow or window.',
+  pic_pond: 'New word POND (item 178, level 2, short O, a final blend). Watch: she may say water, lake or puddle.',
+  pic_sand: 'New word SAND (item 178, level 2, a final blend). Watch: a spade in it may read as dig or beach.',
+  pic_fang: 'New word FANG (item 178, level 3, NG). Watch: the hardest new picture: she may say teeth, tooth or snake.',
+  pic_helmet: "New word HELMET (item 178, two short-vowel syllables, level 2). Watch: she may say hat or knight.",
+  pic_goblin: 'New word GOBLIN (item 178, two short-vowel syllables, level 2, short O first). Watch: she may say elf or monster.',
+  pic_cape: 'New word CAPE (item 178, silent E, long A). Watch: a cape with nobody in it may read as a flag or a blanket.',
+  pic_cave: 'New word CAVE (item 178, silent E, long A). Watch: she may say hole, rock or mountain.',
+  pic_flame: 'New word FLAME (item 178, silent E, long A). Watch: she will likely say fire.',
+  pic_smoke: 'New word SMOKE (item 178, silent E, long O). Watch: she may say cloud or chimney.',
+  pic_sword: "New word SWORD (item 178, untaught: a silent W and the new OR sound). Ellie's Spinny Swords keep it out of her episodes.",
+  pic_shield: 'New word SHIELD (item 178, untaught: IE says long E).',
+  pic_bow: "New word BOW (item 178, a bow and arrow; its OW is long O, not COW's). Watch: she may say arrow. One of three candidates was refused by the image tool.",
+  pic_dragon: 'New word DRAGON (item 178, untaught: its O a schwa). Watch: should not look like Smaug or Tiamat, or she says their name.',
+  pic_crown: "New word CROWN (item 178, untaught: COW's OW). Watch: she may say king or princess.",
+  pic_castle: 'New word CASTLE (item 178, untaught: a silent T, the L carrying "ul"). Watch: she may say house or palace.',
+  pic_wizard: 'New word WIZARD (item 178, in ROBOT\'s place: the bedroom\'s robot toy is shown every episode; untaught: AR says ER). Watch: she may say witch or Santa.',
   // Item 167 promoted item 166's round (Hunt 12's M80) onto a minion of Evil Elsa's own, so the Snow Buddy keeps its art.
   minion_snow_golem: "The Snow Buddy, the minion good Elsa's Snow Buddies summon: it smiles. Evil Elsa's Grumpy Snowmen were this minion too until item 167 gave them their own, `minion_snow_grump` (M80); a grumpy look belongs there, not here.",
   minion_snow_grump: "The Grumpy Snowman, the minion Evil Elsa's Grumpy Snowmen summon (item 167). `current` is item 166's candidate 4 (brief 166_snowman_decal, now its `look`), Matt's pick: drawn with `--ref=art-originals/decal_anna_snowman.png` to match her grumpy house decal, so a redraw wants the same `--ref`.",
@@ -628,6 +648,24 @@ const PICTURES: Record<string, string> = {
   // Item 167: Matt's pick 5 from item 166's round (brief 166_cot_tent); item 160's blue cot with a pillow read as BED (M79).
   cot: 'a cot: one folding camp cot standing outdoors on a little patch of green grass, a taut green canvas sling on a light metal frame with big crossed X-shaped folding legs clearly visible, seen from the side a little from the front, with a small orange camping tent behind it at one side and a rolled-up sleeping bag lying on the cot; clearly a camping cot at a campsite, not a bed in a bedroom, not a crib, not a bench; no people',
   kid: 'a kid: one happy cartoon kid of about six, a boy in an orange t-shirt, blue shorts and sneakers, standing and waving, full body; clearly a child, not a grown-up, not a toy doll, not an elf; no green',
+  // Item 178's words (ICE keeps its flavour picture above).
+  frost: 'frost: one window pane covered in white feathery frost patterns, sparkly ice crystals spreading in from the corners, a cold pale-blue glow; clearly frost on glass, not snow falling, not one snowflake, not an ice cube; no people',
+  pond: 'a pond: one small round blue pond seen a little from above, with two green lily pads, a pink water-lily flower and a few reeds and pebbles round its edge; clearly a little pond of still water, not a puddle, not a lake with boats, not a swimming pool; no frog, no duck, no people',
+  sand: 'sand: one big soft heap of golden beach sand with a little red toy spade stuck in it and a few grains trickling down its side; clearly a pile of sand, not a sandcastle, not a hill of dirt; no sea, no people',
+  fang: "a fang: the open mouth of a friendly cartoon snake, close up, two long pointed shiny white fangs at the front clearly the biggest thing in the picture, a little sparkle on each fang tip; clearly fangs, not ordinary teeth, not a smile with many teeth; no blood",
+  helmet: "a helmet: one shiny silver knight's helmet standing alone, a rounded top, a visor with a slit to see through, a red feather plume on top; clearly a knight's helmet, not a hat, not a cap, not a bucket, not a bike helmet; nobody wearing it",
+  goblin: 'a goblin: one cheeky little cartoon goblin standing, full body, green skin, big pointy ears, a long nose, a mischievous grin, ragged brown clothes and bare feet, holding a stolen gold coin; clearly a little fairy-tale goblin, not an elf with a pointy hat, not a frog, not a monster',
+  cape: "a cape: one bright red hero's cape on its own, flowing out sideways as if in a strong wind, a gold clasp at the neck; clearly a cape with nobody in it, not a dress, not a flag, not a blanket",
+  cave: 'a cave: the dark arched opening of a cave in the side of a big grey rocky hill, black inside, a few rocks and a little path leading in; clearly a cave entrance, not a tunnel with rails, not a doorway in a house, not a hut; no bats, no people',
+  flame: 'a flame: one big bright orange and yellow flame on its own, flickering up into a pointed tip, a little blue at its base; clearly one flame of fire, not a campfire with logs, not a candle, not the sun',
+  smoke: 'smoke: a tall grey puff of smoke curling up out of a little chimney pot, round billowing grey puffs getting bigger and lighter as they rise; clearly smoke from a chimney, not a white cloud in the sky, not fog lying low',
+  sword: "a sword: one shiny silver knight's sword standing point down, a long straight blade, a gold cross-guard and a wrapped brown handle with a round gold knob; clearly a sword, not a knife, not a dagger, not a stick; nobody holding it",
+  shield: "a shield: one big knight's shield standing alone, rounded at the top and pointed at the bottom, blue with a gold border and a gold star in the middle; clearly a shield, not a plate, not a sign, not a badge",
+  bow: 'a bow: one wooden archery bow with its string pulled straight, held upright, with one arrow with red feathers beside it; clearly a bow for shooting arrows, not a ribbon bow, not a violin bow; nobody holding it',
+  dragon: 'a dragon: one friendly cartoon dragon standing, full body, purple scales, big bat-like wings spread, two little horns, a long tail with a spike on the end, a little puff of fire from its nose; clearly a dragon, not a dinosaur, not a lizard; no rider',
+  crown: "a crown: one shiny golden crown on its own, five points with a red jewel on each point and a row of blue jewels round the band; clearly a king's or queen's crown, not a tiara, not a cake, not a party hat; nobody wearing it",
+  castle: 'a castle: one fairy-tale castle on a little hill, grey stone walls with battlements, two round towers with pointed blue roofs and little flags, a big arched wooden door with a drawbridge; clearly a castle, not a house, not a church, not a sandcastle',
+  wizard: "a wizard: one kind old cartoon wizard standing, full body, a very long white beard, a tall pointy blue hat with yellow stars and moons, a long blue robe with stars, holding a wooden staff with a glowing crystal on top, a few magic sparkles round it; clearly a wizard, not a witch, not a king, not Santa",
 };
 
 const HAND: Record<string, string> = {

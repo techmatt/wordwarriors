@@ -33,8 +33,8 @@
  * - 3 per first sound, every letter sound and digraph (QU as Q), or the lower
  *   target COVERAGE.first gives with its reason: I O U have 1 and A Z 2,
  *   through words with sounds she has not been taught (item 058: IGLOO,
- *   OCTOPUS, UMBRELLA, APPLE, ZOO, ZEBRA); E J N V W Y TH have 1-2; Q X
- *   (QUEEN, X-RAY stored, item 127) and voiced TH none;
+ *   OCTOPUS, UMBRELLA, APPLE, ZOO, ZEBRA); E Y TH Q have 2 (QUEEN live
+ *   again, item 178); X (X-RAY stored: its X is the letter's name) and voiced TH none;
  * - a last sound: 3 for B D G K L M N P S T X CK NG, fewer for SH F Z CH TH;
  * - 8 per short vowel; 2 pictures per word-machine family, the listed
  *   families staying families;
@@ -59,8 +59,8 @@ export interface BankEntry {
   role: Role;
   glyph?: string;
   say?: string;
-  /** The item that added it: 037, 040, 054, 056, 058, 059, 121, 126 or 157 (unset for older words). `?words=new` and the grown-ups page's NEW read 121's, 126's and 157's. */
-  since?: '037' | '040' | '054' | '056' | '058' | '059' | '121' | '126' | '157';
+  /** The item that added it: 037, 040, 054, 056, 058, 059, 121, 126, 157 or 178 (unset for older words). `?words=new` and the grown-ups page's NEW read 121's, 126's, 157's and 178's. */
+  since?: '037' | '040' | '054' | '056' | '058' | '059' | '121' | '126' | '157' | '178';
   /** It sounds like a spell (ZAP, HEX, POP; not MUD or NAP): a caster's gift leans to it (item 038, `drawGift`). */
   spell?: true;
   /**
@@ -109,8 +109,8 @@ const B = (word: string, glyph?: string, extra: Partial<BankEntry> = {}): BankEn
 const NEW = { since: '037' as const };
 const SPELL = { spell: true as const };
 const NEW_SPELL = { ...NEW, ...SPELL };
-const ODD = { odd: true as const };
-const NEW_ODD = { ...NEW, ...ODD };
+// Item 178 (Matt, 2026-11-16): the ready pool went live. Every word item 040 marked `odd`
+// (YAK, VAT, JET, RAM, MOTH ...) lost the flag; the flag stays for Matt to set again.
 const NEW_040 = { since: '040' as const };
 const NEW_054 = { since: '054' as const };
 const NEW_056 = { since: '056' as const };
@@ -120,6 +120,8 @@ const NEW_121 = { since: '121' as const };
 const NEW_126 = { since: '126' as const };
 /** Item 157 (Matt's): links that join the Shape-Shifter's word islands (TUB-CUB-CUP, CAT-COT-POT-DOT-DOG, LIP-LID-KID). */
 const NEW_157 = { since: '157' as const };
+/** Item 178 (Matt's): FROST POND FANG SAND HELMET GOBLIN, CAPE CAVE FLAME SMOKE ICE, SWORD SHIELD BOW DRAGON CROWN CASTLE WIZARD (for ROBOT, a bedroom toy). */
+const NEW_178 = { since: '178' as const };
 /** Item 058: a familiar picture holding a sound she has not been taught (UNTAUGHT_SOUNDS): level 3, with the digraphs. */
 const UNTAUGHT_058 = { since: '058' as const, late: true as const };
 
@@ -131,17 +133,17 @@ const ENTRIES: BankEntry[] = [
   T('cap', '🧢'), T('pin', '📌'), T('log'), T('mop'), T('pot'), T('rat', '🐀'), T('mug'),
   T('rug'), T('jug', '🏺'),
   // Pictured words that were move words too.
-  B('sun', '☀️'), B('fan'), B('web', '🕸️'), B('net', '🥅'), B('jet', '✈️', ODD),
-  B('pig', '🐷'), B('pan', '🍳'), B('ram', '🐏', ODD), B('top', '🌀', ODD),
+  B('sun', '☀️'), B('fan'), B('web', '🕸️'), B('net', '🥅'), B('jet', '✈️'),
+  B('pig', '🐷'), B('pan', '🍳'), B('ram', '🐏'), B('top', '🌀'),
   // The move words from before 037.
   A('zap', '⚡', SPELL), A('bam', '🔨'), A('zip', '☄️', SPELL), A('hop', '🐇'), A('pop', '🎈', SPELL), A('hug', '🧸'),
   A('big', '🐘'), A('hot', '🌶️'), A('dig', '⛏️'), A('run', '👟'), A('mud', '🟤'), A('wet', '💦'),
   A('fog', '🌫️'), A('tug', '➰'), A('fix', '🔧'),
   // Item 037, level 1: short i, short e and the rare first sounds (Y, V, K, L, J, G).
-  T('jam', '🍓', NEW), T('yak', '🐂', NEW_ODD), T('vat', '🍯', NEW_ODD), T('leg', '🦵', NEW), T('peg', '📎', NEW_ODD),
-  T('wig', '💇', NEW_ODD), T('bib', '👶', NEW), T('fig', '🟣', NEW_ODD), T('six', '6️⃣', NEW), B('fin', '🦈', NEW_ODD),
-  T('kit', '🧰', NEW_ODD), T('lip', '👄', NEW), T('cog', '⚙️', NEW_ODD), T('rod', '🎣', NEW_ODD), T('pod', '🌱', NEW_ODD),
-  T('gum', '🍬', NEW_ODD), T('bun', '🍞', NEW), T('hut', undefined, NEW), T('sub', '🐳', NEW_ODD),
+  T('jam', '🍓', NEW), T('yak', '🐂', NEW), T('vat', '🍯', NEW), T('leg', '🦵', NEW), T('peg', '📎', NEW),
+  T('wig', '💇', NEW), T('bib', '👶', NEW), T('fig', '🟣', NEW), T('six', '6️⃣', NEW), B('fin', '🦈', NEW),
+  T('kit', '🧰', NEW), T('lip', '👄', NEW), T('cog', '⚙️', NEW), T('rod', '🎣', NEW), T('pod', '🌱', NEW),
+  T('gum', '🍬', NEW), T('bun', '🍞', NEW), T('hut', undefined, NEW), T('sub', '🐳', NEW),
   A('nap', '😴', NEW), A('wag', '🐕', NEW), A('jab', '🥊', NEW), A('red', '🔴', NEW), A('hex', '🔮', NEW_SPELL),
   A('jig', '💃', NEW), A('mix', '🥣', NEW_SPELL), A('jog', '🏃', NEW), A('bop', '🔨', NEW), B('dot', '⚫', NEW),
   A('hum', '🎵', NEW), A('yum', '😋', NEW),
@@ -154,10 +156,10 @@ const ENTRIES: BankEntry[] = [
   // LIP-LID-KID; DOT (a thing too now) joins DOG to POT, and HUT (no longer odd) NUT to HAT.
   T('pup', '🐾', NEW_157), T('cub', '🐻', NEW_157), T('cot', undefined, NEW_157), T('kid', '🧒', NEW_157),
   // Item 037, level 2: blends. Order (item 096): final s-blends (NEST, MASK) and initial l-blends (FLAG, CLAP) first, final nasal blends (JUMP, HAND) last.
-  T('frog', '🐸', NEW), T('drum', '🥁', NEW), T('crab', '🦀', NEW), T('flag', '🚩', NEW), T('sled', '🛷', NEW_ODD),
-  T('nest', '🥚', NEW), T('tent', '⛺', NEW), T('desk', '🗄️', NEW), T('belt', '🥋', NEW), T('vest', '🦺', NEW_ODD),
-  T('plum', '🍑', NEW_ODD), T('gift', '🎁', NEW), T('lamp', '💡', NEW), T('hand', '✋', NEW), T('mask', '🎭', NEW),
-  T('raft', '🛶', NEW_ODD), T('plug', '🔌', NEW_ODD), T('slug', '🐌', NEW_ODD), T('twig', '🌿', NEW_ODD), T('ant', '🐜', NEW),
+  T('frog', '🐸', NEW), T('drum', '🥁', NEW), T('crab', '🦀', NEW), T('flag', '🚩', NEW), T('sled', '🛷', NEW),
+  T('nest', '🥚', NEW), T('tent', '⛺', NEW), T('desk', '🗄️', NEW), T('belt', '🥋', NEW), T('vest', '🦺', NEW),
+  T('plum', '🍑', NEW), T('gift', '🎁', NEW), T('lamp', '💡', NEW), T('hand', '✋', NEW), T('mask', '🎭', NEW),
+  T('raft', '🛶', NEW), T('plug', '🔌', NEW), T('slug', '🐌', NEW), T('twig', '🌿', NEW), T('ant', '🐜', NEW),
   T('milk', '🥛', NEW),
   A('jump', '🦘', NEW), A('spin', '🌀', NEW_SPELL), A('swim', '🏊', NEW), A('flip', '🥞', NEW_SPELL), A('stomp', '🦖', NEW),
   A('slam', '💥', NEW), A('grab', '🦾', NEW), A('clap', '👏', NEW), A('bump', '🚗', NEW), A('snap', '🐊', NEW_SPELL),
@@ -166,8 +168,8 @@ const ENTRIES: BankEntry[] = [
   // Item 121, level 2: an initial r-blend, then the final nasal blends last.
   T('dress', '👗', NEW_121), T('stump', '🌲', NEW_121), T('skunk', '🦡', NEW_121),
   // Item 037, level 3: digraphs, a small start.
-  T('ship', '🚢', NEW), T('fish', '🐟', NEW), T('duck', '🦆', NEW), T('sock', '🧦', NEW), T('moth', '🦋', NEW_ODD),
-  T('shed', '🏚️', NEW_ODD), T('chick', '🐤', NEW),
+  T('ship', '🚢', NEW), T('fish', '🐟', NEW), T('duck', '🦆', NEW), T('sock', '🧦', NEW), T('moth', '🦋', NEW),
+  T('shed', '🏚️', NEW), T('chick', '🐤', NEW),
   A('chop', '🪓', NEW), A('kick', '🦶', NEW), A('rush', '💨', NEW),
   // Item 121, level 3: the farm, home and school, and the chase.
   T('sack', '💰', NEW_121), T('block', '🟦', NEW_121), T('bench', '🪑', NEW_121),
@@ -200,7 +202,8 @@ const ENTRIES: BankEntry[] = [
   T('thumb', '👍', { ...NEW_056, spelled: [['th', 'th'], ['u', 'u'], ['mb', 'm']] }),
   T('lamb', '🐑', { ...NEW_056, spelled: [['l', 'l'], ['a', 'a'], ['mb', 'm']] }),
   A('quest', '🧭', NEW_056),
-  T('quilt', '🛏️', { ...NEW_056, odd: true }),
+  // No glyph since item 178: 🛏️ is the bed's prop, which keeps any word drawn with it out of the keys (`notKeys`).
+  T('quilt', undefined, NEW_056),
   // Long vowels: Q and K have no familiar short-vowel first-sound picture but
   // these; J G V SH TH CH get a third; CAKE KITE BIKE give long A and I a start.
   // Magic-E words have a silent E (the sound ''). Level 3,
@@ -237,6 +240,32 @@ const ENTRIES: BankEntry[] = [
   T('xray', '🦴', { ...UNTAUGHT_058, say: 'x-ray', spelled: [['x', 'x_name'], ['r', 'r'], ['ay', 'long_a']] }),
   // Item 126: COW and its OW (`ow`, a new untaught sound, as 058 added long OO for ZOO).
   T('cow', '🐄', { ...UNTAUGHT_058, since: '126', spelled: [['c', 'c'], ['ow', 'ow']] }),
+  // Item 178 (Matt, 2026-11-16): more words ahead of any DIFFICULTY change. Decodable ones for
+  // her shaky short O and the final blends; HELMET and GOBLIN are two short-vowel syllables,
+  // spelled letter by letter and tagged by their first vowel (level 2, no family).
+  T('frost', '❄️', NEW_178), T('pond', undefined, NEW_178), T('sand', '🏖️', NEW_178), T('fang', '🦷', NEW_178),
+  T('helmet', '⛑️', { ...NEW_178, spelled: [['h', 'h'], ['e', 'e'], ['l', 'l'], ['m', 'm'], ['e', 'e'], ['t', 't']] }),
+  T('goblin', '👺', { ...NEW_178, spelled: [['g', 'g'], ['o', 'o'], ['b', 'b'], ['l', 'l'], ['i', 'i'], ['n', 'n']] }),
+  // Silent-E long vowels, `late` like CAKE and KITE. ICE's C says S (its picture was the roster's flavour art).
+  T('cape', undefined, { ...NEW_178, late: true, spelled: [['c', 'c'], ['a', 'long_a'], ['p', 'p'], ['e', '']] }),
+  T('cave', undefined, { ...NEW_178, late: true, spelled: [['c', 'c'], ['a', 'long_a'], ['v', 'v'], ['e', '']] }),
+  // FLAME has no glyph: 🔥 is the F rune's gesture.
+  T('flame', undefined, { ...NEW_178, late: true, spelled: [['f', 'f'], ['l', 'l'], ['a', 'long_a'], ['m', 'm'], ['e', '']] }),
+  T('smoke', undefined, { ...NEW_178, late: true, spelled: [['s', 's'], ['m', 'm'], ['o', 'long_o'], ['k', 'k'], ['e', '']] }),
+  T('ice', undefined, { ...NEW_178, late: true, spelled: [['i', 'long_i'], ['c', 's'], ['e', '']] }),
+  // Cool words with sounds she has not been taught, `late` like ZEBRA and COW. SWORD's W is silent
+  // and its OR a new untaught sound (`or`); BOW's OW is long O, not COW's OW; CASTLE's T is silent
+  // (ST says S) and its L carries the "ul" as APPLE's does; DRAGON's O is a schwa.
+  // SWORD has no glyph: ⚔️ is the journey map's battle stop, shown every episode (`planInput`'s signs).
+  T('sword', undefined, { ...NEW_178, late: true, spelled: [['s', 's'], ['w', ''], ['or', 'or'], ['d', 'd']] }),
+  T('shield', '🛡️', { ...NEW_178, late: true, spelled: [['sh', 'sh'], ['ie', 'long_e'], ['l', 'l'], ['d', 'd']] }),
+  T('bow', '🏹', { ...NEW_178, late: true, say: 'boh', spelled: [['b', 'b'], ['ow', 'long_o']] }),
+  T('dragon', '🐉', { ...NEW_178, late: true, spelled: [['d', 'd'], ['r', 'r'], ['a', 'a'], ['g', 'g'], ['o', 'schwa'], ['n', 'n']] }),
+  T('crown', '👑', { ...NEW_178, late: true, spelled: [['c', 'c'], ['r', 'r'], ['ow', 'ow'], ['n', 'n']] }),
+  T('castle', '🏰', { ...NEW_178, late: true, spelled: [['c', 'c'], ['a', 'a'], ['st', 's'], ['l', 'l'], ['e', '']] }),
+  // WIZARD in ROBOT's place (Matt's list allows a swap): the bedroom's wind-up robot is shown every
+  // episode, so ROBOT could never be read (as DRUM). Its AR is the unstressed ER, a new untaught sound (`er`).
+  T('wizard', '🧙', { ...NEW_178, late: true, spelled: [['w', 'w'], ['i', 'i'], ['z', 'z'], ['ar', 'er'], ['d', 'd']] }),
 ];
 
 /** The digraphs that are one sound unit (item 056: NG, and QU, whose sound is Q's "kw"). */
@@ -284,8 +313,14 @@ export function tag(e: BankEntry): BankWord {
     // Item 056: a hand-spelled word with one short vowel and nothing long,
     // silent or (item 058) untaught (THUMB is TH U MB, MB saying M) is tagged
     // like any word. ZEBRA, APPLE, UMBRELLA take the long path.
+    // Item 178: two short-vowel syllables (HELMET, GOBLIN) are tagged by the first vowel, level 2 at least.
     const vi = sounds.findIndex(isShort);
-    if (sounds.filter(isShort).length === 1 && !sounds.some((s) => !s || s.startsWith('long_') || isUntaught(s))) {
+    const shorts = sounds.filter(isShort).length;
+    if (shorts > 1 && !sounds.some((s) => !s || s.startsWith('long_') || isUntaught(s))) {
+      const level = Math.max(2, levelOf(units, vi)) as Level;
+      return { ...e, units, sounds, level, vowel: sounds[vi] as Vowel, onset: units.slice(0, vi).join(''), rime: units.slice(vi).join('') };
+    }
+    if (shorts === 1 && !sounds.some((s) => !s || s.startsWith('long_') || isUntaught(s))) {
       return { ...e, units, sounds, level: levelOf(units, vi), vowel: sounds[vi] as Vowel, onset: units.slice(0, vi).join(''), rime: units.slice(vi).join('') };
     }
     // A long-vowel or untaught-sound word: level 1 (KEY, YOYO), or `late` (item 056) 3, with the digraphs.
@@ -306,25 +341,19 @@ export function tag(e: BankEntry): BankWord {
  * shown, never a pad, a gift, a picture or a fetched item, at any difficulty.
  * To bring one back, delete its line here (docs/content.md, *Matt says X*).
  * The grown-ups page lists them apart, with these reasons.
+ *
+ * Item 178 (Matt, 2026-11-16): the ready pool went live, every stored word but
+ * these. Item 127's other 40 (JUG MUG GLASS SACK LAMB TAP BIN MAT DESK JEEP
+ * QUEEN VASE HEN RAT GATE; SWISH DASH JOG RUSH ZIP BAM BOP SLAM JAB HUM HEX
+ * JIG FIX FOG WET PLOP FLOP SKIP TWIST LIFT SNAP QUEST; JET RAM TOP FIN) are live
+ * on their current pictures; item 178's picker (`art_alts_178`) offers a redraw
+ * for each whose reason was the picture (briefs `178_<word>_redraw`). X-RAY stays
+ * stored under item 137's letter-name law.
  */
 export const STORED_WHY: Record<string, string> = {
-  // Things: a picture she would name another way, or one word too many for one picture.
-  jug: 'a pitcher of milk: she says MILK (a bank word) or pitcher',
-  mug: 'a mug of cocoa is a CUP to her (CUP is kept)',
-  glass: 'a glass of water is a CUP or WATER to her',
-  sack: 'a sack is a BAG to her',
-  lamb: 'the same picture as SHEEP (kept)',
-  tap: 'a US child says faucet; the picture also reads as SINK or DRIP',
-  bin: 'a US child says trash can, which points at CAN',
-  mat: 'the foam squares read as a puzzle, or as RUG',
-  desk: 'drawn as a little table: she says table',
-  jeep: 'she says car (or TRUCK)',
-  queen: 'the young queen in a gown reads as a princess',
-  vase: 'the flowers fill the picture: she says flowers',
-  xray: 'she says bones or hand; an x-ray is no idea she has',
-  hen: 'a 4-year-old says chicken',
-  rat: 'the big-eared grey rodent reads as a mouse',
-  gate: 'the planks between posts read as a fence',
+  // Item 178: Matt's pool ruling would make X-RAY live, but its X is `x_name`, the letter's name,
+  // which item 137's law rules out of every hint and clue (asked as a design call; default kept).
+  xray: 'its X says the letter\'s name (ECKS), which item 137 rules out of every hint',
   // Hunt 11, M66: a sound-out would teach the wrong vowel.
   bush: 'its U is the U of PUT, not of SUN: a wrong short-U word in every sound-out',
   // Hunt 9, M40: the bedroom's own props, shown every episode before any room (fix 74), so never read.
@@ -336,34 +365,6 @@ export const STORED_WHY: Record<string, string> = {
   duck: 'a bedroom toy, shown every episode, so it is never read',
   // Hunt 10, M40's kind: the bedroom's tower of blocks (🧱, not BLOCK's 🟦, so the glyph match missed it).
   block: 'the bedroom\'s tower of toy blocks, shown every episode, so it is never read',
-  // Actions: a picture named another way, a sound or idea with no picture, or a rare word.
-  swish: 'the farmer with a scythe reads as CUT (Matt)',
-  dash: 'the running boy reads as RUN (Matt)',
-  jog: 'a running boy again: RUN',
-  rush: 'the picture is wind blowing leaves; RUSH is an idea, close to RUN',
-  zip: 'ZIP is a zipper to her; the comet reads as a fireball',
-  bam: 'a sound word drawn as a hammer (SMASH keeps the hammer)',
-  bop: 'a sound word drawn as a toy hammer, a third hammer',
-  slam: 'the fist on the ground reads as a punch',
-  jab: 'the boxing glove is a punch; JAB is rare for her',
-  hum: 'a sound she cannot see: the picture reads as singing',
-  hex: 'a word she does not know; the swirl reads as magic or SPIN',
-  jig: 'a word she does not know; the picture reads as dance',
-  fix: 'an idea, drawn as a wrench and a band-aid',
-  fog: 'fog drawn alone is a cloud',
-  wet: 'the picture is a splash, as SPLASH',
-  plop: 'a drop into a puddle: DRIP and SPLASH again',
-  flop: 'a walrus landing in a splash: walrus or SPLASH',
-  skip: 'a US child says jump rope, and it reads as JUMP',
-  twist: 'the tornado reads as a tornado, or SPIN',
-  lift: 'the crane is the picture: she says crane',
-  snap: 'a still crocodile: she says crocodile; CHOMP keeps the jaws',
-  quest: 'an idea and a rare word; the picture reads as walking',
-  // Odd things whose action side was still live: the picture is named another way there too.
-  jet: 'the airliner is an airplane to her (odd as a thing since 040)',
-  ram: 'the horned sheep is a SHEEP (odd as a thing since 040)',
-  top: 'spinning tops are rare now (odd as a thing since 040)',
-  fin: 'every child says shark (odd as a thing since 040)',
 };
 
 export const BANK: BankWord[] = ENTRIES.map(tag).map((w) => (STORED_WHY[w.word] ? { ...w, stored: STORED_WHY[w.word] } : w));
@@ -393,17 +394,15 @@ export const COVERAGE = {
   /** Familiar pictures per first sound, every letter sound and digraph, unless `first` says less and why. */
   firstTarget: 3,
   first: {
-    j: { target: 1, why: 'JAM; JUG and JEEP are stored (item 127: she says milk, car), JET odd and stored' },
-    v: { target: 2, why: 'VAN, VET; VASE is stored (item 127: she says flowers), VEST odd' },
+    // Item 178: J V W are back at the usual 3 (JUG JET JEEP, VASE VAT VEST, WIG WIZARD live).
     a: { target: 2, why: 'ANT, APPLE; ALLIGATOR and ASTRONAUT she would not read for years' },
     e: { target: 2, why: 'EGG, ELF; ELK and EDGE are no picture she knows' },
     i: { target: 1, why: 'IGLOO (untaught OO); INSECT she would call a bug, INK and INCH no clear picture' },
     o: { target: 1, why: 'OCTOPUS (untaught schwas); OTTER she would not know, an OX she would call a cow' },
     u: { target: 1, why: 'UMBRELLA (an untaught schwa); UP is an idea, UNDER a place, not a picture' },
-    q: { target: 0, why: 'QUEEN is stored (item 127: the picture reads as a princess; an older queen would bring her back); QUILT she would call a blanket (odd); QUEST is stored' },
-    x: { target: 0, why: 'X-RAY is stored (item 127: she says bones); no word starts with the KS sound' },
-    w: { target: 2, why: 'WEB, WING; WIG is odd, WELL and WITCH are said in hub scenes (WELL DONE, a good witch)' },
-    y: { target: 1, why: 'YOYO; YAK is odd; YAWN, YARN and YOLK need sounds the bank has not got' },
+    q: { target: 2, why: 'QUEEN, QUILT (live again, item 178); no other Q picture she knows' },
+    x: { target: 0, why: 'X-RAY is stored (item 178: its X says the letter name, which item 137 rules out); no word starts with the KS sound' },
+    y: { target: 2, why: 'YOYO, YAK; YAWN, YARN and YOLK need sounds the bank has not got' },
     z: { target: 2, why: 'ZOO, ZEBRA (untaught OO, schwa); ZAP and ZIP are move words, ZIGZAG and ZERO no picture she knows' },
     th: { target: 2, why: 'THUMB, THREE; THORN and THIMBLE she would not know' },
     th_voiced: { target: 0, why: 'THIS, THAT, THE: no picture' },
@@ -419,23 +418,20 @@ export const COVERAGE = {
     f: { target: 1, why: 'ELF; CLIFF and LEAF are no clear picture or need a long vowel' },
     z: { target: 1, why: 'CHEESE; QUIZ and FIZZ are no picture' },
     ch: { target: 0, why: 'WITCH is said in a hub scene; PEACH and BENCH want sounds to come' },
-    th: { target: 1, why: 'BATH; MOTH is odd, TEETH to come' },
+    th: { target: 2, why: 'BATH, MOTH; TEETH to come' },
   } as Record<string, CoverageTarget>,
   /** Familiar pictures per short vowel. */
   vowelTarget: 8,
   /** Familiar pictures per word-machine family (it needs two to build), and the families that must stay families. */
   familyTarget: 2,
-  // Item 127: -IN left (PIN alone: BIN is stored, a trash can to her, FIN odd); a second familiar -IN picture brings it back.
-  families: ['at', 'an', 'ap', 'en', 'et', 'og', 'ug', 'ox', 'un', 'ing', 'ock'],
+  // Item 178: -IN (PIN BIN FIN) and -IG (PIG WIG FIG) are families again with the pool live, and must stay so;
+  // -EG, -OD and -OP (two pictures each) are back too, but not held here.
+  families: ['at', 'an', 'ap', 'en', 'et', 'og', 'ug', 'ox', 'un', 'ing', 'ock', 'in', 'ig'],
   /** The Stretchy Bridge (item 054): early words (levels 1-2, short vowel) per first sound, so its far bank shows two that start alike and differ later. */
   bridgeTarget: 3,
   bridgeStarts: ['m', 's', 'f', 'l', 'n', 'r', 'v', 'b', 'c', 'd', 'h', 'p', 't', 'g', 'j'],
-  bridge: {
-    r: { target: 1, why: 'RUG; RAT is stored (item 127: it reads as a mouse), ROCK and RING are level 3, RAFT and RAM odd' },
-    g: { target: 2, why: 'GIFT, GRASS; GLASS is stored (item 127: a cup to her)' },
-    v: { target: 2, why: 'VAN, VET; VEST is odd, VASE level 3' },
-    j: { target: 1, why: 'JAM; JUG is stored (item 127: milk), JET odd and stored, JEEP level 3 and stored' },
-  } as Record<string, CoverageTarget>,
+  // Item 178: R G V J are at the usual 3 with the pool live (RAT RAM ROD RAFT, GLASS GUM GOBLIN, VAT VEST, JUG JET).
+  bridge: {} as Record<string, CoverageTarget>,
   /** Familiar pictures per long vowel (each its own sound line). */
   long: {
     long_e: { target: 3 },

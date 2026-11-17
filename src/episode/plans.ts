@@ -219,7 +219,10 @@ function planInput(gift: string, rooms: [string, string], counterRoom: string): 
   const prop = hubScene().story.prop;
   if (!prop.startsWith('prop_')) signs.add(prop);
   const signWords = BANK.filter((w) => w.glyph && signs.has(w.glyph)).map((w) => w.word);
-  const saidBefore = [...storyWords(), ...bedroomWords(), ...signWords, ...grabSays(episode.grab ? episode.grab.word : grabWord())];
+  // Item 178 (Matt): the cast's own lines (quest line, hub scene, threat, taunt, wake-up) are only a soft
+  // preference (`softSaid`); what the screen shows (signs) and the warm-up's word stay out.
+  const saidBefore = [...signWords, ...grabSays(episode.grab ? episode.grab.word : grabWord())];
+  const softSaid = [...storyWords(), ...bedroomWords()];
   // And the bed she wakes in and presses green on (hunt 12): with the map's bedroom stop a sunrise since item 157,
   // nothing kept BED out of the key words and the attic's counter (Evil Julia's Cozy Bed). Only those: item 157
   // put BED back in play, and she reads it in the other games.
@@ -228,7 +231,7 @@ function planInput(gift: string, rooms: [string, string], counterRoom: string): 
   // The things the counter room's backdrop paints (hunt 12, M85: the hideout's treasure chest behind
   // ...DOES NOT LIKE THE CHEST): on screen while she reads the counter there, so never that word.
   const notCounter = SIDE_ROOM_BY_ID[counterRoom]?.pictures ?? [];
-  return { fill, ally: episode.ally, gift, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore, notKeys, notCounter };
+  return { fill, ally: episode.ally, gift, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore, softSaid, notKeys, notCounter };
 }
 
 /**

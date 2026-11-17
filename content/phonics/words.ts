@@ -75,7 +75,7 @@ export const MOVE_PICTURES: Word[] = BANK.filter((w) => !THINGS.includes(w)).map
  */
 export const FLAVOUR_PICTURES: Word[] = [
   { word: 'pow', glyph: '🥊', decodable: false },
-  { word: 'ice', glyph: '🧊', decodable: false },
+  // ICE is a bank word again since item 178 (a hand-spelled silent-E word), its picture this one.
 ];
 
 export const WORD_BY_ID: Record<string, Word> = Object.fromEntries(WORDS.map((w) => [w.word, w]));

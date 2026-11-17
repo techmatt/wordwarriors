@@ -207,6 +207,25 @@ const THING_EFFECTS: WordEffect[] = [
   { word: 'octopus', look: 'a friendly octopus whose eight arms wrap the villain up tight', ability: use('octopus', 'trap', 0xff6ad5, { glyph: '🐙', count: 3 }) },
   { word: 'umbrella', look: 'a giant umbrella that opens over the whole team: a shield', ability: use('umbrella', 'shield', 0x9b5de5, { duration: 4 }) },
   { word: 'xray', look: 'an x-ray beam that shines right through the villain, it can see its bones', ability: use('xray', 'beam', 0x7ad9ff, { color2: 0xffffff }) },
+  // Item 178's words.
+  { word: 'frost', look: 'a sparkly frost that creeps over the villain: frozen stiff for a moment', ability: use('frost', 'freeze', 0xdff6ff, { duration: 2 }) },
+  { word: 'pond', look: 'a whole pond of water that sloshes across the arena, lily pads and all', ability: use('pond', 'wave', 0x3a9ad9, { color2: 0x6ad66a }) },
+  { word: 'sand', look: 'a puff of sand in the villain\'s eyes: it cannot see, blink blink', ability: use('sand', 'cone', 0xf2d48a, { color2: 0xffffff, status: 'stun', duration: 2 }) },
+  { word: 'fang', look: 'big white fangs that snap at the villain, nip nip', ability: use('fang', 'bolt', 0xffffff, { ...pic('fang'), count: 3, homing: true }) },
+  { word: 'helmet', look: 'a shiny helmet on every hero\'s head: bonks bounce off', ability: use('helmet', 'shield', 0xc0c0c0, { duration: 4 }) },
+  { word: 'goblin', look: 'a cheeky little goblin that scampers straight through the villain, tee-hee', ability: use('goblin', 'dash', 0x6ab04c, { power: 3 }) },
+  { word: 'cape', look: 'a hero cape that swirls round her: she swoops straight through the villain', ability: use('cape', 'dash', 0xd62828, { power: 3, color2: 0xffd23f }) },
+  { word: 'cave', look: 'a dark cave that closes round the villain: it is lost inside for a moment', ability: use('cave', 'slam', 0x7a6a5a, { power: 2, status: 'stun', duration: 2 }) },
+  { word: 'flame', look: 'a roaring flame beamed at the villain, whoosh', ability: use('flame', 'beam', 0xff6a3a, { color2: 0xffd23f, power: 3 }) },
+  { word: 'smoke', look: 'a big puff of smoke round the villain: cough cough, it is dizzy', ability: use('smoke', 'cone', 0x9a9a9a, { color2: 0xdddddd, status: 'stun', duration: 2 }) },
+  { word: 'ice', look: 'ice cubes pelting the villain: brr, frozen for a moment', ability: use('ice', 'bolt', 0xaee6ff, { ...pic('ice'), count: 5, status: 'freeze', duration: 1.5 }) },
+  { word: 'sword', look: 'shiny swords flung spinning at the villain, clang', ability: use('sword', 'bolt', 0xdfe6ee, { ...pic('sword'), count: 3, homing: true }) },
+  { word: 'shield', look: 'a big round shield held up in front of the whole team', ability: use('shield', 'shield', 0x5aa0ff, { duration: 4 }) },
+  { word: 'bow', look: 'a bow and a volley of arrows, twang twang', ability: use('bow', 'bolt', 0x8a5a3a, { glyph: '🏹', count: 5, homing: true }) },
+  { word: 'dragon', look: 'a friendly dragon swoops in and breathes fire at the villain, roar', ability: use('dragon', 'beam', 0xff8c1a, { color2: 0xd62828, power: 3 }) },
+  { word: 'crown', look: 'a golden crown on her head: the royal sparkle makes the whole team strong again', ability: use('crown', 'heal', 0xffd23f, { color2: 0xffffff }) },
+  { word: 'castle', look: 'a whole toy castle that drops down on the villain, thump', ability: use('castle', 'slam', 0xb0a090, { power: 3 }) },
+  { word: 'wizard', look: 'a kind old wizard who waves his staff: a shower of magic stars on the villain', ability: use('wizard', 'rain', 0x9b5de5, { glyph: '⭐', count: 10 }) },
 ];
 
 /**

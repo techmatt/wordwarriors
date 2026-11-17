@@ -59,9 +59,8 @@ test('no door sign shows a key: the secret door is a compass, so KEY stays reada
   for (const r of ALL_SIDE_ROOMS) assert.notEqual(r.glyph, BANK_BY_WORD.key!.glyph, r.id);
 });
 
-test('PIN is familiar again (Matt, item 043); BIN is stored (item 127), so -IN is no family', () => {
+test('PIN is familiar again (Matt, item 043); BIN and FIN live again (item 178), so -IN is a family', () => {
   assert.ok(!BANK_BY_WORD.pin!.odd);
-  assert.ok(BANK_BY_WORD.bin!.stored);
-  assert.ok(!FAMILY_BY_RIME.in, '-IN has one familiar picture (PIN) only');
-  assert.ok(!FAMILY_BY_RIME.ig, '-IG has one familiar picture (PIG) only');
+  assert.ok(!BANK_BY_WORD.bin!.stored);
+  assert.ok(FAMILY_BY_RIME.in, '-IN has PIN, BIN and FIN');
 });

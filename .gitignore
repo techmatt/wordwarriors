@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+# Conductor's per-item scratch and run output (out/<item>/, out/keep/): never committed.
+/out/
+
 # Build output
 dist/
 *.local

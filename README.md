@@ -837,8 +837,15 @@ leaves a letter short goes red. Lower a target only with its reason.
 Item 127 audited every word she reads or is shown, pictures included, and **stored** the
 risky ones: a picture she would name another way (SWISH's farmer with a scythe reads as
 CUT, DASH's running boy as RUN), a word too rare for her, a sound or idea with no
-picture, or one word too many for one picture (LAMB beside SHEEP). `STORED_WHY` in
-`content/phonics/bank.ts` lists each with its reason. A stored word is in no pool
+picture, or one word too many for one picture (LAMB beside SHEEP). **Item 178 (Matt,
+2026-11-16) turned that ready pool on**: every stored word and every `odd` one is live
+again but BUSH (a wrong short U), the bedroom's props DRUM, LAMP, DUCK and BLOCK, and
+X-RAY (its X is the letter's name, which item 137's law rules out), the six `STORED_WHY`
+still lists. A word a cast's own lines say first (Elsa's ICE castle, Smaug's DRAGON
+mountain) is only weighed down in that episode's key draws (`softSaid`,
+`SOFT_SAID_WEIGHT`; Matt: hearing it in a character line first is no problem), never kept
+out (`tests/unit/castSaid.test.ts`).
+`STORED_WHY` in `content/phonics/bank.ts` lists each with its reason. A stored word is in no pool
 (`THINGS`, `ACTIONS`, `LIVE` leave it out), so nothing draws it at any difficulty, and a
 saved bag holding one drops it. It keeps its entry, picture, `word_<x>` line, effect and
 move lines: the voice composer writes those from `ALL_ACTIONS` and `ALL_FAMILIES`, so

@@ -88,13 +88,15 @@ test('story fights: beats are well formed, spots and splashes drawn, each part e
   }
 });
 
-test('story fights: no line says a bank word, stems included', () => {
+// Item 178 (Matt, MESSAGE #5631): a reading word in a character line is no problem (Smaug's "dragon
+// fire"); a story fight's lines still say no move word, which could be a pad it asks for.
+test('story fights: no line says a move word, stems included', () => {
   for (const s of STORIES) {
     for (const l of storyLines(s)) {
       for (const t of [l.text, l.say ?? '']) {
         const words = t.toLowerCase().split(/[^a-z]+/).filter(Boolean);
         const said = new Set(withStems(words));
-        for (const w of BANK) assert.ok(!said.has(w.word), `${s.id}.${l.key}: "${t}" says ${w.word.toUpperCase()}`);
+        for (const w of BANK.filter((b) => b.role !== 'thing')) assert.ok(!said.has(w.word), `${s.id}.${l.key}: "${t}" says ${w.word.toUpperCase()}`);
       }
     }
   }

@@ -31,7 +31,7 @@
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
 import { FETCH_ITEMS, FRAME_BY_ID, NO_ARTICLE, NOT_FETCHED, NUMBER_WORDS, sentence, tokenWord, type Fill, type Sentence } from '../../content/phonics/sentences';
 import { ACTIONS } from '../../content/phonics/bank';
-import { NAMED_COUNTER_BOOST } from '../config';
+import { NAMED_COUNTER_BOOST, SOFT_SAID_WEIGHT } from '../config';
 import { MINIGAMES, drawGames, type Minigame, type MinigameKind } from './minigames';
 import { machineWords, planMachine, type MachinePlan } from './wordMachine';
 import { chargeRunes, chargeWords, gestureWords, planCharge, type ChargePlan } from './charge';
@@ -139,8 +139,15 @@ export interface EpisodeInput {
   games?: [Minigame, Minigame, Minigame];
   /** The pool `games` is drawn from when not given (default: every minigame). */
   pool?: Minigame[];
-  /** Words said before any room besides the cast's own (the quest's setup line): never key words. */
+  /** Words shown or said before any room that are no character's line (a door's or the map's sign, the warm-up's word): never key words. */
   saidBefore?: string[];
+  /**
+   * Words the cast's own lines say first (the quest line, the hub scene, the threat and taunt; with
+   * `saidEarly`, their fighters' names): only a soft preference (item 178, Matt: "hearing a word in a
+   * character line before reading it is not a problem"): the key draws weigh them SOFT_SAID_WEIGHT, and
+   * nothing keeps them out.
+   */
+  softSaid?: string[];
   /**
    * Words whose picture every episode shows before any room, unsaid (hunt 12: the bed she wakes in and presses
    * green on, BED): never a key word or the attic's counter, which the episode must not show first, but read
@@ -319,7 +326,10 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
     const planner = plannerOf(g);
     return 'shows' in planner ? planner.shows(g, fill) : [];
   });
-  const avoid = new Set(withStems([gift, ...shown, ...(input.saidBefore ?? []), ...saidEarly({ hero: fill.hero, ally: input.ally, villain: fill.villain, helper: fill.helper })]));
+  const avoid = new Set(withStems([gift, ...shown, ...(input.saidBefore ?? [])]));
+  // Item 178 (Matt): what the cast's own lines say is weighed down in the key draws, never kept out.
+  const soft = new Set(withStems([...(input.softSaid ?? []), ...saidEarly({ hero: fill.hero, ally: input.ally, villain: fill.villain, helper: fill.helper })]));
+  const softWeight = (w: string) => (soft.has(w) ? SOFT_SAID_WEIGHT : 1);
   // The episode's move pads, and battle 1's: no room's word, a game's own included, is one of them.
   const moves = new Set<string>([...(input.moveWords ?? ACTION_WORDS), ...(input.battle1Moves ?? [])]);
   const named = CHARACTER_BY_ID[fill.villain]?.counter.word;
@@ -372,7 +382,7 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
     }
     // Not the villain's named counter word either: the attic's to draw (item 092). Nor MOM or DAD (hunt 9, M41).
     const eligible = BAG_WORDS.filter((w) => FETCHABLE.has(w) && !NOT_FETCHED.has(w) && !avoid.has(w) && !notKeys.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w) && !ctx.named.includes(w)).filter(fits(i));
-    keys.push(drawKey(store, eligible, rand, [...keys, ...taken]));
+    keys.push(drawKey(store, eligible, rand, [...keys, ...taken], softWeight));
   }
   // The counter: not a word on battle 1's move pads, not a word fetched this
   // episode (battle 1 shouts THE NET!). Every bag word is decodable (item 009;
@@ -380,7 +390,7 @@ export function episodePlans(store: ProgressStore, input: EpisodeInput, rand: Ra
   // Nor a thing its room's backdrop paints (hunt 12, M85).
   const backdrop = new Set(withStems(input.notCounter ?? []));
   const eligible = BAG_WORDS.filter((w) => !avoid.has(w) && !notKeys.has(w) && !backdrop.has(w) && !moves.has(w) && !keys.includes(w) && !taken.includes(w) && !pictured.includes(w)).filter(fits(2));
-  keys.push(drawKey(store, eligible, rand, [...keys, ...taken], (w) => (w === named ? NAMED_COUNTER_BOOST : 1)));
+  keys.push(drawKey(store, eligible, rand, [...keys, ...taken], (w) => (w === named ? NAMED_COUNTER_BOOST : 1) * softWeight(w)));
 
   const slots = ['a', 'b', 'counter'] as const;
   const roomIds = [input.rooms[0], input.rooms[1], input.counterRoom];

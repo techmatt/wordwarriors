@@ -192,10 +192,17 @@ export class ParentScene extends Phaser.Scene {
       // The word machine (item 026): per family, tries and first-try right (recent).
       // The word machine's families and the rhyme room's, which share the record (hunt 11: -IG, -OP and -OT, the
       // rhyme room's own, never showed).
-      `Word families: ${[...new Set([...FAMILIES.map((f) => f.rime), ...RHYME_FAMILIES.map((f) => f.rime)])].map((rime) => {
-        const s = progress.stat('rimes', rime);
-        return `-${rime} ${s.seen}·${recentPct(s)}`;
-      }).join('  ')}`,
+      // Item 178: the live pool brought five more families, so the twelve shakiest met ones are listed, the rest counted.
+      ((rimes) => {
+        const met = rimes.filter((rime) => progress.stat('rimes', rime).seen > 0).sort((a, b) => progress.shakiness('rimes', b) - progress.shakiness('rimes', a));
+        const list = met.slice(0, 12).map((rime) => {
+          const s = progress.stat('rimes', rime);
+          return `-${rime} ${s.seen}·${recentPct(s)}`;
+        });
+        const more = met.length - list.length;
+        const unmet = rimes.length - met.length;
+        return `Word families: ${list.join('  ') || 'none yet'}${more ? `  +${more} more` : ''}${unmet ? `  (${unmet} not met)` : ''}`;
+      })([...new Set([...FAMILIES.map((f) => f.rime), ...RHYME_FAMILIES.map((f) => f.rime)])]),
       ...this.shifterLines(),
     ], { fontFamily: 'Segoe UI, sans-serif', fontSize: '15px', color: '#444' }), GAME_WIDTH - x - 20, GAME_HEIGHT - y - 10);
   }
@@ -278,7 +285,8 @@ export class ParentScene extends Phaser.Scene {
     });
     const y = 122 + perCol * ROW + 10;
     // Ends above y 690, where F8's warning prints (hunt 10).
-    fitText(this.add.text(30, y, `Out of play since item 040 (odd: a picture she would not know): ${DROPPED.map((w) => w.word.toUpperCase()).join(' ')}`, { ...font, color: '#555' }), GAME_WIDTH - 60, Math.max(22, 690 - y - 4));
+    // Item 178 put every odd word back in play: the line shows only while Matt has marked one again.
+    if (DROPPED.length) fitText(this.add.text(30, y, `Out of play (odd: a picture she would not know): ${DROPPED.map((w) => w.word.toUpperCase()).join(' ')}`, { ...font, color: '#555' }), GAME_WIDTH - 60, Math.max(22, 690 - y - 4));
   }
 
   /** A column grid of items; `badge` puts a short mark (a help level) in an item's dot, `tag` a word after its name. */

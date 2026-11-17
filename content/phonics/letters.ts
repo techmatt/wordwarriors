@@ -140,6 +140,10 @@ export const UNTAUGHT_SOUNDS: LetterSound[] = [
   { letter: 'schwa', say: 'Uh', cls: 'vowel', example: 'zebra', note: 'the schwa, the A of ZEBRA; the same placeholder as short u until Matt records the two apart', record: 'uhhh, the lazy sound at its end, as softly as in the word' },
   { letter: 'x_name', say: 'Ecks', cls: 'fricative', example: 'xray', note: 'X said by its name, the X of X-RAY; not the KS sound at the end of FOX', record: 'X says its name: ecks' },
   { letter: 'ow', say: 'Ow', cls: 'vowel', example: 'cow', note: 'the OW of COW, as in "ouch"; not the long O of SNOW', record: 'ow, as in "ouch!", not the OH of SNOW' },
+  // Item 178: SWORD's OR (its W silent).
+  { letter: 'or', say: 'Or', cls: 'vowel', example: 'sword', note: 'the OR of SWORD and FORK, one sound', record: 'or, as in "for", one sound, no R tacked on after' },
+  // Item 178: WIZARD's AR, said as the lazy ER at the end of a word.
+  { letter: 'er', say: 'Er', cls: 'vowel', example: 'wizard', note: 'the lazy ER of WIZARD (spelled AR there) and the end of TIGER', record: 'er, short and soft, as at the end of "tiger"' },
 ];
 
 /**

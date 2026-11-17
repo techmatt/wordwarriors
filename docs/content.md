@@ -625,7 +625,17 @@ level firmness count `LIVE` only. A family needs two familiar pictures.
 `content/phonics/words.ts` reads the bank: `PICTURE_WORDS` is every
 familiar thing and `both` word, `MOVE_PICTURES` every other bank word (actions, odd ones); sight words (`decodable: false`) use a character's
 name-free face card as the picture; `SPECIAL_WORDS` are non-bank key words kept for the
-story (MICE); `FLAVOUR_PICTURES` keep POW and ICE's art for the roster.
+story (MICE); `FLAVOUR_PICTURES` keep POW's art for the roster (ICE is a bank word since item 178).
+
+**A glyph no screen shows first** (item 178): a thing's glyph must not be a sign every
+episode shows before she reads, or the planner keeps the word out for good (`planInput`'s
+signs: the journey map's ⚔️ battle stop kept SWORD out, the bed's 🛏️ QUILT;
+`tests/unit/castSaid.test.ts`). Nor may the word be a bedroom prop (ROBOT, UNICORN: shown
+every episode). A word a cast's own quest line, hub scene, threat or fight line says
+(Elsa's ICE castle, the FROST CLASH) is fine (Matt, item 178: hearing it in a character line
+first is no problem): the key draws only weigh it down that episode (`softSaid`,
+`SOFT_SAID_WEIGHT` in `src/config.ts`), never keep it out. Those lines still say no action
+word (a pad or the gift).
 
 ## A sentence frame (`content/phonics/sentences.ts`)
 
