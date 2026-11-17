@@ -9,7 +9,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, expectNoErrors, playEpisode, press, until, type WWState } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, playEpisode, press, shotIn, until, type WWState } from './harness';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -27,7 +27,7 @@ test.beforeAll(async ({ browser }) => {
   await page.waitForTimeout(300);
   await press(page, 'green');
   played = await playEpisode(page);
-  await page.screenshot({ path: 'tests/screenshots/081_drawn_victory.png' });
+  await shotIn('081')(page, 'drawn_victory');
   // A hook's time is no test's in the report: the episode's own line says it.
   console.log(`drawn episode: ${Math.round((Date.now() - t0) / 1000)} s`);
 });

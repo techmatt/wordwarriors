@@ -139,7 +139,7 @@ test('planShifter: keeps clear of what it is told; a shorter chain where it must
 
 test('help ramp: level 1 at base whatever she has done; recorded steps up unaided, down with help', () => {
   const store = new ProgressStore(memory());
-  store.setShifterLevel('bat', 3);
+  store.setRampLevel('shifter', 'bat', 3);
   assert.equal(shifterLevel(store, 'bat'), 1);
   withDifficulty(3, () => assert.equal(shifterLevel(store, 'bat'), 3));
   withDifficulty(2, () => assert.equal(shifterLevel(store, 'bat'), 2));

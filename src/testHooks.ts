@@ -17,7 +17,7 @@ import { dadButtonsOpen, dadPress, type DadAnswer } from './input/dadButtons';
 import { dadLock, setDadLock } from './input/dadLock';
 import { typeLetter } from './input/TextEntry';
 import { artBank } from './art/ArtBank';
-import { voiceBus, type VoiceWait } from './voice/VoiceBus';
+import { voiceBus, type Priority, type VoiceWait } from './voice/VoiceBus';
 import { episode, currentStep, type EpisodeState } from './episode/Episode';
 import { progress } from './state/progress';
 import type { ProgressData } from './state/ProgressStore';
@@ -71,7 +71,6 @@ function visibleText(game: Phaser.Game): TextInfo[] {
 export interface WWState {
   /** The scene last opened (a `SceneKey`, so a spec's `s.scene === 'Hubb'` fails typecheck); '' before the first. */
   scene: SceneKey | '';
-  fps: number;
   /** The music playing (src/audio/music.ts), or null. */
   music: string | null;
   step: { kind: string; part?: number; game?: string; what?: string };
@@ -103,7 +102,6 @@ export interface WWState {
 function snapshot(): WWState {
   return {
     scene: hookState.scene,
-    fps: hookState.fps,
     step: currentStep(),
     episode: JSON.parse(JSON.stringify(episode)) as EpisodeState,
     room: hookState.room,
@@ -213,7 +211,7 @@ function makeHooks(game: Phaser.Game) {
     hush: () => voiceBus.hush(),
     texts: () => visibleText(game),
     /** Say any line; a bark needs somewhere to hang its bubble (`at`). */
-    say: (id: string, priority: 'instruction' | 'bark' = 'instruction', at?: { x: number; y: number }) =>
+    say: (id: string, priority: Priority = 'instruction', at?: { x: number; y: number }) =>
       voiceBus.say(id, priority, at ? { ...at, bubbleOffset: 0, active: true } : undefined),
   };
 }

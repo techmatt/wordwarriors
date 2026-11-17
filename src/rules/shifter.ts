@@ -303,7 +303,7 @@ export const shifterShown = (p: ShifterPlan): string[] => [...new Set([p.start, 
 
 /** The help level her reads of a word here have reached (the ramp; recorded, and shown on the grown-ups page). */
 export function recordedShifterLevel(store: ProgressStore, word: string): ShifterLevel {
-  return clampLevel(store.shifterLevel(word, SHIFTER.startLevel));
+  return clampLevel(store.rampLevel('shifter', word, SHIFTER.startLevel));
 }
 
 /** The help level the room gives a word now: SHIFTER.startLevel at base, else her recorded level up to DIFFICULTY. */

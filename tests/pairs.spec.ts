@@ -5,7 +5,7 @@
  * victory scene up to the recap. Screenshots and each pair's voiced line ids
  * land in tests/screenshots/ (ignored) for a look.
  *
- * Off unless asked for (all 36 take about an hour): `npm run test:pairs` plays
+ * Off unless asked for (every pair takes about an hour): `npm run test:pairs` plays
  * them all, `WW_PAIRS=scar` (a substring of `ally+villain`) the pairs that
  * match, `WW_PAIRS=+` all. Off, the spec shows one skipped test saying so.
  */

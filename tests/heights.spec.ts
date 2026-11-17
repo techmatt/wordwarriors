@@ -9,7 +9,7 @@
 
 import { test, expect } from '@playwright/test';
 
-import { boot, collectErrors, expectNoErrors, until } from './harness';
+import { boot, collectErrors, expectNoErrors, shotIn, until } from './harness';
 import { ADULT_FILL, ADULT_HEIGHT } from '../src/config';
 import { outfitFill } from '../src/rules/heights';
 
@@ -33,7 +33,7 @@ for (const c of [
     expect(shorter).toBeLessThanOrEqual(0.1);
     // The shot with the fight frozen for the move choice.
     await until(page, (st) => Boolean(st.battle?.choice?.open), 60_000, 'the move choice');
-    await page.screenshot({ path: `tests/screenshots/093_heights_${c.name.replace(/ /g, '_')}.png` });
+    await shotIn('093')(page, `heights_${c.name.replace(/ /g, '_')}`);
     expectNoErrors(errors);
   });
 }
@@ -51,7 +51,7 @@ test('her outfits (hunt 6, M32): chef Julia beside chef Dada Jason stands as tal
     return { s, julia: drawn(art) * outfitFill(art)!, drawn };
   };
   const chef = await her(page, 'ally=dada_jason', 'char_julia_chef');
-  await page.screenshot({ path: 'tests/screenshots/104_chef_julia_beside_chef_jason.png' });
+  await shotIn('104')(page, 'chef_julia_beside_chef_jason');
   const jason = chef.drawn('char_dada_jason_good') * ADULT_FILL.char_dada_jason_good!;
   const dress = await her(await (await browser.newContext()).newPage(), 'ally=ellie', 'char_julia_good');
   console.log(`Julia head to soles: chef ${chef.julia.toFixed(1)} px, dress ${dress.julia.toFixed(1)} px; chef Dada Jason ${jason.toFixed(1)} px (${(jason / chef.julia).toFixed(2)} of her)`);

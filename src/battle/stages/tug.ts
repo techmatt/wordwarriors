@@ -29,6 +29,7 @@ import { FLOOR_BOTTOM, FLOOR_TOP, type Fighter } from '../Fighter';
 import { ARENA_LEFT, ARENA_RIGHT } from '../movement';
 import type { Box } from '../padPlace';
 import { BaseStage, ease, type Pt } from './stage';
+import { pick } from '../../rules/random';
 
 /** The centre line, and the pool of sea water either side of it. */
 const MID = GAME_WIDTH / 2;
@@ -585,7 +586,7 @@ export class TugStage extends BaseStage {
     if (this.pts.length < 2 || !this.sparks.active) return;
     const count = Math.max(1, Math.round(n * fxQuality.level));
     for (let k = 0; k < count; k++) {
-      const p = this.pts[Math.floor(Math.random() * this.pts.length)]!;
+      const p = pick(this.pts, Math.random);
       this.sparks.emitParticleAt(p.x, p.y, 2);
     }
   }

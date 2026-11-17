@@ -1,5 +1,5 @@
 /**
- * The battle's volleys (item 141, out of BattleScene): the things she fetched
+ * The battle's volleys: the things she fetched
  * in the house flying out of her bag (`useAllFetched`, in beats by
  * `fetchBeats`, src/rules/volleys.ts: a room's earlier words as one volley,
  * each room's last word its own beat), and Charge the Spell's runes

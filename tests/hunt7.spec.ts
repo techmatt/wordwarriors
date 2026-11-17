@@ -1,5 +1,5 @@
 /**
- * Item 116, the seventh bug hunt (docs/qa-findings.md, Hunt 7), a test each:
+ * Item 116, the seventh bug hunt (Hunt 7 in docs/qa-findings.md's git history), a test each:
  *
  * - her outfits for the new allies (items 111, 114) stand within 4% of her dress
  *   height, head to soles (hunt 7's "checked and clean"; slow lane);

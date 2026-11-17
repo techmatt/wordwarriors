@@ -14,7 +14,6 @@ import Phaser from 'phaser';
 
 import { pictureBox } from '../art/pictureBox';
 import { DEPTH, FONT_HEAVY, GAME_HEIGHT, GAME_WIDTH } from '../config';
-import { hookState } from '../hookState';
 import { fitText } from '../ui/fitText';
 import { TEX } from './textures';
 
@@ -27,22 +26,23 @@ import { TEX } from './textures';
 export const fxQuality = { level: 1 };
 
 /**
- * The frame rate over half-second windows, into `hookState.fps`. Each scene owns
- * its own, so a window never spans two scenes. `adapt` (the battle) also moves
- * `fxQuality`: down when frames drop, back up when they recover.
+ * The frame rate over half-second windows. The battle owns one, so a window
+ * never spans two scenes. `adapt` also moves `fxQuality`: down when frames
+ * drop, back up when they recover.
  */
 export class FpsMeter {
   private acc = 0;
   private frames = 0;
+  private fps = 0;
 
   sample(deltaMs: number, adapt = false): void {
     this.acc += deltaMs;
     this.frames++;
     if (this.acc <= 500) return;
-    hookState.fps = Math.round((this.frames * 1000) / this.acc);
+    this.fps = Math.round((this.frames * 1000) / this.acc);
     if (adapt) {
-      if (hookState.fps < 40) fxQuality.level = Math.max(0.35, fxQuality.level - 0.15);
-      else if (hookState.fps > 55) fxQuality.level = Math.min(1, fxQuality.level + 0.05);
+      if (this.fps < 40) fxQuality.level = Math.max(0.35, fxQuality.level - 0.15);
+      else if (this.fps > 55) fxQuality.level = Math.min(1, fxQuality.level + 0.05);
     }
     this.acc = 0;
     this.frames = 0;
@@ -243,7 +243,7 @@ export function flash(scene: Phaser.Scene, color = 0xffffff, ms = 140): void {
 /** The least time between two full-screen flashes (ms). */
 const FLASH_GAP_MS = 450;
 /** A flash's opening strength, fading to nothing over its length (M60). */
-export const FLASH_ALPHA = 0.5;
+const FLASH_ALPHA = 0.5;
 let lastFlash = -Infinity;
 
 /** Time scale shared by a scene's simulation, tweens and particles. */

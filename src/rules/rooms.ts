@@ -1,7 +1,7 @@
 /**
  * Planning the episode's three rooms (`episodePlans`): which game each plays,
- * what each reads, and the key words. Pure: no Phaser, unit-tested. Moved out
- * of src/rules/sentences.ts in item 141; the sentence game's own word rules
+ * what each reads, and the key words. Pure: no Phaser, unit-tested. The
+ * sentence game's own word rules
  * (`distractors`, `saidEarly`, when a frame is solid) stay there.
  *
  * Item 015: the episode picks its three frames first (two different fetch

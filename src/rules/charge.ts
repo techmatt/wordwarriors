@@ -1,6 +1,5 @@
 /**
- * Charge the Spell (item 053; CHARGE.words words a visit since item 140, one
- * in items 058-139): which words a visit spells and their runes. Pure: no
+ * Charge the Spell: which words a visit spells (CHARGE.words) and their runes. Pure: no
  * Phaser, unit-tested (tests/unit/charge.test.ts).
  *
  * A visit is CHARGE.words rounds, each one word of CHARGE.units sound units,
@@ -19,7 +18,7 @@
  * a battle item like any room's fetched word.
  *
  * The room says every sound for her and judges only the word (item 059), so
- * it has no help ramp: item 053's per-sound levels went in item 078.
+ * it has no help ramp.
  */
 
 import { BANK, BANK_BY_WORD, THINGS, type BankWord } from '../../content/phonics/bank';

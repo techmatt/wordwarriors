@@ -86,7 +86,7 @@ import { openParent } from '../scenes/ParentScene';
 
 /** The top band where the health bars and a contest's meter (the race's track) are drawn: bubbles keep below it. */
 const HUD_BAND = new Phaser.Geom.Rectangle(0, 0, GAME_WIDTH, 128);
-/** The tallest VS card, either side (item 093: 340 cut chef Dada Jason's, 357, so Evil Dada Matt across from him read only 3% shorter). */
+/** The tallest VS card, either side: 380, above chef Dada Jason's 357, so no card is cut and the two sides compare true to height. */
 const CARD_MAX = 380;
 /** The move choice's prompt lines that say the right word (`use_move_zap`, `find_move_zap`, `not_move_zap`): its caption hides it. */
 const CHOICE_PROMPT: readonly MoveKind[] = ['use_move', 'find_move', 'not_move'];

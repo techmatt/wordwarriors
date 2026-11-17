@@ -14,6 +14,7 @@ import { deflateRawSync } from 'node:zlib';
 import { mp3Bytes, readWav, wavBytes } from '../../tools/voice/audio';
 import { processTake, unzip } from '../../tools/voice/import';
 import { RAN_TOGETHER_S, SPLIT, countReason, finish, highpass, splitTake, type Entry } from '../../tools/voice/split';
+import { noise } from './seeds';
 
 interface PageCount {
   status: 'ok' | 'empty' | 'count';
@@ -44,8 +45,7 @@ const ENTRIES: Entry[] = [
 
 /** A take: each utterance a tone or a hiss (seconds, kind), with `gap` of quiet room between. */
 function take(parts: [number, 'tone' | 'hiss', number?][], gap: number, room = 0.0005): Float32Array {
-  let r = 11;
-  const rnd = () => ((r = (r * 16807) % 2147483647) / 2147483647) * 2 - 1;
+  const rnd = noise(11);
   const out: number[] = [];
   const quiet = (s: number) => {
     for (let i = 0; i < s * RATE; i++) out.push(room * rnd());

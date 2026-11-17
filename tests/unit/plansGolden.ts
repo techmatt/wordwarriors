@@ -1,13 +1,16 @@
 /**
- * The golden seeded draws (item 091): `episodePlans` and `drawGames` over
- * fixed seeds, every minigame kind behind each door, alone and in pairs, with
- * and without an ally, on fresh stores and on one store carried through a run
- * of episodes. Each case is its rooms' games and words, and a hash of the
- * plans and the store afterwards as stable JSON. `plansGolden.json` holds what they drew when the pool was refactored
- * by kind; a refactor of the draw must leave every case as it is.
+ * The golden seeded draws: `episodePlans` and `drawGames` over fixed seeds,
+ * every minigame kind behind each door, alone and in pairs, with and without
+ * an ally, on fresh stores and on one store carried through a run of episodes.
+ * Each case is its rooms' games and words, and a hash of the plans and the
+ * store afterwards as stable JSON. `plansGolden.json` pins the current seeded
+ * draws: a refactor of the draw must leave every case as it is; a deliberate
+ * draw change regenerates the JSON by running this file (`npm run golden`).
  */
 
 import { createHash } from 'node:crypto';
+import { writeFileSync } from 'node:fs';
+import { isMain } from '../../tools/shared';
 import { FAMILIES } from '../../content/phonics/families';
 import { MINIGAMES, MINIGAME_BY_ID, SENTENCE_GAMES, drawGames, type Minigame } from '../../src/rules/minigames';
 import { episodePlans, type EpisodeInput, type RoomPlan } from '../../src/rules/rooms';
@@ -121,4 +124,8 @@ export function goldenDraws(): Record<string, string> {
     }
   }
   return out;
+}
+
+if (isMain(import.meta.url)) {
+  writeFileSync(new URL('./plansGolden.json', import.meta.url), JSON.stringify(goldenDraws(), null, 1) + '\n');
 }

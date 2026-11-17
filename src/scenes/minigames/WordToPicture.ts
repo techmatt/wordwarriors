@@ -22,7 +22,7 @@ import { PICTURE_STRETCH } from '../../art/pictureBox';
 import { bob, popIn } from '../../fx/juice';
 import { pictureRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
-import { bannerArt, bannerPanelWidth, inkOf, tagPanel } from '../../ui/banner';
+import { bannerArt, bannerPanelWidth, INK, inkOf, LIT, PANEL_MARGIN, tagPanel } from '../../ui/banner';
 import type { Spot } from '../../world/RoomScene';
 import { ParkedGame } from './ParkedGame';
 import type { SceneKey } from '../keys';
@@ -31,8 +31,6 @@ const BANNER_W = 560;
 /** Under the meter's slots, and a slim trim: it ends at about y 262 (a long word's smaller letters) to 275. */
 const BANNER_TOP = 92;
 const BANNER_TRIM = 0.3;
-/** Clear air between the letters (their ink, popped to GROW) and the cream band's edges. */
-const PANEL_MARGIN = 14;
 /** How big a letter pops as the hint sounds it. */
 const GROW = 1.3;
 /**
@@ -48,7 +46,7 @@ const PICTURE_FEET = 560;
  */
 const PICTURE = 150;
 const PICTURE_MAX = { w: PICTURE * PICTURE_STRETCH, h: PICTURE };
-/** Where a new round steps her back to: out of every picture's reach (REACH 95), as before item 133 moved them. */
+/** Where a new round steps her back to: out of every picture's reach (REACH 95). */
 const STEP_BACK = PICTURE_FEET + 120;
 
 const ITEMS = 4;
@@ -92,7 +90,7 @@ export class WordToPicture extends ParkedGame {
     const room = bannerPanelWidth(BANNER_W) - 2 * PANEL_MARGIN;
     for (;;) {
       for (const t of this.letters) t.destroy();
-      const style = { fontFamily: FONT_COMIC, fontSize: `${size}px`, color: '#1a1030' };
+      const style = { fontFamily: FONT_COMIC, fontSize: `${size}px`, color: INK };
       this.letters = [...item.target].map((ch) => this.add.text(0, 0, ch.toUpperCase(), style).setOrigin(0.5));
       const ends = ((GROW - 1) * (this.letters[0]!.width + this.letters.at(-1)!.width)) / 2;
       if (this.letters.reduce((n, t) => n + t.width, 0) + ends <= room || size <= 30) break;
@@ -136,12 +134,12 @@ export class WordToPicture extends ParkedGame {
       for (const [i, ch] of letters.entries()) {
         const t = this.letters[i];
         if (t) {
-          t.setColor('#ff3d7a');
+          t.setColor(LIT);
           this.tweens.add({ targets: t, scale: GROW, duration: 140, yoyo: true });
         }
         if (LETTER_BY_CHAR[ch]) await this.say(letterSoundLine(ch));
         await this.wait(200);
-        t?.setColor('#1a1030');
+        t?.setColor(INK);
       }
       this.locked = false;
     })();

@@ -39,7 +39,7 @@ export const SMOKE = { tag: '@smoke' };
 
 /**
  * A spec's screenshot helper: `shotIn('054')(page, 'clue')` writes tests/screenshots/054_clue.png
- * (the folder is ignored; README names its pairs_*, fights_* and story_* shots).
+ * (the folder is ignored; docs/testing.md names its pairs_*, fights_* and story_* shots).
  */
 export const shotIn = (prefix: string) => (page: Page, name: string) => page.screenshot({ path: `tests/screenshots/${prefix}_${name}.png` });
 
@@ -61,7 +61,7 @@ export function collectErrors(page: Page, opts: { voice?: boolean; art?: boolean
 }
 
 /**
- * How fast the page's clocks run (`WW_SPEED`, default 5; 3 until item 036). Every clock the game
+ * How fast the page's clocks run (`WW_SPEED`, default 5). Every clock the game
  * reads is scaled together: `performance.now`, `Date.now`, timers, the
  * animation-frame timestamp (so Phaser's loop, timers and tweens), and voice
  * clips play `speed` times faster, so they end in step with the timers that
@@ -81,7 +81,7 @@ export const VOICE = { mode: process.env.WW_VOICE ?? 'instant' };
 
 /**
  * Install the clock warp before the page's scripts run (once per page; it survives reloads).
- * `__wwSetSpeed(k)` changes the factor mid-run (`setSpeed`, item 081): each clock is
+ * `__wwSetSpeed(k)` changes the factor mid-run (`setSpeed`): each clock is
  * rebased where it stands, so no clock jumps; timers already set keep their old rate.
  */
 function warpClocks(k0: number): void {
@@ -126,8 +126,8 @@ function warpClocks(k0: number): void {
   };
 }
 
-/** Change the page's clock speed mid-run (item 081): from now on, timers, tweens and new voice clips at `k`. */
-export async function setSpeed(page: Page, k: number): Promise<void> {
+/** Change the page's clock speed mid-run: from now on, timers, tweens and new voice clips at `k`. */
+async function setSpeed(page: Page, k: number): Promise<void> {
   await page.evaluate((n) => (window as unknown as { __wwSetSpeed(k: number): void }).__wwSetSpeed(n), k);
 }
 
@@ -204,7 +204,7 @@ export async function until(page: Page, pred: (s: WWState) => boolean, timeout =
     const s = await state(page);
     if (pred(s)) return s;
     if (Date.now() - start > timeout) throw new Error(`timed out waiting for ${what}; scene=${s.scene} room=${JSON.stringify(s.room?.round)} battle=${s.battle?.phase}`);
-    // 50 ms (100 until item 083): with instant voice a line lasts until the next poll sees it.
+    // 50 ms: with instant voice a line lasts until the next poll sees it.
     await page.waitForTimeout(Number(process.env.WW_POLL_MS ?? 50));
   }
 }
@@ -233,7 +233,7 @@ async function steer(page: Page, x: number, y: number, close: number, at: (s: WW
     if (d < close) break;
     // Pressed against the edge of the floor and near enough: that is arrival.
     if (edge) {
-      // The first reading starts the clock (item 150: NaN never compared, so any walk 0.8 s old "arrived" within 70 px of its spot).
+      // The first reading starts the clock (NaN never compares).
       if (Number.isNaN(last.x) || Math.hypot(p.x - last.x, p.y - last.y) > 1) last = { x: p.x, y: p.y, at: Date.now() };
       else if (Date.now() - last.at > 800 && d < 70) break;
     }
@@ -260,7 +260,7 @@ export async function choose(page: Page, id?: string): Promise<string> {
     else await place(page, spot.x, spot.y + 12);
     let ready = await until(page, (st) => Boolean(st.room && !st.room.locked), 30_000, 'room unlocked');
     // Walking, she may have drifted off it meanwhile (hunt 11: five hub doors stalled with her 110-170 px off, a
-    // pad's drift the likeliest cause, README "A game controller plugged in can play along"): back on.
+    // pad's drift the likeliest cause, docs/tools.md "A game controller plugged in can play along"): back on.
     for (let k = 0; k < 3 && driver.walk; k++) {
       const p = ready.room?.player;
       if (!p || Math.hypot(p.x - spot.x, p.y - spot.y) < 80) break;
@@ -495,11 +495,11 @@ export async function playAgain(page: Page, opts: { hush?: boolean } = {}): Prom
 }
 
 /**
- * Play Charge the Spell (item 053; no presses per rune since item 059; two
- * words since item 140): for each round, wait for its read, then Dad's `read`.
+ * Play Charge the Spell: each round's runes charge by themselves; wait for its
+ * read, then Dad's `read`.
  * Returns the sounds charged, every round's, each once.
  */
-export async function playChargeRoom(page: Page, read: 'yes' | 'no' | 'away' = 'yes'): Promise<string[]> {
+async function playChargeRoom(page: Page, read: 'yes' | 'no' | 'away' = 'yes'): Promise<string[]> {
   const first = await until(page, (s) => s.scene === 'ChargeRoom' && Boolean(s.room?.charge), 30_000, 'charge room');
   const { words } = first.room!.charge!;
   const runes: string[] = [];
@@ -570,7 +570,7 @@ export async function playBridgeRoom(page: Page, wrongFirst = false): Promise<st
  * with `wrongFirst`, a wrong one first on the first link (sounded out, then
  * she picks again). Returns the words read (each a battle item).
  */
-export async function playShifterRoom(page: Page, wrongFirst = false): Promise<string[]> {
+async function playShifterRoom(page: Page, wrongFirst = false): Promise<string[]> {
   const first = await until(page, (s) => s.scene === 'ShifterRoom' && Boolean(s.room?.shifter), 30_000, 'shifter room');
   const words = first.room!.shifter!.words;
   let wrong = wrongFirst;
@@ -594,7 +594,7 @@ export async function playShifterRoom(page: Page, wrongFirst = false): Promise<s
  * `wrongFirst`, a wrong one first on the first round (the rhyme said again,
  * then she picks again). Returns the words read (each a battle item).
  */
-export async function playRhymeRoom(page: Page, wrongFirst = false): Promise<string[]> {
+async function playRhymeRoom(page: Page, wrongFirst = false): Promise<string[]> {
   const first = await until(page, (s) => s.scene === 'RhymeRoom' && Boolean(s.room?.rhyme), 30_000, 'rhyme room');
   const words = first.room!.rhyme!.words;
   let wrong = wrongFirst;
@@ -826,9 +826,7 @@ export async function playEpisode(
  */
 export function expectFightLength(after: WWState): void {
   if (after.battle?.stage.story) return;
-  // 40, not 45 (hunt 12): item 144's M62 cut battle 1's opening (one volley for Charge, runes back to back, a
-  // shorter last beat), and the contests booted straight into a part ran 43.6 to 44.7 s on the code before this
-  // hunt too; a broken fight still ends far sooner.
+  // A battle part runs at least 40 s of simulation time; a broken fight ends far sooner.
   expect(after.battle?.t ?? 0).toBeGreaterThan(40);
   expect(after.battle?.t ?? 0).toBeLessThan(120);
 }

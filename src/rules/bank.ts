@@ -305,7 +305,7 @@ export const VOWEL_ONSET = 'vowel';
  * a vowel, a short-vowel word's empty onset (ANT) and a long-path word's first vowel (APPLE, IGLOO) alike; Dad read
  * A 1·1·0 as one short-A first word. The draws' coverage still weighs by `onset`.
  */
-export function firstSoundTag(w: BankWord): string {
+function firstSoundTag(w: BankWord): string {
   return /^[aeiou]*$/.test(w.onset) ? VOWEL_ONSET : w.onset;
 }
 

@@ -22,6 +22,7 @@ import { planRand } from '../../episode/Episode';
 import { burst, popIn } from '../../fx/juice';
 import { blendRound, type WordItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
+import { INK } from '../../ui/banner';
 import type { Spot } from '../../world/RoomScene';
 import { ParkedGame } from './ParkedGame';
 import type { SceneKey } from '../keys';
@@ -69,7 +70,7 @@ export class BlendPath extends ParkedGame {
     [...item.target].forEach((letter, i) => {
       const x = 260 + i * 160;
       const tile = this.add.image(0, 0, 'prop_tile').setDisplaySize(120, 120).setTint(TILE_COLORS[i % 4]!);
-      const label = this.add.text(0, -4, letter.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '80px', color: '#1a1030' }).setOrigin(0.5);
+      const label = this.add.text(0, -4, letter.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '80px', color: INK }).setOrigin(0.5);
       const c = this.add.container(x, TILE_Y, [tile, label]).setDepth(TILE_Y - 60);
       popIn(this, c, 1, i * 120);
       this.tiles.push({ letter, x, img: c, stepped: false });

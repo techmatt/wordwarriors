@@ -41,6 +41,7 @@ import { lastRead } from '../../src/rules/recent';
 import { RHYME_FAMILIES, RHYME_WORDS, nasalNear, rhymeWords } from '../../src/rules/rhyme';
 import { variantKeys } from '../../src/rules/story';
 import { progress } from '../../src/state/progress';
+import { seeded, spread } from '../unit/seeds';
 
 const arg = (name: string, fallback: string): string => process.argv.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
 const EPISODES = Number(arg('episodes', '300'));
@@ -55,8 +56,7 @@ if (WORDS) favourWords(WORDS === 'new' ? NEW_WORDS : WORDS.split(','));
 // Every draw replays from the seed: the cast's (passed below), the house's (unseeded
 // `planRand` calls Math.random) and the simulated answers. Not `seedRands`: one stream
 // here keeps each seed's past reports, and the answers would need a seed of their own.
-let s = (SEED * 104729) % 2147483647 || 1;
-Math.random = () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
+Math.random = seeded(spread(SEED) % 2147483647 || 1);
 
 type Dim = { name: string; group: string; pool: string[] | null; eps: string[][] };
 const dims = new Map<string, Dim>();

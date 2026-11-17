@@ -18,16 +18,16 @@
  * candidate (README, *Images outside the game*). `--recut` cuts again from `originals/`.
  */
 
-import { appendFile, copyFile, mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
+import { appendFile, copyFile, mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import sharp from 'sharp';
 
-import { exists, runMain } from '../shared.js';
+import { candidateNumbers, exists, runMain } from '../shared.js';
 import type { KeyMode } from '../../content/art/prompts.js';
 import { askOnce, describeUsage, openPage, runCodex, spriteCut } from './generate.js';
 
-export interface FreeformRow {
+interface FreeformRow {
   id: string;
   label: string;
   note?: string;
@@ -58,7 +58,7 @@ interface FreeformOption {
   label?: string;
 }
 
-export interface FreeformSpec {
+interface FreeformSpec {
   name: string;
   title: string;
   intro?: string;
@@ -73,25 +73,19 @@ export interface FreeformSpec {
 type Cutter = (row: FreeformRow, tag: string) => Promise<void>;
 
 /** The look candidate `k` (from 1) of a row is drawn from. */
-export const lookOf = (row: FreeformRow, k: number): FreeformLook | undefined => (row.looks?.length ? row.looks[(k - 1) % row.looks.length] : undefined);
+const lookOf = (row: FreeformRow, k: number): FreeformLook | undefined => (row.looks?.length ? row.looks[(k - 1) % row.looks.length] : undefined);
 
 /** The centred box of a `w`×`h` image at `aspect`. */
-export function centreCrop(w: number, h: number, [aw, ah]: [number, number]): { left: number; top: number; width: number; height: number } {
+function centreCrop(w: number, h: number, [aw, ah]: [number, number]): { left: number; top: number; width: number; height: number } {
   const width = Math.min(w, Math.round((h * aw) / ah));
   const height = Math.min(h, Math.round((w * ah) / aw));
   return { left: Math.floor((w - width) / 2), top: Math.floor((h - height) / 2), width, height };
 }
 
 /** More than a quarter off the aspect: the crop would lose too much of the picture (2:3 for 3:4 is fine, 2.3:1 for 4:3 is not). */
-export function tooFarOff(w: number, h: number, [aw, ah]: [number, number]): boolean {
+function tooFarOff(w: number, h: number, [aw, ah]: [number, number]): boolean {
   const off = (w / h) * (ah / aw);
   return Math.max(off, 1 / off) > 1.25;
-}
-
-async function candidates(dir: string, id: string): Promise<number[]> {
-  const re = new RegExp(`^${id}-(\\d+)\\.png$`);
-  const hits = (await readdir(dir)).map((f) => f.match(re)?.[1]).filter((k): k is string => k !== undefined);
-  return hits.map(Number).sort((a, b) => a - b);
 }
 
 function cutter(spec: FreeformSpec, dir: string, page: Awaited<ReturnType<typeof openPage>>['page'] | undefined): Cutter {
@@ -112,7 +106,7 @@ function cutter(spec: FreeformSpec, dir: string, page: Awaited<ReturnType<typeof
 async function draw(spec: FreeformSpec, dir: string, n: number, jobs: number, cut: Cutter): Promise<void> {
   const todo: { row: FreeformRow; k: number }[] = [];
   for (const row of spec.rows) {
-    const have = await candidates(dir, row.id);
+    const have = await candidateNumbers(dir, row.id);
     const count = n * (row.looks?.length || 1);
     for (let k = 1; k <= count; k++) if (!have.includes(k)) todo.push({ row, k });
   }
@@ -155,7 +149,7 @@ async function sheets(spec: FreeformSpec, dir: string): Promise<void> {
     const [aw, ah] = row.aspect;
     const height = aw > ah ? 600 : 800;
     const width = Math.round((height * aw) / ah);
-    const ks = await candidates(dir, row.id);
+    const ks = await candidateNumbers(dir, row.id);
     if (!ks.length) continue;
     const tile = (k: number) => sharp(path.join(dir, `${row.id}-${k}.png`)).resize(width, height, { fit: 'contain', background: '#cfd8dc' }).flatten({ background: '#cfd8dc' }).png().toBuffer();
     const tiles = await Promise.all(ks.map(tile));
@@ -180,7 +174,7 @@ async function manifest(spec: FreeformSpec, dir: string): Promise<void> {
         label,
         ...(note ? { note } : {}),
         ...(kind ? { kind, default: row.default ?? [] } : {}),
-        options: [...(current ? [current] : []), ...(await candidates(dir, id)).map(option), ...(more ?? [])],
+        options: [...(current ? [current] : []), ...(await candidateNumbers(dir, id)).map(option), ...(more ?? [])],
       };
     }),
   );
@@ -200,7 +194,7 @@ export async function freeform(argv: string[]): Promise<void> {
   const opened = spec.key && !argv.includes('--manifest-only') ? await openPage() : undefined;
   try {
     const cut = cutter(spec, dir, opened?.page);
-    if (argv.includes('--recut')) for (const row of spec.rows) for (const k of await candidates(path.join(dir, 'originals'), row.id)) await cut(row, `${row.id}-${k}`);
+    if (argv.includes('--recut')) for (const row of spec.rows) for (const k of await candidateNumbers(path.join(dir, 'originals'), row.id)) await cut(row, `${row.id}-${k}`);
     else if (!argv.includes('--manifest-only')) await draw(spec, dir, flag('n', 3), flag('jobs', 4), cut);
   } finally {
     await opened?.close();

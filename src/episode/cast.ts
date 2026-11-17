@@ -1,9 +1,9 @@
 /**
- * The episode's cast lookups (split from Episode.ts, which re-exports them):
+ * The episode's cast lookups, re-exported by Episode.ts:
  * who the helper, narrator and waker are, how each character is drawn this
  * episode, and the cast's lines (the quest setup, the hub scene, the wake-up,
  * the villain's taunt and sorry). Pure reads of `episode` (`./state.ts`):
- * no Phaser and no import of Episode.ts (item 076).
+ * no Phaser and no import of Episode.ts.
  */
 
 import { cardArt, charArt } from '../../content/art/assets';

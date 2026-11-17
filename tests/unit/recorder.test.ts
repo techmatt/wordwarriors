@@ -19,6 +19,7 @@ import { processTake } from '../../tools/voice/import';
 import { missingBlock, missingSounds, pageCards, RECORDER_PAGE, syncHosted, withMissingBlock } from '../../tools/recorder/missing';
 import { readLines } from '../../tools/shared';
 import type { LineSpec } from '../../tools/voice/types';
+import { noise } from './seeds';
 
 const html = readFileSync(RECORDER_PAGE, 'utf8');
 
@@ -111,8 +112,7 @@ test('recorder: a sound marked rerecord is asked for until a new take replaces i
 const RATE = 48000;
 /** One card of a targeted page: the word, then its sound three times, with pauses. */
 function soloTake(): Float32Array {
-  let r = 7;
-  const rnd = () => ((r = (r * 16807) % 2147483647) / 2147483647) * 2 - 1;
+  const rnd = noise(7);
   const out: number[] = [];
   const quiet = (s: number) => {
     for (let i = 0; i < s * RATE; i++) out.push(0.0005 * rnd());

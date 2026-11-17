@@ -22,9 +22,15 @@ const ART = { w: 672, h: 300, top: 128, bottom: 188, inset: 0.09 };
 /** How tall the pole and top trim, and the bottom trim and tassels, are drawn: a share of the art's own height. */
 const TRIM_SCALE = 0.45;
 
+/** The words' ink (the sentence banner, the machine's panel), and lit while said. */
+export const INK = '#1a1030';
+export const LIT = '#ff3d7a';
+/** Clear air between the words (their ink, grown to their biggest) and the cream band's edges. */
+export const PANEL_MARGIN = 14;
+
 export type Rect = [number, number, number, number];
 
-export interface BannerArt {
+interface BannerArt {
   /** The strips, top to bottom, centred on the banner's middle: put them in its container. */
   parts: Phaser.GameObjects.Image[];
   /** The whole banner's height. */

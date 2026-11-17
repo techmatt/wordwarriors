@@ -23,6 +23,7 @@ import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
 import { startScene } from '../art/gate';
 import { hookState } from '../hookState';
+import { INK } from '../ui/banner';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { Bubbles } from '../ui/Bubbles';
 import { Caption, type KeepOut } from '../ui/Caption';
@@ -221,7 +222,7 @@ export class VictoryScene extends Phaser.Scene {
       // A standing person or a wide picture by its own shape (M48: TUG was a thin band), inside the card above its word.
       if (pic) parts.push(fitPicture(this.add.image(0, -22, pic), 100, 100, CARD_PIC_MAX));
       // Shrunk to the card if the word is long (a name); never cut off.
-      parts.push(fitText(this.add.text(0, 58, w.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '38px', color: '#1a1030' }).setOrigin(0.5), 120, 50));
+      parts.push(fitText(this.add.text(0, 58, w.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '38px', color: INK }).setOrigin(0.5), 120, 50));
       // Along the bottom, in front of the podium's feet: in the middle of the
       // screen they hid the grown-ups' heads (item 039).
       // Over the dialogue box (DEPTH.hud + 5): the card being said is the highlighter.

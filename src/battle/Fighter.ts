@@ -5,8 +5,8 @@
  * points, ability cooldowns and status effects. It does not decide anything:
  * `movement.ts` steers it and `BattleSim` (sim.ts) chooses when it casts. Motion on
  * the sprite is only bob and squash/stretch (a spin is a card flip in scaleX),
- * per the house rule;
- * no animation frames exist yet, and real art will drop in under the same ids.
+ * per the house rule; there are no animation frames. The card art is ArtBank's
+ * (`public/art/`, a painted placeholder where none is drawn yet).
  *
  * Arena space: x across, y = depth on the floor (FLOOR_TOP..FLOOR_BOTTOM, 430..670). `lift` is height
  * off the floor (flyers, leaps); the sprite draws at y - lift and the shadow

@@ -6,8 +6,8 @@
  * Ally adds a "nobody" card; villain adds a "surprise" card that picks at
  * random. Instructions here are always Dada Matt: no ally exists yet.
  *
- * Parked (CLAUDE.md): out of the episode, kept on purpose; reach it with ?scene=pick (BootScene)
- * or EPISODE_DEFAULTS.pickScreens.
+ * The hero → ally → villain picks are parked (EPISODE_DEFAULTS.pickScreens;
+ * ?scene=pick opens the hero pick, BootScene).
  *
  * Live as choice mode (item 174, `startChoice`): a grown-up turns it on and she
  * picks the ally, then the villain, from big framed cards of the active cast,

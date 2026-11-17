@@ -763,7 +763,7 @@ export class BridgeRoom extends HouseSideRoom {
     this.recordRead(r.word, firstTry, this.wrongTries, { last });
     // The ramp moves on her recorded level, whatever the room gave (item 067: DIFFICULTY caps only what she gets):
     // right first time with no help is one level less help; any help or a wrong picture, one more.
-    progress.setBridgeLevel(r.word, stepLevel(recordedBridgeLevel(progress, r.word), unaided));
+    progress.setRampLevel('bridge', r.word, stepLevel(recordedBridgeLevel(progress, r.word), unaided));
     this.forgetMisses(r.word);
     for (const s of this.spots) s.enabled = false;
 

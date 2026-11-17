@@ -9,7 +9,7 @@
 import { test, expect } from '@playwright/test';
 
 import { ownFight } from '../src/rules/fights';
-import { SLOW, boot, collectErrors, expectNoErrors, playEpisode, press, until } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, playEpisode, press, shotIn, until } from './harness';
 
 const VILLAINS = ['elsa', 'ozymandias', 'moriarty'];
 
@@ -24,9 +24,9 @@ VILLAINS.forEach((villain, i) => {
     // The bad news is said before she can leave the bedroom (the bus keeps only recent lines).
     const door = await until(page, (s) => s.room?.round === 'bedroom:door', 180_000, 'the news, the quest, the door');
     expect(door.voice.history.some((id) => id.startsWith('wake_') && id.endsWith(`_bad_${villain}`)), 'the bad news names the villain').toBe(true);
-    await page.screenshot({ path: `tests/screenshots/115_${villain}_bedroom.png` });
+    await shotIn('115')(page, `${villain}_bedroom`);
     const { end, keys } = await playEpisode(page);
-    await page.screenshot({ path: `tests/screenshots/115_${villain}_victory.png` });
+    await shotIn('115')(page, `${villain}_victory`);
     expect(end.episode.villain).toBe(villain);
     expect(end.battle?.fight).toBe(ownFight(villain));
     for (const k of keys) expect(end.episode.read).toContain(k);

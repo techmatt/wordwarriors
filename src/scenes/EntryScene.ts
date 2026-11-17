@@ -324,7 +324,7 @@ export class EntryScene extends RoomScene {
     progress.record('grabs', this.word, firstTry, this.misses);
     // The ramp moves on her recorded level, whatever the hall gave (item 067: DIFFICULTY caps only what she gets):
     // right first time is one level harder, a first-try miss one easier.
-    progress.setGrabLevel(this.word, stepLevel(recordedGrabLevel(progress, this.word), firstTry));
+    progress.setRampLevel('grab', this.word, stepLevel(recordedGrabLevel(progress, this.word), firstTry));
     if (!episode.fetched.includes(this.word)) episode.fetched.push(this.word);
 
     const y = spot.y - 80;

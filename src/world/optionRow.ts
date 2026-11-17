@@ -17,7 +17,7 @@ import { REACH } from '../config';
 /** The pictures (or stones) standing in the room (feet positions), left to right. */
 export const OPTIONS: readonly (readonly [number, number])[] = [[400, 640], [640, 655], [880, 640]];
 export const PICTURE_SIZE = 116;
-/** Where she walks in when the room is not one of the house's (no `entry` to read): the far left, as before item 153. */
+/** Where she walks in when the room is not one of the house's (no `entry` to read): the far left. */
 const NO_ROOM_ENTRY = { x: 130, y: 610 };
 
 /**

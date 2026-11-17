@@ -16,6 +16,7 @@ import { planRand } from '../../episode/Episode';
 import { bob, popIn, shockwave } from '../../fx/juice';
 import { soundRound, type SoundItem } from '../../rules/rounds';
 import { progress } from '../../state/progress';
+import { INK } from '../../ui/banner';
 import type { Spot } from '../../world/RoomScene';
 import { ParkedGame } from './ParkedGame';
 import type { SceneKey } from '../keys';
@@ -56,7 +57,7 @@ export class SoundToLetter extends ParkedGame {
       stone.setTint(STONE_COLORS[i % STONE_COLORS.length]!, 0xffffff, 0xffffff, STONE_COLORS[i % STONE_COLORS.length]!);
       const label = this.add
         // All game text is upper case (Matt, 2026-10-18); only the display changes, the round still compares lower case.
-        .text(0, -75, letter.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '96px', color: '#1a1030', stroke: '#ffffff', strokeThickness: 8 })
+        .text(0, -75, letter.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '96px', color: INK, stroke: '#ffffff', strokeThickness: 8 })
         .setOrigin(0.5);
       const spot = this.addSpot(letter, xs[i]!, y, [this.add.ellipse(0, 0, 120, 26, 0x000000, 0.3), stone, label], letter === item.target);
       spot.obj.setScale(0);

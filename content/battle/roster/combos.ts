@@ -4,7 +4,7 @@ import { JASON, MATT } from './dads.js';
 import { personOf } from './index.js';
 
 /** Team combos: when both are on the hero side, every so often they fire this together. */
-export const COMBOS: ComboSpec[] = [
+const COMBOS: ComboSpec[] = [
   { pair: ['elsa', 'anna'], ability: ab('sister_storm', 'Sister Storm', 'spin', 16, 0xaee6ff, 3, { count: 5, color2: 0xe63946 }) },
   { pair: ['seraphina', 'smaug'], ability: ab('dragon_duet', 'Dragon Duet', 'cone', 16, 0xff7b00, 3, { color2: 0x6ad66a }) },
   // Item 114: Ozymandias is from Antarctica now, so his duo is with Elsa, not Jasmine.

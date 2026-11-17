@@ -1,9 +1,9 @@
 /**
- * The episode's draws (split from Episode.ts, which re-exports them): the
+ * The episode's draws, re-exported by Episode.ts: the
  * house plan, the warm-up, the gift word, the move plan, the counter, the
  * fight style and the victory scene, each made once per episode on first
  * need, and the words said before each that it keeps clear of; and the
- * journey map's stops. No Phaser and no import of Episode.ts (item 076).
+ * journey map's stops. No Phaser and no import of Episode.ts.
  *
  * The draws are lazy and call each other, each first drawing what it keeps
  * clear of, so whichever is asked for first runs the same chain:
@@ -290,7 +290,7 @@ export function grabPlan(): { word: string; objects: string[] } {
  * default, so a test that plays sentence rooms gets them). Otherwise nothing:
  * the whole pool.
  *
- * The beta's phonics room (item 053): with FORCE_PHONICS_ROOM on, a phonics
+ * The phonics room (item 053): with FORCE_PHONICS_ROOM on, a phonics
  * game (PHONICS_GAMES, drawn by weight) is behind door a of every episode,
  * unless the URL picks its own games (`?games=sentence`, `?game=`: the tests'
  * rooms stay theirs; `?games=all` is the real draw, so it is forced there).
@@ -298,7 +298,7 @@ export function grabPlan(): { word: string; objects: string[] } {
  * Bridge (item 054) whatever else is asked: behind door a, or door b when
  * `?game=` holds door a.
  *
- * The beta's Shape-Shifter (item 096; item 126): it is behind door b of
+ * The Shape-Shifter (item 096; item 126): it is behind door b of
  * 3 episodes in 7, never two running (SHIFTER_ROOM, item 137; door a when
  * no phonics game is forced), on the same terms; else
  * door b is a fetch sentence frame or the word machine, never a second
@@ -317,7 +317,7 @@ function roomGames(): { games?: [Minigame, Minigame, Minigame]; pool?: Minigame[
       : FORCE_PHONICS_ROOM && !only && !asked ? MINIGAME_BY_ID[pickWeighted(fresh(PHONICS_GAMES.map((g) => g.id), progress.recentOf('phonics'), 1), (id) => MINIGAME_BY_ID[id]!.weight, 1, planRand)[0]!]
         : undefined;
   const drawn = !only && !asked;
-  // `?room=charge` / `?room=bridge` keep it behind door b, as before item 126 (tests/opening.spec.ts plays both).
+  // `?room=charge` / `?room=bridge` keep the Shape-Shifter behind door b (tests/opening.spec.ts plays both).
   const shifter = room === SHIFTER_GAME || (drawn && (room !== undefined || planRand() < shifterChance())) ? SHIFTER_GAME : undefined;
   // `?room=shifter` takes door a; else it follows the phonics game. Two doors: a third forced game waits its turn.
   const forced = (room === SHIFTER_GAME ? [shifter, asked, phonics] : [asked, phonics, shifter]).filter((g, i, all): g is Minigame => Boolean(g) && all.indexOf(g) === i).slice(0, 2);

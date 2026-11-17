@@ -16,6 +16,12 @@ export function seeded(seed = 1): () => number {
   return () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
 }
 
+/** Park–Miller noise in -1..1, for the synthetic audio clips' hiss. */
+export function noise(seed: number): () => number {
+  let r = seed;
+  return () => ((r = (r * 16807) % 2147483647) / 2147483647) * 2 - 1;
+}
+
 /** The LCG some files have always used (bank, machine, wordrules); kept so their fixed seeds draw as before. */
 export function seededLcg(seed = 1): () => number {
   let s = seed >>> 0 || 1;

@@ -251,7 +251,7 @@ export const rhymeSays = (p: RhymePlan): string[] => p.rounds.flatMap((r) => r.s
 
 /** The help level her reads of a word here have reached (the ramp; recorded, and shown on the grown-ups page). */
 export function recordedRhymeLevel(store: ProgressStore, word: string): RhymeLevel {
-  return clampLevel(store.rhymeLevel(word, RHYME.startLevel));
+  return clampLevel(store.rampLevel('rhyme', word, RHYME.startLevel));
 }
 
 /** The help level the room gives a word now: RHYME.startLevel at base, else her recorded level up to DIFFICULTY. */

@@ -1,6 +1,5 @@
 /**
- * The episode's state (split from Episode.ts in item 076, which re-exports
- * it): the `episode` object every scene reads, what an episode starts afresh,
+ * The episode's state, re-exported by Episode.ts: the `episode` object every scene reads, what an episode starts afresh,
  * and its step list. No Phaser and no import back into this folder, so the
  * draws (`./draws.ts`) and the rules can be unit-tested in node.
  */

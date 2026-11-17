@@ -44,7 +44,7 @@ import { soundOut } from '../rules/soundOut';
 import { progress } from '../state/progress';
 import type { RoomInfo } from '../hookState';
 import { Bag } from '../ui/Bag';
-import { bannerArt, bannerPanelWidth, inkOf, tagPanel } from '../ui/banner';
+import { bannerArt, bannerPanelWidth, inkOf, PANEL_MARGIN, tagPanel } from '../ui/banner';
 import { makeButtonDot } from '../ui/ButtonDot';
 import type { CaptionMode, KeepOut } from '../ui/Caption';
 import { voiceBank } from '../voice/VoiceBank';
@@ -60,8 +60,6 @@ const BANNER_W = 1160;
 const TWO_ROWS_PX = 56;
 /** The banner's top edge: it hangs from the top of the screen (its pole is all that is up there). */
 const BANNER_TOP = 6;
-/** Clear air between the words (their ink, grown to their biggest) and the cream band's edges (item 128). */
-const PANEL_MARGIN = 14;
 /** The space between two rows of words, as a share of the word size. */
 const ROW_GAP = 0.22;
 /** The picture on its pedestal: how high above the spot its top is (pedestal 100 + picture 150), and its bob. */

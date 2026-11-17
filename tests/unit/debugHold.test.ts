@@ -24,7 +24,7 @@ test('a held store records and draws as usual, saves nothing, and release puts i
   store.record('frames', 'go_get_the', true, 0);
   store.takeFromBag('dog');
   store.remember('games', 'charge');
-  store.setBridgeLevel('dog', 3);
+  store.setRampLevel('bridge', 'dog', 3);
   assert.equal(store.stat('words', 'dog').seen, 1, 'the game under test reads what it recorded');
   assert.equal(storage.getItem(STORE_KEY), blob, 'nothing saved while held');
   // The grown-ups page, opened during the game, reads the store as it was.

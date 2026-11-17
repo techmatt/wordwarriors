@@ -1,5 +1,5 @@
 /**
- * The battle's simulation (item 141, out of BattleScene): every fighter moves
+ * The battle's simulation: every fighter moves
  * in its own style (movement.ts) and uses its abilities on its own cooldowns
  * (abilities.ts), choosing targets as it goes; minions, clones, projectiles
  * and traps are all live. Taunts go through the voice arbiter as barks.
@@ -27,6 +27,7 @@ import { cast, type BattleWorld, type Projectile, type Trap } from './abilities'
 import { Fighter, FLOOR_BOTTOM, FLOOR_TOP, type FighterInit } from './Fighter';
 import { ARENA_LEFT, ARENA_RIGHT, integrate, STEER, STICK_AT_REST_SQ } from './movement';
 import type { FightStage, Phase } from './stages/stage';
+import { pick } from '../rules/random';
 
 /** Cosmetic damage per point of ability power. Tuned so bars drift, not drop. */
 const DAMAGE_PER_POWER = 2.6;
@@ -202,7 +203,7 @@ export class BattleSim {
     if (power >= 2 && !b.choosing && Math.random() < 0.35) {
       // Not a word on a move pad still to come (POW, BAM and ZAP are move words).
       const words = ['POW!', 'BAM!', 'ZAP!', 'BOOM!', 'WHAM!'].filter((w) => !b.textGivesAway(w));
-      floatText(scene, target.cx, target.top, words[Math.floor(Math.random() * words.length)]!, hex(color), 34, HIT_FLOAT);
+      floatText(scene, target.cx, target.top, pick(words, Math.random), hex(color), 34, HIT_FLOAT);
     }
     if (status && !(target.isMain && target.team === 'villain' && b.part === 1 && Math.random() < 0.5)) target.setStatus(status.kind, status.duration, b.now);
     b.show.onHit(target, power);
@@ -256,7 +257,7 @@ export class BattleSim {
     let t: Fighter;
     if (f.isMain && Math.random() < 0.65) {
       const mains = enemies.filter((e) => e.isMain);
-      t = mains.length ? mains[Math.floor(Math.random() * mains.length)]! : enemies[0]!;
+      t = mains.length ? pick(mains, Math.random) : enemies[0]!;
     } else {
       t = enemies.reduce((a, b) => (Phaser.Math.Distance.Between(f.x, f.y, a.x, a.y) < Phaser.Math.Distance.Between(f.x, f.y, b.x, b.y) ? a : b));
     }
@@ -461,7 +462,7 @@ export class BattleSim {
     if (b.now < this.nextTaunt || b.phase !== 'fight') return;
     this.nextTaunt = b.now + 5000 + Math.random() * 4000;
     const speakers = this.fighters.filter((f) => f.isMain && f.active && !f.floored && f.init.taunts?.length && f.canAct(b.now));
-    const f = speakers[Math.floor(Math.random() * speakers.length)];
+    const f = speakers.length ? pick(speakers, Math.random) : undefined;
     if (!f) return;
     const key = b.pickTaunt(f);
     if (!key) return;

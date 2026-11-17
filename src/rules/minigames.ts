@@ -73,10 +73,10 @@ export const SENTENCE_GAMES: Minigame[] = FRAMES.map((f): Minigame => ({ id: `se
 export const WORD_MACHINE_GAME: Minigame = { id: 'word_machine', kind: 'machine', scene: 'WordMachine', glyph: '⚙️', name: 'MACHINE', weight: WORD_MACHINE.weight, slots: ['fetch'] };
 
 /**
- * Charge the Spell (item 053): a fetch room only. One word a visit, each
+ * Charge the Spell (item 053): a fetch room only. CHARGE.words words a visit, each
  * rune's sound said back, then the word read aloud, judged by Dad (its plan:
  * the word and runes, src/rules/charge.ts); the word is a battle item
- * (fetched, item 058) and its runes fire in the next battle. For the beta it is one of the phonics games, one of which is
+ * (fetched, item 058) and its runes fire in the next battle. It is one of the phonics games, one of which is
  * forced per episode (FORCE_PHONICS_ROOM, src/episode/plans.ts `roomGames`).
  */
 export const CHARGE_GAME: Minigame = { id: 'charge', kind: 'charge', scene: 'ChargeRoom', glyph: '✨', name: 'CHARGE', weight: CHARGE.weight, slots: ['fetch'] };
@@ -84,7 +84,7 @@ export const CHARGE_GAME: Minigame = { id: 'charge', kind: 'charge', scene: 'Cha
 /**
  * The Stretchy Bridge (item 054): a fetch room only. Words blended across
  * stepping stones (its plan: src/rules/bridge.ts); every word she reads
- * across it is a battle item, like the machine's. For the beta it is one of
+ * across it is a battle item, like the machine's. It is one of
  * the phonics games, one of which is forced per episode (FORCE_PHONICS_ROOM).
  */
 export const BRIDGE_GAME: Minigame = { id: 'bridge', kind: 'bridge', scene: 'BridgeRoom', glyph: '🌉', name: 'BRIDGE', weight: BRIDGE.weight, slots: ['fetch'] };
@@ -93,8 +93,8 @@ export const BRIDGE_GAME: Minigame = { id: 'bridge', kind: 'bridge', scene: 'Bri
  * The Shape-Shifter (item 096): a fetch room only. The villain's spell walks
  * a creature down a chain of words, one letter changed a link; she reads each
  * link, walking and green only (its plan: src/rules/shifter.ts). Every word
- * she reads there is a battle item, the last creature among them. For the
- * beta it is behind door b of 3 episodes in 7, never two running (SHIFTER_ROOM,
+ * she reads there is a battle item, the last creature among them. It is
+ * behind door b of 3 episodes in 7, never two running (SHIFTER_ROOM,
  * items 126 and 137, src/episode/plans.ts `roomGames`).
  */
 export const SHIFTER_GAME: Minigame = { id: 'shifter', kind: 'shifter', scene: 'ShifterRoom', glyph: '🪄', name: 'SHIFTER', weight: SHIFTER.weight, slots: ['fetch'] };

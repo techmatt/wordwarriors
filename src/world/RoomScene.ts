@@ -23,7 +23,7 @@ import { sfxWrong } from '../audio/sfx';
 import { advance, castArt, castScale, episode, narrator, walkArt, type Slot, type Step } from '../episode/Episode';
 import { outfitFor } from '../../content/battle/outfits';
 import { FreePlay } from '../fx/freePlay';
-import { backdrop, fitPicture, floatText, FpsMeter, wiggle } from '../fx/juice';
+import { backdrop, fitPicture, floatText, wiggle } from '../fx/juice';
 import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import type { DebugOrigin } from '../episode/debug';
@@ -80,7 +80,6 @@ export abstract class RoomScene extends Phaser.Scene {
   protected round = '';
   private dot!: Phaser.GameObjects.Container;
   private lastNear: Spot | null = null;
-  private readonly fps = new FpsMeter();
   private idleMs = 0;
   private hasMoved = false;
   private stickHint: Phaser.GameObjects.Container | null = null;
@@ -457,7 +456,7 @@ export abstract class RoomScene extends Phaser.Scene {
     }
     this.controls.endFrame();
 
-    this.publish(deltaMs);
+    this.publish();
   }
 
   /** Minigame debug mode (item 086, src/episode/debug.ts): what brings this room back, how it looks, and its door out. */
@@ -513,8 +512,7 @@ export abstract class RoomScene extends Phaser.Scene {
     this.idleMs = 0;
   }
 
-  private publish(deltaMs: number): void {
-    this.fps.sample(deltaMs);
+  private publish(): void {
     // A spot switched off and on again (a round's tiles) shows afresh: where she stands then.
     for (const s of this.spots) if (!s.enabled) s.from = undefined;
     const spots: SpotInfo[] = this.spots.filter((s) => s.enabled).map((s) => {

@@ -14,14 +14,14 @@ import { test } from 'node:test';
 
 import { holdPlan, holdSamples } from '../../src/audio/holdSound';
 import { BRIDGE } from '../../src/config';
+import { noise } from './seeds';
 
 const RATE = 48000;
 type Part = [kind: 'quiet' | 'noise' | 'hum', s: number, amp?: number, hz?: number, ampEnd?: number];
 /** A clip from parts: silence, noise (a hiss) and hums (a few harmonics, the level gliding to `ampEnd`). */
 function clip(...parts: Part[]): Float32Array {
   const out: number[] = [];
-  let r = 11;
-  const rnd = () => ((r = (r * 16807) % 2147483647) / 2147483647) * 2 - 1;
+  const rnd = noise(11);
   for (const [kind, s, amp = 0.3, hz = 120, ampEnd = amp] of parts) {
     const n = Math.round(s * RATE);
     for (let i = 0; i < n; i++) {

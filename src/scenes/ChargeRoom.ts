@@ -1,6 +1,5 @@
 /**
- * Charge the Spell (item 053; two words a visit since item 140, one in items
- * 058-139; no presses per rune since item 059): a side room where she says
+ * Charge the Spell: a side room where she says
  * letter SOUNDS aloud after the helper, then reads the word they spell for
  * Dad. Her real gap is sounds (she knows the names).
  *
@@ -17,16 +16,15 @@
  * per rune: Matt found the per-rune presses slow and frustrating (item 059).
  *
  * With every rune charged the whole word lights at the top and she reads it
- * aloud ("Now read the whole spell!", on the visit's first word only since
- * item 144): the room's one press, Dad's. His 2:
+ * aloud ("Now read the whole spell!", on the visit's first word only): the
+ * room's one press, Dad's. His 2:
  * the word is said, its picture shows and flies into her bag. His 1: "Let's
  * sound it out together!", the word sounded out once, unit by unit (never
  * blended), then said, and the picture goes into the bag all the same. The
  * read is recorded under `words`, and its runes' sounds under `sounds` (right
  * with his 2); the word is a battle item (`episode.fetched`). Then the next
- * round's word takes the bar and its sounds start (since item 144 no "Here
- * comes another spell!" first); the last word's picture flies into the bag to
- * "Our spells are all charged up!" (its praise gone, item 144), then back to
+ * round's word takes the bar and its sounds start; the last word's picture
+ * flies into the bag to "Our spells are all charged up!", then back to
  * the hub. A two-word visit with Dad answering at once is at most 40 s (hunt
  * 11, M61, Matt's ruling; 33-39 s measured in an episode).
  *
@@ -214,8 +212,8 @@ export class ChargeRoom extends HouseSideRoom {
       const b = o.getBounds();
       out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: o === this.friend ? 4 : 8 });
     }
-    // The bar at its full size: a new round's pops in from nothing as "Here comes another spell!" started (before item 144), and its
-    // bounds then were nothing, so the box took the top over the new word (hunt 11).
+    // The bar at its full size: a new round's pops in from nothing, and its bounds then are nothing, so the box
+    // would take the top over the new word.
     if (this.bar?.active) {
       const b = barBox(this.cur.units.length);
       out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: 8 });
@@ -286,7 +284,7 @@ export class ChargeRoom extends HouseSideRoom {
    */
   private async startRound(fresh: boolean): Promise<void> {
     const f = ++this.flow;
-    // The visit's first round counts from her arrival, as the round did before item 140.
+    // The visit's first round counts from her arrival.
     this.roundAt = fresh ? this.time.now : this.startedAt;
     this.readAt = 0;
     this.phase = 'sounds';

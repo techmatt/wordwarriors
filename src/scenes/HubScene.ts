@@ -39,7 +39,6 @@ import { voiceBus, type Utterance } from '../voice/VoiceBus';
 import { DEPTH, FONT_ROUNDED, GAME_WIDTH } from '../config';
 import { away, enterRoom, episode, giftWord, helper, hubScene, narrator, planFor, type Slot, type Step } from '../episode/Episode';
 import { isVariant, variant } from '../episode/lineVariants';
-import type { RoomInfo } from '../hookState';
 import { helperAbilityFor } from '../rules/moves';
 import { bob, burst, flash, popIn, shockwave, squash } from '../fx/juice';
 import { fitText } from '../ui/fitText';
@@ -76,7 +75,7 @@ export class HubScene extends RoomScene {
   /** What yellow says again: line ids (narrator lines, or the hub scene's circle line). */
   private hintIds: string[] = [];
   private doors: Partial<Record<'door_a' | 'door_b' | 'door_counter' | 'door_front', Spot>> = {};
-  private circle: Spot | null = null;
+  private giftSpot: Spot | null = null;
   /** How the gift's spot looks (item 138): its pickup and colours. */
   private look: GiftSpotLook | null = null;
   /** The gift's prop with the word written on it (a scroll, a card). */
@@ -97,7 +96,7 @@ export class HubScene extends RoomScene {
     this.phase = 'intro';
     this.hintIds = [];
     this.doors = {};
-    this.circle = null;
+    this.giftSpot = null;
     this.look = null;
     this.scroll = null;
     this.circleLine = null;
@@ -153,7 +152,7 @@ export class HubScene extends RoomScene {
     if (this.scroll?.active) {
       out.push({ x: this.scroll.x - CARD_W / 2 - 10, y: this.scroll.y - CARD_H / 2 - 60, w: CARD_W + 20, h: CARD_H + 70, weight: 5 });
     }
-    const c = this.circle;
+    const c = this.giftSpot;
     if (c?.obj.active && (this.phase === 'circle' || (this.circleLine && voiceBus.speaking?.id === this.circleLine))) {
       const b = c.obj.getBounds();
       out.push({ x: b.x, y: b.y, w: b.width, h: b.height, weight: 40 });
@@ -176,7 +175,7 @@ export class HubScene extends RoomScene {
     bob(this, friend, 6, 750);
     this.caption.track(helper(), () => (friend.active ? { x: friend.x, y: friend.y } : null));
 
-    this.buildCircle();
+    this.buildGiftSpot();
     this.buildDoors();
 
     const done = episode.house.done;
@@ -209,25 +208,21 @@ export class HubScene extends RoomScene {
   // -- building ---------------------------------------------------------------
 
   /**
-   * The spot she stands at to take the gift (item 138): the magic circle for
-   * a spell, else the scene's own pickup (src/world/giftSpot.ts). Still the
-   * spot `circle` to the tests and the flow, whatever it looks like.
+   * The spot she stands at to take the gift: the magic circle for a spell,
+   * else the scene's own pickup (src/world/giftSpot.ts). Its spot id is
+   * `circle`, whatever it looks like.
    */
-  private buildCircle(): void {
+  private buildGiftSpot(): void {
     const { x, y } = HUB.circle;
     const { story } = hubScene();
     this.look = giftSpotLook(this, story.spot, () => this.art('prop_magic_circle', 200, 90, 0, 20), () => this.pickup(story.prop), Boolean(story.hot));
-    this.circle = this.addSpot('circle', x, y, this.look.children, null);
-    if (this.look.dotAbove !== null) this.circle.dotAbove = this.look.dotAbove;
-    this.circle.obj.setDepth(DEPTH.floor + 2);
-    this.circle.enabled = false;
-    // Once its word is caught the circle is spent: it is not there to draw her
+    this.giftSpot = this.addSpot('circle', x, y, this.look.children, null);
+    if (this.look.dotAbove !== null) this.giftSpot.dotAbove = this.look.dotAbove;
+    this.giftSpot.obj.setDepth(DEPTH.floor + 2);
+    this.giftSpot.enabled = false;
+    // Once its word is caught the spot is spent: it is not there to draw her
     // away from the doors (item 039: it glowed on through part 2).
-    if (episode.house.taught) this.circle.obj.setVisible(false);
-  }
-
-  protected override extraHooks(): Partial<RoomInfo> {
-    return { giftSpot: this.circle?.obj.visible ? hubScene().story.spot : null };
+    if (episode.house.taught) this.giftSpot.obj.setVisible(false);
   }
 
   /** The scene's prop as a pickup on its spot: a prop's art, or its emoji standing on its own. */
@@ -279,7 +274,7 @@ export class HubScene extends RoomScene {
   /** A door's sign: its room's picture on a round plaque, gently bobbing. */
   private plaque(glyph: string): Phaser.GameObjects.Container {
     const board = this.add.circle(0, 0, 34, 0xffffff, 1).setStrokeStyle(5, 0xffd23f, 1);
-    // No padding since item 085: an emoji Text is measured on itself (src/ui/glyphMetrics.ts), centred on the plaque.
+    // No padding: an emoji Text is measured on itself (src/ui/glyphMetrics.ts), centred on the plaque.
     const pic = this.add.text(0, 2, glyph, { fontSize: '56px' }).setOrigin(0.5);
     const sign = this.add.container(0, -DOOR_H - 40, [board, pic]);
     bob(this, sign, 4, 1100);
@@ -364,10 +359,10 @@ export class HubScene extends RoomScene {
     this.summonRing(gift);
 
     await this.speak(reveal, this.nar(moveKey('gift_word', gift)), ids.circle);
-    if (this.circle) {
-      this.circle.enabled = true;
-      this.circle.correct = true;
-      burst(this, this.circle.x, this.circle.y - 20, { count: 30, colors: [this.look?.color ?? 0x9a7aff, 0xffffff] });
+    if (this.giftSpot) {
+      this.giftSpot.enabled = true;
+      this.giftSpot.correct = true;
+      burst(this, this.giftSpot.x, this.giftSpot.y - 20, { count: 30, colors: [this.look?.color ?? 0x9a7aff, 0xffffff] });
     }
     this.setPhase('circle', ids.circle);
   }
@@ -449,7 +444,7 @@ export class HubScene extends RoomScene {
   private async learn(): Promise<void> {
     this.setPhase('intro');
     this.locked = true;
-    const circle = this.circle!;
+    const circle = this.giftSpot!;
     const look = this.look!;
     circle.enabled = false;
     circle.correct = null;

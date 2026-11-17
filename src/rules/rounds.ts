@@ -1,5 +1,6 @@
 /**
- * Round generation for the minigames. Phaser-free, so it is unit-tested.
+ * Round generation for the parked games (Sound → Letter, Blend Path, Word →
+ * Picture; src/scenes/minigames/). Phaser-free, so it is unit-tested.
  *
  * Targets come from the ProgressStore, weighted toward her shaky items
  * (`pickWeighted`). Distractors are drawn so each choice looks and sounds

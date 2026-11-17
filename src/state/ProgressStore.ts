@@ -125,6 +125,13 @@ function empty(): ProgressData {
   return { version: STORE_VERSION, sounds: {}, words: {}, spelling: {}, frames: {}, rimes: {}, onsets: {}, grabs: {}, grabLevels: {}, bridgeLevels: {}, bag: { left: [], round: 0 }, moveBag: { left: [], round: 0 }, padBag: { left: [], round: 0 }, episodes: 0, recent: {} };
 }
 
+/** The help ramps that keep a level per word, each in its own `<kind>Levels` field. */
+export type RampKind = 'grab' | 'bridge' | 'shifter' | 'rhyme';
+
+function levelsField(kind: RampKind): `${RampKind}Levels` {
+  return `${kind}Levels`;
+}
+
 /** How many past villains the store keeps. */
 const VILLAINS_KEPT = 4;
 
@@ -238,31 +245,27 @@ export class ProgressStore {
       parsed.sounds ??= {};
       parsed.words ??= {};
       parsed.spelling ??= {};
-      // Added in v0.2 without a version bump: an older blob simply has none yet.
+      // Fields added without a version bump: an older blob simply has none yet.
       parsed.frames ??= {};
-      // Item 015, the same way: an empty bag with round 0 fills on the first draw.
+      // An empty bag with round 0 fills on the first draw.
       parsed.bag ??= { left: [], round: 0 };
       parsed.moveBag ??= { left: [], round: 0 };
-      // Item 038, the same way.
       parsed.padBag ??= { left: [], round: 0 };
       parsed.episodes ??= 0;
-      // Item 026, the same way.
       parsed.rimes ??= {};
       parsed.onsets ??= {};
-      // Item 033, the same way.
       parsed.grabs ??= {};
       parsed.grabLevels ??= {};
-      // Item 054, the same way.
       parsed.bridgeLevels ??= {};
-      // Item 067, the same way: her last victory scene (item 027's `ending`) seeds its rotation.
+      // Her last victory scene (the old `ending` field) seeds its rotation.
       parsed.recent ??= parsed.ending ? { ending: [parsed.ending] } : {};
-      // Item 076: item 025's own villain list joins the rotations.
+      // The old villain list joins the rotations.
       if (parsed.villains?.length && !parsed.recent.villain) parsed.recent.villain = parsed.villains.slice(-VILLAINS_KEPT);
       delete parsed.villains;
       delete parsed.ending;
-      // Item 078: Charge the Spell's help ramp (item 053, unused since 059) is gone.
+      // Charge the Spell's old help ramp is gone.
       delete parsed.chargeLevels;
-      // Item 035: a blob with no `bagKnown` knew the bag words before MUG RUG JUG.
+      // A blob with no `bagKnown` knew the bag words before MUG RUG JUG.
       parsed.bagKnown ??= 'legacy';
       return parsed;
     } catch {
@@ -376,43 +379,17 @@ export class ProgressStore {
     this.remember('villain', person, VILLAINS_KEPT);
   }
 
-  /** A word's warm-up level (item 033), or `fallback` (GRAB.startLevel) if she has never grabbed it. */
-  grabLevel(word: string, fallback: number): number {
-    return this.data.grabLevels[word] ?? fallback;
+  /**
+   * A word's level on a help ramp (the warm-up's, the Stretchy Bridge's, the
+   * Shape-Shifter's, the rhyme room's), or `fallback` (the ramp's startLevel)
+   * if she has never met it there.
+   */
+  rampLevel(kind: RampKind, word: string, fallback: number): number {
+    return this.data[levelsField(kind)]?.[word] ?? fallback;
   }
 
-  setGrabLevel(word: string, level: number): void {
-    this.data.grabLevels[word] = level;
-    this.save();
-  }
-
-  /** A word's Stretchy Bridge help level (item 054), or `fallback` (BRIDGE.startLevel) if she has never crossed with it. */
-  bridgeLevel(word: string, fallback: number): number {
-    return this.data.bridgeLevels[word] ?? fallback;
-  }
-
-  setBridgeLevel(word: string, level: number): void {
-    this.data.bridgeLevels[word] = level;
-    this.save();
-  }
-
-  /** A word's Shape-Shifter help level (item 096), or `fallback` (SHIFTER.startLevel) if she has never met it there. */
-  shifterLevel(word: string, fallback: number): number {
-    return this.data.shifterLevels?.[word] ?? fallback;
-  }
-
-  setShifterLevel(word: string, level: number): void {
-    (this.data.shifterLevels ??= {})[word] = level;
-    this.save();
-  }
-
-  /** A word's rhyme-room help level (item 139), or `fallback` (RHYME.startLevel) if she has never met it there. */
-  rhymeLevel(word: string, fallback: number): number {
-    return this.data.rhymeLevels?.[word] ?? fallback;
-  }
-
-  setRhymeLevel(word: string, level: number): void {
-    (this.data.rhymeLevels ??= {})[word] = level;
+  setRampLevel(kind: RampKind, word: string, level: number): void {
+    (this.data[levelsField(kind)] ??= {})[word] = level;
     this.save();
   }
 

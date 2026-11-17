@@ -25,6 +25,7 @@ import { burst, fitImage, fitPicture, floatText, fxQuality, popIn, shockwave } f
 import { TEX } from '../../fx/textures';
 import type { Fighter } from '../Fighter';
 import { BaseStage } from './stage';
+import { pick } from '../../rules/random';
 
 /** One side of the contest: its station, its dish and the score the dish shows. */
 interface Side {
@@ -281,9 +282,9 @@ export class CookoffStage extends BaseStage {
     const other = s === this.hero ? this.villainSide : this.hero;
     s.nextFood = Phaser.Math.Clamp(1.1 - (s.disp - other.disp) * 1.5, 0.45, 1.6) * (0.8 + Math.random() * 0.4);
     const cooks = (s.team === 'hero' ? h.team() : [h.villain]).filter((f) => f.active && !f.floored);
-    const cook = cooks[Math.floor(Math.random() * cooks.length)];
+    const cook = pick(cooks, Math.random);
     if (!cook) return;
-    const glyph = s.food[Math.floor(Math.random() * s.food.length)]!;
+    const glyph = pick(s.food, Math.random);
     const item = this.scene.add.text(cook.x, cook.cy, glyph, { fontSize: '38px' }).setOrigin(0.5).setDepth(DEPTH.fx);
     this.foodFlown++;
     this.fling(item, cook.x, cook.cy, () => s.topX, () => s.topY, 140, 620, () => {

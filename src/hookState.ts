@@ -34,8 +34,6 @@ export interface RoomInfo {
   sentence?: { tokens: string[]; key: string; frame: string; pass: 'listen' | 'read' | 'find' | 'done'; index: number; skipped: boolean; readLit: number[]; readDot?: { x: number; y: number } | null; bannerBottom?: number };
   /** The home warm-up (item 033): the word to grab, its level on the ramp (1 easiest), misses so far, the hall's pictures. */
   grab?: { word: string; level: number; misses: number; objects: string[]; phase: string };
-  /** The hub (item 138): how the gift's spot is drawn (`GiftSpot`: `magic`, `plate`, `tools`...), null once it is spent. */
-  giftSpot?: string | null;
   /** The word machine (item 026): the round in play (`index` of `rounds`), its tiles, and what is in the slot. */
   machine?: {
     mode: string;
@@ -149,7 +147,7 @@ export interface RoomInfo {
 }
 
 /** A main fighter in the hooks: `box` is its picture's bounds now, [left, top, right, bottom] (hunt 12: the checker's `fighter-offscreen`, `pad-under-fighter`). */
-export interface BattleFighter {
+interface BattleFighter {
   id: string;
   hp: number;
   status: string | null;
@@ -249,7 +247,6 @@ export const hookState: {
   theEnd: TheEndInfo | null;
   /** The scene last opened; '' before the first. */
   scene: SceneKey | '';
-  fps: number;
   /** Every Wait screen so far (item 150). */
   waits: WaitShown[];
 } = {
@@ -260,6 +257,5 @@ export const hookState: {
   ending: null,
   theEnd: null,
   scene: '',
-  fps: 0,
   waits: [],
 };

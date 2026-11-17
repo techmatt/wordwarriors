@@ -72,7 +72,7 @@ export class TheEndScene extends Phaser.Scene {
     const ground = GAME_HEIGHT - 70;
     const gap = 300;
     // All of them smaller together, never apart, when the tallest would bob up into the title (hunt 6: chef
-    // Dada Jason, 1.65 of her since item 093, bobbed his hat and forehead under THE END).
+    // Dada Jason, 1.65 of her, bobbed his hat and forehead under THE END).
     const fit = Math.min(1, (ground - BOB - TITLE_BOTTOM) / Math.max(...heroes.map((id) => 290 * castScale(id))));
     heroes.forEach((id, i) => {
       const x = GAME_WIDTH / 2 + (i - (heroes.length - 1) / 2) * gap;
@@ -106,7 +106,7 @@ export class TheEndScene extends Phaser.Scene {
       if (hookState.theEnd) hookState.theEnd.dad = false;
       sfxSelect();
       advance(this);
-      // No DAD on it (hunt 9): DAD is a bank word since item 126, and THE END showed it every episode (item 126 took it off the yes / no cue and the lock badge).
+      // No DAD on it: DAD is a bank word, and THE END shows every episode.
     }, 'PRESS <b>2</b> TO PLAY AGAIN');
     setDadAsking(true);
   }

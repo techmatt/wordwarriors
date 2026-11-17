@@ -28,7 +28,7 @@ import { TEX } from '../fx/textures';
 import { scatterDecals } from '../rules/decals';
 import { seededRand } from '../rules/random';
 
-export interface HouseMoodOptions {
+interface HouseMoodOptions {
   /** Scatter seed: one per room, so each room has its own stable mess. */
   seed?: number;
   /** The room's walkable floor; decals keep to its margins. */
@@ -50,7 +50,7 @@ export interface HouseMoodOptions {
   floorOnly?: boolean;
 }
 
-export interface HouseMoodHandle {
+interface HouseMoodHandle {
   /** Resolves when everything is in (at once without `reveal`). */
   readonly revealed: Promise<void>;
 }

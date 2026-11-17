@@ -67,7 +67,7 @@ export function grabSays(word: string): string[] {
 
 /** The level her grabs of a word have reached (the ramp, recorded for the grown-ups page). */
 export function recordedGrabLevel(store: ProgressStore, word: string): GrabLevel {
-  return clampLevel(store.grabLevel(word, GRAB.startLevel));
+  return clampLevel(store.rampLevel('grab', word, GRAB.startLevel));
 }
 
 /** The level the hall gives a word now: GRAB.startLevel at base, else her recorded level up to DIFFICULTY (item 067). */

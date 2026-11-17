@@ -497,7 +497,7 @@ async function standStill(page: Page, sc: Scenario, ready: (s: WWState) => boole
  * beside the driver, all episode, until `stop()`. Never green: green is the
  * driver's (her answers), and a stray green near a thing would answer for her.
  */
-function mash(page: Page): { stop(): Promise<void> } {
+function busyChild(page: Page): { stop(): Promise<void> } {
   let on = true;
   const loop = (async () => {
     for (let n = 0; on; n++) {
@@ -984,7 +984,7 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     // Hunt 8: solo at each episode's end, the store's kept chains after each.
     const solos: boolean[] = [];
     const chains: string[][] = [];
-    const masher = sc.mash ? mash(page) : null;
+    const masher = sc.mash ? busyChild(page) : null;
     const hiding = sc.hide ? hider(page) : null;
     const resizing = sc.resize ? resizer(page) : null;
     const net = { failed: [] as string[] };

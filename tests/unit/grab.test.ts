@@ -32,7 +32,7 @@ test('ramp: a new word starts at GRAB.startLevel (1); right first time is harder
   assert.equal(stepLevel(2, false), 1);
   assert.equal(stepLevel(3, true), 3);
   assert.equal(stepLevel(1, false), 1);
-  store.setGrabLevel('van', 3);
+  store.setRampLevel('grab', 'van', 3);
   assert.equal(recordedGrabLevel(store, 'van'), 3);
   assert.equal(grabLevel(new ProgressStore(memory()), 'van'), 1);
   // Item 067: the hall gives the start level at base, whatever she has reached; up to the knob above it.

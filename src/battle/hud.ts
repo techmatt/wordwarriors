@@ -12,6 +12,7 @@ import { FETCH_BY_WORD } from '../../content/phonics/sentences';
 import { DEPTH, FONT_COMIC, FONT_HEAVY, GAME_WIDTH } from '../config';
 import { counterArt, episode } from '../episode/Episode';
 import { fitImage, popIn } from '../fx/juice';
+import { INK } from '../ui/banner';
 import type { Fighter } from './Fighter';
 import type { FightStage } from './stages/stage';
 
@@ -68,7 +69,7 @@ export class BattleHud {
       x += runeStep + (i > 0 && wordOf(sound) !== wordOf(runes[i - 1]!) ? 14 : 0);
       const y = BARS.y + heroes.length * BARS.rowH - 8;
       const chip = fitImage(scene.add.image(x, y, 'prop_rune_stone'), 30, 30).setDepth(DEPTH.hud + 1);
-      const t = scene.add.text(x, y + 1, sound.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: sound.length > 1 ? '13px' : '18px', color: '#1a1030' }).setOrigin(0.5).setDepth(DEPTH.hud + 2);
+      const t = scene.add.text(x, y + 1, sound.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: sound.length > 1 ? '13px' : '18px', color: INK }).setOrigin(0.5).setDepth(DEPTH.hud + 2);
       for (const o of [chip, t]) popIn(scene, o, o.scale, 600 + i * 100, 300);
     });
   }

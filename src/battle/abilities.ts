@@ -37,6 +37,8 @@ import { burst, dustPuff, flash, groundRing, shake, shockwave } from '../fx/juic
 import { TEX } from '../fx/textures';
 import { FLOOR_BOTTOM, FLOOR_TOP, initFromMinion, type Fighter, type FighterInit, type Team } from './Fighter';
 import { ARENA_LEFT, ARENA_RIGHT } from './movement';
+import { pick } from '../rules/random';
+import { INK } from '../ui/banner';
 
 export interface Projectile {
   obj: Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.Transform;
@@ -111,7 +113,7 @@ const ARROW_LENGTH = 110;
 const LETTER_GAP = 170;
 const LETTER_HOLD = 1100;
 /** The letter tiles over her head: as a move pad's word, dark ink on pale. */
-const LETTER = { box: 56, step: 62, tile: 0xfff8e0, rim: 0xff5a1f, ink: '#1a1030' };
+const LETTER = { box: 56, step: 62, tile: 0xfff8e0, rim: 0xff5a1f, ink: INK };
 
 /**
  * How far from `t`'s centre `f` lands beside it, at least `min`: their bodies
@@ -152,7 +154,7 @@ function pickTargets(w: BattleWorld, f: Fighter, target: Fighter | null, n: numb
   const out: Fighter[] = target && target.active ? [target] : [];
   const rest = Phaser.Utils.Array.Shuffle(enemies.filter((e) => e !== target));
   while (out.length < n && rest.length) out.push(rest.pop()!);
-  while (out.length < n) out.push(enemies[Math.floor(Math.random() * enemies.length)]!);
+  while (out.length < n) out.push(pick(enemies, Math.random));
   return out;
 }
 
@@ -691,7 +693,7 @@ const rain: Cast = (w, f, ab, _target, mult) => {
       // seconds in, at full strength, over the bag row and her HP bar).
       if (w.choosing) return;
       // Aim a third of them straight at somebody, the rest anywhere near.
-      const aimed = i % 3 === 0 ? enemies[Math.floor(Math.random() * enemies.length)] : null;
+      const aimed = i % 3 === 0 ? pick(enemies, Math.random) : null;
       const x = aimed ? aimed.x + (Math.random() - 0.5) * 40 : Phaser.Math.Between(minX, maxX);
       const y = aimed ? aimed.y : Phaser.Math.Between(FLOOR_TOP, FLOOR_BOTTOM);
       const size = Math.round((ab.glyph ? 40 : 30) * Math.sqrt(mult) * (0.8 + Math.random() * 0.5));
@@ -780,7 +782,7 @@ const grow: Cast = (w, f, ab, _target, mult) => {
  * The coil's depth (hunt 12, M81): on the floor under every fighter (a fighter's depth is its feet's y, from
  * FLOOR_TOP down; its afterimage is at y - 1), over the stages' floor marks and the fight's darkening.
  */
-export const COIL_DEPTH = FLOOR_TOP - 1.5;
+const COIL_DEPTH = FLOOR_TOP - 1.5;
 
 /**
  * A serpent's body coiled on the floor (hunt 12, M81, Matt's call (a)): one tapered body, drawn, that winds a turn

@@ -28,7 +28,7 @@ import type { LineSpec } from '../voice/types.js';
 
 export const RECORDER_PAGE = path.join('tools', 'recorder', 'phonics-recorder.html');
 /** Matt's GitHub Pages repo, which serves the hosted copy of the page. */
-export const HOSTED_DIR = 'C:\\Code\\techmatt.github.io';
+const HOSTED_DIR = 'C:\\Code\\techmatt.github.io';
 const BLOCK = /(\/\/ missing:begin[^\n]*\n)[\s\S]*?(\/\/ missing:end)/;
 const CARDS = /\/\/ cards:begin\n([\s\S]*?)\/\/ cards:end/;
 /** The recorder's card for a sound fills another's line too (voice:import's ALSO: the K card is CK). */
@@ -57,7 +57,7 @@ export function pageCards(html: string, search = ''): { ALL_GROUPS: RecorderEntr
 }
 
 /** The live words' sounds, in SOUND_BY_UNIT's order, each with the words that sound it out. */
-export function liveSounds(words: BankWord[] = LIVE): Map<string, string[]> {
+function liveSounds(words: BankWord[] = LIVE): Map<string, string[]> {
   const by = new Map<string, string[]>();
   for (const w of words) for (const s of new Set(w.sounds)) if (s) by.set(s, [...(by.get(s) ?? []), w.word]);
   const order = Object.keys(SOUND_BY_UNIT);

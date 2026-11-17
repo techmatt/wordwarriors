@@ -41,7 +41,7 @@ import type { Page } from '@playwright/test';
 import { ART_BY_ID } from '../../content/art/assets.js';
 import { NOTES, PICK_NOTES, refFor } from '../../content/art/prompts.js';
 import { scratchArg } from '../scratch.js';
-import { ART_DIR, exists, fromDataUrl, pngDataUrl, runMain } from '../shared.js';
+import { ART_DIR, candidateNumbers, exists, fromDataUrl, pngDataUrl, runMain } from '../shared.js';
 import { ORIGINALS, codexPrompt, cut, describeUsage, gamePng, isBackground, openPage, refCrop, runCodex } from './generate.js';
 
 const ALTS = path.join(ORIGINALS, 'alts');
@@ -50,7 +50,7 @@ const ALTS = path.join(ORIGINALS, 'alts');
  * through the Drive junction, so a `pick:` path in a report is the repo's, and shared,
  * so it survives the merge. Not in the scratch home, which is outside the repo.
  */
-export const PICKS = path.join(ORIGINALS, 'picks');
+const PICKS = path.join(ORIGINALS, 'picks');
 /** What the game had before an id's first pick, for `art:pick -- <id> 0`. */
 const RESTORE = path.join(ORIGINALS, 'restore');
 
@@ -91,14 +91,8 @@ async function sidecar(id: string, k: number): Promise<Sidecar | undefined> {
 }
 
 /** The candidate numbers kept for an id, ascending. */
-async function candidates(id: string): Promise<number[]> {
-  const files = await readdir(ALTS).catch(() => [] as string[]);
-  const re = new RegExp(`^${id}-(\\d+)\\.png$`);
-  return files
-    .map((f) => f.match(re)?.[1])
-    .filter((k): k is string => k !== undefined)
-    .map(Number)
-    .sort((a, b) => a - b);
+function candidates(id: string): Promise<number[]> {
+  return candidateNumbers(ALTS, id).catch(() => []);
 }
 
 /** Delete every candidate of an id (images and brief sidecars): once one is promoted the rest are disposable. */

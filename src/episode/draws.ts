@@ -1,6 +1,6 @@
 /**
- * The episode's cast draw and its remembering (split from Episode.ts in item
- * 076, which re-exports it): this session's cast options (`?seed=`, `?ally=`
+ * The episode's cast draw and its remembering, re-exported by Episode.ts:
+ * this session's cast options (`?seed=`, `?ally=`
  * and the rest), the cast, quest place, story and line draws, and which of
  * them she meets as her rotations (item 067). No Phaser: unit-tested in
  * tests/unit/episodeDraws.test.ts. The house plan's remembering is
@@ -52,7 +52,7 @@ export function setCastOptions(o: { overrides?: CastOverrides; rand?: Rand; plan
   castEpisode();
 }
 
-/** `?seed=N`'s two streams: the cast's as before, the house's from a seed of its own. */
+/** `?seed=N`'s two streams: the cast's (seededRand(seed)) and the house's from a seed of its own, so a house draw never shifts the cast. */
 export function seedRands(seed: number): { rand: Rand; planRand: Rand } {
   return { rand: seededRand(seed), planRand: seededRand((seed ^ 0x5eed5eed) >>> 0) };
 }
@@ -69,7 +69,7 @@ export function castEpisode(picked: CastOverrides = {}): void {
         ...(EPISODE_DEFAULTS.randomVillain ? {} : { villain: EPISODE_DEFAULTS.villain }),
         primary: EPISODE_DEFAULTS.primary,
         secondary: false,
-        forms: { dada_matt: 'builder', dada_jason: 'chef' },
+        forms: EPISODE_DEFAULTS.forms,
       }
     : {};
   // A style written for one villain (a story fight, item 107) forces him: `?fight=smaug_story` is Evil Smaug.
@@ -92,8 +92,8 @@ export function castEpisode(picked: CastOverrides = {}): void {
   if (episode.ally && personOf(episode.ally) === personOf(episode.hero)) episode.ally = null;
   episode.place = placeOverride && (placeOverride === HOME || PLACE_BY_ID[placeOverride]) ? placeOverride : questFor(helper()).place;
   episode.fight = null;
-  // The helper's quest line and hub scene (item 037): after the cast, so a
-  // seed draws the same cast as before; the default cast always plays the first.
+  // The helper's quest line and hub scene (item 037): after the cast, so the
+  // story draws never change which cast a seed gives; the default cast always plays the first.
   // Her recent variants of each sit out (item 067).
   const recentVariants = (key: string) => progress.recentOf(key).map(Number);
   episode.story = drawStory(helper(), castRand, castDefault, recentVariants);
@@ -133,8 +133,7 @@ export const remembered = { cast: false, plan: false };
 /**
  * Remember this episode's cast and story picks across episodes (item 067),
  * as she walks into the bedroom: the cast is drawn more often than episodes
- * are played (at boot, at the title, after the parked pick screens). The villain as before (item
- * 025); the ally, each dad's form she meets, the quest line, hub scene and
+ * are played (at boot, at the title, after the parked pick screens). The villain, the ally, each dad's form she meets, the quest line, hub scene and
  * line variants.
  */
 export function rememberCast(): void {

@@ -12,7 +12,7 @@ const COLS = 6;
 const STRIP = 18;
 
 /** Where a label's text sits in its strip, and its size (px). */
-export interface LabelStyle {
+interface LabelStyle {
   x: number;
   y: number;
   size: number;

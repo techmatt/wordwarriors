@@ -84,7 +84,7 @@ export function unzip(buf: Buffer): Map<string, Buffer> {
 
 // ---- One take --------------------------------------------------------------
 
-export interface HoldCheck {
+interface HoldCheck {
   mode: HoldMode;
   asked: HoldMode;
   playedS: number;
@@ -93,7 +93,7 @@ export interface HoldCheck {
 }
 
 /** What the bridge makes of a clip: a held sound needs a steady part of MIN_STEADY_S or more; a whole one (F, item 162) is taken as it is. */
-export function holdCheck(x: Float32Array, rate: number, asked: HoldMode): HoldCheck {
+function holdCheck(x: Float32Array, rate: number, asked: HoldMode): HoldCheck {
   const p = holdPlan(x, rate, asked);
   const steadyS = p.steadyStart === undefined ? undefined : (p.end - p.steadyStart) / rate;
   const ok = asked !== 'hold' ? p.mode === asked : p.mode === 'hold' && (steadyS ?? 0) >= MIN_STEADY_S;

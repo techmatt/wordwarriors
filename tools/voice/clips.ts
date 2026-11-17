@@ -34,7 +34,7 @@ import type { LineSpec, TimedWord } from './types.js';
  * listen page's NEW (`src/listen/main.ts`, the newest stamp) marked item 161's five sounds with item 163's S.
  * A run's clips share it, so NEW marks the whole of the latest import; older date-only stamps sort before it.
  */
-export const INGESTED = `${new Date().toISOString().slice(0, 19)}Z`;
+const INGESTED = `${new Date().toISOString().slice(0, 19)}Z`;
 
 export const CLIP_DIR = path.join('content', 'voice', 'clips');
 export const CLIP_INDEX = path.join(CLIP_DIR, 'index.json');

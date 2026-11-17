@@ -47,7 +47,7 @@ const TIMEOUT_MS = 6 * 60_000;
  * near 20 MB). Flat cel-shaded art loses nothing visible; a room drops from
  * about 1.8 MB to 0.3 MB and a sprite from about 290 KB to 85 KB.
  */
-export const shrinkPng = (png: Buffer): Promise<Buffer> => sharp(png).png({ palette: true, quality: 90, effort: 10, dither: 1 }).toBuffer();
+const shrinkPng = (png: Buffer): Promise<Buffer> => sharp(png).png({ palette: true, quality: 90, effort: 10, dither: 1 }).toBuffer();
 
 export const isBackground = (id: string) => isBackgroundKind(ART_BY_ID[id]!.kind);
 

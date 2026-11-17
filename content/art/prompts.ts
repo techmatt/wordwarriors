@@ -24,7 +24,7 @@ const STYLE =
 export const SPRITE_STYLE = `${STYLE} Single subject centered, full body, on a flat pure #00FF00 green background (sprites only).`;
 
 /** Charge's picture letters (item 097, `rune_<sound>`): the one letter the brief names is the picture, so STYLE's no-letters rule gives way for it alone. */
-export const LETTER_STYLE = `${STYLE.replace('No text, letters or numbers anywhere in the image.', 'The capital letter the description names is the only letter in the image: no other text, letters or numbers.')} Single subject centered, on a flat pure #00FF00 green background (sprites only).`;
+const LETTER_STYLE = `${STYLE.replace('No text, letters or numbers anywhere in the image.', 'The capital letter the description names is the only letter in the image: no other text, letters or numbers.')} Single subject centered, on a flat pure #00FF00 green background (sprites only).`;
 
 /** The style block an id's prompt starts with (not a background's). */
 export const spriteStyle = (id: string) => (id.startsWith('rune_') ? LETTER_STYLE : SPRITE_STYLE);
@@ -37,7 +37,7 @@ export const BACKGROUND_STYLE =`${STYLE} A full-bleed background painting fillin
 const GREEN_JASON = ['dada_jason', 'dada_jason_warrior', 'dada_jason_warlock'].flatMap((c) => [`char_${c}_good`, `face_${c}`]);
 const FAMILY_ART = ['julia', 'ellie', 'dada_matt', 'dada_jason', 'dada_matt_lifter', 'dada_matt_cyber', 'dada_matt_blade', 'dada_jason_warrior', 'dada_jason_warlock'].flatMap((c) => [`char_${c}_good`, `char_${c}_evil`, `face_${c}`]).filter((id) => !GREEN_JASON.includes(id));
 // Item 025's counters and decals: glows and metal, no green of their own.
-const ITEM_025 = ['item_juice_box', 'item_magic_pen', 'item_shiny_pot', 'item_slippy_mop', 'item_sunshine_bus', 'decal_dada_matt_lifter_dumbbell', 'decal_dada_matt_cyber_cable', 'decal_dada_matt_blade_rune', 'decal_dada_jason_warrior_shield', 'decal_dada_jason_warlock_flame', 'minion_imp', 'prop_portal', 'char_julia_knight', 'face_julia_knight'];
+const COUNTER_ITEMS_AND_DECALS = ['item_juice_box', 'item_magic_pen', 'item_shiny_pot', 'item_slippy_mop', 'item_sunshine_bus', 'decal_dada_matt_lifter_dumbbell', 'decal_dada_matt_cyber_cable', 'decal_dada_matt_blade_rune', 'decal_dada_jason_warrior_shield', 'decal_dada_jason_warlock_flame', 'minion_imp', 'prop_portal', 'char_julia_knight', 'face_julia_knight'];
 // The counter items of item 009 came back with a green-tinted glow round them.
 const GLOWING_ITEMS = ['cozy_bed', 'golden_nut', 'giant_log', 'cocoa_cup', 'cuddly_cat', 'flappy_bat', 'tickle_fox', 'gold_bag', 'glitch_bug', 'bounce_cap'].map((i) => `item_${i}`);
 // Tiamat (item 013) is purple and silver with a glow: no green of her own.
@@ -48,31 +48,32 @@ const SCAR_ART = ['char_scar_good', 'char_scar_evil', 'face_scar'];
 const ENDING_PROPS = ENDINGS.flatMap((e) => e.props.map((p) => endingPropArt(p.id)));
 // The fight styles' props (item 031): a finish banner, a trophy, a cooking station.
 const FIGHT_PROPS = FIGHTS.flatMap((f) => (f.props ?? []).map((p) => fightPropArt(p.id)));
-// The word bank's new words (item 037) with no green of their own: not frog, twig, pod, plum, fig, slug or snap (a crocodile).
-const BANK_037 = ['jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'gum', 'bun', 'hut', 'sub', 'nap', 'wag', 'jab', 'red', 'hex', 'jig', 'mix', 'jog', 'bop', 'dot', 'hum', 'yum', 'drum', 'crab', 'flag', 'sled', 'nest', 'tent', 'desk', 'belt', 'vest', 'gift', 'lamp', 'hand', 'mask', 'raft', 'plug', 'ant', 'milk', 'jump', 'spin', 'swim', 'flip', 'stomp', 'slam', 'grab', 'clap', 'bump', 'skip', 'twist', 'melt', 'lift', 'plop', 'flop', 'trap', 'blast', 'drip', 'ship', 'fish', 'duck', 'sock', 'moth', 'shed', 'chick', 'chop', 'kick', 'rush'].map((w) => `pic_${w}`);
-// Item 040's words: none is green.
-const BANK_040 = ['vet', 'chest', 'bin', 'rock', 'clock', 'stick', 'brush', 'truck', 'bath', 'plant', 'crib', 'key', 'yoyo'].map((w) => `pic_${w}`);
-// Item 054's words: none is green.
-const BANK_054 = ['mat', 'man', 'lid', 'lock'].map((w) => `pic_${w}`);
-// Item 056's words but the green ones (GRASS, ELF, BUSH), and item 059's TEN.
-const BANK_056 = ['egg', 'bell', 'doll', 'tap', 'glass', 'sink', 'king', 'ring', 'wing', 'shell', 'chips', 'thumb', 'lamb', 'quest', 'quilt', 'queen', 'goat', 'jeep', 'sheep', 'three', 'cheese', 'kite', 'bike', 'vase', 'cake', 'ten'].map((w) => `pic_${w}`);
+// The word bank's pictures with no green of their own. Left out for their green:
+// frog, twig, pod, plum, fig, slug, snap (a crocodile); grass, elf, bush; gate,
+// stump, swish and chomp (grass or leaves, chomp's dragon); pond (lily pads),
+// goblin, cave (its path), castle (its hill) and dragon.
+const NO_GREEN_PICTURES = [
+  'jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'gum', 'bun', 'hut', 'sub', 'nap', 'wag', 'jab', 'red', 'hex', 'jig', 'mix', 'jog', 'bop', 'dot', 'hum', 'yum', 'drum', 'crab', 'flag', 'sled', 'nest', 'tent', 'desk', 'belt', 'vest', 'gift', 'lamp', 'hand', 'mask', 'raft', 'plug', 'ant', 'milk', 'jump', 'spin', 'swim', 'flip', 'stomp', 'slam', 'grab', 'clap', 'bump', 'skip', 'twist', 'melt', 'lift', 'plop', 'flop', 'trap', 'blast', 'drip', 'ship', 'fish', 'duck', 'sock', 'moth', 'shed', 'chick', 'chop', 'kick', 'rush',
+  'vet', 'chest', 'bin', 'rock', 'clock', 'stick', 'brush', 'truck', 'bath', 'plant', 'crib', 'key', 'yoyo',
+  'mat', 'man', 'lid', 'lock',
+  'egg', 'bell', 'doll', 'tap', 'glass', 'sink', 'king', 'ring', 'wing', 'shell', 'chips', 'thumb', 'lamb', 'quest', 'quilt', 'queen', 'goat', 'jeep', 'sheep', 'three', 'cheese', 'kite', 'bike', 'vase', 'cake', 'ten',
+  'ham', 'hay', 'sack', 'dress', 'block', 'bench', 'skunk', 'dash', 'smash', 'crash', 'splash',
+  'mom', 'dad', 'cow',
+  'pup', 'cub', 'cot', 'kid',
+  'frost', 'sand', 'fang', 'helmet', 'cape', 'flame', 'smoke', 'sword', 'shield', 'bow', 'crown', 'wizard',
+].map((w) => `pic_${w}`);
+// Julia's outfits beside the allies, Seraphina's pink dragon, and Ozymandias's
+// penguins, snow bot, fish bucket and cards: no green of their own.
+const NO_GREEN_OUTFITS_AND_MINIONS = ['keeper', 'snow', 'explorer', 'astronaut', 'puzzler', 'gorilla']
+  .flatMap((o) => [`char_julia_${o}`, `face_julia_${o}`])
+  .concat('minion_pink_dragon', 'minion_penguin', 'minion_penguin_trooper', 'minion_snow_bot', 'item_fish_bucket', 'char_ozymandias_good', 'char_ozymandias_evil', 'face_ozymandias', 'decal_ozymandias_penguin', 'decal_ozymandias_snowpile');
 
 /**
  * Sprites with no green of their own. Keying treats every green tint in them as
  * the screen showing through (a cage's faint back bars), not just the edges.
  * Leave out anything meant to have green in it (a leaf, a dragon).
  */
-// Item 111: Julia's outfits beside the new allies and Seraphina's pink dragon, no green of their own.
-const ART_111 = ['keeper', 'snow', 'explorer'].flatMap((o) => [`char_julia_${o}`, `face_julia_${o}`]).concat('minion_pink_dragon');
-// Item 114: Julia's next three outfits, Ozymandias's penguins and snow bot, his fish bucket, no green of their own.
-const ART_114 = ['astronaut', 'puzzler', 'gorilla'].flatMap((o) => [`char_julia_${o}`, `face_julia_${o}`]).concat('minion_penguin', 'minion_penguin_trooper', 'minion_snow_bot', 'item_fish_bucket', 'char_ozymandias_good', 'char_ozymandias_evil', 'face_ozymandias', 'decal_ozymandias_penguin', 'decal_ozymandias_snowpile');
-// Item 121's words but the green ones (GATE, STUMP, SWISH and CHOMP's dragon have grass or leaves).
-const BANK_121 = ['ham', 'hay', 'sack', 'dress', 'block', 'bench', 'skunk', 'dash', 'smash', 'crash', 'splash'].map((w) => `pic_${w}`);
-const BANK_126 = ['mom', 'dad', 'cow'].map((w) => `pic_${w}`);
-const BANK_157 = ['pup', 'cub', 'cot', 'kid'].map((w) => `pic_${w}`);
-// Item 178's words but the green ones (POND's lily pads, GOBLIN, CAVE's path, CASTLE's hill) and DRAGON.
-const BANK_178 = ['frost', 'sand', 'fang', 'helmet', 'cape', 'flame', 'smoke', 'sword', 'shield', 'bow', 'crown', 'wizard'].map((w) => `pic_${w}`);
-const NO_GREEN = new Set(['item_calm_bell', ...ART_114, ...ART_111, ...BANK_037, ...BANK_040, ...BANK_054, ...BANK_056, ...BANK_121, ...BANK_126, ...BANK_157, ...BANK_178, ...FAMILY_ART, ...TIAMAT_ART, ...ITEM_025, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'face_rilla', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_bubble', 'prop_medal', 'prop_dragon_scale', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
+const NO_GREEN = new Set(['item_calm_bell', ...NO_GREEN_OUTFITS_AND_MINIONS, ...NO_GREEN_PICTURES, ...FAMILY_ART, ...TIAMAT_ART, ...COUNTER_ITEMS_AND_DECALS, 'char_julia_chef', 'face_julia_chef', 'prop_silver_sword', ...GLOWING_ITEMS, 'item_bubble_bath', 'item_cleanup_van', 'char_rilla_evil', 'char_rilla_good', 'face_rilla', 'char_elsa_good', 'pic_mice', 'pic_net', 'prop_magic_circle', 'prop_ice_block', 'prop_bubble', 'prop_medal', 'prop_dragon_scale', 'prop_word_machine', 'prop_machine_tile', 'prop_rune_altar', 'prop_rune_stone', ...ENDING_PROPS, ...SCAR_ART, ...FIGHT_PROPS]);
 
 /**
  * Sprites in dark green of their own (item 049): keying takes out only the

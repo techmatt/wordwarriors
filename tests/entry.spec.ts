@@ -233,7 +233,7 @@ for (const seed of [3, 25]) {
     expect(story.length).toBeGreaterThan(1);
     const said = withStems(story.flatMap((id) => [LINE_BY_ID.get(id)?.text, LINE_BY_ID.get(id)?.say]).flatMap((t) => (t ?? '').toLowerCase().split(/[^a-z]+/).filter(Boolean)));
     expect(said, `${g.word} is said in the story`).not.toContain(g.word);
-    await page.screenshot({ path: `tests/screenshots/025_seed${seed}_hub_${ep.place}.png` });
+    await shotIn('025')(page, `seed${seed}_hub_${ep.place}`);
     test.info().annotations.push({ type: 'warm-up', description: `seed ${seed}: ${g.word} at level ${g.level}, ${Math.round((Date.now() - t0) / 100) / 10}s scaled` });
     expectNoErrors(errors);
   });

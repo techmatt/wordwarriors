@@ -15,7 +15,7 @@
 import { BANK_BY_WORD } from '../../content/phonics/bank';
 
 /** A longer word's row would stretch wider than she is by far, with too many arrows: left out. */
-export const MAX_ARROW_LETTERS = 5;
+const MAX_ARROW_LETTERS = 5;
 
 /** Her name, for a battle with no word read yet. */
 const NO_WORD = ['M', 'E', 'R', 'Y', 'L'];

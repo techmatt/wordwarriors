@@ -104,7 +104,7 @@ interface Charge {
 }
 
 /** Where her character is this frame. */
-export interface PlayBody {
+interface PlayBody {
   /** Her feet. */
   x: number;
   y: number;

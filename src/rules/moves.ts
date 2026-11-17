@@ -97,7 +97,7 @@ export function giftOwner(gift: string, hero: string, helper: string): MoveOwner
 }
 
 /** Who fires `word`: see the header. */
-export function ownerFor(word: string, input: Pick<MoveInput, 'hero' | 'team' | 'helper' | 'gift'>, rand: Rand = Math.random): MoveOwner {
+function ownerFor(word: string, input: Pick<MoveInput, 'hero' | 'team' | 'helper' | 'gift'>, rand: Rand = Math.random): MoveOwner {
   const magic: MoveOwner = { fighter: input.hero, ability: effectId(word), from: null };
   if (word === input.gift) return giftOwner(word, input.hero, input.helper) ?? magic;
   const own = teamMoveWords(input.team).get(word);

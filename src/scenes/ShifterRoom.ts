@@ -623,7 +623,7 @@ export class ShifterRoom extends HouseSideRoom {
     if (l.beat === 'read') this.recordRead(l.to, firstTry, this.wrongTries, { last });
     else this.recordFixed(l.to, firstTry, last);
     // The ramp: right first time with no help is one level less help; a hint or a miss, one more.
-    progress.setShifterLevel(l.to, stepLevel(recordedShifterLevel(progress, l.to), unaided));
+    progress.setRampLevel('shifter', l.to, stepLevel(recordedShifterLevel(progress, l.to), unaided));
     this.forgetMisses(l.to);
     for (const s of this.spots) s.enabled = false;
     sfxRight();

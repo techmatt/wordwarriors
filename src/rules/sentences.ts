@@ -2,7 +2,7 @@
  * The sentence game's word rules: a room's other pictures (`distractors`),
  * every word the cast says or shows before the rooms (`saidEarly`), and when
  * a frame is solid. Pure: no Phaser, unit-tested. Planning the episode's
- * rooms and drawing their key words is src/rules/rooms.ts (item 141).
+ * rooms and drawing their key words is src/rules/rooms.ts.
  */
 
 import { CHARACTER_BY_ID, MINIONS, comboPart } from '../../content/battle/roster';

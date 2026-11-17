@@ -27,6 +27,7 @@ import { DEPTH, FONT_COMIC, FONT_HEAVY, GAME_WIDTH } from '../../config';
 import { castFace, episode, narrator, villainSpec } from '../../episode/Episode';
 import { burst, fitImage, popIn, shake, wiggle } from '../../fx/juice';
 import { openTextEntry } from '../../input/TextEntry';
+import { INK } from '../../ui/banner';
 import type { Spot } from '../../world/RoomScene';
 import { ParkedGame } from './ParkedGame';
 import type { SceneKey } from '../keys';
@@ -188,7 +189,7 @@ export class Spelling extends ParkedGame {
     sfxKey();
     box.ghost.setAlpha(0);
     box.filled = this.add
-      .text(box.rect.x, box.rect.y, letter.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '86px', color: '#1a1030' })
+      .text(box.rect.x, box.rect.y, letter.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '86px', color: INK })
       .setOrigin(0.5)
       .setDepth(DEPTH.hud);
     popIn(this, box.filled, 1);

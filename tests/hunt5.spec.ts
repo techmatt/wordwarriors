@@ -1,6 +1,6 @@
 /**
- * The fifth bug hunt's odd input on the newer screens (item 092; docs/qa-findings.md,
- * Hunt 5), a test each:
+ * The fifth bug hunt's odd input on the newer screens (item 092; Hunt 5 in
+ * docs/qa-findings.md's git history), a test each:
  *
  * - key 0 mashed in the hub at four rhythms: debug mode, the DEBUG tag and the scene
  *   always agree, and one press more flips it (slow lane);

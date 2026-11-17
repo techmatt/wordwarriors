@@ -39,7 +39,7 @@ const BACKGROUND_SLOTS = 2;
  * nothing hangs for good. Long: a fetch waits its turn behind the voice
  * clips, and aborting one re-queues it at the back (30 s, 6 s real at test
  * speed 5, thrashed: the slow-art test took a minute instead of 5 s).
- * Wall-clock time since item 069 (`realTimeout`): test speed no longer shortens it.
+ * Wall-clock time (`realTimeout`), so test speed does not shorten it.
  */
 const FETCH_TIMEOUT_MS = 120_000;
 const TRIES = 3;
@@ -74,12 +74,12 @@ interface Job {
   reask?: boolean;
 }
 
-export interface LateArt {
+interface LateArt {
   id: string;
   scene: string;
 }
 
-export class ArtBank {
+class ArtBank {
   private game: Phaser.Game | null = null;
   private readonly jobs = new Map<string, Job>();
   private readonly waiting: Job[] = [];

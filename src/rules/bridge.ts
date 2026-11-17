@@ -71,7 +71,7 @@ export const BRIDGE_PICTURES: string[] = THINGS.filter(bridgeable).map((w) => w.
  * "fuh". Follows the flag, not a word list: a sound made `whole` (or no longer)
  * moves its words off (or back on) by itself.
  */
-export function wholeFits(sounds: readonly string[]): boolean {
+function wholeFits(sounds: readonly string[]): boolean {
   return sounds.every((s, i) => !SOUND_BY_UNIT[s]?.whole || SOUND_BY_UNIT[sounds[i + 1] ?? '']?.cls === 'vowel');
 }
 
@@ -87,7 +87,7 @@ export function bridgeEase(word: string): BridgeEase {
 
 /** The help level her crossings of a word have reached (the ramp, recorded for the grown-ups page). */
 export function recordedBridgeLevel(store: ProgressStore, word: string): BridgeLevel {
-  return clampLevel(store.bridgeLevel(word, BRIDGE.startLevel));
+  return clampLevel(store.rampLevel('bridge', word, BRIDGE.startLevel));
 }
 
 /** The help level the room gives a word now: BRIDGE.startLevel at base, else her recorded level up to DIFFICULTY (item 067). */

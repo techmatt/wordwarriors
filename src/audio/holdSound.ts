@@ -34,7 +34,7 @@ import { BRIDGE } from '../config.js';
 export type HoldMode = 'hold' | 'once' | 'whole';
 
 /** What to play, in samples: `start`..`end` of the clip; a held clip's steady part is `steadyStart`..`end`. */
-export interface HoldPlan {
+interface HoldPlan {
   mode: HoldMode;
   start: number;
   end: number;

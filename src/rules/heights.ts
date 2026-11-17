@@ -1,5 +1,5 @@
 /**
- * How tall each character is drawn beside her (split from cast.ts, item 122).
+ * How tall each character is drawn beside her.
  * Pure, unit-tested (tests/unit/heights.test.ts).
  *
  *   - A grown-up (a dad, in any form) stands his own height, head to soles

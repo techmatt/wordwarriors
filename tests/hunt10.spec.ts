@@ -1,6 +1,6 @@
 /**
  * Hunt 10 (item 135): what the tenth bug hunt fixed that no older spec covers (fixes 138 to 159 in
- * docs/qa-findings.md): F9 in the battle's closing fade (the clash's rings moved to fights.spec.ts, item 161); the backdrop past
+ * docs/qa-findings.md's git history): F9 in the battle's closing fade (the clash's rings moved to fights.spec.ts, item 161); the backdrop past
  * every edge a shake uncovers; the grown-ups page's grid rows, F8 warning and DEBUG tag; the entry
  * hall's decals; the gift word's card and Ellie's bubble (M55); the story fight's fetched beat; Charge's modelled runes after F9.
  */

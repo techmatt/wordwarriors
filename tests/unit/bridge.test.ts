@@ -28,7 +28,7 @@ import { episodePlans } from '../../src/rules/rooms';
 import { ProgressStore, STORE_KEY } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
 import { withDifficulty } from './difficulty';
-import { memory, seeded, spread } from './seeds';
+import { memory, noise, seeded, spread } from './seeds';
 
 // ---- Held sounds ----------------------------------------------------------
 
@@ -36,8 +36,7 @@ const RATE = 24000;
 /** A clip from parts: silence, noise (a hiss or burst) and tones (a hum or a vowel), each `[kind, seconds, amplitude, hz]`. */
 function clip(...parts: [kind: 'quiet' | 'noise' | 'tone', s: number, amp?: number, hz?: number][]): Float32Array {
   const out: number[] = [];
-  let r = 7;
-  const rnd = () => ((r = (r * 16807) % 2147483647) / 2147483647) * 2 - 1;
+  const rnd = noise(7);
   for (const [kind, s, amp = 0.3, hz = 140] of parts) {
     const n = Math.round(s * RATE);
     for (let i = 0; i < n; i++) out.push(kind === 'quiet' ? 0 : kind === 'noise' ? amp * rnd() : amp * Math.sin((2 * Math.PI * hz * i) / RATE));
@@ -202,7 +201,7 @@ test('bridge draw (item 067): a fresh store crosses any short word, every tier, 
 
 test('bridge help (item 067): held at level 1 at base whatever she has reached; up to the knob above it', () => {
   const store = new ProgressStore(memory());
-  store.setBridgeLevel('map', 3);
+  store.setRampLevel('bridge', 'map', 3);
   assert.equal(recordedBridgeLevel(store, 'map'), 3);
   assert.equal(bridgeLevel(store, 'map'), 1);
   withDifficulty(2, () => assert.equal(bridgeLevel(store, 'map'), 2));
@@ -312,8 +311,8 @@ test('help levels: start at 1, up one when right first time with no help, down o
   assert.equal(stepLevel(3, true), 3);
   assert.equal(stepLevel(2, false), 1);
   assert.equal(stepLevel(1, false), 1);
-  store.setBridgeLevel('map', 3);
-  assert.equal(new ProgressStore(storage).bridgeLevel('map', 1), 3);
+  store.setRampLevel('bridge', 'map', 3);
+  assert.equal(new ProgressStore(storage).rampLevel('bridge', 'map', 1), 3);
   // An old blob with no bridgeLevels reads fine.
   const old = memory();
   old.setItem(STORE_KEY, JSON.stringify({ version: 1, words: {} }));

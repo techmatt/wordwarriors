@@ -1,6 +1,6 @@
 /**
- * Matt's rulings on the bug hunt's design calls (item 043; docs/qa-findings.md,
- * "Matt's calls"): M1, M3-M6 in the running game. M2, the phonics voice's face,
+ * Matt's rulings on the bug hunt's design calls (item 043; docs/rulings.md,
+ * by id): M1, M3-M6 in the running game. M2, the phonics voice's face,
  * is a unit test (tests/unit/cast.test.ts).
  */
 

@@ -1,5 +1,5 @@
 /**
- * The third bug hunt's fixes (item 080; docs/qa-findings.md, Hunt 3): held
+ * The third bug hunt's fixes (item 080; Hunt 3 in docs/qa-findings.md's git history): held
  * F-keys, the grown-ups page and the move choice's stick hint under dad lock,
  * and the lock badge after a resize. A hidden tab holding the voice moved to
  * `tests/hiddenTab.spec.ts` (item 159).

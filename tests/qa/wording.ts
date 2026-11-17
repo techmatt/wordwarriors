@@ -149,7 +149,7 @@ export function letterNameIssues(voice: Since['voice']): Issue[] {
  * hub with real voice, right first time and no walking (66 s before): 50 s with her walk to each picture,
  * 60 s before.
  */
-export const ROOM_BUDGET_MS: Record<string, number> = { ChargeRoom: 42_000, Entry: 45_000, SentenceRoom: 60_000, BridgeRoom: 75_000, ShifterRoom: 90_000, WordMachine: 75_000, RhymeRoom: 50_000 };
+const ROOM_BUDGET_MS: Record<string, number> = { ChargeRoom: 42_000, Entry: 45_000, SentenceRoom: 60_000, BridgeRoom: 75_000, ShifterRoom: 90_000, WordMachine: 75_000, RhymeRoom: 50_000 };
 
 /**
  * A Charge visit solo from its start (hunt 8, M38 (c), Matt's call): she says each sound along with

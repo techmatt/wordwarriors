@@ -97,7 +97,7 @@ export function panelIssues(l: Pick<Layout, 'texts' | 'panels'>, scene: string):
 }
 
 /**
- * Overlaps already ruled on in docs/qa-findings.md, a look and not a bug
+ * Overlaps already ruled on in docs/qa-findings.md (Known issues), a look and not a bug
  * (item 092: every scenario of a sweep reported them): W12's bedroom door
  * under the face card and the magic circle's edge (up to 30 px) under the story's last line,
  * W5's entry door on the door line, and W21's move-choice pad ring grazed (up

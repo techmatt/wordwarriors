@@ -161,7 +161,7 @@ function endingSet(draw: boolean): string[] {
 
 /**
  * The parked v0.1 games' scenes, the one list (Pick is not one: it is live
- * behind `pickScreens` and has its own art). They draw their rounds as they
+ * in choice mode and has its own art). They draw their rounds as they
  * open, from every picture: they wait for the lot.
  */
 const PARKED = new Set<SceneKey>(['SoundToLetter', 'BlendPath', 'WordToPicture', 'Spelling', 'Alarm', 'Retreat']);

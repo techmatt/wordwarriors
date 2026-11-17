@@ -387,7 +387,7 @@ export class RhymeRoom extends HouseSideRoom {
     this.recordRead(r.word, firstTry, this.wrongTries, { last });
     progress.record('rimes', r.rime, firstTry, this.wrongTries);
     // The ramp: right first time with no yellow is one level less help; yellow or a miss, one more.
-    progress.setRhymeLevel(r.word, stepLevel(recordedRhymeLevel(progress, r.word), unaided));
+    progress.setRampLevel('rhyme', r.word, stepLevel(recordedRhymeLevel(progress, r.word), unaided));
     this.forgetMisses(r.word);
     for (const s of this.spots) s.enabled = false;
     this.stopSparkle(spot);

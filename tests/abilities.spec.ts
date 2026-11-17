@@ -5,7 +5,7 @@
 
 import { test, expect } from '@playwright/test';
 
-import { boot, collectErrors, expectNoErrors, until, type WW } from './harness';
+import { boot, collectErrors, expectNoErrors, shotIn, until, type WW } from './harness';
 
 // Hunt 12, M81 (Matt's call (a)): Evil Jormungandr's Crushing Coil was 26 flat discs at effect depth, over the
 // heroes' faces and speech bubbles. It is a serpent now: one drawn, tapered body and a head, under the fighters.
@@ -18,7 +18,7 @@ test('M81: the Crushing Coil is one drawn serpent, body and head, under the figh
   expect(depths, 'Evil Jormungandr holds the Crushing Coil').not.toBeNull();
   await page.waitForTimeout(1500);
   const [body, head] = await page.evaluate(() => [(window as unknown as WW).__ww.named('coil_body'), (window as unknown as WW).__ww.named('coil_head')]);
-  await page.screenshot({ path: 'tests/screenshots/m81_crushing_coil.png' });
+  await shotIn('m81')(page, 'crushing_coil');
   // One Graphics body and one head a cast (the AI may have cast it too meanwhile: a pair each), never discs.
   expect(body!.length).toBeGreaterThanOrEqual(1);
   expect(head!.length).toBe(body!.length);

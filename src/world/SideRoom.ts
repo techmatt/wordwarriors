@@ -37,9 +37,8 @@ import { Bag } from '../ui/Bag';
 import { applyHouseMood, roomSeed } from './houseMood';
 import { GIGGLE_BEAT_MS, RoomScene, type Spot } from './RoomScene';
 
-/** The side rooms' words (the sentence banner, the machine's panel): ink, and lit while said. */
-export const INK = '#1a1030';
-export const LIT = '#ff3d7a';
+/** The side rooms' words' ink and lit colours: the banner's (src/ui/banner.ts). */
+export { INK, LIT } from '../ui/banner';
 /** A moment to look round a side room she has just walked into, before anyone talks. */
 export const ARRIVE_MS = 800;
 

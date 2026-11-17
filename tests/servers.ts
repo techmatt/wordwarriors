@@ -1,7 +1,7 @@
 /**
  * The server commands the Playwright configs start (the suite, the bug-hunt checker, the
  * boot timings, the screenshots), each kept once here. Node runs the tools directly: each
- * `npx` cost about 2 s, `node` 0.2-0.4 s (item 105). Both configs below merge vite.config.ts,
+ * `npx` cost about 2 s, `node` 0.2-0.4 s (item 105). Every config below merges vite.config.ts,
  * whose `strictPort` makes a busy port fail loudly, so no command repeats `--strictPort`.
  */
 
@@ -11,6 +11,11 @@
  */
 export function buildServerCommand(port: number): string {
   return `node --import tsx tests/testBuild.ts && node node_modules/vite/bin/vite.js preview -c tests/vite.test.config.ts --port ${port}`;
+}
+
+/** The dev server with watching and hot reload on: the suite's under `WW_DEV_SERVER=1`. */
+export function watchedDevServerCommand(port: number): string {
+  return `node node_modules/vite/bin/vite.js --port ${port}`;
 }
 
 /** The dev server without file watching or hot reload (tests/vite.nowatch.config.ts, item 039). */

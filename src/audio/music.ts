@@ -79,7 +79,7 @@ const TRACKS = {
 } satisfies Record<string, Track>;
 
 /** A track `startMusic` plays: a misspelt name is a type error, not silence. */
-export type TrackName = keyof typeof TRACKS;
+type TrackName = keyof typeof TRACKS;
 
 let musicGain: GainNode | null = null;
 let current: { name: string; track: Track; step: number; next: number; timer: number } | null = null;

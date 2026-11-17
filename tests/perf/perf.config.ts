@@ -1,6 +1,6 @@
 /**
- * Playwright config for the boot timings (item 065, `tests/perf/*.pw.ts`; the
- * `.pw.ts` name keeps it out of the suite). One worker, so nothing shares the
+ * Playwright config for the boot timings (item 065, `tests/perf/boot.pw.ts`
+ * only, not the cast-voice probe beside it; the `.pw.ts` name keeps it out of the suite). One worker, so nothing shares the
  * machine with what is being timed. Port: `PERF_PORT`, else 5196 (src/port.ts; never
  * `CONDUCTOR_PORT`, the suite's in a conductor item, item 153).
  *
@@ -24,7 +24,7 @@ const PORT = Number(process.env.PERF_PORT ?? PERF_PORT);
 
 export default defineConfig({
   testDir: '.',
-  testMatch: '*.pw.ts',
+  testMatch: 'boot.pw.ts',
   outputDir: '../../test-results/perf',
   workers: 1,
   retries: 0,

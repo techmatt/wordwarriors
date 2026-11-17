@@ -1,5 +1,5 @@
 /**
- * Hunt 11 (item 142, docs/qa-findings.md): F9 in a battle once its opening fade-in was done (fix 145's guard
+ * Hunt 11 (item 142, docs/qa-findings.md's git history): F9 in a battle once its opening fade-in was done (fix 145's guard
  * read the camera's finished fade-in as the closing fade, so the grown-ups page never opened from a fight).
  */
 

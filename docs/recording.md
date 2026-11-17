@@ -1,30 +1,29 @@
 # Recording: Matt's side of the voice
 
 The letter sounds and their example words are recorded with the **phonics recorder**
-(`tools/recorder/phonics-recorder.html`, item 057) and brought in with one command,
+(`tools/recorder/phonics-recorder.html`) and brought in with one command,
 `voice:import`. Any other line can still be replaced by hand with `voice:clip`. The
 Firefly / recording-folder loop from Seraphina's Secret (`voice:tasks`,
 `voice:collect`) was deliberately left out.
 
 ## The letter sounds: the recorder and `voice:import`
 
-1. Open the recorder (README, *Matt's recordings*), type your name, and record the 12
-   cards. Each card is three words, and each word is followed by its sound three times:
-   "VAN … vvvv … vvvv … vvvv …… PIG … p … p … p ……". Leave at least half a second
-   between sounds and a second before the next word. Stretch held sounds (half a
-   second or so is enough, with no "uh": "ssss", not "suh"), and keep short sounds
+1. Open the recorder (`docs/voice-art-pipeline.md`, *Matt's recordings*), type your name,
+   and record the 12 cards. Each card is three words, and each word is followed by its
+   sound three times: "VAN … vvvv … vvvv … vvvv …… PIG … p … p … p ……". Leave at least
+   half a second between sounds and a second before the next word. Stretch held sounds
+   (half a second or so is enough, with no "uh": "ssss", not "suh"), and keep short sounds
    crisp. A hiss (S, SH, TH) can be much quieter than the word; that's fine. F is said
-"fuh", with its "uh" (item 162, Matt: a held "ffff" never sounded good), and plays
-whole; L passes only with a
-long "llll", so make it longer than feels needed. The page counts the
+   "fuh", with its "uh" (Matt: a held "ffff" never sounded good), and plays whole; L passes
+   only with a long "llll", so make it longer than feels needed. The page counts the
    sounds in each take as soon as it stops, and saves a take automatically only when
    all 12 are there.
 2. Press **Download zip**. It saves `phonics-<name>.zip`.
 3. `npm run voice:import -- <the zip>` (`--dry` to look first, `--take g04` for one card),
    then `npm run voice:build`.
-4. Listen on `voice-import/review.html` in the scratch home (`C:\Code\wordwarriors-scratch`), which shows each card's envelope with
-   its cuts, every clip with its target id, and what the Stretchy Bridge makes of each
-   sound.
+4. Listen on `voice-import/review.html` in the scratch home (`C:\Code\wordwarriors-scratch`;
+   its audio in `review/`), which shows each card's envelope with its cuts, every clip with
+   its target id, and what the Stretchy Bridge makes of each sound.
 
 A card that is empty or doesn't count out installs nothing and says which card to
 re-record and why ("re-record card 4 (VAN · PIG · HAT): no sound"; "found 10 sounds,
@@ -33,20 +32,24 @@ the most typical of the three repeats that the bridge can hold. If no repeat hol
 short, or an "uh" after it), it keeps the word and skips the sound, so that card is
 re-recorded.
 
-**Just some sounds** (item 158): put `?only=` and the sounds on the end of the page's
+**Just some sounds**: put `?only=` and the sounds on the end of the page's
 address, commas between: `tools/recorder/phonics-recorder.html?only=f,a` (from the repo;
 the hosted link takes the same tail). It shows only those sounds, each its own card of
 one word and its sound three times (4 sounds); the page lists the sounds' names under
-*How to record*. Its zip is `phonics-<name>-only-f-a.zip`, takes `g02f` and `g07a`, and
-imports the same way (`--take g07a` for one).
+*How to record*. Ids are in any case; one the page does not know is named in its header
+(with none it knows, it shows the full page). Its zip is `phonics-<name>-only-f-a.zip`,
+takes `g02f` and `g07a` (so `?only=f` shares `g02f` with `?only=f,a` in the browser's
+storage, and never mixes with the full page's `g02`), and imports the same way (`--take
+g07a` for one).
 
-**Just the missing sounds** (item 108): `?missing` on the end is `?only=` with every sound
+**Just the missing sounds**: `?missing` on the end is `?only=` with every sound
 the game sounds out that has no good recording yet, worked out from the word bank and
-the recordings (`npm run recorder:missing`, README, *Matt's recordings*), and adding a card
+the recordings (`npm run recorder:missing`, `docs/voice-art-pipeline.md`), and adding a card
 for a sound the 12 cards lack (OW in COW, the lazy A at the end of ZEBRA). A sound Matt
-wants done again is on it too (its `rerecord` in `content/phonics/letters.ts`; S since
-item 162). Its zip is `phonics-<name>-missing.zip`. **F** is "fuh" (item 162); **A** is CAT's steady vowel
-(card 7 says CAT since item 158, not ANT), not sliding toward I.
+wants done again is on it too, until an import replaces the clip file named by its
+`rerecord` in `content/phonics/letters.ts` (S's is there, already met). Its zip is
+`phonics-<name>-missing.zip`. **F** is "fuh"; **A** is CAT's steady vowel (card 7 says
+CAT, not ANT), not sliding toward I.
 
 ## Any other line: `voice:clip`
 

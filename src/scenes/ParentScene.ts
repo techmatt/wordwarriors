@@ -56,7 +56,7 @@ const recentPct = (s: { recent: boolean[] }): string =>
   s.recent.length ? `${Math.round((100 * s.recent.filter(Boolean).length) / s.recent.length)}%` : '–';
 
 /** The grown-ups page's start data: the scene to go back to and its own start data. */
-export interface ParentData {
+interface ParentData {
   back?: SceneKey;
   data?: object;
   page?: number;

@@ -73,8 +73,8 @@ const game = new Phaser.Game({
   input: { gamepad: true },
   // Only Boot starts on its own; Episode.ts starts everything else. The
   // parked v0.1 scenes (the one list: PARKED in src/art/needs.ts) stay
-  // registered so `?scene=` can still open them; Pick is kept behind
-  // `pickScreens`.
+  // registered so `?scene=` can still open them; Pick runs in choice mode
+  // (and behind `pickScreens`).
   scene: [
     BootScene,
     JourneyScene,

@@ -5,7 +5,7 @@
  * changes, and never show up in the game's text.
  */
 
-export type Corner = 'top-left' | 'bottom-left' | 'bottom-right';
+type Corner = 'top-left' | 'bottom-left' | 'bottom-right';
 
 /** How far a tag sits inside the canvas's corner, in CSS px. */
 const INSET = 8;

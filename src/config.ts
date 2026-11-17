@@ -43,7 +43,7 @@ export const DEPTH = {
 } as const;
 
 /**
- * Who is in an episode. Since item 025 the cast is drawn fresh every episode
+ * Who is in an episode. The cast is drawn fresh every episode
  * (`castEpisode`, src/episode/draws.ts, drawing with `drawCast` in
  * src/rules/cast.ts): a villain from the whole roster, a random
  * ally, the dads in random forms and roles. The fixed cast below is the
@@ -66,6 +66,8 @@ export const EPISODE_DEFAULTS = {
   villain: 'tiamat',
   /** The default episode's waking dad (a person), in his own form; nobody else comes in. */
   primary: 'dada_matt',
+  /** The default episode's dads' forms. */
+  forms: { dada_matt: 'builder', dada_jason: 'chef' } as Record<string, string>,
   randomVillain: false,
 };
 
@@ -77,10 +79,7 @@ export const EPISODE_DEFAULTS = {
  * the draw by being added here. The dads wake her whatever this says.
  */
 export const ACTIVE_CAST = {
-  // Item 111: Seraphina, Elsa, Anna and Jasmine join (Matt, 2026-10-22);
-  // item 114: Ozymandias, Moriarty and Bluerilla (`rilla`); item 172: Meryl.
   allies: ['dada_matt', 'dada_jason', 'scar', 'ellie', 'seraphina', 'elsa', 'anna', 'jasmine', 'ozymandias', 'moriarty', 'rilla', 'meryl'],
-  // Item 115: Evil Elsa, Evil Ozymandias and Evil Moriarty join the villains.
   villains: ['jormungandr', 'smaug', 'bavmorda', 'tiamat', 'elsa', 'ozymandias', 'moriarty'],
 };
 
@@ -95,14 +94,8 @@ export const ACTIVE_CAST = {
 export const ADULT_HEIGHT = 1.44;
 
 /**
- * Each dad's own height, head to soles (Matt, item 093: Dada Matt 5-10%
- * shorter than Dada Jason beside him, in every form). Until item 093 every dad
- * picture was 1.5 tall, so the chef's hat, the warlock's hood and the
- * warrior's helmet came out of his height: Jason read up to 11% SHORTER than Matt.
- * Now Jason is what Matt was (1.44: builder Matt's head to soles in a 1.5
- * picture) and Matt 7.5% under him. So Matt shrinks a little beside her
- * (pictures 1.37-1.43, were 1.5) and Jason's hatted forms grow (the chef's
- * picture 1.65-1.67), still well under a giant's 2.
+ * Each dad's own height, head to soles (Matt: Dada Matt 5-10% shorter than
+ * Dada Jason, in every form).
  */
 export const ADULT_HEIGHTS: Readonly<Record<string, number>> = { dada_jason: ADULT_HEIGHT, dada_matt: 1.33 };
 
@@ -202,7 +195,7 @@ export const DAD_AWAY_MS = 8000;
 
 /**
  * Charge the Spell (item 053, src/scenes/ChargeRoom.ts): a visit spells
- * `words` words (item 140; one in items 058-139), each a round of `units`
+ * `words` words, each a round of `units`
  * (fewest, most) sound units. Each round opens with the helper saying all its
  * sounds, a slot lit per sound (item 140); then the helper says each
  * rune's letter sound and she says it back in `sayBackMs` of quiet, with no
@@ -211,8 +204,7 @@ export const DAD_AWAY_MS = 8000;
  * DAD_AWAY_MS turns on the session's solo mode (item 106, M34). In solo mode the
  * helper says each sound with her ("Say it with me!") and charges the rune
  * after `soloBeatMs`, then they read the word together; those are recorded as
- * modelled, not as her reads. It has no help ramp (item 053's went in item 078: the
- * room says every sound since item 059). `units` is the game's word length limit;
+ * modelled, not as her reads. It has no help ramp: the room says every sound. `units` is the game's word length limit;
  * every sound is in play from the start (item 067: no tiers). `weight` is its
  * weight in the rooms' pool (a frame is 1). Hunt 11, M61 (item 144): `sayBackMs`
  * 1200 to 1000 with the room's other gaps (`RUNE_BEATS`, src/scenes/ChargeRoom.ts),
@@ -265,7 +257,7 @@ export const BRIDGE = {
 };
 
 /**
- * Beta (item 053): every episode has one of the phonics games (Charge the
+ * Every episode has one of the phonics games (Charge the
  * Spell or the Stretchy Bridge, item 054, drawn by weight) behind one of the
  * two side doors. Off, each is only its weight in the pool. A test URL that
  * picks its own games (`?games=sentence`, `?game=`) is left alone;
@@ -374,8 +366,9 @@ export const WAKE_WAIT_MS = 6000;
 
 /**
  * The beat after each sound when a word is sounded out unit by unit (ms): the entry
- * hall's clue, Charge the Spell's sounds, the rhyme room's plate (hunt 11: 160 ms ran
- * the sounds together). The sentence room's key-word sound-out keeps its own 450
+ * hall's clue, Charge the Spell's sounds, the rhyme room's plate, the Stretchy Bridge's
+ * picked picture, the Shape-Shifter's picture word, and the listen-through page (listen.html) (hunt 11: 160 ms ran the
+ * sounds together). The sentence room's key-word sound-out keeps its own 450
  * (`LETTER_GAP_MS`), the entry hall's help 700 (`HELP_GAP_MS`).
  */
 export const SOUND_GAP_MS = 400;
@@ -475,13 +468,12 @@ export const SHIFTER = {
 };
 
 /**
- * Beta (item 096; item 126, Matt's pick; item 137): 3 episodes in 7 have a
+ * 3 episodes in 7 have a
  * Shape-Shifter behind door b, never two running (beside FORCE_PHONICS_ROOM's game behind door
  * a); the others a fetch sentence frame or the word machine there. `afterOne`
  * is the chance in an episode after one that had it, `afterNone` after one
  * that did not. Item 137 (games rotate strictly): never twice running, so
- * `afterOne` is 0 and it is in 3 episodes of 7 in the long run (it was 0.25:
- * a half). 0 and 0 turn it off (door b from the pool); 1 and 1 force it
+ * `afterOne` is 0 and it is in 3 episodes of 7 in the long run. 0 and 0 turn it off (door b from the pool); 1 and 1 force it
  * every episode. A test URL that picks its own games (`?games=sentence`,
  * `?game=`) is left alone; `?room=shifter` forces it anyway.
  */

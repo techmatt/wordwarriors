@@ -20,6 +20,7 @@
     "voice:clip": "tsx tools/voice/addClip.ts",
     "voice:status": "tsx tools/voice/status.ts",
     "test:unit": "tsx --test tests/unit/*.test.ts",
+    "golden": "tsx tests/unit/plansGolden.ts",
     "bank:audit": "tsx tools/phonics/audit.ts",
     "variety": "tsx tests/variety/simulate.ts",
     "test": "node --import tsx tests/fastLane.ts",

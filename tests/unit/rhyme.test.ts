@@ -126,7 +126,7 @@ test('planRhyme: three rounds where three fit, though one draw would leave no fa
 
 test('help ramp: level 1 at base whatever she has done; above it her recorded level', () => {
   const store = new ProgressStore(memory());
-  store.setRhymeLevel('cat', 3);
+  store.setRampLevel('rhyme', 'cat', 3);
   assert.equal(rhymeLevel(store, 'cat'), 1);
   withDifficulty(3, () => assert.equal(rhymeLevel(store, 'cat'), 3));
   withDifficulty(2, () => assert.equal(rhymeLevel(store, 'cat'), 2));

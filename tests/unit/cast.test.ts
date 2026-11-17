@@ -166,7 +166,7 @@ test('cast: the same seed draws the same episodes', () => {
   for (let i = 0; i < 20; i++) assert.deepEqual(drawCast({ hero: 'julia' }, a), drawCast({ hero: 'julia' }, b));
 });
 
-// Matt's ruling M2 (item 043, docs/qa-findings.md); the other rulings are tests/rulings.spec.ts.
+// Matt's ruling M2 (item 043, docs/rulings.md); the other rulings are tests/rulings.spec.ts.
 test('M2: the phonics voice shows Dada Matt only when he is in the episode on her side', () => {
   const base = { hero: 'julia', ally: 'ellie', primary: null, secondary: null };
   assert.equal(phonicsFace({ ...base, primary: 'dada_matt_cyber' }), 'dada_matt');

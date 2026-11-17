@@ -3,7 +3,7 @@
  * modules for them.
  */
 
-import { readFile, stat } from 'node:fs/promises';
+import { readdir, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -50,6 +50,16 @@ export const exists = (f: string): Promise<boolean> =>
     () => true,
     () => false,
   );
+
+/** The candidate numbers kept for an id in `dir` (`<id>-<n>.png`), ascending; throws if `dir` is missing. */
+export async function candidateNumbers(dir: string, id: string): Promise<number[]> {
+  const re = new RegExp(`^${id}-(\\d+)\\.png$`);
+  return (await readdir(dir))
+    .map((f) => f.match(re)?.[1])
+    .filter((k): k is string => k !== undefined)
+    .map(Number)
+    .sort((a, b) => a - b);
+}
 
 /** The generated line list (`npm run voice:lines` writes it). */
 export const LINES_FILE = path.join('content', 'voice', 'lines.json');

@@ -1,5 +1,5 @@
 /**
- * The fourth bug hunt's fixes (item 089; docs/qa-findings.md, Hunt 4), a test each:
+ * The fourth bug hunt's fixes (item 089; Hunt 4 in docs/qa-findings.md's git history), a test each:
  *
  * - yellow in the sentence room says again the instruction variant she heard, not
  *   the next (fix 84);

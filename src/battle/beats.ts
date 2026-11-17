@@ -1,5 +1,5 @@
 /**
- * The battle's big beats (item 141, out of BattleScene), which the directors
+ * The battle's big beats, which the directors
  * (`part1()` / `part2()`, the story fight's StoryDirector) place on the
  * simulation clock: the team combo, a super's fan of its word's pictures
  * (`wordFx`), the villain's ultimate (`ultimateWindUp`, then Part 1's

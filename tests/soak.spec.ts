@@ -15,7 +15,7 @@
 
 import { test, expect } from '@playwright/test';
 
-import { SLOW, boot, collectErrors, expectNoErrors, playAgain, playEpisode, press, state, until, type WWState } from './harness';
+import { SLOW, boot, collectErrors, expectNoErrors, playAgain, playEpisode, press, shotIn, state, until, type WWState } from './harness';
 
 /** Charge the Spell behind door a, its words battle items, their runes fired in battle 1. */
 function expectCharged(end: WWState): void {
@@ -41,7 +41,7 @@ test('two episodes back to back', SLOW, async ({ page }) => {
   expect(first.end.episode.fetched.length).toBe(4);
   expect(first.end.battle?.villains[0]?.hp).toBe(0);
   expectCharged(first.end);
-  await page.screenshot({ path: `tests/screenshots/025_seed1_victory_${first.end.episode.villain}.png` });
+  await shotIn('025')(page, `seed1_victory_${first.end.episode.villain}`);
   const heap1 = await page.evaluate(() => (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory?.usedJSHeapSize ?? 0);
 
   // Victory: the recap's green, then Dad's 2 on THE END (items 082, 085), then the title, then green.
@@ -57,7 +57,7 @@ test('two episodes back to back', SLOW, async ({ page }) => {
   expect(second.end.episode.fetched.length).toBe(4);
   expect(second.end.battle?.villains[0]?.hp).toBe(0);
   expectCharged(second.end);
-  await page.screenshot({ path: `tests/screenshots/025_seed1_second_victory_${second.end.episode.villain}.png` });
+  await shotIn('025')(page, `seed1_second_victory_${second.end.episode.villain}`);
 
   const end = await state(page);
   // Counted as each victory scene opens (item 039): both, the second before Dad's 2.

@@ -26,7 +26,7 @@ import { fileURLToPath } from 'node:url';
 import { scratchPath } from '../../tools/scratch';
 
 /** Hunts kept. */
-export const KEEP_HUNTS = 3;
+const KEEP_HUNTS = 3;
 
 /** The hunt a tag belongs to, or null for a run outside any hunt. */
 export const huntOf = (tag: string): number | null => {
@@ -136,7 +136,7 @@ export function plan(runs: Run[], current: string | undefined, citing: (hunts: R
  * Thin run directory `runDir` (tag `tag`): delete every PNG `text` does not cite, then
  * the folders left empty. Returns the shots deleted (or that would be) and their bytes.
  */
-export function thinRun(runDir: string, tag: string, text: string, dry: boolean): { shots: number; bytes: number } {
+function thinRun(runDir: string, tag: string, text: string, dry: boolean): { shots: number; bytes: number } {
   let shots = 0;
   let bytes = 0;
   const walk = (rel: string): boolean => {

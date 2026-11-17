@@ -1,5 +1,5 @@
 /**
- * The sixth bug hunt (item 102; docs/qa-findings.md, Hunt 6): the Shape-Shifter
+ * The sixth bug hunt (item 102; Hunt 6 in docs/qa-findings.md's git history): the Shape-Shifter
  * under odd input, and two fixes beside it, a test each:
  *
  * - the lit letter on a read-it label pulses at full size, never blinking out

@@ -22,6 +22,7 @@ import { TEX } from '../fx/textures';
 import type { BattleInfo } from '../hookState';
 import type { Controls } from '../input/Controls';
 import { dadLock } from '../input/dadLock';
+import { INK } from '../ui/banner';
 import { makeButtonDot } from '../ui/ButtonDot';
 import { fitText } from '../ui/fitText';
 import { makeStickHint, placeStickHint } from '../ui/stickHint';
@@ -333,7 +334,7 @@ export class MoveChoice {
     const stake = add.rectangle(0, 62, 10, 26, 0xfff8e8, 0.9);
     // Shrunk to the plate if long (BLAST ran over its edges, item 039).
     const label = fitText(
-      add.text(0, 0, word.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '76px', color: '#1a1030' }).setOrigin(0.5),
+      add.text(0, 0, word.toUpperCase(), { fontFamily: FONT_COMIC, fontSize: '76px', color: INK }).setOrigin(0.5),
       210,
       92,
     );
