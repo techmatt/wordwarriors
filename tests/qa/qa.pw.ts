@@ -70,7 +70,8 @@ interface Scenario {
    * (item 089); `cast` the seventh hunt's (item 116): the new allies and villains, the story fight;
    * `hunt8` the eighth hunt's (item 125): items 119-123's changes; `hunt9` the ninth hunt's
    * (item 129): items 126-128's changes; `hunt10` the tenth's (item 135): items 130-134's;
-   * `hunt11` the eleventh's (item 142): items 137-141's; `hunt12` the twelfth's (item 164): items 147-163's.
+   * `hunt11` the eleventh's (item 142): items 137-141's; `hunt12` the twelfth's (item 164): items 147-163's;
+   * `hunt13` the thirteenth's (item 181): choice mode (174), Meryl (171-175), item 178's words.
    */
   batch?: Batch;
   /** Item 080: reload the page at each of these points, one per episode started from the title. */
@@ -95,14 +96,22 @@ interface Scenario {
   eraseAt?: Point[];
   /** Hunt 8: Dad never presses in Charge the Spell, so it goes solo and stays solo for the session (M34). */
   dadAway?: boolean;
+  /**
+   * Hunt 13: choice mode (item 174), every episode: from the title's blue or Dad's 2 in the bedroom, she
+   * picks `ally` (a person's id) and `villain`; yellow once on the ally cards, and with `back` red from the
+   * villain cards and the ally chosen again. `pick-*` issues check the episode got exactly those two.
+   */
+  choice?: { via: 'title' | 'bedroom'; ally: string; villain: string; back?: boolean };
+  /** Hunt 13: with `mash`, the busy child also hunts and pecks on the keyboard: A-Z, 3-9, Shift, Tab. */
+  keys?: boolean;
 }
 
 /** A scenario batch past the first, named as `QA_SET` names it. */
-const BATCHES = ['more', 'new', 'lenses', 'recent', 'cast', 'hunt8', 'hunt9', 'hunt10', 'hunt11', 'hunt12'] as const;
+const BATCHES = ['more', 'new', 'lenses', 'recent', 'cast', 'hunt8', 'hunt9', 'hunt10', 'hunt11', 'hunt12', 'hunt13'] as const;
 type Batch = (typeof BATCHES)[number];
 
-/** Where in an episode the item-080 probes act (`episode` calls `at` at each). */
-type Point = 'title' | 'bedroom' | 'entry' | 'hub1' | 'room_a' | 'room_b' | 'battle1' | 'choice1' | 'hub2' | 'attic' | 'choice2' | 'ending' | 'victory';
+/** Where in an episode the item-080 probes act (`episode` calls `at` at each); `pick` is choice mode's ally cards (hunt 13). */
+type Point = 'title' | 'pick' | 'bedroom' | 'entry' | 'hub1' | 'room_a' | 'room_b' | 'battle1' | 'choice1' | 'hub2' | 'attic' | 'choice2' | 'ending' | 'victory';
 
 /** How long an idle scenario stands still at each choice (real ms; 5x that in game time). */
 const IDLE_MS = 9000;
@@ -301,10 +310,51 @@ const SCENARIOS: Scenario[] = [
   { name: 'end_mash_h12', query: 'seed=1257&games=all', episodes: 2, endMash: true, batch: 'hunt12' },
   { name: 'tap_egg_all', query: 'cast=random&games=all&words=tap,egg', episodes: 3, batch: 'hunt12' },
   { name: 'charge_solo_h12', query: 'seed=1259&room=charge&words=tap,egg', episodes: 2, dadAway: true, batch: 'hunt12' },
+  // Hunt 13 (item 181): choice mode (174) from both doors, red back, under every probe; Meryl (171-175) as ally in
+  // every fight style and as a villain; item 178's newly live pool and new words in every room; keyboard mashing.
+  { name: 'choice_title', query: 'seed=1301&games=all', choice: { via: 'title', ally: 'meryl', villain: 'elsa', back: true }, batch: 'hunt13' },
+  { name: 'choice_bedroom', query: 'seed=1302&games=all', choice: { via: 'bedroom', ally: 'dada_jason', villain: 'smaug' }, episodes: 2, batch: 'hunt13' },
+  { name: 'choice_lock', query: 'seed=1303&games=all', choice: { via: 'title', ally: 'ellie', villain: 'bavmorda' }, lockAll: true, batch: 'hunt13' },
+  { name: 'choice_parent', query: 'seed=1304&games=all', choice: { via: 'title', ally: 'rilla', villain: 'moriarty' }, parentAll: true, batch: 'hunt13' },
+  { name: 'choice_reload', query: 'seed=1305&games=all', choice: { via: 'title', ally: 'dada_matt', villain: 'tiamat' }, reloadAt: ['pick', 'bedroom'], batch: 'hunt13' },
+  { name: 'choice_erase', query: 'seed=1306&games=all', choice: { via: 'bedroom', ally: 'meryl', villain: 'ozymandias' }, eraseAt: ['pick', 'bedroom'], batch: 'hunt13' },
+  { name: 'choice_mash', query: 'seed=1307&games=all', choice: { via: 'title', ally: 'scar', villain: 'jormungandr', back: true }, mash: true, keys: true, wrong: true, batch: 'hunt13' },
+  { name: 'choice_debug', query: 'seed=1308&games=all', choice: { via: 'bedroom', ally: 'jasmine', villain: 'elsa' }, debugAt: ['hub1', 'room_a'], batch: 'hunt13' },
+  { name: 'meryl_brawl', query: 'seed=1310&ally=meryl&fight=brawl&games=all', wrong: true, batch: 'hunt13' },
+  { name: 'meryl_sky', query: 'seed=1311&ally=meryl&fight=sky_race&games=all', mash: true, batch: 'hunt13' },
+  { name: 'meryl_tug', query: 'seed=1312&ally=meryl&fight=sea_tug&games=all', batch: 'hunt13' },
+  { name: 'meryl_spell', query: 'seed=1313&ally=meryl&fight=spell_clash&games=all', wrong: true, batch: 'hunt13' },
+  { name: 'meryl_frost', query: 'seed=1314&ally=meryl&fight=frost_clash&games=all', batch: 'hunt13' },
+  { name: 'meryl_space', query: 'seed=1315&ally=meryl&fight=space_race&games=all', mash: true, batch: 'hunt13' },
+  { name: 'meryl_magic', query: 'seed=1316&ally=meryl&fight=magic_show&games=all', batch: 'hunt13' },
+  { name: 'meryl_cook', query: 'seed=1317&ally=meryl&fight=cook_off&games=all', wrong: true, batch: 'hunt13' },
+  { name: 'meryl_story', query: 'seed=1318&ally=meryl&fight=smaug_story&games=all', mash: true, batch: 'hunt13' },
+  { name: 'meryl_villain', query: 'seed=1319&villain=meryl&games=all', batch: 'hunt13' },
+  { name: 'meryl_villain_brawl', query: 'seed=1320&villain=meryl&fight=brawl&games=all', wrong: true, mash: true, batch: 'hunt13' },
+  { name: 'words178_all', query: 'cast=random&games=all&words=new', episodes: 4, batch: 'hunt13' },
+  { name: 'words178_bridge', query: 'seed=1330&room=bridge&words=new', episodes: 2, wrong: true, batch: 'hunt13' },
+  { name: 'words178_shifter', query: 'seed=1331&room=shifter&words=new', episodes: 2, batch: 'hunt13' },
+  { name: 'words178_charge', query: 'seed=1332&room=charge&words=new', episodes: 2, batch: 'hunt13' },
+  { name: 'words178_rhyme', query: 'seed=1333&room=rhyme&words=new', episodes: 2, wrong: true, batch: 'hunt13' },
+  { name: 'words178_machine', query: 'seed=1334&game=word_machine&words=new', episodes: 2, batch: 'hunt13' },
+  { name: 'words178_firm', query: 'seed=1335&games=all&words=new&difficulty=2', progress: 'firm', episodes: 2, batch: 'hunt13' },
+  { name: 'words178_solid', query: 'seed=1336&games=all&words=new&difficulty=3', progress: 'all', wrong: true, batch: 'hunt13' },
+  { name: 'keys_shifter', query: 'seed=1340&room=shifter', mash: true, keys: true, batch: 'hunt13' },
+  { name: 'keys_bridge', query: 'seed=1341&room=bridge', mash: true, keys: true, wrong: true, batch: 'hunt13' },
+  { name: 'keys_rhyme', query: 'seed=1342&room=rhyme', mash: true, keys: true, batch: 'hunt13' },
 ];
+
+/**
+ * Hunt 13: the busy child holds off while the episode stands at the title or in choice mode's picks
+ * (`episode` and `playPicks` set it): blue at the title is choice mode's door and red on the first pick
+ * the way back, both the grown-up's. Held from boot, so the first press cannot beat the title.
+ */
+const mashHold = { title: true };
 
 /** How often a busy child presses something (real ms). */
 const MASH_MS = 650;
+/** Hunt 13's keyboard masher (`keys`): every letter, the digits a child's peck may reach that are hers, Shift, Tab. */
+const KEYS_MASHED = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].map((c) => `Key${c}`).concat(['Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Shift', 'Tab']);
 
 /** Every level-1 word solid (`firm`), or every word (`all`): six right first tries each. */
 function seededProgress(kind: 'firm' | 'all'): Partial<ProgressData> {
@@ -497,11 +547,22 @@ async function standStill(page: Page, sc: Scenario, ready: (s: WWState) => boole
  * beside the driver, all episode, until `stop()`. Never green: green is the
  * driver's (her answers), and a stray green near a thing would answer for her.
  */
-function busyChild(page: Page): { stop(): Promise<void> } {
+function busyChild(page: Page, keys = false): { stop(): Promise<void> } {
   let on = true;
   const loop = (async () => {
     for (let n = 0; on; n++) {
       const b = (['blue', 'red', 'yellow'] as const)[n % 3]!;
+      // Hunt 13: hunt-and-peck between the buttons (A-Z belongs to spelling; 3 is blue, Tab yellow; never 0, 1, 2:
+      // debug mode and Dad's buttons are a grown-up's).
+      // Not at the title: blue there is choice mode's door now (item 174), the grown-up's (hunt 13's finding).
+      if (mashHold.title) {
+        await page.waitForTimeout(MASH_MS).catch(() => undefined);
+        continue;
+      }
+      if (keys) {
+        const k = KEYS_MASHED[(n * 7) % KEYS_MASHED.length]!;
+        if ((k !== 'Tab' && k !== 'Digit3') || driver.busy === 0) await page.keyboard.press(k).catch(() => undefined);
+      }
       // Yellow waits while the driver answers (`driver` in the harness).
       if (b !== 'yellow' || driver.busy === 0) await press(page, b).catch(() => undefined);
       await page.waitForTimeout(MASH_MS).catch(() => undefined);
@@ -687,13 +748,66 @@ async function endMash(page: Page, rec: Recorder, log: Record<string, unknown>[]
   await until(page, (s) => s.scene === 'Title', 30_000, 'the title again');
 }
 
+/**
+ * Hunt 13: choice mode's two picks (item 174), as `sc.choice` says: yellow once on the ally cards, the ally,
+ * with `back` red from the villain cards and the ally again, then the villain; on to the bedroom. The
+ * `pick-*` issues: a card list with her ally among the villains, a name never said as she reached its card,
+ * an episode not exactly her two, her picks in her rotations.
+ */
+async function playPicks(page: Page, sc: Scenario, rec: Recorder, at: (p: Point) => Promise<void>): Promise<void> {
+  const c = sc.choice!;
+  const pick = (what: 'ally' | 'villain') =>
+    until(page, (s) => s.scene === 'Pick' && s.episode.choice && s.step.kind === 'pick' && (s.step as { what?: string }).what === what && !s.room?.locked, 30_000, `the ${what} pick`);
+  const bug = (kind: string, detail: string) => rec.add([{ kind, severity: 'bug', scene: 'Pick', detail, key: `${kind}:${detail}` }], rec.lastShot);
+  let s = await pick('ally');
+  await at('pick');
+  s = await pick('ally');
+  await press(page, 'yellow');
+  await page.waitForTimeout(600);
+  await choose(page, c.ally);
+  if (c.back) {
+    await pick('villain');
+    await press(page, 'red');
+    await pick('ally');
+    await choose(page, c.ally);
+  }
+  s = await pick('villain');
+  const ids = s.room!.spots.map((x) => x.id);
+  if (ids.includes(c.ally)) bug('pick-self', `her ally ${c.ally} is among the villain cards`);
+  await choose(page, c.villain);
+  s = await until(page, (x) => x.scene !== 'Pick', 30_000, 'out of the picks');
+  const said = s.voice.history;
+  // A villain card says its evil name (`name_<id>_evil`).
+  if (!said.includes(`name_${c.ally}`)) bug('pick-name-silent', `no name_${c.ally} as she reached its card`);
+  if (!said.some((x) => x === `name_${c.villain}_evil` || x === `name_${c.villain}`)) bug('pick-name-silent', `no name_${c.villain}_evil as she reached its card`);
+  if (!(s.episode.ally ?? '').startsWith(c.ally)) bug('pick-cast', `she picked ally ${c.ally}, the episode has ${s.episode.ally}`);
+  if (s.episode.villain !== c.villain) bug('pick-cast', `she picked villain ${c.villain}, the episode has ${s.episode.villain}`);
+  const recent = s.progress.recent as Record<string, string[] | undefined>;
+  if ((recent.villain ?? []).includes(c.villain)) bug('pick-recent', `her picked villain ${c.villain} is in recent.villain`);
+  if ((recent.ally ?? []).some((a) => a.startsWith(c.ally))) bug('pick-recent', `her picked ally ${c.ally} is in recent.ally`);
+}
+
 /** One episode from the title's green to the victory recap; `at` runs the item-080 probes at each point. */
 async function episode(page: Page, sc: Scenario, rec: Recorder, at: (p: Point) => Promise<void> = async () => undefined): Promise<void> {
+  mashHold.title = true;
   await until(page, (s) => s.scene === 'Title', 90_000, 'title');
   await page.waitForTimeout(500);
   await at('title');
-  await press(page, 'green');
+  if (sc.choice?.via === 'title') {
+    await press(page, 'blue');
+    await playPicks(page, sc, rec, at);
+  } else await press(page, 'green');
+  mashHold.title = false;
   await until(page, (s) => s.scene === 'Bedroom', 30_000, 'bedroom');
+  if (sc.choice?.via === 'bedroom') {
+    // Dad's 2 while the dad still talks (item 174: live until she leaves, under dad lock too).
+    await page.waitForTimeout(1500);
+    mashHold.title = true;
+    await page.keyboard.press('Digit2');
+    await playPicks(page, sc, rec, at);
+    mashHold.title = false;
+    await until(page, (s) => s.scene === 'Bedroom', 30_000, 'bedroom after the picks');
+  }
   await standStill(page, sc, (s) => s.scene === 'Bedroom' && s.room?.round === 'bedroom:door' && !s.room.locked, 'bedroom door');
   await at('bedroom');
   await leaveBedroom(page, { grab: false });
@@ -984,7 +1098,8 @@ for (const sc of SCENARIOS.filter((x) => !LOOK && inSet(x))) {
     // Hunt 8: solo at each episode's end, the store's kept chains after each.
     const solos: boolean[] = [];
     const chains: string[][] = [];
-    const masher = sc.mash ? busyChild(page) : null;
+    mashHold.title = true;
+    const masher = sc.mash ? busyChild(page, Boolean(sc.keys)) : null;
     const hiding = sc.hide ? hider(page) : null;
     const resizing = sc.resize ? resizer(page) : null;
     const net = { failed: [] as string[] };

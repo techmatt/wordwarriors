@@ -27,6 +27,19 @@ test('a stale tab reloaded on the other tab\'s write keeps both tabs\' episodes'
   assert.equal(b.stat('words', 'dog', 'session').seen, 1);
 });
 
+test("hunt 13: rotations copied before another tab's write are not put back over it (Dad's 2 in the bedroom)", () => {
+  const storage = memory();
+  const a = new ProgressStore(storage);
+  const b = new ProgressStore(storage);
+  const copy = a.recentCopy();
+  a.remember('villain', 'smaug');
+  b.reload();
+  b.remember('villain', 'tiamat');
+  a.reload();
+  a.restoreRecent(copy);
+  assert.ok((new ProgressStore(storage).snapshot().recent.villain ?? []).includes('tiamat'), "the other tab's villain stays");
+});
+
 test('reload: an unreadable blob is ignored, an erased store starts empty, a held store comes back to the fresh one', () => {
   const storage = memory();
   const store = new ProgressStore(storage);

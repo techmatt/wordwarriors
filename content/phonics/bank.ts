@@ -350,6 +350,8 @@ export function tag(e: BankEntry): BankWord {
  * for each whose reason was the picture (briefs `178_<word>_redraw`). X-RAY stays
  * stored under item 137's letter-name law.
  */
+const AWAITING_ART = 'its picture is still the stand-in every new word shares: live once item 178\'s art pick is promoted';
+
 export const STORED_WHY: Record<string, string> = {
   // Item 178: Matt's pool ruling would make X-RAY live, but its X is `x_name`, the letter's name,
   // which item 137's law rules out of every hint and clue (asked as a design call; default kept).
@@ -365,6 +367,14 @@ export const STORED_WHY: Record<string, string> = {
   duck: 'a bedroom toy, shown every episode, so it is never read',
   // Hunt 10, M40's kind: the bedroom's tower of blocks (🧱, not BLOCK's 🟦, so the glyph match missed it).
   block: 'the bedroom\'s tower of toy blocks, shown every episode, so it is never read',
+  // Hunt 13 (default of a design question to Matt): item 178 made these live on the shared stand-in picture,
+  // one framed painting for all six (two could stand in one room, identical). Delete a line as its art is promoted.
+  cape: AWAITING_ART,
+  cave: AWAITING_ART,
+  flame: AWAITING_ART,
+  pond: AWAITING_ART,
+  smoke: AWAITING_ART,
+  sword: AWAITING_ART,
 };
 
 export const BANK: BankWord[] = ENTRIES.map(tag).map((w) => (STORED_WHY[w.word] ? { ...w, stored: STORED_WHY[w.word] } : w));

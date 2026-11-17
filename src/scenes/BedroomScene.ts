@@ -47,7 +47,7 @@ import { DEPTH, DOOR_SPARKLE_MS, GAME_WIDTH, WAKE_WAIT_MS } from '../config';
 import { bedroomTaunt, episode, helper, questSetupLine, startChoice, wakeKey, walkArt, waker as wakerId, type Step } from '../episode/Episode';
 import { tauntsSaid } from '../episode/lineVariants';
 import { bob, burst, flash, popIn, shake, squash, wiggle } from '../fx/juice';
-import { isLeaving } from '../fx/sceneGen';
+import { isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import { openDadButtons, type DadAnswer } from '../input/dadButtons';
 import { applyHouseMood } from '../world/houseMood';
@@ -162,6 +162,9 @@ export class BedroomScene extends RoomScene {
   private dadChoice(a: DadAnswer): void {
     if (a !== 'yes' || this.leaving || this.fadingOut || isLeaving(this)) return;
     this.leaving = true;
+    // Hunt 13: the wake-up stops here, so its next beat (a boom, the start of a line) is not heard over the fade.
+    markLeaving(this);
+    voiceBus.hush();
     sfxSelect();
     this.fadeOutThen(() => startChoice(this));
   }

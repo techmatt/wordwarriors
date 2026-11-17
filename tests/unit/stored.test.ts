@@ -5,11 +5,11 @@
  */
 
 import assert from 'node:assert/strict';
-import { existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { MOVE_WORDS } from '../../content/battle/roster';
-import { ACTIONS, BANK_BY_WORD, LIVE, STORED, STORED_WHY, THINGS } from '../../content/phonics/bank';
-import { EFFECT_BY_WORD } from '../../content/phonics/effects';
+import { ACTIONS, BANK_BY_WORD, LIVE, STORED, STORED_WHY, THINGS } from '../../content/phonics/bank';import { EFFECT_BY_WORD } from '../../content/phonics/effects';
 import { FAMILIES } from '../../content/phonics/families';
 import { FETCH_ITEMS } from '../../content/phonics/sentences';
 import { PICTURE_WORDS, WORDS } from '../../content/phonics/words';
@@ -69,4 +69,16 @@ test('bedroom (hunt 10): no toy stands where a grown-up does (the robot stood be
     const people = [b.waker, { x: b.waker.x - 140, y: b.waker.y + 20 }];
     for (const o of b.objects) for (const p of people) assert.ok(Math.hypot(o.x - p.x, o.y - p.y) > 90, `${b.id}: the ${o.id} at ${o.x},${o.y} on a grown-up at ${p.x},${p.y}`);
   }
+});
+
+test('hunt 13: no two live pictured words share one picture file (six of item 178 went live on one stand-in)', () => {
+  const byHash = new Map<string, string[]>();
+  for (const w of LIVE.map((x) => x.word)) {
+    const f = `public/art/pic_${w}.png`;
+    if (!existsSync(f)) continue;
+    const h = createHash('md5').update(readFileSync(f)).digest('hex');
+    byHash.set(h, [...(byHash.get(h) ?? []), w]);
+  }
+  const shared = [...byHash.values()].filter((ws) => ws.length > 1);
+  assert.deepEqual(shared, [], `live words on one picture: ${shared.map((ws) => ws.join('/')).join(', ')}`);
 });

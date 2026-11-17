@@ -104,11 +104,17 @@ export function panelIssues(l: Pick<Layout, 'texts' | 'panels'>, scene: string):
  * to 15 px of its bottom edge) by the partner's face card.
  */
 export function ruledCover(scene: string, target: string, cover: string, overlapH: number): boolean {
+  // Hunt 13 (W66): choice mode's name bubble over a neighbouring card as she walks past: the card in reach
+  // is said, nothing on the covered one is read, and the bubble goes as she moves on.
+  if (scene === 'Pick' && cover === 'bubble') return true;
   if (cover !== 'dialogue') return false;
   if ((scene === 'Bedroom' || scene === 'Entry') && target === 'door') return true;
   if (scene === 'Hub' && target === 'circle') return overlapH <= 30;
   // W44: under a two-row banner the find line's box can sit on a picture's foot (17 to 21 px), and goes as she walks.
   if (scene === 'SentenceRoom') return overlapH <= 22;
+  // Hunt 13 (W65): choice mode's instruction box over the second row of cards' feet (49 px at most) while it
+  // plays; green waits for it, and the faces are clear.
+  if (scene === 'Pick') return overlapH <= 50;
   return scene === 'Battle' && target.startsWith('pad_') && overlapH <= 15;
 }
 

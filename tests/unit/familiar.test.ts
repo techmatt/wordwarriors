@@ -47,7 +47,8 @@ test('the ready pool (item 178, Matt): every odd and stored word is live but BUS
     assert.ok(LIVE.some((l) => l.word === w), `${w} is live`);
   }
   for (const w of ['ram', 'jet', 'fin', 'top']) assert.ok(ACTIONS.some((a) => a.word === w) && THINGS.some((t) => t.word === w), `${w} is a pad and a picture`);
-  assert.deepEqual(STORED.map((w) => w.word).sort(), ['block', 'bush', 'drum', 'duck', 'lamp', 'xray']);
+  // Hunt 13: and item 178's six on the shared stand-in picture, until their art is promoted.
+  assert.deepEqual(STORED.map((w) => w.word).sort(), ['block', 'bush', 'cape', 'cave', 'drum', 'duck', 'flame', 'lamp', 'pond', 'smoke', 'sword', 'xray']);
   assert.deepEqual(DROPPED, [], 'no odd word is out of play');
 });
 

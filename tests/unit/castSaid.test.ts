@@ -9,13 +9,15 @@
 
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { STORED_WHY } from '../../content/phonics/bank';
 import { MINIGAME_BY_ID } from '../../src/rules/minigames';
 import { BAG_WORDS, favourWords } from '../../src/rules/bank';
 import { episodePlans, type EpisodeInput } from '../../src/rules/rooms';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { memory, seeded, spread } from './seeds';
 
-const CAST_SAID = ['ice', 'castle', 'dragon', 'sword', 'shield', 'crown', 'sand'];
+// Not a word stored for its picture (hunt 13: SWORD waits for its art).
+const CAST_SAID = ['ice', 'castle', 'dragon', 'sword', 'shield', 'crown', 'sand'].filter((w) => !STORED_WHY[w]);
 
 // Only the fixed signs: a door's, a place's or a hub prop's glyph keeps its word out of that episode alone (`planInput`).
 test("no live word's glyph is a fixed journey-map stop or the bed (item 178: SWORD's ⚔️ was the map's battle stop, QUILT's 🛏️ the bed)", async () => {

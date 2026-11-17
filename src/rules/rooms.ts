@@ -217,8 +217,19 @@ const MACHINE: OwnWordsPlanner<MachinePlan> = {
     return m.rounds.length ? m : null;
   },
   reads: machineWords,
+  says: machineSays,
   room: (base, m) => ({ ...base, kind: 'machine', machine: m, fetches: machineWords(m) }),
 };
+
+/**
+ * Hunt 13: the machine says each round's rime alone ("Ehg"), and a rime alone can be a bank word's
+ * sound: -EG is EGG however it is respelt (item 178's "Ehg"), -OX is OX. No key drawn after it may be one.
+ */
+export function machineSays(m: MachinePlan): string[] {
+  const rimes = new Set(m.rounds.map((r) => r.rime));
+  // A bank word sounds as a rime when it spells it, a doubled last letter aside (EGG, ADD, INN).
+  return BAG_WORDS.filter((w) => rimes.has(w.replace(/(.)\1$/, '$1')));
+}
 
 // The Stretchy Bridge (item 054) reads several words too; its far-bank
 // pictures are shown, so no room's key word is one of them. Nor is the

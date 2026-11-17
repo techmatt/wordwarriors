@@ -225,6 +225,9 @@ export class ProgressStore {
       return;
     }
     this.readOnly = false;
+    // Hunt 13: another tab's store replaces this one's, so a `recentCopy` taken before it is stale: Dad's 2
+    // in the bedroom must not write it back over the other tab's episode or erase (`restoreRecent`).
+    this.erases++;
     const erased = !raw || fresh.episodes < (this.held?.data ?? this.data).episodes;
     if (this.held) {
       this.held.data = fresh;

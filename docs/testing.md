@@ -190,3 +190,5 @@ over Dad) fails about one run in six and passes on the retry; `test:slow` report
 `charge.spec` "M83: the battle's runes leave a 250 ms beat" (real voice) measures gaps from
 about 170 to 600 ms run to run; 7 of 11 attempts had one under 240 ms (Nov 16), so it
 often fails `test:browser` retry included. The gap below 250 ms may be a real miss of the beat, not only the test.
+Hunt 13: a whole Charge episode at `WW_SPEED=1` had no rune gap under 200 ms, while every speed-5 sweep logs
+160 to 200 ms ones: most likely the warped test clock, not play.

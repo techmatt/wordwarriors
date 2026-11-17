@@ -102,7 +102,8 @@ export class PickScene extends RoomScene {
       this.frames.set(id, card);
       bob(this, picture, 4, 900 + i * 37);
     });
-    this.player.place(GAME_WIDTH / 2, 425);
+    // In a gap of the second row (hunt 13: with seven villains she started on the middle card, Moriarty's face under her).
+    this.player.place(GAME_WIDTH / 2 + ((ids.length - perRow) % 2 ? gap / 2 : 0), 425);
     this.pickTitle();
     this.titleBox = { x: 0, y: 0, w: GAME_WIDTH, h: 90, weight: 3 };
     void this.speak(this.instruction());
@@ -194,6 +195,11 @@ export class PickScene extends RoomScene {
   /** Free play (item 060): closed, the whole scene is a choice. */
   protected override playOpen(): boolean {
     return false;
+  }
+
+  /** Hunt 13: once picked, nothing more: a yellow after the name said back re-asked the pick as the screen faded. */
+  protected override stayLocked(): boolean {
+    return this.picked;
   }
 
   /** Choice mode: her pick, said back; the cast is drawn round it (`chooseAlly`, `chooseVillain`), then on. */

@@ -127,6 +127,10 @@ test('ruled covers (item 092): W12 and W5 are a look, anything past them still a
   assert.ok(!ruledCover('SentenceRoom', 'leg', 'banner', 16));
   assert.ok(ruledCover('SentenceRoom', 'cat', 'dialogue', 18), "W44: the find line on a picture's foot");
   assert.ok(!ruledCover('SentenceRoom', 'cat', 'dialogue', 40));
+  // Hunt 13: choice mode's instruction box on the second row's feet (W65), a name bubble on a neighbour (W66).
+  assert.ok(ruledCover('Pick', 'scar', 'dialogue', 49));
+  assert.ok(!ruledCover('Pick', 'scar', 'dialogue', 80));
+  assert.ok(ruledCover('Pick', 'ellie', 'bubble', 90));
 });
 
 test('variant check (item 092): an idle child\'s re-prompts, the same variant again, count once only when asked', () => {

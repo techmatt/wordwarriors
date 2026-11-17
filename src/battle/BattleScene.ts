@@ -56,7 +56,7 @@ import { FreePlay } from '../fx/freePlay';
 import { SceneGen, isLeaving, markLeaving } from '../fx/sceneGen';
 import { TEX } from '../fx/textures';
 import { Controls } from '../input/Controls';
-import { arrowLetters } from '../rules/arrowLetters';
+import { arrowLetters, superArrowLetters } from '../rules/arrowLetters';
 import { withStems } from '../rules/bank';
 import { wordsOf } from '../rules/sentences';
 import { isDad } from '../rules/cast';
@@ -143,6 +143,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
   private choicesOpened = 0;
   /** Letter-arrow volleys fired this part (item 172): which word comes next. */
   private arrowVolleys = 0;
+  /** Hunt 13: the word a super's letter volley spells, the one she just read (set around the super's `cast`). */
+  private superWord: string | null = null;
   /** Big moves called out this part: each once (item 087: the same call three times in a fight was too many). */
   calledOut = new Set<string>();
   /** The step this battle was started with, so the parent page can come back to it. */
@@ -677,6 +679,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
 
   /** The next word her letter arrows spell over her head: one she has read, on no pad still to come (item 172). */
   arrowLetters(): string[] {
+    // A super's volley spells the word she just read (hunt 13: it spelt another beside SUPER ZAP!).
+    if (this.superWord) return superArrowLetters(this.superWord);
     return arrowLetters(episode.fetched, this.arrowVolleys++, (w) => this.textGivesAway(w));
   }
 
@@ -757,7 +761,12 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     f.setShield(1, 0xffd23f, this.now);
     // Part 1's villain floor a step down first, so the super takes a visible bite (hunt 11, M63).
     this.sim.stepVillainFloor();
-    cast(this, f, ab, this.villain, 2.4, true);
+    this.superWord = right;
+    try {
+      cast(this, f, ab, this.villain, 2.4, true);
+    } finally {
+      this.superWord = null;
+    }
     this.show.superMove(f, ab, right);
     // The word's own effect: a fan of its pictures. Its name on the banner: she has read it.
     this.beats.wordFx(right, f, ab.color);

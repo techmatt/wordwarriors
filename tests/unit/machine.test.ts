@@ -15,8 +15,8 @@ import { narratorLine, rimeLine, sillyLine } from '../../content/voice/ids';
 import { NARRATOR_LINES } from '../../content/voice/script';
 import { WORD_MACHINE } from '../../src/config';
 import { MINIGAMES, MINIGAME_BY_ID, SENTENCE_GAMES, WORD_MACHINE_GAME, drawGames } from '../../src/rules/minigames';
-import { episodePlans, type EpisodeInput } from '../../src/rules/rooms';
-import { machineWords, planMachine } from '../../src/rules/wordMachine';
+import { episodePlans, machineSays, type EpisodeInput } from '../../src/rules/rooms';
+import { machineWords, planMachine, type MachinePlan } from '../../src/rules/wordMachine';
 import { ProgressStore } from '../../src/state/ProgressStore';
 import { composeLines } from '../../tools/voice/compose';
 import { memory, seededLcg as seeded, spread } from './seeds';
@@ -202,4 +202,10 @@ test('voice: rime and silly lines exist for every family; no machine narrator li
     const words = `${t.text} ${t.say ?? ''}`.toLowerCase().split(/[^a-z]+/);
     for (const w of FAMILY_WORDS) assert.ok(!words.includes(w), `${k} says ${w}`);
   }
+});
+
+test('hunt 13: a rime said alone that sounds as a bank word (-EG is EGG) is said, so no later key draws it', () => {
+  const round = (rime: string) => ({ rime, word: `l${rime}`, onset: 'l', tiles: [] });
+  assert.deepEqual(machineSays({ mode: 'build', rounds: [round('eg')] } as unknown as MachinePlan), ['egg']);
+  assert.deepEqual(machineSays({ mode: 'build', rounds: [round('at'), round('ug')] } as unknown as MachinePlan), []);
 });

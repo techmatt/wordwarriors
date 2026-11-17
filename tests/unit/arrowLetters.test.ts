@@ -9,7 +9,7 @@ import test from 'node:test';
 import { ART_BY_ID, cardArt, charArt } from '../../content/art/assets';
 import { ART_PROMPTS } from '../../content/art/prompts';
 import { CHARACTER_BY_ID } from '../../content/battle/roster';
-import { arrowLetters } from '../../src/rules/arrowLetters';
+import { arrowLetters, superArrowLetters } from '../../src/rules/arrowLetters';
 
 test('letter arrows: a volley spells a word she has read, a box a sound unit, in turn', () => {
   assert.deepEqual(arrowLetters(['cat', 'ship'], 0), ['C', 'A', 'T']);
@@ -21,6 +21,13 @@ test('letter arrows: nothing still to read, no word too long for a row, her name
   assert.deepEqual(arrowLetters(['cat', 'ship'], 0, (w) => w === 'cat'), ['SH', 'I', 'P']);
   assert.deepEqual(arrowLetters(['umbrella'], 0), ['M', 'E', 'R', 'Y', 'L']);
   assert.deepEqual(arrowLetters([], 3), ['M', 'E', 'R', 'Y', 'L']);
+});
+
+test('letter arrows: a super spells the word she just read, or nothing (hunt 13: never another word beside SUPER ZAP!)', () => {
+  assert.deepEqual(superArrowLetters('zap'), ['Z', 'A', 'P']);
+  assert.deepEqual(superArrowLetters('ship'), ['SH', 'I', 'P']);
+  assert.deepEqual(superArrowLetters('umbrella'), []);
+  assert.deepEqual(superArrowLetters('nonword'), []);
 });
 
 test('Meryl: drawn big so the rider is not a third of a cast-sized sprite, on foot where a card is small', () => {

@@ -123,6 +123,7 @@ Left as they are, each for its reason; a hunt does not re-report them.
 | W58, W60 | Move choice | A status (Bubble Cage) holds through a choice; a crowded brawl heaps fighters off the pads. |
 | W59 | Hub | The gift card stays up empty for a second as the word flies. |
 | W63 | Ultimate | The vignette's corners show a faint dotted diagonal, zoomed: a polish item (a gradient texture). |
+| W65, W66, W67 | Choice mode's picks | The instruction box on the second row's feet (49 px) while it plays; a card's name bubble over its neighbour, or over the PICK heading, as she walks past: green waits, nothing covered is read. W65 and W66 ruled in `ruledCover`. |
 
 ## Hunt 12 (2026-10-25 to 26)
 
@@ -168,3 +169,38 @@ them): `jorm_edge` 052, 085, 129; `shifter_lock` 069; `bridge_f_parent` 096;
 - **Item 144's quicker openings** put the contests booted straight in at 43.6 to 44.7 s of battle time, under the
   old 45 s floor (`fights.spec` red on the code before this hunt): the floor is 40 s now. A whole episode's parts run
   longer; if the floor bites again, measure an episode's parts, not a boot.
+
+## Hunt 13 (2026-11-16)
+
+`QA_SET=hunt13` (runs `h13a`, `h13b`, `h13c`; `h13r` at `WW_SPEED=1`): choice mode (item 174), Meryl (171 to
+175) and item 178's words, three rounds of code reads (each claim checked by a second reader) and contact-sheet
+reads. Ended early on Matt's MESSAGE #5801 ("move toward wrapping up"). Its fixes are in git (item 181).
+
+### Matt's calls
+
+| # | Call | Ruling |
+| --- | --- | --- |
+| M86 | Places and stuff as fetch keys: GO GET THE POND / CAVE / CASTLE / SHED, WE CAN USE THE SMOKE (`words178_all` 194, 200, 210), as ZOO was before M53. (a) add POND CAVE CASTLE SHED SMOKE SAND FROST to `NOT_FETCHED` (counter frames and games keep them); (b) keep (HUT TENT IGLOO are fetched already). Pick (a), with HUT TENT IGLOO decided alongside | |
+| M87 | Four taunts caption BOW said "bough" (Tiamat's "Bow to your queen!", `words178_charge` 064) while BOW is now read "boh". (a) reword them (KNEEL TO YOUR QUEEN!); (b) keep. Pick (a) | |
+| M88 | Villain decals picture bank words in every room (Smaug's flame, Anna's and warrior Jason's 🛡️ shield, Elsa's ❄️, Meryl's 🏹 arrow, Seraphina's egg, Tiamat's 🚩), so FLAME, SHIELD, FROST, BOW, EGG, FLAG can be read beside their own picture on the wall. (a) a decal's `paints` list kept out of keys like signs; (b) keep. Pick (a) | |
+| M89 | Evil Elsa's FROST CLASH! banner prints FROST in battle 1; the attic can then draw FROST (about 1 in 400). (a) fight banners count as shown (hard); (b) soft, like cast lines; (c) keep. Pick (b) | |
+| M90 | Blue (X) at the title opens choice mode: a child mashing the pad there lands in the picks (red takes her back). (a) keep; (b) blue only with dad lock or the 3 key. Pick (a) | |
+| M91 | Meryl's leap in the cook-off carries the rider behind the team's cake tower: only her head shows for GOLDEN LEAP! (`meryl_cook` 133, 134); the judges' cards and the GOLDEN GALLOP! banner cover her letter tiles. (a) riders and letter rows above the cook-off props; (b) keep. Pick (a) | |
+| M92 | Meryl's quest captions read KNIGHTS CAMP (no apostrophe; the place is the Knights' Camp). (a) text with the apostrophe and `say` as now, then `voice:build` (the manifest records the caption: a text change alone reads stale); (b) keep. Pick (a), in a content item | |
+
+Shots kept with the runs (a scenario and its numbers on one line, as `citesShot` reads them): `choice_bedroom` 006, 007;
+`choice_erase` 011; `choice_reload` 009; `choice_lock` 109; `meryl_cook` 133, 134; `words178_all` 194, 200, 210;
+`words178_charge` 064; `words178_machine` 255; `words178_rhyme` 177.
+
+### Where the next hunt resumes
+
+- **Matt's calls M86 to M92.** The six item-178 words on the shared stand-in picture (CAPE CAVE FLAME POND SMOKE
+  SWORD) are stored (`AWAITING_ART` in `bank.ts`, Matt's answer to the hunt's question): promoting each one's art
+  deletes its line, and `stored.test` fails while two live words share a picture file. The other twelve new words
+  play on emoji stand-ins, all in item 178's picker (`art_alts_178`).
+- **`sound-gap` in battle at speed 5** (160 to 200 ms between rune sounds, most sweeps): at `WW_SPEED=1` a Charge
+  episode's runes (`h13r` `words178_charge`) had none under 200 ms. Likely the warped clock (the voice backstops run
+  on it), so a look at speed 5; `charge.spec`'s M83 flake (docs/testing.md) may be the same.
+- **Never driven this hunt:** two tabs with choice mode (the rotation restore is fixed by reading, unit-tested in
+  `storeTabs.test`); F2 and F4 inside the Pick screens; `QA_SET=hunt12` and `lenses` as regression; `perf`;
+  `variety`. Matt's MESSAGE #5801 ended the hunt before them.

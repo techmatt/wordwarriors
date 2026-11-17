@@ -8,6 +8,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { ALL_SIDE_ROOMS, COUNTER_ROOM, PLACES, SIDE_ROOM_BY_ID } from '../../content/house/house';
+import { STORED_WHY } from '../../content/phonics/bank';
 import { EPISODE_DEFAULTS } from '../../src/config';
 import { rememberCast, resetEpisode, setCastOptions } from '../../src/episode/draws';
 import { housePlan } from '../../src/episode/plans';
@@ -23,7 +24,8 @@ const COUNTER_ROOMS = [COUNTER_ROOM, ...PLACES.map((p) => p.secret.id)];
 
 test('M85: the hideout\'s backdrop pictures its treasure chest; every pictured thing is a bag word; every counter room is listed', () => {
   assert.ok(SIDE_ROOM_BY_ID.secret_hideout!.pictures?.includes('chest'));
-  for (const r of ALL_SIDE_ROOMS) for (const w of r.pictures ?? []) assert.ok(BAG_WORDS.includes(w), `${r.id}: ${w} is no bag word, so it keeps nothing out`);
+  // A stored word may be listed (hunt 13: CAVE, POND, FLAME, SWORD wait for their art): it keeps its word out once live.
+  for (const r of ALL_SIDE_ROOMS) for (const w of r.pictures ?? []) assert.ok(BAG_WORDS.includes(w) || STORED_WHY[w], `${r.id}: ${w} is no bag word, so it keeps nothing out`);
   // The ones whose art paints a bank word (from the art, M85): a new secret room's list is a choice, not a miss.
   for (const id of ['attic', 'secret_hideout', 'tower_room', 'rainbow_room', 'star_observatory', 'treetop_lookout', 'waterfall_cave', 'crystal_vault', 'sweet_cellar']) {
     assert.ok(COUNTER_ROOMS.includes(id) && SIDE_ROOM_BY_ID[id]!.pictures?.length, id);
@@ -73,6 +75,30 @@ test('M85: away at a place whose secret room is the hideout, the house plan neve
       progress.episodeDone();
     }
     for (const w of SIDE_ROOM_BY_ID.secret_hideout!.pictures!) assert.ok(!got.includes(w), `${w} in ${got.join(' ')}`);
+  } finally {
+    Math.random = random;
+    setCastOptions({ overrides: {}, fixed: !EPISODE_DEFAULTS.randomCast });
+  }
+});
+
+test('hunt 13: the counter is never what the villain is (TIAMAT IS SCARED OF THE DRAGON)', () => {
+  const random = Math.random;
+  Math.random = seededRand(1313);
+  try {
+    progress.reset();
+    setCastOptions({ fixed: false, rand: Math.random, overrides: {} });
+    const got: string[] = [];
+    for (let e = 0; e < 12; e++) {
+      resetEpisode();
+      rememberCast();
+      episode.villain = 'tiamat';
+      episode.house.plan = null;
+      // Her bag holds little but DRAGON and CROWN: without the rule they come up.
+      progress.refillBag(['dragon', 'crown', 'cat']);
+      got.push(housePlan()[2]!.key);
+      progress.episodeDone();
+    }
+    assert.ok(!got.includes('dragon') && !got.includes('crown'), got.join(' '));
   } finally {
     Math.random = random;
     setCastOptions({ overrides: {}, fixed: !EPISODE_DEFAULTS.randomCast });

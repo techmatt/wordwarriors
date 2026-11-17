@@ -200,6 +200,20 @@ function forcedBridge(plan: RoomPlan[]): RoomPlan[] {
  * `debugPlan`'s (item 088: a debug run keeps clear of the same words). Draws
  * the move plan and the warm-up's word if they are not drawn yet, in that order.
  */
+/**
+ * Bank words naming what a villain is or carries (hunt 13, after item 178 added DRAGON, FROST, ICE, CROWN,
+ * SHIELD, SWORD, BOW, SAND): never its counter, which the part-2 finish sends at it as a swarm of that thing.
+ */
+const VILLAIN_OWN: Record<string, string[]> = {
+  tiamat: ['dragon', 'crown'],
+  smaug: ['dragon'],
+  elsa: ['frost', 'ice', 'crown'],
+  anna: ['sword', 'shield', 'frost', 'ice'],
+  jasmine: ['sand'],
+  ozymandias: ['ice', 'crown'],
+  meryl: ['fox', 'bow'],
+};
+
 function planInput(gift: string, rooms: [string, string], counterRoom: string): Omit<EpisodeInput, 'games' | 'pool'> {
   const fill = { villain: episode.villain, helper: helper(), hero: episode.hero };
   // The three key words come out of her word bag here; the counter keeps
@@ -230,7 +244,8 @@ function planInput(gift: string, rooms: [string, string], counterRoom: string): 
   const notKeys = BANK.filter((w) => bed && w.glyph === bed).map((w) => w.word);
   // The things the counter room's backdrop paints (hunt 12, M85: the hideout's treasure chest behind
   // ...DOES NOT LIKE THE CHEST): on screen while she reads the counter there, so never that word.
-  const notCounter = SIDE_ROOM_BY_ID[counterRoom]?.pictures ?? [];
+  // Nor what the villain itself is or carries (hunt 13: TIAMAT IS SCARED OF THE DRAGON, a swarm of dragons at a dragon).
+  const notCounter = [...(SIDE_ROOM_BY_ID[counterRoom]?.pictures ?? []), ...(VILLAIN_OWN[personOf(episode.villain)] ?? [])];
   return { fill, ally: episode.ally, gift, rooms, counterRoom, battle1Moves, moveWords: [...new Set(moveWords())], saidBefore, softSaid, notKeys, notCounter };
 }
 

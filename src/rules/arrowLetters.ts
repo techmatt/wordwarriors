@@ -20,6 +20,15 @@ const MAX_ARROW_LETTERS = 5;
 /** Her name, for a battle with no word read yet. */
 const NO_WORD = ['M', 'E', 'R', 'Y', 'L'];
 
+/**
+ * A super's volley (hunt 13): the word she just read on its pad, already confirmed, so it gives nothing
+ * away; too long for a row (or no bank word), the super flies plain: never another word beside SUPER <WORD>!.
+ */
+export function superArrowLetters(word: string): string[] {
+  const units = BANK_BY_WORD[word]?.units;
+  return units && units.length <= MAX_ARROW_LETTERS ? units.map((u) => u.toUpperCase()) : [];
+}
+
 /** The boxes of `shot`'s volley: the fetched words in turn, over and over. */
 export function arrowLetters(fetched: readonly string[], shot: number, givesAway: (word: string) => boolean = () => false): string[] {
   const usable = [...new Set(fetched)].filter((w) => {

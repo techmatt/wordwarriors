@@ -41,8 +41,8 @@ export interface Frame {
 export const NUMBER_WORDS: ReadonlySet<string> = new Set(['six', 'ten', 'three']);
 
 /** Bank things that take no "A" (some, not one): never the key word of a "...A {x}" frame (item 069; GUM item 092), nor the Shape-Shifter's first creature ("It starts as a...", hunt 6). */
-// HAY (item 121) since hunt 10: WE NEED A HAY.
-export const NO_ARTICLE: ReadonlySet<string> = new Set(['cheese', 'milk', 'jam', 'grass', 'chips', 'gum', 'hay']);
+// HAY (item 121) since hunt 10: WE NEED A HAY. SAND, SMOKE and FROST (item 178) since hunt 13: WE NEED A SAND.
+export const NO_ARTICLE: ReadonlySet<string> = new Set(['cheese', 'milk', 'jam', 'grass', 'chips', 'gum', 'hay', 'sand', 'smoke', 'frost']);
 
 /**
  * Bank things never the key word of a fetch frame (hunt 9, M41 (b)): SCAR NEEDS A MOM reads as the
@@ -185,6 +185,12 @@ export const LOOKALIKES: string[][] = [
   ['flame', 'sun', 'dragon'],
   ['pond', 'tub', 'bath'],
   ['sand', 'grass'],
+  // Hunt 13: SAND's picture is a beach under a big red umbrella; GUM's a whole girl blowing a bubble.
+  ['sand', 'umbrella'],
+  ['gum', 'kid'],
+  // Hunt 13, seen in play: YAK (live since 178) beside COW reads as a second cow; KIT's toolbox under FIX's wrench.
+  ['cow', 'yak'],
+  ['fix', 'kit'],
   ['goblin', 'elf', 'kid'],
   ['wizard', 'king', 'elf', 'man'],
   ['cape', 'dress', 'flag'],

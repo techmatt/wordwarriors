@@ -102,7 +102,7 @@ server. `tests/unit/listen.test.ts` checks the cover.
 places, every fight style, the word machine, wrong answers, dad lock, seeded progress and
 episodes back to back (`SCENARIOS` in `tests/qa/qa.pw.ts`). It records, it does not test:
 about 1.5 minutes an episode, 26 minutes the first batch. Batches: `QA_SET=quick` (three),
-`more`, `new`, `lenses`, `recent`, `cast`, `hunt8` … `hunt12`, `all`; what each plays and
+`more`, `new`, `lenses`, `recent`, `cast`, `hunt8` … `hunt13`, `all`; what each plays and
 the checks each hunt added: `docs/qa-findings.md`. A scenario outside the first batch needs
 its set (or `QA_SET=all`) even with `-g` (`QA_SET=recent -- -g "qa variants6$"`), else "No
 tests found"; its batch is its `batch` field (none: the first batch; `quick: true` adds it to
@@ -142,6 +142,12 @@ reads it first and does not re-report them.
   minutes for a big sweep, so background it.
 - **One moment instead of a sweep:** `QA_LOOK='scene=house&cast=default' QA_LOOK_S=30
   QA_LOOK_GREEN=0` records that URL for 30 s into `qa/<tag>/look/`.
+- **Choice mode and a keyboard child** (hunt 13): a scenario's `choice` plays every episode
+  through choice mode (`via: 'title'` blue, or `'bedroom'` Dad's 2; `back` presses red on the
+  villain cards), with `pick-self`, `pick-name-silent`, `pick-cast` and `pick-recent` issues;
+  `pick` is a probe point. `keys` makes a `mash` child also peck A-Z, 3-9, Shift and Tab. The
+  busy child holds off at the title and in the picks (blue there opens choice mode and red
+  leaves it: a grown-up's).
 
 **What it checks** (`tests/qa/checks.ts`, `tests/qa/wording.ts`), at each moment shot (each
 scene change, line, round, move choice, battle phase, victory line, the recap; about 150 an

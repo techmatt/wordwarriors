@@ -55,10 +55,19 @@ function budget(): boolean {
   return ++windowCount <= 6;
 }
 
+/**
+ * Hunt 13: not into a suspended context (a start from the pad alone, which browsers do not count as a
+ * gesture): its clock stands still, so minutes of effects bunched at one instant and all went off at
+ * once when a click unlocked it. Music and voice skip it the same way.
+ */
+function unheard(c: AudioContext): boolean {
+  unlockAudio();
+  return c.state !== 'running';
+}
+
 function playNotes(notes: Note[]): void {
   const c = getAudioContext();
-  if (!c) return;
-  unlockAudio();
+  if (!c || unheard(c)) return;
   const now = c.currentTime;
   try {
     for (const note of notes) {
@@ -84,8 +93,7 @@ const noiseCache = new Map<number, AudioBuffer>();
 
 function playNoise(seconds: number, from: number, to: number, peak: number, type: BiquadFilterType = 'bandpass', at = 0): void {
   const c = getAudioContext();
-  if (!c) return;
-  unlockAudio();
+  if (!c || unheard(c)) return;
   try {
     const key = Math.round(seconds * 100);
     let buffer = noiseCache.get(key);
@@ -309,7 +317,7 @@ export function sfxGrow(): void {
 export function sfxShout(pitch = 1): void {
   if (!budget()) return;
   const c = getAudioContext();
-  if (!c) return;
+  if (!c || unheard(c)) return;
   try {
     const now = c.currentTime;
     const osc = c.createOscillator();

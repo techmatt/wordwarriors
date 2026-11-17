@@ -561,7 +561,9 @@ export class BattleBeats {
     await b.wait(1.0);
     sfxPoof();
     // As tall beside her hero as the villain's good size says (Scar just under her).
-    const gh = b.heroHeight() * castScale(episode.villain);
+    // A rider hero (`?hero=meryl`) fights at her mount's size but counts as a person's (`castScale`, hunt 13).
+    const hs = CHARACTER_BY_ID[episode.hero];
+    const gh = (b.heroHeight() / (hs?.onFoot ? hs.good.size : 1)) * castScale(episode.villain);
     const good = fitImage(scene.add.image(v.x, v.y, castArt(episode.villain)).setOrigin(0.5, 1), gh * 0.95, gh).setDepth(v.y + 1);
     popIn(scene, good, good.scale, 0, 500);
     burst(scene, v.x, v.y - 90, { count: 60, speed: 400, colors: [0xff9ad5, 0xffffff] });

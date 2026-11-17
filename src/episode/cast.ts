@@ -21,7 +21,7 @@ import { adultHeight, isGrownUp, outfitTall } from '../rules/heights';
 import { pick } from '../rules/random';
 import { wordsOf } from '../rules/sentences';
 import { BEDROOM_TAUNTS } from '../rules/story';
-import { episode, type EpisodeState } from './state';
+import { currentStep, episode, type EpisodeState } from './state';
 
 /** The dad who wakes her (src/rules/cast.ts `wakerOf`), in his form. */
 export function waker(state: EpisodeState = episode): string {
@@ -86,6 +86,10 @@ export function narrator(state: EpisodeState = episode): string {
  * today), else `id`. The voice speaks as the person; this is who to draw.
  */
 export function castId(id: string, state: EpisodeState = episode): string {
+  // Hunt 13: on choice mode's pick screens the cast is not hers yet (`startChoice`'s reset drew one the picks
+  // throw away): a person is the person there, so Dada Matt's instruction and a dad's name bubble show his own
+  // face (the one `artFor('Pick')` loads), not a form the draw will replace.
+  if (state === episode && state.choice && currentStep().kind === 'pick') return id;
   const person = personOf(id);
   const inCast = [state.ally, state.villain, state.primary, state.secondary, state.hero].find((c) => c && personOf(c) === person);
   return inCast ?? id;
