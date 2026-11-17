@@ -34,7 +34,7 @@
  *   target COVERAGE.first gives with its reason: I O U have 1 and A Z 2,
  *   through words with sounds she has not been taught (item 058: IGLOO,
  *   OCTOPUS, UMBRELLA, APPLE, ZOO, ZEBRA); E Y TH Q have 2 (QUEEN live
- *   again, item 178); X (X-RAY stored: its X is the letter's name) and voiced TH none;
+ *   again, item 178); X 1 (X-RAY, live: item 182's letter-name exception); voiced TH none;
  * - a last sound: 3 for B D G K L M N P S T X CK NG, fewer for SH F Z CH TH;
  * - 8 per short vowel; 2 pictures per word-machine family, the listed
  *   families staying families;
@@ -236,7 +236,8 @@ const ENTRIES: BankEntry[] = [
   T('octopus', '🐙', { ...UNTAUGHT_058, spelled: [['o', 'o'], ['c', 'c'], ['t', 't'], ['o', 'schwa'], ['p', 'p'], ['u', 'schwa'], ['s', 's']] }),
   T('umbrella', '☂️', { ...UNTAUGHT_058, spelled: [['u', 'u'], ['m', 'm'], ['b', 'b'], ['r', 'r'], ['e', 'e'], ['ll', 'l'], ['a', 'schwa']] }),
   // X-RAY: no familiar picture starts with X's KS sound; X-RAY says the
-  // letter's name (`x_name`), and the audit counts it as X's first sound.
+  // letter's name (`x_name`), and the audit counts it as X's first sound. Live (item 182, Matt):
+  // the one exception to the no-letter-name law (docs/rulings.md).
   T('xray', '🦴', { ...UNTAUGHT_058, say: 'x-ray', spelled: [['x', 'x_name'], ['r', 'r'], ['ay', 'long_a']] }),
   // Item 126: COW and its OW (`ow`, a new untaught sound, as 058 added long OO for ZOO).
   T('cow', '🐄', { ...UNTAUGHT_058, since: '126', spelled: [['c', 'c'], ['ow', 'ow']] }),
@@ -347,15 +348,14 @@ export function tag(e: BankEntry): BankWord {
  * QUEEN VASE HEN RAT GATE; SWISH DASH JOG RUSH ZIP BAM BOP SLAM JAB HUM HEX
  * JIG FIX FOG WET PLOP FLOP SKIP TWIST LIFT SNAP QUEST; JET RAM TOP FIN) are live
  * on their current pictures; item 178's picker (`art_alts_178`) offers a redraw
- * for each whose reason was the picture (briefs `178_<word>_redraw`). X-RAY stays
- * stored under item 137's letter-name law.
+ * for each whose reason was the picture (briefs `178_<word>_redraw`); item 182
+ * promoted Matt's picks. X-RAY is live too (item 182, Matt 2026-11-16): the one
+ * exception to the no-letter-name law, as the only X word (docs/rulings.md).
  */
-const AWAITING_ART = 'its picture is still the stand-in every new word shares: live once item 178\'s art pick is promoted';
-
 export const STORED_WHY: Record<string, string> = {
-  // Item 178: Matt's pool ruling would make X-RAY live, but its X is `x_name`, the letter's name,
-  // which item 137's law rules out of every hint and clue (asked as a design call; default kept).
-  xray: 'its X says the letter\'s name (ECKS), which item 137 rules out of every hint',
+  // Item 182: Matt kept HELMET's painted stand-in in item 178's picker, noting a kid's bicycle
+  // helmet may read better than a knight's helm; item 183's round draws that look.
+  helmet: 'no picture picked yet (item 178\'s round); a kid\'s bicycle helmet is being drawn',
   // Hunt 11, M66: a sound-out would teach the wrong vowel.
   bush: 'its U is the U of PUT, not of SUN: a wrong short-U word in every sound-out',
   // Hunt 9, M40: the bedroom's own props, shown every episode before any room (fix 74), so never read.
@@ -367,14 +367,7 @@ export const STORED_WHY: Record<string, string> = {
   duck: 'a bedroom toy, shown every episode, so it is never read',
   // Hunt 10, M40's kind: the bedroom's tower of blocks (🧱, not BLOCK's 🟦, so the glyph match missed it).
   block: 'the bedroom\'s tower of toy blocks, shown every episode, so it is never read',
-  // Hunt 13 (default of a design question to Matt): item 178 made these live on the shared stand-in picture,
-  // one framed painting for all six (two could stand in one room, identical). Delete a line as its art is promoted.
-  cape: AWAITING_ART,
-  cave: AWAITING_ART,
-  flame: AWAITING_ART,
-  pond: AWAITING_ART,
-  smoke: AWAITING_ART,
-  sword: AWAITING_ART,
+  // (Hunt 13 stored CAPE CAVE FLAME POND SMOKE SWORD on one shared stand-in picture; item 182 promoted their art.)
 };
 
 export const BANK: BankWord[] = ENTRIES.map(tag).map((w) => (STORED_WHY[w.word] ? { ...w, stored: STORED_WHY[w.word] } : w));
@@ -411,7 +404,7 @@ export const COVERAGE = {
     o: { target: 1, why: 'OCTOPUS (untaught schwas); OTTER she would not know, an OX she would call a cow' },
     u: { target: 1, why: 'UMBRELLA (an untaught schwa); UP is an idea, UNDER a place, not a picture' },
     q: { target: 2, why: 'QUEEN, QUILT (live again, item 178); no other Q picture she knows' },
-    x: { target: 0, why: 'X-RAY is stored (item 178: its X says the letter name, which item 137 rules out); no word starts with the KS sound' },
+    x: { target: 1, why: 'X-RAY only (live, item 182: the one letter-name exception); no word starts with the KS sound' },
     y: { target: 2, why: 'YOYO, YAK; YAWN, YARN and YOLK need sounds the bank has not got' },
     z: { target: 2, why: 'ZOO, ZEBRA (untaught OO, schwa); ZAP and ZIP are move words, ZIGZAG and ZERO no picture she knows' },
     th: { target: 2, why: 'THUMB, THREE; THORN and THIMBLE she would not know' },

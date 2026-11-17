@@ -9,7 +9,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { BANK, BANK_BY_WORD, COVERAGE, THINGS, soundOf, unitsOf } from '../../content/phonics/bank';
+import { BANK_BY_WORD, COVERAGE, THINGS, soundOf, unitsOf } from '../../content/phonics/bank';
 import { DIGRAPH_SOUNDS, LETTERS, LONG_VOWEL_SOUNDS, SOUND_BY_UNIT, UNTAUGHT_SOUNDS } from '../../content/phonics/letters';
 import { coverageGaps, coverageRows } from '../../src/rules/bankAudit';
 
@@ -52,7 +52,7 @@ test('units (item 056): QU and NG are units, doubled letters one sound, silent E
   for (const s of ['q', 'ng', 'th_voiced', 'long_a', 'long_i', 'long_u']) assert.ok(SOUND_BY_UNIT[s], s);
 });
 
-test('untaught sounds (item 058): a word holding one is a late long-path word; X-RAY (stored, items 127 and 178) would count for X', () => {
+test('untaught sounds (item 058): a word holding one is a late long-path word; X-RAY (live, item 182) counts for X', () => {
   const t = (w: string) => {
     const b = BANK_BY_WORD[w]!;
     return [b.level, b.vowel, b.sounds.join(' ')];
@@ -72,7 +72,6 @@ test('untaught sounds (item 058): a word holding one is a late long-path word; X
   assert.deepEqual(t('helmet'), [2, 'e', 'h e l m e t']);
   for (const s of UNTAUGHT_SOUNDS) assert.ok(SOUND_BY_UNIT[s.letter] && LONG_VOWEL_SOUNDS.includes(s), `${s.letter} has its own line`);
   const row = (tag: string) => coverageRows().find((r) => r.tag === tag)!.words;
-  assert.ok(coverageRows(BANK.filter((w) => THINGS.includes(w) || w.word === 'xray')).find((r) => r.tag === 'first x')!.words.includes('xray'), 'X-RAY counts for X');
-  assert.ok(!row('first x').includes('xray'), 'X-RAY is stored (its X is the letter name, item 137)');
+  assert.ok(row('first x').includes('xray'), 'X-RAY counts for X, live (item 182: the one letter-name exception)');
   assert.ok(!coverageRows().some((r) => r.tag.startsWith('long ') && UNTAUGHT_SOUNDS.some((s) => r.tag === `long ${s.letter}`)), 'no long row for an untaught sound');
 });

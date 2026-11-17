@@ -42,13 +42,14 @@ test('familiar words: an odd word keeps its action role, or drops out of play; a
   for (const w of STORED) assert.ok(!LIVE.includes(w) && !DROPPED.includes(w), w.word);
 });
 
-test('the ready pool (item 178, Matt): every odd and stored word is live but BUSH, the bedroom props and X-RAY (item 137: its X is the letter name)', () => {
+test('the ready pool (item 178, Matt): every odd and stored word is live but BUSH and the bedroom props (and HELMET, item 182, until its picture is picked)', () => {
   for (const w of ['yak', 'vat', 'cog', 'quilt', 'moth', 'jug', 'queen', 'hen', 'rat', 'gate', 'swish', 'dash', 'zip', 'quest']) {
     assert.ok(LIVE.some((l) => l.word === w), `${w} is live`);
   }
   for (const w of ['ram', 'jet', 'fin', 'top']) assert.ok(ACTIONS.some((a) => a.word === w) && THINGS.some((t) => t.word === w), `${w} is a pad and a picture`);
-  // Hunt 13: and item 178's six on the shared stand-in picture, until their art is promoted.
-  assert.deepEqual(STORED.map((w) => w.word).sort(), ['block', 'bush', 'cape', 'cave', 'drum', 'duck', 'flame', 'lamp', 'pond', 'smoke', 'sword', 'xray']);
+  // Item 182: X-RAY live (Matt: the one letter-name exception); HELMET waits for its picture.
+  assert.ok(LIVE.some((l) => l.word === 'xray'), 'xray is live');
+  assert.deepEqual(STORED.map((w) => w.word).sort(), ['block', 'bush', 'drum', 'duck', 'helmet', 'lamp']);
   assert.deepEqual(DROPPED, [], 'no odd word is out of play');
 });
 

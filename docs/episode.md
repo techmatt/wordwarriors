@@ -158,8 +158,9 @@ Sticky Keys. `src/fx/freePlay.ts` (`docs/systems.md`, *Free play*).
 
 No clue or hint says a letter's name (Matt: names beside sounds confused her). The
 warm-up's clues and the Shape-Shifter's hints and misses say the plain sound (`soundLines`,
-`src/rules/soundOut.ts`). A long vowel's sound (`letter_long_e_sound`) and X-RAY's `x_name`
-("ecks") are sounds, not names.
+`src/rules/soundOut.ts`). A long vowel's sound (`letter_long_e_sound`) is a sound, not a
+name. X-RAY's `x_name` ("ecks") is the letter's name: the one exception, live because X-RAY
+is the only X word (Matt, item 182; `docs/rulings.md`).
 
 ## Dev keys and URLs
 

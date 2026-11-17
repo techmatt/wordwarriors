@@ -185,8 +185,8 @@ export const LOOKALIKES: string[][] = [
   ['flame', 'sun', 'dragon'],
   ['pond', 'tub', 'bath'],
   ['sand', 'grass'],
-  // Hunt 13: SAND's picture is a beach under a big red umbrella; GUM's a whole girl blowing a bubble.
-  ['sand', 'umbrella'],
+  // Hunt 13: GUM's picture is a whole girl blowing a bubble. (SAND's stand-in, a beach under a red
+  // umbrella, paired it with UMBRELLA; item 182's SAND is a heap with a spade, so the pair went.)
   ['gum', 'kid'],
   // Hunt 13, seen in play: YAK (live since 178) beside COW reads as a second cow; KIT's toolbox under FIX's wrench.
   ['cow', 'yak'],

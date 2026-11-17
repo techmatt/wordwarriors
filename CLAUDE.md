@@ -128,8 +128,8 @@ header, and promotion (`art:pick`) rides a later, normal item.
   only after she answers, as confirmation. Letter SOUNDS, never letter names, and never
   captioned (the placeholder spelling is not text to read). A hint sounds out letters one
   by one (a digraph, SH CH TH CK, as one sound) and never blends them. No clue, hint or
-  teaching line says a letter's name, not even as a bridge to its sound. Three deliberate
-  exceptions: Spell the Spell says its word first (it is writing, not reading; the ghost
+  teaching line says a letter's name, not even as a bridge to its sound (X-RAY's "ecks"
+  aside). Speech-rule exceptions: Spell the Spell says its word first (it is writing, not reading; the ghost
   boxes show every letter); in the battle's move choice the partner says which word to
   pick (she hears it and finds it written); and the rhyme room's miss says the rhyme
   whole ("Bug, tug... thumb? Listen: bug, tug, rug!"). Choice-word moves are never called

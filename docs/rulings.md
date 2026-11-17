@@ -11,13 +11,15 @@ is a ruling too: do not "fix" it.
 - **Phonics first.** Word choices serve her phonics, erring toward phonetic diversity; a
   word may use sounds the game does not teach yet (`UNTAUGHT_SOUNDS`, `content/phonics/letters.ts`).
 - **The bank has enough variety.** No new words unless Matt asks; a rare or ambiguous word
-  is stored (`STORED_WHY`), not deleted. XRAY stays X's first word, stored. MAT stays a
+  is stored (`STORED_WHY`), not deleted. XRAY stays X's first word, live (item 182). MAT stays a
   bridge word, though it sounds like "Matt". Plural key words may come later.
 - **An action word is never a picture she picks** (`role: 'action'`: DRIP, BLAST, the move
   and spell words). Every picture pool draws from `THINGS`; `?sentence=` takes only a
   pictured key. Its picture stays where nothing is picked: the cook-off's dish, the
   super's fan (`wordFx`), the recap card. `tests/unit/bank.test.ts` holds the pools to it.
 - **No letter names in clues, hints or teaching lines**, at any level (`docs/episode.md`).
+  One exception, X-RAY (Matt, 2026-11-16, item 182): the only X word, so it is live, and
+  its X is sounded "ecks" (`x_name`), the letter's name, wherever its first sound is said.
 - **A sound played whole stays off the bridge's blends** (M78): a word crosses the
   Stretchy Bridge only when each `whole` sound (now F's "fuh") comes straight before a
   vowel (`wholeFits`): FAN FOX FISH cross, FROG FLAG GIFT ELF do not. It follows the

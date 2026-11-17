@@ -49,11 +49,11 @@ const ENDING_PROPS = ENDINGS.flatMap((e) => e.props.map((p) => endingPropArt(p.i
 // The fight styles' props (item 031): a finish banner, a trophy, a cooking station.
 const FIGHT_PROPS = FIGHTS.flatMap((f) => (f.props ?? []).map((p) => fightPropArt(p.id)));
 // The word bank's pictures with no green of their own. Left out for their green:
-// frog, twig, pod, plum, fig, slug, snap (a crocodile); grass, elf, bush; gate,
-// stump, swish and chomp (grass or leaves, chomp's dragon); pond (lily pads),
-// goblin, cave (its path), castle (its hill) and dragon.
+// frog, twig, pod, plum, fig, slug; grass, elf, bush; gate, stump, swish and chomp
+// (grass or leaves, chomp's dragon); pond (lily pads), goblin, cave (its path),
+// castle (its hill) and dragon; hex (item 182's redraw: a green frog).
 const NO_GREEN_PICTURES = [
-  'jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'gum', 'bun', 'hut', 'sub', 'nap', 'wag', 'jab', 'red', 'hex', 'jig', 'mix', 'jog', 'bop', 'dot', 'hum', 'yum', 'drum', 'crab', 'flag', 'sled', 'nest', 'tent', 'desk', 'belt', 'vest', 'gift', 'lamp', 'hand', 'mask', 'raft', 'plug', 'ant', 'milk', 'jump', 'spin', 'swim', 'flip', 'stomp', 'slam', 'grab', 'clap', 'bump', 'skip', 'twist', 'melt', 'lift', 'plop', 'flop', 'trap', 'blast', 'drip', 'ship', 'fish', 'duck', 'sock', 'moth', 'shed', 'chick', 'chop', 'kick', 'rush',
+  'jam', 'yak', 'vat', 'leg', 'peg', 'wig', 'bib', 'six', 'fin', 'kit', 'lip', 'cog', 'rod', 'gum', 'bun', 'hut', 'sub', 'nap', 'wag', 'jab', 'red', 'jig', 'mix', 'jog', 'bop', 'dot', 'hum', 'yum', 'drum', 'crab', 'flag', 'sled', 'nest', 'tent', 'desk', 'belt', 'vest', 'gift', 'lamp', 'hand', 'mask', 'raft', 'plug', 'ant', 'milk', 'jump', 'spin', 'swim', 'flip', 'stomp', 'slam', 'grab', 'clap', 'bump', 'skip', 'twist', 'melt', 'lift', 'plop', 'flop', 'trap', 'blast', 'drip', 'ship', 'fish', 'duck', 'sock', 'moth', 'shed', 'chick', 'chop', 'kick', 'rush',
   'vet', 'chest', 'bin', 'rock', 'clock', 'stick', 'brush', 'truck', 'bath', 'plant', 'crib', 'key', 'yoyo',
   'mat', 'man', 'lid', 'lock',
   'egg', 'bell', 'doll', 'tap', 'glass', 'sink', 'king', 'ring', 'wing', 'shell', 'chips', 'thumb', 'lamb', 'quest', 'quilt', 'queen', 'goat', 'jeep', 'sheep', 'three', 'cheese', 'kite', 'bike', 'vase', 'cake', 'ten',
@@ -148,24 +148,24 @@ export const NOTES: Record<string, string> = {
  * which the row quotes by itself).
  */
 export const PICK_NOTES: Record<string, string> = {
-  // Item 178's new words: `current` is the painted placeholder; pick one candidate each (or none, to redraw).
-  pic_frost: 'New word FROST (item 178, level 2, short O, a final blend). Watch: she may say ice, snow or window.',
-  pic_pond: 'New word POND (item 178, level 2, short O, a final blend). Watch: she may say water, lake or puddle.',
-  pic_sand: 'New word SAND (item 178, level 2, a final blend). Watch: a spade in it may read as dig or beach.',
-  pic_fang: 'New word FANG (item 178, level 3, NG). Watch: the hardest new picture: she may say teeth, tooth or snake.',
-  pic_helmet: "New word HELMET (item 178, two short-vowel syllables, level 2). Watch: she may say hat or knight.",
-  pic_goblin: 'New word GOBLIN (item 178, two short-vowel syllables, level 2, short O first). Watch: she may say elf or monster.',
-  pic_cape: 'New word CAPE (item 178, silent E, long A). Watch: a cape with nobody in it may read as a flag or a blanket.',
-  pic_cave: 'New word CAVE (item 178, silent E, long A). Watch: she may say hole, rock or mountain.',
-  pic_flame: 'New word FLAME (item 178, silent E, long A). Watch: she will likely say fire.',
-  pic_smoke: 'New word SMOKE (item 178, silent E, long O). Watch: she may say cloud or chimney.',
-  pic_sword: "New word SWORD (item 178, untaught: a silent W and the new OR sound). Ellie's Spinny Swords keep it out of her episodes.",
-  pic_shield: 'New word SHIELD (item 178, untaught: IE says long E).',
-  pic_bow: "New word BOW (item 178, a bow and arrow; its OW is long O, not COW's). Watch: she may say arrow. One of three candidates was refused by the image tool.",
-  pic_dragon: 'New word DRAGON (item 178, untaught: its O a schwa). Watch: should not look like Smaug or Tiamat, or she says their name.',
-  pic_crown: "New word CROWN (item 178, untaught: COW's OW). Watch: she may say king or princess.",
-  pic_castle: 'New word CASTLE (item 178, untaught: a silent T, the L carrying "ul"). Watch: she may say house or palace.',
-  pic_wizard: 'New word WIZARD (item 178, in ROBOT\'s place: the bedroom\'s robot toy is shown every episode; untaught: AR says ER). Watch: she may say witch or Santa.',
+  // Item 178's new words, promoted by item 182 (HELMET still the painted placeholder, stored).
+  pic_frost: "New word FROST (item 178, level 2, short O, a final blend). `current` is candidate 1, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say ice, snow or window.",
+  pic_pond: "New word POND (item 178, level 2, short O, a final blend). `current` is candidate 1, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say water, lake or puddle.",
+  pic_sand: "New word SAND (item 178, level 2, a final blend). `current` is candidate 1, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: a spade in it may read as dig or beach.",
+  pic_fang: "New word FANG (item 178, level 3, NG). `current` is candidate 1, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: the hardest new picture: she may say teeth, tooth or snake.",
+  pic_helmet: "New word HELMET (item 178, two short-vowel syllables, level 2). `current` is the painted placeholder: Matt picked none in item 178's round, so HELMET is stored (item 182) until a picture is promoted; he suggests a kid's bicycle helmet (item 183's round). Watch: she may say hat or knight.",
+  pic_goblin: "New word GOBLIN (item 178, two short-vowel syllables, level 2, short O first). `current` is candidate 1, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say elf or monster.",
+  pic_cape: "New word CAPE (item 178, silent E, long A). `current` is candidate 1, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: a cape with nobody in it may read as a flag or a blanket.",
+  pic_cave: "New word CAVE (item 178, silent E, long A). `current` is candidate 3, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say hole, rock or mountain.",
+  pic_flame: "New word FLAME (item 178, silent E, long A). `current` is candidate 1, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she will likely say fire.",
+  pic_smoke: "New word SMOKE (item 178, silent E, long O). `current` is candidate 2, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say cloud or chimney.",
+  pic_sword: "New word SWORD (item 178, untaught: a silent W and the new OR sound). Ellie's Spinny Swords keep it out of her episodes. `current` is candidate 2, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder.",
+  pic_shield: "New word SHIELD (item 178, untaught: IE says long E). `current` is candidate 1, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder.",
+  pic_bow: "New word BOW (item 178, a bow and arrow; its OW is long O, not COW's). `current` is candidate 1, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say arrow.",
+  pic_dragon: "New word DRAGON (item 178, untaught: its O a schwa). `current` is candidate 1, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: should not look like Smaug or Tiamat, or she says their name.",
+  pic_crown: "New word CROWN (item 178, untaught: COW's OW). `current` is candidate 2, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say king or princess.",
+  pic_castle: "New word CASTLE (item 178, untaught: a silent T, the L carrying \"ul\"). `current` is candidate 3, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say house or palace.",
+  pic_wizard: "New word WIZARD (item 178, in ROBOT's place: the bedroom's robot toy is shown every episode; untaught: AR says ER). `current` is candidate 3, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say witch or Santa.",
   // Item 167 promoted item 166's round (Hunt 12's M80) onto a minion of Evil Elsa's own, so the Snow Buddy keeps its art.
   minion_snow_golem: "The Snow Buddy, the minion good Elsa's Snow Buddies summon: it smiles. Evil Elsa's Grumpy Snowmen were this minion too until item 167 gave them their own, `minion_snow_grump` (M80); a grumpy look belongs there, not here.",
   minion_snow_grump: "The Grumpy Snowman, the minion Evil Elsa's Grumpy Snowmen summon (item 167). `current` is item 166's candidate 4 (brief 166_snowman_decal, now its `look`), Matt's pick: drawn with `--ref=art-originals/decal_anna_snowman.png` to match her grumpy house decal, so a redraw wants the same `--ref`.",
@@ -192,12 +192,12 @@ export const PICK_NOTES: Record<string, string> = {
   pic_zap: "Move word ZAP (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 1, Matt's pick (item 020). 0 is candidate 2, item 018's promotion.",
   pic_pow: "Move word POW (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 1, Matt's pick (item 020). 0 is candidate 2, item 018's promotion: the most compact glove and flash.",
   pic_bam: 'Move word BAM (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 3, promoted by item 018: the clearest impact and cracks. 0 is the painted placeholder.',
-  pic_zip: 'Move word ZIP (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 1, promoted by item 018. 0 is the painted placeholder.',
+  pic_zip: "ZIP, live again (item 178). `current` is candidate 1, promoted by item 182: Matt's pick of the redraw from brief 178_zip_redraw, now its PICTURES line. `0` is the painted placeholder.",
   pic_hop: 'Move word HOP (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 2, promoted by item 018: the dotted jump arc shows. 0 is the painted placeholder.',
   pic_pop: 'Move word POP (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 2, promoted by item 018: still reads as a balloon. 0 is the painted placeholder.',
   pic_mug: 'New word MUG (item 035, the -UG family): the word machine, the rooms and the entry hall. A big mug, so it never reads as CUP. `current` is candidate 1, promoted by item 035: the marshmallows read best. `0` is the painted placeholder.',
   pic_rug: 'New word RUG (item 035, the -UG family): the word machine, the rooms and the entry hall. `current` is candidate 1, promoted by item 035: the biggest, the tassels clearest. `0` is the painted placeholder.',
-  pic_jug: 'New word JUG (item 035, the -UG family): the word machine, the rooms and the entry hall. `current` is candidate 1, promoted by item 035 (all three alike). `0` is the painted placeholder.',
+  pic_jug: "JUG, live again (item 178). `current` is candidate 1, promoted by item 182: Matt's pick of the redraw from brief 178_jug_redraw, now its PICTURES line. `0` is the painted placeholder.",
   pic_cup: 'CUP redrawn as a teacup on a saucer (item 035): its old picture was a mug, which MUG now is. `current` is candidate 3, picked by Matt (item 037). 2 was the promotion of item 035, the plainest teacup. `0` is the old red mug.',
   pic_hug: 'Move word HUG (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 1, promoted by item 018: two different bears read as two. 0 is the painted placeholder.',
   pic_big: 'Move word BIG (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 2, promoted by item 018. 0 is the painted placeholder.',
@@ -206,7 +206,7 @@ export const PICK_NOTES: Record<string, string> = {
   pic_dig: 'Move word DIG (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 2, promoted by item 018. 0 is the painted placeholder.',
   pic_run: 'Move word RUN (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 2, promoted by item 018. 0 is the painted placeholder.',
   pic_mud: 'Move word MUD (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 2, promoted by item 018. 0 is the painted placeholder.',
-  pic_wet: 'Move word WET (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 3, promoted by item 018: the fullest splash. 0 is the painted placeholder.',
+  pic_wet: "WET, live again (item 178). `current` is candidate 2, promoted by item 182: Matt's pick of the redraw from brief 178_wet_redraw, now its PICTURES line. `0` is the painted placeholder.",
   pic_fog: 'Move word FOG (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 1, promoted by item 018: the fullest cloud. 0 is the painted placeholder.',
   pic_top: 'Move word TOP (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 2, promoted by item 018: 1 has a green band keyed half-clear. 0 is the painted placeholder.',
   pic_tug: 'Move word TUG (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 2, promoted by item 018: the tightest rope; all three are long and thin. 0 is the painted placeholder.',
@@ -214,7 +214,7 @@ export const PICK_NOTES: Record<string, string> = {
   pic_pan: "Move word PAN (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 2 of item 070's round, Matt's pick (item 073): an empty pan, so it never reads as EGG. 0 is the painted placeholder.",
   pic_mat: "`current` is candidate 3 of item 070's round, Matt's pick (item 073): jigsaw foam tiles, so it never reads as RUG. `0` is the old striped mat with tassels.",
   pic_rock: "`current` is candidate 4 of item 070's round, Matt's pick (item 073): bold, outlined and orange-brown, apart from the bridge room's grey boulders. Its `0` is not a usable image.",
-  pic_ram: 'Move word RAM (item 018): the picture beside it in the victory recap and the fan of pictures on its super. `current` is candidate 1, promoted by item 018: charging head down. 0 is the painted placeholder.',
+  pic_ram: "RAM, live again (item 178). `current` is candidate 1, promoted by item 182: Matt's pick of the redraw from brief 178_ram_redraw, now its PICTURES line. `0` is the painted placeholder.",
   char_tiamat_good: "`current` is candidate 3, Matt's pick (item 016): wings spread open, hands clasped over her belly. 0 is item 013's first promotion (candidate 1).",
   char_tiamat_evil: "`current` is candidate 3, Matt's pick (item 016): gold collar and cuffs, one hand on her hip. 0 is item 013's first promotion (candidate 2, the plainest dragon belly).",
   face_tiamat: '`current` is candidate 2, promoted by item 013: the only one without a bust shape.',
@@ -258,7 +258,7 @@ export const PICK_NOTES: Record<string, string> = {
   pic_belt: "New word BELT (item 037, level 2, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 2, promoted by item 037: a coiled belt with its buckle, keeper loop and a full row of holes. It is the clearest belt shape and the cut is clean. `0` is the painted placeholder.",
   pic_bib: "New word BIB (item 037, level 1, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 2, promoted by item 037: classic baby bib with polka dots and a bow tie; the neck opening is cleaner than in 1, and the dots are more even than in 3. `0` is the painted placeholder.",
   pic_blast: "New word BLAST (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 2, promoted by item 037: rocket blasting off, with the biggest and most fiery flame and smoke, so it reads most as a launch. `0` is the painted placeholder. Watch: She will probably say ROCKET first; BLAST rests on the flame.",
-  pic_bop: "New word BOP (item 037, level 1, a move word: the victory recap and the fan on its super). `current` is candidate 2, promoted by item 037: a squeaky toy mallet tilted mid-swing, with impact stars where it lands. Of the three, it shows the bop action best. No text. `0` is the painted placeholder. Watch: None of the three shows anyone being bopped, so she is likely to name the object, HAMMER, rather than the action BOP.",
+  pic_bop: "BOP, live again (item 178). `current` is candidate 1, promoted by item 182: Matt's pick of the redraw from brief 178_bop_redraw, now its PICTURES line. `0` is the painted placeholder.",
   pic_bump: "New word BUMP (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 3, promoted by item 037: two kids in bumper cars meeting at a star, a clear and happy action; 1 and 2 are empty cars. `0` is the painted placeholder. Watch: Could be called CRASH or CARS.",
   pic_bun: "New word BUN (item 037, level 1, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 1, promoted by item 037: classic round sesame bun with a visible base split; reads instantly as a bread bun. `0` is the painted placeholder. Watch: Could be named 'bread' or 'burger bun'; acceptable.",
   pic_chick: "New word CHICK (item 037, level 3, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 3, promoted by item 037: yellow chick hatching from an egg, nothing like a duck or a hen; the eggshell says baby bird, wings spread, clean cut. `0` is the painted placeholder.",
@@ -266,7 +266,7 @@ export const PICK_NOTES: Record<string, string> = {
   pic_clap: "New word CLAP (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 1, promoted by item 037: the classic clapping-hands emoji with motion bursts; the most instantly read as clapping. `0` is the painted placeholder. Watch: Candidate 2 looks clasped, like a high five. Candidate 3 has the hands apart, like praying or a cheer.",
   pic_cog: "New word COG (item 037, level 1, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 3, promoted by item 037: bold outline and crisp teeth; the three are near-identical. `0` is the painted placeholder. Watch: Most children would say 'gear', not 'cog'.",
   pic_crab: "New word CRAB (item 037, level 2, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 2, promoted by item 037: classic red cartoon crab, claws up, clean outline; all three are fine. `0` is the painted placeholder.",
-  pic_desk: "New word DESK (item 037, level 2, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 2, promoted by item 037: the widest top with a front drawer, the closest of the three to a desk. `0` is the painted placeholder. Watch: All three look like a small table or nightstand, so she will likely say TABLE. Consider regenerating with a chair, a lamp, or pencils and paper on top.",
+  pic_desk: "DESK, live again (item 178). `current` is candidate 1, promoted by item 182: Matt's pick of the redraw from brief 178_desk_redraw, now its PICTURES line. `0` is the painted placeholder.",
   pic_dot: "DOT (item 037's move word; item 157 makes it a picture to read too, `both`: the Shape-Shifter's DOG-DOT-POT). `current` is item 166's candidate 6 (brief 166_dot_marker, now its prompt), Matt's pick, promoted by item 167: a flat dark-blue marker dot on a white card with the pen beside it, no shine or shadow. It replaced item 160's shiny blue dot, which read as a ball standing on the sand (Hunt 12, M79), and that replaced item 037's polka-dot cloth, which read as 'dots', 'spots' or a blanket. `0` is the painted placeholder. Watch: she may say 'pen'.",
   pic_drip: "New word DRIP (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 3, promoted by item 037: drop has left the tap and is falling, so it shows the action; no distracting face (2) and clean edges. `0` is the painted placeholder. Watch: Could be named TAP. Keep it visually distinct from the PLOP splash.",
   pic_drum: "New word DRUM (item 037, level 2, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 2, promoted by item 037: clear red toy drum with crossed sticks and the cleanest proportions and outline. `0` is the painted placeholder.",
@@ -276,13 +276,13 @@ export const PICK_NOTES: Record<string, string> = {
   pic_fish: "New word FISH (item 037, level 3, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 2, promoted by item 037: clear goldfish with a big friendly face and a neat silhouette; all three are near-identical and clean. `0` is the painted placeholder.",
   pic_flag: "New word FLAG (item 037, level 2, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 1, promoted by item 037: a plain red flag on a pole, the largest flag of the three, with no text. All three are clean and almost identical. `0` is the painted placeholder.",
   pic_flip: "New word FLIP (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 3, promoted by item 037: pancake in the air over the pan, with a dotted arc and arrowhead that show it turning over and landing back; the clearest flipping action. `0` is the painted placeholder. Watch: She may say PANCAKE before FLIP, because the action depends on the dotted arc.",
-  pic_flop: "New word FLOP (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 2, promoted by item 037: the walrus's belly is flat on the water with the biggest splash, the most like a belly-flop. `0` is the painted placeholder. Watch: All three show a walrus in a splash, so she will likely say WALRUS or SPLASH. FLOP is not instantly nameable from these. Consider redrawing as a floppy fall onto a bed or cushion.",
+  pic_flop: "FLOP, live again (item 178). `current` is candidate 2, promoted by item 182: Matt's pick of the redraw from brief 178_flop_redraw, now its PICTURES line. `0` is the painted placeholder.",
   pic_frog: "New word FROG (item 037, level 2, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 2, promoted by item 037: a classic cute green frog, sitting square to the viewer. It is unmistakable and the cut is clean. All three are near-identical. `0` is the painted placeholder. Watch: A green fringe is hard to see against a green subject, so check it in the game.",
   pic_gift: "New word GIFT (item 037, level 2, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 3, promoted by item 037: star wrapping paper and a bow make it clearly a present, not a plain BOX. Candidates 1 and 2 have plain blue sides and lean more toward 'box'. `0` is the painted placeholder.",
   pic_grab: "New word GRAB (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 2, promoted by item 037: claw clearly closed around the teddy; clean cut, nothing stray. `0` is the painted placeholder. Watch: All three are a claw-machine teddy, so a 4-year-old may say TEDDY or CLAW before GRAB. A hand grabbing something would read better as the action.",
   pic_gum: "New word GUM (item 037, level 1, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 3, promoted by item 037: the bubble swells from her lips and covers her face, which is the clearest bubble-gum pose. All three are clean. `0` is the painted placeholder. Watch: In all three the pink bubble could be called BALLOON or BUBBLE. GUM is never shown as a piece of gum.",
   pic_hand: "New word HAND (item 037, level 2, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 2, promoted by item 037: open palm, five clear fingers, clean wrist cut. `0` is the painted placeholder. Watch: An open palm can be read as HIGH FIVE or FIVE, but HAND is the most likely name.",
-  pic_hex: "New word HEX (item 037, level 1, a move word: the victory recap and the fan on its super). `current` is candidate 2, promoted by item 037: hex was not in run 2. Its candidates are in run 3 (art_alts_037_words_3). Candidate 2 is a crisp, centred purple spell swirl with sparkles. Candidate 1 is an empty ring that looks like a portal, and 3 is a softer copy of 2. `0` is the painted placeholder. Watch: HEX is abstract. Any swirl reads as 'magic' or 'spell' more than 'hex', so the voiced context has to carry it.",
+  pic_hex: "HEX, live again (item 178). `current` is candidate 1, promoted by item 182: Matt's pick of the redraw from brief 178_hex_redraw, now its PICTURES line. `0` is the painted placeholder.",
   pic_hum: "New word HUM (item 037, level 1, a move word: the victory recap and the fan on its super). `current` is candidate 2, promoted by item 037: eyes shut, mouth closed and smiling, with notes: reads as humming, not singing; clean. `0` is the painted placeholder. Watch: May still be named SING; no open-mouth/closed-mouth cue beyond the smile.",
   pic_hut: "New word HUT (item 037, level 1, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 2, promoted by item 037: a round mud hut with a thatched roof and a clear doorway: a classic hut, nothing like a shed or a tent. The cut is clean. Candidate 1 is near-identical. `0` is the painted placeholder. Watch: The hut candidates are in run 1 (scratch\\art_alts_037_words_1\\pic_hut-*.png), not run 3 as the task says. Run 3 has no hut files.",
   pic_jab: "New word JAB (item 037, level 1, a move word: the victory recap and the fan on its super). `current` is candidate 3, promoted by item 037: clearest boxing glove (white cuff) punching forward with speed lines; clean cut. `0` is the painted placeholder. Watch: All three are near-identical, and a 4-year-old may say PUNCH or GLOVE rather than JAB.",
@@ -294,7 +294,7 @@ export const PICK_NOTES: Record<string, string> = {
   pic_kit: "New word KIT (item 037, level 1, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 3, promoted by item 037: open red toolbox with a hammer, wrench and screwdriver; the most compact and clean of the three. `0` is the painted placeholder. Watch: All three are toolboxes. She is likely to say TOOLS or TOOLBOX, and could say BOX, a clash this game names.",
   pic_lamp: "New word LAMP (item 037, level 2, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 3, promoted by item 037: the bulb glows visibly under the shade, so it reads as a lamp that is on. It is a clean, simple table-lamp shape. `0` is the painted placeholder.",
   pic_leg: "New word LEG (item 037, level 1, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 1, promoted by item 037: shows the most bare leg (knee and thigh) compared with the sock and shoe. `0` is the painted placeholder. Watch: All three are dominated by a striped sock and red shoe, so SOCK or SHOE are likely answers. The sock also looks like the SOCK picture.",
-  pic_lift: "New word LIFT (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 3, promoted by item 037: crane lifting a crate high, the most compact and readable of the three; clean cut. `0` is the painted placeholder. Watch: A 4-year-old will likely name it CRANE or TRUCK rather than LIFT. A person lifting something would read better as the action.",
+  pic_lift: "LIFT, live again (item 178). `current` is candidate 1, promoted by item 182: Matt's pick of the redraw from brief 178_lift_redraw, now its PICTURES line. `0` is the painted placeholder.",
   pic_lip: "New word LIP (item 037, level 1, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 1, promoted by item 037: glossy red lips, slightly parted with teeth showing, so they read as a mouth part; clean cut. `0` is the painted placeholder. Watch: She may say LIPS (plural) or MOUTH.",
   pic_mask: "New word MASK (item 037, level 2, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 3, promoted by item 037: simplest masquerade eye mask, least ornament clutter, eye holes clear. `0` is the painted placeholder.",
   pic_melt: "New word MELT (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 3, promoted by item 037: most dripping: a falling drop and a puddle make melting the main idea. `0` is the painted placeholder. Watch: Likely named ICE CREAM first; the melting is shown but the object dominates.",
@@ -316,11 +316,11 @@ export const PICK_NOTES: Record<string, string> = {
   pic_ship: "New word SHIP (item 037, level 3, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 3, promoted by item 037: the simplest sailing ship, fewest ropes. `0` is the painted placeholder.",
   pic_six: "Word SIX (item 037). Redrawn by item 059 as a big decorated numeral 6 (blue, polka dots and stars): the die of item 037 read as DICE, not SIX. `0` is the painted placeholder.",
   pic_ten: "New word TEN (item 059, level 1, a picture to read): a big decorated numeral 10, a purple 1 and an orange 0 with rainbow stripes. `0` is the painted placeholder.",
-  pic_skip: "New word SKIP (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 1, promoted by item 037: skipping rope with the most visible motion lines; clean cut. `0` is the painted placeholder. Watch: With no child skipping, it reads as ROPE or JUMP ROPE, not the action SKIP. A child mid-skip would be better.",
+  pic_skip: "SKIP, live again (item 178). `current` is candidate 1, promoted by item 182: Matt's pick of the redraw from brief 178_skip_redraw, now its PICTURES line. `0` is the painted placeholder.",
   pic_slam: "New word SLAM (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 2, promoted by item 037: fist hitting the ground with rocks flying, so it reads as a smash rather than a glowing magic circle. `0` is the painted placeholder. Watch: Could be named PUNCH or SMASH.",
   pic_sled: "New word SLED (item 037, level 2, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 2, promoted by item 037: the three-quarter view shows both curled runners and the slats on snow. Side-on views 1 and 3 look a bit more like a bench. `0` is the painted placeholder. Watch: She may say SLEIGH, but SLED is the more likely word for a child.",
   pic_slug: "New word SLUG (item 037, level 2, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 1, promoted by item 037: whole body visible, eye stalks and slime trail say slug rather than snail (no shell). `0` is the painted placeholder.",
-  pic_snap: "New word SNAP (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 1, promoted by item 037: crocodile snapping its jaws, with the clearest motion lines at the mouth; clean cut. `0` is the painted placeholder. Watch: All three show a crocodile. She may say CROC or CROCODILE rather than SNAP; the action is carried only by a few small motion lines.",
+  pic_snap: "SNAP, live again (item 178). `current` is candidate 1, promoted by item 182: Matt's pick of the redraw from brief 178_snap_redraw, now its PICTURES line. `0` is the painted placeholder.",
   pic_sock: "New word SOCK (item 037, level 3, a picture to read: rooms, warm-up, word machine, battle item). `current` is candidate 2, promoted by item 037: classic striped sock, crisp closed outline; all three are near-identical and fine. `0` is the painted placeholder.",
   pic_spin: "New word SPIN (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 1, promoted by item 037: swirl rings wrap the whole body, so the turning motion reads most clearly. `0` is the painted placeholder. Watch: Ballerina may be named DANCE before SPIN.",
   pic_stomp: "New word STOMP (item 037, level 2, a move word: the victory recap and the fan on its super). `current` is candidate 2, promoted by item 037: monster foot slamming down with dust puffs and cracked ground, whole leg inside the frame (3 is cropped at the top). `0` is the painted placeholder. Watch: Could be named FOOT or CLAW; the impact effects carry the action.",
@@ -343,6 +343,13 @@ export const PICK_NOTES: Record<string, string> = {
   pic_cub: "New word CUB (item 157, level 1, a picture to read: TUB-CUB-CUP). `current` is candidate 3, promoted by item 160: a real sitting brown bear cub waving one paw, no stitching, no bow. `0` is the painted placeholder. Watch: she may say 'bear' or 'baby bear'.",
   pic_cot: "New word COT (item 157, level 1, a picture to read: CAT-COT-POT). `current` is item 166's candidate 5 (brief 166_cot_tent, now its prompt), Matt's pick, promoted by item 167: a green camp cot on X legs on a patch of grass, a small orange tent behind and a rolled sleeping bag on it. It replaced item 160's blue cot with a pillow, which Hunt 12 (M79) said she will call BED. `0` is the painted placeholder. Watch: a US child may not know COT, and she may say TENT.",
   pic_kid: "New word KID (item 157, level 1, a picture to read: LIP-LID-KID). `current` is candidate 2, promoted by item 160: a waving boy of about six in an orange t-shirt and blue shorts, full body. A standing person: SHAPED_PICTURES fits it to its own shape. `0` is the painted placeholder. Watch: she may say 'boy'.",
+  // Item 182: redraws promoted from item 178's round for ids with no note before.
+  pic_queen: "QUEEN, live again (item 178). `current` is candidate 2, promoted by item 182: Matt's pick of the redraw from brief 178_queen_redraw, now its PICTURES line. `0` is the picture it had before item 182.",
+  pic_gate: "GATE, live again (item 178). `current` is candidate 1, promoted by item 182: Matt's pick of the redraw from brief 178_gate_redraw, now its PICTURES line. `0` is the picture it had before item 182.",
+  pic_jeep: "JEEP, live again (item 178). `current` is candidate 1, promoted by item 182: Matt's pick of the redraw from brief 178_jeep_redraw, now its PICTURES line. `0` is the picture it had before item 182.",
+  pic_dash: "DASH, live again (item 178). `current` is candidate 1, promoted by item 182: Matt's pick of the redraw from brief 178_dash_redraw, now its PICTURES line. `0` is the picture it had before item 182.",
+  pic_swish: "SWISH, live again (item 178). `current` is candidate 1, promoted by item 182: Matt's pick of the redraw from brief 178_swish_redraw, now its PICTURES line. `0` is the picture it had before item 182.",
+  pic_jet: "JET, live again (item 178). `current` is candidate 2, promoted by item 182: Matt's pick of the redraw from brief 178_jet_redraw, now its PICTURES line. `0` is the picture it had before item 182.",
 };
 
 // Item 097: Charge's picture letters, one row per rune.
@@ -444,7 +451,8 @@ const PICTURES: Record<string, string> = {
   tub: 'a tub: a white bathtub on little feet, full of bubbles',
   cap: 'a cap: a blue baseball cap with a curved peak, side-on',
   pin: 'a pin: a single red push-pin, the kind for a notice board',
-  jet: 'a jet: a white jet aeroplane flying, side-on, swept-back wings',
+  // Item 182: Matt's pick from item 178's round (brief 178_jet_redraw).
+  jet: 'a jet: one small sleek grey fighter jet zooming across the sky, pointed nose, swept-back wings, two tail fins and a long bright orange flame from its jet engine at the back, white speed lines; a fast jet, not a big airliner with windows',
   log: 'a log: a single cut wooden log lying down, rings showing on the end',
   mop: 'a mop: a floor mop with a long wooden handle and a floppy white mop head',
   pot: 'a pot: a big silver cooking pot with two handles and a lid',
@@ -452,12 +460,14 @@ const PICTURES: Record<string, string> = {
   // Item 035: the -UG family. MUG is a big tall mug, unlike CUP's teacup on a saucer.
   mug: 'a mug: one big tall chunky blue mug of hot cocoa with a big handle, pink and white marshmallows on top, no saucer',
   rug: 'a rug: a colourful striped rectangular rug with tassel fringes on both short ends, lying flat on the floor seen from a little above',
-  jug: 'a jug: a big round glass jug of white milk with a wide handle and a pouring spout',
+  // Item 182: Matt's pick from item 178's round (brief 178_jug_redraw).
+  jug: 'a jug: one big round brown pottery jug with a fat belly, a narrow neck, a little spout and a big loop handle on the side, empty, standing alone; clearly a jug, not a glass, not a cup, no milk showing',
   // Move words (item 018): the picture is what the move does, for the victory recap.
   zap: 'a zap: one bright yellow zig-zag lightning bolt crackling with little white sparks',
   pow: 'a pow: a big red cartoon boxing glove punching forward into a jagged yellow star-shaped impact flash, with no letters in the flash',
   bam: 'a bam: a big wooden cartoon mallet smashing down onto the ground, a jagged star-shaped impact and little cracks under it, with no letters',
-  zip: 'a zip: a small bright blue comet zooming sideways very fast, long white speed lines streaming behind it',
+  // Item 182: Matt's pick from item 178's round (brief 178_zip_redraw).
+  zip: 'a zip: one big shiny zipper on a blue jacket being zipped up, the metal pull tab halfway, the teeth closed below it and open above it, a curved arrow showing it zipping up; clearly a zipper, close up',
   hop: 'a hop: a white bunny rabbit in mid-hop high in the air, a curved dotted arc under it showing the jump',
   pop: 'a pop: a red balloon bursting with a star-shaped bang, rubber bits and confetti flying out',
   hug: 'a hug: two cute teddy bears hugging each other tight, eyes closed and smiling, a little pink heart above them',
@@ -467,14 +477,16 @@ const PICTURES: Record<string, string> = {
   dig: 'a dig: a small red spade digging into a heap of brown dirt, a few clods flying',
   run: 'a run: a pair of bright running trainers in mid-stride, speed lines and little dust puffs behind them',
   mud: 'mud: one big brown splat of mud with drips and a few splashes flying off',
-  wet: 'wet: one big blue water splash with round droplets flying out',
+  // Item 182: Matt's pick from item 178's round (brief 178_wet_redraw).
+  wet: 'wet: one dripping wet cartoon puppy standing in the rain, its fur flattened and dripping, water droplets falling off its ears and tail, a little puddle under it, looking sorry for itself; clearly soaking wet, not a splash',
   fog: 'fog: a big soft grey cloud of fog drifting low, wispy curls at its edges',
   top: 'a top: a colourful striped spinning top toy spinning on its point, curved swirl marks around it',
   tug: 'a tug: two little cartoon hands pulling hard on a thick rope in a tug of war, the rope pulled tight with a knot in the middle',
   fix: 'a fix: a silver spanner and a sticking plaster crossed over each other, with sparkles',
   // Item 073 (069's M9): Matt's pick from 070's brief round, empty so it never reads as EGG.
   pan: 'a pan: one empty black frying pan with a long straight handle, seen from above at a slant so the whole round inside of the pan and the full handle both show, a shiny silver rim and a little shine on the black inside; completely empty, no food, no egg, no steam; clearly a frying pan, not a pot, a plate, a bowl or a tennis racket; the pan large',
-  ram: 'a ram: a white ram (a woolly sheep with big curly horns) charging forward, side-on',
+  // Item 182: Matt's pick from item 178's round (brief 178_ram_redraw).
+  ram: 'a ram: one big strong cartoon ram with huge curly brown horns curled round each side of its head, charging forward head down, dust clouds flying behind its hooves; the big curly horns and the charge are the point, not a fluffy sheep',
   // Item 037: the word bank's new words (content/phonics/bank.ts).
   jam: 'jam: a small glass jar of bright red strawberry jam with a red gingham cloth over the lid, a spoon beside it, no label',
   yak: 'a yak: a big shaggy brown yak with long hair down to its hooves and two curved horns, standing side-on',
@@ -500,11 +512,13 @@ const PICTURES: Record<string, string> = {
   wag: "a wag: a happy dog's tail wagging fast, curved motion lines on each side of it, the dog's back end smiling",
   jab: 'a jab: a red boxing glove doing a quick straight jab forward, speed lines streaming behind it',
   red: 'red: one big splat of bright red paint with a few round drips, nothing else',
-  hex: 'a hex: a swirling purple magic circle glowing in the air, little stars and sparkles spinning round it, no symbols or letters',
+  // Item 182: Matt's pick from item 178's round (brief 178_hex_redraw).
+  hex: "a hex: one cartoon witch's wand pointing and casting a curly purple magic spell, a glowing purple swirl of stars and sparkles shooting from its tip onto a little grumpy frog; the purple magic spell is the point",
   jig: 'a jig: a pair of happy dancing feet in shiny buckled shoes kicking up, music notes floating round them',
   mix: 'a mix: a big mixing bowl of yellow cake batter with a whisk swirling in it, a few splashes flying',
   jog: 'a jog: a smiling jogger in a red sweatband and running clothes jogging along, side-on, little dust puffs behind',
-  bop: 'a bop: a squeaky red-and-yellow toy hammer bopping down, little stars bursting where it lands',
+  // Item 182: Matt's pick from item 178's round (brief 178_bop_redraw).
+  bop: 'a bop: one cartoon kid gently bopping a giggling friend on the head with a big soft squeaky toy hammer, little stars and a squeak line at the bop, both laughing; a playful bop, not a hit that hurts',
   // Item 167: Matt's pick 6 from item 166's round (brief 166_dot_marker); item 160's shiny blue dot (brief 157_dot_single) read as a ball (M79), the polka dots before it as 'dots' or a cloth.
   dot: 'a dot: one big round dot drawn with a fat felt-tip marker on a white card seen straight from above, the dot solid flat dark blue with slightly soft marker edges, a perfect filled circle with no shine, no highlight, no shading and no shadow; the open blue marker pen lies beside the card, its tip touching the edge of the dot; completely flat, a mark on paper, not a ball, not a button, not a planet; one dot alone, no pattern',
   hum: 'a hum: a smiling face with its mouth closed, music notes floating out beside it',
@@ -516,7 +530,8 @@ const PICTURES: Record<string, string> = {
   sled: 'a sled: a red wooden sled with curved metal runners on a little patch of white snow, side-on',
   nest: "a nest: a round brown bird's nest of woven twigs with three small pale-blue eggs in it",
   tent: 'a tent: a bright orange triangular camping tent with its door flaps tied open, guy ropes pegged out',
-  desk: "a desk: a child's wooden desk with a flat top and a drawer, no chair, nothing on it",
+  // Item 182: Matt's pick from item 178's round (brief 178_desk_redraw).
+  desk: "a desk: a child's school desk with a chair tucked under it, a sloping wooden top with an open book, a pencil and a crayon box on it, and a small cubby under the top for books; clearly a school desk to sit and draw at, not a dinner table, not a bench",
   belt: 'a belt: a brown leather belt with a shiny gold buckle, loosely coiled',
   vest: 'a vest: a bright orange safety vest with two shiny silver stripes across it, no writing',
   plum: 'a plum: one round dark purple plum with a short stalk and one green leaf; a plum, not a fig',
@@ -539,13 +554,17 @@ const PICTURES: Record<string, string> = {
   grab: 'a grab: a silver claw-machine claw grabbing a brown teddy bear and lifting it, no machine round it',
   clap: 'a clap: two hands clapping together, curved motion lines and little stars between them',
   bump: 'a bump: a red bumper car and a blue bumper car bumping into each other, a little star where they meet',
-  snap: 'a snap: a green crocodile snapping its long jaws shut, zig-zag teeth, motion lines at its mouth',
-  skip: 'a skip: a skipping rope with red wooden handles swinging in a big arc, motion lines along it',
+  // Item 182: Matt's pick from item 178's round (brief 178_snap_redraw).
+  snap: 'a snap: one cartoon hand snapping its fingers, thumb and middle finger just snapped together, a little star-shaped burst and two short sound lines at the fingertips; clearly a finger snap, close up, no animals',
+  // Item 182: Matt's pick from item 178's round (brief 178_skip_redraw).
+  skip: 'a skip: one happy cartoon girl skipping along a path, one knee up high and the other foot hopping, arms swinging, a dotted bouncy line behind showing her skip, no rope; clearly skipping along, not jumping rope',
   twist: 'a twist: a twisty purple tornado spinning, swirl lines round it',
   melt: 'a melt: a pink strawberry ice-cream cone melting, drips running down the cone and a little puddle',
-  lift: 'a lift: a yellow crane lifting a wooden crate high on its hook',
+  // Item 182: Matt's pick from item 178's round (brief 178_lift_redraw).
+  lift: 'a lift: one strong cartoon kid lifting a big heavy box high over their head with both arms, knees bent, little sweat drops and wobbly effort lines; clearly lifting something heavy, no machines',
   plop: 'a plop: one blue water drop plopping into a puddle, a ring of ripples and a little splash',
-  flop: 'a flop: a cartoon walrus belly-flopping into a pool of blue water with a huge splash',
+  // Item 182: Matt's pick from item 178's round (brief 178_flop_redraw).
+  flop: 'a flop: one cartoon kid in pyjamas flopping backwards onto a big soft fluffy bed with arms wide, pillows bouncing up, a little poof of feathers; the flop onto the bed is the point',
   trap: 'a trap: a little wire cage trap with its door snapping shut, motion lines at the door, empty inside',
   blast: 'a blast: a red-and-white rocket blasting off with big orange flames and smoke clouds under it',
   drip: 'a drip: a silver tap with one big blue water drop falling from it',
@@ -603,9 +622,11 @@ const PICTURES: Record<string, string> = {
   lamb: 'a lamb: a fluffy white baby sheep, small and woolly, standing side-on; a baby, not a big sheep',
   quest: 'a quest: a brave little explorer with a backpack setting off along a winding path to a far castle',
   quilt: 'a quilt: a colourful patchwork quilt of bright squares, folded over the end of a bed',
-  queen: 'a queen: a smiling cartoon queen with a gold crown and a long royal purple gown, standing',
+  // Item 182: Matt's pick from item 178's round (brief 178_queen_redraw).
+  queen: 'a queen: one grown-up cartoon queen, older and grand, with grey hair in a bun, a big gold crown with jewels, a long red velvet robe with a white fluffy fur collar, holding a gold sceptre, sitting on a gold throne; clearly a queen, not a young princess',
   goat: 'a goat: a white goat with little horns and a small beard, standing side-on',
-  jeep: 'a jeep: a green open-top safari jeep with big chunky wheels, side-on; a jeep, not a van or a truck',
+  // Item 182: Matt's pick from item 178's round (brief 178_jeep_redraw).
+  jeep: 'a jeep: one open-top safari jeep with no roof and no doors, a big round spare tyre on the back, a roll bar, chunky knobbly wheels, bumping over a dirt track with a little cloud of dust, side-on; clearly a jeep, not a car, not a truck',
   sheep: 'a sheep: a big fluffy white woolly sheep with a black face, standing side-on',
   three: 'three: a big bright red number 3 made of shiny balloons, nothing else; the numeral alone, no letters',
   ten: 'ten: a big bold number 10, decorated: a bright purple 1 and an orange 0 with rainbow stripes and little sparkles, side by side; the numeral alone, no letters',
@@ -627,7 +648,8 @@ const PICTURES: Record<string, string> = {
   ham: 'a ham: one whole cooked glazed ham, shiny pink-and-brown with a criss-cross pattern on top and a white bone sticking out of one end, on a wooden board; cooked food, not a pig, not a leg',
   hay: 'hay: one big rectangular bale of golden yellow hay tied with two strings, a few loose straws poking out, sitting on the ground; a bale of hay, not loose grass, not a lawn',
   tree: 'a tree: one whole leafy green tree with a thick brown trunk and a round green crown, standing alone on a little patch of grass, roots just showing; a tree, not a bush, not a potted plant, not a stump',
-  gate: 'a gate: one wooden farm gate with five horizontal brown planks and a diagonal brace, standing closed between two short fence posts, a little grass at its foot; a farm gate, not a door, not a fence alone',
+  // Item 182: Matt's pick from item 178's round (brief 178_gate_redraw).
+  gate: 'a gate: one wooden farm gate swinging half open on big black metal hinges, a metal latch on its free end, a dirt path going through the opening into a field, a short stretch of fence on each side; the open gate you walk through is the point, not the fence',
   stump: 'a stump: one short cut tree stump, flat top showing pale rings, brown bark sides and a few roots spreading into the ground, standing upright; a stump left in the ground, not a log lying down, not a whole tree',
   sack: 'a sack: one plump brown cloth sack made of rough woven burlap, tied shut at the top with a rope, sitting upright; a cloth sack, not a handbag or a paper bag, no writing on it',
   dress: "a dress: one girl's bright pink party dress with short puffy sleeves and a wide twirly skirt, on its own, no person wearing it; clearly a dress, not a shirt or a skirt alone",
@@ -635,8 +657,10 @@ const PICTURES: Record<string, string> = {
   bench: 'a bench: one long wooden park bench with a backrest and black iron legs, side-on a little from the front, nobody on it; a bench, not a desk, a table or a chair',
   skunk: 'a skunk: one cute cartoon skunk, black with a bold white stripe down its back and a big fluffy black-and-white tail raised, standing side-on; clearly a skunk, not a cat or a squirrel',
   chomp: "a chomp: a cartoon green dragon's head side-on, its big jaws snapping shut on a big crunchy apple, crumbs flying and little action lines; the biting is the point",
-  dash: 'a dash: a cartoon kid running super fast side-on, leaning forward, speed lines and dust clouds streaming out behind; clearly running very fast',
-  swish: 'a swish: a farmer swinging a long curved scythe through tall grass in one wide arc, cut grass flying up and a curved swish line following the blade; the swing of the scythe is the point',
+  // Item 182: Matt's pick from item 178's round (brief 178_dash_redraw).
+  dash: 'a dash: one cheetah with spots streaking across the picture at top speed, stretched out long in mid-stride, long speed lines and dust clouds streaming out behind; the speed is the point; no people',
+  // Item 182: Matt's pick from item 178's round (brief 178_swish_redraw).
+  swish: "a swish: one long fluffy horse's tail swishing through the air in a big curved sweep, with curved motion lines following it and two little flies being swished away, only the back of the horse showing; the swishing tail is the point; no people, no tools",
   smash: 'a smash: a big cartoon hammer smashing down onto a pile of rocks, pieces flying out and a burst of stars at the hit',
   crash: 'a crash: a tall wobbly stack of plates crashing to the floor, plates tumbling through the air and pieces bursting out with a big burst of dust; clearly falling and crashing',
   splash: 'a splash: a cartoon kid in rain boots jumping into a big puddle, a huge splash of water spraying up all around; the splash is the point',  // Item 126: a mom and a dad as a four-year-old knows them (with their little one), and a cow.
