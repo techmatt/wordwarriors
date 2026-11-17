@@ -163,6 +163,15 @@ backgrounded loop leaves the running `tsx` to finish its candidate: check
   photo and `NOTES` still go round it. Its label is the file's base name, a lower-case slug.
   One id per run, and briefs for one id one after another (side by side they number alike);
   each candidate gets a sidecar `alts/<id>-<k>.json`. Briefs are `<item>_<name>_<look>.txt`.
+- **A round only for this round's candidates:** the manifest lists every candidate an id has,
+  earlier rounds' too. Item 183 ran `--manifest-only --sheet=<name>` over all its ids, then
+  kept `current` and the options labelled `brief <item>_…` (its script:
+  `experiments/results/183_art_round_leftovers/merge.py`).
+- **An id the game does not have yet** (a word a later item adds): `art:alts` refuses ids not
+  in `content/art/assets.ts`. Item 183 drew `pic_robot` with an uncommitted
+  `assets.push({ id: 'pic_robot', kind: 'picture', w: 200, h: 200, … })` and a stand-in
+  `public/art/pic_robot.png`, reverted both after `--manifest-only`; the candidates wait in
+  `alts/` for `art:pick` once the word is in the bank.
 - **`--ref=<image>`** attaches another version of the same character in place of the photo
   (`DESIGN_REF`, `tools/art/generate.ts`): keep face, hair, build; ask for the green
   background like the picture's.
