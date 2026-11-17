@@ -115,7 +115,9 @@ test('planRhyme: three rounds where three fit, though one draw would leave no fa
     // Item 184: the bedroom toys it made live, the same way.
     'duck', 'lamp', 'block',
     // Item 189: the toy words it made live, the same way.
-    'teddy', 'rocket', 'unicorn'];
+    'teddy', 'rocket', 'unicorn',
+    // Item 190: BALL, the same way.
+    'ball'];
   const draw = (seed: number) => planRhyme(new ProgressStore(memory()), { avoid, taken: [] }, seeded(spread(seed)));
   const keep = RHYME.redraws;
   try {

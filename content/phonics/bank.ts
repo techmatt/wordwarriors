@@ -277,8 +277,8 @@ const ENTRIES: BankEntry[] = [
   // Matt's pick 3) is a white-and-orange robot, not the bedroom's blue wind-up toy.
   T('robot', '🤖', { ...NEW_184, late: true, spelled: [['r', 'r'], ['o', 'long_o'], ['b', 'b'], ['o', 'o'], ['t', 't']] }),
   // Item 188 (Matt, 2026-11-16): the bedroom's other toys, each on a picture card unlike the
-  // bedroom's own toy. Item 189 promoted Matt's picks for ROCKET TEDDY UNICORN, so they are live;
-  // BALL stays stored (STORED_WHY) until its redraw (`art_alts_189`) is picked and promoted.
+  // bedroom's own toy. Item 189 promoted Matt's picks for ROCKET TEDDY UNICORN, and item 190 BALL's
+  // redraw (`art_alts_189`, a black-and-white soccer ball), so all four are live.
   // ROCKET sounds out like HELMET (two short vowels, its E said as in HELMET); TEDDY's Y is long E,
   // so it takes KEY's long path at level 1 (DD one sound, as APPLE's PP).
   T('rocket', '🚀', { ...NEW_188, spelled: [['r', 'r'], ['o', 'o'], ['ck', 'ck'], ['e', 'e'], ['t', 't']] }),
@@ -378,10 +378,8 @@ export const STORED_WHY: Record<string, string> = {
   // round, a kid's bicycle helmet, so it is live.)
   // Hunt 11, M66: a sound-out would teach the wrong vowel.
   bush: 'its U is the U of PUT, not of SUN: a wrong short-U word in every sound-out',
-  // Item 188 held ROCKET TEDDY BALL UNICORN for art; item 189 promoted Matt's picks for three of
-  // them. BALL waits for its redraw (Matt passed on 188's three): delete its line when `art:pick`
-  // promotes its picture.
-  ball: 'no picture picked yet (item 189\'s round, art_alts_189)',
+  // (Item 188 held ROCKET TEDDY BALL UNICORN for art; item 189 promoted Matt's picks for three of
+  // them, item 190 BALL's redraw. All four are live.)
   // (Hunt 9 and 10, M40, stored the bedroom's props DRUM LAMP DUCK BLOCK; item 184, Matt 2026-11-16: a toy
   // shown in the bedroom never keeps its word out of play, docs/rulings.md. They are live again.)
   // (Hunt 13 stored CAPE CAVE FLAME POND SMOKE SWORD on one shared stand-in picture; item 182 promoted their art.)

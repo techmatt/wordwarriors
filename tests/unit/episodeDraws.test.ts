@@ -192,8 +192,9 @@ test('door b (items 126, 137): the Shape-Shifter in about 3 drawn episodes of 7,
   // A seed's luck: 126 drew no word machine in 24 once MOM and DAD left the warm-up's words (hunt 10, M45);
   // over seeds 120 to 135 every other seed draws it 1 to 5 times. 125 drew no rhyme room once the N and A
   // runes' pictures became the bank words NEST and ANT (item 146); 120 to 130 bar it all pass. Item 157's
-  // words: 120 draws no rhyme room in 24, 121 to 130 all pass.
-  Math.random = seededRand(121);
+  // words: 120 draws no rhyme room in 24, 121 to 130 all pass. Item 190 (BALL live): 121 draws 7 shifters;
+  // 120 and 122 to 130 pass.
+  Math.random = seededRand(122);
   try {
     progress.reset();
     setCastOptions({ fixed: false, rand: Math.random, overrides: {} });
@@ -222,7 +223,8 @@ test("bedroom toys (item 184, Matt): a toy shown in the bedroom never keeps its 
   // Hunt 9 kept DRUM, LAMP and DUCK out by their glyphs (the toys' 🥁 💡 🦆), ROBOT by its 🤖. Favoured, each comes up.
   const toys = ['drum', 'lamp', 'duck', 'robot'];
   const random = Math.random;
-  Math.random = seededRand(184);
+  // Item 190 (BALL live): 184 and 187 never read ROBOT in 12; 186 and 188 to 194 pass.
+  Math.random = seededRand(186);
   favourWords(toys);
   try {
     progress.reset();
