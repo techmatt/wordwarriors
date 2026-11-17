@@ -26,8 +26,11 @@ Never commit 20 MB or more of tree bytes without Matt's prior confirmation (CLAU
   (`archive\scratch\voice-import\`), already cut into `content/voice/clips/`, the scratch
   home's kept hand-made scripts and briefs (`archive\wordwarriors-scratch\`), and promoted
   candidate rounds' sheets, manifests and preview cuts (`archive\art-originals\picks\`:
-  `art_alts_178*` and `art_alts_183*`, item 187). An archived manifest's `current` tiles
-  point at `public/art/` by a relative path, so they no longer resolve there.
+  `art_alts_178*` and `art_alts_183*`, item 187; `art_alts_188*`, item 189). An archived
+  manifest's `current` tiles point at `public/art/` by a relative path, so they no longer
+  resolve there. A round's passed-on candidates that `art:pick` would not delete (Matt took
+  none for that id) go to `archive\art-originals\alts_<round>_passed\` (item 189: BALL's
+  three from 188), so the id's next round numbers from 1.
 - `C:\Code\gdrive-sync\wordwarriors\progress\` (no junction; item 186): **Julia's save file**,
   below.
 

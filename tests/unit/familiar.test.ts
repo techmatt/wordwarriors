@@ -49,8 +49,9 @@ test('the ready pool (item 178, Matt): every odd and stored word is live but BUS
   for (const w of ['ram', 'jet', 'fin', 'top']) assert.ok(ACTIONS.some((a) => a.word === w) && THINGS.some((t) => t.word === w), `${w} is a pad and a picture`);
   // Item 182: X-RAY live (Matt: the one letter-name exception). Item 187: HELMET live on its promoted picture.
   for (const w of ['xray', 'helmet']) assert.ok(LIVE.some((l) => l.word === w), `${w} is live`);
-  // Item 188: UNICORN TEDDY ROCKET BALL held until their pictures are promoted.
-  assert.deepEqual(STORED.map((w) => w.word).sort(), ['ball', 'bush', 'rocket', 'teddy', 'unicorn']);
+  // Item 188 held UNICORN TEDDY ROCKET BALL for their pictures; item 189 promoted three. BALL waits for its redraw.
+  for (const w of ['unicorn', 'teddy', 'rocket']) assert.ok(LIVE.some((l) => l.word === w), `${w} is live`);
+  assert.deepEqual(STORED.map((w) => w.word).sort(), ['ball', 'bush']);
   assert.deepEqual(DROPPED, [], 'no odd word is out of play');
 });
 

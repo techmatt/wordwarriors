@@ -40,7 +40,7 @@
  *   families staying families;
  * - the Stretchy Bridge: 3 early words (levels 1-2, short vowel) per first
  *   sound it lists (COVERAGE.bridgeStarts; N T G V have 2, R J 1), so its far bank can show two that start alike and differ later;
- * - long vowels: E 3, O A I 2 each, U none yet (UNICORN, item 188, once its art is promoted).
+ * - long vowels: E 3, O A I 2 each, U has UNICORN (item 188, live since item 189), no target.
  *
  * tests/unit/coverage.test.ts fails on any row under target; `npm run
  * bank:audit` prints the table. Lower a target only with its reason.
@@ -277,7 +277,8 @@ const ENTRIES: BankEntry[] = [
   // Matt's pick 3) is a white-and-orange robot, not the bedroom's blue wind-up toy.
   T('robot', '🤖', { ...NEW_184, late: true, spelled: [['r', 'r'], ['o', 'long_o'], ['b', 'b'], ['o', 'o'], ['t', 't']] }),
   // Item 188 (Matt, 2026-11-16): the bedroom's other toys, each on a picture card unlike the
-  // bedroom's own toy, held out of play (STORED_WHY) until Matt's pick from `art_alts_188` is promoted.
+  // bedroom's own toy. Item 189 promoted Matt's picks for ROCKET TEDDY UNICORN, so they are live;
+  // BALL stays stored (STORED_WHY) until its redraw (`art_alts_189`) is picked and promoted.
   // ROCKET sounds out like HELMET (two short vowels, its E said as in HELMET); TEDDY's Y is long E,
   // so it takes KEY's long path at level 1 (DD one sound, as APPLE's PP).
   T('rocket', '🚀', { ...NEW_188, spelled: [['r', 'r'], ['o', 'o'], ['ck', 'ck'], ['e', 'e'], ['t', 't']] }),
@@ -377,11 +378,10 @@ export const STORED_WHY: Record<string, string> = {
   // round, a kid's bicycle helmet, so it is live.)
   // Hunt 11, M66: a sound-out would teach the wrong vowel.
   bush: 'its U is the U of PUT, not of SUN: a wrong short-U word in every sound-out',
-  // Item 188: held for art. Bring one back (delete its line) when `art:pick` promotes its picture.
-  rocket: 'no picture picked yet (item 188\'s round, art_alts_188)',
-  teddy: 'no picture picked yet (item 188\'s round, art_alts_188)',
-  ball: 'no picture picked yet (item 188\'s round, art_alts_188)',
-  unicorn: 'no picture picked yet (item 188\'s round, art_alts_188)',
+  // Item 188 held ROCKET TEDDY BALL UNICORN for art; item 189 promoted Matt's picks for three of
+  // them. BALL waits for its redraw (Matt passed on 188's three): delete its line when `art:pick`
+  // promotes its picture.
+  ball: 'no picture picked yet (item 189\'s round, art_alts_189)',
   // (Hunt 9 and 10, M40, stored the bedroom's props DRUM LAMP DUCK BLOCK; item 184, Matt 2026-11-16: a toy
   // shown in the bedroom never keeps its word out of play, docs/rulings.md. They are live again.)
   // (Hunt 13 stored CAPE CAVE FLAME POND SMOKE SWORD on one shared stand-in picture; item 182 promoted their art.)

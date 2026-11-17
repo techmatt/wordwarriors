@@ -113,7 +113,9 @@ test('planRhyme: three rounds where three fit, though one draw would leave no fa
     // Item 178: the words it made live, kept out so the draw stays as tight as it was.
     'ram', 'tap', 'rat', 'mat', 'hen', 'wig', 'fig', 'jig', 'cog', 'jog', 'top', 'sub', 'jug', 'wet', 'gum',
     // Item 184: the bedroom toys it made live, the same way.
-    'duck', 'lamp', 'block'];
+    'duck', 'lamp', 'block',
+    // Item 189: the toy words it made live, the same way.
+    'teddy', 'rocket', 'unicorn'];
   const draw = (seed: number) => planRhyme(new ProgressStore(memory()), { avoid, taken: [] }, seeded(spread(seed)));
   const keep = RHYME.redraws;
   try {
