@@ -55,12 +55,13 @@ test('stored words keep their picture, word line, effect and move lines', () => 
   }
 });
 
-test("bedroom toys (item 184, Matt; reverses hunt 10's M40): every bedroom prop that is a bank word is live", async () => {
+test("bedroom toys (item 184, Matt; reverses hunt 10's M40): every bedroom prop that is a bank word is live, or held only for its picture (item 188)", async () => {
   const { BEDROOMS } = await import('../../content/house/house');
   const { withStems } = await import('../../src/rules/bank');
   const props = withStems(BEDROOMS.flatMap((b) => b.objects.map((o) => o.id))).filter((w) => BANK_BY_WORD[w]);
-  assert.deepEqual([...props].sort(), ['block', 'drum', 'duck', 'lamp', 'robot']);
-  for (const w of props) assert.ok(!STORED_WHY[w] && LIVE.some((l) => l.word === w), `${w}: a bedroom prop, kept out of play`);
+  assert.deepEqual([...props].sort(), ['ball', 'block', 'drum', 'duck', 'lamp', 'robot', 'rocket', 'teddy', 'unicorn']);
+  const heldForArt = (w: string) => /^no picture picked yet/.test(STORED_WHY[w] ?? '');
+  for (const w of props) assert.ok(heldForArt(w) || (!STORED_WHY[w] && LIVE.some((l) => l.word === w)), `${w}: a bedroom prop, kept out of play`);
 });
 
 test('bedroom (hunt 10): no toy stands where a grown-up does (the robot stood behind the ally, a hat on Ellie, every episode)', async () => {

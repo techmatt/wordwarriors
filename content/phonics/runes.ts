@@ -108,9 +108,9 @@ export const RUNES: RuneSound[] = [
   rune('o', 1, '🔦', 'blink', 'Flick the light on and off, it goes...', 'beam', 0xfff59a, { color2: 0xffffff }),
   rune('u', 1, '👆', 'climb', 'Point up, up, up, it goes...', 'shield', 0x9b5de5, { duration: 4 }),
   // Tier 2: quick sounds.
-  rune('t', 2, '🎾', 'bounce', 'Watch the tennis ball go back and forth...', 'bolt', 0xd8ff3d, { count: 4, homing: true }),
+  rune('t', 2, '🎾', 'bounce', 'Watch it bounce back and forth...', 'bolt', 0xd8ff3d, { count: 4, homing: true }),
   rune('p', 2, '🕯️', 'puff', 'Puff out the candle, it goes...', 'wave', 0xffe0a0, { color2: 0xffffff }),
-  rune('b', 2, '⚾', 'bounce', 'Swing hard at the ball, it goes...', 'bolt', 0xffffff, { count: 3, homing: true, power: 3 }),
+  rune('b', 2, '⚾', 'bounce', 'Swing hard, and it goes...', 'bolt', 0xffffff, { count: 3, homing: true, power: 3 }),
   rune('d', 2, '🦕', 'pulse', 'The dinosaur takes a step, it goes...', 'slam', 0x5ad17a, { power: 3 }),
   rune('c', 2, '📷', 'blink', 'The camera clicks, it goes...', 'lightning', 0xe0e8ff),
   rune('k', 2, '🚪', 'shake', 'Knock on the door, it goes...', 'rain', 0xa0703a, { count: 10 }),

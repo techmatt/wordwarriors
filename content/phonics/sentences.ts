@@ -228,6 +228,15 @@ export const LOOKALIKES: string[][] = [
   // Hunt 12: DOT's blue dot beside BIB's blue polka dots; CUB's brown bear beside HUG's brown bear.
   ['dot', 'bib'],
   ['cub', 'hug'],
+  // Item 188's toys: a teddy beside the bear cub and the doll, a rocket beside the jet, a ball beside
+  // the other round things, a unicorn beside the other four-legged animals. (HUG's teddies and BLAST's
+  // rocket are action pictures, never in a picture pool, so they need no pair.)
+  // Pairs, not one group each: a group pairs all its words, and these must not make APPLE and DOT
+  // (or ZEBRA and COW) look-alikes of each other.
+  ['teddy', 'cub'], ['teddy', 'doll'],
+  ['rocket', 'jet'],
+  ['ball', 'apple'], ['ball', 'dot'], ['ball', 'yoyo'], ['ball', 'plum'],
+  ['unicorn', 'zebra'], ['unicorn', 'goat'], ['unicorn', 'cow'],
 ];
 
 /** The words whose pictures look like `word`'s (not including `word`). */

@@ -19,6 +19,9 @@ is a ruling too: do not "fix" it.
   the bedroom itself is unchanged, and the toys carry no soft weight either (item 184's
   call: the prompt allowed one). A sign shown elsewhere still keeps its word out of that
   episode alone (ROBOT's 🤖 in the Robot Workshop or Dada Matt's robot hub story).
+  Item 188 added the other toys, UNICORN, TEDDY, ROCKET and BALL, each on a picture card
+  unlike the bedroom's toy, stored until that card is promoted (ROCKET's 🚀 keeps it out of an
+  episode with the Rocket Pad, TEDDY's 🧸 of one with the Playroom or Ellie's teddy story).
 - **An action word is never a picture she picks** (`role: 'action'`: DRIP, BLAST, the move
   and spell words). Every picture pool draws from `THINGS`; `?sentence=` takes only a
   pictured key. Its picture stays where nothing is picked: the cook-off's dish, the

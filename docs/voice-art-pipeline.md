@@ -171,7 +171,9 @@ backgrounded loop leaves the running `tsx` to finish its candidate: check
   in `content/art/assets.ts`. Item 183 drew `pic_robot` with an uncommitted
   `assets.push({ id: 'pic_robot', kind: 'picture', w: 200, h: 200, … })` and a stand-in
   `public/art/pic_robot.png`, reverted both after `--manifest-only`; the candidates waited in
-  `alts/` until item 184 added ROBOT to the bank and ran `art:pick`.
+  `alts/` until item 184 added ROBOT to the bank and ran `art:pick`. Simpler (item 188): add
+  the word to the bank stored (`STORED_WHY`, "no picture picked yet"); a stored word keeps its
+  `pic_<word>` asset, so `art:placeholders` then `art:alts` work with no stand-in.
 - **`--ref=<image>`** attaches another version of the same character in place of the photo
   (`DESIGN_REF`, `tools/art/generate.ts`): keep face, hair, build; ask for the green
   background like the picture's.

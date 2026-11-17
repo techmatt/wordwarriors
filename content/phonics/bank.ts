@@ -40,7 +40,7 @@
  *   families staying families;
  * - the Stretchy Bridge: 3 early words (levels 1-2, short vowel) per first
  *   sound it lists (COVERAGE.bridgeStarts; N T G V have 2, R J 1), so its far bank can show two that start alike and differ later;
- * - long vowels: E 3, O A I 2 each, U none yet.
+ * - long vowels: E 3, O A I 2 each, U none yet (UNICORN, item 188, once its art is promoted).
  *
  * tests/unit/coverage.test.ts fails on any row under target; `npm run
  * bank:audit` prints the table. Lower a target only with its reason.
@@ -59,8 +59,8 @@ export interface BankEntry {
   role: Role;
   glyph?: string;
   say?: string;
-  /** The item that added it: 037, 040, 054, 056, 058, 059, 121, 126, 157, 178 or 184 (unset for older words). `?words=new` and the grown-ups page's NEW read 121's, 126's, 157's, 178's and 184's. */
-  since?: '037' | '040' | '054' | '056' | '058' | '059' | '121' | '126' | '157' | '178' | '184';
+  /** The item that added it: 037, 040, 054, 056, 058, 059, 121, 126, 157, 178, 184 or 188 (unset for older words). `?words=new` and the grown-ups page's NEW read 121's, 126's, 157's, 178's, 184's and 188's. */
+  since?: '037' | '040' | '054' | '056' | '058' | '059' | '121' | '126' | '157' | '178' | '184' | '188';
   /** It sounds like a spell (ZAP, HEX, POP; not MUD or NAP): a caster's gift leans to it (item 038, `drawGift`). */
   spell?: true;
   /**
@@ -124,6 +124,8 @@ const NEW_157 = { since: '157' as const };
 const NEW_178 = { since: '178' as const };
 /** Item 184 (Matt's ruling): ROBOT, back once a bedroom toy no longer kept its word out. */
 const NEW_184 = { since: '184' as const };
+/** Item 188 (Matt's): the bedroom's other toys, UNICORN TEDDY ROCKET BALL, each on a picture card of its own. */
+const NEW_188 = { since: '188' as const };
 /** Item 058: a familiar picture holding a sound she has not been taught (UNTAUGHT_SOUNDS): level 3, with the digraphs. */
 const UNTAUGHT_058 = { since: '058' as const, late: true as const };
 
@@ -274,6 +276,16 @@ const ENTRIES: BankEntry[] = [
   // `late` like WIZARD: its first O is long, its second short (BOT). Its picture (item 183's round,
   // Matt's pick 3) is a white-and-orange robot, not the bedroom's blue wind-up toy.
   T('robot', '🤖', { ...NEW_184, late: true, spelled: [['r', 'r'], ['o', 'long_o'], ['b', 'b'], ['o', 'o'], ['t', 't']] }),
+  // Item 188 (Matt, 2026-11-16): the bedroom's other toys, each on a picture card unlike the
+  // bedroom's own toy, held out of play (STORED_WHY) until Matt's pick from `art_alts_188` is promoted.
+  // ROCKET sounds out like HELMET (two short vowels, its E said as in HELMET); TEDDY's Y is long E,
+  // so it takes KEY's long path at level 1 (DD one sound, as APPLE's PP).
+  T('rocket', '🚀', { ...NEW_188, spelled: [['r', 'r'], ['o', 'o'], ['ck', 'ck'], ['e', 'e'], ['t', 't']] }),
+  T('teddy', '🧸', { ...NEW_188, spelled: [['t', 't'], ['e', 'e'], ['dd', 'd'], ['y', 'long_e']] }),
+  // Untaught sounds, `late`: BALL's ALL is one unit (`all`, "awl"); UNICORN's U is long (you), its
+  // I short, its OR SWORD's `or`.
+  T('ball', '⚽', { ...NEW_188, late: true, spelled: [['b', 'b'], ['all', 'all']] }),
+  T('unicorn', '🦄', { ...NEW_188, late: true, spelled: [['u', 'long_u'], ['n', 'n'], ['i', 'i'], ['c', 'c'], ['or', 'or'], ['n', 'n']] }),
 ];
 
 /** The digraphs that are one sound unit (item 056: NG, and QU, whose sound is Q's "kw"). */
@@ -365,6 +377,11 @@ export const STORED_WHY: Record<string, string> = {
   // round, a kid's bicycle helmet, so it is live.)
   // Hunt 11, M66: a sound-out would teach the wrong vowel.
   bush: 'its U is the U of PUT, not of SUN: a wrong short-U word in every sound-out',
+  // Item 188: held for art. Bring one back (delete its line) when `art:pick` promotes its picture.
+  rocket: 'no picture picked yet (item 188\'s round, art_alts_188)',
+  teddy: 'no picture picked yet (item 188\'s round, art_alts_188)',
+  ball: 'no picture picked yet (item 188\'s round, art_alts_188)',
+  unicorn: 'no picture picked yet (item 188\'s round, art_alts_188)',
   // (Hunt 9 and 10, M40, stored the bedroom's props DRUM LAMP DUCK BLOCK; item 184, Matt 2026-11-16: a toy
   // shown in the bedroom never keeps its word out of play, docs/rulings.md. They are live again.)
   // (Hunt 13 stored CAPE CAVE FLAME POND SMOKE SWORD on one shared stand-in picture; item 182 promoted their art.)

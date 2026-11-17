@@ -61,6 +61,7 @@ const NO_GREEN_PICTURES = [
   'mom', 'dad', 'cow',
   'pup', 'cub', 'cot', 'kid',
   'frost', 'sand', 'fang', 'helmet', 'cape', 'flame', 'smoke', 'sword', 'shield', 'bow', 'crown', 'wizard', 'robot',
+  'teddy', 'rocket', 'ball', 'unicorn',
 ].map((w) => `pic_${w}`);
 // Julia's outfits beside the allies, Seraphina's pink dragon, and Ozymandias's
 // penguins, snow bot, fish bucket and cards: no green of their own.
@@ -166,6 +167,10 @@ export const PICK_NOTES: Record<string, string> = {
   pic_crown: "New word CROWN (item 178, untaught: COW's OW). `current` is candidate 2, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say king or princess.",
   pic_castle: "New word CASTLE (item 178, untaught: a silent T, the L carrying \"ul\"). `current` is candidate 3, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say house or palace.",
   pic_wizard: "New word WIZARD (item 178, in ROBOT's place while the bedroom's toys were kept out of play, until item 184; untaught: AR says ER). `current` is candidate 3, promoted by item 182 (Matt's pick in art_alts_178). `0` is the painted placeholder. Watch: she may say witch or Santa.",
+  pic_teddy: "New word TEDDY (item 188, held for art: stored until promoted). Candidates in art_alts_188: a golden teddy sitting face-on with a red bow, unlike the bedroom's brown walking bear (obj_teddy). `0` is the painted placeholder. Watch: she may say bear; not HUG's two hugging teddies or CUB's bear cub.",
+  pic_rocket: "New word ROCKET (item 188, held for art: stored until promoted). Candidates in art_alts_188: a silver-and-purple rocket standing still, no flames, unlike the bedroom's cream-red-blue rocket on its pad (obj_rocket) and BLAST's launch. `0` is the painted placeholder. Watch: she may say spaceship.",
+  pic_ball: "New word BALL (item 188, held for art: stored until promoted; untaught ALL). Candidates in art_alts_188: a red bouncy ball with a yellow star, unlike the bedroom's rainbow beach ball (obj_ball). `0` is the painted placeholder. Watch: it should not read as an apple.",
+  pic_unicorn: "New word UNICORN (item 188, held for art: stored until promoted; long U, untaught OR). Candidates in art_alts_188: a lilac cartoon unicorn prancing, unlike the bedroom's white rainbow plush (obj_unicorn). `0` is the painted placeholder. Watch: she may say horse or pony.",
   pic_robot: "New word ROBOT (item 184, Matt: a toy shown in the bedroom never keeps its word out of play; long O, then BOT's short O). `current` is candidate 3, Matt's pick in art_alts_183 (brief 183_robot_friendly, now its PICTURES prompt): a white-and-orange robot waving, not the bedroom's blue wind-up toy (obj_robot). Watch: she may say toy.",
   // Item 167 promoted item 166's round (Hunt 12's M80) onto a minion of Evil Elsa's own, so the Snow Buddy keeps its art.
   minion_snow_golem: "The Snow Buddy, the minion good Elsa's Snow Buddies summon: it smiles. Evil Elsa's Grumpy Snowmen were this minion too until item 167 gave them their own, `minion_snow_grump` (M80); a grumpy look belongs there, not here.",
@@ -699,6 +704,11 @@ const PICTURES: Record<string, string> = {
   wizard: "a wizard: one kind old cartoon wizard standing, full body, a very long white beard, a tall pointy blue hat with yellow stars and moons, a long blue robe with stars, holding a wooden staff with a glowing crystal on top, a few magic sparkles round it; clearly a wizard, not a witch, not a king, not Santa",
   // Item 184: Matt's pick 3 from item 183's round (brief 183_robot_friendly).
   robot: 'a robot: one friendly toy robot standing facing the viewer and waving one hand: a rounded white and bright orange body, a round dome head with a little antenna and a glowing light on top, a dark screen face with two big round happy eyes and a smile, chunky arms with claw hands, little wheels or chunky boots; no wind-up key, not blue, not boxy (the bedroom already shows a blue boxy wind-up robot); plainly a robot',
+  // Item 188: the bedroom's other toys, each drawn unlike the bedroom's own toy (obj_<id>).
+  teddy: 'a teddy bear: one soft golden-honey teddy bear sitting facing the viewer with its legs out in front, round ears, a cream muzzle and tummy, a big red bow at its neck and a little red heart patch on one foot, a happy smile; plainly a toy teddy with stitching, not a real bear, not brown, not walking, only one bear',
+  rocket: 'a rocket: one toy rocket standing upright on the ground, pointed nose, a shiny silver body with purple stripes, three purple fins, one round blue porthole window, a few little yellow stars around it; no flames, no smoke, no launch pad, not red and not blue-and-cream; plainly a rocket, not a plane',
+  ball: 'a ball: one shiny red rubber bouncy ball with a big yellow star on it, bouncing, a few curved motion lines under it; round and glossy, no stem, no leaf; not a beach ball, not striped, not an apple, not a football',
+  unicorn: 'a unicorn: one cartoon unicorn standing side-on and prancing with one front hoof raised, a soft lilac-purple coat, a shiny golden spiral horn, a long flowing blue-and-violet mane and tail, little golden hooves, big friendly eyes; a real unicorn, not a plush toy, no rainbow, not white, no wings',
 };
 
 const HAND: Record<string, string> = {

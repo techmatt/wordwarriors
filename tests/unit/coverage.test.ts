@@ -72,6 +72,12 @@ test('untaught sounds (item 058): a word holding one is a late long-path word; X
   // Item 184: ROBOT's first O long, its second short, so the long path.
   assert.deepEqual(t('robot'), [3, null, 'r long_o b o t']);
   assert.deepEqual(t('helmet'), [2, 'e', 'h e l m e t']);
+  // Item 188: BALL's ALL and UNICORN's OR untaught (late); ROCKET sounds out like HELMET (CK makes it 3);
+  // TEDDY's Y is long E, KEY's level-1 long path.
+  assert.deepEqual(t('ball'), [3, null, 'b all']);
+  assert.deepEqual(t('unicorn'), [3, null, 'long_u n i c or n']);
+  assert.deepEqual(t('rocket'), [3, 'o', 'r o ck e t']);
+  assert.deepEqual(t('teddy'), [1, null, 't e d long_e']);
   for (const s of UNTAUGHT_SOUNDS) assert.ok(SOUND_BY_UNIT[s.letter] && LONG_VOWEL_SOUNDS.includes(s), `${s.letter} has its own line`);
   const row = (tag: string) => coverageRows().find((r) => r.tag === tag)!.words;
   assert.ok(row('first x').includes('xray'), 'X-RAY counts for X, live (item 182: the one letter-name exception)');

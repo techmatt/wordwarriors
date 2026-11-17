@@ -228,6 +228,11 @@ const THING_EFFECTS: WordEffect[] = [
   { word: 'wizard', look: 'a kind old wizard who waves his staff: a shower of magic stars on the villain', ability: use('wizard', 'rain', 0x9b5de5, { glyph: '⭐', count: 10 }) },
   // Item 184.
   { word: 'robot', look: 'a friendly robot that beeps and fires a grid of laser beams across the arena', ability: use('robot', 'grid', 0xff8c1a) },
+  // Item 188.
+  { word: 'teddy', look: 'a team of brave teddy bears that march in and hug the villain', ability: use('teddy', 'summon', 0xc8884a, { minion: 'teddy', count: 3 }) },
+  { word: 'rocket', look: 'toy rockets that whoosh across the arena and pop on the villain, boom', ability: use('rocket', 'bolt', 0xb48cff, { ...pic('rocket'), count: 3, homing: true, power: 3 }) },
+  { word: 'ball', look: 'bouncy balls that boing all over the villain', ability: use('ball', 'bolt', 0xe63946, { ...pic('ball'), count: 6, homing: true }) },
+  { word: 'unicorn', look: 'a sparkly unicorn that gallops through the villain on a rainbow trail', ability: use('unicorn', 'dash', 0xc8a0ff, { power: 3, color2: 0xffd23f }) },
 ];
 
 /**

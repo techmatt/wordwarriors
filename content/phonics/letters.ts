@@ -144,6 +144,8 @@ export const UNTAUGHT_SOUNDS: LetterSound[] = [
   { letter: 'or', say: 'Or', cls: 'vowel', example: 'sword', note: 'the OR of SWORD and FORK, one sound', record: 'or, as in "for", one sound, no R tacked on after' },
   // Item 178: WIZARD's AR, said as the lazy ER at the end of a word.
   { letter: 'er', say: 'Er', cls: 'vowel', example: 'wizard', note: 'the lazy ER of WIZARD (spelled AR there) and the end of TIGER', record: 'er, short and soft, as at the end of "tiger"' },
+  // Item 188: BALL's ALL, one unit (the -ALL of TALL and WALL).
+  { letter: 'all', say: 'All', cls: 'vowel', example: 'ball', note: 'the ALL of BALL, TALL and WALL, one sound', record: 'awl, as in "ball" without the B' },
 ];
 
 /**
@@ -163,7 +165,7 @@ export const LONG_VOWEL_SOUNDS: LetterSound[] = [
   // Item 056: the other three, for the magic-E words (KITE, CAKE) and later ones.
   { letter: 'long_a', say: 'Ay', cls: 'vowel', example: 'cake', note: 'long a, the vowel of CAKE (A and a silent E)' },
   { letter: 'long_i', say: 'Eye', cls: 'vowel', example: 'kite', note: 'long i, the vowel of KITE (I and a silent E)' },
-  { letter: 'long_u', say: 'You', cls: 'vowel', example: 'cube', note: 'long u, the vowel of CUBE; no familiar bank word has it yet' },
+  { letter: 'long_u', say: 'You', cls: 'vowel', example: 'unicorn', note: 'long u, the first sound of UNICORN (item 188) and the vowel of CUBE' },
   ...UNTAUGHT_SOUNDS,
 ];
 

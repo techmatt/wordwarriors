@@ -181,7 +181,8 @@ the bank until that line is reworded (the unit tests name it).
 A **stored** word is out of every pool (`THINGS`, `ACTIONS`, `LIVE`), so nothing draws it at
 any difficulty and a saved bag drops it. `STORED_WHY` in `content/phonics/bank.ts` lists each
 with its reason; the grown-ups page lists them on page 3. Today that is BUSH (a wrong short
-U) alone; HELMET, stored while it had no picture, is live since item 187.
+U) and item 188's UNICORN, TEDDY, ROCKET and BALL, held until their pictures are picked
+(`art_alts_188`); HELMET, stored while it had no picture, is live since item 187.
 Every other word, `odd` ones included, is live (Matt). A stored word keeps its entry,
 picture, `word_<x>` line, effect and move lines (the composer writes them from `ALL_ACTIONS`
 and `ALL_FAMILIES`), so storing or restoring one changes nothing in `lines.json`. **To bring

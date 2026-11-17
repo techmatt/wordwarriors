@@ -24,7 +24,8 @@ sound (KEY: `[['k', 'k'], ['ey', 'long_e']]`):
 - **Untaught sound** in a familiar picture (ZOO, ZEBRA, X-RAY, COW; Matt: a familiar
   picture may hold one): a key from `UNTAUGHT_SOUNDS`, marked `late`; no vowel tag,
   family or bridge. A new untaught sound goes in that list, which gives it its
-  `letter_<key>_sound` line.
+  `letter_<key>_sound` line. A unit may be longer than two letters: BALL is B ALL (`all`,
+  item 188), the -ALL chunk as one sound.
 - A `spelled` word with one short vowel and nothing long or silent (THUMB) is tagged
   like any word.
 
