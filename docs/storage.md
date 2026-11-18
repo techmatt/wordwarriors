@@ -59,7 +59,11 @@ The main checkout's **dev server** (`npm run dev`, conductor's `game` target) no
 empty browser restores the file (a new port, a new browser, cleared site data); two stamped
 copies, the later write wins (so the grown-ups page's erase sticks); a copy from before item 186
 (no stamp) loses to one with more episodes. A newer browser copy goes to the file. A save older
-than the file's is refused (409), so a stale tab on an old port cannot write over newer play.
+than the file's is refused (409), and so (item 194) is one whose page missed a later save: each
+save names the file's stamp its page's copy builds on (`X-WW-Base`: the file at boot, then each
+save taken, or another tab's on the same origin), so a stale tab on an old port cannot write over
+newer play however new its own stamp. The refused tab switches to the file at once and plays on
+from it, its own copy kept aside like a boot's (Matt, 2026-11-17, `docs/rulings.md`).
 
 **Where it is on:** only the main checkout's dev server (`.git` a folder). A worktree's dev server,
 `vite build` / `preview` and every server a test or tool starts (`tests/servers.ts` sets

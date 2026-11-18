@@ -53,6 +53,23 @@ test('a drawn cast is remembered once: its villain, ally, the dads it meets and 
   assert.equal(JSON.stringify(progress.snapshot().recent), before);
 });
 
+test('item 194: a story fight forcing its villain draws the ally round him, never the same person in both roles', () => {
+  progress.reset();
+  setCastOptions({ fixed: false, rand: seededRand(5), overrides: { ally: 'smaug' }, fight: 'smaug_story' });
+  assert.equal(episode.villain, 'smaug');
+  assert.notEqual(episode.ally && personOf(episode.ally), 'smaug');
+  setCastOptions({ overrides: {}, fight: null });
+  chooseAlly('smaug');
+  assert.equal(episode.ally, 'smaug', 'her card, with no story fight forced');
+  setCastOptions({ fight: 'smaug_story' });
+  chooseAlly('smaug');
+  assert.equal(episode.villain, 'smaug');
+  assert.notEqual(episode.ally && personOf(episode.ally), 'smaug');
+  setCastOptions({ overrides: {}, fight: null, fixed: !EPISODE_DEFAULTS.randomCast });
+  resetEpisode();
+  Object.assign(episode, { choice: false });
+});
+
 test('an overridden ally is not her rotation', () => {
   progress.reset();
   setCastOptions({ fixed: false, rand: seededRand(5), overrides: { ally: 'ellie' } });
@@ -280,7 +297,8 @@ test('games rotate strictly (item 137): no side room plays a game either side ro
 test('frames (hunt 9, M40 (b), M41 (b)): a drawn frame holds no pad, gift or warm-up word, RUN comes up on a pad, and no fetch frame asks for MOM or DAD', () => {
   const random = Math.random;
   // Item 178: seed 131, not 130: the live pool's 20-odd action words back in the move bag left RUN off seed 130's 60.
-  Math.random = seededRand(131);
+  // Item 194: 132, as Smaug and Jormungandr joining the allies and M86's places leaving the fetch keys left RUN off 131's.
+  Math.random = seededRand(132);
   try {
     progress.reset();
     setCastOptions({ fixed: false, rand: Math.random, overrides: {} });

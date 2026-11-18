@@ -121,8 +121,8 @@ test("a frame's own ruled-out key words (hunt 10, M49): never SMAUG RAN AWAY FRO
   assert.ok(drawn.other > 0, 'the test bites: HIDES FROM THE draws ZOO from this bag');
 });
 
-test('NOT_FETCHED (hunt 10, M53): ZOO and HAND are never a fetch key word, but a counter frame still draws them; every NO_BAG_COPY word is in NOT_FETCHED (M45)', () => {
-  assert.deepEqual([...NOT_FETCHED].sort(), ['dad', 'hand', 'mom', 'zoo']);
+test('NOT_FETCHED (hunt 10, M53; hunt 13, M86): ZOO, HAND and the places and stuff are never a fetch key word, but a counter frame still draws them; every NO_BAG_COPY word is in NOT_FETCHED (M45)', () => {
+  assert.deepEqual([...NOT_FETCHED].sort(), ['castle', 'cave', 'dad', 'frost', 'hand', 'hut', 'igloo', 'mom', 'pond', 'sand', 'shed', 'smoke', 'tent', 'zoo']);
   assert.deepEqual([...NO_BAG_COPY].sort(), ['dad', 'mom']);
   for (const w of NO_BAG_COPY) assert.ok(NOT_FETCHED.has(w), w);
   const g = (id: string) => MINIGAME_BY_ID[`sentence:${id}`]!;

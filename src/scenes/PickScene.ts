@@ -35,9 +35,15 @@ import type { SceneKey } from './keys';
 const CARD_W = 100;
 const CARD_H = 125;
 
-/** Choice mode's cards (item 174): two rows at most (12 allies), the feet of each row, its frame round the picture. */
-const CHOICE = { w: 150, h: 190, frame: 10, rows: [305, 545], gap: 196 } as const;
+/** Choice mode's cards (item 174): two rows at most (14 allies since item 194), the feet of each row, its frame round the picture. */
+const CHOICE = { w: 150, h: 190, frame: 10, rows: [305, 545], gap: 196, edge: 12 } as const;
 const FRAME_LINE = 6;
+
+/** The step between choice cards for `perRow` on a row: the full gap, closed up so the row keeps `edge` from both sides of the screen. */
+function choiceGap(perRow: number): number {
+  const card = CHOICE.w + CHOICE.frame * 2 + FRAME_LINE;
+  return perRow < 2 ? CHOICE.gap : Math.min(CHOICE.gap, Math.floor((GAME_WIDTH - 2 * CHOICE.edge - card) / (perRow - 1)));
+}
 
 export class PickScene extends RoomScene {
   private what: 'hero' | 'ally' | 'villain' = 'hero';
@@ -90,7 +96,9 @@ export class PickScene extends RoomScene {
     const evil = this.what === 'villain';
     const ids = evil ? choiceVillains(episode.hero, episode.ally) : choiceAllies(episode.hero);
     const perRow = Math.ceil(ids.length / 2);
-    const { w, h, frame, rows, gap } = CHOICE;
+    const { w, h, frame, rows } = CHOICE;
+    // Item 194: fourteen allies put seven on a row, wider than the screen at the full gap.
+    const gap = choiceGap(perRow);
     ids.forEach((id, i) => {
       const row = i < perRow ? 0 : 1;
       const n = row === 0 ? perRow : ids.length - perRow;

@@ -339,12 +339,16 @@ export class ProgressStore {
     const fresh = this.parse(raw);
     if (!fresh) return false;
     this.erases++;
-    this.data = fresh;
-    this.session = empty();
-    this.held = null;
+    // During a debug game (a stale tab switching to the file, item 194) it is what `release()` comes back to,
+    // the game under test keeping its sandbox, as `reload` does.
+    if (this.held) this.held = { data: fresh, session: empty() };
+    else {
+      this.data = fresh;
+      this.session = empty();
+    }
     this.readOnly = false;
     try {
-      this.storage?.setItem(STORE_KEY, JSON.stringify(this.data));
+      this.storage?.setItem(STORE_KEY, JSON.stringify(this.held?.data ?? this.data));
     } catch {
       // Blocked storage: the game still plays from the replaced data.
     }

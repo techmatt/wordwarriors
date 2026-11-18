@@ -57,6 +57,19 @@ const COMBOS: ComboSpec[] = [
   },
   // Julia rides on Bluerilla's shoulders and they land in one giant happy stomp.
   { pair: ['julia', 'rilla'], ability: ab('shoulder_ride_stomp', 'Shoulder Ride Stomp', 'slam', 16, 0x2a4aa8, 3, { shout: true, color2: 0xffd23f }) },
+  // Item 194: good Smaug joins the allies. Julia rides on his back in a swoop
+  // of rainbow fire, and a shower of his gold coins and her stars follows.
+  {
+    pair: ['julia', 'smaug'],
+    ability: ab('dragon_ride', 'Dragon Ride', 'dash', 16, 0xffd23f, 3, { shout: true, color2: 0xd62828 }),
+    second: ab('dragon_ride_gold', 'Dragon Ride', 'rain', 16, 0xffcc33, 3, { count: 24, glyph: '🟡', color2: 0xff5ab4 }),
+  },
+  // Item 194 (amendment): good Jormungandr too. Julia surfs a giant wave on his back, and her stars rain down after it.
+  {
+    pair: ['julia', 'jormungandr'],
+    ability: ab('serpent_surf', 'Serpent Surf', 'wave', 16, 0x7ad9ff, 3, { color2: 0x2aa66a }),
+    second: ab('serpent_surf_stars', 'Serpent Surf', 'rain', 16, 0xffd23f, 3, { count: 24, glyph: '⭐', color2: 0x7ad9ff }),
+  },
 ];
 
 /** Any two heroes without a written combo still team up with this. */

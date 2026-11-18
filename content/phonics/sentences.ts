@@ -50,8 +50,10 @@ export const NO_ARTICLE: ReadonlySet<string> = new Set(['cheese', 'milk', 'jam',
  * OF THE DAD is a joke), and so do the games with words of their own.
  * ZOO and HAND (hunt 10, M53 (a)): ELSA NEEDS A ZOO (a place, then flying into the bag as an item) and
  * SERAPHINA NEEDS A HAND (the idiom). They stay in the counter frames and the other games.
+ * Places and stuff (hunt 13, M86 (a), Matt 2026-11-18): GO GET THE POND, WE CAN USE THE SMOKE, as ZOO
+ * was, HUT, TENT and IGLOO included (Matt, item 194).
  */
-export const NOT_FETCHED: ReadonlySet<string> = new Set(['mom', 'dad', 'zoo', 'hand']);
+export const NOT_FETCHED: ReadonlySet<string> = new Set(['mom', 'dad', 'zoo', 'hand', 'pond', 'cave', 'castle', 'shed', 'smoke', 'sand', 'frost', 'hut', 'tent', 'igloo']);
 
 /**
  * Bank things read as any word but never a battle item (hunt 10, M45 (b)): no copy goes to her bag

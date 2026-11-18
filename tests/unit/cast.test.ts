@@ -85,8 +85,8 @@ test('cast: the active cast (item 028) draws only its allies and villains, every
     pairs.add(`${c.ally}+${c.villain}`);
   }
   const allyForms = ACTIVE_CAST.allies.flatMap((p) => formsOf(p).map((f) => f.id));
-  assert.equal(allyForms.length, 17, 'four Dada Matts, three Dada Jasons, Scar, Ellie, Seraphina, Elsa, Anna, Jasmine, Ozymandias, Moriarty, Bluerilla and Meryl');
-  // Item 115: Elsa, Ozymandias and Moriarty are both, and nobody is her own villain.
+  assert.equal(allyForms.length, 19, 'four Dada Matts, three Dada Jasons, Scar, Ellie, Seraphina, Elsa, Anna, Jasmine, Ozymandias, Moriarty, Bluerilla, Meryl, Smaug and Jormungandr');
+  // Item 115: Elsa, Ozymandias and Moriarty are both (item 194: Smaug and Jormungandr too), and nobody is her own villain.
   for (const a of allyForms) for (const v of ACTIVE_CAST.villains) if (personOf(a) !== v) assert.ok(pairs.has(`${a}+${v}`), `${a} + ${v}`);
   for (const p of pairs) {
     const [a, v] = p.split('+');
@@ -250,7 +250,8 @@ test('story: the quest line and hub scene are drawn with the cast, the same for 
   assert.equal(hubStory('dada_matt_cyber', 'dada_matt', 2).ids.circle, 'hub_dada_matt_cyber_2_circle');
   assert.equal(hubStory('nobody', 'dada_jason', 1).ids.done, 'nar_dada_jason_hub_any_1_done');
   // A variant drawn for one helper still names a line for another (wrapped).
-  assert.equal(hubStory('jormungandr', 'jormungandr', 3).ids.done, 'hub_jormungandr_1_done');
+  // Item 194: Jormungandr has three now, so his fourth wraps.
+  assert.equal(hubStory('jormungandr', 'jormungandr', 4).ids.done, 'hub_jormungandr_1_done');
 });
 
 test('gift spots (item 138): a spell keeps the magic circle, a dish or a gadget gets its own spot, and the line names it', () => {

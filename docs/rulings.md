@@ -48,8 +48,13 @@ is a ruling too: do not "fix" it.
   sign is no letter shape and no bank word's picture (M84: the bakery is 🧁).
 - **Sentence frames** (M23, M41, M53, M49): a number word is a key only in a frame marked
   `numbers`, never after A nor in a counter frame. MOM, DAD, ZOO and HAND are never fetch
-  keys (`NOT_FETCHED`); counter frames keep MOM and DAD as a joke. RAN AWAY FROM THE never
+  keys (`NOT_FETCHED`); counter frames keep MOM and DAD as a joke. Nor are places and stuff
+  (M86, Matt 2026-11-18): POND, CAVE, CASTLE, SHED, SMOKE, SAND, FROST, HUT, TENT, IGLOO,
+  as ZOO. RAN AWAY FROM THE never
   draws ZOO. RUN and CAN are readable (`framesClear`, M40).
+- **Kept** (hunt 13, Matt 2026-11-18): a villain's decal may picture a bank word (Smaug's
+  flame, the 🛡️ shield, ❄️, 🏹, the egg, 🚩) (M88); Evil Elsa's FROST CLASH! banner may
+  come before FROST as the attic's counter (M89).
 - **MOM and DAD never go in her bag** (M45, `NO_BAG_COPY`): read and recorded, never
   fired; the warm-up never draws them.
 - **Said counts as said** (M57, M11): the warm-up word less its first or last sound counts
@@ -143,13 +148,23 @@ is a ruling too: do not "fix" it.
   is a medal, Seraphina's a dragon scale, the builder's castle stays; rune K kept; Evil
   Elsa's snowmen are `minion_snow_grump`; MAT, PAN and ROCK (M9), the story props (M33),
   COT and DOT (M79) are Matt's picks. Ellie's sword word stays ZIP; Seraphina's pink
-  dragon stays a Dragon Call summon (`dragon_call`). "Bough to your queen!" stays.
+  dragon stays a Dragon Call summon (`dragon_call`). "Bough to your queen!" stays (M87,
+  kept again in hunt 13: captioned BOW, said "bough").
+- **Good Smaug and good Jormungandr are allies** (Matt, item 194): in the draw and choice
+  mode's cards as Elsa, Ozymandias and Moriarty are, never her ally and villain at once;
+  drawn as their reformed selves (`char_<id>_good`, `face_<id>`).
 
 ## Grown-ups and dev
 
 - A `?scene=victory` jump records the victory rotation and counts an episode (M15, kept).
 - Page 2's grid lists the action words grey until met; page 1's first-sound table has one
   VOWEL row (M69). Two tabs: a `storage` listener re-reads the store (M72).
+- **A stale tab switches to the save file** (Matt, 2026-11-17, from item 193's audit): when
+  the dev server refuses a tab's save as older than the file (409), the tab takes the file
+  at once (`src/state/mirror.ts`) and plays on from her real progress, its own copy kept
+  aside as at boot, never playing on into its own localStorage.
+- **Blue at the title opens choice mode** (M90, kept): a mashed pad lands in the picks; red
+  takes her back.
 - An unplugged controller is Matt's check for a drifting stick (M20); a stalled page is
   watched, not chased unless it recurs outside the checker (M44): `docs/tools.md`, *The
   bug-hunt checker*.

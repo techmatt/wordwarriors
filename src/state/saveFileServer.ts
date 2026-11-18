@@ -5,8 +5,8 @@
  * that any origin restores from (src/state/mirror.ts). README, *Operational facts*; docs/storage.md.
  *
  * - `GET /__ww/progress`: the file, or 404.
- * - `PUT /__ww/progress`: the page's latest blob. Refused (409) when the file was saved later than it (a
- *   stale tab on another origin). Before the day's first write, the file as it stood is copied to
+ * - `PUT /__ww/progress`: the page's latest blob. Refused (409) when the file was saved later than it, or
+ *   (item 194) later than the save its copy builds on (`X-WW-Base`): a stale tab on another origin. Before the day's first write, the file as it stood is copied to
  *   `progress-YYYY-MM-DD.json` beside it.
  * - `POST /__ww/progress/aside?origin=…`: a browser's own copy the file is about to replace, kept as
  *   `aside-<origin>-<stamp>.json`, so no copy anywhere is ever dropped unseen.
@@ -25,6 +25,8 @@ import type { Plugin } from 'vite';
 
 export const SAVE_URL = '/__ww/progress';
 export const SAVE_FILE = 'progress.json';
+/** A PUT's header naming the file's stamp the page's copy builds on (`SaveFolder.write`'s `base`), lower case as Node reads it. */
+export const BASE_HEADER = 'x-ww-base';
 
 /** Local date as YYYY-MM-DD. */
 export function day(ms: number): string {
@@ -60,13 +62,17 @@ export class SaveFolder {
     }
   }
 
-  /** Write `raw` unless the file holds a later save; the day's backup first. */
-  write(raw: string): 'written' | 'stale' | 'bad' {
+  /**
+   * Write `raw` unless the file holds a later save; the day's backup first. `base` (item 194) is the file's
+   * stamp the page's copy builds on: a file saved since then holds play that page never saw (another tab's), so
+   * the page is refused even though its own stamp is newer. Without one, the save's own stamp is compared.
+   */
+  write(raw: string, base?: number): 'written' | 'stale' | 'bad' {
     const at = savedAt(raw);
     if (at < 0) return 'bad';
     mkdirSync(this.dir, { recursive: true });
     const was = this.read();
-    if (was !== null && savedAt(was) > at) return 'stale';
+    if (was !== null && savedAt(was) > Math.min(at, base ?? at)) return 'stale';
     const backup = join(this.dir, `progress-${day(this.now())}.json`);
     if (was !== null && !existsSync(backup)) copyFileSync(this.file, backup);
     const tmp = `${this.file}.tmp`;
@@ -149,7 +155,9 @@ export function progressMirror(): Plugin {
             return raw === null ? send(res, 404) : send(res, 200, raw);
           }
           if (path === SAVE_URL && req.method === 'PUT') {
-            const r = folder.write(await body(req));
+            const header = req.headers[BASE_HEADER];
+            const base = typeof header === 'string' && /^\d+$/.test(header) ? Number(header) : undefined;
+            const r = folder.write(await body(req), base);
             return send(res, r === 'written' ? 204 : r === 'stale' ? 409 : 400);
           }
           if (path === `${SAVE_URL}/aside` && req.method === 'POST') {

@@ -4,6 +4,11 @@
  * browser's copy (which is kept beside the file first), a newer browser copy goes to the file. After that
  * every write the store makes is sent on, one at a time, the latest winning. Nothing here can stop the game
  * booting: a failed or slow fetch boots from what the browser has.
+ *
+ * A stale tab (Matt, 2026-11-17, item 194: docs/rulings.md): every save names the file's stamp this tab's copy
+ * builds on (`base`), so the server refuses it (409) once another tab has saved since, however new its own
+ * stamp. Refused, the tab switches to the file at once and plays on from it; its own copy is kept aside, as
+ * at boot.
  */
 
 import { progress } from './progress';
@@ -11,6 +16,8 @@ import { STORE_KEY } from './ProgressStore';
 import { chooseProgress } from './saveFile';
 
 const URL = '/__ww/progress';
+/** `BASE_HEADER` in src/state/saveFileServer.ts (Node only, so not imported here). */
+const BASE_HEADER = 'X-WW-Base';
 /** How long boot waits for the dev server's answer. */
 const BOOT_WAIT_MS = 1500;
 
@@ -22,6 +29,20 @@ declare global {
 
 let sending = false;
 let pending: string | null = null;
+/**
+ * The file's stamp this tab's copy builds on: the file at boot, then each save it took, or another tab's on this
+ * origin. Null while unknown (boot never heard the server): saves then go without one, judged by their own stamp.
+ */
+let base: number | null = null;
+
+function stampOf(raw: string | null): number {
+  if (!raw) return 0;
+  try {
+    return (JSON.parse(raw) as { savedAt?: number }).savedAt ?? 0;
+  } catch {
+    return 0;
+  }
+}
 
 function send(raw: string): void {
   pending = raw;
@@ -29,12 +50,47 @@ function send(raw: string): void {
   sending = true;
   const next = pending;
   pending = null;
-  void fetch(URL, { method: 'PUT', body: next, headers: { 'Content-Type': 'application/json' }, keepalive: next.length < 60_000 })
+  const headers: Record<string, string> = { 'Content-Type': 'application/json', ...(base === null ? {} : { [BASE_HEADER]: String(base) }) };
+  void fetch(URL, { method: 'PUT', body: next, headers, keepalive: next.length < 60_000 })
+    .then(async (res) => {
+      if (res.ok && base !== null) base = Math.max(base, stampOf(next));
+      // Refused: another tab has saved since this one's copy was taken. Saves made meanwhile wait in `pending`
+      // (`sending` holds them) and go with the switch: they built on the stale copy, which is kept aside.
+      if (res.status === 409 && (await switchToFile())) pending = null;
+    })
     .catch(() => undefined)
     .finally(() => {
       sending = false;
       if (pending !== null) send(pending);
     });
+}
+
+/** Keep this browser's copy beside the file and in this browser (nothing dropped unseen), then play from `file`. */
+async function adoptFile(file: string, local: string | null): Promise<boolean> {
+  // In one step with reading `local` (no await between): a save made meanwhile would be in neither copy.
+  try {
+    if (local) localStorage.setItem(`${STORE_KEY}.replaced.${Date.now()}`, local);
+  } catch {
+    // Storage full: the copy beside the file is the one kept.
+  }
+  const took = progress.replace(file);
+  if (took) base = stampOf(file);
+  if (local) await timed(`${URL}/aside?origin=${encodeURIComponent(location.host)}`, { method: 'POST', body: local }).catch(() => undefined);
+  return took;
+}
+
+/** A save refused as stale: fetch the file and switch to it, this tab's latest copy kept aside. False (the tab as it was) when the file cannot be had. */
+async function switchToFile(): Promise<boolean> {
+  const res = await timed(URL);
+  const file = res.ok ? await res.text() : null;
+  if (!file) return false;
+  let local: string | null = null;
+  try {
+    local = localStorage.getItem(STORE_KEY);
+  } catch {
+    // Blocked storage: the latest save this tab tried is the copy kept.
+  }
+  return adoptFile(file, local ?? pending);
 }
 
 async function timed(input: string, init?: RequestInit): Promise<Response> {
@@ -50,6 +106,14 @@ async function timed(input: string, init?: RequestInit): Promise<Response> {
 /** Bring the browser's copy and the save file level, then mirror every write. Resolves at once when there is no file. */
 export async function syncSaveFile(): Promise<void> {
   if (!import.meta.env.DEV || typeof window === 'undefined' || !window.__wwSaveFile) return;
+  // Another tab on this origin saved (src/state/progress.ts re-reads it): that save went to the file too, so
+  // this tab's copy builds on it now. From the start: one during boot's wait counts as well.
+  let seen = 0;
+  window.addEventListener('storage', (e) => {
+    if (e.key !== STORE_KEY) return;
+    seen = Math.max(seen, stampOf(e.newValue));
+    if (base !== null) base = Math.max(base, seen);
+  });
   try {
     let local: string | null = null;
     try {
@@ -59,15 +123,10 @@ export async function syncSaveFile(): Promise<void> {
     }
     const res = await timed(URL);
     const file = res.ok ? await res.text() : null;
+    if (res.ok || res.status === 404) base = Math.max(stampOf(file), seen);
     const pick = chooseProgress(local, file);
     if (pick === 'file' && file) {
-      if (local) await timed(`${URL}/aside?origin=${encodeURIComponent(location.host)}`, { method: 'POST', body: local }).catch(() => undefined);
-      try {
-        if (local) localStorage.setItem(`${STORE_KEY}.replaced.${Date.now()}`, local);
-      } catch {
-        // Storage full: the copy beside the file is the one kept.
-      }
-      progress.replace(file);
+      await adoptFile(file, local);
     } else if (pick === 'local' && local) {
       // Stamped now: a copy from before item 186 has no `savedAt`, and the server keeps the later save.
       const stamped = JSON.stringify({ ...(JSON.parse(local) as object), savedAt: Date.now() });

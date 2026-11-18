@@ -54,6 +54,20 @@ test('the store stamps every write, tells onWrite, and replace takes a whole blo
   assert.equal((JSON.parse(storage.getItem(STORE_KEY)!) as ProgressData).episodes, 1, 'saved to the browser at once');
   assert.equal(store.replace('{"version":99}'), false);
   assert.equal(store.stat('words', 'sun').wrong, 2, 'an unreadable blob changes nothing');
+
+  // Item 194: a stale tab switches to the file during a debug game: the game keeps its sandbox, sends nothing,
+  // and release() comes back to the file.
+  store.hold();
+  store.record('words', 'pig', true, 0);
+  assert.ok(store.replace(JSON.stringify(other.snapshot())));
+  store.record('words', 'hen', true, 0);
+  assert.equal(seen.length, 1, 'still a debug game: nothing sent');
+  assert.equal(store.stat('words', 'pig').seen, 1, 'the game under test keeps its sandbox');
+  assert.equal((JSON.parse(storage.getItem(STORE_KEY)!) as ProgressData).words.pig, undefined, 'the browser holds the file, not the sandbox');
+  store.release();
+  assert.equal(store.stat('words', 'pig').seen, 0);
+  assert.equal(store.stat('words', 'hen').seen, 0);
+  assert.equal(store.stat('words', 'sun').wrong, 2, 'back to the file');
 });
 
 test('two histories merge: counts add, tries run older then newer, levels the higher, the bag less what was taken', () => {
@@ -112,6 +126,10 @@ test('the save folder: a dated backup before the day\'s first write, a stale sav
     t += 24 * 3600 * 1000;
     assert.equal(f.write(blob(4, 40)), 'written');
     assert.equal(readFileSync(join(f.dir, `progress-${day(t)}.json`), 'utf8'), blob(3, 30));
+    // Item 194: a stale tab's save carries a newer stamp of its own, but builds on a file older than this one.
+    assert.equal(f.write(blob(9, 50), 30), 'stale', 'built on 30, the file is 40: another tab saved since');
+    assert.equal(f.write(blob(5, 50), 40), 'written', 'built on the file as it is');
+    assert.equal(f.write(blob(6, 45), 50), 'stale', 'its own stamp still older than the file');
     const name = f.aside(blob(3), 'localhost:5240');
     assert.match(name, /^aside-localhost_5240-/);
     assert.ok(existsSync(join(f.dir, name)));

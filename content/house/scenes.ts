@@ -297,6 +297,12 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'Dragons do not usually share, but you are my friend.',
       'Rub the jewel, and it says...',
     ], TREASURE('to take the jewel'), 'Now you are shiny and strong, let\'s look around!'),
+    // Item 194: a third, as every active ally has.
+    S('🔥', [
+      'I am a friendly dragon now, so I breathe friendly sparks.',
+      'This little spark is warm and kind, and it has a word inside.',
+      'Listen to it crackle, and it says...',
+    ], TRAINING('to catch the spark'), 'Now you are warm and brave, let\'s look around!'),
   ],
   tiamat: [
     S('👑', [
@@ -411,6 +417,12 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'I curled my tail around it for a hundred years, to keep it safe.',
       'Open it up, and it says...',
     ], TREASURE('to take the pearl'), 'Keep it close, let\'s look around!'),
+    // Item 194: a third, as every active ally has.
+    S('🌊', [
+      'The waves sing to me, and today they sang a song just for you.',
+      'I caught it with the tip of my tail, before it could get away.',
+      'Listen to the waves, and they say...',
+    ], TRAINING('to catch the song'), 'Now you are as strong as the sea, let\'s look around!'),
   ],
   moriarty: [
     S('🃏', [

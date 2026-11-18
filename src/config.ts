@@ -77,9 +77,12 @@ export const EPISODE_DEFAULTS = {
  * in any of his forms (four Dada Matts, three Dada Jasons). Everybody else in
  * the roster is still defined, reachable by `?ally=` / `?villain=`, and joins
  * the draw by being added here. The dads wake her whatever this says.
+ * Good Smaug and good Jormungandr joined the allies in item 194 (Matt), so
+ * they are both, as Elsa, Ozymandias and Moriarty are: never her ally and her
+ * villain at once.
  */
 export const ACTIVE_CAST = {
-  allies: ['dada_matt', 'dada_jason', 'scar', 'ellie', 'seraphina', 'elsa', 'anna', 'jasmine', 'ozymandias', 'moriarty', 'rilla', 'meryl'],
+  allies: ['dada_matt', 'dada_jason', 'scar', 'ellie', 'seraphina', 'elsa', 'anna', 'jasmine', 'ozymandias', 'moriarty', 'rilla', 'meryl', 'smaug', 'jormungandr'],
   villains: ['jormungandr', 'smaug', 'bavmorda', 'tiamat', 'elsa', 'ozymandias', 'moriarty'],
 };
 

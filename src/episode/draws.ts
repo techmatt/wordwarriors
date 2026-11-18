@@ -77,6 +77,9 @@ export function castEpisode(picked: CastOverrides = {}): void {
   const overrides: CastOverrides = { ...fixed, ...castOverrides, ...(forced ? { villain: forced } : {}), ...picked };
   // In choice mode too: her villain cards do not outrank a style written for one villain (a dev URL's).
   if (forced && overrides.chosen) overrides.chosen = { ally: overrides.chosen.ally };
+  // Nor is he her ally then (item 194: good Smaug is an ally, and `?fight=smaug_story` forces Evil Smaug): the ally is drawn round him.
+  if (forced && overrides.chosen?.ally && personOf(overrides.chosen.ally) === personOf(forced)) overrides.chosen = {};
+  if (forced && overrides.ally && personOf(overrides.ally) === personOf(forced)) delete overrides.ally;
   // Item 067: her recent allies and each dad's recent forms sit out, as her villains do.
   const recentForms = Object.fromEntries(DADS.map((d) => [d, progress.recentOf(`form_${d}`)]));
   const c = drawCast({ hero: EPISODE_DEFAULTS.hero, recent: progress.recentOf('villain'), recentAllies: progress.recentOf('ally'), recentForms, overrides }, castRand);
