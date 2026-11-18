@@ -1110,6 +1110,126 @@
         }
       ],
       "ingested": "2026-10-26"
+    },
+    "word_xray": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "x-ray!",
+      "spokenHash": "b4efd0f63f3869c3",
+      "audio": "word_xray.14e17901.mp3",
+      "words": [
+        {
+          "word": "xray",
+          "start": 0,
+          "end": 0.9700208333333333
+        }
+      ],
+      "ingested": "2026-11-18T06:14:06Z"
+    },
+    "letter_x_name_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Ecks.",
+      "spokenHash": "06a2f0c475ca28f7",
+      "audio": "letter_x_name_sound.3e92c53c.mp3",
+      "words": [
+        {
+          "word": "Ecks",
+          "start": 0,
+          "end": 0.73
+        }
+      ],
+      "ingested": "2026-11-18T06:14:06Z"
+    },
+    "word_sword": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "sword!",
+      "spokenHash": "89562a5b521091b8",
+      "audio": "word_sword.f3ce8988.mp3",
+      "words": [
+        {
+          "word": "sword",
+          "start": 0,
+          "end": 0.77
+        }
+      ],
+      "ingested": "2026-11-18T06:14:06Z"
+    },
+    "letter_or_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Or.",
+      "spokenHash": "147d0f41b91fd155",
+      "audio": "letter_or_sound.2b90d420.mp3",
+      "words": [
+        {
+          "word": "Or",
+          "start": 0,
+          "end": 0.6299791666666666
+        }
+      ],
+      "ingested": "2026-11-18T06:14:06Z"
+    },
+    "word_wizard": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "wizard!",
+      "spokenHash": "f20d397ff1c7067d",
+      "audio": "word_wizard.4b8aeaf2.mp3",
+      "words": [
+        {
+          "word": "wizard",
+          "start": 0,
+          "end": 0.75
+        }
+      ],
+      "ingested": "2026-11-18T06:14:06Z"
+    },
+    "letter_er_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "Er.",
+      "spokenHash": "44f3d70f7dd34dd1",
+      "audio": "letter_er_sound.8afeca79.mp3",
+      "words": [
+        {
+          "word": "Er",
+          "start": 0,
+          "end": 0.6899791666666667
+        }
+      ],
+      "ingested": "2026-11-18T06:14:06Z"
+    },
+    "word_ball": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "ball!",
+      "spokenHash": "d356fb595c830e41",
+      "audio": "word_ball.4e1cd89f.mp3",
+      "words": [
+        {
+          "word": "ball",
+          "start": 0,
+          "end": 0.76
+        }
+      ],
+      "ingested": "2026-11-18T06:14:06Z"
+    },
+    "letter_all_sound": {
+      "provider": "matt",
+      "speaker": "phonics",
+      "spoken": "All.",
+      "spokenHash": "61b950b80ca43b5d",
+      "audio": "letter_all_sound.f1002a49.mp3",
+      "words": [
+        {
+          "word": "All",
+          "start": 0,
+          "end": 0.81
+        }
+      ],
+      "ingested": "2026-11-18T06:14:06Z"
     }
   }
 }
