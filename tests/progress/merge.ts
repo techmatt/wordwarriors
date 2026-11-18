@@ -23,13 +23,14 @@ function load(path: string) {
   const mem = new Map<string, string>([[STORE_KEY, raw]]);
   const storage: StorageLike = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => void mem.set(k, v) };
   const data = new ProgressStore(storage).snapshot();
-  if (!data.episodes && raw.length > 100) throw new Error(`${path}: unreadable as this build's store`);
+  // The store sets an unreadable blob aside under `<key>.unreadable.<ms>` and starts empty: never merge that.
+  if ([...mem.keys()].some((k) => k.startsWith(`${STORE_KEY}.unreadable`))) throw new Error(`${path}: unreadable as this build's store`);
   return data;
 }
 
 const [olderPath, newerPath, dirArg] = process.argv.slice(2);
 if (!olderPath || !newerPath) {
-  console.error('usage: npx tsx tools/progress/merge.ts <older.json> <newer.json> [<save folder>]');
+  console.error('usage: npx tsx tests/progress/merge.ts <older.json> <newer.json> [<save folder>]');
   process.exit(2);
 }
 const dir = dirArg ?? saveDir(process.cwd(), { ...process.env, WW_PROGRESS_MIRROR: '1' });

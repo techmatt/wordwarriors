@@ -1,7 +1,7 @@
 /**
  * The save file's rules (item 186), pure: which of two copies of the store wins at boot, and the one-time
  * merge of two histories. The dev server keeps the file (src/state/saveFileServer.ts); the page fetches it
- * (src/state/mirror.ts); `tools/progress/merge.ts` merged :5174's history with :5240's.
+ * (src/state/mirror.ts); `tests/progress/merge.ts` merged :5174's history with :5240's.
  */
 
 import type { ProgressData, Stat, WordBag } from './ProgressStore';

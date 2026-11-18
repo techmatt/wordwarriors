@@ -165,6 +165,14 @@ from Claude Code and point `WW_BASE_URL` at it: a backgrounded server dies at it
 timeout, mid-suite. Run the Playwright process itself in the background; its server lives as
 long as the run. `WW_BASE_URL` is for a server you keep running yourself.
 
+`npm test`'s `@smoke` run serves on `CONDUCTOR_PORT` too: a dev server started by hand for a
+manual check in a conductor item must be stopped before the fast lane, or the lane fails at once
+with "is already used" (item 186).
+
+Matt plays on conductor's `game` target: the **main checkout's** dev server on **:5240**
+(`npm run dev -- --port 5240`, set in the control folder's `conductor.toml`), not 5174. Its
+origin is where the browser's own copy of her progress lives (`docs/storage.md`, *Her save file*).
+
 Side tools' ports: shots 5194 (`SHOTS_PORT`), the checker 5195 (`QA_PORT`), perf 5196
 (`PERF_PORT`); none falls back to `CONDUCTOR_PORT`.
 

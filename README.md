@@ -97,6 +97,10 @@ npm run golden
 
 On a merge or rebase conflict in tests/unit/plansGolden.json, take either side and rerun the recipe; never resolve it by hand.
 
+Each pinned hash covers the whole `ProgressStore` snapshot, so a new stored field changes every
+hash. A field that is not a draw (like item 186's `savedAt`) is left out in `digest`
+(`tests/unit/plansGolden.ts`) instead of re-pinning.
+
 ### Speed, GPU and workers
 
 Clocks 5× fast (`WW_SPEED`), battles at 10, three GPU workers (`WW_WORKERS`, `WW_GPU=0`),
@@ -104,6 +108,7 @@ instant voice, teleport and short battles: `docs/testing.md`, *Speed, GPU and wo
 
 ### Ports and servers
 
+Matt plays on conductor's `game` target, the main checkout's dev server on **:5240**, not 5174.
 The suite serves on 5184 (`CONDUCTOR_PORT` when set), never the dev port 5174; shots 5194,
 the checker 5195, perf 5196 (`src/port.ts`). Two runs in one worktree, stopping a run, boot
 timeouts: `docs/testing.md`, *Ports and servers*.
