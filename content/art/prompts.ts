@@ -67,7 +67,9 @@ const NO_GREEN_PICTURES = [
 // penguins, snow bot, fish bucket and cards: no green of their own.
 const NO_GREEN_OUTFITS_AND_MINIONS = ['keeper', 'snow', 'explorer', 'astronaut', 'puzzler', 'gorilla']
   .flatMap((o) => [`char_julia_${o}`, `face_julia_${o}`])
-  .concat('minion_pink_dragon', 'minion_penguin', 'minion_penguin_trooper', 'minion_snow_bot', 'item_fish_bucket', 'char_ozymandias_good', 'char_ozymandias_evil', 'face_ozymandias', 'decal_ozymandias_penguin', 'decal_ozymandias_snowpile');
+  .concat('minion_pink_dragon', 'minion_penguin', 'minion_penguin_trooper', 'minion_snow_bot', 'item_fish_bucket', 'char_ozymandias_good', 'char_ozymandias_evil', 'face_ozymandias', 'decal_ozymandias_penguin', 'decal_ozymandias_snowpile')
+  // Item 195: Kronos's hourglass glass and his key's glow came out green-tinted.
+  .concat('char_kronos_good', 'char_kronos_evil', 'face_kronos', 'item_clockwork_key', 'minion_ticktock', 'decal_kronos_gear', 'decal_kronos_hourglass', 'decal_kronos_clock');
 
 /**
  * Sprites with no green of their own. Keying treats every green tint in them as

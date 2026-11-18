@@ -141,5 +141,6 @@ are villains too.
 | Evil Smaug (`smaug`) | Sky race through the treasure cave (`sky_race`), or his story fight (`smaug_story`) in about half the episodes that can draw it |
 | Evil Moriarty (`moriarty`) | Magic show at the foggy fairground (`magic_show`, the brawl's staging) |
 | Evil Bavmorda (`bavmorda`) | Spell-beam clash (`spell_clash`) |
+| Evil Kronos (`kronos`) | Titan showdown in his clock tower (`titan_showdown`, the brawl's staging) |
 | Evil Dada Jason, warlock (`dada_jason_warlock`) | Spell-beam clash (`spell_clash`) |
 | Everyone else: Julia, Ellie, Seraphina, Dada Matt, Anna, Jasmine, Tiamat, Scar, EvilRilla (`rilla`), Meryl, Dada Matt's lifter, cyber and blade forms, Dada Jason's warrior form | Free-for-all (`brawl`) |

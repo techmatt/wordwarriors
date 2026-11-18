@@ -204,6 +204,15 @@ export const QUESTS: Record<string, Quest> = {
       { text: 'My arrows want more practice, so off we go to the straw targets at the knights camp!' },
     ],
   },
+  // Item 195: a giant time-keeper; the robot workshop is the nearest place full of turning gears.
+  kronos: {
+    place: 'robot_workshop',
+    lines: [
+      { text: 'To get ready to fight them, we have to train where the giant gears turn, in the gear workshop!' },
+      { text: 'Climb onto my shoulder, I know a giant shortcut to the gear workshop!' },
+      { text: 'Every gear in that workshop keeps good time, so that is where we will get ready!' },
+    ],
+  },
   // Item 114: a playful puzzle-loving gentleman, in a library full of trapdoors.
   moriarty: {
     place: 'puzzle_library',

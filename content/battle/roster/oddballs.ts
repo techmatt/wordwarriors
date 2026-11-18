@@ -1,4 +1,4 @@
-/** Roster characters, in ROSTER order (./index.ts): Scar the tiny robot, Moriarty, Bavmorda, Bluerilla and Meryl. */
+/** Roster characters, in ROSTER order (./index.ts): Scar the tiny robot, Moriarty, Bavmorda, Bluerilla, Meryl and Kronos. */
 
 import type { CharacterSpec } from '../types.js';
 import { ab, ult } from './abilities.js';
@@ -380,6 +380,88 @@ export const ODDBALLS: CharacterSpec[] = [
         { id: 'meryl_soot', glyph: '💨', look: 'a smudgy black soot pawprint', count: 3 },
       ],
       fx: 'embers',
+    },
+  },
+  {
+    // Item 195 (Matt): mostly a huge, looming, imposing titan, with time as his
+    // trim: hourglasses, gears, clock faces, slowing and freezing time. Kid-safe:
+    // his threat is a house where time stands still, nothing of the myth's.
+    // KEY (his Clockwork Key) is said by none of his names, moves or taunts.
+    id: 'kronos',
+    description: 'A towering titan of time who freezes moments, hurls hourglasses and sends little alarm clocks marching.',
+    arena: 'clocktower',
+    // As the villain, a showdown in his clock tower: the brawl's staging, his own banners and lines.
+    fight: 'titan_showdown',
+    good: {
+      displayName: 'Kronos',
+      trail: { tint: [0xffd23f, 0x7ad8ff], shape: 'star' },
+      look: 'a huge, gentle giant titan, twice as tall as a grown-up and broad as a doorway, with warm bronze skin, a long flowing beard and hair of shimmering golden sand, kind glowing sky-blue eyes, a crown of slowly turning golden gears, a sky-blue and gold robe with a big friendly clock face on the chest, holding a tall golden hourglass in one big hand, standing tall and smiling; a mighty, kindly time-keeper',
+      palette: [0x3a7ad8, 0xffd23f], glyph: '⏳', style: 'stomp', speed: 120, size: 1.8, hp: 200,
+      abilities: [
+        ab('hourglass_toss', 'Hourglass Toss', 'bolt', 2.4, 0xffd23f, 1, { count: 3, glyph: '⏳', words: ['zip', 'pop'] }),
+        ab('titan_leap', 'Titan Leap', 'slam', 6, 0xffb703, 3, { words: ['jump', 'big', 'bam'] }),
+        ab('gear_spin', 'Gear Spin', 'spin', 5, 0xffd23f, 2, { words: ['spin', 'twist'] }),
+        ab('slow_motion', 'Slow Motion', 'freeze', 9, 0x7ad8ff, 2, { status: 'freeze', duration: 2.5, words: ['nap', 'hum'] }),
+        ab('rewind', 'Rewind', 'heal', 10, 0x7ad8ff, 1, { words: ['fix', 'hug'] }),
+      ],
+      ultimate: ult('golden_hour', 'Golden Hour', 'beam', 0xffd23f, 3, { color2: 0x7ad8ff }),
+      taunts: [
+        { key: 'gentle', text: 'I am big, but I am gentle!' },
+        { key: 'time', text: 'Right on time!' },
+        { key: 'gears', text: 'Turn, little gears, turn!' },
+        { key: 'steady', text: 'Nice and slow, nice and steady.' },
+        { key: 'tall', text: 'I can see over the rooftops!' },
+        { key: 'help', text: 'Tick, tock, time to help!' },
+      ],
+    },
+    evil: {
+      displayName: 'Evil Kronos',
+      trail: { tint: [0xffb703, 0x5a3a8a], shape: 'smoke' },
+      look: 'a towering, hulking titan of stone and bronze, far taller than a grown-up and broad as a doorway, looming forward over everything, with a long flowing beard of drifting golden sand, glowing amber eyes under a heavy stern brow, a crown of jagged turning brass gears, a great cracked clock face set in his chest with its hands spinning backwards, a dark purple cloak, one huge fist gripping a giant hourglass; mighty and imposing, scowling, but a cartoon for a small child, never frightening',
+      // A giant in battle (size 2+, as Evil Tiamat): he looms over the whole fight.
+      palette: [0x3a2a4a, 0xffb703], glyph: '⏳', style: 'stomp', speed: 45, size: 2.4, hp: 260,
+      abilities: [
+        ab('titan_quake', 'Titan Quake', 'slam', 6, 0x8a6a4a, 3),
+        ab('hourglass_hail', 'Hourglass Hail', 'rain', 8, 0xffb703, 2, { count: 14, glyph: '⏳' }),
+        ab('time_freeze', 'Time Freeze', 'freeze', 8, 0x7ad8ff, 2, { status: 'freeze', duration: 3 }),
+        ab('gear_storm', 'Gear Storm', 'orbit', 9, 0xffb703, 2, { count: 6, glyph: '⚙️', duration: 1.6, color2: 0x8a6a4a }),
+        ab('ticktock_march', 'Ticktock March', 'summon', 11, 0xe63946, 2, { minion: 'ticktock', count: 4 }),
+      ],
+      ultimate: ult('frozen_hour', 'Frozen Hour', 'wave', 0xffb703, 3, { color2: 0x3a2a4a, status: 'freeze' }),
+      taunts: [
+        { key: 'slow', text: 'Tick, tock, too slow!' },
+        { key: 'still', text: 'Stand still, little heroes!' },
+        { key: 'biggest', text: 'I am the biggest titan of all!' },
+        { key: 'hour', text: 'Every hour is my hour!' },
+        { key: 'backwards', text: 'Backwards, backwards, round you go!' },
+        { key: 'wait', text: 'Wait for it, wait for it!' },
+      ],
+    },
+    reformed: {
+      sorry: [
+        { key: 'still', text: 'Sorry I made time stand still!' },
+        { key: 'loud', text: 'Sorry, my giant feet were too loud.' },
+        { key: 'grumpy', text: 'Sorry, I was a grumpy old titan.' },
+      ],
+      ending: [
+        { key: 'dance', text: 'Who wants to do a slow motion dance?' },
+        { key: 'party', text: "Let's make this party last all day!" },
+        { key: 'carry', text: 'Climb up, I can carry everybody!' },
+      ],
+    },
+    counter: {
+      id: 'clockwork_key', name: 'Clockwork Key', glyph: '🔑', look: 'a big shiny gold wind-up key with a heart-shaped handle, the kind that winds every clock back to the right time',
+      how: 'restore', word: 'key',
+    },
+    house: {
+      threat: 'he wants to make time stand still in the whole house',
+      tint: 0xc8a050,
+      decals: [
+        { id: 'kronos_gear', glyph: '⚙️', look: 'big brass gears scattered on the floor', count: 3 },
+        { id: 'kronos_hourglass', glyph: '⏳', look: 'a little tipped-over hourglass with golden sand spilling out', count: 3 },
+        { id: 'kronos_clock', glyph: '🕰️', look: 'a crooked wall clock with its hands running backwards', count: 1 },
+      ],
+      fx: 'sand',
     },
   },
 ];

@@ -24,6 +24,7 @@ export const SPELL_WORDS: Record<string, [string, string, string]> = {
   bavmorda: ['sun', 'pin', 'zap'],
   rilla: ['rat', 'bug', 'hen'],
   meryl: ['fox', 'zip', 'hit'],
+  kronos: ['cog', 'big', 'sun'],
   dada_matt_lifter: ['big', 'lug', 'box'],
   dada_matt_cyber: ['zip', 'bit', 'pen'],
   dada_matt_blade: ['zap', 'hit', 'pot'],

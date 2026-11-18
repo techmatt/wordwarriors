@@ -15,8 +15,8 @@ after the news, the hub and every side room; no room art is per-villain):
   Elsa's white, 0.42).
 - `decals`: `{ id, glyph, look, count }`, things left lying about; id prefixed with the
   character (`rilla_footprint`), art `decal_<id>`.
-- `fx`: `frost | freeze | embers | quake | sparkle | smoke | none`; `freeze` is thicker
-  frost creeping in from every edge. In a reading room (`calm`) frost falls half as thick.
+- `fx`: `frost | freeze | embers | quake | sparkle | smoke | sand | none`; `freeze` is thicker
+  frost creeping in from every edge; `sand` is fine golden grains falling slowly (Evil Kronos). In a reading room (`calm`) frost and sand fall half as thick.
 
 ## The counter sentence, and named counter items (`counter.word`)
 
@@ -70,6 +70,7 @@ word's `glyph` must not be a journey-map stop's (🌅 ⚔️ 🏆, 🏠 at home)
 | Evil Bavmorda | CAP | Bounce Cap | reflect |
 | EvilRilla | MICE | Wind-up Mice | scare |
 | Evil Meryl | BELL | Calm Bell | calm |
+| Evil Kronos | KEY | Clockwork Key | restore |
 
 ## A quest and a quest place (`content/house/quests.ts`, `PLACES` in `content/house/house.ts`)
 

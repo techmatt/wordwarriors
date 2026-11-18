@@ -178,6 +178,22 @@ export const FIGHTS: FightSpec[] = [
     },
   },
   {
+    // Item 195: Evil Kronos's. A free-for-all in his clock tower (the brawl's staging), so the giant has room to loom.
+    id: 'titan_showdown',
+    kind: 'brawl',
+    name: 'Titan showdown in the clock tower',
+    arena: 'clocktower',
+    banner: ['TITAN SHOWDOWN!', 'SHOWDOWN TWO!'],
+    tooStrong: 'WHOA! TIME STOOD STILL!',
+    win: 'TIME IS FREE!',
+    lines: {
+      start: { text: "It's a titan showdown! Watch out for frozen time!", say: "It's a titan showdown, watch out for frozen time!" },
+      start2: { text: "We're ready for the time tricks now! Let's go!", say: "We're ready for the time tricks now, let's go!" },
+      retreat: { text: "Time is standing still for us! Let's go home and get ready!", say: "Time is standing still for us, let's go home and get ready!" },
+      finish: { text: "Let's push time forward, all together!" },
+    },
+  },
+  {
     id: 'cook_off',
     kind: 'cookoff',
     name: 'Cook-off',

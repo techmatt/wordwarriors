@@ -89,7 +89,11 @@ One `CharacterSpec`:
   - `style`: `hover | twirl | stomp | dodge | slither | blink | fly | march`; optional
     `mount` (`'carpet'` is drawn, any emoji works) and `trail`
     (`{ tint, shape: 'spark' | 'star' | 'smoke' | 'square' }`).
-  - `speed` (px/s), `size` (1 person, 1.4 big, 1.8 giant), `hp` (cosmetic).
+  - `speed` (px/s), `size` (1 person, 1.4 big, 1.8 giant), `hp` (cosmetic). An evil side
+    of 2 or more is a battle giant (`Fighter.giant`: Evil Tiamat, Evil Kronos), drawn that
+    big and handled apart by several moves and stages; rooms still cap at `CAST_SCALE_MAX`
+    (from the good side's size). `box` changes only the picture's shape and crispness, not
+    its height.
   - A rider drawn on its mount (Meryl): `box` (`{ w, h }`, display box), `muzzle`
     (`{ x, y }`, where bolts leave, shares from the bottom middle); `size` makes it fit
     (Meryl 1.7). `onFoot` briefs `char_<id>_foot` for cards, title, icons and walking

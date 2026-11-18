@@ -83,7 +83,7 @@ export const EPISODE_DEFAULTS = {
  */
 export const ACTIVE_CAST = {
   allies: ['dada_matt', 'dada_jason', 'scar', 'ellie', 'seraphina', 'elsa', 'anna', 'jasmine', 'ozymandias', 'moriarty', 'rilla', 'meryl', 'smaug', 'jormungandr'],
-  villains: ['jormungandr', 'smaug', 'bavmorda', 'tiamat', 'elsa', 'ozymandias', 'moriarty'],
+  villains: ['jormungandr', 'smaug', 'bavmorda', 'tiamat', 'elsa', 'ozymandias', 'moriarty', 'kronos'],
 };
 
 /**

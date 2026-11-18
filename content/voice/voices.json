@@ -35,6 +35,8 @@
     "rilla": { "voice": "en-US-RogerNeural", "rate": "-8%", "pitch": "-5Hz" },
     "rilla_evil": { "voice": "en-US-RogerNeural", "rate": "-15%", "pitch": "-40Hz" },
     "meryl": { "voice": "en-US-EmmaNeural", "rate": "-4%", "pitch": "+12Hz" },
-    "meryl_evil": { "voice": "en-US-EmmaNeural", "rate": "-10%", "pitch": "-22Hz" }
+    "meryl_evil": { "voice": "en-US-EmmaNeural", "rate": "-10%", "pitch": "-22Hz" },
+    "kronos": { "voice": "en-US-EricNeural", "rate": "-12%", "pitch": "-15Hz" },
+    "kronos_evil": { "voice": "en-US-EricNeural", "rate": "-20%", "pitch": "-45Hz" }
   }
 }

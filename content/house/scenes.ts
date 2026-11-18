@@ -386,6 +386,19 @@ export const HUB_SCENES: Record<string, HubStory[]> = {
       'Untie the little ribbon, and it says...',
     ], TREASURE('to take the arrow'), 'A star sent you that, let\'s look around!'),
   ],
+  // Item 195: the giant time-keeper's hourglass and his golden gears.
+  kronos: [
+    S('⏳', [
+      'My golden hourglass keeps one special moment inside it.',
+      'When I turn it over, the moment trickles out as a word.',
+      'Watch the golden grains fall, they say...',
+    ], TRAINING('to catch the grains'), 'Now that moment is yours, let\'s look around!'),
+    S('✨', [
+      'I have been awake for a very, very long time.',
+      'In all that time, I saved up one word, just for you.',
+      'Get ready, here it comes...',
+    ], TREASURE('to take the word'), 'I knew you were the one to keep it, let\'s look around!'),
+  ],
   // Item 114 (Matt): from Antarctica, with a rocket ship, a penguin crew and a crown of ice.
   ozymandias: [
     S('🚀', [

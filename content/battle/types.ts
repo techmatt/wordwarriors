@@ -283,7 +283,7 @@ export interface HouseMood {
    * room. `freeze` (item 115) is frost and more: thicker snow, and frost
    * creeping in from every edge of the screen like a frozen window.
    */
-  fx: 'frost' | 'freeze' | 'embers' | 'quake' | 'sparkle' | 'smoke' | 'none';
+  fx: 'frost' | 'freeze' | 'embers' | 'quake' | 'sparkle' | 'smoke' | 'sand' | 'none';
 }
 
 export interface MinionSpec {

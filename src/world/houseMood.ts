@@ -198,6 +198,21 @@ function startFx(scene: Phaser.Scene, fx: HouseMood['fx'], floor: Phaser.Geom.Re
         tint: [0x666677, 0x887788],
       })
       .setDepth(depth);
+  } else if (fx === 'sand') {
+    // Time trickling away (item 195, Evil Kronos): fine golden grains falling
+    // slowly from the ceiling, as from a giant hourglass; half as thick when calm.
+    scene.add
+      .particles(0, 0, TEX.pixel, {
+        emitZone: zone(new Phaser.Geom.Rectangle(0, -10, GAME_WIDTH, 10)),
+        speedY: { min: 35, max: 75 },
+        speedX: { min: -8, max: 8 },
+        scale: { min: 0.6, max: 1.3 },
+        alpha: { start: 0.9, end: 0.3 },
+        lifespan: 11000,
+        frequency: 60 * (calm ? 2 : 1),
+        tint: [0xffd23f, 0xe8c890, 0xffb703],
+      })
+      .setDepth(depth);
   } else if (fx === 'quake') {
     // Something big walking about the house: a thump, a shake, dust from the
     // floor and bits from the ceiling, every few seconds.

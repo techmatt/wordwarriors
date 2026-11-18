@@ -73,8 +73,8 @@ Drawn fresh each time (`src/rules/cast.ts`):
 
 - **Active cast:** `ACTIVE_CAST` in `src/config.ts`, as persons. Allies: Dada Matt, Dada
   Jason, Scar, Ellie, Seraphina, Elsa, Anna, Jasmine, Ozymandias, Moriarty, Bluerilla
-  (`rilla`), Meryl. Villains: Jörmungandr, Smaug, Bavmorda, Tiamat, Elsa, Ozymandias,
-  Moriarty. A dad comes in all his forms; nobody is her own villain. Anyone else plays by
+  (`rilla`), Meryl, Smaug, Jörmungandr. Villains: Jörmungandr, Smaug, Bavmorda, Tiamat,
+  Elsa, Ozymandias, Moriarty, Kronos. A dad comes in all his forms; nobody is her own villain. Anyone else plays by
   `?ally=` / `?villain=`; adding a name switches them on.
 - **Villain:** equally likely, her last four sitting out, never last episode's.
 - **Ally:** an active ally who is not the villain.

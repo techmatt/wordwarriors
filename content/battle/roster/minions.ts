@@ -65,6 +65,12 @@ export const MINIONS: Record<string, MinionSpec> = {
     palette: [0xffffff, 0xd02040], style: 'march', speed: 95, size: 0.5, hp: 15,
     ability: ab('poke', 'Poke', 'dash', 2.0, 0xd02040, 1),
   },
+  // Evil Kronos's marchers (item 195).
+  ticktock: {
+    id: 'ticktock', name: 'Ticktock', glyph: '⏰', look: 'a little round red alarm clock with two shiny bell ears, a silly cross face on its clock face and stubby running legs, more silly than scary',
+    palette: [0xe63946, 0xffd23f], style: 'march', speed: 110, size: 0.45, hp: 15,
+    ability: ab('ring_ring', 'Ring Ring', 'bolt', 2.0, 0xffd23f, 1, { glyph: '💫' }),
+  },
   mini_serpent: {
     id: 'mini_serpent', name: 'Sea Snake', glyph: '🐍', look: 'a small green sea snake with a curly tail',
     palette: [0x2aa66a, 0x0a4a3a], style: 'slither', speed: 110, size: 0.45, hp: 15,

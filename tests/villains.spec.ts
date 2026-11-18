@@ -11,7 +11,8 @@ import { test, expect } from '@playwright/test';
 import { ownFight } from '../src/rules/fights';
 import { SLOW, boot, collectErrors, expectNoErrors, playEpisode, press, shotIn, until } from './harness';
 
-const VILLAINS = ['elsa', 'ozymandias', 'moriarty'];
+// Item 195: Evil Kronos, with the clock tower, his sand and his sorry.
+const VILLAINS = ['elsa', 'ozymandias', 'moriarty', 'kronos'];
 
 VILLAINS.forEach((villain, i) => {
   test(`Evil ${villain}: a whole episode, the bad news to the victory, nothing missing`, SLOW, async ({ page }) => {
@@ -31,6 +32,8 @@ VILLAINS.forEach((villain, i) => {
     expect(end.battle?.fight).toBe(ownFight(villain));
     for (const k of keys) expect(end.episode.read).toContain(k);
     expect(end.battle?.villains[0]?.hp).toBe(0);
+    // Reformed: his sorry ends the battle, his ending plays in the victory scene.
+    expect(end.voice.history.filter((id) => id.startsWith(`reformed_${villain}_`)).length, 'the sorry and the ending').toBe(2);
     expectNoErrors(errors);
   });
 });

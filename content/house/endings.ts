@@ -146,7 +146,7 @@ export const ENDINGS: EndingSpec[] = [
     close: { text: "Let's all make a wish together!" },
     fit: { form: 'dada_jason_warlock', text: 'I made the stars twinkle extra bright!' },
     // Item 114: Ozymandias, explorer-king with a rocket ship, under the stars.
-    villains: ['moriarty', 'ozymandias', 'tiamat', 'bavmorda', 'dada_jason_warlock'],
+    villains: ['moriarty', 'ozymandias', 'tiamat', 'bavmorda', 'dada_jason_warlock', 'kronos'],
   },
   {
     id: 'campfire',
