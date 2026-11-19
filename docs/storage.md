@@ -51,7 +51,8 @@ The main checkout's **dev server** (`npm run dev`, conductor's `game` target) no
 - `progress-YYYY-MM-DD.json`: the file as each day found it, copied before the day's first
   write. All kept (about 35 KB each).
 - `aside-<origin>-<date>-<time>.json`: a browser's own copy that the file replaced at boot (also
-  kept in that browser as `wordwarriors.progress.replaced.<ms>`). Nothing is dropped unseen.
+  kept in that browser as `wordwarriors.progress.replaced.<ms>`, only the latest: item 196).
+  Nothing is dropped unseen.
 - `merged-from-*.json`: item 186's one-time merge inputs (:5174's 67 episodes, :5240's 3,
   read from Chrome on Nov 16), merged by `tests/progress/merge.ts`.
 

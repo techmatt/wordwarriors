@@ -13,7 +13,7 @@
 
 import { progress } from './progress';
 import { STORE_KEY } from './ProgressStore';
-import { chooseProgress } from './saveFile';
+import { chooseProgress, staleReplaced } from './saveFile';
 
 const URL = '/__ww/progress';
 /** `BASE_HEADER` in src/state/saveFileServer.ts (Node only, so not imported here). */
@@ -65,13 +65,36 @@ function send(raw: string): void {
     });
 }
 
+const REPLACED_PREFIX = `${STORE_KEY}.replaced.`;
+
+/** Drop this browser's replaced copies but the newest `keep` (`staleReplaced`). */
+function pruneReplaced(keep: number): void {
+  try {
+    const keys: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i) ?? '');
+    for (const k of staleReplaced(keys, REPLACED_PREFIX, keep)) localStorage.removeItem(k);
+  } catch {
+    // Blocked storage: nothing kept here to prune.
+  }
+}
+
 /** Keep this browser's copy beside the file and in this browser (nothing dropped unseen), then play from `file`. */
 async function adoptFile(file: string, local: string | null): Promise<boolean> {
   // In one step with reading `local` (no await between): a save made meanwhile would be in neither copy.
-  try {
-    if (local) localStorage.setItem(`${STORE_KEY}.replaced.${Date.now()}`, local);
-  } catch {
-    // Storage full: the copy beside the file is the one kept.
+  if (local) {
+    const key = `${REPLACED_PREFIX}${Date.now()}`;
+    try {
+      localStorage.setItem(key, local);
+    } catch {
+      // Storage full: make room and try once more; failing that, the copy beside the file is the one kept.
+      pruneReplaced(0);
+      try {
+        localStorage.setItem(key, local);
+      } catch {
+        // Still full.
+      }
+    }
+    pruneReplaced(1); // Only the latest stays.
   }
   const took = progress.replace(file);
   if (took) base = stampOf(file);
@@ -106,6 +129,7 @@ async function timed(input: string, init?: RequestInit): Promise<Response> {
 /** Bring the browser's copy and the save file level, then mirror every write. Resolves at once when there is no file. */
 export async function syncSaveFile(): Promise<void> {
   if (!import.meta.env.DEV || typeof window === 'undefined' || !window.__wwSaveFile) return;
+  pruneReplaced(1); // Copies piled up before item 196.
   // Another tab on this origin saved (src/state/progress.ts re-reads it): that save went to the file too, so
   // this tab's copy builds on it now. From the start: one during boot's wait counts as well.
   let seen = 0;

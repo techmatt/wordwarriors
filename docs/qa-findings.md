@@ -6,11 +6,9 @@ the checker (`tests/qa/`) is `docs/tools.md`, *The bug-hunt checker*.
 
 ## Categories to hunt (Matt)
 
-Matt's list from watching Julia play (item 059). A bug hunt checks every category, and
-more broadly anything like them, in every scene. Where the checker (`tests/qa/`,
-`checks.ts` and `wording.ts`) flags a category automatically its issue kind is named;
-the rest is a human look (contact sheet, a read of `content/voice/lines.json`, a played
-round).
+Matt's list (item 059). A hunt checks every category, and anything like them, in every
+scene. The checker's issue kind is named where it flags one (`checks.ts`, `wording.ts`);
+the rest is a human look (contact sheet, `lines.json`, a played round).
 
 | Category | Item 059's example | Checker |
 | --- | --- | --- |
@@ -20,26 +18,25 @@ round).
 | Pictures a four-year-old wouldn't recognize as the word. | SIX was a die (she said DICE); now a decorated numeral 6. | human look: the contact sheet, each picture named aloud as she would |
 | Clipped or incomplete lines instead of complete, natural sentences. | TOO STRONG, LET GO (meant: let's go). | `clipped-line` (look; a heuristic, battle shouts excluded) |
 | Words or phrases that feel odd in their moment. | SUPER POWER. | human look: read each line where it plays |
-| Missing voice lines: a caption shows and nothing is said. | Item 062: lines in play whose clip had not decoded in time, so they played with no audio. | `voice-silent` (bug: a line played with no clip, with why: `queued`, `decoding`, `failed`, `none`, `suspended`); `voice-unbuilt`, `voice-stale`, `voice-no-clip` (bug: a line in `lines.json` with no manifest entry, a clip for old text, or no mp3); `voice-no-line`; `tests/unit/qacategories.test.ts` and `rules.test.ts` hold every line built |
-| Pacing: anything slow, repetitive, or asking for presses that don't teach; every minigame snappy for an impatient four-year-old. | Charge the Spell asked Dad for a press per rune and green and yellow presses besides; it frustrated her. Now about 20 s, one press. | `slow-room` (look; per-room budgets in `ROOM_BUDGET_MS`), `locked-long`, `locked-silent` |
+| Missing voice lines: a caption shows and nothing is said. | Item 062: clips not decoded in time played silent. | `voice-silent` (bug: a line played with no clip, with why: `queued`, `decoding`, `failed`, `none`, `suspended`); `voice-unbuilt`, `voice-stale`, `voice-no-clip` (bug: a line in `lines.json` with no manifest entry, a clip for old text, or no mp3); `voice-no-line`; `tests/unit/qacategories.test.ts` and `rules.test.ts` hold every line built |
+| Pacing: anything slow, repetitive, or asking for presses that don't teach; every minigame snappy for an impatient four-year-old. | Charge the Spell asked a press per rune and more; it frustrated her. Now about 20 s, one press. | `slow-room` (look; per-room budgets in `ROOM_BUDGET_MS`), `locked-long`, `locked-silent` |
 
 ## Writing up a hunt
 
 - A hunt reads this file and `docs/rulings.md` first and does not re-report what is there.
 - A hunt's round: its new batch swept (again as fixes land), older batches as regression,
   a few scenarios at `WW_SPEED=1`, `qa flags` with new URLs, `perf`, `shots`, a 300-episode
-  `variety`; code reads by item and lens, each claim checked by a second reader trying to
-  refute it; contact-sheet reads, each finding checked on its full shot; a content sweep;
-  a completeness read whose gaps become scenarios.
+  `variety`; code reads, each claim checked by a second reader; contact-sheet reads, each
+  checked on its full shot; a content sweep; a completeness read whose gaps become scenarios.
 - Its section is `## Hunt <N> (<dates>)` with a `### Matt's calls` table whose last column
   is `Ruling`, and `### Where the next hunt resumes`. `tests/qa/prune.ts` reads it: a
   hunt's runs are thinned (uncited PNGs deleted) only once its section exists and every
   Ruling cell is filled, keeping each shot cited as `` `<scenario>` <n> `` or by
   `qa/<tag>/…` path. Write the calls rows (Ruling empty) before committing a section
   mid-hunt (W55).
-- Fixes go to git and the hunt's report, not here. Once Matt rules, calls still in force
-  move to `docs/rulings.md` and the issues he leaves become *Known issues*; the previous
-  hunt's section then goes (its runs stay whole until off the three-hunt cap).
+- Fixes go to git and the hunt's report, not here. Once Matt rules, calls in force move to
+  `docs/rulings.md`, issues he leaves become *Known issues*, and the section's calls table
+  may go; keep its shots line while its runs are within the three-hunt cap.
 
 ## The checker's issue kinds
 
@@ -54,9 +51,6 @@ Beyond the README's per-shot checks and the categories above (bug unless marked 
 | Probes | `reload-store`; `dadlock-leak`, `dadlock-badge`, `dadlock-flow`; `parent-return`, `parent-store`; `debug-leak`, `debug-return`, `debug-check`, `debug-tag`; `end-leak`, `end-store`; `erase-return`; `solo-lost`; `flag-stuck` (`qa flags`) |
 | Free play | `shots-over-cap`, `mash-dead` |
 
-Each batch's scenarios are `SCENARIOS` in `tests/qa/qa.pw.ts` (a `batch` per `QA_SET` name,
-`BATCHES`); a new hunt's batch is a new name there.
-
 **Left out on purpose:** `spawn-in-reach` skips doors and a lone answer (the bed, the secret
 door); `locked-silent` skips Charge (its quiet beats are hers to say the sounds back);
 `clipped-line` skips `letter_`, `word_`, `taunt_`, `move_`, `ult_`, `name_` and `story_`
@@ -68,14 +62,12 @@ the rounds back); `sound-gap` is measured in game time.
 compared either side), `hidden_tab` (away 2.5 s every 9 s; frames do not stop as in a real
 hidden tab, so frame spikes are expected), `resize`, `slow_net` / `flaky_net` (0.3 to 1.5 s
 added, or one fetch in seven failed, never the manifest), `lock_all`, `parent_all` and
-`parent_none` (same seed, no visits); with `lenses` or `all` come
-`qa flags` (`FLAGS`: every URL the code reads and odd values, each watched 9 s, output in
-`flags/`) and `qa devkeys skip|auto` (F2 at every step then
-an episode played through; F4 and green to the recap). `QA_SET=recent` holds `debug_rooms`
-(`debugAt`), `end_mash`, `variants6` and `voiceless` (the manifest 404s before boot);
-`erase_mid` (`eraseAt`) is in `hunt9`. A seed's cast is what the title draws, so a reload or
-F9 back to the title draws again: a probe of a drawn thing (the story fight) forces it with
-its URL flag (`fight=`). Real-speed runs: `WW_SPEED=1 QA_SET=all QA_TAG=<tag> npm run qa --
+`parent_none` (same seed, no visits); with `lenses` or `all` come `qa flags` (`FLAGS`:
+every URL the code reads and odd values, each watched 9 s) and `qa devkeys skip|auto` (F2
+at every step then a played episode; F4 and green to the recap). `QA_SET=recent` holds
+`debug_rooms`, `end_mash`, `variants6` and `voiceless` (the manifest 404s); `erase_mid` is
+in `hunt9`. A reload or F9 to the title draws the cast again: probe a drawn thing (the
+story fight) with its URL flag (`fight=`). Real-speed runs: `WW_SPEED=1 QA_SET=all QA_TAG=<tag> npm run qa --
 -g "qa (tug_two_pads|charge_real|rhyme_real)$"`.
 
 ## Known issues
@@ -127,22 +119,8 @@ Left as they are, each for its reason; a hunt does not re-report them.
 
 ## Hunt 12 (2026-10-25 to 26)
 
-`QA_SET=hunt12` (runs `h12a` to `h12j`), `QA_SET=hunt11` as a regression round, `qa flags`,
-`npm run perf`, a 300-episode `variety` run, code reads and contact-sheet reads. Its fixes
-are in git (items 164 and 165); its standing calls are in `docs/rulings.md`.
-
-### Matt's calls
-
-| # | Call | Ruling |
-| --- | --- | --- |
-| M78 | Bridge: F's whole "fuh" lands inside blends (FROG, GIFT, ELF) | (c): `whole` sounds only before a vowel (`wholeFits`) |
-| M79 | Pictures: COT reads as BED, DOT as a ball | (a): redrawn, Matt's picks promoted |
-| M80 | Evil Elsa's Grumpy Snowmen were smiling Snow Buddies | (a): `minion_snow_grump`, Matt's pick promoted |
-| M81 | Crushing Coil: discs over faces | (a): a drawn snake under the fighters (`COIL_DEPTH`) |
-| M82 | Find box on a standing person's legs under a two-row banner | (b): pictures at the square's height (`bannerRows`) |
-| M83 | Battle runes' sounds run together | (b): 250 ms beat (`RUNE_SOUND_BEAT_MS`) |
-| M84 | Bakery sign 🥐 reads as C | (a): 🧁 |
-| M85 | Hideout backdrop paints the counter CHEST | (a): a room's `pictures` never its counter (`notCounter`) |
+Runs `h12a` to `h12j`. Its calls (M78 to M85) are all ruled and applied; they stand in
+`docs/rulings.md`.
 
 Shots kept with the runs (a scenario and its numbers on one line, as `citesShot` reads
 them): `jorm_edge` 052, 085, 129; `shifter_lock` 069; `bridge_f_parent` 096;
@@ -155,36 +133,25 @@ them): `jorm_edge` 052, 085, 129; `shifter_lock` 069; `bridge_f_parent` 096;
 
 ### Where the next hunt resumes
 
-- **Matt's calls M78 to M85** are ruled; item 165 applied M78 and M81 to M85 (the Ruling column), and `sound-gap`
-  takes the battle's rune volley in (M83). M79 (COT and DOT) and M80 (the grumpy snowman) are art rounds
-  (item 166's candidates, then a pick).
-- **Never driven this hunt** (the completeness read's leftovers): keyboard hunt-and-peck (A-Z, digits, Shift) mashed
-  in the Shape-Shifter, the bridge and the rhyme room; F2 and F4 in those rooms (`qa devkeys` runs fixed seeds that
-  seldom draw them: an env query for it is the cheap way); two tabs open with a Shape-Shifter visit finishing in
-  the other (item 144's storage listener); a start from the pad alone with a hidden tab (fix 251, read and unit
-  reasoning only: the harness unlocks audio by key or click).
-- **The sea tug's two pads** (fix 264) keep off the pool of water where they can; with no dry floor between her
-  reach and the serpent the lower ring can still stand in it. Watch it live; a third pad position over the
-  serpent's side was not tried.
-- **Item 144's quicker openings** put the contests booted straight in at 43.6 to 44.7 s of battle time, under the
-  old 45 s floor (`fights.spec` red on the code before this hunt): the floor is 40 s now. A whole episode's parts run
-  longer; if the floor bites again, measure an episode's parts, not a boot.
+- **Never driven:** keyboard hunt-and-peck (A-Z, digits, Shift) mashed in the Shape-Shifter, the bridge and the
+  rhyme room; F2 and F4 in those rooms (`qa devkeys`' fixed seeds seldom draw them: an env query is the cheap
+  way); two tabs with a Shape-Shifter visit finishing in the other; a start from the pad alone with a hidden tab
+  (the harness unlocks audio by key or click).
+- **The sea tug's two pads** keep off the water where they can; with no dry floor between her reach and the
+  serpent the lower ring can still stand in it. Watch it live.
+- **`fights.spec`'s contest floor** is 40 s of battle time (a boot straight in runs 43.6 to 44.7 s); if it bites,
+  measure an episode's parts, not a boot.
 
 ## Hunt 13 (2026-11-16)
 
-`QA_SET=hunt13` (runs `h13a`, `h13b`, `h13c`; `h13r` at `WW_SPEED=1`): choice mode (item 174), Meryl (171 to
-175) and item 178's words, three rounds of code reads (each claim checked by a second reader) and contact-sheet
-reads. Ended early on Matt's MESSAGE #5801 ("move toward wrapping up"). Its fixes are in git (item 181).
+`QA_SET=hunt13` (runs `h13a`, `h13b`, `h13c`; `h13r` at `WW_SPEED=1`): choice mode, Meryl and item 178's
+words. Ended early on Matt's word; its fixes are in git.
 
 ### Matt's calls
 
 | # | Call | Ruling |
 | --- | --- | --- |
-| M86 | Places and stuff as fetch keys: GO GET THE POND / CAVE / CASTLE / SHED, WE CAN USE THE SMOKE (`words178_all` 194, 200, 210), as ZOO was before M53. (a) add POND CAVE CASTLE SHED SMOKE SAND FROST to `NOT_FETCHED` (counter frames and games keep them); (b) keep (HUT TENT IGLOO are fetched already). Pick (a), with HUT TENT IGLOO decided alongside | (a), Matt 2026-11-18: POND CAVE CASTLE SHED SMOKE SAND FROST in `NOT_FETCHED`, and HUT TENT IGLOO with them (item 194) |
-| M87 | Four taunts caption BOW said "bough" (Tiamat's "Bow to your queen!", `words178_charge` 064) while BOW is now read "boh". (a) reword them (KNEEL TO YOUR QUEEN!); (b) keep. Pick (a) | (b) keep, Matt 2026-11-18 |
-| M88 | Villain decals picture bank words in every room (Smaug's flame, Anna's and warrior Jason's 🛡️ shield, Elsa's ❄️, Meryl's 🏹 arrow, Seraphina's egg, Tiamat's 🚩), so FLAME, SHIELD, FROST, BOW, EGG, FLAG can be read beside their own picture on the wall. (a) a decal's `paints` list kept out of keys like signs; (b) keep. Pick (a) | (b) keep, Matt 2026-11-18 |
-| M89 | Evil Elsa's FROST CLASH! banner prints FROST in battle 1; the attic can then draw FROST (about 1 in 400). (a) fight banners count as shown (hard); (b) soft, like cast lines; (c) keep. Pick (b) | (c) keep, Matt 2026-11-18 |
-| M90 | Blue (X) at the title opens choice mode: a child mashing the pad there lands in the picks (red takes her back). (a) keep; (b) blue only with dad lock or the 3 key. Pick (a) | (a) keep, Matt 2026-11-18 |
+| M86 to M90 | Places as fetch keys; BOW said "bough" in taunts; villain decals picturing bank words; FROST CLASH! before the attic's FROST; blue at the title opens choice mode | Ruled 2026-11-18: `docs/rulings.md` |
 | M91 | Meryl's leap in the cook-off carries the rider behind the team's cake tower: only her head shows for GOLDEN LEAP! (`meryl_cook` 133, 134); the judges' cards and the GOLDEN GALLOP! banner cover her letter tiles. (a) riders and letter rows above the cook-off props; (b) keep. Pick (a) | |
 | M92 | Meryl's quest captions read KNIGHTS CAMP (no apostrophe; the place is the Knights' Camp). (a) text with the apostrophe and `say` as now, then `voice:build` (the manifest records the caption: a text change alone reads stale); (b) keep. Pick (a), in a content item | |
 
@@ -194,13 +161,9 @@ Shots kept with the runs (a scenario and its numbers on one line, as `citesShot`
 
 ### Where the next hunt resumes
 
-- **Matt's calls M86 to M92.** Item 182 promoted item 178's picks, so the six words hunt 13 stored on the shared
-  stand-in picture (CAPE CAVE FLAME POND SMOKE SWORD) are live on their own art; `stored.test` still fails if two
-  live words share a picture file. HELMET is live too: item 187 promoted Matt's pick from item 183's round, with
-  new pictures for FOG TAP MUG RUSH JAB.
-- **`sound-gap` in battle at speed 5** (160 to 200 ms between rune sounds, most sweeps): at `WW_SPEED=1` a Charge
-  episode's runes (`h13r` `words178_charge`) had none under 200 ms. Likely the warped clock (the voice backstops run
-  on it), so a look at speed 5; `charge.spec`'s M83 flake (docs/testing.md) may be the same.
-- **Never driven this hunt:** two tabs with choice mode (the rotation restore is fixed by reading, unit-tested in
-  `storeTabs.test`); F2 and F4 inside the Pick screens; `QA_SET=hunt12` and `lenses` as regression; `perf`;
-  `variety`. Matt's MESSAGE #5801 ended the hunt before them.
+- **Matt's calls M91 and M92** are open.
+- **`sound-gap` in battle at speed 5** (160 to 200 ms between rune sounds): at `WW_SPEED=1` a Charge episode's
+  runes (`h13r` `words178_charge`) had none under 200 ms. Likely the warped clock, so a look at speed 5
+  (docs/testing.md, the M83 flake).
+- **Never driven:** two tabs with choice mode (fixed by reading, unit-tested in `storeTabs.test`); F2 and F4
+  inside the Pick screens; `QA_SET=hunt12` and `lenses` as regression; `perf`; `variety`.

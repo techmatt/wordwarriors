@@ -11,11 +11,19 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 
 import { ProgressStore, STORE_KEY, type ProgressData } from '../../src/state/ProgressStore';
-import { chooseProgress, mergeProgress } from '../../src/state/saveFile';
+import { chooseProgress, mergeProgress, staleReplaced } from '../../src/state/saveFile';
 import { SaveFolder, day, saveDir } from '../../src/state/saveFileServer';
 import { memory } from './seeds';
 
 const blob = (episodes: number, savedAt?: number) => JSON.stringify({ version: 1, episodes, ...(savedAt ? { savedAt } : {}) });
+
+test('only the newest replaced copy stays in the browser (item 196)', () => {
+  const p = `${STORE_KEY}.replaced.`;
+  const keys = [STORE_KEY, `${p}9`, `${p}100`, `${p}20`, 'other'];
+  assert.deepEqual(staleReplaced(keys, p, 1), [`${p}20`, `${p}9`], 'boot keeps the latest');
+  assert.deepEqual(staleReplaced(keys, p, 0), [`${p}100`, `${p}20`, `${p}9`], 'a new copy drops every old one');
+  assert.deepEqual(staleReplaced([STORE_KEY], p, 0), []);
+});
 
 test('boot keeps the newer copy: an empty one loses, stamps decide, else episodes', () => {
   assert.equal(chooseProgress(null, null), 'same');

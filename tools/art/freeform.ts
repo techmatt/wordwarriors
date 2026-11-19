@@ -5,8 +5,8 @@
  * that is drawn from it, stay in the spec's folder (put it under `art-originals/`, which
  * is git-ignored and shared).
  *
- * The spec names each row's shape, exact aspect and prompt (README, *Images outside the
- * game*). Beside it: `originals/<id>-<k>.png` as drawn, `<id>-<k>.png` centre-cropped to
+ * The spec names each row's shape, exact aspect and prompt (docs/voice-art-pipeline.md,
+ * *Images outside the game*). Beside it: `originals/<id>-<k>.png` as drawn, `<id>-<k>.png` centre-cropped to
  * the row's aspect, `sheets/<id>.png` a row's candidates side by side for checking, the
  * picker manifest `<name>.json` and `log.jsonl`.
  *
@@ -15,7 +15,7 @@
  *
  * A spec with `key` draws on a key-colour screen and cuts each candidate as a game sprite
  * is cut (keyed, trimmed, fitted); a row with `looks` draws a different brief per
- * candidate (README, *Images outside the game*). `--recut` cuts again from `originals/`.
+ * candidate (docs/voice-art-pipeline.md, *Images outside the game*). `--recut` cuts again from `originals/`.
  */
 
 import { appendFile, copyFile, mkdir, readFile, stat, writeFile } from 'node:fs/promises';

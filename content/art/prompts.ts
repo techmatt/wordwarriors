@@ -358,6 +358,15 @@ export const PICK_NOTES: Record<string, string> = {
   pic_dash: "DASH, live again (item 178). `current` is candidate 1, promoted by item 182: Matt's pick of the redraw from brief 178_dash_redraw, now its PICTURES line. `0` is the picture it had before item 182.",
   pic_swish: "SWISH, live again (item 178). `current` is candidate 1, promoted by item 182: Matt's pick of the redraw from brief 178_swish_redraw, now its PICTURES line. `0` is the picture it had before item 182.",
   pic_jet: "JET, live again (item 178). `current` is candidate 2, promoted by item 182: Matt's pick of the redraw from brief 178_jet_redraw, now its PICTURES line. `0` is the picture it had before item 182.",
+  char_kronos_evil: "`current` is candidate 1 of art_alts_195_kronos, promoted by art:pick on 2026-11-18.",
+  char_kronos_good: "`current` is candidate 1 of art_alts_195_kronos, promoted by art:pick on 2026-11-18.",
+  face_kronos: "`current` is candidate 2 of art_alts_195_kronos, promoted by art:pick on 2026-11-18.",
+  item_clockwork_key: "`current` is candidate 2 of art_alts_195_kronos, promoted by art:pick on 2026-11-18.",
+  minion_ticktock: "`current` is candidate 1 of art_alts_195_kronos, promoted by art:pick on 2026-11-18.",
+  decal_kronos_gear: "`current` is candidate 1 of art_alts_195_kronos, promoted by art:pick on 2026-11-18.",
+  decal_kronos_hourglass: "`current` is candidate 2 of art_alts_195_kronos, promoted by art:pick on 2026-11-18.",
+  decal_kronos_clock: "`current` is candidate 1 of art_alts_195_kronos, promoted by art:pick on 2026-11-18.",
+  arena_clocktower: "`current` is candidate 2 of art_alts_195_kronos, promoted by art:pick on 2026-11-18.",
 };
 
 // Item 097: Charge's picture letters, one row per rune.

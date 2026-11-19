@@ -31,9 +31,8 @@ and yellow cast (free play). Nothing is bound to Shift (it opens Sticky Keys). D
 `docs/episode.md`.
 
 - **`npm ci`** installs exactly what `package-lock.json` pins (about a minute). A fresh
-  checkout or worktree needs it first: without it `npx tsc` lands on npm's "not the tsc
-  command" stub and `npx tsx` cannot find `@playwright/test`. `npm install <pkg>` only to add
-  or bump a dependency, committing the lock file.
+  checkout or worktree needs it first (without it `npx tsc` lands on npm's "not the tsc
+  command" stub and `npx tsx` misses `@playwright/test`). `npm install <pkg>` only to add or bump a dependency, with the lock file.
 - The first install on a machine also needs `npx playwright install chromium
   chromium-headless-shell` (per machine, not per worktree).
 - **`npm run play`** plays a production build: the suite's build (`tests/testBuild.ts`,
@@ -45,11 +44,10 @@ and yellow cast (free play). Nothing is bound to Shift (it opens Sticky Keys). D
   on. To skip that, start Chrome with `--autoplay-policy=no-user-gesture-required`, e.g.
   `"C:\Program Files\Google\Chrome\Application\chrome.exe" --autoplay-policy=no-user-gesture-required --user-data-dir=%TEMP%\ww-chrome http://localhost:5174`.
 - **Start-up** should reach the title in about 2 s. A minute or more means Vite's watcher is
-  walking something big: check for a big folder in the checkout (a `scratch/` folder belongs
-  in the scratch home) and that `server.watch.ignored` in `vite.config.ts` still ignores
-  `scratch`, `art-originals` and `public/voice-gen`. Ignoring the voice junction does not stop
-  new clips being served (Vite serves a `public/` junction live). A dev server holds its
-  watched folders open: nothing under it can be renamed while it runs.
+  walking something big: a big folder in the checkout, or `server.watch.ignored` in
+  `vite.config.ts` no longer ignoring `scratch`, `art-originals` and `public/voice-gen` (new
+  clips are still served). A dev server holds its watched folders open: nothing under it can
+  be renamed while it runs.
 - **A slow server shows as the Wait screen and late lines** (lines silent past 4 s,
   `ENSURE_TIMEOUT_MS`), whichever cast plays. Background voice clips take four
   low-priority slots (`BACKGROUND_SLOTS`, `src/voice/VoiceBank.ts`) so a line or a scene's
@@ -186,11 +184,9 @@ the bank until that line is reworded (the unit tests name it).
 A **stored** word is out of every pool (`THINGS`, `ACTIONS`, `LIVE`), so nothing draws it at
 any difficulty and a saved bag drops it. `STORED_WHY` in `content/phonics/bank.ts` lists each
 with its reason; the grown-ups page lists them on page 3. Today that is BUSH (a wrong short
-U). A word **waiting for its picture** is stored too, with no line anywhere (item 191):
-`content/art/waiting.ts`, generated from `public/art/` by `art:placeholders`, `art:gen` and
-`art:pick`, lists every word whose `pic_<word>` is missing, still the painted placeholder or
-a stand-in shared with another word, and the bank stores it (`WAITING_WHY`) until `art:pick`
-promotes its own picture. `tests/unit/waiting.test.ts` fails if the list and the PNGs disagree.
+U). A word **waiting for its picture** is stored too (`WAITING_WHY`): `content/art/waiting.ts`,
+generated from `public/art/` by the art commands, lists every word whose `pic_<word>` is
+missing, the painted placeholder or shared with another word (`tests/unit/waiting.test.ts`).
 Every other word, `odd` ones included, is live (Matt). A stored word keeps its entry,
 picture, `word_<x>` line, effect and move lines (the composer writes them from `ALL_ACTIONS`
 and `ALL_FAMILIES`), so storing or restoring one changes nothing in `lines.json`. **To bring
@@ -213,15 +209,8 @@ folder in a checkout), or nowhere. Details, the shared voice folder's rules (`--
 
 ## Real art (Codex image generation)
 
-`npm run art:gen -- <ids…>` on Matt's ChatGPT Plus login, no API key: `docs/voice-art-pipeline.md`.
-
-### Candidates to choose from (`art:alts`, `art:pick`)
-
-`docs/voice-art-pipeline.md`, *Candidates*. A candidate round changes nothing tracked.
-
-### Images outside the game (`art:freeform`)
-
-`docs/voice-art-pipeline.md`, *Images outside the game*.
+`npm run art:gen -- <ids…>` on Matt's ChatGPT Plus login, no API key; candidates (`art:alts`,
+`art:pick`) and images outside the game (`art:freeform`): `docs/voice-art-pipeline.md`.
 
 ### Picture letters
 
@@ -229,8 +218,7 @@ Charge's `rune_<sound>` ids are the one art whose prompt asks for a letter: `spr
 `content/art/prompts.ts` gives them `LETTER_STYLE` ("only the named capital letter"). Each
 brief comes from the rune's `picture` in `content/phonics/runes.ts`, so a new look edits
 `look` there. They show on the Charge room's stone (150 px), a done Charge door's badge (54
-px) and the battle's charged-move stone (84 px); `artFor` loads only the plan's and
-`episode.charged`'s runes. The battle HUD's 30 px rune chips keep the bare letter: a picture
+px) and the battle's charged-move stone (84 px). The battle HUD's 30 px rune chips keep the bare letter: a picture
 letter does not read at that size.
 
 ## Operational facts
@@ -238,12 +226,9 @@ letter does not read at that size.
 **New operational facts go here**, or into the docs file of their subject (`docs/testing.md`,
 `docs/tools.md`, `docs/voice-art-pipeline.md`, `docs/storage.md`), never only into a report.
 
-- **Julia's progress is in `C:\Code\gdrive-sync\wordwarriors\progress\progress.json`** (item
-  186): the store's JSON, mirrored by the main checkout's dev server on every write, with a
-  dated daily backup beside it. Read her progress there, not from a browser. A fresh origin (a
-  new port, browser or cleared storage) restores from it at boot. Worktrees and test servers
-  never touch it. Details: `docs/storage.md`, *Her save file*.
-
+- **Julia's progress is in `C:\Code\gdrive-sync\wordwarriors\progress\progress.json`**,
+  mirrored by the main checkout's dev server on every write. Read her progress there, not
+  from a browser. Worktrees and test servers never touch it: `docs/storage.md`, *Her save file*.
 - **A throwaway script that imports game code does not go in the scratch home:** outside
   every checkout, a `.ts` file run from there finds neither the game's code nor
   `node_modules`. Put it in the worktree and delete it after; or import by `file:///` URL

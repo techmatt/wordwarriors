@@ -445,7 +445,8 @@ async function pickOne(id: string, key: string, round: string | undefined, page:
     console.log(`  anything else: a HAND entry for ${id} in content/art/prompts.ts.`);
     console.log(`\n${b.text}\n`);
   }
-  const day = new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const day = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`; // Local, not UTC.
   const current = `\`current\` is candidate ${k}${round ? ` of ${round}` : ''}${b ? ` (brief ${b.name})` : ''}, promoted by art:pick on ${day}.`;
   // A note built by a spread (`...pickedBy025()`) has no line of its own: start from its value, so the new
   // line (which overrides it, after the spread) keeps the rest of it.

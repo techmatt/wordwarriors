@@ -6,6 +6,15 @@
 
 import type { ProgressData, Stat, WordBag } from './ProgressStore';
 
+/**
+ * Of a browser's storage keys, the replaced copies (`<prefix><ms>`) to drop so only the newest `keep` stay (item
+ * 196: each ~35 KB, and the aside file beside the save file holds every one).
+ */
+export function staleReplaced(keys: readonly string[], prefix: string, keep: number): string[] {
+  const ms = (k: string) => Number(k.slice(prefix.length)) || 0;
+  return keys.filter((k) => k.startsWith(prefix)).sort((a, b) => ms(b) - ms(a)).slice(keep);
+}
+
 /** A blob's episodes and save time, or null when it is empty or not JSON. */
 function facts(raw: string | null): { episodes: number; savedAt: number } | null {
   if (!raw) return null;

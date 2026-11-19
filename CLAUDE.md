@@ -17,8 +17,9 @@ episode, reachable by `?scene=`: Sound → Letter, Blend Path, Word → Picture,
 Spell, the alarm and the camp retreat.
 
 **Stack:** TypeScript + Phaser ^3.90 (not 4) + Vite, npm. Playwright for browser tests,
-`node:test` via tsx for pure rules. Dev port **5174** (`src/port.ts`); test ports: README,
-*Ports and servers*. `C:\Code\seraphinas\seraphinas-secret` is a read-only reference.
+`node:test` via tsx for pure rules. Julia plays on conductor's `game` target, **:5240**;
+`npm run dev` uses 5174 (`src/port.ts`); test ports: README, *Ports and servers*.
+`C:\Code\seraphinas\seraphinas-secret` is a read-only reference.
 
 **Docs:** the README's table lists them; `docs/systems.md` has each system's entry point.
 
@@ -61,7 +62,7 @@ plus the specs covering what changed (`npx playwright test <spec>`). `test:slow`
 
 | Command | What |
 | --- | --- |
-| `npm run dev` / `build` / `preview` / `play` | Serve at http://localhost:5174 / typecheck and build `dist/` / serve it / play the suite's build |
+| `npm run dev` / `build` / `preview` / `play` | Serve (5174) / typecheck and build `dist/` / serve it / play the suite's build |
 | `npm run voice:lines` / `voice:build` / `voice:status` | Compose `lines.json`; synthesise changed lines (needs `uv` and network); what is recorded |
 | `npm run voice:clip -- <id> <file>` / `voice:import -- <zip>` / `recorder:missing` | Install a recording / a phonics-recorder zip / refresh the recorder's `?missing` list (`docs/voice-art-pipeline.md`) |
 | `npm run art:placeholders` / `art:gen -- <ids…>` | Paint missing art and rewrite `docs/art.md` / real art |
@@ -70,8 +71,7 @@ plus the specs covering what changed (`npx playwright test <spec>`). `test:slow`
 | `npm run variety`, `perf`, `shots`, `qa` | Simulated episodes' variety, boot timings, screenshots, the bug-hunt checker (`docs/tools.md`) |
 
 **Faster tests over thorough tests where reasonable** (Matt): fewer seeds, a faster
-clock, one walk shared by several checks; Matt scales coverage up when he notices
-problems. A new browser test over ~10 s gets `SLOW`. Test-only shortcuts and
+clock, one walk shared by several checks; Matt scales coverage up on problems. A new browser test over ~10 s gets `SLOW`. Test-only shortcuts and
 `WW_WORKERS`: `docs/testing.md`, *Speed, GPU and workers*.
 
 **Content work:** adding a character, ability, word or line is editing `content/`, then
@@ -82,9 +82,8 @@ art:placeholders`. When Matt asks for a content or tuning change ("add a charact
 **Art rounds:** a candidate round (`art:alts`) changes nothing tracked, so it may run as
 a **readonly** item; a new look is a `--brief` file in the scratch home, not an edit to
 `content/art/prompts.ts`. Its sheet, picker manifest and preview cuts go to
-`art-originals/picks/` (in the repo through the junction, so `pick:` can name it). It
-never asks Matt which candidate to promote: it finishes with `pick:` in the report's
-header, and promotion (`art:pick`) rides a later, normal item.
+`art-originals/picks/` (a junction, so `pick:` can name it). It never asks Matt which
+candidate to promote: it ends with `pick:` in the report's header; promotion (`art:pick`) rides a later, normal item.
 
 ## Standing contract
 
