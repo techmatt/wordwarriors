@@ -106,6 +106,8 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
   private volleys!: BattleVolleys;
   private beats!: BattleBeats;
   private waits: { until: number; resolve: () => void }[] = [];
+  /** `waitHeard`'s waits: page-clock ms (`performance.now`), not simulation time. */
+  private heardWaits: { until: number; resolve: () => void }[] = [];
   phase: Phase = 'intro';
   heroes: Fighter[] = [];
   villain!: Fighter;
@@ -171,6 +173,7 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     this.volleys = new BattleVolleys(this);
     this.beats = new BattleBeats(this);
     this.waits = [];
+    this.heardWaits = [];
     this.phase = 'intro';
     this.heroes = [];
     this.simRate = 1;
@@ -423,6 +426,16 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
   /** Resolve after `s` seconds of simulation time (the director's and the stages' waits). */
   wait(s: number): Promise<void> {
     return this.guard(new Promise((resolve) => this.waits.push({ until: this.now + s * 1000, resolve })));
+  }
+
+  /**
+   * Resolve once `ms` of the page clock have passed from now: a silence she hears, like the beat after a
+   * rune's sound (M83). Not `wait`: `now` only moves once a frame, by Phaser's smoothed frame delta, so a
+   * wait asked between frames (a clip's end) counts from the last frame's `now` and, after a slow frame,
+   * from a clock running behind; the 250 ms beat came out 185 to 225 ms (item 197).
+   */
+  waitHeard(ms: number): Promise<void> {
+    return this.guard(new Promise((resolve) => this.heardWaits.push({ until: performance.now() + ms, resolve })));
   }
 
   say(key: string): Promise<boolean> {
@@ -832,6 +845,10 @@ export class BattleScene extends Phaser.Scene implements StageHost, ChoiceHost, 
     const due = this.waits.filter((w) => w.until <= this.now);
     this.waits = this.waits.filter((w) => w.until > this.now);
     for (const w of due) w.resolve();
+    const clock = performance.now();
+    const heard = this.heardWaits.filter((w) => w.until <= clock);
+    this.heardWaits = this.heardWaits.filter((w) => w.until > clock);
+    for (const w of heard) w.resolve();
 
     // The choice runs on real time: she walks while the fight is frozen.
     if (this.choices.active) this.choices.update(realDt);

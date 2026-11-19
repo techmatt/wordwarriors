@@ -432,10 +432,11 @@ export const RUNE_GAP = 0.5;
 /**
  * The beat between one battle rune's sound ending and the next rune's sound
  * starting, ms (hunt 12, M83: back to back, F-R-O-G played -20 to 15 ms clip to
- * clip, the word nearly blended; about 1 s on a four-rune word). On the battle's
- * clock, as the clips' own length is at test speed (the harness plays them that
- * many times faster), so it is 250 ms at real speed and the checker's `sound-gap`
- * measures it; not cut by `?battle=short`.
+ * clip, the word nearly blended; about 1 s on a four-rune word). On the page clock
+ * from the clip's end (BattleScene `waitHeard`; the battle's frame clock ran it 185
+ * to 225 ms, item 197), as the clips' own length is at test speed (the harness plays
+ * them that many times faster), so it is 250 ms at real speed and the checker's
+ * `sound-gap` measures it; not cut by `?battle=short`.
  */
 export const RUNE_SOUND_BEAT_MS = 250;
 

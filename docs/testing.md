@@ -195,8 +195,10 @@ when a test ends mid-decode: harmless.
 
 **Known flakes:** `banner.spec` "the widest fetch / counter sentence" (the dialogue box 20 px
 over Dad) fails about one run in six and passes on the retry; `test:slow` reports it flaky.
-`charge.spec` "M83: the battle's runes leave a 250 ms beat" (real voice) measures gaps from
-about 170 to 600 ms run to run; 7 of 11 attempts had one under 240 ms (Nov 16), so it
-often fails `test:browser` retry included. The gap below 250 ms may be a real miss of the beat, not only the test.
-Hunt 13: a whole Charge episode at `WW_SPEED=1` had no rune gap under 200 ms, while every speed-5 sweep logs
-160 to 200 ms ones: most likely the warped test clock, not play.
+`charge.spec` "M83: the battle's runes leave a 250 ms beat" was one until item 197, and its short
+gaps (170 to 225 ms) were real: the beat waited 250 ms of the battle's `now`, which moves once a
+frame by Phaser's smoothed delta, so a wait asked as a clip ended counted from the last frame and
+ran 185 to 225 ms of page clock after slow frames (worse at speed 5, where a frame is 5× the game
+time). It now waits on the page clock (`waitHeard`): 12 of 12 passed, gaps 257 ms and up. A
+silence she hears belongs on `waitHeard`, not `wait`; long gaps (to ~2 s) in a loaded speed-5
+run are frame lateness, never a short beat.

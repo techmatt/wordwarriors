@@ -37,6 +37,8 @@ export interface VolleyHost extends BattleWorld {
   /** A story fight is playing: its own beats say what she found. */
   readonly inStory: boolean;
   wait(s: number): Promise<void>;
+  /** `ms` of the page clock from now, for a silence she hears (BattleScene `waitHeard`, M83). */
+  waitHeard(ms: number): Promise<void>;
   say(key: string): Promise<boolean>;
   guard<T>(p: Promise<T>): Promise<T>;
 }
@@ -146,8 +148,9 @@ export class BattleVolleys {
         },
       });
       // The next stone waits for this one's sound and a beat after it (hunt 12, M83: back to back the word's
-      // sounds ran together), as well as the gap (RUNE_GAP: hunt 11, M62).
-      const beatDone = heard.then(() => b.wait(RUNE_SOUND_BEAT_MS / 1000));
+      // sounds ran together), as well as the gap (RUNE_GAP: hunt 11, M62). The beat on the page clock from the
+      // clip's end, not the battle's frame clock, which ran it 185 to 225 ms (item 197).
+      const beatDone = heard.then(() => b.waitHeard(RUNE_SOUND_BEAT_MS));
       await Promise.all([beatDone, gapDone]);
     }
   }

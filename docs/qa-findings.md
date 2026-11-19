@@ -162,8 +162,5 @@ Shots kept with the runs (a scenario and its numbers on one line, as `citesShot`
 ### Where the next hunt resumes
 
 - **Matt's calls M91 and M92** are open.
-- **`sound-gap` in battle at speed 5** (160 to 200 ms between rune sounds): at `WW_SPEED=1` a Charge episode's
-  runes (`h13r` `words178_charge`) had none under 200 ms. Likely the warped clock, so a look at speed 5
-  (docs/testing.md, the M83 flake).
 - **Never driven:** two tabs with choice mode (fixed by reading, unit-tested in `storeTabs.test`); F2 and F4
   inside the Pick screens; `QA_SET=hunt12` and `lenses` as regression; `perf`; `variety`.
